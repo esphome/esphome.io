@@ -11,7 +11,7 @@ params:
 
 Use this component to store graphical images on the device, you can then draw the images on compatible displays.
 
-For showing images downloaded at runtime, take a look at the [Online Image](#online_image) component.
+For showing images downloaded at runtime, take a look at the [Online Image](/components/online_image#online_image) component.
 
 ```yaml
 image:
@@ -56,7 +56,7 @@ image:
 
   - **Remote files**: The URL of the image file.
 
-- **id** (**Required**, [ID](#config-id)): The ID with which you will be able to reference the image later
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID with which you will be able to reference the image later
   in your display code.
 
 - **resize** (*Optional*, string): If set, this will resize the image to fit inside the given dimensions `WIDTHxHEIGHT`

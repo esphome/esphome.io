@@ -62,7 +62,7 @@ switch:
      id: dehumidifier1
 ```
 
-First, we have to give the dehumidifier `switch` an [ID](#config-id) so that we can refer to it inside of our
+First, we have to give the dehumidifier `switch` an [ID](/guides/configuration-types#id) so that we can refer to it inside of our
 automation.
 
 {{< anchor "actions-trigger" >}}
@@ -213,26 +213,26 @@ on_...:
 
 At least one of `condition`, `all` or `any` must be provided.
 
-- **condition** (*Optional*, [Condition](#config-condition)): The condition to check to determine which branch to take.
+- **condition** (*Optional*, [Condition](#all-conditions)): The condition to check to determine which branch to take.
   If this is configured with a list of conditions then they must all be true for the condition to be true.
 
-- **all** (*Optional*, [Condition](#config-condition)): Takes a list of conditions, all of which must be true (and is
+- **all** (*Optional*, [Condition](#all-conditions)): Takes a list of conditions, all of which must be true (and is
   therefore equivalent to `condition`  .)
 
-- **any** (*Optional*, [Condition](#config-condition)): Takes a list of conditions; if at least one is true, the
+- **any** (*Optional*, [Condition](#all-conditions)): Takes a list of conditions; if at least one is true, the
   condition will be true.
 
-- **then** (*Optional*, [Action](#config-action)): The action to perform if the condition evaluates to true.
+- **then** (*Optional*, [Action](#all-actions)): The action to perform if the condition evaluates to true.
   Defaults to doing nothing.
 
-- **else** (*Optional*, [Action](#config-action)): The action to perform if the condition evaluates to false.
+- **else** (*Optional*, [Action](#all-actions)): The action to perform if the condition evaluates to false.
   Defaults to doing nothing.
 
 {{< anchor "lambda_action" >}}
 
 ### `lambda` Action
 
-This action executes an arbitrary piece of C++ code (see [Lambda](#config-lambda)).
+This action executes an arbitrary piece of C++ code (see [Lambda](/automations/templates#config-lambda)).
 
 ```yaml
 on_...:
@@ -253,8 +253,10 @@ on_...:
   - repeat:
       count: 5
       then:
+        - lambda: ESP_LOGI("main", "Turning lights on for iteration [%d]", iteration);
         - light.turn_on: some_light
         - delay: 1s
+        - lambda: ESP_LOGI("main", "Turning lights off for iteration [%d]", iteration);
         - light.turn_off: some_light
         - delay: 10s
 ```
@@ -262,9 +264,9 @@ on_...:
 #### Configuration variables
 
 - **count** (**Required**, int): The number of times the action should be repeated. The counter is available to
-  lambdas using the reserved word "iteration".
+  lambdas using the implicit script parameter `iteration`.
 
-- **then** (**Required**, [Action](#config-action)): The action to repeat.
+- **then** (**Required**, [Action](#all-actions)): The action to repeat.
 
 {{< anchor "wait_until_action" >}}
 
@@ -297,8 +299,8 @@ on_...:
 
 #### Configuration variables
 
-- **condition** (**Required**, [Condition](#config-condition)): The condition to wait to become true.
-- **timeout** (*Optional*, [Time](#config-time)): Time to wait before timing out. Defaults to never timing out.
+- **condition** (**Required**, [Condition](#all-conditions)): The condition to wait to become true.
+- **timeout** (*Optional*, [Time](/guides/configuration-types#time)): Time to wait before timing out. Defaults to never timing out.
 
 {{< anchor "while_action" >}}
 
@@ -321,10 +323,10 @@ on_...:
 
 #### Configuration variables
 
-- **condition** (**Required**, [Condition](#config-condition)): The condition to check to determine whether or not to
+- **condition** (**Required**, [Condition](#all-conditions)): The condition to check to determine whether or not to
   execute.
 
-- **then** (**Required**, [Action](#config-action)): The action to perform until the condition evaluates to false.
+- **then** (**Required**, [Action](#all-actions)): The action to perform until the condition evaluates to false.
 
 {{< anchor "component-update_action" >}}
 
@@ -455,16 +457,30 @@ on_...:
 
 #### Configuration variables
 
-- **time** (**Required**, [templatable](#config-templatable), [Time](#config-time)):
+- **time** (**Required**, [templatable](/automations/templates), [Time](/guides/configuration-types#time)):
   The time for which the condition has to have been true.
 
-- **condition** (**Required**, [condition](#config-condition)): The condition to check.
+- **condition** (**Required**, [condition](#all-conditions)): The condition to check.
 
-{{< anchor "lambda_condition" >}}
+### `component.is_idle` Condition
+
+This condition checks if a given component is idle. A component is considered to be idle if it has completed
+setup, has not been marked as failed, and is not currently being called by the loop task. This is useful for
+synchronizing actions with the state of the component, for example, an e-paper display component that requires
+a significant amount of time to update the display panel.
+
+```yaml
+on_...:
+  then:
+    - if:
+        condition:
+          component.is_idle: some_component
+        # ...
+```
 
 ### `lambda` Condition
 
-This condition performs an arbitrary piece of C++ code (see [Lambda](#config-lambda))
+This condition performs an arbitrary piece of C++ code (see [Lambda](/automations/templates#config-lambda))
 and can be used to create conditional flow in actions.
 
 ```yaml

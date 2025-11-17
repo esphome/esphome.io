@@ -21,7 +21,7 @@ override substitutions with the same name in a package.
 Dictionaries are merged key-by-key. Lists of components are merged by component ID (if specified). Other lists are
 merged by concatenation. All other configuration values are replaced with the later value.
 
-ESPHome uses `!include` to "bring in" packages from other files; this feature is described in [!include](#yaml-include).
+ESPHome uses `!include` to "bring in" packages from other files; this feature is described in [!include](/guides/yaml#yaml-include).
 
 The `packages:` key may have a value that is a list of valid package references, or a mapping of keys to package references.
 When a mapping is used, the keys are for reference only and have no significance in themselves.
@@ -127,7 +127,7 @@ For each package:
   - list of objects containing `path` and `vars`
 
 - **ref** (*Optional*, string): The Git ref(erence) to be used when pulling content from the repository.
-- **refresh** (*Optional*, [Time](#config-time)): The interval at which the content from the repository should be refreshed.
+- **refresh** (*Optional*, [Time](/guides/configuration-types#time)): The interval at which the content from the repository should be refreshed.
 
 ## Packages as Templates
 
