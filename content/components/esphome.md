@@ -208,7 +208,7 @@ or PlatformIO build environments.
 esphome:
   # ...
   environment_variables:
-    HTTP_PROXY: "HTTP_PROXY=http://user:pass@10.10.1.10:3128/"
+    HTTP_PROXY: "http://user:pass@10.10.1.10:3128/"
     PLATFORMIO_SETTING_ENABLE_PROXY_STRICT_SSL: "false"
 ```
 
