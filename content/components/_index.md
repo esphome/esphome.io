@@ -511,6 +511,7 @@ Sensors are organized into categories; if a given sensor fits into more than one
 {{< imgtable >}}
 "APDS9960","components/sensor/apds9960","apds9960.jpg","Colour & Gesture"
 "BMI160","components/sensor/bmi160","bmi160.jpg","Accelerometer & Gyroscope"
+"BMI270","components/sensor/bmi270","bmi270.jpg","Accelerometer & Gyroscope"
 "LD2410","components/sensor/ld2410","ld2410.jpg","Motion & Presence"
 "LD2412","components/sensor/ld2412","ld2412.jpg","Motion & Presence"
 "LD2420","components/sensor/ld2420","ld2420.jpg","Motion & Presence"
