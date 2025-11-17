@@ -7,8 +7,8 @@ params:
     image: usb.svg
 ---
 
-This component allows an ESP32-S3 or ESP32-S2 to host USB-serial devices. It uses the {{< docref "/components/usb_host" >}}
-component to host the device.
+This component allows an ESP32-S3 or ESP32-S2 to host USB-serial peripheral devices. It uses the {{< docref "/components/usb_host" >}}
+component to interface to the device as a USB-OTG host.
 
 Currently supported devices are listed in the table below:
 
