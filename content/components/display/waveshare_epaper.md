@@ -110,6 +110,7 @@ lambda: |-
   - `4.20in-bV2` - B/W rendering only
   - `gdey042t81` - GoodDisplay GDEY042T81 4.2" B/W
   - `4.20in-bV2-bwr` - BWR rendering enabled (uses double the amount of RAM for the display buffer as B/W rendering)
+  - `gdeq0426t82` - GoodDisplay GDEQ0426T82 4.26 B/W
   - `5.83in`
   - `5.83inv2`
   - `gdey0583t81` - GoodDisplay GDEY0583T81 5.83" B/W
