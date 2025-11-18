@@ -119,15 +119,45 @@ See [this section](#custom-section-name) for details.
 ### Visual Elements
 
 #### Images
-- **Optimize all images** before adding (use TinyPNG/TinyJPG)
+
+**Optimization Requirements:**
+- **ALWAYS optimize images** before adding (use TinyPNG/TinyJPG)
 - **Maximum size**: ~1000x800 pixels
-- Place images in `/images/` directory
-- Reference with: `![Alt text](/images/component-name.png)`
+- All images must be as small as possible to minimize page load times
+
+**Directory Structure:**
+- **Component images**: Store in section-specific directories:
+  - General components: `content/components/images/`
+  - Sensor components: `content/components/sensor/images/`
+  - Display components: `content/components/display/images/`
+  - Binary sensors: `content/components/binary_sensor/images/`
+  - Guides: `content/guides/images/`
+  - Cookbook: `content/cookbook/images/`
+  - And so on for each major section
+- **Global/shared images and thumbnails**: Store in `static/images/`
+
+**Referencing Images:**
+Use Hugo `img` shortcode (NOT standard markdown):
+```markdown
+{{< img src="filename.png" alt="Image description" caption="Optional caption text" width="75%" class="align-center" >}}
+```
+
+- `src`: Just the filename (no path) - looks in the section's images directory
+- `alt`: Alternative text for accessibility
+- `caption`: Optional descriptive caption
+- `width`: Optional percentage (e.g., "75%", "50%")
+- `class`: Usually "align-center" for centered images
+
+Example:
+```markdown
+{{< img src="debug.png" alt="Debug component output" caption="Example debug component output." class="align-center" >}}
+```
 
 #### Component Thumbnails
-- **Aspect ratio**: 8:10 (portrait orientation)
-- **Format**: SVG (heavily compressed) or JPG (300x300px)
-- **Location**: `/images/` directory
+- **Aspect ratio**: 8:10 or 10:8 (portrait or landscape orientation)
+- **Format**: SVG (heavily compressed) or JPG (max 300x300px)
+- **Location**: `static/images/` directory
+- **Reference**: Use `/images/filename` path in frontmatter or links
 - Used in component listings and cards
 
 ### Alerts and Callouts
