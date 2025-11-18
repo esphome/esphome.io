@@ -78,13 +78,14 @@ sensor:
 
 Use special formatting to indicate parameter requirements:
 
-- **Bold** for **required** parameters
-- *Italics* for *optional* parameters
+- **Config key**: Always bold
+- **Required** label: Bold
+- *Optional* label: Italics
 
 Example:
 ```markdown
-- **pin** (*Required*, Pin): The pin where the sensor is connected.
-- *update_interval* (*Optional*, Time): The interval to check the sensor. Defaults to `60s`.
+- **pin** (**Required**, Pin): The pin where the sensor is connected.
+- **update_interval** (*Optional*, Time): The interval to check the sensor. Defaults to `60s`.
 ```
 
 ### Links
