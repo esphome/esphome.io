@@ -157,9 +157,6 @@ Use GitHub-style alert syntax:
 - **New features and new component docs**: Target the `next` branch
 - **Create separate branches** for each pull request (one PR per feature/fix)
 
-### Branch Naming
-Follow the pattern: `claude/esphome-docs-<descriptive-name>-<session-id>`
-
 ### Commit Messages
 - Use clear, descriptive commit messages
 - Format: `[component] Brief description of change`
