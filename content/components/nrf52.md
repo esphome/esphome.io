@@ -158,7 +158,7 @@ interval:
 
 ### Board does not boot
 
-Disable DC/DC.
+Disable DC/DC:
 
 ```yaml
 nrf52:
