@@ -99,11 +99,12 @@ nrf52:
 
 ### Flashing is unstable
 
-If you are using the Adafruit bootloader, upgrade to the latest version: [Adafruit nRF52 Bootloader Releases](https://github.com/adafruit/Adafruit_nRF52_Bootloader/releases)
+If you are using the Adafruit bootloader, upgrade to the latest version:
+[Adafruit nRF52 Bootloader Releases](https://github.com/adafruit/Adafruit_nRF52_Bootloader/releases)
 
 ### How to start
 
-Try minimum LED blinking sketch for the board:
+Try minimum LED blinking config for the board:
 
 [supermini-nrf52840](https://github.com/joric/nrfmicro/wiki/Alternatives#supermini-nrf52840)
 
