@@ -131,7 +131,7 @@ interval:
       - output.turn_off: red_led
 ```
 
-[xiao nrf52840](https://wiki.seeedstudio.com/XIAO_BLE/)
+[xiao-nrf52840](https://wiki.seeedstudio.com/XIAO_BLE/)
 
 ```yaml
 nrf52:
@@ -156,7 +156,7 @@ interval:
       - output.turn_off: red_led
 ```
 
-### Board do not boot
+### Board does not boot
 
 Disable DC/DC.
 
