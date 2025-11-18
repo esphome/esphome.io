@@ -327,7 +327,7 @@ on_...:
 ```
 
 > [!NOTE]
-> Be aware that if you disable WiFi, the API timeout will need to be disabled otherwise the device will reboot.
+> If you disable WiFi, you must enable WiFi again before the API timeout is reached or the device will reboot. You can disable the API timeout to avoid this limitation.
 
 {{< anchor "wifi-on_enable" >}}
 
