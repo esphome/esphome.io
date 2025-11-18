@@ -19,9 +19,10 @@
   - Do NOT include the dependent component's configuration in the example
 
 #### Pin References
-- Use **generic notation** like `GPIOXX` instead of specific pin numbers
-- Example: Use `GPIO16` rather than `D0` or specific board pins
-- This ensures examples work across different boards
+- **ALWAYS use the literal string `GPIOXX`** in documentation examples
+- The `XX` is literal - do NOT replace with actual numbers like `GPIO16`
+- **Exception**: Only use specific pin numbers when documenting hardware with fixed pins
+- This ensures examples work across different boards and users replace with their actual pins
 
 ## File Structure & Format
 
@@ -58,7 +59,7 @@ description: Brief description of the component
 ### Code Formatting
 
 #### Inline Code
-- Use single backticks for inline code: `variable_name`, `sensor`, `GPIO16`
+- Use single backticks for inline code: `variable_name`, `sensor`, `GPIOXX`
 - Use for: component names, variable names, short code snippets, pin numbers
 
 #### Code Blocks
@@ -67,7 +68,7 @@ description: Brief description of the component
 ```yaml
 sensor:
   - platform: dht
-    pin: GPIO16
+    pin: GPIOXX
     temperature:
       name: "Living Room Temperature"
 ```
@@ -228,7 +229,7 @@ Additional examples showing common use cases.
 ```yaml
 sensor:
   - platform: dht
-    pin: GPIO16
+    pin: GPIOXX
     temperature:
       name: "Temperature"
 ```
@@ -237,7 +238,7 @@ sensor:
 ```yaml
 sensor:
   - platform: dht
-    pin: GPIO16
+    pin: GPIOXX
     model: AUTO_DETECT
     update_interval: 60s
     temperature:
@@ -255,7 +256,7 @@ sensor:
 4. **Use Title Case** for section headings
 5. **Optimize images** before adding them
 6. **Keep examples minimal** - only essential configuration
-7. **Use generic pin notation** (GPIOXX)
+7. **Use literal `GPIOXX`** - the XX is literal, don't replace with numbers (unless fixed hardware)
 8. **Link to dependencies** instead of including their config
 9. **Target correct branch** (current vs next)
 10. **GitHub CLI not available** - ask user for GitHub information if needed
