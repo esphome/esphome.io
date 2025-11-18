@@ -117,6 +117,7 @@ ESPHome-specific components or components supporting ESPHome device provisioning
 ## Bluetooth/BLE
 
 {{< imgtable >}}
+"BTHome BLE","components/bthome","bluetooth.svg","dark-invert"
 "ESP32 BLE Beacon","components/esp32_ble_beacon","bluetooth.svg","dark-invert"
 "ESP32 BLE Client","components/ble_client","bluetooth.svg","dark-invert"
 "ESP32 BLE Tracker","components/esp32_ble_tracker","bluetooth.svg","dark-invert"
