@@ -161,7 +161,7 @@ Disable DC/DC.
 
 ```yaml
 nrf52:
-  dcdc: False
+  dcdc: false
 ```
 
 ## See Also
