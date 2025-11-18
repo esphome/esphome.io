@@ -15,11 +15,11 @@ BTHome is a standardized format for transmitting sensor data over BLE advertisin
 > The BLE software stack on the ESP32 consumes a significant amount of RAM on the device.
 >
 > **Crashes are likely to occur** if you include too many additional components in your device's
-> configuration. Memory-intensive components such as {{< docref "/components/voice_assistant" >}} and other
+> configuration. Memory-intensive components such as [Voice Assistant](/components/voice_assistant) and other
 > audio components are most likely to cause issues.
 
 > [!NOTE]
-> This component requires the {{< docref "esp32_ble/" >}} component to be configured. The BTHome component will automatically enable BLE advertising.
+> This component requires the [ESP32 BLE](/components/esp32_ble) component to be configured. The BTHome component will automatically enable BLE advertising.
 
 ```yaml
 # Example configuration entry
@@ -42,7 +42,7 @@ bthome:
 ## Configuration variables
 
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID for code generation.
-- **esp32_ble_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the {{< docref "esp32_ble/" >}} component. Defaults to the only `esp32_ble` component if only one is configured.
+- **esp32_ble_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the [ESP32 BLE](/components/esp32_ble) component. Defaults to the only `esp32_ble` component if only one is configured.
 
 - **min_interval** (*Optional*, [Time](/guides/configuration-types#time)): The minimum BLE advertising interval in milliseconds. Setting this less than `max_interval` gives the BLE hardware a better chance to avoid collisions with other BLE transmissions. Range: 20ms to 10,240ms. Defaults to `1s`.
 
@@ -201,15 +201,15 @@ The BTHome component periodically broadcasts BLE advertisements containing your 
 
 ## Integration with Home Assistant
 
-Home Assistant will automatically discover BTHome devices when the [Bluetooth](/integrations/bluetooth/) integration is enabled. The sensor data will appear as entities in Home Assistant without any additional configuration required.
+Home Assistant will automatically discover BTHome devices when the [Bluetooth](https://www.home-assistant.io/integrations/bluetooth/) integration is enabled. The sensor data will appear as entities in Home Assistant without any additional configuration required.
 
 If you've configured encryption, you'll need to provide the same encryption key in Home Assistant when adding the device.
 
 ## See Also
 
-- {{< docref "esp32_ble/" >}}
-- {{< docref "esp32_ble_beacon/" >}}
-- {{< docref "esp32_ble_tracker/" >}}
-- {{< docref "bluetooth_proxy/" >}}
+- [ESP32 BLE](/components/esp32_ble)
+- [ESP32 BLE Beacon](/components/esp32_ble_beacon)
+- [ESP32 BLE Tracker](/components/esp32_ble_tracker)
+- [Bluetooth Proxy](/components/bluetooth_proxy)
 - [BTHome Protocol Specification](https://bthome.io/)
-- {{< apiref "bthome/bthome.h" "bthome/bthome.h" >}}
+- [API Reference](https://esphome.io/api/bthome_2bthome_8h)
