@@ -137,19 +137,30 @@ See [this section](#custom-section-name) for details.
 - **Global/shared images and thumbnails**: Store in `static/images/`
 
 **Referencing Images:**
-Use Hugo `img` shortcode (NOT standard markdown):
+
+**Default**: Use standard markdown syntax:
+```markdown
+![Alt text](filename.png)
+```
+
+The filename (no path) references the image in the section's images directory.
+
+**When shortcode features are needed**: Use Hugo `img` shortcode for captions, width control, or alignment:
 ```markdown
 {{< img src="filename.png" alt="Image description" caption="Optional caption text" width="75%" class="align-center" >}}
 ```
 
+Shortcode parameters:
 - `src`: Just the filename (no path) - looks in the section's images directory
 - `alt`: Alternative text for accessibility
-- `caption`: Optional descriptive caption
-- `width`: Optional percentage (e.g., "75%", "50%")
-- `class`: Usually "align-center" for centered images
+- `caption`: Descriptive caption (only available in shortcode)
+- `width`: Percentage control like "75%", "50%" (only available in shortcode)
+- `class`: Usually "align-center" for centering (only available in shortcode)
 
-Example:
+Examples:
 ```markdown
+![Debug output](debug.png)
+
 {{< img src="debug.png" alt="Debug component output" caption="Example debug component output." class="align-center" >}}
 ```
 
