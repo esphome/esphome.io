@@ -191,13 +191,13 @@ The BTHome component periodically broadcasts BLE advertisements containing your 
 
 1. **Regular Broadcasts**: The component broadcasts all configured sensor values at the interval specified by `min_interval` and `max_interval`.
 
-2. **Immediate Updates**: When `advertise_immediately` is enabled for a sensor, value changes trigger an instant broadcast instead of waiting for the next scheduled interval. This is ideal for event-driven sensors like motion detectors or door sensors.
+1. **Immediate Updates**: When `advertise_immediately` is enabled for a sensor, value changes trigger an instant broadcast instead of waiting for the next scheduled interval. This is ideal for event-driven sensors like motion detectors or door sensors.
 
-3. **Packet Cycling**: If you have many sensors and the data doesn't fit in a single BLE advertisement packet (31-byte limit), the component automatically cycles through multiple packets.
+1. **Packet Cycling**: If you have many sensors and the data doesn't fit in a single BLE advertisement packet (31-byte limit), the component automatically cycles through multiple packets.
 
-4. **Encryption**: When an `encryption_key` is provided, all sensor data is encrypted using AES-CCM encryption, ensuring secure transmission. Home Assistant and other receivers will need the same encryption key to decrypt the data.
+1. **Encryption**: When an `encryption_key` is provided, all sensor data is encrypted using AES-CCM encryption, ensuring secure transmission. Home Assistant and other receivers will need the same encryption key to decrypt the data.
 
-5. **Advertisement Size**: Each BLE advertisement is limited to 31 bytes total. Without encryption, this provides 23 bytes for sensor data. With encryption, only 15 bytes are available due to the encryption overhead (counter and message integrity code).
+1. **Advertisement Size**: Each BLE advertisement is limited to 31 bytes total. Without encryption, this provides 23 bytes for sensor data. With encryption, only 15 bytes are available due to the encryption overhead (counter and message integrity code).
 
 ## Integration with Home Assistant
 
