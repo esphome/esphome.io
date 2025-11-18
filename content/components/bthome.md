@@ -212,4 +212,4 @@ If you've configured encryption, you'll need to provide the same encryption key 
 - [ESP32 BLE Tracker](/components/esp32_ble_tracker)
 - [Bluetooth Proxy](/components/bluetooth_proxy)
 - [BTHome Protocol Specification](https://bthome.io/)
-- [API Reference](https://esphome.io/api/bthome_2bthome_8h)
+- {{< apiref "bthome/bthome.h" "bthome/bthome.h" >}}
