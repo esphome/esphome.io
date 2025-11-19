@@ -1,6 +1,6 @@
 ---
 description: "Instructions for setting up ThermoPro Bluetooth-based temperature and humidity sensors in ESPHome."
-title: "ThermoPro BLE Sensor"
+title: "ThermoPro BLE Sensors"
 params:
   seo:
     description: Instructions for setting up ThermoPro Bluetooth-based temperature and humidity sensors in ESPHome.
@@ -12,8 +12,16 @@ Low Energy devices using the {{< docref "/components/esp32_ble_tracker" >}}. Thi
 temperature, humidity, battery level and signal strength of the ThermoPro device every time the
 sensor sends out a BLE broadcast.
 
-> [!NOTE]
-> Currently this component is only tested with TP357S devices. However, it should work with TP972, TP970, TP96x and TP3xx.
+## Supported Devices
+
+This component supports multiple ThermoPro BLE sensor models:
+
+- **TP3xx series** (e.g., TP357S): Temperature, humidity, and battery level sensors. Testing has been primarily done with TP357S devices.
+- **TP96x series**: Internal and external temperature sensors with battery level monitoring.
+- **TP970**: Internal and external temperature sensors with battery level monitoring.
+- **TP972**: Internal and external temperature sensors with battery level monitoring.
+
+All models support signal strength (RSSI) monitoring.
 
 {{< img src="thermopro_tp357-full.jpg" alt="Image" caption="ThermoPro TP357 Temperature and Humidity Sensor over BLE." width="80.0%" class="align-center" >}}
 
@@ -22,6 +30,7 @@ sensor sends out a BLE broadcast.
 esp32_ble_tracker:
 
 sensor:
+  # TP3xx series example (TP357S with humidity)
   - platform: thermopro_ble
     mac_address: XX:XX:XX:XX:XX:XX
     temperature:
@@ -32,6 +41,18 @@ sensor:
       name: "ThermoPro Battery Level"
     signal_strength:
       name: "ThermoPro Signal Strength"
+
+  # TP96x/TP970/TP972 example (with external temperature probe)
+  # - platform: thermopro_ble
+  #   mac_address: YY:YY:YY:YY:YY:YY
+  #   temperature:
+  #     name: "ThermoPro Internal Temperature"
+  #   external_temperature:
+  #     name: "ThermoPro External Temperature"
+  #   battery_level:
+  #     name: "ThermoPro Battery Level"
+  #   signal_strength:
+  #     name: "ThermoPro Signal Strength"
 ```
 
 ## Configuration variables
@@ -42,21 +63,20 @@ sensor:
 
   - All options from [Sensor](#config-sensor).
 
-- **external_temperature** (*Optional*): The information for the ambient temperature sensor.
-  This is only available on TP972, TP970 and TP96x devices.
+- **external_temperature** (*Optional*): The information for the external/probe temperature sensor.
+  Some models (TP972, TP970, TP96x) support dual temperature readings - one internal and one from an external probe.
 
   - All options from [Sensor](#config-sensor).
 
-- **humidity** (*Optional*): The information for the humidity sensor
-  This is only available on TP3xx devices.
+- **humidity** (*Optional*): The information for the humidity sensor. Only available on TP3xx devices.
 
   - All options from [Sensor](#config-sensor).
 
-- **battery_level** (*Optional*): The information for the battery level sensor
+- **battery_level** (*Optional*): The information for the battery level sensor.
 
   - All options from [Sensor](#config-sensor).
 
-- **signal_strength** (*Optional*): The information about the BT RSSI
+- **signal_strength** (*Optional*): The information for the signal strength (RSSI) sensor.
 
   - All options from [Sensor](#config-sensor).
 
@@ -93,5 +113,4 @@ entry like in the configuration example at the top.
 
 - {{< docref "/components/esp32_ble_tracker" >}}
 - {{< docref "/components/sensor" >}}
-- {{< docref "absolute_humidity/" >}}
 - {{< apiref "thermopro_ble/thermopro_ble.h" "thermopro_ble/thermopro_ble.h" >}}
