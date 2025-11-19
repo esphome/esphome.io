@@ -79,7 +79,7 @@ wifi:
 
   - **ap_timeout** (*Optional*, [Time](/guides/configuration-types#time)): The time after which to enable the
     configured fallback hotspot. Can be disabled by setting this to `0s`, which requires manually starting the AP by
-    other means (eg: from a button press). Defaults to `1min`.
+    other means (eg: from a button press). Defaults to `90s`.
 
 - **domain** (*Optional*, string): Set the domain of the node hostname used for uploading.
   For example, if it's set to `.local`, all uploads will be sent to `<HOSTNAME>.local`.
@@ -380,7 +380,9 @@ on_...:
 ```
 
 > [!NOTE]
-> Be aware that if you disable WiFi, the API timeout will need to be disabled otherwise the device will reboot.
+> Be mindful of the reboot timeouts set for both the [API component](/components/api/) and the
+> [WiFi component](#configuration-variables) if you disable WiFi. If WiFi remains off for longer than the duration of
+> either timeout, the device will reboot!
 
 {{< anchor "wifi-on_enable" >}}
 
