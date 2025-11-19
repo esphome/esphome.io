@@ -50,7 +50,7 @@ light:
 
   - Values `>0` – interval publishing is enabled. The starting state is published at the beginning of the transition or flash, intermediate states are published roughly every `transition_state_publish_interval` while it is running, and a final state is published at the end. If the light call includes `save: true`, the stored state is updated when the transition finishes instead of on each intermediate update.
 
-  Shorter intervals create more frequent publishes and therefore more network and CPU load. In testing on ESP8266-class devices, values below about `150ms` rarely produce smoother visible transitions but can generate a large number of API/MQTT updates and push the device toward its CPU limits. For ESP8266-class devices, defaults in the range of `200ms` to `250ms` (around 4–5 Hz) generally provide smooth updates without excessive overhead.
+  Shorter intervals create more frequent publishes and therefore more network and CPU load. In testing on ESP8266-class devices, values below about `150ms` rarely produce smoother visible transitions but can generate a large number of API/MQTT updates and push the device toward its CPU limits. For ESP8266-class devices, recommended values in the range of `200ms` to `250ms` (around 4–5 Hz) generally provide smooth updates without excessive overhead.
 
 - **initial_state** (*Optional*): The initial state the light should be set to on bootup. This state will be applied
   when the state is **not** restored based on `restore_mode` (below).
