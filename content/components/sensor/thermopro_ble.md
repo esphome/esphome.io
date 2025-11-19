@@ -48,7 +48,7 @@ sensor:
   - All options from [Sensor](#config-sensor).
 
 - **humidity** (*Optional*): The information for the humidity sensor
-  This is only aviliable on TP3xx devices.
+  This is only available on TP3xx devices.
 
   - All options from [Sensor](#config-sensor).
 
