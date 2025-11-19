@@ -15,7 +15,7 @@ ESPHome runs on a wide variety of devices, so it's hard to list any specific
 set of tools that you need or to give instructions on how to connect. This
 guide tries to cover some of the more common flashing situations. If your
 device doesn't fit any of these situations, try and find a guide for your
-specific device in the [devices guides](#devices) or elsewhere on the
+specific device in the [devices guides](/components#devices) or elsewhere on the
 internet.
 
 ## Connecting to the ESP
@@ -52,7 +52,7 @@ On Windows these interfaces are named `COM1`, `COM2`, etc. and on Linux they are
 >
 > * CH34x: [driver](https://github.com/nodemcu/nodemcu-devkit/tree/master/Drivers)
 > * CP2102: [driver](https://www.silabs.com/products/development-tools/software/usb-to-uart-bridge-vcp-drivers)
-> * PL2303: [driver](https://www.prolific.com.tw/US/ShowProduct.aspx?p_id=225&pcid=41)
+> * PL2303: [driver](https://cdn-shop.adafruit.com/datasheets/PL2303HX.pdf)
 
 With the exception of the situation where you have a USB port, you need to make
 five electrical connections to program an ESP-based board:
