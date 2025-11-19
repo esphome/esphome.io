@@ -43,7 +43,7 @@ sensor:
   - All options from [Sensor](#config-sensor).
 
 - **external_temperature** (*Optional*): The information for the ambient temperature sensor.
-  This is only aviliable on TP972, TP970 and TP96x devices.
+  This is only available on TP972, TP970 and TP96x devices.
 
   - All options from [Sensor](#config-sensor).
 
