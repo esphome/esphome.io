@@ -16,7 +16,7 @@ coap_client:
 
 ## Overview
 
-The **CoAP Client** component allows an ESPHome device to send [CoAP](https://datatracker.ietf.org/doc/html/rfc7252) messages to remote CoAP servers over UDP.  
+The **CoAP Client** component allows an ESPHome device to send [CoAP](https://datatracker.ietf.org/doc/html/rfc7252) messages to remote CoAP servers over UDP or TCP.  
 This is useful for integrating ESPHome devices with:
 
 - Constrained IoT devices/sensors
