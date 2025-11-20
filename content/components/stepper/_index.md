@@ -12,11 +12,10 @@ Currently only the A4988 stepper driver
 ([datasheet](https://www.pololu.com/file/0J450/a4988_DMOS_microstepping_driver_with_translator.pdf))
 and ULN2003 ([datasheet](http://www.ti.com/lit/ds/symlink/uln2003a.pdf)) are supported.
 
-{{< note >}}
-This component will not show up in the Home Assistant front-end automatically because
-Home Assistant doesn't have support for steppers. Please see [Home Assistant Configuration](#stepper-ha-config).
+> [!NOTE]
+> This component will not show up in the Home Assistant front-end automatically because
+> Home Assistant doesn't have support for steppers. Please see [Home Assistant Configuration](#stepper-ha-config).
 
-{{< /note >}}
 {{< anchor "base_stepper_config" >}}
 
 ## Base Stepper Configuration
@@ -57,46 +56,43 @@ stepper:
 
 Configuration variables:
 
-- **id** (**Required**, [ID](#config-id)): Specify the ID of the stepper so that you can control it.
-- **step_pin** (**Required**, [Pin Schema](#config-pin_schema)): The `STEP` pin of the A4988
+- **id** (**Required**, [ID](/guides/configuration-types#id)): Specify the ID of the stepper so that you can control it.
+- **step_pin** (**Required**, [Pin Schema](/guides/configuration-types#pin-schema)): The `STEP` pin of the A4988
   stepper driver.
 
-- **dir_pin** (**Required**, [Pin Schema](#config-pin_schema)): The `DIRECTION` pin of the A4988
+- **dir_pin** (**Required**, [Pin Schema](/guides/configuration-types#pin-schema)): The `DIRECTION` pin of the A4988
   stepper driver.
 
-- **sleep_pin** (*Optional*, [Pin Schema](#config-pin_schema)): Optionally also use the `SLEEP` pin
+- **sleep_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): Optionally also use the `SLEEP` pin
   of the A4988 stepper driver. If specified, the driver will be put into sleep mode as soon as the stepper
   reaches the target steps.
 
 - All other from [Base Stepper Configuration](#base_stepper_config).
 
-{{< note >}}
-If the stepper is driving in the wrong direction, you can invert the `dir_pin`  :
+> [!NOTE]
+> If the stepper is driving in the wrong direction, you can invert the `dir_pin`  :
+>
+> ```yaml
+> stepper:
+>   - platform: a4988
+>     # ...
+>     dir_pin:
+>       number: GPIOXX
+>       inverted: true
+> ```
 
-```yaml
-stepper:
-  - platform: a4988
-    # ...
-    dir_pin:
-      number: GPIOXX
-      inverted: true
-```
-
-{{< /note >}}
-{{< note >}}
-TMC drivers are pin-compatible with the A4988, but instead of a `SLEEP` pin they expose an `ENABLE` pin.
-When using a TMC driver with the `a4988` platform you therefore need to invert the `sleep_pin`  :
-
-```yaml
-stepper:
-  - platform: a4988
-    # ...
-    sleep_pin:
-      number: GPIOXX
-      inverted: true
-```
-
-{{< /note >}}
+> [!NOTE]
+> TMC drivers are pin-compatible with the A4988, but instead of a `SLEEP` pin they expose an `ENABLE` pin.
+> When using a TMC driver with the `a4988` platform you therefore need to invert the `sleep_pin`  :
+>
+> ```yaml
+> stepper:
+>   - platform: a4988
+>     # ...
+>     sleep_pin:
+>       number: GPIOXX
+>       inverted: true
+> ```
 
 ## ULN2003 Component
 
@@ -120,11 +116,11 @@ stepper:
 
 Configuration variables:
 
-- **id** (**Required**, [ID](#config-id)): Specify the ID of the stepper so that you can control it.
-- **pin_a** (**Required**, [Pin Schema](#config-pin_schema)): The pin **a** of the stepper control board.
-- **pin_b** (**Required**, [Pin Schema](#config-pin_schema)): The pin **b** of the stepper control board.
-- **pin_c** (**Required**, [Pin Schema](#config-pin_schema)): The pin **c** of the stepper control board.
-- **pin_d** (**Required**, [Pin Schema](#config-pin_schema)): The pin **d** of the stepper control board.
+- **id** (**Required**, [ID](/guides/configuration-types#id)): Specify the ID of the stepper so that you can control it.
+- **pin_a** (**Required**, [Pin Schema](/guides/configuration-types#pin-schema)): The pin **a** of the stepper control board.
+- **pin_b** (**Required**, [Pin Schema](/guides/configuration-types#pin-schema)): The pin **b** of the stepper control board.
+- **pin_c** (**Required**, [Pin Schema](/guides/configuration-types#pin-schema)): The pin **c** of the stepper control board.
+- **pin_d** (**Required**, [Pin Schema](/guides/configuration-types#pin-schema)): The pin **d** of the stepper control board.
 - **sleep_when_done** (*Optional*, boolean): Whether to turn off all coils when the stepper has
   reached the target position
 
@@ -140,7 +136,7 @@ Configuration variables:
 
 ## `stepper.set_target` Action
 
-To use your stepper motor in [automations](#automation) or templates, you can use this action to set the target
+To use your stepper motor in [automations](/automations) or templates, you can use this action to set the target
 position (in steps). The stepper will always run towards the target position and stop once it has reached the target.
 
 ```yaml
@@ -163,26 +159,25 @@ on_...:
 
 Configuration options:
 
-- **id** (**Required**, [ID](#config-id)): The ID of the stepper.
-- **target** (**Required**, int, [templatable](#config-templatable)): The target position in steps.
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the stepper.
+- **target** (**Required**, int, [templatable](/automations/templates)): The target position in steps.
 
-{{< warning >}}
-This turns the stepper to an absolute position! To have the stepper motor move *relative* to the current
-position, first reset the current position and then set the target to the relative value.
+> [!WARNING]
+> This turns the stepper to an absolute position! To have the stepper motor move *relative* to the current
+> position, first reset the current position and then set the target to the relative value.
+>
+> ```yaml
+> on_...:
+>   then:
+>     # Move 150 steps forward
+>     - stepper.report_position:
+>         id: my_stepper
+>         position: 0
+>     - stepper.set_target:
+>         id: my_stepper
+>         target: 150
+> ```
 
-```yaml
-on_...:
-  then:
-    # Move 150 steps forward
-    - stepper.report_position:
-        id: my_stepper
-        position: 0
-    - stepper.set_target:
-        id: my_stepper
-        target: 150
-```
-
-{{< /warning >}}
 {{< anchor "stepper-report_position_action" >}}
 
 ## `stepper.report_position` Action
@@ -219,14 +214,14 @@ on_...:
 
 Configuration variables:
 
-- **id** (**Required**, [ID](#config-id)): The ID of the stepper.
-- **position** (**Required**, int, [templatable](#config-templatable)): The position to report in steps.
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the stepper.
+- **position** (**Required**, int, [templatable](/automations/templates)): The position to report in steps.
 
 {{< anchor "stepper-set_speed_action" >}}
 
 ## `stepper.set_speed` Action
 
-This [Action](#config-action) allows you to set the speed of a stepper at runtime.
+This [Action](/automations/actions#all-actions) allows you to set the speed of a stepper at runtime.
 
 ```yaml
 on_...:
@@ -237,15 +232,15 @@ on_...:
 
 Configuration variables:
 
-- **id** (**Required**, [ID](#config-id)): The ID of the stepper.
-- **speed** (**Required**, [templatable](#config-templatable), float): The speed
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the stepper.
+- **speed** (**Required**, [templatable](/automations/templates), float): The speed
   in `steps/s` (steps per seconds) to drive the stepper at.
 
 {{< anchor "stepper-set_acceleration_action" >}}
 
 ## `stepper.set_acceleration` Action
 
-This [Action](#config-action) allows you to set the acceleration of a stepper at runtime.
+This [Action](/automations/actions#all-actions) allows you to set the acceleration of a stepper at runtime.
 
 ```yaml
 on_...:
@@ -256,15 +251,15 @@ on_...:
 
 Configuration variables:
 
-- **id** (**Required**, [ID](#config-id)): The ID of the stepper.
-- **acceleration** (**Required**, [templatable](#config-templatable), float): The acceleration
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the stepper.
+- **acceleration** (**Required**, [templatable](/automations/templates), float): The acceleration
   in `steps/s^2` (steps per seconds squared) to use when starting to move.
 
 {{< anchor "stepper-set_deceleration_action" >}}
 
 ## `stepper.set_deceleration` Action
 
-This [Action](#config-action) allows you to set the deceleration of a stepper at runtime.
+This [Action](/automations/actions#all-actions) allows you to set the deceleration of a stepper at runtime.
 
 ```yaml
 on_...:
@@ -275,8 +270,8 @@ on_...:
 
 Configuration variables:
 
-- **id** (**Required**, [ID](#config-id)): The ID of the stepper.
-- **deceleration** (**Required**, [templatable](#config-templatable), float): The same as `acceleration`,
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the stepper.
+- **deceleration** (**Required**, [templatable](/automations/templates), float): The same as `acceleration`,
   but for when the motor is decelerating shortly before reaching the set position.
 
 {{< anchor "stepper-ha-config" >}}
@@ -284,7 +279,7 @@ Configuration variables:
 ## Home Assistant Configuration
 
 The easiest way to control your stepper from Home Assistant is to add a `number` to your ESPHome
-configuration. See [Number](#config-number) for more information.
+configuration. See [Number](/components/number#config-number) for more information.
 
 ```yaml
 number:
@@ -309,7 +304,7 @@ stepper:
 
 ## lambda calls
 
-From [lambdas](#config-lambda), you can call several methods on stepper motors to do some
+From [lambdas](/automations/templates#config-lambda), you can call several methods on stepper motors to do some
 advanced stuff (see the full API Reference for more info).
 
 - `set_target`  : Set the target position of the motor as an integer.

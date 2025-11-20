@@ -86,15 +86,13 @@ light:
       - strobe:
 ```
 
-{{< warning >}}
-Consider the warning in {{< docref "/components/light/partition" >}} regarging the increased memory usage.
-
-{{< /warning >}}
+> [!WARNING]
+> Consider the warning in {{< docref "/components/light/partition" >}} regarging the increased memory usage.
 
 ## Home Assistant configuration
 
 The automation to show the CO2 warning light (e.g. red if CO2 > 1000 ppm) is done in Home Assistant, but could also be
-implemented using ESPHome [Automations](#automation).
+implemented using ESPHome [Automations](/automations).
 
 ```yaml
 # Turn on a light with the related color

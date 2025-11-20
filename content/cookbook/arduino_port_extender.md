@@ -37,7 +37,7 @@ esphome:
       - arduino_port_expander.h
 ```
 
-Setup your [I²C Bus](#i2c) and assign it an `id`  :
+Setup your [I²C Bus](/components/i2c) and assign it an `id`  :
 
 ```yaml
 i2c:
@@ -68,11 +68,10 @@ Now it is time to add the ports.
 When adding binary sensors the pins are configured as INPUT_PULLUP, you can use any PIN from 0 to 13 or
 `A0` to `A3` (`A4` and `A5` are used for I²C and `A6` and `A7` do not support internal pull up)
 
-{{< note >}}
-Arduino PIN 13 usually has a LED connected to it and using it as digital input with the built in internal
-pull up might be problematic, using it as an output is preferred.
+> [!NOTE]
+> Arduino PIN 13 usually has a LED connected to it and using it as digital input with the built in internal
+> pull up might be problematic, using it as an output is preferred.
 
-{{< /note >}}
 To setup binary sensors, create a custom platform as below, list in braces all the sensors you want,
 in the example below two binary sensors are declared on pin 9 and A0 (number 14)
 
@@ -95,7 +94,7 @@ binary_sensor:
           ...
 ```
 
-The listed `binary_sensors` supports all options from [Binary Sensor](#config-binary_sensor) like
+The listed `binary_sensors` supports all options from [Binary Sensor](/components/binary_sensor#config-binary_sensor) like
 automations and filters.
 
 ## Sensor
@@ -135,14 +134,12 @@ sensor:
           - throttle: 2s
 ```
 
-The listed `sensors` supports all options from [Sensor](#config-sensor) like
+The listed `sensors` supports all options from [Sensor](/components/sensor) like
 automations and filters.
 
-{{< note >}}
-Sensors are polled by default every loop cycle so it is recommended to use the `throttle` filter
-to not flood the network.
-
-{{< /note >}}
+> [!NOTE]
+> Sensors are polled by default every loop cycle so it is recommended to use the `throttle` filter
+> to not flood the network.
 
 ## Output
 

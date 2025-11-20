@@ -11,7 +11,7 @@ The `tuya` component creates a serial connection to the Tuya MCU for platforms t
 
 {{< img src="tuya.png" alt="Image" width="40%" class="align-center" >}}
 
-The `tuya` serial component requires a [UART bus](#uart) to be configured.
+The `tuya` serial component requires a [UART bus](/components/uart) to be configured.
 Put the `tuya` component in the config and it will list the possible devices for you in the config log.
 
 ```yaml
@@ -55,14 +55,16 @@ Here is another example output for a Tuya ME-81H thermostat:
 
 ## Configuration variables
 
-- **time_id** (*Optional*, [ID](#config-id)): Some Tuya devices support obtaining local time from ESPHome.
+- **time_id** (*Optional*, [ID](/guides/configuration-types#id)): Some Tuya devices support obtaining local time from ESPHome.
   Specify the ID of the {{< docref "time/" >}} which will be used.
 
-- **status_pin** (*Optional*, [Pin Schema](#config-pin_schema)): Some Tuya devices support WiFi status reporting ONLY through gpio pin.
+- **status_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): Some Tuya devices support WiFi status reporting ONLY
+  through gpio pin.
   Specify the pin reported in the config dump or leave empty otherwise.
   More about this on the [Tuya Developer Documentation](https://developer.tuya.com/en/docs/iot/tuya-cloud-universal-serial-port-access-protocol?id=K9hhi0xxtn9cb#title-6-Query%20working%20mode).
 
-- **ignore_mcu_update_on_datapoints** (*Optional*, list): A list of datapoints to ignore MCU updates for. Useful for certain broken/erratic hardware and debugging.
+- **ignore_mcu_update_on_datapoints** (*Optional*, list): A list of datapoints to ignore MCU updates for. Useful for
+  certain broken/erratic hardware and debugging.
 
 Automations:
 
@@ -122,8 +124,9 @@ tuya:
 ### Configuration variables
 
 - **sensor_datapoint** (**Required**, int): The datapoint id number of the sensor.
-- **datapoint_type** (**Required**, string): The datapoint type one of *raw*, *string*, *bool*, *int*, *uint*, *enum*, *bitmask* or *any*.
-- See [Automation](#automation).
+- **datapoint_type** (**Required**, string): The datapoint type one of *raw*, *string*, *bool*, *int*, *uint*, *enum*,
+  *bitmask* or *any*.
+- See [Automation](/automations).
 
 ## See Also
 
