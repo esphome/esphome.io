@@ -95,6 +95,11 @@ Linux instructions above. See <https://learn.microsoft.com/en-us/windows/wsl/ins
 
 The `esphome run yourfile.yaml` command will compile and automatically run the build file on the `host` platform.
 
+## Sleep/Wakeup support
+
+[Sleep / Wakeup actions](/components/display#display-power-save-mode) (`display.sleep` / `display.wakeup`) not implemented for this display component
+since it is more intended for design/testing.
+
 ## See Also
 
 - [SDL touchscreen](/components/touchscreen/sdl#sdl_touchscreen)

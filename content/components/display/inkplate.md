@@ -515,6 +515,10 @@ display:
       number: 5
 ```
 
+### Sleep/Wakeup support
+
+[Sleep / Wakeup actions](/components/display#display-power-save-mode) (`display.sleep` / `display.wakeup`) not implemented yet for this display component.
+
 ### See Also
 
 - {{< docref "index/" >}}

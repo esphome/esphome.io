@@ -481,6 +481,39 @@ RGB displays use red, green, and blue, while grayscale displays may use white.
 
 {{< anchor "display-pages" >}}
 
+{{< anchor "display-power-save-mode" >}}
+
+### Display power save mode
+
+On many displays you can partially turn off the display to save a significant amount of power and avoid wearing it out by having it enter sleep mode. Note that
+not all display components support sleeping mode or have it implemented yet. Check the corresponding display component documentation.
+
+**display.sleep**: Puts the display on power saving mode.
+
+```yaml
+lvgl:
+  on_idle:
+    timeout: 30s
+    then:
+      - light.turn_off: display_backlight
+      - lvgl.pause:
+      - delay: 5s # wait for display backlight to fade out for a nice effect
+      - display.sleep: my_display
+```
+
+**display.wakeup**: Wakes up the display from power saving mode
+
+```yaml
+touchscreen:
+  - on_release:
+      - if:
+          condition:
+            - lvgl.is_paused:
+          then:
+            - light.turn_on: display_backlight
+            - display.wakeup: my_display
+```
+
 ### Display Pages
 
 Certain display types also allow you to show "pages". With pages you can create drawing lambdas

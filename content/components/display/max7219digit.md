@@ -235,6 +235,10 @@ display a single character. So not very space efficient. The format of the comma
 Please see [Formatted Text](/components/display#display-printf) for a quick introduction into the `printf` formatting rules and
 [Displaying Time](/components/display#display-strftime) for an introduction into the `strftime` time formatting.
 
+## Sleep/Wakeup support
+
+[Sleep / Wakeup actions](/components/display#display-power-save-mode) (`display.sleep` / `display.wakeup`) not implemented yet for this display component.
+
 ## See Also
 
 - {{< docref "index/" >}}

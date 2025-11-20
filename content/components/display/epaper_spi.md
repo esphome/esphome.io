@@ -61,6 +61,10 @@ but can be overridden if needed.
   to use multiple SPI buses.
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
 
+## Sleep/Wakeup support
+
+[Sleep / Wakeup actions](/components/display#display-power-save-mode) (`display.sleep` / `display.wakeup`) not implemented yet for this display component.
+
 ## See Also
 
 - {{< docref "index/" >}}

@@ -432,6 +432,10 @@ the example below illustrates:
 Note that the first one requires a custom protocol to be included in the Nextion display's HMI code/configuration. See
 the individual components (linked below) for more detail.
 
+## Sleep/Wakeup support
+
+[Sleep / Wakeup actions](/components/display#display-power-save-mode) (`display.sleep` / `display.wakeup`) not implemented yet for this display component.
+
 ## See Also
 
 - {{< docref "index/" >}}

@@ -148,6 +148,10 @@ be able to be dimmed using a {{< docref "/components/light/monochromatic" >}} wi
 
 A touchscreen, if present, must be configured separately. See the {{< docref "/components/touchscreen" >}} documentation for more information.
 
+## Sleep/Wakeup support
+
+[Sleep / Wakeup actions](/components/display#display-power-save-mode) (`display.sleep` / `display.wakeup`) not implemented yet for this display component.
+
 ## See Also
 
 - {{< docref "index/" >}}

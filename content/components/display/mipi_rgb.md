@@ -221,6 +221,10 @@ display:
 
 ```
 
+## Sleep/Wakeup support
+
+[Sleep / Wakeup actions](/components/display#display-power-save-mode) (`display.sleep` / `display.wakeup`) are supported for this display type.
+
 ## See Also
 
 - {{< docref "index/" >}}
