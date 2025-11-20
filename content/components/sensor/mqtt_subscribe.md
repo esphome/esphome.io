@@ -28,9 +28,9 @@ sensor:
 
 - **topic** (**Required**, string): The MQTT topic to listen for numeric messages.
 - **qos** (*Optional*, int): The MQTT QoS to subscribe with. Defaults to `0`.
-- All other options from [Sensor](#config-sensor).
+- All other options from [Sensor](/components/sensor).
 
 ## See Also
 
-- [Sensor Filters](#sensor-filters)
+- [Sensor Filters](/components/sensor#sensor-filters)
 - {{< apiref "mqtt_subscribe/sensor/mqtt_subscribe_sensor.h" "mqtt_subscribe/sensor/mqtt_subscribe_sensor.h" >}}
