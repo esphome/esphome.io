@@ -165,6 +165,9 @@ The text value may also be a lambda returning a `std::string` or may be
 specified with a `format` property utilising `printf` style formatting. There is also a `time_format` option
 which allows use of [strftime](http://www.cplusplus.com/reference/ctime/strftime/) formats.
 
+When formatting a single floating point value, it is possible to provide a substitute string to be used when the
+value is `nan` or `inf`. The substitute string is specified with the `if_nan` option.
+
 **Examples:**
 
 ```yaml
@@ -199,6 +202,12 @@ on_...:
       text:
         time_format: "%c"
         time: !lambda return id(sntp_id).utcnow();
+  - lvgl.label.update:
+      id: value_id
+      text:
+        format: "%.1f"
+        args: [id(sensor_id).state]
+        if_nan: "N/A"
 ```
 
 {{< anchor "lvgl-widget-animimg" >}}
@@ -789,6 +798,35 @@ on_...:
 
 The `checkbox` can be also integrated as a {{< docref "/components/switch/lvgl" "Switch" >}} component.
 
+{{< anchor "lvgl-widget-container" >}}
+
+## `container`
+
+A `container` is an unstyled widget that is, as the name suggests, intended to act as a container for other widgets.
+It is functionally identical to an [`obj`](#obj) but has no styles applied to it, so without any styling or widgets
+it is invisible. It has a default width and height of 100%.
+
+**Configuration variables:**
+
+- Style options from [Style properties](#lvgl-styling).
+
+**Triggers:**
+
+- [interaction](#lvgl-automation-triggers) LVGL event triggers.
+
+**Example:**
+
+```yaml
+# Example widget:
+- container:
+    x: 10
+    y: 10
+    width: 220
+    height: 300
+    widgets:
+      - ...
+```
+
 {{< anchor "lvgl-widget-dropdown" >}}
 
 ## `dropdown`
@@ -1334,7 +1372,9 @@ The base object is just a simple, empty widget. By default, it's nothing more th
 
 {{< img src="lvgl_baseobj.png" alt="Image" class="align-center" >}}
 
-You can use it as a parent container for other widgets. By default, it catches touches.
+You can use it as a parent container for other widgets. By default, it catches touches. Since `obj` has default
+styling applied, you may choose to use [`container`](#container) instead if the role is simply to group other
+widgets.
 
 **Configuration variables:**
 
@@ -1538,7 +1578,6 @@ The `slider` can be also integrated as {{< docref "/components/number/lvgl" "Num
 
 See [Light brightness slider](/cookbook/lvgl#lvgl-cookbook-bright) and [Media player volume slider](/cookbook/lvgl#lvgl-cookbook-volume) for examples which demonstrate how to use a slider to control entities in Home Assistant.
 
-{{< anchor "lvgl-widget-canvas" >}}
 {{< anchor "lvgl-widget-spinbox" >}}
 
 ## `spinbox`
@@ -1589,7 +1628,7 @@ The spinbox contains a numeric value (as text) which can be increased or decreas
     text_align: center
     range_from: -10
     range_to: 40
-    step: 0.5
+    selected_digit: 2
     digits: 3
     decimal_places: 1
 
