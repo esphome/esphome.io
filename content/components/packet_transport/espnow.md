@@ -98,11 +98,11 @@ This example shows two devices exchanging sensor data over ESP-NOW with encrypti
 ```yaml
 espnow:
   peers:
-    - "AA:BB:CC:DD:EE:01"  # Consumer device
+    - "AA:BB:CC:DD:EE:01"  # Consumer mac address
 
 packet_transport:
   - platform: espnow
-    peer_address: "AA:BB:CC:DD:EE:01"  # Consumer device
+    peer_address: "AA:BB:CC:DD:EE:01"  # Consumer mac address
     encryption: "MySecretKey123"
     sensors:
       - outdoor_temp
@@ -119,13 +119,13 @@ sensor:
 ```yaml
 espnow:
   peers:
-    - "AA:BB:CC:DD:EE:00"  # Provider device
+    - "AA:BB:CC:DD:EE:00"  # Provider mac address
 
 packet_transport:
   - platform: espnow
     encryption: "MySecretKey123"
     providers:
-      - name: temp-sensor
+      - name: temp-sensor  # Provider device name
 
 sensor:
   - platform: packet_transport
@@ -144,9 +144,9 @@ This example shows a central hub receiving sensor data from multiple remote devi
 ```yaml
 espnow:
   peers:
-    - "AA:BB:CC:DD:EE:01"  # room-sensor-1
-    - "AA:BB:CC:DD:EE:02"  # room-sensor-2
-    - "AA:BB:CC:DD:EE:03"  # outdoor-sensor
+    - "AA:BB:CC:DD:EE:01"  # room-sensor-1 mac address
+    - "AA:BB:CC:DD:EE:02"  # room-sensor-2 mac address
+    - "AA:BB:CC:DD:EE:03"  # outdoor-sensor mac address
 
 packet_transport:
   - platform: espnow
