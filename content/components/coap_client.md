@@ -16,7 +16,7 @@ coap_client:
 
 ## Overview
 
-The **CoAP Client** component allows an ESPHome device to send [CoAP](https://datatracker.ietf.org/doc/html/rfc7252) messages to remote CoAP servers over UDP or TCP.  
+The **CoAP Client** component allows an ESPHome device to send [CoAP](https://datatracker.ietf.org/doc/html/rfc7252) messages to remote CoAP servers over UDP.  
 This is useful for integrating ESPHome devices with:
 
 - Constrained IoT devices/sensors
@@ -37,12 +37,6 @@ This component provides an easy YAML interface and Actions usable from automatio
 - **request_timeout** (*Optional*, duration): Time client will block while waiting for response within the processing thread, defaults to 2 seconds.
 - **ack_timeout** (*Optional*, duration): The initial number of seconds to wait for an acknowledgment (ACK) or a response to a Confirmable (CON) message,defaults to 2 seconds.
 - **max_retransmit** (*Optional*, integers): The maximum number of times a Confirmable message is retransmitted before the library stops sending it and signals a failure, defaults to 4 attempts.
-- **oscore_conf** (*Optional*, string): Object Security for Constrained RESTful Environments (OSCORE).  [oscore](https://libcoap.net/doc/reference/4.3.4/man_coap-oscore-conf.html)
-- **psk_identity** (*Optional*, string): Pre-Shared Key Identity.
-- **psk_key** (*Optional*, string): Pre-Shared Key Key.
-- **certificate_authority** (*Optional*, string): Certificate Authority in PEM format.
-- **client_certificate** (*Optional*, string): Client Certificate.
-- **client_certificate_key** (*Optional*, string): Client Private Key.
 
 ## Actions
 
@@ -58,9 +52,9 @@ This [action](/automations/actions#all-actions) sends a GET Request
 on_...:
   then:
     - coap_client.get:
-        url: coap://192.168.1.2/test
+        url: coap://example-server.com/test
   # Short form
-    - coap_client.get: coap://192.168.1.2/test
+    - coap_client.get: coap://example-server.com/test
 ```
 
 #### Configuration variables
@@ -86,16 +80,14 @@ on_...:
   then:
     - coap_client.post:
         request_name: "post example"
-        media_type: "application/json"
-        url: coap://192.168.1.2:5683/test
-        json:
-          key: value
+        url: coap://example-server.com/test
+        payload:"this is a post"
   # Short form
     - coap_client.post: CoAPs://esphome.io
 ```
 
 #### Configuration variables
-
+- **media_type** (*Optional, string): Type of payload sent, defaults to text/plain or application/json.
 - **payload** (*Optional*, string, [templatable](/automations/templates)): A CoAP payload string to send with Request.
 - **json** (*Optional*, mapping): A CoAP payload in JSON format. Values are [templatable](/automations/templates).
 - All other options from [`coap_client.get` Action](#coap_client-get_action).
@@ -113,7 +105,7 @@ on_...:
         request_name: "send example"
         method: PUT
         media_type: "application/json"
-        url: coap://192.168.1.2:5683/test
+        url: coap://example-server.com/test
 ```
 
 #### Configuration variables
@@ -162,19 +154,19 @@ on_...:
     - delay: 5 sec
     - coap_client.get:
         request_name: "Test Observe"
-        url: coap://192.168.1.2/obs
+        url: coap://example-server.com/obs
         capture_response: true
         response_timeout: 10sec
         observe: true
         on_response:
-            then:
-              - logger.log:
-                  format: '%s Response status: %d, Duration: %u ms, %s'
-                  args:
-                    - request_name.c_str()
-                    - response->status_code
-                    - response->duration_ms
-                    - payload.c_str()
+          then:
+            - logger.log:
+                format: '%s Response status: %d, Duration: %u ms, %s'
+                args:
+                  - request_name.c_str()
+                  - response->status_code
+                  - response->duration_ms
+                  - payload.c_str()
 ```
 
 ### POST Payload in JSON format (syntax 1)
@@ -184,7 +176,7 @@ syntax.
 ```yaml
 on_...:
   - coap_client.post:
-      url: CoAPs://esphome.io
+      url: coap://example-server.com/test
       json:
         key: !lambda |-
           return id(my_sensor).state;
@@ -205,7 +197,7 @@ can assign values to keys by using the `root["KEY_NAME"] = VALUE;` syntax as sho
 ```yaml
 on_...:
   - coap_client.post:
-      url: CoAPs://esphome.io
+      url: coap://example-server.com/test
       json: |-
         root["key"] = id(my_sensor).state;
         root["greeting"] = "Hello World";
@@ -229,7 +221,7 @@ whose `id` is set to `player_volume`  :
 ```yaml
 on_...:
 - coap_client.get:
-    url: CoAPs://esphome.io
+    url: coap://example-server.com/test
     capture_response: true
     on_response:
       then:
