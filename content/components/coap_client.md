@@ -3,11 +3,11 @@ description: "Instructions for setting up CoAP Clients in ESPHome"
 title: "CoAP Client"
 params:
   seo:
-    description: "A component that enables ESPHome devices to send CoAP (RFC7252) GET/POST requests to remote CoAP servers.
+    description: "A component that enables ESPHome devices to send CoAP (RFC7252) GET/POST requests to remote CoAP servers."
     image: connection.svg
 ---
 
-The `coap_client` component lets you send CoAP (RFC7252) GET/POST requests to remote CoAP servers."
+The `coap_client` component lets you send CoAP (RFC7252) GET/POST requests to remote CoAP servers.
 
 ```yaml
 # Example configuration entry
