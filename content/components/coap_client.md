@@ -248,6 +248,41 @@ on_...:
                     args: [ 'response->status_code', 'payload.c_str()' ]
 ```
 
+## Programatic Integration
+Example code for usage within another component
+
+```
+    //unique_ptr is required
+    std::unique_ptr<CoapClientRequestData> tx_request = std::make_unique<CoapClientRequestData>();
+    tx_request->name = this->request_name;
+    tx_request->method = CoapMethod::POST
+    tx_request->uri = this->url;
+    tx_request->callback = callback;
+    tx_request->callback_context = this;
+    tx_request->media_type = CoapMediaType::TEXT_PLAIN;
+    tx_request->payload = this->payload;
+    tx_request->response_timeout = this->response_timeout;
+    tx_request->observe = this->observe;
+    global_coap_client->process_request(std::move(tx_request)); // Move is required!
+```
+Create a callback for the response information
+
+- **response_code** - 205 is good!, anything outside of 200's is an error. 0 is response timeout.
+- **data** - payload returned.
+- **len** - of the data.
+- **offset** - in case the data is returned in blocks.
+- **total** - isn't trustworthy till last block when len + offset = total.
+- **context** - the provided callback_context.
+
+If len, offset, and total are all 0 when there is a response timeout or other response error.
+if response is in blocks, then your code is responsible for assembly.
+
+```
+static void callback(uint16_t response_code, const unsigned char *data, size_t len, size_t offset, size_t total, void *context) {
+ ... Your Code Here
+}
+```
+
 ## See Also
 
 - {{< docref "index/" >}}
