@@ -49,7 +49,7 @@ sensor:
 - **espnow_id** (**Required**, [ID](#config-id)): The esp-now ID to use for transport.
 - **peer_address** (*Optional*, MAC Address): MAC address to send packets to. This can be either a specific
   peer address for point-to-point communication, or the broadcast address. Default FF:FF:FF:FF:FF:FF
-- All other options from the [Packet Transport Component](#packet-transport)
+- All other options from the [Packet Transport Component](/components/packet_transport)
 
 > **Note:**  
 > Peers must be registered with the {{< docref "/components/espnow" >}} component before
@@ -192,7 +192,7 @@ sensor:
 
 ## See Also
 
-- [Packet Transport Component](#packet-transport)
+- [Packet Transport Component](/components/packet_transport)
 - {{< docref "/components/espnow" >}}
 - {{< docref "/components/binary_sensor/packet_transport" >}}
 - {{< docref "/components/sensor/packet_transport" >}}
