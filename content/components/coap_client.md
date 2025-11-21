@@ -249,9 +249,10 @@ on_...:
 ```
 
 ## Programatic Integration
+
 Example code for usage within another component
 
-```
+```cpp
     //unique_ptr is required
     std::unique_ptr<CoapClientRequestData> tx_request = std::make_unique<CoapClientRequestData>();
     tx_request->name = this->request_name;
@@ -265,6 +266,7 @@ Example code for usage within another component
     tx_request->observe = this->observe;
     global_coap_client->process_request(std::move(tx_request)); // Move is required!
 ```
+
 Create a callback for the response information
 
 - **response_code** - 205 is good!, anything outside of 200's is an error. 0 is response timeout.
@@ -277,9 +279,9 @@ Create a callback for the response information
 If len, offset, and total are all 0 when there is a response timeout or other response error.
 if response is in blocks, then your code is responsible for assembly.
 
-```
+```cpp
 static void callback(uint16_t response_code, const unsigned char *data, size_t len, size_t offset, size_t total, void *context) {
- ... Your Code Here
+ \\... Your Code Here
 }
 ```
 
