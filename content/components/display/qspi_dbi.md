@@ -221,7 +221,7 @@ touchscreen:
 
 ## Sleep/Wakeup support
 
-[Sleep / Wakeup actions](/components/display#display-power-save-mode) (`display.sleep` / `display.wakeup`) are supported for this display type.
+[Sleep / Wakeup actions](/components/display#display-power-save-mode) (`display.sleep` / `display.wakeup`) are not supported for this display type since it is deprecated. Move to {{< docref "mipi_spi" >}} for support
 
 ## See Also
 

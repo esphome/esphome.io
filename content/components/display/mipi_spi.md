@@ -219,7 +219,7 @@ A touchscreen, if present, must be configured separately. See the {{< docref "/c
 
 ## Sleep/Wakeup support
 
-[Sleep / Wakeup actions](/components/display#display-power-save-mode) (`display.sleep` / `display.wakeup`) not implemented yet for this display component.
+[Sleep / Wakeup actions](/components/display#display-power-save-mode) (`display.sleep` / `display.wakeup`) are supported for this display type.
 
 ## See Also
 
