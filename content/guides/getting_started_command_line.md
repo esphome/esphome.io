@@ -143,7 +143,7 @@ docker run --rm --privileged -v "${PWD}":/config --device=/dev/ttyUSB0 -it ghcr.
 ```
 
 > [!NOTE]
-> Alternatively, you can flash the binary using [ESPHome Web or esptool](#esphome-esptool).
+> Alternatively, you can flash the binary using [ESPHome Web or esptool](/guides/faq#esphome-esptool).
 
 Now when you go to the Home Assistant **Integrations** screen (under **Configuration** panel), you
 should see the ESPHome device show up in the discovered section (although this can take up to 5 minutes).
@@ -176,7 +176,7 @@ binary_sensor:
 
 This is an advanced feature of ESPHome. Almost all pins can
 optionally have a more complicated configuration schema with options for
-inversion and pinMode - the [Pin Schema](#config-pin_schema).
+inversion and pinMode - the [Pin Schema](/guides/configuration-types#pin-schema).
 
 This time when uploading, you don't need to have the device plugged in
 through USB again. The upload will magically happen “over the air”.
@@ -241,3 +241,4 @@ Logging level can be set with the env var `ESPHOME_LOG_LEVEL` (default is `INFO`
 - {{< docref "cli/" >}}
 - {{< docref "/index" "ESPHome index" >}}
 - {{< docref "getting_started_hassio/" >}}
+- {{< docref "security_best_practices" >}}
