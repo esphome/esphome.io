@@ -7,7 +7,7 @@ params:
     image: connection.svg
 ---
 
-The `coap_client` component lets you send CoAP (RFC7252) GET/POST requests to remote CoAP servers. To do so, you need to add it to your device's configuration:
+The `coap_client` component lets you send CoAP (RFC7252) GET/POST requests to remote CoAP servers."
 
 ```yaml
 # Example configuration entry
@@ -32,7 +32,7 @@ This component provides an easy YAML interface and Actions usable from automatio
 
 ## Configuration variables
 
-- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation. 
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
 - **max_block_size** (*Optional*, bytes): Maximum size of payload for a given datagram packet.  Packet size is larger since it includes the header.  Maxium value is 1024B, defaults to 512B.
 - **request_timeout** (*Optional*, duration): Time client will block while waiting for response within the processing thread, defaults to 2 seconds.
 - **ack_timeout** (*Optional*, duration): The initial number of seconds to wait for an acknowledgment (ACK) or a response to a Confirmable (CON) message,defaults to 2 seconds.
@@ -87,6 +87,7 @@ on_...:
 ```
 
 #### Configuration variables
+
 - **media_type** (*Optional, string): Type of payload sent, defaults to text/plain or application/json.
 - **payload** (*Optional*, string, [templatable](/automations/templates)): A CoAP payload string to send with Request.
 - **json** (*Optional*, mapping): A CoAP payload in JSON format. Values are [templatable](/automations/templates).
@@ -170,6 +171,7 @@ on_...:
 ```
 
 ### POST Payload in JSON format (syntax 1)
+
 **Note:** all values of the map must be strings. It is not possible to send JSON `boolean` or `numbers` with this
 syntax.
 
