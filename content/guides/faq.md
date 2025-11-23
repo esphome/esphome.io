@@ -534,13 +534,13 @@ services:
 > in the [ESPHome Device Builder](/guides/getting_started_hassio#installing-esphome-device-builder). In order for this feature to work, you
 > must either use Docker's [host](https://docs.docker.com/network/drivers/host/) networking mode or create [macvlan](https://docs.docker.com/engine/network/drivers/macvlan/)/[ipvlan](https://docs.docker.com/engine/network/drivers/ipvlan/) networks.
 >
-> The [host networking driver]() only works on Linux hosts; it is
+> The host networking driver only works on Linux hosts; it is
 > available on Docker Desktop version 4.29 and later.
 >
 > When working with multiple network interfaces, you can specify which interface the dashboard should bind to by setting the environment
 > variable `DASHBOARD_LISTENING_NETWORK_INTERFACE`. This is particularly useful when using a reverse proxy: the dashboard can be exposed
-> through the reverse proxy on one network while managing devices on another.
-> 
+> through the reverse proxy on one network while device management take place on another one.
+>
 > If you cannot use docker any of those networking based solutions, you have to use an alternate method as described below.
 >
 > Note that mDNS might not work if your Home Assistant server and your ESPHome nodes are on different subnets
