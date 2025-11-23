@@ -46,7 +46,11 @@ The `coap_client` component supports a number of [actions](/automations/actions#
 
 ### `coap_client.get` Action
 
-This [action](/automations/actions#all-actions) sends a GET Request
+This [action](/automations/actions#all-actions) sends a GET Request. Providing a request_name allows the later use of stop (when observe = true), resume (observe = true), and remove.
+If you send again to the same request_name, then the stored request is overwritten and the CoAP Session is reused.  It is the responsibility of the caller to ensure the url does not change scheme or destination and that the resource
+does not require a different credential requirement.
+
+If request_name is not provided, a temporary name is assigned and the request is deleted from storage after timeout or response.  In the case of observe=true, the request is stored until timeout or stop action with pause = false.
 
 ```yaml
 on_...:
@@ -97,7 +101,7 @@ on_...:
 
 ### `coap_client.send` Action
 
-This [action](/automations/actions#all-actions) sends a Request.
+This [action](/automations/actions#all-actions) sends a Request.  
 
 ```yaml
 on_...:
@@ -114,22 +118,65 @@ on_...:
 - **method** (**Required**, string): CoAP method to use (`GET`, `POST`, `PUT`, `DELETE`, `FETCH`, `PATCH`, `IPATCH`  ).
 - All other options from [`coap_client.post` Action](#coap_client-post_action) and [`coap_client.get` Action](#coap_client-get_action).
 
-{{< anchor "coap_client-get_action" >}}
+{{< anchor "coap_client-stop_action" >}}
+
+### `coap_client.stop` Action
+
+This [action](/automations/actions#all-actions) stops an observe Request
+
+```yaml
+on_...:
+  then:
+    - coap_client.stop:
+        request_name: "Test Observe"
+        # keep in storage
+        pause: true
+  # Short form
+    - coap_client.stop: "Test Observe"
+```
+
+#### Configuration variables
+
+- **request_name** (**Required**, string): Name the request, usable when removing the observe Request.
+- **pause** (**Optional**, bool): if true, keep request in storage for future resume or send.  Defaults to True
+
+{{< anchor "coap_client-resume_action" >}}
+
+### `coap_client.resume` Action
+
+This [action](/automations/actions#all-actions) resumes an observe Request that was pause=true when stopped.
+
+```yaml
+on_...:
+  then:
+    - coap_client.resume:
+        request_name: "Test Observe"
+  # Short form
+    - coap_client.resume: "Test Observe"
+```
+
+#### Configuration variables
+
+- **request_name** (**Required**, string): Name the request, usable when removing the observe Request.  If not provided, then all observe requests are removed.
+
+{{< anchor "coap_client-remove_action" >}}
 
 ### `coap_client.remove` Action
 
-This [action](/automations/actions#all-actions) remove an observe Request
+This [action](/automations/actions#all-actions) removes a stored request, if request is observe=true, then it must be stopped prior to remove.
 
 ```yaml
 on_...:
   then:
     - coap_client.remove:
         request_name: "Test Observe"
+  # Short form
+    - coap_client.remove: "Test Observe"
 ```
 
 #### Configuration variables
 
-- **request_name** (**Optional**, string): Name the request, usable when removing the observe Request.  If not provided, then all observe requests are removed.
+- **request_name** (**Required**, string): Name the request, usable when removing the observe Request.  If not provided, then all observe requests are removed.
 
 ## Triggers
 
