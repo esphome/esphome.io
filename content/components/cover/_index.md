@@ -229,6 +229,38 @@ fields are read-only, if you want to act on the cover, use the `make_call()` met
         }
 ```
 
+## Conditions
+
+{{< anchor "cover-is_open_condition" >}}
+
+### `cover.is_open`
+
+This [Condition](/automations/actions#all-conditions) checks if the cover is completely open (COVER_OPEN).
+
+```yaml
+# In some trigger:
+on_...:
+  if:
+    condition:
+      cover.is_open: my_cover
+```
+
+{{< anchor "cover-is_closed_condition" >}}
+
+### `cover.is_closed`
+
+This [Condition](/automations/actions#all-conditions) checks if the cover is completely closed (COVER_CLOSED).
+
+```yaml
+# In some trigger:
+on_...:
+  if:
+    condition:
+      cover.is_closed: my_cover
+```
+
+## Triggers
+
 {{< anchor "cover-on_open_trigger" >}}
 
 ### `cover.on_open` Trigger
