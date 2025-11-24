@@ -9,7 +9,7 @@ params:
 
 {{< anchor "espnow-packet-transport" >}}
 
-The [Packet Transport Component](#packet-transport) platform allows ESPHome nodes to directly communicate with each over a communication channel. The ESP-NOW implementation of the platform uses ESP-NOW as a communication medium. See the [Packet Transport Component](#packet-transport) and {{< docref "/components/espnow" >}} for more information.
+The [Packet Transport Component](/components/packet_transport#packet-transport) platform allows ESPHome nodes to directly communicate with each over a communication channel. The ESP-NOW implementation of the platform uses ESP-NOW as a communication medium. See the [Packet Transport Component](/components/packet_transport#packet-transport) and {{< docref "/components/espnow" >}} for more information.
 
 ESP-NOW provides low-latency, low-power wireless communication between ESP32 devices without requiring a Wi-Fi connection. This makes it ideal for battery-powered sensors or applications where Wi-Fi overhead would impact performance.
 
@@ -41,10 +41,10 @@ sensor:
 
 ## Configuration Variables
 
-- **espnow_id** (**Required**, [ID](#config-id)): The esp-now ID to use for transport.
+- **espnow_id** (**Required**, [ID](/guides/configuration-types#config-id)): The esp-now ID to use for transport.
 - **peer_address** (*Optional*, MAC Address): MAC address to send packets to. This can be either a specific
   peer address for point-to-point communication, or the broadcast address. Default FF:FF:FF:FF:FF:FF
-- All other options from the [Packet Transport Component](#packet-transport)
+- All other options from the [Packet Transport Component](/components/packet_transport#packet-transport)
 
 > **Note:**  
 > Peers must be registered with the {{< docref "/components/espnow" >}} component before
@@ -185,10 +185,10 @@ sensor:
 
 ## See Also
 
-- [Packet Transport Component](#packet-transport)
+- [Packet Transport Component](/components/packet_transport#packet-transport)
 - {{< docref "/components/espnow" >}}
 - {{< docref "/components/binary_sensor/packet_transport" >}}
 - {{< docref "/components/sensor/packet_transport" >}}
-- [UDP Packet Transport](#udp-packet-transport)
-- [Automation](#automation)
+- [UDP Packet Transport](/components/packet_transport/udp#udp-packet-transport)
+- [Automation](/automations#automation)
 - {{< apiref "packet_transport/espnow_transport.h" "packet_transport/espnow_transport.h" >}}
