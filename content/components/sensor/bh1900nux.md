@@ -10,7 +10,7 @@ params:
 The `bh1900nux` sensor platform allows you to use the **BH1900NUX**
 ([datasheet](https://fscdn.rohm.com/en/products/databook/datasheet/ic/sensor/temperature/bh1900nux-e.pdf))
 **temperature sensor** from Rohm Semiconductor with ESPHome.
-The [I²C bus](/components/i2c#i2c) must be set up in your configuration for this sensor to work.
+The [I²C bus](/components/i2c) must be set up in your configuration for this sensor to work.
 
 {{< img src="bh1900nux-evk-001.png" alt="BH1900NUX-EVK-001 Evaluation Board" class="align-center" >}}
 
