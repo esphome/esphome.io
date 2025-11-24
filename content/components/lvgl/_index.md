@@ -832,11 +832,11 @@ This [trigger](/components/lvgl/widgets#lvgl-automation-triggers) is triggered a
 
 ### `on_draw_start`
 
-This [trigger](#lvgl-on-idle-trigger) is executed before each LVGL drawing operation.
+This [trigger](/components/lvgl/widgets#lvgl-automation-triggers) is executed before each LVGL drawing operation.
 
 ### `on_draw_end`
 
-This [trigger](#lvgl-on-idle-trigger) is executed after LVGL has completed drawing all updated screen elements. It
+This [trigger](/components/lvgl/widgets#lvgl-automation-triggers) is executed after LVGL has completed drawing all updated screen elements. It
 may be used for example to trigger an update of a display component like an e-paper screen that requires the buffer
 to be sent to the display for it to be updated.
 
