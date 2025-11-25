@@ -121,7 +121,6 @@ file_types = (
     ".md",
     ".png",
     ".py",
-    ".rst",
     ".svg",
     ".toml",
     ".txt",
@@ -327,76 +326,14 @@ def lint_end_newline(fname, content):
     return None
 
 
-section_regex = re.compile(r"^(=+|-+|\*+|~+)$")
-directive_regex = re.compile(r"^(\s*)\.\. (.*)::.*$")
-directive_arg_regex = re.compile(r"^(\s+):.*:\s*.*$")
-
-
-@lint_content_check(include=["*.rst"])
-def lint_directive_formatting(fname, content):
-    errors = []
-    lines = content.splitlines(keepends=False)
-
-    for i, line in enumerate(lines):
-        m = directive_regex.match(line)
-        if m is None:
-            continue
-        base_indentation = len(m.group(1))
-        directive_name = m.group(2)
-        if directive_name.startswith("|") or directive_name == "seo":
-            continue
-        # Match directive args
-        for j in range(i + 1, len(lines)):
-            if not directive_arg_regex.match(lines[j]):
-                break
-        else:
-            # Reached end of file
-            continue
-
-        # Empty line must follow
-        if lines[j]:
-            errors.append(
-                (
-                    j,
-                    1,
-                    "Directive '{}' is not followed by an empty line. Please insert an "
-                    "empty line after {}:{}".format(directive_name, fname, j),
-                )
-            )
-            continue
-
-        k = j + 1
-        for j in range(k, len(lines)):
-            if not lines[j]:
-                # Ignore Empty lines
-                continue
-
-            num_spaces = len(lines[j]) - len(lines[j].lstrip())
-            if num_spaces <= base_indentation:
-                # Finished with this directive
-                break
-            num_indent = num_spaces - base_indentation
-            if j == k and num_indent != 4:
-                errors.append(
-                    (
-                        j + 1,
-                        num_indent,
-                        "Directive '{}' must be indented with 4 spaces, not {}. See "
-                        "{}:{}".format(directive_name, num_indent, fname, j + 1),
-                    )
-                )
-                break
-
-    return errors
-
-
 @lint_re_check(
-    r"https://esphome.io/",
-    include=["*.rst"],
+    r"https://esphome\.io/[^\s)]*",
+    include=["*.md"],
     exclude=[
-        "components/web_server.rst",
-        "components/image.rst",
-        "cookbook/lvgl.rst",
+        "README.md",
+        "content/components/image.md",
+        "content/components/web_server.md",
+        "content/cookbook/lvgl.md",
     ],
 )
 def lint_esphome_io_link(fname, match):
