@@ -22,7 +22,7 @@ The properties below are common to all widgets.
 > [!NOTE]
 > By default, the `x` and `y` coordinates are measured from the *top left corner* of the parent's content area. [Important](/components/lvgl#lvgl-styling): content area starts *after the padding* thus if the parent has a non-zero padding value, position will be shifted with that. Percentage values are calculated from the parent's content area size.
 >
-> If specifying `align`, `x` and `y` can be used as an offset to the calculated position (can also be negative). They are ignored if [Layouts](/components/lvgl#lvgl-layouts) are used on the parent.
+> If specifying `align`, `x` and `y` can be used as an offset to the calculated position (can also be negative). They are ignored if [Layouts](/components/lvgl/layouts#lvgl-layouts) are used on the parent.
 
 - **height** (*Optional*): Height of the widget in pixels or a percentage, or `SIZE_CONTENT`.
 - **width** (*Optional*): Width of the widget in pixels or a percentage, or `SIZE_CONTENT`.
@@ -49,7 +49,7 @@ The properties below are common to all widgets.
 {{< img src="lvgl_align.png" alt="Image" class="align-center" >}}
 
 - **group** (*Optional*, string): The name of the group of widgets which will interact with a {{< docref "/components/sensor/rotary_encoder" >}}. In every group there is always one focused widget which receives the encoder actions. You need to associate an input device with a group. An input device can send key events to only one group but a group can receive data from more than one input device. If no group is specified for a widget or an encoder, an unnamed default group will be assigned, so in most cases where only one encoder is used it will not be necessary to explicitly specify a group.
-- **layout** (*Optional*): See [Layouts](/components/lvgl#lvgl-layouts) for details. Defaults to `NONE`.
+- **layout** (*Optional*): See [Layouts](/components/lvgl/layouts#lvgl-layouts) for details. Defaults to `NONE`.
 - **styles** (*Optional*, [ID](/guides/configuration-types#id)): The ID of a *style definition* from the main component configuration to override the theme styles.
 - **theme** (*Optional*, list): A list of styles to apply to the widget and children. Same configuration option as at the main component.
 - **widgets** (*Optional*, list): A list of LVGL widgets to be drawn as children of this widget. Same configuration option as at the main component.
@@ -282,16 +282,16 @@ The arc consists of a background and a foreground arc. The indicator foreground 
 - **arc_opa** (*Optional*, [opacity](/components/lvgl#lvgl-opacity)): Opacity of the arc.
 - **arc_rounded** (*Optional*, boolean): Make the end points of the arcs rounded. `true` rounded, `false` perpendicular line ending.
 - **arc_width** (*Optional*, int16): Set the width of the arcs in pixels.
-- **change_rate** (*Optional*, int8): If the arc is pressed the current value will set with a limited speed according to the set change rate. The change rate is defined in degree/second. Defaults to `720`.
+- **change_rate** (*Optional*, uint16): Limits the speed at which the arc value changes when touched or dragged. The change rate is defined in degree/second. Defaults to `720`.
 - **end_angle** (*Optional*, 0-360): end angle of the arc background (see note). Defaults to `45`.
 - **indicator** (*Optional*, list): Settings for the indicator *part* to show the value. Supports a list of [styles](/components/lvgl#lvgl-styling) and state-based styles to customize. Draws *another arc using the arc style* properties. Its padding values are interpreted relative to the background arc.
 - **knob** (*Optional*, list): Settings for the knob *part* to control the value. Supports a list of [styles](/components/lvgl#lvgl-styling) and state-based styles to customize. Draws a handle on the end of the indicator using all background properties and padding values. With zero padding the knob size is the same as the indicator's width. Larger padding makes it larger, smaller padding makes it smaller.
-- **max_value** (*Optional*, int8): Maximum value of the indicator. Defaults to `100`.
-- **min_value** (*Optional*, int8): Minimum value of the indicator. Defaults to `0`.
+- **max_value** (*Optional*, int16): Maximum value of the indicator. Defaults to `100`.
+- **min_value** (*Optional*, int16): Minimum value of the indicator. Defaults to `0`.
 - **mode** (*Optional*, string): `NORMAL`  : the indicator is drawn from the minimum value to the current. `REVERSE`  : the indicator is drawn counter-clockwise from the maximum value to the current. `SYMMETRICAL`  : the indicator is drawn from the middle point to the current value. Defaults to `NORMAL`.
 - **rotation** (*Optional*, 0-360): Offset to the 0 degree position. Defaults to `0.0`.
 - **start_angle** (*Optional*, 0-360): start angle of the arc background (see note). Defaults to `135`.
-- **value** (*Optional*, int8): Actual value of the indicator at start, in `0`  -`100` range. Defaults to `0`.
+- **value** (*Optional*, int16): Actual value of the indicator at start, in `0`  -`100` range. Defaults to `0`.
 - Any [Styling](/components/lvgl#lvgl-styling) and state-based option to override styles inherited from parent. The arc's size and position will respect the padding style properties.
 
 If the `adv_hittest` [flag](#lvgl-widget-flags) is enabled the arc can be clicked through in the middle. Clicks are recognized only on the ring of the background arc.
@@ -303,7 +303,14 @@ If the `adv_hittest` [flag](#lvgl-widget-flags) is enabled the arc can be clicke
 
 - `lvgl.arc.update` [action](/automations/actions#actions-action) updates the widget styles and properties from the specific options above, just like the [lvgl.widget.update](#lvgl-automation-actions) action is used for the common styles, states or flags.
   - **id** (**Required**): The ID or a list of IDs of arc widgets to be updated.
-  - **value** (*Optional*, int8): New value of the indicator.
+  - **change_rate** (*Optional*, uint16): New change rate in degree/second.
+  - **end_angle** (*Optional*, 0-360): New end angle of the arc background.
+  - **max_value** (*Optional*, int16): New maximum value of the indicator.
+  - **min_value** (*Optional*, int16): New minimum value of the indicator.
+  - **mode** (*Optional*, string): New indicator mode.
+  - **rotation** (*Optional*, 0-360): New offset to the 0 degree position.
+  - **start_angle** (*Optional*, 0-360): New start angle of the arc background.
+  - **value** (*Optional*, int16): New value of the indicator.
   - Any [Styling](/components/lvgl#lvgl-styling) and state-based option to override styles inherited from parent. The arc's size and position will respect the padding style properties.
 
 **Triggers:**
@@ -808,7 +815,7 @@ it is invisible. It has a default width and height of 100%.
 
 **Configuration variables:**
 
-- Style options from [Style properties](#lvgl-styling).
+- Style options from [Style properties](/components/lvgl#lvgl-styling).
 
 **Triggers:**
 
@@ -1040,7 +1047,7 @@ A label is the basic widget type that is used to display text.
 
 **Configuration variables:**
 
-- **long_mode** (*Optional*, list): By default, the width and height of the label is set to `SIZE_CONTENT`. Therefore, the size of the label is automatically expanded to the text size. Otherwise, if the `width` or `height` are explicitly set (or set by [Layouts](/components/lvgl#lvgl-layouts)), the lines wider than the label's width can be manipulated according to the long mode policies below. These policies can be applied if the height of the text is greater than the height of the label.
+- **long_mode** (*Optional*, list): By default, the width and height of the label is set to `SIZE_CONTENT`. Therefore, the size of the label is automatically expanded to the text size. Otherwise, if the `width` or `height` are explicitly set (or set by [Layouts](/components/lvgl/layouts#lvgl-layouts)), the lines wider than the label's width can be manipulated according to the long mode policies below. These policies can be applied if the height of the text is greater than the height of the label.
   - `WRAP`  : Wrap lines which are too long. If the height is `SIZE_CONTENT`, the label's height will be expanded, otherwise the text will be clipped (default).
   - `DOT`  : Replaces the last 3 characters from bottom right corner of the label with dots.
   - `SCROLL`  : If the text is wider than the label, scroll the text horizontally back and forth. If it's higher, scroll vertically. Text will scroll in only one direction; horizontal scrolling has higher precedence.
@@ -1253,7 +1260,7 @@ The meter widget can visualize data in very flexible ways. It can use arcs, need
     - Style options from [Style properties](/components/lvgl#lvgl-styling) for the tick *lines* and *labels* using the [`line`](#lvgl-widget-line) and [`label`](#lvgl-widget-label) text style properties.
 - Style options from [Style properties](/components/lvgl#lvgl-styling) for the background of the meter, using the typical background properties.
 - **ticks** (*Optional*, dict): Styling options for the ticks *part*, which will be applied to the tick lines and labels using standard *line* and *label* styles.
-- **indicator** (*Optional*, dict): Styling options for the indicator *part*, which will be applied to the needle line or image using standard *line* and *image* styles.
+- **indicator** (*Optional*, dict): Styling options for the indicator *part*, which will be applied to the needle line or image using standard *line* and *image* styles. Background properties applied here will style the pivot (the dot in the middle of the meter) for example to hide the pivot use `bg_opa: transp` in the `indicator` style.
 - **items** (*Optional*, dict): Settings for the items *part*, which will be applied to arcs.
 
 > [!NOTE]
@@ -1578,7 +1585,6 @@ The `slider` can be also integrated as {{< docref "/components/number/lvgl" "Num
 
 See [Light brightness slider](/cookbook/lvgl#lvgl-cookbook-bright) and [Media player volume slider](/cookbook/lvgl#lvgl-cookbook-volume) for examples which demonstrate how to use a slider to control entities in Home Assistant.
 
-{{< anchor "lvgl-widget-canvas" >}}
 {{< anchor "lvgl-widget-spinbox" >}}
 
 ## `spinbox`
@@ -1629,7 +1635,7 @@ The spinbox contains a numeric value (as text) which can be increased or decreas
     text_align: center
     range_from: -10
     range_to: 40
-    step: 0.5
+    selected_digit: 2
     digits: 3
     decimal_places: 1
 
