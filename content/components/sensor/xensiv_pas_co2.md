@@ -1,9 +1,9 @@
 ---
-title: "Infineon Xensiv PAS CO2 Sensor"
-description: "Instructions for setting up Infineon Xensiv PAS CO2 sensors with ESPHome"
+title: "Infineon XENSIV™ PAS CO2 Sensor"
+description: "Instructions for setting up Infineon's XENSIV™ PAS CO2 sensors with ESPHome"
 ---
 
-The `xensiv_pas_co2_i2c` component allows you to use Infineon's Xensiv PAS CO2 sensor with ESPHome.
+The `xensiv_pas_co2_i2c` component allows you to use Infineon's XENSIV™ PAS CO2 sensor with ESPHome.
 This photoacoustic spectroscopy-based CO2 sensor provides accurate carbon dioxide concentration
 measurements from 0 to 32,000 ppm. The [I²C Bus](/components/i2c) is required to be set up in your
 configuration for this sensor to work.
