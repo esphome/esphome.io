@@ -3,7 +3,7 @@ title: "Infineon Xensiv PAS CO2 Sensor"
 description: "Instructions for setting up Infineon Xensiv PAS CO2 sensors with ESPHome"
 ---
 
-The `xensiv_pasco2_i2c` component allows you to use Infineon's Xensiv PAS CO2 sensor with ESPHome.
+The `xensiv_pas_co2_i2c` component allows you to use Infineon's Xensiv PAS CO2 sensor with ESPHome.
 This photoacoustic spectroscopy-based CO2 sensor provides accurate carbon dioxide concentration
 measurements from 0 to 32,000 ppm. The [I²C Bus](/components/i2c) is required to be set up in your
 configuration for this sensor to work.
@@ -20,7 +20,7 @@ configuration for this sensor to work.
 ```yaml
 # Example configuration entry
 sensor:
-  - platform: xensiv_pasco2_i2c
+  - platform: xensiv_pas_co2_i2c
     interrupt_pin: GPIOXX
     co2:
       name: "CO2"
@@ -94,7 +94,7 @@ You can trigger a single-shot CO2 measurement using a lambda action:
 
 ```yaml
 sensor:
-  - platform: xensiv_pasco2_i2c
+  - platform: xensiv_pas_co2_i2c
     id: pasco2
     co2:
       name: "CO2"
@@ -121,7 +121,7 @@ Set a fixed atmospheric pressure value:
 
 ```yaml
 sensor:
-  - platform: xensiv_pasco2_i2c
+  - platform: xensiv_pas_co2_i2c
     interrupt_pin: GPIOXX
     co2:
       name: "CO2"
@@ -138,7 +138,7 @@ Call the `set_pressure_compensation()` method in a lambda action whenever your p
 
 ```yaml
 sensor:
-  - platform: xensiv_pasco2_i2c
+  - platform: xensiv_pas_co2_i2c
     id: co2_sensor
     interrupt_pin: GPIOXX
     co2:
@@ -164,7 +164,7 @@ sensor:
     pressure:
       name: "Atmospheric Pressure"
       id: atm_pressure
-  - platform: xensiv_pasco2_i2c
+  - platform: xensiv_pas_co2_i2c
     id: co2_sensor
     interrupt_pin: GPIOXX
     co2:
@@ -184,7 +184,7 @@ i2c:
   scl: GPIOXX
 
 sensor:
-  - platform: xensiv_pasco2_i2c
+  - platform: xensiv_pas_co2_i2c
     id: co2_sensor
     interrupt_pin: GPIOXX
     co2:
@@ -243,4 +243,4 @@ button:
 - [I²C Bus Component](/components/i2c)
 - [Infineon Xensiv PAS CO2 Product Page (5V)](https://www.infineon.com/evaluation-board/EVAL-CO2-5V-MINIBOARD)
 - [Infineon Xensiv PAS CO2 Product Page (12V)](https://www.infineon.com/evaluation-board/EVAL-PASCO2-MINIBOARD)
-- {{< apiref "xensiv_pasco2_i2c/xensiv_pasco2_i2c.h" "xensiv_pasco2_i2c.h" >}}
+- {{< apiref "xensiv_pas_co2_i2c/xensiv_pas_co2_i2c.h" "xensiv_pas_co2_i2c.h" >}}
