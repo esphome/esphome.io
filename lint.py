@@ -327,18 +327,15 @@ def lint_end_newline(fname, content):
 
 
 @lint_re_check(
-    r"https://esphome\.io/[^\s)]*",
+    r"\[([^\]]+)\]\((https://esphome\.io/[^)]+)\)",
     include=["*.md"],
-    exclude=[
-        "README.md",
-        "content/components/image.md",
-        "content/components/web_server.md",
-        "content/cookbook/lvgl.md",
-    ],
 )
 def lint_esphome_io_link(fname, match):
+    link_text = match.group(1)
+    full_url = match.group(2)
     return (
-        "All links to esphome.io should be relative, please remove esphome.io from URL"
+        f"Markdown link to esphome.io should use relative path. "
+        f"Change [{link_text}]({full_url}) to use a relative URL"
     )
 
 
