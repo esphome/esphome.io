@@ -34,30 +34,30 @@ wiegand:
 
 ## Configuration variables
 
-- **id** (*Optional*, [ID](#config-id)): Set the ID of this device for use in lambdas.
-- **d0** (**Required**, [Pin Schema](#config-pin_schema)): The pin where the `D0` output
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Set the ID of this device for use in lambdas.
+- **d0** (**Required**, [Pin Schema](/guides/configuration-types#pin-schema)): The pin where the `D0` output
   of the Wiegand's interface connects.
 
-- **d1** (**Required**, [Pin Schema](#config-pin_schema)): The pin where the `D1` output
+- **d1** (**Required**, [Pin Schema](/guides/configuration-types#pin-schema)): The pin where the `D1` output
   of the Wiegand's interface connects.
 
 ### Triggers
 
-- **on_key** (*Optional*, [Automation](#automation)): An automation to perform
+- **on_key** (*Optional*, [Automation](/automations)): An automation to perform
   when a key has been pressed on the pad. The key is in a variable called `x`.
 
-- **on_tag** (*Optional*, [Automation](#automation)): An automation to perform
+- **on_tag** (*Optional*, [Automation](/automations)): An automation to perform
   when a Wiegand-compatible card or a tag has been read by the device. The tag code is
   in a variable called `x`.
 
-- **on_raw** (*Optional*, [Automation](#automation)): An automation to perform
+- **on_raw** (*Optional*, [Automation](/automations)): An automation to perform
   for any data sent by the device. The value is in a variable called `value`, the number of
   bits is in a variable called `bits`. Note that this will include parity bits as well and
   no parity checking is done.
 
 > [!NOTE]
 > Automatic handling of multiple keys (e.g. PIN code entry) is possible with the
-> the [Key Collector](#key_collector) component.
+> the [Key Collector](/components/key_collector#key_collector) component.
 >
 > Keys 10 and 11 are `*` and `#`. They might be labelled as `ENT` or `ESC`,
 > but check the logs to see which key code you get and use the corresponding character.
