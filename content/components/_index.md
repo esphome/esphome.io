@@ -604,6 +604,7 @@ Often known as "tag" or "card" readers within the community.
 "GT911","components/touchscreen/gt911","esp32_s3_box_3.png",""
 "Nextion Binary Sensor","components/binary_sensor/nextion","nextion.jpg",""
 "TT21100","components/touchscreen/tt21100","esp32-s3-korvo-2-lcd.png",""
+"ST7123","components/touchscreen/st7123","tab5.jpg",""
 "LVGL widget","components/binary_sensor/lvgl","lvgl_c_bns.png",""
 {{< /imgtable >}}
 
