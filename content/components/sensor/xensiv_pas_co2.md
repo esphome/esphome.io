@@ -45,6 +45,11 @@ Valid range: 5 seconds to 4095 seconds. Defaults to `60s`. Accepts formats like 
 - **pressure_compensation** (*Optional*, pressure): Atmospheric pressure reference for improved accuracy. 
 Accepts values with units like `1013.25hPa`, `101325Pa`, etc. 
 If not specified, the sensor uses its default reference pressure of 1015 hPa.
+- **pressure_compensation_source** (*Optional*, [ID](/guides/configuration-types#id)): ID of a pressure sensor to use for automatic pressure compensation updates.
+When specified, the CO2 sensor will automatically update its pressure compensation whenever the referenced sensor reports a new value.
+
+> [!NOTE]
+> Use either `pressure_compensation` for a static value or `pressure_compensation_source` for dynamic updates from another sensor, not both.
 
 ### Sensor Configuration
 
@@ -103,16 +108,21 @@ button:
 ```
 
 This is useful in `single_shot` operation mode or for triggering additional measurements in
-continuous mode.
+`continuous` mode.
 
 ## Pressure Compensation
 
 For improved accuracy, you can configure atmospheric pressure compensation. The sensor's CO2
 measurement accuracy is affected by ambient air pressure:
 
+### Static Pressure Value
+
+Set a fixed atmospheric pressure value:
+
 ```yaml
 sensor:
   - platform: xensiv_pasco2_i2c
+    interrupt_pin: GPIOXX
     co2:
       name: "CO2"
     pressure_compensation: 1013.25hPa  # Standard sea level pressure
@@ -130,6 +140,7 @@ Call the `set_pressure_compensation()` method in a lambda action whenever your p
 sensor:
   - platform: xensiv_pasco2_i2c
     id: co2_sensor
+    interrupt_pin: GPIOXX
     co2:
       name: "CO2"
 
@@ -145,15 +156,20 @@ sensor:
 
 **Option 2: Linking Pressure Sensor Directly**
 
-Set the `pressure_compensation` field to the pressure sensor's ID. ESPHome will automatically handle updates and unit conversion:
+Set the `pressure_compensation_source` field to the pressure sensor's ID. ESPHome will automatically handle updates and unit conversion:
 
 ```yaml
 sensor:
-    - platform: xensiv_pasco2_i2c
-        id: co2_sensor
-        co2:
-            name: "CO2"
-        pressure_compensation: atm_pressure
+  - platform: bmp280
+    pressure:
+      name: "Atmospheric Pressure"
+      id: atm_pressure
+  - platform: xensiv_pasco2_i2c
+    id: co2_sensor
+    interrupt_pin: GPIOXX
+    co2:
+        name: "CO2"
+    pressure_compensation_source: atm_pressure
 ```
 
 > [!NOTE]
@@ -170,6 +186,7 @@ i2c:
 sensor:
   - platform: xensiv_pasco2_i2c
     id: co2_sensor
+    interrupt_pin: GPIOXX
     co2:
       name: "CO2"
       filters:
@@ -177,7 +194,6 @@ sensor:
             window_size: 5
             send_every: 1
     address: 0x28
-    interrupt_pin: GPIOXX
     sensor_rate: 60s
     operation_mode: continuous
     pressure_compensation: 1013.25hPa
@@ -203,7 +219,7 @@ button:
 
 - Verify interrupt pin is correctly connected to the sensor's INT pin
 - Check that `operation_mode` is set to `continuous`
-- Ensure `interrupt_pin` is configured in the YAML
+- Ensure `interrupt_pin` is configured correctly in the YAML
 - The sensor uses an **active-low** interrupt signal (triggers on falling edge)
 
 ### Inaccurate Readings
@@ -219,6 +235,7 @@ button:
 - This is normal during initial setup - the sensor needs time to stabilize after soft reset
 - The component will continue operation and verify sensor readiness during first measurement
 - Check logs for "Sensor is ready and operational" or "Sensor ready check inconclusive" messages
+- Restart the device (cut off power to both the MCU and the sensor)
 
 ## See Also
 
