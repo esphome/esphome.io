@@ -59,7 +59,7 @@ zigbee:
 
 ### `factory_reset` Action
 
-This [action](#config-action) triggers a factory reset of the Zigbee device. It handles the leaving of the Zigbee network.
+This action triggers a factory reset of the Zigbee device. It handles the leaving of the Zigbee network.
 
 ```yaml
 on_...:
@@ -69,7 +69,7 @@ on_...:
 
 ### Supported Components
 
-- [Binary Sensor](#config-binary_sensor): only **state** and **name** are exposed over Zigbee.
+- [Binary Sensor](/components/binary_sensor#config-binary_sensor): only **state** and **name** are exposed over Zigbee.
 
 ## Zigbee Component Base Configuration
 
