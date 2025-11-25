@@ -30,10 +30,10 @@ sensor:
 
 ### Platform Configuration
 
-- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
-- **address** (*Optional*, int): The I²C address of the sensor. Defaults to `0x28`. The sensor has a fixed hardware address that cannot be changed.
 - **interrupt_pin** (**Required**, [Pin Schema](/guides/configuration-types#pin-schema)): The GPIO pin connected to the sensor's INT pin.
 The sensor uses an active-low interrupt signal.
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
+- **address** (*Optional*, int): The I²C address of the sensor. Defaults to `0x28`. The sensor has a fixed hardware address that cannot be changed.
 - **sensor_rate** (*Optional*, [Time](/guides/configuration-types#time)): 
 The measurement interval for continuous mode. 
 Valid range: 5 seconds to 4095 seconds. Defaults to `60s`. Accepts formats like `10s`, `1min`, `60s`.
