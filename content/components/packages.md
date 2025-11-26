@@ -23,9 +23,12 @@ merged by concatenation. All other configuration values are replaced with the la
 
 ESPHome uses `!include` to "bring in" packages from other files; this feature is described in [!include](/guides/yaml#yaml-include).
 
-The `packages:` key may have a value that is a list of valid package references, or a mapping of keys to package references.
-When a mapping is used, the keys are for reference only and have no significance in themselves.
-Where only a single package reference is required, it may be used directly rather than in a list.
+The `packages:` key may have a value that is:
+
+- A list of valid package references
+- A mapping of keys to package references. When a mapping is used, the keys are for reference only and have no significance in themselves.
+- A single package reference, which may be used directly rather than in a list.
+
 Examples of all formats are shown below.
 
 ## Local Packages
