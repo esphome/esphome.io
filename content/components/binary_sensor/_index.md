@@ -322,10 +322,10 @@ binary_sensor:
       then:
       - logger.log:
           format: "Old state was %s"
-          args: ['x_previous.has_value() ? ONOFF(x_previous.value()) : "Unknown"']
+          args: ['x_previous.has_value() ? ONOFF(x_previous) : "Unknown"']
       - logger.log:
           format: "New state is %s"
-          args: ['x.has_value() ? ONOFF(x.value()) : "Unknown"']
+          args: ['x.has_value() ? ONOFF(x) : "Unknown"']
 ```
 
 Configuration variables: See [Automation](/automations).
