@@ -62,29 +62,31 @@ climate:
 
 ## Configuration Variables
 
-- **sensor** (*Optional*, [ID](#config-id)): The sensor that is used to measure the ambient
+- **sensor** (*Optional*, [ID](/guides/configuration-types#id)): The sensor that is used to measure the ambient
   temperature. This is only for reporting the current temperature in the frontend.
+- **humidity_sensor** (*Optional*, [ID](/guides/configuration-types#id)): The sensor that is used to measure the ambient
+  humidity. This is only for reporting the current humidity in the frontend.
 
 - **supports_cool** (*Optional*, boolean): Enables setting cooling mode for this climate device. Defaults to `true`.
 - **supports_heat** (*Optional*, boolean): Enables setting heating mode for this climate device. Defaults to `true`.
-- **receiver_id** (*Optional*, [ID](#config-id)): The id of the remote_receiver if this platform supports
+- **receiver_id** (*Optional*, [ID](/guides/configuration-types#id)): The id of the remote_receiver if this platform supports
   receiver. see: [Using a Receiver](#ir-receiver_id).
 
-- All other options from [Climate](#config-climate).
+- All other options from [Climate](/components/climate#config-climate).
 
 ### Advanced Options
 
-- **transmitter_id** (*Optional*, [ID](#config-id)): Manually specify the ID of the remote transmitter.
+- **transmitter_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the remote transmitter.
 
 {{< anchor "climate_ir_lg" >}}
 
 ### `climate_ir_lg`
 
-- **header_high** (*Optional*, [Time](#config-time)): time for the high part of the header for the LG protocol. Defaults to `8000us`
-- **header_low** (*Optional*, [Time](#config-time)): time for the low part of the header for the LG protocol. Defaults to `4000us`
-- **bit_high** (*Optional*, [Time](#config-time)): time for the high part of any bit in the LG protocol. Defaults to `600us`
-- **bit_one_low** (*Optional*, [Time](#config-time)): time for the low part of a '1' bit in the LG protocol. Defaults to `1600us`
-- **bit_zero_low** (*Optional*, [Time](#config-time)): time for the low part of a '0' bit in the LG protocol. Defaults to `550us`
+- **header_high** (*Optional*, [Time](/guides/configuration-types#time)): time for the high part of the header for the LG protocol. Defaults to `8000us`
+- **header_low** (*Optional*, [Time](/guides/configuration-types#time)): time for the low part of the header for the LG protocol. Defaults to `4000us`
+- **bit_high** (*Optional*, [Time](/guides/configuration-types#time)): time for the high part of any bit in the LG protocol. Defaults to `600us`
+- **bit_one_low** (*Optional*, [Time](/guides/configuration-types#time)): time for the low part of a '1' bit in the LG protocol. Defaults to `1600us`
+- **bit_zero_low** (*Optional*, [Time](/guides/configuration-types#time)): time for the low part of a '0' bit in the LG protocol. Defaults to `550us`
 
 ```yaml
 # Example configuration entry
@@ -165,21 +167,18 @@ climate:
     use_fahrenheit: true
 ```
 
-{{< note >}}
+> [!NOTE]
+>
+> - See [Transmit Midea](/components/remote_transmitter#remote_transmitter-transmit_midea) to send custom commands, including Follow Me mode.
+> - See [Toshiba](#toshiba) below if you are looking for compatibility with Midea model MAP14HS1TBL or similar.
 
-- See [Transmit Midea](#remote_transmitter-transmit_midea) to send custom commands, including Follow Me mode.
-- See [Toshiba](#toshiba) below if you are looking for compatibility with Midea model MAP14HS1TBL or similar.
-
-{{< /note >}}
 {{< anchor "mitsubishi" >}}
 
 ### `mitsubishi`
 
-{{< note >}}
-
-- When using this component with Mitsubishi units that only support cooling mode, the Off command may not work. Set **supports_heat** to `false` to resolve that issue.
-
-{{< /note >}}
+> [!NOTE]
+>
+> - When using this component with Mitsubishi units that only support cooling mode, the Off command may not work. Set **supports_heat** to `false` to resolve that issue.
 
 - **set_fan_mode** (*Optional*, string): Select the fan modes desired or that are supported on your remote. Defaults to `3levels`
 
@@ -199,11 +198,9 @@ climate:
 
   - Options are: `down`, `middle-down`, `middle`, `middle-up`, `up`, `auto`
 
-{{< note >}}
-
-- This climate IR component is also known to work with some Stiebel Eltron Units. It has been tested with Stiebel Eltron IR-Remote `KM07F` and unit `ACW 25 i`
-
-{{< /note >}}
+> [!NOTE]
+>
+> - This climate IR component is also known to work with some Stiebel Eltron Units. It has been tested with Stiebel Eltron IR-Remote `KM07F` and unit `ACW 25 i`
 
 ```yaml
 # Example configuration entry
@@ -221,31 +218,44 @@ climate:
 
 ### `toshiba`
 
-- **model** (*Optional*, string): There are two valid models
+- **model** (*Optional*, string): There are four valid models:
 
   - `GENERIC`  : Temperature range is from 17 to 30 (default)
   - `RAC-PT1411HWRU-C`  : Temperature range is from 16 to 30; unit displays temperature in degrees Celsius
   - `RAC-PT1411HWRU-F`  : Temperature range is from 16 to 30; unit displays temperature in degrees Fahrenheit
+  - `RAS-2819T`  : Temperature range is from 18 to 30; supports two-packet IR protocol
 
-{{< note >}}
+> [!NOTE]
+>
+> - While they are identified as separate models here, the `RAC-PT1411HWRU-C` and `RAC-PT1411HWRU-F` are
+>   in fact the same physical model/unit. They are separated here only because different IR codes are used
+>   depending on the desired unit of measurement. This only affects how temperature is displayed on the unit itself.
+>
+> - The `RAC-PT1411HWRU` model supports a feature Toshiba calls "Comfort Sense". The handheld remote control
+>   has a built-in temperature sensor and it will periodically transmit the temperature from this sensor to the
+>   AC unit. If a `sensor` is provided in the configuration with this model, the sensor's temperature will be
+>   transmitted to the `RAC-PT1411HWRU` in the same manner as the original remote controller. How often the
+>   temperature is transmitted is determined by the `update_interval` assigned to the `sensor`. Note that
+>   `update_interval` must be less than seven minutes or the `RAC-PT1411HWRU` will revert to using its own
+>   internal temperature sensor; a value of 30 seconds seems to work well. See {{< docref "/components/sensor" >}}
+>   for more information.
+>
+> - The `RAS-2819T` model uses a two-packet IR protocol where most commands send a primary packet (containing
+>   temperature, mode, and fan speed) followed by a secondary packet (containing fan speed confirmation and
+>   mode-specific data). Single-packet commands are used for power-off and swing toggle operations.
+>
+> - This climate IR component is also known to work with Midea model MAP14HS1TBL and may work with other similar
+>   models, as well. (Midea acquired Toshiba's product line and re-branded it.)
 
-- While they are identified as separate models here, the `RAC-PT1411HWRU-C` and `RAC-PT1411HWRU-F` are
-  in fact the same physical model/unit. They are separated here only because different IR codes are used
-  depending on the desired unit of measurement. This only affects how temperature is displayed on the unit itself.
+```yaml
+# Example configuration entry for RAS-2819T
+climate:
+  - platform: toshiba
+    name: "Toshiba AC"
+    model: RAS-2819T
+    sensor: room_temperature
+```
 
-- The `RAC-PT1411HWRU` model supports a feature Toshiba calls "Comfort Sense". The handheld remote control
-  has a built-in temperature sensor and it will periodically transmit the temperature from this sensor to the
-  AC unit. If a `sensor` is provided in the configuration with this model, the sensor's temperature will be
-  transmitted to the `RAC-PT1411HWRU` in the same manner as the original remote controller. How often the
-  temperature is transmitted is determined by the `update_interval` assigned to the `sensor`. Note that
-  `update_interval` must be less than seven minutes or the `RAC-PT1411HWRU` will revert to using its own
-  internal temperature sensor; a value of 30 seconds seems to work well. See {{< docref "/components/sensor" >}}
-  for more information.
-
-- This climate IR component is also known to work with Midea model MAP14HS1TBL and may work with other similar
-  models, as well. (Midea acquired Toshiba's product line and re-branded it.)
-
-{{< /note >}}
 {{< anchor "whirlpool" >}}
 
 ### `whirlpool`
@@ -281,10 +291,9 @@ The `zhlt01` climate and protocol, based on the ZH/LT-01 remote controller, is u
 
 ## Using a Receiver
 
-{{< note >}}
-This is only supported with select climate devices, see "Supports receiver" in the table at the top of the page.
+> [!NOTE]
+> This is only supported with select climate devices, see "Supports receiver" in the table at the top of the page.
 
-{{< /note >}}
 Optionally, some platforms can listen to data the climate device sends over infrared to update their state (
 for example what mode the device is in). By setting up a {{< docref "/components/remote_receiver" "remote_receiver" >}}
 and passing its ID to the climate platform you can enable this mode.
@@ -337,19 +346,17 @@ Additional configuration must be specified for this platform:
 - **vertical_default** (**Required**, string): What to default to when the AC unit's vertical direction is *not* set to swing. Options are: `down`, `mdown`, `middle`, `mup`, `up`, `auto`
 - **max_temperature** (**Required**, float): The maximum temperature that the AC unit supports being set to.
 - **min_temperature** (**Required**, float): The minimum temperature that the AC unit supports being set to.
-- **sensor** (*Optional*, [ID](#config-id)): The sensor that is used to measure the ambient temperature.
+- **sensor** (*Optional*, [ID](/guides/configuration-types#id)): The sensor that is used to measure the ambient temperature.
 
-{{< note >}}
-The `greeyac` protocol in `heatpumpir` supports a feature Gree calls "I-Feel". The handheld remote control
-has a built-in temperature sensor and it will periodically transmit the temperature from this sensor to the
-AC unit. If a `sensor` is provided in the configuration with this model, the sensor's temperature will be
-transmitted to the `greeyac` device in the same manner as the original remote controller. How often the
-temperature is transmitted is determined by the `update_interval` assigned to the `sensor`. Note that
-`update_interval` must be less than 10 minutes or the `greeyac` device will revert to using its own
-internal temperature sensor; a value of 2 minutes seems to work well. See {{< docref "/components/sensor" >}}
-for more information.
-
-{{< /note >}}
+> [!NOTE]
+> The `greeyac` protocol in `heatpumpir` supports a feature Gree calls "I-Feel". The handheld remote control
+> has a built-in temperature sensor and it will periodically transmit the temperature from this sensor to the
+> AC unit. If a `sensor` is provided in the configuration with this model, the sensor's temperature will be
+> transmitted to the `greeyac` device in the same manner as the original remote controller. How often the
+> temperature is transmitted is determined by the `update_interval` assigned to the `sensor`. Note that
+> `update_interval` must be less than 10 minutes or the `greeyac` device will revert to using its own
+> internal temperature sensor; a value of 2 minutes seems to work well. See {{< docref "/components/sensor" >}}
+> for more information.
 
 ## See Also
 

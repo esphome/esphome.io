@@ -43,6 +43,7 @@ specified, or a custom init sequence can be provided.
 | Model                  | Manufacturer | Product Description                                                           |
 | ---------------------- | ------------ | ----------------------------------------------------------------------------- |
 | JC1060P470             | Guition      | <https://aliexpress.com/item/1005008328088576.html>                           |
+| JC4880P443             | Guition      | <https://aliexpress.com/item/1005009618259341.html>                           |
 | M5STACK-TAB5           | M5Stack      | <https://shop.m5stack.com/products/m5stack-tab5-iot-development-kit-esp32-p4> |
 | WAVESHARE-P4-NANO-10.1 | Waveshare | <https://www.waveshare.com/esp32-p4-nano.htm?sku=29031> |
 | WAVESHARE-P4-86-PANEL | Waveshare | <https://www.waveshare.com/esp32-p4-wifi6-touch-lcd-4b.htm?sku=31570> |
@@ -58,12 +59,12 @@ display:
 
 ### Configuration options
 
-All [graphical display configuration](#display-configuration) options are available, plus the following. For integrated display boards
+All [graphical display configuration](/components/display#display-configuration) options are available, plus the following. For integrated display boards
 most of the configuration will be set by default, but can be overridden if needed.
 
 - **model** (**Required**): Chosen from the lists of supported chips and models above, or `CUSTOM` for custom displays.
-- **reset_pin** (*Optional*, [Pin Schema](#config-pin_schema)): The RESET pin, if required.
-- **enable_pin** (*Optional*, [Pin Schema](#config-pin_schema)): An optional pin to enable the display, if required. A list of pins can be provided for displays that require multiple enable pins. A full pin configuration may be provided
+- **reset_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The RESET pin, if required.
+- **enable_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): An optional pin to enable the display, if required. A list of pins can be provided for displays that require multiple enable pins. A full pin configuration may be provided
   to set the pin mode and inverted property. By default the pin will be driven high to enable the display.
 
 - **color_order** (*Optional*): Should be one of `bgr` (default) or `rgb`. This specifies the order of the color channels in the display panel. The default is `bgr` for most displays, but some displays may require `rgb`. It does not affect the color order of the display buffer, which is always RGB.

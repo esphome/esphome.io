@@ -56,20 +56,17 @@ display:
     number: 5
 ```
 
-{{< warning >}}
-When using the Inkplate epaper module, the GPIO pin numbers above *cannot be changed* as they are
-hardwired within the module/PCB.
+> [!WARNING]
+> When using the Inkplate epaper module, the GPIO pin numbers above *cannot be changed* as they are
+> hardwired within the module/PCB.
 
-{{< /warning >}}
-{{< warning >}}
-Inkplate module cannot perform partial update if 3 bit mode is on.
-It just ignores the function call in that case.
-
-{{< /warning >}}
+> [!WARNING]
+> Inkplate module cannot perform partial update if 3 bit mode is on.
+> It just ignores the function call in that case.
 
 ## Configuration variables
 
-- **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation.
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
 - **model** (*Optional*, enum): Specify the model. Defaults to `inkplate_6`.
   - `inkplate_6`
   - `inkplate_10`
@@ -85,48 +82,48 @@ It just ignores the function call in that case.
   - **flip_y** (*Optional*, boolean): Flip the screen on the Y axis. Defaults to `false`
   - **flip_x** (*Optional*, boolean): Flip the screen on the X axis. Defaults to `false`
 
-- **lambda** (*Optional*, [lambda](#config-lambda)): The lambda to use for rendering the content on the display.
-  See [Display Rendering Engine](#display-engine) for more information.
+- **lambda** (*Optional*, [lambda](/automations/templates#config-lambda)): The lambda to use for rendering the content on the display.
+  See [Display Rendering Engine](/components/display#display-engine) for more information.
 
-- **update_interval** (*Optional*, [Time](#config-time)): The interval to re-draw the screen. Defaults to `5s`.
-- **pages** (*Optional*, list): Show pages instead of a single lambda. See [Display Pages](#display-pages).
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to re-draw the screen. Defaults to `5s`.
+- **pages** (*Optional*, list): Show pages instead of a single lambda. See [Display Pages](/components/display#display-pages).
 
-- **ckv_pin** (**Required**, [Pin](#config-pin)): The CKV pin for the Inkplate display.
-- **gmod_pin** (**Required**, [Pin](#config-pin)): The GMOD pin for the Inkplate display.
-- **gpio0_enable_pin** (**Required**, [Pin](#config-pin)): The GPIO0 Enable pin for the Inkplate display.
-- **oe_pin** (**Required**, [Pin](#config-pin)): The OE pin for the Inkplate display.
-- **powerup_pin** (**Required**, [Pin](#config-pin)): The Powerup pin for the Inkplate display.
-- **sph_pin** (**Required**, [Pin](#config-pin)): The SPH pin for the Inkplate display.
-- **spv_pin** (**Required**, [Pin](#config-pin)): The SPV pin for the Inkplate display.
-- **vcom_pin** (**Required**, [Pin](#config-pin)): The VCOM pin for the Inkplate display.
-- **cl_pin** (*Optional*, [Pin](#config-pin)): The CL pin for the Inkplate display.
+- **ckv_pin** (**Required**, [Pin](/guides/configuration-types#pin)): The CKV pin for the Inkplate display.
+- **gmod_pin** (**Required**, [Pin](/guides/configuration-types#pin)): The GMOD pin for the Inkplate display.
+- **gpio0_enable_pin** (**Required**, [Pin](/guides/configuration-types#pin)): The GPIO0 Enable pin for the Inkplate display.
+- **oe_pin** (**Required**, [Pin](/guides/configuration-types#pin)): The OE pin for the Inkplate display.
+- **powerup_pin** (**Required**, [Pin](/guides/configuration-types#pin)): The Powerup pin for the Inkplate display.
+- **sph_pin** (**Required**, [Pin](/guides/configuration-types#pin)): The SPH pin for the Inkplate display.
+- **spv_pin** (**Required**, [Pin](/guides/configuration-types#pin)): The SPV pin for the Inkplate display.
+- **vcom_pin** (**Required**, [Pin](/guides/configuration-types#pin)): The VCOM pin for the Inkplate display.
+- **cl_pin** (*Optional*, [Pin](/guides/configuration-types#pin)): The CL pin for the Inkplate display.
   Defaults to GPIO0.
 
-- **le_pin** (*Optional*, [Pin](#config-pin)): The LE pin for the Inkplate display.
+- **le_pin** (*Optional*, [Pin](/guides/configuration-types#pin)): The LE pin for the Inkplate display.
   Defaults to GPIO2.
 
-- **display_data_0_pin** (*Optional*, [Pin](#config-pin)): The Data 0 pin for the Inkplate display.
+- **display_data_0_pin** (*Optional*, [Pin](/guides/configuration-types#pin)): The Data 0 pin for the Inkplate display.
   Defaults to GPIO4.
 
-- **display_data_1_pin** (*Optional*, [Pin](#config-pin)): The Data 1 pin for the Inkplate display.
+- **display_data_1_pin** (*Optional*, [Pin](/guides/configuration-types#pin)): The Data 1 pin for the Inkplate display.
   Defaults to GPIO5.
 
-- **display_data_2_pin** (*Optional*, [Pin](#config-pin)): The Data 2 pin for the Inkplate display.
+- **display_data_2_pin** (*Optional*, [Pin](/guides/configuration-types#pin)): The Data 2 pin for the Inkplate display.
   Defaults to GPIO18.
 
-- **display_data_3_pin** (*Optional*, [Pin](#config-pin)): The Data 3 pin for the Inkplate display.
+- **display_data_3_pin** (*Optional*, [Pin](/guides/configuration-types#pin)): The Data 3 pin for the Inkplate display.
   Defaults to GPIO19.
 
-- **display_data_4_pin** (*Optional*, [Pin](#config-pin)): The Data 4 pin for the Inkplate display.
+- **display_data_4_pin** (*Optional*, [Pin](/guides/configuration-types#pin)): The Data 4 pin for the Inkplate display.
   Defaults to GPIO23.
 
-- **display_data_5_pin** (*Optional*, [Pin](#config-pin)): The Data 5 pin for the Inkplate display.
+- **display_data_5_pin** (*Optional*, [Pin](/guides/configuration-types#pin)): The Data 5 pin for the Inkplate display.
   Defaults to GPIO25.
 
-- **display_data_6_pin** (*Optional*, [Pin](#config-pin)): The Data 6 pin for the Inkplate display.
+- **display_data_6_pin** (*Optional*, [Pin](/guides/configuration-types#pin)): The Data 6 pin for the Inkplate display.
   Defaults to GPIO26.
 
-- **display_data_7_pin** (*Optional*, [Pin](#config-pin)): The Data 7 pin for the Inkplate display.
+- **display_data_7_pin** (*Optional*, [Pin](/guides/configuration-types#pin)): The Data 7 pin for the Inkplate display.
   Defaults to GPIO27.
 
 ## Complete Inkplate 6 example

@@ -15,26 +15,22 @@ The properties below are common to all widgets.
 
 **Configuration variables:**
 
-- **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation.
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
 - **x** (*Optional*, int16 or percentage): Horizontal position of the widget.
 - **y** (*Optional*, int16 or percentage): Vertical position of the widget.
 
-{{< note >}}
-By default, the `x` and `y` coordinates are measured from the *top left corner* of the parent's content area. [Important](#lvgl-styling): content area starts *after the padding* thus if the parent has a non-zero padding value, position will be shifted with that. Percentage values are calculated from the parent's content area size.
-
-If specifying `align`, `x` and `y` can be used as an offset to the calculated position (can also be negative). They are ignored if [Layouts](#lvgl-layouts) are used on the parent.
-
-{{< /note >}}
+> [!NOTE]
+> By default, the `x` and `y` coordinates are measured from the *top left corner* of the parent's content area. [Important](/components/lvgl#lvgl-styling): content area starts *after the padding* thus if the parent has a non-zero padding value, position will be shifted with that. Percentage values are calculated from the parent's content area size.
+>
+> If specifying `align`, `x` and `y` can be used as an offset to the calculated position (can also be negative). They are ignored if [Layouts](/components/lvgl/layouts#lvgl-layouts) are used on the parent.
 
 - **height** (*Optional*): Height of the widget in pixels or a percentage, or `SIZE_CONTENT`.
 - **width** (*Optional*): Width of the widget in pixels or a percentage, or `SIZE_CONTENT`.
 
-{{< note >}}
-The size settings support a special value: `SIZE_CONTENT`. It means the widget's size in the respective direction will be set to the size of its children. Note that only children on the right and bottom sides will be considered and children on the top and left remain cropped. This limitation makes the behavior more predictable. Widgets with `hidden` or `floating` flags will be ignored by the `SIZE_CONTENT` calculation.
-
-Similarly to CSS, LVGL also supports `min_width`, `max_width`, `min_height` and `max_height`. These are limits preventing a widget's size from becoming smaller/larger than these values. They are especially useful if the size is set by percentage or `SIZE_CONTENT`.
-
-{{< /note >}}
+> [!NOTE]
+> The size settings support a special value: `SIZE_CONTENT`. It means the widget's size in the respective direction will be set to the size of its children. Note that only children on the right and bottom sides will be considered and children on the top and left remain cropped. This limitation makes the behavior more predictable. Widgets with `hidden` or `floating` flags will be ignored by the `SIZE_CONTENT` calculation.
+>
+> Similarly to CSS, LVGL also supports `min_width`, `max_width`, `min_height` and `max_height`. These are limits preventing a widget's size from becoming smaller/larger than these values. They are especially useful if the size is set by percentage or `SIZE_CONTENT`.
 
 - **min_width**, **max_width**, **min_height**, **max_height** (*Optional*, int16 or percentage): Sets a minimal/maximal width or a minimal/maximal height. Pixel and percentage values can be used. Percentage values are relative to the dimensions of the parent's content area. Defaults to `0%`.
 - **scrollbar_mode** (*Optional*, string): If a child widget is outside its parent content area (the size without padding), the parent can become scrollable (see the `scrollable` [flag](#lvgl-widget-flags)). The widget can either be scrolled horizontally or vertically in one stroke. Scroll bars can appear depending on the setting:
@@ -43,8 +39,8 @@ Similarly to CSS, LVGL also supports `min_width`, `max_width`, `min_height` and 
   - `"ACTIVE"`  : Show scroll bars while a widget is being scrolled.
   - `"AUTO"`  : Show scroll bars when the content is large enough to be scrolled (default).
 
-- **align** (*Optional*, enum): Alignment of the of the widget relative to the parent. A child widget is clipped to its parent boundaries. One of the values *not* starting with `OUT_` (see picture below).
-- **align_to** (*Optional*, list): Alignment of the of the widget relative to another widget on the same level:
+- **align** (*Optional*, enum): Alignment of the widget relative to the parent. A child widget is clipped to its parent boundaries. One of the values *not* starting with `OUT_` (see picture below).
+- **align_to** (*Optional*, list): Alignment of the widget relative to another widget on the same level:
   - **id** (**Required**): The ID of a widget *to* which you want to align.
   - **align** (**Required**, string): Desired alignment (one of the values starting with `OUT_`  ).
   - **x** (*Optional*, int16 or percentage): Horizontal offset position. Default `0`.
@@ -53,8 +49,8 @@ Similarly to CSS, LVGL also supports `min_width`, `max_width`, `min_height` and 
 {{< img src="lvgl_align.png" alt="Image" class="align-center" >}}
 
 - **group** (*Optional*, string): The name of the group of widgets which will interact with a {{< docref "/components/sensor/rotary_encoder" >}}. In every group there is always one focused widget which receives the encoder actions. You need to associate an input device with a group. An input device can send key events to only one group but a group can receive data from more than one input device. If no group is specified for a widget or an encoder, an unnamed default group will be assigned, so in most cases where only one encoder is used it will not be necessary to explicitly specify a group.
-- **layout** (*Optional*): See [Layouts](#lvgl-layouts) for details. Defaults to `NONE`.
-- **styles** (*Optional*, [ID](#config-id)): The ID of a *style definition* from the main component configuration to override the theme styles.
+- **layout** (*Optional*): See [Layouts](/components/lvgl/layouts#lvgl-layouts) for details. Defaults to `NONE`.
+- **styles** (*Optional*, [ID](/guides/configuration-types#id)): The ID of a *style definition* from the main component configuration to override the theme styles.
 - **theme** (*Optional*, list): A list of styles to apply to the widget and children. Same configuration option as at the main component.
 - **widgets** (*Optional*, list): A list of LVGL widgets to be drawn as children of this widget. Same configuration option as at the main component.
 
@@ -84,7 +80,7 @@ To apply styles to the states, you need to specify them one level above, for exa
 
 The state itself can be can be changed by interacting with the widget, or through [actions](#lvgl-automation-actions) with `lvgl.widget.update`.
 
-See [Cover status and control](#lvgl-cookbook-cover) for a cookbook example which demonstrates how to use styling and properties to show different states of a Home Assistant entity.
+See [Cover status and control](/cookbook/lvgl#lvgl-cookbook-cover) for a cookbook example which demonstrates how to use styling and properties to show different states of a Home Assistant entity.
 
 {{< anchor "lvgl-widget-flags" >}}
 
@@ -115,10 +111,8 @@ In addition to visual styling, each widget supports some boolean **flags** to in
 - **user_1**, **user_2**, **user_3**, **user_4** (*Optional*, boolean): custom flags, free to use by user.
 - **widget_1**, **widget_2** (*Optional*, boolean): custom flags, free to use by widget.
 
-{{< note >}}
-LVGL only supports **integers** for numeric `value`. Visualizer widgets can't display floats directly, but they allow scaling by 10s. Some examples in the {{< docref "/cookbook/lvgl" "Cookbook" >}} cover how to do that.
-
-{{< /note >}}
+> [!NOTE]
+> LVGL only supports **integers** for numeric `value`. Visualizer widgets can't display floats directly, but they allow scaling by 10s. Some examples in the {{< docref "/cookbook/lvgl" "Cookbook" >}} cover how to do that.
 
 {{< anchor "lvgl-widget-parts" >}}
 
@@ -171,6 +165,9 @@ The text value may also be a lambda returning a `std::string` or may be
 specified with a `format` property utilising `printf` style formatting. There is also a `time_format` option
 which allows use of [strftime](http://www.cplusplus.com/reference/ctime/strftime/) formats.
 
+When formatting a single floating point value, it is possible to provide a substitute string to be used when the
+value is `nan` or `inf`. The substitute string is specified with the `if_nan` option.
+
 **Examples:**
 
 ```yaml
@@ -205,6 +202,12 @@ on_...:
       text:
         time_format: "%c"
         time: !lambda return id(sntp_id).utcnow();
+  - lvgl.label.update:
+      id: value_id
+      text:
+        format: "%.1f"
+        args: [id(sensor_id).state]
+        if_nan: "N/A"
 ```
 
 {{< anchor "lvgl-widget-animimg" >}}
@@ -217,27 +220,27 @@ The animation image is similar to the normal `image` widget. The main difference
 
 **Configuration variables:**
 
-- **src** (**Required**, list of [images](#display-image)): A list of IDs of existing image configurations to be loaded as frames of the animation.
+- **src** (**Required**, list of [images](/components/image#display-image)): A list of IDs of existing image configurations to be loaded as frames of the animation.
 - **auto_start** (*Optional*, boolean): Start the animation playback automatically at boot. Defaults to `true`.
-- **duration** (**Required**, [Time](#config-time)): Total duration of a playback cycle (each frame is displayed for an equal amount of time).
+- **duration** (**Required**, [Time](/guides/configuration-types#time)): Total duration of a playback cycle (each frame is displayed for an equal amount of time).
 - **repeat_count** (*Optional*, int16 or *forever*): The number of times playback should be repeated. Defaults to `forever`.
-- Some style options from [Style properties](#lvgl-styling) for the background rectangle that uses the typical background style properties and the image itself using the image style properties.
+- Some style options from [Style properties](/components/lvgl#lvgl-styling) for the background rectangle that uses the typical background style properties and the image itself using the image style properties.
 
 **Actions:**
 
-- `lvgl.animimg.start` [action](#actions-action) starts the animation playback if it was displayed with `auto_start` false or after `repeat_count` expired.
+- `lvgl.animimg.start` [action](/automations/actions#actions-action) starts the animation playback if it was displayed with `auto_start` false or after `repeat_count` expired.
   - **id** (**Required**): The ID or a list of IDs of animimg widgets which you want start.
 
-- `lvgl.animimg.stop` [action](#actions-action) stops the animation playback.
+- `lvgl.animimg.stop` [action](/automations/actions#actions-action) stops the animation playback.
   - **id** (**Required**): The ID or a list of IDs of animimg widgets which you want stop.
 
-- `lvgl.animimg.update` [action](#actions-action) can be used to change `repeat_count` and `duration`, just like the [lvgl.widget.update](#lvgl-automation-actions) action is used for the common styles, states or flags.
+- `lvgl.animimg.update` [action](/automations/actions#actions-action) can be used to change `repeat_count` and `duration`, just like the [lvgl.widget.update](#lvgl-automation-actions) action is used for the common styles, states or flags.
   - **id** (**Required**): The ID or a list of IDs of animimg widgets to be updated.
-  - **src** (*Optional*, list of [images](#display-image)): A list of IDs of existing image configurations to be loaded as frames of the animation.
+  - **src** (*Optional*, list of [images](/components/image#display-image)): A list of IDs of existing image configurations to be loaded as frames of the animation.
   - **auto_start** (*Optional*, boolean): Start the animation playback automatically after update. Defaults to `true`.
-  - **duration** (*Optional*, [Time](#config-time)): Total duration of a playback cycle (each frame is displayed for an equal amount of time). This will apply to the next playback loop.
+  - **duration** (*Optional*, [Time](/guides/configuration-types#time)): Total duration of a playback cycle (each frame is displayed for an equal amount of time). This will apply to the next playback loop.
   - **repeat_count** (*Optional*, int16 or *forever*): The number of times playback should be repeated. Defaults to `forever`.
-  - Some style options from [Style properties](#lvgl-styling) for the background rectangle that uses the typical background style properties and the image itself using the image style properties.
+  - Some style options from [Style properties](/components/lvgl#lvgl-styling) for the background rectangle that uses the typical background style properties and the image itself using the image style properties.
 
 **Triggers:**
 
@@ -262,7 +265,7 @@ on_...:
         duration: 300ms
 ```
 
-See [Battery charging animation](#lvgl-cookbook-animbatt) in the Cookbook for a more detailed example.
+See [Battery charging animation](/cookbook/lvgl#lvgl-cookbook-animbatt) in the Cookbook for a more detailed example.
 
 {{< anchor "lvgl-widget-arc" >}}
 
@@ -275,39 +278,45 @@ The arc consists of a background and a foreground arc. The indicator foreground 
 **Configuration variables:**
 
 - **adjustable** (*Optional*, boolean): Add a knob that the user can move to change the value. Defaults to `false`.
-- **arc_color** (*Optional*, [color](#lvgl-color)): Color used to draw the arc.
-- **arc_opa** (*Optional*, [opacity](#lvgl-opacity)): Opacity of the arc.
+- **arc_color** (*Optional*, [color](/components/lvgl#lvgl-color)): Color used to draw the arc.
+- **arc_opa** (*Optional*, [opacity](/components/lvgl#lvgl-opacity)): Opacity of the arc.
 - **arc_rounded** (*Optional*, boolean): Make the end points of the arcs rounded. `true` rounded, `false` perpendicular line ending.
 - **arc_width** (*Optional*, int16): Set the width of the arcs in pixels.
-- **change_rate** (*Optional*, int8): If the arc is pressed the current value will set with a limited speed according to the set change rate. The change rate is defined in degree/second. Defaults to `720`.
+- **change_rate** (*Optional*, uint16): Limits the speed at which the arc value changes when touched or dragged. The change rate is defined in degree/second. Defaults to `720`.
 - **end_angle** (*Optional*, 0-360): end angle of the arc background (see note). Defaults to `45`.
-- **indicator** (*Optional*, list): Settings for the indicator *part* to show the value. Supports a list of [styles](#lvgl-styling) and state-based styles to customize. Draws *another arc using the arc style* properties. Its padding values are interpreted relative to the background arc.
-- **knob** (*Optional*, list): Settings for the knob *part* to control the value. Supports a list of [styles](#lvgl-styling) and state-based styles to customize. Draws a handle on the end of the indicator using all background properties and padding values. With zero padding the knob size is the same as the indicator's width. Larger padding makes it larger, smaller padding makes it smaller.
-- **max_value** (*Optional*, int8): Maximum value of the indicator. Defaults to `100`.
-- **min_value** (*Optional*, int8): Minimum value of the indicator. Defaults to `0`.
+- **indicator** (*Optional*, list): Settings for the indicator *part* to show the value. Supports a list of [styles](/components/lvgl#lvgl-styling) and state-based styles to customize. Draws *another arc using the arc style* properties. Its padding values are interpreted relative to the background arc.
+- **knob** (*Optional*, list): Settings for the knob *part* to control the value. Supports a list of [styles](/components/lvgl#lvgl-styling) and state-based styles to customize. Draws a handle on the end of the indicator using all background properties and padding values. With zero padding the knob size is the same as the indicator's width. Larger padding makes it larger, smaller padding makes it smaller.
+- **max_value** (*Optional*, int16): Maximum value of the indicator. Defaults to `100`.
+- **min_value** (*Optional*, int16): Minimum value of the indicator. Defaults to `0`.
 - **mode** (*Optional*, string): `NORMAL`  : the indicator is drawn from the minimum value to the current. `REVERSE`  : the indicator is drawn counter-clockwise from the maximum value to the current. `SYMMETRICAL`  : the indicator is drawn from the middle point to the current value. Defaults to `NORMAL`.
 - **rotation** (*Optional*, 0-360): Offset to the 0 degree position. Defaults to `0.0`.
 - **start_angle** (*Optional*, 0-360): start angle of the arc background (see note). Defaults to `135`.
-- **value** (*Optional*, int8): Actual value of the indicator at start, in `0`  -`100` range. Defaults to `0`.
-- Any [Styling](#lvgl-styling) and state-based option to override styles inherited from parent. The arc's size and position will respect the padding style properties.
+- **value** (*Optional*, int16): Actual value of the indicator at start, in `0`  -`100` range. Defaults to `0`.
+- Any [Styling](/components/lvgl#lvgl-styling) and state-based option to override styles inherited from parent. The arc's size and position will respect the padding style properties.
 
 If the `adv_hittest` [flag](#lvgl-widget-flags) is enabled the arc can be clicked through in the middle. Clicks are recognized only on the ring of the background arc.
 
-{{< note >}}
-The zero degree position is at the middle right (3 o'clock) of the widget and the degrees increase in a clockwise direction from there. Angles are specified in the `0`  -`360` range.
+> [!NOTE]
+> The zero degree position is at the middle right (3 o'clock) of the widget and the degrees increase in a clockwise direction from there. Angles are specified in the `0`  -`360` range.
 
-{{< /note >}}
 **Actions:**
 
-- `lvgl.arc.update` [action](#actions-action) updates the widget styles and properties from the specific options above, just like the [lvgl.widget.update](#lvgl-automation-actions) action is used for the common styles, states or flags.
+- `lvgl.arc.update` [action](/automations/actions#actions-action) updates the widget styles and properties from the specific options above, just like the [lvgl.widget.update](#lvgl-automation-actions) action is used for the common styles, states or flags.
   - **id** (**Required**): The ID or a list of IDs of arc widgets to be updated.
-  - **value** (*Optional*, int8): New value of the indicator.
-  - Any [Styling](#lvgl-styling) and state-based option to override styles inherited from parent. The arc's size and position will respect the padding style properties.
+  - **change_rate** (*Optional*, uint16): New change rate in degree/second.
+  - **end_angle** (*Optional*, 0-360): New end angle of the arc background.
+  - **max_value** (*Optional*, int16): New maximum value of the indicator.
+  - **min_value** (*Optional*, int16): New minimum value of the indicator.
+  - **mode** (*Optional*, string): New indicator mode.
+  - **rotation** (*Optional*, 0-360): New offset to the 0 degree position.
+  - **start_angle** (*Optional*, 0-360): New start angle of the arc background.
+  - **value** (*Optional*, int16): New value of the indicator.
+  - Any [Styling](/components/lvgl#lvgl-styling) and state-based option to override styles inherited from parent. The arc's size and position will respect the padding style properties.
 
 **Triggers:**
 
-- `on_value` [trigger](#actions-trigger) is activated when the arc value changes, either by user interaction or programmatically. The new value is returned in the variable `x`.
-- `on_change` [trigger](#actions-trigger) is activated when the arc value is changed by user interaction. The new value is returned in the variable `x`.
+- `on_value` [trigger](/automations/actions#actions-trigger) is activated when the arc value changes, either by user interaction or programmatically. The new value is returned in the variable `x`.
+- `on_change` [trigger](/automations/actions#actions-trigger) is activated when the arc value is changed by user interaction. The new value is returned in the variable `x`.
 - [interaction](#lvgl-automation-triggers) LVGL event triggers which also return the value in `x`.
 
 **Example:**
@@ -341,13 +350,12 @@ on_...:
           args: [ 'x' ]
 ```
 
-{{< note >}}
-The `on_value` and `on_change` triggers are sent as the arc knob is dragged or changed with keys. The event is sent *continuously* while the arc knob is being dragged; this generally has a negative effect on performance. To mitigate this, consider using a [universal interaction trigger](#lvgl-automation-triggers) like `on_release`, to get the `x` variable once after the interaction has completed.
+> [!NOTE]
+> The `on_value` and `on_change` triggers are sent as the arc knob is dragged or changed with keys. The event is sent *continuously* while the arc knob is being dragged; this generally has a negative effect on performance. To mitigate this, consider using a [universal interaction trigger](#lvgl-automation-triggers) like `on_release`, to get the `x` variable once after the interaction has completed.
 
-{{< /note >}}
 The `arc` can be also integrated as a {{< docref "/components/number/lvgl" "Number" >}} or {{< docref "/components/sensor/lvgl" "Sensor" >}} component.
 
-See [Light brightness slider](#lvgl-cookbook-bright) and [Media player volume slider](#lvgl-cookbook-volume) for examples which demonstrate how to use a slider (or an arc) to control entities in Home Assistant.
+See [Light brightness slider](/cookbook/lvgl#lvgl-cookbook-bright) and [Media player volume slider](/cookbook/lvgl#lvgl-cookbook-volume) for examples which demonstrate how to use a slider (or an arc) to control entities in Home Assistant.
 
 {{< anchor "lvgl-widget-bar" >}}
 
@@ -364,7 +372,7 @@ Not only the end, but also the start value of the bar can be set, which changes 
 **Configuration variables:**
 
 - **animated** (*Optional*, boolean): Animate the indicator on boot to the starting value. Defaults to `true`.
-- **indicator** (*Optional*, int): Settings for the indicator *part* to show the value. Supports a list of [styles](#lvgl-styling) and state-based styles to customize, all the typical background properties.
+- **indicator** (*Optional*, int): Settings for the indicator *part* to show the value. Supports a list of [styles](/components/lvgl#lvgl-styling) and state-based styles to customize, all the typical background properties.
 - **max_value** (*Optional*, int): Maximum value of the indicator. Defaults to `100`.
 - **min_value** (*Optional*, int): Minimum value of the indicator. Defaults to `0`.
 - **mode** (*Optional*, string): The mode of the bar. Defaults to `NORMAL`.
@@ -373,14 +381,14 @@ Not only the end, but also the start value of the bar can be set, which changes 
   - `SYMMETRICAL`  : the indicator is symmetrically drawn from the middle point to the current value.
 - **start_value** (*Optional*, int): For `RANGE` mode, the start value of the indicator. Defaults to `0`.
 - **value** (*Optional*, int): Value for the indicator end, in `min_value`  -`max_value` range. Defaults to `0`.
-- Style options from [Style properties](#lvgl-styling). The background of the bar and it uses the typical background style properties. Adding padding will make the indicator smaller or larger.
+- Style options from [Style properties](/components/lvgl#lvgl-styling). The background of the bar and it uses the typical background style properties. Adding padding will make the indicator smaller or larger.
 
 **Actions:**
 
-- `lvgl.bar.update` [action](#actions-action) updates the widget styles and properties from the specific options above, just like the [lvgl.widget.update](#lvgl-automation-actions) action is used for the common styles, states or flags.
+- `lvgl.bar.update` [action](/automations/actions#actions-action) updates the widget styles and properties from the specific options above, just like the [lvgl.widget.update](#lvgl-automation-actions) action is used for the common styles, states or flags.
   - **id** (**Required**): The ID or a list of IDs of bar widgets to be updated.
   - Any of the bar options as listed above.
-  - Style options from [Style properties](#lvgl-styling). The background of the bar and it uses the typical background style properties. Adding padding will make the indicator smaller or larger.
+  - Style options from [Style properties](/components/lvgl#lvgl-styling). The background of the bar and it uses the typical background style properties. Adding padding will make the indicator smaller or larger.
 
 **Triggers:**
 
@@ -419,14 +427,14 @@ Simple push (momentary) or toggle (two-states) button.
 **Configuration variables:**
 
 - **checkable** (*Optional*, boolean): A significant [flag](#lvgl-widget-flags) to make a toggle button (which remains pressed in `checked` state). Defaults to `false`.
-- Style options from [Style properties](#lvgl-styling) for the background of the button. Uses the typical background style properties.
+- Style options from [Style properties](/components/lvgl#lvgl-styling) for the background of the button. Uses the typical background style properties.
 
 A notable state is `checked` (boolean) which can have different styles applied.
 
 **Triggers:**
 
-- `on_change` [trigger](#actions-trigger) is activated after clicking. If `checkable` is `true`, the boolean variable `x`, representing the checked state, may be used by lambdas within this trigger.
-- `on_value` [trigger](#actions-trigger) is activated when the checked value changes, either by user interaction or programmatically. The new value is returned in the variable `x`.
+- `on_change` [trigger](/automations/actions#actions-trigger) is activated after clicking. If `checkable` is `true`, the boolean variable `x`, representing the checked state, may be used by lambdas within this trigger.
+- `on_value` [trigger](/automations/actions#actions-trigger) is activated when the checked value changes, either by user interaction or programmatically. The new value is returned in the variable `x`.
 - [interaction](#lvgl-automation-triggers) LVGL event triggers.
 
 **Example:**
@@ -469,7 +477,7 @@ To have a button with a text label on it, add a child [`label`](#lvgl-widget-lab
 
 The `button` can be also integrated as a {{< docref "/components/binary_sensor/lvgl" "Binary Sensor" >}} or as a {{< docref "/components/switch/lvgl" "Switch" >}} component.
 
-See [Remote light button](#lvgl-cookbook-binent) for an example which demonstrates how to use a checkable button to act on a Home Assistant service.
+See [Remote light button](/cookbook/lvgl#lvgl-cookbook-binent) for an example which demonstrates how to use a checkable button to act on a Home Assistant service.
 
 {{< anchor "lvgl-widget-buttonmatrix" >}}
 
@@ -484,7 +492,7 @@ The button matrix widget is a lightweight way to display multiple buttons in row
 - **rows** (**Required**, list): A list for the button rows:
   - **buttons** (**Required**, list): A list of buttons in a row:
     - **id** (*Optional*): An ID for the button in the matrix.
-    - **key_code** (*Optional*, string): One character be sent as the key code to a [Key collector component](#key_collector) instead of `text` when the button is pressed.
+    - **key_code** (*Optional*, string): One character be sent as the key code to a [Key collector component](/components/key_collector#key_collector) instead of `text` when the button is pressed.
     - **selected** (*Optional*, boolean): Set the button as the most recently released or focused. Defaults to `false`.
     - **text** (*Optional*, [Text property](#text-property)): Text to display on the button.
     - **width** (*Optional*): Width relative to the other buttons in the same row. Must be a value between `1` and `15`  ; the default is `1` (for example, given a line with two buttons, one with `width: 1` and another one with `width: 2`, the first will be `33%` wide while the second will be `66%` wide).
@@ -501,15 +509,15 @@ The button matrix widget is a lightweight way to display multiple buttons in row
 
 - **items** (*Optional*, list): Settings for the items *part*, the buttons all use the text and typical background style properties except translations and transformations.
 - **one_checked** (*Optional*, boolean): Allow only one button to be checked at a time (aka. radio buttons). Defaults to `false`.
-- Style options from [Style properties](#lvgl-styling) for the background of the button matrix, uses the typical background style properties. `pad_row` and `pad_column` set the space between the buttons.
+- Style options from [Style properties](/components/lvgl#lvgl-styling) for the background of the button matrix, uses the typical background style properties. `pad_row` and `pad_column` set the space between the buttons.
 
 **Actions:**
 
-- `lvgl.buttonmatrix.update` [action](#actions-action) updates the item styles and properties specified in the specific `state`, `items` options.
+- `lvgl.buttonmatrix.update` [action](/automations/actions#actions-action) updates the item styles and properties specified in the specific `state`, `items` options.
   - **id** (**Required**): The ID or a list of IDs of buttonmatrix widgets to be updated.
   - Widget styles or properties from `state`, `items` options above, to be updated.
 
-- `lvgl.matrix.button.update` [action](#actions-action) updates the button styles and properties specified in the specific `control`, `width` and `selected` options.
+- `lvgl.matrix.button.update` [action](/automations/actions#actions-action) updates the button styles and properties specified in the specific `control`, `width` and `selected` options.
   - **id** (**Required**): The ID or a list of IDs of matrix buttons to be updated.
   - Widget styles or properties from `control`, `width` and `selected` options above, to be updated.
 
@@ -597,10 +605,8 @@ on_...:
         args: ["x", "id(button_2) == x"]
 ```
 
-{{< tip >}}
-The Button Matrix widget supports the [Key collector component](#key_collector) to collect the button presses as key press sequences for further automations. Check out [A numeric input keypad](#lvgl-cookbook-keypad) for an example.
-
-{{< /tip >}}
+> [!TIP]
+> The Button Matrix widget supports the [Key collector component](/components/key_collector#key_collector) to collect the button presses as key press sequences for further automations. Check out [A numeric input keypad](/cookbook/lvgl#lvgl-cookbook-keypad) for an example.
 
 ## `canvas`
 
@@ -620,13 +626,13 @@ Where a list of points is required, this can be provided in the form of a list o
 
 - `lvgl.canvas.fill` fills the entire canvas with a color:
   - **id** (**Required**): The ID of the canvas widget.
-  - **color** (**Required**, [color](#lvgl-color)): Fill color.
-  - **opa** (*Optional*, [opacity](#lvgl-opacity)): Opacity of the fill. Defaults to `COVER`.
+  - **color** (**Required**, [color](/components/lvgl#lvgl-color)): Fill color.
+  - **opa** (*Optional*, [opacity](/components/lvgl#lvgl-opacity)): Opacity of the fill. Defaults to `COVER`.
 
 - `lvgl.canvas.set_pixels` sets individual pixels:
   - **id** (**Required**): The ID of the canvas widget.
-  - **color** (**Required**, [color](#lvgl-color)): Pixel color.
-  - **opa** (*Optional*, [opacity](#lvgl-opacity)): Opacity of the pixels. Defaults to `COVER`.
+  - **color** (**Required**, [color](/components/lvgl#lvgl-color)): Pixel color.
+  - **opa** (*Optional*, [opacity](/components/lvgl#lvgl-opacity)): Opacity of the pixels. Defaults to `COVER`.
   - **points** (**Required**, list): List of points to set, each with:
     - **x** (**Required**, int): X coordinate.
     - **y** (**Required**, int): Y coordinate.
@@ -638,18 +644,18 @@ Where a list of points is required, this can be provided in the form of a list o
   - **width** (**Required**, int): Width in pixels
   - **height** (**Required**, int): Height in pixels
   - **radius** (*Optional*, int): Corner radius.
-  - **bg_color** (*Optional*, [color](#lvgl-color)): Background color.
-  - **bg_opa** (*Optional*, [opacity](#lvgl-opacity)): Background opacity. Defaults to `COVER`.
-  - **border_color** (*Optional*, [color](#lvgl-color)): Border color.
+  - **bg_color** (*Optional*, [color](/components/lvgl#lvgl-color)): Background color.
+  - **bg_opa** (*Optional*, [opacity](/components/lvgl#lvgl-opacity)): Background opacity. Defaults to `COVER`.
+  - **border_color** (*Optional*, [color](/components/lvgl#lvgl-color)): Border color.
   - **border_width** (*Optional*, int): Border width.
-  - **border_opa** (*Optional*, [opacity](#lvgl-opacity)): Border opacity. Defaults to `COVER`.
-  - **outline_color** (*Optional*, [color](#lvgl-color)): Outline color.
+  - **border_opa** (*Optional*, [opacity](/components/lvgl#lvgl-opacity)): Border opacity. Defaults to `COVER`.
+  - **outline_color** (*Optional*, [color](/components/lvgl#lvgl-color)): Outline color.
   - **outline_width** (*Optional*, int): Outline width.
-  - **outline_opa** (*Optional*, [opacity](#lvgl-opacity)): Opacity of the outline. Defaults to `COVER`.
+  - **outline_opa** (*Optional*, [opacity](/components/lvgl#lvgl-opacity)): Opacity of the outline. Defaults to `COVER`.
   - **outline_pad** (*Optional*, int): Padding of the outline. Defaults to `0`.
-  - **shadow_color** (*Optional*, [color](#lvgl-color)): Shadow color.
+  - **shadow_color** (*Optional*, [color](/components/lvgl#lvgl-color)): Shadow color.
   - **shadow_width** (*Optional*, int): Shadow width.
-  - **shadow_opa** (*Optional*, [opacity](#lvgl-opacity)): Opacity of the shadow. Defaults to `COVER`.
+  - **shadow_opa** (*Optional*, [opacity](/components/lvgl#lvgl-opacity)): Opacity of the shadow. Defaults to `COVER`.
   - **shadow_offset_x** (*Optional*, int): Shadow offset X.
   - **shadow_offset_y** (*Optional*, int): Shadow offset Y.
   - **shadow_spread** (*Optional*, int): Shadow spread.
@@ -666,8 +672,8 @@ Where a list of points is required, this can be provided in the form of a list o
   - **text** (**Required**, string): Text to draw.
   - **max_width** (**Required**, int): Max width in pixels.
   - **align** (*Optional*, enum): Alignment of the text relative to `x` and `max_width`. One of `LEFT`, `CENTER`, `RIGHT`, `AUTO`.
-  - **color** (*Optional*, [color](#lvgl-color)): Text color.
-  - **opa** (*Optional*, [opacity](#lvgl-opacity)): Text opacity. Defaults to `COVER`.
+  - **color** (*Optional*, [color](/components/lvgl#lvgl-color)): Text color.
+  - **opa** (*Optional*, [opacity](/components/lvgl#lvgl-opacity)): Text opacity. Defaults to `COVER`.
   - **font** (*Optional*, string): Font to use.
   - **decor** (*Optional*, list): Choose decorations for the text: `NONE`, `UNDERLINE`, `STRIKETHROUGH` (multiple can be specified as YAML list). Defaults to `NONE`.
   - **letter_space** (*Optional*, int16): Extra character spacing of the text. Defaults to `0`.
@@ -678,9 +684,9 @@ Where a list of points is required, this can be provided in the form of a list o
   - **points** (**Required**, list): List of points forming the line, each with:
     - **x** (**Required**, int): X coordinate.
     - **y** (**Required**, int): Y coordinate.
-  - **color** (*Optional*, [color](#lvgl-color)): Line color.
+  - **color** (*Optional*, [color](/components/lvgl#lvgl-color)): Line color.
   - **width** (*Optional*, int): Line width.
-  - **opa** (*Optional*, [opacity](#lvgl-opacity)): Line opacity. Defaults to `COVER`.
+  - **opa** (*Optional*, [opacity](/components/lvgl#lvgl-opacity)): Line opacity. Defaults to `COVER`.
   - **round_start** (*Optional*, boolean): Round the start of the line. Defaults to `false`.
   - **round_end** (*Optional*, boolean): Round the end of the line. Defaults to `false`.
 
@@ -691,9 +697,9 @@ Where a list of points is required, this can be provided in the form of a list o
   - **radius** (**Required**, int): Arc radius.
   - **start_angle** (**Required**, 0-360): Start angle.
   - **end_angle** (**Required**, 0-360): End angle.
-  - **color** (*Optional*, [color](#lvgl-color)): Arc color.
+  - **color** (*Optional*, [color](/components/lvgl#lvgl-color)): Arc color.
   - **width** (*Optional*, int): Arc line width.
-  - **opa** (*Optional*, [opacity](#lvgl-opacity)): Arc opacity. Defaults to `COVER`.
+  - **opa** (*Optional*, [opacity](/components/lvgl#lvgl-opacity)): Arc opacity. Defaults to `COVER`.
   - **rounded** (*Optional*, boolean): Round the start/end of the arc.
 
 - `lvgl.canvas.draw_image` draws an image:
@@ -749,20 +755,20 @@ The checkbox widget is made internally from a *tick box* and a label. When the c
 
 **Configuration variables:**
 
-- **indicator** (*Optional*, list): Settings for the indicator *part* to show the value. Supports a list of [styles](#lvgl-styling) and state-based styles to customize. The "tick box" is a square that uses all the typical background style properties. By default, its size is equal to the height of the main part's font. Padding properties make the tick box larger in the respective directions.
-- Style options from [Style properties](#lvgl-styling) for the background of the widget and it uses the text and all the typical background style properties. `pad_column` adjusts the spacing between the tick box and the label.
+- **indicator** (*Optional*, list): Settings for the indicator *part* to show the value. Supports a list of [styles](/components/lvgl#lvgl-styling) and state-based styles to customize. The "tick box" is a square that uses all the typical background style properties. By default, its size is equal to the height of the main part's font. Padding properties make the tick box larger in the respective directions.
+- Style options from [Style properties](/components/lvgl#lvgl-styling) for the background of the widget and it uses the text and all the typical background style properties. `pad_column` adjusts the spacing between the tick box and the label.
 
 **Actions:**
 
-- `lvgl.checkbox.update` [action](#actions-action) updates the widget styles and properties from the specific options above, just like the [lvgl.widget.update](#lvgl-automation-actions) action is used for the common styles, states or flags.
+- `lvgl.checkbox.update` [action](/automations/actions#actions-action) updates the widget styles and properties from the specific options above, just like the [lvgl.widget.update](#lvgl-automation-actions) action is used for the common styles, states or flags.
   - **id** (**Required**): The ID or a list of IDs of checkbox widgets to be updated.
   - **text** (*Optional*, [Text property](#text-property)): Text to display beside the checkbox.
-  - Style options from [Style properties](#lvgl-styling) for the background of the widget and it uses the text and all the typical background style properties. `pad_column` adjusts the spacing between the tick box and the label.
+  - Style options from [Style properties](/components/lvgl#lvgl-styling) for the background of the widget and it uses the text and all the typical background style properties. `pad_column` adjusts the spacing between the tick box and the label.
 
 **Triggers:**
 
-- `on_change` [trigger](#actions-trigger) is activated when interactively toggling the checkbox. The boolean variable `x`, representing the checkbox's state, may be used by lambdas within this trigger.
-- `on_value` [trigger](#actions-trigger) is activated when the checkbox is toggled, either by user interaction or programmatically. The new value is returned in the variable `x`.
+- `on_change` [trigger](/automations/actions#actions-trigger) is activated when interactively toggling the checkbox. The boolean variable `x`, representing the checkbox's state, may be used by lambdas within this trigger.
+- `on_value` [trigger](/automations/actions#actions-trigger) is activated when the checkbox is toggled, either by user interaction or programmatically. The new value is returned in the variable `x`.
 - [interaction](#lvgl-automation-triggers) LVGL event triggers which also return the value in `x`.
 
 **Example:**
@@ -794,11 +800,39 @@ on_...:
             args: [ x ]
 ```
 
-{{< note >}}
-In case you configure `default_font` in the main section to a custom font, the checkmark will not be shown correctly when the checkbox is in the checked state. See [Restore checkbox mark](#lvgl-cookbook-ckboxmark) for how to easily resolve this.
+> [!NOTE]
+> In case you configure `default_font` in the main section to a custom font, the checkmark will not be shown correctly when the checkbox is in the checked state. See [Restore checkbox mark](/cookbook/lvgl#lvgl-cookbook-ckboxmark) for how to easily resolve this.
 
-{{< /note >}}
 The `checkbox` can be also integrated as a {{< docref "/components/switch/lvgl" "Switch" >}} component.
+
+{{< anchor "lvgl-widget-container" >}}
+
+## `container`
+
+A `container` is an unstyled widget that is, as the name suggests, intended to act as a container for other widgets.
+It is functionally identical to an [`obj`](#obj) but has no styles applied to it, so without any styling or widgets
+it is invisible. It has a default width and height of 100%.
+
+**Configuration variables:**
+
+- Style options from [Style properties](/components/lvgl#lvgl-styling).
+
+**Triggers:**
+
+- [interaction](#lvgl-automation-triggers) LVGL event triggers.
+
+**Example:**
+
+```yaml
+# Example widget:
+- container:
+    x: 10
+    y: 10
+    width: 220
+    height: 300
+    widgets:
+      - ...
+```
 
 {{< anchor "lvgl-widget-dropdown" >}}
 
@@ -815,17 +849,17 @@ The Dropdown widget is built internally from a *button* part and a *list* part (
 **Configuration variables:**
 
 - **dir** (*Optional*, str): Where the list part of the dropdown gets created relative to the button part. `LEFT`, `RIGHT`, `BOTTOM`, `TOP`, defaults to `BOTTOM`.
-- **dropdown_list** (*Optional*, dict): Settings for the the list with items. Supports a list of [styles](#lvgl-styling) to customize. Notable are `text_line_space` and `pad_all` for spacing of list items, and `text_font` to separately change the font in the list. The parts `main`, `scrollbar` and `selected` may be customised. Note that changing styles on the selected item should be done in the `selected` part with `checked` state. `max_height` can be used to limit the height of the list.
+- **dropdown_list** (*Optional*, dict): Settings for the the list with items. Supports a list of [styles](/components/lvgl#lvgl-styling) to customize. Notable are `text_line_space` and `pad_all` for spacing of list items, and `text_font` to separately change the font in the list. The parts `main`, `scrollbar` and `selected` may be customised. Note that changing styles on the selected item should be done in the `selected` part with `checked` state. `max_height` can be used to limit the height of the list.
 - **indicator** (*Optional*, dict): Styles for the dropdown symbol.
 - **options** (**Required**, list): The list of available options in the drop-down.
 - **selected_index** (*Optional*, int8): The index of the item you wish to be selected.
 - **selected_text** (*Optional*, string): The text of the item you wish to be selected.
-- **symbol** (*Optional*, dict): A symbol (typically an chevron) is shown in dropdown list. If `dir` of the drop-down list is `LEFT` the symbol will be shown on the left, otherwise on the right. Choose a different [symbol](#lvgl-fonts) from those built-in or from your own customized font.
-- Style options from [Style properties](#lvgl-styling) for the background of the button. Uses the typical background properties and [`label`](#lvgl-widget-label) text properties for the text on it. `text_font` can be used to set the font of the button part, including the symbol.
+- **symbol** (*Optional*, dict): A symbol (typically an chevron) is shown in dropdown list. If `dir` of the drop-down list is `LEFT` the symbol will be shown on the left, otherwise on the right. Choose a different [symbol](/components/lvgl#lvgl-fonts) from those built-in or from your own customized font.
+- Style options from [Style properties](/components/lvgl#lvgl-styling) for the background of the button. Uses the typical background properties and [`label`](#lvgl-widget-label) text properties for the text on it. `text_font` can be used to set the font of the button part, including the symbol.
 
 **Actions:**
 
-- `lvgl.dropdown.update` [action](#actions-action) updates the widget styles and properties from the specific options above, just like the [lvgl.widget.update](#lvgl-automation-actions) action is used for the common styles, states or flags.
+- `lvgl.dropdown.update` [action](/automations/actions#actions-action) updates the widget styles and properties from the specific options above, just like the [lvgl.widget.update](#lvgl-automation-actions) action is used for the common styles, states or flags.
   - **id** (**Required**): The ID or a list of IDs of dropdown widgets to update.
   - **dir** (*Optional*, str): Where the list part of the dropdown gets created relative to the button part. `LEFT`, `RIGHT`, `BOTTOM`, `TOP`.
   - **options** (*Optional*, list): The list of available options in the drop-down.
@@ -833,9 +867,9 @@ The Dropdown widget is built internally from a *button* part and a *list* part (
 
 **Triggers:**
 
-- `on_change` [trigger](#actions-trigger) is activated only when the user selects an item from the list. The new selected index is returned in the variable `x`. The [interaction](#lvgl-automation-triggers) LVGL event triggers also apply, and they also return the selected index in `x`.
-- `on_value` [trigger](#actions-trigger) is activated the selection changes, either by user interaction or programmatically. The new value is returned in the variable `x`.
-- `on_cancel` [trigger](#actions-trigger) is also activated when you close the dropdown without selecting an item from the list. The currently selected index is returned in the variable `x`.
+- `on_change` [trigger](/automations/actions#actions-trigger) is activated only when the user selects an item from the list. The new selected index is returned in the variable `x`. The [interaction](#lvgl-automation-triggers) LVGL event triggers also apply, and they also return the selected index in `x`.
+- `on_value` [trigger](/automations/actions#actions-trigger) is activated the selection changes, either by user interaction or programmatically. The new value is returned in the variable `x`.
+- `on_cancel` [trigger](/automations/actions#actions-trigger) is also activated when you close the dropdown without selecting an item from the list. The currently selected index is returned in the variable `x`.
 - [interaction](#lvgl-automation-triggers) LVGL event triggers which also return the value in `x`.
 
 **Example:**
@@ -890,7 +924,7 @@ Images are the basic widgets used to display images.
 
 **Configuration variables:**
 
-- **src** (**Required**, [image](#display-image)): The ID of an existing image configuration.
+- **src** (**Required**, [image](/components/image#display-image)): The ID of an existing image configuration.
 - **angle** (*Optional*, 0-360): Rotation of the image. Defaults to `0.0`.
 - **antialias** (*Optional*): The quality of the angle or scale transformation. When anti-aliasing is enabled, the transformations are higher quality but slower. Defaults to `false`.
 - **mode** (*Optional*): Either `REAL` or `VIRTUAL`. With `VIRTUAL`, when the image is scaled or rotated, the real coordinates of the image object are not changed. The larger content simply overflows the object's boundaries. It also means the layouts are not affected the by the transformations. With `REAL`, if the width/height of the object is set to `SIZE_CONTENT`, the object's size will be set to the scaled and rotated size. If an explicit size is set, the overflowing content will be cropped. Defaults to `VIRTUAL`.
@@ -899,14 +933,14 @@ Images are the basic widgets used to display images.
 - **pivot_x** (*Optional*): Horizontal position of the pivot point of rotation, in pixels, relative to the top left corner of the image. Defaults to the center of the image. Must be specified along with `pivot_y`.
 - **pivot_y** (*Optional*): Vertical position of the pivot point of rotation, in pixels, relative to the top left corner of the image. Defaults to the center of the image. Must be specified along with `pivot_x`
 - **zoom** (*Optional*, 0.1-10): Zoom of the image.
-- **image_recolor** (*Optional*, [color](#lvgl-color)): Color to mix with every pixel of an image Note that `image_recolor_opa` defaults to TRANSP, so it must also be set.
-- **image_recolor_opa** (*Optional*, [opacity](#lvgl-opacity)): Opacity of the image recoloring.
+- **image_recolor** (*Optional*, [color](/components/lvgl#lvgl-color)): Color to mix with every pixel of an image Note that `image_recolor_opa` defaults to TRANSP, so it must also be set.
+- **image_recolor_opa** (*Optional*, [opacity](/components/lvgl#lvgl-opacity)): Opacity of the image recoloring.
 
-- Some style options from [Style properties](#lvgl-styling) for the background rectangle that uses the typical background style properties and the image itself using the image style properties.
+- Some style options from [Style properties](/components/lvgl#lvgl-styling) for the background rectangle that uses the typical background style properties and the image itself using the image style properties.
 
 **Actions:**
 
-- `lvgl.image.update` [action](#actions-action) updates the widget styles and properties from the specific options above, just like the [lvgl.widget.update](#lvgl-automation-actions) action is used for the common styles, states or flags.
+- `lvgl.image.update` [action](/automations/actions#actions-action) updates the widget styles and properties from the specific options above, just like the [lvgl.widget.update](#lvgl-automation-actions) action is used for the common styles, states or flags.
   - **id** (**Required**): The ID or a list of IDs of image widgets to be updated.
   - All other configuration variables from above are optional and have the same function as previously described. Updating the `src` option changes the image at runtime.
 
@@ -933,14 +967,11 @@ on_...:
         src: cat_image_bowtie
 ```
 
-{{< note >}}
-Currently `RGB565` type images are supported, with transparency using the optional parameter `transparency` set. See [Images](#display-image) for how to load an image for rendering in ESPHome.
+> [!NOTE]
+> Currently `RGB565` type images are supported, with transparency using the optional parameter `transparency` set. See [Images](/components/image#display-image) for how to load an image for rendering in ESPHome.
+> [!TIP]
+> `offset_x` and `offset_y` can be useful when the widget size is set to be smaller than the image source size. A "running image" effect can be created by animating these values.
 
-{{< /note >}}
-{{< tip >}}
-`offset_x` and `offset_y` can be useful when the widget size is set to be smaller than the image source size. A "running image" effect can be created by animating these values.
-
-{{< /tip >}}
 {{< anchor "lvgl-widget-keyboard" >}}
 
 ## `keyboard`
@@ -962,15 +993,15 @@ For styling, the `keyboard` widget uses the same settings as [`buttonmatrix`](#l
 
 **Actions:**
 
-- `lvgl.keyboard.update` [action](#actions-action) updates the properties from the specific options above, plus any from [lvgl.widget.update](#lvgl-automation-actions).
+- `lvgl.keyboard.update` [action](/automations/actions#actions-action) updates the properties from the specific options above, plus any from [lvgl.widget.update](#lvgl-automation-actions).
   - **id** (**Required**): The ID or a list of IDs of keyboard widgets which you want to update.
   - **mode** (*Optional*, enum): Keyboard layout to use.
   - All other configuration variables from above are optional and have the same function as previously described.
 
 **Triggers:**
 
-- `on_ready` [trigger](#actions-trigger) is activated when the checkmark key is pressed.
-- `on_cancel` [trigger](#actions-trigger) is activated when the key containing the keyboard icon is pressed.
+- `on_ready` [trigger](/automations/actions#actions-trigger) is activated when the checkmark key is pressed.
+- `on_cancel` [trigger](/automations/actions#actions-trigger) is activated when the key containing the keyboard icon is pressed.
 
 **Example:**
 
@@ -1000,14 +1031,12 @@ on_focus:
         - logger.log: Keyboard cancelled
 ```
 
-{{< tip >}}
-The Keyboard widget supports the [Key collector component](#key_collector) to collect the button presses as key press sequences for further automations.
+> [!TIP]
+> The Keyboard widget supports the [Key collector component](/components/key_collector#key_collector) to collect the button presses as key press sequences for further automations.
 
-{{< /tip >}}
-{{< note >}}
-The Keyboard widget in ESPHome doesn't support popovers or custom layouts.
+> [!NOTE]
+> The Keyboard widget in ESPHome doesn't support popovers or custom layouts.
 
-{{< /note >}}
 {{< anchor "lvgl-widget-label" >}}
 
 ## `label`
@@ -1018,32 +1047,31 @@ A label is the basic widget type that is used to display text.
 
 **Configuration variables:**
 
-- **long_mode** (*Optional*, list): By default, the width and height of the label is set to `SIZE_CONTENT`. Therefore, the size of the label is automatically expanded to the text size. Otherwise, if the `width` or `height` are explicitly set (or set by [Layouts](#lvgl-layouts)), the lines wider than the label's width can be manipulated according to the long mode policies below. These policies can be applied if the height of the text is greater than the height of the label.
+- **long_mode** (*Optional*, list): By default, the width and height of the label is set to `SIZE_CONTENT`. Therefore, the size of the label is automatically expanded to the text size. Otherwise, if the `width` or `height` are explicitly set (or set by [Layouts](/components/lvgl/layouts#lvgl-layouts)), the lines wider than the label's width can be manipulated according to the long mode policies below. These policies can be applied if the height of the text is greater than the height of the label.
   - `WRAP`  : Wrap lines which are too long. If the height is `SIZE_CONTENT`, the label's height will be expanded, otherwise the text will be clipped (default).
   - `DOT`  : Replaces the last 3 characters from bottom right corner of the label with dots.
   - `SCROLL`  : If the text is wider than the label, scroll the text horizontally back and forth. If it's higher, scroll vertically. Text will scroll in only one direction; horizontal scrolling has higher precedence.
   - `SCROLL_CIRCULAR`  : If the text is wider than the label, continuously scroll the text horizontally. If it's higher, scroll vertically. Text will scroll in only one direction; horizontal scrolling has higher precedence.
   - `CLIP`  : Simply clip the parts of the text outside the label.
 - **recolor** (*Optional*, boolean): Enable recoloring of button text with `#`. This makes it possible to set the color of characters in the text individually by prefixing the text to be re-colored with a `#RRGGBB` hexadecimal color code followed by a *space*, and finally closed with a single hash `#` tag. For example: `Write a #FF0000 red# word`.
-- **scrollbar** (*Optional*, list): Settings for the indicator *part* to show the value. Supports a list of [styles](#lvgl-styling) and state-based styles to customize. The scroll bar that is shown when the text is larger than the widget's size.
+- **scrollbar** (*Optional*, list): Settings for the indicator *part* to show the value. Supports a list of [styles](/components/lvgl#lvgl-styling) and state-based styles to customize. The scroll bar that is shown when the text is larger than the widget's size.
 - **selected** (*Optional*, list): Settings for the the style of the selected text. Only `text_color` and `bg_color` style properties can be used.
 - **text_align** (*Optional*, enum): Alignment of the text in the widget - it doesn't align the object itself, only the lines inside the object. One of `LEFT`, `CENTER`, `RIGHT`, `AUTO`. Inherited from parent. Defaults to `AUTO`, which detects the text base direction and uses left or right alignment accordingly.
-- **text_color** (*Optional*, [color](#lvgl-color)): Color to render the text in. Inherited from parent. Defaults to `0` (black).
+- **text_color** (*Optional*, [color](/components/lvgl#lvgl-color)): Color to render the text in. Inherited from parent. Defaults to `0` (black).
 - **text_decor** (*Optional*, list): Choose decorations for the text: `NONE`, `UNDERLINE`, `STRIKETHROUGH` (multiple can be specified as YAML list). Inherited from parent. Defaults to `NONE`.
-- **text_font**: (*Optional*, [font](#lvgl-fonts)): The ID of the font used to render the text or symbol. Inherited from parent.
+- **text_font**: (*Optional*, [font](/components/lvgl#lvgl-fonts)): The ID of the font used to render the text or symbol. Inherited from parent.
 - **text_letter_space** (*Optional*, int16): Extra character spacing of the text. Inherited from parent. Defaults to `0`.
 - **text_line_space** (*Optional*, int16): Line spacing of the text. Inherited from parent. Defaults to `0`.
-- **text_opa** (*Optional*, [opacity](#lvgl-opacity)): Opacity of the text. Inherited from parent. Defaults to `COVER`.
+- **text_opa** (*Optional*, [opacity](/components/lvgl#lvgl-opacity)): Opacity of the text. Inherited from parent. Defaults to `COVER`.
 - **text** (*Optional*, [Text property](#text-property)): Text to display on the label.
-- Style options from [Style properties](#lvgl-styling). Uses all the typical background properties and the text properties. The padding values can be used to add space between the text and the background.
+- Style options from [Style properties](/components/lvgl#lvgl-styling). Uses all the typical background properties and the text properties. The padding values can be used to add space between the text and the background.
 
-{{< note >}}
-Newline escape sequences are handled automatically by the label widget. You can use `\n` to make a line break. For example: `"line1\nline2\n\nline4"`. For escape sequences like newline to be translated, *enclose the string in double quotes*.
+> [!NOTE]
+> Newline escape sequences are handled automatically by the label widget. You can use `\n` to make a line break. For example: `"line1\nline2\n\nline4"`. For escape sequences like newline to be translated, *enclose the string in double quotes*.
 
-{{< /note >}}
 **Actions:**
 
-- `lvgl.label.update` [action](#actions-action) updates the widget styles and properties from the specific options above, just like the [lvgl.widget.update](#lvgl-automation-actions) action is used for the common styles, states or flags.
+- `lvgl.label.update` [action](/automations/actions#actions-action) updates the widget styles and properties from the specific options above, just like the [lvgl.widget.update](#lvgl-automation-actions) action is used for the common styles, states or flags.
   - **id** (**Required**): The ID or a list of IDs of label widgets to be updated.
   - **text** (*Optional*, [Text property](#text-property)): New text to display on the label.
   - All other configuration variables from above are optional and have the same function as previously described.
@@ -1091,12 +1119,12 @@ The LED widgets are either circular or rectangular widgets whose brightness can 
 **Configuration variables:**
 
 - **brightness** (*Optional*, percentage): The brightness of the LED color, where `0%` corresponds to black, and `100%` corresponds to the full brightness of the color specified above.
-- **color** (*Optional*, [color](#lvgl-color)): Color for the background, border, and shadow of the widget.
-- Style options from [Style properties](#lvgl-styling), using all the typical background style properties.
+- **color** (*Optional*, [color](/components/lvgl#lvgl-color)): Color for the background, border, and shadow of the widget.
+- Style options from [Style properties](/components/lvgl#lvgl-styling), using all the typical background style properties.
 
 **Actions:**
 
-- `lvgl.led.update` [action](#actions-action) updates the widget styles and properties from the specific options above, just like the [lvgl.widget.update](#lvgl-automation-actions) action is used for the common styles, states or flags.
+- `lvgl.led.update` [action](/automations/actions#actions-action) updates the widget styles and properties from the specific options above, just like the [lvgl.widget.update](#lvgl-automation-actions) action is used for the common styles, states or flags.
   - **id** (**Required**): The ID or a list of IDs of led widgets to be updated.
   - All other configuration variables from above are optional and have the same function as previously described.
 
@@ -1124,11 +1152,10 @@ on_...:
 
 The `led` can be also integrated as {{< docref "/components/light/lvgl" "Light" >}} component.
 
-{{< note >}}
-If configured as a light component, `color` and `brightness` are overridden by the light at startup, according to its `restore_mode` setting.
+> [!NOTE]
+> If configured as a light component, `color` and `brightness` are overridden by the light at startup, according to its `restore_mode` setting.
 
-{{< /note >}}
-Check out [A numeric input keypad](#lvgl-cookbook-keypad) in the Cookbook for an example which demonstrates how to change the `led` styling properties from an automation.
+Check out [A numeric input keypad](/cookbook/lvgl#lvgl-cookbook-keypad) in the Cookbook for an example which demonstrates how to change the `led` styling properties from an automation.
 
 {{< anchor "lvgl-widget-line" >}}
 
@@ -1140,13 +1167,13 @@ The line widget is capable of drawing straight lines between a set of points.
 
 **Configuration variables:**
 
-- **line_color** (*Optional*, [color](#lvgl-color)): Color for the line.
+- **line_color** (*Optional*, [color](/components/lvgl#lvgl-color)): Color for the line.
 - **line_dash_gap** (*Optional*, int16): Set the width of the gap between the dashes in the line (in pixels).
 - **line_dash_width** (*Optional*, int16): Set the width of the dashes in the line (in pixels).
 - **line_rounded** (*Optional*, boolean): Make the end points of the line rounded. `true` rounded, `false` perpendicular line ending.
 - **line_width** (*Optional*, int16): Set the width of the line in pixels.
 - **points** (**Required**, list): A list of `x, y` integer pairs for point coordinates (origin from top left of parent)
-- Style options from [Style properties](#lvgl-styling), all the typical background properties and line style properties.
+- Style options from [Style properties](/components/lvgl#lvgl-styling), all the typical background properties and line style properties.
 
 By default, the Line widget width and height dimensions are set to `SIZE_CONTENT`. This means it will automatically set its size to fit all the points. If the size is set explicitly, parts of the line may not be visible.
 
@@ -1154,7 +1181,7 @@ The points list may be defined with constants in the form `x, y` or as a list of
 
 **Actions:**
 
-- `lvgl.line.update` [action](#actions-action) updates the points and any style properties.
+- `lvgl.line.update` [action](/automations/actions#actions-action) updates the points and any style properties.
   - **id** (**Required**): The ID or a list of IDs of lines to update.
   - **points** (**Required**): A point list as described above.
 
@@ -1189,29 +1216,29 @@ The meter widget can visualize data in very flexible ways. It can use arcs, need
   - **angle_range** (**Required**): The angle between start and end of the tick scale. Defaults to `270`.
   - **indicators** (**Required**, list): A list with indicators to be added to the scale. Multiple of each can be added. Their values are interpreted in the range of the scale:
     - **arc** (*Optional*): Add a background arc the scale:
-      - **color**: [Color](#lvgl-color) to draw the arc. Defaults to `0` (black).
+      - **color**: [Color](/components/lvgl#lvgl-color) to draw the arc. Defaults to `0` (black).
       - **end_value**: The value in the scale range to end drawing the arc to.
       - **r_mod**: Adjust the position of the arc from the scale radius with this amount (can be negative). Defaults to `0`.
       - **start_value**: The value in the scale range to start drawing the arc from.
       - **width**: Arc width in pixels. Defaults to `4`.
       - **opa**: Opacity of the arc. Defaults to 100%.
     - **image** (*Optional*): Add a rotating needle image to the scale:
-      - **id**: Manually specify the [ID](#config-id) used for updating the indicator value at runtime.
+      - **id**: Manually specify the [ID](/guides/configuration-types#id) used for updating the indicator value at runtime.
       - **pivot_x**: Horizontal position of the pivot point of rotation, in pixels, relative to the top left corner of the image.
       - **pivot_y**: Vertical position of the pivot point of rotation, in pixels, relative to the top left corner of the image.
       - **src**: The ID of an existing image configuration, representing a needle pointing to the right like `-o--->`.
       - **value**: The value in the scale range to show at start.
       - **opa**: Opacity of the image. Defaults to 100%.
     - **line** (*Optional*): Add a needle line to the scale. By default, the length of the line is the same as the scale's radius:
-      - **color**: [Color](#lvgl-color) for the needle line. Defaults to `0` (black).
-      - **id**: Manually specify the [ID](#config-id) used for updating the indicator value at runtime.
+      - **color**: [Color](/components/lvgl#lvgl-color) for the needle line. Defaults to `0` (black).
+      - **id**: Manually specify the [ID](/guides/configuration-types#id) used for updating the indicator value at runtime.
       - **r_mod**: Adjust the length of the needle from the scale radius with this amount (can be negative). Defaults to `0`.
       - **value**: The value in the scale range to show at start.
       - **width**: Needle line width in pixels. Defaults to `4`.
       - **opa**: Opacity of the needle. Defaults to 100%.
     - **tick_style** (*Optional*): Add tick style modifications:
-      - **color_end**: [Color](#lvgl-color) for the gradient end of the ticks.
-      - **color_start**: [Color](#lvgl-color) for the gradient start of the ticks.
+      - **color_end**: [Color](/components/lvgl#lvgl-color) for the gradient end of the ticks.
+      - **color_start**: [Color](/components/lvgl#lvgl-color) for the gradient start of the ticks.
       - **end_value**: The value in the scale range to modify the ticks to.
       - **local**: If `true` the ticks' color will be faded from `color_start` to `color_end` in the start and end values specified above. If `false`, `color_start` and `color_end` will be mapped to the entire scale range (and only a *slice* of that color gradient will be visible in the indicator's start and end value range). Defaults to `false`.
       - **start_value**: The value in the scale range to modify the ticks from.
@@ -1220,29 +1247,28 @@ The meter widget can visualize data in very flexible ways. It can use arcs, need
   - **range_to** (**Required**): The maximum value of the tick scale. Defaults to `100`.
   - **rotation** (*Optional*): The rotation angle offset of the tick scale.
   - **ticks** (**Required**, list): A scale can have minor and major ticks and labels on the major ticks. To add the minor ticks:
-    - **color** (*Optional*, [color](#lvgl-color)): Color to draw the ticks. Required if `count` is greater than `0`. Defaults to `0x808080`.
+    - **color** (*Optional*, [color](/components/lvgl#lvgl-color)): Color to draw the ticks. Required if `count` is greater than `0`. Defaults to `0x808080`.
     - **count** (**Required**): How many ticks to be on the scale. Defaults to `12`.
     - **length** (*Optional*): Tick line length in pixels. Required if `count` is greater than `0`. Defaults to `10`.
     - **width** (*Optional*): Tick line width in pixels. Required if `count` is greater than `0`. Defaults to `2`.
     - **major** (*Optional*, list): If you want major ticks and value labels displayed:
-      - **color**: [Color](#lvgl-color) to draw the major ticks. Defaults to `0` (black).
+      - **color**: [Color](/components/lvgl#lvgl-color) to draw the major ticks. Defaults to `0` (black).
       - **label_gap**: Label distance from the ticks with text proportional to the values of the tick line. Defaults to `4`.
       - **length**: Tick line length in pixels or percentage. Defaults to `15%`.
       - **stride**: How many minor ticks to skip when adding major ticks. Defaults to `3`.
       - **width**: Tick line width in pixels. Defaults to `5`.
-    - Style options from [Style properties](#lvgl-styling) for the tick *lines* and *labels* using the [`line`](#lvgl-widget-line) and [`label`](#lvgl-widget-label) text style properties.
-- Style options from [Style properties](#lvgl-styling) for the background of the meter, using the typical background properties.
+    - Style options from [Style properties](/components/lvgl#lvgl-styling) for the tick *lines* and *labels* using the [`line`](#lvgl-widget-line) and [`label`](#lvgl-widget-label) text style properties.
+- Style options from [Style properties](/components/lvgl#lvgl-styling) for the background of the meter, using the typical background properties.
 - **ticks** (*Optional*, dict): Styling options for the ticks *part*, which will be applied to the tick lines and labels using standard *line* and *label* styles.
-- **indicator** (*Optional*, dict): Styling options for the indicator *part*, which will be applied to the needle line or image using standard *line* and *image* styles.
+- **indicator** (*Optional*, dict): Styling options for the indicator *part*, which will be applied to the needle line or image using standard *line* and *image* styles. Background properties applied here will style the pivot (the dot in the middle of the meter) for example to hide the pivot use `bg_opa: transp` in the `indicator` style.
 - **items** (*Optional*, dict): Settings for the items *part*, which will be applied to arcs.
 
-{{< note >}}
-The zero degree position is at the middle right (3 o'clock) of the widget and the degrees increase in a clockwise direction from there. Angles are specified in the `0`  -`360` range.
+> [!NOTE]
+> The zero degree position is at the middle right (3 o'clock) of the widget and the degrees increase in a clockwise direction from there. Angles are specified in the `0`  -`360` range.
 
-{{< /note >}}
 **Actions:**
 
-- `lvgl.indicator.update` [action](#actions-action) updates indicator options as below. [lvgl.widget.update](#lvgl-automation-actions) action can be used for the common styles, states or flags of the meter widget.
+- `lvgl.indicator.update` [action](/automations/actions#actions-action) updates indicator options as below. [lvgl.widget.update](#lvgl-automation-actions) action can be used for the common styles, states or flags of the meter widget.
   - **id** (**Required**): The ID or a list of IDs of indicators to update.
   - **end_value** (*Optional*): The value in the scale range to end drawing the arc to.
   - **start_value** (*Optional*): The value in the scale range to start drawing the arc from.
@@ -1290,7 +1316,7 @@ on_...:
         value: 3
 ```
 
-See [Semicircle gauge](#lvgl-cookbook-gauge), [Thermometer](#lvgl-cookbook-thermometer) and [An analog clock](#lvgl-cookbook-clock) in the Cookbook for examples which demonstrate how to effectively use this widget.
+See [Semicircle gauge](/cookbook/lvgl#lvgl-cookbook-gauge), [Thermometer](/cookbook/lvgl#lvgl-cookbook-thermometer) and [An analog clock](/cookbook/lvgl#lvgl-cookbook-clock) in the Cookbook for examples which demonstrate how to effectively use this widget.
 
 {{< anchor "lvgl-widget-msgbox" >}}
 
@@ -1308,7 +1334,7 @@ The text will be broken into multiple lines automatically and the height will be
   - **title** (**Required**, string): A string to display at the top of the message box.
   - **body** (*Optional*, dict): The content of the body of the message box:
     - **text** (*Optional*, [Text property](#text-property)): The text to display in the body of the message box.
-    - Style options from [Style properties](#lvgl-styling). Uses all the typical background properties and the text properties.
+    - Style options from [Style properties](/components/lvgl#lvgl-styling). Uses all the typical background properties and the text properties.
   - **buttons** (*Optional*, list): A list of buttons to show at the bottom of the message box:
     - **text** (*Optional*, [Text property](#text-property)): Text to display on the button.
     - See [`buttonmatrix`](#lvgl-widget-buttonmatrix) for other options for the buttons.
@@ -1342,10 +1368,9 @@ lvgl:
               - lvgl.widget.hide: message_box
 ```
 
-{{< tip >}}
-You can create your own more complex dialogs with a full-screen sized, half-opaque `obj` with any child widgets on it, and the `hidden` flag set to `true` by default. For non-modal dialogs, simply set the `clickable` flag to `false` on it.
+> [!TIP]
+> You can create your own more complex dialogs with a full-screen sized, half-opaque `obj` with any child widgets on it, and the `hidden` flag set to `true` by default. For non-modal dialogs, simply set the `clickable` flag to `false` on it.
 
-{{< /tip >}}
 {{< anchor "lvgl-widget-obj" >}}
 
 ## `obj`
@@ -1354,11 +1379,13 @@ The base object is just a simple, empty widget. By default, it's nothing more th
 
 {{< img src="lvgl_baseobj.png" alt="Image" class="align-center" >}}
 
-You can use it as a parent container for other widgets. By default, it catches touches.
+You can use it as a parent container for other widgets. By default, it catches touches. Since `obj` has default
+styling applied, you may choose to use [`container`](#container) instead if the role is simply to group other
+widgets.
 
 **Configuration variables:**
 
-- Style options from [Style properties](#lvgl-styling).
+- Style options from [Style properties](/components/lvgl#lvgl-styling).
 
 **Triggers:**
 
@@ -1387,16 +1414,16 @@ Use this widget to generate and display a QR-code containing a string at run tim
 
 - **text** (*Optional*, [Text property](#text-property)): Text to be encoded in the QR.
 - **size** (**Required**, int16): Set the desired size of the QR-code (in pixels). QR-codes with less data are smaller, but they scaled by an integer number to best fit to the given size.
-- **light_color** (*Optional*, [color](#lvgl-color)): Color for the light areas of the QR. Defaults to white.
-- **dark_color** (*Optional*, [color](#lvgl-color)): Color for the dark areas of the QR. Defaults to black.
-- Style options from [Style properties](#lvgl-styling).
+- **light_color** (*Optional*, [color](/components/lvgl#lvgl-color)): Color for the light areas of the QR. Defaults to white.
+- **dark_color** (*Optional*, [color](/components/lvgl#lvgl-color)): Color for the dark areas of the QR. Defaults to black.
+- Style options from [Style properties](/components/lvgl#lvgl-styling).
 
 **Actions:**
 
-- `lvgl.qrcode.update` [action](#actions-action) updates the widget's `text` property to display a new QR-code.
+- `lvgl.qrcode.update` [action](/automations/actions#actions-action) updates the widget's `text` property to display a new QR-code.
   - **id** (**Required**): The ID of the qrcode widget to be updated.
   - **text** (*Optional*, [Text property](#text-property)): New text to be encoded in the QR.
-  - Style options from [Style properties](#lvgl-styling).
+  - Style options from [Style properties](/components/lvgl#lvgl-styling).
 
 **Triggers:**
 
@@ -1431,26 +1458,26 @@ Roller allows you to simply select one option from a list by scrolling.
 
 **Configuration variables:**
 
-- **anim_time** (*Optional*, [Time](#config-time)): When the Roller is scrolled and doesn't stop exactly on an option it will scroll to the nearest valid option automatically in this amount of time.
+- **anim_time** (*Optional*, [Time](/guides/configuration-types#time)): When the Roller is scrolled and doesn't stop exactly on an option it will scroll to the nearest valid option automatically in this amount of time.
 - **mode** (*Optional*, enum): Option to make the roller circular. `NORMAL` or `INFINITE`, defaults to `NORMAL`.
 - **options** (**Required**, list): The list of available options in the roller.
 - **selected_index** (*Optional*, int8): The index of the item you wish to be selected.
 - **selected_text** (*Optional*, string): The text of the item you wish to be selected.
-- **selected** (*Optional*, list): Settings for the selected *part* to show the value. Supports a list of [styles](#lvgl-styling) and state-based styles to customize. The selected option in the middle. Besides the typical background properties it uses the [`label`](#lvgl-widget-label) text style properties to change the appearance of the text in the selected area.
+- **selected** (*Optional*, list): Settings for the selected *part* to show the value. Supports a list of [styles](/components/lvgl#lvgl-styling) and state-based styles to customize. The selected option in the middle. Besides the typical background properties it uses the [`label`](#lvgl-widget-label) text style properties to change the appearance of the text in the selected area.
 - **visible_row_count** (*Optional*, int8): The number of visible rows.
-- Style options from [Style properties](#lvgl-styling). The background of the roller uses all the typical background properties and [`label`](#lvgl-widget-label) style properties. `text_line_space` adjusts the space between the options.
+- Style options from [Style properties](/components/lvgl#lvgl-styling). The background of the roller uses all the typical background properties and [`label`](#lvgl-widget-label) style properties. `text_line_space` adjusts the space between the options.
 
 **Actions:**
 
-- `lvgl.roller.update` [action](#actions-action) updates the widget styles and properties from the specific options above, just like the [lvgl.widget.update](#lvgl-automation-actions) action is used for the common styles, states or flags.
+- `lvgl.roller.update` [action](/automations/actions#actions-action) updates the widget styles and properties from the specific options above, just like the [lvgl.widget.update](#lvgl-automation-actions) action is used for the common styles, states or flags.
 - **id** (**Required**): The ID or a list of IDs of roller widgets to be updated.
 - **animated** (*Optional*, boolean): Animate the indicator to the new selected value. Defaults to `true`.
 - All the other roller options as listed above.
 
 **Triggers:**
 
-- `on_change` [trigger](#actions-trigger) is activated only when the user selects an item from the list. The new selected index is returned in the variable `x`. The [interaction](#lvgl-automation-triggers) LVGL event triggers also apply, and they also return the selected index in `x`.
-- `on_value` [trigger](#actions-trigger) is activated the selection changes, either by user interaction or programmatically. The new value is returned in the variable `x`.
+- `on_change` [trigger](/automations/actions#actions-trigger) is activated only when the user selects an item from the list. The new selected index is returned in the variable `x`. The [interaction](#lvgl-automation-triggers) LVGL event triggers also apply, and they also return the selected index in `x`.
+- `on_value` [trigger](/automations/actions#actions-trigger) is activated the selection changes, either by user interaction or programmatically. The new value is returned in the variable `x`.
 - [interaction](#lvgl-automation-triggers) LVGL event triggers which also return the selected index in `x`.
 
 **Example:**
@@ -1495,29 +1522,29 @@ The slider widget looks like a bar supplemented with a knob. The user can drag t
 
 **Configuration variables:**
 
-- **anim_time** (*Optional*, [Time](#config-time)): Sets the animation time if the value is set with `animated: true`.
+- **anim_time** (*Optional*, [Time](/guides/configuration-types#time)): Sets the animation time if the value is set with `animated: true`.
 - **animated** (*Optional*, boolean): Animate the indicator on boot to the starting value. Defaults to `true`.
-- **indicator** (*Optional*, list): Settings for the indicator *part* to show the value. Supports a list of [styles](#lvgl-styling) and state-based styles to customize. The indicator shows the current state of the slider. Also uses all the typical background style properties.
-- **knob** (*Optional*, list): Settings for the knob *part* to control the value. Supports a list of [styles](#lvgl-styling) and state-based styles to customize. A rectangle (or circle) is drawn at the current value. Also uses all the typical background properties to describe the knob. By default, the knob is square (with an optional corner radius) with side length equal to the smaller side of the slider. The knob can be made larger with the padding values. Padding values can be asymmetric.
+- **indicator** (*Optional*, list): Settings for the indicator *part* to show the value. Supports a list of [styles](/components/lvgl#lvgl-styling) and state-based styles to customize. The indicator shows the current state of the slider. Also uses all the typical background style properties.
+- **knob** (*Optional*, list): Settings for the knob *part* to control the value. Supports a list of [styles](/components/lvgl#lvgl-styling) and state-based styles to customize. A rectangle (or circle) is drawn at the current value. Also uses all the typical background properties to describe the knob. By default, the knob is square (with an optional corner radius) with side length equal to the smaller side of the slider. The knob can be made larger with the padding values. Padding values can be asymmetric.
 - **max_value** (*Optional*, int8): Maximum value of the indicator. Defaults to `100`.
 - **min_value** (*Optional*, int8): Minimum value of the indicator. Defaults to `0`.
 - **value** (*Optional*, int8): Actual value of the indicator at start, in `min_value`  -`max_value` range. Defaults to `0`.
-- Any [Styling](#lvgl-styling) and state-based option for the background of the slider. Uses all the typical background style properties. Padding makes the indicator smaller in the respective direction.
+- Any [Styling](/components/lvgl#lvgl-styling) and state-based option for the background of the slider. Uses all the typical background style properties. Padding makes the indicator smaller in the respective direction.
 
 Normally, the slider can be adjusted either by dragging the knob, or by clicking on the slider bar. In the latter case the knob moves to the point clicked and slider value changes accordingly. In some cases it is desirable to set the slider to react on dragging the knob only. This feature is enabled by enabling the `adv_hittest` flag.
 
 **Actions:**
 
-- `lvgl.slider.update` [action](#actions-action) updates the widget styles and properties from the specific options above, just like the [lvgl.widget.update](#lvgl-automation-actions) action is used for the common styles, states or flags.
+- `lvgl.slider.update` [action](/automations/actions#actions-action) updates the widget styles and properties from the specific options above, just like the [lvgl.widget.update](#lvgl-automation-actions) action is used for the common styles, states or flags.
   - **id** (**Required**): The ID or a list of IDs of slider widgets to be updated.
   - **animated** (*Optional*, boolean): Animate the indicator to the new value. Defaults to `true`.
   - **value** (*Optional*, int8): New value of the indicator.
-  - Any [Styling](#lvgl-styling) and state-based option for the background of the slider. Uses all the typical background style properties. Padding makes the indicator smaller in the respective direction.
+  - Any [Styling](/components/lvgl#lvgl-styling) and state-based option for the background of the slider. Uses all the typical background style properties. Padding makes the indicator smaller in the respective direction.
 
 **Triggers:**
 
-- `on_value` [trigger](#actions-trigger) is activated when the slider value changes, either by user interaction or programmatically. The new value is returned in the variable `x`.
-- `on_change` [trigger](#actions-trigger) is activated when the slider value is changed by user interaction. The new value is returned in the variable `x`.
+- `on_value` [trigger](/automations/actions#actions-trigger) is activated when the slider value changes, either by user interaction or programmatically. The new value is returned in the variable `x`.
+- `on_change` [trigger](/automations/actions#actions-trigger) is activated when the slider value is changed by user interaction. The new value is returned in the variable `x`.
 - [interaction](#lvgl-automation-triggers) LVGL event triggers which also return the value in `x`.
 
 **Example:**
@@ -1551,15 +1578,13 @@ on_...:
           args: [ 'x' ]
 ```
 
-{{< note >}}
-The `on_value` trigger is sent as the slider is dragged or changed with keys. The event is sent *continuously* while the slider is being dragged; this generally has a negative effect on performance. To mitigate this, consider using a [universal interaction trigger](#lvgl-automation-triggers) like `on_release`, to get the `x` variable once after the interaction has completed.
+> [!NOTE]
+> The `on_value` trigger is sent as the slider is dragged or changed with keys. The event is sent *continuously* while the slider is being dragged; this generally has a negative effect on performance. To mitigate this, consider using a [universal interaction trigger](#lvgl-automation-triggers) like `on_release`, to get the `x` variable once after the interaction has completed.
 
-{{< /note >}}
 The `slider` can be also integrated as {{< docref "/components/number/lvgl" "Number" >}} or {{< docref "/components/sensor/lvgl" "Sensor" >}} component.
 
-See [Light brightness slider](#lvgl-cookbook-bright) and [Media player volume slider](#lvgl-cookbook-volume) for examples which demonstrate how to use a slider to control entities in Home Assistant.
+See [Light brightness slider](/cookbook/lvgl#lvgl-cookbook-bright) and [Media player volume slider](/cookbook/lvgl#lvgl-cookbook-volume) for examples which demonstrate how to use a slider to control entities in Home Assistant.
 
-{{< anchor "lvgl-widget-canvas" >}}
 {{< anchor "lvgl-widget-spinbox" >}}
 
 ## `spinbox`
@@ -1570,7 +1595,7 @@ The spinbox contains a numeric value (as text) which can be increased or decreas
 
 **Configuration variables:**
 
-- **anim_time** (*Optional*, [Time](#config-time)): Sets the cursor's blink time.
+- **anim_time** (*Optional*, [Time](/guides/configuration-types#time)): Sets the cursor's blink time.
 - **decimal_places** (*Optional*, 0..6): The number of digits after the decimal point. If `0`, no decimal point is displayed. Defaults to `0`.
 - **digits** (*Optional*, 1..10): The number of digits (excluding the decimal separator and the sign characters). Defaults to `4`.
 - **range_from** (*Optional*, float): The minimum value allowed to set the spinbox to. Defaults to `0`.
@@ -1581,25 +1606,24 @@ The spinbox contains a numeric value (as text) which can be increased or decreas
   be incremented or decremented by one when `increment` or `decrement` actions are called.
 - **value** (*Optional*, float): Actual value to be shown by the spinbox at start. Defaults to `0`.
 
-{{< note >}}
-The sign character will only be shown if the set range contains negatives.
-{{< /note >}}
+> [!NOTE]
+> The sign character will only be shown if the set range contains negatives.
 
 **Actions:**
 
-- `lvgl.spinbox.update` [action](#actions-action) updates the widget styles and properties from the specific options above, just like the [lvgl.widget.update](#lvgl-automation-actions) action is used for the common styles, states or flags.
+- `lvgl.spinbox.update` [action](/automations/actions#actions-action) updates the widget styles and properties from the specific options above, just like the [lvgl.widget.update](#lvgl-automation-actions) action is used for the common styles, states or flags.
   - **id** (**Required**): The ID or a list of IDs of spinbox widgets to be updated.
   - **value** (**Required**, float): New value of the spinbox.
 
-- `lvgl.spinbox.increment` [action](#actions-action) increases the value by one `step` configured above.
+- `lvgl.spinbox.increment` [action](/automations/actions#actions-action) increases the value by one `step` configured above.
   - **id** (**Required**): The ID of the spinbox widget which you want to increment.
 
-- `lvgl.spinbox.decrement` [action](#actions-action) decreases the value by one `step` configured above.
+- `lvgl.spinbox.decrement` [action](/automations/actions#actions-action) decreases the value by one `step` configured above.
   - **id** (**Required**): The ID of the spinbox widget which you want to decrement.
 
 **Triggers:**
 
-- `on_value` [trigger](#actions-trigger) is activated when the spinbox value changes, either by user interaction or programmatically. The new value is returned in the variable `x`.
+- `on_value` [trigger](/automations/actions#actions-trigger) is activated when the spinbox value changes, either by user interaction or programmatically. The new value is returned in the variable `x`.
 - [interaction](#lvgl-automation-triggers) LVGL event triggers which also return the value in `x`.
 
 **Example:**
@@ -1611,7 +1635,7 @@ The sign character will only be shown if the set range contains negatives.
     text_align: center
     range_from: -10
     range_to: 40
-    step: 0.5
+    selected_digit: 2
     digits: 3
     decimal_places: 1
 
@@ -1637,7 +1661,7 @@ on_...:
 
 The `spinbox` can be also integrated as a {{< docref "/components/number/lvgl" "Number" >}} or {{< docref "/components/sensor/lvgl" "Sensor" >}} component.
 
-See [Climate control](#lvgl-cookbook-climate) for an example which demonstrates how to implement a thermostat control using the spinbox.
+See [Climate control](/cookbook/lvgl#lvgl-cookbook-climate) for an example which demonstrates how to implement a thermostat control using the spinbox.
 
 {{< anchor "lvgl-widget-spinner" >}}
 
@@ -1649,20 +1673,20 @@ The Spinner widget is a spinning arc over a ring.
 
 **Configuration variables:**
 
-- **arc_color** (*Optional*, [color](#lvgl-color)): Color to draw the arcs.
+- **arc_color** (*Optional*, [color](/components/lvgl#lvgl-color)): Color to draw the arcs.
 - **arc_length** (**Required**, 0-360): Length of the spinning arc in degrees.
-- **arc_opa** (*Optional*, [opacity](#lvgl-opacity)): Opacity of the arc.
+- **arc_opa** (*Optional*, [opacity](/components/lvgl#lvgl-opacity)): Opacity of the arc.
 - **arc_rounded** (*Optional*, boolean): Make the end points of the arcs rounded. `true` rounded, `false` perpendicular line ending.
 - **arc_width** (*Optional*, int16): Set the width of the arcs in pixels.
-- **indicator** (*Optional*, list): Settings for the indicator *part* to show the value. Supports a list of [styles](#lvgl-styling) and state-based styles to customize. Draws *another arc using the arc style* properties. Its padding values are interpreted relative to the background arc.
-- **spin_time** (**Required**, [Time](#config-time)): Duration of one cycle of the spin.
-- Style options from [Style properties](#lvgl-styling).
+- **indicator** (*Optional*, list): Settings for the indicator *part* to show the value. Supports a list of [styles](/components/lvgl#lvgl-styling) and state-based styles to customize. Draws *another arc using the arc style* properties. Its padding values are interpreted relative to the background arc.
+- **spin_time** (**Required**, [Time](/guides/configuration-types#time)): Duration of one cycle of the spin.
+- Style options from [Style properties](/components/lvgl#lvgl-styling).
 
 **Actions:**
 
-- `lvgl.spinner.update` [action](#actions-action), just like the [lvgl.widget.update](#lvgl-automation-actions) action is used for the common styles, states or flags.
+- `lvgl.spinner.update` [action](/automations/actions#actions-action), just like the [lvgl.widget.update](#lvgl-automation-actions) action is used for the common styles, states or flags.
   - **id** (**Required**): The ID or a list of IDs of spinner widgets to be updated.
-  - Style options from [Style properties](#lvgl-styling).
+  - Style options from [Style properties](/components/lvgl#lvgl-styling).
 
 **Triggers:**
 
@@ -1698,14 +1722,14 @@ The switch looks like a little slider and can be used to turn something on and o
 
 **Configuration variables:**
 
-- **indicator** (*Optional*, list): Settings for the indicator *part*, the foreground area underneath the knob shown when the switch is in `checked` state. Supports a list of [styles](#lvgl-styling) and state-based styles to customize.
-- **knob** (*Optional*, list): Settings for the knob *part* to control the value. Supports a list of [styles](#lvgl-styling) and state-based styles to customize.
-- Style options from [Style properties](#lvgl-styling).
+- **indicator** (*Optional*, list): Settings for the indicator *part*, the foreground area underneath the knob shown when the switch is in `checked` state. Supports a list of [styles](/components/lvgl#lvgl-styling) and state-based styles to customize.
+- **knob** (*Optional*, list): Settings for the knob *part* to control the value. Supports a list of [styles](/components/lvgl#lvgl-styling) and state-based styles to customize.
+- Style options from [Style properties](/components/lvgl#lvgl-styling).
 
 **Triggers:**
 
-- `on_value` [trigger](#actions-trigger) is activated when the switch value changes, either by user interaction or programmatically. The new value is returned in the variable `x`.
-- `on_change` [trigger](#actions-trigger) is activated when the switch value is changed by user interaction. The new value is returned in the variable `x`.
+- `on_value` [trigger](/automations/actions#actions-trigger) is activated when the switch value changes, either by user interaction or programmatically. The new value is returned in the variable `x`.
+- `on_change` [trigger](/automations/actions#actions-trigger) is activated when the switch value is changed by user interaction. The new value is returned in the variable `x`.
 - [interaction](#lvgl-automation-triggers) LVGL event triggers which also return the value in `x`.
 
 **Example:**
@@ -1729,7 +1753,7 @@ The switch looks like a little slider and can be used to turn something on and o
 
 The `switch` can be also integrated as a {{< docref "/components/switch/lvgl" "Switch" >}} component.
 
-See [Local light switch](#lvgl-cookbook-relay) for an example which demonstrates how to use a switch to act on a local component.
+See [Local light switch](/cookbook/lvgl#lvgl-cookbook-relay) for an example which demonstrates how to use a switch to act on a local component.
 
 {{< anchor "lvgl-widget-tabview" >}}
 
@@ -1739,7 +1763,7 @@ The tab view object can be used to organize content in tabs. The tab buttons are
 
 {{< img src="lvgl_tabview.png" alt="Image" class="align-center" >}}
 
-The tabs are indexed (zero-based) in the order they appear in the configuration file. A new tab can be selected either by clicking on a tab button, by sliding horizontally on the content or via the `lvgl.tabview.select` [action](#actions-action), specifying the tab's index.
+The tabs are indexed (zero-based) in the order they appear in the configuration file. A new tab can be selected either by clicking on a tab button, by sliding horizontally on the content or via the `lvgl.tabview.select` [action](/automations/actions#actions-action), specifying the tab's index.
 
 **Configuration variables:**
 
@@ -1755,15 +1779,15 @@ The tabs are indexed (zero-based) in the order they appear in the configuration 
 
 **Actions:**
 
-- `lvgl.tabview.select` [action](#actions-action) jumps the view to the desired tab:
+- `lvgl.tabview.select` [action](/automations/actions#actions-action) jumps the view to the desired tab:
   - **id** (**Required**): The ID of the tabview which receives this action.
   - **index** (**Required**): The (zero-based) index of the tab to which to jump.
   - **animated** (*Optional*, boolean): To animate the movement. Defaults to `false`.
 
 **Triggers:**
 
-- `on_value` [trigger](#actions-trigger) is activated when the tab value changes, either by user interaction or programmatically. The new value is returned in the variable `x`.
-- `on_change` [trigger](#actions-trigger) is activated when the tab value is changed by user interaction. The new value is returned in the variable `x`.
+- `on_value` [trigger](/automations/actions#actions-trigger) is activated when the tab value changes, either by user interaction or programmatically. The new value is returned in the variable `x`.
+- `on_change` [trigger](/automations/actions#actions-trigger) is activated when the tab value is changed by user interaction. The new value is returned in the variable `x`.
 - [interaction](#lvgl-automation-triggers) LVGL event triggers.
 
 **Example:**
@@ -1823,19 +1847,19 @@ The textarea is an extended label widget which displays a cursor and allows the 
 - **password_mode** (*Optional*, boolean): The text area supports password mode. By default, if the `•` (bullet, `0x2022`  ) glyph exists in the font, the entered characters are converted to it after some time or when a new character is entered. If `•` is missing from the font, `*` (asterisk) will be used.
 - **text** (*Optional*, [Text property](#text-property)): Initial contents of the textarea.
 - **placeholder_text** (*Optional*, [Text property](#text-property)): A placeholder text can be specified, which is displayed when the Text area is empty.
-- any [Styling](#lvgl-styling) and state-based option for the background of the textarea. Uses all the typical background style properties and the text/label related style properties for the text.
+- any [Styling](/components/lvgl#lvgl-styling) and state-based option for the background of the textarea. Uses all the typical background style properties and the text/label related style properties for the text.
 
 **Actions:**
 
-- `lvgl.textarea.update` [action](#actions-action) updates the widget's `text` property, to replace the entire text content.
+- `lvgl.textarea.update` [action](/automations/actions#actions-action) updates the widget's `text` property, to replace the entire text content.
   - **id** (**Required**): The ID or a list of IDs of textarea widgets to be updated.
   - **text** (*Optional*, [Text property](#text-property)): The text to replace the textarea content.
   - All other configuration variables from above are optional and have the same function as previously described.
 
 **Triggers:**
 
-- `on_value` [trigger](#actions-trigger) is activated on every keystroke.
-- `on_ready` [trigger](#actions-trigger) is activated when `one_line` is configured as `true` and the newline character is received (Enter/Ready key on the keyboard).
+- `on_value` [trigger](/automations/actions#actions-trigger) is activated on every keystroke.
+- `on_ready` [trigger](/automations/actions#actions-trigger) is activated when `one_line` is configured as `true` and the newline character is received (Enter/Ready key on the keyboard).
 - [interaction](#lvgl-automation-triggers) LVGL event triggers.
 
 For both triggers above, when triggered, the variable `text` (`std::string` type) is available for use in lambdas within these triggers and it will contain the entire contents of the textarea.
@@ -1892,7 +1916,7 @@ If the tileview is screen sized, the user interface resembles what you may have 
 
 **Actions:**
 
-- `lvgl.tileview.select` [action](#actions-action) jumps the `tileview` to the desired tile:
+- `lvgl.tileview.select` [action](/automations/actions#actions-action) jumps the `tileview` to the desired tile:
   - **animated** (*Optional*, boolean): To animate the movement. Defaults to `false`.
   - **column** (*Optional*): Vertical position of the tile to which to jump. Required if not specifying `tile_id`.
   - **row** (*Optional*): Horizontal position of the tile to which to jump. Required if not specifying `tile_id`.
@@ -1901,7 +1925,7 @@ If the tileview is screen sized, the user interface resembles what you may have 
 
 **Triggers:**
 
-- `on_value` [trigger](#actions-trigger) is activated when displayed tile changes. The new value is returned in the variable `tile` as the ID of the now-visible tile.
+- `on_value` [trigger](/automations/actions#actions-trigger) is activated when displayed tile changes. The new value is returned in the variable `tile` as the ID of the now-visible tile.
 - [interaction](#lvgl-automation-triggers) LVGL event triggers.
 
 **Example:**
@@ -1953,10 +1977,10 @@ Several universal actions are also available for all widgets, these are outlined
 
 #### `lvgl.widget.update`
 
-This powerful [action](#actions-action) allows changing/updating any widget's common [style property](#lvgl-styling), state (templatable) or [flag](#lvgl-widget-flags) on the fly.
+This powerful [action](/automations/actions#actions-action) allows changing/updating any widget's common [style property](/components/lvgl#lvgl-styling), state (templatable) or [flag](#lvgl-widget-flags) on the fly.
 
 - **id** (**Required**): The ID or a list of IDs of widgets configured in LVGL to be updated.
-- The widget's common [style property](#lvgl-styling), state (templatable) or [flag](#lvgl-widget-flags).
+- The widget's common [style property](/components/lvgl#lvgl-styling), state (templatable) or [flag](#lvgl-widget-flags).
 
 ```yaml
 # Example for updating styles (in states):
@@ -1976,13 +2000,13 @@ on_...:
         hidden: true
 ```
 
-Check out in the Cookbook [Remote light button](#lvgl-cookbook-binent) for an example which demonstrates how to use a template to update the state.
+Check out in the Cookbook [Remote light button](/cookbook/lvgl#lvgl-cookbook-binent) for an example which demonstrates how to use a template to update the state.
 
 {{< anchor "lvgl-automation-shorthands" >}}
 
 #### `lvgl.widget.hide`, `lvgl.widget.show`
 
-These [actions](#actions-action) are shorthands for toggling the `hidden` [flag](#lvgl-widget-flags) of any widget.
+These [actions](/automations/actions#actions-action) are shorthands for toggling the `hidden` [flag](#lvgl-widget-flags) of any widget.
 
 - **id** (**Required**): The ID or a list of IDs of widgets configured in LVGL which you want to hide or show.
 
@@ -2000,7 +2024,7 @@ on_...:
 
 #### `lvgl.widget.disable`, `lvgl.widget.enable`
 
-These [actions](#actions-action) are shorthands for toggling the `disabled` state of any widget (which controls the appearance of the corresponding *disabled* style set of the theme):
+These [actions](/automations/actions#actions-action) are shorthands for toggling the `disabled` state of any widget (which controls the appearance of the corresponding *disabled* style set of the theme):
 
 - **id** (**Required**): The ID or a list of IDs of widgets configured in LVGL which you want to disable or enable.
 
@@ -2049,7 +2073,7 @@ ESPHome implements as universal triggers the following interaction events genera
 
 These triggers can be applied directly to any widget in the LVGL configuration, *given that the widget itself supports generating such events*. For the widgets having a value, the triggers return the current value in variable `x`  ; this variable may be used in lambdas defined within those triggers.
 
-Each trigger also deliver an `event` parameter, which is a pointer to the LVGL C type `lv_event_t`. This may be used in lambdas defined within those triggers. Refer to the [LVGL documentation](https://docs.lvgl.io/8.4/overview/event.html/) for more information.
+Each trigger also deliver an `event` parameter, which is a pointer to the LVGL C type `lv_event_t`. This may be used in lambdas defined within those triggers. Refer to the [LVGL documentation](https://docs.lvgl.io/8.4/overview/event.html) for more information.
 
 There are additional triggers for pages - each page may have an `on_load` and `on_unload` trigger. These will be called
 when the page becomes active or inactive respectively.

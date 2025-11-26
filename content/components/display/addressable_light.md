@@ -37,7 +37,7 @@ display:
 
 ## Configuration variables
 
-- **addressable_light_id** (**Required**, [ID](#config-id)): The id of the addressable light component to use
+- **addressable_light_id** (**Required**, [ID](/guides/configuration-types#id)): The id of the addressable light component to use
   as a display.
 
 - **width** (**Required**, int): The width of the LED matrix in pixels.
@@ -45,29 +45,27 @@ display:
 - **rotation** (*Optional*): Set the rotation of the display. Everything you draw in `lambda:` will be rotated
   by this option. One of `0°` (default), `90°`, `180°`, `270°`.
 
-- **update_interval** (*Optional*, [Time](#config-time)): The interval to call the lambda to update the display.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to call the lambda to update the display.
   Defaults to `16ms`.
 
-- **pixel_mapper** (*Optional*, [lambda](#config-lambda)): A lambda that returns the integer address of the LED
+- **pixel_mapper** (*Optional*, [lambda](/automations/templates#config-lambda)): A lambda that returns the integer address of the LED
   given the supplied the `x` and `y` pixel coordinate. By default, a left-to-right direct pixel mapper is used.
 
-- **lambda** (*Optional*, [lambda](#config-lambda)): The lambda to use for rendering the content on the display.
+- **lambda** (*Optional*, [lambda](/automations/templates#config-lambda)): The lambda to use for rendering the content on the display.
   `it` will be an instance of {{< apiclass "DisplayBuffer" "display::DisplayBuffer" >}}.
-  See [Display Rendering Engine](#display-engine) for more information.
+  See [Display Rendering Engine](/components/display#display-engine) for more information.
 
-- **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation.
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
 
-{{< note >}}
-When enabled (the default, but also via `it.set_enabled(true)`  ), any effect currently running on the
-addressable light will be disabled. When disabled (`it.set_enabled(false)`  ), the last configured effect will
-be restored.
-
-While the display is enabled, it is still possible to control the parent addressable light component in some
-limited capacity. Changing the brightness will still work, but changing the color will have no affect. It is not
-adivsable to enable any effects (ex: rainbow, color wipe, etc) while the display is enabled, as this will cause a
-great deal of flickering while the effect competes with the display for rendering.
-
-{{< /note >}}
+> [!NOTE]
+> When enabled (the default, but also via `it.set_enabled(true)`  ), any effect currently running on the
+> addressable light will be disabled. When disabled (`it.set_enabled(false)`  ), the last configured effect will
+> be restored.
+>
+> While the display is enabled, it is still possible to control the parent addressable light component in some
+> limited capacity. Changing the brightness will still work, but changing the color will have no affect. It is not
+> adivsable to enable any effects (ex: rainbow, color wipe, etc) while the display is enabled, as this will cause a
+> great deal of flickering while the effect competes with the display for rendering.
 
 ## pixel_mapper
 

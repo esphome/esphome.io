@@ -16,12 +16,10 @@ This page purposefully has little moderation. Found something great or have some
 The usual rules of don't be an asshole apply - don't put your link at the top of the list
 unless it's truly exceptional, etc.
 
-{{< warning >}}
-These configurations and external components are *not officially maintained* by the
-ESPHome team. If an API changes or there's a breaking change, it's up to the author to update
-the post.
-
-{{< /warning >}}
+> [!WARNING]
+> These configurations and external components are *not officially maintained* by the
+> ESPHome team. If an API changes or there's a breaking change, it's up to the author to update
+> the post.
 
 ## Blog Posts & Videos
 
@@ -41,7 +39,6 @@ the post.
 - [ESPHome 12v Fan Controller with PID Climate](https://github.com/patrickcollins12/esphome-fan-controller) by {{< ghuser name="patrickcollins12" >}}
 - [Sonoff 4CH Irrigation Controller with Nextion Display](https://github.com/bruxy70/Irrigation-with-display) by {{< ghuser name="bruxy70" >}}
 - [Automated Bathroom Ventilation](https://www.youtube.com/watch?v=weBDnmrQYOs) by [Intermittent Technology](https://intermit.tech)
-- [ESPHome MP3 Sound Machine](https://selfhostedhome.com/esp8266-mp3-sound-machine/) by [Self Hosted Home](https://selfhostedhome.com)
 - [Detecting Sound with ESP8266](https://thibmaek.com/posts/detecting-sound-level-using-esp8266-and-esphome) by [Thibault Maekelbergh](https://thibmaek.com)
 - [SW420 Vibration Sensor with Remote Notifications](https://github.com/rmooreID/Home-Assistant-Appliance-Monitor/) by {{< ghuser name="rmooreID" >}}
 - [DIY Irrigation Controller (with Internal Scheduler + Lovelace UI)](https://brianhanifin.com/posts/diy-irrigation-controller-esphome-home-assistant/) by {{< ghuser name="BrianHanifin" >}}
@@ -105,6 +102,7 @@ the post.
 - [Medisana BS440 (and propably more scales)](https://github.com/bwynants/weegschaal) by [bwynants](https://github.com/bwynants)
 - [Novy Pureline Pro extractor hood](https://github.com/bwynants/purelinepro) by [bwynants](https://github.com/bwynants)
 - [Digoo DG-R8H and similar nexus433 sensors to MQTT component](https://github.com/FreeBear-nc/esphome-nexus433) by {{< ghuser name="FreeBear-nc" >}}
+- [Adaptive Lighting for white/warm lights](https://github.com/mdvorak/esphome-adaptive-lighting) by {{< ghuser name="mdvorak" >}}
 
 ## Sample Configurations
 

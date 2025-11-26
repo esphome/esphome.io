@@ -17,16 +17,14 @@ It supports two different audio pipelines: announcement and media. Each audio pi
 
 On-device files built directly into the firmware are played without a network connection. Encode on-device files with the configured sample rate, 1 or 2 channels, and 16 bits per sample.
 
-This platform only works on ESP32-based chips using the [ESP-IDF framework](#esp32-framework).
+This platform only works on ESP32-based chips using the [ESP-IDF framework](/components/esp32#esp32-framework).
 
-{{< warning >}}
-Audio and voice components consume a significant amount of resources (RAM, CPU) on the device.
-
-**Crashes are likely to occur** if you include too many additional components in your device's
-configuration. In particular, Bluetooth/BLE components are known to cause issues when used in
-combination with Voice Assistant and/or other audio components.
-
-{{< /warning >}}
+> [!WARNING]
+> Audio and voice components consume a significant amount of resources (RAM, CPU) on the device.
+>
+> **Crashes are likely to occur** if you include too many additional components in your device's
+> configuration. In particular, Bluetooth/BLE components are known to cause issues when used in
+> combination with Voice Assistant and/or other audio components.
 
 ```yaml
 # Example minimal configuration entry
@@ -40,26 +38,26 @@ media_player:
 
 - **announcement_pipeline** (**Required**, Pipeline Schema): Configuration settings for the announcement pipeline.
 
-  - **speaker** (**Required**, [ID](#config-id)): The {{< docref "/components/speaker/index" "speaker" >}} to output the audio.
+  - **speaker** (**Required**, [ID](/guides/configuration-types#id)): The {{< docref "/components/speaker/index" "speaker" >}} to output the audio.
   - **format** (*Optional*, enum): The audio format Home Asssistant will transcode audio to before sending it to the device. One of `FLAC`, `MP3`, `WAV`, or `NONE`. `NONE` disables transcoding in Home Assistant. Defaults to `FLAC`.
   - **sample_rate** (*Optional*, positive integer): Sample rate for the transcoded audio. Should be supported by the configured `speaker` component. Defaults to the speaker's sample rate.
   - **num_channels** (*Optional*, positive integer): Number of channels for the transcoded audio. Must be either `1` or `2`. Defaults to the speaker's number of channels.
 
 - **media_pipeline** (*Optional*, Pipeline Schema): Configuration settings for the media pipeline. Same options as the `announcement_pipeline`.
 - **buffer_size** (*Optional*, positive integer): The buffer size in bytes for each pipeline. Must be between `4000` and `4000000`. Defaults to `1000000`.
-- **codec_support_enabled** (*Optional*, boolean): Enables the MP3 and FLAC decoders and optimizes the WiFi configuration for streaming high quality audio. Defaults to `true`.
+- **codec_support_enabled** (*Optional*, boolean): Enables the MP3 and FLAC decoders. Defaults to `true`.
 - **task_stack_in_psram** (*Optional*, boolean): Run the audio tasks in external memory. Defaults to `false`.
 - **volume_increment** (*Optional*, percentage): Increment amount that the `media_player.volume_up` and `media_player.volume_down` actions will increase or decrease volume by. Defaults to `5%`.
 - **volume_initial** (*Optional*, percentage): The default volume that mediaplayer uses for first boot where a volume has not been previously saved. Defaults to `50%`.
 - **volume_min** (*Optional*, percentage): The minimum volume allowed. Defaults to `0%`.
 - **volume_max** (*Optional*, percentage): The maximum volume allowed. Defaults to `100%`.
 - **files** (*Optional*, list): A list of media files to build into the firmware for on-device playback.
-  - **id** (**Required**, [ID](#config-id)): Unique ID for the file.
+  - **id** (**Required**, [ID](/guides/configuration-types#id)): Unique ID for the file.
   - **file** (**Required**, string): Path to audio file. Can be a local file path or a URL.
-- **on_mute** (*Optional*, [Automation](#automation)): An automation to perform when muted.
-- **on_unmute** (*Optional*, [Automation](#automation)): An automation to perform when unmuted.
-- **on_volume** (*Optional*, [Automation](#automation)): An automation to perform when the volume is changed.
-- All other options from [Media Player](#config-media_player)
+- **on_mute** (*Optional*, [Automation](/automations)): An automation to perform when muted.
+- **on_unmute** (*Optional*, [Automation](/automations)): An automation to perform when unmuted.
+- **on_volume** (*Optional*, [Automation](/automations)): An automation to perform when the volume is changed.
+- All other options from [Media Player](/components/media_player#config-media_player)
 
 {{< anchor "media_player-speaker-examples" >}}
 
@@ -163,7 +161,7 @@ on_...:
 
 Configuration variables:
 
-- **media_file** (**Required**, [ID](#config-id)): The ID of the media file.
+- **media_file** (**Required**, [ID](/guides/configuration-types#id)): The ID of the media file.
 - **announcement** (*Optional*, boolean): Whether to play back the file as an announcement or media stream. Defaults to `false`.
 - **enqueue** (*Optional*, boolean): Whether to add the media file to the end of the pipeline's internal playlist. Defaults to `false`.
 
@@ -172,6 +170,17 @@ Configuration variables:
 ## Performance
 
 Decoding audio files is CPU and memory intensive. PSRAM external memory is strongly recommended. To use the component on a memory constrained device, define only the announcement pipeline, decrease the buffer size, set `codec_support_enabled` to false, and set the pipeline transcode setting format to `WAV` with a low sample rate and only 1 channel.
+
+### Network Optimizations
+
+The speaker media player automatically enables high-performance networking to optimize audio streaming. This configures both WiFi and TCP/IP settings for better throughput and lower latency. The optimization level is PSRAM-aware:
+
+- **With PSRAM guaranteed** ({{< docref "psram" >}} configured with `ignore_not_found: false`): Aggressive settings with 512KB TCP windows and 512 WiFi RX buffers
+- **Without PSRAM guaranteed**: Conservative optimized settings with 65KB TCP windows and 64 WiFi buffers
+
+If you experience out-of-memory issues, you can disable these optimizations by setting `enable_high_performance: false` in the {{< docref "network" >}} component configuration.
+
+### Audio Codec Performance
 
 In general, decoding FLAC has the lowest CPU usage, but requires a strong WiFi connection. Decoding MP3 requires less data to be sent over WiFi but is more CPU intensive to decode. Decoding WAV is only recommended at low sample rates if streamed over a network connection.
 
@@ -185,11 +194,15 @@ Only set `task_stack_in_psram` to true if you have many components configured an
 
 While you are troubleshooting, simplify your setup as much as possible. Only configure the `announcement_pipeline` and do not use `resampler` or `mixer` speakers.
 
+### Audio Issues
+
 If you can't hear anything, check whether your hardware requires a GPIO pin to be high or low to enable the speaker. Verify you have the correct speaker channel configured: try setting your speaker configuration to stereo if you are unsure which channels are available.
 
 If the audio quality is poor, check your output speaker configuration. Experiment with the bits per sample, channels, and sample rate settings. In general, higher sample rates improve audio quality: try using `44100` Hz or `48000` Hz instead of `16000` Hz.
 
 If there is a noticeable delay before a pause command takes effect, reduce the buffer duration in the output speaker. Be sure to adjust both the hardware speaker component settings and the `mixer` speaker component settings, if used.
+
+If audio stutters, and your device has PSRAM, add ({{< docref "psram" >}} configured with `ignore_not_found: false`) so that the networking stack uses higher performance optimization settings.
 
 ## See also
 

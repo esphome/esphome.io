@@ -4,7 +4,7 @@ SHELL := bash
 .SHELLFLAGS := -euo pipefail -c
 
 
-PAGEFIND=npx --yes pagefind@1.3.0
+PAGEFIND=$(shell command -v pagefind >/dev/null 2>&1 && echo "pagefind" || echo "npx --yes pagefind@1.3.0")
 
 export HUGO_PARAMS_COMMIT_HASH=$(shell git rev-parse --short HEAD)
 export HUGO_PARAMS_COMMIT_TITLE=$(shell git log -1 --pretty=%s)
@@ -27,7 +27,6 @@ check-links: anchors
 anchors: repo-data
 	$(PAGEFIND) -s pagefind-bootstrap
 	hugo --environment anchors
-	python3 script/md_anchors.py
 
 repo-data: directories
 	mkdir -p data/automations
@@ -37,7 +36,7 @@ repo-data: directories
 
 live-html:	anchors
 	$(PAGEFIND)
-	hugo server --bind 0.0.0.0 --baseURL http://localhost:1313
+	hugo server --bind 0.0.0.0 --port 8000 --baseURL http://localhost:8000
 
 clean:
 	rm -rf public/*
@@ -54,7 +53,6 @@ convert-branch-in-place:
 netlify: repo-data
 	$(PAGEFIND) -s pagefind-bootstrap
 	hugo --environment anchors
-	python3 script/md_anchors.py
 	hugo --minify
 	$(PAGEFIND)
 	# rerun hugo to incorporate generated index

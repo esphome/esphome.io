@@ -9,7 +9,7 @@ params:
 
 The DHT Temperature+Humidity sensor allows you to use your
 
-- DHT11 ([datasheet](https://akizukidenshi.com/download/ds/aosong/DHT11.pdf), [Adafruit](https://www.adafruit.com/product/386)),
+- DHT11 ([datasheet](https://www.makerhero.com/img/files/download/DHT11-Datasheet.pdf), [Adafruit](https://www.adafruit.com/product/386)),
 - DHT21/DHT22 ([datasheet](https://www.sparkfun.com/datasheets/Sensors/Temperature/DHT22.pdf), [Adafruit](https://www.adafruit.com/product/385)),
 - AMS2301/AM2302 ([datasheet](https://cdn-shop.adafruit.com/datasheets/Digital+humidity+and+temperature+sensor+AM2302.pdf), [Adafruit](https://www.adafruit.com/product/393)),
 - AM2120 ([datasheet](https://www.micros.com.pl/mediaserver/UPAM2120_0004.pdf)),
@@ -40,39 +40,37 @@ sensor:
 
 ## Configuration variables
 
-- **pin** (**Required**, [Pin](#config-pin)): The pin where the DHT bus is connected.
+- **pin** (**Required**, [Pin](/guides/configuration-types#pin)): The pin where the DHT bus is connected.
 - **temperature** (**Required**): The information for the temperature sensor.
 
-  - All options from [Sensor](#config-sensor).
+  - All options from [Sensor](/components/sensor).
 
 - **humidity** (**Required**): The information for the humidity sensor
 
-  - All options from [Sensor](#config-sensor).
+  - All options from [Sensor](/components/sensor).
 
 - **model** (*Optional*, int): Manually specify the DHT model, can be
   one of `AUTO_DETECT`, `DHT11`, `DHT22`, `DHT22_TYPE2`, `AM2302`, `RHT03`, `SI7021`, `AM2120`
   and helps with some connection issues. Defaults to `AUTO_DETECT`. Auto detection doesn't work for the SI7021 chip.
 
-- **update_interval** (*Optional*, [Time](#config-time)): The interval to check the
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to check the
   sensor. Defaults to `60s`.
 
-{{< note >}}
-The default `accuracy_decimals` value of the *humidity* levels is `0`, as the DHT11 for which this was
-originally written does not have a higher resolution. All other DHT sensors have a higher resolution, it's worth
-to configure them with `accuracy_decimals: 1`.
-
-If you're seeing lots of invalid temperature/humidity warnings in the logs, try manually setting the
-DHT model with the `model:` configuration variable. Other problems could be wrong pull-up resistor values
-on the DATA pin or too long cables.
-
-If you're using a DHT module with an external pull-up resistor and seeing invalid temperature/humidity warnings in the logs,
-set `pullup: false` under your `pin` configuration.
-
-{{< /note >}}
+> [!NOTE]
+> The default `accuracy_decimals` value of the *humidity* levels is `0`, as the DHT11 for which this was
+> originally written does not have a higher resolution. All other DHT sensors have a higher resolution, it's worth
+> to configure them with `accuracy_decimals: 1`.
+>
+> If you're seeing lots of invalid temperature/humidity warnings in the logs, try manually setting the
+> DHT model with the `model:` configuration variable. Other problems could be wrong pull-up resistor values
+> on the DATA pin or too long cables.
+>
+> If you're using a DHT module with an external pull-up resistor and seeing invalid temperature/humidity warnings in the logs,
+> set `pullup: false` under your `pin` configuration.
 
 ## See Also
 
-- [Sensor Filters](#sensor-filters)
+- [Sensor Filters](/components/sensor#sensor-filters)
 - {{< docref "absolute_humidity/" >}}
 - {{< docref "dht12/" >}}
 - {{< docref "hdc1080/" >}}

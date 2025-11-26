@@ -35,16 +35,16 @@ switch:
 
 ## Configuration variables
 
-- **nextion_id** (*Optional*, [ID](#config-id)): The ID of the Nextion display.
+- **nextion_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the Nextion display.
 - **component_name** (*Optional*, string): The name of the Nextion component.
 - **variable_name** (*Optional*, string): The name of the Nextion variable. Any value over `0` is considered to be **on**
-- **update_interval** (*Optional*, [Time](#config-time)): The duration to update the sensor. If using a [Nextion Custom Switch Protocol](#nextion_custom_switch_protocol) this should not be used
-- **background_color** (*Optional*, [Color](#config-color)): The background color
-- **background_pressed_color** (*Optional*, [Color](#config-color)): The background color when pressed
-- **foreground_color** (*Optional*, [Color](#config-color)): The foreground color
-- **foreground_pressed_color** (*Optional*, [Color](#config-color)): The foreground color when pressed
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The duration to update the sensor. If using a [Nextion Custom Switch Protocol](#nextion_custom_switch_protocol) this should not be used
+- **background_color** (*Optional*, [Color](/components/display#config-color)): The background color
+- **background_pressed_color** (*Optional*, [Color](/components/display#config-color)): The background color when pressed
+- **foreground_color** (*Optional*, [Color](/components/display#config-color)): The foreground color
+- **foreground_pressed_color** (*Optional*, [Color](/components/display#config-color)): The foreground color when pressed
 - **visible** (*Optional*, boolean): Visible or not
-- All other options from [Switch](#config-switch).
+- All other options from [Switch](/components/switch#config-switch).
 
 **Only one** *component_name* **or** *variable_name* **can be set**
 
@@ -90,23 +90,22 @@ on_...:
 
 Configuration options:
 
-- **id** (**Required**, [ID](#config-id)): The ID of the Nextion switch.
-- **state** (**Required**, string, [templatable](#config-templatable)): The boolean state to publish.
-- **publish_state** (*Optional*, bool, [templatable](#config-templatable)): Publish new state to Home Assistant.
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the Nextion switch.
+- **state** (**Required**, string, [templatable](/automations/templates)): The boolean state to publish.
+- **publish_state** (*Optional*, bool, [templatable](/automations/templates)): Publish new state to Home Assistant.
   Default is true.
 
-- **send_to_nextion** (*Optional*, bool, [templatable](#config-templatable)): Publish new state to Nextion
+- **send_to_nextion** (*Optional*, bool, [templatable](/automations/templates)): Publish new state to Nextion
   display which will update component. Default is true.
 
-{{< note >}}
-This action can also be written in lambdas. See [Lambda Calls](#nextion_switch_lambda_calls)
+> [!NOTE]
+> This action can also be written in lambdas. See [Lambda Calls](#nextion_switch_lambda_calls)
 
-{{< /note >}}
 {{< anchor "nextion_switch_lambda_calls" >}}
 
 ### Lambda Calls
 
-From [lambdas](#config-lambda), you can call several methods to access
+From [lambdas](/automations/templates#config-lambda), you can call several methods to access
 some more advanced functions (see the full {{< apiref "nextion/nextion_switch.h" "nextion/nextion_switch.h" >}} for more info).
 
 {{< anchor "nextion_switch_set_state" >}}
@@ -135,11 +134,10 @@ component or function you want to trigger the send. Typically this is in *Touch 
 set in the *Touch Release Event* to capture all the changes. Since this is a custom protocol it can be sent from anywhere (timers/functions/components)
 in the Nextion.
 
-{{< note >}}
-There is no need to check the *Send Component ID* for the *Touch Press Event* or *Touch Release Event*
-since this will be sending the real value to esphome.
+> [!NOTE]
+> There is no need to check the *Send Component ID* for the *Touch Press Event* or *Touch Release Event*
+> since this will be sending the real value to esphome.
 
-{{< /note >}}
 Using the above yaml example:
 
 - "Radio 0 switch" will poll the Nextion for the `r0.val` value and set the state accordingly.
@@ -147,10 +145,9 @@ Using the above yaml example:
 
 - [Lambda Calls](#nextion_switch_lambda_calls).
 
-{{< note >}}
-No updates will be sent to the Nextion if it is sleeping. Once it wakes, the components will be updated. If a component is invisible, `visible(false)`, then it won't update until it is set to be visible.
+> [!NOTE]
+> No updates will be sent to the Nextion if it is sleeping. Once it wakes, the components will be updated. If a component is invisible, `visible(false)`, then it won't update until it is set to be visible.
 
-{{< /note >}}
 {{< anchor "nextion_custom_switch_protocol" >}}
 
 ## Nextion Custom Switch Protocol
