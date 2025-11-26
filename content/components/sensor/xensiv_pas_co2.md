@@ -9,10 +9,12 @@ measurements from 0 to 32,000 ppm. The [I²C Bus](/components/i2c) is required t
 configuration for this sensor to work.
 
 **Compatible Hardware:**
+
 - [EVAL-CO2-5V-MINIBOARD](https://www.infineon.com/evaluation-board/EVAL-CO2-5V-MINIBOARD) (5V version)
 - [EVAL-PASCO2-MINIBOARD](https://www.infineon.com/evaluation-board/EVAL-PASCO2-MINIBOARD) (12V version)
 
 **Documentation:**
+
 - [PAS CO2 5V Datasheet](https://www.infineon.com/document-promo/infineon-pasco2v15-datasheet-en_fcad9bf5-ca1e-4c2b-bf84-6041fe0219d8)
 - [PAS CO2 12V Datasheet](https://www.infineon.com/document-promo/infineon-pasco2v01-datasheet-en_4fb77315-f724-408e-b491-a1702031c2c1)
 - [5V Miniboard User Manual](https://www.infineon.com/document-promo/infineon-user-manual-eval-co2-5v-miniboard-usermanual-en_4635183f-758d-41ab-a6cb-88ff8d72f0bf)
@@ -34,7 +36,7 @@ sensor:
 The sensor uses an active-low interrupt signal.
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
 - **address** (*Optional*, int): The I²C address of the sensor. Defaults to `0x28`. The sensor has a fixed hardware address that cannot be changed.
-- **sensor_rate** (*Optional*, [Time](/guides/configuration-types#time)): 
+- **sensor_rate** (*Optional*, [Time](/guides/configuration-types#time)):
 The measurement interval for continuous mode. 
 Valid range: 5 seconds to 4095 seconds. Defaults to `60s`. Accepts formats like `10s`, `1min`, `60s`.
 
@@ -42,7 +44,7 @@ Valid range: 5 seconds to 4095 seconds. Defaults to `60s`. Accepts formats like 
 > Sensor accuracy may be affected when sampling rates is <1min.
 
 - **operation_mode** (*Optional*, string): Sensor operation mode. One of `continuous`, `single_shot`. Defaults to `continuous`.
-- **pressure_compensation** (*Optional*, pressure): Atmospheric pressure reference for improved accuracy. 
+- **pressure_compensation** (*Optional*, pressure): Atmospheric pressure reference for improved accuracy.
 Accepts values with units like `1013.25hPa`, `101325Pa`, etc. 
 If not specified, the sensor uses its default reference pressure of 1015 hPa.
 - **pressure_compensation_source** (*Optional*, [ID](/guides/configuration-types#id)): ID of a pressure sensor to use for automatic pressure compensation updates.
@@ -132,7 +134,7 @@ You can also dynamically update the pressure compensation at runtime if you have
 pressure sensor.
 You can update the pressure compensation in two ways:
 
-**Option 1: Using a Lambda Method Call**
+### Option 1: Using a Lambda Method Call
 
 Call the `set_pressure_compensation()` method in a lambda action whenever your pressure sensor updates:
 
@@ -154,7 +156,7 @@ sensor:
             id(co2_sensor).set_pressure_compensation(x * 100);  // x is in hPa, convert to Pa
 ```
 
-**Option 2: Linking Pressure Sensor Directly**
+### Option 2: Linking Pressure Sensor Directly
 
 Set the `pressure_compensation_source` field to the pressure sensor's ID. ESPHome will automatically handle updates and unit conversion:
 
