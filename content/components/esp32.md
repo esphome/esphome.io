@@ -22,7 +22,7 @@ esp32:
   This must match the hardware in use, or it will fail to flash.
 
 - **board** (*Optional*, string): The PlatformIO board ID that should be used. Choose the appropriate board from
-  [this list](https://registry.platformio.org/platforms/platformio/espressif32/boards?version=5.3.0) (the icon next
+  [this list](https://registry.platformio.org/platforms/platformio/espressif32/boards) (the icon next
   to the name can be used to copy the board ID). *This only affects pin aliases and some internal settings*;
   This setting is no longer recommended, `variant` should be used instead.
 
@@ -230,7 +230,7 @@ esp32:
 ## IDF Components
 
 The `components` option allows you to include IDF components. These components will then be compiled into the resulting
-firmware and may be used by [lambdas](#config-lambda). The most common usage of this option is to include third-party
+firmware and may be used by [lambdas](/automations/templates#config-lambda). The most common usage of this option is to include third-party
 components that are available in the [ESP Component Registry](https://components.espressif.com/). They can be added by
 listing their name under this option. It is also possible to use specific versions, or to fetch components from a file or
 git repository.
