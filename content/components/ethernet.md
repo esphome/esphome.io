@@ -247,7 +247,9 @@ ethernet:
   type: IP101
   mdc_pin: GPIO4
   mdio_pin: GPIO13
-  clk_mode: GPIO0_IN
+  clk:
+    pin: GPIO0
+    mode: CLK_EXT_IN
   power_pin: GPIO2
   phy_addr: 1
 ```
