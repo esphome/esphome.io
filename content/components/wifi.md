@@ -108,7 +108,7 @@ wifi:
   > to find available networks. For hidden networks, use `hidden: true` on the network configuration (see
   > [Connecting to Multiple Networks](#wifi-networks)) to ensure the device always connects without scanning.
   > Be aware that marking networks as hidden prevents ESPHome from finding the best access point to connect to,
-  > so the device may connect to an AP with worse signal strength than a better one because all are hidden.
+  > so the device may not connect to the AP with the best signal strength.
 
 - **min_auth_mode** (*Optional*, string): Only on `esp32` and `esp8266`. Sets the minimum WiFi authentication mode
   that the device will accept when connecting to access points. This controls the weakest encryption your device will
