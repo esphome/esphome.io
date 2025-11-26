@@ -101,4 +101,3 @@ If the device is always awake, the API timeout is 60 seconds, so a ping request 
 - {{< docref "/components/network" >}}
 - {{< apiref "openthread/openthread_component.h" "openthread/openthread_component.h" >}}
 - <https://openthread.io/>
--
