@@ -63,7 +63,7 @@ display:
       it.print(0, 0, id(font1), "Hello World!");
 ```
 
-For the 7-color display, colors can be defined like this in the lambda function:
+For the 6/7-color display, colors can be defined like this in the lambda function (please note that `ORANGE` is not available with the 6 color diplay):
 
 ```yaml
 lambda: |-
@@ -113,6 +113,8 @@ lambda: |-
   - `5.83in`
   - `5.83inv2`
   - `gdey0583t81` - GoodDisplay GDEY0583T81 5.83" B/W
+  - `7.30in-e` - 7.3in 6-Color display (black, white, red, yellow, blue, and green)
+  - `7.30in-spectra6` - 7.3in 6-Color display (black, white, red, yellow, blue, and green)
   - `7.30in-f` - 7.3in 7-color display (black, white, red, yellow, blue, green, and orange)
   - `7.50in`
   - `7.50in-bV2` - also supports v3, B/W rendering only
@@ -129,12 +131,12 @@ lambda: |-
   - `13.3in-k` - 13.3in, with the K model, 960x680, B/W rendering only
 
 > [!WARNING]
-> The BUSY pin on the `gdew0154m09`, the `Waveshare 7.30in-f` and the `Waveshare 7.50in V2` models must be inverted to prevent permanent display damage. Set the busy pin to `inverted: true` in the config.
+> The BUSY pin on the `gdew0154m09`, the `Waveshare 7.30in-f`, the `Waveshare 7.30in-e` and the `Waveshare 7.50in V2` models must be inverted to prevent permanent display damage. Set the busy pin to `inverted: true` in the config.
 
 - **busy_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The BUSY pin. Defaults to not connected.
 - **reset_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The RESET pin. Defaults to not connected.
   Make sure you pull this pin high (by connecting it to 3.3V with a resistor) if not connected to a GPIO pin.
-  The 2.13" B74 and V2 display variants require the reset pin.
+  The 2.13" B74 and V2, as well as the `7.30in-e` display variants require the reset pin.
 
 - **rotation** (*Optional*): Set the rotation of the display. Everything you draw in `lambda:` will be rotated
   by this option. One of `0°` (default), `90°`, `180°`, `270°`.
