@@ -39,7 +39,7 @@ The measurement interval for continuous mode.
 Valid range: 5 seconds to 4095 seconds. Defaults to `60s`. Accepts formats like `10s`, `1min`, `60s`.
 
 > [!NOTE]
-> Sensor accuracy may be affected when sampling rates exceed 1 measurement per minute.
+> Sensor accuracy may be affected when sampling rates is <1min.
 
 - **operation_mode** (*Optional*, string): Sensor operation mode. One of `continuous`, `single_shot`. Defaults to `continuous`.
 - **pressure_compensation** (*Optional*, pressure): Atmospheric pressure reference for improved accuracy. 
