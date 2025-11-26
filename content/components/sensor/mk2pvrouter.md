@@ -17,13 +17,13 @@ This component can also be used to send data to a non-Home Assistant system via 
 
 {{< img src="mk2pvrouter-full.jpg" alt="Mk2PVRouter diverter" caption="Mk2PVRouter diverter." width="50.0%" class="align-center" >}}
 
-..
+---
 
 A simple electronic assembly with an ESP8266 or ESP32 could
 let you retrieve detailed telemetry data from the diverter.
 
 As the communication with the Telemetry is done using UART, you need to
-have an [UART bus](#uart) in your configuration with the `rx_pin`
+have an [UART bus](/components/uart) in your configuration with the `rx_pin`
 connected to the output of the diverter. Additionally, you need to
 set the baud rate to 9600bps.
 
@@ -38,19 +38,16 @@ mk2pvrouter:
 
 In `mk2pvrouter` platform:
 
-- **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation or multiple hubs.
-- **uart_id** (*Optional*, [ID](#config-id)): Manually specify the ID of the UART Component if you want to use multiple UART buses.
-- **update_interval** (*Optional*, [Time](#config-time)): The interval to check the
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation or multiple hubs.
+- **uart_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the UART Component if you want to use multiple UART buses.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to check the
   sensor. Defaults to `5s`.
 
 ## MQTT Integration
 
-{{< warning >}}
-If you enable `mqtt` forwarding and you do *not* use the {{< docref "/components/api" >}}, ie the module is exclusively used for forwarding data via MQTT and it's *not* connected to any Home Assistant instance, you must
-remove the `api:` configuration or set `reboot_timeout: 0s`, otherwise the ESP will
-reboot every 15 minutes because no client connected to the native API.
+> [!WARNING]
+> If you enable `mqtt` forwarding and you do *not* use the {{< docref "/components/api" >}}, ie the module is exclusively used for forwarding data via MQTT and it's *not* connected to any Home Assistant instance, you must remove the `api:` configuration or set `reboot_timeout: 0s`, otherwise the ESP will reboot every 15 minutes because no client connected to the native API.
 
-{{< /warning >}}
 If you configure the `mqtt` option, you will need to define the {{< docref "/components/mqtt" >}} component in your configuration.
 This is required for the component to publish data to the MQTT broker.
 
@@ -82,32 +79,30 @@ With this configuration, data will be published to topics such as:
 ```yaml
 sensor:
   - platform: mk2pvrouter
-  tag_name: "P"
-  name: "Power at grid"
-  unit_of_measurement: "Wh"
-  icon: mdi:flash
+    tag_name: "P"
+    name: "Power at grid"
+    unit_of_measurement: "W"
+    icon: mdi:flash
   - platform: mk2pvrouter
-  tag_name: "D"
-  name: "Diverted power"
-  unit_of_measurement: "Wh"
-  icon: mdi:flash
+    tag_name: "D"
+    name: "Diverted power"
+    unit_of_measurement: "W"
+    icon: mdi:flash
   - platform: mk2pvrouter
-  tag_name: "E"
-  name: "Diverted energy"
-  unit_of_measurement: "Wh"
-  icon: mdi:lightning-bolt
+    tag_name: "E"
+    name: "Diverted energy"
+    unit_of_measurement: "Wh"
+    icon: mdi:lightning-bolt
 
 ```
 
 - **tag_name** (**Required**, string): Specify the tag you want to retrieve from the Telemetry.
 
-{{< note >}}
-The available tags are defined in the Mk2PVRouter diverter's program and depend on its configuration.
-Please refer to your diverter's documentation or configuration to determine the tags available for your setup.
+> [!NOTE]
+> The available tags are defined in the Mk2PVRouter diverter's program and depend on its configuration.
+> Please refer to your diverter's documentation or configuration to determine the tags available for your setup.
 
-{{< /note >}}
-
-- All other options from [Sensor](#config-sensor).
+- All other options from [Sensor](/components/sensor).
 
 ## Binary Sensor
 
@@ -120,20 +115,20 @@ binary_sensor:
 ```
 
 - **tag_name** (**Required**, string): Specify the tag you want to retrieve from the Telemetry.
-- All other options from [Sensor](#config-sensor).
+- All other options from [Binary Sensor](/components/binary_sensor#config-binary_sensor).
 
 ## Text Sensor
 
 ```yaml
 text_sensor:
-  - platform: teleinfo
+  - platform: mk2pvrouter
   tag_name: "P"
   name: "Power at grid as string"
 
 ```
 
 - **tag_name** (**Required**, string): Specify the tag you want to retrieve from the Telemetry.
-- All other options from [Text Sensor](#config-text_sensor).
+- All other options from [Text Sensor](/components/text_sensor#config-text_sensor).
 
 ## See Also
 
