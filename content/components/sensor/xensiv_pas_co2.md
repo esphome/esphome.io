@@ -37,7 +37,7 @@ The sensor uses an active-low interrupt signal.
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
 - **address** (*Optional*, int): The I²C address of the sensor. Defaults to `0x28`. The sensor has a fixed hardware address that cannot be changed.
 - **sensor_rate** (*Optional*, [Time](/guides/configuration-types#time)):
-The measurement interval for continuous mode. 
+The measurement interval for continuous mode.
 Valid range: 5 seconds to 4095 seconds. Defaults to `60s`. Accepts formats like `10s`, `1min`, `60s`.
 
 > [!NOTE]
@@ -45,7 +45,7 @@ Valid range: 5 seconds to 4095 seconds. Defaults to `60s`. Accepts formats like 
 
 - **operation_mode** (*Optional*, string): Sensor operation mode. One of `continuous`, `single_shot`. Defaults to `continuous`.
 - **pressure_compensation** (*Optional*, pressure): Atmospheric pressure reference for improved accuracy.
-Accepts values with units like `1013.25hPa`, `101325Pa`, etc. 
+Accepts values with units like `1013.25hPa`, `101325Pa`, etc.
 If not specified, the sensor uses its default reference pressure of 1015 hPa.
 - **pressure_compensation_source** (*Optional*, [ID](/guides/configuration-types#id)): ID of a pressure sensor to use for automatic pressure compensation updates.
 When specified, the CO2 sensor will automatically update its pressure compensation whenever the referenced sensor reports a new value.
