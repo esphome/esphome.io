@@ -35,6 +35,9 @@ wifi:
   password: !secret wifi_password
 ```
 
+> [!TIP]
+> For WiFi security recommendations including `min_auth_mode` configuration, see the [Security Best Practices](/guides/security_best_practices#wifi-security) guide.
+
 {{< anchor "wifi-configuration_variables" >}}
 
 ## Configuration variables
@@ -76,7 +79,7 @@ wifi:
 
   - **ap_timeout** (*Optional*, [Time](/guides/configuration-types#time)): The time after which to enable the
     configured fallback hotspot. Can be disabled by setting this to `0s`, which requires manually starting the AP by
-    other means (eg: from a button press). Defaults to `1min`.
+    other means (eg: from a button press). Defaults to `90s`.
 
 - **domain** (*Optional*, string): Set the domain of the node hostname used for uploading.
   For example, if it's set to `.local`, all uploads will be sent to `<HOSTNAME>.local`.
@@ -377,7 +380,9 @@ on_...:
 ```
 
 > [!NOTE]
-> Be aware that if you disable WiFi, the API timeout will need to be disabled otherwise the device will reboot.
+> Be mindful of the reboot timeouts set for both the [API component](/components/api/) and the
+> [WiFi component](#configuration-variables) if you disable WiFi. If WiFi remains off for longer than the duration of
+> either timeout, the device will reboot!
 
 {{< anchor "wifi-on_enable" >}}
 
@@ -466,6 +471,22 @@ on_...:
 ```
 
 The lambda equivalent for this is `!id(wifi_id).is_disabled()`.
+
+{{< anchor "wifi-ap-active_condition" >}}
+
+### `wifi.ap_active` Condition
+
+This [Condition](/automations/actions#all-conditions) checks if WiFi AP is currently active or not.
+
+```yaml
+on_...:
+  - if:
+      condition: wifi.ap_active
+      then:
+        - logger.log: WiFi AP is active!
+```
+
+The lambda equivalent for this is `id(wifi_id).is_ap_active()`.
 
 ## See Also
 
