@@ -33,6 +33,9 @@ zigbee:
 
 - **on_join** (*Optional*, [Automation](/automations#automation)): Automation to run when the device join the network.
 
+- **internal** (*Optional*, boolean): Mark this component as internal. Internal components will
+  not be exposed over Zigbee. Only specifying an `id` without a `name` will implicitly set this to true.
+
 ## Actions
 
 ## `factory_reset` Action
