@@ -38,7 +38,7 @@ The configuration `layout: horizontal` is a shorthand for a flex layout:
     flex_flow: row
     flex_align_main: space_evenly
     flex_align_track: center
-    flex_align_cross: stretch
+    flex_align_cross: center
 ```
 
 ### Vertical Layout
@@ -51,7 +51,7 @@ The configuration `layout: vertical` is a shorthand for a flex layout:
     flex_flow: column
     flex_align_main: space_evenly
     flex_align_track: center
-    flex_align_cross: stretch
+    flex_align_cross: center
 ```
 
 ### Flex
