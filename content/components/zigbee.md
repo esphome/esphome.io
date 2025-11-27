@@ -12,7 +12,7 @@ Due to the limitations of the Zigbee protocol, only basic properties are exposed
 
 ### Supported Components
 
-- [Binary Sensor](#config-binary_sensor): only **state** and **name** are exposed over Zigbee.
+- [Binary Sensor](/components/binary_sensor#config-binary_sensor): only **state** and **name** are exposed over Zigbee.
 
 ```yaml
 # Example configuration entry
@@ -31,13 +31,13 @@ zigbee:
 
 - **wipe_on_boot** (*Optional*, boolean): erases all non volatile memory data on boot; use only if the device is in boot loop crash. Defaults to `false`.
 
-- **on_join** (*Optional*, [Automation](#automation)): Automation to run when the device join the network.
+- **on_join** (*Optional*, [Automation](/automations#automation)): Automation to run when the device join the network.
 
 ## Actions
 
 ## `factory_reset` Action
 
-This [action](#config-action) triggers a factory reset of the zigbee device. It handles the leaving of the zigbee network.
+This [action](/automations/actions#config-action) triggers a factory reset of the zigbee device. It handles the leaving of the zigbee network.
 
 ```yaml
 on_...:
