@@ -64,6 +64,8 @@ climate:
 
 - **sensor** (*Optional*, [ID](/guides/configuration-types#id)): The sensor that is used to measure the ambient
   temperature. This is only for reporting the current temperature in the frontend.
+- **humidity_sensor** (*Optional*, [ID](/guides/configuration-types#id)): The sensor that is used to measure the ambient
+  humidity. This is only for reporting the current humidity in the frontend.
 
 - **supports_cool** (*Optional*, boolean): Enables setting cooling mode for this climate device. Defaults to `true`.
 - **supports_heat** (*Optional*, boolean): Enables setting heating mode for this climate device. Defaults to `true`.
@@ -216,11 +218,12 @@ climate:
 
 ### `toshiba`
 
-- **model** (*Optional*, string): There are two valid models
+- **model** (*Optional*, string): There are four valid models:
 
   - `GENERIC`  : Temperature range is from 17 to 30 (default)
   - `RAC-PT1411HWRU-C`  : Temperature range is from 16 to 30; unit displays temperature in degrees Celsius
   - `RAC-PT1411HWRU-F`  : Temperature range is from 16 to 30; unit displays temperature in degrees Fahrenheit
+  - `RAS-2819T`  : Temperature range is from 18 to 30; supports two-packet IR protocol
 
 > [!NOTE]
 >
@@ -237,8 +240,21 @@ climate:
 >   internal temperature sensor; a value of 30 seconds seems to work well. See {{< docref "/components/sensor" >}}
 >   for more information.
 >
+> - The `RAS-2819T` model uses a two-packet IR protocol where most commands send a primary packet (containing
+>   temperature, mode, and fan speed) followed by a secondary packet (containing fan speed confirmation and
+>   mode-specific data). Single-packet commands are used for power-off and swing toggle operations.
+>
 > - This climate IR component is also known to work with Midea model MAP14HS1TBL and may work with other similar
 >   models, as well. (Midea acquired Toshiba's product line and re-branded it.)
+
+```yaml
+# Example configuration entry for RAS-2819T
+climate:
+  - platform: toshiba
+    name: "Toshiba AC"
+    model: RAS-2819T
+    sensor: room_temperature
+```
 
 {{< anchor "whirlpool" >}}
 

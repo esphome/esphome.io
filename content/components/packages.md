@@ -182,7 +182,7 @@ captive_portal:
 sensor:
   - platform: uptime
     id: uptime_sensor
-    update_interval: 1min
+    update_interval: 5min
 ```
 
 ```yaml
@@ -192,6 +192,57 @@ packages: !include common.yaml
 sensor:
   - id: !extend uptime_sensor
     update_interval: 10s
+```
+
+LVGL-style configuration hierarchies are also supported:
+
+```yaml
+# In interface.yaml
+lvgl:
+  pages:
+    - id: main_page
+      widgets:
+        - label:
+            id: title_label
+            text: "Main Page"
+```
+
+```yaml
+packages:
+  - !include interface.yaml
+lvgl:
+  pages:
+    - id: !extend main_page
+      widgets:
+        - label:
+            id: !extend title_label
+            text: "New Title"
+            text_color: red
+```
+
+`!extend` also works with substitutions and jinja:
+
+```yaml
+substitutions:
+  switches:
+    - left_switch
+    - right_switch
+    - center_switch
+  
+  mains_switch: 1
+
+switch:
+  - platform: gpio
+    id: left_switch
+    pin: 1
+  - platform: gpio
+    id: right_switch
+    pin: 2
+  - platform: gpio
+    id: center_switch
+    pin: 3
+  - id: !extend ${ switches[mains_switch] }
+    name: "Mains switch"
 ```
 
 {{< anchor "config-packages_remove" >}}
@@ -208,6 +259,19 @@ packages: !include common.yaml  # see above
 
 sensor:
   - id: !remove uptime_sensor
+```
+
+Remove an item in a LVGL-style configuration:
+
+```yaml
+packages:
+  - !include interface.yaml # see above
+lvgl:
+  pages:
+    - id: !extend main_page
+      widgets:
+        - label:
+            id: !remove title_label
 ```
 
 To remove captive portal for a specific device:
@@ -227,6 +291,19 @@ packages:
 sensor:
   - id: !extend uptime_sensor
     update_interval: !remove
+```
+
+`!remove` also works with substitutions:
+
+```yaml
+substitutions:
+  disable_reboot: true
+
+switch:
+  - platform: restart
+    id: restart_switch
+    name: "Living Room Restart"
+  - id: !remove ${disable_reboot and "restart_switch"}
 ```
 
 ## See Also
