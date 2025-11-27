@@ -523,7 +523,7 @@ lvgl:
                     width: 50
                     range_from: 15
                     range_to: 35
-                    step: 0.5
+                    selected_digit: 0
                     rollover: false
                     digits: 3
                     decimal_places: 1
@@ -922,7 +922,7 @@ For this example to work, use the theme and style options from [above](#lvgl-coo
 
 ## Flex layout positioning
 
-[Layouts](/components/lvgl#lvgl-layouts) aim to position widgets automatically, eliminating the need to specify coordinates to position
+[Layouts](/components/lvgl/layouts#lvgl-layouts) aim to position widgets automatically, eliminating the need to specify coordinates to position
 each widget. This is a great way to simplify your configuration containing many widgets as it allows you to even omit
 alignment options.
 
