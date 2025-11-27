@@ -35,7 +35,7 @@ zigbee:
 
 - **internal** (*Optional*, boolean): Mark this component as internal. Internal components will
   not be exposed over Zigbee. Only specifying an `id` without a `name` will implicitly set this to true.
-  Set to true if you run out of Zigbee endpoints. Note: nRF52 supports a maximum of 8 endpoints.
+  Set to true if you run out of Zigbee endpoints. nRF52 supports a maximum of 8 endpoints.
 
 ## Actions
 
