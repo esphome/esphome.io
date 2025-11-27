@@ -1,6 +1,6 @@
 ---
 description: "Zigbee End Device for Zigbee2MQTT and ZHA."
-title: "Zigbee end device"
+title: "Zigbee End Device"
 params:
   seo:
     description: Zigbee End Device for Zigbee2MQTT and ZHA.
