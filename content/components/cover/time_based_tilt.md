@@ -144,35 +144,32 @@ cover:
 
 - All other options from [Cover](/components/cover#config-cover).
 
-
 ### Note on execution order of timing parameters
 
 The cover movement sequences apply timing parameters in a fixed, deterministic order.
 Each stage begins **only after** the previous one has fully completed.
 
-#### Order for **opening**:
+#### Order for **opening**
 
 1. **interlock_wait_time** – waiting time after a direction change before movement is allowed.
-2. **actuator_activation_open_time** – initial power-on time required by some actuators before movement begins.
-3. **inertia_open_time** – delay before the cover starts moving when changing direction.
-4. **tilt_open_duration** – time used to tilt lamellas toward the fully-open position (if applicable).
-5. **open_duration** – main travel time of the cover from closed to open.
-6. **recalibration_open_time** – extra time the motor remains powered after reaching the open limit.
+1. **actuator_activation_open_time** – initial power-on time required by some actuators before movement begins.
+1. **inertia_open_time** – delay before the cover starts moving when changing direction.
+1. **tilt_open_duration** – time used to tilt lamellas toward the fully-open position (if applicable).
+1. **open_duration** – main travel time of the cover from closed to open.
+1. **recalibration_open_time** – extra time the motor remains powered after reaching the open limit.
 
-#### Order for **closing**:
+#### Order for **closing**
 
 1. **interlock_wait_time** – waiting time after a direction change before movement is allowed.
-2. **actuator_activation_close_time** – initial power-on time required by some actuators before movement begins.
-3. **inertia_close_time** – delay before the cover starts moving when changing direction.
-4. **tilt_close_duration** – time used to tilt lamellas toward the fully-close position (if applicable).
-5. **close_duration** – main travel time of the cover from open to closed.
-6. **recalibration_close_time** – extra time the motor remains powered after reaching the closed limit.
+1. **actuator_activation_close_time** – initial power-on time required by some actuators before movement begins.
+1. **inertia_close_time** – delay before the cover starts moving when changing direction.
+1. **tilt_close_duration** – time used to tilt lamellas toward the fully-close position (if applicable).
+1. **close_duration** – main travel time of the cover from open to closed.
+1. **recalibration_close_time** – extra time the motor remains powered after reaching the closed limit.
 
 > [!NOTE]
 > The stop button on the UI is always enabled even when the cover is stopped and each press
 > on the button will cause the `stop_action` to be performed.
-
-
 
 ## See Also
 
