@@ -1,9 +1,9 @@
 ---
-description: "Zigbee end device for zigbee2mqtt and ZHA."
+description: "Zigbee End Device for Zigbee2MQTT and ZHA."
 title: "Zigbee end device"
 params:
   seo:
-    description: Zigbee end device for zigbee2mqtt and ZHA.
+    description: Zigbee End Device for Zigbee2MQTT and ZHA.
     image: zigbee.svg
 ---
 
@@ -35,6 +35,7 @@ zigbee:
 
 - **internal** (*Optional*, boolean): Mark this component as internal. Internal components will
   not be exposed over Zigbee. Only specifying an `id` without a `name` will implicitly set this to true.
+  Set to true if you run out of Zigbee endpoints. Note: nRF52 supports a maximum of 8 endpoints.
 
 ## Actions
 
