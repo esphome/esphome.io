@@ -21,7 +21,6 @@ binary_sensor:
     name: "Door 1"
 
 zigbee:
-  wipe_on_boot: true
   on_join:
     then:
       - logger.log: "Joined network"
