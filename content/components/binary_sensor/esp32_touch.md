@@ -250,7 +250,10 @@ reduce the ESP's overall performance.
 >
 > - **Touch values increase** when touched (opposite of ESP32 which decreases)
 > - **Higher raw values** are returned compared to original ESP32
-> - **Lower measurement duration required** - the default 8ms is often too high for S2/S3
+> - **Lower measurement duration required** - the default 8ms is often too high for S2/S3.
+> 
+> On some ESP32-S3 variants, a value of **0.01ms** or lower with the use of **voltage_attenuation: 1.5V** seems a good starting point
+> If you see some `Event received, mask = 0x10` messages during threshold finding, it means the sensor value being read is too high, and you should raise voltage attenuation, or lower the measurement duration.
 >
 > **Example settings for S2/S3:**
 >
