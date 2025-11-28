@@ -48,7 +48,7 @@ An example configuration YAML is shown below.
 
 ## Configuration variables
 
-- **device** (**Required**): The type of device attached. 
+- **device** (**Required**): The type of device attached.
 
   - Choses the device type. Pick one of the options shown in the [devices](#Currently-Supported-Devices) section.
 
@@ -60,7 +60,7 @@ An example configuration YAML is shown below.
 
 - **max_buffer_length** (*Optional*): The maximum size of the character buffer. The length of this buffer is the longest message you can display.
 
-  - This should be, at minimum, the number of characters on the display you are using. 
+  - This should be, at minimum, the number of characters on the display you are using.
   - You can make it longer if you want to scroll messages that are longer than the display can show all at once.
   - If not set, it defaults to 8. Limited to 255.
 
@@ -75,10 +75,10 @@ An example configuration YAML is shown below.
   - Provide a list of i2c addresses for the secondary displays. The order of the list should match the order of how the displays are physically aligned. Eg: the first provided address will be the second device, the second provided with be the third device, etc...
 
 - **scroll** (*Optional*): Set to `true` to enable scrolling on the display(s). Will scroll the message in the buffer based on the following parameters.
-    
+
   - **continuous** (*Optional*):
 
-    - If set to `true`, will loop the message in the buffer. 
+    - If set to `true`, will loop the message in the buffer.
     - If set to `false`, when the message reaches the end of the buffer, the display will wait a set time and then start the message over.
     - Defaults to `false`
   - **scroll_speed** (*Optional*): The time between the scroll movements.
@@ -92,7 +92,7 @@ An example configuration YAML is shown below.
 
     - Ignored in continuous mode.
     - Defaults to `2s`.
-      
+
   - If the buffer size is smaller than the number of characters available, the message will not scroll.
   - Defaults to `false`
 
@@ -133,14 +133,14 @@ The HT16k33-char component implements a simplified version of the lambda used in
   - *show_leading_zero*: Whether to show the leading 0 (for example in 01:30). Set to `true` to show the leading zero.
   - *use_am_pm*: Whether to use 12 or 24 hour time. Set to `true` to convert the time display to 12 hour mode.
   - *time* an ESPTime object of the time you want to display.
-    
+
 ### Other commands avaialable in lambda
 
 - `it.brightness(value)`: Sets the display brightness to `value`. Must be between 0-16. Setting to zero turns off the display, setting to 16 is full brightness.
 - `it.blank()`: Clears the display memory. This will turn off all digits. Not technically the same as turning off the device, but the result is the same.
 - `it.display_off(turn_off)`: Takes a boolean to turn the display on or off. Set `turn_off` to `true` to turn off the display.
 - `it.display_standby(standby)`: Takes a boolean to put the display in standby mode. Set `standby` to `true` to place the display(s) into standby mode. This is probably a lower power state than just turning off the display, but I have not tested that.
-- ``it.set_blink(blink_state)`: Set the blink state of the device. The HT16k33 is capable of blinking the display independently of the CPU. Valid values for `blink_state` are:
+- `it.set_blink(blink_state)`: Set the blink state of the device. The HT16k33 is capable of blinking the display independently of the CPU. Valid values for `blink_state` are:
 
   - `0`: No blinking
   - `1`: Blink rate of 2Hz
@@ -163,14 +163,14 @@ A list of supported characters is given for each device. If you place a non-supp
   
 Large 7 segment displays from [Adafruit](https://www.adafruit.com/product/1270). They have various colors and all the colors should work the same. The wiring diagram for the device is [here](https://learn.adafruit.com/assets/122068).
   
-Both a right-side-up and upside-down version of this display is implemented here. To use them set `device` to `ADAFRUIT_7_SEG_1.2IN`` or `ADAFRUIT_7_SEG_1.2IN_FLIPPED`.
+Both a right-side-up and upside-down version of this display is implemented here. To use them set `device` to `ADAFRUIT_7_SEG_1.2IN` or `ADAFRUIT_7_SEG_1.2IN_FLIPPED`.
 
 I have implemented a subset of the most useful characters that display properly on a 7 segment display. There does not appear to be a standard for displaying other alphanumeric characters, and I did not implement some of the more esoteric character interpretations. If you need more characters, I suggest using a 14 character device or [add your own](#Adding-or-Modifying-Characters) characters.
 
 Supported Characters
 
 - All numerals (0-9)
-- ` (a blank space)`
+- a blank space
 - `A`
 - `b`
 - `C`
@@ -210,7 +210,7 @@ Aside from the standard characters, this display also has:
 - A LED on the top side of the display between digits 3 and 4.
 
   - Use the character `'` or ``` to light this LED.
-    
+
 For the flipped version of this display, the ```, `'`, `:` and `.` characters work as expected if placed in the correct locations.
 
 These characters must be placed in the correct position in the character buffer to turn on the relevant LED. If they are placed in any other position, they will be treated as an unsupported character.
@@ -228,7 +228,7 @@ I have implemented a subset of the most useful characters that display properly 
 Supported Characters
 
 - All numerals (0-9)
-- ` (a blank space)`
+- a blank space
 - `A`
 - `b`
 - `C`
@@ -245,7 +245,7 @@ Supported Characters
 - `N`
 - `O (Capital letter O)`
 - `o (Lower case letter o)`
-- `P``   
+- `P`
 - `r`
 - `S`
 - `t`
@@ -272,7 +272,7 @@ These characters must be placed in the correct position in the character buffer 
 <details>
 <summary>Adafruit 0.54" 4-Digit 14-Segment</summary>
 
-Small 14 segment displays from [Adafruit](https://www.adafruit.com/product/1911). They have various colors and all the colors should work the same. The wiring diagram for the device is [here])https://learn.adafruit.com/assets/114463).
+Small 14 segment displays from [Adafruit](https://www.adafruit.com/product/1911). They have various colors and all the colors should work the same. The wiring diagram for the device is [here](https://learn.adafruit.com/assets/114463).
   
 Both a right-side-up and upside-down version of this display is implemented here. To use them set `device` to `ADAFRUIT_14_SEG` or `ADAFRUIT_14_SEG_FLIPPED`.
 
@@ -422,23 +422,15 @@ In the below example the characters `E` and `F` are removed.
 I tried to structure this library so that it would be (relatively) easy to add other devices. The basic steps to add a new device is:
 
 1. In `display.py` modify the `HT16K33_DEVICE_TYPES` dictionary to add a definition for your device:
-
-  - They keys are what the user will put in the YAML file for the `device` setting.
-  - The `CLASS_NAME` values associated with those keys are the name of the associated class that you will define for this device. The name can be pretty much anything, but make it something unique and descriptive.
-  - the `FORMAT_FUNCTION` should take a character code in the standard format and return the correct formatting for your device.
-
-2. In the `esphome\components\ht16k33_char` folder:
-   Add in a `.cpp` and `.h` file for your new device. The filename can be pretty much anything,
-   but it is probably best to make it similar to your class name. This is where all the device
-   specific magic happens.
-
-  - Add the character codes to `char_map_` during class initialization.
-  - Set `num_chars_per_display_` during initialization to the number of characters on the display.
-  - Implement a `uint8_t handle_special_char(char char_to_find, uint8_t position)` function.
-  - Implement a `void write_to_buffer(uint16_t char_to_write, uint8_t char_position)` function.
-
-3. In this documentation:
-   Update the documentation to describe your added device.
+   - They keys are what the user will put in the YAML file for the `device` setting.
+   - The `CLASS_NAME` values associated with those keys are the name of the associated class that you will define for this device. The name can be pretty much anything, but make it something unique and descriptive.
+   - the `FORMAT_FUNCTION` should take a character code in the standard format and return the correct formatting for your device.
+2. In the `esphome\components\ht16k33_char` folder, add in a `.cpp` and `.h` file for your new device. The filename can be pretty much anything, but it is probably best to make it similar to your class name. This is where all the device specific magic happens.
+   - Add the character codes to `char_map_` during class initialization.
+   - Set `num_chars_per_display_` during initialization to the number of characters on the display.
+   - Implement a `uint8_t handle_special_char(char char_to_find, uint8_t position)` function.
+   - Implement a `void write_to_buffer(uint16_t char_to_write, uint8_t char_position)` function.
+3. In this documentation, update the documentation to describe your added device.
 
 ## Special Thanks
 
