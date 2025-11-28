@@ -29,7 +29,7 @@ event:
   (i.e., one sequence being part of another), otherwise, exceptions or unexpected behavior may occur.
   The ideal definition is to have fixed prefix and suffix characters as clear data boundaries.
 - **uart_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the UART hub.
-- All other options from [Event](/components/event##config-event).
+- All other options from [Event](/components/event#config-event).
 
 ## See Also
 
