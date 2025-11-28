@@ -7,16 +7,13 @@ params:
     image:  ht16k33-char.jpg
 ---
 
-The `ht16k33` display platform allows you to use a character display that is driven by a HT16k33
-chip with ESPHome. Please note that this component is *only* for character displays. The chip is 
-capable of driving arbitrary arrays of LEDs, but that configuration is not supported by this component.
+The `ht16k33` display platform allows you to use a character display that is driven by a HT16k33 chip with ESPHome. Please note that this component is *only* for character displays. The chip is capable of driving arbitrary arrays of LEDs, but that configuration is not supported by this component.
 
 <img src="images/ht16k33-char-overview.jpg" alt="A picture of two HT16k33 based displays displaying the phrase 'ESP Home'" caption="Two HT16k33 based displays" width="75.0%" class="align-center">
 
-This component supports scrolling messages and spanning the message across multiple displays. It is
-based on the excellent [ht16k33-alpha library](https://github.com/ssieb/esphome_components/tree/2e82fc3a5acc3d1f4ca6b47cbe656f4217d382ac/components/ht16k33_alpha>), but generalized for a wider range of character based devices.
+This component supports scrolling messages and spanning the message across multiple displays. It is based on the excellent [ht16k33-alpha library](https://github.com/ssieb/esphome_components/tree/2e82fc3a5acc3d1f4ca6b47cbe656f4217d382ac/components/ht16k33_alpha>), but generalized for a wider range of character based devices.
 
-## Currently Supported Devices:
+## Currently Supported Devices
 
 See [device details](#Device-details) for more info on these devices and [adding new devices](#Adding-New-Devices) for instructions on adding support for new devices.
 
@@ -27,12 +24,11 @@ See [device details](#Device-details) for more info on these devices and [adding
 | [Adafruit 0.54" 4-Digit 14-Segment](https://www.adafruit.com/product/1911)  | `ADAFRUIT_14_SEG`  `ADAFRUIT_14_SEG_FLIPPED` |
 | [Sparkfun QUIIC 4-Digit 14-Segment](https://www.sparkfun.com/sparkfun-qwiic-alphanumeric-display-red.html) | `SPARKFUN_14_SEG`  `SPARKFUN_14_SEG_FLIPPED` |
 
-
-## Prerequisites:
+## Prerequisites
 
 This component relies on the [I²C Bus](/components/i2c) componenent to be setup.
 
-## Configuration Example:
+## Configuration Example
 
 An example configuration YAML is shown below.
 
@@ -50,7 +46,7 @@ An example configuration YAML is shown below.
           it.print(0, true, "ESP Home");
 ```
 
-## Configuration variables:
+## Configuration variables
 
 - **device** (**Required**): The type of device attached. 
 
@@ -102,11 +98,9 @@ An example configuration YAML is shown below.
 
 ## Using Lambda
 
-The HT16k33-char component implements a simplified version of the lambda used in other displays.
-In the lambda you're passed a variable called `it` as with all other displays. In this case 
-however, `it` is the HT16k33 instance.
+The HT16k33-char component implements a simplified version of the lambda used in other displays. In the lambda you're passed a variable called `it` as with all other displays. In this case however, `it` is the HT16k33 instance.
 
-### Commands available in lambda to place characters on the display:
+### Commands available in lambda to place characters on the display
 
   - `it.print(start_pos, clear_buffer, string)`: Prints a string to the buffer.
 
@@ -140,7 +134,7 @@ however, `it` is the HT16k33 instance.
     - *use_am_pm*: Whether to use 12 or 24 hour time. Set to `true` to convert the time display to 12 hour mode.
     - *time* an ESPTime object of the time you want to display.
     
-### Other commands avaialable in lambda:
+### Other commands avaialable in lambda
 
   - `it.brightness(value)`: Sets the display brightness to `value`. Must be between 0-16. Setting to zero turns off the display, setting to 16 is full brightness.
   - `it.blank()`: Clears the display memory. This will turn off all digits. Not technically the same as turning off the device, but the result is the same.
@@ -175,51 +169,51 @@ I have implemented a subset of the most useful characters that display properly 
 
 Supported Characters
 
-        - All numerals (0-9)
-        - ` (a blank space)`
-        - `A`
-        - `b`
-        - `C`
-        - `c`
-        - `d`
-        - `E`
-        - `F`
-        - `G`
-        - `H`
-        - `h`
-        - `I`
-        - `J`
-        - `L`
-        - `N`
-        - `O (Capital letter O)`
-        - `o (Lower case letter o)`
-        - `P`
-        - `r`
-        - `S`
-        - `t`
-        - `U`
-        - `u`
-        - `Y`
+  - All numerals (0-9)
+  - ` (a blank space)`
+  - `A`
+  - `b`
+  - `C`
+  - `c`
+  - `d`
+  - `E`
+  - `F`
+  - `G`
+  - `H`
+  - `h`
+  - `I`
+  - `J`
+  - `L`
+  - `N`
+  - `O (Capital letter O)`
+  - `o (Lower case letter o)`
+  - `P`
+  - `r`
+  - `S`
+  - `t`
+  - `U`
+  - `u`
+  - `Y`
 
-    Aside from the standard characters, this display also has:
+Aside from the standard characters, this display also has:
   
-      - A colon before the first digit. The two leds can be controlled independently.
+  - A colon before the first digit. The two leds can be controlled independently.
 
-        - Use the character `'` or ``` to light the upper LED.
-        - Use the character `.` to light the lower LED.
-        - Use the character `:` to light both LEDs.
+    - Use the character `'` or ``` to light the upper LED.
+    - Use the character `.` to light the lower LED.
+    - Use the character `:` to light both LEDs.
 
-      - A colon between digit 2 and 3. These two LEDs are wired together.
+  - A colon between digit 2 and 3. These two LEDs are wired together.
 
-        -Use the character `:` to light these LEDs.
+    -Use the character `:` to light these LEDs.
 
-      - A LED on the top side of the display between digits 3 and 4.
+  - A LED on the top side of the display between digits 3 and 4.
 
-        - Use the character `'` or ``` to light this LED.
+    - Use the character `'` or ``` to light this LED.
     
-    For the flipped version of this display, the ```, `'`, `:` and `.` characters work as expected if placed in the correct locations.
+For the flipped version of this display, the ```, `'`, `:` and `.` characters work as expected if placed in the correct locations.
 
-    These characters must be placed in the correct position in the character buffer to turn on the relevant LED. If they are placed in any other position, they will be treated as an unsupported character.
+These characters must be placed in the correct position in the character buffer to turn on the relevant LED. If they are placed in any other position, they will be treated as an unsupported character.
 </details>
 
 <details>
@@ -233,46 +227,46 @@ I have implemented a subset of the most useful characters that display properly 
 
 Supported Characters
 
-        - All numerals (0-9)
-        - ` (a blank space)`
-        - `A`
-        - `b`
-        - `C`
-        - `c`
-        - `d`
-        - `E`
-        - `F`
-        - `G`
-        - `H`
-        - `h`
-        - `I`
-        - `J`
-        - `L`
-        - `N`
-        - `O (Capital letter O)`
-        - `o (Lower case letter o)`
-        - `P``   
-        - `r`
-        - `S`
-        - `t`
-        - `U`
-        - `u`
-        - `Y`
+  - All numerals (0-9)
+  - ` (a blank space)`
+  - `A`
+  - `b`
+  - `C`
+  - `c`
+  - `d`
+  - `E`
+  - `F`
+  - `G`
+  - `H`
+  - `h`
+  - `I`
+  - `J`
+  - `L`
+  - `N`
+  - `O (Capital letter O)`
+  - `o (Lower case letter o)`
+  - `P``   
+  - `r`
+  - `S`
+  - `t`
+  - `U`
+  - `u`
+  - `Y`
 
-    Aside from the standard characters, this display also has:
+Aside from the standard characters, this display also has:
   
-      - A decimal point after each digit
+  - A decimal point after each digit
 
-        - Use the `.` character to turn on a decimal point.
-        - Note that if you are using the upside-down version of the display, use `'` to light the decimal point that is now at the top of the display.
+    - Use the `.` character to turn on a decimal point.
+    - Note that if you are using the upside-down version of the display, use `'` to light the decimal point that is now at the top of the display.
 
-      - A colon between digit 2 and 3. These two LEDs are wired together.
+  - A colon between digit 2 and 3. These two LEDs are wired together.
 
-        -Use the character `:` to light these LEDs.
+    -Use the character `:` to light these LEDs.
 
-      - Note that while it is technically possible to turn on both the decimal point after digit 2 and the colon after digit 2, I did not implement that in this code. If you try to do this, the first character you set will be displayed and the next one will be interpreted as an invalid character at position 3.
+  - Note that while it is technically possible to turn on both the decimal point after digit 2 and the colon after digit 2, I did not implement that in this code. If you try to do this, the first character you set will be displayed and the next one will be interpreted as an invalid character at position 3.
 
-    These characters must be placed in the correct position in the character buffer to turn on the relevant LED. If they are placed in any other position, they will be treated as an unsupported character.
+These characters must be placed in the correct position in the character buffer to turn on the relevant LED. If they are placed in any other position, they will be treated as an unsupported character.
 </details>
 
 <details>
@@ -286,50 +280,50 @@ I have implemented most of the basic alphanumeric characters and punctuation. So
 
 Supported Characters
 
-        - All upper case english characters (A-Z)
-        - All lower case english characters (a-z)
-        - All numerals (0-9)
-        - a blank space
-        - `!`
-        - `"`
-        - `#`
-        - `$`
-        - `%`
-        - `&`
-        - `'`
-        - `(`
-        - `)`
-        - `*`
-        - `+`
-        - `,`
-        - `-`
-        - `/`
-        - `:`
-        - `;`
-        - `<`
-        - `=`
-        - `>`
-        - `?`
-        - `@`
-        - `[`
-        - `\`
-        - `]`
-        - `^`
-        - `_`
-        - `\``
-        - `{`
-        - `|`
-        - `}`
-        - `~`
+  - All upper case english characters (A-Z)
+  - All lower case english characters (a-z)
+  - All numerals (0-9)
+  - a blank space
+  - `!`
+  - `"`
+  - `#`
+  - `$`
+  - `%`
+  - `&`
+  - `'`
+  - `(`
+  - `)`
+  - `*`
+  - `+`
+  - `,`
+  - `-`
+  - `/`
+  - `:`
+  - `;`
+  - `<`
+  - `=`
+  - `>`
+  - `?`
+  - `@`
+  - `[`
+  - `\`
+  - `]`
+  - `^`
+  - `_`
+  - `\``
+  - `{`
+  - `|`
+  - `}`
+  - `~`
 
 Aside from the standard characters, this display also has:
   
-      - A decimal point after each digit
+  - A decimal point after each digit
 
-        - Use the `.` character to turn on a decimal point.
-        - Note that if you are using the upside-down version of the display, I did not implement any way to light the decimal points that are now at the top of the display. The display itself is capable of displaying the `'` character, so I did not figure it was worth it to also be able to light the decimal point. This could be changed in the future is anyone finds a use for those decimal points.
+    - Use the `.` character to turn on a decimal point.
+    - Note that if you are using the upside-down version of the display, I did not implement any way to light the decimal points that are now at the top of the display. The display itself is capable of displaying the `'` character, so I did not figure it was worth it to also be able to light the decimal point. This could be changed in the future is anyone finds a use for those decimal points.
 
-    These characters must be placed in the correct position in the character buffer to turn on the relevant LED. If they are placed in any other position, they will be treated as an unsupported character.
+These characters must be placed in the correct position in the character buffer to turn on the relevant LED. If they are placed in any other position, they will be treated as an unsupported character.
 </details>
 
 <details>
@@ -343,51 +337,51 @@ I have implemented most of the basic alphanumeric characters and punctuation. So
 
 Supported Characters:
 
-        - All upper case english characters (A-Z)
-        - All lower case english characters (a-z)
-        - All numerals (0-9)
-        - a blank space
-        - `!`
-        - `"`
-        - `#`
-        - `$`
-        - `%`
-        - `&`
-        - `'`
-        - `(`
-        - `)`
-        - `*`
-        - `+`
-        - `,`
-        - `-`
-        - `/`
-        - `:`
-        - `;`
-        - `<`
-        - `=`
-        - `>`
-        - `?`
-        - `@`
-        - `[`
-        - `\`
-        - `]`
-        - `^`
-        - `_`
-        - `\``
-        - `{`
-        - `|`
-        - `}`
-        - `~`
+  - All upper case english characters (A-Z)
+  - All lower case english characters (a-z)
+  - All numerals (0-9)
+  - a blank space
+  - `!`
+  - `"`
+  - `#`
+  - `$`
+  - `%`
+  - `&`
+  - `'`
+  - `(`
+  - `)`
+  - `*`
+  - `+`
+  - `,`
+  - `-`
+  - `/`
+  - `:`
+  - `;`
+  - `<`
+  - `=`
+  - `>`
+  - `?`
+  - `@`
+  - `[`
+  - `\`
+  - `]`
+  - `^`
+  - `_`
+  - `\``
+  - `{`
+  - `|`
+  - `}`
+  - `~`
 
-    Aside from the standard characters, this display also has:
+Aside from the standard characters, this display also has:
   
-      - A colon between digit 1 and 2
-      - A decimal point after digit 2
+  - A colon between digit 1 and 2
+  - A decimal point after digit 2
 
-        - Use the `.` character to turn on the decimal point.
-        - Note that if you are using the upside-down version of the display, I did not implement any way to light the decimal point that is now at the top of the display. The display itself is capable of displaying the `'` character, so I did not figure it was worth it to also be able to light the decimal point. This could be changed in the future is anyone finds a use for this decimal point.
+    - Use the `.` character to turn on the decimal point.
+    - Note that if you are using the upside-down version of the display, I did not implement any way to light the decimal point that is now at the top of the display. The display itself is capable of displaying the `'` character, so I did not figure it was worth it to also be able to light the decimal point. This could be changed in the future is anyone finds a use for this decimal point.
 
-    These characters must be placed in the correct position in the character buffer to turn on the relevant LED. If they are placed in any other position, they will be treated as an unsupported character.
+These characters must be placed in the correct position in the character buffer to turn on the relevant LED. If they are placed in any other position, they will be treated as an unsupported character.
 </details>
 
 ## Adding or Modifying Characters
@@ -409,13 +403,13 @@ If the character to add is already in the character map, its code will be overwr
 
 **Example:**
 
-In the below example, the ``E`` character is replaced with the code for ``R``.
+In the below example, the `E` character is replaced with the code for `R`.
 
-``add_characters: { "E": 0b0010000011110011 }``
+`add_characters: { "E": 0b0010000011110011 }`
 
 ## Removing Characters
 
-To remove a character from the map, include a ``remove_characters`` section in the YAML with a python list of characters to remove. These characters will be treated as invalid characters and will display as blank digits.
+To remove a character from the map, include a `remove_characters` section in the YAML with a python list of characters to remove. These characters will be treated as invalid characters and will display as blank digits.
 
 **Example:**
 
@@ -428,28 +422,26 @@ In the below example the characters `E` and `F` are removed.
 
 I tried to structure this library so that it would be (relatively) easy to add other devices. The basic steps to add a new device is:
 
-1. In `display.py` modify the `HT16K33_DEVICE_TYPES` dictionary to add a definition for your device.
+1. In `display.py` modify the `HT16K33_DEVICE_TYPES` dictionary to add a definition for your device:
 
-      * They keys are what the user will put in the YAML file for the `device` setting.
-      * The `CLASS_NAME` values associated with those keys are the name of the associated
-        class that you will define for this device. The name can be pretty much anything,
-        but make it something unique and descriptive.
-      * the `FORMAT_FUNCTION` should take a character code in the standard format and return the correct formatting for your device.
+  - They keys are what the user will put in the YAML file for the `device` setting.
+  - The `CLASS_NAME` values associated with those keys are the name of the associated class that you will define for this device. The name can be pretty much anything, but make it something unique and descriptive.
+  - the `FORMAT_FUNCTION` should take a character code in the standard format and return the correct formatting for your device.
 
 2. In the `esphome\components\ht16k33_char` folder:
    Add in a `.cpp` and `.h` file for your new device. The filename can be pretty much anything,
    but it is probably best to make it similar to your class name. This is where all the device
    specific magic happens.
 
-      * Add the character codes to `char_map_` during class initialization.
-      * Set `num_chars_per_display_` during initialization to the number of characters on the display.
-      * Implement a `uint8_t handle_special_char(char char_to_find, uint8_t position)` function.
-      * Implement a `void write_to_buffer(uint16_t char_to_write, uint8_t char_position)` function.
+  - Add the character codes to `char_map_` during class initialization.
+  - Set `num_chars_per_display_` during initialization to the number of characters on the display.
+  - Implement a `uint8_t handle_special_char(char char_to_find, uint8_t position)` function.
+  - Implement a `void write_to_buffer(uint16_t char_to_write, uint8_t char_position)` function.
 
 3. In this documentation:
    Update the documentation to describe your added device.
 
 ## Special Thanks
 
- - ssieb and his [ht16k33-alpha library](https://github.com/ssieb/esphome_components/tree/2e82fc3a5acc3d1f4ca6b47cbe656f4217d382ac/components/ht16k33_alpha) that I borrowed heavily from.
- - The authors and contributors for the [MAX7219 component](max7219.md) for providing an additional example.
+  - ssieb and his [ht16k33-alpha library](https://github.com/ssieb/esphome_components/tree/2e82fc3a5acc3d1f4ca6b47cbe656f4217d382ac/components/ht16k33_alpha) that I borrowed heavily from.
+  - The authors and contributors for the [MAX7219 component](max7219.md) for providing an additional example.
