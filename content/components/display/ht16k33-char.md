@@ -76,22 +76,22 @@ An example configuration YAML is shown below.
 
 - **scroll** (*Optional*): Set to `true` to enable scrolling on the display(s). Will scroll the message in the buffer based on the following parameters.
     
-    - **continuous** (*Optional*):
+  - **continuous** (*Optional*):
 
-      - If set to `true`, will loop the message in the buffer. 
-      - If set to `false`, when the message reaches the end of the buffer, the display will wait a set time and then start the message over.
-      - Defaults to `false`
-    - **scroll_speed** (*Optional*): The time between the scroll movements.
+    - If set to `true`, will loop the message in the buffer. 
+    - If set to `false`, when the message reaches the end of the buffer, the display will wait a set time and then start the message over.
+    - Defaults to `false`
+  - **scroll_speed** (*Optional*): The time between the scroll movements.
 
-      - Defaults to `1s`.
-    - **scroll_delay** (*Optional*): When not in continuous mode, the time to hold at the start of the message before starting to scroll (in seconds).
+    - Defaults to `1s`.
+  - **scroll_delay** (*Optional*): When not in continuous mode, the time to hold at the start of the message before starting to scroll (in seconds).
 
-      - Ignored in continuous mode.
-      - Defaults to `5s`.
-    - **scroll_dwell** (*Optional*): When not in continuous mode, the time to hold at the end of the message before restarting (in seconds).
+    - Ignored in continuous mode.
+    - Defaults to `5s`.
+  - **scroll_dwell** (*Optional*): When not in continuous mode, the time to hold at the end of the message before restarting (in seconds).
 
-      - Ignored in continuous mode.
-      - Defaults to `2s`.
+    - Ignored in continuous mode.
+    - Defaults to `2s`.
       
   - If the buffer size is smaller than the number of characters available, the message will not scroll.
   - Defaults to `false`
@@ -102,51 +102,51 @@ The HT16k33-char component implements a simplified version of the lambda used in
 
 ### Commands available in lambda to place characters on the display
 
-  - `it.print(start_pos, clear_buffer, string)`: Prints a string to the buffer.
+- `it.print(start_pos, clear_buffer, string)`: Prints a string to the buffer.
 
-    - *start_pos*: The position in the buffer to place the string. Starts at 0 for the first position in the buffer.
-    - *clear_buffer*: Whether to clear the buffer before placing the message. Set to `true` to clear the buffer before adding the new message.
-    - *string*: A char string of the message to place in the buffer. If the message is longer than the buffer, it will be truncated to fit.
+  - *start_pos*: The position in the buffer to place the string. Starts at 0 for the first position in the buffer.
+  - *clear_buffer*: Whether to clear the buffer before placing the message. Set to `true` to clear the buffer before adding the new message.
+  - *string*: A char string of the message to place in the buffer. If the message is longer than the buffer, it will be truncated to fit.
 
-  - `it.print(clear_buffer, string)`: Prints a string to the start of the buffer.
+- `it.print(clear_buffer, string)`: Prints a string to the start of the buffer.
 
-    - *clear_buffer*: Whether to clear the buffer before placing the message. Set to `true` to clear the buffer before adding the new message.
-    - *string*: A char string of the message to place in the buffer. If the message is longer than the buffer, it will be truncated to fit.
+  - *clear_buffer*: Whether to clear the buffer before placing the message. Set to `true` to clear the buffer before adding the new message.
+  - *string*: A char string of the message to place in the buffer. If the message is longer than the buffer, it will be truncated to fit.
 
-  - `it.printf(start_pos, clear_buffer, <standard printf arguments>)`: Implements printf to place a formatted string into the buffer.
+- `it.printf(start_pos, clear_buffer, <standard printf arguments>)`: Implements printf to place a formatted string into the buffer.
 
-    - *start_pos*: The position in the buffer to place the string. Starts at 0 for the first position in the buffer.
-    - *clear_buffer*: Whether to clear the buffer before placing the message. Set to `true` to clear the buffer before adding the new message.
-    - The rest of the arguments of this function will be passed to the printf function to generate a formatted string.
+  - *start_pos*: The position in the buffer to place the string. Starts at 0 for the first position in the buffer.
+  - *clear_buffer*: Whether to clear the buffer before placing the message. Set to `true` to clear the buffer before adding the new message.
+  - The rest of the arguments of this function will be passed to the printf function to generate a formatted string.
 
-  - `it.strftime(start_pos, clear_buffer, format, time)` : Generate a time string using strftime. TODO: A link to the strfrime man page?
+- `it.strftime(start_pos, clear_buffer, format, time)` : Generate a time string using strftime. TODO: A link to the strfrime man page?
 
-    - *start_pos*: The position in the buffer to place the string. Starts at 0 for the first position in the buffer.
-    - *clear_buffer*: Whether to clear the buffer before placing the message. Set to `true` to clear the buffer before adding the new message.
-    - *format*: the formatting string expected by `strftime()`.
-    - *time* an ESPTime object of the time you want to display.
+  - *start_pos*: The position in the buffer to place the string. Starts at 0 for the first position in the buffer.
+  - *clear_buffer*: Whether to clear the buffer before placing the message. Set to `true` to clear the buffer before adding the new message.
+  - *format*: the formatting string expected by `strftime()`.
+  - *time* an ESPTime object of the time you want to display.
 
-  - `it.clock_display(start_pos, clear_buffer, show_leading_zero, use_am_pm, time)`: A simplified function that will display the time in the format HOUR:MINUTE.
+- `it.clock_display(start_pos, clear_buffer, show_leading_zero, use_am_pm, time)`: A simplified function that will display the time in the format HOUR:MINUTE.
 
-    - *start_pos*: The position in the buffer to place the string. Starts at 0 for the first position in the buffer.
-    - *clear_buffer*: Whether to clear the buffer before placing the message. Set to `true` to clear the buffer before adding the new message.
-    - *show_leading_zero*: Whether to show the leading 0 (for example in 01:30). Set to `true` to show the leading zero.
-    - *use_am_pm*: Whether to use 12 or 24 hour time. Set to `true` to convert the time display to 12 hour mode.
-    - *time* an ESPTime object of the time you want to display.
+  - *start_pos*: The position in the buffer to place the string. Starts at 0 for the first position in the buffer.
+  - *clear_buffer*: Whether to clear the buffer before placing the message. Set to `true` to clear the buffer before adding the new message.
+  - *show_leading_zero*: Whether to show the leading 0 (for example in 01:30). Set to `true` to show the leading zero.
+  - *use_am_pm*: Whether to use 12 or 24 hour time. Set to `true` to convert the time display to 12 hour mode.
+  - *time* an ESPTime object of the time you want to display.
     
 ### Other commands avaialable in lambda
 
-  - `it.brightness(value)`: Sets the display brightness to `value`. Must be between 0-16. Setting to zero turns off the display, setting to 16 is full brightness.
-  - `it.blank()`: Clears the display memory. This will turn off all digits. Not technically the same as turning off the device, but the result is the same.
-  - `it.display_off(turn_off)`: Takes a boolean to turn the display on or off. Set `turn_off` to `true` to turn off the display.
-  - `it.display_standby(standby)`: Takes a boolean to put the display in standby mode. Set `standby` to `true` to place the display(s) into standby mode. This is probably a lower power state than just turning off the display, but I have not tested that.
-  - ``it.set_blink(blink_state)`: Set the blink state of the device. The HT16k33 is capable of blinking the display independently of the CPU. Valid values for `blink_state` are:
+- `it.brightness(value)`: Sets the display brightness to `value`. Must be between 0-16. Setting to zero turns off the display, setting to 16 is full brightness.
+- `it.blank()`: Clears the display memory. This will turn off all digits. Not technically the same as turning off the device, but the result is the same.
+- `it.display_off(turn_off)`: Takes a boolean to turn the display on or off. Set `turn_off` to `true` to turn off the display.
+- `it.display_standby(standby)`: Takes a boolean to put the display in standby mode. Set `standby` to `true` to place the display(s) into standby mode. This is probably a lower power state than just turning off the display, but I have not tested that.
+- ``it.set_blink(blink_state)`: Set the blink state of the device. The HT16k33 is capable of blinking the display independently of the CPU. Valid values for `blink_state` are:
 
-    - `0`: No blinking
-    - `1`: Blink rate of 2Hz
-    - `2`: Blink rate of 1Hz
-    - `3`: Blink rate of .5Hz
-    - Any other value given to this function will turn off the blinking.
+  - `0`: No blinking
+  - `1`: Blink rate of 2Hz
+  - `2`: Blink rate of 1Hz
+  - `3`: Blink rate of .5Hz
+  - Any other value given to this function will turn off the blinking.
 
 Please see [Formatted Text](/components/display#display-printf) for a quick introduction into the `printf` formatting rules and
 [Displaying Time](/components/display#display-strftime) for an introduction into the `strftime` time formatting.
@@ -169,47 +169,47 @@ I have implemented a subset of the most useful characters that display properly 
 
 Supported Characters
 
-  - All numerals (0-9)
-  - ` (a blank space)`
-  - `A`
-  - `b`
-  - `C`
-  - `c`
-  - `d`
-  - `E`
-  - `F`
-  - `G`
-  - `H`
-  - `h`
-  - `I`
-  - `J`
-  - `L`
-  - `N`
-  - `O (Capital letter O)`
-  - `o (Lower case letter o)`
-  - `P`
-  - `r`
-  - `S`
-  - `t`
-  - `U`
-  - `u`
-  - `Y`
+- All numerals (0-9)
+- ` (a blank space)`
+- `A`
+- `b`
+- `C`
+- `c`
+- `d`
+- `E`
+- `F`
+- `G`
+- `H`
+- `h`
+- `I`
+- `J`
+- `L`
+- `N`
+- `O (Capital letter O)`
+- `o (Lower case letter o)`
+- `P`
+- `r`
+- `S`
+- `t`
+- `U`
+- `u`
+- `Y`
 
 Aside from the standard characters, this display also has:
   
-  - A colon before the first digit. The two leds can be controlled independently.
+- A colon before the first digit. The two leds can be controlled independently.
 
-    - Use the character `'` or ``` to light the upper LED.
-    - Use the character `.` to light the lower LED.
-    - Use the character `:` to light both LEDs.
+  - Use the character `'` or ``` to light the upper LED.
+  - Use the character `.` to light the lower LED.
+  - Use the character `:` to light both LEDs.
 
-  - A colon between digit 2 and 3. These two LEDs are wired together.
+- A colon between digit 2 and 3. These two LEDs are wired together.
 
-    -Use the character `:` to light these LEDs.
+  -Use the character `:` to light these LEDs.
 
-  - A LED on the top side of the display between digits 3 and 4.
+- A LED on the top side of the display between digits 3 and 4.
 
-    - Use the character `'` or ``` to light this LED.
+  - Use the character `'` or ``` to light this LED.
     
 For the flipped version of this display, the ```, `'`, `:` and `.` characters work as expected if placed in the correct locations.
 
@@ -227,44 +227,44 @@ I have implemented a subset of the most useful characters that display properly 
 
 Supported Characters
 
-  - All numerals (0-9)
-  - ` (a blank space)`
-  - `A`
-  - `b`
-  - `C`
-  - `c`
-  - `d`
-  - `E`
-  - `F`
-  - `G`
-  - `H`
-  - `h`
-  - `I`
-  - `J`
-  - `L`
-  - `N`
-  - `O (Capital letter O)`
-  - `o (Lower case letter o)`
-  - `P``   
-  - `r`
-  - `S`
-  - `t`
-  - `U`
-  - `u`
-  - `Y`
+- All numerals (0-9)
+- ` (a blank space)`
+- `A`
+- `b`
+- `C`
+- `c`
+- `d`
+- `E`
+- `F`
+- `G`
+- `H`
+- `h`
+- `I`
+- `J`
+- `L`
+- `N`
+- `O (Capital letter O)`
+- `o (Lower case letter o)`
+- `P``   
+- `r`
+- `S`
+- `t`
+- `U`
+- `u`
+- `Y`
 
 Aside from the standard characters, this display also has:
   
-  - A decimal point after each digit
+- A decimal point after each digit
 
-    - Use the `.` character to turn on a decimal point.
-    - Note that if you are using the upside-down version of the display, use `'` to light the decimal point that is now at the top of the display.
+  - Use the `.` character to turn on a decimal point.
+  - Note that if you are using the upside-down version of the display, use `'` to light the decimal point that is now at the top of the display.
 
-  - A colon between digit 2 and 3. These two LEDs are wired together.
+- A colon between digit 2 and 3. These two LEDs are wired together.
 
-    -Use the character `:` to light these LEDs.
+  -Use the character `:` to light these LEDs.
 
-  - Note that while it is technically possible to turn on both the decimal point after digit 2 and the colon after digit 2, I did not implement that in this code. If you try to do this, the first character you set will be displayed and the next one will be interpreted as an invalid character at position 3.
+- Note that while it is technically possible to turn on both the decimal point after digit 2 and the colon after digit 2, I did not implement that in this code. If you try to do this, the first character you set will be displayed and the next one will be interpreted as an invalid character at position 3.
 
 These characters must be placed in the correct position in the character buffer to turn on the relevant LED. If they are placed in any other position, they will be treated as an unsupported character.
 </details>
@@ -280,48 +280,48 @@ I have implemented most of the basic alphanumeric characters and punctuation. So
 
 Supported Characters
 
-  - All upper case english characters (A-Z)
-  - All lower case english characters (a-z)
-  - All numerals (0-9)
-  - a blank space
-  - `!`
-  - `"`
-  - `#`
-  - `$`
-  - `%`
-  - `&`
-  - `'`
-  - `(`
-  - `)`
-  - `*`
-  - `+`
-  - `,`
-  - `-`
-  - `/`
-  - `:`
-  - `;`
-  - `<`
-  - `=`
-  - `>`
-  - `?`
-  - `@`
-  - `[`
-  - `\`
-  - `]`
-  - `^`
-  - `_`
-  - `\``
-  - `{`
-  - `|`
-  - `}`
-  - `~`
+- All upper case english characters (A-Z)
+- All lower case english characters (a-z)
+- All numerals (0-9)
+- a blank space
+- `!`
+- `"`
+- `#`
+- `$`
+- `%`
+- `&`
+- `'`
+- `(`
+- `)`
+- `*`
+- `+`
+- `,`
+- `-`
+- `/`
+- `:`
+- `;`
+- `<`
+- `=`
+- `>`
+- `?`
+- `@`
+- `[`
+- `\`
+- `]`
+- `^`
+- `_`
+- `\``
+- `{`
+- `|`
+- `}`
+- `~`
 
 Aside from the standard characters, this display also has:
   
-  - A decimal point after each digit
+- A decimal point after each digit
 
-    - Use the `.` character to turn on a decimal point.
-    - Note that if you are using the upside-down version of the display, I did not implement any way to light the decimal points that are now at the top of the display. The display itself is capable of displaying the `'` character, so I did not figure it was worth it to also be able to light the decimal point. This could be changed in the future is anyone finds a use for those decimal points.
+  - Use the `.` character to turn on a decimal point.
+  - Note that if you are using the upside-down version of the display, I did not implement any way to light the decimal points that are now at the top of the display. The display itself is capable of displaying the `'` character, so I did not figure it was worth it to also be able to light the decimal point. This could be changed in the future is anyone finds a use for those decimal points.
 
 These characters must be placed in the correct position in the character buffer to turn on the relevant LED. If they are placed in any other position, they will be treated as an unsupported character.
 </details>
@@ -337,49 +337,49 @@ I have implemented most of the basic alphanumeric characters and punctuation. So
 
 Supported Characters:
 
-  - All upper case english characters (A-Z)
-  - All lower case english characters (a-z)
-  - All numerals (0-9)
-  - a blank space
-  - `!`
-  - `"`
-  - `#`
-  - `$`
-  - `%`
-  - `&`
-  - `'`
-  - `(`
-  - `)`
-  - `*`
-  - `+`
-  - `,`
-  - `-`
-  - `/`
-  - `:`
-  - `;`
-  - `<`
-  - `=`
-  - `>`
-  - `?`
-  - `@`
-  - `[`
-  - `\`
-  - `]`
-  - `^`
-  - `_`
-  - `\``
-  - `{`
-  - `|`
-  - `}`
-  - `~`
+- All upper case english characters (A-Z)
+- All lower case english characters (a-z)
+- All numerals (0-9)
+- a blank space
+- `!`
+- `"`
+- `#`
+- `$`
+- `%`
+- `&`
+- `'`
+- `(`
+- `)`
+- `*`
+- `+`
+- `,`
+- `-`
+- `/`
+- `:`
+- `;`
+- `<`
+- `=`
+- `>`
+- `?`
+- `@`
+- `[`
+- `\`
+- `]`
+- `^`
+- `_`
+- `\``
+- `{`
+- `|`
+- `}`
+- `~`
 
 Aside from the standard characters, this display also has:
   
-  - A colon between digit 1 and 2
-  - A decimal point after digit 2
+- A colon between digit 1 and 2
+- A decimal point after digit 2
 
-    - Use the `.` character to turn on the decimal point.
-    - Note that if you are using the upside-down version of the display, I did not implement any way to light the decimal point that is now at the top of the display. The display itself is capable of displaying the `'` character, so I did not figure it was worth it to also be able to light the decimal point. This could be changed in the future is anyone finds a use for this decimal point.
+  - Use the `.` character to turn on the decimal point.
+  - Note that if you are using the upside-down version of the display, I did not implement any way to light the decimal point that is now at the top of the display. The display itself is capable of displaying the `'` character, so I did not figure it was worth it to also be able to light the decimal point. This could be changed in the future is anyone finds a use for this decimal point.
 
 These characters must be placed in the correct position in the character buffer to turn on the relevant LED. If they are placed in any other position, they will be treated as an unsupported character.
 </details>
@@ -417,7 +417,6 @@ In the below example the characters `E` and `F` are removed.
 
 `remove_characters: ["E", "F"]`
 
-
 ## Adding New Devices
 
 I tried to structure this library so that it would be (relatively) easy to add other devices. The basic steps to add a new device is:
@@ -443,5 +442,5 @@ I tried to structure this library so that it would be (relatively) easy to add o
 
 ## Special Thanks
 
-  - ssieb and his [ht16k33-alpha library](https://github.com/ssieb/esphome_components/tree/2e82fc3a5acc3d1f4ca6b47cbe656f4217d382ac/components/ht16k33_alpha) that I borrowed heavily from.
-  - The authors and contributors for the [MAX7219 component](max7219.md) for providing an additional example.
+- ssieb and his [ht16k33-alpha library](https://github.com/ssieb/esphome_components/tree/2e82fc3a5acc3d1f4ca6b47cbe656f4217d382ac/components/ht16k33_alpha) that I borrowed heavily from.
+- The authors and contributors for the [MAX7219 component](max7219.md) for providing an additional example.
