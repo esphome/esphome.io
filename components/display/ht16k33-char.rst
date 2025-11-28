@@ -28,11 +28,11 @@ See :ref:`ht16k33-char_device_details` for more info on these devices and :ref:`
 +--------------------------------------------------------------------------------------------------------------------+--------------------------------------+
 | Device                                                                                                             | Device ID(s)                         |
 +====================================================================================================================+======================================+
-| `Adafruit 1.2" 4-Digit 7-Segment <https://www.adafruit.com/product/1270>`__                                        | ``ADAFRUIT_7SEGMENT_1.2IN``          |
-|                                                                                                                    | ``ADAFRUIT_7SEGMENT_1.2IN_FLIPPED``  |
+| `Adafruit 1.2" 4-Digit 7-Segment <https://www.adafruit.com/product/1270>`__                                        | ``ADAFRUIT_7_SEG_1.2IN``             |
+|                                                                                                                    | ``ADAFRUIT_7_SEG_1.2IN_FLIPPED``     |
 +--------------------------------------------------------------------------------------------------------------------+--------------------------------------+
-| `Adafruit 0.56" 4-Digit 7-Segment <https://www.adafruit.com/product/878>`__                                        | ``ADAFRUIT_7SEGMENT_.56IN``          |
-|                                                                                                                    | ``ADAFRUIT_7SEGMENT_.56IN_FLIPPED``  |
+| `Adafruit 0.56" 4-Digit 7-Segment <https://www.adafruit.com/product/878>`__                                        | ``ADAFRUIT_7_SEG_.56IN``             |
+|                                                                                                                    | ``ADAFRUIT_7_SEG_.56IN_FLIPPED``     |
 +--------------------------------------------------------------------------------------------------------------------+--------------------------------------+
 | `Adafruit 0.54" 4-Digit 14-Segment <https://www.adafruit.com/product/1911>`__                                      | ``ADAFRUIT_14_SEG``                  |
 |                                                                                                                    | ``ADAFRUIT_14_SEG_FLIPPED``          |
@@ -85,7 +85,7 @@ Configuration variables:
   - If you have multiple display drivers, this should be the address of the first display.
   - Defaults to 0x70
 
-- **buffer_size** (*Optional*): The size of the character buffer. The length of this buffer is the longest message you can display.
+- **max_buffer_length** (*Optional*): The maximum size of the character buffer. The length of this buffer is the longest message you can display.
 
   - This should be, at minimum, the number of characters on the display you are using. 
   - You can make it longer if you want to scroll messages that are longer than the display can show all at once.
@@ -198,9 +198,9 @@ A list of supported characters is given for each device. If you place a non-supp
 
     Large 7 segment displays from `Adafruit <https://www.adafruit.com/product/1270>`__. They have various colors and all the colors should work the same. The wiring diagram for the device is supposedly `here <https://learn.adafruit.com/assets/122068>`__. However, as of this writing (3/2025) that wiring diagram appears to be incorrect. Based on my testing, the display is actually wired similar to their `smaller displays <https://learn.adafruit.com/assets/108790>`__, with the exception of the decimal points and colons.
   
-    Both a right-side-up and upside-down version of this display is implemented here. To use them set ``device`` to ``ADAFRUIT_7SEGMENT_1.2IN`` or ``ADAFRUIT_7SEGMENT_1.2IN_FLIPPED``.
+    Both a right-side-up and upside-down version of this display is implemented here. To use them set ``device`` to ``ADAFRUIT_7_SEG_1.2IN`` or ``ADAFRUIT_7_SEG_1.2IN_FLIPPED``.
 
-    I have implemented a subset of the most useful characters that display properly on a 7 segment display. There does not appear to be a standard for displaying other alphanumeric characters, and I did not implement some of the more esoteric character interpretations. If you need more characters, I suggest using a 14 character device or submitting a PR to add to this list.
+    I have implemented a subset of the most useful characters that display properly on a 7 segment display. There does not appear to be a standard for displaying other alphanumeric characters, and I did not implement some of the more esoteric character interpretations. If you need more characters, I suggest using a 14 character device or see :ref:`ht16k33-char_new_characters` for instructions on adding your own.
 
     .. collapse:: Supported Characters
 
@@ -254,9 +254,9 @@ A list of supported characters is given for each device. If you place a non-supp
 
     Small 7 segment displays from `Adafruit <https://www.adafruit.com/product/865>`__. They have various colors and all the colors should work the same. The wiring diagram for the device is `here <https://learn.adafruit.com/assets/108790>`__.
   
-    Both a right-side-up and upside-down version of this display is implemented here. To use them set ``device`` to ``ADAFRUIT_7SEGMENT_.56IN`` or ``ADAFRUIT_7SEGMENT_.56IN_FLIPPED``.
+    Both a right-side-up and upside-down version of this display is implemented here. To use them set ``device`` to ``ADAFRUIT_7_SEG_.56IN`` or ``ADAFRUIT_7_SEG_.56IN_FLIPPED``.
 
-    I have implemented a subset of the most useful characters that display properly on a 7 segment display. There does not appear to be and standard for displaying other alphanumeric characters, and I did not implement some of the more esoteric character interpretations. If you need more characters, I suggest using a 14 character device or submitting a PR to add to this list.
+    I have implemented a subset of the most useful characters that display properly on a 7 segment display. There does not appear to be and standard for displaying other alphanumeric characters, and I did not implement some of the more esoteric character interpretations. If you need more characters, I suggest using a 14 character device or see :ref:`ht16k33-char_new_characters` for instructions on adding your own.
 
     .. collapse:: Supported Characters
 
@@ -412,7 +412,7 @@ A list of supported characters is given for each device. If you place a non-supp
 
     These characters must be placed in the correct position in the character buffer to turn on the relevant LED. If they are placed in any other position, they will be treated as an unsupported character.
 
-.. _ht16k33-char_new_devices:
+.. _ht16k33-char_new_characters:
 
 Adding or Modifying Characters
 ------------------------------
@@ -453,6 +453,7 @@ In the below example the characters ``E`` and ``F`` are removed.
 
 ``remove_characters: ["E", "F"]``
 
+.. _ht16k33-char_new_devices:
 
 Adding New Devices
 ------------------------
@@ -465,16 +466,17 @@ I tried to structure this library so that it would be (relatively) easy to add o
       * The ``CLASS_NAME`` values associated with those keys are the name of the associated
         class that you will define for this device. The name can be pretty much anything,
         but make it something unique and descriptive.
+      * the ''FORMAT_FUNCTION'' should take a character code in the standard format and return the correct formatting for your device.
 
 2. In the ``esphome\components\ht16k33_char`` folder:
    Add in a ``.cpp`` and ``.h`` file for your new device. The filename can be pretty much anything,
    but it is probably best to make it similar to your class name. This is where all the device
    specific magic happens.
 
-   These files need to define the class you named in #1 above and implement a ``send_to_display()``
-   function inside this class. This function will be given the character buffer and the location
-   in the buffer of the start of the string to display, and it should implement any device specific
-   stuff to make the characters appear on the display the way you want.
+      * Add the character codes to ``char_map_`` during class initialization.
+      * Set ``num_chars_per_display_`` during initialization to the number of characters on the display.
+      * Implement a ``uint8_t handle_special_char(char char_to_find, uint8_t position)`` function.
+      * Implement a ``void write_to_buffer(uint16_t char_to_write, uint8_t char_position)`` function.
 
 3. In this documentation:
    Update the documentation to describe your added device.
