@@ -425,12 +425,12 @@ I tried to structure this library so that it would be (relatively) easy to add o
    - They keys are what the user will put in the YAML file for the `device` setting.
    - The `CLASS_NAME` values associated with those keys are the name of the associated class that you will define for this device. The name can be pretty much anything, but make it something unique and descriptive.
    - the `FORMAT_FUNCTION` should take a character code in the standard format and return the correct formatting for your device.
-2. In the `esphome\components\ht16k33_char` folder, add in a `.cpp` and `.h` file for your new device. The filename can be pretty much anything, but it is probably best to make it similar to your class name. This is where all the device specific magic happens.
+1. In the `esphome\components\ht16k33_char` folder, add in a `.cpp` and `.h` file for your new device. The filename can be pretty much anything, but it is probably best to make it similar to your class name. This is where all the device specific magic happens.
    - Add the character codes to `char_map_` during class initialization.
    - Set `num_chars_per_display_` during initialization to the number of characters on the display.
    - Implement a `uint8_t handle_special_char(char char_to_find, uint8_t position)` function.
    - Implement a `void write_to_buffer(uint16_t char_to_write, uint8_t char_position)` function.
-3. In this documentation, update the documentation to describe your added device.
+1. In this documentation, update the documentation to describe your added device.
 
 ## Special Thanks
 
