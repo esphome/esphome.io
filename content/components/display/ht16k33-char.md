@@ -15,7 +15,7 @@ This component supports scrolling messages and spanning the message across multi
 
 ## Currently Supported Devices
 
-See [device details](#Device-details) for more info on these devices and [adding new devices](#Adding-New-Devices) for instructions on adding support for new devices.
+See [device details](#device-details) for more info on these devices and [adding new devices](#adding-new-devices) for instructions on adding support for new devices.
 
 | Device | Device ID(s) |
 | --- | --- |
@@ -50,7 +50,7 @@ An example configuration YAML is shown below.
 
 - **device** (**Required**): The type of device attached.
 
-  - Choses the device type. Pick one of the options shown in the [devices](#Currently-Supported-Devices) section.
+  - Choses the device type. Pick one of the options shown in the [devices](#currently-supported-devices) section.
 
 - **address** (*Optional*): The address of the base HT16k33.
 
@@ -165,7 +165,7 @@ Large 7 segment displays from [Adafruit](https://www.adafruit.com/product/1270).
   
 Both a right-side-up and upside-down version of this display is implemented here. To use them set `device` to `ADAFRUIT_7_SEG_1.2IN` or `ADAFRUIT_7_SEG_1.2IN_FLIPPED`.
 
-I have implemented a subset of the most useful characters that display properly on a 7 segment display. There does not appear to be a standard for displaying other alphanumeric characters, and I did not implement some of the more esoteric character interpretations. If you need more characters, I suggest using a 14 character device or [add your own](#Adding-or-Modifying-Characters) characters.
+I have implemented a subset of the most useful characters that display properly on a 7 segment display. There does not appear to be a standard for displaying other alphanumeric characters, and I did not implement some of the more esoteric character interpretations. If you need more characters, I suggest using a 14 character device or [add your own](#adding-or-modifying-characters) characters.
 
 Supported Characters
 
@@ -223,7 +223,7 @@ Small 7 segment displays from [Adafruit](https://www.adafruit.com/product/865). 
   
 Both a right-side-up and upside-down version of this display is implemented here. To use them set `device` to `ADAFRUIT_7_SEG_.56IN` or `ADAFRUIT_7_SEG_.56IN_FLIPPED`.
 
-I have implemented a subset of the most useful characters that display properly on a 7 segment display. There does not appear to be and standard for displaying other alphanumeric characters, and I did not implement some of the more esoteric character interpretations. If you need more characters, I suggest using a 14 character device or [add your own](#Adding-or-Modifying-Characters) characters.
+I have implemented a subset of the most useful characters that display properly on a 7 segment display. There does not appear to be and standard for displaying other alphanumeric characters, and I did not implement some of the more esoteric character interpretations. If you need more characters, I suggest using a 14 character device or [add your own](#adding-or-modifying-characters) characters.
 
 Supported Characters
 
