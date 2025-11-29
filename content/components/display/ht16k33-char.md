@@ -7,7 +7,7 @@ params:
     image:  ht16k33-char.jpg
 ---
 
-The `ht16k33` display platform allows you to use a character display that is driven by a HT16k33 chip with ESPHome. Please note that this component is *only* for character displays. The chip is capable of driving arbitrary arrays of LEDs, but that configuration is not supported by this component.
+The `ht16k33_char` display platform allows you to use a character display that is driven by a HT16k33 chip with ESPHome. Please note that this component is *only* for character displays. The chip is capable of driving arbitrary arrays of LEDs, but that configuration is not supported by this component.
 
 <img src="images/ht16k33-char-overview.jpg" alt="A picture of two HT16k33 based displays displaying the phrase 'ESP Home'" caption="Two HT16k33 based displays" width="75.0%" class="align-center">
 
@@ -119,7 +119,7 @@ The HT16k33-char component implements a simplified version of the lambda used in
   - *clear_buffer*: Whether to clear the buffer before placing the message. Set to `true` to clear the buffer before adding the new message.
   - The rest of the arguments of this function will be passed to the printf function to generate a formatted string.
 
-- `it.strftime(start_pos, clear_buffer, format, time)` : Generate a time string using strftime. TODO: A link to the strfrime man page?
+- `it.strftime(start_pos, clear_buffer, format, time)` : Generate a time string using strftime.
 
   - *start_pos*: The position in the buffer to place the string. Starts at 0 for the first position in the buffer.
   - *clear_buffer*: Whether to clear the buffer before placing the message. Set to `true` to clear the buffer before adding the new message.
@@ -310,7 +310,7 @@ Supported Characters
 - `]`
 - `^`
 - `_`
-- `\``
+- `` ` ``
 - `{`
 - `|`
 - `}`
@@ -367,7 +367,7 @@ Supported Characters:
 - `]`
 - `^`
 - `_`
-- `\``
+- `` ` ``
 - `{`
 - `|`
 - `}`
