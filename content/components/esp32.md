@@ -211,13 +211,6 @@ The following options disable unused VFS features to save flash memory:
   Set to `true` only if you encounter issues with code that incorrectly calls FreeRTOS functions from ISRs with flash cache
   disabled. Defaults to `false` (FreeRTOS functions in flash to save IRAM).
 
-- **ringbuf_in_iram** (*Optional*, boolean): Keep ring buffer functions in IRAM instead of moving them to flash. By default,
-  ring buffer functions are placed in flash to save IRAM, except when audio components (`i2s_audio`, `micro_wake_word`) are
-  configured - these automatically enable IRAM placement for real-time audio performance. This matches the default behavior
-  in ESP-IDF 6.0 (see [migration guide](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/migration-guides/release-6.x/6.0/system.html#id1)).
-  Set to `true` to force ring buffer functions into IRAM regardless of which components are configured.
-  Defaults to `false` (ring buffer functions in flash unless audio components require IRAM).
-
 Some options can be disabled to save flash memory without affecting typical ESPHome functionality. The performance
 options (defaulting to `true`  ) improve socket operation performance but can be disabled if you need better
 multi-threaded scalability (which is uncommon since ESPHome uses an event loop).
