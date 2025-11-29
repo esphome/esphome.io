@@ -9,7 +9,7 @@ params:
 
 The `ht16k33_char` display platform allows you to use a character display that is driven by a HT16k33 chip with ESPHome. Please note that this component is *only* for character displays. The chip is capable of driving arbitrary arrays of LEDs, but that configuration is not supported by this component.
 
-<img src="images/ht16k33-char-overview.jpg" alt="A picture of two HT16k33 based displays displaying the phrase 'ESP Home'" caption="Two HT16k33 based displays" width="75.0%" class="align-center">
+{{<img src="images/ht16k33-char-overview.jpg" alt="A picture of two HT16k33 based displays displaying the phrase 'ESP Home'" caption="Two HT16k33 based displays" width="75.0%" class="align-center">}}
 
 This component supports scrolling messages and spanning the message across multiple displays. It is based on the excellent [ht16k33-alpha library](https://github.com/ssieb/esphome_components/tree/2e82fc3a5acc3d1f4ca6b47cbe656f4217d382ac/components/ht16k33_alpha>), but generalized for a wider range of character based devices.
 
@@ -388,7 +388,7 @@ These characters must be placed in the correct position in the character buffer 
 
 Characters can be added or modified from the standard font table. To do this, provide a ``add_characters`` section of the YAML. This config option should be provided a dictionary of character codes to add. The dictionary key names should be a single character and the key values should consist of a 16-bit number indicating which segments should be lit for that character. The definitions of the segments is given below.
 
-| <img src="images/ht16k33-char-7-seg-def.jpg" alt="A picture showing the segments of a seven segment display" width="200">  | <img src="images/ht16k33-char-14-seg-def.jpg" alt="A picture showing the segments of a 14 segment display" width="200">      |
+| {{<img src="images/ht16k33-char-7-seg-def.jpg" alt="A picture showing the segments of a seven segment display" width="200">}}  | {{img src="images/ht16k33-char-14-seg-def.jpg" alt="A picture showing the segments of a 14 segment display" width="200">}}      |
 | --- | --- |
 | 7 Segment Definitions | 14 Segment Definitions |
 
