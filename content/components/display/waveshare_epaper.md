@@ -108,6 +108,7 @@ lambda: |-
   - `2.90in-bV3` - B/W rendering only
   - `4.20in`
   - `4.20in-bV2` - B/W rendering only
+  - `4.20in-gv2` - 4.2in 4-color display (black, white, yellow, red)
   - `gdey042t81` - GoodDisplay GDEY042T81 4.2" B/W
   - `4.20in-bV2-bwr` - BWR rendering enabled (uses double the amount of RAM for the display buffer as B/W rendering)
   - `5.83in`
