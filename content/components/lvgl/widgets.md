@@ -22,7 +22,7 @@ The properties below are common to all widgets.
 > [!NOTE]
 > By default, the `x` and `y` coordinates are measured from the *top left corner* of the parent's content area. [Important](/components/lvgl#lvgl-styling): content area starts *after the padding* thus if the parent has a non-zero padding value, position will be shifted with that. Percentage values are calculated from the parent's content area size.
 >
-> If specifying `align`, `x` and `y` can be used as an offset to the calculated position (can also be negative). They are ignored if [Layouts](/components/lvgl#lvgl-layouts) are used on the parent.
+> If specifying `align`, `x` and `y` can be used as an offset to the calculated position (can also be negative). They are ignored if [Layouts](/components/lvgl/layouts#lvgl-layouts) are used on the parent.
 
 - **height** (*Optional*): Height of the widget in pixels or a percentage, or `SIZE_CONTENT`.
 - **width** (*Optional*): Width of the widget in pixels or a percentage, or `SIZE_CONTENT`.
@@ -38,7 +38,12 @@ The properties below are common to all widgets.
   - `"ON"`  : Always show the scroll bars (use the double quotes!).
   - `"ACTIVE"`  : Show scroll bars while a widget is being scrolled.
   - `"AUTO"`  : Show scroll bars when the content is large enough to be scrolled (default).
-
+- **scroll_dir** (*Optional*, string): Sets the permissible scroll directions for an object - one of `LEFT`, `RIGHT`,
+  `BOTTOM`, `TOP`, `HOR`, `VER`, `ALL` (default).
+- **scroll_snap_x** (*Optional*, string): For a child of a scrollable object, this property defines the snap position
+  of the child in the X direction. One of `NONE` (default), `START`, `END`, `CENTER`.
+- **scroll_snap_y** (*Optional*, string): For a child of a scrollable object, this property defines the snap position
+  of the child in the Y direction. One of `NONE` (default), `START`, `END`, `CENTER`.
 - **align** (*Optional*, enum): Alignment of the widget relative to the parent. A child widget is clipped to its parent boundaries. One of the values *not* starting with `OUT_` (see picture below).
 - **align_to** (*Optional*, list): Alignment of the widget relative to another widget on the same level:
   - **id** (**Required**): The ID of a widget *to* which you want to align.
@@ -49,7 +54,7 @@ The properties below are common to all widgets.
 {{< img src="lvgl_align.png" alt="Image" class="align-center" >}}
 
 - **group** (*Optional*, string): The name of the group of widgets which will interact with a {{< docref "/components/sensor/rotary_encoder" >}}. In every group there is always one focused widget which receives the encoder actions. You need to associate an input device with a group. An input device can send key events to only one group but a group can receive data from more than one input device. If no group is specified for a widget or an encoder, an unnamed default group will be assigned, so in most cases where only one encoder is used it will not be necessary to explicitly specify a group.
-- **layout** (*Optional*): See [Layouts](/components/lvgl#lvgl-layouts) for details. Defaults to `NONE`.
+- **layout** (*Optional*): See [Layouts](/components/lvgl/layouts#lvgl-layouts) for details. Defaults to `NONE`.
 - **styles** (*Optional*, [ID](/guides/configuration-types#id)): The ID of a *style definition* from the main component configuration to override the theme styles.
 - **theme** (*Optional*, list): A list of styles to apply to the widget and children. Same configuration option as at the main component.
 - **widgets** (*Optional*, list): A list of LVGL widgets to be drawn as children of this widget. Same configuration option as at the main component.
@@ -424,9 +429,17 @@ Simple push (momentary) or toggle (two-states) button.
 
 {{< img src="lvgl_button.png" alt="Image" class="align-center" >}}
 
+A button has no inherent content so requires child widgets to be added. As a shorthand for a button with a single text label,
+the `text:` option may be used to add a single `label` child, otherwise the `widgets:` key must be used to add other
+widgets inside the button.
+
+A button is momentary by default, which has a `pressed` state. If the `checkable` flag is set, it becomes a toggle button, which also has a `checked` state.
+
 **Configuration variables:**
 
-- **checkable** (*Optional*, boolean): A significant [flag](#lvgl-widget-flags) to make a toggle button (which remains pressed in `checked` state). Defaults to `false`.
+- **checkable** (*Optional*, boolean): A significant [flag](#lvgl-widget-flags) to make a toggle button (which reports its `checked` state). Defaults to `false`.
+- **text** (*Optional*, string): Text to be displayed on the button. This will create and add a single label widget to the button. May not be used
+  with the `widgets:` key.
 - Style options from [Style properties](/components/lvgl#lvgl-styling) for the background of the button. Uses the typical background style properties.
 
 A notable state is `checked` (boolean) which can have different styles applied.
@@ -440,30 +453,22 @@ A notable state is `checked` (boolean) which can have different styles applied.
 **Example:**
 
 ```yaml
-# Example widget:
+# Example widget with text:
 - button:
-    x: 10
-    y: 10
-    width: 50
-    height: 30
     id: btn_id
+    text: "Click me!"
 ```
 
-To have a button with a text label on it, add a child [`label`](#lvgl-widget-label) widget to it:
+To create an image button, add a child [`image`](#lvgl-widget-image) widget to it:
 
 ```yaml
-# Example toggle button with text:
+# Example toggle button with image:
 - button:
-    x: 10
-    y: 10
-    width: 70
-    height: 30
     id: btn_id
     checkable: true
     widgets:
-      - label:
-          align: center
-          text: "Light"
+      - image:
+          src: my_image_id
 
 # Example trigger:
 - button:
@@ -473,11 +478,36 @@ To have a button with a text label on it, add a child [`label`](#lvgl-widget-lab
         - logger.log:
             format: "Button checked state: %d"
             args: [ x ]
+
 ```
 
 The `button` can be also integrated as a {{< docref "/components/binary_sensor/lvgl" "Binary Sensor" >}} or as a {{< docref "/components/switch/lvgl" "Switch" >}} component.
+> [!NOTE]
+> A binary sensor linked to a button reports its `pressed` state, while a switch linked to a button reports its `checked` state.
 
 See [Remote light button](/cookbook/lvgl#lvgl-cookbook-binent) for an example which demonstrates how to use a checkable button to act on a Home Assistant service.
+
+**Actions:**
+
+- `lvgl.button.update` [action](/automations/actions#actions-action) may be used to update the button styles at runtime. If
+  the button has a `text:` option then it may also be updated with this action.
+  - **id** (**Required**): The ID or a list of IDs of button widgets to be updated.
+  - **text** (*Optional*, string): Update the button's text (only if the button was configured with the `text:` option).
+  - Style options from [Style properties](/components/lvgl#lvgl-styling) for the background of the button.
+
+  > [!NOTE]
+  > Where other widgets are added as children, they must be updated directly.
+
+```yaml
+# Text update example
+- button:
+    id: btn_id
+    text: "Click me!"
+    on_click:
+      lvgl.button.update:
+        id: btn_id
+        text: "Clicked"
+```
 
 {{< anchor "lvgl-widget-buttonmatrix" >}}
 
@@ -815,7 +845,7 @@ it is invisible. It has a default width and height of 100%.
 
 **Configuration variables:**
 
-- Style options from [Style properties](#lvgl-styling).
+- Style options from [Style properties](/components/lvgl#lvgl-styling).
 
 **Triggers:**
 
@@ -1047,7 +1077,7 @@ A label is the basic widget type that is used to display text.
 
 **Configuration variables:**
 
-- **long_mode** (*Optional*, list): By default, the width and height of the label is set to `SIZE_CONTENT`. Therefore, the size of the label is automatically expanded to the text size. Otherwise, if the `width` or `height` are explicitly set (or set by [Layouts](/components/lvgl#lvgl-layouts)), the lines wider than the label's width can be manipulated according to the long mode policies below. These policies can be applied if the height of the text is greater than the height of the label.
+- **long_mode** (*Optional*, list): By default, the width and height of the label is set to `SIZE_CONTENT`. Therefore, the size of the label is automatically expanded to the text size. Otherwise, if the `width` or `height` are explicitly set (or set by [Layouts](/components/lvgl/layouts#lvgl-layouts)), the lines wider than the label's width can be manipulated according to the long mode policies below. These policies can be applied if the height of the text is greater than the height of the label.
   - `WRAP`  : Wrap lines which are too long. If the height is `SIZE_CONTENT`, the label's height will be expanded, otherwise the text will be clipped (default).
   - `DOT`  : Replaces the last 3 characters from bottom right corner of the label with dots.
   - `SCROLL`  : If the text is wider than the label, scroll the text horizontally back and forth. If it's higher, scroll vertically. Text will scroll in only one direction; horizontal scrolling has higher precedence.
