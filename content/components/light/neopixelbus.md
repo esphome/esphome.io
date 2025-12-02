@@ -69,6 +69,7 @@ light:
   - `LPD6803`
   - `LPD8806`
   - `P9813`
+  - `HD108`
 
 - **method** (*Optional*, string): The method used to transmit the data. By default, ESPHome will try to use the best method
   available for this chipset, ESP platform, and the given pin. See [methods](#neopixelbus-methods) for more information.
