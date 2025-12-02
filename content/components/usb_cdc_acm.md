@@ -35,8 +35,8 @@ usb_cdc_acm:
 
 Each interface in the `interfaces` list consists of the following:
 
-- **id** (*Optional*, [ID](#config-id)): The ID to use for this interface instance. This is used to refer to the
-  interface in other components, platforms or lambdas.
+- **id** (*Optional*, [ID](/guides/configuration-types#config-id)): The ID to use for this interface instance. This is
+  used to refer to the interface in other components, platforms or lambdas.
 
 ## Multiple Interface Example
 
