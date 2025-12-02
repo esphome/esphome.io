@@ -25,8 +25,6 @@ text_sensor:
       name: "Device Info"
     reset_reason:
       name: "Reset Reason"
-    power_save_mode:
-      name: "WiFi Power Save Mode"
 
 sensor:
   - platform: debug
@@ -101,10 +99,10 @@ sensor:
 The component enables debugging features for ESPHome devices running on the Zephyr RTOS.
 It helps with low-level firmware debugging using **SWD (Serial Wire Debug)**. It enables:
 
-- **Thread Awareness in GDB**  
+- **Thread Awareness in GDB**
 Injects Zephyr thread metadata so that all active threads can be inspected via GDB when connected over SWD.
 
-- **Real-Time Logging over RTT**  
+- **Real-Time Logging over RTT**
 Enables logging output over **SEGGER RTT** (Real Time Transfer), allowing non-intrusive debug logs through SWD.
 
 ## See Also

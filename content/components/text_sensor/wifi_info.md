@@ -36,6 +36,8 @@ text_sensor:
       name: ESP Latest Scan Results
     dns_address:
       name: ESP DNS Address
+    power_save_mode:
+      name: ESP Wifi Power Save Mode
 ```
 
 ## Configuration variables
@@ -61,6 +63,8 @@ text_sensor:
 
 - **dns_address** (*Optional*): Expose the DNS Address of the ESP as text sensor.
   [Text Sensor](/components/text_sensor#config-text_sensor).
+
+- **power_save_mode** (*Optional*) Expose the WiFi Power save mode of the ESP as a text sensor. Only available on ESP32.
 
 ## See Also
 
