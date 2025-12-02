@@ -64,7 +64,7 @@ text_sensor:
 - **dns_address** (*Optional*): Expose the DNS Address of the ESP as text sensor.
   [Text Sensor](/components/text_sensor#config-text_sensor).
 
-- **power_save_mode** (*Optional*) Expose the WiFi Power save mode of the ESP as a text sensor. Only available on ESP32.
+- **power_save_mode** (*Optional*) Expose the WiFi Power save mode of the ESP as a text sensor.
 
 ## See Also
 
