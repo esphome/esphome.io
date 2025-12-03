@@ -103,7 +103,8 @@ sensor:
 - **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to check the
   sensor. Defaults to `60s`.
 
-- **idle_interval** (*Optional*, [Time](/guides/configuration-types#time)): If specified, will put the sensor into an idle mode between readings for the specified amount of time.
+- **idle_interval** (*Optional*, [Time](/guides/configuration-types#time)): If specified, puts the sensor
+  into idle mode between readings for the specified amount of time.
 
 ## Wiring
 
