@@ -152,14 +152,16 @@ Sensirion recommends cleaning at least once per week.
 
 ## Idle Operation Mode
 
-The SPS30 sensor can go into an idle operation mode where most internal electronics are switched off, including the fan and laser.  This greatly reduces power consumption as well
-as can prolong the life of the sensor.
+The SPS30 sensor can go into an idle operation mode where most internal electronics are switched off,
+including the fan and laser. This greatly reduces power consumption and can prolong the life of the sensor.
 
-Specifying an `idle_interval` configuration parameter will automatically stop the sensor for that interval, wake it when it is time, allow the sensor to warm up, and take a reading
-before putting it back into idle state.
+Specifying an `idle_interval` configuration parameter will automatically stop the sensor for that interval,
+wake it when it is time, allow the sensor to warm up for 30 seconds, and take a reading before putting it back
+into idle state.
 
-The start and stop actions below allow users to manually take the sensor in and out of idle mode.  Note that after the sensor is started, it does have a warm-up period of 30 seconds
-prior to outputting measurements.
+The start and stop actions below allow users to manually take the sensor in and out of idle mode.
+Note that after the sensor is started, it does have a warm-up period of 30 seconds prior to outputting
+measurements.
 
 See [low power documentation](https://sensirion.com/media/documents/188A2C3C/6166F165/Sensirion_Particulate_Matter_AppNotes_SPS30_Low_Power_Operation_D1.pdf) for more information.
 
@@ -168,19 +170,19 @@ See [low power documentation](https://sensirion.com/media/documents/188A2C3C/616
 This [action](/automations/actions#all-actions) manually puts the sensor into measurement mode.
 
 ```yaml
-    on_...:
-      then:
-        - sps30.start_measurement: my_sps30
+on_...:
+  then:
+    - sps30.start_measurement: my_sps30
 ```
 
 ### Stop Measurement Action
 
-This [action](/automations/actions#all-actions) manually puts the sensor into sleep mode.
+This [action](/automations/actions#all-actions) manually puts the sensor into idle mode.
 
 ```yaml
-    on_...:
-      then:
-        - sps30.stop_measurement: my_sps30
+on_...:
+  then:
+    - sps30.stop_measurement: my_sps30
 ```
 
 ## See Also
