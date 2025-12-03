@@ -164,7 +164,8 @@ The start and stop actions below allow users to manually take the sensor in and 
 Note that after the sensor is started, it does have a warm-up period of 30 seconds prior to outputting
 measurements.
 
-See [low power documentation](https://sensirion.com/media/documents/188A2C3C/6166F165/Sensirion_Particulate_Matter_AppNotes_SPS30_Low_Power_Operation_D1.pdf) for more information.
+See [low power documentation](https://sensirion.com/media/documents/188A2C3C/6166F165/Sensirion_Particulate_Matter_AppNotes_SPS30_Low_Power_Operation_D1.pdf)
+for more information.
 
 ### Start Measurement Action
 
