@@ -202,27 +202,27 @@ For creating larger displays by chaining multiple panels:
 - **brightness** (*Optional*, int): Initial brightness level (0-255). Defaults to `128`.
 - **bit_depth** (*Optional*, int): Color bit depth (6-12). Higher values = better color accuracy but slower refresh. Defaults to `8`.
 - **double_buffer** (*Optional*, boolean): Enable double buffering to prevent tearing. Defaults to `false`. Set to `false` when using LVGL.
-- **update_interval** (*Optional*, [Time](#config-time)): Display update frequency. Defaults to `16ms` (~60 FPS). Set to `never` when using LVGL.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): Display update frequency. Defaults to `16ms` (~60 FPS). Set to `never` when using LVGL.
 - **min_refresh_rate** (*Optional*, int): Minimum panel refresh rate in Hz (40-200). The panel may refresh faster than this, but won't go slower. Auto-calculated from `update_interval` (defaults to 60 Hz when `update_interval: never`). Rarely needs to be set manually.
 
 ### Pin Configuration
 
 **Required when `board` is not specified:**
 
-- **r1_pin** ([Pin Schema](#config-pin_schema)): Red data pin for top half.
-- **g1_pin** ([Pin Schema](#config-pin_schema)): Green data pin for top half.
-- **b1_pin** ([Pin Schema](#config-pin_schema)): Blue data pin for top half.
-- **r2_pin** ([Pin Schema](#config-pin_schema)): Red data pin for bottom half.
-- **g2_pin** ([Pin Schema](#config-pin_schema)): Green data pin for bottom half.
-- **b2_pin** ([Pin Schema](#config-pin_schema)): Blue data pin for bottom half.
-- **a_pin** ([Pin Schema](#config-pin_schema)): Row address bit 0.
-- **b_pin** ([Pin Schema](#config-pin_schema)): Row address bit 1.
-- **c_pin** ([Pin Schema](#config-pin_schema)): Row address bit 2.
-- **d_pin** ([Pin Schema](#config-pin_schema)): Row address bit 3.
-- **e_pin** (*Optional*, [Pin Schema](#config-pin_schema)): Row address bit 4. Required for 1/32 scan panels (32+ rows), omit for 1/16 scan panels.
-- **lat_pin** ([Pin Schema](#config-pin_schema)): Latch/strobe pin.
-- **oe_pin** ([Pin Schema](#config-pin_schema)): Output enable pin.
-- **clk_pin** ([Pin Schema](#config-pin_schema)): Clock pin.
+- **r1_pin** ([Pin Schema](/guides/configuration-types#pin-schema)): Red data pin for top half.
+- **g1_pin** ([Pin Schema](/guides/configuration-types#pin-schema)): Green data pin for top half.
+- **b1_pin** ([Pin Schema](/guides/configuration-types#pin-schema)): Blue data pin for top half.
+- **r2_pin** ([Pin Schema](/guides/configuration-types#pin-schema)): Red data pin for bottom half.
+- **g2_pin** ([Pin Schema](/guides/configuration-types#pin-schema)): Green data pin for bottom half.
+- **b2_pin** ([Pin Schema](/guides/configuration-types#pin-schema)): Blue data pin for bottom half.
+- **a_pin** ([Pin Schema](/guides/configuration-types#pin-schema)): Row address bit 0.
+- **b_pin** ([Pin Schema](/guides/configuration-types#pin-schema)): Row address bit 1.
+- **c_pin** ([Pin Schema](/guides/configuration-types#pin-schema)): Row address bit 2.
+- **d_pin** ([Pin Schema](/guides/configuration-types#pin-schema)): Row address bit 3.
+- **e_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): Row address bit 4. Required for 1/32 scan panels (32+ rows), omit for 1/16 scan panels.
+- **lat_pin** ([Pin Schema](/guides/configuration-types#pin-schema)): Latch/strobe pin.
+- **oe_pin** ([Pin Schema](/guides/configuration-types#pin-schema)): Output enable pin.
+- **clk_pin** ([Pin Schema](/guides/configuration-types#pin-schema)): Clock pin.
 
 ### Advanced Timing (Optional)
 
@@ -237,7 +237,7 @@ For creating larger displays by chaining multiple panels:
 
 ### Standard Display Options
 
-All standard [graphical display configuration](#display-configuration) options are also available, including **lambda**, **pages**, **rotation**, and **auto_clear_enabled**.
+All standard [graphical display configuration](/components/display#display-configuration) options are also available, including **lambda**, **pages**, **rotation**, and **auto_clear_enabled**.
 
 ## Multi-Panel Layouts
 
