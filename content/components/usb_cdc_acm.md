@@ -26,8 +26,8 @@ usb_cdc_acm:
 
 ## Configuration variables
 
-- **usb_rx_buffer_size** (*Optional*, int): Size of the USB receive buffer in bytes. Range: 1-65535. Defaults to `256`.
-- **usb_tx_buffer_size** (*Optional*, int): Size of the USB transmit buffer in bytes. Range: 1-65535. Defaults to `256`.
+- **rx_buffer_size** (*Optional*, int): Size of the USB receive buffer in bytes. Range: 1-65535. Defaults to `256`.
+- **tx_buffer_size** (*Optional*, int): Size of the USB transmit buffer in bytes. Range: 1-65535. Defaults to `256`.
 - **interfaces** (**Optional**, list): List of CDC-ACM interface instances. Up to two are supported; at least one is
   required. Defaults to a single-item list which defines a single interface only.
 
