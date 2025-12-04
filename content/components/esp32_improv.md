@@ -39,7 +39,9 @@ esp32_improv:
 - **status_indicator** (*Optional*, [ID](/guides/configuration-types#id)): An {{< docref "output/index" "output" >}} to display feedback to the user.
 - **identify_duration** (*Optional*, [Time](/guides/configuration-types#time)): The amount of time to identify for. Defaults to `10s`.
 - **wifi_timeout** (*Optional*, [Time](/guides/configuration-types#time)): The amount of time to wait before starting the Improv service
-  after Wi-Fi is no longer connected. Defaults to `1min`.
+  after Wi-Fi is no longer connected. Defaults to `90s`.
+- **next_url** (*Optional*, string): The URL to open after provisioning is complete. Defaults to
+  `https://my.home-assistant.io/redirect/config_flow_start?domain=esphome`.
 
 - **on_start** (*Optional*, [Automation](/automations)): An action to be performed when Improv is waiting for
   authorization and/or upon authorization. See [`on_start`](#improv-on_start).
@@ -122,7 +124,7 @@ esp32_improv:
 
 This automation will be triggered on every state change.
 
-Two variables are available for use in [lambdas](#config-lambda) within this automation. They are:
+Two variables are available for use in [lambdas](/automations/templates#config-lambda) within this automation. They are:
 
 - `state`, an `enum` named `improv::State`, having one of the following values:
 

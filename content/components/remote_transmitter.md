@@ -15,7 +15,7 @@ The component is split into two parts:
 - The remote transmitter "hub", which defines the pin and a few additional settings, and...
 - Individual [actions](/automations/actions#all-actions) to send encoded remote signals.
 
-**See** [Setting up IR Devices](#remote-setting-up-infrared) **and** [Setting up RF Devices](#remote-setting-up-rf) **for details.**
+**See** [Setting up IR Devices](/guides/setting_up_rmt_devices#remote-setting-up-infrared) **and** [Setting up RF Devices](/guides/setting_up_rmt_devices#remote-setting-up-rf) **for details.**
 
 > [!NOTE]
 > This component performs best with an ESP32 or variant; they have a dedicated hardware peripheral which ensures
@@ -57,6 +57,8 @@ remote_transmitter:
 | ESP32-S3 | 192 symbols | 48 symbols |
 
 - **clock_resolution** (*Optional*, int): The clock resolution used by the RMT peripheral in Hz. Defaults to `1000000`.
+- **non_blocking** (*Optional*, boolean): If enabled, any transmit will return immediately and the RMT will run in the
+  background. The `on_complete` automation will trigger after the transmit completes. Defaults to `true`.
 - **use_dma** (*Optional*, boolean): Enable DMA on variants that support it. If enabled `rmt_symbols` controls
   the DMA buffer size and can be set to a large value.
 
@@ -106,7 +108,7 @@ on_...:
 
   - **times** ([templatable](/automations/templates), int): The number of times to repeat the code.
   - **wait_time** ([templatable](/automations/templates), [Time](/guides/configuration-types#time)): The time to wait between repeats (in
-    µs as a result of a [lambda](#config-lambda)).
+    µs as a result of a [lambda](/automations/templates#config-lambda)).
 
 - **transmitter_id** (*Optional*, [ID](/guides/configuration-types#id)): The remote transmitter to send the remote code with. Defaults to
   the first one defined in the configuration.
@@ -375,6 +377,34 @@ on_...:
 - **channel** (**Required**, int): The switch/channel to send, between 0 and 127 inclusive.
 - **command** (**Required**, int): The command to send, between 0 and 63 inclusive.
 - All other options from [Remote Transmitter Actions](#remote_transmitter-transmit_action).
+
+{{< anchor "remote_transmitter-transmit_dyson" >}}
+
+### `remote_transmitter.transmit_dyson` **Action**
+
+This [action](/automations/actions#config-action) sends a Dyson cool AM07 infrared protocol code to a remote transmitter.
+
+```yaml
+on_...:
+  - remote_transmitter.transmit_dyson:
+      code: '0x1200'
+      index: !lambda |-
+        uint8_t idx = id(idx);
+        id(idx) = (id(idx) + 1) & 3;
+        return idx;
+```
+
+#### Configuration variables
+
+- **code** (**Required**, int): The 16-bit code to trigger on, e.g. 0x1200=power, 0x1215=fan++,
+  0x122a=swing..., see dumper output for more info.
+- **index** (**Required**, int): The 8-bit rolling index (range=0..3).
+- All other options from [Remote Transmitter Actions](#remote_transmitter-transmit_action).
+
+> [!NOTE]
+> The **dyson** devices use rolling codes, i.e. each remote button generates 4 different codes in a pseudo
+> random manner. On every transmit the **index** variable must loop to let the **..transmit_dyson** function
+> generate a code that differs from the previous one.
 
 {{< anchor "remote_transmitter-transmit_gobox" >}}
 
@@ -923,6 +953,32 @@ on_...:
 - **command** (**Required**, int): The Samsung36 command to send, see dumper output for more details.
 - All other options from [Remote Transmitter Actions](#remote_transmitter-transmit_action).
 
+{{< anchor "remote_transmitter-transmit_symphony" >}}
+
+### `remote_transmitter.transmit_symphony` **Action**
+
+This [action](/automations/actions#config-action) sends a Symphony infrared remote code to a remote transmitter.
+It transmits constant bit-time frames with a footer gap. Physical Symphony remotes typically
+send the same frame twice separated by a ~35 ms gap. Use `command_repeats` to control how
+many identical frames are sent; defaults to 2.
+
+```yaml
+on_...:
+  - remote_transmitter.transmit_symphony:
+      data: 0x0E88
+      nbits: 12
+      command_repeats: 2
+```
+
+#### Configuration variables
+
+- **data** (**Required**, int): The Symphony code to send, see dumper output for more info.
+- **nbits** (**Required**, int): The number of bits to send. Typical values: `8`, `12`, or `16`.
+- **command_repeats** (*Optional*, int): Number of times to send the same frame in one transmission.
+  Defaults to `2` to match typical handsets.
+
+- All other options from [Remote Transmitter Actions](#remote_transmitter-transmit_action).
+
 {{< anchor "remote_transmitter-transmit_sony" >}}
 
 ### `remote_transmitter.transmit_sony` **Action**
@@ -1049,7 +1105,7 @@ All RC Switch `protocol` settings have these settings:
 
 ### Lambda calls
 
-Actions may also be called from [lambdas](#config-lambda). The `.transmit()` call can be populated with
+Actions may also be called from [lambdas](/automations/templates#config-lambda). The `.transmit()` call can be populated with
 encoded data for a specific protocol by following the example below.
 See the full API Reference for more info.
 
@@ -1068,9 +1124,9 @@ See the full API Reference for more info.
 
 - {{< docref "index/" >}}
 - {{< docref "/components/remote_receiver" >}}
-- [Setting up IR Devices](#remote-setting-up-infrared)
-- [Setting up RF Devices](#remote-setting-up-rf)
+- [Setting up IR Devices](/guides/setting_up_rmt_devices#remote-setting-up-infrared)
+- [Setting up RF Devices](/guides/setting_up_rmt_devices#remote-setting-up-rf)
 - {{< docref "/components/rf_bridge" >}}
-- [Delaying Remote Transmissions](#lambda_magic_rf_queues)
+- [Delaying Remote Transmissions](/cookbook/lambda_magic#lambda_magic_rf_queues)
 - [RCSwitch](https://github.com/sui77/rc-switch) by [Suat Özgür](https://github.com/sui77)
 - {{< apiref "remote_transmitter/remote_transmitter.h" "remote_transmitter/remote_transmitter.h" >}}

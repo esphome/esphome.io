@@ -11,7 +11,7 @@ params:
 
 Use this component to store graphical images on the device, you can then draw the images on compatible displays.
 
-For showing images downloaded at runtime, take a look at the [Online Image](#online_image) component.
+For showing images downloaded at runtime, take a look at the [Online Image](/components/online_image#online_image) component.
 
 ```yaml
 image:
@@ -36,7 +36,7 @@ image:
     type: rgb565
     resize: 200x162
   images:
-    - file: https://esphome.io/images/logo.png
+    - file: https://media.esphome.io/logo/logo.png
       id: esphome_logo
 ```
 

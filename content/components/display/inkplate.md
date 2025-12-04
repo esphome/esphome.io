@@ -72,6 +72,8 @@ display:
   - `inkplate_10`
   - `inkplate_6_plus`
   - `inkplate_6_v2`
+  - `inkplate_5`
+  - `inkplate_5_v2`
 
 - **greyscale** (*Optional*, boolean): Makes the screen display 3 bit colors. Defaults to `false`
 - **partial_updating** (*Optional*, boolean): Makes the screen update partially, which is faster, but leaves burnin. Defaults to `false`
@@ -82,11 +84,11 @@ display:
   - **flip_y** (*Optional*, boolean): Flip the screen on the Y axis. Defaults to `false`
   - **flip_x** (*Optional*, boolean): Flip the screen on the X axis. Defaults to `false`
 
-- **lambda** (*Optional*, [lambda](#config-lambda)): The lambda to use for rendering the content on the display.
-  See [Display Rendering Engine](#display-engine) for more information.
+- **lambda** (*Optional*, [lambda](/automations/templates#config-lambda)): The lambda to use for rendering the content on the display.
+  See [Display Rendering Engine](/components/display#display-engine) for more information.
 
 - **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to re-draw the screen. Defaults to `5s`.
-- **pages** (*Optional*, list): Show pages instead of a single lambda. See [Display Pages](#display-pages).
+- **pages** (*Optional*, list): Show pages instead of a single lambda. See [Display Pages](/components/display#display-pages).
 
 - **ckv_pin** (**Required**, [Pin](/guides/configuration-types#pin)): The CKV pin for the Inkplate display.
 - **gmod_pin** (**Required**, [Pin](/guides/configuration-types#pin)): The GMOD pin for the Inkplate display.
@@ -138,6 +140,7 @@ esphome:
 
 esp32:
   board: esp-wrover-kit
+  cpu_frequency: 240MHz
 
 logger:
 
@@ -236,6 +239,8 @@ font:
   - file: "Helvetica.ttf"
     id: helvetica_48
     size: 48
+
+psram:
 
 display:
 - platform: inkplate
@@ -398,7 +403,7 @@ display:
   greyscale: true
   partial_updating: false
   update_interval: never
-  model: inkplate_5_v2
+  model: inkplate_5 # or inkplate_5_v2
 
   ckv_pin: 32
   sph_pin: 33

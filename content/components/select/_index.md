@@ -34,7 +34,7 @@ Configuration variables:
 - **name** (*Optional*, string): The name for the select. At least one of **id** and **name** must be specified.
 
 > [!NOTE]
-> If you have a [friendly_name](#esphome-configuration_variables) set for your device and
+> If you have a [friendly_name](/components/esphome#esphome-configuration_variables) set for your device and
 > you want the select to use that name, you can set `name: None`.
 
 - **icon** (*Optional*, icon): Manually set the icon to use for the select in the frontend.
@@ -51,7 +51,7 @@ Configuration variables:
   for a list of available options.
   Set to `""` to remove the default entity category.
 
-- If Webserver enabled and version 3 is selected, All other options from Webserver Component.. See [Webserver Version 3](#config-webserver-version-3-options).
+- If Webserver enabled and version 3 is selected, All other options from Webserver Component.. See [Webserver Version 3](/components/web_server#config-webserver-version-3-options).
 
 Automations:
 
@@ -60,19 +60,19 @@ Automations:
 
 MQTT Options:
 
-- All other options from [MQTT Component](#config-mqtt-component).
+- All other options from [MQTT Component](/components/mqtt#config-mqtt-component).
 
 ## Select Automation
 
-You can access the most recent state of the select in [lambdas](#config-lambda) using
-`id(select_id).state`.
+You can access the most recent state of the select in [lambdas](/automations/templates#config-lambda) using
+`id(select_id).current_option()`.
 For more information on using lambdas with select, see [lambda calls](#select-lambda_calls).
 
 {{< anchor "select-on_value" >}}
 
 ### `on_value`
 
-This automation will be triggered whenever a value is set/published, even if the value is the same as before. In [Lambdas](#config-lambda)
+This automation will be triggered whenever a value is set/published, even if the value is the same as before. In [Lambdas](/automations/templates#config-lambda)
 you can get the value from the trigger with `x` and the index offset of the selected value with `i`.
 
 ```yaml
@@ -251,7 +251,7 @@ Configuration variables:
 
 ### lambda calls
 
-From [lambdas](#config-lambda), you can call several methods on all selects to do some
+From [lambdas](/automations/templates#config-lambda), you can call several methods on all selects to do some
 advanced stuff (see the full API Reference for more info).
 
 - `.make_call()`  : Create a call for changing the select state.
@@ -268,19 +268,28 @@ advanced stuff (see the full API Reference for more info).
   to select the first option or `call.select_next(true)` to select the next
   option with the cycle feature enabled.
 
-- `.state`  : Retrieve the currently selected option of the select.
+- `.current_option()`  : Retrieve the currently selected option of the select. Returns `const char*`.
 
 ```cpp
     // For example, create a custom log message when an option is selected:
-    auto state = id(my_select).state.c_str();
+    auto state = id(my_select).current_option();
     ESP_LOGI("main", "Option of my select: %s", state);
 ```
 
 ```yaml
-    # Check if a specific option is selected
+    # Check if a specific option is selected (using strcmp)
     - if:
         condition:
-          - lambda: 'return id(my_select).state == "my_option_value";'
+          - lambda: 'return strcmp(id(my_select).current_option(), "my_option_value") == 0;'
+```
+
+```yaml
+    # Or convert to std::string for comparison
+    - if:
+        condition:
+          - lambda: |-
+              std::string current = id(my_select).current_option();
+              return current == "my_option_value";
 ```
 
 - `.size()`  : Retrieve the number of options in the select.

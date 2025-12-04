@@ -26,11 +26,22 @@ script:
 
   - `single`  : Do not start a new run. Issue a warning.
   - `restart`  : Start a new run after first stopping previous run.
-  - `queued`  : Start a new run after previous runs complete.
+  - `queued`  : Start a new run after previous runs complete. By default, allows up to 5 total instances (1 running + 4 queued).
+    When the limit is reached, additional calls are rejected with a warning.
   - `parallel`  : Start a new, independent run in parallel with previous runs.
 
-- **max_runs** (*Optional*, int): Allows limiting the maximum number of runs when using script modes `queued` and
-  `parallel`, use value `0` for unlimited runs. Defaults to `0`.
+- **max_runs** (*Optional*, int): Allows limiting the maximum number of script instances.
+  - For `queued` mode: Specifies max total instances (including the running one). Defaults to `5` (1 running + 4 queued). Valid range: 1-100.
+  - For `parallel` mode: Specifies max parallel instances. Defaults to `0` (unlimited). Valid range: 0-100.
+
+  ```yaml
+  script:
+    - id: my_script
+      mode: queued
+      max_runs: 10  # Allow up to 10 total instances (1 running + 9 queued)
+      then:
+        - logger.log: "Processing..."
+  ```
 
 - **parameters** (*Optional*, [Script Parameters](#script-parameters)): A script can define one or more parameters
   that must be provided in order to execute. All parameters defined here are mandatory and must be given when calling
@@ -156,7 +167,7 @@ This can't be used in a lambda as it would block all functioning of the device. 
 
 This [condition](/automations/actions#all-conditions) allows you to check if a given script is running. In case scripts are run in
 `parallel`, this condition only tells you if at least one script of the given id is running, not how many. Not
-designed for use with [while](#while_action); instead try [script.wait](#script-wait_action).
+designed for use with [while](/automations/actions#while_action); instead try [script.wait](#script-wait_action).
 
 ```yaml
 on_...:

@@ -10,7 +10,7 @@ params:
 The `esp32_ble_tracker` component creates a global hub so that you can track bluetooth low energy devices
 using your ESP32 node.
 
-See [Setting up devices](#esp32_ble_tracker-setting_up_devices) for information on how you can determine
+See [Setting up devices](/components/binary_sensor/ble_presence#esp32_ble_tracker-setting_up_devices) for information on how you can determine
 the MAC address of a device and track it using ESPHome.
 
 > [!WARNING]
@@ -87,10 +87,10 @@ sensor:
   - **continuous** (*Optional*, boolean): Whether to scan continuously (forever) or to only scan when
     asked to start a scan (with start_scan action). Defaults to `true`.
 
-  - **software_coexistence** (*Optional*, boolean): When enabled, software coexistence will
-    briefly prioritize Bluetooth over Wi-Fi during the initial establishment of BLE connections,
-    which can improve reliability. Only available if `wifi` component is configured.
-    Defaults to `true`.
+- **software_coexistence** (*Optional*, boolean): When enabled, software coexistence will
+  briefly prioritize Bluetooth over Wi-Fi during the initial establishment of BLE connections,
+  which can improve reliability. Only available if `wifi` component is configured.
+  Defaults to `true`.
 
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID for this ESP32 BLE Hub.
 - **max_connections** (*Optional*, int): **DEPRECATED** - This option has been moved to the {{< docref "esp32_ble/" >}} component.
@@ -246,7 +246,7 @@ on_...:
 - **continuous** (*Optional*, boolean): Whether to start the scan in continuous mode. Defaults to `false`
 
 > [!NOTE]
-> This action can also be written in [lambdas](#config-lambda):
+> This action can also be written in [lambdas](/automations/templates#config-lambda):
 
 ```yaml
 esp32_ble_tracker:

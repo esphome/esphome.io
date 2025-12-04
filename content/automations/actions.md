@@ -232,7 +232,7 @@ At least one of `condition`, `all` or `any` must be provided.
 
 ### `lambda` Action
 
-This action executes an arbitrary piece of C++ code (see [Lambda](#config-lambda)).
+This action executes an arbitrary piece of C++ code (see [Lambda](/automations/templates#config-lambda)).
 
 ```yaml
 on_...:
@@ -462,11 +462,25 @@ on_...:
 
 - **condition** (**Required**, [condition](#all-conditions)): The condition to check.
 
-{{< anchor "lambda_condition" >}}
+### `component.is_idle` Condition
+
+This condition checks if a given component is idle. A component is considered to be idle if it has completed
+setup, has not been marked as failed, and is not currently being called by the loop task. This is useful for
+synchronizing actions with the state of the component, for example, an e-paper display component that requires
+a significant amount of time to update the display panel.
+
+```yaml
+on_...:
+  then:
+    - if:
+        condition:
+          component.is_idle: some_component
+        # ...
+```
 
 ### `lambda` Condition
 
-This condition performs an arbitrary piece of C++ code (see [Lambda](#config-lambda))
+This condition performs an arbitrary piece of C++ code (see [Lambda](/automations/templates#config-lambda))
 and can be used to create conditional flow in actions.
 
 ```yaml

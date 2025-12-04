@@ -40,7 +40,7 @@ These boards have completely pre-filled configurations for the display driver, s
 option is `model`.
 
 | Board                        | Driver Chip | Manufacturer | Product link                                                     |
-| ---------------------------- | ----------- | ------------ | ---------------------------------------------------------------- |
+|------------------------------| ----------- | ------------ | ---------------------------------------------------------------- |
 | GUITION-4848S040             | ST7701s     | Guition      | <https://devices.esphome.io/devices/Guition-ESP32-S3-4848S040>   |
 | T-PANEL-S3                   | ST7701s     | Lilygo       | <https://lilygo.cc/products/t-panel-s3>                          |
 | T-RGB-2.1                    | ST7701s     | Lilygo       | <https://lilygo.cc/products/t-rgb>                               |
@@ -48,7 +48,8 @@ option is `model`.
 | SEEED-INDICATOR-D1           | ST7701s     | Seeed Studio | <https://www.seeedstudio.com/SenseCAP-Indicator-D1L-p-5646.html> |
 | ESP32-S3-TOUCH-LCD-4.3       | RPI         | Waveshare    | <https://www.waveshare.com/esp32-s3-touch-lcd-4.3.htm>           |
 | ESP32-S3-TOUCH-LCD-7-800X480 | RPI         | Waveshare    | <https://www.waveshare.com/esp32-s3-touch-lcd-7.htm>             |
-| WAVESHARE-4-480x480          | RPI         | Waveshare    | <https://www.waveshare.com/esp32-s3-touch-lcd-4.htm>             |
+| WAVESHARE-4-480X480          | RPI         | Waveshare    | <https://www.waveshare.com/esp32-s3-touch-lcd-4.htm>             |
+| WAVESHARE-5-1024X600         | RPI         | Waveshare    | <https://www.waveshare.com/esp32-s3-touch-lcd-5.htm>             |
 
 ## Usage
 
@@ -73,9 +74,9 @@ display:
 - **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to re-draw the screen. Defaults to `5s`.
 - **auto_clear_enabled** (*Optional*, boolean): If the display should be cleared before each update. Defaults to `true`
   if a lambda or pages are configured, false otherwise.
-- **lambda** (*Optional*, [lambda](#config-lambda)): The lambda to use for rendering the content on the display.
-  See [Display Rendering Engine](#display-engine) for more information.
-- **pages** (*Optional*, list): Show pages instead of a single lambda. See [Display Pages](#display-pages).
+- **lambda** (*Optional*, [lambda](/automations/templates#config-lambda)): The lambda to use for rendering the content on the display.
+  See [Display Rendering Engine](/components/display#display-engine) for more information.
+- **pages** (*Optional*, list): Show pages instead of a single lambda. See [Display Pages](/components/display#display-pages).
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
 - **dimensions** (**Required**): Dimensions of the screen, specified either as *width* **x** *height* (e.g `320x240`)
   or with separate config keys.
@@ -133,9 +134,11 @@ Displays needing a custom init sequence require an SPI bus to be configured, plu
   `16bit` (default) or `18bit`.
 - **invert_colors** (*Optional*): Inverts the display colors, (white becomes black.) Defaults to false.
 - **color_order** (*Optional*): Should be one of `bgr` (default) or `rgb`.
-- **transform** (*Optional*): Transform the display presentation using hardware. All defaults are `false`.
-  This option should not be used with `rotation`. For the `CUSTOM` model, use `transform: disabled`
-  if the display does not support it, which will prevent a `rotation` being translated to a hardware transform.
+- **transform** (*Optional*): Transform the display presentation using hardware.
+  This is typically used only to correct for displays that have x or y drivers wired backwards. To rotate the
+  display the `rotation` option is preferred - it will automatically use hardware transform if possible.
+  The default values for the `mirror_x` and `mirror_y` options are model dependent.
+  For the `CUSTOM` model, use of `transform: disabled` will prevent a `rotation` being translated to a hardware transform.
 
   - **mirror_x** (*Optional*, boolean): If true, mirror the x-axis.
   - **mirror_y** (*Optional*, boolean): If true, mirror the y-axis.

@@ -46,7 +46,7 @@ Configuration variables:
 - **name** (*Optional*, string): The name of the climate device. At least one of **id** and **name** must be specified.
 
 > [!NOTE]
-> If you have a [friendly_name](#esphome-configuration_variables) set for your device and
+> If you have a [friendly_name](/components/esphome#esphome-configuration_variables) set for your device and
 > you want the climate to use that name, you can set `name: None`.
 
 - **icon** (*Optional*, icon): Manually set the icon to use for the climate device in the frontend.
@@ -87,7 +87,7 @@ Advanced options:
   for a list of available options.
   Set to `""` to remove the default entity category.
 
-- If Webserver enabled and version 3 is selected, All other options from Webserver Component.. See [Webserver Version 3](#config-webserver-version-3-options).
+- If Webserver enabled and version 3 is selected, All other options from Webserver Component.. See [Webserver Version 3](/components/web_server#config-webserver-version-3-options).
 
 MQTT options:
 
@@ -148,7 +148,7 @@ MQTT options:
 - **target_humidity_command_topic** (*Optional*, string): The topic to receive
   target humidity commands on.
 
-- All other options from [MQTT Component](#config-mqtt-component).
+- All other options from [MQTT Component](/components/mqtt#config-mqtt-component).
 
 ## Climate Automation
 
@@ -212,7 +212,7 @@ Configuration variables:
 
 ### lambda calls
 
-From [lambdas](#config-lambda), you can call several methods on all binary sensors to do some
+From [lambdas](/automations/templates#config-lambda), you can call several methods on all binary sensors to do some
 advanced stuff.
 
 - Attributes: All climate devices have read-only attributes to get the current state of the device.
@@ -234,17 +234,41 @@ advanced stuff.
     id(my_climate).target_humidity
     // Fan mode, type: FanMode (enum)
     id(my_climate).fan_mode
-    // Custom Fan mode, type: string
-    id(my_climate).custom_fan_mode
     // Swing mode, type: SwingMode (enum)
     id(my_climate).swing_mode
     // Current action (currentl on idle, cooling, heating, etc.), ClimateAction (enum)
     id(my_climate).action
     // Preset, type: Preset (enum)
     id(my_climate).preset
-    // Custom Preset, type: string
-    id(my_climate).custom_preset
 ```
+
+- Custom mode accessor methods:
+
+```cpp
+    // Check if custom fan mode is active, type: bool
+    id(my_climate).has_custom_fan_mode()
+    // Get custom fan mode (read-only), type: const char*
+    id(my_climate).get_custom_fan_mode()
+    // Check if custom preset is active, type: bool
+    id(my_climate).has_custom_preset()
+    // Get custom preset (read-only), type: const char*
+    id(my_climate).get_custom_preset()
+```
+
+> [!WARNING]
+> Always check if a custom mode is active before accessing it. Calling `get_custom_fan_mode()` or `get_custom_preset()` when no custom mode is set will return `nullptr`, which can cause crashes if dereferenced.
+>
+> ```cpp
+> // Correct - check before accessing
+> if (id(my_climate).has_custom_fan_mode()) {
+>   const char* mode = id(my_climate).get_custom_fan_mode();
+>   // Now safe to use mode
+> }
+>
+> // Wrong - may crash if no custom mode is set
+> const char* mode = id(my_climate).get_custom_fan_mode();
+> ESP_LOGD("tag", "Mode: %s", mode);  // Crashes if mode is nullptr
+> ```
 
 - `.make_call`  : Control the climate device
 
