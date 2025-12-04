@@ -539,7 +539,7 @@ success/error status and optionally include JSON data.
 - **success** (*Optional*, boolean, [templatable](/automations/templates)): Whether the action succeeded.
   Defaults to `true`.
 - **error_message** (*Optional*, string, [templatable](/automations/templates)): An error message to include
-  when `success` is `false`. Defaults to empty string.
+  when `success` is `false`. Defaults to an empty string.
 - **data** (*Optional*, [lambda](/automations/templates#config-lambda)): A lambda that populates a JSON object
   with response data. The lambda receives a `root` variable of type [`JsonObject`](https://arduinojson.org/v7/api/jsonobject/)
   that you can populate with key-value pairs.
