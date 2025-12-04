@@ -588,6 +588,9 @@
       The YAML configuration is on
       <a href="https://github.com/esphome/bluetooth-proxies">GitHub</a>
     </li>
+    <li>
+      <a href="?type=bluetooth&diy">Show DIY devices</a> that require extra setup
+    </li>
   </ul>
 </div>
 
@@ -940,7 +943,7 @@
     })
   );
 
-  // Check URL for type
+  // Check URL for type and diy
   if (window.location.search) {
     const params = new URLSearchParams(window.location.search);
     const type = params.get("type");
@@ -948,6 +951,9 @@
       document.querySelector(
         `input[name="type"][value="${type}"]`
       ).checked = true;
+    }
+    if (params.has("diy")) {
+      document.body.classList.add("show-diy");
     }
   }
 
