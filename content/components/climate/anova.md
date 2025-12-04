@@ -48,9 +48,9 @@ climate:
 
 ## Configuration variables
 
-- **ble_client_id** (**Required**, [ID](#config-id)): The ID of the BLE Client.
+- **ble_client_id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the BLE Client.
 - **unit_of_measurement** (**Required**, string): Units to use on the device display. 'c' or 'f'.
-- All other options from [Climate](#config-climate).
+- All other options from [Climate](/components/climate#config-climate).
 
 ## See Also
 
