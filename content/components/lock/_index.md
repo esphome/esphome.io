@@ -26,7 +26,7 @@ Configuration variables:
 - **name** (*Optional*, string): The name of the lock. At least one of **id** and **name** must be specified.
 
 > [!NOTE]
-> If you have a [friendly_name](#esphome-configuration_variables) set for your device and
+> If you have a [friendly_name](/components/esphome#esphome-configuration_variables) set for your device and
 > you want the lock to use that name, you can set `name: None`.
 
 - **icon** (*Optional*, icon): Manually set the icon to use for the
@@ -36,10 +36,10 @@ Configuration variables:
   not be exposed to the frontend (like Home Assistant). Only specifying an `id` without
   a `name` will implicitly set this to true.
 
-- **on_lock** (*Optional*, [Action](#config-action)): An automation to perform
+- **on_lock** (*Optional*, [Action](/automations/actions#all-actions)): An automation to perform
   when the lock is locked. See [`lock.on_lock` / `lock.on_unlock` Trigger](#lock-on_lock_unlock_trigger).
 
-- **on_unlock** (*Optional*, [Action](#config-action)): An automation to perform
+- **on_unlock** (*Optional*, [Action](/automations/actions#all-actions)): An automation to perform
   when the lock is unlocked. See [`lock.on_lock` / `lock.on_unlock` Trigger](#lock-on_lock_unlock_trigger)..
 
 - **disabled_by_default** (*Optional*, boolean): If true, then this entity should not be added to any client's frontend,
@@ -50,8 +50,8 @@ Configuration variables:
   See <https://developers.home-assistant.io/docs/core/entity/#generic-properties>
   for a list of available options. Set to `""` to remove the default entity category.
 
-- If MQTT enabled, All other options from [MQTT Component](#config-mqtt-component).
-- If Webserver enabled and version 3 is selected, All other options from Webserver Component.. See [Webserver Version 3](#config-webserver-version-3-options).
+- If MQTT enabled, All other options from [MQTT Component](/components/mqtt#config-mqtt-component).
+- If Webserver enabled and version 3 is selected, All other options from Webserver Component.. See [Webserver Version 3](/components/web_server#config-webserver-version-3-options).
 
 {{< anchor "lock-lock_action" >}}
 
@@ -94,7 +94,7 @@ on_...:
 
 ### `lock.is_locked` / `lock.is_unlocked` Condition
 
-This [Condition](#config-condition) checks if the given lock is LOCKED (or UNLOCKED).
+This [Condition](/automations/actions#all-conditions) checks if the given lock is LOCKED (or UNLOCKED).
 
 ```yaml
 # In some trigger:
@@ -109,7 +109,7 @@ on_...:
 
 ### lambda calls
 
-From [lambdas](#config-lambda), you can call several methods on all locks to do some
+From [lambdas](/automations/templates#config-lambda), you can call several methods on all locks to do some
 advanced stuff (see the full API Reference for more info).
 
 - `publish_state()`  : Manually cause the lock to publish a new state and store it internally.

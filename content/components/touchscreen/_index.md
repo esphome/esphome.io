@@ -38,15 +38,15 @@ touchscreen:
 
 ### Configuration variables
 
-- **display** (**Required**, [ID](#config-id)): The display to use this touchscreen with.
+- **display** (**Required**, [ID](/guides/configuration-types#id)): The display to use this touchscreen with.
 - **transform** (*Optional*): Transform the touchscreen presentation using hardware. All defaults are `false`.
 
   - **swap_xy** (*Optional*, boolean): If true, exchange the x and y axes.
   - **mirror_x** (*Optional*, boolean): If true, mirror the x axis.
   - **mirror_y** (*Optional*, boolean): If true, mirror the y axis.
 
-- **update_interval** (*Optional*, [Time](#config-time)): The touchscreen polling interval - used only if an interrupt pin is not in use. Defaults to `50ms`.
-- **touch_timeout** (*Optional*, [Time](#config-time)): A timeout for touchscreens that do not report the end of touch. The default varies depending on the touchscreen.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The touchscreen polling interval - used only if an interrupt pin is not in use. Defaults to `50ms`.
+- **touch_timeout** (*Optional*, [Time](/guides/configuration-types#time)): A timeout for touchscreens that do not report the end of touch. The default varies depending on the touchscreen.
 - **calibration** (*Optional*): Some touchscreens require calibration on a per-device basis.
 
   - **x_min** (**Required**, int): The raw value corresponding to the left
@@ -66,13 +66,13 @@ touchscreen:
 
       (or right if `swap_xy` is specified) edge of the touchscreen.
 
-- **on_touch** (*Optional*, [Automation](#automation)): An automation to perform
+- **on_touch** (*Optional*, [Automation](/automations)): An automation to perform
   when the touchscreen is touched. See [`on_touch` Trigger](#touchscreen-on_touch).
 
-- **on_update** (*Optional*, [Automation](#automation)): An automation to perform
+- **on_update** (*Optional*, [Automation](/automations)): An automation to perform
   when the touchscreen is touched. See [`on_update` Trigger](#touchscreen-on_update).
 
-- **on_release** (*Optional*, [Automation](#automation)): An automation to perform
+- **on_release** (*Optional*, [Automation](/automations)): An automation to perform
   when the touchscreen is no longer touched. See [`on_release` Trigger](#touchscreen-on_release).
 
 {{< anchor "touchscreen-touchpoint" >}}
@@ -97,7 +97,7 @@ The integer members for the touch positions below are in relation to the display
 ## Calibration
 
 For most touchscreen drivers the dimensions of the touchscreen are automatically set from the display driver to match the screen size.
-In some cases such as the [XPT2046](#xpt2046-component) (a resistive touch screen) the reported values bear no relation to the actual screen size.
+In some cases such as the [XPT2046](/components/touchscreen/xpt2046#xpt2046-component) (a resistive touch screen) the reported values bear no relation to the actual screen size.
 The `calibration` configuration can be used to manually calibrate the touchscreen.
 
 To match the point of the touch to the display coordinates the touch screen has to be calibrated.
@@ -106,7 +106,7 @@ as the `x_raw` and `y_raw` member variables. The goal of the calibration is to i
 to the edges of the screen.
 
 The calibration assumes a display oriented in a way that you will be using it, i.e. your
-[Display Rendering Engine](#display-engine) component has to have the [0,0] logical coordinate at the top left.
+[Display Rendering Engine](/components/display#display-engine) component has to have the [0,0] logical coordinate at the top left.
 
 ```yaml
 # Touchscreen
@@ -268,26 +268,26 @@ binary_sensor:
 
 ### Configuration variables
 
-- **touchscreen_id** (*Optional*, [ID](#config-id)): Manually specify the ID of the touchscreen.
+- **touchscreen_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the touchscreen.
 - **x_min** (**Required**, int): Left coordinate of the screen area to be detected as the virtual button.
 - **x_max** (**Required**, int): Right coordinate of the screen area to be detected as the virtual button.
 - **y_min** (**Required**, int): Top coordinate of the screen area to be detected as the virtual button.
 - **y_max** (**Required**, int): Bottom coordinate of the screen area to be detected as the virtual button.
-- **page_id** (*Optional*, [ID](#config-id)): Only trigger this binary sensor if the display is showing this page.
+- **page_id** (*Optional*, [ID](/guides/configuration-types#id)): Only trigger this binary sensor if the display is showing this page.
   Cannot be used with `pages`.
 
-- **pages** (*Optional*, list of [ID](#config-id)): Only trigger this binary sensor if the display is showing one of these pages.
+- **pages** (*Optional*, list of [ID](/guides/configuration-types#id)): Only trigger this binary sensor if the display is showing one of these pages.
   Cannot be used with `page_id`.
 
 - **use_raw** (*Optional*, boolean): Some touch screens are larger than the underlying screen, and use this extra
   area for touch buttons. To allow the sensor to register touches outside the display area set this to `true`.
   The calibration values as above should be set to the display bounds.
 
-- All other options from [Binary Sensor](#config-binary_sensor).
+- All other options from [Binary Sensor](/components/binary_sensor#config-binary_sensor).
 
 ## See Also
 
-- [Binary Sensor Filters](#binary_sensor-filters)
+- [Binary Sensor Filters](/components/binary_sensor#binary_sensor-filters)
 - {{< docref "/components/display/inkplate" "Inkplate 6 Plus" >}}
 - {{< docref "/components/touchscreen/ektf2232" "EKTF2232" >}}
 - {{< docref "/components/touchscreen/xpt2046" "XPT2046" >}}
