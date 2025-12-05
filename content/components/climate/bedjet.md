@@ -41,19 +41,19 @@ bedjet:
 
 ### Configuration variables
 
-- **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation.
-- **ble_client_id** (**Required**, [ID](#config-id)): The ID of the BLE Client.
-- **time_id** (*Optional*, [ID](#config-id)): The ID of a {{< docref "/components/time" >}} which
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
+- **ble_client_id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the BLE Client.
+- **time_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of a {{< docref "/components/time" >}} which
   can be used to set the time on the BedJet device.
 
-- **update_interval** (*Optional*, [Time](#config-time)): The interval to dispatch status
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to dispatch status
   changes to child components. Defaults to `5s`. Each child component can decide whether to
   publish its own updated state on this interval, or use another (longer) update interval to
   throttle its own updates.
 
 ### lambda calls
 
-From [lambdas](#config-lambda), you can call methods to do some advanced stuff.
+From [lambdas](/automations/templates#config-lambda), you can call methods to do some advanced stuff.
 
 - `.upgrade_firmware`  : Check for and install updated BedJet firmware.
 
@@ -106,7 +106,7 @@ climate:
 
 ### Configuration variables
 
-- **bedjet_id** (**Required**, [ID](#config-id)): The ID of the Bedjet component.
+- **bedjet_id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the Bedjet component.
 - **heat_mode** (*Optional*, string): The primary heating mode to use for `HVACMode.HEAT`  :
 
   - `heat` (Default) - Setting `hvac_mode=heat` uses the BedJet "HEAT" mode.
@@ -125,7 +125,7 @@ climate:
 
       reported as the climate entity's current temperature.
 
-- All other options from [Climate](#config-climate).
+- All other options from [Climate](/components/climate#config-climate).
 
 ## `bedjet` Fan
 
@@ -145,8 +145,8 @@ fan:
 
 ### Configuration variables
 
-- **bedjet_id** (**Required**, [ID](#config-id)): The ID of the Bedjet component.
-- Other options from [Fan](#config-fan).
+- **bedjet_id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the Bedjet component.
+- Other options from [Fan](/components/fan#config-fan).
 
 ## `bedjet` Sensor
 
@@ -166,46 +166,42 @@ sensor:
 
 - **outlet_temperature** (*Optional*): If specified, the temperature of the air being
   discharged from the BedJet will be reported as a sensor.
-  All options from [Sensor](#config-sensor).
+  All options from [Sensor](/components/sensor).
 
 - **ambient_temperature** (*Optional*): If specified, the temperature of the room the
   BedJet is in will be reported as a sensor.
-  All options from [Sensor](#config-sensor).
+  All options from [Sensor](/components/sensor).
 
 ## Known issues
 
-{{< warning >}}
-BedJet V2 and other devices are not currently supported. Only BedJet V3 is supported.
+> [!WARNING]
+> BedJet V2 and other devices are not currently supported. Only BedJet V3 is supported.
 
-{{< /warning >}}
-{{< note >}}
-Only one client can be connected to the BedJet BLE service at a time, so you cannot
-use the BedJet mobile app to monitor or control the BedJet device while this component
-is connected. To use the mobile app, you should disconnect the ESP client first.
+> [!NOTE]
+> Only one client can be connected to the BedJet BLE service at a time, so you cannot
+> use the BedJet mobile app to monitor or control the BedJet device while this component
+> is connected. To use the mobile app, you should disconnect the ESP client first.
+>
+> To set up a (dis-)connect switch, see {{< docref "/components/switch/ble_client" >}}.
 
-To set up a (dis-)connect switch, see {{< docref "/components/switch/ble_client" >}}.
-
-{{< /note >}}
-{{< note >}}
-When more than one device is configured and connected, the ESP device may become
-overwhelmed and lead to timeouts while trying to install an updated version of the
-configuration. If this occurs, see the previous note about adding disconnect switches,
-and toggle those off while performing the installation. This will free up resources
-on the ESP and allow the installation to complete.
-
-Additionally, you may use an [ota.on_begin](#ota-on_begin) [Automation](#automation)
-to do this automatically:
-
-```yaml
-ota:
-  on_begin:
-    then:
-      - logger.log: "Disconnecting clients for OTA update..."
-      - switch.turn_off: bedjet_1_monitor
-      - switch.turn_off: bedjet_2_monitor
-```
-
-{{< /note >}}
+> [!NOTE]
+> When more than one device is configured and connected, the ESP device may become
+> overwhelmed and lead to timeouts while trying to install an updated version of the
+> configuration. If this occurs, see the previous note about adding disconnect switches,
+> and toggle those off while performing the installation. This will free up resources
+> on the ESP and allow the installation to complete.
+>
+> Additionally, you may use an [ota.on_begin](/components/ota#ota-on_begin) [Automation](/automations)
+> to do this automatically:
+>
+> ```yaml
+> ota:
+>   on_begin:
+>     then:
+>       - logger.log: "Disconnecting clients for OTA update..."
+>       - switch.turn_off: bedjet_1_monitor
+>       - switch.turn_off: bedjet_2_monitor
+> ```
 
 ## See Also
 

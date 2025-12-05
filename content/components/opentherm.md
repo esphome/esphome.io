@@ -20,11 +20,9 @@ ready-made adapters or roll your own:
 
 {{< img src="opentherm-shield.png" alt="Image" caption="DIYLESS Master OpenTherm Shield." width="50.0%" class="align-center" >}}
 
-{{< note >}}
-This component acts only as an OpenTherm master (for example, a thermostat or controller) and not as a slave or
-gateway. Your existing thermostat is not usable while you use ESPHome with this component to control your boiler.
-
-{{< /note >}}
+> [!NOTE]
+> This component acts only as an OpenTherm master (for example, a thermostat or controller) and not as a slave or
+> gateway. Your existing thermostat is not usable while you use ESPHome with this component to control your boiler.
 
 ## Quick glossary
 
@@ -55,7 +53,7 @@ opentherm:
   from disabling interrupts while we are talking to the boiler. Enable if you experience a lot of random intermittent
   invalid response errors (very likely to happen while using Dallas temperature sensors).
 
-- **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation. Required if you have
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation. Required if you have
   multiple busses.
 
 #### Optional Boiler-specific Configuration

@@ -14,15 +14,13 @@ ESPHome's command line interface always has the following format
 esphome [OPTIONS] <COMMAND> <CONFIGURATION...> [ARGUMENTS]
 ```
 
-{{< note >}}
-You can specify multiple configuration files in the command line interface for some commands,
-just list all files after the `<COMMAND>` like so:
-
-```shell
-esphome run livingroom.yaml kitchen.yaml
-```
-
-{{< /note >}}
+> [!NOTE]
+> You can specify multiple configuration files in the command line interface for some commands,
+> just list all files after the `<COMMAND>` like so:
+>
+> ```shell
+> esphome run livingroom.yaml kitchen.yaml
+> ```
 
 ## Options
 
@@ -60,7 +58,7 @@ Disable all esphome logs.
 Defines or overrides substitution KEY with value VALUE.
 
 {{< /option >}}
-Please see [command line substitutions](#command-line-substitutions) for details.
+Please see [command line substitutions](/components/substitutions#command-line-substitutions) for details.
 
 ## Commands
 
@@ -175,7 +173,7 @@ Specify the host port to use for legacy Over the Air uploads.
 ### `clean-mqtt` Command
 
 The `esphome clean-mqtt <CONFIG>` cleans retained MQTT discovery messages from the MQTT broker.
-See [Using with Home Assistant MQTT entities](#mqtt-using_with_home_assistant_entities).
+See [Using with Home Assistant MQTT entities](/components/mqtt#mqtt-using_with_home_assistant_entities).
 
 #### Options
 
@@ -203,7 +201,7 @@ The `esphome wizard <CONFIG>` command starts the ESPHome configuration creation 
 ### `mqtt-fingerprint` Command
 
 The `esphome mqtt-fingerprint <CONFIG>` command shows the MQTT SSL fingerprints of the remote used
-for SSL MQTT connections. See [SSL Fingerprints](#mqtt-ssl_fingerprints).
+for SSL MQTT connections. See [SSL Fingerprints](/components/mqtt#mqtt-ssl_fingerprints).
 
 ### `version` Command
 
@@ -246,6 +244,23 @@ The optional password to require for authentication.
 If set, opens the dashboard UI in a browser once the server is up and running. Does not work when using
 `--socket`.
 {{< /option >}}
+
+### `analyze-memory` Command
+
+> [!NOTE]
+> This is an advanced command primarily intended for developers and debugging memory issues.
+
+The `esphome analyze-memory <CONFIG>` command compiles the configuration and analyzes memory usage by component.
+
+This command is useful for:
+
+* Understanding which components are consuming the most memory
+* Identifying optimization opportunities to reduce flash or RAM usage
+* Analyzing memory usage before adding more components to a tight build
+* Debugging builds that are approaching memory limits (especially on ESP8266)
+* Contributing to ESPHome development and optimization efforts
+
+The command automatically compiles the configuration if needed (or quickly relinks if sources haven't changed), then analyzes the resulting firmware to show a detailed breakdown of memory usage by component, including flash memory (code and data) and RAM usage (data and BSS).
 
 ### `logs` Command
 
