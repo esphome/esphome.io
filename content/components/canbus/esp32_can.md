@@ -9,7 +9,8 @@ params:
 
 {{< anchor "esp32-can" >}}
 
-The ESP32 has integrated CAN controllers (usually one, some variants like the ESP32-C6 or ESP32-P4 have two or three) and therefore doesn't necessarily need an external controller.
+The ESP32 has integrated CAN controllers (usually one, some variants like the ESP32-C6 or ESP32-P4 have two or three)
+and therefore doesn't necessarily need an external controller.
 You only need to specify the RX and TX pins. Any GPIO will work.
 
 ```yaml
