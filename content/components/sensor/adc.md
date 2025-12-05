@@ -28,7 +28,7 @@ sensor:
 
 ## Configuration variables
 
-- **pin** (**Required**, [Pin](#config-pin)): The pin to measure the voltage on.
+- **pin** (**Required**, [Pin](/guides/configuration-types#pin)): The pin to measure the voltage on.
   Or on the ESP8266 or Raspberry Pi Pico it could alternatively be set to `VCC`, see [Measuring VCC](#adc-vcc).
 
 - **attenuation** (*Optional*): Only on ESP32. Specify the ADC
@@ -42,10 +42,10 @@ sensor:
   - `min` minimal value from all samples
   - `max` maximal value from all samples
 
-- **update_interval** (*Optional*, [Time](#config-time)): The interval
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval
   to check the sensor. Defaults to `60s`.
 
-- All other options from [Sensor](#config-sensor).
+- All other options from [Sensor](/components/sensor).
 
 > [!NOTE]
 > This component prints the voltage as seen by the chip pin. On the ESP8266, this is always 0.0V to 1.0V
@@ -86,6 +86,7 @@ To simplify this, we provide the setting `attenuation: auto` for an automatic/se
 | ESP32-C3 | GPIO0 - GPIO4 | GPIO5 |
 | ESP32-C5 | GPIO1 - GPIO6 | no `ADC2`                                             |
 | ESP32-C6 | GPIO0 - GPIO6 | no `ADC2`                                             |
+| ESP32-C61 | GPIO1, GPIO3 - GPIO5 | no `ADC2`                                      |
 | ESP32-H2 | GPIO1 - GPIO5 | no `ADC2`                                             |
 | ESP32-S2 | GPIO1 - GPIO10 | GPIO11 - GPIO20 |
 | ESP32-S3 | GPIO1 - GPIO10 | GPIO11 - GPIO20 |
@@ -94,7 +95,7 @@ To simplify this, we provide the setting `attenuation: auto` for an automatic/se
 Different ESP32 variants use different ADC calibration methods:
 
 - Original ESP32 (non-variant) & ESP32-S2: Use line-fitting calibration
-- ESP32-C3, ESP32-C5, ESP32-C6, ESP32-H2, ESP32-S3 & ESP32-P4: Use curve-fitting calibration
+- ESP32-C3, ESP32-C5, ESP32-C6, ESP32-C61, ESP32-H2, ESP32-S3 & ESP32-P4: Use curve-fitting calibration
 
 This is handled automatically by the code, but it's worth noting if you're debugging ADC readings or need to understand the calibration process.
 
@@ -200,7 +201,7 @@ This works on SKU:DFR0654. For more information see: [manufacturer's website](ht
 
 ## See Also
 
-- [Sensor Filters](#sensor-filters)
+- [Sensor Filters](/components/sensor#sensor-filters)
 - {{< docref "ads1115/" >}}
 - {{< docref "max6675/" >}}
 - {{< apiref "adc/adc_sensor.h" "adc/adc_sensor.h" >}}
