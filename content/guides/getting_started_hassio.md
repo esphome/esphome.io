@@ -57,11 +57,13 @@ The web UI will present a wizard which will walk you through creating your first
 
 The wizard begins by asking you how you'd like to create your configuration. You have three options:
 
-**New Device Setup**: The wizard guides you through platform selection, board configuration, and Wi-Fi setup to create a basic working configuration.
-
-**Import from File**: Upload an existing ESPHome configuration file (.yaml or .yml). This is useful for restoring backups and migrating configurations. You can browse for files or drag and drop them directly onto the dialog.
-
-**Empty Configuration**: Creates a minimal configuration file for advanced users who prefer to write their own configuration from scratch or paste from [devices.esphome.io](https://devices.esphome.io/).
+- **New Device Setup**: The wizard guides you through platform selection, board configuration, and Wi-Fi
+  setup to create a basic working configuration.
+- **Import from File**: Upload an existing ESPHome configuration file (.yaml or .yml). This is useful for
+  restoring backups and migrating configurations. You can browse for files or drag and drop them directly
+  onto the dialog.
+- **Empty Configuration**: Creates a minimal configuration file for advanced users who prefer to write
+  their own configuration from scratch or paste from [devices.esphome.io](https://devices.esphome.io/).
 
 After creating your first configuration, you'll need to install it on your device.
 
