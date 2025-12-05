@@ -31,9 +31,9 @@ For graphical displays, which offer the greatest flexibility, there are two opti
 
 All display components inherit these configuration variables.
 
-- **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation. Required if there are multiple displays.
-- **update_interval** (*Optional*, [Time](#config-time)): The interval to re-draw the screen. Defaults to `1s`.
-- **lambda** (*Optional*, [lambda](#config-lambda)): The lambda to use for rendering the content on the display.
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation. Required if there are multiple displays.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to re-draw the screen. Defaults to `1s`.
+- **lambda** (*Optional*, [lambda](/automations/templates#config-lambda)): The lambda to use for rendering the content on the display.
   See [Display Rendering Engine](#display-engine) for more information.
 
 All *graphical* displays also inherit these configuration variables.
@@ -50,7 +50,7 @@ All *graphical* displays also inherit these configuration variables.
 ESPHome's own powerful rendering engine can handle many common tasks such as drawing basic shapes,
 printing text with fonts of your choice, or even rendering images.
 
-To achieve all this flexibility displays tie in directly into ESPHome's [lambda system](#config-lambda).
+To achieve all this flexibility displays tie in directly into ESPHome's [lambda system](/automations/templates#config-lambda).
 So when you want to write some text or sensor values to the screen you will be writing in C++ code
 using an API that is designed to
 
@@ -61,16 +61,15 @@ In this section we will be discussing how to use ESPHome's display rendering eng
 and some basic commands. Please note that this only applies to displays that can control each pixel
 individually.
 
-{{< note >}}
-Display hardware is complex and sometimes doesn't behave as expected. If you're having trouble with your display,
-please see [Troubleshooting](#troubleshooting) below.
+> [!NOTE]
+> Display hardware is complex and sometimes doesn't behave as expected. If you're having trouble with your display,
+> please see [Troubleshooting](#troubleshooting) below.
 
-{{< /note >}}
 So, first a few basics: When setting up a display platform in ESPHome there will be a configuration
 option called `lambda:` which will be called every time ESPHome wants to re-render the display.
 In each cycle, the display is automatically cleared before the lambda is executed. You can disable
 this behavior by setting `auto_clear_enabled: false`.
-In the lambda, you can write code like in any [lambda](#config-lambda) in ESPHome. Display
+In the lambda, you can write code like in any [lambda](/automations/templates#config-lambda) in ESPHome. Display
 lambdas are additionally passed a variable called `it` which represents the rendering engine object.
 
 {{< img src="display_rendering_line.png" alt="Image" class="align-center" >}}
@@ -86,11 +85,10 @@ display:
       it.line(0, 0, 50, 50);
 ```
 
-{{< note >}}
-Lambdas are essentially just a lightly modified version of C++. So don't forget to end each line
-with a semicolon (`;`  ). Otherwise you will be greeted by a long error message at the compilation stage.
+> [!NOTE]
+> Lambdas are essentially just a lightly modified version of C++. So don't forget to end each line
+> with a semicolon (`;`  ). Otherwise you will be greeted by a long error message at the compilation stage.
 
-{{< /note >}}
 If you compile and upload the configuration above, you should see a black (or white, depending on the display)
 line which starts at the top left and goes a few pixels down at a 45° angle. (If it's in another corner, use the
 `rotation:` option to rotate the display to your liking)
@@ -203,7 +201,7 @@ You can view the full API documentation for the rendering engine in the "API Ref
 
 ### Drawing Static Text
 
-To be able to display text, you need to prepare some fonts. ESPHome's [font renderer](#display-fonts) allows you to use OpenType/TrueType/Bitmap fonts for your texts. This is very flexiblle because you can prepare various sets of fonts at different sizes with a different number of glyphs which is extremely convenient when we're talking about flash space.
+To be able to display text, you need to prepare some fonts. ESPHome's [font renderer](/components/font#display-fonts) allows you to use OpenType/TrueType/Bitmap fonts for your texts. This is very flexiblle because you can prepare various sets of fonts at different sizes with a different number of glyphs which is extremely convenient when we're talking about flash space.
 
 In your display code, you can render static text by referencing the font and just entering your string enclosed in double quotes:
 
@@ -369,16 +367,15 @@ display:
       it.printf(0, 0, id(my_font), "State: %s", id(my_binary_sensor).state ? "ON" : "OFF");
 ```
 
-{{< note >}}
-For displaying external data on the display, for example data from your Home Assistant instance,
-you can use the {{< docref "/components/text_sensor/mqtt_subscribe" >}} (see the example there for more information).
+> [!NOTE]
+> For displaying external data on the display, for example data from your Home Assistant instance,
+> you can use the {{< docref "/components/text_sensor/mqtt_subscribe" >}} (see the example there for more information).
 
-{{< /note >}}
 {{< anchor "display-strftime" >}}
 
 ### Displaying Time
 
-You can display current time using a time component. Please see the example on the [time documentation](#strftime).
+You can display current time using a time component. Please see the example on the [time documentation](/components/time#strftime).
 
 {{< anchor "clipping" >}}
 
@@ -536,20 +533,19 @@ on_...:
       }
 ```
 
-{{< note >}}
-To trigger a redraw right after the page show use a [component.update](#component-update_action)
-action:
+> [!NOTE]
+> To trigger a redraw right after the page show use a [component.update](/automations/actions#component-update_action)
+> action:
+>
+> ```yaml
+> # For example cycle through pages on a timer
+> interval:
+>   - interval: 5s
+>     then:
+>       - display.page.show_next: my_display
+>       - component.update: my_display
+> ```
 
-```yaml
-# For example cycle through pages on a timer
-interval:
-  - interval: 5s
-    then:
-      - display.page.show_next: my_display
-      - component.update: my_display
-```
-
-{{< /note >}}
 {{< anchor "display-is_displaying_page-condition" >}}
 
 **display.is_displaying_page**: This condition returns true while the specified page is being shown.
@@ -587,8 +583,8 @@ display:
             ESP_LOGD("display", "Page changed from 1 to 2");
 ```
 
-- **from** (*Optional*, [ID](#config-id)): A page id. If set the automation is only triggered if changing from this page. Defaults to all pages.
-- **to** (*Optional*, [ID](#config-id)): A page id. If set the automation is only triggered if changing to this page. Defaults to all pages.
+- **from** (*Optional*, [ID](/guides/configuration-types#id)): A page id. If set the automation is only triggered if changing from this page. Defaults to all pages.
+- **to** (*Optional*, [ID](/guides/configuration-types#id)): A page id. If set the automation is only triggered if changing to this page. Defaults to all pages.
 
 Additionally, the old page will be given as the variable `from` and the new one as the variable `to`.
 
@@ -610,14 +606,11 @@ To help the graphics display team determine the best way to help you, **a pictur
 Should you [create an issue](https://github.com/esphome/esphome/issues) in GitHub regarding your display, please
 be sure to **include a link to where you purchased the display** so that we can validate the configuration you've used.
 
-{{< note >}}
-If you set `update_interval: never` in your config you will not see the test card because the `display:` component will not update the display with the test card. If you want to see a test card, set `update_interval:` to something other than `never`.
+> [!NOTE]
+> If you set `update_interval: never` in your config you will not see the test card because the `display:` component will not update the display with the test card. If you want to see a test card, set `update_interval:` to something other than `never`.
 
-{{< /note >}}
-{{< note >}}
-For displays in 8 bit mode you will see distinct color blocks rather than a smooth gradient.
-
-{{< /note >}}
+> [!NOTE]
+> For displays in 8 bit mode you will see distinct color blocks rather than a smooth gradient.
 
 ### See Also
 
@@ -626,9 +619,9 @@ For displays in 8 bit mode you will see distinct color blocks rather than a smoo
 - {{< docref "/components/display/mipi_spi" >}}
 - {{< docref "/components/display/mipi_rgb" >}}
 - {{< docref "/components/display/mipi_dsi" >}}
-- [Fonts](#display-fonts)
-- [Graph Component](#display-graphs)
-- [QR Code Component](#display-qrcode)
-- [Image Component](#display-image)
-- [Animation Component](#display-animation)
-- [Online Image](#online_image)
+- [Fonts](/components/font#display-fonts)
+- [Graph Component](/components/graph#display-graphs)
+- [QR Code Component](/components/qr_code#display-qrcode)
+- [Image Component](/components/image#display-image)
+- [Animation Component](/components/animation#display-animation)
+- [Online Image](/components/online_image#online_image)

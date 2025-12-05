@@ -10,10 +10,9 @@ params:
 The `media_player` domain includes all platforms that implement media player
 functionality.
 
-{{< note >}}
-ESPHome media players require Home Assistant 2022.6 or newer.
+> [!NOTE]
+> ESPHome media players require Home Assistant 2022.6 or newer.
 
-{{< /note >}}
 {{< anchor "config-media_player" >}}
 
 ## Base Media Player Configuration
@@ -29,11 +28,9 @@ Configuration variables:
 - **id** (*Optional*, string): Manually specify the ID for code generation. At least one of **id** and **name** must be specified.
 - **name** (*Optional*, string): The name of the media player. At least one of **id** and **name** must be specified.
 
-{{< note >}}
-If you have a [friendly_name](#esphome-configuration_variables) set for your device and
-you want the media player to use that name, you can set `name: None`.
-
-{{< /note >}}
+> [!NOTE]
+> If you have a [friendly_name](/components/esphome#esphome-configuration_variables) set for your device and
+> you want the media player to use that name, you can set `name: None`.
 
 - **icon** (*Optional*, icon): Manually set the icon to use for the
   media player in the frontend.
@@ -61,7 +58,7 @@ The actions `turn_off` and `turn_on` are optional and based on the platform impl
 
 Configuration variables:
 
-**id** (*Optional*, [ID](#config-id)): The media player to control. Defaults to the only one in YAML.
+**id** (*Optional*, [ID](/guides/configuration-types#id)): The media player to control. Defaults to the only one in YAML.
 
 {{< anchor "media_player-play" >}}
 

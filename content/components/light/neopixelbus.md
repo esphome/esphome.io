@@ -7,12 +7,11 @@ params:
     image: color_lens.svg
 ---
 
-{{< warning >}}
-NeoPixelBus does **not** work with ESP-IDF.
+> [!WARNING]
+> NeoPixelBus does **not** work with ESP-IDF.
+>
+> For clockless lights, you can use {{< docref "esp32_rmt_led_strip/" >}}, and for SPI LEDs see {{< docref "spi_led_strip/" >}}.
 
-For clockless lights, you can use {{< docref "esp32_rmt_led_strip/" >}}, and for SPI LEDs see {{< docref "spi_led_strip/" >}}.
-
-{{< /warning >}}
 The `neopixelbus` light platform allows you to create RGB lights
 in ESPHome for individually addressable lights like NeoPixel or WS2812.
 
@@ -81,17 +80,16 @@ light:
 Some chipsets have two data pins to connect, others only have one.
 If you have one line, only specify `pin`, otherwise specify both `clock_pin` and `data_pin`.
 
-- **pin** (**Required**, [Pin](#config-pin)): The pin for the data line of the light.
-- **clock_pin** (**Required**, [Pin](#config-pin)): The pin for the clock line of the light, for two-wire lights.
-- **data_pin** (**Required**, [Pin](#config-pin)): The pin for the data line of the light, for two-wire lights.
+- **pin** (**Required**, [Pin](/guides/configuration-types#pin)): The pin for the data line of the light.
+- **clock_pin** (**Required**, [Pin](/guides/configuration-types#pin)): The pin for the clock line of the light, for two-wire lights.
+- **data_pin** (**Required**, [Pin](/guides/configuration-types#pin)): The pin for the data line of the light, for two-wire lights.
 
-- All other options from [Light](#config-light).
+- All other options from [Light](/components/light#config-light).
 
-{{< warning >}}
-On ESP8266 it's highly recommended to connect the light strip to pin
-GPIO3 to reduce flickering.
+> [!WARNING]
+> On ESP8266 it's highly recommended to connect the light strip to pin
+> GPIO3 to reduce flickering.
 
-{{< /warning >}}
 {{< anchor "neopixelbus-methods" >}}
 
 ## Methods
