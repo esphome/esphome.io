@@ -201,6 +201,10 @@ For creating larger displays by chaining multiple panels:
 
 - **brightness** (*Optional*, int): Initial brightness level (0-255). Defaults to `128`.
 - **bit_depth** (*Optional*, int): Color bit depth (6-12). Higher values = better color accuracy but slower refresh. Defaults to `8`.
+- **gamma_correct** (*Optional*, enum): Gamma correction mode. One of:
+  - `LINEAR` - No gamma correction (raw values)
+  - `CIE1931` - CIE 1931 perceptual curve (recommended for most displays)
+  - `GAMMA_2_2` - Standard 2.2 gamma curve
 - **double_buffer** (*Optional*, boolean): Enable double buffering to prevent tearing. Defaults to `false`. Set to `false` when using LVGL.
 - **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): Display update frequency. Defaults to `16ms` (~60 FPS). Set to `never` when using LVGL.
 - **min_refresh_rate** (*Optional*, int): Minimum panel refresh rate in Hz (40-200). The panel may refresh faster than this, but won't go slower. Auto-calculated from `update_interval` (defaults to 60 Hz when `update_interval: never`). Rarely needs to be set manually.
