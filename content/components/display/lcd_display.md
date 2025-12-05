@@ -13,23 +13,22 @@ with ESPHome. This component is only for LCDs that display individual characters
 
 {{< img src="lcd-hello_world.jpg" alt="Image" width="60.0%" class="align-center" >}}
 
-{{< note >}}
-Multiple versions of the display exist, supporting different character sets:
+> [!NOTE]
+> Multiple versions of the display exist, supporting different character sets:
+>
+> - HD44780UA00 English-Japanese which includes katakana characters, some Greek letters and mathematical symbols
+> - HD44780UA02 English-European which includes Greek, Cyrillic and Western European characters (with some diacritics)
+> - HD44780UBxx custom, manufacturer-specific character sets
+>
+> It is also possible to add eight user-defined characters.
 
-- HD44780UA00 English-Japanese which includes katakana characters, some Greek letters and mathematical symbols
-- HD44780UA02 English-European which includes Greek, Cyrillic and Western European characters (with some diacritics)
-- HD44780UBxx custom, manufacturer-specific character sets
-
-It is also possible to add eight user-defined characters.
-
-{{< /note >}}
 {{< anchor "lcd-pcf8574" >}}
 
 ## lcd_pcf8574 Component
 
 `lcd_pcf8574` is for LCD displays with a PCF8574 GPIO expander module connected to all the data pins. This has the
 benefit that you only need to connect two data wires to the ESP instead of the six or ten as with the [lcd_gpio Component](#lcd-gpio).
-The communication happens via [I²C Bus](#i2c), you need to have an `i2c:` section in your configuration.
+The communication happens via [I²C Bus](/components/i2c), you need to have an `i2c:` section in your configuration.
 
 {{< img src="lcd-pcf8574.jpg" alt="Image" caption="LCD Display with a PCF8574 board attached on the back" width="75.0%" class="align-center" >}}
 
@@ -52,25 +51,24 @@ display:
 - **dimensions** (**Required**, string): The dimensions of the display with `COLUMNSxROWS`. If you're not
   sure, power the display up and just count them.
 
-- **address** (*Optional*, int): The [I²C](#i2c) address of the PCF8574 chip, defaults to `0x3F`.
-- **lambda** (*Optional*, [lambda](#config-lambda)): The lambda to use for rendering the content on the display.
+- **address** (*Optional*, int): The [I²C](/components/i2c) address of the PCF8574 chip, defaults to `0x3F`.
+- **lambda** (*Optional*, [lambda](/automations/templates#config-lambda)): The lambda to use for rendering the content on the display.
   See [Rendering Lambda](#display-lcd_lambda) for more information.
 
-- **update_interval** (*Optional*, [Time](#config-time)): The interval to re-draw the screen. Defaults to `1s`.
-- **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to re-draw the screen. Defaults to `1s`.
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
 
-{{< note >}}
-If you're not seeing anything on the display, try turning the contrast potentiometer around on the
-PCF8574 board.
+> [!NOTE]
+> If you're not seeing anything on the display, try turning the contrast potentiometer around on the
+> PCF8574 board.
 
-{{< /note >}}
 {{< anchor "lcd-gpio" >}}
 
 ## lcd_gpio Component
 
 The `lcd_gpio` version of this component addresses the screen directly and does not employ a GPIO expander module.
 Each of the data pins of the LCD needs a dedicated GPIO pin on the ESP. Connecting the screen this way offers
-faster refresh, especially in conjunction with an [LCD Menu](#lcd_menu).
+faster refresh, especially in conjunction with an [LCD Menu](/components/display_menu/lcd_menu#lcd_menu).
 
 {{< img src="lcd_gpio.svg" alt="Image" caption="LCD Display GPIO pinout" width="75.0%" class="align-center" >}}
 
@@ -95,30 +93,29 @@ display:
 - **dimensions** (**Required**, string): The dimensions of the display with `COLUMNSxROWS`. If you're not
   sure, power the display on, turn contrast high up and just count them.
 
-- **data_pins** (**Required**, list of [pins](#config-pin_schema)): A list of the data pins you
+- **data_pins** (**Required**, list of [pins](/guides/configuration-types#pin-schema)): A list of the data pins you
   have hooked up to the LCD. The list can either be 4 items long (operating in 4-bit mode with
   either the first 4 data pins connected or the last 4 data pins connected), or 8 items long (when you have
   connected all 8 data pins).
 
-- **enable_pin** (**Required**, [pin](#config-pin_schema)): The pin you have `E` (`06`  ) hooked up to.
-- **rs_pin** (**Required**, [pin](#config-pin_schema)): The pin you have `RS` (`04`  ) hooked up to.
-- **rw_pin** (*Optional*, [pin](#config-pin_schema)): Optionally set the pin you have `R/W` (`05`  ) hooked up to. You can also just permanently connect that pin to `GND`.
-- **lambda** (*Optional*, [lambda](#config-lambda)): The lambda to use for rendering the content on the display.
+- **enable_pin** (**Required**, [pin](/guides/configuration-types#pin-schema)): The pin you have `E` (`06`  ) hooked up to.
+- **rs_pin** (**Required**, [pin](/guides/configuration-types#pin-schema)): The pin you have `RS` (`04`  ) hooked up to.
+- **rw_pin** (*Optional*, [pin](/guides/configuration-types#pin-schema)): Optionally set the pin you have `R/W` (`05`  ) hooked up to. You can also just permanently connect that pin to `GND`.
+- **lambda** (*Optional*, [lambda](/automations/templates#config-lambda)): The lambda to use for rendering the content on the display.
   See [Rendering Lambda](#display-lcd_lambda) for more information.
 
-- **update_interval** (*Optional*, [Time](#config-time)): The interval to re-draw the screen. Defaults to `1s`.
-- **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to re-draw the screen. Defaults to `1s`.
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
 
-{{< note >}}
-If you're not seeing anything on the display, make sure you apply `3.3V` to the `VEE` (`03`  ) contrast control
-pin of the board. You can use a potentiometer to make it adjustable.
+> [!NOTE]
+> If you're not seeing anything on the display, make sure you apply `3.3V` to the `VEE` (`03`  ) contrast control
+> pin of the board. You can use a potentiometer to make it adjustable.
 
-{{< /note >}}
 {{< anchor "display-lcd_lambda" >}}
 
 ## Rendering Lambda
 
-The LCD displays has a similar API to the fully fledged [Display Rendering Engine](#display-engine), but it's only a subset as LCD displays
+The LCD displays has a similar API to the fully fledged [Display Rendering Engine](/components/display#display-engine), but it's only a subset as LCD displays
 don't have a concept of individual pixels. In the lambda you're passed a variable called `it`
 as with all other displays. In this case however, `it` is an instance of either `GPIOLCDDisplay` or `PCF8574LCDDisplay`.
 
@@ -158,8 +155,8 @@ time:
   id: my_time
 ```
 
-Please see [Formatted Text](#display-printf) for a quick introduction into the `printf` formatting rules and
-[Displaying Time](#display-strftime) for an introduction into the `strftime` time formatting.
+Please see [Formatted Text](/components/display#display-printf) for a quick introduction into the `printf` formatting rules and
+[Displaying Time](/components/display#display-strftime) for an introduction into the `strftime` time formatting.
 
 ## User Defined Characters
 
@@ -251,8 +248,8 @@ binary_sensor:
 - {{< docref "index/" >}}
 - {{< docref "/components/switch/gpio" >}}
 - {{< docref "/components/binary_sensor/gpio" >}}
-- [LCD Menu](#lcd_menu)
-- [Add pages to LCD display](#lambda_magic_pages)
+- [LCD Menu](/components/display_menu/lcd_menu#lcd_menu)
+- [Add pages to LCD display](/cookbook/lambda_magic#lambda_magic_pages)
 - {{< docref "/components/pcf8574" >}}
 - [HD44780U (LCD-II) datasheet](https://www.sparkfun.com/datasheets/LCD/HD44780.pdf)
 - [Charset cheatsheet](https://user-images.githubusercontent.com/1550668/173113487-9c98e866-8ee4-4a3c-a83f-61fe62057c5f.png)

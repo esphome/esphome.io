@@ -14,19 +14,18 @@ will track the tank level, distance, temperature, battery percentage, and sensor
 device every time the sensor sends out a BLE broadcast. There are additional configuration options
 to control handling of poor quality readings and reporting reading quality issues.
 
-{{< warning >}}
-This sensor component only supports the following sensors:
+> [!WARNING]
+> This sensor component only supports the following sensors:
+>
+> + Mopeka Pro Check devices
+> + Mopeka Pro Plus devices
+> + Mopeka Pro Check Universal Sensor
+> + Lippert Propane Tank Sensor, part number 2021130655
+>
+> Sensors are calibrated for propane only.
+>
+> See {{< docref "/components/sensor/mopeka_std_check" >}} for original Mopeka Check sensors support.
 
-+ Mopeka Pro Check devices
-+ Mopeka Pro Plus devices
-+ Mopeka Pro Check Universal Sensor
-+ Lippert Propane Tank Sensor, part number 2021130655
-
-Sensors are calibrated for propane only.
-
-See {{< docref "/components/sensor/mopeka_std_check" >}} for original Mopeka Check sensors support.
-
-{{< /warning >}}
 {{< img src="mopeka_pro_check.jpg" alt="Image" caption="Mopeka Pro Check LP over BLE." class="align-center" >}}
 
 {{< img src="mopeka_pro_check_lippert.jpg" alt="Image" caption="Lippert™ Propane Tank Sensor" class="align-center" >}}
@@ -90,34 +89,34 @@ sensor:
 + **level** (*Optional*): The percentage of full for the tank sensor. If
   read is ignored due to quality this sensor will not be updated.
 
-  + All options from [Sensor](#config-sensor).
+  + All options from [Sensor](/components/sensor).
 
 + **distance** (*Optional*): The raw distance/depth of the liquid for the sensor in mm.
   If read is ignored due to quality this sensor will not be updated.
 
-  + All options from [Sensor](#config-sensor).
+  + All options from [Sensor](/components/sensor).
 
 + **temperature** (*Optional*): The information for the temperature sensor.
   This temperature is on the sensor and is not calibrated to ambient temperature.
 
-  + All options from [Sensor](#config-sensor).
+  + All options from [Sensor](/components/sensor).
 
 + **battery_level** (*Optional*): The information for the battery percentage
   sensor. Sensor uses a standard CR2032 battery.
 
-  + All options from [Sensor](#config-sensor).
+  + All options from [Sensor](/components/sensor).
 
 + **signal_quality** (*Optional*): The information for the read quality
   sensor.
 
-  + All options from [Sensor](#config-sensor).
+  + All options from [Sensor](/components/sensor).
 
 + **ignored_reads** (*Optional*): A diagnostic sensor indicating the number
   of consecutive ignored reads. This resets to zero each time the read is
   equal or greater than the configured ignored quality. Only the distance
   and level sensors are not reported.
 
-  + All options from [Sensor](#config-sensor).
+  + All options from [Sensor](/components/sensor).
 
 + **minimum_signal_quality** (*Optional*, enum): Each report from the sensor
   indicates the quality or confidence in the distance the sensor calculated. Physical
@@ -167,11 +166,9 @@ For all sensors found the `mopeka_ble` component will print a message like this 
 Then just copy the address (`XX:XX:XX:XX:XX:XX`  ) into a new
 `sensor.mopeka_pro_check` platform entry like in the configuration example at the top.
 
-{{< note >}}
-The ESPHome Mopeka Pro Check BLE component listens passively to packets the Mopeka/Lippert device sends by itself.
-ESPHome therefore has no impact on the battery life of the device.
-
-{{< /note >}}
+> [!NOTE]
+> The ESPHome Mopeka Pro Check BLE component listens passively to packets the Mopeka/Lippert device sends by itself.
+> ESPHome therefore has no impact on the battery life of the device.
 
 ## See Also
 
