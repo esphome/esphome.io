@@ -34,7 +34,7 @@ Configuration variables:
 - **name** (*Optional*, string): The name for the select. At least one of **id** and **name** must be specified.
 
 > [!NOTE]
-> If you have a [friendly_name](#esphome-configuration_variables) set for your device and
+> If you have a [friendly_name](/components/esphome#esphome-configuration_variables) set for your device and
 > you want the select to use that name, you can set `name: None`.
 
 - **icon** (*Optional*, icon): Manually set the icon to use for the select in the frontend.
@@ -51,28 +51,28 @@ Configuration variables:
   for a list of available options.
   Set to `""` to remove the default entity category.
 
-- If Webserver enabled and version 3 is selected, All other options from Webserver Component.. See [Webserver Version 3](#config-webserver-version-3-options).
+- If Webserver enabled and version 3 is selected, All other options from Webserver Component.. See [Webserver Version 3](/components/web_server#config-webserver-version-3-options).
 
 Automations:
 
-- **on_value** (*Optional*, [Automation](#automation)): An automation to perform
+- **on_value** (*Optional*, [Automation](/automations)): An automation to perform
   when a new value is published. See [`on_value`](#select-on_value).
 
 MQTT Options:
 
-- All other options from [MQTT Component](#config-mqtt-component).
+- All other options from [MQTT Component](/components/mqtt#config-mqtt-component).
 
 ## Select Automation
 
-You can access the most recent state of the select in [lambdas](#config-lambda) using
-`id(select_id).state`.
+You can access the most recent state of the select in [lambdas](/automations/templates#config-lambda) using
+`id(select_id).current_option()`.
 For more information on using lambdas with select, see [lambda calls](#select-lambda_calls).
 
 {{< anchor "select-on_value" >}}
 
 ### `on_value`
 
-This automation will be triggered whenever a value is set/published, even if the value is the same as before. In [Lambdas](#config-lambda)
+This automation will be triggered whenever a value is set/published, even if the value is the same as before. In [Lambdas](/automations/templates#config-lambda)
 you can get the value from the trigger with `x` and the index offset of the selected value with `i`.
 
 ```yaml
@@ -86,13 +86,13 @@ select:
             args: ["x.c_str()", "i"]
 ```
 
-Configuration variables: See [Automation](#automation).
+Configuration variables: See [Automation](/automations).
 
 {{< anchor "select-set_action" >}}
 
 ### `select.set` Action
 
-This is an [Action](#config-action) for setting the active option using an option value.
+This is an [Action](/automations/actions#all-actions) for setting the active option using an option value.
 
 ```yaml
 - select.set:
@@ -102,8 +102,8 @@ This is an [Action](#config-action) for setting the active option using an optio
 
 Configuration variables:
 
-- **id** (**Required**, [ID](#config-id)): The ID of the select to set.
-- **option** (**Required**, string, [templatable](#config-templatable)):
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the select to set.
+- **option** (**Required**, string, [templatable](/automations/templates)):
   The option to set the select to.
 
 When a non-existing option value is used, a warning is logged and the state of
@@ -113,7 +113,7 @@ the select is left as-is.
 
 ### `select.set_index` Action
 
-This is an [Action](#config-action) for setting the active option using its index offset.
+This is an [Action](/automations/actions#all-actions) for setting the active option using its index offset.
 
 ```yaml
 - select.set_index:
@@ -123,8 +123,8 @@ This is an [Action](#config-action) for setting the active option using its inde
 
 Configuration variables:
 
-- **id** (**Required**, [ID](#config-id)): The ID of the select to set.
-- **index** (**Required**, int, [templatable](#config-templatable)):
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the select to set.
+- **index** (**Required**, int, [templatable](/automations/templates)):
   The index offset of the option to be activated.
 
 When a non-existing index value is used, a warning is logged and the state of
@@ -134,7 +134,7 @@ the select is left as-is.
 
 ### `select.next` Action
 
-This is an [Action](#config-action) for selecting the next option in a select component.
+This is an [Action](/automations/actions#all-actions) for selecting the next option in a select component.
 
 ```yaml
 - select.next:
@@ -147,7 +147,7 @@ This is an [Action](#config-action) for selecting the next option in a select co
 
 Configuration variables:
 
-- **id** (**Required**, [ID](#config-id)): The ID of the select to set.
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the select to set.
 - **cycle** (*Optional*, boolean): Whether or not to jump back to the first option
   of the select when the last option is currently selected. Defaults to `true`.
 
@@ -155,7 +155,7 @@ Configuration variables:
 
 ### `select.previous` Action
 
-This is an [Action](#config-action) for selecting the previous option in
+This is an [Action](/automations/actions#all-actions) for selecting the previous option in
 a select component.
 
 ```yaml
@@ -169,7 +169,7 @@ a select component.
 
 Configuration variables:
 
-- **id** (**Required**, [ID](#config-id)): The ID of the select to set.
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the select to set.
 - **cycle** (*Optional*, boolean): Whether or not to jump to the last option
   of the select when the first option is currently selected. Defaults to `true`.
 
@@ -177,7 +177,7 @@ Configuration variables:
 
 ### `select.first` Action
 
-This is an [Action](#config-action) for selecting the first option in
+This is an [Action](/automations/actions#all-actions) for selecting the first option in
 a select component.
 
 ```yaml
@@ -190,13 +190,13 @@ a select component.
 
 Configuration variables:
 
-- **id** (**Required**, [ID](#config-id)): The ID of the select to set.
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the select to set.
 
 {{< anchor "select-last_action" >}}
 
 ### `select.last` Action
 
-This is an [Action](#config-action) for selecting the last option in
+This is an [Action](/automations/actions#all-actions) for selecting the last option in
 a select component.
 
 ```yaml
@@ -209,13 +209,13 @@ a select component.
 
 Configuration variables:
 
-- **id** (**Required**, [ID](#config-id)): The ID of the select to set.
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the select to set.
 
 {{< anchor "select-operation_action" >}}
 
 ### `select.operation` Action
 
-This is an [Action](#config-action) that can be used to change the active
+This is an [Action](/automations/actions#all-actions) that can be used to change the active
 option in a select component (first, last, previous or next), using a generic
 templatable action call.
 
@@ -235,14 +235,14 @@ templatable action call.
 
 Configuration variables:
 
-- **id** (**Required**, [ID](#config-id)): The ID of the select to set.
-- **operation** (**Required**, string, [templatable](#config-templatable)): The
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the select to set.
+- **operation** (**Required**, string, [templatable](/automations/templates)): The
   operation to perform. One of `FIRST`, `LAST`, `PREVIOUS` or
   `NEXT` (case insensitive). When writing a lambda for this field, then return
   one of the following enum values: `SELECT_OP_FIRST`, `SELECT_OP_LAST`,
   `SELECT_OP_PREVIOUS` or `SELECT_OP_NEXT`.
 
-- **cycle** (*Optional*, bool, [templatable](#config-templatable)):
+- **cycle** (*Optional*, bool, [templatable](/automations/templates)):
   Can be used for options `NEXT` and `PREVIOUS` to specify whether or not to
   wrap around the options list when respectively the last or first option in
   the select is currently active.
@@ -251,7 +251,7 @@ Configuration variables:
 
 ### lambda calls
 
-From [lambdas](#config-lambda), you can call several methods on all selects to do some
+From [lambdas](/automations/templates#config-lambda), you can call several methods on all selects to do some
 advanced stuff (see the full API Reference for more info).
 
 - `.make_call()`  : Create a call for changing the select state.
@@ -268,19 +268,28 @@ advanced stuff (see the full API Reference for more info).
   to select the first option or `call.select_next(true)` to select the next
   option with the cycle feature enabled.
 
-- `.state`  : Retrieve the currently selected option of the select.
+- `.current_option()`  : Retrieve the currently selected option of the select. Returns `const char*`.
 
 ```cpp
     // For example, create a custom log message when an option is selected:
-    auto state = id(my_select).state.c_str();
+    auto state = id(my_select).current_option();
     ESP_LOGI("main", "Option of my select: %s", state);
 ```
 
 ```yaml
-    # Check if a specific option is selected
+    # Check if a specific option is selected (using strcmp)
     - if:
         condition:
-          - lambda: 'return id(my_select).state == "my_option_value";'
+          - lambda: 'return strcmp(id(my_select).current_option(), "my_option_value") == 0;'
+```
+
+```yaml
+    # Or convert to std::string for comparison
+    - if:
+        condition:
+          - lambda: |-
+              std::string current = id(my_select).current_option();
+              return current == "my_option_value";
 ```
 
 - `.size()`  : Retrieve the number of options in the select.
