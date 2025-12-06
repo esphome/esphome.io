@@ -104,6 +104,7 @@ ESPHome-specific components or components supporting ESPHome device provisioning
 {{< imgtable >}}
 "Network Core","components/network","server-network.svg","dark-invert"
 "Native API","components/api","server-network.svg","dark-invert"
+"Coap Client","components/coap_client","connection.svg","dark-invert"
 "MQTT","components/mqtt","mqtt.png",""
 "ESP-NOW","components/espnow","esp-now.svg",""
 "HTTP Request","components/http_request","connection.svg","dark-invert"
