@@ -48,7 +48,7 @@ option is `model`.
 | SEEED-INDICATOR-D1           | ST7701s     | Seeed Studio | <https://www.seeedstudio.com/SenseCAP-Indicator-D1L-p-5646.html> |
 | ESP32-S3-TOUCH-LCD-4.3       | RPI         | Waveshare    | <https://www.waveshare.com/esp32-s3-touch-lcd-4.3.htm>           |
 | ESP32-S3-TOUCH-LCD-7-800X480 | RPI         | Waveshare    | <https://www.waveshare.com/esp32-s3-touch-lcd-7.htm>             |
-| WAVESHARE-3.16-320x820       | ST7701s     | Waveshare    | <https://www.waveshare.com/esp32-s3-lcd-3.16.htm>                |
+| WAVESHARE-3.16-320X820       | ST7701s     | Waveshare    | <https://www.waveshare.com/esp32-s3-lcd-3.16.htm>                |
 | WAVESHARE-4-480X480          | RPI         | Waveshare    | <https://www.waveshare.com/esp32-s3-touch-lcd-4.htm>             |
 | WAVESHARE-5-1024X600         | RPI         | Waveshare    | <https://www.waveshare.com/esp32-s3-touch-lcd-5.htm>             |
 
