@@ -12,7 +12,7 @@ To use it, in your device's configuration, you specify a URL from which the devi
 file (firmware). To trigger the update, an ESPHome [action](/automations/actions#all-actions) is used which initiates the
 download and installation of the new firmware. Once complete, the device is rebooted, invoking the new firmware.
 
-Since the device functions as a CoAP(S) client, it can be on a foreign network or behind a firewall. 
+Since the device functions as a CoAP(S) client, it can be on a foreign network or behind a firewall.
 
 To use this platform, the {{< docref "coap_client/" >}} component must be present in your configuration.
 

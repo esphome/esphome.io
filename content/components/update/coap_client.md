@@ -69,7 +69,7 @@ While `release_url` and `summary` are optional, all other fields shown here are 
 
 If `path` begins with:
 
-- `coap``  : `path` is treated as full URL which will be used to obtain the firmware binary.
+- `coap`: `path` is treated as full URL which will be used to obtain the firmware binary.
 - A forward slash (`/`  ): `path` will be appended to the hostname (an "absolute" path) specified for `source` (as above).
 - Any other character: `path` will be appended to `source` (as specified above) after trimming the manifest file name.
 
