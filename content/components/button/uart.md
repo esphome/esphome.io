@@ -26,8 +26,8 @@ button:
 - **data** (**Required**, string or list of bytes): The data to send via UART. Either an ASCII string
   or a list of bytes.
 
-- **uart_id** (*Optional*, [ID](#config-id)): Manually specify the ID of the UART hub.
-- All other options from [Button](#config-button).
+- **uart_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the UART hub.
+- All other options from [Button](/components/button#config-button).
 
 ## See Also
 
