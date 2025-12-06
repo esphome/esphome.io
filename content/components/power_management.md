@@ -31,7 +31,7 @@ power_management:
 
 ### Configuration variables
 
-- **lock_duration** (*Optional*, [Time](#config-time)): Time that device is locked initially after boot.
+- **lock_duration** (*Optional*, [Time](/guides/configuration-types#config-time)): Time that device is locked initially after boot.
 - **tickless_idle** (*Optional*, boolean): Stops the system's periodic tick interrupt during idle periods to reduce current consumption.
 - **power_down_flash** (*Optional*, boolean): Safe power down, do not set to true if device has PSRAM.
 - **power_down_peripherals** (*Optional*, boolean): For disabled peripherals, automatically save and restore peripheral states, which allows the peripherals to be powered down.
