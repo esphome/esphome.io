@@ -29,7 +29,7 @@ Example usage including a sensor
 ```yaml
 power_management:
   id: pm_id
-  initial_lock_duration: 61sec
+  timer_lock_duration: 61sec
   tickless_idle: false
   power_down_flash: true
   power_down_peripherals: true
@@ -37,7 +37,7 @@ power_management:
 
 ### Configuration variables
 
-- **lock_duration** (*Optional*, [Time](/guides/configuration-types#config-time)): Time that device is locked initially after boot.
+- **timer_lock_duration** (*Optional*, [Time](/guides/configuration-types#config-time)): Time that device is locked initially after boot.
 - **tickless_idle** (*Optional*, boolean): Stops the system's periodic tick interrupt during idle periods to reduce current consumption.
 - **power_down_flash** (*Optional*, boolean): Safe power down, do not set to true if device has PSRAM.
 - **power_down_peripherals** (*Optional*, boolean): For disabled peripherals, automatically save and restore peripheral states, which allows the peripherals to be powered down.
