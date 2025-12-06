@@ -128,8 +128,6 @@ The `delonghi` climate currently supports the protocol used by some Delonghi por
 
 The Daikin ARC remotes (`daikin_arc` climate, `daikin_arc417`, `daikin_arc480` protocols of [Arduino-HeatpumpIR](#heatpumpir)) are used by the japanese model of Daikin.
 
-{{< anchor "gree_ir" >}}
-
 ### `friedrich`
 
 The `friedrich`` climate currently supports the MW12Y3H protocol.
@@ -138,6 +136,8 @@ The `friedrich`` climate currently supports the MW12Y3H protocol.
   - ``MW12Y3H``: uses Deg F
 
 - **use_fahrenheit** (*Optional*, boolean): Future proofing for other models. Defaults to ``true``.
+
+{{< anchor "gree_ir" >}}
 
 ### `gree`
 
