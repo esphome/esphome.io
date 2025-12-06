@@ -85,6 +85,7 @@ ESPHome-specific components or components supporting ESPHome device provisioning
 "Interval","components/interval","description.svg","dark-invert"
 "JSON","components/json","json.svg","dark-invert"
 "Mapping","components/mapping","mapping.svg","dark-invert"
+"Power Management,"components/power_management","power_management.svg","dark-invert"
 "XXTEA","components/xxtea","xxtea.svg",""
 "Script","components/script","description.svg","dark-invert"
 "Factory Reset","components/factory_reset","restart-alert.svg","dark-invert"
