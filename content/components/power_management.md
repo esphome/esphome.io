@@ -13,7 +13,7 @@ Power management algorithm included in ESP-IDF can adjust the advanced periphera
 mode to run an application at smallest possible power consumption, given the requirements of application components.
 
 > [!NOTE]
-> Automatic Light-sleep enabled by tickless_idle: true requires a timer technique to wake up device.  This is available in openthread when poll_period > 0 
+> Automatic Light-sleep enabled by tickless_idle: true requires a timer technique to wake up device.  This is available in openthread when poll_period > 0
 and currently the Power Management componentis meant to be used with esp32-h2 and esp32-c6 devices configured for openthread with a poll_period defined.
 
 > [!NOTE]
