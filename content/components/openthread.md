@@ -18,7 +18,7 @@ This component allows ESPHome nodes to communicate with Home Assistant over a Th
 
 ## Usage
 
-This component requires an ESP32 (ESP32-C6 or ESP32-H2 because they have Thread radio chip) and the use of
+This component requires an ESP32 (ESP32-C5, ESP32-C6, or ESP32-H2 because they have Thread radio chip) and the use of
 ESP-IDF.
 
 ```yaml
@@ -94,3 +94,10 @@ See <https://openthread.io/guides/thread-primer/node-roles-and-types>
 
 The Poll Period makes the device behave as a SED.  Follow on work is needed utilizing Power Management and/or Light Sleep capability in esp-idf.
 If the device is always awake, the API timeout is 60 seconds, so a ping request will force interaction with the parent when the poll period is greater than 60 seconds.
+
+## See Also
+
+- {{< docref "/components/text_sensor/openthread_info" >}}
+- {{< docref "/components/network" >}}
+- {{< apiref "openthread/openthread.h" "openthread/openthread.h" >}}
+- <https://openthread.io/>
