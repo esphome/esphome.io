@@ -8,9 +8,8 @@ params:
 
 This component enables Power Management and also provides methods for acquiring and releasing Power Management Locks
 
-[esp-idf Power Management] (https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/system/power_management.html)
+[esp-idf Power Management](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/system/power_management.html)
 Power management algorithm included in ESP-IDF can adjust the advanced peripheral bus (APB) frequency, CPU frequency, and put the chip into Light-sleep mode to run an application at smallest possible power consumption, given the requirements of application components.
-
 
 > [!NOTE]
 > This is a framework component that requires additional changes to api component to ensure completion of actions.  Do not use tickless_idle: true without api changes.
@@ -18,7 +17,9 @@ Power management algorithm included in ESP-IDF can adjust the advanced periphera
 > Do not use Deep Sleep component with tickless_idle: true.
 
 ## Usage
+
 Example usage including a sensor
+
 ```
 power_management:
   id: pm_id
@@ -38,7 +39,9 @@ power_management:
 - **trace** (*Optional*, boolean): sets the sdkconfig: CONFIG_PM_TRACE.
 
 ## `power_management.acquire_lock` Action
+
 This action acquires a CPU Lock
 
 ## `power_management.release_lock` Action
+
 This action releases a CPU Lock
