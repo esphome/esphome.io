@@ -128,42 +128,15 @@ the original ESP32 or ESP8266) continue to use USB-to-serial bridge ICs for comm
 
 Possible log levels are (sorted by severity):
 
-- `NONE`
-
-- No messages are logged.
-
-- `ERROR`
-
-- With this log level, only errors are logged. Errors are issues that prevent the ESP from working
-
-    correctly. Color: red
-
-- `WARN`
-
-- With this log level, warnings and errors are logged. Warnings are issues like invalid readings from
-
-    sensors that ESPHome can recover from. Color: yellow
-
-- `INFO`
-
-- With this log level, everything up to info messages are logged; so errors, warnings and info. Color: green
-
-- `DEBUG` (**Default**)
-
-- Everything up to this log level is logged. Debug messages include the current readings from a sensor
-
-    and status messages. Color: cyan
-
-- `VERBOSE`
-
-- Like debug, but a few more messages that are usually deemed to be spam are also included. Color: grey
-
-- `VERY_VERBOSE`
-
-- All internal messages are logged. Including all the data flowing through data buses like
-
-    I²C, SPI or UART. Warning: May cause the device to slow down and have trouble staying
-    connecting due to amount of generated messages. Color: white
+| Level          | Colour |           |
+| -------------- | ------ | --------- |
+| `NONE`         |        | No messages are logged. |
+| `ERROR`        | Red    | Only errors are logged. Errors are issues that prevent the ESP from working correctly. |
+| `WARN`         | Yellow | Warnings and errors are logged. Warnings are issues like invalid readings from sensors that ESPHome can recover from. |
+| `INFO`         | Green  | Everything up to info messages are logged; so errors, warnings and info. |
+| `DEBUG`        | Cyan   | **Default** - Everything up to this log level is logged. Debug messages include the current readings from a sensor and status messages. |
+| `VERBOSE`      | Grey   | Like debug, but a few more messages that are usually deemed to be spam are also included. |
+| `VERY_VERBOSE` | White  | All internal messages are logged. Including all the data flowing through data buses like I²C, SPI or UART.<br>Warning: May cause the device to slow down and have trouble staying connecting due to amount of generated messages. |
 
 {{< anchor "logger-manual_tag_specific_levels" >}}
 
