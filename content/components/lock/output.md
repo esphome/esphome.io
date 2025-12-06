@@ -25,8 +25,8 @@ lock:
 
 ## Configuration variables
 
-- **output** (**Required**, [ID](#config-id)): The ID of the output component to use.
-- All other options from [Lock](#config-lock).
+- **output** (**Required**, [ID](/guides/configuration-types#id)): The ID of the output component to use.
+- All other options from [Lock](/components/lock#config-lock).
 
 ## See Also
 
