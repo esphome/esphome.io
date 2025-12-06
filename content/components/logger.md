@@ -134,7 +134,7 @@ Possible log levels are (sorted by severity):
 | `INFO`         | Green  | Everything up to info messages are logged; so errors, warnings and info. |
 | `DEBUG`        | Cyan   | **Default** - Everything up to this log level is logged. Debug messages include the current readings from a sensor and status messages. |
 | `VERBOSE`      | Grey   | Like debug, but a few more messages that are usually deemed to be spam are also included. |
-| `VERY_VERBOSE` | White  | All internal messages are logged. Including all the data flowing through data buses like I²C, SPI or UART.<br>Warning: May cause the device to slow down and have trouble staying connecting due to amount of generated messages. |
+| `VERY_VERBOSE` | White  | All internal messages are logged. Including all the data flowing through data buses like I²C, SPI or UART. Warning: May cause the device to slow down and have trouble staying connecting due to amount of generated messages. |
 
 {{< anchor "logger-manual_tag_specific_levels" >}}
 
