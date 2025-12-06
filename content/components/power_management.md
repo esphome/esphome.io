@@ -20,7 +20,7 @@ Power management algorithm included in ESP-IDF can adjust the advanced periphera
 
 Example usage including a sensor
 
-```
+```yaml
 power_management:
   id: pm_id
   initial_lock_duration: 61sec
