@@ -126,8 +126,8 @@ the original ESP32 or ESP8266) continue to use USB-to-serial bridge ICs for comm
 
 Possible log levels are (sorted by severity):
 
-| Level          | Colour |           |
-| -------------- | ------ | --------- |
+| Level          | Colour | Description |
+| -------------- | ------ | ----------- |
 | `NONE`         |        | No messages are logged. |
 | `ERROR`        | Red    | Only errors are logged. Errors are issues that prevent the ESP from working correctly. |
 | `WARN`         | Yellow | Warnings and errors are logged. Warnings are issues like invalid readings from sensors that ESPHome can recover from. |
