@@ -55,6 +55,21 @@ This action releases a CPU Lock
 ## Example of using Actions
 
 ```yaml
+# used to lock out automatic light sleep
+switch:
+  - platform: template
+    name: "Lock"
+    optimistic: true
+    restore_mode: RESTORE_DEFAULT_OFF
+    turn_on_action:
+      then:
+        - logger.log: "Turn On Lock"
+        - power_management.acquire_lock:
+    turn_off_action:
+      then:
+        - logger.log: "Turn Off Lock"
+        - power_management.release_lock:
+
 button:
   - platform: template
     name: "OTA Http Request Update"
