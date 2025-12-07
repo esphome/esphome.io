@@ -9,7 +9,7 @@ params:
 
 The nRF52 platform supports firmware updates via Over-the-Air (OTA) mechanisms. The **only supported bootloader** for OTA updates is **MCUboot**.
 
-To flash firmware onto the device, you can use any of the tools or libraries listed in the [Zephyr MCUmgr documentation](https://docs.zephyrproject.org/latest/services/device_mgmt/mcumgr.html#tools-libraries).
+To flash firmware onto the device, you can use any of the tools or libraries listed in the [Zephyr MCUmgr documentation](https://docs.zephyrproject.org/latest/services/device_mgmt/mcumgr.html#tools-libraries). You can also use esphome from coammand line.
 
 For flashing over **BLE**, the [MCUmgr Web Tool](https://boogie.github.io/mcumgr-web/) provides a convenient browser-based interface.
 
@@ -40,6 +40,32 @@ ota:
 
 - **ble** (*Optional*, boolean): Enable Bluetooth Low Energy transport for MCUmgr OTA. Default `false`.
 - **hardware_uart** (*Optional*, enum): Select a hardware UART interface to use for MCUmgr OTA communication. This is used when updating devices over a serial interface rather than BLE. Options: `CDC`, `CDC1`, `UART0`, `UART1`.
+
+## Usage
+
+To connect and update the device over BLE:
+
+```bash
+esphome upload h.yaml --device BLE
+```
+
+Or connect to a specific BLE address:
+
+```bash
+esphome upload h.yaml --device 00:11:22:33:44:55
+```
+
+To connect and update the device over serial:
+
+```bash
+esphome upload h.yaml --device /dev/ttyACM0
+```
+
+Or connect to a specific serial:
+
+```bash
+esphome upload h.yaml --device /dev/ttyACM0
+```
 
 ## See Also
 
