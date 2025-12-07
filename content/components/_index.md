@@ -292,6 +292,7 @@ Sensors are organized into categories; if a given sensor fits into more than one
 "Mopeka Pro Check LP","components/sensor/mopeka_pro_check","mopeka_pro_check.jpg","Tank level"
 "Mopeka Standard Check LP","components/sensor/mopeka_std_check","mopeka_std_check.jpg","Tank level"
 "RuuviTag","components/sensor/ruuvitag","ruuvitag.jpg","Temperature & Humidity & Accelerometer"
+"ThermoPro BLE","components/sensor/thermopro_ble","thermopro_tp357.jpg","Temperature & Humidity"
 "Xiaomi BLE","components/sensor/xiaomi_ble","xiaomi_mijia_logo.jpg","Various"
 {{< /imgtable >}}
 
@@ -990,6 +991,7 @@ at the {{< docref "light/fastled" "FastLED Light" >}}.
 "Modbus Text Sensor","components/text_sensor/modbus_controller","modbus.png",""
 "MQTT Subscribe Text","components/text_sensor/mqtt_subscribe","mqtt.png",""
 "Nextion Text Sensor","components/text_sensor/nextion","nextion.jpg",""
+"OpenThread Info","components/text_sensor/openthread_info","openthread.png",""
 "Tuya Text Sensor","components/text_sensor/tuya","tuya.png",""
 "Version","components/text_sensor/version","new-box.svg","dark-invert"
 "WiFi Info","components/text_sensor/wifi_info","network-wifi.svg","dark-invert"
@@ -1040,6 +1042,7 @@ Used for creating infrared (IR) or radio frequency (RF) remote control transmitt
 ESPHome to cellular networks. **Does not encompass Wi-Fi.**
 
 {{< imgtable >}}
+"CC1101","components/cc1101","cc1101.webp",""
 "IR Remote Climate","components/climate/climate_ir","air-conditioner-ir.svg","dark-invert"
 "Remote Receiver","components/remote_receiver","remote.svg","dark-invert"
 "Remote Transmitter","components/remote_transmitter","remote.svg","dark-invert"
