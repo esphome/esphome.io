@@ -9,8 +9,8 @@ params:
 
 The nRF52 platform supports firmware updates via Over-the-Air (OTA) mechanisms. The **only supported bootloader** for OTA updates is **MCUboot**.
 
-To flash firmware onto the device, you can use any of the tools or libraries listed in the [Zephyr MCUmgr documentation](https://docs.zephyrproject.org/latest/services/device_mgmt/mcumgr.html#tools-libraries). You can also use esphome from coammand line.
-
+To flash firmware onto the device, you can use any of the tools or libraries listed in the [Zephyr MCUmgr documentation](https://docs.zephyrproject.org/latest/services/device_mgmt/mcumgr.html#tools-libraries).
+Firmware updates are also available via the ESPHome command-line interface.
 For flashing over **BLE**, the [MCUmgr Web Tool](https://boogie.github.io/mcumgr-web/) provides a convenient browser-based interface.
 
 ```yaml
