@@ -51,6 +51,10 @@ The optimization level depends on whether PSRAM is guaranteed to be available (c
 > This has various security and privacy implications decribed in [RFC7721](https://datatracker.ietf.org/doc/rfc7721/), as this might leak outside of the smart home network and makes the device uniquely identifiable.
 > Therefore, the address generation does not comply to [RFC7217](https://datatracker.ietf.org/doc/rfc7217/).
 
+## nRF52 platform
+
+nRF52 platform only supports IPv6 over Thread, no WiFi.
+
 ## See Also
 
 - {{< docref "wifi/" >}}
