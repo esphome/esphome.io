@@ -54,6 +54,7 @@ The optimization level depends on whether PSRAM is guaranteed to be available (c
 ## nRF52 platform
 
 nRF52 platform only supports IPv6 over Thread, no WiFi.
+
 ```yaml
 # Example configuration
 # IPv6 is always enabled for nRF52 (not configurable)
