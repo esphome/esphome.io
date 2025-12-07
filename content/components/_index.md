@@ -147,6 +147,7 @@ Install updates over-the-air (OTA).
 "OTA Core","components/ota/index","system-update.svg","dark-invert"
 "OTA Updates","components/ota/esphome","system-update.svg","dark-invert"
 "OTA Updates via HTTP Request","components/ota/http_request","system-update.svg","dark-invert"
+"OTA Updates for nRF52","components/ota/zephyr_mcumgr","system-update.svg","dark-invert"
 {{< /imgtable >}}
 
 ## Update Management
