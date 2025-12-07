@@ -208,8 +208,15 @@ Only available with sen50, SEN54 OR SEN55.
 SEN5X sensors or ``0x6B`` for the SEN6X sensors.
 
 > [!NOTE]
-> The sensor needs about a minute "warm-up". The VOC and NOx gas index algorithm needs a
-> number of samples before the values stabilize.
+> This component reports readings as soon as they are available without regard initial accuracy.
+> Your configuration should limit reporting of sensor value for a period of time after power-up. A good starting point is 5 minutes.
+> The PM sensor has a start-up time of 30 seconds.
+> The temperature sensor has a response time of 1 minute with no mention start-up time.
+> The humidity sensor has a response time of 20 seconds with no mention start-up time.
+> The VOC sensor will start detecting events in 1 minute but may take up to 1 hour to meet data sheet specifications.
+> The NOx sensor will start detecting events in 5 minutes but may take up to 6 hours to meet data sheet specifications.
+> The CO₂ sensor has a response time of between 60 and 70 seconds with no mention start-up time.
+> The HCHO sensor has a start-up time of 10 minutes.
 
 ## Wiring
 
@@ -291,7 +298,7 @@ the last week or so to the outdoor average of slightly more than 400 ppm. Auto-c
 opening the windows at least once a week. If you don't open the windows then over time the CO₂ level will tend
 downward.
 
-If you know your minimums are not going to be 400 ppm then you can disable auto-calibration, and occasionally
+If you know your minimums are not going to be 400 ppm then you can disable auto-calibration, occasionally
 take the sensor outside for 5 minutes and then force a manual CO₂ calibration.
 
 ### `perform_forced_co2_calibration` Action
