@@ -126,19 +126,18 @@ the original ESP32 or ESP8266) continue to use USB-to-serial bridge ICs for comm
 
 Possible log levels are (sorted by severity):
 
-| Level          | Color  | Description |
-| -------------- | ------ | ----------- |
-| `NONE`         |        | No messages are logged. |
-| `ERROR`        | Red    | Only errors are logged. Errors prevent the ESP from working correctly. |
-| `WARN`         | Yellow | Warnings and errors. Warnings are recoverable issues like invalid sensor readings. |
-| `INFO`         | Green  | Errors, warnings and info messages are logged. |
-| `DEBUG`        | Cyan   | **Default** - Everything up to debug level. Includes sensor readings and status messages. |
-| `VERBOSE`      | Gray   | Like debug, but includes additional messages usually deemed to be spam. |
-| `VERY_VERBOSE` | White  | All internal messages including data flowing through I²C, SPI and UART buses. |
+| Level              | Color  | Description |
+| ------------------ | ------ | ----------- |
+| `NONE`             |        | No messages are logged. |
+| `ERROR`            | Red    | Only errors are logged. Errors prevent the ESP from working correctly. |
+| `WARN`             | Yellow | Warnings and errors. Warnings are recoverable issues like invalid sensor readings. |
+| `INFO`             | Green  | Errors, warnings and info messages are logged. |
+| `DEBUG` (default)  | Cyan   | Everything up to debug. Includes sensor readings and status messages. |
+| `VERBOSE`          | Gray   | Like debug, but includes additional messages usually deemed to be spam. |
+| `VERY_VERBOSE`     | White  | All internal messages including data flowing through I²C, SPI and UART buses. |
 
 > [!WARNING]
-> `VERY_VERBOSE` may cause the device to slow down and have trouble staying connected
-> due to the amount of generated messages.
+> Using `VERY_VERBOSE` can significantly impact device performance and may cause connection instability.
 
 {{< anchor "logger-manual_tag_specific_levels" >}}
 
