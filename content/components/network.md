@@ -59,3 +59,4 @@ nRF52 platform only supports IPv6 over Thread, no WiFi.
 
 - {{< docref "wifi/" >}}
 - {{< docref "ethernet/" >}}
+- {{< docref "openthread/" >}}
