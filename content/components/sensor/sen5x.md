@@ -3,7 +3,7 @@ description: "Instructions for setting up SEN5X and SEN6X Series Environmental s
 title: "SEN5X and SEN6X Series Environmental sensor"
 params:
   seo:
-    description: Instructions for setting up SEN5X Series Environmental sensor for PM, RH/T, VOC, and NOx measurements.
+    description: Instructions for setting up SEN5X and SEN6X Series Environmental sensor for PM, RH/T, VOC, and NOx measurements.
     image: sen54.jpg
 ---
 
@@ -12,7 +12,7 @@ The `sen5x` sensor platform allows you to use Sensirion
 [SEN6X Series](https://sensirion.com/sen6x-air-quality-sensor-platform)
 Environmental sensors with ESPHome.
 
-The [I²C Bus](/components/i2c) is required to be set up in your configuration for this sensor to work.
+The [I²C Bus](/components/i2c) is required in your configuration for this sensor to work.
 This sensor supports both UART and I²C communication. Only I²C communication is implemented in this component.
 
 ## SEN5X Series
@@ -79,32 +79,32 @@ sensor:
 - **pm_1_0** (*Optional*): The information for the **Mass Concentration** of fine particles up to 1μm sensor.
   Readings in µg/m³.
 
-  - All options from [Sensor](/components/sensor).
+  - All options from [Sensor](/components/sensor#config-sensor).
 
 - **pm_2_5** (*Optional*): The information for the **Mass Concentration** of fine particles up to 2.5μm sensor.
   Readings in µg/m³.
 
-  - All options from [Sensor](/components/sensor).
+  - All options from [Sensor](/components/sensor#config-sensor).
 
 - **pm_4_0** (*Optional*): The information for the **Mass Concentration** of fine particles up to 4μm sensor.
   Readings in µg/m³.
 
-  - All options from [Sensor](/components/sensor).
+  - All options from [Sensor](/components/sensor#config-sensor).
 
 - **pm_10_0** (*Optional*): The information for the **Mass Concentration** of fine particles up to 10μm sensor.
   Readings in µg/m³.
 
-  - All options from [Sensor](/components/sensor).
+  - All options from [Sensor](/components/sensor#config-sensor).
 
 - **temperature** (*Optional*): The information for the Temperature sensor. Only available with SEN54, SEN55,
   SEN63C, SEN65, SEN66 or SEN68.
 
-  - All options from [Sensor](#config-sensor).
+  - All options from [Sensor](/components/sensor#config-sensor).
 
 - **humidity** (*Optional*): The information for the Relative Humidity sensor. Only available with SEN54, SEN55,
   SEN63C, SEN65, SEN66 or SEN68.
 
-  - All options from [Sensor](#config-sensor).
+  - All options from [Sensor](/components/sensor#config-sensor).
 
 - **co2** (*Optional*): The information for the Carbon dioxide (CO₂) sensor. Readings in ppm. Only available with
   SEN63C or SEN66.
@@ -113,16 +113,16 @@ sensor:
   False disables automatic CO₂ calibration. Default is ``true``.
   - **altitude_compensation** (*Optional*, integer): When set to altitude (in meters), the CO₂ sensor will be
   compensated for deviations due to current altitude.
-  - **ambient_pressure_compensation_source** (*Optional*, [ID](#config-id)): Sets an external pressure sensor ID
+  - **ambient_pressure_compensation_source** (*Optional*, [ID](/guides/configuration-types#config-id)): Sets an external pressure sensor ID
   (must report in hPA). This will compensate the CO₂ sensor for deviations due to current pressure. More accurate
   than altitude compensation this correction is applied before each update of the state of the CO₂ sensor.
 
-  - All options from [Sensor](/components/sensor).
+  - All options from [Sensor](/components/sensor#config-sensor).
 
 - **hcho** (*Optional*): The information for the Formaldehyde (HCHO) sensor. Readings in ppb. Only available with
   SEN68.
 
-  - All options from [Sensor](/components/sensor).
+  - All options from [Sensor](/components/sensor#config-sensor).
 
 - **voc** (*Optional*): The information for the VOC Index sensor. Only available with SEN54, SEN55, SEN65, SEN66 or SEN68.
 
@@ -147,7 +147,7 @@ sensor:
     - **gain_factor** (*Optional*): Gain factor to amplify or to attenuate the VOC index output.
       Allowed values are in range 1..1000. The default value is 230.
 
-  - All other options from [Sensor](/components/sensor).
+  - All other options from [Sensor](/components/sensor#config-sensor).
 
 - **nox** (*Optional*): The information for the NOx Index sensor. Only available with SEN55, SEN65, SEN66 or SEN68..
 
@@ -172,7 +172,7 @@ sensor:
     - **gain_factor** (*Optional*): Gain factor to amplify or to attenuate the VOC index output.
       Allowed values are in range 1..1000. The default value is 230.
 
-  - All other options from [Sensor](/components/sensor).
+  - All other options from [Sensor](/components/sensor#config-sensor).
 
 - **store_baseline** (*Optional*, boolean): Stores and retrieves the baseline VOC and NOx information for
   quicker startups. Defaults to `true`
@@ -274,9 +274,9 @@ automatic mode. Instead you have to trigger `sen5x.activate_heater` action occas
 
 ### `activate_heater` Action
 
-This [action](#config-action) manually starts the heater. First all measurements are stopped, then the heater is
-turned on at 200mW for 1s, finally there is a 20 second delay to before reenabling the measurements. This is to
-ensure the heating effects are gone before temperature measurements resume.
+This [action](/automations/actions#all-actions) manually starts the heater. First all measurements are stopped,
+then the heater is turned on at 200mW for 1s, finally there is a 20 second delay to before reenabling the
+measurements. This is to ensure the heating effects are gone before temperature measurements resume.
 
 ``` yaml
 on_...:
@@ -296,7 +296,7 @@ take the sensor outside for 5 minutes and then force a manual CO₂ calibration.
 
 ### `perform_forced_co2_calibration` Action
 
-This [action](#config-action) forces a manual calibration on the CO₂ sensor.
+This [action](/automations/actions#all-actions) forces a manual calibration on the CO₂ sensor.
 
 ``` yaml
 number:
@@ -330,7 +330,7 @@ occasionally call the `sen5x.set_ambient_pressure_compensation` action.
 
 ### `set_ambient_pressure_compensation` Action
 
-This [action](#config-action) updates the current pressure used in CO₂ pressure compensation. Must be in hPa or mbar.
+This [action](/automations/actions#all-actions) updates the current pressure used in CO₂ pressure compensation. Must be in hPa or mbar.
 
 ``` yaml
 sensor:
