@@ -30,7 +30,7 @@ If you are adding a new component to ESPHome, you can automatically generate a s
 
 2. The ESPHome bot will respond with a downloadable ZIP file containing the SVG image.
 
-3. Extract the SVG file and place it in the `/components/images/` folder of this repository.
+3. Extract the SVG file and place it in the `/static/images/` folder of this repository.
 
 4. Use the image in your component's index table entry in `/components/_index.md`.
 
