@@ -126,15 +126,19 @@ the original ESP32 or ESP8266) continue to use USB-to-serial bridge ICs for comm
 
 Possible log levels are (sorted by severity):
 
-| Level          | Colour | Description |
+| Level          | Color  | Description |
 | -------------- | ------ | ----------- |
 | `NONE`         |        | No messages are logged. |
-| `ERROR`        | Red    | Only errors are logged. Errors are issues that prevent the ESP from working correctly. |
-| `WARN`         | Yellow | Warnings and errors are logged. Warnings are issues like invalid readings from sensors that ESPHome can recover from. |
-| `INFO`         | Green  | Everything up to info messages are logged; so errors, warnings and info. |
-| `DEBUG`        | Cyan   | **Default** - Everything up to this log level is logged. Debug messages include the current readings from a sensor and status messages. |
-| `VERBOSE`      | Grey   | Like debug, but a few more messages that are usually deemed to be spam are also included. |
-| `VERY_VERBOSE` | White  | All internal messages are logged. Including all the data flowing through data buses like I²C, SPI or UART. Warning: May cause the device to slow down and have trouble staying connecting due to amount of generated messages. |
+| `ERROR`        | Red    | Only errors are logged. Errors prevent the ESP from working correctly. |
+| `WARN`         | Yellow | Warnings and errors. Warnings are recoverable issues like invalid sensor readings. |
+| `INFO`         | Green  | Errors, warnings and info messages are logged. |
+| `DEBUG`        | Cyan   | **Default** - Everything up to debug level. Includes sensor readings and status messages. |
+| `VERBOSE`      | Gray   | Like debug, but includes additional messages usually deemed to be spam. |
+| `VERY_VERBOSE` | White  | All internal messages including data flowing through I²C, SPI and UART buses. |
+
+> [!WARNING]
+> `VERY_VERBOSE` may cause the device to slow down and have trouble staying connected
+> due to the amount of generated messages.
 
 {{< anchor "logger-manual_tag_specific_levels" >}}
 
