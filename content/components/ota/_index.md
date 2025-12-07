@@ -20,6 +20,7 @@ Available platforms:
 - **esphome**: The default OTA method using ESPHome's native protocol (used by the dashboard and CLI)
 - **http_request**: Pull firmware updates from a remote web server
 - **web_server**: Enable firmware uploads through the device's web interface
+- **zephyr_mcumgr**: Enable firmware upload support for the `nRF52` platform
 
 ```yaml
 # Example configuration entry
