@@ -210,13 +210,14 @@ SEN5X sensors or ``0x6B`` for the SEN6X sensors.
 > [!NOTE]
 > This component reports readings as soon as they are available without regard initial accuracy.
 > Your configuration should limit reporting of sensor values for a period of time after power-up. A good starting point is 5 minutes.
-> * The PM sensor has a start-up time of 30 seconds.
-> * The temperature sensor has a response time of 1 minute with no mention start-up time.
-> * The humidity sensor has a response time of 20 seconds with no mention start-up time.
-> * The VOC sensor will start detecting events in 1 minute but may take up to 1 hour to meet data sheet specifications.
-> * The NOx sensor will start detecting events in 5 minutes but may take up to 6 hours to meet data sheet specifications.
-> * The CO₂ sensor has a response time of between 60 and 70 seconds with no mention start-up time.
-> * The HCHO sensor has a start-up time of 10 minutes.
+>
+> - The PM sensor has a start-up time of 30 seconds.
+> - The temperature sensor has a response time of 1 minute with no mention start-up time.
+> - The humidity sensor has a response time of 20 seconds with no mention start-up time.
+> - The VOC sensor will start detecting events in 1 minute but may take up to 1 hour to meet data sheet specifications.
+> - The NOx sensor will start detecting events in 5 minutes but may take up to 6 hours to meet data sheet specifications.
+> - The CO₂ sensor has a response time of between 60 and 70 seconds with no mention start-up time.
+> - The HCHO sensor has a start-up time of 10 minutes.
 
 ## Wiring
 
