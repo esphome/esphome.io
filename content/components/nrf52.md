@@ -78,7 +78,7 @@ There are two ways to reference GPIO pins:
 
 The `dfu` component enables automatic entry into **DFU (Device Firmware Update)** mode by monitoring
 the USB CDC serial connection. When a host opens the port at **1200 baud**, the component triggers
-a reset via a GPIO pin to put the device into DFU mode.
+a reset to put the device into DFU mode.
 
 ESPHome uses this component internally when uploading firmware via:
 
@@ -88,6 +88,8 @@ esphome upload d.yaml
 
 ### Example Configuration
 
+With reset pin (recommended):
+
 ```yaml
 nrf52:
   dfu:
@@ -96,9 +98,16 @@ nrf52:
       inverted: true
 ```
 
+Without reset pin (less reliable):
+
+```yaml
+nrf52:
+  dfu: {}
+```
+
 ### Configuration variables
 
-- **reset_pin** (*Required*, [Pin](/guides/configuration-types#pin)): The pin to use for trigger a hardware reset. This pin should be connected to the MCU's reset line or to a circuit that causes the bootloader to enter DFU mode after reset.
+- **reset_pin** (*Optional*, [Pin](/guides/configuration-types#pin)): The pin to use to trigger a hardware reset. This pin should be connected to the MCU's reset line or to a circuit that causes the bootloader to enter DFU mode after reset. When omitted, the device will attempt to enter DFU mode without a hardware reset, which is less reliable and may require multiple attempts.
 
 ## REGOUT0
 
