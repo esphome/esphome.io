@@ -35,6 +35,7 @@ ota:
       ble: true
       hardware_uart: CDC
 ```
+
 ### Configuration variables
 
 - **ble** (*Optional*, boolean): Enable Bluetooth Low Energy transport for MCUmgr OTA. Default `false`.
