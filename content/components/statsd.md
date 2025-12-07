@@ -6,8 +6,9 @@ params:
     description: Instructions for setting up a StatsD
 ---
 
-StatsD is a [protocol](https://github.com/statsd/statsd/blob/master/docs/metric_types.md) to send metrics to a Daemon to store and aggregate them.
-Today there are many monitoring solutions that support receiving metrics via the StatsD protocol.
+StatsD is a [protocol](https://github.com/statsd/statsd/blob/master/docs/metric_types.md) to send metrics to a Daemon
+to store and aggregate them. Today there are many monitoring solutions that support receiving metrics via the StatsD
+protocol.
 
 ```yaml
 # Example configuration entry
@@ -37,7 +38,7 @@ This example will generate a metric named `test1.sensor` with the value of the `
 
 ## Sensor list
 
-- **id** (**Required**, [ID](#config-id)): The ID of the sensor.
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the sensor.
 - **name** (**Required**, name): The Name of the metric the sensor value is send as. (Prefix is added to this name).
 
 ## See Also

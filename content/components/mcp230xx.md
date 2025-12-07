@@ -19,7 +19,7 @@ The Microchip MCP230xx series of general purpose, parallel I/O expansion for I²
 
 ## MCP23008 Component
 
-The MCP23008 component ([datasheet](http://ww1.microchip.com/downloads/en/devicedoc/21919e.pdf),
+The MCP23008 component ([datasheet](https://ww1.microchip.com/downloads/aemDocuments/documents/APID/ProductDocuments/DataSheets/MCP23008-MCP23S08-Data-Sheet-DS20001919.pdf),
 [Adafruit](https://www.adafruit.com/product/593)) has 8 GPIOs that can be configured independently.
 
 ```yaml
@@ -56,7 +56,7 @@ binary_sensor:
 
 ### Configuration variables
 
-- **id** (**Required**, [ID](#config-id)): The id to use for this MCP23008 component.
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The id to use for this MCP23008 component.
 - **address** (*Optional*, int): The I²C address of the driver.
   Defaults to `0x20`.
 
@@ -66,7 +66,7 @@ binary_sensor:
 
 ### Pin configuration variables
 
-- **mcp23xxx** (**Required**, [ID](#config-id)): The id of the MCP23008 component.
+- **mcp23xxx** (**Required**, [ID](/guides/configuration-types#id)): The id of the MCP23008 component.
 - **interrupt** (*Optional*): Set this pin to trigger the INT pin on the component. Can be one of `CHANGE`, `RISING`, `FALLING`.
 - **number** (**Required**, int): The pin number.
 - **inverted** (*Optional*, boolean): If all read and written values
@@ -78,13 +78,11 @@ binary_sensor:
 
 ## MCP23016 Component
 
-The MCP23016 component ([datasheet](http://ww1.microchip.com/downloads/en/devicedoc/20090c.pdf))
+The MCP23016 component ([datasheet](https://ww1.microchip.com/downloads/aemDocuments/documents/APID/ProductDocuments/DataSheets/20090C.pdf))
 has 16 GPIOs and can be configured the same way than the other variants.
 
-{{< note >}}
-The 'INPUT_PULLUP' mode is not supported on this device.
-
-{{< /note >}}
+> [!NOTE]
+> The 'INPUT_PULLUP' mode is not supported on this device.
 
 ```yaml
 # Example configuration entry
@@ -119,23 +117,23 @@ binary_sensor:
 
 ### Configuration variables
 
-- **id** (**Required**, [ID](#config-id)): The id to use for this MCP23016 component.
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The id to use for this MCP23016 component.
 - **address** (*Optional*, int): The I²C address of the driver.
   Defaults to `0x20`.
 
 ### Pin configuration variables
 
-- **mcp23xxx** (**Required**, [ID](#config-id)): The id of the MCP23016 component.
-- All other options from [Pin Schema](#config-pin_schema)
+- **mcp23xxx** (**Required**, [ID](/guides/configuration-types#id)): The id of the MCP23016 component.
+- All other options from [Pin Schema](/guides/configuration-types#pin-schema)
 
 {{< anchor "mcp23017-label" >}}
 
 ## MCP23017 Component
 
 The MCP23017 component allows you to use MCP23017 I/O expanders
-([datasheet](http://ww1.microchip.com/downloads/en/devicedoc/20001952c.pdf),
+([datasheet](https://ww1.microchip.com/downloads/aemDocuments/documents/APID/ProductDocuments/DataSheets/MCP23017-Data-Sheet-DS20001952.pdf),
 [Adafruit](https://www.adafruit.com/product/732)) in ESPHome.
-It uses the [I²C Bus](#i2c) for communication.
+It uses the [I²C Bus](/components/i2c) for communication.
 
 Once configured, you can use any of the 16 pins as
 pins for your projects. Within ESPHome they emulate a real internal GPIO pin
@@ -180,7 +178,7 @@ binary_sensor:
 
 ### Configuration variables
 
-- **id** (**Required**, [ID](#config-id)): The id to use for this MCP23017 component.
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The id to use for this MCP23017 component.
 - **address** (*Optional*, int): The I²C address of the driver.
   Defaults to `0x20`.
 
@@ -190,13 +188,13 @@ binary_sensor:
 
 ### Pin configuration variables
 
-- **mcp23xxx** (**Required**, [ID](#config-id)): The id of the MCP23017 component.
+- **mcp23xxx** (**Required**, [ID](/guides/configuration-types#id)): The id of the MCP23017 component.
 - **interrupt** (*Optional*): Set this pin to trigger the port INT pin on the component. Can be one of `CHANGE`, `RISING`, `FALLING`.
-- All other options from [Pin Schema](#config-pin_schema)
+- All other options from [Pin Schema](/guides/configuration-types#pin-schema)
 
 ## See Also
 
-- [I²C Bus](#i2c)
+- [I²C Bus](/components/i2c)
 - {{< docref "switch/gpio" >}}
 - {{< docref "binary_sensor/gpio" >}}
 - {{< apiref "API Reference (MCP23008)" "mcp23008/mcp23008.h" >}}

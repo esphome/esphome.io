@@ -55,13 +55,11 @@ fan:
   switch. Supported by some ceiling fans.
 
 - **speed_count** (*Optional*, int): Set the number of supported discrete speed levels. Defaults to `3`.
-- All other options from [Fan](#config-fan).
+- All other options from [Fan](/components/fan#config-fan).
 
-{{< note >}}
-The MCU on the Tuya dimmer handles the LEDs and they dont seem to be controllable
-over the serial bus.
-
-{{< /note >}}
+> [!NOTE]
+> The MCU on the Tuya dimmer handles the LEDs and they dont seem to be controllable
+> over the serial bus.
 
 ## See Also
 

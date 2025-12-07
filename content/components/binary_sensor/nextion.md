@@ -40,26 +40,25 @@ binary_sensor:
 
 ## Configuration variables
 
-- **nextion_id** (*Optional*, [ID](#config-id)): The ID of the Nextion display.
+- **nextion_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the Nextion display.
 - **component_name** (*Optional*, string): The name of the Nextion component.
 - **variable_name** (*Optional*, string): The name of the Nextion variable. Any value over `0`   is considered to be **on**
 - **page_id** (*Optional*, string): The ID of the page the component is on. Use `0`   for the default page.
 - **component_id** (*Optional*, string): The ID (the number, not name!) of the component to track.
-- **update_interval** (*Optional*, [Time](#config-time)): The duration to update the sensor. If using a [Nextion Custom Binary Sensor Protocol](#nextion_custom_binary_sensor_protocol) this should not be used
-- **background_color** (*Optional*, [Color](#config-color)): The background color
-- **foreground_color** (*Optional*, [Color](#config-color)): The foreground color
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The duration to update the sensor. If using a [Nextion Custom Binary Sensor Protocol](#nextion_custom_binary_sensor_protocol) this should not be used
+- **background_color** (*Optional*, [Color](/components/display#config-color)): The background color
+- **foreground_color** (*Optional*, [Color](/components/display#config-color)): The foreground color
 - **visible** (*Optional*, boolean): Visible or not
-- All other options from [Binary Sensor](#config-binary_sensor).
+- All other options from [Binary Sensor](/components/binary_sensor#config-binary_sensor).
 
 **Touch Sensor:**
 The Nextion will send a **page_id** and **component_id** when the *Send Component ID* check box is selected for the component. To enable
 this native event **page_id** and **component_id** are required. No [Nextion Custom Binary Sensor Protocol](#nextion_custom_binary_sensor_protocol) is required. If **page_id** and **component_id** are set then the component will only react to touch events from the Nextion. Setting **component_name** will allow setting options like foreground color.
 
-{{< note >}}
-`background_color(s)`, `foreground_color(s)`   and `visible`   do not retain their state on page change. [Binary Sensor Settings](#nextion_binary_sensor_settings).
-A [Nextion Sensor](#nextion_sensor) with a custom protocol sending the current page can be used to execute the API call [Update Components By Prefix](#update_components_by_prefix) to update all the components for that page
+> [!NOTE]
+> `background_color(s)`, `foreground_color(s)`   and `visible`   do not retain their state on page change. [Binary Sensor Settings](#nextion_binary_sensor_settings).
+> A [Nextion Sensor](/components/sensor/nextion#nextion_sensor) with a custom protocol sending the current page can be used to execute the API call [Update Components By Prefix](/components/display/nextion#update_components_by_prefix) to update all the components for that page
 
-{{< /note >}}
 Example:
 
 ```yaml
@@ -115,23 +114,22 @@ on_...:
 
 ### Configuration variables
 
-- **id** (**Required**, [ID](#config-id)): The ID of the Nextion switch.
-- **state** (**Required**, string, [templatable](#config-templatable)): The boolean state to publish.
-- **publish_state** (*Optional*, bool, [templatable](#config-templatable)): Publish new state to Home Assistant.
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the Nextion switch.
+- **state** (**Required**, string, [templatable](/automations/templates)): The boolean state to publish.
+- **publish_state** (*Optional*, bool, [templatable](/automations/templates)): Publish new state to Home Assistant.
   Default is true.
 
-- **send_to_nextion** (*Optional*, bool, [templatable](#config-templatable)): Publish new state to Nextion
+- **send_to_nextion** (*Optional*, bool, [templatable](/automations/templates)): Publish new state to Nextion
   display which will update component. Default is true.
 
-{{< note >}}
-This action can also be written in lambdas. See [Lambda Calls](#nextion_binary_sensor_lambda_calls)
+> [!NOTE]
+> This action can also be written in lambdas. See [Lambda Calls](#nextion_binary_sensor_lambda_calls)
 
-{{< /note >}}
 {{< anchor "nextion_binary_sensor_lambda_calls" >}}
 
 ## Lambda Calls
 
-From [lambdas](#config-lambda), you can call several methods to access some
+From [lambdas](/automations/templates#config-lambda), you can call several methods to access some
 more advanced functions (see the full {{< apiref "nextion/binary_sensor/nextion_binarysensor.h" "nextion/binary_sensor/nextion_binarysensor.h" >}} for more info).
 
 {{< anchor "nextion_binary_sensor_set_state" >}}
@@ -160,12 +158,11 @@ component or function you want to trigger the send. Typically this is in *Touch 
 set in the *Touch Release Event* to capture all the changes. Since this is a custom protocol it can be sent from anywhere (timers/functions/components)
 in the Nextion.
 
-{{< note >}}
-There is no need to check the *Send Component ID* for the *Touch Press Event* or *Touch Release Event*
-for an integer value component since this will be sending the real value to esphome,
-but make sure you have both checked for a touch sensor.
+> [!NOTE]
+> There is no need to check the *Send Component ID* for the *Touch Press Event* or *Touch Release Event*
+> for an integer value component since this will be sending the real value to esphome,
+> but make sure you have both checked for a touch sensor.
 
-{{< /note >}}
 Using the above yaml example:
 
 - "mode" is a touch sensor and will trigger when a user presess the component with ID `8`   in page `0`
@@ -174,10 +171,9 @@ Using the above yaml example:
 
 - [Lambda Calls](#nextion_binary_sensor_lambda_calls).
 
-{{< note >}}
-No updates will be sent to the Nextion if it is sleeping. Once it wakes the components will be updated. If a component is invisible, `visible(false)`, then it won't update until it is set to be visible.
+> [!NOTE]
+> No updates will be sent to the Nextion if it is sleeping. Once it wakes the components will be updated. If a component is invisible, `visible(false)`, then it won't update until it is set to be visible.
 
-{{< /note >}}
 {{< anchor "nextion_custom_binary_sensor_protocol" >}}
 
 ## Nextion Custom Binary Sensor Protocol
