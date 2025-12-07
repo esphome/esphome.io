@@ -20,7 +20,7 @@ Next, tell the node how it should wakeup. On the ESP8266, you can only put the n
 for a duration using `sleep_duration`, note that on the ESP8266 `GPIO16` must be connected to
 the `RST` pin so that it will wake up again. On the ESP32, you additionally have the option
 to wake up on any RTC pin (`GPIO0`, `GPIO2`, `GPIO4`, `GPIO12`, `GPIO13`, `GPIO14`,
-`GPIO15`, `GPIO25`, `GPIO26`, `GPIO27`, `GPIO32`, `GPIO39`  ).
+`GPIO15`, `GPIO25`, `GPIO26`, `GPIO27`, `GPIO32`, `GPIO39`).
 
 While in deep sleep mode, the node will not do any work and not respond to any network traffic,
 even Over The Air updates. If the device's entities are appearing as **Unavailable** while your device is actively
@@ -34,33 +34,31 @@ deep_sleep:
   sleep_duration: 10min
 ```
 
-{{< note >}}
-Some ESP8266s have an onboard USB chip (e.g. D1 mini) on the chips' control line that is connected to the RST pin. This enables the flasher to reboot the ESP when required. This may interfere with deep sleep on some devices and prevent the ESP from waking when it's powered through its USB connector. Powering the ESP from a separate 3.3V source connected to the 3.3V pin and GND will solve this issue. In these cases, using a USB to TTL adapter will allow you to log ESP activity.
-
-{{< /note >}}
+> [!NOTE]
+> Some ESP8266s have an onboard USB chip (e.g. D1 mini) on the chips' control line that is connected to the RST pin. This enables the flasher to reboot the ESP when required. This may interfere with deep sleep on some devices and prevent the ESP from waking when it's powered through its USB connector. Powering the ESP from a separate 3.3V source connected to the 3.3V pin and GND will solve this issue. In these cases, using a USB to TTL adapter will allow you to log ESP activity.
 
 ## Configuration variables
 
-- **run_duration** (*Optional*, [Time](#config-time)): The time duration the node should be active, i.e. run code.
+- **run_duration** (*Optional*, [Time](/guides/configuration-types#time)): The time duration the node should be active, i.e. run code.
 
   Only on ESP32, instead of time, it is possible to specify run duration according to the wakeup reason from deep-sleep:
 
-  - **default** (**Required**, [Time](#config-time)): default run duration for timer wakeup and any unspecified wakeup reason.
-  - **gpio_wakeup_reason** (*Optional*, [Time](#config-time)): run duration if woken up by GPIO.
-  - **touch_wakeup_reason** (*Optional*, [Time](#config-time)): run duration if woken up by touch.
+  - **default** (**Required**, [Time](/guides/configuration-types#time)): default run duration for timer wakeup and any unspecified wakeup reason.
+  - **gpio_wakeup_reason** (*Optional*, [Time](/guides/configuration-types#time)): run duration if woken up by GPIO.
+  - **touch_wakeup_reason** (*Optional*, [Time](/guides/configuration-types#time)): run duration if woken up by touch.
 
-- **sleep_duration** (*Optional*, [Time](#config-time)): The time duration to stay in deep sleep mode.
+- **sleep_duration** (*Optional*, [Time](/guides/configuration-types#time)): The time duration to stay in deep sleep mode.
 - **touch_wakeup** (*Optional*, boolean): Only on ESP32. Use a touch event to wakeup from deep sleep. To be able
-  to wakeup from a touch event, [Binary Sensor](#esp32-touch-binary-sensor) must be configured properly.
+  to wakeup from a touch event, [Binary Sensor](/components/binary_sensor/esp32_touch#esp32-touch-binary-sensor) must be configured properly.
 
-- **wakeup_pin** (*Optional*, [Pin Schema](#config-pin_schema)): Only on ESP32. A pin to wake up to once
+- **wakeup_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): Only on ESP32. A pin to wake up to once
   in deep sleep mode. Use the inverted property to wake up to LOW signals.
 
 - **wakeup_pin_mode** (*Optional*): Only on ESP32. Specify how to handle waking up from a `wakeup_pin` if
   the wakeup pin is already in the state with which it would wake up when attempting to enter deep sleep.
   See [ESP32 Wakeup Pin Mode](#deep_sleep-esp32_wakeup_pin_mode). Defaults to `IGNORE`
 
-- **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation.
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
 
 Advanced features:
 
@@ -68,13 +66,14 @@ Advanced features:
   wake up on multiple pins. This cannot be used together with wakeup pin.
 
   - **pins** (**Required**, list of pin numbers): The pins to wake up on.
-  - **mode** (**Required**): The mode to use for the wakeup source. Must be one of `ALL_LOW` (wake up when
-    all pins go LOW) or `ANY_HIGH` (wake up when any pin goes HIGH).
+  - **mode** (**Required**): The mode to use for the wakeup source. Must be one of:
+    - `ANY_LOW`: wake up when any selected pin is LOW (ESP32‑S2/S3/C6/H2 only)
+    - `ALL_LOW`: wake up when all selected pins are LOW (ESP32 only)
+    - `ANY_HIGH`: wake up when any selected pin is HIGH
 
-{{< note >}}
-Only one deep sleep component may be configured.
+> [!NOTE]
+> Only one deep sleep component may be configured.
 
-{{< /note >}}
 {{< anchor "deep_sleep-esp32_wakeup_pin_mode" >}}
 
 ## ESP32 Wakeup Pin Mode
@@ -153,9 +152,9 @@ on_...:
 
 Configuration options:
 
-- **sleep_duration** (*Optional*, [templatable](#config-templatable), [Time](#config-time)): The time duration to stay in deep sleep mode. If a template is used, it should return a value in milliseconds.
+- **sleep_duration** (*Optional*, [templatable](/automations/templates), [Time](/guides/configuration-types#time)): The time duration to stay in deep sleep mode. If a template is used, it should return a value in milliseconds.
 - **until** (*Optional*, string): The time of day to wake up. Only on ESP32.
-- **time_id** (*Optional*, [ID](#config-id)): The ID of the time component to use for the `until` option. Only on ESP32.
+- **time_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the time component to use for the `until` option. Only on ESP32.
 
 {{< anchor "deep_sleep-prevent_action" >}}
 
@@ -170,38 +169,37 @@ on_...:
     - deep_sleep.prevent: deep_sleep_1
 ```
 
-{{< note >}}
-For example, if you want to upload a binary via OTA with deep sleep mode it can be difficult to
-catch the ESP being active.
+> [!NOTE]
+> For example, if you want to upload a binary via OTA with deep sleep mode it can be difficult to
+> catch the ESP being active.
+>
+> You can use this automation to automatically prevent deep sleep when a MQTT message on the topic
+> `livingroom/ota_mode` is received. Then, to do the OTA update, just
+> use a MQTT client to publish a retained MQTT message described below. When the node wakes up again
+> it will no longer enter deep sleep mode and you can upload your OTA update.
+>
+> Remember to turn "OTA mode" off again after the OTA update by sending a MQTT message with the payload
+> `OFF`. To enter the deep sleep again after the OTA update send a message on the topic `livingroom/sleep_mode`
+> with payload `ON`. Deep sleep will start immediately. Don't forget to delete the payload before the node
+> wakes up again.
+>
+> ```yaml
+> deep_sleep:
+>   # ...
+>   id: deep_sleep_1
+> mqtt:
+>   # ...
+>   on_message:
+>     - topic: livingroom/ota_mode
+>       payload: 'ON'
+>       then:
+>         - deep_sleep.prevent: deep_sleep_1
+>     - topic: livingroom/sleep_mode
+>       payload: 'ON'
+>       then:
+>         - deep_sleep.enter: deep_sleep_1
+> ```
 
-You can use this automation to automatically prevent deep sleep when a MQTT message on the topic
-`livingroom/ota_mode` is received. Then, to do the OTA update, just
-use a MQTT client to publish a retained MQTT message described below. When the node wakes up again
-it will no longer enter deep sleep mode and you can upload your OTA update.
-
-Remember to turn "OTA mode" off again after the OTA update by sending a MQTT message with the payload
-`OFF`. To enter the deep sleep again after the OTA update send a message on the topic `livingroom/sleep_mode`
-with payload `ON`. Deep sleep will start immediately. Don't forget to delete the payload before the node
-wakes up again.
-
-```yaml
-deep_sleep:
-  # ...
-  id: deep_sleep_1
-mqtt:
-  # ...
-  on_message:
-    - topic: livingroom/ota_mode
-      payload: 'ON'
-      then:
-        - deep_sleep.prevent: deep_sleep_1
-    - topic: livingroom/sleep_mode
-      payload: 'ON'
-      then:
-        - deep_sleep.enter: deep_sleep_1
-```
-
-{{< /note >}}
 {{< anchor "deep_sleep-allow_action" >}}
 
 ## `deep_sleep.allow` Action
@@ -217,5 +215,5 @@ on_...:
 ## See Also
 
 - {{< docref "switch/shutdown" >}}
-- [Automation](#automation)
+- [Automation](/automations)
 - {{< apiref "deep_sleep/deep_sleep_component.h" "deep_sleep/deep_sleep_component.h" >}}

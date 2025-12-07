@@ -8,17 +8,15 @@ params:
 ---
 
 The `ble_rssi` sensor platform lets you track the RSSI value or signal strength of a
-BLE device. See [the binary sensor setup](#esp32_ble_tracker-setting_up_devices) for
+BLE device. See [the binary sensor setup](/components/binary_sensor/ble_presence#esp32_ble_tracker-setting_up_devices) for
 instructions for setting up this platform.
 
-{{< warning >}}
-The BLE software stack on the ESP32 consumes a significant amount of RAM on the device.
-
-**Crashes are likely to occur** if you include too many additional components in your device's
-configuration. Memory-intensive components such as {{< docref "/components/voice_assistant" >}} and other
-audio components are most likely to cause issues.
-
-{{< /warning >}}
+> [!WARNING]
+> The BLE software stack on the ESP32 consumes a significant amount of RAM on the device.
+>
+> **Crashes are likely to occur** if you include too many additional components in your device's
+> configuration. Memory-intensive components such as {{< docref "/components/voice_assistant" >}} and other
+> audio components are most likely to cause issues.
 
 ```yaml
 # Example configuration entry
@@ -43,11 +41,9 @@ sensor:
     name: "BLE Test Service iBeacon RSSI value"
 ```
 
-{{< note >}}
-Service UUID can be 16 bit long, as in the example, but it can also be 32 bit long
-like `1122aaff`, or 128 bit long like `11223344-5566-7788-99aa-bbccddeeff00`.
-
-{{< /note >}}
+> [!NOTE]
+> Service UUID can be 16 bit long, as in the example, but it can also be 32 bit long
+> like `1122aaff`, or 128 bit long like `11223344-5566-7788-99aa-bbccddeeff00`.
 
 ## Configuration variables
 
@@ -74,7 +70,7 @@ like `1122aaff`, or 128 bit long like `11223344-5566-7788-99aa-bbccddeeff00`.
 - **ibeacon_minor** (*Optional*, int): The iBeacon minor identifier of the beacon that needs
   to be tracked. Usually used to identify beacons within an iBeacon group.
 
-- All other options from [Sensor](#config-sensor).
+- All other options from [Sensor](/components/sensor).
 
 ## See Also
 

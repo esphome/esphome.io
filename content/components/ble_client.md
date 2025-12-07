@@ -11,25 +11,23 @@ The `ble_client` component enables connections to Bluetooth Low Energy devices i
 control them. This component does not expose any sensors or output components itself, but merely manages
 connections to them for use by other components.
 
-{{< warning >}}
-The BLE software stack on the ESP32 consumes a significant amount of RAM on the device.
+> [!WARNING]
+> The BLE software stack on the ESP32 consumes a significant amount of RAM on the device.
+>
+> **Crashes are likely to occur** if you include too many additional components in your device's
+> configuration. Memory-intensive components such as {{< docref "/components/voice_assistant" >}} and other
+> audio components are most likely to cause issues.
 
-**Crashes are likely to occur** if you include too many additional components in your device's
-configuration. Memory-intensive components such as {{< docref "/components/voice_assistant" >}} and other
-audio components are most likely to cause issues.
+> [!NOTE]
+> A maximum of three devices is supported due to limitations in the ESP32 BLE stack. If you wish to
+> connect more devices, use additional ESP32 boards.
+>
+> This component supports devices that require a 6 digit PIN code for authentication.
+>
+> Currently, devices connected with the client cannot be supported by other components based on
+> {{< docref "/components/esp32_ble_tracker" >}} as they listen to advertisements which are only sent by devices
+> without an active connection.
 
-{{< /warning >}}
-{{< note >}}
-A maximum of three devices is supported due to limitations in the ESP32 BLE stack. If you wish to
-connect more devices, use additional ESP32 boards.
-
-This component supports devices that require a 6 digit PIN code for authentication.
-
-Currently, devices connected with the client cannot be supported by other components based on
-{{< docref "/components/esp32_ble_tracker" >}} as they listen to advertisements which are only sent by devices
-without an active connection.
-
-{{< /note >}}
 Despite the last point above, the `ble_client` component requires the `esp32_ble_tracker` component in order
 to discover available client devices.
 
@@ -46,23 +44,23 @@ ble_client:
 
 - **mac_address** (**Required**, MAC Address): The MAC address of the BLE device to connect to.
 - **auto_connect** (*Optional*, boolean): If true the device will be automatically connected when found by the {{< docref "/components/esp32_ble_tracker" >}}. Defaults to true.
-- **id** (**Required**, [ID](#config-id)): The ID to use for code generation, and for reference by dependent components.
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID to use for code generation, and for reference by dependent components.
 
 Automations:
 
-- **on_connect** (*Optional*, [Automation](#automation)): An automation to perform
+- **on_connect** (*Optional*, [Automation](/automations)): An automation to perform
   when the client connects to a device. See [`on_connect`](#ble_client-on_connect).
 
-- **on_disconnect** (*Optional*, [Automation](#automation)): An automation to perform
+- **on_disconnect** (*Optional*, [Automation](/automations)): An automation to perform
   when the client disconnects from a device. See [`on_disconnect`](#ble_client-on_disconnect).
 
-- **on_passkey_request** (*Optional*, [Automation](#automation)): An automation to enter
+- **on_passkey_request** (*Optional*, [Automation](/automations)): An automation to enter
   the passkey required by the other BLE device. See [`on_passkey_request`](#ble_client-on_passkey_request).
 
-- **on_passkey_notification** (*Optional*, [Automation](#automation)): An automation to
+- **on_passkey_notification** (*Optional*, [Automation](/automations)): An automation to
   display the passkey to the user. See [`on_passkey_notification`](#ble_client-on_passkey_notification).
 
-- **on_numeric_comparison_request** (*Optional*, [Automation](#automation)): An automation to
+- **on_numeric_comparison_request** (*Optional*, [Automation](/automations)): An automation to
   compare the passkeys shown on the two BLE devices. See [`on_numeric_comparison_request`](#ble_client-on_numeric_comparison_request).
 
 ## BLE Client Automation
@@ -240,10 +238,10 @@ switch:
 
 ### Configuration variables
 
-- **id** (**Required**, [ID](#config-id)): ID of the associated BLE client.
+- **id** (**Required**, [ID](/guides/configuration-types#id)): ID of the associated BLE client.
 - **service_uuid** (**Required**, UUID): UUID of the service to write to.
 - **characteristic_uuid** (**Required**, UUID): UUID of the service's characteristic to write to.
-- **value** (**Required**, Array of bytes or [lambda](#config-lambda)): The value to be written.
+- **value** (**Required**, Array of bytes or [lambda](/automations/templates#config-lambda)): The value to be written.
 
 {{< anchor "ble_client-passkey_reply_action" >}}
 
@@ -263,7 +261,7 @@ on_...:
 
 ### Configuration variables
 
-- **id** (**Required**, [ID](#config-id)): ID of the associated BLE client.
+- **id** (**Required**, [ID](/guides/configuration-types#id)): ID of the associated BLE client.
 - **passkey** (**Required**, int): The 6-digit passkey.
 
 {{< anchor "ble_client-numeric_comparison_reply_action" >}}
@@ -284,7 +282,7 @@ on_...:
 
 ### Configuration variables
 
-- **id** (**Required**, [ID](#config-id)): ID of the associated BLE client.
+- **id** (**Required**, [ID](/guides/configuration-types#id)): ID of the associated BLE client.
 - **accept** (**Required**, boolean): Should be `true` if the passkeys
   displayed on both BLE devices are matching.
 
@@ -309,7 +307,7 @@ ble_client:
 
 ### Configuration variables
 
-- **id** (**Required**, [ID](#config-id)): ID of the associated BLE client.
+- **id** (**Required**, [ID](/guides/configuration-types#id)): ID of the associated BLE client.
 
 ## BLE Overview
 
@@ -496,5 +494,5 @@ ble_client:
 ## See Also
 
 - {{< docref "/components/sensor/ble_client" >}}
-- [Automation](#automation)
+- [Automation](/automations)
 - {{< apiref "ble_client/ble_client.h" "ble_client/ble_client.h" >}}

@@ -44,31 +44,29 @@ light:
 
 ## Configuration variables
 
-- **uart_id** (*Optional*, [ID](#config-id)): Manually specify the ID of the UART hub.
+- **uart_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the UART hub.
 
-{{< note >}}
-Currently, only the first hardware UART of the ESP is supported, which has to be configured like this:
-
-```yaml
-uart:
-    tx_pin: 1
-    rx_pin: 3
-    baud_rate: 115200
-```
-
-{{< /note >}}
+> [!NOTE]
+> Currently, only the first hardware UART of the ESP is supported, which has to be configured like this:
+>
+> ```yaml
+> uart:
+>     tx_pin: 1
+>     rx_pin: 3
+>     baud_rate: 115200
+> ```
 
 - **leading_edge** (*Optional*, boolean): [Dimming mode](https://en.wikipedia.org/wiki/Dimmer#Solid-state_dimmer): `true` means leading edge, `false` is trailing edge. Defaults to `false`.
 - **min_brightness** (*Optional*, int): Minimum brightness value on a scale from 0..1000, the default is 0.
 - **max_brightness** (*Optional*, int): Maximum brightness value on a scale from 0..1000, the default is 1000.
 - **warmup_brightness** (*Optional*, int): Brightness threshold below which the dimmer switches on later in mains current cycle. [This might help with dimming LEDs](https://github.com/jamesturton/shelly-dimmer-stm32/pull/23). The value is from 0..1000 with an default of 0.
-- **nrst_pin** (*Optional*, [Pin](#config-pin)): Pin connected with "NRST" of STM32. The default is "GPIO5".
-- **boot0_pin** (*Optional*, [Pin](#config-pin)): Pin connected with "BOOT0" of STM32. The default is "GPIO4".
+- **nrst_pin** (*Optional*, [Pin](/guides/configuration-types#pin)): Pin connected with "NRST" of STM32. The default is "GPIO5".
+- **boot0_pin** (*Optional*, [Pin](/guides/configuration-types#pin)): Pin connected with "BOOT0" of STM32. The default is "GPIO4".
 - **current** (*Optional*): Sensor of the current in Amperes. All options from
-  [Sensor](#config-sensor).
+  [Sensor](/components/sensor).
 
-- **voltage** (*Optional*): Sensor of the voltage in Volts. Only accurate if neutral is connected. All options from [Sensor](#config-sensor).
-- **power** (*Optional*): Sensor of the active power in Watts. Only accurate if neutral is connected. All options from [Sensor](#config-sensor).
+- **voltage** (*Optional*): Sensor of the voltage in Volts. Only accurate if neutral is connected. All options from [Sensor](/components/sensor).
+- **power** (*Optional*): Sensor of the active power in Watts. Only accurate if neutral is connected. All options from [Sensor](/components/sensor).
 - **firmware** (*Optional*):
 
   - **version** (*Optional*): Version string of the [firmware](https://github.com/jamesturton/shelly-dimmer-stm32) that will be expected on the microcontroller. The default is "51.6", another known-good firmware is "51.5".
@@ -76,20 +74,18 @@ uart:
   - **sha256** (*Optional*): A hash to compare the downloaded firmware against. Defaults a proper hash of known firmware versions.
   - **update** (*Optional*): Should the firmware of the STM be updated if necessary? The default is false.
 
-{{< note >}}
-When flashing Shelly Dimmer with esphome for the first time, automatic flashing the STM firmware is necessary too for the dimmer to work and enabled by the following configuration.:
+> [!NOTE]
+> When flashing Shelly Dimmer with esphome for the first time, automatic flashing the STM firmware is necessary too for the dimmer to work and enabled by the following configuration.:
+>
+> ```yaml
+> firmware:
+>   version: "51.6" #<-- set version here
+>   update: true
+> ```
+>
+> There is no action required by the user to flash the STM32. There is no way to revert to stock firmware on the STM32 at the time of writing.
 
-```yaml
-firmware:
-  version: "51.6" #<-- set version here
-  update: true
-```
-
-There is no action required by the user to flash the STM32. There is no way to revert to stock firmware on the STM32 at the time of writing.
-
-{{< /note >}}
-
-- All other options from [Light](#config-light).
+- All other options from [Light](/components/light#config-light).
 
 ## See Also
 

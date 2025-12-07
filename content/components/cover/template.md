@@ -42,19 +42,19 @@ Possible return values for the optional lambda:
 
 ## Configuration variables
 
-- **lambda** (*Optional*, [lambda](#config-lambda)):
+- **lambda** (*Optional*, [lambda](/automations/templates#config-lambda)):
   Lambda to be evaluated repeatedly to get the current state/position of the cover.
 
-- **open_action** (*Optional*, [Action](#config-action)): The action that should
+- **open_action** (*Optional*, [Action](/automations/actions#all-actions)): The action that should
   be performed when the remote (like Home Assistant's frontend) requests the cover to be opened.
 
-- **close_action** (*Optional*, [Action](#config-action)): The action that should
+- **close_action** (*Optional*, [Action](/automations/actions#all-actions)): The action that should
   be performed when the remote requests the cover to be closed.
 
-- **stop_action** (*Optional*, [Action](#config-action)): The action that should
+- **stop_action** (*Optional*, [Action](/automations/actions#all-actions)): The action that should
   be performed when the remote requests the cover to be stopped.
 
-- **toggle_action** (*Optional*, [Action](#config-action)): The action that should
+- **toggle_action** (*Optional*, [Action](/automations/actions#all-actions)): The action that should
   be performed when the remote requests to toggle the the cover.
 
 - **optimistic** (*Optional*, boolean): Whether to operate in optimistic mode - when in this mode,
@@ -68,19 +68,19 @@ Possible return values for the optional lambda:
 - **has_position** (*Optional*, boolean): Whether this cover will publish its position as a floating point number.
   By default (`false`  ), the cover only publishes OPEN/CLOSED position.
 
-- **tilt_action** (*Optional*, [Action](#config-action)): The action that should
+- **tilt_action** (*Optional*, [Action](/automations/actions#all-actions)): The action that should
   be performed when the remote (like Home Assistant's frontend) requests the cover be set to a specific
   tilt position. The desired tilt is available in the lambda in the `tilt` variable.
 
-- **tilt_lambda** (*Optional*, [lambda](#config-lambda)):
+- **tilt_lambda** (*Optional*, [lambda](/automations/templates#config-lambda)):
   Lambda to be evaluated repeatedly to get the current tilt position of the cover.
 
-- **position_action** (*Optional*, [Action](#config-action)): The action that should
+- **position_action** (*Optional*, [Action](/automations/actions#all-actions)): The action that should
   be performed when the remote (like Home Assistant's frontend) requests the cover be set to a specific
   position. The desired position is available in the lambda in the `pos` variable.
   Used only when `has_position` is set to `true`.
 
-- All other options from [Cover](#config-cover).
+- All other options from [Cover](/components/cover#config-cover).
 
 {{< anchor "cover-template-publish_action" >}}
 
@@ -110,33 +110,31 @@ on_...:
 
 Configuration options:
 
-- **id** (**Required**, [ID](#config-id)): The ID of the template cover.
-- **state** (*Optional*, [templatable](#config-templatable)):
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the template cover.
+- **state** (*Optional*, [templatable](/automations/templates)):
   The state to publish. One of `OPEN`, `CLOSED`. If using a lambda, use `COVER_OPEN` or `COVER_CLOSED`.
 
-- **position** (*Optional*, [templatable](#config-templatable), float):
+- **position** (*Optional*, [templatable](/automations/templates), float):
   The position to publish, from 0 (CLOSED) to 1.0 (OPEN)
 
-- **tilt** (*Optional*, [templatable](#config-templatable), float):
+- **tilt** (*Optional*, [templatable](/automations/templates), float):
   The tilt position to publish, from 0 (CLOSED) to 1.0 (OPEN)
 
-- **current_operation** (*Optional*, [templatable](#config-templatable), string):
+- **current_operation** (*Optional*, [templatable](/automations/templates), string):
   The current operation mode to publish. One of `IDLE`, `OPENING` and `CLOSING`. If using a lambda, use `COVER_OPERATION_IDLE`, `COVER_OPERATION_OPENING`, and `COVER_OPERATION_CLOSING`.
 
-{{< note >}}
-This action can also be written in lambdas:
-
-```cpp
-id(template_cov).position = COVER_OPEN;
-id(template_cov).tilt = 0.5;
-id(template_cov).publish_state();
-```
-
-{{< /note >}}
+> [!NOTE]
+> This action can also be written in lambdas:
+>
+> ```cpp
+> id(template_cov).position = COVER_OPEN;
+> id(template_cov).tilt = 0.5;
+> id(template_cov).publish_state();
+> ```
 
 ## See Also
 
 - {{< docref "/components/cover" >}}
-- [Automation](#automation)
+- [Automation](/automations)
 - {{< docref "/cookbook/garage-door" >}}
 - {{< apiref "template/cover/template_cover.h" "template/cover/template_cover.h" >}}

@@ -7,14 +7,14 @@ params:
     image: language-cpp.svg
 ---
 
-Here are a couple recipes for various interesting things you can do with [Lambdas](#config-lambda) in ESPHome.
-These don't require external components and demonstrate how powerful [Lambdas](#config-lambda) can be.
+Here are a couple recipes for various interesting things you can do with [Lambdas](/automations/templates#config-lambda) in ESPHome.
+These don't require external components and demonstrate how powerful [Lambdas](/automations/templates#config-lambda) can be.
 
 {{< anchor "lambda_magic_pages" >}}
 
 ## Display pages alternative
 
-Some displays like [lcd_pcf8574 Component](#lcd-pcf8574) don't support pages natively, but you can easily implement them
+Some displays like [lcd_pcf8574 Component](/components/display/lcd_display#lcd-pcf8574) don't support pages natively, but you can easily implement them
 using Lambdas:
 
 ```yaml
@@ -182,13 +182,11 @@ by cycling between: open->stop->close->stop->...
 
 In this example a {{< docref "/components/cover/time_based" >}} is used with the GPIO configuration of a Sonoff Dual R2.
 
-{{< note >}}
-Controlling the cover to quickly (sending new open/close commands within a minute of previous commands)
-might cause unexpected behaviour (eg: cover stopping halfway). This is because the delayed relay off
-feature is implemented using asynchronous automations. So every time an open/close command is sent a
-delayed relay off command is added and old ones are not removed.
-
-{{< /note >}}
+> [!NOTE]
+> Controlling the cover to quickly (sending new open/close commands within a minute of previous commands)
+> might cause unexpected behaviour (eg: cover stopping halfway). This is because the delayed relay off
+> feature is implemented using asynchronous automations. So every time an open/close command is sent a
+> delayed relay off command is added and old ones are not removed.
 
 ```yaml
 esp8266:
@@ -283,5 +281,5 @@ sensor:
 
 ## See Also
 
-- [Templates](#config-lambda)
-- [Automation](#automation)
+- [Templates](/automations/templates#config-lambda)
+- [Automation](/automations)
