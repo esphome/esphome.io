@@ -8,7 +8,7 @@ params:
 ---
 
 The Pylontech component allows you to pull data from Pylontech Batteries into ESPHome.
-It uses [UART](#uart) for communication.
+It uses [UART](/components/uart) for communication.
 
 Once configured, you can use sensors as described below for your projects.
 
@@ -31,7 +31,7 @@ If you have multiple batteries you need to connect to the master battery's conso
 | -------- | -------------- | -------------- | ------------ | -------------------------- |
 | 3        | White/Green    | White/Orange   | Pylontech TX | ESPHome RX via transceiver |
 | 6        | Green          | Orange         | Pylontech RX | ESPHome TX via transceiver |
-| 8 | Brown | Brown | GND | GND |
+| 8        | Brown          | Brown          | GND          | GND                        |
 
 {{< img src="rj45_pinout.jpg" alt="Image" caption="RJ45 pinout" width="70.0%" class="align-center" >}}
 
@@ -41,7 +41,7 @@ If you have multiple batteries you need to connect to the master battery's conso
 | -------- | ------------ | -------------------------- |
 | 2        | Pylontech RX | ESPHome TX via transceiver |
 | 3        | Pylontech TX | ESPHome RX via transceiver |
-| 4 | GND | GND |
+| 4        | GND          | GND                        |
 
 ## Component/Hub
 
@@ -52,9 +52,9 @@ pylontech:
 
 ### Configuration variables
 
-- **id** (**Required**, [ID](#config-id)): The id to use for this Pylontech component.
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The id to use for this Pylontech component.
 - **uart_id** (*Optional*): The uart Bus ID
-- **update_interval** (*Optional*, [Time](#config-time)): The interval to check the sensor. Defaults to `60s`.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to check the sensor. Defaults to `60s`.
 
 ## Sensor
 
@@ -78,15 +78,15 @@ sensor:
 
 - **pylontech_id** (*Optional*): Manually specify the ID of the pylontech instance if there are multiple.
 - **battery** (**Required**): Which battery to monitor. 1 stands for the main battery, 2..16 for child batteries.
-- **voltage** (*Optional*): Voltage of the battery. All options from [Sensor](#config-sensor).
-- **current** (*Optional*): Current flowing into the battery. Negative when discharging. All options from [Sensor](#config-sensor).
-- **coulomb** (*Optional*): State of Charge in percent. All options from [Sensor](#config-sensor).
-- **temperature** (*Optional*): Temperature. All options from [Sensor](#config-sensor).
-- **temperature_low** (*Optional*): Historic minimum temperature. All options from [Sensor](#config-sensor).
-- **temperature_high** (*Optional*): Historic maximum temperature. All options from [Sensor](#config-sensor).
-- **voltage_low** (*Optional*): Voltage of the lowest cell. All options from [Sensor](#config-sensor).
-- **voltage_high** (*Optional*): Voltage of the highest cell. All options from [Sensor](#config-sensor).
-- **mos_temperature** (*Optional*): Temperature of the mosfets. All options from [Sensor](#config-sensor).
+- **voltage** (*Optional*): Voltage of the battery. All options from [Sensor](/components/sensor).
+- **current** (*Optional*): Current flowing into the battery. Negative when discharging. All options from [Sensor](/components/sensor).
+- **coulomb** (*Optional*): State of Charge in percent. All options from [Sensor](/components/sensor).
+- **temperature** (*Optional*): Temperature. All options from [Sensor](/components/sensor).
+- **temperature_low** (*Optional*): Historic minimum temperature. All options from [Sensor](/components/sensor).
+- **temperature_high** (*Optional*): Historic maximum temperature. All options from [Sensor](/components/sensor).
+- **voltage_low** (*Optional*): Voltage of the lowest cell. All options from [Sensor](/components/sensor).
+- **voltage_high** (*Optional*): Voltage of the highest cell. All options from [Sensor](/components/sensor).
+- **mos_temperature** (*Optional*): Temperature of the mosfets. All options from [Sensor](/components/sensor).
 
 ## Text Sensor
 
@@ -106,15 +106,17 @@ text_sensor:
 
 - **pylontech_id** (*Optional*): Manually specify the ID of the pylontech instance if there are multiple.
 - **battery** (**Required**): Which battery to monitor. 1 stands for the main battery, 2..16 for child batteries.
-- **base_state** (*Optional*): Base state. Usually reads `Dischg`, `Charge` or `Idle`. All options from [Text Sensor](#config-text_sensor).
-- **voltage_state** (*Optional*): Voltage state. Usually reads `Normal`. All options from [Text Sensor](#config-text_sensor).
-- **current_state** (*Optional*): Current state. Usually reads `Normal`. All options from [Text Sensor](#config-text_sensor).
-- **temperature_state** (*Optional*): Temperature state. Usually reads `Normal`. All options from [Text Sensor](#config-text_sensor).
+- **base_state** (*Optional*): Base state. Usually reads `Dischg`, `Charge` or `Idle`. All options from [Text Sensor](/components/text_sensor#config-text_sensor).
+- **voltage_state** (*Optional*): Voltage state. Usually reads `Normal`. All options from [Text Sensor](/components/text_sensor#config-text_sensor).
+- **current_state** (*Optional*): Current state. Usually reads `Normal`. All options from [Text Sensor](/components/text_sensor#config-text_sensor).
+- **temperature_state** (*Optional*): Temperature state. Usually reads `Normal`. All options from [Text Sensor](/components/text_sensor#config-text_sensor).
 
 ## Energy Monitoring
 
-By combining {{< docref "/components/sensor/template" "template sensors" >}} and {{< docref "/components/sensor/integration" "integration sensors" >}}
-one can monitor the energy flowing into and out of all batteries combined, ready for [Homeassistant Energy Monitoring](https://www.home-assistant.io/docs/energy/battery/).
+By combining {{< docref "/components/sensor/template" "template sensors" >}} and
+{{< docref "/components/sensor/integration" "integration sensors" >}}
+one can monitor the energy flowing into and out of all batteries combined, ready for
+[Homeassistant Energy Monitoring](https://www.home-assistant.io/docs/energy/battery/).
 
 ```yaml
 sensor:
@@ -162,4 +164,4 @@ sensor:
 - [nodered-pylontech-console-reader](https://github.com/juanhaywood/nodered-pylontech-console-reader)
 - [MultiSIBControl](http://www.multisibcontrol.net/)
 - [ioBroker.pylontech](https://github.com/PLCHome/ioBroker.pylontech/)
-- [UART Bus](#uart)
+- [UART Bus](/components/uart)

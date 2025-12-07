@@ -11,14 +11,12 @@ The `i2s_audio` speaker platform allows you to receive audio via the the {{< doc
 
 This platform only works on ESP32 based chips.
 
-{{< warning >}}
-Audio and voice components consume a significant amount of resources (RAM, CPU) on the device.
-
-**Crashes are likely to occur** if you include too many additional components in your device's
-configuration. In particular, Bluetooth/BLE components are known to cause issues when used in
-combination with Voice Assistant and/or other audio components.
-
-{{< /warning >}}
+> [!WARNING]
+> Audio and voice components consume a significant amount of resources (RAM, CPU) on the device.
+>
+> **Crashes are likely to occur** if you include too many additional components in your device's
+> configuration. In particular, Bluetooth/BLE components are known to cause issues when used in
+> combination with Voice Assistant and/or other audio components.
 
 ```yaml
 # Example configuration entry
@@ -46,7 +44,7 @@ speaker:
 - **mclk_multiple** (*Optional*, enum): The multiple of the MCLK frequency to the sample rate. Must be divisible by 3 if using 24 bits per sample. One of `128`, `256`, `384`, `512`. Defaults to `256`.
 - **use_apll** (*Optional*, boolean): I2S using APLL as main I2S clock, enable it to get accurate clock. Defaults to `false`.
 - **i2s_mode** (*Optional*, enum): The I²S mode to use. One of `primary` (clock driven by the host) or `secondary` (clock driven by the attached device). Defaults to `primary`.
-- **i2s_audio_id** (*Optional*, [ID](#config-id)): The ID of the [I²S Audio](#i2s_audio) you wish to use for this speaker.
+- **i2s_audio_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the [I²S Audio](/components/i2s_audio#i2s_audio) you wish to use for this speaker.
 - **i2s_comm_fmt** (*Optional*, enum): The I²S communication standard format used by this speaker.
 
   - `stand_i2s` (Default)
@@ -59,22 +57,20 @@ speaker:
   - `pcm`
   - `pcm_short`
   - `pcm_long`
-- **buffer_duration** (*Optional*, [Time](#config-time)): The duration of the internal ring buffer. Larger values can reduce stuttering but uses more memory. Defaults to `500ms`.
-- **timeout** (*Optional*, [Time](#config-time)): How long to wait after finishing playback before releasing the bus. Set to `never` to never stop the speaker due to a timeout. Defaults to `500ms`.
-- All other options from [Speaker Component](#config-speaker).
+- **buffer_duration** (*Optional*, [Time](/guides/configuration-types#time)): The duration of the internal ring buffer. Larger values can reduce stuttering but uses more memory. Defaults to `500ms`.
+- **timeout** (*Optional*, [Time](/guides/configuration-types#time)): How long to wait after finishing playback before releasing the bus. Set to `never` to never stop the speaker due to a timeout. Defaults to `500ms`.
+- All other options from [Speaker Component](/components/speaker#config-speaker).
 
 ### External DAC
 
-- **i2s_dout_pin** (**Required**, [Pin Schema](#config-pin_schema)): The GPIO pin to use for the I²S DOUT (Data Out) signal.
+- **i2s_dout_pin** (**Required**, [Pin Schema](/guides/configuration-types#pin-schema)): The GPIO pin to use for the I²S DOUT (Data Out) signal.
 
 For best results, keep the wires as short as possible.
 
 ### Internal DAC
 
-{{< note >}}
-Internal DAC speakers are only supported by the legacy I²S driver on a regular ESP32, not the variants.
-
-{{< /note >}}
+> [!NOTE]
+> Internal DAC speakers are only supported by the legacy I²S driver on a regular ESP32, not the variants.
 
 - **mode** (**Required**, enum): The channel mode of the internal DAC.
 

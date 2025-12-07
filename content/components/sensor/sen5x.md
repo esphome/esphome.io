@@ -12,7 +12,8 @@ The `sen5x` sensor platform allows you to use Sensirion
 [SEN6X Series](https://sensirion.com/sen6x-air-quality-sensor-platform)
 Environmental sensors with ESPHome.
 
-This component only supports I²C communication thus the [I²C Bus](#i2c) is required.
+The [I²C Bus](/components/i2c) is required to be set up in your configuration for this sensor to work.
+This sensor supports both UART and I²C communication. Only I²C communication is implemented in this component.
 
 ## SEN5X Series
 
@@ -78,22 +79,22 @@ sensor:
 - **pm_1_0** (*Optional*): The information for the **Mass Concentration** of fine particles up to 1μm sensor.
   Readings in µg/m³.
 
-  - All options from [Sensor](#config-sensor).
+  - All options from [Sensor](/components/sensor).
 
 - **pm_2_5** (*Optional*): The information for the **Mass Concentration** of fine particles up to 2.5μm sensor.
   Readings in µg/m³.
 
-  - All options from [Sensor](#config-sensor).
+  - All options from [Sensor](/components/sensor).
 
 - **pm_4_0** (*Optional*): The information for the **Mass Concentration** of fine particles up to 4μm sensor.
   Readings in µg/m³.
 
-  - All options from [Sensor](#config-sensor).
+  - All options from [Sensor](/components/sensor).
 
 - **pm_10_0** (*Optional*): The information for the **Mass Concentration** of fine particles up to 10μm sensor.
   Readings in µg/m³.
 
-  - All options from [Sensor](#config-sensor).
+  - All options from [Sensor](/components/sensor).
 
 - **temperature** (*Optional*): The information for the Temperature sensor. Only available with SEN54, SEN55,
   SEN63C, SEN65, SEN66 or SEN68.
@@ -116,12 +117,12 @@ sensor:
   (must report in hPA). This will compensate the CO₂ sensor for deviations due to current pressure. More accurate
   than altitude compensation this correction is applied before each update of the state of the CO₂ sensor.
 
-  - All options from [Sensor](#config-sensor).
+  - All options from [Sensor](/components/sensor).
 
 - **hcho** (*Optional*): The information for the Formaldehyde (HCHO) sensor. Readings in ppb. Only available with
   SEN68.
 
-  - All options from [Sensor](#config-sensor).
+  - All options from [Sensor](/components/sensor).
 
 - **voc** (*Optional*): The information for the VOC Index sensor. Only available with SEN54, SEN55, SEN65, SEN66 or SEN68.
 
@@ -146,7 +147,7 @@ sensor:
     - **gain_factor** (*Optional*): Gain factor to amplify or to attenuate the VOC index output.
       Allowed values are in range 1..1000. The default value is 230.
 
-  - All options from [Sensor](#config-sensor).
+  - All other options from [Sensor](/components/sensor).
 
 - **nox** (*Optional*): The information for the NOx Index sensor. Only available with SEN55, SEN65, SEN66 or SEN68..
 
@@ -171,7 +172,12 @@ sensor:
     - **gain_factor** (*Optional*): Gain factor to amplify or to attenuate the VOC index output.
       Allowed values are in range 1..1000. The default value is 230.
 
-  - All options from [Sensor](#config-sensor).
+  - All other options from [Sensor](/components/sensor).
+
+- **store_baseline** (*Optional*, boolean): Stores and retrieves the baseline VOC and NOx information for
+  quicker startups. Defaults to `true`
+- **temperature_compensation** (*Optional*): These parameters allow to compensate temperature effects of the
+  design-in at customer side by applying a custom temperature offset to the ambient temperature.
 
 - **auto_cleaning_interval** (*Optional*): The periodic fan-cleaning interval in seconds.
 Only available with sen50, SEN54 OR SEN55.
@@ -241,7 +247,7 @@ SEN6X sensors supports fan cleaning but not the automatic fan cleaning interval.
 
 ### `start_fan_autoclean` Action
 
-This [action](#config-action) manually starts a fan-cleaning cycle.
+This [action](/automations/actions#all-actions) manually starts fan-cleaning.
 
 ``` yaml
 on_...:
@@ -381,7 +387,7 @@ to the SEN5X it is not the same. So the current ESPHome component does not yet s
 
 ## See Also
 
-- [Sensor Filters](#sensor-filters)
+- [Sensor Filters](/components/sensor#sensor-filters)
 - {{< docref "absolute_humidity/" >}}
 - {{< docref "sds011/" >}}
 - {{< docref "pmsx003/" >}}

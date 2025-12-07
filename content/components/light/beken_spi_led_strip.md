@@ -9,10 +9,8 @@ params:
 
 This is a component using the Beken SPI DMA interface to drive addressable LED strips.
 
-{{< warning >}}
-Only works on pin P16, which is not available on many tuya modules.
-
-{{< /warning >}}
+> [!WARNING]
+> Only works on pin P16, which is not available on many tuya modules.
 
 ```yaml
 light:
@@ -26,7 +24,7 @@ light:
 
 ## Configuration variables
 
-- **pin** (**Required**, [Pin](#config-pin)): The pin for the data line of the light.
+- **pin** (**Required**, [Pin](/guides/configuration-types#pin)): The pin for the data line of the light.
 - **num_leds** (**Required**, int): The number of LEDs in the strip.
 - **chipset** (**Required**, enum): The chipset to apply known timings from.
   - `WS2812`
@@ -44,12 +42,12 @@ light:
 
 - **is_rgbw** (*Optional*, boolean): Set to `true` if the strip is RGBW. Defaults to `false`.
 - **is_wrgb** (*Optional*, boolean): Set to `true` if the strip is WRGB. Defaults to `false`.
-- **max_refresh_rate** (*Optional*, [Time](#config-time)):
+- **max_refresh_rate** (*Optional*, [Time](/guides/configuration-types#time)):
   A time interval used to limit the number of commands a light can handle per second. For example
   16ms will limit the light to a refresh rate of about 60Hz. Defaults to sending commands as quickly as
   changes are made to the lights.
 
-- All other options from [Light](#config-light).
+- All other options from [Light](/components/light#config-light).
 
 ## See Also
 
