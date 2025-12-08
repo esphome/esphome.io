@@ -186,7 +186,7 @@ switch:
 
 - **stove** (*Optional*): Turn the stove on or off. This switch will also reflect the current stove state.
   If the **stove_state** is "Off" the switch will be off, in all other states, the switch will be on.
-  - **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval that the sensors should be checked. Defaults to 60 seconds.
+  - **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval at which the state should be checked. Defaults to 60 seconds.
   - All options from [Switch](/components/switch#config-switch).
 
 > [!NOTE]
