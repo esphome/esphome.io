@@ -118,7 +118,7 @@ sensor:
   - **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval that the sensors should be checked. Defaults to 60 seconds.
   - All other options from [Sensor](/components/sensor).
 
-- **water_temperature** (*Optional*): Internal boiler water termperature.
+- **water_temperature** (*Optional*): Internal boiler water temperature.
   - **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval that the sensors should be checked. Defaults to 60 seconds.
   - All options from [Sensor](/components/sensor).
 
