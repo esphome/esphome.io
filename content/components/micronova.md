@@ -153,12 +153,6 @@ number:
   - **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval that the sensors should be checked. Defaults to 60 seconds.
   - All options from [Number](/components/number#config-number).
 
-> [!NOTE]
-> Besides **memory_location** and **memory_address** you can specify a specific **memory_write_location** parameter.
-> This parameter is a hex value for the **memory_location** where the new thermostat value must be written.
->
-> - **memory_write_location** (*Optional*): The **memory_location** where to write the new thermostat value.
-
 ## Buttons
 
 ```yaml
