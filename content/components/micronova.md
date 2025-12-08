@@ -56,7 +56,7 @@ micronova:
 > switch or number accepts these parameters:
 >
 > - **memory_location** (*Optional*): The memory location where the parameter must be read. For most stoves this is 0x00 for RAM
->   or 0x20 for EPROM.
+>   or 0x20 for EPROM. Always specifiy the read location. The write bit is automatically set on write requests
 >
 > - **memory_address** (*Optional*): The address where the parameter is stored.
 
