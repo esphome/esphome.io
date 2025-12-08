@@ -55,7 +55,8 @@ micronova:
 > not specify them. However your Micronova boad may require you to specify alternate values. So every text sensor, button,
 > switch or number accepts these parameters:
 >
-> - **memory_location** (*Optional*): The memory location for the parameter (0x00 for RAM, 0x20 for EPROM on most stoves). The write bit is set automatically when writing.
+> - **memory_location** (*Optional*): The memory location for the parameter (0x00 for RAM, 0x20 for EPROM on most stoves).
+>   The write bit is set automatically when writing.
 >
 > - **memory_address** (*Optional*): The address where the parameter is stored.
 
