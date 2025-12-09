@@ -466,9 +466,9 @@ on_multi_click:
 
 While [`on_click`](#binary_sensor-on_click) only triggers on the falling edge of the signal,
 and [`on_double_click`](#binary_sensor-on_double_click) only on the second leading edge, an
-automation for `on_multi_click` can trigger at any time. Like an `ON for at least` without
-an `OFF` does not await a falling edge. This supports implementing a continuous longpress,
-optionally also handling clicks for the very same sensor:
+automation for `on_multi_click` can trigger at any time. For example, an `ON for at least`
+timing without an `OFF` does not await a falling edge. This supports implementing a
+continuous longpress, optionally also handling clicks for the very same sensor:
 
 ```yaml
 binary_sensor:
@@ -476,26 +476,26 @@ binary_sensor:
     id: button_1
     # ...
     on_multi_click:
+    # One can also replace this part with `on_click`
     - timing:
-      # One can also replace this part with `on_click`
-      - ON for at most 0.7s
-        then:
-          - light.turn_on:
-              id: light_1
-              brightness: 10%
+        - ON for at most 0.7s
+      then:
+        - light.turn_on:
+            id: light_1
+            brightness: 10%
     - timing:
-      - ON for at least 1s
-        then:
-          - while:
-              condition:
-                # Self-reference this very sensor
-                binary_sensor.is_on: button_1
-              then:
-                - light.dim_relative:
-                    id: light_1
-                    relative_brightness: 5%
-                    transition_length: 0.1s
-                - delay: 0.1s
+        - ON for at least 1s
+      then:
+        - while:
+            condition:
+              # Self-reference this very sensor
+              binary_sensor.is_on: button_1
+            then:
+              - light.dim_relative:
+                  id: light_1
+                  relative_brightness: 5%
+                  transition_length: 0.1s
+              - delay: 0.1s
 ```
 
 {{< anchor "binary_sensor-is_on_condition" >}}
