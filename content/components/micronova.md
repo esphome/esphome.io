@@ -55,8 +55,8 @@ micronova:
 > not specify them. However your Micronova boad may require you to specify alternate values. So every text sensor, button,
 > switch or number accepts these parameters:
 >
-> - **memory_location** (*Optional*): The memory location where the parameter must be read. For most stoves this is 0x00 for RAM
->   or 0x20 for EPROM.
+> - **memory_location** (*Optional*): The memory location for the parameter (0x00 for RAM, 0x20 for EPROM on most stoves).
+>   The write bit is set automatically when writing.
 >
 > - **memory_address** (*Optional*): The address where the parameter is stored.
 
@@ -153,12 +153,6 @@ number:
   - **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval that the sensors should be checked. Defaults to 60 seconds.
   - All options from [Number](/components/number#config-number).
 
-> [!NOTE]
-> Besides **memory_location** and **memory_address** you can specify a specific **memory_write_location** parameter.
-> This parameter is a hex value for the **memory_location** where the new thermostat value must be written.
->
-> - **memory_write_location** (*Optional*): The **memory_location** where to write the new thermostat value.
-
 ## Buttons
 
 ```yaml
@@ -193,8 +187,10 @@ switch:
 ### Configuration variables
 
 - **stove** (*Optional*): Turn the stove on or off. This switch will also reflect the current stove state.
-  If the **stove_state** is "Off" the switch will be off, in all other states, the switch wil be on.
-  All options from [Switch](/components/switch#config-switch).
+  If the **stove_state** is "Off" the switch will be off, in all other states, the switch will be on.
+  - **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval at which the state should
+    be checked. Defaults to 60 seconds.
+  - All options from [Switch](/components/switch#config-switch).
 
 > [!NOTE]
 > Besides **memory_location** and **memory_address** you can specify specific **memory_data_on** and **memory_data_off** parameters.
