@@ -126,7 +126,7 @@ sensor:
   - **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval that the sensors should be checked. Defaults to 60 seconds.
   - All options from [Sensor](/components/sensor).
 
-- **memory_address_sensor** (*Optional*): Can be any **memory_location** / **memory_address** you want to track. Usefull
+- **memory_address_sensor** (*Optional*): Can be any **memory_location** / **memory_address** you want to track. Useful
   when you don't know where the parameter is for your stove is.
   - **memory_location** (**Required**): The memory location for the parameter (0x00 for RAM, 0x20 for EPROM on most stoves).
   - **memory_address** (**Required**): The address where the parameter is stored.
