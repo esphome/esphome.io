@@ -73,6 +73,7 @@ For further help, see the ESPHome documentation or contact maintainers.
 from __future__ import annotations
 
 import argparse
+from collections.abc import Callable
 from dataclasses import dataclass
 from datetime import datetime
 import json
@@ -371,8 +372,8 @@ class ReleaseNotesGenerator:
     def _collect_prs_from_tags(
         self,
         all_tags: set[str],
-        tag_format: callable,
-        prev_tag_format: callable,
+        tag_format: Callable[[int], str],
+        prev_tag_format: Callable[[int], str | None],
         release_type: str,
         max_releases: int = 100,
     ) -> set[int]:
