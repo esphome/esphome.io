@@ -544,6 +544,8 @@ mqtt:
   # ...
   on_disconnect:
     - switch.turn_off: switch1
+    - lambda: |-
+        ESP_LOGI("mqtt", "Disconnect reason: %d", reason);
 ```
 
 {{< anchor "mqtt-on_message" >}}
