@@ -187,7 +187,9 @@ packages:
   extra_door: ${ left_garage_door if enable_extra_door else {} }
 ```
 
-The above utilizes a [Jinja expression](/components/substitutions#jinja-expressions) to determine whether `left_garage_door` package is actually included. `enable_extra_door` can be set from the [command line](/components/substitutions#command-line-substitutions) as well.
+The above utilizes a [Jinja expression](/components/substitutions#jinja-expressions) to determine whether
+`left_garage_door` package is actually included. `enable_extra_door` can be set from the
+[command line](/components/substitutions#command-line-substitutions) as well.
 
 {{< anchor "config-packages_extend" >}}
 
