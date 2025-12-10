@@ -262,6 +262,7 @@ Sensors are organized into categories; if a given sensor fits into more than one
 "SGP4x","components/sensor/sgp4x","sgp40.jpg","Volatile organics & NOx","",""
 "SM300D2","components/sensor/sm300d2","sm300d2.jpg","Particulate & Volatile organics & eCO₂ & equivalent Formaldehyde & Temperature & Humidity","",""
 "SPS30","components/sensor/sps30","sps30.jpg","Particulate","",""
+"T3022","components/sensor/t3022","t3022.jpg","CO₂","",""
 "T6613/15","components/sensor/t6615","t6615.jpg","CO₂","",""
 "ZyAura","components/sensor/zyaura","zgm053.jpg","CO₂ & Temperature & Humidity","",""
 {{< /imgtable >}}
