@@ -12,10 +12,10 @@ This is a component using the ESP32 RMT peripheral to drive most addressable LED
 ```yaml
 light:
   - platform: esp32_rmt_led_strip
-    rgb_order: GRB
+    channel_map: "G,R,B,WW,CW"
     pin: GPIOXX
-    num_leds: 30
-    chipset: ws2812
+    num_leds: 100
+    chipset: ws2805
     name: "My Light"
 ```
 
@@ -26,23 +26,25 @@ light:
 - **chipset** (**Required**, enum): The name of the chipset used; determines signal timing. Not required if
   [specifying the timings manually](#esp32-rmt-led-strip-manual_timings).
 
+  - `WS2805`
   - `WS2811`
   - `WS2812`
   - `SK6812`
   - `APA106`
   - `SM16703`
 
-- **rgb_order** (**Required**, string): The RGB order of the strip.
+- **channel_map** (**Required**, string): The RGB order of the strip. Must be a comma-seperated string with any of:
+  - "R"
+  - "G"
+  - "B"
+  - "W"
+  - "CW"
+  - "WW"  
 
-  - `RGB`
-  - `RBG`
-  - `GRB`
-  - `GBR`
-  - `BGR`
-  - `BRG`
+- **min_mireds** (*Optional*, float): Min. mireds of the strip.
 
-- **is_rgbw** (*Optional*, boolean): Set to `true` if the strip is RGBW. Defaults to `false`.
-- **is_wrgb** (*Optional*, boolean): Set to `true` if the strip is WRGB. Defaults to `false`.
+- **max_mireds** (*Optional*, float): Max. mireds of the strip.
+
 - **max_refresh_rate** (*Optional*, [Time](/guides/configuration-types#time)): A time interval used to limit the number of commands a light
   can handle per second. For example, `16ms` will limit the light to a refresh rate of about 60Hz. Defaults to
   sending commands as quickly as changes are made to the lights.
