@@ -387,7 +387,7 @@ class ReleaseNotesGenerator:
             f"Checking for beta releases of {base_version.year}.{base_version.month}.0..."
         )
         beta_num = 1
-        max_betas = 20
+        max_betas = 100
         prev_beta_tag = None
 
         while beta_num <= max_betas:
