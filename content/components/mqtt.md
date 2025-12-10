@@ -541,8 +541,6 @@ mqtt:
     - switch.turn_off: switch1
 ```
 
-### `on_connect` / `on_disconnect` Trigger
-
 {{< anchor "mqtt-on_message" >}}
 
 ### `on_message` Trigger
