@@ -525,6 +525,11 @@ mqtt:
   # ...
   on_connect:
     - switch.turn_on: switch1
+    - lambda: |-
+        ESP_LOGI("mqtt", "Session present: %s", session_present ? "true" : "false");
+        if (!session_present) {
+          // Do something if session is not present
+        }
 ```
 
 {{< anchor "mqtt-on_disconnect" >}}
