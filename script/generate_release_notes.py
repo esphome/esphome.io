@@ -368,6 +368,43 @@ class ReleaseNotesGenerator:
 
         return sorted(pr_numbers)
 
+    def _collect_prs_from_tags(
+        self,
+        all_tags: set[str],
+        tag_format: callable,
+        prev_tag_format: callable,
+        release_type: str,
+        max_releases: int = 100,
+    ) -> set[int]:
+        """Collect PRs from a sequence of releases.
+
+        Args:
+            all_tags: Set of all available tags
+            tag_format: Function(n) -> tag name for release n
+            prev_tag_format: Function(n) -> tag name for the previous release to compare against
+            release_type: Description for logging (e.g., "beta release", "patch release")
+            max_releases: Maximum number of releases to check
+        """
+        prs: set[int] = set()
+        release_num = 1
+
+        while release_num <= max_releases:
+            tag = tag_format(release_num)
+
+            if tag not in all_tags:
+                break
+
+            print(f"  Found {release_type}: {tag}")
+
+            prev_tag = prev_tag_format(release_num)
+            if prev_tag is not None:
+                found_prs = self.get_pr_numbers_from_commits(prev_tag, tag)
+                prs.update(found_prs)
+
+            release_num += 1
+
+        return prs
+
     def _get_previous_release_prs(self, base_version: Version) -> set[int]:
         """Get all PRs from the previous release cycle (betas + patches).
 
@@ -379,61 +416,29 @@ class ReleaseNotesGenerator:
         were already released, even if their commits appear in the comparison
         due to different branch structures (dev vs release branch).
         """
-        all_prs: set[int] = set()
         all_tags = self._fetch_all_tags()
+        year = base_version.year
+        month = base_version.month
 
         # Get PRs from beta releases
-        print(
-            f"Checking for beta releases of {base_version.year}.{base_version.month}.0..."
+        print(f"Checking for beta releases of {year}.{month}.0...")
+        beta_prs = self._collect_prs_from_tags(
+            all_tags,
+            tag_format=lambda n: f"{year}.{month}.0b{n}",
+            prev_tag_format=lambda n: f"{year}.{month}.0b{n - 1}" if n > 1 else None,
+            release_type="beta release",
         )
-        beta_num = 1
-        max_betas = 100
-        prev_beta_tag: str | None = None
-
-        while beta_num <= max_betas:
-            beta_tag = f"{base_version.year}.{base_version.month}.0b{beta_num}"
-
-            if beta_tag not in all_tags:
-                break
-
-            print(f"  Found beta release: {beta_tag}")
-
-            if prev_beta_tag:
-                # Get PRs between previous beta and this beta
-                prs = self.get_pr_numbers_from_commits(prev_beta_tag, beta_tag)
-                all_prs.update(prs)
-
-            prev_beta_tag = beta_tag
-            beta_num += 1
 
         # Get PRs from patch releases
-        print(
-            f"Checking for patch releases of {base_version.year}.{base_version.month}.x..."
+        print(f"Checking for patch releases of {year}.{month}.x...")
+        patch_prs = self._collect_prs_from_tags(
+            all_tags,
+            tag_format=lambda n: f"{year}.{month}.{n}",
+            prev_tag_format=lambda n: f"{year}.{month}.{n - 1}",
+            release_type="patch release",
         )
-        patch_num = 1
-        max_patches = 100
 
-        while patch_num <= max_patches:
-            patch_tag = f"{base_version.year}.{base_version.month}.{patch_num}"
-
-            if patch_tag not in all_tags:
-                break
-
-            print(f"  Found patch release: {patch_tag}")
-
-            # Get PRs between base and this patch
-            base_tag = f"{base_version.year}.{base_version.month}.{patch_num - 1}"
-            prs = self.get_pr_numbers_from_commits(base_tag, patch_tag)
-            all_prs.update(prs)
-
-            patch_num += 1
-
-        if patch_num > max_patches:
-            print(
-                f"Warning: Reached maximum patch limit ({max_patches}). Some patches may have been skipped."
-            )
-
-        return all_prs
+        return beta_prs | patch_prs
 
     def discover_prs(self) -> list[int]:
         """Discover PRs for this release"""
