@@ -388,7 +388,7 @@ class ReleaseNotesGenerator:
         )
         beta_num = 1
         max_betas = 100
-        prev_beta_tag = None
+        prev_beta_tag: str | None = None
 
         while beta_num <= max_betas:
             beta_tag = f"{base_version.year}.{base_version.month}.0b{beta_num}"
