@@ -21,6 +21,13 @@ update:
   - platform: http_request
     name: Firmware Update
     source: http://example.com/manifest.json
+
+# Example with HMAC-MD5 support
+update:
+  - platform: http_request
+    name: Firmware Update
+    source: http://example.com/manifest.json
+    hmac_key: "my_secret_key"
 ```
 
 {{< anchor "update_http_request-configuration_variables" >}}
@@ -28,6 +35,7 @@ update:
 ## Configuration variables
 
 - **source** (**Required**, string): The URL of the YAML manifest file containing the firmware metadata.
+- **hmac_key** (*Optional*, string): The secret key used for HMAC-MD5 verification when the manifest contains `hmac_md5` instead of `md5`.
 - **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval at which to check for (**not install**) updates.
   Defaults to 6 hours.
 
@@ -58,7 +66,27 @@ the `ota` block that is structured as follows:
 }
 ```
 
-While `release_url` and `summary` are optional, all other fields shown here are required.
+For enhanced security, you can use HMAC-MD5 instead of MD5:
+
+```json
+{
+  "name": "My ESPHome Project",
+  "version": "2024.6.1",
+  "builds": [
+    {
+      "chipFamily": "ESP32-C3",
+      "ota": {
+        "hmac_md5": "abcdef1234567890abcdef1234567890",
+        "path": "/local/esp32c3/firmware.bin",
+        "release_url": "http://example.com/releases/10",
+        "summary": "Another update",
+      }
+    }
+  ]
+}
+```
+
+While `release_url` and `summary` are optional, all other fields shown here are required. When using `hmac_md5`, the `hmac_key` must be configured in the update component.
 
 If `path` begins with:
 

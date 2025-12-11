@@ -41,17 +41,36 @@ on_...:
         md5_url: http://example.com/firmware.md5
         url: https://example.com/firmware.ota.bin
     - logger.log: "This message should be not displayed because the device reboots"
+
+# Example with HMAC-MD5 verification
+on_...:
+  then:
+    - ota.http_request.flash:
+        hmac_md5_url: http://example.com/firmware.hmac
+        hmac_key: "my_secret_key"
+        url: https://example.com/firmware.ota.bin
 ```
 
 ### Configuration variables
 
 - **md5** (*Optional*, string, [templatable](/automations/templates)): The
   [MD5sum](https://en.wikipedia.org/wiki/Md5sum) of the firmware file pointed to by `url` (below). May not be used
-  with `md5_url` (below); must be specified if `md5_url` is not.
+  with `md5_url`, `hmac_md5`, or `hmac_md5_url`; must be specified if none of the other hash options are provided.
 
 - **md5_url** (*Optional*, string, [templatable](/automations/templates)): The URL of the file containing an
   [MD5sum](https://en.wikipedia.org/wiki/Md5sum) of the firmware file pointed to by `url` (below). May not be used
-  with `md5` (above); must be specified if `md5` is not.
+  with `md5`, `hmac_md5`, or `hmac_md5_url`; must be specified if none of the other hash options are provided.
+
+- **hmac_md5** (*Optional*, string, [templatable](/automations/templates)): The
+  [HMAC-MD5](https://en.wikipedia.org/wiki/HMAC) hash of the firmware file pointed to by `url` (below). Requires
+  `hmac_key` to be specified. May not be used with `md5`, `md5_url`, or `hmac_md5_url`.
+
+- **hmac_md5_url** (*Optional*, string, [templatable](/automations/templates)): The URL of the file containing an
+  [HMAC-MD5](https://en.wikipedia.org/wiki/HMAC) hash of the firmware file pointed to by `url` (below). Requires
+  `hmac_key` to be specified. May not be used with `md5`, `md5_url`, or `hmac_md5`.
+
+- **hmac_key** (*Optional*, string, [templatable](/automations/templates)): The secret key used for HMAC-MD5
+  verification. Required when using `hmac_md5` or `hmac_md5_url`.
 
 - **url** (**Required**, string, [templatable](/automations/templates)): The URL of the binary file containing the
   (new) firmware to be installed.
@@ -102,7 +121,25 @@ on_...:
 > `firmware.md5` file. The `md5_url` configuration variable should point to this file on the web server.
 > It is used by the OTA updating mechanism to ensure the integrity of the (new) firmware as it is installed.
 >
-> **If, for any reason, the MD5sum provided does not match the MD5sum computed as the firmware is installed, the
+> - The [HMAC-MD5](https://en.wikipedia.org/wiki/HMAC) hash provides enhanced security by using a secret key.
+>   It can be generated with the following command(s):
+>
+>   - On macOS and most Linux distributions with OpenSSL:
+>
+> ```shell
+>         openssl dgst -md5 -hmac "your_secret_key" firmware.ota.bin | cut -d' ' -f2 > firmware.hmac
+> ```
+>
+> - On systems with Python:
+>
+> ```shell
+>         python3 -c "import hmac, hashlib; print(hmac.new(b'your_secret_key', open('firmware.ota.bin', 'rb').read(), hashlib.md5).hexdigest())" > firmware.hmac
+> ```
+>
+> Replace `"your_secret_key"` with the same key specified in the `hmac_key` configuration variable.
+> The `hmac_md5_url` configuration variable should point to this file on the web server.
+>
+> **If, for any reason, the MD5sum or HMAC-MD5 provided does not match the computed hash as the firmware is installed, the
 > device will continue to use the original firmware and the new firmware is discarded.**
 
 ## See Also
