@@ -123,6 +123,7 @@ ESPHome-specific components or components supporting ESPHome device provisioning
 "ESP32 BLE Server","components/esp32_ble_server","bluetooth.svg","dark-invert"
 "Bluetooth Proxy","components/bluetooth_proxy","bluetooth.svg","dark-invert"
 "Improv via BLE","components/esp32_improv","improv.svg","dark-invert"
+"Nordic UART Service (NUS)","components/ble_nus","uart.svg",""
 {{< /imgtable >}}
 
 ## Management and Monitoring
@@ -166,6 +167,7 @@ Create update entities simplifying management of OTA updates.
 "I²S Audio","components/i2s_audio","i2s_audio.svg",""
 "OpenTherm","components/opentherm","opentherm.png",""
 "SPI Bus","components/spi","spi.svg",""
+"TinyUSB","components/tinyusb","usb.svg","dark-invert"
 "UART","components/uart","uart.svg",""
 "USB Host","components/usb_host","usb.svg","dark-invert"
 "USB UART","components/usb_uart","usb.svg","dark-invert"
@@ -272,6 +274,7 @@ Sensors are organized into categories; if a given sensor fits into more than one
 "CD74HC4067","components/sensor/cd74hc4067","cd74hc4067.jpg","16-channel analog multiplexer",""
 "MCP3008","components/sensor/mcp3008","mcp3008.jpg","8-channel ADC",""
 "MCP3204 / MCP3208","components/sensor/mcp3204","mcp3204.jpg","4-channel ADC",""
+"MCP3221","components/sensor/mcp3221","mcp3221.png","ADC",""
 "NAU7802","components/sensor/nau7802","nau7802.jpg","ADC",""
 "Resistance","components/sensor/resistance","omega.svg","dark-invert",""
 {{< /imgtable >}}
@@ -361,6 +364,7 @@ Sensors are organized into categories; if a given sensor fits into more than one
 "AM2315C","components/sensor/am2315c","am2315c.jpg","Temperature & Humidity",""
 "AM2320","components/sensor/am2320","am2320.jpg","Temperature & Humidity",""
 "b-parasite","components/sensor/b_parasite","b_parasite.jpg","Moisture & Temperature & Humidity & Light",""
+"BH1900NUX","components/sensor/bh1900nux","bh1900nux-evk-001.png","Temperature",""
 "BME280","components/sensor/bme280","bme280.jpg","Temperature & Humidity & Pressure",""
 "BME68x via BSEC2","components/sensor/bme68x_bsec2","bme680.jpg","Temperature & Humidity & Pressure & Gas",""
 "BME680 via BSEC","components/sensor/bme680_bsec","bme680.jpg","Temperature & Humidity & Pressure & Gas",""
@@ -377,6 +381,7 @@ Sensors are organized into categories; if a given sensor fits into more than one
 "ENS160","components/sensor/ens160","ens160.jpg","eCO₂ & Air Quality",""
 "ENS210","components/sensor/ens210","ens210.jpg","Temperature & Humidity",""
 "HDC1080","components/sensor/hdc1080","hdc1080.jpg","Temperature & Humidity",""
+"HDC2010","components/sensor/hdc2010","hdc2010.png","Temperature & Humidity",""
 "HHCCJCY10 (MiFlora Pink)","components/sensor/xiaomi_hhccjcy10","xiaomi_hhccjcy10.jpg","Soil moisture & Temperature & Light",""
 "Honeywell ABP","components/sensor/honeywellabp","honeywellabp.jpg","Pressure & Temperature",""
 "Honeywell ABP2 I2C","components/sensor/honeywellabp2_i2c","honeywellabp.jpg","Pressure & Temperature",""
@@ -388,6 +393,7 @@ Sensors are organized into categories; if a given sensor fits into more than one
 "HYT271","components/sensor/hyt271","hyt271.jpg","Temperature & Humidity",""
 "Inkbird IBS-TH1 Mini","components/sensor/inkbird_ibsth1_mini","inkbird_isbth1_mini.jpg","Temperature & Humidity",""
 "Internal Temperature","components/sensor/internal_temperature","thermometer.svg","Temperature","dark-invert"
+"LM75B","components/sensor/lm75b","lm75b.jpg","Temperature",""
 "LPS22","components/sensor/lps22","lps22.webp","Temperature & Barometric Pressure",""
 "MCP9808","components/sensor/mcp9808","mcp9808.jpg","Temperature",""
 "MH-Z19","components/sensor/mhz19","mhz19.jpg","CO₂ & Temperature",""
@@ -416,6 +422,7 @@ Sensors are organized into categories; if a given sensor fits into more than one
 "TMP102","components/sensor/tmp102","tmp102.jpg","Temperature",""
 "TMP1075","components/sensor/tmp1075","tmp1075.jpg","Temperature",""
 "TMP117","components/sensor/tmp117","tmp117.jpg","Temperature",""
+"WTS01","components/sensor/wts01","wts01.png","Temperature",""
 "XGZP68xx Series","components/sensor/xgzp68xx","6897d.jpg","Differential Pressure",""
 {{< /imgtable >}}
 
@@ -724,6 +731,7 @@ Often known as "tag" or "card" readers within the community.
 "MIPI DSI Displays","components/display/mipi_dsi","tab5.jpg"
 "MIPI RGB Displays","components/display/mipi_rgb","indicator.jpg"
 "MIPI SPI Displays","components/display/mipi_spi","t4-s3.jpg"
+"ePaper SPI Displays","components/display/epaper_spi","epaper.svg"
 "ILI9xxx","components/display/ili9xxx","ili9341.jpg"
 "ILI9341","components/display/ili9xxx","ili9341.svg"
 "ILI9342","components/display/ili9xxx","ili9342.svg"
@@ -979,6 +987,7 @@ at the {{< docref "light/fastled" "FastLED Light" >}}.
 "Modbus Text Sensor","components/text_sensor/modbus_controller","modbus.png",""
 "MQTT Subscribe Text","components/text_sensor/mqtt_subscribe","mqtt.png",""
 "Nextion Text Sensor","components/text_sensor/nextion","nextion.jpg",""
+"OpenThread Info","components/text_sensor/openthread_info","openthread.png",""
 "Tuya Text Sensor","components/text_sensor/tuya","tuya.png",""
 "Version","components/text_sensor/version","new-box.svg","dark-invert"
 "WiFi Info","components/text_sensor/wifi_info","network-wifi.svg","dark-invert"
@@ -991,6 +1000,7 @@ at the {{< docref "light/fastled" "FastLED Light" >}}.
 {{< imgtable >}}
 "Time Core","components/time/index","clock-outline.svg","dark-invert"
 "DS1307 RTC","components/time/ds1307","clock-outline.svg","dark-invert"
+"RX8130 RTC","components/time/rx8130","clock-outline.svg","dark-invert"
 "GPS Time","components/time/gps","crosshairs-gps.svg","dark-invert"
 "Home Assistant Time","components/time/homeassistant","home-assistant.svg","dark-invert"
 "PCF85063 RTC","components/time/pcf85063","clock-outline.svg","dark-invert"
@@ -1044,11 +1054,13 @@ ESPHome to cellular networks. **Does not encompass Wi-Fi.**
 "Exposure Notifications","components/exposure_notifications","exposure_notifications.png",""
 "GPS","components/gps","crosshairs-gps.svg","dark-invert"
 "Grow Fingerprint Reader","components/fingerprint_grow","fingerprint.svg","dark-invert"
+"HLK-FM22x Face Recognition Module","components/hlk_fm22x","face.svg","dark-invert"
 "Modbus Controller","components/modbus_controller","modbus.png",""
 "Sprinkler","components/sprinkler","sprinkler-variant.svg","dark-invert"
 "Status LED","components/status_led","led-on.svg","dark-invert"
 "Sun","components/sun","weather-sunny.svg","dark-invert"
 "Tuya MCU","components/tuya","tuya.png",""
+"Z-Wave Proxy","components/zwave_proxy","z-wave.svg",""
 {{< /imgtable >}}
 
 ## Cookbook

@@ -30,11 +30,9 @@ Configuration variables:
 - **id** (*Optional*, string): Manually specify the ID for code generation. At least one of **id** and **name** must be specified.
 - **name** (*Optional*, string): The name for the cover. At least one of **id** and **name** must be specified.
 
-{{< note >}}
-If you have a [friendly_name](#esphome-configuration_variables) set for your device and
-you want the cover to use that name, you can set `name: None`.
-
-{{< /note >}}
+> [!NOTE]
+> If you have a [friendly_name](/components/esphome#esphome-configuration_variables) set for your device and
+> you want the cover to use that name, you can set `name: None`.
 
 - **device_class** (*Optional*, string): The device class for the
   sensor. See <https://www.home-assistant.io/integrations/cover/#device-class> for a list of available options.
@@ -56,7 +54,7 @@ Advanced options:
   for a list of available options.
   Set to `""` to remove the default entity category.
 
-- If Webserver enabled and version 3 is selected, All other options from Webserver Component.. See [Webserver Version 3](#config-webserver-version-3-options).
+- If Webserver enabled and version 3 is selected, All other options from Webserver Component.. See [Webserver Version 3](/components/web_server#config-webserver-version-3-options).
 
 MQTT options:
 
@@ -72,13 +70,13 @@ MQTT options:
 - **tilt_command_topic** (*Optional*, string): The topic to receive
   cover tilt commands on.
 
-- All other options from [MQTT Component](#config-mqtt-component).
+- All other options from [MQTT Component](/components/mqtt#config-mqtt-component).
 
 {{< anchor "cover-open_action" >}}
 
 ## `cover.open` Action
 
-This [action](#config-action) opens the cover with the given ID when executed.
+This [action](/automations/actions#all-actions) opens the cover with the given ID when executed.
 
 ```yaml
 on_...:
@@ -86,21 +84,20 @@ on_...:
     - cover.open: cover_1
 ```
 
-{{< note >}}
-This action can also be expressed in [lambdas](#config-lambda):
+> [!NOTE]
+> This action can also be expressed in [lambdas](/automations/templates#config-lambda):
+>
+> ```cpp
+> auto call = id(cover_1).make_call();
+> call.set_command_open();
+> call.perform();
+> ```
 
-```cpp
-auto call = id(cover_1).make_call();
-call.set_command_open();
-call.perform();
-```
-
-{{< /note >}}
 {{< anchor "cover-close_action" >}}
 
 ## `cover.close` Action
 
-This [action](#config-action) closes the cover with the given ID when executed.
+This [action](/automations/actions#all-actions) closes the cover with the given ID when executed.
 
 ```yaml
 on_...:
@@ -108,21 +105,20 @@ on_...:
     - cover.close: cover_1
 ```
 
-{{< note >}}
-This action can also be expressed in [lambdas](#config-lambda):
+> [!NOTE]
+> This action can also be expressed in [lambdas](/automations/templates#config-lambda):
+>
+> ```cpp
+> auto call = id(cover_1).make_call();
+> call.set_command_close();
+> call.perform();
+> ```
 
-```cpp
-auto call = id(cover_1).make_call();
-call.set_command_close();
-call.perform();
-```
-
-{{< /note >}}
 {{< anchor "cover-stop_action" >}}
 
 ## `cover.stop` Action
 
-This [action](#config-action) stops the cover with the given ID when executed.
+This [action](/automations/actions#all-actions) stops the cover with the given ID when executed.
 
 ```yaml
 on_...:
@@ -130,21 +126,20 @@ on_...:
     - cover.stop: cover_1
 ```
 
-{{< note >}}
-This action can also be expressed in [lambdas](#config-lambda):
+> [!NOTE]
+> This action can also be expressed in [lambdas](/automations/templates#config-lambda):
+>
+> ```cpp
+> auto call = id(cover_1).make_call();
+> call.set_command_stop();
+> call.perform();
+> ```
 
-```cpp
-auto call = id(cover_1).make_call();
-call.set_command_stop();
-call.perform();
-```
-
-{{< /note >}}
 {{< anchor "cover-toggle_action" >}}
 
 ## `cover.toggle` Action
 
-This [action](#config-action) toggles the cover with the given ID when executed,
+This [action](/automations/actions#all-actions) toggles the cover with the given ID when executed,
 cycling through the states close/stop/open/stop... This allows the cover to be controlled
 by a single push button.
 
@@ -154,21 +149,20 @@ on_...:
     - cover.toggle: cover_1
 ```
 
-{{< note >}}
-This action can also be expressed in [lambdas](#config-lambda):
+> [!NOTE]
+> This action can also be expressed in [lambdas](/automations/templates#config-lambda):
+>
+> ```cpp
+> auto call = id(cover_1).make_call();
+> call.set_command_toggle();
+> call.perform();
+> ```
 
-```cpp
-auto call = id(cover_1).make_call();
-call.set_command_toggle();
-call.perform();
-```
-
-{{< /note >}}
 {{< anchor "cover-control_action" >}}
 
 ## `cover.control` Action
 
-This [action](#config-action) is a more generic version of the other cover actions and
+This [action](/automations/actions#all-actions) is a more generic version of the other cover actions and
 allows all cover attributes to be set.
 
 ```yaml
@@ -182,7 +176,7 @@ on_...:
 
 Configuration variables:
 
-- **id** (**Required**, [ID](#config-id)): The cover to control.
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The cover to control.
 - **stop** (*Optional*, boolean): Whether to stop the cover.
 - **state** (*Optional*, string): The state to set the cover to - one of `OPEN` or `CLOSE`.
 - **position** (*Optional*, float): The cover position to set.
@@ -192,22 +186,21 @@ Configuration variables:
 
 - **tilt** (*Optional*, float): The tilt position to set. In range 0% - 100%.
 
-{{< note >}}
-This action can also be expressed in [lambdas](#config-lambda):
+> [!NOTE]
+> This action can also be expressed in [lambdas](/automations/templates#config-lambda):
+>
+> ```cpp
+> auto call = id(cover_1).make_call();
+> // set attributes
+> call.set_position(0.5);
+> call.perform();
+> ```
 
-```cpp
-auto call = id(cover_1).make_call();
-// set attributes
-call.set_position(0.5);
-call.perform();
-```
-
-{{< /note >}}
 {{< anchor "cover-lambda_calls" >}}
 
 ## Lambdas
 
-From [lambdas](#config-lambda), you can access the current state of the cover (note that these
+From [lambdas](/automations/templates#config-lambda), you can access the current state of the cover (note that these
 fields are read-only, if you want to act on the cover, use the `make_call()` method as shown above).
 
 - `position`  : Retrieve the current position of the cover, as a value between `0.0` (closed) and `1.0` (open).

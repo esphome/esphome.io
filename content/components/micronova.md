@@ -7,21 +7,19 @@ params:
 ---
 
 The MicroNova component allows you to integrate a pellet stove with a MicroNova board in ESPHome.
-It uses [UART](#uart) for communication.
+It uses [UART](/components/uart) for communication.
 
-The [UART](#uart) must be configured with a baud rate 1200, 8 data bits, 2 stop bits, no parity, no flow control.
+The [UART](/components/uart) must be configured with a baud rate 1200, 8 data bits, 2 stop bits, no parity, no flow control.
 
-{{< warning >}}
-MicroNova bords come in various flavours. This code is only tested on an ExtraFlame Ketty Evo 2.0 stove. The protocol is not
-documented but has been reverse engineerd by others. See the links below for all the info that helped me.
-The different sensors, buttons and stove switch may require specific **memory_location** and **memory_address** parameters that
-match your MicroNova specific board.
-
-Also, switching your stove on or off can behave different on the various MicroNova flavours.
-
-Use this component at your own risk.
-
-{{< /warning >}}
+> [!WARNING]
+> MicroNova bords come in various flavours. This code is only tested on an ExtraFlame Ketty Evo 2.0 stove. The protocol is not
+> documented but has been reverse engineerd by others. See the links below for all the info that helped me.
+> The different sensors, buttons and stove switch may require specific **memory_location** and **memory_address** parameters that
+> match your MicroNova specific board.
+>
+> Also, switching your stove on or off can behave different on the various MicroNova flavours.
+>
+> Use this component at your own risk.
 
 ## Connecting your stove
 
@@ -50,21 +48,19 @@ micronova:
 
 ### Configuration variables
 
-- **enable_rx_pin** (**Required**, [Pin](#config-pin)): Output pin to be used to switch the line between RX and TX.
-- **update_interval** (*Optional*, [Time](#config-time)): The interval that the sensors should be checked.
+- **enable_rx_pin** (**Required**, [Pin](/guides/configuration-types#pin)): Output pin to be used to switch the line between RX and TX.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval that the sensors should be checked.
   Defaults to 60 seconds.
 
-{{< note >}}
-For all text sensors, sensors, numbers, buttons and switches hereafter most of the the default **memory_location** and **memory_address** parameters will work so you should
-not specify them. However your Micronova boad may require you to specify alternate values. So every text sensor, button,
-switch or number accepts these parameters:
-
-- **memory_location** (*Optional*): The memory location where the parameter must be read. For most stoves this is 0x00 for RAM
-  or 0x20 for EPROM.
-
-- **memory_address** (*Optional*): The address where the parameter is stored.
-
-{{< /note >}}
+> [!NOTE]
+> For all text sensors, sensors, numbers, buttons and switches hereafter most of the the default **memory_location** and **memory_address** parameters will work so you should
+> not specify them. However your Micronova boad may require you to specify alternate values. So every text sensor, button,
+> switch or number accepts these parameters:
+>
+> - **memory_location** (*Optional*): The memory location where the parameter must be read. For most stoves this is 0x00 for RAM
+>   or 0x20 for EPROM.
+>
+> - **memory_address** (*Optional*): The address where the parameter is stored.
 
 ## Text Sensors
 
@@ -78,7 +74,7 @@ text_sensor:
 ### Configuration variables
 
 - **stove_state** (*Optional*): The current stove state.
-  All options from [Text Sensor](#config-text_sensor).
+  All options from [Text Sensor](/components/text_sensor#config-text_sensor).
 
 ## Sensors
 
@@ -107,27 +103,27 @@ sensor:
 ### Configuration variables
 
 - **room_temperature** (*Optional*): Sensor that reads the stoves ambient room temperature.
-  All options from [Sensor](#config-sensor).
+  All options from [Sensor](/components/sensor).
 
 - **fumes_temperature** (*Optional*): Fumes temperature.
-  All options from [Sensor](#config-sensor).
+  All options from [Sensor](/components/sensor).
 
 - **stove_power** (*Optional*): Current stove power.
-  All options from [Sensor](#config-sensor).
+  All options from [Sensor](/components/sensor).
 
 - **fan_speed** (*Optional*): Current fan speed. The raw value from the stove is multiplied by 10 + `fan_rpm_offset`.
 
   - **fan_rpm_offset** (*Optional*, integer): Offset the reported RPM value. Must be between 0 and 255. Defaults to 0.
-  - All other options from [Sensor](#config-sensor).
+  - All other options from [Sensor](/components/sensor).
 - **water_temperature** (*Optional*): Internal boiler water termperature.
-  All options from [Sensor](#config-sensor).
+  All options from [Sensor](/components/sensor).
 
 - **water_pressure** (*Optional*): Internal boiler water pressure.
-  All options from [Sensor](#config-sensor).
+  All options from [Sensor](/components/sensor).
 
 - **memory_address_sensor** (*Optional*): Can be any **memory_location** / **memory_address** you want to track. Usefull
   when you don't know where the parameter is for your stove is.
-  All options from [Sensor](#config-sensor).
+  All options from [Sensor](/components/sensor).
 
 ## Numbers
 
@@ -145,17 +141,15 @@ number:
 
 - **thermostat_temperature** (*Optional*): Number that holds the current stove thermostat value.
   - **step** (*Optional*): Temperature step. This value is used to multiply/devide the raw value when setting/reading the **thermostat_temperature**
-  - All other options from [Number](#config-number).
+  - All other options from [Number](/components/number#config-number).
 - **power_level** (*Optional*): Number that sets/reads the requested stove power.
-  All options from [Number](#config-number).
+  All options from [Number](/components/number#config-number).
 
-{{< note >}}
-Besides **memory_location** and **memory_address** you can specify a specific **memory_write_location** parameter.
-This parameter is a hex value for the **memory_location** where the new thermostat value must be written.
-
-- **memory_write_location** (*Optional*): The **memory_location** where to write the new thermostat value.
-
-{{< /note >}}
+> [!NOTE]
+> Besides **memory_location** and **memory_address** you can specify a specific **memory_write_location** parameter.
+> This parameter is a hex value for the **memory_location** where the new thermostat value must be written.
+>
+> - **memory_write_location** (*Optional*): The **memory_location** where to write the new thermostat value.
 
 ## Buttons
 
@@ -172,14 +166,12 @@ button:
 ### Configuration variables
 
 - **custom_button** (*Optional*): Write the hex value **memory_data** to a **memory_location** and **memory_address**
-  All options from [Button](#config-button).
+  All options from [Button](/components/button#config-button).
 
-{{< note >}}
-Besides **memory_location** and **memory_address** you must specify a specific **memory_data** parameter.
-
-- **memory_data** (**Required**): The hex value to be written to the **memory_location** and **memory_address**.
-
-{{< /note >}}
+> [!NOTE]
+> Besides **memory_location** and **memory_address** you must specify a specific **memory_data** parameter.
+>
+> - **memory_data** (**Required**): The hex value to be written to the **memory_location** and **memory_address**.
 
 ## Switches
 
@@ -194,17 +186,15 @@ switch:
 
 - **stove** (*Optional*): Turn the stove on or off. This switch will also reflect the current stove state.
   If the **stove_state** is "Off" the switch will be off, in all other states, the switch wil be on.
-  All options from [Switch](#config-switch).
+  All options from [Switch](/components/switch#config-switch).
 
-{{< note >}}
-Besides **memory_location** and **memory_address** you can specify specific **memory_data_on** and **memory_data_off** parameters.
-These parameters contain the hex value to be written to the **memory_location** and **memory_address** when the switch
-turns on or off.
-
-- **memory_data_on** (*Optional*): The data to write when turning the switch on.
-- **memory_data_off** (*Optional*): The data to write when turning the switch off.
-
-{{< /note >}}
+> [!NOTE]
+> Besides **memory_location** and **memory_address** you can specify specific **memory_data_on** and **memory_data_off** parameters.
+> These parameters contain the hex value to be written to the **memory_location** and **memory_address** when the switch
+> turns on or off.
+>
+> - **memory_data_on** (*Optional*): The data to write when turning the switch on.
+> - **memory_data_off** (*Optional*): The data to write when turning the switch off.
 
 ## See Also
 

@@ -49,26 +49,23 @@ output:
 
 Configuration variables:
 
-- **update_interval** (**Required**, [Time](#config-time)): The cycle interval at which the output is recalculated.
-- **pin** (*Optional*, [Pin Schema](#config-pin_schema)): The pin to pulse.
-- **state_change_action** (*Optional*, [Automation](#automation)): An automation to perform when the load is switched. If a lambda is used the boolean `state` parameter holds the new status.
-- **turn_on_action** (*Optional*, [Automation](#automation)): An automation to perform when the load is turned on. Can be used to control for example a switch or output component.
-- **turn_off_action** (*Optional*, [Automation](#automation)): An automation to perform when the load is turned off. `turn_on_action` and `turn_off_action` must be configured together.
-- All options from [Output](#config-output).
+- **update_interval** (**Required**, [Time](/guides/configuration-types#time)): The cycle interval at which the output is recalculated.
+- **pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The pin to pulse.
+- **state_change_action** (*Optional*, [Automation](/automations)): An automation to perform when the load is switched. If a lambda is used the boolean `state` parameter holds the new status.
+- **turn_on_action** (*Optional*, [Automation](/automations)): An automation to perform when the load is turned on. Can be used to control for example a switch or output component.
+- **turn_off_action** (*Optional*, [Automation](/automations)): An automation to perform when the load is turned off. `turn_on_action` and `turn_off_action` must be configured together.
+- All options from [Output](/components/output#config-output).
 
-{{< note >}}
+> [!NOTE]
+>
+> - If `pin` is defined, the GPIO pin state is writen before any action is executed.
+> - `state_change_action` and `turn_on_action`  /`turn_off_action` can be used togther. `state_change_action` is called before `turn_on_action`  /`turn_off_action`. It's recommended to use either `state_change_action` or `turn_on_action`  /`turn_off_action` to change the state of an output. Using both automations together is only recommended for monitoring.
 
-- If `pin` is defined, the GPIO pin state is writen before any action is executed.
-- `state_change_action` and `turn_on_action`  /`turn_off_action` can be used togther. `state_change_action` is called before `turn_on_action`  /`turn_off_action`. It's recommended to use either `state_change_action` or `turn_on_action`  /`turn_off_action` to change the state of an output. Using both automations together is only recommended for monitoring.
-
-{{< /note >}}
-{{< note >}}
-If the output must not be active for more than some fixed time before it has
-to be off for a while to e.g. cool down, {{< docref "/components/output/slow_pwm" >}}
-should be used with a `max_power` setting to better control the duty
-cycle.
-
-{{< /note >}}
+> [!NOTE]
+> If the output must not be active for more than some fixed time before it has
+> to be off for a while to e.g. cool down, {{< docref "/components/output/slow_pwm" >}}
+> should be used with a `max_power` setting to better control the duty
+> cycle.
 
 ## See Also
 

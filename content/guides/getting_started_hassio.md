@@ -47,24 +47,22 @@ This should open the ESPHome add-on page; once you're there, just click the INST
 
 Installation of the add-on may take a moment or two. Once done, click "Start" and then click "Open Web UI".
 
-{{< note >}}
-If you're running Home Assistant in a way that does not provide access to add-ons, you may
-[run the ESPHome Device Builder independently in Docker](#esphome-device-builder-docker).
+> [!NOTE]
+> If you're running Home Assistant in a way that does not provide access to add-ons, you may
+> [run the ESPHome Device Builder independently in Docker](/guides/getting_started_command_line#esphome-device-builder-docker).
 
-{{< /note >}}
 The web UI will present a wizard which will walk you through creating your first configuration:
 
 {{< img src="dashboard_empty.png" alt="Image" width="95.0%" class="align-center" >}}
 
 After creating your first configuration, you'll need to install it on your device.
 
-{{< note >}}
-The initial installation of ESPHome onto a new device is often the most difficult and/or intimidating part -- at
-least until you've done it a few times.
+> [!NOTE]
+> The initial installation of ESPHome onto a new device is often the most difficult and/or intimidating part -- at
+> least until you've done it a few times.
+>
+> If you haven't done this before, please see {{< docref "physical_device_connection/" >}}.
 
-If you haven't done this before, please see {{< docref "physical_device_connection/" >}}.
-
-{{< /note >}}
 If you didn't do so when prompted upon creating your first device, you'll need to enter your Wi-Fi network credentials
 immediately following installation so that your device can connect to your Wi-Fi network and subsequently communicate
 with Home Assistant.
@@ -101,18 +99,16 @@ actions you can perform:
 The configuration files for ESPHome are stored in the `<HOME_ASSISTANT_CONFIG>/esphome/` directory. For example, the
 configuration for the "Bedroom Light" node in the picture above can be found in `/config/esphome/bedroom-light.yaml`.
 
-{{< note >}}
-Home Assistant add-ons run as individual containers; this can make accessing your configuration files/logs a bit
-challenging. If you wish to do so, you'll need to install Home Assistant's
-[SSH add-on](https://www.home-assistant.io/common-tasks/os/#installing-and-using-the-ssh-add-on), configure it
-with a username and password and also disable "Protection Mode" (please assess the risks associated with doing so).
-
-Finally, to access the logs from a device through an SSH client, you can log in and use a command like
-`docker exec -it addon_15ef4d2f_esphome esphome logs /config/esphome/bedroom-light.yaml`.
-
-See {{< docref "getting_started_command_line/" >}} for more detail.
-
-{{< /note >}}
+> [!NOTE]
+> Home Assistant add-ons run as individual containers; this can make accessing your configuration files/logs a bit
+> challenging. If you wish to do so, you'll need to install Home Assistant's
+> [SSH add-on](https://www.home-assistant.io/common-tasks/os/#installing-and-using-the-ssh-add-on), configure it
+> with a username and password and also disable "Protection Mode" (please assess the risks associated with doing so).
+>
+> Finally, to access the logs from a device through an SSH client, you can log in and use a command like
+> `docker exec -it addon_15ef4d2f_esphome esphome logs /config/esphome/bedroom-light.yaml`.
+>
+> See {{< docref "getting_started_command_line/" >}} for more detail.
 
 ## Adding Features
 
@@ -178,9 +174,8 @@ installed on your device) it can update the device {{< docref "/components/ota/i
 Once your configuration is installed on your device and it's connected to your Wi-Fi, Home Assistant will automatically
 discover it (assuming your network permits this) and offer to configure it:
 
-{{< button href="<https://my.home-assistant.io/redirect/config_flow_start/?domain=esphome>"
-  img="<https://my.home-assistant.io/badges/config_flow_start.svg>"
-  alt="Open your Home Assistant instance and start setting up a new integration." >}}
+[![Open your Home Assistant instance and show the ESPHome integration.](https://my.home-assistant.io/badges/integration.svg)](https://my.home-assistant.io/redirect/integration/?domain=esphome)
+
 Alternatively, you can manually add the device on the Home Assistant Integrations page. To do so, click on the "Add
 Integration" button (bottom right), search for "ESPHome" and enter the ESPHome device's host name. The host name is
 based on the name you've given to the device; if you named your device "living-room-lamp", its host name will be
@@ -202,3 +197,4 @@ a new issue on the [GitHub issue tracker](https://github.com/esphome/esphome/iss
 
 - {{< docref "/index" "ESPHome index" >}}
 - {{< docref "getting_started_command_line/" >}}
+- {{< docref "security_best_practices" >}}
