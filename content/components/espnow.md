@@ -222,7 +222,8 @@ Setting `auto_add_peer` to `true` will allow the component to automatically add 
 automatically add any peer that data is sent to.
 
 A peer can be declared either as a single MAC addres, or as a mapping. The latter is required for setting an (optional) LMK (see [Encryption](#espnow-encryption) below).
-```
+
+```yaml
 peers:
   # MAC address
   - 01:02:03:04:05:06
@@ -238,7 +239,8 @@ peers:
 ESP-NOW supports encryption of frame data. All peers share a single Primary Master Key (PMK), and each peer shares a Local Master Key (LMK) with one other peer.
 
 Both PMK and LMK are 16 bytes in length, and can be passed either as string or as a list of bytes:
-```
+
+```yaml
 # as string
 pmk: '0123456789012345'
 
