@@ -47,7 +47,7 @@ deep_sleep:
   - **gpio_wakeup_reason** (*Optional*, [Time](/guides/configuration-types#time)): run duration if woken up by GPIO.
   - **touch_wakeup_reason** (*Optional*, [Time](/guides/configuration-types#time)): run duration if woken up by touch.
 
-- **sleep_duration** (*Optional*, [Time](/guides/configuration-types#time)): The time duration to stay in deep sleep mode.
+- **sleep_duration** (*Optional*, [Time](/guides/configuration-types#time)): The time duration to stay in deep sleep mode. On BK72xx, the maximum is 36 hours.
 - **touch_wakeup** (*Optional*, boolean): Only on ESP32. Use a touch event to wakeup from deep sleep. To be able
   to wakeup from a touch event, [Binary Sensor](/components/binary_sensor/esp32_touch#esp32-touch-binary-sensor) must be configured properly.
 
@@ -97,7 +97,7 @@ when the deep sleep should start? There are three ways of handling this using th
 # Example configuration with single pin wakeup on BK72xx
 deep_sleep:
   wakeup_pin: P8  # will wakeup when P8 is high
-  wakeup_pin_mode: IGNORE # state of P8 at the moment of going to sleep does not influnce the wakeup scenario
+  wakeup_pin_mode: IGNORE # state of P8 at the moment of going to sleep does not influence the wakeup scenario
 ```
 
 ```yaml
@@ -108,9 +108,8 @@ deep_sleep:
         number: P8
         inverted: True  # will wake up when P8 is low
       wakeup_pin_mode: KEEP_AWAKE # will prevent sleep as long as P8 is low
-    - pin: P24 # will wake-up when P24 is high at first
-      wakeup_pin_mode: INVERT # the next wakeup will happen if P24 state is NOT in the state it went into deep sleep with
-
+    - pin: P24 # will wake up when P24 goes high
+      wakeup_pin_mode: INVERT_WAKEUP # flips the trigger level after each wake
 ```
 
 ## ESP32 Wakeup Cause
