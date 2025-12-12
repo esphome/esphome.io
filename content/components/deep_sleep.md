@@ -51,17 +51,13 @@ deep_sleep:
 - **touch_wakeup** (*Optional*, boolean): Only on ESP32. Use a touch event to wakeup from deep sleep. To be able
   to wakeup from a touch event, [Binary Sensor](/components/binary_sensor/esp32_touch#esp32-touch-binary-sensor) must be configured properly.
 
-- **wakeup_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): Only on ESP32. A pin to wake up to once
+- **wakeup_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema) / list): Only on ESP32/BK72xx. A single pin to wake up to once
   in deep sleep mode. Use the inverted property to wake up to LOW signals.
-
-- **wakeup_pin_mode** (*Optional*): Only on ESP32. Specify how to handle waking up from a `wakeup_pin` if
+  If you want to specify multiple wake-up pins (BK72xx only) specify them under `wakeup_pin` using a list of entries consisting of:
+  - **pin** (**Required**, [Pin Schema](/guides/configuration-types#pin-schema))
+  - **wakeup_pin_mode** (*Optional*) see below
+- **wakeup_pin_mode** (*Optional*): Only on ESP32/BK72xx. Specify how to handle waking up from a `wakeup_pin` if
   the wakeup pin is already in the state with which it would wake up when attempting to enter deep sleep.
-  See [ESP32 Wakeup Pin Mode](#deep_sleep-esp32_wakeup_pin_mode). Defaults to `IGNORE`
-
-- **wakeup_pins** (*Optional*): Only on BK72xx. Similar to the `wakeup_pin`, but allows specifing multiple pins as a list. Each entry in the list should consist of:
-  - **pin** (**Required**, [Pin Schema](/guides/configuration-types#pin-schema)): A pin to wake up to once in deep sleep mode. Use the inverted property to wake up to LOW signals.
-  - **wakeup_pin_mode** (*Required*): Specify how to handle waking up from the `pin` if
-  the it is already in the state with which it would wake up when attempting to enter deep sleep.
   See [Wakeup Pin Mode](#deep_sleep-esp32_wakeup_pin_mode). Defaults to `IGNORE`
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
 
