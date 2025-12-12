@@ -169,6 +169,7 @@ Create update entities simplifying management of OTA updates.
 "SPI Bus","components/spi","spi.svg",""
 "TinyUSB","components/tinyusb","usb.svg","dark-invert"
 "UART","components/uart","uart.svg",""
+"USB CDC-ACM","components/usb_cdc_acm","usb.svg","dark-invert"
 "USB Host","components/usb_host","usb.svg","dark-invert"
 "USB UART","components/usb_uart","usb.svg","dark-invert"
 {{< /imgtable >}}
@@ -744,6 +745,7 @@ Often known as "tag" or "card" readers within the community.
 "ILI9486","components/display/ili9xxx","ili9341.jpg"
 "ILI9488","components/display/ili9xxx","ili9488.svg"
 "WSPICOLCD","components/display/ili9xxx","ili9488.svg"
+"HUB75 LED Matrix","components/display/hub75","hub75.svg"
 "Inkplate","components/display/inkplate","inkplate6.jpg"
 "LCD Display","components/display/lcd_display","lcd.jpg"
 "MAX7219 Dot Matrix","components/display/max7219digit","max7219digit.jpg"
