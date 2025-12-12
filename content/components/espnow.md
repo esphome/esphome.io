@@ -33,6 +33,7 @@ espnow:
 - **enable_on_boot** (*Optional*, boolean): Enable the esp-now component on boot. Defaults to `true`.
 - **peers** (*Optional*, list): A peer is the name for devices that use esp-now. The list will have all MAC addresses from
   the devices where this device may communicate with. See [Peers](#espnow-peers) below.
+- **pmk** (*Optional*, 16-byte string): The Primary Master Key to use. See [Encryption][#espnow-encryption] below.
 
 Automations:
 
@@ -40,6 +41,7 @@ Automations:
 - **on_unknown_peer** (*Optional*, [Automation](/automations)): An automation to perform when data is received from an unknown peer. See [`on_unknown_peer`](#espnow-on_unknown_peer).
 - **on_broadcast** (*Optional*, [Automation](/automations)): An automation to perform when a broadcast packet is received.
   See [`on_broadcast`](#espnow-on_broadcast).
+- **on_start** (*Optional*, [Automation](/automations)): An automation that runs when ESP-NOW has been fully initialized. See [`on_start`](#espnow-on_start);
 
 ## Automations
 
@@ -83,6 +85,12 @@ This automation will be triggered when data is received from a peer that is not 
 ### `on_broadcast`
 
 This automation will be triggered when a broadcast packet is received.
+
+{{< anchor "espnow-on_start" >}}
+
+### `on_start`
+
+This automation will be triggered when ESP-NOW has been fully initialized. It does not get passed any variables.
 
 #### Configuration variables
 
@@ -156,6 +164,7 @@ This is an [Action](/automations/actions#all-actions) to add a new peer to the i
 on_...:
   - espnow.peer.add:
       address: 11:22:33:44:55:66
+      lmk: !secret lmk # optional
   - espnow.peer.add:
       address: !lambda "return {0x11, 0x22, 0x33, 0x44, 0x55, 0x66};"
 ```
@@ -211,6 +220,33 @@ will be an error when trying to send data to a peer.
 
 Setting `auto_add_peer` to `true` will allow the component to automatically add any incoming device as a peer, and will
 automatically add any peer that data is sent to.
+
+A peer can be declared either as a single MAC addres, or as a mapping. The latter is required for setting an (optional) LMK (see [Encryption](#espnow-encryption) below).
+```
+peers:
+  # MAC address
+  - 01:02:03:04:05:06
+  # Mapping
+  - address: 06:05:04:03:02:01
+    lmk: !secret lmk
+```
+
+{{< anchor "espnow-encryption" >}}
+
+## Encryption
+
+ESP-NOW supports encryption of frame data. All peers share a single Primary Master Key (PMK), and each peer shares a Local Master Key (LMK) with one other peer.
+
+Both PMK and LMK are 16 bytes in length, and can be passed either as string or as a list of bytes:
+```
+# as string
+pmk: '0123456789012345'
+
+# as byte list
+pmk: [ 0x00, 0x01, 0x02, 0x03, .., 0x05 ]
+```
+
+For more details, consult the [Espressif ESP-NOW documentation](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/network/esp_now.html#security).
 
 ## See Also
 
