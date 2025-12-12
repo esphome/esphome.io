@@ -61,6 +61,27 @@ deep_sleep:
   See [Wakeup Pin Mode](#deep_sleep-esp32_wakeup_pin_mode). Defaults to `IGNORE`
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
 
+```yaml
+# Example configuration with single pin wakeup on BK72xx
+deep_sleep:
+  wakeup_pin: P8  # will wakeup when P8 is high
+  wakeup_pin_mode: IGNORE # state of P8 at the moment of going to sleep does not influnce the wakeup scenario
+```
+
+```yaml
+# Example configuration with multi-pin wakeup on BK72xx
+deep_sleep:
+  wakeup_pin:
+    - pin:
+        number: P8
+        inverted: True  # will wake up when P8 is low
+      wakeup_pin_mode: KEEP_AWAKE # will prevent sleep as long as P8 is low
+    - pin: P24 # will wake-up when P24 is high at first
+      wakeup_pin_mode: INVERT # the next wakeup will happen if P24 state is NOT in the state it went into deep sleep with
+
+
+```
+
 Advanced features:
 
 - **esp32_ext1_wakeup** (*Optional*): Use the EXT1 wakeup source of the ESP32 to wake from deep sleep to
