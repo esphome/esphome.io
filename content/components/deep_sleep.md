@@ -111,9 +111,7 @@ deep_sleep:
     - pin: P24 # will wake-up when P24 is high at first
       wakeup_pin_mode: INVERT # the next wakeup will happen if P24 state is NOT in the state it went into deep sleep with
 
-
 ```
-
 
 ## ESP32 Wakeup Cause
 
