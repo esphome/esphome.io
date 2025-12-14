@@ -9,13 +9,12 @@ params:
 This component enables Power Management and also provides methods for acquiring and releasing Power Management Locks
 
 [esp-idf Power Management](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/system/power_management.html)
-Power management algorithm included in ESP-IDF can adjust the advanced peripheral bus (APB) frequency, CPU frequency, and put the chip into Light-sleep
+Power management algorithm included in ESP-IDF can adjust the advanced peripheral bus (APB) frequency, CPU frequency, and automatically put the chip into Light-sleep
 mode to run an application at smallest possible power consumption, given the requirements of application components.
 
 > [!NOTE]
-> Automatic Light-sleep enabled by tickless_idle: true requires a timer technique to wake up device.  This is available in openthread when poll_period > 0
-and currently the Power Management componentis meant to be used with esp32-h2 and esp32-c6 devices configured for openthread with a poll_period defined.
-
+> Automatic Light-sleep is enabled by tickless_idle: true and occurs when there are no pending tasks.  
+In the openthread component, setting the poll_period > 0 dove-tails into this by turning off the radio in between data requests to the parent router.
 > [!NOTE]
 > Refenced the closed PR [Initial support for power management #4916](https://github.com/esphome/esphome/pull/4916) during the development (@silverchris)
 
@@ -23,13 +22,10 @@ and currently the Power Management componentis meant to be used with esp32-h2 an
 > Do not use Deep Sleep component with tickless_idle: true.
 
 ## Usage
-
-Example usage including a sensor
-
 ```yaml
 power_management:
   id: pm_id
-  timer_lock_duration: 61sec
+  timer_lock_duration: 10sec
   tickless_idle: false
   power_down_flash: true
   power_down_peripherals: true
@@ -44,44 +40,87 @@ power_management:
 - **profiling** (*Optional*, boolean): sets the sdkconfig: CONFIG_PM_PROFILING.
 - **trace** (*Optional*, boolean): sets the sdkconfig: CONFIG_PM_TRACE.
 
+> [!NOTE]
+> Use of trace configuration variable requires detailed understanding of "esp-idf/components/esp_pm/pm_trace.c" and which GPIO pins are consumed for tracing.
+
 ## `power_management.acquire_lock` Action
 
 This action acquires a CPU Lock
+
+```yaml
+on_...:
+  then:
+  # Long form aquires a SLP Lock
+    - power_management.acquire_lock:
+        lock_type: SLP
+  # Short form aquires a CPU lock
+    - power_management.acquire_lock:
+  # Short form aquires a APB lock
+    - power_management.acquire_lock: APB
+  # Long form aquires a TMR Lock
+    - power_management.acquire_lock:
+        lock_type: TMR
+        #optional, will use last setting (including what was set by CV at power_management component)
+        timer_lock_duration: 10sec
+```
+
+#### Configuration variables
+
+- **lock_type** (*Optional*): The lock type, valid values are TMR, CPU, APB, SLP, defaults to CPU
+- **timer_lock_duration** (*Optional*, [Time](/guides/configuration-types#config-time)): Time that device is locked initially after boot.  Only used when lock_type: TMR
+
+#### Lock Types
+
+- **TMR**: A CPU_FREQ_MAX lock that is set for the **timer_lock_duration** and then released
+- **CPU**: Locks the CPU at its max frequency, CPU_FREQ_MAX
+- **APB**: Locks the Advanced Peripheral Bus to a stable frequency, APB_FREQ_MAX
+- **SLP**: Locks out automatic light sleep, NO_LIGHT_SLEEP
 
 ## `power_management.release_lock` Action
 
 This action releases a CPU Lock
 
+```yaml
+on_...:
+  then:
+  # Long form aquires a SLP Lock
+    - power_management.release_lock:
+        lock_type: SLP
+  # Short form aquires a CPU lock
+    - power_management.release_lock:
+  # Short form aquires a APB lock
+    - power_management.release_lock: APB
+```
+
+#### Configuration variables
+
+- **lock_type** (*Optional*): The lock type, valid values are CPU, APB, SLP, defaults to CPU
+
 ## Example of using Actions
 
-```yaml
-# used to lock out automatic light sleep
-switch:
-  - platform: template
-    name: "Lock"
-    optimistic: true
-    restore_mode: RESTORE_DEFAULT_OFF
-    turn_on_action:
-      then:
-        - logger.log: "Turn On Lock"
-        - power_management.acquire_lock:
-    turn_off_action:
-      then:
-        - logger.log: "Turn Off Lock"
-        - power_management.release_lock:
+## Using esp_pm_dump_locks
+The esp-id function esp_pm_dump_locks can be output to stdout and provide insight into how Power Management is setting and removing locks:
 
-button:
-  - platform: template
-    name: "OTA Http Request Update"
-    on_press:
+```
+interval:
+  - interval: 30s
+    then:
+      - lambda: |-
+          esp_pm_dump_locks(stdout);
+```
+
+This can also be done within an existing sensor to ensure that dump is occuring at same time that sensor value is published.
+
+```
+sensor:
+  - platform: uptime
+    name: "Open Thread Connect"
+    id: open_thread_connect_sensor_id
+    type: seconds
+    update_interval: 1min
+    # profiling sleep to stdout - don't do permanently
+    on_value:
       then:
-        - logger.log: "Turn On Lock"
-        - power_management.acquire_lock:
-        - logger.log: "Begin OTA Flash"
-        - ota.http_request.flash:
-            md5_url: http://192.168.1.2:8000/firmware.md5
-            url: http://192.168.1.2:8000/firmware.ota.bin
-        # This only happens on a failed ota
-        - logger.log: "Turn Off Lock"
-        - power_management.release_lock:
+      - lambda: |-
+          esp_pm_dump_locks(stdout);
 ```
