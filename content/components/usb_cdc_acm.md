@@ -11,13 +11,14 @@ The USB CDC-ACM (Communications Device Class - Abstract Control Model) component
 as USB virtual serial ports. When connected to a host computer, the microcontroller will appear as one or
 more serial/COM ports, allowing serial communication with the application running on the microcontroller.
 
-You must have {{< docref "/components/tinyusb" >}} in your device's configuration to use this component.
+You must have {{< docref "/components/tinyusb" >}} in your device's configuration to use this component. Only for ESP32
 
-The following ESP32 microcontroller variants are currently supported:
+The following microcontroller variants are currently supported:
 
 - ESP32-P4
 - ESP32-S2
 - ESP32-S3
+- nRF52
 
 ```yaml
 # Example minimal configuration entry
@@ -28,6 +29,7 @@ usb_cdc_acm:
 
 - **rx_buffer_size** (*Optional*, int): Size of the USB receive buffer in bytes. Range: 1-65535. Defaults to `256`.
 - **tx_buffer_size** (*Optional*, int): Size of the USB transmit buffer in bytes. Range: 1-65535. Defaults to `256`.
+  Only for ESP32.
 - **interfaces** (*Optional*, list): List of CDC-ACM interface instances. Up to two are supported; at least one is
   required. Defaults to a single-item list which defines a single interface only.
 
