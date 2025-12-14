@@ -12,6 +12,8 @@ This component enables Power Management and also provides methods for acquiring 
 Power management algorithm included in ESP-IDF can adjust the advanced peripheral bus (APB) frequency, CPU frequency, and automatically put the chip into Light-sleep
 mode to run an application at smallest possible power consumption, given the requirements of application components.
 
+It is very important to understand the section: [Dynamic Frequency Scaling and Peripheral Drivers](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/system/power_management.html#dynamic-frequency-scaling-and-peripheral-drivers)
+
 > [!NOTE]
 > Automatic Light-sleep is enabled by tickless_idle: true and occurs when there are no pending tasks.  
 In the openthread component, setting the poll_period > 0 dove-tails into this by turning off the radio in between data requests to the parent router.
@@ -22,6 +24,7 @@ In the openthread component, setting the poll_period > 0 dove-tails into this by
 > Do not use Deep Sleep component with tickless_idle: true.
 
 ## Usage
+
 ```yaml
 power_management:
   id: pm_id
@@ -64,12 +67,12 @@ on_...:
         timer_lock_duration: 10sec
 ```
 
-#### Configuration variables
+### Configuration variables
 
 - **lock_type** (*Optional*): The lock type, valid values are TMR, CPU, APB, SLP, defaults to CPU
 - **timer_lock_duration** (*Optional*, [Time](/guides/configuration-types#config-time)): Time that device is locked initially after boot.  Only used when lock_type: TMR
 
-#### Lock Types
+### Lock Types
 
 - **TMR**: A CPU_FREQ_MAX lock that is set for the **timer_lock_duration** and then released
 - **CPU**: Locks the CPU at its max frequency, CPU_FREQ_MAX
@@ -92,16 +95,17 @@ on_...:
     - power_management.release_lock: APB
 ```
 
-#### Configuration variables
+### Configuration variables
 
 - **lock_type** (*Optional*): The lock type, valid values are CPU, APB, SLP, defaults to CPU
 
 ## Example of using Actions
 
 ## Using esp_pm_dump_locks
+
 The esp-id function esp_pm_dump_locks can be output to stdout and provide insight into how Power Management is setting and removing locks:
 
-```
+```yaml
 interval:
   - interval: 30s
     then:
@@ -111,7 +115,7 @@ interval:
 
 This can also be done within an existing sensor to ensure that dump is occuring at same time that sensor value is published.
 
-```
+```yaml
 sensor:
   - platform: uptime
     name: "Open Thread Connect"
