@@ -65,9 +65,6 @@ uart:
   Use of this setting enables half-duplex mode. Use the full pin schema and set `inverted: true` to invert logic levels.
 
 - **port** (*Optional*, string): Host platform only. Unix style name of the port to use.
-
-- **hardware_uart** (*Optional*, string): NRF52 platform only. Port to be used `USB_CDC` or `USB_CDC1`.
-
 - **rx_buffer_size** (*Optional*, int): The size of the buffer used for receiving UART messages. Increase if you use an
   integration that needs to read big payloads from UART. Defaults to `256`.
 
