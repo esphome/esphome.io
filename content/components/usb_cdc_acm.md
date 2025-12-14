@@ -29,7 +29,6 @@ usb_cdc_acm:
 
 - **rx_buffer_size** (*Optional*, int): Size of the USB receive buffer in bytes. Range: 1-65535. Defaults to `256`.
 - **tx_buffer_size** (*Optional*, int): Size of the USB transmit buffer in bytes. Range: 1-65535. Defaults to `256`.
-  Only for ESP32.
 - **interfaces** (*Optional*, list): List of CDC-ACM interface instances. Up to two are supported; at least one is
   required. Defaults to a single-item list which defines a single interface only.
 
@@ -39,6 +38,8 @@ Each interface in the `interfaces` list consists of the following:
 
 - **id** (*Optional*, [ID](/guides/configuration-types#config-id)): The ID to use for this interface instance. This is
   used to refer to the interface in other components, platforms or lambdas.
+- **disabled** (*Optional*, boolean): Set to `true` to disable this instance. Useful for resolving conflicts with other
+components e.g. logger.
 
 ## Multiple Interface Example
 
