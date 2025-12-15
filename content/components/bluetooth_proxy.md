@@ -52,7 +52,7 @@ bluetooth_proxy:
 - **cache_services** (*Optional*, boolean): Enables caching GATT services in NVS flash storage which significantly speeds up active connections. Defaults to `true`.
 - **connection_slots** (*Optional*, int): The maximum number of BLE connection slots to use.
   Each configured slot consumes ~1KB of RAM, with a maximum of `9`. It is recommended not to exceed `5`
-  connection slots to avoid memory issues. Defaults to `3`.
+  connection slots to avoid memory issues. Defaults to `3`. Ethernet-based proxies can generally handle `4` connection slots reliably.
   The value must not exceed the total configured `max_connections`
   for {{< docref "esp32_ble/" >}}.
 
@@ -78,6 +78,42 @@ esp32_ble_tracker:
 ```
 
 Avoid placing the ESP node in racks, close to routers/switches or other network equipment as EMI interference will degrade Bluetooth signal reception. For best results put as far away as possible, at least 3 meters distance from any other such equipment. Place your ESPHome devices close to the Bluetooth devices that you want to interact with for the best experience.
+
+## Complete sample recommended configuration for a WiFi-connected Bluetooth proxy
+
+Below is a complete sample recommended configuration for a WiFi-connected Bluetooth proxy. If you experience issues with your proxy, try reducing your configuration to be as similar to this as possible.
+
+```yaml
+substitutions:
+  name: my-bluetooth-proxy
+
+esphome:
+  name: ${name}
+  name_add_mac_suffix: true
+
+esp32:
+  board: esp32dev
+  framework:
+    type: esp-idf
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+
+ota:
+  platform: esphome
+
+esp32_ble_tracker:
+
+bluetooth_proxy:
+  active: true
+```
 
 ## Complete sample recommended configuration for an ethernet-connected Bluetooth proxy
 
@@ -126,7 +162,7 @@ esp32_ble_tracker:
 
 bluetooth_proxy:
   active: true
-  connection_slots: 3
+  connection_slots: 4
 ```
 
 ## See Also
