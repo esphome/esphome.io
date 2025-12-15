@@ -12,7 +12,8 @@ This component enables Power Management and also provides methods for acquiring 
 Power management algorithm included in ESP-IDF can adjust the advanced peripheral bus (APB) frequency, CPU frequency, and automatically put the chip into Light-sleep
 mode to run an application at smallest possible power consumption, given the requirements of application components.
 
-It is very important to understand the section: [Dynamic Frequency Scaling and Peripheral Drivers](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/system/power_management.html#dynamic-frequency-scaling-and-peripheral-drivers)
+> [!NOTE]
+> It is very important to understand the section: [Dynamic Frequency Scaling and Peripheral Drivers](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/system/power_management.html#dynamic-frequency-scaling-and-peripheral-drivers)
 
 ## Usage
 
@@ -54,8 +55,7 @@ power_management:
 > [!NOTE]
 > Automatic Light-sleep is enabled by tickless_idle: true and occurs when there are no pending tasks.  
 In the openthread component, setting the poll_period > 0 dove-tails into this by turning off the radio in between data requests to the parent router.
-
-> [!NOTE]
+> When configured for automatic light-sleep.  It is recommended to not use esphome.OTA since opening the listening port decreases light-sleep.  Instead use an OTA platform that pulls the image such as http_request.OTA.
 > Do not use Deep Sleep component with tickless_idle: true.
 
 ## `power_management.acquire_lock` Action
