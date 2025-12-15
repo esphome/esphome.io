@@ -47,7 +47,7 @@ Passively broadcasted sensor data (advertised by devices without requiring activ
 
 ## Improving reception performance
 
-Use a board with an Ethernet connection to the network, to offload ESP32's radio module from WiFi traffic, this gains performance on Bluetooth side.
+Use a board with an Ethernet connection to the network, to offload ESP32's radio module from WiFi traffic. This improves Bluetooth performance. For best results, choose a board with an external antenna (e.g., prefer Olimex ESP32-PoE-ISO-EA over Olimex ESP32-PoE-ISO).
 
 > [!NOTE]
 > The default scan parameters are recommended for most users. Changing `interval` or `window` from their defaults typically provides no meaningful benefit while increasing CPU usage and network traffic. Aggressive scan settings can cause overheating on some PoE-based proxies, and WiFi instability on WiFi-based proxies.
