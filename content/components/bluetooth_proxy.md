@@ -48,7 +48,7 @@ bluetooth_proxy:
   # active: false
 ```
 
-- **active** (*Optional*, boolean): Enables proxying active connections. Defaults to `true`.
+- **active** (*Optional*, boolean): Enables proxying active GATT connections to BLE devices. This is separate from active *scanning* (configured in {{< docref "esp32_ble_tracker/" >}}). Defaults to `true`.
 - **cache_services** (*Optional*, boolean): Enables caching GATT services in NVS flash storage which significantly speeds up active connections. Defaults to `true`.
 - **connection_slots** (*Optional*, int): The maximum number of BLE connection slots to use.
   Each configured slot consumes ~1KB of RAM, with a maximum of `9`. It is recommended not to exceed `5`
@@ -61,17 +61,21 @@ The Bluetooth proxy depends on {{< docref "esp32_ble_tracker/" >}} so make sure 
 ## Improving reception performance
 
 Use a board with an Ethernet connection to the network, to offload ESP32's radio module from WiFi traffic, this gains performance on Bluetooth side.
-To maximize the chances of catching advertisements of the sensors, you can set `interval` equal to `window` in {{< docref "/components/esp32_ble_tracker" >}} scan parameter settings:
+
+> [!NOTE]
+> The default scan parameters are recommended for most users. Changing `interval` or `window` from their defaults typically provides no meaningful benefit while increasing CPU usage and network traffic. Aggressive scan settings can cause overheating on some PoE-based proxies, and WiFi instability on WiFi-based proxies.
+
+### Passive vs Active Scanning
+
+Passive scanning (the default) works for most BLE devices and is sufficient for ongoing operation. Active scanning is typically only needed when initially adding new devices to Home Assistant, as it requests additional scan response data from devices. Active scanning also increases battery drain on battery-powered BLE devices.
+
+If you experience overheating even with default scan parameters, you can try disabling active scanning in {{< docref "esp32_ble_tracker/" >}} if your devices don't require it:
 
 ```yaml
 esp32_ble_tracker:
   scan_parameters:
-    interval: 1100ms
-    window: 1100ms
+    active: false
 ```
-
-> [!NOTE]
-> For WiFi-based proxies, changing the `interval` or `window` from their default values may result in an unstable WiFi connection. Using the default values for `interval` and `window` will usually resolve any instability.
 
 Avoid placing the ESP node in racks, close to routers/switches or other network equipment as EMI interference will degrade Bluetooth signal reception. For best results put as far away as possible, at least 3 meters distance from any other such equipment. Place your ESPHome devices close to the Bluetooth devices that you want to interact with for the best experience.
 
@@ -115,10 +119,10 @@ ota:
   platform: esphome
 
 esp32_ble_tracker:
-  scan_parameters:
-    interval: 1100ms
-    window: 1100ms
-    active: true
+  # The default scan parameters are recommended.
+  # Aggressive scan settings (e.g., interval/window of 1100ms) typically
+  # provide no benefit while increasing CPU usage and may cause
+  # overheating on some PoE-based proxies.
 
 bluetooth_proxy:
   active: true
