@@ -39,8 +39,8 @@ Configuration variables:
 Advanced options:
 
 - **visual** (*Optional*): Configuration for the frontend representation.
-    - **min_temperature** (*Optional*, float): Override the minimum temperature shown in the frontend.
-    - **max_temperature** (*Optional*, float): Override the maximum temperature shown in the frontend.
+  - **min_temperature** (*Optional*, float): Override the minimum temperature shown in the frontend.
+  - **max_temperature** (*Optional*, float): Override the maximum temperature shown in the frontend.
 
 - **internal** (*Optional*, boolean): Mark this component as internal. Internal components will not be exposed to the
   frontend (like Home Assistant). Only specifying an `id` without a `name` will implicitly set this to true.
@@ -134,13 +134,14 @@ From [lambdas](/automations/templates#config-lambda), you can access the current
 ```
 
 Available C++ enums for modes:
-* `water_heater::WATER_HEATER_MODE_OFF`
-* `water_heater::WATER_HEATER_MODE_ECO`
-* `water_heater::WATER_HEATER_MODE_ELECTRIC`
-* `water_heater::WATER_HEATER_MODE_PERFORMANCE`
-* `water_heater::WATER_HEATER_MODE_HIGH_DEMAND`
-* `water_heater::WATER_HEATER_MODE_HEAT_PUMP`
-* `water_heater::WATER_HEATER_MODE_GAS`
+
+- `water_heater::WATER_HEATER_MODE_OFF`
+- `water_heater::WATER_HEATER_MODE_ECO`
+- `water_heater::WATER_HEATER_MODE_ELECTRIC`
+- `water_heater::WATER_HEATER_MODE_PERFORMANCE`
+- `water_heater::WATER_HEATER_MODE_HIGH_DEMAND`
+- `water_heater::WATER_HEATER_MODE_HEAT_PUMP`
+- `water_heater::WATER_HEATER_MODE_GAS`
 
 ## See Also
 
