@@ -36,13 +36,13 @@ Possible return values for the optional lambda:
 
 ## Configuration variables
 
-- **lambda** (*Optional*, [lambda](#config-lambda)):
+- **lambda** (*Optional*, [lambda](/automations/templates#config-lambda)):
   Lambda to be evaluated repeatedly to get the current state of the switch.
 
-- **turn_on_action** (*Optional*, [Action](#config-action)): The action that should
+- **turn_on_action** (*Optional*, [Action](/automations/actions#all-actions)): The action that should
   be performed when the remote (like Home Assistant's frontend) requests the switch to be turned on.
 
-- **turn_off_action** (*Optional*, [Action](#config-action)): The action that should
+- **turn_off_action** (*Optional*, [Action](/automations/actions#all-actions)): The action that should
   be performed when the remote (like Home Assistant's frontend) requests the switch to be turned off.
 
 - **optimistic** (*Optional*, boolean): Whether to operate in optimistic mode - when in this mode,
@@ -53,7 +53,7 @@ Possible return values for the optional lambda:
   This will make the Home Assistant frontend show buttons for both ON and OFF actions, instead
   of hiding one of them when the switch is ON/OFF. Defaults to `false`.
 
-- All other options from [Switch](#config-switch).
+- All other options from [Switch](/components/switch#config-switch).
 
 {{< anchor "switch-template-publish_action" >}}
 
@@ -83,8 +83,8 @@ on_...:
 
 Configuration options:
 
-- **id** (**Required**, [ID](#config-id)): The ID of the template switch.
-- **state** (**Required**, boolean, [templatable](#config-templatable)):
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the template switch.
+- **state** (**Required**, boolean, [templatable](/automations/templates)):
   The state to publish.
 
 > [!NOTE]
