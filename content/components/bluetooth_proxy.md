@@ -19,26 +19,6 @@ are supported.
 If you're looking to create an ESPHome node that is just a Bluetooth Proxy, see
 our [Bluetooth Proxy installer](https://esphome.github.io/bluetooth-proxies/) website.
 
-> [!WARNING]
-> Active connections
->
-> The Bluetooth proxy of ESPHome provides Home Assistant with a maximum number of 3 simultaneous active connections.
-> Devices which maintain a *continuous active* connection will consume one of these constantly, whilst devices which
-> do *periodic disconnections and reconnections* will permit using more than 3 of them (on a statistical basis).
-> Passively broadcasted sensor data (that is advertised by certain devices without active connections) is received
-> separately from these, and is not limited to a specific number.
->
-> The {{< docref "esp32/" >}} component should be configured to use the `esp-idf` framework, as the `arduino` framework
-> uses significantly more memory and performs poorly with the Bluetooth proxy enabled. When switching from
-> `arduino` to `esp-idf`, make sure to update the device with a serial cable as the partition table is
-> different between the two frameworks as {{< docref "/components/ota" >}} updates will not change the partition table.
->
-> The {{< docref "web_server/" >}} component should be disabled as the device is likely
-> to run out of memory and will malfunction when both components are enabled simultaneously.
->
-> Not all devices are supported and ESPHome does not decode or keep a list. To find out if your device is supported,
-> please search for it in the [Home Assistant Integrations](https://www.home-assistant.io/integrations/) list.
-
 ## Configuration
 
 ```yaml
@@ -164,6 +144,23 @@ bluetooth_proxy:
   active: true
   connection_slots: 4
 ```
+
+## Troubleshooting
+
+### Active Connection Limits
+
+The Bluetooth proxy provides Home Assistant with a maximum number of simultaneous active connections (default 3, configurable via `connection_slots`). Devices which maintain a *continuous active* connection will consume one slot constantly, whilst devices which do *periodic disconnections and reconnections* will permit using more devices on a statistical basis. Passively broadcasted sensor data is received separately and is not limited to a specific number.
+
+### Memory Issues
+
+If you experience memory issues, consider the following:
+
+- **Framework:** The `esp-idf` framework is recommended over `arduino` as it uses less memory. When switching frameworks, update the device with a serial cable as the partition table differs—{{< docref "/components/ota" >}} updates will not change the partition table.
+- **Web Server:** The {{< docref "web_server/" >}} component uses additional RAM. Disabling it can help if you experience memory-related issues.
+
+### Device Compatibility
+
+Not all BLE devices are supported and ESPHome does not decode or keep a list. To find out if your device is supported, please search for it in the [Home Assistant Integrations](https://www.home-assistant.io/integrations/) list.
 
 ## See Also
 
