@@ -40,7 +40,9 @@ The Bluetooth proxy depends on {{< docref "esp32_ble_tracker/" >}} so make sure 
 
 ### How Active Connections Work
 
-The Bluetooth proxy provides Home Assistant with a limited number of simultaneous active GATT connections (configured via `connection_slots`, default 3). Devices that maintain a *continuous active* connection consume one slot constantly, while devices that do *periodic disconnections and reconnections* allow more devices to share the available slots on a statistical basis.
+The Bluetooth proxy provides Home Assistant with a limited number of simultaneous active GATT connections (configured via `connection_slots`). The default is 3 slots for WiFi-based proxies. Ethernet-based proxies can generally handle 4 slots reliably since they don't share the radio with WiFi traffic.
+
+Devices that stay connected continuously (like some locks or thermostats) use one slot the entire time. Devices that connect briefly to exchange data and then disconnect (like many sensors) free up the slot for other devices, so you can use more devices than you have slots.
 
 Passively broadcasted sensor data (advertised by devices without requiring active connections, such as many BTHome sensors) is received separately and is not limited by the number of connection slots.
 
