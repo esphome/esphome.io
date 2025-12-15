@@ -153,10 +153,6 @@ bluetooth_proxy:
 
 ## Troubleshooting
 
-### Active Connection Limits
-
-The Bluetooth proxy provides Home Assistant with a maximum number of simultaneous active connections (default 3, configurable via `connection_slots`). Devices which maintain a *continuous active* connection will consume one slot constantly, whilst devices which do *periodic disconnections and reconnections* will permit using more devices on a statistical basis. Passively broadcasted sensor data is received separately and is not limited to a specific number.
-
 ### Memory Issues
 
 If you experience memory issues, consider the following:
