@@ -86,7 +86,7 @@ on_...:
 
 ## `power_management.release_lock` Action
 
-This action releases a CPU Lock
+This action releases a Lock
 
 ```yaml
 on_...:
@@ -102,7 +102,7 @@ on_...:
 
 ### Configuration variables
 
-- **lock_type** (*Optional*): The lock type, valid values are CPU, APB, SLP, defaults to CPU
+- **lock_type** (*Optional*): The lock type, valid values are CPU, APB, SLP, defaults to SLP
 
 ## Using esp_pm_dump_locks
 
