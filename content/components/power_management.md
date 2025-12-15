@@ -14,67 +14,72 @@ mode to run an application at smallest possible power consumption, given the req
 
 It is very important to understand the section: [Dynamic Frequency Scaling and Peripheral Drivers](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/system/power_management.html#dynamic-frequency-scaling-and-peripheral-drivers)
 
-> [!NOTE]
-> Automatic Light-sleep is enabled by tickless_idle: true and occurs when there are no pending tasks.  
-In the openthread component, setting the poll_period > 0 dove-tails into this by turning off the radio in between data requests to the parent router.
-> [!NOTE]
-> Refenced the closed PR [Initial support for power management #4916](https://github.com/esphome/esphome/pull/4916) during the development (@silverchris)
-
-> [!NOTE]
-> Do not use Deep Sleep component with tickless_idle: true.
-
 ## Usage
 
 ```yaml
+# typical
 power_management:
   id: pm_id
-  timer_lock_duration: 10sec
-  tickless_idle: false
+  tickless_idle: true
   power_down_flash: true
   power_down_peripherals: true
 ```
 
-### Configuration variables
-
-- **timer_lock_duration** (*Optional*, [Time](/guides/configuration-types#config-time)): Time that device is locked initially after boot.
-- **tickless_idle** (*Optional*, boolean): Stops the system's periodic tick interrupt during idle periods to reduce current consumption.
-- **power_down_flash** (*Optional*, boolean): Safe power down, do not set to true if device has PSRAM.
-- **power_down_peripherals** (*Optional*, boolean): For disabled peripherals, automatically save and restore peripheral states, which allows the peripherals to be powered down.
-- **profiling** (*Optional*, boolean): sets the sdkconfig: CONFIG_PM_PROFILING.
-- **trace** (*Optional*, boolean): sets the sdkconfig: CONFIG_PM_TRACE.
-
-> [!NOTE]
-> Use of trace configuration variable requires detailed understanding of "esp-idf/components/esp_pm/pm_trace.c" and which GPIO pins are consumed for tracing.
-
-## `power_management.acquire_lock` Action
-
-This action acquires a CPU Lock
-
 ```yaml
-on_...:
-  then:
-  # Long form aquires a SLP Lock
-    - power_management.acquire_lock:
-        lock_type: SLP
-  # Short form aquires a CPU lock
-    - power_management.acquire_lock:
-  # Short form aquires a APB lock
-    - power_management.acquire_lock: APB
-  # Long form aquires a TMR Lock
-    - power_management.acquire_lock:
-        lock_type: TMR
-        #optional, will use last setting (including what was set by CV at power_management component)
-        timer_lock_duration: 10sec
+# full
+power_management:
+  id: pm_id
+  max_frequency: 96MHZ
+  min_frequency: 32MHZ
+  tickless_idle: true
+  power_down_flash: true
+  power_down_peripherals: true
+  profiling: true
+  trace: true
 ```
 
 ### Configuration variables
 
-- **lock_type** (*Optional*): The lock type, valid values are TMR, CPU, APB, SLP, defaults to CPU
-- **timer_lock_duration** (*Optional*, [Time](/guides/configuration-types#config-time)): Time that device is locked initially after boot.  Only used when lock_type: TMR
+- **max_frequency** (*Optional*, frequency) Frequency used when CPU lock acquired.  Defaults to CONFIG_ESP_DEFAULT_CPU_FREQ_MHZ.
+- **min_frequency** (*Optional*, frequency) Frequency used when not holding a CPU lock. Defaults to (esp_clk_xtal_freq() / MHZ).
+- **tickless_idle** (*Optional*, boolean): Stops the system's periodic tick interrupt during idle periods to reduce current consumption and enables automatic light-sleep.  Defaults to False.
+- **power_down_flash** (*Optional*, boolean): Safe power down, do not set to true if device has PSRAM.  Defaults to False.
+- **power_down_peripherals** (*Optional*, boolean): For disabled peripherals, automatically save and restore peripheral states, which allows the peripherals to be powered down.  Defaults to False.
+- **profiling** (*Optional*, boolean): sets the sdkconfig: CONFIG_PM_PROFILING.  Defaults to False.
+- **trace** (*Optional*, boolean): sets the sdkconfig: CONFIG_PM_TRACE.  Defaults to False.
+
+> [!NOTE]
+> Use of trace configuration variable requires detailed understanding of "esp-idf/components/esp_pm/pm_trace.c" and which GPIO pins are consumed for tracing.
+
+> [!NOTE]
+> Automatic Light-sleep is enabled by tickless_idle: true and occurs when there are no pending tasks.  
+In the openthread component, setting the poll_period > 0 dove-tails into this by turning off the radio in between data requests to the parent router.
+
+> [!NOTE]
+> Do not use Deep Sleep component with tickless_idle: true.
+
+## `power_management.acquire_lock` Action
+
+This action acquires a Lock
+
+```yaml
+on_...:
+  then:
+  # Long form aquires a CPU Lock
+    - power_management.acquire_lock:
+        lock_type: CPU
+  # Short form aquires a SLP lock
+    - power_management.acquire_lock:
+  # Short form aquires a APB lock
+    - power_management.acquire_lock: APB
+```
+
+### Configuration variables
+
+- **lock_type** (*Optional*): The lock type, valid values are TMR, CPU, APB, SLP, defaults to SLP
 
 ### Lock Types
 
-- **TMR**: A CPU_FREQ_MAX lock that is set for the **timer_lock_duration** and then released
 - **CPU**: Locks the CPU at its max frequency, CPU_FREQ_MAX
 - **APB**: Locks the Advanced Peripheral Bus to a stable frequency, APB_FREQ_MAX
 - **SLP**: Locks out automatic light sleep, NO_LIGHT_SLEEP
@@ -86,20 +91,18 @@ This action releases a CPU Lock
 ```yaml
 on_...:
   then:
-  # Long form aquires a SLP Lock
+  # Long form releases a CPU Lock
     - power_management.release_lock:
-        lock_type: SLP
-  # Short form aquires a CPU lock
+        lock_type: CPU
+  # Short form releases a SLP lock
     - power_management.release_lock:
-  # Short form aquires a APB lock
+  # Short form releases a APB lock
     - power_management.release_lock: APB
 ```
 
 ### Configuration variables
 
 - **lock_type** (*Optional*): The lock type, valid values are CPU, APB, SLP, defaults to CPU
-
-## Example of using Actions
 
 ## Using esp_pm_dump_locks
 
@@ -128,3 +131,6 @@ sensor:
       - lambda: |-
           esp_pm_dump_locks(stdout);
 ```
+
+> [!NOTE]
+> Refenced the closed PR [Initial support for power management #4916](https://github.com/esphome/esphome/pull/4916) during the development (@silverchris)
