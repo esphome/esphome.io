@@ -683,6 +683,7 @@ Often known as "tag" or "card" readers within the community.
 "Thermostat Controller","components/climate/thermostat","air-conditioner.svg","dark-invert"
 "Tuya Climate","components/climate/tuya","tuya.png",""
 "Uponor Smatrix Base Pulse Underfloor Heating","components/uponor_smatrix","uponor.svg",""
+"Water Heater","components/water_heater/","water-heater.svg","dark-invert"
 {{< /imgtable >}}
 
 ## Cover Components
