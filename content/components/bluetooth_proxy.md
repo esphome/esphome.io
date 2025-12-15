@@ -67,9 +67,9 @@ Use a board with an Ethernet connection to the network, to offload ESP32's radio
 
 ### Passive vs Active Scanning
 
-Passive scanning (the default) works for most BLE devices and is sufficient for ongoing operation. Active scanning is typically only needed when initially adding new devices to Home Assistant, as it requests additional scan response data from devices. Active scanning also increases battery drain on battery-powered BLE devices.
+Passive scanning works for most BLE devices and is sufficient for ongoing operation. Active scanning requests additional scan response data from devices and is typically only needed when initially adding new devices to Home Assistant. Active scanning also increases battery drain on battery-powered BLE devices.
 
-If you experience overheating even with default scan parameters, you can try disabling active scanning in [ESP32 BLE Tracker](/components/esp32_ble_tracker) if your devices don't require it:
+The [ESP32 BLE Tracker](/components/esp32_ble_tracker) component defaults to active scanning (`active: true`). If you experience overheating, you can try switching to passive scanning if your devices don't require active scans:
 
 ```yaml
 esp32_ble_tracker:
