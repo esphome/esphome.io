@@ -39,7 +39,7 @@ The Bluetooth proxy depends on {{< docref "esp32_ble_tracker/" >}} so make sure 
 
 ### How Active Connections Work
 
-The Bluetooth proxy provides Home Assistant with a limited number of simultaneous active GATT connections (configured via `connection_slots`). The default is 3 slots. Ethernet-based proxies can generally handle 4 slots reliably since they don't share the radio with WiFi traffic—set `connection_slots: 4` if you need more connections (each slot uses additional RAM).
+The Bluetooth proxy provides Home Assistant with a limited number of simultaneous active GATT connections (configured via `connection_slots`). The default is 3 slots. Ethernet-based proxies can generally handle 4 slots reliably since they don't share the radio with WiFi traffic. Set `connection_slots: 4` if you need more connections (each slot uses additional RAM).
 
 Devices that stay connected continuously (like some locks or thermostats) use one slot the entire time. Devices that connect briefly to exchange data and then disconnect (like many sensors) free up the slot for other devices, so you can use more devices than you have slots.
 
@@ -158,7 +158,7 @@ bluetooth_proxy:
 
 If you experience memory issues, consider the following:
 
-- **Framework:** The `esp-idf` framework is recommended over `arduino` as it uses less memory. When switching frameworks, update the device with a serial cable as the partition table differs—{{< docref "/components/ota" >}} updates will not change the partition table.
+- **Framework:** The `esp-idf` framework is recommended over `arduino` as it uses less memory. When switching frameworks, update the device with a serial cable as the partition table differs. {{< docref "/components/ota" >}} updates will not change the partition table.
 - **Web Server:** The {{< docref "web_server/" >}} component uses additional RAM. Disabling it can help if you experience memory-related issues.
 
 ### Device Compatibility
