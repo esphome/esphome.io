@@ -380,6 +380,7 @@ Sensors are organized into categories; if a given sensor fits into more than one
 "DHT","components/sensor/dht","dht.jpg","Temperature & Humidity",""
 "DHT12","components/sensor/dht12","dht12.jpg","Temperature & Humidity",""
 "DPS310","components/sensor/dps310","dps310.jpg","Temperature & Pressure",""
+"DPS3xx","components/sensor/xensiv_dps3xx_i2c","dps3xx.png","Temperature & Pressure",""
 "EMC2101","components/emc2101","emc2101.jpg","Temperature",""
 "ENS160","components/sensor/ens160","ens160.jpg","eCO₂ & Air Quality",""
 "ENS210","components/sensor/ens210","ens210.jpg","Temperature & Humidity",""
