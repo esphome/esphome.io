@@ -48,7 +48,7 @@ bluetooth_proxy:
   # active: false
 ```
 
-- **active** (*Optional*, boolean): Enables proxying active GATT connections to BLE devices. This is separate from active *scanning* (configured in {{< docref "esp32_ble_tracker/" >}}). Defaults to `true`.
+- **active** (*Optional*, boolean): Enables proxying active GATT connections to BLE devices. This is separate from active *scanning* (configured in [ESP32 BLE Tracker](/components/esp32_ble_tracker#scan-parameters)). Defaults to `true`.
 - **cache_services** (*Optional*, boolean): Enables caching GATT services in NVS flash storage which significantly speeds up active connections. Defaults to `true`.
 - **connection_slots** (*Optional*, int): The maximum number of BLE connection slots to use.
   Each configured slot consumes ~1KB of RAM, with a maximum of `9`. It is recommended not to exceed `5`
@@ -69,7 +69,7 @@ Use a board with an Ethernet connection to the network, to offload ESP32's radio
 
 Passive scanning (the default) works for most BLE devices and is sufficient for ongoing operation. Active scanning is typically only needed when initially adding new devices to Home Assistant, as it requests additional scan response data from devices. Active scanning also increases battery drain on battery-powered BLE devices.
 
-If you experience overheating even with default scan parameters, you can try disabling active scanning in {{< docref "esp32_ble_tracker/" >}} if your devices don't require it:
+If you experience overheating even with default scan parameters, you can try disabling active scanning in [ESP32 BLE Tracker](/components/esp32_ble_tracker#scan-parameters) if your devices don't require it:
 
 ```yaml
 esp32_ble_tracker:
