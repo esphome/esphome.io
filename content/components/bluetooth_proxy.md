@@ -38,6 +38,12 @@ bluetooth_proxy:
 
 The Bluetooth proxy depends on {{< docref "esp32_ble_tracker/" >}} so make sure to add that to your configuration.
 
+### How Active Connections Work
+
+The Bluetooth proxy provides Home Assistant with a limited number of simultaneous active GATT connections (configured via `connection_slots`, default 3). Devices that maintain a *continuous active* connection consume one slot constantly, while devices that do *periodic disconnections and reconnections* allow more devices to share the available slots on a statistical basis.
+
+Passively broadcasted sensor data (advertised by devices without requiring active connections, such as many BTHome sensors) is received separately and is not limited by the number of connection slots.
+
 ## Improving reception performance
 
 Use a board with an Ethernet connection to the network, to offload ESP32's radio module from WiFi traffic, this gains performance on Bluetooth side.
