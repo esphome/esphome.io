@@ -16,7 +16,7 @@ and Home Assistant.
 Note that while this component is named `bluetooth_proxy`, only BLE devices (and their Home Assistant integrations)
 are supported.
 
-If you'd like to buy a ready-made Bluetooth proxy or flash your own device, see [ESPHome projects](/projects/).
+If you'd like to buy a ready-made Bluetooth proxy or flash your own device, see [ESPHome projects with Bluetooth proxy support](/projects/?type=bluetooth).
 
 ## Configuration
 
