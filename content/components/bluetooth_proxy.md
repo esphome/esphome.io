@@ -33,7 +33,8 @@ bluetooth_proxy:
 - **cache_services** (*Optional*, boolean): Enables caching GATT services in NVS flash storage which significantly speeds up active connections. Defaults to `true`.
 - **connection_slots** (*Optional*, int): The maximum number of BLE connection slots to use.
   Each configured slot consumes ~1KB of RAM, with a maximum of `9`. It is recommended not to exceed `5`
-  connection slots to avoid memory issues. Defaults to `3`. Ethernet-based proxies can generally handle `4` connection slots reliably.
+  connection slots to avoid stability and memory issues. Defaults to `3`.
+  Ethernet-based proxies can generally handle `4` connection slots reliably.
   The value must not exceed the total configured `max_connections`
   for [ESP32 BLE](/components/esp32_ble).
 
