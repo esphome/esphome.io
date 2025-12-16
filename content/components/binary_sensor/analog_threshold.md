@@ -34,19 +34,23 @@ binary_sensor:
     threshold: 0.5
 ```
 
-As an alternative to using this component you may use {{< docref "components/binary_sensor/template" >}} with [condition expressions](/automations/actions/#all-conditions):
+Alternatively, you can achieve similar functionality using a
+[Template Binary Sensor](/components/binary_sensor/template) with the `condition` option:
 
 ```yaml
-# Example configuration entry
+# Alternative using template binary sensor
 binary_sensor:
   - platform: template
-    id: engine_running
     name: "Engine Running"
     condition:
       sensor.in_range:
-        sensor_id: motor_current_sensor
+        id: motor_current_sensor
         above: 0.5
 ```
+
+> [!NOTE]
+> The template approach does not support hysteresis. Use `analog_threshold` if you need
+> different upper and lower thresholds to reduce noise.
 
 ## Configuration variables
 
