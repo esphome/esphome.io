@@ -21,7 +21,7 @@ override substitutions with the same name in a package.
 Dictionaries are merged key-by-key. Lists of components are merged by component ID (if specified). Other lists are
 merged by concatenation. All other configuration values are replaced with the later value.
 
-ESPHome uses `!include` to "bring in" packages from other files; this feature is described in [!include](#yaml-include).
+ESPHome uses `!include` to "bring in" packages from other files; this feature is described in [!include](/guides/yaml#yaml-include).
 
 The `packages:` key may have a value that is a list of valid package references, or a mapping of keys to package references.
 When a mapping is used, the keys are for reference only and have no significance in themselves.
@@ -127,7 +127,7 @@ For each package:
   - list of objects containing `path` and `vars`
 
 - **ref** (*Optional*, string): The Git ref(erence) to be used when pulling content from the repository.
-- **refresh** (*Optional*, [Time](#config-time)): The interval at which the content from the repository should be refreshed.
+- **refresh** (*Optional*, [Time](/guides/configuration-types#time)): The interval at which the content from the repository should be refreshed.
 
 ## Packages as Templates
 
@@ -182,7 +182,7 @@ captive_portal:
 sensor:
   - platform: uptime
     id: uptime_sensor
-    update_interval: 1min
+    update_interval: 5min
 ```
 
 ```yaml
@@ -192,6 +192,31 @@ packages: !include common.yaml
 sensor:
   - id: !extend uptime_sensor
     update_interval: 10s
+```
+
+`!extend` also works with substitutions and jinja:
+
+```yaml
+substitutions:
+  switches:
+    - left_switch
+    - right_switch
+    - center_switch
+  
+  mains_switch: 1
+
+switch:
+  - platform: gpio
+    id: left_switch
+    pin: 1
+  - platform: gpio
+    id: right_switch
+    pin: 2
+  - platform: gpio
+    id: center_switch
+    pin: 3
+  - id: !extend ${ switches[mains_switch] }
+    name: "Mains switch"
 ```
 
 {{< anchor "config-packages_remove" >}}
@@ -227,6 +252,19 @@ packages:
 sensor:
   - id: !extend uptime_sensor
     update_interval: !remove
+```
+
+`!remove` also works with substitutions:
+
+```yaml
+substitutions:
+  disable_reboot: true
+
+switch:
+  - platform: restart
+    id: restart_switch
+    name: "Living Room Restart"
+  - id: !remove ${disable_reboot and "restart_switch"}
 ```
 
 ## See Also

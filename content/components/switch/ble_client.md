@@ -34,8 +34,8 @@ switch:
 
 ## Configuration variables
 
-- **ble_client_id** (**Required**, [ID](#config-id)): ID of the associated BLE client.
-- All other options from [Switch](#config-switch).
+- **ble_client_id** (**Required**, [ID](/guides/configuration-types#id)): ID of the associated BLE client.
+- All other options from [Switch](/components/switch#config-switch).
 
 ## See Also
 

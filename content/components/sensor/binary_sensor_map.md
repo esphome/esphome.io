@@ -138,12 +138,12 @@ binary_sensor:
   - **prob_given_true** (**Required**, float between 0 and 1): Assuming the event is true, the probability this observation is on.
   - **prob_given_false** (**Required**, float between 0 and 1): Assuming the event is false, the probability this observation is on.
 
-- All other options from [Sensor](#config-sensor).
+- All other options from [Sensor](/components/sensor).
 
 ## See Also
 
 - {{< docref "/components/binary_sensor/mpr121" >}}
 - {{< docref "/components/binary_sensor/analog_threshold" >}}
-- [Sensor Filters](#sensor-filters)
+- [Sensor Filters](/components/sensor#sensor-filters)
 - {{< apiref "binary_sensor_map/binary_sensor_map.h" "binary_sensor_map/binary_sensor_map.h" >}}
 - [Bayesian sensor in Home Assistant](https://www.home-assistant.io/integrations/bayesian/)
