@@ -50,14 +50,22 @@ Passively broadcasted sensor data (advertised by devices without requiring activ
 
 ## Improving reception performance
 
-Use a board with an Ethernet connection to the network, to offload ESP32's radio module from WiFi traffic. This improves Bluetooth performance. For best results, choose a board with an external antenna (e.g., prefer Olimex ESP32-PoE-ISO-EA over Olimex ESP32-PoE-ISO).
+Use a board with an Ethernet connection to the network to offload ESP32's radio module
+from WiFi traffic, which improves Bluetooth performance. For best results, use a board
+with an external antenna (e.g., Olimex ESP32-PoE-ISO-EA over Olimex ESP32-PoE-ISO).
 
 > [!NOTE]
-> The default scan parameters are recommended for most users. Changing `interval` or `window` from their defaults typically provides no meaningful benefit while increasing CPU usage and network traffic. Aggressive scan settings can cause overheating on some PoE-based proxies, and WiFi instability on WiFi-based proxies.
+> The default scan parameters are recommended for most users. Changing `interval` or
+> `window` from their defaults typically provides no meaningful benefit while increasing
+> CPU usage and network traffic. Aggressive scan settings can cause overheating on
+> PoE-based proxies and WiFi instability on WiFi-based proxies.
 
 ### Passive vs Active Scanning
 
-Passive scanning works for most BLE devices and is sufficient for ongoing operation. Active scanning requests additional scan response data from devices and is typically only needed when initially adding new devices to Home Assistant. Active scanning also increases battery drain on battery-powered BLE devices.
+Passive scanning works for most BLE devices and is sufficient for ongoing operation.
+Active scanning requests additional scan response data from devices and is typically
+only needed when initially adding new devices to Home Assistant. Active scanning also
+increases battery drain on battery-powered BLE devices.
 
 The [ESP32 BLE Tracker](/components/esp32_ble_tracker) component defaults to active scanning (`active: true`). If you experience overheating, you can try switching to passive scanning if your devices don't require active scans:
 
