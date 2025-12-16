@@ -124,7 +124,7 @@ text_sensor:
   - platform: template
     name: "Example Date"
     id: example_date_text_sensor
-    icon: "mdi:calendar-clock"
+    icon: "mdi:calendar"
     device_class: "date"
     update_interval: 5s
     lambda: |-
