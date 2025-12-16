@@ -55,7 +55,7 @@ power_management:
 > [!NOTE]
 > Automatic Light-sleep is enabled by tickless_idle: true and occurs when there are no pending tasks.  
 In the openthread component, setting the poll_period > 0 dove-tails into this by turning off the radio in between data requests to the parent router.
-> When configured for automatic light-sleep.  It is recommended to not use esphome.OTA since opening the listening port decreases light-sleep.  Instead use an OTA platform that pulls the image such as http_request.OTA.
+> [!NOTE]
 > Do not use Deep Sleep component with tickless_idle: true.
 
 ## `power_management.acquire_lock` Action
