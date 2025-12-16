@@ -34,7 +34,7 @@ binary_sensor:
     threshold: 0.5
 ```
 
-As an alternative to using this component you may use {{< docref "components/binary_sensor/template" >}} with [condition expressions](#config-condition):
+As an alternative to using this component you may use {{< docref "components/binary_sensor/template" >}} with [condition expressions](/automations/actions/#all-conditions):
 
 ```yaml
 # Example configuration entry
