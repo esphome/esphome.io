@@ -51,6 +51,9 @@ prometheus:
 - Cover
 - Switch
 - Lock
+- Datetime
+- Date
+- Time
 - Text Sensor
 - Text
 - Event
