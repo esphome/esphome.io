@@ -306,6 +306,54 @@ The three key settings for LVGL are:
 - `auto_clear_enabled: false` - LVGL handles clearing
 - `double_buffer: false` - LVGL manages its own buffering
 
+## Actions
+
+### `hub75.set_brightness` Action
+
+This action allows you to dynamically change the brightness of the display at runtime.
+
+```yaml
+# Example: Control brightness with a template number
+number:
+  - platform: template
+    name: "Display Brightness"
+    id: brightness
+    icon: "mdi:brightness-6"
+    min_value: 1
+    max_value: 255
+    step: 1
+    optimistic: true
+    restore_value: true
+    initial_value: 128
+    on_value:
+      then:
+        - hub75.set_brightness:
+            id: matrix_display
+            brightness: !lambda return x;
+
+# Example: Turn display off/on by setting brightness
+switch:
+  - platform: template
+    name: "Display Power"
+    id: display_power
+    icon: "mdi:power"
+    restore_mode: RESTORE_DEFAULT_ON
+    optimistic: true
+    turn_on_action:
+      - hub75.set_brightness:
+          id: matrix_display
+          brightness: 128
+    turn_off_action:
+      - hub75.set_brightness:
+          id: matrix_display
+          brightness: 0
+```
+
+**Configuration variables:**
+
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the HUB75 display component. Only required if you have multiple `hub75` platform displays configured.
+- **brightness** (**Required**, int, [templatable](/guides/automations#templates)): The brightness level to set (0-255). A value of 0 effectively turns off the display, while 255 is maximum brightness.
+
 ## Configuration Examples
 
 ### Basic Single Panel (with Board Preset)
