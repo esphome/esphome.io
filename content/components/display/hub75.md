@@ -352,7 +352,7 @@ switch:
 **Configuration variables:**
 
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the HUB75 display component. Only required if you have multiple `hub75` platform displays configured.
-- **brightness** (**Required**, int, [templatable](/guides/automations#templates)): The brightness level to set (0-255). A value of 0 effectively turns off the display, while 255 is maximum brightness.
+- **brightness** (**Required**, int, [templatable](/automations/templates)): The brightness level to set (0-255). A value of 0 effectively turns off the display, while 255 is maximum brightness.
 
 ## Configuration Examples
 
