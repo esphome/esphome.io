@@ -67,7 +67,9 @@ Active scanning requests additional scan response data from devices and is typic
 only needed when initially adding new devices to Home Assistant. Active scanning also
 increases battery drain on battery-powered BLE devices.
 
-The [ESP32 BLE Tracker](/components/esp32_ble_tracker) component defaults to active scanning (`active: true`). If you experience overheating, you can try switching to passive scanning if your devices don't require active scans:
+The [ESP32 BLE Tracker](/components/esp32_ble_tracker) component defaults to active scanning
+(`active: true`). If you experience overheating, you can try switching to passive scanning
+if your devices don't require active scans:
 
 ```yaml
 esp32_ble_tracker:
