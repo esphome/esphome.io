@@ -109,6 +109,27 @@ text_sensor:
     update_interval: 600s
     lambda: |-
       return { ESPHOME_PROJECT_NAME };
+
+  - platform: template
+    name: "Example Datetime"
+    id: example_datetime_text_sensor
+    icon: "mdi:calendar-clock"
+    device_class: "timestamp"
+    update_interval: 5s
+    lambda: |-
+      auto t = id(example_datetime).state_as_esptime();
+      // Eventually make the timezone configurable, this doesn't handle DST
+      return t.strftime("%Y-%m-%dT%H:%M:%S-08:00");
+
+  - platform: template
+    name: "Example Date"
+    id: example_date_text_sensor
+    icon: "mdi:calendar-clock"
+    device_class: "date"
+    update_interval: 5s
+    lambda: |-
+      auto d = id(example_date).state_as_esptime();
+      return d.strftime("%Y-%m-%d");
 ```
 
 ## See Also
