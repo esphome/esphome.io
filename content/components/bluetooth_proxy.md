@@ -27,15 +27,17 @@ bluetooth_proxy:
   # active: false
 ```
 
-- **active** (*Optional*, boolean): Enables proxying active GATT connections to BLE devices. This is separate from active *scanning* (configured in [ESP32 BLE Tracker](/components/esp32_ble_tracker)). Defaults to `true`.
+- **active** (*Optional*, boolean): Enables proxying active GATT connections to BLE devices.
+  This is separate from active *scanning* (configured in [ESP32 BLE Tracker](/components/esp32_ble_tracker)).
+  Defaults to `true`.
 - **cache_services** (*Optional*, boolean): Enables caching GATT services in NVS flash storage which significantly speeds up active connections. Defaults to `true`.
 - **connection_slots** (*Optional*, int): The maximum number of BLE connection slots to use.
   Each configured slot consumes ~1KB of RAM, with a maximum of `9`. It is recommended not to exceed `5`
   connection slots to avoid memory issues. Defaults to `3`. Ethernet-based proxies can generally handle `4` connection slots reliably.
   The value must not exceed the total configured `max_connections`
-  for {{< docref "esp32_ble/" >}}.
+  for [ESP32 BLE](/components/esp32_ble).
 
-The Bluetooth proxy depends on {{< docref "esp32_ble_tracker/" >}} so make sure to add that to your configuration.
+The Bluetooth proxy depends on [ESP32 BLE Tracker](/components/esp32_ble_tracker) so make sure to add that to your configuration.
 
 ### How Active Connections Work
 
@@ -79,7 +81,7 @@ esphome:
   name_add_mac_suffix: true
 
 esp32:
-  board: esp32dev
+  variant: esp32
   framework:
     type: esp-idf
 
@@ -119,6 +121,7 @@ esphome:
 
 esp32:
   board: ${board}
+  variant: esp32
   framework:
     type: esp-idf
 
@@ -158,8 +161,11 @@ bluetooth_proxy:
 
 If you experience memory issues, consider the following:
 
-- **Framework:** The `esp-idf` framework is recommended over `arduino` as it uses less memory. When switching frameworks, update the device with a serial cable as the partition table differs. {{< docref "/components/ota" >}} updates will not change the partition table.
-- **Web Server:** The {{< docref "web_server/" >}} component uses additional RAM. Disabling it can help if you experience memory-related issues.
+- **Framework:** The `esp-idf` framework is recommended over `arduino` as it uses less memory.
+  When switching frameworks, update the device with a serial cable as the partition table differs.
+  [OTA](/components/ota) updates will not change the partition table.
+- **Web Server:** The [Web Server](/components/web_server) component uses additional RAM.
+  Disabling it can help if you experience memory-related issues.
 
 ### Device Compatibility
 
@@ -167,6 +173,6 @@ Not all BLE devices are supported and ESPHome does not decode or keep a list. To
 
 ## See Also
 
-- {{< docref "esp32_ble_tracker/" >}}
+- [ESP32 BLE Tracker](/components/esp32_ble_tracker)
 - {{< apiref "bluetooth_proxy/bluetooth_proxy.h" "bluetooth_proxy/bluetooth_proxy.h" >}}
 - BTHome <https://bthome.io/>
