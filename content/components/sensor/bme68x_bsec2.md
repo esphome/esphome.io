@@ -71,6 +71,23 @@ bme68x_bsec2_i2c:
   section to refer to the correct BME68x sensor if you have more than one device. This will also be used to refer to
   the calibrated BSEC2 algorithm state saved to flash.
 
+```yaml
+# Minimal example configuration with multiple sensors
+bme68x_bsec2_i2c:
+  - id: bme68X_1
+    address: 0x76
+    model: bme680
+    operating_age: 28d
+    sample_rate: LP
+    supply_voltage: 3.3V
+  - id: bme68X_2
+    address: 0x77
+    model: bme680
+    operating_age: 28d
+    sample_rate: LP
+    supply_voltage: 3.3V
+```
+
 ## Sensor
 
 ```yaml
