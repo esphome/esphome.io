@@ -16,7 +16,8 @@ and Home Assistant.
 Note that while this component is named `bluetooth_proxy`, only BLE devices (and their Home Assistant integrations)
 are supported.
 
-If you'd like to buy a ready-made Bluetooth proxy or flash your own device, see [ESPHome projects with Bluetooth proxy support](/projects/?type=bluetooth).
+If you'd like to buy a ready-made Bluetooth proxy or flash your own device, see
+[ESPHome projects with Bluetooth proxy support](/projects/?type=bluetooth).
 
 ## Configuration
 
@@ -30,7 +31,8 @@ bluetooth_proxy:
 - **active** (*Optional*, boolean): Enables proxying active GATT connections to BLE devices.
   This is separate from active *scanning* (configured in [ESP32 BLE Tracker](/components/esp32_ble_tracker)).
   Defaults to `true`.
-- **cache_services** (*Optional*, boolean): Enables caching GATT services in NVS flash storage which significantly speeds up active connections. Defaults to `true`.
+- **cache_services** (*Optional*, boolean): Enables caching GATT services in NVS flash storage which
+  significantly speeds up active connections. Defaults to `true`.
 - **connection_slots** (*Optional*, int): The maximum number of BLE connection slots to use.
   Each configured slot consumes ~1KB of RAM, with a maximum of `9`. It is recommended not to exceed `5`
   connection slots to avoid stability and memory issues. Defaults to `3`.
@@ -38,15 +40,22 @@ bluetooth_proxy:
   The value must not exceed the total configured `max_connections`
   for [ESP32 BLE](/components/esp32_ble).
 
-The Bluetooth proxy depends on [ESP32 BLE Tracker](/components/esp32_ble_tracker) so make sure to add that to your configuration.
+The Bluetooth proxy depends on [ESP32 BLE Tracker](/components/esp32_ble_tracker) so make sure to add that
+to your configuration.
 
 ### How Active Connections Work
 
-The Bluetooth proxy provides Home Assistant with a limited number of simultaneous active GATT connections (configured via `connection_slots`). The default is 3 slots. Ethernet-based proxies can generally handle 4 slots reliably since they don't share the radio with WiFi traffic. Set `connection_slots: 4` if you need more connections (each slot uses additional RAM).
+The Bluetooth proxy provides Home Assistant with a limited number of simultaneous active GATT connections
+(configured via `connection_slots`). The default is 3 slots. Ethernet-based proxies can generally handle
+4 slots reliably since they don't share the radio with WiFi traffic. Set `connection_slots: 4` if you need
+more connections (each slot uses additional RAM).
 
-Devices that stay connected continuously (like some locks or thermostats) use one slot the entire time. Devices that connect briefly to exchange data and then disconnect (like many sensors) free up the slot for other devices, so you can use more devices than you have slots.
+Devices that stay connected continuously (like some locks or thermostats) use one slot the entire time.
+Devices that connect briefly to exchange data and then disconnect (like many sensors) free up the slot
+for other devices, so you can use more devices than you have slots.
 
-Passively broadcasted sensor data (advertised by devices without requiring active connections, such as many BTHome sensors) is received separately and is not limited by the number of connection slots.
+Passively broadcasted sensor data (advertised by devices without requiring active connections, such as
+many BTHome sensors) is received separately and is not limited by the number of connection slots.
 
 ## Improving reception performance
 
@@ -77,11 +86,15 @@ esp32_ble_tracker:
     active: false
 ```
 
-Avoid placing the ESP node in racks, close to routers/switches or other network equipment as EMI interference will degrade Bluetooth signal reception. For best results put as far away as possible, at least 3 meters distance from any other such equipment. Place your ESPHome devices close to the Bluetooth devices that you want to interact with for the best experience.
+Avoid placing the ESP node in racks, close to routers/switches or other network equipment as EMI
+interference will degrade Bluetooth signal reception. For best results put as far away as possible,
+at least 3 meters distance from any other such equipment. Place your ESPHome devices close to the
+Bluetooth devices that you want to interact with for the best experience.
 
 ## Complete sample recommended configuration for a WiFi-connected Bluetooth proxy
 
-Below is a complete sample recommended configuration for a WiFi-connected Bluetooth proxy. If you experience issues with your proxy, try reducing your configuration to be as similar to this as possible.
+Below is a complete sample recommended configuration for a WiFi-connected Bluetooth proxy. If you
+experience issues with your proxy, try reducing your configuration to be as similar to this as possible.
 
 ```yaml
 substitutions:
@@ -117,9 +130,12 @@ bluetooth_proxy:
 
 ## Complete sample recommended configuration for an ethernet-connected Bluetooth proxy
 
-Below is a complete sample recommended configuration for an ethernet-connected Bluetooth proxy. This configuration is not for a Wi-Fi based proxy. If you experience issues with your proxy, try reducing your configuration to be as similar to this as possible.
+Below is a complete sample recommended configuration for an ethernet-connected Bluetooth proxy. This
+configuration is not for a Wi-Fi based proxy. If you experience issues with your proxy, try reducing
+your configuration to be as similar to this as possible.
 
-This configuration is for an Olimex ESP32-PoE-ISO board with an Ethernet connection to the network. If you use a different board, you must change the `board` substitution to match your board.
+This configuration is for an Olimex ESP32-PoE-ISO board with an Ethernet connection to the network.
+If you use a different board, you must change the `board` substitution to match your board.
 
 ```yaml
 substitutions:
@@ -180,7 +196,9 @@ If you experience memory issues, consider the following:
 
 ### Device Compatibility
 
-Not all BLE devices are supported and ESPHome does not decode or keep a list. To find out if your device is supported, please search for it in the [Home Assistant Integrations](https://www.home-assistant.io/integrations/) list.
+Not all BLE devices are supported and ESPHome does not decode or keep a list. To find out if your device
+is supported, please search for it in the
+[Home Assistant Integrations](https://www.home-assistant.io/integrations/) list.
 
 ## See Also
 
