@@ -363,7 +363,7 @@ Sensors are organized into categories; if a given sensor fits into more than one
 
 {{< imgtable >}}
 "Absolute Humidity","components/sensor/absolute_humidity","water-drop.svg","dark-invert",""
-"Adafruit STEMMA Soil Sensor","components/sensor/adafruit_seesaw_soil","adafruit_seesaw_soil.jpg","Temperature & Humidity",""
+"Adafruit STEMMA Soil Sensor","components/sensor/adafruit_seesaw_soil","adafruit_seesaw_soil.png","Temperature & Humidity",""
 "AHT10 / AHT20 / AHT21 / DHT20","components/sensor/aht10","aht10.jpg","Temperature & Humidity",""
 "AirThings BLE","components/sensor/airthings_ble","airthings_logo.png","Temperature & Humidity & Pressure",""
 "AM2315C","components/sensor/am2315c","am2315c.jpg","Temperature & Humidity",""
