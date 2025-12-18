@@ -47,7 +47,7 @@ light:
   can handle per second. For example, `16ms` will limit the light to a refresh rate of about 60Hz. Defaults to
   sending commands as quickly as changes are made to the lights.
 
-- **use_psram** (*Optional*, boolean): Set to `false` to force internal RAM allocation even if you have the the PSRAM
+- **use_psram** (*Optional*, boolean): Set to `false` to force internal RAM allocation even if you have the PSRAM
   component enabled. This can be useful if you're experiencing issues like flickering with your leds strip. Defaults to `true`.
 
 - **rmt_symbols** (*Optional*, int): When `use_dma` is enabled, this sets the size of the driver's internal DMA
@@ -61,6 +61,7 @@ light:
 | ESP32-C3      | 96 symbols       | 48 symbols |
 | ESP32-C5 | 96 symbols | 48 symbols |
 | ESP32-C6 | 96 symbols | 48 symbols |
+| ESP32-C61 | 96 symbols | 48 symbols |
 | ESP32-H2 | 96 symbols | 48 symbols |
 | ESP32-P4 | 192 symbols | 48 symbols |
 | ESP32-S2 | 256 symbols | 64 symbols |
