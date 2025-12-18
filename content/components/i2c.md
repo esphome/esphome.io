@@ -39,7 +39,7 @@ i2c:
 - **scan** (*Optional*, boolean): If ESPHome should do a search of the I²C address space on startup.
   Defaults to `true`.
 
-- **frequency** (*Optional*, float): Set the frequency the I²C bus should operate on.
+- **frequency** (*Optional*, frequency): Set the frequency the I²C bus should operate on.
   Defaults to `50kHz`. Default for NRF52 is `100kHz`. Values are `10kHz`, `50kHz`, `100kHz`, `200kHz`, ... `800kHz`.
   NRF52 supports only `100kHz` and `400kHz`.
 
@@ -52,6 +52,9 @@ i2c:
 
 - **scl_pullup_enabled** (*Optional*, boolean): Enable the internal pullup resistor for the SCL pin.
   Defaults to `true`. Only available on ESP32.
+
+- **low_power_mode** (*Optional*, boolean): Enable the low-power (master only) I²C bus.
+  Only availible on ESP32C5, ESP32C6 and ESP32P4. Defaults to `false` unless required.
 
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID for this I²C bus if you need multiple I²C buses.
 

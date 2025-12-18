@@ -18,7 +18,7 @@ This component allows ESPHome nodes to communicate with Home Assistant over a Th
 
 ## Usage
 
-This component requires an ESP32 (ESP32-C6 or ESP32-H2 because they have Thread radio chip) and the use of
+This component requires an ESP32 (ESP32-C5, ESP32-C6, or ESP32-H2 because they have Thread radio chip) and the use of
 ESP-IDF.
 
 ```yaml
@@ -58,10 +58,12 @@ openthread:
 - **channel** (int): Channel number from 11 to 26
 - **network_name** (string): A human-readable Network Name
 - **network_key** (string): OpenThread network key
-- **panid** (string): 2-byte Personal Area Network ID (PAN ID)
-- **extpanid** (string): 8-byte Extended Personal Area Network ID (XPAN ID)
+- **pan_id** (string): 2-byte Personal Area Network ID (PAN ID)
+- **ext_pan_id** (string): 8-byte Extended Personal Area Network ID (XPAN ID)
 - **pskc** (string): PSKc is used to authenticate an external Thread Commissioner to a Thread network
 - **mesh_local_prefix** (ipv6network): Used to build Mesh-Local IPv6 addresses (ML-EIDs), which are unique to each Thread device within the network partition
+- **force_dataset** (*Optional*, bool): Forces ESPHome configuration to override any previously stored OpenThread
+  network dataset on the device, ensuring configured parameters are always applied at startup. Defaults to `false`
 - **use_address** (*Optional*, string): Manually override what address to use to connect
   to the ESP. Defaults to auto-generated value.
 - **poll_period** (*Optional*, [Time](/guides/configuration-types#config-time)): When Poll_Period is set on an MTD device, the parent router will enqueue any messages and wait for the child to submit a poll data request
@@ -94,3 +96,10 @@ See <https://openthread.io/guides/thread-primer/node-roles-and-types>
 
 The Poll Period makes the device behave as a SED.  Follow on work is needed utilizing Power Management and/or Light Sleep capability in esp-idf.
 If the device is always awake, the API timeout is 60 seconds, so a ping request will force interaction with the parent when the poll period is greater than 60 seconds.
+
+## See Also
+
+- {{< docref "/components/text_sensor/openthread_info" >}}
+- {{< docref "/components/network" >}}
+- {{< apiref "openthread/openthread.h" "openthread/openthread.h" >}}
+- <https://openthread.io/>

@@ -91,7 +91,7 @@ Configuration options:
 > This action can also be written in [lambdas](/automations/templates#config-lambda):
 >
 > ```cpp
-> id(rf_bridge).send_code(0x700, 0x800, 0x1000, 0xABC123);
+> id(my_rf_bridge).send_code(0x700, 0x800, 0x1000, 0xABC123);
 > ```
 
 {{< anchor "rf_bridge-beep_action" >}}
@@ -116,7 +116,7 @@ Configuration options:
 > This action can also be written in [lambdas](/automations/templates#config-lambda):
 >
 > ```cpp
-> id(rf_bridge).beep(100);
+> id(my_rf_bridge).beep(100);
 > ```
 
 {{< anchor "rf_bridge-learn_action" >}}
@@ -140,7 +140,7 @@ Configuration options:
 > This action can also be written in [lambdas](/automations/templates#config-lambda):
 >
 > ```cpp
-> id(rf_bridge).learn();
+> id(my_rf_bridge).learn();
 > ```
 
 {{< anchor "rf_bridge-send_raw_action" >}}
@@ -170,13 +170,13 @@ Configuration options:
 > This action can also be written in [lambdas](/automations/templates#config-lambda):
 >
 > ```cpp
-> id(rf_bridge).send_raw("AAA5070008001000ABC12355");
+> id(my_rf_bridge).send_raw("AAA5070008001000ABC12355");
 > ```
 
 ## Portisch firmware
 
-The radio microcontroller (MCU) can be flashed with an alternative firmware which allows for sniffining and transmitting
-advanced protocols (e.g raw, 0xB0, 0xB1, 0xA8) in addition to the standard recieve/transmit (0xA4,0xA5).
+The radio microcontroller (MCU) can be flashed with an alternative firmware which allows for sniffing and transmitting
+advanced protocols (e.g raw, 0xB0, 0xB1, 0xA8) in addition to the standard receive/transmit (0xA4,0xA5).
 If you have flashed the secondary MCU with the [Portisch firmware](https://github.com/Portisch/RF-Bridge-EFM8BB1) or [Mightymos firmware](https://github.com/mightymos/RF-Bridge-OB38S003),
 ESPHome is able to receive the extra protocols that can be decoded as well as activate the other modes supported. The below Triggers/actions are only for Portisch firmware.
 You can see a list of available commands and format in the [Portisch Wiki](https://github.com/Portisch/RF-Bridge-EFM8BB1/wiki/Commands)
@@ -225,7 +225,7 @@ Configuration options:
 > This action can also be written in [lambdas](/automations/templates#config-lambda):
 >
 > ```cpp
-> id(rf_bridge).send_advanced_code(0x04, 0x01, "ABC123");
+> id(my_rf_bridge).send_advanced_code({0x04, 0x01, "ABC123"});
 > ```
 
 {{< anchor "rf_bridge-start_advanced_sniffing_action" >}}
@@ -249,7 +249,7 @@ Configuration options:
 > This action can also be written in [lambdas](/automations/templates#config-lambda):
 >
 > ```cpp
-> id(rf_bridge).start_advanced_sniffing();
+> id(my_rf_bridge).start_advanced_sniffing();
 > ```
 
 {{< anchor "rf_bridge-stop_advanced_sniffing_action" >}}
@@ -272,7 +272,7 @@ Configuration options:
 > This action can also be written in [lambdas](/automations/templates#config-lambda):
 >
 > ```cpp
-> id(rf_bridge).stop_advanced_sniffing();
+> id(my_rf_bridge).stop_advanced_sniffing();
 > ```
 
 {{< anchor "rf_bridge-start_bucket_sniffing_action" >}}
@@ -304,7 +304,7 @@ Configuration options:
 > This action can also be written in [lambdas](/automations/templates#config-lambda):
 >
 > ```cpp
-> id(rf_bridge).start_bucket_sniffing();
+> id(my_rf_bridge).start_bucket_sniffing();
 > ```
 
 {{< anchor "rf_bridge-restart_radio_controller" >}}
