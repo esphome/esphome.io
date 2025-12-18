@@ -80,7 +80,6 @@ openthread:
 
 - **tlv** (string): dataset TLVs from the Thread information in Home Assistant
 
-
 ## `openthread.radio` Action
 
 If poll_period > 0, then this action can either turn the radio on all the time or turn it off when idle.
