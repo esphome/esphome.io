@@ -66,9 +66,6 @@ openthread:
   to the ESP. Defaults to auto-generated value.
 - **poll_period** (*Optional*, [Time](/guides/configuration-types#config-time)): When Poll_Period is set on an MTD device, the parent router will enqueue any messages and wait for the child to submit a poll data request
 
-> [!NOTE]
-> esphome.ota does not work when poll_period > 0, instead use http_request.ota, timeout and watchdog_timeout need to be tested to find the correct values.  Values greater than 30sec may be required.  During download of image, openthread component will adjust its link mode to always have the radio on, so the performance is similar to not using poll_period.
-
 ## Dataset TLV Configuration
 
 It is also possible to supply the entire dataset TLVs from the Thread information in Home Assistant and the individual values will be automatically extracted from it.
@@ -83,6 +80,29 @@ openthread:
 
 - **tlv** (string): dataset TLVs from the Thread information in Home Assistant
 
+
+## `openthread.radio` Action
+
+If poll_period > 0, then this action can either turn the radio on all the time or turn it off when idle.
+
+```yaml
+on_...:
+  then:
+  # Long form turns radio on all the time
+    - openthread.radio:
+        keep_radio_on: true
+  # Short form turns radio off when idle
+    - openthread.radio:
+  # Short form turns radio off when idle
+    - openthread.radio: false
+  # Short form turns radio on all the time
+    - openthread.radio: true
+```
+
+### Configuration variables
+
+- **keep_radio_on** (*Optional*, bool): defaults to False;  If poll_period is not set or equal to 0, then this action doesn't do anything.
+
 ## OpenThread Device Type
 
 See <https://openthread.io/guides/thread-primer/node-roles-and-types>
@@ -94,6 +114,45 @@ See <https://openthread.io/guides/thread-primer/node-roles-and-types>
 
 The Poll Period makes the device behave as a SED.  Follow on work is needed utilizing Power Management and/or Light Sleep capability in esp-idf.
 If the device is always awake, the API timeout is 60 seconds, so a ping request will force interaction with the parent when the poll period is greater than 60 seconds.
+
+### OTA on a SED
+
+When using OTA, the radio must be always on so that the parent router will transfer data packets immediately rather than waiting for a data request from the SED.
+Below is an example of using a switch that would be turned on prior to attempting using OTA.
+
+```yaml
+switch:
+  - platform: template
+    name: "Radio Always On"
+    optimistic: true
+    restore_mode: RESTORE_DEFAULT_OFF
+    turn_on_action:
+      then:
+        - logger.log: "Set Radio Always On"
+        - openthread.radio: true
+
+    turn_off_action:
+      then:
+        - logger.log: "Set Radio Off When Idle"
+        - openthread.radio: false
+```
+
+Alternatively, if you have configured http_request.ota instead
+
+```yaml
+button:
+  - platform: template
+    name: "OTA Http Request Update"
+    on_press:
+      then:
+        - openthread.radio: true
+        - logger.log: "Begin OTA Flash"
+         # This is a local webserver, ota.http_request over openthread
+        - ota.http_request.flash:
+            md5_url: http://192.168.1.42:8000/${name}/.pioenvs/${name}/firmware.md5
+            url: http://192.168.1.42:8000/${name}/.pioenvs/${name}/firmware.ota.bin
+        - openthread.radio: false
+```
 
 ## See Also
 
