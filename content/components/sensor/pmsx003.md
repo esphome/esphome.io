@@ -93,9 +93,11 @@ sensor:
 - **formaldehyde** (*Optional*): Use the formaldehyde (HCHO) concentration in µg per cubic meter for the `PMS5003S` and `PMS5003ST` type sensors.
   All options from [Sensor](/components/sensor).
 
-- **aqi** (*Optional*): Air Quality Index sensor. Requires both `pm_2_5` and `pm_10_0` sensors to be configured. See [Air Quality Index](#air-quality-index) below.
+- **aqi** (*Optional*): Air Quality Index sensor. Requires both `pm_2_5` and `pm_10_0`
+  sensors to be configured. See [Air Quality Index](#air-quality-index) below.
 
-  - **calculation_type** (**Required**): The AQI calculation standard to use. One of: `AQI` (US EPA) or `CAQI` (European).
+  - **calculation_type** (**Required**): The AQI calculation standard to use.
+    One of: `AQI` (US EPA) or `CAQI` (European).
   - All other options from [Sensor](/components/sensor).
 
 - **update_interval** (*Optional*): Amount of time to wait between generating measurements. If this is longer than 30
@@ -106,14 +108,18 @@ sensor:
 
 ## Air Quality Index
 
-The AQI (Air Quality Index) sensor calculates an air quality index value based on the PM2.5 and PM10 particulate matter concentrations. This provides a single number that indicates overall air quality and associated health concerns.
+The AQI (Air Quality Index) sensor calculates an air quality index value based on the
+PM2.5 and PM10 particulate matter concentrations. This provides a single number that
+indicates overall air quality and associated health concerns.
 
 Two calculation standards are supported:
 
-- **AQI** (US EPA Air Quality Index): The standard used in the United States, Canada, and parts of Asia. Scale of 0-500+.
+- **AQI** (US EPA Air Quality Index): The standard used in the United States, Canada,
+  and parts of Asia. Scale of 0-500+.
 - **CAQI** (Common Air Quality Index): The European standard. Scale of 0-400.
 
-Both calculation types take the PM2.5 and PM10 values and return the higher (more conservative) of the two calculated index values.
+Both calculation types take the PM2.5 and PM10 values and return the higher
+(more conservative) of the two calculated index values.
 
 ### AQI Scale (US EPA)
 
