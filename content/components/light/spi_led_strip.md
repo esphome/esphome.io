@@ -24,14 +24,14 @@ light:
   - platform: spi_led_strip
     num_leds: 30
     protocol: DOTSTAR
-    channel_map: "B,G,R"
+    channel_map: [ B, G, R ]
     id: dotstar_rgb_led
     name: "DotStar RGB LED Strip"
     data_rate: 1MHz
   - platform: spi_led_strip
     num_leds: 30
     protocol: RAW
-    channel_map: "G,B,R,W"
+    channel_map: [ G, B, R, W ]
     id: raw_rgbw_led
     name: "Raw RGBW LED Strip"
     data_rate: 2MHz 
@@ -46,11 +46,11 @@ perceived intensity of different colors will generally vary. This can be done by
 ## Configuration variables
 
 - **protocol** (**Required**): Set the protocol. One of `DOTSTAR`, `RAW`.
-- **channel_map** (**Required**, string): The RGB order of the strip. Must be a comma-seperated string with any of:
-  - "R"
-  - "G"
-  - "B"
-  - "W"  
+- **channel_map** (**Required**, list): The RGB order of the strip. Must be a comma-seperated list with any of:
+  - R
+  - G
+  - B
+  - W  
 - **num_leds** (*Optional*, int): The number of LEDs attached. The default is 1.
 - **data_rate** (*Optional*): Set the data rate of the SPI interface to the display. One of `80MHz`, `40MHz`, `20MHz`, `10MHz`, `5MHz`, `2MHz`, `1MHz` (default), `200kHz`, `75kHz` or `1kHz`.
 
