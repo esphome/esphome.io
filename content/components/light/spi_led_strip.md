@@ -24,14 +24,14 @@ light:
   - platform: spi_led_strip
     num_leds: 30
     protocol: DOTSTAR
-    channel_map: [ B, G, R ]
+    channel_map: [B, G, R]
     id: dotstar_rgb_led
     name: "DotStar RGB LED Strip"
     data_rate: 1MHz
   - platform: spi_led_strip
     num_leds: 30
     protocol: RAW
-    channel_map: [ G, B, R, W ]
+    channel_map: [G, B, R, W]
     id: raw_rgbw_led
     name: "Raw RGBW LED Strip"
     data_rate: 2MHz 
