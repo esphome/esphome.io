@@ -34,7 +34,6 @@ This component provides an easy YAML interface and Actions usable from automatio
 
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
 - **max_block_size** (*Optional*, bytes): Maximum size of payload for a given datagram packet.  Packet size is larger since it includes the header.  Maxium value is 1024B, defaults to 512B.
-- **request_timeout** (*Optional*, duration): Time client will block while waiting for response within the processing thread, defaults to 2 seconds.
 - **ack_timeout** (*Optional*, duration): The initial number of seconds to wait for an acknowledgment (ACK) or a response to a Confirmable (CON) message,defaults to 2 seconds.
 - **max_retransmit** (*Optional*, integers): The maximum number of times a Confirmable message is retransmitted before the library stops sending it and signals a failure, defaults to 4 attempts.
 
