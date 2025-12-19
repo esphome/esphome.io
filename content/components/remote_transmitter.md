@@ -1108,19 +1108,27 @@ All RC Switch `protocol` settings have these settings:
 
 Actions may also be called from [lambdas](/automations/templates#config-lambda). The `.transmit()` call can be populated with
 raw timings or encoded data for a specific protocol by following the examples below.
-See the full API Reference for more info.
 
-- `.transmit()`: Transmit a signal using the remote transmitter.
+- `.transmit()`: Returns a call to populate with data and send.
 
 ```cpp
 // Example - transmit raw timings
 auto call = id(my_transmitter).transmit();
-esphome::remote_base::RawTimings timings = {+601, -613, +601, -613, +601, -613, +601, -613};
-timings.push_back(+405);
-timings.push_back(-209);
-call.get_data()->set_data(timings);
+auto *data = call.get_data();
+for (int32_t i = 0; i < 4; i++) {
+  data->item(600, 600);
+}
+uint8_t bytes[] = {0x12, 0x34, 0x56, 0x78};
+for (uint8_t byte : bytes) {
+  for (int32_t i = 7; i >= 0; i--) {
+    if (byte & (1 << i)) {
+      data->item(400, 200);
+    } else {
+      data->item(200, 400);
+    }
+  }
+}
 call.set_send_times(3);
-// wait time in microseconds; 2000 µs (=2 ms) is common
 call.set_send_wait(2000);
 call.perform();
 ```
@@ -1128,7 +1136,7 @@ call.perform();
 ```cpp
 // Example - transmit using the Pioneer protocol
 auto call = id(my_transmitter).transmit();
-esphome::remote_base::PioneerData data = { rc_code_1, rc_code_2 };
+esphome::remote_base::PioneerData data = {0xA556, 0xA506};
 esphome::remote_base::PioneerProtocol().encode(call.get_data(), data);
 call.set_send_times(2);
 call.perform();
