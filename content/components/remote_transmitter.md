@@ -1107,18 +1107,31 @@ All RC Switch `protocol` settings have these settings:
 ### Lambda calls
 
 Actions may also be called from [lambdas](/automations/templates#config-lambda). The `.transmit()` call can be populated with
-encoded data for a specific protocol by following the example below.
+raw timings or encoded data for a specific protocol by following the examples below.
 See the full API Reference for more info.
 
-- `.transmit()`  : Transmit an IR code using the remote transmitter.
+- `.transmit()`: Transmit a signal using the remote transmitter.
 
 ```cpp
-    // Example - transmit using the Pioneer protocol
-    auto call = id(my_transmitter).transmit();
-    esphome::remote_base::PioneerData data = { rc_code_1, rc_code_2 };
-    esphome::remote_base::PioneerProtocol().encode(call.get_data(), data);
-    call.set_send_times(2);
-    call.perform();
+// Example - transmit raw timings
+auto call = id(my_transmitter).transmit();
+esphome::remote_base::RawTimings timings = {+601, -613, +601, -613, +601, -613, +601, -613};
+timings.push_back(+405);
+timings.push_back(-209);
+call.get_data()->set_data(timings);
+call.set_send_times(3);
+// wait time in microseconds; 2000 µs (=2 ms) is common
+call.set_send_wait(2000);
+call.perform();
+```
+
+```cpp
+// Example - transmit using the Pioneer protocol
+auto call = id(my_transmitter).transmit();
+esphome::remote_base::PioneerData data = { rc_code_1, rc_code_2 };
+esphome::remote_base::PioneerProtocol().encode(call.get_data(), data);
+call.set_send_times(2);
+call.perform();
 ```
 
 ## See Also
