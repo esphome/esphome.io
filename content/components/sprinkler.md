@@ -242,7 +242,7 @@ In summary, to ensure that your sprinkler controller consistently operates as ex
 - Do not use the underlying switches (GPIO, H-Bridge, etc.) you have in your configuration to control sprinkler
   zones/valves outside of initial testing of your device configuration.
 
-- To help prevent accidents, it's probably best if the underlying switches for each sprinkler zone are **not** exposed 
+- To help prevent accidents, it's probably best if the underlying switches for each sprinkler zone are **not** exposed
   to the front end. This can be accomplished in two ways:
 
   - Do not provide a `name:` parameter to your switches, or
