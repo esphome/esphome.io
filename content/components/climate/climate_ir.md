@@ -222,6 +222,8 @@ climate:
 
   - Options are: `down`, `middle-down`, `middle`, `middle-up`, `up`, `auto`
 
+- **vertical_vanes** (*Optional*, int): Set to 2 if the AC unit has separately controllable left and right vertical vanes (FH, FS, FX). At present, this sets both vanes to the same position. Defaults to `1`.
+
 > [!NOTE]
 >
 > - This climate IR component is also known to work with some Stiebel Eltron Units. It has been tested with Stiebel Eltron IR-Remote `KM07F` and unit `ACW 25 i`
