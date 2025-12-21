@@ -137,6 +137,32 @@ text_sensor:
       return std::string(buf);
 
   - platform: template
+    name: "Example Date as Datetime"
+    id: example_date_as_datetime_text_sensor
+    icon: "mdi:calendar-clock"
+    device_class: "timestamp"
+    update_interval: 5s
+    lambda: |-
+      auto t = id(example_date).state_as_esptime();
+      // This handles getting the timezone offset as well
+      int32_t offset_sec = ESPTime::timezone_offset();  // seconds
+      char sign = offset_sec >= 0 ? '+' : '-';
+      offset_sec = abs(offset_sec);
+      int hours = offset_sec / 3600;
+      int minutes = (offset_sec % 3600) / 60;
+      char buf[40];
+      snprintf(
+        buf,
+        sizeof(buf),
+        "%s%c%02d:%02d",
+        t.strftime("%Y-%m-%dT00:00:00").c_str(),
+        sign,
+        hours,
+        minutes
+      );
+      return std::string(buf);
+
+  - platform: template
     name: "Example Date"
     id: example_date_text_sensor
     icon: "mdi:calendar"
