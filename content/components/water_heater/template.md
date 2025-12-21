@@ -18,37 +18,25 @@ water_heater:
   - platform: template
     name: "Template Boiler"
     id: my_boiler
-    min_temperature: 10
-    max_temperature: 80
     
     # Lambda to read the current temperature (e.g. from a sensor)
     current_temperature: return id(my_sensor).state;
     
     # Lambda to read the current operation mode (optional)
     mode: return water_heater::WATER_HEATER_MODE_ECO;
-    
-    # Action to perform when settings change in the UI
-    set_action:
-      then:
-        - logger.log: 
-            format: "New target: %.1f, New Mode: %d"
-            args: [ 'id(my_boiler).target_temperature', 'id(my_boiler).mode' ]
-        - if:
-            condition:
-              lambda: 'return id(my_boiler).mode == water_heater::WATER_HEATER_MODE_OFF;'
-            then:
-              - switch.turn_off: heater_relay
-            else:
-              - switch.turn_on: heater_relay
-
     optimistic: true
+
+    # List to show available modes to show in the UI (optional)
+    supported_modes:
+      - off
+      - eco
+      - gas
 ```
 
 Possible return values for the lambdas:
 
 - `current_temperature`: Returns a `float` (e.g. `42.5`).
 - `mode`: Returns a `WaterHeaterMode` enum (e.g. `water_heater::WATER_HEATER_MODE_ECO`).
-- `return {};` if the value should not be updated.
 
 ## Configuration variables
 
@@ -58,11 +46,10 @@ Possible return values for the lambdas:
 - **mode** (*Optional*, [lambda](/automations/templates#config-lambda)):
   Lambda to be evaluated repeatedly to get the current operation mode. Expects a `WaterHeaterMode` enum return value.
 
-- **set_action** (*Optional*, [Action](/automations/actions#all-actions)): The action that should be performed when the remote
-  (like Home Assistant's frontend) requests a change (new temperature or new mode). Inside this action, you can access the new desired state via `id(water_heater_id).target_temperature` and `id(water_heater_id).mode`.
-
 - **optimistic** (*Optional*, boolean): Whether to operate in optimistic mode - when in this mode, any command sent to
   the template water heater will immediately update the reported state. Defaults to `true`.
+
+- **supported_modes** (*Optional*, list): List to show which modes will be available to set from the UI. Shows all modes on default.
 
 - **restore_mode** (*Optional*, enum): Control how the water heater attempts to restore state on bootup.
 
@@ -71,32 +58,6 @@ Possible return values for the lambdas:
   - `RESTORE_AND_CALL`  : Attempts to restore the state on startup and immediately executes the `set_action`.
 
 - All other options from [Water Heater](/components/water_heater#config-water-heater).
-
-{{< anchor "water-heater-template-publish_action" >}}
-
-## `water_heater.template.publish` Action
-
-You can also publish a state to a template water heater from elsewhere in your YAML file with the `water_heater.template.publish` action.
-
-```yaml
-# Example configuration entry
-water_heater:
-  - platform: template
-    name: "Template Boiler"
-    id: my_template_boiler
-
-# in some trigger
-on_...:
-  - water_heater.template.publish:
-      id: my_template_boiler
-      current_temperature: 45.0
-      mode: ECO
-
-  # Templated
-  - water_heater.template.publish:
-      id: my_template_boiler
-      target_temperature: !lambda 'return 60.0;'
-```
 
 Configuration options:
 
