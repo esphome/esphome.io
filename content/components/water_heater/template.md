@@ -31,6 +31,15 @@ water_heater:
       - off
       - eco
       - gas
+
+    visual:
+      min_temperature: 10 °C
+      max_temperature: 85 °C
+      target_temperature_step: 0.5 °C
+
+    set_action:
+      - lambda: |-
+          ESP_LOGI("boiler", "New mode: %d", id(my_boiler).get_mode());
 ```
 
 Possible return values for the lambdas:
