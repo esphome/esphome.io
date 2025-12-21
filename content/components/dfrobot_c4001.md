@@ -99,8 +99,8 @@ update sensor will change to `Update Available`.
 
 ## Hub Component
 
-The hub component (`dfrobot_c4001:` entry) is required to define the `model` and `mode` of the sensor.
-A (`uart:` entry) is also required in with both the TX and RX pins defined and the baud rate must be
+The hub component `dfrobot_c4001:` entry is required to define the `model` and `mode` of the sensor.
+A `uart:` entry is also required in with both the TX and RX pins defined and the baud rate must be
 set to `9600`.
 
 Multiple instances of this component may be defined if multiple {{< docref "/components/uart" >}}
@@ -120,10 +120,10 @@ dfrobot_c4001:
 
 ### Configuration variables
 
-+ **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation. Necessary
++ **id** (*Optional*, {{< docref "/guides/configuration-types#config-id" >}}): Manually specify the ID used for code generation. Necessary
   if you want to use multiple DFRobot C4001 sensors.
 
-+ **uart_id** (*Optional*, [ID](#config-id)): Manually specify the ID of the
++ **uart_id** (*Optional*, {{< docref "/guides/configuration-types#config-id" >}}): Manually specify the ID of the
   {{< docref "/components/uart" >}} if you want to use multiple DFRobot C4001 sensors.
 
 + **mode** (*Required*, enum): This sets the operation mode of the sensor. Options are `PRESENCE`
@@ -136,7 +136,7 @@ dfrobot_c4001:
 
 ## Binary Sensor
 
-[Binary Sensor Components](#config-sensor) provide read only binary state information such `on`/`off`
+[Binary Sensor Components](/components/binary_sensor#config-binary_sensor) provide read only binary state information such `on`/`off`
 or `true`/`false`.
 
 ``` yaml
@@ -152,24 +152,24 @@ binary_sensor:
 
 ### Configuration variables
 
-+ **dfrobot_c4001_id** (*Optional*, [ID](#config-id)): The ID of the DFRobot mmWave hub component.
++ **dfrobot_c4001_id** (*Optional*, {{< docref "/guides/configuration-types#config-id" >}}): The ID of the DFRobot mmWave hub component.
   Required when multiple instances of the `dfrobot_c4001` component are defined.
 
 + **config_changed** (*Optional*): When `true` the current sensor configuration has been changed but
   not saved to the sensor.
   
-  + All Options from [Binary Sensor](#config-binary_sensor).
+  + All Options from {{< docref "/components/binary_sensor#config-binary_sensor" >}}.
 
 + **occupancy** (*Optional*): In `PRESENCE` mode this indicates presence. In `SPEED_AND_DISTANCE`
   mode this indicates a target is being tracked.
   
-  + All Options from [Binary Sensor](#config-binary_sensor).
+  + All Options from {{< docref "/components/binary_sensor#config-binary_sensor" >}}.
 
 {{< anchor "dfrobot_c4001-button" >}}
 
 ## Button
 
-[BVutton Components](#config-sensor) provide a execute operation.
+[Button Components](/components/button#config-button) provide a execute operation.
 
 ``` yaml
 button:
@@ -185,22 +185,22 @@ button:
 
 ### Configuration variables
 
-+ **dfrobot_c4001_id** (*Optional*, [ID](#config-id)): The ID of the DFRobot mmWave hub component.
++ **dfrobot_c4001_id** (*Optional*, {{< docref "/guides/configuration-types#config-id" >}}): The ID of the DFRobot mmWave hub component.
   Required when multiple instances of the `dfrobot_c4001` component are defined.
 
 + **restart** (*Optional*): When this button is clicked, the C4001 module will be restarted with the
   settings in flash applied. Please note that any unsaved changes will be discarded.
   
-  + All Options from [Button](#config-button).
+  + All Options from [Button](/components/button#config-button).
 
 + **config_save** (*Optional*): Clicking this button sends the new settings to the C4001 module, saves
   them to flash, and restarts the module with the updated configuration.
   
-  + All Options from [Button](#config-button).
+  + All Options from [Button](/components/button#config-button).
 
 + **factory_reset** (*Optional*): This button will restore the C4001 module to its factory settings.
   
-  + All Options from [Button](#config-button).
+  + All Options from [Button](/components/button#config-button).
 
 > [!WARNING]
 > Each change to the configuration of the mmWave radar triggers a write to its internal flash.
@@ -210,7 +210,7 @@ button:
 
 ## Number
 
-[Number components](#config-number) provide read only numeric information such `distance`.
+[Number Components](/components/number#config-number) provide read only numeric information such `distance`.
 
 ``` yaml
 number:
@@ -236,7 +236,7 @@ number:
 
 ### Configuration variables
 
-+ **dfrobot_c4001_id** (*Optional*, [ID](#config-id)): The ID of the DFRobot mmWave hub component.
++ **dfrobot_c4001_id** (*Optional*, {{< docref "/guides/configuration-types#config-id" >}}): The ID of the DFRobot mmWave hub component.
   Required when multiple instances of the `dfrobot_c4001` component are defined.
 
 + **min_range** (*Optional*, float): This is the minimum detection range. This number has a range of
@@ -244,7 +244,7 @@ number:
   recommends not changing this value. The `config_save` button must be clicked to save the sensor
   configuration to flash and make operational. Available in all modes.
   
-  + All Options from [Number](#config-number).
+  + All Options from [Number](/components/number#config-number).
 
 + **max_range** (*Optional*, float): This is the maximum detection range. This number has a range of
   0.6 to
@@ -252,7 +252,7 @@ number:
   must be clicked to save the sensor configuration to flash and make operational. Available in all
   modes.
   
-  + All Options from [Number](#config-number).
+  + All Options from [Number](/components/number#config-number).
 
 + **trigger_range** (*Optional*, float): Sets the maximum range at which occupancy can switch to
   present. The range between max detection range and trigger detection range will NOT cause occupancy
@@ -260,49 +260,49 @@ number:
   0.6 to 12.0 m for the `SEN0610`. The `config_save` button must be clicked to save the sensor
   configuration to flash and make operational. Available only in `PRESENCE` mode.
   
-  + All Options from [Number](#config-number).
+  + All Options from [Number](/components/number#config-number).
 
 + **hold_sensitivity** (*Optional*, float): The number represents the ease in which the sensor switches
   to the present state when someone enters the sensing range of the sensor. Default is 7 (no units)
   with a range of 0 to 9, higher is more sensitive. The `config_save` button must be clicked to save
   the sensor configuration to flash and make operational. Available only in `PRESENCE` mode.
   
-  + All Options from [Number](#config-number).
+  + All Options from [Number](/components/number#config-number).
 
 + **trigger_sensitivity** (*Optional*, float): This number represents ease of continued presence
   detection after the sensor switched to the present state. Default is 5 (no units) with a range of
   0 to 9, higher is more sensitive. The `config_save` button must be clicked to save the sensor
   configuration to flash and make operational. Available only in `PRESENCE` mode.
   
-  + All Options from [Number](#config-number).
+  + All Options from [Number](/components/number#config-number).
   
 + **on_latency** (*Optional*, float): This time value is how long presence is detected before switching
   to the present state. Default is 0.050 seconds with a range of 0.0 to 100.0 seconds. The
   `config_save` button must be clicked to save the sensor configuration to flash and make operational.
   Available only in `PRESENCE` mode.
   
-  + All Options from [Number](#config-number).
+  + All Options from [Number](/components/number#config-number).
 
 + **off_latency** (*Optional*, float): This time value is how long the after the sensor no longer
   detects presence before switching to the not present state. Default is 15 (seconds) with a range of
   0.0 to 1500.0. The `config_save` button must be clicked to save the sensor configuration to flash
   and make operational. Available only in `PRESENCE` mode.
   
-  + All Options from [Number](#config-number).
+  + All Options from [Number](/components/number#config-number).
 
 + **inhibit_time** (*Optional*, float): The dead-time after switching to the not present state before
   presence can be detected again. Default is 1 seconds with a range of 0.1 to 255.0 seconds. The
   `config_save` button must be clicked to save the sensor configuration to flash and make operational.
   Available only in `PRESENCE` mode.
   
-  + All Options from [Number](#config-number).
+  + All Options from [Number](/components/number#config-number).
 
 + **threshold_factor** (*Optional*): The larger the number the larger the object and more motion is
   required to trigger the sensor to switch to target tracked state. Default is 5 (no units) with a
   range of 0.0 to 25.0. The `config_save` button must be clicked to save the sensor configuration to
   flash and make operational. Available only in `SPEED_AND_DISTANCE` mode.
   
-  + All Options from [Number](#config-number).
+  + All Options from [Number](/components/number#config-number).
 
 When `trigger_range` (only in `PRESENCE` mode) is defined you must define `min_range` and `max_range`.
 Both `min_range` and `max_range` must always be defined together.
@@ -318,7 +318,7 @@ The component will enforce the following relationships:
 
 ## Sensor
 
-[Sensor components](#config-sensor) provide read only numeric information such `distance`.
+[Sensor Components](/components/sensor#config-sensor) provide read only numeric information such `distance`.
 
 ``` yaml
 sensor:
@@ -334,32 +334,32 @@ sensor:
 
 ### Configuration variables
 
-+ **dfrobot_c4001_id** (*Optional*, [ID](#config-id)): The ID of the DFRobot mmWave hub component.
++ **dfrobot_c4001_id** (*Optional*, {{< docref "/guides/configuration-types#config-id" >}}): The ID of the DFRobot mmWave hub component.
   Required when multiple instances of the `dfrobot_c4001` component are defined.
 
 + **target_distance** (*Optional*): When **occupancy** binary sensor is `true` this sensor indicates
   distance to target in meters (m). When **occupancy** binary sensor is `false` this sensor switches
   to 0.0 indicating invalid data. Available only in `SPEED_AND_DISTANCE` mode.
   
-  + All Options from [Sensor](#config-sensor).
+  + All Options from [Sensor](/components/sensor#config-sensor).
 
 + **target_speed** (*Optional*): When **occupancy** binary sensor is `true` this sensor indicates
   target speed in meters per second (m/s). When **occupancy** binary sensor is `false` this sensor
   switches to 0.0 indicating invalid data. Available only in `SPEED_AND_DISTANCE` mode.
   
-  + All Options from [Sensor](#config-sensor).
+  + All Options from [Sensor](/components/sensor#config-sensor).
 
 + **target_energy** (*Optional*): When **occupancy** binary sensor is `true` this sensor indicates
   target energy in no units. When **occupancy** binary sensor is `false` this sensor switches to 0.0
   indicating invalid data. Available only in `SPEED_AND_DISTANCE` mode.
   
-  + All Options from [Sensor](#config-sensor).
+  + All Options from [Sensor](/components/sensor#config-sensor).
 
 {{< anchor "dfrobot_c4001-switch" >}}
 
 ## Switch
 
-[Switch components](#config-switch) are used to enable/disable various module features/functions.
+[Switch Components](/components/switch#config-switch) are used to enable/disable various module features/functions.
 
 ``` yaml
 switch:
@@ -375,7 +375,7 @@ switch:
 
 ### Configuration variables
 
-+ **dfrobot_c4001_id** (*Optional*, [ID](#config-id)): The ID of the DFRobot mmWave hub component.
++ **dfrobot_c4001_id** (*Optional*, {{< docref "/guides/configuration-types#config-id" >}}): The ID of the DFRobot mmWave hub component.
   Required when multiple instances of the `dfrobot_c4001` component are defined.
 
 + **out_led_enable** (*Optional*): The `OUT` LED turns on when presence is detected. You can
@@ -384,18 +384,18 @@ switch:
   binary_sensor still works because its state is read from the UART interface. The `config_save`
   button must be clicked to save the sensor configuration to flash and make operational.
 
-  + All Options from [Switch](config-switch).
+  + All Options from [Switch](/components/switch#config-switch).
 
 + **run_led_enable** (*Optional*): The `RUN` LED will flash while the sensor is running. You can turn if
   off with this switch. The `config_save` button must be clicked to save the sensor configuration to flash and
   make operational.
 
-  + All Options from [Switch](config-switch).
+  + All Options from [Switch](/components/switch#config-switch).
   
 + **micro_motion_enable** (*Optional*): Turns on/off micro motion mode. Available only in
   `SPEED_AND_DISTANCE` mode.
 
-  + All Options from [Switch](config-switch).
+  + All Options from [Switch](/components/switch#config-switch).
 
 > [!NOTE]
 > If you are having trouble controlling the `RUN` or `OUT` LEDs. Be sure to perform a a factory reset
@@ -404,7 +404,7 @@ switch:
 
 ## Text Sensor
 
-[Text Sensor components](#config-sensor) provide read only text based information.
+[Text Sensor Components](/components/text_sensor#config-text_sensor) provide read only text based information.
 
 ``` yaml
 text_sensor:
@@ -420,16 +420,16 @@ text_sensor:
 
 + **software_version** (*Optional*): The Software Version as reported by the C4001 module.
 
-  + All Options from [Text Sensor](config-text_sensor).
+  + All Options from [Text Sensor](/components/text_sensor#config-text_sensor).
 
 + **hardware_version** (*Optional*): The Hardware Version as reported by the C4001 module.
   
-  + All Options from [Text Sensor](config-text_sensor).
+  + All Options from [Text Sensor](/components/text_sensor#config-text_sensor).
 
 ## See Also
 
 + [UART bus](#uart)
-+ [Binary Sensor](#config-binary_sensor)
-+ [ID](#config-id)
++ [Binary Sensor](/components/button#config-binary_sensor)
++ {{< docref "/guides/configuration-types#config-id" >}}
 + [DFRobot mmWave C4001 (SEN0609) Radar Wiki page](https://wiki.dfrobot.com/SKU_SEN0609_C4001_mmWave_Presence_Sensor_25m)
 + [DFRobot mmWave C4001 (SEN0610) Radar Wiki page](<https://wiki.dfrobot.com/SKU_SEN0610_Gravity_C4001_mmWave_Presence_Sensor_12m_I2C_UART>)
