@@ -118,8 +118,23 @@ text_sensor:
     update_interval: 5s
     lambda: |-
       auto t = id(example_datetime).state_as_esptime();
-      // Eventually make the timezone configurable, this doesn't handle DST
-      return t.strftime("%Y-%m-%dT%H:%M:%S-08:00");
+      // This handles getting the timezone offset as well
+      int32_t offset_sec = ESPTime::timezone_offset();  // seconds
+      char sign = offset_sec >= 0 ? '+' : '-';
+      offset_sec = abs(offset_sec);
+      int hours = offset_sec / 3600;
+      int minutes = (offset_sec % 3600) / 60;
+      char buf[40];
+      snprintf(
+        buf,
+        sizeof(buf),
+        "%s%c%02d:%02d",
+        t.strftime("%Y-%m-%dT%H:%M:%S").c_str(),
+        sign,
+        hours,
+        minutes
+      );
+      return std::string(buf);
 
   - platform: template
     name: "Example Date"
