@@ -103,7 +103,7 @@ The hub component `dfrobot_c4001:` entry is required to define the `model` and `
 A `uart:` entry is also required in with both the TX and RX pins defined and the baud rate must be
 set to `9600`.
 
-Multiple instances of this component may be defined if multiple {{< docref "/components/uart" >}}
+Multiple instances of this component may be defined if multiple [UART bus](/components/uart)
 components are available:
 
 ```yaml
@@ -120,11 +120,11 @@ dfrobot_c4001:
 
 ### Configuration variables
 
-+ **id** (*Optional*, {{< docref "/guides/configuration-types#config-id" >}}): Manually specify the ID used for code generation. Necessary
++ **id** (*Optional*, [Id](/guides/configuration-types#config-id)): Manually specify the ID used for code generation. Necessary
   if you want to use multiple DFRobot C4001 sensors.
 
-+ **uart_id** (*Optional*, {{< docref "/guides/configuration-types#config-id" >}}): Manually specify the ID of the
-  {{< docref "/components/uart" >}} if you want to use multiple DFRobot C4001 sensors.
++ **uart_id** (*Optional*, [Id](/guides/configuration-types#config-id)): Manually specify the ID of the
+  [UART bus](/components/uart) if you want to use multiple DFRobot C4001 sensors.
 
 + **mode** (*Required*, enum): This sets the operation mode of the sensor. Options are `PRESENCE`
   and `SPEED_AND_DISTANCE`.
@@ -152,18 +152,18 @@ binary_sensor:
 
 ### Configuration variables
 
-+ **dfrobot_c4001_id** (*Optional*, {{< docref "/guides/configuration-types#config-id" >}}): The ID of the DFRobot mmWave hub component.
++ **dfrobot_c4001_id** (*Optional*, [Id](/guides/configuration-types#config-id)): The ID of the DFRobot mmWave hub component.
   Required when multiple instances of the `dfrobot_c4001` component are defined.
 
 + **config_changed** (*Optional*): When `true` the current sensor configuration has been changed but
   not saved to the sensor.
   
-  + All Options from {{< docref "/components/binary_sensor#config-binary_sensor" >}}.
+  + All Options from [Binary Sensor](/components/binary_sensor#config-binary_sensor).
 
 + **occupancy** (*Optional*): In `PRESENCE` mode this indicates presence. In `SPEED_AND_DISTANCE`
   mode this indicates a target is being tracked.
   
-  + All Options from {{< docref "/components/binary_sensor#config-binary_sensor" >}}.
+  + All Options from [Binary Sensor](/components/binary_sensor#config-binary_sensor).
 
 {{< anchor "dfrobot_c4001-button" >}}
 
@@ -185,7 +185,7 @@ button:
 
 ### Configuration variables
 
-+ **dfrobot_c4001_id** (*Optional*, {{< docref "/guides/configuration-types#config-id" >}}): The ID of the DFRobot mmWave hub component.
++ **dfrobot_c4001_id** (*Optional*, [Id](/guides/configuration-types#config-id)): The ID of the DFRobot mmWave hub component.
   Required when multiple instances of the `dfrobot_c4001` component are defined.
 
 + **restart** (*Optional*): When this button is clicked, the C4001 module will be restarted with the
@@ -236,7 +236,7 @@ number:
 
 ### Configuration variables
 
-+ **dfrobot_c4001_id** (*Optional*, {{< docref "/guides/configuration-types#config-id" >}}): The ID of the DFRobot mmWave hub component.
++ **dfrobot_c4001_id** (*Optional*, [Id](/guides/configuration-types#config-id)): The ID of the DFRobot mmWave hub component.
   Required when multiple instances of the `dfrobot_c4001` component are defined.
 
 + **min_range** (*Optional*, float): This is the minimum detection range. This number has a range of
@@ -334,7 +334,7 @@ sensor:
 
 ### Configuration variables
 
-+ **dfrobot_c4001_id** (*Optional*, {{< docref "/guides/configuration-types#config-id" >}}): The ID of the DFRobot mmWave hub component.
++ **dfrobot_c4001_id** (*Optional*, [Id](/guides/configuration-types#config-id)): The ID of the DFRobot mmWave hub component.
   Required when multiple instances of the `dfrobot_c4001` component are defined.
 
 + **target_distance** (*Optional*): When **occupancy** binary sensor is `true` this sensor indicates
@@ -375,7 +375,7 @@ switch:
 
 ### Configuration variables
 
-+ **dfrobot_c4001_id** (*Optional*, {{< docref "/guides/configuration-types#config-id" >}}): The ID of the DFRobot mmWave hub component.
++ **dfrobot_c4001_id** (*Optional*, [Id](/guides/configuration-types#config-id)): The ID of the DFRobot mmWave hub component.
   Required when multiple instances of the `dfrobot_c4001` component are defined.
 
 + **out_led_enable** (*Optional*): The `OUT` LED turns on when presence is detected. You can
@@ -428,8 +428,5 @@ text_sensor:
 
 ## See Also
 
-+ [UART bus](#uart)
-+ [Binary Sensor](/components/button#config-binary_sensor)
-+ {{< docref "/guides/configuration-types#config-id" >}}
 + [DFRobot mmWave C4001 (SEN0609) Radar Wiki page](https://wiki.dfrobot.com/SKU_SEN0609_C4001_mmWave_Presence_Sensor_25m)
 + [DFRobot mmWave C4001 (SEN0610) Radar Wiki page](<https://wiki.dfrobot.com/SKU_SEN0610_Gravity_C4001_mmWave_Presence_Sensor_12m_I2C_UART>)
