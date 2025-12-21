@@ -30,6 +30,9 @@ sensor:
       name: "Particulate Matter <2.5µm Concentration"
     pm_10_0:
       name: "Particulate Matter <10.0µm Concentration"
+    aqi:
+      name: "Air Quality Index"
+      calculation_type: AQI
 ```
 
 ## Configuration variables
@@ -60,6 +63,13 @@ sensor:
 
 - **pmc_10_0** (*Optional*): Count of particles with diameter > 10 um in 0.1 L of air (#/0.1L).
   All options from [Sensor](/components/sensor).
+
+- **aqi** (*Optional*): Air Quality Index sensor. Requires both `pm_2_5` and `pm_10_0`
+  sensors to be configured. See {{< docref "/components/sensor/pmsx003#air-quality-index" >}} for more details.
+
+  - **calculation_type** (**Required**): The AQI calculation standard to use.
+    One of: `AQI` (US EPA) or `CAQI` (European).
+  - All other options from [Sensor](/components/sensor).
 
 ## See Also
 

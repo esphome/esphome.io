@@ -48,6 +48,9 @@ sensor:
     pm_size:
       name: "Typical Particle size"
       id: "pm_size"
+    aqi:
+      name: "Air Quality Index"
+      calculation_type: AQI
     address: 0x69
     update_interval: 10s
     idle_interval: 5min
@@ -94,6 +97,13 @@ sensor:
 - **pm_size** (*Optional*): Typical particle size in μm.
 
   - All options from [Sensor](/components/sensor).
+
+- **aqi** (*Optional*): Air Quality Index sensor. Requires both `pm_2_5` and `pm_10_0`
+  sensors to be configured. See {{< docref "/components/sensor/pmsx003#air-quality-index" >}} for more details.
+
+  - **calculation_type** (**Required**): The AQI calculation standard to use.
+    One of: `AQI` (US EPA) or `CAQI` (European).
+  - All other options from [Sensor](/components/sensor).
 
 - **auto_cleaning_interval** (*Optional*): The interval in seconds of the periodic fan-cleaning.
 

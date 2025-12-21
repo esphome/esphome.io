@@ -40,6 +40,9 @@ sensor:
       name: VOC
     nox:
       name: NOX
+    aqi:
+      name: "Air Quality Index"
+      calculation_type: AQI
 ```
 
 ## Configuration variables
@@ -154,6 +157,13 @@ sensor:
   improvement of the ambient RH/T output accuracy. There is a limited set of different modes available.
   Medium and high accelerations are particularly indicated for air quality monitors which are subjected to large
   temperature changes. Low acceleration is advised for stationary devices not subject to large variations in temperature.
+
+- **aqi** (*Optional*): Air Quality Index sensor. Requires both `pm_2_5` and `pm_10_0`
+  sensors to be configured. See {{< docref "/components/sensor/pmsx003#air-quality-index" >}} for more details.
+
+  - **calculation_type** (**Required**): The AQI calculation standard to use.
+    One of: `AQI` (US EPA) or `CAQI` (European).
+  - All other options from [Sensor](/components/sensor).
 
 - **address** (*Optional*, int): Manually specify the I²C address of the sensor.
   Defaults to `0x69`.
