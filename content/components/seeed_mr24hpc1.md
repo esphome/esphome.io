@@ -13,7 +13,7 @@ The `seeed_mr24hpc1` platform allows you to use Seeed Studio 24GHz mmWave Sensor
 Human Static Presence Module Lite ([Product Page](https://www.seeedstudio.com/24GHz-mmWave-Sensor-Human-Static-Presence-Module-Lite-p-5524.html)) and
 Seeed Studio mmWave Human Detection Sensor Kit ([Product Page](https://www.seeedstudio.com/mmWave-Human-Detection-Sensor-Kit-p-5773.html)) with ESPHome.
 
-The [UART](#uart) is required to be set up in your configuration for this sensor to work, `parity` and `stop_bits` **must be** respectively `NONE` and `1`.
+The [UART](/components/uart) is required to be set up in your configuration for this sensor to work, `parity` and `stop_bits` **must be** respectively `NONE` and `1`.
 You can use the ESP32 software or hardware serial to use this MR24HPC1, its default baud rate is 115200.
 
 {{< img src="seeed-mr24hpc1.jpg" alt="Image" caption="Seeed Studio 24GHz mmWave Sensor - Human Static Presence Module Lite" width="50.0%" class="align-center" >}}
@@ -27,10 +27,10 @@ seeed_mr24hpc1:
 
 ### Configuration variables
 
-- **uart_id** (*Optional*, [ID](#config-id)): Manually specify the ID of the [UART Component](#uart) if you want
+- **uart_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the [UART Component](/components/uart) if you want
   to use multiple UART buses.
 
-- **id** (*Optional*, [ID](#config-id)): Manually specify the ID for this {{< docref "seeed_mr24hpc1/" >}} component if you need multiple components.
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID for this {{< docref "seeed_mr24hpc1/" >}} component if you need multiple components.
 
 ## Binary Sensor
 
@@ -46,7 +46,7 @@ binary_sensor:
 ### Configuration variables
 
 - **has_target** (*Optional*): If true target detect either still or in movement.
-  All options from [Binary Sensor](#config-binary_sensor).
+  All options from [Binary Sensor](/components/binary_sensor#config-binary_sensor).
 
 ## Sensor
 
@@ -79,37 +79,37 @@ sensor:
 
 - **custom_presence_of_detection** (*Optional*, float): Valid only for [underlying open functions](#seeed_mr24hpc1-open_function).
   Radar detects human breath at a straight line distance, usually no more than 3 metres.
-  All options from [Sensor](#config-sensor).
+  All options from [Sensor](/components/sensor).
 
 - **movement_signs** (*Optional*, int): A value calculated by a built-in algorithm to determine if someone is moving in the current environment.
   When the value is 0, the radar determines that no one is present in the environment. When the value is 1,
   the radar determines that someone is present in the environment and is stationary.
   When the value is greater than 1, the radar determines that someone is present in the environment and is in motion.
   The larger the value, the stronger the motion.
-  All options from [Sensor](#config-sensor).
+  All options from [Sensor](/components/sensor).
 
 - **custom_motion_distance** (*Optional*, float): Valid only for [underlying open functions](#seeed_mr24hpc1-open_function).
   Distance in meters of detected moving target.
-  All options from [Sensor](#config-sensor).
+  All options from [Sensor](/components/sensor).
 
 - **custom_spatial_static_value** (*Optional*, int): Valid only for [underlying open functions](#seeed_mr24hpc1-open_function).
   Electromagnetic waves are present in the environment, with a low change in frequency when no one is present.
   The value of the overall space electromagnetic wave reflection weakly floating when there is someone breathing in the space (chest breathing micromotion).
   The output range for this value is 0-250.
-  All options from [Sensor](#config-sensor).
+  All options from [Sensor](/components/sensor).
 
 - **custom_spatial_motion_value** (*Optional*, int): Valid only for [underlying open functions](#seeed_mr24hpc1-open_function).
   Motion amplitude values, different motion amplitudes cause different electromagnetic wave frequency changes.
   The output range for this value is 0-250.
-  All options from [Sensor](#config-sensor).
+  All options from [Sensor](/components/sensor).
 
 - **custom_motion_speed** (*Optional*, float): Valid only for [underlying open functions](#seeed_mr24hpc1-open_function).
   The magnitude of the speed of the target movement is determined in real time. Approaching radar speed is positive, away is negative.
   When there is no movement speed, the value is 0, and the speed gear is in 0.5m/s increments.
-  All options from [Sensor](#config-sensor).
+  All options from [Sensor](/components/sensor).
 
 - **custom_mode_num** (*Optional*, int): The custom mode number that the radar is currently in. If it is not in custom mode, then the value is 0.
-  All options from [Sensor](#config-sensor).
+  All options from [Sensor](/components/sensor).
 
 {{< anchor "seeed_mr24hpc1-open_function" >}}
 
@@ -132,7 +132,7 @@ switch:
   Defaults to off (standard mode). Turning on this feature allows you to observe more information about the environment and is recommended to use it
   again in complex environments where the basic functionality is not sufficient. When this function is turned on, the stationary/motion and approach/away judgement of
   the basic function will be disabled. Notice this requires more resources and is not recommended to be enabled when not necessary.
-  All options from [Switch](#config-switch).
+  All options from [Switch](/components/switch#config-switch).
 
 ## Number
 
@@ -164,7 +164,7 @@ number:
 - **sensitivity** (*Optional*, int): Valid only in [standard mode](#seeed_mr24hpc1-standard_mode). Used to adjust the sensitivity of the radar.
   The sensitivity setting adjusts the detection distance of the sensor for human body in static state.
   There are 3 levels for sensitivity setting, with the default level being sensitivity 3.
-  All options from [Number](#config-number).
+  All options from [Number](/components/number#config-number).
 
 ### Sensitivity
 
@@ -176,39 +176,39 @@ number:
 
 - **custom_mode** (*Optional*, int): Settings and go to the Custom Mode option. Some of the function modules can only be set up in Custom Mode.
   There are four storage areas for custom modes. When you finish setting and click the Setup End button, the radar applies the custom mode options you have set.
-  All options from [Number](#config-number).
+  All options from [Number](/components/number#config-number).
 
 - **existence_threshold** (*Optional*, int): Valid only in [custom mode settings](#seeed_mr24hpc1-custom_mode).
   This corresponds to [custom_spatial_static_value](#seeed_mr24hpc1-spatial_static).
   When the value of `custom_spatial_static_value` is greater than the set value, the radar will judge that someone is stationary,
   otherwise it will judge that no one is.
   The default value is `33`.
-  All options from [Number](#config-number).
+  All options from [Number](/components/number#config-number).
 
 - **motion_threshold** (*Optional*, int): Valid only in [custom mode settings](#seeed_mr24hpc1-custom_mode).
   This corresponds to [custom_spatial_motion_value](#seeed_mr24hpc1-spatial_mtion).
   When the value of `custom_spatial_motion_value` is greater than the set value, the radar will judge that someone is moving,
   otherwise it will judge that someone is stationary.
   The default value is `4`.
-  All options from [Number](#config-number).
+  All options from [Number](/components/number#config-number).
 
 - **motion_trigger** (*Optional*, int): Valid only in [custom mode settings](#seeed_mr24hpc1-custom_mode).
   Used for time accumulation of motion triggers, multiple judgement triggers to reduce false alarms.
   Can be used with `motion_threshold` and `motion_boundary` for performance limitation.
   The default value is `150ms`.
-  All options from [Number](#config-number).
+  All options from [Number](/components/number#config-number).
 
 - **motion_to_rest** (*Optional*, int): Valid only in [custom mode settings](#seeed_mr24hpc1-custom_mode).
   Sets the time for the radar to judge from body motion to body at rest.
   Can be used with `existence_threshold` and `motion_threshold` for performance limitation.
   The default value is `3000ms`.
-  All options from [Number](#config-number).
+  All options from [Number](/components/number#config-number).
 
 - **custom_unman_time** (*Optional*, int): Valid only in [custom mode settings](#seeed_mr24hpc1-custom_mode).
   Sets the time for the radar to judge from body presence to unoccupied state.
   Can be used with `existence_threshold` and `existence_boundary` for performance limitation.
   The default value is `30s`.
-  All options from [Number](#config-number).
+  All options from [Number](/components/number#config-number).
 
 ## Button
 
@@ -225,10 +225,10 @@ button:
 
 ### Configuration variables
 
-- **restart** (*Optional*): Restart the device. All options from [Button](#config-button).
+- **restart** (*Optional*): Restart the device. All options from [Button](/components/button#config-button).
 - **custom_set_end** (*Optional*): Valid only in [custom mode settings](#seeed_mr24hpc1-custom_mode).
   This button is used to end the current custom mode setting and enable that custom mode.
-  All options from [Button](#config-button).
+  All options from [Button](/components/button#config-button).
 
 ## Text Sensor
 
@@ -258,29 +258,29 @@ text_sensor:
 ### Configuration variables
 
 - **heart_beat** (*Optional*): Sensor operating status indicator.
-  All options from [Text Sensor](#config-text_sensor).
+  All options from [Text Sensor](/components/text_sensor#config-text_sensor).
 
 - **product_model** (*Optional*): The product model.
-  All options from [Text Sensor](#config-text_sensor).
+  All options from [Text Sensor](/components/text_sensor#config-text_sensor).
 
 - **product_id** (*Optional*): The product ID.
-  All options from [Text Sensor](#config-text_sensor).
+  All options from [Text Sensor](/components/text_sensor#config-text_sensor).
 
 - **hardware_model** (*Optional*): The hardware model.
-  All options from [Text Sensor](#config-text_sensor).
+  All options from [Text Sensor](/components/text_sensor#config-text_sensor).
 
 - **hardware_version** (*Optional*): The hardware version.
-  All options from [Text Sensor](#config-text_sensor).
+  All options from [Text Sensor](/components/text_sensor#config-text_sensor).
 
 - **keep_away** (*Optional*): Indicator for detecting objects approaching or moving away.
-  All options from [Text Sensor](#config-text_sensor).
+  All options from [Text Sensor](/components/text_sensor#config-text_sensor).
 
 - **motion_status** (*Optional*): An indicator that detects the movement or stationarity of an object.
-  All options from [Text Sensor](#config-text_sensor).
+  All options from [Text Sensor](/components/text_sensor#config-text_sensor).
 
 - **custom_mode_end** (*Optional*): Used to indicate whether or not the current radar is in a customised mode amongst the setup functions.
   There are three main statuses: "Not in custom mode", "Setup in progress..." and "Set Success!".
-  All options from [Text Sensor](#config-text_sensor).
+  All options from [Text Sensor](/components/text_sensor#config-text_sensor).
 
 ## Select
 
@@ -304,7 +304,7 @@ select:
 - **scene_mode** (*Optional*): Valid only in [standard mode](#seeed_mr24hpc1-standard_mode). Used to select a preset scene in standard mode.
   The function of scene mode is to adjust the maximum detection range of the sensor to recognize human movements (Maximum detection distance of the sensor).
   There are 4 modes for scene mode, with the default mode being the living room mode. The detection range values for each scene mode are in the following table.
-  All options from [Select](#config-select).
+  All options from [Select](/components/select#config-select).
 
 ### Scene mode
 
@@ -317,18 +317,18 @@ select:
 
 - **unman_time**: Valid only in [standard mode](#seeed_mr24hpc1-standard_mode).
   Same as `custom_unman_time`, but this setting is only valid in standard mode.
-  All options from [Select](#config-select).
+  All options from [Select](/components/select#config-select).
 
 - **existence_boundary**: Valid only in [custom mode settings](#seeed_mr24hpc1-custom_mode).
   The distance to the farthest stationary target detected by the radar. Used to reduce radar false alarms. Reduces interference outside the detection range.
   The default value is `5m`.
-  All options from [Select](#config-select).
+  All options from [Select](/components/select#config-select).
 
 - **motion_boundary**: Valid only in [custom mode settings](#seeed_mr24hpc1-custom_mode).
   The distance to the furthest moving target detected by the radar. Used to reduce radar false alarms.
   Reduces the detection range of out-of-range doors, glass interference from moving objects outside the door.
   The default value is `5m`.
-  All options from [Select](#config-select).
+  All options from [Select](/components/select#config-select).
 
 ## Home Assistant Card
 

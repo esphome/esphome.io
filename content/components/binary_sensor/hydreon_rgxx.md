@@ -30,19 +30,19 @@ binary_sensor:
 
 ## Configuration variables
 
-- **hydreon_rgxx_id** (*Optional*, [ID](#config-id)): The ID of the Hydreon Rain Sensor display.
+- **hydreon_rgxx_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the Hydreon Rain Sensor display.
 
 - **too_cold** (*Optional*): `true` if the sensor reports being too cold. Hydreon only mentions this feature for the RG-9.
 
-  - All options from [Binary Sensor](#config-binary_sensor).
+  - All options from [Binary Sensor](/components/binary_sensor#config-binary_sensor).
 
 - **lens_bad** (*Optional*): `true` if the sensor reports the lens being bad.
 
-  - All options from [Binary Sensor](#config-binary_sensor).
+  - All options from [Binary Sensor](/components/binary_sensor#config-binary_sensor).
 
 - **em_sat** (*Optional*): `true` if the sensor reports the Emitter being saturated.
 
-  - All options from [Binary Sensor](#config-binary_sensor).
+  - All options from [Binary Sensor](/components/binary_sensor#config-binary_sensor).
 
 ## See Also
 

@@ -23,6 +23,7 @@ title: ""
 - **dfrobot_sen0395:** `reset`, `settings`
 - **display_menu:** `down`, `enter`, `hide`, `left`, `right`, `show`, `show_main`, `up`
 - **ds1307:** `read_time`, `write_time`
+- **rx8130:** `read_time`, `write_time`
 - **esp32_ble_tracker:** `start_scan`, `stop_scan`
 - **event:** `trigger`
 - **ezo_pmp:** `arbitrary_command`, `change_i2c_address`, `clear_calibration`, `clear_total_volume_dosed`, `dose_continuously`, `dose_volume`, `dose_volume_over_time`, `dose_with_constant_flow_rate`, `find`, `pause_dosing`, `set_calibration_volume`, `stop_dosing`
@@ -30,6 +31,7 @@ title: ""
 - **fingerprint_grow:** `aura_led_control`, `cancel_enroll`, `delete`, `delete_all`, `enroll`, `led_control`
 - **globals:** `set`
 - **grove_tb6612fng:** `break`, `change_address`, `no_standby`, `run`, `standby`, `stop`
+- **hc8:** `calibrate`
 - **homeassistant:** `event`, `service`, `tag_scanned`
 - **http_request:** `get`, `post`, `send`
 - **htu21d:** `set_heater`, `set_heater_level`

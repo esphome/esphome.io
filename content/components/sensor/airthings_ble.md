@@ -108,30 +108,26 @@ ble_client:
 esp32_ble_tracker:
 ```
 
-{{< note >}}
-The sensor uses active polling of devices every 5 minutes as per the device reported internal refresh timeout.
+> [!NOTE]
+> The sensor uses active polling of devices every 5 minutes as per the device reported internal refresh timeout.
 
-{{< /note >}}
-{{< note >}}
-Battery-voltage reporting defaults to once every 24 hours in order
-to reduce BLE traffic (obtaining the battery voltage requires quite
-a few BLE commands/responses); if you wish to have it reported
-more frequently configure the `battery_update_interval`. The main
-sensor `update_interval` controls the overall polling frequency
-so setting the interval for the battery voltage to a lower value
-will result in the battery voltage being reported once per polling
-interval.
-
-{{< /note >}}
+> [!NOTE]
+> Battery-voltage reporting defaults to once every 24 hours in order
+> to reduce BLE traffic (obtaining the battery voltage requires quite
+> a few BLE commands/responses); if you wish to have it reported
+> more frequently configure the `battery_update_interval`. The main
+> sensor `update_interval` controls the overall polling frequency
+> so setting the interval for the battery voltage to a lower value
+> will result in the battery voltage being reported once per polling
+> interval.
 
 ### Airthings Wave Radon (Gen 2) Sensor
 
 AirThings Wave Radon (Gen 2) tracks radon (24h and long term), temperature, atmospheric pressure and humidity.
 
-{{< note >}}
-The Wave Gen2 device does NOT support CO2 or TVOC sensors - only radon, temperature, pressure, humidity, and illuminance are available.
+> [!NOTE]
+> The Wave Gen2 device does NOT support CO2 or TVOC sensors - only radon, temperature, pressure, humidity, and illuminance are available.
 
-{{< /note >}}
 {{< img src="airthings_wave_radon.jpg" alt="Image" width="60.0%" class="align-center" >}}
 
 ## Configuration variables
@@ -176,7 +172,7 @@ esp32_ble_tracker:
 ### Battery Level Reporting
 
 If you wish to have the 'percentage of battery life remaining'
-reported as a sensor, you can make use of the [Copy Sensor](#copy-sensor) component.
+reported as a sensor, you can make use of the [Copy Sensor](/components/copy#copy-sensor) component.
 
 The examples below are based on standard alkaline-chemistry batteries;
 if you use other types of batteries you may need to adjust the

@@ -9,7 +9,7 @@ params:
 
 The `hbridge` fan platform allows you to use a compatible *h-bridge* (L298N, DRV8871, MX1508, BTS7960, L9110S, DRV8833, TB6612, etc.) to control a fan (or motor/solenoid).
 
-{{< img src="L298N_module.jpg" alt="Image" caption="L298N H-bridge module. Image by `kuongshun`_." width="50.0%" class="align-center" >}}
+{{< img src="L298N_module.jpg" alt="Image" caption="L298N H-bridge module. Image by kuongshun." width="50.0%" class="align-center" >}}
 
 {{< img src="fan-ui.png" alt="Image" width="80.0%" class="align-center" >}}
 
@@ -27,14 +27,14 @@ fan:
 
 ## Configuration variables
 
-- **pin_a** (**Required**, [ID](#config-id)): The id of the
-  [float output](#output) connected to Pin A (alternatively IN1, etc.) of the h-bridge.
+- **pin_a** (**Required**, [ID](/guides/configuration-types#id)): The id of the
+  [float output](/components/output#output) connected to Pin A (alternatively IN1, etc.) of the h-bridge.
 
-- **pin_b** (**Required**, [ID](#config-id)): The id of the
-  [float output](#output) connected to Pin B (alternatively IN2, etc.) of the h-bridge.
+- **pin_b** (**Required**, [ID](/guides/configuration-types#id)): The id of the
+  [float output](/components/output#output) connected to Pin B (alternatively IN2, etc.) of the h-bridge.
 
-- **enable_pin** (*Optional*, [ID](#config-id)): The id of the
-  [float output](#output) connected to the Enable pin of the h-bridge (if h-bridge uses enable).
+- **enable_pin** (*Optional*, [ID](/guides/configuration-types#id)): The id of the
+  [float output](/components/output#output) connected to the Enable pin of the h-bridge (if h-bridge uses enable).
 
 - **decay_mode** (*Optional*, string): The decay mode you want to use with
   the h-bridge. Either `slow` (coasting) or `fast` (braking). Defaults to `slow`.
@@ -44,7 +44,7 @@ fan:
   will allow 1% increments in the output. Defaults to `100`.
 
 - **preset_modes** (*Optional*): A list of preset modes for this fan. Preset modes can be used in automations (i.e. `on_preset_set`  ).
-- All other options from [Fan Component](#config-fan).
+- All other options from [Fan Component](/components/fan#config-fan).
 
 {{< anchor "fan-hbridge_brake_action" >}}
 

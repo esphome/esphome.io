@@ -50,14 +50,14 @@ Utilizing the UART channels enables you to connect your UART devices, with each 
 as a virtual UART bus for the connected component.
 
 The I/O pins of the WeiKai chips can be use as any of the other GPIO pins.
-Any option accepting a [Pin Schema](#config-pin_schema) can theoretically
+Any option accepting a [Pin Schema](/guides/configuration-types#pin-schema) can theoretically
 be used, but some more complicated components that do communication through
 this I/O expander might not work.
 
 ## Connecting via an SPI bus
 
 The `wk2132_spi`, `wk2212_spi`, `wk2204_spi`, `wk2168_spi` components allows
-you to connect the WeiKai chip with ESPHome via a [SPI](#spi) bus.
+you to connect the WeiKai chip with ESPHome via a [SPI](/components/spi) bus.
 
 You can connect several of these modules to a single SPI controller circuit effectively expanding
 the number of hardware serial ports available. Each WeiKai chip needs to be selected
@@ -90,11 +90,11 @@ wk2168_spi:
 
 ### Configuration variables
 
-- **id** (**Required**, [ID](#config-id)): The id to use for this WeiKai component.
-- **spi_id** (*Optional*, [ID](#config-id)): Manually specify the ID of the [SPI Component](#spi) if you want
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The id to use for this WeiKai component.
+- **spi_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the [SPI Component](/components/spi) if you want
   to use multiple SPI buses.
 
-- **cs_pin** (**Required**, [Pin Schema](#config-pin_schema)): The pin on the ESP that the chip select line
+- **cs_pin** (**Required**, [Pin Schema](/guides/configuration-types#pin-schema)): The pin on the ESP that the chip select line
   of the chip is connected to.
 
 - **data_rate** (*Optional*): Set the data rate of the controller. One of `80MHz`, `40MHz`, `20MHz`, `10MHz`,
@@ -106,7 +106,7 @@ wk2168_spi:
 
 - **uart** (**Required**): The UART channels.
 
-  - **id** (**Required**, [ID](#config-id)): The id to use for this UART channel.
+  - **id** (**Required**, [ID](/guides/configuration-types#id)): The id to use for this UART channel.
   - **channel** (**Required**): Unique channel number of this virtual UART.
     Options: `0` to `1` or `0` to `3` depending on the model.
 
@@ -120,7 +120,7 @@ wk2168_spi:
 ## Connecting via an I²C bus
 
 The `wk2132_i2c` `wk2212_i2c` `wk2204_i2c` `wk2168_i2c` components allows you
-to connect the WeiKai chip with ESPHome via an [I²C](#i2c) bus.
+to connect the WeiKai chip with ESPHome via an [I²C](/components/i2c) bus.
 Up to four WeiKai chips can be connected to an I²C controller board, effectively expanding the
 available hardware serial ports. The base addresses of these boards are defined by the
 positions of two switches, A0 and A1, on the board.
@@ -134,15 +134,14 @@ positions of two switches, A0 and A1, on the board.
 | 0x50 - 0x57 | 1 | 0 |
 | 0x70 - 0x77 | 1 | 1 |
 
-{{< important >}}
-Note that the address is given as a **range** a not a number as you usually find on other I²C component.
-Indeed due to a peculiar way of addressing the different internal registers each component actually occupy
-8 consecutive addresses. For example if the component base address is 0x10, it will occupy the addresses ranging from
-0x10 to 0x17 on the I²C bus.
+> [!IMPORTANT]
+> Note that the address is given as a **range** a not a number as you usually find on other I²C component.
+> Indeed due to a peculiar way of addressing the different internal registers each component actually occupy
+> 8 consecutive addresses. For example if the component base address is 0x10, it will occupy the addresses ranging from
+> 0x10 to 0x17 on the I²C bus.
+>
+> This is important to know if you want to connect other devices on the same I²C bus.
 
-This is important to know if you want to connect other devices on the same I²C bus.
-
-{{< /important >}}
 Here is an example of configuration entry for a `wk2168_i2c` component. For the other components
 just replace the name of the component and do not use more channels that the chip can
 support (an error message will be generated in this case).
@@ -169,7 +168,7 @@ wk2168_i2c:
 
 ### Configuration variables
 
-- **id** (**Required**, [ID](#config-id)): The id to use for this WeiKai component.
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The id to use for this WeiKai component.
 - **address** (*Optional*): The I²C address of this component. Defaults to `0x10`.
 - **i2c_id** (*Optional*): The I²C Bus ID. Defaults to the default i²c bus.
 - **crystal** (*Optional*): The frequency in Hz of the crystal connected to the chip.
@@ -177,7 +176,7 @@ wk2168_i2c:
 
 - **uart** (**Required**): The UART channels.
 
-  - **id** (**Required**, [ID](#config-id)): The id to use for this UART channel.
+  - **id** (**Required**, [ID](/guides/configuration-types#id)): The id to use for this UART channel.
   - **channel** (**Required**): Unique channel number of this virtual UART.
     Options: `0` to `1` or `0` to `3` depending on the model.
 
@@ -233,7 +232,7 @@ switch:
 
 ### Pin configuration variables
 
-- **wkxxxx_xxx** (**Required**, [ID](#config-id)): The id of the `wkxxxx_xxx` component for the pin. For
+- **wkxxxx_xxx** (**Required**, [ID](/guides/configuration-types#id)): The id of the `wkxxxx_xxx` component for the pin. For
   example `wk2212_i2c: wk2168_bridge_spi`
 
 - **number** (**Required**): The pin number (`0` to `7`  )
@@ -292,8 +291,8 @@ log file and the baud rate will automatically be decreased.
 
 ## See Also
 
-- [I²C Bus](#i2c)
-- [SPI Bus](#spi)
+- [I²C Bus](/components/i2c)
+- [SPI Bus](/components/spi)
 - {{< docref "switch/gpio" >}}
 - {{< docref "binary_sensor/gpio" >}}
 - {{< apiref "weika/weika.h" "weika/weika.h" >}}

@@ -56,14 +56,14 @@ canbus:
 **Configuration variables:**
 
 - **platform** (**Required**, [platform](#platforms-canbus)): One of the supported CAN bus [Platforms](#platforms-canbus).
-- **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation.
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
 - **can_id** (**Required**, int): default *CAN ID* used for transmitting frames.
 - **use_extended_id** (*Optional*, boolean): Identifies the type of `can_id`  :
 
   - `false`  : Standard 11-bit IDs *(default)*
   - `true`  : Extended 29-bit IDs
 
-- **bit_rate** (*Optional*, enum): One of the supported bit rates. See [this table](#esp32-can-bit-rate) for a
+- **bit_rate** (*Optional*, enum): One of the supported bit rates. See [this table](/components/canbus/esp32_can#esp32-can-bit-rate) for a
   list of supported bit rates by the internal CAN (TWAI) controllers of different ESP32 variants. Defaults to `125KBPS`.
 
   - `1KBPS` - Support by `esp32_can` depends on ESP32 variant
@@ -87,7 +87,7 @@ canbus:
   - `500KBPS`
   - `1000KBPS`
 
-- **on_frame** (*Optional*, [Automation](#automation)): An automation to perform when a
+- **on_frame** (*Optional*, [Automation](/automations)): An automation to perform when a
   CAN frame is received. See [`on_frame` Trigger](#canbus-on-frame).
 
 {{< anchor "platforms-canbus" >}}
@@ -105,10 +105,8 @@ This automation will be triggered when a CAN frame is received. The variables `x
 received CAN ID and `remote_transmission_request` (of type `bool`  ) containing the corresponding field
 from the CAN frame are passed to the automation for use in lambdas.
 
-{{< note >}}
-Messages this node sends to the same ID will not show up as received messages.
-
-{{< /note >}}
+> [!NOTE]
+> Messages this node sends to the same ID will not show up as received messages.
 
 ```yaml
 canbus:
@@ -175,7 +173,7 @@ on_...:
 
 **Configuration variables:**
 
-- **data** (**Required**, binary data, [templatable](#config-templatable)): Data to transmit, up to eight
+- **data** (**Required**, binary data, [templatable](/automations/templates)): Data to transmit, up to eight
   bytes/characters are supported by CAN bus per frame.
 
 - **canbus_id** (*Optional*): Sets the CAN bus ID to use for transmitting the frame. Required if you are have multiple
@@ -194,11 +192,10 @@ on_...:
 
 Standard IDs and Extended IDs can coexist on the same segment.
 
-{{< note >}}
-It is important to know that "standard" and "extended" addresses denote different addresses. For example,
-Standard `0x123` and Extended `0x123` are, in fact, different addresses.
+> [!NOTE]
+> It is important to know that "standard" and "extended" addresses denote different addresses. For example,
+> Standard `0x123` and Extended `0x123` are, in fact, different addresses.
 
-{{< /note >}}
 Decimal or hexadecimal notation may be used for IDs:
 
 - Standard IDs use `0x000` to `0x7ff` (hexadecimal) or `0` to `2047` (decimal)
