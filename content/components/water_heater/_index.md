@@ -17,8 +17,6 @@ All water heater config schemas inherit from this schema - you can set these key
 ```yaml
 water_heater:
   - platform: ...
-    min_temperature: 10 °C
-    max_temperature: 80 °C
 ```
 
 Configuration variables:
@@ -30,8 +28,6 @@ Configuration variables:
 > If you have a [friendly_name](/components/esphome#esphome-configuration_variables) set for your device and you want the water heater
 > to use that name, you can set `name: None`.
 
-- **min_temperature** (*Optional*, float): The minimum temperature that can be set. Defaults to `10°C` (varies by platform).
-- **max_temperature** (*Optional*, float): The maximum temperature that can be set. Defaults to `80°C` (varies by platform).
 - **target_temperature** (*Optional*, float): The initial target temperature to set on boot.
 
 - **icon** (*Optional*, icon): Manually set the icon to use for the water heater in the frontend.
