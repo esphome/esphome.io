@@ -214,6 +214,7 @@ climate:
 
 - **supports_dry** (*Optional*, boolean): Enables setting dry mode for this unit. Defaults to `false`.
 - **supports_fan_only** (*Optional*, boolean): Enables setting fan only mode for this unit. Confirm that mode is supported on your remote. Defaults to `false`.
+- **fahrenheit_compatibility** (*Optional*, boolean): Enable this setting if Home Assistant is displaying temperatures in Fahrenheit, so that temperatures set through Home Assistant are sent to the unit the same way as temperatures set on the handheld IR remote.  Defaults to `false`.
 
 - **horizontal_default** (*Optional*, string): What to default to when the AC unit's horizontal direction is *not* set to swing. Defaults to `middle`.
 
