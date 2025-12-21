@@ -113,18 +113,19 @@ Image Settings:
   Defaults to ``jpeg`` (JPEG compressed image) which may not be supported by all cameras.
   Other formats require more CPU and memory and may not be supported by all cameras.
 
-    - ``jpeg``: JPEG compressed image
-    - ``rgb565``: RGB565 uncompressed image
-    - ``yuv422``: YUV422 uncompressed image
-    - ``yuv420``: YUV420 uncompressed image
-    - ``grayscale``: Grayscale uncompressed image
-    - ``rgb888``: RGB888 uncompressed image
-    - ``raw``: Raw uncompressed image
-    - ``rgb444``: RGB444 uncompressed image
-    - ``rgb555``: RGB555 uncompressed image
+  - ``jpeg``: JPEG compressed image
+  - ``rgb565``: RGB565 uncompressed image
+  - ``yuv422``: YUV422 uncompressed image
+  - ``yuv420``: YUV420 uncompressed image
+  - ``grayscale``: Grayscale uncompressed image
+  - ``rgb888``: RGB888 uncompressed image
+  - ``raw``: Raw uncompressed image
+  - ``rgb444``: RGB444 uncompressed image
+  - ``rgb555``: RGB555 uncompressed image
 
 - **jpeg_quality** (*Optional*, int): The JPEG quality that the camera should encode images with.
   From 6 (best) to 63 (worst). Defaults to `10`. Set this to ``0`` to disable JPEG compression/conversion.
+  Manual JPEG compression/conversion requires `psram` component to be enabled and configured.
 
 - **vertical_flip** (*Optional*, boolean): Whether to flip the image vertically. Defaults to `true`.
 - **horizontal_mirror** (*Optional*, boolean): Whether to mirror the image horizontally. Defaults to `true`.
