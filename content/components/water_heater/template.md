@@ -64,7 +64,6 @@ Possible return values for the lambdas:
   > **Note**
   > The list of `supported_modes` is static and evaluated at startup. It cannot be changed dynamically and does not support templates or lambdas.
 
-
 - **restore_mode** (*Optional*, enum): Control how the water heater attempts to restore state on bootup.
 
   - `NO_RESTORE` (Default): Do not save or restore state.
