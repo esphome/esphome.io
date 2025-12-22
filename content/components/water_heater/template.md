@@ -33,9 +33,9 @@ water_heater:
       - gas
 
     visual:
-      min_temperature: 10 °C
-      max_temperature: 85 °C
-      target_temperature_step: 0.5 °C
+      min_temperature: 10.0
+      max_temperature: 85.0
+      target_temperature_step: 0.5
 
     set_action:
       - lambda: |-
@@ -58,7 +58,12 @@ Possible return values for the lambdas:
 - **optimistic** (*Optional*, boolean): Whether to operate in optimistic mode - when in this mode, any command sent to
   the template water heater will immediately update the reported state. Defaults to `true`.
 
-- **supported_modes** (*Optional*, list): List to show which modes will be available to set from the UI. Shows all modes on default.
+- **supported_modes** (*Optional*, list):
+  Static list of operation modes that will be exposed to the frontend (for example Home Assistant). This controls the `operation_list` reported to Home Assistant and affects only the UI and available service calls. It does not change runtime behavior or control logic. When not specified, all supported water heater modes are shown by default.
+
+  > **Note**
+  > The list of `supported_modes` is static and evaluated at startup. It cannot be changed dynamically and does not support templates or lambdas.
+
 
 - **restore_mode** (*Optional*, enum): Control how the water heater attempts to restore state on bootup.
 

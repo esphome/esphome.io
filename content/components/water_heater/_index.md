@@ -38,6 +38,11 @@ Advanced options:
   - **min_temperature** (*Optional*, float): Override the minimum temperature shown in the frontend.
   - **max_temperature** (*Optional*, float): Override the maximum temperature shown in the frontend.
 
+- **supported_modes** (*Optional*, list): Static list of operation modes that will be exposed to the frontend (for example Home Assistant). When not specified, all modes supported by the platform are exposed.
+
+  > **Note**
+  > This option is platform-dependent. Not all water heater platforms allow configuring supported modes.
+
 - **internal** (*Optional*, boolean): Mark this component as internal. Internal components will not be exposed to the
   frontend (like Home Assistant). Only specifying an `id` without a `name` will implicitly set this to true.
 
