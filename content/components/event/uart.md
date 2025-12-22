@@ -12,7 +12,6 @@ and triggers events when predefined byte sequences are detected. Patterns are ma
 against the end of received data, making them ideal for detecting message terminators
 or commands with known endings.
 
-
 ```yaml
 # Example configuration entry
 event:
