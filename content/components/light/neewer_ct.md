@@ -52,7 +52,7 @@ For `ble_client` configuration, refer to {{< docref `/components/ble_client` >}}
 - **warm_white_color_temperature** (**Required**, float): The warmest color temperature supported by this light. This
   is the highest value when expressed in [mireds](https://en.wikipedia.org/wiki/Mired), or the lowest value when
   expressed in Kelvin.
-- All other options from [Light](#config-light).
+- All other options from [Light](/components/light#config-light).
 
 ## See Also
 
