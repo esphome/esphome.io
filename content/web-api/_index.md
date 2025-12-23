@@ -361,7 +361,7 @@ which may yield:
 }
 ```
 
-- **id**: The ID of the alarm control panel. Format: `alarm_control_panel/entity_name`.
+- **id**: The ID of the alarm control panel. Format: `alarm_control_panel/entity_name` for entities directly on the node, or `alarm_control_panel/device_name/entity_name` for sub-device entities.
 - **state**: `DISARMED`, `ARMED_HOME`, `ARMED_AWAY`, `ARMED_NIGHT`, `ARMED_VACATION`,
    `ARMED_CUSTOM_BYPASS`, `PENDING`, `ARMING`, `DISARMING`, or `TRIGGERED`.
 
