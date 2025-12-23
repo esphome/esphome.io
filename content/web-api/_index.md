@@ -66,26 +66,23 @@ calls to this API follow the URL schema `/<domain>/<entity_name>[/<method>?<para
 The `domain` is the type of the component, for example `sensor` or `light`. `entity_name` is
 the name of the entity exactly as configured in YAML (including spaces and UTF-8 characters).
 
-For entities on sub-devices, the URL schema is `/<domain>/<device_name>/<entity_name>/<method>`.
+For entities on sub-devices, the URL schema is `/<domain>/<device_name>/<entity_name>[/<method>]`.
 
 Examples:
 
 - `/sensor/Temperature` - A sensor named "Temperature" (GET returns state)
 - `/sensor/温度` - A sensor with a Chinese name (UTF-8 supported)
 - `/switch/Living Room Light/turn_on` - Turn on a switch (POST)
-- `/sensor/Remote Sensor/Temperature/state` - A sensor on a sub-device (use `/state` for GET)
-
-> [!NOTE]
-> For sub-device entities, the URL always requires 4 segments including the method. For GET requests
-> to retrieve state, use `/state` as the method (e.g., `/sensor/Garage/Temperature/state`).
+- `/sensor/Garage/Temperature` - A sensor on a sub-device named "Garage" (GET returns state)
+- `/light/Garage/Main Light/turn_on` - Turn on a light on a sub-device (POST)
 
 > [!NOTE]
 > **Backward Compatibility**
 >
 > For backward compatibility, the old URL format using `object_id` (lowercase with underscores)
-> is still supported but deprecated. For example, `/sensor/temperature_sensor` will still work
-> but may be removed in a future release. The new format using the entity name directly is
-> recommended.
+> is still supported but deprecated and will be removed in ESPHome 2026.7.0. For example,
+> `/sensor/temperature_sensor` will still work but logs a deprecation warning. The new format
+> using the entity name directly is recommended.
 
 By creating a simple GET request for a URL of the form `/<domain>/<entity_name>` you will get a JSON payload
 describing the current state of the component. This payload is equivalent to the ones sent by the
