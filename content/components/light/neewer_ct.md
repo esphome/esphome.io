@@ -54,10 +54,9 @@ For `ble_client` configuration, refer to {{< docref `/components/ble_client` >}}
   expressed in Kelvin.
 - All other options from [Light](#config-light).
 
-See Also
---------
+## See Also
 
-- {{< docref `/components/ble_client` >}}
-- {{< docref `/components/light/index` >}}
-- {{< docref `/components/light/color_temperature` >}}
-- {{< apiref `neewerlight_ct/neewer_ct_light_output.h` >}}
+- {{< docref "/components/ble_client" >}}
+- {{< docref "/components/light/index" >}}
+- {{< docref "/components/light/color_temperature" >}}
+- {{< apiref "neewerlight_ct/neewer_ct_light_output.h" >}}
