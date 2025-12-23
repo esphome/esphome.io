@@ -265,7 +265,7 @@ stopped midway. An example GET request for `/cover/Front Window Blinds` might re
 }
 ```
 
-- **id**: The ID of the cover. Format: `cover/entity_name`.
+- **id**: The ID of the cover. Format: `cover/entity_name` for regular entities, or `cover/device_name/entity_name` for sub-device entities.
 - **state**: `OPEN` or `CLOSED`. Any position other than 0.0 is considered open.
 - **value**: Current cover position as a float number. If the cover component does not support cover position reporting,
   then this will either be 1.0 when open or 0.0 when closed.
