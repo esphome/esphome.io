@@ -139,7 +139,7 @@ When using `detail=all`, the response includes additional fields including the d
 
 Binary sensors have a similar payload and also only support GET requests. For example requesting
 the current state of a binary sensor using the URL `/binary_sensor/Living Room Status` could
-result in following payload:
+result in the following payload:
 
 ```json
 {
