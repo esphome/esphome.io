@@ -149,7 +149,7 @@ result in following payload:
 }
 ```
 
-- **id**: The id of the binary sensor. Format: `binary_sensor/entity_name`.
+- **id**: The id of the binary sensor. Format: `binary_sensor/entity_name` or `binary_sensor/device_name/entity_name` for sub-device entities.
 - **state**: The text-based state of the binary sensor as a string.
 - **value**: The binary (`true`  /`false`  ) state of the binary sensor.
 
