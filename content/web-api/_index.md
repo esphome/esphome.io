@@ -369,8 +369,9 @@ which may yield:
 
 A POST request allows arming and disarming the alarm control panel. Available methods are `arm_away`, `arm_home`,
 `arm_night`, `arm_vacation` and `disarm`. The `code` parameter may be given if the alarm control panel requires
-a code for disarming or arming. For example, a POST to `/alarm_control_panel/My Alarm/disarm?code=1234` would attempt to
-disarm the alarm control panel named "My Alarm" using the code 1234.
+a code for disarming or arming. When constructing your request, include this `code` as part of the POST data (or in
+another non-URL channel supported by your client) and avoid placing it directly in the URL query string, as URLs may
+be logged or stored in browser history.
 
 A valid POST request will always return a 200 OK status response. This does not indicate that the alarm was armed or
 disarmed successfully. It only indicates that the command was received and processed by the web server.
