@@ -108,7 +108,7 @@ a GET request to `/sensor/Outside Temperature` could yield this payload:
 }
 ```
 
-- **id**: The id of the sensor. Format: `sensor/entity_name` or `sensor/device_name/entity_name` for sub-devices.
+- **id**: The id of the sensor. Format: `sensor/entity_name` or `sensor/device_name/entity_name` for sub-device entities.
 - **state**: The text-based state of the sensor as a string.
 - **value**: The floating point (filtered) value of the sensor.
 
@@ -182,7 +182,7 @@ the state of a light, send a GET request to `/light/<entity_name>`, for example 
 }
 ```
 
-- **id**: The id of the light. Format: `light/entity_name` for top-level entities, or `light/device_name/entity_name` for sub-device entities.
+- **id**: The id of the light. Format: `light/entity_name` or `light/device_name/entity_name` for sub-device entities.
 - **state**: The text-based state of the light as a string.
 - **brightness**: The brightness of the light from 0 to 255. Only if the light supports brightness.
    If `state` is `OFF`, this can still report values like 255 in order to send the full state.
@@ -236,7 +236,7 @@ GET request to `/fan/<entity_name>`.
 }
 ```
 
-- **id**: The id of the fan. Format: `fan/entity_name`.
+- **id**: The id of the fan. Format: `fan/entity_name` or `fan/device_name/entity_name` for sub-device entities.
 - **state**: The text-based state of the fan as a string.
 - **value**: The binary (`true`  /`false`  ) state of the fan.
 - **speed_level**: The speed level of the fan if it's supported. Value is between 1 and the maximum supported by the fan.
@@ -265,7 +265,7 @@ stopped midway. An example GET request for `/cover/Front Window Blinds` might re
 }
 ```
 
-- **id**: The ID of the cover. Format: `cover/entity_name` for regular entities, or `cover/device_name/entity_name` for sub-device entities.
+- **id**: The ID of the cover. Format: `cover/entity_name` or `cover/device_name/entity_name` for sub-device entities.
 - **state**: `OPEN` or `CLOSED`. Any position other than 0.0 is considered open.
 - **value**: Current cover position as a float number. If the cover component does not support cover position reporting,
   then this will either be 1.0 when open or 0.0 when closed.
@@ -361,7 +361,7 @@ which may yield:
 }
 ```
 
-- **id**: The ID of the alarm control panel. Format: `alarm_control_panel/entity_name` for entities directly on the node, or `alarm_control_panel/device_name/entity_name` for sub-device entities.
+- **id**: The ID of the alarm control panel. Format: `alarm_control_panel/entity_name` or `alarm_control_panel/device_name/entity_name` for sub-device entities.
 - **state**: `DISARMED`, `ARMED_HOME`, `ARMED_AWAY`, `ARMED_NIGHT`, `ARMED_VACATION`,
    `ARMED_CUSTOM_BYPASS`, `PENDING`, `ARMING`, `DISARMING`, or `TRIGGERED`.
 
