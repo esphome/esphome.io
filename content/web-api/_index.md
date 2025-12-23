@@ -182,7 +182,7 @@ the state of a light, send a GET request to `/light/<entity_name>`, for example 
 }
 ```
 
-- **id**: The id of the light. Format: `light/entity_name`.
+- **id**: The id of the light. Format: `light/entity_name` for top-level entities, or `light/device_name/entity_name` for sub-device entities.
 - **state**: The text-based state of the light as a string.
 - **brightness**: The brightness of the light from 0 to 255. Only if the light supports brightness.
    If `state` is `OFF`, this can still report values like 255 in order to send the full state.
