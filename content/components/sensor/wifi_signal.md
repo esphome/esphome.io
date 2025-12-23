@@ -23,7 +23,7 @@ sensor:
     update_interval: 60s
 ```
 
-To additionally display signal strength in percentage use the [Copy Sensor](#copy-sensor) (it's not possible to add the same sensor twice, because it has a static `uniqueid` reported to Home Assistant):
+To additionally display signal strength in percentage use the [Copy Sensor](/components/copy#copy-sensor) (it's not possible to add the same sensor twice, because it has a static `uniqueid` reported to Home Assistant):
 
 ```yaml
 # Example configuration entry with 2 sensors and filter
@@ -46,10 +46,10 @@ sensor:
 
 ## Configuration variables
 
-- **update_interval** (*Optional*, [Time](#config-time)): The interval
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval
   to check the sensor. Defaults to `60s`.
 
-- All other options from [Sensor](#config-sensor).
+- All other options from [Sensor](/components/sensor).
 
 > [!WARNING]
 > Signal strength readings are only available when WiFi is in station mode. Readings are not valid
@@ -57,7 +57,7 @@ sensor:
 
 ## See Also
 
-- [Sensor Filters](#sensor-filters)
+- [Sensor Filters](/components/sensor#sensor-filters)
 - {{< docref "/components/wifi" >}}
 - {{< docref "/components/text_sensor/wifi_info" >}}
 - {{< apiref "wifi_signal/wifi_signal_sensor.h" "wifi_signal/wifi_signal_sensor.h" >}}

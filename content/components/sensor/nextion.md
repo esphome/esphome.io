@@ -54,15 +54,15 @@ sensor:
 
 ## Configuration variables
 
-- **nextion_id** (*Optional*, [ID](#config-id)): Manually specify the ID of the Nextion display.
+- **nextion_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the Nextion display.
 - **component_name** (*Optional*, string): Manually specify the name of the Nextion component.
 - **variable_name** (*Optional*, string): Manually specify the name of the Nextion variable.
-- **update_interval** (*Optional*, [Time](#config-time)): The duration to update the sensor
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The duration to update the sensor
 - **precision** (*Optional*, int): This is for Nextion float components. This sets
   the precision that the component is set to. This typically is the `vvs1` setting of the component.
 
-- **background_color** (*Optional*, [Color](#config-color)): The background color
-- **foreground_color** (*Optional*, [Color](#config-color)): The foreground color
+- **background_color** (*Optional*, [Color](/components/display#config-color)): The background color
+- **foreground_color** (*Optional*, [Color](/components/display#config-color)): The foreground color
 - **visible** (*Optional*, boolean): Visible or not
 
 ### Waveform Settings
@@ -73,15 +73,15 @@ sensor:
 
 - **waveform_send_last_value** (*Optional*, int): This will send the last value set during an update interval. Setting to true will give a timeseries style graph
 - **wave_max_length** (*Optional*, int): How many data points to store. Typically this is the width of the component in the Nextion
-- **update_interval** (*Optional*, [Time](#config-time)): The duration to update the sensor. This typically should be set for waveforms to send periodic updates.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The duration to update the sensor. This typically should be set for waveforms to send periodic updates.
 
-- All other options from [Sensor](#config-sensor).
+- All other options from [Sensor](/components/sensor).
 
 **Only one** *component_name* **or** *variable_name* **can be set**
 
 > [!NOTE]
 > `background_color`, `foreground_color` and `visible` do not retain their state on page change. [Sensor Settings](#nextion_sensor_settings).
-> A [Nextion Sensor](#nextion_sensor) with a custom protocol sending the current page can be used to execute the API call [Update Components By Prefix](#update_components_by_prefix) to update all the components for that page
+> A [Nextion Sensor](#nextion_sensor) with a custom protocol sending the current page can be used to execute the API call [Update Components By Prefix](/components/display/nextion#update_components_by_prefix) to update all the components for that page
 
 See [How things Update](#nextion_sensor_how_things_update) for additional information
 
@@ -125,12 +125,12 @@ on_...:
 
 Configuration variables:
 
-- **id** (**Required**, [ID](#config-id)): The ID of the Nextion sensor.
-- **state** (**Required**, string, [templatable](#config-templatable)): The float state to publish.
-- **publish_state** (*Optional*, bool, [templatable](#config-templatable)): Publish new state to Home Assistant.
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the Nextion sensor.
+- **state** (**Required**, string, [templatable](/automations/templates)): The float state to publish.
+- **publish_state** (*Optional*, bool, [templatable](/automations/templates)): Publish new state to Home Assistant.
   Default is true.
 
-- **send_to_nextion** (*Optional*, bool, [templatable](#config-templatable)): Publish new state to Nextion
+- **send_to_nextion** (*Optional*, bool, [templatable](/automations/templates)): Publish new state to Nextion
   display which will update component. Default is true.
 
 > [!NOTE]
@@ -140,7 +140,7 @@ Configuration variables:
 
 ### Lambda Calls
 
-From [lambdas](#config-lambda), you can call several methods to access
+From [lambdas](/automations/templates#config-lambda), you can call several methods to access
 some more advanced functions (see the full {{< apiref "nextion/sensor/nextion_sensor.h" "nextion/sensor/nextion_sensor.h" >}} for more info).
 
 {{< anchor "nextion_sensor_set_state" >}}

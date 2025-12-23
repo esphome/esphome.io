@@ -13,7 +13,7 @@ states from your Home Assistant instance using the {{< docref "/components/api" 
 > [!NOTE]
 > Although you might not plan to *export* states from the node and you do not need an entity of the node
 > in Home Assistant, this component still requires you to register the node under Home Assistant. See:
-> [Connecting your device to Home Assistant](#connecting-your-device-to-home-assistant).
+> [Connecting your device to Home Assistant](/guides/getting_started_hassio#connecting-your-device-to-home-assistant).
 
 ```yaml
 # Example configuration entry
@@ -44,7 +44,7 @@ sensor:
 - **attribute** (*Optional*, string): The name of the state attribute to import from the
   specified entity. The entity state is used when this option is omitted.
 
-- All other options from [Sensor](#config-sensor).
+- All other options from [Sensor](/components/sensor).
 
 > [!NOTE]
 > The sensors implemented by this component are by default `internal`, to avoid exporting them back to
@@ -54,6 +54,6 @@ sensor:
 
 ## See Also
 
-- [Sensor Filters](#sensor-filters)
-- [Automation](#automation)
+- [Sensor Filters](/components/sensor#sensor-filters)
+- [Automation](/automations)
 - {{< apiref "homeassistant/sensor/homeassistant_sensor.h" "homeassistant/sensor/homeassistant_sensor.h" >}}

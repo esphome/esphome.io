@@ -43,7 +43,7 @@ Configuration variables:
 - **name** (*Optional*, string): The name for the sensor. At least one of **id** and **name** must be specified.
 
 > [!NOTE]
-> If you have a [friendly_name](#esphome-configuration_variables) set for your device and
+> If you have a [friendly_name](/components/esphome#esphome-configuration_variables) set for your device and
 > you want the sensor to use that name, you can set `name: None`.
 
 - **unit_of_measurement** (*Optional*, string): Manually set the unit
@@ -90,25 +90,25 @@ Configuration variables:
   for a list of available options.
   Set to `""` to remove the default entity category.
 
-- If Webserver enabled and version 3 is selected, All other options from Webserver Component.. See [Webserver Version 3](#config-webserver-version-3-options).
+- If Webserver enabled and version 3 is selected, All other options from Webserver Component.. See [Webserver Version 3](/components/web_server#config-webserver-version-3-options).
 
 Automations:
 
-- **on_value** (*Optional*, [Automation](#automation)): An automation to perform
+- **on_value** (*Optional*, [Automation](/automations)): An automation to perform
   when a new value is published. See [`on_value`](#sensor-on_value).
 
-- **on_value_range** (*Optional*, [Automation](#automation)): An automation to perform
+- **on_value_range** (*Optional*, [Automation](/automations)): An automation to perform
   when a published value transition from outside to a range to inside. See [`on_value_range`](#sensor-on_value_range).
 
-- **on_raw_value** (*Optional*, [Automation](#automation)): An automation to perform
+- **on_raw_value** (*Optional*, [Automation](/automations)): An automation to perform
   when a raw value is received that hasn't passed through any filters. See [`on_raw_value`](#sensor-on_raw_value).
 
 MQTT Options:
 
-- **expire_after** (*Optional*, [Time](#config-time)): Manually set the time in which
+- **expire_after** (*Optional*, [Time](/guides/configuration-types#time)): Manually set the time in which
   the sensor values should be marked as “expired”/“unknown”. Not providing any value means no expiry.
 
-- All other options from [MQTT Component](#config-mqtt-component).
+- All other options from [MQTT Component](/components/mqtt#config-mqtt-component).
 
 > [!NOTE]
 > If you're trying to setup filters for a sensor that has multiple outputs - for example a DHT22 which
@@ -303,7 +303,7 @@ unit_of_measurement: "°F"
 
 ## Sensor Automation
 
-You can access the most recent state of the sensor in [lambdas](#config-lambda) using
+You can access the most recent state of the sensor in [lambdas](/automations/templates#config-lambda) using
 `id(sensor_id).state` and the most recent raw state using `id(sensor_id).raw_state`.
 
 {{< anchor "sensor-on_value" >}}
@@ -311,7 +311,7 @@ You can access the most recent state of the sensor in [lambdas](#config-lambda) 
 ### `on_value`
 
 This automation will be triggered when a new value that has passed through all filters
-is published. In [Lambdas](#config-lambda) you can get the value from the trigger
+is published. In [Lambdas](/automations/templates#config-lambda) you can get the value from the trigger
 with `x`.
 
 ```yaml
@@ -325,7 +325,7 @@ sensor:
             red: !lambda "return x/255;"
 ```
 
-Configuration variables: See [Automation](#automation).
+Configuration variables: See [Automation](/automations).
 
 {{< anchor "sensor-on_value_range" >}}
 
@@ -362,14 +362,14 @@ Configuration variables:
 
 - **above** (*Optional*, float): The minimum for the trigger.
 - **below** (*Optional*, float): The maximum for the trigger.
-- See [Automation](#automation).
+- See [Automation](/automations).
 
 {{< anchor "sensor-on_raw_value" >}}
 
 ### `on_raw_value`
 
 This automation will be triggered when a new value is received that hasn't passed
-through any filters. In [Lambdas](#config-lambda) you can get the value from the
+through any filters. In [Lambdas](/automations/templates#config-lambda) you can get the value from the
 trigger with `x`.
 
 ```yaml
@@ -383,7 +383,7 @@ sensor:
             red: !lambda "return x/255;"
 ```
 
-Configuration variables: See [Automation](#automation).
+Configuration variables: See [Automation](/automations).
 
 {{< anchor "sensor-in_range_condition" >}}
 
@@ -415,7 +415,7 @@ Configuration variables:
 
 ### Lambda calls
 
-From [lambdas](#config-lambda), you can call several methods on all sensors to do some
+From [lambdas](/automations/templates#config-lambda), you can call several methods on all sensors to do some
 advanced stuff (see the full API Reference for more info).
 
 - `publish_state()`  : Manually cause the sensor to push out a value. It will then
