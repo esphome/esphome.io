@@ -62,11 +62,11 @@ I would recommend just opening the network debug panel of your web browser to se
 ### REST API
 
 There's also a simple REST API available which can be used to get and set the current state. All
-calls to this API follow the URL schema `/<domain>/<entity_name>[/<method>?<param>=<value>]`.
+calls to this API follow the URL schema `/<domain>/<entity_name>[/<action>?<param>=<value>]`.
 The `domain` is the type of the component, for example `sensor` or `light`. `entity_name` is
 the name of the entity exactly as configured in YAML (including spaces and UTF-8 characters).
 
-For entities on sub-devices, the URL schema is `/<domain>/<device_name>/<entity_name>[/<method>]`.
+For entities on sub-devices, the URL schema is `/<domain>/<device_name>/<entity_name>[/<action>]`.
 
 Examples:
 
