@@ -259,7 +259,7 @@ sensor:
 ```
 
 > [!NOTE]
-> PVVX firmare deprecated any other advertisment format other than "BTHome" stating with version 6.0.
+> PVVX firmare deprecated any other advertisment format other than "BTHome" starting with version 6.0.
 
 ### XMWSDJ04MMC
 
