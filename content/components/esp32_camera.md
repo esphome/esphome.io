@@ -10,7 +10,7 @@ params:
 The `esp32_camera` component allows you to use ESP32-based camera boards in ESPHome that
 directly integrate into Home Assistant through the native API.
 
-Requires an {{< docref "/components/i2c" >}} to be set up.
+Requires an {{< docref "/components/i2c" >}} and {{< docref "/components/psram" >}} to be configured.
 
 ```yaml
 # Example configuration entry
@@ -57,8 +57,8 @@ Connection Options:
 - **external_clock** (**Required**): The configuration of the external clock to drive the camera.
 
   - **pin** (**Required**, pin): The pin the external clock line is connected to.
-  - **frequency** (*Optional*, float): The frequency of the external clock, must be between 10
-    and 20MHz. Defaults to `20MHz`.
+  - **frequency** (*Optional*, frequency): The frequency of the external clock, must be between `8MHz`
+    and `20MHz`. Defaults to `20MHz`.
 
 - **i2c_id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the [I²C bus](/components/i2c) the camera is connected to.
 - **reset_pin** (*Optional*, pin): The ESP pin the reset pin of the camera is connected to.
