@@ -58,7 +58,7 @@ Advanced options:
 
 MQTT options:
 
-- **mqtt_format** (*Optional*, enum): Either `values` or `json`. When set to `json`, state changes will
+- **mqtt_state_format** (*Optional*, enum): Either `values` or `json`. When set to `json`, state changes will
   be only published to the `state_topic` as a JSON object. When `values`, individual values are published
   to the `state_topic`, `position_state_topic`, and `tilt_state_topic` separately. Defaults to `values`.
 
