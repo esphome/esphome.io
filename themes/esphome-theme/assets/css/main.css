@@ -95,10 +95,30 @@ body {
 a {
   color: var(--link-accent);
   text-decoration: none;
+  position: relative;
 }
 
 a:hover {
-  text-decoration: underline;
+  color: var(--link-accent);
+}
+
+a::before {
+  content: "";
+  position: absolute;
+  display: block;
+  width: 100%;
+  height: 2px;
+  bottom: 0;
+  left: 0;
+  background-color: var(--link-accent);
+  transform: scaleX(0);
+  transform-origin: top left;
+  /* transform origin is middle by default */
+  transition: transform 0.3s ease;
+}
+
+a:hover::before {
+  transform: scaleX(1);
 }
 
 h1, h2, h3, h4, h5, h6, .footer-heading, .getting-started-heading {
