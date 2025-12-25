@@ -68,6 +68,20 @@ the name of the entity exactly as configured in YAML (including spaces and UTF-8
 
 For entities on sub-devices, the URL schema is `/<domain>/<device_name>/<entity_name>[/<action>]`.
 
+#### URL Format and HTTP Methods
+
+The HTTP method (GET or POST) disambiguates URL patterns:
+
+| Segments | GET | POST |
+|----------|-----|------|
+| 2: `/{domain}/{entity}` | Main device state | N/A |
+| 3: `/{domain}/{X}/{Y}` | Sub-device state (`X`=device, `Y`=entity) | Main device action (`X`=entity, `Y`=action) |
+| 4: `/{domain}/{device}/{entity}/{action}` | Invalid | Sub-device action |
+
+> [!NOTE]
+> 4-segment URLs only support POST requests because the fourth segment is always an action,
+> and actions require POST. A GET request to a 4-segment URL returns an error.
+
 Examples:
 
 - `/sensor/Temperature` - A sensor named "Temperature" (GET returns state)
@@ -361,7 +375,7 @@ which may yield:
 }
 ```
 
-- **id**: The ID of the alarm control panel. Format: `alarm_control_panel/entity_name` or `alarm_control_panel/device_name/entity_name` for sub-device entities.
+- **id**: The id of the alarm control panel. Format: `alarm_control_panel/entity_name` or `alarm_control_panel/device_name/entity_name` for sub-device entities.
 - **state**: `DISARMED`, `ARMED_HOME`, `ARMED_AWAY`, `ARMED_NIGHT`, `ARMED_VACATION`,
    `ARMED_CUSTOM_BYPASS`, `PENDING`, `ARMING`, `DISARMING`, or `TRIGGERED`.
 
