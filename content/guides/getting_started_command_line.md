@@ -54,7 +54,7 @@ services:
 > Running ESPHome in Docker on WSL2 can be significantly slower
 > (10x or more) than native Linux or a traditional VM due to filesystem performance
 > issues when accessing files on Windows drives. For better performance, store your
-> ESPHome configuration files inside the WSL2 filesystem (e.g., `~/esphome/config`)
+> ESPHome files inside the WSL2 filesystem (e.g., `~/esphome/...`)
 > rather than on a Windows mount (e.g., `/mnt/c/...`). See [Issue #12568](https://github.com/esphome/esphome/issues/12568)
 > for more details.
 
