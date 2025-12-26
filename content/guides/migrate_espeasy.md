@@ -12,7 +12,7 @@ ESPHome create a binary for you and then upload that in the ESPEasy web interfac
 
 ## Getting Binary
 
-First follow the guides for the [different supported devices](#devices) and create a configuration
+First follow the guides for the [different supported devices](/components#devices) and create a configuration
 file. Then, generate and download the binary:
 
 - **Using the Home Assistant add-on/dashboard**: Just click the `COMPILE` button,
@@ -35,11 +35,10 @@ To upload the binary, navigate to the ESPEasy web interface and enter the
 Press "Load" under Firmware, then select the binary you previously downloaded and upload
 the binary. If everything succeeds, you should now have ESPHome on your node 🎉.
 
-{{< note >}}
-with ESPHome, you in most cases won't need to worry about the available flash size, as
-the binary only ever includes the code that you are actually using.
+> [!NOTE]
+> with ESPHome, you in most cases won't need to worry about the available flash size, as
+> the binary only ever includes the code that you are actually using.
 
-{{< /note >}}
 Happy Hacking!
 
 ## See Also

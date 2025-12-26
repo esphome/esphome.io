@@ -60,12 +60,10 @@ ln882x:
   Defaults to the variant that is detected from the board, if a board that's unknown to ESPHome is used,
   this option is mandatory. **It's recommended not to include this option**.
 
-{{< note >}}
-Support for the LibreTiny platform is still in development and there could be issues or missing components.
-
-Please report any issues on [LibreTiny GitHub](https://github.com/kuba2k2/libretiny).
-
-{{< /note >}}
+> [!NOTE]
+> Support for the LibreTiny platform is still in development and there could be issues or missing components.
+>
+> Please report any issues on [LibreTiny GitHub](https://github.com/kuba2k2/libretiny).
 
 ## Getting Started
 
@@ -149,7 +147,7 @@ sensor:
 output:
   - platform: libretiny_pwm
     pin: PWM2
-    frequency: 1000 Hz
+    frequency: 1kHz
     id: pwm_output
 # using light with the PWM
 light:

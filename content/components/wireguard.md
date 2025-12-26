@@ -16,23 +16,21 @@ available for ESP32, ESP8266 and BK72xx microcontrollers *only*.
   ["WireGuard" Trademark Usage Policy](https://www.wireguard.com/trademark-policy/)
   for additional information.
 
-{{< warning >}}
-To successfully use this component you must have WireGuard® also
-on your remote host (already installed and ready to accept connections).
-If you don't have it please read the section [Remote peer setup](#wireguard-installation).
+> [!WARNING]
+> To successfully use this component you must have WireGuard® also
+> on your remote host (already installed and ready to accept connections).
+> If you don't have it please read the section [Remote peer setup](#wireguard-installation).
 
-{{< /warning >}}
-{{< warning >}}
-This component requires the system clock to be synchronized.
+> [!WARNING]
+> This component requires the system clock to be synchronized.
+>
+> See {{< docref "time/" >}} to setup a time source
+> and **do not use** `homeassistant` time-platform if
+> Home Assistant is on the remote peer because the time
+> synchronization is a prerequisite to establish the VPN link.
+>
+> The {{< docref "time/sntp" >}} is a valid time-platform choice.
 
-See {{< docref "time/" >}} to setup a time source
-and **do not use** `homeassistant` time-platform if
-Home Assistant is on the remote peer because the time
-synchronization is a prerequisite to establish the VPN link.
-
-The {{< docref "time/sntp" >}} is a valid time-platform choice.
-
-{{< /warning >}}
 A VPN tunnel can be created to a **single** remote peer
 adding the following to your configuration:
 
@@ -100,7 +98,7 @@ wireguard:
 - **peer_preshared_key** (*Optional*, string): The chosen pre-shared key between
   local device and remote peer.
 
-- **peer_persistent_keepalive** (*Optional*, [Time](#config-time)): The amount of
+- **peer_persistent_keepalive** (*Optional*, [Time](/guides/configuration-types#time)): The amount of
   time after which a *keepalive* packet is sent through the tunnel.
   By default this feature is disabled (`0s`  ).
 
@@ -117,7 +115,7 @@ wireguard:
   expected to transit through the VPN link (e.g. with {{< docref "mqtt/" >}} to a
   remote MQTT broker).
 
-- **reboot_timeout** (*Optional*, [Time](#config-time)): The amount of time to wait
+- **reboot_timeout** (*Optional*, [Time](/guides/configuration-types#time)): The amount of time to wait
   before rebooting the device when the remote peer is unreachable. Can be disabled
   by setting this to `0s`. Default to `15min`.
 
@@ -133,10 +131,10 @@ wireguard:
   active too. To bypass such deadlock set this parameter to `true` in
   order to not initialize MQTT until the remote peer is up.
 
-- **update_interval** (*Optional*, [Time](#config-time)): How often to check
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): How often to check
   the connection status and the latest handshake value. Default to `10s`.
 
-- **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation.
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
 
 {{< anchor "wireguard-static-routes" >}}
 
@@ -158,23 +156,22 @@ Incoming connections are not affected by `netmask`.
 
 Let's explain with some examples:
 
-| address      | netmask                      | allowed ips                                    | working outgoing connections                                                                                                               |
-| ------------ | ---------------------------- | ---------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| 172.16.0.100 | *omitted* or 255.255.255.255 | *omitted* or any other value                   | **none**, no routes are created                                                                                                            |
-|              | 255.255.255.0                | *omitted*                                      | only to `172.16.0.0/24`                                                                                                                    |
-| | | - 172.16.0.0/24 - 192.168.0.0/24 - *any other* | and any other network will be outside `172.16.0.0/24`                                                                                      |
-| | | - 192.168.0.0/24 | **none** because `192.168.0.0/24` is not part of `172.16.0.0/24`                                                                           |
-| 10.44.0.100 | 255.0.0.0 | *omitted* | to `10.0.0.0/8` network |
-| | | - 10.44.0.0/16 - 10.10.0.0/16 | only to the networks in the allowed list because the netmask will route the whole `10.0.0.0/8` but wireguard allows only those two subnets |
-| any | 0.0.0.0 | *omitted* | **any** |
-| | | - 172.16.0.0/24 - 10.44.0.0/16 - 10.10.0.0/16 | to any network that is in the list of allowed IPs because the netmask will route any traffic but wireguard allows only its own list |
+| address      | netmask                      | allowed ips                                                                   | working outgoing connections                                                                                                               |
+| ------------ | ---------------------------- | ----------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| 172.16.0.100 | *omitted* or 255.255.255.255 | *omitted* or any other value                                                  | **none**, no routes are created                                                                                                            |
+| 172.16.0.100 | 255.255.255.0                | *omitted*                                                                     | to `172.16.0.0/24` network                                                                                                                 |
+| 172.16.0.100 | 255.255.255.0                | `- 172.16.0.0/24`{{< break >}}`- 192.168.0.0/24`{{< break >}} *`- any other`* | only to `172.16.0.0/24` because `192.168.0.0/24` and any other network will be outside of `172.16.0.0/24`                                  |
+| 172.16.0.100 | 255.255.255.0                | `- 192.168.0.0/24`                                                            | **none** because `192.168.0.0/24` is not part of `172.16.0.0/24`                                                                           |
+| 10.44.0.100  | 255.0.0.0                    | *omitted*                                                                     | to `10.0.0.0/8` network                                                                                                                    |
+| 10.44.0.100  | 255.0.0.0                    | `- 10.44.0.0/16`{{< break >}}`- 10.10.0.0/16`                                 | only to the networks in the allowed list because the netmask will route the whole `10.0.0.0/8` but wireguard allows only those two subnets |
+| any          | 0.0.0.0                      | *omitted*                                                                     | **any**                                                                                                                                    |
+| any          | 0.0.0.0                      | `- 172.16.0.0/24`{{< break >}}`- 10.44.0.0/16`{{< break >}}`- 10.10.0.0/16`   | to any network that is in the list of allowed IPs because the netmask will route any traffic but wireguard allows only its own list        |
 
-{{< note >}}
-Setting the `netmask` to `0.0.0.0` has the effect of routing
-through the VPN link any traffic. It is like having set the wireguard
-interface as the system default.
+> [!NOTE]
+> Setting the `netmask` to `0.0.0.0` has the effect of routing
+> through the VPN link any traffic. It is like having set the wireguard
+> interface as the system default.
 
-{{< /note >}}
 {{< anchor "wireguard-sensors" >}}
 
 ## Sensors
@@ -193,7 +190,7 @@ binary_sensor:
       name: 'WireGuard Status'
 ```
 
-All options from [Binary Sensor](#config-binary_sensor) can be added to the
+All options from [Binary Sensor](/components/binary_sensor#config-binary_sensor) can be added to the
 above configuration.
 
 ### Enabled Binary Sensor
@@ -208,7 +205,7 @@ binary_sensor:
       name: 'WireGuard Enabled'
 ```
 
-All options from [Binary Sensor](#config-binary_sensor) can be added to the
+All options from [Binary Sensor](/components/binary_sensor#config-binary_sensor) can be added to the
 above configuration.
 
 ### Latest Handshake Sensor
@@ -223,7 +220,7 @@ sensor:
       name: 'WireGuard Latest Handshake'
 ```
 
-All options from [Sensor](#config-sensor) can be added to the
+All options from [Sensor](/components/sensor) can be added to the
 above configuration.
 
 ### Address Text Sensor
@@ -238,7 +235,7 @@ text_sensor:
       name: 'WireGuard Address'
 ```
 
-All options from [Text Sensor](#config-text_sensor) can be added to the
+All options from [Text Sensor](/components/text_sensor#config-text_sensor) can be added to the
 above configuration.
 
 {{< anchor "wireguard-actions" >}}
@@ -259,11 +256,9 @@ on_...:
 
 The lambda equivalent is `id(wireguard_id).disable()`.
 
-{{< note >}}
-To disable WireGuard® since device boot you can execute this action
-in the [`on_boot`](#esphome-on_boot) step.
-
-{{< /note >}}
+> [!NOTE]
+> To disable WireGuard® since device boot you can execute this action
+> in the [`on_boot`](/components/esphome#esphome-on_boot) step.
 
 ### `wireguard.enable`
 
@@ -349,18 +344,16 @@ These are the steps:
 
 The device should now be linked to your remote Home Assistant.
 
-{{< note >}}
-If you have issues linking the ESP device try setting
-the `use_address` parameter of the {{< docref "wifi/" >}} to the value
-of the [address](#wireguard-address) configured here.
-
-{{< /note >}}
+> [!NOTE]
+> If you have issues linking the ESP device try setting
+> the `use_address` parameter of the {{< docref "wifi/" >}} to the value
+> of the [address](#wireguard-address) configured here.
 
 ## See Also
 
 - {{< docref "time/" >}}
 - {{< docref "time/sntp" >}}
-- [Automation](#automation)
+- [Automation](/automations)
 - [WireGuard®](https://www.wireguard.org/) official website
 - [Home Assistant Community Add-on: WireGuard](https://community.home-assistant.io/t/home-assistant-community-add-on-wireguard/134662)
   (also on [GitHub](https://github.com/hassio-addons/addon-wireguard))
