@@ -203,7 +203,7 @@ text_sensor:
       else if (int(id(iaq).state) >= 251 && int(id(iaq).state) <= 350) {
         return {"Severely polluted"};
       }
-      else if (int(id(iaq).state) >= 351) {
+      else if (int(id(iaq).state) >= 351 && int(id(iaq).state) <= 500) {
         return {"Extremely polluted"};
       }
       else {
