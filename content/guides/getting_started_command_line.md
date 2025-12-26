@@ -50,7 +50,7 @@ services:
 > need to mount the volume with the `nolock` option, otherwise platformio may
 > freeze on container startup as per [platformIO-core Issue 3089](https://github.com/platformio/platformio-core/issues/3089)
 
-> [!NOTE]
+> [!WARNING]
 > Running ESPHome in Docker on WSL2 can be significantly slower
 > (10x or more) than native Linux or a traditional VM due to filesystem performance
 > issues when accessing files on Windows drives. For better performance, store your
