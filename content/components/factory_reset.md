@@ -6,21 +6,19 @@ params:
     description: Instructions for setting up conditions that can remotely invalidate all ESPHome preferences stored in flash and reboot ESP.
 ---
 
-The `factory_reset` component allows you to invalidate (reset) all ESPHome [preferences](#preferences-flash_write_interval) stored in flash memory and reboot your node.
+The `factory_reset` component allows you to invalidate (reset) all ESPHome [preferences](/components/esphome#preferences-flash_write_interval) stored in flash memory and reboot your node.
 After reboot all states, parameters and variables will be reinitialized with their default values. This is useful:
 
 - for devices preflashed with ESPHome to reset behavior back to factory state
 - in case of moving a device to a new environment or starting a new use-case (e.g. reset counters or state)
 - for privacy concerns when giving away a device
 
-{{< note >}}
-**USE WITH GREAT CAUTION!** All credentials, global variables, counters and saved states stored in non-volatile memory will be lost with no chance of recovering them.
-Even raw reading of flash memory with `esptool` will not help, since data is physically erased from flash memory.
-
-For devices configured using {{< docref "/components/captive_portal" "captive portal" >}}, this will reset WiFi settings as well, thus making such devices offline.
-You'll need to be in close proximity to your device to configure it again using a built-in WiFi access point and captive portal.
-
-{{< /note >}}
+> [!NOTE]
+> **USE WITH GREAT CAUTION!** All credentials, global variables, counters and saved states stored in non-volatile memory will be lost with no chance of recovering them.
+> Even raw reading of flash memory with `esptool` will not help, since data is physically erased from flash memory.
+>
+> For devices configured using {{< docref "/components/captive_portal" "captive portal" >}}, this will reset WiFi settings as well, thus making such devices offline.
+> You'll need to be in close proximity to your device to configure it again using a built-in WiFi access point and captive portal.
 
 ## Reset by Fast Power Cycling
 
@@ -49,7 +47,7 @@ factory_reset:
 - **resets_required** (*Optional*, integer): The number of power cycles after which the device will be reset.
   No default, if not configured the power cycle reset feature will be disabled
 
-- **max_delay** (*Optional*, [Time](#config-time)): The maximum delay between power cycles. Default: 10s
+- **max_delay** (*Optional*, [Time](/guides/configuration-types#time)): The maximum delay between power cycles. Default: 10s
 
 ## `on_increment` Trigger
 

@@ -51,12 +51,12 @@ graph:
 
 ## Configuration variables
 
-- **id** (**Required**, [ID](#config-id)): The ID with which you will be able to reference the graph later
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID with which you will be able to reference the graph later
   in your display code.
 
 - **width** (**Required**, int): The graph width in pixels
 - **height** (**Required**, int): The graph height in pixels
-- **duration** (**Required**, [Time](#config-time)): The total graph history duration.
+- **duration** (**Required**, [Time](/guides/configuration-types#time)): The total graph history duration.
 - **border** (*Optional*, boolean): Specifies if a border will be drawn around the graph. Default is True.
 - **x_grid** (*Optional*): Specifies the time per division. If not specified, no vertical grid will be drawn.
 - **y_grid** (*Optional*, float): Specifies the number of units per division. If not specified, no horizontal grid will be drawn.
@@ -69,7 +69,7 @@ graph:
 
 Trace specific fields:
 
-- **sensor** (*Optional*, [ID](#config-id)): The sensor value to plot
+- **sensor** (*Optional*, [ID](/guides/configuration-types#id)): The sensor value to plot
 - **line_thickness** (*Optional*): Defaults to 3
 - **line_type** (*Optional*): Specifies the plot line-type. Can be one of the following: `SOLID`, `DOTTED`, `DASHED`. Defaults to `SOLID`.
 - **continuous** (*Optional*): connects the individual points to make a continuous line. Defaults to `false`.
@@ -79,8 +79,8 @@ Trace specific fields:
 
 The legend displays trace names, current values, units, and line style samples. Only one legend per graph is supported.
 
-- **name_font** (**Required**, [Font](#display-fonts)): Font used for trace names.
-- **value_font** (*Optional*, [Font](#display-fonts)): Font used for current values. If not specified, values are not displayed.
+- **name_font** (**Required**, [Font](/components/font#display-fonts)): Font used for trace names.
+- **value_font** (*Optional*, [Font](/components/font#display-fonts)): Font used for current values. If not specified, values are not displayed.
 - **width** (*Optional*, int): Legend width in pixels. If not specified, width is automatically calculated.
 - **height** (*Optional*, int): Legend height in pixels. If not specified, height is automatically calculated.
 - **border** (*Optional*, boolean): Draw a border around the legend. Defaults to `true`.
@@ -142,7 +142,7 @@ display:
         lambda: |-
           // Draw graph and legend
           it.graph(10, 20, id(temperature_graph_with_legend));
-          it.graph_legend(170, 20, id(temperature_graph_with_legend), my_yellow);
+          it.legend(170, 20, id(temperature_graph_with_legend), my_yellow);
 
 color:
   - id: my_red
@@ -163,13 +163,11 @@ color:
     blue: 0%
 ```
 
-{{< note >}}
-Here are some things to note:
-
-- Setting `y_grid` will expand any specified range to the nearest multiple of grid spacings.
-- Axis labels are currently not possible without manually placing them.
-- The grid and border color is set with `it.graph()`, while the traces are defined separately.
-- Legends are drawn separately using `it.graph_legend()` and can be positioned independently of the graph.
-- Legend dimensions are automatically calculated if not specified, based on font sizes and trace count.
-
-{{< /note >}}
+> [!NOTE]
+> Here are some things to note:
+>
+> - Setting `y_grid` will expand any specified range to the nearest multiple of grid spacings.
+> - Axis labels are currently not possible without manually placing them.
+> - The grid and border color is set with `it.graph()`, while the traces are defined separately.
+> - Legends are drawn separately using `it.legend()` and can be positioned independently of the graph.
+> - Legend dimensions are automatically calculated if not specified, based on font sizes and trace count.
