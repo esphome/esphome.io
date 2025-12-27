@@ -38,8 +38,16 @@ mqtt:
 - **password** (*Optional*, string): The password to use for
   authentication. Empty (the default) means no authentication.
 
-- **clean_session** (*Optional*, boolean): Whether the broker will clean
-  the MQTT session after disconnect. Defaults to `false`.
+- **clean_session** (*Optional*, boolean, string): Whether the broker will clean
+  the MQTT session after disconnect. Can be one of `true`, `false`, `RTC` or `FLASH`. Defaults to `true`.
+  If `false`, the device will save the subscriptions to avoid having to resubscribe when reconnecting.
+  Subscriptions are saved by default in `RTC` for ESP32 (persistent between deep-sleeps) and in `FLASH`
+  for the other platforms (persistent even after power off).
+
+- **rtc_max_subscriptions** (*Optional*, int): Number of slots to allocate in RTC memmory for storing
+  subscriptions in non clean sessions. Only used if `clean_session` is `false` or `RTC` (ESP32).
+  It is recommended not to set this variable unless you are performing persistent subscriptions
+  outside of the usual configuration.
 
 - **client_id** (*Optional*, string): The client id to use for opening
   connections. See [Defaults](#mqtt-defaults) for more information.
