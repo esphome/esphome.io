@@ -44,7 +44,7 @@ mqtt:
   Subscriptions are saved by default in `RTC` for ESP32 (persistent between deep-sleeps) and in `FLASH`
   for the other platforms (persistent even after power off).
 
-- **rtc_max_subscriptions** (*Optional*, int): Number of slots to allocate in RTC memmory for storing
+- **rtc_max_subscriptions** (*Optional*, int): Number of slots to allocate in RTC memory for storing
   subscriptions in non clean sessions. Only used if `clean_session` is `false` or `RTC` (ESP32).
   It is recommended not to set this variable unless you are performing persistent subscriptions
   outside of the usual configuration.
