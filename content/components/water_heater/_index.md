@@ -37,6 +37,7 @@ Advanced options:
 - **visual** (*Optional*): Configuration for the frontend representation.
   - **min_temperature** (*Optional*, float): Override the minimum temperature shown in the frontend.
   - **max_temperature** (*Optional*, float): Override the maximum temperature shown in the frontend.
+  - **target_temperature_step** (*Optional*, float): Override the temperature steps shown in the frontend.
 
 - **supported_modes** (*Optional*, list): Static list of operation modes that will be exposed to the frontend (for example Home Assistant). When not specified, all modes supported by the platform are exposed.
 

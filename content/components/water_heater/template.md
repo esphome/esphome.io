@@ -10,8 +10,6 @@ params:
 The `template` water heater platform allows you to create simple water heaters out of just a few actions and lambdas. Once
 defined, it will automatically appear in Home Assistant as a water heater entity and can be controlled through the frontend.
 
-{{< img src="water-boiler.png" alt="Image" class="align-center" >}}
-
 ```yaml
 # Example configuration entry
 water_heater:
@@ -28,7 +26,7 @@ water_heater:
 
     # List to show available modes to show in the UI (optional)
     supported_modes:
-      - off
+      - "off"
       - eco
       - gas
 
