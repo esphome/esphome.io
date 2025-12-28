@@ -4,7 +4,7 @@ title: "Template Water Heater"
 params:
   seo:
     description: Instructions for setting up template water heaters in ESPHome.
-    image: water-boiler.svg
+    image: water-heater.svg
 ---
 
 The `template` water heater platform allows you to create simple water heaters out of just a few actions and lambdas. Once
