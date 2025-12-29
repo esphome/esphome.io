@@ -113,7 +113,8 @@ sensor:
 
 > [!NOTE]
 > Commands will be ran with the same privileges as the ESPHome binary. Take extra care for the commands to finish! Running a
-> command that never exits will lock up the ESPHome binary too.
+> command that never exits will lock up the ESPHome binary too. Put the commands in double quotes. If the command itself
+> needs to contain double quote characters, escape them with `\`.
 
 ## Build and run
 
