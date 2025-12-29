@@ -36,7 +36,7 @@ host:
 
 ## Lambda calls
 
-The `execute_shell_command` function can be used in a [lambda](/automations/templates#config-lambda) to run linux shell 
+The `execute_shell_command` function can be used in a [lambda](/automations/templates#config-lambda) to run linux shell
 commands on the host operating system, and retrieve the Standard Output, Standard Error and Exit Code of the result.
 
 You can set a shell to run the commands in, and you can specify custom environment variables too.
