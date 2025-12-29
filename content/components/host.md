@@ -21,7 +21,8 @@ configuration to Home Assistant (the native MAC address is not readily available
 > See {{< docref "/components/api" >}} for details.
 
 Many components, especially those interfacing to actual hardware, will not be available when using `host`. Do not
-configure wifi or ethernet - network will automatically be available using the host computer.
+configure wifi or ethernet - network will automatically be available using the host computer. [UART](/components/uart/#uart-component-with-the-host-platform)
+and [Time Source](/components/time/host) can be configured to be used.
 
 ```yaml
 # Example configuration entry
@@ -110,5 +111,7 @@ sensor:
 ## See Also
 
 - [SDL display](/components/display/sdl#sdl)
+- [UART on host](/components/uart/#uart-component-with-the-host-platform)
+- [Host Time Source](/components/time/host)
 - {{< docref "esphome/" >}}
 - {{< docref "/components/time/host" >}}
