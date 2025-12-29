@@ -52,7 +52,7 @@ You can set a shell to run the commands in, and you can specify custom environme
 # Example configuration entry
 button:
   - platform: template
-    name: "Kernel version (sh)"
+    name: "Kernel version (sh)" # display shell type and kernel version number
     on_press:
       - lambda: |-
           auto result = esphome::host::execute_shell_command("ps -p $$ -o comm=; uname -r");
@@ -61,7 +61,7 @@ button:
           id(last_stderr).publish_state(result.stderr_output);
 
   - platform: template
-    name: "Envvars test (bash)"
+    name: "Envvars test (bash)" # display shell type and see if environment variable set works
     on_press:
       - lambda: |-
           esphome::host::ShellCommandOptions opts;
@@ -75,7 +75,7 @@ button:
           id(last_stderr).publish_state(result.stderr_output);
 
   - platform: template
-    name: "Run Command"
+    name: "Run Command" # display first 255 characters of the output of any command typed in the text component
     on_press:
       - lambda: |-
           auto result = esphome::host::execute_shell_command(id(arbitrary_command).state.c_str());
