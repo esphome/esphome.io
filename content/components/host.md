@@ -21,8 +21,8 @@ configuration to Home Assistant (the native MAC address is not readily available
 > See {{< docref "/components/api" >}} for details.
 
 Many components, especially those interfacing to actual hardware, will not be available when using `host`. Do not
-configure wifi or ethernet - network will automatically be available using the host computer. [UART](/components/uart/#uart-component-with-the-host-platform)
-and [Time Source](/components/time/host) can be configured to be used.
+configure wifi or ethernet - network will automatically be available using the host computer. Check out the See Also
+section at the bottom of this page for components working specifically with `host` platform.
 
 ```yaml
 # Example configuration entry
@@ -34,20 +34,12 @@ host:
 
 - **mac_address** (*Optional*, MAC address): A dummy MAC address to use when communicating with HA.
 
-## Build and run
-
-The `esphome run yourfile.yaml` command will compile and automatically run the build file on the `host` platform.
-
 ## Lambda calls
 
-The `execute_shell_command` function can be used in a [lambda](/automations/templates#config-lambda) to run shell commands
-on the host operating system, and retrieve the Standard Output, Standard Error and Exit Code of the result.
+The `execute_shell_command` function can be used in a [lambda](/automations/templates#config-lambda) to run linux shell 
+commands on the host operating system, and retrieve the Standard Output, Standard Error and Exit Code of the result.
 
 You can set a shell to run the commands in, and you can specify custom environment variables too.
-
-> [!NOTE]
-> Commands will be ran with the same privileges as the ESPHome binary. Take extra care for the commands to finish! Running a
-> command that never exits will lock up the ESPHome binary too.
 
 ```yaml
 # Example configuration entry
@@ -106,6 +98,34 @@ sensor:
   - platform: template
     id: last_exit_code
     name: "Last Command Exit Code"
+```
+
+> [!NOTE]
+> Commands will be ran with the same privileges as the ESPHome binary. Take extra care for the commands to finish! Running a
+> command that never exits will lock up the ESPHome binary too.
+
+## Build and run
+
+The `esphome run yourfile.yaml` command will compile and automatically run the build file on the `host` platform.
+
+To retrieve the binary while it's still running, find its path using another terminal:
+
+```
+ps -ax | grep esphome/build
+```
+
+You will get an output similar to:
+
+```
+   1808 pts/2    S+     0:09 /home/yourname/config/.esphome/build/<nodename>/.pioenvs/<nodename>/program
+   2027 pts/3    S+     0:00 grep esphome/build
+```
+
+Stop it using `Ctrl+C`, just copy the binary to your favourite location on the host file system and run it from there:
+
+```
+sudo cp /home/yourname/config/.esphome/build/<nodename>/.pioenvs/<nodename>/program /usr/local/bin/esphome_host_binary
+/usr/local/bin/esphome_host_binary
 ```
 
 ## See Also
