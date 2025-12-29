@@ -102,7 +102,7 @@ sensor:
     name: "Host load average"
     update_interval: 30s
     state_class: "measurement"
-    accuracy_decimals: 1
+    accuracy_decimals: 2
     icon: mdi:cpu-64-bit
     lambda: |-
       auto result = esphome::host::execute_shell_command("awk '{print $1}' /proc/loadavg");
