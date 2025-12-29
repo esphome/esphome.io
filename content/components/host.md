@@ -145,4 +145,3 @@ sudo cp /home/yourname/config/.esphome/build/<nodename>/.pioenvs/<nodename>/prog
 - [UART on host](/components/uart/#uart-component-with-the-host-platform)
 - [Host Time Source](/components/time/host)
 - {{< docref "esphome/" >}}
-- {{< docref "/components/time/host" >}}
