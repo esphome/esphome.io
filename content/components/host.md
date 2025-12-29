@@ -110,20 +110,20 @@ The `esphome run yourfile.yaml` command will compile and automatically run the b
 
 On Linux, to retrieve the binary while it's still running, find its path using another terminal:
 
-```
+```sh
 ps -ax | grep esphome/build
 ```
 
 You will get an output similar to:
 
-```
+```sh
    1808 pts/2    S+     0:09 /home/yourname/config/.esphome/build/<nodename>/.pioenvs/<nodename>/program
    2027 pts/3    S+     0:00 grep esphome/build
 ```
 
 Stop it using `Ctrl+C`, just copy the binary to your favourite location on the host file system and run it from there:
 
-```
+```sh
 sudo cp /home/yourname/config/.esphome/build/<nodename>/.pioenvs/<nodename>/program /usr/local/bin/esphome_host_binary
 /usr/local/bin/esphome_host_binary
 ```
