@@ -45,7 +45,7 @@ You can set a shell to run the commands in, and you can specify custom environme
 # Example configuration entry
 button:
   - platform: template
-    name: "Kernel version (sh)" # display shell type and kernel version number
+    name: "Kernel version (sh)" # get shell type and kernel version number
     on_press:
       - lambda: |-
           auto result = esphome::host::execute_shell_command("ps -p $$ -o comm=; uname -r");
@@ -54,7 +54,7 @@ button:
           id(last_stderr).publish_state(result.stderr_output);
 
   - platform: template
-    name: "Envvars test (bash)" # display shell type and see if environment variable set works
+    name: "Envvars test (bash)" # get shell type and see if environment variable set works
     on_press:
       - lambda: |-
           esphome::host::ShellCommandOptions opts;
@@ -68,7 +68,7 @@ button:
           id(last_stderr).publish_state(result.stderr_output);
 
   - platform: template
-    name: "Run Command" # display first 255 characters of the output of any command typed in the text component
+    name: "Run Command" # get first 255 characters of the output of any command typed in the text component
     on_press:
       - lambda: |-
           auto result = esphome::host::execute_shell_command(id(arbitrary_command).state.c_str());
@@ -98,6 +98,17 @@ sensor:
   - platform: template
     id: last_exit_code
     name: "Last Command Exit Code"
+  - platform: template
+    name: "Host load average"
+    update_interval: 30s
+    state_class: "measurement"
+    accuracy_decimals: 1
+    icon: mdi:cpu-64-bit
+    lambda: |-
+      auto result = esphome::host::execute_shell_command("awk '{print $1}' /proc/loadavg");
+      auto load_str = result.stdout_output;
+      load_str.erase(std::remove_if(load_str.begin(), load_str.end(), ::isspace), load_str.end());
+      return parse_number<float>(load_str);
 ```
 
 > [!NOTE]
