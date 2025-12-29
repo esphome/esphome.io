@@ -108,7 +108,7 @@ sensor:
 
 The `esphome run yourfile.yaml` command will compile and automatically run the build file on the `host` platform.
 
-To retrieve the binary while it's still running, find its path using another terminal:
+On Linux, to retrieve the binary while it's still running, find its path using another terminal:
 
 ```
 ps -ax | grep esphome/build
