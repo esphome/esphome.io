@@ -108,7 +108,11 @@ sensor:
       auto result = esphome::host::execute_shell_command("awk '{print $1}' /proc/loadavg");
       auto load_str = result.stdout_output;
       load_str.erase(std::remove_if(load_str.begin(), load_str.end(), ::isspace), load_str.end());
-      return parse_number<float>(load_str);
+      auto parsed = parse_number<float>(load_str);
+      if (!parsed.has_value()) {
+        return NAN;
+      }
+      return parsed.value();
 ```
 
 > [!NOTE]
