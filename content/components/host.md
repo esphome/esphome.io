@@ -73,7 +73,7 @@ button:
       - lambda: |-
           auto result = esphome::host::execute_shell_command(id(arbitrary_command).state.c_str());
           id(last_exit_code).publish_state(result.exit_code);
-          id(last_stdout).publish_state(result.stdout_output.substr(0, 255));
+          id(last_stdout).publish_state(result.stdout_output.substr(0, 254));
           id(last_stderr).publish_state(result.stderr_output);
 
 text:
