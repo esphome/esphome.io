@@ -1,4 +1,4 @@
-# **Distance UART Sensor**
+# **UART Distance Sensor**
 
 The distance\_uart sensor platform allows you to use a wide variety of UART-based ultrasonic distance sensors with ESPHome. Ideally, this component replaces the need for specific drivers for every model variation (A01, A02, A06, etc.) by unifying them into a single, configurable driver.
 
@@ -174,7 +174,8 @@ The following models have pre-defined configurations. You can specify the model 
 
 The a01nyub and a02yyuw components are now deprecated. Migrating is straightforward: change the platform to distance\_uart and specify the model.
 
-**Migrating from A01NYUB**
+### **Migrating from A01NYUB**
+
 ```yaml
 # OLD  
 sensor:  
@@ -190,7 +191,8 @@ sensor:
     name: "My Sensor"
 ```
 
-**Migrating from A02YYUW**
+### **Migrating from A02YYUW**
+
 ```yaml
 # OLD  
 sensor:  
@@ -209,6 +211,7 @@ sensor:
 ## **Examples**
 
 ### **Simple Auto Sensor (e.g., A02YYUW)**
+
 ```yaml
 uart:  
   tx_pin: GPIO1  
@@ -225,6 +228,7 @@ sensor:
 ### **Controlled Sensor (e.g., A02YYT)**
 
 The A02YYT requires a trigger signal. By connecting the sensor's RX pin to the ESP's TX pin, this component can trigger the read over UART.
+
 ```yaml
 uart:  
   tx_pin: GPIO1  
@@ -241,6 +245,7 @@ sensor:
 ### **Sump Pit Level (Advanced Calculation)**
 
 In this example, we calculate the depth of water in a sump pit. The sensor returns the "air gap" (distance from sensor to water), so we subtract that from the total depth of the pit to get the water level.
+
 ```yaml
 sensor:  
   - platform: distance_uart  
@@ -273,6 +278,7 @@ sensor:
 ### **Custom "Generic" Sensor**
 
 If your model is not in the list, you can manually define the parameters.
+
 ```yaml
 sensor:  
   - platform: distance_uart  
