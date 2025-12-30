@@ -86,6 +86,7 @@ sensor:
     icon: mdi:radiator
     name: "CPU Temperature"
     state_class: measurement
+    unit_of_measurement: "°C"
     accuracy_decimals: 0
     lambda: |-
       auto result = esphome::host::execute_shell_command("cat /sys/class/thermal/thermal_zone0/temp");
@@ -114,7 +115,8 @@ sensor:
   - platform: template
     name: "Free memory"
     state_class: measurement
-    accuracy_decimals: 2
+    unit_of_measurement: "%"
+    accuracy_decimals: 0
     icon: mdi:memory
     lambda: |-
       esphome::host::ShellCommandOptions opts;
