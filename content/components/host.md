@@ -119,4 +119,5 @@ there directly, without having to invoke ESPHome every time.
 - [SDL display](/components/display/sdl#sdl)
 - [UART on host](/components/uart/#uart-component-with-the-host-platform)
 - [Host Time Source](/components/time/host)
+- [Cookbook](/cookbook/host)
 - {{< docref "esphome/" >}}
