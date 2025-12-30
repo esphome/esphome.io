@@ -13,8 +13,8 @@ CPU temperatures, load average, free memory, disk space, number of available upd
 It's recommended to set the system up with a static IP address, because ESPHome acts as server and Home Assistant connects to it as client.
 Since there's no MDNS advertisment published by the host, you need to add it manually to Home Assistant by the IP address.
 
-The shell commands are ran with the same privileges as the ESPHome binary. It's out of scope for this document to show how to provision
-a linux system in order to properly operate complying to this requirement.
+The shell commands are executed with the same privileges as the ESPHome binary. It's out of scope of this document to show how to provision
+a Linux system in order to properly operate complying to this requirement. You need to set it up so the binary runs automatically after boot.
 
 ## Basic setup
 
@@ -52,9 +52,12 @@ esphome:
     - lambda: |-
         auto result = esphome::host::execute_shell_command("hostname");
         id(host_name).publish_state(result.stdout_output);
+    - lambda: |-
+        auto result = esphome::host::execute_shell_command("nproc");
+        id(host_nproc).publish_state(result.stdout_output);
 ```
 
-These lamdas run `on_boot` because their result doesn't change anymore after the system boots up.
+These lamdas run `on_boot` because their result doesn't change anymore after the system boots up, there's no need to run them more than once.
 
 ## Text sensors
 
@@ -74,11 +77,15 @@ text_sensor:
     id: host_name
     icon: mdi:console-network
     name: "Hostname"
+  - platform: template
+    id: host_nproc
+    icon: mdi:cpu-64-bit
+    name: "Cores"
 ```
 
 ## Sensors
 
-Sensors updating at run time can have their polling command set in their own lambdas:
+Sensors updating at runtime can have their polling command set in their own lambdas, which run in every `update_interval`:
 
 ```yaml
 sensor:
@@ -172,7 +179,7 @@ with proper locales, here specifically we care about decimal separator to be a `
 
 ## Controls
 
-The buttons run the commands directly.
+The buttons run the commands directly:
 
 ```yaml
 button:
@@ -236,8 +243,8 @@ interval:
               return {};
 ```
 
-The template switch, in order to update its state has to rely on a less frequent timing than its built-in lambda.
-For this, we need to use `interval` to choose a timig which doesn't overload the system to query for the switch state.
+The template switch, in order to update its state has to rely on a less frequent timing than its built-in lambda which runs every loop cycle.
+For this, we use `interval` component to choose a timig which doesn't overload the system just to query for the switch state.
 
 ## See Also
 
