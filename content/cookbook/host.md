@@ -156,12 +156,12 @@ sensor:
       return parsed.value();
   - platform: template
     name: "Package updates available"
-    update_interval: 4h
+    update_interval: 1days
     state_class: measurement
     accuracy_decimals: 0
     icon: mdi:package-down
     lambda: |-
-      auto result = esphome::host::execute_shell_command("apt-get -s upgrade 2>/dev/null | awk '/^Inst /{c++} END{print c+0}'");
+      auto result = esphome::host::execute_shell_command("apt list --upgradable 2>/dev/null | tail -n +2 | wc -l");
       auto load_str = result.stdout_output;
       load_str.erase(std::remove_if(load_str.begin(), load_str.end(), ::isspace), load_str.end());
       auto parsed = parse_number<float>(load_str);
