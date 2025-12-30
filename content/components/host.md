@@ -98,22 +98,9 @@ sensor:
   - platform: template
     id: last_exit_code
     name: "Last Command Exit Code"
-  - platform: template
-    name: "Host load average"
-    update_interval: 30s
-    state_class: "measurement"
-    accuracy_decimals: 2
-    icon: mdi:cpu-64-bit
-    lambda: |-
-      auto result = esphome::host::execute_shell_command("awk '{print $1}' /proc/loadavg");
-      auto load_str = result.stdout_output;
-      load_str.erase(std::remove_if(load_str.begin(), load_str.end(), ::isspace), load_str.end());
-      auto parsed = parse_number<float>(load_str);
-      if (!parsed.has_value()) {
-        return NAN;
-      }
-      return parsed.value();
 ```
+
+Check out [the Cookbook](/cookbook/host) for examples on how to create a couple of controls and sensors for a Linux host.
 
 > [!NOTE]
 > Commands will be ran with the same privileges as the ESPHome binary. Take extra care for the commands to finish! Running a
@@ -124,25 +111,8 @@ sensor:
 
 The `esphome run yourfile.yaml` command will compile and automatically run the build file on the `host` platform.
 
-On Linux, to retrieve the binary while it's still running, find its path using another terminal:
-
-```sh
-ps -ax | grep esphome/build
-```
-
-You will get an output similar to:
-
-```sh
-   1808 pts/2    S+     0:09 /home/yourname/config/.esphome/build/<nodename>/.pioenvs/<nodename>/program
-   2027 pts/3    S+     0:00 grep esphome/build
-```
-
-Stop it using `Ctrl+C`, just copy the binary to your favourite location on the host file system and run it from there:
-
-```sh
-sudo cp /home/yourname/config/.esphome/build/<nodename>/.pioenvs/<nodename>/program /usr/local/bin/esphome_host_binary
-/usr/local/bin/esphome_host_binary
-```
+The binary path will be printed in the terminal, you can copy it to your favourite location on the host file system and run it from
+there directly, without having to invoke ESPHome every time.
 
 ## See Also
 
