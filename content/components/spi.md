@@ -146,7 +146,7 @@ spi_device:
 ### Configuration variables
 
 - **data_rate** (*Optional*): Set the data rate of the controller. One of `80MHz`, `40MHz`, `20MHz`, `10MHz`,
-  `5MHz`, `4MHz`, `2MHz`, `1MHz` (default), `200kHz`, `75kHz` or `1kHz`. A numeric value in Hz can alternatively
+  `5MHz`, `4MHz`, `2MHz`, `1MHz` (default), `500kHz`, `200kHz`, `75kHz` or `1kHz`. A numeric value in Hz can alternatively
   be specified.
 
 - **spi_mode** (*Optional*): Set the controller mode - one of `mode0`, `mode1`, `mode2`, `mode3`. The default is `mode3`.
