@@ -13,6 +13,9 @@ temperatures, free memory.
 It's recommended to set the system up with a static IP address, because ESPHome acts as server and Home Assistant connects to it as client.
 Since there's no MDNS advertisment published by the host, you need to add it manually to Home Assistant by the IP address.
 
+The shell commands are ran with the same privileges as the ESPHome binary. It's out of scope for this document to show how to provision
+a linux system in order to properly operate complying to this requirement.
+
 ## Basic setup
 
 This is all you need to set up a basic ESPHome binary. Do not set a manual MAC address, it's going to use the MAC of the host it's running on.
@@ -124,7 +127,7 @@ sensor:
 
 ## Controls
 
-The buttons run the commands directly. 
+The buttons run the commands directly.
 
 ```yaml
 button:
