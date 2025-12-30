@@ -60,13 +60,13 @@ The template sensors get updated from the lambdas specified elsewhere in the con
 ```yaml
 text_sensor:
   - platform: template
-    id: host_model
-    icon: mdi:raspberry-pi
-    name: "Model"
-  - platform: template
     id: host_ip_address
     icon: mdi:ip-network
     name: "IP Addresses"
+  - platform: template
+    id: host_model
+    icon: mdi:raspberry-pi
+    name: "Model"
 ```
 
 ## Sensors
@@ -126,6 +126,9 @@ sensor:
     name: "Uptime"
     type: seconds
 ```
+
+Note the usage of `LC_NUMERIC=C` environment variable. This is to ensure that the shell produces numeric output with proper locales, here
+specifically we care about decimal separator to be a `.`, not `,` as it is in many other languages.
 
 ## Controls
 
