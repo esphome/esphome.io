@@ -6,9 +6,9 @@ params:
     description: Recipes for running ESPHome on a Linux host
 ---
 
-If you have a Debian system you can run ESPHome binary on it to control a couple of tasks and monitor some states using
-`host` platform. Have buttons in Home Assistant to reboot or shut down, switch to turn off and on the screen and sensors to monitor
-temperatures, free memory.
+The example config below showcases a Debian system which runs an ESPHome binary to control a couple of tasks and monitor some states using
+`host` platform. Exposes buttons in Home Assistant to reboot or shut down, switch to turn off and on the screen and sensors to monitor
+CPU temperatures, load average, free memory, disk space, number of available update packages.
 
 It's recommended to set the system up with a static IP address, because ESPHome acts as server and Home Assistant connects to it as client.
 Since there's no MDNS advertisment published by the host, you need to add it manually to Home Assistant by the IP address.
@@ -49,6 +49,9 @@ esphome:
     - lambda: |-
         auto result = esphome::host::execute_shell_command("cat /sys/class/dmi/id/product_name");
         id(host_model).publish_state(result.stdout_output);
+    - lambda: |-
+        auto result = esphome::host::execute_shell_command("hostname");
+        id(host_name).publish_state(result.stdout_output);
 ```
 
 These lamdas run `on_boot` because their result doesn't change anymore after the system boots up.
@@ -67,6 +70,10 @@ text_sensor:
     id: host_model
     icon: mdi:raspberry-pi
     name: "Model"
+  - platform: template
+    id: host_name
+    icon: mdi:console-network
+    name: "Hostname"
 ```
 
 ## Sensors
@@ -115,6 +122,37 @@ sensor:
         {"LC_NUMERIC", "C"},
       };
       auto result = esphome::host::execute_shell_command("free | awk '/^Mem:/ {print ($7/$2)*100}'", opts);
+      auto load_str = result.stdout_output;
+      load_str.erase(std::remove_if(load_str.begin(), load_str.end(), ::isspace), load_str.end());
+      auto parsed = parse_number<float>(load_str);
+      if (!parsed.has_value()) {
+        return NAN;
+      }
+      return parsed.value();
+  - platform: template
+    name: "Free disk space on \u005C"
+    update_interval: 5min
+    state_class: measurement
+    unit_of_measurement: "%"
+    accuracy_decimals: 0
+    icon: mdi:harddisk
+    lambda: |-
+      auto result = esphome::host::execute_shell_command("df -P / | awk 'NR==2{u=substr($5,1,length($5)-1); print 100-u}'");
+      auto load_str = result.stdout_output;
+      load_str.erase(std::remove_if(load_str.begin(), load_str.end(), ::isspace), load_str.end());
+      auto parsed = parse_number<float>(load_str);
+      if (!parsed.has_value()) {
+        return NAN;
+      }
+      return parsed.value();
+  - platform: template
+    name: "Package updates available"
+    update_interval: 4h
+    state_class: measurement
+    accuracy_decimals: 0
+    icon: mdi:package-down
+    lambda: |-
+      auto result = esphome::host::execute_shell_command("apt-get -s upgrade 2>/dev/null | awk '/^Inst /{c++} END{print c+0}'");
       auto load_str = result.stdout_output;
       load_str.erase(std::remove_if(load_str.begin(), load_str.end(), ::isspace), load_str.end());
       auto parsed = parse_number<float>(load_str);
