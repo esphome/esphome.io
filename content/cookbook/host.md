@@ -31,6 +31,8 @@ logger:
   level: DEBUG
 ```
 
+On a final deployment, setting `level: INFO` would suffice to reduce output chatter.
+
 ## Read some data at start of binary
 
 Using `name_add_mac_suffix` will append the last 3 bytes of the mac address of the device to the name, this will allow using the same binary
