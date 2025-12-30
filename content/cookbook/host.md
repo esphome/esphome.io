@@ -33,7 +33,7 @@ logger:
 
 On a final deployment, setting `level: INFO` would suffice to reduce output chatter.
 
-## Read some data at start of binary
+## Read some data at start
 
 Using `name_add_mac_suffix` will append the last 3 bytes of the mac address of the device to the name, this will allow using the same binary
 on multiple machines just by copying it over.
@@ -165,8 +165,8 @@ sensor:
     type: seconds
 ```
 
-Note the usage of `LC_NUMERIC=C` environment variable. This is to ensure that the shell produces numeric output with proper locales, here
-specifically we care about decimal separator to be a `.`, not `,` as it is in many other languages.
+Note the usage of `LC_NUMERIC=C` environment variable in the Free memory sensor. This is to ensure that the shell produces numeric output
+with proper locales, here specifically we care about decimal separator to be a `.`, not `,` as it is in many other languages.
 
 ## Controls
 
