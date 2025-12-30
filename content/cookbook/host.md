@@ -3,7 +3,7 @@ description: "Recipes for running ESPHome on a Linux host"
 title: "Host controls and sensors"
 params:
   seo:
-    description: Recipes for running ESPHome on a Linux host
+    description: Example for running an ESPHome compiled binary on a Debian host
 ---
 
 The example config below showcases a Debian system which runs an ESPHome binary to control a couple of tasks and monitor some states using
@@ -244,7 +244,7 @@ interval:
 ```
 
 The template switch, in order to update its state has to rely on a less frequent timing than its built-in lambda which runs every loop cycle.
-For this, we use `interval` component to choose a timig which doesn't overload the system just to query for the switch state.
+For this, we use the `interval` component to set a timing which doesn't overload the system.
 
 ## See Also
 
