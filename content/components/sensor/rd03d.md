@@ -16,6 +16,9 @@ multi-target trajectory tracking.
 The RD-03D can simultaneously track up to 3 moving targets, providing real-time position (X/Y coordinates), speed,
 and distance information for each target. It is primarily intended for indoor use to track moving human targets.
 
+As an FMCW radar, the RD-03D depends on Doppler shift in order to detect objects and cannot detect or range objects
+that are not moving.
+
 The [UART](/components/uart) is required to be set up in your configuration for this sensor to work. The `parity`
 must be `NONE`, `stop_bits` must be `1`, and `baud_rate` must be `256000`. Use of a hardware UART is highly
 recommended to properly support the 256000 baud rate.
@@ -41,9 +44,9 @@ rd03d:
   - ``single``: Single target tracking mode. The radar will only report the primary detected target.
   - ``multi``: Multi-target tracking mode. The radar can track up to 3 targets simultaneously.
 
-- **max_distance_gate** (*Optional*, int): **Experimental.** Maximum distance gate (0-15). Each gate represents
-  approximately 70cm of detection range. This option uses the RD-03 protocol and may not work on all RD-03D
-  firmware versions. Requires a TX pin to be configured.
+- **throttle** (*Optional*, [Time](/guides/configuration-types#time)): Minimum time between sensor updates.
+  The radar sends data very frequently; use this to reduce the update rate sent to Home Assistant.
+  For example, ``500ms`` or ``1s``.
 
 {{< anchor "rd03d-binary-sensors" >}}
 
@@ -186,6 +189,7 @@ uart:
 rd03d:
   id: rd03d_radar
   uart_id: uart_rd03d
+  throttle: 1s
 
 binary_sensor:
   - platform: rd03d
