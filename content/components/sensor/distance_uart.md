@@ -149,22 +149,22 @@ The following models have pre-defined configurations. You can specify the model 
 
 ## **Configuration variables**
 
-- **uart\_id** (**Optional**, [ID](https://www.google.com/search?q=https://esphome.io/guides/configuration-types.html%23config-id)): The ID of the [UART Component](https://esphome.io/components/uart.html) to use. Required if more than one UART component exists; implied if only one exists.  
+- **uart\_id** (**Optional**, [ID](/guides/configuration-types/#id)): The ID of the [UART Component](/components/uart) to use. Required if more than one UART component exists; implied if only one exists.  
 - **model** (**Optional**, string): The specific model of your sensor (e.g., A02YYUW, A19, ME007YS). Setting this automatically configures the blind\_zone, max\_range, baud\_rate, and default operating mode.  
 - **mode** (**Optional**, string): Manually set the operating mode. Defaults to AUTO if model is not specified.  
   - AUTO: The sensor sends data automatically or upon external polling.  
   - CONTROLLED: ESPHome must trigger the sensor to read data.  
-- **update\_interval** (**Optional**, [Time](https://www.google.com/search?q=https://esphome.io/guides/configuration-types.html%23config-time)): The interval to check the sensor. Defaults to 1s.  
+- **update\_interval** (**Optional**, [Time](/guides/configuration-types/#time)): The interval to check the sensor. Defaults to 1s.  
   - In CONTROLLED mode: How often to trigger a reading.  
   - In AUTO mode with publish\_mode: INTERVAL: How often to publish the latest state.  
   - In AUTO mode with publish\_mode: IMMEDIATE: This is ignored for publishing (data is pushed as it arrives).  
-- **blind\_zone** (**Optional**, [distance](https://www.google.com/search?q=https://esphome.io/guides/configuration-types.html%23config-distance)): Readings below this distance are ignored. Automatically set if model is provided.  
-- **max\_range** (**Optional**, [distance](https://www.google.com/search?q=https://esphome.io/guides/configuration-types.html%23config-distance)): Readings above this distance are ignored. Automatically set if model is provided.  
-- **trigger\_pin** (**Optional**, [Pin](https://www.google.com/search?q=https://esphome.io/guides/configuration-types.html%23config-pin)): The GPIO pin used to trigger a reading in CONTROLLED mode. If omitted in CONTROLLED mode, the component will attempt to trigger via the UART TX pin (common for A02YYT).  
+- **blind\_zone** (**Optional**, distance): Readings below this distance are ignored. Automatically set if model is provided.  
+- **max\_range** (**Optional**, distance): Readings above this distance are ignored. Automatically set if model is provided.  
+- **trigger\_pin** (**Optional**, [Pin Schema](/guides/configuration-types/#pin-schema)): The GPIO pin used to trigger a reading in CONTROLLED mode. If omitted in CONTROLLED mode, the component will attempt to trigger via the UART TX pin (common for A02YYT).  
 - **output\_mode** (**Optional**, string): For supported 'Auto' sensors, determines the data processing algorithm.  
   - PROCESSED: (Default) The sensor filters data for stability.  
   - REALTIME: The sensor outputs raw, faster updates (less stable).  
-- **output\_mode\_pin** (**Optional**, [Pin](https://www.google.com/search?q=https://esphome.io/guides/configuration-types.html%23config-pin)): The GPIO pin connected to the sensor's mode selection pin (RX pin on the sensor usually) to switch between Processed/Realtime.  
+- **output\_mode\_pin** (**Optional**, [Pin Schema](/guides/configuration-types/#pin-schema)): The GPIO pin connected to the sensor's mode selection pin (RX pin on the sensor usually) to switch between Processed/Realtime.  
 - **publish\_mode** (**Optional**, string): **Only applies when mode is AUTO.**  
   - INTERVAL: (Default) The sensor is polled according to update\_interval, and the last valid reading is published. Recommended for Home Assistant to prevent flooding.  
   - IMMEDIATE: Every valid reading received from the UART is immediately published.
