@@ -23,7 +23,6 @@ recommended to properly support the 256000 baud rate.
 ```yaml
 # RD-03D configuration
 uart:
-  tx_pin: GPIOXX
   rx_pin: GPIOXX
   baud_rate: 256000
 
@@ -36,6 +35,15 @@ rd03d:
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID for this {{< docref "rd03d/" >}} component.
 - **uart_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the [UART Component](/components/uart) to use.
   Required if you have multiple UARTs configured.
+- **tracking_mode** (*Optional*, string): The tracking mode to configure. If not specified, no command is sent
+  and the radar uses its default mode (typically multi-target). Requires a TX pin to be configured.
+
+  - ``single``: Single target tracking mode. The radar will only report the primary detected target.
+  - ``multi``: Multi-target tracking mode. The radar can track up to 3 targets simultaneously.
+
+- **max_distance_gate** (*Optional*, int): **Experimental.** Maximum distance gate (0-15). Each gate represents
+  approximately 70cm of detection range. This option uses the LD2410 protocol and may not work on all RD-03D
+  firmware versions. Requires a TX pin to be configured.
 
 {{< anchor "rd03d-binary-sensors" >}}
 
@@ -172,11 +180,8 @@ wifi:
 
 uart:
   id: uart_rd03d
-  tx_pin: GPIO17
   rx_pin: GPIO16
   baud_rate: 256000
-  parity: NONE
-  stop_bits: 1
 
 rd03d:
   id: rd03d_radar
