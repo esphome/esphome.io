@@ -42,7 +42,7 @@ rd03d:
   - ``multi``: Multi-target tracking mode. The radar can track up to 3 targets simultaneously.
 
 - **max_distance_gate** (*Optional*, int): **Experimental.** Maximum distance gate (0-15). Each gate represents
-  approximately 70cm of detection range. This option uses the LD2410 protocol and may not work on all RD-03D
+  approximately 70cm of detection range. This option uses the RD-03 protocol and may not work on all RD-03D
   firmware versions. Requires a TX pin to be configured.
 
 {{< anchor "rd03d-binary-sensors" >}}
