@@ -25,6 +25,7 @@ touchscreen:
 - All other options from [Base Touchscreen Configuration](/components/touchscreen#config-touchscreen).
 
 ### Sample configuration
+
 Sample configuration for the Pico CapTouch 2.9\" e-Paper Touchscreen, containing both display and touchscreen controller.
 
 ```yaml
