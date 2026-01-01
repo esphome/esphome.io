@@ -5,7 +5,7 @@ params:
   seo:
     description: ESPHome main documentation
     image: logo-docs.svg
----icnt86.svg
+---
 
 {{< html_file file="images/logo-docs.svg" >}}
 
