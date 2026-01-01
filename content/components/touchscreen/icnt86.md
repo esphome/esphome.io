@@ -27,6 +27,10 @@ touchscreen:
 ### Sample config for the Pico CapTouch 2.9\" e Paper Touchscreen
 
 ```yaml
+spi:
+  clk_pin: GPIO10
+  mosi_pin: GPIO11
+
 i2c:
    - id: bus_a
      sda: GPIO20
@@ -40,6 +44,16 @@ touchscreen:
     i2c_id: bus_b
     interrupt_pin: GPIO17
     reset_pin: GPIO16
+    display: epaper
+
+display:
+  - platform: waveshare_epaper
+    id: epaper
+    rotation: 90
+    cs_pin: GPIO9
+    dc_pin: GPIO8
+    busy_pin: GPIO13
+    reset_pin: GPIO12
 ```
 
 ## See Also
