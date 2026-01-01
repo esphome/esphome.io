@@ -1,9 +1,9 @@
 ---
-description: "Instructions for setting up the Pico CapTouch 2.9 e-Paper Touchscreen with ESPHome"
-title: "Pico CapTouch 2.9 e-Paper Touchscreen"
+description: "Instructions for setting up the icnt86 touchscreen controller with ESPHome"
+title: "ICNT86 Touchscreen"
 params:
   seo:
-    description: Instructions for setting up the Pico CapTouch 2.9 e-Paper Touchscreen with ESPHome
+    description: Instructions for setting up the icnt86 touchscreen controller with ESPHome
 ---
 
 The `icnt86` touchscreen controller allows using the touchscreen with ESPHome.
