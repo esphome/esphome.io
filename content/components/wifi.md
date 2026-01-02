@@ -130,6 +130,13 @@ wifi:
 - **enable_btm** (*Optional*, bool): Only on `esp32`. Enable 802.11v BSS Transition Management support.
 - **enable_rrm** (*Optional*, bool): Only on `esp32`. Enable 802.11k Radio Resource Management support.
 
+- **post_connect_roaming** (*Optional*, bool): Enable basic post-connect roaming for stationary devices.
+  After connecting to a non-hidden network, the device will periodically scan for better access points with
+  the same SSID and switch if one is found with significantly better signal (+10 dB). This helps devices
+  recover from scenarios where they connect to a suboptimal AP (e.g., after an AP reboot or site power loss).
+  Automatically disabled if `enable_btm` or `enable_rrm` is enabled. See [Post-Connect Roaming](#wifi-post_connect_roaming).
+  Defaults to `true`.
+
 - **on_connect** (*Optional*, [Automation](/automations)): An action to be performed when a connection is established.
 - **on_disconnect** (*Optional*, [Automation](/automations)): An action to be performed when the connection is dropped.
 - **enable_on_boot** (*Optional*, boolean): If enabled, the WiFi interface will be enabled on boot. Defaults to `true`.
@@ -259,6 +266,70 @@ wifi:
   password: VerySafePassword
   min_auth_mode: WPA3  # Only connect to WPA3 networks (most secure)
 ```
+
+{{< anchor "wifi-post_connect_roaming" >}}
+
+## Post-Connect Roaming
+
+Post-connect roaming is a simple roaming feature designed for **stationary devices** that don't move but may benefit from
+switching to a better access point after initial connection.
+
+### Why This Feature Exists
+
+Without post-connect roaming, devices can get stuck on a suboptimal AP **permanently** in two common scenarios:
+
+1. **AP reboot**: When an access point reboots (firmware update or other reason), the device connects to another AP with
+   worse signal. Without roaming, it stays on the worse AP permanently, never returning to the original better AP even
+   after it comes back online.
+
+1. **Full site power loss**: When power is restored after an outage, the device connects to whichever AP recovers first,
+   which may be the worst option (e.g., the furthest one). Without roaming, it remains on this suboptimal AP permanently,
+   even after better APs come online.
+
+In both cases, the only fix without post-connect roaming is to manually reboot the device or wait for another disconnection event.
+
+### How It Works
+
+- After connecting to a non-hidden network, scans up to **3 times** (every 5 minutes)
+- Each scan may trigger a roam if an AP with the same SSID is found with **+10 dB better signal**
+- After 3 scans, stops checking (device has converged to best available AP)
+- A non-roaming disconnect (e.g., AP goes down) resets the counter for a fresh start
+- Clears all BSSID priority penalties after successful connection (forgives past failures)
+
+### Configuration
+
+Post-connect roaming is enabled by default. To disable it:
+
+```yaml
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  post_connect_roaming: false
+```
+
+### 802.11k/v Native Roaming
+
+On ESP32 with ESP-IDF framework, post-connect roaming is **automatically disabled** when `enable_btm` or `enable_rrm`
+is configured, as these provide superior 802.11k/v native roaming support:
+
+```yaml
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  enable_btm: true  # 802.11v BSS Transition Management
+  enable_rrm: true  # 802.11k Radio Resource Management
+```
+
+### Limitations
+
+Post-connect roaming provides **basic roaming support** and does not provide seamless handoff:
+
+- TCP connections (including API) will briefly disconnect during the AP switch. Reconnection is typically fast but
+  not transparent to clients.
+- **LibreTiny (BK72xx/RTL87xx)**: The roam attempt may occasionally fail due to SDK flakiness, but the normal retry
+  logic handles this gracefully and eventually reconnects to the best available AP.
+
+For seamless 802.11k/v/r roaming, use ESP32 with ESP-IDF framework and configure `enable_btm` and `enable_rrm`.
 
 {{< anchor "wifi-networks" >}}
 
