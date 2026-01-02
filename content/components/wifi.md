@@ -273,9 +273,9 @@ wifi:
 
 ## Post-Connect Roaming
 
-Post-connect roaming is a simple roaming feature designed for **stationary
-devices** that don't move but may benefit from switching to a better access
-point after initial connection.
+Post-connect roaming provides basic roaming for **stationary devices** that
+don't move but may benefit from switching to a better access point after
+initial connection.
 
 ### Why This Feature Exists
 
@@ -322,7 +322,7 @@ wifi:
 
 On ESP32 with ESP-IDF framework, post-connect roaming is **automatically
 disabled** when `enable_btm` or `enable_rrm` is configured, as these provide
-superior 802.11k/v native roaming support:
+native 802.11k/v roaming support:
 
 ```yaml
 wifi:
@@ -340,8 +340,8 @@ seamless handoff:
 - TCP connections (including API) will briefly disconnect during the AP
   switch. Reconnection is typically fast but not transparent to clients.
 - **LibreTiny (BK72xx/RTL87xx)**: The roam attempt may occasionally fail due
-  to SDK flakiness, but the normal retry logic handles this gracefully and
-  eventually reconnects to the best available AP.
+  to SDK flakiness, but the normal retry logic handles this and reconnects
+  to the best available AP.
 
 For seamless 802.11k/v/r roaming, use ESP32 with ESP-IDF framework and
 configure `enable_btm` and `enable_rrm`.
