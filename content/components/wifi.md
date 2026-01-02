@@ -271,30 +271,39 @@ wifi:
 
 ## Post-Connect Roaming
 
-Post-connect roaming is a simple roaming feature designed for **stationary devices** that don't move but may benefit from
-switching to a better access point after initial connection.
+Post-connect roaming is a simple roaming feature designed for **stationary
+devices** that don't move but may benefit from switching to a better access
+point after initial connection.
 
 ### Why This Feature Exists
 
-Without post-connect roaming, devices can get stuck on a suboptimal AP **permanently** in two common scenarios:
+Without post-connect roaming, devices can get stuck on a suboptimal AP
+**permanently** in two common scenarios:
 
-1. **AP reboot**: When an access point reboots (firmware update or other reason), the device connects to another AP with
-   worse signal. Without roaming, it stays on the worse AP permanently, never returning to the original better AP even
-   after it comes back online.
+1. **AP reboot**: When an access point reboots (firmware update or other
+   reason), the device connects to another AP with worse signal. Without
+   roaming, it stays on the worse AP permanently, never returning to the
+   original better AP even after it comes back online.
 
-1. **Full site power loss**: When power is restored after an outage, the device connects to whichever AP recovers first,
-   which may be the worst option (e.g., the furthest one). Without roaming, it remains on this suboptimal AP permanently,
-   even after better APs come online.
+1. **Full site power loss**: When power is restored after an outage, the
+   device connects to whichever AP recovers first, which may be the worst
+   option (e.g., the furthest one). Without roaming, it remains on this
+   suboptimal AP permanently, even after better APs come online.
 
-In both cases, the only fix without post-connect roaming is to manually reboot the device or wait for another disconnection event.
+In both cases, the only fix without post-connect roaming is to manually
+reboot the device or wait for another disconnection event.
 
 ### How It Works
 
-- After connecting to a non-hidden network, scans up to **3 times** (every 5 minutes)
-- Each scan may trigger a roam if an AP with the same SSID is found with **+10 dB better signal**
+- After connecting to a non-hidden network, scans up to **3 times** (every
+  5 minutes)
+- Each scan may trigger a roam if an AP with the same SSID is found with
+  **+10 dB better signal**
 - After 3 scans, stops checking (device has converged to best available AP)
-- A non-roaming disconnect (e.g., AP goes down) resets the counter for a fresh start
-- Clears all BSSID priority penalties after successful connection (forgives past failures)
+- A non-roaming disconnect (e.g., AP goes down) resets the counter for a
+  fresh start
+- Clears all BSSID priority penalties after successful connection (forgives
+  past failures)
 
 ### Configuration
 
@@ -309,8 +318,9 @@ wifi:
 
 ### 802.11k/v Native Roaming
 
-On ESP32 with ESP-IDF framework, post-connect roaming is **automatically disabled** when `enable_btm` or `enable_rrm`
-is configured, as these provide superior 802.11k/v native roaming support:
+On ESP32 with ESP-IDF framework, post-connect roaming is **automatically
+disabled** when `enable_btm` or `enable_rrm` is configured, as these provide
+superior 802.11k/v native roaming support:
 
 ```yaml
 wifi:
@@ -322,14 +332,17 @@ wifi:
 
 ### Limitations
 
-Post-connect roaming provides **basic roaming support** and does not provide seamless handoff:
+Post-connect roaming provides **basic roaming support** and does not provide
+seamless handoff:
 
-- TCP connections (including API) will briefly disconnect during the AP switch. Reconnection is typically fast but
-  not transparent to clients.
-- **LibreTiny (BK72xx/RTL87xx)**: The roam attempt may occasionally fail due to SDK flakiness, but the normal retry
-  logic handles this gracefully and eventually reconnects to the best available AP.
+- TCP connections (including API) will briefly disconnect during the AP
+  switch. Reconnection is typically fast but not transparent to clients.
+- **LibreTiny (BK72xx/RTL87xx)**: The roam attempt may occasionally fail due
+  to SDK flakiness, but the normal retry logic handles this gracefully and
+  eventually reconnects to the best available AP.
 
-For seamless 802.11k/v/r roaming, use ESP32 with ESP-IDF framework and configure `enable_btm` and `enable_rrm`.
+For seamless 802.11k/v/r roaming, use ESP32 with ESP-IDF framework and
+configure `enable_btm` and `enable_rrm`.
 
 {{< anchor "wifi-networks" >}}
 
