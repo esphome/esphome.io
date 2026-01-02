@@ -10,7 +10,7 @@ params:
 The `spi_led_strip` light platform drives one or more SPI interfaced RGB LEDs. These LEDs are often used in strips, where
 each LED is individually addressable. This component requires an SPI interface to be configured.
 
-This component supports Adafruit's DotStar protocol (as found in APA102 LEDs, for example), as well as a "raw" protocol that sends RGBW values defined via `channel_map`.
+This component supports the APA102 protocol, as well as a "raw" protocol that sends RGBW values defined via `channel_map`.
 
 {{< img src="apa102.jpg" alt="Image" width="75.0%" class="align-center" >}}
 
@@ -23,10 +23,10 @@ spi:
 light:
   - platform: spi_led_strip
     num_leds: 30
-    protocol: DOTSTAR
+    protocol: APA102
     channel_map: [B, G, R]
-    id: dotstar_rgb_led
-    name: "DotStar RGB LED Strip"
+    id: apa_rgb_led
+    name: "APA102 RGB LED Strip"
     data_rate: 1MHz
   - platform: spi_led_strip
     num_leds: 30
@@ -45,7 +45,7 @@ perceived intensity of different colors will generally vary. This can be done by
 
 ## Configuration variables
 
-- **protocol** (**Required**): Set the protocol. One of `DOTSTAR`, `RAW`.
+- **protocol** (**Required**): Set the protocol. One of `APA102`, `RAW`.
 - **channel_map** (**Required**, list): The RGB order of the strip. Must be a comma-seperated list with any of:
   - R
   - G
