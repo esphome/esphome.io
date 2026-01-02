@@ -130,12 +130,14 @@ wifi:
 - **enable_btm** (*Optional*, bool): Only on `esp32`. Enable 802.11v BSS Transition Management support.
 - **enable_rrm** (*Optional*, bool): Only on `esp32`. Enable 802.11k Radio Resource Management support.
 
-- **post_connect_roaming** (*Optional*, bool): Enable basic post-connect roaming for stationary devices.
-  After connecting to a non-hidden network, the device will periodically scan for better access points with
-  the same SSID and switch if one is found with significantly better signal (+10 dB). This helps devices
-  recover from scenarios where they connect to a suboptimal AP (e.g., after an AP reboot or site power loss).
-  Automatically disabled if `enable_btm` or `enable_rrm` is enabled. See [Post-Connect Roaming](#wifi-post_connect_roaming).
-  Defaults to `true`.
+- **post_connect_roaming** (*Optional*, bool): Enable basic post-connect
+  roaming for stationary devices. After connecting to a non-hidden network,
+  the device will periodically scan for better access points with the same
+  SSID and switch if one is found with significantly better signal (+10 dB).
+  This helps devices recover from scenarios where they connect to a suboptimal
+  AP (e.g., after an AP reboot or site power loss). Automatically disabled if
+  `enable_btm` or `enable_rrm` is enabled. See
+  [Post-Connect Roaming](#wifi-post_connect_roaming). Defaults to `true`.
 
 - **on_connect** (*Optional*, [Automation](/automations)): An action to be performed when a connection is established.
 - **on_disconnect** (*Optional*, [Automation](/automations)): An action to be performed when the connection is dropped.
