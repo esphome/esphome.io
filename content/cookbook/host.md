@@ -22,6 +22,9 @@ a Linux system in order to properly operate complying to this requirement. You n
 > command filtering, or security sandboxing. Only use this on systems you fully control and trust, and never expose
 > the API to untrusted networks. Malicious or accidental misuse could result in data loss, system compromise, or
 > other serious consequences.
+> 
+> You should NOT run any commands using this facility that contain data accepted from any outside input (webserver, HA text > sensors etc.)
+> unless that data has been well sanitised, since this risks a [command injection attack](https://owasp.org/www-community/attacks/Command_Injection).
 
 ## Basic setup
 
