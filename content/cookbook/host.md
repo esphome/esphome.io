@@ -38,8 +38,9 @@ api:
 logger:
   level: DEBUG
 ```
-Disabling `reboot_timeout` is recommended because from ESPHome perspective this just means quitting the executable and not rebooting the system.
-On a final deployment, setting `level: INFO` would suffice to reduce output chatter.
+
+Disabling `reboot_timeout` is recommended because from ESPHome perspective this just means quitting the executable and not rebooting the whole
+system. On a final deployment, setting `level: INFO` would suffice to reduce output chatter.
 
 ## Read some data at start
 
