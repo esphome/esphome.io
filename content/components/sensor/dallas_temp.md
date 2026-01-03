@@ -46,6 +46,11 @@ sensor:
 
 - All other options from [Sensor](/components/sensor).
 
+### Byte Order of the Address 
+EspHome (most recent version 2026-January) - uses reversed order of the bytes, compared to the Arduino IDE. That means, if you have an address for a sensor via the Arduino IDE that says 0x2870F5E0161301C7 - then you have to use 0xc7011316e0f57028 in EspHome. The bytes are pairwise ordered in reverse. The Arduino IDE version ends in the above example with c7 - the EspHome version the same address starts with c7. - The other pairs accordingly. The arduino IDE is LSB‑first. While EspHome is MSB‑first.
+
+If you don't have the addresses, use index instead of addresses for the first run. EspHome will print the addresses on the log at first use with index. After that, try with addresses, if you want.
+
 ### See Also
 
 - [Arduino DallasTemperature library](https://github.com/milesburton/Arduino-Temperature-Control-Library)
