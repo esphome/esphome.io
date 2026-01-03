@@ -9,20 +9,15 @@ params:
 
 The `one_wire` component allows you to use supported 1-Wire devices in ESPHome.
 
-## Platforms
-
-- [**GPIO**](/components/one_wire/gpio/) Create a 1-Wire bus on a GPIO pin
-- [**DS2484**](/components/one_wire/ds2484/) An I2C-to-1-Wire bridge device
-
-### Configuration variables:
-
-- **pin** (**Required**, [Pin](/guides/configuration-types#pin)): The pin for the 1-Wire bus
-- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID for this 1-Wire bus if you need multiple busses.
-
 ## Hardware
 The 1-Wire bus the devices are connected to should have an external pull-up resistor of about 4.7KΩ. A resistor of
 *about* 4.7KΩ connected between `3.3V` and the 1-Wire bus's GPIO/data pin should suffice. Values ± 1KΩ will generally
 work fine as well, provided you don't have unusually long wires.
+
+## Platforms
+
+- [**GPIO**](/components/one_wire/gpio/) Create a 1-Wire bus on a GPIO pin
+- [**DS2484**](/components/one_wire/ds2484/) An I2C-to-1-Wire bridge device
 
 ## Obtaining Sensor IDs
 
