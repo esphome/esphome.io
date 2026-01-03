@@ -290,8 +290,14 @@ To enable signal demodulation, configure the signal carrier frequency and duty c
   Toto remote code has been decoded. A variable `x` of type {{< apistruct "remote_base::TotoData" "remote_base::TotoData" >}}
   is passed to the automation for use in lambdas.
 
+{{< anchor "remote-receiver-automation-example" >}}
+
+### Example
+
+This example uses {{< docref "/components/event" "the event component" >}} and triggers when an IR command is decoded.
+
+
 ```yaml
-# Example automation for decoded signals
 remote_receiver:
   ...
   on_samsung:
@@ -302,7 +308,18 @@ remote_receiver:
             - lambda: 'return (x.data == 0xE0E0E01F);'  # VOL+ newer type
             - lambda: 'return (x.data == 0xE0E0E01F0);' # VOL+ older type
         then:
-          - ...
+          - event.trigger:
+              id: samsung_volume_up
+              event_type: "pressed"
+
+event:
+  - platform: template
+    id: samsung_volume_up
+    name: "Volume Up"
+    icon: "mdi:volume-plus"
+    device_class: "button"
+    event_types:
+      - "pressed"
 ```
 
 {{< anchor "remote-receiver-binary-sensor" >}}
@@ -320,7 +337,7 @@ Each time the pre-defined signal is received, the binary sensor will briefly go 
 > changes immediately instead of batching them, ensuring rapid transitions are preserved. However, this increases
 > network traffic and should only be used when necessary.
 >
-> For new projects, consider using automations with the `on_*` triggers (described above)
+> For new projects, consider using [automations using events](#remote-receiver-automation-example)
 > instead of binary sensors, as they are better suited for handling momentary button press events.
 
 ```yaml
