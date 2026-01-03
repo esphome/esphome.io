@@ -109,12 +109,14 @@ sensor:
 
 Check out [the Cookbook](/cookbook/host) for examples on how to create a couple of controls and sensors for a Linux host.
 
-> [!WARNING]
+> [!NOTE]
 > Commands will be run with the same privileges as the ESPHome binary. Take extra care for the commands to finish! Running a
 > command that never exits will lock up the ESPHome binary too. Put the commands in double quotes. If the command itself
 > needs to contain double quote characters, escape them with `\`.
 
-> You should NOT run any commands using this facility that contain data accepted from any outside input (webserver, HA text sensors etc.) unless that data has been well sanitised, since this risks a [command injection attack](https://owasp.org/www-community/attacks/Command_Injection)
+> [!WARNING]
+> You should NOT run any commands using this facility that contain data accepted from any outside input (webserver, HA text
+> sensors etc.) unless that data has been well sanitised, since this risks a [command injection attack](https://owasp.org/www-community/attacks/Command_Injection).
 
 ## Build and run
 
