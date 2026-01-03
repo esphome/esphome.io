@@ -11,13 +11,9 @@ The `one_wire` component allows you to use supported 1-Wire devices in ESPHome.
 
 ## Platforms
 
-### GPIO
-```yaml
-# Example configuration entry
-one_wire:
-  - platform: gpio
-    pin: GPIOXX
-```
+- [**GPIO**](/components/one_wire/gpio/) Create a 1-Wire bus on a GPIO pin
+- [**DS2484**](/components/one_wire/ds2484/) An I2C-to-1-Wire bridge device
+
 ### Configuration variables:
 
 - **pin** (**Required**, [Pin](/guides/configuration-types#pin)): The pin for the 1-Wire bus
