@@ -16,6 +16,13 @@ Since there's no MDNS advertisment published by the host, you need to add it man
 The shell commands are executed with the same privileges as the ESPHome binary. It's out of scope of this document to show how to provision
 a Linux system in order to properly operate complying to this requirement. You need to set it up so the binary runs automatically after boot.
 
+> [!WARNING]
+> This function provides **full, unsandboxed access** to the host operating system. Commands execute with the same
+> privileges as the ESPHome process - if running as root, commands have root access. There is no input validation,
+> command filtering, or security sandboxing. Only use this on systems you fully control and trust, and never expose
+> the API to untrusted networks. Malicious or accidental misuse could result in data loss, system compromise, or
+> other serious consequences.
+
 ## Basic setup
 
 This is all you need to set up a basic ESPHome binary. Do not set a manual MAC address, it's going to use the MAC of the host it's running on.
@@ -26,11 +33,12 @@ host:
 api:
   encryption:
     key: !secret encryption_key
+  reboot_timeout: 0s
 
 logger:
   level: DEBUG
 ```
-
+Disabling `reboot_timeout` is recommended because from ESPHome perspective this just means quitting the executable and not rebooting the system.
 On a final deployment, setting `level: INFO` would suffice to reduce output chatter.
 
 ## Read some data at start
