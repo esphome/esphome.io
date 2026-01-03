@@ -39,6 +39,13 @@ host:
 The `execute_shell_command` function can be used in a [lambda](/automations/templates#config-lambda) to run linux shell
 commands on the host operating system, and retrieve the Standard Output, Standard Error and Exit Code of the result.
 
+> [!WARNING]
+> This function provides **full, unsandboxed access** to the host operating system. Commands execute with the same
+> privileges as the ESPHome process - if running as root, commands have root access. There is no input validation,
+> command filtering, or security sandboxing. Only use this on systems you fully control and trust, and never expose
+> the API to untrusted networks. Malicious or accidental misuse could result in data loss, system compromise, or
+> other serious consequences.
+
 You can set a shell to run the commands in, and you can specify custom environment variables too.
 
 ```yaml
@@ -102,10 +109,12 @@ sensor:
 
 Check out [the Cookbook](/cookbook/host) for examples on how to create a couple of controls and sensors for a Linux host.
 
-> [!NOTE]
+> [!WARNING]
 > Commands will be ran with the same privileges as the ESPHome binary. Take extra care for the commands to finish! Running a
 > command that never exits will lock up the ESPHome binary too. Put the commands in double quotes. If the command itself
 > needs to contain double quote characters, escape them with `\`.
+
+> You should NOT run any commands using this facility that contain data accepted from any outside input (webserver, HA text sensors etc.) unless that data has been well sanitised, since this risks a [command injection attack](https://owasp.org/www-community/attacks/Command_Injection)
 
 ## Build and run
 
