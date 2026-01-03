@@ -296,7 +296,6 @@ To enable signal demodulation, configure the signal carrier frequency and duty c
 
 This example uses {{< docref "/components/event" "the event component" >}} and triggers when an IR command is decoded.
 
-
 ```yaml
 remote_receiver:
   ...
