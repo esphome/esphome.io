@@ -110,7 +110,7 @@ sensor:
 Check out [the Cookbook](/cookbook/host) for examples on how to create a couple of controls and sensors for a Linux host.
 
 > [!WARNING]
-> Commands will be ran with the same privileges as the ESPHome binary. Take extra care for the commands to finish! Running a
+> Commands will be run with the same privileges as the ESPHome binary. Take extra care for the commands to finish! Running a
 > command that never exits will lock up the ESPHome binary too. Put the commands in double quotes. If the command itself
 > needs to contain double quote characters, escape them with `\`.
 
