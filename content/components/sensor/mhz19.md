@@ -53,7 +53,7 @@ sensor:
 
 - **warmup_time** (*Optional*, Time): The sensor has a warmup time and before that, it returns bogus readings (eg: 500ppm, 505ppm...). This setting discards readings until the warmup time happened (`NAN` is returned). The datasheet says preheating takes 1min, but empirical tests have shown it often takes more, so the 75s default should be enough to accommodate for that.
 
-- **detection_range** (*Optional*, 2000ppm, 5000ppm, 10000ppm): The CO_2 sensor can be configured to detect different ranges: 0-2000ppm, 0-5000ppm or 0-10000ppm. Sensors will come from factory with one of these values set, which can be changed with this parameter. The default is to not change the setting, so the previously set range is used.
+- **detection_range** (*Optional*): The CO_2 sensor can be configured to detect different ranges: 0-2000ppm, 0-5000ppm, or 0-10000ppm. Valid values are `2000ppm`, `5000ppm`, or `10000ppm`. Sensors come from the factory with one of these ranges pre-configured, and this setting persists in the sensor's non-volatile memory. If not specified, the previously configured range is used.
 
 {{< img src="mhz19-pins.jpg" alt="Image" caption="Pins on the MH-Z19. Only the ones marked with a red circle need to be connected." width="80.0%" class="align-center" >}}
 
