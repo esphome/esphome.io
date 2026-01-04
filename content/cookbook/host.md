@@ -183,6 +183,22 @@ sensor:
   - platform: uptime
     name: "Uptime"
     type: seconds
+  - platform: template
+    id: eno1_rx
+    name: "NIC eno1 download"
+    state_class: measurement
+    device_class: data_rate
+    accuracy_decimals: 0
+    icon: mdi:download-network-outline
+    unit_of_measurement: b/s
+  - platform: template
+    id: eno1_tx
+    name: "NIC eno1 upload"
+    state_class: measurement
+    device_class: data_rate
+    accuracy_decimals: 0
+    icon: mdi:upload-network-outline
+    unit_of_measurement: b/s
 ```
 
 Note the usage of `LC_NUMERIC=C` environment variable in the Free memory sensor. This is to ensure that the shell produces numeric output
@@ -252,10 +268,49 @@ interval:
               }
               ESP_LOGW("host.shell", "Unable to parse monitor state from output: %s", load_str.c_str());
               return {};
+  - interval: 5min
+    then:
+      - lambda: |-
+          auto rx1_result = esphome::host::execute_shell_command("cat /sys/class/net/eno1/statistics/rx_bytes");
+          auto rx1_str = rx1_result.stdout_output;
+          rx1_str.erase(std::remove_if(rx1_str.begin(), rx1_str.end(), ::isspace), rx1_str.end());
+          id(eno1_rx1) = parse_number<uint64_t>(rx1_str).value_or(0);
+      - lambda: |-
+          auto tx1_result = esphome::host::execute_shell_command("cat /sys/class/net/eno1/statistics/tx_bytes");
+          auto tx1_str = tx1_result.stdout_output;
+          tx1_str.erase(std::remove_if(tx1_str.begin(), tx1_str.end(), ::isspace), tx1_str.end());
+          id(eno1_tx1) = parse_number<uint64_t>(tx1_str).value_or(0);
+      - delay: 1s
+      - lambda: |-
+          auto rx2_result = esphome::host::execute_shell_command("cat /sys/class/net/eno1/statistics/rx_bytes");
+          auto rx2_str = rx2_result.stdout_output;
+          rx2_str.erase(std::remove_if(rx2_str.begin(), rx2_str.end(), ::isspace), rx2_str.end());
+          id(eno1_rx2) = parse_number<uint64_t>(rx2_str).value_or(0);
+      - lambda: |-
+          auto tx2_result = esphome::host::execute_shell_command("cat /sys/class/net/eno1/statistics/tx_bytes");
+          auto tx2_str = tx2_result.stdout_output;
+          tx2_str.erase(std::remove_if(tx2_str.begin(), tx2_str.end(), ::isspace), tx2_str.end());
+          id(eno1_tx2) = parse_number<uint64_t>(tx2_str).value_or(0);
+      - lambda: |-
+          id(eno1_rx).publish_state((float)(id(eno1_rx2) - id(eno1_rx1)));
+          id(eno1_tx).publish_state((float)(id(eno1_tx2) - id(eno1_tx1)));
+
+globals:
+  - id: eno1_rx1
+    type: uint64_t
+  - id: eno1_tx1
+    type: uint64_t
+  - id: eno1_rx2
+    type: uint64_t
+  - id: eno1_tx2
+    type: uint64_t
 ```
 
 The template switch, in order to update its state has to rely on a less frequent timing than its built-in lambda which runs every loop cycle.
 For this, we use the `interval` component to set a timing which doesn't overload the system.
+
+For network traffic measurement, every 5 minutes we look wo times at the linux traffic statistic counters wwith one second delay, substract
+them and publish them to the template sensors. We use `globals` to define variables available between the different lambdas.
 
 ## See Also
 
