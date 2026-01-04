@@ -1043,7 +1043,7 @@ at the {{< docref "light/fastled" "FastLED Light" >}}.
 ## Water Heater Components
 
 {{< imgtable >}}
-"Water Heater Core","components/water_heater/","water_heater.svg","dark-invert"
+"Water Heater Core","components/water_heater/index","folder-open.svg","dark-invert"
 "Template Water Heater","components/water_heater/template","description.svg","dark-invert"
 {{< /imgtable >}}
 
