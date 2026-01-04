@@ -16,19 +16,19 @@ water_heater:
   - platform: template
     name: "Template Boiler"
     id: my_boiler
-    
+
     # Lambda to read the current temperature (e.g. from a sensor)
-    current_temperature: return id(my_sensor).state;
-    
+    current_temperature: !lambda 'return id(my_sensor).state;'
+
     # Lambda to read the current operation mode (optional)
-    mode: return water_heater::WATER_HEATER_MODE_ECO;
+    mode: !lambda 'return water_heater::WATER_HEATER_MODE_ECO;'
     optimistic: true
 
-    # List to show available modes to show in the UI (optional)
+    # List of modes to show in the UI (optional)
     supported_modes:
-      - "off"
-      - eco
-      - gas
+      - "OFF"
+      - ECO
+      - GAS
 
     visual:
       min_temperature: 10.0
@@ -56,6 +56,10 @@ Possible return values for the lambdas:
 - **optimistic** (*Optional*, boolean): Whether to operate in optimistic mode - when in this mode, any command sent to
   the template water heater will immediately update the reported state. Defaults to `true`.
 
+- **set_action** (*Optional*, [Action](/automations/actions)):
+  The action to perform when the water heater receives a command (mode change, target temperature change, etc.).
+  This is where you implement the actual control logic for your water heater.
+
 - **supported_modes** (*Optional*, list):
   Static list of operation modes that will be exposed to the frontend (for example Home Assistant). This controls the `operation_list` reported to Home Assistant and affects only the UI and available service calls. It does not change runtime behavior or control logic. When not specified, all supported water heater modes are shown by default.
 
@@ -70,15 +74,27 @@ Possible return values for the lambdas:
 
 - All other options from [Water Heater](/components/water_heater#config-water-heater).
 
+## `water_heater.template.publish` Action
+
+You can also publish state to a template water heater from elsewhere in your YAML file
+with the `water_heater.template.publish` action.
+
+```yaml
+# Example action
+- water_heater.template.publish:
+    id: my_boiler
+    current_temperature: 55.0
+    target_temperature: 60.0
+    mode: ECO
+```
+
 Configuration options:
 
 - **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the template water heater.
 - **current_temperature** (*Optional*, [templatable](/automations/templates), float):
   The current measured temperature to publish.
-
 - **target_temperature** (*Optional*, [templatable](/automations/templates), float):
   The target setpoint temperature to publish.
-
 - **mode** (*Optional*, [templatable](/automations/templates), string):
   The operation mode to publish. See [Water Heater Modes](/components/water_heater#water-heater-modes) for options.
 
@@ -86,9 +102,8 @@ Configuration options:
 > This action can also be written in lambdas:
 >
 > ```cpp
-> id(my_template_boiler).current_temperature = 50.0;
-> id(my_template_boiler).mode = water_heater::WATER_HEATER_MODE_PERFORMANCE;
-> id(my_template_boiler).publish_state();
+> id(my_boiler).set_current_temperature(55.0);
+> id(my_boiler).publish_state();
 > ```
 
 ## See Also
