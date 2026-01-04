@@ -136,9 +136,13 @@ document.addEventListener('DOMContentLoaded', function () {
         button.addEventListener('click', async () => {
             const anchor = button.getAttribute('data-anchor');
             const url = `${window.location.origin}${window.location.pathname}#${anchor}`;
-            await navigator.clipboard.writeText(url);
-            button.classList.add('copied');
-            setTimeout(() => button.classList.remove('copied'), 1000);
+            try {
+                await navigator.clipboard.writeText(url);
+                button.classList.add('copied');
+                setTimeout(() => button.classList.remove('copied'), 1000);
+            } catch (err) {
+                console.error('Failed to copy link:', err);
+            }
         });
     });
 
@@ -154,14 +158,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
             try {
                 await navigator.clipboard.writeText(code);
-                const feedback = button.querySelector(".copy-feedback");
-                if (feedback) {
-                    feedback.textContent = "Copied!";
-                }
                 button.classList.add('copied');
                 setTimeout(() => {
                     button.classList.remove('copied');
-                }, 2000);
+                }, 1000);
             } catch (err) {
                 console.error('Failed to copy:', err);
             }
