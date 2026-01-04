@@ -25,45 +25,45 @@ smart home exactly how you want it.
 [
   {
     "icon": "code",
-    "title": "No Coding Required",
+    "title": "No coding required",
     "description": "Simple YAML configuration files instead of complex C++ code"
   },
   {
     "icon": "wifi",
-    "title": "Wireless Updates",
+    "title": "Wireless updates",
     "description": "Update your devices over-the-air without physical access"
   },
   {
     "icon": "puzzle-piece",
-    "title": "Modular Design",
+    "title": "Modular design",
     "description": "Support for hundreds of sensors, displays, and other components"
   },
   {
     "icon": "shield-alt",
-    "title": "Local Control",
+    "title": "Local control",
     "description": "Devices work locally without cloud dependencies"
   }
 ]
 {{< /feature-grid >}}
 {{< anchor "who-uses-esphome" >}}
 
-## Who Uses ESPHome?
+## Who uses ESPHome?
 
 {{< feature-grid >}}
 [
   {
     "icon": "user-cog",
-    "title": "DIY Enthusiasts",
+    "title": "DIY enthusiasts",
     "description": "Create custom sensors, switches, and displays tailored to specific needs"
   },
   {
     "icon": "home",
-    "title": "Smart Home Hobbyists",
+    "title": "Smart home hobbyists",
     "description": "Extend their home automation systems with affordable custom devices"
   },
   {
     "icon": "briefcase",
-    "title": "Professional Integrators",
+    "title": "Professional integrators",
     "description": "Deploy reliable, locally-controlled smart devices for clients"
   },
   {
@@ -102,7 +102,7 @@ smart home exactly how you want it.
 {{< /feature-grid >}}
 {{< anchor "getting-started" >}}
 
-## Getting Started
+## Getting started
 
 Getting started with ESPHome is easy. Choose the method that works best for you:
 
@@ -114,23 +114,23 @@ Getting started with ESPHome is easy. Choose the method that works best for you:
     "description": "The easiest way to get started with ESPHome is through the Home Assistant add-on.",
     "steps": [],
     "url": "/guides/getting_started_hassio/",
-    "button_text": "Home Assistant Guide"
+    "button_text": "Home Assistant guide"
   },
   {
     "icon": "terminal",
-    "title": "Command Line",
+    "title": "Command line",
     "description": "For advanced users who prefer working with the command line.",
     "steps": [],
     "url": "/guides/getting_started_command_line/",
-    "button_text": "Command Line Guide"
+    "button_text": "Command line guide"
   },
   {
     "icon": "puzzle-piece",
-    "title": "Ready-Made Projects",
+    "title": "Ready-made projects",
     "description": "Start with a pre-configured project for common use cases.",
     "steps": [],
     "url": "/projects/",
-    "button_text": "Browse Projects"
+    "button_text": "Browse projects"
   }
 ]
 {{< /getting-started-grid >}}

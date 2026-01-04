@@ -48,6 +48,7 @@
             <div class="component-icon">
                 {{ partial "image.html" (dict "src" $image "page" $.Page "alt" "" "classes" $class) }}
             </div>
+            <div class="component-text">
               <!-- Allow words to break on non-alphabetic characters -->
               {{ $broke_title := replaceRE `([^[:alpha:]])` `${1}&#x200B;` $title | safeHTML }}
               <div class="component-name">{{ $broke_title }}</div>
@@ -55,6 +56,7 @@
                   {{ $broke_caption := replaceRE `([^[:alpha:]])` `${1}&#x200B;` $caption | safeHTML }}
                 <div class="component-caption">{{ $broke_caption }}</div>
               {{ end }}
+            </div>
           </a>
         </div>
     {{ end }}

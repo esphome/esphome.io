@@ -41,20 +41,6 @@ function closeTOC() {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-    function setTocSort(sort) {
-        document.documentElement.setAttribute('data-toc-sort', sort);
-        localStorage.setItem('toc-sort', sort);
-        closeMenu();
-    }
-
-    const sortToggles = document.getElementsByClassName('toc-sort-button');
-    Array.from(sortToggles).forEach(toggle => {
-        toggle.addEventListener('click', event => {
-            event.stopPropagation();
-            const currentSort = document.documentElement.getAttribute('data-toc-sort');
-            setTocSort(currentSort === 'alphabetic' ? 'linear' : 'alphabetic');
-        });
-    });
 
 
     function setTheme(theme) {

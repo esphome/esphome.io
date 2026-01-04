@@ -56,9 +56,12 @@
         // Theme handling
         const savedTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
         document.documentElement.setAttribute('data-theme', savedTheme);
-        const tocSort = localStorage.getItem('toc-sort');
-        document.documentElement.setAttribute('data-toc-sort', tocSort);
     </script>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <!-- Favicon -->
     <link rel="icon" type="image/png" sizes="512x512" href={{ "/favicon-512x512.png" | relURL }}>
@@ -95,6 +98,7 @@
                     {{ end }}
                     {{ os.ReadFile "static/images/logo-text.svg" | safeHTML }}
                 </a>
+                <span class="nav-version">{{ .Site.Data.version.release }}</span>
             </div>
             <button type="button" class="hamburger-button" aria-label="Open menu" aria-expanded="false">
                 <span></span>
@@ -143,7 +147,9 @@
                     {{ end }}
                 {{ end }}
                 <div class="nav-search">
-                    <div id="nav-search-container"></div>
+                    <div id="nav-search-container">
+                        <span class="search-icon">{{ os.ReadFile "static/images/icons/search.svg" | safeHTML }}</span>
+                    </div>
                     <div id="nav-search-results"></div>
                 </div>
             </div>
@@ -151,7 +157,7 @@
     </div>
 
 
-    <main data-pagefind-body>
+    <main data-pagefind-body{{ if .IsHome }} class="homepage"{{ end }}>
         <img alt="" aria-hidden="true" hidden class="header-print" src="/images/logo-text.svg"/>
         {{ block "main" . }}{{ end }}
         {{ if ne $branch "current" }}
@@ -164,7 +170,7 @@
             <div class="footer-logo">
                 <a class="footer-logo" href="https://www.openhomefoundation.org/">
                     <span>ESPHome is a project from the</span>
-                    <img src="{{ "images/icons/ohf-logo-on-dark.svg" | relURL }}" alt="ESPHome Logo" width="220px"
+                    <img src="{{ "images/icons/ohf-logo-on-light.svg" | relURL }}" alt="ESPHome Logo" width="220px"
                          height="49px">
                 </a>
                 {{ if getenv "NETLIFY" }}
@@ -189,49 +195,7 @@
                     </div>
                 {{ end }}
             </div>
-            <div class="build-info">
-                <button id="build-info-button" class="build-info-button" title="Show build information">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                         role="none"
-                         aria-label="Show build information"
-                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <line x1="12" y1="16" x2="12" y2="12"></line>
-                        <line x1="12" y1="8" x2="12" y2="8"></line>
-                    </svg>
-                    <span class="desktop-only">Release</span><span> {{ .Site.Data.version.release }}</span>
-                </button>
-            </div>
         </div>
-        {{ if ne $branch "current" }}
-            <div id="build-info-popup" class="build-info-popup">
-                <div class="build-info-content">
-                    <span id="build-info-close" class="build-info-close">&times;</span>
-                    <h4>Build Information</h4>
-                    <div class="build-info-grid">
-                        <div class="build-info-label">Version:</div>
-                        <div class="build-info-value">{{ .Site.Data.version.version }}</div>
-                        {{ if ne .Site.Data.version.release .Site.Data.version.version }}
-                            <div class="build-info-label">Release:</div>
-                            <div class="build-info-value">{{ .Site.Data.version.release }}</div>
-                        {{ end }}
-                        <div class="build-info-label">Branch:</div>
-                        <div class="build-info-value">{{ $branch }}</div>
-
-                        {{ $repo := strings.TrimSuffix ".git" $repo_url }}
-                        <div class="build-info-label">Commit hash:</div>
-                        <div class="build-info-value"><a href="{{ $repo }}/commit/{{ .Site.Params.commit.hash }}"
-                                                         target="_blank">{{ .Site.Params.commit.hash }}</a></div>
-
-                        <div class="build-info-label">Message:</div>
-                        <div class="build-info-value">{{ .Site.Params.commit.title }}</div>
-
-                        <div class="build-info-label">Build date:</div>
-                        <div class="build-info-value">{{ now.Format "2006-01-02" }}</div>
-                    </div>
-                </div>
-            </div>
-        {{ end }}
     </footer>
     <div class="footer-logo footer-logo-print" hidden aria-hidden="true">
         <a class="footer-logo" href="https://www.openhomefoundation.org/">

@@ -99,7 +99,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const searchInput = document.createElement('input');
     searchInput.type = 'text';
     searchInput.id = "frontpage-search";
-    searchInput.placeholder = 'Search...';
+    searchInput.placeholder = 'Search';
     searchInput.className = 'pagefind-ui__search-input';
     searchInput.ariaLabel = 'Search';
     searchContainer.appendChild(searchInput);
