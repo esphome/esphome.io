@@ -309,7 +309,7 @@ globals:
 The template switch, in order to update its state has to rely on a less frequent timing than its built-in lambda which runs every loop cycle.
 For this, we use the `interval` component to set a timing which doesn't overload the system.
 
-For network traffic measurement, every 5 minutes we look wo times at the linux traffic statistic counters wwith one second delay, substract
+For network traffic measurement, every 5 minutes we look two times at the linux traffic statistic counters with one second delay, substract
 them and publish them to the template sensors. We use `globals` to define variables available between the different lambdas.
 
 ## See Also
