@@ -125,6 +125,7 @@ file_types = (
     ".toml",
     ".txt",
     ".webmanifest",
+    ".woff2",
     ".xml",
     ".yaml",
     ".yml",
@@ -132,6 +133,7 @@ file_types = (
 )
 docs_types = [".md"]
 image_types = [".webp", ".jpg", ".ico", ".png", ".svg", ".gif"]
+binary_types = [".woff2"]
 
 LINT_FILE_CHECKS = []
 LINT_CONTENT_CHECKS = []
@@ -561,7 +563,7 @@ for fname in files:
         # file deleted but in git index
         continue
     run_checks(LINT_FILE_CHECKS, fname, fname, p.stat())
-    if p.suffix in image_types:
+    if p.suffix in image_types or p.suffix in binary_types:
         continue
     try:
         with open(fname, "r") as f_handle:
