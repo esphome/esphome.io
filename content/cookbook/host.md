@@ -108,9 +108,9 @@ sensor:
     accuracy_decimals: 0
     lambda: |-
       auto result = esphome::host::execute_shell_command("cat /sys/class/thermal/thermal_zone0/temp");
-      auto load_str = result.stdout_output;
-      load_str.erase(std::remove_if(load_str.begin(), load_str.end(), ::isspace), load_str.end());
-      auto parsed = parse_number<float>(load_str);
+      auto stdout_str = result.stdout_output;
+      stdout_str.erase(std::remove_if(stdout_str.begin(), stdout_str.end(), ::isspace), stdout_str.end());
+      auto parsed = parse_number<float>(stdout_str);
       if (!parsed.has_value()) {
         return NAN;
       }
@@ -123,9 +123,9 @@ sensor:
     icon: mdi:cpu-64-bit
     lambda: |-
       auto result = esphome::host::execute_shell_command("awk '{print $1}' /proc/loadavg");
-      auto load_str = result.stdout_output;
-      load_str.erase(std::remove_if(load_str.begin(), load_str.end(), ::isspace), load_str.end());
-      auto parsed = parse_number<float>(load_str);
+      auto stdout_str = result.stdout_output;
+      stdout_str.erase(std::remove_if(stdout_str.begin(), stdout_str.end(), ::isspace), stdout_str.end());
+      auto parsed = parse_number<float>(stdout_str);
       if (!parsed.has_value()) {
         return NAN;
       }
@@ -142,9 +142,9 @@ sensor:
         {"LC_NUMERIC", "C"},
       };
       auto result = esphome::host::execute_shell_command("free | awk '/^Mem:/ {print ($7/$2)*100}'", opts);
-      auto load_str = result.stdout_output;
-      load_str.erase(std::remove_if(load_str.begin(), load_str.end(), ::isspace), load_str.end());
-      auto parsed = parse_number<float>(load_str);
+      auto stdout_str = result.stdout_output;
+      stdout_str.erase(std::remove_if(stdout_str.begin(), stdout_str.end(), ::isspace), stdout_str.end());
+      auto parsed = parse_number<float>(stdout_str);
       if (!parsed.has_value()) {
         return NAN;
       }
@@ -155,12 +155,12 @@ sensor:
     state_class: measurement
     unit_of_measurement: "%"
     accuracy_decimals: 0
-    icon: mdi:harddisk
+    icon: mdi:chart-donut
     lambda: |-
       auto result = esphome::host::execute_shell_command("df -P / | awk 'NR==2{u=substr($5,1,length($5)-1); print 100-u}'");
-      auto load_str = result.stdout_output;
-      load_str.erase(std::remove_if(load_str.begin(), load_str.end(), ::isspace), load_str.end());
-      auto parsed = parse_number<float>(load_str);
+      auto stdout_str = result.stdout_output;
+      stdout_str.erase(std::remove_if(stdout_str.begin(), stdout_str.end(), ::isspace), stdout_str.end());
+      auto parsed = parse_number<float>(stdout_str);
       if (!parsed.has_value()) {
         return NAN;
       }
@@ -173,9 +173,9 @@ sensor:
     icon: mdi:package-down
     lambda: |-
       auto result = esphome::host::execute_shell_command("apt list --upgradable 2>/dev/null | tail -n +2 | wc -l");
-      auto load_str = result.stdout_output;
-      load_str.erase(std::remove_if(load_str.begin(), load_str.end(), ::isspace), load_str.end());
-      auto parsed = parse_number<float>(load_str);
+      auto stdout_str = result.stdout_output;
+      stdout_str.erase(std::remove_if(stdout_str.begin(), stdout_str.end(), ::isspace), stdout_str.end());
+      auto parsed = parse_number<float>(stdout_str);
       if (!parsed.has_value()) {
         return NAN;
       }
@@ -257,16 +257,16 @@ interval:
                 {"DISPLAY", ":0.0"},
               };
               auto result = esphome::host::execute_shell_command("xset -q | awk '/Monitor is/ {print $NF; exit}'", opts);
-              auto load_str = result.stdout_output;
-              load_str.erase(std::remove_if(load_str.begin(), load_str.end(), ::isspace), load_str.end());
-              auto parsed = parse_on_off(load_str.c_str(), "On", "Off");
+              auto stdout_str = result.stdout_output;
+              stdout_str.erase(std::remove_if(stdout_str.begin(), stdout_str.end(), ::isspace), stdout_str.end());
+              auto parsed = parse_on_off(stdout_str.c_str(), "On", "Off");
               if (parsed == esphome::PARSE_ON) {
                 return true;
               }
               if (parsed == esphome::PARSE_OFF) {
                 return false;
               }
-              ESP_LOGW("host.shell", "Unable to parse monitor state from output: %s", load_str.c_str());
+              ESP_LOGW("host.shell", "Unable to parse monitor state from output: %s", stdout_str.c_str());
               return {};
   - interval: 5min
     then:
