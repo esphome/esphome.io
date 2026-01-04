@@ -56,7 +56,7 @@ Possible return values for the lambdas:
 - **optimistic** (*Optional*, boolean): Whether to operate in optimistic mode - when in this mode, any command sent to
   the template water heater will immediately update the reported state. Defaults to `true`.
 
-- **set_action** (*Optional*, [Action](/automations/actions)):
+- **set_action** (*Optional*, [Action](/automations/actions#all-actions)):
   The action to perform when the water heater receives a command (mode change, target temperature change, etc.).
   This is where you implement the actual control logic for your water heater.
 
