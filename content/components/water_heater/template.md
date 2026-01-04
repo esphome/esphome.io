@@ -74,6 +74,8 @@ Possible return values for the lambdas:
 
 - All other options from [Water Heater](/components/water_heater#config-water-heater).
 
+{{< anchor "water_heater-template-publish_action" >}}
+
 ## `water_heater.template.publish` Action
 
 You can also publish state to a template water heater from elsewhere in your YAML file
