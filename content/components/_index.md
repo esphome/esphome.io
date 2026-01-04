@@ -689,7 +689,6 @@ Often known as "tag" or "card" readers within the community.
 "Thermostat Controller","components/climate/thermostat","air-conditioner.svg","dark-invert"
 "Tuya Climate","components/climate/tuya","tuya.png",""
 "Uponor Smatrix Base Pulse Underfloor Heating","components/uponor_smatrix","uponor.svg",""
-"Water Heater","components/water_heater/","water_heater.svg","dark-invert"
 {{< /imgtable >}}
 
 ## Cover Components
@@ -1039,6 +1038,13 @@ at the {{< docref "light/fastled" "FastLED Light" >}}.
 {{< imgtable >}}
 "Valve Core","components/valve/index","folder-open.svg","dark-invert"
 "Template Valve","components/valve/template","description.svg","dark-invert"
+{{< /imgtable >}}
+
+## Water Heater Components
+
+{{< imgtable >}}
+"Water Heater Core","components/water_heater/","water_heater.svg","dark-invert"
+"Template Water Heater","components/water_heater/template","description.svg","dark-invert"
 {{< /imgtable >}}
 
 ## Wireless Communication
