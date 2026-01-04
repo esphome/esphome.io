@@ -31,10 +31,11 @@ display:
 These are the supported controller chips. Using just the chip name as the model will require full configuration with
 pins and dimensions specified.
 
-| Chip name              | Manufacturer | Product Description                                                                                                          |
-|------------------------|--------------|------------------------------------------------------------------------------------------------------------------------------|
-| Spectra-E6             | Eink         | <https://www.eink.com/brand/detail/Spectra6>                                                                                 |
-| SSD1677                | Solomon      | <https://www.solomon-systech.com/product/ssd1677/>                                                                           |
+| Chip name              | Manufacturer        | Product Description                                                                                                          |
+|------------------------|---------------------|------------------------------------------------------------------------------------------------------------------------------|
+| Spectra-E6             | Eink                | <https://www.eink.com/brand/detail/Spectra6>                                                                                 |
+| SSD1677                | Solomon             | <https://www.solomon-systech.com/product/ssd1677/>                                                                           |
+| E2271KS0C1             | Pervasive Displays  | <https://www.pervasivedisplays.com/product/2-71-e-ink-displays>                                                              |
 
 ## Supported integrated display boards
 
@@ -78,6 +79,8 @@ but can be overridden if needed.
   use `never` to only manually update the screen via `component.update`.
 - **full_update_every** (*Optional*, int): On screens that support partial updates, this sets the number of updates
   before a full update is forced. Defaults to `1` which will make every update a full update.
+- **temperature_c** (*Optional*, float): Ambient temperature in Celsius for temperature-compensated waveforms.
+  Only used by E2271KS0C1. Defaults to `25`.
 - **spi_id** (*Optional*, [ID](/guides/configuration-types#id)): Required to specify the ID of the [SPI Component](/components/spi) if your
   configuration defines multiple SPI buses. If only a single SPI bus is configured, this is optional.
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
@@ -101,6 +104,24 @@ display:
     dc_pin: GPIOXX
     reset_pin: GPIOXX
     busy_pin: { number: GPIOXX, inverted: False, mode: { input: True, pulldown: True } }
+```
+
+### E2271KS0C1 example
+
+The Pervasive Displays E2271KS0C1 is a 2.7" display (264x176 pixels) with fast partial update support.
+
+```yaml
+display:
+  - platform: epaper_spi
+    model: E2271KS0C1
+    cs_pin: GPIO10
+    dc_pin: GPIO7
+    reset_pin: GPIO5
+    busy_pin: GPIO4
+    update_interval: 60s
+    full_update_every: 10
+    lambda: |-
+      it.printf(it.get_width() / 2, it.get_height() / 2, id(font), TextAlign::CENTER, "Hello World");
 ```
 
 ## See Also
