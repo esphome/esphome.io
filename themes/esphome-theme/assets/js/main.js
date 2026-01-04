@@ -269,7 +269,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // Table of Contents highlighting
-    const tocLinks = document.querySelectorAll('.toc-entry');
+    const tocLinks = document.querySelectorAll('.toc-entry, .toc-secondary');
     if (tocLinks.length > 0) {
         // Get all headings that correspond to TOC entries
         const headings = Array.from(tocLinks).map(link => {
@@ -296,7 +296,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     });
 
                     const id = topEntry.target.id;
-                    const tocLink = document.querySelector(`.toc-entry[href="#${id}"]`);
+                    const tocLink = document.querySelector(`.toc-entry[href="#${id}"], .toc-secondary[href="#${id}"]`);
 
                     if (tocLink && tocLink !== currentActive) {
                         // Remove active from previous
