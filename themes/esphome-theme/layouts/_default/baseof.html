@@ -98,38 +98,22 @@
                     {{ end }}
                     {{ os.ReadFile "static/images/logo-text.svg" | safeHTML }}
                 </a>
-                <span class="nav-version">{{ .Site.Data.version.release }}</span>
+                <a href="{{ "changelog/" | relURL }}" class="nav-version">{{ .Site.Data.version.release }}</a>
             </div>
             <button type="button" class="hamburger-button" aria-label="Open menu" aria-expanded="false">
-                <span></span>
-                <span></span>
-                <span></span>
+                <span class="menu-icon">{{ os.ReadFile "static/images/icons/menu.svg" | safeHTML }}</span>
+                <span class="close-icon">{{ os.ReadFile "static/images/icons/close.svg" | safeHTML }}</span>
             </button>
             <div class="nav-links">
-                <div class="dropbtn">
-                    <button class="theme-toggle" aria-label="Toggle theme" title="Toggle dark mode">
-                        <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
-                             role="none"
-                             viewBox="0 0 24 24"
-                             fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                             stroke-linejoin="round">
-                            <circle cx="12" cy="12" r="5"></circle>
-                            <line x1="12" y1="1" x2="12" y2="3"></line>
-                            <line x1="12" y1="21" x2="12" y2="23"></line>
-                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-                            <line x1="1" y1="12" x2="3" y2="12"></line>
-                            <line x1="21" y1="12" x2="23" y2="12"></line>
-                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-                        </svg>
-                        <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
-                             role="none"
-                             viewBox="0 0 24 24"
-                             fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-                        </svg>
-                    </button>
+                <div class="dropbtn theme-toggle-desktop">
+                    <button class="theme-toggle" aria-label="Toggle theme" title="Toggle dark mode"><span class="sun-icon">{{ os.ReadFile "static/images/icons/sun.svg" | safeHTML }}</span><span class="moon-icon">{{ os.ReadFile "static/images/icons/moon.svg" | safeHTML }}</span></button>
+                </div>
+                <div class="theme-picker-mobile">
+                    <span class="theme-picker-label">Theme</span>
+                    <div class="theme-picker-options">
+                        <button class="theme-option" data-theme="light">{{ os.ReadFile "static/images/icons/sun.svg" | safeHTML }} Light</button>
+                        <button class="theme-option" data-theme="dark">{{ os.ReadFile "static/images/icons/moon.svg" | safeHTML }} Dark</button>
+                    </div>
                 </div>
                 {{ range (index .Site.Menus "main") }}
                     {{ if .HasChildren }}
@@ -155,7 +139,7 @@
             </div>
         </nav>
     </div>
-
+    <div class="overlay" id="overlay"></div>
 
     <main data-pagefind-body{{ if .IsHome }} class="homepage"{{ end }}>
         <img alt="" aria-hidden="true" hidden class="header-print" src="/images/logo-text.svg"/>
@@ -168,10 +152,10 @@
     <footer>
         <div class="footer-content">
             <div class="footer-logo">
-                <a class="footer-logo" href="https://www.openhomefoundation.org/">
-                    <span>ESPHome is a project from the</span>
-                    <img src="{{ "images/icons/ohf-logo-on-light.svg" | relURL }}" alt="ESPHome Logo" width="220px"
-                         height="49px">
+                <span>ESPHome is a project from the</span>
+                <a href="https://www.openhomefoundation.org/">
+                    <img class="light-only" src="{{ "images/icons/ohf-logo-on-light.svg" | relURL }}" alt="Open Home Foundation">
+                    <img class="dark-only" src="{{ "images/icons/ohf-logo-on-dark.svg" | relURL }}" alt="Open Home Foundation">
                 </a>
                 {{ if getenv "NETLIFY" }}
                     <br>
