@@ -24,22 +24,22 @@ smart home exactly how you want it.
 {{< feature-grid >}}
 [
   {
-    "icon": "code",
+    "icon": "code-block-tags",
     "title": "No coding required",
     "description": "Simple YAML configuration files instead of complex C++ code"
   },
   {
-    "icon": "wifi",
+    "icon": "cloud-download",
     "title": "Wireless updates",
     "description": "Update your devices over-the-air without physical access"
   },
   {
-    "icon": "puzzle-piece",
+    "icon": "shape-plus",
     "title": "Modular design",
     "description": "Support for hundreds of sensors, displays, and other components"
   },
   {
-    "icon": "shield-alt",
+    "icon": "wifi-strength-off",
     "title": "Local control",
     "description": "Devices work locally without cloud dependencies"
   }
@@ -52,17 +52,17 @@ smart home exactly how you want it.
 {{< feature-grid >}}
 [
   {
-    "icon": "user-cog",
+    "icon": "head-cog",
     "title": "DIY enthusiasts",
     "description": "Create custom sensors, switches, and displays tailored to specific needs"
   },
   {
-    "icon": "home",
+    "icon": "home-automation",
     "title": "Smart home hobbyists",
     "description": "Extend their home automation systems with affordable custom devices"
   },
   {
-    "icon": "briefcase",
+    "icon": "account-tie",
     "title": "Professional integrators",
     "description": "Deploy reliable, locally-controlled smart devices for clients"
   },
@@ -79,7 +79,7 @@ smart home exactly how you want it.
 {{< feature-grid >}}
 [
   {
-    "icon": "microchip",
+    "icon": "espressif",
     "title": "Espressif ESP32 and ESP8266",
     "description": "Wide support for ESP32 and ESP8266 microcontrollers, the heart of many IoT projects."
   },
@@ -89,12 +89,12 @@ smart home exactly how you want it.
     "description": "Support for Raspberry Pi's RP2040 microcontroller."
   },
   {
-    "icon": "bolt",
+    "icon": "chip",
     "title": "Others",
     "description": "Nordic Semiconductor nRF52, Realtek RTL87xx, and Beken BK72xx chips are supported."
   },
   {
-    "icon": "computer",
+    "icon": "monitor",
     "title": "Desktop",
     "description": "Many ESPHome components can be run on a desktop computer using the *host* platform!"
   }
