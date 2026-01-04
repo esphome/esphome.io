@@ -1,14 +1,14 @@
-{{ $emojis := dict
-"caution" ":exclamation:"
-"important" ":information_source:"
-"note" ":information_source:"
-"tip" ":white_check_mark:"
-"warning" ":warning:"
+{{ $icons := dict
+"caution" "circle-exclamation"
+"important" "circle-info"
+"note" "circle-info"
+"tip" "lightbulb"
+"warning" "triangle-exclamation"
 }}
 
 <blockquote class="alert alert-{{ .AlertType }}">
   <p class="alert-heading">
-    {{ transform.Emojify (index $emojis .AlertType) }}
+    <span class="alert-icon">{{ os.ReadFile (printf "static/images/icons/%s.svg" (index $icons .AlertType)) | safeHTML }}</span>
     {{ with .AlertTitle }}
     {{ . }}
     {{ else }}

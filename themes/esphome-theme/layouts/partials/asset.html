@@ -5,10 +5,10 @@
 {{- if eq hugo.Environment "development" -}}
     {{- $asset := resources.Get $path  -}}
     {{- if eq $ext ".css" -}}
-        <link rel="stylesheet" href="{{ $asset.RelPermalink }}"
+        <link rel="stylesheet" href="{{ $asset.RelPermalink }}?v={{ now.Unix }}"
         >
     {{- else if eq $ext ".js" -}}
-        <script src="{{ $asset.RelPermalink }}"></script>
+        <script src="{{ $asset.RelPermalink }}?v={{ now.Unix }}"></script>
     {{- end -}}
 {{- else -}}
     {{- $asset := resources.Get $path | resources.Minify | resources.Fingerprint "sha256" -}}
