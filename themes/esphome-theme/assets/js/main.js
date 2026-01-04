@@ -270,6 +270,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Table of Contents highlighting
     const tocLinks = document.querySelectorAll('.toc-entry, .toc-secondary');
+    const HEADER_HEIGHT = 80;
     if (tocLinks.length > 0) {
         // Get all headings that correspond to TOC entries
         const headings = Array.from(tocLinks).map(link => {
@@ -309,7 +310,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     }
                 }
             }, {
-                rootMargin: '-80px 0px -60% 0px',
+                rootMargin: `-${HEADER_HEIGHT}px 0px -60% 0px`,
                 threshold: 0
             });
 
@@ -336,7 +337,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         currentActive = this;
 
                         window.scrollTo({
-                            top: targetElement.offsetTop - 80,
+                            top: targetElement.offsetTop - HEADER_HEIGHT,
                             behavior: 'smooth'
                         });
                         scroll_bar(navContainer.offsetHeight);
