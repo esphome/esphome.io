@@ -31,6 +31,7 @@ The ESPHome Device Builder provides a simple web user interface (UI) which allow
 device configurations onto your devices.
 
 {{< anchor "installing-esphome-device-builder" >}}
+
 ## Installing ESPHome Device Builder
 
 To install the ESPHome Device Builder in Home Assistant, click the following button:
@@ -77,6 +78,7 @@ immediately following installation so that your device can connect to your Wi-Fi
 with Home Assistant.
 
 {{< anchor "esphome-interface" >}}
+
 ## Device Builder Interface
 
 Let's take a quick tour of the ESPHome Device Builder interface.
@@ -99,8 +101,8 @@ actions you can perform:
   - **Validate**: This will validate the configuration file.
   - **Install**: Opens the Install dialog.
   - **Clean Build Files**: This will delete all of the generated build files; it can help to resolve compile issues
-    should they occur. *This is safe to perform at any time and you should try this before reporting bugs or other
-    issues.*
+    should they occur. _This is safe to perform at any time and you should try this before reporting bugs or other
+    issues._
 
   - **Delete**: This will delete the configuration file.
 
@@ -176,6 +178,7 @@ Note that you won't need to have the device connected to your system with a USB 
 installed on your device) it can update the device {{< docref "/components/ota/index" ""over the air"" >}}.
 
 {{< anchor "connecting-your-device-to-home-assistant" >}}
+
 ## Connecting your device to Home Assistant
 
 Once your configuration is installed on your device and it's connected to your Wi-Fi, Home Assistant will automatically
