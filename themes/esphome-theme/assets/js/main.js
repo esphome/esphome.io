@@ -113,6 +113,13 @@ function prepareAndPrint() {
 
 document.addEventListener('DOMContentLoaded', function () {
 
+    // Fix empty summary elements
+    document.querySelectorAll('details summary').forEach(summary => {
+        if (!summary.textContent.trim()) {
+            summary.textContent = 'Show details';
+        }
+    });
+
     const scrollers = document.querySelectorAll('.scroll-trap');
 
     for (let i = 0; i !== scrollers.length; i++) {
@@ -129,15 +136,9 @@ document.addEventListener('DOMContentLoaded', function () {
         button.addEventListener('click', async () => {
             const anchor = button.getAttribute('data-anchor');
             const url = `${window.location.origin}${window.location.pathname}#${anchor}`;
-            await navigator.clipboard.writeText(url)
-            // Remove the class if it’s already there (to restart the animation)
-            button.classList.remove('spin-once');
-
-            // Trigger reflow to "restart" the animation
-            void button.offsetWidth;
-
-            // Add the class to trigger the spin
-            button.classList.add('spin-once');
+            await navigator.clipboard.writeText(url);
+            button.classList.add('copied');
+            setTimeout(() => button.classList.remove('copied'), 1000);
         });
     });
 
@@ -276,27 +277,81 @@ document.addEventListener('DOMContentLoaded', function () {
             return document.getElementById(id);
         }).filter(Boolean);
 
-        // Add smooth scrolling to TOC links
-        tocLinks.forEach(link => {
-            link.addEventListener('click', function (e) {
-                e.preventDefault();
-                closeTOC();
-                const targetId = this.getAttribute('href').substring(1);
-                const targetElement = document.getElementById(targetId);
+        // Scroll spy using IntersectionObserver
+        if (headings.length > 0) {
+            let currentActive = null;
+            let scrollSpyPaused = false;
 
-                if (targetElement) {
-                    tocScroll = true;
-                    window.scrollTo({
-                        top: targetElement.offsetTop - 80, // Offset for fixed header
-                        behavior: 'smooth'
+            const observer = new IntersectionObserver((entries) => {
+                // Skip updates while scrolling to a clicked link
+                if (scrollSpyPaused) return;
+
+                // Find the first heading that's intersecting (visible)
+                const visibleEntries = entries.filter(e => e.isIntersecting);
+
+                if (visibleEntries.length > 0) {
+                    // Get the topmost visible heading
+                    const topEntry = visibleEntries.reduce((top, entry) => {
+                        return entry.boundingClientRect.top < top.boundingClientRect.top ? entry : top;
                     });
-                    scroll_bar(navContainer.offsetHeight);
 
-                    // Update URL hash without jumping
-                    history.pushState(null, null, `#${targetId}`);
+                    const id = topEntry.target.id;
+                    const tocLink = document.querySelector(`.toc-entry[href="#${id}"]`);
+
+                    if (tocLink && tocLink !== currentActive) {
+                        // Remove active from previous
+                        if (currentActive) {
+                            currentActive.classList.remove('active');
+                        }
+                        // Add active to current
+                        tocLink.classList.add('active');
+                        currentActive = tocLink;
+                    }
                 }
+            }, {
+                rootMargin: '-80px 0px -60% 0px',
+                threshold: 0
             });
-        });
+
+            headings.forEach(heading => observer.observe(heading));
+
+            // Add smooth scrolling to TOC links
+            tocLinks.forEach(link => {
+                link.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    closeTOC();
+                    const targetId = this.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
+
+                    if (targetElement) {
+                        // Pause scroll spy during programmatic scroll
+                        scrollSpyPaused = true;
+                        tocScroll = true;
+
+                        // Immediately update active state
+                        if (currentActive) {
+                            currentActive.classList.remove('active');
+                        }
+                        this.classList.add('active');
+                        currentActive = this;
+
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 80,
+                            behavior: 'smooth'
+                        });
+                        scroll_bar(navContainer.offsetHeight);
+
+                        // Update URL hash without jumping
+                        history.pushState(null, null, `#${targetId}`);
+
+                        // Resume scroll spy after scroll completes
+                        setTimeout(() => {
+                            scrollSpyPaused = false;
+                        }, 500);
+                    }
+                });
+            });
+        }
     }
 
 });

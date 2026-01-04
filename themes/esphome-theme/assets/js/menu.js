@@ -8,17 +8,25 @@ function isMobileScreen() {
 function closeMenu() {
     const hamburger = document.querySelector('.hamburger-button');
     const navLinks = document.querySelector('.nav-links');
+    const overlay = document.getElementById('overlay');
+    const tocToggle = document.getElementById('toc-toggle');
     navLinks.classList.remove('active');
     hamburger.classList.remove('active');
     hamburger.setAttribute('aria-expanded', 'false');
+    // Only hide overlay if TOC isn't open
+    if (overlay && (!tocToggle || !tocToggle.classList.contains('open'))) {
+        overlay.classList.remove('show');
+    }
 }
 
 function openMenu() {
     const hamburger = document.querySelector('.hamburger-button');
     const navLinks = document.querySelector('.nav-links');
+    const overlay = document.getElementById('overlay');
     navLinks.classList.add('active');
     hamburger.classList.add('active');
     hamburger.setAttribute('aria-expanded', 'true');
+    if (overlay) overlay.classList.add('show');
 }
 function openTOC() {
     const tocToggle = document.getElementById('toc-toggle');
@@ -35,26 +43,54 @@ function closeTOC() {
     if (!isMobileScreen() || !tocToggle) return;
     const tocPanel = document.getElementsByClassName('sidebar-mobile')[0];
     const overlay = document.getElementById('overlay');
+    const navLinks = document.querySelector('.nav-links');
     tocToggle.classList.remove('open');
     tocPanel.classList.remove('open');
-    overlay.classList.remove('show');
+    // Only hide overlay if nav menu isn't open
+    if (!navLinks || !navLinks.classList.contains('active')) {
+        overlay.classList.remove('show');
+    }
 }
 
 document.addEventListener('DOMContentLoaded', function() {
 
 
     function setTheme(theme) {
+        document.documentElement.classList.add('theme-transition-disabled');
         document.documentElement.setAttribute('data-theme', theme);
         localStorage.setItem('theme', theme);
         document.querySelector('.theme-toggle').setAttribute('aria-label', `Toggle ${theme === 'dark' ? 'light' : 'dark'} mode`);
-        closeMenu();
+        // Update mobile theme picker active state
+        document.querySelectorAll('.theme-option').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.theme === theme);
+        });
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+                document.documentElement.classList.remove('theme-transition-disabled');
+            });
+        });
     }
 
-    // Theme toggle functionality
+    // Theme toggle functionality (desktop)
     const themeToggle = document.querySelector('.theme-toggle');
-    themeToggle.addEventListener('click', () => {
+    themeToggle.addEventListener('click', (e) => {
+        e.stopPropagation();
         const currentTheme = document.documentElement.getAttribute('data-theme');
         setTheme(currentTheme === 'dark' ? 'light' : 'dark');
+    });
+
+    // Mobile theme picker
+    document.querySelectorAll('.theme-option').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            setTheme(btn.dataset.theme);
+        });
+    });
+
+    // Set initial active state for mobile theme picker
+    const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+    document.querySelectorAll('.theme-option').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.theme === currentTheme);
     });
 
     const tocToggle = document.getElementById('toc-toggle');
@@ -66,8 +102,12 @@ document.addEventListener('DOMContentLoaded', function() {
             else
                 openTOC();
         });
-    if (overlay)
-        overlay.addEventListener('click', closeTOC);
+    if (overlay) {
+        overlay.addEventListener('click', () => {
+            closeTOC();
+            closeMenu();
+        });
+    }
     const sidebarMobile = document.querySelectorAll('.sidebar-mobile');
     sidebarMobile.forEach(sidebar => {
         sidebar.addEventListener("click", closeTOC);
@@ -153,10 +193,12 @@ document.addEventListener('DOMContentLoaded', function() {
     hamburger.addEventListener('click', function(e) {
         e.preventDefault();
         e.stopPropagation();
-        hamburger.classList.toggle('active');
-        navLinks.classList.toggle('active');
-        const expanded = hamburger.getAttribute('aria-expanded') === 'true';
-        hamburger.setAttribute('aria-expanded', expanded ? "false" : "true");
+        const isOpen = navLinks.classList.contains('active');
+        if (isOpen) {
+            closeMenu();
+        } else {
+            openMenu();
+        }
         closeTOC();
     });
     // Close menu on outside click (mobile only)
