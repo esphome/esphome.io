@@ -28,7 +28,7 @@ section at the bottom of this page for components working specifically with `hos
 # Example configuration entry
 host:
   mac_address: "06:35:69:ab:f6:79"
-  preferences_path: /tmp
+  preferences_path: "/tmp"
 ```
 
 ## Configuration variables
