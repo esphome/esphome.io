@@ -26,7 +26,7 @@ most new development happens. Based on the current state of hardware support wit
   - An update to the original ESP32 with a slightly modified set of hardware peripherals.
   - Has a built-in USB peripheral/interface (as opposed to relying on an external USB-to-serial chip).
   - Has instruction set extensions which make it a better fit for applications which require some form of machine
-    learning ({{< docref "/components/micro_wake_word" >}}, for example).
+    learning ([Micro Wake Word](/components/micro_wake_word), for example).
   - Best choice if you need raw compute power, with better overall performance and lower latency.
 
 - **ESP32-C3**
@@ -48,11 +48,11 @@ most new development happens. Based on the current state of hardware support wit
   variants have:
 
   - Roughly 5x the amount of RAM. Some components such as large displays and
-    {{< docref "/components/sensor/bme68x_bsec2" "some sensors" >}} may not work well on ESP8266.
+    [some sensors](/components/sensor/bme68x_bsec2) may not work well on ESP8266.
   - Significantly more flash memory. Most ESP8266 boards have 1-2 MB, while most ESP32 variants have 4 MB or more.
   - More GPIO pins and a better set of hardware peripherals.
 
-  The ESP8266 does not meet the requirements of {{< docref "/guides/made_for_esphome" >}}.
+  The ESP8266 does not meet the requirements of [Made for ESPHome](/guides/made_for_esphome).
 
   The original NodeMCU, D1-Mini, and ESP-01 are examples of boards which utilize an ESP8266. Note that there are
   pin-compatible versions of these boards available which use a more modern ESP32 variant instead.
@@ -64,7 +64,7 @@ most new development happens. Based on the current state of hardware support wit
 ### LibreTiny (BK72xx, RTL87xx, LN882x)
 
 If you have an off-the-shelf smart home device with a Beken, Realtek, or Lightning Semi chip,
-{{< docref "/components/libretiny" "LibreTiny" >}} makes it possible to run ESPHome on it. These chips are typically
+[LibreTiny](/components/libretiny) makes it possible to run ESPHome on it. These chips are typically
 not purchased directly. Instead, users flash existing devices that contain them.
 
 LibreTiny support has matured significantly and these devices generally work well. However, LibreTiny is not as
