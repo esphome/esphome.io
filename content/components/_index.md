@@ -112,6 +112,7 @@ ESPHome-specific components or components supporting ESPHome device provisioning
 "StatsD","components/statsd","connection.svg","dark-invert"
 "UDP","components/udp","udp.svg",""
 "Packet Transport","components/packet_transport/index","packet_transport.svg","dark-invert"
+"Zigbee End Device","components/zigbee","zigbee.svg",""
 {{< /imgtable >}}
 
 ## Bluetooth/BLE
@@ -1038,6 +1039,13 @@ at the {{< docref "light/fastled" "FastLED Light" >}}.
 {{< imgtable >}}
 "Valve Core","components/valve/index","folder-open.svg","dark-invert"
 "Template Valve","components/valve/template","description.svg","dark-invert"
+{{< /imgtable >}}
+
+## Water Heater Components
+
+{{< imgtable >}}
+"Water Heater Core","components/water_heater/index","folder-open.svg","dark-invert"
+"Template Water Heater","components/water_heater/template","description.svg","dark-invert"
 {{< /imgtable >}}
 
 ## Wireless Communication
