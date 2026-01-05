@@ -91,12 +91,13 @@ so if you use any other configuration you will not get log messages over the on-
 | ESP32-C3 | TX: 21, RX: 20 | N/A | Undefined | N/A | N/A | 18/19 |
 | ESP32-C5 | TX: 10, RX: 11 | N/A | Undefined | N/A | N/A | 13/14 |
 | ESP32-C6 | TX: 16, RX: 17 | N/A | Undefined | N/A | N/A | 12/13 |
+| ESP32-C61 | TX: 5, RX: 4 | N/A | Undefined | N/A | N/A | 12/13 |
 | ESP32-P4 | TX: 37, RX: 38 | N/A | TX: 10, RX: 11 | N/A | N/A | 24/25 |
 | ESP32-S2 | TX: 43, RX: 44 | N/A | TX: 17, RX: 18 | N/A | 19/20 | N/A |
 | ESP32-S3 | TX: 43, RX: 44 | N/A | TX: 17, RX: 18 | Undefined | 19/20 | 19/20 |
 | NRF52    | pins varies by board | N/A | pins varies by board | Undefined | D+/D- | N/A |
 
-*Undefined* means that the logger component cannot use this harware UART at this time.
+*Undefined* means that the logger component cannot use this hardware UART at this time.
 
 {{< anchor "logger-default_hardware_interfaces" >}}
 
@@ -114,6 +115,7 @@ the original ESP32 or ESP8266) continue to use USB-to-serial bridge ICs for comm
 | ESP32-C3 | `USB_SERIAL_JTAG` |
 | ESP32-C5 | `USB_SERIAL_JTAG` |
 | ESP32-C6 | `USB_SERIAL_JTAG` |
+| ESP32-C61 | `USB_SERIAL_JTAG` |
 | ESP32-P4 | `USB_SERIAL_JTAG` |
 | ESP32-S2 | `USB_CDC`         |
 | ESP32-S3 | `USB_SERIAL_JTAG` |
@@ -126,42 +128,18 @@ the original ESP32 or ESP8266) continue to use USB-to-serial bridge ICs for comm
 
 Possible log levels are (sorted by severity):
 
-- `NONE`
+| Level              | Color  | Description |
+| ------------------ | ------ | ----------- |
+| `NONE`             |        | No messages are logged. |
+| `ERROR`            | Red    | Only errors are logged. Errors prevent the ESP from working correctly. |
+| `WARN`             | Yellow | Warnings and errors. Warnings are recoverable issues like invalid sensor readings. |
+| `INFO`             | Green  | Errors, warnings and info messages are logged. |
+| `DEBUG` (default)  | Cyan   | Everything up to debug. Includes sensor readings and status messages. |
+| `VERBOSE`          | Gray   | Like debug, but includes additional messages usually deemed to be spam. |
+| `VERY_VERBOSE`     | White  | All internal messages including data flowing through I²C, SPI and UART buses. |
 
-- No messages are logged.
-
-- `ERROR`
-
-- With this log level, only errors are logged. Errors are issues that prevent the ESP from working
-
-    correctly. Color: red
-
-- `WARN`
-
-- With this log level, warnings and errors are logged. Warnings are issues like invalid readings from
-
-    sensors that ESPHome can recover from. Color: yellow
-
-- `INFO`
-
-- With this log level, everything up to info messages are logged; so errors, warnings and info. Color: green
-
-- `DEBUG` (**Default**)
-
-- Everything up to this log level is logged. Debug messages include the current readings from a sensor
-
-    and status messages. Color: cyan
-
-- `VERBOSE`
-
-- Like debug, but a few more messages that are usually deemed to be spam are also included. Color: grey
-
-- `VERY_VERBOSE`
-
-- All internal messages are logged. Including all the data flowing through data buses like
-
-    I²C, SPI or UART. Warning: May cause the device to slow down and have trouble staying
-    connecting due to amount of generated messages. Color: white
+> [!WARNING]
+> Using `VERY_VERBOSE` can significantly impact device performance and may cause connection instability.
 
 {{< anchor "logger-manual_tag_specific_levels" >}}
 
