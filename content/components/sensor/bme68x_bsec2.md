@@ -96,6 +96,8 @@ sensor:
 - **bme68x_bsec2_id** (_Optional_, [ID](/guides/configuration-types#id)): The ID of the `bme68x_bsec2_i2c` component sensors will refer
   to. Useful when multiple devices are present in your configuration.
 
+- **id** (_Optional_, [ID](/guides/configuration-types#id)): This ID has no effect other than providing a target for package management.
+
 - **temperature** (_Optional_): Configuration for the temperature sensor.
 
   - **sample_rate** (_Optional_, string): Optional sample rate override for this sensor. Can be `LP` for low power
@@ -185,29 +187,22 @@ text_sensor:
   - platform: template
     name: "BME68x IAQ Classification"
     lambda: |-
-      if ( int(id(iaq).state) <= 50) {
+      if (int(id(iaq).state) <= 50) {
         return {"Excellent"};
-      }
-      else if (int(id(iaq).state) >= 51 && int(id(iaq).state) <= 100) {
+      } else if (int(id(iaq).state) >= 51 && int(id(iaq).state) <= 100) {
         return {"Good"};
-      }
-      else if (int(id(iaq).state) >= 101 && int(id(iaq).state) <= 150) {
+      } else if (int(id(iaq).state) >= 101 && int(id(iaq).state) <= 150) {
         return {"Lightly polluted"};
-      }
-      else if (int(id(iaq).state) >= 151 && int(id(iaq).state) <= 200) {
+      } else if (int(id(iaq).state) >= 151 && int(id(iaq).state) <= 200) {
         return {"Moderately polluted"};
-      }
-      else if (int(id(iaq).state) >= 201 && int(id(iaq).state) <= 250) {
+      } else if (int(id(iaq).state) >= 201 && int(id(iaq).state) <= 250) {
         return {"Heavily polluted"};
-      }
-      else if (int(id(iaq).state) >= 251 && int(id(iaq).state) <= 350) {
+      } else if (int(id(iaq).state) >= 251 && int(id(iaq).state) <= 350) {
         return {"Severely polluted"};
-      }
-      else if (int(id(iaq).state) >= 351) {
+      } else if (int(id(iaq).state) >= 351 && int(id(iaq).state) <= 500) {
         return {"Extremely polluted"};
-      }
-      else {
-        return {"error"};
+      } else {
+        return {"Error"};
       }
 ```
 
