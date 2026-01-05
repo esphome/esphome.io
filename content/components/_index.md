@@ -804,6 +804,7 @@ Often known as "tag" or "card" readers within the community.
 {{< imgtable >}}
 "Event Core","components/event/index","folder-open.svg","dark-invert"
 "Template Event","components/event/template","description.svg","dark-invert"
+"UART Event","components/event/uart","uart.svg",""
 {{< /imgtable >}}
 
 ## Fan Components
@@ -1038,6 +1039,13 @@ at the {{< docref "light/fastled" "FastLED Light" >}}.
 {{< imgtable >}}
 "Valve Core","components/valve/index","folder-open.svg","dark-invert"
 "Template Valve","components/valve/template","description.svg","dark-invert"
+{{< /imgtable >}}
+
+## Water Heater Components
+
+{{< imgtable >}}
+"Water Heater Core","components/water_heater/index","folder-open.svg","dark-invert"
+"Template Water Heater","components/water_heater/template","description.svg","dark-invert"
 {{< /imgtable >}}
 
 ## Wireless Communication
