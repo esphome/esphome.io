@@ -828,6 +828,7 @@ Components specifically for interacting with Home Assistant.
 {{< imgtable >}}
 "Binary Sensor","components/binary_sensor/homeassistant","home-assistant.svg","dark-invert"
 "Bluetooth Proxy","components/bluetooth_proxy","bluetooth.svg","dark-invert"
+"Infrared Proxy","components/infrared_proxy","remote.svg","dark-invert"
 "micro Wake Word","components/micro_wake_word","voice-assistant.svg","dark-invert"
 "Number","components/number/homeassistant","home-assistant.svg","dark-invert"
 "Sensor","components/sensor/homeassistant","home-assistant.svg","dark-invert"
