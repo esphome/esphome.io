@@ -34,12 +34,15 @@ binary_sensor:
 
 ## Configuration variables
 
-- **wipe_on_boot** (*Optional*, boolean): Erases all non-volatile memory data on boot.
-  Use only if the device is in a boot loop crash. Defaults to `false`.
+- **wipe_on_boot** (*Optional*): erases all non volatile memory data on boot; use only if the device is in boot loop
+crash. One of `true`, `false` or `once`. `once` wipes all data once after flashing new firmware. Defaults to `false`.
 
 - **on_join** (*Optional*, [Automation](/automations#automation)): Automation to run when the device joins the network.
 
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): The ID to use for this `zigbee` component.
+
+- **power_source** (*Optional*, enum): Indicates what kind of power the device uses. One of `MAINS_SINGLE_PHASE`,
+`MAINS_THREE_PHASE`, `BATTERY`, `DC_SOURCE`, `EMERGENCY_MAINS_CONST`, `EMERGENCY_MAINS_TRANSF` or `UNKNOWN`.
 
 ## Actions
 
@@ -76,6 +79,35 @@ binary_sensor:
 #### Configuration variables
 
 - **name** (**Required**, string): The name for the binary sensor. This is exposed as the
+  Zigbee endpoint description.
+- **internal** (*Optional*, boolean): Mark this component as internal. Internal components will
+  not be exposed over Zigbee. Only specifying an `id` without a `name` will implicitly set this to true.
+  Use this if you run out of Zigbee endpoints.
+
+### Sensor Configuration
+
+All sensors with a `name` are automatically exposed over Zigbee.
+
+```yaml
+sensor:
+  - platform: template
+    name: "Analog 1"
+    lambda: return 10.0;
+  - platform: template
+    name: "Analog 2"
+    lambda: return 11.0;
+  - platform: template
+    id: internal_sensor
+    lambda: return 9.0;
+  - platform: template
+    name: "Another internal sensor"
+    internal: true
+    lambda: return 8.0;
+```
+
+#### Configuration variables
+
+- **name** (**Required**, string): The name for the sensor. This is exposed as the
   Zigbee endpoint description.
 - **internal** (*Optional*, boolean): Mark this component as internal. Internal components will
   not be exposed over Zigbee. Only specifying an `id` without a `name` will implicitly set this to true.
