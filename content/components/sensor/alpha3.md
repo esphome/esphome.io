@@ -174,14 +174,13 @@ The text sensor platform displays the current operating mode of the pump.
 > [!NOTE]
 > The pump can only be connected to one device at a time. If you want to use the GO Remote App, you have to first turn the ESP off.
 
->
-> When using control features, test in this order:
+> [!NOTE]
 > When using control features, test in this order:
 >
 > 1. Try REMOTE mode first (no visible effect, just enables remote control)
-> 1. Test AutoAdapt mode (simplest mode change)
-> 1. Test Start/Stop buttons
-> 1. Test setpoint adjustment last
+> 2. Test AutoAdapt mode (simplest mode change)
+> 3. Test Start/Stop buttons
+> 4. Test setpoint adjustment last
 
 ## See Also
 
