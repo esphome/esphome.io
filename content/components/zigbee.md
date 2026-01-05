@@ -34,8 +34,9 @@ binary_sensor:
 
 ## Configuration variables
 
-- **wipe_on_boot** (*Optional*): erases all non volatile memory data on boot; use only if the device is in boot loop
-crash. One of `true`, `false` or `once`. `once` wipes all data once after flashing new firmware. Defaults to `false`.
+- **wipe_on_boot** (*Optional*): Erases all non-volatile memory data on boot.
+Use only if the device is in a boot loop crash. One of `true`, `false` or `once`.
+`once` wipes all data only one time after flashing new firmware. Defaults to `false`.
 
 - **on_join** (*Optional*, [Automation](/automations#automation)): Automation to run when the device joins the network.
 
