@@ -93,8 +93,9 @@ sensor:
 - **formaldehyde** (*Optional*): Use the formaldehyde (HCHO) concentration in µg per cubic meter for the `PMS5003S` and `PMS5003ST` type sensors.
   All options from [Sensor](/components/sensor).
 
-- **aqi** (*Optional*): Air Quality Index sensor. Requires both `pm_2_5` and `pm_10_0`
+- **aqi** (*Optional*, **Deprecated**): Air Quality Index sensor. Requires both `pm_2_5` and `pm_10_0`
   sensors to be configured. See [Air Quality Index](#air-quality-index) below.
+  Use the standalone {{< docref "/components/sensor/aqi" >}} platform instead.
 
   - **calculation_type** (**Required**): The AQI calculation standard to use.
     One of: `AQI` (US EPA) or `CAQI` (European).
@@ -107,6 +108,12 @@ sensor:
   to use multiple UART buses.
 
 ## Air Quality Index
+
+{{< alert color="warning" >}}
+**Deprecated:** The `aqi` option in this component is deprecated. Please use the
+standalone {{< docref "/components/sensor/aqi" >}} sensor platform instead, which
+works with any PM sensor source.
+{{< /alert >}}
 
 The AQI (Air Quality Index) sensor calculates an air quality index value based on the
 PM2.5 and PM10 particulate matter concentrations. This provides a single number that
