@@ -28,11 +28,16 @@ section at the bottom of this page for components working specifically with `hos
 # Example configuration entry
 host:
   mac_address: "06:35:69:ab:f6:79"
+  preferences_path: /tmp
 ```
 
 ## Configuration variables
 
 - **mac_address** (*Optional*, MAC address): A dummy MAC address to use when communicating with HA.
+- **preferences_path** (*Optional*, filesystem directory path): A directory path on the filesystem where to save preferences. Defaults to the path returned by the `$HOME` envronment variable.
+
+ESPHome binaries built for the `host` platform can run through linux `systemd`, properly handling `SIGTERM`/`SIGINT` signalling,
+performing graceful exit.
 
 ## Lambda calls
 
