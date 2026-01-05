@@ -68,6 +68,8 @@ binary_sensor:
     name: "Door 2"
   - platform: template
     id: internal_sensor
+  - platform: template
+    name: "Another internal sensor"
     internal: true
 ```
 
