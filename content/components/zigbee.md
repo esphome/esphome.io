@@ -52,7 +52,6 @@ on_...:
 
 - [Binary Sensor](/components/binary_sensor#config-binary_sensor): only **state** and **name** are exposed over Zigbee.
 
-
 ## Zigbee Component Base Configuration
 
 All Zigbee-enabled ESPHome components support configurable, component-specific overrides.
@@ -66,13 +65,11 @@ binary_sensor:
     internal: True
 ```
 
-
 ### Configuration variables
 
 - **internal** (*Optional*, boolean): Mark this component as internal. Internal components will
   not be exposed over Zigbee. Only specifying an `id` without a `name` will implicitly set this to true.
   Set to true if you run out of Zigbee endpoints. nRF52 supports a maximum of 8 endpoints.
-
 
 ## See Also
 
