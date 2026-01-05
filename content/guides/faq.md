@@ -18,7 +18,7 @@ most new development happens. Based on the current state of hardware support wit
 
   - Best supported/most mature.
   - Includes a great set of built-in hardware peripherals, so it's very capable and very flexible.
-  - Best choice for wired Ethernet connections with lowest latency thanks to its built-in Ethernet MAC,
+  - Best choice for wired Ethernet connections thanks to its built-in Ethernet MAC,
     which connects directly to a PHY chip. Other variants require SPI-based Ethernet controllers, adding latency.
 
 - **ESP32-S3**
