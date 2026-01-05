@@ -34,7 +34,7 @@ binary_sensor:
 
 - **on_join** (*Optional*, [Automation](/automations#automation)): Automation to run when the device join the network.
 
-- **id** (**Required**, [ID](/guides/configuration-types#id)): The id to use for this `zigbee` component.
+- **id** (**Optional**, [ID](/guides/configuration-types#id)): The id to use for this `zigbee` component.
 
 ### Actions
 
