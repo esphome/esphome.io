@@ -27,6 +27,7 @@ recommended to properly support the 256000 baud rate.
 # RD-03D configuration
 uart:
   rx_pin: GPIOXX
+  tx_pin: GPIOXX  # Required only if using tracking_mode
   baud_rate: 256000
 
 rd03d:
@@ -35,7 +36,7 @@ rd03d:
 
 ### Configuration variables
 
-- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID for this {{< docref "rd03d/" >}} component.
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID for this component.
 - **uart_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the [UART Component](/components/uart) to use.
   Required if you have multiple UARTs configured.
 - **tracking_mode** (*Optional*, string): The tracking mode to configure. If not specified, no command is sent
@@ -70,7 +71,7 @@ binary_sensor:
 
 ### Configuration variables
 
-- **rd03d_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID for the {{< docref "rd03d/" >}} component.
+- **rd03d_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the RD-03D component.
 - **target** (*Optional*): True if any target is detected. All options from [Binary Sensor](/components/binary_sensor#config-binary_sensor).
 - **target_N** (*Optional*): True if the specific target (N = 1 to 3) is detected: `target_1`, `target_2`, `target_3`.
   All options from [Binary Sensor](/components/binary_sensor#config-binary_sensor).
@@ -130,7 +131,7 @@ sensor:
 
 ### Configuration variables
 
-- **rd03d_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID for the {{< docref "rd03d/" >}} component.
+- **rd03d_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the RD-03D component.
 - **target_count** (*Optional*, int): Total number of targets currently detected (0 to 3).
   All options from [Sensor](/components/sensor).
 
@@ -251,4 +252,7 @@ sensor:
 
 ## See Also
 
+- {{< docref "/components/sensor/ld2410" >}}
+- {{< docref "/components/sensor/ld2420" >}}
+- {{< docref "/components/sensor/ld2450" >}}
 - {{< apiref "rd03d/rd03d.h" "rd03d/rd03d.h" >}}
