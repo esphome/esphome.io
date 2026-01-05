@@ -68,8 +68,8 @@ web_server:
   Defaults to `false`.
 
 - **compression** (*Optional*, string): The compression algorithm used for embedded web assets when `local` is enabled.
-  Options are `br` (Brotli) or `gzip`. Brotli provides ~10-12% smaller size than gzip for web server assets.
-  Defaults to `br`.
+  Options are `br` (Brotli) or `gzip`. Brotli typically results in smaller embedded web assets than gzip, especially for
+  text-based resources, but the exact size difference depends on the assets being compressed. Defaults to `br`.
 
 - **version** (*Optional*, string): `1`, `2` or `3`. Version 1 displays as a table. Version 2 uses web components
   and has more functionality. Version 3 uses HA-Styling. Defaults to `2`.
