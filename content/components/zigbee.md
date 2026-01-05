@@ -56,11 +56,9 @@ on_...:
 
 ## Supported Components
 
-- [Binary Sensor](/components/binary_sensor#config-binary_sensor): only **state** and **name** are exposed over Zigbee.
-
 ### Binary Sensor Configuration
 
-All Zigbee-enabled ESPHome components support configurable, component-specific overrides.
+All binary sensors with a `name` are automatically exposed over Zigbee.
 
 ```yaml
 binary_sensor:
@@ -69,15 +67,17 @@ binary_sensor:
   - platform: template
     name: "Door 2"
   - platform: template
-    name: "Door 3"
+    id: internal_sensor
     internal: true
 ```
 
 #### Configuration variables
 
+- **name** (**Required**, string): The name for the binary sensor. This is exposed as the
+  Zigbee endpoint description.
 - **internal** (*Optional*, boolean): Mark this component as internal. Internal components will
   not be exposed over Zigbee. Only specifying an `id` without a `name` will implicitly set this to true.
-  Use this if you run out of Zigbee endpoints. nRF52 supports a maximum of 8 endpoints.
+  Use this if you run out of Zigbee endpoints.
 
 ## See Also
 
