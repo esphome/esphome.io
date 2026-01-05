@@ -101,7 +101,7 @@ Examples:
 By creating a simple GET request for a URL of the form `/<domain>/<entity_name>` you will get a JSON payload
 describing the current state of the component. This payload is equivalent to the ones sent by the
 event source API.
-You can get verbose information about the component by adding the parameter `detail=all`
+You can get verbose information about the component by adding the parameter `detail=all`.
 An example would be `/select/My Select?detail=all`.
 
 To actually *control* the state of a component you need to send a POST request with a `method` like
