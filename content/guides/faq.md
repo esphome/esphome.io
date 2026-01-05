@@ -37,7 +37,7 @@ most new development happens. Based on the current state of hardware support wit
 
 - **ESP32-C6**
 
-  - Similar to the ESP32-C3 with additional connectivity options including Thread (via OpenThread) and a Zigbee radio.
+  - Similar to the ESP32-C3 with additional connectivity options including Thread (via OpenThread).
   - A good choice for new projects.
 
 ### Not Recommended for New Projects
