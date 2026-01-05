@@ -14,7 +14,7 @@ most new development happens. Based on the current state of hardware support wit
 
 ### Recommended
 
-- **ESP32 classic**
+- **ESP32 (original, non-variant)**
 
   - Best supported/most mature.
   - Includes a great set of built-in hardware peripherals, so it's very capable and very flexible.
