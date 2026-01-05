@@ -23,6 +23,11 @@ data which this component decodes and updates the configured sensors at the pace
 
 ```yaml
 # Example configuration entry
+uart:
+  rx_pin: GPIO16
+  baud_rate: 115200
+  rx_buffer_size: 1700
+
 dsmr:
   # Optional. The ID of the DSMR. Specify it if you have multiple DSMR components.
   id: dsmr_id
@@ -53,7 +58,7 @@ dsmr:
   # DSMR module uses this pin to tell the smart meter when to send data.
   # By default, smart meters send data continuously.
   # Specifying this pin is only useful if you want to use a custom `request_interval`.
-  request_pin: D5
+  request_pin: GPIO5
 
   # Optional. The minimum time between two telegram readings. Default=0ms.
   # The pace at which the smart meter sends its data determines the update frequency.
@@ -284,7 +289,7 @@ sensor:
     active_demand_abs:
       name: "Active Demand (Avg3) Absolute. OBIS: 1-0:15.24.0"
     active_energy_import_current_average_demand:
-      name: "Current Average Quarterly Demand for Peak Tarriff Belgium. OBIS: 1-0:1.4.0"
+      name: "Current Average Quarterly Demand for Peak Tariff Belgium. OBIS: 1-0:1.4.0"
     active_energy_export_current_average_demand:
       name: "Avg Export Demand (Active). OBIS: 1-0:2.4.0"
     reactive_energy_import_current_average_demand:
@@ -510,7 +515,7 @@ text_sensor:
       on_value:
         then:
           - lambda: |-
-              ESP_LOGV("dsrm", "telegram: %s", x.c_str());
+              ESP_LOGV("dsmr", "telegram: %s", x.c_str());
               p1_bridge_uart->write_str(x.c_str());
 ```
 
