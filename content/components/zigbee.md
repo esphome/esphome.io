@@ -34,11 +34,12 @@ binary_sensor:
 
 ## Configuration variables
 
-- **wipe_on_boot** (*Optional*): Controls Zigbee network data persistence. One of:
-  - `false` (default): Preserve network data across reboots.
-  - `true`: Erase all data on every boot. Use only for recovery from boot loops.
-  - `once`: Erase data only on first boot after flashing, then preserve. Useful for
-    development while maintaining network connection after OTA updates.
+- **wipe_on_boot** (*Optional*): Erases all non-volatile memory data on boot, including
+  Zigbee network pairing and preferences (e.g., last switch state). One of:
+  - `false` (default): Preserve data across reboots.
+  - `true`: Erase all data on every boot. Use only for recovery from boot loops when
+    you don't have an SWD programmer.
+  - `once`: Erase data only on first boot after flashing new firmware, then preserve.
 
 - **on_join** (*Optional*, [Automation](/automations#automation)): Automation to run when the device joins the network.
 
