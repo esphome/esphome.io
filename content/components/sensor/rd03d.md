@@ -1,9 +1,9 @@
 ---
-description: "Instructions for setting up RD-03D radar sensors."
-title: "RD-03D Sensor"
+description: "Instructions for setting up RD-03D mmWave radar sensors."
+title: "RD-03D mmWave Radar"
 params:
   seo:
-    description: Instructions for setting up RD-03D radar sensors.
+    description: Instructions for setting up RD-03D mmWave radar sensors.
 ---
 
 ## Component
@@ -29,6 +29,8 @@ uart:
   rx_pin: GPIOXX
   tx_pin: GPIOXX  # Required only if using tracking_mode
   baud_rate: 256000
+  parity: NONE
+  stop_bits: 1
 
 rd03d:
   id: rd03d_radar
@@ -184,8 +186,10 @@ wifi:
 
 uart:
   id: uart_rd03d
-  rx_pin: GPIO16
+  rx_pin: GPIOXX
   baud_rate: 256000
+  parity: NONE
+  stop_bits: 1
 
 rd03d:
   id: rd03d_radar
@@ -252,6 +256,7 @@ sensor:
 
 ## See Also
 
+- [Ai-Thinker RD-03D Product Page](https://docs.ai-thinker.com/rd-03)
 - {{< docref "/components/sensor/ld2410" >}}
 - {{< docref "/components/sensor/ld2420" >}}
 - {{< docref "/components/sensor/ld2450" >}}
