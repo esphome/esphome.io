@@ -88,3 +88,4 @@ sensor:
 - {{< docref "/components/sensor/hm3301" >}}
 - {{< docref "/components/sensor/sds011" >}}
 - {{< docref "/components/sensor/sps30" >}}
+- {{< apiref "aqi/aqi_sensor.h" "aqi/aqi_sensor.h" >}}
