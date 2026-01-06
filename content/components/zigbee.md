@@ -34,16 +34,19 @@ binary_sensor:
 
 ## Configuration variables
 
-- **wipe_on_boot** (*Optional*): Erases all non-volatile memory data on boot.
-Use only if the device is in a boot loop crash. One of `true`, `false` or `once`.
-`once` wipes all data only one time after flashing new firmware. Defaults to `false`.
+- **wipe_on_boot** (*Optional*): Controls Zigbee network data persistence. One of:
+  - `false` (default): Preserve network data across reboots.
+  - `true`: Erase all data on every boot. Use only for recovery from boot loops.
+  - `once`: Erase data only on first boot after flashing, then preserve. Useful for
+    development while maintaining network connection after OTA updates.
 
 - **on_join** (*Optional*, [Automation](/automations#automation)): Automation to run when the device joins the network.
 
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): The ID to use for this `zigbee` component.
 
-- **power_source** (*Optional*, enum): Indicates what kind of power the device uses. One of `MAINS_SINGLE_PHASE`,
-`MAINS_THREE_PHASE`, `BATTERY`, `DC_SOURCE`, `EMERGENCY_MAINS_CONST`, `EMERGENCY_MAINS_TRANSF` or `UNKNOWN`.
+- **power_source** (*Optional*, enum): Indicates what kind of power the device uses. Affects
+  sleep behavior. One of `UNKNOWN`, `MAINS_SINGLE_PHASE`, `MAINS_THREE_PHASE`, `BATTERY`,
+  `DC_SOURCE`, `EMERGENCY_MAINS_CONST`, or `EMERGENCY_MAINS_TRANSF`. Defaults to `DC_SOURCE`.
 
 ## Actions
 
