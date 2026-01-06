@@ -164,26 +164,6 @@ sensor:
 Here is a complete example configuration for the RD-03D radar.
 
 ```yaml
-esphome:
-  name: rd03d-radar
-  friendly_name: RD-03D Radar
-
-esp32:
-  board: esp32dev
-
-logger:
-  level: DEBUG
-
-api:
-
-ota:
-  - platform: esphome
-
-wifi:
-  ssid: !secret wifi_ssid
-  password: !secret wifi_password
-  ap:
-
 uart:
   id: uart_rd03d
   rx_pin: GPIOXX
@@ -256,7 +236,7 @@ sensor:
 
 ## See Also
 
-- [Ai-Thinker RD-03D Product Page](https://docs.ai-thinker.com/rd-03)
+- [RD-03D Datasheet](https://en.ai-thinker.com/Uploads/file/20231016/20231016032622_13559.pdf)
 - {{< docref "/components/sensor/ld2410" >}}
 - {{< docref "/components/sensor/ld2420" >}}
 - {{< docref "/components/sensor/ld2450" >}}
