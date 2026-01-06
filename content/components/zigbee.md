@@ -116,6 +116,7 @@ sensor:
   Use this if you run out of Zigbee endpoints.
 - **unit_of_measurement** (*Optional*, string): Manually set the unit. By default, values are unitless.
   Only a limited set of units is supported. Unsupported units will revert to unitless.
+  This is exposed as the Zigbee endpoint engineering units.
 
 ## See Also
 
