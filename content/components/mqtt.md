@@ -519,6 +519,8 @@ command_retain: false
 
 This trigger is activated when a connection to the MQTT broker is established. To retrieve if the session is present,
 use a [lambda](/automations/templates#config-lambda) template, it is available under the name `session_present` inside that lambda.
+`session_present` indicates whether the broker has a persistent session for this client from a previous connection. When `true`,
+the broker retained subscriptions and queued messages. When `false`, the session is new.
 
 ```yaml
 mqtt:
@@ -545,7 +547,20 @@ mqtt:
   on_disconnect:
     - switch.turn_off: switch1
     - lambda: |-
-        ESP_LOGI("mqtt", "Disconnect reason: %d", reason);
+        // reason is of type MQTTClientDisconnectReason
+        // Possible values:
+        //   TCP_DISCONNECTED (0)
+        //   MQTT_UNACCEPTABLE_PROTOCOL_VERSION (1)
+        //   MQTT_IDENTIFIER_REJECTED (2)
+        //   MQTT_SERVER_UNAVAILABLE (3)
+        //   MQTT_MALFORMED_CREDENTIALS (4)
+        //   MQTT_NOT_AUTHORIZED (5)
+        //   ESP8266_NOT_ENOUGH_SPACE (6)
+        //   TLS_BAD_FINGERPRINT (7)
+        //   DNS_RESOLVE_ERROR (8)
+        if (reason == mqtt::MQTTClientDisconnectReason::MQTT_NOT_AUTHORIZED) {
+          ESP_LOGE("mqtt", "Not authorized!");
+        }
 ```
 
 {{< anchor "mqtt-on_message" >}}
