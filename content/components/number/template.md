@@ -8,7 +8,7 @@ params:
 ---
 
 The `template` number platform allows you to create a number with templated values
-using [lambdas](#config-lambda).
+using [lambdas](/automations/templates#config-lambda).
 
 ```yaml
 # Example configuration entry
@@ -26,14 +26,14 @@ number:
 - **min_value** (**Required**, float): The minimum value this number can be.
 - **max_value** (**Required**, float): The maximum value this number can be.
 - **step** (**Required**, float): The granularity with which the number can be set.
-- **lambda** (*Optional*, [lambda](#config-lambda)):
+- **lambda** (*Optional*, [lambda](/automations/templates#config-lambda)):
   Lambda to be evaluated every update interval to get the current value of the number.
 
-- **set_action** (*Optional*, [Action](#config-action)): The action that should
+- **set_action** (*Optional*, [Action](/automations/actions#all-actions)): The action that should
   be performed when the remote (like Home Assistant's frontend) requests to set the
   number value. The new value is available to lambdas in the `x` variable.
 
-- **update_interval** (*Optional*, [Time](#config-time)): The interval on which to update the number
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval on which to update the number
   by executing the `lambda`. Defaults to `60s`.
 
 - **optimistic** (*Optional*, boolean): Whether to operate in optimistic mode - when in this mode,
@@ -47,14 +47,14 @@ number:
   restored with `restore_value`.
   Cannot be used with `lambda`. Defaults to `min_value`.
 
-- All other options from [Number](#config-number).
+- All other options from [Number](/components/number#config-number).
 
 ## `number.set` Action
 
 You can also set the number for the template number from elsewhere in your YAML file
-with the [`number.set` Action](#number-set_action).
+with the [`number.set` Action](/components/number#number-set_action).
 
 ## See Also
 
-- [Automation](#automation)
+- [Automation](/automations)
 - {{< apiref "template/number/template_number.h" "template/number/template_number.h" >}}

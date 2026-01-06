@@ -3,6 +3,10 @@ description: "Installing ESPHome Manually"
 title: "Installing ESPHome Manually"
 ---
 
+> [!WARNING]
+> **Python 3.14 is not yet supported.** Please use Python 3.11, 3.12, or 3.13.
+> Python 3.14 introduced breaking changes that ESPHome's dependencies have not yet adapted to.
+
 ## Cross-platform using uv
 
 [uv](https://docs.astral.sh/uv/) is an extremely fast Python package and project manager, written in Rust.
@@ -14,7 +18,7 @@ If you don't have Python installed, uv offers an easy way to [install and manage
 Using uv, you can either run esphome without installing it (`uvx esphome version`) or you can install it as a [tool](https://docs.astral.sh/uv/guides/tools/) with the following command:
 
 ```shell
-uv tool install esphome --with wheel,pip
+uv tool install esphome --with wheel,pip --python ">=3.11,<3.14"
 ```
 
 Now *esphome* will be available on your PATH
@@ -27,7 +31,7 @@ Upgrade to the latest version using `uv tool upgrade esphome`
 
 ## Windows
 
-Download Python from [the official site](https://www.python.org/downloads/). Confirm that the version is at least 3.11; versions 3.14 or higher are not yet recommended.
+Download Python from [the official site](https://www.python.org/downloads/). Use Python 3.11, 3.12, or 3.13.
 
 {{< img src="python-win-installer.png"
   alt="Python installer window with arrows pointing to \"Add Python to PATH\" and \"Install Now\""
