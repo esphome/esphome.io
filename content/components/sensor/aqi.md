@@ -14,8 +14,8 @@ or {{< docref "/components/sensor/sps30" >}}.
 
 {{< alert >}}
 This platform replaces the deprecated `aqi` option previously available in
-the {{< docref "/components/sensor/pmsx003" >}} and {{< docref "/components/sensor/hm3301" >}}
-components. The standalone platform is more flexible as it works with any PM sensor.
+the {{< docref "/components/sensor/hm3301" >}} component. The standalone platform
+is more flexible as it works with any PM sensor.
 {{< /alert >}}
 
 Two calculation types are supported:
@@ -88,4 +88,3 @@ sensor:
 - {{< docref "/components/sensor/hm3301" >}}
 - {{< docref "/components/sensor/sds011" >}}
 - {{< docref "/components/sensor/sps30" >}}
-- {{< apiref "aqi/aqi_sensor.h" "aqi/aqi_sensor.h" >}}
