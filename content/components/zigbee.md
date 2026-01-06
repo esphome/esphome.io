@@ -94,6 +94,7 @@ sensor:
   - platform: template
     name: "Analog 1"
     lambda: return 10.0;
+    unit_of_measurement: "°C"
   - platform: template
     name: "Analog 2"
     lambda: return 11.0;
@@ -113,6 +114,8 @@ sensor:
 - **internal** (*Optional*, boolean): Mark this component as internal. Internal components will
   not be exposed over Zigbee. Only specifying an `id` without a `name` will implicitly set this to true.
   Use this if you run out of Zigbee endpoints.
+- **unit_of_measurement** (*Optional*, string): Manually set the unit. By default, values are unitless.
+  Only a limited set of units is supported. Unsupported units will revert to unitless.
 
 ## See Also
 
