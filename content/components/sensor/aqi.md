@@ -12,11 +12,10 @@ any PM sensor source, such as {{< docref "/components/sensor/pmsx003" >}},
 {{< docref "/components/sensor/hm3301" >}}, {{< docref "/components/sensor/sds011" >}},
 or {{< docref "/components/sensor/sps30" >}}.
 
-{{< alert color="info" >}}
-This platform replaces the deprecated `aqi` option previously available in
-the {{< docref "/components/sensor/hm3301" >}} component. The standalone platform
-is more flexible as it works with any PM sensor.
-{{< /alert >}}
+> [!NOTE]
+> This platform replaces the deprecated `aqi` option previously available in the
+> [HM3301](/components/sensor/hm3301) component. The standalone platform is more
+> flexible as it works with any PM sensor.
 
 Two calculation types are supported:
 
