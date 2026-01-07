@@ -55,10 +55,18 @@ Only on `ESP32`:
 
 Only on `nrf52`:
 
-- **wipe_on_boot** (*Optional*, boolean): Erases all non-volatile memory data on boot.
-  Use only if the device is in a boot loop crash. Defaults to `false`.
+- **wipe_on_boot** (*Optional*): Erases all non-volatile memory data on boot, including
+  Zigbee network pairing and preferences (e.g., last switch state). One of:
+  - `false` (default): Preserve data across reboots.
+  - `true`: Erase all data on every boot. Use only for recovery from boot loops when
+    you don't have an SWD programmer.
+  - `once`: Erase data only on first boot after flashing new firmware, then preserve.
 
 - **on_join** (*Optional*, [Automation](/automations#automation)): Automation to run when the device joins the network.
+
+- **power_source** (*Optional*, enum): Indicates what kind of power the device uses. Affects
+  sleep behavior. One of `UNKNOWN`, `MAINS_SINGLE_PHASE`, `MAINS_THREE_PHASE`, `BATTERY`,
+  `DC_SOURCE`, `EMERGENCY_MAINS_CONST`, or `EMERGENCY_MAINS_TRANSF`. Defaults to `DC_SOURCE`.
 
 ## Actions
 
@@ -78,6 +86,11 @@ on_...:
 The following components are exposed over Zigbee if they have a name and if they are not marked as internal:
 
 - [Binary Sensor](/components/binary_sensor#config-binary_sensor): only **state** and **name** are exposed over Zigbee.
+
+Only on `nrf52`
+
+- [Sensor](/components/sensor#config-sensor): **state**, **name** and **unit_of_measurement** are exposed
+over Zigbee. If no unit is given or if it is not support it will fall back to unitless.
 
 ## Zigbee Component Base Configuration
 
