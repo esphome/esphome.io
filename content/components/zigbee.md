@@ -7,18 +7,18 @@ params:
     image: zigbee.svg
 ---
 
-Zigbee is a low-power mesh networking standard for IoT devices. The low-power aspect is important for 
-battery-powered smart home devices. However, it’s also low-bandwidth, making it ideal for applications 
+Zigbee is a low-power mesh networking standard for IoT devices. The low-power aspect is important for
+battery-powered smart home devices. However, it’s also low-bandwidth, making it ideal for applications
 that don’t send a lot of data, like switches or motion sensors.
 
 Zigbee uses the same RF technology as Thread (IEEE 802.15.4) but defines also multiple application standards.
 The `zigbee` component, however, supports only the Homeautomation profile.
-It allows exposing supported ESPHome components over a Zigbee network to Home Assistant via 
+It allows exposing supported ESPHome components over a Zigbee network to Home Assistant via
 **Zigbee2MQTT** or **ZHA**. Due to the limitations of the Zigbee protocol, only basic properties are exposed.
 Additional properties must be configured manually in Home Assistant. Each ESPHome entity consumes one Zigbee endpoint.
 
 > [!NOTE]
-> Zigbee support is currently available only on `nRF52` platforms and on `ESP32` with IEEE 802.15.4 
+> Zigbee support is currently available only on `nRF52` platforms and on `ESP32` with IEEE 802.15.4
 > connectivity (ESP32-C6 or ESP32-H2).
 > On `nRF52` a maximum of 8 endpoints is supported and at least two endpoints are required due to a limitation in Zigbee2MQTT.
 
@@ -67,7 +67,6 @@ Only on `nrf52`:
 This [action](/automations/actions#config-action) triggers a factory reset of the Zigbee device.
 It handles leaving the Zigbee network.
 
-
 ```yaml
 on_...:
   then:
@@ -77,6 +76,7 @@ on_...:
 ## Supported Components
 
 The following components are exposed over Zigbee if they have a name and if they are not marked as internal:
+
 - [Binary Sensor](/components/binary_sensor#config-binary_sensor): only **state** and **name** are exposed over Zigbee.
 
 ## Zigbee Component Base Configuration
@@ -87,13 +87,13 @@ Zigbee can have some overrides for specific options.
 ### Configuration variables
 
 Only on `ESP32`:
+
 - **report** (**Optional**, enum): Report the state. One of `yes`, `no`, `force`. `yes` activates reporting and uses
 the configuration from the coordinator. `force` ignores the the coordinator settings and reports every change.
 Defaults to `yes`.
 
 > [!NOTE]
 > ZHA sets the minimum reporting interval to 30 seconds for most sensor devices. If you need faster responses set `report` to `force`.
-
 
 ## See Also
 
