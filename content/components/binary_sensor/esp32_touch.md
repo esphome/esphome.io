@@ -284,6 +284,47 @@ Most importantly, the default `measurement_duration` of 8ms (optimized for origi
 S2/S3 variants and can prevent touch detection from working entirely. Using a much lower value like 0.25ms has been
 found to work across many S2/S3 devices, though specific parameters may still need tuning per hardware implementation.
 
+### Benchmark System on S2 and S3
+
+ESP32-S2 and ESP32-S3 devices include an internal benchmark system that automatically calibrates during device startup.
+This benchmark is set to the **maximum value** received during the setup phase (while the device is booting).
+
+When configuring the `threshold` value for your touch sensors, you **must account for this benchmark**. The threshold
+you set in your configuration is **added to the benchmark**, and this sum is compared to the raw values outputted in setup mode.
+
+To find the benchmark value for your device:
+
+1. Enable `setup_mode: true` in your `esp32_touch` configuration
+2. Upload and watch the device logs during startup
+3. Look for benchmark values in the setup logs - these will show the maximum values detected during initialization
+
+The setup logs will display both the configured threshold and the benchmark value for each touch pad. Here's an example from the logs:
+
+```
+[15:27:43.085][C][esp32_touch:019]: Config for ESP32 Touch Hub:
+[15:27:43.085][C][esp32_touch:019]:   Meas cycle: 0.25ms
+[15:27:43.086][C][esp32_touch:019]:   Sleep cycle: 0.50ms
+[15:27:43.090][C][esp32_touch:016]:   Touch Pad 'Touch Pad'
+[15:27:43.091][C][esp32_touch:034]:     Pad: T4
+[15:27:43.091][C][esp32_touch:034]:     Threshold: 600000
+[15:27:43.092][C][esp32_touch:034]:     Benchmark: 1372232
+```
+
+In this example, the benchmark was automatically set to `1372232` (the maximum value detected during boot), and the configured threshold is `600000`.
+
+**How it works:** The threshold is **added to the benchmark** to create the trigger point. In this example:
+
+- Benchmark: `1372232`
+- Threshold: `600000`
+- **Actual trigger point: `1372232 + 600000 = 1972232`**
+
+The raw values outputted in setup mode are compared against this trigger point. Since S2/S3 values **increase** when touched, the touch sensor will trigger when the measured raw value exceeds `1972232` (benchmark + threshold).
+
+> [!TIP]
+> The benchmark ensures consistent behavior across power cycles by automatically calibrating to the baseline
+> capacitance of your touch pad during startup. Always check the setup logs to see what benchmark value was
+> established for your specific hardware configuration.
+
 ## See Also
 
 - {{< docref "/components/binary_sensor" >}}
