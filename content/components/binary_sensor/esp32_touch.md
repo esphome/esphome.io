@@ -295,12 +295,12 @@ you set in your configuration is **added to the benchmark**, and this sum is com
 To find the benchmark value for your device:
 
 1. Enable `setup_mode: true` in your `esp32_touch` configuration
-2. Upload and watch the device logs during startup
-3. Look for benchmark values in the setup logs - these will show the maximum values detected during initialization
+1. Upload and watch the device logs during startup
+1. Look for benchmark values in the setup logs - these will show the maximum values detected during initialization
 
 The setup logs will display both the configured threshold and the benchmark value for each touch pad. Here's an example from the logs:
 
-```
+```log
 [15:27:43.085][C][esp32_touch:019]: Config for ESP32 Touch Hub:
 [15:27:43.085][C][esp32_touch:019]:   Meas cycle: 0.25ms
 [15:27:43.086][C][esp32_touch:019]:   Sleep cycle: 0.50ms
