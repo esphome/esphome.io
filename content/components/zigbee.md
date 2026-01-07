@@ -26,7 +26,7 @@ Additional properties must be configured manually in Home Assistant. Each ESPHom
 > You will need a Zigbee coordinator like **Zigbee2MQTT** or **ZHA**.
 
 > [!WARNING]
-> Whenever the configuration is changed, the device should be re-inerviewed (z2m only) and removed and re-added
+> Whenever the configuration is changed, the device should be re-interviewed (z2m only) and removed and re-added
 > to the Zigbee network. This is especially important if components are added or removed or if names change.
 
 {{< anchor "config-zigbee" >}}
@@ -89,8 +89,8 @@ Zigbee can have some overrides for specific options.
 Only on `ESP32`:
 
 - **report** (**Optional**, enum): Report the state. One of `yes`, `no`, `force`. `yes` activates reporting and uses
-the configuration from the coordinator. `force` ignores the the coordinator settings and reports every change.
-Defaults to `yes`.
+the configuration from the coordinator. `force` ignores the the coordinator settings and reports
+every change. On `nrf52` always `force`is used. Defaults to `yes`.
 
 > [!NOTE]
 > ZHA sets the minimum reporting interval to 30 seconds for most sensor devices. If you need faster responses set `report` to `force`.
