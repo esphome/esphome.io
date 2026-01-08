@@ -395,6 +395,7 @@ to the SEN5X it is not the same. So the current ESPHome component does not yet s
 
 ## See Also
 
+- {{< docref "/components/sensor/aqi" >}}
 - [Sensor Filters](/components/sensor#sensor-filters)
 - {{< docref "absolute_humidity/" >}}
 - {{< docref "sds011/" >}}
