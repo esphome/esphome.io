@@ -56,8 +56,8 @@ wifi:
   - **static_ip** (**Required**, IPv4 address): The static IP of your node.
   - **gateway** (**Required**, IPv4 address): The gateway of the local network.
   - **subnet** (**Required**, IPv4 address): The subnet of the local network.
-  - **dns1** (*Optional*, IPv4 address): The main DNS server to use.
-  - **dns2** (*Optional*, IPv4 address): The backup DNS server to use.
+  - **dns1** (*Optional*, IPv4 address): The main DNS server to use.  Defaults to 0.0.0.0
+  - **dns2** (*Optional*, IPv4 address): The backup DNS server to use.  Defaults to 0.0.0.0
 
 - **use_address** (*Optional*, string): Manually override what address to use to connect
   to the ESP. Defaults to auto-generated value. Example, if you have changed your static IP and want to flash OTA to
