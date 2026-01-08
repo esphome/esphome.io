@@ -64,6 +64,13 @@ interval:
       - output.turn_off: user_led
 
 ```
+## Flashing
+You can flash your board using ST-Link programmer. Simply connect it via USB and run:
+```
+esphome run your_config.yaml
+```
+
+
 ## See Also
 
 - {{< docref "esphome/" >}}
