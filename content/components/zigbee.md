@@ -49,6 +49,16 @@ binary_sensor:
   sleep behavior. One of `UNKNOWN`, `MAINS_SINGLE_PHASE`, `MAINS_THREE_PHASE`, `BATTERY`,
   `DC_SOURCE`, `EMERGENCY_MAINS_CONST`, or `EMERGENCY_MAINS_TRANSF`. Defaults to `DC_SOURCE`.
 
+- **ieee802154_vendor_oui** (Optional, **int | random*):
+  Sets the Vendor Organizationally Unique Identifier.
+  This allows replacing Nordic Semiconductor’s default company ID with your own.
+  The value must be a 24-bit integer in the range 0x000000 - 0xFFFFFF.
+
+  `random` can be set to generate a new random OUI on every firmware flash. This is useful during development to force
+  the coordinator (ZHA/Z2M) to recognize the device as new after firmware updates.
+
+  ⚠️ Warning - overusing `random` may exhaust memory in the Zigbee coordinator.
+
 ## Actions
 
 ### `factory_reset` Action
