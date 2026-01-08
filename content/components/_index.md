@@ -45,6 +45,7 @@ information about ESPHome configuration files.
 "LN882x","components/libretiny","ln882x.svg",""
 "Host","components/host","host.svg","dark-invert"
 "NRF52","components/nrf52","nrf52.svg",""
+"STM32","components/stm32","stm32.svg",""
 {{< /imgtable >}}
 
 ## Microcontroller Peripherals
