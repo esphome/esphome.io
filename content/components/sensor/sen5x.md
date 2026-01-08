@@ -174,13 +174,10 @@ sensor:
 
   - All other options from [Sensor](/components/sensor#config-sensor).
 
-- **store_baseline** (*Optional*, boolean): Stores and retrieves the baseline VOC and NOx information for
-  quicker startups. Defaults to `true`
-
 - **auto_cleaning_interval** (*Optional*): The periodic fan-cleaning interval in seconds.
 Only available with sen50, SEN54 OR SEN55.
 
-- **store_baseline** (*Optional*, boolean): Stores and retrieves the baseline VOC and NOx information for
+- **store_baseline** (*Optional*, boolean): Stores and retrieves the baseline VOC information for
   quicker startups. Defaults to `true`.
 
 - **temperature_compensation** (*Optional*): These parameters allow the user to compensate for temperature
@@ -265,11 +262,9 @@ on_...:
     - sen5x.start_fan_cleaning: my_sen55
 ```
 
-You can emulate the SEN5X automatic fan cleaning on a SEN6X sensor by calling the `sen5x.start_fan_cleaning:`
-action periodically.
-
-For example, to clean the fan every 7 days while the device is on, as recommended by the manufacturer, the
-following configuration can be added:
+You can emulate the SEN5X automatic fan cleaning on a SEN6X sensor by calling the `sen5x.start_fan_cleaning`
+action periodically. For example, to clean the fan every 7 days while the device is on, as recommended by the
+manufacturer, the following configuration can be added:
 
 ``` yaml
 interval:
@@ -365,7 +360,7 @@ sensor:
 ```
 
 Altitude based compensation is also available when you set the `altitude_compensation` configuration variable
-to your correct elevation in meters. Note:
+to your correct elevation in meters.
 
 Note: pressure must be hPA or mBar
 
