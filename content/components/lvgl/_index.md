@@ -92,8 +92,9 @@ The following configuration variables apply to the main `lvgl` component, in ord
   - **touchscreen_id** (**Required**, [ID](/guides/configuration-types#id)): ID of a touchscreen configuration related to a display.
   - **long_press_time** (*Optional*, [Time](/guides/configuration-types#time)): For the touchscreen, delay after which the `on_long_pressed` [interaction trigger](/components/lvgl/widgets#lvgl-automation-triggers) will be called. Defaults to `400ms`.
   - **long_press_repeat_time** (*Optional*, [Time](/guides/configuration-types#time)): For the touchscreen, repeated interval after `long_press_time`, when `on_long_pressed_repeat` [interaction trigger](/components/lvgl/widgets#lvgl-automation-triggers) will be called. Defaults to `100ms`.
+- **groups** (*Optional*, list, string): All available groups for widgets, encoders and keypads. See the {{< docref "/components/lvgl/widgets" "common properties" >}} of the widgets for more information on groups.
 - **encoders** (*Optional*, list): A list of rotary encoders interacting with the LVGL widgets on the display.
-  - **group** (*Optional*, string): A name for a group of widgets which will interact with the input device. See the {{< docref "/components/lvgl/widgets" "common properties" >}} of the widgets for more information on groups.
+  - **group** (*Optional*, string): A name for a group of widgets which will interact with the input device. This **must** match one of the groups defined in the `groups` list. See the {{< docref "/components/lvgl/widgets" "common properties" >}} of the widgets for more information on groups.
   - **initial_focus** (*Optional*, [ID](/guides/configuration-types#id)): An optional ID for a widget to be given focus on startup (especially useful if there is only one focusable widget.)
   - **enter_button** (**Required**, [ID](/guides/configuration-types#id)): The ID of a {{< docref "/components/binary_sensor/index" "Binary Sensor" >}}, to be used as `ENTER` key.
   - **sensor** (*Optional*, [ID](/guides/configuration-types#id)): The ID of a {{< docref "/components/sensor/rotary_encoder" >}}; or a list with buttons for left/right interaction with the widgets:
@@ -102,7 +103,7 @@ The following configuration variables apply to the main `lvgl` component, in ord
   - **long_press_time** (*Optional*, [Time](/guides/configuration-types#time)): For the rotary encoder, delay after which the `on_long_pressed` [interaction trigger](/components/lvgl/widgets#lvgl-automation-triggers) will be called. Defaults to `400ms`. Can be disabled with `never`.
   - **long_press_repeat_time** (*Optional*, [Time](/guides/configuration-types#time)): For the rotary encoder, repeated interval after `long_press_time`, when `on_long_pressed_repeat` [interaction trigger](/components/lvgl/widgets#lvgl-automation-triggers) will be called. Defaults to `100ms`. Can be disabled with `never`.
 - **keypads** (*Optional*, list): A list of keypads interacting with the LVGL widgets on the display.
-  - **group** (*Optional*, string): A name for a group of widgets which will interact with the input device. See the {{< docref "/components/lvgl/widgets" "common properties" >}} of the widgets for more information on groups.
+  - **group** (*Optional*, string): A name for a group of widgets which will interact with the input device. This **must** match one of the groups defined in the `groups` list. See the {{< docref "/components/lvgl/widgets" "common properties" >}} of the widgets for more information on groups.
   - **up** (*Optional*, [ID](/guides/configuration-types#id)): The ID of a {{< docref "/components/binary_sensor/index" "Binary Sensor" >}}, to be used as `UP` key.
   - **down** (*Optional*, [ID](/guides/configuration-types#id)): The ID of a {{< docref "/components/binary_sensor/index" "Binary Sensor" >}}, to be used as `DOWN` key.
   - **right** (*Optional*, [ID](/guides/configuration-types#id)): The ID of a {{< docref "/components/binary_sensor/index" "Binary Sensor" >}}, to be used as `RIGHT` key.
@@ -726,6 +727,40 @@ on_...:
 on_...:
   then:
     - lvgl.widget.focus: previous
+```
+
+{{< anchor "lvgl-encoder-set-group-action" >}}
+
+### `lvgl.encoder.set_group`
+
+This [action](#actions-action) sets the group for an encoder. This is useful for organizing encoders into specific groups for focused input handling.
+
+- **id** (**Required**): The ID of the encoder to be configured.
+- **group** (**Required**): The name of the group to assign the encoder to. This must match one of the groups defined in the `groups` list.
+
+```yaml
+    on_...:
+      then:
+        - lvgl.encoder.set_group:
+            id: my_encoder
+            group: encoder_group
+```
+
+{{< anchor "lvgl-keypad-set-group-action" >}}
+
+### `lvgl.keypad.set_group`
+
+This [action](#actions-action) sets the group for a keypad. This is useful for organizing keypads into specific groups for focused input handling.
+
+- **id** (**Required**): The ID of the keypad to be configured.
+- **group** (**Required**): The name of the group to assign the keypad to. This must match one of the groups defined in the `groups` list.
+
+```yaml
+    on_...:
+      then:
+        - lvgl.keypad.set_group:
+            id: my_keypad
+            group: keypad_group
 ```
 
 {{< anchor "lvgl-conditions" >}}
