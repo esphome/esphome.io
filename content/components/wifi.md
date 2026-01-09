@@ -297,12 +297,13 @@ reboot the device or wait for another disconnection event.
 
 ### How It Works
 
-- After connecting to a non-hidden network, scans up to **3 times** (every
+- After connecting to a non-hidden network, checks up to **3 times** (every
   5 minutes)
-- Scans are skipped when signal is already excellent (> -49 dBm)
+- Scans are skipped when signal is already excellent (> -49 dBm), but still
+  count toward the limit
 - Each scan may trigger a roam if an AP with the same SSID is found with
   **+10 dB better signal**
-- After 3 scans, stops checking (device has converged to best available AP)
+- After 3 checks, stops checking (device has converged to best available AP)
 - A non-roaming disconnect (e.g., AP goes down) resets the counter for a
   fresh start
 - Clears all BSSID priority penalties after successful connection (forgives
