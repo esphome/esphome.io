@@ -24,7 +24,7 @@ Additional properties must be configured manually in Home Assistant. Each ESPHom
 > [!NOTE]
 > You will need a Zigbee coordinator like **Zigbee2MQTT** or **ZHA**.
 
-> [!Important]
+> [!IMPORTANT]
 > Whenever the configuration is changed, the device should be re-interviewed (z2m only) and removed and re-added
 > to the Zigbee network. This is especially important if components are added or removed or if names change.
 
