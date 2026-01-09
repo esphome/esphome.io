@@ -299,6 +299,7 @@ reboot the device or wait for another disconnection event.
 
 - After connecting to a non-hidden network, scans up to **3 times** (every
   5 minutes)
+- Scans are skipped when signal is already excellent (> -49 dBm)
 - Each scan may trigger a roam if an AP with the same SSID is found with
   **+10 dB better signal**
 - After 3 scans, stops checking (device has converged to best available AP)
@@ -320,9 +321,9 @@ wifi:
 
 ### 802.11k/v Native Roaming
 
-On ESP32 with ESP-IDF framework, post-connect roaming is **automatically
-disabled** when `enable_btm` or `enable_rrm` is configured, as these provide
-native 802.11k/v roaming support:
+On ESP32, post-connect roaming is **automatically disabled** when `enable_btm`
+or `enable_rrm` is configured, as these provide native 802.11k/v roaming
+support:
 
 ```yaml
 wifi:
@@ -343,8 +344,8 @@ seamless handoff:
   to SDK flakiness, but the normal retry logic handles this and reconnects
   to the best available AP.
 
-For seamless 802.11k/v/r roaming, use ESP32 with ESP-IDF framework and
-configure `enable_btm` and `enable_rrm`.
+For seamless 802.11k/v/r roaming, use ESP32 and configure `enable_btm` and
+`enable_rrm`.
 
 {{< anchor "wifi-networks" >}}
 
