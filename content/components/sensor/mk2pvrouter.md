@@ -198,6 +198,7 @@ binary_sensor:
 You can use GPIO switches on the ESP to control up to 4 functionalities on the Mk2PVRouter by connecting ESP GPIO outputs to the router's digital inputs (D10-D13).
 
 Common control functions include:
+
 - **Diversion ON/OFF** - Enable or disable energy diversion
 - **Forced mode** - Force the heater ON regardless of surplus energy
 - **Priority selection** - Switch between load priorities
@@ -236,6 +237,7 @@ switch:
 
 > [!TIP]
 > Use `restore_mode` to define the switch state after reboot:
+> 
 > - `RESTORE_DEFAULT_ON` - Restore previous state, default to ON
 > - `RESTORE_DEFAULT_OFF` - Restore previous state, default to OFF
 > - `ALWAYS_ON` / `ALWAYS_OFF` - Always start in a specific state
