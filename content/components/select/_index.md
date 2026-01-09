@@ -277,7 +277,7 @@ advanced stuff (see the full API Reference for more info).
 ```
 
 ```yaml
-    # Check if a specific option is selected (direct comparison works with string_view)
+    # Check if a specific option is selected (direct string comparison in a lambda condition)
     - if:
         condition:
           - lambda: 'return id(my_select).current_option() == "my_option_value";'
