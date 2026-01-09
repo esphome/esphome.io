@@ -72,12 +72,12 @@ The tags available depend on your Mk2PVRouter configuration. Common tags include
 | `D` | Diverted power | W | Single-phase systems |
 | `D1`, `D2`, `D3` | Diversion rate per load | % | Three-phase systems |
 | `E` | Diverted energy | Wh | Single-phase systems |
-| `T1`, `T2`, ... | Temperature sensors | °C×10 | Value is temperature × 10 |
+| `T1`, `T2`, ... | Temperature sensors | c°C | Value is in centi-degrees (divide by 100) |
 | `R1`, `R2`, ... | Relay states | 0/1 | 0 = OFF, 1 = ON |
 | `N` | No-diversion counter | - | Count of cycles without diversion |
 
 > [!NOTE]
-> Voltage values are sent multiplied by 100 (centivolts). The component automatically converts them to volts.
+> Voltage and temperature values are sent multiplied by 100 (centivolts/centi-degrees). The component automatically converts them to volts and °C.
 
 ## Sensors
 
