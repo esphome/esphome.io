@@ -237,7 +237,7 @@ switch:
 
 > [!TIP]
 > Use `restore_mode` to define the switch state after reboot:
-> 
+>
 > - `RESTORE_DEFAULT_ON` - Restore previous state, default to ON
 > - `RESTORE_DEFAULT_OFF` - Restore previous state, default to OFF
 > - `ALWAYS_ON` / `ALWAYS_OFF` - Always start in a specific state
