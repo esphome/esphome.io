@@ -19,60 +19,65 @@ This component can also be used to send data to a non-Home Assistant system via 
 
 ---
 
-A simple electronic assembly with an ESP8266 or ESP32 could
-let you retrieve detailed telemetry data from the diverter.
+## Wiring
 
-As the communication with the Telemetry is done using UART, you need to
-have an [UART bus](/components/uart) in your configuration with the `rx_pin`
-connected to the output of the diverter. Additionally, you need to
-set the baud rate to 9600bps.
+A simple electronic assembly with an ESP8266 or ESP32 allows you to retrieve detailed telemetry data from the diverter.
+
+Connect the **TX pin** of the Mk2PVRouter diverter to the **RX pin** of your ESP module. No TX connection from ESP to diverter is needed (communication is one-way).
+
+## UART Configuration
+
+The communication uses UART with specific settings: **9600 baud, 7 data bits, even parity, 1 stop bit**.
+
+> [!WARNING]
+> **ESP32**: Avoid using GPIO1/GPIO3 (UART0) as these pins are used for USB serial communication and will cause conflicts. Use UART2 pins instead (e.g., GPIO16 for RX, GPIO17 for TX).
+
+> [!NOTE]
+> **ESP8266**: You can use the default UART pins (GPIO3 for RX), but you must disable serial logging by setting `baud_rate: 0` in the logger component.
 
 ```yaml
-# Example configuration entry
+# ESP32 example configuration
+uart:
+  tx_pin: GPIO17
+  rx_pin: GPIO16
+  baud_rate: 9600
+  parity: EVEN
+  data_bits: 7
+  stop_bits: 1
+
+# For ESP8266, also add:
+# logger:
+#   baud_rate: 0  # Disable serial logging to free up UART
+
 mk2pvrouter:
   update_interval: 5s
-
 ```
 
 ## Configuration variables
 
-In `mk2pvrouter` platform:
-
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation or multiple hubs.
 - **uart_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the UART Component if you want to use multiple UART buses.
-- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to check the
-  sensor. Defaults to `5s`.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to check the sensor. Defaults to `5s`.
 
-## MQTT Integration
+## Available Tags
 
-> [!WARNING]
-> If you enable `mqtt` forwarding and you do *not* use the {{< docref "/components/api" >}}, ie the module is exclusively used for forwarding data via MQTT and it's *not* connected to any Home Assistant instance, you must remove the `api:` configuration or set `reboot_timeout: 0s`, otherwise the ESP will reboot every 15 minutes because no client connected to the native API.
+The tags available depend on your Mk2PVRouter configuration. Common tags include:
 
-If you configure the `mqtt` option, you will need to define the {{< docref "/components/mqtt" >}} component in your configuration.
-This is required for the component to publish data to the MQTT broker.
+| Tag | Description | Unit | Notes |
+|-----|-------------|------|-------|
+| `P` | Total power at grid | W | Positive = importing, Negative = exporting |
+| `P1`, `P2`, `P3` | Power per phase | W | Three-phase systems only |
+| `V` | Voltage (single-phase) | cV | Value is in centivolts (divide by 100) |
+| `V1`, `V2`, `V3` | Voltage per phase | cV | Three-phase systems only, in centivolts |
+| `D` | Diverted power | W | Single-phase systems |
+| `D1`, `D2`, `D3` | Diversion rate per load | % | Three-phase systems |
+| `E` | Diverted energy | Wh | Single-phase systems |
+| `T1`, `T2`, ... | Temperature sensors | °C×10 | Value is temperature × 10 |
+| `R1`, `R2`, ... | Relay states | 0/1 | 0 = OFF, 1 = ON |
+| `N` | No-diversion counter | - | Count of cycles without diversion |
 
-The component will publish all sensor data to topics following this structure:
-`<topic_prefix>/<sensor_name>`
-
-Example:
-
-```yaml
-mqtt:
-  broker: 192.168.1.10
-  port: 1883                  # Optional
-  username: mqtt_user         # Optional
-  password: mqtt_pass         # Optional
-  id: mqtt_client             # Optional
-  topic_prefix: "mk2pvrouter" # Optional
-
-mk2pvrouter:
-
-```
-
-With this configuration, data will be published to topics such as:
-
-- `mk2pvrouter/V1` for voltage on phase 1
-- `mk2pvrouter/P1` for power on CT1
+> [!NOTE]
+> Voltage values are sent multiplied by 100 (centivolts). The component automatically converts them to volts.
 
 ## Sensors
 
@@ -81,54 +86,135 @@ sensor:
   - platform: mk2pvrouter
     tag_name: "P"
     name: "Power at grid"
-    unit_of_measurement: "W"
-    icon: mdi:flash
   - platform: mk2pvrouter
-    tag_name: "D"
-    name: "Diverted power"
-    unit_of_measurement: "W"
-    icon: mdi:flash
+    tag_name: "V1"
+    name: "Voltage Phase 1"
   - platform: mk2pvrouter
-    tag_name: "E"
-    name: "Diverted energy"
-    unit_of_measurement: "Wh"
-    icon: mdi:lightning-bolt
-
+    tag_name: "D1"
+    name: "Diversion rate Load 1"
 ```
 
-- **tag_name** (**Required**, string): Specify the tag you want to retrieve from the Telemetry.
-
-> [!NOTE]
-> The available tags are defined in the Mk2PVRouter diverter's program and depend on its configuration.
-> Please refer to your diverter's documentation or configuration to determine the tags available for your setup.
-
+- **tag_name** (**Required**, string): The tag to retrieve from the Telemetry.
 - All other options from [Sensor](/components/sensor).
 
+> [!NOTE]
+> Sensor defaults (unit, device class, accuracy) are automatically set based on the tag name. You can override them if needed.
+
 ## Binary Sensor
+
+Use binary sensors for relay states:
 
 ```yaml
 binary_sensor:
   - platform: mk2pvrouter
-  tag_name: "R1"
-  name: "Relay 1"
-
+    tag_name: "R1"
+    name: "Relay 1"
 ```
 
-- **tag_name** (**Required**, string): Specify the tag you want to retrieve from the Telemetry.
+- **tag_name** (**Required**, string): The tag to retrieve from the Telemetry.
 - All other options from [Binary Sensor](/components/binary_sensor#config-binary_sensor).
 
 ## Text Sensor
 
+Use text sensors if you need the raw string value:
+
 ```yaml
 text_sensor:
   - platform: mk2pvrouter
-  tag_name: "P"
-  name: "Power at grid as string"
-
+    tag_name: "P"
+    name: "Power at grid (raw)"
 ```
 
-- **tag_name** (**Required**, string): Specify the tag you want to retrieve from the Telemetry.
+- **tag_name** (**Required**, string): The tag to retrieve from the Telemetry.
 - All other options from [Text Sensor](/components/text_sensor#config-text_sensor).
+
+## Complete Example
+
+Here's a complete configuration for a three-phase system:
+
+```yaml
+esphome:
+  name: pvrouter-monitor
+
+esp32:
+  board: esp32dev
+
+logger:
+  level: DEBUG
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+api:
+  encryption:
+    key: !secret api_key
+
+ota:
+  - platform: esphome
+
+uart:
+  tx_pin: GPIO17
+  rx_pin: GPIO16
+  baud_rate: 9600
+  parity: EVEN
+  data_bits: 7
+  stop_bits: 1
+
+mk2pvrouter:
+  update_interval: 5s
+
+sensor:
+  - platform: mk2pvrouter
+    tag_name: "P"
+    name: "Total Power"
+  - platform: mk2pvrouter
+    tag_name: "P1"
+    name: "Power Phase 1"
+  - platform: mk2pvrouter
+    tag_name: "P2"
+    name: "Power Phase 2"
+  - platform: mk2pvrouter
+    tag_name: "P3"
+    name: "Power Phase 3"
+  - platform: mk2pvrouter
+    tag_name: "V1"
+    name: "Voltage Phase 1"
+  - platform: mk2pvrouter
+    tag_name: "V2"
+    name: "Voltage Phase 2"
+  - platform: mk2pvrouter
+    tag_name: "V3"
+    name: "Voltage Phase 3"
+
+binary_sensor:
+  - platform: mk2pvrouter
+    tag_name: "R1"
+    name: "Relay 1 State"
+```
+
+## MQTT Integration
+
+> [!WARNING]
+> If you enable MQTT forwarding and do *not* use the {{< docref "/components/api" >}} (i.e., the module is exclusively used for forwarding data via MQTT and is *not* connected to any Home Assistant instance), you must remove the `api:` configuration or set `reboot_timeout: 0s`, otherwise the ESP will reboot every 15 minutes.
+
+If you configure MQTT, you need to define the {{< docref "/components/mqtt" >}} component. The component will publish all sensor data to topics following this structure: `<topic_prefix>/<sensor_name>`
+
+```yaml
+mqtt:
+  broker: 192.168.1.10
+  port: 1883
+  username: mqtt_user
+  password: mqtt_pass
+  topic_prefix: "mk2pvrouter"
+
+mk2pvrouter:
+```
+
+With this configuration, data will be published to topics such as:
+
+- `mk2pvrouter/V1` for voltage on phase 1
+- `mk2pvrouter/P1` for power on phase 1
 
 ## See Also
 
