@@ -1,25 +1,25 @@
 ---
-description: "Instructions for setting up the Infrared Proxy in ESPHome."
-title: "Infrared Proxy"
+description: "Instructions for setting up the IR/RF Proxy in ESPHome."
+title: "IR/RF Proxy"
 params:
   seo:
-    description: Instructions for setting up the Infrared Proxy in ESPHome.
+    description: Instructions for setting up the IR/RF Proxy in ESPHome.
     image: infrared.svg
 ---
 
-ESPHome's infrared proxy component works with Home Assistant to expand its remote control capabilities. This component
+ESPHome's IR/RF proxy component works with Home Assistant to expand its remote control capabilities. This component
 provides a unified API-accessible interface for transmitting and receiving infrared and RF signals, acting as a bridge
 between Home Assistant (or other API clients) and ESPHome's existing [remote_receiver](/components/remote_receiver) and
 [remote_transmitter](/components/remote_transmitter) components. Note that at least one of these components is required
-in your device's configuration if you wish to use the infrared proxy component.
+in your device's configuration if you wish to use the IR/RF proxy component.
 
-The infrared proxy enables runtime signal transmission without recompiling and/or reinstalling (flashing) firmware,
+The IR/RF proxy enables runtime signal transmission without recompiling and/or reinstalling (flashing) firmware,
 making it ideal for learning and replaying IR/RF commands, creating universal remote controls, and integrating with
 Home Assistant's remote control features.
 
 ```yaml
 # Example configuration entry
-infrared_proxy:
+ir_rf_proxy:
   # IR transmitter instance
   - id: living_room_ir
     name: Living Room IR Transmitter
@@ -33,8 +33,8 @@ infrared_proxy:
 
 ### Configuration variables
 
-- **id** (**Required**, [ID](/guides/configuration-types#id)): Unique identifier for the infrared proxy instance.
-- **name** (*Optional*, string): The name of the infrared proxy instance.
+- **id** (**Required**, [ID](/guides/configuration-types#id)): Unique identifier for the IR/RF proxy instance.
+- **name** (*Optional*, string): The name of the IR/RF proxy instance.
 - **remote_transmitter_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the
   [remote_transmitter](/components/remote_transmitter) component to use for sending signals. Exactly one of
   `remote_transmitter_id` or `remote_receiver_id` must be specified.
@@ -43,7 +43,7 @@ infrared_proxy:
   `remote_transmitter_id` or `remote_receiver_id` must be specified.
 - **frequency** (*Optional*, int): The operating frequency in Hz. Set to a non-zero value for RF hardware. Defaults to
   `0` (infrared). This value is used to distinguish between IR and RF hardware types and is passed to Home Assistant,
-  allowing it to identify integrations this infrared proxy instance can potentially support.
+  allowing it to identify integrations this IR/RF proxy instance can potentially support.
 - **icon** (*Optional*, icon): Manually set the icon for this entity.
 - **entity_category** (*Optional*, string): The category of the entity. See
   <https://developers.home-assistant.io/docs/core/entity/#registry-properties> for a list of available options.
@@ -57,13 +57,13 @@ infrared_proxy:
 
 ## How It Works
 
-The infrared proxy component creates API-accessible entities that can be controlled from Home Assistant or other API
+The IR/RF proxy component creates API-accessible entities that can be controlled from Home Assistant or other API
 clients. Each instance can be configured as either a transmitter or receiver by specifying the appropriate hardware
 component ID.
 
 ### Transmitting Signals
 
-The infrared proxy transmits signals using raw timings, which provides full remote control over the exact waveform sent
+The IR/RF proxy transmits signals using raw timings, which provides full remote control over the exact waveform sent
 to the hardware. When configured with a `remote_transmitter_id`, the component can transmit IR/RF signals by accepting
 an [array of microsecond timing values](/components/remote_transmitter#remote_transmittertransmit_raw-action)
 representing alternating mark (LED on) and space (LED off) periods.
@@ -77,12 +77,12 @@ representing alternating mark (LED on) and space (LED off) periods.
 
 The raw timings format allows for maximum flexibility and can support more or less any protocol, whether implemented in
 ESPHome or not. Home Assistant integrations can encode protocol-specific commands into raw timings and transmit them
-through the infrared proxy component.
+through the IR/RF proxy component.
 
 ### Receiving Signals
 
-When configured with a `remote_receiver_id`, the infrared proxy captures raw IR/RF timings and sends them to API
-clients for decoding or analysis. This enables:
+When configured with a `remote_receiver_id`, the IR/RF proxy captures raw timings and sends them to API clients for
+decoding or analysis. This enables:
 
 - Learning IR/RF commands from existing remotes
 - Analyzing unknown protocols
@@ -92,7 +92,7 @@ Reception is non-blocking, allowing other listeners to also process signals simu
 
 ## Hardware Support
 
-The infrared proxy can work with both infrared and RF hardware:
+The IR/RF proxy can work with both infrared and RF hardware:
 
 - **Infrared**: Do not set `frequency` (or set `frequency: 0`, which is the default) and use standard IR LEDs/receivers
 - **RF**: Set `frequency` to match your RF hardware (for example, `315000000` for 315 MHz or `433920000` for 433.92 MHz)
@@ -108,5 +108,5 @@ You can create separate instances for different purposes:
 
 - [Remote Transmitter](/components/remote_transmitter)
 - [Remote Receiver](/components/remote_receiver)
-- {{< apiref "infrared_proxy/infrared_proxy.h" "infrared_proxy/infrared_proxy.h" >}}
+- {{< apiref "ir_rf_proxy/ir_rf_proxy.h" "ir_rf_proxy/ir_rf_proxy.h" >}}
 - [Home Assistant Remote Integration](https://www.home-assistant.io/integrations/remote/)
