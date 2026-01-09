@@ -351,11 +351,11 @@ advanced stuff (see the full API Reference for more info).
     }
 ```
 
-- `preset_mode`  : Retrieve the current preset mode of the fan.
+- `.get_preset_mode()`  : Retrieve the current preset mode of the fan. Returns `std::string_view`.
 
-```yaml
+```cpp
     // Within lambda, get the fan preset mode and conditionally do something
-    if (id(my_fan).preset_mode == "auto") {
+    if (id(my_fan).get_preset_mode() == "auto") {
       // Fan preset mode is "auto", do something here
     } else {
       // Fan preset mode is not "auto", do something else here
