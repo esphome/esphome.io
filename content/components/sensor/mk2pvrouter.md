@@ -193,6 +193,53 @@ binary_sensor:
     name: "Relay 1 State"
 ```
 
+## Controlling the Mk2PVRouter
+
+You can use GPIO switches on the ESP to control up to 4 functionalities on the Mk2PVRouter by connecting ESP GPIO outputs to the router's digital inputs (D10-D13).
+
+Common control functions include:
+- **Diversion ON/OFF** - Enable or disable energy diversion
+- **Forced mode** - Force the heater ON regardless of surplus energy
+- **Priority selection** - Switch between load priorities
+- **Temperature override** - Override temperature-based controls
+
+```yaml
+switch:
+  - platform: gpio
+    pin: GPIO12
+    name: "Diversion ON/OFF"
+    inverted: true
+    restore_mode: RESTORE_DEFAULT_ON
+
+  - platform: gpio
+    pin: GPIO13
+    name: "Forced Mode"
+    inverted: true
+    restore_mode: RESTORE_DEFAULT_OFF
+
+  # Additional controls (optional)
+  # - platform: gpio
+  #   pin: GPIO14
+  #   name: "Priority Select"
+  #   inverted: true
+  #   restore_mode: RESTORE_DEFAULT_OFF
+  #
+  # - platform: gpio
+  #   pin: GPIO27
+  #   name: "Temperature Override"
+  #   inverted: true
+  #   restore_mode: RESTORE_DEFAULT_OFF
+```
+
+> [!NOTE]
+> The Mk2PVRouter digital inputs are **active-low** by default, so `inverted: true` is required for correct operation (ON in Home Assistant = LOW on the GPIO = active on the router).
+
+> [!TIP]
+> Use `restore_mode` to define the switch state after reboot:
+> - `RESTORE_DEFAULT_ON` - Restore previous state, default to ON
+> - `RESTORE_DEFAULT_OFF` - Restore previous state, default to OFF
+> - `ALWAYS_ON` / `ALWAYS_OFF` - Always start in a specific state
+
 ## MQTT Integration
 
 > [!WARNING]
