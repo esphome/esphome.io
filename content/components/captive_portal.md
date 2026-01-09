@@ -20,6 +20,14 @@ this will be overwritten by any subsequent serial upload so make sure to also up
 
 Additionally, you can upload a new firmware file.
 
+## Web Server Access
+
+When both `captive_portal` and [web_server](/components/web_server/) components are enabled,
+you can access the full web server control interface while the captive portal is active. A
+"Device Control" link will appear in the captive portal UI, or you can navigate directly to
+<http://192.168.4.1/?web_server>. This allows you to control the device's entities (switches,
+lights, sensors, etc.) even when the device is in AP fallback mode.
+
 When you connect to the fallback network, the web interface should open automatically (see also
 login to network notifications). If that does not work, you can also navigate to <http://192.168.4.1/>
 manually in your browser.
