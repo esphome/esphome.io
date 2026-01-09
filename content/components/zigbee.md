@@ -1,19 +1,34 @@
 ---
-description: "Zigbee End Device for Zigbee2MQTT and ZHA."
-title: "Zigbee End Device"
+description: "Instructions for setting up Zigbee component."
+title: "Zigbee component"
 params:
   seo:
-    description: Zigbee End Device for Zigbee2MQTT and ZHA.
+    description: Instructions for setting up Zigbee component.
     image: zigbee.svg
 ---
 
-The `zigbee` component allows exposing supported ESPHome components over a Zigbee network to Home Assistant
-via **Zigbee2MQTT** or **ZHA**. Due to the limitations of the Zigbee protocol, only basic properties are exposed.
-Additional properties must be configured manually in Home Assistant. Each ESPHome entity consumes one Zigbee endpoint.
-Because of a limitation in Zigbee2MQTT, at least two endpoints are required. The maximum number of supported endpoints
-is eight.
+Zigbee is a low-power mesh networking standard for IoT devices. The low-power aspect is important for
+battery-powered smart home devices. However, it’s also low-bandwidth, making it ideal for applications
+that don’t send a lot of data, like switches or motion sensors.
 
-Zigbee support is currently available only on `nRF52` platforms.
+Zigbee uses the same RF technology as Thread (IEEE 802.15.4) but defines also multiple application standards.
+The `zigbee` component, however, supports only the Homeautomation profile.
+It allows exposing supported ESPHome components over a Zigbee network to Home Assistant via
+**Zigbee2MQTT** or **ZHA**. Due to the limitations of the Zigbee protocol, only basic properties are exposed.
+Additional properties must be configured manually in Home Assistant. Each ESPHome entity consumes one Zigbee endpoint.
+
+> [!NOTE]
+> Zigbee support is currently available only on `nRF52` platforms.
+> A maximum of 8 endpoints is supported and at least two endpoints are required due to a limitation in Zigbee2MQTT.
+
+> [!NOTE]
+> You will need a Zigbee coordinator like **Zigbee2MQTT** or **ZHA**.
+
+> [!Important]
+> Whenever the configuration is changed, the device should be re-interviewed (z2m only) and removed and re-added
+> to the Zigbee network. This is especially important if components are added or removed or if names change.
+
+{{< anchor "config-zigbee" >}}
 
 ## Full Configuration
 
@@ -24,12 +39,6 @@ zigbee:
   on_join:
     then:
       - logger.log: "Joined network"
-
-binary_sensor:
-  - platform: template
-    name: "Door 1"
-  - platform: template
-    name: "Door 2"
 ```
 
 ## Configuration variables
@@ -64,63 +73,12 @@ on_...:
 
 ## Supported Components
 
-### Binary Sensor Configuration
+The following components are exposed over Zigbee if they have a name and if they are not marked as internal:
 
-All binary sensors with a `name` are automatically exposed over Zigbee.
+- [Binary Sensor](/components/binary_sensor#config-binary_sensor): only **state** and **name** are exposed over Zigbee.
 
-```yaml
-binary_sensor:
-  - platform: template
-    name: "Door 1"
-  - platform: template
-    name: "Door 2"
-  - platform: template
-    id: internal_sensor
-  - platform: template
-    name: "Another internal sensor"
-    internal: true
-```
-
-#### Configuration variables
-
-- **name** (**Required**, string): The name for the binary sensor. This is exposed as the
-  Zigbee endpoint description.
-- **internal** (*Optional*, boolean): Mark this component as internal. Internal components will
-  not be exposed over Zigbee. Only specifying an `id` without a `name` will implicitly set this to true.
-  Use this if you run out of Zigbee endpoints.
-
-### Sensor Configuration
-
-All sensors with a `name` are automatically exposed over Zigbee.
-
-```yaml
-sensor:
-  - platform: template
-    name: "Analog 1"
-    lambda: return 10.0;
-    unit_of_measurement: "°C"
-  - platform: template
-    name: "Analog 2"
-    lambda: return 11.0;
-  - platform: template
-    id: internal_sensor
-    lambda: return 9.0;
-  - platform: template
-    name: "Another internal sensor"
-    internal: true
-    lambda: return 8.0;
-```
-
-#### Configuration variables
-
-- **name** (**Required**, string): The name for the sensor. This is exposed as the
-  Zigbee endpoint description.
-- **internal** (*Optional*, boolean): Mark this component as internal. Internal components will
-  not be exposed over Zigbee. Only specifying an `id` without a `name` will implicitly set this to true.
-  Use this if you run out of Zigbee endpoints.
-- **unit_of_measurement** (*Optional*, string): Manually set the unit. By default, values are unitless.
-  Only a limited set of units is supported. Unsupported units will revert to unitless.
-  This is exposed as the Zigbee endpoint engineering units.
+- [Sensor](/components/sensor#config-sensor): **state**, **name** and **unit_of_measurement** are exposed
+over Zigbee. If no unit is given or if it is not support it will fall back to unitless.
 
 ## See Also
 

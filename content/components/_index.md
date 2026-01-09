@@ -97,6 +97,7 @@ ESPHome-specific components or components supporting ESPHome device provisioning
 "ESP32 Ethernet","components/ethernet","ethernet.svg","dark-invert"
 "ESP32 Hosted","components/esp32_hosted","network-wifi.svg","dark-invert"
 "OpenThread","components/openthread","openthread.png",""
+"Zigbee","components/zigbee","zigbee.svg",""
 {{< /imgtable >}}
 
 ## Network Protocols
@@ -112,7 +113,7 @@ ESPHome-specific components or components supporting ESPHome device provisioning
 "StatsD","components/statsd","connection.svg","dark-invert"
 "UDP","components/udp","udp.svg",""
 "Packet Transport","components/packet_transport/index","packet_transport.svg","dark-invert"
-"Zigbee End Device","components/zigbee","zigbee.svg",""
+"Zigbee","components/zigbee","zigbee.svg",""
 {{< /imgtable >}}
 
 ## Bluetooth/BLE
