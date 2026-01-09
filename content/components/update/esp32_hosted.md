@@ -24,18 +24,6 @@ to bundle a specific firmware version with your device.
 
 ```yaml
 # Example configuration entry for embedded mode
-# Note: Host device must be ESP32-H2 or ESP32-P4
-esp32_hosted:
-  variant: ESP32C6  # Co-processor variant
-  reset_pin: GPIOXX
-  cmd_pin: GPIOXX
-  clk_pin: GPIOXX
-  d0_pin: GPIOXX
-  d1_pin: GPIOXX
-  d2_pin: GPIOXX
-  d3_pin: GPIOXX
-  active_high: true
-
 update:
   - platform: esp32_hosted
     type: embedded
@@ -51,18 +39,6 @@ and select the best compatible version based on the host library version.
 
 ```yaml
 # Example configuration entry for HTTP mode
-# Note: Host device must be ESP32-H2 or ESP32-P4
-esp32_hosted:
-  variant: ESP32C6  # Co-processor variant
-  reset_pin: GPIOXX
-  cmd_pin: GPIOXX
-  clk_pin: GPIOXX
-  d0_pin: GPIOXX
-  d1_pin: GPIOXX
-  d2_pin: GPIOXX
-  d3_pin: GPIOXX
-  active_high: true
-
 http_request:
 
 update:
