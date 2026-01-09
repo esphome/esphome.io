@@ -132,7 +132,7 @@ wifi:
 
 - **post_connect_roaming** (*Optional*, bool): Enable basic post-connect
   roaming for stationary devices. After connecting to a non-hidden network,
-  the device will periodically scan for better access points with the same
+  the device will periodically check for better access points with the same
   SSID and switch if one is found with significantly better signal (+10 dB).
   This helps devices recover from scenarios where they connect to a suboptimal
   AP (e.g., after an AP reboot or site power loss). Automatically disabled if
@@ -280,7 +280,7 @@ initial connection.
 ### Why This Feature Exists
 
 Without post-connect roaming, devices can get stuck on a suboptimal AP
-**permanently** in two common scenarios:
+**permanently** in three common scenarios:
 
 1. **AP reboot**: When an access point reboots (firmware update or other
    reason), the device connects to another AP with worse signal. Without
@@ -292,7 +292,12 @@ Without post-connect roaming, devices can get stuck on a suboptimal AP
    option (e.g., the furthest one). Without roaming, it remains on this
    suboptimal AP permanently, even after better APs come online.
 
-In both cases, the only fix without post-connect roaming is to manually
+1. **Out-of-box provisioning**: When WiFi credentials are provisioned via
+   captive portal, Improv, or other methods, the device connects without
+   using ESPHome's normal RSSI-based AP selection. Without roaming, the
+   device stays on that initial AP forever even if a better one is available.
+
+In all three cases, the only fix without post-connect roaming is to manually
 reboot the device or wait for another disconnection event.
 
 ### How It Works
