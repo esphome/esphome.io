@@ -341,9 +341,6 @@ seamless handoff:
 
 - TCP connections (including API) will briefly disconnect during the AP
   switch. Reconnection is typically fast but not transparent to clients.
-- **LibreTiny (BK72xx/RTL87xx)**: The roam attempt may occasionally fail due
-  to SDK flakiness, but the normal retry logic handles this and reconnects
-  to the best available AP.
 
 For seamless 802.11k/v/r roaming, use ESP32 and configure `enable_btm` and
 `enable_rrm`.
