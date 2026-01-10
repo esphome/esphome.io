@@ -312,8 +312,8 @@ The setup logs will display the Pad, Threshold, and Benchmark for each touch pad
 To determine the appropriate threshold value:
 
 1. Watch the raw values in the logs while touching and not touching the pad
-2. **Subtract the benchmark from the values you see in the logs** to get the difference
-3. Set your threshold to a value between the "not touched" and "touched" differences
+1. **Subtract the benchmark from the values you see in the logs** to get the difference
+1. Set your threshold to a value between the "not touched" and "touched" differences
 
 For example, if you see:
 
