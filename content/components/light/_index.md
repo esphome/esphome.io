@@ -690,19 +690,31 @@ light:
 
 #### Accessing Effect Names
 
-You can access the name of a light effect using the `get_name()` method, which returns a `std::string_view`:
+You can access the name of a light effect using the `get_name()` method, which returns a `StringRef`:
 
 ```cpp
 // Get all effects for a light
 auto &effects = id(my_light).get_effects();
 for (auto *effect : effects) {
-  std::string_view name = effect->get_name();
+  StringRef name = effect->get_name();
   // Compare with string literal
   if (name == "My Custom Effect") {
     ESP_LOGI("light", "Found my effect!");
   }
-  // Safe logging with size-limited format
-  ESP_LOGI("light", "Effect: %.*s", (int) name.size(), name.data());
+  // Safe logging with explicit size
+  ESP_LOGI("light", "Effect: %.*s", (int) name.size(), name.c_str());
+}
+```
+
+You can also get the currently active effect name from a light state using `get_effect_name()`:
+
+```cpp
+// Get currently active effect
+StringRef current = id(my_light).get_effect_name();
+if (current == "None") {
+  ESP_LOGI("light", "No effect active");
+} else {
+  ESP_LOGI("light", "Active effect: %.*s", (int) current.size(), current.c_str());
 }
 ```
 
