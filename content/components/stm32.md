@@ -20,10 +20,9 @@ stm32:
 ## Configuration variables
 
 - **board** (*Required*, string): The board type. It needs to be supported by both `platformio` and `zephyr`. To list all STM32 boards supported by `platformio` run command:
+
   ```sh
-
   pio boards | grep -i stm32
-
   ```
 
   STM32 boards supported by `zephyr` can be found [here](https://docs.zephyrproject.org/latest/boards/index.html#vendor=st&arch=arm).
@@ -44,7 +43,6 @@ Try minimum LED blinking config for the board:
 [nucleo_l476rg](https://www.st.com/en/evaluation-tools/nucleo-l476rg.html)
 
 ```yaml
-
 stm32:
   board: nucleo_l476rg
 
@@ -65,16 +63,14 @@ interval:
       - output.turn_on: user_led
       - delay: 0.5s
       - output.turn_off: user_led
-
 ```
+
 ## Flashing
 You can flash your board using ST-Link programmer. Simply connect it via USB and run:
+
 ```sh
-
 esphome run your_config.yaml
-
 ```
-
 
 ## See Also
 
