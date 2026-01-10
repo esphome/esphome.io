@@ -240,7 +240,8 @@ reduce the ESP's overall performance.
 
 ## S2 and S3 Variants
 
-> [!NOTE] > **ESP32-S2 and ESP32-S3 Touch Configuration**
+> [!NOTE]
+> **ESP32-S2 and ESP32-S3 Touch Configuration**
 >
 > The default `measurement_duration` and `sleep_duration` values are optimized for the original ESP32 and
 > **may not work at all on S2/S3 variants**. The S2/S3 touch hardware requires different timing settings.
@@ -256,14 +257,14 @@ reduce the ESP's overall performance.
 > ```yaml
 > esp32_touch:
 >   setup_mode: false
->   measurement_duration: 0.25ms # Much lower than the 8ms default
+>   measurement_duration: 0.25ms  # Much lower than the 8ms default
 >   sleep_duration: 0.5ms
 >
 > binary_sensor:
 >   - platform: esp32_touch
 >     name: "Touch Sensor"
 >     pin: GPIO1
->     threshold: 1000 # Adjust based on your hardware
+>     threshold: 1000  # Adjust based on your hardware
 > ```
 
 If you're familiar with the ESP32 hardware and pick up an S2 or S3 variant, you're likely to notice some behavioral
