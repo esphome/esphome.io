@@ -66,6 +66,7 @@ interval:
 ```
 
 ## Flashing
+
 You can flash your board using ST-Link programmer. Simply connect it via USB and run:
 
 ```sh
