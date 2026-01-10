@@ -272,8 +272,8 @@ differences between them. In particular:
 - Raw touch sensor readings on the S2 and S3 variants will generally return larger numeric values than the original
   ESP32 hardware.
 
-- Contact with the touch sensor on the S2 and S3 variants will result in the raw sensor value reading _increasing_; on
-  the original ESP32, contact would cause this value to _decrease_.
+- Contact with the touch sensor on the S2 and S3 variants will result in the raw sensor value reading *increasing*; on
+  the original ESP32, contact would cause this value to *decrease*.
 
 These behavioral differences are due to changes in the hardware and software (ESP-IDF) interfaces and should be
 expected -- if you are moving your configuration from an original ESP32 to an S2 or S3 variant, expect that you'll need
