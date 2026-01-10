@@ -20,7 +20,7 @@ stm32:
 ## Configuration variables
 
 - **board** (*Required*, string): The board type. It needs to be supported by both `platformio` and `zephyr`. To list all STM32 boards supported by `platformio` run command:
-  ```
+  ```sh
   pio boards | grep -i stm32
   ```
 
@@ -62,11 +62,10 @@ interval:
       - output.turn_on: user_led
       - delay: 0.5s
       - output.turn_off: user_led
-
 ```
 ## Flashing
 You can flash your board using ST-Link programmer. Simply connect it via USB and run:
-```
+```sh
 esphome run your_config.yaml
 ```
 
