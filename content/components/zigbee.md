@@ -24,7 +24,7 @@ Additional properties must be configured manually in Home Assistant. Each ESPHom
 > [!NOTE]
 > You will need a Zigbee coordinator like **Zigbee2MQTT** or **ZHA**.
 
-> [!IMPORTANT]
+> [!CAUTION]
 > Whenever the configuration is changed, the device should be re-interviewed (z2m only) and removed and re-added
 > to the Zigbee network. This is especially important if components are added or removed or if names change.
 
@@ -79,6 +79,38 @@ The following components are exposed over Zigbee if they have a name and if they
 
 - [Sensor](/components/sensor#config-sensor): **state**, **name** and **unit_of_measurement** are exposed
 over Zigbee. If no unit is given or if it is not support it will fall back to unitless.
+
+## Component Implementation Details
+
+### Binary Sensor
+
+[Binary Sensors](/components/binary_sensor#config-binary_sensor) are implemented as binary input clusters with description and present_value attributes.
+
+#### Configuration variables
+
+- **name** (**Required**, string): The name for the binary sensor. This is exposed as the Zigbee description attribute.
+- **internal** (*Optional*, boolean): Mark this component as internal. Internal components will
+  not be exposed over Zigbee. Only specifying an `id` without a `name` will implicitly set this to true.
+  Use this if you run out of Zigbee endpoints.
+
+### Sensor
+
+[Sensors](/components/sensor#config-sensor) are implemented as analog input clusters with desription, engineering_units,
+and present_value attributes.
+
+#### Configuration variables
+
+- **name** (**Required**, string): The name for the binary sensor. This is exposed as the Zigbee description attribute.
+- **internal** (*Optional*, boolean): Mark this component as internal. Internal components will
+  not be exposed over Zigbee. Only specifying an `id` without a `name` will implicitly set this to true.
+  Use this if you run out of Zigbee endpoints.
+- **unit_of_measurement** (*Optional*, string): Manually set or overwrite the unit. By default
+the unit of the component is used and if the component does not set a unit, values are unitless.
+  Only a limited set of units is supported. Unsupported units will revert to unitless.
+  This is exposed as the Zigbee engineering units attribute.
+
+> [!NOTE]
+> Units are only supported by **ZHA**, but not by **Zigbee2MQTT**.
 
 ## See Also
 
