@@ -272,8 +272,8 @@ differences between them. In particular:
 - Raw touch sensor readings on the S2 and S3 variants will generally return larger numeric values than the original
   ESP32 hardware.
 
-- Contact with the touch sensor on the S2 and S3 variants will result in the raw sensor value reading _increasing_; on
-  the original ESP32, contact would cause this value to _decrease_.
+- Contact with the touch sensor on the S2 and S3 variants will result in the raw sensor value reading **increasing**; on
+  the original ESP32, contact would cause this value to **decrease**.
 
 These behavioral differences are due to changes in the hardware and software (ESP-IDF) interfaces and should be
 expected -- if you are moving your configuration from an original ESP32 to an S2 or S3 variant, expect that you'll need
@@ -282,16 +282,14 @@ to make some adjustments to your configuration to accommodate this behavior.
 Most importantly, the default `measurement_duration` of 8ms (optimized for original ESP32) is often too high for
 S2/S3 variants and can prevent touch detection from working entirely. Using a much lower value like 0.25ms has been
 found to work across many S2/S3 devices, though specific parameters may still need tuning per hardware implementation.
+
 > [!NOTE]
 > The hardware maximum value for touch readings is **2097151**. If your values approach this limit, decrease the `measurement_duration` even more to prevent saturation, for example to 0.05ms.
 
 ### Benchmark System on S2 and S3
 
-ESP32-S2 and ESP32-S3 devices include an internal benchmark system that automatically calibrates and continuously adapts during operation.
-This benchmark uses a **floating benchmark** that is continuously updated by the hardware to track the baseline capacitance.
-
-> [!NOTE]
-> The benchmark system uses a floating benchmark that continuously updates during operation, not just at startup. This allows the touch sensors to adapt to environmental changes (temperature, humidity, etc.) for more reliable and consistent touch detection over time. The benchmark value shown in setup mode logs represents the current floating benchmark at that moment, which may change as conditions change.
+ESP32-S2 and ESP32-S3 devices include an internal benchmark system that automatically calibrates the baseline capacitance.
+The benchmark is set initially once during setup and remains fixed during operation.
 
 When configuring the `threshold` value for your touch sensors, you **must account for this benchmark**. The threshold
 you set in your configuration is **added to the benchmark**, and this sum is compared to the raw values outputted in setup mode.
@@ -300,20 +298,29 @@ To find the benchmark value and determine a suitable threshold for your device:
 
 1. Enable `setup_mode: true` in your `esp32_touch` configuration
 1. Upload and watch the device logs
-1. Look for debug messages showing the current value, benchmark, and difference
+1. Look for the benchmark value in the setup mode logs
 
-The setup logs will display the current raw value, floating benchmark, and the difference between them for each touch pad. Here's an example from the logs:
+The setup logs will display the Pad, Threshold, and Benchmark for each touch pad. Here's an example from the logs:
 
 ```log
-[23:32:47.838][D][esp32_touch:117]: Touch Pad 'Touch Pad' (T4): value=479601, benchmark=325453, difference=154148 (set threshold < 154148 to detect touch)
+[22:59:08.182][C][esp32_touch:034]: Touch Pad 'Touch Pad'
+[22:59:08.182][C][esp32_touch:034]:     Pad: T4
+[22:59:08.183][C][esp32_touch:034]:     Threshold: 500000
+[22:59:08.183][C][esp32_touch:034]:     Benchmark: 4194303
 ```
 
-In this example:
+To determine the appropriate threshold value:
 
-- **value**: `479601` - the current raw touch sensor reading
-- **benchmark**: `325453` - the current floating benchmark value (which may change over time as environmental conditions change)
-- **difference**: `154148` - the difference between the current value and benchmark (`479601 - 325453 = 154148`)
-- **threshold hint**: The log suggests setting a threshold less than `154148` to detect touch
+1. Watch the raw values in the logs while touching and not touching the pad
+2. **Subtract the benchmark from the values you see in the logs** to get the difference
+3. Set your threshold to a value between the "not touched" and "touched" differences
+
+For example, if you see:
+
+- Not touched: raw value `4700000`, benchmark `4194303` → difference = `505697`
+- Touched: raw value `5000000`, benchmark `4194303` → difference = `805697`
+
+You would set a threshold around `600000` to `700000` to reliably detect touches.
 
 ## See Also
 
