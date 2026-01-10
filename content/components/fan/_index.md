@@ -351,7 +351,7 @@ advanced stuff (see the full API Reference for more info).
     }
 ```
 
-- `.get_preset_mode()`  : Retrieve the current preset mode of the fan. Returns `std::string_view`.
+- `.get_preset_mode()`  : Retrieve the current preset mode of the fan. Returns `StringRef`.
 
 ```yaml
     // Within lambda, get the fan preset mode and conditionally do something
