@@ -268,12 +268,12 @@ advanced stuff (see the full API Reference for more info).
   to select the first option or `call.select_next(true)` to select the next
   option with the cycle feature enabled.
 
-- `.current_option()`  : Retrieve the currently selected option of the select. Returns `std::string_view`.
+- `.current_option()`  : Retrieve the currently selected option of the select. Returns `StringRef`.
 
 ```cpp
     // For example, create a custom log message when an option is selected:
     auto option = id(my_select).current_option();
-    ESP_LOGI("main", "Option of my select: %.*s", (int) option.size(), option.data());
+    ESP_LOGI("main", "Option of my select: %.*s", (int) option.size(), option.c_str());
 ```
 
 ```yaml
