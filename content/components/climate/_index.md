@@ -247,22 +247,22 @@ advanced stuff.
 ```cpp
     // Check if custom fan mode is active, type: bool
     id(my_climate).has_custom_fan_mode()
-    // Get custom fan mode (read-only), type: std::string_view
+    // Get custom fan mode (read-only), type: StringRef
     id(my_climate).get_custom_fan_mode()
     // Check if custom preset is active, type: bool
     id(my_climate).has_custom_preset()
-    // Get custom preset (read-only), type: std::string_view
+    // Get custom preset (read-only), type: StringRef
     id(my_climate).get_custom_preset()
 ```
 
 > [!NOTE]
-> `get_custom_fan_mode()` and `get_custom_preset()` return `std::string_view`. When no custom mode is set, they return an empty string view. Use `has_custom_fan_mode()` or `has_custom_preset()` to check if a custom mode is active, or check if the returned string view is empty.
+> `get_custom_fan_mode()` and `get_custom_preset()` return `StringRef`. When no custom mode is set, they return an empty `StringRef`. Use `has_custom_fan_mode()` or `has_custom_preset()` to check if a custom mode is active, or check if the returned `StringRef` is empty.
 >
 > ```cpp
 > // Check using has_custom_fan_mode()
 > if (id(my_climate).has_custom_fan_mode()) {
 >   auto mode = id(my_climate).get_custom_fan_mode();
->   ESP_LOGD("tag", "Mode: %.*s", (int) mode.size(), mode.data());
+>   ESP_LOGD("tag", "Mode: %.*s", (int) mode.size(), mode.c_str());
 > }
 >
 > // Or check if empty
