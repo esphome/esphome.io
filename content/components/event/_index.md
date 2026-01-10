@@ -129,7 +129,7 @@ From [lambdas](/automations/templates#config-lambda), you can interact with an e
 
 - `trigger(std::string event_type)`: Trigger an event with the specified type.
 - `has_event()`: Returns `true` if an event has been triggered, `false` otherwise.
-- `get_last_event_type()`: Returns the last triggered event type as `std::string_view`, or an empty string view if no event has been triggered yet.
+- `get_last_event_type()`: Returns the last triggered event type as `StringRef`, or an empty StringRef if no event has been triggered yet.
 
 ```cpp
     // Within lambda, trigger the event.
@@ -142,8 +142,8 @@ From [lambdas](/automations/templates#config-lambda), you can interact with an e
       if (event_type == "custom_event") {
         ESP_LOGD("main", "Custom event was triggered");
       }
-      // Log using %.*s format for string_view
-      ESP_LOGD("main", "Last event: %.*s", (int) event_type.size(), event_type.data());
+      // Log using %.*s format for StringRef
+      ESP_LOGD("main", "Last event: %.*s", (int) event_type.size(), event_type.c_str());
     }
 ```
 
