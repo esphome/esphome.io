@@ -77,4 +77,3 @@ esphome run your_config.yaml
 
 - {{< docref "esphome/" >}}
 - [Zephyr - Board Porting Guide](https://docs.zephyrproject.org/latest/hardware/porting/board_porting.html)
-
