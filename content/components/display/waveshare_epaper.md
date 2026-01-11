@@ -106,6 +106,7 @@ lambda: |-
   - `2.90inv2-r2` - 2.9in V2 display, but with different initialization and full/partial display refresh management than `2.90inv2`
   - `2.90in-b` - B/W rendering only
   - `2.90in-bV3` - B/W rendering only
+  - `3.70in` - 3.7in display with partial/full refresh support
   - `4.20in`
   - `4.20in-bV2` - B/W rendering only
   - `gdey042t81` - GoodDisplay GDEY042T81 4.2" B/W
@@ -139,12 +140,13 @@ lambda: |-
 - **rotation** (*Optional*): Set the rotation of the display. Everything you draw in `lambda:` will be rotated
   by this option. One of `0°` (default), `90°`, `180°`, `270°`.
 
-- **full_update_every** (*Optional*, int): E-Paper displays have two modes of switching to the next image: A partial
+- **full_update_every** (**Optional**, [int](/guides/configuration-types#config-int)): E-Paper displays have two modes of switching to the next image: A partial
   update that only changes the pixels that have changed and a full update mode that first clears the entire display
   and then re-draws the image. The former is much quicker and nicer, but every so often a full update needs to happen
-  because artifacts accumulate. On the `1.54in`, `1.54inv2`, `2.13in`, `2.13inv2`, `2.90in`, `2.90inv2`, `7.50inV2p` and `gdew029t5` models, you have the option to only
-  do a full-redraw every x-th time using this option. Defaults to `30` on the described models and a full update for
-  all other models.
+  because artifacts accumulate. On the `1.54in`, `1.54inv2`, `2.13in`, `2.13inv2`, `2.13inv3`, `2.90in`,
+  `2.90inv2`, `2.90inv2-r2`, `2.90in-dke`, `3.70in`, `7.50inV2p`, `gdew029t5`, `gdey029t94`, `gdey042t81`,
+  and `gdey0583t81` models, you have the option to only do a full-redraw every x-th time using this
+  option. Defaults to `30` on the described models and a full update for all other models.
 
 - **reset_duration** (*Optional*, [Time](/guides/configuration-types#time)): Duration for the display reset operation. Defaults to `200ms`.
   Setting this value to `2ms` may resolve issues with newer e-Paper Driver modules (e.g. Rev 2.1).
