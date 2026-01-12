@@ -20,6 +20,7 @@ can publish the result to a `text_sensor`.
 key_collector:
   - id: pincode_reader
     source_id: mykeypad
+    start_keys: "*"
     min_length: 4
     max_length: 4
     start_keys: "A"
@@ -47,31 +48,28 @@ key_collector:
 
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): Set the ID of this entry for use in lambdas.
 - **source_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the key input device.
-- **min_length** (*Optional*, integer): The minimal length of the desired key sequence. Below
-  this, `on_result` automation will not trigger even if any of the `end_keys` was pressed.
-
-- **max_length** (*Optional*, integer): The maximum length of the desired key sequence, after
-  which the sequence will trigger the `on_result` automation witout having to press any of the `end_keys`
-
-- **start_keys** (*Optional*, string): Keys used to start the sequence. If specified, no keys
-  will be collected until one of the start keys is pressed. The start key that was pressed is
-  available in the `start` variable in automations.
-
-- **end_keys** (*Optional*, string): Keys used to *enter* the sequence.
-- **end_key_required** (*Optional*, boolean): Only trigger `on_result` automation when one of
-  the `end_keys` was pressed. Defaults to `false`.
-
+- **min_length** (*Optional*, integer): The minimum length of the desired key sequence. Below this limit,
+  `on_result` automation will not trigger even if any of the `end_keys` was pressed.
+- **max_length** (*Optional*, integer): The maximum length of the desired key sequence. After this limit
+  is reached, the collector will either ignore additional keys or trigger the `on_result` automation,
+  depending on `end_key_required`.
+- **start_keys** (*Optional*, string): Keys used to *start* the key sequence; when set, no keys
+  will be accepted until one of the start keys is pressed.
+- **end_keys** (*Optional*, string): Keys used to *finish* the key sequence and trigger the
+  `on_result` automation.
+- **end_key_required** (*Optional*, boolean): Only trigger `on_result` automation when one of the `end_keys`
+  was pressed, and not when `max_length` characters have been entered. Defaults to `false`.
 - **back_keys** (*Optional*, string): Keys used to delete the last pressed key. Like *Backspace* on a keyboard.
-- **clear_keys** (*Optional*, string): Keys used to entirely clear the sequence, all the pressed keys.
-- **allowed_keys** (*Optional*, string): Keys allowed to be used. If not specified, then any otherwise
-  unused keys will be allowed.
-
-- **timeout** (*Optional*, [Time](/guides/configuration-types#time)): Timeout after which to cancel building the sequence and delete all the keys.
+- **clear_keys** (*Optional*, string): Keys used to cancel building the key sequence and clear it.
+- **allowed_keys** (*Optional*, string): Keys allowed to be used, all others will be ignored. If not specified,
+  all keys are allowed.
+- **timeout** (*Optional*, [Time](/guides/configuration-types#time)): Timeout after which to cancel building
+  the key sequence and clear it.
 - **enable_on_boot** (*Optional*, boolean): If enabled, this key collector will be enabled on boot. Defaults to `true`.
 
 At least one of `end_keys` or `max_length` must be specified. The rest are optional.
-If both `end_keys` and `max_length` are specified, then once `max_length` keys are collected, no more will be
-accepted until an end key is pressed.
+When the sequence is cancelled, by timeout or one of `clear_keys`, a key from `start_keys` (if configured) must be
+entered again as well.
 
 ## Triggers
 
@@ -115,8 +113,9 @@ on_...:
     - key_collector.disable:
 ```
 
-## Lambda
+## Lambdas
 
+- `clear(bool progress_update=true)`: Clear collected keys.  
 - `send_key(uint8_t key)`: Send a key to the collector directly.
 
 ## Text Sensor
@@ -131,3 +130,4 @@ that publishes the collected key sequence when a successful result occurs.
 - [Wiegand keypad and tag reader](/components/wiegand/)
 - [LVGL Button Matrix widget](/components/lvgl/widgets#lvgl-widget-buttonmatrix)
 - [LVGL Keyboard widget](/components/lvgl/widgets#lvgl-widget-keyboard)
+- {{< apiref "key_collector/key_collector.h" "key_collector/key_collector.h" >}}
