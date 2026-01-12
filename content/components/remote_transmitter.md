@@ -376,7 +376,11 @@ on_...:
 - **address** (**Required**, int): The 16-bit ID to send. Bits 0-3 are normally zero. Setting bit 0 will allow a Drayton
     receiver in 'learn' mode to receive this address. See dumper output for more info.
 - **data** (*Optional*, int): The data value to send, between 0 and 15 inclusive. Defaults to '0'. Bit '3' represents thermostat on/off. Bit '1'
-    represents 'Low Batt'. e.g. 0x8=Thermostat ON, Battery OK.
+    represents 'Low Batt'. e.g. 0x8=Thermostat ON, Battery OK.  Should be used in preference to channel and command.
+- **channel** (*Optional*, int): The 7-bit switch/channel to send. May be used, in conjunction with command, to maintain compatibility with first
+    implematation of the Drayton receiver. Use of data is preferred.
+- **command** (*Optional*, int): The 5-bit command to send. May be used, in conjunction with channel, to maintain compatibility with first implematation of
+    the Drayton receiver. Use of data is preferred.
 - All other options from [Remote Transmitter Actions](#remote_transmitter-transmit_action).
 
 {{< anchor "remote_transmitter-transmit_dyson" >}}
