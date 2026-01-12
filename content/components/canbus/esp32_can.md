@@ -58,8 +58,8 @@ This is particularly useful for:
 # Example configuration for passive CAN bus monitoring
 canbus:
   - platform: esp32_can
-    tx_pin: GPIO15
-    rx_pin: GPIO16
+    tx_pin: GPIOXX
+    rx_pin: GPIOXX
     bit_rate: 500kbps
     mode: LISTENONLY
     on_frame:
