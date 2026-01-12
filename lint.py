@@ -288,9 +288,11 @@ def lint_all_images_size(fname: str, stat: os.stat_result):
 
 
 if PILLOW_INSTALLED:
+    # Only check raster images that Pillow can read (not SVG, ICO)
+    raster_image_types = [".webp", ".jpg", ".png", ".gif"]
 
     @lint_file_check(
-        include=[f"static/images/*{ext}" for ext in image_types],
+        include=[f"static/images/*{ext}" for ext in raster_image_types],
         exclude=["static/images/hero.png"],
     )
     def lint_index_images_dimensions(fname: str, stat: os.stat_result):
