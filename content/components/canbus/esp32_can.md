@@ -72,6 +72,9 @@ canbus:
 > [!NOTE]
 > In listen-only mode, the ESP32 will not send ACK signals. This means other devices on the bus will not receive acknowledgment for their transmissions from the ESP32. This is the desired behavior when monitoring an existing bus where other devices are already handling acknowledgments.
 
+> [!TIP]
+> The `tx_pin` is still required even in listen-only mode, as the ESP32 TWAI driver requires both pins for initialization. However, no data will be transmitted on this pin when using `LISTENONLY` mode.
+
 {{< anchor "esp32-can-bit-rate" >}}
 
 The following table lists the bit rates supported by the component for ESP32 variants:
