@@ -368,7 +368,7 @@ This [action](/automations/actions#all-actions) sends a Draton Digistat RF remot
 on_...:
   - remote_transmitter.transmit_drayton:
       address: '0x6180'
-      data: '0x12'
+      data: '0x8'
 ```
 
 #### Configuration variables
