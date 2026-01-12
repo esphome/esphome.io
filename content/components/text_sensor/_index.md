@@ -29,7 +29,7 @@ Configuration variables:
 - **name** (*Optional*, string): The name for the sensor. At least one of **id** and **name** must be specified.
 
 > [!NOTE]
-> If you have a [friendly_name](#esphome-configuration_variables) set for your device and
+> If you have a [friendly_name](/components/esphome#esphome-configuration_variables) set for your device and
 > you want the text sensor to use that name, you can set `name: None`.
 
 - **icon** (*Optional*, icon): Manually set the icon to use for the sensor in the frontend.
@@ -51,15 +51,15 @@ Configuration variables:
   for a list of available options.
   Set to `""` to remove the default entity category.
 
-- If MQTT enabled, All other options from [MQTT Component](#config-mqtt-component).
-- If Webserver enabled and version 3 is selected, All other options from Webserver Component.. See [Webserver Version 3](#config-webserver-version-3-options).
+- If MQTT enabled, All other options from [MQTT Component](/components/mqtt#config-mqtt-component).
+- If Webserver enabled and version 3 is selected, All other options from Webserver Component.. See [Webserver Version 3](/components/web_server#config-webserver-version-3-options).
 
 Automations:
 
-- **on_value** (*Optional*, [Automation](#automation)): An automation to perform
+- **on_value** (*Optional*, [Automation](/automations)): An automation to perform
   when a new value is published. See [`on_value`](#text_sensor-on_value).
 
-- **on_raw_value** (*Optional*, [Automation](#automation)): An automation to perform
+- **on_raw_value** (*Optional*, [Automation](/automations)): An automation to perform
   when a new value is received that hasn't passed through any filters. See [`on_raw_value`](#text_sensor-on_raw_value).
 
 {{< anchor "text_sensor-filters" >}}
@@ -187,7 +187,7 @@ filters:
 
 ## Text Sensor Automation
 
-You can access the most recent state of the sensor in [lambdas](#config-lambda) using
+You can access the most recent state of the sensor in [lambdas](/automations/templates#config-lambda) using
 `id(sensor_id).state`.
 
 {{< anchor "text_sensor-on_value" >}}
@@ -195,7 +195,7 @@ You can access the most recent state of the sensor in [lambdas](#config-lambda) 
 ### `on_value`
 
 This automation will be triggered when a new value is published.
-In [Lambdas](#config-lambda) you can get the value from the trigger with `x`.
+In [Lambdas](/automations/templates#config-lambda) you can get the value from the trigger with `x`.
 
 ```yaml
 text_sensor:
@@ -207,14 +207,14 @@ text_sensor:
             ESP_LOGD("main", "The current version is %s", x.c_str());
 ```
 
-Configuration variables: See [Automation](#automation).
+Configuration variables: See [Automation](/automations).
 
 {{< anchor "text_sensor-on_raw_value" >}}
 
 ### `on_raw_value`
 
 This automation will be triggered when a new value is received that hasn't passed
-through any filters. In [Lambdas](#config-lambda) you can get the value from the trigger with `x`.
+through any filters. In [Lambdas](/automations/templates#config-lambda) you can get the value from the trigger with `x`.
 
 ```yaml
 text_sensor:
@@ -226,13 +226,13 @@ text_sensor:
             ESP_LOGD("main", "The current version is %s", x.c_str());
 ```
 
-Configuration variables: See [Automation](#automation).
+Configuration variables: See [Automation](/automations).
 
 {{< anchor "text_sensor-state_condition" >}}
 
 ## `text_sensor.state` Condition
 
-This [Condition](#config-condition) allows you to check if a given text sensor
+This [Condition](/automations/actions#all-conditions) allows you to check if a given text sensor
 has a specific state.
 
 ```yaml
@@ -247,12 +247,12 @@ on_...:
 
 Configuration variables:
 
-- **id** (**Required**, [ID](#config-id)): The text sensor ID.
-- **state** (**Required**, [templatable](#config-templatable), string): The state to compare
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The text sensor ID.
+- **state** (**Required**, [templatable](/automations/templates), string): The state to compare
   to.
 
 > [!NOTE]
-> This condition can also be expressed in [lambdas](#config-lambda):
+> This condition can also be expressed in [lambdas](/automations/templates#config-lambda):
 >
 > ```cpp
 > if (id(my_text_sensor).state == "Hello World") {
@@ -264,7 +264,7 @@ Configuration variables:
 
 ### lambda calls
 
-From [lambdas](#config-lambda), you can call several methods on all text sensors to do some
+From [lambdas](/automations/templates#config-lambda), you can call several methods on all text sensors to do some
 advanced stuff (see the full API Reference for more info).
 
 - `publish_state()`  : Manually cause the sensor to push out a value.

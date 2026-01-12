@@ -80,11 +80,11 @@ light:
 Some chipsets have two data pins to connect, others only have one.
 If you have one line, only specify `pin`, otherwise specify both `clock_pin` and `data_pin`.
 
-- **pin** (**Required**, [Pin](#config-pin)): The pin for the data line of the light.
-- **clock_pin** (**Required**, [Pin](#config-pin)): The pin for the clock line of the light, for two-wire lights.
-- **data_pin** (**Required**, [Pin](#config-pin)): The pin for the data line of the light, for two-wire lights.
+- **pin** (**Required**, [Pin](/guides/configuration-types#pin)): The pin for the data line of the light.
+- **clock_pin** (**Required**, [Pin](/guides/configuration-types#pin)): The pin for the clock line of the light, for two-wire lights.
+- **data_pin** (**Required**, [Pin](/guides/configuration-types#pin)): The pin for the data line of the light, for two-wire lights.
 
-- All other options from [Light](#config-light).
+- All other options from [Light](/components/light#config-light).
 
 > [!WARNING]
 > On ESP8266 it's highly recommended to connect the light strip to pin

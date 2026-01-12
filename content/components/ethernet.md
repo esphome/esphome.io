@@ -59,18 +59,19 @@ ethernet:
   - `W5500` (SPI)
   - `OPENETH` (QEMU, ESP-IDF only)
   - `DM9051` (SPI, ESP-IDF only)
+  - `LAN8670` (RMII)
 
 ### RMII configuration variables
 
-- **mdc_pin** (**Required**, [Pin](#config-pin)): The MDC pin of the board.
+- **mdc_pin** (**Required**, [Pin](/guides/configuration-types#pin)): The MDC pin of the board.
   Usually this is `GPIO23`.
 
-- **mdio_pin** (**Required**, [Pin](#config-pin)): The MDIO pin of the board.
+- **mdio_pin** (**Required**, [Pin](/guides/configuration-types#pin)): The MDIO pin of the board.
   Usually this is `GPIO18`.
 
 - **clk** (**Required**, mapping):
 
-  - **pin** (**Required**, [Pin](#config-pin)): The RMII clock pin.
+  - **pin** (**Required**, [Pin](/guides/configuration-types#pin)): The RMII clock pin.
   - **mode** (**Required**, string): The clock mode of the data lines. See your board's
     datasheet for more details. Must be one of the following values:
 
@@ -84,25 +85,25 @@ ethernet:
   - **value** (**Required**, hex): The value of the register to set as a hex number (e.g. `0x1FFA`  )
   - **page_id** (*Optional*, hex): (RTL8201 only) Register page number to select before writing (e.g. `0x07` for page 7)
 
-- **power_pin** (*Optional*, [Pin Schema](#config-pin_schema)): The pin controlling the
+- **power_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The pin controlling the
   power/reset status of the Ethernet controller. Leave unspecified for no power pin (default).
 
 ### SPI configuration variables
 
-- **clk_pin** (**Required**, [Pin](#config-pin)): The SPI clock pin.
-- **mosi_pin** (**Required**, [Pin](#config-pin)): The SPI MOSI pin.
-- **miso_pin** (**Required**, [Pin](#config-pin)): The SPI MISO pin.
-- **cs_pin** (**Required**, [Pin](#config-pin)): The SPI chip select pin.
-- **interrupt_pin** (*Optional*, [Pin](#config-pin)): The interrupt pin.
+- **clk_pin** (**Required**, [Pin](/guides/configuration-types#pin)): The SPI clock pin.
+- **mosi_pin** (**Required**, [Pin](/guides/configuration-types#pin)): The SPI MOSI pin.
+- **miso_pin** (**Required**, [Pin](/guides/configuration-types#pin)): The SPI MISO pin.
+- **cs_pin** (**Required**, [Pin](/guides/configuration-types#pin)): The SPI chip select pin.
+- **interrupt_pin** (*Optional*, [Pin](/guides/configuration-types#pin)): The interrupt pin.
   This variable is **required** for older frameworks. See below.
 
-- **reset_pin** (*Optional*, [Pin](#config-pin)): The reset pin.
+- **reset_pin** (*Optional*, [Pin](/guides/configuration-types#pin)): The reset pin.
 - **clock_speed** (*Optional*, float): The SPI clock speed.
   Any frequency between `8MHz` and `80MHz` is allowed, but the nearest integer division
   of `80MHz` is used, i.e. `16MHz` (`80MHz` / 5) is used when `15MHz` is configured.
   Default: `26.67MHz`.
 
-- **polling_interval** (*Optional*, [Time](#config-time)): If `interrupt_pin` is not set,
+- **polling_interval** (*Optional*, [Time](/guides/configuration-types#time)): If `interrupt_pin` is not set,
   set the time interval for periodic polling. Minimum is 1ms, Defaults to 10ms.
   Older frameworks may not support this variable. See below for details.
 
@@ -141,7 +142,7 @@ If you are using a framework that does not support SPI-based ethernet modules wi
 
 - **mac_address** (*Optional*, MAC Address): Set the MAC address of the ethernet interface.
 
-- **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation.
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
 
 - **lldp** (*Optional*): Configure and enable the Link Layer Discovery Protocol (IEEE 802.1AB) transmitter. The simplest useful configuration is `lldp: {}`, which enables transmission with the default settings.
 
@@ -257,6 +258,20 @@ ethernet:
   power_pin: GPIO5
 ```
 
+**DFRobot Edge101** and **ESP32-DOWD-V3**:
+
+```yaml
+ethernet:
+  type: IP101
+  mdc_pin: GPIO4
+  mdio_pin: GPIO13
+  clk:
+    pin: GPIO0
+    mode: CLK_EXT_IN
+  power_pin: GPIO2
+  phy_addr: 1
+```
+
 **AiThinker ESP32-G Gateway**:
 
 ```yaml
@@ -271,7 +286,7 @@ ethernet:
   power_pin: GPIO5
 ```
 
-**wESP32**:
+**Silicognition wESP32**:
 
 ```yaml
 # for board up to rev.5
@@ -301,6 +316,30 @@ ethernet:
 
 > [!NOTE]
 > Revision 5 and below of the wESP32 board use the LAN8720 Ethernet PHY. Revision 7 and newer of it use the RTL8201 Ethernet PHY.
+
+**Silicognition ManT1S**:
+
+```yaml
+ethernet:
+  type: LAN8670
+  mdc_pin:
+    number: GPIO8
+    ignore_pin_validation_error: true
+  mdio_pin:
+    number: GPIO7
+    ignore_pin_validation_error: true
+  clk:
+    pin:
+      number: GPIO0
+      ignore_strapping_warning: true
+    mode: CLK_EXT_IN
+  phy_addr: 0
+```
+
+> [!NOTE]
+> The `ignore_pin_validation_error` options are required for the MDC and MDIO pins, since the pin
+> validator assumes these pins are used for flash.  However, this board uses the ESP32-PICO-V3-02
+> module, which has these pins available for other uses, so this check needs to be disabled.
 
 **OpenHacks LAN8720**:
 

@@ -45,7 +45,7 @@ update:
 - **sha256** (**Required**, string): SHA256 hash of the firmware binary file. This is used to verify
   the integrity of the firmware both at compile time and at runtime before flashing to the co-processor.
 
-- All other options from [Update](#config-update).
+- All other options from [Update](/components/update#config-update).
 
 ## Platform requirements
 
@@ -64,14 +64,14 @@ firmware should be built using the ESP-IDF framework and the resulting `.bin` fi
 configuration directory.
 
 ```sh
-# Build instructions for IDF 5.5.1 and ESP Hosted 2.6.1
+# Build instructions for IDF 5.5.1 and ESP Hosted 2.7.0
 git clone -b v5.5.1 --recursive https://github.com/espressif/esp-idf.git
 cd esp-idf
 ./install.sh esp32c6
 source export.sh  # for Linux/macOS
 export.bat        # for Windows
 cd ..
-idf.py create-project-from-example "espressif/esp_hosted^2.6.1:slave"
+idf.py create-project-from-example "espressif/esp_hosted==2.7.0:slave"
 cd slave/
 idf.py set-target esp32c6
 idf.py build

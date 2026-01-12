@@ -53,7 +53,7 @@ opentherm:
   from disabling interrupts while we are talking to the boiler. Enable if you experience a lot of random intermittent
   invalid response errors (very likely to happen while using Dallas temperature sensors).
 
-- **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation. Required if you have
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation. Required if you have
   multiple busses.
 
 #### Optional Boiler-specific Configuration
@@ -341,7 +341,7 @@ available:
 
 Some boilers use non-standard message ids and formats. For example,
 [it's known](https://github.com/olegtarasov/esphome-opentherm/issues/11) that Daikin D2C boiler uses message id
-`162` instead of `56` to set target DHW temperature. In order to accomodate all sorts of non-standard behavior, I
+`162` instead of `56` to set target DHW temperature. In order to accommodate all sorts of non-standard behavior, I
 introduced two automations that allow editing the low-level OpenTherm message:
 
 - **before_send**: fired just before the fully formed message is sent to the boiler. When you use a lambda, the message

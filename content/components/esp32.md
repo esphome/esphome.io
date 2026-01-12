@@ -18,11 +18,11 @@ esp32:
 ## Configuration variables
 
 - **variant** (*Optional*, string): The ESP32 mcu/chip to use for this device configuration. One of `esp32`,
-  `esp32s2`, `esp32s3`, `esp32c2`, `esp32c3`, `esp32c5`, `esp32c6`, `esp32h2` or `esp32p4`.
+  `esp32s2`, `esp32s3`, `esp32c2`, `esp32c3`, `esp32c5`, `esp32c6`, `esp32c61`, `esp32h2` or `esp32p4`.
   This must match the hardware in use, or it will fail to flash.
 
 - **board** (*Optional*, string): The PlatformIO board ID that should be used. Choose the appropriate board from
-  [this list](https://registry.platformio.org/platforms/platformio/espressif32/boards?version=5.3.0) (the icon next
+  [this list](https://registry.platformio.org/platforms/platformio/espressif32/boards) (the icon next
   to the name can be used to copy the board ID). *This only affects pin aliases and some internal settings*;
   This setting is no longer recommended, `variant` should be used instead.
 
@@ -64,7 +64,7 @@ esp32:
 
 ### ESP-IDF Framework
 
-ESP-IDF is Espressif's native development framework. It is required for ESP32-C2, ESP32-C5, ESP32-C6,
+ESP-IDF is Espressif's native development framework. It is required for ESP32-C2, ESP32-C5, ESP32-C6, ESP32-C61,
 ESP32-H2, and ESP32-P4 variants, as these are not supported by the Arduino framework. It is recommended for
 all ESP32 chips when possible. See the {{< docref "/guides/esp32_arduino_to_idf" "migration guide" >}} for help transitioning from Arduino.
 
@@ -78,7 +78,7 @@ esp32:
 
 ### Configuration variables
 
-- **type** (*Optional*, string): The framework type, either `esp-idf` or `arduino`. Defaults to `arduino` for ESP32 (classic), ESP32-C3, ESP32-S2, and ESP32-S3. Defaults to `esp-idf` for ESP32-C2, ESP32-C5, ESP32-C6, ESP32-H2, and ESP32-P4 (Arduino is not supported on these variants)
+- **type** (*Optional*, string): The framework type, either `esp-idf` or `arduino`. Defaults to `arduino` for ESP32 (classic), ESP32-C3, ESP32-S2, and ESP32-S3. Defaults to `esp-idf` for ESP32-C2, ESP32-C5, ESP32-C6, ESP32-C61, ESP32-H2, and ESP32-P4 (Arduino is not supported on these variants)
 
 - **version** (*Optional*, string): The base framework version number to use, from
   [ESP32 ESP-IDF releases](https://github.com/espressif/esp-idf/releases) or
@@ -145,12 +145,36 @@ esp32:
   address is not consistent with the burned-in CRC for that MAC address, resulting in an error like
   `Base MAC address from BLK0 of EFUSE CRC error`. **Valid only on original ESP32 with** `esp-idf` **framework.**
 
+- **minimum_chip_revision** (*Optional*, string): Sets the minimum ESP32 chip revision required for the firmware.
+  One of `0.0`, `1.0`, `1.1`, `2.0`, `3.0`, or `3.1`. **Valid only on original ESP32.**
+
+  Setting this to `3.0` or higher reduces flash size by excluding workaround code for older chip bugs. For PSRAM
+  users, it also saves significant IRAM by keeping C library functions in ROM instead of recompiling them with
+  the PSRAM cache bug workaround.
+
+  **Important:** The firmware will not boot on chips older than the specified revision. If OTA updating a device
+  with an older chip, the bootloader will reject the new firmware and roll back to the previous version (when
+  OTA rollback is enabled, which is the default).
+
+  To find your chip's revision, check the ESPHome boot logs for a line like `ESP32 Chip: ESP32 r3.0, 2 core(s)`
+  or use `esptool.py chip_id`.
+
 - **enable_idf_experimental_features** (*Optional*, boolean): Can be set to `true` to enable experimental features. Use of
   experimental features may cause instability or other issues.
 
 - **loop_task_stack_size** (*Optional*, int): Loop task stack size in bytes. Increase if experiencing stack overflow
   errors (e.g., with complex code or deep recursion). Higher values reduce heap availability. Valid range is 8192-32768
   bytes. Defaults to 8192 bytes.
+
+- **enable_ota_rollback** (*Optional*, boolean): Enable OTA rollback support. When enabled, the bootloader will
+  automatically roll back to the previous firmware if the device crashes or resets before the boot is marked as
+  successful. This works in conjunction with the [safe_mode](/components/safe_mode) component - after the
+  `boot_is_good_after` time (default 60s), the firmware is marked as valid. If the device crashes before that,
+  it will roll back to the previous working firmware. Defaults to `true`.
+
+> [!NOTE]
+> OTA rollback requires the bootloader to be compiled with rollback support. Existing devices may need to be
+> reflashed via serial to update the bootloader - OTA updates do not update the bootloader.
 
 **LWIP Optimization Options (ESP-IDF only):**
 
@@ -198,6 +222,31 @@ The following options disable unused VFS features to save flash memory:
   future storage components) automatically enable it regardless of this setting. Disabling this saves approximately 0.5 KB+
   of flash. Defaults to `true` (VFS directory support disabled to save flash).
 
+**FreeRTOS Memory Options:**
+
+- **freertos_in_iram** (*Optional*, boolean): Keep FreeRTOS functions in IRAM instead of moving them to flash. By default,
+  non-ISR FreeRTOS functions are placed in flash to save up to 8 KB of IRAM. ISR-safe functions (`FromISR` variants) always
+  remain in IRAM. Testing on ESP-IDF 5.5 with Bluetooth proxies shows no performance difference thanks to fast XIP (execute
+  in place) from flash. Bluetooth proxies are one of the most IRAM-intensive and timing-sensitive use cases, which is likely
+  why Espressif made this the default in IDF 6.0. This matches
+  the default behavior in ESP-IDF 6.0 where `CONFIG_FREERTOS_PLACE_FUNCTIONS_INTO_FLASH` is removed and replaced by
+  `CONFIG_FREERTOS_IN_IRAM` to restore the old behavior (see [ESP-IDF 6.0 breaking changes](https://github.com/espressif/esp-idf/issues/17052)
+  and [migration guide](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/migration-guides/release-6.x/6.0/system.html#memory-placement)).
+  Set to `true` only if you encounter issues with code that incorrectly calls FreeRTOS functions from ISRs with flash cache
+  disabled. Defaults to `false` (FreeRTOS functions in flash to save IRAM).
+
+- **ringbuf_in_iram** (*Optional*, boolean): Keep ring buffer functions in IRAM instead of moving them to flash. By default,
+  ring buffer functions are placed in flash to save ~1.5 KB of IRAM. Ring buffer functions are typically only called every
+  ~10ms for audio components, so the overhead of loading from flash vs IRAM is negligible compared to actual data processing.
+  This matches the default behavior in ESP-IDF 6.0 (see [migration guide](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/migration-guides/release-6.x/6.0/system.html#id1)).
+  Set to `true` only if you encounter issues. Defaults to `false` (ring buffer functions in flash to save IRAM).
+
+- **heap_in_iram** (*Optional*, boolean): Keep heap functions (malloc, free, realloc, etc.) in IRAM instead of moving them
+  to flash. By default, heap functions are placed in flash to save ~4-6 KB of IRAM. This is safe because heap functions
+  should never be called from ISRs, and ESPHome's design minimizes heap churn during normal operation (allocations happen
+  primarily at setup, not in hot loops). Set to `true` only if you have a specific use case requiring faster heap operations.
+  Defaults to `false` (heap functions in flash to save IRAM).
+
 Some options can be disabled to save flash memory without affecting typical ESPHome functionality. The performance
 options (defaulting to `true`  ) improve socket operation performance but can be disabled if you need better
 multi-threaded scalability (which is uncommon since ESPHome uses an event loop).
@@ -230,16 +279,42 @@ esp32:
 ## IDF Components
 
 The `components` option allows you to include IDF components. These components will then be compiled into the resulting
-firmware and may be used by [lambdas](#config-lambda). The most common usage of this option is to include third-party
-components that are available in the [ESP Component Registry](https://components.espressif.com/). They can be added by
-listing their name under this option. It is also possible to use specific versions, or to fetch components from a file or
-git repository.
+firmware and may be used by [lambdas](/automations/templates#config-lambda). The most common usage of this option is to include third-party
+components that are available in the [ESP Component Registry](https://components.espressif.com/).
+
+### Simple
+
+For components from the ESP Component Registry, you can use the shorthand syntax `owner/component<operator>version`.
+All [IDF Component Manager version operators](https://docs.espressif.com/projects/idf-component-manager/en/latest/reference/versioning.html)
+are supported (e.g., `^`, `~`, `==`, `>=`):
+
+```yaml
+esp32:
+  framework:
+    components:
+      - espressif/esp_hosted^2.6.1
+```
+
+### Advanced
+
+For more complex configurations (custom git repositories, local paths, etc.), use the advanced syntax:
+
+```yaml
+esp32:
+  framework:
+    components:
+      - name: my_custom_component
+        source: https://github.com/user/component.git
+        ref: main
+        path: components/custom
+```
+
+#### Configuration Variables
 
 - **name** (*Required*, string): Name of the component e.g. `espressif/esp_hosted`.
 - **ref** (*Optional*, string): Component registry version or a git ref.
 - **source** (*Optional*, string): The git repository to use for the component. This can be used for a
   custom or patched version of the component.
-
 - **path** (*Optional*, string): The path of the component in the git repository or a local path to the
   component if `source` is not set.
 

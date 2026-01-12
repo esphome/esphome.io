@@ -21,12 +21,12 @@ update:
 
 ## Configuration variables
 
-- **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation. At least one of **id** and
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation. At least one of **id** and
   **name** must be specified.
 - **name** (*Optional*, string): The name of the update entity. At least one of **id** and **name** must be specified.
 
 > [!NOTE]
-> If you have a [friendly_name](#esphome-configuration_variables) set for your device and
+> If you have a [friendly_name](/components/esphome#esphome-configuration_variables) set for your device and
 > you want the light to use that name, you can set `name: None`.
 
 - **device_class** (*Optional*, string): The device class for the update entity. See
@@ -42,8 +42,8 @@ update:
 - **internal** (*Optional*, boolean): Mark this component as internal. Internal components will
   not be exposed to the frontend (like Home Assistant). Specifying an `id` without a `name` will
 
-- **on_update_available** (*Optional*, [Action](#config-action)): An automation to perform when an update is available.
-- If Webserver enabled and version 3 is selected, All other options from Webserver Component.. See [Webserver Version 3](#config-webserver-version-3-options).
+- **on_update_available** (*Optional*, [Action](/automations/actions#all-actions)): An automation to perform when an update is available.
+- If Webserver enabled and version 3 is selected, All other options from Webserver Component.. See [Webserver Version 3](/components/web_server#config-webserver-version-3-options).
 
 ## Automations
 
@@ -53,9 +53,17 @@ This action allows you to trigger the update entity to start the update process.
 
 Configuration variables:
 
-- **id** (**Required**, [ID](#config-id)): The ID of the update entity.
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the update entity.
 - **force_update** (*Optional*, boolean): Perform the update even if the device is already running the same version.
   Defaults to `false`.
+
+### `update.check` Action
+
+This action allows you to trigger the update entity to check for, but not install, updates.
+
+Configuration variables:
+
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the update entity.
 
 ### `update.is_available` Condition
 
@@ -63,7 +71,7 @@ This condition checks if an update is available for the device.
 
 Configuration variables:
 
-- **id** (**Required**, [ID](#config-id)): The ID of the update entity.
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the update entity.
 
 ## Update Platforms
 
