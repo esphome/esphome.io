@@ -38,7 +38,7 @@ sensor:
 - **address** (*Optional*, int): The I²C address of the sensor. Defaults to `0x77`. The DPS3xx sensors
   typically use `0x77` or `0x76` depending on the hardware configuration.
 
-- **operation_mode** (*Optional*, string): Sensor operation mode. One of `idle`, `continuous`.
+- **operation_mode** (*Optional*, string): Sensor operation mode. One of `single_shot`, `continuous`.
   Defaults to `continuous`.
 
 - **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to check the sensor.
@@ -52,7 +52,7 @@ The sensor supports two operation modes:
 
 - `continuous`: The sensor continuously measures temperature and pressure at the interval specified by
   `update_interval`. This is the default and recommended mode for most applications.
-- `idle`: The sensor enters a low-power state between measurements. Useful for battery-powered applications.
+- `single_shot`: The sensor enters a low-power state between measurements. Useful for battery-powered applications.
 
 ## Hardware Variants
 
