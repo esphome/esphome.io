@@ -42,7 +42,7 @@ power_management:
 
 ### Configuration variables
 
-- **esphome_locks** (*Optional*, boolean) Configures the following locks: esphome_cpu, esphome_apb, esphome_cpu.  These locks can be controlled by actions: power_management.acquire_lock and power_management.release_lock.  Defaults to False.
+- **esphome_locks** (*Optional*, boolean) Configures the following locks: esphome_cpu, esphome_apb, esphome_slp.  These locks can be controlled by actions: power_management.acquire_lock and power_management.release_lock.  Defaults to False.
 - **max_frequency** (*Optional*, frequency) Frequency used when CPU lock acquired.  Defaults to CONFIG_ESP_DEFAULT_CPU_FREQ_MHZ.
 - **min_frequency** (*Optional*, frequency) Frequency used when not holding a CPU lock. Defaults to (esp_clk_xtal_freq() / MHZ).
 - **tickless_idle** (*Optional*, boolean): Stops the system's periodic tick interrupt during idle periods to reduce current consumption and enables automatic light-sleep.  Defaults to False.
