@@ -7,12 +7,10 @@ params:
     image: zigbee.svg
 ---
 
-Zigbee is a low-power mesh networking standard for IoT devices. The low-power aspect is important for
-battery-powered smart home devices. However, it’s also low-bandwidth, making it ideal for applications
-that don’t send a lot of data, like switches or motion sensors.
+Zigbee is a low-power, mesh-based networking standard designed for IoT devices. Its low energy consumption makes it well suited for battery-powered smart-home devices, while its limited bandwidth is ideal for devices that exchange only small amounts of data, such as switches, sensors, and motion detectors.
 
 Zigbee uses the same RF technology as Thread (IEEE 802.15.4) but defines also multiple application standards.
-The `zigbee` component, however, supports only the Homeautomation profile.
+The `zigbee` component, however, supports only the Home Automation profile.
 It allows exposing supported ESPHome components over a Zigbee network to Home Assistant via
 **Zigbee2MQTT** or **ZHA**. Due to the limitations of the Zigbee protocol, only basic properties are exposed.
 Additional properties must be configured manually in Home Assistant. Each ESPHome entity consumes one Zigbee endpoint.
@@ -22,7 +20,7 @@ Additional properties must be configured manually in Home Assistant. Each ESPHom
 > A maximum of 8 endpoints is supported and at least two endpoints are required due to a limitation in Zigbee2MQTT.
 
 > [!NOTE]
-> You will need a Zigbee coordinator like **Zigbee2MQTT** or **ZHA**.
+> You will need a Zigbee coordinator like **Zigbee2MQTT** or **ZHA**. Other commercial Zigbee hubs most like don't support esphome components and might have issues with changing firmware.
 
 > [!CAUTION]
 > Whenever the configuration is changed, the device should be re-interviewed (z2m only) and removed and re-added
@@ -111,9 +109,6 @@ and present_value attributes.
 the unit of the component is used and if the component does not set a unit, values are unitless.
   Only a limited set of units is supported. Unsupported units will revert to unitless.
   This is exposed as the Zigbee engineering units attribute.
-
-> [!NOTE]
-> Units are only supported by **ZHA**, but not by **Zigbee2MQTT**.
 
 ## See Also
 
