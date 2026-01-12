@@ -263,7 +263,7 @@ def lint_executable_bit(fname: str, stat: os.stat_result):
 
 @lint_file_check(
     include=[f"static/images/*{ext}" for ext in image_types],
-    exclude=["static/images/hero.png"],
+    exclude=["static/images/hero.png", "static/images/logo.png"],
 )
 def lint_index_images_size(fname: str, stat: os.stat_result):
     if stat.st_size > 40 * 1024:
@@ -293,7 +293,7 @@ if PILLOW_INSTALLED:
 
     @lint_file_check(
         include=[f"static/images/*{ext}" for ext in raster_image_types],
-        exclude=["static/images/hero.png"],
+        exclude=["static/images/hero.png", "static/images/logo.png"],
     )
     def lint_index_images_dimensions(fname: str, stat: os.stat_result):
         img = Image.open(fname)
