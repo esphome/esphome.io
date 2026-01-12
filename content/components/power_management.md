@@ -32,6 +32,7 @@ power_management:
   id: pm_id
   max_frequency: 96MHZ
   min_frequency: 32MHZ
+  esphome_locks: true
   tickless_idle: true
   power_down_flash: true
   power_down_peripherals: true
@@ -41,6 +42,7 @@ power_management:
 
 ### Configuration variables
 
+- **esphome_locks** (*Optional*, boolean) Configures the following locks: esphome_cpu, esphome_apb, esphome_cpu.  These locks can be controlled by actions: power_management.acquire_lock and power_management.release_lock.  Defaults to False.
 - **max_frequency** (*Optional*, frequency) Frequency used when CPU lock acquired.  Defaults to CONFIG_ESP_DEFAULT_CPU_FREQ_MHZ.
 - **min_frequency** (*Optional*, frequency) Frequency used when not holding a CPU lock. Defaults to (esp_clk_xtal_freq() / MHZ).
 - **tickless_idle** (*Optional*, boolean): Stops the system's periodic tick interrupt during idle periods to reduce current consumption and enables automatic light-sleep.  Defaults to False.
@@ -60,7 +62,7 @@ In the openthread component, setting the poll_period > 0 dove-tails into this by
 
 ## `power_management.acquire_lock` Action
 
-This action acquires a Lock
+This action acquires a Lock.  This only performs the action when esphome_locks: **True**.
 
 ```yaml
 on_...:
@@ -80,13 +82,13 @@ on_...:
 
 ### Lock Types
 
-- **CPU**: Locks the CPU at its max frequency, CPU_FREQ_MAX
-- **APB**: Locks the Advanced Peripheral Bus to a stable frequency, APB_FREQ_MAX
-- **SLP**: Locks out automatic light sleep, NO_LIGHT_SLEEP
+- **CPU**: Locks the CPU (esphome_cpu) at its max frequency, CPU_FREQ_MAX
+- **APB**: Locks the Advanced Peripheral Bus (esphome_apb) to a stable frequency, APB_FREQ_MAX
+- **SLP**: Locks out automatic light sleep (esphome_slp), NO_LIGHT_SLEEP
 
 ## `power_management.release_lock` Action
 
-This action releases a Lock
+This action releases a Lock, This only performs the action when esphome_locks: **True**.
 
 ```yaml
 on_...:
