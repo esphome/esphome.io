@@ -204,7 +204,7 @@ nrf52:
 
 ### Configuration variables
 
-- **version** (*Optional*, string): nrf-sdk version. One of:
+- **version** (*Optional*, string): The nrf-sdk version. One of:
   - `2.6.1-7`  : Stable (default)
   - `2.9.2-0`  : Experimental
   - `3.2.0-0`  : Experimental (no Zigbee support)
