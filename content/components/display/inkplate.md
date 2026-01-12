@@ -4,7 +4,7 @@ title: "Inkplate 5, 6, 10 and 6 Plus"
 params:
   seo:
     description: Instructions for setting up Inkplate E-Paper displays in ESPHome.
-    image: inkplate6.jpg
+    image: inkplate6.png
 ---
 
 All-in-one e-paper display `Inkplate 5`, `Inkplate 6`, `Inkplate 10` and `Inkplate 6 Plus`.
@@ -14,7 +14,7 @@ recycled from a Kindle e-reader. Its main feature is simplicity.
 
 Learn more at [Inkplate's documentation website](https://inkplate.readthedocs.io/en/stable/)
 
-{{< img src="inkplate6.jpg" alt="Image" caption="Inkplate 6" width="75.0%" class="align-center" >}}
+{{< img src="inkplate6.png" alt="Image" caption="Inkplate 6" width="75.0%" class="align-center" >}}
 
 ```yaml
 # Example minimal configuration entry

@@ -262,12 +262,13 @@ def lint_executable_bit(fname: str, stat: os.stat_result):
 
 
 @lint_file_check(
-    include=[f"images/*{ext}" for ext in image_types], exclude=["images/hero.png"]
+    include=[f"static/images/*{ext}" for ext in image_types],
+    exclude=["static/images/hero.png"],
 )
 def lint_index_images_size(fname: str, stat: os.stat_result):
     if stat.st_size > 40 * 1024:
         return (
-            "Image is too large. The files in the images/ folder are displayed on esphome's "
+            "Image is too large. The files in the static/images/ folder are displayed on esphome's "
             "front page and thus should be small (no more than 300x300px, and <40kb). "
             "Use a tool like https://compress-or-die.com/ to reduce the image size. "
             f"Size of file: {stat.st_size / 1024:.0f}kb"
@@ -289,13 +290,14 @@ def lint_all_images_size(fname: str, stat: os.stat_result):
 if PILLOW_INSTALLED:
 
     @lint_file_check(
-        include=["images/*.jpg", "images/*.png"], exclude=["images/hero.png"]
+        include=[f"static/images/*{ext}" for ext in image_types],
+        exclude=["static/images/hero.png"],
     )
     def lint_index_images_dimensions(fname: str, stat: os.stat_result):
         img = Image.open(fname)
         if img.width > 300 or img.height > 300:
             return (
-                "Image has too large dimensions. The images in the images/ folder are displayed on "
+                "Image has too large dimensions. The images in the static/images/ folder are displayed on "
                 "ESPHome's main page, so need to be lightweight. We allow a max of 300x300 for images on this page. "
                 "Use a tool like https://compress-or-die.com/ to reduce the image size. "
                 f"Dimensions of this image: {img.width}x{img.height}"
