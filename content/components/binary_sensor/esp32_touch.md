@@ -284,8 +284,52 @@ Most importantly, the default `measurement_duration` of 8ms (optimized for origi
 S2/S3 variants and can prevent touch detection from working entirely. Using a much lower value like 0.25ms has been
 found to work across many S2/S3 devices, though specific parameters may still need tuning per hardware implementation.
 
+> [!NOTE]
+> The hardware maximum value for touch readings is **2097151**. If your values approach this limit, decrease the `measurement_duration` even more to prevent saturation, for example to 0.05ms.
+
+### Benchmark System on S2 and S3
+
+ESP32-S2 and ESP32-S3 devices include an internal benchmark system that automatically calibrates the baseline capacitance.
+The benchmark is **floating** — it is dynamically determined and updated during operation to account for environmental changes.
+
+The `threshold` value you configure represents a **difference** from the benchmark. When the measured touch value minus
+the benchmark exceeds your threshold, a touch is detected.
+
+To find a suitable threshold for your device:
+
+1. Enable `setup_mode: true` in your `esp32_touch` configuration
+1. Upload and watch the device logs
+1. Observe the difference values while touching and not touching the pad
+
+The setup logs will display the raw value, current benchmark, calculated difference, and a hint for setting your threshold:
+
+```log
+# Not touching - small differences (noise)
+[18:00:33][D][esp32_touch:117]: Touch Pad 'Touch Pad' (T4): value=258976, benchmark=259425, difference=-449 (set threshold < -449 to detect touch)
+[18:00:34][D][esp32_touch:117]: Touch Pad 'Touch Pad' (T4): value=248544, benchmark=248460, difference=84 (set threshold < 84 to detect touch)
+[18:00:34][D][esp32_touch:117]: Touch Pad 'Touch Pad' (T4): value=247191, benchmark=247959, difference=-768 (set threshold < -768 to detect touch)
+
+# Touching - large positive differences
+[18:00:35][D][esp32_touch:117]: Touch Pad 'Touch Pad' (T4): value=491736, benchmark=252774, difference=238962 (set threshold < 238962 to detect touch)
+[18:00:36][D][esp32_touch:117]: Touch Pad 'Touch Pad' (T4): value=471999, benchmark=252774, difference=219225 (set threshold < 219225 to detect touch)
+```
+
+To determine the appropriate threshold value:
+
+1. Watch the **difference** values while not touching — these represent your noise floor (typically small values, ±2000 or less)
+1. Touch the pad and observe the difference values — these should be significantly larger (e.g., 200000+)
+1. Set your threshold to a value between the noise floor and the touched differences
+
+For example, based on the logs above:
+
+- Not touched: difference fluctuates around `-2000` to `+100`
+- Touched: difference is around `200000` to `240000`
+
+A threshold of `50000` to `100000` would reliably detect touches while ignoring noise.
+
 ## See Also
 
 - {{< docref "/components/binary_sensor" >}}
 - {{< apiref "esp32_touch/esp32_touch.h" "esp32_touch/esp32_touch.h" >}}
 - [esp-idf Touch Sensor API](https://esp-idf.readthedocs.io/en/latest/api-reference/peripherals/touch_pad.html)
+
