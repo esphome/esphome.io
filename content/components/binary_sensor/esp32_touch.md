@@ -332,4 +332,3 @@ A threshold of `50000` to `100000` would reliably detect touches while ignoring 
 - {{< docref "/components/binary_sensor" >}}
 - {{< apiref "esp32_touch/esp32_touch.h" "esp32_touch/esp32_touch.h" >}}
 - [esp-idf Touch Sensor API](https://esp-idf.readthedocs.io/en/latest/api-reference/peripherals/touch_pad.html)
-
