@@ -37,7 +37,7 @@ infrared:
     remote_receiver_id: ir_rx
 ```
 
-### Configuration variables
+## Configuration variables
 
 - **id** (**Required**, [ID](/guides/configuration-types#id)): Unique identifier for the IR/RF proxy instance.
 - **name** (*Optional*, string): The name of the IR/RF proxy instance.
