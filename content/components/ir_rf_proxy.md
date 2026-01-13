@@ -7,6 +7,9 @@ params:
     image: infrared.svg
 ---
 
+> [!IMPORTANT]
+> This component/platform is under active development; it may change in any number of ways.
+
 ESPHome's IR/RF proxy component works with Home Assistant to expand its remote control capabilities. This component
 provides a unified API-accessible interface for transmitting and receiving infrared and RF signals, acting as a bridge
 between Home Assistant (or other API clients) and ESPHome's existing [remote_receiver](/components/remote_receiver) and
@@ -19,15 +22,16 @@ Home Assistant's remote control features.
 
 ```yaml
 # Example configuration entry
-ir_rf_proxy:
+infrared:
   # IR transmitter instance
-  - id: living_room_ir
-    name: Living Room IR Transmitter
+  - platform: ir_rf_proxy
+    name: IR Proxy Transmitter
+    id: ir_proxy_tx
     remote_transmitter_id: ir_tx
-
   # IR receiver instance
-  - id: ir_learner
-    name: IR Receiver
+  - platform: ir_rf_proxy
+    name: IR Proxy Receiver
+    id: ir_proxy_rx
     remote_receiver_id: ir_rx
 ```
 
@@ -41,9 +45,10 @@ ir_rf_proxy:
 - **remote_receiver_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the
   [remote_receiver](/components/remote_receiver) component to use for receiving signals. Exactly one of
   `remote_transmitter_id` or `remote_receiver_id` must be specified.
-- **frequency** (*Optional*, int): The operating frequency in Hz. Set to a non-zero value for RF hardware. Defaults to
-  `0` (infrared). This value is used to distinguish between IR and RF hardware types and is passed to Home Assistant,
-  allowing it to identify integrations this IR/RF proxy instance can potentially support.
+- **frequency** (*Optional*, frequency): The operating frequency (for example, `433 MHz`, `315 MHz`, `900 MHz`). Set to
+  a non-zero value for RF hardware. Defaults to `0` (infrared). This value is used to distinguish between IR and RF
+  hardware types and is passed to Home Assistant, allowing it to identify integrations this IR/RF proxy instance can
+  potentially support.
 - **icon** (*Optional*, icon): Manually set the icon for this entity.
 - **entity_category** (*Optional*, string): The category of the entity. See
   <https://developers.home-assistant.io/docs/core/entity/#registry-properties> for a list of available options.
@@ -95,7 +100,7 @@ Reception is non-blocking, allowing other listeners to also process signals simu
 The IR/RF proxy can work with both infrared and RF hardware:
 
 - **Infrared**: Do not set `frequency` (or set `frequency: 0`, which is the default) and use standard IR LEDs/receivers
-- **RF**: Set `frequency` to match your RF hardware (for example, `315000000` for 315 MHz or `433920000` for 433.92 MHz)
+- **RF**: Set `frequency` to match your RF hardware (for example, `315 MHz` for 315 MHz or `433 MHz` for 433.92 MHz)
 
 You can create separate instances for different purposes:
 
