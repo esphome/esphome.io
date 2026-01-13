@@ -8,7 +8,9 @@ params:
 ---
 
 > [!IMPORTANT]
-> This component/platform is under active development; it may change in any number of ways.
+> This component is EXPERIMENTAL. The API may change at any time
+> without following the normal breaking changes policy. Use at your own risk.
+> Once the API is considered stable, this warning will be removed.
 
 ESPHome's IR/RF proxy component works with Home Assistant to expand its remote control capabilities. This component
 provides a unified API-accessible interface for transmitting and receiving infrared and RF signals, acting as a bridge
