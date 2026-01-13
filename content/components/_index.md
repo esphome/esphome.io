@@ -836,6 +836,17 @@ Components specifically for interacting with Home Assistant.
 "Voice Assistant","components/voice_assistant","voice-assistant.svg","dark-invert"
 {{< /imgtable >}}
 
+## Infrared
+
+Used for creating infrared (IR) remote control transmitters and/or receivers.
+
+{{< imgtable >}}
+"Infrared","components/infrared","remote.svg","dark-invert"
+"IR Remote Climate","components/climate/climate_ir","air-conditioner-ir.svg","dark-invert"
+"Remote Receiver","components/remote_receiver","remote.svg","dark-invert"
+"Remote Transmitter","components/remote_transmitter","remote.svg","dark-invert"
+{{< /imgtable >}}
+
 ## Light Components
 
 {{< imgtable >}}
