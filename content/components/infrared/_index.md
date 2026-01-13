@@ -90,10 +90,12 @@ Reception is non-blocking and can operate alongside other signal processing comp
 
 ## Platform Components
 
-TBD
+- [IR/RF Proxy](/components/ir_rf_proxy) - Bridges ESPHome's remote_transmitter/remote_receiver components
+  with the infrared API for runtime signal control
 
 ## See Also
 
+- [IR/RF Proxy](/components/ir_rf_proxy)
 - [Remote Transmitter](/components/remote_transmitter)
 - [Remote Receiver](/components/remote_receiver)
 - {{< apiref "infrared/infrared.h" "infrared/infrared.h" >}}

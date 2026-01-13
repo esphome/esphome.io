@@ -828,7 +828,6 @@ Components specifically for interacting with Home Assistant.
 {{< imgtable >}}
 "Binary Sensor","components/binary_sensor/homeassistant","home-assistant.svg","dark-invert"
 "Bluetooth Proxy","components/bluetooth_proxy","bluetooth.svg","dark-invert"
-"IR/RF Proxy","components/ir_rf_proxy","remote.svg","dark-invert"
 "micro Wake Word","components/micro_wake_word","voice-assistant.svg","dark-invert"
 "Number","components/number/homeassistant","home-assistant.svg","dark-invert"
 "Sensor","components/sensor/homeassistant","home-assistant.svg","dark-invert"
@@ -843,6 +842,7 @@ Used for creating infrared (IR) remote control transmitters and/or receivers.
 
 {{< imgtable >}}
 "Infrared Core","components/infrared/index","folder-open.svg","dark-invert"
+"IR/RF Proxy","components/ir_rf_proxy","remote.svg","dark-invert"
 {{< /imgtable >}}
 
 ## Light Components
