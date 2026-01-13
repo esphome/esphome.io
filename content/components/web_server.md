@@ -8,7 +8,7 @@ params:
 ---
 
 The `web_server` component creates a simple web server on the node that can be accessed
-through any browser and a simple [REST API](#api-rest). Please note that enabling this component
+through any browser and a simple [REST API](/web-api#api-rest). Please note that enabling this component
 will take up *a lot* of memory and may decrease stability, especially on ESP8266.
 
 {{< img src="web_server.png" alt="Image" caption="Web server version 1" width="86.0%" class="align-center" >}}
@@ -30,14 +30,14 @@ web_server:
 
 - **port** (*Optional*, int): The port the web server should open its socket on.
 - **css_url** (*Optional*, url): The URL that should be used for the CSS stylesheet. Defaults
-  to <https://esphome.io/_static/webserver-v1.min.css> (updates will go to `v2`, `v3`, etc). Can be set to empty string.
+  to <https://oi.esphome.io/v1/webserver-v1.min.css> (updates will go to `v2`, `v3`, etc). Can be set to empty string.
 
 - **css_include** (*Optional*, local file): Path to local file to be included in web server index page.
   Contents of this file will be served as `/0.css` and used as CSS stylesheet by internal webserver.
   Useful when building device without internet access, where you want to use built-in AP and webserver.
 
 - **js_url** (*Optional*, url): The URL that should be used for the JS script. Defaults
-  to <https://esphome.io/_static/webserver-v1.min.js>. Can be set to empty string.
+  to <https://oi.esphome.io/v1/webserver-v1.min.js>. Can be set to empty string.
 
 - **js_include** (*Optional*, local file): Path to local file to be included in web server index page.
   Contents of this file will be served as `/0.js` and used as JS script by internal webserver.
@@ -63,7 +63,7 @@ web_server:
   web server OTA platform, setting this to `false` prevents OTA access through the regular web interface while
   maintaining it for captive portal access. To enable OTA for web server, use the `web_server` OTA platform instead.
 
-- **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation.
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
 - **local** (*Optional*, boolean): Include supporting javascript locally allowing it to work without internet access.
   Defaults to `false`.
 
@@ -73,14 +73,14 @@ web_server:
 - **sorting_groups** (*Optional*, list): Available only on `version: 3`. A list of group ID's and names to group the
   entities. See [Webserver Entity Grouping](#config-webserver-grouping).
 
-  - **id** (**Required**, [ID](#config-id)): Manually specify the ID used for the group.
+  - **id** (**Required**, [ID](/guides/configuration-types#id)): Manually specify the ID used for the group.
   - **name** (**Required**, string): A string representing the group name which is displayed as the header of the group
   - **sorting_weight** (*Optional*, float): A float representing the weight of the group. A group with a smaller
 
   `sorting_weight` will be displayed first. Defaults to `50`
 
 To conserve flash size, the CSS and JS files used on the root page to show a simple user
-interface are hosted by esphome.io. If you want to use your own service, use the
+interface are externally hosted at oi.esphome.io. If you want to use your own service, use the
 `css_url` and `js_url` options in your configuration.
 
 > [!NOTE]
@@ -123,6 +123,9 @@ web_server:
     password: !secret web_server_password
 ```
 
+> [!IMPORTANT]
+> Always enable authentication when using the web server. See the [Security Best Practices](/guides/security_best_practices#2-web-server-authentication) guide for recommendations.
+
 Use version 1 user interface:
 
 ```yaml
@@ -155,7 +158,7 @@ captive_portal:
 
 ## Advanced usage
 
-The following assume copies of the files with local paths - which are config dependant.
+The following assume copies of the files with local paths - which are config dependent.
 
 Example `web_server` version 1 configuration with CSS and JS included from esphome-docs.
 CSS and JS URL's are set to empty value, so no internet access is needed for this device to show it's web interface.
@@ -276,7 +279,7 @@ By clicking on any sensor it will expand a graph with the historical values for 
 
 ## See Also
 
-- [Event Source API](#api-event-source)
-- [REST API](#api-rest)
+- [Event Source API](/web-api#api-event-source)
+- [REST API](/web-api#api-rest)
 - {{< apiref "web_server/web_server.h" "web_server/web_server.h" >}}
 - {{< docref "prometheus/" >}}

@@ -39,7 +39,7 @@ logger:
    when `logs` is configured or when `logger.set_level` is used with a `tag` parameter. Only needs to be manually
    enabled if calling `set_log_level()` from a lambda or external component. Defaults to `false` (auto-enabled as needed).
 
-- **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation.
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
 
 Advanced settings:
 
@@ -57,7 +57,7 @@ Advanced settings:
 - **esp8266_store_log_strings_in_flash** (*Optional*, boolean): If set to false, disables storing
    log strings in the flash section of the device (uses more memory). Defaults to true.
 
-- **on_message** (*Optional*, [Automation](#automation)): An action to be
+- **on_message** (*Optional*, [Automation](/automations)): An action to be
    performed when a message is to be logged. The variables `int level`, `const char* tag` and
    `const char* message` are available for lambda processing.
 
@@ -84,19 +84,20 @@ so if you use any other configuration you will not get log messages over the on-
 
 ### Default UART GPIO Pins
 
-|          | `UART0`        | `UART0_SWAP`   | `UART1`        | `UART2`        | `USB_CDC` | `USB_SERIAL_JTAG` |
-| -------- | -------------- | -------------- | -------------- | -------------- | --------- | ----------------- |
-| ESP8266  | TX: 1, RX: 3   | TX: 15, RX: 13 | TX: 2, RX: N/A | N/A            | N/A       | N/A               |
-| ESP32    | TX: 1, RX: 3   | N/A            | TX: 10, RX: 9  | TX: 17, RX: 16 | N/A       | N/A               |
-| ESP32-C3 | TX: 21, RX: 20 | N/A | Undefined | N/A | N/A | 18/19 |
-| ESP32-C5 | TX: 10, RX: 11 | N/A | Undefined | N/A | N/A | 13/14 |
-| ESP32-C6 | TX: 16, RX: 17 | N/A | Undefined | N/A | N/A | 12/13 |
-| ESP32-P4 | TX: 37, RX: 38 | N/A | TX: 10, RX: 11 | N/A | N/A | 24/25 |
-| ESP32-S2 | TX: 43, RX: 44 | N/A | TX: 17, RX: 18 | N/A | 19/20 | N/A |
-| ESP32-S3 | TX: 43, RX: 44 | N/A | TX: 17, RX: 18 | Undefined | 19/20 | 19/20 |
-| NRF52    | pins varies by board | N/A | pins varies by board | Undefined | D+/D- | N/A |
+| Variant   | `UART0`        | `UART0_SWAP`   | `UART1`        | `UART2`        | `USB_CDC` | `USB_SERIAL_JTAG` |
+| --------- | -------------- | -------------- | -------------- | -------------- | --------- | ----------------- |
+| ESP8266   | TX: 1, RX: 3   | TX: 15, RX: 13 | TX: 2, RX: N/A | N/A            | N/A       | N/A               |
+| ESP32     | TX: 1, RX: 3   | N/A            | TX: 10, RX: 9  | TX: 17, RX: 16 | N/A       | N/A               |
+| ESP32-C3  | TX: 21, RX: 20 | N/A            | Undefined      | N/A            | N/A       | 18/19             |
+| ESP32-C5  | TX: 10, RX: 11 | N/A            | Undefined      | N/A            | N/A       | 13/14             |
+| ESP32-C6  | TX: 16, RX: 17 | N/A            | Undefined      | N/A            | N/A       | 12/13             |
+| ESP32-C61 | TX: 5, RX: 4   | N/A            | Undefined      | N/A            | N/A       | 12/13             |
+| ESP32-P4  | TX: 37, RX: 38 | N/A            | TX: 10, RX: 11 | N/A            | N/A       | 24/25             |
+| ESP32-S2  | TX: 43, RX: 44 | N/A            | TX: 17, RX: 18 | N/A            | 19/20     | N/A               |
+| ESP32-S3  | TX: 43, RX: 44 | N/A            | TX: 17, RX: 18 | Undefined      | 19/20     | 19/20             |
+| NRF52     | pins varies by board | N/A      | pins varies by board | Undefined | D+/D-    | N/A               |
 
-*Undefined* means that the logger component cannot use this harware UART at this time.
+*Undefined* means that the logger component cannot use this hardware UART at this time.
 
 {{< anchor "logger-default_hardware_interfaces" >}}
 
@@ -107,18 +108,19 @@ hardware interfaces for logging. Many newer boards based on ESP32 variants (such
 are using the ESP's on-board USB hardware peripheral while boards based on older processors (such as
 the original ESP32 or ESP8266) continue to use USB-to-serial bridge ICs for communication.
 
-|          | Interface |
-| -------- | --------- |
-| ESP8266  | `UART0`   |
-| ESP32    | `UART0`   |
-| ESP32-C3 | `USB_SERIAL_JTAG` |
-| ESP32-C5 | `USB_SERIAL_JTAG` |
-| ESP32-C6 | `USB_SERIAL_JTAG` |
-| ESP32-P4 | `USB_SERIAL_JTAG` |
-| ESP32-S2 | `USB_CDC`         |
-| ESP32-S3 | `USB_SERIAL_JTAG` |
-| RP2040   | `USB_CDC` |
-| NRF52    | `USB_CDC` |
+| Variant   | Interface         |
+| --------- | ----------------- |
+| ESP8266   | `UART0`           |
+| ESP32     | `UART0`           |
+| ESP32-C3  | `USB_SERIAL_JTAG` |
+| ESP32-C5  | `USB_SERIAL_JTAG` |
+| ESP32-C6  | `USB_SERIAL_JTAG` |
+| ESP32-C61 | `USB_SERIAL_JTAG` |
+| ESP32-P4  | `USB_SERIAL_JTAG` |
+| ESP32-S2  | `USB_CDC`         |
+| ESP32-S3  | `USB_SERIAL_JTAG` |
+| RP2040    | `USB_CDC`         |
+| NRF52     | `USB_CDC`         |
 
 {{< anchor "logger-log_levels" >}}
 
@@ -126,42 +128,18 @@ the original ESP32 or ESP8266) continue to use USB-to-serial bridge ICs for comm
 
 Possible log levels are (sorted by severity):
 
-- `NONE`
+| Level              | Color  | Description |
+| ------------------ | ------ | ----------- |
+| `NONE`             |        | No messages are logged. |
+| `ERROR`            | Red    | Only errors are logged. Errors prevent the ESP from working correctly. |
+| `WARN`             | Yellow | Warnings and errors. Warnings are recoverable issues like invalid sensor readings. |
+| `INFO`             | Green  | Errors, warnings and info messages are logged. |
+| `DEBUG` (default)  | Cyan   | Everything up to debug. Includes sensor readings and status messages. |
+| `VERBOSE`          | Gray   | Like debug, but includes additional messages usually deemed to be spam. |
+| `VERY_VERBOSE`     | White  | All internal messages including data flowing through I²C, SPI and UART buses. |
 
-- No messages are logged.
-
-- `ERROR`
-
-- With this log level, only errors are logged. Errors are issues that prevent the ESP from working
-
-    correctly. Color: red
-
-- `WARN`
-
-- With this log level, warnings and errors are logged. Warnings are issues like invalid readings from
-
-    sensors that ESPHome can recover from. Color: yellow
-
-- `INFO`
-
-- With this log level, everything up to info messages are logged; so errors, warnings and info. Color: green
-
-- `DEBUG` (**Default**)
-
-- Everything up to this log level is logged. Debug messages include the current readings from a sensor
-
-    and status messages. Color: cyan
-
-- `VERBOSE`
-
-- Like debug, but a few more messages that are usually deemed to be spam are also included. Color: grey
-
-- `VERY_VERBOSE`
-
-- All internal messages are logged. Including all the data flowing through data buses like
-
-    I²C, SPI or UART. Warning: May cause the device to slow down and have trouble staying
-    connecting due to amount of generated messages. Color: white
+> [!WARNING]
+> Using `VERY_VERBOSE` can significantly impact device performance and may cause connection instability.
 
 {{< anchor "logger-manual_tag_specific_levels" >}}
 
@@ -206,7 +184,7 @@ However, the `wifi` tag has `VERBOSE` level enabled, and shown.
 
 Print a formatted message to the logs.
 
-In the `format` option, you can use `printf`  -style formatting (see [Formatted Text](#display-printf)).
+In the `format` option, you can use `printf`  -style formatting (see [Formatted Text](/components/display#display-printf)).
 
 ```yaml
 on_...:
@@ -221,8 +199,8 @@ on_...:
 
 Configuration options:
 
-- **format** (**Required**, string): The format for the message in [printf-style](#display-printf).
-- **args** (*Optional*, list of [lambda](#config-lambda)): The optional arguments for the
+- **format** (**Required**, string): The format for the message in [printf-style](/components/display#display-printf).
+- **args** (*Optional*, list of [lambda](/automations/templates#config-lambda)): The optional arguments for the
    format message.
 
 - **level** (*Optional*, string): The [log level](#logger-log_levels) to print the message
@@ -260,7 +238,7 @@ on_...:
 ### `on_message`
 
 This automation will be triggered when a new message is added to the log.
-In [lambdas](#config-lambda) you can get the message, log level and tag from the trigger
+In [lambdas](/automations/templates#config-lambda) you can get the message, log level and tag from the trigger
 using `message` (`const char *`  ), `level` (`int`  ) and `tag` (`const char *`  ).
 
 ```yaml

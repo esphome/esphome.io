@@ -29,7 +29,7 @@ Configuration variables:
 - **name** (*Optional*, string): The name of the media player. At least one of **id** and **name** must be specified.
 
 > [!NOTE]
-> If you have a [friendly_name](#esphome-configuration_variables) set for your device and
+> If you have a [friendly_name](/components/esphome#esphome-configuration_variables) set for your device and
 > you want the media player to use that name, you can set `name: None`.
 
 - **icon** (*Optional*, icon): Manually set the icon to use for the
@@ -58,7 +58,7 @@ The actions `turn_off` and `turn_on` are optional and based on the platform impl
 
 Configuration variables:
 
-**id** (*Optional*, [ID](#config-id)): The media player to control. Defaults to the only one in YAML.
+**id** (*Optional*, [ID](/guides/configuration-types#id)): The media player to control. Defaults to the only one in YAML.
 
 {{< anchor "media_player-play" >}}
 

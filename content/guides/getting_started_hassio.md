@@ -49,11 +49,21 @@ Installation of the add-on may take a moment or two. Once done, click "Start" an
 
 > [!NOTE]
 > If you're running Home Assistant in a way that does not provide access to add-ons, you may
-> [run the ESPHome Device Builder independently in Docker](#esphome-device-builder-docker).
+> [run the ESPHome Device Builder independently in Docker](/guides/getting_started_command_line#esphome-device-builder-docker).
 
 The web UI will present a wizard which will walk you through creating your first configuration:
 
 {{< img src="dashboard_empty.png" alt="Image" width="95.0%" class="align-center" >}}
+
+The wizard begins by asking you how you'd like to create your configuration. You have three options:
+
+- **New Device Setup**: The wizard guides you through platform selection, board configuration, and Wi-Fi
+  setup to create a basic working configuration.
+- **Import from File**: Upload an existing ESPHome configuration file (.yaml or .yml). This is useful for
+  restoring backups and migrating configurations. You can browse for files or drag and drop them directly
+  onto the dialog.
+- **Empty Configuration**: Creates a minimal configuration file for advanced users who prefer to write
+  their own configuration from scratch or paste from [devices.esphome.io](https://devices.esphome.io/).
 
 After creating your first configuration, you'll need to install it on your device.
 
@@ -197,3 +207,4 @@ a new issue on the [GitHub issue tracker](https://github.com/esphome/esphome/iss
 
 - {{< docref "/index" "ESPHome index" >}}
 - {{< docref "getting_started_command_line/" >}}
+- {{< docref "security_best_practices" >}}

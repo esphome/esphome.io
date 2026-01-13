@@ -8,7 +8,7 @@ params:
 ---
 
 The `ble_rssi` sensor platform lets you track the RSSI value or signal strength of a
-BLE device. See [the binary sensor setup](#esp32_ble_tracker-setting_up_devices) for
+BLE device. See [the binary sensor setup](/components/binary_sensor/ble_presence#esp32_ble_tracker-setting_up_devices) for
 instructions for setting up this platform.
 
 > [!WARNING]
@@ -70,7 +70,7 @@ sensor:
 - **ibeacon_minor** (*Optional*, int): The iBeacon minor identifier of the beacon that needs
   to be tracked. Usually used to identify beacons within an iBeacon group.
 
-- All other options from [Sensor](#config-sensor).
+- All other options from [Sensor](/components/sensor).
 
 ## See Also
 

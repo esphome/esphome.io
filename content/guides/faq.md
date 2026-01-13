@@ -9,88 +9,79 @@ params:
 
 ## Which ESP should I use for my project?
 
-We're asked this *all the time.* As with all things engineering, "it depends". Based on the current state of hardware
-support within ESPHome, here's what we suggest:
+We're asked this *all the time.* As with all things engineering, "it depends". ESP32 is the leading platform where
+most new development happens. Based on the current state of hardware support within ESPHome, here's what we suggest:
 
 ### Recommended
 
-- **ESP32**
+- **ESP32 (original, non-variant)**
 
-  - Best supported/most mature
+  - Best supported/most mature.
   - Includes a great set of built-in hardware peripherals, so it's very capable and very flexible.
+  - Best choice for wired Ethernet connections thanks to its built-in Ethernet MAC,
+    which connects directly to a PHY chip. Other variants require SPI-based Ethernet controllers, adding latency.
 
 - **ESP32-S3**
 
   - An update to the original ESP32 with a slightly modified set of hardware peripherals.
-  - Has a built-in USB peripheral/interface (as opposed to relying on an external USB-to-serial chip)
+  - Has a built-in USB peripheral/interface (as opposed to relying on an external USB-to-serial chip).
   - Has instruction set extensions which make it a better fit for applications which require some form of machine
-    learning ({{< docref "/components/micro_wake_word" >}}, for example).
+    learning ([Micro Wake Word](/components/micro_wake_word), for example).
+  - Best choice if you need raw compute power, with better overall performance and lower latency.
 
 - **ESP32-C3**
 
   - Generally intended ([per Espressif](https://www.espressif.com/en/news/ESP32_C3)) to replace the well-known ESP8266.
-  - Use if:
+  - A good choice for simpler projects: single-core RISC-V, fewer GPIO pins, but lower cost and power consumption
+    than the dual-core ESP32(-Sx) variants.
 
-    - You're worried that the ESP32(-Sx) is "too powerful".
-    - You need a lower-power device than the ESP32(-Sx) family offers.
+- **ESP32-C6**
 
-### Not Recommended
+  - Similar to the ESP32-C3 with additional connectivity options including Thread (via OpenThread).
+  - A good choice for new projects.
+
+### Not Recommended for New Projects
 
 - **ESP8266**
 
-  - It's over ten years old and is *quite lacking* in terms of built-in hardware peripherals.
-  - Use an ESP32-C3 when you're thinking you need to use an ESP8266 because the ESP32(-Sx) is "too powerful" or
-    "overkill".
+  For new projects, we recommend the ESP32-C3 instead at a similar price point. Compared with ESP8266, all ESP32
+  variants have:
 
-  - Does not meet the requirements of {{< docref "/guides/made_for_esphome" >}}.
-  - The original NodeMCU, D1-Mini and ESP-01 are examples of boards which utilize an ESP8266; note that there are
-    (pin-compatible) versions of these boards available which instead utilize a more modern ESP32 or variant.
+  - Roughly 5x the amount of RAM. Some components such as large displays and
+    [some sensors](/components/sensor/bme68x_bsec2) may not work well on ESP8266.
+  - Significantly more flash memory. Most ESP8266 boards have 1-2 MB, while most ESP32 variants have 4 MB or more.
+  - More GPIO pins and a better set of hardware peripherals.
 
-### Additional Considerations
+  The ESP8266 does not meet the requirements of [Made for ESPHome](/guides/made_for_esphome).
 
-- These recommendations are primarily for people who are starting from scratch and/or are new to ESPHome.
-- A lot of people already have a drawer full of ESP8266 boards -- we're not trying to stop you from using them! That
-  said, *don't buy any more of them* and *consider our recommendations above* as you buy new devices. 😉
+  The original NodeMCU, D1-Mini, and ESP-01 are examples of boards which utilize an ESP8266. Note that there are
+  pin-compatible versions of these boards available which use a more modern ESP32 variant instead.
 
-- *"...But the [ESP8266 board] is cheaper!!!"*...well, you get what you pay for. Compared with the ESP8266, all ESP32s
-  and variants have:
+  That said, **existing ESP8266 devices work well and will continue to be supported for years to come.** Recent
+  memory optimizations have significantly improved available heap on ESP8266, making devices that were previously
+  unreliable now stable. If your ESP8266 devices are working, there's no need to replace them.
 
-  - a better, more complete set of hardware peripherals, keeping the processor core(s) free to maximize performance.
-  - more GPIO pins.
-  - roughly 5x the amount of RAM.
+### LibreTiny (BK72xx, RTL87xx, LN882x)
 
-    - Some components require more RAM than is available on the ESP8266 -- (large) displays and
-      {{< docref "/components/sensor/bme68x_bsec2" "some sensors" >}} are known to regularly provoke issues/crashes
-      on ESP8266s.
+If you have an off-the-shelf smart home device with a Beken, Realtek, or Lightning Semi chip,
+[LibreTiny](/components/libretiny) makes it possible to run ESPHome on it. These chips are typically
+not purchased directly. Instead, users flash existing devices that contain them.
 
-    - Workarounds are often available, but it's not reasonable to assume that a given workaround will work forever,
-      especially if you *want* to update your devices regularly but depend on
-      {{< docref "/components/sensor/bme68x_bsec2" "vendor-provided/maintained libraries for some functionality" >}}.
+LibreTiny support has matured significantly and these devices generally work well. However, LibreTiny is not as
+mature as ESP8266 or ESP32 support.
 
-  - significantly more flash memory.
+### Other Microcontrollers
 
-    - Most ESP8266 boards have just 1 or 2 MBs; meanwhile...
-    - Most ESP32s and variants have at least 4 MBs, but some have 8, 16 or even 32 MBs!
+Support for ESP32-H2, RP2040, and other newer chips is less mature, so you're more likely to run into
+problems with these. We recommend the chips listed above for the best ESPHome experience.
 
-    More RAM and/or flash memory means you can have bigger/more complex ESPHome configurations.
-
-  If saving a dollar or so on a cheaper microcontroller is tempting, keep in mind that *you'll just have to buy yet
-  another, different/"better" board when you realize that the cheaper one doesn't meet the needs of your project(s).*
-  This approach ultimately ends up costing **more.** If you *can*, spend that little bit extra to get a board which
-  will have better longevity and work for more of your projects!
-
-- *What about the ESP32-C6/ESP32-H2/[latest Espressif chip]/RP2040/RP2350?*
-
-  - Support for these is less mature so you're more likely to run into problems with these devices.
-  - We recommend sticking to the microcontrollers we've recommended above for the best ESPHome experience.
-
-- We'll update our recommendations here as support is added/matures for newer microcontrollers.
+We'll update our recommendations here as support matures for newer microcontrollers.
 
 {{< anchor "faq-usb_installation" >}}
 
 ## How do I install ESPHome onto my device?
 
-You can use the [ESPHome Device Builder](#installing-esphome-device-builder) directly; after editing your device's
+You can use the [ESPHome Device Builder](/guides/getting_started_hassio#installing-esphome-device-builder) directly; after editing your device's
 configuration to your liking, click "INSTALL" and follow the prompts. Note that the first time you install ESPHome onto
 a (new) device, you need to connect it with a (USB) cable; this installation method requires a browser that supports
 WebSerial, like Google Chrome or Microsoft Edge.
@@ -110,7 +101,7 @@ If you prefer the more manual way:
      1. Select "Install"
      1. Choose "Manual download"
 
-1. On some boards, you may need to force the microcontroller into its [programming mode](#esphome-phy-con-prg).
+1. On some boards, you may need to force the microcontroller into its [programming mode](/guides/physical_device_connection#esphome-phy-con-prg).
    This often isn't necessary on most modern boards/devices, but it's worth trying if you're experiencing difficulties.
 
 1. Finally, to install a firmware file, you can use:
@@ -119,7 +110,7 @@ If you prefer the more manual way:
 
        browser that supports WebSerial, like Google Chrome or Microsoft Edge.
 
-       1. Connect the board to your computer, make sure it's detected as a [serial port](#esphome-phy-con-drv) and
+       1. Connect the board to your computer, make sure it's detected as a [serial port](/guides/physical_device_connection#esphome-phy-con-drv) and
           click **Connect**.
 
        1. If prompted, allow your browser the requested permission in the pop-up box that appears.
@@ -176,7 +167,7 @@ There are a number of reasons this may happen.
   they are not capable of establishing the data connection required to communicate with your board.
 
 - ESPHome depends on your computer's operating system (OS) to enable the programming tool (`esptool.py`, for example)
-  to communicate with your microcontroller board; you may need to [install appropriate drivers](#esphome-phy-con-drv).
+  to communicate with your microcontroller board; you may need to [install appropriate drivers](/guides/physical_device_connection#esphome-phy-con-drv).
 
 - If you're trying to install ESPHome onto your device from within a Docker container, be sure you are mounting the
   device into your container using `--device=/dev/ttyUSB0`.
@@ -276,7 +267,7 @@ If you *still* can't get it to work, you might want to revisit
 That's no good. Here are some steps that resolve some problems:
 
 - **If you're having Wi-Fi problems**: See [My node keeps reconnecting randomly](#wifi-problems).
-- [Enable verbose logs](#logger-log_levels) in your ESPHome device's `logger:` section.
+- [Enable verbose logs](/components/logger#logger-log_levels) in your ESPHome device's `logger:` section.
 - **If your device is crashing**: See the {{< docref "/guides/troubleshooting" >}} guide for how to get a backtrace.
 - **Still seeing an error?** Check if there is a known issue in the
   [ESPHome issue tracker](https://github.com/esphome/esphome/issues). If not, you can create a new issue to describe
@@ -302,7 +293,7 @@ If you want the issue you're experiencing to be fixed quickly:
   Please read [How to create a Minimal, Complete, and Verifiable example](https://stackoverflow.com/help/mcve).
 
 - If it's a hardware communication issue (such as with an I²C or SPI device), try setting the
-  [log level](#logger-log_levels) to `VERY_VERBOSE` as it may provide better insight into what is going on.
+  [log level](/components/logger#logger-log_levels) to `VERY_VERBOSE` as it may provide better insight into what is going on.
 
 - Please describe what troubleshooting steps you've already tried as that may also help us track down the issue.
 
@@ -416,9 +407,9 @@ Here are some steps that may help mitigate the issue:
 - If you're using a hidden Wi-Fi network, make sure to enable `fast_connect` mode in your device's Wi-Fi
   configuration. Note that this may help with non-hidden networks, as well.
 
-- Give your ESPHome device a [static IP](#wifi-manual_ip).
+- Give your ESPHome device a [static IP](/components/wifi#wifi-manual_ip).
 - Set the `power_save_mode` to `light` in your `wifi:` configuration. Note, however, that this may exacerbate the
-  problem in some situations. See [Power Save Mode](#wifi-power_save_mode).
+  problem in some situations. See [Power Save Mode](/components/wifi#wifi-power_save_mode).
 
 - The issue seems to happen with "cheap" boards more frequently -- especially the "cheap" NodeMCU boards from eBay
   which sometimes have bad antennas.
@@ -441,7 +432,7 @@ Here are some steps that may help mitigate the issue:
 
 - Too many clients simultaneously connected to the native API server on the device may also result in this behavior.
   For example, the Home Assistant ESPHome integration and the log viewer on the
-  [ESPHome Device Builder](#installing-esphome-device-builder) each establish a connection to the device. In
+  [ESPHome Device Builder](/guides/getting_started_hassio#installing-esphome-device-builder) each establish a connection to the device. In
   production, you will likely only have a single connection from Home Assistant, making this less of an issue. Still,
   beware that attaching a log viewer might have an impact.
 
@@ -531,7 +522,7 @@ services:
 
 > [!NOTE]
 > By default, ESPHome uses mDNS to resolve device IPs on the network; this is used to determine online/offline state
-> in the [ESPHome Device Builder](#installing-esphome-device-builder). In order for this feature to work, you
+> in the [ESPHome Device Builder](/guides/getting_started_hassio#installing-esphome-device-builder). In order for this feature to work, you
 > must use Docker's host networking mode.
 >
 > The [host networking driver](https://docs.docker.com/network/drivers/host/) only works on Linux hosts; it is
@@ -546,7 +537,7 @@ services:
 > 1. Enable Avahi on both subnets (install Avahi modules on OpenWRT or pfSense).
 > 1. Enable UDP traffic from your ESPHome device's subnet to 224.0.0.251/32 on port 5353.
 >
-> Alternatively, you can configure the [ESPHome Device Builder](#installing-esphome-device-builder) to use ICMP
+> Alternatively, you can configure the [ESPHome Device Builder](/guides/getting_started_hassio#installing-esphome-device-builder) to use ICMP
 > pings to check the status of devices by setting `"status_use_ping": true` or, with Docker:
 > `-e ESPHOME_DASHBOARD_USE_PING=true`
 >
@@ -559,7 +550,7 @@ services:
 Some of ESPHome's functionality relies on {{< docref "/components/mdns" "mDNS" >}}, so, naturally, disabling it will
 cause these features to stop working.
 
-Generally speaking, disabling mDNS without setting a [static IP address](#wifi-manual_ip) (or a static DHCP lease)
+Generally speaking, disabling mDNS without setting a [static IP address](/components/wifi#wifi-manual_ip) (or a static DHCP lease)
 is bound to cause problems -- mDNS is used to determine the IP address of each ESPHome node.
 
 If you disable mDNS, expect the following repercussions:
@@ -570,7 +561,7 @@ If you disable mDNS, expect the following repercussions:
   mDNS disabled, then you will have to use a static IP address and manually add the ESPHome component with its
   (static) IP address.
 
-- Because status detection in the [ESPHome Device Builder](#installing-esphome-device-builder) uses mDNS by
+- Because status detection in the [ESPHome Device Builder](/guides/getting_started_hassio#installing-esphome-device-builder) uses mDNS by
   default, nodes with mDNS disabled will always appear as "offline". This does not affect any functionality; however,
   if you want to see the online/offline status of your nodes, you may configure the ESPHome Device Builder to ping each
   node instead. See the [notes in the Docker Reference section](#docker-reference-notes) for more information.
@@ -651,6 +642,10 @@ label on GitHub.
 The {{< docref "/components/deep_sleep" "Deep Sleep" >}} component needs to be present within your device's
 configuration when the device is first added to Home Assistant. To prevent entities from appearing as "unavailable",
 you can remove and re-add the device in Home Assistant.
+
+## How do I secure my ESPHome devices?
+
+See the comprehensive {{< docref "security_best_practices" >}} guide for detailed recommendations on API encryption, OTA passwords, network segmentation, physical security, and more.
 
 ## See Also
 
