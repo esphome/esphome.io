@@ -39,8 +39,6 @@ infrared:
 
 ### Configuration variables
 
-- **id** (**Required**, [ID](/guides/configuration-types#id)): Unique identifier for the IR/RF proxy instance.
-- **name** (*Optional*, string): The name of the IR/RF proxy instance.
 - **remote_transmitter_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the
   [remote_transmitter](/components/remote_transmitter) component to use for sending signals. Exactly one of
   `remote_transmitter_id` or `remote_receiver_id` must be specified.
@@ -51,10 +49,8 @@ infrared:
   a non-zero value for RF hardware. Defaults to `0` (infrared). This value is used to distinguish between IR and RF
   hardware types and is passed to Home Assistant, allowing it to identify integrations this IR/RF proxy instance can
   potentially support.
-- **icon** (*Optional*, icon): Manually set the icon for this entity.
-- **entity_category** (*Optional*, string): The category of the entity. See
-  <https://developers.home-assistant.io/docs/core/entity/#registry-properties> for a list of available options.
-- **disabled_by_default** (*Optional*, boolean): If the entity should be disabled by default. Defaults to `false`.
+
+  All other configuration variables from [infrared](/components/infrared/index).
 
 > [!NOTE]
 > When configuring a transmitter for infrared (`frequency: 0` or not set), ensure the linked `remote_transmitter` has
@@ -116,4 +112,3 @@ You can create separate instances for different purposes:
 - [Remote Transmitter](/components/remote_transmitter)
 - [Remote Receiver](/components/remote_receiver)
 - {{< apiref "ir_rf_proxy/ir_rf_proxy.h" "ir_rf_proxy/ir_rf_proxy.h" >}}
-- [Home Assistant Remote Integration](https://www.home-assistant.io/integrations/remote/)
