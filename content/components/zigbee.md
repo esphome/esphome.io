@@ -124,7 +124,7 @@ sensor:
 
 ### Switch Configuration
 
-All switchs with a `name` are automatically exposed over Zigbee.
+All switches with a `name` are automatically exposed over Zigbee.
 
 ```yaml
 switch:
