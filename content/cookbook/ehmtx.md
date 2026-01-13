@@ -4,13 +4,13 @@ title: "ehmtx a matrix status display"
 params:
   seo:
     description: A simple DIY status display, build with a flexible 8x32 RGB LED panel.
-    image: ehmtx-full.jpg
+    image: ehmtx.jpg
 ---
 
 Based on a cheap 8x32 RGB matrix you can build flexible status displays for all kind of informations. It is expandable
 with sensors etc.
 
-{{< img src="ehmtx-full.jpg" alt="Image" width="40%" class="align-center" >}}
+{{< img src="ehmtx.jpg" alt="Image" width="40%" class="align-center" >}}
 
 ## Introduction
 
