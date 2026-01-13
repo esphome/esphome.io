@@ -50,7 +50,7 @@ infrared:
   hardware types and is passed to Home Assistant, allowing it to identify integrations this IR/RF proxy instance can
   potentially support.
 
-  All other configuration variables from [infrared](/components/infrared/index).
+  All other configuration variables from [infrared](/components/infrared).
 
 > [!NOTE]
 > When configuring a transmitter for infrared (`frequency: 0` or not set), ensure the linked `remote_transmitter` has
