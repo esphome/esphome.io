@@ -59,13 +59,6 @@ Configuration variables:
   See <https://developers.home-assistant.io/docs/core/entity/#generic-properties>
   for a list of available options. Set to `""` to remove the default entity category.
 
-- If Webserver enabled and version 3 is selected, all other options from Webserver Component. See
-  [Webserver Version 3](/components/web_server#config-webserver-version-3-options).
-
-MQTT options:
-
-- All other options from [MQTT Component](/components/mqtt#config-mqtt-component).
-
 ## How It Works
 
 The infrared component operates using raw timing sequences, which represent alternating mark (signal on)
