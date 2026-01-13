@@ -37,7 +37,7 @@ infrared:
     remote_receiver_id: ir_rx
 ```
 
-### Configuration variables
+## Configuration variables
 
 - **remote_transmitter_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the
   [remote_transmitter](/components/remote_transmitter) component to use for sending signals. Exactly one of
