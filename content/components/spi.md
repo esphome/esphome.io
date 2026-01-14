@@ -33,7 +33,7 @@ output lines. This is required only for use with certain components.
 > [!NOTE]
 >
 > - Software mode supports only single-bit SPI.
-> - Quad mode SPI is available only on on ESP32 devices (all variants).
+> - Quad mode SPI is available only on ESP32 devices (all variants).
 > - Octal mode is available only on ESP32-S3, -S2 and -P4 variants.
 
 To set up SPI devices in ESPHome, you first need to place a top-level SPI component which defines the pins to
@@ -154,7 +154,7 @@ spi_device:
 
 - **bit_order** (*Optional*): Set the bit order - choose one of `msb_first` (default) or `lsb_first`.
 - **cs_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The CS pin.
-- **release_device** (*Optional*, boolean): For ESP-IDF, release the bus device between transactions. Default isk
+- **release_device** (*Optional*, boolean): For ESP-IDF, release the bus device between transactions. The default is
   `False`. Setting this to `True` will enable more than 6 devices to be connected to hardware SPI buses.
 
 - **interface** (*Optional*): Controls which hardware or software SPI implementation should be used.
