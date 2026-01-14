@@ -77,9 +77,10 @@ The following components are exposed over Zigbee if they have a name and if they
 
 - [Sensor](/components/sensor#config-sensor): **state**, **name** and **unit_of_measurement** are exposed
 over Zigbee. If no unit is given or if it is not support it will fall back to unitless.
-
 > [!NOTE]
 > Units are only supported by **ZHA**, but not by **Zigbee2MQTT**.
+
+- [Switch](/components/switch#config-switch): only **state** and **name** are exposed over Zigbee.
 
 ## Component Implementation Details
 
@@ -110,21 +111,14 @@ the unit of the component is used and if the component does not set a unit, valu
   Only a limited set of units is supported. Unsupported units will revert to unitless.
   This is exposed as the Zigbee engineering units attribute.
 
-### Switch Configuration
+### Switch
 
-All switches with a `name` are automatically exposed over Zigbee.
-
-```yaml
-switch:
-  - platform: template
-    name: "Template Switch"
-    optimistic: true
-```
+[Switches](/components/switch#config-switch) are implemented as binary ouput clusters with description and present_value attributes.
 
 #### Configuration variables
 
 - **name** (**Required**, string): The name for the switch. This is exposed as the
-  Zigbee endpoint description.
+  Zigbee description attribute.
 - **internal** (*Optional*, boolean): Mark this component as internal. Internal components will
   not be exposed over Zigbee. Only specifying an `id` without a `name` will implicitly set this to true.
   Use this if you run out of Zigbee endpoints.
