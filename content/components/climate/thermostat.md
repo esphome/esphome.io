@@ -361,9 +361,11 @@ to activate humidification **or** dehumidification.
 - **use_single_point** (*Optional*, boolean): When set to `true`, forces the thermostat to operate in
   single-point mode even when both `heat_action` and `cool_action` are configured. This is useful for systems
   that can both heat and cool but should present a simplified single set point interface to the user, similar
-  to a traditional home thermostat. When enabled, the `heat_cool_mode` climate mode is disabled and the
-  thermostat will only heat or cool (not both) based on the current climate mode. Presets should specify
-  either `default_target_temperature_low` or `default_target_temperature_high` (but not both). Defaults to `false`.
+  to a traditional home thermostat. When enabled, the `heat_cool` climate mode is disabled and the
+  thermostat will only heat or cool (not both) based on the current climate mode. For presets that should start
+  the thermostat in a heating mode, set `default_target_temperature_low`; for presets that should start in a
+  cooling mode, set `default_target_temperature_high`. Each preset should set at most one of these fields (not
+  both). Defaults to `false`.
 
 {{< anchor "thermostat-preset" >}}
 
