@@ -25,10 +25,11 @@ This component can operate in one of two ways:
   the controller is able to both raise and lower the temperature as required.
 
 This component/controller automatically determines which mode it should operate in based on what [actions](/automations/actions#all-actions)
-are configured -- more on this in a moment. Two parameters define the set points; they are `target_temperature_low` and
-`target_temperature_high`. In single-point mode, however, only one is used. The set point(s) may be adjusted through the
-front-end user interface. The screenshot below illustrates a thermostat controller in dual-point mode, where two set points
-are available.
+are configured -- more on this in a moment. This behavior can be overridden using the `use_single_point` configuration
+option, which forces single-point mode even when both heating and cooling actions are configured. Two parameters define
+the set points; they are `target_temperature_low` and `target_temperature_high`. In single-point mode, however, only one
+is used. The set point(s) may be adjusted through the front-end user interface. The screenshot below illustrates a
+thermostat controller in dual-point mode, where two set points are available.
 
 {{< img src="climate-ui.png" alt="Image" caption="Dual-setpoint climate UI" width="60.0%" class="align-center" >}}
 
@@ -105,6 +106,38 @@ climate:
       - name: Home
         default_target_temperature_high: 22 °C
 ```
+
+```yaml
+# Example single-point configuration with both heating and cooling capability
+# Using use_single_point to force single set point interface
+climate:
+  - platform: thermostat
+    name: "Thermostat Climate Controller"
+    sensor: my_temperature_sensor
+    use_single_point: true
+    min_cooling_off_time: 300s
+    min_cooling_run_time: 300s
+    min_heating_off_time: 300s
+    min_heating_run_time: 300s
+    min_idle_time: 30s
+    cool_action:
+      - switch.turn_on: air_cond
+    heat_action:
+      - switch.turn_on: heater
+    idle_action:
+      - switch.turn_off: air_cond
+      - switch.turn_off: heater
+    default_preset: Home
+    preset:
+      - name: Home
+        default_target_temperature_low: 21 °C
+```
+
+When `use_single_point` is set to `true`, the thermostat presents a single temperature set point to the user,
+similar to a traditional home thermostat. The user selects a target temperature and a climate mode (heat or cool).
+In heat mode, the system activates heating when the temperature drops below the set point. In cool mode, the system
+activates cooling when the temperature rises above the set point. The `heat_cool` mode is not available when
+`use_single_point` is enabled.
 
 ## Controller Behavior and Hysteresis
 
@@ -324,6 +357,13 @@ to activate humidification **or** dehumidification.
 - **supplemental_heating_delta** (*Required with* `supplemental_heating_action`, float): When the temperature
   difference between the lower set point and the current temperature exceeds this value,
   `supplemental_heating_action` will be called immediately.
+
+- **use_single_point** (*Optional*, boolean): When set to `true`, forces the thermostat to operate in
+  single-point mode even when both `heat_action` and `cool_action` are configured. This is useful for systems
+  that can both heat and cool but should present a simplified single set point interface to the user, similar
+  to a traditional home thermostat. When enabled, the `heat_cool_mode` climate mode is disabled and the
+  thermostat will only heat or cool (not both) based on the current climate mode. Presets should specify
+  either `default_target_temperature_low` or `default_target_temperature_high` (but not both). Defaults to `false`.
 
 {{< anchor "thermostat-preset" >}}
 
