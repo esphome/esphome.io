@@ -6,63 +6,62 @@ params:
     description: Instructions for setting up Power Management component.
 ---
 
-This component enables Power Management and also provides methods for acquiring and releasing Power Management Locks
-
-[esp-idf Power Management](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/system/power_management.html)
-Power management algorithm included in ESP-IDF can adjust the advanced peripheral bus (APB) frequency, CPU frequency, and automatically put the chip into Light-sleep
-mode to run an application at smallest possible power consumption, given the requirements of application components.
-
-> [!NOTE]
-> It is very important to understand the section: [Dynamic Frequency Scaling and Peripheral Drivers](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/system/power_management.html#dynamic-frequency-scaling-and-peripheral-drivers)
+This component enables Power Management and also optionally provides actions for acquiring and releasing Power Management Locks
 
 ## Usage
 
 ```yaml
-# typical
+# typical device without PSRAM
 power_management:
-  id: pm_id
-  tickless_idle: true
+  enable_light_sleep: true
   power_down_flash: true
+  power_down_peripherals: true
+```
+
+```yaml
+# typical device with PSRAM
+power_management:
+  enable_light_sleep: true
   power_down_peripherals: true
 ```
 
 ```yaml
 # full
 power_management:
-  id: pm_id
-  max_frequency: 96MHZ
-  min_frequency: 32MHZ
-  esphome_locks: true
-  tickless_idle: true
+  max_frequency: 160MHZ
+  min_frequency: 40MHZ
+  enable_light_sleep: true
+  idle_time_before_sleep: 3
   power_down_flash: true
   power_down_peripherals: true
+  esphome_locks: true
   profiling: true
   trace: true
 ```
 
 ### Configuration variables
 
+- **max_frequency** (*Optional*, frequency) Frequency used when CPU lock acquired.  Default is the CPU Frequency defined for the device.  If setting, minimum is 40MHz.  Recommendation is to use default.  If setting for esp32, use: 80 MHz, 160 MHz, or 240 MHz, and use the profiling: True option and see below for how to dump the lock information.
+- **min_frequency** (*Optional*, frequency) Frequency used when not holding a CPU lock. Defaults to external clock frequency which is typically 40MHz. If setting, minimum is 10MHz which is the minimum frequency required for generating a 1 MHz REF_TICK default clock.  Recommendation is to use default.  If setting, please use the profiling: True option and see below for how to dump the lock information.
+- **enable_light_sleep** (*Optional*, boolean): Stops the system's periodic tick interrupt during idle periods to reduce current consumption and enables automatic Light Sleep.  Defaults to False.  Recommendation is to set to True and test behavior and reduction in power consumption.
+- **idle_time_before_sleep** (*Optional*, int): Default is 3, minimum is 2, max is 4294967295.  How long (ticks) should a device be in idle before attempting to go into Light Sleep.
+- **power_down_flash** (*Optional*, boolean): Safe power down, do not set to True if device has PSRAM.  Defaults to False.  See discussion below.
+- **power_down_peripherals** (*Optional*, boolean): For disabled peripherals, automatically save and restore peripheral states, which allows the peripherals to be powered down.  Defaults to False.  See discussion below
 - **esphome_locks** (*Optional*, boolean) Configures the following locks: esphome_cpu, esphome_apb, esphome_slp.  These locks can be controlled by actions: power_management.acquire_lock and power_management.release_lock.  Defaults to False.
-- **max_frequency** (*Optional*, frequency) Frequency used when CPU lock acquired.  Defaults to CONFIG_ESP_DEFAULT_CPU_FREQ_MHZ.
-- **min_frequency** (*Optional*, frequency) Frequency used when not holding a CPU lock. Defaults to (esp_clk_xtal_freq() / MHZ).
-- **tickless_idle** (*Optional*, boolean): Stops the system's periodic tick interrupt during idle periods to reduce current consumption and enables automatic light-sleep.  Defaults to False.
-- **power_down_flash** (*Optional*, boolean): Safe power down, do not set to true if device has PSRAM.  Defaults to False.
-- **power_down_peripherals** (*Optional*, boolean): For disabled peripherals, automatically save and restore peripheral states, which allows the peripherals to be powered down.  Defaults to False.
-- **profiling** (*Optional*, boolean): sets the sdkconfig: CONFIG_PM_PROFILING.  Defaults to False.
-- **trace** (*Optional*, boolean): sets the sdkconfig: CONFIG_PM_TRACE.  Defaults to False.
+- **profiling** (*Optional*, boolean): If set to True, will keep track of the amount of time each of the power management locks has been held, use this to analyze which locks are preventing the chip from going into a lower power state, and see what time the chip spends in each power saving mode. Setting to True does incur some run-time overhead, so should be disabled in production builds.  See below for how to dump the lock information.  Defaults to False.
+- **trace** (*Optional*, boolean): If set to True, some GPIOs will be used to signal events such as ticks, frequency switching, entry/exit from idle state. For esp32 devices, Refer to pm_trace.c file for the list of GPIOs. This feature is intended to be used when analyzing/debugging behavior of power management implementation, and should be kept disabled after testing.  See below for how to dump the lock information.  Defaults to False.
 
 > [!NOTE]
-> Use of trace configuration variable requires detailed understanding of "esp-idf/components/esp_pm/pm_trace.c" and which GPIO pins are consumed for tracing.
+> Automatic Light Sleep is enabled by enable_light_sleep: True and occurs when there are no pending tasks.  
+In the openthread component, setting the poll_period > 0 dove-tails into this by turning off the radio in between data requests to the parent router allowing the device to go into Light Sleep.
 
 > [!NOTE]
-> Automatic Light-sleep is enabled by tickless_idle: true and occurs when there are no pending tasks.  
-In the openthread component, setting the poll_period > 0 dove-tails into this by turning off the radio in between data requests to the parent router.
-> [!NOTE]
-> Do not use Deep Sleep component with tickless_idle: true.
+> Do not use Deep Sleep component with enable_light_sleep: True.
 
 ## `power_management.acquire_lock` Action
 
 This action acquires a Lock.  This only performs the action when esphome_locks: **True**.
+For a given lock_type, A corresponding release_lock is required for each time an acquire_lock action occurs.
 
 ```yaml
 on_...:
@@ -83,8 +82,8 @@ on_...:
 ### Lock Types
 
 - **CPU**: Locks the CPU (esphome_cpu) at its max frequency, CPU_FREQ_MAX
-- **APB**: Locks the Advanced Peripheral Bus (esphome_apb) to a stable frequency, APB_FREQ_MAX
-- **SLP**: Locks out automatic light sleep (esphome_slp), NO_LIGHT_SLEEP
+- **APB**: Locks the Advanced Peripheral Bus (esphome_apb) to a stable frequency, APB_FREQ_MAX, for esp32, this is 80 MHz.
+- **SLP**: Locks out automatic Light Sleep (esphome_slp), NO_LIGHT_SLEEP
 
 ## `power_management.release_lock` Action
 
@@ -106,9 +105,26 @@ on_...:
 
 - **lock_type** (*Optional*): The lock type, valid values are CPU, APB, SLP, defaults to SLP
 
+## Discussion
+Power management algorithm can perform Dynamic Frequency Scaling (adjusting the advanced peripheral bus (APB) frequency, and CPU frequency) and automatic Light Sleep mode to run an application at smallest possible power consumption, given the requirements of application components.
+Framework components express their requirements by creating, acquiring, and releasing power management locks.  The optional esphome_locks: True allows for this same capability in esphome YAML configrations
+
+Using power_management component comes at the cost of increased interrupt latency and can be upwards of 40 us.
+
+In Light Sleep, peripherals are clock gated, and interrupts (from GPIOs and internal peripherals) will not be generated.  Currently, there is **not** a companion component to provide functionality similar to Deep Sleep, but for Light Sleep.
+The difference between Light Sleep and Deep Sleep is that in Light Sleep, the component stops and restarts at the same execution step(s), while in Deep Sleep, the component reboots.
+
+When DFS is enabled, the APB frequency can be changed multiple times within a single RTOS tick. The APB frequency change does not affect the operation of some peripherals, while other peripherals may have issues. For example, Timer Group peripheral timers keeps counting, however, the speed at which they count changes proportionally to the APB frequency.
+
+Currently the following drivers are known to hold a lock and behave well: SPI, I2C, I2C, SDMMC, Ethernet, Wifi, OpenThread, Bluetooth, CAN.
+If behavior is not as expected, it is recommended to use esphome_locks: True and integrate acquire_lock and release_lock actions into your YAML.
+
+> [!NOTE]
+> It is very important to understand the section: [Dynamic Frequency Scaling and Peripheral Drivers](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/system/power_management.html#dynamic-frequency-scaling-and-peripheral-drivers)
+
 ## Using esp_pm_dump_locks
 
-The esp-id function esp_pm_dump_locks can be output to stdout and provide insight into how Power Management is setting and removing locks:
+When using profiling: True, the esp-id function esp_pm_dump_locks can be output to stdout and provide insight into how Power Management is setting and removing locks:
 
 ```yaml
 interval:
