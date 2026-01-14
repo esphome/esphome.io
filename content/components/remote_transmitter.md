@@ -49,14 +49,17 @@ remote_transmitter:
 | ------------- | ---------------- | ---------- |
 | ESP32         | 512 symbols      | 64 symbols |
 | ESP32-C3      | 96 symbols       | 48 symbols |
-| ESP32-C5 | 96 symbols | 48 symbols |
-| ESP32-C6 | 96 symbols | 48 symbols |
-| ESP32-H2 | 96 symbols | 48 symbols |
-| ESP32-P4 | 192 symbols | 48 symbols |
-| ESP32-S2 | 256 symbols | 64 symbols |
-| ESP32-S3 | 192 symbols | 48 symbols |
+| ESP32-C5      | 96 symbols       | 48 symbols |
+| ESP32-C6      | 96 symbols       | 48 symbols |
+| ESP32-C61     | 96 symbols       | 48 symbols |
+| ESP32-H2      | 96 symbols       | 48 symbols |
+| ESP32-P4      | 192 symbols      | 48 symbols |
+| ESP32-S2      | 256 symbols      | 64 symbols |
+| ESP32-S3      | 192 symbols      | 48 symbols |
 
 - **clock_resolution** (*Optional*, int): The clock resolution used by the RMT peripheral in Hz. Defaults to `1000000`.
+- **non_blocking** (*Optional*, boolean): If enabled, any transmit will return immediately and the RMT will run in the
+  background. The `on_complete` automation will trigger after the transmit completes. Defaults to `true`.
 - **use_dma** (*Optional*, boolean): Enable DMA on variants that support it. If enabled `rmt_symbols` controls
   the DMA buffer size and can be set to a large value.
 
@@ -375,6 +378,34 @@ on_...:
 - **channel** (**Required**, int): The switch/channel to send, between 0 and 127 inclusive.
 - **command** (**Required**, int): The command to send, between 0 and 63 inclusive.
 - All other options from [Remote Transmitter Actions](#remote_transmitter-transmit_action).
+
+{{< anchor "remote_transmitter-transmit_dyson" >}}
+
+### `remote_transmitter.transmit_dyson` **Action**
+
+This [action](/automations/actions#config-action) sends a Dyson cool AM07 infrared protocol code to a remote transmitter.
+
+```yaml
+on_...:
+  - remote_transmitter.transmit_dyson:
+      code: '0x1200'
+      index: !lambda |-
+        uint8_t idx = id(idx);
+        id(idx) = (id(idx) + 1) & 3;
+        return idx;
+```
+
+#### Configuration variables
+
+- **code** (**Required**, int): The 16-bit code to trigger on, e.g. 0x1200=power, 0x1215=fan++,
+  0x122a=swing..., see dumper output for more info.
+- **index** (**Required**, int): The 8-bit rolling index (range=0..3).
+- All other options from [Remote Transmitter Actions](#remote_transmitter-transmit_action).
+
+> [!NOTE]
+> The **dyson** devices use rolling codes, i.e. each remote button generates 4 different codes in a pseudo
+> random manner. On every transmit the **index** variable must loop to let the **..transmit_dyson** function
+> generate a code that differs from the previous one.
 
 {{< anchor "remote_transmitter-transmit_gobox" >}}
 
@@ -923,6 +954,32 @@ on_...:
 - **command** (**Required**, int): The Samsung36 command to send, see dumper output for more details.
 - All other options from [Remote Transmitter Actions](#remote_transmitter-transmit_action).
 
+{{< anchor "remote_transmitter-transmit_symphony" >}}
+
+### `remote_transmitter.transmit_symphony` **Action**
+
+This [action](/automations/actions#config-action) sends a Symphony infrared remote code to a remote transmitter.
+It transmits constant bit-time frames with a footer gap. Physical Symphony remotes typically
+send the same frame twice separated by a ~35 ms gap. Use `command_repeats` to control how
+many identical frames are sent; defaults to 2.
+
+```yaml
+on_...:
+  - remote_transmitter.transmit_symphony:
+      data: 0x0E88
+      nbits: 12
+      command_repeats: 2
+```
+
+#### Configuration variables
+
+- **data** (**Required**, int): The Symphony code to send, see dumper output for more info.
+- **nbits** (**Required**, int): The number of bits to send. Typical values: `8`, `12`, or `16`.
+- **command_repeats** (*Optional*, int): Number of times to send the same frame in one transmission.
+  Defaults to `2` to match typical handsets.
+
+- All other options from [Remote Transmitter Actions](#remote_transmitter-transmit_action).
+
 {{< anchor "remote_transmitter-transmit_sony" >}}
 
 ### `remote_transmitter.transmit_sony` **Action**
@@ -1050,18 +1107,39 @@ All RC Switch `protocol` settings have these settings:
 ### Lambda calls
 
 Actions may also be called from [lambdas](/automations/templates#config-lambda). The `.transmit()` call can be populated with
-encoded data for a specific protocol by following the example below.
-See the full API Reference for more info.
+raw timings or encoded data for a specific protocol by following the examples below.
 
-- `.transmit()`  : Transmit an IR code using the remote transmitter.
+- `.transmit()`: Returns a call to populate with data and send.
 
 ```cpp
-    // Example - transmit using the Pioneer protocol
-    auto call = id(my_transmitter).transmit();
-    esphome::remote_base::PioneerData data = { rc_code_1, rc_code_2 };
-    esphome::remote_base::PioneerProtocol().encode(call.get_data(), data);
-    call.set_send_times(2);
-    call.perform();
+// Example - transmit raw timings
+auto call = id(my_transmitter).transmit();
+auto *data = call.get_data();
+for (int32_t i = 0; i < 4; i++) {
+  data->item(600, 600);
+}
+uint8_t bytes[] = {0x12, 0x34, 0x56, 0x78};
+for (uint8_t byte : bytes) {
+  for (int32_t i = 7; i >= 0; i--) {
+    if (byte & (1 << i)) {
+      data->item(400, 200);
+    } else {
+      data->item(200, 400);
+    }
+  }
+}
+call.set_send_times(3);
+call.set_send_wait(2000);
+call.perform();
+```
+
+```cpp
+// Example - transmit using the Pioneer protocol
+auto call = id(my_transmitter).transmit();
+esphome::remote_base::PioneerData data = {0xA556, 0xA506};
+esphome::remote_base::PioneerProtocol().encode(call.get_data(), data);
+call.set_send_times(2);
+call.perform();
 ```
 
 ## See Also

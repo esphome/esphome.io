@@ -45,6 +45,7 @@ Multiple remote receivers can be configured as a list of dict definitions within
   - **dish**: Decode and dump Dish infrared codes.
   - **dooya**: Decode and dump Dooya RF codes.
   - **drayton**: Decode and dump Drayton Digistat RF codes.
+  - **dyson**: Decode and dump Dyson Cool AM7 tower fan codes.
   - **jvc**: Decode and dump JVC infrared codes.
   - **gobox**: Decode and dump Go-Box infrared codes.
   - **keeloq**: Decode and dump KeeLoq RF codes.
@@ -64,6 +65,7 @@ Multiple remote receivers can be configured as a list of dict definitions within
   - **roomba**: Decode and dump Roomba infrared codes.
   - **samsung**: Decode and dump Samsung infrared codes.
   - **samsung36**: Decode and dump Samsung36 infrared codes.
+  - **symphony**: Decode and dump Symphony infrared codes.
   - **sony**: Decode and dump Sony infrared codes.
   - **toshiba_ac**: Decode and dump Toshiba AC infrared codes.
   - **mirage**: Decode and dump Mirage infrared codes.
@@ -83,7 +85,7 @@ Multiple remote receivers can be configured as a list of dict definitions within
   glitches from noisy signals. Allowed values are in range `0` to `4294967295us`. Defaults to `50us`.
 
 - **idle** (*Optional*, [Time](/guides/configuration-types#time)): The amount of time that a signal should remain stable/unchanged for it to
-  be considered complete. The maximum allowable value is:
+  be considered complete. Defaults to `10ms`. The maximum allowable value is:
 
   - `65536us` on the `ESP32` and `ESP32-S2` variants
   - `32767us` on all other ESP32 variants
@@ -108,6 +110,7 @@ Multiple remote receivers can be configured as a list of dict definitions within
 | ESP32-C3      | 96 symbols       | 48 symbols |
 | ESP32-C5      | 96 symbols       | 48 symbols |
 | ESP32-C6      | 96 symbols       | 48 symbols |
+| ESP32-C61     | 96 symbols       | 48 symbols |
 | ESP32-H2      | 96 symbols       | 48 symbols |
 | ESP32-P4      | 192 symbols      | 48 symbols |
 | ESP32-S2      | 256 symbols      | 64 symbols |
@@ -185,6 +188,10 @@ To enable signal demodulation, configure the signal carrier frequency and duty c
 
 - **on_drayton** (*Optional*, [Automation](/automations)): An automation to perform when a
   Drayton Digistat RF code has been decoded. A variable `x` of type {{< apistruct "remote_base::DraytonData" "remote_base::DraytonData" >}}
+  is passed to the automation for use in lambdas.
+
+- **on_dyson** (*Optional*, [Automation](/automations)): An automation to perform when a
+  Dyson cool AM07 code has been decoded. A variable `x` of type {{< apistruct "remote_base::DysonData" "remote_base::DysonData" >}}
   is passed to the automation for use in lambdas.
 
 - **on_gobox** (*Optional*, [Automation](/automations)): An automation to perform when a
@@ -265,6 +272,10 @@ To enable signal demodulation, configure the signal carrier frequency and duty c
 
 - **on_sony** (*Optional*, [Automation](/automations)): An automation to perform when a
   Sony remote code has been decoded. A variable `x` of type {{< apistruct "remote_base::SonyData" "remote_base::SonyData" >}}
+  is passed to the automation for use in lambdas.
+
+- **on_symphony** (*Optional*, [Automation](/automations)): An automation to perform when a
+  Symphony remote code has been decoded. A variable `x` of type {{< apistruct "remote_base::SymphonyData" "remote_base::SymphonyData" >}}
   is passed to the automation for use in lambdas.
 
 - **on_toshiba_ac** (*Optional*, [Automation](/automations)): An automation to perform when a
@@ -403,7 +414,7 @@ Remote code selection (exactly one of these has to be included):
 
   - **first** (**Required**, uint32_t): The first 24-bit Coolix code to trigger on, see dumper output for more info.
   - **second** (*Optional*, uint32_t): The second 24-bit Coolix code to trigger on, see dumper output for more info.
-    If not set, trigger on on only single non-strict packet, specified by the `first` parameter.
+    If not set, trigger on only single non-strict packet, specified by the `first` parameter.
 
 - **dish**: Trigger on a decoded Dish Network remote code with the given data.
   Beware that Dish remotes use a different carrier frequency (57.6kHz) that many receiver hardware don't decode.
@@ -423,6 +434,11 @@ Remote code selection (exactly one of these has to be included):
   - **address** (**Required**, int): The 16-bit ID code to trigger on, see dumper output for more info.
   - **channel** (**Required**, int): The 7-bit switch/channel to listen for.
   - **command** (**Required**, int): The 5-bit command to listen for.
+
+- **dyson**: Trigger on a decoded dyson cool AM07 infrared remote code with the given data.
+
+  - **code** (**Required**, int): The 16-bit code to trigger on, e.g. 0x1200=power, 0x1215=fan++,0x122a=swing..., see dumper output for more info.
+  - **index** (**Required**, int): The 8-bit rolling index [0..3], to be increased with every transmit, see dumper output for more info.
 
 - **gobox**: Trigger on a decoded Go-Box remote code with the given data.
 
@@ -485,7 +501,7 @@ Remote code selection (exactly one of these has to be included):
 - **pronto**: Trigger on a Pronto remote code with the given code.
 
   - **data** (**Required**, string): The code to listen for, see
-    [transmitter description](/components/remote_transmitter#remote_transmitter-transmit_raw) for more info. Usually you only need to copy this
+    [transmitter description](/components/remote_transmitter#remote_transmitter-transmit_pronto) for more info. Usually you only need to copy this
     directly from the dumper output.
 
   - **delta** (*Optional*, integer): This parameter allows you to manually specify the allowed difference
@@ -566,6 +582,11 @@ Remote code selection (exactly one of these has to be included):
 
   - **data** (**Required**, int): The Sony code to trigger on, see dumper output for more info.
   - **nbits** (*Optional*, int): The number of bits of the remote code. Defaults to `12`.
+
+- **symphony**: Trigger on a decoded Symphony remote code with the given data.
+
+  - **data** (**Required**, int): The Symphony code to trigger on, see dumper output for more info.
+  - **nbits** (**Required**, int): The number of bits of the remote code. Typical values: `8`, `12`, or `16`.
 
 - **toshiba_ac**: Trigger on a decoded Toshiba AC remote code with the given data.
 

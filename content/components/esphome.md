@@ -52,9 +52,15 @@ Advanced options:
 - **platformio_options** (*Optional*, mapping): Additional options to pass over to PlatformIO in the
   platformio.ini file. See [`platformio_options`](#esphome-platformio_options).
 
+- **environment_variables** (*Optional*, mapping): Environment variables to set during the build process.
+  See [`environment_variables`](#esphome-environment_variables).
+
 - **includes** (*Optional*, list of files): A list of C/C++ files to include in the (auto-generated) `main` file.
   The paths in this list are relative to the directory where the YAML configuration file is located or `<...>` includes.
   See [`includes`](#esphome-includes).
+
+- **includes_c** (*Optional*, list of files): The same as `includes` but for files that require C linkage. All includes
+  will be wrapped in `extern "C" {}`. See [`includes`](#esphome-includes).
 
 - **libraries** (*Optional*, list of libraries): A list of libraries to include in the project. See
   [`libraries`](#esphome-libraries).
@@ -188,6 +194,27 @@ esphome:
     upload_speed: 115200
     board_build.f_flash: 80000000L
 ```
+
+{{< anchor "esphome-environment_variables" >}}
+
+## `environment_variables`
+
+With the `environment_variables` option, you can set environment variables that will be available during the
+compilation process. This is useful when you need to pass configuration to build scripts, custom libraries,
+or PlatformIO build environments.
+
+```yaml
+# Example configuration entry
+esphome:
+  # ...
+  environment_variables:
+    HTTP_PROXY: "http://user:pass@10.10.1.10:3128/"
+    PLATFORMIO_SETTING_ENABLE_PROXY_STRICT_SSL: "false"
+```
+
+> [!NOTE]
+> Environment variables set here are only available during the build process. They do not affect
+> the runtime behavior of your device.
 
 {{< anchor "esphome-includes" >}}
 
@@ -368,6 +395,12 @@ esphome:
 This allows YAML files to specify the minimum version of ESPHome required to compile.
 This is useful in the case of packages where a published package might use features only
 available in a newer version of ESPHome. This allows for a more friendly error message.
+
+```yaml
+# Example configuration
+esphome:
+  min_version: 2025.11.0
+```
 
 {{< anchor "esphome-area" >}}
 
