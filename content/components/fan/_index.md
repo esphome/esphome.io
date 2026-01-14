@@ -387,7 +387,7 @@ advanced stuff (see the full API Reference for more info).
 
 - `set_preset_mode()` / `has_preset_mode()`: Set or check the preset mode of the fan.
 
-```cpp
+```yaml
     // Within lambda, get the fan preset mode and conditionally do something.
     // get_preset_mode() returns an empty StringRef when no preset mode is set,
     // so check has_preset_mode() before using where a non-empty value is expected.
