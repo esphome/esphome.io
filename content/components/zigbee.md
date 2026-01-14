@@ -77,10 +77,11 @@ The following components are exposed over Zigbee if they have a name and if they
 
 - [Sensor](/components/sensor#config-sensor): **state**, **name** and **unit_of_measurement** are exposed
 over Zigbee. If no unit is given or if it is not support it will fall back to unitless.
-> [!NOTE]
-> Units are only supported by **ZHA**, but not by **Zigbee2MQTT**.
 
 - [Switch](/components/switch#config-switch): only **state** and **name** are exposed over Zigbee.
+
+> [!NOTE]
+> Units are only supported by **ZHA**, but not by **Zigbee2MQTT**.
 
 ## Component Implementation Details
 
