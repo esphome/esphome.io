@@ -354,11 +354,13 @@ advanced stuff (see the full API Reference for more info).
 - `get_preset_mode()`: Retrieve the current preset mode of the fan. Returns `StringRef`.
 
 ```cpp
-    // Within lambda, get the fan preset mode and conditionally do something
-    if (id(my_fan).get_preset_mode() == "auto") {
-      // Fan preset mode is "auto", do something here
+    // Within lambda, get the fan preset mode and conditionally do something.
+    // get_preset_mode() returns an empty StringRef when no preset mode is set,
+    // so check has_preset_mode() before using where a non-empty value is expected.
+    if (id(my_fan).has_preset_mode() && id(my_fan).get_preset_mode() == "auto") {
+      // Fan preset mode is "auto", do something here.
     } else {
-      // Fan preset mode is not "auto", do something else here
+      // Fan preset mode is not set, or is not "auto". Do something else here.
     }
 ```
 
