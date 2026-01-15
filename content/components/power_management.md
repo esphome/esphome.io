@@ -61,7 +61,7 @@ In the openthread component, setting the poll_period > 0 dove-tails into this by
 ## `power_management.acquire_lock` Action
 
 This action acquires a Lock.  This only performs the action when esphome_locks: **True**.
-For a given lock_type, A corresponding release_lock is required for each time an acquire_lock action occurs.
+For a given lock_type, a corresponding release_lock is required for each time an acquire_lock action occurs.
 
 ```yaml
 on_...:
@@ -106,6 +106,7 @@ on_...:
 - **lock_type** (*Optional*): The lock type, valid values are CPU, APB, SLP, defaults to SLP
 
 ## Discussion
+
 Power management algorithm can perform Dynamic Frequency Scaling (adjusting the advanced peripheral bus (APB) frequency, and CPU frequency) and automatic Light Sleep mode to run an application at smallest possible power consumption, given the requirements of application components.
 Framework components express their requirements by creating, acquiring, and releasing power management locks.  The optional esphome_locks: True allows for this same capability in esphome YAML configrations
 
