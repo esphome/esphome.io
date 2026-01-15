@@ -145,6 +145,20 @@ esp32:
   address is not consistent with the burned-in CRC for that MAC address, resulting in an error like
   `Base MAC address from BLK0 of EFUSE CRC error`. **Valid only on original ESP32 with** `esp-idf` **framework.**
 
+- **minimum_chip_revision** (*Optional*, string): Sets the minimum ESP32 chip revision required for the firmware.
+  One of `0.0`, `1.0`, `1.1`, `2.0`, `3.0`, or `3.1`. **Valid only on original ESP32.**
+
+  Setting this to `3.0` or higher reduces flash size by excluding workaround code for older chip bugs. For PSRAM
+  users, it also saves significant IRAM by keeping C library functions in ROM instead of recompiling them with
+  the PSRAM cache bug workaround.
+
+  **Important:** The firmware will not boot on chips older than the specified revision. If OTA updating a device
+  with an older chip, the bootloader will reject the new firmware and roll back to the previous version (when
+  OTA rollback is enabled, which is the default).
+
+  To find your chip's revision, check the ESPHome boot logs for a line like `ESP32 Chip: ESP32 r3.0, 2 core(s)`
+  or use `esptool.py chip_id`.
+
 - **enable_idf_experimental_features** (*Optional*, boolean): Can be set to `true` to enable experimental features. Use of
   experimental features may cause instability or other issues.
 
@@ -226,6 +240,12 @@ The following options disable unused VFS features to save flash memory:
   ~10ms for audio components, so the overhead of loading from flash vs IRAM is negligible compared to actual data processing.
   This matches the default behavior in ESP-IDF 6.0 (see [migration guide](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/migration-guides/release-6.x/6.0/system.html#id1)).
   Set to `true` only if you encounter issues. Defaults to `false` (ring buffer functions in flash to save IRAM).
+
+- **heap_in_iram** (*Optional*, boolean): Keep heap functions (malloc, free, realloc, etc.) in IRAM instead of moving them
+  to flash. By default, heap functions are placed in flash to save ~4-6 KB of IRAM. This is safe because heap functions
+  should never be called from ISRs, and ESPHome's design minimizes heap churn during normal operation (allocations happen
+  primarily at setup, not in hot loops). Set to `true` only if you have a specific use case requiring faster heap operations.
+  Defaults to `false` (heap functions in flash to save IRAM).
 
 Some options can be disabled to save flash memory without affecting typical ESPHome functionality. The performance
 options (defaulting to `true`  ) improve socket operation performance but can be disabled if you need better
