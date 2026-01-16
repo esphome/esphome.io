@@ -66,7 +66,8 @@ prometheus:
 
 > [!NOTE]
 > The prometheus metrics for datetime based entities (datetime, date, time)
-> are in milliseconds since the Unix epoch, [as mentioned in the Grafana Time Units Docs](https://grafana.com/docs/grafana/latest/visualizations/panels-visualizations/configure-standard-options/#time-format-units)
+> are in milliseconds since the Unix epoch for easy use in
+> grafana, [as mentioned in the Grafana Time Units Docs](https://grafana.com/docs/grafana/latest/visualizations/panels-visualizations/configure-standard-options/#time-format-units)
 
 ## Supported Prometheus Labels
 
