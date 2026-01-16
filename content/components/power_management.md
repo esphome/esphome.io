@@ -11,18 +11,9 @@ This component enables Power Management and also optionally provides actions for
 ## Usage
 
 ```yaml
-# typical device without PSRAM
+# typical
 power_management:
   enable_light_sleep: true
-  power_down_flash: true
-  power_down_peripherals: true
-```
-
-```yaml
-# typical device with PSRAM
-power_management:
-  enable_light_sleep: true
-  power_down_peripherals: true
 ```
 
 ```yaml
@@ -48,7 +39,7 @@ power_management:
 - **power_down_flash** (*Optional*, boolean): Safe power down, do not set to True if device has PSRAM.  Defaults to False.  See discussion below.
 - **power_down_peripherals** (*Optional*, boolean): For disabled peripherals, automatically save and restore peripheral states, which allows the peripherals to be powered down.  Defaults to False.  See discussion below
 - **esphome_locks** (*Optional*, boolean) Configures the following locks: esphome_cpu, esphome_apb, esphome_slp.  These locks can be controlled by actions: power_management.acquire_lock and power_management.release_lock.  Defaults to False.
-- **profiling** (*Optional*, boolean): If set to True, will keep track of the amount of time each of the power management locks has been held, use this to analyze which locks are preventing the chip from going into a lower power state, and see what time the chip spends in each power saving mode. Setting to True does incur some run-time overhead, so should be disabled in production builds.  See below for how to dump the lock information.  Defaults to False.
+- **profiling** (*Optional*, boolean): If set to True, will keep track of the amount of time each of the power management locks has been held, use this to analyze which locks are preventing the device from going into a lower power state, and see what time the device spends in each power saving mode. Setting to True does incur some run-time overhead, so should be disabled in production builds.  See below for how to dump the lock information.  Defaults to False.
 - **trace** (*Optional*, boolean): If set to True, some GPIOs will be used to signal events such as ticks, frequency switching, entry/exit from idle state. For esp32 devices, Refer to pm_trace.c file for the list of GPIOs. This feature is intended to be used when analyzing/debugging behavior of power management implementation, and should be kept disabled after testing.  See below for how to dump the lock information.  Defaults to False.
 
 > [!NOTE]
@@ -111,6 +102,14 @@ Power management algorithm can perform Dynamic Frequency Scaling (adjusting the 
 Framework components express their requirements by creating, acquiring, and releasing power management locks.  The optional esphome_locks: True allows for this same capability in esphome YAML configrations
 
 Using power_management component comes at the cost of increased interrupt latency and can be upwards of 40 us.
+
+When power_down_flash: True, device will try to power down flash when entering Light Sleep, which costs more time when device wakes up. Can only be enabled if there is no SPIRAM configured.
+This option will power down flash under a strict but relatively safe condition.  Condition is related to a calculation that device will not attempt wake up while flash is powering down.
+This is a valuable option in reducing power consumption, and usage is encouraged with proper testing to ensure that flash is not corrupted.
+
+When power_down_peripherals: True, digital peripherals will try to be powered down in Light Sleep, and all related peripherals will not be available during sleep.
+The device will automatically save/restore register context during sleep/wakeup to make the upper layer unaware of the peripheral powerdown during sleep.
+Although this option is encouraged due to the reduction in power consumption, it must be used with caution after proper testing since not all peripherals are supported and unsupported peripherals will basically be reset upon wakeup.
 
 In Light Sleep, peripherals are clock gated, and interrupts (from GPIOs and internal peripherals) will not be generated.  Currently, there is **not** a companion component to provide functionality similar to Deep Sleep, but for Light Sleep.
 The difference between Light Sleep and Deep Sleep is that in Light Sleep, the component stops and restarts at the same execution step(s), while in Deep Sleep, the component reboots.
