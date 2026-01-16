@@ -1022,6 +1022,7 @@ at the {{< docref "light/fastled" "FastLED Light" >}}.
 "Time Core","components/time/index","clock-outline.svg","dark-invert"
 "BM8563 RTC","components/time/bm8563","bm8563.svg",""
 "DS1307 RTC","components/time/ds1307","clock-outline.svg","dark-invert"
+"RX8025T RTC","components/time/rx8025t","clock-outline.svg","dark-invert"
 "RX8130 RTC","components/time/rx8130","clock-outline.svg","dark-invert"
 "GPS Time","components/time/gps","crosshairs-gps.svg","dark-invert"
 "Home Assistant Time","components/time/homeassistant","home-assistant.svg","dark-invert"
