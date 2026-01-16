@@ -456,7 +456,7 @@ More details about the tuning of these parameters for SEN6X sensors are included
 
 ## See Also
 
-- [Sensor Filters](#sensor-filters)
+- [Sensor Filters](/components/sensor#sensor-filters)
 - {{< docref "absolute_humidity/" >}}
 - {{< docref "scd4x/" >}}
 - {{< docref "sgp4x/" >}}
