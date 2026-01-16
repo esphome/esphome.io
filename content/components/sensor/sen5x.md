@@ -1,8 +1,9 @@
--description: "Instructions for setting up SEN5X and SEN6X Series Environmental sensor for PM, RH/T, VOC, NOx, CO2 and HCHO measurements."
+---
+description: "Instructions for setting up SEN5X and SEN6X Series Environmental sensor for PM, RH/T, VOC, NOx, CO₂ and HCHO measurements."
 title: "SEN5X and SEN6X Series Environmental sensor"
 params:
   seo:
-    description: Instructions for setting up SEN5X and SEN6X Series Environmental sensor for PM, RH/T, VOC, and NOx measurements.
+    description: Instructions for setting up SEN5X and SEN6X Series Environmental sensor for PM, RH/T, VOC, NOx, CO₂ and HCHO measurements.
     image: sen54.jpg
 ---
 
@@ -273,7 +274,7 @@ action periodically.
 For example, to clean the fan every 7 days while the device is on, as recommended by the manufacturer, the
 following configuration can be added:
 
-``` yaml
+```yaml
 interval:
   - interval: 7d
     then:
@@ -294,7 +295,7 @@ This [action](/automations/actions#all-actions) manually starts the heater. Firs
 then the heater is turned on at 200mW for 1s, finally there is a 20 second delay to before reenabling the
 measurements. This is to ensure the heating effects are gone before temperature measurements resume.
 
-``` yaml
+```yaml
 on_...:
   then:
     - sen5x.activate_heater: my_sen66
@@ -318,7 +319,7 @@ This [action](/automations/actions#all-actions) forces a manual calibration on t
 will recalibrate the CO₂ sensor when the "CO₂ Calibrate" button is pressed using the "CO₂ Calibration Value"
 number's current value.
 
-``` yaml
+```yaml
 number:
   - platform: template
     id: co2_forced_cal_value
@@ -362,7 +363,7 @@ with the current pressure. Dynamic pressure updates provide the best CO₂ accur
 This [action](/automations/actions#all-actions) updates the current pressure used in CO₂ pressure compensation.
 Must be in hPa or mBar. Only available with SEN63C, SEN66 or SEN69C.
 
-``` yaml
+```yaml
 sensor:
   - platform: bmp581
     id: bmp581_sensor
@@ -380,7 +381,7 @@ sensor:
 
 ### Dynamic example with a local sensor
 
-``` yaml
+```yaml
 sensor:
   - platform: bmp581
     id: bmp581_sensor
@@ -399,7 +400,7 @@ sensor:
 
 ### Static example with altitude
 
-``` yaml
+```yaml
 sensor:
   - platform: sen5x
     type: SEN66
