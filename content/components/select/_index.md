@@ -99,7 +99,6 @@ Configuration variables:
 - **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the select to test.
 - **options** (**Required**, list, [templatable](/automations/templates)): Either a lambda returning a `std::vector` of `std::string`, or a list of constant strings.
 
-
 ```yaml
 # In some trigger:
 on_...:
@@ -125,6 +124,7 @@ on_...:
       then:
         - logger.log: "Select is Happy, or matches some variable state"
 ```
+
 ## Actions
 
 {{< anchor "select-set_action" >}}
