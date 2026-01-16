@@ -99,11 +99,16 @@ on_...:
       condition:
         select.is:
           id: my_select
-          options:
-            - Happy
-            - Ecstatic
+          options: [Happy, Ecstatic]
       then:
         - logger.log: "Select is Happy or Ecstatic"
+  - if:
+      condition:
+        select.is:
+          id: my_select
+          options: "Happy" # Single option 
+      then:
+        - logger.log: "Select matches Happy"
   - if:
       condition:
         select.is:
