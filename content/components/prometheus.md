@@ -184,15 +184,15 @@ esphome_event_value{id="template_event",area="Dev",node="devidfprometheus",name=
 #TYPE esphome_date_value gauge
 #TYPE esphome_date_failed gauge
 esphome_date_failed{id="date",area="Dev",node="devidfprometheus",name="Date"} 0
-esphome_date_value{id="date",area="Dev",node="devidfprometheus",name="Date"} 946800000
+esphome_date_value{id="date",area="Dev",node="devidfprometheus",name="Date"} 946800000000
 #TYPE esphome_time_value gauge
 #TYPE esphome_time_failed gauge
 esphome_time_failed{id="time",area="Dev",node="devidfprometheus",name="Time"} 0
-esphome_time_value{id="time",area="Dev",node="devidfprometheus",name="Time"} 2096
+esphome_time_value{id="time",area="Dev",node="devidfprometheus",name="Time"} 2096000
 #TYPE esphome_datetime_value gauge
 #TYPE esphome_datetime_failed gauge
 esphome_datetime_failed{id="datetime",area="Dev",node="devidfprometheus",name="Datetime"} 0
-esphome_datetime_value{id="datetime",area="Dev",node="devidfprometheus",name="Datetime"} 946845296
+esphome_datetime_value{id="datetime",area="Dev",node="devidfprometheus",name="Datetime"} 946845296000
 ```
 
 ## See Also
