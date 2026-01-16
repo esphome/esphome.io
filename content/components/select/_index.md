@@ -92,7 +92,13 @@ Configuration variables: See [Automation](/automations).
 
 ### `select.is` Condition
 
-This [Condition](/automations/actions#all-conditions) checks if the select is set to a specific option, or any one of a list of options.
+This [Condition](/automations/actions#all-conditions) checks if the select is set to any one of a list of options.
+
+Configuration variables:
+
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the select to test.
+- **options** (**Required**, list, [templatable](/automations/templates)): Either a lambda returning a `std::vector` of `std::string`, or a list of constant strings.
+
 
 ```yaml
 # In some trigger:
@@ -110,21 +116,15 @@ on_...:
           id: my_select
           options: "Happy" # Single option 
       then:
-        - logger.log: "Select matches Happy"
+        - logger.log: "Select is exactly Happy"
   - if:
       condition:
         select.is:
           id: my_select
-          options: !lambda return id(text_sensor).state;
+          options: !lambda return {id(text_sensor).state, "Happy"};
       then:
-        - logger.log: "Select matches desired state"
+        - logger.log: "Select is Happy, or matches some variable state"
 ```
-
-Configuration variables:
-
-- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the select to test.
-- **options** (**Required**, list, [templatable](/automations/templates)): Either a lambda returning a string, or a list of constant strings.
-
 ## Actions
 
 {{< anchor "select-set_action" >}}
