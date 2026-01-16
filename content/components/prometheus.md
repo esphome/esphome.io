@@ -64,6 +64,10 @@ prometheus:
 - Valve
 - Climate
 
+> [!NOTE]
+> The prometheus metrics for datetime based entities (datetime, date, time) 
+> are in milliseconds since the Unix epoch, [as mentioned in the Grafana Time Units Docs](https://grafana.com/docs/grafana/latest/visualizations/panels-visualizations/configure-standard-options/#time-format-units)
+
 ## Supported Prometheus Labels
 
 The following labels are supported in all Prometheus metrics. Some metrics may have more labels.
