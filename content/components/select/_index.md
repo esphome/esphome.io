@@ -88,6 +88,36 @@ select:
 
 Configuration variables: See [Automation](/automations).
 
+### `select.is` Condition
+
+This [Condition](/automations/actions#all-conditions) checks if the select is set to a specific option, or a list of options.
+
+```yaml
+# In some trigger:
+on_...:
+  - if:
+      condition:
+        select.is:
+          id: my_select
+          options:
+            - Happy
+            - Ecstatic
+      then:
+        - logger.log: "Select is Happy or Ecstatic"
+  - if:
+      condition:
+        select.is:
+          id: my_select
+          options: !lambda return id(text_sensor).state;
+      then:
+        - logger.log: "Select matches desired state"
+```
+
+Configuration variables:
+
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the select to test.
+- **options** (**Required**, list, [templatable](/automations/templates)): Either a lambda returning a string, or a list of constant strings.
+
 {{< anchor "select-set_action" >}}
 
 ### `select.set` Action
