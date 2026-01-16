@@ -67,6 +67,11 @@ web_server:
 - **local** (*Optional*, boolean): Include supporting javascript locally allowing it to work without internet access.
   Defaults to `false`.
 
+- **compression** (*Optional*, string): The compression algorithm used for embedded web assets when `local` is enabled.
+  Options are `gzip` or `br` (Brotli). Brotli provides smaller embedded web assets (~10% smaller than gzip), but some
+  browsers only support Brotli over HTTPS connections. Since ESPHome devices typically serve over HTTP, gzip
+  is recommended for maximum compatibility. Defaults to `gzip`.
+
 - **version** (*Optional*, string): `1`, `2` or `3`. Version 1 displays as a table. Version 2 uses web components
   and has more functionality. Version 3 uses HA-Styling. Defaults to `2`.
 
