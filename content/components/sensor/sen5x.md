@@ -17,7 +17,7 @@ This sensor supports both UART and I²C communication. Only I²C communication i
 
 ## SEN5X Series
 
-<img src="sen54.jpg" alt="SEN5X" width="50.0%" class="align-center">
+{{< img src="sen54.jpg" alt="Image" caption="SEN5X Environmental Sensor" width="50.0%" class="align-center" >}}
 
 ```yaml
 # Example SEN55 configuration entry
@@ -52,7 +52,7 @@ sensor:
 
 ## SEN6X Series
 
-<img src="sen66.jpg" alt="Image" width="50.0%">
+{{< img src="sen66.jpg" alt="Image" caption="SEN6X Environmental Sensor" width="50.0%" class="align-center" >}}
 
 ```yaml
 # Example SEN66 configuration entry
