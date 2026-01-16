@@ -53,8 +53,6 @@ Configuration variables:
 
 - If Webserver enabled and version 3 is selected, All other options from Webserver Component.. See [Webserver Version 3](/components/web_server#config-webserver-version-3-options).
 
-Automations:
-
 - **on_value** (*Optional*, [Automation](/automations)): An automation to perform
   when a new value is published. See [`on_value`](#select-on_value).
 
@@ -62,11 +60,13 @@ MQTT Options:
 
 - All other options from [MQTT Component](/components/mqtt#config-mqtt-component).
 
-## Select Automation
+### Accessing the current option
 
 You can access the most recent state of the select in [lambdas](/automations/templates#config-lambda) using
 `id(select_id).current_option()`.
 For more information on using lambdas with select, see [lambda calls](#select-lambda_calls).
+
+## Triggers
 
 {{< anchor "select-on_value" >}}
 
@@ -87,6 +87,8 @@ select:
 ```
 
 Configuration variables: See [Automation](/automations).
+
+## Conditions
 
 ### `select.is` Condition
 
@@ -122,6 +124,8 @@ Configuration variables:
 
 - **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the select to test.
 - **options** (**Required**, list, [templatable](/automations/templates)): Either a lambda returning a string, or a list of constant strings.
+
+## Actions
 
 {{< anchor "select-set_action" >}}
 
@@ -284,10 +288,9 @@ Configuration variables:
 
 {{< anchor "select-lambda_calls" >}}
 
-### lambda calls
+## Using Selects in Lambdas
 
-From [lambdas](/automations/templates#config-lambda), you can call several methods on all selects to do some
-advanced stuff (see the full API Reference for more info).
+From [lambdas](/automations/templates#config-lambda), you can call several methods on selects (see the full API Reference for more info).
 
 - `.make_call()`  : Create a call for changing the select state.
 
