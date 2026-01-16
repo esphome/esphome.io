@@ -91,8 +91,8 @@ sensor:
       name: "CO₂"
 ```
 
-{{< /div >}}
-{{< /div >}}
+</div>
+</div>
 
 ## Configuration variables
 
