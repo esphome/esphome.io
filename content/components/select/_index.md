@@ -90,7 +90,7 @@ Configuration variables: See [Automation](/automations).
 
 ### `select.is` Condition
 
-This [Condition](/automations/actions#all-conditions) checks if the select is set to a specific option, or a list of options.
+This [Condition](/automations/actions#all-conditions) checks if the select is set to a specific option, or any one of a list of options.
 
 ```yaml
 # In some trigger:
