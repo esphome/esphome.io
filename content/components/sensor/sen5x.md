@@ -15,11 +15,12 @@ Environmental sensors with ESPHome.
 The [I²C Bus](/components/i2c) is required in your configuration for this sensor to work.
 This sensor supports both UART and I²C communication. Only I²C communication is implemented in this component.
 
-{{< columns >}}
+{{< div style="display: flex; gap: 20px;" >}}
+{{< div style="flex: 1;" >}}
 
 ## SEN5X Series
 
-{{< img src="sen54.jpg" alt="Image" width="50.0%" class="align-center" >}}
+{{< img src="sen54.jpg" alt="SEN5X" width="50.0%" class="align-center" >}}
 
 ```yaml
 # Example SEN55 configuration entry
@@ -52,7 +53,8 @@ sensor:
       name: "NOx"
 ```
 
-:::
+{{< /div >}}
+{{< div style="flex: 1;" >}}
 
 ## SEN6X Series
 
@@ -89,7 +91,8 @@ sensor:
       name: "CO₂"
 ```
 
-{{< /columns >}}
+{{< /div >}}
+{{< /div >}}
 
 ## Configuration variables
 
