@@ -92,12 +92,15 @@ Configuration variables: See [Automation](/automations).
 
 ### `select.is` Condition
 
-This [Condition](/automations/actions#all-conditions) checks if the select is set to any one of a list of options.
+This [Condition](/automations/actions#all-conditions) checks if the select is set to any one of a list of options. A lambda may also be used for more complex computations.
 
 Configuration variables:
 
 - **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the select to test.
-- **options** (**Required**, list, [templatable](/automations/templates)): Either a lambda returning a `std::vector` of `std::string`, or a list of constant strings.
+- **options** (*Optional*, list): A string, or list of strings to compare with the current selection. The condition is true if any match.
+- **lambda** (*Optional*, [templatable](/automations/templates)): A lambda returning a boolean value. The current selection is passed in a `StringRef` argument called `current`.
+
+Only one of `options` and `lambda` must be provided.
 
 ```yaml
 # In some trigger:
@@ -120,7 +123,7 @@ on_...:
       condition:
         select.is:
           id: my_select
-          options: !lambda return {id(text_sensor).state, "Happy"};
+          lambda: return id(text_sensor).state == current || "Happy" == current;
       then:
         - logger.log: "Select is Happy, or matches some variable state"
 ```
