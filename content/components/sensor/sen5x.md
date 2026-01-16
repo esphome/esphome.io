@@ -134,6 +134,7 @@ sensor:
   - **ambient_pressure_compensation_source** (*Optional*, [ID](/guides/configuration-types#config-id)):
   Sets an external pressure sensor ID (must report in hPA). This will compensate the CO₂ sensor for deviations
   due to current pressure. This correction is applied with each update of the CO₂ sensor.
+  - All options from [Sensor](/components/sensor#config-sensor).
 
 - **voc** (*Optional*): The information for the VOC Index sensor. Only available with SEN54, SEN55, SEN65, SEN66,
   SEN69 or SEN69C.
@@ -159,6 +160,8 @@ sensor:
     - **gain_factor** (*Optional*): Gain factor to amplify or to attenuate the VOC index output.
       Allowed values are in range 1..1000. The default value is 230.
 
+  - All options from [Sensor](/components/sensor#config-sensor).
+
 - **nox** (*Optional*): NOx Index. Only available with SEN55, SEN65, SEN66, SEN69 or SEN69C.
 
   - **algorithm_tuning** (*Optional*): Like VOC the NOx algorithm can be customized by tuning 5 different parameters.
@@ -180,11 +183,15 @@ sensor:
     - **gain_factor** (*Optional*): Gain factor to amplify or to attenuate the NOx index output.
       Allowed values are in range 1..1000. The default value is 230.
 
+  - All options from [Sensor](/components/sensor#config-sensor).
+
 - **hcho** (*Optional*): The information for the Formaldehyde (HCHO) sensor. Readings in ppb. Only available with
   SEN68 or SEN69C.
+  
+  - All options from [Sensor](/components/sensor#config-sensor).
 
 - **store_baseline** (*Optional*, boolean): Stores and retrieves the baseline VOC information for
-  quicker startups. Defaults to `true`. Only available with SEN54, SEN55, SEN65, SEN66, SEN68 or SEN69C.
+  quicker startups. Defaults to `true`. Only available with SEN54, SEN55, SEN65, SEN66, SEN68 or SEN69C. 
 
 - **auto_cleaning_interval** (*Optional*, positive int): The periodic fan-cleaning interval in seconds.
   Only available with SEN55, SEN54 OR SEN55.
@@ -192,12 +199,11 @@ sensor:
 - **temperature_compensation** (*Optional*, sequence): These parameters allow the user to compensate temperature
   effects of the customer design by applying custom temperature offsets to the ambient temperature. Only available
   with SEN54, SEN55, SEN62, SEN63C, SEN65, SEN66, SEN69 or SEN69C.
+  See [Temperature Compensation](#temperature-compensation) section below for more information.
 
   - **offset** (*Optional*, float): Temperature offset, in °C. Defaults to `0`.
   - **normalized_offset_slope** (*Optional*, float): Normalized temperature offset slope. Defaults to `0`.
   - **time_constant** (*Optional*, positive int): Time constant in seconds. Defaults to `0`.
-
-  Look for the Temperature Compensation section below for more information.
   
 - **acceleration_mode** (*Optional*): Allowed value are `low`, `medium` and `high`. Defaults to `low`.
   Only available with SEN54 or SEN55.
