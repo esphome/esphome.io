@@ -15,9 +15,6 @@ Environmental sensors with ESPHome.
 The [I²C Bus](/components/i2c) is required in your configuration for this sensor to work.
 This sensor supports both UART and I²C communication. Only I²C communication is implemented in this component.
 
-<div style="display: flex; gap: 20px;">
-<div style="flex: 1;">
-
 ## SEN5X Series
 
 <img src="sen54.jpg" alt="SEN5X" width="50.0%" class="align-center">
@@ -53,9 +50,6 @@ sensor:
       name: "NOx"
 ```
 
-</div>
-<div style="flex: 1;">
-
 ## SEN6X Series
 
 <img src="sen66.jpg" alt="Image" width="50.0%">
@@ -90,9 +84,6 @@ sensor:
     co2:
       name: "CO₂"
 ```
-
-</div>
-</div>
 
 ## Configuration variables
 
@@ -270,7 +261,7 @@ to blow out the accumulated dust inside the fan.
 
 ## Actions
 
-## Fan Cleaning
+### Fan Cleaning
 
 Both sensor families support manual running of the fan cleaning cycle by using the
 `sen5x.start_fan_autoclean` action. Only available with the SEN54, SEN55, SEN62, SEN63C, SEN65,
@@ -278,7 +269,7 @@ SEN66, SEN68 or SEN69C.
 
 {{< anchor "start_fan_autoclean_action" >}}
 
-## `sen5x.start_fan_autoclean` Action
+#### `sen5x.start_fan_autoclean` Action
 
 This [action](/automations/actions#all-actions) manually starts fan cleaning.
 
@@ -301,7 +292,7 @@ interval:
       - sen5x.start_fan_autoclean: my_sen66
 ```
 
-## Humidity Sensor Heater
+### Humidity Sensor Heater
 
 The SEN6X humidity sensor can develop an offset in the humidity reading when exposed to high levels of
 humidity for extended periods of time. It supports a heater similar to the one in the SHT4X. The
@@ -309,7 +300,7 @@ difference is no automatic mode. Instead you have to trigger `sen5x.activate_hea
 
 {{< anchor "activate_heater_action" >}}
 
-### `activate_heater` Action
+#### `activate_heater` Action
 
 This [action](/automations/actions#all-actions) manually starts the heater. First all measurements are
 stopped, then the heater is turned on at 200mW for 1s, finally there is a 20 second delay to before
@@ -322,7 +313,7 @@ on_...:
     - sen5x.activate_heater: my_sen66
 ```
 
-## CO₂ Calibration
+### CO₂ Calibration
 
 The CO₂ sensor by default has auto-calibration enabled. Auto-calibration will adjust the minimum measurement
 over the last week or so to the outdoor average of slightly more than 400 ppm. Auto-calibration assumes that
@@ -334,7 +325,7 @@ take the sensor outside for 5 minutes and then force a manual CO₂ calibration 
 
 {{< anchor "perform_forced_co2_recalibration_action" >}}
 
-### `perform_forced_co2_recalibration` Action
+#### `perform_forced_co2_recalibration` Action
 
 This [action](/automations/actions#all-actions) forces a manual calibration on the CO₂ sensor. The example
 below will recalibrate the CO₂ sensor when the "CO₂ Calibrate" button is pressed using the
@@ -368,14 +359,14 @@ sensor:
       name: "CO₂"
 ```
 
-## CO₂ Compensation
+### CO₂ Compensation
 
 The CO₂ sensor supports pressure/altitude compensation to improve CO₂ accuracy. If a pressure sensor is available
 you can dynamically adjust pressure compensation by either adding `ambient_pressure_compensation_source` to your
 configuration for automatic updates or you can periodically call the `sen5x.set_ambient_pressure_compensation`
 action with the current ambient pressure. You can also statically define `altitude_compensation`.
 
-### Dynamic example with a local sensor
+#### Dynamic example with a local sensor
 
 ```yaml
 sensor:
@@ -394,7 +385,7 @@ sensor:
       ambient_pressure_compensation_source: pressure_hpa
 ```
 
-### Dynamic example `set_ambient_pressure_compensation` Action
+#### Dynamic example `set_ambient_pressure_compensation` Action
 
 This [action](/automations/actions#all-actions) updates the current pressure used in CO₂ pressure compensation.
 Must be in hPa or mBar. Note: Once `set_ambient_pressure_compensation` is called `altitude_compensation`, if
@@ -422,7 +413,7 @@ sensor:
 
 ```
 
-### Static example with altitude
+#### Static example with altitude
 
 ```yaml
 sensor:
