@@ -17,7 +17,7 @@ This sensor supports both UART and I²C communication. Only I²C communication i
 
 ## SEN5X Series
 
-{{< img src="sen54.jpg" alt="Image" caption="SEN5X Environmental Sensor" width="50.0%" class="align-center" >}}
+{{< img src="sen54.jpg" alt="Image" width="33.3%" class="align-center" >}}
 
 ```yaml
 # Example SEN55 configuration entry
@@ -52,7 +52,7 @@ sensor:
 
 ## SEN6X Series
 
-{{< img src="sen66.jpg" alt="Image" caption="SEN6X Environmental Sensor" width="50.0%" class="align-center" >}}
+{{< img src="sen66.jpg" alt="Image" width="33.3%" class="align-center" >}}
 
 ```yaml
 # Example SEN66 configuration entry
@@ -261,6 +261,11 @@ to blow out the accumulated dust inside the fan.
 
 ## Actions
 
+Multiple actions are available with this component and all are mutually exclusive. Actions take time to complete.
+While an individual action is running the sensor is otherwise occupied and cannot be accessed. Attempting to run
+an action while another action is already running results in a 'Sensor is busy' log warning. Several actions also
+require the sensor to be in the idle state with no measurements running.
+
 ### Fan Cleaning
 
 Both sensor families support manual running of the fan cleaning cycle by using the
@@ -271,7 +276,9 @@ SEN66, SEN68 or SEN69C.
 
 #### `sen5x.start_fan_autoclean` Action
 
-This [action](/automations/actions#all-actions) manually starts fan cleaning.
+This [action](/automations/actions#all-actions) manually starts fan cleaning. During the fan cleaning
+process sensor measurements are paused or stopped, depending on the sensor, while the fan is running at
+the elevated rate. The entire fan cleaning sequence takes 12 seconds.
 
 ```yaml
 on_...:
@@ -298,14 +305,12 @@ The SEN6X humidity sensor can develop an offset in the humidity reading when exp
 humidity for extended periods of time. It supports a heater similar to the one in the SHT4X. The
 difference is no automatic mode. Instead you have to trigger `sen5x.activate_heater` action occasionally.
 
-{{< anchor "activate_heater_action" >}}
-
 #### `activate_heater` Action
 
 This [action](/automations/actions#all-actions) manually starts the heater. First all measurements are
-stopped, then the heater is turned on at 200mW for 1s, finally there is a 20 second delay to before
+stopped, then the heater is turned on at 200mW for 1s, finally there is a 20 second delay before
 reenabling the measurements. This is to ensure the heating effects are gone before temperature measurements
-resume.
+resume. The entire activate heater sequence takes 22 seconds.
 
 ```yaml
 on_...:
@@ -322,13 +327,16 @@ will tend downward.
 
 If you know your minimums are not going to be 400 ppm then you can disable auto-calibration and occasionally
 take the sensor outside for 5 minutes and then force a manual CO₂ calibration to the expected outdoor CO₂ level.
-
-{{< anchor "perform_forced_co2_recalibration_action" >}}
+Be sure to watch the log output of your device when you perform this action. If the sensor reports an error
+during the recalibration process it will be reported in the log.
 
 #### `perform_forced_co2_recalibration` Action
 
-This [action](/automations/actions#all-actions) forces a manual calibration on the CO₂ sensor. The example
-below will recalibrate the CO₂ sensor when the "CO₂ Calibrate" button is pressed using the
+This [action](/automations/actions#all-actions) forces a manual calibration on the CO₂ sensor. Measurements
+are stopped before issuing the forced co2 recalibrate command to the sensor. The entire perform forced co2
+recalibration action takes 2 seconds.
+
+The example below will recalibrate the CO₂ sensor when the "CO₂ Calibrate" button is pressed using the
 "CO₂ Calibration Value" number's current value.
 
 ```yaml
