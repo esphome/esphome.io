@@ -90,33 +90,37 @@ sensor:
 - **type** (*Required*, enum): The type of the connected sensor. Must be one of the following:
   SEN50, SEN54, SEN55, SEN62, SEN63C, SEN65, SEN66, SEN68 or SEN69C.
 
-  - All options from [Sensor](#config-sensor).
+  - All options from [Sensor](/components/sensor#config-sensor).
 
-- **pm_1_0** (*Optional*): The information for the **Mass Concentration** sensor for fine particles up to 1μm. Readings in µg/m³.
+- **pm_1_0** (*Optional*): The information for the **Mass Concentration** sensor for fine particles up to
+  1μm in size. Readings in µg/m³.
 
-  - All options from [Sensor](#config-sensor).
+  - All options from [Sensor](/components/sensor#config-sensor).
 
-- **pm_2_5** (*Optional*): The information for the **Mass Concentration** sensor for fine particles up to 2.5μm. Readings in µg/m³.
+- **pm_2_5** (*Optional*): The information for the **Mass Concentration** sensor for fine particles up to
+  2.5μm in size. Readings in µg/m³.
 
-  - All options from [Sensor](#config-sensor).
+  - All options from [Sensor](/components/sensor#config-sensor).
 
-- **pm_4_0** (*Optional*): The information for the **Mass Concentration** sensor for coarse particles up to 4μm. Readings in µg/m³.
+- **pm_4_0** (*Optional*): The information for the **Mass Concentration** sensor for coarse particles up to
+  4μm in size. Readings in µg/m³.
 
-  - All options from [Sensor](#config-sensor).
+  - All options from [Sensor](/components/sensor#config-sensor).
 
-- **pm_10_0** (*Optional*): The information for the **Mass Concentration** sensor for coarse particles up to 10μm. Readings in µg/m³.
+- **pm_10_0** (*Optional*): The information for the **Mass Concentration** sensor for coarse particles up to
+  10μm in size. Readings in µg/m³.
 
-  - All options from [Sensor](#config-sensor).
+  - All options from [Sensor](/components/sensor#config-sensor).
 
 - **temperature** (*Optional*): The information for the Temperature sensor. Only available with SEN54, SEN55,
   SEN62, SEN63C, SEN65, SEN66, SEN68 or SEN69C.
 
-  - All options from [Sensor](#config-sensor).
+  - All options from [Sensor](/components/sensor#config-sensor).
 
 - **humidity** (*Optional*): The information for the Relative Humidity sensor. Only available with SEN54, SEN55,
   SEN62, SEN63C, SEN65, SEN66, SEN68 or SEN69C.
 
-  - All options from [Sensor](#config-sensor).
+  - All options from [Sensor](/components/sensor#config-sensor).
 
 - **co2** (*Optional*): The information for the Carbon dioxide (CO₂) sensor. Readings in ppm. Only available with
   SEN63C, SEN66 or SEN69C.
@@ -126,14 +130,17 @@ sensor:
   - **altitude_compensation** (*Optional*, integer): When set to altitude (in meters), the CO₂ sensor will be
   statically compensated for deviations due to current altitude.
   - **ambient_pressure_compensation** (*Optional*, integer): When set to pressure (in hPA), the CO₂ sensor will be
-  statically compensated for deviations due to ambient pressure.
-  - **ambient_pressure_compensation_source** (*Optional*, [ID](/guides/configuration-types#config-id)): Sets an external
-  pressure sensor ID (must report in hPA). This will compensate the CO₂ sensor for deviations due to current pressure.
-  This correction is applied before each update of the CO₂ sensor.
+  compensated for deviations due to ambient pressure.
+  - **ambient_pressure_compensation_source** (*Optional*, [ID](/guides/configuration-types#config-id)):
+  Sets an external pressure sensor ID (must report in hPA). This will compensate the CO₂ sensor for deviations
+  due to current pressure. This correction is applied with each update of the CO₂ sensor.
 
-- **voc** (*Optional*): The information for the VOC Index sensor. Only available with SEN54, SEN55, SEN65, SEN66, SEN69 or SEN69C.
+- **voc** (*Optional*): The information for the VOC Index sensor. Only available with SEN54, SEN55, SEN65, SEN66,
+  SEN69 or SEN69C.
 
-  - **algorithm_tuning** (*Optional*): The VOC algorithm can be customized by tuning 6 different parameters. For more details see [Engineering Guidelines for SEN5x](https://sensirion.com/media/documents/25AB572C/62B463AA/Sensirion_Engineering_Guidelines_SEN5x.pdf)
+  - **algorithm_tuning** (*Optional*): The VOC algorithm can be customized by tuning 6 different parameters.
+    For more details see
+    [Engineering Guidelines for SEN5x](https://sensirion.com/media/documents/25AB572C/62B463AA/Sensirion_Engineering_Guidelines_SEN5x.pdf).
 
     - **index_offset** (*Optional*): VOC index representing typical (average) conditions.
       Allowed values are in range 1..250. The default value is 100.
@@ -186,7 +193,7 @@ sensor:
   effects of the customer design by applying custom temperature offsets to the ambient temperature. Only available
   with SEN54, SEN55, SEN62, SEN63C, SEN65, SEN66, SEN69 or SEN69C.
 
-  - **offset** (*Optional*, float): Temperature offset [°C]. Defaults to `0`.
+  - **offset** (*Optional*, float): Temperature offset, in °C. Defaults to `0`.
   - **normalized_offset_slope** (*Optional*, float): Normalized temperature offset slope. Defaults to `0`.
   - **time_constant** (*Optional*, positive int): Time constant in seconds. Defaults to `0`.
 
@@ -206,20 +213,23 @@ sensor:
   variations in temperature.
 
   For more information see
-  [Temperature Acceleration and Compensation Instructions for SEN5x.](https://sensirion.com/media/documents/9B9DE2A7/61E957EB/Sensirion_Temperature_Acceleration_and_Compensation_Instructions_SEN.pdf)
+  [Temperature Acceleration and Compensation Instructions for SEN5x.](https://sensirion.com/media/documents/9B9DE2A7/61E957EB/Sensirion_Temperature_Acceleration_and_Compensation_Instructions_SEN.pdf).
 
 - **address** (*Optional*, int): Manually specify the I²C address of the sensor. Defaults to `0x69` for
   SEN5X sensors and `0x6B` for SEN6X sensors.
 
 > [!NOTE]
 > This component reports readings as soon as they are available without regard initial accuracy.
-> Your configuration should limit reporting of sensor values for a period of time after power-up. A good starting point is 5 minutes.
+> Your configuration should limit reporting of sensor values for a period of time after power-up.
+> A good starting point is 5 minutes.
 >
 > - The PM sensor has a start-up time of 30 seconds.
 > - The temperature sensor has a response time of 1 minute with no mention start-up time.
 > - The humidity sensor has a response time of 20 seconds with no mention start-up time.
-> - The VOC sensor will start detecting events in 1 minute but may take up to 1 hour to meet data sheet specifications.
-> - The NOx sensor will start detecting events in 5 minutes but may take up to 6 hours to meet data sheet specifications.
+> - The VOC sensor will start detecting events in 1 minute but may take up to 1 hour to meet
+>   data sheet specifications.
+> - The NOx sensor will start detecting events in 5 minutes but may take up to 6 hours to meet
+>   data sheet specifications.
 > - The CO₂ sensor has a response time of between 60 and 70 seconds with no mention start-up time.
 > - The HCHO sensor has a start-up time of 10 minutes.
 
@@ -240,8 +250,8 @@ For better stability, the SDA and SCL lines require suitable pull-up resistors.
 ## Automatic Fan Cleaning
 
 The SEN5X sensors have an automatic fan-cleaning procedure will be triggered periodically following
-`auto_cleaning_interval` cleaning interval. This will accelerate the fan to maximum speed for 10 seconds to blow
-out the accumulated dust inside the fan.
+`auto_cleaning_interval` cleaning interval. This will accelerate the fan to maximum speed for 10 seconds
+to blow out the accumulated dust inside the fan.
 
 - Measurement values are not updated while the fan-cleaning is running.
 - The default cleaning interval is set to 604,800 seconds (i.e., 168 hours or 1 week).
@@ -253,8 +263,9 @@ out the accumulated dust inside the fan.
 
 ## Fan Cleaning
 
-Both sensor families support manual running of the fan cleaning cycle by using the `sen5x.start_fan_autoclean` action.
-Only available with the SEN54, SEN55, SEN62, SEN63C, SEN65, SEN66, SEN68 or SEN69C.
+Both sensor families support manual running of the fan cleaning cycle by using the
+`sen5x.start_fan_autoclean` action. Only available with the SEN54, SEN55, SEN62, SEN63C, SEN65,
+SEN66, SEN68 or SEN69C.
 
 {{< anchor "start_fan_autoclean_action" >}}
 
@@ -283,17 +294,18 @@ interval:
 
 ## Humidity Sensor Heater
 
-The SEN6X humidity sensor can develop an offset in the humidity reading when exposed to high levels of humidity
-for extended periods of time. It supports a heater similar to the one in the SHT4X. The difference is no
-automatic mode. Instead you have to trigger `sen5x.activate_heater` action occasionally.
+The SEN6X humidity sensor can develop an offset in the humidity reading when exposed to high levels of
+humidity for extended periods of time. It supports a heater similar to the one in the SHT4X. The
+difference is no automatic mode. Instead you have to trigger `sen5x.activate_heater` action occasionally.
 
 {{< anchor "activate_heater_action" >}}
 
 ### `activate_heater` Action
 
-This [action](/automations/actions#all-actions) manually starts the heater. First all measurements are stopped,
-then the heater is turned on at 200mW for 1s, finally there is a 20 second delay to before reenabling the
-measurements. This is to ensure the heating effects are gone before temperature measurements resume.
+This [action](/automations/actions#all-actions) manually starts the heater. First all measurements are
+stopped, then the heater is turned on at 200mW for 1s, finally there is a 20 second delay to before
+reenabling the measurements. This is to ensure the heating effects are gone before temperature measurements
+resume.
 
 ```yaml
 on_...:
@@ -303,10 +315,10 @@ on_...:
 
 ## CO₂ Calibration
 
-The CO₂ sensor by default has auto-calibration enabled. Auto-calibration will adjust the minimum measurement over
-the last week or so to the outdoor average of slightly more than 400 ppm. Auto-calibration assumes that you are
-opening the windows at least once a week. If you don't open the windows then over time the CO₂ level will tend
-downward.
+The CO₂ sensor by default has auto-calibration enabled. Auto-calibration will adjust the minimum measurement
+over the last week or so to the outdoor average of slightly more than 400 ppm. Auto-calibration assumes that
+you are opening the windows at least once a week. If you don't open the windows then over time the CO₂ level
+will tend downward.
 
 If you know your minimums are not going to be 400 ppm then you can disable auto-calibration and occasionally
 take the sensor outside for 5 minutes and then force a manual CO₂ calibration to the expected outdoor CO₂ level.
@@ -315,9 +327,9 @@ take the sensor outside for 5 minutes and then force a manual CO₂ calibration 
 
 ### `perform_forced_co2_recalibration` Action
 
-This [action](/automations/actions#all-actions) forces a manual calibration on the CO₂ sensor. The example below
-will recalibrate the CO₂ sensor when the "CO₂ Calibrate" button is pressed using the "CO₂ Calibration Value"
-number's current value.
+This [action](/automations/actions#all-actions) forces a manual calibration on the CO₂ sensor. The example
+below will recalibrate the CO₂ sensor when the "CO₂ Calibrate" button is pressed using the
+"CO₂ Calibration Value" number's current value.
 
 ```yaml
 number:
@@ -337,47 +349,22 @@ button:
     entity_category: CONFIG
     on_press:
       - sen5x.perform_forced_co2_recalibration:
-          value: !lambda |-
-            float value = id(co2_forced_cal_value).state;
-            return value;
+          value: !lambda "return id(co2_forced_cal_value).state;"
           id: sen66_sensor
 sensor:
   - platform: sen5x
-    type: SEN69C
+    type: SEN66
     id: sen66_sensor
     co2:
       name: "CO₂"
-      ambient_pressure_compensation_source: pressure_hpa
 ```
 
 ## CO₂ Compensation
 
-The CO₂ sensor supports pressure/altitude compensation. This first approach is to statically define either
-`altitude_compensation` or `ambient_pressure_compensation`. This will improve your CO₂ accuracy over uncompensated
-accuracy. Or you can dynamically adjust pressure compensation by either adding a `ambient_pressure_compensation_source`
-to your configuration for automatic updates or periodically calling `sen5x.set_ambient_pressure_compensation` action
-with the current pressure. Dynamic pressure updates provide the best CO₂ accuracy.
-
-### `set_ambient_pressure_compensation` Action
-
-This [action](/automations/actions#all-actions) updates the current pressure used in CO₂ pressure compensation.
-Must be in hPa or mBar. Only available with SEN63C, SEN66 or SEN69C.
-
-```yaml
-sensor:
-  - platform: bmp581
-    id: bmp581_sensor
-    pressure:
-      id: pressure_hpa
-      filters:
-        - lambda: |-
-            // convert Pa to hPa (or mBar)
-            return x * 0.01;
-    on_value:
-      then:
-        - lambda: !lambda |-
-            id(pressure_hpa)->set_ambient_pressure_compensation(x);
-```
+The CO₂ sensor supports pressure/altitude compensation to improve CO₂ accuracy. If a pressure sensor is available
+you can dynamically adjust pressure compensation by either adding `ambient_pressure_compensation_source` to your
+configuration for automatic updates or you can periodically call the `sen5x.set_ambient_pressure_compensation`
+action with the current ambient pressure. You can also statically define `altitude_compensation`.
 
 ### Dynamic example with a local sensor
 
@@ -396,6 +383,34 @@ sensor:
     co2:
       name: "CO₂"
       ambient_pressure_compensation_source: pressure_hpa
+```
+
+### Dynamic example `set_ambient_pressure_compensation` Action
+
+This [action](/automations/actions#all-actions) updates the current pressure used in CO₂ pressure compensation.
+Must be in hPa or mBar. Note: Once `set_ambient_pressure_compensation` is called `altitude_compensation`, if
+set in the configuration, will be ignored. Only available with SEN63C, SEN66 or SEN69C.
+
+```yaml
+sensor:
+  - platform: bmp581
+    id: bmp581_sensor
+    pressure:
+      id: pressure_hpa
+      filters:
+        - lambda: |-
+            // convert Pa to hPa (or mBar)
+            return x * 0.01;
+    on_value:
+      then:
+        - lambda: !lambda |-
+            id(sen66_sensor).set_ambient_pressure_compensation(x);
+  - platform: sen5x
+    type: SEN69C
+    id: sen66_sensor
+    co2:
+      name: "CO₂"
+
 ```
 
 ### Static example with altitude
@@ -417,23 +432,24 @@ configuration under the `voc` and `nox` sensors. For more details see
 
 ## Temperature Compensation
 
-The SEN54, SEN55, SEN62, SEN63C, SEN65, SEN66, SEN68 or SEN69C contain an internal temperature compensation mechanism.
-The compensated ambient temperature is calculated as follows:
+The SEN54, SEN55, SEN62, SEN63C, SEN65, SEN66, SEN68 or SEN69C contain an internal temperature
+compensation mechanism. The compensated ambient temperature is calculated as follows:
 
 ``` c++
 T_Ambient_Compensated = T_Ambient + (slope*T_Ambient) + offset
 ```
 
-Where slope and offset are the values set with `temperature_compensation` configuration variables, smoothed with the
-specified time constant, also a `temperature_compensation` configuration variable. The time constant is how fast the
-slope and offset are applied. After the specified value in seconds, 63% of the new slope and offset are applied.
+Where slope and offset are the values set with `temperature_compensation` configuration variables, smoothed
+with the specified time constant, also a `temperature_compensation` configuration variable. The time constant
+is how fast the slope and offset are applied. After the specified value in seconds, 63% of the new slope and
+offset are applied.
 
 More details about the tuning of these parameters for SEN5X sensors are included in the application note:
 [Temperature Acceleration and Compensation Instructions for SEN5x](https://sensirion.com/media/documents/9B9DE2A7/61E957EB/Sensirion_Temperature_Acceleration_and_Compensation_Instructions_SEN.pdf).
 
-The SEN62, SEN63C, SEN65, SEN66, SEN68 or SEN69C support temperature compensation using the same formula above
-but with the added feature of up to five slots. At this time only slot 0 is supported. A later update will correct
-this issue.
+The SEN62, SEN63C, SEN65, SEN66, SEN68 or SEN69C support temperature compensation using the same formula
+above but with the added feature of up to five slots. At this time only slot 0 is supported. A later update
+will correct this issue.
 
 More details about the tuning of these parameters for SEN6X sensors are included in the application note:
 [SEN6x – Temperature Acceleration and Compensation Instructions](https://sensirion.com/media/documents/C964FCC8/693FD554/PS_AN_SEN6x_Temperature_Compensation_and_Acceleration_Application_No.pdf).
