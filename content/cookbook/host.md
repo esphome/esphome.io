@@ -55,16 +55,16 @@ esphome:
   name_add_mac_suffix: true
   on_boot:
     - lambda: |-
-        auto result = esphome::host::execute_shell_command("ip -o -4 addr show | awk '$2!=\"lo\"{print $4}' | cut -d/ -f1");
+        auto result = esphome::host::execute_host_command("ip -o -4 addr show | awk '$2!=\"lo\"{print $4}' | cut -d/ -f1");
         id(host_ip_address).publish_state(result.stdout_output);
     - lambda: |-
-        auto result = esphome::host::execute_shell_command("cat /sys/class/dmi/id/product_name");
+        auto result = esphome::host::execute_host_command("cat /sys/class/dmi/id/product_name");
         id(host_model).publish_state(result.stdout_output);
     - lambda: |-
-        auto result = esphome::host::execute_shell_command("hostname");
+        auto result = esphome::host::execute_host_command("hostname");
         id(host_name).publish_state(result.stdout_output);
     - lambda: |-
-        auto result = esphome::host::execute_shell_command("nproc");
+        auto result = esphome::host::execute_host_command("nproc");
         id(host_nproc).publish_state(result.stdout_output);
 ```
 
@@ -107,7 +107,7 @@ sensor:
     unit_of_measurement: "°C"
     accuracy_decimals: 0
     lambda: |-
-      auto result = esphome::host::execute_shell_command("cat /sys/class/thermal/thermal_zone0/temp");
+      auto result = esphome::host::execute_host_command("cat /sys/class/thermal/thermal_zone0/temp");
       auto stdout_str = result.stdout_output;
       stdout_str.erase(std::remove_if(stdout_str.begin(), stdout_str.end(), ::isspace), stdout_str.end());
       auto parsed = parse_number<float>(stdout_str);
@@ -122,7 +122,7 @@ sensor:
     accuracy_decimals: 2
     icon: mdi:cpu-64-bit
     lambda: |-
-      auto result = esphome::host::execute_shell_command("awk '{print $1}' /proc/loadavg");
+      auto result = esphome::host::execute_host_command("awk '{print $1}' /proc/loadavg");
       auto stdout_str = result.stdout_output;
       stdout_str.erase(std::remove_if(stdout_str.begin(), stdout_str.end(), ::isspace), stdout_str.end());
       auto parsed = parse_number<float>(stdout_str);
@@ -141,7 +141,7 @@ sensor:
       opts.environment = {
         {"LC_NUMERIC", "C"},
       };
-      auto result = esphome::host::execute_shell_command("free | awk '/^Mem:/ {print ($7/$2)*100}'", opts);
+      auto result = esphome::host::execute_host_command("free | awk '/^Mem:/ {print ($7/$2)*100}'", opts);
       auto stdout_str = result.stdout_output;
       stdout_str.erase(std::remove_if(stdout_str.begin(), stdout_str.end(), ::isspace), stdout_str.end());
       auto parsed = parse_number<float>(stdout_str);
@@ -157,7 +157,7 @@ sensor:
     accuracy_decimals: 0
     icon: mdi:chart-donut
     lambda: |-
-      auto result = esphome::host::execute_shell_command("df -P / | awk 'NR==2{u=substr($5,1,length($5)-1); print 100-u}'");
+      auto result = esphome::host::execute_host_command("df -P / | awk 'NR==2{u=substr($5,1,length($5)-1); print 100-u}'");
       auto stdout_str = result.stdout_output;
       stdout_str.erase(std::remove_if(stdout_str.begin(), stdout_str.end(), ::isspace), stdout_str.end());
       auto parsed = parse_number<float>(stdout_str);
@@ -172,7 +172,7 @@ sensor:
     accuracy_decimals: 0
     icon: mdi:package-down
     lambda: |-
-      auto result = esphome::host::execute_shell_command("apt list --upgradable 2>/dev/null | tail -n +2 | wc -l");
+      auto result = esphome::host::execute_host_command("apt list --upgradable 2>/dev/null | tail -n +2 | wc -l");
       auto stdout_str = result.stdout_output;
       stdout_str.erase(std::remove_if(stdout_str.begin(), stdout_str.end(), ::isspace), stdout_str.end());
       auto parsed = parse_number<float>(stdout_str);
@@ -215,14 +215,14 @@ button:
     icon: mdi:restart
     on_press:
       - lambda: |-
-          auto result = esphome::host::execute_shell_command("/sbin/reboot");
+          auto result = esphome::host::execute_host_command("/sbin/reboot");
   - platform: template
     name: "Shutdown"
     icon: mdi:power-cycle
     disabled_by_default: true
     on_press:
       - lambda: |-
-          auto result = esphome::host::execute_shell_command("/sbin/shutdown -h now");
+          auto result = esphome::host::execute_host_command("/sbin/shutdown -h now");
 
 switch:
   - platform: template
@@ -237,14 +237,14 @@ switch:
           opts.environment = {
             {"DISPLAY", ":0.0"},
           };
-          auto result = esphome::host::execute_shell_command("xset dpms force on", opts);
+          auto result = esphome::host::execute_host_command("xset dpms force on", opts);
     turn_off_action:
       - lambda: |-
           esphome::host::ShellCommandOptions opts;
           opts.environment = {
             {"DISPLAY", ":0.0"},
           };
-          auto result = esphome::host::execute_shell_command("xset dpms force off", opts);
+          auto result = esphome::host::execute_host_command("xset dpms force off", opts);
 
 interval:
   - interval: 5s
@@ -256,7 +256,7 @@ interval:
               opts.environment = {
                 {"DISPLAY", ":0.0"},
               };
-              auto result = esphome::host::execute_shell_command("xset -q | awk '/Monitor is/ {print $NF; exit}'", opts);
+              auto result = esphome::host::execute_host_command("xset -q | awk '/Monitor is/ {print $NF; exit}'", opts);
               auto stdout_str = result.stdout_output;
               stdout_str.erase(std::remove_if(stdout_str.begin(), stdout_str.end(), ::isspace), stdout_str.end());
               auto parsed = parse_on_off(stdout_str.c_str(), "On", "Off");
@@ -271,23 +271,23 @@ interval:
   - interval: 5min
     then:
       - lambda: |-
-          auto rx1_result = esphome::host::execute_shell_command("cat /sys/class/net/eno1/statistics/rx_bytes");
+          auto rx1_result = esphome::host::execute_host_command("cat /sys/class/net/eno1/statistics/rx_bytes");
           auto rx1_str = rx1_result.stdout_output;
           rx1_str.erase(std::remove_if(rx1_str.begin(), rx1_str.end(), ::isspace), rx1_str.end());
           id(eno1_rx1) = parse_number<uint64_t>(rx1_str).value_or(0);
       - lambda: |-
-          auto tx1_result = esphome::host::execute_shell_command("cat /sys/class/net/eno1/statistics/tx_bytes");
+          auto tx1_result = esphome::host::execute_host_command("cat /sys/class/net/eno1/statistics/tx_bytes");
           auto tx1_str = tx1_result.stdout_output;
           tx1_str.erase(std::remove_if(tx1_str.begin(), tx1_str.end(), ::isspace), tx1_str.end());
           id(eno1_tx1) = parse_number<uint64_t>(tx1_str).value_or(0);
       - delay: 1s
       - lambda: |-
-          auto rx2_result = esphome::host::execute_shell_command("cat /sys/class/net/eno1/statistics/rx_bytes");
+          auto rx2_result = esphome::host::execute_host_command("cat /sys/class/net/eno1/statistics/rx_bytes");
           auto rx2_str = rx2_result.stdout_output;
           rx2_str.erase(std::remove_if(rx2_str.begin(), rx2_str.end(), ::isspace), rx2_str.end());
           id(eno1_rx2) = parse_number<uint64_t>(rx2_str).value_or(0);
       - lambda: |-
-          auto tx2_result = esphome::host::execute_shell_command("cat /sys/class/net/eno1/statistics/tx_bytes");
+          auto tx2_result = esphome::host::execute_host_command("cat /sys/class/net/eno1/statistics/tx_bytes");
           auto tx2_str = tx2_result.stdout_output;
           tx2_str.erase(std::remove_if(tx2_str.begin(), tx2_str.end(), ::isspace), tx2_str.end());
           id(eno1_tx2) = parse_number<uint64_t>(tx2_str).value_or(0);
@@ -387,7 +387,7 @@ sensor:
     accuracy_decimals: 0
     icon: mdi:timer-play-outline
     lambda: |-
-      auto result = esphome::host::execute_shell_command("UNIT=esphome_host.service; ae=$(systemctl show -p ActiveEnterTimestampMonotonic --value $UNIT); awk -v ae=${ae:-0} '{print (ae>0)?int($1-ae/1000000):0}' /proc/uptime");
+      auto result = esphome::host::execute_host_command("UNIT=esphome_host.service; ae=$(systemctl show -p ActiveEnterTimestampMonotonic --value $UNIT); awk -v ae=${ae:-0} '{print (ae>0)?int($1-ae/1000000):0}' /proc/uptime");
       auto stdout_str = result.stdout_output;
       stdout_str.erase(std::remove_if(stdout_str.begin(), stdout_str.end(), ::isspace), stdout_str.end());
       auto parsed = parse_number<float>(stdout_str);
