@@ -316,18 +316,17 @@ them and publish them to the template sensors. We use `globals` to define variab
 
 To deploy it as a systemd unit which ensures proper startup at boot, and restarts the binary in case of failure we can assume something like:
 
-* **User:** `kiosk` (with appropriate privileges to run the commands defined in the yaml)
-* **Binary location:** `/usr/local/bin/esphome_host`
-* **Preferences location:** `/var/lib/esphome_host`
+- **User:** `kiosk` (with appropriate privileges to run the commands defined in the yaml)
+- **Binary location:** `/usr/local/bin/esphome_host`
+- **Preferences location:** `/var/lib/esphome_host` (in the yaml, set `preferences_path: /var/lib/esphome_host`)
 
 ### Place the binary and create directories
 
-In the yaml, set `preferences_path: /var/lib/esphome_host`. Compile the binary using `esphome run` and watch the log for the message "Running
-program from path". Usse that path in the following command:
+. Compile the binary using `esphome run` and watch the log for the message "Running program from path". Usse that path in the following command:
 
 ```bash
 # Recommended location for the binary
-sudo install -m 0755 <compilation_path> /usr/local/bin/esphome_host
+sudo install -m 0755 <compilation_output_path> /usr/local/bin/esphome_host
 
 # Create the dedicated working directory to save the preferences file
 sudo install -d -o kiosk -g kiosk -m 0750 /var/lib/esphome_host
