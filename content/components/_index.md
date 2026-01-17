@@ -138,6 +138,7 @@ ESPHome-specific components or components supporting ESPHome device provisioning
 "Safe Mode","components/safe_mode","restart-alert.svg","dark-invert"
 "Web Server","components/web_server","http.svg",""
 "ESP32 Camera Web Server","components/esp32_camera_web_server","camera.svg","dark-invert"
+"Zephyr GDB coredump","components/zephyr_coredump","bug-report.svg","dark-invert"
 {{< /imgtable >}}
 
 ## Update Installation
@@ -1091,7 +1092,6 @@ ESPHome to cellular networks. **Does not encompass Wi-Fi.**
 "Sun","components/sun","weather-sunny.svg","dark-invert"
 "Tuya MCU","components/tuya","tuya.png",""
 "Z-Wave Proxy","components/zwave_proxy","z-wave.svg",""
-"Zephyr GDB coredump","components/zephyr_coredump","bug-report.svg","dark-invert"
 {{< /imgtable >}}
 
 ## Cookbook

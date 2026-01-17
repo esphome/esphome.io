@@ -5,7 +5,7 @@ title: "Zephyr GDB coredump"
 
 This component helps debug crashes without requiring SWD. When a crash occurs, the stack memory is saved to flash.
 On the next boot, the stored stack memory is printed to the logs.
-These logs can then be used to reconstruct the call stack, as described in the Zephyr coredump documentation:
+These logs can then be used to reconstruct the call stack, as described in the 
 [Zephyr coredump documentation](https://docs.zephyrproject.org/latest/services/debugging/coredump.html)
 
 ```yaml
