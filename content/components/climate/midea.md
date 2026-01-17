@@ -63,6 +63,7 @@ climate:
       name: Temp
     power_usage:                # Optional. Power usage sensor (only for devices that support this feature).
       name: Power
+      power_multiplier: 1
     humidity_setpoint:          # Optional. Indoor humidity sensor (only for devices that support this feature).
       name: Humidity
 ```
@@ -91,7 +92,7 @@ climate:
   - All options from [Sensor](/components/sensor).
 - **power_usage** (*Optional*): The information for the current power consumption
   sensor.
-
+  - **power_usage** (*Optional*, float): Multiplying facotr to correct the reported power usage. Defaults to 0.
   - All options from [Sensor](/components/sensor).
 - **humidity_setpoint** (*Optional*): The information for the humidity indoor
   sensor (experimental).
