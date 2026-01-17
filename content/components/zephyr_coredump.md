@@ -11,6 +11,7 @@ esphome:
     then:
       - delay: 30s
       - lambda: |-
+          // Intentionally trigger a crash
           volatile uint32_t *p = (uint32_t *)0xDEADBEEF;
           *p = 0xDEADBEEF;
 
