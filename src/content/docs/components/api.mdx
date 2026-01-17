@@ -410,7 +410,18 @@ on_...:
       - logger.log: Client is connected to API!
 ```
 
-The lambda equivalent for this is `id(api_id).is_connected()`.
+The lambda equivalent for this is `id(api_id).is_connected()`, e.g.
+
+```yaml
+api:
+  id: api_id # Required to register "api_id"
+
+script:
+ - id: ...
+    then:
+      - lambda: |-
+          if (id(api_id).is_connected()) ...
+```
 
 **Check if a client subscribed to entity states is connected (typically Home Assistant):**
 
@@ -425,7 +436,18 @@ on_boot:
       event: esphome.device_booted
 ```
 
-The lambda equivalent for this is `id(api_id).is_connected(true)`.
+The lambda equivalent for this is `id(api_id).is_connected(true)`, e.g.
+
+```yaml
+api:
+  id: api_id # Required to register "api_id"
+
+script:
+ - id: ...
+    then:
+      - lambda: |-
+          if (id(api_id).is_connected(true)) ...
+```
 
 **Use Cases:**
 
