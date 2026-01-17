@@ -322,7 +322,7 @@ To deploy it as a systemd unit which ensures proper startup at boot, and restart
 
 ### Place the binary and create directories
 
-. Compile the binary using `esphome run` and watch the log for the message "Running program from path". Usse that path in the following command:
+Compile the binary using `esphome run` and watch the log for the message "Running program from path". Usse that path in the following command:
 
 ```bash
 # Recommended location for the binary
@@ -359,7 +359,7 @@ RestartSec=5s
 WantedBy=default.target
 ```
 
-## 3) Enable and start
+### Enable and start
 
 ```bash
 sudo systemctl daemon-reload
