@@ -28,11 +28,15 @@ section at the bottom of this page for components working specifically with `hos
 # Example configuration entry
 host:
   mac_address: "06:35:69:ab:f6:79"
+  use_shell: true
+  preferences_path: "\tmp"
 ```
 
 ## Configuration variables
 
 - **mac_address** (*Optional*, MAC address): A dummy MAC address to use when communicating with HA.
+- **use_shell** (*Optional*, boolean): Instead of running the commands directly, run them in a shell.
+- **preferences_path** (*Optional*, path): Override the filesystem path where to save the preferences (defaults to `$HOME/.esphome/prefs`)
 
 ## Lambda calls
 
