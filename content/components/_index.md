@@ -1091,7 +1091,7 @@ ESPHome to cellular networks. **Does not encompass Wi-Fi.**
 "Sun","components/sun","weather-sunny.svg","dark-invert"
 "Tuya MCU","components/tuya","tuya.png",""
 "Z-Wave Proxy","components/zwave_proxy","z-wave.svg",""
-"Zephyr GDB coredump","components/zephyr_coredump","gdb.svg",""
+"Zephyr GDB coredump","components/zephyr_coredump","bug-report.svg","dark-invert"
 {{< /imgtable >}}
 
 ## Cookbook
