@@ -373,6 +373,30 @@ To see the log, use:
 journalctl -u esphome_host.service
 ```
 
+### Monitor unit uptime
+
+Here's a tip to monitor separately the uptime of the `esphome_host` executable:
+
+```yaml
+sensor:
+  - platform: template
+    name: "Uptime app unit"
+    state_class: total_increasing
+    unit_of_measurement: s
+    device_class: duration
+    accuracy_decimals: 0
+    icon: mdi:timer-play-outline
+    lambda: |-
+      auto result = esphome::host::execute_shell_command("UNIT=esphome_host.service; ae=$(systemctl show -p ActiveEnterTimestampMonotonic --value $UNIT); awk -v ae=${ae:-0} '{print (ae>0)?int($1-ae/1000000):0}' /proc/uptime");
+      auto stdout_str = result.stdout_output;
+      stdout_str.erase(std::remove_if(stdout_str.begin(), stdout_str.end(), ::isspace), stdout_str.end());
+      auto parsed = parse_number<float>(stdout_str);
+      if (!parsed.has_value()) {
+        return NAN;
+      }
+      return parsed.value();
+```
+
 ## See Also
 
 - {{< docref "/components/host" >}}
