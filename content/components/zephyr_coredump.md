@@ -6,7 +6,7 @@ title: "Zephyr GDB coredump"
 This component helps debug crashes without requiring SWD. When a crash occurs, the stack memory is saved to flash.
 On the next boot, the stored stack memory is printed to the logs.
 These logs can then be used to reconstruct the call stack, as described in the Zephyr coredump documentation:
-https://docs.zephyrproject.org/latest/services/debugging/coredump.html
+[Zephyr coredump documentation](https://docs.zephyrproject.org/latest/services/debugging/coredump.html)
 
 ```yaml
 # Example configuration entry
@@ -25,7 +25,7 @@ zephyr_coredump:
 
 ## Crash log example
 
-```
+```log
 [14:36:08.267][E][coredump:052]: #CD:BEGIN#
 [14:36:08.267][E][coredump:039]: #CD:5a450100030005001a0000004102004400d0670020b4670020efbeadde00b0ad
 [14:36:08.269][E][coredump:039]: #CD:de00000000296201002862010000000001505500200000000000000000000000
@@ -39,7 +39,7 @@ zephyr_coredump:
 ```gdb
 0x00016228 in esphome::StatelessLambdaAction<>::play() (this=<optimized out>)
     at .esphome/build/coredump-test/src/esphome/core/base_automation.h:231
-231	  void play(const Ts &...x) override { this->f_(x...); }
+231  void play(const Ts &...x) override { this->f_(x...); }
 (gdb) bt
 #0  0x00016228 in esphome::StatelessLambdaAction<>::play() (
     this=<optimized out>)
