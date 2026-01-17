@@ -92,7 +92,7 @@ climate:
   - All options from [Sensor](/components/sensor).
 - **power_usage** (*Optional*): The information for the current power consumption
   sensor.
-  - **power_usage** (*Optional*, float): Multiplying facotr to correct the reported power usage. Defaults to 0.
+  - **power_multiplier** (*Optional*, float): Multiplying factor to correct the reported power usage. Defaults to 1.
   - All options from [Sensor](/components/sensor).
 - **humidity_setpoint** (*Optional*): The information for the humidity indoor
   sensor (experimental).
