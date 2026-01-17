@@ -40,7 +40,7 @@ host:
 
 ## Lambda calls
 
-The `execute_shell_command` function can be used in a [lambda](/automations/templates#config-lambda) to run linux shell
+The `execute_host_command` function can be used in a [lambda](/automations/templates#config-lambda) to run linux shell
 commands on the host operating system, and retrieve the Standard Output, Standard Error and Exit Code of the result.
 
 > [!WARNING]
@@ -59,7 +59,7 @@ button:
     name: "Kernel version (sh)" # get shell type and kernel version number
     on_press:
       - lambda: |-
-          auto result = esphome::host::execute_shell_command("ps -p $$ -o comm=; uname -r");
+          auto result = esphome::host::execute_host_command("ps -p $$ -o comm=; uname -r");
           id(last_exit_code).publish_state(result.exit_code);
           id(last_stdout).publish_state(result.stdout_output);
           id(last_stderr).publish_state(result.stderr_output);
@@ -73,7 +73,7 @@ button:
           opts.environment = {
             {"FOO", "BAR"},
           };
-          auto result = esphome::host::execute_shell_command("ps -p $$ -o comm=; printf 'FOO=\"%s\"\n' \"${FOO-}\"", opts);
+          auto result = esphome::host::execute_host_command("ps -p $$ -o comm=; printf 'FOO=\"%s\"\n' \"${FOO-}\"", opts);
           id(last_exit_code).publish_state(result.exit_code);
           id(last_stdout).publish_state(result.stdout_output);
           id(last_stderr).publish_state(result.stderr_output);
@@ -82,7 +82,7 @@ button:
     name: "Run Command" # get first 255 characters of the output of any command typed in the text component
     on_press:
       - lambda: |-
-          auto result = esphome::host::execute_shell_command(id(arbitrary_command).state.c_str());
+          auto result = esphome::host::execute_host_command(id(arbitrary_command).state.c_str());
           id(last_exit_code).publish_state(result.exit_code);
           id(last_stdout).publish_state(result.stdout_output.substr(0, 254));
           id(last_stderr).publish_state(result.stderr_output);
