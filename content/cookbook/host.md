@@ -44,7 +44,7 @@ logger:
 Disabling `reboot_timeout` is recommended because from ESPHome perspective this just means quitting the executable and not rebooting the whole
 system. On a final deployment, setting `level: INFO` would suffice to reduce output chatter.
 
-## Read some data at start
+### Read some data at start
 
 Using `name_add_mac_suffix` will append the last 3 bytes of the mac address of the device to the name, this will allow using the same binary
 on multiple machines just by copying it over.
@@ -70,7 +70,7 @@ esphome:
 
 These lamdas run `on_boot` because their result doesn't change anymore after the system boots up, there's no need to run them more than once.
 
-## Text sensors
+### Text sensors
 
 The template sensors get updated from the lambdas specified elsewhere in the configuration, thus they are very simple:
 
@@ -94,7 +94,7 @@ text_sensor:
     name: "Cores"
 ```
 
-## Sensors
+### Sensors
 
 Sensors updating at runtime can have their polling command set in their own lambdas, which run in every `update_interval`:
 
@@ -204,7 +204,7 @@ sensor:
 Note the usage of `LC_NUMERIC=C` environment variable in the Free memory sensor. This is to ensure that the shell produces numeric output
 with proper locales, here specifically we care about decimal separator to be a `.`, not `,` as it is in many other languages.
 
-## Controls
+### Controls
 
 The buttons run the commands directly:
 
@@ -311,6 +311,68 @@ For this, we use the `interval` component to set a timing which doesn't overload
 
 For network traffic measurement, every 5 minutes we look two times at the linux traffic statistic counters with one second delay, substract
 them and publish them to the template sensors. We use `globals` to define variables available between the different lambdas.
+
+## Deploy as systemd unit
+
+To deploy it as a systemd unit which ensures proper startup at boot, and restarts the binary in case of failure we can assume something like:
+
+* **User:** `kiosk` (with appropriate privileges to run the commands defined in the yaml)
+* **Binary location:** `/usr/local/bin/esphome_host`
+* **Preferences location:** `/var/lib/esphome_host`
+
+### Place the binary and create directories
+
+In the yaml, set `preferences_path: /var/lib/esphome_host`. Compile the binary using `esphome run` and watch the log for the message "Running
+program from path". Usse that path in the following command:
+
+```bash
+# Recommended location for the binary
+sudo install -m 0755 <compilation_path> /usr/local/bin/esphome_host
+
+# Create the dedicated working directory to save the preferences file
+sudo install -d -o kiosk -g kiosk -m 0750 /var/lib/esphome_host
+```
+
+### Create the systemd unit
+
+```bash
+sudo nano /etc/systemd/system/esphome_host.service
+```
+
+with the following content:
+
+```ini
+[Unit]
+Description=ESPHome Host Service
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=kiosk
+Group=kiosk
+WorkingDirectory=/var/lib/esphome_host
+ExecStart=/usr/local/bin/esphome_host
+Restart=on-failure
+RestartSec=5s
+
+[Install]
+WantedBy=default.target
+```
+
+## 3) Enable and start
+
+```bash
+sudo systemctl daemon-reload
+sudo systemctl enable --now esphome_host.service
+sudo systemctl status esphome_host.service
+```
+
+To see the log, use:
+
+```bash
+journalctl -u esphome_host.service
+```
 
 ## See Also
 
