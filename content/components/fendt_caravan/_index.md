@@ -72,10 +72,10 @@ Sensor Configuration variables:
 The sensor platform exposes multible logical devices under the caravan management system.
 
 - **fendt_caravan_id** (**Required**): Reference to the `fendt_caravan` component.
-- **control_unit_device** (**Required**): Main control unit(MACU) of the caravan. The MCU provides some information for the caravan like in/out temperature, power, light main switch, and floor heater status. 
+- **control_unit_device** (**Required**): Main control unit(MACU) of the caravan. The MCU provides some information for the caravan like in/out temperature, power, light main switch, and floor heater status.
   - **id** (**Required**): The ID of the MCU.
-  - **main_switch** (Optional): Main Switch of the MCU. This switch closes all power in the caravan including MCU power. 
-  - **temperature_in** (Optional): Inside temperature sensor. 
+  - **main_switch** (Optional): Main Switch of the MCU. This switch closes all power in the caravan including MCU power.
+  - **temperature_in** (Optional): Inside temperature sensor.
   - **temperature_out** (Optional): Outside temperature sensor.
   - **power_status** (Optional): AC Power connection status text sensor.
   - **light_status** (Optional): Main light state switch. It closes or opens all lights in the caravan.
