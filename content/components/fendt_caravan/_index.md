@@ -27,7 +27,6 @@ You can obtain the Caravan’s MAC address using the **nRF Connect** application
 - ESP32 device with BLE support
 - Caravan with **Fendt / Hobby BLE interface** enabled or power on
 
-
 ## Base Fan Configuration
 
 ```yaml
@@ -46,14 +45,12 @@ Configuration variables:
 - **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the Fendt Caravan.
 - **ble_client_id** (**Required**): The client ID of the `ble_client`.
 
-
 ## Supported Platforms
 
 - ESP32 (BLE required)
 - Tested with **ESP32-C3**
 
 ESP8266 is **not supported** due to BLE limitations.
-
 
 ## See Also
 
