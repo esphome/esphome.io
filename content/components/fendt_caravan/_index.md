@@ -1,10 +1,10 @@
 ---
 description: "Fendt Caravan component allows ESP32 devices to connect to the Bluetooth Low Energy (BLE) interface of Fendt and Hobby(most probably) caravans."
-title: "Fendt Caravan Connect"
+title: "Fendt Caravan"
 params:
   seo:
     description: Fendt Caravan component allows ESP32 devices to connect to the Bluetooth Low Energy (BLE) interface of Fendt and Hobby(most probably) caravans.
-    image: /images/example.png
+    image: /images/control_panel.png
 ---
 
 The **Fendt Caravan** component allows ESP32 devices to connect to the Bluetooth Low Energy (BLE) interface of **Fendt** and **Hobby** caravans and exposes the same data and controls that are available in the *Fendt Connect* mobile application directly to **Home Assistant** using ESPHome.
@@ -17,7 +17,7 @@ This component is **experimental**. The configuration, exposed entities, and beh
 
 {{< img src="fendt_caravan_ui.png" alt="Image" >}}
 
-{{< anchor "config-fend-caravan" >}}
+{{< anchor "config-fendt-caravan" >}}
 
 ## Prerequisites
 
@@ -27,7 +27,7 @@ You can obtain the Caravan’s MAC address using the **nRF Connect** application
 - ESP32 device with BLE support
 - Caravan with **Fendt / Hobby BLE interface** enabled or power on
 
-## Base Fan Configuration
+## Fent Caravan Configuration
 
 ```yaml
 esp32_ble_tracker:
@@ -59,7 +59,7 @@ sensor:
       software_version:
         name: "Software Version"
       floor_heater:
-        name: "Floot Heater"
+        name: "Floor Heater"
 ```
 
 Configuration variables:
@@ -69,10 +69,10 @@ Configuration variables:
 
 Sensor Configuration variables:
 
-The sensor platform exposes multible logical devices under the caravan management system.
+The sensor platform exposes multiple logical devices under the caravan management system.
 
 - **fendt_caravan_id** (**Required**): Reference to the `fendt_caravan` component.
-- **control_unit_device** (**Required**): Main control unit(MACU) of the caravan. The MCU provides some information for the caravan like in/out temperature, power, light main switch, and floor heater status.
+- **control_unit_device** (**Required**): Main control unit(MCU) of the caravan. The MCU provides some information for the caravan like in/out temperature, power, light main switch, and floor heater status.
   - **id** (**Required**): The ID of the MCU.
   - **main_switch** (Optional): Main Switch of the MCU. This switch closes all power in the caravan including MCU power.
   - **temperature_in** (Optional): Inside temperature sensor.
