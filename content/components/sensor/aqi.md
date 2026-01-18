@@ -90,4 +90,3 @@ sensor:
 - {{< docref "/components/sensor/gcja5" >}}
 - {{< docref "/components/sensor/sps30" >}}
 - {{< apiref "aqi/aqi_sensor.h" "aqi/aqi_sensor.h" >}}
-
