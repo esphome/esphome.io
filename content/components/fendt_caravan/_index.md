@@ -1,10 +1,10 @@
 ---
-description: "Fendt Caravan component allows ESP32 devices to connect to the Bluetooth Low Energy (BLE) interface of Fendt and Hobby(most probably) caravans."
+description: "Fendt Caravan component allows ESP32 devices to connect to the Bluetooth Low Energy (BLE) interface of Fendt and Hobby (most probably) caravans."
 title: "Fendt Caravan"
 params:
   seo:
-    description: Fendt Caravan component allows ESP32 devices to connect to the Bluetooth Low Energy (BLE) interface of Fendt and Hobby(most probably) caravans.
-    image: /images/control_panel.png
+    description: Fendt Caravan component allows ESP32 devices to connect to the Bluetooth Low Energy (BLE) interface of Fendt and Hobby (most probably) caravans.
+    image: fendt_caravan.svg
 ---
 
 The **Fendt Caravan** component allows ESP32 devices to connect to the Bluetooth Low Energy (BLE) interface of **Fendt** and **Hobby** caravans and exposes the same data and controls that are available in the *Fendt Connect* mobile application directly to **Home Assistant** using ESPHome.
@@ -27,7 +27,7 @@ You can obtain the Caravan’s MAC address using the **nRF Connect** application
 - ESP32 device with BLE support
 - Caravan with **Fendt / Hobby BLE interface** enabled or power on
 
-## Fent Caravan Configuration
+## Fendt Caravan Configuration
 
 ```yaml
 esp32_ble_tracker:
