@@ -9,7 +9,8 @@ params:
 The `aqi` sensor platform allows you to compute an Air Quality Index from
 PM2.5 and PM10 particulate matter sensor readings. This sensor works with
 any PM sensor source, such as {{< docref "/components/sensor/pmsx003" >}},
-{{< docref "/components/sensor/hm3301" >}}, {{< docref "/components/sensor/sds011" >}},
+{{< docref "/components/sensor/hm3301" >}}, {{< docref "/components/sensor/sds011" >}}, 
+{{< docref "/components/sensor/gcja5" >}}
 or {{< docref "/components/sensor/sps30" >}}.
 
 > [!NOTE]
@@ -86,5 +87,6 @@ sensor:
 - {{< docref "/components/sensor/pmsx003" >}}
 - {{< docref "/components/sensor/hm3301" >}}
 - {{< docref "/components/sensor/sds011" >}}
+- {{< docref "/components/sensor/gcja5" >}}
 - {{< docref "/components/sensor/sps30" >}}
 - {{< apiref "aqi/aqi_sensor.h" "aqi/aqi_sensor.h" >}}
