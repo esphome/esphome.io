@@ -21,6 +21,7 @@ nrf52:
 ## Configuration variables
 
 - **board** (*Required*, string): The board type. Valid options are `adafruit_feather_nrf52840`, `adafruit_itsybitsy_nrf52840`, `xiao_ble`. Other boards should work with those configuration as well.
+- **framework** (*Optional*): Options for the underlying nRF/Zephyr framework. See [Framework](#nrf52-framework).
 - **bootloader** (*Optional*, string): Bootloader type. Valid options are `mcuboot`, `adafruit`, `adafruit_nrf52_sd132`, `adafruit_nrf52_sd140_v6`, `adafruit_nrf52_sd140_v7`. Default value depends on board type.
 - **dcdc** (*Optional*, boolean): Enable DC/DC converter for REG1 stage. Defaults to `true`.
 External LC filters must be connected to the DC/DC regulator pins if it is being used.
@@ -193,7 +194,11 @@ nrf52:
   dcdc: false
 ```
 
+{{< anchor "nrf52-framework" >}}
+
 ## Framework
+
+ESPHome for nrf52 uses the [nRF Connect SDK](https://github.com/nrfconnect/sdk-nrf) based on [Zephyr](https://github.com/zephyrproject-rtos/zephyr)
 
 ```yaml
 # Example configuration entry
@@ -208,6 +213,33 @@ nrf52:
   - `2.6.1-7`  : Stable (default)
   - `2.9.2-0`  : Experimental
   - `3.2.0-0`  : Experimental (no Zigbee support)
+- **source** (*Optional*, boolean|string): The PlatformIO package to use for the framework. This variable provides the URL of the git repository or the file archive of a custom or patched version of the `platformio/framework-zephyr` package. Refer to [PlatformIO package specifications](https://docs.platformio.org/en/latest/core/userguide/pkg/cmd_install.html#package-specifications) for the supported URL schemes. Examples:
+
+  - `https://github.com/user/framework-sdk-nrf/releases/download/archive.zip`
+  - `https://github.com/user/sdk-nrf.git#branch`
+  - `symlink:///path/to/sdk-nrf`
+
+  If set to `false`/`disabled`, the package specified in the `platform-nordicnrf52` package will be used.
+
+- **platform_source** (*Optional*, string): The PlatformIO package to use for the platform package. This variable provides the URL of the git repository or the file archive of a custom or patched version of the `platformio/platform-nordicnrf52` package. Refer to [PlatformIO package specifications](https://docs.platformio.org/en/latest/core/userguide/pkg/cmd_install.html#package-specifications) for the supported URL schemes.
+
+- **toolchain_source** (*Optional*, boolean|string): The PlatformIO package to use for the toolchain package. This variable provides the URL of the git repository or the file archive of a custom or patched version of the `platformio/toolchain-gccarmnoneeabi` package. Refer to [PlatformIO package specifications](https://docs.platformio.org/en/latest/core/userguide/pkg/cmd_install.html#package-specifications) for the supported URL schemes.
+
+  If set to `false`/`disabled`, the package specified by the `platform-nordicnrf52` package will be used.
+
+- **additional_packages** (*Optional*, list of packages): See [Additional Packages](#nrf52-additional-packages) below.
+
+{{< anchor "nrf52-additional-packages" >}}
+
+## Additional Packages
+
+The `additional_packages` option allows you to include additional PlatformIO packages into the build.
+
+### Configuration Variables
+
+- **name** (*Required*, string): The name of the package. This can be found in the [PlatformIO Registry](https://registry.platformio.org/)
+
+- **version** (*Required*, string): The version of the package.
 
 ## See Also
 
