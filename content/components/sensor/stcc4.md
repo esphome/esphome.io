@@ -12,8 +12,6 @@ The `stcc4` sensor platform allows you to use your Sensirion STCC4
 Using a SHT45 on the internal STCC4 bus is supported for automatic temperature and relative humidity compensation and monitoring.
 The [I²C Bus](/components/i2c) is required to be set up in your configuration for this sensor to work.
 
-
-
 {{< img src="stcc4.jpg" alt="Image" width="80.0%" class="align-center" >}}
 
 ```yaml
@@ -51,7 +49,6 @@ sensor:
 
   - **ambient_pressure_compensation_source** (*Optional*, [ID](/guides/configuration-types#id)): Give an external pressure sensor ID
     here. This can improve the sensor's internal calculations. Defaults to `101'300 Pa`
-
 
 ## Example With Compensation
 
