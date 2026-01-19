@@ -422,6 +422,7 @@ Sensors are organized into categories; if a given sensor fits into more than one
 "SHT4X","components/sensor/sht4x","sht4x.jpg","Temperature & Humidity",""
 "SHTCx","components/sensor/shtcx","shtc3.jpg","Temperature & Humidity",""
 "SMT100","components/sensor/smt100","smt100.jpg","Moisture & Temperature",""
+"STCC4","components/sensor/stcc4","stcc4.jpg","CO₂ & Temperature & Humidity",""
 "STS3X","components/sensor/sts3x","sts3x.jpg","Temperature",""
 "STTS22H","components/sensor/stts22h","stts22h.jpg","Temperature",""
 "TC74","components/sensor/tc74","tc74.jpg","Temperature",""
