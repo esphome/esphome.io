@@ -234,17 +234,43 @@ advanced stuff.
     id(my_climate).target_humidity
     // Fan mode, type: FanMode (enum)
     id(my_climate).fan_mode
-    // Custom Fan mode, type: string
-    id(my_climate).custom_fan_mode
     // Swing mode, type: SwingMode (enum)
     id(my_climate).swing_mode
     // Current action (currentl on idle, cooling, heating, etc.), ClimateAction (enum)
     id(my_climate).action
     // Preset, type: Preset (enum)
     id(my_climate).preset
-    // Custom Preset, type: string
-    id(my_climate).custom_preset
 ```
+
+- Custom mode accessor methods:
+
+```cpp
+    // Check if custom fan mode is active, type: bool
+    id(my_climate).has_custom_fan_mode()
+    // Get custom fan mode (read-only), type: StringRef
+    id(my_climate).get_custom_fan_mode()
+    // Check if custom preset is active, type: bool
+    id(my_climate).has_custom_preset()
+    // Get custom preset (read-only), type: StringRef
+    id(my_climate).get_custom_preset()
+```
+
+> [!NOTE]
+> `get_custom_fan_mode()` and `get_custom_preset()` return `StringRef`. When no custom mode is set, they return an empty `StringRef`. Use `has_custom_fan_mode()` or `has_custom_preset()` to check if a custom mode is active, or check if the returned `StringRef` is empty.
+>
+> ```cpp
+> // Check using has_custom_fan_mode()
+> if (id(my_climate).has_custom_fan_mode()) {
+>   auto mode = id(my_climate).get_custom_fan_mode();
+>   ESP_LOGD("tag", "Mode: %.*s", (int) mode.size(), mode.c_str());
+> }
+>
+> // Or check if empty
+> auto mode = id(my_climate).get_custom_fan_mode();
+> if (!mode.empty()) {
+>   // Use mode
+> }
+> ```
 
 - `.make_call`  : Control the climate device
 

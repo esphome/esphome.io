@@ -49,12 +49,13 @@ remote_transmitter:
 | ------------- | ---------------- | ---------- |
 | ESP32         | 512 symbols      | 64 symbols |
 | ESP32-C3      | 96 symbols       | 48 symbols |
-| ESP32-C5 | 96 symbols | 48 symbols |
-| ESP32-C6 | 96 symbols | 48 symbols |
-| ESP32-H2 | 96 symbols | 48 symbols |
-| ESP32-P4 | 192 symbols | 48 symbols |
-| ESP32-S2 | 256 symbols | 64 symbols |
-| ESP32-S3 | 192 symbols | 48 symbols |
+| ESP32-C5      | 96 symbols       | 48 symbols |
+| ESP32-C6      | 96 symbols       | 48 symbols |
+| ESP32-C61     | 96 symbols       | 48 symbols |
+| ESP32-H2      | 96 symbols       | 48 symbols |
+| ESP32-P4      | 192 symbols      | 48 symbols |
+| ESP32-S2      | 256 symbols      | 64 symbols |
+| ESP32-S3      | 192 symbols      | 48 symbols |
 
 - **clock_resolution** (*Optional*, int): The clock resolution used by the RMT peripheral in Hz. Defaults to `1000000`.
 - **non_blocking** (*Optional*, boolean): If enabled, any transmit will return immediately and the RMT will run in the
@@ -382,7 +383,7 @@ on_...:
 
 ### `remote_transmitter.transmit_dyson` **Action**
 
-This [action](#config-action) sends a Dyson cool AM07 infrared protocol code to a remote transmitter.
+This [action](/automations/actions#config-action) sends a Dyson cool AM07 infrared protocol code to a remote transmitter.
 
 ```yaml
 on_...:
@@ -957,7 +958,7 @@ on_...:
 
 ### `remote_transmitter.transmit_symphony` **Action**
 
-This [action](#config-action) sends a Symphony infrared remote code to a remote transmitter.
+This [action](/automations/actions#config-action) sends a Symphony infrared remote code to a remote transmitter.
 It transmits constant bit-time frames with a footer gap. Physical Symphony remotes typically
 send the same frame twice separated by a ~35 ms gap. Use `command_repeats` to control how
 many identical frames are sent; defaults to 2.
@@ -1106,18 +1107,39 @@ All RC Switch `protocol` settings have these settings:
 ### Lambda calls
 
 Actions may also be called from [lambdas](/automations/templates#config-lambda). The `.transmit()` call can be populated with
-encoded data for a specific protocol by following the example below.
-See the full API Reference for more info.
+raw timings or encoded data for a specific protocol by following the examples below.
 
-- `.transmit()`  : Transmit an IR code using the remote transmitter.
+- `.transmit()`: Returns a call to populate with data and send.
 
 ```cpp
-    // Example - transmit using the Pioneer protocol
-    auto call = id(my_transmitter).transmit();
-    esphome::remote_base::PioneerData data = { rc_code_1, rc_code_2 };
-    esphome::remote_base::PioneerProtocol().encode(call.get_data(), data);
-    call.set_send_times(2);
-    call.perform();
+// Example - transmit raw timings
+auto call = id(my_transmitter).transmit();
+auto *data = call.get_data();
+for (int32_t i = 0; i < 4; i++) {
+  data->item(600, 600);
+}
+uint8_t bytes[] = {0x12, 0x34, 0x56, 0x78};
+for (uint8_t byte : bytes) {
+  for (int32_t i = 7; i >= 0; i--) {
+    if (byte & (1 << i)) {
+      data->item(400, 200);
+    } else {
+      data->item(200, 400);
+    }
+  }
+}
+call.set_send_times(3);
+call.set_send_wait(2000);
+call.perform();
+```
+
+```cpp
+// Example - transmit using the Pioneer protocol
+auto call = id(my_transmitter).transmit();
+esphome::remote_base::PioneerData data = {0xA556, 0xA506};
+esphome::remote_base::PioneerProtocol().encode(call.get_data(), data);
+call.set_send_times(2);
+call.perform();
 ```
 
 ## See Also

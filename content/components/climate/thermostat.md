@@ -230,8 +230,10 @@ indication of the current climate mode.
   its fan either immediately or, when `fan_only_cooling` is `true`, as needed based on the upper
   target temperature value).
 
-- **heat_cool_mode** (*Optional*, [Action](/automations/actions#all-actions)): The action to call when
-  the climate device is placed into "heat/cool" mode (it may both cool and heat as required).
+- **heat_cool_mode** (*Optional*, [Action](/automations/actions#all-actions) or boolean): The action to call when
+  the climate device is placed into "heat/cool" mode (it may both cool and heat as required). If no action is desired,
+  may be set to `true` to enable the mode without a related automation. Note that **both** `heat_action` **and**
+  `cool_action` ([see above](#heating-and-cooling-actions)) must be defined to enable this mode.
 
 - **auto_mode** (*Optional*, [Action](/automations/actions#all-actions)): The action to call when
   the climate device is placed into "auto" mode (it may both cool and heat as required). This mode is
@@ -301,13 +303,13 @@ These should be used to control the fan only, if available.
 These are triggered when the humidity control action is changed by the thermostat controller. It can trigger actions
 to activate humidification **or** dehumidification.
 
-- **humidity_control_dehumidify_action** (*Optional*, [Action](#config-action)): The action to call when
+- **humidity_control_dehumidify_action** (*Optional*, [Action](/automations/actions#config-action)): The action to call when
   dehumidification is required.
 
-- **humidity_control_humidify_action** (*Optional*, [Action](#config-action)): The action to call when
+- **humidity_control_humidify_action** (*Optional*, [Action](/automations/actions#config-action)): The action to call when
   humidification is required.
 
-- **humidity_control_off_action** (*Optional*, [Action](#config-action)): The action to call when
+- **humidity_control_off_action** (*Optional*, [Action](/automations/actions#config-action)): The action to call when
   (de)humidification should stop. This action is **required** when either of the above actions are configured.
 
 ## Advanced Configuration/Behavior
@@ -562,7 +564,7 @@ the range of allowed temperature values in the thermostat component. See {{< doc
   before calling the idle [action](/automations/actions#all-actions). Defaults to 0.5 °C.
 
 - **humidity_hysteresis** (*Optional*, float): The maximum humidity differential (above/below the set point)
-  before calling the respective humidity control [action](#config-action). Defaults to 1%.
+  before calling the respective humidity control [action](/automations/actions#config-action). Defaults to 1%.
 
 > [!NOTE]
 >
