@@ -8,7 +8,7 @@ if incoming value is sufficiently different from the previously passed one.
 This difference can be calculated in two ways an absolute difference or a percentage difference, and
 with respect to a minimum, `min_value` and maximum value, `max_value`.
 
-### Configuration variables:
+## Configuration variables
 
 - **min_value** (*Optional*, float, percent): The minimum absolute or percentage difference required (default is `0.0`)
 - **max_value** (*Optional*, float, percent): The maximum absolute or percentage difference allowed (default is infinity)
