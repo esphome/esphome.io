@@ -198,7 +198,7 @@ nrf52:
 
 ## Framework
 
-ESPHome for nrf52 uses the [nRF Connect SDK](https://github.com/nrfconnect/sdk-nrf) based on [Zephyr](https://github.com/zephyrproject-rtos/zephyr)
+ESPHome for nrf52 uses the [nRF Connect SDK](https://github.com/nrfconnect/sdk-nrf) based on [Zephyr](https://github.com/zephyrproject-rtos/zephyr).
 
 ```yaml
 # Example configuration entry
