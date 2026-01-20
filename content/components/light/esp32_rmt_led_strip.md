@@ -21,7 +21,7 @@ light:
 
 ## Configuration variables
 
-- **pin** (**Required**, [Pin](/guides/configuration-types#pin)): The pin for the data line of the light.
+- **pin** (**Required**, [Pin Schema](/guides/configuration-types#pin-schema)): The pin for the data line of the light.
 - **num_leds** (**Required**, int): The number of LEDs in the strip.
 - **chipset** (**Required**, enum): The name of the chipset used; determines signal timing. Not required if
   [specifying the timings manually](#esp32-rmt-led-strip-manual_timings).
@@ -59,13 +59,13 @@ light:
 | ------------- | ---------------- | ---------- |
 | ESP32         | 512 symbols      | 64 symbols |
 | ESP32-C3      | 96 symbols       | 48 symbols |
-| ESP32-C5 | 96 symbols | 48 symbols |
-| ESP32-C6 | 96 symbols | 48 symbols |
-| ESP32-C61 | 96 symbols | 48 symbols |
-| ESP32-H2 | 96 symbols | 48 symbols |
-| ESP32-P4 | 192 symbols | 48 symbols |
-| ESP32-S2 | 256 symbols | 64 symbols |
-| ESP32-S3 | 192 symbols | 48 symbols |
+| ESP32-C5      | 96 symbols       | 48 symbols |
+| ESP32-C6      | 96 symbols       | 48 symbols |
+| ESP32-C61     | 96 symbols       | 48 symbols |
+| ESP32-H2      | 96 symbols       | 48 symbols |
+| ESP32-P4      | 192 symbols      | 48 symbols |
+| ESP32-S2      | 256 symbols      | 64 symbols |
+| ESP32-S3      | 192 symbols      | 48 symbols |
 
 - **use_dma** (*Optional*, boolean): Enable DMA on variants that support it. If enabled `rmt_symbols` controls
   the DMA buffer size and can be set to a large value.

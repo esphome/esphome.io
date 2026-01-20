@@ -446,4 +446,5 @@ advanced stuff (see the full API Reference for more info).
 
 ## See Also
 
+- {{< docref "/components/sensor/aqi" >}}
 - {{< apiref "sensor/sensor.h" "sensor/sensor.h" >}}
