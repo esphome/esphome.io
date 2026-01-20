@@ -8,13 +8,26 @@ if incoming value is sufficiently different from the previously passed one.
 This difference can be calculated in two ways an absolute difference or a percentage difference, and
 with respect to a minimum, `min_value` and maximum value, `max_value`.
 
-For any of the `min_value` or `max_value`, if a number is specified, it will be used as the absolute
-difference required. For example if the filter were configured with a value of 2 and the last value
-passed through was 10, only values greater than or equal to 12 or less than or equal to 8 would be
-passed through.
+### Configuration variables:
 
-If the delta reference value is specified directly, that is without `min_value` or `max_value`, then
-the value is mapped to the `min_value`.
+- **min_value** (*Optional*, float, percent): The minimum absolute or percentage difference required (default is `0.0`)
+- **max_value** (*Optional*, float, percent): The maximum absolute or percentage difference allowed (default is infinity)
+- **baseline** (*Optional*, float, [lambda](/automations/templates#config-lambda)): A baseline to use
+  when calculating the difference. By default the last passed value is used.
+
+At least one of `min_value` or `max_value` must be specified. Alternatively to specifying `min_value`
+and/or `max_value` as keys, you can also just provide a single float or percentage value. In this case the value
+is interpreted as `min_value`.
+
+The filter will reject values that do not differ from the baseline by more than `min_value`, or that
+differ from the baseline by more than the `max_value`.
+For example, if the filter were configured with a value of `2.0` only values that differ from the last
+passed value by more than `2.0` will be passed through.
+
+> [!NOTE]
+> A `min_value` of `0.0` means that
+> values equal to the last value will not be passed through, only values that differ, making it useful for
+> eliminating duplicate values.
 
 ```yaml
 # Example configuration entry
