@@ -38,6 +38,9 @@ sensor:
   - `AHT10` - For AHT10 devices.
   - `AHT20` - For AHT20 and AHT30 devices.
 
+> [!NOTE]
+> Even if the sensor chip housing is labeled as AHT10, it might be necessary to configure the `AHT20` variant. If the sensor is listed in the log as recognized at the configured address, but no data could be fetches, please give it a try.
+
 - **temperature** (**Required**): The information for the temperature sensor.
 
   - All options from [Sensor](/components/sensor).
