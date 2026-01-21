@@ -140,7 +140,7 @@ lambda: |-
 - **rotation** (*Optional*): Set the rotation of the display. Everything you draw in `lambda:` will be rotated
   by this option. One of `0°` (default), `90°`, `180°`, `270°`.
 
-- **full_update_every** (**Optional**, [int](/guides/configuration-types#config-int)): E-Paper displays have two modes of switching to the next image: A partial
+- **full_update_every** (**Optional**, int): E-Paper displays have two modes of switching to the next image: A partial
   update that only changes the pixels that have changed and a full update mode that first clears the entire display
   and then re-draws the image. The former is much quicker and nicer, but every so often a full update needs to happen
   because artifacts accumulate. On the `1.54in`, `1.54inv2`, `2.13in`, `2.13inv2`, `2.13inv3`, `2.90in`,
