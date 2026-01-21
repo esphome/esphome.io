@@ -185,7 +185,7 @@ There are the following possibilities to operate this sensor:
 1. Device flashed with [ATC MiThermometer](https://github.com/atc1441/ATC_MiThermometer) custom firmware
 
 - "BTHome" advertisement (PVVX firmware default, bindkey supported)
-- "Mi Like" advertisement (dummy bindkey required) 
+- "Mi Like" advertisement (dummy bindkey required)
 - "Custom" advertisement (no bindkey required)
 - "pvvx" advertisement (no bindkey required, only PVVX firmware)
 
