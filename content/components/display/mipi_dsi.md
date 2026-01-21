@@ -49,6 +49,13 @@ specified, or a custom init sequence can be provided.
 | WAVESHARE-P4-NANO-10.1 | Waveshare | <https://www.waveshare.com/esp32-p4-nano.htm?sku=29031> |
 | WAVESHARE-P4-86-PANEL | Waveshare | <https://www.waveshare.com/esp32-p4-wifi6-touch-lcd-4b.htm?sku=31570> |
 
+{{< alert >}}
+**M5Stack Tab5 Model Identification:** The Tab5 has two hardware revisions with different display controllers. Units manufactured before October 14, 2025 use the ILI9881C display driver with separate GT911 touch driver (use `M5STACK-TAB5`). Units manufactured on or after that date use the integrated ST7123 display-touch driver (use `M5STACK-TAB5-V2`). If unsure which model you have, ESPHome will report which driver initializes successfully in the logs. You can also look at the sticker on the back of the device for the display driver installed. The label is just above the ESP32P$ icon. See image below for example of V2 hardware.
+
+{{< img src="tab5-version-label.jpg" alt="Tab5 version label showing model identification" width="50%" class="align-center" >}}
+
+{{< /alert >}}
+
 ## Configuration
 
 ```yaml
