@@ -29,7 +29,9 @@ http_request:
 - **verify_ssl** (*Optional*, boolean): When set to `true` (default), SSL/TLS certificates will be validated upon
   connection; if invalid, the connection will be aborted. To accomplish this, ESP-IDF's default ESP x509 certificate
   bundle is included in the build. This certificate bundle includes the complete list of root certificates from
-  Mozilla's NSS root certificate store. **Supported on ESP32 only; must be explicitly set to false on other platforms.**
+  Mozilla's NSS root certificate store. **Certificate verification is supported on ESP32 only; must be explicitly
+  set to false on other platforms. Disabling verification (`verify_ssl: false`) requires ESP-IDF framework and is
+  not supported on ESP32 Arduino.**
 
 - **watchdog_timeout** (*Optional*, [Time](/guides/configuration-types#time)): Change the watchdog timeout during connection/data transfer.
   May be useful on slow connections or connections with high latency. **Do not change this value unless you are
