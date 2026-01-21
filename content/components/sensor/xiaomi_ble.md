@@ -187,7 +187,7 @@ There are the following possibilities to operate this sensor:
 - "Mi Like" advertisement (dummy bindkey required)
 - "Custom" advertisement (no bindkey required)
 - "pvvx" advertisement (no bindkey required, only PVVX firmware)
-- "BTHome" advertisement (no bindkey required, PVVX firmware default)
+- "BTHome" advertisement (bindkey supported, PVVX firmware default)
 
 Configuration example for Xiaomi stock firmware or ATC MiThermometer firmware set to "Mi Like" advertisement:
 
@@ -210,6 +210,7 @@ Configuration example for PVVX MiThermometer firmware set to "BTHome" advertisem
 sensor:
   - platform: bthome_mithermometer
     mac_address: AA:BB:CC:DD:EE:FF
+    bindkey: eef418daf699a0c188f3bfd17e4565d9
     temperature:
       name: "BTHome Temperature"
     humidity:
@@ -221,6 +222,11 @@ sensor:
     signal_strength:
       name: "BTHome Signal"
 ```
+
+If you enable "Encrypted beacon" in the PVVX firmware, specify the `bindkey` with the value you see when you press the "Get BindKey" button in Telink Flasher ((see [Obtaining the Bindkey](#obtaining_the_bindkey)).
+
+> [!NOTE]
+> Once you've set a `bindkey`, the component will not accept unencrypted beacons from that `mac_address`. The mismatch will be printed in the log.
 
 Configuration example for PVVX MiThermometer firmware set to "pvvx" advertisement:
 
