@@ -7,7 +7,7 @@ params:
     image: zigbee.svg
 ---
 
-Zigbee is a low-power, mesh-based networking standard designed for IoT devices. Its low energy consumption makes it well suited for battery-powered smart-home devices, while its limited bandwidth is ideal for devices that exchange only small amounts of data, such as switches, sensors, and motion detectors.
+Zigbee is a low-power, mesh-based networking standard designed for IoT devices. Its low energy consumption makes it well-suited for battery-powered smart-home devices, while its limited bandwidth is ideal for devices that exchange only small amounts of data, such as switches, sensors, and motion detectors.
 
 Zigbee uses the same RF technology as Thread (IEEE 802.15.4) but defines also multiple application standards.
 The `zigbee` component, however, supports only the Home Automation profile.
@@ -20,11 +20,11 @@ Additional properties must be configured manually in Home Assistant. Each ESPHom
 > A maximum of 8 endpoints is supported and at least two endpoints are required due to a limitation in Zigbee2MQTT.
 
 > [!NOTE]
-> You will need a Zigbee coordinator like **Zigbee2MQTT** or **ZHA**. Other commercial Zigbee hubs most like don't support esphome components and might have issues with changing firmware.
+> You will need a Zigbee coordinator like **Zigbee2MQTT** or **ZHA**. Other commercial Zigbee hubs most likely don't support esphome components and might have issues with changing firmware.
 
 > [!CAUTION]
-> Whenever the configuration is changed, the device should be re-interviewed (z2m only) and removed and re-added
-> to the Zigbee network. This is especially important if components are added or removed or if names change.
+> Whenever the configuration is changed, the device should be removed and re-added to the Zigbee network.
+> For Zigbee2MQTT, the device must also be re-interviewed. This is especially important if components are added or removed or if names change.
 
 {{< anchor "config-zigbee" >}}
 
@@ -76,7 +76,7 @@ The following components are exposed over Zigbee if they have a name and if they
 - [Binary Sensor](/components/binary_sensor#config-binary_sensor): only **state** and **name** are exposed over Zigbee.
 
 - [Sensor](/components/sensor#config-sensor): **state**, **name** and **unit_of_measurement** are exposed
-over Zigbee. If no unit is given or if it is not support it will fall back to unitless.
+over Zigbee. If no unit is given or if it is not supported it will fall back to unitless.
 
 - [Switch](/components/switch#config-switch): only **state** and **name** are exposed over Zigbee.
 
@@ -98,12 +98,12 @@ over Zigbee. If no unit is given or if it is not support it will fall back to un
 
 ### Sensor
 
-[Sensors](/components/sensor#config-sensor) are implemented as analog input clusters with desription, engineering_units,
+[Sensors](/components/sensor#config-sensor) are implemented as analog input clusters with description, engineering_units,
 and present_value attributes.
 
 #### Configuration variables
 
-- **name** (**Required**, string): The name for the binary sensor. This is exposed as the Zigbee description attribute.
+- **name** (**Required**, string): The name for the sensor. This is exposed as the Zigbee description attribute.
 - **internal** (*Optional*, boolean): Mark this component as internal. Internal components will
   not be exposed over Zigbee. Only specifying an `id` without a `name` will implicitly set this to true.
   Use this if you run out of Zigbee endpoints.
@@ -114,7 +114,7 @@ the unit of the component is used and if the component does not set a unit, valu
 
 ### Switch
 
-[Switches](/components/switch#config-switch) are implemented as binary ouput clusters with description and present_value attributes.
+[Switches](/components/switch#config-switch) are implemented as binary output clusters with description and present_value attributes.
 
 #### Configuration variables
 
