@@ -894,6 +894,7 @@ ESPHome was originally founded by [Otto Winter (@OttoWinter)](https://github.com
 - [Nate Clark (@heythisisnate)](https://github.com/heythisisnate)
 - [highground88 (@highground88)](https://github.com/highground88)
 - [hindenbugbite (@hindenbugbite)](https://github.com/hindenbugbite)
+- [Mike Ford (@HLFCode)](https://github.com/HLFCode)
 - [Henrik Fransson (@hmfhmf)](https://github.com/hmfhmf)
 - [Hmmbob (@hmmbob)](https://github.com/hmmbob)
 - [Hamish Moffatt (@hmoffatt)](https://github.com/hmoffatt)
@@ -1829,6 +1830,7 @@ ESPHome was originally founded by [Otto Winter (@OttoWinter)](https://github.com
 - [Roman Ondráček (@Roman3349)](https://github.com/Roman3349)
 - [romerod (@romerod)](https://github.com/romerod)
 - [Jérôme W. (@RomRider)](https://github.com/RomRider)
+- [John Stenger (@rootnegativ1)](https://github.com/rootnegativ1)
 - [Robbie Page (@rorpage)](https://github.com/rorpage)
 - [roscoegray (@roscoegray)](https://github.com/roscoegray)
 - [Ross Troha (@rosstroha)](https://github.com/rosstroha)
@@ -2320,4 +2322,4 @@ ESPHome was originally founded by [Otto Winter (@OttoWinter)](https://github.com
 - [Christian Zufferey (@zuzu59)](https://github.com/zuzu59)
 - [Zynth-dev (@Zynth-dev)](https://github.com/Zynth-dev)
 
-*This page was last updated January 14, 2026.*
+*This page was last updated January 20, 2026.*
