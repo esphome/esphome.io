@@ -223,7 +223,7 @@ sensor:
       name: "BTHome Signal"
 ```
 
-If you enable "Encrypted beacon" in the PVVX firmware, specify the `bindkey` with the value you see when you press the "Get BindKey" button in Telink Flasher ((see [Obtaining the Bindkey](#obtaining_the_bindkey)).
+If you enable "Encrypted beacon" in the PVVX firmware, specify the `bindkey` with the value you see when you press the "Get BindKey" button in Telink Flasher (see [Obtaining the Bindkey](#obtaining_the_bindkey)).
 
 > [!NOTE]
 > Once you've set a `bindkey`, the component will not accept unencrypted beacons from that `mac_address`. The mismatch will be printed in the log.
