@@ -180,12 +180,12 @@ Hygro thermometer, small square body, segment LCD, encrypted, broadcasts tempera
 
 There are the several possibilities to operate this sensor:
 
-1. Xiaomi stock firmware (requires a bindkey in order to decrypt the received data, see [Obtaining the Bindkey](#obtaining_the_bindkey))
+1. Xiaomi stock firmware (requires a bindkey)
 1. Device flashed with [PVVX MiThermometer](https://github.com/pvvx/ATC_MiThermometer) custom firmware, supporting "BTHome", "pvvx", "Mi Like", "Custom" advertisements
 1. Device flashed with [ATC MiThermometer](https://github.com/atc1441/ATC_MiThermometer) custom firmware, supporting "Mi Like", "Custom" advertisements
 
 With PVVX firmware and "BTHome" advertisement, encryption with bindkey is supported, just like with Xiaomi stock firmware
-(see [Obtaining the Bindkey](#obtaining_the_bindkey)). Unencrypted communication is supported only in custom firmware, not recommended.
+(see [Obtaining the Bindkey](#obtaining_the_bindkey)). Unencrypted communication is supported only in custom firmware, but it's not recommended for obvious security reasons.
 
 Configuration example for Xiaomi stock firmware or ATC MiThermometer firmware set to "Mi Like" advertisement:
 
