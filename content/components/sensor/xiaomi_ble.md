@@ -25,7 +25,7 @@ Configuration example:
 ```yaml
 sensor:
   - platform: xiaomi_hhccjcy01
-    mac_address: XX:XX:XX:XX:XX:XX
+    mac_address: "XX:XX:XX:XX:XX:XX"
     temperature:
       name: "Xiaomi HHCCJCY01 Temperature"
     moisture:
@@ -53,7 +53,7 @@ Configuration example:
 ```yaml
 sensor:
   - platform: xiaomi_gcls002
-    mac_address: XX:XX:XX:XX:XX:XX
+    mac_address: "XX:XX:XX:XX:XX:XX"
     temperature:
       name: "GCLS02 Temperature"
     moisture:
@@ -75,7 +75,7 @@ Configuration example:
 ```yaml
 sensor:
   - platform: xiaomi_hhccpot002
-    mac_address: XX:XX:XX:XX:XX:XX
+    mac_address: "XX:XX:XX:XX:XX:XX"
     moisture:
       name: "HHCCPOT002 Moisture"
     conductivity:
@@ -93,7 +93,7 @@ Configuration example:
 ```yaml
 sensor:
   - platform: xiaomi_lywsdcgq
-    mac_address: XX:XX:XX:XX:XX:XX
+    mac_address: "XX:XX:XX:XX:XX:XX"
     temperature:
       name: "LYWSDCGQ Temperature"
     humidity:
@@ -115,7 +115,7 @@ Configuration example:
 ```yaml
 sensor:
   - platform: xiaomi_lywsd02
-    mac_address: XX:XX:XX:XX:XX:XX
+    mac_address: "XX:XX:XX:XX:XX:XX"
     temperature:
       name: "LYWSD02 Temperature"
     humidity:
@@ -133,7 +133,7 @@ Configuration example:
 ```yaml
 sensor:
   - platform: xiaomi_lywsd02mmc
-    mac_address: "A4:C1:38:54:5E:18"
+    mac_address: "XX:XX:XX:XX:XX:XX"
     bindkey: "2529d8e0d23150a588675cc54ad48400"
     temperature:
       name: "LYWSD02MMC Temperature"
@@ -156,7 +156,7 @@ Configuration example:
 ```yaml
 sensor:
   - platform: xiaomi_cgg1
-    mac_address: XX:XX:XX:XX:XX:XX
+    mac_address: "XX:XX:XX:XX:XX:XX"
     temperature:
       name: "CGG1 Temperature"
     humidity:
@@ -164,7 +164,7 @@ sensor:
     battery_level:
       name: "CGG1 Battery Level"
   - platform: xiaomi_cgg1
-    mac_address: XX:XX:XX:XX:XX:XX
+    mac_address: "XX:XX:XX:XX:XX:XX"
     bindkey: "00112233445566778899aabbccddeeff"
     temperature:
       name: "CGG1 (New) Temperature"
@@ -192,8 +192,8 @@ Configuration example for Xiaomi stock firmware or ATC MiThermometer firmware se
 ```yaml
 sensor:
   - platform: xiaomi_lywsd03mmc
-    mac_address: XX:XX:XX:XX:XX:XX
-    bindkey: "eef418daf699a0c188f3bfd17e4565d9"
+    mac_address: "XX:XX:XX:XX:XX:XX"
+    bindkey: "00112233445566778899aabbccddeeff"
     temperature:
       name: "LYWSD03MMC Temperature"
     humidity:
@@ -207,8 +207,8 @@ Configuration example for PVVX MiThermometer firmware set to "BTHome" advertisem
 ```yaml
 sensor:
   - platform: bthome_mithermometer
-    mac_address: AA:BB:CC:DD:EE:FF
-    bindkey: "eef418daf699a0c188f3bfd17e4565d9"
+    mac_address: "XX:XX:XX:XX:XX:XX"
+    bindkey: "00112233445566778899aabbccddeeff"
     temperature:
       name: "BTHome Temperature"
     humidity:
@@ -231,7 +231,7 @@ Configuration example for PVVX MiThermometer firmware set to "pvvx" advertisemen
 ```yaml
 sensor:
   - platform: pvvx_mithermometer
-    mac_address: XX:XX:XX:XX:XX:XX
+    mac_address: "XX:XX:XX:XX:XX:XX"
     temperature:
       name: "PVVX Temperature"
     humidity:
@@ -249,7 +249,7 @@ Configuration example for ATC MiThermometer firmware set to "Custom" advertiseme
 ```yaml
 sensor:
   - platform: atc_mithermometer
-    mac_address: XX:XX:XX:XX:XX:XX
+    mac_address: "XX:XX:XX:XX:XX:XX"
     temperature:
       name: "ATC Temperature"
     humidity:
@@ -276,8 +276,8 @@ Configuration example:
 ```yaml
 sensor:
   - platform: xiaomi_xmwsdj04mmc
-    mac_address: XX:XX:XX:XX:XX:XX
-    bindkey: "eef418daf699a0c188f3bfd17e4565d9"
+    mac_address: "XX:XX:XX:XX:XX:XX"
+    bindkey: "00112233445566778899aabbccddeeff"
     temperature:
       name: "XMWSDJ04MMC Temperature"
     humidity:
@@ -299,7 +299,7 @@ Configuration example:
 ```yaml
 sensor:
   - platform: xiaomi_mhoc303
-    mac_address: XX:XX:XX:XX:XX:XX
+    mac_address: "XX:XX:XX:XX:XX:XX"
     temperature:
       name: "MHO-C303 Climate Temperature"
     humidity:
@@ -329,8 +329,8 @@ Configuration example for Xiaomi stock firmware:
 ```yaml
 sensor:
   - platform: xiaomi_mhoc401
-    mac_address: XX:XX:XX:XX:XX:XX
-    bindkey: "eef418daf699a0c188f3bfd17e4565d9"
+    mac_address: "XX:XX:XX:XX:XX:XX"
+    bindkey: "00112233445566778899aabbccddeeff"
     temperature:
       name: "MHOC401 Temperature"
     humidity:
@@ -344,7 +344,7 @@ Configuration example for PVVX MiThermometer firmware set to "Custom" advertisem
 ```yaml
 sensor:
   - platform: pvvx_mithermometer
-    mac_address: XX:XX:XX:XX:XX:XX
+    mac_address: "XX:XX:XX:XX:XX:XX"
     temperature:
       name: "PVVX Temperature"
     humidity:
@@ -366,8 +366,8 @@ Configuration example:
 ```yaml
 sensor:
   - platform: xiaomi_cgd1
-    mac_address: XX:XX:XX:XX:XX:XX
-    bindkey: "fe39106baeedb7c801e3d63c4396f97e"
+    mac_address: "XX:XX:XX:XX:XX:XX"
+    bindkey: "00112233445566778899aabbccddeeff"
     temperature:
       name: "CGD1 Temperature"
     humidity:
@@ -388,8 +388,8 @@ Configuration example:
 ```yaml
 sensor:
   - platform: xiaomi_cgdk2
-    mac_address: XX:XX:XX:XX:XX:XX
-    bindkey: "fe39106baeedb7c801e3d63c4396f97e"
+    mac_address: "XX:XX:XX:XX:XX:XX"
+    bindkey: "00112233445566778899aabbccddeeff"
     temperature:
       name: "CGDK2 Temperature"
     humidity:
@@ -409,7 +409,7 @@ Configuration example:
 ```yaml
 sensor:
   - platform: xiaomi_jqjcy01ym
-    mac_address: XX:XX:XX:XX:XX:XX
+    mac_address: "XX:XX:XX:XX:XX:XX"
     temperature:
       name: "JQJCY01YM Temperature"
     humidity:
@@ -433,7 +433,7 @@ sensor:
 
 binary_sensor:
   - platform: xiaomi_wx08zm
-    mac_address: XX:XX:XX:XX:XX:XX
+    mac_address: "XX:XX:XX:XX:XX:XX"
     tablet:
       name: "WX08ZM Mosquito Tablet"
     battery_level:
@@ -454,7 +454,7 @@ sensor:
 binary_sensor:
   - platform: xiaomi_mue4094rt
     name: "MUE4094RT Night Light"
-    mac_address: XX:XX:XX:XX:XX:XX
+    mac_address: "XX:XX:XX:XX:XX:XX"
     timeout: "5s"
 ```
 
@@ -472,8 +472,8 @@ sensor:
 binary_sensor:
   - platform: xiaomi_mjyd02yla
     name: "MJYD02YL-A Night Light"
-    mac_address: XX:XX:XX:XX:XX:XX
-    bindkey: "48403ebe2d385db8d0c187f81e62cb64"
+    mac_address: "XX:XX:XX:XX:XX:XX"
+    bindkey: "00112233445566778899aabbccddeeff"
     idle_time:
       name: "MJYD02YL-A Idle Time"
     light:
@@ -496,8 +496,8 @@ Configuration example:
 binary_sensor:
   - platform: xiaomi_cgpr1
     name: "CGPR1 Motion detector"
-    mac_address: XX:XX:XX:XX:XX:XX
-    bindkey: "ff1ae526b23b4aebeadcaaad86f59055"
+    mac_address: "XX:XX:XX:XX:XX:XX"
+    bindkey: "00112233445566778899aabbccddeeff"
     idle_time:
       name: "CGPR1 Idle Time"
     battery_level:
@@ -518,8 +518,8 @@ Configuration example:
 ```yaml
 xiaomi_rtcgq02lm:
   - id: motion_one
-    mac_address: XX:XX:XX:XX:XX:XX
-    bindkey: fe39106baeedb7c801e3d63c4396f97e
+    mac_address: "XX:XX:XX:XX:XX:XX"
+    bindkey: 00112233445566778899aabbccddeeff
 
 binary_sensor:
   - platform: xiaomi_rtcgq02lm
