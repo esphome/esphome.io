@@ -205,7 +205,7 @@ sensor:
       name: "LYWSD03MMC Battery Level"
 ```
 
-Configuration example for PVVX MiThermometer firmware set to "BTHome" advertisement:
+Configuration example for PVVX MiThermometer firmware set to "BTHome v2" advertisement:
 
 ```yaml
 sensor:
@@ -582,35 +582,25 @@ It can sometimes take some time for the first BLE broadcast to be received. Once
 
 ## Obtaining the Bindkey
 
-To set up an encrypted device such as the LYWSD03MMC (with Xiaomi stock firmware) and CGD1, you first need to obtain the bind key. The `xiaomi_ble` sensor component is not able to automatically generate a bindkey so other workarounds are necessary.
-
-### LYWSD03MMC/MHO-C401
-
-If the LYWSD03MMC or MHO-C401 sensor is operated with the Xiaomi stock firmware, you can use the [TeLink flasher application](https://atc1441.github.io/TelinkFlasher.html) to easily generate a new bind key and upload the key to the device without the need to flash a new firmware (see figure). For this, you load the flasher [webpage](https://atc1441.github.io/TelinkFlasher.html) with a [supported browser](https://github.com/WebBluetoothCG/web-bluetooth/blob/master/implementation-status.md) and connect the device by pressing "Connect". After the connection is established, you press the "Do Activation" button and the new key will be shown in the "Mi Bind Key" field. The key can be copied directly into the sensor YAML configuration.
-
-{{< img src="telink_flasher.jpg" alt="Image" caption="Telink flasher application." width="100.0%" class="align-center" >}}
+To set up an encrypted device you need to obtain the `bindkey`. The `xiaomi_ble` sensor component is not able to automatically generate a bindkey so other workarounds are necessary.
 
 > [!WARNING]
-> The new bind key will work with ESPHome, but the Mi Home app will not recognise the sensor anymore once the device has been activated by the TeLink flasher application. To use the sensor again with the Xiaomi Mi Home app, the device needs to be removed and then re-added inside the Mi Home app.
+> If you keep the stock firmware, the new bind key will work with ESPHome, but the Mi Home app will not recognise the sensor anymore once the device has been activated by the TeLink flasher application.
+> To use the sensor again with the Xiaomi Mi Home app, the device needs to be removed and then re-added inside the Mi Home app.
 
-### CGDK2
+### LYWSD03MMC, CGD1 and most other encrypted devices
 
-The method to obtain a new bind key for the CGDK2 sensor is similar to the method for the LYWSD03MMC sensor, except a modified version of the flasher application is used.
-
-For this, you load the [application](https://zaluthar.github.io/TelinkFlasher.html) with a [supported browser](https://github.com/WebBluetoothCG/web-bluetooth/blob/master/implementation-status.md) and connect the device by pressing "Connect". After the connection is established, you press the "Do Activation" button and the new key will be shown in the "Mi Bind Key" field. The key can be copied directly into the sensor YAML configuration.
-
-### Other encrypted devices
-
-- The easiest method (confirmed to work for LYWSD03MMC) is to use the [Telink flasher method](https://github.com/pvvx/ATC_MiThermometer). The accompanying [video](https://www.youtube.com/watch?v=NXKzFG61lNs) shows how to wirelessly flash a LYWSD03MMC, or how to obtain the bind key of the stock firmware
+- The easiest method is to use [PVVX](https://github.com/pvvx/ATC_MiThermometer)'s [Telink flasher method](https://github.com/pvvx/ATC_MiThermometer). The accompanying
+  [video](https://www.youtube.com/watch?v=NXKzFG61lNs) shows how to wirelessly flash a LYWSD03MMC, or how to obtain the bind key of the stock firmware
   (watch till around 13:10). The custom firmware allows you to change several settings of the device, including the smiley and the advertising interval.
-  Follow the instructions on the site using Telink Flasher - best results with a Bluetooth-enabled Android phone. Note that with `pvvx` default settings
-  advertisment is set to `Custom` with no encryption. No need for `bind_key` in this case, you can just add the sensors to your ESPHome config as described above.
+  Follow the instructions on the site using Telink Flasher - best results with a Bluetooth-enabled Android phone. Note that by default there's no encryption set,
+  thus no need for `bind_key` in this case, you can just add the sensors to your ESPHome config as described above. However, if you do enable the "Encrypted beacon"
+  checkbox, scroll down to the bottom of the page press the “Get BindKey” button to see the key.
 
 - The other option is to use the original Mi Home app to add the sensor once. While adding the device, a new key is generated and uploaded into the Xiaomi cloud
-  and to the device itself. Currently a chinese server needs to be selected as the rest of the world doesn't support most of these devices yet. Once generated,
-  the key will not change again until the device is removed and re-added in the Xiaomi app.
+  and to the device itself. Once generated, the key will not change again until the device is removed and re-added in the Xiaomi app.
 
-  - The easiest method to retrieve the bindkey from the cloud is to use the
+  - To retrieve the bindkey from the cloud you can use the
     [Cloud Tokens Extractor](https://github.com/PiotrMachowski/Xiaomi-cloud-tokens-extractor), written by one of Home Assistant users.
     If you prefer to not use the executable, read [the Home Assistant Documentation](https://www.home-assistant.io/integrations/xiaomi_miio/#xiaomi-cloud-tokens-extractor).
 
@@ -628,24 +618,27 @@ For this, you load the [application](https://zaluthar.github.io/TelinkFlasher.ht
 
     The `bind_key` is the 32 digits "value" item in the above output which needs to be inserted into the config file.
 
+- If the LYWSD03MMC or MHO-C401 sensor is operated with the Xiaomi stock firmware, you can also use ATC's [TeLink flasher application](https://atc1441.github.io/TelinkFlasher.html)
+  to easily generate a new bind key and upload the key to the device without the need to flash a new firmware (see figure). For this, you load the flasher
+  [webpage](https://atc1441.github.io/TelinkFlasher.html) with a [supported browser](https://github.com/WebBluetoothCG/web-bluetooth/blob/master/implementation-status.md)
+  and connect the device by pressing "Connect". After the connection is established, you press the "Do Activation" button and the new key will be shown in the "Mi Bind Key"
+  field. The key can be copied directly into the sensor YAML configuration.
+
+{{< img src="telink_flasher.jpg" alt="Image" caption="Telink flasher application." width="100.0%" class="align-center" >}}
+
+- For CGDK2 can also load Zaluthar's [application](https://zaluthar.github.io/TelinkFlasher.html) with a [supported browser](https://github.com/WebBluetoothCG/web-bluetooth/blob/master/implementation-status.md)
+  and connect the device by pressing "Connect". After the connection is established, you press the "Do Activation" button and the new key will be shown in the "Mi Bind Key"
+  field. The key can be copied directly into the sensor YAML configuration.
+
 ## Improving reception performance
 
 Use a board with an Ethernet connection to the network, to offload ESP32's radio module from WiFi traffic, this gains performance on Bluetooth side.
-To maximize the chances of catching advertisements of the sensors, you can set `interval` equal to `window` in {{< docref "/components/esp32_ble_tracker" >}} scan parameter settings:
-
-```yaml
-esp32_ble_tracker:
-  scan_parameters:
-    interval: 5s # try with 300ms if you don't have LAN module
-    window: 5s # try with 300ms if you don't have LAN module
-    active: false
-```
 
 Avoid placing the ESP node in racks, close to routers/switches or other network equipment as EMI interference will degrade Bluetooth signal reception. For best results put as far away as possible, at least 3 meters distance from any other such equipment.
 
 ## Security considerations
 
-You should at least protect your sensors with a custom pairing PIN code. Choose a method employing bindkey in order to use encrypted communication over the air.
+You should at least protect your sensors with a custom pairing PIN code. Choose a method employing `bindkey` in order to use encrypted communication over the air, and prevent accepting spoofed messages.
 
 ## See Also
 
