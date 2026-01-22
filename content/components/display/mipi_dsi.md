@@ -57,10 +57,10 @@ Units manufactured before October 14, 2025 use the ILI9881C display driver with 
 Units manufactured on or after that date use the integrated ST7123 display-touch driver (use `M5STACK-TAB5-V2`).
 
 If unsure which model you have, check the sticker on the back of the device for the display driver chip name.
-The label is just above the ESPressif icon. See image below for example of V2 hardware.  
+The label is just above the ESPressif icon. See image below for example of V2 hardware.
 
 Selection of the wrong display driver model will cause the display to simply fail to work with no relevant logging.
-Selection of the wrong touchscreen driver however will display an error message in the log output, so if in doubt, 
+Selection of the wrong touchscreen driver however will display an error message in the log output, so if in doubt,
 verify the correct touchscreen driver first to accurately identify the board before configuring the display driver.
 
 {{< img src="tab5-version-label.jpg" alt="Tab5 version label showing model identification" width="50%" class="align-center" >}}
