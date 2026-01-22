@@ -181,11 +181,14 @@ Hygro thermometer, small square body, segment LCD, encrypted, broadcasts tempera
 There are the several possibilities to operate this sensor:
 
 1. Xiaomi stock firmware (requires a bindkey)
-1. Device flashed with [PVVX MiThermometer](https://github.com/pvvx/ATC_MiThermometer) custom firmware, supporting "BTHome", "pvvx", "Mi Like", "Custom" advertisements
+1. Device flashed with [PVVX MiThermometer](https://github.com/pvvx/ATC_MiThermometer) custom firmware, supporting "BTHome v2", "ATC1441", "PVVX (Custom)", "MIJIA (MiHome)" advertisements
 1. Device flashed with [ATC MiThermometer](https://github.com/atc1441/ATC_MiThermometer) custom firmware, supporting "Mi Like", "Custom" advertisements
 
-With PVVX firmware and "BTHome" advertisement, encryption with bindkey is supported, just like with Xiaomi stock firmware
+With PVVX firmware and "BTHome v2" advertisement, encryption with bindkey is supported, just like with Xiaomi stock firmware
 (see [Obtaining the Bindkey](#obtaining_the_bindkey)). Unencrypted communication is supported only in custom firmware, but it's not recommended for obvious security reasons.
+
+> [!NOTE]
+> PVVX firmare deprecated any other advertisment format other than "BTHome v2" starting with version 6.0.
 
 Configuration example for Xiaomi stock firmware or ATC MiThermometer firmware set to "Mi Like" advertisement:
 
@@ -226,7 +229,7 @@ If you enable "Encrypted beacon" in the PVVX firmware, specify the `bindkey` wit
 > [!NOTE]
 > Once you've set a `bindkey`, the component will not accept unencrypted beacons from that `mac_address`. The mismatch will be printed in the log.
 
-Configuration example for PVVX MiThermometer firmware set to "pvvx" advertisement:
+Configuration example for PVVX MiThermometer firmware set to "pvvx" advertisement (deprecated):
 
 ```yaml
 sensor:
@@ -244,7 +247,7 @@ sensor:
       name: "PVVX Signal"
 ```
 
-Configuration example for ATC MiThermometer firmware set to "Custom" advertisement:
+Configuration example for ATC MiThermometer firmware set to "Custom" advertisement (deprecated):
 
 ```yaml
 sensor:
@@ -261,9 +264,6 @@ sensor:
     signal_strength:
       name: "ATC Signal"
 ```
-
-> [!NOTE]
-> PVVX firmare deprecated any other advertisment format other than "BTHome v2" starting with version 6.0.
 
 ### XMWSDJ04MMC
 
