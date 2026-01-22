@@ -208,7 +208,7 @@ Configuration example for PVVX MiThermometer firmware set to "BTHome" advertisem
 sensor:
   - platform: bthome_mithermometer
     mac_address: AA:BB:CC:DD:EE:FF
-    bindkey: eef418daf699a0c188f3bfd17e4565d9
+    bindkey: "eef418daf699a0c188f3bfd17e4565d9"
     temperature:
       name: "BTHome Temperature"
     humidity:
