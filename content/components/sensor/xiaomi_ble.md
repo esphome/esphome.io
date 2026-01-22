@@ -178,7 +178,7 @@ Hygro thermometer, small square body, segment LCD, encrypted, broadcasts tempera
 
 {{< img src="xiaomi_lywsd03mmc.jpg" alt="Image" width="30.0%" class="align-center" >}}
 
-There are the several possibilities to operate this sensor:
+There are several ways to operate this sensor:
 
 1. Xiaomi stock firmware (requires a bindkey)
 1. Device flashed with [PVVX MiThermometer](https://github.com/pvvx/ATC_MiThermometer) custom firmware, supporting "BTHome v2", "ATC1441", "PVVX (Custom)", "MIJIA (MiHome)" advertisements
