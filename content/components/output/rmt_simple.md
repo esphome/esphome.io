@@ -97,13 +97,13 @@ rmt_simple:
   resolution_hz: 10000000   # 10 MHz (100 ns per tick)
   pin_0:
     gpio_number: GPIO26
-      - duration0: 10   # 1µs high
+      - duration0: 10       # 1µs high
         level0: 1
-        duration1: 20   # 2µs low
+        duration1: 20       # 2µs low
         level1: 0
-      - duration0: 5    # 0.5µs high
+      - duration0: 5        # 0.5µs high
         level0: 1
-        duration1: 15  # 1.5µs low (Implied frequency of 100 KHz @ 2 pulses/cycle)
+        duration1: 15       # 1.5µs low (Implied frequency of 100 KHz @ 2 pulses/cycle)
         level1: 0
   pin_1:
     gpio_number: GPIO16
@@ -119,7 +119,7 @@ rmt_simple:
 - **No Home Assistant integration**: No actions, triggers, or automations available
 - **Limited to 64 symbols per channel for EPS32**
 - **Limited to 48 symbols per channel for EPS32-XX variants**
-- **Platform-specific channel limits**: 2 channels on most variants, 4 on S3/P4
+- **Platform-specific channel limits**: 2 synchronised channels on most variants, 4 on S3/P4
 
 ## Use cases
 
