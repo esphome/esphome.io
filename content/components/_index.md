@@ -935,6 +935,7 @@ at the {{< docref "light/fastled" "FastLED Light" >}}.
 "Modbus Output","components/output/modbus_controller","modbus.png",""
 "MY9231/MY9291","components/output/my9231","my9231.svg",""
 "PCA9685","components/output/pca9685","pca9685.jpg",""
+"RMT Simple","components/output/rmt_simple","pwm.png",""
 "Sigma-Delta Output","components/output/sigma_delta_output","sigma-delta.svg","dark-invert"
 "Slow PWM","components/output/slow_pwm","pwm.png",""
 "SM16716","components/output/sm16716","sm16716.svg",""
