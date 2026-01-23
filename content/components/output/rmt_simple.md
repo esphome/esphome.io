@@ -97,6 +97,7 @@ rmt_simple:
   resolution_hz: 10000000   # 10 MHz (100 ns per tick)
   pin_0:
     gpio_number: GPIO26
+    pulse_sequence:
       - duration0: 10       # 1µs high
         level0: 1
         duration1: 20       # 2µs low
@@ -107,6 +108,7 @@ rmt_simple:
         level1: 0
   pin_1:
     gpio_number: GPIO16
+    pulse_sequence:
       - duration0: 30
         level0: 1
         duration1: 20
