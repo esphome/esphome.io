@@ -219,7 +219,7 @@ on_...:
 
 ### `remote_transmitter.transmit_brennenstuhl` **Action**
 
-This [action](#config-action) sends a brennenstuhl protocol code to a remote transmitter.
+This [action](/automations/actions#all-actions) sends a brennenstuhl protocol code to a remote transmitter.
 
 ```yaml
 on_...:
@@ -239,7 +239,7 @@ on_...:
 > a pseudo random manner. The yaml snippet from above handles the codes of the button **A-ON** that are stored
 > in the vector `id(a_on)[]`. The vector is looped with `id(idx)` to provide the transmit function with codes
 > that differ from the previous ones.
-> See [Rolling Codes](#remote-setting-up-rolling-codes) and [Setting up RF Devices](#remote-setting-up-rf)
+> See [Rolling Codes](/guides/setting_up_rmt_devices#remote-setting-up-rolling-codes) and [Setting up RF Devices](/guides/setting_up_rmt_devices#remote-setting-up-rf)
 > for details and a complete YAML example.
 
 {{< anchor "remote_transmitter-transmit_byronsx" >}}
