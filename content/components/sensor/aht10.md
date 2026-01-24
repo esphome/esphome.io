@@ -39,7 +39,8 @@ sensor:
   - `AHT20` - For AHT20 and AHT30 devices.
 
 > [!NOTE]
-> Even if the sensor chip housing is labeled as AHT10, it might be necessary to configure the `AHT20` variant. If the sensor is listed in the log as recognized at the configured address, but no data could be fetches, please give it a try.
+> Even if the sensor chip housing is labeled as AHT10, it may require the `AHT20` variant configuration.
+> If recognized at the address but data fetch fails, try the AHT20 variant.
 
 - **temperature** (**Required**): The information for the temperature sensor.
 
