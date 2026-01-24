@@ -36,7 +36,7 @@ image:
     type: rgb565
     resize: 200x162
   images:
-    - file: https://esphome.io/images/logo.png
+    - file: https://media.esphome.io/logo/logo.png
       id: esphome_logo
 ```
 
@@ -82,12 +82,6 @@ image:
 - **byte_order** (*Optional*, string): For RGB565 images, the pixels are converted to 16 bit values. By default these will be stored in big endian byte order (MSB first),
   but you can override this by setting `byte_order` to `little_endian`. Options are `big_endian` (default) and `little_endian`.
   Not applicable to other image formats.
-
-> [!NOTE]
-> To use images you will need to have the python `pillow` package installed.
-> Additionally, if you want to use SVG images (including MDI images), you will
-> additionally need to have the python `cairosvg` package installed. These are automatically installed when
-> setting up ESPHome via the usual methods.
 
 ## Setting defaults
 
