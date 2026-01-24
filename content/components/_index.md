@@ -313,6 +313,7 @@ Sensors are organized into categories; if a given sensor fits into more than one
 {{< imgtable >}}
 "A01NYUB","components/sensor/a01nyub","a01nyub.jpg","Acoustic distance"
 "A02YYUW","components/sensor/a02yyuw","a02yyuw.jpg","Acoustic distance"
+"DS1603L","components/sensor/ds1603l","ds1603l.jpg","Acoustic distance"
 "GL-R01 Time of Flight Sensor","components/sensor/gl_r01","gl_r01.jpg","IR optical distance"
 "HRXL MaxSonar WR","components/sensor/hrxl_maxsonar_wr","hrxl_maxsonar_wr.jpg","Acoustic distance"
 "JSN-SR04T","components/sensor/jsn_sr04t","jsn-sr04t-v3.jpg","Acoustic distance"
