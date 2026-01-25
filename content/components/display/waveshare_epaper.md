@@ -31,12 +31,12 @@ configuration.
 | ------------------ | ----------- | ------------------ |
 | `VCC`              | `3.3V`      | N/A                |
 | `GND`              | `GND`       | N/A                |
-| `CLK`              | Any GPIO | `spi.clk_pin`      |
-| `DIN`              | Any GPIO | `spi.mosi_pin`     |
-| `CS`               | Any GPIO | `cs_pin`           |
-| `DC`               | Any GPIO | `dc_pin`           |
-| `BUSY` (Optional) | Any GPIO | `busy_pin`         |
-| `RESET` (Optional) | Any GPIO | `reset_pin`        |
+| `CLK`              | Any GPIO    | `spi.clk_pin`      |
+| `DIN`              | Any GPIO    | `spi.mosi_pin`     |
+| `CS`               | Any GPIO    | `cs_pin`           |
+| `DC`               | Any GPIO    | `dc_pin`           |
+| `BUSY` (Optional)  | Any GPIO    | `busy_pin`         |
+| `RESET` (Optional) | Any GPIO    | `reset_pin`        |
 
 {{< img src="waveshare_epaper-pins.jpg" alt="Image" width="60.0%" class="align-center" >}}
 
@@ -96,6 +96,7 @@ lambda: |-
   - `2.13in-ttgo-dke` - T5_V2.3 with DKE group display (DEPG0213BN) tested
   - `2.13inv2` - 2.13in V2 display (Pico e-Paper 2.13v2 and Cloud Module)
   - `2.13inv3` - 2.13in V3 display (Pico e-Paper 2.13v3)
+  - `2.13in3c-weact` - WeAct Studio 2.13in 3-color (Black/White/Red) e-paper display (122x250) - not tested
   - `2.70in` - currently not working with the HAT Rev 2.1 version
   - `2.70inv2`
   - `2.70in-b` - Black/White/Red
@@ -106,10 +107,12 @@ lambda: |-
   - `2.90inv2-r2` - 2.9in V2 display, but with different initialization and full/partial display refresh management than `2.90inv2`
   - `2.90in-b` - B/W rendering only
   - `2.90in-bV3` - B/W rendering only
+  - `2.90in3c-weact` - WeAct Studio 2.90in 3-color (Black/White/Red) e-paper display (128x296) - tested
   - `4.20in`
   - `4.20in-bV2` - B/W rendering only
   - `gdey042t81` - GoodDisplay GDEY042T81 4.2" B/W
   - `4.20in-bV2-bwr` - BWR rendering enabled (uses double the amount of RAM for the display buffer as B/W rendering)
+  - `4.20in3c-weact` - WeAct Studio 4.20in 3-color (Black/White/Red) e-paper display (400x300) - not tested
   - `5.83in`
   - `5.83inv2`
   - `gdey0583t81` - GoodDisplay GDEY0583T81 5.83" B/W
@@ -131,6 +134,13 @@ lambda: |-
 > [!WARNING]
 > The BUSY pin on the `gdew0154m09`, the `Waveshare 7.30in-f` and the `Waveshare 7.50in V2` models must be inverted to prevent permanent display damage. Set the busy pin to `inverted: true` in the config.
 
+**WeAct 3-Color E-Paper Displays (2.13in, 2.90in, 4.20in)**
+
+For WeAct Studio 3-color e-paper displays, a unified driver (`WeActEPaper3C`) is used across different sizes. This single driver handles the 2.13in, 2.90in, and 4.20in models, simplifying code management and ensuring consistent behavior.
+
+> [!NOTE]
+> For these WeAct 3-color models, `full_update_every` is not configurable as they typically perform a full refresh with every display update to ensure optimal color rendering and prevent ghosting.
+
 - **busy_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The BUSY pin. Defaults to not connected.
 - **reset_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The RESET pin. Defaults to not connected.
   Make sure you pull this pin high (by connecting it to 3.3V with a resistor) if not connected to a GPIO pin.
@@ -142,7 +152,7 @@ lambda: |-
 - **full_update_every** (*Optional*, int): E-Paper displays have two modes of switching to the next image: A partial
   update that only changes the pixels that have changed and a full update mode that first clears the entire display
   and then re-draws the image. The former is much quicker and nicer, but every so often a full update needs to happen
-  because artifacts accumulate. On the `1.54in`, `1.54inv2`, `2.13in`, `2.13inv2`, `2.90in`, `2.90inv2`, `7.50inV2p` and `gdew029t5` models, you have the option to only
+  because artifacts accumulate. On the `1.54in`, `1.54inv2`, `2.13in`, `2.13inv2`, `2.90in`, `2.90inv2`, `7.50inV2p`, `gdew029t5` and **WeAct 3-color displays**, you have the option to only
   do a full-redraw every x-th time using this option. Defaults to `30` on the described models and a full update for
   all other models.
 
