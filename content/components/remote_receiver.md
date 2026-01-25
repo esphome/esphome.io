@@ -46,6 +46,7 @@ Multiple remote receivers can be configured as a list of dict definitions within
   - **dooya**: Decode and dump Dooya RF codes.
   - **drayton**: Decode and dump Drayton Digistat RF codes.
   - **dyson**: Decode and dump Dyson Cool AM7 tower fan codes.
+  - **fsl_scoreboard**: Decode and dump FSL Cricket Scoreboard remote codes.
   - **jvc**: Decode and dump JVC infrared codes.
   - **gobox**: Decode and dump Go-Box infrared codes.
   - **keeloq**: Decode and dump KeeLoq RF codes.
@@ -70,7 +71,6 @@ Multiple remote receivers can be configured as a list of dict definitions within
   - **toshiba_ac**: Decode and dump Toshiba AC infrared codes.
   - **mirage**: Decode and dump Mirage infrared codes.
   - **toto**: Decode and dump Toto infrared codes.
-  - **fsl_scoreboard**: Decode and dump FSL Cricket Scoreboard remote codes.
 
 - **tolerance** (*Optional*, int, [Time](/guides/configuration-types#time) or mapping): The percentage or time that the remote signal lengths
   can deviate in the decoding process. Defaults to `25%`.
@@ -195,6 +195,10 @@ To enable signal demodulation, configure the signal carrier frequency and duty c
   Dyson cool AM07 code has been decoded. A variable `x` of type {{< apistruct "remote_base::DysonData" "remote_base::DysonData" >}}
   is passed to the automation for use in lambdas.
 
+- **on_fsl_scoreboard** (*Optional*, [Automation](/automations)): An automation to perform when an
+  FSL Cricket Scoreboard remote code has been decoded. A variable `x` of type {{< apistruct "remote_base::FSLScoreboardData" "remote_base::FSLScoreboardData" >}}
+  is passed to the automation for use in lambdas.
+
 - **on_gobox** (*Optional*, [Automation](/automations)): An automation to perform when a
   Go-Box remote code has been decoded. A variable `x` of type {{< apistruct "remote_base::GoboxData" "remote_base::GoboxData" >}}
   is passed to the automation for use in lambdas.
@@ -289,10 +293,6 @@ To enable signal demodulation, configure the signal carrier frequency and duty c
 
 - **on_toto** (*Optional*, [Automation](/automations)): An automation to perform when a
   Toto remote code has been decoded. A variable `x` of type {{< apistruct "remote_base::TotoData" "remote_base::TotoData" >}}
-  is passed to the automation for use in lambdas.
-
-- **on_fsl_scoreboard** (*Optional*, [Automation](/automations)): An automation to perform when an
-  FSL Cricket Scoreboard remote code has been decoded. A variable `x` of type {{< apistruct "remote_base::FSLScoreboardData" "remote_base::FSLScoreboardData" >}}
   is passed to the automation for use in lambdas.
 
 ```yaml
