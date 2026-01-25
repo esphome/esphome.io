@@ -9,7 +9,7 @@ params:
 
 The LM75B Temperature sensor allows you to use your NXP Semiconductors LM75B
 ([datasheet](https://www.nxp.com/docs/en/data-sheet/LM75B.pdf)) sensor with
-ESPHome. The [I²C Bus](#i2c) is required to be set up in your configuration
+ESPHome. The [I²C Bus](/components/i2c) is required to be set up in your configuration
 for this sensor to work.
 
 The LM75B is a temperature-to-digital converter using an on-chip band gap
@@ -32,11 +32,11 @@ sensor:
 ## Configuration variables
 
 - **address** (*Optional*, int): Manually specify the I²C address of the sensor. Defaults to `0x48`.
-- **update_interval** (*Optional*, [Time](#config-time)): The interval to check the sensor. Defaults to `60s`.
-- All other options from [Sensor](#config-sensor).
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to check the sensor. Defaults to `60s`.
+- All other options from [Sensor](/components/sensor).
 
 ## See Also
 
-- [Sensor Filters](#sensor-filters)
+- [Sensor Filters](/components/sensor#sensor-filters)
 - {{< apiref "lm75b/lm75b.h" "lm75b/lm75b.h" >}}
 - [Datasheet](https://www.nxp.com/docs/en/data-sheet/LM75B.pdf)

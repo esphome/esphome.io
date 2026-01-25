@@ -35,6 +35,9 @@ wifi:
   password: !secret wifi_password
 ```
 
+> [!TIP]
+> For WiFi security recommendations including `min_auth_mode` configuration, see the [Security Best Practices](/guides/security_best_practices#wifi-security) guide.
+
 {{< anchor "wifi-configuration_variables" >}}
 
 ## Configuration variables
@@ -74,15 +77,15 @@ wifi:
   - **manual_ip** (*Optional*): Manually set the IP options for the AP. Same options as
     manual_ip for station mode.
 
-  - **ap_timeout** (*Optional*, [Time](#config-time)): The time after which to enable the
+  - **ap_timeout** (*Optional*, [Time](/guides/configuration-types#time)): The time after which to enable the
     configured fallback hotspot. Can be disabled by setting this to `0s`, which requires manually starting the AP by
-    other means (eg: from a button press). Defaults to `1min`.
+    other means (eg: from a button press). Defaults to `90s`.
 
 - **domain** (*Optional*, string): Set the domain of the node hostname used for uploading.
   For example, if it's set to `.local`, all uploads will be sent to `<HOSTNAME>.local`.
   Defaults to `.local`.
 
-- **reboot_timeout** (*Optional*, [Time](#config-time)): The amount of time to wait before rebooting when no
+- **reboot_timeout** (*Optional*, [Time](/guides/configuration-types#time)): The amount of time to wait before rebooting when no
   WiFi connection exists. Can be disabled by setting this to `0s`, but note that the low level IP stack currently
   seems to have issues with WiFi where a full reboot is required to get the interface back working. Defaults to `15min`.
   Does not apply when in access point mode.
@@ -94,12 +97,32 @@ wifi:
   for ESP8266 is 20dB, 20.5dB might cause unexpected restarts.
 
 - **fast_connect** (*Optional*, boolean): If enabled, directly connects to WiFi network without doing a full scan
-  first. This is required for hidden networks and can significantly improve connection times (thus reducing power
-  consumption). Defaults to `off`.
+  first. This can significantly improve connection times (thus reducing power consumption). Defaults to `off`.
   The downside is that this option connects to the first network the ESP sees, even if that network is very far away and
   better ones are available. If multiple networks are configured, the last successfully connected one is tested first.
   In case it fails, all networks are then tested one after the other in their declared order, starting with the first
   one in the list.
+
+  > [!NOTE]
+  > While `fast_connect` skips the initial scan, if the connection attempt fails, ESPHome will still perform a scan
+  > to find available networks. For hidden networks, use `hidden: true` on the network configuration (see
+  > [Connecting to Multiple Networks](#wifi-networks)) to ensure the device always connects without scanning.
+  > Be aware that marking networks as hidden prevents ESPHome from finding the best access point to connect to,
+  > so the device may not connect to the AP with the best signal strength.
+
+- **min_auth_mode** (*Optional*, string): Only on `esp32` and `esp8266`. Sets the minimum WiFi authentication mode
+  that the device will accept when connecting to access points. This controls the weakest encryption your device will
+  allow. Possible values are:
+
+  - `WPA` - Allows WPA, WPA2, and WPA3 networks (least secure, uses TKIP encryption with known vulnerabilities)
+  - `WPA2` - Allows WPA2 and WPA3 networks (recommended, uses AES encryption)
+  - `WPA3` - Only allows WPA3 networks (most secure, ESP32 only)
+
+  Defaults to `WPA2` on ESP32 and `WPA` on ESP8266 (will change to `WPA2` in 2026.6.0).
+
+  **Security Warning:** Setting `min_auth_mode: WPA` allows connection to networks using deprecated WPA/TKIP encryption,
+  which has known security vulnerabilities. Only use this setting for legacy routers that cannot be upgraded to WPA2 or WPA3.
+  If your router supports WPA2 or newer, use the default `WPA2` setting for better security.
 
 - **passive_scan** (*Optional*, boolean): If enabled, then the device will perform WiFi scans in a passive fashion.
   Defaults to `false`.
@@ -107,13 +130,22 @@ wifi:
 - **enable_btm** (*Optional*, bool): Only on `esp32`. Enable 802.11v BSS Transition Management support.
 - **enable_rrm** (*Optional*, bool): Only on `esp32`. Enable 802.11k Radio Resource Management support.
 
-- **on_connect** (*Optional*, [Automation](#automation)): An action to be performed when a connection is established.
-- **on_disconnect** (*Optional*, [Automation](#automation)): An action to be performed when the connection is dropped.
+- **post_connect_roaming** (*Optional*, bool): Enable basic post-connect
+  roaming for stationary devices. After connecting to a non-hidden network,
+  the device will periodically check for better access points with the same
+  SSID and switch if one is found with significantly better signal (+10 dB).
+  This helps devices recover from scenarios where they connect to a suboptimal
+  AP (e.g., after an AP reboot or site power loss). Automatically disabled if
+  `enable_btm` or `enable_rrm` is enabled. See
+  [Post-Connect Roaming](#wifi-post_connect_roaming). Defaults to `true`.
+
+- **on_connect** (*Optional*, [Automation](/automations)): An action to be performed when a connection is established.
+- **on_disconnect** (*Optional*, [Automation](/automations)): An action to be performed when the connection is dropped.
 - **enable_on_boot** (*Optional*, boolean): If enabled, the WiFi interface will be enabled on boot. Defaults to `true`.
 - **use_psram** (*Optional*, boolean): For ESP32 only, requests that the WiFi libraries try to allocate memory from PSRAM.
   Defaults to `false`. Requires PSRAM to be configured.
 
-- **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation.
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
 
 ## Access Point Mode
 
@@ -181,7 +213,7 @@ network doesn't allow for `.local` addresses. When a manual IP is in your config
 the OTA process will automatically choose that as the target for the upload.
 
 > [!NOTE]
-> See also [Changing ESPHome Node Name](#esphome-changing_node_name).
+> See also [Changing ESPHome Node Name](/components/esphome#esphome-changing_node_name).
 
 {{< anchor "wifi-power_save_mode" >}}
 
@@ -201,6 +233,122 @@ wifi:
   # ...
   power_save_mode: none
 ```
+
+{{< anchor "wifi-min_auth_mode" >}}
+
+## WiFi Authentication Mode
+
+The `min_auth_mode` option allows you to control the minimum WiFi security standard your device will accept.
+This is useful for ensuring your device only connects to secure networks, or for maintaining compatibility with
+legacy routers that only support older encryption standards.
+
+### Example: Maximum Security (WPA2 or newer)
+
+```yaml
+wifi:
+  ssid: MyHomeNetwork
+  password: VerySafePassword
+  min_auth_mode: WPA2  # Reject WPA-only networks
+```
+
+### Example: Legacy Router Support (WPA allowed)
+
+```yaml
+wifi:
+  ssid: OldRouter
+  password: VerySafePassword
+  min_auth_mode: WPA  # Allow connection to WPA-only routers (less secure)
+```
+
+### Example: Modern Security (WPA3 only, ESP32 only)
+
+```yaml
+wifi:
+  ssid: ModernRouter
+  password: VerySafePassword
+  min_auth_mode: WPA3  # Only connect to WPA3 networks (most secure)
+```
+
+{{< anchor "wifi-post_connect_roaming" >}}
+
+## Post-Connect Roaming
+
+Post-connect roaming provides basic roaming for **stationary devices** that
+don't move but may benefit from switching to a better access point after
+initial connection.
+
+### Why This Feature Exists
+
+Without post-connect roaming, devices can get stuck on a suboptimal AP
+**permanently** in three common scenarios:
+
+1. **AP reboot**: When an access point reboots (firmware update or other
+   reason), the device connects to another AP with worse signal. Without
+   roaming, it stays on the worse AP permanently, never returning to the
+   original better AP even after it comes back online.
+
+1. **Full site power loss**: When power is restored after an outage, the
+   device connects to whichever AP recovers first, which may be the worst
+   option (e.g., the furthest one). Without roaming, it remains on this
+   suboptimal AP permanently, even after better APs come online.
+
+1. **Out-of-box provisioning**: When WiFi credentials are provisioned via
+   captive portal, Improv, or other methods, the device connects without
+   using ESPHome's normal RSSI-based AP selection. Without roaming, the
+   device stays on that initial AP forever even if a better one is available.
+
+In all three cases, the only fix without post-connect roaming is to manually
+reboot the device or wait for another disconnection event.
+
+### How It Works
+
+- After connecting to a non-hidden network, checks up to **3 times** (every
+  5 minutes)
+- Scans are skipped when signal is already excellent (> -49 dBm), but still
+  count toward the limit
+- Each scan may trigger a roam if an AP with the same SSID is found with
+  **+10 dB better signal**
+- After 3 checks, stops checking (device has converged to best available AP)
+- A non-roaming disconnect (e.g., AP goes down) resets the counter for a
+  fresh start
+- Clears all BSSID priority penalties after successful connection (forgives
+  past failures)
+
+### Configuration
+
+Post-connect roaming is enabled by default. To disable it:
+
+```yaml
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  post_connect_roaming: false
+```
+
+### 802.11k/v Native Roaming
+
+On ESP32, post-connect roaming is **automatically disabled** when `enable_btm`
+or `enable_rrm` is configured, as these provide native 802.11k/v roaming
+support:
+
+```yaml
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  enable_btm: true  # 802.11v BSS Transition Management
+  enable_rrm: true  # 802.11k Radio Resource Management
+```
+
+### Limitations
+
+Post-connect roaming provides **basic roaming support** and does not provide
+seamless handoff:
+
+- TCP connections (including API) will briefly disconnect during the AP
+  switch. Reconnection is typically fast but not transparent to clients.
+
+For seamless 802.11k/v/r roaming, use ESP32 and configure `enable_btm` and
+`enable_rrm`.
 
 {{< anchor "wifi-networks" >}}
 
@@ -248,9 +396,26 @@ wifi:
 - **hidden** (*Optional*, boolean): Whether this network is hidden. Defaults to false.
   If you add this option you also have to specify ssid.
 
-- **priority** (*Optional*, float): The priority of this network. After each time, the network with
-  the highest priority is chosen. If the connection fails, the priority is decreased by one.
+  > [!TIP]
+  > Set `hidden: true` if your network does not broadcast its SSID. This ensures the device attempts to connect
+  > using hidden network mode without first scanning for visible networks. Note that when connecting to a hidden
+  > network, ESPHome cannot determine which access point has the best signal strength, potentially resulting in
+  > connections to APs with weaker signals when multiple APs share the same SSID.
+
+- **priority** (*Optional*, int): The priority of this network (range: -128 to 127). The network with
+  the highest priority is chosen. After each connection failure, the priority is decreased by one.
+  If all tracked BSSIDs have identical priorities, they are automatically reset to 0 to start fresh.
   Defaults to `0`.
+
+### Example: Connecting to a Hidden Network
+
+```yaml
+wifi:
+  networks:
+  - ssid: MyHiddenNetwork
+    password: VerySafePassword
+    hidden: true
+```
 
 {{< anchor "eap" >}}
 
@@ -327,7 +492,9 @@ on_...:
 ```
 
 > [!NOTE]
-> Be aware that if you disable WiFi, the API timeout will need to be disabled otherwise the device will reboot.
+> Be mindful of the reboot timeouts set for both the [API component](/components/api/) and the
+> [WiFi component](#configuration-variables) if you disable WiFi. If WiFi remains off for longer than the duration of
+> either timeout, the device will reboot!
 
 {{< anchor "wifi-on_enable" >}}
 
@@ -367,18 +534,18 @@ on_...:
 
 #### Configuration variables
 
-- **ssid** (**Required**, string, [templatable](#config-templatable)): The name of the WiFi access point.
-- **password** (**Required**, string, [templatable](#config-templatable)): The password of the WiFi access point.
+- **ssid** (**Required**, string, [templatable](/automations/templates)): The name of the WiFi access point.
+- **password** (**Required**, string, [templatable](/automations/templates)): The password of the WiFi access point.
   Leave empty for no password.
 
-- **save** (*Optional*, boolean, [templatable](#config-templatable)): If set to `true`, the SSID and password will be
+- **save** (*Optional*, boolean, [templatable](/automations/templates)): If set to `true`, the SSID and password will be
   saved in persistent memory. Defaults to `true`.
 
-- **timeout** (*Optional*, [Time](#config-time), [templatable](#config-templatable)): The time to wait for the connection
+- **timeout** (*Optional*, [Time](/guides/configuration-types#time), [templatable](/automations/templates)): The time to wait for the connection
   to be established. Defaults to 30 seconds.
 
-- **on_connect** (*Optional*, [Automation](#automation)): An action to be performed when a connection is established.
-- **on_error** (*Optional*, [Automation](#automation)): An action to be performed when the connection fails.
+- **on_connect** (*Optional*, [Automation](/automations)): An action to be performed when a connection is established.
+- **on_error** (*Optional*, [Automation](/automations)): An action to be performed when the connection fails.
 
 ## Conditions
 
@@ -386,7 +553,7 @@ on_...:
 
 ### `wifi.connected` Condition
 
-This [Condition](#config-condition) checks if the WiFi client is currently connected to a station.
+This [Condition](/automations/actions#all-conditions) checks if the WiFi client is currently connected to a station.
 
 ```yaml
 on_...:
@@ -403,7 +570,7 @@ The lambda equivalent for this is `id(wifi_id).is_connected()`.
 
 ### `wifi.enabled` Condition
 
-This [Condition](#config-condition) checks if WiFi is currently enabled or not.
+This [Condition](/automations/actions#all-conditions) checks if WiFi is currently enabled or not.
 
 ```yaml
 on_...:
@@ -416,6 +583,22 @@ on_...:
 ```
 
 The lambda equivalent for this is `!id(wifi_id).is_disabled()`.
+
+{{< anchor "wifi-ap-active_condition" >}}
+
+### `wifi.ap_active` Condition
+
+This [Condition](/automations/actions#all-conditions) checks if WiFi AP is currently active or not.
+
+```yaml
+on_...:
+  - if:
+      condition: wifi.ap_active
+      then:
+        - logger.log: WiFi AP is active!
+```
+
+The lambda equivalent for this is `id(wifi_id).is_ap_active()`.
 
 ## See Also
 

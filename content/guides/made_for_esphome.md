@@ -4,7 +4,7 @@ title: "Made for ESPHome"
 params:
   seo:
     description: Information about the Made for ESPHome program
-    image: /_static/made-for-esphome-black-on-white.png
+    image: /images/made-for-esphome-black-on-white.png
 ---
 
 {{< anchor "made_for_esphome" >}}
@@ -34,7 +34,7 @@ Note that these are **not** required for projects that only provide a physical/w
 - Your ESPHome configuration is open source, available for end users to modify/update
 - Users should be able to apply updates if your project sells ready-made devices
 - All components/platforms used must have an `id` specified so users can easily refer to,
-  [Extend](#config-packages_extend) and/or [Remove](#config-packages_remove) configuration variables should they choose to
+  [Extend](/components/packages#config-packages_extend) and/or [Remove](/components/packages#config-packages_remove) configuration variables should they choose to
   "take control"
 
 - Your project supports adoption via the `dashboard_import` feature of ESPHome (see
@@ -70,18 +70,18 @@ After your project is approved, you may use these logos on your product and/or i
     }
 </style>
 
-{{< img src="made-for-esphome-black-on-white.svg" alt="Image"
-  caption="Made with ESPHome black on white ([svg](images/made-for-esphome-black-on-white.svg), [png](images/made-for-esphome-black-on-white.png))"
+{{< img src="/images/made-for-esphome-black-on-white.svg" alt="Image"
+  caption="Made with ESPHome black on white ([svg](/images/made-for-esphome-black-on-white.svg), [png](/images/made-for-esphome-black-on-white.png))"
   width="100%" class="align-center" >}}
 
-{{< img src="made-for-esphome-white-on-black.svg" alt="Image"
-  caption="Made with ESPHome white on black ([svg](images/made-for-esphome-white-on-black.svg), [png](images/made-for-esphome-white-on-black.png))"
+{{< img src="/images/made-for-esphome-white-on-black.svg" alt="Image"
+  caption="Made with ESPHome white on black ([svg](/images/made-for-esphome-white-on-black.svg), [png](/images/made-for-esphome-white-on-black.png))"
   width="100%" class="align-center" >}}
 
-{{< img src="made-for-esphome-black-on-transparent.svg" alt="Image"
-  caption="Made with ESPHome black on transparent ([svg](images/made-for-esphome-black-on-transparent.svg), [png](images/made-for-esphome-black-on-transparent.png))"
+{{< img src="/images/made-for-esphome-black-on-transparent.svg" alt="Image"
+  caption="Made with ESPHome black on transparent ([svg](/images/made-for-esphome-black-on-transparent.svg), [png](/images/made-for-esphome-black-on-transparent.png))"
   width="100%" class="align-center" >}}
 
-{{< img src="made-for-esphome-white-on-transparent.svg" alt="Image"
-caption="Made with ESPHome white on transparent ([svg](images/made-for-esphome-white-on-transparent.svg), [png](images/made-for-esphome-white-on-transparent.png))"
-width="100%" class="align-center" >}}
+{{< img src="/images/made-for-esphome-white-on-transparent.svg" alt="Image"
+  caption="Made with ESPHome white on transparent ([svg](/images/made-for-esphome-white-on-transparent.svg), [png](/images/made-for-esphome-white-on-transparent.png))"
+  width="100%" class="align-center" >}}

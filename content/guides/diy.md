@@ -39,7 +39,6 @@ unless it's truly exceptional, etc.
 - [ESPHome 12v Fan Controller with PID Climate](https://github.com/patrickcollins12/esphome-fan-controller) by {{< ghuser name="patrickcollins12" >}}
 - [Sonoff 4CH Irrigation Controller with Nextion Display](https://github.com/bruxy70/Irrigation-with-display) by {{< ghuser name="bruxy70" >}}
 - [Automated Bathroom Ventilation](https://www.youtube.com/watch?v=weBDnmrQYOs) by [Intermittent Technology](https://intermit.tech)
-- [ESPHome MP3 Sound Machine](https://selfhostedhome.com/esp8266-mp3-sound-machine/) by [Self Hosted Home](https://selfhostedhome.com)
 - [Detecting Sound with ESP8266](https://thibmaek.com/posts/detecting-sound-level-using-esp8266-and-esphome) by [Thibault Maekelbergh](https://thibmaek.com)
 - [SW420 Vibration Sensor with Remote Notifications](https://github.com/rmooreID/Home-Assistant-Appliance-Monitor/) by {{< ghuser name="rmooreID" >}}
 - [DIY Irrigation Controller (with Internal Scheduler + Lovelace UI)](https://brianhanifin.com/posts/diy-irrigation-controller-esphome-home-assistant/) by {{< ghuser name="BrianHanifin" >}}
@@ -66,6 +65,7 @@ unless it's truly exceptional, etc.
 - [An IoT clock designed for children](https://github.com/chrisns/childrens-clock) by {{< ghuser name="chrisns" >}}
 - [Remote controller RC433 for garage door open](https://dedeideas.eu/index.php/en-us/rc433-pre-home-assistant-en) by [lubomirkarlik](https://dedeideas.eu/index.php/en-us/about-me)
 - [How to create an ESPHome external component](https://medium.com/@vinsce/create-an-esphome-external-component-part-1-introduction-config-validation-and-code-generation-e0389e674bd6) by {{< ghuser name="vinsce" >}}
+- [Smart garage door remote modification when direct opener wiring isn't feasible](https://github.com/linux4life798/smart-garage-remote) by {{< ghuser name="linux4life798" >}}
 
 ## Custom Components & Code
 
@@ -104,6 +104,8 @@ unless it's truly exceptional, etc.
 - [Novy Pureline Pro extractor hood](https://github.com/bwynants/purelinepro) by [bwynants](https://github.com/bwynants)
 - [Digoo DG-R8H and similar nexus433 sensors to MQTT component](https://github.com/FreeBear-nc/esphome-nexus433) by {{< ghuser name="FreeBear-nc" >}}
 - [Adaptive Lighting for white/warm lights](https://github.com/mdvorak/esphome-adaptive-lighting) by {{< ghuser name="mdvorak" >}}
+- [Connecting the PAJ7620 gesture sensor](https://github.com/apaex/PAJ7620-ESPHome) by {{< ghuser name="apaex" >}}
+- [Dew Point Sensor using Magnus formula](https://github.com/iret33/esphome-dew-point) by {{< ghuser name="iret33" >}}
 
 ## Sample Configurations
 
