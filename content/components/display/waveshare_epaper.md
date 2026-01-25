@@ -134,13 +134,6 @@ lambda: |-
 > [!WARNING]
 > The BUSY pin on the `gdew0154m09`, the `Waveshare 7.30in-f` and the `Waveshare 7.50in V2` models must be inverted to prevent permanent display damage. Set the busy pin to `inverted: true` in the config.
 
-**WeAct 3-Color E-Paper Displays (2.13in, 2.90in, 4.20in)**
-
-For WeAct Studio 3-color e-paper displays, a unified driver (`WeActEPaper3C`) is used across different sizes. This single driver handles the 2.13in, 2.90in, and 4.20in models, simplifying code management and ensuring consistent behavior.
-
-> [!NOTE]
-> For these WeAct 3-color models, `full_update_every` is not configurable as they typically perform a full refresh with every display update to ensure optimal color rendering and prevent ghosting.
-
 - **busy_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The BUSY pin. Defaults to not connected.
 - **reset_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The RESET pin. Defaults to not connected.
   Make sure you pull this pin high (by connecting it to 3.3V with a resistor) if not connected to a GPIO pin.
@@ -152,9 +145,12 @@ For WeAct Studio 3-color e-paper displays, a unified driver (`WeActEPaper3C`) is
 - **full_update_every** (*Optional*, int): E-Paper displays have two modes of switching to the next image: A partial
   update that only changes the pixels that have changed and a full update mode that first clears the entire display
   and then re-draws the image. The former is much quicker and nicer, but every so often a full update needs to happen
-  because artifacts accumulate. On the `1.54in`, `1.54inv2`, `2.13in`, `2.13inv2`, `2.90in`, `2.90inv2`, `7.50inV2p`, `gdew029t5` and **WeAct 3-color displays**, you have the option to only
+  because artifacts accumulate. On the `1.54in`, `1.54inv2`, `2.13in`, `2.13inv2`, `2.90in`, `2.90inv2`, `7.50inV2p`, `gdew029t5` you have the option to only
   do a full-redraw every x-th time using this option. Defaults to `30` on the described models and a full update for
   all other models.
+
+> [!NOTE]
+> For WeAct 3-color models, `full_update_every` is not configurable as they typically perform a full refresh with every display update to ensure optimal color rendering and prevent ghosting.
 
 - **reset_duration** (*Optional*, [Time](/guides/configuration-types#time)): Duration for the display reset operation. Defaults to `200ms`.
   Setting this value to `2ms` may resolve issues with newer e-Paper Driver modules (e.g. Rev 2.1).
