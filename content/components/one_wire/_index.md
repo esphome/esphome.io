@@ -18,7 +18,8 @@ work fine as well, provided you don't have unusually long wires.
 ## Platforms
 
 - [**GPIO**](/components/one_wire/gpio/) Create a 1-Wire bus on a GPIO pin
-- [**DS2484**](/components/one_wire/ds2484/) An I2C-to-1-Wire bridge device
+- [**DS2482**](/components/one_wire/ds2482/) I2C-to-1-Wire bridge (DS2482-100 single-channel or DS2482-800 8-channel)
+- [**DS2484**](/components/one_wire/ds2484/) I2C-to-1-Wire bridge (single-channel)
 
 ## Obtaining Sensor IDs
 
