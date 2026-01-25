@@ -42,12 +42,19 @@ Currently, there are three types of events sent: `ping`, `state` and `log`. The 
 is repeatedly sent out to keep the connection alive. `log` events are sent every time a log
 message is triggered and is used to show the debug log on the index page. `state` is where
 the real magic happens. All events with this type have a JSON payload that describes the state
-of a component. Each of these JSON payloads have two mandatory fields: `id` and `state`. ID
-is the unique identifier of the component using the format `domain/entity_name` (for example
-`sensor/Temperature`) or `domain/device_name/entity_name` for sub-device entities. `state`
-contains a simple text-based representation of the state of the underlying component, for
-example ON/OFF or 21.4 °C. Several components also have additional fields in this payload,
-for example lights have a `brightness` attribute.
+of a component. Each of these JSON payloads have the following identifier fields:
+
+- `name_id`: The preferred identifier using the format `domain/entity_name` (for example
+  `sensor/Temperature`) or `domain/device_name/entity_name` for sub-device entities.
+- `id`: Legacy identifier using the format `domain-object_id` (for example `sensor-temperature`).
+  Provided for backward compatibility with existing integrations.
+
+New integrations should use `name_id`. The `id` field will switch to the new format
+(matching `name_id`) in ESPHome 2026.8.0, at which point `name_id` will be removed.
+
+The `state` field contains a simple text-based representation of the state of the underlying
+component, for example ON/OFF or 21.4 °C. Several components also have additional fields in
+this payload, for example lights have a `brightness` attribute.
 
 {{< img src="event-source.png" alt="Image" caption="Example payload of the event source API." class="align-center" >}}
 
