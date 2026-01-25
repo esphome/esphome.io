@@ -10,6 +10,8 @@ params:
 The captive portal component in ESPHome is a fallback mechanism for when connecting to the
 configured {{< docref "wifi" "WiFi" >}} fails.
 
+This component is available on ESP32, ESP8266, RP2040, and LibreTiny platforms.
+
 After 1 minute of unsuccessful WiFi connection attempts, the ESP will start a WiFi hotspot
 (with the credentials from your configuration)
 
