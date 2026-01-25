@@ -1041,6 +1041,25 @@ on_...:
 - **code** (**Required**, list): The 14 byte Mirage code to send.
 - All other options from [Remote Transmitter Actions](#remote_transmitter-transmit_action).
 
+{{< anchor "remote_transmitter-transmit_fsl_scoreboard" >}}
+
+### `remote_transmitter.transmit_fsl_scoreboard` **Action**
+
+This [action](/automations/actions#all-actions) sends an FSL Cricket Scoreboard remote code to a remote transmitter.
+
+```yaml
+on_...:
+  - remote_transmitter.transmit_fsl_scoreboard:
+      field: 5
+      value: 100
+```
+
+#### Configuration variables
+
+- **field** (**Required**, int): The scoreboard field ID (0-15).
+- **value** (**Required**, int): The value to display (0-999).
+- All other options from [Remote Transmitter Actions](#remote_transmitter-transmit_action).
+
 {{< anchor "remote_transmitter-transmit_toto" >}}
 
 ### `remote_transmitter.transmit_toto` **Action**
