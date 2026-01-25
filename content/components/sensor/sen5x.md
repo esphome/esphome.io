@@ -128,12 +128,15 @@ sensor:
   - **auto_self_calibration** (*Optional*, boolean): True enables automatic CO₂ self calibration.
   False disables automatic CO₂ calibration. Default is `true`.
   - **altitude_compensation** (*Optional*, integer): When set to altitude (in meters), the CO₂ sensor will be
-  statically compensated for deviations due to current altitude.
+  statically compensated for deviations due to current altitude. See [CO₂ Compensation](#co₂-compensation) section below
+  for more information.
   - **ambient_pressure_compensation** (*Optional*, integer): When set to pressure (in hPA), the CO₂ sensor will be
-  compensated for deviations due to ambient pressure.
+  compensated for deviations due to ambient pressure. See [CO₂ Compensation](#co₂-compensation) section below
+  for more information.
   - **ambient_pressure_compensation_source** (*Optional*, [ID](/guides/configuration-types#config-id)):
   Sets an external pressure sensor ID (must report in hPA). This will compensate the CO₂ sensor for deviations
-  due to current pressure. This correction is applied with each update of the CO₂ sensor.
+  due to current pressure. This correction is applied with each update of the CO₂ sensor. See
+  [CO₂ Compensation](#co₂-compensation) section below for more information.
   - All options from [Sensor](/components/sensor#config-sensor).
 
 - **voc** (*Optional*): The information for the VOC Index sensor. Only available with SEN54, SEN55, SEN65, SEN66,
@@ -171,15 +174,11 @@ sensor:
     - **learning_time_offset_hours** (*Optional*): Time constant to estimate the NOx algorithm offset from the
       history in hours. Past events will be forgotten after about twice the learning time.
       Allowed values are in range 1..1000. The default value is 12 hour.
-    - **learning_time_gain_hours** (*Optional*): Time constant to estimate the NOx algorithm gain from the
-      history in hours. Past events will be forgotten after about twice the learning time.
-      Allowed values are in range 1..1000. The default value is 12 hours.
+    - **learning_time_gain_hours** (*Optional*): Here for completeness, but this is ignored by NOx Algorithm Tuning.
     - **gating_max_duration_minutes** (*Optional*): Maximum duration of gating in minutes (freeze of estimator
       during high NOx index signal). Zero disables the gating. Allowed values are in range 0..3000.
       The default value is 180 minutes.
-    - **std_initial** (*Optional*): Initial estimate for standard deviation. Lower value boosts events during
-      initial learning period, but may result in larger device-to-device variations.
-      Allowed values are in range 10..5000. The default value is 50.
+    - **std_initial** (*Optional*): Here for completeness, but this is ignored by NOx Algorithm Tuning.
     - **gain_factor** (*Optional*): Gain factor to amplify or to attenuate the NOx index output.
       Allowed values are in range 1..1000. The default value is 230.
 
@@ -190,8 +189,10 @@ sensor:
   
   - All options from [Sensor](/components/sensor#config-sensor).
 
-- **store_baseline** (*Optional*, boolean): Stores and retrieves the baseline VOC information for
-  quicker startups. Defaults to `true`. Only available with SEN54, SEN55, SEN65, SEN66, SEN68 or SEN69C. 
+- **store_baseline** (*Optional*, boolean): When set to `true` the VOC algorithm state is saved to flash every
+  2 hours. During setup of the sensor the previously saved algorithm state is loaded and the VOC sensor will
+  skip the initial learning phase.
+  Only available with SEN54, SEN55, SEN65, SEN66, SEN68 or SEN69C.
 
 - **auto_cleaning_interval** (*Optional*, positive int): The periodic fan-cleaning interval in seconds.
   Only available with SEN55, SEN54 OR SEN55.
@@ -252,18 +253,6 @@ I²C is the only mode supported by this component.
 The SEN6X series operates at 3.3V and only supports I²C mode.
 
 For better stability, the SDA and SCL lines require suitable pull-up resistors.
-
-## Automatic Fan Cleaning
-
-The SEN5X sensors have an automatic fan-cleaning procedure will be triggered periodically following
-`auto_cleaning_interval` cleaning interval. This will accelerate the fan to maximum speed for 10 seconds
-to blow out the accumulated dust inside the fan.
-
-- Measurement values are not updated while the fan-cleaning is running.
-- The default cleaning interval is set to 604,800 seconds (i.e., 168 hours or 1 week).
-- The interval can be configured using the Set Automatic Cleaning Interval command.
-- Set the interval to 0 to disable the automatic cleaning.
-- The cleaning procedure can also be started manually with the `start_fan_autoclean` Action.
 
 ## Actions
 
@@ -437,6 +426,18 @@ sensor:
       name: "CO₂"
       altitude_compensation: 427m
 ```
+
+## Automatic Fan Cleaning
+
+The SEN5X sensors have an automatic fan-cleaning procedure will be triggered periodically following
+`auto_cleaning_interval` cleaning interval. This will accelerate the fan to maximum speed for 10 seconds
+to blow out the accumulated dust inside the fan.
+
+- Measurement values are not updated while the fan-cleaning is running.
+- The default cleaning interval is set to 604,800 seconds (i.e., 168 hours or 1 week).
+- The interval can be configured using the Set Automatic Cleaning Interval command.
+- Set the interval to 0 to disable the automatic cleaning.
+- The cleaning procedure can also be started manually with the `start_fan_autoclean` Action.
 
 ## NOx and VOC Algorithm Tuning
 
