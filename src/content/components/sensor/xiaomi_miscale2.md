@@ -1,0 +1,6 @@
+---
+title: Xiaomi Miscale2 combined into Xiaomi Miscale
+description: Xiaomi Miscale2 combined into Xiaomi Miscale
+---
+
+[xiaomi_miscale](/components/sensor/xiaomi_miscale)

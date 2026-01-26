@@ -1,4 +1,5 @@
 .PHONY: clean live-html check-links anchors production convert-from-rst convert-branch-in-place directories netlify repo-data all
+.PHONY: astro-dev astro-build astro-preview astro-migrate astro-netlify astro-clean
 
 SHELL := bash
 .SHELLFLAGS := -euo pipefail -c
@@ -11,7 +12,13 @@ export HUGO_PARAMS_COMMIT_TITLE=$(shell git log -1 --pretty=%s)
 export HUGO_PARAMS_BRANCH=$(shell git branch --show-current)
 export HUGO_PARAMS_REPO_URL=$(shell git config --get remote.origin.url)
 
+# Astro environment variables
+export COMMIT_REF=$(shell git rev-parse --short HEAD)
+export BRANCH=$(shell git branch --show-current)
+
 all: production
+
+# ==================== Hugo Targets (Legacy) ====================
 
 production: anchors
 	hugo --minify
@@ -57,3 +64,42 @@ netlify: repo-data
 	$(PAGEFIND)
 	# rerun hugo to incorporate generated index
 	hugo --minify
+
+# ==================== Astro Targets ====================
+
+# Install dependencies
+astro-install:
+	npm install
+
+# Run content migration from Hugo to Astro format
+astro-migrate:
+	npx tsx scripts/migrate-content.ts
+
+# Fetch automation and version data
+astro-data:
+	npx tsx scripts/fetch-automations.ts
+
+# Development server
+astro-dev: astro-install
+	npm run dev
+
+# Production build
+astro-build: astro-install astro-data
+	npm run build
+	$(PAGEFIND) --site dist
+
+# Preview production build
+astro-preview: astro-build
+	npm run preview
+
+# Clean Astro build artifacts
+astro-clean:
+	rm -rf dist
+	rm -rf .astro
+	rm -rf node_modules
+	rm -rf src/data/*.json
+
+# Netlify build for Astro
+astro-netlify: astro-install astro-data
+	npm run build
+	$(PAGEFIND) --site dist

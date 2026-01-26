@@ -1,17 +1,45 @@
+# ==================== Astro Build Configuration ====================
+# Uncomment the Astro section and comment out Hugo section to switch
+
+# Astro Build (New)
 [build]
-  publish = "public"
-  command = "make netlify"
-  environment = { HUGO_BASEURL = "https://esphome.io", HUGOxPARAMSxAPI_DOCS_URL = "https://api-docs.esphome.io", PYTHON_VERSION = "3.12", HUGO_VERSION = "0.147.8" }
+  publish = "dist"
+  command = "make astro-netlify"
+  environment = { NODE_VERSION = "20", SITE_URL = "https://esphome.io", API_DOCS_URL = "https://api-docs.esphome.io" }
 
 [context.beta]
-  environment = { HUGO_BASEURL = "https://beta.esphome.io", HUGOxPARAMSxAPI_DOCS_URL = "https://api-docs-beta.esphome.io" }
+  environment = { SITE_URL = "https://beta.esphome.io", API_DOCS_URL = "https://api-docs-beta.esphome.io" }
 
 [context.next]
-  environment = { HUGO_BASEURL = "https://next.esphome.io", HUGOxPARAMSxAPI_DOCS_URL = "https://api-docs-dev.esphome.io" }
+  environment = { SITE_URL = "https://next.esphome.io", API_DOCS_URL = "https://api-docs-dev.esphome.io" }
 
 [context.production]
-  environment = { HUGO_BASEURL = "https://esphome.io", HUGOxPARAMSxAPI_DOCS_URL = "https://api-docs.esphome.io" }
+  environment = { SITE_URL = "https://esphome.io", API_DOCS_URL = "https://api-docs.esphome.io" }
 
+# ==================== Hugo Build Configuration (Legacy) ====================
+# To use Hugo instead of Astro, uncomment this section and comment out Astro above
+#
+# [build]
+#   publish = "public"
+#   command = "make netlify"
+#   environment = { HUGO_BASEURL = "https://esphome.io", HUGOxPARAMSxAPI_DOCS_URL = "https://api-docs.esphome.io", PYTHON_VERSION = "3.12", HUGO_VERSION = "0.147.8" }
+#
+# [context.beta]
+#   environment = { HUGO_BASEURL = "https://beta.esphome.io", HUGOxPARAMSxAPI_DOCS_URL = "https://api-docs-beta.esphome.io" }
+#
+# [context.next]
+#   environment = { HUGO_BASEURL = "https://next.esphome.io", HUGOxPARAMSxAPI_DOCS_URL = "https://api-docs-dev.esphome.io" }
+#
+# [context.production]
+#   environment = { HUGO_BASEURL = "https://esphome.io", HUGOxPARAMSxAPI_DOCS_URL = "https://api-docs.esphome.io" }
+
+
+# Redirect .html extensions to clean URLs (for Astro)
+[[redirects]]
+  from = "/*.html"
+  to = "/:splat/"
+  status = 301
+  force = false
 
 # Caching HTML - 1 week
 [[headers]]

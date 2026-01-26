@@ -1,0 +1,90 @@
+---
+import '../styles/main.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+
+interface Props {
+  title: string;
+  description?: string;
+  seo?: {
+    description?: string;
+    image?: string;
+  };
+  isHome?: boolean;
+  hasToc?: boolean;
+}
+
+const { title, description, seo, isHome = false, hasToc = false } = Astro.props;
+const siteTitle = 'ESPHome';
+const fullTitle = isHome ? `${title}` : `${title} - ${siteTitle}`;
+const metaDescription = seo?.description || description || 'ESPHome - Smart Home Made Simple';
+const branch = import.meta.env.BRANCH || 'current';
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>{fullTitle}</title>
+
+  <!-- SEO Meta Tags -->
+  <meta name="description" content={metaDescription}>
+  <meta property="og:title" content={title}>
+  <meta property="og:description" content={metaDescription}>
+  <meta property="og:type" content="website">
+  <meta property="og:url" content={Astro.url}>
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content={title}>
+  <meta name="twitter:description" content={metaDescription}>
+
+  {seo?.image && (
+    <>
+      <meta property="og:image" content={seo.image}>
+      <meta name="twitter:image" content={seo.image}>
+    </>
+  )}
+
+  <!-- Theme initialization (must run before page renders to prevent flash) -->
+  <script is:inline>
+    const savedTheme = localStorage.getItem('theme') ||
+      (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    document.documentElement.setAttribute('data-theme', savedTheme);
+    const tocSort = localStorage.getItem('toc-sort');
+    if (tocSort) document.documentElement.setAttribute('data-toc-sort', tocSort);
+  </script>
+
+  <!-- Favicons -->
+  <link rel="icon" type="image/png" sizes="512x512" href="/favicon-512x512.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192x192.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+
+  <slot name="head" />
+</head>
+<body>
+  <div class="page-container">
+    <Header isHome={isHome} hasToc={hasToc} />
+
+    <main data-pagefind-body>
+      <img alt="" aria-hidden="true" hidden class="header-print" src="/images/logo-text.svg" />
+      <slot />
+      {branch !== 'current' && (
+        <div class="branch-overlay" aria-hidden="true">{branch.toUpperCase()}</div>
+      )}
+    </main>
+
+    <Footer />
+  </div>
+
+  <!-- KaTeX for math rendering -->
+  <slot name="math" />
+
+  <!-- Core JavaScript -->
+  <script src="/js/menu.js" defer></script>
+  <script src="/js/search.js" defer></script>
+  <script src="/js/main.js" defer></script>
+
+  <slot name="scripts" />
+</body>
+</html>

@@ -1,0 +1,97 @@
+---
+import ThemeToggle from './ThemeToggle.astro';
+import Search from './Search.astro';
+
+interface Props {
+  isHome?: boolean;
+  hasToc?: boolean;
+}
+
+const { isHome = false, hasToc = false } = Astro.props;
+
+// Navigation menu structure (matching Hugo's menu)
+const mainMenu = [
+  {
+    name: 'Getting Started',
+    children: [
+      { name: 'From Home Assistant', url: '/guides/getting_started_hassio/' },
+      { name: 'Using Command Line', url: '/guides/getting_started_command_line/' },
+      { name: 'Ready-Made Projects', url: '/projects/' },
+      { name: 'Migrate from Tasmota', url: '/guides/migrate_sonoff_tasmota/' },
+      { name: 'FAQ and Tips', url: '/guides/faq/' },
+    ],
+  },
+  {
+    name: 'Next Steps',
+    children: [
+      { name: 'Documentation', url: '/components/' },
+      { name: 'Automations', url: '/automations/' },
+      { name: 'Configuration Types', url: '/guides/configuration-types/' },
+      { name: 'Device Examples', url: 'https://devices.esphome.io/' },
+      { name: 'DIY Examples', url: '/guides/diy/' },
+      { name: 'Sharing ESPHome Devices', url: '/guides/creators/' },
+      { name: 'Made for ESPHome', url: '/guides/made_for_esphome/' },
+    ],
+  },
+  {
+    name: 'Keeping Up',
+    children: [
+      { name: 'Changelog', url: '/changelog/' },
+      { name: 'Discord', url: 'https://discord.gg/KhAMKrd' },
+      { name: 'Forums', url: 'https://community.home-assistant.io/c/esphome/' },
+      { name: 'Development', url: 'https://developers.esphome.io' },
+      { name: 'Supporters', url: '/guides/supporters/' },
+    ],
+  },
+];
+
+const logoUrl = isHome ? '/' : '/components/';
+const logoTitle = isHome ? 'ESPHome Landing Page' : 'ESPHome Documentation Home';
+---
+
+<div class="nav-container" id="nav-container">
+  <nav id="sticky-nav" class="sticky-nav">
+    {hasToc && (
+      <button type="button" class="toc-button" id="toc-toggle" aria-label="Open table of contents" aria-expanded="false">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="24" height="24">
+          <path fill="currentColor" d="M40 48C26.7 48 16 58.7 16 72v48c0 13.3 10.7 24 24 24H88c13.3 0 24-10.7 24-24V72c0-13.3-10.7-24-24-24H40zM192 64c-17.7 0-32 14.3-32 32s14.3 32 32 32H480c17.7 0 32-14.3 32-32s-14.3-32-32-32H192zm0 160c-17.7 0-32 14.3-32 32s14.3 32 32 32H480c17.7 0 32-14.3 32-32s-14.3-32-32-32H192zm0 160c-17.7 0-32 14.3-32 32s14.3 32 32 32H480c17.7 0 32-14.3 32-32s-14.3-32-32-32H192zM16 232v48c0 13.3 10.7 24 24 24H88c13.3 0 24-10.7 24-24V232c0-13.3-10.7-24-24-24H40c-13.3 0-24 10.7-24 24zM40 368c-13.3 0-24 10.7-24 24v48c0 13.3 10.7 24 24 24H88c13.3 0 24-10.7 24-24V392c0-13.3-10.7-24-24-24H40z"/>
+        </svg>
+      </button>
+    )}
+
+    <div class="nav-logo">
+      <a id="nav-logo-a" title={logoTitle} href={logoUrl}>
+        <img src="/images/logo-text.svg" alt="ESPHome" height="30">
+      </a>
+    </div>
+
+    <button type="button" class="hamburger-button" aria-label="Open menu" aria-expanded="false">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+
+    <div class="nav-links">
+      <div class="dropbtn">
+        <ThemeToggle />
+      </div>
+
+      {mainMenu.map((item) => (
+        <div class="dropdown">
+          <button type="button" class="dropbtn" aria-haspopup="true" aria-expanded="false">
+            {item.name}
+          </button>
+          <div class="dropdown-content">
+            {item.children.map((child) => (
+              <a href={child.url}>{child.name}</a>
+            ))}
+          </div>
+        </div>
+      ))}
+
+      <Search />
+    </div>
+  </nav>
+</div>
+
+<div class="overlay" id="nav-overlay"></div>

@@ -1,0 +1,70 @@
+---
+// Pagefind search component
+---
+
+<div class="nav-search">
+  <div id="nav-search-container"></div>
+  <div id="nav-search-results"></div>
+</div>
+
+<script is:inline>
+  // Initialize Pagefind search
+  document.addEventListener('DOMContentLoaded', async function() {
+    const container = document.getElementById('nav-search-container');
+    const resultsContainer = document.getElementById('nav-search-results');
+    if (!container || !resultsContainer) return;
+
+    // Create a simple search input
+    const input = document.createElement('input');
+    input.type = 'search';
+    input.placeholder = 'Search...';
+    input.className = 'pagefind-ui__search-input';
+    container.appendChild(input);
+
+    // Try to load Pagefind dynamically (only available after build)
+    let pagefind = null;
+    try {
+      // Use dynamic import with variable to prevent Vite from resolving
+      const pagefindPath = '/pagefind/pagefind.js';
+      pagefind = await import(/* @vite-ignore */ pagefindPath);
+      await pagefind.init();
+    } catch (e) {
+      // Pagefind not available (dev mode)
+      console.info('Pagefind search will be available after build');
+      input.placeholder = 'Search (after build)';
+      return;
+    }
+
+    input.addEventListener('input', async function(e) {
+      const query = e.target.value;
+      if (!query.trim()) {
+        resultsContainer.style.display = 'none';
+        resultsContainer.innerHTML = '';
+        return;
+      }
+
+      const search = await pagefind.search(query);
+      const results = await Promise.all(search.results.slice(0, 10).map(function(r) { return r.data(); }));
+
+      if (results.length > 0) {
+        resultsContainer.innerHTML = results.map(function(r) {
+          return '<a href="' + r.url + '" class="search-result">' +
+            '<div class="search-result-title">' + (r.meta?.title || 'Untitled') + '</div>' +
+            '<div class="search-result-excerpt">' + (r.excerpt || '') + '</div>' +
+          '</a>';
+        }).join('');
+        resultsContainer.style.display = 'block';
+      } else {
+        resultsContainer.innerHTML = '<div class="search-no-results">No results found</div>';
+        resultsContainer.style.display = 'block';
+      }
+    });
+
+    // Hide results when clicking outside
+    document.addEventListener('click', function(e) {
+      if (!e.target.closest('.nav-search')) {
+        resultsContainer.style.display = 'none';
+      }
+    });
+  });
+</script>

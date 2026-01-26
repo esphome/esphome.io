@@ -1,0 +1,50 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import Sidebar from '../components/Sidebar.astro';
+import TOC from '../components/TOC.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+
+interface Props {
+  title: string;
+  description?: string;
+  seo?: {
+    description?: string;
+    image?: string;
+  };
+  headings?: Array<{ depth: number; slug: string; text: string }>;
+  collection?: string;
+  slug?: string;
+  editUrl?: string;
+}
+
+const { title, description, seo, headings = [], collection, slug, editUrl } = Astro.props;
+const hasToc = headings.length > 0;
+
+// Generate edit URL for GitHub
+const githubEditUrl = editUrl ||
+  (collection && slug ? `https://github.com/esphome/esphome-docs/edit/current/content/${collection}/${slug}.md` : null);
+---
+
+<BaseLayout title={title} description={description} seo={seo} hasToc={hasToc}>
+  <div class="content-container">
+    <!-- Left Sidebar (Desktop only) -->
+    <aside class="sidebar sidebar-fixed">
+      <Sidebar headings={headings} editUrl={githubEditUrl}>
+        <slot name="sidebar-extra" />
+      </Sidebar>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="content">
+      <Breadcrumbs collection={collection} slug={slug} title={title} />
+      <article>
+        <slot />
+      </article>
+    </div>
+
+    <!-- Mobile Sidebar (slides in on mobile) -->
+    <aside class="sidebar sidebar-mobile">
+      <Sidebar headings={headings} editUrl={githubEditUrl} />
+    </aside>
+  </div>
+</BaseLayout>

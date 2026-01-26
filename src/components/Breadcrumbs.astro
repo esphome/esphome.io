@@ -1,0 +1,115 @@
+---
+interface Props {
+  collection?: string;
+  slug?: string;
+  title: string;
+}
+
+const { collection, slug, title } = Astro.props;
+
+// Build breadcrumb trail from collection and slug
+interface Breadcrumb {
+  label: string;
+  href?: string;
+}
+
+const breadcrumbs: Breadcrumb[] = [];
+
+// Collection name mapping
+const collectionNames: Record<string, string> = {
+  components: 'Components',
+  guides: 'Guides',
+  cookbook: 'Cookbook',
+  automations: 'Automations',
+  changelog: 'Changelog',
+  projects: 'Projects',
+  webapi: 'Web API',
+};
+
+if (collection) {
+  // Add home
+  breadcrumbs.push({ label: 'Home', href: '/' });
+
+  // Add collection
+  const collectionLabel = collectionNames[collection] || collection;
+  breadcrumbs.push({ label: collectionLabel, href: `/${collection}/` });
+
+  // Add intermediate path segments
+  if (slug) {
+    const parts = slug.split('/');
+    let currentPath = `/${collection}`;
+
+    // Add intermediate directories (skip the last part which is the current page)
+    for (let i = 0; i < parts.length - 1; i++) {
+      currentPath += `/${parts[i]}`;
+      // Capitalize first letter and replace underscores/hyphens with spaces
+      const label = parts[i]
+        .replace(/[-_]/g, ' ')
+        .replace(/\b\w/g, c => c.toUpperCase());
+      breadcrumbs.push({ label, href: `${currentPath}/` });
+    }
+  }
+
+  // Add current page (no href)
+  breadcrumbs.push({ label: title });
+}
+---
+
+{breadcrumbs.length > 1 && (
+  <nav class="breadcrumbs" aria-label="Breadcrumb">
+    <ol>
+      {breadcrumbs.map((crumb, index) => (
+        <li>
+          {crumb.href ? (
+            <a href={crumb.href}>{crumb.label}</a>
+          ) : (
+            <span aria-current="page">{crumb.label}</span>
+          )}
+          {index < breadcrumbs.length - 1 && <span class="separator">/</span>}
+        </li>
+      ))}
+    </ol>
+  </nav>
+)}
+
+<style>
+  .breadcrumbs {
+    font-size: 0.875rem;
+    margin-bottom: 1rem;
+    color: var(--text-color);
+    opacity: 0.8;
+  }
+
+  .breadcrumbs ol {
+    display: flex;
+    flex-wrap: wrap;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    gap: 0.25rem;
+  }
+
+  .breadcrumbs li {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+
+  .breadcrumbs a {
+    color: var(--link-accent);
+  }
+
+  .breadcrumbs a:hover {
+    text-decoration: underline;
+  }
+
+  .breadcrumbs .separator {
+    color: var(--text-color);
+    opacity: 0.5;
+    margin: 0 0.25rem;
+  }
+
+  .breadcrumbs span[aria-current="page"] {
+    font-weight: 500;
+  }
+</style>

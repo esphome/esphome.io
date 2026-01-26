@@ -1,0 +1,38 @@
+---
+title: LVGL Binary Sensor
+description: Instructions for setting up an LVGL widget binary sensor.
+seo:
+  description: Instructions for setting up an LVGL widget binary sensor.
+  image: ../images/lvgl_c_bns.png
+---
+
+The `lvgl` binary sensor platform creates a binary sensor from an LVGL widget
+and requires [LVGL](/components/lvgl/index) to be configured.
+
+Supported widget is [`button`](/components/lvgl/widgets#lvgl-widget-button). A single binary sensor supports only a single widget; in other words, it's not possible to have multiple widgets associated with a single ESPHome binary sensor component.
+
+## Configuration variables
+
+- **widget** (**Required**): The ID of a supported widget configured in LVGL, which will reflect the state of the binary sensor.
+- All other variables from [Binary Sensor](/components/binary_sensor#config-binary_sensor).
+
+Example:
+
+```yaml
+binary_sensor:
+  - platform: lvgl
+    widget: btn_id
+    name: LVGL push button
+```
+
+## See Also
+
+- [LVGL Main component](/components/lvgl/index)
+- [Button widget](/components/lvgl/widgets#lvgl-widget-button)
+- [lvgl](/components/sensor/lvgl)
+- [lvgl](/components/number/lvgl)
+- [lvgl](/components/switch/lvgl)
+- [lvgl](/components/select/lvgl)
+- [lvgl](/components/light/lvgl)
+- [lvgl](/components/text/lvgl)
+- [lvgl](/components/text_sensor/lvgl)

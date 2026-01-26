@@ -1,8 +1,34 @@
-site: public
-output_path: pagefind
+# Pagefind configuration for ESPHome documentation
+# https://pagefind.app/docs/config-options/
+
+# Source directory (output from Astro build)
+site: dist
+
+# Output location for search index
+output_subdir: pagefind
+
+# Exclude certain pages from search
 exclude_selectors:
-  - "a.headerlink"
-  - ".toctree-wrapper"
-  - ".sphinxsidebar"
+  - "[data-pagefind-ignore]"
+  - ".nav-container"
+  - "footer"
+  - ".sidebar"
   - ".breadcrumbs"
-glob: "{components,cookbook,guides,projects,web-api}/**/*.html"
+
+# Keep index size reasonable
+keep_index_url: false
+
+# Bundle settings
+bundle_dir: _pagefind
+
+# Root selector for content
+root_selector: "[data-pagefind-body]"
+
+# Glob patterns for files to index
+glob: "**/*.html"
+
+# Force language
+force_language: en
+
+# Verbose output for debugging
+verbose: false

@@ -1,0 +1,44 @@
+---
+title: LVGL Sensor
+description: Instructions for setting up an LVGL widget sensor component.
+seo:
+  description: Instructions for setting up an LVGL widget sensor component.
+  image: ../images/lvgl_c_num.png
+---
+
+The `lvgl` sensor platform creates a sensor component from an LVGL widget
+and requires [LVGL](/components/lvgl/index) to be configured.
+
+Supported widgets are [`arc`](/components/lvgl/widgets#lvgl-widget-arc), [`bar`](/components/lvgl/widgets#lvgl-widget-bar), [`slider`](/components/lvgl/widgets#lvgl-widget-slider) and [`spinbox`](/components/lvgl/widgets#lvgl-widget-spinbox). A single sensor supports only a single widget; in other words, it's not possible to have multiple widgets associated with a single ESPHome sensor.
+
+## Configuration variables
+
+- **widget** (**Required**): The ID of a supported widget configured in LVGL, which will reflect the state of the sensor.
+- All other variables from [Sensor](/components/sensor).
+
+Example:
+
+```yaml
+sensor:
+  - platform: lvgl
+    widget: slider_id
+    name: LVGL Slider
+```
+
+> [!NOTE]
+> Widget-specific actions (`lvgl.arc.update`, `lvgl.bar.update`, `lvgl.slider.update`, `lvgl.spinbox.update`, `lvgl.spinbox.decrement`, `lvgl.spinbox.increment`  ) will trigger corresponding component updates to be sent to Home Assistant.
+
+## See Also
+
+- [LVGL Main component](/components/lvgl/index)
+- [Arc widget](/components/lvgl/widgets#lvgl-widget-arc)
+- [Bar widget](/components/lvgl/widgets#lvgl-widget-bar)
+- [Slider widget](/components/lvgl/widgets#lvgl-widget-slider)
+- [Spinbox widget](/components/lvgl/widgets#lvgl-widget-spinbox)
+- [lvgl](/components/binary_sensor/lvgl)
+- [lvgl](/components/switch/lvgl)
+- [lvgl](/components/select/lvgl)
+- [lvgl](/components/light/lvgl)
+- [lvgl](/components/number/lvgl)
+- [lvgl](/components/text/lvgl)
+- [lvgl](/components/text_sensor/lvgl)

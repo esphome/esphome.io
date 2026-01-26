@@ -1,0 +1,111 @@
+---
+// Footer component
+const version = '2026.1.2'; // TODO: Load from data file
+const isNetlify = import.meta.env.NETLIFY === 'true';
+const branch = import.meta.env.BRANCH || 'current';
+
+const footerLinks = [
+  {
+    name: 'Documentation',
+    children: [
+      { name: 'Components', url: '/components/', icon: 'puzzle-piece' },
+      { name: 'Guides', url: '/guides/', icon: 'compass' },
+      { name: 'Automations', url: '/automations/', icon: 'magic' },
+      { name: 'Cookbook', url: '/cookbook/', icon: 'kitchen-set' },
+    ],
+  },
+  {
+    name: 'Community',
+    children: [
+      { name: 'Discord', url: 'https://discord.gg/KhAMKrd', icon: 'discord' },
+      { name: 'GitHub', url: 'https://github.com/esphome/esphome', icon: 'github' },
+      { name: 'Forum', url: 'https://community.home-assistant.io/c/esphome/', icon: 'comments' },
+    ],
+  },
+  {
+    name: 'Resources',
+    children: [
+      { name: 'Changelog', url: '/changelog/', icon: 'history' },
+      { name: 'Device Database', url: 'https://devices.esphome.io', icon: 'microchip' },
+      { name: 'Development', url: 'https://developers.esphome.io', icon: 'code' },
+    ],
+  },
+];
+---
+
+<footer>
+  <div class="footer-content">
+    <div class="footer-logo">
+      <a href="https://www.openhomefoundation.org/">
+        <span>ESPHome is a project from the</span>
+        <img src="/images/icons/ohf-logo-on-dark.svg" alt="Open Home Foundation" width="220" height="49">
+      </a>
+      {isNetlify && (
+        <>
+          <br />
+          <a href="https://www.netlify.com">
+            <img src="/images/icons/netlify-badge-color-accent.svg" alt="Deploys by Netlify" />
+          </a>
+        </>
+      )}
+    </div>
+
+    <div class="footer-links">
+      {footerLinks.map((section) => (
+        <div class="footer-column">
+          <div class="footer-heading">{section.name}</div>
+          <ul>
+            {section.children.map((link) => (
+              <li>
+                <a href={link.url}>
+                  <img src={`/images/icons/${link.icon}.svg`} alt="" width="16" height="16" aria-hidden="true" />
+                  {link.name}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+
+    <div class="build-info">
+      <button id="build-info-button" class="build-info-button" title="Show build information">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+             aria-hidden="true" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="16" x2="12" y2="12"></line>
+          <line x1="12" y1="8" x2="12" y2="8"></line>
+        </svg>
+        <span class="desktop-only">Release</span>
+        <span>{version}</span>
+      </button>
+    </div>
+  </div>
+
+  {branch !== 'current' && (
+    <div id="build-info-popup" class="build-info-popup">
+      <div class="build-info-content">
+        <span id="build-info-close" class="build-info-close">&times;</span>
+        <h4>Build Information</h4>
+        <div class="build-info-grid">
+          <div class="build-info-label">Version:</div>
+          <div class="build-info-value">{version}</div>
+          <div class="build-info-label">Branch:</div>
+          <div class="build-info-value">{branch}</div>
+          <div class="build-info-label">Build date:</div>
+          <div class="build-info-value">{new Date().toISOString().split('T')[0]}</div>
+        </div>
+      </div>
+    </div>
+  )}
+</footer>
+
+<!-- Print footer -->
+<div class="footer-logo footer-logo-print" hidden aria-hidden="true">
+  <a class="footer-logo" href="https://www.openhomefoundation.org/">
+    <span>ESPHome is a project from the</span>
+    <img src="/images/icons/ohf-logo-on-light.svg" alt="Open Home Foundation" width="220" height="49">
+    <br>
+    <span>https://esphome.io</span>
+  </a>
+</div>

@@ -1,0 +1,123 @@
+---
+/**
+ * Dynamic Documentation Page Route
+ *
+ * Handles all documentation pages from content collections.
+ * Supports nested paths like /components/sensor/dht
+ */
+import { getCollection, type CollectionEntry } from 'astro:content';
+import DocsLayout from '../layouts/DocsLayout.astro';
+
+// Define the collection types
+type DocsCollectionName = 'components' | 'guides' | 'cookbook' | 'automations' | 'changelog' | 'projects' | 'webapi';
+
+interface DocsEntry {
+  collection: DocsCollectionName;
+  slug: string;
+  data: {
+    title?: string;
+    description?: string;
+    seo?: {
+      description?: string;
+      image?: string;
+    };
+    draft?: boolean;
+  };
+  render: () => Promise<{
+    Content: any;
+    headings: Array<{ depth: number; slug: string; text: string }>;
+  }>;
+}
+
+// Generate a title from the slug if none is provided
+function generateTitle(slug: string): string {
+  const parts = slug.split('/');
+  const lastPart = parts[parts.length - 1] || parts[parts.length - 2] || 'Untitled';
+  return lastPart
+    .replace(/[-_]/g, ' ')
+    .replace(/\b\w/g, c => c.toUpperCase());
+}
+
+// Get all entries from all collections
+export async function getStaticPaths() {
+  const collections: DocsCollectionName[] = [
+    'components',
+    'guides',
+    'cookbook',
+    'automations',
+    'changelog',
+    'projects',
+    'webapi',
+  ];
+
+  const allEntries: Array<{ params: { slug: string }; props: { entry: DocsEntry } }> = [];
+
+  for (const collectionName of collections) {
+    try {
+      const entries = await getCollection(collectionName);
+
+      for (const entry of entries) {
+        // Build the full slug path
+        // For components/sensor/dht, the URL should be /components/sensor/dht
+        const fullSlug = `${collectionName}/${entry.slug}`;
+
+        allEntries.push({
+          params: { slug: fullSlug },
+          props: {
+            entry: {
+              collection: collectionName,
+              slug: entry.slug,
+              data: entry.data,
+              render: entry.render,
+            } as DocsEntry,
+          },
+        });
+
+        // Also add route without trailing index for _index.md files
+        if (entry.slug.endsWith('/index') || entry.slug === 'index') {
+          const shortSlug = entry.slug.replace(/\/?index$/, '');
+          const fullShortSlug = shortSlug ? `${collectionName}/${shortSlug}` : collectionName;
+
+          allEntries.push({
+            params: { slug: fullShortSlug },
+            props: {
+              entry: {
+                collection: collectionName,
+                slug: entry.slug,
+                data: entry.data,
+                render: entry.render,
+              } as DocsEntry,
+            },
+          });
+        }
+      }
+    } catch (e) {
+      console.warn(`Collection ${collectionName} not found or empty:`, e);
+    }
+  }
+
+  return allEntries;
+}
+
+// Get props from the route
+const { entry } = Astro.props;
+const { Content, headings } = await entry.render();
+
+// Use provided title or generate from slug
+const title = entry.data?.title || generateTitle(entry.slug);
+
+// Build edit URL
+const editUrl = `https://github.com/esphome/esphome-docs/edit/current/content/${entry.collection}/${entry.slug}.md`;
+---
+
+<DocsLayout
+  title={title}
+  description={entry.data?.description}
+  seo={entry.data?.seo}
+  headings={headings}
+  collection={entry.collection}
+  slug={entry.slug}
+  editUrl={editUrl}
+>
+  <Content />
+</DocsLayout>

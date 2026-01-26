@@ -1,0 +1,151 @@
+---
+/**
+ * Homepage for ESPHome Documentation
+ *
+ * Renders the homepage content from the migrated _index.md
+ * or provides a default landing page.
+ */
+import HomeLayout from '../layouts/HomeLayout.astro';
+import fs from 'fs';
+import path from 'path';
+import matter from 'gray-matter';
+
+// Try to load homepage content
+let title = 'ESPHome - Smart Home Made Simple';
+let description = 'ESPHome turns ESP32, ESP8266, and RP2040 microcontrollers into fully-featured smart home devices.';
+let content = '';
+let seo: { description?: string; image?: string } | undefined;
+
+try {
+  const homePath = path.join(process.cwd(), 'src/content/home.md');
+  if (fs.existsSync(homePath)) {
+    const fileContent = fs.readFileSync(homePath, 'utf-8');
+    const parsed = matter(fileContent);
+    title = parsed.data.title || title;
+    description = parsed.data.description || description;
+    seo = parsed.data.seo;
+    content = parsed.content;
+  }
+} catch (e) {
+  console.warn('Could not load homepage content:', e);
+}
+---
+
+<HomeLayout title={title} description={description} seo={seo}>
+  <div class="hero-container">
+    <div class="hero-content">
+      <h1>{title}</h1>
+      <p class="lead">{description}</p>
+      <div class="cta-buttons">
+        <a href="/guides/getting_started_hassio/" class="btn btn-primary">Get Started</a>
+        <a href="/components/" class="btn btn-secondary">Documentation</a>
+      </div>
+    </div>
+    <div class="hero-img">
+      <img src="/images/logo.svg" alt="ESPHome Logo" width="400" height="400">
+    </div>
+  </div>
+
+  {content && (
+    <div class="home-content" set:html={content} />
+  )}
+
+  <section class="home-section">
+    <h2>What is ESPHome?</h2>
+    <p>
+      ESPHome is an open-source firmware framework that simplifies the process of creating custom firmware for popular
+      WiFi-enabled microcontrollers. With ESPHome, you can:
+    </p>
+    <ul>
+      <li><strong>Create custom smart home devices</strong> using simple YAML configuration files</li>
+      <li><strong>Integrate seamlessly with Home Assistant</strong> for a unified smart home experience</li>
+      <li><strong>Control and monitor</strong> your devices through multiple interfaces (web, API, MQTT)</li>
+      <li><strong>Automate your home</strong> with powerful on-device automations</li>
+      <li><strong>Update your devices wirelessly</strong> "Over The Air" (OTA) updates without physical access</li>
+    </ul>
+  </section>
+
+  <section class="home-section">
+    <h2>Key Features</h2>
+    <div class="feature-grid">
+      <div class="feature-card">
+        <div class="feature-icon">
+          <img src="/images/icons/code.svg" alt="" aria-hidden="true">
+        </div>
+        <div class="feature-text">No Coding Required</div>
+        <p>Simple YAML configuration files instead of complex C++ code</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">
+          <img src="/images/icons/wifi.svg" alt="" aria-hidden="true">
+        </div>
+        <div class="feature-text">Wireless Updates</div>
+        <p>Update your devices over-the-air without physical access</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">
+          <img src="/images/icons/puzzle-piece.svg" alt="" aria-hidden="true">
+        </div>
+        <div class="feature-text">Modular Design</div>
+        <p>Support for hundreds of sensors, displays, and other components</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">
+          <img src="/images/icons/shield-alt.svg" alt="" aria-hidden="true">
+        </div>
+        <div class="feature-text">Local Control</div>
+        <p>Devices work locally without cloud dependencies</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="home-section">
+    <h2>Getting Started</h2>
+    <div class="getting-started-grid">
+      <div class="getting-started-card">
+        <div class="feature-icon">
+          <img src="/images/icons/home-assistant.svg" alt="" aria-hidden="true">
+        </div>
+        <h3>From Home Assistant</h3>
+        <p>The easiest way to get started with ESPHome is through the Home Assistant add-on.</p>
+        <a href="/guides/getting_started_hassio/" class="btn btn-primary">Home Assistant Guide</a>
+      </div>
+      <div class="getting-started-card">
+        <div class="feature-icon">
+          <img src="/images/icons/terminal.svg" alt="" aria-hidden="true">
+        </div>
+        <h3>Command Line</h3>
+        <p>For advanced users who prefer working with the command line.</p>
+        <a href="/guides/getting_started_command_line/" class="btn btn-primary">Command Line Guide</a>
+      </div>
+      <div class="getting-started-card">
+        <div class="feature-icon">
+          <img src="/images/icons/puzzle-piece.svg" alt="" aria-hidden="true">
+        </div>
+        <h3>Ready-Made Projects</h3>
+        <p>Start with a pre-configured project for common use cases.</p>
+        <a href="/projects/" class="btn btn-primary">Browse Projects</a>
+      </div>
+    </div>
+  </section>
+</HomeLayout>
+
+<style>
+  .lead {
+    font-size: 1.25rem;
+    margin-bottom: 1.5rem;
+    color: var(--text-color);
+    opacity: 0.9;
+  }
+
+  .cta-buttons {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-top: 2rem;
+  }
+
+  .home-content {
+    margin: 2rem 0;
+  }
+</style>

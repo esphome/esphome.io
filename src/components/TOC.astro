@@ -1,0 +1,88 @@
+---
+interface Heading {
+  depth: number;
+  slug: string;
+  text: string;
+}
+
+interface Props {
+  headings: Heading[];
+}
+
+const { headings } = Astro.props;
+
+// Build hierarchical TOC structure
+interface TocItem {
+  heading: Heading;
+  children: TocItem[];
+}
+
+function buildTocTree(headings: Heading[]): TocItem[] {
+  const root: TocItem[] = [];
+  const stack: { item: TocItem; depth: number }[] = [];
+
+  for (const heading of headings) {
+    const item: TocItem = { heading, children: [] };
+
+    // Pop items from stack until we find a parent with smaller depth
+    while (stack.length > 0 && stack[stack.length - 1].depth >= heading.depth) {
+      stack.pop();
+    }
+
+    if (stack.length === 0) {
+      root.push(item);
+    } else {
+      stack[stack.length - 1].item.children.push(item);
+    }
+
+    stack.push({ item, depth: heading.depth });
+  }
+
+  return root;
+}
+
+// Sort headings alphabetically for alphabetic view
+function sortAlphabetically(items: TocItem[]): TocItem[] {
+  return [...items].sort((a, b) =>
+    a.heading.text.localeCompare(b.heading.text)
+  ).map(item => ({
+    ...item,
+    children: sortAlphabetically(item.children),
+  }));
+}
+
+const linearTree = buildTocTree(headings);
+const alphabeticTree = sortAlphabetically(linearTree);
+
+interface RenderContext {
+  tree: TocItem[];
+  level?: number;
+}
+
+function renderTocItems(tree: TocItem[], level: number = 1): string {
+  if (tree.length === 0) return '';
+
+  const items = tree.map(item => {
+    const childrenHtml = item.children.length > 0
+      ? `<ul>${renderTocItems(item.children, level + 1)}</ul>`
+      : '';
+
+    return `
+      <li class="toc-item toc-level-${level}">
+        <a href="#${item.heading.slug}" class="toc-entry">${item.heading.text}</a>
+        ${childrenHtml}
+      </li>
+    `;
+  }).join('');
+
+  return items;
+}
+---
+
+<nav class="page-toc" aria-label="Table of contents">
+  <!-- Linear (document order) TOC -->
+  <ul class="toc-linear" set:html={renderTocItems(linearTree)} />
+
+  <!-- Alphabetic TOC -->
+  <ul class="toc-alphabetic" set:html={renderTocItems(alphabeticTree)} />
+</nav>
