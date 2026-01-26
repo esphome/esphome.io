@@ -1,0 +1,182 @@
+---
+/**
+ * ESPHome Homepage
+ * Custom landing page with hero section and feature grids
+ */
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
+import FeatureGrid from '../components/FeatureGrid.astro';
+import GettingStartedGrid from '../components/GettingStartedGrid.astro';
+
+const heroFeatures = [
+  {
+    icon: "code",
+    title: "No Coding Required",
+    description: "Simple YAML configuration files instead of complex C++ code"
+  },
+  {
+    icon: "wifi",
+    title: "Wireless Updates",
+    description: "Update your devices over-the-air without physical access"
+  },
+  {
+    icon: "puzzle-piece",
+    title: "Modular Design",
+    description: "Support for hundreds of sensors, displays, and other components"
+  },
+  {
+    icon: "shield-alt",
+    title: "Local Control",
+    description: "Devices work locally without cloud dependencies"
+  }
+];
+
+const userFeatures = [
+  {
+    icon: "user-cog",
+    title: "DIY Enthusiasts",
+    description: "Create custom sensors, switches, and displays tailored to specific needs"
+  },
+  {
+    icon: "home",
+    title: "Smart Home Hobbyists",
+    description: "Extend their home automation systems with affordable custom devices"
+  },
+  {
+    icon: "briefcase",
+    title: "Professional Integrators",
+    description: "Deploy reliable, locally-controlled smart devices for clients"
+  },
+  {
+    icon: "industry",
+    title: "Manufacturers",
+    description: 'Create <a href="/guides/made_for_esphome">Made for ESPHome</a> certified products with standardized firmware'
+  }
+];
+
+const microcontrollerFeatures = [
+  {
+    icon: "microchip",
+    title: "Espressif ESP32 and ESP8266",
+    description: "Wide support for ESP32 and ESP8266 microcontrollers, the heart of many IoT projects."
+  },
+  {
+    icon: "raspberry-pi",
+    title: "RP2040",
+    description: "Support for Raspberry Pi's RP2040 microcontroller."
+  },
+  {
+    icon: "bolt",
+    title: "Others",
+    description: "Nordic Semiconductor nRF52, Realtek RTL87xx, and Beken BK72xx chips are supported."
+  },
+  {
+    icon: "computer",
+    title: "Desktop",
+    description: "Many ESPHome components can be run on a desktop computer using the <em>host</em> platform!"
+  }
+];
+
+const gettingStartedItems = [
+  {
+    icon: "home-assistant",
+    title: "From Home Assistant",
+    description: "The easiest way to get started with ESPHome is through the Home Assistant add-on.",
+    url: "/guides/getting_started_hassio/",
+    button_text: "Home Assistant Guide"
+  },
+  {
+    icon: "terminal",
+    title: "Command Line",
+    description: "For advanced users who prefer working with the command line.",
+    url: "/guides/getting_started_command_line/",
+    button_text: "Command Line Guide"
+  },
+  {
+    icon: "puzzle-piece",
+    title: "Ready-Made Projects",
+    description: "Start with a pre-configured project for common use cases.",
+    url: "/projects/",
+    button_text: "Browse Projects"
+  }
+];
+---
+
+<StarlightPage
+  frontmatter={{
+    title: 'ESPHome',
+    description: 'Smart Home Made Simple. ESPHome turns ESP32, ESP8266, and RP2040 microcontrollers into fully-featured smart home devices.',
+    template: 'splash',
+    hero: {
+      title: 'Smart Home Made Simple',
+      tagline: 'ESPHome turns ESP32, ESP8266, and RP2040 microcontrollers into fully-featured smart home devices.',
+      image: { html: '<img src="/images/logo.svg" alt="ESPHome logo" width="400" height="400" />' },
+      actions: [
+        { text: 'Get Started', link: '/guides/getting_started_hassio/', variant: 'primary' },
+        { text: 'Browse Components', link: '/components/', variant: 'secondary' },
+      ],
+    },
+  }}
+>
+  <section class="homepage-section">
+    <h2 id="what-is-esphome">What is ESPHome?</h2>
+    <p>
+      ESPHome is an open-source firmware framework that simplifies the process of creating custom firmware for popular
+      WiFi-enabled microcontrollers. With ESPHome, you can:
+    </p>
+    <ul>
+      <li><strong>Create custom smart home devices</strong> using simple YAML configuration files</li>
+      <li><strong>Integrate seamlessly with Home Assistant</strong> for a unified smart home experience</li>
+      <li><strong>Control and monitor</strong> your devices through multiple interfaces (web, API, MQTT)</li>
+      <li><strong>Automate your home</strong> with powerful on-device automations</li>
+      <li><strong>Update your devices wirelessly</strong> "Over The Air" (OTA) updates without physical access</li>
+    </ul>
+    <p>
+      ESPHome takes care of the complex parts of firmware development, allowing you to focus on what matters - building your
+      smart home exactly how you want it.
+    </p>
+
+    <FeatureGrid features={heroFeatures} />
+  </section>
+
+  <section class="homepage-section">
+    <h2 id="who-uses-esphome">Who Uses ESPHome?</h2>
+    <FeatureGrid features={userFeatures} />
+  </section>
+
+  <section class="homepage-section">
+    <h2 id="supported-microcontrollers">Which microcontrollers does ESPHome support?</h2>
+    <FeatureGrid features={microcontrollerFeatures} />
+  </section>
+
+  <section class="homepage-section">
+    <h2 id="getting-started">Getting Started</h2>
+    <p>Getting started with ESPHome is easy. Choose the method that works best for you:</p>
+    <GettingStartedGrid items={gettingStartedItems} />
+  </section>
+</StarlightPage>
+
+<style>
+  .homepage-section {
+    margin-bottom: 3rem;
+  }
+
+  .homepage-section h2 {
+    margin-bottom: 1rem;
+    font-size: 1.75rem;
+  }
+
+  .homepage-section p {
+    max-width: 70ch;
+    line-height: 1.7;
+  }
+
+  .homepage-section ul {
+    max-width: 70ch;
+    margin-bottom: 1.5rem;
+  }
+
+  .homepage-section li {
+    margin-bottom: 0.5rem;
+    line-height: 1.6;
+  }
+</style>
