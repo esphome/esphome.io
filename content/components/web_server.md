@@ -64,6 +64,10 @@ web_server:
   maintaining it for captive portal access. To enable OTA for web server, use the `web_server` OTA platform instead.
 
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
+- **use_legacy_id** (*Optional*, boolean): Use the legacy entity ID format (`{domain}-{object_id}`) in
+  [Event Source](/web-api#api-event-source) payloads instead of the new format (`{domain}/{name}`).
+  This option is provided for compatibility with third-party integrations that rely on the previous ID format.
+  Defaults to `false`. *This option will be removed in version 2026.7.0.*
 - **local** (*Optional*, boolean): Include supporting javascript locally allowing it to work without internet access.
   Defaults to `false`.
 
