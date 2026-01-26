@@ -1,0 +1,45 @@
+---
+title: "ENS210 Temperature+Humidity Sensor"
+description: "Instructions for setting up ENS210 temperature and humidity sensors"
+---
+
+import Img from '@/components/Img.astro';
+import ApiRef from '@/components/ApiRef.astro';
+
+
+The `ENS210` Temperature+Humidity sensor allows you to use your ENS210
+([datasheet](https://www.sciosense.com/wp-content/uploads/2023/12/ENS210-Datasheet.pdf)) i2c-based sensor with ESPHome.
+
+&lt;Img src="ens210.jpg" alt="Image" caption="ENS210 Temperature & Humidity Sensor." class="align-center" width="80.0%" /&gt;
+
+<Img src="temperature-humidity.png" alt="Image" class="align-center" width="80.0%" />
+
+```yaml
+# Example configuration entry
+sensor:
+  - platform: ens210
+    temperature:
+      name: "Living Room Temperature"
+    humidity:
+      name: "Living Room Humidity"
+    update_interval: 60s
+```
+
+## Configuration variables
+
+- **temperature** (**Required**): The information for the temperature sensor.
+
+  - All options from [Sensor](/components/sensor).
+
+- **humidity** (**Required**): The information for the humidity sensor
+
+  - All options from [Sensor](/components/sensor).
+
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to check the sensor. Defaults to `60s`.
+
+## See Also
+
+- [Sensor Filters](/components/sensor#sensor-filters)
+- [absolute_humidity/](/absolute_humidity/)
+- <ApiRef text="ENS210/ENS210.h" path="ENS210/ENS210.h" />
+- [ENS210 Library](https://github.com/maarten-pennings/ENS210) by [Maarten Pennings](https://github.com/maarten-pennings)

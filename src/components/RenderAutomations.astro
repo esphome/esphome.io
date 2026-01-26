@@ -1,0 +1,83 @@
+---
+/**
+ * RenderAutomations Component
+ * Renders automations data grouped by domain.
+ *
+ * Usage:
+ *   <RenderAutomations category="actions" />
+ *   <RenderAutomations category="conditions" />
+ *   <RenderAutomations category="triggers" />
+ *
+ * Data is loaded from src/data/automations/{current,beta,next}.json
+ */
+
+interface Props {
+  category: 'actions' | 'conditions' | 'triggers';
+}
+
+const { category } = Astro.props;
+
+// Determine which branch data to use
+const branch = import.meta.env.BRANCH || 'current';
+const effectiveBranch = branch === 'new' ? 'current' : branch;
+
+// Import automations data
+let automationsData: Record<string, Record<string, string[]>> | null = null;
+
+try {
+  // Dynamic import based on branch
+  if (effectiveBranch === 'beta') {
+    const data = await import('../data/automations/beta.json');
+    automationsData = data.default?.automations || data.automations;
+  } else if (effectiveBranch === 'next') {
+    const data = await import('../data/automations/next.json');
+    automationsData = data.default?.automations || data.automations;
+  } else {
+    const data = await import('../data/automations/current.json');
+    automationsData = data.default?.automations || data.automations;
+  }
+} catch (e) {
+  console.warn(`Could not load automations data for branch: ${effectiveBranch}`, e);
+}
+
+// Get the category data
+const categoryData = automationsData?.[category] || {};
+
+// Helper to create links
+function createLink(domain: string, entry: string, category: string): string {
+  const singular = category.slice(0, -1); // actions -> action
+  const entryLink = entry.replace(/\./g, '');
+
+  if (domain === 'Core') {
+    return `<a href="#common-${category}">${entry}</a>`;
+  }
+
+  // Link to the component page with anchor
+  return `<a href="/components/${domain.toLowerCase()}/#${singular}-${entryLink.toLowerCase()}">${entry}</a>`;
+}
+
+function createDomainLink(domain: string, category: string): string {
+  if (domain === 'Core') {
+    return `<a href="#common-${category}">Common ${category}</a>`;
+  }
+  return `<a href="/components/${domain.toLowerCase()}/">${domain}</a>`;
+}
+---
+
+{automationsData ? (
+  <ul class="automations-list">
+    {Object.entries(categoryData).map(([domain, entries]) => (
+      <li>
+        <strong class="automations-domain" set:html={createDomainLink(domain, category)} />:
+        {' '}
+        <span set:html={entries.map((entry, i) =>
+          createLink(domain, entry, category) + (i < entries.length - 1 ? ', ' : '')
+        ).join('')} />
+      </li>
+    ))}
+  </ul>
+) : (
+  <p>
+    <strong>Warning:</strong> Data not found for branch: <code>{effectiveBranch}</code>
+  </p>
+)}

@@ -1,0 +1,40 @@
+---
+title: "M5Stack KMeterISO I2C K-Type probe temperature sensor"
+description: "Instructions for setting up KMeterISO temperature sensors"
+---
+
+import Img from '@/components/Img.astro';
+import ApiRef from '@/components/ApiRef.astro';
+
+
+The `kmeteriso` sensor platform allows you to use your KMeterISO
+([product](https://docs.m5stack.com/en/unit/KMeterISO%20Unit),
+[M5Stack](https://docs.m5stack.com/en/unit/KMeterISO%20Unit)) K-Type thermocouple temperature sensor with ESPHome.
+The [I²C](/components/i2c) is required to be set up in your configuration
+for this sensor to work.
+
+<Img src="kmeteriso.jpg" alt="Image" caption="M5Stack KMeterISO temperature sensor." class="align-center" width="50.0%" />
+
+```yaml
+# Example configuration entry
+sensor:
+- platform: kmeteriso
+  temperature:
+    name: Temperature
+  internal_temperature:
+    name: Internal temperature
+```
+
+## Configuration variables
+
+- **temperature** (*Optional*): The information for the temperature sensor. All options from [Sensor](/components/sensor).
+- **internal_temperature** (*Optional*): The information for the temperature sensor inside the probe. All options from [Sensor](/components/sensor).
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to check the
+  sensor. Defaults to `5s`.
+
+## See Also
+
+- [Sensor Filters](/components/sensor#sensor-filters)
+- [absolute_humidity/](/absolute_humidity/)
+- <ApiRef text="kmeteriso/kmeteriso.h" path="kmeteriso/kmeteriso.h" />
+- [M5Stack Unit code](https://github.com/m5stack/M5Unit-KMeterISO) by [M5Stack](https://m5stack.com/)

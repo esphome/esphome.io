@@ -1,0 +1,262 @@
+---
+title: "ESPHome 2024.2.0 - 21st February 2024"
+description: "Changelog for ESPHome 2024.2.0."
+---
+
+import PR from '@/components/PR.astro';
+import GhUser from '@/components/GhUser.astro';
+import Changelogs from '@/components/Changelogs.astro';
+import ComponentGrid from '@/components/ComponentGrid.astro';
+
+
+<ComponentGrid items={[
+  {
+    "title": "micro Wake Word",
+    "link": "components/micro_wake_word",
+    "image": "voice-assistant.svg",
+    "darkInvert": true
+  },
+  {
+    "title": "AS5600",
+    "link": "components/sensor/as5600",
+    "image": "as5600.jpg"
+  },
+  {
+    "title": "ST7567",
+    "link": "components/display/st7567",
+    "image": "st7567.jpg"
+  },
+  {
+    "title": "BME280 SPI",
+    "link": "components/sensor/bme280",
+    "image": "bme280.jpg"
+  },
+  {
+    "title": "VEML3235",
+    "link": "components/sensor/veml3235",
+    "image": "veml3235.jpg"
+  },
+  {
+    "title": "Honeywell HIH I2C",
+    "link": "components/sensor/honeywell_hih_i2c",
+    "image": "honeywellhih.jpg"
+  },
+  {
+    "title": "Combination",
+    "link": "components/sensor/combination",
+    "image": "function.svg",
+    "darkInvert": true
+  }
+]} />
+
+## micro Wake Word
+
+ESPHome implements an on-device wake word detection framework from [microWakeWord](https://github.com/kahrendt/microWakeWord).
+See the [component documentation](/components/micro_wake_word/) for details on how to use it.
+
+Check out the live stream replay below for more details about how it works and came to be.
+
+{/* markdownlint-disable-next-line MD033 */}
+<iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/NQIv3nsu7dE"
+        title="YouTube video player" frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen>
+</iframe>
+
+## BME280 changes
+
+<GhUser name="apbodrov" /> has added support for the BME280 sensor over SPI. This change is a breaking change
+for any existing configurations using the BME280 over I2C as the platform name has been changed from
+`bme280` to `bme280_i2c`. There are no other configuration changes required to continue using the BME280 over I2C.
+See the [component documentation](/components/sensor/bme280/) for the latest configuration variables.
+
+## CSE7766 changes
+
+<GhUser name="ssieb" /> has changed the CSE7766 sensor from appearing to be a polling component.
+It has a high update rate, so if you don't want to send a lot of data to HA, you can
+add the [throttle_average](/components/sensor#sensor-filters) filter
+with the time period you were using for the update interval (the default is 60s) to each
+sensor. The example in the sensor doc page has been updated to show this.
+
+{/* markdownlint-disable MD013 */}
+
+## Release 2024.2.1 - February 26
+
+- Add missing timeout to "async_request" <PR number={6267} repo="esphome" /> by <GhUser name="jesserockz" />
+- Bump zeroconf timeout to 3000 <PR number={6270} repo="esphome" /> by <GhUser name="jesserockz" />
+- web_server: Add a position property for cover entities that have the supports position trait <PR number={6269} repo="esphome" /> by <GhUser name="DanielBaulig" />
+- allow multiple emc2101 <PR number={6272} repo="esphome" /> by <GhUser name="ssieb" />
+- Fix RP2040 SPI pin validation <PR number={6277} repo="esphome" /> by <GhUser name="kbx81" />
+- dashboard: move storage json update to a background task in edit save <PR number={6280} repo="esphome" /> by <GhUser name="bdraco" />
+- make output optional for speed fan <PR number={6274} repo="esphome" /> by <GhUser name="ssieb" />
+- fix throttle average nan handling <PR number={6275} repo="esphome" /> by <GhUser name="ssieb" />
+- Fix thermostat supplemental actions <PR number={6282} repo="esphome" /> by <GhUser name="kbx81" />
+
+## Release 2024.2.2 - March 6
+
+- CSE7766: Fix energy calculation <PR number={6286} repo="esphome" /> by <GhUser name="puuu" />
+- handling with the negative temperature in the sensor tmp102 <PR number={6316} repo="esphome" /> by <GhUser name="FlyingFeng2021" />
+- fix tmp102 negative calculation <PR number={6320} repo="esphome" /> by <GhUser name="ssieb" />
+- auto load output for now <PR number={6309} repo="esphome" /> by <GhUser name="ssieb" />
+- Add wake word phrase to voice assistant start command <PR number={6290} repo="esphome" /> by <GhUser name="jesserockz" />
+
+## Full list of changes
+
+### New Components
+
+- feat: add AS5600 component/sensor <PR number={5174} repo="esphome" /> by <GhUser name="ammmze" /> (new-integration)
+- Support for ST7567 display 128x64 (I2C, SPI) <PR number={5952} repo="esphome" /> by <GhUser name="latonita" /> (new-integration)
+- BME280 SPI <PR number={5538} repo="esphome" /> by <GhUser name="apbodrov" /> (new-integration) (breaking-change)
+- Add support for VEML3235 lux sensor <PR number={5959} repo="esphome" /> by <GhUser name="kbx81" /> (new-integration)
+- Add support of Honeywell HumidIcon (I2C HIH series) Temperature & Humidity sensor <PR number={5730} repo="esphome" /> by <GhUser name="Benichou34" /> (new-integration)
+- Add combination sensor and remove absorbed kalman_combinator component <PR number={5438} repo="esphome" /> by <GhUser name="kahrendt" /> (new-integration) (breaking-change)
+- Add micro_wake_word component <PR number={6136} repo="esphome" /> by <GhUser name="kahrendt" /> (new-integration)
+
+### Breaking Changes
+
+- PMSx003 add relevant device and state classes to default config <PR number={5633} repo="esphome" /> by <GhUser name="wheimbigner" /> (breaking-change)
+- BME280 SPI <PR number={5538} repo="esphome" /> by <GhUser name="apbodrov" /> (new-integration) (breaking-change)
+- convert cse7766 to non-polling <PR number={6095} repo="esphome" /> by <GhUser name="ssieb" /> (breaking-change)
+- Add combination sensor and remove absorbed kalman_combinator component <PR number={5438} repo="esphome" /> by <GhUser name="kahrendt" /> (new-integration) (breaking-change)
+
+### Beta Changes
+
+- AUTO_LOAD `sensor` for `shelly_dimmer` <PR number={6223} repo="esphome" /> by <GhUser name="kbx81" />
+- Add more debugging logs to microWakeWord <PR number={6238} repo="esphome" /> by <GhUser name="kahrendt" />
+- Fix to RF receiver for Drayton Digistat heating controller <PR number={6235} repo="esphome" /> by <GhUser name="marshn" />
+- WRGB Use correct multiplier <PR number={6237} repo="esphome" /> by <GhUser name="mhetzi" />
+- Add optional minimum esphome version to microWakeWord manifest <PR number={6240} repo="esphome" /> by <GhUser name="jesserockz" />
+- Fix xl9535 pin reads <PR number={6242} repo="esphome" /> by <GhUser name="jesserockz" />
+- hold interrupt disable for dallas one-wire <PR number={6244} repo="esphome" /> by <GhUser name="ssieb" />
+- Fix tm1651 enum <PR number={6248} repo="esphome" /> by <GhUser name="kbx81" />
+- Clear UART read buffer before sending next command <PR number={6200} repo="esphome" /> by <GhUser name="fototakas" />
+- Voice Assistant: add on_idle trigger and fix nevermind <PR number={6141} repo="esphome" /> by <GhUser name="synesthesiam" />
+- Tuya Fan component fix to handle enum datapoint type <PR number={6135} repo="esphome" /> by <GhUser name="sibowler" />
+
+### All changes
+
+- Bump esptool from 4.6.2 to 4.7.0 <PR number={5935} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- Bump actions/download-artifact from 3.0.2 to 4.0.0 <PR number={5936} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- Bump build-image action versions <PR number={5954} repo="esphome" /> by <GhUser name="jesserockz" />
+- Revert "Bump build-image action versions" <PR number={5955} repo="esphome" /> by <GhUser name="jesserockz" />
+- Revert "Bump actions/download-artifact from 3.0.2 to 4.0.0" <PR number={5956} repo="esphome" /> by <GhUser name="jesserockz" />
+- Bump zeroconf from 0.130.0 to 0.131.0 <PR number={5967} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- Add ability to lock to set mode <PR number={5924} repo="esphome" /> by <GhUser name="ysmilda" />
+- feat: add AS5600 component/sensor <PR number={5174} repo="esphome" /> by <GhUser name="ammmze" /> (new-integration)
+- Add default substitutions for package includes <PR number={5752} repo="esphome" /> by <GhUser name="mknjc" />
+- Add gradient option to addressable color wipe effect <PR number={5689} repo="esphome" /> by <GhUser name="lifeisafractal" />
+- Added alarm processing for Haier component (hOn protocol) <PR number={5965} repo="esphome" /> by <GhUser name="paveldn" />
+- Allow haier remote protocol to use lambdas <PR number={5898} repo="esphome" /> by <GhUser name="catlee" />
+- PMSx003 add relevant device and state classes to default config <PR number={5633} repo="esphome" /> by <GhUser name="wheimbigner" /> (breaking-change)
+- Add waveshare 2.7in V2 model <PR number={5903} repo="esphome" /> by <GhUser name="gumulka" />
+- Add support for waveshare 2.9in B V3 version <PR number={5902} repo="esphome" /> by <GhUser name="gumulka" />
+- Fix pin reuse in test1 <PR number={5978} repo="esphome" /> by <GhUser name="jesserockz" />
+- Add Waveshare 1.47in 172x320 to ST7789v component <PR number={5884} repo="esphome" /> by <GhUser name="mrtoy-me" />
+- (fingerprint_grow) Added on_finger_scan_invalid automation. <PR number={5885} repo="esphome" /> by <GhUser name="RubenNL" />
+- Alarm panel: Add changes to support enhanced features <PR number={5671} repo="esphome" /> by <GhUser name="hwstar" />
+- support default pins for adafruit esp32 feather v2 <PR number={5482} repo="esphome" /> by <GhUser name="sbrudenell" />
+- Bug: Unwanted change resistance in x9c component <PR number={5483} repo="esphome" /> by <GhUser name="fizista" />
+- Improvements to RF receiver for Drayton Digistat heating controller <PR number={5504} repo="esphome" /> by <GhUser name="marshn" />
+- Reduce memory usage with StringRef in MQTT Components <PR number={5719} repo="esphome" /> by <GhUser name="kahrendt" />
+- Nextion allow underscore on names <PR number={5979} repo="esphome" /> by <GhUser name="edwardtfn" />
+- Add Keeloq RF protocol <PR number={5511} repo="esphome" /> by <GhUser name="marshn" />
+- Add a Binary Sensor Filter for state settling <PR number={5900} repo="esphome" /> by <GhUser name="cottsay" />
+- Lint the script folder files <PR number={5991} repo="esphome" /> by <GhUser name="jesserockz" />
+- web_server support for home assistant like styling <PR number={5854} repo="esphome" /> by <GhUser name="afarago" />
+- [Touchscreen] Add expire of touch record. <PR number={5986} repo="esphome" /> by <GhUser name="Fabian-Schmidt" />
+- Support for ST7567 display 128x64 (I2C, SPI) <PR number={5952} repo="esphome" /> by <GhUser name="latonita" /> (new-integration)
+- Add constants used by multiple display drivers to global const.py <PR number={6033} repo="esphome" /> by <GhUser name="clydebarrow" />
+- Nextion queue size <PR number={6029} repo="esphome" /> by <GhUser name="edwardtfn" />
+- Ble client additions and fixes <PR number={5277} repo="esphome" /> by <GhUser name="clydebarrow" />
+- HaierProtocol library updated to 0.9.25 to fix the answer_timeout bug <PR number={6015} repo="esphome" /> by <GhUser name="paveldn" />
+- GT911 touchscreen: Fix bug causing touch button release to fail <PR number={6042} repo="esphome" /> by <GhUser name="clydebarrow" />
+- Display: Introduce `draw_pixels_at()` method for fast block display rendering <PR number={6034} repo="esphome" /> by <GhUser name="clydebarrow" />
+- clang-format and clang-tidy scripts: More robust algorithm to find correct executable <PR number={6041} repo="esphome" /> by <GhUser name="clydebarrow" />
+- Don't crash with invalid adc pin <PR number={6059} repo="esphome" /> by <GhUser name="ssieb" />
+- Add questionmark to default glyphs. <PR number={6053} repo="esphome" /> by <GhUser name="RubenNL" />
+- pylontech: fix voltage_low and voltage_high wrong unit <PR number={6060} repo="esphome" /> by <GhUser name="functionpointer" />
+- Bump flake8 from 6.1.0 to 7.0.0 <PR number={6058} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- Nextion enable upload from https when using esp-idf <PR number={6051} repo="esphome" /> by <GhUser name="edwardtfn" />
+- Extends UART change at runtime to ESP8266 <PR number={6019} repo="esphome" /> by <GhUser name="edwardtfn" />
+- Nextion draw QR code at runtime <PR number={6027} repo="esphome" /> by <GhUser name="edwardtfn" />
+- Extend i2s config options <PR number={6056} repo="esphome" /> by <GhUser name="Hadatko" />
+- Add getter for image data_start <PR number={6036} repo="esphome" /> by <GhUser name="clydebarrow" />
+- Bump hypothesis to 6.92.1 <PR number={6011} repo="esphome" /> by <GhUser name="bdraco" />
+- Bump recommended ESP32 IDF to 4.4.6 <PR number={6048} repo="esphome" /> by <GhUser name="bdraco" />
+- Bump pytest from 7.4.3 to 7.4.4 <PR number={6046} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- dashboard: refactor ping implementation to be more efficient <PR number={6002} repo="esphome" /> by <GhUser name="bdraco" />
+- Bump pytest-asyncio from 0.23.2 to 0.23.3 <PR number={6047} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- Bump black from 23.12.0 to 23.12.1 <PR number={6018} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- Run python tests on windows and macos <PR number={6010} repo="esphome" /> by <GhUser name="bdraco" />
+- BME280 SPI <PR number={5538} repo="esphome" /> by <GhUser name="apbodrov" /> (new-integration) (breaking-change)
+- Actions to enable and disable WireGuard connection <PR number={5690} repo="esphome" /> by <GhUser name="droscy" />
+- hydreon_rgxx - fix missing cg.add(var.set_model(...)) <PR number={6065} repo="esphome" /> by <GhUser name="mrtoy-me" />
+- Bump pillow to 10.2.0. <PR number={6091} repo="esphome" /> by <GhUser name="pfrenssen" />
+- convert cse7766 to non-polling <PR number={6095} repo="esphome" /> by <GhUser name="ssieb" /> (breaking-change)
+- Use touch state from ft63x6 driver. <PR number={6055} repo="esphome" /> by <GhUser name="nielsnl68" />
+- update script/setup so it works fine on windows <PR number={6087} repo="esphome" /> by <GhUser name="nielsnl68" />
+- add Pico-ResTouch-LCD-3.5 <PR number={6078} repo="esphome" /> by <GhUser name="nielsnl68" />
+- Revert "add Pico-ResTouch-LCD-3.5" <PR number={6098} repo="esphome" /> by <GhUser name="nielsnl68" />
+- Add triangle shapes to display component <PR number={6096} repo="esphome" /> by <GhUser name="mathieu-mp" />
+- Fingerprint_grow: Trigger on finger scan start and on finger scan misplaced <PR number={6003} repo="esphome" /> by <GhUser name="alexborro" />
+- Add continuous option to the graph <PR number={6093} repo="esphome" /> by <GhUser name="ssieb" />
+- Add NFC binary sensor platform <PR number={6068} repo="esphome" /> by <GhUser name="kbx81" />
+- Socket: Add recvfrom method to receive UDP with source address. <PR number={6103} repo="esphome" /> by <GhUser name="clydebarrow" />
+- Add support for VEML3235 lux sensor <PR number={5959} repo="esphome" /> by <GhUser name="kbx81" /> (new-integration)
+- CV: tidy up Schema wrapper <PR number={6105} repo="esphome" /> by <GhUser name="jesserockz" />
+- Add support X.509 client certificates for MQTT. <PR number={5778} repo="esphome" /> by <GhUser name="h2zero" />
+- Fix color observation for triangle outline in display component <PR number={6107} repo="esphome" /> by <GhUser name="mathieu-mp" />
+- Add support of Honeywell HumidIcon (I2C HIH series) Temperature & Humidity sensor <PR number={5730} repo="esphome" /> by <GhUser name="Benichou34" /> (new-integration)
+- Proposal: Test yaml for each component <PR number={5398} repo="esphome" /> by <GhUser name="Fabian-Schmidt" />
+- WiFi fast_connect: save/load BSSID and channel for faster connect from sleep <PR number={5931} repo="esphome" /> by <GhUser name="rguca" />
+- Fixes Waveshare 7.5in B V2 and V3 <PR number={6079} repo="esphome" /> by <GhUser name="Pofilo" />
+- Add combination sensor and remove absorbed kalman_combinator component <PR number={5438} repo="esphome" /> by <GhUser name="kahrendt" /> (new-integration) (breaking-change)
+- Bump platformio from 6.1.11 to 6.1.13 <PR number={6086} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- Bump actions/cache from 3.3.2 to 4.0.0 <PR number={6110} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- Enable networking and some other components on host platform <PR number={6114} repo="esphome" /> by <GhUser name="clydebarrow" />
+- Fix time component for host platform <PR number={6118} repo="esphome" /> by <GhUser name="clydebarrow" />
+- Add quad spi features <PR number={5925} repo="esphome" /> by <GhUser name="clydebarrow" />
+- add AM2120 device type <PR number={6115} repo="esphome" /> by <GhUser name="alexbuit" />
+- Add support for Waveshare EPD 2.13" V3 <PR number={5363} repo="esphome" /> by <GhUser name="clydebarrow" />
+- OTA 2 which confirm each written chunk <PR number={6066} repo="esphome" /> by <GhUser name="tomaszduda23" />
+- Remove optional&lt;&gt; for pointer types <PR number={6120} repo="esphome" /> by <GhUser name="kroimon" />
+- Improve temperature precision in BME280 and BMP280 <PR number={6124} repo="esphome" /> by <GhUser name="jxl77" />
+- Nextion TFT upload IDF memory optimization <PR number={6128} repo="esphome" /> by <GhUser name="edwardtfn" />
+- Add support for Pico-ResTouch-LCD-3.5 to ili9xxx driver <PR number={6129} repo="esphome" /> by <GhUser name="clydebarrow" />
+- Ensure filename is shown when YAML raises an error <PR number={6139} repo="esphome" /> by <GhUser name="bdraco" />
+- ILI9XXX: Restore offset usage in set_addr_window <PR number={6147} repo="esphome" /> by <GhUser name="clydebarrow" />
+- Minimum 1 for full_update_every to prevent IntegerDivideByZero. <PR number={6150} repo="esphome" /> by <GhUser name="RubenNL" />
+- Support tri-color waveshare eink displays 2.7inch B and B V2 <PR number={4238} repo="esphome" /> by <GhUser name="rnauber" />
+- Synchronise Device Classes from Home Assistant <PR number={6158} repo="esphome" /> by <GhUser name="esphomebot" />
+- dfrobot_sen0395: Use setLatency instead of outputLatency <PR number={5665} repo="esphome" /> by <GhUser name="jfroy" />
+- Add some components to the new testing framework (A part 1) <PR number={6142} repo="esphome" /> by <GhUser name="kbx81" />
+- WRGB or RGBW? WS2814 <PR number={6164} repo="esphome" /> by <GhUser name="mhetzi" />
+- Add some components to the new testing framework (A part 2) <PR number={6162} repo="esphome" /> by <GhUser name="kbx81" />
+- Bump aioesphomeapi to 21.0.2 <PR number={6188} repo="esphome" /> by <GhUser name="bdraco" />
+- Add some components to the new testing framework (B) <PR number={6173} repo="esphome" /> by <GhUser name="kbx81" />
+- Add "transformer_active" flag for use in effects. <PR number={6157} repo="esphome" /> by <GhUser name="TikiBill" />
+- CSE7766: fix power and current measurements at low loads <PR number={6180} repo="esphome" /> by <GhUser name="twasilczyk" />
+- host platform: improvements and bugfixes <PR number={6137} repo="esphome" /> by <GhUser name="clydebarrow" />
+- WLED Sync fix and BK72XX support <PR number={6190} repo="esphome" /> by <GhUser name="ChuckMash" />
+- Add missing vector.h for lightwaverf <PR number={6196} repo="esphome" /> by <GhUser name="kbx81" />
+- Add some components to the new testing framework (C) <PR number={6174} repo="esphome" /> by <GhUser name="kbx81" />
+- update docstrings in cpp_generator.py <PR number={6212} repo="esphome" /> by <GhUser name="nielsnl68" />
+- Fixed group mask logic for WLED Sync fix <PR number={6193} repo="esphome" /> by <GhUser name="ChuckMash" />
+- Add micro_wake_word component <PR number={6136} repo="esphome" /> by <GhUser name="kahrendt" /> (new-integration)
+- AUTO_LOAD `sensor` for `shelly_dimmer` <PR number={6223} repo="esphome" /> by <GhUser name="kbx81" />
+- Add more debugging logs to microWakeWord <PR number={6238} repo="esphome" /> by <GhUser name="kahrendt" />
+- Fix to RF receiver for Drayton Digistat heating controller <PR number={6235} repo="esphome" /> by <GhUser name="marshn" />
+- WRGB Use correct multiplier <PR number={6237} repo="esphome" /> by <GhUser name="mhetzi" />
+- Add optional minimum esphome version to microWakeWord manifest <PR number={6240} repo="esphome" /> by <GhUser name="jesserockz" />
+- Fix xl9535 pin reads <PR number={6242} repo="esphome" /> by <GhUser name="jesserockz" />
+- hold interrupt disable for dallas one-wire <PR number={6244} repo="esphome" /> by <GhUser name="ssieb" />
+- Fix tm1651 enum <PR number={6248} repo="esphome" /> by <GhUser name="kbx81" />
+- Clear UART read buffer before sending next command <PR number={6200} repo="esphome" /> by <GhUser name="fototakas" />
+- Voice Assistant: add on_idle trigger and fix nevermind <PR number={6141} repo="esphome" /> by <GhUser name="synesthesiam" />
+- Tuya Fan component fix to handle enum datapoint type <PR number={6135} repo="esphome" /> by <GhUser name="sibowler" />
+
+{/* markdownlint-enable MD013 */}
+
+## All Changelogs
+
+<Changelogs />

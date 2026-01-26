@@ -1,0 +1,67 @@
+---
+/**
+ * ApiKeyInput Component
+ * Creates an input field that generates a random API key with a copy button.
+ *
+ * Usage:
+ *   <ApiKeyInput />
+ */
+---
+
+<div class="api-key-input">
+  <input type="text" id="api-key" readonly />
+  <button type="button" id="copy-api-key" aria-label="Copy API key">Copy</button>
+  <span class="copied" id="api-key-copied" style="display:none">Copied!</span>
+</div>
+
+<script>
+  // Base64 encoding function
+  function bytesArrToBase64(arr: Uint8Array): string {
+    const abc = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+    const bin = (n: number) => n.toString(2).padStart(8, '0');
+    const l = arr.length;
+    let result = '';
+    for (let i = 0; i <= (l - 1) / 3; i++) {
+      const c1 = i * 3 + 1 >= l;
+      const c2 = i * 3 + 2 >= l;
+      const chunk = bin(arr[3 * i]) + bin(c1 ? 0 : arr[3 * i + 1]) + bin(c2 ? 0 : arr[3 * i + 2]);
+      const r = chunk.match(/.{1,6}/g)!.map((x, j) =>
+        j === 3 && c2 ? '=' : (j === 2 && c1 ? '=' : abc[parseInt('0b' + x, 2)])
+      );
+      result += r.join('');
+    }
+    return result;
+  }
+
+  // Generate random API key on page load
+  document.addEventListener('DOMContentLoaded', () => {
+    const input = document.getElementById('api-key') as HTMLInputElement;
+    const copyBtn = document.getElementById('copy-api-key');
+    const copiedMsg = document.getElementById('api-key-copied');
+
+    if (input) {
+      const array = new Uint8Array(32);
+      window.crypto.getRandomValues(array);
+      input.value = bytesArrToBase64(array);
+
+      // Select all on click
+      input.addEventListener('click', () => {
+        input.focus();
+        input.select();
+      });
+    }
+
+    if (copyBtn && input && copiedMsg) {
+      copyBtn.addEventListener('click', () => {
+        input.select();
+        input.setSelectionRange(0, 99999); // For mobile
+        navigator.clipboard.writeText(input.value).then(() => {
+          copiedMsg.style.display = 'inline';
+          setTimeout(() => {
+            copiedMsg.style.display = 'none';
+          }, 1200);
+        });
+      });
+    }
+  });
+</script>

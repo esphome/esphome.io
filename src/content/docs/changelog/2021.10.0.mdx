@@ -1,0 +1,466 @@
+---
+title: "ESPHome 2021.10.0 - 20th October 2021"
+description: "Changelog for ESPHome 2021.10.0."
+---
+
+import PR from '@/components/PR.astro';
+import GhUser from '@/components/GhUser.astro';
+import Changelogs from '@/components/Changelogs.astro';
+import ComponentGrid from '@/components/ComponentGrid.astro';
+
+
+<ComponentGrid items={[
+  {
+    "title": "AirThings Wave Mini",
+    "link": "components/sensor/airthings_ble",
+    "image": "airthings_logo.png"
+  },
+  {
+    "title": "Current-Based Cover",
+    "link": "components/cover/current_based",
+    "image": "flash.svg",
+    "darkInvert": true
+  },
+  {
+    "title": "Daly BMS",
+    "link": "components/sensor/daly_bms",
+    "image": "daly_bms.jpg"
+  },
+  {
+    "title": "EPEVER Tracer",
+    "link": "cookbook/tracer-an",
+    "image": "tracer-an.jpg"
+  },
+  {
+    "title": "LTR390",
+    "link": "components/sensor/ltr390",
+    "image": "ltr390.jpg"
+  },
+  {
+    "title": "Modbus Controller",
+    "link": "components/modbus_controller",
+    "image": "modbus.png"
+  },
+  {
+    "title": "Safe Mode Switch",
+    "link": "components/switch/safe_mode",
+    "image": "restart-alert.svg",
+    "darkInvert": true
+  },
+  {
+    "title": "SCD4X",
+    "link": "components/sensor/scd4x",
+    "image": "scd4x.jpg"
+  },
+  {
+    "title": "Tuya Cover",
+    "link": "components/cover/tuya",
+    "image": "tuya.png"
+  }
+]} />
+
+Learn from the creators about the new encryption, support for any ESP32 variant and how Otto came up with ESPHome
+
+{/* markdownlint-disable-next-line MD033 */}
+<iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/X10ToPN1gIk"
+        title="YouTube video player" frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen></iframe>
+
+## ESP-IDF
+
+A huge effort has been put into reorganising, restructuring and rewriting a whole lot of code
+to allow ESP32 based boards to be compiled using ESP-IDF as the framework instead of Arduino.
+This allows ESPHome to keep up with new features and support for new ESP32 based chips
+that Espressif add to the ESP-IDF, such as the ESP32-C3 that a lot of people had been asking about.
+
+There are known issues and specific components that are missing support for ESP-IDF as those ones rely
+on an Arduino library and need more time to be rewritten in a compatible way.
+
+The new documentation is here at [esp32](/components/esp32/).
+
+If you come across an issue while switching to ESP-IDF, please file an
+[issue on GitHub](https://github.com/esphome/esphome/issues/new/choose)
+using the `ESP32-IDF` option as the platform.
+
+## Dashboard Node Import
+
+If you intend on creating and distributing devices preinstalled with ESPHome, check out [creators](/guides/creators/)
+for more information and the best ways to give the end users the best experience.
+
+The newest feature of this set is the importing of devices found on the network. If the device is running
+ESPHome 2021.10 or newer, it can be configured to broadcast a url via mDNS and the ESPHome dashboard will pick this up
+and prompt the user to import the device and create a minimal configuration for it.
+
+## Modbus Controller
+
+Support for generic modbus device data has been added. This allows you as a user
+to get data and control a modbus device without a native ESPHome component. Although a
+native component is still better and preferred if it exists.
+
+- [Modbus Controller](/components/modbus_controller/)
+- [Sensors](/components/sensor/modbus_controller/)
+- [Binary Sensors](/components/binary_sensor/modbus_controller/)
+- [Text Sensors](/components/text_sensor/modbus_controller/)
+- [Numbers](/components/number/modbus_controller/)
+- [Switches](/components/switch/modbus_controller/)
+- [Outputs](/components/output/modbus_controller/)
+
+## Text Sensor filters
+
+`text_sensors` now have `filters` that allow you to do string manipulation before the value is
+given to the frontend. Check out the [docs here](/components/text_sensor#text_sensor-filters).
+
+## Lighting
+
+The Tuya light platform now supports RGB and HSV datapoints for those TuyaMCU based lights.
+
+Partitions now support adding non-addressable lights into the sequence. As an example you
+could build a "fake" addressable light from regular rgb leds.
+
+## Graphs
+
+There is new [Graph](/components/graph#display-graphs) building functions for displays that will allow you to
+draw the history of sensors over time. See the docs for examples and images on what this looks like.
+
+## `wait_until`
+
+The `wait_until` action now has an optional `timeout` option that lets you continue or cancel (using an
+if action afterwards) your automations if the condition does not become true after a period of time.
+
+## Combination of MiScale 1 & 2
+
+<PR number={2266} repo="esphome" /> combines the two miscale platforms into one as the code was mostly the
+same and autodetection could be done to detemine which one you are using.
+
+## Float Output state changes
+
+When using a float output with both invert and min/max values, prevously
+the end resut value was being calculated incorrectly. <PR number={2368} repo="esphome" /> fixed this.
+
+{/* markdownlint-disable MD013 */}
+
+## Release 2021.10.1 - October 21
+
+- Fix MDNS for ESP8266 devices <PR number={2571} repo="esphome" /> by <GhUser name="mmakaay" />
+- Fix ESP8266 GPIO0 Pullup Validation <PR number={2572} repo="esphome" /> by <GhUser name="OttoWinter" />
+- Fix wifi ble coexistence check <PR number={2573} repo="esphome" /> by <GhUser name="OttoWinter" />
+- Arduino global delay/millis/... symbols workaround <PR number={2575} repo="esphome" /> by <GhUser name="OttoWinter" />
+- Fix ESP8266 OTA adds unnecessary Update library <PR number={2579} repo="esphome" /> by <GhUser name="OttoWinter" />
+- Fix ESP8266 dallas GPIO16 INPUT_PULLUP <PR number={2581} repo="esphome" /> by <GhUser name="OttoWinter" />
+- Fix platformio version in Dockerfile doesn't match requirements <PR number={2582} repo="esphome" /> by <GhUser name="OttoWinter" />
+- Fix platformio_install_deps no longer installing all lib_deps <PR number={2584} repo="esphome" /> by <GhUser name="OttoWinter" />
+
+## Release 2021.10.2 - October 22
+
+- Fix HeatpumpIR pin <PR number={2585} repo="esphome" /> by <GhUser name="OttoWinter" />
+- Fix PlatformIO version for latest Arduino framework <PR number={2590} repo="esphome" /> by <GhUser name="oxan" />
+- Fix pin/component switchup in SX1509 pin configuration <PR number={2593} repo="esphome" /> by <GhUser name="oxan" />
+- Fix old-style `arduino_version` on ESP8266 and with magic values <PR number={2591} repo="esphome" /> by <GhUser name="oxan" />
+- Bump esphome-dashboard from 20211021.0 to 20211021.1 <PR number={2594} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- Fix validation of addressable light IDs <PR number={2588} repo="esphome" /> by <GhUser name="oxan" />
+- Fix socket connection closed not detected <PR number={2587} repo="esphome" /> by <GhUser name="OttoWinter" />
+- Bump noise-c from 0.1.3 to 0.1.4 <PR number={2602} repo="esphome" /> by <GhUser name="OttoWinter" />
+- Add OTA upload compression for ESP8266 <PR number={2601} repo="esphome" /> by <GhUser name="OttoWinter" />
+- Re-raise keyboardinterrupt <PR number={2603} repo="esphome" /> by <GhUser name="OttoWinter" />
+- Add owner to all libraries used <PR number={2604} repo="esphome" /> by <GhUser name="OttoWinter" />
+- Fix compiler warnings and update platformio line filter <PR number={2607} repo="esphome" /> by <GhUser name="OttoWinter" />
+- Fix ESP8266 OTA compression only starting framework v2.7.0 <PR number={2610} repo="esphome" /> by <GhUser name="OttoWinter" />
+- Bugfix tca9548a and idf refactor anh <PR number={2612} repo="esphome" /> by <GhUser name="andreashergert1984" />
+
+## Release 2021.10.3 - October 27
+
+- fixed dependency for pca9685 component <PR number={2614} repo="esphome" /> by <GhUser name="andreashergert1984" />
+- Bump platform-espressif8266 from 2.6.2 to 2.6.3 <PR number={2620} repo="esphome" /> by <GhUser name="OttoWinter" />
+- Autodetect flash size <PR number={2615} repo="esphome" /> by <GhUser name="agners" />
+- Teleinfo ptec <PR number={2599} repo="esphome" /> by <GhUser name="0hax" />
+- Fix glue code missing micros() <PR number={2623} repo="esphome" /> by <GhUser name="OttoWinter" />
+- Remove power and energy from sensors that are not true power <PR number={2628} repo="esphome" /> by <GhUser name="jesserockz" />
+- fix modbus output <PR number={2630} repo="esphome" /> by <GhUser name="martgras" />
+- Fix pin number validation for sn74hc595 <PR number={2621} repo="esphome" /> by <GhUser name="sairon" />
+- Fix select.set using lambda <PR number={2633} repo="esphome" /> by <GhUser name="jesserockz" />
+
+## Full list of changes
+
+### New Features
+
+- Added graphing component <PR number={2109} repo="esphome" /> by <GhUser name="synco" /> (new-integration) (new-feature)
+- Add deep sleep wakeup from touch (#1238) <PR number={2281} repo="esphome" /> by <GhUser name="chrta" /> (new-feature)
+- Allow non-addressable lights in light partitions <PR number={2256} repo="esphome" /> by <GhUser name="paulmonigatti" /> (new-feature)
+- Add support for Waveshare 7.5 inch (C) bichromatic display (black-and-white only for now) <PR number={1844} repo="esphome" /> by <GhUser name="pixelspark" /> (new-feature)
+- Wifi scan results <PR number={1605} repo="esphome" /> by <GhUser name="gpambrozio" /> (new-feature)
+- Add SSD1305 support to SSD1306 integration along with few new options <PR number={1902} repo="esphome" /> by <GhUser name="zhangjingye03" /> (new-feature) (breaking-change)
+- Adds light sensor support for b-parasites <PR number={2391} repo="esphome" /> by <GhUser name="rbaron" /> (new-feature)
+- Tuya rgb support <PR number={2278} repo="esphome" /> by <GhUser name="irtimaled" /> (new-feature)
+- add fan.cycle_speed action <PR number={2329} repo="esphome" /> by <GhUser name="WeekendWarrior1" /> (new-feature)
+- Add cover toggle support <PR number={1809} repo="esphome" /> by <GhUser name="dtmuller" /> (new-feature)
+- Support HSV-based color support on tuya light <PR number={2400} repo="esphome" /> by <GhUser name="irtimaled" /> (new-feature)
+- String manipulation filters for text sensors! <PR number={2393} repo="esphome" /> by <GhUser name="WeekendWarrior1" /> (new-feature)
+- Add optional timeout for wait_until action <PR number={2282} repo="esphome" /> by <GhUser name="jesserockz" /> (new-feature)
+
+### New Components
+
+- Added graphing component <PR number={2109} repo="esphome" /> by <GhUser name="synco" /> (new-integration) (new-feature)
+- Configurable Flash Write Interval <PR number={2119} repo="esphome" /> by <GhUser name="alexyao2015" /> (new-integration)
+- Add support for Daly Smart BMS <PR number={2156} repo="esphome" /> by <GhUser name="s1lvi0" /> (new-integration)
+- Add support for LTR390 <PR number={1505} repo="esphome" /> by <GhUser name="sjtrny" /> (new-integration)
+- Modbus controller <PR number={1779} repo="esphome" /> by <GhUser name="martgras" /> (new-integration)
+- Dashboard node import and render in browser <PR number={2374} repo="esphome" /> by <GhUser name="OttoWinter" /> (new-integration)
+- Add Current based cover <PR number={1439} repo="esphome" /> by <GhUser name="djwmarcx" /> (new-integration)
+- Add support for SCD4X <PR number={2217} repo="esphome" /> by <GhUser name="sjtrny" /> (new-integration)
+- Add support for Airthing Wave Mini <PR number={2440} repo="esphome" /> by <GhUser name="ncareau" /> (new-integration)
+- Add Safe Mode Restart Switch <PR number={2437} repo="esphome" /> by <GhUser name="paulmonigatti" /> (new-integration)
+- Added heatpumpir support <PR number={1343} repo="esphome" /> by <GhUser name="rob-deutsch" /> (new-integration)
+- OTA firmware MD5 check + password support for esp-idf <PR number={2507} repo="esphome" /> by <GhUser name="mmakaay" /> (new-integration)
+
+### Breaking Changes
+
+- Combine code of xiaomi_miscale and xiaomi_miscale2 <PR number={2266} repo="esphome" /> by <GhUser name="edenhaus" /> (breaking-change)
+- Correctly invert the float output state <PR number={2368} repo="esphome" /> by <GhUser name="jesserockz" /> (breaking-change)
+- Add SSD1305 support to SSD1306 integration along with few new options <PR number={1902} repo="esphome" /> by <GhUser name="zhangjingye03" /> (new-feature) (breaking-change)
+- Disable dependency finder on ESP32 <PR number={2435} repo="esphome" /> by <GhUser name="agners" /> (breaking-change)
+
+### Beta Fixes
+
+- Fix light state remaining on after turn off with transition <PR number={2509} repo="esphome" /> by <GhUser name="oxan" />
+- Fix: Light flash not restoring previous LightState <PR number={2383} repo="esphome" /> by <GhUser name="paulmonigatti" />
+- Disallow using UART2 for logger on ESP-32 variants that lack it <PR number={2510} repo="esphome" /> by <GhUser name="oxan" />
+- Fix BME680_BSEC compilation issue with ESP32 <PR number={2516} repo="esphome" /> by <GhUser name="paulmonigatti" />
+- add missing include in sgp30 <PR number={2517} repo="esphome" /> by <GhUser name="dmitriy5181" />
+- Fix: Color modes not being correctly used in light partitions <PR number={2513} repo="esphome" /> by <GhUser name="paulmonigatti" />
+- Add pressure compensation during runtime <PR number={2493} repo="esphome" /> by <GhUser name="martgras" />
+- Don't define UART_SELECTION_UART2 when UART2 is unavailable <PR number={2512} repo="esphome" /> by <GhUser name="oxan" />
+- Remove BME680_BSEC test <PR number={2518} repo="esphome" /> by <GhUser name="paulmonigatti" />
+- Fix Nextion HTTPClient error for ESP32 <PR number={2524} repo="esphome" /> by <GhUser name="kbx81" />
+- Fix bug in register name definition <PR number={2526} repo="esphome" /> by <GhUser name="martgras" />
+- OTA firmware MD5 check + password support for esp-idf <PR number={2507} repo="esphome" /> by <GhUser name="mmakaay" /> (new-integration)
+- Replace framework version_hint with source option <PR number={2529} repo="esphome" /> by <GhUser name="oxan" />
+- Fix bitshift on read in ADE7953 <PR number={2537} repo="esphome" /> by <GhUser name="oxan" />
+- Allow downloading all bin files from backend in dashboard <PR number={2514} repo="esphome" /> by <GhUser name="jesserockz" />
+- Bump dashboard to 20211015.0 <PR number={2525} repo="esphome" /> by <GhUser name="balloob" />
+- Only show timestamp for dashboard access logs <PR number={2540} repo="esphome" /> by <GhUser name="OttoWinter" />
+- Fix const used for IDF recommended version <PR number={2542} repo="esphome" /> by <GhUser name="jesserockz" />
+- Fix Bluetooth setup_priorities <PR number={2458} repo="esphome" /> by <GhUser name="jesserockz" />
+- Autodetect ESP32 variant <PR number={2530} repo="esphome" /> by <GhUser name="oxan" />
+- Bump dashboard to 20211019.0 <PR number={2549} repo="esphome" /> by <GhUser name="jesserockz" />
+- Fix ADC pin validation on ESP32-C3 <PR number={2551} repo="esphome" /> by <GhUser name="oxan" />
+- ignore exception when not waiting for a response <PR number={2552} repo="esphome" /> by <GhUser name="martgras" />
+- Bump dashboard to 20211020.0 <PR number={2556} repo="esphome" /> by <GhUser name="jesserockz" />
+- Fix HA addon so it does not have logout button <PR number={2558} repo="esphome" /> by <GhUser name="jesserockz" />
+- Bump esphome-dashboard to 20211020.1 <PR number={2559} repo="esphome" /> by <GhUser name="jesserockz" />
+- A few esp32_ble_server/improv fixes <PR number={2562} repo="esphome" /> by <GhUser name="jesserockz" />
+- Bump esphome-dashboard to 20211021.0 <PR number={2564} repo="esphome" /> by <GhUser name="jesserockz" />
+- Move running process log line to debug level <PR number={2565} repo="esphome" /> by <GhUser name="OttoWinter" />
+- Revert nextion clang-tidy changes <PR number={2566} repo="esphome" /> by <GhUser name="OttoWinter" />
+
+### All changes
+
+- Drop obsolete comments from CONTRIBUTING.md <PR number={2271} repo="esphome" /> by <GhUser name="oxan" />
+- Support inverting color temperature on tuya lights <PR number={2277} repo="esphome" /> by <GhUser name="irtimaled" />
+- Untangle core headers (part 1) <PR number={2276} repo="esphome" /> by <GhUser name="oxan" />
+- Compatibility with clang-tidy v14 <PR number={2272} repo="esphome" /> by <GhUser name="oxan" />
+- Store strings only used for logging in flash <PR number={2274} repo="esphome" /> by <GhUser name="oxan" />
+- Expose select on Frontend `web_server:` <PR number={2245} repo="esphome" /> by <GhUser name="ayufan" />
+- Fix devcontainer scripts on Windows <PR number={2239} repo="esphome" /> by <GhUser name="alexyao2015" />
+- Fix SM300D2 sensor component routines so they correctly read the sensor output <PR number={2159} repo="esphome" /> by <GhUser name="jamesbraid" />
+- Bump tzlocal from 2.1 to 3.0 <PR number={2154} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- Activate owning-memory clang-tidy check <PR number={1891} repo="esphome" /> by <GhUser name="OttoWinter" />
+- Fix issue #2054. PZEM004T Component doesn't set the module address. <PR number={1784} repo="esphome" /> by <GhUser name="0x3333" />
+- Convert st7735.h to use LF line endings <PR number={2287} repo="esphome" /> by <GhUser name="oxan" />
+- Add esphal.h include to inkplate6 component <PR number={2286} repo="esphome" /> by <GhUser name="oxan" />
+- Revert "Bump tzlocal from 2.1 to 3.0 (#2154)" <PR number={2289} repo="esphome" /> by <GhUser name="OttoWinter" />
+- Run clang-tidy against ESP32 <PR number={2147} repo="esphome" /> by <GhUser name="oxan" />
+- Run clang-tidy against Arduino 3 <PR number={2146} repo="esphome" /> by <GhUser name="oxan" />
+- Bump click from 7.1.2 to 8.0.1 <PR number={1824} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- Add stale/lock bots <PR number={2299} repo="esphome" /> by <GhUser name="OttoWinter" />
+- Use standard version of make_unique when available <PR number={2292} repo="esphome" /> by <GhUser name="oxan" />
+- Bug fix of NFC message & records becoming inaccessible in on_tag lambdas <PR number={2309} repo="esphome" /> by <GhUser name="JonasEr" />
+- Dsmr updates <PR number={2157} repo="esphome" /> by <GhUser name="glmnet" />
+- Support direct relay state feedback for tuya climate component <PR number={1668} repo="esphome" /> by <GhUser name="kroimon" />
+- ac_dimmer increase gate time for robotdyn <PR number={1708} repo="esphome" /> by <GhUser name="glmnet" />
+- Bump aioesphomeapi from 9.0.0 to 9.1.0 <PR number={2306} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- Bump black from 21.8b0 to 21.9b0 <PR number={2305} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- Add namespace to all PlatformIO library references <PR number={2296} repo="esphome" /> by <GhUser name="oxan" />
+- Allow transforms and flashes to not update remote_values <PR number={2313} repo="esphome" /> by <GhUser name="matthewmazzanti" />
+- Reduce stale/lock gh actions interval <PR number={2341} repo="esphome" /> by <GhUser name="OttoWinter" />
+- Add `esp8266_disable_ssl_support:` config option <PR number={2236} repo="esphome" /> by <GhUser name="ayufan" />
+- Bump pylint from 2.10.2 to 2.11.1 <PR number={2334} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- Add eco mode to tuya climate component <PR number={1860} repo="esphome" /> by <GhUser name="kroimon" />
+- Fix SPIDevice::write_byte16 to actually take a 16 bit argument <PR number={2345} repo="esphome" /> by <GhUser name="lgugelmann" />
+- Redo docker build system with buildkit+multi-stage and cache pio packages <PR number={2338} repo="esphome" /> by <GhUser name="OttoWinter" />
+- Calculating the AC only component of the samples <PR number={1906} repo="esphome" /> by <GhUser name="synco" />
+- Fix error reporting for DHT bit read loop <PR number={2344} repo="esphome" /> by <GhUser name="besteru" />
+- Also run docker CI when requirements change <PR number={2347} repo="esphome" /> by <GhUser name="OttoWinter" />
+- Added graphing component <PR number={2109} repo="esphome" /> by <GhUser name="synco" /> (new-integration) (new-feature)
+- Properly calculate negative temperatures in sm300d2 <PR number={2335} repo="esphome" /> by <GhUser name="poptix" />
+- Fix docker release deploy push flag <PR number={2348} repo="esphome" /> by <GhUser name="OttoWinter" />
+- Add invert_colors option for st7735 <PR number={2327} repo="esphome" /> by <GhUser name="g5pw" />
+- Add deep sleep wakeup from touch (#1238) <PR number={2281} repo="esphome" /> by <GhUser name="chrta" /> (new-feature)
+- Add ESPHOME_VERSION_CODE define <PR number={2324} repo="esphome" /> by <GhUser name="oxan" />
+- Install python requirements after apt ones for better caching <PR number={2349} repo="esphome" /> by <GhUser name="OttoWinter" />
+- Introduce call_dump_config() indirection <PR number={2325} repo="esphome" /> by <GhUser name="oxan" />
+- ESP-IDF support and generic target platforms <PR number={2303} repo="esphome" /> by <GhUser name="OttoWinter" />
+- CI cache only restore from direct matches <PR number={2351} repo="esphome" /> by <GhUser name="OttoWinter" />
+- fixes compilation error in rtttl <PR number={2357} repo="esphome" /> by <GhUser name="martgras" />
+- Fix MDNS not registered <PR number={2359} repo="esphome" /> by <GhUser name="OttoWinter" />
+- Fix src_filter in platformio.ini after src_dir change <PR number={2353} repo="esphome" /> by <GhUser name="OttoWinter" />
+- Fix duplicate defines and restore alphabetical order <PR number={2352} repo="esphome" /> by <GhUser name="oxan" />
+- Configurable Flash Write Interval <PR number={2119} repo="esphome" /> by <GhUser name="alexyao2015" /> (new-integration)
+- Fix OTA password mismatch error. <PR number={2363} repo="esphome" /> by <GhUser name="mmakaay" />
+- Allow compilation against IDF from repository <PR number={2355} repo="esphome" /> by <GhUser name="oxan" />
+- Fix ESP8266 preferences not set up <PR number={2362} repo="esphome" /> by <GhUser name="OttoWinter" />
+- Fix ESP8266 preference loading <PR number={2367} repo="esphome" /> by <GhUser name="paulmonigatti" />
+- Allow non-addressable lights in light partitions <PR number={2256} repo="esphome" /> by <GhUser name="paulmonigatti" /> (new-feature)
+- add = to default font glpyh list <PR number={2361} repo="esphome" /> by <GhUser name="WeekendWarrior1" />
+- Fix docker pio settings not applied <PR number={2370} repo="esphome" /> by <GhUser name="OttoWinter" />
+- Fix OTA crash during reading of new bin file. <PR number={2366} repo="esphome" /> by <GhUser name="mmakaay" />
+- Fix Dallas parent not being set <PR number={2369} repo="esphome" /> by <GhUser name="paulmonigatti" />
+- Discard SenseAir S8 commands echoes & fix calibration result check <PR number={2358} repo="esphome" /> by <GhUser name="nmaggioni" />
+- Add support for Daly Smart BMS <PR number={2156} repo="esphome" /> by <GhUser name="s1lvi0" /> (new-integration)
+- Combine code of xiaomi_miscale and xiaomi_miscale2 <PR number={2266} repo="esphome" /> by <GhUser name="edenhaus" /> (breaking-change)
+- Add support for Waveshare 7.5 inch (C) bichromatic display (black-and-white only for now) <PR number={1844} repo="esphome" /> by <GhUser name="pixelspark" /> (new-feature)
+- ili9341: use larger SPI transfers <PR number={1628} repo="esphome" /> by <GhUser name="numo68" />
+- Correctly invert the float output state <PR number={2368} repo="esphome" /> by <GhUser name="jesserockz" /> (breaking-change)
+- Add support for LTR390 <PR number={1505} repo="esphome" /> by <GhUser name="sjtrny" /> (new-integration)
+- Allow sloppy Tuya datapoint message length <PR number={1982} repo="esphome" /> by <GhUser name="trvrnrth" />
+- Mqtt topics to support numeric fan speed <PR number={1859} repo="esphome" /> by <GhUser name="wifwucite" />
+- Wifi scan results <PR number={1605} repo="esphome" /> by <GhUser name="gpambrozio" /> (new-feature)
+- Add SSD1305 support to SSD1306 integration along with few new options <PR number={1902} repo="esphome" /> by <GhUser name="zhangjingye03" /> (new-feature) (breaking-change)
+- Fix broken compilation due to conflict between #1237 and IDF changes <PR number={2372} repo="esphome" /> by <GhUser name="oxan" />
+- Don't generate IDs with the name of loaded integrations <PR number={2373} repo="esphome" /> by <GhUser name="oxan" />
+- fix i2c scanning eror for Arduino <PR number={2364} repo="esphome" /> by <GhUser name="martgras" />
+- Bump tzlocal from 2.1 to 3.0 <PR number={2294} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- ledc: do not try to write_state to an uninitialized output <PR number={1732} repo="esphome" /> by <GhUser name="toelke" />
+- Fix two i2c error code return errors <PR number={2375} repo="esphome" /> by <GhUser name="OttoWinter" />
+- Fix ir_climate on ESP32-C3 <PR number={2314} repo="esphome" /> by <GhUser name="stintel" />
+- Fix ESP8266 ADC <PR number={2376} repo="esphome" /> by <GhUser name="paulmonigatti" />
+- Fix: Pin flags code generation returning FLAG_NONE <PR number={2377} repo="esphome" /> by <GhUser name="paulmonigatti" />
+- Add missing MockObj operators <PR number={2378} repo="esphome" /> by <GhUser name="OttoWinter" />
+- Fix esp-idf pinmask bit-shift overflow <PR number={2380} repo="esphome" /> by <GhUser name="chrta" />
+- Add i2c bus recovery during initialization <PR number={2379} repo="esphome" /> by <GhUser name="chrta" />
+- Bump voluptuous from 0.12.1 to 0.12.2 <PR number={2381} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- Read unencrypted DSMR telegrams in chunks <PR number={2382} repo="esphome" /> by <GhUser name="mmakaay" />
+- Fix clang-tidy header filter <PR number={2385} repo="esphome" /> by <GhUser name="OttoWinter" />
+- Fix InterruptLock on ESP-IDF <PR number={2388} repo="esphome" /> by <GhUser name="OttoWinter" />
+- Fix some issues with wifi driver after IDF refactor <PR number={2387} repo="esphome" /> by <GhUser name="OttoWinter" />
+- Fix arduino esp32 wifi v2 <PR number={2389} repo="esphome" /> by <GhUser name="OttoWinter" />
+- Misc fixes for esp-idf <PR number={2386} repo="esphome" /> by <GhUser name="OttoWinter" />
+- Adds light sensor support for b-parasites <PR number={2391} repo="esphome" /> by <GhUser name="rbaron" /> (new-feature)
+- fix: Setting Tuya string DP value <PR number={2394} repo="esphome" /> by <GhUser name="irtimaled" />
+- Tuya rgb support <PR number={2278} repo="esphome" /> by <GhUser name="irtimaled" /> (new-feature)
+- add fan.cycle_speed action <PR number={2329} repo="esphome" /> by <GhUser name="WeekendWarrior1" /> (new-feature)
+- Modbus controller <PR number={1779} repo="esphome" /> by <GhUser name="martgras" /> (new-integration)
+- Extend nfc ndef records with Text <PR number={2191} repo="esphome" /> by <GhUser name="JonasEr" />
+- Fix NDEF URI casing <PR number={2397} repo="esphome" /> by <GhUser name="jesserockz" />
+- Dashboard node import and render in browser <PR number={2374} repo="esphome" /> by <GhUser name="OttoWinter" /> (new-integration)
+- ccs811: Skip reading data if it is not available/ready <PR number={2404} repo="esphome" /> by <GhUser name="chrta" />
+- Add missing include for component bme680_bsec <PR number={2403} repo="esphome" /> by <GhUser name="mmakaay" />
+- fix: stop tuya light state getting reset <PR number={2401} repo="esphome" /> by <GhUser name="irtimaled" />
+- Add Current based cover <PR number={1439} repo="esphome" /> by <GhUser name="djwmarcx" /> (new-integration)
+- Add cover toggle support <PR number={1809} repo="esphome" /> by <GhUser name="dtmuller" /> (new-feature)
+- Fix handling of timestamps in Teleinfo component. <PR number={2392} repo="esphome" /> by <GhUser name="0hax" />
+- bump dashboard to 20210927.0 <PR number={2405} repo="esphome" /> by <GhUser name="balloob" />
+- Add str_sprintf function that returns std::string <PR number={2408} repo="esphome" /> by <GhUser name="oxan" />
+- Fix lint issues in web_server_base <PR number={2409} repo="esphome" /> by <GhUser name="jesserockz" />
+- Fix uninitialised use of ESPPreferenceObject.backend <PR number={2411} repo="esphome" /> by <GhUser name="paulmonigatti" />
+- Add support for SCD4X <PR number={2217} repo="esphome" /> by <GhUser name="sjtrny" /> (new-integration)
+- Support HSV-based color support on tuya light <PR number={2400} repo="esphome" /> by <GhUser name="irtimaled" /> (new-feature)
+- Tuya: add cover component <PR number={2279} repo="esphome" /> by <GhUser name="marmarek" />
+- Fix tuya cover lint checks <PR number={2414} repo="esphome" /> by <GhUser name="OttoWinter" />
+- Bump debian base to 5.1.0 / 20210902 <PR number={2413} repo="esphome" /> by <GhUser name="OttoWinter" />
+- Remove default initializations from tuya cover <PR number={2415} repo="esphome" /> by <GhUser name="jesserockz" />
+- Move #ifdef to after header include <PR number={2417} repo="esphome" /> by <GhUser name="oxan" />
+- String manipulation filters for text sensors! <PR number={2393} repo="esphome" /> by <GhUser name="WeekendWarrior1" /> (new-feature)
+- Update web_server.cpp <PR number={2419} repo="esphome" /> by <GhUser name="arallsopp" />
+- Fix default environment for clang-tidy <PR number={2420} repo="esphome" /> by <GhUser name="oxan" />
+- Replace std::move() with const references where possible <PR number={2421} repo="esphome" /> by <GhUser name="oxan" />
+- Fix line endings normalization <PR number={2407} repo="esphome" /> by <GhUser name="oxan" />
+- Option to ignore CRC for EFuse MAC address <PR number={2399} repo="esphome" /> by <GhUser name="mmakaay" />
+- Fix attach_interrupt(...) for esp-idf framework <PR number={2416} repo="esphome" /> by <GhUser name="mmakaay" />
+- Fix I2C recovery on Arduino <PR number={2412} repo="esphome" /> by <GhUser name="mmakaay" />
+- Fix ESP32 esp-idf OTA updates <PR number={2424} repo="esphome" /> by <GhUser name="mmakaay" />
+- Add local MAC address to WiFi info <PR number={2428} repo="esphome" /> by <GhUser name="cvwillegen" />
+- Thermostat publish state fix <PR number={2427} repo="esphome" /> by <GhUser name="kbx81" />
+- Convert time to use tzdata <PR number={2425} repo="esphome" /> by <GhUser name="OttoWinter" />
+- Hotfix for ESP8266 OTA issue: ERROR Error binary size <PR number={2432} repo="esphome" /> by <GhUser name="mmakaay" />
+- Disable dependency finder on ESP32 <PR number={2435} repo="esphome" /> by <GhUser name="agners" />
+- Use size_t to fix comparision using RISC-V toolchain <PR number={2436} repo="esphome" /> by <GhUser name="agners" />
+- Fix I2C recovery ESP32 esp-idf <PR number={2438} repo="esphome" /> by <GhUser name="mmakaay" />
+- Fix esp32 no longer has Hash internal lib <PR number={2441} repo="esphome" /> by <GhUser name="OttoWinter" />
+- Fix restoring globals <PR number={2442} repo="esphome" /> by <GhUser name="OttoWinter" />
+- Always upload using esptool <PR number={2433} repo="esphome" /> by <GhUser name="OttoWinter" />
+- Add support for Airthing Wave Mini <PR number={2440} repo="esphome" /> by <GhUser name="ncareau" /> (new-integration)
+- Improved validation for Addressable Light Partition Segments <PR number={2439} repo="esphome" /> by <GhUser name="paulmonigatti" />
+- Bump pytest-cov from 2.12.1 to 3.0.0 <PR number={2444} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- Fix compilation error for shutdown component <PR number={2447} repo="esphome" /> by <GhUser name="martgras" />
+- Bump aioesphomeapi from 9.1.4 to 9.1.5 <PR number={2449} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- Only ping once every two seconds <PR number={2448} repo="esphome" /> by <GhUser name="alexiri" />
+- Bump esphome-dashboard to 20211006.0 <PR number={2451} repo="esphome" /> by <GhUser name="jesserockz" />
+- I2C re-introduce very verbose logging <PR number={2446} repo="esphome" /> by <GhUser name="OttoWinter" />
+- Add Safe Mode Restart Switch <PR number={2437} repo="esphome" /> by <GhUser name="paulmonigatti" /> (new-integration)
+- Add id() for restoring global <PR number={2454} repo="esphome" /> by <GhUser name="jesserockz" />
+- Add timestamp to ESPHome dashboard/cli logs <PR number={2455} repo="esphome" /> by <GhUser name="alexiri" />
+- I2c fix <PR number={2460} repo="esphome" /> by <GhUser name="martgras" />
+- Correct I2C read() return val check in bh1750 component. <PR number={2465} repo="esphome" /> by <GhUser name="mmakaay" />
+- atm90e32: make the total_increasing class sensors actually be increasing totals. <PR number={2459} repo="esphome" /> by <GhUser name="davidmonro" />
+- Use enum for Tuya fan direction datapoint <PR number={2471} repo="esphome" /> by <GhUser name="rmounce" />
+- Fix MQTT cover state when position is supported <PR number={2468} repo="esphome" /> by <GhUser name="definitio" />
+- Sgp40 fix <PR number={2462} repo="esphome" /> by <GhUser name="natelust" />
+- EntityBase Refactor <PR number={2418} repo="esphome" /> by <GhUser name="paulmonigatti" />
+- Fix below freezing temperature for Inkbird sensors <PR number={2466} repo="esphome" /> by <GhUser name="nuttytree" />
+- Add configuration for cover topics <PR number={2472} repo="esphome" /> by <GhUser name="definitio" />
+- Add configuration for climate topics <PR number={2473} repo="esphome" /> by <GhUser name="definitio" />
+- Use arduino btStart for arduino framework <PR number={2457} repo="esphome" /> by <GhUser name="jesserockz" />
+- Bump click from 8.0.1 to 8.0.3 <PR number={2481} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- Bump flake8 from 3.9.2 to 4.0.1 <PR number={2483} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- Bump platformio from 5.2.0 to 5.2.1 <PR number={2482} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- Bump esphome-dashboard from 20211006.0 to 20211011.1 <PR number={2484} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- Replace deprecated COLOR_BLACK constant <PR number={2487} repo="esphome" /> by <GhUser name="davet2001" />
+- Fix color temperature persistence on CWWW lights <PR number={2486} repo="esphome" /> by <GhUser name="sairon" />
+- Fix reset on http_request without network connection <PR number={2474} repo="esphome" /> by <GhUser name="niklasweber" />
+- Consolidate CONF_RAW_DATA_ID to const.py <PR number={2491} repo="esphome" /> by <GhUser name="davet2001" />
+- Update Airthings BLE <PR number={2453} repo="esphome" /> by <GhUser name="jesserockz" />
+- Add on_open and on_closed triggers to cover <PR number={2488} repo="esphome" /> by <GhUser name="nuttytree" />
+- Fix LoadProhibited crash for logger baud_rate 0 on esp-idf <PR number={2498} repo="esphome" /> by <GhUser name="mmakaay" />
+- Added heatpumpir support <PR number={1343} repo="esphome" /> by <GhUser name="rob-deutsch" /> (new-integration)
+- Reduce IRAM usage in test3 <PR number={2499} repo="esphome" /> by <GhUser name="oxan" />
+- Add optional timeout for wait_until action <PR number={2282} repo="esphome" /> by <GhUser name="jesserockz" /> (new-feature)
+- Improves ct_clamp component accuracy <PR number={2283} repo="esphome" /> by <GhUser name="skasi7" />
+- Allow multiple pn532_spi entries <PR number={2489} repo="esphome" /> by <GhUser name="jesserockz" />
+- Add throttle_average sensor filter <PR number={2485} repo="esphome" /> by <GhUser name="sermayoral" />
+- Fix light state remaining on after turn off with transition <PR number={2509} repo="esphome" /> by <GhUser name="oxan" />
+- Fix: Light flash not restoring previous LightState <PR number={2383} repo="esphome" /> by <GhUser name="paulmonigatti" />
+- Disallow using UART2 for logger on ESP-32 variants that lack it <PR number={2510} repo="esphome" /> by <GhUser name="oxan" />
+- Fix BME680_BSEC compilation issue with ESP32 <PR number={2516} repo="esphome" /> by <GhUser name="paulmonigatti" />
+- add missing include in sgp30 <PR number={2517} repo="esphome" /> by <GhUser name="dmitriy5181" />
+- Fix: Color modes not being correctly used in light partitions <PR number={2513} repo="esphome" /> by <GhUser name="paulmonigatti" />
+- Add pressure compensation during runtime <PR number={2493} repo="esphome" /> by <GhUser name="martgras" />
+- Don't define UART_SELECTION_UART2 when UART2 is unavailable <PR number={2512} repo="esphome" /> by <GhUser name="oxan" />
+- Remove BME680_BSEC test <PR number={2518} repo="esphome" /> by <GhUser name="paulmonigatti" />
+- Fix Nextion HTTPClient error for ESP32 <PR number={2524} repo="esphome" /> by <GhUser name="kbx81" />
+- Fix bug in register name definition <PR number={2526} repo="esphome" /> by <GhUser name="martgras" />
+- OTA firmware MD5 check + password support for esp-idf <PR number={2507} repo="esphome" /> by <GhUser name="mmakaay" /> (new-integration)
+- Replace framework version_hint with source option <PR number={2529} repo="esphome" /> by <GhUser name="oxan" />
+- Fix bitshift on read in ADE7953 <PR number={2537} repo="esphome" /> by <GhUser name="oxan" />
+- Allow downloading all bin files from backend in dashboard <PR number={2514} repo="esphome" /> by <GhUser name="jesserockz" />
+- Bump dashboard to 20211015.0 <PR number={2525} repo="esphome" /> by <GhUser name="balloob" />
+- Only show timestamp for dashboard access logs <PR number={2540} repo="esphome" /> by <GhUser name="OttoWinter" />
+- Fix const used for IDF recommended version <PR number={2542} repo="esphome" /> by <GhUser name="jesserockz" />
+- Fix Bluetooth setup_priorities <PR number={2458} repo="esphome" /> by <GhUser name="jesserockz" />
+- Autodetect ESP32 variant <PR number={2530} repo="esphome" /> by <GhUser name="oxan" />
+- Bump dashboard to 20211019.0 <PR number={2549} repo="esphome" /> by <GhUser name="jesserockz" />
+- Fix ADC pin validation on ESP32-C3 <PR number={2551} repo="esphome" /> by <GhUser name="oxan" />
+- ignore exception when not waiting for a response <PR number={2552} repo="esphome" /> by <GhUser name="martgras" />
+- Bump dashboard to 20211020.0 <PR number={2556} repo="esphome" /> by <GhUser name="jesserockz" />
+- Fix HA addon so it does not have logout button <PR number={2558} repo="esphome" /> by <GhUser name="jesserockz" />
+- Bump esphome-dashboard to 20211020.1 <PR number={2559} repo="esphome" /> by <GhUser name="jesserockz" />
+- A few esp32_ble_server/improv fixes <PR number={2562} repo="esphome" /> by <GhUser name="jesserockz" />
+- Bump esphome-dashboard to 20211021.0 <PR number={2564} repo="esphome" /> by <GhUser name="jesserockz" />
+- Move running process log line to debug level <PR number={2565} repo="esphome" /> by <GhUser name="OttoWinter" />
+- Revert nextion clang-tidy changes <PR number={2566} repo="esphome" /> by <GhUser name="OttoWinter" />
+
+{/* markdownlint-enable MD013 */}
+
+## All Changelogs
+
+<Changelogs />

@@ -1,0 +1,204 @@
+---
+title: "ESPHome 2022.8.0 - 17th August 2022"
+description: "Changelog for ESPHome 2022.8.0."
+---
+
+import PR from '@/components/PR.astro';
+import GhUser from '@/components/GhUser.astro';
+import Changelogs from '@/components/Changelogs.astro';
+import ComponentGrid from '@/components/ComponentGrid.astro';
+
+
+<ComponentGrid items={[
+  {
+    "title": "DAC7678",
+    "link": "components/output/dac7678",
+    "image": "dac7678.svg"
+  },
+  {
+    "title": "Sprinkler",
+    "link": "components/sprinkler",
+    "image": "sprinkler-variant.svg",
+    "darkInvert": true
+  },
+  {
+    "title": "Feedback Cover",
+    "link": "components/cover/feedback",
+    "image": "feedback_cover.svg",
+    "darkInvert": true
+  },
+  {
+    "title": "SMT100",
+    "link": "components/sensor/smt100",
+    "image": "smt100.jpg",
+    "caption": "Moisture & Temperature"
+  },
+  {
+    "title": "Whynter IR Climate",
+    "link": "components/climate/climate_ir",
+    "image": "air-conditioner-ir.svg",
+    "darkInvert": true
+  },
+  {
+    "title": "Bluetooth Proxy",
+    "link": "components/bluetooth_proxy",
+    "image": "bluetooth.svg",
+    "darkInvert": true
+  }
+]} />
+
+## Bluetooth Proxy
+
+ESPHome 2022.8.2 brings a new feature that allows you to use your ESP32 devices as Bluetooth Proxies for Home Assistant.
+They will forward the BLE Advertisements to Home Assistant which will then trigger a discovery and allow you to set up
+an integration for the found devices. This allows you to set up multiple ESP32 Bluetooth Proxies around the area to make
+sure all advertisements are received reliably.
+
+We have created a few examples that are ready to flash directly from your browser for some specific devices:
+[https://esphome.github.io/bluetooth-proxies/](https://esphome.github.io/bluetooth-proxies/)
+
+## Sprinkler controller
+
+<GhUser name="kbx81" /> has written a beast of a sprinkler controller to help organise and schedule all of your
+sprinkler valves and keep those plants and veggies thriving. Check out the docs at
+[sprinkler](/components/sprinkler/).
+
+## ST7789V
+
+The [st7789v](/components/display/st7789v/) display platform has had an update which adds a `model` configuration
+option. With this comes custom width and heights to allow you to use this with any display using this driver now.
+
+## Breaking Changes
+
+There are a few breaking changes this release, including removing `min_save_interval` from
+the [integration](/components/sensor/integration/) and [total_daily_energy](/components/sensor/total_daily_energy/).
+The BedJet climate introduced recently has also undergone a refactoring to allow different
+platforms to extend the functionality available from ESPHome.
+
+{/* markdownlint-disable MD013 */}
+
+## Release 2022.8.1 - September 1
+
+- fix grow password setting <PR number={3722} repo="esphome" /> by <GhUser name="ssieb" />
+- Fix SPI HW selection for ESP32 variants <PR number={3728} repo="esphome" /> by <GhUser name="kbx81" />
+
+## Release 2022.8.2 - September 6
+
+- Initial bluetooth_proxy support <PR number={3736} repo="esphome" /> by <GhUser name="jesserockz" /> (new-integration)
+- Ignore NaN states in the integration component <PR number={3767} repo="esphome" /> by <GhUser name="anatoly-savchenkov" />
+- Update modbus_controller.cpp <PR number={3768} repo="esphome" /> by <GhUser name="Avirsaam" />
+
+## Release 2022.8.3 - September 6
+
+- Fix HA addon auth using HA credentials <PR number={3758} repo="esphome" /> by <GhUser name="jesserockz" />
+
+## Full list of changes
+
+### New Components
+
+- DAC7678 support <PR number={3441} repo="esphome" /> by <GhUser name="NickB1" /> (new-integration)
+- Add support for SMT100 Soil Moisture Sensor <PR number={3654} repo="esphome" /> by <GhUser name="piechade" /> (new-integration)
+- Adding support for Whynter ARC-14S/SH Air Conditioners <PR number={3641} repo="esphome" /> by <GhUser name="aeonsablaze" /> (new-integration)
+- Sprinkler controller component <PR number={2249} repo="esphome" /> by <GhUser name="kbx81" /> (new-integration)
+- Create feedback cover component <PR number={3253} repo="esphome" /> by <GhUser name="ianchi" /> (new-integration)
+
+### Breaking Changes
+
+- Remove min_save_interval from intergration and total_daily_energy <PR number={3498} repo="esphome" /> by <GhUser name="jesserockz" /> (breaking-change)
+- Rework NaN handling in sensor filters <PR number={3610} repo="esphome" /> by <GhUser name="DAVe3283" /> (breaking-change)
+- Extend ST7789V component to support additional displays <PR number={3651} repo="esphome" /> by <GhUser name="kbx81" /> (breaking-change)
+- Refactor BedJet climate into Hub component <PR number={3522} repo="esphome" /> by <GhUser name="jhansche" /> (breaking-change)
+
+### Beta Changes
+
+- Improve Web view for Climate components <PR number={3706} repo="esphome" /> by <GhUser name="anatoly-savchenkov" />
+- Add vector include <PR number={3707} repo="esphome" /> by <GhUser name="jesserockz" />
+- Add state_class total <PR number={3608} repo="esphome" /> by <GhUser name="peterg79" />
+- add gradient color V2.0 <PR number={3709} repo="esphome" /> by <GhUser name="nielsnl68" />
+- Webui small fixes <PR number={3713} repo="esphome" /> by <GhUser name="anatoly-savchenkov" />
+- Only trigger ble_client on_connect after discovering services <PR number={3710} repo="esphome" /> by <GhUser name="buxtronix" />
+- Fixes BLE remote address type when connecting <PR number={3702} repo="esphome" /> by <GhUser name="rbaron" />
+- Makes ble_client.ble_write's action value templatable <PR number={3715} repo="esphome" /> by <GhUser name="rbaron" />
+
+### All changes
+
+- Refactor vl53l0x to remove code from header. <PR number={3536} repo="esphome" /> by <GhUser name="RoboMagus" />
+- Fix modbus user-defined function handling <PR number={3527} repo="esphome" /> by <GhUser name="gazoodle" />
+- Language schema 202204 <PR number={3492} repo="esphome" /> by <GhUser name="glmnet" />
+- Fix / Reverse order shutdown <PR number={3585} repo="esphome" /> by <GhUser name="RoboMagus" />
+- RestoringGlobalsComponent: Store value on shutdown <PR number={3586} repo="esphome" /> by <GhUser name="RoboMagus" />
+- Map LOLIN C3 mini board pins <PR number={3587} repo="esphome" /> by <GhUser name="mateusdemboski" />
+- Bump platformio to 6.0.2 <PR number={3566} repo="esphome" /> by <GhUser name="jesserockz" />
+- Bump pylint from 2.13.9 to 2.14.3 <PR number={3589} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- DAC7678 support <PR number={3441} repo="esphome" /> by <GhUser name="NickB1" /> (new-integration)
+- Correcting ESP32 flash save/load key calculation algorithm <PR number={3416} repo="esphome" /> by <GhUser name="cinadr" />
+- Bump aioesphomeapi from 10.8.2 to 10.10.0 <PR number={3590} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- Do two substitutions passes to allow substitutions inside substitutions <PR number={3583} repo="esphome" /> by <GhUser name="jesserockz" />
+- Update actions <PR number={3592} repo="esphome" /> by <GhUser name="wrt54g" />
+- Add github-actions to dependabot <PR number={3595} repo="esphome" /> by <GhUser name="jesserockz" />
+- Fix some typos found by codespell <PR number={3598} repo="esphome" /> by <GhUser name="misery" />
+- #3358 Correct temperature validity detection issue in some conditions of pu… <PR number={3545} repo="esphome" /> by <GhUser name="Benoit3" />
+- Remove min_save_interval from intergration and total_daily_energy <PR number={3498} repo="esphome" /> by <GhUser name="jesserockz" /> (breaking-change)
+- Bump zeroconf from 0.38.4 to 0.38.7 <PR number={3562} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- fix EDict to dict mapping in helpers.py <PR number={3599} repo="esphome" /> by <GhUser name="jpeletier" />
+- Fix slow_pwm output glitch <PR number={3601} repo="esphome" /> by <GhUser name="marshn" />
+- Bump pyupgrade from 2.32.1 to 2.34.0 <PR number={3591} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- Bump black from 22.3.0 to 22.6.0 <PR number={3613} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- Bump colorama from 0.4.4 to 0.4.5 <PR number={3614} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- Bump pylint from 2.14.3 to 2.14.4 <PR number={3617} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- Bump pytest-mock from 3.7.0 to 3.8.1 <PR number={3616} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- Update dfplayer condition function name <PR number={3619} repo="esphome" /> by <GhUser name="dab0g" />
+- Added more sensor device classes <PR number={3624} repo="esphome" /> by <GhUser name="lal12" />
+- Improvement pipsolar crc <PR number={3316} repo="esphome" /> by <GhUser name="andreashergert1984" />
+- Fix configuration constants in core. <PR number={3652} repo="esphome" /> by <GhUser name="RoboMagus" />
+- FIX: NVS preferences being written even if unchanged <PR number={3647} repo="esphome" /> by <GhUser name="jpeletier" />
+- Add 'set_total_pulses' action to 'pulse_counter' sensor. <PR number={3640} repo="esphome" /> by <GhUser name="RoboMagus" />
+- add option to publish initial state of binary sensors <PR number={3636} repo="esphome" /> by <GhUser name="ssieb" />
+- update packages: nginx-light-1.18.0-6.1+deb11u2 nano-5.4-2+deb11u1 <PR number={3631} repo="esphome" /> by <GhUser name="peterg79" />
+- Add support for SMT100 Soil Moisture Sensor <PR number={3654} repo="esphome" /> by <GhUser name="piechade" /> (new-integration)
+- Rework NaN handling in sensor filters <PR number={3610} repo="esphome" /> by <GhUser name="DAVe3283" /> (breaking-change)
+- Remove deprecated adc init call. <PR number={3667} repo="esphome" /> by <GhUser name="ssieb" />
+- List webserver service on MDNS if enabled. <PR number={3662} repo="esphome" /> by <GhUser name="RoboMagus" />
+- Show changes from python linting <PR number={3677} repo="esphome" /> by <GhUser name="jesserockz" />
+- dalybms: support changing the address <PR number={3676} repo="esphome" /> by <GhUser name="ssieb" />
+- Upgrade rweather/Crypto from 0.2.0 to 0.4.0 <PR number={3593} repo="esphome" /> by <GhUser name="sybrenstuvel" />
+- Allow GPIO20 for ESP32 <PR number={3680} repo="esphome" /> by <GhUser name="ashald" />
+- Remove old unused code in mcp23xxx_base <PR number={3685} repo="esphome" /> by <GhUser name="jesserockz" />
+- Adding option to report signal strength on pvvx_mithermometer <PR number={3688} repo="esphome" /> by <GhUser name="doolbneerg" />
+- Pass optional args to 'new_Pvariable' when creating new entities <PR number={3690} repo="esphome" /> by <GhUser name="RoboMagus" />
+- fix sx1509 use of pullup and pulldown <PR number={3689} repo="esphome" /> by <GhUser name="ssieb" />
+- Add a soft reset in setup() for bme280. <PR number={3615} repo="esphome" /> by <GhUser name="dbaarda" />
+- Add get_ap() method to WiFi <PR number={3684} repo="esphome" /> by <GhUser name="anatoly-savchenkov" />
+- Extend ST7789V component to support additional displays <PR number={3651} repo="esphome" /> by <GhUser name="kbx81" /> (breaking-change)
+- Fix panic abort when BLEClient reconnects <PR number={3594} repo="esphome" /> by <GhUser name="dentra" />
+- Introduces ble_client.ble_write Action <PR number={3398} repo="esphome" /> by <GhUser name="rbaron" />
+- Add helpers to switch python for schema and codegen <PR number={3693} repo="esphome" /> by <GhUser name="jesserockz" />
+- Refactor BedJet climate into Hub component <PR number={3522} repo="esphome" /> by <GhUser name="jhansche" /> (breaking-change)
+- Added support for setting the current animation frame <PR number={3681} repo="esphome" /> by <GhUser name="davestubbs" />
+- Adding support for Whynter ARC-14S/SH Air Conditioners <PR number={3641} repo="esphome" /> by <GhUser name="aeonsablaze" /> (new-integration)
+- Sprinkler controller component <PR number={2249} repo="esphome" /> by <GhUser name="kbx81" /> (new-integration)
+- add gradient color <PR number={3687} repo="esphome" /> by <GhUser name="nielsnl68" />
+- [Nextion] Add on_page trigger <PR number={3673} repo="esphome" /> by <GhUser name="anatoly-savchenkov" />
+- Bump pyupgrade from 2.34.0 to 2.37.3 <PR number={3670} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- Bump aioesphomeapi from 10.10.0 to 10.11.0 <PR number={3669} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- Create feedback cover component <PR number={3253} repo="esphome" /> by <GhUser name="ianchi" /> (new-integration)
+- Bump pytest-asyncio from 0.18.3 to 0.19.0 <PR number={3695} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- Bump zeroconf from 0.38.7 to 0.39.0 <PR number={3694} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- Bump pytest-mock from 3.8.1 to 3.8.2 <PR number={3622} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- Bump flake8 from 4.0.1 to 5.0.4 <PR number={3703} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- Bump pylint from 2.14.4 to 2.14.5 <PR number={3697} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- Add priority to on_shutdown trigger <PR number={3644} repo="esphome" /> by <GhUser name="RoboMagus" />
+- Improve Web view for Climate components <PR number={3706} repo="esphome" /> by <GhUser name="anatoly-savchenkov" />
+- Add vector include <PR number={3707} repo="esphome" /> by <GhUser name="jesserockz" />
+- Add state_class total <PR number={3608} repo="esphome" /> by <GhUser name="peterg79" />
+- add gradient color V2.0 <PR number={3709} repo="esphome" /> by <GhUser name="nielsnl68" />
+- Webui small fixes <PR number={3713} repo="esphome" /> by <GhUser name="anatoly-savchenkov" />
+- Only trigger ble_client on_connect after discovering services <PR number={3710} repo="esphome" /> by <GhUser name="buxtronix" />
+- Fixes BLE remote address type when connecting <PR number={3702} repo="esphome" /> by <GhUser name="rbaron" />
+- Makes ble_client.ble_write's action value templatable <PR number={3715} repo="esphome" /> by <GhUser name="rbaron" />
+
+{/* markdownlint-enable MD013 */}
+
+## All Changelogs
+
+<Changelogs />

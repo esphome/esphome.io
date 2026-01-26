@@ -1,0 +1,203 @@
+---
+title: "ESPHome 2022.9.0 - 21st September 2022"
+description: "Changelog for ESPHome 2022.9.0."
+---
+
+import PR from '@/components/PR.astro';
+import GhUser from '@/components/GhUser.astro';
+import Changelogs from '@/components/Changelogs.astro';
+import ComponentGrid from '@/components/ComponentGrid.astro';
+
+
+<ComponentGrid items={[
+  {
+    "title": "DPS310",
+    "link": "components/sensor/dps310",
+    "image": "dps310.jpg"
+  },
+  {
+    "title": "MCP9600",
+    "link": "components/sensor/mcp9600",
+    "image": "mcp9600.jpg"
+  },
+  {
+    "title": "TM1621",
+    "link": "components/display/tm1621",
+    "image": "tm1621.jpg"
+  },
+  {
+    "title": "MPL3115A2",
+    "link": "components/sensor/mpl3115a2",
+    "image": "mpl3115a2.jpg"
+  },
+  {
+    "title": "uFire EC sensor",
+    "link": "components/sensor/ufire_ec",
+    "image": "ufire_ec.png"
+  },
+  {
+    "title": "uFire ISE sensor",
+    "link": "components/sensor/ufire_ise",
+    "image": "ufire_ise.png"
+  },
+  {
+    "title": "Factory Reset Switch",
+    "link": "components/switch/factory_reset",
+    "image": "restart-alert.svg",
+    "darkInvert": true
+  },
+  {
+    "title": "Factory Reset Button",
+    "link": "components/button/factory_reset",
+    "image": "restart-alert.svg",
+    "darkInvert": true
+  },
+  {
+    "title": "TM1638",
+    "link": "components/display/tm1638",
+    "image": "tm1638.jpg"
+  },
+  {
+    "title": "BL0942",
+    "link": "components/sensor/bl0942",
+    "image": "bl0942.png"
+  }
+]} />
+
+## ESPHome Editor
+
+The editor used in ESPHome has been swapped out for Monaco thanks to <GhUser name="glmnet" />. He has
+been working hard to make the experience of writing your YAML configurations easier and it now
+supports auto completion with popups to show you more information.
+
+## Factory Reset
+
+A new Factory Reset switch and button has been added this release, allowing resetting of information such
+as counters, restored values, and more importantly, the wifi credentials of a device that has been set up
+using the captive portal such as pre-flashed devices you would have purchased.
+
+## Bluetooth Active Connections
+
+ESPHome 2022.9.3 adds active connections to the `bluetooth_proxy` component allowing Home Assistant
+to connect to and control supported devices.
+
+{/* markdownlint-disable MD013 */}
+
+## Release 2022.9.1 - September 22
+
+- Revert "fix spi timing issues" <PR number={3838} repo="esphome" /> by <GhUser name="jesserockz" />
+
+## Release 2022.9.2 - September 29
+
+- Bump dashboard to 20220925.0 <PR number={3846} repo="esphome" /> by <GhUser name="glmnet" />
+
+## Release 2022.9.3 - October 6
+
+- Bluetooth Proxy active connections <PR number={3817} repo="esphome" /> by <GhUser name="jesserockz" />
+
+## Release 2022.9.4 - October 7
+
+- Add network type to mdns service message <PR number={3880} repo="esphome" /> by <GhUser name="jesserockz" />
+- Bump esphome-dashboard to 20221007.0 <PR number={3881} repo="esphome" /> by <GhUser name="jesserockz" />
+- Dont add wifi block to yaml if discovered device uses ethernet <PR number={3882} repo="esphome" /> by <GhUser name="jesserockz" />
+
+## Full list of changes
+
+### New Components
+
+- Add dps310 sensor support <PR number={3704} repo="esphome" /> by <GhUser name="kbx81" /> (new-integration)
+- Support for MCP9600 Thermocouple Amplifier <PR number={3700} repo="esphome" /> by <GhUser name="MrEditor97" /> (new-integration)
+- Add support to tm1621 display <PR number={3737} repo="esphome" /> by <GhUser name="Philippe12" /> (new-integration)
+- u-fire EC sensor <PR number={3774} repo="esphome" /> by <GhUser name="pvizeli" /> (new-integration)
+- Add support for MPL3115A2 Pressure/Altitude and Temperature Sensor <PR number={3371} repo="esphome" /> by <GhUser name="kbickar" /> (new-integration)
+- Add support for BL0942 voltage, current, energy and power Sensor <PR number={3777} repo="esphome" /> by <GhUser name="dbuezas" /> (new-integration)
+- Add Factory Reset button and switch <PR number={3724} repo="esphome" /> by <GhUser name="anatoly-savchenkov" /> (new-integration)
+- Add support for TM1638 Led and Key component <PR number={3340} repo="esphome" /> by <GhUser name="skykingjwc" /> (new-integration)
+- Add uFire ISE sensor <PR number={3789} repo="esphome" /> by <GhUser name="pvizeli" /> (new-integration)
+
+### Beta Changes
+
+- null initialize total sensor for pulse counter <PR number={3803} repo="esphome" /> by <GhUser name="RoboMagus" />
+- Sim800l add calls, multiline sms and ussd <PR number={3630} repo="esphome" /> by <GhUser name="glmnet" />
+- Unify 'nullptr' initalization of class members; <PR number={3805} repo="esphome" /> by <GhUser name="RoboMagus" />
+- Initialize all child sensors to nullptr <PR number={3808} repo="esphome" /> by <GhUser name="jesserockz" />
+- Remove floating point calculation from ac_dimmer ISR <PR number={3770} repo="esphome" /> by <GhUser name="Azimath" />
+- split pronto codes if they are too long <PR number={3812} repo="esphome" /> by <GhUser name="ssieb" />
+- [BME280] raise standby time <PR number={3804} repo="esphome" /> by <GhUser name="h3ndrik" />
+- Make sprinkler reset_resume() method public <PR number={3824} repo="esphome" /> by <GhUser name="kbx81" />
+- Bump dashboard to 20220919.1 <PR number={3828} repo="esphome" /> by <GhUser name="balloob" />
+- Fix-esphome-validation-line-number <PR number={3815} repo="esphome" /> by <GhUser name="glmnet" />
+- Bump dashboard to 20220920.0 <PR number={3831} repo="esphome" /> by <GhUser name="balloob" />
+- Bump dashboard to 20220920.1 <PR number={3834} repo="esphome" /> by <GhUser name="glmnet" />
+
+### All changes
+
+- support modifying the apds9960 settings <PR number={3708} repo="esphome" /> by <GhUser name="ssieb" />
+- Add support for pvvx mithermometer display via ble client <PR number={3333} repo="esphome" /> by <GhUser name="puuu" />
+- Improve OTA error messages adding return codes <PR number={3698} repo="esphome" /> by <GhUser name="IgnacioHR" />
+- Send CR also for commands for sim800l <PR number={3719} repo="esphome" /> by <GhUser name="ssieb" />
+- hydreon_rgxx: Support lens_bad, em_sat and temperature <PR number={3642} repo="esphome" /> by <GhUser name="functionpointer" />
+- wifi: support 802.11k and 802.11v <PR number={3600} repo="esphome" /> by <GhUser name="stintel" />
+- Add final validate for i2c with mix/max frequency <PR number={3727} repo="esphome" /> by <GhUser name="jesserockz" />
+- Add dps310 sensor support <PR number={3704} repo="esphome" /> by <GhUser name="kbx81" /> (new-integration)
+- Let favicon be cached <PR number={3729} repo="esphome" /> by <GhUser name="slovdahl" />
+- Add bitmap font support <PR number={3573} repo="esphome" /> by <GhUser name="justfalter" />
+- add log messages for bad pronto codes <PR number={3738} repo="esphome" /> by <GhUser name="ssieb" />
+- add color compare operator's <PR number={3730} repo="esphome" /> by <GhUser name="nielsnl68" />
+- Support for MCP9600 Thermocouple Amplifier <PR number={3700} repo="esphome" /> by <GhUser name="MrEditor97" /> (new-integration)
+- Support high update rates and fix several bugs in the cse7766 component. <PR number={3675} repo="esphome" /> by <GhUser name="fhriley" />
+- Add Prometheus metrics relabeling <PR number={3734} repo="esphome" /> by <GhUser name="jangrewe" />
+- mcp23017: read output latch registers during setup <PR number={3744} repo="esphome" /> by <GhUser name="andyboeh" />
+- Captive portal show nearby WiFi with no ssid configured <PR number={3748} repo="esphome" /> by <GhUser name="anatoly-savchenkov" />
+- Remove unnecessary schema extension on template button <PR number={3753} repo="esphome" /> by <GhUser name="jesserockz" />
+- Tidy up switch schemas <PR number={3754} repo="esphome" /> by <GhUser name="jesserockz" />
+- Add IP101 support to Ethernet component <PR number={3751} repo="esphome" /> by <GhUser name="kbx81" />
+- Add BedJet Fan child component <PR number={3735} repo="esphome" /> by <GhUser name="jhansche" />
+- ibeacon support for the ble_rssi sensor <PR number={3745} repo="esphome" /> by <GhUser name="wjtje" />
+- Add AEHA IR Protocol <PR number={3726} repo="esphome" /> by <GhUser name="hazi" />
+- Add sum type to binary_sensor_map <PR number={3541} repo="esphome" /> by <GhUser name="fbrthld" />
+- Bump aioesphomeapi from 10.11.0 to 10.13.0 <PR number={3740} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- Bump pylint from 2.14.5 to 2.15.0 <PR number={3746} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- Esp32 pulsecounter optional pcnt <PR number={3691} repo="esphome" /> by <GhUser name="RoboMagus" />
+- Bump black from 22.6.0 to 22.8.0 <PR number={3760} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- Various ili9341 fixes <PR number={3756} repo="esphome" /> by <GhUser name="nielsnl68" />
+- Add the same docker tags as used in HA <PR number={3752} repo="esphome" /> by <GhUser name="andrey-yantsen" />
+- Bump pytest from 7.1.1 to 7.1.3 <PR number={3766} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- Remove unneeded line (spi component adds it) <PR number={3778} repo="esphome" /> by <GhUser name="jesserockz" />
+- Move crc16 to helpers <PR number={3780} repo="esphome" /> by <GhUser name="jesserockz" />
+- YAML linting <PR number={3779} repo="esphome" /> by <GhUser name="jesserockz" />
+- Add support to tm1621 display <PR number={3737} repo="esphome" /> by <GhUser name="Philippe12" /> (new-integration)
+- u-fire EC sensor <PR number={3774} repo="esphome" /> by <GhUser name="pvizeli" /> (new-integration)
+- Add support for MPL3115A2 Pressure/Altitude and Temperature Sensor <PR number={3371} repo="esphome" /> by <GhUser name="kbickar" /> (new-integration)
+- Add support for BL0942 voltage, current, energy and power Sensor <PR number={3777} repo="esphome" /> by <GhUser name="dbuezas" /> (new-integration)
+- Bump pylint from 2.15.0 to 2.15.2 <PR number={3785} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- Add Factory Reset button and switch <PR number={3724} repo="esphome" /> by <GhUser name="anatoly-savchenkov" /> (new-integration)
+- [MPU6050] Support devices with WHOAMI 0x98 <PR number={3784} repo="esphome" /> by <GhUser name="CarlosGS" />
+- Bump zeroconf from 0.39.0 to 0.39.1 <PR number={3782} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- Add support for TM1638 Led and Key component <PR number={3340} repo="esphome" /> by <GhUser name="skykingjwc" /> (new-integration)
+- Remove status_set_error from ufire_ec <PR number={3792} repo="esphome" /> by <GhUser name="pvizeli" />
+- Bump frenck/action-yamllint from 1.2.0 to 1.3.0 <PR number={3798} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- esp32_ble_tracker continuous and one shot scanning modes <PR number={3649} repo="esphome" /> by <GhUser name="jonofmac" />
+- Add stop action for ble scanning <PR number={3799} repo="esphome" /> by <GhUser name="jesserockz" />
+- Add Prometheus Service Discovery for online devices <PR number={3788} repo="esphome" /> by <GhUser name="cznewt" />
+- Allow ble tracker to subscribe to ota start and stop the scanning <PR number={3800} repo="esphome" /> by <GhUser name="jesserockz" />
+- Add uFire ISE sensor <PR number={3789} repo="esphome" /> by <GhUser name="pvizeli" /> (new-integration)
+- fix spi timing issues <PR number={3763} repo="esphome" /> by <GhUser name="IgnacioHR" />
+- null initialize total sensor for pulse counter <PR number={3803} repo="esphome" /> by <GhUser name="RoboMagus" />
+- Sim800l add calls, multiline sms and ussd <PR number={3630} repo="esphome" /> by <GhUser name="glmnet" />
+- Unify 'nullptr' initalization of class members; <PR number={3805} repo="esphome" /> by <GhUser name="RoboMagus" />
+- Initialize all child sensors to nullptr <PR number={3808} repo="esphome" /> by <GhUser name="jesserockz" />
+- Remove floating point calculation from ac_dimmer ISR <PR number={3770} repo="esphome" /> by <GhUser name="Azimath" />
+- split pronto codes if they are too long <PR number={3812} repo="esphome" /> by <GhUser name="ssieb" />
+- [BME280] raise standby time <PR number={3804} repo="esphome" /> by <GhUser name="h3ndrik" />
+- Make sprinkler reset_resume() method public <PR number={3824} repo="esphome" /> by <GhUser name="kbx81" />
+- Bump dashboard to 20220919.1 <PR number={3828} repo="esphome" /> by <GhUser name="balloob" />
+- Fix-esphome-validation-line-number <PR number={3815} repo="esphome" /> by <GhUser name="glmnet" />
+- Bump dashboard to 20220920.0 <PR number={3831} repo="esphome" /> by <GhUser name="balloob" />
+- Bump dashboard to 20220920.1 <PR number={3834} repo="esphome" /> by <GhUser name="glmnet" />
+
+{/* markdownlint-enable MD013 */}
+
+## All Changelogs
+
+<Changelogs />

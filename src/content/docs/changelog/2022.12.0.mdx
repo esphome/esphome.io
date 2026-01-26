@@ -1,0 +1,231 @@
+---
+title: "ESPHome 2022.12.0 - 14th December 2022"
+description: "Changelog for ESPHome 2022.12.0."
+---
+
+import PR from '@/components/PR.astro';
+import GhUser from '@/components/GhUser.astro';
+import Changelogs from '@/components/Changelogs.astro';
+import ComponentGrid from '@/components/ComponentGrid.astro';
+
+
+<ComponentGrid items={[
+  {
+    "title": "ESP32",
+    "link": "components/esp32",
+    "image": "esp32.svg"
+  },
+  {
+    "title": "Bluetooth Proxy",
+    "link": "components/bluetooth_proxy",
+    "image": "bluetooth.svg",
+    "darkInvert": true
+  },
+  {
+    "title": "SN74HC165 I/O Expander",
+    "link": "components/sn74hc165",
+    "image": "sn74hc595.jpg"
+  }
+]} />
+The festive holidays are coming early and bring you an ESPHome release 1 week earlier than normal.
+This release does not bring a bunch of new components like most releases, but instead the focus
+has been on upgrading the core Arduino and ESP-IDF versions used for the ESP32 based devices.
+
+## Ethernet
+
+Because these core upgrade have aligned the version of ESP-IDF under the hood, `ethernet`
+is now able to be used when specifying ESP-IDF as your framework of choice.
+
+## Bluetooth Proxy
+
+The Bluetooth Proxy has also had a whole lot of work done by <GhUser name="bdraco" /> under the hood to
+improve the stability, speed and reliability between Home Assistant and the bluetooth devices
+that get proxied through. Along with some of these bluetooth changes is a change to the
+underlying flash partition table that ESPHome uses. OTA will work, but to fully take advantage
+of the performance increases for bluetooth, it is best to at least one serial flash with ESPHome
+2022.12.0 or later.
+
+## Container images
+
+> [!NOTE]
+> This breaking change only affects you if you use docker containers directly and specify the suffix
+> in your image.
+
+2022.12.6 changes the way the container images are built and published. This is due to something
+breaking somewhere that we could not explain. It has to do with the `docker manifest` command
+which has been around for a while but always been marked as `experimental` so we cannot really
+complain.
+
+From now on there will be no builds with tags for the `-armv7` / `-amd64` / `aarch64` suffixes,
+but the main images (`ghcr.io/esphome/esphome:&lt;version&gt;`  ) will be multi-arch capable and work on the
+3 supported architectures.
+
+{/* markdownlint-disable MD013 */}
+
+## Release 2022.12.1 - December 16
+
+- Support non-multiarch toolchains on 32-bit ARM <PR number={4191} repo="esphome" /> by <GhUser name="agners" />
+- Mark ESP32-S2 as not having Bluetooth <PR number={4194} repo="esphome" /> by <GhUser name="jesserockz" />
+- Fix i2s_audio media_player compiling for esp32-s2 <PR number={4195} repo="esphome" /> by <GhUser name="jesserockz" />
+
+## Release 2022.12.2 - December 20
+
+- Fix import_full_config for adoption configs <PR number={4197} repo="esphome" /> by <GhUser name="jesserockz" />
+- Handle zero padding anywhere in the combined adv data <PR number={4208} repo="esphome" /> by <GhUser name="bdraco" />
+
+## Release 2022.12.3 - December 20
+
+- Fix ESP32 GPIO when using INPUT PULLUP mode <PR number={4213} repo="esphome" /> by <GhUser name="jesserockz" />
+
+## Release 2022.12.4 - January 20
+
+- Fix gpio pin mode for ISR pins <PR number={4216} repo="esphome" /> by <GhUser name="jesserockz" />
+- Always send the MTU request for BLE v3 cached connections <PR number={4322} repo="esphome" /> by <GhUser name="bdraco" />
+
+## Release 2022.12.5 - January 23
+
+- Bump nano version in lint docker image <PR number={4218} repo="esphome" /> by <GhUser name="jesserockz" />
+
+## Release 2022.12.6 - January 24
+
+- Move from docker manifest command to buildx with platforms <PR number={4320} repo="esphome" /> by <GhUser name="jesserockz" /> (breaking-change)
+
+## Release 2022.12.7 - January 26
+
+- Add "content" to deploy-ha-addon-repo dispatch <PR number={4349} repo="esphome" /> by <GhUser name="ludeeus" />
+- fix stepper jump back with small steps <PR number={4339} repo="esphome" /> by <GhUser name="0xDRRB" />
+- rename esp32 CAN to TWAI, so it compiles again <PR number={4334} repo="esphome" /> by <GhUser name="designer2k2" />
+- Fix BME280 initialization before wifi setup <PR number={4190} repo="esphome" /> by <GhUser name="pxe-la" />
+- Add a soft reset in setup() for bmp280 <PR number={4329} repo="esphome" /> by <GhUser name="melyux" />
+
+## Release 2022.12.8 - January 27
+
+- Upgrades add-on base image to 6.2.0 <PR number={4310} repo="esphome" /> by <GhUser name="frenck" />
+- Migrate old-style S6 scripts to s6-rc.d <PR number={4311} repo="esphome" /> by <GhUser name="frenck" />
+- Refactor NGINX configuration of Home Assistant Add-on <PR number={4312} repo="esphome" /> by <GhUser name="frenck" />
+- Add Home Assistant integration discovery <PR number={4328} repo="esphome" /> by <GhUser name="frenck" />
+
+## Full list of changes
+
+### New Features
+
+- PID Climate - deadband and output sampling <PR number={3254} repo="esphome" /> by <GhUser name="patrickcollins12" /> (new-feature)
+
+### New Components
+
+- Add sn74hc165 input shift register <PR number={4151} repo="esphome" /> by <GhUser name="jesserockz" /> (new-integration)
+
+### Breaking Changes
+
+- Update esp32 arduino and platform versions <PR number={3564} repo="esphome" /> by <GhUser name="jesserockz" /> (notable-change) (breaking-change)
+
+### Beta Changes
+
+- Fix ble parsing with zero padded advertisements <PR number={4162} repo="esphome" /> by <GhUser name="jesserockz" />
+- Increase watchdog timeout when starting OTA <PR number={4172} repo="esphome" /> by <GhUser name="jesserockz" />
+- Bump esphome-dashboard to 20221213.0 <PR number={4176} repo="esphome" /> by <GhUser name="jesserockz" />
+- Remove internal pin restriction from cd74hc4067 <PR number={4179} repo="esphome" /> by <GhUser name="jesserockz" />
+- Speed up bluetooth proxy connections when using esp-idf <PR number={4171} repo="esphome" /> by <GhUser name="bdraco" /> (notable-change)
+- Remove warnings when falling through switch cases on purpose <PR number={4181} repo="esphome" /> by <GhUser name="jesserockz" />
+- Revert camera config change for esp-idf <PR number={4182} repo="esphome" /> by <GhUser name="jesserockz" />
+
+### Notable Changes
+
+- Update esp32 arduino and platform versions <PR number={3564} repo="esphome" /> by <GhUser name="jesserockz" /> (notable-change) (breaking-change)
+- Update ESP-IDF and platform version <PR number={3565} repo="esphome" /> by <GhUser name="jesserockz" /> (notable-change)
+- Speed up bluetooth proxy connections when using esp-idf <PR number={4171} repo="esphome" /> by <GhUser name="bdraco" /> (notable-change)
+
+### All changes
+
+- Bump colorama from 0.4.5 to 0.4.6 <PR number={4010} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- Bump frenck/action-yamllint from 1.3.0 to 1.3.1 <PR number={4011} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- add two new icons <PR number={3963} repo="esphome" /> by <GhUser name="nagyrobi" />
+- Move CONF_INTERRUPT_PIN to const.py <PR number={4014} repo="esphome" /> by <GhUser name="jesserockz" />
+- Bump pyupgrade from 3.2.0 to 3.2.2 <PR number={4017} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- Add reset_reason text sensor to debug component <PR number={3814} repo="esphome" /> by <GhUser name="kuba2k2" />
+- remove unused variable last_save in total_daily_energy <PR number={4039} repo="esphome" /> by <GhUser name="bkaufx" />
+- Bump base image versions to latest <PR number={4016} repo="esphome" /> by <GhUser name="jesserockz" />
+- Add number device class support <PR number={4042} repo="esphome" /> by <GhUser name="frenck" />
+- Update esp32 arduino and platform versions <PR number={3564} repo="esphome" /> by <GhUser name="jesserockz" /> (notable-change) (breaking-change)
+- Update esp32 boards list <PR number={4056} repo="esphome" /> by <GhUser name="jesserockz" />
+- Add Lolin S2 Mini board <PR number={3264} repo="esphome" /> by <GhUser name="jhamhader" />
+- Add pin aliases for upesy boards <PR number={3794} repo="esphome" /> by <GhUser name="uPesy" />
+- Bump pylint from 2.15.5 to 2.15.6 <PR number={4058} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- fix display_menu recursive schema gen <PR number={4045} repo="esphome" /> by <GhUser name="glmnet" />
+- Remove manual handling of ethernet power pin <PR number={4062} repo="esphome" /> by <GhUser name="jesserockz" />
+- Bump aioesphomeapi from 11.4.3 to 12.0.0 <PR number={4070} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- Update ESP-IDF and platform version <PR number={3565} repo="esphome" /> by <GhUser name="jesserockz" /> (notable-change)
+- Always use brackets around single log macros <PR number={4072} repo="esphome" /> by <GhUser name="jesserockz" />
+- Midea ir templatable code <PR number={4053} repo="esphome" /> by <GhUser name="reidprojects" />
+- Boards: Adafruit QT Py ESP32 Pico/C3/S2 <PR number={4064} repo="esphome" /> by <GhUser name="jenscski" />
+- Dont set esp32 pin drive strength unless pin is set for output <PR number={4075} repo="esphome" /> by <GhUser name="jesserockz" />
+- Don't allow debug component if you don't have at least debug logging level <PR number={4076} repo="esphome" /> by <GhUser name="jesserockz" />
+- Remove a bunch of unnecessary pylint disabling <PR number={4079} repo="esphome" /> by <GhUser name="jesserockz" />
+- Update ESP32-audioI2S library <PR number={4073} repo="esphome" /> by <GhUser name="jesserockz" />
+- Add vector includes <PR number={4080} repo="esphome" /> by <GhUser name="jesserockz" />
+- Allow manually specifying binary file to OTA <PR number={4054} repo="esphome" /> by <GhUser name="jesserockz" />
+- Fix regressed 'esphome run' <PR number={4094} repo="esphome" /> by <GhUser name="mmakaay" />
+- Make parse_characteristics and parse_descriptors lazy to reduce memory pressure <PR number={4063} repo="esphome" /> by <GhUser name="bdraco" />
+- Speed up BLE connections <PR number={4093} repo="esphome" /> by <GhUser name="bdraco" />
+- Align BLE service logging <PR number={4095} repo="esphome" /> by <GhUser name="bdraco" />
+- Suppress logging unhandled ESP_BLE_AD_TYPE_INT_RANGE <PR number={4096} repo="esphome" /> by <GhUser name="bdraco" />
+- Make sure all BLE address strings are uppercase <PR number={4097} repo="esphome" /> by <GhUser name="bdraco" />
+- Add logging for BLE connection slots <PR number={4098} repo="esphome" /> by <GhUser name="bdraco" />
+- Fix registering for gatt notify when characteristic only support indicate <PR number={4092} repo="esphome" /> by <GhUser name="bdraco" />
+- Fix descriptors not being deleted <PR number={4104} repo="esphome" /> by <GhUser name="bdraco" />
+- Improve reliability of bluetooth active connections <PR number={4049} repo="esphome" /> by <GhUser name="bdraco" />
+- Always use generated api options from aioesphomeapi <PR number={4116} repo="esphome" /> by <GhUser name="jesserockz" />
+- Fix bluetooth_gatt_write_descriptor never getting a response <PR number={4112} repo="esphome" /> by <GhUser name="bdraco" />
+- Combine the scanner failure check so we only stop the scanner once <PR number={4111} repo="esphome" /> by <GhUser name="bdraco" />
+- Reduce memory needed to send the services list <PR number={4110} repo="esphome" /> by <GhUser name="bdraco" />
+- Avoid parsing characteristics and descriptors to reduce memory pressure <PR number={4109} repo="esphome" /> by <GhUser name="bdraco" />
+- Send device address type alongside ble advertisements <PR number={4115} repo="esphome" /> by <GhUser name="jesserockz" />
+- Remove uuid lookups from BLE read/write/notify characteristics <PR number={4102} repo="esphome" /> by <GhUser name="bdraco" />
+- Active BLE connection v3 <PR number={4113} repo="esphome" /> by <GhUser name="bdraco" />
+- preprocess out proto_enum_to_string if not needed <PR number={4119} repo="esphome" /> by <GhUser name="jesserockz" />
+- Bump aioesphomeapi from 12.0.0 to 12.2.0 <PR number={4120} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- Avoid parsing services with v3 connections without cache <PR number={4117} repo="esphome" /> by <GhUser name="bdraco" />
+- FIX: Unnecessary flash writes by ModbusSwitch component <PR number={3648} repo="esphome" /> by <GhUser name="jpeletier" />
+- Speed up uuid parsing when fetching the service list <PR number={4121} repo="esphome" /> by <GhUser name="bdraco" />
+- modbus_switch: honor switch:restore_mode <PR number={4122} repo="esphome" /> by <GhUser name="jpeletier" />
+- PID Climate - deadband and output sampling <PR number={3254} repo="esphome" /> by <GhUser name="patrickcollins12" /> (new-feature)
+- Allow auto setting of ble client id if there is only 1 in config <PR number={4125} repo="esphome" /> by <GhUser name="jesserockz" />
+- fix RESTORE_INVERTED switch:restore_mode <PR number={4129} repo="esphome" /> by <GhUser name="jpeletier" />
+- Bump pylint from 2.15.6 to 2.15.7 <PR number={4127} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- Allow global setting of compile process limit <PR number={4081} repo="esphome" /> by <GhUser name="jesserockz" />
+- Bump flake8 from 5.0.4 to 6.0.0 <PR number={4084} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- Bump arduino pico and update wifi methods <PR number={4144} repo="esphome" /> by <GhUser name="jesserockz" />
+- Bump aioesphomeapi from 12.2.0 to 12.2.1 <PR number={4133} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- Bump esptool from 3.3.1 to 4.4 <PR number={4071} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- Fix mismatched flake8 version in pre-commit <PR number={4145} repo="esphome" /> by <GhUser name="jesserockz" />
+- Detect BLE stack unrecoverable state <PR number={4128} repo="esphome" /> by <GhUser name="bdraco" />
+- Bump pylint from 2.15.7 to 2.15.8 <PR number={4148} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- Fix crash with bluetooth tracker and esp-idf <PR number={4140} repo="esphome" /> by <GhUser name="bdraco" />
+- Use ENTITY_CATEGORY_CONFIG for sprinkler config switches. <PR number={4141} repo="esphome" /> by <GhUser name="schinckel" />
+- fix switch initialization <PR number={4153} repo="esphome" /> by <GhUser name="ssieb" />
+- Change 4 chip limit on sn74hc595 to 256 <PR number={4108} repo="esphome" /> by <GhUser name="jesserockz" />
+- Add reports fahrenheit to tuya climate <PR number={4032} repo="esphome" /> by <GhUser name="jesserockz" />
+- Allow dashboard import to pull complete file from github <PR number={3982} repo="esphome" /> by <GhUser name="jesserockz" />
+- Invalid config for waveshare models with no full_update_every <PR number={4066} repo="esphome" /> by <GhUser name="Nizzle" />
+- Add sn74hc165 input shift register <PR number={4151} repo="esphome" /> by <GhUser name="jesserockz" /> (new-integration)
+- Fixed deep sleep for ESP32C3 <PR number={4143} repo="esphome" /> by <GhUser name="pistifonok" />
+- ESP32 IDF: Override toolchain-esp32ulp with espressifs own published version <PR number={4155} repo="esphome" /> by <GhUser name="jesserockz" />
+- Add API for dashboard to get boards list <PR number={4154} repo="esphome" /> by <GhUser name="jesserockz" />
+- Bump pytest-asyncio from 0.20.1 to 0.20.2 <PR number={4019} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- Bump pyupgrade from 3.2.2 to 3.3.0 <PR number={4137} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- Bump dessant/lock-threads from 3 to 4 <PR number={4150} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- Bump aioesphomeapi from 12.2.1 to 13.0.1 <PR number={4149} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- Bump esphome-dashboard to 20221207.0 <PR number={4156} repo="esphome" /> by <GhUser name="jesserockz" />
+- Fix ble parsing with zero padded advertisements <PR number={4162} repo="esphome" /> by <GhUser name="jesserockz" />
+- Increase watchdog timeout when starting OTA <PR number={4172} repo="esphome" /> by <GhUser name="jesserockz" />
+- Bump esphome-dashboard to 20221213.0 <PR number={4176} repo="esphome" /> by <GhUser name="jesserockz" />
+- Remove internal pin restriction from cd74hc4067 <PR number={4179} repo="esphome" /> by <GhUser name="jesserockz" />
+- Speed up bluetooth proxy connections when using esp-idf <PR number={4171} repo="esphome" /> by <GhUser name="bdraco" /> (notable-change)
+- Remove warnings when falling through switch cases on purpose <PR number={4181} repo="esphome" /> by <GhUser name="jesserockz" />
+- Revert camera config change for esp-idf <PR number={4182} repo="esphome" /> by <GhUser name="jesserockz" />
+
+{/* markdownlint-enable MD013 */}
+
+## All Changelogs
+
+<Changelogs />

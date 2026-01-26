@@ -1,0 +1,437 @@
+---
+title: "ESPHome 2025.2.0 - 19th February 2025"
+description: "Changelog for ESPHome 2025.2.0."
+---
+
+import PR from '@/components/PR.astro';
+import GhUser from '@/components/GhUser.astro';
+import Changelogs from '@/components/Changelogs.astro';
+import ComponentGrid from '@/components/ComponentGrid.astro';
+
+
+<ComponentGrid items={[
+  {
+    "title": "Audio ADC Core",
+    "link": "components/audio_adc/",
+    "image": "audio_adc.svg"
+  },
+  {
+    "title": "XXTEA",
+    "link": "components/xxtea",
+    "image": "xxtea.svg"
+  },
+  {
+    "title": "Host SDL2 Keyboard",
+    "link": "components/binary_sensor/sdl",
+    "image": "sdl.png"
+  },
+  {
+    "title": "ES7210",
+    "link": "components/audio_adc/es7210",
+    "image": "es7210.svg"
+  },
+  {
+    "title": "ES7243E",
+    "link": "components/audio_adc/es7243e",
+    "image": "es7243e.svg"
+  },
+  {
+    "title": "ES8156",
+    "link": "components/audio_dac/es8156",
+    "image": "es8156.svg"
+  },
+  {
+    "title": "Speaker Media Player",
+    "link": "components/media_player/speaker",
+    "image": "speaker.svg",
+    "darkInvert": true
+  },
+  {
+    "title": "Mixer Speaker",
+    "link": "components/speaker/mixer",
+    "image": "mixer.svg"
+  },
+  {
+    "title": "Resampler Speaker",
+    "link": "components/speaker/resampler",
+    "image": "waveform.svg",
+    "darkInvert": true
+  }
+]} />
+**🎉 Happy New Year! 🎉**
+
+We're kicking off 2025 with a number of updates, several of which are focused on removing old code. Unfortunately,
+this means we have a few breaking changes, but this work helps keep ESPHome more maintainable in the long-run.
+
+Join us below for the ESPHome New Year Release Party.
+
+{/* markdownlint-disable-next-line MD033 */}
+<iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/HtG3fjAO96c"
+        title="YouTube video player" frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen>
+</iframe>
+
+## Removal of "old style" Platform Configuration
+
+[Three years ago](https://github.com/esphome/esphome/pull/2303), we added support for using
+[ESP-IDF](https://github.com/espressif/esp-idf/) directly (as an alternative to Arduino). This brought about a
+number of benefits and a new syntax was introduced to facilitate greater flexibility when specifying and configuring
+your microcontroller/board.
+
+In this release, we've removed support for the "old style" of configuring your microcontroller/board. If you're still
+using it, you'll need to update your configurations to use the new style. A brief explanation is
+[in this pull request](https://github.com/esphome/esphome/pull/8118), but for more detail, please see the
+[documentation for your microcontroller platform](/components#devices).
+
+## Removal of Custom Components
+
+Custom components were deprecated over a year ago and, as promised, support for them was removed in this release. We
+encourage all developers to migrate their custom components to [external_components](/components/external_components/).
+Please see [a note about custom components](https://developers.esphome.io/blog/2025/02/19/about-the-removal-of-support-for-custom-components/)
+for a detailed explanation and next steps.
+
+## Removal of `armv7` support
+
+ESPHome no longer supports the 32-bit `armv7` architecture. This is due to both waning support as it relates to
+tooling and performance reasons. We strongly recommend moving to a more modern architecture, especially if you're using
+the ESPHome Device Builder to build/compile firmware for your devices.
+
+- The toolchains required for compiling ESPHome are dropping support for armv7, so if the toolchain is not available,
+  ESPHome can't do the compile.
+
+- Building on armv7 is very slow and is likely to crash due to lack of RAM, which is not a good user experience.
+- ESPHome can be installed anywhere you can run Docker or Python pip, which will provide a better experience with
+  much faster compiling.
+
+## `esp32_rmt` Updates
+
+Components which utilize the RMT hardware found on the ESP32 and its variants have been updated to use the new
+interface available in [ESP-IDF](https://github.com/espressif/esp-idf/) versions 5 and above. This eliminates
+related warnings seen in the compiler logs while building ESPHome configurations. In most cases, you won't notice any
+difference, but this change could result in some issues, particularly for
+[external_components](/components/external_components/). You may need to make a minor change or two in your device
+configurations; the configuration validator will tell you if this is necessary as you update your devices.
+
+## Audio Components
+
+This release includes support for a number of new audio-related components/hardware. These are primarily aimed at
+supporting hardware found in Espressif's S3-Box series of products, eliminating the need to use the
+[ESP-ADF](https://github.com/espressif/esp-adf/) and thus offering better integration with ESPHome in general. If
+you're using an S3-Box (or one of the variants), we strongly recommend updating your device either OTA or by using our
+[projects](/projects/) web installer. If you have "taken control" of or "adopted" your S3-Box, we strongly recommend
+updating your device's local configuration based on our updated configuration files found at
+[https://github.com/esphome/wake-word-voice-assistants](https://github.com/esphome/wake-word-voice-assistants).
+
+In addition, new `speaker` components have been introduced to provide more advanced functionality when using
+[voice_assistant](/components/voice_assistant/). These components extend our work to help you create the ultimate
+personal voice assistant hardware.
+
+The new [speaker media player](/components/media_player/speaker/) component adds several features
+for building a well-rounded audio device. It supports playing two different streams of audio: one for announcements
+and another for music.
+
+The new [mixer speaker](/components/speaker/mixer/) component lets you combine the two streams. The mixer
+even supports audio ducking, so you can lower the volume of the music while your announcement plays!
+
+## Image Components
+
+This release adds support for alpha-blending images when using LVGL. To facilitate this, the `use_transparency`
+configuration variable in [image](/components/image/) and related components was renamed to `transparency`
+and changed from a boolean to an enum; in addition, the `type` configuration variable is now mandatory. See the
+[image](/components/image/) documentation for more detail.
+
+The default presentation for binary images has changed in part due to the new transparency support. This may result
+in images appearing to have inverted colors for example on e-ink displays. There is a new configuration variable,
+`invert_alpha`, which can be used to switch black and white pixels if necessary to restore the previous behaviour.
+
+Finally, the [online_image](/components/online_image/) was updated to add support for both BMP and JPEG image formats.
+
+## ILI9XXX Display Component
+
+There are two changes to the [ili9xxx](/components/display/ili9xxx/) component. Previously the component
+automatically loaded the `psram` component - this has been removed, and you must now explicitly include the
+`psram` component in your configuration if your display requires it. The bit-depth defaults to 16 bit as before, but
+there is no attempt to automatically fallback to 8 bit if insufficient memory is available. You must now explicitly
+select 8-bit mode with the `color_palette` configuration variable if required.
+
+The symptoms caused by these changes are likely to be a blank screen or a screen that is not displaying correctly. Check
+the runtime logs for any errors or warnings that may indicate the cause of the issue, specifically memory allocation
+failures.
+
+{/* markdownlint-disable MD013 */}
+
+## Release 2025.2.1 - February 26
+
+- Bump aioesphomeapi to 29.1.1 <PR number={8274} repo="esphome" /> by <GhUser name="bdraco" />
+- Fix BLE max notifications with ESP-IDF 5.x <PR number={8301} repo="esphome" /> by <GhUser name="bdraco" />
+- Update webserver local assets to 20250224-195901 <PR number={8312} repo="esphome" /> by <GhUser name="esphomebot" />
+- Fix bluetooth race when disconnect called while still connecting <PR number={8297} repo="esphome" /> by <GhUser name="bdraco" />
+- [esp32_touch] Fix variants, add tests for variants <PR number={8320} repo="esphome" /> by <GhUser name="kbx81" />
+
+## Release 2025.2.2 - March 3
+
+- Fix `end_of_scan_` not being called while disconnecting <PR number={8328} repo="esphome" /> by <GhUser name="bdraco" />
+- [audio] Determine http timeout based on duration since last successful read <PR number={8341} repo="esphome" /> by <GhUser name="kahrendt" />
+- Bump aioesphomeapi to 29.3.2 <PR number={8353} repo="esphome" /> by <GhUser name="bdraco" />
+- [ltr390] Move calculation to allow dynamic setting of gain and resolution <PR number={8343} repo="esphome" /> by <GhUser name="jesserockz" />
+
+## Full list of changes
+
+### New Components
+
+- [es7210] add support for es7210 ADC <PR number={8007} repo="esphome" /> by <GhUser name="kahrendt" /> (new-integration)
+- [audio_adc] Add new `audio_adc` component <PR number={8094} repo="esphome" /> by <GhUser name="kbx81" /> (new-integration)
+- [es8156] Add support for ES8156 audio DAC <PR number={8085} repo="esphome" /> by <GhUser name="kbx81" /> (new-integration)
+- [es7243e] Add support for ES7243E audio ADC <PR number={8098} repo="esphome" /> by <GhUser name="kbx81" /> (new-integration)
+- [esp32_ble_server] Create custom services, characteristics and descriptors <PR number={7009} repo="esphome" /> by <GhUser name="Rapsssito" /> (new-integration)
+- [resampler] Media Player Components PR7 <PR number={8169} repo="esphome" /> by <GhUser name="kahrendt" /> (new-integration)
+- [mixer] Media Player Components PR8 <PR number={8170} repo="esphome" /> by <GhUser name="kahrendt" /> (new-integration)
+- [xxtea] Extract encryption functions to separate component <PR number={8183} repo="esphome" /> by <GhUser name="clydebarrow" /> (new-integration)
+- [logger] Add runtime level select <PR number={8222} repo="esphome" /> by <GhUser name="clydebarrow" /> (new-integration)
+- [speaker] Media Player Components PR9 <PR number={8171} repo="esphome" /> by <GhUser name="kahrendt" /> (new-integration)
+
+### New Platforms
+
+- [uptime] Add text_sensor <PR number={8028} repo="esphome" /> by <GhUser name="clydebarrow" /> (new-platform)
+- Add: Human Presence and Target Count to the Seeed Studio MR60BHA2 <PR number={8010} repo="esphome" /> by <GhUser name="limengdu" /> (new-platform)
+- [sdl] Implement binary sensors from keystrokes <PR number={8207} repo="esphome" /> by <GhUser name="bdm310" /> (new-platform)
+
+### Breaking Changes
+
+- [esp32_rmt] Updates for IDF 5+ <PR number={7770} repo="esphome" /> by <GhUser name="swoboda1337" /> (breaking-change)
+- [lvgl] remove default state <PR number={8038} repo="esphome" /> by <GhUser name="clydebarrow" /> (breaking-change)
+- [nextion] Brightness control tweaks <PR number={8027} repo="esphome" /> by <GhUser name="kbx81" /> (breaking-change)
+- [image] Transparency changes; code refactor <PR number={7908} repo="esphome" /> by <GhUser name="clydebarrow" /> (breaking-change)
+- [ili9xxx] psram and 8 bit changes <PR number={8084} repo="esphome" /> by <GhUser name="clydebarrow" /> (breaking-change)
+- [core] Remove old style platform configuration <PR number={8118} repo="esphome" /> by <GhUser name="jesserockz" /> (breaking-change)
+- [custom] Remove platforms <PR number={8119} repo="esphome" /> by <GhUser name="kbx81" /> (breaking-change)
+- Remove arm/v7 container image support <PR number={8194} repo="esphome" /> by <GhUser name="jesserockz" /> (breaking-change)
+- [esp32_rmt] Set pull-up and open-drain modes based on pin schema <PR number={8178} repo="esphome" /> by <GhUser name="swoboda1337" /> (breaking-change)
+- [scd30] Increase minimal CONF_UPDATE_INTERVAL from 1 to 2 seconds <PR number={8256} repo="esphome" /> by <GhUser name="DjordjeMandic" /> (breaking-change)
+
+### Beta Changes
+
+- [online_image]Fix reset if buffer not allocated <PR number={8236} repo="esphome" /> by <GhUser name="guillempages" />
+- [core] Ignore dot-prefixed config entries when looking for target platform <PR number={8240} repo="esphome" /> by <GhUser name="jesserockz" />
+- Bump zeroconf to 0.144.1 <PR number={8238} repo="esphome" /> by <GhUser name="bdraco" />
+- [core] Fix `config_dir` for dashboard <PR number={8242} repo="esphome" /> by <GhUser name="jesserockz" />
+- [cse7766] Remove `stream` dependency <PR number={7720} repo="esphome" /> by <GhUser name="gabest11" />
+- [graph] Remove `stream` dependency <PR number={8243} repo="esphome" /> by <GhUser name="kbx81" />
+- [modbus_controller] Remove `stream` dependency <PR number={8244} repo="esphome" /> by <GhUser name="kbx81" />
+- [logger] Fix bug causing global log level to be overwritten <PR number={8248} repo="esphome" /> by <GhUser name="swoboda1337" />
+- Add support for the DAC on the S2 <PR number={8030} repo="esphome" /> by <GhUser name="maraid" />
+- Fix crash when storage file doesnt exist yet <PR number={8249} repo="esphome" /> by <GhUser name="jesserockz" />
+- don't crash on null pages <PR number={8254} repo="esphome" /> by <GhUser name="ssieb" />
+- [scd30] Increase minimal CONF_UPDATE_INTERVAL from 1 to 2 seconds <PR number={8256} repo="esphome" /> by <GhUser name="DjordjeMandic" /> (breaking-change)
+- Bump zeroconf to 0.144.3 <PR number={8253} repo="esphome" /> by <GhUser name="bdraco" />
+- DHT platform now supports modules with inbuilt external resistor <PR number={8257} repo="esphome" /> by <GhUser name="deCodeIt" />
+- Replace glyphsets with esphome_glyphsets <PR number={8261} repo="esphome" /> by <GhUser name="bdraco" />
+- Bump aioesphomeapi to 29.1.0 <PR number={8105} repo="esphome" /> by <GhUser name="bdraco" />
+- Bump openssh-client to 1:9.2p1-2+deb12u4 to fix docker builds <PR number={8269} repo="esphome" /> by <GhUser name="bdraco" />
+- Increase default repeat delay for Toto remote transmitter protocol <PR number={8265} repo="esphome" /> by <GhUser name="G-Two" />
+- Bump zeroconf to 0.145.1 <PR number={8267} repo="esphome" /> by <GhUser name="bdraco" />
+
+### All changes
+
+- [rotary_encoder] Fix volatile increment/decrement deprecation warnings <PR number={7958} repo="esphome" /> by <GhUser name="edwardtfn" />
+- [pulse_counter] Fix volatile increment/decrement deprecation warnings <PR number={7954} repo="esphome" /> by <GhUser name="edwardtfn" />
+- [nextion] Publishes `is_connected()` <PR number={7961} repo="esphome" /> by <GhUser name="edwardtfn" />
+- Fix adc channel for ESP32-H2 <PR number={7964} repo="esphome" /> by <GhUser name="luar123" />
+- [nextion] Remove `_internal` from non-protected functions <PR number={7656} repo="esphome" /> by <GhUser name="edwardtfn" />
+- [opentherm] Message ordering, on-the-fly message editing, code improvements <PR number={7903} repo="esphome" /> by <GhUser name="olegtarasov" />
+- [debug] Detailed reset reason <PR number={7729} repo="esphome" /> by <GhUser name="edwardtfn" />
+- [uart] Use `SOC_UART_NUM` as number of uarts instead of `UART_NUM_MAX` <PR number={7967} repo="esphome" /> by <GhUser name="jesserockz" />
+- [ci] Dont run main ci suite on docker files <PR number={7966} repo="esphome" /> by <GhUser name="jesserockz" />
+- Bump docker/setup-buildx-action from 3.7.1 to 3.8.0 in the docker-actions group <PR number={7969} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- [core] Add c6 and h2 to split default <PR number={7974} repo="esphome" /> by <GhUser name="swoboda1337" />
+- [midea] Add Fahrenheit support to `midea_ac.follow_me` action <PR number={7762} repo="esphome" /> by <GhUser name="DjordjeMandic" />
+- [esp32_rmt] Updates for IDF 5+ <PR number={7770} repo="esphome" /> by <GhUser name="swoboda1337" /> (breaking-change)
+- [qspi_dbi] Bugfix and new features <PR number={7979} repo="esphome" /> by <GhUser name="clydebarrow" />
+- [helpers] Provide calls to get free heap and largest available block. <PR number={7978} repo="esphome" /> by <GhUser name="clydebarrow" />
+- Bump actions/upload-artifact from 4.4.3 to 4.5.0 <PR number={7981} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- [esp32_ble] do not skip events if queue is blocked <PR number={7960} repo="esphome" /> by <GhUser name="tomaszduda23" />
+- [ble_client, bluetooth_proxy, esp32_ble_client, esp32_ble_tracker] fix ble proxy stop working <PR number={7901} repo="esphome" /> by <GhUser name="tomaszduda23" />
+- [esp32_rmt] IDF 5+ update fixes <PR number={8002} repo="esphome" /> by <GhUser name="swoboda1337" />
+- Initialize esp32_rmt_led_strip buffer <PR number={8036} repo="esphome" /> by <GhUser name="pzich" />
+- [addressable_light] Remove rmt channel from idf tests <PR number={7987} repo="esphome" /> by <GhUser name="clydebarrow" />
+- Remove rmt channel from idf tests <PR number={8054} repo="esphome" /> by <GhUser name="clydebarrow" />
+- Fixed comment typo in light_color_values.h <PR number={8050} repo="esphome" /> by <GhUser name="samunemeth" />
+- Fix braceless else statements <PR number={7799} repo="esphome" /> by <GhUser name="pzich" />
+- Enable udp to work (on ipv4) when ipv6 is enabled <PR number={8060} repo="esphome" /> by <GhUser name="HeMan" />
+- Update sprinkler.cpp <PR number={7996} repo="esphome" /> by <GhUser name="jotaj91" />
+- [lvgl] remove default state <PR number={8038} repo="esphome" /> by <GhUser name="clydebarrow" /> (breaking-change)
+- [lvgl] fix bg_image_src <PR number={8005} repo="esphome" /> by <GhUser name="clydebarrow" />
+- [lgvl] disp_bg_image and disp_bg_opa changes <PR number={8025} repo="esphome" /> by <GhUser name="clydebarrow" />
+- [spi_led_strip] Fix priority <PR number={8021} repo="esphome" /> by <GhUser name="clydebarrow" />
+- [config] Early check for required version <PR number={8000} repo="esphome" /> by <GhUser name="clydebarrow" />
+- [lvgl] Implement `lvgl.page.is_showing:` condition <PR number={8055} repo="esphome" /> by <GhUser name="clydebarrow" />
+- [display] auto_clear_enabled defaults <PR number={7986} repo="esphome" /> by <GhUser name="clydebarrow" />
+- Convert IPAddress to use Pythonmodule ipaddress <PR number={8072} repo="esphome" /> by <GhUser name="HeMan" />
+- Add log level env var <PR number={7604} repo="esphome" /> by <GhUser name="briancw" />
+- [spi] relay on KEY_TARGET_PLATFORM as the other platforms does <PR number={8066} repo="esphome" /> by <GhUser name="tomaszduda23" />
+- Bump actions/upload-artifact from 4.5.0 to 4.6.0 <PR number={8058} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- Bump peter-evans/create-pull-request from 7.0.5 to 7.0.6 <PR number={8024} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- Bump docker/setup-qemu-action from 3.2.0 to 3.3.0 in the docker-actions group <PR number={8052} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- Bump docker/build-push-action from 6.10.0 to 6.11.0 in /.github/actions/build-image <PR number={8053} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- Allow CONF_RMT_CHANNEL parameter for IDF 4.X <PR number={8035} repo="esphome" /> by <GhUser name="gnumpi" />
+- [esp32] Fix arch_get_cpu_freq_hz <PR number={8047} repo="esphome" /> by <GhUser name="swoboda1337" />
+- Fix Waveshare 7in5bv3bwr image quality in BWR mode <PR number={8043} repo="esphome" /> by <GhUser name="zbikmarc" />
+- [json] use correct formatting <PR number={8039} repo="esphome" /> by <GhUser name="clydebarrow" />
+- [nextion] Brightness control tweaks <PR number={8027} repo="esphome" /> by <GhUser name="kbx81" /> (breaking-change)
+- [image] Transparency changes; code refactor <PR number={7908} repo="esphome" /> by <GhUser name="clydebarrow" /> (breaking-change)
+- Added VERY_VERBOSE dfplayer printing <PR number={8026} repo="esphome" /> by <GhUser name="solarkennedy" />
+- [core] fix comment for crc8 function in helpers.h <PR number={8016} repo="esphome" /> by <GhUser name="DjordjeMandic" />
+- [debug] Add framework type to debug info <PR number={8013} repo="esphome" /> by <GhUser name="edwardtfn" />
+- [debug] Add ESP32 partition table logging to `dump_config` <PR number={8012} repo="esphome" /> by <GhUser name="edwardtfn" />
+- [psram] Improve total PSRAM display in logs by using rounded KB values <PR number={8008} repo="esphome" /> by <GhUser name="edwardtfn" />
+- Use ESPHome logo on readme page according to theme (light/dark) <PR number={7992} repo="esphome" /> by <GhUser name="dougiteixeira" />
+- Fix compile errors with pioarduino/platform-espressif32: wifi_component_esp32_arduino.cpp <PR number={7998} repo="esphome" /> by <GhUser name="bitflippersanonymous" />
+- Include esp_mac.h and C++20 str_startswith/str_ends <PR number={7999} repo="esphome" /> by <GhUser name="bitflippersanonymous" />
+- [esp32_wifi] Enhance WiFi component with TCPIP core locking. <PR number={7997} repo="esphome" /> by <GhUser name="bitflippersanonymous" />
+- add missing include in base_automation.h <PR number={8001} repo="esphome" /> by <GhUser name="nielsnl68" />
+- Fixed topic when mac is used <PR number={7988} repo="esphome" /> by <GhUser name="Hadatko" />
+- web_server: Adds REST API POST endpoints to arm and disarm <PR number={7985} repo="esphome" /> by <GhUser name="heythisisnate" />
+- [lvgl] fix tests <PR number={8075} repo="esphome" /> by <GhUser name="clydebarrow" />
+- Allow external libraries to use ESP_LOGx macros <PR number={8078} repo="esphome" /> by <GhUser name="kroimon" />
+- [uptime] Add text_sensor <PR number={8028} repo="esphome" /> by <GhUser name="clydebarrow" /> (new-platform)
+- [image] Fix mdi images <PR number={8082} repo="esphome" /> by <GhUser name="clydebarrow" />
+- [ili9xxx] psram and 8 bit changes <PR number={8084} repo="esphome" /> by <GhUser name="clydebarrow" /> (breaking-change)
+- [spi] Restore `SPIDelegateDummy` <PR number={8019} repo="esphome" /> by <GhUser name="clydebarrow" />
+- [lvgl] fix lvgl.widget.update and friends <PR number={8087} repo="esphome" /> by <GhUser name="clydebarrow" />
+- fix(web_server/fan): send speed update values even when fan is off <PR number={8086} repo="esphome" /> by <GhUser name="distante" />
+- [es7210] add support for es7210 ADC <PR number={8007} repo="esphome" /> by <GhUser name="kahrendt" /> (new-integration)
+- [event] Store `last_event_type` in class <PR number={8088} repo="esphome" /> by <GhUser name="jesserockz" />
+- [prometheus] Select, media_player, and number prometheus metrics <PR number={7895} repo="esphome" /> by <GhUser name="jzucker2" />
+- Bump docker/build-push-action from 6.11.0 to 6.12.0 in /.github/actions/build-image <PR number={8090} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- Revert "Add resistance_sampler interface for config validation" <PR number={8093} repo="esphome" /> by <GhUser name="clydebarrow" />
+- Fix running pre-commit on Windows <PR number={8095} repo="esphome" /> by <GhUser name="stellar-aria" />
+- Remove black-formatter from pre-commit hooks <PR number={8097} repo="esphome" /> by <GhUser name="stellar-aria" />
+- Increase Daly-BMS coltage cells from 16 to 18 cells <PR number={8057} repo="esphome" /> by <GhUser name="j-sepul" />
+- [image]Rename option "use_transparency" <PR number={8113} repo="esphome" /> by <GhUser name="guillempages" />
+- [online_image] Use RAMAllocator <PR number={8114} repo="esphome" /> by <GhUser name="guillempages" />
+- Fixed incorrect display dimension <PR number={8110} repo="esphome" /> by <GhUser name="Duckle29" />
+- Update defines.h for esp-idf 5.1.5 <PR number={8117} repo="esphome" /> by <GhUser name="jesserockz" />
+- [audio_adc] Add new `audio_adc` component <PR number={8094} repo="esphome" /> by <GhUser name="kbx81" /> (new-integration)
+- [uptime] Cosmetic improvements for uptime text_sensor <PR number={8101} repo="esphome" /> by <GhUser name="clydebarrow" />
+- [es8156] Add support for ES8156 audio DAC <PR number={8085} repo="esphome" /> by <GhUser name="kbx81" /> (new-integration)
+- [esp32_touch] Fix deprecated warning <PR number={8092} repo="esphome" /> by <GhUser name="swoboda1337" />
+- [core] Remove old style platform configuration <PR number={8118} repo="esphome" /> by <GhUser name="jesserockz" /> (breaking-change)
+- Bump actions/stale from 9.0.0 to 9.1.0 <PR number={8120} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- [custom] Remove platforms <PR number={8119} repo="esphome" /> by <GhUser name="kbx81" /> (breaking-change)
+- Add: Human Presence and Target Count to the Seeed Studio MR60BHA2 <PR number={8010} repo="esphome" /> by <GhUser name="limengdu" /> (new-platform)
+- [es7243e] Add support for ES7243E audio ADC <PR number={8098} repo="esphome" /> by <GhUser name="kbx81" /> (new-integration)
+- [debug] fix debug_esp32 printf for partition size and address <PR number={8122} repo="esphome" /> by <GhUser name="fightforlife" />
+- [esp32] Set logger default interface for C6 <PR number={8126} repo="esphome" /> by <GhUser name="kbx81" />
+- [core] add support for custom platform <PR number={7616} repo="esphome" /> by <GhUser name="tomaszduda23" />
+- Add verbose logging for pulse width calculation in pulse_meter <PR number={8124} repo="esphome" /> by <GhUser name="DjordjeMandic" />
+- [ads1115] Add sample rate control <PR number={8102} repo="esphome" /> by <GhUser name="brambo123" />
+- Fix mqtt climate step rounding <PR number={8121} repo="esphome" /> by <GhUser name="olemmela" />
+- [spi] Fix data type in bitbash transfer_() <PR number={8125} repo="esphome" /> by <GhUser name="oliv3r" />
+- [online_image] Add binary bmp support <PR number={8116} repo="esphome" /> by <GhUser name="jesserockz" />
+- [online_image] Code Improvements <PR number={8130} repo="esphome" /> by <GhUser name="guillempages" />
+- Update mdns for ESP-IDF <PR number={8145} repo="esphome" /> by <GhUser name="HeMan" />
+- Include Bluetooth connection slot allocations in connections free message <PR number={8148} repo="esphome" /> by <GhUser name="bdraco" />
+- [esp32_ble_server] Create custom services, characteristics and descriptors <PR number={7009} repo="esphome" /> by <GhUser name="Rapsssito" /> (new-integration)
+- [online_image] Add JPEG support to online_image <PR number={8127} repo="esphome" /> by <GhUser name="guillempages" />
+- [logger] Ensure PRIu32 and friends are available <PR number={8155} repo="esphome" /> by <GhUser name="clydebarrow" />
+- Fix forgotten uses of use_transparency <PR number={8115} repo="esphome" /> by <GhUser name="kroimon" />
+- Add multicast support to udp component <PR number={8051} repo="esphome" /> by <GhUser name="HeMan" />
+- [display] Properly handle case of auto_clear_enabled: false <PR number={8156} repo="esphome" /> by <GhUser name="clydebarrow" />
+- [esp32_rmt] Increase default symbols in led strip and remove IRAM config <PR number={8133} repo="esphome" /> by <GhUser name="swoboda1337" />
+- [climate] Accept °K as intended <PR number={8134} repo="esphome" /> by <GhUser name="oliv3r" />
+- Bump docker/build-push-action from 6.12.0 to 6.13.0 in /.github/actions/build-image <PR number={8136} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- Bump pypa/gh-action-pypi-publish from 1.12.3 to 1.12.4 <PR number={8137} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- Bump actions/setup-python from 5.3.0 to 5.4.0 <PR number={8154} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- Bump actions/setup-python from 5.3.0 to 5.4.0 in /.github/actions/restore-python <PR number={8153} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- [remote_transmitter] Fix issues with 32bit rollover on esp8266 and libretiny <PR number={8056} repo="esphome" /> by <GhUser name="swoboda1337" />
+- Use abspath for config path dir <PR number={8044} repo="esphome" /> by <GhUser name="NicoIIT" />
+- [remote_base] Add default value for offset in is_valid <PR number={8159} repo="esphome" /> by <GhUser name="swoboda1337" />
+- feat(core): Add support for &lt;...&gt; includes <PR number={8132} repo="esphome" /> by <GhUser name="Rapsssito" />
+- Bump zeroconf to 0.143.0 <PR number={8104} repo="esphome" /> by <GhUser name="bdraco" />
+- [i2s_audio] Media Player Components PR1 <PR number={8163} repo="esphome" /> by <GhUser name="kahrendt" />
+- [audio, i2s_audio, speaker] Media Player Components PR2 <PR number={8164} repo="esphome" /> by <GhUser name="kahrendt" />
+- [audio] Media Player Components PR3 <PR number={8165} repo="esphome" /> by <GhUser name="kahrendt" />
+- Add virtual get_flags() to GPIOPin and implementation in InternalGPIOPin derivatives <PR number={8151} repo="esphome" /> by <GhUser name="DjordjeMandic" />
+- Make get_flags() in GPIOPin mandatory <PR number={8182} repo="esphome" /> by <GhUser name="DjordjeMandic" />
+- [audio] Media Player Components PR4 <PR number={8166} repo="esphome" /> by <GhUser name="kahrendt" />
+- [audio] Media Player Components PR5 <PR number={8167} repo="esphome" /> by <GhUser name="kahrendt" />
+- [audio] Media Player Components PR6 <PR number={8168} repo="esphome" /> by <GhUser name="kahrendt" />
+- Remove arm/v7 container image support <PR number={8194} repo="esphome" /> by <GhUser name="jesserockz" /> (breaking-change)
+- [resampler] Media Player Components PR7 <PR number={8169} repo="esphome" /> by <GhUser name="kahrendt" /> (new-integration)
+- [mixer] Media Player Components PR8 <PR number={8170} repo="esphome" /> by <GhUser name="kahrendt" /> (new-integration)
+- [CI] Consolidate some tests (A) <PR number={8184} repo="esphome" /> by <GhUser name="kbx81" />
+- [CI] Consolidate some tests (B) <PR number={8185} repo="esphome" /> by <GhUser name="kbx81" />
+- [CI] Consolidate some tests (C) <PR number={8186} repo="esphome" /> by <GhUser name="kbx81" />
+- [CI] Consolidate some tests (D) <PR number={8189} repo="esphome" /> by <GhUser name="kbx81" />
+- [CI] Consolidate some tests (E) <PR number={8191} repo="esphome" /> by <GhUser name="kbx81" />
+- [CI] Consolidate some tests (F) <PR number={8195} repo="esphome" /> by <GhUser name="kbx81" />
+- [CI] Consolidate some tests (G) <PR number={8196} repo="esphome" /> by <GhUser name="kbx81" />
+- [CI] Consolidate some tests (H) <PR number={8198} repo="esphome" /> by <GhUser name="kbx81" />
+- [CI] Consolidate some tests (K, L) <PR number={8201} repo="esphome" /> by <GhUser name="kbx81" />
+- [CI] Consolidate some tests (M) <PR number={8202} repo="esphome" /> by <GhUser name="kbx81" />
+- [CI] Consolidate some tests (I, J) <PR number={8200} repo="esphome" /> by <GhUser name="kbx81" />
+- [i2c] Workaround for i2c on s2 <PR number={8188} repo="esphome" /> by <GhUser name="swoboda1337" />
+- [lvgl] add triggers for swipe gestures <PR number={8190} repo="esphome" /> by <GhUser name="clydebarrow" />
+- [xxtea] Extract encryption functions to separate component <PR number={8183} repo="esphome" /> by <GhUser name="clydebarrow" /> (new-integration)
+- [lvgl] Make layouts work properly on base display <PR number={8193} repo="esphome" /> by <GhUser name="clydebarrow" />
+- [preferences] Better handling of flash_write_interval <PR number={8199} repo="esphome" /> by <GhUser name="clydebarrow" />
+- [CI] Consolidate some tests (N, O, P) <PR number={8204} repo="esphome" /> by <GhUser name="kbx81" />
+- [CI] Consolidate some tests (Q, R) <PR number={8205} repo="esphome" /> by <GhUser name="kbx81" />
+- [prometheus] Add update entity to prometheus metrics <PR number={8173} repo="esphome" /> by <GhUser name="jzucker2" />
+- [uponor_smatrix] add target temperature as sensor <PR number={7745} repo="esphome" /> by <GhUser name="janschroeter" />
+- [sdl] Implement binary sensors from keystrokes <PR number={8207} repo="esphome" /> by <GhUser name="bdm310" /> (new-platform)
+- Bump the docker-actions group with 2 updates <PR number={8215} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- [esp32_rmt] Set pull-up and open-drain modes based on pin schema <PR number={8178} repo="esphome" /> by <GhUser name="swoboda1337" /> (breaking-change)
+- Add Toto protocol to remote receiver and transmitter <PR number={8177} repo="esphome" /> by <GhUser name="G-Two" />
+- Markdown tweaks/updates <PR number={8211} repo="esphome" /> by <GhUser name="kbx81" />
+- [CI] Consolidate some tests (S) <PR number={8206} repo="esphome" /> by <GhUser name="kbx81" />
+- [CI] Consolidate some tests (U, V, W, X, Y, Z) <PR number={8210} repo="esphome" /> by <GhUser name="kbx81" />
+- [CI] Consolidate some tests (T) <PR number={8208} repo="esphome" /> by <GhUser name="kbx81" />
+- [online_image]Pin specific version of JPEG library <PR number={8217} repo="esphome" /> by <GhUser name="guillempages" />
+- [logger] Add runtime level select <PR number={8222} repo="esphome" /> by <GhUser name="clydebarrow" /> (new-integration)
+- [online_image] Set Accept header <PR number={8216} repo="esphome" /> by <GhUser name="candrews" />
+- [waveshare_epaper] Rationalise and complete tests <PR number={8221} repo="esphome" /> by <GhUser name="clydebarrow" />
+- Fix pref conflict of WiFi creds and fast_connect <PR number={8219} repo="esphome" /> by <GhUser name="QRPp" />
+- Don't activate venv in devcontainer <PR number={8128} repo="esphome" /> by <GhUser name="kroimon" />
+- Add ADC sampling method option <PR number={8131} repo="esphome" /> by <GhUser name="blind-oracle" />
+- [ota] Increase socket timeout earlier in OTA script <PR number={8129} repo="esphome" /> by <GhUser name="swoboda1337" />
+- [speaker] Media Player Components PR9 <PR number={8171} repo="esphome" /> by <GhUser name="kahrendt" /> (new-integration)
+- Add partial update of GDEW029T5 e-paper display <PR number={8162} repo="esphome" /> by <GhUser name="mystster" />
+- Add waveshare 2.9inch e-Paper HAT (D) <PR number={7906} repo="esphome" /> by <GhUser name="TataGEEK" />
+- [http_request]Use std::string for headers <PR number={8225} repo="esphome" /> by <GhUser name="guillempages" />
+- [online_image] Improve error handling <PR number={8212} repo="esphome" /> by <GhUser name="guillempages" />
+- [speaker] Bugfix: Ensure all audio is played after completely decoding a file <PR number={8231} repo="esphome" /> by <GhUser name="kahrendt" />
+- [voice_assistant] Add announce support <PR number={8232} repo="esphome" /> by <GhUser name="kahrendt" />
+- [prometheus] Adding valve entity metrics <PR number={8223} repo="esphome" /> by <GhUser name="jzucker2" />
+- Added Waveshare e-paper display model "7.50inv2p" to the waveshare_epaper component. <PR number={7751} repo="esphome" /> by <GhUser name="tmpeh" />
+- added Waveshare BWR Mode for the 4.2in Display <PR number={7995} repo="esphome" /> by <GhUser name="itpcc" />
+- Add GDEY029T94 support <PR number={7931} repo="esphome" /> by <GhUser name="danielkoek" />
+- GDEY042T81 e-paper displays support <PR number={8061} repo="esphome" /> by <GhUser name="mgruener" />
+- Add support for Waveshare 7.3" ACeP 7-Color display <PR number={6380} repo="esphome" /> by <GhUser name="NeilSCGH" />
+- Bump esphome-dashboard to 20250212.0 <PR number={8235} repo="esphome" /> by <GhUser name="jesserockz" />
+- [online_image]Fix reset if buffer not allocated <PR number={8236} repo="esphome" /> by <GhUser name="guillempages" />
+- [core] Ignore dot-prefixed config entries when looking for target platform <PR number={8240} repo="esphome" /> by <GhUser name="jesserockz" />
+- Bump zeroconf to 0.144.1 <PR number={8238} repo="esphome" /> by <GhUser name="bdraco" />
+- [core] Fix `config_dir` for dashboard <PR number={8242} repo="esphome" /> by <GhUser name="jesserockz" />
+- [cse7766] Remove `stream` dependency <PR number={7720} repo="esphome" /> by <GhUser name="gabest11" />
+- [graph] Remove `stream` dependency <PR number={8243} repo="esphome" /> by <GhUser name="kbx81" />
+- [modbus_controller] Remove `stream` dependency <PR number={8244} repo="esphome" /> by <GhUser name="kbx81" />
+- [logger] Fix bug causing global log level to be overwritten <PR number={8248} repo="esphome" /> by <GhUser name="swoboda1337" />
+- Add support for the DAC on the S2 <PR number={8030} repo="esphome" /> by <GhUser name="maraid" />
+- Fix crash when storage file doesnt exist yet <PR number={8249} repo="esphome" /> by <GhUser name="jesserockz" />
+- don't crash on null pages <PR number={8254} repo="esphome" /> by <GhUser name="ssieb" />
+- [scd30] Increase minimal CONF_UPDATE_INTERVAL from 1 to 2 seconds <PR number={8256} repo="esphome" /> by <GhUser name="DjordjeMandic" /> (breaking-change)
+- Bump zeroconf to 0.144.3 <PR number={8253} repo="esphome" /> by <GhUser name="bdraco" />
+- DHT platform now supports modules with inbuilt external resistor <PR number={8257} repo="esphome" /> by <GhUser name="deCodeIt" />
+- Replace glyphsets with esphome_glyphsets <PR number={8261} repo="esphome" /> by <GhUser name="bdraco" />
+- Bump aioesphomeapi to 29.1.0 <PR number={8105} repo="esphome" /> by <GhUser name="bdraco" />
+- Bump openssh-client to 1:9.2p1-2+deb12u4 to fix docker builds <PR number={8269} repo="esphome" /> by <GhUser name="bdraco" />
+- Increase default repeat delay for Toto remote transmitter protocol <PR number={8265} repo="esphome" /> by <GhUser name="G-Two" />
+- Bump zeroconf to 0.145.1 <PR number={8267} repo="esphome" /> by <GhUser name="bdraco" />
+
+{/* markdownlint-enable MD013 */}
+
+## All Changelogs
+
+<Changelogs />

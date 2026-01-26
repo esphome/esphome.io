@@ -1,0 +1,214 @@
+---
+title: "ESPHome 2024.4.0 - 17th April 2024"
+description: "Changelog for ESPHome 2024.4.0."
+---
+
+import PR from '@/components/PR.astro';
+import GhUser from '@/components/GhUser.astro';
+import Changelogs from '@/components/Changelogs.astro';
+import ComponentGrid from '@/components/ComponentGrid.astro';
+
+
+<ComponentGrid items={[
+  {
+    "title": "Template Datetime Time",
+    "link": "components/datetime/template",
+    "image": "description.svg",
+    "darkInvert": true
+  },
+  {
+    "title": "SUN-GTIL2 inverter",
+    "link": "components/sun_gtil2",
+    "image": "sun_1000g2.png"
+  },
+  {
+    "title": "AT581X",
+    "link": "components/at581x",
+    "image": "at581x.png"
+  },
+  {
+    "title": "JSN-SR04T",
+    "link": "components/sensor/jsn_sr04t",
+    "image": "jsn-sr04t-v3.jpg"
+  },
+  {
+    "title": "Daikin ARC",
+    "link": "components/climate/climate_ir",
+    "image": "air-conditioner-ir.svg",
+    "darkInvert": true
+  },
+  {
+    "title": "HHCCJCY10 (MiFlora Pink)",
+    "link": "components/sensor/xiaomi_hhccjcy10",
+    "image": "xiaomi_hhccjcy10.jpg"
+  },
+  {
+    "title": "TLC5971",
+    "link": "components/output/tlc5971",
+    "image": "tlc5971.jpg"
+  },
+  {
+    "title": "Dooya",
+    "link": "components/remote_transmitter",
+    "image": "remote.svg"
+  }
+]} />
+
+## Time Entities
+
+ESPHome now has support for `time` entities that can be set from the frontend (like Home Assistant).
+This allows you to set a timer to execute future automations on device.
+
+ESPHome Dates require Home Assistant 2024.4 or later.
+
+## Voice Assistant Audio
+
+This release adds support for sending and receiving audio to/from voice assistants via the API. Currently ESPHome
+sends and receives the Voice Assistant audio bytes via a UDP socket which can be unreliable and insecure.
+Beginning with Home Assistant 2024.5, both sides will automatically recognise that they both support API Audio and will
+use that route instead. This is more reliable because the ESPHome API uses a TCP socket, so packet order and
+delivery is guaranteed, and if you use API Encryption, your audio will also be encrypted in transit.
+
+{/* markdownlint-disable MD013 */}
+
+## Release 2024.4.1 - April 23
+
+- [Tuya Climate] Fix compilation error caused by codegen <PR number={6568} repo="esphome" /> by <GhUser name="zry98" />
+- wifi: fix reconnect issue due to enablement of fast connect <PR number={6598} repo="esphome" /> by <GhUser name="jpeletier" />
+- Calibrate Beken internal temperature <PR number={6599} repo="esphome" /> by <GhUser name="Mat931" />
+- fix streaming logs from MQTT for ESP32 devices using TLS <PR number={6605} repo="esphome" /> by <GhUser name="ccutrer" />
+- Disallow variant/family override for known boards <PR number={6512} repo="esphome" /> by <GhUser name="clydebarrow" />
+- esp32_ble: Consider ESP_BT_STATUS_DONE a successful state <PR number={6493} repo="esphome" /> by <GhUser name="polyfloyd" />
+- Fix or filter <PR number={6574} repo="esphome" /> by <GhUser name="swoboda1337" />
+
+## Release 2024.4.2 - April 30
+
+- Fix SHT3xd fails sometimes in 2024.4.0 <PR number={6592} repo="esphome" /> by <GhUser name="mrtoy-me" />
+- allow defaults with no include vars <PR number={6613} repo="esphome" /> by <GhUser name="ssieb" />
+- Revert #6458 <PR number={6650} repo="esphome" /> by <GhUser name="tronikos" />
+- [i2s_audio.microphone] Fixing adc bug <PR number={6654} repo="esphome" /> by <GhUser name="jesserockz" />
+
+## Full list of changes
+
+### New Components
+
+- Add sun_gtil2 component (for SUN-1000G2 / SUN-2000G2 grid tie inverters) <PR number={4958} repo="esphome" /> by <GhUser name="Mat931" /> (new-integration)
+- Add support for AT581x component <PR number={6297} repo="esphome" /> by <GhUser name="X-Ryl669" /> (new-integration)
+- Add new Component: Ultrasonic Distance Sensor JSN-SR04T <PR number={6023} repo="esphome" /> by <GhUser name="Mafus1" /> (new-integration)
+- feat: Add Daikin ARC (tested on Daikin ARC472A62) <PR number={6429} repo="esphome" /> by <GhUser name="magicbear" /> (new-integration)
+- add support for Tuya pink version of miflora <PR number={5402} repo="esphome" /> by <GhUser name="fariouche" /> (new-integration)
+- Implemented support for the TLC5971 as an output component <PR number={6494} repo="esphome" /> by <GhUser name="IJIJI" /> (new-integration)
+
+### Breaking Changes
+
+- Add support for new modes in Tuya Climate <PR number={5159} repo="esphome" /> by <GhUser name="moriahmorgan" /> (breaking-change)
+- IPv6 string representation follows RFC5952 <PR number={6449} repo="esphome" /> by <GhUser name="HeMan" /> (breaking-change)
+
+### Beta Changes
+
+- Add dooya remote transmitter test <PR number={6508} repo="esphome" /> by <GhUser name="jesserockz" />
+- ads1115: remove auto-load and split sensor into platform folder <PR number={5981} repo="esphome" /> by <GhUser name="jesserockz" /> (new-platform)
+- Bump esphome-dashboard to 20240412.0 <PR number={6517} repo="esphome" /> by <GhUser name="jesserockz" />
+- Fix missing ifdefs in voice assistant <PR number={6520} repo="esphome" /> by <GhUser name="jesserockz" />
+- Fix project version longer than 30 characters breaking compilation <PR number={6535} repo="esphome" /> by <GhUser name="jesserockz" />
+- Fix no-release bug on ft6x36 <PR number={6527} repo="esphome" /> by <GhUser name="clydebarrow" />
+
+### All changes
+
+- Bump docker/login-action from 3.0.0 to 3.1.0 <PR number={6367} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- Bump peter-evans/create-pull-request from 6.0.1 to 6.0.2 <PR number={6361} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- Bump docker/build-push-action from 5.2.0 to 5.3.0 in /.github/actions/build-image <PR number={6373} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- Bump docker/setup-buildx-action from 3.1.0 to 3.2.0 <PR number={6372} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- Fix deep_sleep for ESP32-C6 <PR number={6377} repo="esphome" /> by <GhUser name="ferrets6" />
+- Fix keeloq for IDF 5+ <PR number={6382} repo="esphome" /> by <GhUser name="kbx81" />
+- Fix Nextion set_component_picture call <PR number={6378} repo="esphome" /> by <GhUser name="edwardtfn" />
+- Add line_at_angle method to Display component <PR number={6381} repo="esphome" /> by <GhUser name="deisterhold" />
+- Check generated proto files are as expected if any are modified in PRs <PR number={6254} repo="esphome" /> by <GhUser name="jesserockz" />
+- ld2420: fix energy mode documentation <PR number={6225} repo="esphome" /> by <GhUser name="andresv" />
+- Add actions for component tests A, B and C <PR number={6256} repo="esphome" /> by <GhUser name="kbx81" />
+- Add some components to the new testing framework (V) <PR number={6231} repo="esphome" /> by <GhUser name="kbx81" />
+- Add some components to the new testing framework (X,Y,Z) <PR number={6233} repo="esphome" /> by <GhUser name="kbx81" />
+- Add some components to the new testing framework (E) <PR number={6176} repo="esphome" /> by <GhUser name="kbx81" />
+- Make SPI compile with IDF &gt;= 5.0 <PR number={6383} repo="esphome" /> by <GhUser name="HeMan" />
+- Fix esp32-camera test yaml <PR number={6398} repo="esphome" /> by <GhUser name="kbx81" />
+- Bump pytest-asyncio from 0.23.5.post1 to 0.23.6 <PR number={6402} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- Bump actions/cache from 4.0.1 to 4.0.2 in /.github/actions/restore-python <PR number={6403} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- Bump actions/cache from 4.0.1 to 4.0.2 <PR number={6404} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- Bump ESP8266 Arduino versions <PR number={5359} repo="esphome" /> by <GhUser name="HeMan" />
+- Allow accept/reject delta to be specified. <PR number={5060} repo="esphome" /> by <GhUser name="cvwillegen" />
+- Allow setting htop for ledc <PR number={6340} repo="esphome" /> by <GhUser name="Gagootron" />
+- sm2135: add separate_modes option to support different chip variants <PR number={6152} repo="esphome" /> by <GhUser name="jasperro" />
+- AHT10: fix temperature-only operation; add warning/error messages <PR number={6405} repo="esphome" /> by <GhUser name="clydebarrow" />
+- Add support for new modes in Tuya Climate <PR number={5159} repo="esphome" /> by <GhUser name="moriahmorgan" /> (breaking-change)
+- Add sun_gtil2 component (for SUN-1000G2 / SUN-2000G2 grid tie inverters) <PR number={4958} repo="esphome" /> by <GhUser name="Mat931" /> (new-integration)
+- SPI: Make some validation failures give more useful messages. <PR number={6413} repo="esphome" /> by <GhUser name="clydebarrow" />
+- Bump aioesphomeapi from 23.1.1 to 23.2.0 <PR number={6412} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- Add check for use of GPIOXX in config <PR number={6419} repo="esphome" /> by <GhUser name="clydebarrow" />
+- WireGuard for esp8266 <PR number={6365} repo="esphome" /> by <GhUser name="droscy" />
+- setup.cfg: drop duplicate, underintended trove classifier <PR number={6421} repo="esphome" /> by <GhUser name="mweinelt" />
+- Store preferences in disk file on host platform <PR number={6428} repo="esphome" /> by <GhUser name="clydebarrow" />
+- Add support for AT581x component <PR number={6297} repo="esphome" /> by <GhUser name="X-Ryl669" /> (new-integration)
+- Add some components to the new testing framework (F) <PR number={6177} repo="esphome" /> by <GhUser name="kbx81" />
+- Add get_contrast() and get_brightness() to SSD1306 class to get protected variables <PR number={6435} repo="esphome" /> by <GhUser name="benediktkr" />
+- Add new Component: Ultrasonic Distance Sensor JSN-SR04T <PR number={6023} repo="esphome" /> by <GhUser name="Mafus1" /> (new-integration)
+- Add some components to the new testing framework (G) <PR number={6178} repo="esphome" /> by <GhUser name="kbx81" />
+- Add some components to the new testing framework (K) <PR number={6186} repo="esphome" /> by <GhUser name="kbx81" />
+- Add some components to the new testing framework (N) <PR number={6210} repo="esphome" /> by <GhUser name="kbx81" />
+- Add some components to the new testing framework (Q) <PR number={6218} repo="esphome" /> by <GhUser name="kbx81" />
+- Add some components to the new testing framework (U) <PR number={6230} repo="esphome" /> by <GhUser name="kbx81" />
+- Fix spacing in new test yaml <PR number={6441} repo="esphome" /> by <GhUser name="kbx81" />
+- Add some components to the new testing framework (W) <PR number={6232} repo="esphome" /> by <GhUser name="kbx81" />
+- Add some components to the new testing framework (L) <PR number={6195} repo="esphome" /> by <GhUser name="kbx81" />
+- feat: Add Daikin ARC (tested on Daikin ARC472A62) <PR number={6429} repo="esphome" /> by <GhUser name="magicbear" /> (new-integration)
+- Disable truthy yamllint rule <PR number={6442} repo="esphome" /> by <GhUser name="jesserockz" />
+- Add get_size method to QR Code header <PR number={6430} repo="esphome" /> by <GhUser name="deisterhold" />
+- Minor change to support sht85 sensor <PR number={6415} repo="esphome" /> by <GhUser name="mrtoy-me" />
+- IPv6 string representation follows RFC5952 <PR number={6449} repo="esphome" /> by <GhUser name="HeMan" /> (breaking-change)
+- Bump actions/setup-python from 5.0.0 to 5.1.0 <PR number={6437} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- Bump actions/setup-python from 5.0.0 to 5.1.0 in /.github/actions/restore-python <PR number={6438} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- Optimize QMC5883L: Read registers only for enabled sensors <PR number={6458} repo="esphome" /> by <GhUser name="tronikos" />
+- minor refactor to allow commit hash as ref value. <PR number={6446} repo="esphome" /> by <GhUser name="LelandSindt" />
+- TMP117 fix polling period config <PR number={6452} repo="esphome" /> by <GhUser name="mrtoy-me" />
+- Bump Arduino Pico Framework to 3.7.2 and Platform to 1.12.0 <PR number={6386} repo="esphome" /> by <GhUser name="HeMan" />
+- Display menu: Allow "left" key to exit current menu if not editing <PR number={6460} repo="esphome" /> by <GhUser name="jesserockz" />
+- Fix NOLINT on inclusive-language check <PR number={6464} repo="esphome" /> by <GhUser name="jesserockz" />
+- Add yamllint to dev requirements <PR number={6466} repo="esphome" /> by <GhUser name="jesserockz" />
+- Add temperature for QMC5883L <PR number={6456} repo="esphome" /> by <GhUser name="tronikos" />
+- web_server: Return early if no clients connected <PR number={6467} repo="esphome" /> by <GhUser name="jesserockz" />
+- ESP32 Arduino WiFi: misc bug fixes <PR number={6470} repo="esphome" /> by <GhUser name="paravoid" />
+- Replace std::regex with sscanf calls <PR number={6468} repo="esphome" /> by <GhUser name="jesserockz" />
+- Include "Failed" status in config log. <PR number={6482} repo="esphome" /> by <GhUser name="clydebarrow" />
+- Fix Microphone IsCapturingCondition <PR number={6490} repo="esphome" /> by <GhUser name="RaymiiOrg" />
+- Remove misleading tag/line in messages <PR number={6495} repo="esphome" /> by <GhUser name="clydebarrow" />
+- Send/Receive Voice Assistant audio via API <PR number={6471} repo="esphome" /> by <GhUser name="jesserockz" />
+- Datetime date initial value fix <PR number={6483} repo="esphome" /> by <GhUser name="RFDarter" />
+- If the loop() took more than the required time, don't delay further <PR number={6496} repo="esphome" /> by <GhUser name="clydebarrow" />
+- Bump LibreTiny version to 1.5.1 <PR number={6500} repo="esphome" /> by <GhUser name="kuba2k2" />
+- Internal temperature: Support Beken platform <PR number={6491} repo="esphome" /> by <GhUser name="Mat931" />
+- Bump docker/setup-buildx-action from 3.2.0 to 3.3.0 <PR number={6502} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- add support for Tuya pink version of miflora <PR number={5402} repo="esphome" /> by <GhUser name="fariouche" /> (new-integration)
+- Add MAC address to WiFi config reply <PR number={6489} repo="esphome" /> by <GhUser name="cvwillegen" />
+- Adds i2c timeout config <PR number={4614} repo="esphome" /> by <GhUser name="tracestep" />
+- Add ABB-Welcome / Busch-Welcome Door Intercom Protocol <PR number={4689} repo="esphome" /> by <GhUser name="Mat931" />
+- Add support for time entities <PR number={6399} repo="esphome" /> by <GhUser name="jesserockz" />
+- Fix Match by IRK <PR number={6499} repo="esphome" /> by <GhUser name="MRemy2" />
+- Add rmt_channel to remote_transmitter and remote_receiver <PR number={6497} repo="esphome" /> by <GhUser name="jesserockz" /> (new-integration)
+- Rework tlc5947 to remove AUTO_LOAD <PR number={6503} repo="esphome" /> by <GhUser name="jesserockz" />
+- UART: ignore require_tx/rx if not a native uart implementation <PR number={6504} repo="esphome" /> by <GhUser name="jesserockz" />
+- esp32_rmt_led_strip bugfixes <PR number={6506} repo="esphome" /> by <GhUser name="Mat931" />
+- Implemented support for the TLC5971 as an output component <PR number={6494} repo="esphome" /> by <GhUser name="IJIJI" /> (new-integration)
+- Add Dooya protocol to remote_base <PR number={6488} repo="esphome" /> by <GhUser name="bukureckid" />
+- Only give error for connected sensors at startup <PR number={6474} repo="esphome" /> by <GhUser name="leejoow" />
+- Webserver float to string fix <PR number={6507} repo="esphome" /> by <GhUser name="RFDarter" />
+- Add dooya remote transmitter test <PR number={6508} repo="esphome" /> by <GhUser name="jesserockz" />
+- ads1115: remove auto-load and split sensor into platform folder <PR number={5981} repo="esphome" /> by <GhUser name="jesserockz" /> (new-platform)
+- Bump esphome-dashboard to 20240412.0 <PR number={6517} repo="esphome" /> by <GhUser name="jesserockz" />
+- Fix missing ifdefs in voice assistant <PR number={6520} repo="esphome" /> by <GhUser name="jesserockz" />
+- Fix project version longer than 30 characters breaking compilation <PR number={6535} repo="esphome" /> by <GhUser name="jesserockz" />
+- Fix no-release bug on ft6x36 <PR number={6527} repo="esphome" /> by <GhUser name="clydebarrow" />
+
+{/* markdownlint-enable MD013 */}
+
+## All Changelogs
+
+<Changelogs />

@@ -1,0 +1,51 @@
+---
+/**
+ * Img Component
+ * Displays an image with optional caption, width, height, and CSS class.
+ *
+ * Usage:
+ *   <Img src="example.jpg" alt="Example image" />
+ *   <Img src="example.jpg" alt="Example" caption="This is an example" width={500} />
+ *   <Img src="example.jpg" alt="Example" class="center dark-invert" />
+ */
+
+interface Props {
+  src: string;
+  alt?: string;
+  caption?: string;
+  class?: string;
+  width?: number | string;
+  height?: number | string;
+}
+
+const { src, alt = 'Image', caption, class: className, width, height } = Astro.props;
+
+// Determine image path
+let imageSrc = src;
+if (!src.startsWith('http') && !src.startsWith('/')) {
+  // Relative path - prepend /images/ if not already there
+  if (!src.startsWith('images/')) {
+    imageSrc = `/images/${src}`;
+  } else {
+    imageSrc = `/${src}`;
+  }
+}
+
+// Build style string
+const styles: string[] = [];
+if (width) styles.push(`width: ${typeof width === 'number' ? width + 'px' : width}`);
+if (height) styles.push(`height: ${typeof height === 'number' ? height + 'px' : height}`);
+const styleStr = styles.length > 0 ? styles.join('; ') : undefined;
+
+// Build class list
+const classes = className ? className.split(' ').filter(Boolean) : [];
+---
+
+{caption ? (
+  <figure class:list={classes}>
+    <img src={imageSrc} alt={alt} style={styleStr} />
+    <figcaption>{caption}</figcaption>
+  </figure>
+) : (
+  <img src={imageSrc} alt={alt} style={styleStr} class:list={classes} />
+)}

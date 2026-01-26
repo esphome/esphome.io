@@ -1,0 +1,53 @@
+---
+title: "SX127x Packet Transport Platform"
+description: "Instructions for setting up a sx127x packet transport platform on ESPHome"
+---
+
+import ApiRef from '@/components/ApiRef.astro';
+
+
+The [packet_transport](/components/packet_transport/) platform allows ESPHome nodes to directly communicate with each over a
+communication channel. The [sx127x](/components/sx127x/) implementation of the platform uses FSK, OOK or
+LoRa as a communication medium. See the [packet_transport](/components/packet_transport/) and [sx127x](/components/sx127x/) for more information.
+
+## Example Configuration
+
+```yaml
+# Example configuration entry
+sx127x:
+  dio0_pin: GPIO26
+  cs_pin: GPIO18
+  rst_pin: GPIO23
+  pa_pin: BOOST
+  pa_power: 8
+  bandwidth: 125_0kHz
+  crc_enable: true
+  frequency: 433.92MHz
+  modulation: LORA
+  rx_start: true
+  sync_value: 0x33
+  spreading_factor: 7
+  coding_rate: CR_4_5
+
+packet_transport:
+  platform: sx127x
+  sensors:
+    - dht_temp
+
+sensor:
+  - platform: dht
+      id: dht
+      pin: GPIOXX
+      temperature:
+        name: "Temperature"
+        id: dht_temp
+```
+
+## See Also
+
+- [packet_transport](/components/packet_transport/)
+- [sx127x](/components/sx127x/)
+- [packet_transport](/components/binary_sensor/packet_transport/)
+- [packet_transport](/components/sensor/packet_transport/)
+- [automations](/automations/)
+- <ApiRef text="packet_transport/packet_transport.h" path="packet_transport/packet_transport.h" />

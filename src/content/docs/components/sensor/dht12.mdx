@@ -1,0 +1,50 @@
+---
+title: "DHT12 Temperature+Humidity Sensor"
+description: "Instructions for setting up DHT12 temperature and humidity sensors"
+---
+
+import Img from '@/components/Img.astro';
+import ApiRef from '@/components/ApiRef.astro';
+
+
+The `dht12` Temperature+Humidity sensor allows you to use your DHT12
+([datasheet](http://www.robototehnika.ru/file/DHT12.pdf),
+[electrodragon](http://www.electrodragon.com/product/dht12/)) I²C-based sensor with ESPHome. This sensor is also called AM2320 by some sellers.
+
+&lt;Img src="dht12-full.jpg" alt="Image" caption="DHT12 Temperature & Humidity Sensor." class="align-center" width="50.0%" /&gt;
+
+<Img src="temperature-humidity.png" alt="Image" class="align-center" width="80.0%" />
+
+```yaml
+# Example configuration entry
+sensor:
+  - platform: dht12
+    temperature:
+      name: "Living Room Temperature"
+    humidity:
+      name: "Living Room Humidity"
+    update_interval: 60s
+```
+
+## Configuration variables
+
+- **temperature** (**Required**): The information for the temperature sensor.
+
+  - All options from [Sensor](/components/sensor).
+
+- **humidity** (**Required**): The information for the humidity sensor
+
+  - All options from [Sensor](/components/sensor).
+
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to check the sensor. Defaults to `60s`.
+
+## See Also
+
+- [Sensor Filters](/components/sensor#sensor-filters)
+- [absolute_humidity/](/absolute_humidity/)
+- [dht/](/dht/)
+- [hdc1080/](/hdc1080/)
+- [htu21d/](/htu21d/)
+- [sht3xd/](/sht3xd/)
+- <ApiRef text="dht12/dht12.h" path="dht12/dht12.h" />
+- [DHT12 Library](https://github.com/dplasa/dht) by [Daniel Plasa](https://github.com/dplasa)

@@ -1,0 +1,48 @@
+---
+title: "BH1750 Ambient Light Sensor"
+description: "Instructions for setting up BH1750 ambient light sensors in ESPHome."
+---
+
+import Img from '@/components/Img.astro';
+import ApiRef from '@/components/ApiRef.astro';
+
+
+<a id="bh1750" aria-hidden="true"></a>
+
+The `bh1750` sensor platform allows you to use your BH1750
+([datasheet](http://www.mouser.com/ds/2/348/bh1750fvi-e-186247.pdf))
+ambient light sensor with ESPHome. The [I²C bus](/components/i2c) is required to be set up in
+your configuration for this sensor to work.
+
+<Img src="bh1750-full.jpg" alt="Image" caption="BH1750 Ambient Light Sensor." class="align-center" width="50.0%" />
+
+<Img src="bh1750-ui.png" alt="Image" class="align-center" width="80.0%" />
+
+```yaml
+# Example configuration entry
+sensor:
+  - platform: bh1750
+    name: "BH1750 Illuminance"
+    address: 0x23
+    update_interval: 60s
+```
+
+## Configuration variables
+
+- **address** (*Optional*, int): Manually specify the I²C address of the sensor.
+  Defaults to `0x23` (address if address pin is pulled low). If the address pin is pulled high,
+  the address is `0x5C`.
+
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to check the
+  sensor. Defaults to `60s`.
+
+- All other options from [Sensor](/components/sensor).
+
+## See Also
+
+- [Sensor Filters](/components/sensor#sensor-filters)
+- [opt3001/](/opt3001/)
+- [tsl2561/](/tsl2561/)
+- [tsl2591/](/tsl2591/)
+- <ApiRef text="bh1750/bh1750.h" path="bh1750/bh1750.h" />
+- [BH1750 Library](https://github.com/claws/BH1750) by [@claws](https://github.com/claws)

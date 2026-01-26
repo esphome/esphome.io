@@ -1,0 +1,176 @@
+---
+title: "ESPHome 2024.7.0 - 17th July 2024"
+description: "Changelog for ESPHome 2024.7.0."
+---
+
+import PR from '@/components/PR.astro';
+import GhUser from '@/components/GhUser.astro';
+import Changelogs from '@/components/Changelogs.astro';
+
+
+## microWakeWord
+
+The `micro_wake_word` component has been updated to "version 2".
+This brings the capability to configure multiple models per device and has a `vad` model for
+voice activity detection.
+
+The configuration has a breaking change to support these new features.
+
+```yaml
+micro_wake_word:
+  model: okay_nabu
+```
+
+needs to be changed to the following:
+
+```yaml
+micro_wake_word:
+  models:
+    - okay_nabu
+```
+
+Please see the [Documentation](/components/micro_wake_word/) for the full configuration.
+
+{/* markdownlint-disable MD013 */}
+
+## Release 2024.7.1 - July 22
+
+- Prevent rename from deleting new config <PR number={7104} repo="esphome" /> by <GhUser name="acortelyou" />
+- [i2s_microphone] Partially revert #7092 so microphone volume doesn't change <PR number={7109} repo="esphome" /> by <GhUser name="kahrendt" />
+- [heatpumpir] Fix BK72XX Compile error with IRremoteESP8266 <PR number={6955} repo="esphome" /> by <GhUser name="dianlight" />
+- [http_request] allow basic auth for idf <PR number={7086} repo="esphome" /> by <GhUser name="oarcher" />
+- Fixes sml parser to process extended length lists with a number of items that is dividable by 16 <PR number={6148} repo="esphome" /> by <GhUser name="irgendwienet" />
+
+## Release 2024.7.2 - July 25
+
+- [http_request] Change default timeout to 4.5s <PR number={7123} repo="esphome" /> by <GhUser name="jesserockz" />
+- [http_request] Fix ESP-IDF follow redirect <PR number={7101} repo="esphome" /> by <GhUser name="dentra" />
+
+## Release 2024.7.3 - August 1
+
+- [pmwcs3] Add delay after sending REG_READ_START <PR number={7130} repo="esphome" /> by <GhUser name="thevogoncoder" />
+- Fix for Mitsubishi units that only support cooling <PR number={7143} repo="esphome" /> by <GhUser name="RubyBailey" />
+- [micro_wake_word] Fix VAD detection and modify detection computation <PR number={7164} repo="esphome" /> by <GhUser name="kahrendt" />
+
+## Full list of changes
+
+### New Features
+
+- [uptime] Add new timestamp type for uptime sensor <PR number={7029} repo="esphome" /> by <GhUser name="jesserockz" /> (new-feature)
+
+### Breaking Changes
+
+- [dooya] Flip bit timings <PR number={6947} repo="esphome" /> by <GhUser name="jesserockz" /> (breaking-change)
+- [modbus_text_sensor] new default ANSI encoding type <PR number={6975} repo="esphome" /> by <GhUser name="dudanov" /> (breaking-change)
+- [micro_wake_word] Version 2 <PR number={7032} repo="esphome" /> by <GhUser name="kahrendt" /> (breaking-change)
+
+### Beta Changes
+
+- helpers.cpp: Fix GLIBCXX_RELEASE check &lt; 8 <PR number={7062} repo="esphome" /> by <GhUser name="ferbar" />
+- Fix pmsa003i cold boot marked as failed on ESP32 et al <PR number={7064} repo="esphome" /> by <GhUser name="z3liff" />
+- [http_request] Fix follow_redirects on arduino <PR number={7054} repo="esphome" /> by <GhUser name="guillempages" />
+- [ethernet] Fix compile warning for IPv6 <PR number={7048} repo="esphome" /> by <GhUser name="HeMan" />
+- Update webserver local assets to 20240704-081526 <PR number={7041} repo="esphome" /> by <GhUser name="esphomebot" />
+- Add braces to if statement to avoid compiler warning. <PR number={7036} repo="esphome" /> by <GhUser name="colmbuckley" />
+- [mitsubishi] Fix current temperature <PR number={6909} repo="esphome" /> by <GhUser name="ttaborda" />
+- [climate] fix dump output of unsupported features <PR number={7005} repo="esphome" /> by <GhUser name="dudanov" />
+- [climate-traits] improved performance <PR number={7006} repo="esphome" /> by <GhUser name="dudanov" />
+- Add default icon to restart button <PR number={7076} repo="esphome" /> by <GhUser name="leejoow" />
+- Add support for the Gree YAC1FB9 in climate_ir <PR number={7056} repo="esphome" /> by <GhUser name="topeju" />
+- add ESP32-C6 support to esp32_can <PR number={7063} repo="esphome" /> by <GhUser name="Adminius" />
+- Fix voice assistant crash when no speaker configured <PR number={7075} repo="esphome" /> by <GhUser name="kevdliu" />
+- Bump HeatpumpIR, add protocols, remove IRremoteESP8266 <PR number={6996} repo="esphome" /> by <GhUser name="nagyrobi" />
+- LTR390 separate ALS and UV gain and resolution <PR number={7026} repo="esphome" /> by <GhUser name="latonita" />
+- [improv_serial] Fix linker error created in #6998 <PR number={7082} repo="esphome" /> by <GhUser name="kbx81" />
+- [i2s_audio] Allow config for primary/secondary i2s mode <PR number={7092} repo="esphome" /> by <GhUser name="jesserockz" />
+- [micro_wake_word] Allow simpler model config <PR number={7094} repo="esphome" /> by <GhUser name="jesserockz" />
+- [ota] Print Arduino update errors <PR number={7096} repo="esphome" /> by <GhUser name="jesserockz" />
+
+### All changes
+
+- [CI] Update device class sync script for update entities <PR number={6895} repo="esphome" /> by <GhUser name="jesserockz" />
+- X9c operation speed <PR number={6898} repo="esphome" /> by <GhUser name="oliverhihn" />
+- Bump actions/checkout from 4.1.6 to 4.1.7 <PR number={6900} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- [CI] Allow clang-tidy to see IDF components <PR number={6903} repo="esphome" /> by <GhUser name="kbx81" />
+- [esp32_camera] Use newer library version (for #6802) <PR number={6809} repo="esphome" /> by <GhUser name="kbx81" />
+- [micro_wake_word] Pin to esp-tflite-micro v1.3.1 <PR number={6906} repo="esphome" /> by <GhUser name="kbx81" />
+- VEML7700 Fix GCC build warnings <PR number={6881} repo="esphome" /> by <GhUser name="latonita" />
+- IDF 5 fixes for #6802 <PR number={6911} repo="esphome" /> by <GhUser name="kbx81" />
+- [CI-ethernet] Add/fix/organize/clean up ethernet component tests <PR number={6916} repo="esphome" /> by <GhUser name="kbx81" />
+- [CI-a01nyub] Consolidate test files <PR number={6917} repo="esphome" /> by <GhUser name="kbx81" />
+- [CI-api] Test fix for IDF 5+ <PR number={6918} repo="esphome" /> by <GhUser name="kbx81" />
+- [CI-http_request] Test fix for IDF 5+ <PR number={6919} repo="esphome" /> by <GhUser name="kbx81" />
+- [CI-wireguard] Test file consolidation <PR number={6920} repo="esphome" /> by <GhUser name="kbx81" />
+- [CI-esp32_hall] Remove IDF test <PR number={6921} repo="esphome" /> by <GhUser name="kbx81" />
+- [CI] Introduce testing for IDF 5 (and other arbitrary framework versions) <PR number={6802} repo="esphome" /> by <GhUser name="kbx81" />
+- uart: allow setting the UART id in final_validate_device_schema <PR number={6923} repo="esphome" /> by <GhUser name="paravoid" />
+- Bump peter-evans/create-pull-request from 6.0.5 to 6.1.0 <PR number={6935} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- Fix garbled graphics on LILYGO T4-S3 display <PR number={6910} repo="esphome" /> by <GhUser name="manuelkasper" />
+- Update cover.h for open() and close() compiler warnings <PR number={6936} repo="esphome" /> by <GhUser name="peter--s" />
+- [CI] Add debug component test for LibreTiny <PR number={6945} repo="esphome" /> by <GhUser name="kbx81" />
+- [dooya] Flip bit timings <PR number={6947} repo="esphome" /> by <GhUser name="jesserockz" /> (breaking-change)
+- [qspi_amoled] Fix display remaining blank after update() before setup completion <PR number={6958} repo="esphome" /> by <GhUser name="manuelkasper" />
+- Bump docker/build-push-action from 6.0.1 to 6.1.0 in /.github/actions/build-image <PR number={6962} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- Synchronise Device Classes from Home Assistant <PR number={6966} repo="esphome" /> by <GhUser name="esphomebot" />
+- [qspi_amoled] Fix clear/fill with rotation <PR number={6960} repo="esphome" /> by <GhUser name="manuelkasper" />
+- [script] allow template parameters <PR number={6972} repo="esphome" /> by <GhUser name="ssieb" />
+- [haier] climate ID auto generation <PR number={6949} repo="esphome" /> by <GhUser name="dudanov" />
+- [core] Add script to extract actions, conditions, and pin_providers <PR number={6929} repo="esphome" /> by <GhUser name="jesserockz" />
+- [external_files] Move common `download_content` function to `external_files.py` <PR number={6982} repo="esphome" /> by <GhUser name="jesserockz" />
+- Do not build mDNS when mDNS is disabled via yaml <PR number={6979} repo="esphome" /> by <GhUser name="Links2004" />
+- Bump HeatpumpIR and IRremoteESP8266 <PR number={6948} repo="esphome" /> by <GhUser name="nagyrobi" />
+- [CI] Add more mdns and safe_mode tests <PR number={6990} repo="esphome" /> by <GhUser name="kbx81" />
+- [CI] Remove old test yamls from CI runs <PR number={6991} repo="esphome" /> by <GhUser name="kbx81" />
+- [CI] Update tests to run against IDF 5.1 <PR number={6992} repo="esphome" /> by <GhUser name="kbx81" />
+- Bump docker/build-push-action from 6.1.0 to 6.2.0 in /.github/actions/build-image <PR number={6999} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- [tuya] implement command 0x22 - datapoint-async <PR number={6980} repo="esphome" /> by <GhUser name="christiaanderidder" />
+- Allow wireguard to bind to PPP interface <PR number={6989} repo="esphome" /> by <GhUser name="droscy" />
+- [modbus_text_sensor] new default ANSI encoding type <PR number={6975} repo="esphome" /> by <GhUser name="dudanov" /> (breaking-change)
+- [CI] Remove old test yaml files <PR number={7002} repo="esphome" /> by <GhUser name="kbx81" />
+- Revert "[CI] Update tests to run against IDF 5.1" <PR number={7003} repo="esphome" /> by <GhUser name="jesserockz" />
+- Enable devcontainer linters <PR number={7019} repo="esphome" /> by <GhUser name="orland0m" />
+- 'uart' and 'improv_serial' need to understand non-UART logger configurations <PR number={6998} repo="esphome" /> by <GhUser name="kpfleming" />
+- Make crc8 const-correct <PR number={7027} repo="esphome" /> by <GhUser name="nattgris" />
+- [CI] Run all tests when a base test changes <PR number={7010} repo="esphome" /> by <GhUser name="kbx81" />
+- [CI] Update tests to run against IDF 5.1 <PR number={7011} repo="esphome" /> by <GhUser name="kbx81" />
+- [uptime] Add new timestamp type for uptime sensor <PR number={7029} repo="esphome" /> by <GhUser name="jesserockz" /> (new-feature)
+- Fix compile errors on ESP32-C6 with W5500 SPI ethernet <PR number={7030} repo="esphome" /> by <GhUser name="LeeHanYeong" />
+- Bump docker/setup-buildx-action from 3.3.0 to 3.4.0 <PR number={7043} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- Bump docker/build-push-action from 6.2.0 to 6.3.0 in /.github/actions/build-image <PR number={7038} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- Bump docker/setup-qemu-action from 3.0.0 to 3.1.0 <PR number={7039} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- Bump actions/upload-artifact from 4.3.3 to 4.3.4 <PR number={7047} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- Bump actions/download-artifact from 4.1.7 to 4.1.8 <PR number={7046} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- Fix display of update state in webinterfae <PR number={7045} repo="esphome" /> by <GhUser name="leejoow" />
+- Haier component update to support more protocol variations <PR number={7040} repo="esphome" /> by <GhUser name="paveldn" />
+- Don't test for IPv6 addresses when min_ipv6_addr_count is 0 <PR number={7037} repo="esphome" /> by <GhUser name="colmbuckley" />
+- [CI] Allow running specific target test(s) only <PR number={7051} repo="esphome" /> by <GhUser name="tomaszduda23" />
+- Bump actions/setup-python from 5.1.0 to 5.1.1 in /.github/actions/restore-python <PR number={7071} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- Fix RC Switch protocol not transmitting correctly via IR <PR number={5411} repo="esphome" /> by <GhUser name="michd" />
+- [micro_wake_word] Version 2 <PR number={7032} repo="esphome" /> by <GhUser name="kahrendt" /> (breaking-change)
+- UART component support added for host platform <PR number={6912} repo="esphome" /> by <GhUser name="paveldn" />
+- Configure ap ip for RP2040 <PR number={7065} repo="esphome" /> by <GhUser name="HeMan" />
+- helpers.cpp: Fix GLIBCXX_RELEASE check &lt; 8 <PR number={7062} repo="esphome" /> by <GhUser name="ferbar" />
+- Fix pmsa003i cold boot marked as failed on ESP32 et al <PR number={7064} repo="esphome" /> by <GhUser name="z3liff" />
+- [http_request] Fix follow_redirects on arduino <PR number={7054} repo="esphome" /> by <GhUser name="guillempages" />
+- [ethernet] Fix compile warning for IPv6 <PR number={7048} repo="esphome" /> by <GhUser name="HeMan" />
+- Update webserver local assets to 20240704-081526 <PR number={7041} repo="esphome" /> by <GhUser name="esphomebot" />
+- Add braces to if statement to avoid compiler warning. <PR number={7036} repo="esphome" /> by <GhUser name="colmbuckley" />
+- [mitsubishi] Fix current temperature <PR number={6909} repo="esphome" /> by <GhUser name="ttaborda" />
+- [climate] fix dump output of unsupported features <PR number={7005} repo="esphome" /> by <GhUser name="dudanov" />
+- [climate-traits] improved performance <PR number={7006} repo="esphome" /> by <GhUser name="dudanov" />
+- Add default icon to restart button <PR number={7076} repo="esphome" /> by <GhUser name="leejoow" />
+- Add support for the Gree YAC1FB9 in climate_ir <PR number={7056} repo="esphome" /> by <GhUser name="topeju" />
+- add ESP32-C6 support to esp32_can <PR number={7063} repo="esphome" /> by <GhUser name="Adminius" />
+- Fix voice assistant crash when no speaker configured <PR number={7075} repo="esphome" /> by <GhUser name="kevdliu" />
+- Bump HeatpumpIR, add protocols, remove IRremoteESP8266 <PR number={6996} repo="esphome" /> by <GhUser name="nagyrobi" />
+- LTR390 separate ALS and UV gain and resolution <PR number={7026} repo="esphome" /> by <GhUser name="latonita" />
+- [improv_serial] Fix linker error created in #6998 <PR number={7082} repo="esphome" /> by <GhUser name="kbx81" />
+- [i2s_audio] Allow config for primary/secondary i2s mode <PR number={7092} repo="esphome" /> by <GhUser name="jesserockz" />
+- [micro_wake_word] Allow simpler model config <PR number={7094} repo="esphome" /> by <GhUser name="jesserockz" />
+- [ota] Print Arduino update errors <PR number={7096} repo="esphome" /> by <GhUser name="jesserockz" />
+
+{/* markdownlint-enable MD013 */}
+
+## All Changelogs
+
+<Changelogs />

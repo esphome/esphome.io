@@ -1,0 +1,96 @@
+# Makefile for ESPHome Docs - Astro Starlight build
+# Rename this to Makefile when ready to switch from Hugo
+
+.PHONY: all build dev clean fetch-data migrate production netlify check-links preview install
+
+SHELL := bash
+.SHELLFLAGS := -euo pipefail -c
+
+# Default target
+all: build
+
+# Install dependencies
+install:
+	npm install
+
+# Fetch automations data from data.esphome.io
+fetch-data:
+	@echo "Fetching automations data..."
+	npx tsx scripts/fetch-automations.ts
+
+# Run content migration from Hugo to Astro
+migrate:
+	@echo "Running content migration..."
+	npx tsx scripts/migrate-content.ts
+
+# Run migration in dry-run mode
+migrate-dry:
+	@echo "Running content migration (dry run)..."
+	npx tsx scripts/migrate-content.ts --dry-run
+
+# Development server
+dev: fetch-data
+	npm run dev
+
+# Preview production build
+preview:
+	npm run preview
+
+# Production build
+build: fetch-data
+	npm run build
+
+# Alias for production
+production: build
+
+# Netlify build
+netlify: fetch-data
+	npm run build
+
+# Check links (using linkinator)
+check-links: build
+	@echo "Checking links..."
+	npx linkinator dist --recurse --skip "^https://github.com" --skip "^https://discord" --skip "^https://community.home-assistant.io"
+
+# Clean build artifacts
+clean:
+	rm -rf dist .astro node_modules/.cache
+	rm -rf src/data/automations/*.json
+
+# Deep clean (including node_modules)
+clean-all: clean
+	rm -rf node_modules
+
+# Copy static assets from Hugo (one-time migration helper)
+copy-static:
+	@echo "Copying static assets..."
+	mkdir -p public/images
+	cp -r static/images/* public/images/ 2>/dev/null || true
+	cp -r static/*.svg public/ 2>/dev/null || true
+	cp -r static/*.png public/ 2>/dev/null || true
+	cp -r static/*.ico public/ 2>/dev/null || true
+
+# Full migration workflow
+full-migrate: install copy-static fetch-data migrate build
+	@echo "Migration complete! Check dist/ for output."
+
+# Help
+help:
+	@echo "ESPHome Docs - Astro Starlight Build"
+	@echo ""
+	@echo "Usage: make [target]"
+	@echo ""
+	@echo "Targets:"
+	@echo "  install      - Install npm dependencies"
+	@echo "  dev          - Start development server"
+	@echo "  build        - Build for production"
+	@echo "  preview      - Preview production build"
+	@echo "  fetch-data   - Fetch automations data"
+	@echo "  migrate      - Run content migration"
+	@echo "  migrate-dry  - Run content migration (dry run)"
+	@echo "  check-links  - Check for broken links"
+	@echo "  clean        - Clean build artifacts"
+	@echo "  clean-all    - Clean everything including node_modules"
+	@echo "  copy-static  - Copy static assets from Hugo"
+	@echo "  full-migrate - Run full migration workflow"
+	@echo "  help         - Show this help"

@@ -1,0 +1,39 @@
+---
+/**
+ * ApiRef Component
+ * Creates a link to a C++ API reference.
+ *
+ * Usage:
+ *   <ApiRef text="Sensor class" path="esphome::sensor::Sensor" />
+ *   <ApiRef text="Component" path="esphome/core/component.h::Component" />
+ */
+
+interface Props {
+  text: string;
+  path: string;
+}
+
+const { text, path } = Astro.props;
+
+// Get API docs URL from environment
+const apiDocsUrl = import.meta.env.API_DOCS_URL || 'https://api-docs.esphome.io';
+
+// Process the path to create the API URL
+// 1. Get the last path element
+const pathParts = path.split('/');
+const lastElement = pathParts[pathParts.length - 1];
+
+// 2. Process special characters
+let processedPath = lastElement
+  .replace(/_/g, '__')  // Underscores become double underscores
+  .replace(/\./g, '_8')  // Dots become _8
+  .replace(/:/g, '_1');  // Colons become _1
+
+// 3. Convert capital letters to lowercase preceded by underscore
+processedPath = processedPath.replace(/[A-Z]/g, (match) => `_${match.toLowerCase()}`);
+
+const displayText = text === path ? 'API Reference' : text;
+const url = `${apiDocsUrl}/${processedPath}`;
+---
+
+<a href={url} target="_blank" rel="noopener noreferrer">{displayText}</a>

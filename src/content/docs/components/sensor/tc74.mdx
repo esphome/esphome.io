@@ -1,0 +1,44 @@
+---
+title: "TC74 Temperature Sensor"
+description: "Instructions for setting up the TC74 temperature sensors."
+---
+
+import Img from '@/components/Img.astro';
+import ApiRef from '@/components/ApiRef.astro';
+
+
+The TC74 sensor platform allows you to use your TC74 ([datasheet](https://ww1.microchip.com/downloads/en/DeviceDoc/21462D.pdf), [Adafruit](https://www.adafruit.com/product/4375)) temperature sensors with ESPHome.
+The [I²C Bus](/components/i2c) is required to be set up in your configuration for this
+sensor to work.
+
+<Img src="tc74-full.jpg" alt="Image" caption="TC74 Temperature Sensor." class="align-center" width="50.0%" />
+
+```yaml
+# Example configuration entry
+sensor:
+  - platform: tc74
+    name: "Living Room Temperature"
+```
+
+## Configuration variables
+
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to check
+  the sensor. Defaults to `60s`.
+
+- **address** (*Optional*, int): The I²C address of the sensor. Defaults to
+  `0x48`, the address of the TC74A0. For suffixes other than `A0` add the
+  final digit to `0x48` to calculate the address. For example, the TC74A5 has
+  I²C address `0x4D`.
+
+- All other options from [Sensor](/components/sensor).
+
+## See Also
+
+- [Sensor Filters](/components/sensor#sensor-filters)
+- [dht/](/dht/)
+- [dht12/](/dht12/)
+- [hdc1080/](/hdc1080/)
+- [sht3xd/](/sht3xd/)
+- [htu21d/](/htu21d/)
+- [tmp102/](/tmp102/)
+- <ApiRef text="tc74/tc74.h" path="tc74/tc74.h" />

@@ -1,0 +1,22 @@
+---
+/**
+ * PR Component
+ * Creates a link to a GitHub pull request.
+ *
+ * Usage:
+ *   <PR number={123} />
+ *   <PR number={456} repo="esphome-docs" />
+ */
+
+interface Props {
+  number: number;
+  repo?: string;
+}
+
+const { number, repo = 'esphome' } = Astro.props;
+const url = `https://github.com/esphome/${repo}/pull/${number}`;
+---
+
+<a href={url} target="_blank" rel="noopener noreferrer" class="gh-link">
+  {repo}#{number}
+</a>

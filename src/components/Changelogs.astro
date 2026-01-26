@@ -1,0 +1,60 @@
+---
+/**
+ * Changelogs Component
+ * Creates a collapsible list of all changelog entries.
+ *
+ * Usage:
+ *   <Changelogs />
+ *
+ * Note: This component relies on the content collection to list changelogs.
+ */
+import { getCollection } from 'astro:content';
+
+// Get all changelog entries
+const allDocs = await getCollection('docs');
+const changelogs = allDocs
+  .filter(doc => doc.slug.startsWith('changelog/') && doc.slug !== 'changelog')
+  .map(doc => {
+    // Extract version from slug (e.g., "changelog/2024.1.0" -> "2024.1.0")
+    const version = doc.slug.replace('changelog/', '');
+    const title = doc.data.title || version;
+
+    // Create sort key from version
+    let sortKey = version;
+    const versionNum = version.startsWith('v') ? version.slice(1) : version;
+    const parts = versionNum.split('.');
+    if (parts.length >= 3) {
+      const major = parseInt(parts[0], 10) || 0;
+      const minor = parts[1].padStart(2, '0');
+      const patch = parts[2];
+      sortKey = `${major.toString().padStart(4, '0')}.${minor}.${patch}`;
+    }
+
+    return {
+      version,
+      slug: doc.slug,
+      title,
+      sortKey,
+    };
+  })
+  .sort((a, b) => b.sortKey.localeCompare(a.sortKey));
+
+// Get current page slug if available
+const currentSlug = Astro.url.pathname.replace(/^\/|\/$/g, '');
+---
+
+<details>
+  <summary>All Changelogs</summary>
+  <div class="changelogs-list">
+    <ul>
+      {changelogs.map((changelog) => {
+        const isCurrentPage = currentSlug === changelog.slug;
+        return isCurrentPage ? (
+          <li>{changelog.title} <em>(current page)</em></li>
+        ) : (
+          <li><a href={`/${changelog.slug}/`}>{changelog.title}</a></li>
+        );
+      })}
+    </ul>
+  </div>
+</details>

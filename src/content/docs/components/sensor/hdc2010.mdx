@@ -1,0 +1,51 @@
+---
+title: "HDC2010 High Precision Temperature and Humidity Sensor"
+description: "Instructions for setting up HDC2010 temperature and humidity sensors."
+---
+
+import Img from '@/components/Img.astro';
+import ApiRef from '@/components/ApiRef.astro';
+
+
+The HDC2010 Temperature and Humidity sensor allows you to use your HDC2010
+([datasheet](https://www.ti.com/lit/ds/symlink/hdc2010.pdf),
+[Itbrainpower](https://itbrainpower.net/a-gsm/Arduino-HDC2010-sensor_howto)) sensors with
+ESPHome. The [i2c/](/i2c/) is
+required to be set up in your configuration for this sensor to work.
+
+&lt;Img src="hdc2010-full.png" alt="Image" caption="HDC2010 Temperature & Humidity Sensor. Image by `Mikroe`." class="align-center" width="50.0%" /&gt;
+
+<Img src="temperature-humidity.png" alt="Image" class="align-center" width="80.0%" />
+
+```yaml
+# Example configuration entry
+sensor:
+  - platform: hdc2010
+    temperature:
+      name: "Living Room Temperature"
+    humidity:
+      name: "Living Room Humidity"
+    update_interval: 60s
+```
+
+## Configuration variables
+
+- **temperature** (**Required**): The information for the temperature sensor.
+
+  - All options from [sensor/](/sensor/).
+
+- **humidity** (**Required**): The information for the humidity sensor
+
+  - All options from [sensor/](/sensor/).
+
+- **update_interval** (*Optional*, [time/](/time/)): The interval to check the sensor. Defaults to `60s`.
+
+## See Also
+
+- [sensor/](/sensor/#sensor-filters)
+- [absolute_humidity/](/absolute_humidity/)
+- [dht/](/dht/)
+- [dht12/](/dht12/)
+- [htu21d/](/htu21d/)
+- [sht3xd/](/sht3xd/)
+- <ApiRef text="hdc2010/hdc2010.h" path="hdc2010/hdc2010.h" />

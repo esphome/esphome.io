@@ -1,0 +1,124 @@
+---
+title: "Microphone Components"
+description: "Instructions for setting up microphones in ESPHome."
+---
+
+
+The `microphone` domain contains common functionality shared across the
+microphone platforms.
+
+<a id="config-microphone" aria-hidden="true"></a>
+
+## Base Microphone Configuration
+
+Configuration variables:
+
+- **on_data** (*Optional*, [Automation](/automations)): An automation to
+  perform when new data is received.
+
+<a id="config-microphone-source" aria-hidden="true"></a>
+
+## Microphone Source Configuration
+
+A microphone source configuration is used by components to ensure that it receives audio in the required format.
+
+Configuration variables:
+
+- **microphone** (**Required**, [ID](/guides/configuration-types#id)): The [microphone](/components/microphone/) to use for input.
+- **bits_per_sample** (*Optional*, int): The bits per sample to use as input to the component.
+  May be restricted by the component to a specific value.
+
+- **channels** (*Optional*, list): A list of 0-indexed channel numbers enabling them to use as
+  input to the component. The total amount may be restricted by the component. Defaults to 0,
+  the first channel read by the microphone.
+
+- **gain_factor** (*Optional*, int): The gain factor to apply to audio read from the microphone. Ranges from 1 to 64.
+  Defaults to 1, no gain.
+
+<a id="microphone-actions" aria-hidden="true"></a>
+
+## Microphone Actions
+
+All `microphone` actions can be used without specifying an `id` if you have only one `microphone` in
+your configuration YAML.
+
+Configuration variables:
+
+**id** (*Optional*, [ID](/guides/configuration-types#id)): The microphone to control. Defaults to the only one in YAML.
+
+<a id="microphone-capture" aria-hidden="true"></a>
+
+### `microphone.capture` Action
+
+This action will start capturing audio data from the microphone. The data will be passed to any components listening
+and will be available in the `on_data` trigger.
+
+<a id="microphone-stop_capture" aria-hidden="true"></a>
+
+### `microphone.stop_capture` Action
+
+This action will stop capturing audio data from the microphone.
+
+<a id="microphone-mute" aria-hidden="true"></a>
+
+### `microphone.mute` Action
+
+This action will apply a software mute to the audio data from the microphone before passing it to any listening components.
+
+<a id="microphone-unmute" aria-hidden="true"></a>
+
+### `microphone.unmute` Action
+
+This action will disable applying a software mute initiated with `microphone.mute`.
+
+<a id="microphone-triggers" aria-hidden="true"></a>
+
+## Microphone Triggers
+
+<a id="microphone-on_data" aria-hidden="true"></a>
+
+### `microphone.on_data` Trigger
+
+This trigger will fire when new data is received from the microphone.
+The data is available as a `std::vector&lt;uint8_t&gt;` in the variable `x`.
+This data is the raw microphone audio and includes all the read bits per sample and channels.
+
+```yaml
+microphone:
+  - platform: ...
+    on_data:
+      - logger.log:
+          format: "Received %d bytes"
+          args: ['x.size()']
+```
+
+Configuration variables:
+
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): The microphone to check. Defaults to the only one in YAML.
+
+<a id="microphone-conditions" aria-hidden="true"></a>
+
+## Microphone Conditions
+
+All `microphone` conditions can be used without specifying an `id` if you have only one `microphone` in
+your configuration YAML.
+
+Configuration variables:
+
+**id** (*Optional*, [ID](/guides/configuration-types#id)): The microphone to check. Defaults to the only one in YAML.
+
+<a id="microphone-is_capturing" aria-hidden="true"></a>
+
+### `microphone.is_capturing` Condition
+
+This condition will check if the microphone is currently capturing audio data.
+
+<a id="microphone-is_muted" aria-hidden="true"></a>
+
+### `microphone.is_muted` Condition
+
+This condition will check if the microphone is currently apply a software mute.
+
+## Platforms
+
+## See Also

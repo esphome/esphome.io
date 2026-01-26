@@ -1,0 +1,450 @@
+---
+title: "ESPHome 2025.5.0 - 21st May 2025"
+description: "Changelog for ESPHome 2025.5.0."
+---
+
+import PR from '@/components/PR.astro';
+import GhUser from '@/components/GhUser.astro';
+import Changelogs from '@/components/Changelogs.astro';
+import ComponentGrid from '@/components/ComponentGrid.astro';
+
+
+<ComponentGrid items={[
+  {
+    "title": "PM2005 Sensor",
+    "link": "components/sensor/pm2005",
+    "image": "pm2005.png"
+  },
+  {
+    "title": "Mapping",
+    "link": "components/mapping",
+    "image": "mapping.svg",
+    "darkInvert": true
+  },
+  {
+    "title": "Packet Transport",
+    "link": "components/packet_transport/",
+    "image": "packet_transport.svg",
+    "darkInvert": true
+  },
+  {
+    "title": "Syslog",
+    "link": "components/syslog",
+    "image": "file-document-box.svg",
+    "darkInvert": true
+  },
+  {
+    "title": "Sound Level",
+    "link": "components/sensor/sound_level",
+    "image": "waveform.svg",
+    "darkInvert": true
+  },
+  {
+    "title": "MIPI SPI Displays",
+    "link": "components/display/mipi_spi",
+    "image": "t4-s3.jpg"
+  }
+]} />
+
+## Voice Assistant
+
+raw:: html
+<a href="https://www.home-assistant.io/voice-pe/" target="_blank">Home Assistant Voice Preview Edition</a> is
+Home Assistant's first official voice assistant hardware.
+It was designed from the ground up to give the best experience possible with Assist,
+Home Assistant's built-in voice assistant software. With advanced mics and audio processing,
+it can run fully locally in the home. Voice Preview Edition was built to run ESPHome,
+and like any ESPHome device, can be fully customized.
+
+We have implemented all of the new features developed for the Voice Preview Edition!
+The voice assistant component supports starting conversations from Home Assistant and
+continuing conversations without needing to reactivate the wake word.
+Additionally, microWakeWord supports enabling and disabling models via yaml actions.
+The voice assistant component, through Home Assistant, can also change the active
+on-device wake word. If you use our prebuilt voice assistant firmwares, then you
+will receive an update notification automatically in Home Assistant adding support
+for these new features!
+
+If you have taken control or created your own voice assistant configuration, you may
+need to adjust them to support these new features. Please see the newly updated
+examples in our wake word voice assistant firmware repository to get started.
+
+If you have taken control of your Home Assistant Voice PE and want to get all of the
+new changes and don't want to continue managing your own YAML file, you can re-install
+the latest firmware from the raw:: html
+<a href="https://esphome.github.io/home-assistant-voice-pe/" target="_blank">web installer</a>. We also provide
+OTA updates for the device that you can directly install from within Home Assistant.
+
+It is now easier to configure and use microphones. Multiple components can
+simultaneously read from one microphone. Each individual component using a microphone
+can also set their own specific gain level or specify which microphone channel to use.
+Microphone settings are validated at compilation, and most settings are converted,
+if necessary, without any extra configuration. Your existing YAML files should still
+build without any adjustments. However, if your microphone was previously configured
+to use 32 bits per sample, then you should add a gain factor of 4 to match
+ESPHome's previous behavior. For example:
+
+```yaml
+voice_assistant:
+  microphone:
+    microphone: echo_microphone
+    gain_factor: 4
+```
+
+## Packet Transport
+
+The [packet_transport](/components/packet_transport/) has been added to allow ESPHome devices to directly communicate
+with each other. There are two platforms available in this release: [uart](/components/packet_transport/uart/)
+and [udp](/components/packet_transport/udp/).
+
+## HTTP Request
+
+The [http_request](/components/http_request/) actions have had the `headers` config variable renamed to
+`request_headers` in order to differentiate it from the new `collect_headers` config variable allowing you to collect
+and access the response headers in automations.
+
+## ATM90E32
+
+For energy meters that use the [atm90e32](/components/sensor/atm90e32/) energy metering chip, like
+from CircuitSetup, and Gelidus Research, support was added for semi-automatic gain & offset calibration, and status
+messages for each phase & frequency. An apparent power sensor was also added.
+
+{/* markdownlint-disable MD013 */}
+
+## Release 2025.5.1 - May 27
+
+- [core] Add some missing includes <PR number={8864} repo="esphome" /> by <GhUser name="jesserockz" />
+- [tuya_select] - Fix datapoint config error. <PR number={8871} repo="esphome" /> by <GhUser name="Cossid" />
+- [online_image] Allocate pngle manually to potentially use psram <PR number={8354} repo="esphome" /> by <GhUser name="jesserockz" />
+- [lvgl] Improve error messages from text validation <PR number={8872} repo="esphome" /> by <GhUser name="clydebarrow" />
+- [micro_wake_word] avoid duplicated detections from same event <PR number={8877} repo="esphome" /> by <GhUser name="kahrendt" />
+- [speaker] ensure the pipeline returns an error state before returning its stopped <PR number={8878} repo="esphome" /> by <GhUser name="kahrendt" />
+- [logger] Fix options in select <PR number={8875} repo="esphome" /> by <GhUser name="jesserockz" />
+- [esp32] Fix building on IDF 4 <PR number={8892} repo="esphome" /> by <GhUser name="kbx81" />
+- [api] Fix crash with gcc compiler on host <PR number={8902} repo="esphome" /> by <GhUser name="jesserockz" />
+- [web_server] Fix download list where external_components has a substitution value <PR number={8911} repo="esphome" /> by <GhUser name="jesserockz" />
+
+## Release 2025.5.2 - June 3
+
+- [i2s-audio] ensure mic task isn't pinned to a core <PR number={8879} repo="esphome" /> by <GhUser name="kahrendt" />
+- [rp2040] use low-level control for ISR gpio and add IRAM_ATTR <PR number={8950} repo="esphome" /> by <GhUser name="ssieb" />
+- [esp8266] fix isr pin <PR number={8981} repo="esphome" /> by <GhUser name="ssieb" />
+- [debug] Make sensors work without logger debug level <PR number={8980} repo="esphome" /> by <GhUser name="clydebarrow" />
+- Fix logger stack overflow <PR number={8988} repo="esphome" /> by <GhUser name="bdraco" />
+
+## Full list of changes
+
+### New Components
+
+- Add CUBIC PM2005/PM2105 Laser Particle Sensor Module <PR number={8292} repo="esphome" /> by <GhUser name="andrewjswan" /> (new-integration)
+- [mapping] Implement yaml-configured maps <PR number={8333} repo="esphome" /> by <GhUser name="clydebarrow" /> (new-integration)
+- [const] Create component-level const repository <PR number={8385} repo="esphome" /> by <GhUser name="clydebarrow" /> (new-integration)
+- [packet_transport] Extract packet encoding functionality <PR number={8187} repo="esphome" /> by <GhUser name="clydebarrow" /> (new-integration) (breaking-change)
+- [uart] Add packet_transport platform <PR number={8214} repo="esphome" /> by <GhUser name="clydebarrow" /> (new-integration)
+- [syslog] Implement logging via syslog <PR number={8637} repo="esphome" /> by <GhUser name="clydebarrow" /> (new-integration)
+- [sound_level] Add a new sound level sensor <PR number={8737} repo="esphome" /> by <GhUser name="kahrendt" /> (new-integration)
+- [mipi_spi] New display driver for MIPI DBI devices <PR number={8383} repo="esphome" /> by <GhUser name="clydebarrow" /> (new-integration)
+
+### New Platforms
+
+- [cst226] Add support for cst226 binary sensor <PR number={8381} repo="esphome" /> by <GhUser name="clydebarrow" /> (new-platform)
+- ATM90E32 Semi-automatic calibration & Status fields <PR number={8529} repo="esphome" /> by <GhUser name="CircuitSetup" /> (new-platform) (breaking-change)
+
+### Breaking Changes
+
+- [http_request] Ability to get response headers <PR number={8224} repo="esphome" /> by <GhUser name="candrews" /> (breaking-change)
+- [i2s_audio, microphone, micro_wake_word, voice_assistant] Use microphone source to process incoming audio <PR number={8645} repo="esphome" /> by <GhUser name="kahrendt" /> (breaking-change)
+- [packet_transport] Extract packet encoding functionality <PR number={8187} repo="esphome" /> by <GhUser name="clydebarrow" /> (new-integration) (breaking-change)
+- ATM90E32 Semi-automatic calibration & Status fields <PR number={8529} repo="esphome" /> by <GhUser name="CircuitSetup" /> (new-integration) (breaking-change)
+
+### Beta Changes
+
+<details>
+<summary></summary>
+
+
+- [media_player] Deprecate `MEDIA_PLAYER_SCHEMA` <PR number={8784} repo="esphome" /> by <GhUser name="jesserockz" />
+- [schema] Get component name if available for deprecation warning <PR number={8785} repo="esphome" /> by <GhUser name="jesserockz" />
+- [fan] Update components to use `fan_schema(...)` <PR number={8786} repo="esphome" /> by <GhUser name="jesserockz" />
+- Improve batching of BLE advertisements for better airtime efficiency <PR number={8778} repo="esphome" /> by <GhUser name="bdraco" />
+- Fix release to pypi <PR number={8789} repo="esphome" /> by <GhUser name="jesserockz" />
+- [climate] Update components to use `climate_schema(...)` <PR number={8788} repo="esphome" /> by <GhUser name="jesserockz" />
+- Bump esphome-dashboard to 20250514.0 <PR number={8790} repo="esphome" /> by <GhUser name="jesserockz" />
+- Avoid protobuf message construction when tx buffer is full <PR number={8787} repo="esphome" /> by <GhUser name="bdraco" />
+- Update some sensor schemas to be Optional <PR number={8803} repo="esphome" /> by <GhUser name="jesserockz" />
+- Use fixed buffer for plaintext protocol like noise protocol <PR number={8800} repo="esphome" /> by <GhUser name="bdraco" />
+- Optimize protobuf varint decoder for ESPHome use case <PR number={8791} repo="esphome" /> by <GhUser name="bdraco" />
+- Logger Recursion Guard per Task on ESP32 <PR number={8765} repo="esphome" /> by <GhUser name="bdraco" />
+- [log] improve/refactor `log` <PR number={8708} repo="esphome" /> by <GhUser name="ximex" />
+- [gps] update lib, improve code/tests/config <PR number={8768} repo="esphome" /> by <GhUser name="ximex" />
+- Fix ESP32 Camera class inheritance <PR number={8811} repo="esphome" /> by <GhUser name="bdraco" />
+- [sen5x] Fix validation for values read from hardware <PR number={8769} repo="esphome" /> by <GhUser name="kbx81" />
+- Fix the case of single error <PR number={8824} repo="esphome" /> by <GhUser name="asergunov" />
+- Revert "[binary_sensor] initial state refactor" <PR number={8828} repo="esphome" /> by <GhUser name="clydebarrow" />
+- Fix misspelling of climate in climate_ir.climate_ir_with_receiver_schema <PR number={8829} repo="esphome" /> by <GhUser name="warthog618" />
+- Fix ESP32 console logging corruption and message loss in multi-task <PR number={8806} repo="esphome" /> by <GhUser name="bdraco" />
+- Reduce number of calls to fetch time in the main loop <PR number={8804} repo="esphome" /> by <GhUser name="bdraco" />
+- Refactor API frame helpers to enable buffer reuse <PR number={8825} repo="esphome" /> by <GhUser name="bdraco" />
+- Bump docker/build-push-action from 6.16.0 to 6.17.0 in /.github/actions/build-image <PR number={8810} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- Update esp32-camera library version <PR number={8832} repo="esphome" /> by <GhUser name="Fexiven" />
+- Fix api doc homepage <PR number={8836} repo="esphome" /> by <GhUser name="jesserockz" />
+- Deploy doxygen docs to netlify <PR number={8837} repo="esphome" /> by <GhUser name="jesserockz" />
+- [release] Fix output value <PR number={8839} repo="esphome" /> by <GhUser name="jesserockz" />
+- [release] Don't wait for docker to be finished before deploying schema <PR number={8838} repo="esphome" /> by <GhUser name="jesserockz" />
+- Fix API connection sending ping too early after connection establishment <PR number={8840} repo="esphome" /> by <GhUser name="bdraco" />
+- Fix ethernet connection timeout issue caused by incorrect time value during setup <PR number={8841} repo="esphome" /> by <GhUser name="bdraco" />
+- [docker] Update pip on build <PR number={8835} repo="esphome" /> by <GhUser name="jesserockz" />
+- [api-docs] Run using netlify builders <PR number={8842} repo="esphome" /> by <GhUser name="jesserockz" />
+- Fix #ifdefs <PR number={8853} repo="esphome" /> by <GhUser name="clydebarrow" />
+- [at581x] Fix issue with methods not being public <PR number={8852} repo="esphome" /> by <GhUser name="gpambrozio" />
+- [api-docs] Move netlify.toml to root <PR number={8861} repo="esphome" /> by <GhUser name="jesserockz" />
+
+
+</details>
+
+### All changes
+
+<details open>
+<summary></summary>
+
+
+- [esp32] Allow pioarduino version 5.3.3 and 5.5.0 <PR number={8526} repo="esphome" /> by <GhUser name="swoboda1337" />
+- Update setup to make .temp directory <PR number={8558} repo="esphome" /> by <GhUser name="calumapplepie" />
+- [core] make require_framework_version generic <PR number={8412} repo="esphome" /> by <GhUser name="tomaszduda23" />
+- Add support for Waveshare 5.65" ACeP 7-Color display <PR number={8557} repo="esphome" /> by <GhUser name="nhjschulz" />
+- [ci] Pin codecov action to v5.4.0 <PR number={8564} repo="esphome" /> by <GhUser name="jesserockz" />
+- [lvgl] Small buffers in internal RAM <PR number={8523} repo="esphome" /> by <GhUser name="clydebarrow" />
+- Use python3 in place of python, as some systems don't emulate the former <PR number={8568} repo="esphome" /> by <GhUser name="calumapplepie" />
+- Add typing to protobuf code generator <PR number={8541} repo="esphome" /> by <GhUser name="bdraco" />
+- fix typo `USE_ESP32_VARIANT_ESP32H6` <PR number={8580} repo="esphome" /> by <GhUser name="ximex" />
+- [prometheus] Add climate metrics <PR number={8247} repo="esphome" /> by <GhUser name="jzucker2" />
+- [api] Allow noise encryption key to be set at runtime <PR number={7296} repo="esphome" /> by <GhUser name="kbx81" />
+- [esp32_rmt_led_strip] Add use_dma option <PR number={8270} repo="esphome" /> by <GhUser name="swoboda1337" />
+- Add CUBIC PM2005/PM2105 Laser Particle Sensor Module <PR number={8292} repo="esphome" /> by <GhUser name="andrewjswan" /> (new-integration)
+- [uptime] Add format config for text_sensor <PR number={8304} repo="esphome" /> by <GhUser name="clydebarrow" />
+- [mapping] Implement yaml-configured maps <PR number={8333} repo="esphome" /> by <GhUser name="clydebarrow" /> (new-integration)
+- [analog_threshold] Make thresholds templatable <PR number={8452} repo="esphome" /> by <GhUser name="clydebarrow" />
+- [internal_temperature] Add p4 ifdefs <PR number={8484} repo="esphome" /> by <GhUser name="swoboda1337" />
+- Sort resolved IP addresses for dashboard <PR number={8536} repo="esphome" /> by <GhUser name="dwmw2" />
+- Remove duplicate co2 and pressure constants <PR number={8583} repo="esphome" /> by <GhUser name="mgiacomelli" />
+- [remote_receiver] Filtering fixes <PR number={7777} repo="esphome" /> by <GhUser name="swoboda1337" />
+- [psram] Add version check to fix 5.3.2 <PR number={8588} repo="esphome" /> by <GhUser name="swoboda1337" />
+- Bump esp-idf to 5.1.6 <PR number={8566} repo="esphome" /> by <GhUser name="bdraco" />
+- Update const.py - Add UNIT_MEGAJOULE = "MJ" <PR number={8594} repo="esphome" /> by <GhUser name="Roving-Ronin" />
+- Implement `min_power` for component `ac_dimmer` using method `trailing` <PR number={8472} repo="esphome" /> by <GhUser name="VasilKalchev" />
+- Rewrite BLE scanner to use a state machine <PR number={8601} repo="esphome" /> by <GhUser name="bdraco" />
+- [http_request] Ability to get response headers <PR number={8224} repo="esphome" /> by <GhUser name="candrews" /> (breaking-change)
+- [sht4x] Reduce warn spam, added communication check in setup <PR number={8250} repo="esphome" /> by <GhUser name="DjordjeMandic" />
+- Schema gen action <PR number={8593} repo="esphome" /> by <GhUser name="glmnet" />
+- [i2s_audio, i2s_audio_microphone, i2s_audio_speaker] Add basic support for new esp-idf 5.x.x i2s driver. <PR number={8181} repo="esphome" /> by <GhUser name="luar123" />
+- fix schema-gen-ci failures <PR number={8621} repo="esphome" /> by <GhUser name="glmnet" />
+- replace `http` with `https` <PR number={8628} repo="esphome" /> by <GhUser name="ximex" />
+- [docker] Use new base container image <PR number={8582} repo="esphome" /> by <GhUser name="jesserockz" />
+- [i2s_audio] Microphone reads in loop for callbacks shouldn't ever delay <PR number={8625} repo="esphome" /> by <GhUser name="kahrendt" />
+- [micro_wake_word] Use microphone callback and avoid unnecessary allocation attempts <PR number={8626} repo="esphome" /> by <GhUser name="kahrendt" />
+- [voice_assisant] support start/continue conversation and deallocate buffers <PR number={8610} repo="esphome" /> by <GhUser name="kahrendt" />
+- [voice_assistant] Use mic callback and remove esp_adf code <PR number={8627} repo="esphome" /> by <GhUser name="kahrendt" />
+- [const] Create component-level const repository <PR number={8385} repo="esphome" /> by <GhUser name="clydebarrow" /> (new-integration)
+- [http_request] Implement for host platform <PR number={8040} repo="esphome" /> by <GhUser name="clydebarrow" />
+- Take advantage of clipping to speed image drawing. <PR number={8630} repo="esphome" /> by <GhUser name="lhartmann" />
+- [touchscreen] Clear interrupt flag before reading touch data. <PR number={8632} repo="esphome" /> by <GhUser name="raineth" />
+- [mdns] Support templatable config options for MDNS extra services <PR number={8606} repo="esphome" /> by <GhUser name="heythisisnate" />
+- Fix support for ESP32-H2 in deep_sleep <PR number={8290} repo="esphome" /> by <GhUser name="baal86" />
+- [const] Move CONF_GAIN_FACTOR to const.py <PR number={8646} repo="esphome" /> by <GhUser name="jesserockz" />
+- [http_request] Fix request headers <PR number={8644} repo="esphome" /> by <GhUser name="jesserockz" />
+- add beo4_protocol to remote_base component <PR number={8307} repo="esphome" /> by <GhUser name="aanban" />
+- Ensure new const file stays in order <PR number={8642} repo="esphome" /> by <GhUser name="jesserockz" />
+- [audio, microphone] Add MicrophoneSource helper class <PR number={8641} repo="esphome" /> by <GhUser name="kahrendt" />
+- [pmsx003] Refactor Imports, Extract Constants, Improve Data Handling & Logging <PR number={8344} repo="esphome" /> by <GhUser name="ximex" />
+- Add code to send/receive GoBox infrared control messages. <PR number={7554} repo="esphome" /> by <GhUser name="cvwillegen" />
+- [bluetooth_proxy] Allow changing active/passive via api <PR number={8649} repo="esphome" /> by <GhUser name="jesserockz" />
+- [pmsa003i] code improvements <PR number={8485} repo="esphome" /> by <GhUser name="ximex" />
+- [adc] sort variants and add links to reference implementations <PR number={8327} repo="esphome" /> by <GhUser name="ximex" />
+- [i2s_audio, microphone, micro_wake_word, voice_assistant] Use microphone source to process incoming audio <PR number={8645} repo="esphome" /> by <GhUser name="kahrendt" /> (breaking-change)
+- [debug] Fix compile errors when using the ESP32-C2 <PR number={7474} repo="esphome" /> by <GhUser name="d51x" />
+- [canbus] Add callback for use by other components <PR number={8578} repo="esphome" /> by <GhUser name="clydebarrow" />
+- [i2s_audio] Move microphone reads into a task <PR number={8651} repo="esphome" /> by <GhUser name="kahrendt" />
+- Only warn if the component blocked for a longer time than the last time <PR number={8064} repo="esphome" /> by <GhUser name="numo68" />
+- [micro_wake_word] add new VPE features <PR number={8655} repo="esphome" /> by <GhUser name="kahrendt" />
+- [microphone] Bugfix: protect against starting mic if already started <PR number={8656} repo="esphome" /> by <GhUser name="kahrendt" />
+- Bump FastLed version to 3.9.16 <PR number={8402} repo="esphome" /> by <GhUser name="andrewjswan" />
+- [gree] Add support for YAG remotes <PR number={7418} repo="esphome" /> by <GhUser name="sarthurdev" />
+- Add a function to return the I2C address from an I2CDevice object <PR number={8454} repo="esphome" /> by <GhUser name="ilikecake" />
+- Fix second scrolling run ussue <PR number={8347} repo="esphome" /> by <GhUser name="asergunov" />
+- [alarm_control_panel] Allow sensor to trigger when alarm disarmed <PR number={7746} repo="esphome" /> by <GhUser name="nworbneb" />
+- Component pca9685 - phase_begin always set to zero <PR number={8379} repo="esphome" /> by <GhUser name="uae007" />
+- [remote_base] Fix compile error on IDF <PR number={8664} repo="esphome" /> by <GhUser name="kbx81" />
+- [defines] Fix USE_MICRO_WAKE_WORD position <PR number={8663} repo="esphome" /> by <GhUser name="jesserockz" />
+- Adding timing budget support for vl53l0x <PR number={7991} repo="esphome" /> by <GhUser name="lastradanet" />
+- Daikin IR Climate Remote Target Temperature and Fan Modes <PR number={7946} repo="esphome" /> by <GhUser name="bcpearce" />
+- [i2c] Allow buffers in PSRAM <PR number={8640} repo="esphome" /> by <GhUser name="clydebarrow" />
+- Fix CONFIG_LWIP_TCP_RCV_SCALE and CONFIG_TCP_WND_DEFAULT <PR number={8425} repo="esphome" /> by <GhUser name="rwrozelle" />
+- support self-signed cert in mqtt <PR number={8650} repo="esphome" /> by <GhUser name="scaiper" />
+- [binary_sensor] initial state refactor <PR number={8648} repo="esphome" /> by <GhUser name="clydebarrow" /> (breaking-change)
+- Add to_ntc_resistance|temperature sensor filter (esphome/feature-requests#2967) <PR number={7898} repo="esphome" /> by <GhUser name="rhabacker" />
+- [esp32, debug] Add `cpu_frequency` config option and debug sensor <PR number={8542} repo="esphome" /> by <GhUser name="clydebarrow" />
+- [voice_assistant] voice assistant can configure enabled wake words <PR number={8657} repo="esphome" /> by <GhUser name="kahrendt" />
+- [mlx90393] Add verification for register contents <PR number={8279} repo="esphome" /> by <GhUser name="functionpointer" />
+- Check for missed pulse_meter ISRs in the main loop <PR number={6126} repo="esphome" /> by <GhUser name="TrentHouliston" />
+- [debug] add missing header <PR number={8666} repo="esphome" /> by <GhUser name="kahrendt" />
+- [microphone] Add software mute and fix wrong type for automations <PR number={8667} repo="esphome" /> by <GhUser name="kahrendt" />
+- [micro_wake_word] Clarify spectrogram features calculation <PR number={8669} repo="esphome" /> by <GhUser name="kahrendt" />
+- Add UNIT_MILLIVOLT <PR number={8665} repo="esphome" /> by <GhUser name="DJTerentjev" />
+- Added Banking support to tca9555, fixed input bug <PR number={8003} repo="esphome" /> by <GhUser name="mobrembski" />
+- Add GDEY0583T81 support <PR number={8668} repo="esphome" /> by <GhUser name="myllyja" />
+- [climate] Fix typo and use `this->` <PR number={8678} repo="esphome" /> by <GhUser name="ximex" />
+- Add CONF_CONTINUOUS to const.py <PR number={8682} repo="esphome" /> by <GhUser name="ilikecake" />
+- unify lowercase `x` in hexadecimal values <PR number={8686} repo="esphome" /> by <GhUser name="ximex" />
+- [climate_ir_lg] use `this->` <PR number={8687} repo="esphome" /> by <GhUser name="ximex" />
+- [packet_transport] Extract packet encoding functionality <PR number={8187} repo="esphome" /> by <GhUser name="clydebarrow" /> (new-integration) (breaking-change)
+- [esp32_ble_server] Add appearance advertising field <PR number={8672} repo="esphome" /> by <GhUser name="clydebarrow" />
+- [packages] Allow list instead of dict for packages <PR number={8688} repo="esphome" /> by <GhUser name="clydebarrow" />
+- [lvgl] Add refresh action to re-evaluate initial widget properties <PR number={8675} repo="esphome" /> by <GhUser name="clydebarrow" />
+- [image] Support the other Pictogrammers icon sets `memory:` and `mdil:` <PR number={8676} repo="esphome" /> by <GhUser name="clydebarrow" />
+- [uart] Add packet_transport platform <PR number={8214} repo="esphome" /> by <GhUser name="clydebarrow" /> (new-integration)
+- [debug] Show source of last software reboot <PR number={8595} repo="esphome" /> by <GhUser name="clydebarrow" />
+- [syslog] Implement logging via syslog <PR number={8637} repo="esphome" /> by <GhUser name="clydebarrow" /> (new-integration)
+- [cst226] Add support for cst226 binary sensor <PR number={8381} repo="esphome" /> by <GhUser name="clydebarrow" /> (new-platform)
+- [nextion] Adds a command pacer with `command_spacing` attribute <PR number={7948} repo="esphome" /> by <GhUser name="edwardtfn" />
+- [arduino] Always include Arduino.h for Arduino <PR number={8693} repo="esphome" /> by <GhUser name="clydebarrow" />
+- [audio, microphone] Quantization Improvements <PR number={8695} repo="esphome" /> by <GhUser name="kahrendt" />
+- [micro_wake_word] Experimental cutoff adjustments and uses mic sample rate <PR number={8702} repo="esphome" /> by <GhUser name="kahrendt" />
+- [mics_4514] Add default device class to CO sensor <PR number={8710} repo="esphome" /> by <GhUser name="jesserockz" />
+- [i2s_audio, mixer, resampler, speaker] Simplify duration played callback <PR number={8703} repo="esphome" /> by <GhUser name="kahrendt" />
+- [packet_transport] Make some arguments const <PR number={8700} repo="esphome" /> by <GhUser name="clydebarrow" />
+- Reserve buffer space to avoid frequent realloc when generating protobuf messages <PR number={8707} repo="esphome" /> by <GhUser name="bdraco" />
+- Preallocate Buffer Space for ESP32-CAM <PR number={8712} repo="esphome" /> by <GhUser name="bdraco" />
+- Correct Protobuf Wire Type for `encode_fixed64` <PR number={8713} repo="esphome" /> by <GhUser name="bdraco" />
+- Avoid Reallocation When Sending Logging Messages <PR number={8714} repo="esphome" /> by <GhUser name="bdraco" />
+- Reserve space in the frame helper when we know in advance how much we need <PR number={8716} repo="esphome" /> by <GhUser name="bdraco" />
+- Require reserve_size in create_buffer to reduce realloc overhead <PR number={8715} repo="esphome" /> by <GhUser name="bdraco" />
+- [key_collector] enable/disable <PR number={8718} repo="esphome" /> by <GhUser name="ssieb" />
+- Increase zeroconf timeout to 10 seconds <PR number={8670} repo="esphome" /> by <GhUser name="bdraco" />
+- Consolidate `write_raw_` implementation to reduce code duplication <PR number={8717} repo="esphome" /> by <GhUser name="bdraco" />
+- Improve BLE Connection Reliability by Enabling Software Coexistence <PR number={8683} repo="esphome" /> by <GhUser name="bdraco" />
+- Optimize bluetooth_proxy memory copy and reduce reallocs <PR number={8723} repo="esphome" /> by <GhUser name="bdraco" />
+- ATM90E32 Semi-automatic calibration & Status fields <PR number={8529} repo="esphome" /> by <GhUser name="CircuitSetup" /> (new-integration) (breaking-change)
+- [api] Synchronise api.proto between repos <PR number={8720} repo="esphome" /> by <GhUser name="jesserockz" />
+- [valve] Tidy up template publish action location <PR number={8731} repo="esphome" /> by <GhUser name="jesserockz" />
+- [valve] Move to use `valve_schema(..)` instead of `VALVE_SCHEMA` <PR number={8730} repo="esphome" /> by <GhUser name="jesserockz" />
+- [lock] Tidy up template publish action and lockstate locations <PR number={8729} repo="esphome" /> by <GhUser name="jesserockz" />
+- [update] Move to use `update_schema(..)` instead of `UPDATE_SCHEMA` <PR number={8726} repo="esphome" /> by <GhUser name="jesserockz" />
+- [text] Move to use `text_schema(..)` instead of `TEXT_SCHEMA` <PR number={8727} repo="esphome" /> by <GhUser name="jesserockz" />
+- [lock] Move to use `lock_schema(..)` instead of `LOCK_SCHEMA` <PR number={8728} repo="esphome" /> by <GhUser name="jesserockz" />
+- [config] Use `cv.UNDEFINED` instead of adhoc `_UNDEF` objects <PR number={8725} repo="esphome" /> by <GhUser name="jesserockz" />
+- [audio, microphone] - Allow MicrophoneSource to passively capture/optimization <PR number={8732} repo="esphome" /> by <GhUser name="kahrendt" />
+- [audio] Bump esp-audio-libs to version 1.1.4 for speed optimizations <PR number={8739} repo="esphome" /> by <GhUser name="kahrendt" />
+- [i2s_audio] Fix: Slot bit-width for ESP32 variant <PR number={8738} repo="esphome" /> by <GhUser name="kahrendt" />
+- [voice_assistant] Bugfix: Properly detect states where mic is running <PR number={8745} repo="esphome" /> by <GhUser name="kahrendt" />
+- [sound_level] Add a new sound level sensor <PR number={8737} repo="esphome" /> by <GhUser name="kahrendt" /> (new-integration)
+- [one_wire][dallas_temp] adjust timings and reduce disabled interrupts <PR number={8744} repo="esphome" /> by <GhUser name="ssieb" />
+- MQTT: fan direction control added <PR number={8022} repo="esphome" /> by <GhUser name="mbronk" />
+- [config] Add entity schema consts with deprecation log <PR number={8747} repo="esphome" /> by <GhUser name="jesserockz" />
+- Fix ESP32 API Disconnects Caused by Concurrent Logger Writes <PR number={8736} repo="esphome" /> by <GhUser name="bdraco" />
+- [vscode] provide version to editor <PR number={8752} repo="esphome" /> by <GhUser name="glmnet" />
+- [i2s_audio] Correct a microphone with a DC offset signal <PR number={8751} repo="esphome" /> by <GhUser name="kahrendt" />
+- [config] Deprecate other `*_SCHEMA` constants <PR number={8748} repo="esphome" /> by <GhUser name="jesserockz" />
+- [opentherm] Update to use schema methods <PR number={8756} repo="esphome" /> by <GhUser name="jesserockz" />
+- [factory_reset] Use switch_schema method <PR number={8757} repo="esphome" /> by <GhUser name="jesserockz" />
+- [sprinkler] Use number_schema method <PR number={8759} repo="esphome" /> by <GhUser name="jesserockz" />
+- [tm1638] Use switch_schema method <PR number={8758} repo="esphome" /> by <GhUser name="jesserockz" />
+- [airthings] Remove unnecessary schema <PR number={8760} repo="esphome" /> by <GhUser name="jesserockz" />
+- [ble_client] Use text_sensor_schema method <PR number={8761} repo="esphome" /> by <GhUser name="jesserockz" />
+- [sml] Use text_sensor_schema method <PR number={8762} repo="esphome" /> by <GhUser name="jesserockz" />
+- [udp, syslog] fix clang tidy <PR number={8755} repo="esphome" /> by <GhUser name="tomaszduda23" />
+- Avoid iterating clients twice in the api_server loop <PR number={8733} repo="esphome" /> by <GhUser name="bdraco" />
+- [clang] clang tidy support with zephyr <PR number={8352} repo="esphome" /> by <GhUser name="tomaszduda23" />
+- Fix missing recursion guard release on ESP8266 <PR number={8766} repo="esphome" /> by <GhUser name="bdraco" />
+- [schema] Deploy schema after release workflow finished <PR number={8767} repo="esphome" /> by <GhUser name="jesserockz" />
+- [config] Deprecate more `*_SCHEMA` constants <PR number={8763} repo="esphome" /> by <GhUser name="jesserockz" />
+- [gps] Add hdop sensor <PR number={8680} repo="esphome" /> by <GhUser name="realzoulou" />
+- In case of proto-diff show changes and archive generated <PR number={8698} repo="esphome" /> by <GhUser name="dala318" />
+- [climate] Fix climate_schema <PR number={8772} repo="esphome" /> by <GhUser name="jesserockz" />
+- Tuya Select - Add int_datapoint option <PR number={8393} repo="esphome" /> by <GhUser name="Cossid" />
+- [select] Tidy schema generation <PR number={8775} repo="esphome" /> by <GhUser name="jesserockz" />
+- [demo] Clean up schema deprecations, add test <PR number={8771} repo="esphome" /> by <GhUser name="jesserockz" />
+- [template] Use alarm_control_panel_schema method <PR number={8764} repo="esphome" /> by <GhUser name="jesserockz" />
+- [cover] Update components to use `cover_schema(...)` <PR number={8770} repo="esphome" /> by <GhUser name="jesserockz" />
+- [switch] Fix schema generation <PR number={8774} repo="esphome" /> by <GhUser name="jesserockz" />
+- [esp32] improve `gpio` <PR number={8709} repo="esphome" /> by <GhUser name="ximex" />
+- [text_sensor] Fix schema generation <PR number={8773} repo="esphome" /> by <GhUser name="jesserockz" />
+- [audio] Fix: Decoder stops unnecessarily after a potential failure is detected. <PR number={8776} repo="esphome" /> by <GhUser name="gnumpi" />
+- [esp32][esp8266] use low-level pin control for ISR gpio <PR number={8743} repo="esphome" /> by <GhUser name="ssieb" />
+- [online_image] Support 24 bit bmp images <PR number={8612} repo="esphome" /> by <GhUser name="jesserockz" />
+- [mipi_spi] New display driver for MIPI DBI devices <PR number={8383} repo="esphome" /> by <GhUser name="clydebarrow" /> (new-integration)
+- [media_player] Deprecate `MEDIA_PLAYER_SCHEMA` <PR number={8784} repo="esphome" /> by <GhUser name="jesserockz" />
+- [schema] Get component name if available for deprecation warning <PR number={8785} repo="esphome" /> by <GhUser name="jesserockz" />
+- [fan] Update components to use `fan_schema(...)` <PR number={8786} repo="esphome" /> by <GhUser name="jesserockz" />
+- Improve batching of BLE advertisements for better airtime efficiency <PR number={8778} repo="esphome" /> by <GhUser name="bdraco" />
+- Fix release to pypi <PR number={8789} repo="esphome" /> by <GhUser name="jesserockz" />
+- [climate] Update components to use `climate_schema(...)` <PR number={8788} repo="esphome" /> by <GhUser name="jesserockz" />
+- Bump esphome-dashboard to 20250514.0 <PR number={8790} repo="esphome" /> by <GhUser name="jesserockz" />
+- Avoid protobuf message construction when tx buffer is full <PR number={8787} repo="esphome" /> by <GhUser name="bdraco" />
+- Update some sensor schemas to be Optional <PR number={8803} repo="esphome" /> by <GhUser name="jesserockz" />
+- Use fixed buffer for plaintext protocol like noise protocol <PR number={8800} repo="esphome" /> by <GhUser name="bdraco" />
+- Optimize protobuf varint decoder for ESPHome use case <PR number={8791} repo="esphome" /> by <GhUser name="bdraco" />
+- Logger Recursion Guard per Task on ESP32 <PR number={8765} repo="esphome" /> by <GhUser name="bdraco" />
+- [log] improve/refactor `log` <PR number={8708} repo="esphome" /> by <GhUser name="ximex" />
+- [gps] update lib, improve code/tests/config <PR number={8768} repo="esphome" /> by <GhUser name="ximex" />
+- Fix ESP32 Camera class inheritance <PR number={8811} repo="esphome" /> by <GhUser name="bdraco" />
+- [sen5x] Fix validation for values read from hardware <PR number={8769} repo="esphome" /> by <GhUser name="kbx81" />
+- Fix the case of single error <PR number={8824} repo="esphome" /> by <GhUser name="asergunov" />
+- Revert "[binary_sensor] initial state refactor" <PR number={8828} repo="esphome" /> by <GhUser name="clydebarrow" />
+- Fix misspelling of climate in climate_ir.climate_ir_with_receiver_schema <PR number={8829} repo="esphome" /> by <GhUser name="warthog618" />
+- Fix ESP32 console logging corruption and message loss in multi-task <PR number={8806} repo="esphome" /> by <GhUser name="bdraco" />
+- Reduce number of calls to fetch time in the main loop <PR number={8804} repo="esphome" /> by <GhUser name="bdraco" />
+- Refactor API frame helpers to enable buffer reuse <PR number={8825} repo="esphome" /> by <GhUser name="bdraco" />
+- Update esp32-camera library version <PR number={8832} repo="esphome" /> by <GhUser name="Fexiven" />
+- Fix api doc homepage <PR number={8836} repo="esphome" /> by <GhUser name="jesserockz" />
+- Deploy doxygen docs to netlify <PR number={8837} repo="esphome" /> by <GhUser name="jesserockz" />
+- [release] Fix output value <PR number={8839} repo="esphome" /> by <GhUser name="jesserockz" />
+- [release] Don't wait for docker to be finished before deploying schema <PR number={8838} repo="esphome" /> by <GhUser name="jesserockz" />
+- Fix API connection sending ping too early after connection establishment <PR number={8840} repo="esphome" /> by <GhUser name="bdraco" />
+- Fix ethernet connection timeout issue caused by incorrect time value during setup <PR number={8841} repo="esphome" /> by <GhUser name="bdraco" />
+- [docker] Update pip on build <PR number={8835} repo="esphome" /> by <GhUser name="jesserockz" />
+- [api-docs] Run using netlify builders <PR number={8842} repo="esphome" /> by <GhUser name="jesserockz" />
+- Fix #ifdefs <PR number={8853} repo="esphome" /> by <GhUser name="clydebarrow" />
+- [at581x] Fix issue with methods not being public <PR number={8852} repo="esphome" /> by <GhUser name="gpambrozio" />
+- [api-docs] Move netlify.toml to root <PR number={8861} repo="esphome" /> by <GhUser name="jesserockz" />
+
+
+</details>
+
+### Dependency Changes
+
+<details>
+<summary></summary>
+
+
+- Bump ruff from 0.11.2 to 0.11.4 <PR number={8538} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- Bump pytest-cov from 6.0.0 to 6.1.1 <PR number={8537} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- Bump ruff from 0.11.4 to 0.11.5 <PR number={8546} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- Bump codecov/codecov-action from 5.4.0 to 5.4.2 <PR number={8572} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- Bump aioesphomeapi from 29.10.0 to 30.0.1 <PR number={8579} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- Bump ruff from 0.11.5 to 0.11.6 <PR number={8587} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- Bump actions/download-artifact from 4.2.1 to 4.3.0 <PR number={8617} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- Bump docker/build-push-action from 6.15.0 to 6.16.0 in /.github/actions/build-image <PR number={8619} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- Bump ruff from 0.11.6 to 0.11.7 <PR number={8615} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- Bump setuptools from 78.1.0 to 79.0.1 <PR number={8614} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- Bump actions/setup-python from 5.5.0 to 5.6.0 <PR number={8618} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- Bump actions/setup-python from 5.5.0 to 5.6.0 in /.github/actions/restore-python <PR number={8616} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- Bump setuptools from 79.0.1 to 80.3.1 <PR number={8696} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- Bump aioesphomeapi from 30.0.1 to 30.1.0 <PR number={8652} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- Bump pylint from 3.3.6 to 3.3.7 <PR number={8706} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- Bump yamllint from 1.37.0 to 1.37.1 <PR number={8705} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- Bump ruff from 0.11.7 to 0.11.8 <PR number={8721} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- Bump puremagic from 1.28 to 1.29 <PR number={8722} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- Bump aioesphomeapi from 30.1.0 to 30.2.0 <PR number={8734} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- Bump ruff from 0.11.8 to 0.11.9 <PR number={8735} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- Bump zeroconf from 0.146.5 to 0.147.0 <PR number={8754} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- Bump setuptools from 80.3.1 to 80.4.0 <PR number={8753} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+- Bump docker/build-push-action from 6.16.0 to 6.17.0 in /.github/actions/build-image <PR number={8810} repo="esphome" /> by <GhUser name="dependabot[bot]" />
+
+
+</details>
+
+{/* markdownlint-enable MD013 */}
+
+## All Changelogs
+
+<Changelogs />

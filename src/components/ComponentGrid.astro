@@ -1,0 +1,62 @@
+---
+/**
+ * ComponentGrid Component
+ * Creates a grid of component cards with images, titles, and optional descriptions.
+ * Replaces the Hugo imgtable shortcode.
+ *
+ * Usage:
+ *   <ComponentGrid items={[
+ *     { title: "DHT Sensor", link: "/components/sensor/dht/", image: "dht.png" },
+ *     { title: "BME280", link: "/components/sensor/bme280/", image: "bme280.png", darkInvert: true },
+ *     { title: "Dallas", link: "/components/sensor/dallas/", image: "dallas.png", caption: "Temperature" }
+ *   ]} />
+ */
+
+interface ComponentItem {
+  title: string;
+  link: string;
+  image: string;
+  darkInvert?: boolean;
+  caption?: string;
+}
+
+interface Props {
+  items: ComponentItem[];
+}
+
+const { items } = Astro.props;
+
+// Helper to resolve image paths
+function resolveImagePath(image: string): string {
+  if (image.startsWith('http') || image.startsWith('/')) {
+    return image;
+  }
+  return `/images/${image}`;
+}
+
+// Helper to break title on non-alphabetic characters for better wrapping
+function breakTitle(title: string): string {
+  return title.replace(/([^a-zA-Z])/g, '$1\u200B');
+}
+---
+
+<div class="component-grid">
+  {items.map((item) => (
+    <div class="component-card">
+      <a href={item.link}>
+        <div class="component-icon">
+          <img
+            src={resolveImagePath(item.image)}
+            alt={item.title}
+            class:list={[{ 'dark-invert': item.darkInvert }]}
+            loading="lazy"
+          />
+        </div>
+        <div class="component-name" set:html={breakTitle(item.title)} />
+        {item.caption && (
+          <div class="component-caption" set:html={breakTitle(item.caption)} />
+        )}
+      </a>
+    </div>
+  ))}
+</div>
