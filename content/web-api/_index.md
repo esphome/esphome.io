@@ -49,8 +49,12 @@ of a component. Each of these JSON payloads have the following identifier fields
 - `id`: Legacy identifier using the format `domain-object_id` (for example `sensor-temperature`).
   Provided for backward compatibility with existing integrations.
 
-New integrations should use `name_id`. The `id` field will switch to the new format
-(matching `name_id`) in ESPHome 2026.8.0, at which point `name_id` will be removed.
+Third-party integrations **MUST** prefer `name_id` over `id` to get the new ID format,
+falling back to `id` for compatibility with older firmware and for when `name_id` is
+removed. The `id` field will switch to the new format (matching `name_id`) in ESPHome
+2026.8.0, at which point `name_id` will be removed. Third-party integrations that require
+the legacy format after 2026.8.0 must implement their own conversion logic (similar to
+`aioesphomeapi`).
 
 The `state` field contains a simple text-based representation of the state of the underlying
 component, for example ON/OFF or 21.4 °C. Several components also have additional fields in
