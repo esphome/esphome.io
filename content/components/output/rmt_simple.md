@@ -95,6 +95,7 @@ esp32:
 rmt_simple:
   id: rmt_test
   resolution_hz: 10000000   # 10 MHz (100 ns per tick)
+  align_pulse_lengths: true  # Pad shorter patterns to match longest
   pin_0:
     gpio_number: GPIO26
     pulse_sequence:
@@ -119,8 +120,8 @@ rmt_simple:
 
 - **No runtime control**: Cannot modify patterns without reflashing
 - **No Home Assistant integration**: No actions, triggers, or automations available
-- **Limited to 64 symbols per channel for EPS32**
-- **Limited to 48 symbols per channel for EPS32-XX variants**
+- **Limited to 64 symbols per channel for EPS32 (no sync manager)**
+- **Limited to 48 symbols per channel for EPS32 variants having a sync manager**
 - **Platform-specific channel limits**: 2 synchronised channels on most variants, 4 on S3/P4
 
 ## Use cases
