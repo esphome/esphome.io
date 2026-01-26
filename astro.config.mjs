@@ -16,8 +16,8 @@ export default defineConfig({
     starlight({
       title: 'ESPHome',
       logo: {
-        light: './public/images/logo-text.svg',
-        dark: './public/images/logo-text-dark.svg',
+        light: './src/assets/logo-text.svg',
+        dark: './src/assets/logo-text-dark.svg',
         replacesTitle: true,
       },
       social: {
