@@ -249,13 +249,13 @@ The following options disable unused VFS features to save flash memory:
 
 **TLS/Certificate Options:**
 
-- **use_full_certificate_bundle** (*Optional*, boolean): Use the full certificate bundle (~69 KB) instead of the common-CAs
-  bundle (~34 KB). By default, ESPHome uses the CMN (common CAs) bundle which includes only Certificate Authorities with
+- **use_full_certificate_bundle** (*Optional*, boolean): Use the full certificate bundle instead of the common CAs
+  bundle. By default, ESPHome uses the CMN (common CAs) bundle which includes only Certificate Authorities with
   greater than 1% market share. This covers approximately 99% of websites including Let's Encrypt, DigiCert, Google Trust
   Services, Amazon Trust Services, and other major CAs. The CMN bundle is sufficient for most use cases including GitHub
   (commonly used for OTA updates via {{< docref "/components/http_request" >}}), Home Assistant Cloud, and typical HTTPS
   endpoints. Set to `true` only if connecting to services that use uncommon Certificate Authorities. Defaults to `false`
-  (CMN bundle to save ~35 KB flash).
+  (CMN bundle saves ~51 KB flash).
 
 Some options can be disabled to save flash memory without affecting typical ESPHome functionality. The performance
 options (defaulting to `true`  ) improve socket operation performance but can be disabled if you need better
