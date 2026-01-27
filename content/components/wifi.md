@@ -97,12 +97,18 @@ wifi:
   for ESP8266 is 20dB, 20.5dB might cause unexpected restarts.
 
 - **fast_connect** (*Optional*, boolean): If enabled, directly connects to WiFi network without doing a full scan
-  first. This is required for hidden networks and can significantly improve connection times (thus reducing power
-  consumption). Defaults to `off`.
+  first. This can significantly improve connection times (thus reducing power consumption). Defaults to `off`.
   The downside is that this option connects to the first network the ESP sees, even if that network is very far away and
   better ones are available. If multiple networks are configured, the last successfully connected one is tested first.
   In case it fails, all networks are then tested one after the other in their declared order, starting with the first
   one in the list.
+
+  > [!NOTE]
+  > While `fast_connect` skips the initial scan, if the connection attempt fails, ESPHome will still perform a scan
+  > to find available networks. For hidden networks, use `hidden: true` on the network configuration (see
+  > [Connecting to Multiple Networks](#wifi-networks)) to ensure the device always connects without scanning.
+  > Be aware that marking networks as hidden prevents ESPHome from finding the best access point to connect to,
+  > so the device may not connect to the AP with the best signal strength.
 
 - **min_auth_mode** (*Optional*, string): Only on `esp32` and `esp8266`. Sets the minimum WiFi authentication mode
   that the device will accept when connecting to access points. This controls the weakest encryption your device will
@@ -123,6 +129,15 @@ wifi:
 
 - **enable_btm** (*Optional*, bool): Only on `esp32`. Enable 802.11v BSS Transition Management support.
 - **enable_rrm** (*Optional*, bool): Only on `esp32`. Enable 802.11k Radio Resource Management support.
+
+- **post_connect_roaming** (*Optional*, bool): Enable basic post-connect
+  roaming for stationary devices. After connecting to a non-hidden network,
+  the device will periodically check for better access points with the same
+  SSID and switch if one is found with significantly better signal (+10 dB).
+  This helps devices recover from scenarios where they connect to a suboptimal
+  AP (e.g., after an AP reboot or site power loss). Automatically disabled if
+  `enable_btm` or `enable_rrm` is enabled. See
+  [Post-Connect Roaming](#wifi-post_connect_roaming). Defaults to `true`.
 
 - **on_connect** (*Optional*, [Automation](/automations)): An action to be performed when a connection is established.
 - **on_disconnect** (*Optional*, [Automation](/automations)): An action to be performed when the connection is dropped.
@@ -254,6 +269,87 @@ wifi:
   min_auth_mode: WPA3  # Only connect to WPA3 networks (most secure)
 ```
 
+{{< anchor "wifi-post_connect_roaming" >}}
+
+## Post-Connect Roaming
+
+Post-connect roaming provides basic roaming for **stationary devices** that
+don't move but may benefit from switching to a better access point after
+initial connection.
+
+### Why This Feature Exists
+
+Without post-connect roaming, devices can get stuck on a suboptimal AP
+**permanently** in three common scenarios:
+
+1. **AP reboot**: When an access point reboots (firmware update or other
+   reason), the device connects to another AP with worse signal. Without
+   roaming, it stays on the worse AP permanently, never returning to the
+   original better AP even after it comes back online.
+
+1. **Full site power loss**: When power is restored after an outage, the
+   device connects to whichever AP recovers first, which may be the worst
+   option (e.g., the furthest one). Without roaming, it remains on this
+   suboptimal AP permanently, even after better APs come online.
+
+1. **Out-of-box provisioning**: When WiFi credentials are provisioned via
+   captive portal, Improv, or other methods, the device connects without
+   using ESPHome's normal RSSI-based AP selection. Without roaming, the
+   device stays on that initial AP forever even if a better one is available.
+
+In all three cases, the only fix without post-connect roaming is to manually
+reboot the device or wait for another disconnection event.
+
+### How It Works
+
+- After connecting to a non-hidden network, checks up to **3 times** (every
+  5 minutes)
+- Scans are skipped when signal is already excellent (> -49 dBm), but still
+  count toward the limit
+- Each scan may trigger a roam if an AP with the same SSID is found with
+  **+10 dB better signal**
+- After 3 checks, stops checking (device has converged to best available AP)
+- A non-roaming disconnect (e.g., AP goes down) resets the counter for a
+  fresh start
+- Clears all BSSID priority penalties after successful connection (forgives
+  past failures)
+
+### Configuration
+
+Post-connect roaming is enabled by default. To disable it:
+
+```yaml
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  post_connect_roaming: false
+```
+
+### 802.11k/v Native Roaming
+
+On ESP32, post-connect roaming is **automatically disabled** when `enable_btm`
+or `enable_rrm` is configured, as these provide native 802.11k/v roaming
+support:
+
+```yaml
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  enable_btm: true  # 802.11v BSS Transition Management
+  enable_rrm: true  # 802.11k Radio Resource Management
+```
+
+### Limitations
+
+Post-connect roaming provides **basic roaming support** and does not provide
+seamless handoff:
+
+- TCP connections (including API) will briefly disconnect during the AP
+  switch. Reconnection is typically fast but not transparent to clients.
+
+For seamless 802.11k/v/r roaming, use ESP32 and configure `enable_btm` and
+`enable_rrm`.
+
 {{< anchor "wifi-networks" >}}
 
 ## Connecting to Multiple Networks
@@ -300,10 +396,26 @@ wifi:
 - **hidden** (*Optional*, boolean): Whether this network is hidden. Defaults to false.
   If you add this option you also have to specify ssid.
 
+  > [!TIP]
+  > Set `hidden: true` if your network does not broadcast its SSID. This ensures the device attempts to connect
+  > using hidden network mode without first scanning for visible networks. Note that when connecting to a hidden
+  > network, ESPHome cannot determine which access point has the best signal strength, potentially resulting in
+  > connections to APs with weaker signals when multiple APs share the same SSID.
+
 - **priority** (*Optional*, int): The priority of this network (range: -128 to 127). The network with
   the highest priority is chosen. After each connection failure, the priority is decreased by one.
   If all tracked BSSIDs have identical priorities, they are automatically reset to 0 to start fresh.
   Defaults to `0`.
+
+### Example: Connecting to a Hidden Network
+
+```yaml
+wifi:
+  networks:
+  - ssid: MyHiddenNetwork
+    password: VerySafePassword
+    hidden: true
+```
 
 {{< anchor "eap" >}}
 

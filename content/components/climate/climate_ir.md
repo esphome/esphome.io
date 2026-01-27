@@ -131,7 +131,7 @@ The Daikin ARC remotes (`daikin_arc` climate, `daikin_arc417`, `daikin_arc480` p
 
 ### `gree`
 
-- **model** (**Required**, string): GREE has a few different protocols depending on model. One of these will work for you.
+- **model** (**Required**, string): GREE has a few different protocols depending on model. One of these will likely work for you:
 
   - `generic`
   - `yan`
@@ -142,12 +142,36 @@ The Daikin ARC remotes (`daikin_arc` climate, `daikin_arc417`, `daikin_arc480` p
   - `yag`
 
 ```yaml
-# Example configuration entry
+# Example configuration entry for climate only
 climate:
   - platform: gree
     name: "AC"
+    id: my_gree_ac
     sensor: room_temperature
     model: yan
+```
+
+Models `yan`, `yaa`, `yac` and `yac1fb9` support a couple of additional features which can be controlled with switches:
+
+- **gree_id** (**Required**, [ID](/guides/configuration-types#id)): Specify the ID of the `gree` climate to which these swicthes should belong.
+- **light** (*Optional*, [Switch](/components/switch#config-switch)): To turn off indoor unit display/LED at night for complete room darkness.
+- **turbo** (*Optional*, [Switch](/components/switch#config-switch)): For maximum fan speed and fastest results.
+- **health** (*Optional*, [Switch](/components/switch#config-switch)): Removal of dust and germs from the environment by ionizing the air flowing through the blades.
+- **xfan** (*Optional*, [Switch](/components/switch#config-switch)): Prevention of excess moisture in the machine that cause mold, mildew, and unpleasant odors. Indoor fan will keep running for short period after turning turn off the AC, to dry the blades.
+
+```yaml
+# Example configuration entry for switches of the climate
+switch:
+  - platform: gree
+    gree_id: my_gree_ac
+    light:
+      name: "AC Lights"
+    turbo:
+      name: "AC Turbo"
+    health:
+      name: "AC Health"
+    xfan:
+      name: "AC X-Fan"
 ```
 
 {{< anchor "midea_ir" >}}
@@ -326,7 +350,7 @@ climate:
 
 The `heatpumpir` platform supports dozens of manufacturers and hundreds of AC units by utilising the [Arduino-HeatpumpIR library](https://github.com/ToniA/arduino-heatpumpir).
 
-This platform compiles only under `arduino` framework or LibreTiny, and should only be used if your AC unit is not supported by any of the other (native) platforms from above. No support can be provided for Arduino-HeatpumpIR, because it is a third party library.
+This platform works with the `arduino` framework and ESP-IDF (on ESP32), and should only be used if your AC unit is not supported by any of the other (native) platforms from above. No support can be provided for Arduino-HeatpumpIR, because it is a third party library.
 
 This platform utilises the library's generic one-size-fits-all API, which might not line up perfectly with all of the supported AC units. For example, some AC units have more fan speed options than what the generic API supports.
 

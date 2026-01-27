@@ -112,6 +112,7 @@ ESPHome-specific components or components supporting ESPHome device provisioning
 "StatsD","components/statsd","connection.svg","dark-invert"
 "UDP","components/udp","udp.svg",""
 "Packet Transport","components/packet_transport/index","packet_transport.svg","dark-invert"
+"Zigbee End Device","components/zigbee","zigbee.svg",""
 {{< /imgtable >}}
 
 ## Bluetooth/BLE
@@ -169,6 +170,7 @@ Create update entities simplifying management of OTA updates.
 "SPI Bus","components/spi","spi.svg",""
 "TinyUSB","components/tinyusb","usb.svg","dark-invert"
 "UART","components/uart","uart.svg",""
+"USB CDC-ACM","components/usb_cdc_acm","usb.svg","dark-invert"
 "USB Host","components/usb_host","usb.svg","dark-invert"
 "USB UART","components/usb_uart","usb.svg","dark-invert"
 {{< /imgtable >}}
@@ -232,6 +234,7 @@ Sensors are organized into categories; if a given sensor fits into more than one
 
 {{< imgtable >}}
 "AGS10","components/sensor/ags10","ags10.jpg","Volatile organics","",""
+"Air Quality Index","components/sensor/aqi","aqi.svg","AQI from PM sensors","",""
 "AirThings BLE","components/sensor/airthings_ble","airthings_logo.png","Radon","CO₂","Volatile organics"
 "CCS811","components/sensor/ccs811","ccs811.jpg","eCO₂ & Volatile organics","",""
 "CM1106","components/sensor/cm1106","cm1106.png","CO₂","",""
@@ -337,6 +340,7 @@ Sensors are organized into categories; if a given sensor fits into more than one
 "Daly BMS","components/sensor/daly_bms","daly_bms.jpg","Voltage & Current & Power"
 "DSMR","components/sensor/dsmr","dsmr.svg","Electrical counter"
 "HLW8012","components/sensor/hlw8012","hlw8012.svg","Voltage & Current & Power"
+"HLW8032","components/sensor/hlw8032","hlw8032.png","Voltage & Current & Power"
 "INA219","components/sensor/ina219","ina219.jpg","DC Current"
 "INA226","components/sensor/ina226","ina226.jpg","DC Current & Power"
 "INA228","components/sensor/ina2xx","ina228.jpg","DC Voltage & Current & Power & Charge"
@@ -502,6 +506,7 @@ Sensors are organized into categories; if a given sensor fits into more than one
 "Resol VBus","components/vbus","resol_deltasol_bs_plus.jpg",""
 "Rotary Encoder","components/sensor/rotary_encoder","rotary_encoder.jpg",""
 "SMT100","components/sensor/smt100","smt100.jpg","Moisture & Temperature"
+"SY6970","components/sensor/sy6970","sy6970.jpg","Battery charge IC"
 "Sound Level","components/sensor/sound_level","waveform.svg","dark-invert"
 "Tuya Sensor","components/sensor/tuya","tuya.png",""
 "TX20","components/sensor/tx20","tx20.jpg","Wind speed & Wind direction"
@@ -519,6 +524,7 @@ Sensors are organized into categories; if a given sensor fits into more than one
 "LD2412","components/sensor/ld2412","ld2412.jpg","Motion & Presence"
 "LD2420","components/sensor/ld2420","ld2420.jpg","Motion & Presence"
 "LD2450","components/sensor/ld2450","ld2450.png","Motion & Presence"
+"RD-03D","components/sensor/rd03d","rd03d.webp","Motion & Presence"
 "MPU6050","components/sensor/mpu6050","mpu6050.jpg","Accelerometer & Gyroscope"
 "MPU6886","components/sensor/mpu6886","mpu6886.jpg","Accelerometer & Gyroscope"
 "MSA301","components/sensor/msa3xx","msa301.jpg","Accelerometer"
@@ -616,6 +622,7 @@ Often known as "tag" or "card" readers within the community.
 "LD2412","components/sensor/ld2412","ld2412.jpg"
 "LD2420","components/sensor/ld2420","ld2420.jpg"
 "LD2450","components/sensor/ld2450","ld2450.png"
+"RD-03D","components/sensor/rd03d","rd03d.webp"
 "Seeed Studio MR24HPC1 mmWave","components/seeed_mr24hpc1","seeed-mr24hpc1.jpg"
 {{< /imgtable >}}
 
@@ -744,6 +751,7 @@ Often known as "tag" or "card" readers within the community.
 "ILI9486","components/display/ili9xxx","ili9341.jpg"
 "ILI9488","components/display/ili9xxx","ili9488.svg"
 "WSPICOLCD","components/display/ili9xxx","ili9488.svg"
+"HUB75 LED Matrix","components/display/hub75","hub75.svg"
 "Inkplate","components/display/inkplate","inkplate6.jpg"
 "LCD Display","components/display/lcd_display","lcd.jpg"
 "MAX7219 Dot Matrix","components/display/max7219digit","max7219digit.jpg"
@@ -801,6 +809,7 @@ Often known as "tag" or "card" readers within the community.
 {{< imgtable >}}
 "Event Core","components/event/index","folder-open.svg","dark-invert"
 "Template Event","components/event/template","description.svg","dark-invert"
+"UART Event","components/event/uart","uart.svg",""
 {{< /imgtable >}}
 
 ## Fan Components
@@ -827,6 +836,15 @@ Components specifically for interacting with Home Assistant.
 "Switch","components/switch/homeassistant","home-assistant.svg","dark-invert"
 "Text Sensor","components/text_sensor/homeassistant","home-assistant.svg","dark-invert"
 "Voice Assistant","components/voice_assistant","voice-assistant.svg","dark-invert"
+{{< /imgtable >}}
+
+## Infrared Components
+
+Used for creating infrared (IR) remote control transmitters and/or receivers.
+
+{{< imgtable >}}
+"Infrared Core","components/infrared/index","folder-open.svg","dark-invert"
+"IR/RF Proxy","components/ir_rf_proxy","remote.svg","dark-invert"
 {{< /imgtable >}}
 
 ## Light Components
@@ -1037,12 +1055,20 @@ at the {{< docref "light/fastled" "FastLED Light" >}}.
 "Template Valve","components/valve/template","description.svg","dark-invert"
 {{< /imgtable >}}
 
+## Water Heater Components
+
+{{< imgtable >}}
+"Water Heater Core","components/water_heater/index","folder-open.svg","dark-invert"
+"Template Water Heater","components/water_heater/template","description.svg","dark-invert"
+{{< /imgtable >}}
+
 ## Wireless Communication
 
 Used for creating infrared (IR) or radio frequency (RF) remote control transmitters and/or receivers, or to connect
 ESPHome to cellular networks. **Does not encompass Wi-Fi.**
 
 {{< imgtable >}}
+"CC1101","components/cc1101","cc1101.webp",""
 "IR Remote Climate","components/climate/climate_ir","air-conditioner-ir.svg","dark-invert"
 "Remote Receiver","components/remote_receiver","remote.svg","dark-invert"
 "Remote Transmitter","components/remote_transmitter","remote.svg","dark-invert"

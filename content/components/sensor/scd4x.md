@@ -25,6 +25,9 @@ sensor:
       name: "Workshop Humidity"
 ```
 
+> [!WARNING]
+> The white membrane on the sensor must not be removed or tampered with [to ensure proper operation](https://community.home-assistant.io/t/scd41-question-white-tape-on-sensor/730240).
+
 ## Configuration variables
 
 - **co2** (*Optional*): The information for the CO₂ sensor.
@@ -104,9 +107,9 @@ api:
       variables:
         co2_ppm: int
       then:
-      - scd4x.perform_forced_calibration:
-          value: !lambda 'return co2_ppm;'
-          id: my_scd41
+        - scd4x.perform_forced_calibration:
+            value: !lambda 'return co2_ppm;'
+            id: my_scd41
 ```
 
 {{< anchor "factory_reset_action" >}}
