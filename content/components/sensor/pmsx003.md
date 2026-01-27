@@ -11,14 +11,14 @@ The `pmsx003` sensor platform allows you to use your [Plantower](https://www.pla
 [PMS1003](https://www.plantower.com/static/upload/file/20220627/1656292073878896.pdf),
 [PMS3003](https://www.dynamoelectronics.com/descargas/PMS3003.pdf),
 [PMS5003](https://www.aqmd.gov/docs/default-source/aq-spec/resources-page/plantower-pms5003-manual_v2-3.pdf),
+PMS5003S,
+PMS5003T,
 [PMS5003ST](https://raw.githubusercontent.com/Arduinolibrary/DFRobot_SEN0233_Air_Quality_Monitor/master/PMS5003ST%20series%20data%20manua_English_V2.6%20.pdf),
 [PMS6003](https://www.laskakit.cz/user/related_files/203-pms6003.pdf),
 [PMS7003](https://download.kamami.pl/p564008-PMS7003%20series%20data%20manua_English_V2.5.pdf),
 [PMS9003M](https://evelta.com/content/datasheets/203-PMS9003M.pdf),
 [PMSA003](https://evelta.com/content/datasheets/PMSA003%20series%20data%20manual_English_V2.5.pdf),
-... laser based particulate matter sensors
-([datasheet](http://www.aqmd.gov/docs/default-source/aq-spec/resources-page/plantower-pms5003-manual_v2-3.pdf))
-sensors with ESPHome.
+laser based particulate matter sensors with ESPHome.
 
 As the communication with the PMSX003 is done using UART, you need
 to have an [UART bus](/components/uart) in your configuration with the `rx_pin` connected to the SEND/TX pin
