@@ -1,0 +1,168 @@
+---
+description: "Instructions for setting up STCC4 CO₂, Temperature and Relative Humidity Sensor"
+title: "STCC4 CO₂, Temperature and Relative Humidity Sensor"
+---
+
+import { Image } from 'astro:assets';
+import APIRef from '@components/APIRef.astro';
+
+The `stcc4` sensor platform allows you to use your Sensirion STCC4 CO₂
+([datasheet](https://sensirion.com/resource/datasheet/STCC4)) sensor with ESPHome.
+The [I²C Bus](/components/i2c) is required to be set up in your configuration for this sensor to work.
+
+The STCC4 is a miniature CO₂ sensor based on thermal conductivity measurement. It features a
+dedicated I²C controller interface for connecting a Sensirion SHT4x temperature and humidity sensor,
+which provides both onboard temperature/humidity readings and signal compensation for accurate CO₂
+measurements.
+
+<Image src="/images/stcc4.jpg" width={470} height={470} layout="constrained" alt="STCC4 CO₂ Sensor" />
+
+```yaml
+# Example configuration with onboard SHT4x
+sensor:
+  - platform: stcc4
+    co2:
+      name: "CO2 Concentration"
+    temperature:
+      name: "Temperature"
+    humidity:
+      name: "Humidity"
+```
+
+> [!NOTE]
+> The STCC4 evaluation kit (SEK-STCC4) includes an SHT4x sensor connected to the STCC4's
+> dedicated I²C controller interface. The STCC4 reads the SHT4x automatically and returns
+> temperature and humidity alongside CO₂ in each measurement. These values are exposed as
+> optional sensor outputs.
+
+## Configuration variables
+
+- **co2** (*Optional*): The CO₂ concentration sensor in ppm.
+
+  - All options from [Sensor](/components/sensor).
+
+- **temperature** (*Optional*): The temperature sensor from the onboard SHT4x (°C).
+
+  - All options from [Sensor](/components/sensor).
+
+- **humidity** (*Optional*): The relative humidity sensor from the onboard SHT4x (%).
+
+  - All options from [Sensor](/components/sensor).
+
+- **temperature_source** (*Optional*, [ID](/guides/configuration-types#id)): The ID of an
+  external temperature sensor for RHT compensation. Only needed for boards **without** an
+  onboard SHT4x connected to the STCC4's dedicated I²C bus. Must be used together with
+  `humidity_source`.
+
+- **humidity_source** (*Optional*, [ID](/guides/configuration-types#id)): The ID of an
+  external humidity sensor for RHT compensation. Only needed for boards **without** an
+  onboard SHT4x connected to the STCC4's dedicated I²C bus. Must be used together with
+  `temperature_source`.
+
+- **ambient_pressure_compensation** (*Optional*, int): Enable compensation of measured CO₂
+  values based on given ambient pressure in hPa.
+
+- **ambient_pressure_compensation_source** (*Optional*, [ID](/guides/configuration-types#id)):
+  The ID of a pressure sensor for dynamic pressure compensation. The sensor must report
+  pressure in hPa/mBar.
+
+- **measurement_mode** (*Optional*): Set measurement mode for the STCC4.
+
+  - `continuous`: The sensor takes measurements continuously at 1-second intervals (default).
+  - `single_shot`: A measurement is started at each update interval. A measurement takes approximately 500ms.
+
+- **address** (*Optional*, int): Manually specify the I²C address of the sensor.
+  Defaults to `0x64`.
+
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to check the
+  sensor. Defaults to `60s`.
+
+## Temperature and Humidity Compensation
+
+The STCC4 uses thermal conductivity to measure CO₂ concentration. This measurement principle
+is affected by temperature and humidity, so compensation is required for accurate readings.
+
+### Boards with onboard SHT4x (recommended)
+
+The STCC4 evaluation kit and most breakout boards include an SHT4x sensor connected to the
+STCC4's dedicated I²C controller. In this configuration, compensation is handled automatically
+and you can read temperature and humidity directly:
+
+```yaml
+sensor:
+  - platform: stcc4
+    co2:
+      name: "CO2"
+    temperature:
+      name: "Temperature"
+    humidity:
+      name: "Humidity"
+```
+
+### Boards without onboard SHT4x
+
+If your board does not have an SHT4x connected to the STCC4's dedicated I²C bus, you can
+provide external temperature and humidity values using the `temperature_source` and
+`humidity_source` options. These values are sent to the sensor via the `set_rht_compensation`
+command:
+
+```yaml
+sensor:
+  - platform: sht4x
+    temperature:
+      id: temp_sensor
+    humidity:
+      id: humidity_sensor
+
+  - platform: stcc4
+    co2:
+      name: "CO2"
+    temperature_source: temp_sensor
+    humidity_source: humidity_sensor
+```
+
+## Pressure Compensation
+
+Ambient pressure affects CO₂ readings. You can set a static pressure value or use a dynamic
+pressure sensor:
+
+### Static pressure compensation
+
+```yaml
+sensor:
+  - platform: stcc4
+    co2:
+      name: "CO2"
+    ambient_pressure_compensation: 1013
+```
+
+### Dynamic pressure compensation
+
+```yaml
+sensor:
+  - platform: bme280_i2c
+    pressure:
+      name: "Pressure"
+      id: pressure_sensor
+
+  - platform: stcc4
+    co2:
+      name: "CO2"
+    ambient_pressure_compensation_source: pressure_sensor
+```
+
+## Specifications
+
+- **CO₂ measurement range**: 400 - 5000 ppm (accurate), up to 32000 ppm (supported)
+- **Accuracy**: ±(100 ppm + 10% of reading) at 400-5000 ppm with SHT4x compensation
+- **I²C address**: 0x64 (default), 0x65 (alternative)
+- **Measurement technology**: Thermal conductivity
+
+## See Also
+
+- [Sensor Filters](/components/sensor#sensor-filters)
+- [SHT4X Temperature and Humidity Sensor](/components/sensor/sht4x/)
+- [SCD4X CO₂, Temperature and Relative Humidity Sensor](/components/sensor/scd4x/)
+- [Sensirion STCC4 Datasheet](https://sensirion.com/resource/datasheet/STCC4)
+- [Sensirion STCC4 Driver](https://github.com/Sensirion/embedded-i2c-stcc4)
+- <APIRef text="stcc4/stcc4.h" path="stcc4/stcc4.h" />
