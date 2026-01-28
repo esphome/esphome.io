@@ -1,0 +1,200 @@
+---
+description: "Instructions for setting up VL53L1X distance sensors in ESPHome."
+title: "VL53L1X Time Of Flight Distance Sensor"
+params:
+  seo:
+    description: Instructions for setting up VL53L1X distance sensors in ESPHome.
+    image: vl53l1x.jpg
+---
+
+The `vl53l1x` sensor platform allows you to use VL53L1X optical time of flight
+([datasheet](https://www.st.com/resource/en/datasheet/vl53l1x.pdf),
+[ST](https://www.st.com/en/imaging-and-photonics-solutions/vl53l1x.html)) sensors with ESPHome
+to measure distances. The sensor works optically by emitting short infrared pulses
+and measuring the time it takes the light to be reflected back.
+
+The VL53L1X is the successor to the VL53L0X with improved range and accuracy:
+
+- **Short mode**: Up to 1.3m, better ambient light immunity
+- **Medium mode**: Up to 3m
+- **Long mode**: Up to 4m (default)
+
+Range performance depends on surface reflectance, ambient light, and sensor configuration.
+
+The [I²C Bus](/components/i2c) is required to be set up in your configuration for this sensor to work.
+
+## Wiring
+
+- `VCC` connects to 3.3V (sensor operates at 2.6V to 3.5V)
+- `GND` connects to ground
+- `SCL` connects to I²C SCL (clock)
+- `SDA` connects to I²C SDA (data)
+- `GPIO1` is the interrupt output (active low, active high, or hi-Z) - not used by ESPHome
+- `XSHUT` connects to a free GPIO pin for enable/disable control. Optional for single sensor setups
+  using the default address. **Required** when using multiple sensors or a non-default address.
+
+```yaml
+# Simple configuration example
+sensor:
+  - platform: vl53l1x
+    name: "VL53L1X Distance"
+    address: 0x29
+    update_interval: 1s
+```
+
+## Configuration variables
+
+- **distance_mode** (*Optional*, string): Set the distance mode. One of `short`, `medium`, or `long`.
+  Defaults to `long`.
+
+  - `short`: Up to 1.3m range, better immunity to ambient light
+  - `medium`: Up to 3m range
+  - `long`: Up to 4m range, more affected by ambient light
+
+- **timing_budget** (*Optional*, [Time](/guides/configuration-types#time)): The time allowed for
+  a single distance measurement. Longer timing budgets improve accuracy but reduce measurement rate.
+  Range is 15ms to 500ms. Defaults to `50ms`.
+
+  Minimum timing budgets per distance mode:
+
+  - Short mode: 15ms minimum
+  - Medium mode: 20ms minimum
+  - Long mode: 33ms minimum
+
+- **timeout** (*Optional*, [Time](/guides/configuration-types#time)): Maximum time to wait for
+  a measurement to complete. Defaults to `100ms`.
+
+- **signal_rate_limit** (*Optional*, float): Minimum return signal rate in MCPS (mega counts per second)
+  for a valid reading. Lower values may increase range but also increase the chance of invalid readings.
+  Defaults to `0.25`.
+
+- **roi_width** (*Optional*, int): Width of the Region of Interest (ROI) in SPADs. Range is 4 to 16.
+  Defaults to `16` (full field of view).
+
+- **roi_height** (*Optional*, int): Height of the Region of Interest (ROI) in SPADs. Range is 4 to 16.
+  Defaults to `16` (full field of view).
+
+- **roi_center** (*Optional*, int): Center SPAD number for the ROI. Range is 0 to 199.
+  Defaults to `199` (optical center).
+
+- **offset** (*Optional*, int): Calibration offset in millimeters. Range is -1024 to 1023.
+  Defaults to `0`.
+
+- **address** (*Optional*, int): Manually specify the I²C address of the sensor. Defaults to `0x29`.
+  If an address other than `0x29` is specified, the sensor will be dynamically re-addressed at startup.
+  A dynamic re-address requires the `enable_pin` configuration variable to be assigned.
+
+- **enable_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The pin connected
+  to XSHUT on the VL53L1X to enable/disable the sensor. **Required** if not using address `0x29`,
+  which is the case when you have multiple VL53L1X sensors on the same I²C bus.
+
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to check
+  the sensor. Defaults to `60s`.
+
+- All other options from [Sensor](/components/sensor).
+
+## Distance Modes
+
+The VL53L1X supports three distance modes that trade off between maximum range and ambient light immunity:
+
+**Short Mode** is best for:
+
+- Indoor applications with controlled lighting
+- Shorter range requirements (up to 1.3m)
+- Environments with bright ambient light
+
+**Long Mode** (default) is best for:
+
+- Maximum range requirements (up to 4m)
+- Lower ambient light conditions
+- Dark or reflective targets
+
+**Medium Mode** provides a balance between the two.
+
+```yaml
+# Short range mode for better accuracy in bright conditions
+sensor:
+  - platform: vl53l1x
+    name: "Short Range Sensor"
+    distance_mode: short
+    timing_budget: 20ms
+    update_interval: 100ms
+```
+
+## Region of Interest (ROI)
+
+The VL53L1X has a 16x16 SPAD (Single Photon Avalanche Diode) array. By default, all SPADs are used
+for detection, giving a wide field of view (~27°). You can configure a smaller ROI to narrow the
+field of view, which can be useful for:
+
+- Detecting smaller objects
+- Reducing interference from nearby objects
+- Creating a more focused detection zone
+
+```yaml
+# Narrow field of view configuration
+sensor:
+  - platform: vl53l1x
+    name: "Narrow FOV Sensor"
+    roi_width: 8
+    roi_height: 8
+    roi_center: 199
+```
+
+The minimum ROI size is 4x4 SPADs. The `roi_center` parameter specifies which SPAD is at the center
+of the ROI. The default value of 199 corresponds to the optical center of the sensor.
+
+## Multiple Sensors
+
+Multiple VL53L1X sensors can be used on the same I²C bus. Since all sensors power up with the same
+default address (0x29), you must use the XSHUT pin to control when each sensor initializes:
+
+1. Connect each sensor's XSHUT pin to a different GPIO
+1. Assign a unique I²C address to each sensor
+1. The driver will initialize sensors sequentially, reprogramming their addresses
+
+```yaml
+# Multiple VL53L1X sensors on same I²C bus
+sensor:
+  - platform: vl53l1x
+    name: "Distance Front"
+    address: 0x30
+    enable_pin: GPIO25
+    update_interval: 500ms
+
+  - platform: vl53l1x
+    name: "Distance Rear"
+    address: 0x31
+    enable_pin: GPIO26
+    update_interval: 500ms
+
+  - platform: vl53l1x
+    name: "Distance Left"
+    address: 0x32
+    enable_pin: GPIO27
+    update_interval: 500ms
+```
+
+## Calibration
+
+The `offset` parameter can be used to compensate for systematic measurement errors. To calibrate:
+
+1. Place a target at a known distance (e.g., 100mm)
+1. Read the measured value
+1. Calculate offset = actual_distance - measured_distance
+1. Set the `offset` parameter to this value
+
+```yaml
+# Calibrated sensor with -5mm offset
+sensor:
+  - platform: vl53l1x
+    name: "Calibrated Distance"
+    offset: -5
+```
+
+## See Also
+
+- {{< docref "/components/sensor/vl53l0x" >}}
+- [Sensor Filters](/components/sensor#sensor-filters)
+- {{< apiref "vl53l1x/vl53l1x_sensor.h" "vl53l1x/vl53l1x_sensor.h" >}}
+- [VL53L1X Arduino library](https://github.com/pololu/vl53l1x-arduino/) by [Pololu](https://github.com/pololu)
