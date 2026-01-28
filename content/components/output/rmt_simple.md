@@ -11,14 +11,13 @@ This library provides a static high-frequency, synchronised, multi-channel pulse
 
 The overarching aim of the library to provide an intuitive, and user-friendly way of deploying low-level rmt_word_types in pulse sequences. For this reason, the yaml input file uses rmt_word_type nomenclature for pulse sequence input.
 
-
 ## Platform variant support
 
 Advanced synchronisation hardware is enabled by default, but only available on certain chips:
 
 | Variant | Max Transmission Channels | Sync Manager | Alignment |
-|---------|--------------|--------------|-----------|
-| ESP32    | 4 | No  | Optional |
+| ------- | ------------------------- | ------------ | --------- |
+| ESP32 | 4 | No | Optional |
 | ESP32-C3 | 2 | Yes | Required |
 | ESP32-C6 | 2 | Yes | Required |
 | ESP32-S3 | 4 | Yes | Required |
@@ -47,25 +46,26 @@ Advanced synchronisation hardware is enabled by default, but only available on c
 
 Each rmt_word_type symbol in the pulse sequence defines two level transitions:
 
-- **duration0** (**Required**, int): Duration of the first level in RMT ticks. 
+- **duration0** (**Required**, int): Duration of the first level in RMT ticks.
 - **level0** (**Required**, int): State of the first level. `0` for LOW, `1` for HIGH.
 - **duration1** (**Required**, int): Duration of the second level in RMT ticks.
 - **level1** (**Required**, int): State of the second level. `0` for LOW, `1` for HIGH.
 
 **Example conversions at different resolutions:**
 
-| Resolution | Tick Duration  | Max duration (32767 ticks) |
-|------------|---------------|------------|
+| Resolution | Tick Duration | Max duration (32767 ticks) |
+| ---------- | ------------- | -------------------------- |
 | 1 MHz | 1 µs | 32.767 ms |
 | 10 MHz | 100 ns | 3.277 ms |
 | 80 MHz | 12.5 ns | 409.6 µs |
 
 **Choosing a resolution:**
+
 - **Lower frequency** (1 MHz): Longer maximum duration, less precision. Good for millisecond-range pulses.
 - **Higher frequency** (80 MHz): Shorter maximum duration, high precision. Good for sub-microsecond timing.
 
-> [!NOTES] 
-> Frequency can be adjusted by zero filling the longest pulse sequence. 
+> [!NOTES]
+> Frequency can be adjusted by zero filling the longest pulse sequence.
 
 ## Understanding RMT symbols
 
@@ -74,6 +74,7 @@ level transitions. This dual-transition structure allows compact representation 
 rmt_word_t symbol which is limited to 32767 ticks maximum.
 
 **Example symbol breakdown:**
+
 ```yaml
 - duration0: 100   # Stay at level0 for 100 ticks
   level0: 0        # First level is LOW
@@ -128,6 +129,7 @@ rmt_simple:
 ## Use cases
 
 **Well suited for:**
+
 - Charge pumps / voltage doublers
 - Synchronous DC-DC converters
 - Inverters
