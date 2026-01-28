@@ -232,7 +232,7 @@ To enable signal demodulation, configure the signal carrier frequency and duty c
   is passed to the automation for use in lambdas.
 
 - **on_nexus** (*Optional*, :ref:`Automation <automation>`): An automation to perform when a
-  Nexus remote code has been decoded. A variable ``x`` of type :apistruct:`remote_base::NexusData`
+  Nexus remote code has been decoded. A variable `x` of type {{< apistruct "remote_base::NexusData" "remote_base::NexusData" >}}
   is passed to the automation for use in lambdas.
 
 - **on_panasonic** (*Optional*, [Automation](/automations)): An automation to perform when a
