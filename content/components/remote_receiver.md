@@ -231,7 +231,7 @@ To enable signal demodulation, configure the signal carrier frequency and duty c
   Nexa RF code has been decoded. A variable `x` of type {{< apistruct "remote_base::NexaData" "remote_base::NexaData" >}}
   is passed to the automation for use in lambdas.
 
-- **on_nexus** (*Optional*, :ref:`Automation <automation>`): An automation to perform when a
+- **on_nexus** (*Optional*, [Automation](/automations)): An automation to perform when a
   Nexus remote code has been decoded. A variable `x` of type {{< apistruct "remote_base::NexusData" "remote_base::NexusData" >}}
   is passed to the automation for use in lambdas.
 
