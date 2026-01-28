@@ -621,6 +621,31 @@ on_...:
 
 {{< anchor "remote_transmitter-transmit_panasonic" >}}
 
+### ``remote_transmitter.transmit_nexus`` **Action**
+
+This [action](config-action) sends a 36-bit Nexus code to a remote transmitter.
+
+```yaml
+on_...:
+  - remote_transmitter.transmit_nexus:
+      channel: 1
+      address: 42
+      temperature: 34.5
+      humidity: 51
+      battery_level: true
+      force_update: false
+```
+
+Configuration variables:
+
+- **channel** (**Required**, int): The 2-bit channel to send, between 1 and 4 inclusive.
+- **address** (**Required**, int): The 8-bit address (sensor ID) to send, between 0 and 255 inclusive. Each sensor has a unique one.
+- **temperature** (**Optional**, float): The 12-bit temperature to send, between -204.8 and 204.7 inclusive. Defaults to ``25.5``.
+- **humidity** (**Optional**, int): The 8-bit humidity to send, between 0 and 255 inclusive. Defaults to ``42``.
+- **battery_level** (**Optional**, boolean): The battery level normal flag bit to send, ``false`` means the battery level is low, ``true`` means normal. Defaults to ``true``.
+- **force_update** (**Optional**, boolean): The force update flag bit to send, ``false`` means the transmission is normal, ``true`` means forced. Defaults to ``false``.
+- All other options from :ref:`remote_transmitter-transmit_action`.
+
 ### `remote_transmitter.transmit_panasonic` **Action**
 
 This [action](/automations/actions#all-actions) sends a Panasonic infrared remote code to a remote transmitter.

@@ -55,6 +55,7 @@ Multiple remote receivers can be configured as a list of dict definitions within
   - **midea**: Decode and dump Midea infrared codes.
   - **nec**: Decode and dump NEC infrared codes.
   - **nexa**: Decode and dump Nexa (RF) codes.
+  - **nexus**: Decode and dump Nexus temperature & humidity sensor RF codes.
   - **panasonic**: Decode and dump Panasonic infrared codes.
   - **pioneer**: Decode and dump Pioneer infrared codes.
   - **pronto**: Print remote code in Pronto form. Useful for using arbitrary protocols.
@@ -228,6 +229,10 @@ To enable signal demodulation, configure the signal carrier frequency and duty c
 
 - **on_nexa** (*Optional*, [Automation](/automations)): An automation to perform when a
   Nexa RF code has been decoded. A variable `x` of type {{< apistruct "remote_base::NexaData" "remote_base::NexaData" >}}
+  is passed to the automation for use in lambdas.
+
+- **on_nexus** (*Optional*, :ref:`Automation <automation>`): An automation to perform when a
+  Nexus remote code has been decoded. A variable ``x`` of type :apistruct:`remote_base::NexusData`
   is passed to the automation for use in lambdas.
 
 - **on_panasonic** (*Optional*, [Automation](/automations)): An automation to perform when a
@@ -488,6 +493,11 @@ Remote code selection (exactly one of these has to be included):
   - **state** (**Required**, int): The Nexa state code to trigger on, see dumper output for more info.
   - **channel** (**Required**, int): The Nexa channel code to trigger on, see dumper output for more info.
   - **level** (**Required**, int): The Nexa level code to trigger on, see dumper output for more info.
+
+- **nexus**: Trigger on a decoded Nexus remote code with the given data.
+
+  - **channel** (**Required**, int): The channel to trigger on, see dumper output for more info.
+  - **address** (**Required**, int): The address to trigger on, see dumper output for more info.
 
 - **panasonic**: Trigger on a decoded Panasonic remote code with the given data.
 
