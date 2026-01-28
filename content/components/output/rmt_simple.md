@@ -7,14 +7,16 @@ params:
     image: pwm.png
 ---
 
-This library provides a static high-frequency, synchronised, multi-channel pulse sequence generator suitable for driving power-electronics, switched-capacitor, and timing-critical digital applications. The library uses the [RMT (Remote Control) peripheral](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/peripherals/rmt.html) to enable complementary and phase-controlled GPIO outputs with deterministic timing, and all accomplished with zero cpu overhead.
+This library provides a static high-frequency, synchronised, multi-channel pulse sequence generator suitable for driving power-electronics, switched-capacitor, and timing-critical digital applications. The library uses the [RMT (Remote Control) peripheral](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/peripherals/rmt.html) to enable complementary and phase-controlled pulse sequence outputs to GPIO pins.  The hardware peripheral ensures zero cpu overhead.
+
+The overarching aim of the library to provide an intuitive, and user-friendly way of deploying low-level rmt_word_types in pulse sequences. For this reason, the yaml input file uses rmt_word_type nomenclature for pulse sequence input.
 
 
 ## Platform variant support
 
-Different ESP32 variants support different numbers of RMT transmission channels and features:
+Advanced synchronisation hardware is enabled by default, but only available on certain chips:
 
-| Variant | Max Channels | Sync Manager | Alignment |
+| Variant | Max Transmission Channels | Sync Manager | Alignment |
 |---------|--------------|--------------|-----------|
 | ESP32    | 4 | No  | Optional |
 | ESP32-C3 | 2 | Yes | Required |
@@ -30,7 +32,7 @@ Different ESP32 variants support different numbers of RMT transmission channels 
 
 - **align_pulse_lengths** (*Optional*, boolean): When enabled, all channel pulse sequences are padded to match
   the longest pattern duration. This necessarily happens for hardware synchronisation.
-  Defaults to `true`. Can only be disabled on ESP32 - all other variants must use alignment.
+  Defaults to `true`. This feature can only be disabled for platforms lacking synchronisation hardware (ESP32).
 
 - **pin_0**, **pin_1**, **pin_2**, **pin_3** (*Optional*, [Pin](/guides/configuration-types#pin) or Object):
   GPIO pins and pulse configurations for up to 4 channels. At least one pin must be configured. Each pin
@@ -67,9 +69,9 @@ Each rmt_word_type symbol in the pulse sequence defines two level transitions:
 
 ## Understanding RMT symbols
 
-Each RMT symbol (internally `rmt_symbol_word_t`) defines **two** consecutive level transitions. This dual-transition
-structure allows compact representation of pulse patterns.  
-Each rmt_word_t symbol which is limited to 32767 ticks maximum.
+Each pulse consists of a RMT symbol (internally `rmt_symbol_word_t`) which defines **two** consecutive
+level transitions. This dual-transition structure allows compact representation of pulse patterns. Each
+rmt_word_t symbol which is limited to 32767 ticks maximum.
 
 **Example symbol breakdown:**
 ```yaml
@@ -81,9 +83,9 @@ Each rmt_word_t symbol which is limited to 32767 ticks maximum.
 
 Multiple symbols chain together to create complex patterns. The pattern repeats continuously once started.
 
-## Example configurations
+## Example configuration
 
-### Example: 2 channel square wave
+For scnchronised pulses, the frequency on each GPIO is determined both by the longest duration pulse sequence, and the number pulses per sequence on each GPIO.  In the example below pin_0 (GPIO26) is frequency limiting for both channels.
 
 ```yaml
 # Example configuration entry
@@ -96,7 +98,7 @@ rmt_simple:
   id: rmt_test
   resolution_hz: 10000000   # 10 MHz (100 ns per tick)
   pin_0:
-    gpio_number: GPIO26
+    gpio_number: GPIO26     # 400 KHz @ 5µs/sequence and 2 pulses/sequence
     pulse_sequence:
       - duration0: 10       # 1µs high
         level0: 1
@@ -104,23 +106,23 @@ rmt_simple:
         level1: 0
       - duration0: 5        # 0.5µs high
         level0: 1
-        duration1: 15       # 1.5µs low (Implied frequency of 100 KHz @ 2 pulses/cycle)
+        duration1: 15       # 1.5µs low (Implied frequency of 400 KHz at 50µs/sequence and 2 pulses/sequence)
         level1: 0
   pin_1:
-    gpio_number: GPIO16
+    gpio_number: GPIO16     # 200 KHz @ 50µs/sequence and 1 pulses/sequence
     pulse_sequence:
-      - duration0: 30
-        level0: 1
+      - duration0: 10
+        level0: 0
         duration1: 20
-        level1: 0
+        level1: 1
 ```
 
 ## Limitations and constraints
 
 - **No runtime control**: Cannot modify patterns without reflashing
 - **No Home Assistant integration**: No actions, triggers, or automations available
-- **Limited to 64 symbols per channel for EPS32**
-- **Limited to 48 symbols per channel for EPS32-XX variants**
+- **Limited to 64 symbols per channel for non-hardware synchronised variants (ESP32)**
+- **Limited to 48 symbols per channel for hardware synchronised variants**
 - **Platform-specific channel limits**: 2 synchronised channels on most variants, 4 on S3/P4
 
 ## Use cases
