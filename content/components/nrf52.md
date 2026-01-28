@@ -210,9 +210,10 @@ nrf52:
 ### Configuration variables
 
 - **version** (*Optional*, string): The nrf-sdk version. One of:
-  - `2.6.1-7`  : Stable (default)
-  - `2.9.2-0`  : Experimental
-  - `3.2.0-0`  : Experimental (no Zigbee support)
+  - `2.6.1-a`  : Stable (default)
+  - `2.9.2-2`  : Experimental
+  - `3.2.0-1`  : Experimental (no Zigbee support)
+  
 - **source** (*Optional*, boolean|string): The PlatformIO package to use for the framework. This variable provides the URL of the git repository or the file archive of a custom or patched version of the `platformio/framework-zephyr` package. Refer to [PlatformIO package specifications](https://docs.platformio.org/en/latest/core/userguide/pkg/cmd_install.html#package-specifications) for the supported URL schemes. Examples:
 
   - `https://github.com/user/framework-sdk-nrf/releases/download/archive.zip`
@@ -222,10 +223,6 @@ nrf52:
   If set to `false`/`disabled`, the package specified in the `platform-nordicnrf52` package will be used.
 
 - **platform_source** (*Optional*, string): The PlatformIO package to use for the platform package. This variable provides the URL of the git repository or the file archive of a custom or patched version of the `platformio/platform-nordicnrf52` package. Refer to [PlatformIO package specifications](https://docs.platformio.org/en/latest/core/userguide/pkg/cmd_install.html#package-specifications) for the supported URL schemes.
-
-- **toolchain_source** (*Optional*, boolean|string): The PlatformIO package to use for the toolchain package. This variable provides the URL of the git repository or the file archive of a custom or patched version of the `platformio/toolchain-gccarmnoneeabi` package. Refer to [PlatformIO package specifications](https://docs.platformio.org/en/latest/core/userguide/pkg/cmd_install.html#package-specifications) for the supported URL schemes.
-
-  If set to `false`/`disabled`, the package specified by the `platform-nordicnrf52` package will be used.
 
 - **additional_packages** (*Optional*, list of packages): See [Additional Packages](#nrf52-additional-packages) below.
 
