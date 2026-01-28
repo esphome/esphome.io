@@ -175,11 +175,11 @@ number:
 - **unit_of_measurement** (*Optional*, string): Manually set the unit. By default, values are unitless.
   Only a limited set of units is supported. Unsupported units will revert to unitless.
   This is exposed as the Zigbee endpoint engineering units.
-- **min_value** (**Optional**, float): The minimum value this number can be. This is exposed as the
+- **min_value** (*Optional*, float): The minimum value this number can be. This is exposed as the
   Zigbee endpoint min present value.
-- **max_value** (**Optional**, float): The maximum value this number can be. This is exposed as the
+- **max_value** (*Optional*, float): The maximum value this number can be. This is exposed as the
   Zigbee endpoint min present value.
-- **step** (**Optional**, float): The granularity with which the number can be set. This is exposed
+- **step** (*Optional*, float): The granularity with which the number can be set. This is exposed
   as the Zigbee endpoint resolution.
 
 ## See Also
