@@ -47,6 +47,7 @@ specified, or a custom init sequence can be provided.
 | M5STACK-TAB5           | M5Stack      | <https://shop.m5stack.com/products/m5stack-tab5-iot-development-kit-esp32-p4> |
 | WAVESHARE-P4-NANO-10.1 | Waveshare | <https://www.waveshare.com/esp32-p4-nano.htm?sku=29031> |
 | WAVESHARE-P4-86-PANEL | Waveshare | <https://www.waveshare.com/esp32-p4-wifi6-touch-lcd-4b.htm?sku=31570> |
+| WAVESHARE-ESP32-P4-WIFI6-TOUCH-LCD-7B | Waveshare | <https://www.waveshare.com/esp32-p4-wifi6-touch-lcd-4b.htm?sku=31570> |
 
 ## Configuration
 
