@@ -281,7 +281,7 @@ The following options disable debug features that are rarely needed in productio
 
 - **disable_usb_serial_jtag_secondary** (*Optional*, boolean): Disable the secondary USB Serial/JTAG console. This is a fallback
   console output when UART0 is the primary console but not connected. On chips that default to USB Serial/JTAG as the primary
-  console (ESP32-C3, C5, C6, H2, P4, S3), this setting has no effect since the primary console is already USB Serial/JTAG.
+  console (ESP32-C3, ESP32-C5, ESP32-C6, ESP32-H2, ESP32-P4, ESP32-S3), this setting has no effect since the primary console is already USB Serial/JTAG.
   Components like the logger that need USB Serial/JTAG automatically enable it regardless of this setting. Defaults to `true`
   (secondary console disabled to save resources).
 
@@ -301,9 +301,8 @@ The following options disable debug features that are rarely needed in productio
   them to flash saves IRAM. This is safe for ESPHome because no ESPHome IRAM interrupt service routines call ADC or other
   analog functions. Defaults to `true` (regi2c functions in flash to save IRAM).
 
-Some options can be disabled to save flash memory without affecting typical ESPHome functionality. The performance
-options (defaulting to `true`  ) improve socket operation performance but can be disabled if you need better
-multi-threaded scalability (which is uncommon since ESPHome uses an event loop).
+These defaults are chosen to reduce flash and IRAM usage for typical ESPHome devices. Adjust them only if you have specific
+debugging or performance requirements that justify changing them.
 
 **Example configuration with advanced options:**
 
@@ -321,7 +320,7 @@ esp32:
       # VFS and LWIP memory saving options (enabled by default)
       disable_libc_locks_in_iram: true  # Saves ~1.3 KB IRAM
       disable_vfs_support_termios: true  # Saves ~1.8 KB flash
-      disable_vfs_support_select: true  # Saves ~2.7 KB flash (auto-enabled by openthread)
+      disable_vfs_support_select: true  # Saves ~2.7 KB flash (auto-enabled by OpenThread)
       disable_vfs_support_dir: true  # Saves ~0.5 KB+ flash
       enable_lwip_dhcp_server: false  # Only needed for WiFi AP mode
       enable_lwip_mdns_queries: true  # Needed for .local hostname resolution
@@ -346,7 +345,7 @@ esp32:
 **Example for development/debugging with JTAG:**
 
 ```yaml
-# Configuration for debugging - re-enable debug features
+# Enable debug features for JTAG debugging
 esp32:
   board: esp32dev
   framework:
