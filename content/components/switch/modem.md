@@ -27,9 +27,7 @@ switch:
 
 ## Configuration variables
 
-- **gnss** ([`object`](https://esphome.io/components/switch/index.html#config-switch)_,
-  _optional_): Enable/disable GNSS. Only available for modem models `SIM7600` and `SIM7670`. All options from
-  [Switch](https://esphome.io/components/switch/index.html#config-switch).
+- **gnss** ([`object`](/components/switch/#config-switch)_, optional_): Enable/disable GNSS. Only available for modem models `SIM7600` and `SIM7670`. All options from [Switch](/components/switch/#config-switch).
 
 ## See Also
 

@@ -151,7 +151,7 @@ The lambda equivalent is `id(atmodem).is_enabled()`.
 
 ## Lambda calls
 
-From [lambdas](/guides/configuration-types#lambda), you can call several methods for advanced control.
+From [lambdas](/guides/configuration-types/#lambda), you can call several methods for advanced control.
 
 - `.is_connected()`: Returns `true` if the modem is connected, `false` otherwise.
 - `.is_enabled()`: Returns `true` if the modem is enabled, `false` otherwise.

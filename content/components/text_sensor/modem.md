@@ -24,9 +24,9 @@ text_sensor:
 
 ## Configuration variables
 
-- **network_type** ([`string`](https://esphome.io/components/text_sensor/index.html#config-text_sensor)_, optional_): Expose the modem network type (GSM, GPRS, LTE...) as a text sensor. All options from [Text Sensor](https://esphome.io/components/text_sensor/index.html#config-text_sensor).
-- **update_interval** ([`Time`](https://esphome.io/guides/configuration-types#time)_, optional_): The interval to poll the device. Defaults to `60s`.
-- All other options from [Text Sensor](https://esphome.io/components/text_sensor/index.html#config-text_sensor).
+- **network_type** ([`string`](/components/text_sensor/#config-text_sensor)_, optional_): Expose the modem network type (GSM, GPRS, LTE...) as a text sensor. All options from [Text Sensor](/components/text_sensor/#config-text_sensor).
+- **update_interval** ([`Time`](/guides/configuration-types/#time)_, optional_): The interval to poll the device. Defaults to `60s`.
+- All other options from [Text Sensor](/components/text_sensor/#config-text_sensor).
 
 ## See Also
 

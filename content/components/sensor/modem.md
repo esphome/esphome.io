@@ -28,10 +28,10 @@ sensor:
 
 ## Configuration variables
 
-- **rssi** ([`number`](https://esphome.io/components/sensor/index.html#config-sensor)_, optional_): Received Signal Strength Indicator (RSSI) in dB. The range is from -113 dB (weakest) to -51 dB (strongest). All options from [Sensor](https://esphome.io/components/sensor/index.html#config-sensor).
-- **ber** ([`number`](https://esphome.io/components/sensor/index.html#config-sensor)_, optional_): Bit Error Rate (BER) in percent (%). This may not be available on all modem models. All options from [Sensor](https://esphome.io/components/sensor/index.html#config-sensor).
-- **update_interval** ([`Time`](https://esphome.io/guides/configuration-types#time)_, optional_): The interval to poll the modem for new values. Defaults to `60s`.
-- All other options from [Sensor](https://esphome.io/components/sensor/index.html#config-sensor).
+- **rssi** ([`number`](/components/sensor/#config-sensor)_, optional_): Received Signal Strength Indicator (RSSI) in dB. The range is from -113 dB (weakest) to -51 dB (strongest). All options from [Sensor](/components/sensor/#config-sensor).
+- **ber** ([`number`](/components/sensor/#config-sensor)_, optional_): Bit Error Rate (BER) in percent (%). This may not be available on all modem models. All options from [Sensor](/components/sensor/#config-sensor).
+- **update_interval** ([`Time`](/guides/configuration-types/#time)_, optional_): The interval to poll the modem for new values. Defaults to `60s`.
+- All other options from [Sensor](/components/sensor/#config-sensor).
 
 ## See Also
 
