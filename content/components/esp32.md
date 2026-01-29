@@ -262,7 +262,8 @@ The following options disable unused VFS features to save flash memory:
 - **include_idf_components** (*Optional*, list of strings): A list of ESP-IDF component names to include in the build.
   ESPHome excludes certain IDF components by default to reduce compile time. If you need to use an IDF component that
   is excluded (for example, when using custom code in a lambda that requires a specific IDF library), you can explicitly
-  include it here. Example: `["esp_http_client", "mqtt"]`.
+  include it here. Example: `["esp_http_client", "mqtt"]`. This is different from the `components` option in the "IDF Components"
+  section below, which is for adding external components (for example from the ESP Component Registry or custom sources).
 
 Some options can be disabled to save flash memory without affecting typical ESPHome functionality. The performance
 options (defaulting to `true`  ) improve socket operation performance but can be disabled if you need better
