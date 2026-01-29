@@ -108,7 +108,7 @@ api:
   Can be disabled by setting this to `0s`. Defaults to `15min`.
 
 - **client_keepalive_interval** (*Optional*, [Time](/guides/configuration-types#time)): The amount of time the server(device) waits for any messages from the client before sending a ping request. Defaults to `60sec`, Range is `60sec` to `180sec`
-- **server_keepalive_interval** (*Optional*, [Time](/guides/configuration-types#time)): The amount of time the client waits for any messages from the server(device) before sending a ping request. Defaults to `60sec`, Range is `20sec` to `180sec`
+- **server_keepalive_interval** (*Optional*, [Time](/guides/configuration-types#time)): The amount of time the client waits for any messages from the server(device) before sending a ping request. Defaults to `20sec`, Range is `20sec` to `180sec`
 
   > [!NOTE]
   > Increasing intervals between pings may result in server not knowing that a client is no longer active or vise-versa.
