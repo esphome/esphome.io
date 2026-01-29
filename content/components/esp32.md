@@ -49,6 +49,20 @@ esp32:
 
 ESPHome supports two framework options for ESP32 chips:
 
+### ESP-IDF Framework
+
+ESP-IDF is Espressif's native development framework. It is required for ESP32-C2, ESP32-C5, ESP32-C6, ESP32-C61,
+ESP32-H2, and ESP32-P4 variants, as these are not supported by the Arduino framework. It is the default and recommended for
+all ESP32 chips when possible. See the {{< docref "/guides/esp32_arduino_to_idf" "migration guide" >}} for help transitioning from Arduino.
+
+```yaml
+# Example configuration entry
+esp32:
+  board: ...
+  framework:
+    type: esp-idf
+```
+
 ### Arduino Framework
 
 The Arduino framework is integrated as an ESP-IDF component. This provides Arduino API compatibility
@@ -62,23 +76,9 @@ esp32:
     type: arduino
 ```
 
-### ESP-IDF Framework
-
-ESP-IDF is Espressif's native development framework. It is required for ESP32-C2, ESP32-C5, ESP32-C6, ESP32-C61,
-ESP32-H2, and ESP32-P4 variants, as these are not supported by the Arduino framework. It is recommended for
-all ESP32 chips when possible. See the {{< docref "/guides/esp32_arduino_to_idf" "migration guide" >}} for help transitioning from Arduino.
-
-```yaml
-# Example configuration entry
-esp32:
-  board: ...
-  framework:
-    type: esp-idf
-```
-
 ### Configuration variables
 
-- **type** (*Optional*, string): The framework type, either `esp-idf` or `arduino`. Defaults to `arduino` for ESP32 (classic), ESP32-C3, ESP32-S2, and ESP32-S3. Defaults to `esp-idf` for ESP32-C2, ESP32-C5, ESP32-C6, ESP32-C61, ESP32-H2, and ESP32-P4 (Arduino is not supported on these variants)
+- **type** (*Optional*, string): The framework type, either `esp-idf` or `arduino`. Defaults to `esp-idf` for all ESP32 variants.
 
 - **version** (*Optional*, string): The base framework version number to use, from
   [ESP32 ESP-IDF releases](https://github.com/espressif/esp-idf/releases) or
@@ -144,6 +144,20 @@ esp32:
 - **ignore_efuse_mac_crc** (*Optional*, boolean): Can be set to `true` for devices on which the burned-in MAC
   address is not consistent with the burned-in CRC for that MAC address, resulting in an error like
   `Base MAC address from BLK0 of EFUSE CRC error`. **Valid only on original ESP32 with** `esp-idf` **framework.**
+
+- **minimum_chip_revision** (*Optional*, string): Sets the minimum ESP32 chip revision required for the firmware.
+  One of `0.0`, `1.0`, `1.1`, `2.0`, `3.0`, or `3.1`. **Valid only on original ESP32.**
+
+  Setting this to `3.0` or higher reduces flash size by excluding workaround code for older chip bugs. For PSRAM
+  users, it also saves significant IRAM by keeping C library functions in ROM instead of recompiling them with
+  the PSRAM cache bug workaround.
+
+  **Important:** The firmware will not boot on chips older than the specified revision. If OTA updating a device
+  with an older chip, the bootloader will reject the new firmware and roll back to the previous version (when
+  OTA rollback is enabled, which is the default).
+
+  To find your chip's revision, check the ESPHome boot logs for a line like `ESP32 Chip: ESP32 r3.0, 2 core(s)`
+  or use `esptool.py chip_id`.
 
 - **enable_idf_experimental_features** (*Optional*, boolean): Can be set to `true` to enable experimental features. Use of
   experimental features may cause instability or other issues.
@@ -227,6 +241,22 @@ The following options disable unused VFS features to save flash memory:
   This matches the default behavior in ESP-IDF 6.0 (see [migration guide](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/migration-guides/release-6.x/6.0/system.html#id1)).
   Set to `true` only if you encounter issues. Defaults to `false` (ring buffer functions in flash to save IRAM).
 
+- **heap_in_iram** (*Optional*, boolean): Keep heap functions (malloc, free, realloc, etc.) in IRAM instead of moving them
+  to flash. By default, heap functions are placed in flash to save ~4-6 KB of IRAM. This is safe because heap functions
+  should never be called from ISRs, and ESPHome's design minimizes heap churn during normal operation (allocations happen
+  primarily at setup, not in hot loops). Set to `true` only if you have a specific use case requiring faster heap operations.
+  Defaults to `false` (heap functions in flash to save IRAM).
+
+**TLS/Certificate Options:**
+
+- **use_full_certificate_bundle** (*Optional*, boolean): Use the full certificate bundle instead of the common CAs
+  bundle. By default, ESPHome uses the CMN (common CAs) bundle which includes only Certificate Authorities with
+  greater than 1% market share. This covers approximately 99% of websites including Let's Encrypt, DigiCert, Google Trust
+  Services, Amazon Trust Services, and other major CAs. The CMN bundle is sufficient for most use cases including GitHub
+  (commonly used for OTA updates via {{< docref "/components/http_request" >}}), Home Assistant Cloud, and typical HTTPS
+  endpoints. Set to `true` only if connecting to services that use uncommon Certificate Authorities. Defaults to `false`
+  (CMN bundle saves ~51 KB flash).
+
 Some options can be disabled to save flash memory without affecting typical ESPHome functionality. The performance
 options (defaulting to `true`  ) improve socket operation performance but can be disabled if you need better
 multi-threaded scalability (which is uncommon since ESPHome uses an event loop).
@@ -252,6 +282,9 @@ esp32:
       enable_lwip_dhcp_server: false  # Disabled by default, only needed for AP mode
       enable_lwip_mdns_queries: false  # Enabled by default, can disable if not using .local hostnames
       enable_lwip_bridge_interface: false  # Disabled by default
+
+      # TLS options
+      use_full_certificate_bundle: false  # Disabled by default, saves ~35 KB flash
 ```
 
 {{< anchor "esp32-idf_components" >}}
