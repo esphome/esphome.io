@@ -107,6 +107,13 @@ api:
   the ESP is connected to the network, when in fact it is not - only a full reboot fixes it.
   Can be disabled by setting this to `0s`. Defaults to `15min`.
 
+- **client_keepalive_interval** (*Optional*, [Time](/guides/configuration-types#time)): The amount of time the server(device) waits for any messages from the client before sending a ping request. Defaults to `60sec`, Range is `60sec` to `180sec`
+- **server_keepalive_interval** (*Optional*, [Time](/guides/configuration-types#time)): The amount of time the client waits for any messages from the server(device) before sending a ping request. Defaults to `60sec`, Range is `20sec` to `180sec`
+
+  > [!NOTE]
+  > Increasing intervals between pings may result in server not knowing that a client is no longer active or vise-versa.
+  > The intent of these configuration variables is to fine tune the amount of communication between server and client.
+  
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
 
 - **on_client_connected** (*Optional*, [Action](/automations/actions#all-actions)): An automation to perform when a client
