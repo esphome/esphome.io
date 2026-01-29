@@ -158,7 +158,7 @@ All numbers with a `name` are automatically exposed over Zigbee.
 ```yaml
 number:
   - platform: template
-    name: "Template_number"
+    name: "Template Number"
     optimistic: true
     min_value: 2
     max_value: 100
@@ -178,7 +178,7 @@ number:
 - **min_value** (*Optional*, float): The minimum value this number can be. This is exposed as the
   Zigbee endpoint min present value.
 - **max_value** (*Optional*, float): The maximum value this number can be. This is exposed as the
-  Zigbee endpoint min present value.
+  Zigbee endpoint max present value.
 - **step** (*Optional*, float): The granularity with which the number can be set. This is exposed
   as the Zigbee endpoint resolution.
 
