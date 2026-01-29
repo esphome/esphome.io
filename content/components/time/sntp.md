@@ -20,6 +20,9 @@ time:
 - **servers** (*Optional*, list of strings): Choose up to 3 NTP servers that are used for the clock source.
   Defaults to `0.pool.ntp.org`, `1.pool.ntp.org` and `2.pool.ntp.org`
 
+- **smooth_sync** (*Optional*, boolean): When true, updates time smoothly by gradually reducing time error. If the difference between the SNTP response time and system time is more than 35 minutes, update system time immediately.
+  Defaults to `false`, which updates system time immediately upon receiving a response from the SNTP server.
+
 - All other options from [Base Time Configuration](/components/time#base_time_config).
 
 > [!NOTE]
