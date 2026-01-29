@@ -414,7 +414,7 @@ Remote code selection (exactly one of these has to be included):
 
   - **first** (**Required**, uint32_t): The first 24-bit Coolix code to trigger on, see dumper output for more info.
   - **second** (*Optional*, uint32_t): The second 24-bit Coolix code to trigger on, see dumper output for more info.
-    If not set, trigger on on only single non-strict packet, specified by the `first` parameter.
+    If not set, trigger on only single non-strict packet, specified by the `first` parameter.
 
 - **dish**: Trigger on a decoded Dish Network remote code with the given data.
   Beware that Dish remotes use a different carrier frequency (57.6kHz) that many receiver hardware don't decode.
@@ -501,7 +501,7 @@ Remote code selection (exactly one of these has to be included):
 - **pronto**: Trigger on a Pronto remote code with the given code.
 
   - **data** (**Required**, string): The code to listen for, see
-    [transmitter description](/components/remote_transmitter#remote_transmitter-transmit_raw) for more info. Usually you only need to copy this
+    [transmitter description](/components/remote_transmitter#remote_transmitter-transmit_pronto) for more info. Usually you only need to copy this
     directly from the dumper output.
 
   - **delta** (*Optional*, integer): This parameter allows you to manually specify the allowed difference
