@@ -287,6 +287,28 @@ esp32:
       use_full_certificate_bundle: false  # Disabled by default, saves ~35 KB flash
 ```
 
+**Arduino Selective Compilation:**
+
+When using the Arduino framework, ESPHome uses selective compilation to only build the Arduino libraries actually needed by your configuration. This significantly reduces flash usage, RAM usage, and build times. Most Arduino libraries (WiFi, Network, BLE, Zigbee, Matter, RainMaker, etc.) are disabled by default since ESPHome uses ESP-IDF APIs directly.
+
+Components that need specific Arduino libraries automatically enable them via `cg.add_library()`. For edge cases where a library isn't auto-detected (e.g., custom lambdas using Arduino APIs), you can explicitly enable libraries:
+
+- **include_arduino_libraries** (*Optional*, list of strings): A list of Arduino library names to explicitly enable. Only needed when using Arduino library APIs directly in lambdas that aren't detected by ESPHome's component system. Available libraries include: `ArduinoOTA`, `AsyncUDP`, `BLE`, `BluetoothSerial`, `DNSServer`, `EEPROM`, `ESP_HostedOTA`, `ESP_I2S`, `ESP_NOW`, `ESP_SR`, `ESPmDNS`, `Ethernet`, `FFat`, `FS`, `Hash`, `HTTPClient`, `HTTPUpdate`, `Insights`, `LittleFS`, `Matter`, `NetBIOS`, `Network`, `NetworkClientSecure`, `OpenThread`, `PPP`, `Preferences`, `RainMaker`, `SD`, `SD_MMC`, `SimpleBLE`, `SPI`, `SPIFFS`, `Ticker`, `Update`, `USB`, `WebServer`, `WiFi`, `WiFiProv`, `Wire`, `Zigbee`.
+
+```yaml
+# Example: Enabling Arduino libraries for custom lambda code
+esp32:
+  board: esp32dev
+  framework:
+    type: arduino
+    advanced:
+      include_arduino_libraries:
+        - Preferences  # If using Arduino Preferences API in lambda
+```
+
+> [!NOTE]
+> Most users do not need to use `include_arduino_libraries`. ESPHome components automatically enable the libraries they need. This option is only for advanced use cases like custom lambdas that directly call Arduino library functions.
+
 {{< anchor "esp32-idf_components" >}}
 
 ## IDF Components
