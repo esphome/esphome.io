@@ -1,0 +1,252 @@
+---
+description: "Instructions for setting up the Modem configuration for your ESP32 node in ESPHome."
+title: "Modem Component"
+params:
+  seo:
+    description: Instructions for setting up the Modem configuration for your ESP32 node in ESPHome.
+    image: modem.svg
+    keywords: Network, Modem
+---
+
+This component provides cellular modem TCP/IP connectivity for ESP32-based devices. It allows your node to connect to the internet over a cellular network.
+
+Only ESP32s using the IDF framework are supported.
+
+Because the device will be on a private network, you will need to use [MQTT](/components/mqtt) for communication, or the [API](/components/api) combined with [Wireguard](/components/wireguard).
+
+This component cannot be used at the same time as the [Ethernet](/components/ethernet) or [Captive Portal](/components/captive_portal) components. It is also not compatible with Wi-Fi station mode.
+
+```yaml
+# Example configuration entry
+modem:
+  id: atmodem
+  model: SIM7600
+  rx_pin: GPIO26
+  tx_pin: GPIO27
+  apn: orange
+  pin_code: "0000"
+```
+
+## Configuration variables
+
+- **model** (**Required**, string): The model of the modem. Supported models are: `BG96`, `SIM800`, `SIM7000`, `SIM7600`, `SIM7670`, and `GENERIC`.
+- **rx_pin** (**Required**, [Pin Schema](/guides/configuration-types#pin-schema)): The pin used for `RX` on the ESP side (which should be connected to the `TX` pin on the modem).
+- **tx_pin** (**Required**, [Pin Schema](/guides/configuration-types#pin-schema)): The pin used for `TX` on the ESP side (which should be connected to the `RX` pin on the modem).
+- **apn** (**Required**, string): The Access Point Name (APN) of your cellular operator.
+- **pin_code** (*Optional*, string): The PIN code for your SIM card.
+- **power_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The pin connected to the modem's `PWK` or power key, used for power management.
+- **status_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The pin connected to the modem's `STATUS` output, used to read the power state.
+- **enable_cmux** (*Optional*, boolean): Enables CMUX mode, which allows the modem to answer AT commands while connected to the network. This is required by other components that communicate with the modem, such as [Modem Sensor](/components/sensor/modem). Defaults to `true`.
+- **reboot_timeout** (*Optional*, [Time](/guides/configuration-types#time)): The amount of time to wait after a failed connection attempt before rebooting the node. Defaults to `10min`. Can be disabled by setting to `0s`.
+- **init_at** (*Optional*, list of strings): A list of AT commands to be sent to the modem upon initialization.
+- **enable_on_boot** (*Optional*, boolean): If enabled, the PPPoS interface will be started on boot. Defaults to `true`.
+- **use_address** (*Optional*, string): Manually override what address to use to connect to the ESP. Defaults to auto-generated value.
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
+
+{{< anchor "nmea_schema" >}}
+
+- **nmea** (*Optional*, [Nmea Schema](#nmea_schema)): Create a virtual UART bus that can be used by the [GPS](/components/gps).
+
+  - **id** (*Required*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
+  - **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval of NMEA updates. Defaults to `20s`
+
+## Advanced options
+
+- **baud_rate** (*Optional*, int): The baud rate for the serial connection to the modem. You can use `init_at` to send `AT+IPR=?` to find the available baud rates for your modem.
+- **ton_pulse_delay**, **ton_delay**, **toff_pulse_delay**, **toff_delay** (*Optional*, [Time](/guides/configuration-types#time)): These options are for advanced power management tuning and are only needed when using the `power_pin`. For most supported models, these values are pre-configured. They are required when using the `GENERIC` model with a `power_pin`, or if you need to override the default timings for your specific hardware.
+- **tx_buffer_size** (*Optional*, int): The size of the TX buffer in bytes. Defaults to `1024`.
+- **rx_buffer_size** (*Optional*, int): The size of the RX buffer in bytes. Defaults to `1024`.
+- **dte_buffer_size** (*Optional*, int): The size of the DTE buffer in bytes. Defaults to `1024`. This may need to be increased if you frequently see the "CMUX: Failed to defragment longer payload" warning.
+- **debug** (*Optional*, boolean): Enables verbose logging for the underlying `esp_modem` library. Defaults to `false`.
+
+## Automations
+
+- **on_connect** (*Optional*, [Automation](/automations)): An action to be performed when the modem gets an IP address.
+- **on_disconnect** (*Optional*, [Automation](/automations)): An action to be performed when the modem loses its IP address.
+- **on_start_ppp** (*Optional*, [Automation](/automations)): An action to be performed when the modem starts the PPP connection.
+- **on_enable** (*Optional*, [Automation](/automations)): An action to be performed when the modem is enabled.
+- **on_not_responding** (*Optional*, [Automation](/automations)): An action to be performed when the modem is not responding to commands.
+
+## Actions
+
+### `modem.disable` Action
+
+This action turns off the modem on demand.
+
+```yaml
+on_...:
+  then:
+    - modem.disable:
+```
+
+> [!NOTE]
+> If you disable the modem, you may also need to disable the MQTT timeout to prevent the device from rebooting.
+
+### `modem.enable` Action
+
+This action turns on the modem on demand.
+
+```yaml
+on_...:
+  then:
+    - modem.enable:
+```
+
+> [!NOTE]
+> You can set the `enable_on_boot` configuration option to `false` if you do not want the modem to be enabled automatically on boot.
+
+### `modem.reset` Action
+
+This action resets the modem on demand.
+
+```yaml
+on_...:
+  then:
+    - modem.reset:
+```
+
+### `modem.send_at` Action
+
+This action sends an AT command to the modem. It requires `enable_cmux: true`.
+
+```yaml
+on_...:
+  then:
+    - modem.send_at: "AT+CGSN"
+```
+
+## Conditions
+
+### `modem.connected` Condition
+
+This [Condition](/automations/actions#all-conditions) checks if the modem is currently connected and has an IP address.
+
+```yaml
+on_...:
+  if:
+    condition:
+      modem.connected:
+    then:
+      - logger.log: Modem is connected!
+```
+
+The lambda equivalent is `id(atmodem).is_connected()`.
+
+### `modem.enabled` Condition
+
+This [Condition](/automations/actions#all-conditions) checks if the modem is currently enabled.
+
+```yaml
+on_...:
+  if:
+    condition:
+      modem.enabled:
+    then:
+      - modem.disable:
+    else:
+      - modem.enable:
+```
+
+The lambda equivalent is `id(atmodem).is_enabled()`.
+
+## Lambda calls
+
+From [lambdas](/guides/configuration-types#lambda), you can call several methods for advanced control.
+
+- `.is_connected()`: Returns `true` if the modem is connected, `false` otherwise.
+- `.is_enabled()`: Returns `true` if the modem is enabled, `false` otherwise.
+- `.enable()`: Enables the modem and starts the connection. If `power_pin` is defined, this will also power on the modem.
+- `.disable()`: Disconnects the modem. If `power_pin` is defined, this will power off the modem; otherwise, it will activate light sleep mode.
+- `.reset()`: Power cycles the modem if `power_pin` is defined.
+- `.modem_handler->send_at(std::string cmd)`: A shorthand for `.modem_handler->dce->at()` that returns a `modem::AtCommandResult` containing the status and result string.
+
+```cpp
+// Example of sending an AT command from a lambda
+modem::AtCommandResult result = id(atmodem).modem_handler->send_at("AT+CGMR");
+if(result) {
+ ESP_LOGI("main", "Firmware version: %s", result.c_str());
+} else {
+ ESP_LOGE("main", "Firmware version error: %s", result.esp_modem_command_result == esp_modem::command_result::FAIL ? "FAIL": "TIMEOUT");
+}
+```
+
+- `.modem_handler->dce`: Provides access to the DCE object from the underlying [esp_modem](https://docs.espressif.com/projects/esp-protocols/esp_modem/docs/latest/) library. See the [DCE methods](https://docs.espressif.com/projects/esp-protocols/esp_modem/docs/latest/cxx_api_docs.html#modem-commands) for available commands.
+
+> [!WARNING]
+> The `dce` object can be a `nullptr`, so you must check for its existence before using it. Improper use of these methods can break the modem component.
+
+```cpp
+// Example of getting the modem's internal voltage
+int voltage, bcs, bcl;
+ESP_LOGI("main", "Getting modem voltage...");
+if(id(atmodem).modem_handler->dce) {
+  esp_modem::command_result err = id(atmodem).modem_handler->dce->get_battery_status(voltage, bcs, bcl);
+  switch (err) {
+    case esp_modem::command_result::FAIL:
+      ESP_LOGE("main", "get_battery_status FAIL");
+      break;
+    case esp_modem::command_result::OK:
+      ESP_LOGI("main", "get_battery_status OK: %d", voltage);
+      break;
+    case esp_modem::command_result::TIMEOUT:
+      ESP_LOGE("main", "get_battery_status TIMEOUT");
+  }
+} else {
+  ESP_LOGE("main", "DCE not available");
+}
+```
+
+## Hardware Notes
+
+### LilyGo Devices
+
+On some LilyGo devices, the `power_pin` is inverted. Some models also require the `flight_pin` to be held high.
+
+```yaml
+modem:
+  power_pin:
+    number: GPIO4
+    inverted: true
+
+switch:
+  - platform: gpio
+    id: flight_mode
+    pin: GPIO25
+    restore_mode: ALWAYS_ON
+    internal: true
+```
+
+## Performance and Stability
+
+To improve data transfer speed or resolve issues with large transfers, you can try enabling `CONFIG_UART_ISR_IN_IRAM`.
+
+```yaml
+esp32:
+  framework:
+    type: esp-idf
+    sdkconfig_options:
+      # To gain more speed, or if big transferts fails
+      # not done by default because it conflicts with the uart component (crash)
+      CONFIG_UART_ISR_IN_IRAM: y
+      # Some command may block for a long delay if the modem is not reachable, and cause a watchdog timeout
+      CONFIG_ESP_TASK_WDT_TIMEOUT_S: "60"
+      # With CMUX, do not reconstruct the entire payload in the DTE buffer.
+      # Try it if you get "CMUX: Failed to defragment longer payload" warnings message
+      # You can also this a bigger "buffer_size_dte"
+      CONFIG_ESP_MODEM_CMUX_DEFRAGMENT_PAYLOAD: n
+      CONFIG_ESP_MODEM_USE_INFLATABLE_BUFFER_IF_NEEDED: y
+      CONFIG_ESP_MODEM_CMUX_USE_SHORT_PAYLOADS_ONLY: n
+```
+
+## See Also
+
+- [Network](/components/network)
+- [Modem Text Sensor](/components/text_sensor/modem)
+- [Modem Sensor](/components/sensor/modem)
+- [Modem Switch](/components/switch/modem)
+- [MQTT](/components/mqtt)
+- [Wireguard](/components/wireguard)
+- [GPS](/components/gps)
+- [SIM7600 AT command list](https://simcom.ee/documents/SIM7600C/SIM7500_SIM7600%20Series_AT%20Command%20Manual_V1.01.pdf)
+- [SIM7600 Hardware design](https://simcom.ee/documents/SIM7600E/SIM7600%20Series%20Hardware%20Design_V1.03.pdf)
+- [esp_modem](https://docs.espressif.com/projects/esp-protocols/esp_modem/docs/latest/)
