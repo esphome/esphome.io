@@ -736,6 +736,27 @@ on_...:
 - **command** (**Required**, int): The RC5 command to send.
 - All other options from [Remote Transmitter Actions](#remote_transmitter-transmit_action).
 
+{{< anchor "remote_transmitter-transmit_rc5x" >}}
+
+### `remote_transmitter.transmit_rc5x` **Action**
+
+This [action](/automations/actions#all-actions) sends an RC5X (Marantz Extended RC5) infrared remote code to a remote transmitter.
+
+```yaml
+on_...:
+  - remote_transmitter.transmit_rc5x:
+      address: 0x10
+      command: 0x00
+      extension: 0x06
+```
+
+#### Configuration variables
+
+- **address** (**Required**, int): The address to send, see dumper output for more details.
+- **command** (**Required**, int): The RC5X command to send.
+- **extension** (**Required**, int): The RC5X extension field to send.
+- All other options from [Remote Transmitter Actions](#remote_transmitter-transmit_action).
+
 {{< anchor "remote_transmitter-transmit_rc6" >}}
 
 ### `remote_transmitter.transmit_rc6` **Action**
