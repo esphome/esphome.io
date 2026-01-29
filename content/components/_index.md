@@ -506,6 +506,7 @@ Sensors are organized into categories; if a given sensor fits into more than one
 "Resol VBus","components/vbus","resol_deltasol_bs_plus.jpg",""
 "Rotary Encoder","components/sensor/rotary_encoder","rotary_encoder.jpg",""
 "SMT100","components/sensor/smt100","smt100.jpg","Moisture & Temperature"
+"SY6970","components/sensor/sy6970","sy6970.jpg","Battery charge IC"
 "Sound Level","components/sensor/sound_level","waveform.svg","dark-invert"
 "Tuya Sensor","components/sensor/tuya","tuya.png",""
 "TX20","components/sensor/tx20","tx20.jpg","Wind speed & Wind direction"
@@ -836,6 +837,15 @@ Components specifically for interacting with Home Assistant.
 "Voice Assistant","components/voice_assistant","voice-assistant.svg","dark-invert"
 {{< /imgtable >}}
 
+## Infrared Components
+
+Used for creating infrared (IR) remote control transmitters and/or receivers.
+
+{{< imgtable >}}
+"Infrared Core","components/infrared/index","folder-open.svg","dark-invert"
+"IR/RF Proxy","components/ir_rf_proxy","remote.svg","dark-invert"
+{{< /imgtable >}}
+
 ## Light Components
 
 {{< imgtable >}}
@@ -1019,6 +1029,7 @@ at the {{< docref "light/fastled" "FastLED Light" >}}.
 "PCF85063 RTC","components/time/pcf85063","clock-outline.svg","dark-invert"
 "PCF8563 RTC","components/time/pcf8563","clock-outline.svg","dark-invert"
 "SNTP","components/time/sntp","clock-outline.svg","dark-invert"
+"Zigbee Time","components/time/zigbee","zigbee.svg",""
 {{< /imgtable >}}
 
 ## Touchscreen Components
