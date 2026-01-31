@@ -113,7 +113,7 @@ api:
   > [!NOTE]
   > Increasing intervals between pings may result in server not knowing that a client is no longer active or vise-versa.
   > Behavior that may be exihibited is lag in reconnection on reboot.
-  > The intent of these configuration variables is to fine tune the amount of communication between server and client 
+  > The intent of these configuration variables is to fine tune the amount of communication between server and client
   > to reduce radio usage in power constrained devices.
   
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
