@@ -52,8 +52,8 @@ accurate - you are not writing a press release.
 For example instead of "Created comprehensive documentation with configuration examples and setup instructions"
 it is sufficient to say "Created documentation with examples and instructions".
 
-## Legacy Hugo Shortcuts
+## Legacy Hugo Shortcodes
 
-The following Hugo shortcuts are legacy and should be replaced when encountered:
+The following Hugo shortcodes are legacy and should be replaced when encountered:
 * `{{< docref >}}`: use standard Markdown links instead
 * `{{< img >}}`: use standard Markdown image syntax instead
