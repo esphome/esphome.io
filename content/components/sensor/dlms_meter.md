@@ -63,8 +63,6 @@ text_sensor:
       name: "Timestamp"
 ```
 
-{{< collapse >}}
-
 ### Example (Netz Noe / EVN)
 
 ```yaml
@@ -75,7 +73,7 @@ uart:
 
 dlms_meter:
   decryption_key: "01234567890123456789012345678901"  # Replace with your key
-  provider: netznoe                 # (optional) only set when using Netz Noe / EVN
+  provider: netznoe
 
 sensor:
   - platform: dlms_meter
@@ -109,8 +107,6 @@ text_sensor:
     meternumber:                 # EVN specific
       name: "Meter Number"
 ```
-
-{{< /collapse >}}
 
 ## Component Configuration
 
