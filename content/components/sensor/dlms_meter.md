@@ -28,7 +28,7 @@ uart:
   rx_buffer_size: 1024        # Needed for large frames
 
 dlms_meter:
-  decryption_key: "36C66639E48A8CA4D6BC8B282A793BBB"  # Replace with your key
+  decryption_key: "01234567890123456789012345678901"  # Replace with your key
 
 sensor:
   - platform: dlms_meter
@@ -74,7 +74,7 @@ uart:
   rx_buffer_size: 1024
 
 dlms_meter:
-  decryption_key: "36C66639E48A8CA4D6BC8B282A793BBB"  # Replace with your key
+  decryption_key: "01234567890123456789012345678901"  # Replace with your key
   provider: netznoe                 # (optional) only set when using Netz Noe / EVN
 
 sensor:
