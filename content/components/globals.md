@@ -46,7 +46,7 @@ globals:
   Be careful: on the ESP8266, you only have a total of 96 bytes available for this! Defaults to `no`.
 
 - **update_interval** (*Optional*, {{< docref "/guides/configuration-types#time" "Time" >}}): The interval
-  to check if the value has changed and needs to be saved. Only applies when ``restore_value`` is ``yes``.
+  to check if the value has changed and needs to be saved. Only applies when `restore_value` is `yes`.
   Defaults to `1s`. The value is also saved on shutdown.
 
 - **max_restore_data_length** (*Optional*, integer): Only applies to variables of type `std::string`. ESPHome will allocate enough space for this many characters,
