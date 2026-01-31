@@ -128,7 +128,7 @@ Not all sensors are available on all meters. Provider specific sensors are liste
 
 ### Configuration Variables
 
-Each of the following entries is *optional*; add only the ones you need. All support the standard [Sensor](#config-sensor) options.
+Each of the following entries is *optional*; add only the ones you need. All support the standard [Sensor](/components/sensor) options.
 
 - **voltage_l1**: Voltage Phase 1.
 - **voltage_l2**: Voltage Phase 2.
@@ -145,13 +145,13 @@ Each of the following entries is *optional*; add only the ones you need. All sup
 
 #### Netz Noe / EVN Additional Sensor
 
-- **power_factor**: Power factor. All options from [Sensor](#config-sensor).
+- **power_factor**: Power factor. All options from [Sensor](/components/sensor).
 
 ## Text Sensor
 
 ### Configuration Variables
 
-All text sensor entries are *optional* and support standard [Text Sensor](#config-text_sensor) options.
+All text sensor entries are *optional* and support standard [Text Sensor](/components/text_sensor#config-text_sensor) options.
 
 - **timestamp**: Timestamp included in the received frame.
 
