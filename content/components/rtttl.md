@@ -18,9 +18,9 @@ and play monophonic songs. It accepts the Ring Tone Text Transfer Language, RTTT
 It's important that your buzzer is a **passive** one, if it beeps when you feed it with 3.3V then it is not
 a passive one and this library will not work properly.
 
-The tone generator needs a PWM capable output to work with, currently only the
-[ESP8266 Software PWM Output](/component/output/esp8266_pwm) and
-[ESP32 LEDC Output](/component/output/ledc) are supported.
+The tone generator needs a PWM-capable output to work with, currently only the
+[ESP8266 Software PWM Output](/components/output/esp8266_pwm) and
+[ESP32 LEDC Output](/components/output/ledc) are supported.
 
 ```yaml
 # Example configuration entry
@@ -113,7 +113,6 @@ on_...:
       logger.log: 'Playback is active!'
 ```
 
-
 ## RTTTL Format
 
 An RTTTL string consists of three parts separated by colons (`:`):
@@ -129,7 +128,7 @@ name:d=4,o=5,b=120:notes
 ### Control Parameters
 
 - **d** (duration): The default note duration. Valid values are 1 (whole note), 2 (half note), 4 (quarter note), 8 (eighth note), 16 (sixteenth note), and 32 (thirty-second note). Default is 4.
-- **o** (octave): The default octave for notes. Valid values are 4, 5, 6, or 7. Higher values produce higher pitched sounds. Default is 6.
+- **o** (octave): The default octave for notes. Valid values are 4, 5, 6, or 7. Higher values produce higher-pitched sounds. Default is 6.
 - **b** (beats): The tempo in beats per minute (BPM). Determines how fast the melody plays. Default is 63.
 
 ### Note Format
