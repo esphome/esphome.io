@@ -17,9 +17,7 @@ sounds.
 
 This sensor platform expects a sensor that can be sent a **trigger
 pulse** on a specific pin and will send out an **echo pulse** once a
-measurement has been taken. Because sometimes (for example if no object
-is detected) the echo pulse is never returned, this sensor also has a
-timeout option which specifies how long to wait for values.
+measurement has been taken.
 
 {{< img src="ultrasonic-full.jpg" alt="Image" caption="HC-SR04 Ultrasonic Distance Sensor." width="50.0%" class="align-center" >}}
 
@@ -36,29 +34,26 @@ sensor:
 
 ## Configuration variables
 
-- **trigger_pin** (**Required**, [Pin Schema](#config-pin_schema)): The output pin to
+- **trigger_pin** (**Required**, [Pin Schema](/guides/configuration-types#pin-schema)): The output pin to
   periodically send the trigger pulse to.
 
-- **echo_pin** (**Required**, [Pin Schema](#config-pin_schema)): The input pin on which to
+- **echo_pin** (**Required**, [Pin Schema](/guides/configuration-types#pin-schema)): The input pin on which to
   wait for the echo.
 
-- **update_interval** (*Optional*, [Time](#config-time)): The interval to check the
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to check the
   sensor. Defaults to `60s`.
 
-- All other options from [Sensor](#config-sensor).
+- All other options from [Sensor](/components/sensor).
 
 Advanced options:
 
-- **timeout** (*Optional*, float): The number of meters for the
-  timeout. Most sensors can only sense up to 2 meters. Defaults to 2 meters.
-
-- **pulse_time** (*Optional*, [Time](#config-time)): The duration for which the trigger pin will be
+- **pulse_time** (*Optional*, [Time](/guides/configuration-types#time)): The duration for which the trigger pin will be
   active. Defaults to `10us`.
 
-- **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation.
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
 
 ## See Also
 
-- [Sensor Filters](#sensor-filters)
+- [Sensor Filters](/components/sensor#sensor-filters)
 - {{< docref "template/" >}}
 - {{< apiref "ultrasonic/ultrasonic_sensor.h" "ultrasonic/ultrasonic_sensor.h" >}}

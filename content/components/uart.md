@@ -26,27 +26,23 @@ receive/send data at using the `baud_rate` option. Two common baud rates are 960
 
 In some cases only **TX** or **RX** exists as the device at the other end only accepts data or sends data.
 
-The UART component may be used as a platform for the [Packet Transport Component](#packet-transport) component, enabling
+The UART component may be used as a platform for the [Packet Transport Component](/components/packet_transport#packet-transport) component, enabling
 sensor data to be sent directly from one ESPHome node to another over a UART bus. When using RS485 this can operate in
 a multi-drop configuration.
 
-{{< note >}}
-On the ESP32, this component uses the hardware UART units and is thus very accurate. On the ESP8266 however,
-ESPHome has to use a software implementation as there are no other hardware UART units available other than the
-ones used for logging. Therefore the UART data on the ESP8266 can have occasional data glitches especially with
-higher baud rates.
+> [!NOTE]
+> On the ESP32, this component uses the hardware UART units and is thus very accurate. On the ESP8266 however,
+> ESPHome has to use a software implementation as there are no other hardware UART units available other than the
+> ones used for logging. Therefore the UART data on the ESP8266 can have occasional data glitches especially with
+> higher baud rates.
 
-{{< /note >}}
-{{< note >}}
-From ESPHome 2021.8 the `ESP8266SoftwareSerial` UART `write_byte` function had the parity bit fixed to be correct
-for the data being sent. This could cause unexpected issues if you are using the Software UART and have devices that
-explicity check the parity. Most likely you will need to flip the `parity` flag in YAML.
+> [!NOTE]
+> From ESPHome 2021.8 the `ESP8266SoftwareSerial` UART `write_byte` function had the parity bit fixed to be correct
+> for the data being sent. This could cause unexpected issues if you are using the Software UART and have devices that
+> explicity check the parity. Most likely you will need to flip the `parity` flag in YAML.
 
-{{< /note >}}
-{{< note >}}
-UART implementation for the host platform does not use TX and RX pins but port names.
-
-{{< /note >}}
+> [!NOTE]
+> UART implementation for the host platform does not use TX and RX pins but port names.
 
 ```yaml
 # Example configuration entry
@@ -59,13 +55,13 @@ uart:
 ## Configuration variables
 
 - **baud_rate** (**Required**, int): The baud rate of the UART bus.
-- **tx_pin** (*Optional*, [Pin](#config-pin)): The pin to send data to from the ESP's perspective. Use the full pin
+- **tx_pin** (*Optional*, [Pin](/guides/configuration-types#pin)): The pin to send data to from the ESP's perspective. Use the full pin
   schema and set `inverted: true` to invert logic levels. Not supported by host platform.
 
-- **rx_pin** (*Optional*, [Pin](#config-pin)): The pin to receive data on from the ESP's perspective. Use the full pin
+- **rx_pin** (*Optional*, [Pin](/guides/configuration-types#pin)): The pin to receive data on from the ESP's perspective. Use the full pin
   schema and set `inverted: true` to invert logic levels. Not supported by host platform.
 
-- **flow_control_pin** (*Optional*, [Pin](#config-pin)): ESP32 only. The pin used to for hardware RS485 flow control.
+- **flow_control_pin** (*Optional*, [Pin](/guides/configuration-types#pin)): ESP32 only. The pin used to for hardware RS485 flow control.
   Use of this setting enables half-duplex mode. Use the full pin schema and set `inverted: true` to invert logic levels.
 
 - **port** (*Optional*, string): Host platform only. Unix style name of the port to use.
@@ -75,11 +71,11 @@ uart:
 - **rx_full_threshold** (*Optional*, int): ESP32 only. After receiving this number of bytes, the data becomes available for processing.
   The default is calculated at compilation time to be approximately ten milliseconds (about 8 bytes at 9600 baud, 114 bytes at 115200 baud).
   
-- **rx_timeout** (*Optional*, int): ESP32 only. This value specifies a number of bytes used to determine the duration of the timeout. The duration of the timeout is based on the amount of time it would take to receive this number of bytes. In other words, for a given value and baud rate, doubling the baud rate will halve the duration of the timeout. After the timeout has elapsed, the data becomes available for processing. Defaults to ``2``.
+- **rx_timeout** (*Optional*, int): ESP32 only. This value specifies a number of bytes used to determine the duration of the timeout. The duration of the timeout is based on the amount of time it would take to receive this number of bytes. In other words, for a given value and baud rate, doubling the baud rate will halve the duration of the timeout. After the timeout has elapsed, the data becomes available for processing. Defaults to `2`.
 - **data_bits** (*Optional*, int): The number of data bits used on the UART bus. Options: 5 to 8. Defaults to 8.
 - **parity** (*Optional*): The parity used on the UART bus. Options: `NONE`, `EVEN`, `ODD`. Defaults to `NONE`.
 - **stop_bits** (*Optional*, int): The number of stop bits to send. Options: 1, 2. Defaults to 1.
-- **id** (*Optional*, [ID](#config-id)): Manually specify the ID for this UART hub if you need multiple UART hubs.
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID for this UART hub if you need multiple UART hubs.
 - **debug** (*Optional*, mapping): Options for debugging communication on the UART hub, see [Debugging](#uart-debugging).
 
 {{< anchor "uart-hardware_uarts" >}}
@@ -102,15 +98,14 @@ The ESP8266 has two UARTs; the second of which is TX-only. Only a limited set of
 use either `tx_pin: GPIO1` and `rx_pin: GPIO3`, or `tx_pin: GPIO15` and `rx_pin: GPIO13`. `UART1` must
 use `tx_pin: GPIO2`. Any other combination of pins will result in use of a software UART.
 
-{{< note >}}
-The Software UART is only available on the ESP8266. It is not available on ESP32 and variants.
+> [!NOTE]
+> The Software UART is only available on the ESP8266. It is not available on ESP32 and variants.
 
-{{< /note >}}
 {{< anchor "uart-write_action" >}}
 
 ## `uart.write` Action
 
-This [Action](#config-action) sends a defined UART signal to the given UART bus.
+This [Action](/automations/actions#all-actions) sends a defined UART signal to the given UART bus.
 
 ```yaml
 on_...:
@@ -172,13 +167,13 @@ uart:
   to trigger publishing the accumulated bytes. The possible options are:
 
   - **bytes** (*Optional*, int): Trigger after accumulating the specified number of bytes. Defaults to 150.
-  - **timeout** (*Optional*, [Time](#config-time)): Trigger after no communication has been seen during the
+  - **timeout** (*Optional*, [Time](/guides/configuration-types#time)): Trigger after no communication has been seen during the
     specified timeout, while one or more bytes have been accumulated. Defaults to 100ms.
 
   - **delimiter** (*Optional*, string or list of bytes): Trigger after the specified sequence of bytes is
     detected in the communication.
 
-- **sequence** (*Optional*, [Action](#config-action)): Action(s) to perform for publishing debugging data.
+- **sequence** (*Optional*, [Action](/automations/actions#all-actions)): Action(s) to perform for publishing debugging data.
   Defaults to an action that logs the bytes in hex format. The actions can make use of the following variables:
 
   - **direction**: `uart::UART_DIRECTION_RX` or `uart::UART_DIRECTION_TX`

@@ -34,7 +34,7 @@ esp32_touch:
    will spam the logs. See [setting up touch pads](#esp32-touch-binary-sensor)
    for more information. Defaults to `false`.
 
-- **id** (*Optional*, [ID](#config-id)): Manually specify the ID for code generation.
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID for code generation.
 
 #### Advanced options
 
@@ -43,11 +43,11 @@ the sensors aren't behaving as expected.
 
 #### All processors
 
-- **sleep_duration** (*Optional*, [Time](#config-time)): Set a time period
+- **sleep_duration** (*Optional*, [Time](/guides/configuration-types#time)): Set a time period
   denoting the amount of time the touch peripheral should sleep between measurements. This can decrease
   power usage but make the sensor slower. Default is about 27 milliseconds.
 
-- **measurement_duration** (*Optional*, [Time](#config-time)): Set the conversion
+- **measurement_duration** (*Optional*, [Time](/guides/configuration-types#time)): Set the conversion
   time for all touch pads. A longer conversion time means that more charge/discharge cycles of the touch pad
   can be performed, therefore increasing accuracy. Default is about 8ms, the maximum amount.
 
@@ -65,7 +65,7 @@ For a more detailed explanation of the parameters above, please see the
 
 #### ESP32 only
 
-- **iir_filter** (*Optional*, [Time](#config-time)): Optionally set up an
+- **iir_filter** (*Optional*, [Time](/guides/configuration-types#time)): Optionally set up an
   [Infinite Impulse Response](https://en.wikipedia.org/wiki/Infinite_impulse_response)
   filter should be applied to all touch pads. This can increase the accuracy of the touch pads a lot, but higher values
   decrease the response time. A good value to start with is `10ms`. By default, the IIR filter is inactive.
@@ -106,7 +106,7 @@ For a more detailed explanation of the denoise configuration, please see the
 
 Waterproof configuration:
 
-- **waterproof_guard_ring** (*Optional*, [Pin](#config-pin)): Sets the touch channel to use for the guard pad. The guard
+- **waterproof_guard_ring** (*Optional*, [Pin](/guides/configuration-types#pin)): Sets the touch channel to use for the guard pad. The guard
   pad is used to detect the large area of water covering the touch panel.
 
 - **waterproof_shield_driver** (*Optional*): Shield channel drive capability configuration; the larger the
@@ -143,7 +143,7 @@ binary_sensor:
 
 ### Configuration variables
 
-- **pin** (**Required**, [Pin](#config-pin)): The pin to detect touch
+- **pin** (**Required**, [Pin](/guides/configuration-types#pin)): The pin to detect touch
    events on.
 
 - **threshold** (**Required**, `int`  ): The threshold to use to detect touch events. See
@@ -151,10 +151,10 @@ binary_sensor:
 
 - **wakeup_threshold** (*Optional*, `int`  ): The threshold to use to detect touch events to wake-up from deep sleep.
    See [Finding Thresholds](#esp32-finding-thresholds) below for help determining this value. Touch pad sensors that should trigger a
-   wake-up from deep sleep must specify this value. The [Deep Sleep Component](#deep_sleep-component) must also be configured to enable
+   wake-up from deep sleep must specify this value. The [Deep Sleep Component](/components/deep_sleep#deep_sleep-component) must also be configured to enable
    wake-up from a touch event. Note that no filter(s) is/are active during deep sleep.
 
-- All other options from [Binary Sensor](#config-binary_sensor).
+- All other options from [Binary Sensor](/components/binary_sensor#config-binary_sensor).
 
 ## Raw Values
 
@@ -240,34 +240,33 @@ reduce the ESP's overall performance.
 
 ## S2 and S3 Variants
 
-{{< note >}}
-**ESP32-S2 and ESP32-S3 Touch Configuration**
+> [!NOTE]
+> **ESP32-S2 and ESP32-S3 Touch Configuration**
+>
+> The default `measurement_duration` and `sleep_duration` values are optimized for the original ESP32 and
+> **may not work at all on S2/S3 variants**. The S2/S3 touch hardware requires different timing settings.
+>
+> Key differences:
+>
+> - **Touch values increase** when touched (opposite of ESP32 which decreases)
+> - **Higher raw values** are returned compared to original ESP32
+> - **Lower measurement duration required** - the default 8ms is often too high for S2/S3
+>
+> **Example settings for S2/S3:**
+>
+> ```yaml
+> esp32_touch:
+>   setup_mode: false
+>   measurement_duration: 0.25ms  # Much lower than the 8ms default
+>   sleep_duration: 0.5ms
+>
+> binary_sensor:
+>   - platform: esp32_touch
+>     name: "Touch Sensor"
+>     pin: GPIO1
+>     threshold: 1000  # Adjust based on your hardware
+> ```
 
-The default `measurement_duration` and `sleep_duration` values are optimized for the original ESP32 and
-**may not work at all on S2/S3 variants**. The S2/S3 touch hardware requires different timing settings.
-
-Key differences:
-
-- **Touch values increase** when touched (opposite of ESP32 which decreases)
-- **Higher raw values** are returned compared to original ESP32
-- **Lower measurement duration required** - the default 8ms is often too high for S2/S3
-
-**Example settings for S2/S3:**
-
-```yaml
-esp32_touch:
-  setup_mode: false
-  measurement_duration: 0.25ms  # Much lower than the 8ms default
-  sleep_duration: 0.5ms
-
-binary_sensor:
-  - platform: esp32_touch
-    name: "Touch Sensor"
-    pin: GPIO1
-    threshold: 1000  # Adjust based on your hardware
-```
-
-{{< /note >}}
 If you're familiar with the ESP32 hardware and pick up an S2 or S3 variant, you're likely to notice some behavioral
 differences between them. In particular:
 

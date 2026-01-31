@@ -13,8 +13,8 @@
 
 <a href="https://esphome.io/">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://esphome.io/images/logo-docs-on-dark.svg">
-    <img src="https://esphome.io/images/logo-docs.svg" alt="ESPHome Logo">
+    <source media="(prefers-color-scheme: dark)" srcset="https://media.esphome.io/logo/logo-text-on-dark.svg">
+    <img src="https://media.esphome.io/logo/logo-text-on-light.svg" alt="ESPHome Logo">
   </picture>
 </a>
 
@@ -135,14 +135,6 @@ Creates an HTML anchor point that can be linked to with fragment identifiers.
 ```
 
 NOTE: Headings automatically create anchors, so it is not necessary to insert `anchor` shortcodes for them.
-
-### `button`
-
-Creates a button with an image that links to a URL.
-
-``` text
-{{< button href="https://example.com" img="/images/button.png" alt="Example Button" target="_self" >}}
-```
 
 ### `collapse`
 
@@ -385,7 +377,7 @@ To run the site locally:
 1. Clone this repository
 1. Navigate to the repository directory
 1. Run `make live-html`
-1. Open your browser to <http://localhost:1313/>
+1. Open your browser to <http://localhost:8000/>
 
 ## Building for Production
 

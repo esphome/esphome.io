@@ -11,12 +11,10 @@ The MQTT Client Component sets up the MQTT connection to your broker.
 If you are connecting to Home Assistant, you may prefer to use the native API,
 in which case this is not needed.
 
-{{< warning >}}
-If you enable MQTT and you do *not* use the {{< docref "/components/api" >}}, you must
-remove the `api:` configuration or set `reboot_timeout: 0s`, otherwise the ESP will
-reboot every 15 minutes because no client connected to the native API.
-
-{{< /warning >}}
+> [!WARNING]
+> If you enable MQTT and you do *not* use the {{< docref "/components/api" >}}, you must
+> remove the `api:` configuration or set `reboot_timeout: 0s`, otherwise the ESP will
+> reboot every 15 minutes because no client connected to the native API.
 
 ```yaml
 # Example configuration entry
@@ -26,10 +24,8 @@ mqtt:
   password: !secret mqtt_password
 ```
 
-{{< note >}}
-Support for esp-idf is still experimental. Please report issues you have with MQTT using the ESP-IDF framework.
-
-{{< /note >}}
+> [!NOTE]
+> Support for esp-idf is still experimental. Please report issues you have with MQTT using the ESP-IDF framework.
 
 ## Configuration variables
 
@@ -86,7 +82,7 @@ Support for esp-idf is still experimental. Please report issues you have with MQ
   The `log_topic` has an additional configuration option:
 
   - **level** (*Optional*, string): The log level to use for MQTT logs. See
-    [Log Levels](#logger-log_levels) for options.
+    [Log Levels](/components/logger#logger-log_levels) for options.
 
 - **birth_message** (*Optional*, [MQTTMessage](#mqtt-message)): The message to send when
   a connection to the broker is established. See [Last Will And Birth Messages](#mqtt-last_will_birth) for more information.
@@ -101,40 +97,43 @@ Support for esp-idf is still experimental. Please report issues you have with MQ
   for verifying SSL connections. See [SSL Fingerprints](#mqtt-ssl_fingerprints).
   for more information.
 
-- **certificate_authority** (*Optional*, string): Only with `esp-idf`. CA certificate in PEM format. See
-  [TLS with esp-idf (esp32)](#mqtt-tls-idf) for more information.
+- **certificate_authority** (*Optional*, string): Only on ESP32. CA certificate in PEM format. See
+  [TLS (ESP32)](#mqtt-tls-idf) for more information.
+
+> [!TIP]
+> For MQTT security recommendations including TLS configuration, see the [Security Best Practices](/guides/security_best_practices#mqtt) guide.
 
 - **client_certificate** (*Optional*, string): Only on `esp32`. Client certificate in PEM format.
 - **client_certificate_key** (*Optional*, string): Only on `esp32`. Client private key in PEM format.
-- **skip_cert_cn_check** (*Optional*, bool): Only with `esp-idf`. Don't verify if the common name in the server
+- **skip_cert_cn_check** (*Optional*, bool): Only on ESP32. Don't verify if the common name in the server
   certificate matches the value of `broker`.
 
-- **idf_send_async** (*Optional*, bool): Only with `esp-idf`. If true publishing the message happens from a separate mqtt task.
+- **idf_send_async** (*Optional*, bool): Only on ESP32. If true publishing the message happens from a separate mqtt task.
   The client only enqueues the message. Defaults to `false`.
   The advantage of asynchronous publishing is that it doesn't block the esphome main thread for potentially tens of seconds.
   The disadvantage is additional memory usage for the thread.
   Set this to true if you need to ensure that mqtt does not block the main thread, especially if you have poor network conditions.
 
-- **reboot_timeout** (*Optional*, [Time](#config-time)): The amount of time to wait before rebooting when no
+- **reboot_timeout** (*Optional*, [Time](/guides/configuration-types#time)): The amount of time to wait before rebooting when no
   MQTT connection exists. Can be disabled by setting this to `0s`. Defaults to `15min`.
 
-- **keepalive** (*Optional*, [Time](#config-time)): The time
+- **keepalive** (*Optional*, [Time](/guides/configuration-types#time)): The time
   to keep the MQTT socket alive, decreasing this can help with overall stability due to more
   WiFi traffic with more pings. Defaults to 15 seconds.
 
-- **on_connect** (*Optional*, [Automation](#automation)): An action to be performed when a connection
+- **on_connect** (*Optional*, [Automation](/automations)): An action to be performed when a connection
   to the broker is established.
 
-- **on_disconnect** (*Optional*, [Automation](#automation)): An action to be performed when the connection
+- **on_disconnect** (*Optional*, [Automation](/automations)): An action to be performed when the connection
   to the broker is dropped.
 
-- **on_message** (*Optional*, [Automation](#automation)): An action to be
+- **on_message** (*Optional*, [Automation](/automations)): An action to be
   performed when a message on a specific MQTT topic is received. See [`on_message` Trigger](#mqtt-on_message).
 
-- **on_json_message** (*Optional*, [Automation](#automation)): An action to be
+- **on_json_message** (*Optional*, [Automation](/automations)): An action to be
   performed when a JSON message on a specific MQTT topic is received. See [`on_json_message` Trigger](#mqtt-on_json_message).
 
-- **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation.
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
 - **publish_nan_as_none** (*Optional*, bool): Publish `None` instead of `NaN` to handle Unknown/Unavailable sensor
   states in Home Assistant. Defaults to `false`.
 
@@ -388,30 +387,28 @@ mqtt:
 
 {{< anchor "mqtt-tls-idf" >}}
 
-## TLS with esp-idf (esp32)
+## TLS (ESP32)
 
-If used with the esp-idf framework a TLS connection to a MQTT broker can be established.
-The servers CA certificate is required to validate the connection.
+On ESP32, a TLS connection to an MQTT broker can be established.
+The server's CA certificate is required to validate the connection.
 
 You have to download the server CA certificate in PEM format and add it to `certificate_authority`.
 Usually these are .crt files and you can open them with any text editor.
 Also make sure to change the `port` of the MQTT broker. Most brokers use port 8883 for TLS connections.
 
-{{< warning >}}
-MbedTLS, the library that handles TLS for the esp-idf, doesn't validate wildcard certificates.
-
-The Common Name check only works if the CN is explicitly reported in the certificate.
-
-- \*.example.com -> Fail
-- mqtt.example.com -> Success
-
-If a secure connection is necessary for your device, you really want to set:
-
-```yaml
-skip_cert_cn_check: false
-```
-
-{{< /warning >}}
+> [!WARNING]
+> MbedTLS, the library that handles TLS for the esp-idf, doesn't validate wildcard certificates.
+>
+> The Common Name check only works if the CN is explicitly reported in the certificate.
+>
+> - \*.example.com -> Fail
+> - mqtt.example.com -> Success
+>
+> If a secure connection is necessary for your device, you really want to set:
+>
+> ```yaml
+> skip_cert_cn_check: false
+> ```
 
 ```yaml
 mqtt:
@@ -491,46 +488,79 @@ command_retain: false
    Home Assistant for showing entity availability. Default derived from
    [global birth/last will message](#mqtt-last_will_birth).
 
-- **state_topic** (*Optional*, string): The topic to publish state
+- **state_topic** (*Optional*, string, [templatable](/automations/templates)): The topic to publish state
    updates to. Defaults to
    `<TOPIC_PREFIX>/<COMPONENT_TYPE>/<COMPONENT_NAME>/state`.
 
    ESPHome will always publish a manually configured state topic, even if
-   the component is internal. Use `null` to disable publishing the
+   the component is internal. Use `null` (or return `""` in the lambda) to disable publishing the
    component's state.
 
-- **command_topic** (*Optional*, string): The topic to subscribe to for
+- **command_topic** (*Optional*, string, [templatable](/automations/templates)): The topic to subscribe to for
    commands from the remote. Defaults to
    `<TOPIC_PREFIX>/<COMPONENT_TYPE>/<COMPONENT_NAME>/command`.
 
    ESPHome will always subscribe to a manually configured command topic,
-   even if the component is internal. Use `null` to disable subscribing
+   even if the component is internal. Use `null` (or return `""` in the lambda) to disable subscribing
    to the component's command topic.
 
 - **command_retain** (*Optional*, boolean): Whether MQTT command messages
    sent to the device should be retained or not. Default to `false`.
 
-{{< warning >}}
-When changing these options and you're using MQTT discovery, you will need to restart Home Assistant.
-This is because Home Assistant only discovers a device once in every Home Assistant start.
-
-{{< /warning >}}
+> [!WARNING]
+> When changing these options and you're using MQTT discovery, you will need to restart Home Assistant.
+> This is because Home Assistant only discovers a device once in every Home Assistant start.
 
 ## Triggers
 
-{{< anchor "mqtt-on_connect_disconnect" >}}
+{{< anchor "mqtt-on_connect" >}}
 
-### `on_connect` / `on_disconnect` Trigger
+### `on_connect` Trigger
 
-This trigger is activated when a connection to the MQTT broker is established or dropped.
+This trigger is activated when a connection to the MQTT broker is established. To retrieve if the session is present,
+use a [lambda](/automations/templates#config-lambda) template, it is available under the name `session_present` inside that lambda.
+`session_present` indicates whether the broker has a persistent session for this client from a previous connection. When `true`,
+the broker retained subscriptions and queued messages. When `false`, the session is new.
 
 ```yaml
 mqtt:
   # ...
   on_connect:
     - switch.turn_on: switch1
+    - lambda: |-
+        ESP_LOGI("mqtt", "Session present: %s", session_present ? "true" : "false");
+        if (!session_present) {
+          // Do something if session is not present
+        }
+```
+
+{{< anchor "mqtt-on_disconnect" >}}
+
+### `on_disconnect` Trigger
+
+This trigger is activated when a connection to the MQTT broker is dropped. To retrieve the disconnect reason,
+use a [lambda](/automations/templates#config-lambda) template, the reason is available under the name `reason` inside that lambda.
+
+```yaml
+mqtt:
+  # ...
   on_disconnect:
     - switch.turn_off: switch1
+    - lambda: |-
+        // reason is of type MQTTClientDisconnectReason
+        // Possible values:
+        //   TCP_DISCONNECTED (0)
+        //   MQTT_UNACCEPTABLE_PROTOCOL_VERSION (1)
+        //   MQTT_IDENTIFIER_REJECTED (2)
+        //   MQTT_SERVER_UNAVAILABLE (3)
+        //   MQTT_MALFORMED_CREDENTIALS (4)
+        //   MQTT_NOT_AUTHORIZED (5)
+        //   ESP8266_NOT_ENOUGH_SPACE (6)
+        //   TLS_BAD_FINGERPRINT (7)
+        //   DNS_RESOLVE_ERROR (8)
+        if (reason == mqtt::MQTTClientDisconnectReason::MQTT_NOT_AUTHORIZED) {
+          ESP_LOGE("mqtt", "Not authorized!");
+        }
 ```
 
 {{< anchor "mqtt-on_message" >}}
@@ -538,7 +568,7 @@ mqtt:
 ### `on_message` Trigger
 
 With this configuration option you can write complex automations whenever an MQTT
-message on a specific topic is received. To use the message content, use a [lambda](#config-lambda)
+message on a specific topic is received. To use the message content, use a [lambda](/automations/templates#config-lambda)
 template, the message payload is available under the name `x` inside that lambda.
 
 ```yaml
@@ -562,45 +592,41 @@ mqtt:
 - **payload** (*Optional*, string): Optionally set a payload to match. Only if exactly the payload
   you specify with this option is received, the automation will be executed.
 
-{{< note >}}
-You can even specify multiple `on_message` triggers by using a YAML list:
+> [!NOTE]
+> You can even specify multiple `on_message` triggers by using a YAML list:
+>
+> ```yaml
+> mqtt:
+>   on_message:
+>      - topic: some/topic
+>        then:
+>          - # ...
+>      - topic: some/other/topic
+>        then:
+>          - # ...
+> ```
 
-```yaml
-mqtt:
-  on_message:
-     - topic: some/topic
-       then:
-         - # ...
-     - topic: some/other/topic
-       then:
-         - # ...
-```
-
-{{< /note >}}
-
-{{< note >}}
-This action can also be used in [lambdas](#config-lambda):
-
-```yaml
-mqtt:
-  # Give the MQTT component an ID
-  id: mqtt_client
-```
-
-```cpp
-id(mqtt_client).subscribe("the/topic", [=](const std::string &topic, const std::string &payload) {
-    // do something with payload
-});
-```
-
-{{< /note >}}
+> [!NOTE]
+> This action can also be used in [lambdas](/automations/templates#config-lambda):
+>
+> ```yaml
+> mqtt:
+>   # Give the MQTT component an ID
+>   id: mqtt_client
+> ```
+>
+> ```cpp
+> id(mqtt_client).subscribe("the/topic", [=](const std::string &topic, const std::string &payload) {
+>     // do something with payload
+> });
+> ```
 
 {{< anchor "mqtt-on_json_message" >}}
 
 ## `on_json_message` Trigger
 
 With this configuration option you can write complex automations whenever a JSON-encoded MQTT
-message is received. To use the message content, use a [lambda](#config-lambda)
+message is received. To use the message content, use a [lambda](/automations/templates#config-lambda)
 template, the decoded message payload is available under the name `x` inside that lambda.
 
 The `x` object is of type `JsonObject` by the [ArduinoJson](https://github.com/bblanchon/ArduinoJson)
@@ -642,27 +668,24 @@ mqtt:
 - **qos** (*Optional*, int): The MQTT Quality of Service to subscribe to the topic with. Defaults
   to 0.
 
-{{< note >}}
-Due to the way this trigger works internally it is incompatible with certain actions and will
-trigger a compile failure. For example with the `delay` action.
+> [!NOTE]
+> Due to the way this trigger works internally it is incompatible with certain actions and will
+> trigger a compile failure. For example with the `delay` action.
 
-{{< /note >}}
-{{< note >}}
-This action can also be used in [lambdas](#config-lambda):
-
-```yaml
-mqtt:
-  # Give the MQTT component an ID
-  id: mqtt_client
-```
-
-```cpp
-id(mqtt_client).subscribe_json("the/topic", [=](const std::string &topic, JsonObject root) {
-    // do something with JSON-decoded value root
-});
-```
-
-{{< /note >}}
+> [!NOTE]
+> This action can also be used in [lambdas](/automations/templates#config-lambda):
+>
+> ```yaml
+> mqtt:
+>   # Give the MQTT component an ID
+>   id: mqtt_client
+> ```
+>
+> ```cpp
+> id(mqtt_client).subscribe_json("the/topic", [=](const std::string &topic, JsonObject root) {
+>     // do something with JSON-decoded value root
+> });
+> ```
 
 ## Actions
 
@@ -690,31 +713,29 @@ on_...:
 
 #### Configuration variables
 
-- **topic** (**Required**, string, [templatable](#config-templatable)):
+- **topic** (**Required**, string, [templatable](/automations/templates)):
    The MQTT topic to publish the message.
 
-- **payload** (**Required**, string, [templatable](#config-templatable)): The message content.
-- **qos** (*Optional*, int, [templatable](#config-templatable)): The `Quality of
-   Service <https://www.hivemq.com/blog/mqtt-essentials-part-6-mqtt-quality-of-service-levels>`__
+- **payload** (**Required**, string, [templatable](/automations/templates)): The message content.
+- **qos** (*Optional*, int, [templatable](/automations/templates)): The [Quality of
+   Service](https://www.hivemq.com/blog/mqtt-essentials-part-6-mqtt-quality-of-service-levels)
    level of the topic. Defaults to 0.
 
-- **retain** (*Optional*, boolean, [templatable](#config-templatable)): If the published message should
+- **retain** (*Optional*, boolean, [templatable](/automations/templates)): If the published message should
    have a retain flag on or not. Defaults to `false`.
 
-{{< note >}}
-This action can also be written in [lambdas](#config-lambda):
-
-```yaml
-mqtt:
-  # Give the MQTT component an ID
-  id: mqtt_client
-```
-
-```cpp
-id(mqtt_client).publish("the/topic", "The Payload");
-```
-
-{{< /note >}}
+> [!NOTE]
+> This action can also be written in [lambdas](/automations/templates#config-lambda):
+>
+> ```yaml
+> mqtt:
+>   # Give the MQTT component an ID
+>   id: mqtt_client
+> ```
+>
+> ```cpp
+> id(mqtt_client).publish("the/topic", "The Payload");
+> ```
 
 {{< anchor "mqtt-publish_json_action" >}}
 
@@ -742,32 +763,30 @@ on_...:
 
 ### Configuration variables
 
-- **topic** (**Required**, string, [templatable](#config-templatable)):
+- **topic** (**Required**, string, [templatable](/automations/templates)):
    The MQTT topic to publish the message.
 
-- **payload** (**Required**, [lambda](#config-lambda)): The message content.
+- **payload** (**Required**, [lambda](/automations/templates#config-lambda)): The message content.
 - **qos** (*Optional*, int): The [Quality of Service](https://www.hivemq.com/blog/mqtt-essentials-part-6-mqtt-quality-of-service-levels)
    level of the topic. Defaults to 0.
 
 - **retain** (*Optional*, boolean): If the published message should
    have a retain flag on or not. Defaults to `false`.
 
-{{< note >}}
-This action can also be written in [lambdas](#config-lambda):
-
-```yaml
-mqtt:
-  # Give the MQTT component an ID
-  id: mqtt_client
-```
-
-```cpp
-id(mqtt_client).publish_json("the/topic", [=](JsonObject root) {
-  root["something"] = id(my_sensor).state;
-});
-```
-
-{{< /note >}}
+> [!NOTE]
+> This action can also be written in [lambdas](/automations/templates#config-lambda):
+>
+> ```yaml
+> mqtt:
+>   # Give the MQTT component an ID
+>   id: mqtt_client
+> ```
+>
+> ```cpp
+> id(mqtt_client).publish_json("the/topic", [=](JsonObject root) {
+>   root["something"] = id(my_sensor).state;
+> });
+> ```
 
 ### `mqtt.disable` Action
 
@@ -779,10 +798,8 @@ on_...:
     - mqtt.disable:
 ```
 
-{{< note >}}
-The configuration option `enable_on_boot` can be set to `false` if you do not want MQTT to be enabled on boot.
-
-{{< /note >}}
+> [!NOTE]
+> The configuration option `enable_on_boot` can be set to `false` if you do not want MQTT to be enabled on boot.
 
 ### `mqtt.enable` Action
 
@@ -794,12 +811,10 @@ on_...:
     - mqtt.enable:
 ```
 
-{{< note >}}
-The configuration option `enable_on_boot` can be set to `false` if you do not want MQTT to be enabled on boot.
-`mqtt.enable` can be useful for custom setups. For example, if the broker name is negotiated dynamically and
-saved in a global variable.
-
-{{< /note >}}
+> [!NOTE]
+> The configuration option `enable_on_boot` can be set to `false` if you do not want MQTT to be enabled on boot.
+> `mqtt.enable` can be useful for custom setups. For example, if the broker name is negotiated dynamically and
+> saved in a global variable.
 
 ```yaml
 mqtt:
@@ -826,7 +841,7 @@ on_...:
 
 ### `mqtt.connected` Condition
 
-This [Condition](#config-condition) checks if the MQTT client is currently connected to
+This [Condition](/automations/actions#all-conditions) checks if the MQTT client is currently connected to
 the MQTT broker.
 
 ```yaml
@@ -838,22 +853,20 @@ on_...:
       - logger.log: MQTT is connected!
 ```
 
-{{< note >}}
-This action can also be written in [lambdas](#config-lambda):
-
-```yaml
-mqtt:
-  # Give the MQTT component an ID
-  id: mqtt_client
-```
-
-```cpp
-if (id(mqtt_client)->is_connected()) {
-  // do something if MQTT is connected
-}
-```
-
-{{< /note >}}
+> [!NOTE]
+> This action can also be written in [lambdas](/automations/templates#config-lambda):
+>
+> ```yaml
+> mqtt:
+>   # Give the MQTT component an ID
+>   id: mqtt_client
+> ```
+>
+> ```cpp
+> if (id(mqtt_client)->is_connected()) {
+>   // do something if MQTT is connected
+> }
+> ```
 
 ## See Also
 

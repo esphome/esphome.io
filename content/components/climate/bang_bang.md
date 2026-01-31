@@ -10,12 +10,11 @@ params:
 The `bang_bang` climate platform allows you to regulate a value with a
 [bang-bang controller](https://en.wikipedia.org/wiki/Bang%E2%80%93bang_control) (also called hysteresis controller).
 
-{{< note >}}
-The {{< docref "thermostat" "thermostat" >}} component behaves more like a common thermostat; it is
-essentially two bang-bang controllers in one. Please see the `Bang-bang vs. Thermostat`_ section below
-if you are not sure which is appropriate for your application.
+> [!NOTE]
+> The {{< docref "thermostat" "thermostat" >}} component behaves more like a common thermostat; it is
+> essentially two bang-bang controllers in one. Please see the [Bang-bang vs. Thermostat](#bang-bang-vs-thermostat) section below
+> if you are not sure which is appropriate for your application.
 
-{{< /note >}}
 The bang-bang controller's principle of operation is quite simple. First, you specify an observable
 value (for example the temperature of a room). The controller will try to keep this observed value
 in a defined range. To do this, the controller can activate objects like a heating unit to change
@@ -67,8 +66,8 @@ climate:
 
 ## Configuration variables
 
-- **sensor** (**Required**, [ID](#config-id)): The sensor that is used to measure the current temperature.
-- **humidity_sensor** (*Optional*, [ID](#config-id)): If specified, this sensor is used to measure the current humidity.
+- **sensor** (**Required**, [ID](/guides/configuration-types#id)): The sensor that is used to measure the current temperature.
+- **humidity_sensor** (*Optional*, [ID](/guides/configuration-types#id)): If specified, this sensor is used to measure the current humidity.
   This is used for information only and does not influence temperature control.
 
 - **default_target_temperature_low** (**Required**, float): The default low target temperature for
@@ -77,17 +76,17 @@ climate:
 - **default_target_temperature_high** (**Required**, float): The default high target temperature for
   the control algorithm. This can be dynamically set in the frontend later.
 
-- **idle_action** (**Required**, [Action](#config-action)): The action to call when
+- **idle_action** (**Required**, [Action](/automations/actions#all-actions)): The action to call when
   the climate device wants to enter idle mode.
 
-- **heat_action** (*Optional*, [Action](#config-action)): The action to call when
+- **heat_action** (*Optional*, [Action](/automations/actions#all-actions)): The action to call when
   the climate device wants to heating mode and increase the current temperature. At least one
   of `heat_action` and `cool_action` need to be specified.
 
-- **cool_action** (*Optional*, [Action](#config-action)): The action to call when
+- **cool_action** (*Optional*, [Action](/automations/actions#all-actions)): The action to call when
   the climate device wants to cooling mode and decrease the current temperature.
 
-- All other options from [Climate](#config-climate).
+- All other options from [Climate](/components/climate#config-climate).
 
 Advanced options:
 
@@ -101,11 +100,9 @@ Advanced options:
   - **default_target_temperature_high** (**Required**, float): The default high target temperature for
     the control algorithm during away mode.
 
-{{< note >}}
-While this platform uses the term temperature everywhere, it can also be used for other values.
-For example, controlling humidity is also possible with this platform.
-
-{{< /note >}}
+> [!NOTE]
+> While this platform uses the term temperature everywhere, it can also be used for other values.
+> For example, controlling humidity is also possible with this platform.
 
 ## Bang-bang vs. Thermostat
 

@@ -10,14 +10,13 @@ params:
 The `tuya` light platform creates a simple brightness-only light from a
 tuya serial component.
 
-{{< warning >}}
-Some of these dimmers have no way of serial flashing without destroying them.
-Make sure you have some way to OTA upload configured before flashing. This means you need
-to have working wifi, ota, and maybe api sections in the config.
-The dimmer switch I got would hang if the logger was configured to use the serial port
-which meant it was bricked until I cut it open.
+> [!WARNING]
+> Some of these dimmers have no way of serial flashing without destroying them.
+> Make sure you have some way to OTA upload configured before flashing. This means you need
+> to have working wifi, ota, and maybe api sections in the config.
+> The dimmer switch I got would hang if the logger was configured to use the serial port
+> which meant it was bricked until I cut it open.
 
-{{< /warning >}}
 This requires the {{< docref "/components/tuya" >}} component to be set up before you can use this platform.
 
 Here is an example output for a Tuya dimmer:
@@ -62,9 +61,12 @@ light:
   If this is set, along with **color_datapoint**, then ESPHome will use this value to format
   the color sent to **color_datapoint**.
 
-  - `rgb`  : Use a 6 digit hex RGB value
-  - `hsv`  : Use a 12 digit hex HSV value
-  - `rgbhsv`  : Use a 14 digit hex RGBHSV value
+  - `RGB`  : Use a 6 digit hex RGB value
+  - `HSV`  : Use a 12 digit hex HSV value
+  - `RGBHSV`  : Use a 14 digit hex RGBHSV value
+
+- **color_type_lowercase** (*Optional*, boolean): Some lights require the color hex string to be lowercase.
+  Defaults to false.
 
 - **min_value** (*Optional*, int): The lowest dimmer value allowed. My dimmer had a
   minimum of 25 and wouldn't even accept anything lower, but this option is available if necessary.
@@ -84,16 +86,14 @@ light:
 
 - **cold_white_color_temperature** (*Optional*, float): The color temperature (in [mireds](https://en.wikipedia.org/wiki/Mired) or Kelvin) of the cold white channel.
 - **warm_white_color_temperature** (*Optional*, float): The color temperature (in [mireds](https://en.wikipedia.org/wiki/Mired) or Kelvin) of the warm white channel.
-- All other options from [Light](#config-light).
+- All other options from [Light](/components/light#config-light).
 - At least one of *dimmer_datapoint*, *switch_datapoint*, *rgb_datapoint*, or *hsv_datapoint* must be provided.
 - Only one of *rgb_datapoint* or *hsv_datapoint* can be provided for one light.
 
-{{< note >}}
-The MCU on the Tuya dimmer handles transitions and gamma correction on its own.
-Therefore the `gamma_correct` setting default is `1.0` and the
-`default_transition_length` parameter is `0s` by default.
-
-{{< /note >}}
+> [!NOTE]
+> The MCU on the Tuya dimmer handles transitions and gamma correction on its own.
+> Therefore the `gamma_correct` setting default is `1.0` and the
+> `default_transition_length` parameter is `0s` by default.
 
 ## See Also
 
