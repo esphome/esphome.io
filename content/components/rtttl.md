@@ -122,8 +122,8 @@ name:d=4,o=5,b=120:notes
 ```
 
 1. **Name**: A short identifier for the melody (max 10 characters)
-2. **Control Parameters**: Control section with `d`, `o`, and `b` parameters
-3. **Notes**: The actual melody encoded as note data
+1. **Control Parameters**: Control section with `d`, `o`, and `b` parameters
+1. **Notes**: The actual melody encoded as note data
 
 ### Control Parameters
 
