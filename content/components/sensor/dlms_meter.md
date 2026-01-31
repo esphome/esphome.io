@@ -23,7 +23,7 @@ about every 5 seconds). ESPHome listens, decrypts and updates the configured sen
 ```yaml
 # Example configuration entry for a generic grid operator
 uart:
-  rx_pin: GPIO33              # Adjust for where the M-Bus adapter RX is connected
+  rx_pin: GPIOXX              # Adjust for where the M-Bus adapter RX is connected
   baud_rate: 2400
   rx_buffer_size: 1024        # Needed for large frames
 
@@ -69,7 +69,7 @@ text_sensor:
 
 ```yaml
 uart:
-  rx_pin: GPIO33
+  rx_pin: GPIOXX
   baud_rate: 2400
   rx_buffer_size: 1024
 
