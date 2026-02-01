@@ -247,6 +247,27 @@ The following options disable unused VFS features to save flash memory:
   primarily at setup, not in hot loops). Set to `true` only if you have a specific use case requiring faster heap operations.
   Defaults to `false` (heap functions in flash to save IRAM).
 
+**TLS/Certificate Options:**
+
+- **use_full_certificate_bundle** (*Optional*, boolean): Use the full certificate bundle instead of the common CAs
+  bundle. By default, ESPHome uses the CMN (common CAs) bundle which includes only Certificate Authorities with
+  greater than 1% market share. This covers approximately 99% of websites including Let's Encrypt, DigiCert, Google Trust
+  Services, Amazon Trust Services, and other major CAs. The CMN bundle is sufficient for most use cases including GitHub
+  (commonly used for OTA updates via {{< docref "/components/http_request" >}}), Home Assistant Cloud, and typical HTTPS
+  endpoints. Set to `true` only if connecting to services that use uncommon Certificate Authorities. Defaults to `false`
+  (CMN bundle saves ~51 KB flash).
+
+**Built-in IDF Component Inclusion:**
+
+- **include_builtin_idf_components** (*Optional*, list of strings): A list of built-in ESP-IDF component names to
+  re-enable in the build. ESPHome excludes certain built-in IDF components by default to reduce compile time. If you
+  need to use a built-in IDF component that is excluded (for example, when using custom code in a lambda that requires
+  a specific IDF library), you can explicitly include it here. Example: `["esp_http_client", "mqtt"]`.
+
+  Note: This is different from the `components` option which adds external components from the
+  [ESP Component Registry](https://components.espressif.com/). This option re-enables built-in ESP-IDF components
+  that are excluded by default.
+
 Some options can be disabled to save flash memory without affecting typical ESPHome functionality. The performance
 options (defaulting to `true`  ) improve socket operation performance but can be disabled if you need better
 multi-threaded scalability (which is uncommon since ESPHome uses an event loop).
@@ -272,6 +293,9 @@ esp32:
       enable_lwip_dhcp_server: false  # Disabled by default, only needed for AP mode
       enable_lwip_mdns_queries: false  # Enabled by default, can disable if not using .local hostnames
       enable_lwip_bridge_interface: false  # Disabled by default
+
+      # TLS options
+      use_full_certificate_bundle: false  # Disabled by default, saves ~35 KB flash
 ```
 
 {{< anchor "esp32-idf_components" >}}
