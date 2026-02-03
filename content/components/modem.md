@@ -31,17 +31,7 @@ modem:
   id: atmodem
   model: SIM7600
   apn: orange
-  pin_code: "1234"
-  rx_pin: GPIO26
-  tx_pin: GPIO27
-  rts_pin: GPIO21
-  cts_pin: GPIO20
-  power_pin:
-    ton_pulse_delay: 3s
-    ton_delay: 10s
-    pin:
-      number: GPIO19
-      inverted: false
+  pin_code: "0000"
 ```
 
 ## Configuration variables
