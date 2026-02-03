@@ -25,15 +25,19 @@ modem:
   tx_pin: GPIO27
   apn: orange
   pin_code: "0000"
+  rts_pin: GPIO21
+  cts_pin: GPIO20
 ```
 
 ## Configuration variables
 
-- **model** (**Required**, string): The model of the modem. Supported models are: `BG96`, `SIM800`, `SIM7000`, `SIM7600`, `SIM7670`, and `GENERIC`.
+- **model** (**Required**, string): The model of the modem. Supported models are: `BG96`, `SIM800`, `SIM7000`, `SIM7070`, `SIM7600`, `SIM7670`, and `GENERIC`.
 - **rx_pin** (**Required**, [Pin Schema](/guides/configuration-types#pin-schema)): The pin used for `RX` on the ESP side (which should be connected to the `TX` pin on the modem).
 - **tx_pin** (**Required**, [Pin Schema](/guides/configuration-types#pin-schema)): The pin used for `TX` on the ESP side (which should be connected to the `RX` pin on the modem).
 - **apn** (**Required**, string): The Access Point Name (APN) of your cellular operator.
 - **pin_code** (*Optional*, string): The PIN code for your SIM card.
+- **rts_pin** (**Optional**, [Pin Schema](/guides/configuration-types#pin-schema)): The pin used for `RTS` hardware flow control. It enables UART hardware flow control if `cts_pin` is also declared.
+- **cts_pin** (**Optional**, [Pin Schema](/guides/configuration-types#pin-schema)): The pin used for `CTS` hardware flow control. It enables UART hardware flow control if `rts_pin` is also declared.
 - **power_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The pin connected to the modem's `PWK` or power key, used for power management.
 - **status_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The pin connected to the modem's `STATUS` output, used to read the power state.
 - **enable_cmux** (*Optional*, boolean): Enables CMUX mode, which allows the modem to answer AT commands while connected to the network. This is required by other components that communicate with the modem, such as [Modem Sensor](/components/sensor/modem). Defaults to `true`.
