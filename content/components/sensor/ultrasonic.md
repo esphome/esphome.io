@@ -48,6 +48,7 @@ sensor:
 - All other options from [Sensor](/components/sensor).
 
 Advanced options:
+
 - **timeout** (*Optional*, float): The number of meters for the
   timeout. Most sensors can only sense up to 2 meters. Defaults to 2 meters.
 
