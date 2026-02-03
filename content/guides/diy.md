@@ -65,6 +65,7 @@ unless it's truly exceptional, etc.
 - [An IoT clock designed for children](https://github.com/chrisns/childrens-clock) by {{< ghuser name="chrisns" >}}
 - [Remote controller RC433 for garage door open](https://dedeideas.eu/index.php/en-us/rc433-pre-home-assistant-en) by [lubomirkarlik](https://dedeideas.eu/index.php/en-us/about-me)
 - [How to create an ESPHome external component](https://medium.com/@vinsce/create-an-esphome-external-component-part-1-introduction-config-validation-and-code-generation-e0389e674bd6) by {{< ghuser name="vinsce" >}}
+- [Smart garage door remote modification when direct opener wiring isn't feasible](https://github.com/linux4life798/smart-garage-remote) by {{< ghuser name="linux4life798" >}}
 
 ## Custom Components & Code
 
@@ -104,6 +105,7 @@ unless it's truly exceptional, etc.
 - [Digoo DG-R8H and similar nexus433 sensors to MQTT component](https://github.com/FreeBear-nc/esphome-nexus433) by {{< ghuser name="FreeBear-nc" >}}
 - [Adaptive Lighting for white/warm lights](https://github.com/mdvorak/esphome-adaptive-lighting) by {{< ghuser name="mdvorak" >}}
 - [Connecting the PAJ7620 gesture sensor](https://github.com/apaex/PAJ7620-ESPHome) by {{< ghuser name="apaex" >}}
+- [Dew Point Sensor using Magnus formula](https://github.com/iret33/esphome-dew-point) by {{< ghuser name="iret33" >}}
 
 ## Sample Configurations
 
@@ -138,6 +140,6 @@ unless it's truly exceptional, etc.
 - [FishFeeder](https://github.com/ColoMAX/fishfeeder) by {{< ghuser name="ColoMAX" >}}
 - [ESPHome IKEA VINDRIKTNING](https://github.com/DzurisHome/ESPHome-IKEA-VINDRIKTNING) by {{< ghuser name="DzurisHome" >}}
 - [ESPHome Refoss P11](https://github.com/DzurisHome/ESPHome-Refoss-P11) by {{< ghuser name="DzurisHome" >}}
+- [ESPHome Tethercell Battery](https://github.com/w00dst0ck/esphome-tethercell) by {{< ghuser name="w00dst0ck" >}}
 - [M5Stack Atom Echo Sound Level Meter](https://gist.github.com/hollie/ebc752a90fd1b494013095bc0933510d) by {{< ghuser name="hollie" >}}
-
 <!-- markdownlint-enable MD013 -->

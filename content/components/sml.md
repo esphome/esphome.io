@@ -40,10 +40,11 @@ sml:
   uart_id: uart_bus
   on_data:
     - lambda: !lambda |-
+        char hex[512];  // Size appropriately for your data
         if (valid) {
-          id(mqttclient).publish("gridmeter/sensor/sml/state", format_hex(bytes));
+          id(mqttclient).publish("gridmeter/sensor/sml/state", format_hex_to(hex, bytes));
         } else {
-          id(mqttclient).publish("gridmeter/sensor/sml/error", format_hex(bytes));
+          id(mqttclient).publish("gridmeter/sensor/sml/error", format_hex_to(hex, bytes));
         }
 ```
 
@@ -153,7 +154,7 @@ text_sensor:
     format: uint
 ```
 
-The `format` parameter is optional. If ommited, the SML component will try to guess the correct datatype
+The `format` parameter is optional. If omitted, the SML component will try to guess the correct datatype
 from the received SML message.
 
 And in HomeAssistant:
