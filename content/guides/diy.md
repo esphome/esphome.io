@@ -105,6 +105,7 @@ unless it's truly exceptional, etc.
 - [Digoo DG-R8H and similar nexus433 sensors to MQTT component](https://github.com/FreeBear-nc/esphome-nexus433) by {{< ghuser name="FreeBear-nc" >}}
 - [Adaptive Lighting for white/warm lights](https://github.com/mdvorak/esphome-adaptive-lighting) by {{< ghuser name="mdvorak" >}}
 - [Connecting the PAJ7620 gesture sensor](https://github.com/apaex/PAJ7620-ESPHome) by {{< ghuser name="apaex" >}}
+- [Dew Point Sensor using Magnus formula](https://github.com/iret33/esphome-dew-point) by {{< ghuser name="iret33" >}}
 
 ## Sample Configurations
 
@@ -139,5 +140,5 @@ unless it's truly exceptional, etc.
 - [FishFeeder](https://github.com/ColoMAX/fishfeeder) by {{< ghuser name="ColoMAX" >}}
 - [ESPHome IKEA VINDRIKTNING](https://github.com/DzurisHome/ESPHome-IKEA-VINDRIKTNING) by {{< ghuser name="DzurisHome" >}}
 - [ESPHome Refoss P11](https://github.com/DzurisHome/ESPHome-Refoss-P11) by {{< ghuser name="DzurisHome" >}}
-
+- [ESPHome Tethercell Battery](https://github.com/w00dst0ck/esphome-tethercell) by {{< ghuser name="w00dst0ck" >}}
 <!-- markdownlint-enable MD013 -->
