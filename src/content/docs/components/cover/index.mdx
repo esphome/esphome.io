@@ -7,6 +7,7 @@ sidebar:
 
 import { Image } from 'astro:assets';
 import coverUiImg from './images/cover-ui.png';
+import APIClass from '@components/APIClass.astro';
 
 The `cover` component is a generic representation of covers in ESPHome.
 A cover can (currently) either be *closed* or *open* and supports three types of
@@ -73,9 +74,9 @@ MQTT options:
 
 - All other options from [MQTT Component](/components/mqtt#config-mqtt-component).
 
-<span id="cover-open_action"></span>
+## Actions
 
-## `cover.open` Action
+### `cover.open` Action
 
 This [action](/automations/actions#all-actions) opens the cover with the given ID when executed.
 
@@ -94,9 +95,7 @@ on_...:
 > call.perform();
 > ```
 
-<span id="cover-close_action"></span>
-
-## `cover.close` Action
+### `cover.close` Action
 
 This [action](/automations/actions#all-actions) closes the cover with the given ID when executed.
 
@@ -115,9 +114,7 @@ on_...:
 > call.perform();
 > ```
 
-<span id="cover-stop_action"></span>
-
-## `cover.stop` Action
+### `cover.stop` Action
 
 This [action](/automations/actions#all-actions) stops the cover with the given ID when executed.
 
@@ -136,9 +133,7 @@ on_...:
 > call.perform();
 > ```
 
-<span id="cover-toggle_action"></span>
-
-## `cover.toggle` Action
+### `cover.toggle` Action
 
 This [action](/automations/actions#all-actions) toggles the cover with the given ID when executed,
 cycling through the states close/stop/open/stop... This allows the cover to be controlled
@@ -159,9 +154,7 @@ on_...:
 > call.perform();
 > ```
 
-<span id="cover-control_action"></span>
-
-## `cover.control` Action
+### `cover.control` Action
 
 This [action](/automations/actions#all-actions) is a more generic version of the other cover actions and
 allows all cover attributes to be set.
@@ -197,7 +190,106 @@ Configuration variables:
 > call.perform();
 > ```
 
-<span id="cover-lambda_calls"></span>
+## Conditions
+
+### `cover.is_open` Condition
+
+This [condition](/automations/actions#all-conditions) checks if the cover with the given ID is fully open.
+
+```yaml
+on_...:
+  if:
+    condition:
+      cover.is_open: cover_1
+    then:
+      - logger.log: "Cover is open!"
+```
+
+Configuration variables:
+
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The cover to check.
+
+### `cover.is_closed` Condition
+
+This [condition](/automations/actions#all-conditions) checks if the cover with the given ID is fully closed.
+
+```yaml
+on_...:
+  if:
+    condition:
+      cover.is_closed: cover_1
+    then:
+      - logger.log: "Cover is closed!"
+```
+
+Configuration variables:
+
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The cover to check.
+
+## Triggers
+
+### `cover.on_opened` Trigger
+
+This trigger is activated each time the cover reaches a fully open state.
+
+```yaml
+cover:
+  - platform: template  # or any other platform
+    # ...
+    on_opened:
+      - logger.log: "Cover is fully open!"
+```
+
+### `cover.on_closed` Trigger
+
+This trigger is activated each time the cover reaches a fully closed state.
+
+```yaml
+cover:
+  - platform: template  # or any other platform
+    # ...
+    on_closed:
+      - logger.log: "Cover is fully closed!"
+```
+
+### `cover.on_opening` Trigger
+
+This trigger is activated each time the cover starts opening.
+
+```yaml
+cover:
+  - platform: template  # or any other platform
+    # ...
+    on_opening:
+      - logger.log: "Cover started opening"
+```
+
+### `cover.on_closing` Trigger
+
+This trigger is activated each time the cover starts closing.
+
+```yaml
+cover:
+  - platform: template  # or any other platform
+    # ...
+    on_closing:
+      - logger.log: "Cover started closing"
+```
+
+### `cover.on_idle` Trigger
+
+This trigger is activated each time the cover stops moving and becomes idle.
+
+```yaml
+cover:
+  - platform: template  # or any other platform
+    # ...
+    on_idle:
+      - logger.log: "Cover stopped moving"
+```
+
+> [!NOTE]
+> The `on_open` trigger is deprecated and will be removed in a future release. Please use `on_opened` instead.
 
 ## Lambdas
 
@@ -230,8 +322,6 @@ fields are read-only, if you want to act on the cover, use the `make_call()` met
         }
 ```
 
-<span id="cover-on_open_trigger"></span>
-
 ### `cover.on_open` Trigger
 
 This trigger is activated each time the cover reaches a fully open state.
@@ -244,8 +334,6 @@ cover:
       - logger.log: "Cover is Open!"
 ```
 
-<span id="cover-on_closed_trigger"></span>
-
 ### `cover.on_closed` Trigger
 
 This trigger is activated each time the cover reaches a fully closed state.
@@ -257,3 +345,7 @@ cover:
     on_closed:
       - logger.log: "Cover is Closed!"
 ```
+
+## See Also
+
+- <APIClass text="cover/cover.h" path="cover::Cover" />
