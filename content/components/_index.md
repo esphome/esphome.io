@@ -249,6 +249,7 @@ Sensors are organized into categories; if a given sensor fits into more than one
 "iAQ-Core","components/sensor/iaqcore","iaqcore.jpg","eCO₂ & Volatile organics","",""
 "MH-Z19","components/sensor/mhz19","mhz19.jpg","CO₂ & Temperature","",""
 "MiCS-4514","components/sensor/mics_4514","mics_4514.jpg","NO₂ & CO & H₂ & Ethanol & Methane & Ammonia","",""
+"PM1003 Sensor","components/sensor/pm1003","pm1003.jpg","Particulate","",""
 "PM1006 Sensor","components/sensor/pm1006","pm1006.jpg","Particulate","",""
 "PM2005 Sensor","components/sensor/pm2005","pm2005.png","Particulate","",""
 "PMSA003I","components/sensor/pmsa003i","pmsa003i.jpg","Particulate","",""
