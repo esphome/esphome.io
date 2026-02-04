@@ -27,6 +27,10 @@ mqtt:
 > [!NOTE]
 > Support for esp-idf is still experimental. Please report issues you have with MQTT using the ESP-IDF framework.
 
+> [!NOTE]
+> The `host` platform supports MQTT for development/testing. Support is experimental and some features (for example
+> TLS-related options) are not available on `host`.
+
 ## Configuration variables
 
 - **broker** (**Required**, string): The host of your MQTT broker.

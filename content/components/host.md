@@ -29,6 +29,25 @@ host:
   mac_address: "06:35:69:ab:f6:79"
 ```
 
+## MQTT (optional)
+
+The `host` platform can be used with the {{< docref "/components/mqtt" >}} component for development/testing.
+
+> [!NOTE]
+> Support is experimental and not all embedded-target features (for example TLS-related options) are available.
+
+If you only need MQTT for ESPHome dashboard/CLI discovery and status, it’s common to disable Home Assistant entity
+discovery while keeping device discovery enabled:
+
+```yaml
+host:
+
+mqtt:
+  broker: 127.0.0.1
+  discovery: false
+  discover_ip: true
+```
+
 ## Configuration variables
 
 - **mac_address** (*Optional*, MAC address): A dummy MAC address to use when communicating with HA.
