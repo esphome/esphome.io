@@ -72,6 +72,14 @@ sensor:
       name: "Battery1 Current"
     coulomb:
       name: "Battery1 State of Charge"
+    state_of_health:
+      name: "Battery1 State of Health"
+    cycle_count:
+      name: "Battery1 Cycle Count"
+    design_capacity:
+      name: "Battery1 Design Capacity"
+    remaining_capacity:
+      name: "Battery1 Remaining Capacity"
 ```
 
 ### Configuration variables
@@ -87,6 +95,10 @@ sensor:
 - **voltage_low** (*Optional*): Voltage of the lowest cell. All options from [Sensor](/components/sensor).
 - **voltage_high** (*Optional*): Voltage of the highest cell. All options from [Sensor](/components/sensor).
 - **mos_temperature** (*Optional*): Temperature of the mosfets. All options from [Sensor](/components/sensor).
+- **state_of_health** (*Optional*): State of Health in percent. Obtained via the ``soh`` console command. All options from [Sensor](/components/sensor).
+- **cycle_count** (*Optional*): Number of charge/discharge cycles. Obtained via the ``soh`` console command. All options from [Sensor](/components/sensor).
+- **design_capacity** (*Optional*): Design capacity in Ah. Obtained via the ``soh`` console command. All options from [Sensor](/components/sensor).
+- **remaining_capacity** (*Optional*): Remaining capacity in Ah. Obtained via the ``soh`` console command. All options from [Sensor](/components/sensor).
 
 ## Text Sensor
 
