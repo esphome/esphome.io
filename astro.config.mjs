@@ -17,7 +17,8 @@ export default defineConfig({
   },
   integrations: [
     starlight({
-      title: "ESPHome",
+      title: "ESPHome - Smart Home Made Simple",
+      titleDelimiter: "-",
       favicon: "/favicon.ico",
       plugins: [
         //starlightBlog({
