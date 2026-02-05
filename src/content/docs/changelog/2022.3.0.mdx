@@ -1,0 +1,135 @@
+---
+description: "Changelog for ESPHome 2022.3.0."
+title: "ESPHome 2022.3.0 - 16th March 2022"
+slug: "changelog/2022.3.0"
+---
+
+import PR from "@components/PR.astro";
+import GHUser from "@components/GHUser.astro";
+
+
+- [Analog Threshold](/components/binary_sensor/analog_threshold/)
+- [MAX44009](/components/sensor/max44009/)
+- [Copy](/components/copy/)
+- [MPU6886](/components/sensor/mpu6886/)
+- [MCP4728](/components/output/mcp4728/)
+- [Honeywell ABP](/components/sensor/honeywellabp/)
+- [Mopeka Pro Check LP](/components/sensor/mopeka_pro_check/)
+
+
+## Python 3.8 Minimum
+
+This release sets the minimum Python version to 3.8. Please upgrade your local python if you are unable
+to update further.
+
+## Webserver
+
+Thanks to <GHUser name="wilberforce" /> for doing a massive bunch of work on giving new life to the frontend of
+the [webserver](/components/web_server/).
+
+{/* markdownlint-disable MD013 */}
+
+## Release 2022.3.1 - March 23
+
+- Fix WDT reset during dallas search algorithm <PR number={3293} /> by <GHUser name="wysiwyng" />
+- Webserver utilize Component Iterator to not overload eventstream <PR number={3310} /> by <GHUser name="jesserockz" />
+- Reserve less memory for json <PR number={3289} /> by <GHUser name="jesserockz" />
+- Add small delay before setting up app in safe mode <PR number={3323} /> by <GHUser name="jesserockz" />
+
+## Release 2022.3.2 - March 30
+
+- Actually increase request memory for json parsing <PR number={3331} /> by <GHUser name="jesserockz" />
+
+## Full list of changes
+
+### New Features
+
+- support for waveshare 7.50in-hd-b <PR number={3239} /> by <GHUser name="Michanord" /> (new-feature)
+- Add optional display page for touchscreen binary sensors <PR number={3247} /> by <GHUser name="jesserockz" /> (new-feature)
+
+### New Components
+
+- Analog threshold <PR number={3190} /> by <GHUser name="ianchi" /> (new-integration)
+- Add sensor support: MAX44009 <PR number={3125} /> by <GHUser name="berfenger" /> (new-integration)
+- Add copy integration <PR number={3241} /> by <GHUser name="OttoWinter" /> (new-integration)
+- Add support for MPU-6886 <PR number={3183} /> by <GHUser name="fabaff" /> (new-integration)
+- Add device support: MCP4728 <PR number={3174} /> by <GHUser name="berfenger" /> (new-integration)
+- Add sensor support: Honeywell ABP (SPI version) <PR number={3164} /> by <GHUser name="RubyBailey" /> (new-integration)
+- Add Mopeka BLE and Mopeka Pro Check BLE Sensor <PR number={2618} /> by <GHUser name="spbrogan" /> (new-integration)
+
+### Breaking Changes
+
+- Raise minimum python version to 3.8 <PR number={3176} /> by <GHUser name="jesserockz" /> (breaking-change)
+- Add class as first positional arg to sensor_schema <PR number={3216} /> by <GHUser name="jesserockz" /> (breaking-change)
+- BH1750 dynamically calculate options <PR number={3214} /> by <GHUser name="OttoWinter" /> (breaking-change)
+
+### Beta Changes
+
+- Add optimistic config flag to modbus select. <PR number={3267} /> by <GHUser name="stegm" />
+- Add helper overloads for hex print 16-bit <PR number={3297} /> by <GHUser name="jesserockz" />
+- Allow custom register type for modbus number <PR number={3202} /> by <GHUser name="jesserockz" />
+
+### Notable Changes
+
+- Webserver v2 <PR number={2688} /> by <GHUser name="wilberforce" /> (notable-change)
+
+### All changes
+
+- Remove unused obj attribute from AssignmentExpression <PR number={3145} /> by <GHUser name="OttoWinter" />
+- Remove spurious Zeroconf instance from api client <PR number={3143} /> by <GHUser name="OttoWinter" />
+- Raise minimum python version to 3.8 <PR number={3176} /> by <GHUser name="jesserockz" /> (breaking-change)
+- Improve dallas timing <PR number={3181} /> by <GHUser name="OttoWinter" />
+- Bump pytest-asyncio from 0.18.0 to 0.18.1 <PR number={3187} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Bump pytest from 7.0.0 to 7.0.1 <PR number={3189} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- add sim800l diagnostics <PR number={3136} /> by <GHUser name="glmnet" />
+- Docker move deps install into base <PR number={3207} /> by <GHUser name="OttoWinter" />
+- Remove redundant name from binary_sensor constructor <PR number={3213} /> by <GHUser name="jesserockz" />
+- ESP8266 early init for pins <PR number={3144} /> by <GHUser name="OttoWinter" />
+- CAN bus: read all queued messages <PR number={3194} /> by <GHUser name="felixstorm" />
+- CAN bus: support bit mask for on_frame can_id <PR number={3196} /> by <GHUser name="felixstorm" />
+- Simplify captive portal to compressed single page <PR number={2872} /> by <GHUser name="wilberforce" />
+- HttpRequestComponent::get_string - avoid copy <PR number={2988} /> by <GHUser name="roitagar" />
+- Docker ha-addon switch to nginx-light <PR number={3218} /> by <GHUser name="OttoWinter" />
+- Analog threshold <PR number={3190} /> by <GHUser name="ianchi" /> (new-integration)
+- Fix pm1006 polling component definition <PR number={3210} /> by <GHUser name="mipa87" />
+- Add class as first positional arg to sensor_schema <PR number={3216} /> by <GHUser name="jesserockz" /> (breaking-change)
+- Binary Sensor codegen tidyup <PR number={3217} /> by <GHUser name="jesserockz" />
+- Read all cell voltages from DalyBMS <PR number={3203} /> by <GHUser name="zigman79" />
+- Remote magiquest protocol <PR number={2963} /> by <GHUser name="ImSorryButWho" />
+- Implement text_sensor based on ble_client <PR number={3079} /> by <GHUser name="ashald" />
+- Add sensor support: MAX44009 <PR number={3125} /> by <GHUser name="berfenger" /> (new-integration)
+- Fix for api disconnect detection. <PR number={2909} /> by <GHUser name="peter-valkov" />
+- [miscale] Add flag to clear last impedance reading if the newly received reading only contains weight <PR number={3132} /> by <GHUser name="mknjc" />
+- Add ESP32 variant config validator function <PR number={3088} /> by <GHUser name="oxan" />
+- Fix warning in test1.yaml <PR number={3228} /> by <GHUser name="OttoWinter" />
+- Lint trailing whitespace <PR number={3230} /> by <GHUser name="OttoWinter" />
+- Add ESP32C3 and ESP32S2 support to dashboard <PR number={3152} /> by <GHUser name="OttoWinter" />
+- BH1750 dynamically calculate options <PR number={3214} /> by <GHUser name="OttoWinter" /> (breaking-change)
+- Bump esphome-dashboard from 20220209.0 to 20220219.0 <PR number={3231} /> by <GHUser name="OttoWinter" />
+- Add copy integration <PR number={3241} /> by <GHUser name="OttoWinter" /> (new-integration)
+- Button code cleanup <PR number={3242} /> by <GHUser name="OttoWinter" />
+- Pulse meter internal filter mode <PR number={3082} /> by <GHUser name="cstaahl" />
+- Add support for MPU-6886 <PR number={3183} /> by <GHUser name="fabaff" /> (new-integration)
+- light: add RESTORE_AND_OFF/RESTORE_AND_ON LightRestoreMode <PR number={3238} /> by <GHUser name="Niorix" />
+- Implement send_first_at for exponential_moving_average <PR number={3240} /> by <GHUser name="EdJoPaTo" />
+- Add device support: MCP4728 <PR number={3174} /> by <GHUser name="berfenger" /> (new-integration)
+- support for waveshare 7.50in-hd-b <PR number={3239} /> by <GHUser name="Michanord" /> (new-feature)
+- Fix template button after abstract press_action <PR number={3250} /> by <GHUser name="jesserockz" />
+- Store platform as uppercase <PR number={3251} /> by <GHUser name="jesserockz" />
+- Add sensor support: Honeywell ABP (SPI version) <PR number={3164} /> by <GHUser name="RubyBailey" /> (new-integration)
+- Add optional display page for touchscreen binary sensors <PR number={3247} /> by <GHUser name="jesserockz" /> (new-feature)
+- Add Mopeka BLE and Mopeka Pro Check BLE Sensor <PR number={2618} /> by <GHUser name="spbrogan" /> (new-integration)
+- Remove stray define <PR number={3260} /> by <GHUser name="jesserockz" />
+- Webserver v2 <PR number={2688} /> by <GHUser name="wilberforce" /> (notable-change)
+- Add entity_category_diagnostics to SGP30 baseline sensors <PR number={3272} /> by <GHUser name="JasperPlant" />
+- Bump esphome-dashboard to 20220309.0 <PR number={3277} /> by <GHUser name="jesserockz" />
+- Add visual step/min/max for webserver climate <PR number={3275} /> by <GHUser name="wilberforce" />
+- Add optimistic config flag to modbus select. <PR number={3267} /> by <GHUser name="stegm" />
+- Add helper overloads for hex print 16-bit <PR number={3297} /> by <GHUser name="jesserockz" />
+- Allow custom register type for modbus number <PR number={3202} /> by <GHUser name="jesserockz" />
+
+{/* markdownlint-enable MD013 */}
+
+## All Changelogs
+
+

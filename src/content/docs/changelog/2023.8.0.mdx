@@ -1,0 +1,174 @@
+---
+description: "Changelog for ESPHome 2023.8.0."
+title: "ESPHome 2023.8.0 - 16th August 2023"
+slug: "changelog/2023.8.0"
+---
+
+import PR from "@components/PR.astro";
+import GHUser from "@components/GHUser.astro";
+
+
+- [A01NYUB](/components/sensor/a01nyub/)
+- [KMeterISO](/components/sensor/kmeteriso/)
+- [BMP581](/components/sensor/bmp581/)
+- [GCJA5](/components/sensor/gcja5/)
+
+
+## LD2410
+
+The LD2410 component has had a massive upgrade thanks to <GHUser name="regevbr" />!
+It now supports settings most if not all configuration parameters via `switches` / `numbers` and `selects`
+and exposes more data via various `sensors`.
+This includes breaking changes that mean the existing gate configuration options have been moved to the
+`number` platform.
+
+{/* markdownlint-disable MD013 */}
+
+## Release 2023.8.1 - August 18
+
+- Fix checksum calculation for sml <PR number={5271} /> by <GHUser name="Mat931" />
+- Change haier from AUTO to HEAT_COOL <PR number={5267} /> by <GHUser name="jesserockz" /> (breaking-change)
+
+## Release 2023.8.2 - August 21
+
+- Move libcairo to all architectures in docker <PR number={5276} /> by <GHUser name="jesserockz" />
+- Resolve offline ESPs in dashboard when using ESPHOME_DASHBOARD_USE_PING=true <PR number={5281} /> by <GHUser name="mwolter805" />
+- Align SPI data rates in C++ code with Python <PR number={5284} /> by <GHUser name="clydebarrow" />
+- Change htu21d sensors from required to optional <PR number={5285} /> by <GHUser name="jesserockz" />
+- Reserve keyword "clock" <PR number={5279} /> by <GHUser name="clydebarrow" />
+
+## Release 2023.8.3 - September 6
+
+- Introduce cv.temperature_delta and fix problematic thermostat configuration behavior <PR number={5297} /> by <GHUser name="sebastianrasor" />
+- fix to PR # 3887 MQTT connection not using discovery: false <PR number={5275} /> by <GHUser name="luka6000" />
+- Attempt to fix secret blurring <PR number={5326} /> by <GHUser name="jesserockz" />
+- Bugfix: disable channels after IO if multiple tca9548a I2C multiplexers are configured <PR number={5317} /> by <GHUser name="kahrendt" />
+- Fix checksum calculation for pipsolar <PR number={5299} /> by <GHUser name="Mat931" />
+
+## Full list of changes
+
+### New Components
+
+- Add support for a01nyub <PR number={4863} /> by <GHUser name="MrSuicideParrot" /> (new-integration)
+- Add KMeterISO component. <PR number={5170} /> by <GHUser name="Rudd-O" /> (new-integration)
+- New component: Add support for bmp581 pressure and temperature sensors <PR number={4657} /> by <GHUser name="kahrendt" /> (new-integration)
+- New PM sensor Panasonic SN-GCJA5 <PR number={4988} /> by <GHUser name="gcormier" /> (new-integration)
+- Add configuration flow abilites to the ld2410 component <PR number={4434} /> by <GHUser name="regevbr" /> (new-integration) (notable-change) (breaking-change)
+
+### Breaking Changes
+
+- Coolix IR protocol improvements <PR number={5105} /> by <GHUser name="dudanov" /> (breaking-change)
+- Speaker return bytes written and do not wait for queue <PR number={5182} /> by <GHUser name="jesserockz" /> (breaking-change)
+- Change device name in MQTT discovery messages to friendly names <PR number={5205} /> by <GHUser name="pidpawel" /> (breaking-change)
+- Add configuration flow abilites to the ld2410 component <PR number={4434} /> by <GHUser name="regevbr" /> (new-integration) (notable-change) (breaking-change)
+
+### Beta Changes
+
+- Read string of bool env and match against well known values <PR number={5232} /> by <GHUser name="jesserockz" />
+- fix aeha data template <PR number={5231} /> by <GHUser name="ssieb" />
+- Expose start to speaker interface <PR number={5228} /> by <GHUser name="jesserockz" />
+- New features added for Haier integration <PR number={5196} /> by <GHUser name="paveldn" />
+- pca9554 cache reads <PR number={5137} /> by <GHUser name="hwstar" />
+- fix midea: undo approved PR#4053 <PR number={5233} /> by <GHUser name="dudanov" />
+- Fixing smartair2 protocol implementation if no Wi-Fi <PR number={5238} /> by <GHUser name="paveldn" />
+- tuya: add time sync callback only once to prevent memleak <PR number={5234} /> by <GHUser name="afflux" />
+- Fix duplicate tuya time warning <PR number={5243} /> by <GHUser name="jesserockz" />
+- Change XL9535 `setup_priority` to IO <PR number={5246} /> by <GHUser name="mreditor97" />
+- rmt_base additional minor changes <PR number={5245} /> by <GHUser name="dudanov" />
+- Fix 24 bit signed integer parsing in sml parser <PR number={5250} /> by <GHUser name="mulder-fbi" />
+- Fix IDFI2CBus::writev ignoring stop parameter <PR number={4840} /> by <GHUser name="CarsonF" />
+- Add configuration flow abilites to the ld2410 component <PR number={4434} /> by <GHUser name="regevbr" /> (new-integration) (notable-change) (breaking-change)
+
+### Notable Changes
+
+- Change MQTT client for ESP32 Arduino <PR number={5157} /> by <GHUser name="HeMan" /> (notable-change)
+- Add configuration flow abilites to the ld2410 component <PR number={4434} /> by <GHUser name="regevbr" /> (new-integration) (notable-change) (breaking-change)
+
+### All changes
+
+- Mk2 to prepare color.h for idf ≥ 5 <PR number={5070} /> by <GHUser name="HeMan" />
+- display: Add helper methods to `Display::clip` and `Display::clamp_x/y_` <PR number={5003} /> by <GHUser name="ayufan" />
+- Mark repo as safe directory to git config <PR number={5102} /> by <GHUser name="davet2001" />
+- Bump click from 8.1.3 to 8.1.5 <PR number={5099} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Bump pyyaml from 6.0 to 6.0.1 <PR number={5117} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- ignore components folder in root <PR number={5130} /> by <GHUser name="jesserockz" />
+- Add size getter to CallbackManager <PR number={5129} /> by <GHUser name="jesserockz" />
+- Make docker use pip installed pillow <PR number={5074} /> by <GHUser name="HeMan" />
+- Change datatype in e131 addressable light <PR number={5127} /> by <GHUser name="HeMan" />
+- Streamer mode <PR number={5119} /> by <GHUser name="grahambrown11" />
+- Version bump for ESP32 IDF and Arduino <PR number={5035} /> by <GHUser name="HeMan" />
+- Synchronise Device Classes from Home Assistant <PR number={5136} /> by <GHUser name="esphomebot" />
+- Update known boards to 5.4.0 <PR number={5134} /> by <GHUser name="jesserockz" />
+- Init colorama in ESPHome main <PR number={5111} /> by <GHUser name="kuba2k2" />
+- Coolix IR protocol improvements <PR number={5105} /> by <GHUser name="dudanov" /> (breaking-change)
+- Allow esp32 idf components to specify submodules and specific components <PR number={5128} /> by <GHUser name="jesserockz" />
+- Synchronise Device Classes from Home Assistant <PR number={5147} /> by <GHUser name="esphomebot" />
+- Prepare some components for IDF ≥ 5 <PR number={5061} /> by <GHUser name="HeMan" />
+- Bump clang-tidy from 11 to 14 <PR number={5160} /> by <GHUser name="dudanov" />
+- climate triggers Climate and ClimateCall references <PR number={5028} /> by <GHUser name="dudanov" />
+- remote_base changes <PR number={5124} /> by <GHUser name="dudanov" />
+- Add 'map_linear' and 'clamp' sensor filters <PR number={5040} /> by <GHUser name="Mat931" />
+- Adding Inkplate 6 v2 model variant <PR number={5165} /> by <GHUser name="mullerdavid" />
+- duty_time: fix build without binary_sensor. Parented in automations. <PR number={5156} /> by <GHUser name="dudanov" />
+- Add standardized CRC helper functions <PR number={4798} /> by <GHUser name="Mat931" />
+- Enable IPv6 for ESP32 Arduino, wifi and ethernet <PR number={4865} /> by <GHUser name="HeMan" />
+- Bump zeroconf from 0.69.0 to 0.71.4 <PR number={5148} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Bump black from 23.3.0 to 23.7.0 <PR number={5126} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Bump pylint from 2.17.4 to 2.17.5 <PR number={5172} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Bump pyupgrade from 3.7.0 to 3.9.0 <PR number={5083} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Vertical and horizontal airflow actions fix for Haier climate <PR number={5164} /> by <GHUser name="paveldn" />
+- Microphone add is_stopped <PR number={5183} /> by <GHUser name="jesserockz" />
+- Add get_board function to esp32 module <PR number={5184} /> by <GHUser name="jesserockz" />
+- Speaker return bytes written and do not wait for queue <PR number={5182} /> by <GHUser name="jesserockz" /> (breaking-change)
+- Update components "if x in config" <PR number={5181} /> by <GHUser name="jesserockz" />
+- Bump click from 8.1.5 to 8.1.6 <PR number={5179} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- PWM Output on RP2040 for high frequencies <PR number={5204} /> by <GHUser name="matemaciek" />
+- Fix some configs after #5181 <PR number={5209} /> by <GHUser name="jesserockz" />
+- Improved compensation sgp30 <PR number={5208} /> by <GHUser name="arno1801" />
+- Add support for a01nyub <PR number={4863} /> by <GHUser name="MrSuicideParrot" /> (new-integration)
+- Change device name in MQTT discovery messages to friendly names <PR number={5205} /> by <GHUser name="pidpawel" /> (breaking-change)
+- Add ESP32-S2/S3 capacitive touch support <PR number={5116} /> by <GHUser name="kbx81" />
+- Bump zeroconf from 0.71.4 to 0.74.0 <PR number={5199} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Implemented Waveshare 7.5in B V3 <PR number={5210} /> by <GHUser name="lucasprim" />
+- Refactor `pulse_meter` to better handle higher frequencies <PR number={4231} /> by <GHUser name="TrentHouliston" />
+- Change MQTT client for ESP32 Arduino <PR number={5157} /> by <GHUser name="HeMan" /> (notable-change)
+- Add read interface to microphone <PR number={5131} /> by <GHUser name="jesserockz" />
+- i2c: fix build on ESP-IDF ≥ 5.1 <PR number={5200} /> by <GHUser name="stintel" />
+- Add socket define for rp2040 dev <PR number={4968} /> by <GHUser name="jesserockz" />
+- core: read ESP32 MAC address from eFuse if IEEE802.15.4 is supported <PR number={5176} /> by <GHUser name="stintel" />
+- esp32_ble_beacon: enable CONFIG_BT_BLE_42_FEATURES_SUPPORTED <PR number={5211} /> by <GHUser name="stintel" />
+- Bump pytest-asyncio from 0.21.0 to 0.21.1 <PR number={5187} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- ledc: check SOC_LEDC_SUPPORT_APB_CLOCK <PR number={5212} /> by <GHUser name="stintel" />
+- Add arm night to alarm control panel <PR number={5186} /> by <GHUser name="primeroz" />
+- Bump pyupgrade from 3.9.0 to 3.10.1 <PR number={5189} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Add KMeterISO component. <PR number={5170} /> by <GHUser name="Rudd-O" /> (new-integration)
+- Bump platformio from 6.1.7 to 6.1.9 <PR number={5066} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- New component: Add support for bmp581 pressure and temperature sensors <PR number={4657} /> by <GHUser name="kahrendt" /> (new-integration)
+- New PM sensor Panasonic SN-GCJA5 <PR number={4988} /> by <GHUser name="gcormier" /> (new-integration)
+- Daly BMS improvements <PR number={3388} /> by <GHUser name="matthias882" />
+- Add missing `on_(arming|pending|armed_home|armed_night|armed_away|disarmed)` triggers to alarm_control_panel <PR number={5219} /> by <GHUser name="primeroz" />
+- add value option to timeout filter <PR number={5222} /> by <GHUser name="ssieb" />
+- Tweak Color init because IDF 5+ <PR number={5221} /> by <GHUser name="kbx81" />
+- Read string of bool env and match against well known values <PR number={5232} /> by <GHUser name="jesserockz" />
+- fix aeha data template <PR number={5231} /> by <GHUser name="ssieb" />
+- Expose start to speaker interface <PR number={5228} /> by <GHUser name="jesserockz" />
+- New features added for Haier integration <PR number={5196} /> by <GHUser name="paveldn" />
+- pca9554 cache reads <PR number={5137} /> by <GHUser name="hwstar" />
+- fix midea: undo approved PR#4053 <PR number={5233} /> by <GHUser name="dudanov" />
+- Fixing smartair2 protocol implementation if no Wi-Fi <PR number={5238} /> by <GHUser name="paveldn" />
+- tuya: add time sync callback only once to prevent memleak <PR number={5234} /> by <GHUser name="afflux" />
+- Fix duplicate tuya time warning <PR number={5243} /> by <GHUser name="jesserockz" />
+- Change XL9535 `setup_priority` to IO <PR number={5246} /> by <GHUser name="mreditor97" />
+- rmt_base additional minor changes <PR number={5245} /> by <GHUser name="dudanov" />
+- Fix 24 bit signed integer parsing in sml parser <PR number={5250} /> by <GHUser name="mulder-fbi" />
+- Fix IDFI2CBus::writev ignoring stop parameter <PR number={4840} /> by <GHUser name="CarsonF" />
+- Add configuration flow abilites to the ld2410 component <PR number={4434} /> by <GHUser name="regevbr" /> (new-integration) (notable-change) (breaking-change)
+- Add `libfreetype-dev` Debian package for armv7 Docker builds <PR number={5262} /> by <GHUser name="pierlon" />
+- Add delay before enabling ipv6 <PR number={5256} /> by <GHUser name="HeMan" />
+- Bump zeroconf from 0.74.0 to 0.80.0 <PR number={5260} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+
+{/* markdownlint-enable MD013 */}
+
+## All Changelogs
+
+

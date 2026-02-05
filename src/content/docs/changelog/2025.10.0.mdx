@@ -1,0 +1,776 @@
+---
+description: "Changelog for ESPHome 2025.10.0."
+title: "ESPHome 2025.10.0 - 15th October 2025"
+slug: "changelog/2025.10.0"
+---
+
+import PR from "@components/PR.astro";
+import GHUser from "@components/GHUser.astro";
+
+
+- [Z-Wave Proxy](/components/zwave_proxy/)
+- [ePaper SPI Displays](/components/display/epaper_spi/)
+- [WTS01](/components/sensor/wts01/)
+- [LM75B](/components/sensor/lm75b/)
+
+
+## Release Overview
+
+ESPHome 2025.10.0 delivers major architectural improvements, new communication protocols, and extensive performance
+optimizations. This release focuses on enhancing security, improving memory efficiency, and expanding hardware support
+while introducing groundbreaking new features.
+
+**Key Highlights:**
+
+- **Z-Wave Proxy** - Bridge Z-Wave devices to Home Assistant through ESPHome
+- **Arduino as IDF Component** - Unified ESP32 framework architecture (breaking change)
+- **Enhanced ePaper Display Support** - New unified SPI ePaper component
+- **Security Enhancements** - SHA256 OTA authentication, password deprecation, and API hardening with OOM protection
+- **API Improvements** - Home Assistant action responses and configurable connection limits
+- **Extensive Memory Optimizations** - Flash and RAM savings across all platforms
+- **New Sensor Components** - WTS01 and LM75B temperature sensors
+
+## Z-Wave Proxy
+
+The new [Zwave Proxy](/components/zwave_proxy/) component enables network-based connectivity for Z-Wave hardware
+by proxying serial communication between a Z-Wave modem SoC and Z-Wave JS over WiFi or Ethernet. This component was
+specifically designed for the [Home Assistant ZWA-2 Z-Wave Adapter](https://www.home-assistant.io/connect/zwa-2/), which combines an ESP32 and a Z-Wave modem in a single device, but could support other Z-Wave hardware in the future.
+
+**Key Features:**
+
+- **Remote Z-Wave placement** - Position your Z-Wave modem anywhere in your home with WiFi/Ethernet connectivity
+- **Serial-to-network bridge** - Proxies UART communication between Z-Wave hardware and Z-Wave JS via ESPHome's
+  native API
+- **Flexible deployment** - Use ESP32 devices to extend Z-Wave modem placement beyond USB cable reach
+- **Low latency performance** - Achieves 50-60ms typical latency (as low as 35ms under ideal conditions)
+- **Ethernet recommended** - Best reliability with wired connections, though WiFi is supported
+
+This component is particularly useful for optimizing Z-Wave mesh network topology by placing the Z-Wave controller in
+a central location, even when your server is in a basement or closet.
+
+## Arduino as IDF Component (Major Architectural Change)
+
+This release includes a fundamental change in how ESP32 Arduino builds work - **Arduino is now integrated as an ESP-IDF component** rather than a separate framework. This is the biggest architectural change for ESP32 in ESPHome's history.
+
+Previously, Arduino came as a precompiled framework with everything baked in - you got whatever upstream decided, whether you needed it or not. This led to bloated builds that often **couldn't even fit on devices** with limited flash space. You were stuck with the upstream choices and locked out of ESP-IDF features.
+
+Now Arduino is built as an ESP-IDF component alongside your configuration. ESPHome compiles only what you actually use, eliminating the bloat. You get access to ESP-IDF features while still using Arduino libraries when you need them. This aligns with Espressif's recommended approach and is how the Arduino ecosystem is evolving.
+
+**Memory Savings:**
+
+- **20-30KB RAM savings** on Arduino builds
+- **Additional ~8KB RAM savings** if using the web server
+- **Smaller binary sizes** overall
+- Better memory efficiency through shared libraries
+
+**Development Benefits:**
+
+- **Faster fixes for underlying components** - Many components now share the same implementations between Arduino and ESP-IDF, eliminating duplicate maintenance
+- **Access to latest ESP-IDF 5.4** features while using Arduino libraries
+- **Reduced maintenance burden** - One framework to maintain instead of two separate paths
+- **Future-proof** - Follows Espressif's direction for the ESP32 ecosystem
+
+**Build Time Trade-off:**
+
+- Arduino builds now take longer (Arduino is compiled on top of ESP-IDF)
+- ESP-IDF builds are now **2-3x faster** than Arduino builds
+- **Consider migrating to ESP-IDF** if build time matters to you
+
+### Should You Migrate to ESP-IDF?
+
+**We recommend ESP-IDF for most users**, especially for:
+
+- Bluetooth Proxy devices (lower memory usage)
+- New projects
+- Configurations where you want faster builds
+
+Arduino is still fully supported and works great if you need it for specific Arduino libraries. See our [Arduino to ESP-IDF migration guide](/components/esp32#migrating-from-arduino) for help switching - it's easier than you might think!
+
+### What You Need to Know
+
+**Most users:** Your configuration will work without changes. ESPHome handles the framework integration automatically.
+
+**External component developers:** If you maintain external components using Arduino-specific APIs, review [Espressif's Arduino as ESP-IDF component documentation](https://docs.espressif.com/projects/arduino-esp32/en/latest/esp-idf_component.html) and test your components with this release.
+
+**Breaking change details:** Framework version handling has been improved with stricter validation. See the breaking changes section for specifics.
+
+## ePaper SPI Display Component
+
+The new [Epaper Spi](/components/display/epaper_spi/) component provides a unified, modernized interface for
+SPI-based ePaper displays:
+
+**Improvements:**
+
+- **Cleaner configuration** with consistent API across models
+- **Better performance** with optimized refresh cycles
+- **Improved partial update** handling where supported
+- **Reduced memory overhead** through efficient buffering
+
+**Current Status:**
+
+Currently supports one display model, with additional models from the
+[waveshare_epaper](/components/display/waveshare_epaper/) component being migrated over time. This
+new architecture provides a more maintainable codebase for future ePaper display support.
+
+## Security Enhancements
+
+ESPHome 2025.10.0 significantly improves security with several key changes. We conducted an internal security audit that didn't find any privilege escalation issues but identified many hardening opportunities. We've addressed these in this release and will continue to focus on internal security testing in the coming months.
+
+### SHA256 OTA Authentication
+
+OTA authentication has been upgraded from MD5 to SHA256 for better security:
+
+- **Modern cryptographic hashing** replaces legacy MD5 authentication
+- **Hardware acceleration** on supported ESP32 variants (S3, etc.)
+- **Non-blocking authentication** for better performance
+- **Graceful transition period** - Both SHA256 and MD5 are accepted through 2025.12.x
+- **MD5 will be rejected starting with 2026.1.0** on platforms that support SHA256
+
+During the transition, you'll see a warning when MD5 is used. After 2026.1.0, downgrading to older ESPHome versions will require serial flashing instead of OTA.
+
+**Bonus improvement:** Extended handshake timeout (20s) makes OTA more reliable on poor WiFi connections without freezing the device.
+
+### API Password Deprecation - Heads Up
+
+If you're still using password authentication for the API, now's the time to switch to encryption. Password support will be removed in **version 2026.1.0**.
+
+This release adds better warnings so you'll know if you need to update your configuration:
+
+- **You'll see a clear warning** if you're using passwords - no surprises when support is removed
+- **Can't use both** - if you try to configure both password and encryption, ESPHome will stop you (this combination has never worked properly and causes connection failures)
+- **Easy migration** - just switch from `password:` to `encryption:` with a key
+- **You have time** - password support works until 2026.1.0, giving you plenty of time to update
+
+> [!warning]
+> If you're using `password:` in your API configuration, please migrate to `encryption:` before version 2026.1.0.
+> Password authentication will be removed at that time. You can't use both password and encryption together -
+> pick one (and encryption is the better choice for security).
+
+## Dashboard Improvements
+
+The ESPHome Dashboard now uses WebSockets instead of HTTP polling for real-time updates:
+
+- **Instant updates** - Device status changes appear immediately (no more 1-2 second polling delay)
+- **Snappier interface** - Everything feels more responsive
+- **Lower server load** - More efficient than constant HTTP polling
+- **Logs start instantly** - The logs command now skips external component updates, eliminating 5-30 second delays when internet is unavailable
+
+If you manage multiple devices, the dashboard will feel noticeably faster and more responsive. Viewing logs is now instant even in offline or isolated network environments.
+
+## Device Onboarding Improvements
+
+Getting your ESPHome devices online has never been easier. This release brings major improvements to the initial setup experience, particularly for ESP32-IDF devices and the [Made for ESPHome](/guides/made_for_esphome/) program.
+
+### Captive Portal for ESP-IDF
+
+**This is huge.** ESP-IDF devices now have full captive portal support, which means you don't have to figure out which IP address to type into your browser anymore. When you connect to the device's access point, your phone or computer automatically detects the captive portal and opens the configuration page - just like connecting to hotel or airport WiFi.
+
+This brings ESP-IDF up to feature parity with Arduino for onboarding, and since most new ESPHome devices are running ESP-IDF, this dramatically improves the out-of-box experience. The implementation includes a lightweight DNS server that runs in ESPHome's event loop, responding to all DNS queries with the device's IP address to trigger captive portal detection on iOS, Android, and other platforms.
+
+### Improved Improv BLE Performance
+
+[Improv Wi-Fi over BLE](https://www.improv-wifi.com/ble/) is the standard way to provision ESPHome devices over Bluetooth, and we've made it significantly faster and more reliable:
+
+**Performance improvements:**
+
+- **26x faster service lookups** for typical 3-service configurations by replacing HashMap with vectors
+- **1KB flash savings** plus reduced RAM usage
+- **Better discoverability** - Device names are now visible to passive BLE scanners, making ESPHome devices easier to find on a wider range of BLE scanning technologies
+
+**Why passive scanning matters:** Many home automation systems and BLE scanners only support passive scanning (not active scanning). Making the device name visible to passive scanners means your devices show up in more scanning apps and are easier to identify during setup.
+
+These improvements directly support the [Made for ESPHome program](/guides/made_for_esphome/), which requires Improv provisioning via BLE for Wi-Fi projects to ensure a consistent, high-quality setup experience across all ESPHome-compatible products.
+
+The Made for ESPHome program requires Improv BLE provisioning for Wi-Fi projects. See the [certification requirements](/guides/made_for_esphome/) for details.
+
+## Home Assistant Action Responses
+
+The API now supports receiving responses from Home Assistant actions, enabling bidirectional communication:
+
+**Capabilities:**
+
+- **Call Home Assistant actions** from ESPHome
+- **Receive response data** for processing in automations
+- **Enhanced integration** with Home Assistant services
+- **New automation possibilities** with real-time data exchange
+
+This feature enables more sophisticated integrations, such as querying state from Home Assistant for use in ESPHome
+logic.
+
+## YAML Enhancements
+
+### Literal Substitutions
+
+The new `!literal` tag allows raw string values in substitutions without variable expansion:
+
+```yaml
+substitutions:
+  json_template: !literal '{"key": "${value}"}'
+```
+
+This is particularly useful for JSON templates and other contexts where dollar signs should not trigger
+substitution.
+
+### Dynamic Auto-Loading
+
+Components can now conditionally auto-load dependencies based on configuration, reducing unnecessary component
+inclusion and saving memory.
+
+## Memory & Performance Optimizations
+
+ESPHome 2025.10.0 brings major memory efficiency improvements, with **nearly 3KB of RAM savings** on typical configurations. As ESPHome has grown more capable over the years, memory usage has naturally increased with new features. ESP8266 devices with their ~40KB of free RAM were starting to feel the squeeze, and ESP32-C3 Bluetooth proxies were experiencing stability issues under load.
+
+**We've made these use cases much better.** Through systematic optimization efforts, we've reclaimed precious RAM and improved stability across the board. ESP8266 users get more headroom for complex configurations. ESP32-C3 Bluetooth proxy users get better stability with multiple active connections. All platforms benefit from faster performance and lower memory overhead.
+
+The improvements come from replacing heavy C++ STL containers (vectors, maps, sets) with lighter alternatives and moving data from RAM to flash storage where possible. Each optimization might save a few hundred bytes, but they add up quickly when applied across the codebase.
+
+**This is just the beginning** - we're continuing this optimization work in 2025.11.0 and beyond. Expect more memory savings and performance improvements in upcoming releases.
+
+**RAM Savings:**
+
+- **~3KB total RAM savings on ESP8266, ~1-2KB on ESP32** from all optimizations combined
+- **Lock component**: 388 bytes flash + 23 bytes RAM per lock via bitmask optimization
+- **ESP32 BLE Server**: 1KB flash savings by replacing HashMap with vectors (26x faster lookups)
+- **Event Emitter**: 2.6KB flash savings via vector replacement (2.3x faster)
+- **mDNS/OpenThread**: StaticVector eliminates dynamic allocation overhead
+- **Script names**: Moved to flash storage instead of RAM
+- **Component metadata**: Named structs replace std::pair overhead
+- **API**: Zero-copy techniques eliminate unnecessary data copying in Bluetooth proxy, Z-Wave proxy, and base API calls (authentication, time zones), reducing allocations and improving performance
+
+**Performance Improvements:**
+
+- **Logger**: 35-72% faster log formatting through optimized string handling
+- **Web Server**: Significant reduction through lookup tables and IDF server unification
+- **Scheduler**: Reduced function call overhead
+- **OTA**: Non-blocking authentication improves responsiveness
+- **USB Host**: Dedicated FreeRTOS task for continuous event processing prevents data corruption during high-frequency transfers
+
+These optimizations benefit all platforms, but ESP8266 users will notice the most dramatic stability improvements.
+
+## New Components & Features
+
+### Sensor Components
+
+- **WTS01** - Temperature sensor with UART interface
+- **LM75B** - Popular I2C temperature sensor
+
+### Communication Features
+
+- **Multiple CAN instances** on supported ESP32 platforms
+- **UART enhancements** with multiple ESP32 features and fixes
+- **Remote receiver demodulation** support on ESP32
+- **Modbus courtesy responses** for improved protocol compliance
+
+### Hardware Support
+
+- **LAN8670 PHY** support for Ethernet
+- **Configurable Ethernet MAC address** in YAML
+- **QMC5883L DRDY pin** for maximum sampling rate
+- **USB host/UART** support on ESP32-P4
+
+## For Contributors
+
+If you contribute to ESPHome or maintain external components, you'll notice some big improvements to the development experience:
+
+**CI Testing Improvements:**
+
+- **Much faster CI for large PRs** - Large PR test time reduced from ~1 hour to ~20 minutes through intelligent component grouping
+- **Release builds 6-7x faster** - Release test time reduced from 12+ hours to 1h40m
+- **Smarter component testing** - Changed components get isolated test runners with full validation, while dependency-only components are grouped for speed
+- **Better feedback loops** - Get results faster, making it easier to iterate on contributions
+- **More reliable testing** - APT package caching (2m30s → 5s), retry logic for downloads, and utilization of a larger available disk partition (66GB instead of 23GB)
+
+These improvements make it much easier to contribute to ESPHome by reducing wait times and making the CI system more efficient and reliable.
+
+## Breaking Changes
+
+ESPHome 2025.10.0 includes several breaking changes requiring attention:
+
+### Arduino as IDF Component
+
+- **Framework architecture change** - Arduino is now integrated as an ESP-IDF component
+- **Impact**: Build process changes, potential incompatibilities with external components
+- **Action Required**: Test custom components, update framework version handling
+- **PR**: [#10647](https://github.com/esphome/esphome/pull/10647)
+
+### API Changes
+
+Several API-related breaking changes improve security and efficiency:
+
+- **ConnectRequest/Response renamed** to AuthenticationRequest/Response
+  [#10726](https://github.com/esphome/esphome/pull/10726)
+- **Password and encryption now mutually exclusive** with deprecation warnings
+  [#10871](https://github.com/esphome/esphome/pull/10871)
+- **Configurable connection limits** added with new defaults [#10939](https://github.com/esphome/esphome/pull/10939)
+- **Message size limits** to prevent memory exhaustion [#10936](https://github.com/esphome/esphome/pull/10936)
+- **ClientInfo::get_combined_info() removed** to eliminate heap fragmentation
+  [#10970](https://github.com/esphome/esphome/pull/10970)
+- **HomeassistantServiceResponse renamed** to HomeassistantActionRequest
+  [#10839](https://github.com/esphome/esphome/pull/10839)
+
+### Component Changes
+
+- **EKTF2232**: `rts_pin` renamed to `reset_pin` [#10720](https://github.com/esphome/esphome/pull/10720)
+- **MMC5603**: Fixed incorrect calculation factor (values will change)
+  [#9925](https://github.com/esphome/esphome/pull/9925)
+- **ESP32 BLE**: max_connections now shared between client and server
+  [#11006](https://github.com/esphome/esphome/pull/11006)
+- **Logger**: Runtime tag-specific log levels conditionally compiled
+  [#11004](https://github.com/esphome/esphome/pull/11004)
+- **Lock**: Internal representation changed to bitmask [#10977](https://github.com/esphome/esphome/pull/10977)
+- **mDNS/OpenThread**: Services storage uses StaticVector [#10976](https://github.com/esphome/esphome/pull/10976)
+
+### ESP32 Platform
+
+- **Version handling improved** with stricter validation
+  [#10899](https://github.com/esphome/esphome/pull/10899)
+- **Web server**: IDF web server now used for Arduino builds
+  [#10991](https://github.com/esphome/esphome/pull/10991)
+
+### Audio
+
+- **esp-audio-libs updated to 2.0.1** with new FLAC decoder
+  [#10974](https://github.com/esphome/esphome/pull/10974)
+
+Most breaking changes involve internal optimizations and security improvements. Standard configurations should
+continue working, but custom components and advanced setups may require updates.
+
+{/* markdownlint-disable MD013 */}
+
+## Release 2025.10.1 - October 16
+
+<details>
+<summary></summary>
+
+- [mipi_spi] Rotation fixes <PR number={11226} /> by <GHUser name="clydebarrow" /> (new-feature)
+- [ota] Fix MQTT resolution when static IP appears first in device list <PR number={11272} /> by <GHUser name="bdraco" />
+- [ota.esphome] Handle blank password the same as no password defined <PR number={11271} /> by <GHUser name="jesserockz" />
+- [tests] Fix OTA password test assertions after merge collision <PR number={11275} /> by <GHUser name="bdraco" />
+- [wifi] Fix enterprise wifi <PR number={11276} /> by <GHUser name="swoboda1337" />
+- [substitutions] Fix AttributeError when using packages with substitutions <PR number={11274} /> by <GHUser name="bdraco" />
+
+</details>
+
+## Release 2025.10.2 - October 20
+
+<details>
+<summary></summary>
+
+- [datetime] Fix DateTimeStateTrigger compilation when time component is not used <PR number={11287} /> by <GHUser name="bdraco" />
+- [core] Add ESP32 ROM functions to reserved ids <PR number={11293} /> by <GHUser name="swoboda1337" />
+- [htu21d] Revert register address change <PR number={11291} /> by <GHUser name="swoboda1337" />
+- [esp32] Reduce tx power on Arduino in the event of a brownout <PR number={11304} /> by <GHUser name="swoboda1337" />
+- [const] Add CONF_OPENTHREAD <PR number={11318} /> by <GHUser name="danstiner" />
+- [dashboard] Fix binary download with packages using secrets after Path migration <PR number={11313} /> by <GHUser name="bdraco" />
+- [dashboard] fix migration to Path <PR number={11342} /> by <GHUser name="tomaszduda23" />
+- [scd4x, bme68x] Fix temperature_offset to use the temperature_delta instead of temperature <PR number={11347} /> by <GHUser name="Spectre5" />
+- [core] Fix IndexError when OTA devices cannot be resolved <PR number={11311} /> by <GHUser name="bdraco" />
+- [esp32] Fix OTA rollback <PR number={11300} /> by <GHUser name="swoboda1337" />
+- [openthread] Backport address resolution support to prevent OTA crash <PR number={11312} /> by <GHUser name="bdraco" />
+
+</details>
+
+## Release 2025.10.3 - October 24
+
+<details>
+<summary></summary>
+
+- [hdc1080] Make HDC1080_CMD_CONFIGURATION failure a warning (and log it) <PR number={11355} /> by <GHUser name="pzich" />
+- [uart] Make rx pin respect pullup and pulldown settings <PR number={9248} /> by <GHUser name="asergunov" />
+- [core] handle mixed IP and DNS addresses correctly in resolve_ip_address <PR number={11503} /> by <GHUser name="Links2004" />
+
+</details>
+
+## Release 2025.10.4 - November 4
+
+<details>
+<summary></summary>
+
+- [uart] Fix order of initialization calls <PR number={11510} /> by <GHUser name="kbx81" />
+- Fix the LiberTiny bug with UART pin setup <PR number={11518} /> by <GHUser name="asergunov" />
+- [mipi_rgb] Fix rotation with custom model <PR number={11585} /> by <GHUser name="clydebarrow" /> (new-feature)
+- [lvgl] Fix nested lambdas in automations unable to access parameters <PR number={11583} /> by <GHUser name="bdraco" />
+- [image] Catch and report svg load errors <PR number={11619} /> by <GHUser name="clydebarrow" />
+- [lvgl] Fix event for binary sensor <PR number={11636} /> by <GHUser name="clydebarrow" />
+- [sdl] Fix keymappings <PR number={11635} /> by <GHUser name="clydebarrow" />
+
+</details>
+
+## Release 2025.10.5 - November 11
+
+<details>
+<summary></summary>
+
+- [const] Add CONF_ROWS <PR number={11249} /> by <GHUser name="stuartparmenter" />
+- [core] Don't allow python 3.14 <PR number={11527} /> by <GHUser name="swoboda1337" />
+- [usb_uart] Fixes for transfer queue allocation <PR number={11548} /> by <GHUser name="clydebarrow" />
+- [lvgl] Fix rotation with unusual width <PR number={11680} /> by <GHUser name="clydebarrow" />
+
+</details>
+
+## Full list of changes
+
+### New Features
+
+- [esp32] Use arduino as an idf component <PR number={10647} /> by <GHUser name="swoboda1337" /> (new-feature) (breaking-change)
+- [zwave_proxy] New component <PR number={10762} /> by <GHUser name="kbx81" /> (new-component) (new-feature)
+- [substitutions] implement !literal <PR number={10785} /> by <GHUser name="jpeletier" /> (new-feature)
+- [uart] Multiple ESP32 features and fixes <PR number={8103} /> by <GHUser name="brambo123" /> (new-feature)
+- Add external wake word message <PR number={10850} /> by <GHUser name="synesthesiam" /> (new-feature)
+- [wts01] Add WTS01 temperature sensor component <PR number={8539} /> by <GHUser name="alepee" /> (new-component) (new-feature) (new-platform)
+- Add sha256 support <PR number={10882} /> by <GHUser name="bdraco" /> (new-component) (new-feature)
+- [ethernet] Add LAN8670 PHY support <PR number={10874} /> by <GHUser name="xorbit" /> (new-feature)
+- [ethernet] Add mac_address yaml configuration option <PR number={10861} /> by <GHUser name="sphen13" /> (new-feature)
+- [sx126x] Add additional FSK CRC options <PR number={10928} /> by <GHUser name="swoboda1337" /> (new-feature)
+- [esp32_can] support multiple CAN instances for platforms that support it <PR number={10712} /> by <GHUser name="patagonaa" /> (new-feature)
+- [qmc5883l] Added drdy_pin option to allow it to run max rate <PR number={10901} /> by <GHUser name="mortification77" /> (new-feature)
+- [lm75b] Add LM75B temperature sensor component <PR number={10534} /> by <GHUser name="Beormund" /> (new-component) (new-feature) (new-platform)
+- [remote_receiver] Add signal demodulation support on ESP32 <PR number={8711} /> by <GHUser name="smkent" /> (new-feature)
+- [modbus_controller] courtesy response <PR number={10027} /> by <GHUser name="carlessole" /> (new-feature)
+- [api] Add support for getting action responses from home-assistant <PR number={10948} /> by <GHUser name="jesserockz" /> (new-feature)
+- [epaper_spi] New epaper component <PR number={10462} /> by <GHUser name="jesserockz" /> (new-component) (new-feature) (new-platform)
+- [usb_host] Fix transfer slot exhaustion at high data rates and add configurable max_transfer_requests <PR number={11174} /> by <GHUser name="bdraco" /> (new-feature)
+
+### New Components
+
+- [zwave_proxy] New component <PR number={10762} /> by <GHUser name="kbx81" /> (new-component) (new-feature)
+- [wts01] Add WTS01 temperature sensor component <PR number={8539} /> by <GHUser name="alepee" /> (new-component) (new-feature) (new-platform)
+- Add sha256 support <PR number={10882} /> by <GHUser name="bdraco" /> (new-component) (new-feature)
+- [lm75b] Add LM75B temperature sensor component <PR number={10534} /> by <GHUser name="Beormund" /> (new-component) (new-feature) (new-platform)
+- [epaper_spi] New epaper component <PR number={10462} /> by <GHUser name="jesserockz" /> (new-component) (new-feature) (new-platform)
+
+### New Platforms
+
+- [wts01] Add WTS01 temperature sensor component <PR number={8539} /> by <GHUser name="alepee" /> (new-component) (new-feature) (new-platform)
+- [lm75b] Add LM75B temperature sensor component <PR number={10534} /> by <GHUser name="Beormund" /> (new-component) (new-feature) (new-platform)
+- [epaper_spi] New epaper component <PR number={10462} /> by <GHUser name="jesserockz" /> (new-component) (new-feature) (new-platform)
+
+### Breaking Changes
+
+- [api] Rename ConnectRequest/Response to AuthenticationRequest/Response <PR number={10726} /> by <GHUser name="bdraco" /> (breaking-change)
+- [esp32] Use arduino as an idf component <PR number={10647} /> by <GHUser name="swoboda1337" /> (new-feature) (breaking-change)
+- [ektf2232] Rename `rts_pin` to `reset_pin` <PR number={10720} /> by <GHUser name="jesserockz" /> (breaking-change)
+- [mmc5603] Fix incorrect factor for value calculation in MMC5603 component <PR number={9925} /> by <GHUser name="Nerdiyde" /> (breaking-change)
+- [api] Rename `HomeassistantServiceResponse` to `HomeassistantActionRequest` <PR number={10839} /> by <GHUser name="jesserockz" /> (breaking-change)
+- [api] Make password and encryption mutually exclusive, add deprecation warning for password auth <PR number={10871} /> by <GHUser name="bdraco" /> (breaking-change)
+- [api] Add configurable connection limits <PR number={10939} /> by <GHUser name="bdraco" /> (breaking-change)
+- [api] Remove ClientInfo::get_combined_info() to eliminate heap fragmentation <PR number={10970} /> by <GHUser name="bdraco" /> (breaking-change)
+- [mdns][openthread] Use StaticVector for services storage with compile-time capacity <PR number={10976} /> by <GHUser name="bdraco" /> (breaking-change)
+- [lock] Replace std::set with bitmask (saves 388B flash + 23B RAM per lock) <PR number={10977} /> by <GHUser name="bdraco" /> (breaking-change)
+- [logger] Conditionally compile runtime tag-specific log levels for performance <PR number={11004} /> by <GHUser name="bdraco" /> (breaking-change)
+- [esp32] Improve version handling <PR number={10899} /> by <GHUser name="swoboda1337" /> (breaking-change)
+- [web_server] Use IDF web server for ESP32 Arduino builds <PR number={10991} /> by <GHUser name="bdraco" /> (breaking-change)
+- [esp32_ble] Fix max_connections architecture (shared client+server limit) <PR number={11006} /> by <GHUser name="bdraco" /> (breaking-change)
+- [audio] Update esp-audio-libs 2.0.1 to use new FLAC decoder <PR number={10974} /> by <GHUser name="kahrendt" /> (breaking-change)
+- [api] Add message size limits to prevent memory exhaustion <PR number={10936} /> by <GHUser name="bdraco" /> (breaking-change)
+
+### All changes
+
+<details>
+<summary></summary>
+
+- [thermostat] Rename timer enums to mitigate naming conflict <PR number={10666} /> by <GHUser name="kbx81" />
+- [remote] Remove duplicate implementations of remote code <PR number={10548} /> by <GHUser name="swoboda1337" />
+- Add coverage for dashboard ahead of Path conversion <PR number={10669} /> by <GHUser name="bdraco" />
+- Add additional coverage for yaml_util <PR number={10674} /> by <GHUser name="bdraco" />
+- [esp32] Allow esp-idf 5.5.1 <PR number={10680} /> by <GHUser name="swoboda1337" />
+- [esp32_ble_tracker] Simplify BLE client state machine by removing READY_TO_CONNECT <PR number={10672} /> by <GHUser name="bdraco" />
+- Fix packet_transport not initializing packet data after flushing <PR number={10686} /> by <GHUser name="fakuivan" />
+- [api_protobuf.py] Use type based on size/length <PR number={10696} /> by <GHUser name="kbx81" />
+- Unpin libretiny version in network test <PR number={10717} /> by <GHUser name="HeMan" />
+- Add additional coverage ahead of Path conversion <PR number={10723} /> by <GHUser name="bdraco" />
+- [api] Exclude ConnectRequest/Response when password is disabled <PR number={10704} /> by <GHUser name="bdraco" />
+- [json] Only compile SpiRamAllocator when PSRAM is enabled <PR number={10728} /> by <GHUser name="bdraco" />
+- [CI] Check esp32 boards file is up to date <PR number={10730} /> by <GHUser name="jesserockz" />
+- [const] Move CONF_CLEAR to const.py <PR number={10742} /> by <GHUser name="DT-art1" />
+- Migrate to SPDX license specifier in pyproject.toml <PR number={10768} /> by <GHUser name="mweinelt" />
+- [core] Make StringRef convertToJson inline to save 250+ bytes flash <PR number={10751} /> by <GHUser name="bdraco" />
+- [api] Rename ConnectRequest/Response to AuthenticationRequest/Response <PR number={10726} /> by <GHUser name="bdraco" /> (breaking-change)
+- [esp32] Use arduino as an idf component <PR number={10647} /> by <GHUser name="swoboda1337" /> (new-feature) (breaking-change)
+- [ethernet] Remove redundant Arduino framework version check <PR number={10781} /> by <GHUser name="bdraco" />
+- [esp32] Optimize NVS preferences memory usage by replacing vector with unique_ptr <PR number={10729} /> by <GHUser name="bdraco" />
+- [libretiny] Optimize preferences memory usage by replacing vector with unique_ptr <PR number={10731} /> by <GHUser name="bdraco" />
+- [zwave_proxy] New component <PR number={10762} /> by <GHUser name="kbx81" /> (new-component) (new-feature)
+- [ektf2232] Rename `rts_pin` to `reset_pin` <PR number={10720} /> by <GHUser name="jesserockz" /> (breaking-change)
+- [dashboard] Transfer DNS/mDNS cache from dashboard to CLI to avoid blocking <PR number={10685} /> by <GHUser name="bdraco" />
+- [api_protobuf.py] Use type appropriate for `estimated_size` <PR number={10797} /> by <GHUser name="kbx81" />
+- [core] os.path -> Path <PR number={10654} /> by <GHUser name="jesserockz" />
+- [zwave_proxy] Send Home ID in DeviceInfoResponse <PR number={10798} /> by <GHUser name="kbx81" />
+- Fix esphome run <PR number={10807} /> by <GHUser name="balloob" />
+- [zephyr] Fix compilation after Path migration <PR number={10811} /> by <GHUser name="bdraco" />
+- [http_request] Fix Path object passed to C++ codegen <PR number={10812} /> by <GHUser name="bdraco" />
+- Synchronise Device Classes from Home Assistant <PR number={10803} /> by <GHUser name="esphomebot" />
+- [sensirion] Fix warning <PR number={10813} /> by <GHUser name="swoboda1337" />
+- [core] Fix TypeError in update-all command after Path migration <PR number={10821} /> by <GHUser name="bdraco" />
+- Add coverage for Path to str fix in #10807 <PR number={10808} /> by <GHUser name="bdraco" />
+- [web_server] Reduce flash usage by eliminating lambda overhead in JSON generation <PR number={10749} /> by <GHUser name="bdraco" />
+- [tests] Add integration tests for oversized payload handling in API <PR number={10788} /> by <GHUser name="bdraco" />
+- Skip external component updates when running logs command <PR number={10756} /> by <GHUser name="bdraco" />
+- Fix missing os import after merge collisions <PR number={10823} /> by <GHUser name="bdraco" />
+- [substitutions] add missing safe globals tests <PR number={10814} /> by <GHUser name="jpeletier" />
+- [substitutions] implement !literal <PR number={10785} /> by <GHUser name="jpeletier" /> (new-feature)
+- tuya: handle WIFI_SELECT and WIFI_RESET <PR number={10822} /> by <GHUser name="thekeymeister" />
+- [uart] Multiple ESP32 features and fixes <PR number={8103} /> by <GHUser name="brambo123" /> (new-feature)
+- [CI] Format files after sync <PR number={10828} /> by <GHUser name="jesserockz" />
+- [mmc5603] Fix incorrect factor for value calculation in MMC5603 component <PR number={9925} /> by <GHUser name="Nerdiyde" /> (breaking-change)
+- Pin ruamel.yaml.clib to 0.2.12 <PR number={10837} /> by <GHUser name="bdraco" />
+- [camera-encoder] Use defines instead of build flags <PR number={10824} /> by <GHUser name="jesserockz" />
+- [core] Add typing to some core files <PR number={10843} /> by <GHUser name="jesserockz" />
+- [core] Add a clean-platform option <PR number={10831} /> by <GHUser name="swoboda1337" />
+- [wifi] Unify ESP32 WiFi implementation to use ESP-IDF driver <PR number={10849} /> by <GHUser name="bdraco" />
+- [api] Implement zero-copy API for bluetooth_proxy writes <PR number={10840} /> by <GHUser name="bdraco" />
+- [zwave_proxy] Fix race condition sending zero home ID on reboot <PR number={10848} /> by <GHUser name="bdraco" />
+- Implement zero-copy API for zwave_proxy <PR number={10836} /> by <GHUser name="bdraco" />
+- Implement zero-copy for strings in base API calls <PR number={10851} /> by <GHUser name="bdraco" />
+- [api] Rename `HomeassistantServiceResponse` to `HomeassistantActionRequest` <PR number={10839} /> by <GHUser name="jesserockz" /> (breaking-change)
+- [esp32_ble] Remove Arduino-specific BLE limitations and SplitDefaults <PR number={10780} /> by <GHUser name="bdraco" />
+- [api] Consolidate authentication checks to reduce function call overhead <PR number={10852} /> by <GHUser name="bdraco" />
+- [usb_host] Prevent USB data corruption from missed events <PR number={10859} /> by <GHUser name="bdraco" />
+- Add external wake word message <PR number={10850} /> by <GHUser name="synesthesiam" /> (new-feature)
+- [api] Make password and encryption mutually exclusive, add deprecation warning for password auth <PR number={10871} /> by <GHUser name="bdraco" /> (breaking-change)
+- [json] Parsing json without a lambda <PR number={10838} /> by <GHUser name="jesserockz" />
+- Pin SHA for github actions <PR number={10879} /> by <GHUser name="jesserockz" />
+- [wts01] Add WTS01 temperature sensor component <PR number={8539} /> by <GHUser name="alepee" /> (new-component) (new-feature) (new-platform)
+- [scd30] Fix temp offset <PR number={10847} /> by <GHUser name="swoboda1337" />
+- Fix flakey password auth failure integration test <PR number={10883} /> by <GHUser name="bdraco" />
+- [core] Rename to clean-platform to clean-all <PR number={10876} /> by <GHUser name="swoboda1337" />
+- Add sha256 support <PR number={10882} /> by <GHUser name="bdraco" /> (new-component) (new-feature)
+- [dashboard] Fix progress bars on Windows <PR number={10858} /> by <GHUser name="swoboda1337" />
+- [htu21d] Fix I2C NACK issue and buffer overrun <PR number={10801} /> by <GHUser name="swoboda1337" />
+- [ethernet] Add LAN8670 PHY support <PR number={10874} /> by <GHUser name="xorbit" /> (new-feature)
+- Update stale bot rules <PR number={10891} /> by <GHUser name="jesserockz" />
+- [stale] Clean up stale job <PR number={10892} /> by <GHUser name="jesserockz" />
+- [text_sensor] Convert LOG_TEXT_SENSOR macro to function to reduce flash usage <PR number={10884} /> by <GHUser name="bdraco" />
+- [esp32_ble] Reduce RAM usage and firmware size by disabling unused GATT functionality <PR number={10862} /> by <GHUser name="bdraco" />
+- [version] Reduce flash usage by optimizing string concatenation in setup() <PR number={10890} /> by <GHUser name="bdraco" />
+- [web_server] Remove std::find_if overhead matching IDF implementation <PR number={10889} /> by <GHUser name="bdraco" />
+- [select] Remove STL algorithm overhead to reduce flash usage <PR number={10887} /> by <GHUser name="bdraco" />
+- [climate] Remove STL algorithm overhead in save_state() method <PR number={10888} /> by <GHUser name="bdraco" />
+- [ethernet] Fix Ethernet RMII capable variant validation <PR number={10909} /> by <GHUser name="xorbit" />
+- [ota] Add SHA256 password authentication with backward compatibility <PR number={10809} /> by <GHUser name="bdraco" />
+- [zwave_proxy, api] Add notification message when Z-Wave HomeID changes <PR number={10860} /> by <GHUser name="kbx81" />
+- Allow usb_host & usb_uart components on ESP32-P4 <PR number={10815} /> by <GHUser name="p1ngb4ck" />
+- [spi] fix SPI interface selection on ESP32-S2 and -S3 (#10732) <PR number={10766} /> by <GHUser name="bibach" />
+- [captive_portal] Add DNS server support for ESP-IDF framework <PR number={10919} /> by <GHUser name="bdraco" />
+- [esp32_improv] Make device name visible to passive BLE scanners <PR number={10918} /> by <GHUser name="bdraco" />
+- [esp32_ble_tracker] Reduce gap_scan_result log verbosity to VV <PR number={10917} /> by <GHUser name="bdraco" />
+- [esp32_ble_server] Replace HashMap with vector for services - saves 1KB flash, 26x faster <PR number={10894} /> by <GHUser name="bdraco" />
+- [esp32_ble_server] Optimize notification and action managers for typical use cases <PR number={10897} /> by <GHUser name="bdraco" />
+- [event_emitter] Replace unordered_map with vector - saves 2.6KB flash, 2.3x faster <PR number={10900} /> by <GHUser name="bdraco" />
+- [core] Fix platform component normalization happening too late in validation pipeline <PR number={10908} /> by <GHUser name="bdraco" />
+- [esp32_ble_server] Conditionally compile BLE automation features to save memory <PR number={10910} /> by <GHUser name="bdraco" />
+- [usb_host] Fix double-free crash with lock-free atomic pool allocation <PR number={10926} /> by <GHUser name="bdraco" />
+- [nrf52] add more tests <PR number={10695} /> by <GHUser name="tomaszduda23" />
+- [nrf52] add more tests <PR number={10694} /> by <GHUser name="tomaszduda23" />
+- [core] Don't remove storage in clean-all <PR number={10921} /> by <GHUser name="swoboda1337" />
+- [script] Reduce RAM usage by storing names in flash <PR number={10941} /> by <GHUser name="bdraco" />
+- [ota] Complete non-blocking authentication implementation <PR number={10912} /> by <GHUser name="bdraco" />
+- [socket] Reduce memory overhead for LWIP TCP accept queue on ESP8266/RP2040 <PR number={10938} /> by <GHUser name="bdraco" />
+- [api] Add configurable connection limits <PR number={10939} /> by <GHUser name="bdraco" /> (breaking-change)
+- [mcp2515, canbus] error handling improvments <PR number={10526} /> by <GHUser name="patagonaa" />
+- [ethernet] Add mac_address yaml configuration option <PR number={10861} /> by <GHUser name="sphen13" /> (new-feature)
+- [captive_portal] Add DHCP Option 114 support for ESP32 <PR number={10952} /> by <GHUser name="bdraco" />
+- [sx126x] Add additional FSK CRC options <PR number={10928} /> by <GHUser name="swoboda1337" /> (new-feature)
+- [dashboard] Replace polling with WebSocket for real-time updates <PR number={10893} /> by <GHUser name="bdraco" />
+- [deep_sleep] esp32 fixes to align with variant support <PR number={10929} /> by <GHUser name="bdraco" />
+- [const] Move `CONF_ON_RESPONSE` to const.py <PR number={10958} /> by <GHUser name="jesserockz" />
+- [substitutions] fix #10825 set evaluation error <PR number={10830} /> by <GHUser name="jpeletier" />
+- [web_server] Optimize handler methods with lookup tables to reduce flash usage <PR number={10951} /> by <GHUser name="bdraco" />
+- [psram] Fix invalid variant error, add `supported()` check <PR number={10962} /> by <GHUser name="jesserockz" />
+- [remote_transmitter] fix sending codes on libretiny <PR number={10959} /> by <GHUser name="szupi-ipuzs" />
+- [hdc1080] remove delays and fix no check for sensor nullptr <PR number={10947} /> by <GHUser name="mrtoy-me" />
+- [core] Fix ComponentIterator alignment for 32-bit platforms <PR number={10969} /> by <GHUser name="bdraco" />
+- [logger] Optimize log formatting performance (35-72% faster) <PR number={10960} /> by <GHUser name="bdraco" />
+- [core] Add some types to `loader.py` <PR number={10967} /> by <GHUser name="jesserockz" />
+- [psram] raise instead of returning invalid object <PR number={10954} /> by <GHUser name="carlreid" />
+- [rtttl] Fix warning <PR number={10972} /> by <GHUser name="swoboda1337" />
+- [api] Reduce flash usage in user services by eliminating vector copy <PR number={10971} /> by <GHUser name="bdraco" />
+- [api] Remove ClientInfo::get_combined_info() to eliminate heap fragmentation <PR number={10970} /> by <GHUser name="bdraco" /> (breaking-change)
+- [ci] Fix pre-commit action to comply with pinned SHA security policy <PR number={10990} /> by <GHUser name="bdraco" />
+- Fix UNIT_KILOVOLT_AMPS_REACTIVE constant definition <PR number={10992} /> by <GHUser name="ogruendel" />
+- [mpr121] remove delay <PR number={10963} /> by <GHUser name="mrtoy-me" />
+- [sps30] remove delay <PR number={10964} /> by <GHUser name="mrtoy-me" />
+- [core] Fix MQTT import <PR number={10982} /> by <GHUser name="swoboda1337" />
+- [logger] Fix line number wrapping bug for files with >999 lines <PR number={10979} /> by <GHUser name="bdraco" />
+- Fix log level selector when selecting levels above INFO <PR number={10368} /> by <GHUser name="mill1000" />
+- [esp32_can] support multiple CAN instances for platforms that support it <PR number={10712} /> by <GHUser name="patagonaa" /> (new-feature)
+- [const] Move CONF_MAX_CONNECTIONS to const.py <PR number={11007} /> by <GHUser name="bdraco" />
+- [json] Fix missing defines.h include causing PSRAM allocator to be unused <PR number={11008} /> by <GHUser name="bdraco" />
+- [mpr121] cleaner setup <PR number={11013} /> by <GHUser name="mrtoy-me" />
+- [core] Merge duplicate loops in mac_address_is_valid() <PR number={11018} /> by <GHUser name="bdraco" />
+- [api] Simplify message reading conditional <PR number={11016} /> by <GHUser name="bdraco" />
+- [ethernet] Consolidate error handling to reduce flash usage <PR number={11019} /> by <GHUser name="bdraco" />
+- [api] Consolidate fatal error logging to reduce flash usage <PR number={11015} /> by <GHUser name="bdraco" />
+- [sps30] Clean up <PR number={10998} /> by <GHUser name="swoboda1337" />
+- [esp32_ble_server] Replace EventEmitter with direct callbacks to reduce memory usage <PR number={10946} /> by <GHUser name="bdraco" />
+- [api] Add configurable send queue limit to prevent OOM crashes <PR number={10973} /> by <GHUser name="bdraco" />
+- [mdns][openthread] Use StaticVector for services storage with compile-time capacity <PR number={10976} /> by <GHUser name="bdraco" /> (breaking-change)
+- [lock] Replace std::set with bitmask (saves 388B flash + 23B RAM per lock) <PR number={10977} /> by <GHUser name="bdraco" /> (breaking-change)
+- [number] Reduce flash usage in NumberCall logging <PR number={10983} /> by <GHUser name="bdraco" />
+- [core] Replace std::pair with purpose-built named structs for component metadata <PR number={10984} /> by <GHUser name="bdraco" />
+- [web_server] Reduce flash and RAM usage by optimizing string construction <PR number={10986} /> by <GHUser name="bdraco" />
+- [web_server_idf] Fix watchdog timeout with unreliable event source connections <PR number={11002} /> by <GHUser name="bdraco" />
+- [web_server_idf] Optimize parameter storage to reduce flash usage and memory overhead <PR number={11003} /> by <GHUser name="bdraco" />
+- [logger] Conditionally compile runtime tag-specific log levels for performance <PR number={11004} /> by <GHUser name="bdraco" /> (breaking-change)
+- [wifi] Optimize WPA2 EAP phase2 logging to reduce memory overhead <PR number={11005} /> by <GHUser name="bdraco" />
+- [esphome.ota] Fix ESP32-S3 OTA authentication with hardware SHA acceleration <PR number={11011} /> by <GHUser name="bdraco" />
+- [scheduler] Deduplicate item removal code with template helper <PR number={11017} /> by <GHUser name="bdraco" />
+- [esp32] Improve version handling <PR number={10899} /> by <GHUser name="swoboda1337" /> (breaking-change)
+- [ci] Fix clang-tidy after Arduino-as-IDF-component migration <PR number={11031} /> by <GHUser name="bdraco" />
+- [wifi] Optimize logging to reduce flash usage by 284 bytes on ESP8266 <PR number={11022} /> by <GHUser name="bdraco" />
+- [esp32_ble] Optimize string operations to reduce flash usage by 264 bytes <PR number={11023} /> by <GHUser name="bdraco" />
+- [esp32_rmt_led_strip] Fix clang-tidy signed/unsigned comparison warning <PR number={11033} /> by <GHUser name="bdraco" />
+- [sonoff_d1] Fix clang-tidy signed/unsigned comparison warning <PR number={11034} /> by <GHUser name="bdraco" />
+- [tuya] Fix clang-tidy signed/unsigned comparison warning <PR number={11035} /> by <GHUser name="bdraco" />
+- [web_server] Use IDF web server for ESP32 Arduino builds <PR number={10991} /> by <GHUser name="bdraco" /> (breaking-change)
+- [core] Remove platformio install from setup <PR number={10997} /> by <GHUser name="swoboda1337" />
+- [nextion] Reduce DEBUG logs on events <PR number={11014} /> by <GHUser name="edwardtfn" />
+- [esp32_ble] Fix max_connections architecture (shared client+server limit) <PR number={11006} /> by <GHUser name="bdraco" /> (breaking-change)
+- [mipi] Fix rotation handling <PR number={11010} /> by <GHUser name="clydebarrow" />
+- [zwave_proxy] Send HomeID upon client connect <PR number={11037} /> by <GHUser name="kbx81" />
+- [online_image] Fix clang-tidy sign comparison errors <PR number={11041} /> by <GHUser name="bdraco" />
+- [animation] Fix clang-tidy sign comparison errors <PR number={11042} /> by <GHUser name="bdraco" />
+- [bl0906, bl0942] Fix clang-tidy sign comparison errors <PR number={11043} /> by <GHUser name="bdraco" />
+- [cm1106] Fix clang-tidy sign comparison error <PR number={11045} /> by <GHUser name="bdraco" />
+- [daikin_arc] Fix clang-tidy sign comparison errors <PR number={11046} /> by <GHUser name="bdraco" />
+- [es7210] Fix clang-tidy sign comparison errors <PR number={11047} /> by <GHUser name="bdraco" />
+- [esp32_can] Fix clang-tidy sign comparison error <PR number={11049} /> by <GHUser name="bdraco" />
+- [fingerprint_grow] Fix clang-tidy sign comparison error <PR number={11050} /> by <GHUser name="bdraco" />
+- [mixer] Fix clang-tidy sign comparison errors <PR number={11061} /> by <GHUser name="bdraco" />
+- [nau7802] Fix clang-tidy sign comparison errors <PR number={11062} /> by <GHUser name="bdraco" />
+- [max7219digit] Fix clang-tidy sign comparison error <PR number={11060} /> by <GHUser name="bdraco" />
+- [ltr_als_ps] Fix clang-tidy sign comparison errors <PR number={11058} /> by <GHUser name="bdraco" />
+- [ltr501] Fix clang-tidy sign comparison errors <PR number={11057} /> by <GHUser name="bdraco" />
+- [kamstrup_kmp] Fix clang-tidy sign comparison errors <PR number={11055} /> by <GHUser name="bdraco" />
+- [ili9xxx] Fix clang-tidy sign comparison errors <PR number={11054} /> by <GHUser name="bdraco" />
+- [pid] Fix clang-tidy sign comparison error <PR number={11063} /> by <GHUser name="bdraco" />
+- [key_collector] Fix clang-tidy sign comparison errors <PR number={11056} /> by <GHUser name="bdraco" />
+- [qmc5883l] Added drdy_pin option to allow it to run max rate <PR number={10901} /> by <GHUser name="mortification77" /> (new-feature)
+- [matrix_keypad] Fix clang-tidy sign comparison error <PR number={11059} /> by <GHUser name="bdraco" />
+- [audio, i2s_audio] Fix clang-tidy sign comparison errors <PR number={11044} /> by <GHUser name="bdraco" />
+- [graphical_display_menu] Fix clang-tidy sign comparison errors <PR number={11052} /> by <GHUser name="bdraco" />
+- [statsd] Fix clang-tidy sign comparison error <PR number={11069} /> by <GHUser name="bdraco" />
+- [json] Add `parse_json` overload for `const char *` <PR number={11039} /> by <GHUser name="jesserockz" />
+- [st7789v] Fix clang-tidy sign comparison errors <PR number={11068} /> by <GHUser name="bdraco" />
+- [st7567_i2c] Fix clang-tidy sign comparison warning <PR number={11067} /> by <GHUser name="bdraco" />
+- [esp32_ble] Fix clang-tidy sign comparison error <PR number={11048} /> by <GHUser name="bdraco" />
+- [lm75b] Add LM75B temperature sensor component <PR number={10534} /> by <GHUser name="Beormund" /> (new-component) (new-feature) (new-platform)
+- [remote_base] Fix clang-tidy sign comparison error <PR number={11064} /> by <GHUser name="bdraco" />
+- [mipi_spi] Fix clang-tidy sign comparison errors <PR number={11070} /> by <GHUser name="bdraco" />
+- [esp32_ble_server] Refactor property setters to reduce code duplication <PR number={11071} /> by <GHUser name="bdraco" />
+- [esp32_ble_server] Use early returns in is_created() and is_failed() methods <PR number={11072} /> by <GHUser name="bdraco" />
+- [remote_receiver] Add signal demodulation support on ESP32 <PR number={8711} /> by <GHUser name="smkent" /> (new-feature)
+- [rtttl] Fix clang-tidy sign comparison error <PR number={11065} /> by <GHUser name="bdraco" />
+- [haier] Fix clang-tidy sign comparison error <PR number={11053} /> by <GHUser name="bdraco" />
+- [graph] Fix clang-tidy sign comparison error <PR number={11051} /> by <GHUser name="bdraco" />
+- [tormatic] Fix clang-tidy sign comparison error <PR number={11075} /> by <GHUser name="bdraco" />
+- [uponor_smatrix] Fix clang-tidy sign comparison errors <PR number={11076} /> by <GHUser name="bdraco" />
+- [veml7700] Fix clang-tidy sign comparison errors <PR number={11078} /> by <GHUser name="bdraco" />
+- [waveshare_epaper] Fix clang-tidy sign comparison errors <PR number={11079} /> by <GHUser name="bdraco" />
+- [api] Fix clang-tidy sign comparison error <PR number={11081} /> by <GHUser name="bdraco" />
+- [time] Fix clang-tidy sign comparison errors <PR number={11080} /> by <GHUser name="bdraco" />
+- [mcp2515] setup filters <PR number={10486} /> by <GHUser name="mrk-its" />
+- [core] Allow `AUTO_LOAD` to receive the component config to determine if it should load other components <PR number={10961} /> by <GHUser name="jesserockz" />
+- [esp32] Fix clang-tidy error for Arduino watchdog function declarations <PR number={11085} /> by <GHUser name="bdraco" />
+- [clang-tidy] Include sdkconfig.defaults in hash calculation <PR number={11091} /> by <GHUser name="bdraco" />
+- [const] Move `CONF_CAPTURE_RESPONSE` to const.py <PR number={11096} /> by <GHUser name="jesserockz" />
+- [core] Update helpers for new auto load functionality <PR number={11097} /> by <GHUser name="jesserockz" />
+- [light] Reduce flash usage by eliminating duplicate validation code <PR number={11030} /> by <GHUser name="bdraco" />
+- [esp32_ble] Refactor ESPBTUUID::from_raw to use parse_hex helpers <PR number={11073} /> by <GHUser name="bdraco" />
+- [esp32_ble] Refactor ESPBTUUID comparison with direct returns and memcmp <PR number={11074} /> by <GHUser name="bdraco" />
+- [api] Optimize frame helpers to eliminate double-move overhead <PR number={11092} /> by <GHUser name="bdraco" />
+- [esp32] Hide build warnings <PR number={11102} /> by <GHUser name="swoboda1337" />
+- [audio] Update esp-audio-libs 2.0.1 to use new FLAC decoder <PR number={10974} /> by <GHUser name="kahrendt" /> (breaking-change)
+- [api] Add message size limits to prevent memory exhaustion <PR number={10936} /> by <GHUser name="bdraco" /> (breaking-change)
+- [esp32] Fix issue when framework source is set <PR number={11106} /> by <GHUser name="swoboda1337" />
+- [core] Fix dynamic auto load priority <PR number={11112} /> by <GHUser name="jesserockz" />
+- [modbus_controller] courtesy response <PR number={10027} /> by <GHUser name="carlessole" /> (new-feature)
+- [mdns] Fix delete/malloc bug and store string constants in flash <PR number={11105} /> by <GHUser name="bdraco" />
+- [api] Add support for getting action responses from home-assistant <PR number={10948} /> by <GHUser name="jesserockz" /> (new-feature)
+- [epaper_spi] New epaper component <PR number={10462} /> by <GHUser name="jesserockz" /> (new-component) (new-feature) (new-platform)
+- [ci] Reduce component test group size to prevent runner disk exhaustion <PR number={11121} /> by <GHUser name="bdraco" />
+- [ci] Reduce component test group size to 10 to prevent runner disk exhaustion <PR number={11122} /> by <GHUser name="bdraco" />
+- [canbus][mcp23xxx_base] Mark virtual methods as pure virtual to fix linker errors <PR number={11133} /> by <GHUser name="bdraco" />
+- [ci][tests] Remove redundant ESP32 Arduino test files <PR number={11136} /> by <GHUser name="bdraco" />
+- [ci][ethernet][tests] Remove redundant Arduino tests for ethernet PHYs <PR number={11137} /> by <GHUser name="bdraco" />
+- [ci][improv_serial][tests] Remove redundant ESP32 Arduino test files <PR number={11138} /> by <GHUser name="bdraco" />
+- [mdns] Store TXT record values in flash to reduce heap usage <PR number={11114} /> by <GHUser name="bdraco" />
+- [esp32] Update IDF 5.5 and Arduino 3.3 to use 55.03.31-1 <PR number={11120} /> by <GHUser name="swoboda1337" />
+- [esp32] Update migration warning for Arduino-as-IDF-component transition <PR number={11142} /> by <GHUser name="bdraco" />
+- [ci][mdns][tests] Remove redundant ESP32 Arduino test files <PR number={11143} /> by <GHUser name="bdraco" />
+- [esp32_ble_beacon, esp32_ble_tracker] Remove unused Arduino includes and redundant tests <PR number={11140} /> by <GHUser name="bdraco" />
+- [network][ci][tests] Remove redundant ESP32 Arduino test files <PR number={11148} /> by <GHUser name="bdraco" />
+- [ci][time][tests] Remove redundant ESP32 Arduino test files <PR number={11147} /> by <GHUser name="bdraco" />
+- [ci][debug][tests] Remove redundant ESP32 variant Arduino test files <PR number={11146} /> by <GHUser name="bdraco" />
+- [ci][logger][tests] Remove redundant ESP32 Arduino test files <PR number={11144} /> by <GHUser name="bdraco" />
+- [opentherm][ci][tests] Remove redundant ESP32 Arduino tests and simplify conditionals <PR number={11149} /> by <GHUser name="bdraco" />
+- [ci][tests] Remove redundant ESP32-C3 Arduino tests for non-variant-specific components <PR number={11152} /> by <GHUser name="bdraco" />
+- [datetime][ci][tests] Replace test.all.yaml with minimal platform cover <PR number={11151} /> by <GHUser name="bdraco" />
+- [ci][tests] Remove all redundant ESP32-C3 Arduino tests <PR number={11154} /> by <GHUser name="bdraco" />
+- [json] Fix PSRAM allocator dangling pointer crash <PR number={11165} /> by <GHUser name="bdraco" />
+- [esp32_ble] Partial revert of #10862 - Fix GATT client notifications <PR number={11171} /> by <GHUser name="bdraco" />
+- [mdns] Restore mdns_txt_record() public API for external components <PR number={11158} /> by <GHUser name="bdraco" />
+- Group component tests to reduce CI time <PR number={11134} /> by <GHUser name="bdraco" />
+- [ci] Filter out components without tests from CI test jobs (#11134 followup) <PR number={11178} /> by <GHUser name="bdraco" />
+- [esp32] Change Arduino dev & latest to 3.3.2 <PR number={11169} /> by <GHUser name="swoboda1337" />
+- [mipi_rgb] Fix pin conflicts introduced by shared SPI bus in #11134 <PR number={11185} /> by <GHUser name="bdraco" />
+- [ci] Dynamic runner allocation: 8 for releases, 4 for dev <PR number={11191} /> by <GHUser name="bdraco" />
+- [wifi] Fix missed string literal in flash on ESP8266 <PR number={11187} /> by <GHUser name="bdraco" />
+- [ota] Increase handshake timeout to 20s now that auth is non-blocking <PR number={11186} /> by <GHUser name="bdraco" />
+- [esp32_improv] Fix state not transitioning to PROVISIONED when WiFi configured via captive portal <PR number={11181} /> by <GHUser name="bdraco" />
+- [usb_host] Fix transfer slot exhaustion at high data rates and add configurable max_transfer_requests <PR number={11174} /> by <GHUser name="bdraco" /> (new-feature)
+- [media_player.speaker] Dynamic auto load <PR number={11084} /> by <GHUser name="jesserockz" />
+- [core] Properly clean the build dir in the HA addon <PR number={11208} /> by <GHUser name="swoboda1337" />
+- Fix log retrieval with FQDN when mDNS is disabled <PR number={11202} /> by <GHUser name="bdraco" />
+- [mipi_dsi] Update waveshare P4-86 config <PR number={10562} /> by <GHUser name="tjq19940331" />
+- [pzemac, pzemdc, sdm_meter] Fix pin conflicts in ESP32-IDF tests <PR number={11240} /> by <GHUser name="bdraco" />
+- [netlify] Pin python version <PR number={11244} /> by <GHUser name="jesserockz" />
+
+</details>
+
+<details>
+<summary></summary>
+
+- Bump ruff from 0.12.12 to 0.13.0 <PR number={10670} /> by [@dependabot[bot]](https://github.com/apps/dependabot)
+- Bump pytest-asyncio from 1.1.0 to 1.2.0 <PR number={10691} /> by [@dependabot[bot]](https://github.com/apps/dependabot)
+- Bump pytest-mock from 3.15.0 to 3.15.1 <PR number={10759} /> by [@dependabot[bot]](https://github.com/apps/dependabot)
+- Bump aioesphomeapi from 40.2.1 to 41.1.0 <PR number={10776} /> by [@dependabot[bot]](https://github.com/apps/dependabot)
+- Bump ruff from 0.13.0 to 0.13.1 <PR number={10802} /> by [@dependabot[bot]](https://github.com/apps/dependabot)
+- Bump aioesphomeapi from 41.1.0 to 41.4.0 <PR number={10805} /> by [@dependabot[bot]](https://github.com/apps/dependabot)
+- Bump esptool from 5.0.2 to 5.1.0 <PR number={10758} /> by [@dependabot[bot]](https://github.com/apps/dependabot)
+- Bump aioesphomeapi from 41.4.0 to 41.6.0 <PR number={10833} /> by [@dependabot[bot]](https://github.com/apps/dependabot)
+- Bump aioesphomeapi from 41.6.0 to 41.7.0 <PR number={10841} /> by [@dependabot[bot]](https://github.com/apps/dependabot)
+- Bump aioesphomeapi from 41.7.0 to 41.8.0 <PR number={10853} /> by [@dependabot[bot]](https://github.com/apps/dependabot)
+- Bump aioesphomeapi from 41.8.0 to 41.9.0 <PR number={10855} /> by [@dependabot[bot]](https://github.com/apps/dependabot)
+- Bump aioesphomeapi from 41.9.0 to 41.9.1 <PR number={10857} /> by [@dependabot[bot]](https://github.com/apps/dependabot)
+- Bump aioesphomeapi from 41.9.1 to 41.10.0 <PR number={10872} /> by [@dependabot[bot]](https://github.com/apps/dependabot)
+- Bump actions/cache from 4.2.4 to 4.3.0 in /.github/actions/restore-python <PR number={10869} /> by [@dependabot[bot]](https://github.com/apps/dependabot)
+- Bump actions/cache from 4.2.4 to 4.3.0 <PR number={10868} /> by [@dependabot[bot]](https://github.com/apps/dependabot)
+- Bump github/codeql-action from 3.30.3 to 3.30.4 <PR number={10886} /> by [@dependabot[bot]](https://github.com/apps/dependabot)
+- Bump ruff from 0.13.1 to 0.13.2 <PR number={10885} /> by [@dependabot[bot]](https://github.com/apps/dependabot)
+- Bump pyyaml from 6.0.2 to 6.0.3 <PR number={10904} /> by [@dependabot[bot]](https://github.com/apps/dependabot)
+- Bump github/codeql-action from 3.30.4 to 3.30.5 <PR number={10905} /> by [@dependabot[bot]](https://github.com/apps/dependabot)
+- Bump aioesphomeapi from 41.10.0 to 41.11.0 <PR number={10942} /> by [@dependabot[bot]](https://github.com/apps/dependabot)
+- Bump docker/login-action from 3.5.0 to 3.6.0 in the docker-actions group <PR number={10943} /> by [@dependabot[bot]](https://github.com/apps/dependabot)
+- Bump github/codeql-action from 3.30.5 to 3.30.6 <PR number={10985} /> by [@dependabot[bot]](https://github.com/apps/dependabot)
+- Bump actions/stale from 10.0.0 to 10.1.0 <PR number={11001} /> by [@dependabot[bot]](https://github.com/apps/dependabot)
+- Bump ruff from 0.13.2 to 0.13.3 <PR number={11000} /> by [@dependabot[bot]](https://github.com/apps/dependabot)
+- Bump zeroconf from 0.147.2 to 0.148.0 <PR number={11083} /> by [@dependabot[bot]](https://github.com/apps/dependabot)
+- Bump pylint from 3.3.8 to 3.3.9 <PR number={11082} /> by [@dependabot[bot]](https://github.com/apps/dependabot)
+- Bump aioesphomeapi from 41.11.0 to 41.12.0 <PR number={11108} /> by [@dependabot[bot]](https://github.com/apps/dependabot)
+- Bump github/codeql-action from 3.30.6 to 4.30.7 <PR number={11109} /> by [@dependabot[bot]](https://github.com/apps/dependabot)
+- Bump ruff from 0.13.3 to 0.14.0 <PR number={11107} /> by [@dependabot[bot]](https://github.com/apps/dependabot)
+- Bump aioesphomeapi from 41.12.0 to 41.13.0 <PR number={11113} /> by [@dependabot[bot]](https://github.com/apps/dependabot)
+- Bump esphome-dashboard from 20250904.0 to 20251009.0 <PR number={11123} /> by [@dependabot[bot]](https://github.com/apps/dependabot)
+- Bump aioesphomeapi from 41.13.0 to 41.14.0 <PR number={11188} /> by [@dependabot[bot]](https://github.com/apps/dependabot)
+- Bump esphome-dashboard from 20251009.0 to 20251013.0 <PR number={11212} /> by [@dependabot[bot]](https://github.com/apps/dependabot)
+- Bump aioesphomeapi from 41.14.0 to 41.16.0 <PR number={11215} /> by [@dependabot[bot]](https://github.com/apps/dependabot)
+- Bump aioesphomeapi from 41.16.0 to 41.16.1 <PR number={11221} /> by [@dependabot[bot]](https://github.com/apps/dependabot)
+
+</details>
+
+{/* markdownlint-enable MD013 */}
+
+## All Changelogs
+
+

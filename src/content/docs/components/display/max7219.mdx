@@ -1,0 +1,182 @@
+---
+description: "Instructions for setting up MAX7219 7-segment displays."
+title: "MAX7219 7-Segment Display"
+---
+
+The `max7219` display platform allows you to use MAX7219 7-segment display drivers (
+[datasheet](https://datasheets.maximintegrated.com/en/ds/MAX7219-MAX7221.pdf),
+[hobbycomponents](https://hobbycomponents.com/displays/597-max7219-8-digit-seven-segment-display-module))
+with ESPHome. Please note that this component is *only* for 7-segment display, not matrix configurations.
+
+![Image](./images/max7219-full.jpg)
+
+As the communication with the MAX7219 is done using SPI for this component, you need
+to have an [SPI bus](/components/spi) in your configuration with both the **mosi_pin** set (miso_pin is not required).
+Connect VCC to 3.3V (the manufacturer recommends 4+ V, but 3.3V seems to work fine), DIN to your `mosi_pin` and
+CS to your set `cs_pin` and finally GND to GND.
+
+You can even daisy-chain multiple MAX7219s by connecting the DOUT of the previous chip in the chain to the
+next DIN. With more than ~3 chips the 3.3V will probably not be enough, so then you will have to potentially
+use a logic level converted.
+
+```yaml
+# Example configuration entry
+spi:
+  clk_pin: D0
+  mosi_pin: D1
+
+display:
+  - platform: max7219
+    cs_pin: D2
+    num_chips: 1
+    lambda: |-
+      it.print("01234567");
+```
+
+## Configuration variables
+
+- **cs_pin** (**Required**, [Pin Schema](/guides/configuration-types#pin-schema)): The pin you have the CS line hooked up to.
+- **num_chips** (*Optional*, int): The number of chips you wish to use for daisy chaining. Defaults to
+  `1`.
+
+- **intensity** (*Optional*, int): The intensity with which the MAX7219 should drive the outputs. Range is from
+  0 (least intense) to 15 (the default).
+
+- **lambda** (*Optional*, [lambda](/automations/templates#config-lambda)): The lambda to use for rendering the content on the MAX7219.
+  See [Rendering Lambda](#display-max7219_lambda) for more information.
+
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to re-draw the screen. Defaults to `1s`.
+- **spi_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the [SPI Component](/components/spi) if you want
+  to use multiple SPI buses.
+
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
+- **reverse_enable** (*Optional*, boolean): For some displays the order of the chips is reversed so you'll see "56781234" instead of "12345678". This option will adjust the output to compensate. Defaults to `false`.
+
+<span id="display-max7219_lambda"></span>
+
+## Rendering Lambda
+
+The MAX7219 has a similar API to the fully fledged [Display Rendering Engine](/components/display#display-engine), but it's only a subset as the MAX7219
+7-segment displays don't have a concept of individual pixels. In the lambda you're passed a variable called `it`
+as with all other displays. In this case however, `it` is an MAX7219 instance (see API Reference).
+
+The most basic operation with the MAX7219 is wiring a simple number to the screen as in the configuration example
+at the top of this page. But even though you're passing in a string (here `"01234567"`  ), ESPHome converts it
+into a representation that the MAX7219 can understand: The exact pixels that should be turned on. And of course,
+not all characters can be represented. You can see a full list of characters [below](#display-max7219_characters).
+
+Each of the three methods (`print`, `printf` and `strftime`  ) all optionally take a position argument at the
+beginning which can be used to print the text at a specific position. This argument is `0` by default which
+means the first character of the first MAX7219. For example to start the first character of your text at
+the end of the first MAX7219, you would write `it.print(7, "0");`.
+
+Also note that the `.` (dot) character is special because when ESPHome encounters it in the string the dot
+segment of the previous position will be enabled.
+
+```yaml
+display:
+  - platform: max7219
+    # ...
+    lambda: |-
+      // Print 0 at position 0 (left)
+      it.print("0");
+      // Result: "0       "
+
+      // Print 1 at position 1 (second character)
+      it.print(1, "1");
+      // Result: "01      "
+
+      // Let's write a sensor value (let's assume it's 42.1)
+      it.printf(3, "%.1f", id(my_sensor).state);
+      // Result: "01 42.1  " (the dot will appear on the "2" segment)
+
+      // Overwrite the previous content with blank
+      it.print("        ");
+      // Print a right-padded sensor value with 0 digits after the decimal
+      it.printf("SENS%4.0f", id(my_sensor).state);
+      // Result: "SENS  42"
+
+      // Print the current time
+      it.print("        ");
+      it.strftime("%H.%M.%S", id(esptime).now());
+      // Result for 10:06:42 -> "10.06.42  "
+
+      // Change the display intnsity based on another id.
+      // Value should be from 0-15.
+      it.set_intensity(id(my_brightness));
+```
+
+Please see [Formatted Text](/components/display#display-printf) for a quick introduction into the `printf` formatting rules and
+[Displaying Time](/components/display#display-strftime) for an introduction into the `strftime` time formatting.
+
+<span id="display-max7219_characters"></span>
+
+## All 7-Segment Characters
+
+| **MAX7219 Representation**              | **Character**     |
+| --------------------------------------- | ----------------- |
+| ![Image](/images/seg00.svg) | *(space)*         |
+| ![Image](/images/seg80.svg) | `.`               |
+| ![Image](/images/segB0.svg) | `!`               |
+| ![Image](/images/seg7E.svg) | `0`, `O`        |
+| ![Image](/images/seg30.svg) | `1`, `I`        |
+| ![Image](/images/seg6D.svg) | `2`, `Z`        |
+| ![Image](/images/seg79.svg) | `3`               |
+| ![Image](/images/seg33.svg) | `4`               |
+| ![Image](/images/seg5B.svg) | `5`, `S`, `s` |
+| ![Image](/images/seg5F.svg) | `6`               |
+| ![Image](/images/seg70.svg) | `7`               |
+| ![Image](/images/seg7F.svg) | `8`               |
+| ![Image](/images/seg73.svg) | `9`               |
+| ![Image](/images/seg37.svg) | `H`               |
+| ![Image](/images/seg4E.svg) | `(`, `[`, `C` |
+| ![Image](/images/seg31.svg) | `{`               |
+| ![Image](/images/seg78.svg) | `)`, `]`        |
+| ![Image](/images/seg07.svg) | `}`, `T`, `t` |
+| ![Image](/images/seg20.svg) | `` ` ``            |
+| ![Image](/images/seg02.svg) | `'`               |
+| ![Image](/images/seg22.svg) | `"`               |
+| ![Image](/images/seg6F.svg) | `@`               |
+| ![Image](/images/seg65.svg) | `?`               |
+| ![Image](/images/seg10.svg) | `,`, `i`        |
+| ![Image](/images/seg49.svg) | `%`               |
+| ![Image](/images/seg40.svg) | `*`               |
+| ![Image](/images/seg48.svg) | `:`               |
+| ![Image](/images/seg58.svg) | `;`               |
+| ![Image](/images/seg77.svg) | `A`, `a`        |
+| ![Image](/images/seg1F.svg) | `B`, `b`        |
+| ![Image](/images/seg3D.svg) | `D`, `d`        |
+| ![Image](/images/seg4F.svg) | `E`, `e`        |
+| ![Image](/images/seg47.svg) | `F`, `f`        |
+| ![Image](/images/seg5E.svg) | `G`, `g`        |
+| ![Image](/images/seg3C.svg) | `J`, `j`        |
+| ![Image](/images/seg0E.svg) | `L`, `l`        |
+| ![Image](/images/seg15.svg) | `N`, `n`        |
+| ![Image](/images/seg67.svg) | `P`, `p`        |
+| ![Image](/images/segFE.svg) | `Q`               |
+| ![Image](/images/seg05.svg) | `R`, `r`        |
+| ![Image](/images/seg3E.svg) | `U`, `V`        |
+| ![Image](/images/seg3F.svg) | `W`               |
+| ![Image](/images/seg27.svg) | `Y`, `y`        |
+| ![Image](/images/seg01.svg) | `-`               |
+| ![Image](/images/seg08.svg) | `_`               |
+| ![Image](/images/seg09.svg) | `=`               |
+| ![Image](/images/seg06.svg) | `\|`              |
+| ![Image](/images/seg0D.svg) | `c`               |
+| ![Image](/images/seg17.svg) | `h`               |
+| ![Image](/images/seg1D.svg) | `o`               |
+| ![Image](/images/seg1C.svg) | `u`, `v`        |
+| ![Image](/images/seg8E.svg) | `~`               |
+
+:::note
+Original 7-segment display base image taken from Wikipedia at [https://de.wikipedia.org/wiki/Datei:7_Segment_Display.svg](https://de.wikipedia.org/wiki/Datei:7_Segment_Display.svg)
+by user [h2g2bob](https://commons.wikimedia.org/wiki/User:H2g2bob) under
+[Creative Commons BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/deed.de) and modified
+for this documentation.
+:::
+
+## See Also
+
+- [Index](/index/)
+- 
+- [MAX7219 Library](https://github.com/nickgammon/MAX7219) by [Nick Gammon](https://github.com/nickgammon)

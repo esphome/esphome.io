@@ -1,0 +1,618 @@
+---
+description: "Changelog for ESPHome version 1.15.0."
+title: "Changelog - Version 1.15.0 - September 13, 2020"
+slug: "changelog/v1.15.0"
+---
+
+import PR from "@components/PR.astro";
+import GHUser from "@components/GHUser.astro";
+
+{/* markdownlint-disable MD013 */}
+
+- [AHT10](/components/sensor/aht10/)
+- [QMC5883L](/components/sensor/qmc5883l/)
+- [INA226](/components/sensor/ina226/)
+- [HM3301](/components/sensor/hm3301/)
+- [MAX31856](/components/sensor/max31856/)
+- [MAX31865](/components/sensor/max31865/)
+- [RuuviTag](/components/sensor/ruuvitag/)
+- [SPS30](/components/sensor/sps30/)
+- [TMP117](/components/sensor/tmp117/)
+- [Xiaomi BLE](/components/sensor/xiaomi_ble/)
+- [Slow PWM](/components/output/slow_pwm/)
+- [ESP32 DAC](/components/output/esp32_dac/)
+- [AC Dimmer](/components/output/ac_dimmer/)
+- [Tuya Fan](/components/fan/tuya/)
+- [Tuya Binary Sensor](/components/binary_sensor/tuya/)
+- [Tuya Dimmer](/components/light/tuya/)
+- [Tuya Sensor](/components/sensor/tuya/)
+- [Tuya Switch](/components/switch/tuya/)
+- [Tuya Climate](/components/climate/tuya/)
+- [MAX7219 Dot Matrix](/components/display/max7219digit/)
+- [TM1637](/components/display/tm1637/)
+- [SSD1351](/components/display/ssd1351/)
+- [ST7789V](/components/display/st7789v/)
+- [ILI9341](/components/display/ili9341/)
+- [PCD8544 (Nokia 5110/ 3310)](/components/display/pcd8544/)
+- [BLE Scanner](/components/text_sensor/ble_scanner/)
+- [Custom UART Text Sensor](/cookbook/lambda_magic/)
+- [Thermostat Controller](/components/climate/thermostat/)
+- [PID Controller](/components/climate/pid/)
+- [IR Remote Climate](/components/climate/ir_climate/)
+- [HTTP Request](/components/http_request/)
+- [MCP3008 8-Channel 10-Bit A/D Converter](/components/mcp3008/)
+- [SN74HC595 I/O Expander](/components/sn74hc595/)
+- [TM1651 Battery Display](/components/tm1651/)
+- [RF Bridge](/components/rf_bridge/)
+- [Exposure Notifications](/components/exposure_notifications/)
+- [RTTTL Buzzer](/components/rtttl/)
+- [Prometheus](/components/prometheus/)
+
+Stop! this is not Otto Winter, but Guillermo Ruffino (<GHUser name="glmnet" />). So Hi there!
+
+Latest feature release was 10 months ago already, however development and support did not stop. We have
+lots of contributions here, the list above with integrations images is the longest to date and the changelog
+is bigger too!
+
+## Notable Changes & New Features
+
+ESPHome add on is now also available at the Home Assistant community add ons! (<GHUser name="OttoWinter" /> and
+<GHUser name="frenck" /> of course)
+
+The dashboard got a visual revamp! Now more nodes are visible at the same time. <GHUser name="jonathanadams" /> also
+took a few bugs with it too.
+
+Lots new sensors, port expanders, displays... and <GHUser name="kbx81" /> came up with color displays too!
+There are new climates like the Thermostat, PID and more IR based devices too. And can't wait to see DIY
+projects with the RTTTL buzzer.
+
+Scripts are more stable, and also were updated to follow new Home Assistant script options, like `single`,
+`queued`, etc.
+
+Also if you don't like repeating stuff in yaml, the new packages options <GHUser name="corvis" /> added are very handy.
+
+I did a terrible job tagging contributions and now I'm paying for that, hope nobody gets angry.
+
+I've updated the contributors list in an attepmpt of giving people credit, many really deserve to be listed
+here not only for their code contributions but also for their support on the community, bug fixing etc., thanks!
+
+This release is possible not only because all the contributions this project receives, but also for the
+latest contributions from Otto itself, he did a great job automating GitHub with actions and also building
+scripts which takes cares of 90% of the release process, so hopefully new versions will come along at a better pace.
+If you don't see somebody credited by somthing, thats because Otto did it.
+
+From myself special thanks to <GHUser name="ssieb" />, <GHUser name="rradar" />, <GHUser name="jesserockz" />, <GHUser name="kbx81" />, and many others
+specially <GHUser name="OttoWinter" /> for all this.
+
+Still many new features and fixes are pending to be included in this release, but we had to left them aside
+for a while so we can focus better. So let's ship this and keep going on new stuff!!
+
+Last but not least, thanks to all contributors, bug reporters and patrons! Without you this would not
+be possible!
+
+## New Features
+
+- esphome: Dashboard Updates <PR number={1025} /> by <GHUser name="jonathanadams" /> (new-feature) (notable-change)
+- esphome: Ble scanner <PR number={976} /> by <GHUser name="TheKuko" /> (new-feature)
+- esphome: Add Prometheus /metrics-Endpoint <PR number={1032} /> by <GHUser name="margau" /> (new-feature)
+- esphome: Add support for command-line substitutions <PR number={1014} /> by <GHUser name="AlexMekkering" /> (new-feature)
+- esphome: Packages feature <PR number={1052} /> by <GHUser name="corvis" /> (new-feature) (notable-change)
+- esphome: WPA2 Enterprise Attempt 2 <PR number={1158} /> (new-feature)
+- esphome: New script modes POC <PR number={1168} /> (breaking-change) (new-feature)
+
+## New Integrations
+
+- esphome: implemented ruuvi_ble and ruuvitag with RAWv1 and RAWv2 protocol <PR number={810} /> by <GHUser name="Alex9779" /> (new-integration)
+- esphome: http_request component <PR number={719} /> by <GHUser name="Anonym-tsk" /> (new-integration)
+- esphome: Add support for Sensirion SPS30 Particulate Matter sensors <PR number={891} /> by <GHUser name="valordk" /> (new-integration)
+- esphome: Add TM1561 support <PR number={893} /> by <GHUser name="freekode" /> (new-integration)
+- esphome: Add slow_pwm output component <PR number={894} /> by <GHUser name="nickw444" /> (new-integration)
+- esphome: Add RFBridge component <PR number={896} /> by <GHUser name="jesserockz" /> (new-integration)
+- esphome: Climate Mitsubishi <PR number={725} /> by <GHUser name="glmnet" /> (new-integration)
+- esphome: PID Climate <PR number={885} /> (new-integration)
+- esphome: Display tm1637 <PR number={946} /> by <GHUser name="glmnet" /> (new-integration)
+- esphome: Daikin climate ir component <PR number={964} /> by <GHUser name="hectorgimenez" /> (new-integration)
+- esphome: Add TMP117 component <PR number={992} /> by <GHUser name="Azimath" /> (new-integration)
+- esphome: Support for AHT10 temperature and humidity sensor <PR number={949} /> by <GHUser name="gmasse" /> (new-integration)
+- esphome: Add HM3301 laser dust detection sensor <PR number={963} /> by <GHUser name="freekode" /> (new-integration)
+- esphome: Add AC Dimmer support <PR number={880} /> (new-integration)
+- esphome: feat: Add support for MCP23016 IO Expander <PR number={1012} /> by <GHUser name="reidprojects" /> (new-integration)
+- esphome: Climate whirlpool <PR number={1029} /> by <GHUser name="glmnet" /> (new-integration)
+- esphome: Add support for ESP32 DAC <PR number={1071} /> by <GHUser name="napieraj" /> (new-integration)
+- esphome: Adding support for MAX31856 Thermocouple Temperature Sensor (feature #700) <PR number={1039} /> by <GHUser name="declanshanaghy" /> (new-integration)
+- esphome: Add support for additional Xiaomi BLE sensors <PR number={1027} /> by <GHUser name="ahpohl" /> (new-integration) (notable-change)
+- esphome: Add E1.31 support <PR number={950} /> by <GHUser name="ayufan" /> (new-integration)
+- esphome: Add `adalight` light effect <PR number={956} /> by <GHUser name="ayufan" /> (new-integration)
+- esphome: Add WLED support <PR number={1092} /> by <GHUser name="ayufan" /> (new-integration)
+- esphome: Add LG Climate IR <PR number={1097} /> by <GHUser name="square99" /> (new-integration)
+- esphome: add support for SN74HC595 shift register <PR number={1083} /> by <GHUser name="phjr" /> (new-integration)
+- esphome: Thermostat component <PR number={1105} /> by <GHUser name="kbx81" /> (new-integration)
+- esphome: Add SSD1351 OLED display support <PR number={1100} /> by <GHUser name="kbx81" /> (new-integration)
+- esphome: Add support for Tuya Switches <PR number={1074} /> by <GHUser name="jesserockz" /> (new-integration)
+- esphome: Add support for Tuya Climate devices <PR number={1076} /> by <GHUser name="jesserockz" /> (new-integration)
+- esphome: Add support for Tuya Sensors <PR number={1088} /> by <GHUser name="jesserockz" /> (new-integration)
+- esphome: Add support for Tuya Binary Sensors <PR number={1089} /> by <GHUser name="jesserockz" /> (new-integration)
+- esphome: Add support for Toshiba heat pumps <PR number={1121} /> by <GHUser name="JoppyFurr" /> (new-integration)
+- esphome: Add exposure notifications <PR number={1135} /> (new-integration)
+- esphome: rtttl player <PR number={1171} /> by <GHUser name="glmnet" /> (new-integration)
+
+## Breaking Changes
+
+- esphome: Drop Python 2 Support <PR number={793} /> (breaking-change)
+- esphome: Fix SGP30 incorrect baseline reading/writing <PR number={936} /> by <GHUser name="panuruj" /> (breaking-change)
+- esphome: fix servo bug restoring state and starting servo detached <PR number={1008} /> by <GHUser name="glmnet" /> (breaking-change)
+- esphome: fix shunt voltage / current / power reading in INA3221 <PR number={1101} /> by <GHUser name="Vxider" /> (breaking-change)
+- esphome: Fix: Component script not stopped in certain situations <PR number={1004} /> by <GHUser name="balrog-kun" /> (breaking-change)
+- esphome: New script modes POC <PR number={1168} /> (breaking-change) (new-feature)
+
+## Notable Changes
+
+- esphome: Dashboard Updates <PR number={1025} /> by <GHUser name="jonathanadams" /> (new-feature) (notable-change)
+- esphome: Uart improvments <PR number={1024} /> by <GHUser name="0hax" /> (notable-change)
+- esphome: Add support for additional Xiaomi BLE sensors <PR number={1027} /> by <GHUser name="ahpohl" /> (new-integration) (notable-change)
+- esphome: Packages feature <PR number={1052} /> by <GHUser name="corvis" /> (new-feature) (notable-change)
+
+## Beta Fixes
+
+- esphome: Mitigate CVE-2020-12638 WiFi WPA Downgrade <PR number={1207} />
+- esphome: ESP8266 change recommended framework version to 2.7.2 <PR number={1208} />
+- esphome: Fix base config should override packages config <PR number={1209} />
+- docs: ESP8266 change recommended framework version to 2.7.2 <PR number={714} repo="esphome-docs" />
+- esphome: Fix AS3935 sensor configuration issues <PR number={1210} /> by <GHUser name="trylika" />
+- esphome: Fix prometheus has wrong setup priority <PR number={1211} />
+- esphome: Downgrade FastLED to 3.3.2 <PR number={1212} />
+- docs: Fix old screenshots <PR number={716} repo="esphome-docs" /> by <GHUser name="glmnet" />
+- docs: Add tuya platforms to changelog table <PR number={715} repo="esphome-docs" /> by <GHUser name="jesserockz" />
+- esphome: Fix sdist missing requirements.txt <PR number={1214} />
+- docs: Include new v1.15 components from diff <PR number={718} repo="esphome-docs" /> by <GHUser name="glmnet" />
+- esphome: renamed icon molecule co2 <PR number={1217} /> by <GHUser name="glmnet" />
+- esphome: Add job to update HassIO addon repo <PR number={1218} />
+- esphome: Stop infinite loop in light on_turn_on <PR number={1219} /> by <GHUser name="WizKid" />
+- esphome: Bump ESPAsyncWebServer-esphome to v1.2.7 <PR number={1221} />
+- docs: Added hint that not the subsensor id is meant. <PR number={720} repo="esphome-docs" /> by <GHUser name="ei-ke" />
+- esphome: wpa2 enterprise fixes: also copy eap parameters, don't require psk password to be set <PR number={1215} /> by <GHUser name="dr-oblivium" />
+- esphome: Bump base image to 2.4.1 <PR number={1224} />
+- esphome: Fix release.yml invalid bash syntax <PR number={1226} />
+- esphome: Bump ESP8266 Arduino framework from 2.7.2 to 2.7.3 <PR number={1229} />
+- docs: Update docs for community Hass.io add-ons <PR number={721} repo="esphome-docs" />
+- esphome: Bump ESPAsyncTCP from 1.2.2 to 1.2.3 <PR number={1227} />
+- esphome: Fix ESP8266 core has a broken settimeofday implementation <PR number={1231} />
+- docs: Cookbook: BME280 Environment added dew point calculations <PR number={629} repo="esphome-docs" /> by <GHUser name="rradar" />
+- esphome: Fix tuya.cpp compile warning <PR number={1232} />
+- esphome: Script mode fix <PR number={1238} /> by <GHUser name="jesserockz" />
+- esphome: make powered on assume public <PR number={1240} /> by <GHUser name="glmnet" />
+- esphome: Bump docker base image to 2.6.0 <PR number={1245} />
+- esphome: Image bit dephts <PR number={1241} /> by <GHUser name="glmnet" />
+- docs: add image type <PR number={730} repo="esphome-docs" /> by <GHUser name="glmnet" />
+- esphome: fixes deg symbol not shown <PR number={1248} /> by <GHUser name="glmnet" />
+- docs: Update diy.rst <PR number={736} repo="esphome-docs" /> by <GHUser name="emorydunn" />
+- docs: Add a note about setting dns in manual ip mode <PR number={735} repo="esphome-docs" /> by <GHUser name="martgras" />
+- docs: Change example ota id <PR number={737} repo="esphome-docs" /> by <GHUser name="jesserockz" />
+- esphome: Fix SSD1306 post-setup brightness control <PR number={1090} /> by <GHUser name="kbx81" />
+- esphome: Fix esp8266_restore_from_flash <PR number={638} />
+- esphome: Fix stack trace decode for latest platformio <PR number={830} />
+- docs: Update diy.rst <PR number={748} repo="esphome-docs" /> by <GHUser name="galagaking" />
+- docs: Add carrier_frequency for IR device example <PR number={734} repo="esphome-docs" /> by <GHUser name="abmantis" />
+- docs: Added Arlec Grid Connect Smart Plug <PR number={749} repo="esphome-docs" /> by <GHUser name="freerangeeggs" />
+
+## All changes
+
+- esphome: Add lint check for integer constants <PR number={775} />
+- esphome: Wizard board name fixes <PR number={787} /> by <GHUser name="scop" />
+- esphome: Logger on_message trigger <PR number={729} /> by <GHUser name="Anonym-tsk" />
+- docs: Logger on_message trigger <PR number={374} repo="esphome-docs" /> by <GHUser name="Anonym-tsk" />
+- docs: Add Fujitsu General Climate component docs <PR number={307} repo="esphome-docs" /> by <GHUser name="31337Ghost" />
+- docs: fix logger.rst ref link <PR number={379} repo="esphome-docs" /> by <GHUser name="glmnet" />
+- esphome: Added more power data to the atm90e32 component <PR number={799} /> by <GHUser name="CircuitSetup" />
+- docs: added reactive power, power factor, chip temp... <PR number={380} repo="esphome-docs" /> by <GHUser name="CircuitSetup" />
+- esphome: service uuid based ble tracking <PR number={800} /> by <GHUser name="Lumpusz" />
+- docs: Ble rssi svc <PR number={377} repo="esphome-docs" /> by <GHUser name="Lumpusz" />
+- docs: Typo fix pzemac <PR number={388} repo="esphome-docs" /> by <GHUser name="Anonym-tsk" />
+- docs: Typo fix pzemdc <PR number={389} repo="esphome-docs" /> by <GHUser name="Anonym-tsk" />
+- docs: Document UART stop_bits <PR number={396} repo="esphome-docs" />
+- docs: Document missing servo restore option <PR number={398} repo="esphome-docs" />
+- esphome: Fix stack trace decode for latest platformio <PR number={830} />
+- esphome: Add MAX31865 sensor support, fix MAX31855 sensor <PR number={832} /> by <GHUser name="DAVe3283" />
+- docs: Add MAX31865, update MAX31855 <PR number={399} repo="esphome-docs" /> by <GHUser name="DAVe3283" />
+- esphome: Add support for INA226 Current/Power Monitor <PR number={801} /> by <GHUser name="sergio303" />
+- docs: Add INA226 current/power monitor <PR number={403} repo="esphome-docs" /> by <GHUser name="sergio303" />
+- esphome: implemented ruuvi_ble and ruuvitag with RAWv1 and RAWv2 protocol <PR number={810} /> by <GHUser name="Alex9779" /> (new-integration)
+- docs: added docs for ruuvitag <PR number={383} repo="esphome-docs" /> by <GHUser name="Alex9779" />
+- esphome: http_request component <PR number={719} /> by <GHUser name="Anonym-tsk" /> (new-integration)
+- docs: http_request component <PR number={392} repo="esphome-docs" /> by <GHUser name="Anonym-tsk" />
+- esphome: fix esphome better error out <PR number={843} /> by <GHUser name="glmnet" />
+- esphome: Add climate dry fan <PR number={845} /> by <GHUser name="glmnet" />
+- esphome: Decode DHT11 decimal part <PR number={861} /> by <GHUser name="airy10" />
+- docs: add climate core docs fan, swing <PR number={415} repo="esphome-docs" /> by <GHUser name="glmnet" />
+- esphome: fix chip_temperature for atm90e32 component <PR number={865} /> by <GHUser name="CircuitSetup" />
+- esphome: add position action and lambda - tested <PR number={877} /> by <GHUser name="KristopherMackowiak" />
+- esphome: added idle action for climate <PR number={859} /> by <GHUser name="danielkucera" />
+- esphome: Fix MAX31865 edge case. <PR number={882} /> by <GHUser name="DAVe3283" />
+- docs: Added Documentation for QMC5883L + HMC5883L Doc improvements <PR number={301} repo="esphome-docs" /> by <GHUser name="timpur" />
+- esphome: Add QMC5883L Sensor + Improvements to HMC5883L <PR number={671} /> by <GHUser name="timpur" />
+- esphome: Add B/W support for Waveshare 2.90in (B) screen <PR number={889} /> by <GHUser name="akomelj" />
+- docs: Add B/W support for Waveshare 2.90in (B) screen <PR number={426} repo="esphome-docs" /> by <GHUser name="akomelj" />
+- esphome: Add support for Sensirion SPS30 Particulate Matter sensors <PR number={891} /> by <GHUser name="valordk" /> (new-integration)
+- docs: Add documentation for Sensirion SPS30 Particulate Matter sensors <PR number={424} repo="esphome-docs" /> by <GHUser name="valordk" />
+- docs: Add TM1651 docs <PR number={429} repo="esphome-docs" /> by <GHUser name="freekode" />
+- esphome: Add TM1561 support <PR number={893} /> by <GHUser name="freekode" /> (new-integration)
+- esphome: Add magic value REPLACEME <PR number={881} />
+- esphome: Pulse counter validate not both disabled <PR number={902} />
+- esphome: Optimize application loop speed <PR number={860} />
+- esphome: Better/stricter pin validation <PR number={903} />
+- esphome: Disable default wait_time for rc_switch <PR number={900} />
+- esphome: Update python dependencies <PR number={906} />
+- esphome: Handle yaml merge keys correcly. <PR number={888} /> by <GHUser name="edge90" />
+- esphome: Allow loading esphome version from a fork <PR number={907} /> by <GHUser name="jesserockz" />
+- esphome: Clean up YAML Mapping construction <PR number={910} />
+- docs: Add doc for slow_pwm output component <PR number={427} repo="esphome-docs" /> by <GHUser name="nickw444" />
+- esphome: Add slow_pwm output component <PR number={894} /> by <GHUser name="nickw444" /> (new-integration)
+- esphome: ESP32 GPIOs 33 to 38 can be used for deep sleep wakeup <PR number={911} /> by <GHUser name="adamgreg" />
+- esphome: Drop Python 2 Support <PR number={793} /> (breaking-change)
+- esphome: Add RFBridge component <PR number={896} /> by <GHUser name="jesserockz" /> (new-integration)
+- docs: Add docs for RF Bridge <PR number={433} repo="esphome-docs" /> by <GHUser name="jesserockz" />
+- esphome: ct_clamp: Check sample() return value is not NaN <PR number={921} /> by <GHUser name="balrog-kun" />
+- docs: merge all ir climates in a single doc <PR number={385} repo="esphome-docs" /> by <GHUser name="glmnet" />
+- esphome: Climate Mitsubishi <PR number={725} /> by <GHUser name="glmnet" /> (new-integration)
+- esphome: fix: only decode when not str already <PR number={923} /> by <GHUser name="wilmardo" />
+- esphome: fix climate-ir bad merge <PR number={935} /> by <GHUser name="glmnet" />
+- esphome: http_request: fix memory allocation <PR number={916} /> by <GHUser name="Anonym-tsk" />
+- esphome: http_request: version validation fix <PR number={917} /> by <GHUser name="Anonym-tsk" />
+- esphome: PID Climate <PR number={885} /> (new-integration)
+- docs: not a display component <PR number={462} repo="esphome-docs" /> by <GHUser name="glmnet" />
+- esphome: Fix for wizard via dashboard not decoding strings <PR number={941} /> by <GHUser name="timsavage" />
+- esphome: Adding the espressif 2.6.3 <PR number={944} /> by <GHUser name="Valcob" />
+- esphome: extract and use current version of python 3 <PR number={938} /> by <GHUser name="gitolicious" />
+- esphome: Inverted output in neopixelbus <PR number={895} /> by <GHUser name="voibit" />
+- docs: Added support for inverted output in neopixelbus <PR number={441} repo="esphome-docs" /> by <GHUser name="voibit" />
+- esphome: Added degree symbol for MAX7219 7-segment display. <PR number={764} /> by <GHUser name="cyberplant" />
+- esphome: Fix dump/tx of 64 bit codes <PR number={940} /> by <GHUser name="andrasbiro" />
+- esphome: Update hdc1080.cpp <PR number={887} /> by <GHUser name="dmkif" />
+- esphome: add tcl112 support for dry, fan and swing <PR number={939} /> by <GHUser name="glmnet" />
+- esphome: Fix SGP30 incorrect baseline reading/writing <PR number={936} /> by <GHUser name="panuruj" /> (breaking-change)
+- docs: Update SGP30 for the correct eCO2 and TVOC baseline <PR number={458} repo="esphome-docs" /> by <GHUser name="panuruj" />
+- docs: change docs to suggest logger config <PR number={378} repo="esphome-docs" /> by <GHUser name="glmnet" />
+- esphome: Add register_*_effect to allow registering custom effects <PR number={947} /> by <GHUser name="ayufan" />
+- esphome: Bugfix/normalize core comparisons (and Python 3 update fixes) <PR number={952} /> by <GHUser name="timsavage" />
+- esphome: Add transmit pioneer <PR number={922} /> by <GHUser name="kbx81" />
+- docs: Add transmit pioneer <PR number={446} repo="esphome-docs" /> by <GHUser name="kbx81" />
+- docs: add tm1637 docs <PR number={467} repo="esphome-docs" /> by <GHUser name="glmnet" />
+- esphome: Display tm1637 <PR number={946} /> by <GHUser name="glmnet" /> (new-integration)
+- esphome: Support a further variant of Xiaomi CGG1 <PR number={930} /> by <GHUser name="mario-tux" />
+- docs: Add Daikin IR Climate documentation <PR number={476} repo="esphome-docs" /> by <GHUser name="hectorgimenez" />
+- esphome: Daikin climate ir component <PR number={964} /> by <GHUser name="hectorgimenez" /> (new-integration)
+- esphome: fix tm1637 missing __init__.py <PR number={975} /> by <GHUser name="glmnet" />
+- esphome: sim800l: Add support of roaming-registered SIM cards <PR number={977} /> by <GHUser name="andriej" />
+- esphome: BME280: fix typos, use forced mode constant <PR number={974} /> by <GHUser name="GMTA" />
+- esphome: MQTT climate features <PR number={913} /> by <GHUser name="puuu" />
+- esphome: Revert default ESP32 upload baud rate <PR number={978} />
+- esphome: Add TM1651 simple level, turn on, turn off actions <PR number={920} /> by <GHUser name="freekode" />
+- esphome: Webserver - include css, js in index <PR number={932} /> by <GHUser name="Elkropac" />
+- docs: web_server - css_include and js_include: add new options and example <PR number={459} repo="esphome-docs" /> by <GHUser name="Elkropac" />
+- docs: Add new action for TM1651 <PR number={442} repo="esphome-docs" /> by <GHUser name="freekode" />
+- docs: Added equal symbol for MAX7219 7-segment display <PR number={503} repo="esphome-docs" /> by <GHUser name="egeltje" />
+- esphome: Added equal symbol for MAX7219 7-segment display <PR number={986} /> by <GHUser name="egeltje" />
+- esphome: Output from platformio idedata command does not need to be decoded <PR number={953} /> by <GHUser name="brandond" />
+- esphome: Allow custom lights to be addressable <PR number={954} /> by <GHUser name="brandond" />
+- esphome: Fix esphome/issues#947 - RGBW(W) white brightness <PR number={925} /> by <GHUser name="pauln" />
+- esphome: Add support for TTGO epaper boards with B73 revision <PR number={928} /> by <GHUser name="thomasklingbeil" />
+- esphome: Fix OTA updates getting killed by task_wdt <PR number={959} /> by <GHUser name="Skaronator" />
+- esphome: Bugfix/1077 decode called on str fetching platformio stacktrace <PR number={991} /> by <GHUser name="timsavage" />
+- esphome: Add support for Tuya ceiling fan controllers <PR number={989} /> by <GHUser name="buxtronix" />
+- esphome: Fixed iBeacon struct and major and minor parsing <PR number={987} /> by <GHUser name="sekkr1" />
+- esphome: http_request http fix <PR number={980} /> by <GHUser name="Anonym-tsk" />
+- esphome: Rgbww color fix <PR number={967} /> by <GHUser name="quinnhosler" />
+- esphome: add time cover assumed_state option <PR number={979} /> by <GHUser name="glmnet" />
+- esphome: Add on_rc_switch trigger <PR number={983} /> by <GHUser name="escoand" />
+- esphome: SCD30 fixes and improvements <PR number={962} /> by <GHUser name="Sizurka" />
+- docs: cover time based add assumed state option <PR number={490} repo="esphome-docs" /> by <GHUser name="glmnet" />
+- esphome: pzemac total energy support <PR number={933} /> by <GHUser name="yekm" />
+- docs: docs for Tuya fan, update tuya light <PR number={502} repo="esphome-docs" /> by <GHUser name="buxtronix" />
+- docs: Next <PR number={491} repo="esphome-docs" /> by <GHUser name="CircuitSetup" />
+- docs: add energy support to pzemac <PR number={478} repo="esphome-docs" /> by <GHUser name="yekm" />
+- docs: Added examples for uart text sensor <PR number={468} repo="esphome-docs" /> by <GHUser name="tomludd" />
+- docs: Add docs for TMP117 sensor <PR number={505} repo="esphome-docs" /> by <GHUser name="Azimath" />
+- esphome: Add TMP117 component <PR number={992} /> by <GHUser name="Azimath" /> (new-integration)
+- esphome: Unittests for esphome python code <PR number={931} /> by <GHUser name="timsavage" />
+- esphome: Corrections to default register values of ATM90E32 component <PR number={982} /> by <GHUser name="CircuitSetup" />
+- esphome: Support for AHT10 temperature and humidity sensor <PR number={949} /> by <GHUser name="gmasse" /> (new-integration)
+- docs: Add documentation for AHT10 sensor <PR number={466} repo="esphome-docs" /> by <GHUser name="gmasse" />
+- esphome: Retry connecting if the connection is not valid <PR number={994} /> by <GHUser name="abmantis" />
+- esphome: Support for pcd8544 (nokia 5110 and 3310) screen <PR number={973} /> by <GHUser name="pax0r" />
+- esphome: fix servo bug restoring state and starting servo detached <PR number={1008} /> by <GHUser name="glmnet" /> (breaking-change)
+- docs: Documentation for PCD8544 <PR number={485} repo="esphome-docs" /> by <GHUser name="pax0r" />
+- esphome: VSCode devcontainer support <PR number={914} /> by <GHUser name="Anonym-tsk" />
+- esphome: removes comments from lambda <PR number={998} /> by <GHUser name="glmnet" />
+- esphome: Add HM3301 laser dust detection sensor <PR number={963} /> by <GHUser name="freekode" /> (new-integration)
+- docs: Add docs HM3301 <PR number={529} repo="esphome-docs" /> by <GHUser name="freekode" />
+- esphome: Constant brightness <PR number={1007} /> by <GHUser name="kroimon" />
+- docs: Add webserver-v1.js click handlers for Cover buttons <PR number={521} repo="esphome-docs" /> by <GHUser name="balrog-kun" />
+- esphome: web_server: Add cover calls to REST API <PR number={999} /> by <GHUser name="balrog-kun" />
+- esphome: Add AC Dimmer support <PR number={880} /> (new-feature) (new-integration)
+- docs: add ac_dimmer <PR number={536} repo="esphome-docs" /> by <GHUser name="glmnet" />
+- docs: Add documentation for cwww and rgbww constant_brightness variables. (… <PR number={540} repo="esphome-docs" /> by <GHUser name="glmnet" />
+- esphome: feat: Add support for MCP23016 IO Expander <PR number={1012} /> by <GHUser name="reidprojects" /> (new-integration)
+- docs: feat: Added documentation to support for MCP23016 <PR number={537} repo="esphome-docs" /> by <GHUser name="reidprojects" />
+- docs: Kristopher mackowiak next <PR number={544} repo="esphome-docs" /> by <GHUser name="glmnet" />
+- docs: fix copy paste void <PR number={545} repo="esphome-docs" /> by <GHUser name="glmnet" />
+- esphome: Daikin climate receiver support <PR number={1001} /> by <GHUser name="puuu" />
+- docs: ir_climate: describe daikin receive support <PR number={522} repo="esphome-docs" /> by <GHUser name="puuu" />
+- esphome: Tests for CPP Code generation and some Python3 improvements <PR number={961} /> by <GHUser name="timsavage" />
+- esphome: Climate whirlpool <PR number={1029} /> by <GHUser name="glmnet" /> (new-integration)
+- docs: add whirlpool climate <PR number={552} repo="esphome-docs" /> by <GHUser name="glmnet" />
+- docs: add mac address info <PR number={554} repo="esphome-docs" /> by <GHUser name="glmnet" />
+- esphome: add mac address to wifi info <PR number={1030} /> by <GHUser name="glmnet" />
+- esphome: SHTC3: Wake up the sensor during setup <PR number={993} /> by <GHUser name="Sizurka" />
+- esphome: Change buffer sending process for waveshare_epaper (2.70in) <PR number={1031} /> by <GHUser name="ukewea" />
+- docs: add light on off triggers docs <PR number={559} repo="esphome-docs" /> by <GHUser name="glmnet" />
+- esphome: add lights on off triggers <PR number={1037} /> by <GHUser name="glmnet" /> (new-feature)
+- docs: Bluetooth advertising automation <PR number={512} repo="esphome-docs" /> by <GHUser name="puuu" />
+- esphome: Bluetooth advertising automation <PR number={995} /> by <GHUser name="puuu" />
+- esphome: Fix missing yield in ESP32 UART timeout code causing watchdog resets when blocking for serial data. <PR number={1016} /> by <GHUser name="fake-name" />
+- docs: Make initial run variable available to addressable_lambda <PR number={558} repo="esphome-docs" /> by <GHUser name="Skaronator" />
+- esphome: Make initial run variable available to addressable_lambda <PR number={1035} /> by <GHUser name="Skaronator" />
+- esphome: Dashboard Updates <PR number={1025} /> by <GHUser name="jonathanadams" /> (new-feature) (notable-change)
+- docs: remote_receiver: describe memory_block configuration <PR number={523} repo="esphome-docs" /> by <GHUser name="puuu" />
+- esphome: esp32 remote: make RMT memory blocks configureable <PR number={1002} /> by <GHUser name="puuu" />
+- esphome: test disable no delay <PR number={1026} /> by <GHUser name="glmnet" />
+- esphome: http_request ESP32 insecure requests fix <PR number={1041} /> by <GHUser name="Anonym-tsk" />
+- esphome: Update FastLED Library 3.3.3 <PR number={1020} /> by <GHUser name="teamsuperpanda" />
+- docs: Max7219 intensity change update <PR number={546} repo="esphome-docs" /> by <GHUser name="buxtronix" />
+- esphome: Some max7219 updates. <PR number={1021} /> by <GHUser name="buxtronix" />
+- docs: 5.83in Waveshare add <PR number={572} repo="esphome-docs" /> by <GHUser name="sredfern" />
+- esphome: Extending Support to 5.83in Waveshare eink B/W displays <PR number={1009} /> by <GHUser name="sredfern" />
+- esphome: Allow tm1637 to use pins from IO expanders <PR number={1058} /> by <GHUser name="jesserockz" />
+- esphome: Fix fan oscillation trait not being used <PR number={1048} /> by <GHUser name="blejdfist" />
+- esphome: Update tm1637.cpp <PR number={1044} /> by <GHUser name="nepozs" />
+- esphome: dht: Fix sensor reading from DHT22 <PR number={926} /> by <GHUser name="robinsmidsrod" />
+- docs: dht: Add DHT22_TYPE2 model <PR number={563} repo="esphome-docs" /> by <GHUser name="robinsmidsrod" />
+- esphome: Add lambda to devcontainer config <PR number={1059} /> by <GHUser name="jesserockz" />
+- docs: Ble scanner doc <PR number={611} repo="esphome-docs" /> by <GHUser name="TheKuko" />
+- esphome: Ble scanner <PR number={976} /> by <GHUser name="TheKuko" /> (new-feature)
+- docs: Update arduino framework versions <PR number={575} repo="esphome-docs" /> by <GHUser name="Skaronator" />
+- docs: Fix pcf8574 mode <PR number={616} repo="esphome-docs" /> by <GHUser name="glmnet" />
+- docs: Dallas autosetup <PR number={551} repo="esphome-docs" /> by <GHUser name="krahabb" />
+- esphome: Expose mac address via discovery (mDNS) <PR number={1038} /> by <GHUser name="ctalkington" />
+- docs: ESP32 DAC output documentation <PR number={617} repo="esphome-docs" /> by <GHUser name="napieraj" />
+- esphome: Add support for ESP32 DAC <PR number={1071} /> by <GHUser name="napieraj" /> (new-integration)
+- esphome: Uart improvments <PR number={1024} /> by <GHUser name="0hax" /> (notable-change)
+- docs: Uart improvments <PR number={571} repo="esphome-docs" /> by <GHUser name="0hax" />
+- esphome: Adding support for MAX31856 Thermocouple Temperature Sensor (feature #700) <PR number={1039} /> by <GHUser name="declanshanaghy" /> (new-integration)
+- esphome: Add support for additional Xiaomi BLE sensors <PR number={1027} /> by <GHUser name="ahpohl" /> (new-integration) (notable-change)
+- docs: Add support for additional Xiaomi BLE sensors <PR number={576} repo="esphome-docs" /> by <GHUser name="ahpohl" />
+- esphome: Explicitly set language to English <PR number={1073} /> by <GHUser name="gitolicious" />
+- docs: Added TTGO-Camera Plus PIN configuration <PR number={510} repo="esphome-docs" /> by <GHUser name="rudgr" />
+- esphome: Added support for ssd1327 <PR number={985} /> by <GHUser name="igg" />
+- docs: added energy in pzem004 documentation <PR number={547} repo="esphome-docs" /> by <GHUser name="adriancuzman" />
+- esphome: added energy reading for pzem004 <PR number={1022} /> by <GHUser name="adriancuzman" />
+- esphome: BH1750 Measurement time <PR number={997} /> by <GHUser name="rradar" />
+- docs: BH1750 Measurement time doc updates <PR number={515} repo="esphome-docs" /> by <GHUser name="rradar" />
+- esphome: Sort keys in dicts in output yaml for 'config' command <PR number={1049} /> by <GHUser name="ivan4th" />
+- esphome: Extend uart: with rx_buffer_size: <PR number={1006} /> by <GHUser name="ayufan" />
+- docs: Document `uart.rx_buffer_size` <PR number={528} repo="esphome-docs" /> by <GHUser name="ayufan" />
+- esphome: Add Prometheus /metrics-Endpoint <PR number={1032} /> by <GHUser name="margau" /> (new-feature)
+- docs: Add Prometheus-Documentation <PR number={556} repo="esphome-docs" /> by <GHUser name="margau" />
+- esphome: Turn off PN532 RF field when not expecting a tag <PR number={1046} /> by <GHUser name="apeeters" />
+- docs: Docs for CS Optional <PR number={644} repo="esphome-docs" /> by <GHUser name="igg" />
+- esphome: making SPI CS optional <PR number={988} /> by <GHUser name="igg" />
+- esphome: AQI calculator for HM3301 <PR number={1011} /> by <GHUser name="freekode" />
+- docs: AQI calculator for HM3301 <PR number={535} repo="esphome-docs" /> by <GHUser name="freekode" />
+- esphome: Fix gamma_correct when using constant_brightness option <PR number={1043} /> by <GHUser name="Skaronator" />
+- esphome: Add E1.31 support <PR number={950} /> by <GHUser name="ayufan" /> (new-integration)
+- esphome: Add `adalight` light effect <PR number={956} /> by <GHUser name="ayufan" /> (new-integration)
+- docs: Add documentation about E1.31, Adalight and WLED <PR number={646} repo="esphome-docs" /> by <GHUser name="ayufan" />
+- esphome: Add WLED support <PR number={1092} /> by <GHUser name="ayufan" /> (new-integration)
+- docs: PID Climate Controller <PR number={432} repo="esphome-docs" />
+- docs: Added Etekcity Voltson cookbook <PR number={628} repo="esphome-docs" /> by <GHUser name="gitolicious" />
+- esphome: Update docker base image <PR number={1093} /> by <GHUser name="Skaronator" />
+- esphome: SenseAir: flush input buffer on read error <PR number={1017} /> by <GHUser name="ferbar" />
+- docs: Add documentation for fan direction <PR number={580} repo="esphome-docs" /> by <GHUser name="blejdfist" />
+- esphome: Add support for controlling fan direction <PR number={1051} /> by <GHUser name="blejdfist" />
+- esphome: Add API component to logging error message <PR number={1062} /> by <GHUser name="JeffResc" />
+- docs: Added MCP3008 <PR number={591} repo="esphome-docs" /> by <GHUser name="SenexCrenshaw" />
+- esphome: Add MCP3008 I/O Expander <PR number={1057} /> by <GHUser name="SenexCrenshaw" />
+- esphome: ADE7953: Fix dereferencing of a null pointer <PR number={1086} /> by <GHUser name="rnauber" />
+- esphome: sgp30 baseline write bug fix (#1157) <PR number={1078} /> by <GHUser name="korellas" />
+- esphome: fix for ESP32 'Association Leave' <PR number={1081} /> by <GHUser name="MasterTim17" />
+- esphome: Climate bang bang enhancements <PR number={1061} /> by <GHUser name="kbx81" />
+- docs: Climate bang bang enhancements <PR number={595} repo="esphome-docs" /> by <GHUser name="kbx81" />
+- esphome: Fix decode and encode for RC5-protocol <PR number={1047} /> by <GHUser name="LukasK13" />
+- esphome: Add esp8266 huzzah gpio pins <PR number={1096} /> by <GHUser name="halkeye" />
+- esphome: fix percentage handling <PR number={1094} /> by <GHUser name="ssieb" />
+- docs: Add support for command-line-substitutions <PR number={538} repo="esphome-docs" /> by <GHUser name="AlexMekkering" />
+- esphome: Add support for command-line substitutions <PR number={1014} /> by <GHUser name="AlexMekkering" /> (new-feature)
+- esphome: Add LG Climate IR <PR number={1097} /> by <GHUser name="square99" /> (new-integration)
+- docs: Add LG Climate IR <PR number={655} repo="esphome-docs" /> by <GHUser name="square99" />
+- esphome: ESP32: Conditionally log on services to avoid OOM crashes <PR number={1098} /> by <GHUser name="buxtronix" />
+- esphome: Release BT controller unused memory in the right place <PR number={1095} /> by <GHUser name="buxtronix" />
+- docs: add documentation for component sn74hc595 <PR number={637} repo="esphome-docs" /> by <GHUser name="phjr" />
+- esphome: add support for SN74HC595 shift register <PR number={1083} /> by <GHUser name="phjr" /> (new-integration)
+- esphome: Max7219 in Dot Matrix configuration <PR number={1053} /> by <GHUser name="rspaargaren" />
+- docs: Max7219 new documentation <PR number={585} repo="esphome-docs" /> by <GHUser name="rspaargaren" />
+- esphome: Add support for ST7789V display module (as on TTGO T-Display) <PR number={1050} /> by <GHUser name="kbx81" />
+- docs: Add documentation for ST7789V display module (as on TTGO T-Display) <PR number={594} repo="esphome-docs" /> by <GHUser name="kbx81" />
+- esphome: Vl53 long range <PR number={1055} /> by <GHUser name="rspaargaren" />
+- docs: Update vl53l0x.rst <PR number={592} repo="esphome-docs" /> by <GHUser name="rspaargaren" />
+- esphome: fix shunt voltage / current / power reading in INA3221 <PR number={1101} /> by <GHUser name="Vxider" /> (breaking-change)
+- esphome: Fix current / power reading in INA219 <PR number={1103} /> by <GHUser name="Vxider" />
+- esphome: Fix: Component script not stopped in certain situations <PR number={1004} /> by <GHUser name="balrog-kun" /> (breaking-change)
+- docs: add script.stop breaking change <PR number={659} repo="esphome-docs" /> by <GHUser name="glmnet" />
+- esphome: Fixes esphome/issues#1192 - Save on upload bug <PR number={1107} /> by <GHUser name="jonathanadams" />
+- esphome: Revert "Climate bang bang enhancements" <PR number={1106} /> by <GHUser name="glmnet" />
+- esphome: Use default average mode in INA3221 <PR number={1102} /> by <GHUser name="Vxider" />
+- esphome: Thermostat component <PR number={1105} /> by <GHUser name="kbx81" /> (new-integration)
+- docs: Added thermostat component doc <PR number={665} repo="esphome-docs" /> by <GHUser name="kbx81" />
+- esphome: unpin mbedtls version <PR number={1114} /> by <GHUser name="glmnet" />
+- esphome: Fix ethernet logging too many warn messages <PR number={1112} /> by <GHUser name="glmnet" />
+- esphome: add click dependency <PR number={1111} /> by <GHUser name="glmnet" />
+- docs: Add documentation for climate.pid.reset_integral_term action <PR number={660} repo="esphome-docs" /> by <GHUser name="carlos-sarmiento" />
+- esphome: Add Integral Reset Action to PIDClimate <PR number={1104} /> by <GHUser name="carlos-sarmiento" />
+- docs: color interlock <PR number={653} repo="esphome-docs" /> by <GHUser name="peq123" />
+- esphome: RGBWW - added channel interlock for RGB vs white <PR number={1042} /> by <GHUser name="peq123" />
+- docs: Add documentation for new WPA2-EAP authentication. <PR number={633} repo="esphome-docs" /> by <GHUser name="tomtom5152" />
+- docs: SSD1325 documentation update for grayscale support <PR number={596} repo="esphome-docs" /> by <GHUser name="kbx81" />
+- esphome: SSD1325 grayscale support <PR number={1064} /> by <GHUser name="kbx81" />
+- docs: Cleaned up ESP32 DAC docs <PR number={618} repo="esphome-docs" /> by <GHUser name="napieraj" />
+- docs: Added SSD1351 doc <PR number={663} repo="esphome-docs" /> by <GHUser name="kbx81" />
+- esphome: Add SSD1351 OLED display support <PR number={1100} /> by <GHUser name="kbx81" /> (new-integration)
+- esphome: Add cryptography requirement to the setup.py file <PR number={1116} /> by <GHUser name="jesserockz" />
+- docs: Support ssd1327 docs <PR number={664} repo="esphome-docs" /> by <GHUser name="igg" />
+- esphome: Revert "Add ESP32 support for WPA2-EAP Enterprise WiFi authentication" <PR number={1117} /> by <GHUser name="glmnet" />
+- esphome: Revert "Add cryptography requirement to the setup.py file" <PR number={1118} /> by <GHUser name="glmnet" />
+- esphome: Install updated git version in lint image <PR number={1122} /> by <GHUser name="jesserockz" />
+- docs: documentation for version sensor hide timestamp option <PR number={640} repo="esphome-docs" /> by <GHUser name="Wauter" />
+- esphome: fixes script wait not waiting <PR number={1123} /> by <GHUser name="glmnet" />
+- docs: Split the Tuya component documentation <PR number={631} repo="esphome-docs" /> by <GHUser name="jesserockz" />
+- esphome: Add support for Tuya Switches <PR number={1074} /> by <GHUser name="jesserockz" /> (new-integration)
+- docs: Add Tuya Switch docs <PR number={625} repo="esphome-docs" /> by <GHUser name="jesserockz" />
+- esphome: fix script.wait action <PR number={1120} /> by <GHUser name="ssieb" />
+- esphome: Add support for Tuya Climate devices <PR number={1076} /> by <GHUser name="jesserockz" /> (new-integration)
+- docs: Add Tuya Climate docs <PR number={632} repo="esphome-docs" /> by <GHUser name="jesserockz" />
+- esphome: Add support for Tuya Sensors <PR number={1088} /> by <GHUser name="jesserockz" /> (new-integration)
+- docs: Add Tuya Sensor docs <PR number={661} repo="esphome-docs" /> by <GHUser name="jesserockz" />
+- docs: Add Tuya Binary Sensor docs <PR number={662} repo="esphome-docs" /> by <GHUser name="jesserockz" />
+- esphome: Add support for Tuya Binary Sensors <PR number={1089} /> by <GHUser name="jesserockz" /> (new-integration)
+- esphome: feature request 398 add 'hide timestamp' option for version text sensor <PR number={1085} /> by <GHUser name="Wauter" />
+- esphome: Add 7.5inch v2 waveshare <PR number={1077} /> by <GHUser name="PaulAntonDeen" />
+- docs: Added new version of 7.5inch waveshare epaper <PR number={675} repo="esphome-docs" /> by <GHUser name="PaulAntonDeen" />
+- esphome: Move CI/CD to GitHub Actions <PR number={1125} /> by <GHUser name="jesserockz" />
+- esphome: Add PR labels based on files changed <PR number={1127} /> by <GHUser name="jesserockz" />
+- esphome: Brightness support for Nextion display <PR number={1109} /> by <GHUser name="Vxider" />
+- docs: Brightness support for Nextion display <PR number={668} repo="esphome-docs" /> by <GHUser name="Vxider" />
+- esphome: Revert "Add PR labels based on files changed" <PR number={1128} /> by <GHUser name="jesserockz" />
+- docs: Add Toshiba climate <PR number={681} repo="esphome-docs" /> by <GHUser name="JoppyFurr" />
+- esphome: Add support for Toshiba heat pumps <PR number={1121} /> by <GHUser name="JoppyFurr" /> (new-integration)
+- esphome: Packages feature <PR number={1052} /> by <GHUser name="corvis" /> (new-feature) (notable-change)
+- docs: Added documentation for packages feature <PR number={582} repo="esphome-docs" /> by <GHUser name="corvis" />
+- esphome: Allow updating pid control params <PR number={1115} /> by <GHUser name="carlos-sarmiento" />
+- esphome: Github actions repo <PR number={1130} /> by <GHUser name="jesserockz" />
+- esphome: Feature/fix unit tests <PR number={1129} /> by <GHUser name="pkuehne" />
+- esphome: GH Actions Update <PR number={1134} />
+- esphome: Bug/fix internal flag in binary sensor <PR number={1136} /> by <GHUser name="pkuehne" />
+- esphome: Use inclusive terminology <PR number={1137} />
+- esphome: Add exposure notifications <PR number={1135} /> (new-integration)
+- esphome: Fix adding another mbedtls <PR number={1131} />
+- esphome: Tuya Sensor remove commented out code (style guide) <PR number={1132} />
+- docs: Add exposure notifications docs <PR number={683} repo="esphome-docs" />
+- docs: Improve RGBW(W) docs <PR number={682} repo="esphome-docs" />
+- esphome: add mqtt speed topics for fan <PR number={1140} /> by <GHUser name="ssieb" />
+- esphome: Bump pytest from 5.4.1 to 5.4.3 <PR number={1144} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- esphome: Bump hypothesis from 5.10.4 to 5.19.3 <PR number={1146} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- esphome: Bump protobuf from 3.11.3 to 3.12.2 <PR number={1147} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- esphome: Bump ifaddr from 0.1.6 to 0.1.7 <PR number={1148} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- esphome: Bump pytest-cov from 2.8.1 to 2.10.0 <PR number={1145} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- esphome: Fix Waveshare 7.50inV2 <PR number={1143} />
+- esphome: Load setup.py requirements from requirements.txt <PR number={1149} />
+- esphome: Add pytest to CI <PR number={1138} />
+- esphome: Feature/component test fixture <PR number={1142} /> by <GHUser name="pkuehne" />
+- esphome: Use more layer caching for esphome/esphome Dockerfile <PR number={1150} />
+- esphome: Don't remove location information for packages <PR number={1133} />
+- esphome: Add tasmota magic bits to short circuit compat check <PR number={1152} />
+- esphome: Fix executable bits on some hassio files <PR number={1151} />
+- esphome: Don't run deploy job when repository is not esphome/esphome <PR number={1157} /> by <GHUser name="jesserockz" />
+- docs: Docs for Setting control parameters on PID <PR number={674} repo="esphome-docs" /> by <GHUser name="carlos-sarmiento" />
+- esphome: Bump pytest-mock from 1.13.0 to 3.2.0 <PR number={1159} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- esphome: Bump pylint from 2.5.0 to 2.5.3 <PR number={1160} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- esphome: Bump tzlocal from 2.0.0 to 2.1 <PR number={1162} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- esphome: Fix unit test warning for hypothesis deprecation <PR number={1163} /> by <GHUser name="pkuehne" />
+- esphome: Bump flake8 from 3.7.9 to 3.8.3 <PR number={1161} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- esphome: Bump FastLED from 3.2.9 to 3.3.3 <PR number={1164} />
+- esphome: Arduino dev branch changed <PR number={1139} /> by <GHUser name="glmnet" />
+- esphome: Add bump version script <PR number={1153} />
+- esphome: fix(cover yaml validation): adds gate to coincide with Home Assistant <PR number={1175} /> by <GHUser name="erasmuswill" />
+- esphome: http_request fix urls caching <PR number={1174} /> by <GHUser name="Anonym-tsk" />
+- esphome: Fix rf_bridge send and receive <PR number={1180} /> by <GHUser name="vicfergar" />
+- esphome: mdi:timer icon replaced with mdi:timer-outline <PR number={1181} /> by <GHUser name="Troon" />
+- esphome: Bump hypothesis from 5.19.3 to 5.20.3 <PR number={1176} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- esphome: Fix Home Assistant API disconnects when using st7789v display. <PR number={1179} /> by <GHUser name="dr-oblivium" />
+- esphome: Fixed type mismatch between result field and preference of integration sensor <PR number={1178} /> by <GHUser name="FrankBakkerNl" />
+- esphome: Feature/wizard tests <PR number={1167} /> by <GHUser name="pkuehne" />
+- esphome: Add HassIO by-id serial port paths to serial ports listing <PR number={1155} />
+- esphome: Bump NeoPixelBus from 2.5.2 to 2.5.7 <PR number={1165} />
+- esphome: Bump colorlog from 4.1.0 to 4.2.1 <PR number={1183} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- esphome: Bump hypothesis from 5.20.3 to 5.21.0 <PR number={1184} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- esphome: ESP8266 Disable Pin Initialization on Boot to fix pin toggling <PR number={1185} />
+- esphome: Fix dashboard logout button and py3.8 removed hmac.new digestmod <PR number={1156} />
+- docs: WPA2 Enterprise Attempt 2 <PR number={704} repo="esphome-docs" />
+- esphome: WPA2 Enterprise Attempt 2 <PR number={1158} /> (new-feature)
+- esphome: Remove symlink_ops.py <PR number={1196} />
+- esphome: Fix senseair flush input buffer wrong log level <PR number={1194} />
+- esphome: Fix WLED minor issues <PR number={1193} />
+- esphome: Clean up UART Improvements code <PR number={1190} />
+- esphome: Partially revert make SPI CS pin optional <PR number={1187} />
+- esphome: New script modes POC <PR number={1168} /> (breaking-change) (new-feature)
+- docs: Add script modes and timers <PR number={693} repo="esphome-docs" /> by <GHUser name="glmnet" />
+- esphome: Revert "Sort keys in dicts in output yaml for 'config' command (#1049)" <PR number={1191} />
+- esphome: Fix SN74HC595 doesn't use ESPHome HAL and add lint checks for it <PR number={1188} />
+- docs: Partially Revert make SPI CS pin optional <PR number={706} repo="esphome-docs" />
+- esphome: Enlarge ESP32 app partitions <PR number={1197} />
+- esphome: Add CODEOWNERS mechanism <PR number={1199} />
+- esphome: rtttl player <PR number={1171} /> by <GHUser name="glmnet" /> (new-integration)
+- docs: add buzzer rtttl docs <PR number={700} repo="esphome-docs" /> by <GHUser name="glmnet" />
+- esphome: Add @glmnet components <PR number={1200} /> by <GHUser name="glmnet" />
+- docs: fix merge: climate devices moved to climate-ir <PR number={710} repo="esphome-docs" /> by <GHUser name="glmnet" />
+- esphome: Add @jesserockz to codeowners <PR number={1202} /> by <GHUser name="jesserockz" />
+- esphome: Fix set point logging issue <PR number={1201} /> by <GHUser name="kbx81" />
+- docs: Revert "Dallas autosetup (#551)" <PR number={709} repo="esphome-docs" />
+- esphome: Revert "Added auto discovery and setup to Dallas Platform (#1028)" <PR number={1189} />
+
+## Release 1.15.1 - September 14
+
+- esphome: fix sntp timezone <PR number={1266} /> by <GHUser name="glmnet" />
+- esphome: Fix for Ruuvi voltage parsing of RAWv2 format <PR number={1267} /> by <GHUser name="akoivist" />
+- docs: Adds Tuya Climate temperature multiplier <PR number={756} repo="esphome-docs" /> by <GHUser name="jesserockz" />
+- esphome: Adds support for Tuya Climate temperature multiplier <PR number={1276} /> by <GHUser name="jesserockz" />
+
+## Release 1.15.2 - September 20
+
+- docs: Light triggers referenced in the "automation" guide. <PR number={746} repo="esphome-docs" /> by <GHUser name="demikl" />
+- docs: specific MacOS Docker command to launch dashboard <PR number={553} repo="esphome-docs" /> by <GHUser name="oncleben31" />
+- docs: Update index.rst <PR number={757} repo="esphome-docs" /> by <GHUser name="3ative" />
+- esphome: Adds new homeassistant.tag_scanned action <PR number={1281} /> by <GHUser name="jesserockz" />
+- docs: add custom uart id usage <PR number={765} repo="esphome-docs" /> by <GHUser name="glmnet" />
+- esphome: Readds the battery level for xiaomi_hhccjcy01 <PR number={1288} /> by <GHUser name="jesserockz" />
+- esphome: fix(remote_receiver): Add missing pin setup for ESP32 <PR number={1252} /> by <GHUser name="lwfitzgerald" />
+- docs: Add docs for homeassistant.tag_scanned action <PR number={763} repo="esphome-docs" /> by <GHUser name="jesserockz" />
+
+## Release 1.15.3 - October 22
+
+- docs: Mention CODEOWNERS magic symbol <PR number={767} repo="esphome-docs" /> by <GHUser name="glmnet" />
+- docs: using docker image to build esphome-docs locally <PR number={747} repo="esphome-docs" /> by <GHUser name="demikl" />
+- docs: Add missing doc for rc_switch event <PR number={740} repo="esphome-docs" /> by <GHUser name="micw" />
+- docs: Remove unneeded parameters <PR number={752} repo="esphome-docs" /> by <GHUser name="KTibow" />
+- docs: Enable color_interlock for the Teckin SB50 example <PR number={743} repo="esphome-docs" /> by <GHUser name="CarlosGS" />
+- docs: clarify esp8266_restore_from_flash with restore_value <PR number={754} repo="esphome-docs" /> by <GHUser name="pille" />
+- docs: Update mirabella-genio-bulb.rst <PR number={732} repo="esphome-docs" /> by <GHUser name="DotNetDann" />
+- docs: Fix APDS9960 datasheet link <PR number={772} repo="esphome-docs" /> by <GHUser name="JonathanTreffler" />
+- docs: Update uart.rst <PR number={771} repo="esphome-docs" /> by <GHUser name="sublime93" />
+- docs: Update index.rst <PR number={773} repo="esphome-docs" /> by <GHUser name="damanti-me" />
+- docs: HM3301 - Change type to calculation_type <PR number={769} repo="esphome-docs" /> by <GHUser name="rdehuyss" />
+- docs: Update diy.rst <PR number={781} repo="esphome-docs" /> by <GHUser name="Dilbert66" />
+- docs: Update docker architectures in getting started <PR number={780} repo="esphome-docs" /> by <GHUser name="jesserockz" />
+- docs: Remove bh7150 API reference <PR number={784} repo="esphome-docs" /> by <GHUser name="JeffResc" />
+- docs: Add 2.13in-ttgo-b73 to list of waveshare models <PR number={786} repo="esphome-docs" /> by <GHUser name="davewongillies" />
+- docs: Typo: connedted -> connected <PR number={787} repo="esphome-docs" /> by <GHUser name="johanvanderkuijl" />
+- docs: Update edit URL on Sonoff Basic page <PR number={785} repo="esphome-docs" /> by <GHUser name="JeffResc" />
+- docs: Update Sonoff Mini <PR number={783} repo="esphome-docs" /> by <GHUser name="debsahu" />
+- docs: Set correct link to ESPColor struct <PR number={788} repo="esphome-docs" /> by <GHUser name="cdrfun" />
+- docs: Add battery_level note for xiaomi_hhccjcy01 <PR number={761} repo="esphome-docs" /> by <GHUser name="axilleas" />
+- docs: Corrected the example pin mapping to GPIO mapping. <PR number={789} repo="esphome-docs" /> by <GHUser name="shaeed" />
+- esphome: fix chip_rotation: 180 <PR number={1321} /> by <GHUser name="ssieb" />
+- docs: Fix links, moved to gists <PR number={802} repo="esphome-docs" /> by <GHUser name="glmnet" />
+- docs: Update wifi.rst <PR number={795} repo="esphome-docs" /> by <GHUser name="Frankster-NL" />
+- docs: BME680 default address is 0x76 <PR number={792} repo="esphome-docs" /> by <GHUser name="trvrnrth" />
+- docs: Individual BMXXXXX sensor configs are optional <PR number={791} repo="esphome-docs" /> by <GHUser name="trvrnrth" />
+- esphome: Fix Light Trigger <PR number={1308} /> by <GHUser name="MartinWelsch" />
+- esphome: Fix Xiaomi merged packet parsing <PR number={1293} /> by <GHUser name="Alex9779" />
+- docs: Correct pull-up value <PR number={811} repo="esphome-docs" /> by <GHUser name="tomlut" />
+- esphome: Fix color_interlock behavior <PR number={1325} /> by <GHUser name="margau" />
+- esphome: Fix scheduler with too many cancelled timers <PR number={1309} /> by <GHUser name="glmnet" />
+- esphome: fix config check in OnlyWith configuration helper <PR number={1304} /> by <GHUser name="akomelj" />
+- esphome: fix: Incorrect time delay conversion breaks remote_transmitter_esp8266.cpp <PR number={1322} /> by <GHUser name="thejonesyboy" />
+- esphome: fix hm3301 AQICalculator is off by 1 <PR number={1331} /> by <GHUser name="ikatkov" />
+
+{/* markdownlint-enable MD013 */}
+
+## All Changelogs
+
+

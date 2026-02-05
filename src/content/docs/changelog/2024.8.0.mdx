@@ -1,0 +1,261 @@
+---
+description: "Changelog for ESPHome 2024.8.0."
+title: "ESPHome 2024.8.0 - 21st August 2024"
+slug: "changelog/2024.8.0"
+---
+
+import PR from "@components/PR.astro";
+import GHUser from "@components/GHUser.astro";
+
+
+- [LVGL Graphics](/components/lvgl/index/)
+- [Online Image](/components/online_image/)
+- [APDS9306](/components/sensor/apds9306/)
+- [Home Assistant Number](/components/number/homeassistant/)
+- [Home Assistant Switch](/components/switch/homeassistant/)
+- [BME68x via BSEC2](/components/sensor/bme68x_bsec2/)
+- [M5Stack Unit 8 Angle](/components/sensor/m5stack_8angle/)
+- [LYWSD02MMC](/components/sensor/xiaomi_ble.html#lywsd02mmc/)
+
+
+## Light and Versatile Embedded Graphics Library
+
+Or LVGL for short, has been worked on by <GHUser name="clydebarrow" /> (and multiple other users doing testing
+and documentation etc) for quite some time now and is finally ready for releasing this month. It is a very powerful
+graphics library that is able to be configured almost completely in YAML (There are some places that will require
+lambdas/c++). The [documentation](/components/lvgl/index/) is very extensive and hopefully we see
+some awesome dashboards being made with it.
+
+## Online Image
+
+<GHUser name="guillempages" /> created a new [online_image](/components/online_image/) component
+that allows your ESPHome device to download images from the internet while it is running and show them on your display.
+This can also be combined with the new LVGL component to show dynamic images for your dashboard.
+
+## Home Assistant Switch & Number
+
+New platforms have been added for `switch` and `number` to allow importing of state and controlling
+of switches and numbers that exist in Home Assistant (or another device via Home Assistant).
+This greatly simplifies controlling remote entities and will hopefully be extended to other platforms.
+
+## Thank you for your support
+
+We would like to thank all Home Assistant Cloud subscribers for their support. It allows
+[Nabu Casa](https://nabucasa.com/) to employ two developers to maintain and further develop the ESPHome project.
+
+{/* markdownlint-disable MD013 */}
+
+## Release 2024.8.1 - August 28
+
+- [lvgl] Bug fixes <PR number={7338} /> by <GHUser name="clydebarrow" />
+- [core] Clean build if the loaded integrations changed <PR number={7344} /> by <GHUser name="clydebarrow" />
+- [lvgl] Fix race condition involving numbers, switches etc. <PR number={7345} /> by <GHUser name="clydebarrow" />
+- [api] Fix sending the `once` flag on ha entity subscription <PR number={7357} /> by <GHUser name="jesserockz" />
+
+## Release 2024.8.2 - September 3
+
+- [datetime] Fix templated args <PR number={7368} /> by <GHUser name="jesserockz" />
+- Enable IPv6 when manual IPv4 is enabled <PR number={7381} /> by <GHUser name="HeMan" />
+- [core] Only clean build files with esp-idf <PR number={7388} /> by <GHUser name="jesserockz" />
+
+## Release 2024.8.3 - September 3
+
+- Bump Dockerfile dependencies <PR number={7386} /> by <GHUser name="jesserockz" />
+
+## Full list of changes
+
+### New Features
+
+- [update] Implement `update.perform` action and `update.is_available` condition <PR number={7165} /> by <GHUser name="jesserockz" /> (new-feature)
+
+### New Components
+
+- Feature/m5angle8: Add support for m5angle8 input device <PR number={6799} /> by <GHUser name="rnauber" /> (new-integration)
+- APDS9306 Ambient Light Sensor <PR number={6709} /> by <GHUser name="aodrenah" /> (new-integration)
+- [lvgl] base implementation <PR number={7116} /> by <GHUser name="clydebarrow" /> (new-integration)
+- Add runtime online image support <PR number={4710} /> by <GHUser name="guillempages" /> (new-integration)
+- [bme68x_bsec2_i2c] BME68X Temperature+Pressure+Humidity+Gas Sensor via BSEC2 <PR number={4585} /> by <GHUser name="neffs" /> (new-integration)
+- Add support for LYWSD02MMC Xiaomi device <PR number={7080} /> by <GHUser name="juanluss31" /> (new-integration)
+
+### New Platforms
+
+- [homeassistant] Native switch entity import and control <PR number={7018} /> by <GHUser name="Links2004" /> (new-platform)
+- [homeassistant] Native number entity import and control <PR number={6455} /> by <GHUser name="landonr" /> (new-platform)
+- Correct offset calibration <PR number={7228} /> by <GHUser name="descipher" /> (new-platform)
+
+### Breaking Changes
+
+- Remove deprecated argument parser <PR number={7151} /> by <GHUser name="jesserockz" /> (breaking-change)
+
+### Beta Changes
+
+- remove extra number from pronto <PR number={7263} /> by <GHUser name="ssieb" />
+- [api] Bump noise-c library version <PR number={7288} /> by <GHUser name="clydebarrow" />
+- fix some small rtttl issues <PR number={6817} /> by <GHUser name="nielsnl68" />
+- Fix overflow in ESPColorCorrection object <PR number={7268} /> by <GHUser name="g-kiss" />
+- [validation] Allow `maybe_simple_value` to not have default key in complex value <PR number={7294} /> by <GHUser name="jesserockz" />
+- [network] Always allow `enable_ipv6: false` <PR number={7291} /> by <GHUser name="dwmw2" />
+- Revert "[validation] Allow `maybe_simple_value` to not have default key in complex value" <PR number={7305} /> by <GHUser name="jesserockz" />
+- [lvgl] Bug fixes <PR number={7300} /> by <GHUser name="clydebarrow" />
+- [speaker] Fix header includes <PR number={7304} /> by <GHUser name="nielsnl68" />
+- [microphone] Fix header includes <PR number={7310} /> by <GHUser name="jesserockz" />
+- Fix RP2040 Neopixel flickering issue <PR number={7307} /> by <GHUser name="deCodeIt" />
+- add the ability to add more idf components to an existing setup <PR number={7302} /> by <GHUser name="nielsnl68" />
+- Fix waveshare 2.13" epaper stride calculation error <PR number={7303} /> by <GHUser name="serialx" />
+- [rtttl] fix STOPPED state <PR number={7323} /> by <GHUser name="NewoPL" />
+
+### All changes
+
+- [wifi] Fix EAP for IDF 5.1+, add test <PR number={7061} /> by <GHUser name="kbx81" />
+- jsn_sr04t component: AJ_SR04M compatibility mode in checksum calculation <PR number={7044} /> by <GHUser name="soeffi" />
+- [CI] compile entire web_server during tests <PR number={7084} /> by <GHUser name="tomaszduda23" />
+- [CI] Add more `improv_serial` tests <PR number={7081} /> by <GHUser name="kbx81" />
+- Bump docker/build-push-action from 6.3.0 to 6.4.0 in /.github/actions/build-image <PR number={7089} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- [CI] add web_server v1 test <PR number={7090} /> by <GHUser name="tomaszduda23" />
+- [wifi] Hostname may not be set as expected on Arduino platform <PR number={7050} /> by <GHUser name="NewoPL" />
+- Add host uart support for MacOS <PR number={7095} /> by <GHUser name="clydebarrow" />
+- Bump docker/build-push-action from 6.4.0 to 6.4.1 in /.github/actions/build-image <PR number={7102} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- [code-quality] Add some ruff configuration <PR number={7103} /> by <GHUser name="jesserockz" />
+- [web_server] move v1 code to separate file <PR number={7091} /> by <GHUser name="tomaszduda23" />
+- [validation] Add `host` to `require_framework_version` <PR number={7107} /> by <GHUser name="jesserockz" />
+- [code-quality] Tidy up some duplicate CONFIG_SCHEMA assignments <PR number={7106} /> by <GHUser name="jesserockz" />
+- Move MQTT ip discovery to deticated config option. <PR number={6673} /> by <GHUser name="Links2004" />
+- Feature/m5angle8: Add support for m5angle8 input device <PR number={6799} /> by <GHUser name="rnauber" /> (new-integration)
+- use cache to build tests for compoenents <PR number={7059} /> by <GHUser name="tomaszduda23" />
+- [modbus_controller] Add on_command_sent trigger <PR number={7078} /> by <GHUser name="leejoow" />
+- [ili9xxx] Rework delay handling <PR number={7115} /> by <GHUser name="clydebarrow" />
+- Inherit `esp32_ble_beacon` from `esp32_ble` <PR number={6908} /> by <GHUser name="jpbede" />
+- APDS9306 Ambient Light Sensor <PR number={6709} /> by <GHUser name="aodrenah" /> (new-integration)
+- Bump docker/build-push-action from 6.4.1 to 6.5.0 in /.github/actions/build-image <PR number={7119} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Bump docker/setup-qemu-action from 3.1.0 to 3.2.0 <PR number={7120} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Bump docker/login-action from 3.2.0 to 3.3.0 <PR number={7121} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Bump docker/setup-buildx-action from 3.4.0 to 3.5.0 <PR number={7122} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- [fan] fix initial FanCall to properly set speed <PR number={7113} /> by <GHUser name="kr0ner" />
+- Added ruff to pre-commit hooks <PR number={7124} /> by <GHUser name="clydebarrow" />
+- Update webserver local assets to 20240724-013115 <PR number={7126} /> by <GHUser name="esphomebot" />
+- [http_request] Allow configure buffer size on ESP-IDF <PR number={7125} /> by <GHUser name="dentra" />
+- Give more info on import errors. <PR number={7128} /> by <GHUser name="clydebarrow" />
+- [lvgl] base implementation <PR number={7116} /> by <GHUser name="clydebarrow" /> (new-integration)
+- Bump aioesphomeapi to 24.6.2 and cryptography to 43.0.0 <PR number={7131} /> by <GHUser name="bdraco" />
+- [dependabot] Group docker action bumps into single PR <PR number={7133} /> by <GHUser name="jesserockz" />
+- Add `--version` handler to cli <PR number={7150} /> by <GHUser name="jesserockz" />
+- [code-quality] Organise ethernet related imports <PR number={7152} /> by <GHUser name="jesserockz" />
+- [code-quality] Organise wifi related imports <PR number={7153} /> by <GHUser name="jesserockz" />
+- [code-quality] Organise core imports <PR number={7149} /> by <GHUser name="jesserockz" />
+- Remove deprecated argument parser <PR number={7151} /> by <GHUser name="jesserockz" /> (breaking-change)
+- Move `CONF_ON_ERROR` to const.py <PR number={7156} /> by <GHUser name="jesserockz" />
+- [code-quality] Organise esp32 imports <PR number={7154} /> by <GHUser name="jesserockz" />
+- Add microAmp and milliAmp to defined units <PR number={7157} /> by <GHUser name="FreeBear-nc" />
+- Bump docker/setup-buildx-action from 3.5.0 to 3.6.1 in the docker-actions group <PR number={7159} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- LVGL stage 2 <PR number={7129} /> by <GHUser name="clydebarrow" />
+- [pid] Add get_min_integral() and get_max_integral() <PR number={7162} /> by <GHUser name="FreeBear-nc" />
+- [code-quality] Organise bluetooth related imports <PR number={7155} /> by <GHUser name="jesserockz" />
+- http_request watchdog as a component <PR number={7161} /> by <GHUser name="oarcher" />
+- [touchscreen] Allow binary sensor to have multiple pages in config <PR number={7112} /> by <GHUser name="jesserockz" />
+- [matrix_keypad] Add `pin->setup()` to rows and cols <PR number={7163} /> by <GHUser name="AAllport" />
+- [update] Implement `update.perform` action and `update.is_available` condition <PR number={7165} /> by <GHUser name="jesserockz" /> (new-feature)
+- [lvgl] PR stage 3 <PR number={7160} /> by <GHUser name="clydebarrow" />
+- [api] `homeassistant.action` replaces `homeassistant.service` <PR number={7171} /> by <GHUser name="jesserockz" />
+- ade7953_spi wrong size specified in read_array call <PR number={7172} /> by <GHUser name="SimoPk" />
+- Bump improv library to 1.2.4 <PR number={7174} /> by <GHUser name="jesserockz" />
+- Implement 'round to nearest multiple' filter <PR number={7142} /> by <GHUser name="MrEbbinghaus" />
+- git ignore managed_components <PR number={7180} /> by <GHUser name="oarcher" />
+- [core] Eliminate nuisance messages from `build_codeowners` <PR number={7185} /> by <GHUser name="clydebarrow" />
+- [code-quality] More portable shebangs <PR number={7189} /> by <GHUser name="jesserockz" />
+- Add support for doing update entity refresh/check via API. <PR number={7190} /> by <GHUser name="jesserockz" />
+- [lvgl] Stage 4 <PR number={7166} /> by <GHUser name="clydebarrow" />
+- [esp32_improv] Update Improv library to reference new repo/version <PR number={7195} /> by <GHUser name="kahrendt" />
+- hydreon_rgxx: Fix parsing of data line <PR number={7192} /> by <GHUser name="domob1812" />
+- Remove outdated version block <PR number={7177} /> by <GHUser name="tomaszduda23" />
+- [lvgl] Stage 5 <PR number={7191} /> by <GHUser name="clydebarrow" />
+- socket: socket::set_sockaddr() for IPv4 addresses in IPv6 builds <PR number={7196} /> by <GHUser name="dwmw2" />
+- Adds MQTT component to Alarm Control panel component <PR number={7188} /> by <GHUser name="heythisisnate" />
+- [lvgl] Final stage <PR number={7184} /> by <GHUser name="clydebarrow" />
+- Move `CONF_BACKGROUND_COLOR` and `CONF_FOREGROUND_COLOR` to const.py <PR number={7202} /> by <GHUser name="jesserockz" />
+- [helpers] Set default flags of ExternalRAMAllocator to ALLOW_FAILURE <PR number={7201} /> by <GHUser name="jesserockz" />
+- Add runtime online image support <PR number={4710} /> by <GHUser name="guillempages" /> (new-integration)
+- Update i2s_audio_speaker.cppi2s_audio/speaker: Fix fallthrough compiler warning <PR number={7167} /> by <GHUser name="Mimoja" />
+- Move CONF_ITEMS/CONF_FONT/CONF_TEXT to const.py <PR number={7204} /> by <GHUser name="jesserockz" />
+- [lvgl] Fix compile error when using encoder with buttons only. <PR number={7203} /> by <GHUser name="clydebarrow" />
+- Revert "Add null GPIO pin " <PR number={6621} /> by <GHUser name="jesserockz" />
+- [remote_transmitter] Change default carrier_frequency to valid value <PR number={7176} /> by <GHUser name="iannisimo" />
+- [code-quality] Organise script imports <PR number={7198} /> by <GHUser name="jesserockz" />
+- [max31856] Use cv.frequency as validator <PR number={7212} /> by <GHUser name="jesserockz" />
+- [code-quality] Organise base entities imports <PR number={7208} /> by <GHUser name="tomaszduda23" />
+- [spi] Remove `SPIDelegateDummy` <PR number={7215} /> by <GHUser name="jesserockz" />
+- [code-quality] Apply ruff linting suggestions <PR number={7206} /> by <GHUser name="tomaszduda23" />
+- [code-quality] Organise logger imports <PR number={7205} /> by <GHUser name="tomaszduda23" />
+- [code-quality] Apply ruff linting suggestions to core <PR number={7207} /> by <GHUser name="tomaszduda23" />
+- [code-quality] fix clang-tidy sprinkler <PR number={7222} /> by <GHUser name="tomaszduda23" />
+- [code-quality] __attribute__((packed)) <PR number={7221} /> by <GHUser name="tomaszduda23" />
+- hx711: Check for DOUT going high after a reading <PR number={7214} /> by <GHUser name="dwmw2" />
+- [mqtt] Add extended device info <PR number={7194} /> by <GHUser name="dentra" />
+- [code-quality] NOLINT readability-identifier-naming <PR number={7220} /> by <GHUser name="tomaszduda23" />
+- [code-quality] Organise time imports <PR number={7219} /> by <GHUser name="tomaszduda23" />
+- [lvgl] Fix set state on updates <PR number={7227} /> by <GHUser name="clydebarrow" />
+- add missing override <PR number={7231} /> by <GHUser name="tomaszduda23" />
+- Add text_align_to_string <PR number={7243} /> by <GHUser name="MrMDavidson" />
+- [sml] Fixed crashing sml parser <PR number={7235} /> by <GHUser name="eNBeWe" />
+- Allow project name and version as improv_serial identity <PR number={7248} /> by <GHUser name="AzonInc" />
+- [lvgl] Implement default group for encoders <PR number={7242} /> by <GHUser name="clydebarrow" />
+- [bme68x_bsec2_i2c] BME68X Temperature+Pressure+Humidity+Gas Sensor via BSEC2 <PR number={4585} /> by <GHUser name="neffs" /> (new-integration)
+- [code-quality] clang-tidy media_player <PR number={7238} /> by <GHUser name="tomaszduda23" />
+- Bump docker/build-push-action from 6.5.0 to 6.6.1 in /.github/actions/build-image <PR number={7232} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- fix build error <PR number={7229} /> by <GHUser name="tomaszduda23" />
+- adjust to new python pre-commit hooks <PR number={7178} /> by <GHUser name="tomaszduda23" />
+- add windows script/setup.bat <PR number={7140} /> by <GHUser name="nielsnl68" />
+- [code-quality] add NOLINT haier_base <PR number={7236} /> by <GHUser name="tomaszduda23" />
+- [code-quality] clang-tidy bedjet <PR number={7251} /> by <GHUser name="tomaszduda23" />
+- fix name conflict with zephyr macro <PR number={7252} /> by <GHUser name="tomaszduda23" />
+- [code-quality] Apply ruff linting suggestions <PR number={7239} /> by <GHUser name="tomaszduda23" />
+- Add support for LYWSD02MMC Xiaomi device <PR number={7080} /> by <GHUser name="juanluss31" /> (new-integration)
+- [code-quality] fix clang-tidy web server <PR number={7230} /> by <GHUser name="tomaszduda23" />
+- [test][web_server] Rejig test for v3 <PR number={7110} /> by <GHUser name="RFDarter" />
+- [api] Error log when NONE Update command is sent <PR number={7247} /> by <GHUser name="oarcher" />
+- [api] Add new flag to request state/attribute once from HA only <PR number={7258} /> by <GHUser name="jesserockz" />
+- [homeassistant] Add `HOME_ASSISTANT_IMPORT_CONTROL_SCHEMA` <PR number={7259} /> by <GHUser name="jesserockz" />
+- [const] Add some units for future use and adjust case <PR number={7260} /> by <GHUser name="nkinnan" />
+- [online_image] add option to show placeholder while downloading <PR number={7083} /> by <GHUser name="guillempages" />
+- [lvgl] Add initial_focus for encoders <PR number={7256} /> by <GHUser name="clydebarrow" />
+- [code-quality] fix order in esphome/const.py <PR number={7267} /> by <GHUser name="tomaszduda23" />
+- [code-quality] fix clang-tidy network <PR number={7266} /> by <GHUser name="tomaszduda23" />
+- [code-quality] fix clang-tidy core optional <PR number={7265} /> by <GHUser name="tomaszduda23" />
+- [code-quality] Fix variable naming in base_light_effects <PR number={7237} /> by <GHUser name="tomaszduda23" />
+- [code-quality] fix clang-tidy mqtt <PR number={7253} /> by <GHUser name="tomaszduda23" />
+- [code-quality] fix clang-tidy wifi related <PR number={7254} /> by <GHUser name="tomaszduda23" />
+- Bump docker/build-push-action from 6.6.1 to 6.7.0 in /.github/actions/build-image <PR number={7269} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- [CI] Dont run full CI on `build-image` action changes <PR number={7270} /> by <GHUser name="jesserockz" />
+- Implement ByteBuffer <PR number={6878} /> by <GHUser name="clydebarrow" />
+- Add min and max brightness parameters for Light dim_relative Action <PR number={6971} /> by <GHUser name="PaoloTK" />
+- [homeassistant] Native switch entity import and control <PR number={7018} /> by <GHUser name="Links2004" /> (new-platform)
+- [homeassistant] Native number entity import and control <PR number={6455} /> by <GHUser name="landonr" /> (new-platform)
+- [lvgl] Rework events to avoid feedback loops <PR number={7262} /> by <GHUser name="clydebarrow" />
+- Add `color_filter_opa` style property <PR number={7276} /> by <GHUser name="clydebarrow" />
+- [code-quality] fix clang-tidy wake_on_lan <PR number={7275} /> by <GHUser name="tomaszduda23" />
+- [code-quality] fix readability-braces-around-statements <PR number={7273} /> by <GHUser name="tomaszduda23" />
+- [mqtt] fix missing initializer in MQTTClientComponent::disable_discovery <PR number={7271} /> by <GHUser name="oarcher" />
+- [code-quality] fix readability-named-parameter <PR number={7272} /> by <GHUser name="tomaszduda23" />
+- support illuminance for airthings wave plus device <PR number={5203} /> by <GHUser name="MadMonkey87" />
+- [micro_wake_word] Bump ESPMicroSpeechFeatures version to 1.1.0 <PR number={7249} /> by <GHUser name="kahrendt" />
+- Implement the finish() method and action. implement the is_stopped condition <PR number={7255} /> by <GHUser name="nielsnl68" />
+- Correct offset calibration <PR number={7228} /> by <GHUser name="descipher" /> (new-platform)
+- remove extra number from pronto <PR number={7263} /> by <GHUser name="ssieb" />
+- [api] Bump noise-c library version <PR number={7288} /> by <GHUser name="clydebarrow" />
+- fix some small rtttl issues <PR number={6817} /> by <GHUser name="nielsnl68" />
+- Fix overflow in ESPColorCorrection object <PR number={7268} /> by <GHUser name="g-kiss" />
+- [validation] Allow `maybe_simple_value` to not have default key in complex value <PR number={7294} /> by <GHUser name="jesserockz" />
+- [network] Always allow `enable_ipv6: false` <PR number={7291} /> by <GHUser name="dwmw2" />
+- Revert "[validation] Allow `maybe_simple_value` to not have default key in complex value" <PR number={7305} /> by <GHUser name="jesserockz" />
+- [lvgl] Bug fixes <PR number={7300} /> by <GHUser name="clydebarrow" />
+- [speaker] Fix header includes <PR number={7304} /> by <GHUser name="nielsnl68" />
+- [microphone] Fix header includes <PR number={7310} /> by <GHUser name="jesserockz" />
+- Fix RP2040 Neopixel flickering issue <PR number={7307} /> by <GHUser name="deCodeIt" />
+- add the ability to add more idf components to an existing setup <PR number={7302} /> by <GHUser name="nielsnl68" />
+- Fix waveshare 2.13" epaper stride calculation error <PR number={7303} /> by <GHUser name="serialx" />
+- [rtttl] fix STOPPED state <PR number={7323} /> by <GHUser name="NewoPL" />
+
+{/* markdownlint-enable MD013 */}
+
+## All Changelogs
+
+

@@ -1,0 +1,195 @@
+---
+description: "Changelog for ESPHome 2023.5.0."
+title: "ESPHome 2023.5.0 - 17th May 2023"
+slug: "changelog/2023.5.0"
+---
+
+import PR from "@components/PR.astro";
+import GHUser from "@components/GHUser.astro";
+
+
+- [Speaker Core](/components/speaker/index/)
+- [I2S Speaker](/components/speaker/i2s_audio/)
+- [MLX90614](/components/sensor/mlx90614/)
+- [MAX6956 I/O expander - I²C Bus](/components/max6956/)
+- [PCA6416A I/O Expander](/components/pca6416a/)
+- [HYT271](/components/sensor/hyt271/)
+- [GP8403](/components/output/gp8403/)
+- [ESP32 RMT LED Strip](/components/light/esp32_rmt_led_strip/)
+
+
+## Speakers
+
+Following on from last months release adding [microphones](/components/microphone/index/),
+this release adds [speaker](/components/speaker/index/) support!
+
+These new changes allows the [Voice Assistant](/components/voice_assistant/) to request the raw audio
+stream response from Home Assistant to playback without using a full [Media Player](/components/media_player/).
+This has much lower latency and allows for a much more responsive voice assistant experience.
+
+## More Microphones
+
+This release also adds a bit more configuration for the i2s_audio microphone components.
+There is a breaking-change that requires new configuration fields to be added in YAML.
+See the [microphone documentation](/components/microphone/i2s_audio/) for the configuration details,
+but below is a small example for the M5Stack Atom Echo.
+
+```yaml
+# Old
+microphone:
+  platform: i2s_audio
+  i2s_din_pin: GPIO23
+  id: my_microphone
+
+# New
+microphone:
+  platform: i2s_audio
+  i2s_din_pin: GPIO23
+  adc_type: external
+  pdm: false
+```
+
+{/* markdownlint-disable MD013 */}
+
+## Release 2023.5.1 - May 18
+
+- Remove i2c dependency from ttp229_bsf <PR number={4851} /> by <GHUser name="jesserockz" />
+- Sprinkler fixes <PR number={4816} /> by <GHUser name="kbx81" />
+
+## Release 2023.5.2 - May 22
+
+- Fix i2s_audio media_player mutex acquisition <PR number={4867} /> by <GHUser name="kroimon" />
+
+## Release 2023.5.3 - May 22
+
+- Allow microphone channel to be specified in config <PR number={4871} /> by <GHUser name="jesserockz" />
+- [PSRam] Change log unit to KB to minimize rounding error. <PR number={4872} /> by <GHUser name="Fabian-Schmidt" />
+
+## Release 2023.5.4 - May 24
+
+- [internal_temperature] ESP32-S3 needs ESP IDF V4.4.3 or higher <PR number={4873} /> by <GHUser name="Fabian-Schmidt" />
+- Update cover.h for compile errors with stop() <PR number={4879} /> by <GHUser name="Davrosx" />
+- Print ESPHome version when running commands <PR number={4883} /> by <GHUser name="jesserockz" />
+- fix modbus sending FP32_R values <PR number={4882} /> by <GHUser name="ssieb" />
+- Fix esp32_rmt_led_strip color modes <PR number={4886} /> by <GHUser name="jesserockz" />
+
+## Release 2023.5.5 - May 29
+
+- Fix version printing not breaking yaml parsing <PR number={4904} /> by <GHUser name="jesserockz" />
+
+## Full list of changes
+
+### New Components
+
+- Add mlx90614 sensors <PR number={3749} /> by <GHUser name="jesserockz" /> (new-integration)
+- Add PCA6416A Support <PR number={4681} /> by <GHUser name="Mat931" /> (new-integration)
+- Add support for hyt271 <PR number={4282} /> by <GHUser name="Philippe12" /> (new-integration)
+- Max6956 support added <PR number={3764} /> by <GHUser name="looping40" /> (new-integration)
+- Speaker support <PR number={4743} /> by <GHUser name="jesserockz" /> (new-integration)
+- Add gp8403 output component <PR number={4495} /> by <GHUser name="jesserockz" /> (new-integration)
+- Create esp32 rmt addressable light driver <PR number={4708} /> by <GHUser name="jesserockz" /> (new-integration)
+- Add host target platform <PR number={4783} /> by <GHUser name="jesserockz" /> (new-integration)
+
+### Breaking Changes
+
+- Remove climate legacy away flags <PR number={4744} /> by <GHUser name="jesserockz" /> (breaking-change)
+- Revert "Template sensors always publish on update interval (#2224)" <PR number={4774} /> by <GHUser name="nuttytree" /> (breaking-change)
+
+### Beta Changes
+
+- Fixed access point for ESP32 IDF platform <PR number={4784} /> by <GHUser name="HeMan" />
+- Remove AUTO_LOAD from apds9960 <PR number={4746} /> by <GHUser name="jesserockz" />
+- Supposed to fix #4069, by changing the default value to 0s (timeunit … <PR number={4806} /> by <GHUser name="Alex1602" />
+- Wording <PR number={4805} /> by <GHUser name="fgsch" />
+- Tuya: Prevent loop when setting colors on case-sensitive dps <PR number={4809} /> by <GHUser name="richardhopton" />
+- Fix i2s media player volume control <PR number={4813} /> by <GHUser name="jesserockz" />
+- Dont try stop if not actually started <PR number={4814} /> by <GHUser name="jesserockz" />
+- Fix missing stop trait in send_cover_info <PR number={4826} /> by <GHUser name="RoboMagus" />
+- Bump aioesphomeapi from 13.7.2 to 13.7.5 <PR number={4830} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Update PulseLightEffect with range brightness <PR number={4820} /> by <GHUser name="max246" />
+- Bump esphome-dashboard to 20230516.0 <PR number={4831} /> by <GHUser name="jesserockz" />
+- Fix time period validation for the auto cleaning interval <PR number={4811} /> by <GHUser name="fgsch" />
+- Bump tzlocal from 4.2 to 5.0.1 <PR number={4829} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Start UART assignment at UART0 if the logger is not enabled or is not configured for hardware logging on ESP32 <PR number={4762} /> by <GHUser name="spectrumjade" />
+- Synchronise Device Classes from Home Assistant <PR number={4825} /> by [@github-actions[bot]](https://github.com/github-actions[bot])
+- support sending keys to the collector <PR number={4838} /> by <GHUser name="ssieb" />
+- handle Wiegand 8-bit keys <PR number={4837} /> by <GHUser name="ssieb" />
+
+### All changes
+
+- Only allow 5 jobs from each CI run to be in parallel <PR number={4682} /> by <GHUser name="jesserockz" />
+- Add Bayesian type for binary_sensor_map component <PR number={4640} /> by <GHUser name="kahrendt" />
+- Bump aioesphomeapi from 13.5.1 to 13.7.0 <PR number={4676} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Bump peter-evans/create-pull-request from 4 to 5 <PR number={4661} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Bump docker/build-push-action from 3 to 4 <PR number={4367} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Keep Device Class in Flash. <PR number={4639} /> by <GHUser name="Fabian-Schmidt" />
+- Add support for passive WiFi scanning <PR number={4666} /> by <GHUser name="BellaCoola" />
+- Initial attempt at supporting ESP-IDF 5.0.0 <PR number={4364} /> by <GHUser name="kbx81" />
+- Get Sunrise & Sunset for a Specific Date <PR number={4712} /> by <GHUser name="RebbePod" />
+- Add `supports_stop` trait to Cover <PR number={3897} /> by <GHUser name="amomchilov" />
+- Bump aioesphomeapi from 13.7.0 to 13.7.1 <PR number={4725} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Add on_tag_removed trigger for RC522 <PR number={4742} /> by <GHUser name="kbx81" />
+- Fix 'blutooth' typo in esp32_ble component <PR number={4738} /> by <GHUser name="RoboMagus" />
+- Bump pylint from 2.17.2 to 2.17.3 <PR number={4740} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Bump tornado from 6.2 to 6.3.1 <PR number={4741} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Bump pytest from 7.3.0 to 7.3.1 <PR number={4686} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Expand the platformio dep installer to also install platforms and tools <PR number={4716} /> by <GHUser name="jesserockz" />
+- Remove climate legacy away flags <PR number={4744} /> by <GHUser name="jesserockz" /> (breaking-change)
+- Add mlx90614 sensors <PR number={3749} /> by <GHUser name="jesserockz" /> (new-integration)
+- Move am43 sensor code and remove auto load on cover <PR number={4631} /> by <GHUser name="jesserockz" />
+- Fix assumed_state switch webserver <PR number={4259} /> by <GHUser name="RoboMagus" />
+- Bump aioesphomeapi from 13.7.1 to 13.7.2 <PR number={4753} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Bump git version in Dockerfile <PR number={4763} /> by <GHUser name="jesserockz" />
+- Power down PN532 before deep sleep <PR number={4707} /> by <GHUser name="tracestep" />
+- Switch ESPAsyncTCP-esphome to esphome fork <PR number={4764} /> by <GHUser name="jesserockz" />
+- Bump pyupgrade from 3.3.1 to 3.3.2 <PR number={4751} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Only pre-install libraries in docker images <PR number={4766} /> by <GHUser name="jesserockz" />
+- Add PCA6416A Support <PR number={4681} /> by <GHUser name="Mat931" /> (new-integration)
+- play_folder bugfix and addition of play_mp3 <PR number={4758} /> by <GHUser name="llluis" />
+- RF Codec for Drayton Digistat heating controller <PR number={4494} /> by <GHUser name="marshn" />
+- Add support for hyt271 <PR number={4282} /> by <GHUser name="Philippe12" /> (new-integration)
+- Add support for BLE passkey authentication <PR number={4258} /> by <GHUser name="Mat931" />
+- Add support for V2 of the waveshare 5.83in e-paper display. <PR number={3660} /> by <GHUser name="cooki35" />
+- Max6956 support added <PR number={3764} /> by <GHUser name="looping40" /> (new-integration)
+- Bump zeroconf from 0.56.0 to 0.60.0 <PR number={4767} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Revert "Template sensors always publish on update interval (#2224)" <PR number={4774} /> by <GHUser name="nuttytree" /> (breaking-change)
+- update schema gen to 2023.4.0 <PR number={4772} /> by <GHUser name="glmnet" />
+- Speaker support <PR number={4743} /> by <GHUser name="jesserockz" /> (new-integration)
+- Add gp8403 output component <PR number={4495} /> by <GHUser name="jesserockz" /> (new-integration)
+- Create esp32 rmt addressable light driver <PR number={4708} /> by <GHUser name="jesserockz" /> (new-integration)
+- Bump ESP32-audioI2s to 2.0.7 <PR number={4796} /> by <GHUser name="jesserockz" />
+- SM2135 Add optional current configuration, avoid communication failures. <PR number={3850} /> by <GHUser name="BoukeHaarsma23" />
+- Fix ezo parsing <PR number={4792} /> by <GHUser name="alfredopironti" />
+- [ili9xxx] Improve fill operation performance <PR number={4702} /> by <GHUser name="Fabian-Schmidt" />
+- Add host target platform <PR number={4783} /> by <GHUser name="jesserockz" /> (new-integration)
+- Add more envs to root platformio <PR number={4799} /> by <GHUser name="jesserockz" />
+- Keep Unit of Measurement in Flash. <PR number={4719} /> by <GHUser name="Fabian-Schmidt" />
+- [display] Small display print performance improvement <PR number={4788} /> by <GHUser name="Fabian-Schmidt" />
+- Fixed calculation of start and end dhcp range <PR number={4785} /> by <GHUser name="HeMan" />
+- Add more configuration for microphones - i2s/pdm/adc <PR number={4775} /> by <GHUser name="jesserockz" />
+- Wrap VA code <PR number={4800} /> by <GHUser name="jesserockz" />
+- Make i2s_audio bclk_pin optional <PR number={4801} /> by <GHUser name="jesserockz" />
+- Validate project details are set for dashboard_import <PR number={4802} /> by <GHUser name="jesserockz" />
+- Fixed access point for ESP32 IDF platform <PR number={4784} /> by <GHUser name="HeMan" />
+- Remove AUTO_LOAD from apds9960 <PR number={4746} /> by <GHUser name="jesserockz" />
+- Supposed to fix #4069, by changing the default value to 0s (timeunit … <PR number={4806} /> by <GHUser name="Alex1602" />
+- Wording <PR number={4805} /> by <GHUser name="fgsch" />
+- Tuya: Prevent loop when setting colors on case-sensitive dps <PR number={4809} /> by <GHUser name="richardhopton" />
+- Fix i2s media player volume control <PR number={4813} /> by <GHUser name="jesserockz" />
+- Dont try stop if not actually started <PR number={4814} /> by <GHUser name="jesserockz" />
+- Fix missing stop trait in send_cover_info <PR number={4826} /> by <GHUser name="RoboMagus" />
+- Bump aioesphomeapi from 13.7.2 to 13.7.5 <PR number={4830} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Update PulseLightEffect with range brightness <PR number={4820} /> by <GHUser name="max246" />
+- Bump esphome-dashboard to 20230516.0 <PR number={4831} /> by <GHUser name="jesserockz" />
+- Fix time period validation for the auto cleaning interval <PR number={4811} /> by <GHUser name="fgsch" />
+- Bump tzlocal from 4.2 to 5.0.1 <PR number={4829} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Start UART assignment at UART0 if the logger is not enabled or is not configured for hardware logging on ESP32 <PR number={4762} /> by <GHUser name="spectrumjade" />
+- Synchronise Device Classes from Home Assistant <PR number={4825} /> by [@github-actions[bot]](https://github.com/github-actions[bot])
+- support sending keys to the collector <PR number={4838} /> by <GHUser name="ssieb" />
+- handle Wiegand 8-bit keys <PR number={4837} /> by <GHUser name="ssieb" />
+
+{/* markdownlint-enable MD013 */}
+
+## All Changelogs
+
+

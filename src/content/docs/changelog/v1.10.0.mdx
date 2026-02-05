@@ -1,0 +1,242 @@
+---
+description: "Changelog for esphomelib version 1.10.0."
+title: "Changelog - Version 1.10.0"
+slug: "changelog/v1.10.0"
+---
+
+import PR from "@components/PR.astro";
+import GHUser from "@components/GHUser.astro";
+
+{/* markdownlint-disable MD013 */}
+
+- [Native API](/components/api/)
+- [Dashboard+Hass.io Add-On Updates](/guides/getting_started_hassio/)
+- [Better Custom Components](/components/sensor/custom/)
+- [APDS9960](/components/sensor/apds9960/)
+- [MAX31855](/components/sensor/max31855/)
+- [ULN2003](/components/stepper/index/)
+- [NeoPixelBus Light](/components/light/neopixelbus/)
+- [ESP32 Ethernet](/components/ethernet/)
+- [Home Assistant Sensor](/components/sensor/homeassistant/)
+
+
+## Native API
+
+This release brings with it lots of goodies, but most important is the [native API](/components/api/).
+MQTT has been the only way this project communicated with Home Assistant for a while now. And MQTT is a great protocol
+to get started, but it always had problems:
+
+- Another service to install - Users would need to install an MQTT broker in order to get started.
+- MQTT Discovery - Home Assistant's MQTT discovery has been great, but always had problems like retained messages etc.
+- Inefficient - A typical MQTT message for sending a binary sensor state is about 70 bytes long, and the MQTT library
+  we used was quite inefficient with runtime memory allocation too.
+
+So I decided to do something against that: ESPHome now features a native protocol (based on TCP+protocol buffers)
+that addresses these issues and has a
+[component on the Home Assistant](https://rc--home-assistant-docs.netlify.com/components/esphome/)
+side too.
+
+**Does this mean MQTT will be removed?**
+
+No! MQTT is an awesome protocol with easy integration for many tools like Node-RED and custom MQTT clients.
+This native API is only for replacing communications with Home Assistant, so *if* anything gets removed it's
+MQTT auto discovery for Home Assistant. Of course both can be used together at the same time too.
+
+**Should I switch to the native API immediately?**
+
+You definitely can, but a word of warning first: The MQTT implementation has seen tons of fixes for small quirks
+in how the ESP SDK works. From my own testing, the native API seems to be quite stable - but I'm sure it'll take a bit
+of time to find+fix some final bugs.
+
+**How do I migrate from MQTT?**
+
+First, make sure you run at least Home Assistant 0.85.0 (currently a
+[beta release](https://www.home-assistant.io/docs/installation/updating/#run-the-beta-version)).
+Then, go through the migration guide here (removed).
+
+## Python 3 Compatibility
+
+PlatformIO has finally implemented [python 3 support](https://github.com/platformio/platformio-core/issues/895)
+after some quick changes, ESPHome is now also compatible with python 3.5+. So with this new release
+you can try ESPHome with Python 3 already. Just make sure to install the development version of platformio first:
+
+```bash
+pip3 install -U https://github.com/platformio/platformio-core/archive/develop.zip
+```
+
+I don't particularly like python 2, and in a year's time support for it will officially be ended. So the plan for
+ESPHome is to drop python 2 as soon as possible. Once platformio releases version 4.0 (with python 3 support), I
+will go through and check everything still works. Maybe ESPHome will support python 2 for 1 or 2 releases after that
+but really I want to drop support for python 2 as soon as possible.
+
+## Dashboard & Hass.io Addon Updates
+
+The dashboard and Hass.io addon have seen a lot of ❤️ in this release: The dashboard has seen tons of small
+changes to make the user experience better and the Hass.io addon has been completely re-written with the
+[Hass.io Community Addon Images](https://github.com/hassio-addons) as the base.
+
+- The dashboard now features a built-in YAML editor.
+- Configuration wizard now shows a list of boards directly, so you just have to choose them from a dropdown.
+- Hass.io Addon: You can log in using your Home Assistant credentials now.
+- And many more changes (colored logs, auto-scroll, node status, update notifications, ...)
+
+## Rename: `esphome{lib,yaml}` -> ESPHome
+
+The name esphomelib and esphomeyaml were too technical, and this project has changed a lot since the first
+published release (the yaml part didn't even exist back then). So ... the project is being re-branded slightly:
+
+- esphomeyaml -> ESPHome
+- esphomelib -> ESPHome Core
+- esphomedocs -> ESPHome Docs
+
+As you see, the yaml project is now getting the "fancy" name, because that's by far the best way to use this framework.
+As part of this change, using the *core* framework directly from code (without YAML) is being deprecated, the API docs
+have long been inaccurate now and users should really switch over to ESPHome through YAML
+
+Of course that doesn't mean you won't be able to write custom code. In fact, this release also contains lots of
+new guides and changes to make creating custom components much easier. The goal is to have a project where users
+can use YAML for the boring boilerplate code but can completely customize everything with custom components.
+
+This migration is of course huge - almost every single file in the code+docs base has `esphome{lib,yaml}` somewhere
+in it, so it will take time until the next release for this to be finished.
+
+## Breaking Changes
+
+- Previously, esphomelib would by default only publish every 15th sensor value in order to provide averaged values.
+  However, that often confused users and I now decided to remove it **and** set the default update interval of
+  all components to `60s` instead of the previous `15s`. You can get back the old behavior by setting
+
+```yaml
+    sensor:
+      - platform: ...  # enter platform here
+        # other settings
+        update_interval: 15s
+        filters:
+          - sliding_window_moving_average: {}
+```
+
+- The fastled effects have been renamed to `addressable_` for the new
+  [Neopixelbus](/components/light/neopixelbus/) integration. See the validation error message
+  for more info.
+
+## Other notable changes
+
+- You can now configured multiple WiFi networks to connect to. The best one will be chosen automatically.
+  This is along with a *complete* rewrite of the WiFi component which now interacts directly with the ESP SDK.
+  ([Connecting to Multiple Networks](/components/wifi#wifi-networks))
+
+- GPIO Switches have a new option `restore_mode` to configure how their values should be restored on boot.
+  ([Gpio](/components/switch/gpio/))
+
+- Added [Substitutions](/components/substitutions/) to reduce repeating across configs.
+- Validation error messages are now displayed even better. Now all errors are shown with the exact context
+  where the error appeared. Try it, it's so much better. Next step will be to upgrade to a better YAML reader
+  to provide better error messages when the YAML syntax is invalid.
+
+- Added a bunch of guides (and helpers) for creating custom components. Also new: `esphomeyaml.libraries`,
+  `esphomeyaml.includes` and `esphomeyaml.platformio_options` ([Esphome](/components/esphome/))
+
+- Saved a lot of flash space on ESP8266 boards. Previously, platformio would allocate about 1/4 of flash for SPIFFS,
+  but esphomelib doesn't use that so now you have that as extra storage. Thanks `@brandond [http://github.com/brandond](http://github.com/brandond)`
+
+- You can now use Home Assistant to get time in ESPHome, so no more need for SNTP. See [Time](/components/time/).
+
+## Release 1.10.1 - January 13
+
+- docs: Fix substitutions example & api intro text <PR number={117} repo="esphome-docs" /> by <GHUser name="thubot" />
+- lib: Fix while action not resetting is_running <PR number={378} repo="esphome-core" />
+- lib: Fix remote transmitter ESP32 repeat wait <PR number={376} repo="esphome-core" />
+- lib: Fix addressable lights <PR number={375} repo="esphome-core" />
+- yaml: Fix ESP32 not decoding stacktrace on broken PC <PR number={330} />
+- docs: Fixed missing link to BME cookbook <PR number={120} repo="esphome-docs" /> by <GHUser name="Mynasru" />
+- lib: Fix addressable flicker effect <PR number={383} repo="esphome-core" />
+- lib: NeoPixelBus: fix handling of white color component <PR number={384} repo="esphome-core" /> by <GHUser name="badbadc0ffee" />
+- lib: Fix trigger not being optional <PR number={381} repo="esphome-core" />
+- docs: Add WiFi fast connect <PR number={121} repo="esphome-docs" />
+- yaml: Fix AsyncTCP compilation on ESP32 with Arduino breaking change <PR number={334} />
+- yaml: Fix show logs with MQTT and dashboard <PR number={332} />
+- lib: Add WiFi fast connect mode <PR number={385} repo="esphome-core" />
+- lib: Fix API Server has deep sleep <PR number={386} repo="esphome-core" />
+- yaml: Introduce wifi fast connect mode <PR number={333} />
+- lib: Fix GPIO Switch not handling inverted <PR number={387} repo="esphome-core" />
+- lib: Expose NeoPixelBus Controller <PR number={388} repo="esphome-core" />
+- yaml: Pin platformio platforms <PR number={335} />
+- lib: Fix ble tracker compile error <PR number={390} repo="esphome-core" />
+
+## All changes
+
+- docs: CSE7766 Update Interval <PR number={91} repo="esphome-docs" />
+- docs: add baud_rate; typo on sensor type <PR number={90} repo="esphome-docs" /> by <GHUser name="drewp" />
+- docs: Fix docs for LCD display strftime <PR number={95} repo="esphome-docs" />
+- lib: Make CSE7766 a polling sensor <PR number={305} repo="esphome-core" />
+- lib: Supply clang-format file for contributors <PR number={290} repo="esphome-core" />
+- yaml: Time SNTP validate server format <PR number={254} />
+- yaml: Fix GPIO input schema validator <PR number={253} />
+- lib: Implement custom sensor platform <PR number={274} repo="esphome-core" />
+- lib: Only compile code stuff if necessary <PR number={309} repo="esphome-core" />
+- yaml: [Huge] Util Refactor, Dashboard Improvements, Hass.io Auth API, Better Validation Errors, Conditions, Custom Platforms, Substitutions <PR number={234} />
+- docs: Fix copy paste error <PR number={100} repo="esphome-docs" /> by <GHUser name="oscar-b" />
+- lib: Fix large JSON payloads being cut off <PR number={323} repo="esphome-core" /> by <GHUser name="quazzie" />
+- docs: Add Wikipedia link to tz database zones list <PR number={105} repo="esphome-docs" /> by <GHUser name="apeeters" />
+- docs: Add pins for Shelly 2 <PR number={103} repo="esphome-docs" /> by <GHUser name="oscar-b" />
+- lib: Native Esphomelib API <PR number={322} repo="esphome-core" />
+- yaml: Add native ESPHome API <PR number={265} />
+- lib: Add support for MAX31855 sensor <PR number={310} repo="esphome-core" /> by <GHUser name="sherbang" />
+- docs: Documentation for MAX31855 sensor <PR number={97} repo="esphome-docs" /> by <GHUser name="sherbang" />
+- lib: Fix typo in Output Switch <PR number={307} repo="esphome-core" />
+- lib: Fix PCA9685 with many channels <PR number={304} repo="esphome-core" />
+- docs: Fixed typo in Sonoff R2 Cover example <PR number={112} repo="esphome-docs" /> by <GHUser name="voicevon" />
+- lib: Dump native API Server config on boot <PR number={338} repo="esphome-core" /> by <GHUser name="voicevon" />
+- lib: Split Automation headers from implementation <PR number={349} repo="esphome-core" />
+- lib: Travis update <PR number={350} repo="esphome-core" />
+- lib: Fix API Server logs <PR number={347} repo="esphome-core" />
+- lib: WiFi Better logging for ESP8266 <PR number={346} repo="esphome-core" />
+- lib: API Server Watchdog <PR number={345} repo="esphome-core" />
+- lib: GPIO Switch Restore Mode <PR number={344} repo="esphome-core" />
+- lib: Fix Remote Receiver Overflow for ESP8266 <PR number={348} repo="esphome-core" />
+- yaml: Api fixes <PR number={289} />
+- yaml: Fix host network <PR number={280} />
+- yaml: Fix ESP8266 verbose logging <PR number={291} />
+- yaml: API Server Watchdog <PR number={290} />
+- lib: Implement Addressable Lights Base <PR number={243} repo="esphome-core" />
+- yaml: Disable SPIFFS to save flash space <PR number={288} />
+- yaml: Fix MQTT message trigger <PR number={282} />
+- yaml: GPIO Switch Restore Mode <PR number={287} />
+- yaml: Addressable Lights <PR number={294} />
+- yaml: Toggle Auto-Update Check With Environment Variable <PR number={292} />
+- yaml: Make compatible with python 3 <PR number={281} />
+- docs: Fix copy/paste error in turn_off_action <PR number={113} repo="esphome-docs" /> by <GHUser name="wutr" />
+- yaml: GPIO Switch Fix restore_mode validator <PR number={296} /> by <GHUser name="yottatsa" />
+- yaml: Fixes for Python 3 Compatibility <PR number={297} />
+- lib: Stop old template action when new one is started <PR number={354} repo="esphome-core" />
+- lib: Add APDS-9960 support <PR number={286} repo="esphome-core" />
+- lib: Change default update interval to 60 seconds <PR number={356} repo="esphome-core" />
+- lib: ESP32 Ethernet support <PR number={288} repo="esphome-core" />
+- lib: Add ULN2003 support <PR number={301} repo="esphome-core" />
+- lib: Add clean discovery option to simplify transition to native API <PR number={357} repo="esphome-core" />
+- yaml: Add clean MQTT discovery option for native API <PR number={302} />
+- yaml: Add APDS9960 Support <PR number={300} />
+- lib: Add neopixelbus component <PR number={352} repo="esphome-core" />
+- yaml: Add neopixelbus component <PR number={303} />
+- yaml: Add support for MAX31855 sensor <PR number={258} /> by <GHUser name="sherbang" />
+- yaml: ULN2003 Support <PR number={304} />
+- yaml: Add ESP32 Ethernet Support <PR number={301} />
+- docs: total_daily_energy doesn't have pin option <PR number={114} repo="esphome-docs" /> by <GHUser name="oscar-b" />
+- docs: Getting started HassIO - USD device discovery <PR number={110} repo="esphome-docs" /> by <GHUser name="DavidDeSloovere" />
+- docs: Mismatch in example and text <PR number={109} repo="esphome-docs" /> by <GHUser name="wellsi" />
+- docs: BME280 environment cookbook entry <PR number={107} repo="esphome-docs" /> by <GHUser name="Mynasru" />
+- docs: Update getting_started_command_line.rst <PR number={102} repo="esphome-docs" /> by <GHUser name="doskoi" />
+- docs: Updated the multi click example code block <PR number={92} repo="esphome-docs" /> by <GHUser name="cooljimy84" />
+- docs: Add step to setting up devices <PR number={101} repo="esphome-docs" /> by <GHUser name="magnusoverli" />
+- yaml: Update beta config <PR number={305} />
+- yaml: Fix component.update action <PR number={308} />
+- yaml: OTA don't error when upgrading from no password to password mode <PR number={309} />
+- yaml: use full space on small devices <PR number={310} /> by <GHUser name="escoand" />
+- lib: Fix interval compilation error <PR number={364} repo="esphome-core" />
+- yaml: Fix interval trigger <PR number={313} />
+
+{/* markdownlint-enable MD013 */}
+
+## All Changelogs
+
+

@@ -1,0 +1,21 @@
+---
+/**
+ * GHUser Component
+ * Creates a link to a GitHub user profile.
+ *
+ * Usage in MDX:
+ * <GHUser name="octocat" />
+ * <GHUser name="octocat" text="The Octocat" />
+ */
+
+interface Props {
+  name: string;
+  text?: string;
+}
+
+const { name, text } = Astro.props;
+const displayText = text || `@${name}`;
+const url = `https://github.com/${name}`;
+---
+
+<a href={url} target="_blank" rel="noopener noreferrer">{displayText}</a>

@@ -1,0 +1,254 @@
+---
+description: "Changelog for ESPHome version 1.19.0."
+title: "Changelog - Version 1.19.0 - 16th June 2021"
+slug: "changelog/v1.19.0"
+---
+
+import PR from "@components/PR.astro";
+import GHUser from "@components/GHUser.astro";
+
+{/* markdownlint-disable MD013 */}
+
+- [Improv](/components/esp32_improv/)
+- [SM2135](/components/output/sm2135/)
+- [XPT2046](/components/binary_sensor/xpt2046/)
+- [SDM Meter](/components/sensor/sdm_meter/)
+- [CS5460A](/components/sensor/cs5460a/)
+
+Wow. Ok, so this release may not look big, but there are a number of new features that are not new components.
+
+## Improv
+
+[Improv Wi-Fi](/components/esp32_improv/) is a new standard that stands for **Improved Provisioning of Wi-Fi
+Credentials**. What it does is allow you to provision Wi-Fi credentials to the device by using Bluetooth LE.
+Check out the website for more details at [improv-wifi.com](https://www.improv-wifi.com/).
+
+## Home Assistant Sensor Attributes
+
+For a long time now one of the top requested features was to be able to read attributes from Home Assistant
+entities into a local sensor in ESPHome. For example the brightness of a light, or the current temperature
+of a climate device. <GHUser name="frenck" /> decided to take a stab and as long as you are running at least ESPHome
+1.19.0 and Home Assistant 2021.6 then you can do this. Thanks Frenck!
+
+```yaml
+# Example configuration entry
+sensor:
+  - platform: homeassistant
+    id: current_temperature
+    entity_id: climate.living_room
+    attribute: current_temperature
+```
+
+## For the Creators
+
+There have been a few additions to the ESPHome codebase that make it easier for creators to make projects
+in ESPHome and distribute them pre-installed and ready to use. See the [new page here](/guides/creators/).
+
+## The Web Experience
+
+We have been working hard on some new tooling to make it easier for everyone to install ESPHome and other DIY
+firmwares onto their ESP-based devices. To do this we have created the
+[ESP Web Tools](https://esphome.github.io/esp-web-tools/). Big shoutout to <GHUser name="balloob" /> on most of that work!
+
+Because of these new tools, the ESPHome dashboard has gotten a slight makeover when you choose to install to a device.
+You are now given the option to install directly via WebSerial to the ESP from the browser. No more plugging into the
+server/VM running ESPHome and restarting container etc. It just works. (Provided you are using Chrome or Edge).
+
+## Command Line Interface
+
+Thanks to <GHUser name="oxan" /> for making some change to the ESPHome CLI. Instead of `esphome config.yaml run`
+we now have `esphome run config.yaml`. The old format is still accepted and will be removed in a future release,
+but there is a **breaking change** with this release which is the arguments `--upload-port` and `--serial-port` have been
+combined and changed to `--device`.
+
+## Release 1.19.1 - June 18
+
+- Update dashboard to 20210617.0 <PR number={1930} /> by <GHUser name="balloob" />
+- Fix: midea_ac: fixed query status frame <PR number={1922} /> by <GHUser name="dudanov" />
+- Improve config final validation <PR number={1917} /> by <GHUser name="OttoWinter" />
+- Replace CLIMATE_MODE_AUTO with CLIMATE_MODE_HEAT_COOL in most cases <PR number={1933} /> by <GHUser name="jesserockz" />
+
+## Release 1.19.2 - June 21
+
+- Don't send Tuya commands while currently receiving a message <PR number={1886} /> by <GHUser name="nuttytree" />
+- Fix midea_ac query frame <PR number={1940} /> by <GHUser name="dudanov" />
+- Allow wifi setup to proceed when there is no sta or ap <PR number={1931} /> by <GHUser name="jesserockz" />
+- Fix bad climate control enum <PR number={1942} /> by <GHUser name="jesserockz" />
+
+## Release 1.19.3 - June 23
+
+- Bump esphome-dashboard to 20210622.0 <PR number={1955} /> by <GHUser name="jesserockz" />
+
+## Release 1.19.4 - June 24
+
+- Rework climate traits <PR number={1941} /> by <GHUser name="OttoWinter" />
+- API raise minor version for climate changes <PR number={1947} /> by <GHUser name="OttoWinter" />
+- Disallow power_save_mode NONE if used together with BLE <PR number={1950} /> by <GHUser name="OttoWinter" />
+- Add climate preset NONE again <PR number={1951} /> by <GHUser name="OttoWinter" />
+- Compat argv parsing improvements <PR number={1952} /> by <GHUser name="OttoWinter" />
+- Bump dashboard to 20210623.0 <PR number={1958} /> by <GHUser name="jesserockz" />
+
+## Full list of changes
+
+### New Components
+
+- Add sm2135 component <PR number={1736} /> by <GHUser name="BoukeHaarsma23" /> (cherry-picked) (new-integration)
+- Add support for the XPT2046 touchscreen controller <PR number={1542} /> by <GHUser name="numo68" /> (new-integration)
+- Add support for SDMXXX energy meters <PR number={1260} /> by <GHUser name="polyfaces" /> (new-integration)
+- Add CS5460A power-meter component <PR number={1474} /> by <GHUser name="balrog-kun" /> (new-integration)
+- Added support for Xiaomi CGDK2 <PR number={1451} /> by <GHUser name="zaluthar" /> (new-integration)
+- Improv - BLE WiFi provisioning <PR number={1807} /> by <GHUser name="jesserockz" /> (new-integration) (notable-change)
+
+### Breaking Changes
+
+- Drop 128x160 ESP-32 camera resolution <PR number={1813} /> by <GHUser name="oxan" /> (breaking-change)
+- teleinfo: use text_sensor and sensor. <PR number={1403} /> by <GHUser name="0hax" /> (breaking-change)
+- CLI user experience improvements <PR number={1805} /> by <GHUser name="oxan" /> (breaking-change) (notable-change)
+
+### Notable Changes
+
+- Add attribute support to Home Assistant sensors <PR number={1770} /> by <GHUser name="frenck" /> (notable-change)
+- CLI user experience improvements <PR number={1805} /> by <GHUser name="oxan" /> (breaking-change) (notable-change)
+- Improv - BLE WiFi provisioning <PR number={1807} /> by <GHUser name="jesserockz" /> (new-integration) (notable-change)
+
+### Beta Fixes
+
+- Upgrade the version of AsyncTCP-esphome to v1.2.2 <PR number={1762} /> by <GHUser name="glmnet" /> (cherry-picked)
+- Fix build issues for idf 4.2 (Support ESP32-S2) <PR number={1433} /> by <GHUser name="misery" /> (cherry-picked)
+- Use core constants for sample duration on bh1750 <PR number={1764} /> by <GHUser name="yuvalabou" /> (breaking-change) (cherry-picked)
+- Add sm2135 component <PR number={1736} /> by <GHUser name="BoukeHaarsma23" /> (cherry-picked) (new-integration)
+- Allow RC522 components to have multiple configurations <PR number={1782} /> by <GHUser name="jesserockz" /> (cherry-picked)
+- Simplify LightCall validation <PR number={1874} /> by <GHUser name="oxan" /> (cherry-picked)
+- Simplify LightCall validation <PR number={1874} /> by <GHUser name="oxan" /> (cherry-picked)
+- BLE loop use <PR number={1882} /> by <GHUser name="jesserockz" /> (cherry-picked)
+- BLE loop use <PR number={1882} /> by <GHUser name="jesserockz" /> (cherry-picked)
+- Add support for waveshare_epaper 1.54v2 <PR number={1843} /> by <GHUser name="geoffdavis" /> (cherry-picked)
+- Add support for waveshare_epaper 1.54v2 <PR number={1843} /> by <GHUser name="geoffdavis" /> (cherry-picked)
+- Ensure wifi is in at least station mode before starting improv <PR number={1899} /> by <GHUser name="jesserockz" /> (cherry-picked)
+- Ensure wifi is in at least station mode before starting improv <PR number={1899} /> by <GHUser name="jesserockz" /> (cherry-picked)
+- Move esp32_ble_server to its own component <PR number={1898} /> by <GHUser name="jesserockz" /> (breaking-change) (cherry-picked) (new-integration)
+- Move esp32_ble_server to its own component <PR number={1898} /> by <GHUser name="jesserockz" /> (breaking-change) (cherry-picked) (new-integration)
+- Add new wizard + allow installing firmware over webserial <PR number={1887} /> by <GHUser name="balloob" /> (cherry-picked)
+- Add new wizard + allow installing firmware over webserial <PR number={1887} /> by <GHUser name="balloob" /> (cherry-picked)
+- Allow no networks or AP to be set. <PR number={1908} /> by <GHUser name="jesserockz" /> (cherry-picked)
+- Allow no networks or AP to be set. <PR number={1908} /> by <GHUser name="jesserockz" /> (cherry-picked)
+- Validate that either networks, ap, or improv is set up <PR number={1910} /> by <GHUser name="jesserockz" /> (cherry-picked)
+- Validate that either networks, ap, or improv is set up <PR number={1910} /> by <GHUser name="jesserockz" /> (cherry-picked)
+- Bump frontend to 20210614.0 <PR number={1912} /> by <GHUser name="balloob" /> (cherry-picked)
+- Bump frontend to 20210614.0 <PR number={1912} /> by <GHUser name="balloob" /> (cherry-picked)
+- fixes compatibility with esphome cfg vscode <PR number={1911} /> by <GHUser name="glmnet" /> (cherry-picked)
+- fixes compatibility with esphome cfg vscode <PR number={1911} /> by <GHUser name="glmnet" /> (cherry-picked)
+- Bump dashboard to 20210615.0 <PR number={1918} /> by <GHUser name="balloob" /> (cherry-picked)
+- Shorten the ble name to prevent crash with long device names <PR number={1920} /> by <GHUser name="jesserockz" /> (cherry-picked)
+- Fix update-all from dashboard <PR number={1924} /> by <GHUser name="frenck" />
+
+### All changes
+
+- Bump black from 20.8b1 to 21.5b0 <PR number={1745} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Bump pylint from 2.7.2 to 2.8.2 <PR number={1729} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Fix error when using %% in printf format. <PR number={1713} /> by <GHUser name="mmakaay" />
+- Update const.py <PR number={1748} /> by <GHUser name="cciprian5" />
+- Allow duration for deep_sleep.enter to be templatable <PR number={1765} /> by <GHUser name="jesserockz" />
+- Bump black from 21.5b0 to 21.5b1 <PR number={1768} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Bump flake8 from 3.9.0 to 3.9.2 <PR number={1763} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Bump pytest from 6.2.3 to 6.2.4 <PR number={1769} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Adding delay to aht10.cpp (issue #1635) <PR number={1498} /> by <GHUser name="krunkel" />
+- Mitsubishi Heat Pump - Fixed default transmit_state to be generic instead of for a specific type of heat pump <PR number={1414} /> by <GHUser name="RubyBailey" />
+- Add function to set SDS011 sensor in sleeping mode <PR number={1416} /> by <GHUser name="onde2rock" />
+- Autorepeat filter for the binary sensors <PR number={1681} /> by <GHUser name="numo68" />
+- Add action to set total pulses on pulse_meter <PR number={1757} /> by <GHUser name="jesserockz" />
+- Add more json schema generation features <PR number={1690} /> by <GHUser name="glmnet" />
+- Generate protobuf code closer to formatted files <PR number={1790} /> by <GHUser name="jesserockz" />
+- Add attribute support to Home Assistant sensors <PR number={1770} /> by <GHUser name="frenck" /> (notable-change)
+- Bump Arduino SDK for ESP32 to 1.0.6 <PR number={1789} /> by <GHUser name="agners" />
+- Added bottom segment to digit 9 <PR number={1787} /> by <GHUser name="testbughub" />
+- Add support for the XPT2046 touchscreen controller <PR number={1542} /> by <GHUser name="numo68" /> (new-integration)
+- Revert "Added bottom segment to digit 9" <PR number={1791} /> by <GHUser name="jesserockz" />
+- Introduce new async-def coroutine syntax <PR number={1657} /> by <GHUser name="OttoWinter" />
+- Add on_tag_removed trigger to pn532 <PR number={1436} /> by <GHUser name="romerod" />
+- Do not use Serial2 for ESP32C3, too <PR number={1798} /> by <GHUser name="misery" />
+- Use latest version of upstream NeoPixelBus library <PR number={1701} /> by <GHUser name="agners" />
+- Added fan triggers on_turn_on and on_turn_off <PR number={1726} /> by <GHUser name="dataway" />
+- tm1637 - support 6 character displays <PR number={1803} /> by <GHUser name="dataway" />
+- Convert core components to async-def coroutine syntax <PR number={1658} /> by <GHUser name="OttoWinter" />
+- Lights & GPIO Switch inverted restore mode <PR number={1810} /> by <GHUser name="frenck" />
+- allow default option for typed_schema <PR number={1700} /> by <GHUser name="wifwucite" />
+- Refactor font creation to save stack space <PR number={1707} /> by <GHUser name="numo68" />
+- BME680 BSEC: Allow sample rate overrides for T/P/H sensors <PR number={1710} /> by <GHUser name="trvrnrth" />
+- Add the on_page_change display trigger <PR number={1687} /> by <GHUser name="numo68" />
+- Allow segments in a light partition to be reversed <PR number={1484} /> by <GHUser name="jimbauwens" />
+- Document considerations when changing recommended framework version <PR number={1822} /> by <GHUser name="OttoWinter" />
+- Convert components to async-def syntax <PR number={1821} /> by <GHUser name="OttoWinter" />
+- Bump protobuf from 3.15.8 to 3.17.0 <PR number={1776} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Convert components to async-def syntax <PR number={1823} /> by <GHUser name="OttoWinter" />
+- Update sensor device classes from HA <PR number={1825} /> by <GHUser name="OttoWinter" />
+- Update platformio.ini settings and fix test apps <PR number={1815} /> by <GHUser name="oxan" />
+- lambda condition should return <PR number={1833} /> by <GHUser name="glmnet" />
+- fix dallas pin validation <PR number={1692} /> by <GHUser name="glmnet" />
+- Fix typo in wizard <PR number={1836} /> by <GHUser name="ThomDietrich" />
+- add validate to components <PR number={1631} /> by <GHUser name="glmnet" />
+- Added bottom segment to digit 9 <PR number={1847} /> by <GHUser name="testbughub" />
+- Add support for SDMXXX energy meters <PR number={1260} /> by <GHUser name="polyfaces" /> (new-integration)
+- Add CS5460A power-meter component <PR number={1474} /> by <GHUser name="balrog-kun" /> (new-integration)
+- Drop 128x160 ESP-32 camera resolution <PR number={1813} /> by <GHUser name="oxan" /> (breaking-change)
+- Rf Bridge: add bucket sniffing and beep functionality <PR number={1819} /> by <GHUser name="ianchi" />
+- Use built-in validation for altitude <PR number={1831} /> by <GHUser name="agners" />
+- Don't check uart settings for modbus <PR number={1850} /> by <GHUser name="jesserockz" />
+- I2c raw cmds with multiplexer <PR number={1817} /> by <GHUser name="mmakaay" />
+- Update fingerprint count after enroll <PR number={1811} /> by <GHUser name="rwagnervm" />
+- teleinfo: use text_sensor and sensor. <PR number={1403} /> by <GHUser name="0hax" /> (breaking-change)
+- Copy missing BLE client characteristic read data <PR number={1818} /> by <GHUser name="buxtronix" />
+- Added support for Xiaomi CGDK2 <PR number={1451} /> by <GHUser name="zaluthar" /> (new-integration)
+- Fix ble client esp_gatt_if comparison <PR number={1852} /> by <GHUser name="jesserockz" />
+- Add optional lambda to BLESensor for raw data parsing <PR number={1851} /> by <GHUser name="torfbolt" />
+- Support Tuya light color temperature control <PR number={1412} /> by <GHUser name="rmounce" />
+- Tuya improvements <PR number={1491} /> by <GHUser name="trvrnrth" />
+- Use size_t for length parameter <PR number={1799} /> by <GHUser name="misery" />
+- Added vol +/- control to dfplayer <PR number={1856} /> by <GHUser name="foxsam21" />
+- Support raw datapoints for tuya components <PR number={1669} /> by <GHUser name="kroimon" />
+- Add support for Sensor state class <PR number={1835} /> by <GHUser name="frenck" />
+- make crc16 function accessible <PR number={1857} /> by <GHUser name="ssieb" />
+- Add preset, custom_preset and custom_fan_mode support to climate <PR number={1471} /> by <GHUser name="Lumpusz" />
+- Avoid unnecessary waits to stabilize the VOC algorithm <PR number={1834} /> by <GHUser name="agners" />
+- Fix SCD30 configuration on ESP32 <PR number={1830} /> by <GHUser name="agners" />
+- Bump Docker base version to 3.1.0 <PR number={1864} /> by <GHUser name="agners" />
+- CLI user experience improvements <PR number={1805} /> by <GHUser name="oxan" /> (breaking-change) (notable-change)
+- Improv - BLE WiFi provisioning <PR number={1807} /> by <GHUser name="jesserockz" /> (new-integration) (notable-change)
+- Implement versioning for esphome/esphome-lint docker images <PR number={1877} /> by <GHUser name="OttoWinter" />
+- Bump base image to 3.4.0 <PR number={1879} /> by <GHUser name="OttoWinter" />
+- Use Clang 11 <PR number={1846} /> by <GHUser name="agners" />
+- Remove explain changes section from PR template <PR number={1876} /> by <GHUser name="OttoWinter" />
+- Fixes for BLE/improv <PR number={1878} /> by <GHUser name="jesserockz" />
+- Fix Clang 11 finds <PR number={1880} /> by <GHUser name="agners" />
+- Allow setting creator project name and version into code <PR number={1872} /> by <GHUser name="jesserockz" />
+- Add platform and board to mdns response when API is used <PR number={1871} /> by <GHUser name="jesserockz" />
+- Update total_pulses at every detected pulse <PR number={1875} /> by <GHUser name="rklomp" />
+- Simplify LightCall validation <PR number={1874} /> by <GHUser name="oxan" /> (cherry-picked)
+- BLE loop use <PR number={1882} /> by <GHUser name="jesserockz" /> (cherry-picked)
+- Add support for waveshare_epaper 1.54v2 <PR number={1843} /> by <GHUser name="geoffdavis" /> (cherry-picked)
+- Update ambiguous command <PR number={1889} /> by <GHUser name="jesserockz" />
+- Configure clang-format for consistent pointer alignment <PR number={1890} /> by <GHUser name="OttoWinter" />
+- Activate some clang-tidy checks <PR number={1884} /> by <GHUser name="OttoWinter" />
+- Avoid non-const globals and enable clang-tidy check <PR number={1892} /> by <GHUser name="agners" />
+- Convert st7735.cpp to use Unix line separators <PR number={1894} /> by <GHUser name="oxan" />
+- Ensure wifi is in at least station mode before starting improv <PR number={1899} /> by <GHUser name="jesserockz" /> (cherry-picked)
+- Move esp32_ble_server to its own component <PR number={1898} /> by <GHUser name="jesserockz" /> (breaking-change) (cherry-picked) (new-integration)
+- Add new wizard + allow installing firmware over webserial <PR number={1887} /> by <GHUser name="balloob" /> (cherry-picked)
+- Split files in light component <PR number={1893} /> by <GHUser name="oxan" />
+- Fix CI by avoiding non-const global <PR number={1907} /> by <GHUser name="oxan" />
+- Adds support cpp to vscode <PR number={1828} /> by <GHUser name="dentra" />
+- Allow no networks or AP to be set. <PR number={1908} /> by <GHUser name="jesserockz" /> (cherry-picked)
+- Validate that either networks, ap, or improv is set up <PR number={1910} /> by <GHUser name="jesserockz" /> (cherry-picked)
+- Support ESP8266 Arduino 3.0.0 <PR number={1897} /> by <GHUser name="agners" />
+- Bump frontend to 20210614.0 <PR number={1912} /> by <GHUser name="balloob" /> (cherry-picked)
+- Run script/setup in devcontainer instead of pip install <PR number={1913} /> by <GHUser name="OttoWinter" />
+- fixes compatibility with esphome cfg vscode <PR number={1911} /> by <GHUser name="glmnet" /> (cherry-picked)
+- Bump dashboard to 20210615.0 <PR number={1918} /> by <GHUser name="balloob" /> (cherry-picked)
+- Shorten the ble name to prevent crash with long device names <PR number={1920} /> by <GHUser name="jesserockz" /> (cherry-picked)
+- Fix update-all from dashboard <PR number={1924} /> by <GHUser name="frenck" />
+
+{/* markdownlint-enable MD013 */}
+
+## All Changelogs
+
+

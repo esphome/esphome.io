@@ -1,0 +1,172 @@
+---
+description: "Changelog for ESPHome version 1.18.0."
+title: "Changelog - Version 1.18.0 - 19th May 2021"
+slug: "changelog/v1.18.0"
+---
+
+import PR from "@components/PR.astro";
+import GHUser from "@components/GHUser.astro";
+
+{/* markdownlint-disable MD013 */}
+
+- [BME680 via BSEC](/components/sensor/bme680_bsec/)
+- [b-parasite](/components/sensor/b_parasite/)
+- [SGP40](/components/sensor/sgp40/)
+- [SHT4X](/components/sensor/sht4x/)
+- [TCA9548A I²C Multiplexer](/components/tca9548a/)
+- [Grow Fingerprint Reader](/components/fingerprint_grow/)
+- [TOF10120](/components/sensor/tof10120/)
+- [SM2135](/components/output/sm2135/)
+- [ESP32 BLE Client](/components/ble_client/)
+- [BLE Sensor](/components/sensor/ble_sensor/)
+- [External Components](/components/external_components/)
+
+It feels like I was just writing the release notes for 1.17 not long ago, so here's to getting ESPHome going on a regular schedule.
+
+Releases will be set for the 3rd Wednesday of each month, with a beta release starting 1 week earlier for those who would like to test
+that and help make sure it is stable.
+
+Apart from a few new sensors, we now have built in support for [External Components](/components/external_components/), check it out. Thanks <GHUser name="OttoWinter" /> and <GHUser name="glmnet" />
+
+Also now, an ESPHome device is able to connect to other BLE devices and become a [Ble Client](/components/ble_client/), reading sensors and controlling switches etc.
+You can read basic sensor values using the [Ble Client](/components/sensor/ble_client/) component or use the data displayed in the logs to build a new native component
+that provides the sensors/switches/etc directly.
+
+Jesse
+
+## New Integrations
+
+- esphome: Add I2CMultiplexer in general and the TCA9548A in special <PR number={1410} /> by <GHUser name="andreashergert1984" /> (new-integration)
+- esphome: Add BME680 via BSEC integration <PR number={1313} /> by <GHUser name="trvrnrth" /> (new-integration)
+- esphome: Adds support for b-parasite soil moisture sensor <PR number={1666} /> by <GHUser name="rbaron" /> (new-integration)
+- esphome: Sgp40 <PR number={1513} /> by <GHUser name="SenexCrenshaw" /> (new-integration)
+- esphome: Add support for SHT4X <PR number={1512} /> by <GHUser name="sjtrny" /> (new-integration)
+- esphome: Add Grow Fingerprint Reader <PR number={1356} /> by <GHUser name="loongyh" /> (new-integration)
+- esphome: Support for TOF10120 distance sensor <PR number={1375} /> by <GHUser name="wstrzalka" /> (new-integration)
+- esphome: BLE client support on ESP32 <PR number={1177} /> by <GHUser name="buxtronix" /> (new-integration)
+- esphome: Implement external custom components installing from YAML <PR number={1630} /> by <GHUser name="OttoWinter" /> (new-integration)
+- esphome: Add sm2135 component <PR number={1736} /> by <GHUser name="BoukeHaarsma23" /> (cherry-picked) (new-integration)
+
+## Breaking Changes
+
+- esphome: Raise minimum python version to 3.7 <PR number={1673} /> by <GHUser name="OttoWinter" /> (breaking-change)
+- esphome: Change wifi signal strength unit to dBm <PR number={1734} /> by <GHUser name="mbo18" /> (breaking-change)
+- esphome: Use core constants for sample duration on bh1750 <PR number={1764} /> by <GHUser name="yuvalabou" /> (breaking-change) (cherry-picked)
+
+## Beta Fixes
+
+- docs: Update allowed characters for node names <PR number={1072} repo="esphome-docs" /> by <GHUser name="pkuehne" /> (cherry-picked)
+- docs: Fix missed merge conflict <PR number={1155} repo="esphome-docs" /> by <GHUser name="jesserockz" /> (cherry-picked)
+- docs: Replaced set_password with new_password <PR number={1157} repo="esphome-docs" /> by <GHUser name="PaulAntonDeen" /> (cherry-picked)
+- esphome: Fix build issues for idf 4.2 (Support ESP32-S2) <PR number={1433} /> by <GHUser name="misery" /> (cherry-picked)
+- esphome: Upgrade the version of AsyncTCP-esphome to v1.2.2 <PR number={1762} /> by <GHUser name="glmnet" /> (cherry-picked)
+- esphome: Use core constants for sample duration on bh1750 <PR number={1764} /> by <GHUser name="yuvalabou" /> (breaking-change) (cherry-picked)
+- esphome: Add sm2135 component <PR number={1736} /> by <GHUser name="BoukeHaarsma23" /> (cherry-picked) (new-integration)
+- docs: Add sm2135 component <PR number={1127} repo="esphome-docs" /> by <GHUser name="BoukeHaarsma23" /> (cherry-picked)
+- docs: Some clarification added to external components. <PR number={1165} repo="esphome-docs" /> by <GHUser name="mmakaay" /> (cherry-picked)
+- esphome: Allow RC522 components to have multiple configurations <PR number={1782} /> by <GHUser name="jesserockz" /> (cherry-picked)
+
+## All changes
+
+- esphome: Add I2CMultiplexer in generel and the TCA9548A in special <PR number={1410} /> by <GHUser name="andreashergert1984" /> (new-integration)
+- docs: Add i2c multiplexer <PR number={897} repo="esphome-docs" /> by <GHUser name="andreashergert1984" />
+- esphome: Add the display.is_displaying_page condition <PR number={1646} /> by <GHUser name="numo68" />
+- docs: Add documentation for the display.is_displaying_page condition <PR number={1079} repo="esphome-docs" /> by <GHUser name="numo68" />
+- esphome: Add BME680 via BSEC integration <PR number={1313} /> by <GHUser name="trvrnrth" /> (new-integration)
+- docs: Add BME680 BSEC docs <PR number={793} repo="esphome-docs" /> by <GHUser name="trvrnrth" />
+- esphome: Fixed CustomComponentConstructor::get_component() <PR number={1653} /> by <GHUser name="dataway" />
+- esphome: Bump pytest from 6.2.2 to 6.2.3 <PR number={1663} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- esphome: Bump protobuf from 3.15.6 to 3.15.7 <PR number={1662} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- esphome: Rewrite sun component calculations <PR number={1661} /> by <GHUser name="OttoWinter" />
+- esphome: Raise minimum python version to 3.7 <PR number={1673} /> by <GHUser name="OttoWinter" /> (breaking-change)
+- esphome: Adds support for b-parasite soil moisture sensor <PR number={1666} /> by <GHUser name="rbaron" /> (new-integration)
+- docs: Adds docs for the b-parasite soil moisture sensor <PR number={1086} repo="esphome-docs" /> by <GHUser name="rbaron" />
+- esphome: mqtt_client: Added MQTTClientComponent::unsubscribe() <PR number={1672} /> by <GHUser name="dataway" />
+- esphome: Disallow _ in node name <PR number={1632} /> by <GHUser name="pkuehne" />
+- esphome: Receive long MQTT payload <PR number={1590} /> by <GHUser name="gaco79" />
+- esphome: Daylight Saving Time spelling fix <PR number={1677} /> by <GHUser name="dashdrum" />
+- esphome: Support custom build_flags for bme680_bsec <PR number={1678} /> by <GHUser name="SenexCrenshaw" />
+- esphome: Add Arduino ESP32 version mapping <PR number={1679} /> by <GHUser name="OttoWinter" />
+- esphome: Automate building and publishing of esphome-lint docker image <PR number={1680} /> by <GHUser name="OttoWinter" />
+- esphome: Sgp40 <PR number={1513} /> by <GHUser name="SenexCrenshaw" /> (new-integration)
+- docs: sgp40 <PR number={985} repo="esphome-docs" /> by <GHUser name="SenexCrenshaw" />
+- esphome: Bump protobuf from 3.15.7 to 3.15.8 <PR number={1682} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- esphome: Implementing the remainder of GPS data for the GPS component. <PR number={1676} /> by <GHUser name="coogle" />
+- docs: Updating docs for the gps component. <PR number={1094} repo="esphome-docs" /> by <GHUser name="coogle" />
+- esphome: Bump AsyncTCP-esphome to 1.2.1. <PR number={1693} /> by <GHUser name="mmakaay" />
+- esphome: Revert "Bump AsyncTCP-esphome to 1.2.1." <PR number={1709} /> by <GHUser name="glmnet" />
+- esphome: Fix name_add_mac_suffix using_ instead of - <PR number={1702} /> by <GHUser name="glmnet" />
+- docs: Update name_add_mac_suffix use dash <PR number={1111} repo="esphome-docs" /> by <GHUser name="glmnet" />
+- esphome: Add monochromatic effects: Pulse, Random <PR number={1616} /> by <GHUser name="ferbar" />
+- docs: Add 'pulse' effect doc <PR number={1067} repo="esphome-docs" /> by <GHUser name="ferbar" />
+- esphome: Add support for SHT4X <PR number={1512} /> by <GHUser name="sjtrny" /> (new-integration)
+- docs: Add docs for SHT4X <PR number={1002} repo="esphome-docs" /> by <GHUser name="sjtrny" />
+- esphome: Addition of forward and reverse active energy counters to ATM90E32 sensor component <PR number={1271} /> by <GHUser name="elyorkhakimov" />
+- docs: Add Atm90e32 energy docs <PR number={1120} repo="esphome-docs" /> by <GHUser name="jesserockz" />
+- esphome: Add Grow Fingerprint Reader <PR number={1356} /> by <GHUser name="loongyh" /> (new-integration)
+- docs: Add Grow fingerprint reader docs <PR number={835} repo="esphome-docs" /> by <GHUser name="loongyh" />
+- esphome: Support for TOF10120 distance sensor <PR number={1375} /> by <GHUser name="wstrzalka" /> (new-integration)
+- docs: Documentation for TOF10120 support <PR number={846} repo="esphome-docs" /> by <GHUser name="wstrzalka" />
+- esphome: Swap fan and swing fields for Fujitu ACs <PR number={1635} /> by <GHUser name="alex-richards" />
+- esphome: BLE client support on ESP32 <PR number={1177} /> by <GHUser name="buxtronix" /> (new-integration)
+- docs: Ble client docs <PR number={702} repo="esphome-docs" /> by <GHUser name="buxtronix" />
+- esphome: Update email addresses <PR number={1733} /> by <GHUser name="jesserockz" />
+- esphome: Ble client fixes <PR number={1739} /> by <GHUser name="buxtronix" />
+- esphome: Fix #1940: Implement speed_count in TuyaFan <PR number={1654} /> by <GHUser name="0x0a11c0de" />
+- docs: Add speed_count to tuya fan <PR number={1080} repo="esphome-docs" /> by <GHUser name="0x0a11c0de" />
+- docs: Fix mcp3008 reference <PR number={1131} repo="esphome-docs" /> by <GHUser name="jesserockz" />
+- esphome: Add Hyperion Support <PR number={1339} /> by <GHUser name="d-two" />
+- docs: Add note about hyperion classic udp port <PR number={1135} repo="esphome-docs" /> by <GHUser name="jesserockz" />
+- esphome: Call `Stepper::should_step_` every loop iteration <PR number={1373} /> by <GHUser name="akonradi" />
+- esphome: Add support for controlling Tuya fan direction <PR number={1409} /> by <GHUser name="rmounce" />
+- docs: Document Tuya fan direction datapoint <PR number={877} repo="esphome-docs" /> by <GHUser name="rmounce" />
+- esphome: Change wifi signal strength unit to dBm <PR number={1734} /> by <GHUser name="mbo18" /> (breaking-change)
+- docs: Change wifi signal strength unit to dBm <PR number={1125} repo="esphome-docs" /> by <GHUser name="mbo18" />
+- esphome: Added an option to disable mDNS <PR number={1716} /> by <GHUser name="dnetguru" />
+- docs: Added docs for enable_mdns option <PR number={1118} repo="esphome-docs" /> by <GHUser name="dnetguru" />
+- docs: add External components docs <PR number={1107} repo="esphome-docs" /> by <GHUser name="glmnet" />
+- esphome: Implement external custom components installing from YAML <PR number={1630} /> by <GHUser name="OttoWinter" /> (new-integration)
+- esphome: Update copyright year <PR number={1760} /> by <GHUser name="bonanitech" />
+- docs: Fixed datasheet link for RC522 <PR number={1144} repo="esphome-docs" /> by <GHUser name="0nikola1" />
+- docs: Added receive for Fujitsu ACs <PR number={1037} repo="esphome-docs" /> by <GHUser name="alex-richards" />
+- docs: Update allowed characters for node names <PR number={1072} repo="esphome-docs" /> by <GHUser name="pkuehne" /> (cherry-picked)
+- docs: Update docs: Add references to alternative ICs to HLW8012 and CSE7766 <PR number={902} repo="esphome-docs" /> by <GHUser name="kubik369" />
+- docs: Update pulse_counter.rst <PR number={1089} repo="esphome-docs" /> by <GHUser name="Chupaka" />
+- docs: Remove deprecated board_flash_mode from configuration example <PR number={1149} repo="esphome-docs" /> by <GHUser name="frenck" />
+- docs: Update deep_sleep.rst <PR number={1152} repo="esphome-docs" /> by <GHUser name="theOzzieRat" />
+- docs: Utalize pip3 for commands <PR number={1143} repo="esphome-docs" /> by <GHUser name="rradar" />
+- docs: FAQ page: Converting from "I" to "we" wording <PR number={1103} repo="esphome-docs" /> by <GHUser name="spacegaier" />
+- docs: thermostat min/max temperature clarification <PR number={1057} repo="esphome-docs" /> by <GHUser name="larsonmpdx" />
+- docs: Added compatibility notes <PR number={1033} repo="esphome-docs" /> by <GHUser name="Dezorian" />
+- docs: Specify format for BSSID entries. <PR number={1046} repo="esphome-docs" /> by <GHUser name="marcteale" />
+- docs: add font to usage example <PR number={1050} repo="esphome-docs" /> by <GHUser name="azrael783" />
+- docs: Fix missed merge conflict <PR number={1155} repo="esphome-docs" /> by <GHUser name="jesserockz" /> (cherry-picked)
+- docs: Sample codeblock has incorrect variables <PR number={1156} repo="esphome-docs" /> by <GHUser name="jcallaghan" />
+- docs: Replaced set_password with new_password <PR number={1157} repo="esphome-docs" /> by <GHUser name="PaulAntonDeen" /> (cherry-picked)
+- docs: pulse counter: Show how calculations are made <PR number={861} repo="esphome-docs" /> by <GHUser name="fredrike" />
+- esphome: Upgrade the version of AsyncTCP-esphome to v1.2.2 <PR number={1762} /> by <GHUser name="glmnet" /> (cherry-picked)
+- esphome: Fix build issues for idf 4.2 (Support ESP32-S2) <PR number={1433} /> by <GHUser name="misery" /> (cherry-picked)
+- esphome: Use core constants for sample duration on bh1750 <PR number={1764} /> by <GHUser name="yuvalabou" /> (breaking-change) (cherry-picked)
+- docs: Fix docs for inkplate <PR number={1158} repo="esphome-docs" /> by <GHUser name="NobodysNightmare" />
+- docs: Fixed wrong link in i2c_id <PR number={1163} repo="esphome-docs" /> by <GHUser name="petrepa" />
+- docs: Explain where to upload .ttf font files <PR number={1133} repo="esphome-docs" /> by <GHUser name="TheGroundZero" />
+- esphome: Add sm2135 component <PR number={1736} /> by <GHUser name="BoukeHaarsma23" /> (cherry-picked) (new-integration)
+- docs: Add sm2135 component <PR number={1127} repo="esphome-docs" /> by <GHUser name="BoukeHaarsma23" /> (cherry-picked)
+- docs: Some clarification added to external components. <PR number={1165} repo="esphome-docs" /> by <GHUser name="mmakaay" /> (cherry-picked)
+- docs: Add new disconnect reasons to the FAQ. <PR number={1129} repo="esphome-docs" /> by <GHUser name="mmakaay" />
+- esphome: Allow RC522 components to have multiple configurations <PR number={1782} /> by <GHUser name="jesserockz" /> (cherry-picked)
+- docs: Update max frequency <PR number={1172} repo="esphome-docs" /> by <GHUser name="bookcasey" />
+- docs: Update web-api id component <PR number={1168} repo="esphome-docs" /> by <GHUser name="meijerwynand" />
+- docs: Fix docker build failure <PR number={1179} repo="esphome-docs" /> by <GHUser name="martgras" />
+- docs: Update ifan02 example with new fan speed options <PR number={1177} repo="esphome-docs" /> by <GHUser name="workingmanrob" />
+- docs: Document missing use_address in Ethernet component <PR number={1176} repo="esphome-docs" /> by <GHUser name="xsnoopy" />
+- docs: Lambda over multiple lines. added <PR number={1173} repo="esphome-docs" /> by <GHUser name="klenaers" />
+- docs: changed LG example to existing, working code <PR number={1171} repo="esphome-docs" /> by <GHUser name="qqgg231" />
+- docs: GPIO Switch: simplify Momentary Switch example <PR number={1121} repo="esphome-docs" /> by <GHUser name="ianchi" />
+- docs: Added warning: GPIOs are LIVE in power measurement devices <PR number={583} repo="esphome-docs" /> by <GHUser name="CarlosGS" />
+
+{/* markdownlint-enable MD013 */}
+
+## All Changelogs
+
+

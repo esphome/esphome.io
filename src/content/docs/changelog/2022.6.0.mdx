@@ -1,0 +1,203 @@
+---
+description: "Changelog for ESPHome 2022.6.0."
+title: "ESPHome 2022.6.0 - 15th June 2022"
+slug: "changelog/2022.6.0"
+---
+
+import PR from "@components/PR.astro";
+import GHUser from "@components/GHUser.astro";
+
+
+- [Tuya Select](/components/select/tuya/)
+- [SGP41](/components/sensor/sgp4x/)
+- [Media Player Core](/components/media_player/index/)
+- [I2S Audio](/components/media_player/i2s_audio/)
+
+We are almost half way through 2022 already! My, how fast time flies when we
+are having fun with ESPHome. This release is kind of small, but packs some big features.
+There will be no 2022.7.0 (July) release next month as I (<GHUser name="jesserockz" />) will be away
+around that time. So lets hope we can make 2022.8.0 worth the wait.
+
+## 🎶🎶🎶 Media Players
+
+ESPHome can now become a media player target for Home Assistant. This allows users to buy or build
+ESP32 based speakers and place them around the house.
+
+We made a small website showing you a few tested [Media Players](https://esphome.github.io/media-players) and you can
+install ESPHome directly to them via the browser using ESP Web Tools.
+
+Join us in a live stream all about Audio in the Open Home!
+
+When: Thursday, June 16, at 7pm UTC / 12pm PST / 9pm CET
+
+{/* markdownlint-disable-next-line MD033 */}
+<iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/SEH-DxOsywg"
+        title="YouTube video player" frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen>
+</iframe>
+
+## Includes with vars
+
+<GHUser name="jimtng" /> is a newcomer to ESPHome. While migrating everything from a certain other
+firmware, they found that they had to duplicate lots of yaml configuration for their many devices.
+Basically, they decided to upgrade the `!include` yaml "directive" to allow variables.
+
+```yaml
+# device.yaml
+binary_sensor:
+  - <<: !include
+      file: bin-sensor.yaml
+      vars:
+        pin: GPIO1
+        name: "Binary Sensor 1"
+        switch: my_switch_1_id
+        delay: 10s
+  - <<: !include
+      file: bin-sensor.yaml
+      vars:
+        pin: GPIO1
+        name: "Binary Sensor 2"
+        switch: my_switch_2_id
+        delay: 60s
+
+# bin-sensor.yaml
+platform: gpio
+pin: ${pin}
+name: ${name}
+on_press:
+  - switch.turn_on: ${switch}
+  - delay: ${delay}
+  - switch.turn_off: ${switch}
+```
+
+Now while this is probably not the best example, the variables act as `substitutions`
+and can be used anywhere in the underlying yaml file and can very much DRY out your configurations.
+
+{/* markdownlint-disable MD013 */}
+
+## Release 2022.6.1 - June 18
+
+- Setup the mute pin if configured <PR number={3568} /> by <GHUser name="jesserockz" />
+- Bugfix for ExternalRAMAllocator copy constructor <PR number={3571} /> by <GHUser name="bnw" />
+- Media Player: added triggers <PR number={3576} /> by <GHUser name="dudanov" />
+
+## Release 2022.6.2 - June 23
+
+- Move gas mbus config option being a define to being a build flag <PR number={3575} /> by <GHUser name="lkomurcu" />
+- Fix: Make MQTT over TLS actually work <PR number={3580} /> by <GHUser name="ShellAddicted" />
+- Fix wrong type for voc_state*_ in sgp4x component <PR number={3581} /> by <GHUser name="kahrendt" />
+- Media Player: added play_media action <PR number={3579} /> by <GHUser name="dudanov" />
+- Fix 2 small issues in BLEClient <PR number={3544} /> by <GHUser name="jhansche" />
+
+## Release 2022.6.3 - August 8
+
+- FIX: Modbus queue deduplicator deleting custom commands <PR number={3650} /> by <GHUser name="jpeletier" />
+- Update inkbird_ibsth1_mini.cpp <PR number={3664} /> by <GHUser name="ssieb" />
+- Add CO device class to binary_sensor <PR number={3656} /> by <GHUser name="berg" />
+- Use application/json instead of text/json <PR number={3671} /> by <GHUser name="ssieb" />
+- Use correct struct members. <PR number={3672} /> by <GHUser name="ssieb" />
+
+## Breaking Changes
+
+### TCS34725 integration time
+
+The sampling settings for the TCS34725 have had a new option `auto` added and set as the default. This allows for better accuracy.
+You are able to set it back to the previous default value by specifying `integration_time: 2.4ms` in your configuration.
+
+### SGP40 moved
+
+While adding support for the SGP41 chip, the SGP40 was moved and they were both combined into a new `sgp4x` component.
+
+### MQTT fan speeds
+
+<PR number={3397} /> removes deprecated MQTT fan speed state and speed command topics.
+These were replaced with speed level state and command topics in ESPHome 2021.10.0.
+
+### AC Dimmer
+
+Due to an output power calculation the perceived power might vary slightly specially in the lower and upper regions.
+
+### DisplayBuffer
+
+A new virtual method was added to the DisplayBuffer class for specifying the display type. This change only affects `external_components`.
+See <PR number={3430} /> for more details.
+
+## Full list of changes
+
+### New Components
+
+- Add Tuya select <PR number={3469} /> by <GHUser name="bearpawmaxim" /> (new-integration)
+- Add support for SGP41 <PR number={3382} /> by <GHUser name="martgras" /> (new-integration) (breaking-change)
+- Implement Media Player and I2S Media player <PR number={3487} /> by <GHUser name="jesserockz" /> (new-integration)
+
+### Breaking Changes
+
+- Tcs34725 automatic sampling settings for improved dynamics and accuracy <PR number={3258} /> by <GHUser name="swifty99" /> (breaking-change)
+- Add support for SGP41 <PR number={3382} /> by <GHUser name="martgras" /> (new-integration) (breaking-change)
+- Remove deprecated fan speeds <PR number={3397} /> by <GHUser name="kbickar" /> (breaking-change)
+- Output a true RMS voltage % <PR number={3494} /> by <GHUser name="josephdouce" /> (breaking-change)
+- Add display_type property to DisplayBuffer <PR number={3430} /> by <GHUser name="guillempages" /> (breaking-change)
+
+### Beta Changes
+
+- publish fan speed count for discovery <PR number={3537} /> by <GHUser name="ssieb" />
+- Nextion brightness setting requires an assignment <PR number={3533} /> by <GHUser name="nagyv" />
+- Implement media player volume actions <PR number={3551} /> by <GHUser name="jesserockz" />
+- Fix compilation with ESP32-S3 <PR number={3543} /> by <GHUser name="misery" />
+- Bm3xx: Fix typo <PR number={3559} /> by <GHUser name="martgras" />
+
+### Notable Changes
+
+- Add variable substitutions for !include <PR number={3510} /> by <GHUser name="jimtng" /> (notable-change)
+
+### All changes
+
+- Tcs34725 automatic sampling settings for improved dynamics and accuracy <PR number={3258} /> by <GHUser name="swifty99" /> (breaking-change)
+- Remove duplicate convert_to_8bit_color function. <PR number={2469} /> by <GHUser name="davet2001" />
+- Bump esptool from 3.3 to 3.3.1 <PR number={3468} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Bump pylint from 2.13.8 to 2.13.9 <PR number={3470} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Tuya status gpio support <PR number={3466} /> by <GHUser name="bearpawmaxim" />
+- Add Tuya select <PR number={3469} /> by <GHUser name="bearpawmaxim" /> (new-integration)
+- MQTT cover: send state even if position is available <PR number={3473} /> by <GHUser name="pyos" />
+- Ili9341 8bit indexed mode pt1 <PR number={2490} /> by <GHUser name="davet2001" />
+- feat: esp32-camera add stream event <PR number={3285} /> by <GHUser name="myml" />
+- Add support for SGP41 <PR number={3382} /> by <GHUser name="martgras" /> (new-integration) (breaking-change)
+- add support user-defined modbus functions <PR number={3461} /> by <GHUser name="gazoodle" />
+- Remove deprecated fan speeds <PR number={3397} /> by <GHUser name="kbickar" /> (breaking-change)
+- Fix compile issues on windows <PR number={3491} /> by <GHUser name="jesserockz" />
+- midea: New power_toggle action. Auto-use remote transmitter. <PR number={3496} /> by <GHUser name="dudanov" />
+- Output a true RMS voltage % <PR number={3494} /> by <GHUser name="josephdouce" /> (breaking-change)
+- [scd4x] Fix not passing arguments to templatable value for perform_forced_calibration <PR number={3495} /> by <GHUser name="Wumpf" />
+- Thermostat preset with modes <PR number={3298} /> by <GHUser name="MrMDavidson" />
+- Allow Prometheus component to export internal components <PR number={3508} /> by <GHUser name="jangrewe" />
+- [BedJet] Add configurable heating strategy <PR number={3519} /> by <GHUser name="jhansche" />
+- Add variable substitutions for !include <PR number={3510} /> by <GHUser name="jimtng" /> (notable-change)
+- Change rain intensity sensor string <PR number={3511} /> by <GHUser name="wtremmel" />
+- Implement Media Player and I2S Media player <PR number={3487} /> by <GHUser name="jesserockz" /> (new-integration)
+- Add mqtt.on_connect and mqtt.on_disconnect triggers <PR number={3520} /> by <GHUser name="jimtng" />
+- Refactor clock syncing <PR number={3503} /> by <GHUser name="jhansche" />
+- Added RC6 protocol support <PR number={3514} /> by <GHUser name="Emrvb" />
+- Add display_type property to DisplayBuffer <PR number={3430} /> by <GHUser name="guillempages" /> (breaking-change)
+- Correct ADC auto-range for ESP32-S2 variant (13 bit adc) <PR number={3158} /> by <GHUser name="CarlosGS" />
+- Suppress first rotary encoder event <PR number={3532} /> by <GHUser name="mmakaay" />
+- Fix endless 'WiFi Unknown connection status 0' loop <PR number={3530} /> by <GHUser name="mmakaay" />
+- support rotated ILI9341 (ILI9342) <PR number={3526} /> by <GHUser name="ssieb" />
+- Fix sdp3x error checking <PR number={3531} /> by <GHUser name="Azimath" />
+- Fix percentage validation for wrong data type input <PR number={3524} /> by <GHUser name="mmakaay" />
+- Block Tuya light from reacting to dp changes if transitioning <PR number={3076} /> by <GHUser name="VitaliyKurokhtin" />
+- Cleanup deprecated EntityBase::hash_base() <PR number={3525} /> by <GHUser name="mmakaay" />
+- Fix bogus reading on no communication with MAX31865 <PR number={3505} /> by <GHUser name="DAVe3283" />
+- Implement the media player actions <PR number={3534} /> by <GHUser name="jesserockz" />
+- RG15 data is float/double, not int <PR number={3512} /> by <GHUser name="wtremmel" />
+- publish fan speed count for discovery <PR number={3537} /> by <GHUser name="ssieb" />
+- Nextion brightness setting requires an assignment <PR number={3533} /> by <GHUser name="nagyv" />
+- Implement media player volume actions <PR number={3551} /> by <GHUser name="jesserockz" />
+- Fix compilation with ESP32-S3 <PR number={3543} /> by <GHUser name="misery" />
+- Bm3xx: Fix typo <PR number={3559} /> by <GHUser name="martgras" />
+
+{/* markdownlint-enable MD013 */}
+
+## All Changelogs
+
+

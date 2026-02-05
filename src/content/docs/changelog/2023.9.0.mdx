@@ -1,0 +1,234 @@
+---
+description: "Changelog for ESPHome 2023.9.0."
+title: "ESPHome 2023.9.0 - 27th September 2023"
+slug: "changelog/2023.9.0"
+---
+
+import PR from "@components/PR.astro";
+import GHUser from "@components/GHUser.astro";
+
+
+- [BK72xx](/components/libretiny/)
+- [RTL87xx](/components/libretiny/)
+- [WireGuard](/components/wireguard/)
+- [PMWCS3](/components/sensor/pmwcs3/)
+- [SEN0321](/components/sensor/sen0321/)
+- [LightWaveRF](/components/lightwaverf/)
+- [BMI160](/components/sensor/bmi160/)
+- [SPI LED Strips](/components/light/spi_led_strip/)
+
+
+## LibreTiny
+
+[LibreTiny](/components/libretiny/) is a platform for the RTL87xx and BK72xx family of chips. ESPHome
+leverages this platform and brings the powerful yet simple YAML configuration to these chips.
+
+It has been months in the making, and many back and forwards with <GHUser name="kuba2k2" />
+(and all of the contributors to LibreTiny), but we finally got there and merged it in.
+
+## Wireguard
+
+[WireGuard](/components/wireguard/) is a new component that allows you to connect to a WireGuard® Peer.
+
+## LED Strips
+
+Following on from the previously added [Esp32 Rmt Led Strip](/components/light/esp32_rmt_led_strip/), we now have
+[SPI LED Strips](/components/light/spi_led_strip/). These are replacement components for
+[Neopixelbus](/components/light/neopixelbus/) and [Fastled](/components/light/fastled/) that
+do not rely on the Arduino framework.
+
+{/* markdownlint-disable MD013 */}
+
+## Release 2023.9.1 - September 28
+
+- Tuya Number Scaling <PR number={5108} /> by <GHUser name="InvncibiltyCloak" />
+- Migrate dashboard json files to /data folder instead of wiping out <PR number={5441} /> by <GHUser name="jesserockz" />
+
+## Release 2023.9.2 - October 2
+
+- SPI fixes for buggy components <PR number={5446} /> by <GHUser name="clydebarrow" />
+- Fix an Issue with IR Remote Climate and Whirlpool protocol toggle <PR number={5447} /> by <GHUser name="the-mentor" />
+- Fix SPI support for second bus on 2023.9.1 <PR number={5456} /> by <GHUser name="angelnu" />
+- Ensure esphome directory exists on addon startup <PR number={5464} /> by <GHUser name="jesserockz" />
+
+## Release 2023.9.3 - October 3
+
+- Bump zeroconf from 0.112.0 to 0.115.0 <PR number={5432} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- add pin config for denky_d4 <PR number={5471} /> by <GHUser name="alucryd" />
+- Support RP2040 hardware SPI <PR number={5466} /> by <GHUser name="clydebarrow" />
+- Bump zeroconf from 0.115.0 to 0.115.1 <PR number={5470} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Sleep mode fix for BP5758D driver <PR number={5461} /> by <GHUser name="dwildstr" />
+- Tuya Number: split "multiply" to a separate option <PR number={5458} /> by <GHUser name="paravoid" />
+
+## Breaking Changes
+
+### Home Assistant Add-on
+
+The `/config/esphome/.esphome` folder has been removed and replaced with `/data` when running ESPHome as a Home Assistant add-on.
+This was done because it is exactly what the add-on `/data` folder was made for and there were many files in the `.esphome` folder
+that were making the Home Assistant Backup larger for no reason at all. All files in there are generated or sourced from online based
+on your configurations files which have not been touched.
+
+:::note
+2023.9.1 makes a further small change that moves the `json` files used by the dashboard into the new `/data` folder.
+If you had already updated to 2023.9.0 though, the files would have already been removed and they will be re-generated
+next time you install each device.
+:::
+
+### Enum device class
+
+The `enum` device class was removed from ESPHome to keep in sync with Home Assistant. The class was already not able to be used by
+any of the built in components and only potentially used by `external_components`.
+
+## Full list of changes
+
+### New Components
+
+- Add pmwcs3 capacitive soil moisture & temperature sensor component <PR number={4624} /> by <GHUser name="SeByDocKy" /> (new-integration)
+- Support for LibreTiny platform (RTL8710, BK7231 & other modules) <PR number={3509} /> by <GHUser name="kuba2k2" /> (new-integration)
+- Adding DFRobot Ozone Sensor Support (sen0321) <PR number={4782} /> by <GHUser name="notjj" /> (new-integration)
+- Integration LightwaveRF switches <PR number={4812} /> by <GHUser name="max246" /> (new-integration)
+- Refactor SPI code; Add ESP-IDF hardware support <PR number={5311} /> by <GHUser name="clydebarrow" /> (new-integration)
+- Add BMI160 support <PR number={5143} /> by <GHUser name="flaviut" /> (new-integration)
+- Native SPI RGB LED component <PR number={5288} /> by <GHUser name="clydebarrow" /> (new-integration)
+- Wireguard component <PR number={4256} /> by <GHUser name="lhoracek" /> (new-integration)
+
+### Breaking Changes
+
+- Synchronise Device Classes from Home Assistant <PR number={5328} /> by <GHUser name="esphomebot" /> (breaking-change)
+- Use /data directory for .esphome folder when running as HA add-on <PR number={5374} /> by <GHUser name="jesserockz" /> (breaking-change)
+
+### Beta Changes
+
+- Add patch to apt install <PR number={5389} /> by <GHUser name="synesthesiam" />
+- Fix Waveshare 7.5v2 epaper screens are always powered on <PR number={5283} /> by <GHUser name="phoenixswiss" />
+- Update radon_eye_listener.cpp <PR number={5401} /> by <GHUser name="rmmacias" />
+- Add shelly-dimmer-stm32 51.7 to known versions <PR number={5400} /> by <GHUser name="trvrnrth" />
+- Add E-Trailer Gaslevel support to Mopeka Std Check <PR number={5397} /> by <GHUser name="Phhere" />
+- fix disabled wifi power on 8266 <PR number={5409} /> by <GHUser name="ssieb" />
+- fix handling of web server version <PR number={5405} /> by <GHUser name="ssieb" />
+- Climate preset fix <PR number={5407} /> by <GHUser name="Jorre05" />
+- Remove Wi-Fi dependency from Midea component <PR number={5394} /> by <GHUser name="AnthonyMaiorani" />
+- http_request: Cleanups and safety improvements <PR number={5360} /> by <GHUser name="kpfleming" />
+- Make the pulse meter timeout on startup when no pulses are received <PR number={5388} /> by <GHUser name="TrentHouliston" />
+- Wizard: fix colored text in input prompts <PR number={5313} /> by <GHUser name="kuba2k2" />
+- support keypads with pulldowns <PR number={5404} /> by <GHUser name="ssieb" />
+- Fix SPI inverted clock on ESP8266 <PR number={5416} /> by <GHUser name="clydebarrow" />
+- [RP2040W] Fix WiFi bootloop upon LibreTiny support <PR number={5414} /> by <GHUser name="hostcc" />
+- dallas: limit addresses to 64 bits <PR number={5413} /> by <GHUser name="oddstr13" />
+- Bump zeroconf from 0.108.0 to 0.112.0 <PR number={5392} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- LibreTiny: enable MQTT, bump to v1.4.1 <PR number={5419} /> by <GHUser name="kuba2k2" />
+- Wireguard keepalive remove uint16 type <PR number={5430} /> by <GHUser name="glmnet" />
+- Fix #4896 and #4903 <PR number={5433} /> by <GHUser name="clydebarrow" />
+
+### All changes
+
+- Updated my username in Code Owners <PR number={5247} /> by <GHUser name="mreditor97" />
+- remote_base: change dumpers log level <PR number={5253} /> by <GHUser name="dudanov" />
+- Add `libfreetype-dev` Debian package for armv7 Docker builds <PR number={5262} /> by <GHUser name="pierlon" />
+- Add delay before enabling ipv6 <PR number={5256} /> by <GHUser name="HeMan" />
+- Bump zeroconf from 0.74.0 to 0.80.0 <PR number={5260} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Bump click from 8.1.6 to 8.1.7 <PR number={5272} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Remove support for ESP-IDF version < 4 <PR number={5261} /> by <GHUser name="HeMan" />
+- Add pmwcs3 capacitive soil moisture & temperature sensor component <PR number={4624} /> by <GHUser name="SeByDocKy" /> (new-integration)
+- Add manufacturer data config to BLE server <PR number={5251} /> by <GHUser name="clydebarrow" />
+- Add support for `ESP32-{S2,S3,C3}` to debug component <PR number={4731} /> by <GHUser name="jayme-github" />
+- Support for ESP32-C2 & ESP32-C6 <PR number={4377} /> by <GHUser name="vidplace7" />
+- Bump arduino-heatpumpir to v1.0.23 <PR number={5269} /> by <GHUser name="rob-deutsch" />
+- Fix equality check when setting current-based cover position <PR number={5167} /> by <GHUser name="kroimon" />
+- Bump platformio from 6.1.9 to 6.1.10 <PR number={5237} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Add Invert method for SSD1306 <PR number={5292} /> by <GHUser name="max246" />
+- Update PSRAM config params for IDF4+ <PR number={5298} /> by <GHUser name="kbx81" />
+- Fix legacy zeroconf record update method <PR number={5294} /> by <GHUser name="bdraco" />
+- Bump zeroconf from 0.80.0 to 0.86.0 <PR number={5308} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Add PSRAM mode and speed config <PR number={5312} /> by <GHUser name="kbx81" />
+- Add extra SLPOUT for waking up some ST7789 chips <PR number={5319} /> by <GHUser name="clydebarrow" />
+- 7789 controller fixes take 2 <PR number={5320} /> by <GHUser name="clydebarrow" />
+- Bump Arduino Pico to 3.4.0 <PR number={5321} /> by <GHUser name="HeMan" />
+- Use gzip compression for the web server component's static resources <PR number={5291} /> by <GHUser name="EternityForest" />
+- Bump zeroconf from 0.86.0 to 0.88.0 <PR number={5315} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Adding heating coil and fan icons, enum device_class <PR number={5325} /> by <GHUser name="barndawgie" />
+- Add dashboard API to get firmware binaries <PR number={4675} /> by <GHUser name="kuba2k2" />
+- Make uart error message go away <PR number={5329} /> by <GHUser name="clydebarrow" />
+- add heating functionality to SI7021 <PR number={4828} /> by <GHUser name="max246" />
+- Bump esphome-dashboard to 20230904.0 <PR number={5339} /> by <GHUser name="jesserockz" />
+- Added Handling for Nack "file not found" <PR number={5338} /> by <GHUser name="croessi" />
+- Prepare api and time for ESP-IDF ≥ 5 <PR number={5332} /> by <GHUser name="HeMan" />
+- Tweak Improv serial to build in IDF 5 <PR number={5331} /> by <GHUser name="kbx81" />
+- Support for LibreTiny platform (RTL8710, BK7231 & other modules) <PR number={3509} /> by <GHUser name="kuba2k2" /> (new-integration)
+- Extend ESP32 CAN bit rates /bus speed support <PR number={5280} /> by <GHUser name="mkaiser" />
+- Debug component: add free PSRAM sensor <PR number={5334} /> by <GHUser name="kahrendt" />
+- libretiny: fix uart_port framework config <PR number={5343} /> by <GHUser name="jesserockz" />
+- Bump actions/checkout from 3 to 4 <PR number={5341} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Add Lilygo T-Embed to st7789v display config. <PR number={5337} /> by <GHUser name="clydebarrow" />
+- Disable IPv6 when config explicitly says false <PR number={5310} /> by <GHUser name="HeMan" />
+- Add defines.h to ethernet_component.h for ENABLE_IPV6 <PR number={5344} /> by <GHUser name="kbx81" />
+- Synchronise Device Classes from Home Assistant <PR number={5328} /> by <GHUser name="esphomebot" /> (breaking-change)
+- Bump pytest from 7.4.0 to 7.4.1 <PR number={5342} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Fixed default temperature step values for haier climate <PR number={5330} /> by <GHUser name="paveldn" />
+- Add debug component to all tests <PR number={5333} /> by <GHUser name="HeMan" />
+- Support MaxBotix XL in addition to HRXL <PR number={4510} /> by <GHUser name="notjj" />
+- Adding DFRobot Ozone Sensor Support (sen0321) <PR number={4782} /> by <GHUser name="notjj" /> (new-integration)
+- mdns: bump IDF mdns component to 1.2.0 <PR number={5217} /> by <GHUser name="stintel" />
+- Integration LightwaveRF switches <PR number={4812} /> by <GHUser name="max246" /> (new-integration)
+- Bump flake8 from 6.0.0 to 6.1.0 <PR number={5171} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Bump tornado from 6.3.2 to 6.3.3 <PR number={5236} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Bump platformio from 6.1.10 to 6.1.11 <PR number={5323} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Only run ci-docker when ci-docker workflow changes <PR number={5347} /> by <GHUser name="jesserockz" />
+- esp32: Extra build customization <PR number={5322} /> by <GHUser name="jesserockz" />
+- Allow upload command to flash file via serial <PR number={5274} /> by <GHUser name="jesserockz" />
+- Allow "--device SERIAL" on cli to flash only via serial <PR number={5351} /> by <GHUser name="jesserockz" />
+- Fix PN532 for IDF 5 and ultralight enhancements <PR number={5352} /> by <GHUser name="kbx81" />
+- Fix cpu_ll_get_cycle_count() deprecated warning <PR number={5353} /> by <GHUser name="kbx81" />
+- Refactor SPI code; Add ESP-IDF hardware support <PR number={5311} /> by <GHUser name="clydebarrow" /> (new-integration)
+- Bump actions/cache from 3.3.1 to 3.3.2 <PR number={5367} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Bump zeroconf from 0.88.0 to 0.102.0 <PR number={5368} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Fix repeat.count = 0 case <PR number={5364} /> by <GHUser name="Xmister" />
+- Fix dashboard download for ESP32 variants <PR number={5355} /> by <GHUser name="kuba2k2" />
+- Bump pytest from 7.4.1 to 7.4.2 <PR number={5357} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- [ADC] Support measuring VCC on Raspberry Pico (W) <PR number={5335} /> by <GHUser name="hostcc" />
+- Move CONF_PHASE_A/B/C constants to const.py. <PR number={5304} /> by <GHUser name="kpfleming" />
+- Add BMI160 support <PR number={5143} /> by <GHUser name="flaviut" /> (new-integration)
+- Use black-pre-commit-mirror to speed up pre-commit runs. <PR number={5372} /> by <GHUser name="kpfleming" />
+- Native SPI RGB LED component <PR number={5288} /> by <GHUser name="clydebarrow" /> (new-integration)
+- Wireguard component <PR number={4256} /> by <GHUser name="lhoracek" /> (new-integration)
+- Bump LibreTiny version to 1.4.0 <PR number={5375} /> by <GHUser name="kuba2k2" />
+- time: Make `std::string` version of strftime() avoid runaway memory allocations <PR number={5348} /> by <GHUser name="kpfleming" />
+- Fix disabled wifi crash on boot <PR number={5370} /> by <GHUser name="Xmister" />
+- debug: add ESP32-C6 support <PR number={5354} /> by <GHUser name="stintel" />
+- Make string globals persist-able using fixed size allocations <PR number={5296} /> by <GHUser name="EternityForest" />
+- Use /data directory for .esphome folder when running as HA add-on <PR number={5374} /> by <GHUser name="jesserockz" /> (breaking-change)
+- Bump zeroconf from 0.102.0 to 0.108.0 <PR number={5376} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Bump black from 23.7.0 to 23.9.1 <PR number={5377} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Attempt to fix rp2040 adc with vcc <PR number={5378} /> by <GHUser name="jesserockz" />
+- Enable IPv6 for ESP8266 and Raspberry pi pico w (RP2040) <PR number={4759} /> by <GHUser name="HeMan" />
+- Workflow updates <PR number={5384} /> by <GHUser name="jesserockz" />
+- Modbus Controller added some features <PR number={5318} /> by <GHUser name="0x3333" />
+- Force heater off on setup <PR number={5161} /> by <GHUser name="rufuswilson" />
+- Add IDF 5 test yaml, add adc to IDF tests, fix adc for IDF 5 <PR number={5379} /> by <GHUser name="kbx81" />
+- Add patch to apt install <PR number={5389} /> by <GHUser name="synesthesiam" />
+- Fix Waveshare 7.5v2 epaper screens are always powered on <PR number={5283} /> by <GHUser name="phoenixswiss" />
+- Update radon_eye_listener.cpp <PR number={5401} /> by <GHUser name="rmmacias" />
+- Add shelly-dimmer-stm32 51.7 to known versions <PR number={5400} /> by <GHUser name="trvrnrth" />
+- Add E-Trailer Gaslevel support to Mopeka Std Check <PR number={5397} /> by <GHUser name="Phhere" />
+- fix disabled wifi power on 8266 <PR number={5409} /> by <GHUser name="ssieb" />
+- fix handling of web server version <PR number={5405} /> by <GHUser name="ssieb" />
+- Climate preset fix <PR number={5407} /> by <GHUser name="Jorre05" />
+- Remove Wi-Fi dependency from Midea component <PR number={5394} /> by <GHUser name="AnthonyMaiorani" />
+- http_request: Cleanups and safety improvements <PR number={5360} /> by <GHUser name="kpfleming" />
+- Make the pulse meter timeout on startup when no pulses are received <PR number={5388} /> by <GHUser name="TrentHouliston" />
+- Wizard: fix colored text in input prompts <PR number={5313} /> by <GHUser name="kuba2k2" />
+- support keypads with pulldowns <PR number={5404} /> by <GHUser name="ssieb" />
+- Fix SPI inverted clock on ESP8266 <PR number={5416} /> by <GHUser name="clydebarrow" />
+- [RP2040W] Fix WiFi bootloop upon LibreTiny support <PR number={5414} /> by <GHUser name="hostcc" />
+- dallas: limit addresses to 64 bits <PR number={5413} /> by <GHUser name="oddstr13" />
+- Bump zeroconf from 0.108.0 to 0.112.0 <PR number={5392} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- LibreTiny: enable MQTT, bump to v1.4.1 <PR number={5419} /> by <GHUser name="kuba2k2" />
+- Wireguard keepalive remove uint16 type <PR number={5430} /> by <GHUser name="glmnet" />
+- Fix #4896 and #4903 <PR number={5433} /> by <GHUser name="clydebarrow" />
+
+{/* markdownlint-enable MD013 */}
+
+## All Changelogs
+
+
