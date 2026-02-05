@@ -3,11 +3,80 @@ import starlight from "@astrojs/starlight";
 import starlightBlog from "starlight-blog";
 import { fileURLToPath } from "url";
 import path from "path";
+import fs from "fs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
+// Generate changelog sidebar items sorted newest to oldest
+function getChangelogItems() {
+  const changelogDir = path.join(__dirname, "src/content/docs/changelog");
+  const files = fs.readdirSync(changelogDir).filter((f) => f.endsWith(".mdx"));
+
+  const versions = files
+    .map((f) => {
+      const filePath = path.join(changelogDir, f);
+      const content = fs.readFileSync(filePath, "utf-8");
+      const titleMatch = content.match(/^title:\s*["']?([^"'\n]+)["']?/m);
+      const label = titleMatch ? titleMatch[1] : f.replace(".mdx", "");
+
+      // v1.x.x format
+      const match = f.match(/^v(\d+)\.(\d+)\.(\d+)\.mdx$/);
+      if (match) {
+        const [, major, minor, patch] = match;
+        const sortValue =
+          parseInt(major) * 10000 + parseInt(minor) * 100 + parseInt(patch);
+        const slug = `v${major}.${minor}.${patch}`;
+        return { label, slug, sortValue };
+      }
+      // 2021.x.x format
+      const match2 = f.match(/^(\d{4})\.(\d+)\.(\d+)\.mdx$/);
+      if (match2) {
+        const [, year, month, patch] = match2;
+        const sortValue =
+          parseInt(year) * 10000 + parseInt(month) * 100 + parseInt(patch);
+        const slug = `${year}.${month}.${patch}`;
+        return { label, slug, sortValue };
+      }
+      return null;
+    })
+    .filter(Boolean);
+
+  // Sort descending (newest first)
+  versions.sort((a, b) => b.sortValue - a.sortValue);
+
+  return versions.map((v) => ({
+    label: v.label,
+    link: `/changelog/${v.slug}/`,
+  }));
+}
+
+// Get the latest changelog version for redirects
+function getLatestChangelog() {
+  const changelogDir = path.join(__dirname, "src/content/docs/changelog");
+  const files = fs.readdirSync(changelogDir).filter((f) => f.endsWith(".mdx") && f !== "index.mdx");
+
+  let latest = { sortValue: 0, slug: "" };
+  for (const f of files) {
+    const match = f.match(/^(\d{4})\.(\d+)\.(\d+)\.mdx$/);
+    if (match) {
+      const [, year, month, patch] = match;
+      const sortValue = parseInt(year) * 10000 + parseInt(month) * 100 + parseInt(patch);
+      if (sortValue > latest.sortValue) {
+        latest = { sortValue, slug: `${year}.${month}.${patch}` };
+      }
+    }
+  }
+  return latest.slug;
+}
+
+const latestChangelog = getLatestChangelog();
+
 export default defineConfig({
   site: "https://esphome.io",
+  redirects: {
+    "/changelog/": `/changelog/${latestChangelog}/`,
+    "/changelog/index/": `/changelog/${latestChangelog}/`,
+  },
   vite: {
     resolve: {
       alias: {
@@ -103,7 +172,7 @@ export default defineConfig({
         {
           label: "Keeping Up",
           items: [
-            { label: "Blog", link: "/blog/" },
+            //{ label: "Blog", link: "/blog/" },
             { label: "Changelog", link: "/changelog/" },
             { label: "Discord", link: "https://discord.gg/KhAMKrd" },
             {
@@ -117,7 +186,7 @@ export default defineConfig({
         {
           label: "Changelog",
           collapsed: true,
-          autogenerate: { directory: "changelog" },
+          items: getChangelogItems(),
         },
       ],
       head: [
