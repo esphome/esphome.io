@@ -320,7 +320,7 @@ esp32:
 ```
 
 > [!NOTE]
-> If you were already adding libraries via ``libraries`` config or calling ``cg.add_library()``, no action is needed. If you were previously using Arduino library APIs directly in lambdas (e.g., ``Preferences``, ``Wire``, ``SPI``) without adding them to the ``libraries`` config, you will need to explicitly add them.
+> If you were already adding libraries via `libraries` config or calling `cg.add_library()`, no action is needed. If you were previously using Arduino library APIs directly in lambdas (e.g., `Preferences`, `Wire`, `SPI`) without adding them to the `libraries` config, you will need to explicitly add them.
 
 {{< anchor "esp32-idf_components" >}}
 
