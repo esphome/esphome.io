@@ -15,11 +15,11 @@ to measure distances. These sensors usually can't measure anything more
 than about two meters and may sometimes make some annoying clicking
 sounds.
 
-This sensor platform expects a sensor that can be sent a **trigger
-pulse** on a specific pin and will send out an **echo pulse** once a
-measurement has been taken. Because sometimes (for example if no object
-is detected) the echo pulse is never returned, this sensor also has a
-timeout option which specifies how long to wait for values.
+This sensor platform expects a sensor that can be sent a **trigger pulse** on a specific pin and will send out
+an **echo pulse** while the measurement is being taken. Because sometimes (for example if no object is
+detected) the echo is never returned, this sensor has a timeout option which specifies the maximum distance
+to wait for. If you set this too long, the sensor itself will timeout and it will appear as if there was a
+valid measurement.
 
 {{< img src="ultrasonic-full.jpg" alt="Image" caption="HC-SR04 Ultrasonic Distance Sensor." width="50.0%" class="align-center" >}}
 
@@ -29,8 +29,8 @@ timeout option which specifies how long to wait for values.
 # Example configuration entry
 sensor:
   - platform: ultrasonic
-    trigger_pin: D1
-    echo_pin: D2
+    trigger_pin: GPIOXX
+    echo_pin: GPIOXX
     name: "Ultrasonic Sensor"
 ```
 
