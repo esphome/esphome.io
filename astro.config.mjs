@@ -127,6 +127,27 @@ export default defineConfig({
             href: "/favicon.ico",
           },
         },
+        {
+          tag: "meta",
+          attrs: {
+            property: "og:image",
+            content: "https://esphome.io/images/logo.svg",
+          },
+        },
+        {
+          tag: "meta",
+          attrs: {
+            name: "twitter:image",
+            content: "https://esphome.io/images/logo.svg",
+          },
+        },
+        {
+          tag: "meta",
+          attrs: {
+            name: "twitter:card",
+            content: "summary_large_image",
+          },
+        },
       ],
     }),
   ],
