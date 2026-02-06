@@ -72,9 +72,11 @@ MQTT options:
 
 - All other options from [MQTT Component](/components/mqtt#config-mqtt-component).
 
+## Actions
+
 {{< anchor "cover-open_action" >}}
 
-## `cover.open` Action
+### `cover.open` Action
 
 This [action](/automations/actions#all-actions) opens the cover with the given ID when executed.
 
@@ -95,7 +97,7 @@ on_...:
 
 {{< anchor "cover-close_action" >}}
 
-## `cover.close` Action
+### `cover.close` Action
 
 This [action](/automations/actions#all-actions) closes the cover with the given ID when executed.
 
@@ -116,7 +118,7 @@ on_...:
 
 {{< anchor "cover-stop_action" >}}
 
-## `cover.stop` Action
+### `cover.stop` Action
 
 This [action](/automations/actions#all-actions) stops the cover with the given ID when executed.
 
@@ -137,7 +139,7 @@ on_...:
 
 {{< anchor "cover-toggle_action" >}}
 
-## `cover.toggle` Action
+### `cover.toggle` Action
 
 This [action](/automations/actions#all-actions) toggles the cover with the given ID when executed,
 cycling through the states close/stop/open/stop... This allows the cover to be controlled
@@ -160,7 +162,7 @@ on_...:
 
 {{< anchor "cover-control_action" >}}
 
-## `cover.control` Action
+### `cover.control` Action
 
 This [action](/automations/actions#all-actions) is a more generic version of the other cover actions and
 allows all cover attributes to be set.
@@ -196,39 +198,6 @@ Configuration variables:
 > call.perform();
 > ```
 
-{{< anchor "cover-lambda_calls" >}}
-
-## Lambdas
-
-From [lambdas](/automations/templates#config-lambda), you can access the current state of the cover (note that these
-fields are read-only, if you want to act on the cover, use the `make_call()` method as shown above).
-
-- `position`  : Retrieve the current position of the cover, as a value between `0.0` (closed) and `1.0` (open).
-
-```cpp
-        if (id(my_cover).position == COVER_OPEN) {
-          // Cover is open
-        } else if (id(my_cover).position == COVER_CLOSED) {
-          // Cover is closed
-        } else {
-          // Cover is in-between open and closed
-        }
-```
-
-- `tilt`  : Retrieve the current tilt position of the cover, as a value between `0.0` and `1.0`.
-
-- `current_operation`  : The operation the cover is currently performing:
-
-```cpp
-        if (id(my_cover).current_operation == CoverOperation::COVER_OPERATION_IDLE) {
-          // Cover is idle
-        } else if (id(my_cover).current_operation == CoverOperation::COVER_OPERATION_OPENING) {
-          // Cover is currently opening
-        } else if (id(my_cover).current_operation == CoverOperation::COVER_OPERATION_CLOSING) {
-          // Cover is currently closing
-        }
-```
-
 ## Conditions
 
 {{< anchor "cover-is_open_condition" >}}
@@ -261,9 +230,9 @@ on_...:
 
 ## Triggers
 
-{{< anchor "cover-on_open_trigger" >}}
+{{< anchor "cover-on_opened_trigger" >}}
 
-### `cover.on_open` Trigger
+### `cover.on_opened` Trigger
 
 This trigger is activated each time the cover reaches a fully open state.
 
@@ -271,8 +240,8 @@ This trigger is activated each time the cover reaches a fully open state.
 cover:
   - platform: template  # or any other platform
     # ...
-    on_open:
-      - logger.log: "Cover is Open!"
+    on_opened:
+      - logger.log: "Cover is fully open!"
 ```
 
 {{< anchor "cover-on_closed_trigger" >}}
@@ -286,7 +255,85 @@ cover:
   - platform: template  # or any other platform
     # ...
     on_closed:
-      - logger.log: "Cover is Closed!"
+      - logger.log: "Cover is fully closed!"
+```
+
+{{< anchor "cover-on_opening_trigger" >}}
+
+### `cover.on_opening` Trigger
+
+This trigger is activated each time the cover starts opening.
+
+```yaml
+cover:
+  - platform: template  # or any other platform
+    # ...
+    on_opening:
+      - logger.log: "Cover started opening"
+```
+
+{{< anchor "cover-on_closing_trigger" >}}
+
+### `cover.on_closing` Trigger
+
+This trigger is activated each time the cover starts closing.
+
+```yaml
+cover:
+  - platform: template  # or any other platform
+    # ...
+    on_closing:
+      - logger.log: "Cover started closing"
+```
+
+{{< anchor "cover-on_idle_trigger" >}}
+
+### `cover.on_idle` Trigger
+
+This trigger is activated each time the cover stops moving and becomes idle.
+
+```yaml
+cover:
+  - platform: template  # or any other platform
+    # ...
+    on_idle:
+      - logger.log: "Cover stopped moving"
+```
+
+> [!NOTE]
+> The `on_open` trigger is deprecated and will be removed in a future release. Please use `on_opened` instead.
+
+{{< anchor "cover-lambda_calls" >}}
+
+## Lambdas
+
+From [lambdas](/automations/templates#config-lambda), you can access the current state of the cover (note that these
+fields are read-only, if you want to act on the cover, use the `make_call()` method as shown above).
+
+- `position`  : Retrieve the current position of the cover, as a value between `0.0` (closed) and `1.0` (open).
+
+```cpp
+        if (id(my_cover).position == COVER_OPEN) {
+          // Cover is open
+        } else if (id(my_cover).position == COVER_CLOSED) {
+          // Cover is closed
+        } else {
+          // Cover is in-between open and closed
+        }
+```
+
+- `tilt`  : Retrieve the current tilt position of the cover, as a value between `0.0` and `1.0`.
+
+- `current_operation`  : The operation the cover is currently performing:
+
+```cpp
+        if (id(my_cover).current_operation == CoverOperation::COVER_OPERATION_IDLE) {
+          // Cover is idle
+        } else if (id(my_cover).current_operation == CoverOperation::COVER_OPERATION_OPENING) {
+          // Cover is currently opening
+        } else if (id(my_cover).current_operation == CoverOperation::COVER_OPERATION_CLOSING) {
+          // Cover is currently closing
+        }
 ```
 
 ## See Also
