@@ -133,6 +133,8 @@ The `esphome config <CONFIG>` validates the configuration and displays the valid
 
 The `esphome compile <CONFIG>` validates the configuration and compiles the firmware.
 
+You can also pass a `.esphomebundle.tar.gz` bundle file instead of a YAML configuration. The bundle will be automatically extracted before compilation. See the [`bundle` command](#bundle-command) for details.
+
 #### Options
 
 {{< option "--only-generate" >}}
@@ -261,6 +263,46 @@ This command is useful for:
 * Contributing to ESPHome development and optimization efforts
 
 The command automatically compiles the configuration if needed (or quickly relinks if sources haven't changed), then analyzes the resulting firmware to show a detailed breakdown of memory usage by component, including flash memory (code and data) and RAM usage (data and BSS).
+
+### `bundle` Command
+
+The `esphome bundle <CONFIG>` command packages a YAML configuration and all its local dependencies into a self-contained `.esphomebundle.tar.gz` archive. This is useful for remote compilation — the bundle can be transferred to another machine and compiled with `esphome compile device.esphomebundle.tar.gz`.
+
+The bundle includes:
+
+* The main YAML configuration file
+* All `!include`d YAML files and `secrets.yaml` (filtered to only referenced keys)
+* Font, image, and animation files
+* Certificate and key files (e.g. for WPA2 EAP)
+* C/C++ includes from `esphome.includes`
+* Web server CSS/JS includes
+* Local `external_components` directories
+
+Remote resources (git-based external components, online fonts, etc.) are **not** bundled — they will be fetched during compilation on the target machine.
+
+```shell
+esphome bundle my_device.yaml
+```
+
+> [!WARNING]
+> Bundles may contain secrets such as Wi-Fi passwords. Do not share bundles with untrusted parties.
+
+Any ESPHome command can accept a bundle file in place of a YAML configuration. The bundle is automatically extracted before the command runs:
+
+```shell
+esphome compile my_device.esphomebundle.tar.gz
+esphome run my_device.esphomebundle.tar.gz --device 192.168.1.50
+```
+
+#### Options
+
+{{< option "-o|--output PATH" >}}
+Specify a custom output path for the bundle archive. If not specified, the bundle is created next to the configuration file with the `.esphomebundle.tar.gz` extension.
+{{< /option >}}
+
+{{< option "--list-only" >}}
+List all discovered files that would be included in the bundle without creating the archive. Useful for verifying which files will be packaged.
+{{< /option >}}
 
 ### `logs` Command
 
