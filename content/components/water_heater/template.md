@@ -23,6 +23,12 @@ water_heater:
     # Lambda to read the target temperature (optional)
     target_temperature: !lambda 'return id(my_target_temp_sensor).state;'
 
+    # Lambda to read the work state (on/off) (optional)
+    on: !lambda "return id(my_switch).state;"
+
+    # Lambda to read the away mode state (optional)
+    away: !lambda "return id(vacation_mode).state;"
+
     # Lambda to read the current operation mode (optional)
     mode: !lambda 'return water_heater::WATER_HEATER_MODE_ECO;'
     optimistic: true
@@ -41,6 +47,8 @@ water_heater:
     set_action:
       - lambda: |-
           ESP_LOGI("boiler", "New mode: %d", id(my_boiler).get_mode());
+          ESP_LOGI("boiler", "New target temperature: %.1f", id(my_boiler).get_target_temperature());
+          ESP_LOGI("boiler", "On: %s, Away: %s", YESNO(id(my_boiler).is_on()), YESNO(id(my_boiler).is_away()));
 ```
 
 Possible return values for the lambdas:
@@ -48,6 +56,8 @@ Possible return values for the lambdas:
 - `current_temperature`: Returns a `float` (e.g. `42.5`).
 - `target_temperature`: Returns a `float` (e.g. `60.0`).
 - `mode`: Returns a `WaterHeaterMode` enum (e.g. `water_heater::WATER_HEATER_MODE_ECO`).
+- `on`: Returns a `bool` (e.g. `true`).
+- `away`: Returns a `bool` (e.g. `true`).
 
 ## Configuration variables
 
@@ -59,6 +69,12 @@ Possible return values for the lambdas:
 
 - **mode** (*Optional*, [lambda](/automations/templates#config-lambda)):
   Lambda to be evaluated repeatedly to get the current operation mode. Expects a `WaterHeaterMode` enum return value.
+
+- **on** (*Optional*, [lambda](/automations/templates#config-lambda)):
+  Lambda to be evaluated repeatedly to get the current on/off state. Expects a boolean return value.
+
+- **away** (*Optional*, [lambda](/automations/templates#config-lambda)):
+  Lambda to be evaluated repeatedly to get the current away mode state. Expects a boolean return value.
 
 - **optimistic** (*Optional*, boolean): Whether to operate in optimistic mode - when in this mode, any command sent to
   the template water heater will immediately update the reported state. Defaults to `true`.
@@ -95,6 +111,8 @@ with the `water_heater.template.publish` action.
     current_temperature: 55.0
     target_temperature: 60.0
     mode: ECO
+    on: true
+    away: false
 ```
 
 Configuration options:
@@ -106,6 +124,10 @@ Configuration options:
   The target setpoint temperature to publish.
 - **mode** (*Optional*, [templatable](/automations/templates), string):
   The operation mode to publish. See [Water Heater Modes](/components/water_heater#water-heater-modes) for options.
+- **on** (*Optional*, [templatable](/automations/templates), boolean):
+  The current on/off state to publish.
+- **away** (*Optional*, [templatable](/automations/templates), boolean):
+  The current away mode state to publish.
 
 > [!NOTE]
 > This action can also be written in lambdas:
@@ -113,6 +135,11 @@ Configuration options:
 > ```cpp
 > id(my_boiler).set_current_temperature(55.0);
 > id(my_boiler).publish_state();
+> // Or with state updates
+> auto call = id(my_boiler).make_call();
+> call.set_on(true);
+> call.set_away(false);
+> call.perform();
 > ```
 
 ## See Also
