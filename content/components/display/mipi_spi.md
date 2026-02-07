@@ -61,6 +61,7 @@ using an octal SPI bus, so references here to parallel and octal SPI are equival
 | Model                                | Manufacturer | Product Description                                               |
 |--------------------------------------|--------------|-------------------------------------------------------------------|
 | ADAFRUIT-S2-TFT-FEATHER              | Adafruit     | <https://www.adafruit.com/product/6312>                           |
+| ADAFRUIT-S3-REVERSE-TFT-FEATHER      | Adafruit     | <https://www.adafruit.com/product/5691>                           |
 | ADAFRUIT-FUNHOUSE                    | Adafruit     | <https://www.adafruit.com/product/4985>                           |
 | M5CORE                               | M5Stack      | <https://docs.m5stack.com/en/core/BASIC%20v2.6>                   |
 | M5CORE2                              | M5Stack      | <https://docs.m5stack.com/en/core/core2>                          |
