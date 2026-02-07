@@ -50,6 +50,8 @@ specified, or a custom init sequence can be provided.
 | WAVESHARE-P4-NANO-10.1 | Waveshare | <https://www.waveshare.com/esp32-p4-nano.htm?sku=29031> |
 | WAVESHARE-P4-86-PANEL | Waveshare | <https://www.waveshare.com/esp32-p4-wifi6-touch-lcd-4b.htm?sku=31570> |
 | WAVESHARE-ESP32-P4-WIFI6-TOUCH-LCD-7B | Waveshare | <https://www.waveshare.com/wiki/ESP32-P4-WIFI6-Touch-LCD-7B> |
+| WAVESHARE-ESP32-P4-WIFI6-TOUCH-LCD-3.4C | Waveshare | <https://www.waveshare.com/wiki/ESP32-P4-WIFI6-Touch-LCD-3.4C> |
+| WAVESHARE-ESP32-P4-WIFI6-TOUCH-LCD-4C | Waveshare | <https://www.waveshare.com/wiki/ESP32-P4-WIFI6-Touch-LCD-4C> |
 
 > [!NOTE]
 The M5Stack Tab5 has two hardware revisions with different display chips requiring different model selections.
