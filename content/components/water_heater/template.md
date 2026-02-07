@@ -24,7 +24,7 @@ water_heater:
     target_temperature: !lambda 'return id(my_target_temp_sensor).state;'
 
     # Lambda to read the work state (on/off) (optional)
-    on: !lambda "return id(my_switch).state;"
+    "on": !lambda "return id(my_switch).state;"
 
     # Lambda to read the away mode state (optional)
     away: !lambda "return id(vacation_mode).state;"
@@ -111,7 +111,7 @@ with the `water_heater.template.publish` action.
     current_temperature: 55.0
     target_temperature: 60.0
     mode: ECO
-    on: true
+    "on": true
     away: false
 ```
 
