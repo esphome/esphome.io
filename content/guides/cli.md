@@ -287,7 +287,7 @@ esphome bundle my_device.yaml
 > [!WARNING]
 > Bundles may contain secrets such as Wi-Fi passwords. Do not share bundles with untrusted parties.
 
-Any ESPHome command can accept a bundle file in place of a YAML configuration. The bundle is automatically extracted before the command runs:
+Any command that accepts `<CONFIG>` can also accept a `.esphomebundle.tar.gz` bundle file in place of a YAML configuration. The bundle is automatically extracted before the command runs:
 
 ```shell
 esphome compile my_device.esphomebundle.tar.gz
