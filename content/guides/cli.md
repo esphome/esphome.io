@@ -274,7 +274,7 @@ The bundle includes:
 * All `!include`d YAML files and `secrets.yaml` (filtered to only referenced keys)
 * Font, image, and animation files
 * Certificate and key files (e.g. for WPA2 EAP)
-* C/C++ includes from `esphome.includes`
+* C/C++ includes from `esphome: includes:`
 * Web server CSS/JS includes
 * Local `external_components` directories
 
