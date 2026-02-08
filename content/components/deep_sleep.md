@@ -231,6 +231,7 @@ binary_sensor:
           else:
             - logger.log: "input_boolean.esphome_prevent_sleep is OFF!"
             - deep_sleep.allow:
+
 ```
 
 Following ota update, don't forget to set the `input_boolean.esphome_prevent_sleep` to Off to allow the device to deep_sleep.
@@ -254,6 +255,7 @@ mqtt:
       then:
         - logger.log: "esphome_sleep/prevent is OFF!"
         - deep_sleep.allow:
+
 ```
 
 Following ota update, don't forget to publish a retained `OFF` payload to `esphome_sleep/prevent` to allow the device to deep_sleep.
