@@ -208,15 +208,15 @@ The following 2 examples will prevent deep_sleep and allow an OTA update
 
 ### Using API
 
-When using Esphome API, allowing deep_sleep can be controlled by a Home Assistant input_boolean.  
-For example, `input_boolean.esphome_prevent_sleep`
+When using ESPHome API, allowing deep_sleep can be controlled by a Home Assistant input_boolean.  
+For example, `input_boolean.ESPHome_prevent_sleep`
 
 ```yaml
 binary_sensor:
   - platform: homeassistant
     name: "Input Boolean Prevent Sleep Sensor"
-    entity_id: input_boolean.esphome_prevent_sleep
-    id: esphome_prevent_sleep_sensor
+    entity_id: input_boolean.ESPHome_prevent_sleep
+    id: ESPHome_prevent_sleep_sensor
     trigger_on_initial_state: true
     internal: true
     # Optional: act when the state changes
@@ -224,41 +224,39 @@ binary_sensor:
       then:
       - if:
           condition:
-            binary_sensor.is_on: esphome_prevent_sleep_sensor
+            binary_sensor.is_on: ESPHome_prevent_sleep_sensor
           then:
-            - logger.log: "input_boolean.esphome_prevent_sleep is ON!"
-            - deep_sleep.prevent:
+            - logger.log: "input_boolean.ESPHome_prevent_sleep is ON!"
+            - deep_sleep.prevent: deep_sleep_1
           else:
-            - logger.log: "input_boolean.esphome_prevent_sleep is OFF!"
-            - deep_sleep.allow:
-
+            - logger.log: "input_boolean.ESPHome_prevent_sleep is OFF!"
+            - deep_sleep.allow: deep_sleep_1
 ```
 
-Following ota update, don't forget to set the `input_boolean.esphome_prevent_sleep` to Off to allow the device to deep_sleep.
+Following OTA update, don't forget to set the `input_boolean.ESPHome_prevent_sleep` to Off to allow the device to deep_sleep.
 
 ### Using MQTT
 
 When communicating with an mqtt broker, allowing deep_sleep can be controlled by a retained payload to a MQTT topic
-For example, `esphome_sleep/prevent` with 2 values `ON` and `OFF`
+For example, `ESPHome_sleep/prevent` with 2 values `ON` and `OFF`
 
 ```yaml
 mqtt:
   ...
   on_message:
-    - topic: esphome_sleep/prevent
+    - topic: ESPHome_sleep/prevent
       payload: 'ON'
       then:
-        - logger.log: "esphome_sleep/prevent is ON!"
-        - deep_sleep.prevent:
-    - topic: esphome_sleep/prevent
+        - logger.log: "ESPHome_sleep/prevent is ON!"
+        - deep_sleep.prevent: deep_sleep_1
+    - topic: ESPHome_sleep/prevent
       payload: 'OFF'
       then:
-        - logger.log: "esphome_sleep/prevent is OFF!"
-        - deep_sleep.allow:
-
+        - logger.log: "ESPHome_sleep/prevent is OFF!"
+        - deep_sleep.allow: deep_sleep_1
 ```
 
-Following ota update, don't forget to publish a retained `OFF` payload to `esphome_sleep/prevent` to allow the device to deep_sleep.
+Following OTA update, don't forget to publish a retained `OFF` payload to `ESPHome_sleep/prevent` to allow the device to deep_sleep.
 
 ## See Also
 
