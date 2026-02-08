@@ -210,7 +210,8 @@ The following 2 examples will prevent deep_sleep and allow an OTA update
 
 When using Esphome API, allowing deep_sleep can be controlled by a Home Assistant input_boolean.  
 For example, `input_boolean.esphome_prevent_sleep`
-```
+
+```yaml
 binary_sensor:
   - platform: homeassistant
     name: "Input Boolean Prevent Sleep Sensor"
@@ -239,7 +240,7 @@ Following ota update, don't forget to set the `input_boolean.esphome_prevent_sle
 When communicating with an mqtt broker, allowing deep_sleep can be controlled by a retained payload to a MQTT topic
 For example, `esphome_sleep/prevent` with 2 values `ON` and `OFF`
 
-```
+```yaml
 mqtt:
   ...
   on_message:
