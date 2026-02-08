@@ -281,17 +281,7 @@ The bundle includes:
 Remote resources (git-based external components, online fonts, etc.) are **not** bundled — they will be fetched during compilation on the target machine.
 
 ```shell
-esphome bundle my_device.yaml
-```
-
-> [!WARNING]
-> Bundles may contain secrets such as Wi-Fi passwords. Do not share bundles with untrusted parties.
-
-Any command that accepts `<CONFIG>` can also accept a `.esphomebundle.tar.gz` bundle file in place of a YAML configuration. The bundle is automatically extracted before the command runs:
-
-```shell
-esphome compile my_device.esphomebundle.tar.gz
-esphome run my_device.esphomebundle.tar.gz --device 192.168.1.50
+esphome bundle my-device.yaml
 ```
 
 #### Options
