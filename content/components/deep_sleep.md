@@ -189,37 +189,6 @@ on_...:
     - deep_sleep.prevent: deep_sleep_1
 ```
 
-> [!NOTE]
-> For example, if you want to upload a binary via OTA with deep sleep mode it can be difficult to
-> catch the ESP being active.
->
-> You can use this automation to automatically prevent deep sleep when a MQTT message on the topic
-> `livingroom/ota_mode` is received. Then, to do the OTA update, just
-> use a MQTT client to publish a retained MQTT message described below. When the node wakes up again
-> it will no longer enter deep sleep mode and you can upload your OTA update.
->
-> Remember to turn "OTA mode" off again after the OTA update by sending a MQTT message with the payload
-> `OFF`. To enter the deep sleep again after the OTA update send a message on the topic `livingroom/sleep_mode`
-> with payload `ON`. Deep sleep will start immediately. Don't forget to delete the payload before the node
-> wakes up again.
->
-> ```yaml
-> deep_sleep:
->   # ...
->   id: deep_sleep_1
-> mqtt:
->   # ...
->   on_message:
->     - topic: livingroom/ota_mode
->       payload: 'ON'
->       then:
->         - deep_sleep.prevent: deep_sleep_1
->     - topic: livingroom/sleep_mode
->       payload: 'ON'
->       then:
->         - deep_sleep.enter: deep_sleep_1
-> ```
-
 {{< anchor "deep_sleep-allow_action" >}}
 
 ## `deep_sleep.allow` Action
@@ -231,6 +200,62 @@ on_...:
   then:
     - deep_sleep.allow: deep_sleep_1
 ```
+
+## Preventing Deep Sleep
+
+To upload a binary via OTA with deep sleep mode it can be difficult to catch the ESP being active.
+The following 2 examples will prevent deep_sleep and allow an OTA update
+
+### Using API
+
+When using Esphome API, allowing deep_sleep can be controlled by a Home Assistant input_boolean.  
+For example, `input_boolean.esphome_prevent_sleep`
+```
+binary_sensor:
+  - platform: homeassistant
+    name: "Input Boolean Prevent Sleep Sensor"
+    entity_id: input_boolean.esphome_prevent_sleep
+    id: esphome_prevent_sleep_sensor
+    trigger_on_initial_state: true
+    internal: true
+    # Optional: act when the state changes
+    on_state:
+      then:
+      - if:
+          condition:
+            binary_sensor.is_on: esphome_prevent_sleep_sensor
+          then:
+            - logger.log: "input_boolean.esphome_prevent_sleep is ON!"
+            - deep_sleep.prevent:
+          else:
+            - logger.log: "input_boolean.esphome_prevent_sleep is OFF!"
+            - deep_sleep.allow:
+```
+
+Following ota update, don't forget to set the `input_boolean.esphome_prevent_sleep` to Off to allow the device to deep_sleep.
+
+### Using MQTT
+
+When communicating with an mqtt broker, allowing deep_sleep can be controlled by a retained payload to a MQTT topic
+For example, `esphome_sleep/prevent` with 2 values `ON` and `OFF`
+
+```
+mqtt:
+  ...
+  on_message:
+    - topic: esphome_sleep/prevent
+      payload: 'ON'
+      then:
+        - logger.log: "esphome_sleep/prevent is ON!"
+        - deep_sleep.prevent:
+    - topic: esphome_sleep/prevent
+      payload: 'OFF'
+      then:
+        - logger.log: "esphome_sleep/prevent is OFF!"
+        - deep_sleep.allow:
+```
+
+Following ota update, don't forget to publish a retained `OFF` payload to `esphome_sleep/prevent` to allow the device to deep_sleep.
 
 ## See Also
 
