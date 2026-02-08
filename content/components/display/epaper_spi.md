@@ -68,8 +68,8 @@ but can be overridden if needed.
 - **model** (**Required**): The model of the ePaper display. See the table above for options (case is not significant).
 - **dc_pin** (**Required**, [Pin Schema](/guides/configuration-types#pin-schema)): The DC pin. Predefined for integrated boards.
 - **cs_pin** (**Required**, [Pin Schema](/guides/configuration-types#pin-schema)): The CS pin. Predefined for integrated boards.
-- **cs1_pin** (**Optional**, [Pin Schema](/guides/configuration-types#pin-schema)): The CS1 pin. Required for the T133A01 panel.
-- **enable_pin** (**Optional**, [Pin Schema](/guides/configuration-types#pin-schema)): The enable pin. Required for the T133A01 panel.
+- **cs1_pin** (**Optional**, [Pin Schema](/guides/configuration-types#pin-schema)): The CS1 pin. Required when using the T133A01 panel.
+- **enable_pin** (**Optional**, [Pin Schema](/guides/configuration-types#pin-schema)): The enable pin. Required when using the T133A01 panel.
 - **busy_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The BUSY pin, if used.
 - **reset_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The RESET pin, if used.
   Make sure you pull this pin high (by connecting it to 3.3V with a resistor) if not connected to a GPIO pin.
@@ -119,7 +119,7 @@ display:
     busy_pin: { number: GPIOXX, inverted: False, mode: { input: True, pulldown: True } }
 ```
 
-### Example for Seeed E02 13.3" Color Display
+### Example for Seeed EE02 13.3" Color Display
 
 ```yaml
 esp32:
