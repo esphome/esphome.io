@@ -31,11 +31,12 @@ display:
 These are the supported controller chips. Using just the chip name as the model will require full configuration with
 pins and dimensions specified.
 
-| Chip name              | Manufacturer | Product Description                                      |
-|------------------------|--------------|----------------------------------------------------------|
-| JD79660                | Jadard       | <https://www.tdytech.com/en/> (B2B, see vendors instead) |
-| Spectra-E6             | Eink         | <https://www.eink.com/brand/detail/Spectra6>             |
-| SSD1677                | Solomon      | <https://www.solomon-systech.com/product/ssd1677/>       |
+| Chip name              | Manufacturer | Product Description                                                       |
+|------------------------|--------------|---------------------------------------------------------------------------|
+| JD79660                | Jadard       | <https://www.tdytech.com/en/> (B2B, see vendors instead)                  |
+| Spectra-E6             | Eink         | <https://www.eink.com/brand/detail/Spectra6>                              |
+| SSD1677                | Solomon      | <https://www.solomon-systech.com/product/ssd1677/>                        |
+| T133A01                | SeekInk      | <https://www.seekink.com/product/13-3-inch-colored-e-ink-display-module/> |
 
 ## Supported display panels
 
@@ -57,6 +58,7 @@ a minimum only the model name need be configured. Other options can be overridde
 | ---------------------- |--------------| ---------------------------------------------------------------------------------------------------------------------------- |
 | Seeed-reTerminal-E1002 | Seeed Studio | <https://www.seeedstudio.com/reTerminal-E1002-p-6533.html>                                                                   |
 | Seeed-ee04-mono-4.26   | Seeed Studio | Seeed EE04 board with Waveshare 4.26" mono epaper. <https://www.seeedstudio.com/XIAO-ePaper-Display-Board-EE04-p-6560.html>  |
+| Seeed-ee02-color-13.3  | Seeed Studio | Seeed EE02 board with T133A01 13.3" Spectra 6 Color Display. <https://www.seeedstudio.com/XIAO-ePaper-DIY-Kit-EE02-for-13-3-Spectratm-6-E-Ink.html> |
 
 ## Configuration variables
 
@@ -64,8 +66,10 @@ When using a model defining an integrated display board most of the configuratio
 but can be overridden if needed.
 
 - **model** (**Required**): The model of the ePaper display. See the table above for options (case is not significant).
-- **cs_pin** (**Required**, [Pin Schema](/guides/configuration-types#pin-schema)): The CS pin. Predefined for integrated boards.
 - **dc_pin** (**Required**, [Pin Schema](/guides/configuration-types#pin-schema)): The DC pin. Predefined for integrated boards.
+- **cs_pin** (**Required**, [Pin Schema](/guides/configuration-types#pin-schema)): The CS pin. Predefined for integrated boards.
+- **cs1_pin** (**Optional**, [Pin Schema](/guides/configuration-types#pin-schema)): The CS1 pin. Required for the T133A01 panel.
+- **enable_pin** (**Optional**, [Pin Schema](/guides/configuration-types#pin-schema)): The enable pin. Required for the T133A01 panel.
 - **busy_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The BUSY pin, if used.
 - **reset_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The RESET pin, if used.
   Make sure you pull this pin high (by connecting it to 3.3V with a resistor) if not connected to a GPIO pin.
@@ -113,6 +117,30 @@ display:
     dc_pin: GPIOXX
     reset_pin: GPIOXX
     busy_pin: { number: GPIOXX, inverted: False, mode: { input: True, pulldown: True } }
+```
+
+### Example for Seeed E02 13.3" Color Display
+
+```yaml
+esp32:
+  variant: esp32s3
+  flash_size: 16MB
+  framework:
+    type: esp-idf
+    advanced:
+      execute_from_psram: true
+
+psram:
+  mode: octal
+  speed: 80MHz
+
+spi:
+  clk_pin: 7
+  mosi_pin: 9
+
+display:
+  - platform: epaper_spi
+    model: Seeed-ee02-color-13.3
 ```
 
 ## See Also
