@@ -45,6 +45,8 @@ the pins used to interface to the display to be specified.
 |---------------------|--------------|----------------------------------------------------|
 | Waveshare-2.13in-v3 | Waveshare    | <https://www.waveshare.com/pico-epaper-2.13.htm>   |
 | Waveshare-4.26in    | Waveshare    | <https://www.waveshare.com/4.26inch-e-paper.htm>   |
+| WeAct-2.9in-3c      | WeAct        | 2.9" 3-color e-paper (128x296, SSD1683)           |
+| WeAct-4.2in-3c      | WeAct        | 4.2" 3-color e-paper (400x300, SSD1683)           |
 
 ## Supported integrated display boards
 
