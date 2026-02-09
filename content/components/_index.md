@@ -709,6 +709,7 @@ Often known as "tag" or "card" readers within the community.
 "Feedback Cover","components/cover/feedback","feedback_cover.svg","dark-invert"
 "HE60R Cover","components/cover/he60r","he60r.jpg",""
 "Time-Based Cover","components/cover/time_based","timer.svg","dark-invert"
+"Time-Based Cover with Tilt Function","components/cover/time_based_tilt","time_based_tilt.svg","dark-invert"
 "Tormatic/Novoferm Cover","components/cover/tormatic","tormatic.png",""
 "Tuya Cover","components/cover/tuya","tuya.png",""
 {{< /imgtable >}}
