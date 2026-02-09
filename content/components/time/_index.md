@@ -270,7 +270,7 @@ created based on a given format. If you want to get the current time attributes,
 | `.year`         | Year since 0 A.C.                                             | [1970-∞[                                                                      | 2018         |
 | `.is_dst`       | Is daylight savings time                                      | false, true                                                                   | true         |
 | `.timestamp`    | Unix epoch time (seconds since UTC  Midnight January 1, 1970) | [-2147483648 - 2147483647] (negative  values for time past January 19th 2038) | 1534606002   |
-| `.is_valid()`   | Basic check if the time is valid  (i.e. not January 1st 1970) | false, true                                                                   | true         |
+| `.is_valid()`   | Basic check if the time is valid  (i.e. year 2019 or newer)   | false, true                                                                   | true         |
 
 > [!NOTE]
 > Before the ESP has connected to the internet and can get the current time the date will be January 1st 1970. So
