@@ -491,7 +491,7 @@ Sensors are organized into categories; if a given sensor fits into more than one
 "Combination","components/sensor/combination","function.svg","dark-invert"
 "Duty Time","components/sensor/duty_time","timer-play-outline.svg","dark-invert"
 "EZO sensor circuits","components/sensor/ezo","ezo-ph-circuit.png","(pH)"
-"Filter Lifetime Sensor","components/sensor/filter_lifetime_sensor","filter_lifetime_sensor.svg","Track filter lifetime"
+"Filter Lifetime Sensor","components/sensor/filter_lifetime_sensor","filter_lifetime.svg","Track filter lifetime"
 "FS3000","components/sensor/fs3000","fs3000.jpg","Air velocity"
 "GDK101","components/sensor/gdk101","gdk101.jpg","Radiation"
 "Growatt Solar","components/sensor/growatt_solar","growatt.jpg","Solar rooftop"
