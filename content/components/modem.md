@@ -17,16 +17,31 @@ Because the device will be on a private network, you will need to use [MQTT](/co
 This component cannot be used at the same time as the [Ethernet](/components/ethernet) or [Captive Portal](/components/captive_portal) components. It is also not compatible with Wi-Fi station mode.
 
 ```yaml
-# Example configuration entry
+# Example basic configuration entry
 modem:
   id: atmodem
   model: SIM7600
+  apn: orange
   rx_pin: GPIO26
   tx_pin: GPIO27
+  power_pin: GPIO19
+
+# Example advanced configuration entry
+modem:
+  id: atmodem
+  model: SIM7600
   apn: orange
-  pin_code: "0000"
+  pin_code: "1234"
+  rx_pin: GPIO26
+  tx_pin: GPIO27
   rts_pin: GPIO21
   cts_pin: GPIO20
+  power_pin:
+    ton_pulse_delay: 3s
+    ton_delay: 10s
+    pin:
+      number: GPIO19
+      inverted: false
 ```
 
 ## Configuration variables
@@ -38,7 +53,12 @@ modem:
 - **pin_code** (*Optional*, string): The PIN code for your SIM card.
 - **rts_pin** (**Optional**, [Pin Schema](/guides/configuration-types#pin-schema)): The pin used for `RTS` hardware flow control. It enables UART hardware flow control if `cts_pin` is also declared.
 - **cts_pin** (**Optional**, [Pin Schema](/guides/configuration-types#pin-schema)): The pin used for `CTS` hardware flow control. It enables UART hardware flow control if `rts_pin` is also declared.
-- **power_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The pin connected to the modem's `PWK` or power key, used for power management.
+- **power_pin** (*Optional*): The pin connected to the modem's `PWK` or power key, used for power management. If you don’t need any other options, you can just use `power_pin: GPIO19`.
+  - **pin** (**Required**, [Pin Schema](/guides/configuration-types#pin-schema)).
+  - **ton_pulse_delay** (*Optional*, [Time](/guides/configuration-types#time)): The duration to hold the power pin active to turn the modem ON. This option is for advanced power management tuning. In most supported models this value is pre-configured. It is required when using the `GENERIC` model or if you need to override the default timings for your specific hardware.
+  - **ton_delay** (*Optional*, [Time](/guides/configuration-types#time)): The duration to wait after the power-on pulse has finished before the modem is considered fully booted. This option is for advanced power management tuning. In most supported models this value is pre-configured. It is required when using the `GENERIC` model or if you need to override the default timings for your specific hardware.
+  - **toff_pulse_delay** (*Optional*, [Time](/guides/configuration-types#time)): The duration to hold the power pin active to turn the modem OFF. This option is for advanced power management tuning. In most supported models this value is pre-configured. It is required when using the `GENERIC` model or if you need to override the default timings for your specific hardware.
+  - **toff_delay** (*Optional*, [Time](/guides/configuration-types#time)): The duration to wait after the power-off pulse has finished before the modem is considered fully shut down. This option is for advanced power management tuning. In most supported models this value is pre-configured. It is required when using the `GENERIC` model or if you need to override the default timings for your specific hardware.
 - **status_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The pin connected to the modem's `STATUS` output, used to read the power state.
 - **enable_cmux** (*Optional*, boolean): Enables CMUX mode, which allows the modem to answer AT commands while connected to the network. This is required by other components that communicate with the modem, such as [Modem Sensor](/components/sensor/modem). Defaults to `true`.
 - **reboot_timeout** (*Optional*, [Time](/guides/configuration-types#time)): The amount of time to wait after a failed connection attempt before rebooting the node. Defaults to `10min`. Can be disabled by setting to `0s`.
@@ -57,7 +77,6 @@ modem:
 ## Advanced options
 
 - **baud_rate** (*Optional*, int): The baud rate for the serial connection to the modem. You can use `init_at` to send `AT+IPR=?` to find the available baud rates for your modem.
-- **ton_pulse_delay**, **ton_delay**, **toff_pulse_delay**, **toff_delay** (*Optional*, [Time](/guides/configuration-types#time)): These options are for advanced power management tuning and are only needed when using the `power_pin`. For most supported models, these values are pre-configured. They are required when using the `GENERIC` model with a `power_pin`, or if you need to override the default timings for your specific hardware.
 - **tx_buffer_size** (*Optional*, int): The size of the TX buffer in bytes. Defaults to `1024`.
 - **rx_buffer_size** (*Optional*, int): The size of the RX buffer in bytes. Defaults to `1024`.
 - **dte_buffer_size** (*Optional*, int): The size of the DTE buffer in bytes. Defaults to `1024`. This may need to be increased if you frequently see the "CMUX: Failed to defragment longer payload" warning.
