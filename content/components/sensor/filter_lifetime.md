@@ -157,9 +157,9 @@ button:
 The sensor tracks filter usage by:
 
 1. **Monitoring runtime**: Accumulates time when the device is on. You can specify this with `is_on` lambda, `is_on_sensor`, or omit it to assume always-on (default: `true`)
-2. **Scaling by speed**: Runtime is multiplied by the speed percentage. You can specify this with `current_speed` lambda, `current_speed_sensor`, or omit it for constant full-speed operation (default: `100.0`). Running at 50% speed for 1 hour = 30 minutes of runtime
-3. **Calculating percentage**: Compares accumulated runtime against `max_lifetime` to show remaining life
-4. **Persisting data**: Stores runtime to flash memory, surviving reboots and power loss
+1. **Scaling by speed**: Runtime is multiplied by the speed percentage. You can specify this with `current_speed` lambda, `current_speed_sensor`, or omit it for constant full-speed operation (default: `100.0`). Running at 50% speed for 1 hour = 30 minutes of runtime
+1. **Calculating percentage**: Compares accumulated runtime against `max_lifetime` to show remaining life
+1. **Persisting data**: Stores runtime to flash memory, surviving reboots and power loss
 
 ### Calculation Details
 
