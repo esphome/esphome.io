@@ -45,7 +45,7 @@ globals:
 - **restore_value** (*Optional*, boolean): Whether to try to restore the state on boot up.
   Be careful: on the ESP8266, you only have a total of 96 bytes available for this! Defaults to `no`.
 
-- **update_interval** (*Optional*, {{< docref "/guides/configuration-types#time" "Time" >}}): The interval
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval
   to check if the value has changed and needs to be saved. Only applies when `restore_value` is `yes`.
   Defaults to `1s`. The value is also saved on shutdown.
 
