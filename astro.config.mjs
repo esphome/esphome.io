@@ -69,6 +69,62 @@ function getLatestChangelog() {
   return latest.slug;
 }
 
+// Generate component sidebar items with proper labels
+function getComponentItems() {
+  const componentsDir = path.join(__dirname, "src/content/docs/components");
+  const entries = fs.readdirSync(componentsDir, { withFileTypes: true });
+  const items = [];
+
+  for (const entry of entries) {
+    if (entry.name === "images" || entry.name === "index.mdx") continue;
+
+    if (entry.isFile() && entry.name.endsWith(".mdx")) {
+      const filePath = path.join(componentsDir, entry.name);
+      const content = fs.readFileSync(filePath, "utf-8");
+      const titleMatch = content.match(/^title:\s*["']?([^"'\n]+)["']?/m);
+      const label = titleMatch ? titleMatch[1] : entry.name.replace(".mdx", "");
+      const slug = entry.name.replace(".mdx", "");
+      items.push({ label, link: `/components/${slug}/`, sort: label.toLowerCase() });
+    } else if (entry.isDirectory()) {
+      const dirPath = path.join(componentsDir, entry.name);
+      const indexPath = path.join(dirPath, "index.mdx");
+
+      let groupLabel = entry.name.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+      if (fs.existsSync(indexPath)) {
+        const content = fs.readFileSync(indexPath, "utf-8");
+        const titleMatch = content.match(/^title:\s*["']?([^"'\n]+)["']?/m);
+        if (titleMatch) groupLabel = titleMatch[1];
+      }
+
+      const subFiles = fs.readdirSync(dirPath).filter((f) => f.endsWith(".mdx"));
+      const subItems = [];
+      for (const f of subFiles) {
+        const subPath = path.join(dirPath, f);
+        const content = fs.readFileSync(subPath, "utf-8");
+        const titleMatch = content.match(/^title:\s*["']?([^"'\n]+)["']?/m);
+        const label = titleMatch ? titleMatch[1] : f.replace(".mdx", "");
+        const slug = f === "index.mdx" ? "" : f.replace(".mdx", "") + "/";
+        const item = { label, link: `/components/${entry.name}/${slug}` };
+        if (f === "index.mdx") {
+          subItems.unshift(item);
+        } else {
+          subItems.push(item);
+        }
+      }
+
+      items.push({
+        label: groupLabel,
+        collapsed: true,
+        items: subItems,
+        sort: groupLabel.toLowerCase(),
+      });
+    }
+  }
+
+  items.sort((a, b) => a.sort.localeCompare(b.sort));
+  return items.map(({ sort, ...item }) => item);
+}
+
 const latestChangelog = getLatestChangelog();
 
 export default defineConfig({
@@ -89,6 +145,7 @@ export default defineConfig({
       title: "ESPHome - Smart Home Made Simple",
       titleDelimiter: "-",
       favicon: "/favicon.ico",
+      pagination: false,
       plugins: [
         //starlightBlog({
         //  title: 'Blog',
@@ -152,7 +209,7 @@ export default defineConfig({
         {
           label: "Components",
           collapsed: true,
-          autogenerate: { directory: "components" },
+          items: getComponentItems(),
         },
         {
           label: "Automations",
@@ -196,6 +253,15 @@ export default defineConfig({
             rel: "icon",
             href: "/favicon.ico",
           },
+        },
+        {
+          tag: "script",
+          content: `document.addEventListener('keydown', function(e) {
+            if (e.key === '/' && !['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement?.tagName)) {
+              e.preventDefault();
+              document.querySelector('button[data-open-modal]')?.click();
+            }
+          });`,
         },
         {
           tag: "meta",
