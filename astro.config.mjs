@@ -182,6 +182,9 @@ export default defineConfig({
       editLink: {
         baseUrl: "https://github.com/esphome/esphome-docs/edit/current/",
       },
+      components: {
+        Footer: "./src/components/Footer.astro",
+      },
       customCss: ["./src/styles/custom.css"],
       sidebar: [
         {
