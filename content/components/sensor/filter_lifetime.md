@@ -64,9 +64,9 @@ sensor:
 ## Configuration variables
 
 - **max_lifetime** (**Required**, int): Maximum filter lifetime in months. For example, if the filter should be replaced every 6 months, set this to `6`.
-- **is_on** (*Optional*, [Lambda](/guides/automations#templates-lambdas)): A lambda that returns `true` when the device is running. Runtime only accumulates when this returns `true`. Defaults to `true` (always on).
+- **is_on** (*Optional*, [Lambda](/automations/templates)): A lambda that returns `true` when the device is running. Runtime only accumulates when this returns `true`. Defaults to `true` (always on).
 - **is_on_sensor** (*Optional*, [Binary Sensor](/components/binary_sensor)): Reference to a binary sensor that indicates when the device is running. Cannot be used together with `is_on` lambda.
-- **current_speed** (*Optional*, [Lambda](/guides/automations#templates-lambdas)): A lambda that returns the current operating speed as a percentage (0-100). This scales the runtime accumulation - running at 50% speed accumulates half as much runtime. Defaults to `100.0` (full speed).
+- **current_speed** (*Optional*, [Lambda](/automations/templates)): A lambda that returns the current operating speed as a percentage (0-100). This scales the runtime accumulation - running at 50% speed accumulates half as much runtime. Defaults to `100.0` (full speed).
 - **current_speed_sensor** (*Optional*, [Sensor](/components/sensor)): Reference to a sensor that reports the current operating speed percentage (0-100). Cannot be used together with `current_speed` lambda.
 - **runtime_hours** (*Optional*): Optional sensor showing total accumulated runtime in hours.
   - All options from [Sensor](/components/sensor).
@@ -191,23 +191,26 @@ button:
 
 ## Advanced Examples
 
-### Integration with PM2.5 Sensor
+### Air Purifier with Variable Speed
 
-Combine with a PM2.5 sensor to show both filter life and air quality:
+Track filter life on an air purifier with variable fan speed:
 
 ```yaml
-uart:
-  rx_pin: GPIO22
-  tx_pin: GPIO21
-  baud_rate: 9600
+switch:
+  - platform: template
+    id: purifier
+    name: "Air Purifier"
+    # ... switch configuration
+
+number:
+  - platform: template
+    id: fan_speed_pct
+    name: "Fan Speed"
+    min_value: 0
+    max_value: 100
+    # ... number configuration
 
 sensor:
-  - platform: pm100x
-    model: pm1006
-    pm_2_5:
-      id: pm25_sensor
-      name: "PM2.5"
-
   - platform: filter_lifetime
     name: "HEPA Filter Life"
     max_lifetime: 12
@@ -330,6 +333,5 @@ sensor:
 
 - [Sensor Component](/components/sensor)
 - [Template Switch](/components/switch/template)
-- [Automations](/guides/automations)
-- {{< docref "/components/sensor/pm100x" "PM100X Particulate Matter Sensor" >}}
+- [Automations](/automations)
 - {{< apiref "filter_lifetime/filter_lifetime.h" "filter_lifetime/filter_lifetime.h" >}}
