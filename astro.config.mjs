@@ -53,14 +53,17 @@ function getChangelogItems() {
 // Get the latest changelog version for redirects
 function getLatestChangelog() {
   const changelogDir = path.join(__dirname, "src/content/docs/changelog");
-  const files = fs.readdirSync(changelogDir).filter((f) => f.endsWith(".mdx") && f !== "index.mdx");
+  const files = fs
+    .readdirSync(changelogDir)
+    .filter((f) => f.endsWith(".mdx") && f !== "index.mdx");
 
   let latest = { sortValue: 0, slug: "" };
   for (const f of files) {
     const match = f.match(/^(\d{4})\.(\d+)\.(\d+)\.mdx$/);
     if (match) {
       const [, year, month, patch] = match;
-      const sortValue = parseInt(year) * 10000 + parseInt(month) * 100 + parseInt(patch);
+      const sortValue =
+        parseInt(year) * 10000 + parseInt(month) * 100 + parseInt(patch);
       if (sortValue > latest.sortValue) {
         latest = { sortValue, slug: `${year}.${month}.${patch}` };
       }
@@ -84,19 +87,27 @@ function getComponentItems() {
       const titleMatch = content.match(/^title:\s*["']?([^"'\n]+)["']?/m);
       const label = titleMatch ? titleMatch[1] : entry.name.replace(".mdx", "");
       const slug = entry.name.replace(".mdx", "");
-      items.push({ label, link: `/components/${slug}/`, sort: label.toLowerCase() });
+      items.push({
+        label,
+        link: `/components/${slug}/`,
+        sort: label.toLowerCase(),
+      });
     } else if (entry.isDirectory()) {
       const dirPath = path.join(componentsDir, entry.name);
       const indexPath = path.join(dirPath, "index.mdx");
 
-      let groupLabel = entry.name.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+      let groupLabel = entry.name
+        .replace(/_/g, " ")
+        .replace(/\b\w/g, (c) => c.toUpperCase());
       if (fs.existsSync(indexPath)) {
         const content = fs.readFileSync(indexPath, "utf-8");
         const titleMatch = content.match(/^title:\s*["']?([^"'\n]+)["']?/m);
         if (titleMatch) groupLabel = titleMatch[1];
       }
 
-      const subFiles = fs.readdirSync(dirPath).filter((f) => f.endsWith(".mdx"));
+      const subFiles = fs
+        .readdirSync(dirPath)
+        .filter((f) => f.endsWith(".mdx"));
       const subItems = [];
       for (const f of subFiles) {
         const subPath = path.join(dirPath, f);
@@ -152,8 +163,9 @@ export default defineConfig({
         //}),
       ],
       logo: {
-        light: "./src/assets/logo.svg",
-        dark: "./src/assets/logo.svg",
+        light: "./src/assets/logo-dark.svg",
+        dark: "./src/assets/logo-light.svg",
+        replacesTitle: true,
       },
       social: [
         {
