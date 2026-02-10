@@ -31,12 +31,12 @@ configuration.
 | ------------------ | ----------- | ------------------ |
 | `VCC`              | `3.3V`      | N/A                |
 | `GND`              | `GND`       | N/A                |
-| `CLK`              | Any GPIO    | `spi.clk_pin`      |
-| `DIN`              | Any GPIO    | `spi.mosi_pin`     |
-| `CS`               | Any GPIO    | `cs_pin`           |
-| `DC`               | Any GPIO    | `dc_pin`           |
-| `BUSY` (Optional)  | Any GPIO    | `busy_pin`         |
-| `RESET` (Optional) | Any GPIO    | `reset_pin`        |
+| `CLK`              | Any GPIO | `spi.clk_pin`      |
+| `DIN`              | Any GPIO | `spi.mosi_pin`     |
+| `CS`               | Any GPIO | `cs_pin`           |
+| `DC`               | Any GPIO | `dc_pin`           |
+| `BUSY` (Optional) | Any GPIO | `busy_pin`         |
+| `RESET` (Optional) | Any GPIO | `reset_pin`        |
 
 {{< img src="waveshare_epaper-pins.jpg" alt="Image" width="60.0%" class="align-center" >}}
 
@@ -96,7 +96,6 @@ lambda: |-
   - `2.13in-ttgo-dke` - T5_V2.3 with DKE group display (DEPG0213BN) tested
   - `2.13inv2` - 2.13in V2 display (Pico e-Paper 2.13v2 and Cloud Module)
   - `2.13inv3` - 2.13in V3 display (Pico e-Paper 2.13v3)
-  - `2.13in3c-weact` - WeAct Studio 2.13in 3-color (Black/White/Red) e-paper display (122x250) - not tested
   - `2.70in` - currently not working with the HAT Rev 2.1 version
   - `2.70inv2`
   - `2.70in-b` - Black/White/Red
@@ -107,12 +106,10 @@ lambda: |-
   - `2.90inv2-r2` - 2.9in V2 display, but with different initialization and full/partial display refresh management than `2.90inv2`
   - `2.90in-b` - B/W rendering only
   - `2.90in-bV3` - B/W rendering only
-  - `2.90in3c-weact` - WeAct Studio 2.90in 3-color (Black/White/Red) e-paper display (128x296) - tested
   - `4.20in`
   - `4.20in-bV2` - B/W rendering only
   - `gdey042t81` - GoodDisplay GDEY042T81 4.2" B/W
   - `4.20in-bV2-bwr` - BWR rendering enabled (uses double the amount of RAM for the display buffer as B/W rendering)
-  - `4.20in3c-weact` - WeAct Studio 4.20in 3-color (Black/White/Red) e-paper display (400x300) - not tested
   - `5.83in`
   - `5.83inv2`
   - `gdey0583t81` - GoodDisplay GDEY0583T81 5.83" B/W
@@ -145,12 +142,9 @@ lambda: |-
 - **full_update_every** (*Optional*, int): E-Paper displays have two modes of switching to the next image: A partial
   update that only changes the pixels that have changed and a full update mode that first clears the entire display
   and then re-draws the image. The former is much quicker and nicer, but every so often a full update needs to happen
-  because artifacts accumulate. On the `1.54in`, `1.54inv2`, `2.13in`, `2.13inv2`, `2.90in`, `2.90inv2`, `7.50inV2p`, `gdew029t5` you have the option to only
+  because artifacts accumulate. On the `1.54in`, `1.54inv2`, `2.13in`, `2.13inv2`, `2.90in`, `2.90inv2`, `7.50inV2p` and `gdew029t5` models, you have the option to only
   do a full-redraw every x-th time using this option. Defaults to `30` on the described models and a full update for
   all other models.
-
-> [!NOTE]
-> For WeAct 3-color models, `full_update_every` is not configurable as they typically perform a full refresh with every display update to ensure optimal color rendering and prevent ghosting.
 
 - **reset_duration** (*Optional*, [Time](/guides/configuration-types#time)): Duration for the display reset operation. Defaults to `200ms`.
   Setting this value to `2ms` may resolve issues with newer e-Paper Driver modules (e.g. Rev 2.1).
