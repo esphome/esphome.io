@@ -203,23 +203,9 @@ export default defineConfig({
             { label: "FAQ and Tips", link: "/guides/faq/" },
           ],
         },
+        { label: "Components", link: "/components/" },
         {
-          label: "Next Steps",
-          items: [
-            { label: "Documentation", link: "/components/" },
-            { label: "Automations", link: "/automations/" },
-            {
-              label: "Configuration Types",
-              link: "/guides/configuration-types/",
-            },
-            { label: "Device Examples", link: "https://devices.esphome.io/" },
-            { label: "DIY Examples", link: "/guides/diy/" },
-            { label: "Sharing ESPHome Devices", link: "/guides/creators/" },
-            { label: "Made for ESPHome", link: "/guides/made_for_esphome/" },
-          ],
-        },
-        {
-          label: "Components",
+          label: "All Components",
           collapsed: true,
           items: getComponentItems(),
         },
