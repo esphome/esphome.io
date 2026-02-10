@@ -1,18 +1,19 @@
 [build]
   publish = "dist"
-  command = "npm run build"
+  command = "sed -i \"s|{{API_DOCS_URL}}|${API_DOCS_URL}|g\" netlify.toml && npm run build"
 
 [build.environment]
   NODE_VERSION = "20"
+  API_DOCS_URL = "https://api-docs.esphome.io"
 
 [context.beta]
-  environment = { SITE_URL = "https://beta.esphome.io" }
+  environment = { SITE_URL = "https://beta.esphome.io", API_DOCS_URL = "https://api-docs-beta.esphome.io" }
 
 [context.next]
-  environment = { SITE_URL = "https://next.esphome.io" }
+  environment = { SITE_URL = "https://next.esphome.io", API_DOCS_URL = "https://api-docs-dev.esphome.io" }
 
 [context.production]
-  environment = { SITE_URL = "https://esphome.io" }
+  environment = { SITE_URL = "https://esphome.io", API_DOCS_URL = "https://api-docs.esphome.io" }
 
 
 # Caching HTML - 1 week
@@ -54,10 +55,10 @@ status = 301
   to = "https://discord.gg/KhAMKrd"
   status = 301
 
-# API docs redirect
+# API docs redirect - substituted per environment by build command
 [[redirects]]
   from = "/api/*"
-  to = "https://api-docs.esphome.io/:splat"
+  to = "{{API_DOCS_URL}}/:splat"
   status = 301
 
 # Webserver files
