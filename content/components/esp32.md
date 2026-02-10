@@ -262,6 +262,21 @@ The following options disable unused VFS features to save flash memory:
   handshake. Most ESPHome use cases don't need post-handshake certificate access. Components that require peer certificate
   access automatically enable it regardless of this setting. Defaults to `true` (peer certificate not kept to save heap).
 
+**Built-in IDF Component Inclusion:**
+
+- **include_builtin_idf_components** (*Optional*, list of strings): A list of built-in ESP-IDF component names to
+  re-enable in the build. ESPHome excludes certain built-in IDF components by default to reduce compile time. If you
+  need to use a built-in IDF component that is excluded (for example, when using custom code in a lambda that requires
+  a specific IDF library), you can explicitly include it here. Example: `["esp_http_client", "mqtt"]`.
+
+  Note: This is different from the `components` option which adds external components from the
+  [ESP Component Registry](https://components.espressif.com/). This option re-enables built-in ESP-IDF components
+  that are excluded by default.
+
+Some options can be disabled to save flash memory without affecting typical ESPHome functionality. The performance
+options (defaulting to `true`  ) improve socket operation performance but can be disabled if you need better
+multi-threaded scalability (which is uncommon since ESPHome uses an event loop).
+
 - **disable_mbedtls_pkcs7** (*Optional*, boolean): Disable PKCS#7 support in mbedTLS. PKCS#7 is used for specific certificate
   validation scenarios that ESPHome doesn't typically use. Components that require PKCS#7 automatically enable it regardless
   of this setting. Disabling this saves code size. Defaults to `true` (PKCS#7 disabled to save flash).
