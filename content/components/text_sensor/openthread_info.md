@@ -32,6 +32,8 @@ text_sensor:
       name: "Thread Network Key"
     pan_id:
       name: "Thread PAN ID"
+    mesh_local_eid:
+      name: "Thread Mesh Local EID"
     ext_pan_id:
       name: "Thread Extended PAN ID"
 ```
@@ -67,6 +69,11 @@ text_sensor:
   > The `network_key` sensor exposes sensitive security credentials that could allow unauthorized access to your
   > Thread network. Only enable this sensor if you need it for debugging purposes and understand the security
   > implications.
+
+- **mesh_local_eid** (*Optional*): Expose the Mesh Local EID (Endpoint Identifier) address as a text sensor. This is
+  an IPv6 address unique to the device within the Thread mesh, used for communication between Thread devices
+  regardless of network topology changes.
+  All options from [Text Sensor](/components/text_sensor#config-text_sensor).
 
 - **pan_id** (*Optional*): Expose the Personal Area Network ID (PAN ID) as a text sensor. This is a 16-bit
   identifier for the Thread network. All options from [Text Sensor](/components/text_sensor#config-text_sensor).
