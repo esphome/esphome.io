@@ -1,5 +1,6 @@
 import { defineConfig } from "astro/config";
 import starlight from "@astrojs/starlight";
+import sitemap from "@astrojs/sitemap";
 import starlightBlog from "starlight-blog";
 import { fileURLToPath } from "url";
 import path from "path";
@@ -292,5 +293,6 @@ export default defineConfig({
         },
       ],
     }),
+    sitemap(),
   ],
 });
