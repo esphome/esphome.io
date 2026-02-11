@@ -3,6 +3,10 @@ description: "Instructions for setting up FastLED addressable lights like NEOPIX
 title: "FastLED Light"
 ---
 
+import { Image } from 'astro:assets';
+import fastledClocklessUiImg from './images/fastled_clockless-ui.png';
+import fastledSpiUiImg from './images/fastled_spi-ui.png';
+
 :::caution
 FastLED does **not** work as expected with Arduino 3 or newer for ESP8266. For now, you can either downgrade the arduino version or use [Neopixelbus](/neopixelbus/).
 
@@ -34,7 +38,7 @@ in ESPHome for a [number of supported chipsets](#fastled_clockless-chipsets).
 Clockless FastLED lights differ from the
 [SPI](#fastled-spi) in that they only have a single data wire to connect, and not separate data and clock wires.
 
-![Image](./images/fastled_clockless-ui.png)
+<Image src={fastledClocklessUiImg} layout="constrained" alt="" />
 
 ```yaml
 # Example configuration entry
@@ -108,7 +112,7 @@ SPI FastLED lights differ from the
 [Clockless](#fastled-clockless) in that they require two pins to be connected, one for a data and one for a clock signal
 whereas the clockless lights only need a single pin.
 
-![Image](./images/fastled_spi-ui.png)
+<Image src={fastledSpiUiImg} layout="constrained" alt="" />
 
 ```yaml
 # Example configuration entry

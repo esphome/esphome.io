@@ -5,6 +5,13 @@ sidebar:
   label: "Display Component"
 ---
 
+import { Image } from 'astro:assets';
+import displayRenderingLineImg from './images/display_rendering_line.png';
+import displayRenderingShapesImg from './images/display_rendering_shapes.png';
+import displayRenderingColorsImg from './images/display_rendering_colors.png';
+import displayRenderingTextImg from './images/display_rendering_text.png';
+import testCardImg from './images/test_card.jpg';
+
 The `display` component houses ESPHome's graphical rendering and display
 engine. It caters for a wide range of different display types, from simple character displays to
 graphical displays with fully addressable pixels.
@@ -72,7 +79,7 @@ this behavior by setting `auto_clear_enabled: false`.
 In the lambda, you can write code like in any [lambda](/automations/templates#config-lambda) in ESPHome. Display
 lambdas are additionally passed a variable called `it` which represents the rendering engine object.
 
-![Image](./images/display_rendering_line.png)
+<Image src={displayRenderingLineImg} layout="constrained" alt="" />
 
 ```yaml
 display:
@@ -104,7 +111,7 @@ the rendering engine is always first specify the `x` coordinate and then the `y`
 
 Now that you know a bit more about ESPHome's coordinate system, let's draw some basic shapes like lines, rectangles, circles or even polygons:
 
-![Image](./images/display_rendering_shapes.png)
+<Image src={displayRenderingShapesImg} layout="constrained" alt="" />
 
 ```yaml
 display:
@@ -163,7 +170,7 @@ display:
 
 For color displays (e.g. TFT displays), you can use the Color class.
 
-![Image](./images/display_rendering_colors.png)
+<Image src={displayRenderingColorsImg} layout="constrained" alt="" />
 
 ```yaml
 display:
@@ -256,7 +263,7 @@ display:
       it.print(0, 0, id(my_font_with_icons), COLOR_ON, TextAlign::CENTER, "Just\U000f05d4here. Already\U000F02D1this.", COLOR_OFF);
 ```
 
-![Image](./images/display_rendering_text.png)
+<Image src={displayRenderingTextImg} layout="constrained" alt="" />
 
 <span id="display-printf"></span>
 
@@ -601,7 +608,7 @@ If you're experiencing issues with your color display, the `show_test_card: true
 - Together with that it will show the letters "**R**", "**G**" and "**B**" to validate the display geometry.
 - There will be a rectangle around the corners of the display with a marker at the 0,0 corner which should be at the top left of the screen.
 
-![Image](./images/test_card.jpg)
+<Image src={testCardImg} layout="constrained" alt="" />
 
 When all points above are shown correctly then the display is working as expected.
 To help the graphics display team determine the best way to help you, **a picture of the result of this option is very helpful.**

@@ -3,12 +3,16 @@ description: "Instructions for setting up T6613 and T6615 sensors for ESPHome"
 title: "T6613/15 CO2 Sensors"
 ---
 
+import { Image } from 'astro:assets';
+import t6615Img from './images/t6615.png';
+import t6615PinsImg from './images/t6615-pins.png';
+
 The `t6615` sensor platform allows you to use T6613 and T6615 family sensors
 ([amphenol](https://amphenol-sensors.com/en/telaire/co2/525-co2-sensor-modules/319-t6615)) with ESPHome. T6613 sensors are unreferenced and require ABC to
 calibrate daily, while the T6615 sensors have a sealed reference gas and
 do not require ABC calibration. All ppm ranges are supported by this platform.
 
-![Image](./images/t6615.png)
+<Image src={t6615Img} layout="constrained" alt="" />
 
 As the communication is done using UART, you need to have an [UART bus](/components/uart) in your configuration with the
 `rx_pin` connected to the TX pin of the device (pin 10) and the `tx_pin` connected to the RX Pin of the device (pin
@@ -38,7 +42,7 @@ sensor:
 
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for actions.
 
-![Image](./images/t6615-pins.png)
+<Image src={t6615PinsImg} layout="constrained" alt="" />
 
 ## See Also
 

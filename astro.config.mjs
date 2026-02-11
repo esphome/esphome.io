@@ -4,6 +4,7 @@ import starlightBlog from "starlight-blog";
 import { fileURLToPath } from "url";
 import path from "path";
 import fs from "fs";
+import { imageBreakpoints } from "./src/lib/breakpoints.ts";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -150,6 +151,10 @@ export default defineConfig({
         "@components": path.resolve(__dirname, "./src/components"),
       },
     },
+  },
+  image: {
+    breakpoints: imageBreakpoints,
+    responsiveStyles: true,
   },
   integrations: [
     starlight({

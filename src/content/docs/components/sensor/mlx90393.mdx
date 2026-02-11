@@ -3,12 +3,16 @@ description: "Instructions for setting up MLX90393 Triple-Axis magnetometer sens
 title: "MLX90393 Triple-axis Magnetometer"
 ---
 
+import { Image } from 'astro:assets';
+import mlx90393FullImg from './images/mlx90393-full.jpg';
+import mlx90393ResolutionImg from './images/mlx90393-resolution.svg';
+
 The `mlx90393` sensor platform allows you to use your MLX90393
 ([datasheet](https://media.melexis.com/-/media/files/documents/datasheets/mlx90393-datasheet-melexis.pdf),
 [Adafruit](https://www.adafruit.com/product/4022)) three axis magnetometer with ESPHome. The [I²C](/components/i2c) is required to be set up in
 your configuration for this sensor to work.
 
-![Image](./images/mlx90393-full.jpg)
+<Image src={mlx90393FullImg} layout="constrained" alt="" />
 
 ```yaml
 # Example configuration entry
@@ -105,7 +109,7 @@ The **gain** option controls this amplifier. Too much amplification will cause s
 After amplification, the analog signal is digitized using a 19-bit ADC.
 Only 16 bits are sent to ESPHome. The **resolution** option chooses which bits are sent.
 
-![Image](./images/mlx90393-resolution.svg)
+<Image src={mlx90393ResolutionImg} layout="constrained" alt="" />
 
 Note that the ADC doesn't actually fill all its 19 bits. This causes `DIV_4` to have the same maximum field as `DIV_8`, while giving better sensitivity.
 Only `DIV_2` and `DIV_1` actually use all values, giving them the best dynamic range. However, both will cause integer overflows when the maximum field strength is exceeded.

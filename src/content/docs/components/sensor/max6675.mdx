@@ -3,10 +3,14 @@ description: "Instructions for setting up MAX6675 Thermocouple temperature senso
 title: "MAX6675 K-Type Thermocouple Temperature Sensor"
 ---
 
+import { Image } from 'astro:assets';
+import max6675FullImg from './images/max6675-full.jpg';
+import temperatureImg from './images/temperature.png';
+
 The `max6675` temperature sensor allows you to use your MAX6675 thermocouple
 temperature sensor ([datasheet](https://datasheets.maximintegrated.com/en/ds/MAX6675.pdf), [SainSmart](https://www.sainsmart.com/products/max6675-module-k-type-thermocouple-thermocouple-sensor-temperature-0-1024-for-arduino)) with ESPHome
 
-![Image](./images/max6675-full.jpg)
+<Image src={max6675FullImg} layout="constrained" alt="" />
 
 As the communication with the MAX6675 is done using SPI, you need
 to have an [SPI bus](/components/spi) in your configuration with the **miso_pin** set (MOSI is not required).
@@ -14,7 +18,7 @@ to have an [SPI bus](/components/spi) in your configuration with the **miso_pin*
 Connect `GND` to `GND`, `VCC` to `3.3V` and the other three `MISO` (or `SO` for short),
 `CS` and `CLOCK` (or `CLK`  ) to free GPIO pins.
 
-![Image](./images/temperature.png)
+<Image src={temperatureImg} layout="constrained" alt="" />
 
 ```yaml
 # Example configuration entry

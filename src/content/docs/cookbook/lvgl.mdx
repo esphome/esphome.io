@@ -3,6 +3,26 @@ description: "Recipes for common use cases of LVGL Displays with ESPHome"
 title: "LVGL: Tips and Tricks"
 ---
 
+import { Image } from 'astro:assets';
+import lvglCookRemligbutImg from './images/lvgl_cook_remligbut.png';
+import lvglCookGaugeImg from './images/lvgl_cook_gauge.png';
+import lvglCookThermometerImg from './images/lvgl_cook_thermometer.png';
+import lvglCookThermometerGaugeImg from './images/lvgl_cook_thermometer_gauge.png';
+import lvglCookClimateImg from './images/lvgl_cook_climate.png';
+import lvglCookCoverImg from './images/lvgl_cook_cover.png';
+import lvglCookGradientStylesImg from './images/lvgl_cook_gradient_styles.png';
+import lvglCookPagenavImg from './images/lvgl_cook_pagenav.png';
+import lvglCookStaticoImg from './images/lvgl_cook_statico.png';
+import lvglCookTitlebarImg from './images/lvgl_cook_titlebar.png';
+import lvglCookFlexLayoutImg from './images/lvgl_cook_flex_layout.png';
+import lvglCookFontRobotoMdiImg from './images/lvgl_cook_font_roboto_mdi.png';
+import lvglCookFontBinstatImg from './images/lvgl_cook_font_binstat.png';
+import lvglCookFontBattImg from './images/lvgl_cook_font_batt.png';
+import lvglCookAnimimgBattImg from './images/lvgl_cook_animimg_batt.gif';
+import lvglCookClockImg from './images/lvgl_cook_clock.png';
+import lvglCookKeypadImg from './images/lvgl_cook_keypad.png';
+import lvglCookWeatherImg from './images/lvgl_cook_weather.png';
+
 <span id="lvgl-cookbook"></span>
 
 Here are a couple recipes for various interesting things you can do with [Lvgl](/components/lvgl/) in ESPHome.
@@ -24,7 +44,7 @@ of `240x320px`  ; if your display's dimensions differ, you'll need to adjust the
 
 ## Local light switch
 
-![Image](/images/lvgl_switch.png)
+<Image src="/images/lvgl_switch.png" width={61} height={39} layout="constrained" alt="" />
 
 The easiest way to integrate an LVGL [`switch`](/components/lvgl/widgets#lvgl-widget-switch) widget and a switch or light is with
 [automations](/automations):
@@ -56,7 +76,7 @@ lvgl:
 
 ## Remote light button
 
-![Image](./images/lvgl_cook_remligbut.png)
+<Image src={lvglCookRemligbutImg} layout="constrained" alt="" />
 
 If you'd like to control a remote light which appears as an entity in Home Assistant from a checkable (toggle)
 [`button`](/components/lvgl/widgets#lvgl-widget-button), first you need to import the light state into ESPHome, and then control it using a
@@ -101,7 +121,7 @@ lvgl:
 
 ## Light brightness slider
 
-![Image](/images/lvgl_cook_volume.png)
+<Image src="/images/lvgl_cook_volume.png" width={72} height={207} layout="constrained" alt="" />
 
 You can use a [slider](/components/lvgl/widgets#lvgl-widget-slider) or an [arc](/components/lvgl/widgets#lvgl-widget-arc) to control the brightness of a dimmable light.
 
@@ -152,7 +172,7 @@ is that `max_value` has to be `100`.
 
 ## Media player volume slider
 
-![Image](/images/lvgl_cook_volume.png)
+<Image src="/images/lvgl_cook_volume.png" width={72} height={207} layout="constrained" alt="" />
 
 Similarly, you can use a [slider](/components/lvgl/widgets#lvgl-widget-slider) or an [arc](/components/lvgl/widgets#lvgl-widget-arc) to control the volume level of a
 media player, which uses float values.
@@ -215,7 +235,7 @@ completed.
 A gauge similar to what Home Assistant shows in the Energy Dashboard can accomplished with [`meter`](/components/lvgl/widgets#lvgl-widget-meter)
 and [`label`](/components/lvgl/widgets#lvgl-widget-label) widgets:
 
-![Image](./images/lvgl_cook_gauge.png)
+<Image src={lvglCookGaugeImg} layout="constrained" alt="" />
 
 The trick here is to have a parent [`obj`](/components/lvgl/widgets#lvgl-widget-obj) which contains the other widgets as children. We place a
 [`meter`](/components/lvgl/widgets#lvgl-widget-meter) in the middle, which is made from an indicator `line` and two `arc` widgets. We use
@@ -318,7 +338,7 @@ The `obj` used to hide the middle part of the meter indicator line has `radius` 
 A thermometer with a precise gauge also made from a [`meter`](/components/lvgl/widgets#lvgl-widget-meter) widget and a numeric display using
 [`label`](/components/lvgl/widgets#lvgl-widget-label):
 
-![Image](./images/lvgl_cook_thermometer.png)
+<Image src={lvglCookThermometerImg} layout="constrained" alt="" />
 
 Whenever a new value comes from the sensor, we update the needle indicator as well as the text in the
 [`label`](/components/lvgl/widgets#lvgl-widget-label). Since LVGL only handles integer values on the [`meter`](/components/lvgl/widgets#lvgl-widget-meter) scale,
@@ -396,7 +416,7 @@ lvgl:
 And here's the same sensor configuration, but instead with a semicircle gauge with a gradient background drawn by a
 multitude of ticks:
 
-![Image](./images/lvgl_cook_thermometer_gauge.png)
+<Image src={lvglCookThermometerGaugeImg} layout="constrained" alt="" />
 
 If you change the size of the widget, to obtain a uniform gradient, be sure to increase or decrease the ticks count
 accordingly.
@@ -477,7 +497,7 @@ needle, were only the part hanging above the ticks scale is visible, the rest is
 
 [`spinbox`](/components/lvgl/widgets#lvgl-widget-spinbox) is the ideal widget to control a thermostat:
 
-![Image](./images/lvgl_cook_climate.png)
+<Image src={lvglCookClimateImg} layout="constrained" alt="" />
 
 First we import from Home Assistant the current target temperature of the climate component, and we update the value
 of the spinbox with it whenever it changes. We use two buttons labeled with minus and plus to control the spinbox,
@@ -551,7 +571,7 @@ lvgl:
 To make a nice user interface for controlling Home Assistant covers you could use 3 buttons, which also display the
 state.
 
-![Image](./images/lvgl_cook_cover.png)
+<Image src={lvglCookCoverImg} layout="constrained" alt="" />
 
 Just as in the previous examples, we need to get the state of the cover first. We'll use a numeric sensor to retrieve
 the current position of the cover and a text sensor to retrieve its current movement. We are particularly interested
@@ -679,7 +699,7 @@ lvgl:
 Since LVGL uses inheritance to apply styles across the widgets, it's possible to apply them at the top level, and only
 make modifications on demand, if necessary.
 
-![Image](./images/lvgl_cook_gradient_styles.png)
+<Image src={lvglCookGradientStylesImg} layout="constrained" alt="" />
 
 In this example we prepare a set of gradient styles in the *theme*, and make some modifications in a *style_definition*
 which can be applied in a batch to the desired widgets. Theme is applied automatically, and can be overridden manually
@@ -786,7 +806,7 @@ Note that style definitions can contain common properties too, like positioning 
 
 If using multiple pages, a navigation bar can be useful at the bottom of the screen:
 
-![Image](./images/lvgl_cook_pagenav.png)
+<Image src={lvglCookPagenavImg} layout="constrained" alt="" />
 
 To save from repeating the same widgets on each page, there's the *top_layer* which is the *Always on Top* transparent
 page above all the pages. Everything you put on this page will be on top of all the others.
@@ -836,7 +856,7 @@ library [fonts](/components/lvgl#lvgl-fonts).
 
 The top layer is useful to show status icons visible on all pages:
 
-![Image](./images/lvgl_cook_statico.png)
+<Image src={lvglCookStaticoImg} layout="constrained" alt="" />
 
 In the example below, we only show the icon when the connection with Home Assistant is established:
 
@@ -882,7 +902,7 @@ Of note:
 
 Each page can have its own title bar:
 
-![Image](./images/lvgl_cook_titlebar.png)
+<Image src={lvglCookTitlebarImg} layout="constrained" alt="" />
 
 To put a title bar behind the status icon, we need to add it to each page, also containing the label with a unique
 title:
@@ -927,7 +947,7 @@ For this example to work, use the theme and style options from [above](#lvgl-coo
 each widget. This is a great way to simplify your configuration containing many widgets as it allows you to even omit
 alignment options.
 
-![Image](./images/lvgl_cook_flex_layout.png)
+<Image src={lvglCookFlexLayoutImg} layout="constrained" alt="" />
 
 This example illustrates a control panel for three covers, made up of labels and discrete buttons. Although a button
 matrix could also be suitable for this, you might still prefer fully-featured individual buttons, as they offer a wider
@@ -1278,7 +1298,7 @@ One example is when you'd like some MDI icons to be used in line with the text (
 and symbols coexist). You can use a font of your choice; choose the symbols/icons from MDI you want and mix them in a
 single sized set.
 
-![Image](./images/lvgl_cook_font_roboto_mdi.png)
+<Image src={lvglCookFontRobotoMdiImg} layout="constrained" alt="" />
 
 In the example below, we use the default set of glyphs from RobotoCondensed-Regular and append some extra symbols to
 it from MDI. Then we display these inline with the text by escaping their codepoints:
@@ -1361,7 +1381,7 @@ binary size - it would uselessly include the entire set of glyphs in the flash.
 
 ## Toggle state icon button
 
-![Image](./images/lvgl_cook_font_binstat.png)
+<Image src={lvglCookFontBinstatImg} layout="constrained" alt="" />
 
 A common use case for icons is a status display. For example, a checkable (toggle) button will display different
 icons based on the status of a light or switch. To put an icon on a button you use a [`label`](/components/lvgl/widgets#lvgl-widget-label)
@@ -1436,7 +1456,7 @@ lvgl:
 
 ## Battery status icon
 
-![Image](./images/lvgl_cook_font_batt.png)
+<Image src={lvglCookFontBattImg} layout="constrained" alt="" />
 
 Another example for using MDI icons is to display battery percentage in 10 steps. We need to have a font containing
 the glyphs corresponding to the different battery percentage levels, and we need a sensor to import the battery status
@@ -1520,7 +1540,7 @@ lvgl:
 
 ## Battery charging animation
 
-![Image](./images/lvgl_cook_animimg_batt.gif)
+<Image src={lvglCookAnimimgBattImg} layout="constrained" alt="" />
 
 To have an animation illustrating a battery charging, you can use [`animimg`](/components/lvgl/widgets#lvgl-widget-animimg) with a set of
 [images rendered from MDI](/components/image#display-image) showing battery levels:
@@ -1615,7 +1635,7 @@ Use `x`, `y`, `align` widget properties for precise positioning.
 Using the [`meter`](/components/lvgl/widgets#lvgl-widget-meter) and [`label`](/components/lvgl/widgets#lvgl-widget-label) widgets, we can create an analog clock which
 shows the date too.
 
-![Image](./images/lvgl_cook_clock.png)
+<Image src={lvglCookClockImg} layout="constrained" alt="" />
 
 The [`meter`](/components/lvgl/widgets#lvgl-widget-meter) has three scales: one for minutes ticks and hand, ranged between `0` and `60`; one
 for the hour ticks and the labels as majors, ranged between `1` and `12`; and a higher resolution scale for the hour
@@ -1746,7 +1766,7 @@ The [`buttonmatrix`](/components/lvgl/widgets#lvgl-widget-buttonmatrix) widget c
 [Key collector component](/components/key_collector#key_collector) to collect the button presses as key press sequences. It sends the `text` of
 the buttons (or `key_code` where configured) to the key collector.
 
-![Image](./images/lvgl_cook_keypad.png)
+<Image src={lvglCookKeypadImg} layout="constrained" alt="" />
 
 If you key in the correct sequence, the [`led`](/components/lvgl/widgets#lvgl-widget-led) widget will change color accordingly:
 
@@ -1889,7 +1909,7 @@ Of note:
 Another example relying on the **Grid** layout can be a weather panel showing the forecast through the
 [OpenWeatherMap integration](https://www.home-assistant.io/integrations/openweathermap/) of Home Assistant.
 
-![Image](./images/lvgl_cook_weather.png)
+<Image src={lvglCookWeatherImg} layout="constrained" alt="" />
 
 All the information displayed here could be retrieved to local `platform: homeassistant` sensors as desribed in several
 examples in this Cookbook, however, this time we take a different approach. Instead of pulling the data by ESPHome,

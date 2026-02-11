@@ -5,10 +5,15 @@ sidebar:
   label: "LVGL Graphics"
 ---
 
+import { Image } from 'astro:assets';
+import lvglMainScreenshotImg from './images/lvgl_main_screenshot.png';
+import lvglSymbolsImg from './images/lvgl_symbols.png';
+import lvglBoxmodelImg from './images/lvgl_boxmodel.png';
+
 [LVGL](https://lvgl.io/) (Light and Versatile Graphics Library) is a free and open-source
 embedded graphics library to create beautiful UIs for any MCU, MPU and display type. ESPHome supports [LVGL version 8](https://docs.lvgl.io/8.4/).
 
-![Image](./images/lvgl_main_screenshot.png)
+<Image src={lvglMainScreenshotImg} layout="constrained" alt="" />
 
 ## Prerequisites
 
@@ -38,7 +43,7 @@ display:
     update_interval: never
 ```
 
-![](/images/lvgl-hello.png)
+<Image src="/images/lvgl-hello.png" width={800} height={652} layout="constrained" alt="" />
 
 To make LVGL your own you will need to add widgets to the display. For example, to show a label with the text "Hello World!" in the center of the screen:
 
@@ -299,7 +304,7 @@ The binary will only include any of the above if used in the configuration.
 
 You can display the embedded symbols among the text by their codepoint address preceded by `\u`. For example: `\uF00C`  :
 
-![Image](./images/lvgl_symbols.png)
+<Image src={lvglSymbolsImg} layout="constrained" alt="" />
 
 :::note
 The `text_font` parameter affects the size of symbols, since all the built-in font arrays based on Montserrat include these symbols at the respective sizes. If you set `text_font` on a widget to a custom ESPHome font, these symbols will likely not display, unless you include them manually from a FontAwesome OpenType file.
@@ -320,7 +325,7 @@ In addition to the above, the following special fonts are available from LVGL as
 
 LVGL follows CSS's [border-box model](https://developer.mozilla.org/en-US/docs/Web/CSS/box-sizing). A widget's *box* is built from the following parts:
 
-![Image](./images/lvgl_boxmodel.png)
+<Image src={lvglBoxmodelImg} layout="constrained" alt="" />
 
 - *bounding box*: the box defined with `width` and `height` of the widgets (pixels or parent content area percentage; not drawn, just for calculations).
 - *border*: the border line, drawn on the inner side of the bounding box (pixels).

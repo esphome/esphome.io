@@ -3,6 +3,10 @@ description: "Instructions for setting up the touch pad on the ESP32"
 title: "ESP32 Touch Pad"
 ---
 
+import { Image } from 'astro:assets';
+import esp32TouchUiImg from './images/esp32_touch-ui.png';
+import esp32TouchFindingThresholdsImg from './images/esp32_touch-finding_thresholds.png';
+
 Capacitive touch detection is possible on ESP32, ESP32-S2 or ESP32-S3 processors.
 In ESPHome, it is configured in two parts:
 
@@ -124,7 +128,7 @@ you can add individual touch pads as binary sensors. When a touch is detected on
 sensor will report an `ON` state. And, of course, if no touch is detected, the binary sensor will report
 an `OFF` state.
 
-![Image](./images/esp32_touch-ui.png)
+<Image src={esp32TouchUiImg} layout="constrained" alt="" />
 
 ```yaml
 # Example configuration entry
@@ -224,7 +228,7 @@ Touching the sensor's pins/pads should result in a (significant) change in the v
 different amounts of force applied to the touch pad; a pattern should emerge, revealing a value that falls between
 "touched" and "not touched" which the binary sensor will then use to differentiate between the two states.
 
-![Image](./images/esp32_touch-finding_thresholds.png)
+<Image src={esp32TouchFindingThresholdsImg} layout="constrained" alt="" />
 
 Once you've determined an appropriate value, update the threshold parameter in your configuration and test the updated
 configuration. You may need to repeat this process a few times to fine-tune the behavior and get it just right.

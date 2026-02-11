@@ -3,6 +3,10 @@ description: "Instructions for setting up the MCP2515 CAN bus platform in ESPHom
 title: "MCP2515"
 ---
 
+import { Image } from 'astro:assets';
+import canbusMcp2515ResistorImg from './images/canbus_mcp2515_resistor.png';
+import canbusMcp2515Txs0108eImg from './images/canbus_mcp2515_txs0108e.png';
+
 The MCP2515 communicates with ESPHome via the [SPI bus](/components/spi); to use it, you must have at least one
 [SPI bus](/components/spi) with both the `mosi_pin` and `miso_pin` defined in your ESPHome configuration.
 
@@ -66,11 +70,11 @@ if you suspect this is an issue.
 The easiest approach is to use fully assembled boards and just add one resistor on the MISO line. This runs MOSI, SCK
 and CS out of specification which is rarely a problem.
 
-![Image](./images/canbus_mcp2515_resistor.png)
+<Image src={canbusMcp2515ResistorImg} layout="constrained" alt="" />
 
 A more complex option is to properly convert the 3.3V and 5V logic levels with a level shifter.
 
-![Image](./images/canbus_mcp2515_txs0108e.png)
+<Image src={canbusMcp2515Txs0108eImg} layout="constrained" alt="" />
 
 ## See Also
 

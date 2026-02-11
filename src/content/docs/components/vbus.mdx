@@ -3,12 +3,16 @@ description: "Instructions for integrating a solar energy collector controller u
 title: "VBus Component"
 ---
 
+import { Image } from 'astro:assets';
+import resolVbusAdapterSchematicImg from './images/resol_vbus_adapter_schematic.png';
+import vbusSerialOptocouplerImg from './images/vbus_serial_optocoupler.png';
+
 The `VBus` Component provides status reading connectivity to solar heat energy collector controllers using VBus
 protocol. These devices are mainly produced by Resol, often also found under different brand names like Viessmann,
 Kioto, Wagner etc. The component currently supports natively the models in the table below
 but any device can be added via lambda by knowing [its packet structure](https://danielwippermann.github.io/resol-vbus).
 
-![Image](/images/resol_deltasol_bs_plus.jpg)
+<Image src="/images/resol_deltasol_bs_plus.jpg" width={207} height={300} layout="constrained" alt="" />
 
 ## Supported Models
 
@@ -44,11 +48,11 @@ To connect to this and read data from the bus a level shifting is needed as the 
 would damage the MCU). For our read-only purposes it's
 sufficient to adapt the level appropriately to 3.3V using a circuit like below:
 
-![Image](./images/resol_vbus_adapter_schematic.png)
+<Image src={resolVbusAdapterSchematicImg} layout="constrained" alt="" />
 
 An electrically isolated version using an opto-coupler:
 
-![Image](./images/vbus_serial_optocoupler.png)
+<Image src={vbusSerialOptocouplerImg} layout="constrained" alt="" />
 
 Another approach, with PCB design ready to be manufactured [can be found here](https://github.com/FatBeard/vbus-arduino-library/tree/master/pcb).
 

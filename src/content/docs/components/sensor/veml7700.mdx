@@ -3,6 +3,11 @@ description: "Instructions for setting up VEML7700 / VEML6030 ambient light sens
 title: "VEML7700 and VEML6030 Ambient Light Sensors"
 ---
 
+import { Image } from 'astro:assets';
+import veml7700FullImg from './images/veml7700-full.jpg';
+import veml7700UiImg from './images/veml7700-ui.png';
+import veml7700SpectralImg from './images/veml7700-spectral.png';
+
 The `veml7700` sensor platform allows you to use the Vishay VEML7700 and VEML6030 ambient light sensors with ESPHome.
 Communication with the device is over [I²C](/components/i2c), which must be present in your configuration. VEML7700 and VEML6030
 are basically the same but in different packages. The VEML7700 uses a fixed address of `0x10`, while the smaller VEML6030
@@ -11,9 +16,9 @@ can be configured to use either `0x10` or `0x48`.
 The VEML 7700/6030 devices are available on breakout boards from a number of vendors including [Adafruit](http://www.adafruit.com/products/4162), [SparkFun](https://www.sparkfun.com/products/15436),
 [DFRobot](https://www.dfrobot.com/product-1620.html), and others.
 
-![Image](./images/veml7700-full.jpg)
+<Image src={veml7700FullImg} layout="constrained" alt="" />
 
-![Image](./images/veml7700-ui.png)
+<Image src={veml7700UiImg} layout="constrained" alt="" />
 
 The sensor is a high accuracy ambient light digital 16-bit resolution sensor with dynamic range from 0 lux to about 120,000 lux.
 Its wide range of measurements is enabled by four configurable _gain_ levels and six different _integration time_ options.
@@ -22,7 +27,7 @@ Higher gain values are typically used for lower light conditions.
 The sensor has two photodiodes with different spectral response represented by two channels: an _ALS_ channel and a _WHITE_ channel.
 The _ALS_, or _Ambient light_ channel follows a so-called human eye curve very closely. The _WHITE_ channel covers a much wider wavelength/spectrum, capturing quite a lot of near-infrared radiance.
 
-![Image](./images/veml7700-spectral.png)
+<Image src={veml7700SpectralImg} layout="constrained" alt="" />
 
 Using this component's automatic measurement mode is advised; in this mode, proper _gain_ and _integration time_ are automatically selected by the component after
 taking several measurements. To do so, it follows a process recommended by the manufacturer.

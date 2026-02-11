@@ -3,13 +3,17 @@ description: "Instructions for setting up displays using addressable lights and 
 title: "Addressable Light"
 ---
 
+import { Image } from 'astro:assets';
+import addressableLightPixelMapDefaultImg from './images/addressable_light_pixel_map_default.png';
+import addressableLightPixelMap8x32Img from './images/addressable_light_pixel_map_8x32.png';
+
 The `addressable_light` display platform allows to display text and graphics on an addressable
 light that has been arranged in a display matrix.
 
 The display requires that an  component, such as
 [Fastled](/components/light/fastled/) or [Neopixelbus](/components/light/neopixelbus/), be defined.
 
-![Image](/images/addressable_light.jpg)
+<Image src="/images/addressable_light.jpg" width={250} height={253} layout="constrained" alt="" />
 
 ```yaml
 display:
@@ -78,13 +82,13 @@ Determining the correct algorithm for the pixel mapper for your matrix will hope
 The default pixel mapper assumes that the led matrix is addressed starting with the top left LED, moving to the right, and
 then starting with the left-most row of the next row.
 
-![Image](./images/addressable_light_pixel_map_default.png)
+<Image src={addressableLightPixelMapDefaultImg} layout="constrained" alt="" />
 
 ### BTF-Lighting 8x32 WS2812B Flexible LED Matrix
 
 The following image illustrates the path the addressable strip takes through the common the BTF-Lighting 8x32 matrix.
 
-![Image](./images/addressable_light_pixel_map_8x32.png)
+<Image src={addressableLightPixelMap8x32Img} layout="constrained" alt="" />
 
 Below is a definition that includes a pixel_mapper suitable for these 8x32 matrices.
 

@@ -3,6 +3,12 @@ description: "Instructions for setting up AS5600 magnetic position sensor / enco
 title: "AS5600 12-Bit Magnetic Position Sensor"
 ---
 
+import { Image } from 'astro:assets';
+import as5600FullImg from './images/as5600-full.jpg';
+import as5600MagnetPositionImg from './images/as5600-magnet-position.png';
+import as5600UiImg from './images/as5600-ui.jpg';
+import as5600UiDerivedImg from './images/as5600-ui-derived.jpg';
+
 <span id="as5600-component"></span>
 
 ## Component/Hub
@@ -13,7 +19,7 @@ The `as5600` sensor platform you to use your AS5600 ([datasheet](https://ams.com
 using the [AS5600 Sensor Platform](#as5600-sensor). To use this hub, first setup
 the [I²C Bus](/components/i2c) and connect the sensor to the pins specified there.
 
-![Image](./images/as5600-full.jpg)
+<Image src={as5600FullImg} layout="constrained" alt="" />
 
 ```yaml
 as5600:
@@ -99,7 +105,7 @@ If you would like the ESP controller to pull that pin high or low, you may confi
 
 ## Position / Range
 
-![Image](./images/as5600-magnet-position.png)
+<Image src={as5600MagnetPositionImg} layout="constrained" alt="" />
 
 Position and range may be configured as one of the following:
 
@@ -159,7 +165,7 @@ The `as5600` sensor allows you to publish the angle/position measurement from yo
 First, setup an [AS5600 Hub](#as5600-component) for your AS5600 sensor and then use this
 sensor platform to create individual sensors that will report the position to Home Assistant.
 
-![Image](./images/as5600-ui.jpg)
+<Image src={as5600UiImg} layout="constrained" alt="" />
 
 ```yaml
 as5600:
@@ -242,7 +248,7 @@ The magnet status should report one of the following values:
 You may desire the position to be converted from the native `0` thru `4095` to degrees, or perhaps a percentage of the allowable range.
 Here are some examples to make that happen:
 
-![Image](./images/as5600-ui-derived.jpg)
+<Image src={as5600UiDerivedImg} layout="constrained" alt="" />
 
 ```yaml
 as5600:

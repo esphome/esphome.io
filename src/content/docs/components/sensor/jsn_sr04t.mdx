@@ -3,6 +3,9 @@ description: "Instructions for setting up JSN-SR04T waterproof ultrasonic distan
 title: "JSN-SR04T Waterproof Ultrasonic Range Finder"
 ---
 
+import { Image } from 'astro:assets';
+import jsnSr04tV3ModeSelectPadsImg from './images/jsn-sr04t-v3-mode-select-pads.jpg';
+
 This sensor allows you to use the JSN-SR04T and AJ_SR04M Waterproof Ultrasonic Range Finder **in Mode 1 and 2**
 with ESPHome to measure distances. This sensor can measure
 ranges between 25 centimeters and 600 centimeters with a resolution of 1 millimeter.
@@ -25,7 +28,7 @@ Configure the AJ_SR04M for mode 2:
 
 - Add a 47k resistor to pad R19.
 
-![Image](./images/jsn-sr04t-v3-mode-select-pads.jpg)
+<Image src={jsnSr04tV3ModeSelectPadsImg} layout="constrained" alt="" />
 
 In mode 1 the module continuously takes measurements approximately every 100mS and outputs the distance on the TX pin at 9600 baud.
 In this mode [Sensor Filters](/components/sensor#sensor-filters) are highly recommended.
@@ -35,7 +38,7 @@ The module then outputs the distance on its TX pin. The frequency of the measure
 
 To use the sensor, first set up an [UART Bus](/components/uart) with a baud rate of 9600 and connect the sensor to the specified pin.
 
-![Image](/images/jsn-sr04t-v3.jpg)
+<Image src="/images/jsn-sr04t-v3.jpg" width={300} height={225} layout="constrained" alt="" />
 
 ```yaml
 # Example configuration entry

@@ -6,6 +6,11 @@ params:
     description: Instructions for reading data from a SUN-1000G2 grid tie inverter using ESPHome
 ---
 
+import { Image } from 'astro:assets';
+import sunGtil2ControllerBoardImg from './images/sun_gtil2_controller_board.png';
+import sunGtil2DisplayBoardImg from './images/sun_gtil2_display_board.png';
+import sunGtil2SchematicImg from './images/sun_gtil2_schematic.png';
+
 The `sun_gtil2` component allows you to get voltage, power and temperature readings from your `SUN-1000G2`
 or `SUN-2000G2` grid tie inverter. This is done by reading the UART data transmitted from the inverter's
 controller board to the display board.
@@ -16,11 +21,11 @@ inverter via the (more limited) external RS232 interface you should use the
 [Modbus](/components/modbus_controller/) component instead.
 :::
 
-![Image](./images/sun_gtil2_controller_board.png)
+<Image src={sunGtil2ControllerBoardImg} layout="constrained" alt="" />
 
-![Image](./images/sun_gtil2_display_board.png)
+<Image src={sunGtil2DisplayBoardImg} layout="constrained" alt="" />
 
-![Image](./images/sun_gtil2_schematic.png)
+<Image src={sunGtil2SchematicImg} layout="constrained" alt="" />
 
 As the data is read from the inverter using UART, you need to have an [UART bus](/components/uart) in your
 configuration with the `rx_pin` connected to the TX pin of the inverter's controller board. Additionally, you

@@ -3,12 +3,16 @@ description: "Instructions for setting up SPS30 PM1.0, PM2.5, PM4, PM10 Particul
 title: "SPS30 Particulate Matter Sensor"
 ---
 
+import { Image } from 'astro:assets';
+import sensirionPmImg from './images/sensirion-pm.png';
+import sps30WiringImg from './images/sps30-wiring.png';
+
 The `sps30` sensor platform allows you to use your Sensirion SPS30
 ([datasheet](https://sensirion.com/media/documents/8600FF88/64A3B8D6/Sensirion_PM_Sensors_Datasheet_SPS30.pdf)) sensors with ESPHome.
 The [I²C Bus](/components/i2c) is required to be set up in your configuration for this sensor to work.
 This sensor supports both UART and I²C communication. However, at the moment only I²C communication is implemented.
 
-![Image](./images/sensirion-pm.png)
+<Image src={sensirionPmImg} layout="constrained" alt="" />
 
 ```yaml
 # Example configuration entry
@@ -107,7 +111,7 @@ sensor:
 The sensor has a 5 pin JST ZHR type connector, with a 1.5mm pitch. ([Matching connector housing](https://octopart.com/zhr-5-jst-279203), [datasheet](http://www.farnell.com/datasheets/1393424.pdf))
 To force the sensor into I²C mode, the SEL pin (Interface Select, pin no.4) should be shorted to ground (pin no.5)
 
-![Image](./images/sps30-wiring.png)
+<Image src={sps30WiringImg} layout="constrained" alt="" />
 
 For better stability, the SDA and SCL lines require suitable pull-up resistors. Sensirion shows 10 kΩ resistors between VDD (5V, pin no.1) and SDA (pin no.2) and SCL (pin no.3) in the manual.
 

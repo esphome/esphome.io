@@ -3,6 +3,10 @@ description: "Simple visualisation of Home Assistant states using a Neopixel str
 title: "Infostripe"
 ---
 
+import { Image } from 'astro:assets';
+import infostripDetailImg from './images/infostrip-detail.jpg';
+import infostripLightsUiImg from './images/infostrip-lights-ui.png';
+
 Showing the current status of sensor states using a Neopixel (WS2812B) strip is a simple way to communicate states to
 the user. Compared to a dashboard screen the infostrip can only communicate the information like a binary sensor.
 
@@ -11,7 +15,7 @@ the user. Compared to a dashboard screen the infostrip can only communicate the 
 - mode (continuous vs. flashing, flashing or strobe is not recommend)
 - light position on stripe
 
-![Image](./images/infostrip-detail.jpg)
+<Image src={infostripDetailImg} layout="constrained" alt="" />
 
 ## ESPHome configuration
 
@@ -134,7 +138,7 @@ automation:
           {{ map[state] if state in map else 'white' }}
 ```
 
-![Image](./images/infostrip-lights-ui.png)
+<Image src={infostripLightsUiImg} layout="constrained" alt="" />
 
 ## See Also
 
