@@ -980,6 +980,7 @@ at the {{< docref "light/fastled" "FastLED Light" >}}.
 "GPIO Switch","components/switch/gpio","gpio.svg",""
 "H-bridge Switch","components/switch/hbridge","hbridge-relay.jpg",""
 "LVGL Widget","components/switch/lvgl","lvgl_c_swi.png",""
+"M5Stack 4-Relay","components/switch/m5stack_4relay","m5stack_4relay.png",""
 "Modbus Switch","components/switch/modbus_controller","modbus.png",""
 "Nextion Switch","components/switch/nextion","nextion.jpg",""
 "Restart Switch","components/switch/restart","restart.svg","dark-invert"
