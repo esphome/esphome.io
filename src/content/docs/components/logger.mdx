@@ -10,9 +10,8 @@ serial port and through MQTT topics (if there is an MQTT client in the
 configuration). By default, all logs with a severity `DEBUG` or higher will be shown.
 Increasing the log level severity (to e.g `INFO` or `WARN`  ) can help with the performance of the application and memory size.
 
-:::note
-The "severity" of a log message represents the importance of the message, i.e. how critical it is. The severity levels are defined in the [log levels](#logger-log_levels) section.
-:::
+> [!NOTE]
+> The "severity" of a log message represents the importance of the message, i.e. how critical it is. The severity levels are defined in the [log levels](#logger-log_levels) section.
 
 ```yaml
 # Example configuration entry
@@ -135,9 +134,8 @@ Possible log levels are (sorted by severity):
 | `VERBOSE`          | Gray   | Like debug, but includes additional messages usually deemed to be spam. |
 | `VERY_VERBOSE`     | White  | All internal messages including data flowing through I²C, SPI and UART buses. |
 
-:::caution
-Using `VERY_VERBOSE` can significantly impact device performance and may cause connection instability.
-:::
+> [!CAUTION]
+> Using `VERY_VERBOSE` can significantly impact device performance and may cause connection instability.
 
 <span id="logger-manual_tag_specific_levels"></span>
 
@@ -156,10 +154,9 @@ logger:
     mqtt.client: ERROR
 ```
 
-:::note
-When using `logs`, runtime per-tag log level support is automatically enabled. When this feature is disabled
-(the default when `logs` is not configured), the logger is optimized for better performance and reduced memory usage.
-:::
+> [!NOTE]
+> When using `logs`, runtime per-tag log level support is automatically enabled. When this feature is disabled
+> (the default when `logs` is not configured), the logger is optimized for better performance and reduced memory usage.
 
 The `level` option controls which log statements are included in the
 firmware. You cannot set a tag to a more detailed level than
@@ -225,11 +222,10 @@ on_...:
         tag: mqtt.client
 ```
 
-:::note
-When using `logger.set_level` with a `tag` parameter, runtime per-tag log level support is automatically enabled.
-If you need to call `set_log_level()` directly from a lambda or external component, you must manually enable
-`runtime_tag_levels: true` in the logger configuration.
-:::
+> [!NOTE]
+> When using `logger.set_level` with a `tag` parameter, runtime per-tag log level support is automatically enabled.
+> If you need to call `set_log_level()` directly from a lambda or external component, you must manually enable
+> `runtime_tag_levels: true` in the logger configuration.
 
 ## Logger Automation
 
@@ -253,10 +249,9 @@ logger:
             return "Triggered on_message with level " + to_string(level) + ", tag " + tag + " and message " + message;
 ```
 
-:::note
-Logging will not work in the `on_message` trigger. You can't use the [logger.log](#logger-log_action) action
-and the `ESP_LOGx` logging macros in this automation.
-:::
+> [!NOTE]
+> Logging will not work in the `on_message` trigger. You can't use the [logger.log](#logger-log_action) action
+> and the `ESP_LOGx` logging macros in this automation.
 
 ## See Also
 

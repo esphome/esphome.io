@@ -14,9 +14,8 @@ and can be put in different modes like `HEAT`, `COOL`, `HEAT_COOL` or `OFF`.
 
 <Image src={climateUiImg} layout="constrained" alt="" />
 
-:::note
-Not all climate components support all possible features. Check the corresponding documentation page for details on what is supported.
-:::
+> [!NOTE]
+> Not all climate components support all possible features. Check the corresponding documentation page for details on what is supported.
 
 <span id="config-climate"></span>
 
@@ -47,10 +46,9 @@ Configuration variables:
 - **id** (*Optional*, string): Manually specify the ID for code generation. At least one of **id** and **name** must be specified.
 - **name** (*Optional*, string): The name of the climate device. At least one of **id** and **name** must be specified.
 
-:::note
-If you have a [friendly_name](/components/esphome#esphome-configuration_variables) set for your device and
-you want the climate to use that name, you can set `name: None`.
-:::
+> [!NOTE]
+> If you have a [friendly_name](/components/esphome#esphome-configuration_variables) set for your device and
+> you want the climate to use that name, you can set `name: None`.
 
 - **icon** (*Optional*, icon): Manually set the icon to use for the climate device in the frontend.
 - **visual** (*Optional*): Visual settings for the climate device - these do not
@@ -258,23 +256,22 @@ advanced stuff.
     id(my_climate).get_custom_preset()
 ```
 
-:::note
-`get_custom_fan_mode()` and `get_custom_preset()` return `StringRef`. When no custom mode is set, they return an empty `StringRef`. Use `has_custom_fan_mode()` or `has_custom_preset()` to check if a custom mode is active, or check if the returned `StringRef` is empty.
-
-```cpp
-// Check using has_custom_fan_mode()
-if (id(my_climate).has_custom_fan_mode()) {
-  auto mode = id(my_climate).get_custom_fan_mode();
-  ESP_LOGD("tag", "Mode: %.*s", (int) mode.size(), mode.c_str());
-}
-
-// Or check if empty
-auto mode = id(my_climate).get_custom_fan_mode();
-if (!mode.empty()) {
-  // Use mode
-}
-```
-:::
+> [!NOTE]
+> `get_custom_fan_mode()` and `get_custom_preset()` return `StringRef`. When no custom mode is set, they return an empty `StringRef`. Use `has_custom_fan_mode()` or `has_custom_preset()` to check if a custom mode is active, or check if the returned `StringRef` is empty.
+>
+> ```cpp
+> // Check using has_custom_fan_mode()
+> if (id(my_climate).has_custom_fan_mode()) {
+>   auto mode = id(my_climate).get_custom_fan_mode();
+>   ESP_LOGD("tag", "Mode: %.*s", (int) mode.size(), mode.c_str());
+> }
+>
+> // Or check if empty
+> auto mode = id(my_climate).get_custom_fan_mode();
+> if (!mode.empty()) {
+>   // Use mode
+> }
+> ```
 
 - `.make_call`  : Control the climate device
 

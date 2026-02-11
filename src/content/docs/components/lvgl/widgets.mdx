@@ -44,20 +44,18 @@ The properties below are common to all widgets.
 - **x** (*Optional*, int16 or percentage): Horizontal position of the widget.
 - **y** (*Optional*, int16 or percentage): Vertical position of the widget.
 
-:::note
-By default, the `x` and `y` coordinates are measured from the *top left corner* of the parent's content area. [Important](/components/lvgl#lvgl-styling): content area starts *after the padding* thus if the parent has a non-zero padding value, position will be shifted with that. Percentage values are calculated from the parent's content area size.
-
-If specifying `align`, `x` and `y` can be used as an offset to the calculated position (can also be negative). They are ignored if [Layouts](/components/lvgl/layouts#lvgl-layouts) are used on the parent.
-:::
+> [!NOTE]
+> By default, the `x` and `y` coordinates are measured from the *top left corner* of the parent's content area. [Important](/components/lvgl#lvgl-styling): content area starts *after the padding* thus if the parent has a non-zero padding value, position will be shifted with that. Percentage values are calculated from the parent's content area size.
+>
+> If specifying `align`, `x` and `y` can be used as an offset to the calculated position (can also be negative). They are ignored if [Layouts](/components/lvgl/layouts#lvgl-layouts) are used on the parent.
 
 - **height** (*Optional*): Height of the widget in pixels or a percentage, or `SIZE_CONTENT`.
 - **width** (*Optional*): Width of the widget in pixels or a percentage, or `SIZE_CONTENT`.
 
-:::note
-The size settings support a special value: `SIZE_CONTENT`. It means the widget's size in the respective direction will be set to the size of its children. Note that only children on the right and bottom sides will be considered and children on the top and left remain cropped. This limitation makes the behavior more predictable. Widgets with `hidden` or `floating` flags will be ignored by the `SIZE_CONTENT` calculation.
-
-Similarly to CSS, LVGL also supports `min_width`, `max_width`, `min_height` and `max_height`. These are limits preventing a widget's size from becoming smaller/larger than these values. They are especially useful if the size is set by percentage or `SIZE_CONTENT`.
-:::
+> [!NOTE]
+> The size settings support a special value: `SIZE_CONTENT`. It means the widget's size in the respective direction will be set to the size of its children. Note that only children on the right and bottom sides will be considered and children on the top and left remain cropped. This limitation makes the behavior more predictable. Widgets with `hidden` or `floating` flags will be ignored by the `SIZE_CONTENT` calculation.
+>
+> Similarly to CSS, LVGL also supports `min_width`, `max_width`, `min_height` and `max_height`. These are limits preventing a widget's size from becoming smaller/larger than these values. They are especially useful if the size is set by percentage or `SIZE_CONTENT`.
 
 - **min_width**, **max_width**, **min_height**, **max_height** (*Optional*, int16 or percentage): Sets a minimal/maximal width or a minimal/maximal height. Pixel and percentage values can be used. Percentage values are relative to the dimensions of the parent's content area. Defaults to `0%`.
 - **scrollbar_mode** (*Optional*, string): If a child widget is outside its parent content area (the size without padding), the parent can become scrollable (see the `scrollable` [flag](#lvgl-widget-flags)). The widget can either be scrolled horizontally or vertically in one stroke. Scroll bars can appear depending on the setting:
@@ -143,9 +141,8 @@ In addition to visual styling, each widget supports some boolean **flags** to in
 - **user_1**, **user_2**, **user_3**, **user_4** (*Optional*, boolean): custom flags, free to use by user.
 - **widget_1**, **widget_2** (*Optional*, boolean): custom flags, free to use by widget.
 
-:::note
-LVGL only supports **integers** for numeric `value`. Visualizer widgets can't display floats directly, but they allow scaling by 10s. Some examples in the [Cookbook](/cookbook/lvgl/) cover how to do that.
-:::
+> [!NOTE]
+> LVGL only supports **integers** for numeric `value`. Visualizer widgets can't display floats directly, but they allow scaling by 10s. Some examples in the [Cookbook](/cookbook/lvgl/) cover how to do that.
 
 <span id="lvgl-widget-parts"></span>
 
@@ -329,9 +326,8 @@ The arc consists of a background and a foreground arc. The indicator foreground 
 
 If the `adv_hittest` [flag](#lvgl-widget-flags) is enabled the arc can be clicked through in the middle. Clicks are recognized only on the ring of the background arc.
 
-:::note
-The zero degree position is at the middle right (3 o'clock) of the widget and the degrees increase in a clockwise direction from there. Angles are specified in the `0`  -`360` range.
-:::
+> [!NOTE]
+> The zero degree position is at the middle right (3 o'clock) of the widget and the degrees increase in a clockwise direction from there. Angles are specified in the `0`  -`360` range.
 
 **Actions:**
 
@@ -384,9 +380,8 @@ on_...:
           args: [ 'x' ]
 ```
 
-:::note
-The `on_value` and `on_change` triggers are sent as the arc knob is dragged or changed with keys. The event is sent *continuously* while the arc knob is being dragged; this generally has a negative effect on performance. To mitigate this, consider using a [universal interaction trigger](#lvgl-automation-triggers) like `on_release`, to get the `x` variable once after the interaction has completed.
-:::
+> [!NOTE]
+> The `on_value` and `on_change` triggers are sent as the arc knob is dragged or changed with keys. The event is sent *continuously* while the arc knob is being dragged; this generally has a negative effect on performance. To mitigate this, consider using a [universal interaction trigger](#lvgl-automation-triggers) like `on_release`, to get the `x` variable once after the interaction has completed.
 
 The `arc` can be also integrated as a [Number](/components/number/lvgl/) or [Sensor](/components/sensor/lvgl/) component.
 
@@ -512,9 +507,8 @@ To create an image button, add a child [`image`](#lvgl-widget-image) widget to i
 ```
 
 The `button` can be also integrated as a [Binary Sensor](/components/binary_sensor/lvgl/) or as a [Switch](/components/switch/lvgl/) component.
-:::note
-A binary sensor linked to a button reports its `pressed` state, while a switch linked to a button reports its `checked` state.
-:::
+> [!NOTE]
+> A binary sensor linked to a button reports its `pressed` state, while a switch linked to a button reports its `checked` state.
 
 See [Remote light button](/cookbook/lvgl#lvgl-cookbook-binent) for an example which demonstrates how to use a checkable button to act on a Home Assistant service.
 
@@ -666,9 +660,8 @@ on_...:
         args: ["x", "id(button_2) == x"]
 ```
 
-:::tip
-The Button Matrix widget supports the [Key collector component](/components/key_collector#key_collector) to collect the button presses as key press sequences for further automations. Check out [A numeric input keypad](/cookbook/lvgl#lvgl-cookbook-keypad) for an example.
-:::
+> [!TIP]
+> The Button Matrix widget supports the [Key collector component](/components/key_collector#key_collector) to collect the button presses as key press sequences for further automations. Check out [A numeric input keypad](/cookbook/lvgl#lvgl-cookbook-keypad) for an example.
 
 ## `canvas`
 
@@ -862,9 +855,8 @@ on_...:
             args: [ x ]
 ```
 
-:::note
-In case you configure `default_font` in the main section to a custom font, the checkmark will not be shown correctly when the checkbox is in the checked state. See [Restore checkbox mark](/cookbook/lvgl#lvgl-cookbook-ckboxmark) for how to easily resolve this.
-:::
+> [!NOTE]
+> In case you configure `default_font` in the main section to a custom font, the checkmark will not be shown correctly when the checkbox is in the checked state. See [Restore checkbox mark](/cookbook/lvgl#lvgl-cookbook-ckboxmark) for how to easily resolve this.
 
 The `checkbox` can be also integrated as a [Switch](/components/switch/lvgl/) component.
 
@@ -1030,11 +1022,10 @@ on_...:
         src: cat_image_bowtie
 ```
 
-:::note
-Currently `RGB565` type images are supported, with transparency using the optional parameter `transparency` set. See [Images](/components/image#display-image) for how to load an image for rendering in ESPHome.
-[!TIP]
-`offset_x` and `offset_y` can be useful when the widget size is set to be smaller than the image source size. A "running image" effect can be created by animating these values.
-:::
+> [!NOTE]
+> Currently `RGB565` type images are supported, with transparency using the optional parameter `transparency` set. See [Images](/components/image#display-image) for how to load an image for rendering in ESPHome.
+> [!TIP]
+> `offset_x` and `offset_y` can be useful when the widget size is set to be smaller than the image source size. A "running image" effect can be created by animating these values.
 
 <span id="lvgl-widget-keyboard"></span>
 
@@ -1095,13 +1086,11 @@ on_focus:
         - logger.log: Keyboard cancelled
 ```
 
-:::tip
-The Keyboard widget supports the [Key collector component](/components/key_collector#key_collector) to collect the button presses as key press sequences for further automations.
-:::
+> [!TIP]
+> The Keyboard widget supports the [Key collector component](/components/key_collector#key_collector) to collect the button presses as key press sequences for further automations.
 
-:::note
-The Keyboard widget in ESPHome doesn't support popovers or custom layouts.
-:::
+> [!NOTE]
+> The Keyboard widget in ESPHome doesn't support popovers or custom layouts.
 
 <span id="lvgl-widget-label"></span>
 
@@ -1132,9 +1121,8 @@ A label is the basic widget type that is used to display text.
 - **text** (*Optional*, [Text property](#text-property)): Text to display on the label.
 - Style options from [Style properties](/components/lvgl#lvgl-styling). Uses all the typical background properties and the text properties. The padding values can be used to add space between the text and the background.
 
-:::note
-Newline escape sequences are handled automatically by the label widget. You can use `\n` to make a line break. For example: `"line1\nline2\n\nline4"`. For escape sequences like newline to be translated, *enclose the string in double quotes*.
-:::
+> [!NOTE]
+> Newline escape sequences are handled automatically by the label widget. You can use `\n` to make a line break. For example: `"line1\nline2\n\nline4"`. For escape sequences like newline to be translated, *enclose the string in double quotes*.
 
 **Actions:**
 
@@ -1219,9 +1207,8 @@ on_...:
 
 The `led` can be also integrated as [Light](/components/light/lvgl/) component.
 
-:::note
-If configured as a light component, `color` and `brightness` are overridden by the light at startup, according to its `restore_mode` setting.
-:::
+> [!NOTE]
+> If configured as a light component, `color` and `brightness` are overridden by the light at startup, according to its `restore_mode` setting.
 
 Check out [A numeric input keypad](/cookbook/lvgl#lvgl-cookbook-keypad) in the Cookbook for an example which demonstrates how to change the `led` styling properties from an automation.
 
@@ -1331,9 +1318,8 @@ The meter widget can visualize data in very flexible ways. It can use arcs, need
 - **indicator** (*Optional*, dict): Styling options for the indicator *part*, which will be applied to the needle line or image using standard *line* and *image* styles. Background properties applied here will style the pivot (the dot in the middle of the meter) for example to hide the pivot use `bg_opa: transp` in the `indicator` style.
 - **items** (*Optional*, dict): Settings for the items *part*, which will be applied to arcs.
 
-:::note
-The zero degree position is at the middle right (3 o'clock) of the widget and the degrees increase in a clockwise direction from there. Angles are specified in the `0`  -`360` range.
-:::
+> [!NOTE]
+> The zero degree position is at the middle right (3 o'clock) of the widget and the degrees increase in a clockwise direction from there. Angles are specified in the `0`  -`360` range.
 
 **Actions:**
 
@@ -1437,9 +1423,8 @@ lvgl:
               - lvgl.widget.hide: message_box
 ```
 
-:::tip
-You can create your own more complex dialogs with a full-screen sized, half-opaque `obj` with any child widgets on it, and the `hidden` flag set to `true` by default. For non-modal dialogs, simply set the `clickable` flag to `false` on it.
-:::
+> [!TIP]
+> You can create your own more complex dialogs with a full-screen sized, half-opaque `obj` with any child widgets on it, and the `hidden` flag set to `true` by default. For non-modal dialogs, simply set the `clickable` flag to `false` on it.
 
 <span id="lvgl-widget-obj"></span>
 
@@ -1648,9 +1633,8 @@ on_...:
           args: [ 'x' ]
 ```
 
-:::note
-The `on_value` trigger is sent as the slider is dragged or changed with keys. The event is sent *continuously* while the slider is being dragged; this generally has a negative effect on performance. To mitigate this, consider using a [universal interaction trigger](#lvgl-automation-triggers) like `on_release`, to get the `x` variable once after the interaction has completed.
-:::
+> [!NOTE]
+> The `on_value` trigger is sent as the slider is dragged or changed with keys. The event is sent *continuously* while the slider is being dragged; this generally has a negative effect on performance. To mitigate this, consider using a [universal interaction trigger](#lvgl-automation-triggers) like `on_release`, to get the `x` variable once after the interaction has completed.
 
 The `slider` can be also integrated as [Number](/components/number/lvgl/) or [Sensor](/components/sensor/lvgl/) component.
 
@@ -1677,9 +1661,8 @@ The spinbox contains a numeric value (as text) which can be increased or decreas
   be incremented or decremented by one when `increment` or `decrement` actions are called.
 - **value** (*Optional*, float): Actual value to be shown by the spinbox at start. Defaults to `0`.
 
-:::note
-The sign character will only be shown if the set range contains negatives.
-:::
+> [!NOTE]
+> The sign character will only be shown if the set range contains negatives.
 
 **Actions:**
 

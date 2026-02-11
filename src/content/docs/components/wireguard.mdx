@@ -16,22 +16,20 @@ available for ESP32, ESP8266 and BK72xx microcontrollers *only*.
   ["WireGuard" Trademark Usage Policy](https://www.wireguard.com/trademark-policy/)
   for additional information.
 
-:::caution
-To successfully use this component you must have WireGuard® also
-on your remote host (already installed and ready to accept connections).
-If you don't have it please read the section [Remote peer setup](#wireguard-installation).
-:::
+> [!CAUTION]
+> To successfully use this component you must have WireGuard® also
+> on your remote host (already installed and ready to accept connections).
+> If you don't have it please read the section [Remote peer setup](#wireguard-installation).
 
-:::caution
-This component requires the system clock to be synchronized.
-
-See [Time](/time/) to setup a time source
-and **do not use** `homeassistant` time-platform if
-Home Assistant is on the remote peer because the time
-synchronization is a prerequisite to establish the VPN link.
-
-The [Sntp](/time/sntp/) is a valid time-platform choice.
-:::
+> [!CAUTION]
+> This component requires the system clock to be synchronized.
+>
+> See [Time](/time/) to setup a time source
+> and **do not use** `homeassistant` time-platform if
+> Home Assistant is on the remote peer because the time
+> synchronization is a prerequisite to establish the VPN link.
+>
+> The [Sntp](/time/sntp/) is a valid time-platform choice.
 
 A VPN tunnel can be created to a **single** remote peer
 adding the following to your configuration:
@@ -169,17 +167,15 @@ Let's explain with some examples:
 | any          | 0.0.0.0                      | *omitted*                                                                     | **any**                                                                                                                                    |
 | any          | 0.0.0.0                      | `- 172.16.0.0/24<br />- 10.44.0.0/16`<br />`- 10.10.0.0/16`   | to any network that is in the list of allowed IPs because the netmask will route any traffic but wireguard allows only its own list        |
 
-:::note
-Setting the `netmask` to `0.0.0.0` has the effect of routing
-through the VPN link any traffic. It is like having set the wireguard
-interface as the system default.
-:::
+> [!NOTE]
+> Setting the `netmask` to `0.0.0.0` has the effect of routing
+> through the VPN link any traffic. It is like having set the wireguard
+> interface as the system default.
 
-:::note
-Setting the `netmask` to `0.0.0.0` has the effect of routing
-through the VPN link any traffic. It is like having set the wireguard
-interface as the system default.
-:::
+> [!NOTE]
+> Setting the `netmask` to `0.0.0.0` has the effect of routing
+> through the VPN link any traffic. It is like having set the wireguard
+> interface as the system default.
 
 <span id="wireguard-sensors"></span>
 
@@ -265,10 +261,9 @@ on_...:
 
 The lambda equivalent is `id(wireguard_id).disable()`.
 
-:::note
-To disable WireGuard® since device boot you can execute this action
-in the [`on_boot`](/components/esphome#esphome-on_boot) step.
-:::
+> [!NOTE]
+> To disable WireGuard® since device boot you can execute this action
+> in the [`on_boot`](/components/esphome#esphome-on_boot) step.
 
 ### `wireguard.enable`
 
@@ -354,11 +349,10 @@ These are the steps:
 
 The device should now be linked to your remote Home Assistant.
 
-:::note
-If you have issues linking the ESP device try setting
-the `use_address` parameter of the [Wifi](/wifi/) to the value
-of the [address](#wireguard-address) configured here.
-:::
+> [!NOTE]
+> If you have issues linking the ESP device try setting
+> the `use_address` parameter of the [Wifi](/wifi/) to the value
+> of the [address](#wireguard-address) configured here.
 
 ## See Also
 

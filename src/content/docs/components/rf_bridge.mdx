@@ -16,10 +16,9 @@ The radio microcontroller is connected to the ESP8266 via the
 [UART bus](/components/uart/). The uart bus must be configured at the same speed of the module
 which is 19200bps.
 
-:::caution
-If you are using the [Logger](/logger/) make sure you disable the uart logging with the
-`baud_rate: 0` option.
-:::
+> [!CAUTION]
+> If you are using the [Logger](/logger/) make sure you disable the uart logging with the
+> `baud_rate: 0` option.
 
 <Image src={rfBridgeFullImg} layout="constrained" alt="" />
 
@@ -87,13 +86,12 @@ Configuration options:
 * **code** (**Required**, int, [templatable](/automations/templates)): RF code
 * **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the RF Bridge if you have multiple bridges or multiple bridge components.
 
-:::note
-This action can also be written in [lambdas](/automations/templates#config-lambda):
-
-```cpp
-id(my_rf_bridge).send_code(0x700, 0x800, 0x1000, 0xABC123);
-```
-:::
+> [!NOTE]
+> This action can also be written in [lambdas](/automations/templates#config-lambda):
+>
+> ```cpp
+> id(my_rf_bridge).send_code(0x700, 0x800, 0x1000, 0xABC123);
+> ```
 
 <span id="rf_bridge-beep_action"></span>
 
@@ -113,13 +111,12 @@ Configuration options:
 * **duration** (**Required**, int, [templatable](/automations/templates)): beep duration in milliseconds.
 * **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the RF Bridge if you have multiple components.
 
-:::note
-This action can also be written in [lambdas](/automations/templates#config-lambda):
-
-```cpp
-id(my_rf_bridge).beep(100);
-```
-:::
+> [!NOTE]
+> This action can also be written in [lambdas](/automations/templates#config-lambda):
+>
+> ```cpp
+> id(my_rf_bridge).beep(100);
+> ```
 
 <span id="rf_bridge-learn_action"></span>
 
@@ -138,13 +135,12 @@ Configuration options:
 
 * **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the RF Bridge if you have multiple components.
 
-:::note
-This action can also be written in [lambdas](/automations/templates#config-lambda):
-
-```cpp
-id(my_rf_bridge).learn();
-```
-:::
+> [!NOTE]
+> This action can also be written in [lambdas](/automations/templates#config-lambda):
+>
+> ```cpp
+> id(my_rf_bridge).learn();
+> ```
 
 <span id="rf_bridge-send_raw_action"></span>
 
@@ -169,13 +165,12 @@ Configuration options:
 * **raw** (**Required**, string, [templatable](/automations/templates)): RF raw string
 * **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the RF Bridge if you have multiple components.
 
-:::note
-This action can also be written in [lambdas](/automations/templates#config-lambda):
-
-```cpp
-id(my_rf_bridge).send_raw("AAA5070008001000ABC12355");
-```
-:::
+> [!NOTE]
+> This action can also be written in [lambdas](/automations/templates#config-lambda):
+>
+> ```cpp
+> id(my_rf_bridge).send_raw("AAA5070008001000ABC12355");
+> ```
 
 ## Portisch firmware
 
@@ -225,13 +220,12 @@ Configuration options:
 * **code** (**Required**, string, [templatable](/automations/templates)): RF code
 * **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the RF Bridge if you have multiple components.
 
-:::note
-This action can also be written in [lambdas](/automations/templates#config-lambda):
-
-```cpp
-id(my_rf_bridge).send_advanced_code({0x04, 0x01, "ABC123"});
-```
-:::
+> [!NOTE]
+> This action can also be written in [lambdas](/automations/templates#config-lambda):
+>
+> ```cpp
+> id(my_rf_bridge).send_advanced_code({0x04, 0x01, "ABC123"});
+> ```
 
 <span id="rf_bridge-start_advanced_sniffing_action"></span>
 
@@ -250,13 +244,12 @@ Configuration options:
 
 * **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the RF Bridge if you have multiple components.
 
-:::note
-This action can also be written in [lambdas](/automations/templates#config-lambda):
-
-```cpp
-id(my_rf_bridge).start_advanced_sniffing();
-```
-:::
+> [!NOTE]
+> This action can also be written in [lambdas](/automations/templates#config-lambda):
+>
+> ```cpp
+> id(my_rf_bridge).start_advanced_sniffing();
+> ```
 
 <span id="rf_bridge-stop_advanced_sniffing_action"></span>
 
@@ -274,13 +267,12 @@ Configuration options:
 
 * **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the RF Bridge if you have multiple components.
 
-:::note
-This action can also be written in [lambdas](/automations/templates#config-lambda):
-
-```cpp
-id(my_rf_bridge).stop_advanced_sniffing();
-```
-:::
+> [!NOTE]
+> This action can also be written in [lambdas](/automations/templates#config-lambda):
+>
+> ```cpp
+> id(my_rf_bridge).stop_advanced_sniffing();
+> ```
 
 <span id="rf_bridge-start_bucket_sniffing_action"></span>
 
@@ -289,15 +281,13 @@ id(my_rf_bridge).stop_advanced_sniffing();
 Tell the RF Bridge to dump raw sniffing data. Useful for getting codes for unsupported protocols.
 The raw data will be available in the log and can later be used with [`rf_bridge.send_raw` Action](#rf_bridge-send_raw_action) action.
 
-:::note
-A conversion from *B1* (received) raw format to *B0* (send) raw command format should be applied.
-For this, you can use the tool [B1 Converter](https://jonajona.nl/convertB1.html)
-:::
+> [!NOTE]
+> A conversion from *B1* (received) raw format to *B0* (send) raw command format should be applied.
+> For this, you can use the tool [B1 Converter](https://jonajona.nl/convertB1.html)
 
-:::note
-There seems to be an overflow problem in Portisch firmware and after a short while, the bucket sniffing stops.
-You should re-call the action to reset and start sniffing again. This issue is fixed in Mightymos firmware.
-:::
+> [!NOTE]
+> There seems to be an overflow problem in Portisch firmware and after a short while, the bucket sniffing stops.
+> You should re-call the action to reset and start sniffing again. This issue is fixed in Mightymos firmware.
 
 ```yaml
 on_...:
@@ -309,13 +299,12 @@ Configuration options:
 
 * **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the RF Bridge if you have multiple components.
 
-:::note
-This action can also be written in [lambdas](/automations/templates#config-lambda):
-
-```cpp
-id(my_rf_bridge).start_bucket_sniffing();
-```
-:::
+> [!NOTE]
+> This action can also be written in [lambdas](/automations/templates#config-lambda):
+>
+> ```cpp
+> id(my_rf_bridge).start_bucket_sniffing();
+> ```
 
 <span id="rf_bridge-restart_radio_controller"></span>
 

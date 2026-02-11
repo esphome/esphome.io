@@ -16,9 +16,8 @@ HUB75 displays are RGB LED matrix panels that use parallel row updating to creat
 - ESP32-S3
 - ESP32-P4
 
-:::caution
-This component does **NOT** work with ESP32-C3, ESP32-C2, or ESP32-H2.
-:::
+> [!CAUTION]
+> This component does **NOT** work with ESP32-C3, ESP32-C2, or ESP32-H2.
 
 **Memory Considerations:**
 
@@ -60,13 +59,11 @@ HUB75 panels use a standard connector with the following pins:
 | CLK       | Clock                | `clk_pin`      |
 | GND       | Ground               | N/A            |
 
-:::note
-The E pin is only required for 1/32 scan panels (panels with 32 or 64 rows). It can be omitted for 1/16 scan panels.
-:::
+> [!NOTE]
+> The E pin is only required for 1/32 scan panels (panels with 32 or 64 rows). It can be omitted for 1/16 scan panels.
 
-:::tip
-Use a [board preset](#board-presets) to automatically configure pins for common hardware, or specify all pins manually if using custom wiring.
-:::
+> [!TIP]
+> Use a [board preset](#board-presets) to automatically configure pins for common hardware, or specify all pins manually if using custom wiring.
 
 ## Usage
 
@@ -82,9 +79,8 @@ display:
       it.print(0, 0, id(font), "Hello World!");
 ```
 
-:::note
-Unlike some other display components, HUB75 does **NOT** require an SPI bus configuration. It uses DMA internally for efficient display updates.
-:::
+> [!NOTE]
+> Unlike some other display components, HUB75 does **NOT** require an SPI bus configuration. It uses DMA internally for efficient display updates.
 
 ## Board Presets
 
@@ -178,9 +174,8 @@ For creating larger displays by chaining multiple panels:
   - `BOTTOM_LEFT_UP_ZIGZAG` - Zigzag: start bottom-left (all panels upright)
   - `BOTTOM_RIGHT_UP_ZIGZAG` - Zigzag: start bottom-right (all panels upright)
 
-:::note
-The total display size will be `panel_width × layout_cols` by `panel_height × layout_rows` pixels.
-:::
+> [!NOTE]
+> The total display size will be `panel_width × layout_cols` by `panel_height × layout_rows` pixels.
 
 ### Panel Hardware (Optional)
 
@@ -282,9 +277,8 @@ display:
     layout: TOP_LEFT_DOWN_ZIGZAG
 ```
 
-:::tip
-**Serpentine layouts** (e.g., `TOP_LEFT_DOWN`) physically rotate alternate rows upside down to minimize cable length. **Zigzag layouts** (e.g., `TOP_LEFT_DOWN_ZIGZAG`) keep all panels upright but require longer cables between rows.
-:::
+> [!TIP]
+> **Serpentine layouts** (e.g., `TOP_LEFT_DOWN`) physically rotate alternate rows upside down to minimize cable length. **Zigzag layouts** (e.g., `TOP_LEFT_DOWN_ZIGZAG`) keep all panels upright but require longer cables between rows.
 
 ## Using with LVGL
 
