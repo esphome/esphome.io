@@ -174,8 +174,8 @@ examples that are ready for you to copy and paste!
 
   - **pump_switch_id** (*Optional*, [Switch](/components/switch#config-switch)): This is the [switch](/components/switch#config-switch)
     component to be used to control the valve's pump or upstream electric valve. Typically this would be a
-    [GPIO switch](/switch/gpio/) wired to control a relay or other switching device which in turn would
-    activate the respective pump/valve. For latching valves/pumps, use an [H-Bridge switch](/switch/hbridge/).
+    [GPIO switch](/components/switch/gpio/) wired to control a relay or other switching device which in turn would
+    activate the respective pump/valve. For latching valves/pumps, use an [H-Bridge switch](/components/switch/hbridge/).
     *It is not recommended to expose this switch to the front end; please see*
     [An Important Note about GPIO Switches and Control](#sprinkler-controller-an_important_note_about_gpio_switches_and_control)
     *below for more detail.*
@@ -194,9 +194,9 @@ examples that are ready for you to copy and paste!
 
   - **valve_switch_id** (**Required**, [Switch](/components/switch#config-switch)): This is the [switch](/components/switch#config-switch)
     component to be used to control the valve that operates the given section or zone of the sprinkler
-    system. Typically this would be a [GPIO switch](/switch/gpio/) wired to control a relay
+    system. Typically this would be a [GPIO switch](/components/switch/gpio/) wired to control a relay
     or other switching device which in turn would activate the respective valve. For latching valves, use an
-    [H-Bridge switch](/switch/hbridge/). *It is not recommended to expose this switch to the front end; please see*
+    [H-Bridge switch](/components/switch/hbridge/). *It is not recommended to expose this switch to the front end; please see*
     [An Important Note about GPIO Switches and Control](#sprinkler-controller-an_important_note_about_gpio_switches_and_control)
     *below for more detail.*
 
@@ -207,8 +207,8 @@ examples that are ready for you to copy and paste!
 The savvy and/or seasoned ESPHome user will quickly realize that `pump_switch_id` and `valve_switch_id` (as described
 above) are really just pointers to other switches elsewhere in the ESPHome yaml configuration.
 
-It might seem reasonable to assume that these switches (typically [GPIO switches](/switch/gpio/) or
-[H-Bridge switches](/switch/hbridge/)) may be used to switch the various sprinkler zones on and off,
+It might seem reasonable to assume that these switches (typically [GPIO switches](/components/switch/gpio/) or
+[H-Bridge switches](/components/switch/hbridge/)) may be used to switch the various sprinkler zones on and off,
 however, this is **not** the case. It's important to note that the sprinkler controller provides a switch for each
 configured zone -- ultimately, this switch is to be used to switch any given zone on or off, **not** the underlying
 switch the zone is configured with.
@@ -735,7 +735,7 @@ switch:
 ### Single Controller, Three Latching Valves, Single Latching Pump
 
 This example is similar to the previous example, however it illustrates how a "latching" or "pulsed"
-valve can be configured using [H-Bridge switches](/switch/hbridge/). This type of valve
+valve can be configured using [H-Bridge switches](/components/switch/hbridge/). This type of valve
 requires two GPIO pins to operate -- one to switch the valve on and another to switch the valve off.
 
 Note that, while this example illustrates a configuration that uses exclusively latching valves,
