@@ -1,0 +1,195 @@
+---
+description: "Changelog for ESPHome 2022.4.0."
+title: "ESPHome 2022.4.0 - 20th April 2022"
+pagefind: false
+slug: "changelog/2022.4.0"
+---
+
+import PR from "@components/PR.astro";
+import GHUser from "@components/GHUser.astro";
+
+
+- [QMP6988](/components/sensor/qmp6988/)
+- [Hydreon Rain Sensor](/components/binary_sensor/hydreon_rgxx/)
+- [Mi Motion Sensor 2](/components/sensor/xiaomi_ble/)
+- [Sonoff D1 Dimmer](/components/light/sonoff_d1/)
+- [MCP3208](/components/sensor/mcp3204/)
+- [Shelly Dimmer](/components/light/shelly_dimmer/)
+
+
+## Home Assistant Addon Repo
+
+This is a repeat from the 2022.2 release notes.
+
+The [ESPHome Home Assistant addon repository](https://github.com/esphome/home-assistant-addon)
+is added by default to new Home Assistant installations. Because of this, we have decided that we would
+deprecate the ESPHome addon inside the [Community Addons](https://github.com/hassio-addons/repository)
+and everyone should move to the ESPHome repo. It is safe to delete the Community ESPHome addon as
+your configuration YAML files are stored in the Home Assistant configuration folder.
+
+You can add the ESPHome addon here:
+
+[![Open your Home Assistant instance and show the dashboard of an add-on.][my-badge]][my-url]
+
+[my-badge]: https://my.home-assistant.io/badges/supervisor_addon.svg
+[my-url]: https://my.home-assistant.io/redirect/supervisor_addon/?addon=5c53de3b_esphome&repository_url=https%3A%2F%2Fgithub.com%2Fesphome%2Fhome-assistant-addon
+
+## Python 3.8 Minimum
+
+A friendly reminder that 2022.3 set the minimum Python version to 3.8.
+Please upgrade your local python if you are unable to update ESPHome further.
+This is taken care of automatically if you are using the Home Assistant Add-on, or the
+ESPHome docker container.
+
+## Shelly Dimmer 2
+
+Support for the STM32 chip of the Shelly Dimmer has been added in this release. The component also supports
+flashing custom firmware to the stm32 via ESPHome which is required to use the component. See the
+[documentation](/components/light/shelly_dimmer/) for more details.
+
+## Google Fonts
+
+<GHUser name="OttoWinter" /> has given everyone a way to use Google Fonts in their YAML and displays without
+having to manually download TTF font files. The example below will automatically download and cache the Roboto
+TTF font file required so you can utilise it. See the [Font Renderer Component](/components/font#display-fonts) documentation
+for more details.
+
+```yaml
+font:
+  - file: "gfonts://Roboto"
+    id: roboto
+    size: 20
+```
+
+## Deep sleep wakeup time
+
+Deep sleep for ESP32 has had a new feature added.
+
+```yaml
+on_...:
+  - deep_sleep.enter:
+      until: "14:00:00"
+      time_id: ...
+```
+
+This will automatically calculate the time required to deep sleep to ensure that the device will
+wake up at "14:00:00". The time format here is local time to match the timezone you have configured and
+this requires a time component to be configured.
+
+## Sensors imported from Home Assistant
+
+In this release there is a breaking change on the sensors that are imported from homeassistant,
+`platform: homeassistant`. They will now default to being internal to ESPHome and will not be re-exported back
+to Home Assistant, MQTT or the web server. This change makes sense as it was just extra sensors and network traffic.
+You are able to add these back as non internal by adding `internal: false` to the YAML for each of the sensors.
+
+## Full list of changes
+
+{/* markdownlint-disable MD013 */}
+
+### New Features
+
+- Allow to set user defined characters on LCD <PR number={3322} /> by <GHUser name="numo68" /> (new-feature)
+- Font allow using google fonts directly <PR number={3243} /> by <GHUser name="OttoWinter" /> (new-feature) (notable-change)
+- Add mqtt for idf <PR number={2930} /> by <GHUser name="martgras" /> (new-feature)
+- Extend mcp3204 to support 8 channels (mcp3208 variant) <PR number={3332} /> by <GHUser name="RadekHvizdos" /> (new-feature)
+- Add cover toggle support to endstop cover <PR number={3358} /> by <GHUser name="rrooggiieerr" /> (new-feature)
+- Remote base pronto receive <PR number={2826} /> by <GHUser name="cvwillegen" /> (new-feature)
+- Allow specifying deep sleep wakup clock time <PR number={3312} /> by <GHUser name="jesserockz" /> (new-feature)
+
+### New Components
+
+- Add support for QMP6988 Pressure sensor <PR number={3192} /> by <GHUser name="andrewpc" /> (new-integration)
+- Add integration hydreon_rgxx for rain sensors by Hydreon <PR number={2711} /> by <GHUser name="functionpointer" /> (new-integration)
+- Add Xiaomi RTCGQ02LM - Mi Motion Sensor 2 <PR number={3186} /> by <GHUser name="jesserockz" /> (new-integration)
+- Add Sonoff D1 Dimmer support <PR number={2775} /> by <GHUser name="anatoly-savchenkov" /> (new-integration)
+- Refactor Sensirion Sensors <PR number={3374} /> by <GHUser name="martgras" /> (new-integration)
+- Add support for Shelly Dimmer 2 <PR number={2954} /> by <GHUser name="rnauber" /> (new-integration)
+
+### Breaking Changes
+
+- Make home_assistant imported sensors internal by default <PR number={3372} /> by <GHUser name="jesserockz" /> (breaking-change)
+
+### Beta Changes
+
+- Actually increase request memory for json parsing <PR number={3331} /> by <GHUser name="jesserockz" />
+- Actually increase request memory for json parsing <PR number={3331} /> by <GHUser name="jesserockz" />
+- Changes accuracy of single cell voltage <PR number={3387} /> by <GHUser name="matthias882" />
+- Add support for Shelly Dimmer 2 <PR number={2954} /> by <GHUser name="rnauber" /> (new-integration)
+- Allocate smaller amount of buffer for JSON <PR number={3384} /> by <GHUser name="dz0ny" />
+- Fix power_delivered/produced_phase sensor deviceclass in DSMR <PR number={3395} /> by <GHUser name="mvdwetering" />
+- Shelly Dimmer: Delete obsolete LICENSE.txt <PR number={3394} /> by <GHUser name="rnauber" />
+- Dont require empty object for wifi ap with defaults <PR number={3404} /> by <GHUser name="jesserockz" />
+
+### Notable Changes
+
+- Font allow using google fonts directly <PR number={3243} /> by <GHUser name="OttoWinter" /> (new-feature) (notable-change)
+
+### All changes
+
+- Bump pytest-asyncio from 0.18.1 to 0.18.2 <PR number={3262} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Bump zeroconf from 0.38.3 to 0.38.4 <PR number={3257} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Bump click from 8.0.3 to 8.0.4 <PR number={3248} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Bump docker dependencies <PR number={3281} /> by <GHUser name="OttoWinter" />
+- Fixed wrong comment <PR number={3286} /> by <GHUser name="Rai-Rai" />
+- Add support for QMP6988 Pressure sensor <PR number={3192} /> by <GHUser name="andrewpc" /> (new-integration)
+- Adds support for b-parasite's v2 BLE protocol <PR number={3290} /> by <GHUser name="rbaron" />
+- increase delay for Ethernet module warm up Safe Mode <PR number={3326} /> by <GHUser name="nagyrobi" />
+- Bump esptool from 3.2 to 3.3 <PR number={3327} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Allow to set user defined characters on LCD <PR number={3322} /> by <GHUser name="numo68" /> (new-feature)
+- Font allow using google fonts directly <PR number={3243} /> by <GHUser name="OttoWinter" /> (new-feature) (notable-change)
+- Actually increase request memory for json parsing <PR number={3331} /> by <GHUser name="jesserockz" />
+- Actually increase request memory for json parsing <PR number={3331} /> by <GHUser name="jesserockz" />
+- Change beginning of file comments to avoid creating doxygen tag for `esphome` namespace <PR number={3314} /> by <GHUser name="e28eta" />
+- Publish custom data when modbus number lambda fills vector <PR number={3295} /> by <GHUser name="jesserockz" />
+- Define touchscreen support when in use. <PR number={3296} /> by <GHUser name="geiseri" />
+- New vscode schema gen <PR number={3336} /> by <GHUser name="glmnet" />
+- protobuf: fix incomplete 64 bits implementation <PR number={3341} /> by <GHUser name="ianchi" />
+- feat: support ble_client that use security w/o pin codes <PR number={3320} /> by <GHUser name="ammmze" />
+- Add mqtt for idf <PR number={2930} /> by <GHUser name="martgras" /> (new-feature)
+- Added a function to load custom characters in LCD display <PR number={3279} /> by <GHUser name="andrewjswan" />
+- CAN bus: support remote transmission request flag for canbus.send <PR number={3193} /> by <GHUser name="felixstorm" />
+- Tm1637 binarysensor <PR number={2792} /> by <GHUser name="mvturnho" />
+- Bump click from 8.0.4 to 8.1.2 <PR number={3351} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Bump pylint from 2.12.2 to 2.13.4 <PR number={3348} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Bump pytest-asyncio from 0.18.2 to 0.18.3 <PR number={3335} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Bump pytest from 7.0.1 to 7.1.1 <PR number={3313} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Bump docker dependencies <PR number={3354} /> by <GHUser name="OttoWinter" />
+- Bump voluptuous from 0.12.2 to 0.13.0 <PR number={3355} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Bump tzlocal from 4.1 to 4.2 <PR number={3356} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Bump pyupgrade from 2.31.0 to 2.31.1 <PR number={3292} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Bump black from 22.1.0 to 22.3.0 <PR number={3357} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Allow on_value_range for sensor and number to be templated <PR number={3359} /> by <GHUser name="jesserockz" />
+- Add support for Electrolux heatpump and bump arduino-heatpumpir version <PR number={3353} /> by <GHUser name="ikilledmypc" />
+- Implement newer RTU protocol of Growatt inverters <PR number={3315} /> by <GHUser name="djwlindenaar" />
+- Add parameter to control i2c stop signal at endTransmission <PR number={3370} /> by <GHUser name="kbickar" />
+- Fix SHTC3 sensor detection <PR number={3365} /> by <GHUser name="ssieb" />
+- Extend mcp3204 to support 8 channels (mcp3208 variant) <PR number={3332} /> by <GHUser name="RadekHvizdos" /> (new-feature)
+- Bump pyupgrade from 2.31.1 to 2.32.0 <PR number={3366} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Bump voluptuous from 0.13.0 to 0.13.1 <PR number={3364} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Bump pylint from 2.13.4 to 2.13.5 <PR number={3363} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Fix HM3301 AQI int8 overflow <PR number={3361} /> by <GHUser name="calco88" />
+- Add cover toggle support to endstop cover <PR number={3358} /> by <GHUser name="rrooggiieerr" /> (new-feature)
+- Make home_assistant imported sensors internal by default <PR number={3372} /> by <GHUser name="jesserockz" /> (breaking-change)
+- Add integration hydreon_rgxx for rain sensors by Hydreon <PR number={2711} /> by <GHUser name="functionpointer" /> (new-integration)
+- Addition of Deep Sleep RTC pin definition for ESP32-S2 <PR number={3303} /> by <GHUser name="andrewpc" />
+- Add Xiaomi RTCGQ02LM - Mi Motion Sensor 2 <PR number={3186} /> by <GHUser name="jesserockz" /> (new-integration)
+- Add Sonoff D1 Dimmer support <PR number={2775} /> by <GHUser name="anatoly-savchenkov" /> (new-integration)
+- Remote base pronto receive <PR number={2826} /> by <GHUser name="cvwillegen" /> (new-feature)
+- Use correct http defines <PR number={3378} /> by <GHUser name="dz0ny" />
+- Refactor Sensirion Sensors <PR number={3374} /> by <GHUser name="martgras" /> (new-integration)
+- Fix silent config errors <PR number={3380} /> by <GHUser name="jesserockz" />
+- Move PN532OnTagTrigger to nfc::NfcOnTagTrigger <PR number={3379} /> by <GHUser name="jesserockz" />
+- Allow specifying deep sleep wakup clock time <PR number={3312} /> by <GHUser name="jesserockz" /> (new-feature)
+- Changes accuracy of single cell voltage <PR number={3387} /> by <GHUser name="matthias882" />
+- Add support for Shelly Dimmer 2 <PR number={2954} /> by <GHUser name="rnauber" /> (new-integration)
+- Allocate smaller amount of buffer for JSON <PR number={3384} /> by <GHUser name="dz0ny" />
+- Fix power_delivered/produced_phase sensor deviceclass in DSMR <PR number={3395} /> by <GHUser name="mvdwetering" />
+- Shelly Dimmer: Delete obsolete LICENSE.txt <PR number={3394} /> by <GHUser name="rnauber" />
+- Dont require empty object for wifi ap with defaults <PR number={3404} /> by <GHUser name="jesserockz" />
+
+{/* markdownlint-enable MD013 */}
+
+## All Changelogs
+
+

@@ -1,0 +1,219 @@
+---
+description: "Changelog for ESPHome 2023.6.0."
+title: "ESPHome 2023.6.0 - 21st June 2023"
+pagefind: false
+slug: "changelog/2023.6.0"
+---
+
+import PR from "@components/PR.astro";
+import GHUser from "@components/GHUser.astro";
+
+
+- [Alarm Control Panel Core](/components/alarm_control_panel/index/)
+- [Template Alarm Control Panel](/components/alarm_control_panel/template/)
+- [RP2040 PIO LED Strip](/components/light/rp2040_pio_led_strip/)
+- [TMP1075](/components/sensor/tmp1075/)
+
+
+## Dark Mode 😎
+
+Thanks to <GHUser name="grahambrown11" /> for implement a dark mode for the ESPHome dashboard!
+It will take the preference of your browser and is not configurable at this time.
+
+## Alarm Control Panel
+
+<GHUser name="grahambrown11" /> also has contributed the base alarm control panel code and a template alarm
+control panel. This is available to use now in ESPHome, but will require Home Assistant 2023.7 or newer for the entity
+to show up and be control from that side.
+
+## MDI icons
+
+You can now specify MDI icons as ESPHome images using the `mdi:` prefix, for example:
+
+```yaml
+image:
+  - file: "my_image.png"
+    id: my_image
+  - file: "mdi:chip"
+    resize: 32x32
+    id: chip_icon
+```
+
+## Wi-Fi enable and disable
+
+Wi-Fi can now be enabled and disabled on demand using the `wifi.enable` and `wifi.disable` actions.
+It can also be set to not enable on bootup. See the [Wi-Fi documentation](/components/wifi/)
+for more details.
+
+{/* markdownlint-disable MD013 */}
+
+## Release 2023.6.1 - June 23
+
+- Make ethernet_info work with esp-idf framework <PR number={4976} /> by <GHUser name="HeMan" />
+- display: fix white screen on binary displays <PR number={4991} /> by <GHUser name="ayufan" />
+
+## Release 2023.6.2 - June 23
+
+- remove unused static declarations <PR number={4993} /> by <GHUser name="ssieb" />
+- Fix rp2040 pio tool download <PR number={4994} /> by <GHUser name="jesserockz" />
+
+## Release 2023.6.3 - June 28
+
+- Update webserver to 56d73b5 <PR number={5007} /> by <GHUser name="jesserockz" />
+- Synchronise Device Classes from Home Assistant <PR number={5018} /> by <GHUser name="esphomebot" />
+- Fixes compressed downloads <PR number={5014} /> by <GHUser name="fdcastel" />
+- Add CONFIG_BT_BLE_42_FEATURES_SUPPORTED for ble <PR number={5008} /> by <GHUser name="jesserockz" />
+
+## Release 2023.6.4 - July 4
+
+- [SCD30] Disable negative temperature offset <PR number={4850} /> by <GHUser name="ardichoke" />
+- fix template binary_sensor publish_initial_state option <PR number={5033} /> by <GHUser name="dudanov" />
+- Add alarm to reserved ids <PR number={5042} /> by <GHUser name="grahambrown11" />
+- Advertise noise is enabled <PR number={5034} /> by <GHUser name="bdraco" />
+- Update webserver to ea86d81 <PR number={5023} /> by <GHUser name="jesserockz" />
+
+## Release 2023.6.5 - July 10
+
+- Fix bulk and single Bluetooth parser coexistence <PR number={5073} /> by <GHUser name="bdraco" />
+- binary_sensor: Validate max_length for on_click/on_double_click <PR number={5068} /> by <GHUser name="kpfleming" />
+
+## Breaking Changes
+
+### VOC sensors
+
+Some VOC sensors have had their default device class changed from `volatile_organic_compounds` to `volatile_organic_compounds_parts`
+to better align with what they are returning.
+
+### Microphone
+
+The `on_data` trigger (and the internal callback) for the microphone now provides `std::vector<int16>` instead of a `std::vector<uin8_t>`.
+
+### Header files moved
+
+There are a couple of breaking changes for users who publish `external_components` and may use the internal APIs.
+See the list below for the pull requests that have been marked as breaking changes.
+
+## Full list of changes
+
+### New Components
+
+- Rp2040 pio ledstrip <PR number={4818} /> by <GHUser name="Papa-DMan" /> (new-integration)
+- Add support for TMP1075 temperature sensor <PR number={4776} /> by <GHUser name="sybrenstuvel" /> (new-integration)
+- Add Alarm Control Panel <PR number={4770} /> by <GHUser name="grahambrown11" /> (new-integration)
+
+### Breaking Changes
+
+- Add transparency support to all image types <PR number={4600} /> by <GHUser name="guillempages" /> (breaking-change)
+- Allow i2s microphone bits per sample to be configured <PR number={4884} /> by <GHUser name="jesserockz" /> (breaking-change)
+- Move ESPTime into core esphome namespace <PR number={4926} /> by <GHUser name="jesserockz" /> (breaking-change)
+- display: add `BaseImage` and provide only `Image::get_pixel` method <PR number={4932} /> by <GHUser name="ayufan" /> (breaking-change)
+- Migrate VOC sensors that use ppb to use volatile_organic_compounds_parts device class <PR number={4982} /> by <GHUser name="bdraco" /> (breaking-change)
+
+### Beta Changes
+
+- Add support in vbus component for Deltasol BS 2009 <PR number={4943} /> by <GHUser name="clydebarrow" />
+- fix vbus sensor offsets <PR number={4952} /> by <GHUser name="ssieb" />
+- Add support for ESP32-S3-BOX-Lite displays <PR number={4941} /> by <GHUser name="guillempages" />
+- Split display_buffer sub-components into own files <PR number={4950} /> by <GHUser name="guillempages" />
+- Add support for S3 box display <PR number={4942} /> by <GHUser name="guillempages" />
+- display: allow to align image with `ImageAlign` <PR number={4933} /> by <GHUser name="ayufan" />
+- Use HW SPI for rp2040 <PR number={4955} /> by <GHUser name="jesserockz" />
+- Fix for Fujitsu AC not having Quiet Fan Mode <PR number={4962} /> by <GHUser name="TaruDesigns" />
+- Store app comment and compilation_time in flash <PR number={4945} /> by <GHUser name="bdraco" />
+- Construct web_server assets at build time instead of run time <PR number={4944} /> by <GHUser name="bdraco" />
+- Update pca9685_output.cpp <PR number={4929} /> by <GHUser name="standahabich" />
+- Apply configured IIR filter setting in generated BMP280 code <PR number={4975} /> by <GHUser name="murrayma" />
+- airthings_wave: refactor to eliminate code duplication <PR number={4910} /> by <GHUser name="kpfleming" /> (new-integration)
+- Make growatt play nicer with other modbus components. <PR number={4947} /> by <GHUser name="onnlucky" />
+- Bump esphome-dashboard to 20230621.0 <PR number={4980} /> by <GHUser name="jesserockz" />
+- Fix pypi release <PR number={4983} /> by <GHUser name="jesserockz" />
+- Add configuration option to disable the log UI. <PR number={4419} /> by <GHUser name="dd32" />
+- Update webserver and captive portal pages to 67c48ee9 <PR number={4986} /> by <GHUser name="jesserockz" />
+- Migrate VOC sensors that use ppb to use volatile_organic_compounds_parts device class <PR number={4982} /> by <GHUser name="bdraco" /> (breaking-change)
+- dashboard: Adds "compressed=1" to /download.bin endpoint. (...) <PR number={4966} /> by <GHUser name="fdcastel" />
+
+### All changes
+
+- Add minimum RSSI check to ble presence <PR number={4646} /> by <GHUser name="nielsnl68" />
+- Run black over tests folder <PR number={4824} /> by <GHUser name="jesserockz" />
+- Use token so PR checks are run <PR number={4834} /> by <GHUser name="jesserockz" />
+- Fix stale bot ignoring not-stale <PR number={4836} /> by <GHUser name="jesserockz" />
+- Rework CI into multiple dependent jobs <PR number={4823} /> by <GHUser name="jesserockz" />
+- Add DNS to Text info <PR number={4821} /> by <GHUser name="max246" />
+- allow to use MQTT for discovery of IPs if mDNS is no option <PR number={3887} /> by <GHUser name="Links2004" />
+- Move some I2C logic out of header file <PR number={4839} /> by <GHUser name="CarsonF" />
+- Allow substitutions to be valid names <PR number={4726} /> by <GHUser name="jgoguen" />
+- Insert Europe Tank Types from mopeka_std_check <PR number={4757} /> by <GHUser name="lukasl96" />
+- Bump tornado from 6.3.1 to 6.3.2 <PR number={4841} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Bump pylint from 2.17.3 to 2.17.4 <PR number={4843} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Bump zeroconf from 0.60.0 to 0.62.0 <PR number={4781} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Bump pyupgrade from 3.3.2 to 3.4.0 <PR number={4842} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Bump platformio from 6.1.6 to 6.1.7 <PR number={4795} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Migrate e131 to use socket instead of WiFiUDP arduino library <PR number={4832} /> by <GHUser name="jesserockz" />
+- Add transparency support to all image types <PR number={4600} /> by <GHUser name="guillempages" /> (breaking-change)
+- Run YAML test 8 during CI and fix board used <PR number={4862} /> by <GHUser name="kroimon" />
+- Rp2040 pio ledstrip <PR number={4818} /> by <GHUser name="Papa-DMan" /> (new-integration)
+- [ILI9xxx] Update ili9xxx_init.h code for the ILI9488 display for correct white balance <PR number={4849} /> by <GHUser name="lucasreiners" />
+- Update codeowners <PR number={4875} /> by <GHUser name="freekode" />
+- Fix rp2040_pio_led_strip color modes <PR number={4887} /> by <GHUser name="jesserockz" />
+- Add i2s mclk <PR number={4885} /> by <GHUser name="rpatel3001" />
+- Allow partially looping animations <PR number={4693} /> by <GHUser name="guillempages" />
+- Allow i2s microphone bits per sample to be configured <PR number={4884} /> by <GHUser name="jesserockz" /> (breaking-change)
+- Add support for TMP1075 temperature sensor <PR number={4776} /> by <GHUser name="sybrenstuvel" /> (new-integration)
+- move pio tools to LED component <PR number={4903} /> by <GHUser name="ssieb" />
+- add SUB_SELECT macro <PR number={4897} /> by <GHUser name="regevbr" />
+- add SUB_SWITCH macro <PR number={4898} /> by <GHUser name="regevbr" />
+- esp32_rmt_led_strip: fix compile with ESP-IDF ≥ 5 <PR number={4856} /> by <GHUser name="stintel" />
+- Bump aioesphomeapi from 13.7.5 to 13.9.0 <PR number={4907} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- ota: fix compile with ESP-IDF ≥ 5 <PR number={4857} /> by <GHUser name="stintel" />
+- ota: fix TWDT with ESP-IDF ≥ 5 <PR number={4858} /> by <GHUser name="stintel" />
+- light: fix compile with ESP-IDF ≥ 5 <PR number={4855} /> by <GHUser name="stintel" />
+- Continuous voice_assistant and silence detection <PR number={4892} /> by <GHUser name="jesserockz" />
+- Allow WIFI to be disabled and enabled <PR number={4810} /> by <GHUser name="jesserockz" />
+- Bump frenck/action-yamllint from 1.4.0 to 1.4.1 <PR number={4876} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Bump pytest-cov from 4.0.0 to 4.1.0 <PR number={4888} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Bump zeroconf from 0.62.0 to 0.63.0 <PR number={4890} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Bump esptool from 4.5.1 to 4.6 <PR number={4906} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- prometheus: fix compilation with EntityBase <PR number={4895} /> by <GHUser name="mischief" />
+- Support for Adafruit ESP32-S2 TFT Feather <PR number={4912} /> by <GHUser name="PlainTechEnthusiast" />
+- Add support for mdi images <PR number={4654} /> by <GHUser name="guillempages" />
+- Increase SNTP setup priority <PR number={4917} /> by <GHUser name="droscy" />
+- Bump aioesphomeapi from 13.9.0 to 14.0.0 <PR number={4925} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Bluetooth Proxy: Raw bundled advertisements <PR number={4924} /> by <GHUser name="jesserockz" />
+- Move ESPTime into core esphome namespace <PR number={4926} /> by <GHUser name="jesserockz" /> (breaking-change)
+- Allow multiple MAC addresses for 'on_ble_advertise' filter <PR number={4773} /> by <GHUser name="RoboMagus" />
+- Add SVG image support <PR number={4922} /> by <GHUser name="guillempages" />
+- Add !extend to devcontainer's customTags <PR number={4749} /> by <GHUser name="jimtng" />
+- [max7219digit] fix 270° rotation <PR number={4930} /> by <GHUser name="spezifisch" />
+- proto generation updates <PR number={4653} /> by <GHUser name="jesserockz" />
+- I2S media player allow setting communication format for external DACs <PR number={4918} /> by <GHUser name="ccorderor" />
+- Add MULTI_CONF to pn53_i2c <PR number={4938} /> by <GHUser name="jesserockz" />
+- display: Improve Image rendering by removing usage of virtual functions <PR number={4931} /> by <GHUser name="ayufan" />
+- display: add `BaseImage` and provide only `Image::get_pixel` method <PR number={4932} /> by <GHUser name="ayufan" /> (breaking-change)
+- Add Alarm Control Panel <PR number={4770} /> by <GHUser name="grahambrown11" /> (new-integration)
+- Add support in vbus component for Deltasol BS 2009 <PR number={4943} /> by <GHUser name="clydebarrow" />
+- fix vbus sensor offsets <PR number={4952} /> by <GHUser name="ssieb" />
+- Add support for ESP32-S3-BOX-Lite displays <PR number={4941} /> by <GHUser name="guillempages" />
+- Split display_buffer sub-components into own files <PR number={4950} /> by <GHUser name="guillempages" />
+- Add support for S3 box display <PR number={4942} /> by <GHUser name="guillempages" />
+- display: allow to align image with `ImageAlign` <PR number={4933} /> by <GHUser name="ayufan" />
+- Use HW SPI for rp2040 <PR number={4955} /> by <GHUser name="jesserockz" />
+- Fix for Fujitsu AC not having Quiet Fan Mode <PR number={4962} /> by <GHUser name="TaruDesigns" />
+- Store app comment and compilation_time in flash <PR number={4945} /> by <GHUser name="bdraco" />
+- Construct web_server assets at build time instead of run time <PR number={4944} /> by <GHUser name="bdraco" />
+- Update pca9685_output.cpp <PR number={4929} /> by <GHUser name="standahabich" />
+- Apply configured IIR filter setting in generated BMP280 code <PR number={4975} /> by <GHUser name="murrayma" />
+- airthings_wave: refactor to eliminate code duplication <PR number={4910} /> by <GHUser name="kpfleming" /> (new-integration)
+- Make growatt play nicer with other modbus components. <PR number={4947} /> by <GHUser name="onnlucky" />
+- Bump esphome-dashboard to 20230621.0 <PR number={4980} /> by <GHUser name="jesserockz" />
+- Fix pypi release <PR number={4983} /> by <GHUser name="jesserockz" />
+- Add configuration option to disable the log UI. <PR number={4419} /> by <GHUser name="dd32" />
+- Update webserver and captive portal pages to 67c48ee9 <PR number={4986} /> by <GHUser name="jesserockz" />
+- Migrate VOC sensors that use ppb to use volatile_organic_compounds_parts device class <PR number={4982} /> by <GHUser name="bdraco" /> (breaking-change)
+- dashboard: Adds "compressed=1" to /download.bin endpoint. (...) <PR number={4966} /> by <GHUser name="fdcastel" />
+
+{/* markdownlint-enable MD013 */}
+
+## All Changelogs
+
+

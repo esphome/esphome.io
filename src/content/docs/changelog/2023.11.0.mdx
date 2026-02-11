@@ -1,0 +1,267 @@
+---
+description: "Changelog for ESPHome 2023.11.0."
+title: "ESPHome 2023.11.0 - 15th November 2023"
+pagefind: false
+slug: "changelog/2023.11.0"
+---
+
+import PR from "@components/PR.astro";
+import GHUser from "@components/GHUser.astro";
+
+
+- [Text Core](/components/text/index/)
+- [Template Text](/components/text/template/)
+- [UART Button](/components/button/uart/)
+- [GREE Climate](/components/climate/climate_ir/)
+- [DFRobot mmWave Radar](/components/dfrobot_sen0395/)
+- [LD2420](/components/sensor/ld2420/)
+- [Qwiic PIR Motion](/components/binary_sensor/qwiic_pir/)
+- [Noblex Climate](/components/climate/climate_ir/)
+- [Honeywell ABP2](/components/sensor/honeywellabp2_i2c/)
+- [iAQ-Core](/components/sensor/iaqcore/)
+- [SFA30](/components/sensor/sfa30/)
+- [ZH/LT-01 Climate](/components/climate/climate_ir/)
+- [EMC2101](/components/emc2101/)
+- [MicroNova pellet stove](/components/micronova/)
+- [XGZP68xx Series](/components/sensor/xgzp68xx/)
+
+
+## Text Components
+
+We finally have implemented the [Text](/components/text/index/) Components.
+Many people have been using "Text Input Helpers" to get user entered text into
+ESPHome for various reasons. Now ESPHome can expose text entities
+directly to Home Assistant. These require Home Assistant 2023.11 or above to use.
+
+## Various Automations
+
+- BLE have had `ble.enable` and `ble.disable` actions added to turn on and off when not needed,
+  as well as a new condition `ble.enabled` to check the state.
+
+- Wi-Fi has new triggers for `on_connect` and `on_disconnect`.
+
+- `api` has new triggers `on_client_connected` and `on_client_disconnected` which were
+  released in the 2023.10.5 patch version due to requiring that specific PR to not cause merge
+  conflicts later.
+
+## Areas
+
+When you add a new ESPHome device to Home Assistant, you assign that device to an area.
+From Home Assistant 2023.12, you will be able to specify the suggested area that Home Assistant
+pre-populates when you connect the device.
+
+```yaml
+esphome:
+  name: living-room-light
+  friendly_name: Living Room Light
+  area: Living Room
+```
+
+{/* markdownlint-disable MD013 */}
+
+## Release 2023.11.1 - November 16
+
+- Add more VA triggers <PR number={5762} /> by <GHUser name="kbx81" />
+- Fix MY9231 flicker <PR number={5765} /> by <GHUser name="Mat931" />
+
+## Release 2023.11.2 - November 18
+
+- Bump aioesphomeapi from 18.4.0 to 18.4.1 <PR number={5767} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Bump aioesphomeapi from 18.4.1 to 18.5.2 <PR number={5780} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- fix 32-bit arm <PR number={5781} /> by <GHUser name="ssieb" />
+- Add 2MB option for partitions.csv generation and restore use of user-defined partitions <PR number={5779} /> by <GHUser name="kbx81" />
+
+## Release 2023.11.3 - November 22
+
+- include payload_open when a lock supports OPEN <PR number={5809} /> by <GHUser name="ccutrer" />
+- dashboard: Fix online status when api is disabled <PR number={5791} /> by <GHUser name="bdraco" />
+- fix: compile errors with fonts <PR number={5808} /> by <GHUser name="cvandesande" />
+- Early return when there are no wifi scan results <PR number={5797} /> by <GHUser name="jesserockz" />
+- Add some additional VA triggers, part 2 <PR number={5811} /> by <GHUser name="kbx81" />
+
+## Release 2023.11.4 - November 24
+
+- Allow images to be downloaded from URLs <PR number={5214} /> by <GHUser name="landonr" />
+
+## Release 2023.11.5 - November 28
+
+- Voice Assistant improvements <PR number={5827} /> by <GHUser name="jesserockz" />
+- Fix missing include in remote_base <PR number={5843} /> by <GHUser name="jesserockz" />
+- Add 'voice_assistant.connected' condition <PR number={5845} /> by <GHUser name="jesserockz" />
+
+## Release 2023.11.6 - November 28
+
+- Fix write_speaker without speaker in config <PR number={5847} /> by <GHUser name="jesserockz" />
+
+## Full list of changes
+
+### New Components
+
+- Add Support for Sensirion SFA30 sensor <PR number={5519} /> by <GHUser name="ghsensdev" /> (new-integration)
+- add uart button <PR number={5540} /> by <GHUser name="ssieb" /> (new-integration)
+- Add ZH/LT-01 climate component with IR receiver option <PR number={4333} /> by <GHUser name="cfeenstra1024" /> (new-integration)
+- Feat: Add GREE climateir component <PR number={4464} /> by <GHUser name="PiuPiuson" /> (new-integration)
+- AMS iAQ Core CO2 sensor component <PR number={5192} /> by <GHUser name="yozik04" /> (new-integration)
+- Add IR Noblex climate component <PR number={4913} /> by <GHUser name="AGalfra" /> (new-integration)
+- Add text component <PR number={5336} /> by <GHUser name="EternityForest" /> (new-integration)
+- Add support for honeywellabp2 pressure sensor <PR number={5422} /> by <GHUser name="jpfaff" /> (new-integration)
+- Add Emc2101 <PR number={4491} /> by <GHUser name="ellull" /> (new-integration)
+- Add support for Qwiic PIR binary sensor <PR number={5194} /> by <GHUser name="kahrendt" /> (new-integration)
+- Add dfrobot_sen0395 mmwave radar component <PR number={4203} /> by <GHUser name="niklasweber" /> (new-integration)
+- Add HLK-LD2420 mmWave Radar module component. <PR number={4847} /> by <GHUser name="descipher" /> (new-integration)
+- Add Micronova component <PR number={4760} /> by <GHUser name="Jorre05" /> (new-integration)
+- Add differential pressure sensor support for CFSensor XGZP68xxD devices <PR number={5562} /> by <GHUser name="gcormier" /> (new-integration)
+- Add spi support for ade7953 <PR number={5439} /> by <GHUser name="angelnu" /> (new-integration)
+- Add resistance_sampler interface for config validation <PR number={5718} /> by <GHUser name="jesserockz" /> (new-integration)
+
+### Breaking Changes
+
+- Hydreon updates <PR number={5424} /> by <GHUser name="jj-uk" /> (breaking-change)
+- Fix esp32_rmt_led_strip custom timing units <PR number={5696} /> by <GHUser name="jesserockz" /> (breaking-change)
+
+### Beta Changes
+
+- Handle nanoseconds in config <PR number={5695} /> by <GHUser name="jesserockz" />
+- Fix esp32_rmt_led_strip custom timing units <PR number={5696} /> by <GHUser name="jesserockz" /> (breaking-change)
+- Fix static assets cache logic <PR number={5700} /> by <GHUser name="bdraco" />
+- Use piwheels for armv7 docker image builds <PR number={5703} /> by <GHUser name="bdraco" />
+- fix: Fix broken bluetooth_proxy and ble_clients after BLE enable/disable <PR number={5704} /> by <GHUser name="Rapsssito" />
+- Bump aioesphomeapi to 18.2.7 <PR number={5706} /> by <GHUser name="bdraco" />
+- Update Dockerfile to use piwheels for armv7 <PR number={5709} /> by <GHUser name="bdraco" />
+- Bump zeroconf from 0.120.0 to 0.122.3 <PR number={5715} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Add resistance_sampler interface for config validation <PR number={5718} /> by <GHUser name="jesserockz" /> (new-integration)
+- Fix zeroconf name resolution refactoring error <PR number={5725} /> by <GHUser name="bdraco" />
+- Missed ifdefs <PR number={5727} /> by <GHUser name="descipher" />
+- Bump aioesphomeapi from 18.2.7 to 18.4.0 <PR number={5735} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Migrate to using aioesphomeapi for the log runner to fix multiple issues <PR number={5733} /> by <GHUser name="bdraco" />
+- Bump zeroconf to 0.123.0 <PR number={5736} /> by <GHUser name="bdraco" />
+- Handle wake word not set up internally <PR number={5738} /> by <GHUser name="jesserockz" />
+- dashboard: remove usage of codecs module <PR number={5741} /> by <GHUser name="bdraco" />
+- dashboard: Run get_serial_ports in the executor <PR number={5740} /> by <GHUser name="bdraco" />
+- Generate partitions.csv based on flash size <PR number={5697} /> by <GHUser name="kbx81" />
+- Allow setup to continue past mqtt if network/wifi is disabled <PR number={5754} /> by <GHUser name="jesserockz" />
+- Dont dump wifi info when disabled <PR number={5755} /> by <GHUser name="jesserockz" />
+
+### All changes
+
+- Splits FastLed test scripts out of test1.yaml <PR number={5522} /> by <GHUser name="nielsnl68" />
+- Add round sensor filter <PR number={5532} /> by <GHUser name="jesserockz" />
+- Add Support for Sensirion SFA30 sensor <PR number={5519} /> by <GHUser name="ghsensdev" /> (new-integration)
+- Change UART source clock to `UART_SCLK_DEFAULT` when IDF >=v5 <PR number={5533} /> by <GHUser name="leoshusar" />
+- add uart button <PR number={5540} /> by <GHUser name="ssieb" /> (new-integration)
+- add on/off options for uart switch <PR number={5539} /> by <GHUser name="ssieb" />
+- Update docker base and packages + docker python 3.11 <PR number={5473} /> by <GHUser name="bdraco" />
+- IDF 5 fixes for various components from test1.yaml <PR number={5451} /> by <GHUser name="kbx81" />
+- Bump aioesphomeapi from 15.0.0 to 18.0.6 <PR number={5557} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Bump zeroconf from 0.115.1 to 0.119.0 <PR number={5560} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Add config to allow suppression of warnings about use of strapping pins <PR number={5287} /> by <GHUser name="clydebarrow" />
+- Hydreon updates <PR number={5424} /> by <GHUser name="jj-uk" /> (breaking-change)
+- Bump actions/checkout from 4.1.0 to 4.1.1 <PR number={5551} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Bump pyupgrade from 3.10.1 to 3.13.0 <PR number={5428} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Bump tzlocal from 5.0.1 to 5.1 <PR number={5480} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Bump black from 23.9.1 to 23.10.0 <PR number={5561} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Fan no off cycle action <PR number={5564} /> by <GHUser name="skykingjwc" />
+- Bump aioesphomeapi from 18.0.6 to 18.0.7 <PR number={5573} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Remove unnecessary checks in Nextion component <PR number={5578} /> by <GHUser name="edwardtfn" />
+- update storage version from mdns <PR number={5584} /> by <GHUser name="glmnet" />
+- set Nextion protocol reparse mode <PR number={5484} /> by <GHUser name="edwardtfn" />
+- Add address text sensor to WireGuard <PR number={5576} /> by <GHUser name="droscy" />
+- Add LibreTiny hardwares to PR Template <PR number={5575} /> by <GHUser name="HeMan" />
+- Bump pytest-mock from 3.11.1 to 3.12.0 <PR number={5571} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Bump pyupgrade from 3.13.0 to 3.15.0 <PR number={5570} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Add ZH/LT-01 climate component with IR receiver option <PR number={4333} /> by <GHUser name="cfeenstra1024" /> (new-integration)
+- Feat: Add GREE climateir component <PR number={4464} /> by <GHUser name="PiuPiuson" /> (new-integration)
+- AMS iAQ Core CO2 sensor component <PR number={5192} /> by <GHUser name="yozik04" /> (new-integration)
+- Add IR Noblex climate component <PR number={4913} /> by <GHUser name="AGalfra" /> (new-integration)
+- Bump aioesphomeapi from 18.0.7 to 18.0.12 <PR number={5597} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Add text component <PR number={5336} /> by <GHUser name="EternityForest" /> (new-integration)
+- Fix exception handling when loading packages <PR number={5569} /> by <GHUser name="dentra" />
+- Add support for honeywellabp2 pressure sensor <PR number={5422} /> by <GHUser name="jpfaff" /> (new-integration)
+- Add Emc2101 <PR number={4491} /> by <GHUser name="ellull" /> (new-integration)
+- Fix: Incorporate unique serial number in preference's hash for multiple Sensirion sensors <PR number={5479} /> by <GHUser name="kahrendt" />
+- Add support for Qwiic PIR binary sensor <PR number={5194} /> by <GHUser name="kahrendt" /> (new-integration)
+- Add ignore out of range option for clamp filter <PR number={5455} /> by <GHUser name="kahrendt" />
+- Print text mqtt command topic <PR number={5601} /> by <GHUser name="jesserockz" />
+- Correctly allow mqtt topics to be none so ESPHome does not sub/pub to them <PR number={5213} /> by <GHUser name="jesserockz" />
+- SX1509 output debounce fix (resolves esphome/issues#4402) <PR number={4672} /> by <GHUser name="tracestep" />
+- Add details when error loading package <PR number={5603} /> by <GHUser name="dentra" />
+- Fallback to main secrets.yaml for packages <PR number={5604} /> by <GHUser name="dentra" />
+- Add area (zone) to esphome core config to be suggested through API and MQTT. <PR number={5602} /> by <GHUser name="Cossid" />
+- Devcontainer: allow pip install and dont warn about root user <PR number={5608} /> by <GHUser name="jesserockz" />
+- Validate test files before compiling <PR number={5611} /> by <GHUser name="jesserockz" />
+- Minor defines.h updates <PR number={5610} /> by <GHUser name="jesserockz" />
+- timeout filter: return value <PR number={5612} /> by <GHUser name="jesserockz" />
+- Add dfrobot_sen0395 mmwave radar component <PR number={4203} /> by <GHUser name="niklasweber" /> (new-integration)
+- refactor mcp4728 component <PR number={5609} /> by <GHUser name="ssieb" />
+- Fix HA error related to incorrect state class <PR number={5605} /> by <GHUser name="nagyrobi" />
+- Fix xpt2046 for IDF 5 <PR number={5614} /> by <GHUser name="kbx81" />
+- IDF 5 fixes for various components from test4.yaml <PR number={5622} /> by <GHUser name="kbx81" />
+- IDF 5 fixes for various components from test2.yaml <PR number={5621} /> by <GHUser name="kbx81" />
+- Fix armv7 docker builds <PR number={5630} /> by <GHUser name="bdraco" />
+- Bump aioesphomeapi from 18.0.12 to 18.2.0 <PR number={5606} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Add needs-docs workflow to fail CI <PR number={5643} /> by <GHUser name="jesserockz" />
+- Add support for PCA9535 16 bit I/O expander <PR number={5634} /> by <GHUser name="clydebarrow" />
+- Fix nextion waveform sending for multiple waveforms <PR number={4408} /> by <GHUser name="gpambrozio" />
+- Allow validation of pins based on hub config <PR number={5647} /> by <GHUser name="jesserockz" />
+- Bump aioesphomeapi from 18.2.0 to 18.2.1 <PR number={5653} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Validate sn74hc595 pin number are within range <PR number={5655} /> by <GHUser name="jesserockz" />
+- Update PCA9554 pin checks to new facility <PR number={5656} /> by <GHUser name="clydebarrow" />
+- Update mDNS component to 1.2.2 <PR number={5654} /> by <GHUser name="HeMan" />
+- Fix return value of run_external_command <PR number={5657} /> by <GHUser name="jesserockz" />
+- Update RTTTL component to allow I2S <PR number={5177} /> by <GHUser name="nielsnl68" />
+- Bump flake8 version in pre-commit to match requirements file <PR number={5658} /> by <GHUser name="jesserockz" />
+- Bump pytest from 7.4.2 to 7.4.3 <PR number={5599} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Bump tzlocal from 5.1 to 5.2 <PR number={5594} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Bump black from 23.10.0 to 23.10.1 <PR number={5593} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Add Healthcheck to Dockerfile <PR number={5651} /> by <GHUser name="JcMinarro" />
+- Add HLK-LD2420 mmWave Radar module component. <PR number={4847} /> by <GHUser name="descipher" /> (new-integration)
+- Add Micronova component <PR number={4760} /> by <GHUser name="Jorre05" /> (new-integration)
+- Add basic shell autocompletion using argcomplete <PR number={5618} /> by <GHUser name="Nardol" />
+- Fixed int variables for user defined service in case of ESP32-C3 <PR number={5675} /> by <GHUser name="paveldn" />
+- Add callback for raw sml messages <PR number={5668} /> by <GHUser name="micw" />
+- Fix compile with latest esp-idf on esp32c6 <PR number={5677} /> by <GHUser name="DAVe3283" />
+- Null topic_prefix disables MQTT publishing/subscription unless topic is explicitly configured <PR number={5644} /> by <GHUser name="kahrendt" />
+- feat: Add ESP32 BLE enable/disable automations <PR number={5616} /> by <GHUser name="Rapsssito" />
+- ble_client rssi sensor fix when not connected <PR number={5632} /> by <GHUser name="jesserockz" />
+- Add Byron Doorbell RF protocol <PR number={4718} /> by <GHUser name="marshn" />
+- Refactor dashboard zeroconf support <PR number={5681} /> by <GHUser name="bdraco" />
+- Allow static assets to be cached if not in debug mode <PR number={5684} /> by <GHUser name="jesserockz" />
+- Remove extra code in old sgp40 <PR number={5685} /> by <GHUser name="jesserockz" />
+- Allow pulse light effect to have separate on and off transition lengths <PR number={5659} /> by <GHUser name="jesserockz" />
+- Add differential pressure sensor support for CFSensor XGZP68xxD devices <PR number={5562} /> by <GHUser name="gcormier" /> (new-integration)
+- Bump zeroconf from 0.119.0 to 0.120.0 <PR number={5682} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Add spi support for ade7953 <PR number={5439} /> by <GHUser name="angelnu" /> (new-integration)
+- Remove page jump on Nextion startup <PR number={5673} /> by <GHUser name="edwardtfn" />
+- [web_server] Adds the ability to handle Private Network Access preflight requests <PR number={5669} /> by <GHUser name="DanielBaulig" />
+- Update esphome-dashboard to version 20231107.0 <PR number={5686} /> by <GHUser name="jesserockz" />
+- add wifi.on_connect and wifi.on_disconnect triggers <PR number={3639} /> by <GHUser name="ChemicalXandco" />
+- Implement a memory cache for dashboard entries to avoid frequent disk reads <PR number={5687} /> by <GHUser name="bdraco" />
+- support spi for sn74hc595 <PR number={5491} /> by <GHUser name="angelnu" />
+- Handle on_disconnect when Wi-Fi is disabled <PR number={5691} /> by <GHUser name="kbx81" />
+- Bump aioesphomeapi from 18.2.1 to 18.2.4 <PR number={5692} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Handle nanoseconds in config <PR number={5695} /> by <GHUser name="jesserockz" />
+- Fix esp32_rmt_led_strip custom timing units <PR number={5696} /> by <GHUser name="jesserockz" /> (breaking-change)
+- Fix static assets cache logic <PR number={5700} /> by <GHUser name="bdraco" />
+- Use piwheels for armv7 docker image builds <PR number={5703} /> by <GHUser name="bdraco" />
+- fix: Fix broken bluetooth_proxy and ble_clients after BLE enable/disable <PR number={5704} /> by <GHUser name="Rapsssito" />
+- Bump aioesphomeapi to 18.2.7 <PR number={5706} /> by <GHUser name="bdraco" />
+- Update Dockerfile to use piwheels for armv7 <PR number={5709} /> by <GHUser name="bdraco" />
+- Bump zeroconf from 0.120.0 to 0.122.3 <PR number={5715} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Add resistance_sampler interface for config validation <PR number={5718} /> by <GHUser name="jesserockz" /> (new-integration)
+- Fix zeroconf name resolution refactoring error <PR number={5725} /> by <GHUser name="bdraco" />
+- Missed ifdefs <PR number={5727} /> by <GHUser name="descipher" />
+- Bump aioesphomeapi from 18.2.7 to 18.4.0 <PR number={5735} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Migrate to using aioesphomeapi for the log runner to fix multiple issues <PR number={5733} /> by <GHUser name="bdraco" />
+- Bump zeroconf to 0.123.0 <PR number={5736} /> by <GHUser name="bdraco" />
+- Handle wake word not set up internally <PR number={5738} /> by <GHUser name="jesserockz" />
+- dashboard: remove usage of codecs module <PR number={5741} /> by <GHUser name="bdraco" />
+- dashboard: Run get_serial_ports in the executor <PR number={5740} /> by <GHUser name="bdraco" />
+- Generate partitions.csv based on flash size <PR number={5697} /> by <GHUser name="kbx81" />
+- Allow setup to continue past mqtt if network/wifi is disabled <PR number={5754} /> by <GHUser name="jesserockz" />
+- Dont dump wifi info when disabled <PR number={5755} /> by <GHUser name="jesserockz" />
+
+{/* markdownlint-enable MD013 */}
+
+## All Changelogs
+
+

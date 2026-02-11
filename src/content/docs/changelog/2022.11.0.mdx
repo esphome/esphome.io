@@ -1,0 +1,235 @@
+---
+description: "Changelog for ESPHome 2022.11.0."
+title: "ESPHome 2022.11.0 - 16th November 2022"
+pagefind: false
+slug: "changelog/2022.11.0"
+---
+
+import PR from "@components/PR.astro";
+import GHUser from "@components/GHUser.astro";
+
+
+- [RP2040](/components/rp2040/)
+- [WL-134 Pet Tag Sensor](/components/text_sensor/wl_134/)
+- [Ethernet Info](/components/text_sensor/ethernet_info/)
+- [Atlas Scientific Peristaltic Pump](/components/ezo_pmp/)
+- [ADC128S102](/components/sensor/adc128s102/)
+- [Daikin BRC](/components/climate/climate_ir/)
+- [Display Menu Core](/components/display_menu/index/)
+- [LCD Menu](/components/display_menu/lcd_menu/)
+
+
+## Raspberry Pi Pico-W
+
+What can I say... I (Jesse) started working on making ESPHome run on the original Raspberry Pi
+Pico one random weekend just for fun with no real intention of taking it further myself.
+Little did I know there would be a Raspberry Pi Pico-W released earlier this year which sparked
+up interest in continuing that PR and almost fully implementing RP2040 and the Pico-W as
+a supported platform in ESPHome.
+
+There are things that have not been tested, and most likely things that will not work, so
+please [create or search for an issue](https://github.com/esphome/esphome/issues) if this is the case.
+
+Looking forward to seeing peoples projects built on these boards running ESPHome.
+
+## Script Parameters
+
+Thanks <GHUser name="jimtng" /> for taking the time to implement a feature requested by many people over time.
+Parameters on scripts are now a thing.
+
+```yaml
+script:
+  - id: push_button
+    parameters:
+      button: int
+    then:
+      - logger.log:
+          format: "Button %d pressed"
+          args: [ button ]
+
+on_...:
+  - script.execute:
+      id: push_button
+      button: 1
+
+on_...:
+  - script.execute:
+      id: push_button
+      button: 2
+```
+
+## LCD Menu
+
+Another great feature added this release is the LCD Menu. This allows a user to build a simple (or complex)
+menu system on an lcd display within ESPHome YAML, with support for switches, numbers, selects etc.
+Thanks <GHUser name="numo68" />.
+
+## Preserving User WiFi Credentials
+
+If you purchase a device, or install ESPHome on a device that does not have Wi-Fi credentials pre-configured from YAML,
+ESPHome will now preserve any credentials entered via the [Captive Portal](/components/captive_portal/),
+[Improv Serial](/components/improv_serial/) or [Esp32 Improv](/components/esp32_improv/) components after an OTA
+update of the firmeware is done. It is possible they can survive flashing via serial, but only if the flash was
+not erased first, which it is in the case of using ESPHome to flash.
+
+Products that use [ESP Web Tools](https://esphome.github.io/esp-web-tools) are able to specify in the manifest
+that the flash should not be erased when installing the firmware and this is a way to provide updates for a device
+that was sold.
+
+## Running ESPHome on lower powered machines
+
+People have noticed that trying to compile their projects on machine such as the Raspberry Pi 3 would crash either
+the whole machine or the ESPHome add-on, or Home Assistant. This is due to having less RAM and CPU power available
+to run all of the things at the same time. A new config option has been added as per the example below that should
+help to allow compiling on machines such as Raspberry Pi 3. By default ESPHome tries to compile using all of the
+processor cores, and this allows you to limit it to a lower amount.
+
+```yaml
+esphome:
+  ...
+  compile_process_limit: 1
+```
+
+{/* markdownlint-disable MD013 */}
+
+## Release 2022.11.1 - November 17
+
+- Support ADC on RP2040 <PR number={4040} /> by <GHUser name="jesserockz" />
+
+## Release 2022.11.2 - November 23
+
+- Fix rp2040 pwm to use pico-sdk, not mbed <PR number={4059} /> by <GHUser name="jesserockz" />
+- Update web_server index <PR number={4060} /> by <GHUser name="jesserockz" />
+- rp2040_pwm frequency is per pair of pins <PR number={4061} /> by <GHUser name="jesserockz" />
+- Avoid 128bit uuid loop for 16/32 bit uuids <PR number={4068} /> by <GHUser name="bdraco" />
+- Avoid creating a new espbt::ESPBTUUID each loop when registering for notify <PR number={4069} /> by <GHUser name="bdraco" />
+
+## Release 2022.11.3 - November 24
+
+- fix missing library <PR number={4051} /> by <GHUser name="ssieb" />
+- Fix units for refresh: never <PR number={4048} /> by <GHUser name="bkaufx" />
+- Don't convert climate temperature step <PR number={4082} /> by <GHUser name="jesserockz" />
+
+## Release 2022.11.4 - December 1
+
+- current-based cover fix copy paste mistake <PR number={4124} /> by <GHUser name="jesserockz" />
+- Dashboard fix relative url after login <PR number={4103} /> by <GHUser name="ngraziano" />
+- Fix queuing scripts not compiling <PR number={4077} /> by <GHUser name="jesserockz" />
+
+## Release 2022.11.5 - December 6
+
+- Fix board pin alias lookup <PR number={4147} /> by <GHUser name="jesserockz" />
+
+## Full list of changes
+
+### New Features
+
+- Allow preserving WiFi credentials entered with captive_portal <PR number={3813} /> by <GHUser name="kuba2k2" /> (new-feature)
+
+### New Components
+
+- Add support for wl-134 <PR number={3569} /> by <GHUser name="hobbypunk90" /> (new-integration)
+- New platform ethernet_info from component text_sensor <PR number={3811} /> by <GHUser name="gtjadsonsantos" /> (new-integration)
+- Implementation for Atlas Scientific Peristaltic Pump <PR number={3528} /> by <GHUser name="carlos-sarmiento" /> (new-integration)
+- Add adc128s102 sensor <PR number={3822} /> by <GHUser name="DeerMaximum" /> (new-integration)
+- Added component Daikin BRC to support ceiling cassette heatpumps <PR number={3743} /> by <GHUser name="hagak" /> (new-integration)
+- Initial Support for RP2040 platform <PR number={3284} /> by <GHUser name="jesserockz" /> (new-integration)
+- Implement a simple LCD menu <PR number={3406} /> by <GHUser name="numo68" /> (new-integration)
+
+### Breaking Changes
+
+- Don't Use Base Network Manual IP for WiFi AP <PR number={3902} /> by <GHUser name="bkaufx" /> (breaking-change)
+
+### Beta Changes
+
+- Update set-output to use new GITHUB_OUTPUT <PR number={4008} /> by <GHUser name="jesserockz" />
+- Add cover toggle support to current based cover <PR number={3950} /> by <GHUser name="maringeph" />
+- Add option for dashboard command to only generate the project and supporting files <PR number={3981} /> by <GHUser name="jesserockz" />
+- Fix local webserver based on esphome/esphome-webserver#17 <PR number={3958} /> by <GHUser name="RoboMagus" />
+- fix to_lower filter <PR number={4015} /> by <GHUser name="ssieb" />
+- Mark webserver and captive portal as not available on rp2040 <PR number={4023} /> by <GHUser name="jesserockz" />
+- Fix time components on rp2040 <PR number={4024} /> by <GHUser name="jesserockz" />
+- Mark mqtt as unavailable on rp2040 <PR number={4025} /> by <GHUser name="jesserockz" />
+- Update_interval less that 1 second in QMC5883L integration <PR number={4031} /> by <GHUser name="2mikrobi" />
+- Always save user wifi credentials if non in config <PR number={4036} /> by <GHUser name="jesserockz" />
+- bump nginx-light 1.18.0-6.1+deb11u2 to 1.18.0-6.1+deb11u3 <PR number={4034} /> by <GHUser name="johnmoxley" />
+
+### All changes
+
+- Update the ibeacon code <PR number={3859} /> by <GHUser name="fhriley" />
+- Don't Use Base Network Manual IP for WiFi AP <PR number={3902} /> by <GHUser name="bkaufx" /> (breaking-change)
+- Allow preserving WiFi credentials entered with captive_portal <PR number={3813} /> by <GHUser name="kuba2k2" /> (new-feature)
+- Add support for wl-134 <PR number={3569} /> by <GHUser name="hobbypunk90" /> (new-integration)
+- New platform ethernet_info from component text_sensor <PR number={3811} /> by <GHUser name="gtjadsonsantos" /> (new-integration)
+- Implementation for Atlas Scientific Peristaltic Pump <PR number={3528} /> by <GHUser name="carlos-sarmiento" /> (new-integration)
+- Add adc128s102 sensor <PR number={3822} /> by <GHUser name="DeerMaximum" /> (new-integration)
+- Added component Daikin BRC to support ceiling cassette heatpumps <PR number={3743} /> by <GHUser name="hagak" /> (new-integration)
+- Bump platformio from 6.0.2 to 6.1.4 <PR number={3711} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Add API interface to request a complete device config as JSON. <PR number={3911} /> by <GHUser name="RoboMagus" />
+- Initial Support for RP2040 platform <PR number={3284} /> by <GHUser name="jesserockz" /> (new-integration)
+- Bump esphome-dashboard to 20221020.0 <PR number={3920} /> by <GHUser name="jesserockz" />
+- Fix missing dependencies for heatpumpir <PR number={3933} /> by <GHUser name="jesserockz" />
+- Update the PR template <PR number={3934} /> by <GHUser name="jesserockz" />
+- Fix error with require_framework_version and rp2040 <PR number={3923} /> by <GHUser name="jesserockz" />
+- Make mDNS on rp2040 work <PR number={3936} /> by <GHUser name="jesserockz" />
+- Send manufacturer name via API <PR number={3938} /> by <GHUser name="jesserockz" />
+- Update base platformio board for rp2040 <PR number={3937} /> by <GHUser name="jesserockz" />
+- Implement different random for rp2040 <PR number={3939} /> by <GHUser name="jesserockz" />
+- add proper device class to uptime <PR number={3928} /> by <GHUser name="nagyrobi" />
+- Show local mac when scanning wifi <PR number={3635} /> by <GHUser name="cvwillegen" />
+- Prefix devcontainer image with ghcr.io <PR number={3942} /> by <GHUser name="jesserockz" />
+- Implement InterruptLock for RP2040 <PR number={3945} /> by <GHUser name="jesserockz" />
+- Implement RP2040 preferences <PR number={3946} /> by <GHUser name="jesserockz" />
+- Fix filesystem size for RP2040 OTA <PR number={3947} /> by <GHUser name="jesserockz" />
+- Bump esphome/Improv to 1.2.3 <PR number={3948} /> by <GHUser name="jesserockz" />
+- Add core config option to limit compile process count <PR number={3952} /> by <GHUser name="jesserockz" />
+- Some RP2040 wifi changes for AP mode <PR number={3953} /> by <GHUser name="jesserockz" />
+- Update rp2040 to latest framework release from GitHub <PR number={3954} /> by <GHUser name="jesserockz" />
+- [SM300D2] Reduce log severity for successful reads <PR number={3955} /> by <GHUser name="pauln" />
+- Fix imports for rp2040 with no wifi <PR number={3956} /> by <GHUser name="jesserockz" />
+- Allow using LED pin on rpi pico-w <PR number={3957} /> by <GHUser name="jesserockz" />
+- Fix RP2040 SPISettings <PR number={3960} /> by <GHUser name="jesserockz" />
+- Make some minor changes to I²C so rp2040 works <PR number={3959} /> by <GHUser name="jesserockz" />
+- Bump tornado from 6.1 to 6.2 <PR number={3620} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Bump pytest-cov from 3.0.0 to 4.0.0 <PR number={3922} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Remove gitpod <PR number={3964} /> by <GHUser name="balloob" />
+- Bump pyupgrade from 3.0.0 to 3.2.0 <PR number={3973} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Bump pytest from 7.1.3 to 7.2.0 <PR number={3966} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Bump actions/stale from 5 to 6 <PR number={3841} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Bump pylint from 2.15.3 to 2.15.5 <PR number={3978} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Bump pytest-mock from 3.8.2 to 3.10.0 <PR number={3877} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Allow multiple bluetooth proxy connections <PR number={3971} /> by <GHUser name="jesserockz" />
+- Always use gh releases in base platformio file for rp2040 <PR number={3988} /> by <GHUser name="jesserockz" />
+- Allow the use of multiple RDM6300 devices <PR number={3989} /> by <GHUser name="mbardeen" />
+- Bump aioesphomeapi from 10.13.0 to 11.4.2 <PR number={3987} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- rp2040: Set watchdog to reboot properly <PR number={3991} /> by <GHUser name="jesserockz" />
+- RP2040 uart support <PR number={3990} /> by <GHUser name="jesserockz" />
+- add uart number to LOGCONFIG <PR number={3996} /> by <GHUser name="tomaszduda23" />
+- Implement a simple LCD menu <PR number={3406} /> by <GHUser name="numo68" /> (new-integration)
+- Lint updates <PR number={3992} /> by <GHUser name="jesserockz" />
+- Bump zeroconf from 0.39.1 to 0.39.4 <PR number={3979} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Bump black from 22.8.0 to 22.10.0 <PR number={3986} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Skip validation of defined pins <PR number={3999} /> by <GHUser name="jenscski" />
+- Bump pytest-asyncio from 0.19.0 to 0.20.1 <PR number={4003} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Bump aioesphomeapi from 11.4.2 to 11.4.3 <PR number={4002} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Bump platformio from 6.1.4 to 6.1.5 <PR number={4004} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Enable calibration, callbacks and custom commands for EZO sensors <PR number={3910} /> by <GHUser name="gvdhoven" />
+- Bump esphome-dashboard to 20221109.0 <PR number={4006} /> by <GHUser name="jesserockz" />
+- Add support for parameters in scripts <PR number={3538} /> by <GHUser name="jimtng" />
+- Update set-output to use new GITHUB_OUTPUT <PR number={4008} /> by <GHUser name="jesserockz" />
+- Add cover toggle support to current based cover <PR number={3950} /> by <GHUser name="maringeph" />
+- Add option for dashboard command to only generate the project and supporting files <PR number={3981} /> by <GHUser name="jesserockz" />
+- Fix local webserver based on esphome/esphome-webserver#17 <PR number={3958} /> by <GHUser name="RoboMagus" />
+- fix to_lower filter <PR number={4015} /> by <GHUser name="ssieb" />
+- Mark webserver and captive portal as not available on rp2040 <PR number={4023} /> by <GHUser name="jesserockz" />
+- Fix time components on rp2040 <PR number={4024} /> by <GHUser name="jesserockz" />
+- Mark mqtt as unavailable on rp2040 <PR number={4025} /> by <GHUser name="jesserockz" />
+- Update_interval less that 1 second in QMC5883L integration <PR number={4031} /> by <GHUser name="2mikrobi" />
+- Always save user wifi credentials if non in config <PR number={4036} /> by <GHUser name="jesserockz" />
+- bump nginx-light 1.18.0-6.1+deb11u2 to 1.18.0-6.1+deb11u3 <PR number={4034} /> by <GHUser name="johnmoxley" />
+
+{/* markdownlint-enable MD013 */}
+
+## All Changelogs
+
+

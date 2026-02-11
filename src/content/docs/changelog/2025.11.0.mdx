@@ -1,0 +1,1195 @@
+---
+description: "Changelog for ESPHome 2025.11.0."
+title: "ESPHome 2025.11.0 - November 2025"
+pagefind: false
+slug: "changelog/2025.11.0"
+---
+
+import PR from "@components/PR.astro";
+import GHUser from "@components/GHUser.astro";
+
+- [BH1900NUX](/components/sensor/bh1900nux/)
+- [HDC2010](/components/sensor/hdc2010/)
+- [TinyUSB](/components/tinyusb/)
+- [MCP3221](/components/sensor/mcp3221/)
+- [HLK-FM22x Face Recognition Module](/components/hlk_fm22x/)
+- [RX8130 RTC](/components/time/rx8130/)
+
+## Release Overview
+
+{/* RELEASE_OVERVIEW_START */}
+ESPHome 2025.11.0 is a performance and reliability-focused release that makes your devices faster, more reliable, and more capable than ever before. WiFi connectivity gets a complete overhaul with intelligent mesh network handling, dramatically faster connection times, and enhanced security controls. Memory optimizations free up **2-31KB of RAM** and **10KB+ of flash**, giving even resource-constrained devices room to grow. A new infrastructure change slashes event processing latency by **600-1,300x**—making BLE Proxy GATT operations rival local Bluetooth adapters, even over the network.
+
+**WiFi improvements** address the most common connectivity pain points: devices no longer get stuck on failed access points in mesh networks, hidden network connections are 2-6 seconds faster, and the new `min_auth_mode` option provides security controls with WPA2 defaults. The redesigned connection strategy with intelligent AP selection and reliable reconnection logic delivers the rock-solid WiFi performance users expect.
+
+**Ultra-low latency event processing** transforms responsiveness across BLE, USB, MQTT, ESP-NOW, and wake word detection—reducing latency from 0-16ms to just ~12 microseconds. Voice assistants respond faster to wake words, BLE devices pair quicker, and MQTT automations trigger with sub-millisecond precision. This zero-configuration optimization automatically benefits all affected components on ESP32 platforms.
+
+**Memory optimizations** touch nearly every core component—WiFi scan management, select options, lights, climate controls, sensors, and the action framework. Sensor filter optimizations deliver the most dramatic gains, with sliding window filters saving up to 25KB of RAM on configurations that previously struggled with memory constraints. These improvements enable more complex configurations on the same hardware.
+
+New hardware support expands ESPHome's reach with 7 new components including the HDC2010 sensor, MCP3221 ADC, HLK-FM22X face recognition module, BH1900NUX sensor, RX8130 RTC, and TinyUSB foundation support for ESP32-S2/S3. Platform enhancements bring I2C and BLE logging to nRF52, while ESP32 gains hosted BLE for chips without native Bluetooth and ESP-NOW transport capabilities.
+{/* RELEASE_OVERVIEW_END */}
+
+{/* FEATURE_HIGHLIGHTS_START */}
+## Enhanced WiFi Security and Reliability
+
+**Dramatically Improved WiFi Reliability and Connection Times** ([#11805](https://github.com/esphome/esphome/pull/11805))
+
+A major step forward in WiFi reliability addresses critical connectivity issues in mesh networks and multi-AP environments. Previously, devices would get stuck repeatedly trying the strongest signal even when that access point was rejecting connections—a bug introduced in 2025.8.2 that made the priority-based failover system ineffective.
+
+The redesigned connection strategy delivers measurable improvements:
+
+- **Intelligent AP selection**: Connection failure history now takes precedence over signal strength, enabling automatic failover to working access points instead of getting stuck on failed BSSIDs
+- **Faster initial connections**: Explicit hidden network probing phase with smart skipping of visible networks reduces connection time by 2-6 seconds
+- **Reliable reconnections**: Two-attempt BSSID filtering eliminates false positives from normal WiFi stack transitions
+- **Natural mesh handling**: Simplified architecture removes 150+ lines of complex BSSID cycling logic—the priority degradation system now naturally handles mesh networks through scan-based retry cycles
+- **Clearer diagnostics**: State machine-based retry phases with improved logging make connection issues easier to troubleshoot
+- **Memory efficiency**: Automatic priority reset when all BSSIDs fail equally (saves up to 96 bytes)
+
+This release restores and improves upon the reliable failover behavior users expect in multi-AP deployments, while reducing connection latency and memory overhead.
+
+**Configurable Minimum Authentication Mode** ([#11814](https://github.com/esphome/esphome/pull/11814))
+
+Added `min_auth_mode` configuration option to control WiFi authentication security:
+
+- **Secure default**: WPA2 minimum authentication mode protects against downgrade attacks
+- **Explicit security control**: Choose between WPA, WPA2, or WPA3 (ESP32 only)
+- **Backward compatibility**: Can be lowered to WPA for legacy routers
+
+```yaml
+wifi:
+  ssid: "MyNetwork"
+  password: "password123"
+  min_auth_mode: WPA2  # Recommended for security
+```
+
+## Memory Optimizations for Resource-Constrained Devices
+
+ESPHome 2025.11.0 delivers substantial memory improvements across the entire framework, with measured savings ranging from **2-7KB of RAM on typical devices** and up to **31KB of RAM on sensor-heavy configurations**. Flash savings reach **10KB+** on ESP32/ESP8266 platforms.
+
+**Sensor Filter Optimizations:**
+
+- **Sliding window filters** ([#11282](https://github.com/esphome/esphome/pull/11282)) - Saves **22-25KB RAM** on large batch windows, **90% on sliding windows**, **1,748 bytes flash** on ESP8266. Prevents OOM crashes on ESP32 devices with multiple sensors
+- **Filter value lists** ([#11407](https://github.com/esphome/esphome/pull/11407)) - Saves **444 bytes flash** on ESP8266, 18-52% faster execution
+- **Calibration/OR filters** ([#11437](https://github.com/esphome/esphome/pull/11437)) - Saves **464 bytes flash**, **48 bytes RAM** on ESP8266
+
+**Component Optimizations:**
+
+- **WiFi component** ([#11205](https://github.com/esphome/esphome/pull/11205)) - Saves **440-1,192 bytes RAM** depending on network density
+- **Select component** ([#11514](https://github.com/esphome/esphome/pull/11514)) - Saves **270-2,800 bytes per select** depending on option count
+- **Light component** ([#11348](https://github.com/esphome/esphome/pull/11348)) - Saves **1,756 bytes flash** on ESP8266, **~108 bytes RAM** per 6 lights
+- **Climate component** ([#11466](https://github.com/esphome/esphome/pull/11466), [#11621](https://github.com/esphome/esphome/pull/11621)) - Saves **~440 bytes RAM** per climate entity
+- **Fan component** ([#11483](https://github.com/esphome/esphome/pull/11483), [#11632](https://github.com/esphome/esphome/pull/11632)) - Saves **~24 bytes per fan**
+- **Event component** ([#11463](https://github.com/esphome/esphome/pull/11463), [#11767](https://github.com/esphome/esphome/pull/11767)) - Saves **1,248 bytes flash**
+- **Global Controller Registry** ([#11772](https://github.com/esphome/esphome/pull/11772)) - Saves **388-6,148 bytes RAM** depending on entity count
+- **Action framework** ([#11704](https://github.com/esphome/esphome/pull/11704)) - Saves **356 bytes flash**, eliminates RAM allocations in automations
+- **Script component** ([#11308](https://github.com/esphome/esphome/pull/11308)) - Saves **1,592 bytes flash** on ESP32
+- **ESP32-IDF** ([#10930](https://github.com/esphome/esphome/pull/10930), [#11441](https://github.com/esphome/esphome/pull/11441)) - Saves **~10KB combined** (1.3KB + 8.7KB)
+- **Network component** ([#11707](https://github.com/esphome/esphome/pull/11707)) - Saves **32-72 bytes per network component**
+- **Light effects** ([#11487](https://github.com/esphome/esphome/pull/11487)) - Saves **24-32 bytes per effect**
+- **WiFi priority** ([#11830](https://github.com/esphome/esphome/pull/11830)) - Saves **3 bytes per network entry** plus up to **96 bytes** from auto-recovery
+
+**Note on Breaking Changes:** These optimizations required API changes for external component developers. See [Breaking Changes](#breaking-changes) section for migration details. Standard YAML configurations remain fully compatible but custom code in lambdas may require updates.
+
+## Ultra-Low Latency Event Processing
+
+**Thread-Safe Loop Wake Mechanism** ([#11681](https://github.com/esphome/esphome/pull/11681))
+
+A new infrastructure change eliminates event processing delays across multiple components. Previously, events from background tasks (BLE, USB, MQTT, ESP-NOW, wake word detection) would queue and wait up to 16ms for the next `select()` timeout before processing. The new `wake_loop_threadsafe()` mechanism uses a UDP loopback socket to immediately wake the main event loop when events arrive.
+
+**Latency Improvements:**
+
+- **Before**: 0-16ms average ~8ms
+- **After**: ~12 microseconds
+- **Speedup**: 600-1,300x faster event processing
+
+**Components with Ultra-Low Latency:**
+
+- **BLE operations** ([#11663](https://github.com/esphome/esphome/pull/11663)) - Bluetooth Proxy, BLE Client GATT operations, HomeKit pairing
+- **USB Host** ([#11683](https://github.com/esphome/esphome/pull/11683)) - USB event processing over 1000x faster
+- **MQTT** ([#11695](https://github.com/esphome/esphome/pull/11695)) - ESP32 only (ESP8266 already runs in main loop)
+- **ESP-NOW** ([#11696](https://github.com/esphome/esphome/pull/11696)) - Packet reception and transmission completion
+- **Micro Wake Word** ([#11698](https://github.com/esphome/esphome/pull/11698)) - Near-instant automation responses, all triggers fire within same millisecond
+
+**Real-World Impact:**
+
+- **BLE Proxy GATT operations** now rival or exceed BlueZ local adapters in Home Assistant, even when operating over the network
+- Faster wake word detection response for voice assistants
+- Improved BLE connection and pairing times
+- Reduced MQTT automation trigger latency
+- Faster USB event handling (e.g., Z-Wave PoE proxies)
+
+This optimization requires no configuration changes and automatically benefits all affected components on ESP32 platforms.
+
+## High-Performance Networking for Media Streaming
+
+**Automatic Network Performance Tuning** ([#11812](https://github.com/esphome/esphome/pull/11812))
+
+Introduced centralized high-performance networking system where components request optimized settings through `network.require_high_performance_networking()`:
+
+- **PSRAM-aware configuration**: Aggressive settings (512KB TCP windows) when PSRAM guaranteed, conservative (65KB windows) otherwise
+- **WiFi optimization**: Automatically applies optimized WiFi driver settings when high-performance mode enabled
+- **Automatic enablement**: Speaker media player automatically enables high-performance networking (fixes streaming stuttering issues)
+- **User control**: New `network.enable_high_performance` option to explicitly enable/disable
+
+This optimization is critical for ESP32-S3 devices running voice assistants and media streaming, eliminating audio stuttering caused by insufficient WiFi buffer sizes.
+
+**PSRAM Configuration Options** ([#11411](https://github.com/esphome/esphome/pull/11411))
+
+Added `ignore_not_found` option (default `true`) to allow disabling `CONFIG_SPIRAM_IGNORE_NOTFOUND`. When set to `false` on devices with guaranteed PSRAM, enables WiFi driver to configure larger buffers for optimal streaming performance. Also improves boot reliability by managing heap allocations before PSRAM initialization.
+
+## New Hardware Support
+
+**7 New Sensor/Device Components:**
+
+- [HDC2010](/components/sensor/hdc2010) ([#6674](https://github.com/esphome/esphome/pull/6674)) - Texas Instruments temperature and humidity sensor
+- [MCP3221](/components/sensor/mcp3221) ([#7764](https://github.com/esphome/esphome/pull/7764)) - I2C A-D converter with configurable reference voltage
+- [HLK-FM22X](/components/hlk_fm22x) ([#8059](https://github.com/esphome/esphome/pull/8059)) - Face recognition module family
+- [BH1900NUX](/components/sensor/bh1900nux) ([#8631](https://github.com/esphome/esphome/pull/8631)) - Rohm Semiconductor temperature sensor
+- [RX8130](/components/time/rx8130) ([#10511](https://github.com/esphome/esphome/pull/10511)) - Epson RTC chip (used in M5Stack devices)
+- [BLE NUS Logger](/components/ble_nus) ([#9846](https://github.com/esphome/esphome/pull/9846)) - Logging over BLE for nRF52 platform
+- [TinyUSB](/components/tinyusb) ([#11678](https://github.com/esphome/esphome/pull/11678)) - USB device functionality foundation for ESP32-S2/S3
+
+**Extended Hardware Support:**
+
+- GP8403 DAC now supports GP8413 (15-bit) model ([#7726](https://github.com/esphome/esphome/pull/7726)) with higher precision
+- Toshiba climate supports RAS-2819T air conditioner ([#9490](https://github.com/esphome/esphome/pull/9490)) with two-packet IR protocol
+- Dallas temperature sensors support index-based addressing ([#11346](https://github.com/esphome/esphome/pull/11346)) for devices without programmable addresses
+- SX126x LoRa module pins now support GPIO port expanders ([#11782](https://github.com/esphome/esphome/pull/11782)) for SeeedStudio SenseCAP Indicator
+- Mopeka Standard Check sensors support alternate ID 0x44 ([#10907](https://github.com/esphome/esphome/pull/10907))
+
+**Platform & Feature Expansions:**
+
+- **nRF52 platform** - I2C support ([#8150](https://github.com/esphome/esphome/pull/8150)), BLE NUS logging ([#9846](https://github.com/esphome/esphome/pull/9846), [#9861](https://github.com/esphome/esphome/pull/9861)), GPIO voltage control ([#9858](https://github.com/esphome/esphome/pull/9858)), GPIO input by switching to polling mode ([#11664](https://github.com/esphome/esphome/pull/11664)), and Seeed XIAO BLE board improvements ([#10698](https://github.com/esphome/esphome/pull/10698))
+- **ESP-NOW transport** - Added ESP-NOW as a transport platform for packet_transport component ([#11025](https://github.com/esphome/esphome/pull/11025))
+- **IR Remote protocols** - Dyson AM07 fan support ([#10163](https://github.com/esphome/esphome/pull/10163)), Symphony protocol ([#10777](https://github.com/esphome/esphome/pull/10777)), Toshiba RAS-2819T AC ([#9490](https://github.com/esphome/esphome/pull/9490))
+
+## ESP32 Platform Enhancements
+
+**ESP-IDF 5.5.1 and Arduino 3.3.2** ([#9839](https://github.com/esphome/esphome/pull/9839))
+
+Major framework updates bring the latest ESP-IDF 5.5.1 and Arduino 3.3.2 to ESPHome:
+
+- **ESP-IDF 5.5.1**: Latest features and bug fixes from Espressif
+- **Arduino 3.3.2**: Updated Arduino framework with improved stability
+- **Memory improvements**: Significant RAM gains (+3.1-3.3MB free RAM)
+- **Platform version**: Updated to 55.03.31-2
+
+These updates are automatically applied when using the default framework versions.
+
+**Hosted BLE Support** ([#11167](https://github.com/esphome/esphome/pull/11167))
+
+ESP32 P4 and other chips without integrated Bluetooth now support BLE through external controllers using ESP-Hosted API. Enables Bluetooth Proxy functionality on previously unsupported ESP32 variants.
+
+**Hosted OTA Support** ([#11562](https://github.com/esphome/esphome/pull/11562))
+
+Firmware updates for ESP32 co-processors are now supported via ESP-Hosted API, enabling OTA functionality for hosted configurations.
+
+**Brownout Protection** ([#11306](https://github.com/esphome/esphome/pull/11306))
+
+ESP-IDF builds now automatically reduce PHY TX power during brownout conditions to prevent boot loops. This feature was previously only available in Arduino framework builds. Can be disabled if needed through sdkconfig options.
+
+**Configurable Main Loop Stack Size** ([#10564](https://github.com/esphome/esphome/pull/10564))
+
+ESP32 ESP-IDF configurations can now tune the main loop stack size for complex setups:
+
+```yaml
+esp32:
+  framework:
+    type: esp-idf
+    advanced:
+      main_loop_stack_size: 16384  # Increase for deeply nested components
+```
+
+**Framework Source Options** ([#11125](https://github.com/esphome/esphome/pull/11125))
+
+ESP32 framework configuration now accepts additional PlatformIO source schemes beyond HTTP, including `symlink://`, `git://`, and other repository protocols for local development.
+
+## OpenThread Improvements
+
+**Over-The-Air Updates** ([#11095](https://github.com/esphome/esphome/pull/11095))
+
+OpenThread devices (ESP32-H2) now support OTA updates via `esphome run`. The mDNS address is automatically populated as the device's default address, eliminating the need to manually specify `--device <address>`.
+
+**Sleepy End Device Support** ([#11374](https://github.com/esphome/esphome/pull/11374))
+
+Added `poll_period` configuration for MTD (Minimal Thread Device) mode, enabling Sleep End Device (SED) behavior for battery-powered Thread devices:
+
+```yaml
+openthread:
+  device_type: MTD
+  poll_period: 40s  # Radio turns off between polls
+```
+
+## nRF52 Platform Expansion
+
+The nRF52 (Zephyr) platform received extensive new functionality:
+
+- **I2C Support** ([#8150](https://github.com/esphome/esphome/pull/8150)) - Full I2C bus support for sensors and peripherals
+- **BLE Logging** ([#9846](https://github.com/esphome/esphome/pull/9846), [#9861](https://github.com/esphome/esphome/pull/9861)) - Log viewing via `esphome logs --device BLE` or MAC address
+- **GPIO High Voltage Mode** ([#9858](https://github.com/esphome/esphome/pull/9858)) - Adjustable voltage levels for USB-powered operation
+- **Xiao BLE Bootloader Fix** ([#10698](https://github.com/esphome/esphome/pull/10698)) - Corrected default bootloader, fixed upload, added runtime mismatch detection
+
+## LVGL Display Enhancements
+
+**Simplified Layout System** ([#10149](https://github.com/esphome/esphome/pull/10149))
+
+LVGL widgets now support shorthand layout methods for easier configuration:
+
+```yaml
+lvgl:
+  widgets:
+    - container:
+        layout: vertical  # Simple flex layout
+        widgets:
+          - label:
+              text: "Item 1"
+          - label:
+              text: "Item 2"
+
+    - container:
+        layout: 3x2  # Simple grid layout
+```
+
+New `container` widget provides styling-free base with 100% default dimensions. Added `stretch` option for flex layouts and substantial speedup of config validation.
+
+**Rendering Triggers and NaN Substitution** ([#11628](https://github.com/esphome/esphome/pull/11628), [#11712](https://github.com/esphome/esphome/pull/11712))
+
+Added `on_draw_start` and `on_draw_end` triggers for coordinating e-paper display updates. Text formatting now supports NaN substitution for graceful handling of unavailable sensor values:
+
+```yaml
+lvgl:
+  widgets:
+    - label:
+        text:
+          format: "%.1f°C"
+          args: [id(temp_sensor)]
+          if_nan: "--.-°C"  # Show when sensor unavailable
+```
+
+## Display Component Improvements
+
+**E-Paper SPI Refactoring** ([#11540](https://github.com/esphome/esphome/pull/11540))
+
+Major improvements to e-paper displays:
+
+- **Faster transfers**: Larger data blocks for Spectra displays
+- **Optimized state machine**: Code-based sequence instead of linear queue saves memory
+- **Board-specific configs**: Pre-configured pin mappings (Seeed-reTerminal-E1002)
+- **Improved timing**: Internal delay handling instead of loop disabling
+- **Fixed busy pin logic** ([#11349](https://github.com/esphome/esphome/pull/11349)): Corrected active-low detection
+
+**Component Idle Detection** ([#11651](https://github.com/esphome/esphome/pull/11651))
+
+New `component.is_idle` condition and `is_idle()` method for automations that need to wait for displays to finish updating before proceeding:
+
+```yaml
+lvgl:
+  on_draw_end:
+    - component.update: epaper_display
+    - wait_until:
+        component.is_idle: epaper_display  # Wait for display ready
+    - lvgl.resume:
+```
+
+## Configuration and Developer Tools
+
+**Advanced Substitution Features** ([#11203](https://github.com/esphome/esphome/pull/11203))
+
+The `!extend` and `!remove` tags now support substitutions and Jinja templates:
+
+```yaml
+substitutions:
+  COMPONENT_TO_REMOVE: component3
+
+packages:
+  base:
+    - id: !remove ${COMPONENT_TO_REMOVE}  # Conditional removal
+```
+
+**Memory Analysis Command** ([#11395](https://github.com/esphome/esphome/pull/11395))
+
+New `esphome analyze-memory <config.yaml>` command provides detailed memory usage breakdown by component:
+
+- Compiles configuration (fast relink if cached)
+- Analyzes memory usage by component and external components
+- Displays comprehensive memory report
+- Helps identify optimization opportunities
+
+## Component-Specific Enhancements
+
+### Sensors
+
+- Dallas temperature sensors support index-based addressing ([#11346](https://github.com/esphome/esphome/pull/11346)) for devices without programmable addresses
+- INA2xx reset control ([#10787](https://github.com/esphome/esphome/pull/10787)): Preserve counters through ESP resets with `reset_on_boot: false`
+- XGZP68xx oversampling ([#10306](https://github.com/esphome/esphome/pull/10306)): Configurable oversampling up to 32768x for improved accuracy
+
+**Improved Improv WiFi Provisioning** ([#10757](https://github.com/esphome/esphome/pull/10757))
+
+ESP32 Improv now supports `next_url` with template substitutions for post-provisioning redirection:
+
+```yaml
+esp32_improv:
+  next_url: "https://example.com/setup?device={{device_name}}&ip={{ip_address}}"
+```
+
+**Sensor Heartbeat Filter Options** ([#10993](https://github.com/esphome/esphome/pull/10993))
+
+Heartbeat filter adds `optimistic` mode to forward new values immediately while still repeating periodically:
+
+```yaml
+sensor:
+  - platform: template
+    filters:
+      - heartbeat:
+          period: 100ms
+          optimistic: true  # Forward immediately + repeat
+```
+
+**ESP-NOW Packet Transport** ([#11025](https://github.com/esphome/esphome/pull/11025))
+
+ESP-NOW now available as transport platform for packet_transport component, enabling direct ESP32-to-ESP32 wireless sensor data transmission.
+
+**Remote Transmitter Non-Blocking Mode** ([#11524](https://github.com/esphome/esphome/pull/11524))
+
+Remote transmitter operations no longer block the main loop by default, preventing "took a long time for an operation" warnings during long IR transmissions.
+
+**HTTP Request Trigger Variables** ([#11464](https://github.com/esphome/esphome/pull/11464))
+
+HTTP request actions now pass trigger variables correctly into `on_response` and `on_error` triggers.
+
+{/* FEATURE_HIGHLIGHTS_END */}
+
+## Breaking Changes
+
+{/* BREAKING_CHANGES_USERS_START */}
+
+### User-Facing Breaking Changes
+
+#### WiFi & Network
+
+- **WiFi**: WiFi and Ethernet components no longer block other components' setup until connected. Components with setup priority > WIFI (802.3) now initialize immediately, even if network is disconnected. [#9823](https://github.com/esphome/esphome/pull/9823)
+
+- **WiFi min_auth_mode**: ESP8266 default will change from `WPA` to `WPA2` in 2026.6.0. Users with WPA-only routers must explicitly set `min_auth_mode: WPA` before then. [#11814](https://github.com/esphome/esphome/pull/11814)
+
+- **WiFi priority**: The `priority` configuration option now only accepts integers (-128 to 127) instead of floats. Change `priority: 5.5` to `priority: 5`. [#11830](https://github.com/esphome/esphome/pull/11830)
+
+- **.local addresses**: .local addresses now require mDNS to be enabled for DNS resolution. Previously attempted DNS resolution could add 10+ second delays. [#11508](https://github.com/esphome/esphome/pull/11508)
+
+- **Network high performance**: Speaker media player now always enables high performance networking mode (previously only with codec support). Users can override with `enable_high_performance` under the network component if needed. [#11812](https://github.com/esphome/esphome/pull/11812)
+
+### ESP32 Platform
+
+- **ESP32 brownout protection**: ESP-IDF now reduces PHY TX power during brownout to prevent boot loops. Can be disabled with `sdkconfig_options: CONFIG_ESP_PHY_REDUCE_TX_POWER: n` if needed. [#11306](https://github.com/esphome/esphome/pull/11306)
+
+- **ESP32 PSRAM**: PSRAM is no longer auto-loaded by components that depend on it (such as `esp32_camera`, `speaker`, and `media_player`). Users must now explicitly add a `psram:` configuration block to their YAML. Additionally, for ESP32-S3, the `mode` option is now required since S3 supports both quad and octal modes. Typically, 2MB PSRAM uses `quad` mode while 8 or 16MB uses `octal` mode—check your module's datasheet. Example configuration:
+
+  ```yaml
+  psram:
+    mode: octal  # Required for ESP32-S3, use 'quad' or 'octal'
+    speed: 80MHz
+  ```
+
+  [#11470](https://github.com/esphome/esphome/pull/11470)
+
+### Component Behavior Changes
+
+- **Script max_runs**: Queued scripts now default to `max_runs: 5` (allowing 1 running + 4 queued instances) instead of unlimited to prevent crashes from unbounded memory growth. Set `max_runs` explicitly if you need more capacity. [#11308](https://github.com/esphome/esphome/pull/11308)
+
+- **Remote transmitter**: Remote transmitter now defaults to non-blocking mode to prevent long blocking operations (>30ms). [#11524](https://github.com/esphome/esphome/pull/11524)
+
+- **Fan preset modes**: Fan preset modes now preserve the order defined in YAML instead of being sorted alphabetically. The order in Home Assistant will match your YAML configuration order. [#11483](https://github.com/esphome/esphome/pull/11483)
+
+- **Select state**: The public `state` member has been deprecated and will be removed in 2026.5.0. Use `current_option()` method instead. Deprecation warnings will be shown during compilation. [#11623](https://github.com/esphome/esphome/pull/11623)
+
+### Component-Specific Changes
+
+- **HM3301**: AQI calculation updated to EPA 2024 standard. Values will change compared to the old 2012 formula. [#9442](https://github.com/esphome/esphome/pull/9442)
+
+- **GDK101**: Firmware version is now reported as a string instead of a float division result. [#11029](https://github.com/esphome/esphome/pull/11029)
+
+- **Uponor Smatrix**: The `address` property of the `uponor_smatrix` component was removed. Device addresses are now 32-bit instead of separate 16-bit system and device addresses. Update configurations by prepending the previous system address to individual device addresses. [#11066](https://github.com/esphome/esphome/pull/11066)
+
+- **Pipsolar**: Fixed typo `warnung_low_pv_energy` renamed to `warning_low_pv_energy`. Update YAML configurations. [#10291](https://github.com/esphome/esphome/pull/10291)
+
+- **E-Paper SPI**: Busy pin logic corrected to match datasheet (active low). Some e-paper displays may behave differently. [#11349](https://github.com/esphome/esphome/pull/11349)
+
+- **nRF52 bootloader**: Default bootloader changed for `xiao_ble` and `adafruit_itsybitsy_nrf52840` boards. Warning shown if generic Adafruit bootloader is used. [#10698](https://github.com/esphome/esphome/pull/10698)
+
+- **HTTP request triggers**: Changed from multiple on_response/on_error triggers to a single trigger that receives variables. Update automation configurations to use the new variable-based trigger format. [#11464](https://github.com/esphome/esphome/pull/11464)
+
+## YAML Lambda Changes
+
+Users who access component members directly in YAML lambdas may need updates:
+
+- **Select**: Change `id(my_select).state` to `id(my_select).current_option()` (deprecated, will be removed in 2026.5.0). [#11623](https://github.com/esphome/esphome/pull/11623)
+
+- **Fan**: Change `id(my_fan).preset_mode` to `id(my_fan).get_preset_mode()`. [#11632](https://github.com/esphome/esphome/pull/11632)
+
+- **Event**: Change `id(my_event).last_event_type` to `id(my_event).get_last_event_type()`. [#11767](https://github.com/esphome/esphome/pull/11767)
+
+- **Climate**: Custom mode members are now private. Change direct access to public accessor methods:
+  - Check if active: `id(my_climate).custom_fan_mode.has_value()` → `id(my_climate).has_custom_fan_mode()`, `id(my_climate).custom_preset.has_value()` → `id(my_climate).has_custom_preset()`
+  - Get value: `id(my_climate).custom_fan_mode.value()` → `id(my_climate).get_custom_fan_mode()`, `id(my_climate).custom_preset.value()` → `id(my_climate).get_custom_preset()`
+
+  [#11621](https://github.com/esphome/esphome/pull/11621)
+{/* BREAKING_CHANGES_USERS_END */}
+
+### Breaking Changes for Developers
+
+{/* BREAKING_CHANGES_DEVELOPERS_START */}
+
+The following changes affect external component developers. Standard YAML configurations are generally not affected.
+
+## Core Framework Changes
+
+- **Action/Trigger Framework**: All action/trigger/condition method signatures changed to use const references (`const Ts&... x`) instead of pass-by-value (`Ts... x`). See the [Action Framework Performance Optimization](https://developers.esphome.io/blog/2025/11/06/action-framework-performance-optimization/) blog post for migration details. [#11704](https://github.com/esphome/esphome/pull/11704)
+
+- **Controller API**: Controllers now use global registry pattern. Method signatures changed to remove unused state parameters (e.g., `on_sensor_update(sensor::Sensor *obj)` instead of `on_sensor_update(sensor::Sensor *obj, float state)`). External controller implementations extremely rare. [#11772](https://github.com/esphome/esphome/pull/11772)
+
+- **EntityBase::hash_base()**: Removed deprecated virtual method (deprecated since June 2022). Remove `hash_base()` overrides from external components. [#11783](https://github.com/esphome/esphome/pull/11783)
+
+- **hexencode()**: Removed function deprecated since 2022.1. Use alternative encoding methods. [#11383](https://github.com/esphome/esphome/pull/11383)
+
+- **Schema constants**: Removed deprecated schema constants from core. Update external components to use current schema helpers. [#11591](https://github.com/esphome/esphome/pull/11591)
+
+## Component-Specific API Changes
+
+### Climate
+
+See the [Climate Entity Class: FiniteSetMask and Flash Storage Optimizations](https://developers.esphome.io/blog/2025/11/07/climate-entity-class-finitesetmask-and-flash-storage-optimizations/) blog post for migration details.
+
+- **Custom modes storage**: Changed from `std::set<`std::string`>` to `FiniteSetMask` for supported modes, and from `std::vector<`std::string`>` to `std::vector<const char *>` for custom fan modes and presets. [#11466](https://github.com/esphome/esphome/pull/11466), [#11621](https://github.com/esphome/esphome/pull/11621)
+
+- **Member access**: Climate device members (`custom_fan_mode_`, `custom_preset_`) are now private. Use protected setter methods (`set_custom_fan_mode_()`, `set_custom_preset_()`) in derived classes. Use public accessor methods to read values: `has_custom_fan_mode()`, `get_custom_fan_mode()`, `has_custom_preset()`, `get_custom_preset()`. [#11621](https://github.com/esphome/esphome/pull/11621)
+
+- **Deprecated methods**: Removed methods deprecated in 1.20 (July 2021). [#11388](https://github.com/esphome/esphome/pull/11388)
+
+### Light
+
+See the [Light Entity Class: Memory Optimizations](https://developers.esphome.io/blog/2025/11/07/light-entity-class-memory-optimizations/) blog post for migration details.
+
+- **Color modes**: Replaced `std::set<ColorMode>` with `ColorModeMask` bitmask class. [#11348](https://github.com/esphome/esphome/pull/11348)
+
+- **Effect names**: Changed from `std::string` to `const char *` for effect names. [#11487](https://github.com/esphome/esphome/pull/11487)
+
+- **Deprecated methods**: Removed methods deprecated in 2021.8.0. [#11389](https://github.com/esphome/esphome/pull/11389)
+
+### Fan
+
+See the [Fan Entity Class: Preset Mode Flash Storage and Order Preservation](https://developers.esphome.io/blog/2025/11/07/fan-entity-class-preset-mode-flash-storage-and-order-preservation/) blog post for migration details.
+
+- **Preset modes**: Changed from `std::set<`std::string`>` to `std::vector<const char *>`. The `.preset_mode` public member has been removed - use `get_preset_mode()` for reading and `set_preset_mode_()` for writing in derived classes. [#11483](https://github.com/esphome/esphome/pull/11483), [#11632](https://github.com/esphome/esphome/pull/11632)
+
+- **Deprecated code**: Removed code deprecated in 2022.2. [#11392](https://github.com/esphome/esphome/pull/11392)
+
+### Select
+
+See the [Select Entity Class: Index-Based Operations and Flash Storage](https://developers.esphome.io/blog/2025/11/07/select-entity-class-index-based-operations-and-flash-storage/) blog post for migration details.
+
+- **Options storage**: Changed from `std::vector<`std::string`>` to `FixedVector<const char *>`. [#11514](https://github.com/esphome/esphome/pull/11514)
+
+- **State member**: Public `state` member deprecated (will be removed in 2026.5.0). Use `current_option()` method instead. [#11623](https://github.com/esphome/esphome/pull/11623)
+
+- **Index-based operations**: Added optional `control(size_t index)` override for more efficient implementations. [#11623](https://github.com/esphome/esphome/pull/11623)
+
+### Event
+
+See the [Event Entity Class: Memory Optimizations](https://developers.esphome.io/blog/2025/11/07/event-entity-class-memory-optimizations/) blog post for migration details.
+
+- **Event types storage**: Changed from `FixedVector<`std::string`>` to `FixedVector<const char *>`. The `last_event_type` field is now private - use `get_last_event_type()` getter instead. [#11463](https://github.com/esphome/esphome/pull/11463), [#11767](https://github.com/esphome/esphome/pull/11767)
+
+### Network Components
+
+See the [Network get_use_address() Optimization](https://developers.esphome.io/blog/2025/11/20/network-use-address-optimization/) blog post for migration details.
+
+- **WiFi scan results**: External components that access WiFi scan results after connection must call `wifi.request_wifi_scan_results()` in their `to_code()` function to prevent cleanup. [#11205](https://github.com/esphome/esphome/pull/11205)
+
+- **use_address**: Changed from `const `std::string` &` to `const char *` in WiFi, Ethernet, and OpenThread components. Remove `.c_str()` calls when using `get_use_address()`. [#11707](https://github.com/esphome/esphome/pull/11707)
+
+### Other Components
+
+- **Cover**: Removed methods deprecated in 2021.9. Update to current cover API. [#11391](https://github.com/esphome/esphome/pull/11391)
+
+- **Nextion**: Removed methods deprecated in 1.20 (July 2021). Update to current nextion API. [#11393](https://github.com/esphome/esphome/pull/11393)
+
+## ESP32-Specific Changes
+
+- **ESP-IDF advanced options**: New options to disable libc locks in IRAM and VFS features. External components using these features must call helper functions to register needs. [#10930](https://github.com/esphome/esphome/pull/10930), [#11441](https://github.com/esphome/esphome/pull/11441)
+
+## Migration Resources
+
+For detailed migration guides and examples, see the [ESPHome developer documentation](https://developers.esphome.io/).
+
+The 2025.11 release blog posts include comprehensive migration examples for common use cases.
+{/* BREAKING_CHANGES_DEVELOPERS_END */}
+
+{/* markdownlint-disable MD013 */}
+
+## Release 2025.11.1 - November 24
+
+<details>
+<summary></summary>
+
+- [graph] Fix legend border <PR number={12000} /> by <GHUser name="swoboda1337" />
+- [network] Fix IPAddress constructor causing comparison failures and garbage output <PR number={12005} /> by <GHUser name="bdraco" />
+- [ltr501][ltr_als_ps] Rename enum to avoid collision with lwip defines <PR number={12017} /> by <GHUser name="swoboda1337" />
+- [cst816][packet_transport][udp][wake_on_lan] Fix error messages <PR number={12019} /> by <GHUser name="swoboda1337" />
+- [jsn_sr04t] Fix model AJ_SR04M <PR number={11992} /> by <GHUser name="swoboda1337" />
+- [cst816][http_request] Fix status_set_error() dangling pointer bugs <PR number={12033} /> by <GHUser name="bdraco" />
+- [esp32] Fix C2 builds <PR number={12050} /> by <GHUser name="swoboda1337" />
+- [core] Add support for passing yaml files to clean-all <PR number={12039} /> by <GHUser name="swoboda1337" />
+- [script][wait_until] Fix FIFO ordering and reentrancy bugs <PR number={12049} /> by <GHUser name="bdraco" />
+- [esp_ldo,mipi_dsi,mipi_rgb] Fix dangling pointer bugs in mark_failed() <PR number={12077} /> by <GHUser name="bdraco" />
+- [online_image] Fix some large PNGs causing watchdog timeout <PR number={12025} /> by <GHUser name="jesserockz" />
+
+</details>
+
+## Release 2025.11.2 - November 27
+
+<details>
+<summary></summary>
+
+- [nextion] Do not set alternative baud rate when not specified or `<= 0` <PR number={12097} /> by <GHUser name="edwardtfn" />
+- [esp32] Fix platformio flash size print <PR number={12099} /> by <GHUser name="swoboda1337" />
+- [script] Fix script.wait hanging when triggered from on_boot <PR number={12102} /> by <GHUser name="bdraco" />
+- [lvgl] Allow multiple widgets per grid cell <PR number={12091} /> by <GHUser name="clydebarrow" /> (new-feature)
+- [lvgl] Fix position of errors in widget config <PR number={12111} /> by <GHUser name="clydebarrow" />
+- [esp32] Fix hosted update when there is no wifi <PR number={12123} /> by <GHUser name="swoboda1337" />
+- [wifi] Restore blocking setup until connected for RP2040 <PR number={12142} /> by <GHUser name="clydebarrow" />
+- [scheduler] Fix use-after-move crash in heap operations <PR number={12124} /> by <GHUser name="bdraco" />
+
+</details>
+
+## Release 2025.11.3 - December 3
+
+<details>
+<summary></summary>
+
+- [build] Don't clear pio cache unless requested <PR number={11966} /> by <GHUser name="clydebarrow" />
+- [usb_uart] Wake main loop immediately when USB data arrives <PR number={12148} /> by <GHUser name="bdraco" />
+- [espnow] Initialize LwIP stack when running without WiFi component <PR number={12169} /> by <GHUser name="bdraco" />
+- [helpers] Add conversion from FixedVector to std::vector <PR number={12179} /> by <GHUser name="clydebarrow" />
+- [hlk_fm22x] Fix Action::play method signatures <PR number={12192} /> by <GHUser name="bdraco" />
+- [mopeka_pro_check] Fix negative temperatures <PR number={12198} /> by <GHUser name="swoboda1337" />
+- [ade7953] Apply voltage_gain setting to both channels <PR number={12180} /> by <GHUser name="dlitz" />
+- [core] Fix clean all on windows <PR number={12217} /> by <GHUser name="swoboda1337" />
+- [rtl87xx] Fix AsyncTCP compilation by upgrading FreeRTOS to 8.2.3 <PR number={12230} /> by <GHUser name="swoboda1337" />
+- [analog_threshold] Fix oscillation when using invert filter <PR number={12251} /> by <GHUser name="swoboda1337" />
+- [rtl87xx] Fix FreeRTOS version for RTL8720C boards <PR number={12261} /> by <GHUser name="swoboda1337" />
+
+</details>
+
+## Release 2025.11.4 - December 4
+
+<details>
+<summary></summary>
+
+- [esp32] Add build flag to suppress noexecstack message <PR number={12272} /> by <GHUser name="clydebarrow" />
+- [ld2420] Add missing USE_SELECT ifdefs <PR number={12275} /> by <GHUser name="swoboda1337" />
+- [config] Provide path for `has_at_most_one_of` messages <PR number={12277} /> by <GHUser name="clydebarrow" />
+- [es8311] Remove MIN and MAX from mic_gain enum options <PR number={12281} /> by <GHUser name="swoboda1337" />
+- [esp32_hosted] Fix build and bump IDF component version to 2.7.0 <PR number={12282} /> by <GHUser name="swoboda1337" />
+- [CI] Trigger generic version notifier job on release <PR number={12292} /> by <GHUser name="jesserockz" />
+- [scheduler] Fix use-after-free when cancelling timeouts from non-main-loop threads <PR number={12288} /> by <GHUser name="bdraco" />
+
+</details>
+
+## Release 2025.11.5 - December 9
+
+<details>
+<summary></summary>
+
+- [binary_sensor] Fix reporting of 'unknown' <PR number={12296} /> by <GHUser name="clydebarrow" />
+- [lvgl] Number saves value on interactive change <PR number={12315} /> by <GHUser name="clydebarrow" />
+- [scheduler] Fix missing lock when recycling items in defer queue processing <PR number={12343} /> by <GHUser name="bdraco" />
+- [wifi] Fix scan timeout loop when scan returns zero networks <PR number={12354} /> by <GHUser name="bdraco" />
+- [libretiny] Fix WiFi scan timeout loop when scan fails <PR number={12356} /> by <GHUser name="bdraco" />
+- [mqtt] Fix logger method case sensitivity error <PR number={12379} /> by <GHUser name="swoboda1337" />
+
+</details>
+
+## Full list of changes
+
+### New Features
+
+- [esp32] Accept more framework URL schemes as sources <PR number={11125} /> by <GHUser name="j9brown" /> (new-feature)
+- [esp32_ble] Add support for hosted BLE <PR number={11167} /> by <GHUser name="swoboda1337" /> (new-feature)
+- [esp32] Add option to disable libc locks in IRAM, saving ~1.3KB RAM <PR number={10930} /> by <GHUser name="bdraco" /> (new-feature) (breaking-change)
+- [ina2xx_base] add device reset-on-boot disablement option <PR number={10787} /> by <GHUser name="joshuaboniface" /> (new-feature)
+- [toshiba] Add support for RAS-2819T air conditioner <PR number={9490} /> by <GHUser name="exotime" /> (new-feature)
+- [bh1900nux] Add bh1900nux temperature Sensor <PR number={8631} /> by <GHUser name="B48D81EFCC" /> (new-component) (new-feature) (new-platform)
+- [xgzp68xx] Add oversampling config and tidy up implementation. <PR number={10306} /> by <GHUser name="ned14" /> (new-feature)
+- [remote_base] Add Symphony IR protocol (encode/decode) with command_repeats support <PR number={10777} /> by <GHUser name="leodrivera" /> (new-feature)
+- [thermostat] Add humidity support <PR number={11286} /> by <GHUser name="kbx81" /> (new-feature)
+- [nrf52, ble_nus] add logging over BLE <PR number={9846} /> by <GHUser name="tomaszduda23" /> (new-component) (new-feature)
+- [substitutions] !extend and !remove now support substitutions and jinja <PR number={11203} /> by <GHUser name="jpeletier" /> (new-feature)
+- [cli] Add `analyze-memory` command <PR number={11395} /> by <GHUser name="bdraco" /> (new-feature)
+- [mipi_rgb] Add Waveshare 5" 1024x600 <PR number={11206} /> by <GHUser name="clydebarrow" /> (new-feature)
+- [esp32_improv]: add next_url support for WiFi provisioning <PR number={10757} /> by <GHUser name="amankrokx" /> (new-feature)
+- [espnow] Add transport platform for packet_transport <PR number={11025} /> by <GHUser name="EasilyBoredEngineer" /> (new-feature) (new-platform)
+- [sensor] Add optimistic option to heartbeat filter <PR number={10993} /> by <GHUser name="pkejval" /> (new-feature)
+- [openthread] Fix OTA by populating CORE.address with device's mDNS address <PR number={11095} /> by <GHUser name="danstiner" /> (new-feature)
+- [nrf52] support BLE --device for logging <PR number={9861} /> by <GHUser name="tomaszduda23" /> (new-feature)
+- [hdc2010] New component <PR number={6674} /> by <GHUser name="optimusprimespace" /> (new-component) (new-feature) (new-platform)
+- [remote_base] add support for Dyson cool AM07 tower fan <PR number={10163} /> by <GHUser name="aanban" /> (new-feature)
+- [remote_transmitter] Add non-blocking mode <PR number={11524} /> by <GHUser name="swoboda1337" /> (new-feature) (breaking-change)
+- [lvgl] Trigger  improvements and additions <PR number={11628} /> by <GHUser name="clydebarrow" /> (new-feature)
+- [component] Add is_idle method and condition <PR number={11651} /> by <GHUser name="clydebarrow" /> (new-feature)
+- Add support for Mopeka standard check alternate ID <PR number={10907} /> by <GHUser name="pixelatedmirror" /> (new-feature)
+- [esp32] Make loop task stack size configurable <PR number={10564} /> by <GHUser name="idstein" /> (new-feature)
+- [nrf52, i2c] i2c support for nrf52 <PR number={8150} /> by <GHUser name="tomaszduda23" /> (new-feature)
+- [esp32_hosted] Initial OTA implementation  <PR number={11562} /> by <GHUser name="swoboda1337" /> (new-feature) (new-platform)
+- [epaper_spi] Refactoring <PR number={11540} /> by <GHUser name="clydebarrow" /> (new-feature)
+- [tinyusb] New component <PR number={11678} /> by <GHUser name="kbx81" /> (new-component) (new-feature)
+- [lvgl] Layout improvements <PR number={10149} /> by <GHUser name="clydebarrow" /> (new-feature)
+- Dallas indexing <PR number={11346} /> by <GHUser name="leejoow" /> (new-feature)
+- [gp8403] Add gp8413 (15 bits) DAC model <PR number={7726} /> by <GHUser name="SeByDocKy" /> (new-feature)
+- [lvgl] Allow text substitution for NaN <PR number={11712} /> by <GHUser name="clydebarrow" /> (new-feature)
+- [openthread] add poll period for mtd devices <PR number={11374} /> by <GHUser name="rwrozelle" /> (new-feature)
+- [psram] Add option to disable ignore not found sdkconfig setting <PR number={11411} /> by <GHUser name="kahrendt" /> (new-feature)
+- Add MCP3221 i2c A-D-Converter <PR number={7764} /> by <GHUser name="philippderdiedas" /> (new-component) (new-feature) (new-platform)
+- [nrf52] api <PR number={11751} /> by <GHUser name="lboue" /> (new-feature)
+- [sx126x] Change BUSY, RST, DIO1 pins to general GPIO (from internal) <PR number={11782} /> by <GHUser name="PaulSchulz" /> (new-feature)
+- HLK-FM22X Face Recognition module component <PR number={8059} /> by <GHUser name="OnFreund" /> (new-component) (new-feature) (new-platform)
+- Add support for RX8130 RTC Chip <PR number={10511} /> by <GHUser name="Beormund" /> (new-component) (new-feature) (new-platform)
+- [nrf52,gpio] add gpio levels for high voltage mode <PR number={9858} /> by <GHUser name="tomaszduda23" /> (new-feature)
+- [wifi] Add min_auth_mode configuration option <PR number={11814} /> by <GHUser name="bdraco" /> (new-feature) (breaking-change)
+- [network, psram, speaker wifi] Use CORE.data to enable high performance networking <PR number={11812} /> by <GHUser name="kahrendt" /> (new-feature) (breaking-change)
+- [core] Add support for setting environment variables <PR number={11953} /> by <GHUser name="swoboda1337" /> (new-feature)
+- [epaper_spi] Add basic `7.3in-Spectra-E6` model <PR number={12001} /> by <GHUser name="jesserockz" /> (new-feature)
+
+### New Components
+
+- [bh1900nux] Add bh1900nux temperature Sensor <PR number={8631} /> by <GHUser name="B48D81EFCC" /> (new-component) (new-feature) (new-platform)
+- [nrf52, ble_nus] add logging over BLE <PR number={9846} /> by <GHUser name="tomaszduda23" /> (new-component) (new-feature)
+- [hdc2010] New component <PR number={6674} /> by <GHUser name="optimusprimespace" /> (new-component) (new-feature) (new-platform)
+- [tinyusb] New component <PR number={11678} /> by <GHUser name="kbx81" /> (new-component) (new-feature)
+- Add MCP3221 i2c A-D-Converter <PR number={7764} /> by <GHUser name="philippderdiedas" /> (new-component) (new-feature) (new-platform)
+- HLK-FM22X Face Recognition module component <PR number={8059} /> by <GHUser name="OnFreund" /> (new-component) (new-feature) (new-platform)
+- Add support for RX8130 RTC Chip <PR number={10511} /> by <GHUser name="Beormund" /> (new-component) (new-feature) (new-platform)
+
+### New Platforms
+
+- [bh1900nux] Add bh1900nux temperature Sensor <PR number={8631} /> by <GHUser name="B48D81EFCC" /> (new-component) (new-feature) (new-platform)
+- [espnow] Add transport platform for packet_transport <PR number={11025} /> by <GHUser name="EasilyBoredEngineer" /> (new-feature) (new-platform)
+- [hdc2010] New component <PR number={6674} /> by <GHUser name="optimusprimespace" /> (new-component) (new-feature) (new-platform)
+- [esp32_hosted] Initial OTA implementation  <PR number={11562} /> by <GHUser name="swoboda1337" /> (new-feature) (new-platform)
+- [gdk101] Fix fw version reporting <PR number={11029} /> by <GHUser name="Szewcson" /> (breaking-change) (new-platform)
+- Add MCP3221 i2c A-D-Converter <PR number={7764} /> by <GHUser name="philippderdiedas" /> (new-component) (new-feature) (new-platform)
+- HLK-FM22X Face Recognition module component <PR number={8059} /> by <GHUser name="OnFreund" /> (new-component) (new-feature) (new-platform)
+- Add support for RX8130 RTC Chip <PR number={10511} /> by <GHUser name="Beormund" /> (new-component) (new-feature) (new-platform)
+
+### Breaking Changes
+
+- [wifi] Free scan results memory after connection (saves up to 1.2KB RAM) <PR number={11205} /> by <GHUser name="bdraco" /> (breaking-change)
+- [esp32] Add option to disable libc locks in IRAM, saving ~1.3KB RAM <PR number={10930} /> by <GHUser name="bdraco" /> (new-feature) (breaking-change)
+- [esp32] Reduce tx power on IDF in the event of a brownout <PR number={11306} /> by <GHUser name="swoboda1337" /> (breaking-change)
+- [nrf52] add xiao_ble board <PR number={10698} /> by <GHUser name="tomaszduda23" /> (breaking-change)
+- [light] Use bitmask instead of std::set for color modes <PR number={11348} /> by <GHUser name="bdraco" /> (breaking-change)
+- [script] Fix unbounded queue growth, optimize queued mode (default max_runs=5) <PR number={11308} /> by <GHUser name="bdraco" /> (breaking-change)
+- [light] Clean up deprecated functions from 1.21 <PR number={11389} /> by <GHUser name="jesserockz" /> (breaking-change)
+- [climate] Clean up deprecated functions from 1.20 <PR number={11388} /> by <GHUser name="jesserockz" /> (breaking-change)
+- [nextion] Clean up deprecated code from 1.20 <PR number={11393} /> by <GHUser name="jesserockz" /> (breaking-change)
+- remove hexencode due 2022.1 deprecation <PR number={11383} /> by <GHUser name="JuantAldea" /> (breaking-change)
+- [uponor_smatrix] Use combined 32 bit addresses instead of separate 16 bit system and device addresses <PR number={11066} /> by <GHUser name="kroimon" /> (breaking-change)
+- [fan] Clean up deprecated code from 2022.2 <PR number={11392} /> by <GHUser name="jesserockz" /> (breaking-change)
+- [cover] Clean up deprecated functions from 2021.9 <PR number={11391} /> by <GHUser name="jesserockz" /> (breaking-change)
+- [epaper_spi] Fix busy pin logic <PR number={11349} /> by <GHUser name="egalli-dev" /> (breaking-change)
+- [pipsolar] cleanup / refactoring <PR number={10291} /> by <GHUser name="patagonaa" /> (breaking-change)
+- [esp32] Add advanced options to disable unused VFS features (saves ~8.7 KB flash) <PR number={11441} /> by <GHUser name="bdraco" /> (breaking-change)
+- [event] Replace std::set with FixedVector for event type storage <PR number={11463} /> by <GHUser name="bdraco" /> (breaking-change)
+- [light] Store effect names in flash (const char*) to save RAM <PR number={11487} /> by <GHUser name="bdraco" /> (breaking-change)
+- [climate] Replace std::set with FiniteSetMask for trait storage <PR number={11466} /> by <GHUser name="bdraco" /> (breaking-change)
+- [http_request] Pass trigger variables into on_response/on_error <PR number={11464} /> by <GHUser name="jesserockz" /> (breaking-change)
+- [select] Store options in flash to reduce RAM usage <PR number={11514} /> by <GHUser name="bdraco" /> (breaking-change)
+- [core] Remove deprecated schema constants <PR number={11591} /> by <GHUser name="jesserockz" /> (breaking-change)
+- [remote_transmitter] Add non-blocking mode <PR number={11524} /> by <GHUser name="swoboda1337" /> (new-feature) (breaking-change)
+- [core] .local addresses are only resolvable if mDNS is enabled <PR number={11508} /> by <GHUser name="Links2004" /> (breaking-change)
+- [fan] Use std::vector for preset modes, preserve config order <PR number={11483} /> by <GHUser name="bdraco" /> (breaking-change)
+- [climate] Replace `std::vector<`std::string`>` with const char* for custom fan modes and presets <PR number={11621} /> by <GHUser name="bdraco" /> (breaking-change)
+- [psram] Require mode for S3 <PR number={11470} /> by <GHUser name="clydebarrow" /> (breaking-change)
+- [network] Store use_address in RODATA to save RAM <PR number={11707} /> by <GHUser name="bdraco" /> (breaking-change)
+- [fan] Remove duplicate preset mode storage to save RAM <PR number={11632} /> by <GHUser name="bdraco" /> (breaking-change)
+- [select] Refactor to index-based operations for immediate and future RAM savings <PR number={11623} /> by <GHUser name="bdraco" /> (breaking-change)
+- [core] Reduce action framework argument copies by 83% <PR number={11704} /> by <GHUser name="bdraco" /> (breaking-change)
+- [gdk101] Fix fw version reporting <PR number={11029} /> by <GHUser name="Szewcson" /> (breaking-change) (new-platform)
+- [event] Store event types in flash memory <PR number={11767} /> by <GHUser name="bdraco" /> (breaking-change)
+- Updated AQI calculation for HM3301 to the new standard <PR number={9442} /> by <GHUser name="optimusprimespace" /> (breaking-change)
+- [core] Remove deprecated EntityBase::hash_base() method <PR number={11783} /> by <GHUser name="bdraco" /> (breaking-change)
+- [core] Implement Global Controller Registry to reduce RAM usage <PR number={11772} /> by <GHUser name="bdraco" /> (breaking-change)
+- [wifi][ethernet] Don't block setup until connected <PR number={9823} /> by <GHUser name="clydebarrow" /> (breaking-change)
+- [wifi] Change priority type from float to int8_t <PR number={11830} /> by <GHUser name="bdraco" /> (breaking-change)
+- [wifi] Add min_auth_mode configuration option <PR number={11814} /> by <GHUser name="bdraco" /> (new-feature) (breaking-change)
+- [network, psram, speaker wifi] Use CORE.data to enable high performance networking <PR number={11812} /> by <GHUser name="kahrendt" /> (new-feature) (breaking-change)
+
+### All changes
+
+<details>
+<summary></summary>
+
+- [ci] Reduce component test group size to prevent runner disk exhaustion <PR number={11121} /> by <GHUser name="bdraco" />
+- [ci] Reduce component test group size to 10 to prevent runner disk exhaustion <PR number={11122} /> by <GHUser name="bdraco" />
+- [esp32] Accept more framework URL schemes as sources <PR number={11125} /> by <GHUser name="j9brown" /> (new-feature)
+- [stale] Increase operations-per-run <PR number={11135} /> by <GHUser name="swoboda1337" />
+- [esp32_ble_tracker] Replace std::vector with StaticVector for listeners and clients <PR number={11173} /> by <GHUser name="bdraco" />
+- [web_server] Consolidate duplicate client connection checks (saves 288 bytes of flash) <PR number={11116} /> by <GHUser name="bdraco" />
+- [web_server] Reduce code duplication in JSON generation with helper functions <PR number={11117} /> by <GHUser name="bdraco" />
+- [mdns] Conditionally store services to reduce RAM usage by 200-464 bytes <PR number={11180} /> by <GHUser name="bdraco" />
+- [core] Optimize looping_components_ with FixedVector to save flash <PR number={11183} /> by <GHUser name="bdraco" />
+- [core] Add make_name_with_suffix helper to optimize string concatenation <PR number={11176} /> by <GHUser name="bdraco" />
+- [http_request] Pass parameters by const reference to reduce flash usage <PR number={11184} /> by <GHUser name="bdraco" />
+- [socket] Split LWIP socket classes to reduce memory overhead on ESP8266/RP2040 <PR number={11172} /> by <GHUser name="bdraco" />
+- [esp32_ble] Replace handler vectors with StaticVector for 560B-2KB memory savings <PR number={11200} /> by <GHUser name="bdraco" />
+- [bluetooth_proxy] Use FixedVector for GATT characteristics and descriptors <PR number={11214} /> by <GHUser name="bdraco" />
+- [network] Optimize get_use_address() to return const reference instead of a copy <PR number={11218} /> by <GHUser name="bdraco" />
+- [docs] Add state management best practices to CLAUDE.md <PR number={11224} /> by <GHUser name="bdraco" />
+- [docs] Add embedded systems optimization best practices to AI instructions <PR number={11225} /> by <GHUser name="bdraco" />
+- Bump pillow to 11.3.0 <PR number={11239} /> by <GHUser name="bdraco" />
+- [netlify] Pin python version <PR number={11244} /> by <GHUser name="jesserockz" />
+- [wifi] Free scan results memory after connection (saves up to 1.2KB RAM) <PR number={11205} /> by <GHUser name="bdraco" /> (breaking-change)
+- [core] Use FixedVector for automation condition vectors to save 384 bytes flash <PR number={11237} /> by <GHUser name="bdraco" />
+- [wifi] Use FixedVector for scan results to reduce flash usage <PR number={11216} /> by <GHUser name="bdraco" />
+- [web_server_idf] Use std::vector instead of std::set for SSE sessions <PR number={11233} /> by <GHUser name="bdraco" />
+- [light] Use FixedVector for LightState effects list <PR number={11232} /> by <GHUser name="bdraco" />
+- [api] Convert HomeassistantActionRequest vectors to FixedVector for flash savings <PR number={11229} /> by <GHUser name="bdraco" />
+- [mdns] Use FixedVector for txt_records to reduce flash usage <PR number={11228} /> by <GHUser name="bdraco" />
+- [core] Fix regression from #10654 <PR number={11248} /> by <GHUser name="stuartparmenter" />
+- [const] Add CONF_ROWS <PR number={11249} /> by <GHUser name="stuartparmenter" />
+- [ci] Group all PR builds, isolate direct changes for full validation on dev <PR number={11193} /> by <GHUser name="bdraco" />
+- [ci] Add Python 3.14 testing and streamline version matrix <PR number={11238} /> by <GHUser name="bdraco" />
+- [esp32_hosted] Bump hosted components <PR number={11170} /> by <GHUser name="swoboda1337" />
+- [esp32] Remove kconfiglib from requirements.txt <PR number={11210} /> by <GHUser name="thanegill" />
+- [esp32_rmt_led_strip] Don't send reset if duration is zero <PR number={11235} /> by <GHUser name="swoboda1337" />
+- [ci] Isolate openthread <PR number={11259} /> by <GHUser name="swoboda1337" />
+- [esp32] Bump IDF version to 5.5.1 and Arduino version to 3.3.2 <PR number={9839} /> by <GHUser name="swoboda1337" />
+- [esp32_ble] Add support for hosted BLE <PR number={11167} /> by <GHUser name="swoboda1337" /> (new-feature)
+- [esp32] Add option to disable libc locks in IRAM, saving ~1.3KB RAM <PR number={10930} /> by <GHUser name="bdraco" /> (new-feature) (breaking-change)
+- [api] Use FixedVector for ListEntitiesServicesResponse args <PR number={11230} /> by <GHUser name="bdraco" />
+- [api] Use std::unique_ptr for fixed-size byte buffers in Noise protocol <PR number={11278} /> by <GHUser name="bdraco" />
+- [api] Use FixedVector for HomeAssistantServiceCallAction to reduce flash usage and avoid realloc <PR number={11277} /> by <GHUser name="bdraco" />
+- [git] Automatically recover from broken git repositories in external_components <PR number={11246} /> by <GHUser name="bdraco" />
+- [api, climate, thermostat] Implement feature_flags for `climate` <PR number={10987} /> by <GHUser name="kbx81" />
+- [i2s_audio] Refactor to use CORE.data instead of module-level globals <PR number={11223} /> by <GHUser name="bdraco" />
+- [esp32_ble] Refactor to use CORE.data instead of module-level globals <PR number={11222} /> by <GHUser name="bdraco" />
+- [esp32_ble_tracker] Refactor to use CORE.data instead of module-level globals <PR number={11220} /> by <GHUser name="bdraco" />
+- [api] Use FixedVector for ExecuteServiceRequest/Argument arrays to eliminate reallocations <PR number={11270} /> by <GHUser name="bdraco" />
+- [ci] Merge components with different buses to reduce CI time <PR number={11251} /> by <GHUser name="bdraco" />
+- [esp32] Reduce tx power on IDF in the event of a brownout <PR number={11306} /> by <GHUser name="swoboda1337" /> (breaking-change)
+- [ina2xx_base] add device reset-on-boot disablement option <PR number={10787} /> by <GHUser name="joshuaboniface" /> (new-feature)
+- [tests] Fix ESP32-C3 component test binary size by using larger partition table <PR number={11319} /> by <GHUser name="bdraco" />
+- Synchronise Device Classes from Home Assistant <PR number={11285} /> by <GHUser name="esphomebot" />
+- [toshiba] Add support for RAS-2819T air conditioner <PR number={9490} /> by <GHUser name="exotime" /> (new-feature)
+- [cap1188] remove delays in setup <PR number={11317} /> by <GHUser name="mrtoy-me" />
+- [nrf52] add xiao_ble board <PR number={10698} /> by <GHUser name="tomaszduda23" /> (breaking-change)
+- [bh1900nux] Add bh1900nux temperature Sensor <PR number={8631} /> by <GHUser name="B48D81EFCC" /> (new-component) (new-feature) (new-platform)
+- [debug] Replace std::map with struct array for ESP32 chip features <PR number={11307} /> by <GHUser name="bdraco" />
+- [tests] Add i2c_id to mcp47a1 & mcp4725 and remove from isolation <PR number={11324} /> by <GHUser name="swoboda1337" />
+- [ci] Fix test_build_components missing test files with hyphen naming pattern <PR number={11329} /> by <GHUser name="bdraco" />
+- [xgzp68xx] Add oversampling config and tidy up implementation. <PR number={10306} /> by <GHUser name="ned14" /> (new-feature)
+- [remote_base] Add Symphony IR protocol (encode/decode) with command_repeats support <PR number={10777} /> by <GHUser name="leodrivera" /> (new-feature)
+- [tests] Migrate remote_transmitter/receiver to common bus definitions <PR number={11325} /> by <GHUser name="bdraco" />
+- [tests] Remove superfluous else-blocks from lambdas <PR number={11322} /> by <GHUser name="JuantAldea" />
+- [total_daily_energy] Fix ID conflicts in component test configuration <PR number={11337} /> by <GHUser name="bdraco" />
+- [thermostat] Add humidity support <PR number={11286} /> by <GHUser name="kbx81" /> (new-feature)
+- [api] Update to use new climate API <PR number={11357} /> by <GHUser name="kbx81" />
+- [web_server] Update to use new climate API <PR number={11363} /> by <GHUser name="kbx81" />
+- [mqtt] Update to use new climate API <PR number={11360} /> by <GHUser name="kbx81" />
+- [prometheus] Update to use new climate API <PR number={11361} /> by <GHUser name="kbx81" />
+- [nrf52] fix task names in logs <PR number={11367} /> by <GHUser name="tomaszduda23" />
+- [nrf52, ble_nus] add logging over BLE <PR number={9846} /> by <GHUser name="tomaszduda23" /> (new-component) (new-feature)
+- make types sensors_t and sensor_type_t internal to StatsdComponent <PR number={11345} /> by <GHUser name="JuantAldea" />
+- [api][time] Refactor timezone update logic for cleaner code <PR number={11327} /> by <GHUser name="bdraco" />
+- [scheduler] Replace defer queue deque with vector to avoid 512-byte upfront allocation <PR number={11305} /> by <GHUser name="bdraco" />
+- [ci] Add automated memory impact analysis for pull requests <PR number={11242} /> by <GHUser name="bdraco" />
+- [light] Use bitmask instead of std::set for color modes <PR number={11348} /> by <GHUser name="bdraco" /> (breaking-change)
+- [esp32_ble_client] Remove duplicate MAC address extraction in set_address() <PR number={11358} /> by <GHUser name="bdraco" />
+- [wifi] Replace std::vector with std::unique_ptr for WiFi scan buffer <PR number={11364} /> by <GHUser name="bdraco" />
+- [bluetooth_proxy] Merge duplicate loops in get_connection_() <PR number={11359} /> by <GHUser name="bdraco" />
+- [mdns] Use std::unique_ptr for TXT records to reduce ESP32 flash usage <PR number={11362} /> by <GHUser name="bdraco" />
+- [sensor] Optimize sliding window filters to eliminate heap fragmentation <PR number={11282} /> by <GHUser name="bdraco" />
+- [mqtt] Reduce flash usage by optimizing ArduinoJson assignments <PR number={11340} /> by <GHUser name="bdraco" />
+- [wifi] Optimize WiFi scanning to reduce copies and heap allocations <PR number={11323} /> by <GHUser name="bdraco" />
+- [script] Fix unbounded queue growth, optimize queued mode (default max_runs=5) <PR number={11308} /> by <GHUser name="bdraco" /> (breaking-change)
+- [wifi] Convert fast_connect to compile-time define, save 156-1024 bytes flash <PR number={11328} /> by <GHUser name="bdraco" />
+- [wifi] Optimize WiFi scan results with in-place construction <PR number={11330} /> by <GHUser name="bdraco" />
+- Migrate from hexencode() to format_hex_pretty() in Kuntze component <PR number={11372} /> by <GHUser name="JuantAldea" />
+- [substitutions] !extend and !remove now support substitutions and jinja <PR number={11203} /> by <GHUser name="jpeletier" /> (new-feature)
+- [light] Clean up deprecated functions from 1.21 <PR number={11389} /> by <GHUser name="jesserockz" /> (breaking-change)
+- [climate] Clean up deprecated functions from 1.20 <PR number={11388} /> by <GHUser name="jesserockz" /> (breaking-change)
+- [nextion] Clean up deprecated code from 1.20 <PR number={11393} /> by <GHUser name="jesserockz" /> (breaking-change)
+- [ci] Fix memory impact analysis failing on fork PRs <PR number={11380} /> by <GHUser name="bdraco" />
+- remove hexencode due 2022.1 deprecation <PR number={11383} /> by <GHUser name="JuantAldea" /> (breaking-change)
+- [substitutions] Recursive substitutions and better jinja error handling and debug help <PR number={10806} /> by <GHUser name="jpeletier" />
+- [cli] Add `analyze-memory` command <PR number={11395} /> by <GHUser name="bdraco" /> (new-feature)
+- [ci] Fix fork PR workflow failing to find PRs from forks <PR number={11396} /> by <GHUser name="bdraco" />
+- [nrf52] add missing defines for tests <PR number={11384} /> by <GHUser name="tomaszduda23" />
+- [uponor_smatrix] Use combined 32 bit addresses instead of separate 16 bit system and device addresses <PR number={11066} /> by <GHUser name="kroimon" /> (breaking-change)
+- [fan] Clean up deprecated code from 2022.2 <PR number={11392} /> by <GHUser name="jesserockz" /> (breaking-change)
+- [mipi_rgb] Add Waveshare 5" 1024x600 <PR number={11206} /> by <GHUser name="clydebarrow" /> (new-feature)
+- [ci] Skip memory analysis when only Python/config files change in core <PR number={11397} /> by <GHUser name="bdraco" />
+- [climate] Add basic compile tests for climate component <PR number={11404} /> by <GHUser name="bdraco" />
+- [tests] Fix flaky test_noise_corrupt_encrypted_frame integration test <PR number={11405} /> by <GHUser name="bdraco" />
+- [esp32][ci] Fix IRAM overflow in grouped component tests for ESP32-IDF <PR number={11386} /> by <GHUser name="bdraco" />
+- [cover] Clean up deprecated functions from 2021.9 <PR number={11391} /> by <GHUser name="jesserockz" /> (breaking-change)
+- MQTT Light - Min/Max Color Temperature <PR number={11103} /> by <GHUser name="cram42" />
+- [climate] First pass at some optimization <PR number={11366} /> by <GHUser name="kbx81" />
+- [esp32_improv]: add next_url support for WiFi provisioning <PR number={10757} /> by <GHUser name="amankrokx" /> (new-feature)
+- [epaper_spi] Fix busy pin logic <PR number={11349} /> by <GHUser name="egalli-dev" /> (breaking-change)
+- [climate] Migrate components to the new API <PR number={11369} /> by <GHUser name="JuantAldea" />
+- [bang_bang] Various clean-up <PR number={11356} /> by <GHUser name="kbx81" />
+- [espnow] Add transport platform for packet_transport <PR number={11025} /> by <GHUser name="EasilyBoredEngineer" /> (new-feature) (new-platform)
+- [pipsolar] cleanup / refactoring <PR number={10291} /> by <GHUser name="patagonaa" /> (breaking-change)
+- [json] Add basic compile tests <PR number={11409} /> by <GHUser name="bdraco" />
+- Add tests for FilterOutValueFilter and ThrottleWithPriorityFilter <PR number={11408} /> by <GHUser name="bdraco" />
+- [esp32] Automatic CONFIG_LWIP_MAX_SOCKETS configuration based on component needs <PR number={11378} /> by <GHUser name="bdraco" />
+- [sensor] Optimize filter memory usage with ValueListFilter base class <PR number={11407} /> by <GHUser name="bdraco" />
+- [esp32_improv, improv_base] Reduce flash usage by 352 bytes <PR number={11406} /> by <GHUser name="bdraco" />
+- [esp32_hosted] Bump esp hosted to 2.6.1  <PR number={11414} /> by <GHUser name="swoboda1337" />
+- [ci] Optimize clang-tidy for small PRs by avoiding unnecessary job spitting <PR number={11402} /> by <GHUser name="bdraco" />
+- [ci] Prefer platform-specific tests for memory impact analysis <PR number={11398} /> by <GHUser name="bdraco" />
+- Add basic text_sensor tests <PR number={11424} /> by <GHUser name="bdraco" />
+- ESP8266: Complete testing mode memory patches with DRAM and Flash <PR number={11427} /> by <GHUser name="bdraco" />
+- [ci] Fix clang-tidy split decision to account for component dependencies <PR number={11430} /> by <GHUser name="bdraco" />
+- [core] Add support for extern "C" includes <PR number={11422} /> by <GHUser name="swoboda1337" />
+- [sensor,text_sensor,binary_sensor] Optimize filter parameters with std::initializer_list <PR number={11426} /> by <GHUser name="bdraco" />
+- [ci] Fix memory impact workflow for new components <PR number={11421} /> by <GHUser name="bdraco" />
+- [text_sensor] Optimize filters with FixedVector (1.6KB flash savings) <PR number={11423} /> by <GHUser name="bdraco" />
+- [improv] Put next_url behind defines to save flash <PR number={11420} /> by <GHUser name="jesserockz" />
+- [core] Optimize automation actions memory usage with std::initializer_list <PR number={11433} /> by <GHUser name="bdraco" />
+- [espnow] Fix compilation error with initializer_list after #11433 <PR number={11436} /> by <GHUser name="bdraco" />
+- [analyze-memory] Improve symbol categorization accuracy <PR number={11440} /> by <GHUser name="bdraco" />
+- Add additional sensor filter tests <PR number={11438} /> by <GHUser name="bdraco" />
+- [ci] Fix clang-tidy split mode for core file changes <PR number={11434} /> by <GHUser name="bdraco" />
+- [climate] Add some integration tests <PR number={11439} /> by <GHUser name="kbx81" />
+- [sensor] Optimize calibration and Or filters with FixedVector <PR number={11437} /> by <GHUser name="bdraco" />
+- [binary_sensor] Add compile test for auto repeat <PR number={11443} /> by <GHUser name="bdraco" />
+- [binary_sensor] Optimize AutorepeatFilter with FixedVector <PR number={11444} /> by <GHUser name="bdraco" />
+- [climate] Remove unnecessary vector allocations in state save/restore <PR number={11445} /> by <GHUser name="bdraco" />
+- [sensor] Add optimistic option to heartbeat filter <PR number={10993} /> by <GHUser name="pkejval" /> (new-feature)
+- [light] Decouple AddressableLight and Light transition classes <PR number={11166} /> by <GHUser name="j9brown" />
+- Add gpio switch interlock compile tests <PR number={11449} /> by <GHUser name="bdraco" />
+- [CI] Add auto label for chained PRs <PR number={11457} /> by <GHUser name="jesserockz" />
+- [light] Add tests for AddressableColorWipeEffectColor/StrobeLightEffectColor <PR number={11456} /> by <GHUser name="bdraco" />
+- Add compile tests for binary_sensor MultiClickTrigger <PR number={11454} /> by <GHUser name="bdraco" />
+- [gpio] Optimize switch interlock with FixedVector <PR number={11448} /> by <GHUser name="bdraco" />
+- [esp32] Add advanced options to disable unused VFS features (saves ~8.7 KB flash) <PR number={11441} /> by <GHUser name="bdraco" /> (breaking-change)
+- [light] Improve gamma correction precision <PR number={11141} /> by <GHUser name="j9brown" />
+- C++ components unit test framework <PR number={9284} /> by <GHUser name="jpeletier" />
+- [light] Replace std::vector with FixedVector in strobe and color_wipe effects <PR number={11455} /> by <GHUser name="bdraco" />
+- [core] Stop clang-format "fixing" a single line <PR number={11462} /> by <GHUser name="jesserockz" />
+- [api] Allow clearing noise psk if dynamically set <PR number={11429} /> by <GHUser name="jesserockz" />
+- [binary_sensor] Optimize MultiClickTrigger with FixedVector <PR number={11453} /> by <GHUser name="bdraco" />
+- [wifi] Test multiple stas in wifi compile tests <PR number={11460} /> by <GHUser name="bdraco" />
+- [event] Replace std::set with FixedVector for event type storage <PR number={11463} /> by <GHUser name="bdraco" /> (breaking-change)
+- [CI] Fix component detection when core files change in determine-jobs <PR number={11461} /> by <GHUser name="bdraco" />
+- [light] Add compile test for addressable lights <PR number={11465} /> by <GHUser name="bdraco" />
+- [wifi] Optimize WiFi network storage with FixedVector <PR number={11458} /> by <GHUser name="bdraco" />
+- [climate] Fix restore state for fan mode, preset, and swing mode <PR number={11126} /> by <GHUser name="j9brown" />
+- [light] Eliminate dimming undershoot during addressable light transition <PR number={11471} /> by <GHUser name="j9brown" />
+- [ci] Fix test detection for components with only variant tests <PR number={11474} /> by <GHUser name="bdraco" />
+- [ci] Fix component splitter for components with only variant tests <PR number={11476} /> by <GHUser name="bdraco" />
+- [esp32] Set the location of the IDF component manager cache <PR number={11467} /> by <GHUser name="swoboda1337" />
+- [ci] Fix WiFi testing mode validation and component splitter for variant-only tests <PR number={11481} /> by <GHUser name="bdraco" />
+- [openthread] Fix OTA by populating CORE.address with device's mDNS address <PR number={11095} /> by <GHUser name="danstiner" /> (new-feature)
+- [fan] Add basic fan compile tests <PR number={11484} /> by <GHUser name="bdraco" />
+- [nrf52] support BLE --device for logging <PR number={9861} /> by <GHUser name="tomaszduda23" /> (new-feature)
+- [light] Store effect names in flash (const char*) to save RAM <PR number={11487} /> by <GHUser name="bdraco" /> (breaking-change)
+- [light] Use std::initializer_list for add_effects to reduce flash overhead <PR number={11485} /> by <GHUser name="bdraco" />
+- [light] Extract ColorModeMask into generic FiniteSetMask helper <PR number={11472} /> by <GHUser name="bdraco" />
+- [improv_serial] Various optimizations <PR number={11473} /> by <GHUser name="kbx81" />
+- [hdc2010] New component <PR number={6674} /> by <GHUser name="optimusprimespace" /> (new-component) (new-feature) (new-platform)
+- [api] Fix clang-tidy modernize-use-emplace warning for light effects <PR number={11490} /> by <GHUser name="bdraco" />
+- [ethernet] Add RMII GPIO pin conflict validation <PR number={11488} /> by <GHUser name="bdraco" />
+- [scheduler] Remove unused deque include after defer queue optimization <PR number={11491} /> by <GHUser name="bdraco" />
+- [pipsolar] improve sensor readout in HA, set unknown state on timeout / error <PR number={10292} /> by <GHUser name="patagonaa" />
+- [tests] Isolate gps component to prevent TinyGPSPlus millis() conflicts <PR number={11499} /> by <GHUser name="bdraco" />
+- [core][sensor] Eliminate redundant default value setters in generated code <PR number={11495} /> by <GHUser name="bdraco" />
+- [http_request] Pass collect_headers by const reference instead of by value <PR number={11494} /> by <GHUser name="bdraco" />
+- [remote_transmitter] Remove delays and use RMT instead <PR number={11505} /> by <GHUser name="swoboda1337" />
+- [esp32] Add IDF 5.4.3 to platform list and switch to tar.xz <PR number={11528} /> by <GHUser name="swoboda1337" />
+- [sntp] Replace `std::vector<`std::string`>` with `std::array<const char*>` to save heap memory <PR number={11525} /> by <GHUser name="bdraco" />
+- [gpio] Skip set_inverted() call for default false value <PR number={11538} /> by <GHUser name="bdraco" />
+- [core] Don't allow python 3.14 <PR number={11527} /> by <GHUser name="swoboda1337" />
+- Optimize stateless lambdas to use function pointers <PR number={11551} /> by <GHUser name="bdraco" />
+- [substitutions] fix #11077 Preserve ESPHomeDatabase (document metadata) in substitutions <PR number={11087} /> by <GHUser name="jpeletier" />
+- [network] Eliminate runtime string parsing for IP address initialization <PR number={11561} /> by <GHUser name="bdraco" />
+- [api] Register user services with initializer_list <PR number={11545} /> by <GHUser name="bdraco" />
+- [light] Optimize LambdaLightEffect and AddressableLambdaLightEffect with function pointers <PR number={11556} /> by <GHUser name="bdraco" />
+- [core] Optimize TemplatableValue to use function pointers for stateless lambdas <PR number={11554} /> by <GHUser name="bdraco" />
+- [template] Optimize all template platforms to use function pointers for stateless lambdas <PR number={11555} /> by <GHUser name="bdraco" />
+- [api] Use FixedVector const references for service array arguments <PR number={11546} /> by <GHUser name="bdraco" />
+- [core] Simplify ESPTime::strftime() and save 20 bytes flash <PR number={11539} /> by <GHUser name="bdraco" />
+- [number] Skip set_mode call when using default AUTO mode <PR number={11537} /> by <GHUser name="bdraco" />
+- [template] Store initial option as index in template select <PR number={11523} /> by <GHUser name="bdraco" />
+- fix: load_cert_chain requires the path, not a file object <PR number={11543} /> by <GHUser name="waza-ari" />
+- [tuya] allow enum for eco id <PR number={11544} /> by <GHUser name="ssieb" />
+- [nextion] Remove TFT upload baud rate validation to reduce flash usage <PR number={11012} /> by <GHUser name="edwardtfn" />
+- [nextion] Add `set_component_visibility()` method for dynamic visibility control <PR number={11530} /> by <GHUser name="edwardtfn" />
+- [remote_base] add support for Dyson cool AM07 tower fan <PR number={10163} /> by <GHUser name="aanban" /> (new-feature)
+- Additional tests for ble_client lambdas <PR number={11565} /> by <GHUser name="bdraco" />
+- Add additional modbus compile tests <PR number={11567} /> by <GHUser name="bdraco" />
+- [http_request] update timeout to be uint32_t  <PR number={11577} /> by <GHUser name="rwrozelle" />
+- Add additional uart test coverage <PR number={11571} /> by <GHUser name="bdraco" />
+- [esp32_ble_server][esp32_improv] Eliminate unnecessary heap allocations <PR number={11569} /> by <GHUser name="bdraco" />
+- [modbus_controller] Optimize lambdas to use function pointers instead of std::function <PR number={11566} /> by <GHUser name="bdraco" />
+- [ci] Remove base bus components exclusion from memory impact analysis <PR number={11572} /> by <GHUser name="bdraco" />
+- [ble_client] Use function pointers for lambda actions and sensors <PR number={11564} /> by <GHUser name="bdraco" />
+- [climate] Replace std::set with FiniteSetMask for trait storage <PR number={11466} /> by <GHUser name="bdraco" /> (breaking-change)
+- [uart] Optimize UART components to eliminate temporary vector allocations <PR number={11570} /> by <GHUser name="bdraco" />
+- [packages] Tighten package validation <PR number={11584} /> by <GHUser name="jpeletier" />
+- [http_request] Pass trigger variables into on_response/on_error <PR number={11464} /> by <GHUser name="jesserockz" /> (breaking-change)
+- [ci] Change upper Python version being tested to 3.13 <PR number={11587} /> by <GHUser name="bdraco" />
+- template_alarm_control_panel cleanups <PR number={11469} /> by <GHUser name="warthog618" />
+- [ci] Fix auto labeller workflow with wrong comment for too-big with labels <PR number={11592} /> by <GHUser name="jesserockz" />
+- [logger] Improve level validation errors <PR number={11589} /> by <GHUser name="jesserockz" />
+- [fan] Remove deprecated `set_speed` function <PR number={11590} /> by <GHUser name="jesserockz" />
+- [select] Store options in flash to reduce RAM usage <PR number={11514} /> by <GHUser name="bdraco" /> (breaking-change)
+- [ci] Fix component tests not running when only test files change <PR number={11580} /> by <GHUser name="bdraco" />
+- template_alarm_control_panel readability improvements <PR number={11593} /> by <GHUser name="warthog618" />
+- [core] Remove deprecated schema constants <PR number={11591} /> by <GHUser name="jesserockz" /> (breaking-change)
+- [remote_transmitter] Add non-blocking mode <PR number={11524} /> by <GHUser name="swoboda1337" /> (new-feature) (breaking-change)
+- [core] Fix substitution id redefinition false positive <PR number={11603} /> by <GHUser name="jpeletier" />
+- [lvgl] fix typo from previous refactor <PR number={11596} /> by <GHUser name="stuartparmenter" />
+- [lvgl] memset canvas buffer to prevent display of random garbage <PR number={11582} /> by <GHUser name="stuartparmenter" />
+- [ci] Restore parallel execution for clang-tidy split mode <PR number={11613} /> by <GHUser name="bdraco" />
+- [ci] Consolidate component splitting into determine-jobs <PR number={11614} /> by <GHUser name="bdraco" />
+- [gpio] Skip set_use_interrupt call when using default value <PR number={11612} /> by <GHUser name="bdraco" />
+- [template] Eliminate optional wrapper to save 4 bytes RAM per instance <PR number={11610} /> by <GHUser name="bdraco" />
+- [e131] Replace std::set with std::vector to reduce flash usage <PR number={11598} /> by <GHUser name="bdraco" />
+- [core] .local addresses are only resolvable if mDNS is enabled <PR number={11508} /> by <GHUser name="Links2004" /> (breaking-change)
+- [substitutions] fix jinja parsing strings that look like sets as sets <PR number={11611} /> by <GHUser name="jpeletier" />
+- [automations] Update error message <PR number={11640} /> by <GHUser name="clydebarrow" />
+- [ruff] Remove deprecated UP038 rule from ignore list <PR number={11646} /> by <GHUser name="bdraco" />
+- [lvgl] Trigger  improvements and additions <PR number={11628} /> by <GHUser name="clydebarrow" /> (new-feature)
+- [cpp_generator] Align isinstance() with codebase style (tuple vs PEP 604) <PR number={11645} /> by <GHUser name="bdraco" />
+- [json] Fix component test compilation errors <PR number={11647} /> by <GHUser name="bdraco" />
+- [nrf52] fix compilation warning <PR number={11656} /> by <GHUser name="tomaszduda23" />
+- [core] Remove redundant fd bounds check in yield_with_select_() <PR number={11666} /> by <GHUser name="bdraco" />
+- [api] Remove unnecessary intermediate variable in frame helpers <PR number={11668} /> by <GHUser name="bdraco" />
+- Add basic tests for web_server_idf <PR number={11659} /> by <GHUser name="bdraco" />
+- add integration test for script re-entry argument issue <PR number={11652} /> by <GHUser name="afflux" />
+- [nextion] Send `auto_wake_on_touch` as part of startup commands on loop <PR number={11670} /> by <GHUser name="edwardtfn" />
+- ESP32 Pin loopTask to CORE 1 <PR number={11669} /> by <GHUser name="glmnet" />
+- [nrf52,gpio] switch input gpio to polling mode <PR number={11664} /> by <GHUser name="tomaszduda23" />
+- [nrf52] enable nrf52 test <PR number={11379} /> by <GHUser name="tomaszduda23" />
+- Enable IPv6 for host <PR number={11630} /> by <GHUser name="HeMan" />
+- Use lists inits initialization instead of std::fill <PR number={11532} /> by <GHUser name="JuantAldea" />
+- [nrf52, zigbee] OnlyWith support list of components <PR number={11533} /> by <GHUser name="tomaszduda23" />
+- actions: fix loop re-entry <PR number={7972} /> by <GHUser name="afflux" />
+- [component] Add is_idle method and condition <PR number={11651} /> by <GHUser name="clydebarrow" /> (new-feature)
+- [font][image] Use ESPHome urls for remote images <PR number={11675} /> by <GHUser name="clydebarrow" />
+- [esphome][ota] Add write_byte_() helper to reduce code duplication <PR number={11511} /> by <GHUser name="bdraco" />
+- [esp32_ble] Optimize loop() to reduce flash usage by ~104 bytes <PR number={11627} /> by <GHUser name="bdraco" />
+- [ble_client] Fix premature disconnections by reading characteristics immediately after service discovery <PR number={11410} /> by <GHUser name="bdraco" />
+- Add action continuation tests <PR number={11674} /> by <GHUser name="bdraco" />
+- [web_server] Remove redundant assignment in deq_push_back_with_dedup_ <PR number={11642} /> by <GHUser name="bdraco" />
+- [web_server] Eliminate nested lambdas in DeferredUpdateEventSourceList <PR number={11641} /> by <GHUser name="bdraco" />
+- [web_server] Use zero-copy entity ID comparison in request handlers <PR number={11644} /> by <GHUser name="bdraco" />
+- [esp32_ble] Reduce GATT event latency from 8ms to 12μs with notification socket <PR number={11663} /> by <GHUser name="bdraco" />
+- [fan] Use std::vector for preset modes, preserve config order <PR number={11483} /> by <GHUser name="bdraco" /> (breaking-change)
+- [web_server_idf] Reduce flash by eliminating temporary string allocations in event formatting <PR number={11658} /> by <GHUser name="bdraco" />
+- [scheduler] Refactor call() for improved code organization <PR number={11643} /> by <GHUser name="bdraco" />
+- [core] Avoid redundant millis() calls in base_automation loop methods <PR number={11676} /> by <GHUser name="bdraco" />
+- [esp32_ble] Wake main loop for GAP security events <PR number={11677} /> by <GHUser name="bdraco" />
+- [climate] Replace `std::vector<`std::string`>` with const char* for custom fan modes and presets <PR number={11621} /> by <GHUser name="bdraco" /> (breaking-change)
+- [nrf52,debug] fix status of nRESET pin, add extra registry from UICR <PR number={11667} /> by <GHUser name="tomaszduda23" />
+- [template] alarm_control_panel more ESP_LOGCONFIG reductions <PR number={11691} /> by <GHUser name="warthog618" />
+- [mqtt] Fix climate custom fan mode and preset compilation errors <PR number={11692} /> by <GHUser name="bdraco" />
+- Add support for Mopeka standard check alternate ID <PR number={10907} /> by <GHUser name="pixelatedmirror" /> (new-feature)
+- [esp32] Make loop task stack size configurable <PR number={10564} /> by <GHUser name="idstein" /> (new-feature)
+- [nrf52, i2c] i2c support for nrf52 <PR number={8150} /> by <GHUser name="tomaszduda23" /> (new-feature)
+- [core][esp32_ble][socket] Add wake_loop_threadsafe() helper for background thread wakeups <PR number={11681} /> by <GHUser name="bdraco" />
+- [usb_host] Add wake_loop_threadsafe() for low-latency USB event processing <PR number={11683} /> by <GHUser name="bdraco" />
+- [esp32_hosted] Initial OTA implementation  <PR number={11562} /> by <GHUser name="swoboda1337" /> (new-feature) (new-platform)
+- [epaper_spi] Refactoring <PR number={11540} /> by <GHUser name="clydebarrow" /> (new-feature)
+- [micro_wake_word] Add wake_loop_threadsafe() for low-latency wake word detection <PR number={11698} /> by <GHUser name="bdraco" />
+- [usb_uart] Fixes for transfer queue allocation <PR number={11548} /> by <GHUser name="clydebarrow" />
+- [helpers] Add `get_mac_address_into_buffer()` <PR number={11700} /> by <GHUser name="kbx81" />
+- [tinyusb] New component <PR number={11678} /> by <GHUser name="kbx81" /> (new-component) (new-feature)
+- [ci] Fix memory impact analysis to filter incompatible platform components <PR number={11706} /> by <GHUser name="bdraco" />
+- [core] Fix ESPTime crash <PR number={11705} /> by <GHUser name="swoboda1337" />
+- [psram] Require mode for S3 <PR number={11470} /> by <GHUser name="clydebarrow" /> (breaking-change)
+- [lvgl] Layout improvements <PR number={10149} /> by <GHUser name="clydebarrow" /> (new-feature)
+- [lvgl] Fix rotation with unusual width <PR number={11680} /> by <GHUser name="clydebarrow" />
+- [mqtt] Add wake_loop_threadsafe() for low-latency event processing on ESP32 <PR number={11695} /> by <GHUser name="bdraco" />
+- [espnow] Add wake_loop_threadsafe() for low-latency event processing <PR number={11696} /> by <GHUser name="bdraco" />
+- [esp32_ble] Remove leftover lwip/sockets.h include <PR number={11702} /> by <GHUser name="bdraco" />
+- [ci] Fix non-component files incorrectly detected as components <PR number={11701} /> by <GHUser name="bdraco" />
+- [ci] Cache component dependency graph for up to 3.4x faster determine-jobs <PR number={11648} /> by <GHUser name="bdraco" />
+- Dallas indexing <PR number={11346} /> by <GHUser name="leejoow" /> (new-feature)
+- [sgp30] Fix reading from preexisting stored baseline even with `store_baseline:false` <PR number={7922} /> by <GHUser name="chaserhkj" />
+- [max7219digit] support `flip_x` when `rotate_chip` is 90° or 270° <PR number={6109} /> by <GHUser name="Tugzrida" />
+- [gp8403] Add gp8413 (15 bits) DAC model <PR number={7726} /> by <GHUser name="SeByDocKy" /> (new-feature)
+- [gt911] Fix gt911 touchscreen with reset pin not initializing when loglevel is set to NONE <PR number={11715} /> by <GHUser name="jpeletier" />
+- [automations] Reduce memory usage in if/while/repeat actions (32-36 bytes per instance) <PR number={11650} /> by <GHUser name="bdraco" />
+- [network] Store use_address in RODATA to save RAM <PR number={11707} /> by <GHUser name="bdraco" /> (breaking-change)
+- [fan] Remove duplicate preset mode storage to save RAM <PR number={11632} /> by <GHUser name="bdraco" /> (breaking-change)
+- [lvgl] Fix case sensitivity in flex layout <PR number={11717} /> by <GHUser name="clydebarrow" />
+- [display] Optimize display writers with function pointers for stateless lambdas <PR number={11629} /> by <GHUser name="bdraco" />
+- [select] Refactor to index-based operations for immediate and future RAM savings <PR number={11623} /> by <GHUser name="bdraco" /> (breaking-change)
+- [const] Move `CONF_ENABLED` to const.py <PR number={11719} /> by <GHUser name="Gnuspice" />
+- [core] Reduce action framework argument copies by 83% <PR number={11704} /> by <GHUser name="bdraco" /> (breaking-change)
+- [select][lvgl] Fix FixedVector size() returning 0 when using operator[] after init() <PR number={11721} /> by <GHUser name="bdraco" />
+- [wifi_info] Reduce heap usage by up to 1.7KB in scan_results sensor <PR number={11723} /> by <GHUser name="bdraco" />
+- [voice_assistant] Eliminate substr() allocations in text truncation <PR number={11725} /> by <GHUser name="bdraco" />
+- [rtttl] Reduce flash usage by eliminating substr() allocations <PR number={11722} /> by <GHUser name="bdraco" />
+- [ld2420] Eliminate substr() allocation in firmware version parsing <PR number={11724} /> by <GHUser name="bdraco" />
+- [scheduler] Extract helper functions to improve code readability <PR number={11730} /> by <GHUser name="bdraco" />
+- [template] Mark all component classes as final <PR number={11733} /> by <GHUser name="bdraco" />
+- [mqtt] Use StringRef to avoid string copies in discovery <PR number={11731} /> by <GHUser name="bdraco" />
+- [mdns] Eliminate redundant hostname copy to save heap memory <PR number={11734} /> by <GHUser name="bdraco" />
+- [core] Deprecate get_icon(), get_device_class(), get_unit_of_measurement() and fix remaining non-MQTT usages <PR number={11732} /> by <GHUser name="bdraco" />
+- [tests] Fix ID collision between bl0940 and nau7802 component tests <PR number={11739} /> by <GHUser name="bdraco" />
+- [ci] Skip memory impact analysis for release and beta branches <PR number={11740} /> by <GHUser name="bdraco" />
+- [lvgl] Allow text substitution for NaN <PR number={11712} /> by <GHUser name="clydebarrow" /> (new-feature)
+- [ci] Skip memory impact analysis when more than 40 components changed <PR number={11741} /> by <GHUser name="bdraco" />
+- Update AI instructions with C++ style guidelines from developers docs <PR number={11743} /> by <GHUser name="bdraco" />
+- [api] Store YAML service names in flash instead of heap <PR number={11744} /> by <GHUser name="bdraco" />
+- [core] Add helper functions for clamp_at_... <PR number={10387} /> by <GHUser name="clydebarrow" />
+- [core] Fix wait_until and for_condition timing regression in automation chains <PR number={11716} /> by <GHUser name="bdraco" />
+- [select] Convert remaining components to use index-based control() <PR number={11693} /> by <GHUser name="bdraco" />
+- [gdk101] Fix fw version reporting <PR number={11029} /> by <GHUser name="Szewcson" /> (breaking-change) (new-platform)
+- [openthread] add poll period for mtd devices <PR number={11374} /> by <GHUser name="rwrozelle" /> (new-feature)
+- [socket] Deduplicate IP formatting in LWIP raw TCP implementation <PR number={11747} /> by <GHUser name="bdraco" />
+- [psram] Add option to disable ignore not found sdkconfig setting <PR number={11411} /> by <GHUser name="kahrendt" /> (new-feature)
+- Add MCP3221 i2c A-D-Converter <PR number={7764} /> by <GHUser name="philippderdiedas" /> (new-component) (new-feature) (new-platform)
+- [ci] Reduce release time by removing 468 redundant ESP32-C3 IDF tests <PR number={11737} /> by <GHUser name="bdraco" />
+- [wifi] Guard AP-related members with USE_WIFI_AP to save RAM <PR number={11753} /> by <GHUser name="bdraco" />
+- [wifi] Refactor AP selection to use index instead of copy (saves 88 bytes) <PR number={11749} /> by <GHUser name="bdraco" />
+- [core] Use ESPDEPRECATED macro for deprecation warnings <PR number={11755} /> by <GHUser name="bdraco" />
+- [ai_instructions] Add public API and breaking changes guidelines <PR number={11756} /> by <GHUser name="bdraco" />
+- [tests] Fix determine_jobs tests failing when target branch is beta <PR number={11758} /> by <GHUser name="bdraco" />
+- [ci] Fix component batching for beta/release branches (3-4 → 40 per batch) <PR number={11759} /> by <GHUser name="bdraco" />
+- [event] Store event types in flash memory <PR number={11767} /> by <GHUser name="bdraco" /> (breaking-change)
+- Updated AQI calculation for HM3301 to the new standard <PR number={9442} /> by <GHUser name="optimusprimespace" /> (breaking-change)
+- Expand uart.write tests <PR number={11785} /> by <GHUser name="bdraco" />
+- Add ble_client lambda compile tests <PR number={11787} /> by <GHUser name="bdraco" />
+- Add additional compile time tests for canbus <PR number={11789} /> by <GHUser name="bdraco" />
+- Add additional sx126x lambda tests <PR number={11791} /> by <GHUser name="bdraco" />
+- Add additional sx127x lambda tests <PR number={11793} /> by <GHUser name="bdraco" />
+- Add additional speaker lambda tests <PR number={11797} /> by <GHUser name="bdraco" />
+- Add additional udp lambda tests <PR number={11795} /> by <GHUser name="bdraco" />
+- Add additonal abbwelcome remote_base tests <PR number={11799} /> by <GHUser name="bdraco" />
+- Add additional tests for remote_transmitter raw <PR number={11801} /> by <GHUser name="bdraco" />
+- [ble_client] Optimize ble_write memory usage - store static data in flash <PR number={11786} /> by <GHUser name="bdraco" />
+- [canbus] Optimize canbus.send memory usage - store static data in flash <PR number={11788} /> by <GHUser name="bdraco" />
+- [sx126x] Optimize send_packet action memory usage - store static data in flash <PR number={11790} /> by <GHUser name="bdraco" />
+- [remote_base] Optimize raw transmit action memory usage - use function pointers <PR number={11800} /> by <GHUser name="bdraco" />
+- [sx127x] Optimize send_packet action memory usage - store static data in flash <PR number={11792} /> by <GHUser name="bdraco" />
+- [remote_base] Eliminate substr() allocations in Pronto dump logging <PR number={11726} /> by <GHUser name="bdraco" />
+- [bl0940] Fix calibration number preference hash for multi-device configs <PR number={11769} /> by <GHUser name="bdraco" />
+- [speaker] Optimize speaker.play action memory usage - store static data in flash <PR number={11796} /> by <GHUser name="bdraco" />
+- [udp] Optimize udp.write action memory usage - store static data in flash <PR number={11794} /> by <GHUser name="bdraco" />
+- [uart] Store static data in flash and use function pointers for lambdas <PR number={11784} /> by <GHUser name="bdraco" />
+- [core] Remove deprecated EntityBase::hash_base() method <PR number={11783} /> by <GHUser name="bdraco" /> (breaking-change)
+- [remote_base] Optimize abbwelcome action memory usage - store static data in flash <PR number={11798} /> by <GHUser name="bdraco" />
+- [nrf52] api <PR number={11751} /> by <GHUser name="lboue" /> (new-feature)
+- [core] Implement Global Controller Registry to reduce RAM usage <PR number={11772} /> by <GHUser name="bdraco" /> (breaking-change)
+- [sx126x] Change BUSY, RST, DIO1 pins to general GPIO (from internal) <PR number={11782} /> by <GHUser name="PaulSchulz" /> (new-feature)
+- Ensure event paths are enabled in api compile tests <PR number={11776} /> by <GHUser name="bdraco" />
+- [nrf52,watchdog] do not disable watchog if it is not nesesery <PR number={11686} /> by <GHUser name="tomaszduda23" />
+- HLK-FM22X Face Recognition module component <PR number={8059} /> by <GHUser name="OnFreund" /> (new-component) (new-feature) (new-platform)
+- [tests] Add unit test coverage for web_port property <PR number={11811} /> by <GHUser name="bdraco" />
+- [ai] simplify namespace syntax <PR number={11824} /> by <GHUser name="ximex" />
+- [lvgl] Automatically register widget types <PR number={11394} /> by <GHUser name="stuartparmenter" />
+- Add support for RX8130 RTC Chip <PR number={10511} /> by <GHUser name="Beormund" /> (new-component) (new-feature) (new-platform)
+- [wifi] Fix mesh network failover and improve retry logic reliability <PR number={11805} /> by <GHUser name="bdraco" />
+- [tests] Migrate components to shared packages and fix ID ambiguity <PR number={11819} /> by <GHUser name="bdraco" />
+- [CI] Don't request codeowners review in forks <PR number={11827} /> by <GHUser name="jesserockz" />
+- [wifi][ethernet] Don't block setup until connected <PR number={9823} /> by <GHUser name="clydebarrow" /> (breaking-change)
+- [core] Update clamp functions to allow mixed but comparable types <PR number={11828} /> by <GHUser name="clydebarrow" />
+- [nrf52,gpio] add gpio levels for high voltage mode <PR number={9858} /> by <GHUser name="tomaszduda23" /> (new-feature)
+- [nrf52,pcf8563] fix build error <PR number={11846} /> by <GHUser name="tomaszduda23" />
+- [nrf52,ssd1306_i2c] fix build error <PR number={11847} /> by <GHUser name="tomaszduda23" />
+- [lvgl]Adjust condition for LVGL style transformation defines <PR number={11845} /> by <GHUser name="CzBiX" />
+- [nrf52,debug] add partition dump <PR number={11839} /> by <GHUser name="tomaszduda23" />
+- [nrf52] fix boot loop <PR number={11854} /> by <GHUser name="tomaszduda23" />
+- [wifi] Fix infinite retry loop when no hidden networks and captive portal active <PR number={11831} /> by <GHUser name="bdraco" />
+- [wifi] Change priority type from float to int8_t <PR number={11830} /> by <GHUser name="bdraco" /> (breaking-change)
+- [wifi] Fix all-hidden networks duplicate attempts and scan skipping <PR number={11848} /> by <GHUser name="bdraco" />
+- [wifi] Add min_auth_mode configuration option <PR number={11814} /> by <GHUser name="bdraco" /> (new-feature) (breaking-change)
+- [wifi] Fix scan and connection failures after adapter restart <PR number={11851} /> by <GHUser name="bdraco" />
+- [wifi] Restore two-attempt BSSID filtering for mesh networks <PR number={11844} /> by <GHUser name="bdraco" />
+- [wifi] Conditionally compile manual_ip to save 24-72 bytes RAM <PR number={11833} /> by <GHUser name="bdraco" />
+- [network, psram, speaker wifi] Use CORE.data to enable high performance networking <PR number={11812} /> by <GHUser name="kahrendt" /> (new-feature) (breaking-change)
+- [ci] Reduce release time by removing 21 redundant ESP32-S3 IDF tests <PR number={11850} /> by <GHUser name="bdraco" />
+- [esp32] Update the recommended platform to 55.03.31-2 <PR number={11865} /> by <GHUser name="swoboda1337" />
+- [core] Fix wait_until hanging when used in on_boot automations <PR number={11869} /> by <GHUser name="bdraco" />
+- [captive_portal] Warn when enabled without WiFi AP configured <PR number={11856} /> by <GHUser name="bdraco" />
+- [api] Eliminate heap allocations when transmitting Event types <PR number={11773} /> by <GHUser name="bdraco" />
+- [esp32_ble_tracker] Use initializer_list to eliminate compiler warning and reduce flash usage <PR number={11861} /> by <GHUser name="bdraco" />
+- [api][event] Send events immediately to prevent loss during rapid triggers <PR number={11777} /> by <GHUser name="bdraco" />
+- [thermostat] Replace std::map with FixedVector, reduce flash usage <PR number={11875} /> by <GHUser name="bdraco" />
+- [mqtt] Fix crash with empty broker during upload/logs <PR number={11866} /> by <GHUser name="bdraco" />
+- [light] Fix dangling reference in compute_color_mode causing memory corruption <PR number={11868} /> by <GHUser name="bdraco" />
+- [wifi][ethernet] Fix spurious warnings and unclear status after PR #9823 <PR number={11871} /> by <GHUser name="bdraco" />
+- [wifi] Fix slow reconnection after connection loss for all network types <PR number={11873} /> by <GHUser name="bdraco" />
+- [esp32] Make esp-idf default framework for P4 <PR number={11884} /> by <GHUser name="clydebarrow" />
+- [esp32] Add sdkconfig flag to make OTA work for 32MB flash <PR number={11883} /> by <GHUser name="clydebarrow" />
+- [light] Fix missing `ColorMode::BRIGHTNESS` case in logging <PR number={11836} /> by <GHUser name="edwardtfn" />
+- [wifi] Allow `use_psram` with Arduino <PR number={11902} /> by <GHUser name="edwardtfn" />
+- [uart] Improve error handling and validate buffer size <PR number={11895} /> by <GHUser name="swoboda1337" />
+- [ld2412] Fix stuck targets by adding timeout filter <PR number={11919} /> by <GHUser name="bdraco" />
+- [ld2410] Add timeout filter to prevent stuck targets <PR number={11920} /> by <GHUser name="bdraco" />
+- [scheduler] Fix timing breakage after 49 days of uptime on ESP8266/RP2040 <PR number={11924} /> by <GHUser name="bdraco" />
+- [analyze-memory] Show all core symbols > 100 B instead of top 15 <PR number={11909} /> by <GHUser name="bdraco" />
+- [sntp] Merge multiple instances to fix crash and undefined behavior <PR number={11904} /> by <GHUser name="bdraco" />
+- [web_server.ota] Merge multiple instances to prevent undefined behavior <PR number={11905} /> by <GHUser name="bdraco" />
+- [web_server_idf] Fix lwIP assertion crash by shutting down sockets on connection close <PR number={11937} /> by <GHUser name="bdraco" />
+- [uart] Setup uart pins only if flags are set <PR number={11914} /> by <GHUser name="asergunov" />
+- [core] Add support for setting environment variables <PR number={11953} /> by <GHUser name="swoboda1337" /> (new-feature)
+- [mipi_rgb] GUITION-4848S040 colors and orientation fix <PR number={11709} /> by <GHUser name="strange-v" />
+- [lvgl] Apply scale to spinbox value <PR number={11946} /> by <GHUser name="clydebarrow" />
+- [esp32] Fix Arduino build on some ESP32 S2 boards <PR number={11972} /> by <GHUser name="swoboda1337" />
+- [scheduler] Add defensive nullptr checks and explicit locking requirements <PR number={11974} /> by <GHUser name="bdraco" />
+- [sfa30] Fix negative temperature values <PR number={11973} /> by <GHUser name="swoboda1337" />
+- [wifi] Fix captive portal unusable when WiFi credentials are wrong <PR number={11965} /> by <GHUser name="bdraco" />
+- [tests] Fix SNTP time ID conflicts in component tests for grouped testing <PR number={11990} /> by <GHUser name="bdraco" />
+- [text_sensor] Fix infinite loop in substitute filter <PR number={11989} /> by <GHUser name="swoboda1337" />
+- [wifi] Fix positive RSSI values on 8266 <PR number={11994} /> by <GHUser name="swoboda1337" />
+- [web_server_idf] Fix pbuf_free crash by moving shutdown before close <PR number={11995} /> by <GHUser name="bdraco" />
+- [epaper_spi] Add basic `7.3in-Spectra-E6` model <PR number={12001} /> by <GHUser name="jesserockz" /> (new-feature)
+
+</details>
+
+<details>
+<summary></summary>
+
+- Bump pyupgrade from 3.20.0 to 3.21.0 <PR number={11139} /> by [@dependabot[bot]](https://github.com/apps/dependabot)
+- Bump github/codeql-action from 4.30.7 to 4.30.8 <PR number={11163} /> by [@dependabot[bot]](https://github.com/apps/dependabot)
+- Bump pylint from 3.3.9 to 4.0.0 <PR number={11211} /> by [@dependabot[bot]](https://github.com/apps/dependabot)
+- Bump aioesphomeapi from 41.16.1 to 41.17.0 <PR number={11231} /> by [@dependabot[bot]](https://github.com/apps/dependabot)
+- Bump ruamel-yaml-clib from 0.2.12 to 0.2.14 <PR number={10842} /> by [@dependabot[bot]](https://github.com/apps/dependabot)
+- Bump aioesphomeapi from 41.17.0 to 41.18.0 <PR number={11247} /> by [@dependabot[bot]](https://github.com/apps/dependabot)
+- Bump pylint from 4.0.0 to 4.0.1 <PR number={11267} /> by [@dependabot[bot]](https://github.com/apps/dependabot)
+- Bump aioesphomeapi from 41.18.0 to 42.0.0 <PR number={11273} /> by [@dependabot[bot]](https://github.com/apps/dependabot)
+- Bump ruff from 0.14.0 to 0.14.1 <PR number={11303} /> by [@dependabot[bot]](https://github.com/apps/dependabot)
+- Bump github/codeql-action from 4.30.8 to 4.30.9 <PR number={11326} /> by [@dependabot[bot]](https://github.com/apps/dependabot)
+- Bump aioesphomeapi from 42.0.0 to 42.1.0 <PR number={11350} /> by [@dependabot[bot]](https://github.com/apps/dependabot)
+- Bump aioesphomeapi from 42.1.0 to 42.2.0 <PR number={11352} /> by [@dependabot[bot]](https://github.com/apps/dependabot)
+- Bump pylint from 4.0.1 to 4.0.2 <PR number={11418} /> by [@dependabot[bot]](https://github.com/apps/dependabot)
+- Bump actions/download-artifact from 4.3.0 to 5.0.0 <PR number={11419} /> by [@dependabot[bot]](https://github.com/apps/dependabot)
+- Bump bleak from 1.0.1 to 1.1.1 <PR number={11492} /> by [@dependabot[bot]](https://github.com/apps/dependabot)
+- Bump aioesphomeapi from 42.2.0 to 42.3.0 <PR number={11493} /> by [@dependabot[bot]](https://github.com/apps/dependabot)
+- Bump ruamel-yaml from 0.18.15 to 0.18.16 <PR number={11482} /> by [@dependabot[bot]](https://github.com/apps/dependabot)
+- Bump aioesphomeapi from 42.3.0 to 42.4.0 <PR number={11586} /> by [@dependabot[bot]](https://github.com/apps/dependabot)
+- Bump aioesphomeapi from 42.4.0 to 42.5.0 <PR number={11597} /> by [@dependabot[bot]](https://github.com/apps/dependabot)
+- Bump github/codeql-action from 4.30.9 to 4.31.0 <PR number={11522} /> by [@dependabot[bot]](https://github.com/apps/dependabot)
+- Bump actions/upload-artifact from 4.6.2 to 5.0.0 <PR number={11520} /> by [@dependabot[bot]](https://github.com/apps/dependabot)
+- Bump actions/download-artifact from 5.0.0 to 6.0.0 <PR number={11521} /> by [@dependabot[bot]](https://github.com/apps/dependabot)
+- Bump ruff from 0.14.1 to 0.14.2 <PR number={11519} /> by [@dependabot[bot]](https://github.com/apps/dependabot)
+- Bump github/codeql-action from 4.31.0 to 4.31.2 <PR number={11626} /> by [@dependabot[bot]](https://github.com/apps/dependabot)
+- Bump ruff from 0.14.2 to 0.14.3 <PR number={11633} /> by [@dependabot[bot]](https://github.com/apps/dependabot)
+- Bump aioesphomeapi from 42.5.0 to 42.6.0 <PR number={11682} /> by [@dependabot[bot]](https://github.com/apps/dependabot)
+- Bump ruff from 0.14.3 to 0.14.4 <PR number={11768} /> by [@dependabot[bot]](https://github.com/apps/dependabot)
+- Bump aioesphomeapi from 42.6.0 to 42.7.0 <PR number={11771} /> by [@dependabot[bot]](https://github.com/apps/dependabot)
+- Bump pytest-asyncio from 1.2.0 to 1.3.0 <PR number={11815} /> by [@dependabot[bot]](https://github.com/apps/dependabot)
+- Bump pyupgrade from 3.21.0 to 3.21.1 <PR number={11816} /> by [@dependabot[bot]](https://github.com/apps/dependabot)
+- Bump pytest from 8.4.2 to 9.0.0 <PR number={11817} /> by [@dependabot[bot]](https://github.com/apps/dependabot)
+
+</details>
+
+{/* markdownlint-enable MD013 */}
+
+## All Changelogs
+

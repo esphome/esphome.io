@@ -1,0 +1,327 @@
+---
+description: "Changelog for esphomelib version 1.9.0."
+title: "Changelog - Version 1.9.0"
+pagefind: false
+slug: "changelog/v1.9.0"
+---
+
+import PR from "@components/PR.astro";
+import GHUser from "@components/GHUser.astro";
+
+{/* markdownlint-disable MD013 */}
+
+- [Beta Releases](/guides/faq.html#how-do-i-update-to-the-latest-beta-release/)
+- [Text Sensors](/components/text_sensor/index/)
+- [MQTT Subscribe](/components/sensor/mqtt_subscribe/)
+- [Stepper](/components/stepper/index/)
+- [CSE7766](/components/sensor/cse7766/)
+- [PMSX003](/components/sensor/pmsx003/)
+- [esphomeflasher](/guides/faq.html#i-can-t-get-flashing-over-usb-to-work/)
+- [Total Daily Energy](/components/sensor/total_daily_energy/)
+- [MY9231/MY9291 LED driver](/components/output/my9231/)
+
+It's time for another release of esphomelib: 1.9.0. This release is quite different from the last one,
+it doesn't focus that much on new integrations with a "modest" amount of 7 new integrations. No, most of the
+development has been focused on improving the core architecture and making the esphomelib ecosystem easier to use.
+Because that's my main goal of this project: Providing a great user-experience so that you can focus on building
+awesome things with DIY hardware!
+
+The features I'm particularly excited about are:
+
+* `esphomeflasher` - Experiencing problems flashing esphomelib firmwares using esphomeyaml?
+  No problem, esphomeflasher is a tool designed to make that super easy. Just let esphomeyaml generate the binary and flash
+  from your PC.
+
+* [Over-the-Air Updates](/components/ota/index/) have been completely re-written to make them a lot more stable.
+* A lot of work has been put in to provide more context in YAML validation errors. Sometimes, esphomeyaml will even
+  try to give you suggestions for how to fix a validation error!
+
+* A new release cycle: esphomeyaml now also has a [beta release channel](/guides/faq#faq-beta) kind of like Home Assistant. This helps to
+  iron out the most important bugs before each stable release
+
+* And of course, lots of stability improvements and bug fixes :)
+
+Thank you very much to everybody who contributed to this release with new code or by
+[reporting bugs](/guides/faq#faq-bug_report)!
+
+## New Components
+
+* There's a new base component called [text sensors](/components/text_sensor/index/) for using
+  text-based inputs, not just numbers like the generic [sensors](/components/sensor/index/) did
+  (<PR number={166} />, <PR number={52} repo="esphome-docs" />)
+
+* The new MQTT Subscribe Sensors allow you to get external data into esphomelib's ecosystem via MQTT
+  (<PR number={193} repo="esphome-core" />, <PR number={175} />, <PR number={50} repo="esphome-docs" />)
+
+* Added [CSE7766 Power Sensor](/components/sensor/cse7766/) to support power measurements
+  on the Sonoff Pow R2 (<PR number={277} repo="esphome-core" />, <PR number={190} />, <PR number={59} repo="esphome-docs" />)
+
+* Thanks to <GHUser name="puuu" />, the LED driver in the Sonoff B1 (MY9231) is now supported!
+  (<PR number={266} repo="esphome-core" />, <PR number={227} />, <PR number={80} repo="esphome-docs" />)
+
+* Added the [PMSX003 Particulate Matter Sensor](/components/sensor/pmsx003/)
+  (<PR number={229} repo="esphome-core" />, <PR number={192} />, <PR number={58} repo="esphome-docs" />)
+
+* Added support for [A4988 Stepper Motors](/components/stepper/index/) (<PR number={239} repo="esphome-core" />,
+  <PR number={206} />, <PR number={68} repo="esphome-docs" />)
+
+* Added [total daily energy sensor](/components/sensor/total_daily_energy/) to accumulate the total
+  power usage over one day (<PR number={256} repo="esphome-core" />, <PR number={220} />)
+
+## New Features
+
+* Compiling for ESP32s is now possible on RPis 🎉
+
+* esphomelib now has a new tool: [esphomeflasher](https://github.com/esphome/esphome-flasher) to simplify
+  flashing on Windows/MacOS machines **without having to install esphomeyaml**. So if esphomeyaml for some reason
+  can't find your USB port, you now can use the esphomeflasher app. See `esphomeflasher`.
+
+* ESP8266s now save the states of lights/switches/... internally and restores them on boot.
+  Additionally, esphomelib can now operate in fully offline mode if your WiFi network goes down
+  or the MQTT broker is unreachable, see [Do Automations Work Without a Network Connection](/automations/actions#automation-networkless)
+  (<PR number={258} repo="esphome-core" />, <PR number={267} repo="esphome-core" />, <PR number={229} />)
+
+* The [Over-the-Air Update](/components/ota/index/) process was quite buggy sometimes and the Arduino-library
+  esphomelib used was doing some weird stuff. The OTA-process has now been completely re-written to be more stable
+  (<PR number={204} repo="esphome-core" />, <PR number={177} />).
+
+* Add support for the Home Assistant device registry. If you're using [Home Assistant 0.81.0](https://www.home-assistant.io/blog/2018/10/26/release-81/)
+  or higher you will see a list of all components for each esphomelib node in the integrations screen
+  (<PR number={233} repo="esphome-core" />).
+
+* The current esphomelib version and compilation time are now printed on each boot
+  (<PR number={189} repo="esphome-core" />, <PR number={159} />):
+
+```text
+    [13:57:33][I][application:092]: You're running esphomelib v1.9.0 compiled on Nov  3 2018, 13:55:11
+```
+
+* Stack traces in the USB logs are now automatically decoded to make debugging easier
+  (<PR number={214} />)
+
+* Added [`on_json_message` Trigger](/components/mqtt#mqtt-on_json_message) and [`mqtt.publish_json` Action](/components/mqtt#mqtt-publish_json_action) to make using JSON for MQTT payloads easier
+  (<PR number={230} repo="esphome-core" />, <PR number={193} />, <PR number={60} repo="esphome-docs" />)
+
+* The remote (IR) components have received support for Samsung's IR protocol
+  (<PR number={176} />, <PR number={48} repo="esphome-docs" />)
+
+* Added [`component.update` Action](/automations/actions#component-update_action), [`logger.log` Action](/components/logger#logger-log_action) and [`script.execute` Action](/components/script#script-execute_action) for simplifying
+  automations
+  (<PR number={232} repo="esphome-core" />, <PR number={196} />, <PR number={198} />, <PR number={61} repo="esphome-docs" />, <PR number={63} repo="esphome-docs" />)
+
+* Added [`on_multi_click`](/components/binary_sensor#binary_sensor-on_multi_click) trigger to distinguish between double, long, and single clicks.
+  (<PR number={262} repo="esphome-core" />, <PR number={77} repo="esphome-docs" />, <PR number={226} />)
+
+* Added an [pn532-on_tag](/components/binary_sensor/pn532#pn532-on_tag) to [PN532 NFC Readers](/components/binary_sensor/pn532/) so that automations
+  can directly use the NFC tag ID
+  (<PR number={194} repo="esphome-core" />, <PR number={189} />, <PR number={57} repo="esphome-docs" />)
+
+* Added a `hass-config` command which generates a Home Assistant configuration for your esphomeyaml nodes.
+  Useful if you're not using MQTT discovery (<PR number={208} />)
+
+* All documentation pages now have comment systems powered by [disqus](https://disqus.com/)
+  (<PR number={47} repo="esphome-docs" />)
+
+* You now have to option to have a different log level for log messages sent over MQTT ([docs](/components/mqtt#mqtt-message),
+  <PR number={167} />, <PR number={51} repo="esphome-docs" />)
+
+* Added a color correction option to [FastLED addressable lights](/components/light/fastled/)
+  (<PR number={234} repo="esphome-core" />, <PR number={200} />, <PR number={64} repo="esphome-docs" />)
+
+* Added a `clean` command to esphomeyaml to fix some occasional build errors
+  (<PR number={181} />)
+
+* Added a `send_first_at` option to sliding window moving average sensor filters
+  (<PR number={240} repo="esphome-core" />, <PR number={207} />, <PR number={69} repo="esphome-docs" />)
+
+* You can now upload OTA firmware files with the [web server component](/components/web_server/)
+
+* Added the ability to define global variables in esphomeyaml: [Globals](/components/globals/).
+
+* Added a `frequency` option to the [Esp8266 Pwm](/components/output/esp8266_pwm/).
+
+## Breaking Changes
+
+* As part of the rewrite of Over-The-Air updates, the old OTA protocol is incompatible with the new one -
+  But fear not, esphomeyaml still supports the legacy OTA update process. On your first OTA upload with 1.9.0, you will
+  see esphomeyaml try with the new OTA method and fail. After that, esphomeyaml will fall back to the old OTA
+  process and upload correctly (<PR number={204} repo="esphome-core" />).
+
+* esphomelib's naming convention has been made more consistent. If you're not using any [lambdas](/automations/templates#config-lambda),
+  everything will still work. However, if you're using the C++ API, there are a couple of breaking changes:
+
+  For sensors and binary sensors, `id(my_sensor).value` has been deprecated and `id(my_sensor).state` should be used
+  instead. Additionally, the syntax for toggling lights and switches through C++ has been changed. Please see
+  the <PR number={62} repo="esphome-docs" /> changeset for more information
+  (<PR number={231} repo="esphome-core" />, <PR number={62} repo="esphome-docs" />, <PR number={197} />)
+
+## Release 1.9.1 - November 19
+
+* lib: Fix RDM6300 not reporting cards <PR number={278} repo="esphome-core" />
+* lib: Fix SNTP with less than 3 servers <PR number={279} repo="esphome-core" />
+* lib: Fix update interval log missing time unit <PR number={280} repo="esphome-core" />
+* lib: Fix CSE7766 spamming logs <PR number={281} repo="esphome-core" />
+* lib: Fix outdated links <PR number={282} repo="esphome-core" />
+* yaml: Fix SNTP servers option <PR number={237} />
+
+## Release 1.9.2 - November 25
+
+* lib: Fix crashing when logger not being used <PR number={285} repo="esphome-core" />
+* lib: Fix template cover spamming logs <PR number={287} repo="esphome-core" />
+* lib: Improve ESP32 BLE tracker stability <PR number={289} repo="esphome-core" />
+* lib: Fix sensor filters using C++ undefined behavior <PR number={293} repo="esphome-core" />
+
+## Release 1.9.3 - December 1
+
+* docs: Fix Sonoff Basic pinouts <PR number={88} repo="esphome-docs" /> by <GHUser name="sherbang" />
+* docs: Update cwww.rst <PR number={85} repo="esphome-docs" /> by <GHUser name="Melkor82" />
+* lib: Fix PMSX003 <PR number={300} repo="esphome-core" />
+* lib: Fix issue with filters introduced in 1.9.2 <PR number={296} repo="esphome-core" />
+* lib: Fix BMP085 pressure value <PR number={292} repo="esphome-core" />
+* yaml: CSE7766 update interval <PR number={250} />
+* docs: CSE7766 Update Interval <PR number={91} repo="esphome-docs" />
+
+## All changes
+
+* docs: Clarify ESP32 BLE Tracker comment <PR number={42} repo="esphome-docs" />
+* yaml: Add a link to Home Assistant in README <PR number={152} /> by <GHUser name="jonnyair" />
+* lib: Add a link to Home Assistant in README.md <PR number={184} repo="esphome-core" /> by <GHUser name="jonnyair" />
+* docs: Fix time docs 12-hour clock strftime format <PR number={43} repo="esphome-docs" />
+* lib: Fix ESP32 BLE Presence detection always on <PR number={185} repo="esphome-core" />
+* lib: Fix LCD display include <PR number={186} repo="esphome-core" />
+* lib: Fix template switch spamming output <PR number={187} repo="esphome-core" />
+* lib: Fix using HTU21D for SI7021 <PR number={188} repo="esphome-core" />
+* lib: Fix components sending invalid state on startup if integration not ready yet <PR number={195} repo="esphome-core" />
+* lib: Log esphomelib version and compilation time on boot <PR number={189} repo="esphome-core" /> (new-feature)
+* yaml: Log esphomelib version and compilation time on boot <PR number={159} /> (new-feature)
+* yaml: Fix raw remote receiver <PR number={158} />
+* lib: Add Code of Conduct (Contributor Covenant) <PR number={196} repo="esphome-core" />
+* lib: Create CONTRIBUTING.md <PR number={197} repo="esphome-core" />
+* lib: Create issue templates <PR number={198} repo="esphome-core" />
+* lib: Create pull request template <PR number={199} repo="esphome-core" />
+* yaml: Create Pull Request Template <PR number={172} />
+* yaml: Create CONTRIBUTING.md <PR number={169} />
+* yaml: Add Code of Conduct (Contributor Covenant) <PR number={168} />
+* yaml: Create issue templates <PR number={171} />
+* docs: Add Code of Conduct (Contributor Covenant) <PR number={44} repo="esphome-docs" />
+* docs: Create Pull Request Template <PR number={45} repo="esphome-docs" />
+* yaml: Fix readme broken link <PR number={174} />
+* lib: Fix pulse counter counting inverted on ESP8266 <PR number={200} repo="esphome-core" />
+* yaml: Add use_build_flags removal notice <PR number={173} />
+* docs: Highlight update_interval gotchas <PR number={46} repo="esphome-docs" />
+* docs: Add Disqus and cleanup <PR number={47} repo="esphome-docs" /> (new-feature)
+* lib: Fix PN532 not logging discovered tags <PR number={202} repo="esphome-core" />
+* yaml: Add Samsung IR protocol <PR number={176} /> by <GHUser name="escoand" /> (new-feature)
+* docs: add samsung ir protocol <PR number={48} repo="esphome-docs" /> by <GHUser name="escoand" /> (new-feature)
+* lib: Bump FastLED to 3.2.0 <PR number={203} repo="esphome-core" />
+* yaml: Fix Wifi power_save_mode option <PR number={178} />
+* lib: Fix application sort order <PR number={211} repo="esphome-core" />
+* docs: Improve pulse counter docs <PR number={49} repo="esphome-docs" />
+* lib: Fix ESP32 BLE Controller Init <PR number={213} repo="esphome-core" />
+* lib: Fix Web Server Creating Infinite Print Loop <PR number={214} repo="esphome-core" />
+* lib: Add TOGGLE payload to more components <PR number={212} repo="esphome-core" /> (new-feature)
+* lib: ESP8266 Pulse Counter Improve Timing <PR number={205} repo="esphome-core" />
+* lib: Add MQTT Subscribe Sensor <PR number={193} repo="esphome-core" /> (new-feature)
+* docs: Add MQTT Subscribe sensor <PR number={50} repo="esphome-docs" /> (new-feature)
+* yaml: Add MQTT Subscribe sensor <PR number={175} /> (new-feature)
+* yaml: MQTT different log level <PR number={167} /> (new-feature)
+* docs: Add option to have different log level over MQTT <PR number={51} repo="esphome-docs" /> (new-feature)
+* yaml: Add clean build files command and auto-clean on version change <PR number={181} /> (new-feature)
+* lib: Add power on value to switch <PR number={207} repo="esphome-core" /> (new-feature)
+* lib: Rework OTA to be more stable <PR number={204} repo="esphome-core" /> (breaking-change) (new-feature)
+* yaml: Rework OTA to be more stable <PR number={177} /> (new-feature)
+* lib: Fix WiFi not working when GPIO 0 connected <PR number={215} repo="esphome-core" />
+* lib: Fix MiFlora illuminance reading <PR number={220} repo="esphome-core" />
+* lib: Remove invalid file headers <PR number={219} repo="esphome-core" />
+* yaml: Fix config dump time output <PR number={184} />
+* lib: GPIO Switch Rewrite <PR number={217} repo="esphome-core" />
+* docs: Add power on value to GPIO Switch <PR number={55} repo="esphome-docs" /> (new-feature)
+* yaml: Decentralize Automation Generator Code <PR number={182} />
+* lib: Add PN532 On Tag Trigger <PR number={226} repo="esphome-core" /> (new-feature)
+* lib: Add text sensors <PR number={194} repo="esphome-core" /> (new-feature)
+* docs: Add Text sensors <PR number={52} repo="esphome-docs" /> (new-feature)
+* lib: Fix PCF8574 assert. <PR number={223} repo="esphome-core" /> by <GHUser name="lobradov" />
+* lib: Unify Xiaomi MiJia&MiFlora Implementations <PR number={225} repo="esphome-core" />
+* docs: Unify xiaomi implementations <PR number={56} repo="esphome-docs" />
+* yaml: Unify Xiaomi implementations <PR number={188} />
+* lib: Add CSE7766 for Sonoff Pow R2 <PR number={227} repo="esphome-core" /> (new-feature)
+* docs: Add CSE7766 for Sonoff Pow R2 <PR number={59} repo="esphome-docs" /> (new-feature)
+* docs: Add PN532 On Tag Trigger <PR number={57} repo="esphome-docs" /> (new-feature)
+* yaml: Add CSE776 for Sonoff Pow R2 <PR number={190} /> (new-feature)
+* yaml: Add Text Sensors <PR number={166} /> (new-feature)
+* yaml: Add PN532 On Tag Trigger <PR number={189} /> (new-feature)
+* lib: Add MQTT publish JSON action and subscribe JSON trigger <PR number={230} repo="esphome-core" /> (new-feature)
+* yaml: Add MQTT publish JSON action and subscribe JSON trigger <PR number={193} /> (new-feature)
+* docs: Add MQTT publish JSON action and subscribe JSON trigger <PR number={60} repo="esphome-docs" /> (new-feature)
+* lib: Add PMSX003 Particulate Matter Sensor <PR number={229} repo="esphome-core" /> (new-feature)
+* docs: Add PMSX003 Particulate Matter Sensor <PR number={58} repo="esphome-docs" /> (new-feature)
+* lib: Add update component action and scripts <PR number={232} repo="esphome-core" /> (new-feature)
+* docs: Add update component action and scripts <PR number={61} repo="esphome-docs" /> (new-feature)
+* lib: Implement HASS device registry for MQTT components <PR number={233} repo="esphome-core" /> (new-feature)
+* lib: Add FastLED color correction option <PR number={234} repo="esphome-core" /> (new-feature)
+* docs: Add FastLED color correction option <PR number={64} repo="esphome-docs" /> (new-feature)
+* yaml: Add update component action and scripts <PR number={196} /> (new-feature)
+* yaml: Add PMSX003 Particulate Matter Sensor <PR number={192} /> (new-feature)
+* yaml: Add FastLED color correction option <PR number={200} /> (new-feature)
+* yaml: Fix triggers being interpreted as a sequence of automations <PR number={199} />
+* yaml: Fix value range trigger :expressionless: <PR number={201} />
+* lib: Make naming convention consistent <PR number={231} repo="esphome-core" /> (breaking-change)
+* docs: Make naming convention consistent <PR number={62} repo="esphome-docs" /> (breaking-change)
+* docs: Fix some typos <PR number={65} repo="esphome-docs" />
+* yaml: Improve API naming convention consistency <PR number={197} /> (breaking-change)
+* yaml: Fix some typos <PR number={202} />
+* docs: Add logger.log action <PR number={63} repo="esphome-docs" /> (new-feature)
+* yaml: Add logger.log action <PR number={198} /> (new-feature)
+* docs: Fix template sensor docs <PR number={66} repo="esphome-docs" />
+* docs: Fix text sensor outdated API docs <PR number={70} repo="esphome-docs" />
+* docs: Add Stepper Support <PR number={68} repo="esphome-docs" /> (new-feature)
+* lib: Add stepper motor support <PR number={239} repo="esphome-core" /> (new-feature)
+* lib: Add send_first_at option to sliding window sensor filter <PR number={240} repo="esphome-core" /> (new-feature)
+* docs: Add send_first_at option to sliding window sensor filter <PR number={69} repo="esphome-docs" /> (new-feature)
+* lib: Fix display line drawing algorithm <PR number={241} repo="esphome-core" />
+* lib: Fix availability calculation <PR number={242} repo="esphome-core" />
+* yaml: Add Stepper Motor Support <PR number={206} /> (new-feature)
+* yaml: Add send_first_at option to sliding window sensor filter <PR number={207} /> (new-feature)
+* docs: Switch example to Dehumidifier, minor grammar/puncuation <PR number={67} repo="esphome-docs" /> by <GHUser name="rorpage" />
+* docs: Tiny typo fix. <PR number={73} repo="esphome-docs" /> by <GHUser name="corbanmailloux" />
+* yaml: Auto-Decode stacktraces <PR number={214} /> (new-feature)
+* docs: Fix a broken link to setting up a BLE tracker. <PR number={72} repo="esphome-docs" /> by <GHUser name="corbanmailloux" />
+* yaml: Add generate home assistant config command <PR number={208} /> (new-feature)
+* yaml: Update Gitlab Build Script <PR number={215} />
+* lib: Fix status binary sensor always reporting false internally <PR number={257} repo="esphome-core" />
+* yaml: Fix HLW8012 Voltage Divider option not being added to source <PR number={224} />
+* lib: Fix HLW8012 Initial Value Reporting <PR number={254} repo="esphome-core" />
+* lib: Clean up Time API <PR number={253} repo="esphome-core" />
+* yaml: Better typing to components <PR number={225} />
+* lib: Support uploading OTA updates over web server <PR number={255} repo="esphome-core" /> (new-feature)
+* lib: Save and Restore states from RTC memory <PR number={258} repo="esphome-core" /> (new-feature)
+* docs: Revert add power_on_value to gpio switch <PR number={78} repo="esphome-docs" />
+* lib: Improve default log levels and log sources <PR number={264} repo="esphome-core" />
+* lib: OTA Read back server acknowledgement <PR number={263} repo="esphome-core" />
+* lib: Add Multi Click Trigger to binary sensor <PR number={262} repo="esphome-core" /> (new-feature)
+* docs: Add binary sensor on multi click trigger <PR number={77} repo="esphome-docs" /> (new-feature)
+* lib: ESP32 BLE Release Bluetooth Classic Memory <PR number={261} repo="esphome-core" />
+* yaml: Add restore state option to template switch <PR number={222} />
+* docs: Advertise esphomeflasher <PR number={76} repo="esphome-docs" /> (new-feature)
+* docs: Replace table generator with custom RST directive <PR number={75} repo="esphome-docs" />
+* yaml: Clean up time API <PR number={221} />
+* yaml: Revert Add power on value to GPIO switch <PR number={223} />
+* yaml: Add binary sensor multi click trigger <PR number={226} /> (new-feature)
+* lib: Add Total Daily Energy Sensor <PR number={256} repo="esphome-core" /> (new-feature)
+* yaml: Add total daily energy sensor <PR number={220} /> (new-feature)
+* docs: Add total daily energy sensor <PR number={79} repo="esphome-docs" />
+* lib: Introduce new setup phase: "dump config" to allow fully-offline operation <PR number={267} repo="esphome-core" />
+* yaml: Let esphomeyaml know about class inheritance <PR number={229} />
+* docs: ESP32 deep sleep wake up multiple pins <PR number={81} repo="esphome-docs" />
+* yaml: Deep Sleep Wake Up From Multiple Pins <PR number={230} />
+* lib: Deep Sleep Multi Wakeup <PR number={268} repo="esphome-core" />
+* lib: MY9231/MY9291 LED driver support <PR number={266} repo="esphome-core" /> by <GHUser name="puuu" /> (new-feature)
+* yaml: Add MY9231 support <PR number={227} /> by <GHUser name="puuu" /> (new-feature)
+* docs: MY9231/MY9291 LED driver documentation <PR number={80} repo="esphome-docs" /> by <GHUser name="puuu" /> (new-feature)
+* docs: SEO Optimization <PR number={82} repo="esphome-docs" />
+
+{/* markdownlint-enable MD013 */}
+
+## All Changelogs
+
+

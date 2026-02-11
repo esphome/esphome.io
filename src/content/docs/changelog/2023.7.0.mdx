@@ -1,0 +1,176 @@
+---
+description: "Changelog for ESPHome 2023.7.0."
+title: "ESPHome 2023.7.0 - 19th July 2023"
+pagefind: false
+slug: "changelog/2023.7.0"
+---
+
+import PR from "@components/PR.astro";
+import GHUser from "@components/GHUser.astro";
+
+- [XL9535 I/O Expander](/components/xl9535/)
+- [Zio Ultrasonic Sensor](/components/sensor/zio_ultrasonic/)
+- [Alpha3](/components/sensor/alpha3/)
+- [PCF8563 RTC](/components/time/pcf8563/)
+- [TT21100](/components/touchscreen/tt21100/)
+- [Grove TB6612FNG](/components/grove_tb6612fng/)
+- [ATM90E26](/components/sensor/atm90e26/)
+- [Duty Time](/components/sensor/duty_time/)
+
+## Webserver with ESP-IDF
+
+This releases adds support for the [Webserver](/components/web_server/) and
+[Captive Portal](/components/captive_portal/) when using the `esp-idf` framework on ESP32 boards.
+
+## Display components
+
+This release adds a few changes to the display core code to optimise and allow for future
+improvements which are already in progress. This also may bring breaking changes to the internal APIs that
+`external_components` may be relying on.
+
+## A new warning in the logs
+
+```text
+[00:00:00][W][component:204]: Component xxxxxx took a long time for an operation (x.xx s).
+[00:00:00][W][component:205]: Components should block for at most 20-30ms.
+```
+
+These 2 log lines may show up in the most recent version of ESPHome due to the log level being changed from
+`verbose` to `warning`. I made this change because changing the device log level to verbose just to see if these
+lines show up significantly slowed down the device due to all the extra logging it had to do.
+
+Please do not report new issues for this, but [comment on this issue](https://github.com/esphome/issues/issues/4717)
+if someone has not already commented for that specific component.
+
+## Full list of changes
+
+{/* markdownlint-disable MD013 */}
+
+### New Components
+
+- XL9535 I/O Expander <PR number={4899} /> by <GHUser name="mreditor97" /> (new-integration)
+- Add Zio Ultrasonic Distance Sensor Component <PR number={5059} /> by <GHUser name="kahrendt" /> (new-integration)
+- Add Alpha3 pump component <PR number={3787} /> by <GHUser name="jan-hofmeier" /> (new-integration)
+- RTC implementation of pcf8563 <PR number={4998} /> by <GHUser name="KoenBreeman" /> (new-integration)
+- web server esp idf support <PR number={3500} /> by <GHUser name="dentra" /> (new-integration)
+- Add TT21100 touchscreen component <PR number={4793} /> by <GHUser name="kroimon" /> (new-integration)
+- Add support for Grove tb6612 fng <PR number={4797} /> by <GHUser name="max246" /> (new-integration)
+- Add support for ATM90E26 <PR number={4366} /> by <GHUser name="danieltwagner" /> (new-integration)
+- New 'Duty Time' sensor component <PR number={5069} /> by <GHUser name="dudanov" /> (new-integration)
+
+### Breaking Changes
+
+- display: add `BaseFont` and introduce `Font::draw` methods <PR number={4963} /> by <GHUser name="ayufan" /> (breaking-change)
+- display: Rename `display.DisplayBufferRef` to `display.DisplayRef` used by lambda <PR number={5002} /> by <GHUser name="ayufan" /> (breaking-change)
+- Remove template switch restore_state <PR number={5106} /> by <GHUser name="jesserockz" /> (breaking-change)
+
+### Beta Changes
+
+- Dont do mqtt ip lookup if `use_address` has ip address <PR number={5096} /> by <GHUser name="jesserockz" />
+- ESP32 enable ADC2 when wifi is disabled <PR number={4381} /> by <GHUser name="pciavald" />
+- [Sprinkler] Resume fixes <PR number={5100} /> by <GHUser name="hostcc" />
+- Remove template switch restore_state <PR number={5106} /> by <GHUser name="jesserockz" /> (breaking-change)
+- Add timeout filter <PR number={5104} /> by <GHUser name="clydebarrow" />
+- P1 values for capacity tariff in Belgium <PR number={5081} /> by <GHUser name="bwynants" />
+- airthings_wave: Silence compiler warnings <PR number={5098} /> by <GHUser name="kpfleming" />
+- Sigma delta fix <PR number={4911} /> by <GHUser name="PlainTechEnthusiast" />
+- [LD2410] Remove baud_rate check <PR number={5112} /> by <GHUser name="voed" />
+- Fix silence detection flag on voice assistant <PR number={5120} /> by <GHUser name="jesserockz" />
+
+## Release 2023.7.1 - August 1
+
+- Dashboard: use Popen() on Windows <PR number={5110} /> by <GHUser name="kuba2k2" />
+- Swap ADC back to use 'int' because C3 <PR number={5151} /> by <GHUser name="kbx81" />
+- wifi: handle WIFI_REASON_ROAMING reason in event <PR number={5153} /> by <GHUser name="stintel" />
+- Slightly lower template switch setup priority <PR number={5163} /> by <GHUser name="cvwillegen" />
+- update "Can't convert" warning to match others in homeassistant_sensor <PR number={5162} /> by <GHUser name="PlainTechEnthusiast" />
+- Increase maximum number of BLE notifications <PR number={5155} /> by <GHUser name="bdraco" />
+- invert min_rssi check <PR number={5150} /> by <GHUser name="Jorre05" />
+- Fix graininess & streaks for 7.50inV2alt Waveshare e-paper <PR number={5168} /> by <GHUser name="Egglestron" />
+
+### All changes
+
+- Upgraded Haier climate component implementation <PR number={4521} /> by <GHUser name="paveldn" />
+- display: add `BaseFont` and introduce `Font::draw` methods <PR number={4963} /> by <GHUser name="ayufan" /> (breaking-change)
+- display/font: optimise font rendering by about 25% <PR number={4956} /> by <GHUser name="ayufan" />
+- display: move `Rect` into `rect.cpp/.h` <PR number={4957} /> by <GHUser name="ayufan" />
+- Bump pytest from 7.3.1 to 7.3.2 <PR number={4936} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Add read/write for 16bit registers <PR number={4844} /> by <GHUser name="CarsonF" />
+- XL9535 I/O Expander <PR number={4899} /> by <GHUser name="mreditor97" /> (new-integration)
+- Fix python venv restoring <PR number={4965} /> by <GHUser name="jesserockz" />
+- Preprocess away unused code when IPv6 is disabled <PR number={4973} /> by <GHUser name="HeMan" />
+- Bump aioesphomeapi from 14.0.0 to 14.1.0 <PR number={4972} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Add actions to animation <PR number={4959} /> by <GHUser name="guillempages" />
+- Bump zeroconf from 0.63.0 to 0.69.0 <PR number={4970} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- mqtt: add ESP-IDF ≥ 5.0 support <PR number={4854} /> by <GHUser name="stintel" />
+- display: move `Image`, `Font` and `Animation` code into components <PR number={4967} /> by <GHUser name="ayufan" />
+- support empty schemas and one platform components <PR number={4999} /> by <GHUser name="glmnet" />
+- update dsmr to 0.7 <PR number={5011} /> by <GHUser name="Pvlerick" />
+- add water delivered to dsmr component <PR number={4237} /> by <GHUser name="jerome992" />
+- Update sync workflow <PR number={5017} /> by <GHUser name="jesserockz" />
+- Bump aioesphomeapi from 14.1.0 to 15.0.0 <PR number={5012} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Bump pyupgrade from 3.4.0 to 3.7.0 <PR number={4971} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Bump pytest from 7.3.2 to 7.4.0 <PR number={5000} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Attempt to fix script parameters <PR number={4627} /> by <GHUser name="jesserockz" />
+- Remove yaml test cache <PR number={5019} /> by <GHUser name="jesserockz" />
+- Bump esptool from 4.6 to 4.6.2 <PR number={4949} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Bump pytest-mock from 3.10.0 to 3.11.1 <PR number={4977} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- binary_sensor removed unused filter <PR number={5039} /> by <GHUser name="dudanov" />
+- binary_sensor filters templatable delays <PR number={5029} /> by <GHUser name="dudanov" />
+- Improve the gamma settings for the S3-Box-lite display <PR number={5046} /> by <GHUser name="guillempages" />
+- Prepare ethernet to work with esp idf 5.0 <PR number={5037} /> by <GHUser name="HeMan" />
+- Prepare debug and logger component to work with idf 5.0 <PR number={5036} /> by <GHUser name="HeMan" />
+- Mopeka std fixes <PR number={5041} /> by <GHUser name="Fabian-Schmidt" />
+- Adjust signature for on_disconnect <PR number={5009} /> by <GHUser name="bdraco" />
+- Log component long time message at warning level <PR number={5048} /> by <GHUser name="jesserockz" />
+- Log start of i2c setup <PR number={5049} /> by <GHUser name="jesserockz" />
+- Initial debug component support for rp2040 <PR number={5056} /> by <GHUser name="HeMan" />
+- Fix when idf component has broken symlinks <PR number={5058} /> by <GHUser name="jesserockz" />
+- Some tests wasn't running (locally) <PR number={5050} /> by <GHUser name="HeMan" />
+- [ILI9xxx] Add ili9488_a (alternative gamma configuration for ILI9488) <PR number={5027} /> by <GHUser name="lnicolas83" />
+- [ili9xxx] Allow config of spi data rate. <PR number={4701} /> by <GHUser name="Fabian-Schmidt" />
+- Make scheduler debuging work with idf ≥ 5 <PR number={5052} /> by <GHUser name="HeMan" />
+- Adds 1.54" e-ink display (gdew0154m09) support to waveshare_epaper component <PR number={4939} /> by <GHUser name="tobiasoort" />
+- display: split `DisplayBuffer` and `Display` <PR number={5001} /> by <GHUser name="ayufan" />
+- Fixed ili9xxx_display update() method <PR number={5013} /> by <GHUser name="nielsnl68" />
+- [Ethernet] ksz8081rna support <PR number={4739} /> by <GHUser name="Fabian-Schmidt" />
+- Improve BME680 BSEC sensor device classes <PR number={4859} /> by <GHUser name="trvrnrth" />
+- Update RP2040 Aruino framwork and platform to latest <PR number={5025} /> by <GHUser name="HeMan" />
+- Allow pillow versions over 10 <PR number={5071} /> by <GHUser name="HeMan" />
+- display: Rename `display.DisplayBufferRef` to `display.DisplayRef` used by lambda <PR number={5002} /> by <GHUser name="ayufan" /> (breaking-change)
+- Add Zio Ultrasonic Distance Sensor Component <PR number={5059} /> by <GHUser name="kahrendt" /> (new-integration)
+- Add Alpha3 pump component <PR number={3787} /> by <GHUser name="jan-hofmeier" /> (new-integration)
+- RTC implementation of pcf8563 <PR number={4998} /> by <GHUser name="KoenBreeman" /> (new-integration)
+- web server esp idf support <PR number={3500} /> by <GHUser name="dentra" /> (new-integration)
+- Add TT21100 touchscreen component <PR number={4793} /> by <GHUser name="kroimon" /> (new-integration)
+- tuya_light: fix float->int conversion while setting color temperature <PR number={5067} /> by <GHUser name="kswt" />
+- Fix typo in mpu6050.cpp <PR number={5086} /> by <GHUser name="stefanklug" />
+- airthings_wave: Battery level reporting <PR number={4979} /> by <GHUser name="kpfleming" />
+- Add support for Grove tb6612 fng <PR number={4797} /> by <GHUser name="max246" /> (new-integration)
+- Add MCP2515 12MHz xtal support <PR number={5089} /> by <GHUser name="clydebarrow" />
+- Correct message for standard transmission. <PR number={5088} /> by <GHUser name="clydebarrow" />
+- Restrict pillow to versions before 10.0.0 <PR number={5090} /> by <GHUser name="jesserockz" />
+- Bump esphome-dashboard to 20230711.0 <PR number={5085} /> by <GHUser name="jesserockz" />
+- added uart final validate data bits <PR number={5079} /> by <GHUser name="dudanov" />
+- Add support for ATM90E26 <PR number={4366} /> by <GHUser name="danieltwagner" /> (new-integration)
+- Grove amend name <PR number={5093} /> by <GHUser name="max246" />
+- Fixing colon for tm1637 display if inverted set true <PR number={5072} /> by <GHUser name="paveldn" />
+- Fix use of `optional<T>` <PR number={5091} /> by <GHUser name="dudanov" />
+- New 'Duty Time' sensor component <PR number={5069} /> by <GHUser name="dudanov" /> (new-integration)
+- Fix PIDController::in_deadband() to give correct result when error is zero <PR number={5078} /> by <GHUser name="lewissbaker" />
+- Edit error message for pillow install to add version restrictions <PR number={5094} /> by <GHUser name="jesserockz" />
+- Dont do mqtt ip lookup if `use_address` has ip address <PR number={5096} /> by <GHUser name="jesserockz" />
+- ESP32 enable ADC2 when wifi is disabled <PR number={4381} /> by <GHUser name="pciavald" />
+- [Sprinkler] Resume fixes <PR number={5100} /> by <GHUser name="hostcc" />
+- Remove template switch restore_state <PR number={5106} /> by <GHUser name="jesserockz" /> (breaking-change)
+- Add timeout filter <PR number={5104} /> by <GHUser name="clydebarrow" />
+- P1 values for capacity tariff in Belgium <PR number={5081} /> by <GHUser name="bwynants" />
+- airthings_wave: Silence compiler warnings <PR number={5098} /> by <GHUser name="kpfleming" />
+- Sigma delta fix <PR number={4911} /> by <GHUser name="PlainTechEnthusiast" />
+- [LD2410] Remove baud_rate check <PR number={5112} /> by <GHUser name="voed" />
+- Fix silence detection flag on voice assistant <PR number={5120} /> by <GHUser name="jesserockz" />
+
+{/* markdownlint-enable MD013 */}
+
+## All Changelogs
+

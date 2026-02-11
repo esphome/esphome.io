@@ -1,0 +1,32 @@
+---
+description: "Instructions for setting up buttons that can remotely shut down the ESP."
+title: "Shutdown Button"
+---
+
+import { Image } from 'astro:assets';
+
+The `shutdown` button platform allows you to shutdown your node remotely
+through Home Assistant. It does this by putting the node into deep sleep mode with no
+wakeup source selected. After enabling, the only way to startup the ESP again is by
+pressing the reset button or restarting the power supply.
+
+<Image src="/images/shutdown-ui.png" width={452} height={80} layout="constrained" alt="" />
+
+```yaml
+# Example configuration entry
+button:
+  - platform: shutdown
+    name: "Living Room Shutdown"
+```
+
+## Configuration variables
+
+- All options from [Button](/components/button#config-button).
+
+## See Also
+
+- [Restart](/restart/)
+- [Safe Mode](/safe_mode/)
+- [Factory Reset](/factory_reset/)
+- [Shutdown](/components/switch/shutdown/)
+- [Template](/template/)

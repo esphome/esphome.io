@@ -1,0 +1,183 @@
+---
+description: "Changelog for ESPHome 2024.9.0."
+title: "ESPHome 2024.9.0 - 18th September 2024"
+pagefind: false
+slug: "changelog/2024.9.0"
+---
+
+import PR from "@components/PR.astro";
+import GHUser from "@components/GHUser.astro";
+
+
+- [UDP](/components/udp/)
+- [StatsD](/components/statsd/)
+- [BL0906](/components/sensor/bl0906/)
+- [CH422G](/components/ch422g/)
+- [BMP280 SPI](/components/sensor/bmp280/)
+- [LTR501 & LTR301 & LTR558](/components/sensor/ltr501/)
+
+
+## UDP & StatsD Components
+
+This release brings two new data driven components to ESPHome.
+
+The first is the [UDP Component](/components/udp/) which allows direct communication between ESPHome
+devices over the local network. To start off, only sensor and binary sensor data can be transmitted, and
+hopefully more entity types will be supported in the future.
+
+Next is the [StatsD Component](/components/statsd/) which allows you to send sensor data
+directly to a statsd server for monitoring.
+
+## Breaking Changes
+
+There are a few breaking changes this release that will require changes in YAML if you are
+using the affected components. Please make sure to check the list below for details about each one.
+The documentation is always the best place to find the most up-to-date information on configuration for
+any given component found in ESPHome.
+
+## Thank you for your support
+
+Did you know that Jesse and Keith both are employed at [Nabu Casa](https://nabucasa.com/) to work full-time on ESPHome?
+Yep, that's possible thanks to everyone who subscribes to Home Assistant Cloud. Thank you!
+
+{/* markdownlint-disable MD013 */}
+
+## Release 2024.9.1 - September 23
+
+- Copy active wake words to message <PR number={7481} /> by <GHUser name="synesthesiam" />
+
+## Release 2024.9.2 - October 1
+
+- fix bl0906 reset energy action <PR number={7488} /> by <GHUser name="ssieb" />
+- [config_validation] Fix bug with extras on schemas <PR number={7497} /> by <GHUser name="jesserockz" />
+- Prevent rp2040 randomly breaking the build <PR number={7507} /> by <GHUser name="nkinnan" />
+- [rp2040] Always use maxgerhardt platform fork <PR number={7514} /> by <GHUser name="jesserockz" />
+
+## Full list of changes
+
+### New Components
+
+- Add support for BL0906 energy meter <PR number={7339} /> by <GHUser name="tarontop" /> (new-integration)
+- [udp] Implement UDP sensor broadcast <PR number={6865} /> by <GHUser name="clydebarrow" /> (new-integration)
+- CH422G support <PR number={7356} /> by <GHUser name="jesterret" /> (new-integration)
+- Add StatsD component <PR number={6642} /> by <GHUser name="Links2004" /> (new-integration)
+- Add support for using BMP280 with SPI <PR number={7053} /> by <GHUser name="ademuri" /> (new-integration) (breaking-change)
+- LTR-501, LTR-301, LTR-558 Series of Lite-On Light (ALS) and Proximity(PS) sensors <PR number={6262} /> by <GHUser name="latonita" /> (new-integration)
+
+### Breaking Changes
+
+- [ili9xxx] Make `invert_colors` required <PR number={7292} /> by <GHUser name="gvdhoven" /> (breaking-change)
+- Add support for using BMP280 with SPI <PR number={7053} /> by <GHUser name="ademuri" /> (new-integration) (breaking-change)
+- Move I2S config settings the the base i2sAudio files. Phase 1 <PR number={7183} /> by <GHUser name="nielsnl68" /> (breaking-change)
+- [i2s_audio] Add more options to speakers and microphones <PR number={7306} /> by <GHUser name="pyos" /> (breaking-change)
+
+### Beta Changes
+
+- [voice-assistant] Dont error on `no_wake_word` timeout error with streaming wake word <PR number={7435} /> by <GHUser name="jesserockz" />
+- Improve manufacturer data tracing to identify BLE devices a bit easie… <PR number={7332} /> by <GHUser name="tomer-w" />
+- Add sample_bytes to media player supported format <PR number={7451} /> by <GHUser name="synesthesiam" />
+- [docker] Bump git from 1:2.39.2-1.1 to 1:2.39.5-0+deb12u1 <PR number={7452} /> by <GHUser name="jesserockz" />
+- Add voice assistant configuration messages <PR number={7445} /> by <GHUser name="synesthesiam" />
+- Dont replace project name spaces with underlines <PR number={7455} /> by <GHUser name="jesserockz" />
+- Add voice assistant methods for configuration <PR number={7459} /> by <GHUser name="synesthesiam" />
+
+### All changes
+
+- [code-quality] fix performance-unnecessary-value-param <PR number={7274} /> by <GHUser name="tomaszduda23" />
+- [code-quality] fix clang-tidy prometheus <PR number={7284} /> by <GHUser name="tomaszduda23" />
+- [code-quality] fix clang-tidy ota <PR number={7282} /> by <GHUser name="tomaszduda23" />
+- [code-quality] fix clang-tidy e131 <PR number={7281} /> by <GHUser name="tomaszduda23" />
+- [code-quality] fix clang-tidy wireguard <PR number={7287} /> by <GHUser name="tomaszduda23" />
+- [code-quality] fix clang-tidy improv_serial <PR number={7283} /> by <GHUser name="tomaszduda23" />
+- [code-quality] fix clang-tidy captive_portal <PR number={7280} /> by <GHUser name="tomaszduda23" />
+- Add HMAC-MD5 support for authenticating OTA updates <PR number={7200} /> by <GHUser name="dwmw2" /> (new-integration)
+- [const] Add UNIT_LITRE <PR number={7317} /> by <GHUser name="Roving-Ronin" />
+- [code-quality] fix clang-tidy socket <PR number={7285} /> by <GHUser name="tomaszduda23" />
+- [code-quality] fix clang-tidy cstddef <PR number={7324} /> by <GHUser name="tomaszduda23" />
+- Add output source priority "hybrid" <PR number={7322} /> by <GHUser name="syssi" />
+- Enable verbose mode from env ESPHOME_VERBOSE or --verbose <PR number={6987} /> by <GHUser name="ptr727" />
+- Tuya Number: allow to set hidden datapoints <PR number={7024} /> by <GHUser name="szupi-ipuzs" />
+- feat: Expand ByteBuffer <PR number={7316} /> by <GHUser name="Rapsssito" />
+- [ledc] Tweak fix in #6997 <PR number={7336} /> by <GHUser name="kbx81" />
+- [ledc] Fix maximum brightness on ESP-IDF 5.1 <PR number={7342} /> by <GHUser name="clydebarrow" />
+- [lvgl] Bug fixes: <PR number={7341} /> by <GHUser name="clydebarrow" />
+- [const] Move `CONF_LINE_FREQUENCY` to const.py <PR number={7351} /> by <GHUser name="jesserockz" />
+- bl0942: Fix init sequence, add address and line_frequency options <PR number={7250} /> by <GHUser name="dwmw2" />
+- Add supported formats to media player <PR number={7318} /> by <GHUser name="synesthesiam" />
+- Add reset to esp32_rmt_led_strip <PR number={7354} /> by <GHUser name="angelnu" />
+- [ili9xxx] Make `invert_colors` required <PR number={7292} /> by <GHUser name="gvdhoven" /> (breaking-change)
+- Add WS2811 to esp32_rmt_led_strip <PR number={7353} /> by <GHUser name="angelnu" />
+- [lvgl] Add lvgl.widget.focus action and related triggers. <PR number={7315} /> by <GHUser name="clydebarrow" />
+- esp32_can: suppress compiler warning <PR number={7372} /> by <GHUser name="mrk-its" />
+- Add support for BL0906 energy meter <PR number={7339} /> by <GHUser name="tarontop" /> (new-integration)
+- [platformio] Add environments for ESP-IDF 5.3 for development <PR number={7371} /> by <GHUser name="clydebarrow" />
+- [lvgl] Bug fixes <PR number={7370} /> by <GHUser name="clydebarrow" />
+- [bytebuffer] Use existing bit_cast operations. <PR number={7374} /> by <GHUser name="clydebarrow" />
+- Bump actions/setup-python from 5.1.0 to 5.2.0 <PR number={7375} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Bump actions/setup-python from 5.1.1 to 5.2.0 in /.github/actions/restore-python <PR number={7376} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- [gt911] Add reset pin config <PR number={7373} /> by <GHUser name="clydebarrow" />
+- [st7701s] Add delay feature in init sequences <PR number={7343} /> by <GHUser name="clydebarrow" />
+- Add now required `invert_colors` option to test files referencing ili9xxx <PR number={7367} /> by <GHUser name="clydebarrow" />
+- esp32_can: make queue lengths configurable <PR number={7361} /> by <GHUser name="mrk-its" />
+- [code-quality] fix clang-tidy web_server and web_server_base <PR number={7286} /> by <GHUser name="tomaszduda23" />
+- Update MiCS Values <PR number={7173} /> by <GHUser name="TrevorSchirmer" />
+- Tuya Number: allow restoring value of hidden datapoints <PR number={7346} /> by <GHUser name="szupi-ipuzs" />
+- [udp] Implement UDP sensor broadcast <PR number={6865} /> by <GHUser name="clydebarrow" /> (new-integration)
+- update logs for bluetooth proxy <PR number={7382} /> by <GHUser name="tomaszduda23" />
+- [font] Make display an auto-load, not a dependency <PR number={7366} /> by <GHUser name="clydebarrow" />
+- CH422G support <PR number={7356} /> by <GHUser name="jesterret" /> (new-integration)
+- [rpi_dpi_rgb] Add enable_pin and reset_display method to driver <PR number={7383} /> by <GHUser name="lboue" />
+- Bump actions/upload-artifact from 4.3.4 to 4.4.0 <PR number={7379} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Fix build for esp32h2 using esp-idf 5.3 <PR number={7393} /> by <GHUser name="mrene" />
+- Bump mDNS and follow ruff's suggestions <PR number={7308} /> by <GHUser name="HeMan" />
+- Bump rp2040 Arduino platform and framework <PR number={7134} /> by <GHUser name="HeMan" />
+- [gree] Add support for YX1FF remote <PR number={7298} /> by <GHUser name="dangreco" />
+- [modbus_controller] Allow duplicate command config <PR number={7311} /> by <GHUser name="0x3333" />
+- Better support for task blocking ring buffer reads and writes <PR number={7390} /> by <GHUser name="kahrendt" />
+- Bump pypa/gh-action-pypi-publish from 1.9.0 to 1.10.0 <PR number={7395} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- [api] Remove id from `MediaPlayerSupportedFormat` <PR number={7406} /> by <GHUser name="jesserockz" />
+- Drop max BLE client connections limitation <PR number={7088} /> by <GHUser name="syssi" />
+- [bl0942] loop and overflow cleanup <PR number={7358} /> by <GHUser name="dwmw2" />
+- Bump peter-evans/create-pull-request from 6.1.0 to 7.0.0 <PR number={7405} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Bump pypa/gh-action-pypi-publish from 1.10.0 to 1.10.1 <PR number={7404} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Voice assist improvement - configurable conversation_id timeout <PR number={7385} /> by <GHUser name="jeffc" />
+- Support BL0942 calibration <PR number={7299} /> by <GHUser name="dwmw2" />
+- [micro_wake_word] Remove duplicated download code <PR number={7401} /> by <GHUser name="jesserockz" />
+- Add StatsD component <PR number={6642} /> by <GHUser name="Links2004" /> (new-integration)
+- [homeassistant-switch] Support different entity domains <PR number={7331} /> by <GHUser name="jesserockz" />
+- Add support for using BMP280 with SPI <PR number={7053} /> by <GHUser name="ademuri" /> (new-integration) (breaking-change)
+- Add voice assistant announce <PR number={7377} /> by <GHUser name="synesthesiam" />
+- [lvgl] Msgbox fixes and enhancements <PR number={7380} /> by <GHUser name="clydebarrow" />
+- libretiny: Allow specifying version of explicitly imported sources <PR number={7408} /> by <GHUser name="dwmw2" />
+- [libretiny] Report version 1.7.0 for 'dev' and 'latest' <PR number={7415} /> by <GHUser name="dwmw2" />
+- LTR-501, LTR-301, LTR-558 Series of Lite-On Light (ALS) and Proximity(PS) sensors <PR number={6262} /> by <GHUser name="latonita" /> (new-integration)
+- Fix armv7 container builds <PR number={7426} /> by <GHUser name="jesserockz" />
+- [gh-actions] Don't produce docker build summaries <PR number={7430} /> by <GHUser name="jesserockz" />
+- Add BK72xx support to require_framework_version() <PR number={7409} /> by <GHUser name="dwmw2" />
+- Switch IPv6 platform check to use require_framework_version() <PR number={7410} /> by <GHUser name="dwmw2" />
+- [bl0942] Improve energy reporting <PR number={7428} /> by <GHUser name="dwmw2" />
+- [rpi_dpi_rgb] Add bounce_buffer config for ESP-IDF 5.x <PR number={7423} /> by <GHUser name="clydebarrow" />
+- [LVGL] Add color gradients <PR number={7427} /> by <GHUser name="clydebarrow" />
+- [dsmr] Add internal 'telegram' text_sensor to support bridging <PR number={6841} /> by <GHUser name="marcovaneck" />
+- Pull in new AsyncTCP for IPv6 on BK72xx <PR number={7431} /> by <GHUser name="dwmw2" />
+- Bump LibreTiny recommended version to 1.7.0 <PR number={7432} /> by <GHUser name="dwmw2" />
+- Enable IPv6 support for BK72xx <PR number={7398} /> by <GHUser name="dwmw2" />
+- Move I2S config settings the the base i2sAudio files. Phase 1 <PR number={7183} /> by <GHUser name="nielsnl68" /> (breaking-change)
+- Implement all supported thermocouple types for MAX31856 <PR number={7218} /> by <GHUser name="ArkanStasarik" />
+- [i2s_audio] Add more options to speakers and microphones <PR number={7306} /> by <GHUser name="pyos" /> (breaking-change)
+- [uponor_smatrix] Modifies sending algorithm <PR number={7326} /> by <GHUser name="skasi7" />
+- User configurable frame buffer. <PR number={7360} /> by <GHUser name="ajwahab" />
+- [Modbus Controller] Added preference to change command retries <PR number={7312} /> by <GHUser name="0x3333" />
+- [voice-assistant] Dont error on `no_wake_word` timeout error with streaming wake word <PR number={7435} /> by <GHUser name="jesserockz" />
+- Improve manufacturer data tracing to identify BLE devices a bit easie… <PR number={7332} /> by <GHUser name="tomer-w" />
+- Add sample_bytes to media player supported format <PR number={7451} /> by <GHUser name="synesthesiam" />
+- [docker] Bump git from 1:2.39.2-1.1 to 1:2.39.5-0+deb12u1 <PR number={7452} /> by <GHUser name="jesserockz" />
+- Add voice assistant configuration messages <PR number={7445} /> by <GHUser name="synesthesiam" />
+- Dont replace project name spaces with underlines <PR number={7455} /> by <GHUser name="jesserockz" />
+- Add voice assistant methods for configuration <PR number={7459} /> by <GHUser name="synesthesiam" />
+
+{/* markdownlint-enable MD013 */}
+
+## All Changelogs
+
+

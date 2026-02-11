@@ -1,0 +1,190 @@
+---
+description: "Changelog for ESPHome version 1.12.0."
+title: "Changelog - Version 1.12.0"
+pagefind: false
+slug: "changelog/v1.12.0"
+---
+
+import PR from "@components/PR.astro";
+import GHUser from "@components/GHUser.astro";
+
+{/* markdownlint-disable MD013 */}
+
+- [User-Defined Services](/components/api.html#user-defined-services/)
+- [ESP32 Camera](/components/esp32_camera/)
+- [MPR121](/components/binary_sensor/mpr121/)
+- [SDS011](/components/sensor/sds011/)
+- [MCP23017](/components/mcp230xx/)
+- [Servo](/components/servo/)
+- [WiFi Info](/components/text_sensor/wifi_info/)
+
+It's release day! 🎉 Today I'm happy to release ESPHome 1.12.0. What's new? A lot of awesome
+stuff got added! Let me walk you through it:
+
+Before 1.12, it was only possible to transfer data from ESPHome to Home Assistant (with the
+`homeassistant.service` call). With 1.12 you get [User-defined services](/components/api#api-device-actions),
+just define a service in your ESPHome file and call it like any other service from HA. All the
+rest (like variables, data validation, etc) are handled automatically!
+
+[ESP32 Camera Support](/components/esp32_camera/): This is huge. When integrating cameras
+into your smart home you'd always have to weigh between security and price; cheap cameras often
+are very insecure (and sometimes even exposed on the web). And even the pricier ones would
+sometimes phone back to the manufacturer and upload your data. With ESPHome, everything's 100%
+local and communicates *directly* with Home Assistant. It took a bit longer than I initially
+anticipated to iron out most stability issues, but with 1.12.0 it's finally here :)
+
+And thanks very much to <GHUser name="puuu" /> for the [SDS011 Particulate Matter integration](/components/sensor/sds011/) and
+<GHUser name="mvturnho" /> for the newly added
+[MPR121 Capacitive Touch sensor](/components/binary_sensor/mpr121/) support!
+
+And as always, this release contains tons of small adjustments (like automatically providing
+suggestions for validation errors) and bug fixes to make your life easier.
+
+## Breaking Changes
+
+- The `timeout_meter` and `timeout_time` options of the ultrasonic sensor
+  have been merged into `timeout`. ([Ultrasonic](/components/sensor/ultrasonic/))
+
+- Ultrasonic Sensor no longer works with GPIO16 as echo pin on ESP8266s because
+  the implementation switched to an asynchronous interrupt mode.
+
+## Other notable changes
+
+- Added `calibrate_linear` sensor filter for easier calibration of sensors
+  ([sensor-filter-calibrate_linear](/components/sensor/filter/multiply#sensor-filter-calibrate_linear))
+
+- Added `for` parameter to [binary_sensor.is_on](/components/binary_sensor#binary_sensor-is_on_condition) condition.
+- Added `streamer_mode`, `status_use_ping` and `relative_url` options to the Hass.io addon
+  (see addon description).
+
+- Improved validation. For small typos for config variables similar keys are automatically
+  suggested.
+
+- Added `esp8266_restore_from_flash` to [esphome section](/components/esphome/) which
+  enables restoring state from flash instead of RTC memory - this allows recovering relay state
+  even after a power cycle.
+
+- Added ability
+- `!secret` values are now hidden for config validation.
+- Rotary Encoders have a new `min_value` and `max_value` option. ([Rotary Encoder](/components/sensor/rotary_encoder/))
+- Fixed OTA not working for ESP32 when BLE enabled.
+- Added a "delete" button in the dashboard interface to delete configuration files.
+- Reworked GPIO interrupts, this will fix a bunch of issues with components that use interrupts
+  (rotary encoder, software uart, remote receiver, ...)
+
+- Allowed the use of newest Arduino Core version for ESP8266: `2.5.0` (not default yet,
+  please try it out on non-critical devices and report if there are no wifi issues)
+
+## Release 1.12.1 - March 20
+
+- core: Fix homeassistant mqtt discovery for light components <PR number={553} repo="esphome-core" /> by <GHUser name="puuu" />
+- esphome: Fix filter_out: nan filer <PR number={486} />
+- docs: Sonoff S20 yaml fix <PR number={200} repo="esphome-docs" /> by <GHUser name="BananaPukeh" />
+- core: Fix WiFi Info Text Sensor <PR number={554} repo="esphome-core" />
+- core: Fix addressable lights starting white at boot <PR number={556} repo="esphome-core" />
+- esphome: Fix IPAddress in validate secret <PR number={488} />
+
+## Release 1.12.2 - March 31
+
+- esphome: Better symlink support under Windows <PR number={487} /> by <GHUser name="glmnet" />
+- core: Fix WiFi Info sensor for ESP32 <PR number={561} repo="esphome-core" />
+- core: Revert ultrasonic sensor to non-interrupt mode <PR number={562} repo="esphome-core" />
+- core: Fix web_server for text_sensors <PR number={567} repo="esphome-core" />
+- core: Fix ESP8266 cannot OTA after failed OTA attempt <PR number={564} repo="esphome-core" />
+- core: ESP8266 SDK Core 2.3.0 compat <PR number={563} repo="esphome-core" />
+- esphome: ESP8266 SDK 2.3.0 compat <PR number={490} />
+- docs: Expand USB flashing, clarify how to report a bug. <PR number={204} repo="esphome-docs" /> by <GHUser name="balloob" />
+- core: Fix dallas on GPIO0 <PR number={568} repo="esphome-core" />
+- docs: Fix api homeassistant.service docs <PR number={209} repo="esphome-docs" /> by <GHUser name="davericher" />
+- esphome: Upgrade ESPAsyncTCP to 1.2.0 <PR number={497} />
+- core: Upgrade espasynctcp <PR number={576} repo="esphome-core" />
+- esphome: Fix dashboard wizard unicode <PR number={494} />
+- esphome: Fix text sensor MQTT settings <PR number={495} />
+- core: Split up WiFi ESP32 and ESP8266 implementation <PR number={572} repo="esphome-core" />
+- core: Fix MCP23017 to work on OUTPUT mode. <PR number={571} repo="esphome-core" /> by <GHUser name="puerari" />
+- core: Disable wifi interface on shutdown <PR number={566} repo="esphome-core" />
+- core: Fix light flashes <PR number={578} repo="esphome-core" />
+- core: Rewrite PN532 to fix some lowvbat issues <PR number={575} repo="esphome-core" />
+- core: cse7766 fix <PR number={558} repo="esphome-core" /> by <GHUser name="brianrjones69" />
+- esphome: Upgrade docker base image to 1.4.3 <PR number={499} />
+- core: Fix neopixelbus logging causes section type conflict <PR number={579} repo="esphome-core" />
+
+## All changes
+
+- core: Fix feed_wdt <PR number={520} repo="esphome-core" />
+- core: Speed up waveshare Epaper <PR number={518} repo="esphome-core" />
+- esphome: Improve dashboard setup wizard <PR number={450} />
+- core: Add MPR121 support for esphome-core <PR number={517} repo="esphome-core" /> by <GHUser name="mvturnho" />
+- esphome: Add MPR121 Capacitive Touch Sensor <PR number={449} /> by <GHUser name="mvturnho" />
+- core: Add restore state from flash option <PR number={530} repo="esphome-core" />
+- esphome: Add restore state from flash option <PR number={459} />
+- docs: Add restore state from flash option <PR number={181} repo="esphome-docs" />
+- esphome: Automatically hide secrets in validation <PR number={455} />
+- core: Add nextion commands <PR number={523} repo="esphome-core" />
+- core: Add logic in Output for minimum power setting <PR number={516} repo="esphome-core" /> by <GHUser name="mtl010957" />
+- esphome: Add handling for min power output setting <PR number={448} /> by <GHUser name="mtl010957" />
+- docs: Update output documentation for min_power configuration <PR number={167} repo="esphome-docs" /> by <GHUser name="mtl010957" />
+- esphome: Recommend similar keys for spelling errors <PR number={458} />
+- core: Convert Automation engine to variadic templates <PR number={519} repo="esphome-core" />
+- core: Add linear calibration filter <PR number={524} repo="esphome-core" />
+- esphome: Convert automation engine to use variadic templates <PR number={452} />
+- docs: Add linear calibration filter <PR number={180} repo="esphome-docs" />
+- core: Add native API User-Defined services <PR number={522} repo="esphome-core" />
+- esphome: Add native API User-Defined services <PR number={453} />
+- esphome: Add linear calibration sensor filter <PR number={454} />
+- docs: Component reshuffle <PR number={183} repo="esphome-docs" /> by <GHUser name="FrengerH" />
+- docs: Add MPR121 support <PR number={176} repo="esphome-docs" /> by <GHUser name="mvturnho" />
+- esphome: Fix os.symlink on Windows <PR number={460} />
+- esphome: Enable i2c scanning by default <PR number={462} />
+- core: Add rotary encoder min/max value <PR number={534} repo="esphome-core" />
+- esphome: Add rotary encoder min/max value <PR number={463} />
+- esphome: Fix gain setting for ADS1115 <PR number={468} /> by <GHUser name="Melkor82" />
+- core: Use clang-format and clang-tidy in CI <PR number={540} repo="esphome-core" />
+- core: Add GPIO interrupt abstraction <PR number={535} repo="esphome-core" />
+- core: Add MCP23017 <PR number={537} repo="esphome-core" />
+- core: Add WiFi/MQTT/API connected condition <PR number={536} repo="esphome-core" />
+- core: Fix debug statement in ESP32 Hall Sensor <PR number={533} repo="esphome-core" /> by <GHUser name="emwap" />
+- core: Remove light mqtt_json warning <PR number={532} repo="esphome-core" />
+- esphome: Add WiFi/MQTT/API connected condition <PR number={465} />
+- esphome: Rewrite interrupt components <PR number={464} />
+- esphome: Add relative_url, streamer_mode, status_use_ping dashboard options <PR number={461} />
+- esphome: Add MCP23017 <PR number={466} />
+- esphome: Allow Arduino Core 2.5.0 for ESP8266 <PR number={469} />
+- core: Add copy output platform <PR number={542} repo="esphome-core" />
+- core: Add 'for' to binary sensor conditions <PR number={541} repo="esphome-core" />
+- esphome: Upgrade ESP32 core to 1.0.1 <PR number={470} />
+- core: Add WiFi Info Text Sensor <PR number={543} repo="esphome-core" />
+- esphome: Add for to binary sensor conditions <PR number={471} />
+- esphome: Add connected condition <PR number={474} />
+- esphome: Add copy output platform <PR number={472} />
+- esphome: Add Wifi info text sensor <PR number={473} />
+- docs: Add text-based sensor example to OLED cookbook entry <PR number={190} repo="esphome-docs" /> by <GHUser name="tubalainen" />
+- docs: H801 Cookbook Edit Language about holding GPIOs during flashing <PR number={189} repo="esphome-docs" /> by <GHUser name="2016for" />
+- docs: Adding manual for Sonoff T1 UK 3 Gang V1.1 <PR number={182} repo="esphome-docs" /> by <GHUser name="nnmalex" />
+- core: Add SDS011 <PR number={538} repo="esphome-core" /> by <GHUser name="puuu" />
+- esphome: Support SDS011 component. <PR number={467} /> by <GHUser name="puuu" />
+- docs: Document SDS011 component <PR number={185} repo="esphome-docs" /> by <GHUser name="puuu" />
+- docs: Add Teckin SP20 (US) example to 'Generic Sonoff' page <PR number={191} repo="esphome-docs" /> by <GHUser name="mjoshd" />
+- esphome: Add color to login error for better visibility <PR number={478} /> by <GHUser name="TheZoker" />
+- core: Fixed: Waveshare 4.2in display timing problem due to high speed SPI u… <PR number={546} repo="esphome-core" /> by <GHUser name="dirkj" />
+- docs: Update information on flashing OTA to old ip <PR number={193} repo="esphome-docs" /> by <GHUser name="tubalainen" />
+- docs: NeopixelBus Light: Fix GPIO2 not GPIO3 for uart1 method <PR number={194} repo="esphome-docs" /> by <GHUser name="Bierchermuesli" />
+- docs: Cookbook Guide for Mirabella Genio Smart Bulbs <PR number={184} repo="esphome-docs" /> by <GHUser name="cryptelli" />
+- docs: Improve bme280_environment cookbook for stable climates <PR number={149} repo="esphome-docs" /> by <GHUser name="hajdbo" />
+- core: SDS011: change type of update_interval_min to uint8_t <PR number={545} repo="esphome-core" /> by <GHUser name="puuu" />
+- core: Add ESP32 camera support <PR number={544} repo="esphome-core" />
+- docs: Cookbook Guide for Brilliant / Mirabella Genio Smart Plugs <PR number={195} repo="esphome-docs" /> by <GHUser name="cryptelli" />
+- esphome: Add ESP32 Camera <PR number={475} />
+- docs: Add native API User-Defined services <PR number={171} repo="esphome-docs" /> (cherry-picked)
+- docs: BME280 environment micrograms -> grams <PR number={198} repo="esphome-docs" /> by <GHUser name="hajdbo" />
+- esphome: Changes for 1.12 <PR number={482} /> (cherry-picked)
+- core: Fixes for 1.12 <PR number={551} repo="esphome-core" /> (cherry-picked)
+- core: More changes for 1.12 <PR number={552} repo="esphome-core" />
+- esphome: More changes for 1.12 <PR number={483} />
+- esphome: Update Hassio base image to 1.4.1 <PR number={484} />
+
+{/* markdownlint-enable MD013 */}
+
+## All Changelogs
+
+

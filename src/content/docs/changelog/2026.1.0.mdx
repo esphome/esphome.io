@@ -1,0 +1,1243 @@
+---
+description: "Changelog for ESPHome 2026.1.0."
+title: "ESPHome 2026.1.0 - January 2026"
+pagefind: false
+slug: "changelog/2026.1.0"
+---
+
+import PR from "@components/PR.astro";
+import GHUser from "@components/GHUser.astro";
+
+
+- [AQI](/components/sensor/aqi/)
+- [Water Heater Core](/components/water_heater/index/)
+- [Template Water Heater](/components/water_heater/template/)
+- [Zigbee End Device](/components/zigbee/)
+- [RD-03D](/components/sensor/rd03d/)
+- [Infrared Core](/components/infrared/index/)
+- [IR/RF Proxy](/components/ir_rf_proxy/)
+
+
+## Release Overview
+
+{/* RELEASE_OVERVIEW_START */}
+ESPHome 2026.1.0 delivers one of the most requested features: automatic WiFi roaming. Devices now switch to better access points after connecting, solving the problem of devices getting stuck on distant APs after power outages or AP reboots.
+
+The web server now uses entity names directly in URLs with collision-free encoding, fixing issues that plagued non-ASCII configurations.
+
+This release completes major security transitions: API password authentication has been removed and API encryption is now required, while OTA updates require SHA256 authentication. ESP-IDF is now the default for ESP32, ESP32-C3, ESP32-S2, and ESP32-S3, delivering up to 40% smaller binaries and faster compile times.
+
+Months of performance optimization work culminates here: heap churn reduction plus allocator work enabled moving heap functions from IRAM to flash (saving ~6KB of IRAM on ESP32), removing object_id storage from RAM saves hundreds to thousands of bytes, zero-copy API support delivers ~42% more entities per packet, and ESP32 camera streaming improves by ~10% with lower latency. These optimizations translate directly into headroom for existing devices and reliability for years to come.
+
+LibreTiny platforms (BK72xx, RTL87xx, LN882x) receive thread-safe WiFi, atomics support, and deep sleep that bring them closer to first-class status. New hardware support includes the RD-03D mmWave radar and BTHome v2 parsing for Xiaomi sensors, while Zigbee on nRF52 expands with sensor, binary sensor, and switch support.
+{/* RELEASE_OVERVIEW_END */}
+
+## Upgrade Checklist
+
+- If you used `api: password:`, replace it with `api: encryption: key:`
+- If you rely on Arduino-only components, explicitly set ESP32 framework to `type: arduino`
+- If you used web server URLs directly, note the new name-based URLs and the `/` restriction in entity names
+- If you have lambdas using Fan, Select, Climate, Event, or Light state methods, check the Lambda API Changes below
+
+## Building forward without leaving users behind
+
+At the end of 2024, ESPHome completed the transition from ESP-IDF 4.x to ESP-IDF 5.x for ESP32. By early 2025, as we began addressing the higher baseline memory costs on ESP32, something important became clear. Users were telling us that their devices were running out of RAM, firmware builds were failing because flash limits were exceeded, and devices that had worked reliably for years were suddenly unstable or impossible to update.
+
+ESPHome had grown powerful.
+It had also grown heavy.
+
+That growth did not happen overnight. Since 2019, the ESPHome codebase has steadily expanded. New components, new platforms, and new capabilities were added year after year. The project kept moving forward because it had to. User demand, new hardware, and ecosystem changes did not wait.
+
+What we did not have for a long time was enough capacity to do more than one hard thing at once.
+
+As we started reducing memory usage on ESP32 in early 2025, the work exposed a broader pattern. ESP8266 does not use ESP-IDF, but the ESP32 transition helped us see something we had missed. As development increasingly focused on ESP32, ESP8266 became less sustainable by default. Not because users needed ESP32 features, but because that was where optimization, testing, and attention naturally concentrated. When configurations became tight or devices unstable, the path of least resistance was often to move to ESP32.
+
+Over time, that behavior became normalized.
+
+The ESP-IDF upgrade forced us to step back and examine why so many users had already migrated. The answer was uncomfortable but clear. ESP8266 was not failing because it could not meet user needs. It was failing because we were no longer treating it as a first class platform. By the time runtime heap on ESP8266 routinely dropped below 10k, the outcome was predictable. Even modest real world configurations became fragile, and we eventually had to advise users not to use ESP8266 at all.
+
+That realization marked a real inflection point.
+
+Not because the ESP32 transition was wrong, but because it revealed a dependency we had allowed to form. Progress had quietly become tied to hardware replacement. People were being left behind, not by design, but by momentum. With millions of ESP8266 devices already deployed and likely to remain in homes for years, that was not an acceptable outcome.
+
+What changed was not direction.
+What changed was scale.
+
+Increased support for the Open Home Foundation changed the equation. With more Home Assistant users supporting the ecosystem through hardware purchases and Home Assistant Cloud subscriptions, ESPHome now has two full time developers and a broader base of part time contributors. That made it possible to keep moving forward while also tackling long standing performance, memory, and sustainability work.
+
+In the middle of 2025, pressure increased again when ESPHome upgraded from Arduino 2 to Arduino 3 for ESP32. The new Arduino core brought important long term improvements, but it also increased baseline RAM and flash usage. On top of the ESP-IDF 5 transition, the impact compounded. Rather than accepting that cost, we made a structural change and moved Arduino to run as an ESP-IDF component.
+
+This gave us tighter control over integration, build behavior, and memory ownership, and allowed us to systematically reduce the overhead introduced by the transition.
+
+Over the following months, work continued in parallel. New components kept landing. New platforms were supported. At the same time, we removed duplication between layers, tightened boundaries, and eliminated unused paths that had quietly accumulated over time. The goal was not just compatibility, but sustainability.
+
+This work was guided by the principles of the Open Home Foundation. Privacy, choice, and sustainability are not abstract ideals. They show up in practical ways, in how long devices remain usable, how often hardware needs to be replaced, and whether users are forced to discard perfectly good devices just to keep their software up to date. We chose sustainability through efficiency.
+
+By the start of 2026, these efforts converged. The ESP-IDF 5 transition, the Arduino 3 integration, and the memory reduction work across ESPHome all fell into place, producing a step change in performance, RAM availability, and flash usage across supported platforms.
+
+The results were tangible.
+
+On ESP8266, available heap increased from under 10k to over 30k in realistic configurations. On a platform that often only has about 45k of heap available when nearly nothing is configured, that shift fundamentally changes what is possible. Devices that were unstable became reliable, and devices that could not be updated regained headroom.
+
+In parallel, we addressed long standing performance and latency issues on ESP32-C3. Bluetooth proxies on this platform were unreliable and frustrating, but through scheduler tuning, memory optimizations, and transport improvements, they are now viable. ESP32-S3 remains the better choice for heavy Bluetooth workloads, but C3 is no longer a dead end.
+
+ESP8266 is no longer a platform we warn users away from. It can continue serving existing deployments well into the future, even as new projects naturally gravitate toward ESP32.
+
+What changed in 2026 is not just memory numbers or latency graphs.
+
+What changed is intent.
+
+ESPHome continues to move forward with new hardware support, new components, and new features, while treating sustainability as a first class requirement rather than an afterthought.
+
+In 2026, ESPHome is faster, leaner, and more durable. It respects the hardware it runs on and the users who already invested in it.
+
+We learned how to move forward without leaving users behind.
+
+{/* FEATURE_HIGHLIGHTS_START */}
+## WiFi Roaming Support
+
+One of the most requested features for years: ESPHome devices now automatically switch to better access points after connecting ([#12809](https://github.com/esphome/esphome/pull/12809)).
+
+This addresses three scenarios where devices get stuck on suboptimal APs:
+
+- **AP reboot** - Device connects to a distant AP while the nearby one restarts, never switches back
+- **Power outage** - Devices connect to whichever AP recovers first, often the worst option
+- **Improv provisioning** - Bluetooth or serial setup may pick a suboptimal AP
+
+For Bluetooth proxies or Z-Wave adapters, a poor WiFi connection cascades into widespread failures. Until now, the only fix was manually restarting each device.
+
+Post-connect roaming is designed for stationary devices and is intentionally conservative. If you already configured 802.11k or 802.11v roaming, post-connect roaming disables itself automatically. Devices scan up to 3 times after connecting (every 5 minutes), skip scanning when signal is already excellent, and only roam when finding a meaningfully better signal. Users shouldn't need to understand RSSI thresholds to get reliable WiFi behavior.
+
+```yaml
+# Enabled by default, but can be disabled:
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  post_connect_roaming: false  # To disable
+```
+
+## Web Server Improvements
+
+The web server now uses entity names directly in URLs instead of sanitized `object_id` values ([#12627](https://github.com/esphome/esphome/pull/12627)), fixing long-standing issues with URL collisions. This change is part of the broader effort to [eliminate `object_id` collisions with non-ASCII characters](https://github.com/esphome/backlog/issues/85) - a key step toward proper UTF-8 support so users can use non-ASCII entity names in Home Assistant without collisions.
+
+**Problems Solved:**
+
+- **UTF-8 name collisions** - Different UTF-8 names like `"温度传感器"` (temperature) and `"湿度传感器"` (humidity) previously both became `"___"`, making them indistinguishable
+- **Sub-device collisions** - Multiple devices with entities named "Temperature" now have unique URLs like `/sensor/Garage/Temperature`
+
+**New URL Format:**
+
+```text
+# Main device entity
+/sensor/Temperature
+
+# Sub-device entity
+/sensor/Garage/Temperature
+
+# UTF-8 names work correctly
+/sensor/温度
+```
+
+Old URLs using `object_id` format (e.g., `/sensor/temperature_sensor`) continue to work during a deprecation period until 2026.7.0.
+
+**SSE Entity IDs:** A deprecation path was added for SSE event entity IDs. The payload now includes a temporary `name_id` field (new format like `sensor/Temperature`) alongside `id` (legacy format like `sensor-temperature`). **Timeline:** In 2026.8.0, `name_id` will be removed and `id` will switch to the new format. Third-party integrations should prefer `name_id` now, falling back to `id` for compatibility with older firmware. Integrations requiring the legacy format after 2026.8.0 must implement their own conversion logic.
+
+**Important restrictions:**
+
+- Names may not include `/` because it is reserved as a URL path separator
+- Names used in URLs are limited to 120 characters
+
+### Brotli Compression for Web Assets
+
+Web server and captive portal assets now use Brotli compression by default, saving significant flash space ([#12959](https://github.com/esphome/esphome/pull/12959)):
+
+- **captive_portal**: 348 bytes saved (24%)
+- **web_server v2**: 1,210 bytes saved (10%)
+- **web_server v3**: 9,420 bytes saved (12%)
+
+## Security Enhancements
+
+This release includes significant security improvements that complete long-standing deprecations:
+
+### API Password Authentication Removed
+
+Password authentication has been **removed** from the API component after being deprecated since May 2022 ([#12819](https://github.com/esphome/esphome/pull/12819)). Password authentication only verified identity while all data was still transmitted in plaintext. Noise-based encryption provides both authentication and a fully encrypted data stream.
+
+**If your configuration still has `password:`, it will fail to compile.** Users must migrate to encryption:
+
+```yaml
+api:
+  encryption:
+    key: !secret api_encryption_key
+# Generate a key with: openssl rand -base64 32
+```
+
+### OTA Authentication Upgraded
+
+MD5 authentication support has been **removed** from OTA updates ([#12707](https://github.com/esphome/esphome/pull/12707)). SHA256 is now mandatory, preventing protocol downgrade attacks.
+
+:::note
+**ESPHome versions before 2025.10.0 that use password authentication cannot OTA to devices running 2026.1.0 or later.**
+
+If you use multiple systems to install and/or update your ESPHome devices, be sure they're all up-to-date! If you need to downgrade to a version before 2025.10.0, downgrade to 2025.12.x first, then OTA to an earlier version.
+:::
+
+### HMAC-SHA256 Support
+
+A new `hmac_sha256` component provides HMAC support using the more secure SHA256 algorithm ([#12437](https://github.com/esphome/esphome/pull/12437)).
+
+## ESP-IDF Default Framework
+
+This release completes the transition announced in ESPHome 2025.8.0: **ESP-IDF is now the default framework** for ESP32, ESP32-C3, ESP32-S2, and ESP32-S3 ([#12746](https://github.com/esphome/esphome/pull/12746)). Users have been warned about this change for months.
+
+**Benefits:**
+
+- **Up to 40% smaller firmware binaries** - More room for features
+- **Up to 2-3x faster compile times** - Quicker development cycles
+- **Better performance** - Improved runtime characteristics
+- **Access to newer features** - Full ESP-IDF capabilities
+
+This release also bumps to ESP-IDF 5.5.2 ([#12681](https://github.com/esphome/esphome/pull/12681)).
+
+To continue using Arduino for components that require it (such as `heatpumpir` or `midea`), explicitly set `type: arduino` in your configuration. See the [Arduino to ESP-IDF Migration Guide](/guides/esp32_arduino_to_idf/) for details.
+
+```yaml
+esp32:
+  board: esp32dev
+  framework:
+    type: arduino  # Explicitly use Arduino if needed
+```
+
+## Performance & Memory Optimizations
+
+This release represents the culmination of months of work to reduce heap churn and memory usage throughout ESPHome, resulting in significant improvements across all platforms.
+
+### Heap Churn Reduction
+
+Systematic elimination of unnecessary dynamic allocations means heap functions (malloc, free, realloc) are now primarily called during setup, not during normal operation. This enabled moving heap functions from IRAM to flash on ESP32, **saving ~6KB of IRAM** ([#12862](https://github.com/esphome/esphome/pull/12862)).
+
+Key optimizations include:
+
+- `StaticVector` and `FixedVector` replacing `std::vector` where sizes are known
+- `const char*` for static strings instead of `std::string`
+- Pre-allocated buffers instead of dynamic allocation in hot paths
+- Stack allocation where possible
+- Audio/video components using pre-allocated ring buffers
+
+### Object ID RAM Removal
+
+The `object_id` field is no longer stored in RAM, saving significant memory especially on ESP8266 ([#12631](https://github.com/esphome/esphome/pull/12631)):
+
+- **ESP8266** (37 entities): ~886 bytes saved (~24 bytes/entity)
+- **ESP32** (102 entities): ~497 bytes saved (~5 bytes/entity)
+- **Large setups** (800 entities): ~3,600 bytes saved
+
+### ESP8266 Memory Optimizations
+
+ESP8266 receives additional memory optimizations:
+
+- **Unused waveform code excluded** - Saves 596 bytes RAM when `esp8266_pwm` is not used ([#12690](https://github.com/esphome/esphome/pull/12690))
+- **Unused Serial objects excluded** - Saves 32-64 bytes RAM ([#12736](https://github.com/esphome/esphome/pull/12736))
+
+### ESP-IDF 5.5.2 Compiler Improvements
+
+The bump to ESP-IDF 5.5.2 includes compiler improvements that reduce flash usage by ~35KB (~4%) on typical ESP32 configurations ([#12681](https://github.com/esphome/esphome/pull/12681)). The libc component alone shrank by ~15KB.
+
+### Logging Optimizations
+
+Over 100 components received logging optimizations that combine consecutive log statements into single calls ([#12838](https://github.com/esphome/esphome/pull/12838), [#12860](https://github.com/esphome/esphome/pull/12860), [#12856](https://github.com/esphome/esphome/pull/12856), and many more). Each `ESP_LOG*` call involves formatting, memory allocation, serial output, and network packet transmission. Combining them significantly reduces event loop blocking and the number of network packets sent to connected clients.
+
+Additional logging improvements:
+
+- **Thread-safe logging on host platform** - Consistent behavior across platforms ([#13010](https://github.com/esphome/esphome/pull/13010))
+- **RAII guards for recursion protection** - Optimized hot path performance ([#13194](https://github.com/esphome/esphome/pull/13194))
+- **StaticVector for log listeners** - Compile-time sizing eliminates heap allocation ([#13196](https://github.com/esphome/esphome/pull/13196))
+
+### Zero-Copy API Protocol
+
+Zero-copy message handling is now complete and enabled by default for all protobuf messages ([#12816](https://github.com/esphome/esphome/pull/12816)), eliminating unnecessary memory copies during API communication. Combined with removing `object_id` from the wire protocol ([#12818](https://github.com/esphome/esphome/pull/12818)) and 33% smaller batch items ([#13199](https://github.com/esphome/esphome/pull/13199)), this provides:
+
+- **~42% more entities per packet** (24 → 34)
+- **Faster Home Assistant reconnects** - especially noticeable for large setups
+- **Reduced protocol overhead** - no longer sending the name twice
+- **Lower CPU usage** - zero-copy eliminates buffer allocations during message processing
+- **33% less RAM per queued message** - batch items reduced from 12 to 8 bytes
+
+### ESP32 Network Latency Reduction
+
+Socket operations on ESP32 now call `lwip_read()` and `lwip_write()` directly instead of going through ESP-IDF's VFS layer ([#13179](https://github.com/esphome/esphome/pull/13179)). This reduces latency for API connections, async TCP, and voice assistant components by eliminating unnecessary function pointer dispatches.
+
+### PSRAM Workaround Optimization
+
+ESP32 r3.0+ users with PSRAM can now save ~10KB of IRAM by setting `minimum_chip_revision: "3.0"` ([#13074](https://github.com/esphome/esphome/pull/13074)). This disables workarounds for silicon bugs that were fixed in newer chip revisions.
+
+## LibreTiny Platform Improvements
+
+LibreTiny platforms (BK72xx, RTL87xx, LN882x) receive significant improvements that bring them closer to first-class platform status:
+
+- **Thread-safe logging** - Prevents buffer corruption and connection failures when non-main tasks log messages ([#13062](https://github.com/esphome/esphome/pull/13062))
+- **Cortex-M4 atomics support** - Enables proper atomic operations on RTL87xx and LN882x platforms ([#13191](https://github.com/esphome/esphome/pull/13191))
+- **Thread-safe WiFi** - Improved WiFi reliability in multi-threaded scenarios ([#13191](https://github.com/esphome/esphome/pull/13191))
+- **Board regeneration** - Updated board definitions with consolidated platform code ([#13191](https://github.com/esphome/esphome/pull/13191))
+- **Deep sleep support** - BK7231n and BK7231t chips now support deep sleep with configurable timer and GPIO wake-up ([#12267](https://github.com/esphome/esphome/pull/12267))
+- **BLE stack disabled on BK7231N** - Saves ~21KB RAM and ~225KB flash since ESPHome has no BLE support on LibreTiny ([#13131](https://github.com/esphome/esphome/pull/13131))
+- **LibreTiny 1.9.2** - Fixes GPIO interrupt issues on LN882H that caused HLW8012/BL0937 power sensors to report zero ([#13077](https://github.com/esphome/esphome/pull/13077))
+
+## New Hardware Support
+
+### RD-03D mmWave Radar
+
+The `rd03d` component adds support for the Ai-Thinker RD-03D 24GHz millimeter-wave radar module with multi-target trajectory tracking ([#12764](https://github.com/esphome/esphome/pull/12764)).
+
+**Features:**
+
+- **Multi-target tracking** - Tracks up to 3 simultaneous targets
+- **Rich sensor data** - X, Y coordinates, speed, distance, and angle for each target
+
+### BTHome MiThermometer
+
+The `bthome_mithermometer` platform enables receiving data from Xiaomi Mijia BLE sensors running PVVX firmware with BTHome v2 format ([#12635](https://github.com/esphome/esphome/pull/12635)). Starting with PVVX firmware version 6, BTHome v2 is the only supported format.
+
+### Air Quality Index Sensor
+
+A new standalone `aqi` sensor computes Air Quality Index from particulate matter readings ([#12203](https://github.com/esphome/esphome/pull/12203), [#12958](https://github.com/esphome/esphome/pull/12958)). It supports both EPA AQI (US) and CAQI (European) calculation methods.
+
+```yaml
+sensor:
+  - platform: pmsx003
+    pm_2_5:
+      id: pm25
+    pm_10_0:
+      id: pm10
+
+  - platform: aqi
+    name: "Air Quality Index"
+    pm_2_5: pm25
+    pm_10_0: pm10
+    calculation_type: AQI  # or CAQI for European standard
+```
+
+## Zigbee Support for nRF52
+
+ESPHome now supports Zigbee on nRF52 platforms, bringing a new connectivity option alongside WiFi, Bluetooth, and Thread:
+
+- **Binary sensor support** - Expose GPIO states via Zigbee ([#11535](https://github.com/esphome/esphome/pull/11535))
+- **Sensor support** - Expose ESPHome sensors via Zigbee's Analog Input cluster with automatic unit mapping ([#12187](https://github.com/esphome/esphome/pull/12187))
+- **Switch support** - Control ESPHome switches via Zigbee as binary output ([#13083](https://github.com/esphome/esphome/pull/13083))
+- **`wipe_on_boot: once`** - Wipe network settings only on first boot, preserving connections after OTA updates
+- **Framework version support** - Configure nRF-SDK version with experimental support for SDK 2.9.2 and 3.2.0 ([#12489](https://github.com/esphome/esphome/pull/12489))
+
+## OTA Rollback Support
+
+ESP32 devices using ESP-IDF now support automatic OTA rollback ([#12460](https://github.com/esphome/esphome/pull/12460)). When enabled (the default), the bootloader automatically rolls back to the previous firmware if the device crashes or resets before the boot is marked as successful.
+
+This feature works with the `safe_mode` component - after a successful boot (determined by the safe_mode boot timer), the firmware is marked as valid. If the device crashes before that point, it automatically rolls back.
+
+**Note:** Your bootloader must be compiled with the appropriate sdkconfig. If upgrading from an older bootloader, a serial flash may be required.
+
+## Platform & Component Improvements
+
+### AC Dimmer ESP-IDF Support
+
+The `ac_dimmer` component now supports ESP-IDF framework in addition to Arduino ([#7072](https://github.com/esphome/esphome/pull/7072)).
+
+### DSMR ESP-IDF Support
+
+The `dsmr` component now supports ESP-IDF framework and fixes multiple bugs with the DSMR parsing ([#11036](https://github.com/esphome/esphome/pull/11036)).
+
+### ESP32 Camera Performance
+
+The `esp32_camera` component received significant performance improvements ([#12601](https://github.com/esphome/esphome/pull/12601)):
+
+- **~10% more frames delivered** during streaming (510-523 vs 467-474 per 60 seconds)
+- **~50% reduction in idle CPU usage** by skipping work when no frames are pending
+- **Lower latency** through burst frame delivery and immediate wake signals instead of polling
+
+## Water Heater Component
+
+ESPHome now includes a dedicated [water_heater](/components/water_heater) entity type for controlling water heaters, boilers, and similar hot water appliances ([#12498](https://github.com/esphome/esphome/pull/12498), [#12516](https://github.com/esphome/esphome/pull/12516), [#12511](https://github.com/esphome/esphome/pull/12511)).
+
+- **Template platform** - Full control via automations and lambdas
+- **Multiple operating modes** - Support for eco, gas, and custom modes
+- **Web server support** - Control and monitor via the built-in web interface
+
+:::note
+Home Assistant integration for water heater entities is not yet available. See [home-assistant/core#159201](https://github.com/home-assistant/core/pull/159201) for progress.
+:::
+
+```yaml
+water_heater:
+  - platform: template
+    name: "Boiler"
+    supported_modes:
+      - eco
+      - gas
+    visual:
+      min_temperature: 10.0
+      max_temperature: 85.0
+```
+
+## Experimental: IR/RF Proxy Component
+
+:::caution
+This component is experimental and the API is likely to change in future releases.
+:::
+
+The new [ir_rf_proxy](/components/ir_rf_proxy) component provides an API-accessible interface for transmitting and receiving infrared and RF signals, bridging Home Assistant with ESPHome's existing `remote_receiver` and `remote_transmitter` components ([#12985](https://github.com/esphome/esphome/pull/12985)).
+
+**Key Features:**
+
+- **Home Assistant integration** - IR/RF transmission and reception exposed through the native API
+- **Flexible hardware support** - Works with both infrared and RF configurations
+- **Raw timing arrays** - Maximum flexibility with minimal on-device processing
+- **Bidirectional operation** - Define multiple proxy instances for transmit and receive
+
+This component is part of a broader effort to make IR & RF easier to use from within Home Assistant. A new experimental `infrared` entity platform ([#13129](https://github.com/esphome/esphome/pull/13129)) provides the underlying infrastructure.
+
+```yaml
+infrared:
+  - platform: ir_rf_proxy
+    name: IR Proxy Transmitter
+    remote_transmitter_id: ir_tx
+  - platform: ir_rf_proxy
+    name: IR Proxy Receiver
+    remote_receiver_id: ir_rx
+```
+
+## Additional Features
+
+- **UART event component** - Trigger ESPHome events when receiving specific UART sequences ([#11765](https://github.com/esphome/esphome/pull/11765))
+- **Templatable MQTT topics** - Dynamic state and command topics via lambdas ([#12441](https://github.com/esphome/esphome/pull/12441))
+- **Update check action** - Trigger HTTP-based update checks from automations ([#12415](https://github.com/esphome/esphome/pull/12415))
+- **SPI flexible data rates** - Any achievable data rate within 5% can now be specified ([#12753](https://github.com/esphome/esphome/pull/12753))
+- **Hub75 improvements** - Rotation support, expanded bit depths (4-12), and brightness action ([#12674](https://github.com/esphome/esphome/pull/12674), [#12521](https://github.com/esphome/esphome/pull/12521))
+- **ESP32 CAN listen-only mode** - Passive bus monitoring without sending ACK signals ([#13084](https://github.com/esphome/esphome/pull/13084))
+- **MMC5603 temperature compensation** - Eliminates thermal variation in magnetometer readings ([#12556](https://github.com/esphome/esphome/pull/12556))
+- **MHZ19 configurable detection range** - Set detection range at setup or dynamically via action ([#12677](https://github.com/esphome/esphome/pull/12677))
+- **ESP32 RMT LED strip inverted logic** - Support for simple transistor-based level shifters ([#12825](https://github.com/esphome/esphome/pull/12825))
+- **ESP32 Hosted HTTP updates** - Fetch coprocessor firmware from remote manifests ([#13090](https://github.com/esphome/esphome/pull/13090))
+- **Thermostat boolean heat_cool_mode** - Simplified configuration without requiring automations ([#13069](https://github.com/esphome/esphome/pull/13069))
+{/* FEATURE_HIGHLIGHTS_END */}
+
+## Breaking Changes
+
+{/* BREAKING_CHANGES_USERS_START */}
+### Platform Changes
+
+- **ESP32**: ESP-IDF is now the default framework for ESP32, ESP32-C3, ESP32-S2, and ESP32-S3. Users who relied on the implicit Arduino default must now explicitly specify `type: arduino` if they need Arduino-specific features or have components that don't yet support ESP-IDF (such as `heatpumpir`, `midea`, or `light` with `wled` effect). [#12746](https://github.com/esphome/esphome/pull/12746)
+
+- **ESP8266**: Unused Arduino Serial objects are now excluded from builds. Users who directly use `Serial` or `Serial1` in lambdas must now explicitly enable them with `enable_serial: true` or `enable_serial1: true` under the `esp8266:` configuration. Most users are unaffected as Serial usage typically goes through the `uart` component. [#12736](https://github.com/esphome/esphome/pull/12736)
+
+- **ESP8266**: Unused waveform code is now excluded from builds when `esp8266_pwm` is not used, saving 596 bytes of RAM. Users who directly use Arduino waveform functions in lambdas must add an `esp8266_pwm` component to their configuration. [#12690](https://github.com/esphome/esphome/pull/12690)
+
+### Security Changes
+
+- **API**: Password authentication has been removed after being deprecated since May 2022. Configurations with `password:` will fail to build. Users must migrate to `encryption:` with a key generated via `openssl rand -base64 32`. [#12819](https://github.com/esphome/esphome/pull/12819)
+
+  ```yaml
+  api:
+    encryption:
+      key: !secret api_encryption_key
+  ```
+
+- **OTA**: ESPHome versions before 2025.10.0 cannot perform OTA updates to devices running this version. MD5 authentication support has been removed; SHA256 is now mandatory. [#12707](https://github.com/esphome/esphome/pull/12707)
+
+### Component Changes
+
+- **Sprinkler**: Internal latching valve support has been removed. The configuration variables `pump_pulse_duration`, `pump_off_switch_id`, `pump_on_switch_id`, `valve_pulse_duration`, `valve_off_switch_id`, and `valve_on_switch_id` are no longer available. Users with latching valves must now use an [H-Bridge switch](/components/switch/hbridge) with the standard `valve_switch_id` and/or `pump_switch_id` configuration. [#12603](https://github.com/esphome/esphome/pull/12603)
+
+- **Web Server**: URLs now use entity names instead of sanitized `object_id` values. Old URLs (e.g., `/sensor/temperature_sensor`) still work but are deprecated and will be removed in 2026.7.0. Additionally, the `/` character is no longer allowed in entity, device, or area names (reserved as URL path separator), and names are limited to 120 characters maximum. [#12627](https://github.com/esphome/esphome/pull/12627)
+
+- **ESP32 Hosted**: The update configuration now requires an explicit `type:` field. Existing embedded mode configurations must add `type: embedded`. A new `type: http` mode allows fetching firmware from remote manifests. [#13090](https://github.com/esphome/esphome/pull/13090)
+
+- **HM3301**: The AQI sensor configuration has been refactored into a shared `aqi` component. Existing `aqi:` configurations under `hm3301` continue to work but the implementation is now shared with `pmsx003`. [#12203](https://github.com/esphome/esphome/pull/12203)
+
+- **MMC5603**: The `auto_set_reset` option is now enabled by default to eliminate temperature-related drift. This reduces maximum read frequency from 150Hz to 75Hz. Users requiring high-frequency reads can set `auto_set_reset: false`. [#12556](https://github.com/esphome/esphome/pull/12556)
+
+- **Ultrasonic**: The `timeout` option is deprecated and will be removed in 2026.8.0. A fixed 80ms measurement timeout is now used to fix reliability issues with some SR04 sensors that have a 12.3ms delay before sending pulses. [#12897](https://github.com/esphome/esphome/pull/12897)
+
+### Behavior Changes
+
+- **API**: The `on_client_disconnected` trigger now fires after the client is removed from the connection list, so `api.connected` correctly reflects the true connection state. Users who added `delay: 1ms` workarounds can remove them. Users who relied on the disconnecting client still being counted may need to adjust their logic. [#13088](https://github.com/esphome/esphome/pull/13088)
+
+- **Display Drivers**: Multiple display drivers now correctly honor clipping for `fill()` and `clear()` operations. Code that relied on the previous (incorrect) behavior where fills ignored clipping regions may produce different results. [#12808](https://github.com/esphome/esphome/pull/12808)
+
+- **Build Info**: The `compilation_time` field in the native API now correctly updates on every compile (previously only updated when `main.cpp` was rebuilt). The version text sensor format has changed to include config hash. [#12425](https://github.com/esphome/esphome/pull/12425)
+
+### Deprecations
+
+- **custom_components folder**: The `custom_components` folder is deprecated and will be removed in 2026.6.0. Users should migrate to `external_components` instead. A warning appears if the folder exists and contains files. [#12552](https://github.com/esphome/esphome/pull/12552)
+
+### Lambda API Changes
+
+Users with lambdas that access component state should note the following changes. These methods now return `StringRef` instead of `const char*`, which is safer but requires minor syntax changes:
+
+- **Fan**: `get_preset_mode()` returns `StringRef`. Use `.empty()` instead of `!= nullptr` checks, and `==` for string comparison instead of `strcmp()`. [#13092](https://github.com/esphome/esphome/pull/13092)
+
+- **Select**: `current_option()` returns `StringRef`. Use `.empty()` instead of `!= nullptr` checks. [#13095](https://github.com/esphome/esphome/pull/13095)
+
+- **Climate**: `get_custom_fan_mode()` and `get_custom_preset()` return `StringRef`. Use `has_custom_fan_mode()` or `.empty()` instead of `!= nullptr` checks. [#13103](https://github.com/esphome/esphome/pull/13103)
+
+- **Event**: `get_last_event_type()` returns `StringRef`. Use `has_event()` or `.empty()` instead of `!= nullptr` checks. [#13104](https://github.com/esphome/esphome/pull/13104)
+
+- **Light**: `get_effect_name()` returns `StringRef` instead of `std::string`. [#13105](https://github.com/esphome/esphome/pull/13105)
+{/* BREAKING_CHANGES_USERS_END */}
+
+### Breaking Changes for Developers
+
+{/* BREAKING_CHANGES_DEVELOPERS_START */}
+- **Application API**: `get_compilation_time()` deprecated (removal 2026.7.0), `get_compilation_time_ref()` removed. Use `get_build_time()` (Unix timestamp), `get_config_hash()`, `get_config_version_hash()`, or `get_build_time_string(buffer)` instead. [#12425](https://github.com/esphome/esphome/pull/12425)
+
+- **Fan API**: `Fan::get_preset_mode()` returns `StringRef` instead of `const char*`. Returns empty ref when no preset is set. Use `has_preset_mode()` or `.empty()` instead of nullptr checks. New `apply_preset_mode_(call)` helper for derived classes. [#13092](https://github.com/esphome/esphome/pull/13092)
+
+- **Select API**: `Select::current_option()` returns `StringRef` instead of `const char*`. Returns empty ref when no state is set. [#13095](https://github.com/esphome/esphome/pull/13095)
+
+- **Climate API**: `Climate::get_custom_fan_mode()` and `Climate::get_custom_preset()` return `StringRef` instead of `const char*`. New `StringRef` overloads for `set_custom_fan_mode_()` and `set_custom_preset_()` protected setters. [#13103](https://github.com/esphome/esphome/pull/13103)
+
+- **Event API**: `Event::get_last_event_type()` returns `StringRef` instead of `const char*`. New `has_event()` method added. [#13104](https://github.com/esphome/esphome/pull/13104)
+
+- **Light API**: `LightEffect::get_name()` returns `StringRef` instead of `const char*`. `LightState::get_effect_name()` returns `StringRef` instead of `std::string`. New `str_equals_case_insensitive(StringRef, StringRef)` helper in `helpers.h`. [#13105](https://github.com/esphome/esphome/pull/13105)
+
+- **ESP8266 Serial**: External components using Arduino `Serial` or `Serial1` directly must call `enable_serial()` or `enable_serial1()` from `esphome.components.esp8266.const` in their `to_code()` function. [#12736](https://github.com/esphome/esphome/pull/12736)
+
+For detailed migration guides and API documentation, see the [ESPHome Developers Documentation](https://developers.esphome.io/).
+{/* BREAKING_CHANGES_DEVELOPERS_END */}
+
+{/* markdownlint-disable MD013 */}
+
+## Release 2026.1.1 - January 22
+
+<details>
+<summary></summary>
+
+- [wifi] Process scan results one at a time to avoid heap allocation <PR number={13400} /> by <GHUser name="bdraco" />
+- [lvgl] Validate LVGL dropdown symbols require Unicode codepoint ≥ 0x100 <PR number={13394} /> by [@Copilot](https://github.com/apps/copilot-swe-agent)
+- [http_request] Fix verify_ssl: false not working on ESP32 <PR number={13422} /> by <GHUser name="swoboda1337" />
+- [esp32] Add warning for experimental 400MHz on ESP32-P4 <PR number={13433} /> by <GHUser name="swoboda1337" />
+- [wifi] Fix bk72xx manual_ip preventing API connection <PR number={13426} /> by <GHUser name="bdraco" />
+- [spi] Fix display init failure by marking displays as write-only for half-duplex mode <PR number={13431} /> by <GHUser name="bdraco" />
+- [http_request] Fix OTA failures on ESP8266/Arduino by making read semantics consistent <PR number={13435} /> by <GHUser name="bdraco" />
+- [dht] Increase delay for DHT22 and RHT03 <PR number={13446} /> by <GHUser name="rguca" />
+- [api] Limit Nagle batching for log messages to reduce LWIP buffer pressure <PR number={13439} /> by <GHUser name="bdraco" />
+- [wifi] Fix stale error_from_callback_ causing immediate connection failures <PR number={13450} /> by <GHUser name="bdraco" />
+- [fingerprint_grow] Use buffer-based dump_summary to fix deprecation warnings <PR number={13447} /> by <GHUser name="swoboda1337" />
+- [aqi] Remove unit_of_measurement to fix Home Assistant warning <PR number={13448} /> by <GHUser name="swoboda1337" />
+- [time] Always call time sync callbacks even when time unchanged <PR number={13456} /> by <GHUser name="bdraco" />
+
+</details>
+
+## Release 2026.1.2 - January 25
+
+<details>
+<summary></summary>
+
+- [st7701s] Fix dump_summary deprecation warning <PR number={13462} /> by <GHUser name="bdraco" />
+- [mipi_rgb] Fix dump_summary deprecation warning <PR number={13463} /> by <GHUser name="bdraco" />
+- [rpi_dpi_rgb] Fix dump_summary deprecation warning <PR number={13461} /> by <GHUser name="bdraco" />
+- [ir_rf_proxy] Remove unnecessary headers, add tests <PR number={13464} /> by <GHUser name="kbx81" />
+- [mipi_rgb] Add software reset command to st7701s init sequence <PR number={13470} /> by <GHUser name="clydebarrow" />
+- [slow_pwm] Fix dump_summary deprecation warning <PR number={13460} /> by <GHUser name="bdraco" />
+- [sen5x] Fix store baseline functionality <PR number={13469} /> by <GHUser name="mikelawrence" />
+- [lvgl] Fix setting empty text <PR number={13494} /> by <GHUser name="clydebarrow" />
+- [light] Fix cwww state restore <PR number={13493} /> by <GHUser name="kbx81" />
+- [rd03d] Fix speed and resolution field order <PR number={13495} /> by <GHUser name="jasstrong" />
+- [modbus_controller] Fix YAML serialization error with custom_command <PR number={13482} /> by <GHUser name="swoboda1337" />
+- [i2c] Increase ESP-IDF I2C transaction timeout from 20ms to 100ms <PR number={13483} /> by <GHUser name="swoboda1337" />
+- [wifi] Fix watchdog timeout on P4 WiFi scan <PR number={13520} /> by <GHUser name="clydebarrow" />
+- [wifi] Fix scan flag race condition causing reconnect failure on ESP8266/LibreTiny <PR number={13514} /> by <GHUser name="bdraco" />
+
+</details>
+
+## Release 2026.1.3 - January 29
+
+<details>
+<summary></summary>
+
+- Update webserver local assets to 20260122-204614 <PR number={13455} /> by <GHUser name="esphomebot" />
+- [mhz19] Fix Uninitialized var warning message <PR number={13526} /> by <GHUser name="sebcaps" />
+- [ota] Improve error message when device closes connection without responding <PR number={13562} /> by <GHUser name="bdraco" />
+- [socket] ESP8266: call delay(0) instead of esp_delay(0, cb) for zero timeout <PR number={13530} /> by <GHUser name="bdraco" />
+- [web_server] Add name_id to SSE for entity ID format migration <PR number={13535} /> by <GHUser name="bdraco" />
+- Update webserver local assets to 20260127-190637 <PR number={13573} /> by <GHUser name="esphomebot" />
+- [ld2450] preserve precision of angle <PR number={13600} /> by <GHUser name="ccutrer" />
+- [wifi] Fix ESP8266 yield panic when WiFi scan fails <PR number={13603} /> by <GHUser name="bdraco" />
+- [http_request] Fix empty body for chunked transfer encoding responses <PR number={13599} /> by <GHUser name="bdraco" />
+
+</details>
+
+## Release 2026.1.4 - February 4
+
+<details>
+<summary></summary>
+
+- [mipi_spi] Fix log_pin() FlashStringHelper compatibility <PR number={13624} /> by <GHUser name="J0k3r2k1" />
+- [max7219] Allocate buffer in constructor <PR number={13660} /> by <GHUser name="swoboda1337" />
+- [mqtt] resolve warnings related to use of ip.str() <PR number={13719} /> by <GHUser name="rwrozelle" />
+- [core] Add missing uint32_t ID overloads for defer() and cancel_defer() <PR number={13720} /> by <GHUser name="bdraco" />
+- [http_request] Fix requests taking full timeout when response is already complete <PR number={13649} /> by <GHUser name="bdraco" />
+- [cse7766] Fix power reading stuck when load switches off <PR number={13734} /> by <GHUser name="bdraco" />
+- [wifi] Fix wifi.connected condition returning false in connect state listener automations <PR number={13733} /> by <GHUser name="bdraco" />
+- [ultrasonic] adjust timeouts and bring the parameter back <PR number={13738} /> by <GHUser name="ssieb" />
+
+</details>
+
+## Full list of changes
+
+### New Features
+
+- [esp32] Add OTA rollback support <PR number={12460} /> by <GHUser name="swoboda1337" /> (new-feature)
+- [hub75] Add set_brightness action <PR number={12521} /> by <GHUser name="stuartparmenter" /> (new-feature)
+- [update] Add check action to trigger update checks <PR number={12415} /> by <GHUser name="rogerfachini" /> (new-feature)
+- [deep_sleep] Deep sleep for BK72xx <PR number={12267} /> by <GHUser name="szupi-ipuzs" /> (new-feature)
+- [mmc5603] enable AUTO_SR_en to compensate for temperature drift <PR number={12556} /> by <GHUser name="pixelgrb" /> (new-feature) (breaking-change)
+- [aqi, hm3301, pmsx003] Air Quality Index improvements <PR number={12203} /> by <GHUser name="jasstrong" /> (new-component) (new-feature) (breaking-change)
+- [water_heater] (1/4)  Implement API/Core/component for new water_heater component <PR number={12498} /> by <GHUser name="dhoeben" /> (new-component) (new-feature)
+- Add Event Component to UART <PR number={11765} /> by <GHUser name="eoasmxd" /> (new-feature) (new-platform)
+- [bme68x_bsec2] add `id:` to allow extending <PR number={12649} /> by <GHUser name="ssieb" /> (new-feature)
+- Add BTHome advertisments parsing to Xiaomi Mijia BLE Sensors <PR number={12635} /> by <GHUser name="nagyrobi" /> (new-component) (new-feature) (new-platform)
+- [spi] Allow any achievable data rate <PR number={12753} /> by <GHUser name="tuct" /> (new-feature)
+- [mhz19] Make detection range configurable <PR number={12677} /> by <GHUser name="jvanderneutstulen" /> (new-feature)
+- [water_heater] (2/4) Implement template for new water_heater component <PR number={12516} /> by <GHUser name="dhoeben" /> (new-feature)
+- [esp32_rmt_led_strip] Support inverted logic <PR number={12825} /> by <GHUser name="Frederic98" /> (new-feature)
+- [water_heater] (4/4) Implement tests for new water_heater component <PR number={12517} /> by <GHUser name="dhoeben" /> (new-feature)
+- [hub75] Bump esp-hub75 version to 0.2.2 <PR number={12674} /> by <GHUser name="stuartparmenter" /> (new-feature)
+- [nrf52,zigbee] add support for binary_input <PR number={11535} /> by <GHUser name="tomaszduda23" /> (new-component) (new-feature)
+- [dsmr] Remove dependency on Arduino framework. Various bug fixes. Add missing sensors. <PR number={11036} /> by <GHUser name="PolarGoose" /> (new-feature)
+- [cc1101] Add freq_offset to on_packet trigger <PR number={13008} /> by <GHUser name="swoboda1337" /> (new-feature)
+- [rd03d] Add Ai-Thinker RD-03D mmWave radar component <PR number={12764} /> by <GHUser name="jasstrong" /> (new-component) (new-feature) (new-platform)
+- [aqi] Implement a sensor that computes AQI <PR number={12958} /> by <GHUser name="jasstrong" /> (new-feature) (new-platform)
+- [nrf52, zigbee] Add sensor <PR number={12187} /> by <GHUser name="tomaszduda23" /> (new-feature)
+- [wifi] Add basic post-connect roaming support for stationary devices <PR number={12809} /> by <GHUser name="bdraco" /> (new-feature)
+- [web_server][captive_portal] Add Brotli compression (saves ~11KB flash when using local)  <PR number={12959} /> by <GHUser name="bdraco" /> (new-feature)
+- [logger] Add thread-safe logging support for LibreTiny platform <PR number={13062} /> by <GHUser name="bdraco" /> (new-feature)
+- [thermostat] Allow `heat_cool_mode` without an automation <PR number={13069} /> by <GHUser name="kbx81" /> (new-feature)
+- [mqtt] Include session_present and reason parameters in connection callbacks <PR number={12413} /> by <GHUser name="Rapsssito" /> (new-feature)
+- [ac_dimmer] Added support for ESP-IDF (5+) <PR number={7072} /> by <GHUser name="latonita" /> (new-feature)
+- [esp32_hosted] Add HTTP-based coprocessor firmware update support <PR number={13090} /> by <GHUser name="swoboda1337" /> (new-feature) (breaking-change)
+- [water_heater] (3/4)  Implement web_server for new water_heater component <PR number={12511} /> by <GHUser name="dhoeben" /> (new-feature)
+- [esp32_can] Add listen-only mode to esp32_can component <PR number={13084} /> by <GHUser name="mikaabra" /> (new-feature)
+- [nrf52,sdk] Add framework version support <PR number={12489} /> by <GHUser name="tomaszduda23" /> (new-feature)
+- [tuya] add color_type_lowercase option <PR number={13101} /> by <GHUser name="lullius" /> (new-feature)
+- [mqtt] templatable state and command topics <PR number={12441} /> by <GHUser name="Rapsssito" /> (new-feature)
+- [ir_rf_proxy] New component <PR number={12985} /> by <GHUser name="kbx81" /> (new-component) (new-feature)
+- [nrf52,zigbee] Add binary output as switch <PR number={13083} /> by <GHUser name="tomaszduda23" /> (new-feature)
+- [epaper_spi] Add Waveshare 2.13v3 <PR number={13117} /> by <GHUser name="clydebarrow" /> (new-feature)
+
+### New Components
+
+- Add hmac-sha256 support <PR number={12437} /> by <GHUser name="dwmw2" /> (new-component)
+- [aqi, hm3301, pmsx003] Air Quality Index improvements <PR number={12203} /> by <GHUser name="jasstrong" /> (new-component) (new-feature) (breaking-change)
+- [water_heater] (1/4)  Implement API/Core/component for new water_heater component <PR number={12498} /> by <GHUser name="dhoeben" /> (new-component) (new-feature)
+- Add BTHome advertisments parsing to Xiaomi Mijia BLE Sensors <PR number={12635} /> by <GHUser name="nagyrobi" /> (new-component) (new-feature) (new-platform)
+- [nrf52,zigbee] add support for binary_input <PR number={11535} /> by <GHUser name="tomaszduda23" /> (new-component) (new-feature)
+- [rd03d] Add Ai-Thinker RD-03D mmWave radar component <PR number={12764} /> by <GHUser name="jasstrong" /> (new-component) (new-feature) (new-platform)
+- [infrared] Implement experimental API/Core/component for new component/entity type <PR number={13129} /> by <GHUser name="kbx81" /> (new-component)
+- [ir_rf_proxy] New component <PR number={12985} /> by <GHUser name="kbx81" /> (new-component) (new-feature)
+
+### New Platforms
+
+- Add Event Component to UART <PR number={11765} /> by <GHUser name="eoasmxd" /> (new-feature) (new-platform)
+- Add BTHome advertisments parsing to Xiaomi Mijia BLE Sensors <PR number={12635} /> by <GHUser name="nagyrobi" /> (new-component) (new-feature) (new-platform)
+- [rd03d] Add Ai-Thinker RD-03D mmWave radar component <PR number={12764} /> by <GHUser name="jasstrong" /> (new-component) (new-feature) (new-platform)
+- [aqi] Implement a sensor that computes AQI <PR number={12958} /> by <GHUser name="jasstrong" /> (new-feature) (new-platform)
+
+### Breaking Changes
+
+- Add build info to image <PR number={12425} /> by <GHUser name="dwmw2" /> (breaking-change)
+- [core] Deprecate custom_components folder <PR number={12552} /> by <GHUser name="swoboda1337" /> (breaking-change)
+- [mmc5603] enable AUTO_SR_en to compensate for temperature drift <PR number={12556} /> by <GHUser name="pixelgrb" /> (new-feature) (breaking-change)
+- [aqi, hm3301, pmsx003] Air Quality Index improvements <PR number={12203} /> by <GHUser name="jasstrong" /> (new-component) (new-feature) (breaking-change)
+- [sprinkler] Remove internal latching valve support <PR number={12603} /> by <GHUser name="kbx81" /> (breaking-change)
+- [esp32] Breaking Change: Change default framework to ESP-IDF <PR number={12746} /> by <GHUser name="bdraco" /> (breaking-change)
+- Fix display driver fill implementations to honor clipping correctly <PR number={12808} /> by <GHUser name="stuartparmenter" /> (breaking-change)
+- [ota] Remove MD5 authentication support <PR number={12707} /> by <GHUser name="bdraco" /> (breaking-change)
+- [web_server] Fix URL collisions with UTF-8 names and sub-devices <PR number={12627} /> by <GHUser name="bdraco" /> (breaking-change)
+- [api] Remove deprecated password authentication <PR number={12819} /> by <GHUser name="bdraco" /> (breaking-change)
+- [ultrasonic] Fix timeout issues and deprecate timeout option <PR number={12897} /> by <GHUser name="swoboda1337" /> (breaking-change)
+- [esp8266] Add enable_serial/enable_serial1 helpers to exclude unused Serial objects <PR number={12736} /> by <GHUser name="bdraco" /> (breaking-change)
+- [api] Fire on_client_disconnected trigger after removing client from list <PR number={13088} /> by <GHUser name="bdraco" /> (breaking-change)
+- [esp32_hosted] Add HTTP-based coprocessor firmware update support <PR number={13090} /> by <GHUser name="swoboda1337" /> (new-feature) (breaking-change)
+- [fan] Return StringRef from get_preset_mode() for safety and modern API <PR number={13092} /> by <GHUser name="bdraco" /> (breaking-change)
+- [select] Return StringRef from current_option() <PR number={13095} /> by <GHUser name="bdraco" /> (breaking-change)
+- [light] Return StringRef from LightEffect::get_name() and LightState::get_effect_name() <PR number={13105} /> by <GHUser name="bdraco" /> (breaking-change)
+- [event] Return StringRef from get_last_event_type() <PR number={13104} /> by <GHUser name="bdraco" /> (breaking-change)
+- [climate] Return StringRef from get_custom_fan_mode() and get_custom_preset() <PR number={13103} /> by <GHUser name="bdraco" /> (breaking-change)
+- [hub75] Bump esp-hub75 version to 0.3.0 <PR number={13243} /> by <GHUser name="stuartparmenter" /> (breaking-change)
+
+### All changes
+
+<details>
+<summary></summary>
+
+- [esp32_ble_client] Use stack-based MAC formatting in auth logging <PR number={12393} /> by <GHUser name="bdraco" />
+- [core] Add constexpr parse_hex_char helper and simplify parse_hex <PR number={12394} /> by <GHUser name="bdraco" />
+- [text] Add integration tests for text command API <PR number={12401} /> by <GHUser name="bdraco" />
+- [climate] Save 48 bytes per entity by conditionally compiling visual overrides <PR number={12406} /> by <GHUser name="bdraco" />
+- [api] Release prologue memory after noise handshake completes <PR number={12412} /> by <GHUser name="bdraco" />
+- Add USE_SHA256 define to sha256 component to enable tests <PR number={12457} /> by <GHUser name="dwmw2" />
+- Add HMAC-MD5 component tests <PR number={12459} /> by <GHUser name="dwmw2" />
+- Add host platform support to MD5 component <PR number={12458} /> by <GHUser name="dwmw2" />
+- Add hmac-sha256 support <PR number={12437} /> by <GHUser name="dwmw2" /> (new-component)
+- Add FNV-1a hash functions <PR number={12502} /> by <GHUser name="dwmw2" />
+- [esp32] Fix serial logging on h2, c2 & c61 <PR number={12522} /> by <GHUser name="zigboi" />
+- [esp32] improve types and variable naming <PR number={12423} /> by <GHUser name="ximex" />
+- [climate] Improve temperature unit regex <PR number={12032} /> by <GHUser name="ximex" />
+- [openthread] channel range, fix typo, use C++17 nested namespace syntax <PR number={12422} /> by <GHUser name="ximex" />
+- [spi] Use ESP-IDF driver for ESP32 Arduino <PR number={12420} /> by <GHUser name="swoboda1337" />
+- [http_request] Use ESP-IDF for ESP32 Arduino <PR number={12428} /> by <GHUser name="swoboda1337" />
+- [esp32] Remove Arduino-specific code from core.cpp <PR number={12501} /> by <GHUser name="swoboda1337" />
+- [ledc,mqtt,resampler] Remove unnecessary ESP-IDF framework restrictions <PR number={12442} /> by <GHUser name="swoboda1337" />
+- [esp32] Add OTA rollback support <PR number={12460} /> by <GHUser name="swoboda1337" /> (new-feature)
+- [hub75] Add set_brightness action <PR number={12521} /> by <GHUser name="stuartparmenter" /> (new-feature)
+- [update] Add check action to trigger update checks <PR number={12415} /> by <GHUser name="rogerfachini" /> (new-feature)
+- [time] Convert to C++17 nested namespace syntax <PR number={12463} /> by <GHUser name="bdraco" />
+- [factory_reset] Optimize memory by storing interval as uint16_t seconds <PR number={12462} /> by <GHUser name="bdraco" />
+- [esphome] Improve OTA field alignment to save 4 bytes on 32-bit <PR number={12461} /> by <GHUser name="bdraco" />
+- [core] Refactor str_snake_case and str_sanitize to use constexpr helpers <PR number={12454} /> by <GHUser name="bdraco" />
+- [deep_sleep] Deep sleep for BK72xx <PR number={12267} /> by <GHUser name="szupi-ipuzs" /> (new-feature)
+- [nextion] Use ESP-IDF for ESP32 Arduino <PR number={9429} /> by <GHUser name="edwardtfn" />
+- [esp32] Store preference keys as uint32_t, convert to string only at NVS boundary <PR number={12494} /> by <GHUser name="bdraco" />
+- [libretiny] Store preference keys as uint32_t, convert to string only at FlashDB boundary <PR number={12500} /> by <GHUser name="bdraco" />
+- [text] Avoid string copies in callbacks by passing const ref <PR number={12504} /> by <GHUser name="bdraco" />
+- [spi] Add SPIInterface stub for clang-tidy on unsupported platforms <PR number={12532} /> by <GHUser name="swoboda1337" />
+- [nextion] Fix clang-tidy error on Zephyr for HTTPClient <PR number={12538} /> by <GHUser name="swoboda1337" />
+- [ci] Check changed headers in clang-tidy when using --changed <PR number={12540} /> by <GHUser name="swoboda1337" />
+- [select] Eliminate string allocation in state callbacks <PR number={12505} /> by <GHUser name="bdraco" />
+- [esp32] Dynamically embed managed component server certificates <PR number={12509} /> by <GHUser name="swoboda1337" />
+- Add build info to image <PR number={12425} /> by <GHUser name="dwmw2" /> (breaking-change)
+- [esp32][libretiny] Avoid duplicate snprintf when syncing preferences <PR number={12542} /> by <GHUser name="bdraco" />
+- [wifi] Reduce scan logging to prevent blocking loop during connection <PR number={12544} /> by <GHUser name="bdraco" />
+- [libretiny] Fix millis() ambiguity on BK72XX <PR number={12534} /> by <GHUser name="swoboda1337" />
+- [api] Remove unused force parameter from encode_message <PR number={12551} /> by <GHUser name="bdraco" />
+- [socket] Refactor socket implementations for memory efficiency and code quality <PR number={12550} /> by <GHUser name="bdraco" />
+- [core] Deprecate custom_components folder <PR number={12552} /> by <GHUser name="swoboda1337" /> (breaking-change)
+- [mmc5603] enable AUTO_SR_en to compensate for temperature drift <PR number={12556} /> by <GHUser name="pixelgrb" /> (new-feature) (breaking-change)
+- [aqi, hm3301, pmsx003] Air Quality Index improvements <PR number={12203} /> by <GHUser name="jasstrong" /> (new-component) (new-feature) (breaking-change)
+- [dht] Fix "Falling edge for bit 39 failed!" for Sonoff THS01 <PR number={9225} /> by <GHUser name="rguca" />
+- [wifi] Replace optional with sentinel values to reduce RAM and clarify API <PR number={12446} /> by <GHUser name="bdraco" />
+- [esp32_ble] Add stack-based UUID formatting to avoid heap allocations <PR number={12510} /> by <GHUser name="bdraco" />
+- [climate] Add zero-copy support for API custom fan mode and preset commands <PR number={12402} /> by <GHUser name="bdraco" />
+- [ota] Replace std::function callbacks with listener interface <PR number={12167} /> by <GHUser name="bdraco" />
+- [alarm_control_panel] Remove redundant per-state callbacks <PR number={12171} /> by <GHUser name="bdraco" />
+- [fan] Add zero-copy support for API preset mode commands <PR number={12404} /> by <GHUser name="bdraco" />
+- [sen5x][sgp4x] Move configuration keys from SEN5x and SGP4x to const.py <PR number={12567} /> by <GHUser name="mebner86" />
+- [core] Migrate entities to use lazy callbacks <PR number={12580} /> by <GHUser name="bdraco" />
+- [tests] Fix race condition in alarm control panel state transitions test <PR number={12581} /> by <GHUser name="bdraco" />
+- [text_sensor] Avoid string copies in callbacks by passing const ref <PR number={12503} /> by <GHUser name="bdraco" />
+- [api] Add zero-copy support for noise encryption key requests <PR number={12405} /> by <GHUser name="bdraco" />
+- [zwave_proxy] Add missing USE_API guards for clang-tidy <PR number={12590} /> by <GHUser name="bdraco" />
+- [const] Add CONF_ON_DATA and consolidate definitions <PR number={12595} /> by <GHUser name="FredM67" />
+- [sprinkler] Squash a few bugs + minor optimization <PR number={12436} /> by <GHUser name="kbx81" />
+- [syslog] Use C++17 nested namespace syntax <PR number={12594} /> by <GHUser name="bdraco" />
+- Add nix files to gitignore <PR number={12604} /> by <GHUser name="polyfloyd" />
+- [syslog] Eliminate heap allocations in log path <PR number={12589} /> by <GHUser name="bdraco" />
+- [api] Add zero-copy support for Home Assistant state response messages <PR number={12585} /> by <GHUser name="bdraco" />
+- [web_server] Replace str_sprintf with stack buffers <PR number={12592} /> by <GHUser name="bdraco" />
+- [water_heater] (1/4)  Implement API/Core/component for new water_heater component <PR number={12498} /> by <GHUser name="dhoeben" /> (new-component) (new-feature)
+- [logger] RP2040: Use write() with known length instead of println() <PR number={12615} /> by <GHUser name="bdraco" />
+- [thermostat] Enhance timer behavior for immediate response to duration changes <PR number={12610} /> by <GHUser name="clinta" />
+- [codegen] Add static storage class to global variables for size optimization <PR number={12616} /> by <GHUser name="bdraco" />
+- [api] Use union for iterators to reduce APIConnection size by ~16 bytes <PR number={12563} /> by <GHUser name="bdraco" />
+- [esp32_ble] Avoid string allocation when setting BLE device name <PR number={12579} /> by <GHUser name="bdraco" />
+- [esp32_camera] Reduce loop overhead and improve frame latency with wake_loop_threadsafe <PR number={12601} /> by <GHUser name="bdraco" />
+- [core] Add zero-allocation object_id methods <PR number={12578} /> by <GHUser name="bdraco" />
+- [core] Remove deprecated config options from before 2025 <PR number={12622} /> by <GHUser name="swoboda1337" />
+- [thermostat] Optimizations to reduce binary size <PR number={12621} /> by <GHUser name="kbx81" />
+- [sprinkler] Remove internal latching valve support <PR number={12603} /> by <GHUser name="kbx81" /> (breaking-change)
+- [esp32] Remove remaining using_esp_idf checks <PR number={12623} /> by <GHUser name="swoboda1337" />
+- [safe_mode] Defer preference sync in clean_rtc to avoid blocking event loop <PR number={12625} /> by <GHUser name="bdraco" />
+- [web_server] Make internal JSON helper methods private <PR number={12624} /> by <GHUser name="bdraco" />
+- [core] Move comment to PROGMEM on ESP8266 <PR number={12554} /> by <GHUser name="bdraco" />
+- [web_server] Use stack buffers for value formatting to reduce flash usage <PR number={12575} /> by <GHUser name="bdraco" />
+- Add Event Component to UART <PR number={11765} /> by <GHUser name="eoasmxd" /> (new-feature) (new-platform)
+- [logger] Zephyr: Use k_str_out() with known length instead of printk() <PR number={12619} /> by <GHUser name="bdraco" />
+- [logger] Host: Use fwrite() with explicit length and remove platform branching <PR number={12628} /> by <GHUser name="bdraco" />
+- [core] Deprecate get_object_id() and migrate remaining usages to get_object_id_to() <PR number={12629} /> by <GHUser name="bdraco" />
+- [alarm_control_panel] Use C++17 nested namespace and remove unused include <PR number={12662} /> by <GHUser name="bdraco" />
+- [text_sensor] Return state by const reference to avoid copies <PR number={12661} /> by <GHUser name="bdraco" />
+- [wifi] Avoid unnecessary string copy in failed connection logging <PR number={12659} /> by <GHUser name="bdraco" />
+- [web_server] Move HTTP header strings to flash on ESP8266 <PR number={12668} /> by <GHUser name="bdraco" />
+- [web_server] Use C++17 nested namespace syntax <PR number={12663} /> by <GHUser name="bdraco" />
+- [wifi_info] Reduce heap allocations in text sensor formatting <PR number={12660} /> by <GHUser name="bdraco" />
+- [esp8266] Native OTA backend to reduce Arduino dependencies <PR number={12675} /> by <GHUser name="bdraco" />
+- [core] Add format_hex_to helper for zero-allocation hex formatting <PR number={12670} /> by <GHUser name="bdraco" />
+- [udp] Use stack buffer for listen address logging in dump_config <PR number={12667} /> by <GHUser name="bdraco" />
+- [wifi] Use StringRef and std::span in WiFiConnectStateListener to avoid allocations <PR number={12672} /> by <GHUser name="bdraco" />
+- [wifi] Eliminate heap allocations in dump_config logging <PR number={12664} /> by <GHUser name="bdraco" />
+- [ethernet] Eliminate heap allocations in dump_config logging <PR number={12665} /> by <GHUser name="bdraco" />
+- [core] Replace USE_ESP_IDF with USE_ESP32 across components <PR number={12673} /> by <GHUser name="swoboda1337" />
+- [internal_temperature] Add ESP32-C5 support <PR number={12713} /> by <GHUser name="Swaptor" />
+- [esp32] Bump to ESP-IDF 5.5.2, Arduino 3.3.5, platform 55.3.35 <PR number={12681} /> by <GHUser name="swoboda1337" />
+- [ota] Use precision format specifier for auth logging <PR number={12706} /> by <GHUser name="bdraco" />
+- [usb_host] sort esp32 variants <PR number={12720} /> by <GHUser name="ximex" />
+- [tests] fix typo mipi tests <PR number={12715} /> by <GHUser name="ximex" />
+- [tests] improve mipi_spi variable naming <PR number={12716} /> by <GHUser name="ximex" />
+- Fixed bug displaying negative numbers in PVVX MiThermometer Display <PR number={12735} /> by <GHUser name="hsand" />
+- [cli] Report program path on host <PR number={12743} /> by <GHUser name="clydebarrow" />
+- [esp32] Breaking Change: Change default framework to ESP-IDF <PR number={12746} /> by <GHUser name="bdraco" /> (breaking-change)
+- [esp32] Add IDF framework source for Arduino builds <PR number={12731} /> by <GHUser name="swoboda1337" />
+- Update dallas_temp.cpp <PR number={12695} /> by <GHUser name="bakroistvan" />
+- [bme68x_bsec2] add `id:` to allow extending <PR number={12649} /> by <GHUser name="ssieb" /> (new-feature)
+- [ethernet_info] Eliminate heap allocations in DNS text sensor <PR number={12756} /> by <GHUser name="bdraco" />
+- [core] Add format_hex_pretty_to buffer helper and reduce code duplication <PR number={12687} /> by <GHUser name="bdraco" />
+- [core] Make LockFreeQueue more widely available <PR number={12766} /> by <GHUser name="clydebarrow" />
+- Add BTHome advertisments parsing to Xiaomi Mijia BLE Sensors <PR number={12635} /> by <GHUser name="nagyrobi" /> (new-component) (new-feature) (new-platform)
+- [mipi_spi] Use stack buffer for hex formatting in verbose logging <PR number={12778} /> by <GHUser name="bdraco" />
+- Fix display driver fill implementations to honor clipping correctly <PR number={12808} /> by <GHUser name="stuartparmenter" /> (breaking-change)
+- [mipi_dsi] Use stack buffer for hex formatting in very verbose logging <PR number={12776} /> by <GHUser name="bdraco" />
+- [mipi_rgb] Use stack buffer for hex formatting in init sequence logging <PR number={12777} /> by <GHUser name="bdraco" />
+- [mitsubishi] Use stack buffer for hex formatting in verbose logging <PR number={12779} /> by <GHUser name="bdraco" />
+- [modbus] Use stack buffer for hex formatting in verbose logging <PR number={12780} /> by <GHUser name="bdraco" />
+- [pn532_spi] Replace format_hex_pretty with stack-based format_hex_pretty_to <PR number={12782} /> by <GHUser name="bdraco" />
+- [qspi_dbi] Replace format_hex_pretty with stack-based format_hex_pretty_to <PR number={12783} /> by <GHUser name="bdraco" />
+- [seeed_mr60bha2] Replace format_hex_pretty with stack-based format_hex_pretty_to <PR number={12784} /> by <GHUser name="bdraco" />
+- [seeed_mr60fda2] Use stack-based format_hex_pretty_to for verbose logging <PR number={12785} /> by <GHUser name="bdraco" />
+- [zwave_proxy] Use stack-based format_hex_pretty_to for very verbose logging <PR number={12786} /> by <GHUser name="bdraco" />
+- [ee895] Use stack-based format_hex_to for verbose logging <PR number={12789} /> by <GHUser name="bdraco" />
+- [mopeka_std_check] Use stack-based format_hex_pretty_to for very verbose logging <PR number={12790} /> by <GHUser name="bdraco" />
+- [espnow] Use stack buffer for hex formatting in verbose logging <PR number={12738} /> by <GHUser name="bdraco" />
+- [i2c] Use stack buffer for hex formatting in verbose logging <PR number={12739} /> by <GHUser name="bdraco" />
+- [hlk_fm22x] Use stack buffer for hex formatting in verbose logging <PR number={12740} /> by <GHUser name="bdraco" />
+- [esp32_ble_tracker] Use stack buffer for hex formatting in very verbose logging <PR number={12741} /> by <GHUser name="bdraco" />
+- [ethernet] Use stack buffer for hex formatting in very verbose logging <PR number={12742} /> by <GHUser name="bdraco" />
+- [ble_client] Use stack buffer for hex formatting in very verbose logging <PR number={12744} /> by <GHUser name="bdraco" />
+- [light] Use StringRef to avoid allocation in JSON effect name serialization <PR number={12758} /> by <GHUser name="bdraco" />
+- [ota] Remove MD5 authentication support <PR number={12707} /> by <GHUser name="bdraco" /> (breaking-change)
+- [xiaomi_*] Use stack-based hex formatting for bindkey logging <PR number={12798} /> by <GHUser name="bdraco" />
+- [usb_cdc_acm] Use stack-based hex formatting in verbose logging <PR number={12792} /> by <GHUser name="bdraco" />
+- [spi] Allow any achievable data rate <PR number={12753} /> by <GHUser name="tuct" /> (new-feature)
+- [api] Auto-generate StringRef for incoming API string fields <PR number={12648} /> by <GHUser name="bdraco" />
+- [core] Remove unused USE_ESP32_FRAMEWORK_ARDUINO ifdefs <PR number={12813} /> by <GHUser name="swoboda1337" />
+- [ultrasonic] Use interrupt-based measurement for reliability <PR number={12617} /> by <GHUser name="swoboda1337" />
+- [web_server] Fix URL collisions with UTF-8 names and sub-devices <PR number={12627} /> by <GHUser name="bdraco" /> (breaking-change)
+- Update webserver local assets to 20260102-230255 <PR number={12817} /> by <GHUser name="esphomebot" />
+- [api] Auto-generate zero-copy pointer access for incoming API bytes fields <PR number={12654} /> by <GHUser name="bdraco" />
+- [api] Use StringRef in handle_action_response to avoid temporary string <PR number={12655} /> by <GHUser name="bdraco" />
+- [packet_transport] Use stack-based format_hex_pretty_to for logging <PR number={12791} /> by <GHUser name="bdraco" />
+- [api] Use pointer to FixedVector for siren tones field <PR number={12657} /> by <GHUser name="bdraco" />
+- [voice_assistant] Use zero-copy buffer access for audio data <PR number={12656} /> by <GHUser name="bdraco" />
+- [ld2410][ld2412][ld2450] Use stack buffers for hex logging <PR number={12688} /> by <GHUser name="bdraco" />
+- [api] Use StringRef in send_action_response and send_execute_service_response <PR number={12658} /> by <GHUser name="bdraco" />
+- [mqtt] Avoid heap allocations when logging IP addresses <PR number={12686} /> by <GHUser name="bdraco" />
+- [tuya] Use stack buffers for hex logging to avoid heap allocations <PR number={12689} /> by <GHUser name="bdraco" />
+- [udp] Avoid heap allocations when joining multicast groups <PR number={12685} /> by <GHUser name="bdraco" />
+- [wifi] Use wifi_ssid_to() to avoid heap allocations in automation and connection checks <PR number={12678} /> by <GHUser name="bdraco" />
+- [captive_portal] Use stack buffer for IP address logging in DNS server <PR number={12679} /> by <GHUser name="bdraco" />
+- [esp32_improv] Use stack buffer for URL formatting to avoid heap allocation <PR number={12682} /> by <GHUser name="bdraco" />
+- [wifi] Use stack buffers for IP address logging to avoid heap allocations <PR number={12680} /> by <GHUser name="bdraco" />
+- [esp32] Add minimum_chip_revision setting and log chip revision at startup <PR number={12696} /> by <GHUser name="bdraco" />
+- [cse7766] Use stack buffer for hex formatting in debug logging <PR number={12732} /> by <GHUser name="bdraco" />
+- [wifi] Use precision format specifier for SSID logging to avoid stack copy <PR number={12704} /> by <GHUser name="bdraco" />
+- [shelly_dimmer] Use stack buffer for hex formatting in command logging <PR number={12721} /> by <GHUser name="bdraco" />
+- [remote_base] Use stack buffer for hex formatting in mirage protocol logging <PR number={12722} /> by <GHUser name="bdraco" />
+- [remote_base] Use stack buffer for hex formatting in haier protocol logging <PR number={12723} /> by <GHUser name="bdraco" />
+- [rc522] Use stack buffers for hex formatting in tag logging <PR number={12725} /> by <GHUser name="bdraco" />
+- [opentherm] Replace heap-allocating format calls with printf format specifiers in debug_error <PR number={12726} /> by <GHUser name="bdraco" />
+- [a01nyub] Use stack buffer for hex formatting in error logging <PR number={12727} /> by <GHUser name="bdraco" />
+- [a02yyuw] Use stack buffer for hex formatting in error logging <PR number={12728} /> by <GHUser name="bdraco" />
+- [jsn_sr04t] Use stack buffer for hex formatting in error logging <PR number={12729} /> by <GHUser name="bdraco" />
+- [sonoff_d1] Use stack buffer for hex formatting in logging <PR number={12730} /> by <GHUser name="bdraco" />
+- [nextion] Use stack buffers for hex formatting in upload logging <PR number={12733} /> by <GHUser name="bdraco" />
+- [epaper_spi] Use stack buffer for hex formatting in command logging <PR number={12734} /> by <GHUser name="bdraco" />
+- [esp32_improv] Use stack buffer for hex formatting in verbose logging <PR number={12737} /> by <GHUser name="bdraco" />
+- [gpio] Avoid heap allocation in dump_summary <PR number={12760} /> by <GHUser name="bdraco" />
+- [core] Remove object_id RAM storage - no longer in hot path after #12627 <PR number={12631} /> by <GHUser name="bdraco" />
+- [api] Remove object_id from API protocol - clients compute it from name #12698 <PR number={12818} /> by <GHUser name="bdraco" />
+- [api] Use stack-based format_hex_pretty_to for packet logging macros <PR number={12788} /> by <GHUser name="bdraco" />
+- [kuntze] Use stack buffer for hex formatting in verbose logging <PR number={12775} /> by <GHUser name="bdraco" />
+- [xiaomi_ble] Use stack-based hex formatting in verbose logging <PR number={12793} /> by <GHUser name="bdraco" />
+- [hte501] Use stack-based hex formatting in verbose logging <PR number={12794} /> by <GHUser name="bdraco" />
+- [addressable_light] Use StringRef to avoid allocation when saving effect name <PR number={12759} /> by <GHUser name="bdraco" />
+- [tee501] Use stack-based hex formatting in verbose logging <PR number={12795} /> by <GHUser name="bdraco" />
+- [gps] add icon for HDOP and use correct state_class for longitude and… <PR number={12718} /> by <GHUser name="ximex" />
+- [vbus] Use stack-based hex formatting in verbose logging <PR number={12796} /> by <GHUser name="bdraco" />
+- [uponor_smatrix] Use stack-based hex formatting in verbose logging <PR number={12797} /> by <GHUser name="bdraco" />
+- [core] Add CONF_ON_START (#12439) <PR number={12440} /> by <GHUser name="robertklep" />
+- [api] Enable zero-copy bytes SOURCE_BOTH messages <PR number={12816} /> by <GHUser name="bdraco" />
+- [esp8266] Exclude unused waveform code to save ~596 bytes RAM <PR number={12690} /> by <GHUser name="bdraco" />
+- [tests] Remove reserved / character from entity names in component tests <PR number={12820} /> by <GHUser name="bdraco" />
+- [uart] make sure that all variables are initialized <PR number={12823} /> by <GHUser name="tomaszduda23" />
+- [api] Remove deprecated password authentication <PR number={12819} /> by <GHUser name="bdraco" /> (breaking-change)
+- [nrf52, zephyr] move nrf52-specific code to nrf52 component <PR number={12582} /> by <GHUser name="mrk-its" />
+- [api] Fix KeyError when running logs after password removal <PR number={12831} /> by <GHUser name="bdraco" />
+- [mhz19] Make detection range configurable <PR number={12677} /> by <GHUser name="jvanderneutstulen" /> (new-feature)
+- [mhz19] Refactor Actions to Parented <PR number={12837} /> by <GHUser name="jvanderneutstulen" />
+- Fix comment typos <PR number={12828} /> by <GHUser name="jhollowe" />
+- [espnow] Use stack-based MAC formatting and remove dead code <PR number={12836} /> by <GHUser name="bdraco" />
+- [wifi] Combine scan result log lines to reduce loop blocking with many matching APs <PR number={12830} /> by <GHUser name="bdraco" />
+- [core] Fix startup delay from setup timing logs when console connected <PR number={12832} /> by <GHUser name="bdraco" />
+- [wifi] Use stack-based MAC formatting in ESP8266 and IDF event handlers <PR number={12834} /> by <GHUser name="bdraco" />
+- [image] Use alternative version of CairoSVG on Windows <PR number={12811} /> by <GHUser name="clydebarrow" />
+- [absolute_humidity] Combine log statements to reduce loop blocking <PR number={12838} /> by <GHUser name="bdraco" />
+- [nrf52] add printk use case documentation <PR number={12839} /> by <GHUser name="tomaszduda23" />
+- [water_heater] (2/4) Implement template for new water_heater component <PR number={12516} /> by <GHUser name="dhoeben" /> (new-feature)
+- [esp32_ble_tracker] Combine log statements to reduce loop blocking <PR number={12860} /> by <GHUser name="bdraco" />
+- [http_request] Combine log statements to reduce loop blocking <PR number={12859} /> by <GHUser name="bdraco" />
+- [water_heater] Combine log statements to reduce loop blocking <PR number={12858} /> by <GHUser name="bdraco" />
+- [update] Combine log statements to reduce loop blocking <PR number={12857} /> by <GHUser name="bdraco" />
+- [ethernet] Combine log statements to reduce loop blocking <PR number={12854} /> by <GHUser name="bdraco" />
+- [uart] Combine log statements to reduce loop blocking <PR number={12855} /> by <GHUser name="bdraco" />
+- [captive_portal] Combine log statements to reduce loop blocking <PR number={12853} /> by <GHUser name="bdraco" />
+- [ac_dimmer] Fix ESP8266 build by requiring waveform support <PR number={12852} /> by <GHUser name="bdraco" />
+- [bp1658cj] Combine log statements to reduce loop blocking <PR number={12851} /> by <GHUser name="bdraco" />
+- [ble_nus] Combine log statements to reduce loop blocking <PR number={12850} /> by <GHUser name="bdraco" />
+- [bedjet] Combine log statements to reduce loop blocking <PR number={12848} /> by <GHUser name="bdraco" />
+- [as3935] Combine log statements to reduce loop blocking <PR number={12846} /> by <GHUser name="bdraco" />
+- [anova] Combine log statements to reduce loop blocking <PR number={12845} /> by <GHUser name="bdraco" />
+- [ads1118] Combine log statements to reduce loop blocking <PR number={12844} /> by <GHUser name="bdraco" />
+- [ads1115] Combine log statements to reduce loop blocking <PR number={12843} /> by <GHUser name="bdraco" />
+- [ade7880] Combine log statements to reduce loop blocking <PR number={12842} /> by <GHUser name="bdraco" />
+- [adc] Combine log statements to reduce loop blocking <PR number={12841} /> by <GHUser name="bdraco" />
+- [esp32_rmt_led_strip] Support inverted logic <PR number={12825} /> by <GHUser name="Frederic98" /> (new-feature)
+- [ac_dimmer] Combine log statements to reduce loop blocking <PR number={12840} /> by <GHUser name="bdraco" />
+- [wifi] Combine log statements to reduce loop blocking <PR number={12856} /> by <GHUser name="bdraco" />
+- [binary_sensor] Combine log statements to reduce loop blocking <PR number={12849} /> by <GHUser name="bdraco" />
+- [esp32] Move heap functions to flash, saving ~6KB <PR number={12862} /> by <GHUser name="bdraco" />
+- [water_heater] (4/4) Implement tests for new water_heater component <PR number={12517} /> by <GHUser name="dhoeben" /> (new-feature)
+- [cst816] Combine log statements to reduce loop blocking <PR number={12872} /> by <GHUser name="bdraco" />
+- [esp_ldo] Combine log statements to reduce loop blocking <PR number={12886} /> by <GHUser name="bdraco" />
+- [epaper_spi] Combine log statements to reduce loop blocking <PR number={12881} /> by <GHUser name="bdraco" />
+- [chsc6x] Combine log statements to reduce loop blocking <PR number={12871} /> by <GHUser name="bdraco" />
+- [cap1188] Combine log statements to reduce loop blocking <PR number={12868} /> by <GHUser name="bdraco" />
+- [dht] Combine log statements to reduce loop blocking <PR number={12877} /> by <GHUser name="bdraco" />
+- [espnow] Combine log statements to reduce loop blocking <PR number={12887} /> by <GHUser name="bdraco" />
+- [esp8266_pwm] Combine log statements to reduce loop blocking <PR number={12885} /> by <GHUser name="bdraco" />
+- [endstop] Combine log statements to reduce loop blocking <PR number={12879} /> by <GHUser name="bdraco" />
+- [fan] Combine log statements to reduce loop blocking <PR number={12889} /> by <GHUser name="bdraco" />
+- [debug] Combine log statements to reduce loop blocking <PR number={12875} /> by <GHUser name="bdraco" />
+- [esp32_ble_client] Combine log statements to reduce loop blocking <PR number={12883} /> by <GHUser name="bdraco" />
+- [ezo_pmp] Combine log statements to reduce loop blocking <PR number={12888} /> by <GHUser name="bdraco" />
+- [esp32_ble_tracker] Make start_scan action idempotent <PR number={12864} /> by <GHUser name="bdraco" />
+- [es8388] Combine log statements to reduce loop blocking <PR number={12882} /> by <GHUser name="bdraco" />
+- [esp32][libretiny] Reuse preference buffer to avoid heap churn <PR number={12890} /> by <GHUser name="bdraco" />
+- [esp32_hosted] Combine log statements to reduce loop blocking <PR number={12884} /> by <GHUser name="bdraco" />
+- [ens160_base] Combine log statements to reduce loop blocking <PR number={12880} /> by <GHUser name="bdraco" />
+- [emmeti] Combine log statements to reduce loop blocking <PR number={12878} /> by <GHUser name="bdraco" />
+- [dfrobot_sen0395] Combine log statements to reduce loop blocking <PR number={12876} /> by <GHUser name="bdraco" />
+- [current_based] Combine log statements to reduce loop blocking <PR number={12873} /> by <GHUser name="bdraco" />
+- [cd74hc4067] Combine log statements to reduce loop blocking <PR number={12870} /> by <GHUser name="bdraco" />
+- [cc1101] Combine log statements to reduce loop blocking <PR number={12869} /> by <GHUser name="bdraco" />
+- [factory_reset] Combine log statements to reduce loop blocking <PR number={12866} /> by <GHUser name="bdraco" />
+- [ultrasonic] Fix timeout issues and deprecate timeout option <PR number={12897} /> by <GHUser name="swoboda1337" /> (breaking-change)
+- [hub75] Bump esp-hub75 version to 0.2.2 <PR number={12674} /> by <GHUser name="stuartparmenter" /> (new-feature)
+- [gcja5] Combine log statements to reduce loop blocking <PR number={12898} /> by <GHUser name="bdraco" />
+- [gl_r01_i2c] Combine log statements to reduce loop blocking <PR number={12899} /> by <GHUser name="bdraco" />
+- [wifi] Fix LibreTiny thread safety with queue-based event handling <PR number={12833} /> by <GHUser name="bdraco" />
+- [openthread] Combine log statements to reduce loop blocking <PR number={12917} /> by <GHUser name="bdraco" />
+- [opentherm] Combine log statements to reduce loop blocking <PR number={12916} /> by <GHUser name="bdraco" />
+- [my9231] Combine log statements to reduce loop blocking <PR number={12915} /> by <GHUser name="bdraco" />
+- [mqtt] Combine log statements to reduce loop blocking <PR number={12914} /> by <GHUser name="bdraco" />
+- [mcp9600] Combine log statements to reduce loop blocking <PR number={12913} /> by <GHUser name="bdraco" />
+- [mcp3204] Combine log statements to reduce loop blocking <PR number={12912} /> by <GHUser name="bdraco" />
+- [hc8] Combine log statements to reduce loop blocking <PR number={12900} /> by <GHUser name="bdraco" />
+- [hlw8012] Combine log statements to reduce loop blocking <PR number={12901} /> by <GHUser name="bdraco" />
+- [honeywellabp] Combine log statements to reduce loop blocking <PR number={12902} /> by <GHUser name="bdraco" />
+- [ina260] Combine log statements to reduce loop blocking <PR number={12903} /> by <GHUser name="bdraco" />
+- [ina2xx_base] Combine log statements to reduce loop blocking <PR number={12904} /> by <GHUser name="bdraco" />
+- [lc709203f] Combine log statements to reduce loop blocking <PR number={12905} /> by <GHUser name="bdraco" />
+- [ledc] Combine log statements to reduce loop blocking <PR number={12906} /> by <GHUser name="bdraco" />
+- [mopeka_std_check] Combine log statements to reduce loop blocking <PR number={12911} /> by <GHUser name="bdraco" />
+- [modbus] Combine log statements to reduce loop blocking <PR number={12910} /> by <GHUser name="bdraco" />
+- [libretiny_pwm] Combine log statements to reduce loop blocking <PR number={12907} /> by <GHUser name="bdraco" />
+- [m5stack_8angle] Combine log statements to reduce loop blocking <PR number={12908} /> by <GHUser name="bdraco" />
+- [vl53l0x] Combine log statements to reduce loop blocking <PR number={12929} /> by <GHUser name="bdraco" />
+- [tuya] Combine log statements to reduce loop blocking <PR number={12924} /> by <GHUser name="bdraco" />
+- [sx1509] Combine log statements to reduce loop blocking <PR number={12920} /> by <GHUser name="bdraco" />
+- [tlc5947] Combine log statements to reduce loop blocking <PR number={12921} /> by <GHUser name="bdraco" />
+- [tmp1075] Combine log statements to reduce loop blocking <PR number={12923} /> by <GHUser name="bdraco" />
+- [uln2003] Combine log statements to reduce loop blocking <PR number={12926} /> by <GHUser name="bdraco" />
+- [mqtt] Combine log statements to reduce loop blocking <PR number={12938} /> by <GHUser name="bdraco" />
+- [usb_uart] Combine log statements to reduce loop blocking <PR number={12928} /> by <GHUser name="bdraco" />
+- [sun] Combine log statements to reduce loop blocking <PR number={12919} /> by <GHUser name="bdraco" />
+- [waveshare_epaper] Combine log statements to reduce loop blocking <PR number={12931} /> by <GHUser name="bdraco" />
+- [usb_host] Combine log statements to reduce loop blocking <PR number={12927} /> by <GHUser name="bdraco" />
+- [wireguard] Combine log statements to reduce loop blocking <PR number={12932} /> by <GHUser name="bdraco" />
+- [xiaomi_xmwsdj04mmc] Combine log statements to reduce loop blocking <PR number={12936} /> by <GHUser name="bdraco" />
+- [ufire_ec] Combine log statements to reduce loop blocking <PR number={12925} /> by <GHUser name="bdraco" />
+- [xpt2046] Combine log statements to reduce loop blocking <PR number={12937} /> by <GHUser name="bdraco" />
+- [wl_134] Combine log statements to reduce loop blocking <PR number={12933} /> by <GHUser name="bdraco" />
+- [x9c] Combine log statements to reduce loop blocking <PR number={12934} /> by <GHUser name="bdraco" />
+- [xgzp68xx] Combine log statements to reduce loop blocking <PR number={12935} /> by <GHUser name="bdraco" />
+- [voice_assistant] Combine log statements to reduce loop blocking <PR number={12930} /> by <GHUser name="bdraco" />
+- [tlc5971] Combine log statements to reduce loop blocking <PR number={12922} /> by <GHUser name="bdraco" />
+- [wifi] Combine log statements to reduce loop blocking <PR number={12939} /> by <GHUser name="bdraco" />
+- [api] Fix message batch size mismatch and improve naming consistency <PR number={12940} /> by <GHUser name="bdraco" />
+- [pcf8574] Combine log statements to reduce loop blocking <PR number={12941} /> by <GHUser name="bdraco" />
+- [qspi_dbi] Combine log statements to reduce loop blocking <PR number={12948} /> by <GHUser name="bdraco" />
+- [pn7160] Combine log statements to reduce loop blocking <PR number={12945} /> by <GHUser name="bdraco" />
+- [rpi_dpi_rgb] Combine log statements to reduce loop blocking <PR number={12953} /> by <GHUser name="bdraco" />
+- [pn7150] Combine log statements to reduce loop blocking <PR number={12944} /> by <GHUser name="bdraco" />
+- [pn532] Combine log statements to reduce loop blocking <PR number={12943} /> by <GHUser name="bdraco" />
+- [pid] Combine log statements to reduce loop blocking <PR number={12942} /> by <GHUser name="bdraco" />
+- [pulse_counter] Combine log statements to reduce loop blocking <PR number={12946} /> by <GHUser name="bdraco" />
+- [qmp6988] Combine log statements to reduce loop blocking <PR number={12947} /> by <GHUser name="bdraco" />
+- [radon_eye_rd200] Combine log statements to reduce loop blocking <PR number={12949} /> by <GHUser name="bdraco" />
+- [remote_base] Combine log statements to reduce loop blocking <PR number={12950} /> by <GHUser name="bdraco" />
+- [remote_receiver] Combine log statements to reduce loop blocking <PR number={12951} /> by <GHUser name="bdraco" />
+- [rp2040_pwm] Combine log statements to reduce loop blocking <PR number={12952} /> by <GHUser name="bdraco" />
+- [shelly_dimmer] Combine log statements to reduce loop blocking <PR number={12956} /> by <GHUser name="bdraco" />
+- [safe_mode] Combine log statements to reduce loop blocking <PR number={12955} /> by <GHUser name="bdraco" />
+- [runtime_stats] Combine log statements to reduce loop blocking <PR number={12954} /> by <GHUser name="bdraco" />
+- [nrf52,zigbee] add support for binary_input <PR number={11535} /> by <GHUser name="tomaszduda23" /> (new-component) (new-feature)
+- [sht3xd] Combine log statements to reduce loop blocking <PR number={12957} /> by <GHUser name="bdraco" />
+- [st7567_i2c] Combine log statements to reduce loop blocking <PR number={12975} /> by <GHUser name="bdraco" />
+- [st7567_spi] Combine log statements to reduce loop blocking <PR number={12976} /> by <GHUser name="bdraco" />
+- [st7789v] Combine log statements to reduce loop blocking <PR number={12978} /> by <GHUser name="bdraco" />
+- [shtcx] Combine log statements to reduce loop blocking <PR number={12960} /> by <GHUser name="bdraco" />
+- [sim800l] Combine log statements to reduce loop blocking <PR number={12961} /> by <GHUser name="bdraco" />
+- [sm16716] Combine log statements to reduce loop blocking <PR number={12962} /> by <GHUser name="bdraco" />
+- [sm2135] Combine log statements to reduce loop blocking <PR number={12963} /> by <GHUser name="bdraco" />
+- [sonoff_d1] Combine log statements to reduce loop blocking <PR number={12966} /> by <GHUser name="bdraco" />
+- [spi_device] Combine log statements to reduce loop blocking <PR number={12967} /> by <GHUser name="bdraco" />
+- [ssd1325_spi] Combine log statements to reduce loop blocking <PR number={12972} /> by <GHUser name="bdraco" />
+- [sm2335] Combine log statements to reduce loop blocking <PR number={12965} /> by <GHUser name="bdraco" />
+- [sm2235] Combine log statements to reduce loop blocking <PR number={12964} /> by <GHUser name="bdraco" />
+- [ssd1351_spi] Combine log statements to reduce loop blocking <PR number={12974} /> by <GHUser name="bdraco" />
+- [ssd1327_spi] Combine log statements to reduce loop blocking <PR number={12973} /> by <GHUser name="bdraco" />
+- [ssd1322_spi] Combine log statements to reduce loop blocking <PR number={12971} /> by <GHUser name="bdraco" />
+- [ssd1306_spi] Combine log statements to reduce loop blocking <PR number={12970} /> by <GHUser name="bdraco" />
+- [ssd1306_i2c] Combine log statements to reduce loop blocking <PR number={12969} /> by <GHUser name="bdraco" />
+- [spi_led_strip] Combine log statements to reduce loop blocking <PR number={12968} /> by <GHUser name="bdraco" />
+- [st7735] Combine log statements to reduce loop blocking <PR number={12977} /> by <GHUser name="bdraco" />
+- [whirlpool] support for 14 byte whirlpool IR receiver messages <PR number={12774} /> by <GHUser name="mukaschultze" />
+- [esp32_ble] Avoid heap allocation in ESPBTUUID::from_raw for string literals <PR number={12980} /> by <GHUser name="bdraco" />
+- [esp32_ble_tracker, ble_client] Reduce heap allocations with stack-based string formatting <PR number={12982} /> by <GHUser name="bdraco" />
+- [captive_portal] Avoid defer overhead on ESP8266 when saving WiFi credentials <PR number={12981} /> by <GHUser name="bdraco" />
+- [light] Use zero-copy set_effect overload in JSON schema parsing <PR number={12979} /> by <GHUser name="bdraco" />
+- [ci] Add LibreTiny (BK72XX) to memory impact analysis <PR number={12983} /> by <GHUser name="bdraco" />
+- [api] Avoid heap string copies in Home Assistant state subscription callbacks <PR number={12506} /> by <GHUser name="bdraco" />
+- [esphome OTA] Allow compilation on host platform <PR number={11655} /> by <GHUser name="guillempages" />
+- [async_tcp] Add AsyncClient for ESP-IDF and host <PR number={12337} /> by <GHUser name="dwmw2" />
+- [image] Replace use of cairosvg with resvg-py <PR number={12863} /> by <GHUser name="clydebarrow" />
+- [dsmr] Remove dependency on Arduino framework. Various bug fixes. Add missing sensors. <PR number={11036} /> by <GHUser name="PolarGoose" /> (new-feature)
+- [cc1101] Add freq_offset to on_packet trigger <PR number={13008} /> by <GHUser name="swoboda1337" /> (new-feature)
+- [radon_eye_rd200] update Radon Eye RD200 with v2/v3 support <PR number={7962} /> by <GHUser name="paukstis" />
+- [voice_assistant] Reduce heap allocation with stack-based timer formatting <PR number={13001} /> by <GHUser name="bdraco" />
+- [midea] Reduce heap allocations with stack-based string formatting <PR number={13000} /> by <GHUser name="bdraco" />
+- [thermopro_ble] Reduce heap allocation with stack-based string formatting <PR number={12999} /> by <GHUser name="bdraco" />
+- [atc_mithermometer] Reduce heap allocations with stack-based string formatting <PR number={12996} /> by <GHUser name="bdraco" />
+- [b_parasite] Reduce heap allocation with stack-based string formatting <PR number={12998} /> by <GHUser name="bdraco" />
+- [ruuvi_ble] Reduce heap allocation with stack-based string formatting <PR number={12997} /> by <GHUser name="bdraco" />
+- [bthome_mithermometer] Reduce heap allocations with stack-based string formatting <PR number={12995} /> by <GHUser name="bdraco" />
+- [bedjet] Use stack-based UUID formatting in logging <PR number={12993} /> by <GHUser name="bdraco" />
+- [xiaomi_ble] Reduce heap allocations with stack-based string formatting <PR number={12992} /> by <GHUser name="bdraco" />
+- [mopeka] Reduce heap allocations with stack-based string formatting <PR number={12990} /> by <GHUser name="bdraco" />
+- [airthings_wave_base, airthings_ble] Use stack-based string formatting in logging <PR number={12989} /> by <GHUser name="bdraco" />
+- [esp8266] Add enable_serial/enable_serial1 helpers to exclude unused Serial objects <PR number={12736} /> by <GHUser name="bdraco" /> (breaking-change)
+- [esp8266] Avoid heap allocation in preferences save/load <PR number={12465} /> by <GHUser name="bdraco" />
+- [pvvx_mithermometer] Reduce heap allocations with stack-based string formatting <PR number={12994} /> by <GHUser name="bdraco" />
+- [rd03d] Add Ai-Thinker RD-03D mmWave radar component <PR number={12764} /> by <GHUser name="jasstrong" /> (new-component) (new-feature) (new-platform)
+- [radon_eye_rd200, radon_eye_ble] Use stack-based string formatting in logging <PR number={12991} /> by <GHUser name="bdraco" />
+- [opentherm][nau7802] Use direct format specifiers instead of to_string().c_str() <PR number={13019} /> by <GHUser name="bdraco" />
+- [improv_base] Optimize next_url to avoid STL string operations <PR number={13015} /> by <GHUser name="bdraco" />
+- [mqtt] Move Home Assistant discovery keys to PROGMEM on ESP8266 <PR number={13011} /> by <GHUser name="bdraco" />
+- [ble_scanner] Use stack-based string formatting to reduce heap allocations <PR number={13013} /> by <GHUser name="bdraco" />
+- [ota] Fix ESP32-S3 OTA crash with hardware SHA acceleration on IDF 5.5.x <PR number={13021} /> by <GHUser name="bdraco" />
+- [wifi] Clean up duplicate and empty logging output <PR number={13018} /> by <GHUser name="bdraco" />
+- [xiaomi_ble] Simplify set_bindkey using parse_hex and const char* <PR number={13014} /> by <GHUser name="bdraco" />
+- [core] Auto-replace / in entity names with Unicode fraction slash during deprecation period <PR number={13016} /> by <GHUser name="bdraco" />
+- [wifi] Eliminate heap allocations in IP address logging <PR number={13017} /> by <GHUser name="bdraco" />
+- [neopixelbus] Fix ESP8266 compilation by enabling Serial/Serial1 for NeoPixelBus library <PR number={13027} /> by <GHUser name="bdraco" />
+- [async_tcp] Fix build conflicts and use IDF component for ESP32 <PR number={13025} /> by <GHUser name="dwmw2" />
+- [aqi] Implement a sensor that computes AQI <PR number={12958} /> by <GHUser name="jasstrong" /> (new-feature) (new-platform)
+- [api] Eliminate `std::string` from ClientInfo struct <PR number={12566} /> by <GHUser name="bdraco" />
+- [text_sensor][text] Add const char* overloads to publish_state to eliminate heap churn <PR number={13030} /> by <GHUser name="bdraco" />
+- [esp32_camera][uart] Add missing wake_loop_threadsafe() preprocessor guards <PR number={13043} /> by <GHUser name="bdraco" />
+- Map `HEAT_COOL` to `MODE_AUTO` in HeatpumpIR component <PR number={12058} /> by <GHUser name="poolski" />
+- [sml] Eliminate heap allocations in text sensor <PR number={13039} /> by <GHUser name="bdraco" />
+- [openthread_info] Eliminate heap allocations in text sensors <PR number={13036} /> by <GHUser name="bdraco" />
+- [homeassistant] Eliminate heap allocation in text sensor state updates <PR number={13035} /> by <GHUser name="bdraco" />
+- [ethernet_info] Eliminate heap allocations in text sensors <PR number={13034} /> by <GHUser name="bdraco" />
+- [pylontech] Eliminate heap allocations in text sensors <PR number={13033} /> by <GHUser name="bdraco" />
+- [wifi_info] Eliminate heap churn in text sensors <PR number={13031} /> by <GHUser name="bdraco" />
+- [ci] Add lint check to prevent usage of deprecated CORE.using_esp_idf <PR number={13029} /> by <GHUser name="bdraco" />
+- [dsmr] Eliminate heap allocation when publishing telegram <PR number={13032} /> by <GHUser name="bdraco" />
+- [text_sensor][text] Avoid heap allocation when state unchanged <PR number={13044} /> by <GHUser name="bdraco" />
+- [esp32] Don't warn about no ota rollback if no ota at all <PR number={13045} /> by <GHUser name="clydebarrow" />
+- [zwave_proxy] Add logging if client sends zero-length message <PR number={13052} /> by <GHUser name="kbx81" />
+- [zwave_proxy] Make `send_frame` safer, make `set_home_id` protected <PR number={13055} /> by <GHUser name="kbx81" />
+- [nrf52, zigbee] Add sensor <PR number={12187} /> by <GHUser name="tomaszduda23" /> (new-feature)
+- [api] Simplify string handling by removing bifurcated client/server storage <PR number={12822} /> by <GHUser name="bdraco" />
+- [api] Coalesce log packets to reduce buffer pressure and prevent dropped state updates <PR number={13026} /> by <GHUser name="bdraco" />
+- [sun] Eliminate heap allocation in text sensor <PR number={13037} /> by <GHUser name="bdraco" />
+- [ble_client] Eliminate heap allocations in text sensor <PR number={13038} /> by <GHUser name="bdraco" />
+- [analyze-memory] Add RAM symbol analysis by component <PR number={13040} /> by <GHUser name="bdraco" />
+- [preferences] Fix preferences not syncing in safe mode due to component registration order <PR number={13041} /> by <GHUser name="bdraco" />
+- [sun_gtil2] Eliminate heap allocations in text sensor publishing <PR number={13047} /> by <GHUser name="bdraco" />
+- [http_request] Store JSON keys in flash for ESP8266 <PR number={13048} /> by <GHUser name="bdraco" />
+- [mqtt] Use ESPHOME_F() for JSON strings to reduce ESP8266 RAM usage <PR number={13049} /> by <GHUser name="bdraco" />
+- [esp32_hosted] Add SHA256 alignment for hardware DMA compatibility <PR number={13050} /> by <GHUser name="bdraco" />
+- [ld2410/ld2412/ld2450] Use index-based select publish_state to avoid heap allocations <PR number={13051} /> by <GHUser name="bdraco" />
+- [core] Add integer overload for fnv1a_hash_extend <PR number={13054} /> by <GHUser name="bdraco" />
+- [tuya] Avoid heap allocation in text sensor enum publish <PR number={13056} /> by <GHUser name="bdraco" />
+- [core] Improve log timestamp accuracy by batching serial reads <PR number={12750} /> by <GHUser name="bdraco" />
+- [es8388] Use index-based select publish_state to avoid heap allocations <PR number={13053} /> by <GHUser name="bdraco" />
+- [modbus_controller] Replace format_hex_pretty with stack-based format_hex_pretty_to <PR number={12781} /> by <GHUser name="bdraco" />
+- [logger] Add thread-safe logging for host platform <PR number={13010} /> by <GHUser name="bdraco" />
+- [wifi] Add basic post-connect roaming support for stationary devices <PR number={12809} /> by <GHUser name="bdraco" /> (new-feature)
+- [debug] Use stack buffers with buf_append helper instead of `std::string` <PR number={13020} /> by <GHUser name="bdraco" />
+- [abbwelcome] Use stack-based formatting to eliminate heap allocations <PR number={12799} /> by <GHUser name="bdraco" />
+- [web_server][captive_portal] Add Brotli compression (saves ~11KB flash when using local)  <PR number={12959} /> by <GHUser name="bdraco" /> (new-feature)
+- Update webserver local assets to 20260107-214817 <PR number={13064} /> by <GHUser name="esphomebot" />
+- [esp32_touch] Disable hardware timeout to prevent continuous interrupts <PR number={13059} /> by <GHUser name="marcbodea" />
+- [logger] Add thread-safe logging support for LibreTiny platform <PR number={13062} /> by <GHUser name="bdraco" /> (new-feature)
+- [image] Add define and core data <PR number={13058} /> by <GHUser name="clydebarrow" />
+- [thermostat] Allow `heat_cool_mode` without an automation <PR number={13069} /> by <GHUser name="kbx81" /> (new-feature)
+- [logger] Enable loop disable optimization for LibreTiny task log buffer <PR number={13078} /> by <GHUser name="bdraco" />
+- [libretiny] Bump to 1.9.2 <PR number={13077} /> by <GHUser name="bdraco" />
+- [wifi] Disable SoftAP support on Arduino ESP32 when ap: not configured <PR number={13076} /> by <GHUser name="bdraco" />
+- [core] Improve minimum_chip_revision warning for PSRAM users <PR number={13074} /> by <GHUser name="bdraco" />
+- [wifi] Fix infinite roaming when best-signal AP is crashed/broken <PR number={13071} /> by <GHUser name="bdraco" />
+- [mqtt] Reduce heap allocations in topic string building <PR number={13072} /> by <GHUser name="bdraco" />
+- [wifi] Limit ignored disconnect events on LibreTiny to speed up AP failover <PR number={13070} /> by <GHUser name="bdraco" />
+- [mqtt] Include session_present and reason parameters in connection callbacks <PR number={12413} /> by <GHUser name="Rapsssito" /> (new-feature)
+- [ac_dimmer] Added support for ESP-IDF (5+) <PR number={7072} /> by <GHUser name="latonita" /> (new-feature)
+- [wifi] Warn when AP is configured without captive_portal or web_server <PR number={13087} /> by <GHUser name="bdraco" />
+- [web_server] Use centralized length constants for buffer sizing <PR number={13073} /> by <GHUser name="bdraco" />
+- [api] Fire on_client_disconnected trigger after removing client from list <PR number={13088} /> by <GHUser name="bdraco" /> (breaking-change)
+- [hub75] Fix depth and gamma mode defines <PR number={13091} /> by <GHUser name="stuartparmenter" />
+- [api] Add methods supporting efficient packed repeated sint32 field encoding for #12985 <PR number={13094} /> by <GHUser name="kbx81" />
+- [remote_base] Add zero-copy packed sint32 decoder for #12985 <PR number={13093} /> by <GHUser name="kbx81" />
+- Revert "[wifi] Disable SoftAP support on Arduino ESP32 when ap: not configured" <PR number={13099} /> by <GHUser name="bdraco" />
+- [hub75] Fix gamma_correct to use enum value instead of key string <PR number={13102} /> by <GHUser name="stuartparmenter" />
+- [mapping] Fix test SPI data rate for RP2040 <PR number={13108} /> by <GHUser name="bdraco" />
+- [mdns] Remove deprecated api password from test configuration <PR number={13107} /> by <GHUser name="bdraco" />
+- [CI] skip endpoint check due to test grouping <PR number={13111} /> by <GHUser name="tomaszduda23" />
+- [esp32_hosted] Add HTTP-based coprocessor firmware update support <PR number={13090} /> by <GHUser name="swoboda1337" /> (new-feature) (breaking-change)
+- [water_heater] (3/4)  Implement web_server for new water_heater component <PR number={12511} /> by <GHUser name="dhoeben" /> (new-feature)
+- Update webserver local assets to 20260110-013228 <PR number={13113} /> by <GHUser name="esphomebot" />
+- [aqi] Fix precision loss for low PM concentration values <PR number={13120} /> by <GHUser name="jasstrong" />
+- [esp32_hosted] Bump component versions <PR number={13118} /> by <GHUser name="swoboda1337" />
+- [core] Rename FixedVector::shrink_to_fit() to release() for clarity <PR number={13130} /> by <GHUser name="bdraco" />
+- [api] Proto code generator changes for #12985 <PR number={13100} /> by <GHUser name="kbx81" />
+- [sensor] Use C++17 nested namespace syntax <PR number={13116} /> by <GHUser name="bdraco" />
+- [libretiny] Disable BLE stack on BK7231N to save ~21KB RAM <PR number={13131} /> by <GHUser name="bdraco" />
+- [helpers] Add format_hex_prefixed_to for "0x" prefixed hex formatting <PR number={13115} /> by <GHUser name="bdraco" />
+- [web_server] Fix v1 compilation on ESP-IDF by adding missing write method <PR number={13153} /> by <GHUser name="bdraco" />
+- [wifi] Fix captive portal/improv only attempting last configured network <PR number={13086} /> by <GHUser name="bdraco" />
+- [uptime] Format text sensor output on stack to avoid heap allocations <PR number={13150} /> by <GHUser name="bdraco" />
+- [improv_serial] Use int8_to_str to avoid heap allocation for RSSI formatting <PR number={13149} /> by <GHUser name="bdraco" />
+- [web_server_idf] Reduce heap usage in DefaultHeaders and auth  <PR number={13141} /> by <GHUser name="bdraco" />
+- [light] Move LightColorValues::lerp() out of header to reduce code duplication <PR number={13138} /> by <GHUser name="bdraco" />
+- [safe_mode] Conditionally compile callback when on_safe_mode is configured <PR number={13136} /> by <GHUser name="bdraco" />
+- [ch422g][lc709203f][qmc5883l] Avoid heap allocation in status_set_warning calls <PR number={13152} /> by <GHUser name="bdraco" />
+- [runtime_stats] Fix log output formatting alignment <PR number={13155} /> by <GHUser name="bdraco" />
+- [ci] Add RP2040 to memory impact analysis <PR number={13134} /> by <GHUser name="bdraco" />
+- [fan] Return StringRef from get_preset_mode() for safety and modern API <PR number={13092} /> by <GHUser name="bdraco" /> (breaking-change)
+- [select] Return StringRef from current_option() <PR number={13095} /> by <GHUser name="bdraco" /> (breaking-change)
+- [light] Return StringRef from LightEffect::get_name() and LightState::get_effect_name() <PR number={13105} /> by <GHUser name="bdraco" /> (breaking-change)
+- [event] Return StringRef from get_last_event_type() <PR number={13104} /> by <GHUser name="bdraco" /> (breaking-change)
+- [climate] Return StringRef from get_custom_fan_mode() and get_custom_preset() <PR number={13103} /> by <GHUser name="bdraco" /> (breaking-change)
+- [api] Use StringRef for HomeassistantServiceMap.value to eliminate heap allocations <PR number={13154} /> by <GHUser name="bdraco" />
+- [tuya][rc522][remote_base] Migrate format_hex_pretty() to stack-based alternatives <PR number={13158} /> by <GHUser name="bdraco" />
+- [infrared] Implement experimental API/Core/component for new component/entity type <PR number={13129} /> by <GHUser name="kbx81" /> (new-component)
+- [rd03d] Filter targets with sentinel speed values <PR number={13146} /> by <GHUser name="jasstrong" />
+- [nrf52,zigbee] Warning if spaces in description <PR number={13114} /> by <GHUser name="tomaszduda23" />
+- [api] Use stack buffer for bytes field dumping in proto message logs <PR number={13162} /> by <GHUser name="bdraco" />
+- [mqtt][prometheus][graph] Migrate value_accuracy_to_string() to stack-based alternative <PR number={13159} /> by <GHUser name="bdraco" />
+- [nfc] Use stack-based hex formatting in pn7150/pn7160 components <PR number={13163} /> by <GHUser name="bdraco" />
+- [esp32_can] Add listen-only mode to esp32_can component <PR number={13084} /> by <GHUser name="mikaabra" /> (new-feature)
+- [deep_sleep] Fix GPIO wakeup comment <PR number={12815} /> by <GHUser name="jvanderneutstulen" />
+- [deep_sleep] Fix GPIO wakeup on ESP32-C3/C6 <PR number={12803} /> by <GHUser name="jvanderneutstulen" />
+- [nrf52,sdk] Add framework version support <PR number={12489} /> by <GHUser name="tomaszduda23" /> (new-feature)
+- [web_server] Fix select compilation error in v1 <PR number={13169} /> by <GHUser name="bdraco" />
+- [core] Migrate callers and soft deprecate get_mac_address()/get_mac_address_pretty() <PR number={13157} /> by <GHUser name="bdraco" />
+- [infrared] Use set_data() for vector timings in control() <PR number={13171} /> by <GHUser name="bdraco" />
+- [core] Soft deprecate heap-allocating string helpers to prevent fragmentation patterns <PR number={13156} /> by <GHUser name="bdraco" />
+- [tuya] add color_type_lowercase option <PR number={13101} /> by <GHUser name="lullius" /> (new-feature)
+- [mqtt] templatable state and command topics <PR number={12441} /> by <GHUser name="Rapsssito" /> (new-feature)
+- [ci] Add format_hex_pretty to heap-allocating helper lint check <PR number={13178} /> by <GHUser name="bdraco" />
+- [ir_rf_proxy] New component <PR number={12985} /> by <GHUser name="kbx81" /> (new-component) (new-feature)
+- [socket] Call lwip_read/lwip_write directly on ESP32 to reduce network I/O latency <PR number={13179} /> by <GHUser name="bdraco" />
+- [bme68x_bsec2] use EntityBase instead of Component for the id <PR number={13185} /> by <GHUser name="ssieb" />
+- [ld24xx] add id to support extending <PR number={13183} /> by <GHUser name="ssieb" />
+- [improv_serial] Use stack buffers for webserver URL formatting <PR number={13175} /> by <GHUser name="bdraco" />
+- [api] Use stack buffer for VERY_VERBOSE proto message dumps <PR number={13176} /> by <GHUser name="bdraco" />
+- [mqtt] Avoid intermediate string allocations in publish calls <PR number={13174} /> by <GHUser name="bdraco" />
+- [i2s_audio] Bugfix: Buffer overflow in software volume control <PR number={13190} /> by <GHUser name="kahrendt" />
+- [wifi] Fix ESP8266 disconnect callback order to set error flag before notifying listeners <PR number={13189} /> by <GHUser name="bdraco" />
+- [libretiny] Regenerate boards, enable Cortex-M4 atomics, and consolidate platform code <PR number={13191} /> by <GHUser name="bdraco" />
+- [nrf52,zigbee] Add binary output as switch <PR number={13083} /> by <GHUser name="tomaszduda23" /> (new-feature)
+- [ota] Mark partition valid when OTA begins to prevent rollback blocking <PR number={13195} /> by <GHUser name="swoboda1337" />
+- [epaper_spi] Add Waveshare 2.13v3 <PR number={13117} /> by <GHUser name="clydebarrow" /> (new-feature)
+- [ssd1306_i2c] fix "SSD1306 72x40" display initialization (add SSD1306B Iref setup) <PR number={13148} /> by <GHUser name="Cougar" />
+- [logger] Use RAII guards for recursion protection and optimize hot path <PR number={13194} /> by <GHUser name="bdraco" />
+- [logger] Use StaticVector for log listeners with compile-time sizing <PR number={13196} /> by <GHUser name="bdraco" />
+- [wifi] Use StaticVector for WiFi listeners with per-type compile-time sizing <PR number={13197} /> by <GHUser name="bdraco" />
+- [bh1750] Eliminate heap allocations by replacing callbacks with state machine <PR number={11950} /> by <GHUser name="bdraco" />
+- [api] Reduce batch RAM usage by 33% via switch dispatch <PR number={13199} /> by <GHUser name="bdraco" />
+- [usb_cdc_acm] move esp32 implementation to new file <PR number={12824} /> by <GHUser name="tomaszduda23" />
+- [scheduler] Eliminate heap allocations for `std::string` names and add uint32_t ID API <PR number={13200} /> by <GHUser name="bdraco" />
+- [ethernet_info] Convert to event-driven IP state listener pattern <PR number={13203} /> by <GHUser name="bdraco" />
+- [web_server] Store method/domain comparison strings in flash on ESP8266 <PR number={13205} /> by <GHUser name="bdraco" />
+- [image] Correctly handle dimensions in physical units <PR number={13209} /> by <GHUser name="clydebarrow" />
+- [core] Optimize and normalize entity state publishing logs with >> format <PR number={13236} /> by <GHUser name="bdraco" />
+- [api] Fix state updates being sent to clients that did not subscribe <PR number={13237} /> by <GHUser name="bdraco" />
+- [core] Fix platform subcomponents not filtering source files <PR number={13208} /> by <GHUser name="bdraco" />
+- [core] Fix ESP32-S2/S3 hardware SHA crash by aligning HashBase digest buffer <PR number={13234} /> by <GHUser name="bdraco" />
+- [safe_mode] Detect bootloader rollback support at runtime <PR number={13230} /> by <GHUser name="swoboda1337" />
+- [qr_code] Allocate and free memory for QR code buffer <PR number={13161} /> by <GHUser name="rootnegativ1" />
+- [web_server][captive_portal] Change default compression from Brotli to gzip <PR number={13246} /> by <GHUser name="bdraco" />
+- [sprinkler] Fix scheduler deprecation warnings and heap churn with FixedVector <PR number={13251} /> by <GHUser name="bdraco" />
+- [dallas_temp] Use const char* for set_timeout to fix deprecation warning and heap churn <PR number={13250} /> by <GHUser name="bdraco" />
+- [api] Fix clock conflicts when multiple clients connected to homeassistant time <PR number={13253} /> by <GHUser name="bdraco" />
+- [esp32_ble_client] Reduce GATT data event logging to prevent firmware update failures <PR number={13252} /> by <GHUser name="bdraco" />
+- [ntc, resistance] change log level to verbose <PR number={13268} /> by <GHUser name="mrtoy-me" />
+- [hmac_sha256] Replace unsafe sprintf with format_hex_to <PR number={13290} /> by <GHUser name="bdraco" />
+- [hub75] Bump esp-hub75 version to 0.3.0 <PR number={13243} /> by <GHUser name="stuartparmenter" /> (breaking-change)
+- [http_request] Unable to handle chunked responses <PR number={7884} /> by <GHUser name="HLFCode" />
+- [network] Fix IPAddress::str_to() to lowercase IPv6 hex digits <PR number={13325} /> by <GHUser name="bdraco" />
+- [api] Fix truncation of Home Assistant attributes longer than 255 characters <PR number={13348} /> by <GHUser name="bdraco" />
+- [core] Fix state leakage and module caching when processing multiple configurations <PR number={13368} /> by <GHUser name="swoboda1337" />
+- [x9c] Fix potentiometer unable to decrement <PR number={13382} /> by <GHUser name="swoboda1337" />
+- [wifi_info] Fix missing state when both IP+DNS or SSID+BSSID configure <PR number={13385} /> by <GHUser name="bdraco" />
+
+</details>
+
+<details>
+<summary></summary>
+
+- Bump actions/create-github-app-token from 2.2.0 to 2.2.1 <PR number={12370} /> by [@dependabot[bot]](https://github.com/apps/dependabot)
+- Bump peter-evans/create-pull-request from 7.0.11 to 8.0.0 <PR number={12409} /> by [@dependabot[bot]](https://github.com/apps/dependabot)
+- Bump codecov/codecov-action from 5.5.1 to 5.5.2 <PR number={12408} /> by [@dependabot[bot]](https://github.com/apps/dependabot)
+- Bump tornado from 6.5.2 to 6.5.3 <PR number={12430} /> by [@dependabot[bot]](https://github.com/apps/dependabot)
+- Bump actions/upload-artifact from 5.0.0 to 6.0.0 <PR number={12452} /> by [@dependabot[bot]](https://github.com/apps/dependabot)
+- Bump actions/download-artifact from 6.0.0 to 7.0.0 <PR number={12449} /> by [@dependabot[bot]](https://github.com/apps/dependabot)
+- Bump actions/cache from 4.3.0 to 5.0.1 <PR number={12450} /> by [@dependabot[bot]](https://github.com/apps/dependabot)
+- Bump github/codeql-action from 4.31.7 to 4.31.8 <PR number={12451} /> by [@dependabot[bot]](https://github.com/apps/dependabot)
+- Bump actions/cache from 4.3.0 to 5.0.1 in /.github/actions/restore-python <PR number={12453} /> by [@dependabot[bot]](https://github.com/apps/dependabot)
+- Bump ruff from 0.14.8 to 0.14.9 <PR number={12448} /> by [@dependabot[bot]](https://github.com/apps/dependabot)
+- Bump aioesphomeapi from 43.2.1 to 43.3.0 <PR number={12507} /> by [@dependabot[bot]](https://github.com/apps/dependabot)
+- Bump tornado from 6.5.3 to 6.5.4 <PR number={12508} /> by [@dependabot[bot]](https://github.com/apps/dependabot)
+- Bump github/codeql-action from 4.31.8 to 4.31.9 <PR number={12524} /> by [@dependabot[bot]](https://github.com/apps/dependabot)
+- Bump ruamel-yaml from 0.18.16 to 0.18.17 <PR number={12555} /> by [@dependabot[bot]](https://github.com/apps/dependabot)
+- Bump voluptuous from 0.15.2 to 0.16.0 <PR number={12573} /> by [@dependabot[bot]](https://github.com/apps/dependabot)
+- Bump docker/setup-buildx-action from 3.11.1 to 3.12.0 in the docker-actions group <PR number={12574} /> by [@dependabot[bot]](https://github.com/apps/dependabot)
+- Bump ruff from 0.14.9 to 0.14.10 <PR number={12572} /> by [@dependabot[bot]](https://github.com/apps/dependabot)
+- Bump aioesphomeapi from 43.3.0 to 43.4.0 <PR number={12597} /> by [@dependabot[bot]](https://github.com/apps/dependabot)
+- Bump aioesphomeapi from 43.4.0 to 43.5.0 <PR number={12599} /> by [@dependabot[bot]](https://github.com/apps/dependabot)
+- Bump aioesphomeapi from 43.5.0 to 43.6.0 <PR number={12644} /> by [@dependabot[bot]](https://github.com/apps/dependabot)
+- Bump aioesphomeapi from 43.6.0 to 43.7.0 <PR number={12699} /> by [@dependabot[bot]](https://github.com/apps/dependabot)
+- Bump bleak from 2.0.0 to 2.1.0 <PR number={12700} /> by [@dependabot[bot]](https://github.com/apps/dependabot)
+- Bump aioesphomeapi from 43.7.0 to 43.8.0 <PR number={12701} /> by [@dependabot[bot]](https://github.com/apps/dependabot)
+- Bump aioesphomeapi from 43.8.0 to 43.9.0 <PR number={12702} /> by [@dependabot[bot]](https://github.com/apps/dependabot)
+- Bump aioesphomeapi from 43.9.0 to 43.9.1 <PR number={12724} /> by [@dependabot[bot]](https://github.com/apps/dependabot)
+- Bump bleak from 2.1.0 to 2.1.1 <PR number={12804} /> by [@dependabot[bot]](https://github.com/apps/dependabot)
+- Bump aioesphomeapi from 43.9.1 to 43.10.0 <PR number={12821} /> by [@dependabot[bot]](https://github.com/apps/dependabot)
+- Bump ruamel-yaml from 0.18.17 to 0.19.1 <PR number={12768} /> by [@dependabot[bot]](https://github.com/apps/dependabot)
+- Bump aioesphomeapi from 43.10.0 to 43.10.1 <PR number={12865} /> by [@dependabot[bot]](https://github.com/apps/dependabot)
+- Bump ruff from 0.14.10 to 0.14.11 <PR number={13082} /> by [@dependabot[bot]](https://github.com/apps/dependabot)
+- Bump esphome-dashboard from 20251013.0 to 20260110.0 <PR number={13109} /> by [@dependabot[bot]](https://github.com/apps/dependabot)
+- Bump aioesphomeapi from 43.10.1 to 43.11.0 <PR number={13132} /> by [@dependabot[bot]](https://github.com/apps/dependabot)
+- Bump aioesphomeapi from 43.11.0 to 43.12.0 <PR number={13139} /> by [@dependabot[bot]](https://github.com/apps/dependabot)
+- Bump aioesphomeapi from 43.12.0 to 43.13.0 <PR number={13160} /> by [@dependabot[bot]](https://github.com/apps/dependabot)
+- Bump github/codeql-action from 4.31.9 to 4.31.10 <PR number={13173} /> by [@dependabot[bot]](https://github.com/apps/dependabot)
+- Bump yamllint from 1.37.1 to 1.38.0 <PR number={13192} /> by [@dependabot[bot]](https://github.com/apps/dependabot)
+
+</details>
+
+{/* markdownlint-enable MD013 */}
+
+## All Changelogs
+
+

@@ -1,0 +1,236 @@
+---
+description: "Changelog for ESPHome 2023.2.0."
+title: "ESPHome 2023.2.0 - 15th February 2023"
+pagefind: false
+slug: "changelog/2023.2.0"
+---
+
+import PR from "@components/PR.astro";
+import GHUser from "@components/GHUser.astro";
+
+
+- [PCA9554 I/O Expander](/components/pca9554/)
+- [BP1658CJ](/components/output/bp1658cj/)
+- [BP5758D](/components/output/bp5758d/)
+- [SM2235](/components/output/sm2235/)
+- [SM2335](/components/output/sm2335/)
+- [PCF85063 RTC](/components/time/pcf85063/)
+- [Matrix Keypad](/components/matrix_keypad/)
+- [X9C Potentiometer](/components/output/x9c/)
+- [EE895](/components/sensor/ee895/)
+- [HTE501](/components/sensor/hte501/)
+- [TEE501](/components/sensor/tee501/)
+- [Sigma-Delta Output](/components/output/sigma_delta_output/)
+- [Wiegand Reader](/components/wiegand/)
+- [MiCS-4514](/components/sensor/mics_4514/)
+- [LD2410](/components/sensor/ld2410/)
+- [Resol VBus](/components/vbus/)
+
+
+## Friendly Name
+
+ESPHome now supports setting a `friendly_name` which is sent to Home Assistant. This name will be used for the config entry,
+the device name, and will be automatically prefixed to all of the entities where needed by Home Assistant.
+
+:::note
+If you opt to use this new friendly name, take note that you should remove any friendly name (substitition) that
+you currently prepend onto entity `name` in YAML.
+:::
+
+```yaml
+esphome:
+  name: living-room
+  friendly_name: Living Room
+
+sensor:
+  - platform: dht
+    pin: GPIO5
+    name: Temperature
+```
+
+## ESPHome Update Entities in Home Assistant
+
+Home Assistant has offered "read-only" update entities since 2023.2.0 for ESPHome devices. This release of ESPHome
+added a new API required so that those update entities can now trigger a build and install of the new firmware "over
+the air" to your devices.
+
+{/* markdownlint-disable MD013 */}
+
+## Release 2023.2.1 - February 16
+
+- Add ESPHome version to generated platformio.ini <PR number={4443} /> by <GHUser name="jesserockz" />
+
+## Release 2023.2.2 - February 17
+
+- Fix adoption of variants and pico-w <PR number={4455} /> by <GHUser name="jesserockz" />
+
+## Release 2023.2.3 - February 20
+
+- Fix MQTT discovery for climate after preset implementation <PR number={4451} /> by <GHUser name="jmichiel" />
+- Update distribution manifest <PR number={4459} /> by <GHUser name="jesserockz" />
+
+## Release 2023.2.4 - February 23
+
+- BL0939 state_class set for energy sensors <PR number={4463} /> by <GHUser name="konsulten" />
+- fix wiegand tag parity <PR number={4476} /> by <GHUser name="ssieb" />
+- Fix multiple remote_receivers with triggers <PR number={4477} /> by <GHUser name="jesserockz" />
+
+## Full list of changes
+
+### New Components
+
+- Add Pca9554 component <PR number={4192} /> by <GHUser name="hwstar" /> (new-integration)
+- Add support for BP5758D LED driver <PR number={4021} /> by <GHUser name="Cossid" /> (new-integration)
+- Add support for BP1658CJ LED driver <PR number={4020} /> by <GHUser name="Cossid" /> (new-integration)
+- Add support for SM2235 and SM2335 LED drivers <PR number={3924} /> by <GHUser name="Cossid" /> (new-integration)
+- PCF85063 RTC chip <PR number={3873} /> by <GHUser name="brogon" /> (new-integration)
+- Add support for matrix keypads <PR number={4241} /> by <GHUser name="ssieb" /> (new-integration)
+- Add X9C Potentiometer component <PR number={4183} /> by <GHUser name="EtienneMD" /> (new-integration)
+- add key collector component <PR number={4242} /> by <GHUser name="ssieb" /> (new-integration)
+- Add support for EE895 <PR number={3771} /> by <GHUser name="Stock-M" /> (new-integration)
+- Add support for HTE501 <PR number={3772} /> by <GHUser name="Stock-M" /> (new-integration)
+- Add support for TEE501 <PR number={3773} /> by <GHUser name="Stock-M" /> (new-integration)
+- Implement a slow sigma-delta modulation based output <PR number={4132} /> by <GHUser name="Cat-Ion" /> (new-integration)
+- add Wiegand reader component <PR number={4288} /> by <GHUser name="ssieb" /> (new-integration)
+- Add MICS-4514 gas sensor <PR number={4316} /> by <GHUser name="jesserockz" /> (new-integration)
+- Add Ld2410 Support <PR number={3919} /> by <GHUser name="sebcaps" /> (new-integration)
+- add Resol VBus support <PR number={3976} /> by <GHUser name="ssieb" /> (new-integration)
+
+### Breaking Changes
+
+- Use NAN values for TSL2591 saturation <PR number={3931} /> by <GHUser name="mdonoughe" /> (breaking-change)
+- set_retry: add retries remaining parameter to the provided function <PR number={4251} /> by <GHUser name="e28eta" /> (breaking-change)
+
+### Beta Changes
+
+- Bump curl version in docker <PR number={4403} /> by <GHUser name="jesserockz" />
+- Fix release workflow <PR number={4405} /> by <GHUser name="jesserockz" />
+- Climate PID Autotune Logging fixes <PR number={4136} /> by <GHUser name="patrickcollins12" />
+- Add Clipping to displaybuffer <PR number={4271} /> by <GHUser name="nielsnl68" />
+- Fix check for empty clipping array <PR number={4421} /> by <GHUser name="nielsnl68" />
+- Ledc fix <PR number={4338} /> by <GHUser name="xvil" />
+- Add version api endpoint <PR number={4429} /> by <GHUser name="jesserockz" />
+- Handle uart.write in json-config endpoint <PR number={4430} /> by <GHUser name="jesserockz" />
+- Bump esphome-dashboard to 20230214.0 <PR number={4431} /> by <GHUser name="jesserockz" />
+- Fix setting wrong traits on midea climate component <PR number={4425} /> by <GHUser name="dudanov" />
+
+### All changes
+
+- Expose lambda action to reset a cycle in `slow_pwm` <PR number={4158} /> by <GHUser name="johndbritton" />
+- climate: Add features to generic Toshiba model <PR number={3912} /> by <GHUser name="zagor" />
+- Fix UUID displaying incorrectly in BLE Tracker logs <PR number={4187} /> by <GHUser name="deunlee" />
+- Bump actions/stale from 6 to 7 <PR number={4217} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Add Pca9554 component <PR number={4192} /> by <GHUser name="hwstar" /> (new-integration)
+- Bump aioesphomeapi from 13.0.1 to 13.0.2 <PR number={4188} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Bump pytest-asyncio from 0.20.2 to 0.20.3 <PR number={4164} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Handle deprecated sdkconfig option <PR number={4204} /> by <GHUser name="mmakaay" />
+- feat: set a wider range for jpeg quality <PR number={3872} /> by <GHUser name="sisco0" />
+- Bump black from 22.10.0 to 22.12.0 <PR number={4167} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Use NAN values for TSL2591 saturation <PR number={3931} /> by <GHUser name="mdonoughe" /> (breaking-change)
+- Ili9341 8bit indexed mode pt2 <PR number={2502} /> by <GHUser name="davet2001" />
+- Allow ignoring of failed Modbus response CRC <PR number={3930} /> by <GHUser name="jangrewe" />
+- calc LEDC PWM Resolution with LEDC_TIMER_BIT_MAX <PR number={3820} /> by <GHUser name="MFlasskamp" />
+- Component::set_retry updates <PR number={3305} /> by <GHUser name="e28eta" />
+- Fix race condition in web_server scheduler on ESP32 <PR number={3951} /> by <GHUser name="tomaszduda23" />
+- Fix saving light state for restore modes LIGHT_RESTORE_AND_OFF/ON <PR number={4131} /> by <GHUser name="myhomeiot" />
+- Add precipitation device class <PR number={4219} /> by <GHUser name="jesserockz" />
+- Add support for BP5758D LED driver <PR number={4021} /> by <GHUser name="Cossid" /> (new-integration)
+- Add support for BP1658CJ LED driver <PR number={4020} /> by <GHUser name="Cossid" /> (new-integration)
+- Add support for SM2235 and SM2335 LED drivers <PR number={3924} /> by <GHUser name="Cossid" /> (new-integration)
+- Fix broken PULSE_METER <PR number={4199} /> by <GHUser name="cstaahl" />
+- PCF85063 RTC chip <PR number={3873} /> by <GHUser name="brogon" /> (new-integration)
+- Add API for dashboard to get boards list by platform <PR number={4168} /> by <GHUser name="kuba2k2" />
+- Bump dashboard to 20221231.0 <PR number={4248} /> by <GHUser name="balloob" />
+- Bump zeroconf to 0.47.1 <PR number={4268} /> by <GHUser name="bdraco" />
+- Don't match words containing "id" <PR number={4265} /> by <GHUser name="ssieb" />
+- Add support for matrix keypads <PR number={4241} /> by <GHUser name="ssieb" /> (new-integration)
+- Fix Template Switch restore_mode support <PR number={4280} /> by <GHUser name="SharpEdgeMarshall" />
+- Correct decimals in Growatt energy reporting <PR number={4277} /> by <GHUser name="rfpronk" />
+- Bump pylint from 2.15.8 to 2.15.10 <PR number={4278} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Fix frequency limit for MCP9600 <PR number={4276} /> by <GHUser name="jowgn" />
+- fix: json compilation error on rp2040 <PR number={4273} /> by <GHUser name="kellertk" />
+- http_request: add request duration logging <PR number={4272} /> by <GHUser name="stas-sl" />
+- Fix HttpRequestResponseTrigger <PR number={4270} /> by <GHUser name="gmbuell" />
+- Fix HttpRequestResponseTrigger again <PR number={4285} /> by <GHUser name="gmbuell" />
+- Add X9C Potentiometer component <PR number={4183} /> by <GHUser name="EtienneMD" /> (new-integration)
+- small DisplayBuffer images and font update <PR number={4044} /> by <GHUser name="nielsnl68" />
+- Fix use of dangling pointers in esp-idf MQTT backend <PR number={4239} /> by <GHUser name="aaliddell" />
+- Ensure we never write zero bytes <PR number={4284} /> by <GHUser name="bdraco" />
+- Fix off-by-one bedjet fan speed (#3873) <PR number={4292} /> by <GHUser name="jhansche" />
+- Clean up dashboard ping result post-rename/delete <PR number={4170} /> by <GHUser name="balloob" />
+- Calculate PWM wrap dynamically whenever the frequency is changed <PR number={4294} /> by <GHUser name="tradeJmark" />
+- Remove baud check in tuya dump_config <PR number={4298} /> by <GHUser name="jesserockz" />
+- Add friendly_name to device <PR number={4296} /> by <GHUser name="jesserockz" />
+- allow multiple dsmr <PR number={4299} /> by <GHUser name="ssieb" />
+- Bump pytest from 7.2.0 to 7.2.1 <PR number={4300} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Bump aioesphomeapi from 13.0.2 to 13.1.0 <PR number={4301} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Display the configured esphome:comment on the WebServer <PR number={4246} /> by <GHUser name="grillp" />
+- Allow 0xA8 ID for APDS9960 <PR number={4287} /> by <GHUser name="reubn" />
+- Dont default CORE.friendly_name <PR number={4305} /> by <GHUser name="jesserockz" />
+- add key collector component <PR number={4242} /> by <GHUser name="ssieb" /> (new-integration)
+- Tsl2591 gain publish <PR number={4291} /> by <GHUser name="z3liff" />
+- Add support for EE895 <PR number={3771} /> by <GHUser name="Stock-M" /> (new-integration)
+- Add support for HTE501 <PR number={3772} /> by <GHUser name="Stock-M" /> (new-integration)
+- Add support for TEE501 <PR number={3773} /> by <GHUser name="Stock-M" /> (new-integration)
+- PCA9685, fix reset device and add option EXTCLK <PR number={3845} /> by <GHUser name="standahabich" />
+- Implement a slow sigma-delta modulation based output <PR number={4132} /> by <GHUser name="Cat-Ion" /> (new-integration)
+- set_retry: add retries remaining parameter to the provided function <PR number={4251} /> by <GHUser name="e28eta" /> (breaking-change)
+- add Wiegand reader component <PR number={4288} /> by <GHUser name="ssieb" /> (new-integration)
+- Format docker/build.py <PR number={4313} /> by <GHUser name="jesserockz" />
+- Add macro for sub sensor defining <PR number={4315} /> by <GHUser name="jesserockz" />
+- Add friendly name in MDNS records if it is not empty <PR number={4317} /> by <GHUser name="catalin2402" />
+- Add upload dashboard api <PR number={4318} /> by <GHUser name="balloob" />
+- Bump esphome-dashboard to 20230120.0 <PR number={4319} /> by <GHUser name="jesserockz" />
+- Hydreon: Use new device classes water and precipitation_intensity <PR number={3993} /> by <GHUser name="functionpointer" />
+- Dont fail workflows if lint building fails <PR number={4336} /> by <GHUser name="jesserockz" />
+- Add MICS-4514 gas sensor <PR number={4316} /> by <GHUser name="jesserockz" /> (new-integration)
+- Refactor esp32_ble_tracker to use esp32_ble core ble setup code <PR number={4173} /> by <GHUser name="jesserockz" />
+- Add next_url to improv serial component config <PR number={4343} /> by <GHUser name="jesserockz" /> (new-integration)
+- Remove state class from uptime sensor <PR number={4345} /> by <GHUser name="jesserockz" />
+- Fix esp32_ble_tracker setup priority <PR number={4346} /> by <GHUser name="jesserockz" />
+- Fix in ble client base address parsing <PR number={4347} /> by <GHUser name="jesserockz" />
+- Added support for ADS1015 <PR number={4281} /> by <GHUser name="xvil" />
+- Fix "BLE server / advertising always on" <PR number={4353} /> by <GHUser name="Mat931" />
+- Dump full parsed config to json-config api call <PR number={4373} /> by <GHUser name="jesserockz" />
+- Fix pressure compensation in SCD4X <PR number={4357} /> by <GHUser name="CarlosGS" />
+- Allow mdns services to be exposed by config <PR number={4202} /> by <GHUser name="elupus" />
+- Allow final validate of uart stop bits and parity <PR number={4376} /> by <GHUser name="jesserockz" />
+- Update sim800l.cpp <PR number={4223} /> by <GHUser name="fbeek" />
+- SCD30 Added support for manual calibration <PR number={4362} /> by <GHUser name="ftrueck" />
+- Add Ld2410 Support <PR number={3919} /> by <GHUser name="sebcaps" /> (new-integration)
+- add Resol VBus support <PR number={3976} /> by <GHUser name="ssieb" /> (new-integration)
+- Allow dashboard import to specify if api encryption key should be generated <PR number={4393} /> by <GHUser name="jesserockz" />
+- modify SGP4X integration to report device_class as air quality index <PR number={4327} /> by <GHUser name="alexd321" />
+- Remove unneeded validation for esp32 gpio pins <PR number={4394} /> by <GHUser name="jesserockz" />
+- Fix shelly dimmer current sensor device class <PR number={4385} /> by <GHUser name="trvrnrth" />
+- Added Ethernet Component for ESP IDF with JL1101 PHY driver <PR number={4009} /> by <GHUser name="mobrembski" />
+- adds gpio INPUT_OUTPUT_OPEN_DRAIN <PR number={4360} /> by <GHUser name="tomaszduda23" />
+- Merge components in packages <PR number={3555} /> by <GHUser name="quentinmit" />
+- Update ld2410 logging <PR number={4395} /> by <GHUser name="jesserockz" />
+- Update log for mics4514 to state 3 minute start time. <PR number={4396} /> by <GHUser name="jesserockz" />
+- mDNS updates <PR number={4399} /> by <GHUser name="jesserockz" />
+- Dont keep logging on improv start <PR number={4401} /> by <GHUser name="jesserockz" />
+- Add support for Lippert LP sensors in mopeka_pro_check component <PR number={4118} /> by <GHUser name="rperciaccante" />
+- climate: add support for quiet fan mode <PR number={3609} /> by <GHUser name="MichaelMure" />
+- add MQTT preset support for Climate components <PR number={4379} /> by <GHUser name="jmichiel" />
+- Added CanalSat and CanalSatLD protocol support <PR number={3513} /> by <GHUser name="Emrvb" />
+- Remove unused manifest handler <PR number={4169} /> by <GHUser name="balloob" />
+- Use the github-script action to call the workflow <PR number={4400} /> by <GHUser name="jesserockz" />
+- Convert secrets constant to a tuple <PR number={4245} /> by <GHUser name="balloob" />
+- Verify rel_path output is relative <PR number={4247} /> by <GHUser name="balloob" />
+- Bump curl version in docker <PR number={4403} /> by <GHUser name="jesserockz" />
+- Fix release workflow <PR number={4405} /> by <GHUser name="jesserockz" />
+- Climate PID Autotune Logging fixes <PR number={4136} /> by <GHUser name="patrickcollins12" />
+- Add Clipping to displaybuffer <PR number={4271} /> by <GHUser name="nielsnl68" />
+- Fix check for empty clipping array <PR number={4421} /> by <GHUser name="nielsnl68" />
+- Ledc fix <PR number={4338} /> by <GHUser name="xvil" />
+- Add version api endpoint <PR number={4429} /> by <GHUser name="jesserockz" />
+- Handle uart.write in json-config endpoint <PR number={4430} /> by <GHUser name="jesserockz" />
+- Bump esphome-dashboard to 20230214.0 <PR number={4431} /> by <GHUser name="jesserockz" />
+- Fix setting wrong traits on midea climate component <PR number={4425} /> by <GHUser name="dudanov" />
+
+{/* markdownlint-enable MD013 */}
+
+## All Changelogs
+
+

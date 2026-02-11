@@ -1,0 +1,253 @@
+---
+description: "Changelog for ESPHome 2024.3.0."
+title: "ESPHome 2024.3.0 - 20th March 2024"
+pagefind: false
+slug: "changelog/2024.3.0"
+---
+
+import PR from "@components/PR.astro";
+import GHUser from "@components/GHUser.astro";
+
+
+- [Datetime Core](/components/datetime/index/)
+- [Template Datetime](/components/datetime/template/)
+- [AM2315C](/components/sensor/am2315c/)
+- [HTU31D](/components/sensor/htu31d/)
+- [MS8607](/components/sensor/ms8607/)
+- [AGS10](/components/sensor/ags10/)
+- [VEML6030](/components/sensor/veml7700/)
+- [VEML7700](/components/sensor/veml7700/)
+- [MR24HPC1 mmWave](/components/seeed_mr24hpc1/)
+- [ADS1118](/components/sensor/ads1118/)
+- [CST816](/components/touchscreen/cst816/)
+- [CST226](/components/touchscreen/cst226/)
+- [RPI_DPI_RGB](/components/display/rpi_dpi_rgb/)
+- [Quad SPI AMOLED](/components/display/qspi_amoled/)
+- [ST7701S](/components/display/st7701s/)
+- [ADE7880](/components/sensor/ade7880/)
+- [Emmeti](/components/climate/climate_ir/)
+- [Uponor Smatrix](/components/uponor_smatrix/)
+- [Kamstrup KMP](/components/sensor/kamstrup_kmp/)
+- [Template Fan](/components/fan/template/)
+
+
+## Dates
+
+ESPHome now has support for `date` entities that can be set from the frontend (like Home Assistant) for
+you to check against and execute automations in the future.
+
+ESPHome Dates require Home Assistant 2024.4 or later.
+
+## IPv6
+
+ESPHome is now prepared for the future! The future that is the old IPv6 that is.
+Dualstack is added and it could now have up to 5 ip addresses of any type, and communication with Home assistant,
+MQTT and NTP works with IPv6. ESPHome still depends on IPv4, but the crystal ball shows sign of IPv6-only networks.
+
+If you are building an [External Components](/components/external_components/) or you use
+`network::get_ip_address()`, `wifi::global_wifi_component->get_ip_address()` or
+`ethernet::global_eth_component->get_ip_address()`, these functions have been renamed to
+`::get_ip_addresses()` respectively and now return a list of all IP addresses.
+
+{/* markdownlint-disable MD013 */}
+
+## Release 2024.3.1 - March 27
+
+- AHT10: Fix bug <PR number={6409} /> by <GHUser name="clydebarrow" />
+- microWakeWord: Fix model path joining <PR number={6426} /> by <GHUser name="ebw44" />
+- Don't compile strptime unless its required <PR number={6424} /> by <GHUser name="gabest11" />
+- Fix editor live validation <PR number={6431} /> by <GHUser name="bdraco" />
+
+## Release 2024.3.2 - April 4
+
+- Fix logger compile error on ESP32-C6 <PR number={6323} /> by <GHUser name="DAVe3283" />
+- Add missing ethernet types <PR number={6444} /> by <GHUser name="ssieb" />
+- fix: changing the content source when playing is paused blocks the player <PR number={6454} /> by <GHUser name="NewoPL" />
+
+## Thank you for your support
+
+We would like to thank all Home Assistant Cloud subscribers for their support. It allows [Nabu Casa](https://nabucasa.com/) to
+employ two developers to maintain and further develop the ESPHome project.
+
+## Full list of changes
+
+### New Components
+
+- New component: ADE7880 voltage/current/power/energy sensor <PR number={5242} /> by <GHUser name="kpfleming" /> (new-integration)
+- Add Uponor Smatrix component <PR number={5769} /> by <GHUser name="kroimon" /> (new-integration)
+- Support for MS8607 PHT (Pressure Humidity Temperature) sensor <PR number={3307} /> by <GHUser name="e28eta" /> (new-integration)
+- Add datetime date entities <PR number={6191} /> by <GHUser name="RFDarter" /> (new-integration)
+- Add AGS10 Sensor <PR number={6070} /> by <GHUser name="mak-42" /> (new-integration)
+- ads1118 component <PR number={5711} /> by <GHUser name="solomondg1" /> (new-integration)
+- Add CST816 touchscreen driver <PR number={5941} /> by <GHUser name="clydebarrow" /> (new-integration)
+- AM2315C Temperature + Humidity Sensor <PR number={6266} /> by <GHUser name="swoboda1337" /> (new-integration)
+- Touchscreen: add support for CST226 controller chip <PR number={6151} /> by <GHUser name="clydebarrow" /> (new-integration)
+- Drivers for RGB 16 bit parallel displays <PR number={5872} /> by <GHUser name="clydebarrow" /> (new-integration)
+- VEML7700 and VEML6030 light sensors <PR number={6067} /> by <GHUser name="latonita" /> (new-integration)
+- Add Seeed Studio mmWave Kit MR24HPC1 <PR number={5761} /> by <GHUser name="limengdu" /> (new-integration)
+- Add driver for quad SPI AMOLED displays <PR number={6354} /> by <GHUser name="clydebarrow" /> (new-integration)
+- feat: Add HTU31D Support <PR number={5805} /> by <GHUser name="betterengineering" /> (new-integration)
+- Emmeti infrared climate support <PR number={5197} /> by <GHUser name="E440QF" /> (new-integration)
+- Added Kamstrup Multical 40x component <PR number={4200} /> by <GHUser name="cfeenstra1024" /> (new-integration)
+
+### New Platforms
+
+- Additional sensors and binary sensors support for Haier Climate <PR number={6257} /> by <GHUser name="paveldn" /> (breaking-change) (new-platform)
+- add template fan <PR number={6310} /> by <GHUser name="ssieb" /> (breaking-change) (new-platform)
+
+### Breaking Changes
+
+- LTR390 - Multiple bugfixes <PR number={6161} /> by <GHUser name="sjtrny" /> (breaking-change)
+- Touchscreen component and driver fixes <PR number={5997} /> by <GHUser name="nielsnl68" /> (breaking-change)
+- Additional sensors and binary sensors support for Haier Climate <PR number={6257} /> by <GHUser name="paveldn" /> (breaking-change) (new-platform)
+- add template fan <PR number={6310} /> by <GHUser name="ssieb" /> (breaking-change) (new-platform)
+
+### Beta Changes
+
+- SPI: Revert clk_pin to standard output pin schema <PR number={6368} /> by <GHUser name="clydebarrow" />
+- Allow actions in web_server to be executed via GET method <PR number={5938} /> by <GHUser name="afarago" />
+- fix servo restore <PR number={6370} /> by <GHUser name="ssieb" />
+- Don't try to get IPv6 addresses when disabled <PR number={6366} /> by <GHUser name="HeMan" />
+- Use AQI device class <PR number={6376} /> by <GHUser name="fgsch" />
+- Fix list-components when PR is not targeting dev <PR number={6375} /> by <GHUser name="jesserockz" />
+- allow negative ppm for sensair <PR number={6385} /> by <GHUser name="ssieb" />
+- microWakeWord - add new ops and small improvements <PR number={6360} /> by <GHUser name="kahrendt" />
+- Fix compilation for uponor_smatrix without time component <PR number={6389} /> by <GHUser name="kroimon" />
+- Shows component operation time in `ms` <PR number={6388} /> by <GHUser name="edwardtfn" />
+- IPv6 can't be enabled for libretiny <PR number={6387} /> by <GHUser name="HeMan" />
+- Replace name and friendly name in full adopted configs <PR number={4456} /> by <GHUser name="jesserockz" />
+- Fix bug in `remote_base` conditional <PR number={6281} /> by <GHUser name="swoboda1337" />
+- Fix sending packets to uponor_smatrix devices <PR number={6392} /> by <GHUser name="kroimon" />
+- Fix wrong initialization of vectors in ade7953_i2c <PR number={6393} /> by <GHUser name="kroimon" />
+- ld2420: Firmware v1.5.4+ bug workaround <PR number={6168} /> by <GHUser name="descipher" />
+- Require xsrf/csrf when using a password <PR number={6396} /> by <GHUser name="jesserockz" />
+- AHT10: Use state machine to avoid blocking delay <PR number={6401} /> by <GHUser name="clydebarrow" />
+- Show component warnings and errors in the log; <PR number={6400} /> by <GHUser name="clydebarrow" />
+- web_server support for v3 <PR number={6203} /> by <GHUser name="RFDarter" />
+
+### All changes
+
+- Bump openssh-client to 1:9.2p1-2+deb12u2 <PR number={6216} /> by <GHUser name="jesserockz" />
+- Add support for 1.8V-powered devices <PR number={6234} /> by <GHUser name="bisbastuner" />
+- Adjust HeatpumpIR dependency <PR number={6222} /> by <GHUser name="ivankravets" />
+- INA226 - fixed improper work with signed values, added configurable ADC parameters <PR number={6172} /> by <GHUser name="latonita" />
+- Prevent network config on rpipico board <PR number={5832} /> by <GHUser name="carlosV2" />
+- Bump pytest-asyncio from 0.23.3 to 0.23.5 <PR number={6201} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- New component: ADE7880 voltage/current/power/energy sensor <PR number={5242} /> by <GHUser name="kpfleming" /> (new-integration)
+- Add some components to the new testing framework (D) <PR number={6175} /> by <GHUser name="kbx81" />
+- Provide example devcontainer config for mdns and USB passthrough <PR number={6094} /> by <GHUser name="linkedupbits" />
+- Bump black from 23.12.1 to 24.2.0 <PR number={6221} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Bump pytest from 7.4.4 to 8.0.1 <PR number={6246} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Bump codecov/codecov-action from 3 to 4 <PR number={6160} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Bump peter-evans/create-pull-request from 5.0.2 to 6.0.0 <PR number={6159} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Bump frenck/action-yamllint from 1.4.2 to 1.5.0 <PR number={6236} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Bump voluptuous from 0.14.1 to 0.14.2 <PR number={6181} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Bump pyupgrade from 3.15.0 to 3.15.1 <PR number={6247} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- LTR390 - Multiple bugfixes <PR number={6161} /> by <GHUser name="sjtrny" /> (breaking-change)
+- Fix yamllint <PR number={6253} /> by <GHUser name="jesserockz" />
+- Improve the error message on OTA version mismatch <PR number={6259} /> by <GHUser name="sybrenstuvel" />
+- Bump aioesphomeapi from 21.0.2 to 22.0.0 <PR number={6263} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Allow ESP8266 to use multiple i2c busses <PR number={6145} /> by <GHUser name="LouDou" />
+- Add Uponor Smatrix component <PR number={5769} /> by <GHUser name="kroimon" /> (new-integration)
+- Fix test_build_components for macOS sed <PR number={6278} /> by <GHUser name="kbx81" />
+- Allow to specify global build directory <PR number={6276} /> by <GHUser name="werwolfby" />
+- Add device class support to text sensor <PR number={6202} /> by <GHUser name="dougiteixeira" />
+- Bump pytest from 8.0.1 to 8.0.2 <PR number={6288} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Improve dualstack and IPv6 support <PR number={5449} /> by <GHUser name="HeMan" />
+- Waveshare e-ink 2IN9_V2 - fix full and partial update based on vendor… <PR number={5481} /> by <GHUser name="darianndd" />
+- Add RTTTL volume control. <PR number={5968} /> by <GHUser name="nielsnl68" />
+- Touchscreen component and driver fixes <PR number={5997} /> by <GHUser name="nielsnl68" /> (breaking-change)
+- Add `on_update` trigger for Project versions <PR number={6298} /> by <GHUser name="jesserockz" />
+- Bump peter-evans/create-pull-request from 6.0.0 to 6.0.1 <PR number={6302} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- CSE7766 Apparent Power & Power Factor calculations <PR number={6292} /> by <GHUser name="DAVe3283" />
+- Adding W5500 support to ethernet component <PR number={4424} /> by <GHUser name="JeroenVanOort" />
+- Fix numbering of ip_address sensors <PR number={6305} /> by <GHUser name="HeMan" />
+- Bump aioesphomeapi from 22.0.0 to 23.0.0 <PR number={6293} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Add regular polygon shapes to display component <PR number={6108} /> by <GHUser name="mathieu-mp" />
+- Fix return value in `core/automation.h` <PR number={6314} /> by <GHUser name="FlyingFeng2021" />
+- aht10: Added new CMD and renamed existing CMD to match datasheet <PR number={6303} /> by <GHUser name="cptskippy" />
+- handling with the negative temperature in the sensor tmp102 <PR number={6316} /> by <GHUser name="FlyingFeng2021" />
+- x9c: fix off by 1 error <PR number={6318} /> by <GHUser name="andynumber2" />
+- Support for MS8607 PHT (Pressure Humidity Temperature) sensor <PR number={3307} /> by <GHUser name="e28eta" /> (new-integration)
+- Separate logger implementations for each hardware platform into different files <PR number={6167} /> by <GHUser name="tomaszduda23" />
+- Additional sensors and binary sensors support for Haier Climate <PR number={6257} /> by <GHUser name="paveldn" /> (breaking-change) (new-platform)
+- Add toggle command to cover web_server endpoint <PR number={6319} /> by <GHUser name="heythisisnate" />
+- Improv: support connecting to hidden networks <PR number={6322} /> by <GHUser name="jesserockz" />
+- Update mDNS for IDF ≥ 5.0 <PR number={6328} /> by <GHUser name="HeMan" />
+- DFPlayer: refix Bug created with PR 4758 <PR number={5861} /> by <GHUser name="sandronidi" />
+- Fix build failures on host platform caused by #6167 <PR number={6338} /> by <GHUser name="clydebarrow" />
+- Update bang_bang to log two decimal places in config dump <PR number={6304} /> by <GHUser name="rafalw1277" />
+- Add datetime date entities <PR number={6191} /> by <GHUser name="RFDarter" /> (new-integration)
+- Add AGS10 Sensor <PR number={6070} /> by <GHUser name="mak-42" /> (new-integration)
+- Bump aioesphomeapi from 23.0.0 to 23.1.0 <PR number={6332} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Bump pytest-asyncio from 0.23.5 to 0.23.5.post1 <PR number={6334} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Bump docker/setup-buildx-action from 3.0.0 to 3.1.0 <PR number={6295} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Set dependabot to look at composite actions versions <PR number={6343} /> by <GHUser name="jesserockz" />
+- ads1118 component <PR number={5711} /> by <GHUser name="solomondg1" /> (new-integration)
+- Bump actions/cache from 4.0.0 to 4.0.1 <PR number={6306} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Bump docker/build-push-action from 5.0.0 to 5.2.0 in /.github/actions/build-image <PR number={6347} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- fix: modbus_textsensor response is too long in some cases <PR number={6333} /> by <GHUser name="NewoPL" />
+- add template fan <PR number={6310} /> by <GHUser name="ssieb" /> (breaking-change) (new-platform)
+- dump config after logging CDC port is opened by host <PR number={6169} /> by <GHUser name="tomaszduda23" />
+- Add IRK support to allow tracking of devices with random MAC addresses <PR number={6335} /> by <GHUser name="chbmuc" />
+- [Fingerprint_grow] Implements Sleep Mode feature <PR number={6116} /> by <GHUser name="alexborro" />
+- cleanup ili9xxx component by removing data rate define <PR number={6350} /> by <GHUser name="nielsnl68" />
+- web_server_idf: support x-www-form-urlencoded POST requests <PR number={6037} /> by <GHUser name="dentra" />
+- feat(MQTT): Add QoS option for each MQTT component <PR number={6279} /> by <GHUser name="Rapsssito" />
+- Check permissions <PR number={6255} /> by <GHUser name="OdileVidrine" />
+- Add CST816 touchscreen driver <PR number={5941} /> by <GHUser name="clydebarrow" /> (new-integration)
+- ILI9XXX: Lazily allocate buffer <PR number={6352} /> by <GHUser name="clydebarrow" />
+- AM2315C Temperature + Humidity Sensor <PR number={6266} /> by <GHUser name="swoboda1337" /> (new-integration)
+- Add ble_presence binary sensor timeout config value. <PR number={6024} /> by <GHUser name="clydebarrow" />
+- Add state listeners to `rotary_encoder` <PR number={6035} /> by <GHUser name="clydebarrow" />
+- ili9xxx: Add support for GC9A01A display <PR number={6351} /> by <GHUser name="clydebarrow" />
+- Touchscreen: add support for CST226 controller chip <PR number={6151} /> by <GHUser name="clydebarrow" /> (new-integration)
+- font: add anti-aliasing and other features <PR number={6198} /> by <GHUser name="clydebarrow" />
+- Mhz19 warmup <PR number={6214} /> by <GHUser name="fornellas" />
+- Refactor ATM90E32 to reduce blocking time and improve accuracy. <PR number={5670} /> by <GHUser name="descipher" />
+- Bump aioesphomeapi from 23.1.0 to 23.1.1 <PR number={6348} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Bump pytest from 8.0.2 to 8.1.1 <PR number={6346} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Add support for Waveshare 2.13" V2 display <PR number={6337} /> by <GHUser name="manuelkasper" />
+- Mitsubishi Climate updates <PR number={3886} /> by <GHUser name="RubyBailey" />
+- Drivers for RGB 16 bit parallel displays <PR number={5872} /> by <GHUser name="clydebarrow" /> (new-integration)
+- hydreon_rgxx - add resolution option <PR number={6077} /> by <GHUser name="mrtoy-me" />
+- SPI schema now uses typed_schema with `type` key <PR number={6353} /> by <GHUser name="clydebarrow" />
+- VEML7700 and VEML6030 light sensors <PR number={6067} /> by <GHUser name="latonita" /> (new-integration)
+- Add Seeed Studio mmWave Kit MR24HPC1 <PR number={5761} /> by <GHUser name="limengdu" /> (new-integration)
+- Add getter for font glyph data <PR number={6355} /> by <GHUser name="clydebarrow" />
+- Require reset_pin for certain waveshare_epaper models in YAML validation <PR number={6357} /> by <GHUser name="manuelkasper" />
+- touchscreen driver fixes <PR number={6356} /> by <GHUser name="clydebarrow" />
+- Make USE_HOST compilable on msys2 <PR number={6359} /> by <GHUser name="maruel" />
+- download font from url on build <PR number={5254} /> by <GHUser name="landonr" />
+- Add driver for quad SPI AMOLED displays <PR number={6354} /> by <GHUser name="clydebarrow" /> (new-integration)
+- ADE7953: Add the ability to use accumulating energy registers, more precise power reporting <PR number={6311} /> by <GHUser name="isorin" />
+- feat: Add HTU31D Support <PR number={5805} /> by <GHUser name="betterengineering" /> (new-integration)
+- Emmeti infrared climate support <PR number={5197} /> by <GHUser name="E440QF" /> (new-integration)
+- Added Kamstrup Multical 40x component <PR number={4200} /> by <GHUser name="cfeenstra1024" /> (new-integration)
+- add possibility to provide different conversion times for Bus Voltage… <PR number={6327} /> by <GHUser name="kev300" />
+- SPI: Revert clk_pin to standard output pin schema <PR number={6368} /> by <GHUser name="clydebarrow" />
+- Allow actions in web_server to be executed via GET method <PR number={5938} /> by <GHUser name="afarago" />
+- fix servo restore <PR number={6370} /> by <GHUser name="ssieb" />
+- Don't try to get IPv6 addresses when disabled <PR number={6366} /> by <GHUser name="HeMan" />
+- Use AQI device class <PR number={6376} /> by <GHUser name="fgsch" />
+- Fix list-components when PR is not targeting dev <PR number={6375} /> by <GHUser name="jesserockz" />
+- allow negative ppm for sensair <PR number={6385} /> by <GHUser name="ssieb" />
+- microWakeWord - add new ops and small improvements <PR number={6360} /> by <GHUser name="kahrendt" />
+- Fix compilation for uponor_smatrix without time component <PR number={6389} /> by <GHUser name="kroimon" />
+- Shows component operation time in `ms` <PR number={6388} /> by <GHUser name="edwardtfn" />
+- IPv6 can't be enabled for libretiny <PR number={6387} /> by <GHUser name="HeMan" />
+- Replace name and friendly name in full adopted configs <PR number={4456} /> by <GHUser name="jesserockz" />
+- Fix bug in `remote_base` conditional <PR number={6281} /> by <GHUser name="swoboda1337" />
+- Fix sending packets to uponor_smatrix devices <PR number={6392} /> by <GHUser name="kroimon" />
+- Fix wrong initialization of vectors in ade7953_i2c <PR number={6393} /> by <GHUser name="kroimon" />
+- ld2420: Firmware v1.5.4+ bug workaround <PR number={6168} /> by <GHUser name="descipher" />
+- Require xsrf/csrf when using a password <PR number={6396} /> by <GHUser name="jesserockz" />
+- AHT10: Use state machine to avoid blocking delay <PR number={6401} /> by <GHUser name="clydebarrow" />
+- Show component warnings and errors in the log; <PR number={6400} /> by <GHUser name="clydebarrow" />
+- web_server support for v3 <PR number={6203} /> by <GHUser name="RFDarter" />
+
+{/* markdownlint-enable MD013 */}
+
+## All Changelogs
+
+

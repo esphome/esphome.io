@@ -1,0 +1,266 @@
+---
+description: "Changelog for ESPHome 2024.5.0."
+title: "ESPHome 2024.5.0 - 15th May 2024"
+pagefind: false
+slug: "changelog/2024.5.0"
+---
+
+import PR from "@components/PR.astro";
+import GHUser from "@components/GHUser.astro";
+
+
+- [Valve Core](/components/valve/index/)
+- [Template Valve](/components/valve/template/)
+- [Event Core](/components/event/index/)
+- [Template Event](/components/event/template/)
+- [Template Time](/components/datetime/template/)
+- [Template Datetime](/components/datetime/template/)
+- [WeiKai SPI/I²C UART/IO Expander](/components/weikai/)
+
+
+## Valves, Events, and More
+
+This release brings a new `Valve` component, which can be used to control valves.
+A `Valve` can be opened, closed, or a specific position set if supported.
+
+`Event` entities were added to Home Assistant in [2023.8](https://www.home-assistant.io/blog/2023/08/02/release-20238/#introducing-the-event-entity).
+They allow better structure and also history and logging of the events sent from ESPHome to Home Assistant compared
+to just using publishing events onto the Home Assistant event bus with the `homeassistant.event` action.
+
+The `datetime` component has also been extended with `DateTime` and `Time` entity types this release.
+
+## ESP32 ADC Attenuation
+
+The attenuation configuration option for ESP32 `adc` sensors has had a deprecation in the underlying ESP-IDF
+framework with the `11dB` option. The value to replace `11dB` with is `12dB`. There are no functionality changes
+otherwise. There will be a warning in the logs when installing if you are using `11dB` and it will be
+removed in **2024.8.0**.
+
+## Remote Receiver tolerance
+
+The `tolerance` option in the `remote_receiver` component has been extended to allow time values, but at the
+same time the validation is now more strict.
+If you were using a raw value with no unit before 2024.5.0, for example `25`, you will need to change it to `25%`.
+
+{/* markdownlint-disable MD013 */}
+
+## Release 2024.5.1 - May 20
+
+- Add device_class to valve core config <PR number={6765} /> by <GHUser name="acshef" />
+- Synchronise Device Classes from Home Assistant <PR number={6768} /> by <GHUser name="esphomebot" />
+- Fix Upload from Dashboard with MQTT discovery. <PR number={6774} /> by <GHUser name="Links2004" />
+- Fix MQTT dashboard discovery (Exception in MqttStatusThread). <PR number={6775} /> by <GHUser name="Links2004" />
+
+## Release 2024.5.2 - May 21
+
+- Revert "Fix MQTT dashboard discovery (Exception in MqttStatusThread)." <PR number={6782} /> by <GHUser name="bdraco" />
+- Fix DashboardEntries.all() call <PR number={6783} /> by <GHUser name="bdraco" />
+- [remote_receiver] Add better error message for tolerance breaking change <PR number={6784} /> by <GHUser name="jesserockz" />
+- Update webserver local assets to 20240519-215627 <PR number={6779} /> by <GHUser name="esphomebot" />
+
+## Release 2024.5.3 - May 25
+
+- [voice_assistant] Don't allocate buffers until starting the microphone for the first time <PR number={6800} /> by <GHUser name="jesserockz" />
+
+## Release 2024.5.4 - May 28
+
+- [web_server_base] Bump ESPAsyncWebServer-esphome to 3.2.2 <PR number={6797} /> by <GHUser name="jesserockz" />
+- [helpers] Move Base64 string to cpp <PR number={6819} /> by <GHUser name="gabest11" />
+
+## Release 2024.5.5 - June 5
+
+- [voice_assistant] Half the microphone ringbuffer size <PR number={6830} /> by <GHUser name="jesserockz" />
+- [i2s_speaker] Add buffer allocation failure checks <PR number={6829} /> by <GHUser name="jesserockz" />
+- [improv_serial] Fix for IDF 4.4.7 <PR number={6855} /> by <GHUser name="kbx81" />
+
+## Full list of changes
+
+### New Components
+
+- Add valve component <PR number={6447} /> by <GHUser name="kbx81" /> (new-integration)
+- Add the WeiKai SPI/I2C UART/IO Expander components to esphome <PR number={5218} /> by <GHUser name="DrCoolzic" /> (new-integration)
+- Event entity support <PR number={6451} /> by <GHUser name="nohat" /> (new-integration)
+- SPI and I2C for BMP390 and BMP380 <PR number={6652} /> by <GHUser name="latonita" /> (new-integration) (breaking-change)
+
+### Breaking Changes
+
+- Add DNS sensor and simplify format <PR number={6450} /> by <GHUser name="HeMan" /> (breaking-change)
+- SM2135 - Use standard channel ordering. <PR number={6573} /> by <GHUser name="Cossid" /> (breaking-change)
+- [sn74hc595] Enforce type field to distinguish gpio vs spi mode <PR number={6609} /> by <GHUser name="jesserockz" /> (breaking-change)
+- Add datetime entities <PR number={6513} /> by <GHUser name="jesserockz" /> (breaking-change)
+- SPI and I2C for BMP390 and BMP380 <PR number={6652} /> by <GHUser name="latonita" /> (new-integration) (breaking-change)
+
+### Beta Changes
+
+- [github] Upgrade to actions/[upload,download]-artifact v4 <PR number={6698} /> by <GHUser name="jesserockz" />
+- [nextion] Replace flags to `USE_ARDUINO` <PR number={6700} /> by <GHUser name="edwardtfn" />
+- [remote_receiver, remote_transmitter] Improve error messages on the ESP32 <PR number={6701} /> by <GHUser name="Mat931" />
+- [ethernet] Use constexpr instead of inline define for KSZ80XX_PC2R_REG_ADDR <PR number={6705} /> by <GHUser name="jesserockz" />
+- Add PHY register writes to enable external clock on Ethernet with RTL8201 <PR number={6704} /> by <GHUser name="heythisisnate" />
+- Bump recommended ESP-IDF to 4.4.7 <PR number={6703} /> by <GHUser name="bdraco" />
+- [core] Ensure that a generated ID name is distinct from its type. <PR number={6706} /> by <GHUser name="clydebarrow" />
+- [color] Fix crash when hex color parses as int, improve error reporting. <PR number={6707} /> by <GHUser name="clydebarrow" />
+- [github] Fix digest artifact name <PR number={6710} /> by <GHUser name="jesserockz" />
+- fix(ltr390): stuck ALS values when configured for ALS+UV readings <PR number={6723} /> by <GHUser name="CodeInPolish" />
+- Set FEATURE_API_AUDIO flag also if the speaker component is not used <PR number={6712} /> by <GHUser name="gnumpi" />
+- Bump platformio from 6.1.13 to 6.1.15 <PR number={6634} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Fix ESPHOME_PROJECT_VERSION_30 <PR number={6731} /> by <GHUser name="jesserockz" />
+- Voice-Assistant: Start-order change for VAD disabled: start va-pipeline when microphon… <PR number={6391} /> by <GHUser name="gnumpi" />
+- Add ANNOUNCING state to media_player. <PR number={6691} /> by <GHUser name="gnumpi" />
+- [adc] Fix 11db deprecation warning <PR number={6749} /> by <GHUser name="jesserockz" /> (notable-change)
+
+### Notable Changes
+
+- [adc] Fix 11db deprecation warning <PR number={6749} /> by <GHUser name="jesserockz" /> (notable-change)
+
+### All changes
+
+- Add some components to the new testing framework (H) <PR number={6179} /> by <GHUser name="kbx81" />
+- Added Htu21d model option <PR number={6511} /> by <GHUser name="MRemy2" />
+- Add bk72xx base test file <PR number={6522} /> by <GHUser name="jesserockz" />
+- Add "log" alias for "logs" command <PR number={6519} /> by <GHUser name="pzich" />
+- Add DNS sensor and simplify format <PR number={6450} /> by <GHUser name="HeMan" /> (breaking-change)
+- Add all missing `remote_receiver` `on_...` tests <PR number={6524} /> by <GHUser name="kbx81" />
+- Add actions to http_request tests <PR number={6529} /> by <GHUser name="kbx81" />
+- Update homeassistant component tests with actions <PR number={6528} /> by <GHUser name="kbx81" />
+- Define `USE_PSRAM` <PR number={6526} /> by <GHUser name="edwardtfn" />
+- Bump black from 24.2.0 to 24.4.0 <PR number={6539} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Bump peter-evans/create-pull-request from 6.0.2 to 6.0.3 <PR number={6525} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Bump python version in sync-device-classes workflow to 3.12 for HA <PR number={6541} /> by <GHUser name="jesserockz" />
+- Bump pylint from 3.0.3 to 3.1.0 <PR number={6287} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Bump aioesphomeapi from 23.2.0 to 24.0.0 <PR number={6544} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Bump pyupgrade from 3.15.1 to 3.15.2 <PR number={6543} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Add enum option to typed_schema <PR number={6546} /> by <GHUser name="jesserockz" />
+- Move esphome-fork startup script to main repo. <PR number={6523} /> by <GHUser name="jesserockz" />
+- Call workflow for addon with dev version <PR number={6549} /> by <GHUser name="jesserockz" />
+- Use trusted publishing token for pypi <PR number={6545} /> by <GHUser name="jesserockz" />
+- Fix uart to work with new enum definition in esp-idf-v5.2.1 <PR number={6487} /> by <GHUser name="luar123" />
+- Housecleaning: Use walrus operator in datetime <PR number={6552} /> by <GHUser name="jesserockz" />
+- Housecleaning: Use walrus operator in text <PR number={6560} /> by <GHUser name="jesserockz" />
+- Housecleaning: Use walrus operator in light <PR number={6556} /> by <GHUser name="jesserockz" />
+- Housecleaning: Use walrus operator in select <PR number={6557} /> by <GHUser name="jesserockz" />
+- Housecleaning: Use walrus operator in number <PR number={6561} /> by <GHUser name="jesserockz" />
+- Housecleaning: Use walrus operator in cover <PR number={6562} /> by <GHUser name="jesserockz" />
+- Housecleaning: Use walrus operator in climate <PR number={6551} /> by <GHUser name="jesserockz" />
+- Housecleaning: Use walrus operator in fan <PR number={6555} /> by <GHUser name="jesserockz" />
+- Housecleaning: Use walrus operator in text_sensor <PR number={6559} /> by <GHUser name="jesserockz" />
+- Bump zeroconf to 0.132.2 <PR number={6548} /> by <GHUser name="bdraco" />
+- Housecleaning: Use walrus operator in switch <PR number={6558} /> by <GHUser name="jesserockz" />
+- Housecleaning: Use walrus operator in lock <PR number={6554} /> by <GHUser name="jesserockz" />
+- Housecleaning: Use walrus operator in sensor <PR number={6553} /> by <GHUser name="jesserockz" />
+- Bump pytest-mock from 3.12.0 to 3.14.0 <PR number={6572} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Bump peter-evans/create-pull-request from 6.0.3 to 6.0.4 <PR number={6569} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Nextion - Review set_protocol_reparse_mode() <PR number={6567} /> by <GHUser name="edwardtfn" />
+- Allow component final_validate <PR number={6475} /> by <GHUser name="kbx81" />
+- SM2135 - Use standard channel ordering. <PR number={6573} /> by <GHUser name="Cossid" /> (breaking-change)
+- Nextion - Do not refresh sensors while updating <PR number={6566} /> by <GHUser name="edwardtfn" />
+- Nextion - Review types <PR number={6565} /> by <GHUser name="edwardtfn" />
+- On failure, dump the output of preceding jobs in CI status <PR number={6564} /> by <GHUser name="clydebarrow" />
+- Nextion `send_command` method <PR number={6540} /> by <GHUser name="edwardtfn" />
+- Fix some printf formats for size_t. <PR number={6542} /> by <GHUser name="clydebarrow" />
+- remove delay from tmp102 <PR number={6577} /> by <GHUser name="ssieb" />
+- Create `component_dir` substitution for local files to be included in… <PR number={6575} /> by <GHUser name="jesserockz" />
+- Define `USE_ESP32_BLE` <PR number={6585} /> by <GHUser name="edwardtfn" />
+- Bump aioesphomeapi from 24.0.0 to 24.3.0 <PR number={6602} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Add yamllint and clang-format to pre-commit hooks <PR number={6578} /> by <GHUser name="clydebarrow" />
+- Use clang-format version from requirements_dev file <PR number={6606} /> by <GHUser name="jesserockz" />
+- Add some components to the new testing framework (P) <PR number={6213} /> by <GHUser name="kbx81" />
+- Add some components to the new testing framework (M part 1) <PR number={6207} /> by <GHUser name="kbx81" />
+- Add some components to the new testing framework (M part 2) <PR number={6208} /> by <GHUser name="kbx81" />
+- Add some components to the new testing framework (O) <PR number={6211} /> by <GHUser name="kbx81" />
+- [mopeka_std_check] Fix test file indentation <PR number={6610} /> by <GHUser name="jesserockz" />
+- Add valve component <PR number={6447} /> by <GHUser name="kbx81" /> (new-integration)
+- Add some components to the new testing framework (R) <PR number={6219} /> by <GHUser name="kbx81" />
+- [sn74hc595] Enforce type field to distinguish gpio vs spi mode <PR number={6609} /> by <GHUser name="jesserockz" /> (breaking-change)
+- [tests] Run yaml tests in groups if over 100 to run <PR number={6612} /> by <GHUser name="jesserockz" />
+- Add some components to the new testing framework (I) <PR number={6185} /> by <GHUser name="kbx81" />
+- Add some components to the new testing framework (T) <PR number={6229} /> by <GHUser name="kbx81" />
+- Add some components to the new testing framework (S part 1) <PR number={6224} /> by <GHUser name="kbx81" />
+- Add some components to the new testing framework (S part 2) <PR number={6227} /> by <GHUser name="kbx81" />
+- `graphical_display_menu` requires a Display, not DisplayBuffer <PR number={6614} /> by <GHUser name="clydebarrow" />
+- Add null GPIO pin <PR number={6611} /> by <GHUser name="clydebarrow" />
+- Allow UART to be AUTO LOADed <PR number={6617} /> by <GHUser name="jesserockz" />
+- Add the WeiKai SPI/I2C UART/IO Expander components to esphome <PR number={5218} /> by <GHUser name="DrCoolzic" /> (new-integration)
+- Sort mqtt_const alphabetically <PR number={6619} /> by <GHUser name="jesserockz" />
+- Limit Rx wait loop time to 3 seconds. <PR number={6594} /> by <GHUser name="descipher" />
+- Event entity support <PR number={6451} /> by <GHUser name="nohat" /> (new-integration)
+- Only check c/c++ files with clang-format <PR number={6620} /> by <GHUser name="jesserockz" />
+- Added base64 helper <PR number={4866} /> by <GHUser name="freekode" />
+- Add Roomba IR protocol <PR number={4595} /> by <GHUser name="rforro" />
+- Fix issue when setting cw/ww brightness via temperature <PR number={5976} /> by <GHUser name="patagonaa" />
+- Add get/set color temperature functions in Kelvin <PR number={5006} /> by <GHUser name="danielkent-net" />
+- Move CONF_PLATFORM_VERSION to global const.py <PR number={6629} /> by <GHUser name="tomaszduda23" />
+- Ble client fixes for proxy <PR number={6596} /> by <GHUser name="elupus" />
+- Fix for #6614- use background_color, improve anti-aliasing <PR number={6618} /> by <GHUser name="clydebarrow" />
+- Fix graph hangs when y ≤ 0 <PR number={6593} /> by <GHUser name="chiahsing" />
+- Feature add last_operation to time based cover <PR number={6084} /> by <GHUser name="xprofiler" />
+- Add `event`, `text_sensor` and `valve` device classes to sync script <PR number={6624} /> by <GHUser name="kbx81" />
+- Add datetime entities <PR number={6513} /> by <GHUser name="jesserockz" /> (breaking-change)
+- Multiple Daly-BMS support <PR number={6615} /> by <GHUser name="latonita" />
+- Remove text_sensor from sync-device-class job <PR number={6637} /> by <GHUser name="kbx81" />
+- Synchronise Device Classes from Home Assistant <PR number={6638} /> by <GHUser name="esphomebot" />
+- Display: add diagnostic test_card option <PR number={6608} /> by <GHUser name="nielsnl68" />
+- waveshare_epaper: Add 2.90in-dke <PR number={6492} /> by <GHUser name="polyfloyd" />
+- Extract core comments from #6241 <PR number={6643} /> by <GHUser name="javawizard" />
+- [hm3301] Updated the AQI based on the airnow document <PR number={6004} /> by <GHUser name="optimusprimespace" />
+- Fix command line substitutions without any yaml substitutions <PR number={6644} /> by <GHUser name="jesserockz" />
+- Allow platform dependencies <PR number={6623} /> by <GHUser name="kbx81" />
+- [light] Add transition_length to strobe effect. <PR number={6595} /> by <GHUser name="lhartmann" />
+- Fixed the issue that graph draws out of the boundary. <PR number={6651} /> by <GHUser name="chiahsing" />
+- Fix upload command. MQTT user and password is missing from configuration. #5093 <PR number={5766} /> by <GHUser name="dylan09" />
+- patch esphome cli to skip mqtt based device discovery if --device option is specified <PR number={6371} /> by <GHUser name="quigleymd" />
+- Fix for #4866 - inconsistent arguments <PR number={6639} /> by <GHUser name="clydebarrow" />
+- [template/text] Fix lambda config <PR number={6655} /> by <GHUser name="asergunov" />
+- web_server: Add support for v3 local server_index <PR number={6563} /> by <GHUser name="pzich" />
+- Update webserver local assets to 20240429-211523 <PR number={6657} /> by <GHUser name="esphomebot" />
+- [nextion] Exit reparse before update TFT <PR number={6589} /> by <GHUser name="edwardtfn" />
+- [nextion] Set alternative TFT update baud rate <PR number={6587} /> by <GHUser name="edwardtfn" />
+- [TM1637] Let turn off the display <PR number={6656} /> by <GHUser name="asergunov" />
+- [nextion] Use persistent http connection for TFT upload (Arduino) <PR number={6582} /> by <GHUser name="edwardtfn" />
+- Extend MQTT tests <PR number={6648} /> by <GHUser name="kbx81" />
+- Extend and consolidate `script` tests <PR number={6663} /> by <GHUser name="kbx81" />
+- [nextion] Use persistent http connection for TFT upload (ESP-IDF) <PR number={6576} /> by <GHUser name="edwardtfn" />
+- Add a function to return the loop_interval <PR number={6666} /> by <GHUser name="tronikos" />
+- Remote receiver improvements <PR number={4642} /> by <GHUser name="Mat931" />
+- Make fast update intervals in qmc5883l work <PR number={6647} /> by <GHUser name="tronikos" />
+- SPI and I2C for BMP390 and BMP380 <PR number={6652} /> by <GHUser name="latonita" /> (new-integration) (breaking-change)
+- Set `CONF_` CI counter to fail on 3 or more definitions <PR number={6668} /> by <GHUser name="jesserockz" />
+- [core] Rename ALWAYS_INLINE to ESPHOME_ALWAYS_INLINE <PR number={6636} /> by <GHUser name="tomaszduda23" />
+- print task name if logger is called from other than main thread <PR number={6630} /> by <GHUser name="tomaszduda23" />
+- Fix recent definitions into `defines.h` <PR number={6667} /> by <GHUser name="edwardtfn" />
+- Add fast update to HMC5883L <PR number={6669} /> by <GHUser name="mkmer" />
+- Minor tidy up of BME280 code <PR number={6672} /> by <GHUser name="latonita" />
+- External components: optional configurable path for git source <PR number={6677} /> by <GHUser name="twasilczyk" />
+- Use clang-apply-replacements when clang-apply-replacements-14 does not exist <PR number={6684} /> by <GHUser name="Links2004" />
+- fix conflict with EMPTY macro in zephyr <PR number={6679} /> by <GHUser name="tomaszduda23" />
+- Bump actions/checkout from 4.1.1 to 4.1.5 <PR number={6685} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Fix Datetime-Datetime compiler error <PR number={6686} /> by <GHUser name="RFDarter" />
+- Bump esphome/ESPAsyncWebServer-esphome to 3.2.0 <PR number={6687} /> by <GHUser name="jesserockz" />
+- fix date_time validation <PR number={6688} /> by <GHUser name="RFDarter" />
+- proceed if AP mode is set up <PR number={6631} /> by <GHUser name="ssieb" />
+- Migrate some constants to core code <PR number={6692} /> by <GHUser name="clydebarrow" />
+- Consolidate test files where all tests are identical <PR number={6690} /> by <GHUser name="kbx81" />
+- Make `pulse_meter` PULSE filter report the pulse as soon as it can <PR number={6014} /> by <GHUser name="TrentHouliston" />
+- Update webserver local assets to 20240507-231331 <PR number={6696} /> by <GHUser name="esphomebot" />
+- [github] Upgrade to actions/[upload,download]-artifact v4 <PR number={6698} /> by <GHUser name="jesserockz" />
+- [nextion] Replace flags to `USE_ARDUINO` <PR number={6700} /> by <GHUser name="edwardtfn" />
+- [remote_receiver, remote_transmitter] Improve error messages on the ESP32 <PR number={6701} /> by <GHUser name="Mat931" />
+- [ethernet] Use constexpr instead of inline define for KSZ80XX_PC2R_REG_ADDR <PR number={6705} /> by <GHUser name="jesserockz" />
+- Add PHY register writes to enable external clock on Ethernet with RTL8201 <PR number={6704} /> by <GHUser name="heythisisnate" />
+- Bump recommended ESP-IDF to 4.4.7 <PR number={6703} /> by <GHUser name="bdraco" />
+- [core] Ensure that a generated ID name is distinct from its type. <PR number={6706} /> by <GHUser name="clydebarrow" />
+- [color] Fix crash when hex color parses as int, improve error reporting. <PR number={6707} /> by <GHUser name="clydebarrow" />
+- [github] Fix digest artifact name <PR number={6710} /> by <GHUser name="jesserockz" />
+- fix(ltr390): stuck ALS values when configured for ALS+UV readings <PR number={6723} /> by <GHUser name="CodeInPolish" />
+- Set FEATURE_API_AUDIO flag also if the speaker component is not used <PR number={6712} /> by <GHUser name="gnumpi" />
+- Bump platformio from 6.1.13 to 6.1.15 <PR number={6634} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Fix ESPHOME_PROJECT_VERSION_30 <PR number={6731} /> by <GHUser name="jesserockz" />
+- Voice-Assistant: Start-order change for VAD disabled: start va-pipeline when microphon… <PR number={6391} /> by <GHUser name="gnumpi" />
+- Add ANNOUNCING state to media_player. <PR number={6691} /> by <GHUser name="gnumpi" />
+- [adc] Fix 11db deprecation warning <PR number={6749} /> by <GHUser name="jesserockz" /> (notable-change)
+
+{/* markdownlint-enable MD013 */}
+
+## All Changelogs
+
+

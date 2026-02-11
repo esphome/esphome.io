@@ -1,0 +1,222 @@
+---
+description: "Changelog for ESPHome version 1.20.0."
+title: "Changelog - Version 1.20.0 - 21st July 2021"
+pagefind: false
+slug: "changelog/v1.20.0"
+---
+
+import PR from "@components/PR.astro";
+import GHUser from "@components/GHUser.astro";
+import { Image } from 'astro:assets';
+import onlineIndicatorImg from './images/online-indicator.png';
+
+{/* markdownlint-disable MD013 */}
+
+- [Number Core](/components/number/index/)
+- [Template Number](/components/number/template/)
+- [Havells Inverter](/components/sensor/havells_solar/)
+- [Anova Cooker](/components/climate/anova/)
+
+Here's to another timely release bringing a few new components and a whole bunch of changes under
+the hood to existing ones.
+
+## Number Entities
+
+Creating `number` entities in Home Assistant from ESPHome is now supported. This basically replaces
+creating an `input_number` and then importing that sensor into ESPHome as a sensor with
+`platform: homeassistant`. The state of the number can also be updated directly on the ESPHome device
+and will be reflected in Home Assistant.
+
+I would like to see what other platforms people can come up with for the number component,
+I have a few ideas myself.
+
+## Light Changes
+
+Unfortunately, some breaking changes had to be made:
+
+- For addressable RGBW lights, the brightness now also applies to the white channel (this was already the case for
+  non-addressable RGBW lights). If you want to control only the brightness of the color channel, use the new `color_brightness` option.
+
+- For RGBW lights, the white channel is no longer normalized by the color intensity in the `light.turn_on` and
+  `light.control` actions. In previous versions, if the red value was set to 60% and the white value to 30%, this
+  would result in the white channel being at 50% brightness. Starting with this version, this will result in the
+  white channel being set to 30%, as expected.
+
+## ESPHome Dashboard
+
+Thanks <GHUser name="balloob" /> for making a small, but very significant change to the dashboard cards so now people who suffer from color-blindness
+will know whether or not the node is online.
+
+<Image src={onlineIndicatorImg} layout="constrained" alt="" />
+
+## Nextion
+
+The Nextion component has had a major rewrite this release bringing many more features to those that use the displays.
+I am not sure how to describe the changes except for listing the main change points from the PR and linking to the docs
+for you to read yourself. [Nextion](/components/display/nextion/)
+
+- Sensors/binary sensors/switch/text sensors and touch have all been added.
+- Over the air TFT file upload
+- Polling has been added to all the components
+- Display on_wake/on_sleep
+- Many API helpers (get_string/get_int) have been added
+
+## Release 1.20.1 - July 27
+
+- Fix git pull for external_components <PR number={2055} /> by <GHUser name="mmakaay" />
+- midea_ac: fix presets implementation <PR number={2054} /> by <GHUser name="dudanov" />
+- Fixes new auto mode COOL and HEAT after <PR number={1994} /> <PR number={2053} /> by <GHUser name="carstenschroeder" />
+- Log warning about lack of support for Anova nano <PR number={2063} /> by <GHUser name="buxtronix" />
+- Couple more updates for the Tuya component <PR number={2065} /> by <GHUser name="nuttytree" />
+- Fix MQTT climate custom fan modes without regular ones <PR number={2071} /> by <GHUser name="OttoWinter" />
+
+## Release 1.20.2 - July 29
+
+- More Tuya MCU robustness <PR number={2080} /> by <GHUser name="jkl1337" />
+- Bump esphome dashboard to 20210728.0 <PR number={2081} /> by <GHUser name="jesserockz" />
+- HLW8012 - Dump energy sensor config <PR number={2082} /> by <GHUser name="jesserockz" />
+- Use sensor_schema for total_daily_energy <PR number={2090} /> by <GHUser name="jesserockz" />
+
+## Release 1.20.3 - July 30
+
+- Set pulse meter total to use state class measurement and last reset type auto <PR number={2097} /> by <GHUser name="jesserockz" />
+
+## Release 1.20.4 - August 4
+
+- Correctly invert esp32 RMT TX <PR number={2022} /> by <GHUser name="WeekendWarrior1" />
+- Move configure_rmt() into setup() <PR number={2028} /> by <GHUser name="WeekendWarrior1" />
+- Fix climate restore schema changed resulting in invalid restore <PR number={2068} /> by <GHUser name="OttoWinter" />
+- Fix PID climate breaks when restoring old modes <PR number={2086} /> by <GHUser name="OttoWinter" />
+- fix diplay trigger missing base class <PR number={2099} /> by <GHUser name="glmnet" />
+- Fix min/max keys in MQTT Number to match Home Assistant <PR number={2102} /> by <GHUser name="paulmonigatti" />
+- Use proper schema for the analog pin shorthand <PR number={2103} /> by <GHUser name="nonameplum" />
+- [duty_cycle] initialize two missing variables <PR number={2088} /> by <GHUser name="CarlosGS" />
+- Fix time.on_time triggering if time jumped back <PR number={1806} /> by <GHUser name="brambo123" />
+- Fix external components not refreshing with default or high refresh time <PR number={2122} /> by <GHUser name="OttoWinter" />
+
+## Full list of changes
+
+### New Features
+
+- Allow WiFi AP to use device name <PR number={1990} /> by <GHUser name="jesserockz" /> (new-feature)
+- Add Number entities (from Home Assistant) <PR number={1971} /> by <GHUser name="jesserockz" /> (new-feature) (new-integration) (notable-change)
+- Nextion upload and sensors <PR number={1464} /> by <GHUser name="SenexCrenshaw" /> (cherry-picked) (new-feature) (notable-change)
+- Adding last_reset_type to sensors that should support it. <PR number={2039} /> by <GHUser name="jesserockz" /> (cherry-picked) (new-feature)
+
+### New Components
+
+- Climate component for Ballu air conditioners with remote model YKR-K/002E <PR number={1939} /> by <GHUser name="bazuchan" /> (new-integration)
+- Anova ble component <PR number={1752} /> by <GHUser name="buxtronix" /> (new-integration)
+- Add Number entities (from Home Assistant) <PR number={1971} /> by <GHUser name="jesserockz" /> (new-feature) (new-integration) (notable-change)
+- Added support for havells_solar sensor <PR number={1988} /> by <GHUser name="sourabhjaiswal" /> (new-integration)
+
+### Breaking Changes
+
+- remote_receiver use config parent receiver for registering dumpers <PR number={1980} /> by <GHUser name="jesserockz" /> (breaking-change)
+- Change color model to fix white channel issues <PR number={1895} /> by <GHUser name="oxan" /> (breaking-change)
+- Remove a whole bunch of deprecated/removed stuff <PR number={1981} /> by <GHUser name="jesserockz" /> (breaking-change)
+- catch 0.0 in float set_level pre-adjustment <PR number={2013} /> by <GHUser name="WeekendWarrior1" /> (breaking-change)
+- Climate mode meaning was changed <PR number={1995} /> by <GHUser name="OttoWinter" /> (breaking-change)
+
+### Beta Fixes
+
+- Nextion upload and sensors <PR number={1464} /> by <GHUser name="SenexCrenshaw" /> (cherry-picked) (new-feature) (notable-change)
+- Fix ethernet component hostname handling <PR number={2010} /> by <GHUser name="flacjacket" /> (cherry-picked)
+- Refactor docker build system and workflows <PR number={2023} /> by <GHUser name="OttoWinter" /> (cherry-picked)
+- GH Actions CI use GHCR <PR number={2027} /> by <GHUser name="OttoWinter" /> (cherry-picked)
+- Dashboard disable assets caching <PR number={2025} /> by <GHUser name="OttoWinter" /> (cherry-picked)
+- Improve external components error messages <PR number={2026} /> by <GHUser name="OttoWinter" /> (cherry-picked)
+- Number and Template Number updates <PR number={2036} /> by <GHUser name="jesserockz" /> (cherry-picked)
+- Add restore_value to template number <PR number={2041} /> by <GHUser name="jesserockz" /> (cherry-picked)
+- midea_ac: Fix turbo boost mode. Preset PRESET_BOOST. <PR number={2029} /> by <GHUser name="dudanov" /> (cherry-picked)
+- Bump dashboard to 20210719.0 <PR number={2043} /> by <GHUser name="balloob" /> (cherry-picked)
+- Correct ADS1115 handling of multiple sensors in continuous mode <PR number={2016} /> by <GHUser name="flacjacket" /> (cherry-picked)
+- ESP32 ADC use esp-idf <PR number={2024} /> by <GHUser name="OttoWinter" /> (cherry-picked)
+- Fix white value transition for addressable lights <PR number={2045} /> by <GHUser name="oxan" /> (cherry-picked)
+- Adding last_reset_type to sensors that should support it. <PR number={2039} /> by <GHUser name="jesserockz" /> (cherry-picked) (new-feature)
+- Remove superfluous polling on ADS1115 <PR number={2015} /> by <GHUser name="flacjacket" /> (cherry-picked)
+
+### Notable Changes
+
+- Add Number entities (from Home Assistant) <PR number={1971} /> by <GHUser name="jesserockz" /> (new-feature) (new-integration) (notable-change)
+- Nextion upload and sensors <PR number={1464} /> by <GHUser name="SenexCrenshaw" /> (cherry-picked) (new-feature) (notable-change)
+
+### All changes
+
+- Update ambiguous command <PR number={1889} /> by <GHUser name="jesserockz" />
+- Configure clang-format for consistent pointer alignment <PR number={1890} /> by <GHUser name="OttoWinter" />
+- Activate some clang-tidy checks <PR number={1884} /> by <GHUser name="OttoWinter" />
+- Avoid non-const globals and enable clang-tidy check <PR number={1892} /> by <GHUser name="agners" />
+- Convert st7735.cpp to use Unix line separators <PR number={1894} /> by <GHUser name="oxan" />
+- Split files in light component <PR number={1893} /> by <GHUser name="oxan" />
+- Fix CI by avoiding non-const global <PR number={1907} /> by <GHUser name="oxan" />
+- Adds support cpp to vscode <PR number={1828} /> by <GHUser name="dentra" />
+- Support ESP8266 Arduino 3.0.0 <PR number={1897} /> by <GHUser name="agners" />
+- Run script/setup in devcontainer instead of pip install <PR number={1913} /> by <GHUser name="OttoWinter" />
+- Fix typo in test3.yaml <PR number={1928} /> by <GHUser name="loongyh" />
+- Fix error print in script/helpers.py <PR number={1935} /> by <GHUser name="agners" />
+- Add variable bit width for Samsung protocol <PR number={1927} /> by <GHUser name="kbx81" />
+- Add data sizes to log message <PR number={1938} /> by <GHUser name="jesserockz" />
+- Update generation script to add const <PR number={1945} /> by <GHUser name="jesserockz" />
+- Bump dashboard to 20210621.0 <PR number={1946} /> by <GHUser name="balloob" />
+- Improve DHT read timings <PR number={1901} /> by <GHUser name="agners" />
+- More VSCode devcontainer improvements <PR number={1934} /> by <GHUser name="agners" />
+- Validate color temperature values for RGBWW/CWWW lights <PR number={1957} /> by <GHUser name="oxan" />
+- Fix on_multi_click min_length <PR number={1960} /> by <GHUser name="jesserockz" />
+- Climate component for Ballu air conditioners with remote model YKR-K/002E <PR number={1939} /> by <GHUser name="bazuchan" /> (new-integration)
+- Simplify initializing glyph_data <PR number={1970} /> by <GHUser name="gladhorn" />
+- Add device_class support for MQTT integration <PR number={1832} /> by <GHUser name="definitio" />
+- Rename master branch to release <PR number={1976} /> by <GHUser name="OttoWinter" />
+- Fix tuya fan speed send <PR number={1978} /> by <GHUser name="trvrnrth" />
+- Time Based Cover: Fixed apparent race condition on ESP32 chips <PR number={1984} /> by <GHUser name="pdoidge" />
+- Fix invalid escape sequences in regex (fix pytest warning) <PR number={1814} /> by <GHUser name="oxan" />
+- Bump hypothesis from 5.21.0 to 5.49.0 <PR number={1753} /> by <GHUser name="mweinelt" />
+- Bump pytest-mock from 3.5.1 to 3.6.1 <PR number={1754} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- hlw8012: fix constants for BL0937 <PR number={1973} /> by <GHUser name="ianchi" />
+- Anova ble component <PR number={1752} /> by <GHUser name="buxtronix" /> (new-integration)
+- Add stepper.set_acceleration and stepper.set_deceleration to stepper component <PR number={1977} /> by <GHUser name="WeekendWarrior1" />
+- remote_receiver use config parent receiver for registering dumpers <PR number={1980} /> by <GHUser name="jesserockz" /> (breaking-change)
+- Don't try compat parsing for "esphome version" <PR number={1966} /> by <GHUser name="oxan" />
+- Change color model to fix white channel issues <PR number={1895} /> by <GHUser name="oxan" /> (breaking-change)
+- Allow WiFi AP to use device name <PR number={1990} /> by <GHUser name="jesserockz" /> (new-feature)
+- Support custom fan modes in mqtt_climate <PR number={1989} /> by <GHUser name="mgorven" />
+- Bump protobuf from 3.17.0 to 3.17.3 <PR number={1986} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Bump pytest-cov from 2.11.1 to 2.12.1 <PR number={1855} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Bump pytest-asyncio from 0.14.0 to 0.15.1 <PR number={1793} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Improve climate mode code docs <PR number={1995} /> by <GHUser name="OttoWinter" />
+- Climate modes COOL and HEAT are auto modes <PR number={1994} /> by <GHUser name="carstenschroeder" />
+- Add state callback to ota component <PR number={1816} /> by <GHUser name="mmakaay" />
+- Fix deprecation message for old climate swing mode methods <PR number={2003} /> by <GHUser name="oxan" />
+- Add Number entities (from Home Assistant) <PR number={1971} /> by <GHUser name="jesserockz" /> (new-feature) (new-integration) (notable-change)
+- Fixed lolin32 lite key <PR number={2001} /> by <GHUser name="monkeyclass" />
+- Add support for IBS-TH1 External Sensor <PR number={1983} /> by <GHUser name="MikkoTervala" />
+- Bang bang climate new mode meanings <PR number={1996} /> by <GHUser name="OttoWinter" />
+- Sgp30 sensor improvements <PR number={1510} /> by <GHUser name="huubeikens" />
+- Color brightness fixes <PR number={2008} /> by <GHUser name="oxan" />
+- Bump black from 21.5b1 to 21.6b0 <PR number={2011} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Added support for havells_solar sensor <PR number={1988} /> by <GHUser name="sourabhjaiswal" /> (new-integration)
+- Remove a whole bunch of deprecated/removed stuff <PR number={1981} /> by <GHUser name="jesserockz" /> (breaking-change)
+- catch 0.0 in float set_level pre-adjustment <PR number={2013} /> by <GHUser name="WeekendWarrior1" /> (breaking-change)
+- Introduce clamp as a template function <PR number={1953} /> by <GHUser name="agners" />
+- [Teleinfo] do not stop parsing frame if there is only a CRC error on … <PR number={1999} /> by <GHUser name="St4n" />
+- Nextion upload and sensors <PR number={1464} /> by <GHUser name="SenexCrenshaw" /> (cherry-picked) (new-feature) (notable-change)
+- Fix ethernet component hostname handling <PR number={2010} /> by <GHUser name="flacjacket" /> (cherry-picked)
+- Refactor docker build system and workflows <PR number={2023} /> by <GHUser name="OttoWinter" /> (cherry-picked)
+- GH Actions CI use GHCR <PR number={2027} /> by <GHUser name="OttoWinter" /> (cherry-picked)
+- Dashboard disable assets caching <PR number={2025} /> by <GHUser name="OttoWinter" /> (cherry-picked)
+- Improve external components error messages <PR number={2026} /> by <GHUser name="OttoWinter" /> (cherry-picked)
+- Number and Template Number updates <PR number={2036} /> by <GHUser name="jesserockz" /> (cherry-picked)
+- Add restore_value to template number <PR number={2041} /> by <GHUser name="jesserockz" /> (cherry-picked)
+- midea_ac: Fix turbo boost mode. Preset PRESET_BOOST. <PR number={2029} /> by <GHUser name="dudanov" /> (cherry-picked)
+- Bump dashboard to 20210719.0 <PR number={2043} /> by <GHUser name="balloob" /> (cherry-picked)
+- Correct ADS1115 handling of multiple sensors in continuous mode <PR number={2016} /> by <GHUser name="flacjacket" /> (cherry-picked)
+- ESP32 ADC use esp-idf <PR number={2024} /> by <GHUser name="OttoWinter" /> (cherry-picked)
+- Fix white value transition for addressable lights <PR number={2045} /> by <GHUser name="oxan" /> (cherry-picked)
+- Adding last_reset_type to sensors that should support it. <PR number={2039} /> by <GHUser name="jesserockz" /> (cherry-picked) (new-feature)
+- Remove superfluous polling on ADS1115 <PR number={2015} /> by <GHUser name="flacjacket" /> (cherry-picked)
+
+{/* markdownlint-enable MD013 */}
+
+## All Changelogs
+
+

@@ -1,0 +1,208 @@
+---
+description: "Changelog for ESPHome 2024.12.0."
+title: "ESPHome 2024.12.0 - 18th December 2024"
+pagefind: false
+slug: "changelog/2024.12.0"
+---
+
+import PR from "@components/PR.astro";
+import GHUser from "@components/GHUser.astro";
+
+
+- [Seeed Studio MR60BHA2 mmWave](/components/seeed_mr60bha2/)
+- [Seeed Studio MR60FDA2 mmWave](/components/seeed_mr60fda2/)
+- [H-bridge Switch](/components/switch/hbridge/)
+- [Switch Binary Sensor](/components/binary_sensor/switch/)
+
+
+## ESP-IDF
+
+ESPHome has now updated the core ESP32 code to use [ESP-IDF](https://github.com/espressif/esp-idf/) 5.1.5.
+This is a major upgrade and should bring more features, chip support (Most notably the ESP32-C6 that people
+keep raving on about) and in general more stability.
+
+To accommodate this change, ESPHome has moved away from the "official" platformio provided ESP32 platform,
+and is now using a community fork [pioarduino/platform-espressif32](https://github.com/pioarduino/platform-espressif32)
+as platformio has decided to stop providing ESP-IDF updates to their platform for Espressif chips. As a user,
+you should not notice any difference.
+
+As we are unable to test every single component and board, there might be issues with specific configurations.
+Please report these in the [ESPHome issue tracker](https://github.com/esphome/esphome/issues) on GitHub.
+
+## ESPHome `armv7` Docker Support
+
+We will be retiring ESPHome's Docker support for `armv7` hardware in the February 2025 release.
+
+This is due to both waning support as it relates to tooling and performance reasons. We strongly recommend moving to a
+more modern architecture, especially if you're using the ESPHome Device Compiler to build/compile firmware for your
+devices.
+
+{/* markdownlint-disable MD013 */}
+
+## Release 2024.12.1 - December 19
+
+- [core] Bugfix: Implement ring buffer with xRingbuffer <PR number={7973} /> by <GHUser name="kahrendt" />
+
+## Release 2024.12.2 - December 20
+
+- [esp32] Fix flash size warning when using IDF <PR number={7983} /> by <GHUser name="kbx81" />
+- [esp32_ble] Fix for Improv <PR number={7984} /> by <GHUser name="kbx81" />
+
+## Release 2024.12.3 - January 17
+
+- Fixed libretiny preference wrongly detecting change in the data to store <PR number={7990} /> by <GHUser name="szupi-ipuzs" />
+- [http_request] Bugfix: run update function in a task <PR number={8018} /> by <GHUser name="kahrendt" />
+
+## Release 2024.12.4 - January 17
+
+- Bump python3-setuptools to 66.1.1-1+deb12u1 <PR number={8074} /> by <GHUser name="jesserockz" />
+
+## Full list of changes
+
+### New Components
+
+- Add: Seeed Studio mr60fda2 mmwave sensor <PR number={7576} /> by <GHUser name="limengdu" /> (new-integration)
+- Add: Seeed Studio MR60BHA2 mmWave Sensor <PR number={7589} /> by <GHUser name="limengdu" /> (new-integration)
+
+### New Platforms
+
+- binary_sensor for switch state <PR number={7819} /> by <GHUser name="ssieb" /> (new-platform)
+- Add H-Bridge switch component <PR number={7421} /> by <GHUser name="dwmw2" /> (new-platform)
+
+### Breaking Changes
+
+- Fix entity name validation to allow "Off" and "On" <PR number={7821} /> by <GHUser name="jesserockz" /> (breaking-change)
+- MQTT sensors handling of publishing NaN values <PR number={7768} /> by <GHUser name="kbullet" /> (breaking-change)
+- Synchronise esp32 boards with platform version 51.03.07 <PR number={7945} /> by <GHUser name="jesserockz" /> (breaking-change)
+- [sgp30] Set default update interval to 60s <PR number={7952} /> by <GHUser name="jesserockz" /> (breaking-change)
+
+### Beta Changes
+
+- [const] Add RMT CONF variables to const.py <PR number={7953} /> by <GHUser name="swoboda1337" />
+- [sgp30] Set default update interval to 60s <PR number={7952} /> by <GHUser name="jesserockz" /> (breaking-change)
+- [dallas_temp] Move delay_microseconds_safe to iram <PR number={7957} /> by <GHUser name="swoboda1337" />
+- [i2s_audio] Bugfix: Correctly set ring buffer size <PR number={7959} /> by <GHUser name="kahrendt" />
+- [adc] Restore missing LIBRETINY code in a separated file <PR number={7955} /> by <GHUser name="edwardtfn" />
+- [font] cleanly handle font file format exception (Bugfix) <PR number={7970} /> by <GHUser name="clydebarrow" />
+- [dashboard] Accept basic auth header <PR number={7965} /> by <GHUser name="jesserockz" />
+- Bump esphome-dashboard to 20241217.1 <PR number={7971} /> by <GHUser name="jesserockz" />
+- [esp32_ble] Use RAMAllocator to avoid panic abort from `new` <PR number={7936} /> by <GHUser name="jesserockz" />
+
+### All changes
+
+- Bump codecov/codecov-action from 4 to 5 <PR number={7771} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- [remote_base] Fix extra comma in dump raw <PR number={7774} /> by <GHUser name="swoboda1337" />
+- [nextion] New trigger `on_buffer_overflow` <PR number={7772} /> by <GHUser name="edwardtfn" />
+- enable rp2040 for online_image <PR number={7769} /> by <GHUser name="afflux" />
+- [nextion] Add publish actions <PR number={7646} /> by <GHUser name="pkejval" />
+- [wifi] Make wifi_channel_() public <PR number={7818} /> by <GHUser name="nielsnl68" />
+- feat(WiFi): Add wifi.configure action <PR number={7335} /> by <GHUser name="Rapsssito" />
+- allow multiple graphical menus <PR number={7809} /> by <GHUser name="ssieb" />
+- Move `CONF_NAME_ADD_MAC_SUFFIX` to `const.py` <PR number={7820} /> by <GHUser name="jesserockz" />
+- binary_sensor for switch state <PR number={7819} /> by <GHUser name="ssieb" /> (new-platform)
+- [nextion] Remove assignment within `if` <PR number={7824} /> by <GHUser name="kbx81" />
+- [ota] `void` functions should return nothing <PR number={7825} /> by <GHUser name="kbx81" />
+- [safe_mode] Remove unused capture <PR number={7826} /> by <GHUser name="kbx81" />
+- [stepper] Remove unnecessary `#include` <PR number={7827} /> by <GHUser name="kbx81" />
+- [sx1509] Fix up includes <PR number={7828} /> by <GHUser name="kbx81" />
+- [uart] `void` functions should return nothing <PR number={7829} /> by <GHUser name="kbx81" />
+- [audio] Header modernization <PR number={7832} /> by <GHUser name="kbx81" />
+- [opentherm] Follow variable naming convention <PR number={7833} /> by <GHUser name="kbx81" />
+- [opentherm] Add nolint for 8266 static global <PR number={7837} /> by <GHUser name="kbx81" />
+- [helpers] Add NOLINT for Mutex private field `handle_` <PR number={7838} /> by <GHUser name="kbx81" />
+- Add waveshare 1 45 in v2 b support <PR number={7052} /> by <GHUser name="programmingbgloDE" />
+- added Waveshare BWR Mode for the 7.5in Display <PR number={7687} /> by <GHUser name="JonasB2497" />
+- [homeassistant.number] Return when value not set <PR number={7839} /> by <GHUser name="kbx81" />
+- [CI] Add/update some system include paths <PR number={7831} /> by <GHUser name="kbx81" />
+- add on_key trigger to matrix_keypad <PR number={7830} /> by <GHUser name="ssieb" />
+- Add: Seeed Studio mr60fda2 mmwave sensor <PR number={7576} /> by <GHUser name="limengdu" /> (new-integration)
+- [lvgl] clang-tidy fixes for #7822 <PR number={7843} /> by <GHUser name="kbx81" />
+- [xiaomi_ble] clang-tidy fixes for #7822 <PR number={7860} /> by <GHUser name="kbx81" />
+- [wireguard] clang-tidy fixes for #7822 <PR number={7859} /> by <GHUser name="kbx81" />
+- [dsmr] clang-tidy fixes for #7822 <PR number={7848} /> by <GHUser name="kbx81" />
+- Fix entity name validation to allow "Off" and "On" <PR number={7821} /> by <GHUser name="jesserockz" /> (breaking-change)
+- [camera_web_server] Add `NOLINT` due to naming <PR number={7823} /> by <GHUser name="kbx81" />
+- [display_menu_base] clang-tidy fixes for #7822 <PR number={7847} /> by <GHUser name="kbx81" />
+- [nextion] clang-tidy fixes for #7822 <PR number={7852} /> by <GHUser name="kbx81" />
+- [shelly_dimmer] clang-tidy fixes for #7822 <PR number={7844} /> by <GHUser name="kbx81" />
+- [sim800l] clang-tidy fixes for #7822 <PR number={7856} /> by <GHUser name="kbx81" />
+- [nfc, pn532, pn7150, pn7160] clang-tidy fixes for #7822 <PR number={7853} /> by <GHUser name="kbx81" />
+- [output] clang-tidy fixes for #7822 <PR number={7854} /> by <GHUser name="kbx81" />
+- [sun_gtil2] clang-tidy fixes for #7822 <PR number={7858} /> by <GHUser name="kbx81" />
+- [pipsolar] clang-tidy fixes for #7822 <PR number={7855} /> by <GHUser name="kbx81" />
+- [ltr501] clang-tidy fixes for #7822 <PR number={7850} /> by <GHUser name="kbx81" />
+- [cse7766] clang-tidy fixes for #7822 <PR number={7846} /> by <GHUser name="kbx81" />
+- [alarm_control_panel] clang-tidy fixes for #7822 <PR number={7845} /> by <GHUser name="kbx81" />
+- [sprinkler] clang-tidy fixes for #7822 <PR number={7857} /> by <GHUser name="kbx81" />
+- [haier] clang-tidy fixes for #7822 <PR number={7849} /> by <GHUser name="kbx81" />
+- [mqtt] clang-tidy fixes for #7822 <PR number={7851} /> by <GHUser name="kbx81" />
+- [helpers, optional] clang-tidy fixes for #7822 <PR number={7841} /> by <GHUser name="kbx81" />
+- Move `USE_CAPTIVE_PORTAL` into all define groups it can be used with <PR number={7863} /> by <GHUser name="jesserockz" />
+- Bump docker/build-push-action from 6.9.0 to 6.10.0 in /.github/actions/build-image <PR number={7866} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- python lint for platform components <PR number={7864} /> by <GHUser name="tomaszduda23" />
+- [max31865] clang-tidy fixes for #7822 <PR number={7876} /> by <GHUser name="kbx81" />
+- [esp32_ble] clang-tidy fixes for #7822 <PR number={7883} /> by <GHUser name="kbx81" />
+- [mqtt] clang-tidy fixes for #7822 <PR number={7877} /> by <GHUser name="kbx81" />
+- [uln2003] clang-tidy fixes for #7822 <PR number={7881} /> by <GHUser name="kbx81" />
+- [rotary_encoder] clang-tidy fixes for #7822 <PR number={7880} /> by <GHUser name="kbx81" />
+- [pca6416a, pca9554] clang-tidy fixes for #7822 <PR number={7879} /> by <GHUser name="kbx81" />
+- [nextion] clang-tidy fixes for #7822 <PR number={7878} /> by <GHUser name="kbx81" />
+- [various] clang-tidy fixes for #7822 <PR number={7874} /> by <GHUser name="kbx81" />
+- [logger] clang-tidy fixes for #7822 <PR number={7875} /> by <GHUser name="kbx81" />
+- [ezo] clang-tidy fixes for #7822 <PR number={7873} /> by <GHUser name="kbx81" />
+- [apds9306] clang-tidy fixes for #7822 <PR number={7872} /> by <GHUser name="kbx81" />
+- [dht] clang-tidy fixes for #7822 <PR number={7871} /> by <GHUser name="kbx81" />
+- [network] clang-tidy fixes for #7822 <PR number={7870} /> by <GHUser name="kbx81" />
+- [lvgl] Make image update via lambda work <PR number={7886} /> by <GHUser name="clydebarrow" />
+- [deep_sleep] fix deep_sleep not keeping awake when sleep_duration is defined <PR number={7885} /> by <GHUser name="makstech" />
+- [hx711] clang-tidy fixes for #7822 <PR number={7900} /> by <GHUser name="kbx81" />
+- [modbus_controller] Clang fixes <PR number={7899} /> by <GHUser name="kbx81" />
+- Add H-Bridge switch component <PR number={7421} /> by <GHUser name="dwmw2" /> (new-platform)
+- [CI] Bump GHA runners to `ubuntu-24.04` <PR number={7905} /> by <GHUser name="kbx81" />
+- [font et. al.] Remove explicit check for pillow installed. <PR number={7891} /> by <GHUser name="clydebarrow" />
+- [CI] Update clang-tidy to 18.1.3 <PR number={7822} /> by <GHUser name="kbx81" />
+- MQTT sensors handling of publishing NaN values <PR number={7768} /> by <GHUser name="kbullet" /> (breaking-change)
+- [ble] Allow setting shorter name for ble advertisements <PR number={7867} /> by <GHUser name="jesserockz" />
+- [font] Restore correct default glyphs for bitmap fonts <PR number={7907} /> by <GHUser name="clydebarrow" />
+- [helpers] clang-tidy fix for #7706 <PR number={7909} /> by <GHUser name="kbx81" />
+- [docker] Fix clang-tidy installation <PR number={7910} /> by <GHUser name="kbx81" />
+- [sntp] Resolve warnings from ESP-IDF 5.x <PR number={7913} /> by <GHUser name="clydebarrow" />
+- Add strftime variant with background color <PR number={7714} /> by <GHUser name="mikosoft83" />
+- [i2s_audio] Bugfix: Follow configured bits per sample <PR number={7916} /> by <GHUser name="kahrendt" />
+- Haier AC quiet mode switch fix <PR number={7902} /> by <GHUser name="paveldn" />
+- [CI] Update clang-tidy to 18.1.8 <PR number={7915} /> by <GHUser name="syssi" />
+- [i2s_audio] Speaker type fix <PR number={7919} /> by <GHUser name="kbx81" />
+- [esp32_rmt_led_strip] Add `COMPONENT_SCHEMA` extending <PR number={7918} /> by <GHUser name="jesserockz" />
+- [esp32] Use pioarduino + IDF 5.1.5 as default for IDF builds <PR number={7706} /> by <GHUser name="kbx81" />
+- Bump actions/cache from 4.1.2 to 4.2.0 <PR number={7926} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Bump actions/cache from 4.1.2 to 4.2.0 in /.github/actions/restore-python <PR number={7925} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- Add OCI Image Labels <PR number={7924} /> by <GHUser name="Passific" />
+- Move docker oci labels to correct image <PR number={7927} /> by <GHUser name="jesserockz" />
+- Update project description <PR number={7928} /> by <GHUser name="jesserockz" />
+- [modbus] More clean-up <PR number={7921} /> by <GHUser name="kbx81" />
+- Add: Seeed Studio MR60BHA2 mmWave Sensor <PR number={7589} /> by <GHUser name="limengdu" /> (new-integration)
+- Optimize QMC5883L reads <PR number={7889} /> by <GHUser name="dnschneid" />
+- [display] Fix strftime overload ignoring alignment <PR number={7937} /> by <GHUser name="jesserockz" />
+- Add font anti-aliasing for grayscale display <PR number={7934} /> by <GHUser name="koreapyj" />
+- Bump pypa/gh-action-pypi-publish from 1.12.2 to 1.12.3 <PR number={7941} /> by [@dependabot[bot]](https://github.com/dependabot[bot])
+- [adc] Split files by platform <PR number={7940} /> by <GHUser name="edwardtfn" />
+- [const] Move `CONF_TEMPERATURE_COMPENSATION` to common const.py <PR number={7943} /> by <GHUser name="jesserockz" />
+- [lvgl] Fix image `mode` property (Bugfix) <PR number={7938} /> by <GHUser name="clydebarrow" />
+- [lvgl] Add `on_change` event <PR number={7939} /> by <GHUser name="clydebarrow" />
+- Synchronise esp32 boards with platform version 51.03.07 <PR number={7945} /> by <GHUser name="jesserockz" /> (breaking-change)
+- [i2c] Use correct macro to determine number of i2c peripherals for idf <PR number={7947} /> by <GHUser name="jesserockz" />
+- [const] Add RMT CONF variables to const.py <PR number={7953} /> by <GHUser name="swoboda1337" />
+- [sgp30] Set default update interval to 60s <PR number={7952} /> by <GHUser name="jesserockz" /> (breaking-change)
+- [dallas_temp] Move delay_microseconds_safe to iram <PR number={7957} /> by <GHUser name="swoboda1337" />
+- [i2s_audio] Bugfix: Correctly set ring buffer size <PR number={7959} /> by <GHUser name="kahrendt" />
+- [adc] Restore missing LIBRETINY code in a separated file <PR number={7955} /> by <GHUser name="edwardtfn" />
+- [font] cleanly handle font file format exception (Bugfix) <PR number={7970} /> by <GHUser name="clydebarrow" />
+- [dashboard] Accept basic auth header <PR number={7965} /> by <GHUser name="jesserockz" />
+- Bump esphome-dashboard to 20241217.1 <PR number={7971} /> by <GHUser name="jesserockz" />
+- [esp32_ble] Use RAMAllocator to avoid panic abort from `new` <PR number={7936} /> by <GHUser name="jesserockz" />
+
+{/* markdownlint-enable MD013 */}
+
+## All Changelogs
+
+
