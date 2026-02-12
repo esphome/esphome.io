@@ -3,6 +3,8 @@ description: "Instructions for setting up the basic ESPNow component in ESPHome.
 title: "ESPNow communication Component"
 ---
 
+import APIStruct from '@components/APIStruct.astro';
+
 The ESPNow component allows ESPHome to communicate with esp32 devices in a simple and unrestricted way.
 It enables the option to interact with other esp32 devices over the Espressif's ESP-NOW protocol, see
 [documentation](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/network/esp_now.html).
@@ -42,7 +44,7 @@ Automations:
 There will be 3 variables available to automations. Their memory will be cleaned up after the automation is
 done and will not be available if there are any `delay` actions or others that do work "asynchronously" in the automation.
 
-- **info**:  with information about the received packet.
+- **info**: <APIStruct text="espnow::ESPNowRecvInfo" path="espnow::ESPNowRecvInfo" /> with information about the received packet.
 - **data**: A `const uint8_t *` - pointer to the data.
 - **size**: The size of the data in bytes.
 
