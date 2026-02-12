@@ -7,6 +7,8 @@ import path from "path";
 import fs from "fs";
 import { imageBreakpoints } from "./src/lib/breakpoints.ts";
 import { remarkAlert } from "remark-github-blockquote-alert";
+import remarkMath from "remark-math";
+import rehypeKatex from "rehype-katex";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -159,7 +161,8 @@ export default defineConfig({
     responsiveStyles: true,
   },
   markdown: {
-    remarkPlugins: [remarkAlert]
+    remarkPlugins: [remarkAlert, remarkMath],
+    rehypePlugins: [rehypeKatex],
   },
   integrations: [
     starlight({
@@ -195,7 +198,7 @@ export default defineConfig({
       components: {
         Footer: "./src/components/Footer.astro",
       },
-      customCss: ["./src/styles/custom.css"],
+      customCss: ["./src/styles/custom.css", "katex/dist/katex.min.css"],
       sidebar: [
         {
           label: "Getting Started",
