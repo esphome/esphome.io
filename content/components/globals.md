@@ -45,7 +45,7 @@ globals:
   to it later in [lambdas](/automations/templates#config-lambda).
 
 - **type** (**Required**, string): The C++ type of the global variable, for example `bool` (for `true`  /`false`  ),
-  `int` (for integers), `float` (for decimal numbers), `int[50]` for an array of 50 integers, etc. In the case of `RTC`, only primitive types are allowed.
+  `int` (for integers), `float` (for decimal numbers), `int[50]` for an array of 50 integers, etc. In the case of `RTC`, only primitive types and simple fixed-size arrays of primitive types (such as `uint8_t[3]`) are allowed.
 
 - **restore_value** (*Optional*, boolean or `'RTC'`): Whether to try to restore the state on boot up. If `true`, the value will be stored on flash.
   Be careful: on the ESP8266, you only have a total of 96 bytes in available for this! If `RTC` (only available for ESP32 devices), the value will be stored in [RTC memory](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-guides/deep-sleep-stub.html#load-wake-stub-data-into-rtc-memory),
