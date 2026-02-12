@@ -222,15 +222,6 @@ Creates an input field with a randomly generated API key and a copy button.
 {{< api-key-input >}}
 ```
 
-### `ghuser`
-
-Creates a link to a GitHub user profile.
-
-``` text
-{{< ghuser name="octocat" >}}                <!-- Links to @octocat -->
-{{< ghuser name="octocat" text="GitHub" >}}  <!-- Links to @octocat but displays "GitHub" -->
-```
-
 ### `html_file`
 
 Reads a file from the static directory and inserts it as HTML.
@@ -247,23 +238,6 @@ Creates an option block for documenting command-line options or configuration pa
 {{< option "--help|-h" >}}
 This is the help option.
 {{< /option >}}
-```
-
-### `pr`
-
-Creates a link to a GitHub pull request.
-
-``` text
-{{< pr number="123" >}}                <!-- Links to esphome/esphome#123 -->
-{{< pr number="123" repo="esphome-docs" >}}    <!-- Links to esphome/esphome-docs#123 -->
-```
-
-### `redirect`
-
-Creates a page that automatically redirects to another URL.
-
-``` text
-{{< redirect url="/some/path" >}}
 ```
 
 ## Markdown features
