@@ -3,7 +3,7 @@ description: "Global Variables"
 title: "Global Variables"
 ---
 
-In some cases you might need to share a global variable across multiple lambdas, or to remember between periods of deep_sleep. For example, global variables can be
+In some cases you might need to share a global variable across multiple lambdas, to remember between resets, or to remember between periods of deep_sleep. For example, global variables can be
 used to store the state of a garage door.
 
 ```yaml
@@ -19,6 +19,11 @@ globals:
     restore_value: yes
     max_restore_data_length: 24
     initial_value: '"Global value is"'
+  # Example for RTC variable
+  - id: my_global_rtc_uint
+    type: uint8_t[3]
+    restore_value: RTC
+    initial_value: '{1, 2, 3}'
 
  # In an automation
  on_...:
@@ -40,10 +45,11 @@ globals:
   to it later in [lambdas](/automations/templates#config-lambda).
 
 - **type** (**Required**, string): The C++ type of the global variable, for example `bool` (for `true`  /`false`  ),
-  `int` (for integers), `float` (for decimal numbers), `int[50]` for an array of 50 integers, etc.
+  `int` (for integers), `float` (for decimal numbers), `int[50]` for an array of 50 integers, etc. In the case of `RTC`, only primitive types are allowed.
 
-- **restore_value** (*Optional*, boolean): Whether to try to restore the state on boot up.
-  Be careful: on the ESP8266, you only have a total of 96 bytes available for this! Defaults to `no`.
+- **restore_value** (*Optional*, boolean or `'RTC'`): Whether to try to restore the state on boot up. If `true`, the value will be stored on flash.
+  Be careful: on the ESP8266, you only have a total of 96 bytes in available for this! If `RTC`, the value will be stored in [RTC memory](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-guides/deep-sleep-stub.html#load-wake-stub-data-into-rtc-memory),
+   so it will persist between deep sleeps (**not between restarts**). Defaults to `no`.
 
 - **max_restore_data_length** (*Optional*, integer): Only applies to variables of type `std::string`. ESPHome will allocate enough space for this many characters,
   plus single character of overhead. Strings longer than this will not be saved. The max value of this variable is 254 characters, and the default is 63 characters.
