@@ -84,7 +84,24 @@ target level of the servo from -100% to 100%.
 - 100% (= 1.0) is the maximum value of the servo. For continuous-rotation servos this will
   rotate the servo forward.
 
-CODE_BLOCK_1_END
+```yaml
+on_...:
+  then:
+  - servo.write:
+      id: my_servo
+      level: -100.0%
+
+  # Templated
+  - servo.write:
+      id: my_servo
+      # For template values, range is [-1; 1]
+      level: !lambda |-
+        if (id(my_binary_sensor).state) {
+          return 1.0;
+        } else {
+          return -1.0;
+        }
+```
 
 Configuration options:
 
@@ -95,7 +112,9 @@ Configuration options:
 :::note
 This action can also be expressed as a [lambda](/automations/templates#config-lambda):
 
-CODE_BLOCK_2_END
+```cpp
+id(my_servo).write(1.0);
+```
 :::
 
 <span id="servo-detach_action"></span>
@@ -105,12 +124,18 @@ CODE_BLOCK_2_END
 This [Action](/automations/actions#all-actions) allows you to disable the output on a servo motor -
 this will make the servo motor stop immediately and disable its active control.
 
-CODE_BLOCK_3_END
+```yaml
+on_...:
+  then:
+  - servo.detach: my_servo
+```
 
 :::note
 This action can also be expressed as a [lambda](/automations/templates#config-lambda):
 
-CODE_BLOCK_4_END
+```cpp
+id(my_servo).detach();
+```
 :::
 
 <span id="servo-ha-config"></span>

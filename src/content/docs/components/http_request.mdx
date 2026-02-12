@@ -180,7 +180,27 @@ The `status_code` should be checked before using the `body` variable. A successf
 a status code of `200`. Server errors such as "not found" (404) or "internal server error" (500) will have an appropriate status code, and may contain an error message in the `body` variable.
 :::
 
-CODE_BLOCK_4_END
+```yaml
+on_...
+  then:
+    - http_request.get:
+        url: https://esphome.io
+        collect_headers:
+          - Content-Type
+        on_response:
+          then:
+            - logger.log:
+                format: "Response status: %d, Duration: %u ms, Content-Type: %s"
+                args:
+                  - response->status_code
+                  - response->duration_ms
+                  - response->get_response_header("Content-Type").c_str()
+            - lambda: |-
+                ESP_LOGD(TAG, "Response status: %d, Duration: %u ms, Content-Type: %s", response->status_code, response->duration_ms, response->get_response_header("Content-Type").c_str());
+        on_error:
+          then:
+            - logger.log: "Request failed!"
+```
 
 <span id="http_request-on_error"></span>
 
@@ -197,14 +217,35 @@ are available for use in [lambdas](/automations/templates#config-lambda). See ex
 
 ### Templatable values
 
-CODE_BLOCK_5_END
+```yaml
+on_...:
+  - http_request.post:
+      url: !lambda |-
+        return ((std::string) "https://esphome.io?state=" + id(my_sensor).state).c_str();
+      request_headers:
+        X-Custom-Header: !lambda |-
+          return ((std::string) "Value-" + id(my_sensor).state).c_str();
+      body: !lambda |-
+        return id(my_sensor).state;
+```
 
 ### POST Body in JSON format (syntax 1)
 
 **Note:** all values of the map must be strings. It is not possible to send JSON `boolean` or `numbers` with this
 syntax.
 
-CODE_BLOCK_6_END
+```yaml
+on_...:
+  - http_request.post:
+      url: https://esphome.io
+      json:
+        key: !lambda |-
+          return id(my_sensor).state;
+        greeting: "Hello World"
+
+    # Will send:
+    # {"key": "42.0", "greeting": "Hello World"}
+```
 
 ### POST Body in JSON format (syntax 2)
 
@@ -214,7 +255,17 @@ The JSON message will be constructed using the [ArduinoJson](https://github.com/
 In the `json` option you have access to a `root` object which represents the base object of the JSON message. You
 can assign values to keys by using the `root["KEY_NAME"] = VALUE;` syntax as shown below.
 
-CODE_BLOCK_7_END
+```yaml
+on_...:
+  - http_request.post:
+      url: https://esphome.io
+      json: |-
+        root["key"] = id(my_sensor).state;
+        root["greeting"] = "Hello World";
+
+    # Will send:
+    # {"key": 42.0, "greeting": "Hello World"}
+```
 
 ### GET values from a JSON body response
 
