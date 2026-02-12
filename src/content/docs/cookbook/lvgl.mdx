@@ -614,7 +614,7 @@ text_sensor:
       - if:
           condition:
             lambda: |-
-              return ((0 == x.compare(`std::string`{"opening"})) or (0 == x.compare(`std::string`{"closing"})));
+              return ((0 == x.compare(std::string{"opening"})) or (0 == x.compare(std::string{"closing"})));
           then:
             - lvgl.label.update:
                 id: cov_stop_myroom
@@ -1406,14 +1406,14 @@ text_sensor:
         - lvgl.widget.update:
             id: btn_lightbulb
             state:
-              checked: !lambda return (0 == x.compare(`std::string`{"on"}));
-              disabled: !lambda return ((0 == x.compare(`std::string`{"unavailable"})) or (0 == x.compare(`std::string`{"unknown"})));
+              checked: !lambda return (0 == x.compare(std::string{"on"}));
+              disabled: !lambda return ((0 == x.compare(std::string{"unavailable"})) or (0 == x.compare(std::string{"unknown"})));
         - lvgl.label.update:
             id: lbl_lightbulb
             text: !lambda |-
               static char buf[10];
-              `std::string` icon;
-              if (0 == x.compare(`std::string`{"on"})) {
+              std::string icon;
+              if (0 == x.compare(std::string{"on"})) {
                   icon = "\U000F0335";
               } else {
                   icon = "\U000F0336";
@@ -1487,7 +1487,7 @@ sensor:
           id: lbl_battery_status
           text: !lambda |-
             static char buf[10];
-            `std::string` icon;
+            std::string icon;
             if (x == 100.0) {
                 icon = "\U000F0079"; // mdi-battery (full)
             } else if (x > 90) {
@@ -1864,7 +1864,7 @@ key_collector:
     on_progress:
       - if:
           condition:
-            lambda: return (0 != x.compare(`std::string`{""}));
+            lambda: return (0 != x.compare(std::string{""}));
           then:
             - lvgl.label.update:
                 id: lvgl_label
@@ -1876,7 +1876,7 @@ key_collector:
     on_result:
       - if:
           condition:
-            lambda: return (0 == x.compare(`std::string`{"1234"}));
+            lambda: return (0 == x.compare(std::string{"1234"}));
           then:
             - lvgl.led.update:
                 id: lvgl_led

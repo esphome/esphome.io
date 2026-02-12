@@ -244,9 +244,9 @@ pn532_...:
           auto message = tag.get_ndef_message();
           auto records = message->get_records();
           for (auto &record : records) {
-            `std::string` payload = record->get_payload();
+            std::string payload = record->get_payload();
             size_t pos = payload.find("https://www.home-assistant.io/tag/");
-            if (pos != `std::string`::npos) {
+            if (pos != std::string::npos) {
               return payload.substr(pos + 34);
             }
           }
@@ -265,7 +265,7 @@ on_...
   then:
     - lambda: |-
         static const char alphanum[] = "0123456789abcdef";
-        `std::string` uri = "https://www.home-assistant.io/tag/";
+        std::string uri = "https://www.home-assistant.io/tag/";
         for (int i = 0; i < 8; i++)
           uri += alphanum[random_uint32() % (sizeof(alphanum) - 1)];
         uri += "-";

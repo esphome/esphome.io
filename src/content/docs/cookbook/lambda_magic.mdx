@@ -128,7 +128,7 @@ number:
 
 globals:
 - id: rf_code_queue
-  type: '`std::vector<`std::string`>`'
+  type: '`std::vector<std::string>`'
 
 script:
 - id: rf_transmitter_queue
@@ -140,7 +140,7 @@ script:
       then:
          - rf_bridge.send_raw:
              raw: !lambda |-
-               `std::string` rf_code = id(rf_code_queue).front();
+               std::string rf_code = id(rf_code_queue).front();
                id(rf_code_queue).erase(id(rf_code_queue).begin());
                return rf_code;
          - delay: !lambda 'return id(queue_delay).state;'
