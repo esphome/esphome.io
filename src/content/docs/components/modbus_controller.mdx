@@ -567,7 +567,7 @@ The response is mapped to the sensor based on `register_count` and offset in byt
 >           // if there is no internet connection localtime returns year 70
 >           if (year != 70) {
 >             // create the payload
->             `std::vector<uint16_t>` rtc_data = {uint16_t((minutes << 8) | seconds), uint16_t((day << 8) | hour),
+>             std::vector<uint16_t> rtc_data = {uint16_t((minutes << 8) | seconds), uint16_t((day << 8) | hour),
 >                                               uint16_t((year << 8) | month)};
 >             // Create a Modbus command item with the time information as the payload
 >             esphome::modbus_controller::ModbusCommandItem set_rtc_command =
@@ -579,7 +579,7 @@ The response is mapped to the sensor based on `register_count` and offset in byt
 >           }
 >           // Battery settings
 >           // Note: these values are examples only and apply my AGM Battery
->           `std::vector<uint16_t>` battery_settings1 = {
+>           std::vector<uint16_t> battery_settings1 = {
 >               0,       // 9000 Battery Type 0 =  User
 >               0x0073,  // 9001 Battery Cap 0x55 == 115AH
 >               0x012C,  // 9002 Temp compensation -3V /°C/2V
@@ -598,7 +598,7 @@ The response is mapped to the sensor based on `register_count` and offset in byt
 >           };
 >
 >           // Boost and equalization periods
->           `std::vector<uint16_t>` battery_settings2 = {
+>           std::vector<uint16_t> battery_settings2 = {
 >               0x0000,  // 906B Equalize Duration (min.) 0
 >               0x0075   // 906C Boost Duration (aka absorb) 117 mins
 >           };

@@ -458,7 +458,7 @@ The following changes affect external component developers. Standard YAML config
 
 See the [Climate Entity Class: FiniteSetMask and Flash Storage Optimizations](https://developers.esphome.io/blog/2025/11/07/climate-entity-class-finitesetmask-and-flash-storage-optimizations/) blog post for migration details.
 
-- **Custom modes storage**: Changed from `std::set<`std::string`>` to `FiniteSetMask` for supported modes, and from `std::vector<`std::string`>` to `std::vector<const char *>` for custom fan modes and presets. [#11466](https://github.com/esphome/esphome/pull/11466), [#11621](https://github.com/esphome/esphome/pull/11621)
+- **Custom modes storage**: Changed from `std::set<std::string>` to `FiniteSetMask` for supported modes, and from `std::vector<std::string>` to `std::vector<const char *>` for custom fan modes and presets. [#11466](https://github.com/esphome/esphome/pull/11466), [#11621](https://github.com/esphome/esphome/pull/11621)
 
 - **Member access**: Climate device members (`custom_fan_mode_`, `custom_preset_`) are now private. Use protected setter methods (`set_custom_fan_mode_()`, `set_custom_preset_()`) in derived classes. Use public accessor methods to read values: `has_custom_fan_mode()`, `get_custom_fan_mode()`, `has_custom_preset()`, `get_custom_preset()`. [#11621](https://github.com/esphome/esphome/pull/11621)
 
@@ -478,7 +478,7 @@ See the [Light Entity Class: Memory Optimizations](https://developers.esphome.io
 
 See the [Fan Entity Class: Preset Mode Flash Storage and Order Preservation](https://developers.esphome.io/blog/2025/11/07/fan-entity-class-preset-mode-flash-storage-and-order-preservation/) blog post for migration details.
 
-- **Preset modes**: Changed from `std::set<`std::string`>` to `std::vector<const char *>`. The `.preset_mode` public member has been removed - use `get_preset_mode()` for reading and `set_preset_mode_()` for writing in derived classes. [#11483](https://github.com/esphome/esphome/pull/11483), [#11632](https://github.com/esphome/esphome/pull/11632)
+- **Preset modes**: Changed from `std::set<std::string>` to `std::vector<const char *>`. The `.preset_mode` public member has been removed - use `get_preset_mode()` for reading and `set_preset_mode_()` for writing in derived classes. [#11483](https://github.com/esphome/esphome/pull/11483), [#11632](https://github.com/esphome/esphome/pull/11632)
 
 - **Deprecated code**: Removed code deprecated in 2022.2. [#11392](https://github.com/esphome/esphome/pull/11392)
 
@@ -486,7 +486,7 @@ See the [Fan Entity Class: Preset Mode Flash Storage and Order Preservation](htt
 
 See the [Select Entity Class: Index-Based Operations and Flash Storage](https://developers.esphome.io/blog/2025/11/07/select-entity-class-index-based-operations-and-flash-storage/) blog post for migration details.
 
-- **Options storage**: Changed from `std::vector<`std::string`>` to `FixedVector<const char *>`. [#11514](https://github.com/esphome/esphome/pull/11514)
+- **Options storage**: Changed from `std::vector<std::string>` to `FixedVector<const char *>`. [#11514](https://github.com/esphome/esphome/pull/11514)
 
 - **State member**: Public `state` member deprecated (will be removed in 2026.5.0). Use `current_option()` method instead. [#11623](https://github.com/esphome/esphome/pull/11623)
 
@@ -496,7 +496,7 @@ See the [Select Entity Class: Index-Based Operations and Flash Storage](https://
 
 See the [Event Entity Class: Memory Optimizations](https://developers.esphome.io/blog/2025/11/07/event-entity-class-memory-optimizations/) blog post for migration details.
 
-- **Event types storage**: Changed from `FixedVector<`std::string`>` to `FixedVector<const char *>`. The `last_event_type` field is now private - use `get_last_event_type()` getter instead. [#11463](https://github.com/esphome/esphome/pull/11463), [#11767](https://github.com/esphome/esphome/pull/11767)
+- **Event types storage**: Changed from `FixedVector<std::string>` to `FixedVector<const char *>`. The `last_event_type` field is now private - use `get_last_event_type()` getter instead. [#11463](https://github.com/esphome/esphome/pull/11463), [#11767](https://github.com/esphome/esphome/pull/11767)
 
 ### Network Components
 
@@ -504,7 +504,7 @@ See the [Network get_use_address() Optimization](https://developers.esphome.io/b
 
 - **WiFi scan results**: External components that access WiFi scan results after connection must call `wifi.request_wifi_scan_results()` in their `to_code()` function to prevent cleanup. [#11205](https://github.com/esphome/esphome/pull/11205)
 
-- **use_address**: Changed from `const `std::string` &` to `const char *` in WiFi, Ethernet, and OpenThread components. Remove `.c_str()` calls when using `get_use_address()`. [#11707](https://github.com/esphome/esphome/pull/11707)
+- **use_address**: Changed from `const std::string &` to `const char *` in WiFi, Ethernet, and OpenThread components. Remove `.c_str()` calls when using `get_use_address()`. [#11707](https://github.com/esphome/esphome/pull/11707)
 
 ### Other Components
 
@@ -706,7 +706,7 @@ The 2025.11 release blog posts include comprehensive migration examples for comm
 - [remote_transmitter] Add non-blocking mode <PR number={11524} /> by <GHUser name="swoboda1337" /> (new-feature) (breaking-change)
 - [core] .local addresses are only resolvable if mDNS is enabled <PR number={11508} /> by <GHUser name="Links2004" /> (breaking-change)
 - [fan] Use std::vector for preset modes, preserve config order <PR number={11483} /> by <GHUser name="bdraco" /> (breaking-change)
-- [climate] Replace `std::vector<`std::string`>` with const char* for custom fan modes and presets <PR number={11621} /> by <GHUser name="bdraco" /> (breaking-change)
+- [climate] Replace `std::vector<std::string>` with const char* for custom fan modes and presets <PR number={11621} /> by <GHUser name="bdraco" /> (breaking-change)
 - [psram] Require mode for S3 <PR number={11470} /> by <GHUser name="clydebarrow" /> (breaking-change)
 - [network] Store use_address in RODATA to save RAM <PR number={11707} /> by <GHUser name="bdraco" /> (breaking-change)
 - [fan] Remove duplicate preset mode storage to save RAM <PR number={11632} /> by <GHUser name="bdraco" /> (breaking-change)
@@ -907,7 +907,7 @@ The 2025.11 release blog posts include comprehensive migration examples for comm
 - [http_request] Pass collect_headers by const reference instead of by value <PR number={11494} /> by <GHUser name="bdraco" />
 - [remote_transmitter] Remove delays and use RMT instead <PR number={11505} /> by <GHUser name="swoboda1337" />
 - [esp32] Add IDF 5.4.3 to platform list and switch to tar.xz <PR number={11528} /> by <GHUser name="swoboda1337" />
-- [sntp] Replace `std::vector<`std::string`>` with `std::array<const char*>` to save heap memory <PR number={11525} /> by <GHUser name="bdraco" />
+- [sntp] Replace `std::vector<std::string>` with `std::array<const char*>` to save heap memory <PR number={11525} /> by <GHUser name="bdraco" />
 - [gpio] Skip set_inverted() call for default false value <PR number={11538} /> by <GHUser name="bdraco" />
 - [core] Don't allow python 3.14 <PR number={11527} /> by <GHUser name="swoboda1337" />
 - Optimize stateless lambdas to use function pointers <PR number={11551} /> by <GHUser name="bdraco" />
@@ -991,7 +991,7 @@ The 2025.11 release blog posts include comprehensive migration examples for comm
 - [scheduler] Refactor call() for improved code organization <PR number={11643} /> by <GHUser name="bdraco" />
 - [core] Avoid redundant millis() calls in base_automation loop methods <PR number={11676} /> by <GHUser name="bdraco" />
 - [esp32_ble] Wake main loop for GAP security events <PR number={11677} /> by <GHUser name="bdraco" />
-- [climate] Replace `std::vector<`std::string`>` with const char* for custom fan modes and presets <PR number={11621} /> by <GHUser name="bdraco" /> (breaking-change)
+- [climate] Replace `std::vector<std::string>` with const char* for custom fan modes and presets <PR number={11621} /> by <GHUser name="bdraco" /> (breaking-change)
 - [nrf52,debug] fix status of nRESET pin, add extra registry from UICR <PR number={11667} /> by <GHUser name="tomaszduda23" />
 - [template] alarm_control_panel more ESP_LOGCONFIG reductions <PR number={11691} /> by <GHUser name="warthog618" />
 - [mqtt] Fix climate custom fan mode and preset compilation errors <PR number={11692} /> by <GHUser name="bdraco" />
