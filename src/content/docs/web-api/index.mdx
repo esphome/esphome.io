@@ -5,6 +5,7 @@ title: "Web Server API"
 
 import { Image } from 'astro:assets';
 import eventSourceImg from './images/event-source.png';
+import Figure from '@components/Figure.astro';
 
 ESPHome includes a built-in web server that can be used to view states
 and send commands. In addition to the web-frontend available under the root index of the
@@ -61,7 +62,12 @@ The `state` field contains a simple text-based representation of the state of th
 component, for example ON/OFF or 21.4 °C. Several components also have additional fields in
 this payload, for example lights have a `brightness` attribute.
 
-<Image src={eventSourceImg} layout="constrained" alt="" />
+<Figure
+  src={eventSourceImg}
+  caption="Example payload of the event source API."
+  layout="constrained"
+  alt=""
+/>
 
 Additionally, each time a client connects to the event source the server sends out all current
 states so that the client can catch up with reality.

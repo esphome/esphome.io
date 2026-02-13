@@ -7,6 +7,7 @@ import { Image } from 'astro:assets';
 import sunGtil2ControllerBoardImg from './images/sun_gtil2_controller_board.png';
 import sunGtil2DisplayBoardImg from './images/sun_gtil2_display_board.png';
 import sunGtil2SchematicImg from './images/sun_gtil2_schematic.png';
+import Figure from '@components/Figure.astro';
 
 The `sun_gtil2` component allows you to get voltage, power and temperature readings from your `SUN-1000G2`
 or `SUN-2000G2` grid tie inverter. This is done by reading the UART data transmitted from the inverter's
@@ -17,11 +18,26 @@ controller board to the display board.
 > inverter via the (more limited) external RS232 interface you should use the
 > [Modbus](/components/modbus_controller/) component instead.
 
-<Image src={sunGtil2ControllerBoardImg} layout="constrained" alt="" />
+<Figure
+  src={sunGtil2ControllerBoardImg}
+  caption="Pinout of the inverter's controller board"
+  layout="constrained"
+  alt=""
+/>
 
-<Image src={sunGtil2DisplayBoardImg} layout="constrained" alt="" />
+<Figure
+  src={sunGtil2DisplayBoardImg}
+  caption="Pinout of the inverter's display board"
+  layout="constrained"
+  alt=""
+/>
 
-<Image src={sunGtil2SchematicImg} layout="constrained" alt="" />
+<Figure
+  src={sunGtil2SchematicImg}
+  caption="Simplified connection diagram"
+  layout="constrained"
+  alt=""
+/>
 
 As the data is read from the inverter using UART, you need to have an [UART bus](/components/uart) in your
 configuration with the `rx_pin` connected to the TX pin of the inverter's controller board. Additionally, you

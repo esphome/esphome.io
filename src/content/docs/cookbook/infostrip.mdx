@@ -6,6 +6,7 @@ title: "Infostripe"
 import { Image } from 'astro:assets';
 import infostripDetailImg from './images/infostrip-detail.jpg';
 import infostripLightsUiImg from './images/infostrip-lights-ui.png';
+import Figure from '@components/Figure.astro';
 
 Showing the current status of sensor states using a Neopixel (WS2812B) strip is a simple way to communicate states to
 the user. Compared to a dashboard screen the infostrip can only communicate the information like a binary sensor.
@@ -15,7 +16,12 @@ the user. Compared to a dashboard screen the infostrip can only communicate the 
 - mode (continuous vs. flashing, flashing or strobe is not recommend)
 - light position on stripe
 
-<Image src={infostripDetailImg} layout="constrained" alt="" />
+<Figure
+  src={infostripDetailImg}
+  caption="Wemos D1 mini, Neopixel, CO2 sensor on a blackboard, pixelmeanings are described by the chalk drawn icons."
+  layout="constrained"
+  alt=""
+/>
 
 ## ESPHome configuration
 
@@ -137,7 +143,12 @@ automation:
           {{ map[state] if state in map else 'white' }}
 ```
 
-<Image src={infostripLightsUiImg} layout="constrained" alt="" />
+<Figure
+  src={infostripLightsUiImg}
+  caption="Each pixel is used as a light entity."
+  layout="constrained"
+  alt=""
+/>
 
 ## See Also
 
