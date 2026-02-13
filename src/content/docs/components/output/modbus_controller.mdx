@@ -47,7 +47,7 @@ The `modbus_controller` platform creates an output from a modbus_controller. The
   Possible return values for the lambda:
 
   - `return <FLOATING_POINT_NUMBER / BOOL>;` the new value for the sensor.
-  - `<fill payload with data> and return <anything>;` if the payload is added from the lambda then these 16 bit words will be sent
+  - `return <anything>; and fill payload with data` if the payload is added from the lambda then these 16 bit words will be sent
   - `return {};` if you don't want write the command to the device (or do it from the lambda).
 
 - **offset** (*Optional*, int): Offset from start address in bytes (only required for uncommon response encodings). If more than one register is written in a command this value is used to find the start of this datapoint relative to start address. The component calculates the size of the range based on offset and size of the value type.
