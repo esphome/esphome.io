@@ -126,6 +126,7 @@ Custom components are located in `src/components/` and can be imported into MDX 
 
 - **APIRef**: Links to C++ API documentation
 - **ImgTable**: Grid of component cards with images
+- **Figure**: Images with optional captions
 - **Footer**: Custom footer component
 
 ### Using Components
@@ -134,8 +135,12 @@ Import and use components in MDX files:
 
 ```jsx
 import APIRef from '@components/APIRef.astro';
+import Figure from '@components/Figure.astro';
+import myImageImg from './images/my-image.jpg';
 
 <APIRef text="component.h" path="component/component.h" />
+
+<Figure src={myImageImg} alt="Description" caption="Optional caption" />
 ```
 
 ## Alert Boxes

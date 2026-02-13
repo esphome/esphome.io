@@ -4,6 +4,7 @@ title: "Character-Based LCD Display"
 ---
 
 import { Image } from 'astro:assets';
+import Figure from '@components/Figure.astro';
 import lcdHelloWorldImg from './images/lcd-hello_world.jpg';
 import lcdPcf8574Img from './images/lcd-pcf8574.jpg';
 import lcdGpioImg from './images/lcd_gpio.svg';
@@ -32,7 +33,12 @@ with ESPHome. This component is only for LCDs that display individual characters
 benefit that you only need to connect two data wires to the ESP instead of the six or ten as with the [lcd_gpio Component](#lcd-gpio).
 The communication happens via [I²C Bus](/components/i2c), you need to have an `i2c:` section in your configuration.
 
-<Image src={lcdPcf8574Img} layout="constrained" alt="" />
+<Figure
+  src={lcdPcf8574Img}
+  alt=""
+  caption="LCD Display with a PCF8574 board attached on the back"
+  layout="constrained"
+/>
 
 ```yaml
 # Example configuration entry
@@ -72,7 +78,12 @@ The `lcd_gpio` version of this component addresses the screen directly and does 
 Each of the data pins of the LCD needs a dedicated GPIO pin on the ESP. Connecting the screen this way offers
 faster refresh, especially in conjunction with an [LCD Menu](/components/display_menu/lcd_menu#lcd_menu).
 
-<Image src={lcdGpioImg} layout="constrained" alt="" />
+<Figure
+  src={lcdGpioImg}
+  alt=""
+  caption="LCD Display GPIO pinout"
+  layout="constrained"
+/>
 
 ```yaml
 # Example configuration entry

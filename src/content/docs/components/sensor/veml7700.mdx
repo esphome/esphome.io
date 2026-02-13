@@ -4,6 +4,7 @@ title: "VEML7700 and VEML6030 Ambient Light Sensors"
 ---
 
 import { Image } from 'astro:assets';
+import Figure from '@components/Figure.astro';
 import veml7700FullImg from './images/veml7700-full.jpg';
 import veml7700UiImg from './images/veml7700-ui.png';
 import veml7700SpectralImg from './images/veml7700-spectral.png';
@@ -17,9 +18,19 @@ can be configured to use either `0x10` or `0x48`.
 The VEML 7700/6030 devices are available on breakout boards from a number of vendors including [Adafruit](http://www.adafruit.com/products/4162), [SparkFun](https://www.sparkfun.com/products/15436),
 [DFRobot](https://www.dfrobot.com/product-1620.html), and others.
 
-<Image src={veml7700FullImg} layout="constrained" alt="" />
+<Figure
+  src={veml7700FullImg}
+  alt=""
+  caption="VEML7700 Ambient Light Sensor on a board and standalone sensors."
+  layout="constrained"
+/>
 
-<Image src={veml7700UiImg} layout="constrained" alt="" />
+<Figure
+  src={veml7700UiImg}
+  alt=""
+  caption="VEML sensor in Home Assistant UI."
+  layout="constrained"
+/>
 
 The sensor is a high accuracy ambient light digital 16-bit resolution sensor with dynamic range from 0 lux to about 120,000 lux.
 Its wide range of measurements is enabled by four configurable _gain_ levels and six different _integration time_ options.
@@ -28,7 +39,12 @@ Higher gain values are typically used for lower light conditions.
 The sensor has two photodiodes with different spectral response represented by two channels: an _ALS_ channel and a _WHITE_ channel.
 The _ALS_, or _Ambient light_ channel follows a so-called human eye curve very closely. The _WHITE_ channel covers a much wider wavelength/spectrum, capturing quite a lot of near-infrared radiance.
 
-<Image src={veml7700SpectralImg} layout="constrained" alt="" />
+<Figure
+  src={veml7700SpectralImg}
+  alt=""
+  caption="ALS and WHITE channels spectral response"
+  layout="constrained"
+/>
 
 Using this component's automatic measurement mode is advised; in this mode, proper _gain_ and _integration time_ are automatically selected by the component after
 taking several measurements. To do so, it follows a process recommended by the manufacturer.

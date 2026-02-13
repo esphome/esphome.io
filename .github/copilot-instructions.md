@@ -112,8 +112,12 @@ Import custom components:
 
 ```mdx
 import APIRef from '@components/APIRef.astro';
+import Figure from '@components/Figure.astro';
+import myImageImg from './images/my-image.jpg';
 
 <APIRef text="component.h" path="component/component.h" />
+
+<Figure src={myImageImg} alt="Description" caption="Optional caption" />
 ```
 
 ### Mathematical Expressions

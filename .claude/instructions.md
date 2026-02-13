@@ -282,6 +282,41 @@ Create grids of component cards:
 
 **Important**: All ImgTable images must be in `/public/images/`.
 
+#### Figure Component
+
+Add captions to images using the Figure component:
+
+```mdx
+import Figure from '@components/Figure.astro';
+import myImageImg from './images/my-image.jpg';
+
+<Figure
+  src={myImageImg}
+  alt="Description"
+  caption="This caption appears below the image"
+/>
+```
+
+**With absolute path for multi-use images:**
+
+```mdx
+<Figure
+  src="/images/shared-image.jpg"
+  alt="Description"
+  caption="Optional caption text"
+  style="width: 50%"
+/>
+```
+
+**Props:**
+
+- `src`: Either imported variable or absolute path (required)
+- `alt`: Alternative text for accessibility (required)
+- `caption`: Optional caption text displayed below image
+- `layout`: Use `"constrained"` for responsive images (default)
+- `style`: Optional inline CSS styles
+- `width`, `height`: Optional pixel values
+
 ## Git Workflow
 
 ### Branch Strategy

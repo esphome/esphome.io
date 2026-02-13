@@ -4,6 +4,7 @@ title: "TM1637 7-Segment Display"
 ---
 
 import { Image } from 'astro:assets';
+import Figure from '@components/Figure.astro';
 import tm1637FullImg from './images/tm1637-full.jpg';
 import tm1637KeyConnectionsImg from './images/tm1637_key_connections.png';
 import tm16372devicesImg from './images/tm1637_2devices.png';
@@ -12,7 +13,12 @@ import APIRef from '@components/APIRef.astro';
 
 The `tm1637` display platform allows you to use the popular TM1637 7-segment display drivers with ESPHome.
 
-<Image src={tm1637FullImg} layout="constrained" alt="" />
+<Figure
+  src={tm1637FullImg}
+  alt=""
+  caption="TM1637 7-Segment Display."
+  layout="constrained"
+/>
 
 The module can be powered with 5v or with 3.3v too. To display the colon punctuation use the
 `.` in the colon place. (See clock example below)
@@ -52,7 +58,12 @@ display:
 The TM1637 LED display controller also includes a special circuit with keyboard scan interface and enhanced identification circuit with anti-interference keys.
 This circuit uses the 8 segment lines that also drive the LED display. But combined with the K1 and K2 pins we can add 16 keys that can be used as binary sensors in esphome.
 
-<Image src={tm1637KeyConnectionsImg} layout="constrained" alt="" />
+<Figure
+  src={tm1637KeyConnectionsImg}
+  alt=""
+  caption="TM1637 display keyboard connections"
+  layout="constrained"
+/>
 
 ```yaml
 binary_sensor:
@@ -152,7 +163,12 @@ display:
 
 To connect multiple TM1636 displays you need as many control lines as you have displays. This is achived by sharing control-lines for clk and dio between displays.
 
-<Image src={tm16372devicesImg} layout="constrained" alt="" />
+<Figure
+  src={tm16372devicesImg}
+  alt=""
+  caption="Two TM1637 displays on only 2 control lines"
+  layout="constrained"
+/>
 
 When using the pins more than once, the configuration must reflect the fact:
 
@@ -180,7 +196,12 @@ display:
 When using more than 2 devices like 3 or more you add a control-line for the Dio pin and share this with the next display Clk pin.
 The last displays Dio pin shares the Clk pin of the first display.
 
-<Image src={tm16373plusDevicesImg} layout="constrained" alt="" />
+<Figure
+  src={tm16373plusDevicesImg}
+  alt=""
+  caption="Three TM1637 displays on 3 control lines"
+  layout="constrained"
+/>
 
 ## See Also
 

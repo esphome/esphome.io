@@ -4,6 +4,7 @@ title: "Haier Climate"
 ---
 
 import { Image } from 'astro:assets';
+import Figure from '@components/Figure.astro';
 import usbPinoutImg from './images/usb_pinout.png';
 import haierPinoutImg from './images/haier_pinout.jpg';
 import APIRef from '@components/APIRef.astro';
@@ -23,13 +24,23 @@ Older Haier models controlled by the SmartAir2 application are using the KZW-W00
 | TX | DATA+ | green | RX |
 | RX | DATA- | white | TX |
 
-<Image src={usbPinoutImg} layout="constrained" alt="" />
+<Figure
+  src={usbPinoutImg}
+  alt=""
+  caption="KZW-W002 module pinout"
+  layout="constrained"
+/>
 
 Newer Haier models using a module called ESP32-for-Haier. It is an ESP32 single-core board with an ESP32-S0WD chip. In some cases, you can reuse this module and flash it with ESPHome, but some new modules don't support this. They look the same but have encryption enabled.
 
 **Warning!** The new generation of ESP32-Haier devices has encryption enabled, so they can only be flashed with firmware that is signed with a private key. There is no way to make them work with ESPHome, so if you try to do it, the board will get into a boot loop with the error `rst:0x10 (RTCWDT_RTC_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)` The only way to recover this board is to flash it with the original image. So before starting your experiments make a backup image.
 
-<Image src={haierPinoutImg} layout="constrained" alt="" />
+<Figure
+  src={haierPinoutImg}
+  alt=""
+  caption="ESP32-for-Haier UART0 pinout"
+  layout="constrained"
+/>
 
 Also, you can use any other ESP32, ESP8266, or an RPI pico W board. In this case, you will need to cut the original wire or make a connector yourself (the board has a JST SM04B-GHS-TB connector)
 

@@ -4,6 +4,7 @@ title: "Sigma-Delta Output"
 ---
 
 import { Image } from 'astro:assets';
+import Figure from '@components/Figure.astro';
 import sigmaDeltaExampleImg from './images/sigma-delta-example.png';
 import APIRef from '@components/APIRef.astro';
 
@@ -11,7 +12,12 @@ This component uses [sigma-delta modulation](https://en.wikipedia.org/wiki/Delta
 to output a floating-point value on a binary output. Unlike with [Slow Pwm](/components/output/slow_pwm/),
 it is possible to update the output value with each update cycle, not just at the end of a longer period.
 
-<Image src={sigmaDeltaExampleImg} layout="constrained" alt="" />
+<Figure
+  src={sigmaDeltaExampleImg}
+  alt=""
+  caption="Comparison between a *Slow PWM* with a period of 100s and a *sigma-delta output* with an update interval of 1s"
+  layout="constrained"
+/>
 
 For example, if you choose to toggle the output at most once every 1 second and decide on a
 PWM period of 10 seconds, for reasonably frequent updates, with [Slow Pwm](/components/output/slow_pwm/)
