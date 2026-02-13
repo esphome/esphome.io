@@ -18,7 +18,7 @@ import ImgTable from "@components/ImgTable.astro";
 
 ## Release Overview
 
-<!-- RELEASE_OVERVIEW_START -->
+{/* RELEASE_OVERVIEW_START */}
 ESPHome 2026.2.0 is a performance and stability release. The focus is on making your devices compile faster, run leaner, and stay reliable over months of uptime.
 
 **Faster builds, smaller firmware.** ESP32 Arduino builds compile 36% faster and produce 44% less flash and 50% less static RAM. ESP-IDF compiles are ~22% faster. A streamlined certificate bundle saves another 51KB of flash.
@@ -26,7 +26,7 @@ ESPHome 2026.2.0 is a performance and stability release. The focus is on making 
 **More stable, more responsive devices.** CPU usage is down across the board: the BLE tracker loop uses ~85% less CPU, MQTT consolidation saves ~6.5% total device CPU, and the scheduler is 25% smaller. Unnecessary memory allocations have been eliminated from dozens of components, and ESP8266 devices recover significant RAM by moving strings to flash.
 
 This release also introduces 3 new components (DLMS smart meter, CH423 I/O expander, SY6970 battery management), adds 7 new display models including ESP32-P4 Waveshare panels, expands the Zigbee platform, and hardens security with constant-time authentication and cryptographic random generation.
-<!-- RELEASE_OVERVIEW_END -->
+{/* RELEASE_OVERVIEW_END */}
 
 ## Upgrade Checklist
 
@@ -37,7 +37,7 @@ This release also introduces 3 new components (DLMS smart meter, CH423 I/O expan
 - If you connect to HTTPS servers using uncommon CAs, add `use_full_certificate_bundle: true` under `esp32: framework: advanced:`
 - If you use BL0942 sensors, expect readings to change after recalibration to match corrected reference values
 
-<!-- FEATURE_HIGHLIGHTS_START -->
+{/* FEATURE_HIGHLIGHTS_START */}
 ## ESP32 Build Size and Compile Time Optimizations
 
 ESP32 builds are faster and produce smaller firmware in this release, meaning shorter compile times and more room on your devices.
@@ -209,13 +209,13 @@ The existing `on_open` trigger has been renamed to `on_opened` (the old name is 
 This release continues the work that began in [2025.10.0](/changelog/2025.10.0/) and accelerated in [2026.1.0](/changelog/2026.1.0/): making ESPHome leaner and more reliable on every platform. Fewer heap allocations, smaller firmware, and lower CPU usage all contribute to devices that stay stable for months and years. That focus on memory discipline and long-term stability will continue in future releases as we extend these improvements to more components and platforms.
 
 On the documentation side, [esphome.io](https://esphome.io) has migrated from Hugo to [Starlight](https://starlight.astro.build/), bringing faster page loads, improved search, and a modern documentation framework that will make it easier to maintain and contribute to the docs going forward.
-<!-- FEATURE_HIGHLIGHTS_END -->
+{/* FEATURE_HIGHLIGHTS_END */}
 
 ## Breaking Changes
 
 Most users can update without any configuration changes. The items below are grouped by whether you need to take action.
 
-<!-- BREAKING_CHANGES_USERS_START -->
+{/* BREAKING_CHANGES_USERS_START */}
 ### Action required (if you use these components)
 
 - **BMP581**: Update your platform from `bmp581` to `bmp581_i2c`. The component has been split to prepare for future SPI support. [#12485](https://github.com/esphome/esphome/pull/12485)
@@ -245,20 +245,20 @@ These changes improve correctness or save resources. They only require action if
 - **Sensor clamp filter**: The `clamp` filter now handles infinity and NaN instead of passing them through. [#13457](https://github.com/esphome/esphome/pull/13457)
 
 - **Water Heater**: On/Off and Away state control now requires both Home Assistant 2026.3.0 and ESPHome 2026.2.0. [#13892](https://github.com/esphome/esphome/pull/13892)
-<!-- BREAKING_CHANGES_USERS_END -->
+{/* BREAKING_CHANGES_USERS_END */}
 
 ### Breaking Changes for Developers
 
-<!-- BREAKING_CHANGES_DEVELOPERS_START -->
+{/* BREAKING_CHANGES_DEVELOPERS_START */}
 - **ESP32 Arduino selective compilation**: Arduino libraries are now disabled by default. External components that use Arduino libraries must call `cg.add_library("LibraryName", None)` in their `to_code()` to enable them. [#13623](https://github.com/esphome/esphome/pull/13623)
 - **Voice Assistant `get_timers()` return type**: `get_timers()` now returns `const std::vector<Timer> &` instead of `const std::unordered_map<std::string, Timer> &`. Code using map pair semantics (`.second`) must be updated to iterate `Timer` directly. The `on_timer_tick` automation arg type is now `const std::vector<Timer> &`. [#13857](https://github.com/esphome/esphome/pull/13857)
 - **Cover `on_open` renamed to `on_opened`**: The `CoverOpenTrigger` now tracks transitions instead of firing on every state update. The old `on_open` name is deprecated until 2026.8.0. [#13471](https://github.com/esphome/esphome/pull/13471)
 - **Water Heater API**: `WATER_HEATER_COMMAND_HAS_STATE` is deprecated in favor of `WATER_HEATER_COMMAND_HAS_ON_STATE` and `WATER_HEATER_COMMAND_HAS_AWAY_STATE` for granular on/off and away control. [#13892](https://github.com/esphome/esphome/pull/13892)
 
 For detailed migration guides and API documentation, see the [ESPHome Developers Documentation](https://developers.esphome.io/).
-<!-- BREAKING_CHANGES_DEVELOPERS_END -->
+{/* BREAKING_CHANGES_DEVELOPERS_END */}
 
-<!-- markdownlint-disable MD013 -->
+{/* markdownlint-disable MD013 */}
 
 ## Full list of changes
 
