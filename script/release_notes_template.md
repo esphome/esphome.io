@@ -1,11 +1,18 @@
 ---
 description: "Changelog for ESPHome {VERSION}."
 title: "ESPHome {VERSION} - {DATE}"
+pagefind: false
+slug: "{VERSION}"
 ---
 
+<!-- NOTE: When creating a new changelog, save this as a .mdx file -->
+
+import ImgTable from '@components/ImgTable.astro';
+
 <!-- MANUAL: Add featured components here -->
-{{< imgtable >}}
-{{< /imgtable >}}
+<ImgTable items={[
+  // ["Component Name", "/components/path/", "image.png"],
+]} />
 
 ## Release Overview
 
@@ -37,7 +44,7 @@ title: "ESPHome {VERSION} - {DATE}"
   - Select 3-5 most important features/changes
   - Group related PRs into cohesive narratives
   - Include specific numbers (RAM savings, performance improvements)
-  - Use {{< docref >}} for component links
+  - Use [Component Name](/components/path/) for component links
   - Professional but enthusiastic tone
   - Order by importance (most impactful first)
 -->
@@ -119,7 +126,3 @@ title: "ESPHome {VERSION} - {DATE}"
 </details>
 
 <!-- markdownlint-enable MD013 -->
-
-## All Changelogs
-
-{{< changelogs >}}
