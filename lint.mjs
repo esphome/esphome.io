@@ -236,6 +236,13 @@ async function buildAnchorCache() {
 async function checkInternalLinks(fname, content, anchorCache) {
   if (!fname.endsWith('.md') && !fname.endsWith('.mdx')) return;
 
+  // Skip template and documentation files with example links
+  const ignoreFiles = [
+    '.claude/instructions.md',
+    'script/release_notes_template.md',
+  ];
+  if (ignoreFiles.includes(fname)) return;
+
   const linkPattern = /\[([^\]]+)\]\(([^)]+)\)/g;
   let match;
 
