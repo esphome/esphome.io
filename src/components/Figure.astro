@@ -13,6 +13,9 @@ interface Props {
 }
 
 const { src, alt, caption, layout = 'constrained', style, width, height } = Astro.props;
+
+// Check if there's slot content for caption
+const hasSlot = Astro.slots.has('caption');
 ---
 
 <figure class="captioned-image">
@@ -24,7 +27,11 @@ const { src, alt, caption, layout = 'constrained', style, width, height } = Astr
     width={width}
     height={height}
   />
-  {caption && <figcaption>{caption}</figcaption>}
+  {(hasSlot || caption) && (
+    <figcaption>
+      {hasSlot ? <slot name="caption" /> : caption}
+    </figcaption>
+  )}
 </figure>
 
 <style>

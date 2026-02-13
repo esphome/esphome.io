@@ -286,6 +286,8 @@ Create grids of component cards:
 
 Add captions to images using the Figure component:
 
+**Simple text caption (using caption prop):**
+
 ```mdx
 import Figure from '@components/Figure.astro';
 import myImageImg from './images/my-image.jpg';
@@ -295,6 +297,21 @@ import myImageImg from './images/my-image.jpg';
   alt="Description"
   caption="This caption appears below the image"
 />
+```
+
+**Caption with markdown links (using caption slot):**
+
+```mdx
+import Figure from '@components/Figure.astro';
+
+<Figure
+  src="/images/badge.svg"
+  alt="Badge"
+>
+  <p slot="caption">
+    Download: [svg](/images/badge.svg), [png](/images/badge.png)
+  </p>
+</Figure>
 ```
 
 **With absolute path for multi-use images:**
@@ -312,10 +329,14 @@ import myImageImg from './images/my-image.jpg';
 
 - `src`: Either imported variable or absolute path (required)
 - `alt`: Alternative text for accessibility (required)
-- `caption`: Optional caption text displayed below image
+- `caption`: Optional caption text for simple captions (string)
 - `layout`: Use `"constrained"` for responsive images (default)
 - `style`: Optional inline CSS styles
 - `width`, `height`: Optional pixel values
+
+**Slots:**
+
+- `caption`: For captions with markdown/links (use `<Fragment slot="caption">` with markdown content)
 
 ## Git Workflow
 

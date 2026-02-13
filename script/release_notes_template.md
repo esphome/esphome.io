@@ -1,10 +1,6 @@
 ---
 description: "Changelog for ESPHome {VERSION}."
 title: "ESPHome {VERSION} - {DATE}"
-params:
-  seo:
-    description: Changelog for ESPHome {VERSION}.
-    image: /changelog/images/changelog-{VERSION}.png
 ---
 
 <!-- MANUAL: Add featured components here -->

@@ -1,9 +1,6 @@
 ---
 description: "Instructions for setting up a modbus_controller device sensor."
 title: "Modbus Controller Number"
-params:
-  seo:
-    description: Instructions for setting up a modbus_controller device sensor.
 ---
 
 The `modbus_controller` platform creates a Number from a modbus_controller.
@@ -47,8 +44,8 @@ When the Number is updated a modbus write command is created sent to the device.
   Parameters passed into the lambda
 
   - **x** (float): The parsed float value of the modbus data
-  - **data** (`std::vector<uint8_t): vector containing the complete raw modbus response bytes for this sensor
-    *note:* because the response contains data for all registers in the same range you have to use `data[item->`offset]` to get the first response byte for your sensor.
+  - **data** (`std::vector<uint8_t>`): vector containing the complete raw modbus response bytes for this sensor
+    *note:* because the response contains data for all registers in the same range you have to use `data[item->offset]` to get the first response byte for your sensor.
 
   - **item** (const pointer to a SensorItem derived object): The sensor object itself.
 
@@ -71,7 +68,7 @@ When the Number is updated a modbus write command is created sent to the device.
   Possible return values for the lambda:
 
   - `return <FLOATING_POINT_NUMBER>;` the new value for the sensor.
-  - `return <anything>;` and fill payload with data if the payload is added from the lambda then these 16 bit words will be sent
+  - `<fill payload with data> and return <anything>;` if the payload is added from the lambda then these 16 bit words will be sent
   - `return {};` if you don't want write the command to the device (or do it from the lambda).
 
 - All other options from [Number](/components/number#config-number).

@@ -1,9 +1,6 @@
 ---
 description: "Instructions for setting up a modbus_controller device output."
 title: "Modbus Controller Output"
-params:
-  seo:
-    description: Instructions for setting up a modbus_controller device output.
 ---
 
 The `modbus_controller` platform creates an output from a modbus_controller. The goal is to write a value to a modbus register on a device.
@@ -50,7 +47,7 @@ The `modbus_controller` platform creates an output from a modbus_controller. The
   Possible return values for the lambda:
 
   - `return <FLOATING_POINT_NUMBER / BOOL>;` the new value for the sensor.
-  - `return <anything>;` and fill payload with data if the payload is added from the lambda then these 16 bit words will be sent
+  - `<fill payload with data> and return <anything>;` if the payload is added from the lambda then these 16 bit words will be sent
   - `return {};` if you don't want write the command to the device (or do it from the lambda).
 
 - **offset** (*Optional*, int): Offset from start address in bytes (only required for uncommon response encodings). If more than one register is written in a command this value is used to find the start of this datapoint relative to start address. The component calculates the size of the range based on offset and size of the value type.
@@ -89,10 +86,10 @@ output:
 
 - [Modbus](/components/modbus/)
 - [Modbus Controller](/components/modbus_controller/)
-- [Modbus Controller](/components/sensor/modbus_controller/)
-- [Modbus Controller](/components/binary_sensor/modbus_controller/)
-- [Modbus Controller](/components/switch/modbus_controller/)
-- [Modbus Controller](/components/number/modbus_controller/)
-- [Modbus Controller](/components/select/modbus_controller/)
-- [Modbus Controller](/components/text_sensor/modbus_controller/)
+- [Modbus Controller Sensor](/components/sensor/modbus_controller/)
+- [Modbus Controller Binary Sensor](/components/binary_sensor/modbus_controller/)
+- [Modbus Controller Switch](/components/switch/modbus_controller/)
+- [Modbus Controller Number](/components/number/modbus_controller/)
+- [Modbus Controller Select](/components/select/modbus_controller/)
+- [Modbus Controller Text Sensor](/components/text_sensor/modbus_controller/)
 - [https://www.modbustools.com/modbus.html](https://www.modbustools.com/modbus.html)

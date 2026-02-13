@@ -595,21 +595,11 @@ It can sometimes take some time for the first BLE broadcast to be received. Once
 
 ## Obtaining the Bindkey
 
-To set up an encrypted device such as the LYWSD03MMC (with Xiaomi stock firmware) and CGD1, you first need to obtain the bind key. The `xiaomi_ble` sensor component is not able to automatically generate a bindkey so other workarounds are necessary.
+To set up an encrypted device you need to obtain the `bindkey`. The `xiaomi_ble` sensor component is not able to automatically generate a bindkey so other workarounds are necessary.
 
-### LYWSD03MMC/MHO-C401
-
-If the LYWSD03MMC or MHO-C401 sensor is operated with the Xiaomi stock firmware, you can use the [TeLink flasher application](https://atc1441.github.io/TelinkFlasher.html) to easily generate a new bind key and upload the key to the device without the need to flash a new firmware (see figure). For this, you load the flasher [webpage](https://atc1441.github.io/TelinkFlasher.html) with a [supported browser](https://github.com/WebBluetoothCG/web-bluetooth/blob/master/implementation-status.md) and connect the device by pressing "Connect". After the connection is established, you press the "Do Activation" button and the new key will be shown in the "Mi Bind Key" field. The key can be copied directly into the sensor YAML configuration.
-
-<Figure
-  src={telinkFlasherImg}
-  alt=""
-  caption="Telink flasher application."
-  layout="constrained"
-/>
-
-> [!CAUTION]
-> The new bind key will work with ESPHome, but the Mi Home app will not recognise the sensor anymore once the device has been activated by the TeLink flasher application. To use the sensor again with the Xiaomi Mi Home app, the device needs to be removed and then re-added inside the Mi Home app.
+> [!WARNING]
+> If you keep the stock firmware, the new bind key will work with ESPHome, but the Mi Home app will not recognise the sensor anymore once the device has been activated by the TeLink flasher application.
+> To use the sensor again with the Xiaomi Mi Home app, the device needs to be removed and then re-added inside the Mi Home app.
 
 ### LYWSD03MMC, CGD1 and most other encrypted devices
 
@@ -661,15 +651,6 @@ If the LYWSD03MMC or MHO-C401 sensor is operated with the Xiaomi stock firmware,
 ## Improving reception performance
 
 Use a board with an Ethernet connection to the network, to offload ESP32's radio module from WiFi traffic, this gains performance on Bluetooth side.
-To maximize the chances of catching advertisements of the sensors, you can set `interval` equal to `window` in [Esp32 Ble Tracker](/components/esp32_ble_tracker/) scan parameter settings:
-
-```yaml
-esp32_ble_tracker:
-  scan_parameters:
-    interval: 5s # try with 300ms if you don't have LAN module
-    window: 5s # try with 300ms if you don't have LAN module
-    active: false
-```
 
 Avoid placing the ESP node in racks, close to routers/switches or other network equipment as EMI interference will degrade Bluetooth signal reception. For best results put as far away as possible, at least 3 meters distance from any other such equipment.
 
