@@ -24,7 +24,7 @@ The LVGL component will take care of the display rendering. For most displays, t
 set to `never`, but note that some displays such as OLED and e-paper will need the update interval set to a suitable
 interval, or make use of the [`on_draw_end`](#on_draw_end) trigger to manually update the display.
 
-For interactivity, a [Touchscreen](/components/touchscreen/index/) (capacitive highly preferred), a [Rotary Encoder](/components/sensor/rotary_encoder/) or a custom keypad made up from discrete [Binary Sensors](/components/binary_sensor/index/) can be used.
+For interactivity, a [Touchscreen](/components/touchscreen/) (capacitive highly preferred), a [Rotary Encoder](/components/sensor/rotary_encoder/) or a custom keypad made up from discrete [Binary Sensors](/components/binary_sensor/) can be used.
 
 Check out the detailed examples in [the Cookbook](/cookbook/lvgl#lvgl-cookbook) which demonstrate a number of ways you can integrate your environment with LVGL and ESPHome.
 
@@ -98,26 +98,26 @@ The following configuration variables apply to the main `lvgl` component, in ord
 - **encoders** (*Optional*, list): A list of rotary encoders interacting with the LVGL widgets on the display.
   - **group** (*Optional*, string): A name for a group of widgets which will interact with the input device. See the [common properties](/components/lvgl/widgets/) of the widgets for more information on groups.
   - **initial_focus** (*Optional*, [ID](/guides/configuration-types#id)): An optional ID for a widget to be given focus on startup (especially useful if there is only one focusable widget.)
-  - **enter_button** (**Required**, [ID](/guides/configuration-types#id)): The ID of a [Binary Sensor](/components/binary_sensor/index/), to be used as `ENTER` key.
+  - **enter_button** (**Required**, [ID](/guides/configuration-types#id)): The ID of a [Binary Sensor](/components/binary_sensor/), to be used as `ENTER` key.
   - **sensor** (*Optional*, [ID](/guides/configuration-types#id)): The ID of a [Rotary Encoder](/components/sensor/rotary_encoder/); or a list with buttons for left/right interaction with the widgets:
-    - **left_button** (*Optional*, [ID](/guides/configuration-types#id)): The ID of a [Binary Sensor](/components/binary_sensor/index/), to be used as `LEFT` key.
-    - **right_button** (*Optional*, [ID](/guides/configuration-types#id)): The ID of a [Binary Sensor](/components/binary_sensor/index/), to be used as `RIGHT` key.
+    - **left_button** (*Optional*, [ID](/guides/configuration-types#id)): The ID of a [Binary Sensor](/components/binary_sensor/), to be used as `LEFT` key.
+    - **right_button** (*Optional*, [ID](/guides/configuration-types#id)): The ID of a [Binary Sensor](/components/binary_sensor/), to be used as `RIGHT` key.
   - **long_press_time** (*Optional*, [Time](/guides/configuration-types#time)): For the rotary encoder, delay after which the `on_long_pressed` [interaction trigger](/components/lvgl/widgets#lvgl-automation-triggers) will be called. Defaults to `400ms`. Can be disabled with `never`.
   - **long_press_repeat_time** (*Optional*, [Time](/guides/configuration-types#time)): For the rotary encoder, repeated interval after `long_press_time`, when `on_long_pressed_repeat` [interaction trigger](/components/lvgl/widgets#lvgl-automation-triggers) will be called. Defaults to `100ms`. Can be disabled with `never`.
 - **keypads** (*Optional*, list): A list of keypads interacting with the LVGL widgets on the display.
   - **group** (*Optional*, string): A name for a group of widgets which will interact with the input device. See the [common properties](/components/lvgl/widgets/) of the widgets for more information on groups.
-  - **up** (*Optional*, [ID](/guides/configuration-types#id)): The ID of a [Binary Sensor](/components/binary_sensor/index/), to be used as `UP` key.
-  - **down** (*Optional*, [ID](/guides/configuration-types#id)): The ID of a [Binary Sensor](/components/binary_sensor/index/), to be used as `DOWN` key.
-  - **right** (*Optional*, [ID](/guides/configuration-types#id)): The ID of a [Binary Sensor](/components/binary_sensor/index/), to be used as `RIGHT` key.
-  - **left** (*Optional*, [ID](/guides/configuration-types#id)): The ID of a [Binary Sensor](/components/binary_sensor/index/), to be used as `LEFT` key.
-  - **esc** (*Optional*, [ID](/guides/configuration-types#id)): The ID of a [Binary Sensor](/components/binary_sensor/index/), to be used as `ESC` key.
-  - **del** (*Optional*, [ID](/guides/configuration-types#id)): The ID of a [Binary Sensor](/components/binary_sensor/index/), to be used as `DEL` key.
-  - **backspace** (*Optional*, [ID](/guides/configuration-types#id)): The ID of a [Binary Sensor](/components/binary_sensor/index/), to be used as `BACKSPACE` key.
-  - **enter** (*Optional*, [ID](/guides/configuration-types#id)): The ID of a [Binary Sensor](/components/binary_sensor/index/), to be used as `ENTER` key.
-  - **next** (*Optional*, [ID](/guides/configuration-types#id)): The ID of a [Binary Sensor](/components/binary_sensor/index/), to be used as `NEXT` key.
-  - **prev** (*Optional*, [ID](/guides/configuration-types#id)): The ID of a [Binary Sensor](/components/binary_sensor/index/), to be used as `PREV` key.
-  - **home** (*Optional*, [ID](/guides/configuration-types#id)): The ID of a [Binary Sensor](/components/binary_sensor/index/), to be used as `HOME` key.
-  - **end** (*Optional*, [ID](/guides/configuration-types#id)): The ID of a [Binary Sensor](/components/binary_sensor/index/), to be used as `END` key.
+  - **up** (*Optional*, [ID](/guides/configuration-types#id)): The ID of a [Binary Sensor](/components/binary_sensor/), to be used as `UP` key.
+  - **down** (*Optional*, [ID](/guides/configuration-types#id)): The ID of a [Binary Sensor](/components/binary_sensor/), to be used as `DOWN` key.
+  - **right** (*Optional*, [ID](/guides/configuration-types#id)): The ID of a [Binary Sensor](/components/binary_sensor/), to be used as `RIGHT` key.
+  - **left** (*Optional*, [ID](/guides/configuration-types#id)): The ID of a [Binary Sensor](/components/binary_sensor/), to be used as `LEFT` key.
+  - **esc** (*Optional*, [ID](/guides/configuration-types#id)): The ID of a [Binary Sensor](/components/binary_sensor/), to be used as `ESC` key.
+  - **del** (*Optional*, [ID](/guides/configuration-types#id)): The ID of a [Binary Sensor](/components/binary_sensor/), to be used as `DEL` key.
+  - **backspace** (*Optional*, [ID](/guides/configuration-types#id)): The ID of a [Binary Sensor](/components/binary_sensor/), to be used as `BACKSPACE` key.
+  - **enter** (*Optional*, [ID](/guides/configuration-types#id)): The ID of a [Binary Sensor](/components/binary_sensor/), to be used as `ENTER` key.
+  - **next** (*Optional*, [ID](/guides/configuration-types#id)): The ID of a [Binary Sensor](/components/binary_sensor/), to be used as `NEXT` key.
+  - **prev** (*Optional*, [ID](/guides/configuration-types#id)): The ID of a [Binary Sensor](/components/binary_sensor/), to be used as `PREV` key.
+  - **home** (*Optional*, [ID](/guides/configuration-types#id)): The ID of a [Binary Sensor](/components/binary_sensor/), to be used as `HOME` key.
+  - **end** (*Optional*, [ID](/guides/configuration-types#id)): The ID of a [Binary Sensor](/components/binary_sensor/), to be used as `END` key.
   - **long_press_time** (*Optional*, [Time](/guides/configuration-types#time)): For the keypad, delay after which the `on_long_pressed` [interaction trigger](/components/lvgl/widgets#lvgl-automation-triggers) will be called. Defaults to `400ms`. Can be disabled with `never`.
   - **long_press_repeat_time** (*Optional*, [Time](/guides/configuration-types#time)): For the keypad, repeated interval after `long_press_time`, when `on_long_pressed_repeat` [interaction trigger](/components/lvgl/widgets#lvgl-automation-triggers) will be called. Defaults to `100ms`. Can be disabled with `never`.
 
