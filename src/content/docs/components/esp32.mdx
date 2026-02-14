@@ -34,8 +34,9 @@ esp32:
 - **cpu_frequency** (*Optional*, string): The CPU frequency to use. One of `40MHz`, `80MHz`, `160MHz`, `240MHz`,
   `360MHz` or `400MHz`. Defaults to `160MHz`. Not all values are available for all chips.
 
-- **partitions** (*Optional*, filename): The name of (optionally including the path to) the file containing the
-  partitioning scheme to be used. When not specified, partitions are automatically generated based on `flash_size` and `custom_partitions`.
+- **partitions** (*Optional*, filename or list of partitions): The name of (optionally including the path to) the file containing the
+  partitioning scheme to be used or a list of partitions to be added to the automatically generated partition scheme. See [Partitions](#esp32-partitions).
+  When no partition scheme file is specified, partitions are automatically generated based on `flash_size`.
 
 - **custom_partitions** (*Optional*): Add partitions to the automatically generated partition scheme. See [Custom Partitions](#esp32-partitions).
 
@@ -438,9 +439,9 @@ esp32:
 
 {{< anchor "esp32-partitions" >}}
 
-## Custom Partitions
+## Partitions
 
-The `custom_partitions` option allows you to add partitions to the automatically generated partition table. Valid partition types and subtypes
+The `partitions` option allows you to add partitions to the automatically generated partition table. Valid partition types and subtypes
 are found in the [esp-idf documentation](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-guides/partition-tables.html).
 
 - **name** (*Required*, string): Name of the partition. Can not be any of `nvs`, `app0`, `app1`, `otadata`, `eeprom`, `spiffs`, `phy_init`.
