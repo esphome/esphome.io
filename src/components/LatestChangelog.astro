@@ -28,6 +28,9 @@ for (const entry of changelogs) {
 
 const rendered = latest.entry ? await render(latest.entry) : null;
 const Content = rendered?.Content;
+const slug = latest.entry?.data.slug ?? latest.entry?.id;
+const redirectUrl = slug ? `/${slug}/` : null;
 ---
 
+{redirectUrl && <script define:vars={{ redirectUrl }}>window.location.replace(redirectUrl);</script>}
 {Content && <Content />}
