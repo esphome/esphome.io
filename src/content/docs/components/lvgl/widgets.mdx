@@ -800,6 +800,73 @@ Where a list of points is required, this can be provided in the form of a list o
             color: red
 ```
 
+<span id="lvgl-widget-chart"></span>
+
+## `chart`
+
+The chart widget visualizes data series as `LINE`, `BAR` or `SCATTER`.
+Series can be seeded with initial values and then updated at runtime.
+
+**Configuration variables:**
+
+- **type** (*Optional*, string): Chart type, one of `NONE`, `LINE`, `BAR`, `SCATTER`. Defaults to `LINE`.
+- **update_mode** (*Optional*, string): How new points are added, one of `SHIFT`, `CIRCULAR`. Defaults to `SHIFT`.
+- **point_count** (*Optional*, int): Number of points per series. Range: `1..4096`. Defaults to `10`.
+- **div_line_count** (*Optional*, list): Two integer values `[horizontal, vertical]` in range `0..255`.
+- **x_axis**, **y_axis**, **secondary_x_axis**, **secondary_y_axis** (*Optional*, dict): Axis range settings:
+  - **min_value** (*Optional*, int): Minimum axis value. Defaults to `0`.
+  - **max_value** (*Optional*, int): Maximum axis value. Defaults to `100`.
+- **series** (*Optional*, list): Series definitions:
+  - **id** (**Required**, [ID](/guides/configuration-types#id)): Series ID used by `lvgl.chart.series.update`.
+  - **color** (*Optional*, [color](/components/lvgl#lvgl-color)): Series color. Defaults to `0`.
+  - **y_axis** (*Optional*, string): Axis for the series, one of `PRIMARY_Y`, `SECONDARY_Y`, `PRIMARY_X`, `SECONDARY_X`. Defaults to `PRIMARY_Y`.
+  - **values** (*Optional*, list of int): Initial values for the series (must not exceed `point_count`).
+- Style options from [Style properties](/components/lvgl#lvgl-styling).
+
+**Actions:**
+
+- `lvgl.chart.update` [action](/automations/actions#actions-action) updates chart properties and common widget styles/states/flags.
+  - **id** (**Required**): The ID or a list of IDs of chart widgets to be updated.
+  - **type**, **update_mode**, **point_count**, **div_line_count**, **x_axis**, **y_axis**, **secondary_x_axis**, **secondary_y_axis** (*Optional*): Same as chart configuration options above.
+
+- `lvgl.chart.series.update` [action](/automations/actions#actions-action) updates a chart series.
+  - **id** (**Required**): The series ID defined in `series`.
+  - **value** (*Optional*, int): Append one value according to `update_mode`.
+  - **values** (*Optional*, list of int): Rewrite values by index.
+
+> [!NOTE]
+> `lvgl.chart.series.update` requires one of `value` or `values`.
+
+**Triggers:**
+
+- [interaction](#lvgl-automation-triggers) LVGL event triggers.
+
+**Example:**
+
+```yaml
+- chart:
+    id: chart_id
+    width: 200
+    height: 120
+    point_count: 100
+    type: line
+    update_mode: circular
+    y_axis:
+      min_value: 0
+      max_value: 100
+    series:
+      - id: chart_series_1
+        color: 0x00FF00
+        values: [10, 20, 30]
+
+interval:
+  - interval: 500ms
+    then:
+      - lvgl.chart.series.update:
+          id: chart_series_1
+          value: !lambda return random_uint32() % 100;
+```
+
 <span id="lvgl-widget-checkbox"></span>
 
 ## `checkbox`
