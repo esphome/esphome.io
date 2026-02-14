@@ -146,8 +146,6 @@ const latestChangelog = getLatestChangelog();
 export default defineConfig({
   site: "https://esphome.io",
   redirects: {
-    "/changelog/": `/changelog/${latestChangelog}/`,
-    "/changelog/index/": `/changelog/${latestChangelog}/`,
     "/guides/changelog/": `/changelog/${latestChangelog}/`,
   },
   vite: {
