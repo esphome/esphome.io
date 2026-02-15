@@ -1,5 +1,5 @@
 ---
-description: "Instructions for setting up Xiaomi Mi Home (Mijia) bluetooth-based sensors in ESPHome."
+description: "Instructions for setting up Xiaomi Mi Home (Mijia) Bluetooth-based sensors in ESPHome."
 title: "Xiaomi Mijia BLE Sensors"
 ---
 
@@ -23,7 +23,7 @@ import APIRef from '@components/APIRef.astro';
 The `xiaomi_ble` sensor platform lets you track the output of Xiaomi Bluetooth Low Energy devices using the [Esp32 Ble Tracker](/components/esp32_ble_tracker/). This component will track, for example, the temperature, humidity, moisture, conductivity, illuminance, formaldehyde, mosquito tablet and battery level of the device every time the sensor sends out a BLE broadcast. Contrary to other implementations, `xiaomi_ble` listens passively to advertisement packets and does not pair with the device. Hence ESPHome has no impact on battery life. Thus, if you only use such sensors, you can safely set `scan_parameters.active: false` in `esp32_ble_tracker` configuration, to save from spamming your RF environment with useless scan requests.
 
 > [!NOTE]
-> You may alternatively use ESPHome's [Bluetooth Proxy](/components/bluetooth_proxy/) component to forward sensor data to Home Assistant and have Mija devices configured using its own Mija BLE component. This should work for the devices flashed with [PVVX MiThermometer](https://github.com/pvvx/ATC_MiThermometer) custom firmware, as well as the regular, stock firmware.
+> You may alternatively use ESPHome's [Bluetooth Proxy](/components/bluetooth_proxy/) component to forward sensor data to Home Assistant and have Mijia devices configured using its own Mijia BLE component. This should work for the devices flashed with [PVVX MiThermometer](https://github.com/pvvx/ATC_MiThermometer) custom firmware, as well as the regular, stock firmware.
 
 ## Supported Devices
 
@@ -620,7 +620,7 @@ To set up an encrypted device you need to obtain the `bindkey`. The `xiaomi_ble`
   - Another option is to use a SSL packet sniffer. It can be setup on either an Android phone or the iPhone. Instructions how to obtain the
     key using Android can be found in [in this tutorial](https://github.com/ahpohl/xiaomi_lywsd03mmc) on GitHub.
     Instructions how to obtain the key using an iPhone can be found in
-    [custom-components/sensor.mitemp_bt](https://github.com/custom-components/sensor.mitemp_bt/blob/master/faq.md#my-sensors-ble-advertisements-are-encrypted-how-can-i-get-the-key)
+    [custom-components/ble_monitor](https://custom-components.github.io/ble_monitor/faq#encryption-keys)
     on GitHub. Once the traffic between the Mi Home app and the Xiaomi servers has been recorded, the bind key will show in clear text:
 
     ```text
