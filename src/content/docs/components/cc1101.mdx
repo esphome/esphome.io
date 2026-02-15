@@ -154,6 +154,13 @@ cc1101:
 
 ## Actions
 
+There are different kind of actions
+
+  * actions controlling the radio state (`begin_rx`, `begin_tx`, `set_idle`),
+  * an acion to transmit a package (`send_packet`), and
+  * actions allowing re-configuration of [general](#general-settings) and [tuner](#tuner-settings) settings on the fly
+    (all remaining `set_*` actions)
+
 ### `cc1101.begin_tx` Action
 
 This [action](/automations/actions#all-actions) puts the radio into TX mode and switches `gdo0_pin` to output mode.
@@ -183,6 +190,80 @@ on_...:
   - cc1101.send_packet:
       data: [0x12, 0x34, 0x56, 0x78]
 ```
+
+### `cc1101.set_frequency` Action
+
+This [action](/automations/actions#all-actions) allows setting the frequency.
+
+### `cc1101.set_output_power` Action
+
+This [action](/automations/actions#all-actions) allows setting the output power.
+
+### `cc1101.set_modulation_type` Action
+
+This [action](/automations/actions#all-actions) allows setting the modulation type.
+
+Example for specifying the value directly and with a lambda:
+
+```yaml
+on_...:
+  - cc1101.set_modulation_type: !lambda |-
+      return cc1101::Modulation::MODULATION_2_FSK;
+  - cc1101.set_modulation_type:
+      value: "4-FSK"
+  - cc1101.set_modulation_type: "GFSK"
+```
+
+### `cc1101.set_symbol_rate` Action
+
+This [action](/automations/actions#all-actions) allows setting the symbol rate.
+
+### `cc1101.set_rx_attenuation` Action
+
+This [action](/automations/actions#all-actions) allows setting the RX attenuation.
+
+Example for specifying the value directly and with a lambda:
+
+```yaml
+on_...:
+  - cc1101.set_rx_attenuation: !lambda |-
+      return cc1101::RxAttenuation::RX_ATTENUATION_0DB;
+  - cc1101.set_rx_attenuation:
+      value: "6dB"
+  - cc1101.set_rx_attenuation: "12dB"
+```
+
+### `cc1101.set_dc_blocking_filter` Action
+
+This [action](/automations/actions#all-actions) allows enabling or disabling the DC blocking filter.
+
+### `cc1101.set_manchester` Action
+
+This [action](/automations/actions#all-actions) allows enbling or disabling manchester encoding.
+
+### `cc1101.set_filter_bandwidth` Action
+
+This [action](/automations/actions#all-actions) allows setting the filter bandwidth.
+
+### `cc1101.set_fsk_deviation` Action
+
+This [action](/automations/actions#all-actions) allows setting the FSK deviation.
+
+### `cc1101.set_msk_deviation` Action
+
+This [action](/automations/actions#all-actions) allows setting the MSK deviation.
+
+### `cc1101.set_channel` Action
+
+This [action](/automations/actions#all-actions) allows setting the channel.
+
+### `cc1101.set_channel_spacing` Action
+
+This [action](/automations/actions#all-actions) allows setting the channel spacing.
+
+### `cc1101.set_if_frequency` Action
+
+This [action](/automations/actions#all-actions) allows setting the intermediate frequency.
 
 ## Integration with Remote Receiver/Transmitter
 
