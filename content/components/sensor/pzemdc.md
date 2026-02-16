@@ -85,8 +85,8 @@ While its own component is great working for a basic setup, you may want to have
 #Where is the modbus hardware connect to?
 uart:
   - id: modbus_uart
-    tx_pin: gpio03
-    rx_pin: gpio01
+    tx_pin: gpio<XX> #User-defined
+    rx_pin: gpio<XX> #User-defined
     baud_rate: 9600
     stop_bits: 1
     parity: NONE
