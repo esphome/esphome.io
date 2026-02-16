@@ -237,6 +237,16 @@ canbus:
         - lambda: |-
             std::string b(x.begin(), x.end());
             ESP_LOGD("CAN standard ID 0x123", "%s", &b[0]);
+
+    - can_id: 0
+      can_id_mask: 0x000
+      use_extended_id: true
+      then:
+        - lambda: |-
+            ESP_LOGI("CAN", "can_id: 0x%03X", can_id);
+            if (x.size() > 0) {
+              ESP_LOGD("CAN", "First data: 0x%02X", x[0]);
+
 ```
 
 ## Binary Sensor Example
