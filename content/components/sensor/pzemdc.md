@@ -80,6 +80,7 @@ on_...:
 While its own component is great working for a basic setup, you may want to have more possibilities while using modbus controller.
 
 ### Example Config
+
 ```yaml
 #Where is the modbus hardware connect to?
 uart:
@@ -166,11 +167,12 @@ sensor:
       # Multiply to change from Watt hours to Kilo Watt hours (kwh)
       - multiply: 0.001
 
-
 ```
 
 ### `on_offline` and `on_online` Action
+
 Scenario: A binary sensor (id: bs_pzem_online) shall indicate if the device is off- or online.
+
 ```yaml
   on_online:
     then:
@@ -189,11 +191,10 @@ Scenario: A binary sensor (id: bs_pzem_online) shall indicate if the device is o
             id(pzem_dc_voltage).publish_state(0.0);
             id(pzem_dc_current).publish_state(0.0);
             id(pzem_dc_power).publish_state(0.0);
-
 ```
 
-
 ## See Also
+
 - {{< docref "/components/uart" >}}
 - {{< docref "/components/modbus" >}}
 - {{< docref "/components/modbus_controller" >}}
