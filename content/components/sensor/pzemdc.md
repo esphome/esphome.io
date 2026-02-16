@@ -79,9 +79,8 @@ on_...:
 
 While its own component is great working for a basic setup, you may want to have more possibilities while using modbus controller.
 
-**Example Config**
+### Example Config
 ```yaml
-
 #Where is the modbus hardware connect to?
 uart:
   - id: modbus_uart
@@ -170,11 +169,8 @@ sensor:
 
 ```
 
-**```on_offline``` and ```on_online``` Action**
-
-**Scenario:**
-A binary sensor (id: bs_pzem_online) shall indicate if the device is off- or online.
-
+### `on_offline` and `on_online` Action
+Scenario: A binary sensor (id: bs_pzem_online) shall indicate if the device is off- or online.
 ```yaml
   on_online:
     then:
@@ -198,7 +194,6 @@ A binary sensor (id: bs_pzem_online) shall indicate if the device is off- or onl
 
 
 ## See Also
-
 - {{< docref "/components/uart" >}}
 - {{< docref "/components/modbus" >}}
 - {{< docref "/components/modbus_controller" >}}
