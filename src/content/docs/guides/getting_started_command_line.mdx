@@ -42,6 +42,14 @@ services:
       - USERNAME=test
       - PASSWORD=ChangeMe
 ```
+Docker specific environment variables:
+
+| Name | Default value | Description |
+|-----|------|------|
+| DASHBOARD_LISTENING_NETWORK_INTERFACE | `not set` | Network interface the dashboard listens on. This is mainly useful for advanced networking setups, such as when exposing the dashboard through a reverse proxy while the container is attached to a [macvlan](https://docs.docker.com/engine/network/drivers/macvlan/) or [ipvlan](https://docs.docker.com/engine/network/drivers/ipvlan/) network.)|
+
+In addition to the variables listed above, all other supported [ESPHome environment variables](https://github.com/esphome/feature-requests/issues/2759) can also be defined at the container level.
+
 
 > [!NOTE]
 > If you are using NFS share to back your container's config volume, you may

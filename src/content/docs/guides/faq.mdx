@@ -516,15 +516,19 @@ services:
 
 <span id="docker-reference-notes"></span>
 
-> [!NOTE]
+> > [!NOTE]
 > By default, ESPHome uses mDNS to resolve device IPs on the network; this is used to determine online/offline state
 > in the [ESPHome Device Builder](/guides/getting_started_hassio#installing-esphome-device-builder). In order for this feature to work, you
-> must use Docker's host networking mode.
+> must either use Docker's [host](https://docs.docker.com/network/drivers/host/) networking mode or create [macvlan](https://docs.docker.com/engine/network/drivers/macvlan/)/[ipvlan](https://docs.docker.com/engine/network/drivers/ipvlan/) networks.
 >
-> The [host networking driver](https://docs.docker.com/network/drivers/host/) only works on Linux hosts; it is
+> The [host networking driver](https://docs.docker.com/engine/network/drivers/host/) only works on Linux hosts; it is
 > available on Docker Desktop version 4.29 and later.
 >
-> If you don't want to use the host networking driver, you have to use an alternate method as described below.
+> When working with multiple network interfaces, you can specify which interface the dashboard should bind to by setting the environment
+> variable `DASHBOARD_LISTENING_NETWORK_INTERFACE`. This is particularly useful when using a reverse proxy: the dashboard can be exposed
+> through the reverse proxy on one network while managing devices on another.
+>
+> If you cannot use docker any of those networking based solutions, you have to use an alternate method as described below.
 >
 > Note that mDNS might not work if your Home Assistant server and your ESPHome nodes are on different subnets
 > and/or VLANs. If your router supports Avahi, you can configure mDNS to work across different subnets.
