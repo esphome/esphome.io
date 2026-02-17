@@ -26,14 +26,13 @@ function collectMdxFiles(dir: string): string[] {
 // Match headings like:
 //   ### `switch.toggle` Action
 //   ## `deep_sleep.enter` Action
-//   ### `remote_transmitter.transmit_nec` **Action**
 //   ### `switch.is_on` / `switch.is_off` Condition
 //   ## `sun.is_above_horizon` / `sun.is_below_horizon` Conditions
 const headingPattern = new RegExp(
   "^#{2,4}\\s+" +
   "`([a-z_][a-z0-9_.]*\\.[a-z_][a-z0-9_]*)`" +
   "(?:\\s+/\\s+`([a-z_][a-z0-9_.]*\\.[a-z_][a-z0-9_]*)`)*" +
-  "\\s+(?:\\*\\*)?" + type + "s?(?:\\*\\*)?\\s*$",
+  "\\s+" + type + "s?\\s*$",
   "mi"
 );
 
@@ -42,7 +41,7 @@ const headingPatternGlobal = new RegExp(
   "^#{2,4}\\s+" +
   "(`[a-z_][a-z0-9_.]*\\.[a-z_][a-z0-9_]*`)" +
   "(?:\\s+/\\s+`[a-z_][a-z0-9_.]*\\.[a-z_][a-z0-9_]*`)*" +
-  "\\s+(?:\\*\\*)?" + type + "s?(?:\\*\\*)?\\s*$",
+  "\\s+" + type + "s?\\s*$",
   "gmi"
 );
 
