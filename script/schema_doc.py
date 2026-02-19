@@ -4,7 +4,6 @@ import json
 import os
 import re
 import unicodedata
-import string
 from pathlib import Path
 from pprint import pprint
 from inspect import getmembers
@@ -301,7 +300,7 @@ def json_save():
 
 
 def make_doc_with_see_also(md_file, index, docs):
-    docs = convert_links_and_shortcodes(md_file, index, docs)
+    docs = convert_links(md_file, index, docs)
     return f"{docs}\n\n{see_also.md()}"
 
 
@@ -375,49 +374,7 @@ def find_schema_prop(schema, prop_name):
     return None
 
 
-DOXYGEN_LOOKUP = {}
-for s in string.ascii_lowercase + string.digits:
-    DOXYGEN_LOOKUP[s] = s
-for s in string.ascii_uppercase:
-    DOXYGEN_LOOKUP[s] = "_{}".format(s.lower())
-DOXYGEN_LOOKUP[":"] = "_1"
-DOXYGEN_LOOKUP["_"] = "__"
-DOXYGEN_LOOKUP["."] = "_8"
-
-
-def encode_doxygen(value):
-    value = value.split("/")[-1]
-    try:
-        return "".join(DOXYGEN_LOOKUP[s] for s in value)
-    except KeyError as exc:
-        raise ValueError(
-            "Unknown character in doxygen string! '{}'".format(value)
-        ) from exc
-
-
-def get_md_file_ref(md_file, ref):
-    # This should mimic the docref short code, see /themes/esphome-theme/layouts/shortcodes/docref.html
-    if ref.startswith("/"):
-        md_parent = DOCS_ROOT
-        ref = ref[1:]
-    else:
-        md_parent = md_file.parent
-    if ref.endswith("/"):
-        ref = ref[:-1]
-
-    ref_md_path = md_parent / (ref + ".mdx")
-    if ref_md_path.exists():
-        return ref_md_path
-    ref_md_default = md_parent / ref / "index.mdx"
-    if ref_md_default.exists():
-        return ref_md_default
-    ref_md_default = DOCS_ROOT / "components" / (ref + ".mdx")
-    if ref_md_default.exists():
-        return ref_md_default
-    return md_file  # go nowhere
-
-
-def convert_links_and_shortcodes(md_file, index, docs):
+def convert_links(md_file, index, docs):
     if docs is None:
         return None
 
@@ -437,34 +394,7 @@ def convert_links_and_shortcodes(md_file, index, docs):
 
         return f"[{title}]({url})"
 
-    docs = re.sub(REGEX_LOCAL_LINK, replacer_local, docs)
-
-    # Matches {{ shortcode-group-1 "group-2" "group-3" }}
-    REGEX_SHORTCODE = r"{{<\s([^\s]*)\s\"([^\"]*)\"(?:\s\"([^\"]*)\")?\s>}}"
-
-    def replacer_shortcode(match):
-        if match.group(1) == "docref":
-            ref = match.group(2)
-            md_file_ref = get_md_file_ref(md_file, ref)
-            title = match.group(3) or get_doc_title(md_file_ref)
-            if ref.startswith("/"):
-                url = args.deploy_url + ref
-            else:
-                url = args.deploy_url + "/" + "/".join(md_file.parts[1:-1]) + "/" + ref
-            if url.endswith("/index"):
-                url = url[: -(len("/index"))]
-        elif match.group(1) == "apistruct":
-            title = match.group(2)
-            url = f"{args.api_docs_url}/structesphome_1_1{encode_doxygen(match.group(3))}.html"
-        elif match.group(1) == "apiclass":
-            title = match.group(2)
-            url = f"{args.api_docs_url}/classesphome_1_1{encode_doxygen(match.group(3))}.html"
-        else:
-            print(f"{md_file}:{index} unknown shortcode '{match.group(1)}'")
-
-        return f"[{title}]({url})"
-
-    return re.sub(REGEX_SHORTCODE, replacer_shortcode, docs)
+    return re.sub(REGEX_LOCAL_LINK, replacer_local, docs)
 
 
 def set_schema_doc(md_file, index, schema, prop_name, prop_types, doc):
@@ -496,7 +426,7 @@ def set_schema_doc(md_file, index, schema, prop_name, prop_types, doc):
 
             # Document with type information, unless the type just says templatable
             if len(type_parts) > 1 and type_parts[1] != TYPE_TEMPLATABLE:
-                prop_type = convert_links_and_shortcodes(md_file, index, type_parts[1])
+                prop_type = convert_links(md_file, index, type_parts[1])
                 matched_config[JSON_DOCS] = f"**{prop_type}**: {converted_doc}"
                 stats.props += 1
                 return matched_config
@@ -651,7 +581,7 @@ def process_config(md_file, lines, index, config_var, indent=0, parent_schema=No
                 values = config_var.get("values", {})
                 if enum_value in values:
                     values[enum_value] = values.get(enum_value) or {}
-                    values[enum_value][JSON_DOCS] = convert_links_and_shortcodes(
+                    values[enum_value][JSON_DOCS] = convert_links(
                         md_file, index, enum_desc
                     )
                     stats.enum_docs += 1
@@ -663,7 +593,7 @@ def process_config(md_file, lines, index, config_var, indent=0, parent_schema=No
                     values = config_var.get("values", {})
                     if enum_value in values:
                         values[enum_value] = values.get(enum_value) or {}
-                        values[enum_value][JSON_DOCS] = convert_links_and_shortcodes(
+                        values[enum_value][JSON_DOCS] = convert_links(
                             md_file, index, enum_desc
                         )
                         stats.enum_docs += 1
@@ -797,8 +727,8 @@ if __name__ == "__main__":
             if file_name == "index":
                 # fill core platform docs, from _index files in platforms folders
                 index, docs = md_get_paragraph(lines, index)
-                core["platforms"][content_folder][JSON_DOCS] = (
-                    convert_links_and_shortcodes(md_file, index, docs)
+                core["platforms"][content_folder][JSON_DOCS] = convert_links(
+                    md_file, index, docs
                 )
                 stats.core_platform_docs += 1
                 is_platform = True
@@ -901,9 +831,7 @@ if __name__ == "__main__":
 
                 if title_config_vars is not None:
                     index, docs = md_get_paragraph(lines, index)
-                    title_config_vars[JSON_DOCS] = convert_links_and_shortcodes(
-                        md_file, index, docs
-                    )
+                    title_config_vars[JSON_DOCS] = convert_links(md_file, index, docs)
                     if config_type == "action":
                         stats.action_docs += 1
                     elif config_type == "condition":
