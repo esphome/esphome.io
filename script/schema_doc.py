@@ -73,7 +73,7 @@ class SeeAlso:
 
     def md(self):
         url_path = "/" + "/".join(list(self.file.parts[1:-1]))
-        if self.file.stem != "_index":
+        if self.file.stem != "index":
             url_path += f"/{self.file.stem}"
         if self.doc_slug_title:
             url_path += self.doc_slug_title
@@ -407,7 +407,7 @@ def get_md_file_ref(md_file, ref):
     ref_md_path = md_parent / (ref + ".mdx")
     if ref_md_path.exists():
         return ref_md_path
-    ref_md_default = md_parent / ref / "_index.mdx"
+    ref_md_default = md_parent / ref / "index.mdx"
     if ref_md_default.exists():
         return ref_md_default
     ref_md_default = DOCS_ROOT / "components" / (ref + ".mdx")
@@ -784,7 +784,7 @@ if __name__ == "__main__":
         # so for the root component (in core) we need to use the one in root, and ignore the one in subfolder,
         # that one will be used in e.g. sensors.json (platform)
 
-        if file_name == "_index" and content_folder == "components":
+        if file_name == "index" and content_folder == "components":
             continue  # nothing here
 
         if file_name in core["components"]:
@@ -793,7 +793,7 @@ if __name__ == "__main__":
             if is_component:
                 config_component = file_name
         elif content_folder != "content" and content_folder in core["platforms"]:
-            if file_name == "_index":
+            if file_name == "index":
                 # fill core platform docs, from _index files in platforms folders
                 index, docs = md_get_paragraph(lines, index)
                 core["platforms"][content_folder][JSON_DOCS] = (
@@ -842,7 +842,7 @@ if __name__ == "__main__":
                 component_name = f"{file_name}_i2c"
             elif (
                 # Handle Platform titles, e.g. Sensor, Switch titles
-                file_name != "_index"
+                file_name != "index"
                 and get_platform_from_title(title, config_component or file_name)
                 is not None
             ):
