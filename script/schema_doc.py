@@ -72,7 +72,8 @@ class SeeAlso:
         self.set_title_slug(title)
 
     def md(self):
-        url_path = "/" + "/".join(list(self.file.parts[1:-1]))
+        relative = self.file.relative_to(DOCS_ROOT)
+        url_path = "/" + "/".join(relative.parts[:-1])
         if self.file.stem != "index":
             url_path += f"/{self.file.stem}"
         if self.doc_slug_title:
