@@ -26,6 +26,8 @@ JSON_CV_TYPE = "type"
 JSON_CV_TYPE_SCHEMA = "schema"
 JSON_ACTION = "action"
 
+DOCS_ROOT = Path(".") / "src" / "content" / "docs"
+
 args = None
 
 
@@ -395,20 +397,20 @@ def encode_doxygen(value):
 def get_md_file_ref(md_file, ref):
     # This should mimic the docref short code, see /themes/esphome-theme/layouts/shortcodes/docref.html
     if ref.startswith("/"):
-        md_parent = Path(".") / "content"
+        md_parent = DOCS_ROOT
         ref = ref[1:]
     else:
         md_parent = md_file.parent
     if ref.endswith("/"):
         ref = ref[:-1]
 
-    ref_md_path = md_parent / (ref + ".md")
+    ref_md_path = md_parent / (ref + ".mdx")
     if ref_md_path.exists():
         return ref_md_path
-    ref_md_default = md_parent / ref / "_index.md"
+    ref_md_default = md_parent / ref / "_index.mdx"
     if ref_md_default.exists():
         return ref_md_default
-    ref_md_default = Path(".") / "content" / "components" / (ref + ".md")
+    ref_md_default = DOCS_ROOT / "components" / (ref + ".mdx")
     if ref_md_default.exists():
         return ref_md_default
     return md_file  # go nowhere
@@ -745,22 +747,22 @@ if __name__ == "__main__":
     core = esphome_json["core"]
 
     md_files = []
-    for root, _, files in os.walk(Path(".") / "content" / "components"):
+    for root, _, files in os.walk(DOCS_ROOT / "components"):
         for file in files:
-            if file.endswith(".md"):
+            if file.endswith(".mdx"):
                 fullpath = Path(root, file)
                 md_files.append(fullpath)
-    md_files.append(Path(".") / "content" / "automations" / "actions.md")
+    md_files.append(DOCS_ROOT / "automations" / "actions.mdx")
 
     fill_anchors(
         md_files
         + [
             # config-lambda, config-templatable
-            Path(".") / "content" / "automations" / "templates.md",
+            DOCS_ROOT / "automations" / "templates.mdx",
             # config-id, config-pin_schema
-            Path(".") / "content" / "guides" / "configuration-types.md",
+            DOCS_ROOT / "guides" / "configuration-types.mdx",
             # api-rest
-            Path(".") / "content" / "web-api" / "_index.md",
+            DOCS_ROOT / "web-api" / "index.mdx",
         ]
     )
 
@@ -953,10 +955,14 @@ if __name__ == "__main__":
                             schema = json_config[config_component]["schemas"].get(
                                 f"{platform_name.upper()}_SCHEMA"
                             )
-                        else:
+                        elif platform_name:
                             schema = json_config[f"{config_component}.{platform_name}"][
                                 "schemas"
                             ].get("CONFIG_SCHEMA")
+                        else:
+                            print(
+                                f"{md_file}:{index} {config_component} unknown component type"
+                            )
                     else:
                         schema = None
                 if schema:
