@@ -423,7 +423,7 @@ function checkAutomationHeadings(fname, content) {
     const upperMatch = line.match(/^#{2,4}\s+`([^`]*[A-Z][^`]*)`/);
     if (upperMatch) {
       const name = upperMatch[1];
-      if (name.match(/^[A-Za-z0-9_]+\.[A-Za-z0-9_.]+$/)) {
+      if (name.match(/^\w+\.[\w.]+$/)) {
         addError(fname, lineno, 1,
           `Action/Condition/Trigger name "\`${name}\`" contains uppercase letters. ` +
           'ESPHome automation names should be all lowercase (e.g. `component.action_name`).');
@@ -432,7 +432,7 @@ function checkAutomationHeadings(fname, content) {
 
     // Check 6: Use `/` not `&` to separate paired automation names in headings
     // e.g. ### `foo.bar` & `foo.baz` Action (should use `/`)
-    if (line.match(/^#{2,4}\s+`[^`]+`\s+&\s+`[^`]+`/)) {
+    if (line.match(/^#{2,4}\s+`\w+(\.\w+)+`\s+&\s+`\w+(\.\w+)+`/)) {
       addError(fname, lineno, 1,
         'Use `/` instead of `&` to separate paired automation names in headings ' +
         '(e.g. `foo.on` / `foo.off` Action).');
