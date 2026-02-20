@@ -1,0 +1,228 @@
+---
+description: "Non-Volatile Memory (NVM) component for external FRAM and EEPROM storage with partition support"
+title: "NVM Component"
+---
+
+import APIRef from '@components/APIRef.astro';
+
+The NVM (Non-Volatile Memory) component provides a unified interface for external NVM devices like FRAM and EEPROM. It supports partitioning the memory into logical sections for different purposes: preferences storage, raw data, or key-value storage.
+
+## Features
+
+- **Partition Support**: Divide NVM into logical sections with different purposes
+- **Preferences Backend**: Replace ESPHome's internal flash-based preferences with external NVM
+- **Raw Storage**: Direct byte-level access for custom data structures
+- **Key-Value Store**: Simple key-value storage for configuration data
+- **Unlimited Writes**: When using FRAM, no write cycle limitations like flash memory
+
+## Supported Platforms
+
+### FRAM I2C
+
+Ferroelectric RAM (FRAM) provides non-volatile storage with unlimited write cycles and no write delays. See [FRAM I2C Platform](/components/nvm/fram_i2c/) for details.
+
+## Example Configuration
+
+```yaml
+# Example: 32KB FRAM with three partitions
+nvm:
+  - platform: fram_i2c
+    id: my_fram
+    address: 0x50
+    model: MB85RC256
+    partitions:
+      # Preferences partition replaces flash-based preferences
+      - id: pref_partition
+        type: preferences
+        size: 4kB
+      
+      # Raw partition for custom data
+      - id: sensor_cache
+        type: raw
+        size: 12kB
+      
+      # Key-value partition for configuration
+      - id: config_store
+        type: key_value
+        size: 2kB
+```
+
+## Partition Types
+
+### Preferences Partition
+
+The `preferences` partition type replaces ESPHome's internal flash-based preferences storage. This is useful for:
+
+- Extending the limited ESP8266 RTC memory (96 bytes)
+- Avoiding flash wear from frequent preference updates
+- Sharing preferences across firmware updates
+
+```yaml
+partitions:
+  - id: pref_partition
+    type: preferences
+    size: 4kB  # Minimum recommended: 2kB
+```
+
+> [!NOTE]
+> Only one preferences partition is allowed across all NVM devices. The partition automatically registers as ESPHome's global preferences backend.
+
+> [!WARNING]
+> The preferences partition must be large enough to hold all your global variables and component preferences. If too small, saves will fail silently.
+
+### Raw Partition
+
+The `raw` partition type provides direct byte-level access to the storage. Use this for:
+
+- Custom data structures
+- Sensor data caching
+- Binary data storage
+
+```yaml
+partitions:
+  - id: data_store
+    type: raw
+    size: 8kB
+```
+
+#### Using Raw Partitions in Lambdas
+
+```yaml
+globals:
+  - id: data_partition
+    type: nvm::RawPartition*
+    initial_value: 'nullptr'
+
+on_boot:
+  - lambda: |
+      id(data_partition) = id(data_store);
+      
+      // Write a value
+      uint32_t counter = 12345;
+      id(data_partition)->write_value(0, counter);
+      
+      // Read a value
+      uint32_t value;
+      if (id(data_partition)->read_value(0, value)) {
+        ESP_LOGD("main", "Read counter: %u", value);
+      }
+```
+
+### Key-Value Partition
+
+The `key_value` partition type provides a simple key-value store for string-based configuration data.
+
+```yaml
+partitions:
+  - id: config_store
+    type: key_value
+    size: 2kB
+```
+
+#### Using Key-Value Partitions in Lambdas
+
+```yaml
+on_boot:
+  - lambda: |
+      // Store a value
+      id(config_store)->set_string("device_name", "Living Room Sensor");
+      
+      // Retrieve a value
+      char buf[64];
+      int len = id(config_store)->get_string("device_name", buf, sizeof(buf), "Unknown");
+      ESP_LOGD("main", "Device name: %s", buf);
+      
+      // Check if key exists
+      if (id(config_store)->has_key("calibration")) {
+        // Key exists
+      }
+      
+      // Delete a key
+      id(config_store)->erase("temp_data");
+```
+
+## Configuration Variables
+
+### NVM Platform
+
+- **platform** (**Required**, string): The NVM platform to use (e.g., `fram_i2c`).
+- **id** (**Required**, [ID](/guides/configuration-types#id)): Manually specify the ID for this NVM device.
+- **partitions** (*Optional*, list): List of partition configurations. See below.
+
+### Partition Configuration
+
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID for this partition.
+- **type** (**Required**, string): The partition type. One of:
+  - `preferences`: ESPHome preferences backend
+  - `raw`: Direct byte-level access
+  - `key_value`: Key-value store
+- **size** (**Required**, [bytes](/guides/configuration-types#bytes)): Size of the partition in bytes. Supports suffixes like `kB`, `MB`.
+- **offset** (*Optional*, int): Absolute offset within the NVM device. Auto-calculated if not specified.
+
+## Partition Sizing
+
+When planning partition sizes, consider:
+
+| Partition Type | Minimum | Recommended | Notes |
+|----------------|---------|-------------|-------|
+| `preferences` | 1kB | 2-4kB | Depends on number of global variables |
+| `raw` | Any | As needed | User-defined data structures |
+| `key_value` | 256B | 1-2kB | Each entry has ~3 bytes overhead + key length |
+
+### Calculating Preferences Size
+
+The preferences partition stores:
+- Global variables with `restore_value: yes`
+- Component states (e.g., light state, switch position)
+- RTC data
+
+A rough estimate: count your global variables and multiply by their size plus ~8 bytes overhead per variable.
+
+## Automatic Partition Placement
+
+If you don't specify offsets, partitions are placed automatically starting at address 0:
+
+```yaml
+# Without offsets - automatic placement
+partitions:
+  - id: partition_a
+    type: preferences
+    size: 4kB    # Placed at offset 0
+  - id: partition_b
+    type: raw
+    size: 8kB    # Placed at offset 4096
+  - id: partition_c
+    type: key_value
+    size: 2kB    # Placed at offset 12288
+```
+
+You can also specify explicit offsets:
+
+```yaml
+# With explicit offsets
+partitions:
+  - id: partition_a
+    type: preferences
+    size: 4kB
+    offset: 0x0000
+  - id: partition_b
+    type: raw
+    size: 8kB
+    offset: 0x1000
+```
+
+## Usage Monitoring
+
+The NVM component logs usage warnings when partitions approach capacity:
+
+- **80% warning**: Partition is getting full
+- **90% warning**: Partition is nearly full, consider increasing size
+
+Check logs during development to ensure adequate partition sizing.
+
+## See Also
+
+- [FRAM I2C Platform](/components/nvm/fram_i2c/)
+- [Global Variables](/components/globals/)
+- [I²C Bus](/components/i2c/)
+- <APIRef text="nvm.h" path="nvm/nvm.h" />

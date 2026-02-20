@@ -1,0 +1,199 @@
+---
+description: "I2C FRAM platform for the NVM component - unlimited write cycles, instant writes"
+title: "FRAM I2C Platform"
+---
+
+import APIRef from '@components/APIRef.astro';
+
+The FRAM I2C platform provides support for I²C-connected Ferroelectric RAM (FRAM) devices as NVM storage.
+
+![FRAM I2C Module](/images/fram_i2c.jpg) FRAM offers unique advantages over flash and EEPROM:
+
+- **Unlimited write cycles**: No wear-out mechanism, unlike flash/EEPROM
+- **Instant writes**: No write delays or busy polling needed
+- **Fast access**: Read/write at bus speed (up to 1MHz I²C)
+- **Low power**: Very low active and standby power consumption
+- **High endurance**: 10¹⁴ to 10¹⁶ write cycles per cell
+
+## Supported Devices
+
+### Fujitsu MB85RC Series
+
+| Model | Size | Part Numbers |
+|-------|------|--------------|
+| MB85RC64 | 8 KB | MB85RC64V |
+| MB85RC128 | 16 KB | MB85RC128V |
+| MB85RC256 | 32 KB | MB85RC256V |
+| MB85RC512 | 64 KB | MB85RC512T |
+| MB85RC1M | 128 KB | MB85RC1MT |
+| MB85RC2M | 256 KB | MB85RC2MT |
+
+### Infineon/Cypress FM24/CY15 Series
+
+| Model | Size | Notes |
+|-------|------|-------|
+| FM24CL64B | 8 KB | Alternative to MB85RC64 |
+| FM24CL256B | 32 KB | Alternative to MB85RC256 |
+| CY15B104QSN | 512 KB | 4 Mbit device |
+| CY15B108QSN | 1 MB | 8 Mbit device |
+
+## Example Configuration
+
+```yaml
+# Basic FRAM configuration
+i2c:
+  sda: GPIO21
+  scl: GPIO22
+
+nvm:
+  - platform: fram_i2c
+    id: my_fram
+    model: MB85RC256
+    partitions:
+      - id: preferences
+        type: preferences
+        size: 4kB
+      - id: sensor_data
+        type: raw
+        size: 8kB
+```
+
+## Configuration Variables
+
+- **model** (*Optional*, string): The FRAM model. One of:
+  - `MB85RC64` (8 KB)
+  - `MB85RC128` (16 KB)
+  - `MB85RC256` (32 KB)
+  - `MB85RC512` (64 KB)
+  - `MB85RC1M` (128 KB)
+  - `MB85RC2M` (256 KB)
+  - `FM24CL64B` (8 KB)
+  - `FM24CL256B` (32 KB)
+  - `CY15B104QSN` (512 KB)
+  - `CY15B108QSN` (1 MB)
+
+- **size** (*Optional*, [bytes](/guides/configuration-types#bytes)): Custom FRAM size in bytes. Use this for unsupported models. Either `model` or `size` must be specified.
+
+- **address** (*Optional*, int): I²C address. Defaults to `0x50` for known models. Required when using custom `size`.
+
+- **i2c_id** (*Optional*, [ID](/guides/configuration-types#id)): The I²C bus to use. Defaults to the default I²C bus.
+
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID for this FRAM device.
+
+- **partitions** (*Optional*, list): List of partition configurations. See [NVM Component](/components/nvm/) for details.
+
+## I²C Addressing
+
+FRAM devices typically use a 7-bit I²C address. The base address is `0x50` and can be configured via pins A0, A1, A2:
+
+| A2 | A1 | A0 | Address |
+|----|----|----|---------|
+| 0 | 0 | 0 | 0x50 |
+| 0 | 0 | 1 | 0x51 |
+| 0 | 1 | 0 | 0x52 |
+| 0 | 1 | 1 | 0x53 |
+| 1 | 0 | 0 | 0x54 |
+| 1 | 0 | 1 | 0x55 |
+| 1 | 1 | 0 | 0x56 |
+| 1 | 1 | 1 | 0x57 |
+
+This allows up to 8 FRAM devices on a single I²C bus.
+
+## Multiple FRAM Devices
+
+You can use multiple FRAM devices on the same I²C bus by configuring different addresses:
+
+```yaml
+nvm:
+  - platform: fram_i2c
+    id: fram_1
+    model: MB85RC256
+    address: 0x50
+    partitions:
+      - id: pref_partition
+        type: preferences
+        size: 4kB
+
+  - platform: fram_i2c
+    id: fram_2
+    model: MB85RC256
+    address: 0x51
+    partitions:
+      - id: data_store
+        type: raw
+        size: 16kB
+```
+
+## Large FRAM Devices (≥64KB)
+
+FRAM devices with 64KB or more (MB85RC512, MB85RC1M, MB85RC2M, CY15B104QSN, CY15B108QSN) use extended addressing:
+
+- **64KB devices**: 16-bit addresses (2 address bytes)
+- **128KB+ devices**: 17/18-bit addresses using device ID register
+
+The component automatically handles the appropriate addressing mode based on the model.
+
+> [!NOTE]
+> For devices larger than 128KB, the component uses the device's device ID register for extended addressing. This is transparent to the user.
+
+## Custom FRAM Size
+
+For FRAM devices not in the supported list, specify the size directly:
+
+```yaml
+nvm:
+  - platform: fram_i2c
+    id: custom_fram
+    size: 64kB
+    address: 0x50  # Required for custom size
+    partitions:
+      - id: storage
+        type: raw
+        size: 32kB
+```
+
+## Wiring
+
+FRAM I²C devices typically come in 8-pin packages:
+
+```
+     ┌─────────┐
+  A0 │1       8│ VDD
+  A1 │2       7│ WP (Write Protect)
+  A2 │3       6│ SCL
+ VSS │4       5│ SDA
+     └─────────┘
+```
+
+- **VDD**: 2.7V to 3.6V (check datasheet for your specific model)
+- **VSS**: Ground
+- **SDA**: I²C data line (with pull-up resistor)
+- **SCL**: I²C clock line (with pull-up resistor)
+- **A0-A2**: Address selection pins (connect to VDD or VSS)
+- **WP**: Write protect pin (connect to VSS for normal operation)
+
+> [!WARNING]
+> Always use pull-up resistors (typically 4.7kΩ) on SDA and SCL lines.
+
+## Comparison with EEPROM
+
+| Feature | FRAM | EEPROM |
+|---------|------|--------|
+| Write cycles | Unlimited (10¹⁴+) | Limited (~100,000) |
+| Write speed | Instant (no delay) | 5-10ms per page |
+| Read speed | Fast | Fast |
+| Power consumption | Very low | Low |
+| Cost | Higher | Lower |
+
+FRAM is ideal for applications requiring frequent writes, such as:
+- Data logging
+- State preservation
+- Wear leveling not needed
+- Real-time counters
+
+## See Also
+
+- [NVM Component](/components/nvm/)
+- [I²C Bus](/components/i2c/)
+- [Global Variables](/components/globals/)
+- <APIRef text="fram_i2c.h" path="fram_i2c/fram_i2c.h" />
