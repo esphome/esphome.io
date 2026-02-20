@@ -420,7 +420,7 @@ function checkAutomationHeadings(fname, content) {
 
     // Check 5: Uppercase letters in backticked automation names (domain.name pattern)
     // e.g. ### `MAX7219.invert_on` Action (should be `max7219.invert_on`)
-    const upperMatch = line.match(/^#{2,4}\s+`([^`]*[A-Z][^`]*)`/);
+    const upperMatch = line.match(/^#{2,4}\s+`([\w.]*[A-Z][\w.]*)`/);
     if (upperMatch) {
       const name = upperMatch[1];
       if (name.match(/^\w+\.[\w.]+$/)) {
