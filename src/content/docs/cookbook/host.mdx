@@ -1,9 +1,6 @@
 ---
 description: "Recipes for running ESPHome on a Linux host"
 title: "Host controls and sensors"
-params:
-  seo:
-    description: Example for running an ESPHome compiled binary on a Debian host
 ---
 
 The example config below showcases a Debian system which runs an ESPHome binary to control a couple of tasks and monitor some states using
@@ -312,9 +309,9 @@ For this, we use the `interval` component to set a timing which doesn't overload
 For network traffic measurement, every 5 minutes we look two times at the linux traffic statistic counters with one second delay, substract
 them and publish them to the template sensors. We use `globals` to define variables available between the different lambdas.
 
-## Deploy as systemd unit
+## Deploy as `systemd` unit
 
-To deploy it as a systemd unit which ensures proper startup at boot, and restarts the binary in case of failure we can assume something like:
+To deploy it as a `systemd` unit which ensures proper startup at boot, and restarts the binary in case of failure we can assume something like:
 
 - **User:** `kiosk` (with appropriate privileges to run the commands defined in the yaml)
 - **Binary location:** `/usr/local/bin/esphome_host`
@@ -332,7 +329,7 @@ sudo install -m 0755 <compilation_output_path> /usr/local/bin/esphome_host
 sudo install -d -o kiosk -g kiosk -m 0750 /var/lib/esphome_host
 ```
 
-### Create the systemd unit
+### Create the `systemd` unit
 
 ```bash
 sudo nano /etc/systemd/system/esphome_host.service
@@ -399,5 +396,5 @@ sensor:
 
 ## See Also
 
-- {{< docref "/components/host" >}}
-- {{< docref "esphome/" >}}
+- [Host Platform](/components/host)
+- [ESPHome Core Configuration](/components/esphome/)
