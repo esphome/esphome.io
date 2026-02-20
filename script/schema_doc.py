@@ -9,7 +9,7 @@ from pprint import pprint
 from inspect import getmembers
 from types import FunctionType
 
-# cspell:ignore Clockless fastled apiclass apistruct classesphome dfrobot docref structesphome templatable
+# cspell:ignore Clockless fastled dfrobot templatable
 
 DOC_CONFIGURATION_VARIABLES = "Configuration variables:"
 DOC_CONFIGURATION_OPTIONS = "Configuration options:"
@@ -36,7 +36,7 @@ def is_configuration_variables_title_alike(title):
     return re.search(REGEX_CONFIGURATION_VARIABLES_TITLE, title, re.IGNORECASE)
 
 
-def hugo_slugify(text: str) -> str:
+def slugify(text: str) -> str:
     # Normalize Unicode to ASCII (e.g., é → e)
     text = unicodedata.normalize("NFKD", text)
     text = text.encode("ascii", "ignore").decode("ascii")
@@ -65,7 +65,7 @@ class SeeAlso:
 
     def set_title_slug(self, title):
         # TODO: if setting same title, the slug actually gets appended -1, -2 etc.
-        self.doc_slug_title = f"#{hugo_slugify(title)}"
+        self.doc_slug_title = f"#{slugify(title)}"
 
     def set_title(self, title):
         self.set_title_slug(title)
@@ -92,7 +92,10 @@ class Stats:
     enum_docs = 0
     action_docs = 0
     condition_docs = 0
-    missing_anchors = []
+    missing_anchors: list = None
+
+    def __init__(self):
+        self.missing_anchors = []
 
 
 stats = Stats()
@@ -163,11 +166,11 @@ def mrkdwn_lines(md_file):
 
 
 def fill_anchors(md_files):
-    REGEX_ANCHOR = r"^{{<\sanchor\s\"([^\"]*)\"\s>}}"
+    REGEX_ANCHOR = r'<span\s+id="([^"]*)"'
     for md_file in md_files:
         lines = mrkdwn_lines(md_file)
         for line in lines:
-            search = re.search(REGEX_ANCHOR, line, re.IGNORECASE)
+            search = re.search(REGEX_ANCHOR, line)
             if search:
                 anchor = search.group(1)
                 anchors[anchor] = md_file
@@ -190,8 +193,9 @@ def md_get_paragraph(lines, index):
         not lines[index].strip()
         or (  # whitespace
             lines[index].strip().startswith("{{")
-            and lines[index].strip().endswith("}}")  # anchors
+            and lines[index].strip().endswith("}}")  # legacy anchors
         )
+        or lines[index].strip().startswith('<span id="')  # anchors
         or (is_title(lines[index]))  # titles
     ):
         index += 1
@@ -208,7 +212,7 @@ def md_get_paragraph(lines, index):
     return index, paragraph.strip()
 
 
-def md_get_next_title(lines, index):
+def md_get_next_title(md_file, lines, index):
     while True:
         if index >= len(lines):
             return index, None
@@ -390,7 +394,11 @@ def convert_links(md_file, index, docs):
             url = anchor
         else:
             anchor_file = anchors[anchor]
-            url = f"{args.deploy_url}/{'/'.join(anchor_file.parts[1:-1])}/{anchor_file.stem}#{anchor}"
+            relative = anchor_file.relative_to(DOCS_ROOT)
+            url_path = "/" + "/".join(relative.parts[:-1])
+            if anchor_file.stem != "index":
+                url_path += f"/{anchor_file.stem}"
+            url = f"{args.deploy_url}{url_path}#{anchor}"
 
         return f"[{title}]({url})"
 
@@ -711,7 +719,7 @@ if __name__ == "__main__":
         config_component = None
         json_config = None
         # component docs:
-        # some components have .md files on folders, e.g. http_request
+        # some components have .mdx files in folders, e.g. http_request
         # so for the root component (in core) we need to use the one in root, and ignore the one in subfolder,
         # that one will be used in e.g. sensors.json (platform)
 
@@ -725,7 +733,7 @@ if __name__ == "__main__":
                 config_component = file_name
         elif content_folder != "content" and content_folder in core["platforms"]:
             if file_name == "index":
-                # fill core platform docs, from _index files in platforms folders
+                # fill core platform docs, from index files in platforms folders
                 index, docs = md_get_paragraph(lines, index)
                 core["platforms"][content_folder][JSON_DOCS] = convert_links(
                     md_file, index, docs
@@ -748,7 +756,7 @@ if __name__ == "__main__":
         title_config_vars = None
 
         while True:
-            index, title = md_get_next_title(lines, index)
+            index, title = md_get_next_title(md_file, lines, index)
             if not title:
                 break
             component_name = None
