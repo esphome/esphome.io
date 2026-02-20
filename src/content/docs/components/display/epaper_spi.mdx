@@ -86,11 +86,106 @@ but can be overridden if needed.
 - **pages** (*Optional*, list): Show pages instead of a single lambda. See [Display Pages](/components/display#display-pages).
 - **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to re-draw the screen. Defaults to `60s`,
   use `never` to only manually update the screen via `component.update`.
+- **on_state** (*Optional*, [Automation](/automations)): Triggered on every `epaper_spi` internal state transition. The new state is available as `x`.
+- **on_render_start** (*Optional*, [Automation](/automations)): Triggered when rendering starts (transition from `IDLE` to any non-idle state).
+- **on_render_end** (*Optional*, [Automation](/automations)): Triggered when rendering ends (transition back to `IDLE`).
 - **full_update_every** (*Optional*, int): On screens that support partial updates, this sets the number of updates
   before a full update is forced. Defaults to `1` which will make every update a full update.
 - **spi_id** (*Optional*, [ID](/guides/configuration-types#id)): Required to specify the ID of the [SPI Component](/components/spi) if your
   configuration defines multiple SPI buses. If only a single SPI bus is configured, this is optional.
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
+
+## Automations
+
+### `on_state` Trigger
+
+The `on_state` trigger runs whenever the internal `epaper_spi` state machine changes state.
+The new state is available in lambda as `x`.
+
+```yaml
+display:
+  - platform: epaper_spi
+    id: my_display
+    model: Seeed-reTerminal-E1002
+    on_state:
+      then:
+        - lambda: |-
+            if (x == esphome::epaper_spi::EPaperState::IDLE) {
+              ESP_LOGI("epaper", "Display is idle");
+            }
+```
+
+### `on_render_start` Trigger
+
+The `on_render_start` trigger runs when rendering begins (when state changes from `IDLE` to non-idle).
+
+```yaml
+display:
+  - platform: epaper_spi
+    model: Seeed-reTerminal-E1002
+    on_render_start:
+      then:
+        - logger.log: "ePaper render started"
+```
+
+### `on_render_end` Trigger
+
+The `on_render_end` trigger runs when rendering ends (when state returns to `IDLE`).
+
+```yaml
+display:
+  - platform: epaper_spi
+    model: Seeed-reTerminal-E1002
+    on_render_end:
+      then:
+        - logger.log: "ePaper render finished"
+```
+
+## Conditions
+
+> [!NOTE]
+> The `display.is_rendering` and `display.is_idle` conditions described here are provided by the `epaper_spi` platform.
+
+### `display.is_rendering` Condition
+
+Returns `true` when the display is rendering (`state != IDLE`).
+
+```yaml
+on_...:
+  - if:
+      condition:
+        display.is_rendering: my_display
+      then:
+        - logger.log: "Display busy"
+```
+
+### `display.is_idle` Condition
+
+Returns `true` when the display is idle (`state == IDLE`).
+
+```yaml
+on_...:
+  - if:
+      condition:
+        display.is_idle: my_display
+      then:
+        - logger.log: "Display idle"
+```
+
+## Using `get_state()` in Lambdas
+
+For advanced logic, you can read the raw state enum from lambdas with `get_state()`.
+
+```yaml
+script:
+  - id: wait_for_idle
+    then:
+      - wait_until:
+          condition:
+            lambda: |-
+              return id(my_display).get_state() == esphome::epaper_spi::EPaperState::IDLE;
+      - logger.log: "Safe to continue"
+```
 
 ### Full configuration example
 
