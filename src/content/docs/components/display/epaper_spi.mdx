@@ -102,6 +102,8 @@ but can be overridden if needed.
 The `on_state` trigger runs whenever the internal `epaper_spi` state machine changes state.
 The new state is available in lambda as `x`.
 
+Possible state values are: `IDLE`, `UPDATE`, `RESET`, `RESET_END`, `SHOULD_WAIT`, `INITIALISE`, `TRANSFER_DATA`, `POWER_ON`, `REFRESH_SCREEN`, `POWER_OFF`, and `DEEP_SLEEP`. For C++ enum details, see <APIRef text="EPaperState API reference" path="epaper_spi/epaper_spi.h" />.
+
 ```yaml
 display:
   - platform: epaper_spi
@@ -192,6 +194,7 @@ script:
 ```yaml
 display:
   - platform: epaper_spi
+    id: my_display
     model: SSD1677
     full_update_every: 10
     update_interval: 5s
@@ -205,11 +208,45 @@ display:
     cs_pin: GPIOXX
     dc_pin: GPIOXX
     reset_pin: GPIOXX
-    busy_pin: { number: GPIOXX, inverted: False, mode: { input: True, pulldown: True } }
+    busy_pin: { number: GPIOXX, inverted: false, mode: { input: true, pulldown: true } }
+    on_state:
+      then:
+        - lambda: |-
+            if (x == esphome::epaper_spi::EPaperState::IDLE) {
+              ESP_LOGI("epaper", "state is IDLE");
+            }
+    on_render_start:
+      then:
+        - logger.log: "render started"
+    on_render_end:
+      then:
+        - logger.log: "render ended"
+
+binary_sensor:
+  - platform: gpio
+    pin: GPIO0
+    on_press:
+      then:
+        - if:
+            condition:
+              display.is_idle: my_display
+            then:
+              - component.update: my_display
+
+script:
+  - id: wait_for_epaper_idle
+    then:
+      - wait_until:
+          condition:
+            display.is_idle: my_display
+      - lambda: |-
+          const auto state = id(my_display).get_state();
+          ESP_LOGI("epaper", "done, current state=%d", static_cast<int>(state));
 ```
 
 ## See Also
 
 - [ESPHome Display Rendering Engine](/components/display#display-engine)
 - [LVGL Graphics](/components/lvgl/)
+- <APIRef text="EPaperState enum (epaper_spi.h)" path="epaper_spi/epaper_spi.h" />
 - <APIRef text="epaper_spi.h" path="epaper_spi/epaper_spi.h" />
