@@ -26,7 +26,7 @@ esp_ldo:
 - **channel** (**Required**, int): The channel number of the LDO regulator to configure. Valid values are 1–4.
   Channels 3 and 4 are available for general use. Channels 1 and 2 are reserved for internal chip use (flash/PSRAM)
   and require ``allow_internal_channel: true`` to be set.
-- **voltage** (**Required**, voltage): The desired output voltage. Must be in the range ``0.9V`` to ``2.7V``, or
+- **voltage** (**Required**, voltage): The desired output voltage. Must be in the range ``0.5V`` to ``2.7V``, or
   exactly ``3.3V`` (pass-through mode). Note: voltage accuracy is approximately ±50–100 mV.
 - **adjustable** (*Optional*, bool): If true, the output voltage can be adjusted at run-time using the
   ``esp_ldo.voltage.adjust`` action. Defaults to ``false``.
@@ -50,7 +50,7 @@ on_...:
 ### Configuration variables
 
 - **id** (**Required**, [ID](#config-id)): The ID of the LDO to adjust.
-- **voltage** (**Required**, voltage): The desired output voltage. Must be in the range ``0.9V`` to ``2.7V``, or
+- **voltage** (**Required**, voltage): The desired output voltage. Must be in the range ``0.5V`` to ``2.7V``, or
   exactly ``3.3V``.
 
 ## Notes
