@@ -185,7 +185,7 @@ Scenario: A binary sensor (id: bs_pzem_online) shall indicate if the device is o
           id: bs_pzem_online
           state: ON
 
-#Also possible writing it in lambdas:
+`#It`'s also possible to write it in lambdas:
   on_offline:
       then:
         - lambda: |-
