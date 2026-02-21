@@ -192,7 +192,7 @@ Scenario: A binary sensor (id: bs_pzem_online) shall indicate if the device is o
             ESP_LOGW("pzem_hub", "Controller: Device is offline, zero'ing all sensors");
             id(bs_pzem_online).publish_state(false);
 
-            //additionally lets zero all sensors as the device is offline
+            //additionally let's zero all sensors as the device is offline
             id(pzem_dc_voltage).publish_state(0.0);
             id(pzem_dc_current).publish_state(0.0);
             id(pzem_dc_power).publish_state(0.0);
