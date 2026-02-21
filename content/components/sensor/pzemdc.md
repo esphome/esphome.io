@@ -28,7 +28,7 @@ uart:
   tx_pin: D1
   rx_pin: D2
   baud_rate: 9600
-  stop_bits: 2
+  stop_bits: 1
 
 sensor:
   - platform: pzemdc
@@ -89,7 +89,6 @@ uart:
     rx_pin: gpio<XX> #User-defined
     baud_rate: 9600
     stop_bits: 1
-    parity: NONE
 
 #Lets define the modbus to use:
 modbus:
@@ -101,9 +100,8 @@ modbus_controller:
 - id: pzem_hub
   modbus_id: my_modbus
   address: 0x01
-  setup_priority: -10
   command_throttle: 100ms
-  update_interval: "4s"
+  update_interval: "4s" #a short update interval, we will throttle in the config of the sensor
 
 sensor:
   - platform: modbus_controller
@@ -132,9 +130,11 @@ sensor:
     accuracy_decimals: 2
     filters:
       - multiply: 0.01
+      #let's throttle the updates for this sensor
+      - throttle: 30s 
       # Using delta to ignore false values in case the PZEM Device is OFF
       - delta: 0.05
-      # Using heartbeat to send an "alive" message to HA
+      # Using heartbeat to send an "alive" message to HA to not have a broken line there
       - heartbeat: 10s
 
   - platform: modbus_controller
@@ -145,28 +145,33 @@ sensor:
     icon: "mdi:lightning-bolt"
     address: 0x0002
     unit_of_measurement: "W"
-    value_type: U_DWORD
-    accuracy_decimals: 2
+    value_type: U_DWORD_R
+    accuracy_decimals: 1
     filters:
       - multiply: 0.1
+      #lets throttle the updates for this sensor
+      - throttle: 30s 
       # DELTA-Filter: Does only send a new value if the new one is different by 3 Watt 
       - delta: 3.0
       # Using heartbeat to send an "alive" message to HA
       - heartbeat: 10s
 
-  - platform: total_daily_energy
+  - platform: modbus_controller
+    modbus_controller_id: pzem_hub
     name: "PZEM Daily Energy"
-    id: pzem_dc_energy_daily
-    icon: "mdi:counter"
-    power_id: pzem_dc_power
+    id: pzem_dc_energy_total
+    register_type: read
+    address: 0x0004
+    value_type: U_DWORD_R
     unit_of_measurement: "kWh"
-    state_class: total_increasing
     device_class: energy
+    state_class: total_increasing
     accuracy_decimals: 3
+    icon: "mdi:counter"
     filters:
-      # Multiply to change from Watt hours to Kilo Watt hours (kwh)
       - multiply: 0.001
-
+      #lets throttle the updates for this sensor
+      - throttle: 60s 
 ```
 
 ### `on_offline` and `on_online` Action
