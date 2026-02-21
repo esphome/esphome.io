@@ -68,7 +68,7 @@ partitions:
 > Only one preferences partition is allowed across all NVM devices. The partition automatically registers as ESPHome's global preferences backend.
 
 > [!WARNING]
-> The preferences partition must be large enough to hold all your global variables and component preferences. If too small, saves will fail silently.
+> The preferences partition must be large enough to hold all your global variables and component preferences. If too small, saves will fail silently. See [Usage Monitoring](#usage-monitoring) below for tips on sizing.
 
 ### Raw Partition
 
@@ -95,12 +95,10 @@ globals:
 
 on_boot:
   - lambda: |
-      id(data_partition) = id(data_store);
-      
       // Write a value
       uint32_t counter = 12345;
       id(data_partition)->write_value(0, counter);
-      
+
       // Read a value
       uint32_t value;
       if (id(data_partition)->read_value(0, value)) {
@@ -125,11 +123,11 @@ partitions:
 on_boot:
   - lambda: |
       // Store a value
-      id(config_store)->set_string("device_name", "Living Room Sensor");
+      id(config_store)->set("device_name", "Living Room Sensor");
       
       // Retrieve a value
       char buf[64];
-      int len = id(config_store)->get_string("device_name", buf, sizeof(buf), "Unknown");
+      int len = id(config_store)->get("device_name", buf, sizeof(buf), "Unknown");
       ESP_LOGD("main", "Device name: %s", buf);
       
       // Check if key exists
@@ -213,7 +211,7 @@ partitions:
 
 ## Usage Monitoring
 
-The NVM component logs usage warnings when partitions approach capacity:
+The NVM component logs usage warnings when partitions (except `raw`) approach capacity:
 
 - **80% warning**: Partition is getting full
 - **90% warning**: Partition is nearly full, consider increasing size

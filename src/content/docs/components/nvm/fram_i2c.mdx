@@ -5,7 +5,7 @@ title: "FRAM I2C Platform"
 
 import APIRef from '@components/APIRef.astro';
 
-The FRAM I2C platform provides support for I²C-connected Ferroelectric RAM (FRAM) devices as NVM storage.
+The FRAM I2C platform provides support for I²C-connected Ferroelectric RAM (FRAM) devices as [NVM](/components/nvm/) storage.
 
 ![FRAM I2C Module](/images/fram_i2c.jpg) FRAM offers unique advantages over flash and EEPROM:
 
@@ -82,23 +82,6 @@ nvm:
 
 - **partitions** (*Optional*, list): List of partition configurations. See [NVM Component](/components/nvm/) for details.
 
-## I²C Addressing
-
-FRAM devices typically use a 7-bit I²C address. The base address is `0x50` and can be configured via pins A0, A1, A2:
-
-| A2 | A1 | A0 | Address |
-|----|----|----|---------|
-| 0 | 0 | 0 | 0x50 |
-| 0 | 0 | 1 | 0x51 |
-| 0 | 1 | 0 | 0x52 |
-| 0 | 1 | 1 | 0x53 |
-| 1 | 0 | 0 | 0x54 |
-| 1 | 0 | 1 | 0x55 |
-| 1 | 1 | 0 | 0x56 |
-| 1 | 1 | 1 | 0x57 |
-
-This allows up to 8 FRAM devices on a single I²C bus.
-
 ## Multiple FRAM Devices
 
 You can use multiple FRAM devices on the same I²C bus by configuring different addresses:
@@ -124,18 +107,6 @@ nvm:
         size: 16kB
 ```
 
-## Large FRAM Devices (≥64KB)
-
-FRAM devices with 64KB or more (MB85RC512, MB85RC1M, MB85RC2M, CY15B104QSN, CY15B108QSN) use extended addressing:
-
-- **64KB devices**: 16-bit addresses (2 address bytes)
-- **128KB+ devices**: 17/18-bit addresses using device ID register
-
-The component automatically handles the appropriate addressing mode based on the model.
-
-> [!NOTE]
-> For devices larger than 128KB, the component uses the device's device ID register for extended addressing. This is transparent to the user.
-
 ## Custom FRAM Size
 
 For FRAM devices not in the supported list, specify the size directly:
@@ -151,29 +122,6 @@ nvm:
         type: raw
         size: 32kB
 ```
-
-## Wiring
-
-FRAM I²C devices typically come in 8-pin packages:
-
-```
-     ┌─────────┐
-  A0 │1       8│ VDD
-  A1 │2       7│ WP (Write Protect)
-  A2 │3       6│ SCL
- VSS │4       5│ SDA
-     └─────────┘
-```
-
-- **VDD**: 2.7V to 3.6V (check datasheet for your specific model)
-- **VSS**: Ground
-- **SDA**: I²C data line (with pull-up resistor)
-- **SCL**: I²C clock line (with pull-up resistor)
-- **A0-A2**: Address selection pins (connect to VDD or VSS)
-- **WP**: Write protect pin (connect to VSS for normal operation)
-
-> [!WARNING]
-> Always use pull-up resistors (typically 4.7kΩ) on SDA and SCL lines.
 
 ## Comparison with EEPROM
 
