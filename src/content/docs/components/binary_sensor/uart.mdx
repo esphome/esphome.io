@@ -1,0 +1,38 @@
+---
+description: "Instructions for setting up UART binary input in ESPHome that can be triggered by UART sequences."
+title: "UART Binary Input"
+---
+import APIRef from '@components/APIRef.astro';
+
+
+The `uart` binary input platform allows to monitor pre-defined sequence of bytes on a
+[UART bus](/components/uart/).
+
+```yaml
+# Example configuration entry
+binary_sensor:
+  - platform: uart
+    id: up
+    data: [0x1B, 0x5B, 0x41]
+    on_press:
+      then:
+        - display_menu.up
+  - platform: uart
+    id: enter
+    data: "\r"
+    on_press:
+      then:
+        - display_menu.enter
+```
+
+## Configuration variables
+
+- **data** (**Required**, string or list of bytes): The data to monitor for via UART. Either an ASCII string
+  or a list of bytes.
+
+- **uart_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the UART hub.
+- All other options from [Binary Sensor](/components/binary_sensor#config-binary_sensor).
+
+## See Also
+
+- [UART Bus](/components/uart/)
