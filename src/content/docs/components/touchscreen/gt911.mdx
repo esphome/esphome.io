@@ -21,20 +21,33 @@ This controller is used in the Espressif ESP32-S3-BOX-3 and the m5paper;
   height={217}
 />
 
-## Base Touchscreen Configuration
+## Base Touchscreen Configurations
 
 ```yaml
-# Example configuration entry
+# Example configuration entry for board with interrupt line run directly to esp GPIO
 touchscreen:
   platform: gt911
   id: my_touchscreen
   interrupt_pin: GPIOXX
 ```
 
+```yaml
+# Example configuration entry for board with interrupt line run through IO Expander
+touchscreen:
+  platform: gt911
+  id: my_touchscreen
+  intcfg_pin:
+    waveshare_io_ch32v003: wave_io_hub
+    number: 2
+```
+
 ### Configuration variables
 
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually set the ID of this touchscreen.
 - **interrupt_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The touch detection pin.
+- **intcfg_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): Use this pin config rather than 
+interrupt_pin if the touchscreen interrupt line runs through an IO Expander rather than directly to an esp GPIO.  
+Allows for configuration of touchscreen at boot but requires touch detection polling.
 - **reset_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The reset pin.
 
 - All other options from [Touchscreen](/components/touchscreen#config-touchscreen).
