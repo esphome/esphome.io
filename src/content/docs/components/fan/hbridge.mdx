@@ -22,6 +22,21 @@ The `hbridge` fan platform allows you to use a compatible *h-bridge* (L298N, DRV
 
 ```yaml
 # Example configuration entry
+output:
+  - platform: gpio
+    id: motor_enable
+    pin: 22  
+
+  - platform: ledc
+    id: motor_forward_pin
+    pin: 12
+    frequency: 20000 Hz
+
+  - platform: ledc
+    id: motor_reverse_pin
+    pin: 14
+    frequency: 20000 Hz
+
 fan:
   - platform: hbridge
     id: my_fan
