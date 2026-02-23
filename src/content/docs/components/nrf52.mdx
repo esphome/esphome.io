@@ -30,9 +30,22 @@ The nRF52840 requires a bootloader, with two supported options: `MCUboot` and `A
 
 Examples of low power [nRF52840 boards](https://github.com/joric/nrfmicro/wiki).
 
+## Flashing with MCUboot
+
+Flashing with MCUboot requires an SWD connection, for which a programmer is necessary. A cheap ST-Link V2 can be utilized.
+
+1. Connect the board to the PC via SWD.
+1. Run `esphome upload yourfile.yaml --device PYOCD`.
+
+```yaml
+# Example configuration entry
+nrf52:
+  board: adafruit_feather_nrf52840
+```
+
 ## Flashing with Adafruit nRF52 Bootloader
 
-For Adafruit, ProMicro nRF52840, Seeed Studio XIAO BLE boards flashing via a flash drive.
+For flashing via a flash drive.
 
 1. Connect the board to the PC via USB.
 1. Quickly short the reset pin to ground twice.
@@ -48,19 +61,6 @@ This bootloader supports updates over USB CDC.
 # Example configuration entry
 nrf52:
   board: adafruit_itsybitsy_nrf52840
-```
-
-## Flashing with MCUboot
-
-Flashing this bootloader requires an SWD connection, for which a programmer is necessary. A cheap ST-Link V2 can be utilized.
-
-1. Connect the board to the PC via SWD.
-1. Run `esphome upload yourfile.yaml --device PYOCD`.
-
-```yaml
-# Example configuration entry
-nrf52:
-  board: adafruit_feather_nrf52840
 ```
 
 ## GPIO Pin Numbering
