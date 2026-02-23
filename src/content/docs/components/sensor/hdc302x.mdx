@@ -21,7 +21,7 @@ The [I²C Bus](/components/i2c) is required to be set up in your configuration f
 
 <Figure
   src={hdc302xFullImg}
-  caption="HDC3022 Temperature and Humidity Sensor. Image from Adafruit."
+  caption="HDC3022 Temperature and Humidity Sensor. Image by [Adafruit](https://www.adafruit.com)."
   layout="constrained"
   alt=""
 />
@@ -52,9 +52,9 @@ sensor:
 - **power_mode** (*Optional*, enum): The power mode used when triggering temperature and humidity measurements. This
   affects measurement accuracy and sensor power usage.
   - `HIGH_ACCURACY` (Default): Highest accuracy, slower, higher power usage.
-  - `BALANCED`
-  - `LOW_POWER`
-  - `ULTRA_LOW_POWER`: Lowest power usage, faster, less accurate.
+  - `BALANCED`: Balance between accuracy and power usage.
+  - `LOW_POWER`: Lower power usage, faster, less accurate.
+  - `ULTRA_LOW_POWER`: Lowest power usage, fastest, least accurate.
 
 - **address** (*Optional*, int): Manually specify the I²C address of the sensor.
   Defaults to `0x44`. Supported addresses are `0x44` through `0x47`.
@@ -100,7 +100,7 @@ on_...:
   - `HALF`
   - `FULL`: Maximum power. Use with caution -- see warning above.
   - A raw integer value between `0` and `16383` may also be used for fine-grained control
-    of the 14-resistor heater array. See Table 7-15 in the [datasheet](https://www.ti.com/lit/ds/symlink/hdc3020.pdf).
+    of the 14-bit heater current control. See Table 7-15 in the [datasheet](https://www.ti.com/lit/ds/symlink/hdc3020.pdf).
 - **duration** (*Optional*, [Time](/guides/configuration-types#time)): Duration to run the heater.
   Set to `0s` to keep the heater on until manually disabled with `hdc302x.heater_off`. Defaults to `5s`.
 
