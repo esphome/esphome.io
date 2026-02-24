@@ -36,7 +36,7 @@ touchscreen:
 touchscreen:
   platform: gt911
   id: my_touchscreen
-  intcfg_pin:
+  expander_interrupt_pin:
     waveshare_io_ch32v003: wave_io_hub
     number: 2
 ```
@@ -45,9 +45,10 @@ touchscreen:
 
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually set the ID of this touchscreen.
 - **interrupt_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The touch detection pin.
-- **intcfg_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): Use this pin config rather than 
+- **expander_interrupt_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): Use this pin config rather than 
 interrupt_pin if the touchscreen interrupt line runs through an IO Expander rather than directly to an esp GPIO.  
-Allows for configuration of touchscreen at boot but requires touch detection polling.
+Allows for configuration of touchscreen at boot but requires touch detection polling. interrupt_pin and expander_interrupt_pin cannot
+both be configured at the same time and build will error out if attempted.
 - **reset_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The reset pin.
 
 - All other options from [Touchscreen](/components/touchscreen#config-touchscreen).
