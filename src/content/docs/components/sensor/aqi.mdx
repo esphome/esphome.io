@@ -18,12 +18,13 @@ or [Sps30](/components/sensor/sps30/).
 
 > [!WARNING]
 > The value produced by this component is a **PM-only AQI estimate**, not a full
-> US EPA Air Quality Index. The official EPA AQI considers six criteria pollutants —
-> PM2.5, PM10, ozone (O₃), carbon monoxide (CO), sulfur dioxide (SO₂), and
-> nitrogen dioxide (NO₂). Without sensors for those additional pollutants, this
-> component cannot produce a true composite AQI; the output reflects particulate
-> matter conditions only and may significantly underestimate actual air quality risk
-> when other pollutants are elevated.
+> US EPA Air Quality Index. The official EPA AQI is calculated across five pollutant
+> categories — ground-level ozone (O₃), particle pollution (PM2.5 and PM10),
+> carbon monoxide (CO), sulfur dioxide (SO₂), and nitrogen dioxide (NO₂) — and
+> reports the worst sub-index as the overall AQI. Without sensors for ozone, CO,
+> SO₂, and NO₂, this component cannot produce a true composite AQI; the output
+> reflects particulate matter conditions only and may significantly underestimate
+> actual air quality risk when other pollutants are elevated.
 >
 > Additionally, the official EPA PM2.5 AQI is defined using **24-hour averaged**
 > concentrations (or the [EPA NowCast](https://www.airnow.gov/publications/air-quality-index/technical-assistance-document-for-reporting-the-daily-aqi/)
@@ -71,8 +72,8 @@ sensor:
 
   - `AQI`: US EPA Air Quality Index breakpoint formula applied to PM2.5 and PM10
     only. Returns values from 0-500, where higher values indicate worse air quality.
-    **This is not a full EPA AQI** — the official standard also requires ozone, CO,
-    SO₂, and NO₂ measurements. Based on the
+    **This is not a full EPA AQI** — the official standard covers five pollutant
+    categories and also requires ozone, CO, SO₂, and NO₂ measurements. Based on the
     [EPA Technical Assistance Document](https://document.airnow.gov/technical-assistance-document-for-the-reporting-of-daily-air-quailty.pdf).
 
   - `CAQI`: European Common Air Quality Index. Returns values from 0 upward, where
