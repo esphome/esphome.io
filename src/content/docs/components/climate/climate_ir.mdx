@@ -24,7 +24,7 @@ submit a feature request (see FAQ).
 | [Daikin BRC](#daikin_brc) | `daikin_brc`                       | yes |
 | [Delonghi](#delonghi_ir) | `delonghi`                         | yes |
 | Emmeti | `emmeti`                           | yes |
-| Fujitsu General | `fujitsu_general`                  | yes |
+| [Fujitsu General](#fujitsu_general) | `fujitsu_general`                  | yes |
 | [GREE](#gree_ir) | `gree`                             | |
 | Hitachi | `hitachi_ac344`, `hitachi_ac424` | yes |
 | [LG](#climate_ir_lg) | `climate_ir_lg`                    | yes |
@@ -126,6 +126,32 @@ The `delonghi` climate currently supports the protocol used by some Delonghi por
 ### `daikin_arc`
 
 The Daikin ARC remotes (`daikin_arc` climate, `daikin_arc417`, `daikin_arc480` protocols of [Arduino-HeatpumpIR](#heatpumpir)) are used by the japanese model of Daikin.
+
+<span id="fujitsu_general"></span>
+
+### `fujitsu_general`
+
+The `fujitsu_general` climate supports the modern Fujitsu IR protocol. Older units, such as the ones using the AR-JXX remotes are not supported yet.
+
+After configuring a climate component, additional stateless commands can be sent through a button:
+
+- **fujitsu_general_id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the `fujitsu_general` climate component.
+- **step_horizontal** (*Optional*, [Switch](/components/button#config-button)): Steps the air vanes to control horizontal airflow.
+- **step_vertical** (*Optional*, [Switch](/components/button#config-button)): Steps the air vanes to control vertical airflow.
+- **economy** (*Optional*, [Switch](/components/button#config-button)): Toggles economy mode.
+
+```yaml
+# Example configuration for buttons
+button:
+  - platform: fujitsu_general
+    fujitsu_general_id: heat_pump_climate
+    step_horizontal:
+      name: "Step Horizontal"
+    step_vertical:
+      name: "Step Vertical"
+    economy:
+      name: "Toggle Economy Mode"
+```
 
 <span id="gree_ir"></span>
 
