@@ -18,7 +18,7 @@ esp_ldo:
   - channel: 3
     voltage: 2.5V
   - channel: 4
-    voltage: 3.3V
+    voltage: passthrough
 ```
 
 ## Configuration variables
@@ -27,7 +27,8 @@ esp_ldo:
   Channels 3 and 4 are available for general use. Channels 1 and 2 are reserved for internal chip use (flash/PSRAM)
   and require ``allow_internal_channel: true`` to be set.
 - **voltage** (**Required**, voltage): The desired output voltage. Must be in the range ``0.5V`` to ``2.7V``, or
-  exactly ``3.3V`` (pass-through mode). Note: voltage accuracy is approximately ±50–100 mV.
+  ``passthrough`` to enable pass-through mode (output follows the supply voltage). Note: voltage accuracy is
+  approximately ±50–100 mV.
 - **adjustable** (*Optional*, bool): If true, the output voltage can be adjusted at run-time using the
   ``esp_ldo.voltage.adjust`` action. Defaults to ``false``.
 - **allow_internal_channel** (*Optional*, bool): Must be set to ``true`` to use channels 1 or 2. These channels are
@@ -50,8 +51,7 @@ on_...:
 ### Configuration variables
 
 - **id** (**Required**, [ID](#config-id)): The ID of the LDO to adjust.
-- **voltage** (**Required**, voltage): The desired output voltage. Must be in the range ``0.5V`` to ``2.7V``, or
-  exactly ``3.3V``.
+- **voltage** (**Required**, voltage): The desired output voltage. Must be in the range ``0.5V`` to ``2.7V``.
 
 ## Notes
 
@@ -59,7 +59,7 @@ on_...:
 - Channels 1 and 2 are connected to the chip's internal flash and PSRAM power domains on most ESP32-P4 modules.
   Only use these channels if your specific board schematic confirms they are routed to an external pad and are
   not powering internal components.
-- ``3.3V`` is achieved via internal pass-through mode and does not support runtime adjustment.
+- ``passthrough`` mode passes the supply voltage directly to the output and does not support runtime adjustment.
 
 ## See Also
 
