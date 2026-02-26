@@ -29,7 +29,8 @@ esp_ldo:
   ``passthrough`` to enable pass-through mode (output follows the supply voltage). Note: the actual output voltage
   may deviate by approximately 50–100 mV from the configured value.
 - **adjustable** (*Optional*, bool): If true, the output voltage can be adjusted at runtime using the
-  ``esp_ldo.voltage.adjust`` action. Defaults to ``false``.
+  ``esp_ldo.voltage.adjust`` action. Defaults to ``false``. Cannot be set to ``true`` when ``voltage`` is
+  ``passthrough``, as pass-through mode does not support runtime voltage adjustment.
 - **allow_internal_channel** (*Optional*, bool): Must be set to ``true`` to use channels 1 or 2. These channels are
   normally reserved by the chip for flash and PSRAM power. Incorrect use can cause system instability, data
   corruption, or a permanently bricked device. Only set this if you have verified via your board's datasheet and
@@ -58,7 +59,9 @@ on_...:
 - Channels 1 and 2 are connected to the chip's internal flash and PSRAM power domains on most ESP32-P4 modules.
   Only use these channels if your specific board schematic confirms they are routed to an external pad and are
   not powering internal components.
-- ``passthrough`` mode passes the supply voltage directly to the output and does not support runtime adjustment.
+- ``passthrough`` mode passes the supply voltage directly to the output and does not support runtime voltage
+  adjustment. Setting ``adjustable: true`` together with ``voltage: passthrough`` is a configuration error and
+  will be rejected during validation.
 
 ## See Also
 
