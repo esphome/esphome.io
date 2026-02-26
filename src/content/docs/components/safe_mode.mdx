@@ -38,6 +38,25 @@ safe_mode:
 
 - **on_safe_mode** (*Optional*, [Automation](/automations)): An action to be performed once when safe mode is invoked.
 
+- **mark_boot_ok** (*Optional*, [Action](/automations/actions)): An action to mark the boot as successful, preventing
+   safe mode from being invoked. This is primarily useful in conjunction with devices that boot, take a sensor reading,
+   wait for the sensor data to be sent and then sleep. Rather than waiting for the `boot_is_good_after` time to elapse,
+   you can mark the boot as successful. Without this your device could potentially do an OTA rollback even though the
+   new firmware is functional.
+
+```yaml
+# Example mark_boot_ok usage
+api:
+   encryption:
+      key: $api_key
+   on_api_connected:
+      - component.update: my_sensor
+      # Wait for the sensor data to send over the network
+      - delay: 2s
+      - safe_mode.mark_boot_ok
+      - deep_sleep.enter
+```
+
 > [!WARNING]
 > The `on_safe_mode` [automation](/automations) is intended for use by recovery actions **only**.
 >
