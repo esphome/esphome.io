@@ -10,7 +10,7 @@ import APIRef from '@components/APIRef.astro';
 The `gt911` touchscreen platform allows using the touch screen controllers based on the gt911 chip with ESPHome.
 The [I²C](/components/i2c) is required to be set up in your configuration for this touchscreen to work.
 
-This controller is used in the Espressif ESP32-S3-BOX-3 and the m5paper;
+This controller is used in the Espressif ESP32-S3-BOX-3 and the m5paper as well as some Waveshare-ESP32-S3-Touch devices;
 
 <Figure
   src="/images/esp32_s3_box_3.png"
@@ -24,7 +24,7 @@ This controller is used in the Espressif ESP32-S3-BOX-3 and the m5paper;
 ## Base Touchscreen Configurations
 
 ```yaml
-# Example configuration entry for board with interrupt line run directly to esp GPIO
+# Example configuration entry for board with interrupt line run directly to ESP GPIO
 touchscreen:
   platform: gt911
   id: my_touchscreen
@@ -36,7 +36,7 @@ touchscreen:
 touchscreen:
   platform: gt911
   id: my_touchscreen
-  expander_interrupt_pin:
+  interrupt_pin:
     waveshare_io_ch32v003: wave_io_hub
     number: 2
 ```
@@ -44,10 +44,9 @@ touchscreen:
 ### Configuration variables
 
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually set the ID of this touchscreen.
-- **interrupt_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The touch detection pin.
-- **expander_interrupt_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): 
-Use expander_interrupt_pin config rather than interrupt_pin if the touchscreen interrupt line runs through an IO Expander rather than directly to an esp GPIO.  
-Allows for configuration of touchscreen at boot but requires touch detection polling. Both interrupt_pin and expander_interrupt_pin cannot be configured at the same time and build will error out if attempted.
+- **interrupt_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The touch detection pin if run to an on-MCU pin.  
+If the touchscreen interrupt line runs through an IO Expander rather than directly to an ESP GPIO this will allow for configuration of touchscreen 
+at boot but transitions to touch detection polling.
 - **reset_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The reset pin.
 
 - All other options from [Touchscreen](/components/touchscreen#config-touchscreen).
