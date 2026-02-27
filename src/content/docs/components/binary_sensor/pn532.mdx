@@ -28,6 +28,13 @@ You will need to switch the dip switches located on the module according to the 
 SPI is usually switch 1 OFF and switch 2 ON and I²C is usually switch 1 ON and switch 2 OFF.
 You will need to have the [SPI Bus](/components/spi) or the [I²C Bus](/components/i2c) configured depending on your choice.
 
+### Key Improvements
+
+- **Flapping tag detection fix:** Prevents rapid alternating `on_tag`/`on_tag_removed` events when a tag is left on the reader.
+- **Reliability:** Includes a health check with configurable auto-reset to recover from I2C bus freezes.
+- **Interference Reduction:** The RF field is disabled between polls by default to reduce interference with 2.4GHz WiFi antennas.
+- **Bus Health:** Implements exponential backoff on bus failures to prevent log flooding.
+
 ## Over SPI
 
 The `pn532_spi` component allows you to use PN532 NFC/RFID controllers
@@ -61,6 +68,16 @@ binary_sensor:
 
 - **on_tag_removed** (*Optional*, [Automation](/automations)): An automation to perform
   when a tag is removed. See [`on_tag_removed`](#pn532-on_tag_removed).
+
+- **health_check_enabled** (*Optional*, boolean): Enable periodic health checks to verify communication with the PN532. Defaults to `true`.
+
+- **health_check_interval** (*Optional*, [Time](/guides/configuration-types#time)): How often to run the health check. Defaults to `60s`.
+
+- **max_failed_checks** (*Optional*, integer): Number of consecutive failures before marking the component as unhealthy. Defaults to `3`.
+
+- **auto_reset_on_failure** (*Optional*, boolean): Attempt to re-initialize the PN532 if it becomes unresponsive. Defaults to `true`.
+
+- **rf_field_enabled** (*Optional*, boolean): Keep the RF field on between polls. Setting this to `false` can reduce WiFi interference. Defaults to `false`.
 
 - **spi_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the [SPI Component](/components/spi) if you want
   to use multiple SPI buses.
@@ -102,6 +119,21 @@ binary_sensor:
 
 - **on_tag** (*Optional*, [Automation](/automations)): An automation to perform
   when a tag is read. See [pn532-on_tag](#pn532-on_tag).
+
+- **on_tag_removed** (*Optional*, [Automation](/automations)): An automation to perform
+  when a tag is removed. See [`on_tag_removed`](#pn532-on_tag_removed).
+
+- **health_check_enabled** (*Optional*, boolean): Enable periodic health checks to verify communication with the PN532. Defaults to `true`.
+
+- **health_check_interval** (*Optional*, [Time](/guides/configuration-types#time)): How often to run the health check. Defaults to `60s`.
+
+- **max_failed_checks** (*Optional*, integer): Number of consecutive failures before marking the component as unhealthy. Defaults to `3`.
+
+- **auto_reset_on_failure** (*Optional*, boolean): Attempt to re-initialize the PN532 if it becomes unresponsive. Defaults to `true`.
+
+- **rf_field_enabled** (*Optional*, boolean): Keep the RF field on between polls. Setting this to `false` can reduce WiFi interference. Defaults to `false`.
+
+- **address** (*Optional*, integer): The I²C address of the PN532. Defaults to `0x24`.
 
 - **i2c_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the [I²C Component](/components/i2c) if you want
   to use multiple I²C buses.
@@ -203,8 +235,8 @@ binary_sensor:
 
 ### Configuration variables
 
-- **uid** (**Required**, string): The unique ID of the NFC/RFID tag. This is a hyphen-separated list
-  of hexadecimal values. For example `74-10-37-94`.
+- **uid** (**Required**, string): The unique ID of the NFC/RFID tag. This is a hyphen-separated or colon-separated list
+  of hexadecimal values. For example `74-10-37-94` or `74:10:37:94`.
 
 - All other options from [Binary Sensor](/components/binary_sensor#config-binary_sensor).
 
