@@ -28,6 +28,13 @@ esp32_ble:
   # auth_req_mode: sc_mitm_bond  # Optional, for advanced security
   # max_key_size: 16  # Optional, encryption key size (7-16)
   # min_key_size: 7   # Optional, encryption key size (7-16)
+  filter:
+    mac_address:
+      - 00:11:22:33:44:55
+      - 00:11:22:33:44:56
+      - 00:11:22:33:44:57
+      - 00:11:22:33:44:58
+      - 00:11:22:33:44:59
 ```
 
 ## Configuration variables
@@ -103,6 +110,13 @@ esp32_ble:
   - `sc_mitm_bond` - Secure connections with MITM and bonding
 
   See [ESP32 SDK Documentation](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/bluetooth/esp_gap_ble.html#c.ESP_LE_AUTH_NO_BOND) for details on these modes.
+
+- **filter** (*Optional*): Advanced parameters for configuring the filtering behavior.
+
+    - **mac_address** (*Optional*, List) - list of MAC addresses with which BLE should work
+
+> [!NOTE]
+> A `mac_address` list is used to restrict which devices can establish a BLE connection with the ESP32 board. In addition, the same list is applied at the scanning stage, so the board only processes advertisement packets from approved devices. This ensures that both connection attempts and incoming BLE advertisements are limited to explicitly authorized devices, improving security and reducing unnecessary processing.
 
 ## `ble.disable` Action
 
