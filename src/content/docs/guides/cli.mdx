@@ -231,6 +231,12 @@ for those parameters will be ignored. Cannot be used along with `--systemd-socke
 `--socket`.
 
 
+**`--no-auto-build`**
+: Disable automatic firmware pre-build on startup. When set, the dashboard will not compile firmware for out-of-date
+devices automatically. You can also disable this via the `ESPHOME_DASHBOARD_AUTO_BUILD` environment variable (set to
+`false` or `0`). The CLI flag takes precedence over the environment variable. Pre-build is enabled by default.
+
+
 #### Automatic Firmware Pre-build
 
 When the dashboard starts, it automatically checks all configured devices and compiles firmware for any device whose
@@ -243,6 +249,18 @@ builds are complete.
 
 If a pre-build fails for a particular device, the error is logged and the dashboard moves on to the next device. Failed
 devices will still show as having an update available so you can retry manually.
+
+To disable automatic pre-building, use the `--no-auto-build` flag:
+
+```bash
+esphome dashboard config/ --no-auto-build
+```
+
+Or set the environment variable:
+
+```bash
+ESPHOME_DASHBOARD_AUTO_BUILD=false esphome dashboard config/
+```
 
 ### `analyze-memory` Command
 
