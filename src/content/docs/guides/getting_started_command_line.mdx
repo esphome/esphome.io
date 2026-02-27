@@ -238,6 +238,10 @@ docker run --rm -p 6052:6052 -e ESPHOME_DASHBOARD_USE_PING=true -v "${PWD}":/con
 
 After that, you will be able to access the ESPHome Device Builder at `localhost:6052`.
 
+When the dashboard starts, it automatically pre-builds firmware for any device whose ESPHome version is out of date.
+This runs in the background so the dashboard is immediately usable, and a snackbar notification tracks progress. Once
+pre-builds are complete, clicking UPDATE on a device will flash immediately without waiting for a compile.
+
 Logging level can be set with the env var `ESPHOME_LOG_LEVEL` (default is `INFO`).
 
 <Image src={dashboardStatesImg} layout="constrained" alt="" />
