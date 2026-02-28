@@ -118,8 +118,16 @@ sensor:
 - **address** (*Optional*, int): Manually specify the I²C address of the sensor.
   Defaults to `0x6B`.
 
+- **store_baseline** (*Optional*, boolean): Periodically save the VOC algorithm's learned state to flash memory and restore it after a reboot. The saved state is automatically discarded if the device configuration has changed. Only has effect when a voc sensor is configured.
+  Defaults to ``true``.
+
+- **startup_delay** (*Optional*, [Time](/guides/configuration-types#time)): The time to wait after the sensor starts measuring before publishing values, to allow the sensor to stabilise.
+  Defaults to `60s`.
+
 - **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to check the sensor.
   Defaults to `60s`.
+
+
 
 > [!NOTE]
 > The sensor needs about a minute "warm-up". The VOC and NOx gas index algorithm needs a
