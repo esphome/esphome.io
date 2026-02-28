@@ -48,6 +48,8 @@ openthread:
   pskc: 0xc23a76e98f1a6483639b1ac1271e2e27
   mesh_local_prefix: fd53:145f:ed22:ad81::/64
   force_dataset: true
+
+  #output_power: -3dBm   # optional: reduce power
 ```
 
 ### Configuration variables
@@ -68,6 +70,28 @@ openthread:
 
 > [!NOTE]
 > esphome.ota does not work when poll_period > 0, instead use http_request.ota, timeout and watchdog_timeout need to be tested to find the correct values.  Values greater than 100sec may be required.
+
+- **output_power** (*Optional*, integer): The amount of TX power for the Thread radio interface in dBm.
+  Allowed range depends on hardware capabilities (ESP32C5 and ESP32C6 from -15dBm to 20dBm, ESP32H2 from -24dBm to 20dBm).
+
+  Default if unset is the internal default power value of the platform. Typically this is 0dBm.
+
+  > [!WARNING]
+  > **When changing the default value built into the stack, you are responsible to comply to all local regulatories of your region.**
+  >
+  > For example, in common case of a total [EIRP](https://en.wikipedia.org/wiki/Effective_radiated_power) maximum of 20dBm/100mW for 2.4GHz frequency range:
+  > If you set an output power of 20dBm, any positive antenna gain may exceed aforementioned total EIRP limit!
+
+  > [!NOTE]
+  > Power consumption typically grows nonlinearly by increasing output power (see e.g. ESP data sheet, section "Current Consumption for 802,15,4 in Active Mode").
+  >
+  > Excessive power may also have negative spatial impact to all communicating nodes in total.
+  >
+  > Particularly for Thread as designated low-power mesh network protocol, low output power up to ca 5-7dBm are common and sufficient.
+  > Some vendors therefore even restrict their hardware to approximately this maximum, whereas Espressif with 20dBm reserves room for
+  > common EIRP regulatory maximum values, in case no further local gain (e.g. antenna) exists.
+  >
+  > Negative values also are often reasonable for extra power saving (e.g. battery powered devices), increasing data security, etc.
 
 ## Dataset TLV Configuration
 
