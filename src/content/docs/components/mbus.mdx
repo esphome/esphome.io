@@ -1,12 +1,7 @@
 ---
 description: "Instructions for setting up M-Bus in ESPHome."
 title: "MBus Component"
-params:
-  seo:
-    description: Instructions for setting up M-Bus in ESPHome.
 ---
-
-{{< anchor "mbus" >}}
 
 The M-Bus component creates an M-Bus connection to control an M-Bus slave device, letting your ESPHome node act as an M-Bus master.
 You can access registers from your M-Bus slave device as sensors and present them to your favorite home automation system.
@@ -29,15 +24,15 @@ This module converts TTL Levels to Voltage and Current signals and provides the 
 
 ## Configuration variables for M-Bus Component
 
-- **mbus_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the mbus master.
-- **secondary_address** (*Optional*): The secondary address of the M-Bus slave.
-- **interval** (*Optional*, [Time](/guides/configuration-types#time)): Interval of the command loop for reading M-Bus slaves (default: `1min`).
+- **mbus_id** (_Optional_, [ID](/guides/configuration-types#id)): Manually specify the ID of the mbus master.
+- **secondary_address** (_Optional_): The secondary address of the M-Bus slave.
+- **interval** (_Optional_, [Time](/guides/configuration-types#time)): Interval of the command loop for reading M-Bus slaves (default: `1min`).
 
 ## Configuration variables for M-Bus Sensor
 
-- **mbus_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the mbus master.
+- **mbus_id** (_Optional_, [ID](/guides/configuration-types#id)): Manually specify the ID of the mbus master.
 - **data_index** (**Required**): Index of the data in the M-Bus Client response. Index is 0 based.
-- **factor** (*Optional*): Divider for scaling the reading (default: `1.0`). The value is divided by the factor before being published to Home Assistant.
+- **factor** (_Optional_): Divider for scaling the reading (default: `1.0`). The value is divided by the factor before being published to Home Assistant.
 
 ## Operation Modes
 
@@ -53,36 +48,36 @@ If `secondary_address` is set, the M-Bus component starts the readout loop.
 The following code creates an M-Bus master and a sensor definition to read the first data frame.
 
 ```yaml
-    logger:
-      tx_buffer_size: 1024
-      level: DEBUG
+logger:
+  tx_buffer_size: 1024
+  level: DEBUG
 
-    uart:
-      id: m_bus
-      baud_rate: 2400
-      data_bits: 8
-      parity: EVEN
-      stop_bits: 1
-      rx_pin: 16
-      tx_pin: 17
+uart:
+  id: m_bus
+  baud_rate: 2400
+  data_bits: 8
+  parity: EVEN
+  stop_bits: 1
+  rx_pin: 16
+  tx_pin: 17
 
-    mbus:
-      secondary_address: 0x0025426642042002
-      interval: "5s"
-      sensor:
-        - data_index: 0
-          factor: 10
-          name: "Energy Consumption"
-          accuracy_decimals: 1
-          device_class: energy
-          icon: "mdi:flash"
-          state_class: total_increasing
-          unit_of_measurement: "Wh"
+mbus:
+  secondary_address: 0x0025426642042002
+  interval: "5s"
+  sensor:
+    - data_index: 0
+      factor: 10
+      name: "Energy Consumption"
+      accuracy_decimals: 1
+      device_class: energy
+      icon: "mdi:flash"
+      state_class: total_increasing
+      unit_of_measurement: "Wh"
 ```
 
 ## Log Example for slave discovery
 
--------------------------------
+---
 
 ```text
 
