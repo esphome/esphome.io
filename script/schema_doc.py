@@ -534,7 +534,7 @@ def process_schema(
                 next_index = md_skip_level(lines, index)
                 continue
             if matched_config.get(JSON_CV_TYPE, []) not in ["enum", "schema"]:
-                if args.debug_level > 2:
+                if args.debug_level > 6:
                     print(
                         f"{md_file}:{index} {lines[index]} : an indentation increase for a {matched_config.get(JSON_CV_TYPE, 'unknown')}"
                     )
