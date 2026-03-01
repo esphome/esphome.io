@@ -833,10 +833,6 @@ if __name__ == "__main__":
                     )
                 elif len(parts) == 3:
                     # platform.component.action
-                    if parts[1] not in core["components"]:
-                        print(
-                            f"{md_file}:{index} Found {config_type} {title} with invalid name format"
-                        )
                     title_config_vars = (
                         (json_get(parts[1]) or {})
                         .get(f"{parts[1]}.{parts[0]}", {})
