@@ -428,6 +428,7 @@ def set_schema_doc(md_file, index, schema, prop_name, prop_types, doc):
             if (
                 prop_name != "id"
                 and optionality != config_optionality.lower()
+                and not (config_optionality == "GeneratedID" and optionality == "optional")
                 and args.debug_level > 3
             ):
                 print(
