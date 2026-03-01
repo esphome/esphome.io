@@ -227,7 +227,7 @@ def md_get_next_title(md_file, lines, index):
         if is_configuration_variables_title_alike(line):
             if line.startswith("#"):
                 see_also.set_title_slug(line)
-            elif args.debug_level > 3:
+            elif args.debug_level > 6:
                 print(
                     f"{md_file}:{index + 1} {DOC_CONFIGURATION_VARIABLES} title is not # marked. Cannot generate slug link"
                 )
@@ -427,8 +427,8 @@ def set_schema_doc(md_file, index, schema, prop_name, prop_types, doc):
             config_optionality = matched_config.get(JSON_KEY, "")
             if (
                 prop_name != "id"
+                and config_optionality != "GeneratedID"
                 and optionality != config_optionality.lower()
-                and not (config_optionality == "GeneratedID" and optionality == "optional")
                 and args.debug_level > 3
             ):
                 print(
