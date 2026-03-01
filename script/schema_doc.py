@@ -412,9 +412,11 @@ def convert_links(md_file, index, docs):
     return re.sub(REGEX_LOCAL_LINK, replacer_local, docs)
 
 
-def set_schema_doc(md_file, index, schema, prop_name, prop_types, doc):
-    TYPE_TEMPLATABLE = "[templatable](#config-templatable)"
+def is_templatable_type(type_part):
+    return re.search(r"\[templatable\]", type_part) is not None
 
+
+def set_schema_doc(md_file, index, schema, prop_name, prop_types, doc):
     matched_config = find_schema_prop(schema, prop_name)
     if matched_config:
         converted_doc = make_doc_with_see_also(md_file, index, doc)
@@ -432,7 +434,7 @@ def set_schema_doc(md_file, index, schema, prop_name, prop_types, doc):
                     f"{md_file}:{index} {prop_name} Key {config_optionality} in ESPHome does not match {optionality} in docs"
                 )
 
-            templatable = TYPE_TEMPLATABLE in type_parts[1:]
+            templatable = any(is_templatable_type(p) for p in type_parts[1:])
             config_templatable = matched_config.get(JSON_TEMPLATABLE, False)
             if templatable != config_templatable and args.debug_level > 3:
                 print(
@@ -440,7 +442,7 @@ def set_schema_doc(md_file, index, schema, prop_name, prop_types, doc):
                 )
 
             # Document with type information, unless the type just says templatable
-            if len(type_parts) > 1 and type_parts[1] != TYPE_TEMPLATABLE:
+            if len(type_parts) > 1 and not is_templatable_type(type_parts[1]):
                 prop_type = convert_links(md_file, index, type_parts[1])
                 matched_config[JSON_DOCS] = f"**{prop_type}**: {converted_doc}"
                 stats.props += 1
