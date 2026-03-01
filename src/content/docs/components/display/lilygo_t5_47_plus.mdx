@@ -1,0 +1,212 @@
+---
+description: "Instructions for setting up the LILYGO T5 4.7\" Plus E-Paper Display in ESPHome."
+title: "LILYGO T5 4.7\" Plus"
+---
+
+import APIRef from '@components/APIRef.astro';
+
+The `lilygo_t5_47_plus` component allows you to use the
+[LILYGO T5 4.7" Plus](https://www.lilygo.cc/products/t5-4-7-inch-e-paper-v2-3)
+e-paper display board with ESPHome.
+
+This is an all-in-one ESP32-S3 development board featuring:
+
+- A 4.7" e-paper display (ED047TC1, 960×540 pixels, 16-level grayscale)
+- A GT911 capacitive touchscreen controller
+- A battery voltage divider for LiPo battery monitoring
+- PSRAM (octal, required for the display framebuffer)
+
+The component provides three platforms:
+
+- **display** — E-paper display rendering
+- **sensor** — Battery voltage and battery level
+- **touchscreen** — Capacitive touch input via GT911
+
+All board-specific pin assignments and bus configurations (including I²C for the touchscreen) are
+encapsulated by the component — no pin or bus configuration is needed.
+
+> [!NOTE]
+> This component requires an **ESP32-S3** with the **Arduino** framework and **PSRAM** enabled.
+
+## Board Configuration
+
+The board requires the following base configuration. The `psram` component must be configured since
+the display framebuffer is allocated in PSRAM (~259 KB).
+
+```yaml
+esp32:
+  board: esp32-s3-devkitc-1
+  variant: esp32s3
+  framework:
+    type: arduino
+
+psram:
+  mode: octal
+  speed: 80MHz
+```
+
+## Display
+
+```yaml
+# Example configuration entry
+display:
+  - platform: lilygo_t5_47_plus
+    id: epaper
+    update_interval: 60s
+    lambda: |-
+      it.printf(480, 270, id(my_font), TextAlign::CENTER, "Hello World!");
+```
+
+The display renders in **grayscale** (16 levels). Colors are automatically converted to grayscale
+using the luminance formula (R×0.2126 + G×0.7152 + B×0.0722).
+
+The component properly powers off the e-paper display during deep sleep via `on_safe_shutdown`.
+
+### Display Configuration Variables
+
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
+- **lambda** (*Optional*, [lambda](/automations/templates#config-lambda)): The lambda to use for rendering the content on the display.
+  See [Display Rendering Engine](/components/display#display-engine) for more information.
+- **pages** (*Optional*, list): Show pages instead of a single lambda. See [Display Pages](/components/display#display-pages).
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to re-draw the screen. Defaults to `5s`.
+- All other options from [Display Component](/components/display#config-display).
+
+## Battery Sensor
+
+The board includes a voltage divider connected to GPIO14 for monitoring a LiPo battery. The sensor
+component reads the ADC using the ESP32-S3's eFuse-calibrated `analogReadMilliVolts()` and converts
+the reading to voltage and percentage based on a LiPo discharge curve.
+
+```yaml
+# Example configuration entry
+sensor:
+  - platform: lilygo_t5_47_plus
+    update_interval: 60s
+    battery_voltage:
+      name: "Battery Voltage"
+    battery_level:
+      name: "Battery Level"
+```
+
+At least one of `battery_voltage` or `battery_level` must be configured.
+
+### Sensor Configuration Variables
+
+- **battery_voltage** (*Optional*): A [Sensor](/components/sensor/) that reports the battery voltage in Volts.
+  All options from [Sensor](/components/sensor#config-sensor).
+- **battery_level** (*Optional*): A [Sensor](/components/sensor/) that reports the battery level as a percentage (0–100%).
+  All options from [Sensor](/components/sensor#config-sensor).
+- **min_voltage** (*Optional*, float): The voltage considered as 0% charge. Must be between 2.5 and 3.5. Defaults to `3.0`.
+- **max_voltage** (*Optional*, float): The voltage considered as 100% charge. Must be between 3.7 and 4.5. Defaults to `4.2`.
+- **voltage_divider** (*Optional*, float): The hardware voltage divider factor. Must be between 1.0 and 10.0. Defaults to `2.0`.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval between sensor readings. Defaults to `60s`.
+
+## Touchscreen
+
+The board uses a GT911 capacitive touch controller. It supports up to 5 simultaneous touch points
+and uses polling mode. The I²C bus configuration and GT911 address detection (trying both `0x5D`
+and `0x14`) are handled automatically by the component.
+
+```yaml
+# Example configuration entry
+touchscreen:
+  - platform: lilygo_t5_47_plus
+    display: epaper
+    on_touch:
+      - logger.log:
+          format: "Touch at (%d, %d)"
+          args: [touch.x, touch.y]
+```
+
+### Touchscreen Configuration Variables
+
+- **display** (**Required**, [ID](/guides/configuration-types#id)): The ID of the display to use for touch coordinate mapping.
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
+- All other options from [Touchscreen Component](/components/touchscreen#config-touchscreen).
+
+## Complete Example
+
+```yaml
+esphome:
+  name: lilygo-t5-47-plus
+  friendly_name: "LILYGO T5 4.7\" Plus"
+  platformio_options:
+    board_build.arduino.memory_type: qio_opi
+
+esp32:
+  board: esp32-s3-devkitc-1
+  variant: esp32s3
+  framework:
+    type: arduino
+
+psram:
+  mode: octal
+  speed: 80MHz
+
+logger:
+
+api:
+
+ota:
+  - platform: esphome
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+time:
+  - platform: homeassistant
+    id: ha_time
+
+display:
+  - platform: lilygo_t5_47_plus
+    id: epaper
+    update_interval: 5min
+    lambda: |-
+      it.printf(480, 20, id(font_title), TextAlign::TOP_CENTER, "LILYGO T5 4.7\" Plus");
+      it.strftime(480, 100, id(font_large), TextAlign::TOP_CENTER, "%H:%M", id(ha_time).now());
+      it.strftime(480, 180, id(font_medium), TextAlign::TOP_CENTER, "%A, %d %B %Y", id(ha_time).now());
+
+      // Drawing primitives
+      it.rectangle(10, 370, 940, 160);
+      it.circle(480, 450, 40);
+      it.filled_circle(480, 450, 30);
+
+sensor:
+  - platform: lilygo_t5_47_plus
+    update_interval: 60s
+    battery_voltage:
+      name: "Battery Voltage"
+    battery_level:
+      name: "Battery Level"
+
+touchscreen:
+  - platform: lilygo_t5_47_plus
+    display: epaper
+    on_touch:
+      - logger.log:
+          format: "Touch at (%d, %d)"
+          args: [touch.x, touch.y]
+
+font:
+  - file: "gfonts://Roboto@700"
+    id: font_title
+    size: 40
+  - file: "gfonts://Roboto@500"
+    id: font_large
+    size: 60
+  - file: "gfonts://Roboto"
+    id: font_medium
+    size: 30
+```
+
+## See Also
+
+- [Display Component](/components/display/)
+- [Touchscreen Component](/components/touchscreen/)
+- [Sensor Component](/components/sensor/)
+- [LILYGO T5 4.7" Touchscreen (older version)](/components/touchscreen/lilygo_t5_47/)
+- [LILYGO Product Page](https://www.lilygo.cc/products/t5-4-7-inch-e-paper-v2-3)
+- <APIRef text="display.h" path="lilygo_t5_47_plus/display.h" />
+- <APIRef text="battery.h" path="lilygo_t5_47_plus/sensor/battery.h" />
+- <APIRef text="touchscreen.h" path="lilygo_t5_47_plus/touchscreen/touchscreen.h" />
