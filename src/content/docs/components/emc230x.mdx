@@ -1,0 +1,238 @@
+---
+description: "Instructions for setting up EMC2301, EMC2302, EMC2303 or EMC2305 fan controller in ESPHome."
+title: "EMC230x Fan Controller"
+---
+
+import { Image } from 'astro:assets';
+import emc2303FullImg from './images/emc2303-full.png';
+import APIRef from '@components/APIRef.astro';
+
+The EMC230x component allows you to use the EMC2301, EMC2302, EMC2303 or EMC2305 fan controllers
+([datasheet](https://ww1.microchip.com/downloads/aemDocuments/documents/MSLD/ProductDocuments/DataSheets/EMC2301-2-3-5-Data-Sheet-DS20006532A.pdf))
+in ESPHome using the [I²C Bus](/components/i2c) for communication. The type of device is automatically detected.
+
+The EMC230x family can independently control and monitor up to five PWM fans, depending on the model. It also includes
+a watchdog timer to drive the fans to full speed if I²C communication is lost, a spin-up routine to ensure the fans
+start correctly, and ramp rate control to smooth fan speed changes. The tachometer input allows you to monitor fan
+speed from `480 RPM` to `16,000 RPM`.
+
+<Image src={emc2303FullImg} alt="EMC2303 Fan Controller" layout="constrained" />
+
+> [!IMPORTANT]
+> The 7-bit I²C address of the component depends on the model and variant:
+
+| Model                 | Configuration                          | I²C Address |
+|-----------------------|----------------------------------------|-------------|
+| **EMC2301**           | Fixed                                  | `0x2F`      |
+| **EMC2302-1**         | —                                      | `0x2E`      |
+| **EMC2302-2**         | —                                      | `0x2F`      |
+| **EMC2303 / EMC2305** | 4.7 kΩ pull-up on ADDR_SEL pin         | `0x2E`      |
+| **EMC2303 / EMC2305** | 6.8 kΩ pull-up on ADDR_SEL pin         | `0x2F`      |
+| **EMC2303 / EMC2305** | 10 kΩ pull-up on ADDR_SEL pin          | `0x2C`      |
+| **EMC2303 / EMC2305** | 15 kΩ pull-up on ADDR_SEL pin          | `0x2D`      |
+| **EMC2303 / EMC2305** | 22 kΩ pull-up on ADDR_SEL pin          | `0x4C`      |
+| **EMC2303 / EMC2305** | 33 kΩ pull-up on ADDR_SEL pin          | `0x4D`      |
+
+```yaml
+# Example configuration entry
+emc230x:
+
+# Individual fan outputs
+output:
+  - platform: emc230x
+    id: fan1_output
+    fan: 1
+
+# Individual tachometer inputs
+sensor:
+  - platform: emc230x
+    fan: 1
+    speed:
+      id: "fan1_speed_sensor"
+      name: "Fan 1 Speed Sensor"
+```
+
+## Hub Component
+
+The `emc230x` hub component is used to configure global settings for the EMC230x fan controller as well as
+settings for each individual fan.
+
+Multiple instances of the `emc230x` component can be defined if you have more than one EMC230x fan controller with
+unique I²C addresses.
+
+```yaml
+emc230x:
+  - id: emc230x_hub
+```
+
+### Configuration variables
+
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID to use for this EMC230x component.
+  Necessary if you want to define multiple instances of this component.
+- **address** (*Optional*, int): The I²C address of the fan controller. Defaults to `0x2F`.
+- **watchdog** (*Optional*, boolean): Enable the watchdog timer to drive the fans to full speed in case the I²C
+  communication is lost. Defaults to `false`.
+- **fan_1** to **fan_5** (*Optional*, [Fan Schema](#fan-schema)): Configuration for each fan driver.
+  Uses default values if not specified.
+
+### Fan Schema
+
+- **pwm_push_pull** (*Optional*, boolean): If `true`, the PWM output will be configured in push-pull mode.
+  Defaults to `false` (open-drain mode).
+- **pwm_frequency** (*Optional*, string): The frequency of the PWM signal. One of `26kHz`, `19.5kHz`, `4.9kHz`,
+  `2.4kHz`. Defaults to `26kHz`.
+- **pwm_divider** (*Optional*, int): Divide `pwm_frequency` by the specified value to get the effective frequency of
+  the PWM signal. Defaults to `1`.
+- **pulses_per_revolution** (*Optional*, int): The number of pulses per revolution for the tachometer input.
+  Defaults to `2`.
+- **min_speed_measurement** (*Optional*, string): The minimum speed the tachometer will be able to measure.
+  One of `500RPM`, `1000RPM`, `2000RPM`, `4000RPM`. Defaults to `500RPM`.
+- **update_time** (*Optional*, string): Used together with `max_step_size` to configure the ramp rate for the fan.
+  One of `100ms`, `200ms`, `300ms`, `400ms`, `500ms`, `800ms`, `1200ms`, `1600ms`. Defaults to `400ms`.
+- **max_step_size** (*Optional*, int): The maximum step size for each update when ramping the fan speed up or down.
+  Defaults to `0` (disabled).
+- **noise_filter** (*Optional*, boolean): Enable the noise filter that removes high-frequency noise from the tachometer
+  input. Defaults to `true`.
+- **spin_up_kick** (*Optional*, boolean): If `true`, drives the fan to 100% for 1/4 of the spin-up time.
+  Defaults to `false`.
+- **spin_up_level** (*Optional*, string): The PWM level to use during the spin-up routine. One of `30%`, `35%`, `40%`,
+  `45%`, `50%`, `55%`, `60%`, `65%`. Defaults to `60%`.
+- **spin_up_time** (*Optional*, string): Length of the spin-up routine. One of `0.25s`, `0.5s`, `1s`, `2s`.
+  Defaults to `0.5s`.
+
+#### RPM Measurement
+
+The speed of the fan is calculated using the configuration variables `pulses_per_revolution` and
+`min_speed_measurement`.
+
+Most fans output 2 pulses per revolution, but some output 1, 3 or 4.
+Setting the correct value for `pulses_per_revolution` is required to get correct RPM reading.
+
+Choosing a higher `min_speed_measurement` improves accuracy and resolution, at the cost of not being able to measure
+lower speeds.
+
+> [!TIP]
+> To see the raw tachometer count from the chip, set the logging level to `VERBOSE`:
+>
+> ```yaml
+> logger:
+>   level: VERBOSE
+> ```
+>
+> For a typical fan (`pulses_per_revolution: 2` and `min_speed_measurement: 500RPM`) the RPM can be calculated directly
+> from the tachometer count with:
+>
+> $$
+> \text{RPM} = \frac{3932160}{\text{tachometer count}}
+> $$
+
+To calculate the RPM, the following formula is used internally:
+
+$$
+\text{RPM} = \frac{60}{\text{pulses\_per\_revolution}} \times 32768 \times (n - 1) \times m / \text{tachometer count}
+$$
+
+Where:
+- **n** depends on `pulses_per_revolution`:
+
+| pulses_per_revolution | n (edges measured) |
+|-----------------------|--------------------|
+| 1                     | 3                  |
+| 2                     | 5                  |
+| 3                     | 7                  |
+| 4                     | 9                  |
+
+- **m** depends on `min_speed_measurement`:
+
+| min_speed_measurement | m (multiplier) |
+|-----------------------|----------------|
+| 500RPM                | 1              |
+| 1000RPM               | 2              |
+| 2000RPM               | 4              |
+| 4000RPM               | 8              |
+
+#### Ramp Rate Control
+
+Setting `update_time` and `max_step_size` will limit the maximum change in fan speed per update. This creates smoother
+transitions when increasing or decreasing speed.
+
+Setting `max_step_size` to `0` disables ramp-rate control completely and allows the fan to change speed instantly.
+
+> [!IMPORTANT]
+> The `max_step_size` is **not** a percentage of the PWM level. It is a value from `0` (disabled) to `31`, where `255`
+> represents the full PWM range (0–255).
+>
+> For example, `max_step_size: 16` allows a maximum change of roughly 6.3% per update.
+>
+> You can calculate the value you need with this formula (then round to the nearest integer):
+>
+> $$
+> \text{max\_step\_size} = \frac{\text{desired percentage step}}{100} \times 255
+> $$
+
+#### Spin-up Routine
+
+Some fans have trouble starting at low PWM values. The spin-up routine drives the fan to a higher speed for a short
+time to ensure reliable startup.
+
+This routine is **only** triggered when the fan is turned on from **0% PWM**. It is **not** triggered when simply
+changing the speed, even if the fan is physically stopped because of a very low PWM level.
+
+When `spin_up_kick` is enabled, the fan is driven to 100% for the first 1/4 of the `spin_up_time`. After that, it
+switches to `spin_up_level` for the remaining 3/4 of the time.
+
+If `spin_up_kick` is disabled, the fan runs at `spin_up_level` for the entire `spin_up_time`.
+
+## Output
+
+The `emc230x` output platform lets you control the speed of any fan connected to the EMC230x controller.
+
+It is normally used together with a [Speed Fan](/components/fan/speed/) component to provide speed control for the fan.
+
+```yaml
+output:
+  - platform: emc230x
+    id: fan1_output
+    emc230x_id: emc230x_hub
+    fan: 1
+```
+
+### Configuration variables
+
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID to use for this output component.
+- **emc230x_id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the EMC230x component defined above.
+  Required when multiple instances of the `emc230x` component are defined.
+- **fan** (**Required**, int): The fan number (1–5) this output controls.
+- All other options from [Output](/components/output).
+
+## Sensor
+
+The `emc230x` sensor platform lets you monitor the actual speed of the fans as RPM values.
+
+To get the correct RPM readings, make sure you have configured the [RPM Measurement](#rpm-measurement) settings
+in the `emc230x` hub component according to the specifications of your fans.
+
+```yaml
+sensor:
+  - platform: emc230x
+    emc230x_id: emc230x_hub
+    fan: 1
+    speed:
+      id: "fan1_speed_sensor"
+      name: "Fan 1 Speed Sensor"
+```
+
+### Configuration variables
+
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID to use for this sensor component.
+- **emc230x_id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the EMC230x component defined above.
+  Required when multiple instances of the `emc230x` component are defined.
+- **fan** (**Required**, int): The fan number (1–5) this sensor monitors.
+- **speed** (*Optional*): The fan speed sensor in RPM. All options from [Sensor](/components/sensor).
+
+## See Also
+- [I²C Bus](/components/i2c)
+- [Speed Fan](/components/fan/speed/)
+- [Base Output Configuration](/components/output#base-output-configuration)
+- [Base Sensor Configuration](/components/sensor#base-sensor-configuration)
+- <APIRef text="emc230x.h" path="emc230x/emc230x.h" />
