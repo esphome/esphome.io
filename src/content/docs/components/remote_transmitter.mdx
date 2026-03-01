@@ -189,7 +189,7 @@ on_...:
 #### Configuration variables
 
 - **address** (**Required**, int, [templatable](/automations/templates)): The address to send the command to, see dumper output for more details.
-- **data** (**Required**, list, [templatable](/automations/templates)): The command to send, A length of 2-35 bytes can be specified for one packet.
+- **data** (**Required**, list, [templatable](/automations/templates)): The command to send; a length of 2-35 bytes can be specified for one packet.
 - **carrier_frequency** (*Optional*, float, [templatable](/automations/templates)): Set a frequency to send the signal
   with for infrared signals. Defaults to `38000Hz`.
 
@@ -401,7 +401,7 @@ on_...:
 
 - **code** (**Required**, int, [templatable](/automations/templates)): The 16-bit code to trigger on, e.g. 0x1200=power, 0x1215=fan++,
   0x122a=swing..., see dumper output for more info.
-- **index** (*Optional*, int, [templatable](/automations/templates)): The 8-bit rolling index (range=0..3). Defaults to `0xFF`.
+- **index** (*Optional*, int, [templatable](/automations/templates)): The 8-bit rolling index. Defaults to `0xFF`.
 - All other options from [Remote Transmitter Actions](#remote_transmitter-transmit_action).
 
 > [!NOTE]
@@ -477,8 +477,8 @@ on_...:
 #### Configuration variables
 
 - **address** (**Required**, int, [templatable](/automations/templates)): The 32-bit address to send, see dumper output for more info.
-- **command** (*Optional*, int, [templatable](/automations/templates)): The 4 bit command/button code to send, see dumper output for more info. Defaults to `0x10`.
-- **code** (**Required**, int, [templatable](/automations/templates)): The 32 bit encrypted field to send.
+- **command** (*Optional*, int, [templatable](/automations/templates)): The 4-bit command/button code to send, see dumper output for more info. Defaults to `0x10`.
+- **code** (**Required**, int, [templatable](/automations/templates)): The 32-bit encrypted field to send.
 - **level** (*Optional*, boolean, [templatable](/automations/templates)): Low battery level status bit. Defaults to false.
 - All other options from [Remote Transmitter Actions](#remote_transmitter-transmit_action).
 - A repeat **wait_time** of 15ms as shown replicates the repetition of an HCS301.
@@ -815,8 +815,8 @@ remote transmitter.
 ```yaml
 on_...:
   - remote_transmitter.transmit_rc_switch_type_b:
-      address: '0100'
-      channel: '1011'
+      address: 1
+      channel: 3
       state: off
       protocol: 1
 ```
@@ -877,7 +877,7 @@ on_...:
 
 #### Configuration variables
 
-- **group** (**Required**, int, [templatable](/automations/templates)): The group to send the command to. Range is 1 to 4.
+- **group** (**Required**, string, [templatable](/automations/templates)): The group to send the command to. Range is `a` to `d`.
 - **device** (**Required**, int, [templatable](/automations/templates)): The device to send the command to. Range is 1 to 3.
 - **state** (**Required**, boolean, [templatable](/automations/templates)): The on/off state to send.
 - **protocol** (*Optional*, [templatable](/automations/templates)): The RC Switch protocol to use, see [RC Switch Protocol](#remote_transmitter-rc_switch-protocol)
