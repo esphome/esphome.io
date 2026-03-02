@@ -159,15 +159,18 @@ transitions when increasing or decreasing speed.
 Setting `max_step_size` to `0` disables ramp-rate control completely and allows the fan to change speed instantly.
 
 > [!IMPORTANT]
-> The `max_step_size` is **not** a percentage of the PWM level. It is a value from `0` (disabled) to `31`, where `255`
-> represents the full PWM range (0–255).
+> `max_step_size` is **not** a percentage of the PWM level. Instead, it is a raw step limit from `0` (disabled) to
+> `31`.
 >
-> For example, `max_step_size: 16` allows a maximum change of roughly 6.3% per update.
+> The actual PWM duty cycle is 8-bit (0–255), so even the maximum value `31` only allows a change of **≈12.2%** of the
+> full scale per update.
+>
+> For example, `max_step_size: 16` allows a maximum change of roughly **6.3%** per update (16/255).
 >
 > You can calculate the value you need with this formula (then round to the nearest integer):
 >
 > $$
-> \text{max\_step\_size} = \frac{\text{desired percentage step}}{100} \times 255
+> \text{max\_step\_size} = \frac{\text{desired percentage}}{100} \times 255
 > $$
 
 #### Spin-up Routine
