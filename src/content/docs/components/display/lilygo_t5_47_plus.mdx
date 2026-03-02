@@ -23,7 +23,10 @@ The component provides three platforms:
 - **touchscreen** — Capacitive touch input via GT911
 
 All board-specific pin assignments and bus configurations (including I²C for the touchscreen) are
-encapsulated by the component — no pin or bus configuration is needed.
+encapsulated by the component — no pin or bus configuration is needed for the built-in peripherals.
+The GT911 touchscreen controller is attached to an internal I²C bus that this component initializes
+automatically; you should not create a separate `i2c:` entry for it. You may still define additional
+`i2c:` buses in your configuration for other external I²C devices, using their own pins.
 
 > [!NOTE]
 > This component requires an **ESP32-S3** with the **Arduino** framework and **PSRAM** enabled.
