@@ -21,12 +21,6 @@ Multiple `serial_proxy` instances may be configured on a single device, each att
 
 ```yaml
 # Example configuration entry
-uart:
-  - id: serial_1
-    tx_pin: GPIO4
-    rx_pin: GPIO5
-    baud_rate: 115200
-
 serial_proxy:
   - id: serial_proxy_1
     uart_id: serial_1
@@ -41,9 +35,9 @@ serial_proxy:
 - **uart_id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the [UART](/components/uart/) component
   this proxy is attached to.
 - **port_type** (**Required**, string): The electrical type of the serial port. One of:
-  - `TTL`: Standard TTL logic-level UART (3.3V or 5V). Use for direct connections to most microcontrollers.
-  - `RS232`: RS-232 standard serial port (typically ±12V levels via a level-shifter). Use for legacy PC-style serial connections.
-  - `RS485`: RS-485 differential serial bus. Use for industrial/multi-drop serial networks.
+  - `TTL`: Standard TTL logic-level UART (3.3V or 5V). Typically used for direct connections to most microcontrollers.
+  - `RS232`: RS-232 standard serial port (typically ±12V levels via an appropriate line-driver IC). Typically used for PC-style serial connections, often with a DB9-type connector.
+  - `RS485`: RS-485 differential serial bus. Typically used for industrial/multi-drop serial networks.
 - **rts_pin** (*Optional*, [Pin](/guides/configuration-types#pin)): GPIO pin to use as the RTS (Request to Send)
   modem control output. The state of this pin may be controlled by the API client at runtime.
 - **dtr_pin** (*Optional*, [Pin](/guides/configuration-types#pin)): GPIO pin to use as the DTR (Data Terminal Ready)
