@@ -59,12 +59,21 @@ climate:
   for the control algorithm. This can be dynamically set in the frontend later.
 
 - **heat_output** (*Optional*, [ID](/guides/configuration-types#id)): The ID of a [float output](/components/output#config-output)
-  that increases the current temperature. At least one of `heat_output` and `cool_output` must
-  be specified.
+  that increases the current temperature. At least one of `heat_output`, `cool_output` or
+  `level_and_direction_output` must be specified. You cannot use `level_and_direction_output`
+  together with `heat_output` or `cool_output`.
 
 - **cool_output** (*Optional*, [ID](/guides/configuration-types#id)): The ID of a [float output](/components/output#config-output)
-  that decreases the current temperature. At least one of `heat_output` and `cool_output` must
-  be specified.
+  that decreases the current temperature. At least one of `heat_output`, `cool_output` or
+  `level_and_direction_output` must be specified.
+
+- **level_and_direction_output** (*Optional*): A single combined output with level and direction, for use with
+  devices such as Peltier modules or motor controllers. Mutually exclusive with `heat_output` and `cool_output`.
+  Contains:
+  - **level** (**Required**, [ID](/guides/configuration-types#id)): The ID of a [float output](/components/output#config-output)
+    for the output level (0–1), e.g. PWM.
+  - **direction** (**Required**, [ID](/guides/configuration-types#id)): The ID of a [binary output](/components/output#config-output)
+    for the direction (e.g. false = heat, true = cool).
 
 - **control_parameters** (**Required**): Control parameters of the PID controller.
 
@@ -124,6 +133,7 @@ To set up a PID climate controller, you need a couple of components:
 - A [Sensor](/components/sensor) to read the current temperature (`sensor`  ).
 - At least one [float output](/components/output#config-output) to drive for heating or cooling (or both).
   This could for example be a PWM output via [Sigma Delta Output](/components/output/sigma_delta_output/) or [Slow Pwm](/components/output/slow_pwm/) that drives a heating unit.
+  Alternatively, use **level_and_direction_output** with a float output (level) and a [binary output](/components/output#config-output) (direction) for a single device that can both heat and cool, such as a Peltier module or a motor-driven valve.
 
   Please note the output *must* be controllable with continuous value (not only ON/OFF, but any state
   in between for example 50% heating power).
