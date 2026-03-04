@@ -1,32 +1,99 @@
 OXT-type Dimmer
 ===============
 
-.. seo::
-    :description: Instructions for setting up a 1- or 2-channel OXT Dimmer
-    :image: /components/light/images/oxt_dimmer.jpg
+---
+description: "Instructions for setting up an OXT-type Dimmer light."
+title: "OXT-type Dimmer"
+---
+
+import { Image } from 'astro:assets';
+import oxtUiImg from './images/oxt_dimmer.jpg';
+import APIRef from '@components/APIRef.astro';
 
 OXT dimmers are another type of in-wall, brightness-only light dimming devices sold with Tuya-Smart application support,
-yet using different method to control light than the already-supported :doc:`/components/light/tuya` (see :ref:`technical-details`).
+yet using different method to control light than the already-supported [Tuya light](/components/light/tuya).
 
 There are two types of OXT dimmers available supporting either 1- or 2- light channels.
 
 .. note::
 
-    Advantage of the OXT implementations is that, unlike :doc:`/components/light/tuya`-based devices, here the firmware has 
+    Advantage of the OXT implementations is that, unlike [Tuya](/components/light/tuya)-based devices, here the firmware has 
     full control over dimming functionality and physical switch input, so can control timings, transitions, effects, etc.
 
 The devices seem to be manufactured in China and is sold under different marketing names such as OXT and Smart Best, possibly also
 Himojo, HaveDeer, GIRIER, RSH are compatible as well but have not been tested... All of them look identical and have same dimensions 39.2*39.2*18mm,
 so very likely they are all using same hardware design and protocol.
 
-.. figure:: images/oxt_dimmer.jpg
-    :align: center
-    :width: 100.0%
+<Image src={oxtUiImg} layout="constrained" alt="" />
 
-.. _technical-details:
+For a 2-channel dimmer use config like this one:
 
-Technical details
------------------
+```yaml
+# Example configuration entry
+bk72xx:
+  board: cb3s # Using original CB3S module by Tuya, can also be replaced with other pin-compatible
+
+# Disable UART logging - we need UART to talk to dimming MCU
+logger:
+  baud_rate: 0
+
+uart:
+  tx_pin: GPIO11 # rx_pin is not required (not used)
+  baud_rate: 9600
+
+light:
+  - platform: oxt_dimmer
+    channels:
+      - name: "Light CH1"
+        id: dimmer1
+        min_value: 0
+        max_value: 255
+      - name: "Light CH2"
+        id: dimmer2
+        min_value: 0
+        max_value: 255
+
+binary_sensor:
+  - platform: gpio
+    id: light_switch_1
+    pin:
+      number: GPIO08
+      mode:
+        input: true
+        pullup: true
+      inverted: true
+    on_press:
+      - light.turn_on: dimmer1
+    on_release:
+      - light.turn_off: dimmer1
+
+  - platform: gpio
+    id: light_switch_2
+    pin:
+      number: GPIO09
+      mode:
+        input: true
+        pullup: true
+      inverted: true
+    on_press:
+      - light.turn_on: dimmer2
+    on_release:
+      - light.turn_off: dimmer2
+```
+
+## Configuration variables
+
+- **channels**(**Required**, list): List of light channels to be configured. First one will control channel `0x01` and the second one will control channel `0x02`.
+- **uart_id** (*Optional*, :ref:`config-id`): Manually specify the ID of the UART component. Defaults to UART 1
+
+For each channel, you have:
+  
+- ???? **sensing_pin** (*Optional*, :ref:`config-pin_schema`): Specify GPIO input that will be used to control dimmer locally. Supports short-press to toggle the light and long-press to dim up/down.
+- **min_value** (*Optional*, integer): Min brightness, lamp will be turned off below this value
+- **max_value** (*Optional*, integer): Similar to the above, brightness will be limited to this value when maxed
+- All other options from [Light](/components/light#config-light).
+
+## Technical details
 
 The device is using Tuya-compatible application structure with two main components:
 
@@ -48,8 +115,7 @@ Unlike other Tuya-based dimming devices:
 There is no confirmation from MCU whether the light has actually switched-on, nor it is any information about overheating or
 unexpected events - just fire the command over UART and "hope that it works".
 
-OXT Control protocol
---------------------
+### OXT Control protocol
 
 The protocol to control brightness is very simple and each frame consists of:
 
@@ -70,79 +136,8 @@ where a brightness value id ranging 0x00-0xff.
 The protocol also works with different numer of leading/trailing zeroes - this hasn't yet been 
 reverse engineered. There's no confirmation, no acks, no feedback.
 
-Example Configuration
----------------------
-
-For a 2-channel dimmer use config like this one:
-
-.. code-block:: yaml
-
-    bk72xx:
-      board: cb3s # Using original CB3S module by Tuya, can also be replaced with other pin-compatible
-
-    # Disable UART logging - we need UART to talk to dimming MCU
-    logger:
-      baud_rate: 0
-
-    uart:
-      tx_pin: GPIO11 # rx_pin is not required (not used)
-      baud_rate: 9600
-    
-    light:
-      - platform: oxt_dimmer
-        channels:
-          - name: "Light CH1"
-            id: dimmer1
-            min_value: 0
-            max_value: 255
-          - name: "Light CH2"
-            id: dimmer2
-            min_value: 0
-            max_value: 255
-
-    binary_sensor:
-      - platform: gpio
-        id: light_switch_1
-        pin:
-          number: GPIO08
-          mode:
-            input: true
-            pullup: true
-          inverted: true
-        on_press:
-          - light.turn_on: dimmer1
-        on_release:
-          - light.turn_off: dimmer1
-    
-      - platform: gpio
-        id: light_switch_2
-        pin:
-          number: GPIO09
-          mode:
-            input: true
-            pullup: true
-          inverted: true
-        on_press:
-          - light.turn_on: dimmer2
-        on_release:
-          - light.turn_off: dimmer2
-
-Configuration variables:
-------------------------
-
-- **channels**(**Required**, list): List of light channels to be configured. First one will control channel `0x01` and the second one will control channel `0x02`.
-- **uart_id** (*Optional*, :ref:`config-id`): Manually specify the ID of the UART component. Defaults to UART 1
-
-For each channel, you have:
-  
-- ???? **sensing_pin** (*Optional*, :ref:`config-pin_schema`): Specify GPIO input that will be used to control dimmer locally. Supports short-press to toggle the light and long-press to dim up/down.
-- **min_value** (*Optional*, integer): Min brightness, lamp will be turned off below this value
-- **max_value** (*Optional*, integer): Similar to the above, brightness will be limited to this value when maxed
-- All other options from [Light](/components/light#config-light).
-
 See Also
 --------
 
-- :doc:`/components/light/index`
-- :apiref:`oxt_dimmer/light/oxt_dimmer.h`
-- :ghedit:`Edit`
+- [Light Component](/components/light/)
+- <APIRef text="oxt_dimmer.h" path="oxt_dimmer/light/oxt_dimmer.h" />
