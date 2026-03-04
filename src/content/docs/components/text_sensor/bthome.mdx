@@ -2,7 +2,10 @@
 description: "Instructions for receiving BTHome BLE text sensor data on ESP32 devices."
 title: "BTHome BLE Text Sensor"
 ---
+import { Image } from 'astro:assets';
 import APIRef from '@components/APIRef.astro';
+
+<Image src="/images/bthome.png" width={868} height={256} layout="constrained" alt="BTHome logo" />
 
 The `bthome` text sensor platform lets you receive string values broadcast by [BTHome v2](https://bthome.io/) Bluetooth Low Energy devices. The ESP32 acts as a passive BLE listener — it does not connect to the remote device, it simply receives its advertisements.
 
@@ -35,7 +38,7 @@ text_sensor:
 ## Configuration variables
 
 - **remote_id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the remote device declared in the `bthome` component's `remote_devices` list.
-- **type** (**Required**, string): The BTHome text sensor type to receive, such as `motion_detected` or `window_open`. Must be one of the [supported text sensor types](/components/bthome#supported-text-sensor-types). Type names are case-insensitive.
+- **type** (**Optional**, string): The BTHome text sensor type to receive, such as `text` or `raw`. Must be one of the [supported text sensor types](/components/bthome#supported-text-sensor-types). Type names are case-insensitive. Defaults to `text`.
 - All other options from [Text Sensor](/components/text_sensor).
 
 ## Encrypted devices
