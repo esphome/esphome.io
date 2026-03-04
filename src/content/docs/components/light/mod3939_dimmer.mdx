@@ -10,8 +10,8 @@ import mod3939UiImg from './images/mod3939_dimmer.jpg';
 yet using different method to control light than the already-supported [Tuya light](/components/light/tuya).
 
 The devices are sold under different marketing names such as OXT, Smart Best, Himojo, HaveDeer, GIRIER, RSH, AVATTO which seem compatible
-as well but have not been tested... All of them look identical and have same dimensions 39.2×39.2×18mm, thus it is very very likely they are
-all using same hardware design and protocol. Hence the component name, "Module 39x39", as their dimension is the property they share most common.
+as well but have not been tested. All of them look identical and have same dimensions 39.2×39.2×18mm, thus it is very likely they are
+using same hardware design and protocol. Hence the component name, "Module 39x39", as their dimension is the property they share most common.
 
 > [!NOTE]
 > Advantage of this implementation is that, unlike [Tuya](/components/light/tuya)-based devices, here the firmware has 
@@ -83,9 +83,8 @@ For a 1-channel dimmer omit the second channel from the `mod3939_dimmer` configu
 
 For each channel, you have:
   
-- ???? **sensing_pin** (*Optional*, :ref:`config-pin_schema`): Specify GPIO input that will be used to control dimmer locally. Supports short-press to toggle the light and long-press to dim up/down.
-- **min_value** (*Optional*, integer): Min brightness, lamp will be turned off below this value
-- **max_value** (*Optional*, integer): Similar to the above, brightness will be limited to this value when maxed
+- **min_value** (*Optional*, integer): Minimum brightness, lamp will be turned off below this value
+- **max_value** (*Optional*, integer): Maximum brightness will be limited to this value when setting light to max
 - All other options from [Light](/components/light#config-light).
 
 ## Technical details
@@ -109,17 +108,16 @@ Unlike other Tuya-based dimming devices:
 There is no confirmation from MCU whether the light has actually switched-on, nor it is any information about overheating or
 unexpected events - just fire the command over UART and "hope that it works".
 
-The UART needs only `tx_pin`, which is usually `GPIO11` on these devices. The physical switch connects to `GPIO08` for CH1 and `GPIO09` for CH2.
+The UART needs only `tx_pin`, which is usually `GPIO11` on these devices. The physical switch connects to `GPIO08` for CH1
+and `GPIO09` for CH2.
 
 ### The control protocol
 
 The protocol to control brightness is very simple and each frame consists of:
 
-
 | Zero | Zero | Syn  | Head | Update | Channel1 | Channel2 | Foot | Foot | Foot | Zero | Zero |
 |------|------|------|------|--------|----------|----------|------|------|------|------|------|
 | 0x00 | 0x00 | 0xff | 0x55 | `<UU>` | `<XX>`   | `<YY>`   | 0x05 | 0xdc | 0x0a | 0x00 | 0x00 |
-
 
 where:
 
@@ -127,10 +125,10 @@ where:
 - `<XX>` is brightness value for Channel 1
 - `<YY>` is brightness value for Channel 2
 
-where a brightness value id ranging 0x00-0xff.
+with brightness values ranging between `0x00` - `0xff`.
 
-The protocol also works with different numer of leading/trailing zeroes - this hasn't yet been 
-reverse engineered. There's no confirmation, no acks, no feedback.
+The protocol also works with different numer of leading/trailing zeroes - this hasn't yet been reverse engineered. There's
+no confirmation, no acks, no feedback.
 
 See Also
 --------
