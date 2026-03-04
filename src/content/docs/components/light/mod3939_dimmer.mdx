@@ -79,9 +79,9 @@ For a 1-channel dimmer omit the second channel from the `mod3939_dimmer` configu
 ## Configuration variables
 
 - **channels**(**Required**, list): List of light channels to be configured. First one will control channel `0x01` and the second one will control channel `0x02`.
-- **uart_id** (*Optional*, :ref:`config-id`): Manually specify the ID of the UART component. Defaults to UART 1
+- **uart_id** (*Optional*, :ref:`config-id`): Manually specify the ID of the UART component. Defaults to UART 1.
 
-For each channel, you have:
+For each channel, you can have:
   
 - **min_value** (*Optional*, integer): Minimum brightness, lamp will be turned off below this value
 - **max_value** (*Optional*, integer): Maximum brightness will be limited to this value when setting light to max
@@ -97,18 +97,18 @@ The device is using Tuya-compatible application structure with two main componen
 
 > [!NOTE]
 > CB3S module is using Beken BK7321N controller. The support for that family of products is added to ESPHome with
-> the use of :doc:`/components/libretiny`.
+> the use of [LibreTiny Platform](/components/libretiny).
 
 Unlike other Tuya-based dimming devices:
 
 - external switch input is connected to CB3S module instead of the second MCU,
 - communication to dimming MCU is unidirectional (uses ony TX pin of the UART interface),
-- the protocol is different than in other :doc:`/components/tuya` devices.
+- the protocol is different than in other [Tuya](/components/light/tuya) devices.
 
 There is no confirmation from MCU whether the light has actually switched-on, nor it is any information about overheating or
 unexpected events - just fire the command over UART and "hope that it works".
 
-The UART needs only `tx_pin`, which is usually `GPIO11` on these devices. The physical switch connects to `GPIO08` for CH1
+The UART needs only `tx_pin`, which is usually `GPIO11` on these devices. The physical switches connect to `GPIO08` for CH1
 and `GPIO09` for CH2.
 
 ### The control protocol
@@ -132,5 +132,6 @@ no confirmation, no acks, no feedback.
 
 See Also
 --------
-
+- [LibreTiny Platform](/components/libretiny)
 - [Light Component](/components/light/)
+- [Binary Sensor Component](/components/binary_sensor/)
