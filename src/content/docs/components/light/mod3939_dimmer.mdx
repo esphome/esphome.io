@@ -117,14 +117,14 @@ The UART needs only `tx_pin`, which is usually `GPIO11` on these devices. The ph
 The protocol to control brightness is very simple and each frame consists of:
 
 
-| Zeroes      | Syn Header  | Update | Channel1 | Channel2 |  Footer?           | Zeroes      |
+| Zero | Zero | Syn  | Head | Update | Channel1 | Channel2 | Foot | Foot | Foot | Zero | Zero |
 |------|------|------|------|--------|----------|----------|------|------|------|------|------|
 | 0x00 | 0x00 | 0xff | 0x55 | `<UU>` | `<XX>`   | `<YY>`   | 0x05 | 0xdc | 0x0a | 0x00 | 0x00 |
 
 
 where:
 
-- `<UU>` is the channel ID being updated by the given command (either 0x01 or 0x02)
+- `<UU>` is the Channel ID being updated by the given command (either `0x01` or `0x02`)
 - `<XX>` is brightness value for Channel 1
 - `<YY>` is brightness value for Channel 2
 
