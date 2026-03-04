@@ -1,25 +1,24 @@
 ---
-description: "Instructions for setting up an OXT-type Dimmer light."
-title: "OXT-type Dimmer"
+description: "Instructions for setting up an 39.2*39.2*18mm module dimmer light."
+title: "Mdoule 39x39 Dimmer"
 ---
 
 import { Image } from 'astro:assets';
-import oxtUiImg from './images/oxt_dimmer.jpg';
+import mod3939UiImg from './images/mod3939_dimmer.jpg';
 
-OXT dimmers are another type of in-wall, brightness-only light dimming devices sold with Tuya-Smart application support,
+"Mdoule 39x39" dimmers are a generic type of in-wall, brightness-only light dimming devices sold with Tuya-Smart application support,
 yet using different method to control light than the already-supported [Tuya light](/components/light/tuya).
 
-There are two types of OXT dimmers available supporting either 1- or 2- light channels.
+There are two types of them, supporting either 1- or 2- light channels. The devices are sold under different marketing names such as 
+OXT, Smart Best, Himojo, HaveDeer, GIRIER, RSH, AVATTO which seem compatible as well but have not been tested... All of them look identical
+and have same dimensions 39.2*39.2*18mm, thus it is very very likely they are all using same hardware design and protocol. Hence the component
+name, "Mdoule 39x39", as their dimension is the property they share most common.
 
 > [!NOTE]
-> Advantage of the OXT implementations is that, unlike [Tuya](/components/light/tuya)-based devices, here the firmware has 
+> Advantage of this implementation is that, unlike [Tuya](/components/light/tuya)-based devices, here the firmware has 
 > full control over dimming functionality and physical switch input, so can control timings, transitions, effects, etc.
 
-The devices seem to be manufactured in China and is sold under different marketing names such as OXT and Smart Best, possibly also
-Himojo, HaveDeer, GIRIER, RSH are compatible as well but have not been tested... All of them look identical and have same dimensions 39.2*39.2*18mm,
-so very likely they are all using same hardware design and protocol.
-
-<Image src={oxtUiImg} layout="constrained" alt="" />
+<Image src={mod3939UiImg} layout="constrained" alt="" />
 
 For a 2-channel dimmer use config like this one:
 
@@ -34,10 +33,10 @@ logger:
 
 uart: # rx_pin is not required (not used)
   tx_pin: GPIO11 # fixed
-  baud_rate: 9600
+  baud_rate: 9600 # fixed
 
 light:
-  - platform: oxt_dimmer
+  - platform: mod3939_dimmer
     channels:
       - name: "Light CH1"
         id: dimmer1
@@ -76,7 +75,7 @@ binary_sensor:
       - light.turn_off: dimmer2
 ```
 
-For a 1-channel dimmer omit the second channel from the configuration.
+For a 1-channel dimmer omit the second channel from the `mod3939_dimmer` configuration.
 
 ## Configuration variables
 
@@ -113,7 +112,7 @@ unexpected events - just fire the command over UART and "hope that it works".
 
 The UART needs only `tx_pin`, which is usually `GPIO11` on these devices. The physical switch connects to `GPIO08` for CH1 and `GPIO09` for CH2.
 
-### OXT Control protocol
+### The control protocol
 
 The protocol to control brightness is very simple and each frame consists of:
 
