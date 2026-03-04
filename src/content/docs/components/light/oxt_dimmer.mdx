@@ -1,6 +1,3 @@
-OXT-type Dimmer
-===============
-
 ---
 description: "Instructions for setting up an OXT-type Dimmer light."
 title: "OXT-type Dimmer"
@@ -14,10 +11,9 @@ yet using different method to control light than the already-supported [Tuya lig
 
 There are two types of OXT dimmers available supporting either 1- or 2- light channels.
 
-.. note::
-
-    Advantage of the OXT implementations is that, unlike [Tuya](/components/light/tuya)-based devices, here the firmware has 
-    full control over dimming functionality and physical switch input, so can control timings, transitions, effects, etc.
+> [!NOTE]
+> Advantage of the OXT implementations is that, unlike [Tuya](/components/light/tuya)-based devices, here the firmware has 
+> full control over dimming functionality and physical switch input, so can control timings, transitions, effects, etc.
 
 The devices seem to be manufactured in China and is sold under different marketing names such as OXT and Smart Best, possibly also
 Himojo, HaveDeer, GIRIER, RSH are compatible as well but have not been tested... All of them look identical and have same dimensions 39.2*39.2*18mm,
@@ -36,8 +32,8 @@ bk72xx:
 logger:
   baud_rate: 0
 
-uart:
-  tx_pin: GPIO11 # rx_pin is not required (not used)
+uart: # rx_pin is not required (not used)
+  tx_pin: GPIO11 # fixed
   baud_rate: 9600
 
 light:
@@ -56,7 +52,7 @@ binary_sensor:
   - platform: gpio
     id: light_switch_1
     pin:
-      number: GPIO08
+      number: GPIO08 # fixed
       mode:
         input: true
         pullup: true
@@ -69,7 +65,7 @@ binary_sensor:
   - platform: gpio
     id: light_switch_2
     pin:
-      number: GPIO09
+      number: GPIO09 # fixed
       mode:
         input: true
         pullup: true
@@ -102,10 +98,9 @@ The device is using Tuya-compatible application structure with two main componen
   wifi, Tuya comms, etc, (this will be replaced with our custorm firmware),
 - secondary, application-specific MCU responsible for controlling triac at strictly defined moments.
 
-.. note::
-
-    CB3S module is using Beken BK7321N controller. The support for that family of products is added to ESPHome with
-    the use of :doc:`/components/libretiny`.
+> [!NOTE]
+> CB3S module is using Beken BK7321N controller. The support for that family of products is added to ESPHome with
+> the use of :doc:`/components/libretiny`.
 
 Unlike other Tuya-based dimming devices:
 
@@ -115,6 +110,8 @@ Unlike other Tuya-based dimming devices:
 
 There is no confirmation from MCU whether the light has actually switched-on, nor it is any information about overheating or
 unexpected events - just fire the command over UART and "hope that it works".
+
+The UART needs only `tx_pin`, which is usually `GPIO11` on these devices. The physical switch connects to `GPIO08` for CH1 and `GPIO09` for CH2.
 
 ### OXT Control protocol
 
