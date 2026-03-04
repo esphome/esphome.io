@@ -1,10 +1,13 @@
 ---
-description: "Instructions for setting up BTHome BLE sensor broadcasting on ESP32 devices."
+description: "Instructions for setting up BTHome BLE sensor broadcasting and receiving on ESP32 devices."
 title: "BTHome BLE"
 ---
 import APIRef from '@components/APIRef.astro';
 
-The `bthome` component enables your ESP32 device to broadcast sensor data using the [BTHome v2](https://bthome.io/) Bluetooth Low Energy (BLE) protocol. This allows your ESP32 to function as a battery-powered BLE sensor that can be automatically discovered and integrated with Home Assistant and other BTHome-compatible receivers.
+The `bthome` component provides two complementary roles using the [BTHome v2](https://bthome.io/) Bluetooth Low Energy (BLE) protocol:
+
+- **Broadcaster (server)**: The ESP32 advertises its own sensor values so that Home Assistant or any other BTHome-compatible receiver can pick them up.
+- **Receiver (client)**: The ESP32 passively listens for BTHome advertisements from remote devices (commercial sensors, other ESPHome devices) and exposes their values as local sensor entities. See [BTHome Sensor](/components/sensor/bthome/), [BTHome Binary Sensor](/components/binary_sensor/bthome/), and [BTHome Text Sensor](/components/text_sensor/bthome/).
 
 BTHome is a standardized format for transmitting sensor data over BLE advertising packets, providing efficient, low-power communication for IoT devices.
 
@@ -16,11 +19,13 @@ BTHome is a standardized format for transmitting sensor data over BLE advertisin
 > audio components are most likely to cause issues.
 
 > [!NOTE]
-> This component requires the [ESP32 BLE](/components/esp32_ble/) component to be configured. The BTHome component will automatically enable BLE advertising.
+> When used as a **broadcaster**, this component requires the [ESP32 BLE](/components/esp32_ble/) component and will automatically enable BLE advertising.
+> When used as a **receiver only**, only [ESP32 BLE Tracker](/components/esp32_ble_tracker/) is needed — `esp32_ble:` is not required.
 
 ```yaml
 # Example configuration entry
 esp32_ble:
+  advertising_cycle_time: 10s
 
 bthome:
   sensors:
@@ -31,12 +36,12 @@ bthome:
     - type: battery
       id: my_battery
   binary_sensors:
-    - type: motion
+    - type: motion_detected
       id: my_motion
       advertise_immediately: true
   text_sensors:
     - id: my_device_status
-      max_size: 8
+      max_length: 8
 ```
 
 ## Configuration variables
@@ -44,7 +49,12 @@ bthome:
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID for code generation.
 - **esp32_ble_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the [ESP32 BLE](/components/esp32_ble/) component. Defaults to the only `esp32_ble` component if only one is configured.
 
-- **encryption_key** (*Optional*, string): A 32-character hexadecimal string (16 bytes) used for AES-CCM encryption of the BLE advertisements. Spaces and dashes in the key are ignored. When set, all sensor data will be encrypted. Example: `"0123456789ABCDEF0123456789ABCDEF"` or `"01-23-45-67-89-AB-CD-EF-01-23-45-67-89-AB-CD-EF"`.
+- **key** (*Optional*, string): A 32-character hexadecimal string (16 bytes) used for AES-CCM encryption of outgoing BLE advertisements. Spaces and dashes in the key are ignored. When set, all broadcasted sensor data will be encrypted. Example: `"0123456789ABCDEF0123456789ABCDEF"` or `"01-23-45-67-89-AB-CD-EF-01-23-45-67-89-AB-CD-EF"`.
+
+- **remote_devices** (*Optional*, list): A list of remote BTHome devices to receive data from. Each entry requires:
+  - **mac_address** (**Required**, MAC address): The Bluetooth MAC address of the remote device.
+  - **id** (**Required**, [ID](/guides/configuration-types#id)): An ID to reference this device from [BTHome Sensor](/components/sensor/bthome/), [BTHome Binary Sensor](/components/binary_sensor/bthome/), and [BTHome Text Sensor](/components/text_sensor/bthome/) platform entries.
+  - **key** (*Optional*, string): A 32-character hexadecimal string (16 bytes) used to decrypt advertisements from this device.
 
 - **sensors** (*Optional*, list): A list of sensors to broadcast. Each sensor requires:
   - **type** (**Required**, string): The BTHome sensor type (see [Supported Sensor Types](#supported-sensor-types)).
@@ -57,9 +67,13 @@ bthome:
   - **advertise_immediately** (*Optional*, boolean): When set to `true`, the component will immediately broadcast an advertisement when this binary sensor's state changes. Particularly useful for motion detectors, door sensors, and other event-driven sensors. Defaults to `false`.
 
 - **text_sensors** (*Optional*, list): A list of text sensors to broadcast. Each text sensor requires:
-  - **type** (**Optional**, string): The BTHome text sensor type (see [Supported Text Sensor Types](#supported-text-sensor-types)). Defaults to `text`.
+  - **type** (*Optional*, string): The BTHome text sensor type (see [Supported Text Sensor Types](#supported-text-sensor-types)). Defaults to `text`.
   - **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of an existing text sensor component.
   - **max_length** (*Optional*, number): Maximum length of the text string to publish. Defaults to 5. Cannot be set to a number higher than 21. Sensor values longer than `max_length` will be truncated to fit.
+  - **advertise_immediately** (*Optional*, boolean): When set to `true`, the component will immediately broadcast an advertisement when this text sensor's value changes. Defaults to `false`.
+
+> [!NOTE]
+> Due to protocol limitations, all sensors of the same BTHome object type must share the same `advertise_immediately` setting. Mixing `true` and `false` for sensors of the same type is a configuration error.
 
 ## Supported Sensor Types
 
@@ -173,110 +187,17 @@ Text sensors carry a variable-length string payload. Size includes the 1-byte BT
 | 0x53 | `text` | UTF-8 text string | variable |
 | 0x54 | `raw` | Raw binary data | variable |
 
-## Complete Example
-
-```yaml
-# Complete example with multiple sensors and encryption
-esp32_ble:
-
-bthome:
-  # Optional encryption for secure communication
-  encryption_key: "0123456789ABCDEF0123456789ABCDEF"
-
-  sensors:
-    - type: temperature
-      id: room_temperature
-    - type: humidity
-      id: room_humidity
-    - type: battery
-      id: device_battery
-    - type: pressure
-      id: barometric_pressure
-    - type: power_w_i32_e2
-      id: transmission_line_power
-
-  binary_sensors:
-    - type: motion_detected
-      id: pir_sensor
-      advertise_immediately: true  # Broadcast immediately on motion
-    - type: door_open
-      id: door_sensor
-      advertise_immediately: true  # Broadcast immediately on door state change
-    - type: battery_low
-      id: low_battery_alert
-
-  text_sensors:
-    - type: text
-      id: device_status
-      max_length: 11
-
-# Example sensor definitions
-sensor:
-  - platform: bme280
-    temperature:
-      name: "Room Temperature"
-      id: room_temperature
-    humidity:
-      name: "Room Humidity"
-      id: room_humidity
-    pressure:
-      name: "Barometric Pressure"
-      id: barometric_pressure
-
-  - platform: adc
-    pin: GPIO34
-    name: "Device Battery"
-    id: device_battery
-    filters:
-      - multiply: 0.048828125  # Convert to percentage
-
-  - platform: bh1750
-    name: "Light Level"
-    id: light_level
-
-binary_sensor:
-  - platform: gpio
-    pin: GPIO5
-    name: "PIR Sensor"
-    id: pir_sensor
-    device_class: motion
-
-  - platform: gpio
-    pin: GPIO4
-    name: "Door Sensor"
-    id: door_sensor
-    device_class: door
-
-  - platform: template
-    name: "Low Battery Alert"
-    id: low_battery_alert
-    lambda: |-
-      return id(device_battery).state < 20.0;
-
-text_sensor:
-  - platform: template
-    name: "Device Status"
-    id: device_status
-    update_interval: 60s
-    lambda: |-
-      if (id(device_battery).state < 20.0) {
-        return "Low Battery";
-      } 
-      return "OK";
-      
-```
-
 ## How It Works
 
 The BTHome component periodically broadcasts BLE advertisements containing your sensor data in a standardized format that can be received by compatible devices like Home Assistant. Here's how it operates:
 
-1. **Regular Broadcasts**: The component broadcasts all configured sensor values at the interval specified by `esp32_ble`'s `advertising_cycle_time`.
+1. **Regular Broadcasts**: The component broadcasts all configured sensor values at the interval configured by [`advertising_cycle_time`](/components/esp32_ble#configuration-variables) in the `esp32_ble` component (default: 10 s).
 
 1. **Immediate Updates**: When `advertise_immediately` is enabled for a sensor, value changes trigger an instant broadcast instead of waiting for the next scheduled interval. This is ideal for event-driven sensors like motion detectors or door sensors.
 
 1. **Packet Cycling**: If you have many sensors and the data doesn't fit in a single BLE advertisement packet (23-bytes effective limit, or 15 bytes if encryption enabled), the component automatically cycles through multiple packets.
 
-1. **Encryption**: When an `encryption_key` is provided, all sensor data is encrypted using AES-CCM encryption, ensuring secure transmission. Home Assistant and other receivers will need the same encryption key to decrypt the data.
+1. **Encryption**: When a `key` is provided, all sensor data is encrypted using AES-CCM encryption, ensuring secure transmission. Home Assistant and other receivers will need the same key to decrypt the data.
 
 1. **Advertisement Size**: Each BLE advertisement is limited to 31 bytes total. Without encryption, this provides 23 bytes for sensor data. With encryption, only 15 bytes are available due to the encryption overhead (counter and message integrity code).
 
@@ -331,15 +252,183 @@ sensor:
 
 #### Protocol Limitations
 
-The maximum number of sensors of the same type is limited by the space in one advertising frame. For example, an unencrypted frame (23 bytes) can hold up to 7 temperature sensors of type `temperature_c_e2` since each takes 3 bytes. To work around this limitation you can mix temperature sensors of diferent types / precision depending on your application. For example, `temperature_c_i8` takes only 2 bytes.
+The maximum number of sensors of the same type is limited by the space in one advertising frame. For example, an unencrypted frame (23 bytes) can hold up to 7 temperature sensors of type `temperature_c_e2` since each takes 3 bytes. To work around this limitation you can mix temperature sensors of different types / precision depending on your application. For example, `temperature_c_i8` takes only 2 bytes.
 
 If a published sensor becomes unavailable, i.e. is `NAN`, all sensors of the same exact type won't be updated since the protocol does not allow to broadcast a `NAN`. To work around this issue, add a filter to avoid the sensor to publish invalid values.
+
+When `advertise_immediately` is enabled for a type, any change to any sensor of that type triggers an immediate broadcast of all sensors of that type together.
 
 ## Integration with Home Assistant
 
 Home Assistant will automatically discover BTHome devices when the [Bluetooth](https://www.home-assistant.io/integrations/bluetooth/) integration is enabled. The sensor data will appear as entities in Home Assistant without any additional configuration required.
 
 If you've configured encryption, you'll need to provide the same encryption key in Home Assistant when adding the device.
+
+## Complete Example
+
+```yaml
+# Complete example with multiple sensors and encryption
+esp32_ble:
+
+bthome:
+  # Optional encryption for secure communication
+  key: "0123456789ABCDEF0123456789ABCDEF"
+
+  sensors:
+    - type: temperature
+      id: room_temperature
+    - type: humidity
+      id: room_humidity
+    - type: battery
+      id: device_battery
+    - type: pressure
+      id: barometric_pressure
+    - type: power_w_i32_e2
+      id: transmission_line_power
+
+  binary_sensors:
+    - type: motion_detected
+      id: pir_sensor
+      advertise_immediately: true  # Broadcast immediately on motion
+    - type: door_open
+      id: door_sensor
+      advertise_immediately: true  # Broadcast immediately on door state change
+    - type: battery_low
+      id: low_battery_alert
+
+  text_sensors:
+    - type: text
+      id: device_status
+      max_length: 11
+
+# Example sensor definitions
+sensor:
+  - platform: bme280_i2c
+    temperature:
+      name: "Room Temperature"
+      id: room_temperature
+    humidity:
+      name: "Room Humidity"
+      id: room_humidity
+    pressure:
+      name: "Barometric Pressure"
+      id: barometric_pressure
+
+  - platform: adc
+    pin: GPIO34
+    name: "Device Battery"
+    id: device_battery
+    filters:
+      - multiply: 0.048828125  # Convert to percentage
+
+  - platform: bh1750
+    name: "Light Level"
+    id: light_level
+
+binary_sensor:
+  - platform: gpio
+    pin: GPIO5
+    name: "PIR Sensor"
+    id: pir_sensor
+    device_class: motion
+
+  - platform: gpio
+    pin: GPIO4
+    name: "Door Sensor"
+    id: door_sensor
+    device_class: door
+
+  - platform: template
+    name: "Low Battery Alert"
+    id: low_battery_alert
+    lambda: |-
+      return id(device_battery).state < 20.0;
+
+text_sensor:
+  - platform: template
+    name: "Device Status"
+    id: device_status
+    update_interval: 60s
+    lambda: |-
+      if (id(device_battery).state < 20.0) {
+        return "Low Battery";
+      } 
+      return "OK";
+      
+```
+
+## ESP32 to ESP32 Example
+
+This example shows two devices: a **sensor node** that broadcasts measurements, and a **hub** that receives them and forwards the values to Home Assistant via the native API.
+
+### Sensor node (broadcaster)
+
+```yaml
+# sensor_node.yaml
+esp32_ble:
+
+bthome:
+  key: "0123456789ABCDEF0123456789ABCDEF"  # optional (encryption)
+  sensors:
+    - type: temperature
+      id: room_temperature
+    - type: humidity
+      id: room_humidity
+  binary_sensors:
+    - type: motion_detected
+      id: pir_sensor
+      advertise_immediately: true  # push instantly on motion
+
+sensor:
+  - platform: bme280_i2c
+    address: 0x76
+    temperature:
+      name: "Room Temperature"
+      id: room_temperature
+    humidity:
+      name: "Room Humidity"
+      id: room_humidity
+
+binary_sensor:
+  - platform: gpio
+    pin: GPIO5
+    name: "PIR Sensor"
+    id: pir_sensor
+```
+
+### Hub (receiver)
+
+Replace `AA:BB:CC:DD:EE:FF` with the MAC address of the sensor node, visible in its boot log.
+
+```yaml
+# hub.yaml
+esp32_ble_tracker:
+
+bthome:
+  remote_devices:
+    - mac_address: "AA:BB:CC:DD:EE:FF"  # sensor node's MAC address
+      id: sensor_node
+      key: "0123456789ABCDEF0123456789ABCDEF"  # sensor node's encryption key, if any.
+
+sensor:
+  - platform: bthome
+    remote_id: sensor_node
+    type: temperature
+    name: "Room Temperature"
+  - platform: bthome
+    remote_id: sensor_node
+    type: humidity
+    name: "Room Humidity"
+
+binary_sensor:
+  - platform: bthome
+    remote_id: sensor_node
+    type: motion_detected
+    name: "Motion"
+```
+
+> [!NOTE]
+> The hub does not need `esp32_ble:` — only `esp32_ble_tracker:`, which is sufficient for passive scanning. The sensor node needs `esp32_ble:` because it actively advertises.
 
 ## See Also
 
