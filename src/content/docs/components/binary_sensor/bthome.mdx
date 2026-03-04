@@ -1,0 +1,76 @@
+---
+description: "Instructions for receiving BTHome BLE binary sensor data on ESP32 devices."
+title: "BTHome BLE Binary Sensor"
+---
+import APIRef from '@components/APIRef.astro';
+
+The `bthome` binary sensor platform lets you receive boolean state values broadcast by [BTHome v2](https://bthome.io/) Bluetooth Low Energy devices. The ESP32 acts as a passive BLE listener — it does not connect to the remote device, it simply receives its advertisements.
+
+> [!WARNING]
+> The BLE software stack on the ESP32 consumes a significant amount of RAM on the device.
+>
+> **Crashes are likely to occur** if you include too many additional components in your device's
+> configuration. Memory-intensive components such as [Voice Assistant](/components/voice_assistant/) and other
+> audio components are most likely to cause issues.
+
+> [!NOTE]
+> This platform requires the [BTHome](/components/bthome/) component to be configured with at least one `remote_devices` entry.
+
+```yaml
+# Example configuration entry
+esp32_ble_tracker:
+
+bthome:
+  remote_devices:
+    - mac_address: "AA:BB:CC:DD:EE:FF"
+      id: my_sensor_device
+
+binary_sensor:
+  - platform: bthome
+    remote_id: my_sensor_device
+    type: motion_detected
+    name: "Motion"
+  - platform: bthome
+    remote_id: my_sensor_device
+    type: door_open
+    name: "Door"
+  - platform: bthome
+    remote_id: my_sensor_device
+    type: battery_low
+    name: "Battery Low"
+```
+
+## Configuration variables
+
+- **remote_id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the remote device declared in the `bthome` component's `remote_devices` list.
+- **type** (**Required**, string): The BTHome binary sensor type to receive. Must match one of the [supported binary sensor types](/components/bthome#supported-binary-sensor-types). Type names are case-insensitive.
+- All other options from [Binary Sensor](/components/binary_sensor).
+
+The `device_class` is automatically applied based on the chosen type, but can be overridden.
+
+## Encrypted devices
+
+To receive data from a device that uses BTHome encryption, add a `bindkey` to the remote device entry:
+
+```yaml
+bthome:
+  remote_devices:
+    - mac_address: "AA:BB:CC:DD:EE:FF"
+      id: my_sensor_device
+      bindkey: "0123456789ABCDEF0123456789ABCDEF"
+
+binary_sensor:
+  - platform: bthome
+    remote_id: my_sensor_device
+    type: motion_detected
+    name: "Motion"
+```
+
+## See Also
+
+- [BTHome BLE](/components/bthome/)
+- [ESP32 BLE Tracker](/components/esp32_ble_tracker/)
+- [BTHome Sensor](/components/sensor/bthome/)
+- [BTHome Text Sensor](/components/text_sensor/bthome/)
+- [BTHome Protocol Specification](https://bthome.io/)
+- <APIRef text="bthome.h" path="bthome/bthome.h" />

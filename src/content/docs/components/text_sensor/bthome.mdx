@@ -1,0 +1,66 @@
+---
+description: "Instructions for receiving BTHome BLE text sensor data on ESP32 devices."
+title: "BTHome BLE Text Sensor"
+---
+import APIRef from '@components/APIRef.astro';
+
+The `bthome` text sensor platform lets you receive string values broadcast by [BTHome v2](https://bthome.io/) Bluetooth Low Energy devices. The ESP32 acts as a passive BLE listener — it does not connect to the remote device, it simply receives its advertisements.
+
+> [!WARNING]
+> The BLE software stack on the ESP32 consumes a significant amount of RAM on the device.
+>
+> **Crashes are likely to occur** if you include too many additional components in your device's
+> configuration. Memory-intensive components such as [Voice Assistant](/components/voice_assistant/) and other
+> audio components are most likely to cause issues.
+
+> [!NOTE]
+> This platform requires the [BTHome](/components/bthome/) component to be configured with at least one `remote_devices` entry.
+
+```yaml
+# Example configuration entry
+esp32_ble_tracker:
+
+bthome:
+  remote_devices:
+    - mac_address: "AA:BB:CC:DD:EE:FF"
+      id: my_sensor_device
+
+text_sensor:
+  - platform: bthome
+    remote_id: my_sensor_device
+    type: text
+    name: "Device Status"
+```
+
+## Configuration variables
+
+- **remote_id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the remote device declared in the `bthome` component's `remote_devices` list.
+- **type** (**Required**, string): The BTHome text sensor type to receive, such as `motion_detected` or `window_open`. Must be one of the [supported text sensor types](/components/bthome#supported-text-sensor-types). Type names are case-insensitive.
+- All other options from [Text Sensor](/components/text_sensor).
+
+## Encrypted devices
+
+To receive data from a device that uses BTHome encryption, add a `bindkey` to the remote device entry:
+
+```yaml
+bthome:
+  remote_devices:
+    - mac_address: "AA:BB:CC:DD:EE:FF"
+      id: my_sensor_device
+      bindkey: "0123456789ABCDEF0123456789ABCDEF"
+
+text_sensor:
+  - platform: bthome
+    remote_id: my_sensor_device
+    type: text
+    name: "Device Status"
+```
+
+## See Also
+
+- [BTHome BLE](/components/bthome/)
+- [ESP32 BLE Tracker](/components/esp32_ble_tracker/)
+- [BTHome Sensor](/components/sensor/bthome/)
+- [BTHome Binary Sensor](/components/binary_sensor/bthome/)
+- [BTHome Protocol Specification](https://bthome.io/)
+- <APIRef text="bthome.h" path="bthome/bthome.h" />

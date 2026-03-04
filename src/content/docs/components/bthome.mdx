@@ -1,0 +1,354 @@
+---
+description: "Instructions for setting up BTHome BLE sensor broadcasting on ESP32 devices."
+title: "BTHome BLE"
+---
+import APIRef from '@components/APIRef.astro';
+
+The `bthome` component enables your ESP32 device to broadcast sensor data using the [BTHome v2](https://bthome.io/) Bluetooth Low Energy (BLE) protocol. This allows your ESP32 to function as a battery-powered BLE sensor that can be automatically discovered and integrated with Home Assistant and other BTHome-compatible receivers.
+
+BTHome is a standardized format for transmitting sensor data over BLE advertising packets, providing efficient, low-power communication for IoT devices.
+
+> [!WARNING]
+> The BLE software stack on the ESP32 consumes a significant amount of RAM on the device.
+>
+> **Crashes are likely to occur** if you include too many additional components in your device's
+> configuration. Memory-intensive components such as [Voice Assistant](/components/voice_assistant/) and other
+> audio components are most likely to cause issues.
+
+> [!NOTE]
+> This component requires the [ESP32 BLE](/components/esp32_ble/) component to be configured. The BTHome component will automatically enable BLE advertising.
+
+```yaml
+# Example configuration entry
+esp32_ble:
+
+bthome:
+  sensors:
+    - type: temperature
+      id: my_temperature
+    - type: humidity
+      id: my_humidity
+    - type: battery
+      id: my_battery
+  binary_sensors:
+    - type: motion
+      id: my_motion
+      advertise_immediately: true
+  text_sensors:
+    - id: my_device_status
+      max_size: 8
+```
+
+## Configuration variables
+
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID for code generation.
+- **esp32_ble_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the [ESP32 BLE](/components/esp32_ble/) component. Defaults to the only `esp32_ble` component if only one is configured.
+
+- **encryption_key** (*Optional*, string): A 32-character hexadecimal string (16 bytes) used for AES-CCM encryption of the BLE advertisements. Spaces and dashes in the key are ignored. When set, all sensor data will be encrypted. Example: `"0123456789ABCDEF0123456789ABCDEF"` or `"01-23-45-67-89-AB-CD-EF-01-23-45-67-89-AB-CD-EF"`.
+
+- **sensors** (*Optional*, list): A list of sensors to broadcast. Each sensor requires:
+  - **type** (**Required**, string): The BTHome sensor type (see [Supported Sensor Types](#supported-sensor-types)).
+  - **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of an existing sensor component.
+  - **advertise_immediately** (*Optional*, boolean): When set to `true`, the component will immediately broadcast an advertisement when this sensor's value changes, rather than waiting for the next scheduled advertisement. Useful for time-sensitive sensors. Defaults to `false`.
+
+- **binary_sensors** (*Optional*, list): A list of binary sensors to broadcast. Each binary sensor requires:
+  - **type** (**Required**, string): The BTHome binary sensor type (see [Supported Binary Sensor Types](#supported-binary-sensor-types)).
+  - **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of an existing binary sensor component.
+  - **advertise_immediately** (*Optional*, boolean): When set to `true`, the component will immediately broadcast an advertisement when this binary sensor's state changes. Particularly useful for motion detectors, door sensors, and other event-driven sensors. Defaults to `false`.
+
+- **text_sensors** (*Optional*, list): A list of text sensors to broadcast. Each text sensor requires:
+  - **type** (**Optional**, string): The BTHome text sensor type (see [Supported Text Sensor Types](#supported-text-sensor-types)). Defaults to `text`.
+  - **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of an existing text sensor component.
+  - **max_length** (*Optional*, number): Maximum length of the text string to publish. Defaults to 5. Cannot be set to a number higher than 21. Sensor values longer than `max_length` will be truncated to fit.
+
+## Supported Sensor Types
+
+The following sensor types are supported by the BTHome protocol. Type names are case-insensitive. Where an alias exists, the alias is the preferred short form; the canonical name is shown in parentheses. Size includes the 1-byte BTHome type ID header.
+
+---
+
+| BTHome ID | Name                                        | Description                          | Size | Precision | Range                          |
+| --------- | ------------------------------------------- | ------------------------------------ | ---: | --------: | ------------------------------ |
+| 0x51      | `acceleration` (`acceleration_mss_e3`)      | Acceleration (m/s²)                  |    3 |     0.001 | 0 – 65.535                     |
+| 0x63      | `acceleration_mss_i32_e6`                   | Acceleration, high-res signed (m/s²) |    5 |  0.000001 | −2,147.483648 – 2,147.483647   |
+| 0x01      | `battery` (`battery_pct`)                   | Battery level (%)                    |    2 |         1 | 0 – 255                        |
+| 0x60      | `channel`                                   | Channel number                       |    2 |         1 | 0 – 255                        |
+| 0x12      | `co2` (`co2_ppm`)                           | CO₂ concentration (ppm)              |    3 |         1 | 0 – 65,535                     |
+| 0x56      | `conductivity` (`conductivity_uscm`)        | Conductivity (µS/cm)                 |    3 |         1 | 0 – 65,535                     |
+| 0x5A      | `count_i16`                                 | Count (int16)                        |    3 |         1 | −32,768 – 32,767               |
+| 0x5B      | `count_i32`                                 | Count (int32)                        |    5 |         1 | −2,147,483,648 – 2,147,483,647 |
+| 0x59      | `count_i8`                                  | Count (int8)                         |    2 |         1 | −128 – 127                     |
+| 0x3D      | `count_u16`                                 | Count (uint16)                       |    3 |         1 | 0 – 65,535                     |
+| 0x3E      | `count_u32`                                 | Count (uint32)                       |    5 |         1 | 0 – 4,294,967,295              |
+| 0x09      | `count_u8`                                  | Count (uint8)                        |    2 |         1 | 0 – 255                        |
+| 0x43      | `current` (`current_a_e3`)                  | Current (A)                          |    3 |     0.001 | 0 – 65.535                     |
+| 0x5D      | `current_a_i16_e3`                          | Current, signed (A)                  |    3 |     0.001 | −32.768 – 32.767               |
+| 0x08      | `dewpoint` (`dewpoint_c_e2`)                | Dew point (°C)                       |    3 |      0.01 | −327.68 – 327.67               |
+| 0x5E      | `direction` (`direction_deg_e2`)            | Wind direction (°)                   |    3 |      0.01 | −327.68 – 327.67               |
+| 0x40      | `distance` (`distance_mm`)                  | Distance (mm)                        |    3 |         1 | 0 – 65,535                     |
+| 0x41      | `distance_m_e1`                             | Distance (m)                         |    3 |       0.1 | 0 – 6,553.5                    |
+| 0x42      | `duration` (`duration_s_e3`)                | Duration (s)                         |    4 |     0.001 | 0 – 16,777.215                 |
+| 0x4D      | `energy_kwh_u32_e3`                         | Energy, extended (kWh)               |    5 |     0.001 | 0 – 4,294,967.295              |
+| 0x0A      | `energy` (`energy_kwh_e3`)                  | Energy (kWh)                         |    4 |     0.001 | 0 – 16,777.215                 |
+| 0x4B      | `gas_m3_u24_e3`                             | Gas consumption (m³)                 |    4 |     0.001 | 0 – 16,777.215                 |
+| 0x4C      | `gas_m3_u32_e3`                             | Gas consumption, extended (m³)       |    5 |     0.001 | 0 – 4,294,967.295              |
+| 0x52      | `gyroscope` (`gyroscope_degs_e3`)           | Gyroscope (°/s)                      |    3 |     0.001 | 0 – 65.535                     |
+| 0x03      | `humidity` (`humidity_pct_e2`)              | Humidity (%)                         |    3 |      0.01 | 0 – 655.35                     |
+| 0x2E      | `humidity_pct_u8`                           | Humidity, low-res (%)                |    2 |         1 | 0 – 255                        |
+| 0x05      | `illuminance` (`illuminance_lx_e2`)         | Illuminance (lux)                    |    4 |      0.01 | 0 – 167,772.15                 |
+| 0x06      | `mass_kg` (`mass_kg_e2`)                    | Weight (kg)                          |    3 |      0.01 | 0 – 655.35                     |
+| 0x07      | `mass_lb` (`mass_lb_e2`)                    | Weight (lb)                          |    3 |      0.01 | 0 – 655.35                     |
+| 0x14      | `moisture` (`moisture_pct_e2`)              | Moisture (%)                         |    3 |      0.01 | 0 – 655.35                     |
+| 0x2F      | `moisture_pct_u8`                           | Moisture, low-res (%)                |    2 |         1 | 0 – 255                        |
+| 0x0D      | `pm2_5` (`pm2_5_ugm3`)                      | Particulate matter 2.5 (µg/m³)       |    3 |         1 | 0 – 65,535                     |
+| 0x0E      | `pm10` (`pm10_ugm3`)                        | Particulate matter 10 (µg/m³)        |    3 |         1 | 0 – 65,535                     |
+| 0x0B      | `power` (`power_w_e2`)                      | Power (W)                            |    3 |      0.01 | 0 – 655.35                     |
+| 0x5C      | `power_w_i32_e2`                            | Power, signed (W)                    |    5 |      0.01 | −21,474,836.48 – 21,474,836.47 |
+| 0x5F      | `precipitation` (`precipitation_mm_e1`)     | Precipitation (mm)                   |    3 |       0.1 | 0 – 6,553.5                    |
+| 0x04      | `pressure` (`pressure_hpa_e2`)              | Pressure (hPa)                       |    4 |      0.01 | 0 – 167,772.15                 |
+| 0x3F      | `rotation` (`rotation_deg_e1`)              | Rotation angle (°)                   |    3 |       0.1 | −3,276.8 – 3,276.7             |
+| 0x61      | `rotational_speed` (`rotational_speed_rpm`) | Rotational speed (rpm)               |    3 |         1 | 0 – 65,535                     |
+| 0x62      | `speed_ms_i32_e6`                           | Speed, high-res signed (m/s)         |    5 |  0.000001 | −2,147.483648 – 2,147.483647   |
+| 0x44      | `speed` (`speed_ms_e2`)                     | Speed (m/s)                          |    3 |      0.01 | 0 – 655.35                     |
+| 0x50      | `timestamp`                                 | Unix timestamp (s)                   |    5 |         1 | 0 – 4,294,967,295              |
+| 0x02      | `temperature` (`temperature_c_e2`)          | Temperature (°C)                     |    3 |      0.01 | −327.68 – 327.67               |
+| 0x58      | `temperature_c_i8_0_35`                     | Temperature, 0.35° step (°C)         |    2 |      0.35 | −44.80 – 44.45                 |
+| 0x57      | `temperature_c_i8`                          | Temperature, int8 (°C)               |    2 |         1 | −128 – 127                     |
+| 0x45      | `temperature_c_e1`                          | Temperature, low-res (°C)            |    3 |       0.1 | −3,276.8 – 3,276.7             |
+| 0x13      | `tvoc` (`tvoc_ugm3`)                        | Total VOCs (µg/m³)                   |    3 |         1 | 0 – 65,535                     |
+| 0x46      | `uv_index` (`uv_index_e1`)                  | UV index                             |    2 |       0.1 | 0 – 25.5                       |
+| 0x49      | `volume_flow` (`volume_flow_m3hr_e3`)       | Volume flow rate (m³/h)              |    3 |     0.001 | 0 – 65.535                     |
+| 0x55      | `volume_storage` (`volume_storage_l_e3`)    | Storage volume (L)                   |    5 |     0.001 | 0 – 4,294,967.295              |
+| 0x4E      | `volume_l_u32_e3`                           | Volume, extended (L)                 |    5 |     0.001 | 0 – 4,294,967.295              |
+| 0x47      | `volume` (`volume_l_e1`)                    | Volume (L)                           |    3 |       0.1 | 0 – 6,553.5                    |
+| 0x48      | `volume_ml`                                 | Volume (mL)                          |    3 |         1 | 0 – 65,535                     |
+| 0x4A      | `voltage_v_e1`                              | Voltage, low-res (V)                 |    3 |       0.1 | 0 – 6,553.5                    |
+| 0x0C      | `voltage` (`voltage_v_e3`)                  | Voltage (V)                          |    3 |     0.001 | 0 – 65.535                     |
+| 0x4F      | `water` (`water_l_e3`)                      | Water consumption (L)                |    5 |     0.001 | 0 – 4,294,967.295              |
+
+## Supported Binary Sensor Types
+
+Binary sensors encode a boolean value (false/true) in a single byte. Size includes the 1-byte BTHome type ID header.
+
+Sorted alphabetically by **Name**:
+
+| BTHome ID | Name                     | Description              | Size |
+| --------- | ------------------------ | ------------------------ | ---: |
+| 0x16      | `battery_charging`       | Battery charging         |    2 |
+| 0x15      | `battery_low`            | Battery low              |    2 |
+| 0x17      | `co_detected`            | Carbon monoxide detected |    2 |
+| 0x18      | `cold_detected`          | Cold detected            |    2 |
+| 0x19      | `connectivity_connected` | Connected                |    2 |
+| 0x1A      | `door_open`              | Door open                |    2 |
+| 0x1C      | `gas_detected`           | Gas detected             |    2 |
+| 0x1B      | `garage_door_open`       | Garage door open         |    2 |
+| 0x0F      | `generic_boolean`        | Generic boolean          |    2 |
+| 0x1D      | `heat_detected`          | Heat detected            |    2 |
+| 0x1E      | `light_detected`         | Light detected           |    2 |
+| 0x1F      | `lock_unlocked`          | Lock unlocked            |    2 |
+| 0x20      | `moisture_wet`           | Moisture (wet)           |    2 |
+| 0x21      | `motion_detected`        | Motion detected          |    2 |
+| 0x22      | `moving_active`          | Moving (active)          |    2 |
+| 0x23      | `occupancy_detected`     | Occupancy detected       |    2 |
+| 0x11      | `opening_open`           | Opening (open/closed)    |    2 |
+| 0x10      | `power_on`               | Power on                 |    2 |
+| 0x25      | `presence_home`          | Presence (home)          |    2 |
+| 0x26      | `problem_detected`       | Problem detected         |    2 |
+| 0x24      | `plug_plugged_in`        | Plug plugged in          |    2 |
+| 0x27      | `running_active`         | Running (active)         |    2 |
+| 0x28      | `safety_safe`            | Safety (safe)            |    2 |
+| 0x29      | `smoke_detected`         | Smoke detected           |    2 |
+| 0x2A      | `sound_detected`         | Sound detected           |    2 |
+| 0x2B      | `tamper_active`          | Tamper (active)          |    2 |
+| 0x2C      | `vibration_detected`     | Vibration detected       |    2 |
+| 0x2D      | `window_open`            | Window open              |    2 |
+
+
+## Supported Text Sensor Types
+
+Text sensors carry a variable-length string payload. Size includes the 1-byte BTHome type ID and 1-byte length field, plus the string content.
+
+| BTHome ID | Name | Description | Size |
+|-----------|------|-------------|------|
+| 0x53 | `text` | UTF-8 text string | variable |
+| 0x54 | `raw` | Raw binary data | variable |
+
+## Complete Example
+
+```yaml
+# Complete example with multiple sensors and encryption
+esp32_ble:
+
+bthome:
+  # Optional encryption for secure communication
+  encryption_key: "0123456789ABCDEF0123456789ABCDEF"
+
+  sensors:
+    - type: temperature
+      id: room_temperature
+    - type: humidity
+      id: room_humidity
+    - type: battery
+      id: device_battery
+    - type: pressure
+      id: barometric_pressure
+    - type: power_w_i32_e2
+      id: transmission_line_power
+
+  binary_sensors:
+    - type: motion_detected
+      id: pir_sensor
+      advertise_immediately: true  # Broadcast immediately on motion
+    - type: door_open
+      id: door_sensor
+      advertise_immediately: true  # Broadcast immediately on door state change
+    - type: battery_low
+      id: low_battery_alert
+
+  text_sensors:
+    - type: text
+      id: device_status
+      max_length: 11
+
+# Example sensor definitions
+sensor:
+  - platform: bme280
+    temperature:
+      name: "Room Temperature"
+      id: room_temperature
+    humidity:
+      name: "Room Humidity"
+      id: room_humidity
+    pressure:
+      name: "Barometric Pressure"
+      id: barometric_pressure
+
+  - platform: adc
+    pin: GPIO34
+    name: "Device Battery"
+    id: device_battery
+    filters:
+      - multiply: 0.048828125  # Convert to percentage
+
+  - platform: bh1750
+    name: "Light Level"
+    id: light_level
+
+binary_sensor:
+  - platform: gpio
+    pin: GPIO5
+    name: "PIR Sensor"
+    id: pir_sensor
+    device_class: motion
+
+  - platform: gpio
+    pin: GPIO4
+    name: "Door Sensor"
+    id: door_sensor
+    device_class: door
+
+  - platform: template
+    name: "Low Battery Alert"
+    id: low_battery_alert
+    lambda: |-
+      return id(device_battery).state < 20.0;
+
+text_sensor:
+  - platform: template
+    name: "Device Status"
+    id: device_status
+    update_interval: 60s
+    lambda: |-
+      if (id(device_battery).state < 20.0) {
+        return "Low Battery";
+      } 
+      return "OK";
+      
+```
+
+## How It Works
+
+The BTHome component periodically broadcasts BLE advertisements containing your sensor data in a standardized format that can be received by compatible devices like Home Assistant. Here's how it operates:
+
+1. **Regular Broadcasts**: The component broadcasts all configured sensor values at the interval specified by `esp32_ble`'s `advertising_cycle_time`.
+
+1. **Immediate Updates**: When `advertise_immediately` is enabled for a sensor, value changes trigger an instant broadcast instead of waiting for the next scheduled interval. This is ideal for event-driven sensors like motion detectors or door sensors.
+
+1. **Packet Cycling**: If you have many sensors and the data doesn't fit in a single BLE advertisement packet (23-bytes effective limit, or 15 bytes if encryption enabled), the component automatically cycles through multiple packets.
+
+1. **Encryption**: When an `encryption_key` is provided, all sensor data is encrypted using AES-CCM encryption, ensuring secure transmission. Home Assistant and other receivers will need the same encryption key to decrypt the data.
+
+1. **Advertisement Size**: Each BLE advertisement is limited to 31 bytes total. Without encryption, this provides 23 bytes for sensor data. With encryption, only 15 bytes are available due to the encryption overhead (counter and message integrity code).
+
+### Multiple sensors of the same type
+
+The BTHome protocol allows a single advertisement to include more than one object of the same type. This is useful when a device exposes several independent measurements that share a measurement class — for example, a multi-probe thermometer reporting temperatures from two separate sensors, or a device reporting both indoor and outdoor humidity.
+
+#### Broadcasting multiple sensors of the same type
+
+On the transmitting side, add multiple entries with the same `type` to the `sensors` or `binary_sensors` list:
+
+```yaml
+bthome:
+  sensors:
+    - type: temperature
+      id: probe_1_temperature   # first temperature object in the packet
+    - type: temperature
+      id: probe_2_temperature   # second temperature object in the packet
+    - type: humidity
+      id: room_humidity
+```
+
+Objects in the advertisement are always emitted in ascending BTHome object-ID order, so all `temperature` objects (ID `0x02`) are grouped before `humidity` (ID `0x03`). Within the same type, objects appear in the order they are declared in the YAML.
+
+#### Receiving multiple sensors of the same type
+
+On the receiving side, declare the same number of sensors of that type on your hub device. Each sensor is matched to the object at the corresponding position in the advertisement — the first declared sensor matches the first occurrence, the second declared sensor matches the second occurrence, and so on.
+
+```yaml
+bthome:
+  remote_devices:
+    - mac_address: "AA:BB:CC:DD:EE:FF"
+      id: multi_probe
+
+sensor:
+  - platform: bthome
+    remote_id: multi_probe
+    type: temperature
+    name: "Probe 1 Temperature"   # matches first temperature object
+  - platform: bthome
+    remote_id: multi_probe
+    type: temperature
+    name: "Probe 2 Temperature"   # matches second temperature object
+  - platform: bthome
+    remote_id: multi_probe
+    type: humidity
+    name: "Room Humidity"
+```
+
+> [!IMPORTANT]
+> The declaration order on the receiver must match the emission order on the transmitter. If the transmitting device sends temperature readings in the order `probe_1`, `probe_2`, the receiver must declare its temperature sensors in the same order. Swapping the order will cause the values to be attributed to the wrong sensor.
+
+#### Protocol Limitations
+
+The maximum number of sensors of the same type is limited by the space in one advertising frame. For example, an unencrypted frame (23 bytes) can hold up to 7 temperature sensors of type `temperature_c_e2` since each takes 3 bytes. To work around this limitation you can mix temperature sensors of diferent types / precision depending on your application. For example, `temperature_c_i8` takes only 2 bytes.
+
+If a published sensor becomes unavailable, i.e. is `NAN`, all sensors of the same exact type won't be updated since the protocol does not allow to broadcast a `NAN`. To work around this issue, add a filter to avoid the sensor to publish invalid values.
+
+## Integration with Home Assistant
+
+Home Assistant will automatically discover BTHome devices when the [Bluetooth](https://www.home-assistant.io/integrations/bluetooth/) integration is enabled. The sensor data will appear as entities in Home Assistant without any additional configuration required.
+
+If you've configured encryption, you'll need to provide the same encryption key in Home Assistant when adding the device.
+
+## See Also
+
+- [BTHome Sensor](/components/sensor/bthome/)
+- [BTHome Binary Sensor](/components/binary_sensor/bthome/)
+- [BTHome Text Sensor](/components/text_sensor/bthome/)
+- [ESP32 BLE](/components/esp32_ble/)
+- [ESP32 BLE Beacon](/components/esp32_ble_beacon/)
+- [ESP32 BLE Tracker](/components/esp32_ble_tracker/)
+- [Bluetooth Proxy](/components/bluetooth_proxy/)
+- [BTHome Protocol Specification](https://bthome.io/)
+- <APIRef text="bthome.h" path="bthome/bthome.h" />

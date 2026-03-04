@@ -1,0 +1,99 @@
+---
+description: "Instructions for receiving BTHome BLE sensor data on ESP32 devices."
+title: "BTHome BLE Sensor"
+---
+import APIRef from '@components/APIRef.astro';
+
+The `bthome` sensor platform lets you receive numeric sensor values broadcast by [BTHome v2](https://bthome.io/) Bluetooth Low Energy devices. The ESP32 acts as a passive BLE listener — it does not connect to the remote device, it simply receives its advertisements.
+
+> [!WARNING]
+> The BLE software stack on the ESP32 consumes a significant amount of RAM on the device.
+>
+> **Crashes are likely to occur** if you include too many additional components in your device's
+> configuration. Memory-intensive components such as [Voice Assistant](/components/voice_assistant/) and other
+> audio components are most likely to cause issues.
+
+> [!NOTE]
+> This platform requires the [BTHome](/components/bthome/) component to be configured with at least one `remote_devices` entry.
+
+```yaml
+# Example configuration entry
+esp32_ble_tracker:
+
+bthome:
+  remote_devices:
+    - mac_address: "AA:BB:CC:DD:EE:FF"
+      id: my_sensor_device
+
+sensor:
+  - platform: bthome
+    remote_id: my_sensor_device
+    type: temperature
+    name: "Room Temperature"
+  - platform: bthome
+    remote_id: my_sensor_device
+    type: humidity
+    name: "Room Humidity"
+  - platform: bthome
+    remote_id: my_sensor_device
+    type: battery
+    name: "Device Battery"
+```
+
+## Configuration variables
+
+- **remote_id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the remote device declared in the `bthome` component's `remote_devices` list.
+- **type** (**Required**, string): The BTHome sensor type to receive, such as `temperature`, `humidity`, etc. Must match one of the [supported sensor types](/components/bthome#supported-sensor-types). Type names are case-insensitive.
+- All other options from [Sensor](/components/sensor).
+
+The defaults for `unit_of_measurement`, `accuracy_decimals`, `device_class`, and `state_class` are automatically applied based on the chosen type, but can be overridden.
+
+## Multiple sensors of the same type
+
+A single remote device may broadcast more than one object of the same type — for example, a multi-probe thermometer sending two independent temperature readings. Declare the same number of sensors of that type, in the same order as they appear in the advertisement:
+
+```yaml
+bthome:
+  remote_devices:
+    - mac_address: "AA:BB:CC:DD:EE:FF"
+      id: multi_probe
+
+sensor:
+  - platform: bthome
+    remote_id: multi_probe
+    type: temperature
+    name: "Probe 1 Temperature"   # matches first temperature object
+  - platform: bthome
+    remote_id: multi_probe
+    type: temperature
+    name: "Probe 2 Temperature"   # matches second temperature object
+```
+
+See [BTHome — Multiple sensors of the same type](/components/bthome#multiple-sensors-of-the-same-type) for more details on ordering and protocol limitations.
+
+## Encrypted devices
+
+To receive data from a device that uses BTHome encryption, add a `bindkey` to the remote device entry:
+
+```yaml
+bthome:
+  remote_devices:
+    - mac_address: "AA:BB:CC:DD:EE:FF"
+      id: my_sensor_device
+      bindkey: "0123456789ABCDEF0123456789ABCDEF"
+
+sensor:
+  - platform: bthome
+    remote_id: my_sensor_device
+    type: temperature
+    name: "Room Temperature"
+```
+
+## See Also
+
+- [BTHome BLE](/components/bthome/)
+- [ESP32 BLE Tracker](/components/esp32_ble_tracker/)
+- [BTHome Binary Sensor](/components/binary_sensor/bthome/)
+- [BTHome Text Sensor](/components/text_sensor/bthome/)
+- [BTHome Protocol Specification](https://bthome.io/)
+- <APIRef text="bthome.h" path="bthome/bthome.h" />
