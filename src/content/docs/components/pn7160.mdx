@@ -1,6 +1,6 @@
 ---
-description: "Instructions for setting up PN7160 NFC tag readers and tags in ESPHome"
-title: "PN7160 NFC"
+description: "Instructions for setting up PN7160/PN7161 NFC tag readers and tags in ESPHome"
+title: "PN7160/PN7161 NFC"
 ---
 
 import { Image } from 'astro:assets';
@@ -11,12 +11,12 @@ import APIRef from '@components/APIRef.astro';
 
 ## Component/Hub
 
-The `pn7160` component allows you to use PN7160 NFC controllers with ESPHome. This component is a global hub that
-establishes a connection to the PN7160 via [SPI](/components/spi) or [I²C](/components/i2c).
+The `pn7160` component allows you to use PN7160/PN7161 NFC controllers with ESPHome. This component is a global hub that
+establishes a connection to the PN7160/PN7161 via [SPI](/components/spi) or [I²C](/components/i2c).
 
 <Image src={pn716xFullImg} layout="constrained" alt="" />
 
-Within ESPHome, the PN7160 can be configured to use either the SPI **or** I²C protocol for data communication.
+Within ESPHome, the PN7160/PN7161 can be configured to use either the SPI **or** I²C protocol for data communication.
 Note that there are different versions of the IC for each bus type, each with a different part number; in other
 words, **the bus type cannot be changed by jumpers/switches as it is determed at the time of manufacture.**
 
@@ -30,11 +30,20 @@ independently enabled and disabled by using the corresponding [Actions](#pn7160-
 
 In addition, the [Nfc](/components/binary_sensor/nfc/) platform may be used to quickly and easily identify tags presented to the reader.
 
+<span id="pn7160-stability_health_check"></span>
+
+## Stability and Health Check
+
+This component includes several enhancements to improve reliability and address common issues found in PN7160/PN7161 implementations:
+- **I2C Frequency Validation:** PN7160/PN7161 requires an I2C frequency of 100kHz or higher; configuring a lower frequency will trigger a validation warning to prevent startup IRQ timeouts (ESPHome issue [#6339](https://github.com/esphome/issues/issues/6339)).
+- **IRQ Handling:** Addresses issues where the IRQ line could become "stuck" high after several reads, blocking further communication.
+- **Health Check with Auto-Recovery:** Periodically validates NCI communication and the internal state machine. If the component becomes unresponsive or stuck in an initialization state, it can perform an automatic hard reset by toggling the `ven_pin`.
+
 <span id="pn7160-spi"></span>
 
 ## Over SPI
 
-The `pn7160_spi` component allows you to use [SPI-equipped](/components/spi) PN7160 NFC controllers with ESPHome.
+The `pn7160_spi` component allows you to use [SPI-equipped](/components/spi) PN7160/PN7161 NFC controllers with ESPHome.
 
 ```yaml
 pn7160_spi:
@@ -45,6 +54,10 @@ pn7160_spi:
   wkup_req_pin: GPIOXX
   emulation_message: https://www.home-assistant.io/tag/pulse_ce
   tag_ttl: 1000ms
+  health_check_enabled: true
+  health_check_interval: 30s
+  max_failed_checks: 3
+  auto_reset_on_failure: true
 ```
 
 ### Configuration variables
@@ -67,6 +80,14 @@ pn7160_spi:
 - **tag_ttl** (*Optional*, [Time](/guides/configuration-types#time)): The duration that must elapse after the PN7160 is no longer able to
   "see" a tag before it is considered to have been removed from the reader.
 
+- **health_check_enabled** (*Optional*, boolean): Enable periodic health checks. Defaults to `true`.
+
+- **health_check_interval** (*Optional*, [Time](/guides/configuration-types#time)): The health check frequency. Defaults to `60s`.
+
+- **max_failed_checks** (*Optional*, integer): The number of consecutive health check failures allowed before declaring the component unhealthy. Defaults to `3`.
+
+- **auto_reset_on_failure** (*Optional*, boolean): Whether to perform a hard reset via the `ven_pin` when the health check fails. Defaults to `true`.
+
 - **on_tag** (*Optional*, [Automation](/automations)): An automation to perform when a tag is first read. See
   [`on_tag` Trigger](#pn7160-on_tag).
 
@@ -85,9 +106,16 @@ pn7160_spi:
 
 ## Over I²C
 
-The `pn7160_i2c` component allows you to use [I²C-equipped](/components/i2c) PN7160 NFC controllers with ESPHome.
+The `pn7160_i2c` component allows you to use [I²C-equipped](/components/i2c) PN7160/PN7161 NFC controllers with ESPHome.
 
 ```yaml
+# CRITICAL: PN7160/PN7161 requires I2C frequency >= 100kHz
+# ESPHome's default 50kHz will cause IRQ timeouts
+i2c:
+  sda: GPIO21
+  scl: GPIO22
+  frequency: 400kHz  # Must be >= 100kHz
+
 pn7160_i2c:
   dwl_req_pin: GPIOXX
   irq_pin: GPIOXX
@@ -95,7 +123,15 @@ pn7160_i2c:
   wkup_req_pin: GPIOXX
   emulation_message: https://www.home-assistant.io/tag/pulse_ce
   tag_ttl: 1000ms
+  health_check_enabled: true
+  health_check_interval: 30s
+  max_failed_checks: 3
+  auto_reset_on_failure: true
 ```
+
+:::caution
+Your `i2c:` config **must** specify `frequency: 100kHz` or higher. The ESPHome default of 50kHz will cause IRQ timeouts (see bug [#6339](https://github.com/esphome/issues/issues/6339)). This requirement applies to both PN7160 and PN7161.
+:::
 
 ### Configuration variables
 
@@ -113,6 +149,14 @@ pn7160_i2c:
 
 - **tag_ttl** (*Optional*, [Time](/guides/configuration-types#time)): The duration that must elapse after the PN7160 is no longer able to
   "see" a tag before it is considered to have been removed from the reader.
+
+- **health_check_enabled** (*Optional*, boolean): Enable periodic health checks. Defaults to `true`.
+
+- **health_check_interval** (*Optional*, [Time](/guides/configuration-types#time)): The health check frequency. Defaults to `60s`.
+
+- **max_failed_checks** (*Optional*, integer): The number of consecutive health check failures allowed before declaring the component unhealthy. Defaults to `3`.
+
+- **auto_reset_on_failure** (*Optional*, boolean): Whether to perform a hard reset via the `ven_pin` when the health check fails. Defaults to `true`.
 
 - **on_tag** (*Optional*, [Automation](/automations)): An automation to perform when a tag is first read. See
   [`on_tag` Trigger](#pn7160-on_tag).
@@ -279,6 +323,24 @@ on_...:
     - tag.polling_on: my_pn7160_id
 ```
 
+<span id="pn7160-conditions"></span>
+
+## Conditions
+
+<span id="pn7160-is_writing"></span>
+
+### `pn7160.is_writing` Condition
+
+This condition returns `true` if the component is currently waiting for a tag to be presented so it can write to it.
+
+```yaml
+if:
+  condition:
+    pn7160.is_writing: my_pn7160_id
+  then:
+    - logger.log: "Waiting for tag to write..."
+```
+
 ## Triggers
 
 <span id="pn7160-on_tag"></span>
@@ -366,6 +428,30 @@ pn7160_...:
     then:
       - rtttl.play: "alert:d=32,o=5,b=160:e6,p,e6,p,e6"
 ```
+
+<span id="pn7160-on_finished_write"></span>
+
+### `on_finished_write` Trigger
+
+This automation will be triggered when a tag write operation completes.
+
+```yaml
+pn7160_...:
+  # ...
+  on_finished_write:
+    then:
+      - logger.log: "Tag write complete!"
+```
+
+<span id="pn7160-health_check"></span>
+
+## Health Check
+
+The PN7160 component includes a health check mechanism to ensure the chip remains responsive:
+- It periodically validates the internal state machine.
+- It detects if the chip is stuck in transient initialization states (RESET, INIT, CONFIG, etc.).
+- It monitors for "stuck" IRQ states where the chip fails to progress.
+- If failures exceed `max_failed_checks`, it can perform a hard reset by toggling the `ven_pin` (if `auto_reset_on_failure` is enabled).
 
 <span id="pn7160-ndef"></span>
 
