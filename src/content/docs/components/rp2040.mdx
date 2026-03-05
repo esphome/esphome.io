@@ -19,9 +19,39 @@ This component contains platform-specific options for the RP2040 platform.
 > unknown problem.
 
 ```yaml
-# Example configuration entry
+# Example configuration entry for Raspberry Pi Pico W
+esphome:
+  name: pico-w
+  friendly_name: Pico W
+
 rp2040:
   board: rpipicow
+
+logger:
+  hardware_uart: UART0
+  baud_rate: 115200
+
+api:
+
+ota:
+  - platform: esphome
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+  ap:
+    ssid: "Pico-W Fallback"
+
+output:
+  - platform: gpio
+    pin: LED
+    id: led_output
+
+light:
+  - platform: binary
+    name: "Onboard LED"
+    output: led_output
 ```
 
 > [!NOTE]
@@ -67,19 +97,6 @@ resolved to the correct GPIO number for your board:
 | `SS`     | Default SPI chip select | GPIO 17            |
 | `TX`     | Default UART TX         | GPIO 0             |
 | `RX`     | Default UART RX         | GPIO 1             |
-
-```yaml
-# Example: Using the onboard LED by name
-output:
-  - platform: gpio
-    pin: LED
-    id: led_output
-
-light:
-  - platform: binary
-    name: "Onboard LED"
-    output: led_output
-```
 
 > [!NOTE]
 > On boards with the CYW43439 wireless chip (Pico W, Pico 2 W), the onboard LED is connected
