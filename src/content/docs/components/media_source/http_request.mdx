@@ -1,0 +1,43 @@
+---
+description: "Instructions for setting up the HTTP Request media source in ESPHome."
+title: "HTTP Request Media Source"
+---
+
+import APIRef from '@components/APIRef.astro';
+
+The `http_request` media source platform plays audio streamed from HTTP and HTTPS URLs using the
+[HTTP Request](/components/http_request/) component. Audio is fetched over the network and decoded
+on the device.
+
+Files are played using the `http://` or `https://` URI scheme.
+
+This component only works on ESP32 based chips.
+
+```yaml
+# Example configuration entry
+http_request:
+
+media_source:
+  - platform: http_request
+    id: http_source
+```
+
+To play a file, send a media URL like `https://example.com/audio/alert.mp3` to a media player that
+uses this media source.
+
+<span id="config-http_request_media_source"></span>
+
+## Configuration variables
+
+- **buffer_size** (*Optional*, int): The size of the ring buffer in bytes used to transfer data
+  between the HTTP reader and the audio decoder. Minimum is `8192`, maximum is `512000`. Defaults
+  to `51200`.
+- **task_stack_in_psram** (*Optional*, boolean): If `true`, the FreeRTOS decode task stack is
+  allocated in PSRAM instead of internal RAM. Requires the [psram](/components/psram/) component. Defaults to `false`.
+- All other options from [Media Source](/components/media_source/).
+
+## See Also
+
+- [HTTP Request Component](/components/http_request/)
+- [Media Source Components](/components/media_source/)
+- <APIRef text="http_request_media_source.h" path="esphome/components/http_request/media_source/http_request_media_source.h" />
