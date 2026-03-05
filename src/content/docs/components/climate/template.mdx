@@ -1,0 +1,208 @@
+---
+description: "Instructions for setting up template climate controllers in ESPHome."
+title: "Template Climate"
+---
+
+import APIRef from '@components/APIRef.astro';
+
+The `template` climate platform allows you to create a climate entity backed by lambda expressions
+and automation actions. It is useful for wrapping custom UART/I²C climate controllers, integrating
+hardware that lacks a dedicated ESPHome component, or prototyping climate integrations.
+
+Once defined, it will automatically appear in Home Assistant as a climate entity and can be
+controlled through the frontend.
+
+```yaml
+# Example configuration entry
+climate:
+  - platform: template
+    name: "Living Room Climate"
+    current_temperature: !lambda "return id(my_temperature_sensor).state;"
+    supported_modes:
+      - "OFF"
+      - HEAT
+      - COOL
+      - FAN_ONLY
+    supported_fan_modes:
+      - AUTO
+      - LOW
+      - HIGH
+    supported_swing_modes:
+      - "OFF"
+      - VERTICAL
+    supported_presets:
+      - NONE
+      - ECO
+      - AWAY
+    set_mode_action:
+      - logger.log:
+          format: "Mode: %d"
+          args: ["(int) x"]
+    set_target_temperature_action:
+      - logger.log:
+          format: "Target temperature: %.1f"
+          args: ["x"]
+    set_fan_mode_action:
+      - logger.log:
+          format: "Fan mode: %d"
+          args: ["(int) x"]
+    set_swing_mode_action:
+      - logger.log:
+          format: "Swing mode: %d"
+          args: ["(int) x"]
+    set_preset_action:
+      - logger.log:
+          format: "Preset: %d"
+          args: ["(int) x"]
+    optimistic: true
+    visual:
+      temperature_step: 0.5
+```
+
+## Configuration variables
+
+- **current_temperature** (*Optional*, [lambda](/automations/templates#config-lambda)):
+  Lambda evaluated repeatedly to get the current (measured) temperature. Return a `float` value, or return
+  `{}` to leave the current temperature unchanged. When this lambda is provided, the climate entity will
+  report a current temperature to the frontend.
+
+- **target_temperature** (*Optional*, [lambda](/automations/templates#config-lambda)):
+  Lambda evaluated repeatedly to get the target (setpoint) temperature. Return a `float` value, or return
+  `{}` to leave the target temperature unchanged. Use this in non-optimistic mode when the target temperature
+  is owned by an external device.
+
+- **mode** (*Optional*, [lambda](/automations/templates#config-lambda)):
+  Lambda evaluated repeatedly to get the current operating mode. Return a `ClimateMode` value
+  (e.g. `climate::CLIMATE_MODE_HEAT`), or return `{}` to leave the mode unchanged.
+
+- **fan_mode** (*Optional*, [lambda](/automations/templates#config-lambda)):
+  Lambda evaluated repeatedly to get the current fan mode. Return a `ClimateFanMode` value
+  (e.g. `climate::CLIMATE_FAN_AUTO`), or return `{}` to leave the fan mode unchanged.
+
+- **swing_mode** (*Optional*, [lambda](/automations/templates#config-lambda)):
+  Lambda evaluated repeatedly to get the current swing mode. Return a `ClimateSwingMode` value
+  (e.g. `climate::CLIMATE_SWING_OFF`), or return `{}` to leave the swing mode unchanged.
+
+- **preset** (*Optional*, [lambda](/automations/templates#config-lambda)):
+  Lambda evaluated repeatedly to get the current preset. Return a `ClimatePreset` value
+  (e.g. `climate::CLIMATE_PRESET_ECO`), or return `{}` to leave the preset unchanged.
+
+- **optimistic** (*Optional*, boolean): Whether to operate in optimistic mode. When enabled, any command
+  sent to the template climate will immediately update the reported state without waiting for the external
+  device to confirm it. Defaults to `true`.
+
+- **supported_modes** (*Optional*, list): Static list of operating modes to expose to the frontend.
+  Valid values: `OFF`, `HEAT`, `COOL`, `AUTO`, `HEAT_COOL`, `FAN_ONLY`, `DRY`.
+
+  > [!NOTE]
+  > The list of `supported_modes` is static and evaluated at startup. It cannot be changed dynamically.
+
+- **supported_fan_modes** (*Optional*, list): Static list of fan modes to expose to the frontend.
+  Valid values: `ON`, `OFF`, `AUTO`, `LOW`, `MEDIUM`, `HIGH`, `MIDDLE`, `FOCUS`, `DIFFUSE`, `QUIET`.
+
+- **supported_swing_modes** (*Optional*, list): Static list of swing modes to expose to the frontend.
+  Valid values: `OFF`, `BOTH`, `VERTICAL`, `HORIZONTAL`.
+
+- **supported_presets** (*Optional*, list): Static list of presets to expose to the frontend.
+  Valid values: `NONE`, `ECO`, `AWAY`, `BOOST`, `COMFORT`, `HOME`, `SLEEP`, `ACTIVITY`.
+
+- **set_mode_action** (*Optional*, [Action](/automations/actions#all-actions)):
+  Action executed when a mode change command is received. The requested mode is available as
+  the variable `x` of type `ClimateMode`.
+
+- **set_target_temperature_action** (*Optional*, [Action](/automations/actions#all-actions)):
+  Action executed when a target temperature change command is received. The requested temperature
+  is available as the variable `x` of type `float`.
+
+- **set_fan_mode_action** (*Optional*, [Action](/automations/actions#all-actions)):
+  Action executed when a fan mode change command is received. The requested fan mode is available
+  as the variable `x` of type `ClimateFanMode`.
+
+- **set_swing_mode_action** (*Optional*, [Action](/automations/actions#all-actions)):
+  Action executed when a swing mode change command is received. The requested swing mode is
+  available as the variable `x` of type `ClimateSwingMode`.
+
+- **set_preset_action** (*Optional*, [Action](/automations/actions#all-actions)):
+  Action executed when a preset change command is received. The requested preset is available as
+  the variable `x` of type `ClimatePreset`.
+
+- All other options from [Climate](/components/climate#config-climate).
+
+> [!NOTE]
+> Climate state (mode, target temperature, fan mode, swing mode, and preset) is automatically
+> persisted to flash and restored on reboot via the standard ESPHome climate restore mechanism.
+
+## Non-optimistic mode example
+
+In non-optimistic mode the external device owns the state. ESPHome reads it back via lambdas and
+only fires the action hooks when commands arrive from the frontend or automations.
+
+The example below uses globals to simulate an external device that owns its own state. In a real
+scenario, the `set_*_action` blocks would send commands to the device (e.g. over UART or I²C), and
+the state lambdas would read back the current device state.
+
+```yaml
+globals:
+  - id: ext_mode
+    type: int
+    initial_value: "0"  # CLIMATE_MODE_OFF
+  - id: ext_target_temp
+    type: float
+    initial_value: "21.0"
+  - id: ext_fan_mode
+    type: int
+    initial_value: "2"  # CLIMATE_FAN_AUTO
+  - id: ext_swing_mode
+    type: int
+    initial_value: "0"  # CLIMATE_SWING_OFF
+  - id: ext_preset
+    type: int
+    initial_value: "5"  # CLIMATE_PRESET_ECO
+
+climate:
+  - platform: template
+    name: "External Heatpump"
+    optimistic: false
+    current_temperature: !lambda "return 22.5f;"
+    target_temperature: !lambda "return id(ext_target_temp);"
+    mode: !lambda "return static_cast<climate::ClimateMode>(id(ext_mode));"
+    fan_mode: !lambda "return static_cast<climate::ClimateFanMode>(id(ext_fan_mode));"
+    swing_mode: !lambda "return static_cast<climate::ClimateSwingMode>(id(ext_swing_mode));"
+    preset: !lambda "return static_cast<climate::ClimatePreset>(id(ext_preset));"
+    supported_modes:
+      - "OFF"
+      - HEAT
+      - COOL
+      - FAN_ONLY
+    supported_fan_modes:
+      - AUTO
+      - LOW
+      - HIGH
+    supported_swing_modes:
+      - "OFF"
+      - VERTICAL
+    supported_presets:
+      - NONE
+      - ECO
+      - AWAY
+    set_mode_action:
+      - lambda: "id(ext_mode) = (int) x;"
+    set_target_temperature_action:
+      - lambda: "id(ext_target_temp) = x;"
+    set_fan_mode_action:
+      - lambda: "id(ext_fan_mode) = (int) x;"
+    set_swing_mode_action:
+      - lambda: "id(ext_swing_mode) = (int) x;"
+    set_preset_action:
+      - lambda: "id(ext_preset) = (int) x;"
+    visual:
+      min_temperature: 16.0
+      max_temperature: 30.0
+      temperature_step: 0.5
+```
+
+## See Also
+
+- [Climate Component](/components/climate/)
+- [Automation](/automations)
+- <APIRef text="template_climate.h" path="template/climate/template_climate.h" />
