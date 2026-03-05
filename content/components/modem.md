@@ -63,6 +63,7 @@ modem:
 
   - **id** (*Required*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
   - **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval of NMEA updates. Defaults to `20s`
+  - **on_update** (*Optional*, [Automation](/automations)): An action to be performed when a new NMEA frame is published.
 
 ## Advanced options
 
