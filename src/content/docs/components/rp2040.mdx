@@ -8,9 +8,12 @@ This component contains platform-specific options for the RP2040 platform.
 > [!NOTE]
 > Support for all aspects of ESPHome on the RP2040 is still in development.
 >
-> Only the original model of Raspberry Pi Pico W board is supported, which has the Cypress **CYW43439** chip providing
-> wireless connectivity. It can be identified by a metallic shield encapsulating the radio circuitry. Pico W boards with
-> radio module chips like ESP8285 or similar (labelled as `RP2040 Pico W-2023` etc.), are not supported.
+> The Raspberry Pi **Pico W** and boards with the Cypress **CYW43439** chip providing wireless connectivity are
+> supported and tested. RP2350 boards (such as the Pico 2 and Pico 2 W) can be compiled but are not yet
+> fully tested — use at your own risk.
+>
+> Pico W boards with radio module chips like ESP8285 or similar (labelled as `RP2040 Pico W-2023` etc.)
+> are not supported.
 >
 > Please search for or create an [issue](https://github.com/esphome/esphome/issues/new/choose) if you encounter an
 > unknown problem.
@@ -37,10 +40,51 @@ rp2040:
 
 ## Configuration variables
 
-- **board** (**Required**, string): The board type. Valid option is `rpipicow`.
+- **board** (**Required**, string): The PlatformIO board identifier. Common boards include `rpipicow`
+  (Raspberry Pi Pico W), `rpipico` (Raspberry Pi Pico), `rpipico2w` (Raspberry Pi Pico 2 W), and
+  `rpipico2` (Raspberry Pi Pico 2). Over 140 boards from the
+  [arduino-pico](https://github.com/earlephilhower/arduino-pico) framework are supported. Any board
+  supported by the framework can be used here.
 - **watchdog_timeout** (*Optional*, string): The timeout to apply to the RP2040 watchdog (in seconds or milliseconds).
   When the device hangs for that period of time, it will reboot. Defaults to `8388ms` (maximum). Set to `0s` to
   disable the watchdog entirely.
+
+## GPIO Pin Names
+
+ESPHome supports named GPIO pins for boards with known pin mappings. These names are automatically
+resolved to the correct GPIO number for your board:
+
+| Pin Name | Description             | Example (Pico W) |
+|----------|-------------------------|-------------------|
+| `LED`    | Onboard LED             | GPIO 64 (CYW43)   |
+| `SDA`    | Default I²C data        | GPIO 4             |
+| `SCL`    | Default I²C clock       | GPIO 5             |
+| `SDA1`   | Secondary I²C data      | GPIO 26            |
+| `SCL1`   | Secondary I²C clock     | GPIO 27            |
+| `MISO`   | Default SPI MISO        | GPIO 16            |
+| `MOSI`   | Default SPI MOSI        | GPIO 19            |
+| `SCK`    | Default SPI clock       | GPIO 18            |
+| `SS`     | Default SPI chip select | GPIO 17            |
+| `TX`     | Default UART TX         | GPIO 0             |
+| `RX`     | Default UART RX         | GPIO 1             |
+
+```yaml
+# Example: Using the onboard LED by name
+output:
+  - platform: gpio
+    pin: LED
+    id: led_output
+
+light:
+  - platform: binary
+    name: "Onboard LED"
+    output: led_output
+```
+
+> [!NOTE]
+> On boards with the CYW43439 wireless chip (Pico W, Pico 2 W), the onboard LED is connected
+> to the wireless chip rather than a standard GPIO. It is accessible as pin 64 (or the `LED` pin name)
+> and only supports output mode.
 
 ## See Also
 
