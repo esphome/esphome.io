@@ -1,0 +1,39 @@
+---
+description: "Instructions for setting up modem switches"
+title: "Modem Switch"
+---
+import APIRef from '@components/APIRef.astro';
+
+> [!CAUTION]
+> This switch platform enables or disables specific service characteristics for the [Modem](/components/modem) component.
+
+> [!NOTE]
+> The [Modem](/components/modem) component must have `enable_cmux` set to `True`.
+
+```yaml
+modem:
+  id: atmodem
+  rx_pin: GPIO26
+  tx_pin: GPIO27
+  status_pin: GPIO34
+  model: SIM7600
+  apn: orange
+  enable_cmux: True
+
+switch:
+  - platform: modem
+    gnss:
+      name: GNSS
+      restore_mode: ALWAYS_ON
+```
+
+## Configuration variables
+
+- **gnss** (*Optional*, [object](/components/switch#config-switch)): Enable/disable GNSS. Only available for modem models `SIM7600` and `SIM7670`. All options from [Switch](/components/switch#config-switch).
+
+## See Also
+
+- [Modem](/components/modem)
+- [Modem Sensor](/components/sensor/modem)
+- [Sensor Filters](/components/sensor#sensor-filters)
+- <APIRef text="modem_switch.h" path="modem/modem_switch.h" />
