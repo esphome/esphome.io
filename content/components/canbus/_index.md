@@ -243,7 +243,7 @@ canbus:
       use_extended_id: true
       then:
         - lambda: |-
-            ESP_LOGI("CAN", "can_id: 0x%03X", can_id);
+            ESP_LOGD("CAN", "can_id: 0x%03X", can_id);
             if (x.size() > 0) {
               ESP_LOGD("CAN", "First data: 0x%02X", x[0]);
 
