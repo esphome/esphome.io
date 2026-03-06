@@ -90,6 +90,34 @@ light:
     output: led_output
 ```
 
+## Serial Debugging
+
+By default, ESPHome logs over USB CDC (the same USB connection used for flashing). If the device fails to
+boot or USB CDC does not come up, you can use a hardware UART to get logs via a USB-to-serial adapter.
+
+Add the following to your configuration:
+
+```yaml
+logger:
+  hardware_uart: UART0
+  baud_rate: 115200
+```
+
+Then connect a USB-to-serial adapter to your board's UART0 pins:
+
+| Signal | Pico W Pin | Connect to Adapter |
+|--------|------------|--------------------|
+| TX     | GPIO 0     | RX                 |
+| RX     | GPIO 1     | TX                 |
+| GND    | Any GND    | GND                |
+
+> [!TIP]
+> The `TX` and `RX` [pin names](#gpio-pin-names) resolve to the default UART0 pins for your board.
+> Check your board's pinout if they differ from the Pico W defaults above.
+
+Open a serial terminal at 115200 baud to view logs. This is especially useful for diagnosing boot
+failures, WiFi issues, or crashes that prevent USB from initializing.
+
 ## See Also
 
 - [ESPHome Core Configuration](/components/esphome/)
