@@ -73,6 +73,23 @@ resolved to the correct GPIO number for your board:
 > to the wireless chip rather than a standard GPIO. It is accessible as pin 64 (or the `LED` pin name)
 > and only supports output mode.
 
+### Onboard LED Example
+
+```yaml
+rp2040:
+  board: rpipicow
+
+output:
+  - platform: gpio
+    pin: LED
+    id: led_output
+
+light:
+  - platform: binary
+    name: "Onboard LED"
+    output: led_output
+```
+
 ## See Also
 
 - [ESPHome Core Configuration](/components/esphome/)
