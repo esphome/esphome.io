@@ -39,7 +39,7 @@ Each interface in the `interfaces` list consists of the following:
 - **id** (*Optional*, [ID](/guides/configuration-types#config-id)): The ID to use for this interface instance. This is
   used to refer to the interface in other components, platforms or lambdas.
 - **disabled** (*Optional*, boolean): Set to `true` to disable this instance. Useful for resolving conflicts with other
-components e.g. logger.
+components e.g. logger. Only on nRF52.
 
 ## Multiple Interface Example
 
