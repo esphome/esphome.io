@@ -97,6 +97,22 @@ so if you use any other configuration you will not get log messages over the on-
 
 *Undefined* means that the logger component cannot use this hardware UART at this time.
 
+For situations where `logger` UART output needs to be configured for pins other than the default,
+the below workaround is required.
+
+```yaml
+logger:
+  hardware_uart: UART0
+
+esphome:
+  name: "logs_example_device"
+  on_boot:
+    then:
+      - lambda: |-
+          // Remap UART0 to other non-default pins
+          uart_set_pin(UART_NUM_0, <UART0_TX>, <UART0_RX>, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE);
+```
+
 <span id="logger-default_hardware_interfaces"></span>
 
 ## Default Hardware Interfaces
