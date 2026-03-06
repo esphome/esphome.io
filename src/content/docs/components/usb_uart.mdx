@@ -14,6 +14,7 @@ Currently supported devices are listed in the table below:
 
 | Name       | VID    | PID    | Description                                             |
 | ---------- | ------ | ------ | ------------------------------------------------------- |
+| FT23XX     | 0x0403 | 0x6010 | FTDI USB to serial adapter (FT232R/FT2232H/FT4232H/FT232H/FT230X) |
 | CH34X      | 0x1A86 | 0x55D5 | USB to serial adapter, multi-channel (up to 3 channels) |
 | CH340      | 0x1A86 | 0x7523 | USB to serial adapter, single channel                   |
 | ESP_JTAG | 0x303A | 0x1001 | ESP32 JTAG interface |
@@ -34,7 +35,7 @@ usb_uart:
 ## Configuration variables
 
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): The id to use for this component.
-- **type** (**Required**, string): The type of USB-serial device to connect to. One of `ch34x`, `ch340`, `esp_jtag`, `stm32_vcp`, `cdc_acm`, `cp210x`.
+- **type** (**Required**, string): The type of USB-serial device to connect to. One of `ft23xx`, `ch34x`, `ch340`, `esp_jtag`, `stm32_vcp`, `cdc_acm`, `cp210x`.
 - **channels** (**Required**, list): A list of channels to configure.
 - **vid** (*Optional*, int): The vendor ID of the device. Use 0 as a wildcard. Each type has a default VID which will be overridden if this is set.
 - **pid** (*Optional*, int): The product ID of the device. Use 0 as a wildcard. Each type has a default PID which will be overridden if this is set.
@@ -53,6 +54,8 @@ Setting both `vid` and `pid` to 0 will match any device.
 - **debug** (*Optional*, boolean): If set to true, the channel will log all data sent and received. Defaults to false.
 
 ## Device types
+
+The `ft23xx` type supports FTDI USB UART chips. The chip variant is auto-detected from the USB device descriptor (`bcdDevice`), covering AM, BM, FT2232C, FT232R, FT2232H, FT4232H, FT232H and FT230X. The default PID (`0x6010`) matches the FT2232H; set `pid: 0` to match any FTDI device.
 
 The `cdc_acm` type is a generic USB CDC ACM (Abstract Control Model) device. This is a common USB device class for serial communication.
 This driver does not strictly enforce the CDC-ACM configuration specification, so it may work with devices that do not properly implement that specification. It expects to find a single interrupt endpoint, a single bulk in endpoint, and a single bulk out endpoint.
