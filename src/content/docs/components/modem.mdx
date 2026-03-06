@@ -32,6 +32,25 @@ modem:
   model: SIM7600
   apn: orange
   pin_code: "0000"
+
+# Example with NMEA for GPS
+modem:
+  id: atmodem
+  model: SIM7600
+  apn: orange
+  rx_pin: GPIO26
+  tx_pin: GPIO27
+
+nmea:
+  platform: modem
+  id: nmea_data
+  update_interval: 10s
+  on_update:
+    - component.update: gps_id
+
+gps:
+  uart_id: nmea_data
+  id: gps_id
 ```
 
 ## Configuration variables
@@ -56,14 +75,6 @@ modem:
 - **enable_on_boot** (*Optional*, boolean): If enabled, the PPPoS interface will be started on boot. Defaults to `true`.
 - **use_address** (*Optional*, string): Manually override what address to use to connect to the ESP. Defaults to auto-generated value.
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
-
-<span id="nmea_schema"></span>
-
-- **nmea** (*Optional*, [Nmea Schema](#nmea_schema)): Create a virtual UART bus that can be used by the [GPS](/components/gps).
-
-  - **id** (*Required*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
-  - **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval of NMEA updates. Defaults to `20s`
-  - **on_update** (*Optional*, [Automation](/automations)): An action to be performed when a new NMEA frame is published.
 
 ## Advanced options
 
@@ -258,6 +269,7 @@ esp32:
 - [Modem Text Sensor](/components/text_sensor/modem)
 - [Modem Sensor](/components/sensor/modem)
 - [Modem Switch](/components/switch/modem)
+- [Modem NMEA Platform](/components/nmea/modem)
 - [MQTT](/components/mqtt)
 - [Wireguard](/components/wireguard)
 - [GPS](/components/gps)

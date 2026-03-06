@@ -1,0 +1,41 @@
+---
+description: "Instructions for setting up a Modem NMEA platform on ESPHome"
+title: "Modem NMEA Platform"
+---
+
+import APIRef from '@components/APIRef.astro';
+
+The Modem NMEA platform creates a virtual UART bus that provides NMEA data from a [Modem](/components/modem) component. This allows the [GPS](/components/gps) component to receive location data from the cellular modem.
+
+## Example Configuration
+
+```yaml
+# Example configuration entry
+modem:
+  id: atmodem
+
+nmea:
+  platform: modem
+  id: nmea_data
+  update_interval: 10s
+  on_update:
+    - component.update: gps_id
+
+gps:
+  uart_id: nmea_data
+  id: gps_id
+```
+
+## Configuration variables
+
+- **platform** (**Required**, string): Must be `modem`.
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation. This ID can be used as the `uart_id` in the [GPS](/components/gps) component.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval of NMEA updates. Defaults to `20s`.
+- **on_update** (*Optional*, [Automation](/automations)): An action to be performed when a new NMEA frame is published.
+
+## See Also
+
+- [Modem Component](/components/modem)
+- [GPS Component](/components/gps)
+- [UART Bus](/components/uart)
+- <APIRef text="modem component" path="modem/modem_component.h" />
