@@ -222,9 +222,14 @@ Although in practice people often ignore this, it has the risk of:
 - damaging your microcontroller
 - disturbing the communication between the other hdmi devices
 
-Therefor, the schematics above proposes to add a small relay that disconnects the GPIO from the cec line
-when the power is switched off. The choice of relay type is not critical, but it is advised to use a
+Therefor, the schematics above shows a small relay that disconnects the GPIO from the cec line
+when the power is switched off. The choice of relay type is not critical, but it should be a
 small-signal and compact relay type such as a TQ2-5V or a G6K-2P-5V.
+
+To protect the GPIO pin when the power is off, alternatively, in stead of a relay, an 'i2c' level-shift
+chip can be used. Although the 3.3 volt level is already fine, an interface chip like a TXS0102 is designed
+to withstand a bus line voltage even when the local power is off, and its `i2c` pull-down behavior is compatible
+with the cec bus protocol.
 
 ### 2: Use a UART for sending messages
 
