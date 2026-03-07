@@ -181,17 +181,30 @@ output_parameters:
 - **max_flow_temp** (**Required**, float): Maximum flow temperature in °C
   to output. Protects system and limits energy use.
 
-- **rate_limit_rising** (*Optional*, float, default: `0.2`): Maximum rate of increase in °C/minute.
-  Protects boiler from thermal shock.
+- **rate_limit_rising** (*Optional*, float, default: `0.2` °C/minute): Maximum rate of flow temperature increase.
+  Critical for preventing thermal shock in cast iron or steel boilers. Condensing boilers can typically handle 0.5-1.0 °C/minute.
 
-- **rate_limit_falling** (*Optional*, float, default: `0.2`): Maximum rate of decrease in °C/minute.
-  Prevents rapid temperature swings.
+- **rate_limit_falling** (*Optional*, float, default: `0.2` °C/minute): Maximum rate of flow temperature decrease.
+  Usually less critical than rising limit. Can often be set higher (0.5-1.0 °C/minute) for faster response to warming weather.
 
 - **action_hysteresis** (*Optional*, float, default: `0.5`): Hysteresis in °C
   above min_flow_temp for HEATING vs IDLE action display.
 
 - **write_deadband** (*Optional*, float, default: `0.05`): Minimum change in °C
   required to write new setpoint to output. Reduces boiler communication frequency.
+
+#### Boiler-Specific Rate Limits
+
+| Boiler Type | Rising | Falling | Notes |
+|-------------|--------|---------|-------|
+| Cast iron (non-modulating) | 0.1-0.2 | 0.2-0.3 | Most sensitive to thermal shock |
+| Steel firetube | 0.2-0.3 | 0.3-0.5 | Moderate sensitivity |
+| Condensing (modulating) | 0.5-1.0 | 1.0-2.0 | Fast response acceptable |
+| Heat pump | 1.0-2.0 | 1.0-2.0 | Limited by compressor modulation rate |
+
+> [!WARNING]
+> Exceeding manufacturer recommendations for rate of temperature change can cause thermal shock,
+> potentially cracking heat exchangers in cast iron boilers or voiding warranties.
 
 <span id="deadband-parameters"></span>
 
