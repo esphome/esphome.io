@@ -16,33 +16,53 @@ PID correction for precise room temperature control.
 
 ## How It Works
 
-The controller calculates the required boiler flow temperature using this formula:
+Think of equitherm like adjusting your coat based on the weather outside:
+
+- **Cold outside** → Boiler sends hotter water
+- **Mild outside** → Boiler sends cooler water
+- **Your job**: Set the target room temperature — the curve handles the rest
+
+### What Each Setting Does
+
+| Setting | Plain English | When to Adjust |
+|---------|---------------|----------------|
+| **heat_curve_coefficient** (hc) | "How aggressively should heating respond to cold weather?" | Room too cold in winter → increase. Room too hot in winter → decrease. |
+| **heat_curve_exponent** (n) | "What type of radiators do you have?" | Set once based on your system (see below). |
+| **heat_curve_shift** | "Move the whole curve up or down" | Room too cold in mild weather → increase. Room too warm in mild weather → decrease. |
+
+### Radiator Exponent (Set Once)
+
+This accounts for how your emitters release heat:
+
+- **Underfloor heating:** 1.0 (heat releases evenly)
+- **Modern panel radiators:** 1.25 (typical default)
+- **Old cast iron radiators:** 1.3 (heat releases more aggressively as water gets hotter)
+
+> [!TIP]
+> If you don't know your radiator type, start with 1.25. Most modern European homes use panel radiators.
+
+### Example Heating Curve
+
+With `hc = 1.2`, `n = 1.25`, `shift = 0`, and target room temperature of 21°C:
+
+| Outdoor Temp | Boiler Flow Temp |
+|-------------|------------------|
+| -10°C (very cold) | 62°C |
+| 0°C (cold) | 50°C |
+| +10°C (mild) | 38°C |
+| +20°C (warm) | 26°C (min) |
+
+The curve automatically adjusts every time the outdoor temperature changes — no manual thermostat fiddling needed.
+
+### The Full Formula
 
 $$T_{flow} = T_{target} + shift + hc \cdot (T_{target} - T_{outdoor})^{1/n}$$
 
-Where:
-- **$hc$** (heat curve coefficient): Dimensionless factor controlling curve steepness
-- **$n$** (radiator exponent): Accounts for non-linear radiator emission characteristics
-  - $n = 1.0$ for underfloor heating (linear)
-  - $n = 1.25$ for modern panel radiators (typical)
-  - $n = 1.3$ for older cast iron radiators
-- **$shift$**: Flat offset in °C for parallel curve adjustment
+You tune it by adjusting `hc` and `shift` based on comfort, not by calculating. The [Equitherm Studio](#companion-tools) tool can help visualize how changes affect the curve.
 
-> [!NOTE]
-> Radiator heat output follows $Q \propto \Delta T^n$. The term $(T_{target} - T_{outdoor})^{1/n}$
-> inversely compensates for this non-linearity to maintain a linear response to outdoor temperature changes.
+### PID Correction
 
-### Example Flow Temperatures
-
-For $T_{target} = 21°C$, $n = 1.25$, $shift = 0$:
-
-| Outdoor Temp | hc = 0.8 | hc = 1.2 | hc = 1.6 |
-|-------------|---------|---------|---------|
-| -10°C       | 52°C    | 62°C    | 71°C    |
-| 0°C         | 42°C    | 50°C    | 58°C    |
-| +10°C       | 32°C    | 38°C    | 44°C    |
-
-The PID controller then adds a correction based on the difference between actual and target room temperature,
+The PID controller adds a correction based on the difference between actual and target room temperature,
 allowing the system to compensate for factors the heating curve cannot predict (solar gain, internal heat sources, etc.).
 
 ## Basic Example
