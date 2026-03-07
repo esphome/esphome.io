@@ -1,0 +1,477 @@
+---
+description: "Instructions for setting up equitherm (weather-compensated) climate controllers with ESPHome."
+title: "Equitherm Climate"
+---
+
+import APIRef from '@components/APIRef.astro';
+
+The `equitherm` climate platform implements a weather-compensated heating controller that calculates the optimal
+flow temperature based on outdoor conditions. It combines a heating curve (equitherm regulation) with optional
+PID correction for precise room temperature control.
+
+> [!NOTE]
+> Equitherm regulation is the standard control method used by commercial boilers and thermostats in Europe.
+> Unlike a simple thermostat that only reacts to room temperature, equitherm proactively adjusts the heating
+> based on outdoor weather, resulting in more stable temperatures and better efficiency.
+
+## How It Works
+
+The controller calculates the required boiler flow temperature using this formula:
+
+```
+t_flow = t_target + shift + hc × (t_target - t_outdoor)^(1/n)
+```
+
+Where:
+- **hc** (heat curve coefficient): Controls how aggressively the system responds to outdoor temperature changes
+- **n** (radiator exponent): Accounts for radiator characteristics (1.0 for underfloor, 1.2-1.33 for panels)
+- **shift**: Flat offset for fine-tuning
+
+The PID controller then adds a correction based on the difference between actual and target room temperature,
+allowing the system to compensate for factors the heating curve cannot predict (solar gain, internal heat sources, etc.).
+
+## Basic Example
+
+```yaml
+climate:
+  - platform: equitherm
+    name: "Central Heating"
+    outdoor_sensor: outdoor_temperature
+    indoor_sensor: room_temperature
+    default_target_temperature: 21°C
+    flow_setpoint: boiler_setpoint
+    control_parameters:
+      heat_curve_coefficient: 1.2
+      heat_curve_exponent: 1.25
+      heat_curve_shift: 0°C
+    output_parameters:
+      min_flow_temp: 25°C
+      max_flow_temp: 70°C
+```
+
+## Configuration variables
+
+### Main Configuration
+
+- **outdoor_sensor** (**Required**, [ID](/guides/configuration-types#id)): The sensor that measures outdoor temperature.
+  This is the primary input for the heating curve calculation.
+
+- **indoor_sensor** (**Required**, [ID](/guides/configuration-types#id)): The sensor that measures room temperature.
+  Used for display and optional PID correction.
+
+- **default_target_temperature** (**Required**, float): The default target room temperature (setpoint)
+  in °C. This can be changed in the frontend later.
+
+- **flow_setpoint** (*Optional*, [ID](/guides/configuration-types#id)): A [number](/components/number/) component
+  that receives the calculated flow temperature in °C. Use this for OpenTherm integration. Exactly one of
+  `flow_setpoint` or `heat_output` must be specified.
+
+- **heat_output** (*Optional*, [ID](/guides/configuration-types#id)): A [float output](/components/output/)
+  that receives a normalized value (0.0-1.0). Use this for PWM or modulating outputs. Exactly one of
+  `flow_setpoint` or `heat_output` must be specified.
+
+- **fallback_outdoor_temp** (*Optional*, float, default: `0`): Temperature in °C
+  to use when the outdoor sensor fails or becomes stale. Choose a value appropriate for your climate (conservative for winter).
+
+- **sensor_stale_timeout** (*Optional*, [Time](/guides/configuration-types#config-time), default: `10min`):
+  How long to wait for sensor updates before treating the sensor as failed and switching to fallback mode.
+
+- **control_parameters** (**Required**): Heating curve and PID parameters. See [Control Parameters](#control-parameters).
+
+- **output_parameters** (**Required**): Output behavior settings. See [Output Parameters](#output-parameters).
+
+- **deadband_parameters** (*Optional*): Deadband configuration for stable operation near target. See [Deadband Parameters](#deadband-parameters).
+
+- All other options from [Climate](/components/climate#config-climate).
+
+<span id="control-parameters"></span>
+
+### Control Parameters
+
+```yaml
+control_parameters:
+  heat_curve_coefficient: 1.2
+  heat_curve_exponent: 1.25
+  heat_curve_shift: 0°C
+  kp: 0.0
+  ki: 0.0
+  kd: 0.0
+  min_integral: -10°C
+  max_integral: 10°C
+```
+
+- **heat_curve_coefficient** (**Required**, float, range: 0.5-5.0): The heat curve coefficient (hc).
+  Higher values = more aggressive heating. Start with 1.0-1.5 for well-insulated buildings.
+
+- **heat_curve_exponent** (**Required**, float, range: 0.5-3.0): The radiator exponent (n).
+  - `1.0` for underfloor heating
+  - `1.2-1.25` for modern panel radiators
+  - `1.3-1.33` for older cast iron radiators
+
+- **heat_curve_shift** (*Optional*, float, default: `0`): Flat offset in °C
+  to shift the entire heating curve up or down.
+
+- **kp** (*Optional*, float, default: `0.0`): Proportional gain for PID correction.
+  Start with small values like 0.5-2.0 if using PID.
+
+- **ki** (*Optional*, float, default: `0.0`): Integral gain for PID correction.
+  Use very small values like 0.001-0.01.
+
+- **kd** (*Optional*, float, default: `0.0`): Derivative gain for PID correction.
+  Often not needed for heating systems.
+
+- **min_integral** (*Optional*, float, default: `-10`): Minimum PID integral term in °C
+  to prevent windup.
+
+- **max_integral** (*Optional*, float, default: `10`): Maximum PID integral term in °C
+  to prevent windup.
+
+<span id="output-parameters"></span>
+
+### Output Parameters
+
+```yaml
+output_parameters:
+  min_flow_temp: 25°C
+  max_flow_temp: 70°C
+  rate_limit_rising: 0.2
+  rate_limit_falling: 0.2
+  action_hysteresis: 0.5°C
+  write_deadband: 0.05°C
+```
+
+- **min_flow_temp** (**Required**, float): Minimum flow temperature in °C
+  to output. Protects boiler and prevents condensation.
+
+- **max_flow_temp** (**Required**, float): Maximum flow temperature in °C
+  to output. Protects system and limits energy use.
+
+- **rate_limit_rising** (*Optional*, float, default: `0.2`): Maximum rate of increase in °C/minute.
+  Protects boiler from thermal shock.
+
+- **rate_limit_falling** (*Optional*, float, default: `0.2`): Maximum rate of decrease in °C/minute.
+  Prevents rapid temperature swings.
+
+- **action_hysteresis** (*Optional*, float, default: `0.5`): Hysteresis in °C
+  above min_flow_temp for HEATING vs IDLE action display.
+
+- **write_deadband** (*Optional*, float, default: `0.05`): Minimum change in °C
+  required to write new setpoint to output. Reduces boiler communication frequency.
+
+<span id="deadband-parameters"></span>
+
+### Deadband Parameters
+
+Deadband reduces PID activity when room temperature is near target, improving stability.
+
+```yaml
+deadband_parameters:
+  threshold_high: 0.5°C
+  threshold_low: -0.5°C
+  kp_multiplier: 0.0
+  ki_multiplier: 0.05
+  kd_multiplier: 0.0
+```
+
+- **threshold_high** (**Required**, float): Upper threshold in °C
+  defining the deadband (relative to target).
+
+- **threshold_low** (**Required**, float): Lower threshold in °C
+  defining the deadband (relative to target). Must be less than threshold_high.
+
+- **kp_multiplier** (*Optional*, float, default: `0.0`): Multiplier for Kp inside deadband.
+
+- **ki_multiplier** (*Optional*, float, default: `0.0`): Multiplier for Ki inside deadband.
+
+- **kd_multiplier** (*Optional*, float, default: `0.0`): Multiplier for Kd inside deadband.
+
+## Complete Example with OpenTherm
+
+```yaml
+# Complete weather-compensated heating control with OpenTherm boiler
+
+opentherm:
+  in_pin: GPIOXX
+  out_pin: GPIOXX
+  ch_enable: true
+  dhw_enable: true
+
+# Flow setpoint output for OpenTherm
+number:
+  - platform: opentherm
+    t_set:
+      id: boiler_setpoint
+      name: "Boiler Setpoint"
+      min_value: 20
+      max_value: 70
+
+# Temperature sensors
+sensor:
+  - platform: homeassistant
+    id: outdoor_temperature
+    entity_id: sensor.outdoor_temperature
+    filters:
+      - heartbeat: 30s
+
+  - platform: homeassistant
+    id: room_temperature
+    entity_id: sensor.room_temperature
+    filters:
+      - heartbeat: 10s
+
+# Main climate controller
+climate:
+  - platform: equitherm
+    name: "Central Heating"
+    id: heating
+    outdoor_sensor: outdoor_temperature
+    indoor_sensor: room_temperature
+    default_target_temperature: 21°C
+    flow_setpoint: boiler_setpoint
+    control_parameters:
+      heat_curve_coefficient: 1.2
+      heat_curve_exponent: 1.25
+      heat_curve_shift: 0°C
+      kp: 1.5
+      ki: 0.005
+      kd: 0.0
+    output_parameters:
+      min_flow_temp: 28°C
+      max_flow_temp: 55°C
+      rate_limit_rising: 0.5
+      rate_limit_falling: 1.0
+```
+
+## Runtime Tuning with Numbers
+
+For runtime adjustment of heating parameters, use the `equitherm.number` platform:
+
+```yaml
+number:
+  - platform: equitherm
+    climate_id: heating
+    heat_curve_coefficient:
+      name: "Heat Curve Coefficient"
+    heat_curve_exponent:
+      name: "Heat Curve Exponent"
+    heat_curve_shift:
+      name: "Heat Curve Shift"
+    pid_proportional_gain:
+      name: "PID Kp"
+    pid_integral_gain:
+      name: "PID Ki"
+    pid_derivative_gain:
+      name: "PID Kd"
+    fallback_outdoor_temp:
+      name: "Fallback Outdoor Temp"
+    rate_limit_rising:
+      name: "Rate Limit Rising"
+    rate_limit_falling:
+      name: "Rate Limit Falling"
+```
+
+Configuration variables:
+
+- **climate_id** (**Required**, [ID](/guides/configuration-types#id)): ID of the equitherm climate component.
+
+- **heat_curve_coefficient** (*Optional*): Runtime-adjustable heat curve coefficient (0.5-5.0, step 0.05).
+
+- **heat_curve_exponent** (*Optional*): Runtime-adjustable radiator exponent (0.5-3.0, step 0.05).
+
+- **heat_curve_shift** (*Optional*): Runtime-adjustable curve shift (-20°C to +20°C, step 0.5°C).
+
+- **pid_proportional_gain** (*Optional*): Runtime-adjustable Kp (0-20, step 0.01).
+
+- **pid_integral_gain** (*Optional*): Runtime-adjustable Ki (0-10, step 0.0001).
+
+- **pid_derivative_gain** (*Optional*): Runtime-adjustable Kd (0-10, step 0.01).
+
+- **fallback_outdoor_temp** (*Optional*): Runtime-adjustable fallback temperature (-40°C to +30°C).
+
+- **rate_limit_rising** (*Optional*): Runtime-adjustable rising rate limit (0-2°C/min).
+
+- **rate_limit_falling** (*Optional*): Runtime-adjustable falling rate limit (0-2°C/min).
+
+All numbers support these additional options:
+
+- **min_value** (*Optional*, float): Override default minimum.
+- **max_value** (*Optional*, float): Override default maximum.
+- **step** (*Optional*, float): Override default step size.
+- **restore_value** (*Optional*, boolean, default: `true`): Restore value on reboot.
+
+## Diagnostic Sensors
+
+### Sensor Platform
+
+```yaml
+sensor:
+  - platform: equitherm
+    climate_id: heating
+    type: curve_output_raw
+    name: "Raw Curve Output"
+  - platform: equitherm
+    climate_id: heating
+    type: base_curve_output
+    name: "Base Curve Output"
+  - platform: equitherm
+    climate_id: heating
+    type: final_flow_setpoint
+    name: "Final Flow Setpoint"
+  - platform: equitherm
+    climate_id: heating
+    type: last_written_setpoint
+    name: "Last Written Setpoint"
+  - platform: equitherm
+    climate_id: heating
+    type: pid_correction
+    name: "PID Correction"
+  - platform: equitherm
+    climate_id: heating
+    type: proportional_term
+    name: "PID Proportional"
+  - platform: equitherm
+    climate_id: heating
+    type: integral_term
+    name: "PID Integral"
+  - platform: equitherm
+    climate_id: heating
+    type: derivative_term
+    name: "PID Derivative"
+  - platform: equitherm
+    climate_id: heating
+    type: fallback_duration
+    name: "Fallback Duration"
+```
+
+Configuration variables:
+
+- **climate_id** (**Required**, [ID](/guides/configuration-types#id)): ID of the equitherm climate component.
+
+- **type** (**Required**, string): The value to monitor. One of:
+  - `curve_output_raw` - Heating curve output before rate limiting and PID.
+  - `base_curve_output` - Curve output after PID, before rate limiting.
+  - `final_flow_setpoint` - Final setpoint after rate limiting (what gets written).
+  - `last_written_setpoint` - Last value actually sent to the boiler.
+  - `pid_correction` - Current PID correction being applied.
+  - `proportional_term` - PID proportional term.
+  - `integral_term` - PID integral term.
+  - `derivative_term` - PID derivative term.
+  - `fallback_duration` - How long the system has been in fallback mode (seconds).
+
+### Binary Sensor Platform
+
+```yaml
+binary_sensor:
+  - platform: equitherm
+    climate_id: heating
+    outdoor_fallback_active:
+      name: "Outdoor Sensor Fallback"
+    indoor_fallback_active:
+      name: "Indoor Sensor Fallback"
+    rate_limiting_active:
+      name: "Rate Limiting Active"
+```
+
+Configuration variables:
+
+- **climate_id** (**Required**, [ID](/guides/configuration-types#id)): ID of the equitherm climate component.
+
+- **outdoor_fallback_active** (*Optional*): `ON` when outdoor sensor has failed and fallback temperature is being used.
+
+- **indoor_fallback_active** (*Optional*): `ON` when indoor sensor has failed (PID disabled, pure equitherm mode).
+
+- **rate_limiting_active** (*Optional*): `ON` when output is being limited by rate limiting.
+
+### Text Sensor Platform
+
+```yaml
+text_sensor:
+  - platform: equitherm
+    climate_id: heating
+    control_mode:
+      name: "Control Mode"
+```
+
+Configuration variables:
+
+- **climate_id** (**Required**, [ID](/guides/configuration-types#id)): ID of the equitherm climate component.
+
+- **control_mode** (*Optional*): Text sensor showing current control mode:
+  - `Normal` - Both sensors working, full equitherm + PID control
+  - `Outdoor Fallback` - Outdoor sensor failed, using fallback temperature
+  - `Indoor Fallback` - Indoor sensor failed, PID disabled (pure equitherm)
+  - `Full Fallback` - Both sensors failed
+
+## Actions
+
+### `climate.equitherm.force_recalculate` Action
+
+Force an immediate recalculation of the flow setpoint, bypassing rate limiting. Useful after changing
+parameters via number components.
+
+```yaml
+on_...:
+  - climate.equitherm.force_recalculate: heating
+  # or with option to skip PID update:
+  - climate.equitherm.force_recalculate:
+      id: heating
+      update_pid: false
+```
+
+Configuration variables:
+
+- **id** (**Required**, [ID](/guides/configuration-types#id)): ID of the equitherm climate component.
+- **update_pid** (*Optional*, boolean, default: `true`): Whether to update the PID calculation.
+
+## Sensor Failure Handling
+
+The component handles sensor failures gracefully:
+
+1. **Outdoor sensor fails**: Uses `fallback_outdoor_temp` to continue heating. The system logs a warning
+   and the `outdoor_fallback_active` binary sensor turns on.
+
+2. **Indoor sensor fails**: Switches to pure equitherm mode (PID disabled). The heating curve alone
+   determines flow temperature. The `indoor_fallback_active` binary sensor turns on.
+
+3. **Both sensors fail**: Uses fallback outdoor temp and disables PID. Maximum fallback mode.
+
+4. **Sensor recovers**: Automatically returns to normal operation and resets rate limiting state.
+
+## Tuning Guide
+
+### Step 1: Disable PID
+
+Start with all PID gains at 0 to tune the heating curve first:
+
+```yaml
+control_parameters:
+  heat_curve_coefficient: 1.0
+  heat_curve_exponent: 1.25
+  kp: 0.0
+  ki: 0.0
+  kd: 0.0
+```
+
+### Step 2: Tune the Heating Curve
+
+Monitor room temperature over several days. Adjust:
+
+- **Room too cold in cold weather**: Increase `heat_curve_coefficient`
+- **Room too warm in cold weather**: Decrease `heat_curve_coefficient`
+- **Room too cold in mild weather**: Increase `heat_curve_shift`
+- **Room too warm in mild weather**: Decrease `heat_curve_shift`
+
+### Step 3: Add PID Correction (Optional)
+
+If the heating curve alone cannot maintain stable temperature:
+
+1. Start with small `kp` (0.5-1.5)
+2. Add tiny `ki` (0.001-0.01) if there's persistent offset
+3. `kd` is rarely needed for heating systems
+
+## See Also
+
+- [OpenTherm Component](/components/opentherm/)
+- [PID Climate](/components/climate/pid/)
+- [Climate Component](/components/climate/)
+- <APIRef text="equitherm.h" path="equitherm/equitherm.h" />
