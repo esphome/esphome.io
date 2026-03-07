@@ -1,0 +1,102 @@
+---
+title: "DLMS Push"
+description: "Instructions for setting up unencrypted DLMS (COSEM) PUSH smart meter integration using an RS485 to UART adapter."
+---
+
+import APIClass from '@components/APIClass.astro';
+import APIRef from '@components/APIRef.astro';
+import { Image } from 'astro:assets';
+
+The `dlms_push` component connects to smart meters which use the unencrypted **DLMS/COSEM** protocol over an RS485 interface. These smart meters are configured for PUSH communication, which means they send data without the need for polling. They are (for example) widely deployed by ČEZ Distribuce in Czechia (e.g., Sagemcom XT211).
+
+**An RS485 to TTL UART adapter is required.**
+
+This component is passive; it does not transmit data to the meter. The meter periodically broadcasts frames (often about every 60 seconds). ESPHome listens, parses the unencrypted payload, and updates the configured sensors as data arrives.
+
+<Image src="/images/dlms_push.png" alt="RelayBox HAN port RJ11 with RS485 converter to ESP32c3" width={400} height={400} />
+
+## Example Configuration
+
+```yaml
+uart:
+  id: bus_1
+  rx_pin:
+    number: GPIO21
+    mode:
+      input: true
+      pullup: true
+  tx_pin: GPIO20
+  baud_rate: 9600
+  data_bits: 8
+  parity: NONE
+  stop_bits: 1
+
+dlms_push:
+  id: my_dlms_meter
+  uart_id: bus_1
+  show_log: false
+  receive_timeout: 50ms
+
+sensor:
+  - platform: dlms_push
+    id: active_energy_consumed
+    name: "Energy"
+    obis_code: 1.0.1.8.0.255
+    unit_of_measurement: kWh
+    accuracy_decimals: 3
+    device_class: energy
+    state_class: total_increasing
+    filters:
+      # The meter often sends energy values in Wh, so we divide by 1000 to get kWh
+      - lambda: "return x/1000.0;"
+
+binary_sensor:
+  - platform: dlms_push
+    name: "Relay 1"
+    obis_code: 0.1.96.3.10.255
+
+text_sensor:
+  - platform: dlms_push
+    name: "Serial number"
+    obis_code: 0.0.96.1.1.255
+    entity_category: diagnostic
+```
+
+## Configuration Variables
+
+- **id** (*Optional*, ID): Manually specify the ID for this component.
+- **uart_id** (*Optional*, ID): The ID of the UART bus to use.
+- **show_log** (*Optional*, boolean): Whether to show the log of the DLMS/COSEM communication. This is useful for debugging and first setup to discover the available OBIS codes of your meter. Defaults to `false`.
+- **receive_timeout** (*Optional*, Time): The timeout for receiving data from the meter. If the meter does not send any data within this time, the communication is considered finished and will be processed. Defaults to `50ms`.
+- **custom_pattern** (*Optional*, string): Custom COSEM object pattern DSL.
+
+## Platforms
+
+To use the sensors, you must map the reported values using their respective **OBIS codes**.
+
+### Sensor
+
+The `sensor` platform is used for numeric measurements (e.g., Watts, Watt-hours).
+
+- **obis_code** (**Required**, string): The OBIS code of the data point, formatted as `A.B.C.D.E.F` (e.g., `1.0.1.8.0.255`).
+- All other options from [Sensor](/components/sensor).
+
+### Binary Sensor
+
+The binary sensor evaluates to `false` when the underlying value is 0, and `true` when the value is anything else.
+
+- **obis_code** (**Required**, string): The OBIS code of the data point.
+- All other options from [Binary Sensor](/components/binary_sensor).
+
+### Text Sensor
+
+The text sensor is used to display string values sent by the meter, such as serial numbers.
+
+- **obis_code** (**Required**, string): The OBIS code of the data point.
+- All other options from [Text Sensor](/components/text_sensor).
+
+## See Also
+
+- [UART Bus](/components/uart)
+- <APIClass text="DlmsPushComponent" path="dlms_push::DlmsPushComponent" />
+- <APIRef text="dlms_push.h" path="dlms_push/dlms_push.h" />
