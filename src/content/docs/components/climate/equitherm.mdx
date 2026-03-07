@@ -18,14 +18,29 @@ PID correction for precise room temperature control.
 
 The controller calculates the required boiler flow temperature using this formula:
 
-```
-t_flow = t_target + shift + hc × (t_target - t_outdoor)^(1/n)
-```
+$$T_{flow} = T_{target} + shift + hc \cdot (T_{target} - T_{outdoor})^{1/n}$$
 
 Where:
-- **hc** (heat curve coefficient): Controls how aggressively the system responds to outdoor temperature changes
-- **n** (radiator exponent): Accounts for radiator characteristics (1.0 for underfloor, 1.2-1.33 for panels)
-- **shift**: Flat offset for fine-tuning
+- **$hc$** (heat curve coefficient): Dimensionless factor controlling curve steepness
+- **$n$** (radiator exponent): Accounts for non-linear radiator emission characteristics
+  - $n = 1.0$ for underfloor heating (linear)
+  - $n = 1.25$ for modern panel radiators (typical)
+  - $n = 1.3$ for older cast iron radiators
+- **$shift$**: Flat offset in °C for parallel curve adjustment
+
+> [!NOTE]
+> Radiator heat output follows $Q \propto \Delta T^n$. The term $(T_{target} - T_{outdoor})^{1/n}$
+> inversely compensates for this non-linearity to maintain a linear response to outdoor temperature changes.
+
+### Example Flow Temperatures
+
+For $T_{target} = 21°C$, $n = 1.25$, $shift = 0$:
+
+| Outdoor Temp | hc = 0.8 | hc = 1.2 | hc = 1.6 |
+|-------------|---------|---------|---------|
+| -10°C       | 52°C    | 62°C    | 71°C    |
+| 0°C         | 42°C    | 50°C    | 58°C    |
+| +10°C       | 32°C    | 38°C    | 44°C    |
 
 The PID controller then adds a correction based on the difference between actual and target room temperature,
 allowing the system to compensate for factors the heating curve cannot predict (solar gain, internal heat sources, etc.).
