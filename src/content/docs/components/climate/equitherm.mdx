@@ -197,7 +197,7 @@ output_parameters:
 
 ### Deadband Parameters
 
-Deadband reduces PID activity when room temperature is near target, improving stability.
+Deadband reduces PID activity when room temperature is within `threshold_low` to `threshold_high` of the target.
 
 ```yaml
 deadband_parameters:
@@ -219,6 +219,50 @@ deadband_parameters:
 - **ki_multiplier** (*Optional*, float, default: `0.0`): Multiplier for Ki inside deadband.
 
 - **kd_multiplier** (*Optional*, float, default: `0.0`): Multiplier for Kd inside deadband.
+
+#### Deadband Strategies
+
+**Strategy 1: Zero Multipliers (Recommended for initial setup)**
+
+```yaml
+deadband_parameters:
+  threshold_high: 0.5°C
+  threshold_low: -0.5°C
+  kp_multiplier: 0.0
+  ki_multiplier: 0.0
+  kd_multiplier: 0.0
+```
+
+Complete PID suppression inside deadband. Use when room temperature is generally stable and small offsets within ±0.5°C are acceptable. Trade-off: System may "stick" slightly above or below target.
+
+**Strategy 2: Reduced Integral Only**
+
+```yaml
+deadband_parameters:
+  threshold_high: 0.5°C
+  threshold_low: -0.5°C
+  kp_multiplier: 0.0
+  ki_multiplier: 0.05  # 5% of normal Ki
+  kd_multiplier: 0.0
+```
+
+Allows slow drift toward target without aggressive correction. Use when you want the system to eventually reach exact setpoint but without constant small adjustments. This is the recommended approach for most installations.
+
+**Strategy 3: Full PID with Narrow Deadband**
+
+```yaml
+deadband_parameters:
+  threshold_high: 0.2°C
+  threshold_low: -0.2°C
+  kp_multiplier: 0.3  # 30% of normal Kp
+  ki_multiplier: 0.1  # 10% of normal Ki
+  kd_multiplier: 0.0
+```
+
+Gentle correction continues inside deadband. Use when precise temperature maintenance is critical. Trade-off: More boiler communication and slightly higher wear.
+
+> [!TIP]
+> Start with Strategy 1 (zero multipliers). If you notice the room temperature consistently settling 0.3-0.5°C off target, switch to Strategy 2.
 
 ## Complete Example with OpenTherm
 
