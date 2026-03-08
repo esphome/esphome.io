@@ -58,7 +58,7 @@ esphome upload nrf52_device.yaml --device 00:11:22:33:44:55
 To connect and update the device over serial:
 
 ```bash
-esphome upload h.yaml
+esphome upload nrf52_device.yaml
 ```
 
 Or connect to a specific serial:
