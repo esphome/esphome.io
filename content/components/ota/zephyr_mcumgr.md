@@ -46,7 +46,7 @@ ota:
 To connect and update the device over BLE:
 
 ```bash
-esphome upload h.yaml --device BLE
+esphome upload nrf52_device.yaml --device BLE
 ```
 
 Or connect to a specific BLE address:
