@@ -53,8 +53,10 @@ speaker:
   - `pcm`
   - `pcm_short`
   - `pcm_long`
+
 - **buffer_duration** (*Optional*, [Time](/guides/configuration-types#time)): The duration of the internal ring buffer. Larger values can reduce stuttering but uses more memory. Defaults to `500ms`.
-- **timeout** (*Optional*, [Time](/guides/configuration-types#time)): How long to wait after finishing playback before releasing the bus. Set to `never` to never stop the speaker due to a timeout. Defaults to `500ms`.
+- **timeout** (*Optional*, [Time](/guides/configuration-types#time)): How long to wait after finishing playback before releasing the bus. Set to `never` to never stop the speaker due to a timeout. Defaults to `500ms`. **Note:** With `spdif_mode: true` (see below), buffer underflows are filled with silence frames until the specified interval elapses; this maintains the SPDIF signal to prevent the receiver from detecting a loss of signal/source change, which may otherwise lengthen gaps of silence.
+- **spdif_mode** (*Optional*, boolean): Enable SPDIF (Sony/Philips Digital Interface Format) mode for digital audio output. When enabled, the speaker outputs a SPDIF-encoded bitstream suitable for optical (TOSLINK) or coaxial digital audio transmission. Defaults to `false`.
 - All other options from [Speaker Component](/components/speaker#config-speaker).
 
 ### External DAC
@@ -73,6 +75,50 @@ For best results, keep the wires as short as possible.
   - `left`
   - `right`
   - `stereo`
+
+## SPDIF Mode
+
+SPDIF (Sony/Philips Digital Interface Format) mode enables digital audio transmission over optical (TOSLINK) or coaxial connections. This mode encodes PCM audio data into a SPDIF bitstream that can be received by soundbars, A/V receivers, DACs, and other digital audio equipment.
+
+### Hardware Setup
+
+For optical SPDIF transmission, you can use:
+
+- **Simple LED**: Any LED (even a debug LED on your dev board) can transmit SPDIF audio. Place an optical cable near the LED.
+- **TOSLINK Transmitter Module**: Dedicated optical transmitter modules provide a proper TOSLINK connector for reliable connections.
+
+The transmitter is connected to the `i2s_dout_pin` (the same pin used for standard I²S data output).
+
+### SPDIF Mode Constraints
+
+When `spdif_mode` is enabled, the following constraints apply:
+
+- **Sample Rate**: Only `44100` Hz (CD quality) or `48000` Hz (DVD/DAT quality) are supported
+- **Channels**: Must be set to `stereo` (2 channels)
+- **Bits per Sample**: Must be set to `16bit`
+- **I²S Driver**: Only works with the legacy I²S driver
+- **I²S Mode**: Typically used in `primary` mode
+
+### Example SPDIF Configuration
+
+```yaml
+# Example SPDIF speaker configuration
+i2s_audio:
+  - id: i2s_output
+
+speaker:
+  - platform: i2s_audio
+    id: spdif_speaker
+    dac_type: external
+    i2s_audio_id: i2s_output
+    i2s_dout_pin: GPIOXX
+    spdif_mode: true
+    fill_silence: true
+    sample_rate: 48000
+    bits_per_sample: 16bit
+    channel: stereo
+    timeout: never
+```
 
 ## See Also
 
