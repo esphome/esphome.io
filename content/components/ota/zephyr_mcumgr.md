@@ -64,7 +64,7 @@ esphome upload nrf52_device.yaml
 Or connect to a specific serial:
 
 ```bash
-esphome upload h.yaml --device /dev/ttyACM0
+esphome upload nrf52_device.yaml --device /dev/ttyACM0
 ```
 
 ## See Also
