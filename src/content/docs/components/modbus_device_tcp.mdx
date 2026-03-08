@@ -1,0 +1,155 @@
+---
+title: "Modbus Device TCP"
+description: "ESP32 as a Modbus TCP device using Espressif esp-modbus on ESP-IDF."
+---
+
+This component turns an **ESP32** into a **Modbus TCP device** (responder) using [Espressif esp-modbus](https://github.com/espressif/esp-modbus) on the **ESP-IDF** framework. It exposes coils, discrete inputs, input registers, and holding registers that you fill from sensors, GPIO, or lambdas.
+
+**Tested on:** Ubuntu 24 with ESPHome 2026.1.5
+
+## Requirements
+
+- **ESP32** (tested with NodeMCU-32S)
+- **ESP-IDF** framework: set `framework: type: esp-idf` in your YAML
+- **WiFi** (TCP needs network; the component starts the device after WiFi is connected)
+
+## Configuration
+
+```yaml
+# Example configuration entry
+esp32:
+  board: nodemcu-32s
+  framework:
+    type: esp-idf
+
+modbus_device_tcp:
+  id: modbus_server
+  port: 1502        # optional; default 1502
+  unit_id: 1         # optional; default 1 (0–247)
+  num_objects: 5     # optional; default 5; range 1–128
+```
+
+## Configuration variables
+
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
+- **port** (*Optional*, int): TCP port the device listens on. Defaults to `1502`.
+- **unit_id** (*Optional*, int): Modbus unit address (0–247). Defaults to `1`.
+- **num_objects** (*Optional*, int): Size of each map (coils, discrete inputs, input registers, holding registers). Each map has `num_objects` elements (indices 0..num_objects-1). Defaults to `5`. Range 1–128.
+
+You can set `port` and `unit_id` in your YAML; those values are used at runtime. The component injects esp-modbus, include paths, and the pre-build script—no need to add `platformio_options` or build flags in your app YAML.
+
+## Usage
+
+From **interval**, **automation**, or **lambda**, call the component by `id` to push values into the Modbus maps:
+
+| Method | Description |
+|--------|-------------|
+| `id(modbus_server).set_coil(index, value)` | Set coil at `index` (0..num_objects-1). `value`: `true`/`false`. |
+| `id(modbus_server).set_discrete_input(index, value)` | Set discrete input at `index`. Read-only for the controller. |
+| `id(modbus_server).set_input_register(index, value)` | Set input register at `index` (16-bit). Read-only for the controller. |
+| `id(modbus_server).set_holding_register(index, value)` | Set holding register at `index` (16-bit). Read/write for the controller. |
+
+Example: drive coils from a GPIO and fill holding/input registers from sensors:
+
+```yaml
+modbus_device_tcp:
+  id: modbus_server
+  num_objects: 8
+
+interval:
+  - interval: 1s
+    then:
+      - lambda: |-
+          id(modbus_server).set_coil(0, id(some_binary_sensor).state);
+          id(modbus_server).set_holding_register(0, (uint16_t)id(some_sensor).state);
+          id(modbus_server).set_input_register(0, (uint16_t)id(uptime_sensor).state);
+```
+
+## Full example
+
+Complete configuration with a GPIO binary sensor, internal/WiFi/uptime sensors, and a 1s interval filling all four Modbus maps:
+
+```yaml
+esphome:
+  name: mbsl1
+
+esp32:
+  board: nodemcu-32s
+  framework:
+    type: esp-idf
+
+modbus_device_tcp:
+  id: modbus_server
+  port: 503
+  unit_id: 1
+  num_objects: 5
+
+binary_sensor:
+  - platform: gpio
+    pin:
+      number: GPIO4
+      inverted: true
+      mode:
+        input: true
+        pullup: true
+    id: coil1_source
+    name: "Coil 1 from GPIO"
+
+sensor:
+  - platform: internal_temperature
+    id: esp_temp
+    name: "ESP internal temp"
+    update_interval: 10s
+    accuracy_decimals: 1
+  - platform: wifi_signal
+    id: wifi_rssi
+    name: "WiFi RSSI"
+    update_interval: 10s
+  - platform: uptime
+    id: uptime_sec
+    name: "Uptime"
+    update_interval: 1s
+
+interval:
+  - interval: 1s
+    then:
+      - lambda: |-
+          id(modbus_server).set_coil(0, true);
+          id(modbus_server).set_coil(1, id(coil1_source).state);
+          id(modbus_server).set_holding_register(0, (uint16_t)id(esp_temp).state);
+          id(modbus_server).set_holding_register(1, (uint16_t)(rand() % 101));
+          float rssi = id(wifi_rssi).state;
+          float pct = (rssi + 100.0f) * 100.0f / 70.0f;
+          if (pct < 0.0f) pct = 0.0f;
+          if (pct > 100.0f) pct = 100.0f;
+          id(modbus_server).set_holding_register(2, (uint16_t)pct);
+          id(modbus_server).set_input_register(0, (uint16_t)id(uptime_sec).state);
+          id(modbus_server).set_input_register(1, 88);
+          id(modbus_server).set_discrete_input(0, true);
+          id(modbus_server).set_discrete_input(1, false);
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+logger:
+  level: DEBUG
+```
+
+Use a `secrets.yaml` with `wifi_ssid` and `wifi_password` in the same directory.
+
+## Optional: request/response logging
+
+The component uses a pre-build script that can patch esp-modbus to log each Modbus request and response (function code, address, count, length) at INFO level. By default this is **off**. To enable it, edit the component source (e.g. in your external component or custom component):
+
+- **File:** `components/modbus_device_tcp/filter_esp_modbus.py`
+- **Variable:** `ENABLE_MODBUS_REQUEST_RESPONSE_LOGGING = True`
+
+Then run a normal compile. Set back to `False` and recompile to turn logging off again.
+
+## See Also
+
+- [Modbus](/components/modbus/) (RTU client/server)
+- [Modbus Controller](/components/modbus_controller/)
+- [External Components](/components/external_components/)
+- [Espressif esp-modbus](https://github.com/espressif/esp-modbus)
