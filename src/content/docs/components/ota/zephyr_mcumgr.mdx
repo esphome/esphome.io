@@ -1,17 +1,18 @@
 ---
 description: "Instructions for setting up ESPHome's nRF52 platform to allow remote firmware updates of devices."
-title: "ESPHome nRF52 Firmware Updates"
-params:
-  seo:
-    description: Instructions for setting up ESPHome's nRF52 platform to allow remote firmware updates of devices.
-    image: system-update.svg
+title: "nRF52 Firmware Updates"
 ---
+import APIRef from '@components/APIRef.astro';
 
 The nRF52 platform supports firmware updates via Over-the-Air (OTA) mechanisms. The **only supported bootloader** for OTA updates is **MCUboot**.
 
 To flash firmware onto the device, you can use any of the tools or libraries listed in the [Zephyr MCUmgr documentation](https://docs.zephyrproject.org/latest/services/device_mgmt/mcumgr.html#tools-libraries).
 Firmware updates are also available via the ESPHome command-line interface.
 For flashing over **BLE**, the [MCUmgr Web Tool](https://boogie.github.io/mcumgr-web/) provides a convenient browser-based interface.
+
+In addition to OTA updates, ESPHome also supports a "safe mode" to help with recovery if/when updates don't work as
+expected. This is automatically enabled by this component, but it may be disabled if desired. See
+[Safe Mode](/components/safe_mode/) for details.
 
 ```yaml
 # Example configuration entry
@@ -69,5 +70,8 @@ esphome upload nrf52_device.yaml --device /dev/ttyACM0
 
 ## See Also
 
-- {{< apiref "ota/ota_component.h" "ota/ota_component.h" >}}
-- {{< docref "/components/ota" >}}
+- [Over-the-Air Updates](/components/ota/)
+- [ESPHome OTA Updates](/components/ota/esphome/)
+- [Safe Mode](/components/safe_mode/)
+- <APIRef text="ota_component.h" path="ota/ota_component.h" />
+- [Building and using MCUboot with Zephyr](https://docs.nordicsemi.com/bundle/ncs-latest/page/mcuboot/readme-zephyr.html)
