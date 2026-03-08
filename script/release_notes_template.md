@@ -1,15 +1,18 @@
 ---
 description: "Changelog for ESPHome {VERSION}."
 title: "ESPHome {VERSION} - {DATE}"
-params:
-  seo:
-    description: Changelog for ESPHome {VERSION}.
-    image: /changelog/images/changelog-{VERSION}.png
+pagefind: false
+slug: "{VERSION}"
 ---
 
+<!-- NOTE: When creating a new changelog, save this as a .mdx file -->
+
+import ImgTable from '@components/ImgTable.astro';
+
 <!-- MANUAL: Add featured components here -->
-{{< imgtable >}}
-{{< /imgtable >}}
+<ImgTable items={[
+  // ["Component Name", "/components/path/", "image.png"],
+]} />
 
 ## Release Overview
 
@@ -26,6 +29,16 @@ params:
 -->
 <!-- RELEASE_OVERVIEW_END -->
 
+## Upgrade Checklist
+
+<!-- UPGRADE_CHECKLIST_START -->
+<!--
+  AI-generated checklist of actionable items for users upgrading to this version.
+  Generated from breaking changes and undocumented API changes.
+  Each item starts with "If you..." and gives a concise action.
+-->
+<!-- UPGRADE_CHECKLIST_END -->
+
 <!-- FEATURE_HIGHLIGHTS_START -->
 <!--
   FEATURE HIGHLIGHT SECTIONS
@@ -41,7 +54,7 @@ params:
   - Select 3-5 most important features/changes
   - Group related PRs into cohesive narratives
   - Include specific numbers (RAM savings, performance improvements)
-  - Use {{< docref >}} for component links
+  - Use [Component Name](/components/path/) for component links
   - Professional but enthusiastic tone
   - Order by importance (most impactful first)
 -->
@@ -67,6 +80,25 @@ params:
   - Use code blocks for YAML examples
 -->
 <!-- BREAKING_CHANGES_USERS_END -->
+
+### Undocumented API Changes
+
+<!-- UNDOCUMENTED_API_CHANGES_START -->
+<!--
+  UNDOCUMENTED API CHANGES
+
+  For C++ API changes that don't affect YAML configurations but may affect
+  users with custom lambdas or external component developers. These are
+  changes to internal APIs that aren't covered by the breaking change policy
+  but are worth noting for advanced users.
+
+  Guidelines:
+  - Group related changes together
+  - Include before/after code examples where helpful
+  - Link to relevant PRs
+  - Explain who is affected (lambda users, external component developers)
+-->
+<!-- UNDOCUMENTED_API_CHANGES_END -->
 
 ### Breaking Changes for Developers
 
@@ -111,6 +143,12 @@ params:
 <!-- This section is automatically generated from PR labels -->
 <!-- AUTO_GENERATED_BREAKING_CHANGES_LIST_END -->
 
+### Undocumented API Changes
+
+<!-- AUTO_GENERATED_UNDOCUMENTED_API_CHANGES_LIST_START -->
+<!-- This section is automatically generated from PR labels -->
+<!-- AUTO_GENERATED_UNDOCUMENTED_API_CHANGES_LIST_END -->
+
 ### All changes
 
 <details>
@@ -123,7 +161,3 @@ params:
 </details>
 
 <!-- markdownlint-enable MD013 -->
-
-## All Changelogs
-
-{{< changelogs >}}
