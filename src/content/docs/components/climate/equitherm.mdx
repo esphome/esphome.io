@@ -566,10 +566,10 @@ Configuration variables:
 binary_sensor:
   - platform: equitherm
     climate_id: heating
-    outdoor_fallback_active:
-      name: "Outdoor Sensor Fallback"
-    indoor_fallback_active:
-      name: "Indoor Sensor Fallback"
+    outdoor_sensor_fault:
+      name: "Outdoor Sensor Fault"
+    indoor_sensor_fault:
+      name: "Indoor Sensor Fault"
     rate_limiting_active:
       name: "Rate Limiting Active"
 ```
@@ -579,9 +579,9 @@ Configuration variables:
 - **climate_id** (**Required**, [ID](/guides/configuration-types#id)): ID of the equitherm climate component.
   If only one equitherm climate is configured, this is automatically resolved.
 
-- **outdoor_fallback_active** (*Optional*): `ON` when outdoor sensor has failed and fallback temperature is being used.
+- **outdoor_sensor_fault** (*Optional*): `ON` when outdoor sensor has failed and fallback temperature is being used.
 
-- **indoor_fallback_active** (*Optional*): `ON` when indoor sensor has failed (PID disabled, pure equitherm mode).
+- **indoor_sensor_fault** (*Optional*): `ON` when indoor sensor has failed (PID disabled, pure equitherm mode).
 
 - **rate_limiting_active** (*Optional*): `ON` when output is being limited by rate limiting.
 
@@ -655,10 +655,10 @@ Configuration variables:
 The component handles sensor failures gracefully:
 
 1. **Outdoor sensor fails**: Uses `fallback_outdoor_temp` to continue heating. The system logs a warning
-   and the `outdoor_fallback_active` binary sensor turns on.
+   and the `outdoor_sensor_fault` binary sensor turns on.
 
 2. **Indoor sensor fails**: Switches to pure equitherm mode (PID disabled). The heating curve alone
-   determines flow temperature. The `indoor_fallback_active` binary sensor turns on.
+   determines flow temperature. The `indoor_sensor_fault` binary sensor turns on.
 
 3. **Both sensors fail**: Uses fallback outdoor temp and disables PID. Maximum fallback mode.
 
