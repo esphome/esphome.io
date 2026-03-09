@@ -111,8 +111,11 @@ logger:
 The most important function for a thermostat is to set the boiler temperature setpoint. This component has three ways
 to provide this input: using a Home Assistant sensor from which the setpoint can be read, using a
 [Number](/components/number/), or defining an output to which other components can write. For most users, the last
-option is the most useful one, as it can be combined with the [Pid](/components/climate/pid/) component to create a
-thermostat that works as you would expect a thermostat to work. See [Basic PID thermostat](#thermostat-pid-basic) for an example.
+option is the most useful one, as it can be combined with climate components:
+
+- [Pid Climate](/components/climate/pid/) — reactive control based on room temperature error
+- [Equitherm Climate](/components/climate/equitherm/) — weather-compensated control that proactively adjusts
+  flow temperature based on outdoor conditions (often better for hydronic heating systems)
 
 ### Numerical values
 
@@ -478,6 +481,76 @@ climate:
       ki: 0.004
 ```
 
+<span id="thermostat-equitherm-basic"></span>
+
+### Weather-compensated thermostat (Equitherm)
+
+```yaml
+# A weather-compensated thermostat using the Equitherm climate component.
+# Instead of reacting to room temperature like PID, equitherm proactively
+# calculates the optimal flow temperature based on outdoor conditions.
+# This is how most commercial European boilers work natively.
+
+# Ideal for hydronic heating systems with radiators or underfloor heating.
+
+opentherm:
+  in_pin: GPIOXX
+  out_pin: GPIOXX
+  dhw_enable: true
+
+output:
+  - platform: opentherm
+    t_set:
+      id: t_set
+      min_value: 25    # Minimum flow temperature
+      max_value: 70    # Maximum flow temperature
+      zero_means_zero: true
+
+sensor:
+  - platform: opentherm
+    t_outside:              # Use this if your boiler has its own outdoor sensor
+      id: outdoor_temp
+      name: "Outdoor temperature"
+    t_boiler:
+      name: "Boiler water temperature"
+
+  # Alternative: use your own outdoor sensor via Home Assistant
+  # - platform: homeassistant
+  #   id: outdoor_temp
+  #   entity_id: sensor.outdoor_temperature
+
+  - platform: homeassistant
+    id: room_temp
+    entity_id: sensor.temperature
+    filters:
+      - heartbeat: 30s
+
+binary_sensor:
+  - platform: opentherm
+    ch_active:
+      name: "Central Heating active"
+    flame_on:
+      name: "Boiler Flame on"
+
+switch:
+  - platform: opentherm
+    ch_enable:
+      name: "Central Heating enabled"
+      restore_mode: RESTORE_DEFAULT_ON
+
+climate:
+  - platform: equitherm
+    name: "Central heating"
+    heat_output: t_set
+    sensor: room_temp
+    outdoor_sensor: outdoor_temp
+    default_target_temperature: 21
+    min_flow_temp: 25
+    max_flow_temp: 70
+    heat_curve_coefficient: 1.2
+    heat_curve_exponent: 1.25
+```
+
 ## See Also
 
 - [OpenTherm thermostat with ESPHome and Home Assistant](https://olegtarasov.me/opentherm-thermostat-esphome/) —
@@ -485,6 +558,9 @@ climate:
 
 - [Development repository](https://github.com/olegtarasov/esphome-opentherm) — new features will be tested here
   before proposing them to ESPHome core.
+
+- [Equitherm Climate](/components/climate/equitherm/) — weather-compensated heating controller that pairs well with
+  OpenTherm boilers.
 - <APIRef text="API Reference: OpenthermHub" path="opentherm/hub.h" />
 - <APIRef text="API Reference: OpenthermInput" path="opentherm/input.h" />
 - <APIRef text="API Reference: OpenthermNumber" path="opentherm/number/number.h" />
