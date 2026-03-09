@@ -508,39 +508,39 @@ All numbers support these additional options:
 sensor:
   - platform: equitherm
     climate_id: heating
-    type: curve_output_raw
-    name: "Raw Curve Output"
+    type: HEATING_CURVE_OUTPUT
+    name: "Heating Curve Output"
   - platform: equitherm
     climate_id: heating
-    type: base_curve_output
-    name: "Base Curve Output"
+    type: PID_ADJUSTED_OUTPUT
+    name: "PID Adjusted Output"
   - platform: equitherm
     climate_id: heating
-    type: final_flow_setpoint
-    name: "Final Flow Setpoint"
+    type: FLOW_SETPOINT
+    name: "Flow Setpoint"
   - platform: equitherm
     climate_id: heating
-    type: last_written_setpoint
-    name: "Last Written Setpoint"
+    type: ACTIVE_SETPOINT
+    name: "Active Setpoint"
   - platform: equitherm
     climate_id: heating
-    type: pid_correction
+    type: PID_CORRECTION
     name: "PID Correction"
   - platform: equitherm
     climate_id: heating
-    type: proportional_term
+    type: PID_PROPORTIONAL
     name: "PID Proportional"
   - platform: equitherm
     climate_id: heating
-    type: integral_term
+    type: PID_INTEGRAL
     name: "PID Integral"
   - platform: equitherm
     climate_id: heating
-    type: derivative_term
+    type: PID_DERIVATIVE
     name: "PID Derivative"
   - platform: equitherm
     climate_id: heating
-    type: fallback_duration
+    type: FALLBACK_DURATION
     name: "Fallback Duration"
 ```
 
@@ -550,15 +550,15 @@ Configuration variables:
   If only one equitherm climate is configured, this is automatically resolved.
 
 - **type** (**Required**, string): The value to monitor. Processing pipeline:
-  - `curve_output_raw` → Pure heating curve calculation (before PID and rate limiting).
-  - `base_curve_output` → Curve + PID correction applied (before rate limiting).
-  - `final_flow_setpoint` → After rate limiting (value ready to write).
-  - `last_written_setpoint` → Last value actually sent to the boiler.
-  - `pid_correction` → Current PID correction being applied.
-  - `proportional_term` → PID proportional term.
-  - `integral_term` → PID integral term.
-  - `derivative_term` → PID derivative term.
-  - `fallback_duration` → How long the system has been in fallback mode (seconds).
+  - `HEATING_CURVE_OUTPUT` → Pure heating curve calculation (before PID and rate limiting).
+  - `PID_ADJUSTED_OUTPUT` → Curve + PID correction applied (before rate limiting).
+  - `FLOW_SETPOINT` → After rate limiting (value ready to write).
+  - `ACTIVE_SETPOINT` → Last value actually sent to the boiler.
+  - `PID_CORRECTION` → Current PID correction being applied.
+  - `PID_PROPORTIONAL` → PID proportional term.
+  - `PID_INTEGRAL` → PID integral term.
+  - `PID_DERIVATIVE` → PID derivative term.
+  - `FALLBACK_DURATION` → How long the system has been in fallback mode (seconds).
 
 ### Binary Sensor Platform
 
