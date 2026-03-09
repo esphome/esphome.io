@@ -7,7 +7,7 @@ import APIRef from '@components/APIRef.astro';
 
 <span id="i2c"></span>
 
-This component sets up the I²C bus for your ESP32, ESP8266, RP2040, NRF52, or host platform. In order for these components
+This component sets up the I²C bus for your `esp32`, `esp8266`, `rp2040`, `nrf52`, or `host` platform. In order for these components
 to work correctly, you need to define the I²C bus in your configuration. On ESP32 (both Arduino and ESP-IDF
 frameworks), internal pullup resistors are enabled by default. On ESP8266, the internal 10kΩ pullup resistors
 are always enabled. External pullups are still recommended for longer wire runs or multiple devices.
@@ -42,7 +42,7 @@ i2c:
 - **frequency** (*Optional*, frequency): Set the frequency the I²C bus should operate on.
   Defaults to `50kHz`. Values are `10kHz`, `50kHz`, `100kHz`, `200kHz`, ... `800kHz`.
 
-### ESP32, ESP8266, RP2040, NRF52
+### `esp32`, `esp8266`, `rp2040`, `nrf52`
 
 - **sda** (*Optional*, [Pin](/guides/configuration-types#pin)): The pin for the data line of the I²C bus.
   Defaults to the default of your board (usually GPIO21 for ESP32 and GPIO4 for ESP8266).
@@ -54,7 +54,7 @@ i2c:
   Defaults to the framework defaults (`100us` on `esp32`, `1s` on `esp8266` and `1s` on `rp2040`).
   Maximum on `esp32` is 13ms.
 
-### ESP32 only
+### `esp32` only
 
 - **sda_pullup_enabled** (*Optional*, boolean): Enable the internal pullup resistor for the SDA pin.
   Defaults to `true`.
@@ -65,31 +65,31 @@ i2c:
 - **low_power_mode** (*Optional*, boolean): Enable the low-power (master only) I²C bus.
   Only available on ESP32C5, ESP32C6 and ESP32P4. Defaults to `false` unless required.
 
-### Host platform
+### `host`
 
 - **device** (**Required**, string): The I²C device path to use (e.g., `/dev/i2c-0`, `/dev/i2c-1`).
 
-> [!NOTE]
-> If the device can support multiple I²C buses these buses need to be defined as below and sensors need to be setup specifying the correct bus:
->
-> ```yaml
-> # Example configuration entry
-> i2c:
->   - id: bus_a
->     sda: GPIOXX
->     scl: GPIOXX
->     scan: true
->   - id: bus_b
->     sda: GPIOXX
->     scl: GPIOXX
->     scan: true
-> # Sensors should be specified as follows
-> sensor:
->   - platform: bme680
->     i2c_id: bus_b
->     address: 0x76
-> # ...
-> ```
+## Multiple I²C buses
+
+If the device supports multiple I²C buses, they need to be defined separately and sensors need to be set up specifying the correct bus:
+
+```yaml
+# Example configuration entry
+i2c:
+  - id: bus_a
+    sda: GPIOXX
+    scl: GPIOXX
+    scan: true
+  - id: bus_b
+    sda: GPIOXX
+    scl: GPIOXX
+    scan: true
+# Sensors should be specified as follows
+sensor:
+  - platform: bme680
+    i2c_id: bus_b
+    address: 0x76
+```
 
 For I²C multiplexing see [Tca9548A](/components/tca9548a/).
 
