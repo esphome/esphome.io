@@ -99,11 +99,19 @@ See [https://openthread.io/guides/thread-primer/node-roles-and-types](https://op
 The Poll Period makes the device behave as a SED.  Follow on work is needed utilizing Power Management and/or Light Sleep capability in esp-idf.
 If the device is always awake, the API timeout is 60 seconds, so a ping request will force interaction with the parent when the poll period is greater than 60 seconds.
 
-## Logging Within ESP-IDF Openthread Component
+## OpenThread ESP-IDF Logging
 
-The logging within the ESP-IDF Openthread component is controlled by the log_level setting in framework and statically set using
-sdkconfig compile-time configuration macros.
-see [CONFIG_OPENTHREAD_LOG_LEVEL](https://docs.espressif.com/projects/esp-idf/en/v5.0.1/esp32/api-reference/kconfig.html#config-openthread-log-level)
+The OpenThread log level is controlled by the ``log_level`` setting in the ESP-IDF framework configuration.
+The ESP-IDF log levels are mapped to OpenThread log levels as follows:
+
+| ESP-IDF Level | OpenThread Level |
+|---------------|------------------|
+| NONE          | NONE             |
+| ERROR         | CRIT             |
+| WARN          | WARN             |
+| INFO          | NOTE             |
+| DEBUG         | INFO             |
+| VERBOSE       | DEBG             |
 
 ```yaml
 # Example ESP-IDF framework log_level setting
@@ -113,19 +121,10 @@ esp32:
     log_level: INFO
 ```
 
-The ESP-IDF log_levels are mapped as follows to Openthread log levels:
-
-* 0 NONE -> NONE
-* 1 ERROR -> CRIT
-* 2 WARN -> WARN
-* 3 INFO -> NOTE
-* 4 DEBUG -> INFO
-* 5 VERBOSE -> DEBG
-
 ## See Also
 
 - [OpenThread Info Text Sensor](/components/text_sensor/openthread_info/)
-- [ESP32 Platform](/components/esp32/)
 - [Network component](/components/network/)
+- [ESP32 Platform](/components/esp32/)
 - [https://openthread.io/](https://openthread.io/)
 - <APIRef text="openthread.h" path="openthread/openthread.h" />
