@@ -4,24 +4,15 @@ title: "Modem Sensor"
 ---
 import APIRef from '@components/APIRef.astro';
 
-> [!CAUTION]
-> The modem sensor platform queries the [Modem](/components/modem) component for specific values.
-
-> [!NOTE]
-> The [Modem](/components/modem) component must have `enable_cmux` set to `True`.
+Retrieve Signal Strength (RSSI) and Bit Error Rate (BER) from the [Modem](/components/modem)
 
 ```yaml
 modem:
   id: atmodem
-  rx_pin: GPIO26
-  tx_pin: GPIO27
-  status_pin: GPIO34
-  model: SIM7600
-  apn: orange
-  enable_cmux: True
+
 
 sensor:
-- platform: modem
+- platform: modem_info
   rssi:
     name: rssi
   ber:
