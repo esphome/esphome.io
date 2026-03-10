@@ -98,16 +98,55 @@ sensor:
 - **voc** (*Optional*): VOC Index. Note: only available with SEN65, SEN66, SEN68 or SEN69C. The sensor will be
   ignored on unsupported models.
 
+  - **algorithm_tuning** (*Optional*): Parameters for the on-sensor VOC index algorithm.
+
+    - **index_offset** (*Optional*, int): The VOC index representing a typical (average) condition. Range: 1 to 250.
+      Defaults to `100`.
+    - **learning_time_offset_hours** (*Optional*, int): The time it takes for the algorithm to learn and adjust the
+      VOC index offset. Range: 1 to 1000. Defaults to `12`.
+    - **learning_time_gain_hours** (*Optional*, int): The time it takes for the algorithm to learn and adjust the
+      VOC index gain. Range: 1 to 1000. Defaults to `12`.
+    - **gating_max_duration_minutes** (*Optional*, int): Maximum duration the algorithm can block new VOC index
+      measurements during high-signal events. Range: 0 to 3000. Defaults to `180`.
+    - **std_initial** (*Optional*, int): The initial estimate of the standard deviation of the VOC index. Range:
+      10 to 5000. Defaults to `50`.
+    - **gain_factor** (*Optional*, int): Factor that controls the overall sensitivity of the VOC index algorithm.
+      Range: 1 to 1000. Defaults to `230`.
+
   - All options from [Sensor](/components/sensor).
 
 - **nox** (*Optional*): NOx Index. Note: only available with SEN65, SEN66, SEN68 or SEN69C. The sensor will be
   ignored on unsupported models.
+
+  - **algorithm_tuning** (*Optional*): Parameters for the on-sensor NOx index algorithm.
+
+    - **index_offset** (*Optional*, int): The NOx index representing a typical (average) condition. Range: 1 to 250.
+      Defaults to `1`.
+    - **learning_time_offset_hours** (*Optional*, int): The time it takes for the algorithm to learn and adjust the
+      NOx index offset. Range: 1 to 1000. Defaults to `12`.
+    - **learning_time_gain_hours** (*Optional*, int): The time it takes for the algorithm to learn and adjust the
+      NOx index gain. Range: 1 to 1000. Defaults to `12`.
+    - **gating_max_duration_minutes** (*Optional*, int): Maximum duration the algorithm can block new NOx index
+      measurements during high-signal events. Range: 0 to 3000. Defaults to `720`.
+    - **gain_factor** (*Optional*, int): Factor that controls the overall sensitivity of the NOx index algorithm.
+      Range: 1 to 1000. Defaults to `230`.
 
   - All options from [Sensor](/components/sensor).
 
 - **co2** (*Optional*): The **carbon dioxide** concentration in ppm. Note: only available with SEN63C, SEN66 or
   SEN69C. The sensor will be ignored on unsupported models.
 
+  - **automatic_self_calibration** (*Optional*, boolean): Enable or disable the CO2 sensor's automatic
+    self-calibration (ASC). Defaults to `true`.
+  - **ambient_pressure_compensation** (*Optional*, int): Set a static ambient air pressure in hPa for CO2
+    measurement compensation. Valid range is 700 to 1200. Use this as a static alternative to
+    ``altitude_compensation``. Defaults to `1013`.
+  - **altitude_compensation** (*Optional*, int): Set a static sensor altitude above sea level in meters for CO2
+    measurement compensation. Valid range is 0 to 3000. Use this as a static alternative to
+    ``ambient_pressure_compensation``. Defaults to `0`.
+  - **ambient_pressure_compensation_source** (*Optional*, [ID](/guides/configuration-types#id)): Reference to an
+    external pressure sensor for dynamic CO2 compensation. The pressure value (in hPa) is read on each update and
+    sent to the sensor when it changes. Takes precedence over the static ``ambient_pressure_compensation``.
   - All options from [Sensor](/components/sensor).
 
 - **formaldehyde** (*Optional*): The Formaldehyde (HCHO) concentration in ppb. Note: only available with SEN68 or
@@ -131,21 +170,6 @@ sensor:
   - **p** (*Optional*, float): Filter constant P. Defaults to `20.0`.
   - **t1** (*Optional*, float): Time constant T1. Defaults to `100.0`.
   - **t2** (*Optional*, float): Time constant T2. Defaults to `300.0`.
-
-- **ambient_pressure_compensation** (*Optional*, integer): Set a static ambient air pressure in hPa for CO2 measurement
-  compensation. Valid range is 700 to 1200. Use this as a static alternative to ``altitude_compensation``. Only available on models with a CO2 sensor (SEN63C, SEN66, SEN69C).
-  Defaults to `1013 hPa`.
-
-- **altitude_compensation** (*Optional*, integer): Set a static sensor altitude above sea level in m for CO2
-  measurement compensation. Valid range is 0 to 3000. Use this as a static alternative to
-  ``ambient_pressure_compensation``. Only available on models with a CO2
-  sensor (SEN63C, SEN66, SEN69C).
-  Defaults to `0 m`.
-
-- **store_baseline** (*Optional*, boolean): Periodically save the VOC algorithm's learned state to flash memory and
-  restore it after a reboot. The saved state is automatically discarded if the device configuration has changed. Only
-  has effect when a voc sensor is configured.
-  Defaults to `true`.
 
 - **startup_delay** (*Optional*, [Time](/guides/configuration-types#time)): The time to wait after the sensor starts
   measuring before publishing values, to allow the sensor to stabilise.
