@@ -118,14 +118,29 @@ sensor:
 - **address** (*Optional*, int): Manually specify the I²C address of the sensor.
   Defaults to `0x6B`.
 
+- **temperature_compensation** (*Optional*): Compensates for waste heat from the device's electronics, which raises
+  the measured temperature above the true ambient. Relative humidity is automatically recalculated. See Ref. 1 for details.
+
+  - **offset** (*Optional*, float): Static temperature offset in °C. Defaults to `0`.
+  - **normalized_offset_slope** (*Optional*, float): Slope of the offset as a function of ambient temperature. Defaults to `0`.
+  - **time_constant** (*Optional*, integer): Thermal time constant (τ63) in seconds. Defaults to `0`.
+
+- **temperature_acceleration** (*Optional*): Compensates for the low pass filtering effect introduced by thermal mass. See Ref. 1 for details.
+
+  - **k** (*Optional*, float): Filter constant K. Defaults to `20.0`.
+  - **p** (*Optional*, float): Filter constant P. Defaults to `20.0`.
+  - **t1** (*Optional*, float): Time constant T1. Defaults to `100.0`.
+  - **t2** (*Optional*, float): Time constant T2. Defaults to `300.0`.
+
 - **ambient_pressure_compensation** (*Optional*, integer): Set a static ambient air pressure in hPa for CO2 measurement
-  compensation. Valid range is 700 to 1200. Use this as a static alternative to ``altitude_compensation``. If not set,
-  the device default (1013 hPa) is used. Only available on models with a CO2 sensor (SEN63C, SEN66, SEN69C).
+  compensation. Valid range is 700 to 1200. Use this as a static alternative to ``altitude_compensation``. Only available on models with a CO2 sensor (SEN63C, SEN66, SEN69C).
+  Defaults to `1013 hPa`.
 
 - **altitude_compensation** (*Optional*, integer): Set a static sensor altitude above sea level in m for CO2
   measurement compensation. Valid range is 0 to 3000. Use this as a static alternative to
-  ``ambient_pressure_compensation``. If not set, the device default (0 m) is used. Only available on models with a CO2
+  ``ambient_pressure_compensation``. Only available on models with a CO2
   sensor (SEN63C, SEN66, SEN69C).
+  Defaults to `0 m`.
 
 - **store_baseline** (*Optional*, boolean): Periodically save the VOC algorithm's learned state to flash memory and
   restore it after a reboot. The saved state is automatically discarded if the device configuration has changed. Only
@@ -152,6 +167,10 @@ The sensor has a JST GHR-06V-S 6 pin type connector, with a 1.25mm pitch. The ca
 Pins 2 and 5 (GND) and pins 1 and 6 (VDD) are connected internally.
 
 For better stability, the SDA and SCL lines require suitable pull-up resistors.
+
+## References
+
+1. Sensirion, "SEN6x - Temperature Acceleration and Compensation Instructions," February 2025. [Online](https://sensirion.com/media/documents/C964FCC8/69709EC3/PS_AN_SEN6x_Temperature_Compensation_and_Acceleration_Application_No.pdf). Available: www.sensirion.com.
 
 ## See Also
 
