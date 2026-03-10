@@ -6,10 +6,12 @@ import { fileURLToPath } from "url";
 import path from "path";
 import fs from "fs";
 import { imageBreakpoints } from "./src/lib/breakpoints.ts";
+import { remarkExportAst } from "./src/lib/remark-export-ast.js";
 import { remarkAlert } from "remark-github-blockquote-alert";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
 
+const EXPORT_AST = process.argv.includes("--ast");
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // Generate changelog sidebar items sorted newest to oldest
@@ -133,7 +135,11 @@ export default defineConfig({
     responsiveStyles: true,
   },
   markdown: {
-    remarkPlugins: [remarkAlert, remarkMath],
+    remarkPlugins: [
+      remarkAlert,
+      remarkMath,
+      ...(EXPORT_AST ? [remarkExportAst] : []),
+    ],
     rehypePlugins: [rehypeKatex],
   },
   integrations: [
