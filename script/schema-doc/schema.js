@@ -6,10 +6,10 @@
  * under esphome_json.core.{components, platforms}.
  */
 
-import fs from 'node:fs';
-import path from 'node:path';
+import fs from "node:fs";
+import path from "node:path";
 
-let schemaDir = '';
+let schemaDir = "";
 
 /** name → parsed JSON object */
 const cache = new Map();
@@ -23,16 +23,16 @@ export function initSchema(dir) {
  * Special case: "core" → "esphome".
  */
 export function loadSchema(name) {
-  if (name === 'core') name = 'esphome';
+  if (name === "core") name = "esphome";
   if (cache.has(name)) return cache.get(name);
 
-  const file = path.join(schemaDir, name + '.json');
+  const file = path.join(schemaDir, name + ".json");
   if (!fs.existsSync(file)) {
     return null;
   }
   let data;
   try {
-    data = JSON.parse(fs.readFileSync(file, 'utf-8'));
+    data = JSON.parse(fs.readFileSync(file, "utf-8"));
   } catch (e) {
     console.error(`Error reading ${file}: ${e.message}`);
     return null;
@@ -44,8 +44,8 @@ export function loadSchema(name) {
 /** Save all modified schemas back to disk. */
 export function saveAllSchemas() {
   for (const [name, data] of cache) {
-    const file = path.join(schemaDir, name + '.json');
-    fs.writeFileSync(file, JSON.stringify(data, null, 2), 'utf-8');
+    const file = path.join(schemaDir, name + ".json");
+    fs.writeFileSync(file, JSON.stringify(data, null, 2), "utf-8");
   }
 }
 
@@ -53,8 +53,8 @@ export function saveAllSchemas() {
  * Check if a schema file exists (without loading it).
  */
 export function schemaExists(name) {
-  if (name === 'core') name = 'esphome';
-  const file = path.join(schemaDir, name + '.json');
+  if (name === "core") name = "esphome";
+  const file = path.join(schemaDir, name + ".json");
   return fs.existsSync(file);
 }
 
@@ -75,7 +75,7 @@ export function findSchemaProp(schema, propName) {
 
   // Search through extends
   for (const extended of schema.extends ?? []) {
-    const parts = extended.split('.');
+    const parts = extended.split(".");
     const extJson = loadSchema(parts[0]);
     if (!extJson) continue;
 
@@ -91,7 +91,7 @@ export function findSchemaProp(schema, propName) {
     if (!extNode) continue;
 
     // Recurse into the extended schema
-    if (extNode.type === 'schema' && extNode.schema) {
+    if (extNode.type === "schema" && extNode.schema) {
       const found = findSchemaProp(extNode.schema, propName);
       if (found) return found;
     }
@@ -159,7 +159,11 @@ export function getConditionSchema(componentName, conditionName) {
  * e.g. platform="sensor", component="adc", action="reset"
  * → adc.json["adc.sensor"]["action"]["reset"]
  */
-export function getPlatformActionSchema(componentName, platformName, actionName) {
+export function getPlatformActionSchema(
+  componentName,
+  platformName,
+  actionName,
+) {
   const json = loadSchema(componentName);
   const key = `${componentName}.${platformName}`;
   return json?.[key]?.action?.[actionName] ?? null;
