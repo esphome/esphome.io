@@ -81,6 +81,13 @@ Advanced options:
 - **compile_process_limit** (*Optional*, int): The maximum number of simultaneous compile processes to run.
   Defaults to the number of cores of the CPU which is also the maximum you can set.
 
+- **ccache** (*Optional*, boolean): Enable [ccache](https://ccache.dev/) compiler caching for faster
+  recompilation. When enabled, compiled objects are cached and reused across builds, which is especially
+  useful when managing multiple devices with similar firmware. Can also be enabled via the
+  `esphome compile --ccache` CLI flag or the `ESPHOME_CCACHE=1` environment variable.
+  Requires ccache to be installed (`apt install ccache` / `brew install ccache`).
+  Defaults to `false`.
+
 - **debug_scheduler** (*Optional*, boolean): If set, the scheduler will print debug information about scheduled tasks at log level DEBUG.
 - **areas** (*Optional*, list of [Area Configuration](#esphome-area)): Additional areas that can be referenced by devices.
 - **devices** (*Optional*, list of [Sub-Devices](#esphome-devices)): Sub-devices to group entities under.
