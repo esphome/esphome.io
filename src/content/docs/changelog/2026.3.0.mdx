@@ -22,9 +22,9 @@ import ImgTable from "@components/ImgTable.astro";
 ## Release Overview
 
 {/* RELEASE_OVERVIEW_START */}
-ESPHome 2026.3.0 is a performance-focused release with deep optimizations across the entire stack. The main loop is 17x faster on socket polling, light gamma correction is 8-10x faster, API protobuf encoding is 6-12x faster, and `millis()` is 2.5x faster — all reducing CPU overhead and improving responsiveness, especially on single-core chips and Bluetooth proxy devices. Flash savings of 11-20KB+ are achieved through printf wrapping, scanf removal, timezone refactoring, and aggressive devirtualization.
+ESPHome 2026.3.0 is a performance-focused release with deep optimizations across the entire stack. The main loop is 17x faster on socket polling, light gamma correction is 8-10x faster, API protobuf encoding is 6-12x faster, and `millis()` is 2.5x faster, all reducing CPU overhead and improving responsiveness, especially on single-core chips and Bluetooth proxy devices. Flash savings of 11-20KB+ are achieved through printf wrapping, scanf removal, timezone refactoring, and aggressive devirtualization.
 
-Alongside the performance work, a redesigned media player architecture with pluggable sources, playlists, and Ogg Opus support ships together with a major RP2040/RP2350 platform overhaul bringing pico-sdk 2.0, 143+ board definitions, BLE foundations, crash diagnostics, and captive portal support. ESP32-P4 and ESP32-C5 gain expanded hardware support, nRF52 gets BLE OTA, and new components include SEN6x, HDC302x, dew point, and serial proxy — across 480 merged pull requests.
+Alongside the performance work, a redesigned media player architecture with pluggable sources, playlists, and Ogg Opus support ships together with a major RP2040/RP2350 platform overhaul bringing pico-sdk 2.0, 143+ board definitions, BLE foundations, crash diagnostics, and captive portal support. ESP32-P4 and ESP32-C5 gain expanded hardware support, nRF52 gets BLE OTA, and new components include SEN6x, HDC302x, dew point, and serial proxy.
 {/* RELEASE_OVERVIEW_END */}
 
 ## Upgrade Checklist
@@ -61,11 +61,10 @@ The [audio_file](/components/audio_file) component lets you embed audio files (l
 
 ## RP2040/RP2350 Platform Overhaul
 
-The RP2040 platform receives its most significant update yet, with framework modernization, RP2350 support, and a dramatically improved developer experience.
+The headline change for RP2040 is the **arduino-pico framework jump from 3.9.4 to 5.5.0**, bringing pico-sdk 2.0 and the GCC 14 toolchain ([#14328](https://github.com/esphome/esphome/pull/14328)). This unlocks first-class RP2350 (Pico 2 W) support, modern SDK APIs, and a dramatically improved developer experience.
 
-**Framework Update:**
+**What the framework update brings:**
 
-- **arduino-pico 3.9.4 to 5.5.0** with pico-sdk 2.0 and GCC 14 toolchain ([#14328](https://github.com/esphome/esphome/pull/14328))
 - **RP2350 hardware verified** - Pico 2 W tested with WiFi, debug sensors, and OTA all working (429KB free heap)
 - **143+ board definitions** (up from 3) auto-generated from the arduino-pico repository, including all RP2350 variants ([#14528](https://github.com/esphome/esphome/pull/14528))
 - **WiFi reliability fixes** - Proper CYW43 link status detection, non-blocking WiFi join, and correct disconnect cleanup
@@ -92,9 +91,7 @@ The RP2040 platform receives its most significant update yet, with framework mod
 
 Note: The framework update is a breaking change for external components using old pico-sdk APIs (e.g., `padsbank0_hw` renamed to `pads_bank0_hw`, `SerialPIO::NOPIN` is now just `NOPIN`).
 
-## ESP32-P4 and ESP32-C5 Support
-
-This release significantly expands support for Espressif's newest silicon.
+## ESP32-P4 and ESP32-C5 Improvements
 
 **ESP32-P4:**
 
@@ -105,7 +102,7 @@ This release significantly expands support for Espressif's newest silicon.
 
 **ESP32-C5:**
 
-- **Dual-band WiFi** - New `band_mode` configuration option for selecting 2.4GHz, 5GHz, or auto band selection on the ESP32-C5's dual-band radio ([#14148](https://github.com/esphome/esphome/pull/14148))
+- **Dual-band WiFi configuration** - New `band_mode` option for selecting 2.4GHz, 5GHz, or auto band selection on the ESP32-C5's dual-band radio ([#14148](https://github.com/esphome/esphome/pull/14148))
 
 ## Main Loop Performance Overhaul
 
@@ -113,15 +110,15 @@ This release delivers a major performance overhaul to the core event loop, reduc
 
 **Socket Polling: 17x Faster on ESP32**
 
-The `lwip_select()` system call has been replaced with direct LwIP socket reads and FreeRTOS task notifications on ESP32 ([#14249](https://github.com/esphome/esphome/pull/14249)). The old `select()` call cost ~133 us per loop iteration due to internal locking overhead — the new path costs just ~7.5 us (poll) or ~1.3 us (pre-sleep scan), freeing ~1.55% of total CPU time. On single-core chips (ESP32-C3, C6, H2), this directly improves BLE scan responsiveness by eliminating mutex contention with the WiFi/BLE stacks. The optimization was also extended to all LibreTiny platforms (bk72xx, rtl87xx, ln882x) ([#14254](https://github.com/esphome/esphome/pull/14254)), where real-world testing showed WiFi connection times dropping from up to 60s to under 30s. Socket pointer caching ([#14408](https://github.com/esphome/esphome/pull/14408)) further inlined the entire `ready()` chain to ~30 bytes with zero function calls.
+The `lwip_select()` system call has been replaced with direct LwIP socket reads and FreeRTOS task notifications on ESP32 ([#14249](https://github.com/esphome/esphome/pull/14249)). The old `select()` call cost ~133 us per loop iteration due to internal locking overhead -the new path costs just ~7.5 us (poll) or ~1.3 us (pre-sleep scan), freeing ~1.55% of total CPU time. On single-core chips (ESP32-C3, C6, H2), this directly improves BLE scan responsiveness by eliminating mutex contention with the WiFi/BLE stacks. The optimization was also extended to all LibreTiny platforms (bk72xx, rtl87xx, ln882x) ([#14254](https://github.com/esphome/esphome/pull/14254)), where real-world testing showed WiFi connection times dropping from up to 60s to under 30s. Socket pointer caching ([#14408](https://github.com/esphome/esphome/pull/14408)) further inlined the entire `ready()` chain to ~30 bytes with zero function calls.
 
 **Instant ISR Wake**
 
-GPIO binary sensors and touch sensors now wake the main loop immediately from interrupts instead of waiting up to ~16ms for the select timeout ([#14383](https://github.com/esphome/esphome/pull/14383)). UART wake-on-RX was also redesigned — replacing a FreeRTOS task + event queue (~3.9KB heap per UART) with a direct ISR callback at essentially zero cost ([#14382](https://github.com/esphome/esphome/pull/14382)). With the new near-zero-cost mechanism, wake-on-RX is now enabled by default on all ESP32 UARTs ([#14391](https://github.com/esphome/esphome/pull/14391)), and ESP8266 gained ISR wake support for GPIO binary sensors ([#14392](https://github.com/esphome/esphome/pull/14392)).
+GPIO binary sensors and touch sensors now wake the main loop immediately from interrupts instead of waiting up to ~16ms for the select timeout ([#14383](https://github.com/esphome/esphome/pull/14383)). UART wake-on-RX was also redesigned -replacing a FreeRTOS task + event queue (~3.9KB heap per UART) with a direct ISR callback at essentially zero cost ([#14382](https://github.com/esphome/esphome/pull/14382)). With the new near-zero-cost mechanism, wake-on-RX is now enabled by default on all ESP32 UARTs ([#14391](https://github.com/esphome/esphome/pull/14391)), and ESP8266 gained ISR wake support for GPIO binary sensors ([#14392](https://github.com/esphome/esphome/pull/14392)).
 
 **Faster millis()**
 
-The `millis()` function — called once per component per loop iteration — was optimized with a custom 64-bit division algorithm that eliminates the `__udivdi3` software division routine, achieving 2-2.5x speedup on every call ([#14409](https://github.com/esphome/esphome/pull/14409)). Native 64-bit `millis_64()` implementations were added for ESP32, RP2040, and Host platforms ([#14339](https://github.com/esphome/esphome/pull/14339), [#14356](https://github.com/esphome/esphome/pull/14356), [#14340](https://github.com/esphome/esphome/pull/14340)), eliminating 193 bytes of rollover tracking code on ESP32.
+The `millis()` function -called once per component per loop iteration -was optimized with a custom 64-bit division algorithm that eliminates the `__udivdi3` software division routine, achieving 2-2.5x speedup on every call ([#14409](https://github.com/esphome/esphome/pull/14409)). Native 64-bit `millis_64()` implementations were added for ESP32, RP2040, and Host platforms ([#14339](https://github.com/esphome/esphome/pull/14339), [#14356](https://github.com/esphome/esphome/pull/14356), [#14340](https://github.com/esphome/esphome/pull/14340)), eliminating 193 bytes of rollover tracking code on ESP32.
 
 **Scheduler and Loop Overhead**
 
@@ -133,37 +130,37 @@ The native API communication layer received over 20 targeted optimizations this 
 
 **Encoding Pipeline:**
 
-- **Direct buffer writes** — Protobuf encoding now writes through raw pointers to pre-sized buffers instead of `push_back()`, achieving 6-12x faster encoding in benchmarks ([#14018](https://github.com/esphome/esphome/pull/14018))
-- **Protobuf devirtualization** — `encode()` and `calculate_size()` are resolved at compile time instead of through virtual dispatch, achieving 2x faster `calculate_size()` on sensor state messages and 2.5x less CPU time in the API component ([#14449](https://github.com/esphome/esphome/pull/14449))
-- **Single-pass BLE advertisement encoding** — Eliminates 24 redundant `calculate_size()` calls per BLE proxy flush, reducing encode time by 28% ([#14575](https://github.com/esphome/esphome/pull/14575))
-- **Zero-fill elimination** — A custom `APIBuffer` replaces `std::vector<uint8_t>` for protobuf buffers, skipping unnecessary zero-initialization before every message encode, reducing API component CPU time by 43% on BLE proxy devices ([#14593](https://github.com/esphome/esphome/pull/14593))
-- **Force proto fields** — BLE advertisement fields known to be non-default skip zero checks, saving 13% on `calculate_size()` for BLE batches ([#14610](https://github.com/esphome/esphome/pull/14610))
+- **Direct buffer writes** -Protobuf encoding now writes through raw pointers to pre-sized buffers instead of `push_back()`, achieving 6-12x faster encoding in benchmarks ([#14018](https://github.com/esphome/esphome/pull/14018))
+- **Protobuf devirtualization** -`encode()` and `calculate_size()` are resolved at compile time instead of through virtual dispatch, achieving 2x faster `calculate_size()` on sensor state messages and 2.5x less CPU time in the API component ([#14449](https://github.com/esphome/esphome/pull/14449))
+- **Single-pass BLE advertisement encoding** -Eliminates 24 redundant `calculate_size()` calls per BLE proxy flush, reducing encode time by 28% ([#14575](https://github.com/esphome/esphome/pull/14575))
+- **Zero-fill elimination** -A custom `APIBuffer` replaces `std::vector<uint8_t>` for protobuf buffers, skipping unnecessary zero-initialization before every message encode, reducing API component CPU time by 43% on BLE proxy devices ([#14593](https://github.com/esphome/esphome/pull/14593))
+- **Force proto fields** -BLE advertisement fields known to be non-default skip zero checks, saving 13% on `calculate_size()` for BLE batches ([#14610](https://github.com/esphome/esphome/pull/14610))
 
 **Parsing and Dispatch:**
 
-- **Varint 32/64-bit split** — Varint parsing uses fast 32-bit arithmetic for the common case (1-4 byte values), with 64-bit only when BLE fields require it, 25-50% faster on common paths ([#14039](https://github.com/esphome/esphome/pull/14039))
-- **Varint fast paths inlined** — Protobuf varint parsing and encoding hot paths were inlined for zero function-call overhead in tight loops ([#14607](https://github.com/esphome/esphome/pull/14607), [#14638](https://github.com/esphome/esphome/pull/14638))
-- **Frame helper devirtualization** — When only one API protocol is configured (plaintext-only or noise-only), virtual dispatch is eliminated for all frame operations ([#14468](https://github.com/esphome/esphome/pull/14468))
-- **Noise data path optimized** — Redundant state machine checks eliminated from every packet read/write in the noise protocol path ([#14629](https://github.com/esphome/esphome/pull/14629))
+- **Varint 32/64-bit split** -Varint parsing uses fast 32-bit arithmetic for the common case (1-4 byte values), with 64-bit only when BLE fields require it, 25-50% faster on common paths ([#14039](https://github.com/esphome/esphome/pull/14039))
+- **Varint fast paths inlined** -Protobuf varint parsing and encoding hot paths were inlined for zero function-call overhead in tight loops ([#14607](https://github.com/esphome/esphome/pull/14607), [#14638](https://github.com/esphome/esphome/pull/14638))
+- **Frame helper devirtualization** -When only one API protocol is configured (plaintext-only or noise-only), virtual dispatch is eliminated for all frame operations ([#14468](https://github.com/esphome/esphome/pull/14468))
+- **Noise data path optimized** -Redundant state machine checks eliminated from every packet read/write in the noise protocol path ([#14629](https://github.com/esphome/esphome/pull/14629))
 
 **Encryption:**
 
-- **Noise encryption 10-34% faster** — Updated noise-c to 0.1.11 with libsodium 1.0.21, which optimizes ChaCha20-Poly1305 with aligned 32-bit loads for embedded targets ([#14632](https://github.com/esphome/esphome/pull/14632)). ESP32 sees the largest improvement at 34% faster, with all platforms benefiting. Users can now use API encryption without worrying about performance overhead.
+- **Noise encryption 10-34% faster** -Updated noise-c to 0.1.11 with libsodium 1.0.21, which optimizes ChaCha20-Poly1305 with aligned 32-bit loads for embedded targets ([#14632](https://github.com/esphome/esphome/pull/14632)). ESP32 sees the largest improvement at 34% faster, with all platforms benefiting. Users can now use API encryption without worrying about performance overhead.
 
 **Network Layer:**
 
-- **Socket devirtualization** — The socket abstraction layer was converted from virtual dispatch to concrete types, enabling the compiler to inline all hot-path socket methods directly into callers, saving ~3KB flash on ESP32 ([#14398](https://github.com/esphome/esphome/pull/14398))
-- **Handshake timeout** — 15-second timeout for completing API handshakes prevents connection slot exhaustion from stale half-open connections ([#14050](https://github.com/esphome/esphome/pull/14050))
+- **Socket devirtualization** -The socket abstraction layer was converted from virtual dispatch to concrete types, enabling the compiler to inline all hot-path socket methods directly into callers, saving ~3KB flash on ESP32 ([#14398](https://github.com/esphome/esphome/pull/14398))
+- **Handshake timeout** -15-second timeout for completing API handshakes prevents connection slot exhaustion from stale half-open connections ([#14050](https://github.com/esphome/esphome/pull/14050))
 
 **BLE Event Processing:**
 
-- **BLE event hot path optimized** — Eliminated redundant operations in the ESP32 BLE event processing loop, including short-circuiting dropped-count checks (4 instructions instead of ~25 in the common case) and removing redundant event release calls ([#14627](https://github.com/esphome/esphome/pull/14627))
+- **BLE event hot path optimized** -Eliminated redundant operations in the ESP32 BLE event processing loop, including short-circuiting dropped-count checks (4 instructions instead of ~25 in the common case) and removing redundant event release calls ([#14627](https://github.com/esphome/esphome/pull/14627))
 
 ## Light Gamma Correction: 8-10x Faster
 
-Runtime `powf()` calls in light gamma correction have been replaced with pre-computed PROGMEM lookup tables generated at compile time ([#14123](https://github.com/esphome/esphome/pull/14123)). A 5-channel RGBWW light transition frame dropped from 349 us to 36 us on ESP32 and from 456 us to 58 us on ESP8266. Addressable lights also save 512 bytes of heap per instance — the RAM gamma tables are eliminated entirely. The `powf` math library (~2.3KB flash) is no longer pulled into the binary for lights.
+Runtime `powf()` calls in light gamma correction have been replaced with pre-computed PROGMEM lookup tables generated at compile time ([#14123](https://github.com/esphome/esphome/pull/14123)). A 5-channel RGBWW light transition frame dropped from 349 us to 36 us on ESP32 and from 456 us to 58 us on ESP8266. Addressable lights also save 512 bytes of heap per instance -the RAM gamma tables are eliminated entirely. The `powf` math library (~2.3KB flash) is no longer pulled into the binary for lights.
 
-The `powf` elimination extends beyond lights — a new `pow10_int()` helper replaces `powf(10, exp)` in sensor filters and accuracy normalization, achieving up to 22x faster computation on ESP8266 and saving 3.1KB flash ([#14114](https://github.com/esphome/esphome/pull/14114)). Light color interpolation now uses a lightweight `lerp_fast` instead of `std::lerp` ([#14238](https://github.com/esphome/esphome/pull/14238)), and static effect names are resolved to integer indices at code generation time instead of runtime string matching, saving 632 bytes on ESP8266 ([#14265](https://github.com/esphome/esphome/pull/14265)).
+The `powf` elimination extends beyond lights -a new `pow10_int()` helper replaces `powf(10, exp)` in sensor filters and accuracy normalization, achieving up to 22x faster computation on ESP8266 and saving 3.1KB flash ([#14114](https://github.com/esphome/esphome/pull/14114)). Light color interpolation now uses a lightweight `lerp_fast` instead of `std::lerp` ([#14238](https://github.com/esphome/esphome/pull/14238)), and static effect names are resolved to integer indices at code generation time instead of runtime string matching, saving 632 bytes on ESP8266 ([#14265](https://github.com/esphome/esphome/pull/14265)).
 
 ## Memory and Flash Optimizations
 
@@ -182,8 +179,8 @@ The entire libc timezone infrastructure has been replaced with a lightweight 32-
 
 **printf/scanf Wrapping:**
 
-- **ESP32 printf wrapping saves ~11KB flash** — `printf()`, `vprintf()`, and `fprintf()` are wrapped with lightweight stubs that redirect through `vsnprintf()`, eliminating newlib's `_vfprintf_r` dead code ([#14362](https://github.com/esphome/esphome/pull/14362))
-- **ESP8266 scanf removal saves ~8KB flash** — The forced `-u _scanf_float` linker flag has been removed, garbage-collecting the entire unused `scanf` family ([#13678](https://github.com/esphome/esphome/pull/13678))
+- **ESP32 printf wrapping saves ~11KB flash** -`printf()`, `vprintf()`, and `fprintf()` are wrapped with lightweight stubs that redirect through `vsnprintf()`, eliminating newlib's `_vfprintf_r` dead code ([#14362](https://github.com/esphome/esphome/pull/14362))
+- **ESP8266 scanf removal saves ~8KB flash** -The forced `-u _scanf_float` linker flag has been removed, garbage-collecting the entire unused `scanf` family ([#13678](https://github.com/esphome/esphome/pull/13678))
 - **ESP8266 printf stubs save ~1.6KB flash** ([#14621](https://github.com/esphome/esphome/pull/14621))
 - **RP2040 printf stubs save ~9.2KB flash** ([#14622](https://github.com/esphome/esphome/pull/14622))
 
@@ -199,17 +196,17 @@ Most preference saves (switches, fans, covers, numbers, rotary encoders) now use
 
 **Framework and Core Optimizations:**
 
-- **ESP-IDF bumped to 5.5.3** ([#14122](https://github.com/esphome/esphome/pull/14122))
-- **Component devirtualization** — `call_loop()`, `mark_failed()`, and `call_dump_config()` are now non-virtual, saving ~800+ bytes of flash from vtable elimination ([#14083](https://github.com/esphome/esphome/pull/14083), [#14355](https://github.com/esphome/esphome/pull/14355))
-- **Compile-time loop detection** — Components that don't override `loop()` are now detected at compile time and excluded from the loop list, eliminating runtime vtable probing ([#14405](https://github.com/esphome/esphome/pull/14405))
-- **Conditional filter compilation** — Sensor, text sensor, and binary sensor filter infrastructure is now compiled out entirely when no filters are configured, saving flash and RAM ([#14213](https://github.com/esphome/esphome/pull/14213), [#14214](https://github.com/esphome/esphome/pull/14214), [#14215](https://github.com/esphome/esphome/pull/14215))
-- **Logger tx_buffer compile-time sized** — The logger's transmit buffer is now an inline array instead of a separate heap allocation, consolidating two allocations into one ([#14205](https://github.com/esphome/esphome/pull/14205))
-- **Logger hot path optimized** — Eliminated null-check and call frame indirection from every log call ([#14538](https://github.com/esphome/esphome/pull/14538))
-- **Scheduler overhead reduced** — Replaced `unique_ptr` with raw lifecycle-managed pointers, saving 608 bytes from eliminated STL template instantiations ([#14620](https://github.com/esphome/esphome/pull/14620))
-- **FLAC CRC validation disabled** — Skipping internal CRC checks during FLAC decoding improves throughput by 15-20% ([#14108](https://github.com/esphome/esphome/pull/14108))
-- **LibreTiny BK72xx -Os optimization** — ESPHome source code now compiles with `-Os` on BK72xx while the SDK stays at `-O1`, improving flash usage without triggering SDK bugs ([#14322](https://github.com/esphome/esphome/pull/14322))
-- **Codebase-wide constexpr migration** — Over 20 PRs converted `static const` to `constexpr` across core, API, BLE, NFC, MQTT, and display components, moving constants to flash and enabling compiler optimizations ([#14071](https://github.com/esphome/esphome/pull/14071), [#14127](https://github.com/esphome/esphome/pull/14127), [#14129](https://github.com/esphome/esphome/pull/14129), and others)
-- **`esphome::optional` replaced with `std::optional`** — Eliminates a custom implementation in favor of the C++17 standard ([#14368](https://github.com/esphome/esphome/pull/14368))
+- **ESP-IDF bumped to 5.5.3** -Fixes long-standing BLE bugs from ESP-IDF 5.5.1 and 5.5.2 where BLE would stop working ([#14122](https://github.com/esphome/esphome/pull/14122))
+- **Component devirtualization** -`call_loop()`, `mark_failed()`, and `call_dump_config()` are now non-virtual, saving ~800+ bytes of flash from vtable elimination ([#14083](https://github.com/esphome/esphome/pull/14083), [#14355](https://github.com/esphome/esphome/pull/14355))
+- **Compile-time loop detection** -Components that don't override `loop()` are now detected at compile time and excluded from the loop list, eliminating runtime vtable probing ([#14405](https://github.com/esphome/esphome/pull/14405))
+- **Conditional filter compilation** -Sensor, text sensor, and binary sensor filter infrastructure is now compiled out entirely when no filters are configured, saving flash and RAM ([#14213](https://github.com/esphome/esphome/pull/14213), [#14214](https://github.com/esphome/esphome/pull/14214), [#14215](https://github.com/esphome/esphome/pull/14215))
+- **Logger tx_buffer compile-time sized** -The logger's transmit buffer is now an inline array instead of a separate heap allocation, consolidating two allocations into one ([#14205](https://github.com/esphome/esphome/pull/14205))
+- **Logger hot path optimized** -Eliminated null-check and call frame indirection from every log call ([#14538](https://github.com/esphome/esphome/pull/14538))
+- **Scheduler overhead reduced** -Replaced `unique_ptr` with raw lifecycle-managed pointers, saving 608 bytes from eliminated STL template instantiations ([#14620](https://github.com/esphome/esphome/pull/14620))
+- **FLAC CRC validation disabled** -Skipping internal CRC checks during FLAC decoding improves throughput by 15-20% ([#14108](https://github.com/esphome/esphome/pull/14108))
+- **LibreTiny BK72xx -Os optimization** -ESPHome source code now compiles with `-Os` on BK72xx while the SDK stays at `-O1`, improving flash usage without triggering SDK bugs ([#14322](https://github.com/esphome/esphome/pull/14322))
+- **Codebase-wide constexpr migration** -Over 20 PRs converted `static const` to `constexpr` across core, API, BLE, NFC, MQTT, and display components, moving constants to flash and enabling compiler optimizations ([#14071](https://github.com/esphome/esphome/pull/14071), [#14127](https://github.com/esphome/esphome/pull/14127), [#14129](https://github.com/esphome/esphome/pull/14129), and others)
+- **`esphome::optional` replaced with `std::optional`** -Eliminates a custom implementation in favor of the C++17 standard ([#14368](https://github.com/esphome/esphome/pull/14368))
 
 ## nRF52 Platform Improvements
 
@@ -243,9 +240,9 @@ The new [hdc302x](/components/sensor/hdc302x) component adds support for Texas I
 
 The new [dew_point](/components/sensor/dew_point) component calculates the dew point from any existing temperature and humidity sensors, without requiring additional hardware ([#14441](https://github.com/esphome/esphome/pull/14441)).
 
-## Serial Proxy
+## Serial Proxy (Experimental)
 
-The new [serial_proxy](/components/serial_proxy) component proxies UART communication to Home Assistant API clients over the network ([#13944](https://github.com/esphome/esphome/pull/13944)). This enables remote access to serial devices connected to ESPHome nodes, similar to how `zwave_proxy` bridges Z-Wave modems. Configure a UART bus and expose it as a named serial port with a specified type (TTL, RS232, RS485).
+The new [serial_proxy](/components/serial_proxy) component proxies UART communication to Home Assistant API clients over the network ([#13944](https://github.com/esphome/esphome/pull/13944)). This experimental component enables remote access to serial devices connected to ESPHome nodes, similar to how `zwave_proxy` bridges Z-Wave modems. Configure a UART bus and expose it as a named serial port with a specified type (TTL, RS232, RS485).
 
 ## Display Support Expansion
 
