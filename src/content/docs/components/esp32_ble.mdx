@@ -30,11 +30,13 @@ esp32_ble:
   # min_key_size: 7   # Optional, encryption key size (7-16)
   filter:
     mac_address:
-      - 00:11:22:33:44:55
-      - 00:11:22:33:44:56
-      - 00:11:22:33:44:57
-      - 00:11:22:33:44:58
-      - 00:11:22:33:44:59
+      - value: 00:11:22:33:44:55
+        public: true # Default
+      - value: 00:11:22:33:44:56
+        public: false
+      - value: 00:11:22:33:44:57
+      - value: 00:11:22:33:44:58
+      - value: 00:11:22:33:44:59
 ```
 
 ## Configuration variables
@@ -116,7 +118,7 @@ esp32_ble:
     - **mac_address** (*Optional*, List) - list of MAC addresses with which BLE should work
 
 > [!NOTE]
-> A `mac_address` list is used to restrict which devices can establish a BLE connection with the ESP32 board. In addition, the same list is applied at the scanning stage, so the board only processes advertisement packets from approved devices. This ensures that both connection attempts and incoming BLE advertisements are limited to explicitly authorized devices, improving security and reducing unnecessary processing.
+> A `mac_address` list is applied at the scanning stage, so the board only processes advertisement packets from approved devices. This ensures that incoming BLE advertisements are limited to explicitly authorized devices, improving security and reducing unnecessary processing.
 
 ## `ble.disable` Action
 
