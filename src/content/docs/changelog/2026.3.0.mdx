@@ -7,6 +7,7 @@ slug: "changelog/2026.3.0"
 
 import ImgTable from "@components/ImgTable.astro";
 
+{/* MANUAL: Add featured components here */}
 <ImgTable items={[
   ["Serial Proxy", "/components/serial_proxy/", "uart.svg", "dark-invert"],
   ["Media Source Core", "/components/media_source/", "folder-open.svg", "dark-invert"],
@@ -17,6 +18,249 @@ import ImgTable from "@components/ImgTable.astro";
   ["RP2040 BLE", "/components/rp2040_ble/", "bluetooth.svg", "dark-invert"],
   ["Dew Point", "/components/sensor/dew_point/", "water-drop.svg", "dark-invert"],
 ]} />
+
+## Release Overview
+
+{/* RELEASE_OVERVIEW_START */}
+ESPHome 2026.3.0 delivers a redesigned media player architecture with pluggable sources, playlists, and Ogg Opus support, alongside a major RP2040 platform overhaul bringing RP2350 support, 143+ board definitions, and BLE foundations. This release also expands ESP32-P4 and ESP32-C5 hardware support, achieves significant memory savings across all platforms (up to 9.5KB flash and 2% RAM), and adds nRF52 OTA via BLE. New sensor components including SEN6x and HDC302x, the serial_proxy component for remote UART access, and 10+ new display models round out a release packed with 480 merged pull requests.
+{/* RELEASE_OVERVIEW_END */}
+
+## Upgrade Checklist
+
+{/* UPGRADE_CHECKLIST_START */}
+- If you use `opentherm` with the `opentherm_version` config key, rename it to `opentherm_version_controller`
+- If you use `speaker` media player and stream audio via hardcoded URLs (not through Home Assistant), set `codec_support_enabled: all` to keep all codecs available
+- If you have an ESP32-P4 engineering sample (pre-rev3), add `engineering_sample: true` to your `esp32:` config
+- If you use `sgp30` sensors, expect stored baselines to be lost after update (up to 12 hours recalibration)
+- If you use `nextion` TFT uploads over slow networks, set `tft_upload_http_timeout` to a higher value (default changed from 15s to 4.5s)
+- If you use `time` component and have lambdas calling `::mktime()`, `setenv("TZ", ...)`, or `tzset()` directly, update them to use ESPHome's `ESPTime` API
+- If you use external components on ESP8266 that call `get_icon_ref()` or `get_device_class_ref()`, update them to use the new `get_icon_to()` / `get_device_class_to()` buffer API
+- If you use external components on ESP8266 or RP2040 that rely on FILE*-based `printf`, add `enable_full_printf: true` to your platform config
+- If you maintain external components for RP2040, check for pico-sdk 2.0 API renames (`padsbank0_hw` → `pads_bank0_hw`, `SerialPIO::NOPIN` → `NOPIN`)
+- If you maintain external components that override `UARTComponent::flush()`, update the return type from `void` to `FlushResult`
+{/* UPGRADE_CHECKLIST_END */}
+
+{/* FEATURE_HIGHLIGHTS_START */}
+## New Media Player Architecture (speaker_source)
+
+ESPHome 2026.3.0 introduces a completely redesigned media player built around a modular **source-based architecture**. The new [speaker_source](/components/speaker_source) media player replaces the monolithic speaker media player with a flexible orchestrator that routes audio from pluggable [media_source](/components/media_source) components.
+
+**Key Features:**
+
+- **Pluggable media sources** - Audio can come from embedded [audio_file](/components/audio_file) files, HTTP streams, or future sources like Sendspin, each as a separate component
+- **Dual pipeline support** - Separate media and announcement pipelines with independent speakers, formats, and sources, allowing announcements to play alongside music
+- **Full playlist management** - Enqueue, next/previous track navigation, repeat (off/one/all), and shuffle with Fisher-Yates algorithm
+- **Volume persistence** - Volume and mute state are saved across reboots with configurable min/max/increment
+- **Ogg Opus codec support** - The new microOpus library enables decoding Opus audio streams, completing the codec lineup alongside FLAC and MP3 ([#13967](https://github.com/esphome/esphome/pull/13967))
+- **Smarter codec builds** - The `codec_support_enabled` option now defaults to `needed`, building only the codecs your configuration actually requires instead of all three (users streaming arbitrary URLs should set `codec_support_enabled: all`)
+- **Expanded media player commands** - New `next`, `previous`, `repeat_all`, `shuffle`, `unshuffle`, `group_join`, and `clear_playlist` actions ([#12258](https://github.com/esphome/esphome/pull/12258))
+
+The [audio_file](/components/audio_file) component lets you embed audio files (local or from URLs) directly into firmware for instant playback without network access. Files are decoded directly from flash, saving two buffer copies compared to the previous approach.
+
+## RP2040/RP2350 Platform Overhaul
+
+The RP2040 platform receives its most significant update yet, with framework modernization, RP2350 support, and a dramatically improved developer experience.
+
+**Framework Update:**
+
+- **arduino-pico 3.9.4 to 5.5.0** with pico-sdk 2.0 and GCC 14 toolchain ([#14328](https://github.com/esphome/esphome/pull/14328))
+- **RP2350 hardware verified** - Pico 2 W tested with WiFi, debug sensors, and OTA all working (429KB free heap)
+- **143+ board definitions** (up from 3) auto-generated from the arduino-pico repository, including all RP2350 variants ([#14528](https://github.com/esphome/esphome/pull/14528))
+- **WiFi reliability fixes** - Proper CYW43 link status detection, non-blocking WiFi join, and correct disconnect cleanup
+
+**New Capabilities:**
+
+- **BLE foundation** - New [rp2040_ble](/components/rp2040_ble) component initializes BTstack on Pico W/Pico 2 W boards, laying the groundwork for BLE scanning and Bluetooth proxy support with only ~17KB overhead ([#14603](https://github.com/esphome/esphome/pull/14603))
+- **BOOTSEL upload via picotool** - `esphome upload` now detects RP2040 devices in BOOTSEL mode, uploads with real-time progress, and automatically starts log output after reboot ([#14483](https://github.com/esphome/esphome/pull/14483))
+- **9.2KB flash savings** from printf stub optimization ([#14622](https://github.com/esphome/esphome/pull/14622))
+
+Note: The framework update is a breaking change for external components using old pico-sdk APIs (e.g., `padsbank0_hw` renamed to `pads_bank0_hw`, `SerialPIO::NOPIN` is now just `NOPIN`).
+
+## ESP32-P4 and ESP32-C5 Support
+
+This release significantly expands support for Espressif's newest silicon.
+
+**ESP32-P4:**
+
+- **Touch pad support** - The `esp32_touch` component has been migrated to ESP-IDF v5.5's unified touch sensor driver, adding ESP32-P4 as a supported variant with 14 touch channels (GPIO 2-15) ([#14033](https://github.com/esphome/esphome/pull/14033))
+- **Production silicon default** - The default board now targets rev3+ production chips instead of engineering samples. Users with pre-rev3 dev kits should set `engineering_sample: true` ([#14139](https://github.com/esphome/esphome/pull/14139))
+- **Execute from PSRAM** - Code execution from PSRAM is now enabled for P4, expanding available instruction memory ([#14329](https://github.com/esphome/esphome/pull/14329))
+- **LDO channels 1 & 2** - The `esp_ldo` component now supports internal LDO channels with an explicit `allow_internal_channel` guard, useful for boards like the Waveshare ESP32-P4 where these channels power external peripherals ([#14177](https://github.com/esphome/esphome/pull/14177))
+
+**ESP32-C5:**
+
+- **Dual-band WiFi** - New `band_mode` configuration option for selecting 2.4GHz, 5GHz, or auto band selection on the ESP32-C5's dual-band radio ([#14148](https://github.com/esphome/esphome/pull/14148))
+
+## Memory and Flash Optimizations
+
+Several significant optimizations reduce firmware size and RAM usage across all platforms.
+
+**Timezone Overhaul (~9.5KB flash on ESP32, ~2% RAM on ESP8266):**
+
+The entire libc timezone infrastructure has been replaced with a lightweight 32-byte struct parser ([#13635](https://github.com/esphome/esphome/pull/13635)). Previously, ESPHome pulled in libc's `scanf` family (~9.8KB), environment variable infrastructure, and double-stored timezone data just to parse a string it already knew. The new implementation also provides consistent cross-platform timezone behavior with 126 unit tests, eliminating differences between newlib versions on different chips. Lambdas using `::mktime()` or `setenv("TZ", ...)` directly may need to be updated.
+
+| Platform | Flash Savings | RAM Savings |
+|----------|---------------|-------------|
+| ESP32-IDF | ~9.5KB | 136 bytes |
+| ESP8266 | ~4.1KB | ~850 bytes |
+| LibreTiny | ~4.7KB | 148 bytes |
+| RP2040 | ~3.7KB | 148 bytes |
+
+**ESP8266 PROGMEM Optimizations:**
+
+- **Icon strings moved to flash** - Saves ~27 bytes per unique icon (~1KB for a config with 40 icons) ([#14437](https://github.com/esphome/esphome/pull/14437))
+- **Device class strings moved to flash** - Same treatment applied to device class strings, with deduplicated handling across MQTT and API ([#14443](https://github.com/esphome/esphome/pull/14443))
+- **printf stubs save 1.6KB flash** on ESP8266 ([#14621](https://github.com/esphome/esphome/pull/14621))
+
+## nRF52 Platform Improvements
+
+The nRF52 platform gains critical OTA and debugging capabilities.
+
+**BLE and Serial OTA:**
+
+- The new [zephyr_mcumgr](/components/zephyr_mcumgr) component enables over-the-air updates via BLE or serial using the MCUmgr protocol ([#11932](https://github.com/esphome/esphome/pull/11932)). This is a major step forward for nRF52 devices which previously lacked wireless update support.
+
+**Crash Debugging:**
+
+- Early boot debug messages are now available on nRF52, including boot reason logging and last crash PC/LR values stored in a no-init buffer ([#11685](https://github.com/esphome/esphome/pull/11685)). The logger waits up to 10 seconds for the CDC port to open, ensuring no early logs are lost.
+
+**BLE NUS UART:**
+
+- The `ble_nus` component now supports bidirectional UART communication over Bluetooth, compatible with tools like [ble-serial](https://pypi.org/project/ble-serial/) ([#14320](https://github.com/esphome/esphome/pull/14320)).
+
+## New Sensor Components
+
+This release adds support for several new sensor families.
+
+**SEN6x Environmental Sensor Node:**
+
+The new [sen6x](/components/sen6x) component supports Sensirion's entire SEN6x product family (SEN62, SEN63C, SEN65, SEN66, SEN68, SEN69C) with up to 7 measurement channels: PM1.0/2.5/4.0/10, temperature, humidity, NOx, VOC, CO2, and formaldehyde ([#12553](https://github.com/esphome/esphome/pull/12553)). Each sensor variant automatically exposes only its available channels.
+
+**HDC302x Temperature & Humidity:**
+
+The new [hdc302x](/components/hdc302x) component adds support for Texas Instruments' high-precision HDC3020/3021/3022 sensors, including the IP67-rated HDC3022 with permanent PTFE dust and water protection ([#10160](https://github.com/esphome/esphome/pull/10160)).
+
+**Dew Point Calculator:**
+
+The new [dew_point](/components/dew_point) component calculates the dew point from any existing temperature and humidity sensors, without requiring additional hardware ([#14441](https://github.com/esphome/esphome/pull/14441)).
+
+## Serial Proxy
+
+The new [serial_proxy](/components/serial_proxy) component proxies UART communication to Home Assistant API clients over the network ([#13944](https://github.com/esphome/esphome/pull/13944)). This enables remote access to serial devices connected to ESPHome nodes, similar to how `zwave_proxy` bridges Z-Wave modems. Configure a UART bus and expose it as a named serial port with a specified type (TTL, RS232, RS485).
+
+## Display Support Expansion
+
+Several new display models are now supported out of the box:
+
+- **Waveshare DSI touch panels** - 5 new MIPI DSI models from 3.4" to 10.1" with touch support ([#14023](https://github.com/esphome/esphome/pull/14023))
+- **Waveshare 7.5" 4-color e-Paper (H)** - 800x480 display with black/white/yellow/red colors ([#13991](https://github.com/esphome/esphome/pull/13991))
+- **WeAct 3-color e-paper** - 2.13", 2.9", and 4.2" SSD1683-based displays with red/black/white ([#13894](https://github.com/esphome/esphome/pull/13894))
+- **Waveshare 1.83" v2** - MIPI SPI panel with updated init sequence for the Rev2 PCB ([#13680](https://github.com/esphome/esphome/pull/13680))
+- **Camera sensors without JPEG** - The `esp32_camera` component now supports sensors like the GC0308 (m5stack AtomS3R-CAM) that output RGB565 instead of JPEG, with automatic software JPEG conversion ([#9496](https://github.com/esphome/esphome/pull/9496))
+{/* FEATURE_HIGHLIGHTS_END */}
+
+## Breaking Changes
+
+{/* BREAKING_CHANGES_USERS_START */}
+### Platform Changes
+
+- **ESP32-P4**: The default board now targets production rev3+ silicon instead of engineering samples. If you have a pre-rev3 ESP32-P4 dev kit, add `engineering_sample: true` to your `esp32:` config [#14139](https://github.com/esphome/esphome/pull/14139)
+- **RP2040**: The arduino-pico framework has been updated from 3.9.4 to 5.5.0 (pico-sdk 2.0, GCC 14). Most user configs are unaffected, but external components targeting RP2040 may need updates [#14328](https://github.com/esphome/esphome/pull/14328)
+- **ESP8266**: `printf`/`vprintf`/`fprintf` are now wrapped with lightweight stubs to save ~1.6KB flash. External components that need full FILE*-based printf can set `enable_full_printf: true` under `esp8266:` [#14621](https://github.com/esphome/esphome/pull/14621)
+- **RP2040**: Same printf wrapping saves ~9.2KB flash. Use `enable_full_printf: true` under `rp2040:` if needed [#14622](https://github.com/esphome/esphome/pull/14622)
+
+### Component Changes
+
+- **Speaker Media Player**: The `codec_support_enabled` option now defaults to `needed` instead of building all codecs. Users who stream arbitrary audio formats via hardcoded URLs should set `codec_support_enabled: all` to restore the previous behavior [#13967](https://github.com/esphome/esphome/pull/13967)
+- **OpenTherm**: The deprecated `opentherm_version` config option has been removed. Use `opentherm_version_controller` instead [#14103](https://github.com/esphome/esphome/pull/14103)
+- **Nextion**: The TFT upload HTTP timeout default changed from 15s to 4.5s to prevent watchdog resets. Users with slow connections can increase it via the new `tft_upload_http_timeout` option [#14234](https://github.com/esphome/esphome/pull/14234)
+- **OpenThread**: The log level is now statically set based on the `esp32.framework.log_level` setting instead of being dynamic [#14456](https://github.com/esphome/esphome/pull/14456)
+- **SGP30**: Fixed serial number truncation from 48-bit to 24-bit. This changes the preference hash, so existing stored baselines will no longer be found. The sensor will need to go through its warm-up/calibration period again (up to 12 hours) [#14478](https://github.com/esphome/esphome/pull/14478)
+- **Micronova**: A command queue has been added for read and write requests. Write requests are now prioritized, and read requests are deduplicated. This fixes silently ignored write requests and incomplete sensor updates [#12268](https://github.com/esphome/esphome/pull/12268)
+
+### Timezone Changes
+
+- **Time**: The libc timezone infrastructure has been replaced with a lightweight custom parser, saving ~9.5KB flash on ESP32 and ~2% RAM on ESP8266. The `dump_config()` output now shows human-readable timezone info (e.g., `UTC-6:00 (DST UTC-5:00)`) instead of raw POSIX strings. Lambdas using `::mktime()`, bare `::strftime()`, or calling `setenv("TZ", ...)`/`tzset()` directly may need updating, though most user lambdas are unaffected as `::localtime()` is overridden to continue working [#13635](https://github.com/esphome/esphome/pull/13635)
+
+### Entity String Changes (ESP8266)
+
+- **Icons**: Icon strings are now stored in PROGMEM (flash) on ESP8266, with a maximum length of 63 characters. All standard `mdi:*` icons are well under this limit [#14437](https://github.com/esphome/esphome/pull/14437)
+- **Device Classes**: Device class strings are similarly moved to PROGMEM on ESP8266 [#14443](https://github.com/esphome/esphome/pull/14443)
+{/* BREAKING_CHANGES_USERS_END */}
+
+### Undocumented API Changes
+
+{/* UNDOCUMENTED_API_CHANGES_START */}
+Several internal C++ APIs have been changed for performance optimization. While these are not part of the public API, they may affect users who write lambdas or maintain external components.
+
+### Entity property setters removed
+
+- **EntityBase**: `set_internal()`, `set_disabled_by_default()`, and `set_entity_category()` have been removed and packed into the existing `configure_entity_()` call. `set_device()` is renamed to `set_device_()` and made protected. These were codegen-only setters that were unsafe to call at runtime. [#14564](https://github.com/esphome/esphome/pull/14564)
+
+### Timezone API changes
+
+- **Time**: The libc functions `localtime()` and `localtime_r()` are overridden on embedded platforms to use ESPHome's custom timezone implementation. Code using `::mktime()` or `::strftime()` directly may need updating. The `setenv("TZ", ...)`/`tzset()` path is no longer used internally. [#13635](https://github.com/esphome/esphome/pull/13635)
+
+### Protobuf API changes
+
+- **API ProtoMessage**: `encode()` and `calculate_size()` are no longer virtual. `ProtoSize` class converted from accumulator-object API to pure static methods. Lambdas calling `calculate_size()` should now call it directly on the message (returns `uint32_t` instead of populating a `ProtoSize` object). [#14449](https://github.com/esphome/esphome/pull/14449)
+
+  ```cpp
+  // Before
+  ProtoSize s;
+  msg.calculate_size(s);
+  uint32_t size = s.get_size();
+
+  // After
+  uint32_t size = msg.calculate_size();
+  ```
+
+- **APIServer**: `is_connected(bool state_subscription_only)` overload removed. Use `is_connected()` (no args, inlined) for the common path, or `is_connected_with_state_subscription()` for the rare state-subscription-only check. [#14574](https://github.com/esphome/esphome/pull/14574)
+
+### OTA backend changes
+
+- **OTA**: The `OTABackend` abstract base class has been removed. Use `auto` for local variables from `make_ota_backend()`, and `ota::OTABackendPtr` for member variables. Include `ota_backend_factory.h` instead of `ota_backend.h`. [#14473](https://github.com/esphome/esphome/pull/14473)
+
+### OpenThread build changes
+
+- **OpenThread**: The OT console (`CONFIG_OPENTHREAD_CONSOLE_ENABLE`) and OT diagnostics (`CONFIG_OPENTHREAD_DIAG`) are now disabled by default, saving up to ~22KB flash. Custom lambdas using the OT console or diagnostics C API will need to re-enable these via sdkconfig. [#14390](https://github.com/esphome/esphome/pull/14390), [#14399](https://github.com/esphome/esphome/pull/14399)
+
+### Bug fixes affecting output values
+
+- **ByteBuffer**: `put_uint24(value, offset)` was writing 4 bytes instead of 3, corrupting the adjacent byte. Lambdas relying on the old (buggy) behavior may see different results. [#14555](https://github.com/esphome/esphome/pull/14555)
+- **INA2xx / MSA3xx**: `two_complement_()` / `twos_complement_()` had an off-by-one that returned the most-negative value as positive. Affected readings will now be correct. [#14555](https://github.com/esphome/esphome/pull/14555)
+{/* UNDOCUMENTED_API_CHANGES_END */}
+
+### Breaking Changes for Developers
+
+{/* BREAKING_CHANGES_DEVELOPERS_START */}
+- **Entity icon API**: `get_icon_ref()` and `get_icon()` deprecated on non-ESP8266, `static_assert` error on ESP8266. Use `get_icon_to(std::span<char, MAX_ICON_LENGTH>)` instead [#14437](https://github.com/esphome/esphome/pull/14437)
+- **Entity device class API**: `get_device_class_ref()` and `get_device_class()` deprecated on non-ESP8266, `static_assert` error on ESP8266. Use `get_device_class_to(std::span<char, MAX_DEVICE_CLASS_LENGTH>)` instead [#14443](https://github.com/esphome/esphome/pull/14443)
+- **RP2040 framework**: arduino-pico 3.9.4 → 5.5.0 with pico-sdk 2.0. Key API renames: `padsbank0_hw` → `pads_bank0_hw`, `SerialPIO::NOPIN` → `NOPIN` [#14328](https://github.com/esphome/esphome/pull/14328)
+- **UART flush()**: Return type changed from `void` to `FlushResult`. External components overriding `flush()` must update their signature [#14608](https://github.com/esphome/esphome/pull/14608)
+- **runtime_image**: `ImageFormat` enum moved from `esphome::online_image` to `esphome::runtime_image`. `OnlineImage` constructor signature changed [#10212](https://github.com/esphome/esphome/pull/10212)
+- **OTA backend**: `OTABackend` abstract base class removed. Use `ota::OTABackendPtr` type alias and `auto` for `make_ota_backend()` return [#14473](https://github.com/esphome/esphome/pull/14473)
+- **Protobuf API**: `encode()` and `calculate_size()` are now non-virtual on `ProtoMessage`. `ProtoSize` converted to static methods. `send_message()` is now templated and deduces `MESSAGE_TYPE` [#14449](https://github.com/esphome/esphome/pull/14449)
+- **EntityBase setters**: `set_internal()`, `set_disabled_by_default()`, `set_entity_category()` removed (now packed into `configure_entity_()`). `set_device()` renamed to `set_device_()` and made protected [#14564](https://github.com/esphome/esphome/pull/14564)
+- **Component**: `call_loop()` and `mark_failed()` devirtualized [#14083](https://github.com/esphome/esphome/pull/14083)
+- **Component**: `call_dump_config()` devirtualized [#14355](https://github.com/esphome/esphome/pull/14355)
+- **Logger**: `LogListener` virtual interface replaced with `LogCallback` struct [#14084](https://github.com/esphome/esphome/pull/14084)
+- **Socket**: Socket abstraction layer devirtualized [#14398](https://github.com/esphome/esphome/pull/14398)
+- **esphome::optional**: Replaced with `std::optional` [#14368](https://github.com/esphome/esphome/pull/14368)
+- **Application name/friendly_name**: Changed from `std::string` to `StringRef` [#14532](https://github.com/esphome/esphome/pull/14532)
+- **http_request headers**: `std::map` replaced with `std::vector` [#14024](https://github.com/esphome/esphome/pull/14024), [#14027](https://github.com/esphome/esphome/pull/14027)
+- **i2c**: Deprecated `stop` parameter overloads and `readv`/`writev` methods removed [#14106](https://github.com/esphome/esphome/pull/14106)
+- **ESP32 IDF components**: Deprecated `add_idf_component()` parameters removed [#14105](https://github.com/esphome/esphome/pull/14105)
+- **register_component**: Now protected, runtime checks removed [#14371](https://github.com/esphome/esphome/pull/14371)
+- **register_action**: Now requires explicit `synchronous=` parameter [#14606](https://github.com/esphome/esphome/pull/14606)
+- **build_info_data.h**: Moved out of `application.h` to fix incremental rebuilds [#14230](https://github.com/esphome/esphome/pull/14230)
+- **Entity string properties**: Packed into PROGMEM-indexed `uint8_t` fields [#14171](https://github.com/esphome/esphome/pull/14171)
+- **get_loop_priority**: Conditionally compiled with `USE_LOOP_PRIORITY` [#14210](https://github.com/esphome/esphome/pull/14210)
+- **SerializationBuffer**: New stack-first JSON serialization buffer [#13625](https://github.com/esphome/esphome/pull/13625)
+- **Modbus**: `get_uart()` added for timeout calculation; external modbus components may need update [#14614](https://github.com/esphome/esphome/pull/14614)
+
+For detailed migration guides and API documentation, see the [ESPHome Developers Documentation](https://developers.esphome.io/).
+{/* BREAKING_CHANGES_DEVELOPERS_END */}
 
 {/* markdownlint-disable MD013 */}
 
