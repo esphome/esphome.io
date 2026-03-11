@@ -117,11 +117,15 @@ The `lwip_select()` system call has been replaced with direct LwIP socket reads 
 
 **Instant ISR Wake**
 
-GPIO binary sensors and touch sensors now wake the main loop immediately from interrupts instead of waiting up to ~16ms for the select timeout ([#14383](https://github.com/esphome/esphome/pull/14383)). UART wake-on-RX was also redesigned — replacing a FreeRTOS task + event queue (~3.9KB heap per UART) with a direct ISR callback at essentially zero cost ([#14382](https://github.com/esphome/esphome/pull/14382)).
+GPIO binary sensors and touch sensors now wake the main loop immediately from interrupts instead of waiting up to ~16ms for the select timeout ([#14383](https://github.com/esphome/esphome/pull/14383)). UART wake-on-RX was also redesigned — replacing a FreeRTOS task + event queue (~3.9KB heap per UART) with a direct ISR callback at essentially zero cost ([#14382](https://github.com/esphome/esphome/pull/14382)). With the new near-zero-cost mechanism, wake-on-RX is now enabled by default on all ESP32 UARTs ([#14391](https://github.com/esphome/esphome/pull/14391)), and ESP8266 gained ISR wake support for GPIO binary sensors ([#14392](https://github.com/esphome/esphome/pull/14392)).
 
 **Faster millis()**
 
 The `millis()` function — called once per component per loop iteration — was optimized with a custom 64-bit division algorithm that eliminates the `__udivdi3` software division routine, achieving 2-2.5x speedup on every call ([#14409](https://github.com/esphome/esphome/pull/14409)). Native 64-bit `millis_64()` implementations were added for ESP32, RP2040, and Host platforms ([#14339](https://github.com/esphome/esphome/pull/14339), [#14356](https://github.com/esphome/esphome/pull/14356), [#14340](https://github.com/esphome/esphome/pull/14340)), eliminating 193 bytes of rollover tracking code on ESP32.
+
+**Scheduler and Loop Overhead**
+
+The main loop now calls `component->loop()` directly instead of going through `call()` → `call_loop_()` → `loop()`, eliminating 2 unnecessary function frames per component per iteration ([#14451](https://github.com/esphome/esphome/pull/14451)). On a device with 120 looping components, that's 240 function frames removed per loop cycle. The scheduler's defer queue processing was also optimized, halving lock acquisitions from 2N+1 to N+1 for N deferred items and skipping the lock entirely when the queue is empty ([#14107](https://github.com/esphome/esphome/pull/14107)).
 
 ## API and Protobuf Performance
 
@@ -159,6 +163,8 @@ The native API communication layer received over 20 targeted optimizations this 
 
 Runtime `powf()` calls in light gamma correction have been replaced with pre-computed PROGMEM lookup tables generated at compile time ([#14123](https://github.com/esphome/esphome/pull/14123)). A 5-channel RGBWW light transition frame dropped from 349 us to 36 us on ESP32 and from 456 us to 58 us on ESP8266. Addressable lights also save 512 bytes of heap per instance — the RAM gamma tables are eliminated entirely. The `powf` math library (~2.3KB flash) is no longer pulled into the binary for lights.
 
+The `powf` elimination extends beyond lights — a new `pow10_int()` helper replaces `powf(10, exp)` in sensor filters and accuracy normalization, achieving up to 22x faster computation on ESP8266 and saving 3.1KB flash ([#14114](https://github.com/esphome/esphome/pull/14114)). Light color interpolation now uses a lightweight `lerp_fast` instead of `std::lerp` ([#14238](https://github.com/esphome/esphome/pull/14238)), and static effect names are resolved to integer indices at code generation time instead of runtime string matching, saving 632 bytes on ESP8266 ([#14265](https://github.com/esphome/esphome/pull/14265)).
+
 ## Memory and Flash Optimizations
 
 Several significant optimizations reduce firmware size and RAM usage across all platforms.
@@ -181,16 +187,28 @@ The entire libc timezone infrastructure has been replaced with a lightweight 32-
 - **ESP8266 printf stubs save ~1.6KB flash** ([#14621](https://github.com/esphome/esphome/pull/14621))
 - **RP2040 printf stubs save ~9.2KB flash** ([#14622](https://github.com/esphome/esphome/pull/14622))
 
+**Preferences Heap Churn Eliminated:**
+
+Most preference saves (switches, fans, covers, numbers, rotary encoders) now use a small inline buffer instead of heap-allocating for every save operation ([#13259](https://github.com/esphome/esphome/pull/13259)). A union-based `SmallInlineBuffer<8>` stores data inline when 8 bytes or smaller, eliminating heap fragmentation from repeated preference writes on long-running devices.
+
 **ESP8266 PROGMEM Optimizations:**
 
 - **Icon strings moved to flash** - Saves ~27 bytes per unique icon (~1KB for a config with 40 icons) ([#14437](https://github.com/esphome/esphome/pull/14437))
 - **Device class strings moved to flash** - Same treatment applied to device class strings, with deduplicated handling across MQTT and API ([#14443](https://github.com/esphome/esphome/pull/14443))
+- **Static strings auto-wrapped in PROGMEM** via `TemplatableValue` ([#13885](https://github.com/esphome/esphome/pull/13885))
 
 **Framework and Core Optimizations:**
 
 - **ESP-IDF bumped to 5.5.3** ([#14122](https://github.com/esphome/esphome/pull/14122))
 - **Component devirtualization** — `call_loop()`, `mark_failed()`, and `call_dump_config()` are now non-virtual, saving ~800+ bytes of flash from vtable elimination ([#14083](https://github.com/esphome/esphome/pull/14083), [#14355](https://github.com/esphome/esphome/pull/14355))
 - **Compile-time loop detection** — Components that don't override `loop()` are now detected at compile time and excluded from the loop list, eliminating runtime vtable probing ([#14405](https://github.com/esphome/esphome/pull/14405))
+- **Conditional filter compilation** — Sensor, text sensor, and binary sensor filter infrastructure is now compiled out entirely when no filters are configured, saving flash and RAM ([#14213](https://github.com/esphome/esphome/pull/14213), [#14214](https://github.com/esphome/esphome/pull/14214), [#14215](https://github.com/esphome/esphome/pull/14215))
+- **Logger tx_buffer compile-time sized** — The logger's transmit buffer is now an inline array instead of a separate heap allocation, consolidating two allocations into one ([#14205](https://github.com/esphome/esphome/pull/14205))
+- **Logger hot path optimized** — Eliminated null-check and call frame indirection from every log call ([#14538](https://github.com/esphome/esphome/pull/14538))
+- **Scheduler overhead reduced** — Replaced `unique_ptr` with raw lifecycle-managed pointers, saving 608 bytes from eliminated STL template instantiations ([#14620](https://github.com/esphome/esphome/pull/14620))
+- **FLAC CRC validation disabled** — Skipping internal CRC checks during FLAC decoding improves throughput by 15-20% ([#14108](https://github.com/esphome/esphome/pull/14108))
+- **LibreTiny BK72xx -Os optimization** — ESPHome source code now compiles with `-Os` on BK72xx while the SDK stays at `-O1`, improving flash usage without triggering SDK bugs ([#14322](https://github.com/esphome/esphome/pull/14322))
+- **Codebase-wide constexpr migration** — Over 20 PRs converted `static const` to `constexpr` across core, API, BLE, NFC, MQTT, and display components, moving constants to flash and enabling compiler optimizations ([#14071](https://github.com/esphome/esphome/pull/14071), [#14127](https://github.com/esphome/esphome/pull/14127), [#14129](https://github.com/esphome/esphome/pull/14129), and others)
 - **`esphome::optional` replaced with `std::optional`** — Eliminates a custom implementation in favor of the C++17 standard ([#14368](https://github.com/esphome/esphome/pull/14368))
 
 ## nRF52 Platform Improvements
