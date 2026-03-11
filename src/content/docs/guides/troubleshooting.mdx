@@ -13,7 +13,53 @@ instructions for capturing and understanding crash data.
 
 ## Getting a Stack Trace from Crashes
 
-When your ESPHome device crashes, you can obtain a decoded stack trace to help identify the cause. This requires:
+### ESP32: Automatic Crash Reporting (No Serial Cable Needed)
+
+ESP32 devices automatically capture the crash backtrace and store it across reboots. After a crash, the backtrace is
+logged at boot and when Home Assistant or `esphome logs` connects via the API. The CLI automatically decodes the
+addresses using the debug symbols from your last local compile.
+
+To see the decoded crash data:
+
+1. **Compile locally** to ensure you have matching debug symbols:
+
+   ```shell
+   esphome compile your-device.yaml
+   esphome upload your-device.yaml
+   ```
+
+1. **Connect via API** after the crash (no USB needed):
+
+   ```shell
+   esphome logs your-device.yaml
+   ```
+
+   The crash data from the previous boot will appear automatically:
+
+   ```log
+   [11:07:57][E][esp32.crash:079]: *** CRASH DETECTED ON PREVIOUS BOOT ***
+   [11:07:57][E][esp32.crash:080]:   PC:  0x42071478  (fault location)
+   WARNING Decoded 0x42071478: setup()::{lambda()#1}::_FUN() at your-device.yaml:37
+   [11:07:57][E][esp32.crash:082]:   BT0: 0x42071475  (backtrace)
+   WARNING Decoded 0x42071475: setup()::{lambda()#1}::_FUN() at your-device.yaml:37
+   [11:07:57][E][esp32.crash:082]:   BT1: 0x420714C1  (backtrace)
+   WARNING Decoded 0x420714c1: esphome::StatelessLambdaAction<>::play()
+   ```
+
+   The crash data also appears in the Home Assistant log viewer. To enable this, go to the ESPHome device's
+   integration options in Home Assistant and enable **Subscribe to logs from the device**. The logs appear under
+   the `homeassistant.components.esphome` logger. See the
+   [Home Assistant ESPHome integration docs](https://www.home-assistant.io/integrations/esphome/#obtaining-logs-from-the-device)
+   for details.
+
+> [!NOTE]
+> The crash data survives software resets but not power cycles. If the device crashes and is power-cycled
+> before you can connect, the crash data will be lost.
+
+### All Platforms: Serial Console Stack Trace
+
+For platforms without automatic crash reporting, or when you need the full register dump, you can capture the
+crash output via serial console. This requires:
 
 1. Compiling the firmware locally (to have matching debug symbols)
 1. Connecting the device via USB cable for serial console access
