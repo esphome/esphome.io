@@ -650,6 +650,24 @@ def oddities_doc_not_specific_component(folder, file):
         return file == "fastled"
 
 
+def md_skip_imports(md_file, lines, index):
+    # Skip import/export statements, committing position only after actual imports.
+    # Blank lines between imports are consumed but don't commit the position.
+    last_import_end = index
+    i = index
+    while i < len(lines):
+        stripped = lines[i].strip()
+        if stripped.startswith("import ") or stripped.startswith("export "):
+            i += 1
+            last_import_end = i  # commit: we've passed an import line
+        elif not stripped:
+            i += 1  # tentatively skip blank lines
+        else:
+            break  # non-import content reached
+
+    return last_import_end
+
+
 def oddities_titles(folder, file, title):
     # this replaces some titles which should be named otherwise
     if folder == "light":
@@ -721,6 +739,7 @@ if __name__ == "__main__":
     for md_file in md_files:
         lines = mrkdwn_lines(md_file)
         index = md_parse_frontmatter(md_file, lines)
+        index = md_skip_imports(md_file, lines, index)
         see_also.reset_doc(md_file)
         file_name = md_file.stem
         content_folder = md_file.parent.name
