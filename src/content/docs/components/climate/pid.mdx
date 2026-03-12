@@ -382,6 +382,36 @@ Configuration variables:
 - **kd** (*Optional*, float, [templatable](/automations/templates)): The factor for the derivative term of the PID controller.
   Defaults to `0`.
 
+This action updates the active runtime PID controller. The new values are used on the
+next PID computation cycle.
+
+## `climate.pid.set_deadband_control_parameters_multipliers` Action
+
+This action sets runtime multipliers for the deadband PID terms. This can be used to tune
+how strongly the P/I/D terms are applied while the controller is in deadband.
+
+```yaml
+on_...:
+  - climate.pid.set_deadband_control_parameters_multipliers:
+      id: pid_climate
+      kp_multiplier: 0.0
+      ki_multiplier: 0.0
+      kd_multiplier: 0.0
+```
+
+Configuration variables:
+
+- **id** (**Required**, [ID](/guides/configuration-types#id)): ID of the PID Climate to update.
+- **kp_multiplier** (**Required**, float, [templatable](/automations/templates)): Deadband multiplier for the proportional term.
+- **ki_multiplier** (*Optional*, float, [templatable](/automations/templates)): Deadband multiplier for the integral term.
+  Defaults to `0`.
+
+- **kd_multiplier** (*Optional*, float, [templatable](/automations/templates)): Deadband multiplier for the derivative term.
+  Defaults to `0`.
+
+This action updates the active runtime PID controller. The new values are used on the
+next PID computation cycle.
+
 ## `climate.pid.reset_integral_term` Action
 
 This action resets the integral term of the PID controller to 0. This might be necessary under certain
@@ -423,6 +453,9 @@ Configuration variables:
   - `KP` - The current factor for the proportional term of the PID controller.
   - `KI` - The current factor for the integral term of the PID controller.
   - `KD` - The current factor for the differential term of the PID controller.
+  - `KP_DEADBAND_MULTIPLIER` - The current deadband multiplier for the proportional term.
+  - `KI_DEADBAND_MULTIPLIER` - The current deadband multiplier for the integral term.
+  - `KD_DEADBAND_MULTIPLIER` - The current deadband multiplier for the differential term.
 
 - All other options from [Sensor](/components/sensor).
 
