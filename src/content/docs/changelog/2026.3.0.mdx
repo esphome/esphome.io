@@ -134,7 +134,7 @@ The nRF52 platform gains critical OTA and debugging capabilities, thanks to [@to
 
 ## Scheduler Performance
 
-The scheduler drives all timers, intervals, and deferred callbacks on every device. This release includes 9 targeted optimizations:
+The scheduler drives all timers, intervals, and deferred callbacks on every device. This release includes 7 targeted optimizations:
 
 - **Defer queue lock halving** - Lock acquisitions reduced from 2N+1 to N+1 for N deferred items, with the lock skipped entirely when the queue is empty (the common case) ([#14107](https://github.com/esphome/esphome/pull/14107))
 - **Relaxed memory ordering** - Atomic reads under the scheduler lock now use relaxed ordering since the lock already provides the necessary memory barrier ([#14140](https://github.com/esphome/esphome/pull/14140))
@@ -463,7 +463,7 @@ Several core virtual interfaces have been replaced with compile-time dispatch fo
 - **RP2040 framework**: arduino-pico 3.9.4 → 5.5.0 with pico-sdk 2.0. Key API renames: `padsbank0_hw` → `pads_bank0_hw`, `SerialPIO::NOPIN` → `NOPIN` [#14328](https://github.com/esphome/esphome/pull/14328)
 - **UART flush()**: Return type changed from `void` to `FlushResult`. External components overriding `flush()` must update their signature [#14608](https://github.com/esphome/esphome/pull/14608)
 - **runtime_image**: `ImageFormat` enum moved from `esphome::online_image` to `esphome::runtime_image`. `OnlineImage` constructor signature changed [#10212](https://github.com/esphome/esphome/pull/10212)
-- **Modbus**: `get_uart()` added for timeout calculation; external modbus components may need update [#14614](https://github.com/esphome/esphome/pull/14614)
+- **Modbus**: `rx_full_threshold` sentinel added to `UARTComponent`; timeout calculation changed for non-hardware UARTs. External modbus components may need update [#14614](https://github.com/esphome/esphome/pull/14614)
 
 #### Registration and build changes
 
