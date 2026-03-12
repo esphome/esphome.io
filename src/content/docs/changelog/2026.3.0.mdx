@@ -36,9 +36,6 @@ Alongside the performance work, a redesigned media player architecture with plug
 - If you use `sgp30` sensors, plan for up to 12 hours of recalibration after update as stored baselines will be invalidated by a serial number fix
 - If you use `nextion` TFT uploads over slow networks, set `tft_upload_http_timeout` to a higher value (default changed from 15s to 4.5s)
 - If you use `time` component and have lambdas calling `::mktime()`, `setenv("TZ", ...)`, or `tzset()` directly, update them to use ESPHome's `ESPTime` API
-- If you use external components on ESP8266 that call `get_icon_ref()` or `get_device_class_ref()`, update them to use the new `get_icon_to()` / `get_device_class_to()` buffer API
-- If you use external components on ESP8266 or RP2040 that rely on FILE*-based `printf`, add `enable_full_printf: true` to your platform config
-- If you maintain external components for RP2040, check for pico-sdk 2.0 API renames (`padsbank0_hw` → `pads_bank0_hw`, `SerialPIO::NOPIN` → `NOPIN`)
 - If you maintain external components that override `UARTComponent::flush()`, update the return type from `void` to `FlushResult`
 {/* UPGRADE_CHECKLIST_END */}
 
