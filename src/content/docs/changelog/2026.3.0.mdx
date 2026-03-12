@@ -181,11 +181,13 @@ The native API communication layer received over 20 targeted optimizations this 
 
 - **BLE event hot path optimized** - Eliminated redundant operations in the ESP32 BLE event processing loop, including short-circuiting dropped-count checks (4 instructions instead of ~25 in the common case) and removing redundant event release calls ([#14627](https://github.com/esphome/esphome/pull/14627))
 
-## Light Gamma Correction: 8-10x Faster
+## Light Optimizations
 
-Runtime `powf()` calls in light gamma correction have been replaced with pre-computed PROGMEM lookup tables generated at compile time ([#14123](https://github.com/esphome/esphome/pull/14123)). A 5-channel RGBWW light transition frame dropped from 349 us to 36 us on ESP32 and from 456 us to 58 us on ESP8266. Addressable lights also save 512 bytes of heap per instance -the RAM gamma tables are eliminated entirely. The `powf` math library (~2.3KB flash) is no longer pulled into the binary for lights.
+Runtime `powf()` calls in light gamma correction have been replaced with pre-computed PROGMEM lookup tables generated at compile time ([#14123](https://github.com/esphome/esphome/pull/14123)). A 5-channel RGBWW light transition frame dropped from 349 us to 36 us on ESP32 (8-10x faster) and from 456 us to 58 us on ESP8266. Addressable lights also save 512 bytes of heap per instance - the RAM gamma tables are eliminated entirely. The `powf` math library (~2.3KB flash) is no longer pulled into the binary for lights.
 
-The `powf` elimination extends beyond lights -a new `pow10_int()` helper replaces `powf(10, exp)` in sensor filters and accuracy normalization, achieving up to 22x faster computation on ESP8266 and saving 3.1KB flash ([#14114](https://github.com/esphome/esphome/pull/14114)). Light color interpolation now uses a lightweight `lerp_fast` instead of `std::lerp` ([#14238](https://github.com/esphome/esphome/pull/14238)), and static effect names are resolved to integer indices at code generation time instead of runtime string matching, saving 632 bytes on ESP8266 ([#14265](https://github.com/esphome/esphome/pull/14265)).
+Light color interpolation now uses a lightweight `lerp_fast` instead of `std::lerp` ([#14238](https://github.com/esphome/esphome/pull/14238)), and static effect names are resolved to integer indices at code generation time instead of runtime string matching, saving 632 bytes on ESP8266 ([#14265](https://github.com/esphome/esphome/pull/14265)).
+
+The `powf` elimination extends beyond lights - a new `pow10_int()` helper replaces `powf(10, exp)` in sensor filters and accuracy normalization, achieving up to 22x faster computation on ESP8266 and saving 3.1KB flash ([#14114](https://github.com/esphome/esphome/pull/14114)).
 
 ## Logger Optimizations
 
