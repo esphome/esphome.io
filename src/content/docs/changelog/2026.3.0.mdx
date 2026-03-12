@@ -24,7 +24,7 @@ import ImgTable from "@components/ImgTable.astro";
 {/* RELEASE_OVERVIEW_START */}
 ESPHome 2026.3.0 is a performance-focused release with deep optimizations across the entire stack. The main loop is up to 99x faster on socket polling, light gamma correction is 8-10x faster, API protobuf encoding is 6-12x faster, and `millis()` is 2.5x faster, all reducing CPU overhead and improving responsiveness, especially on single-core chips and Bluetooth proxy devices. Flash savings of 11-20KB+ are achieved through printf wrapping, scanf removal, timezone refactoring, and aggressive devirtualization.
 
-Alongside the performance work, a redesigned media player architecture with pluggable sources, playlists, and Ogg Opus support ships together with a major RP2040/RP2350 platform overhaul bringing pico-sdk 2.0, 143+ board definitions, BLE foundations, crash diagnostics, and captive portal support. A long-standing LWIP use-after-free bug that caused heap corruption crashes on ESP8266 (and RP2040) has been fixed — both platforms now pass stress testing. ESP32 gains an automatic crash handler that captures backtraces across reboots and reports them over the API — no serial cable needed. ESP32-P4 and ESP32-C5 gain expanded hardware support, nRF52 gets BLE OTA, and new components include SEN6x, HDC302x, dew point, and serial proxy.
+Alongside the performance work, a redesigned media player architecture with pluggable sources, playlists, and Ogg Opus support ships together with RP2040/RP2350 reaching first-class platform support — pico-sdk 2.0, 143+ board definitions, BLE foundations, crash diagnostics, and captive portal. A long-standing LWIP use-after-free bug that caused heap corruption crashes on ESP8266 (and RP2040) has been fixed — both platforms now pass stress testing. An 86-fix codebase correctness sweep from [@swoboda1337](https://github.com/swoboda1337) addresses buffer overflows, millis() overflow bugs, uninitialized variables, and logic errors across 100+ components. ESP32 gains an automatic crash handler that captures backtraces across reboots and reports them over the API — no serial cable needed. ESP32-P4 and ESP32-C5 gain expanded hardware support, nRF52 gets BLE OTA, and new components include SEN6x, HDC302x, dew point, and serial proxy.
 {/* RELEASE_OVERVIEW_END */}
 
 ## Upgrade Checklist
@@ -65,9 +65,9 @@ The main loop now calls `component->loop()` directly instead of going through `c
 
 WiFi `is_connected()` now caches connection state as a simple bool field, eliminating expensive SDK calls on every invocation ([#14463](https://github.com/esphome/esphome/pull/14463)). The `network::is_connected()` and `EthernetComponent::is_connected()` functions were moved to headers as inline ([#14464](https://github.com/esphome/esphome/pull/14464)). OpenThread connection state is now updated via callback instead of polling with a mutex lock on every loop ([#14484](https://github.com/esphome/esphome/pull/14484)). The API server's `is_connected()` was split into an inline fast path for the common no-arg case and an out-of-line path for state subscription checks, important for the BLE proxy hot path ([#14574](https://github.com/esphome/esphome/pull/14574)).
 
-## RP2040/RP2350 Platform Overhaul
+## RP2040/RP2350: First-Class Platform Support
 
-The headline change for RP2040 is the **arduino-pico framework jump from 3.9.4 to 5.5.0**, bringing pico-sdk 2.0 and the GCC 14 toolchain ([#14328](https://github.com/esphome/esphome/pull/14328)). This unlocks first-class RP2350 (Pico 2 W) support, modern SDK APIs, and a dramatically improved developer experience.
+The RP2040/RP2350 platform takes a major step toward first-class support in this release. The **arduino-pico framework jumps from 3.9.4 to 5.5.0**, bringing pico-sdk 2.0 and the GCC 14 toolchain ([#14328](https://github.com/esphome/esphome/pull/14328)). RP2350 (Pico 2 W) is now verified on real hardware with WiFi, debug sensors, and OTA all working, and the platform gains the same reliability, tooling, and developer experience that ESP32 users expect.
 
 **What the framework update brings:**
 
