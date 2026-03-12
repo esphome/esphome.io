@@ -411,7 +411,7 @@ Also thank you to [@ademuri](https://github.com/ademuri), [@anunayk](https://git
 ### Undocumented API Changes
 
 {/* UNDOCUMENTED_API_CHANGES_START */}
-These are changes to undocumented C++ APIs that may affect users who write lambdas or maintain external components. They are not part of the public API but are noted here for awareness.
+These are changes to **unstable, undocumented** C++ APIs that may affect users who write lambdas or maintain external components. These APIs are not documented on [esphome.io](https://esphome.io) and are **not part of the public API** — they may change at any time without notice. Only APIs documented on [esphome.io](https://esphome.io) are considered stable. If you depend on these internals, you do so at your own risk. We list them here as a courtesy.
 
 - **EntityBase**: `set_internal()`, `set_disabled_by_default()`, and `set_entity_category()` have been removed and packed into the existing `configure_entity_()` call. `set_device()` is renamed to `set_device_()` and made protected. These were codegen-only setters that were unsafe to call at runtime. [#14564](https://github.com/esphome/esphome/pull/14564)
 - **Time**: The libc functions `localtime()` and `localtime_r()` are overridden on embedded platforms to use ESPHome's custom timezone implementation. Code using `::mktime()` or `::strftime()` directly may need updating. The `setenv("TZ", ...)`/`tzset()` path is no longer used internally. [#13635](https://github.com/esphome/esphome/pull/13635)
