@@ -218,6 +218,7 @@ esphome:
 
 With `includes` you can include source files in the generated PlatformIO project.
 All files declared with this option are copied to the project each time it is compiled.
+`includes_c` behaves the same way, but wraps generated header includes in `extern "C" {}`.
 
 You can always look at the generated PlatformIO project (`.esphome/build/<NODE>`  ) to see what
 is happening - and if you want you can even copy the include files directly into the `src/` folder.
@@ -229,8 +230,27 @@ esphome:
   # ...
   includes:
     - my_switch.h
+    - path: my_types.h
+      stage: before_any_globals
     - <mylib.h>
+  includes_c:
+    - path: my_c_header.h
+      stage: after_all_globals
 ```
+
+Each item may be either a plain string or a mapping with these keys:
+
+- **path** (**Required**, string): Relative path to a file or directory, or a system include written with `<...>`.
+- **stage** (*Optional*, string): Controls where generated include statements are emitted relative to generated globals.
+  Supported values are `before_any_globals` and `after_all_globals`.
+
+If `stage` is omitted, ESPHome keeps the previous behavior:
+
+- System includes such as `<vector>` default to `before_any_globals`.
+- Local headers and directories default to `after_all_globals`.
+
+Use `before_any_globals` when a header defines types or macros used by generated globals.
+Use `after_all_globals` when a header needs generated globals to exist first.
 
 This option behaves differently depending on what the included file is pointing at:
 
