@@ -429,7 +429,6 @@ These are changes to **unstable, undocumented** C++ APIs that may affect users w
 - **OTA**: The `OTABackend` abstract base class has been removed. Use `auto` for local variables from `make_ota_backend()`, and `ota::OTABackendPtr` for member variables. Include `ota_backend_factory.h` instead of `ota_backend.h`. [#14473](https://github.com/esphome/esphome/pull/14473)
 - **OpenThread**: The OT console (`CONFIG_OPENTHREAD_CONSOLE_ENABLE`) and OT diagnostics (`CONFIG_OPENTHREAD_DIAG`) are now disabled by default, saving up to ~22KB flash. Custom lambdas using the OT console or diagnostics C API will need to re-enable these via sdkconfig. [#14390](https://github.com/esphome/esphome/pull/14390), [#14399](https://github.com/esphome/esphome/pull/14399)
 - **ByteBuffer**: `put_uint24(value, offset)` was writing 4 bytes instead of 3, corrupting the adjacent byte. Lambdas relying on the old (buggy) behavior may see different results. [#14555](https://github.com/esphome/esphome/pull/14555)
-- **INA2xx / MSA3xx**: `two_complement_()` / `twos_complement_()` had an off-by-one that returned the most-negative value as positive. Affected readings will now be correct. [#14555](https://github.com/esphome/esphome/pull/14555)
 {/* UNDOCUMENTED_API_CHANGES_END */}
 
 ### Breaking Changes for Developers
