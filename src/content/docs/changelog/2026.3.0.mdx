@@ -121,7 +121,7 @@ The BK72xx main task ran at FreeRTOS priority 3, below all WiFi (4-5) and LwIP (
 
 ## nRF52 Platform Improvements
 
-The nRF52 platform gains critical OTA and debugging capabilities.
+The nRF52 platform gains critical OTA and debugging capabilities, thanks to [@tomaszduda23](https://github.com/tomaszduda23).
 
 **BLE and Serial OTA:**
 
@@ -265,7 +265,7 @@ ESP-IDF has been bumped to 5.5.3 ([#14122](https://github.com/esphome/esphome/pu
 
 **ESP32-C5:**
 
-- **Dual-band WiFi configuration** - New `band_mode` option for selecting 2.4GHz, 5GHz, or auto band selection on the ESP32-C5's dual-band radio ([#14148](https://github.com/esphome/esphome/pull/14148))
+- **Dual-band WiFi configuration** - New `band_mode` option for selecting 2.4GHz, 5GHz, or auto band selection on the ESP32-C5's dual-band radio, thanks to [@swoboda1337](https://github.com/swoboda1337) ([#14148](https://github.com/esphome/esphome/pull/14148))
 
 ## New Sensor Components
 
@@ -318,7 +318,7 @@ The LD24xx family (LD2410, LD2412, LD2420, LD2450) received comprehensive integr
 
 ## New Media Player Architecture (speaker_source)
 
-The media player has been redesigned around a modular **source-based architecture** to support the upcoming [Sendspin](https://www.sendspin-audio.com/spec/) multi-room audio protocol. The new [speaker_source](/components/media_player/speaker_source) media player replaces the monolithic speaker media player with a flexible orchestrator that routes audio from pluggable [media_source](/components/media_source) components.
+The media player has been redesigned around a modular **source-based architecture** to support the upcoming [Sendspin](https://www.sendspin-audio.com/spec/) multi-room audio protocol, thanks to [@kahrendt](https://github.com/kahrendt). The new [speaker_source](/components/media_player/speaker_source) media player replaces the monolithic speaker media player with a flexible orchestrator that routes audio from pluggable [media_source](/components/media_source) components.
 
 **Key Features:**
 
@@ -334,7 +334,7 @@ The [audio_file](/components/audio_file) component lets you embed audio files (l
 
 ## Other Notable Features
 
-- **`!extend`/`!remove` on all list components** - A long-awaited feature: `!extend` and `!remove` now work on any list-based config entry (like `external_components`) even when the component schema doesn't declare an `id` field ([#14682](https://github.com/esphome/esphome/pull/14682))
+- **`!extend`/`!remove` on all list components** - A long-awaited feature: `!extend` and `!remove` now work on any list-based config entry (like `external_components`) even when the component schema doesn't declare an `id` field, thanks to [@swoboda1337](https://github.com/swoboda1337) ([#14682](https://github.com/esphome/esphome/pull/14682))
 - **BLE connection parameters API** - Bluetooth proxies can now adjust connection intervals on connected BLE devices, allowing integrations like yalexs-ble to switch from fast intervals (~7.5ms) to slow ones (~1000ms) after connection, significantly reducing battery drain on "Always Connected" devices like Yale/August locks ([#14577](https://github.com/esphome/esphome/pull/14577))
 - **Safe mode explicit boot success** - New `safe_mode.mark_boot_ok` action lets you explicitly notify safe mode that a boot is successful, solving the issue for deep sleep devices that boot and sleep within the safe mode timeout window ([#14306](https://github.com/esphome/esphome/pull/14306))
 - **CC1101 runtime configuration** - New actions to change frequency, modulation type, symbol rate, filter bandwidth, and other CC1101 radio settings on the fly ([#14141](https://github.com/esphome/esphome/pull/14141))
@@ -350,6 +350,28 @@ The [audio_file](/components/audio_file) component lets you embed audio files (l
 - **GT911 interrupt via IO expander** - Touch interrupt line can now be routed through an IO expander ([#14358](https://github.com/esphome/esphome/pull/14358))
 - **ESP32 hosted SDIO clock** - Configurable SDIO clock frequency for `esp32_hosted` WiFi ([#14319](https://github.com/esphome/esphome/pull/14319))
 - **Nextion configurable HTTP parameters** - New options for TFT upload timeout, follow redirects, and useragent ([#14234](https://github.com/esphome/esphome/pull/14234))
+
+## Thank You, Contributors
+
+This release includes 478 pull requests from over 30 contributors. A huge thank you to everyone who made 2026.3.0 possible:
+
+- [@swoboda1337](https://github.com/swoboda1337) - 101 PRs including the 86-fix correctness sweep across 100+ components and the ESP32-C5 dual-band WiFi support
+- [@kahrendt](https://github.com/kahrendt) - 20 PRs building the new media player architecture, Ogg Opus codec support, audio file component, and speaker pipeline infrastructure
+- [@tomaszduda23](https://github.com/tomaszduda23) - 11 PRs bringing the nRF52 platform forward with BLE OTA (zephyr_mcumgr), crash debugging, and USB CDC support
+- [@schdro](https://github.com/schdro) - 8 PRs improving the OpenThread stack with TX power configuration, connection caching, and build optimizations
+- [@kbx81](https://github.com/kbx81) - 8 PRs on the mixer_speaker, USB UART reliability, and core fixes
+- [@ximex](https://github.com/ximex) - 7 PRs with code quality improvements across rtttl, ESP32 pin validation, and time handling
+- [@clydebarrow](https://github.com/clydebarrow) - 6 PRs including the ESP32-P4 PSRAM execution, const cleanup, and USB UART fixes
+- [@rwrozelle](https://github.com/rwrozelle) - 4 PRs improving OpenThread with connection state caching and code quality
+- [@p1ngb4ck](https://github.com/p1ngb4ck) - 3 PRs adding UART debug prefix, ESP LDO channel support, and USB UART chip detection
+- [@exciton](https://github.com/exciton) - 2 PRs creating the Modbus integration test infrastructure and fixing timing bugs
+- [@CFlix](https://github.com/CFlix) - the new dew point sensor component
+- [@edwardtfn](https://github.com/edwardtfn) - Nextion TFT upload improvements
+- [@AndreKR](https://github.com/AndreKR) - ESP8266 TLS buffer configuration
+- [@mikelawrence](https://github.com/mikelawrence) - Sensirion sensor library improvements
+- [@diorcety](https://github.com/diorcety) - cross-compiler compatibility fixes
+
+And thank you to [@pgolawsk](https://github.com/pgolawsk), [@Rapsssito](https://github.com/Rapsssito), [@rwagoner](https://github.com/rwagoner), [@rsre](https://github.com/rsre), [@sredman](https://github.com/sredman), [@oarcher](https://github.com/oarcher), [@nagyrobi](https://github.com/nagyrobi), [@mback2k](https://github.com/mback2k), [@JiriPrchal](https://github.com/JiriPrchal), [@ccutrer](https://github.com/ccutrer), and everyone else who contributed code, reported issues, tested pre-releases, and helped in the community.
 {/* FEATURE_HIGHLIGHTS_END */}
 
 ## Breaking Changes
