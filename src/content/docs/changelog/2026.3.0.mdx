@@ -35,7 +35,7 @@ Alongside the performance work, a redesigned media player architecture with plug
 - If you have an ESP32-P4 engineering sample (pre-rev3), add `engineering_sample: true` to your `esp32:` config
 - If you use `sgp30` sensors, plan for up to 12 hours of recalibration after update as stored baselines will be invalidated by a serial number fix
 - If you use `nextion` TFT uploads over slow networks, set `tft_upload_http_timeout` to a higher value (default changed from 15s to 4.5s)
-- If you use `time` component and have lambdas calling `::mktime()`, `setenv("TZ", ...)`, or `tzset()` directly, update them to use ESPHome's `ESPTime` API
+- If you use `time` component and have lambdas calling `::mktime()`, `::strftime()`, `setenv("TZ", ...)`, or `tzset()` directly, update them to use ESPHome's `ESPTime` API
 - If you maintain external components that override `UARTComponent::flush()`, update the return type from `void` to `FlushResult`
 {/* UPGRADE_CHECKLIST_END */}
 
@@ -391,7 +391,7 @@ Most users can update without any configuration changes. The items below are gro
 - **ESP32-P4**: The default board now targets production rev3+ silicon instead of engineering samples. If you have a pre-rev3 ESP32-P4 dev kit, add `engineering_sample: true` to your `esp32:` config [#14139](https://github.com/esphome/esphome/pull/14139)
 - **Speaker Media Player**: The `codec_support_enabled` option now defaults to `needed` instead of building all codecs. If you stream audio via hardcoded URLs (not through Home Assistant), set `codec_support_enabled: all` to restore the previous behavior [#13967](https://github.com/esphome/esphome/pull/13967)
 - **SGP30**: Fixed serial number truncation from 48-bit to 24-bit. This changes the preference hash, so existing stored baselines will no longer be found. Plan for up to 12 hours of recalibration [#14478](https://github.com/esphome/esphome/pull/14478)
-- **Time**: Lambdas calling `::mktime()`, `setenv("TZ", ...)`, or `tzset()` directly need updating to use ESPHome's `ESPTime` API. Most user lambdas are unaffected as `::localtime()` is overridden to continue working [#13635](https://github.com/esphome/esphome/pull/13635)
+- **Time**: If you have lambdas calling `::mktime()`, `::strftime()`, `setenv("TZ", ...)`, or `tzset()` directly, update them to use ESPHome's `ESPTime` API. Most users are unaffected, and `::localtime()` continues to work [#13635](https://github.com/esphome/esphome/pull/13635)
 
 ### Most users unaffected
 
@@ -411,7 +411,7 @@ Most users can update without any configuration changes. The items below are gro
 These are changes to **unstable, undocumented** C++ APIs that may affect users who write lambdas or maintain external components. These APIs are not documented on [esphome.io](https://esphome.io) and are **not part of the public API** — they may change at any time without notice. Only APIs documented on [esphome.io](https://esphome.io) are considered stable. If you depend on these internals, you do so at your own risk. We list them here as a courtesy.
 
 - **EntityBase**: `set_internal()`, `set_disabled_by_default()`, and `set_entity_category()` have been removed and packed into the existing `configure_entity_()` call. `set_device()` is renamed to `set_device_()` and made protected. These were codegen-only setters that were unsafe to call at runtime. [#14564](https://github.com/esphome/esphome/pull/14564)
-- **Time**: The libc functions `localtime()` and `localtime_r()` are overridden on embedded platforms to use ESPHome's custom timezone implementation. Code using `::mktime()` or `::strftime()` directly may need updating. The `setenv("TZ", ...)`/`tzset()` path is no longer used internally. [#13635](https://github.com/esphome/esphome/pull/13635)
+- **Time**: The libc functions `localtime()` and `localtime_r()` are overridden on embedded platforms to use ESPHome's custom timezone implementation. The `setenv("TZ", ...)`/`tzset()` path is no longer used internally. See the breaking changes section above for lambda migration guidance. [#13635](https://github.com/esphome/esphome/pull/13635)
 - **API ProtoMessage**: `encode()` and `calculate_size()` are no longer virtual. `ProtoSize` class converted from accumulator-object API to pure static methods. Lambdas calling `calculate_size()` should now call it directly on the message (returns `uint32_t` instead of populating a `ProtoSize` object). [#14449](https://github.com/esphome/esphome/pull/14449)
   ```cpp
   // Before
