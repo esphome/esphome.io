@@ -24,7 +24,7 @@ import ImgTable from "@components/ImgTable.astro";
 {/* RELEASE_OVERVIEW_START */}
 ESPHome 2026.3.0 is a performance-focused release with deep optimizations across the entire stack. The main loop is up to 99x faster on socket polling, light gamma correction is 8-10x faster, API protobuf encoding is 6-12x faster, and `millis()` is 2.5x faster, all reducing CPU overhead and improving responsiveness, especially on single-core chips and Bluetooth proxy devices. Flash savings of 11-20KB+ are achieved through printf wrapping, scanf removal, timezone refactoring, and aggressive devirtualization.
 
-Alongside the performance work, a redesigned media player architecture with pluggable sources, playlists, and Ogg Opus support ships together with a major RP2040/RP2350 platform overhaul bringing pico-sdk 2.0, 143+ board definitions, BLE foundations, crash diagnostics, and captive portal support. ESP32-P4 and ESP32-C5 gain expanded hardware support, nRF52 gets BLE OTA, and new components include SEN6x, HDC302x, dew point, and serial proxy.
+Alongside the performance work, a redesigned media player architecture with pluggable sources, playlists, and Ogg Opus support ships together with a major RP2040/RP2350 platform overhaul bringing pico-sdk 2.0, 143+ board definitions, BLE foundations, crash diagnostics, and captive portal support. ESP32 gains an automatic crash handler that captures backtraces across reboots and reports them over the API — no serial cable needed. ESP32-P4 and ESP32-C5 gain expanded hardware support, nRF52 gets BLE OTA, and new components include SEN6x, HDC302x, dew point, and serial proxy.
 {/* RELEASE_OVERVIEW_END */}
 
 ## Upgrade Checklist
@@ -252,6 +252,12 @@ ESP-IDF has been bumped to 5.5.3 ([#14122](https://github.com/esphome/esphome/pu
 - **FLAC CRC validation disabled** - Skipping internal CRC checks during FLAC decoding improves throughput by 15-20% ([#14108](https://github.com/esphome/esphome/pull/14108))
 - **Codebase-wide constexpr migration** - Over 20 PRs converted `static const` to `constexpr` across core, API, BLE, NFC, MQTT, and display components, moving constants to flash and enabling compiler optimizations ([#14071](https://github.com/esphome/esphome/pull/14071), [#14127](https://github.com/esphome/esphome/pull/14127), [#14129](https://github.com/esphome/esphome/pull/14129), and others)
 - **`esphome::optional` replaced with `std::optional`** - Eliminates a custom implementation in favor of the C++17 standard ([#14368](https://github.com/esphome/esphome/pull/14368))
+
+## ESP32 Crash Handler
+
+A new crash handler for ESP32 devices using the ESP-IDF framework automatically captures backtraces when a crash occurs, stores them in `.noinit` memory (survives software reset), and logs the data on next boot ([#14709](https://github.com/esphome/esphome/pull/14709)). Crash data appears in `esphome logs` over the API — no serial cable needed — and in the Home Assistant log viewer when "Subscribe to logs" is enabled. The CLI automatically decodes addresses inline using `addr2line`.
+
+The handler works on both **Xtensa** (ESP32, S2, S3) and **RISC-V** (C3, C6, H2, C2) architectures, capturing up to 16 backtrace frames with human-readable exception reasons. On RISC-V, stack-scanned entries are validated and labeled to distinguish from register-sourced frames. Memory cost is minimal: +92 bytes RAM, +1,092 bytes flash. No configuration needed — it's automatically enabled for all ESP-IDF devices.
 
 ## ESP32-P4 and ESP32-C5 Improvements
 
@@ -527,6 +533,7 @@ For detailed migration guides and API documentation, see the [ESPHome Developers
 - [speaker_source] Add playlist management [esphome#14652](https://github.com/esphome/esphome/pull/14652) by [@kahrendt](https://github.com/kahrendt) (new-feature)
 - [speaker_source] Add shuffle support [esphome#14653](https://github.com/esphome/esphome/pull/14653) by [@kahrendt](https://github.com/kahrendt) (new-feature)
 - [speaker_source] Add announcement pipeline [esphome#14654](https://github.com/esphome/esphome/pull/14654) by [@kahrendt](https://github.com/kahrendt) (new-feature)
+- [esp32] Add crash handler to capture and report backtrace across reboots [esphome#14709](https://github.com/esphome/esphome/pull/14709) by [@bdraco](https://github.com/bdraco) (new-feature)
 
 ### New Components
 
