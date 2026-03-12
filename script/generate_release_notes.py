@@ -763,9 +763,15 @@ class ReleaseNotesGenerator:
         human_count = len(stats)
         total_prs = len([pr for pr in prs if pr.author not in BOT_AUTHORS])
 
+        if human_count < 10:
+            contributors_phrase = f"from {human_count} contributors. "
+        else:
+            rounded_contributors = ((human_count - 1) // 10) * 10
+            contributors_phrase = f"from over {rounded_contributors} contributors. "
+
         lines = [
-            f"This release includes {total_prs} pull requests from "
-            f"over {(human_count // 10) * 10} contributors. "
+            f"This release includes {total_prs} pull requests "
+            f"{contributors_phrase}"
             f"A huge thank you to everyone who made {self.version} possible:",
             "",
         ]
