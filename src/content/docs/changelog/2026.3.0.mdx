@@ -50,13 +50,13 @@ The `lwip_select()` system call has been replaced with direct LwIP socket reads 
 
 **Instant ISR Wake**
 
-GPIO binary sensors and touch sensors now wake the main loop immediately from interrupts instead of waiting up to ~16ms for the select timeout ([#14383](https://github.com/esphome/esphome/pull/14383)). UART wake-on-RX was also redesigned -replacing a FreeRTOS task + event queue (~3.9KB heap per UART) with a direct ISR callback at essentially zero cost ([#14382](https://github.com/esphome/esphome/pull/14382)). With the new near-zero-cost mechanism, wake-on-RX is now enabled by default on all ESP32 UARTs ([#14391](https://github.com/esphome/esphome/pull/14391)), and ESP8266 gained ISR wake support for GPIO binary sensors ([#14392](https://github.com/esphome/esphome/pull/14392)).
+GPIO binary sensors and touch sensors now wake the main loop immediately from interrupts instead of waiting up to ~16ms for the select timeout ([#14383](https://github.com/esphome/esphome/pull/14383)). UART wake-on-RX was also redesigned — replacing a FreeRTOS task + event queue (~3.9KB heap per UART) with a direct ISR callback at essentially zero cost ([#14382](https://github.com/esphome/esphome/pull/14382)). With the new near-zero-cost mechanism, wake-on-RX is now enabled by default on all ESP32 UARTs ([#14391](https://github.com/esphome/esphome/pull/14391)), and ESP8266 gained ISR wake support for GPIO binary sensors ([#14392](https://github.com/esphome/esphome/pull/14392)).
 
 **Native 64-bit Time and Faster millis()**
 
 A new `millis_64()` HAL function provides native 64-bit uptime across all platforms, replacing the Scheduler's CAS/atomic rollover tracking with direct hardware register reads ([#14339](https://github.com/esphome/esphome/pull/14339)). On ESP32, this reads `esp_timer_get_time()` directly (26 bytes, lock-free) instead of the 193-byte rollover reconstruction path. RP2040 uses `time_us_64()` from the hardware timer ([#14356](https://github.com/esphome/esphome/pull/14356)), and Host uses `clock_gettime(CLOCK_MONOTONIC)` ([#14340](https://github.com/esphome/esphome/pull/14340)). Components like `uptime` and `web_server` now call `millis_64()` directly from `hal.h` instead of going through `App.scheduler`.
 
-The `millis()` function itself -called once per component per loop iteration -was also optimized with a custom 64-bit division algorithm that eliminates the `__udivdi3` software division routine, achieving 2-2.5x speedup on every call ([#14409](https://github.com/esphome/esphome/pull/14409)).
+The `millis()` function itself — called once per component per loop iteration — was also optimized with a custom 64-bit division algorithm that eliminates the `__udivdi3` software division routine, achieving 2-2.5x speedup on every call ([#14409](https://github.com/esphome/esphome/pull/14409)).
 
 **Loop Call Overhead**
 
@@ -315,12 +315,6 @@ Several new display models are now supported out of the box:
 - **Division by zero guards** - Added checks in tsl2561, bl0942, graph, combination sensor, and others ([#14634](https://github.com/esphome/esphome/pull/14634))
 - **Malformed external input hardening** - Added bounds checks for BLE advertisements, Nextion responses, Modbus frames, and UART-based sensors to prevent crashes from unexpected data ([#14643](https://github.com/esphome/esphome/pull/14643), [#14651](https://github.com/esphome/esphome/pull/14651))
 
-## Integration Test Infrastructure
-
-This release introduces UART mock-based integration tests, enabling automated testing of components that communicate over serial protocols. Tests can now simulate real device responses and verify component behavior end-to-end on the host platform.
-
-The LD24xx family (LD2410, LD2412, LD2420, LD2450) received comprehensive integration tests ([#14377](https://github.com/esphome/esphome/pull/14377), [#14448](https://github.com/esphome/esphome/pull/14448), [#14471](https://github.com/esphome/esphome/pull/14471), [#14611](https://github.com/esphome/esphome/pull/14611)) along with bug fixes and performance improvements: fixed signed char causing incorrect distance values on LD2410/LD2412 ([#14380](https://github.com/esphome/esphome/pull/14380)), fixed buffer overflows in LD2420 command parsing and calibration ([#14297](https://github.com/esphome/esphome/pull/14297), [#14458](https://github.com/esphome/esphome/pull/14458)), optimized LD2450 with single-pass zone counting ([#14387](https://github.com/esphome/esphome/pull/14387)), `atan2f` angle calculation ([#14388](https://github.com/esphome/esphome/pull/14388)), and integer dedup for direction updates ([#14386](https://github.com/esphome/esphome/pull/14386)). Modbus also gained integration tests using the same UART mock approach ([#14395](https://github.com/esphome/esphome/pull/14395)).
-
 ## New Media Player Architecture (speaker_source)
 
 The media player has been redesigned around a modular **source-based architecture** to support the upcoming [Sendspin](https://www.sendspin-audio.com/spec/) multi-room audio protocol, thanks to [@kahrendt](https://github.com/kahrendt). The new [speaker_source](/components/media_player/speaker_source) media player replaces the monolithic speaker media player with a flexible orchestrator that routes audio from pluggable [media_source](/components/media_source) components.
@@ -355,6 +349,7 @@ The [audio_file](/components/audio_file) component lets you embed audio files (l
 - **GT911 interrupt via IO expander** - Touch interrupt line can now be routed through an IO expander ([#14358](https://github.com/esphome/esphome/pull/14358))
 - **ESP32 hosted SDIO clock** - Configurable SDIO clock frequency for `esp32_hosted` WiFi ([#14319](https://github.com/esphome/esphome/pull/14319))
 - **Nextion configurable HTTP parameters** - New options for TFT upload timeout, follow redirects, and useragent ([#14234](https://github.com/esphome/esphome/pull/14234))
+- **UART mock integration tests** - New integration test infrastructure enables automated testing of serial protocol components. The LD24xx family (LD2410, LD2412, LD2420, LD2450) and Modbus received comprehensive tests along with bug fixes ([#14377](https://github.com/esphome/esphome/pull/14377), [#14448](https://github.com/esphome/esphome/pull/14448), [#14471](https://github.com/esphome/esphome/pull/14471), [#14611](https://github.com/esphome/esphome/pull/14611), [#14395](https://github.com/esphome/esphome/pull/14395))
 
 ## Thank You, Contributors
 
