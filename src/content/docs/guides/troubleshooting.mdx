@@ -15,9 +15,14 @@ instructions for capturing and understanding crash data.
 
 ### ESP32: Automatic Crash Reporting (No Serial Cable Needed)
 
-ESP32 devices automatically capture the crash backtrace and store it across software resets (warm reboots). After a
-crash, the backtrace is logged at boot and when Home Assistant or `esphome logs` connects via the API. The CLI
-automatically decodes the addresses using the debug symbols from your last local compile.
+ESP32 devices using the **ESP-IDF framework** (the default) automatically capture the crash backtrace and store it
+across software resets (warm reboots). After a crash, the backtrace is logged at boot and when Home Assistant or
+`esphome logs` connects via the API. The CLI automatically decodes the addresses using the debug symbols from your
+last local compile.
+
+> [!NOTE]
+> This feature requires the ESP-IDF framework, which is the default for ESP32 devices. It is not available when
+> using the Arduino framework.
 
 To see the decoded crash data:
 
