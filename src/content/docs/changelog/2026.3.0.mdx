@@ -412,6 +412,7 @@ Most users can update without any configuration changes. The items below are gro
 - **Time**: The libc timezone infrastructure has been replaced with a lightweight custom parser, saving ~9.5KB flash on ESP32 and ~2% RAM on ESP8266. The `dump_config()` output now shows human-readable timezone info (e.g., `UTC-6:00 (DST UTC-5:00)`) instead of raw POSIX strings [#13635](https://github.com/esphome/esphome/pull/13635)
 - **Icons (ESP8266)**: Icon strings are now stored in PROGMEM (flash), with a maximum length of 63 characters. All standard `mdi:*` icons are well under this limit [#14437](https://github.com/esphome/esphome/pull/14437)
 - **Device Classes (ESP8266)**: Device class strings are similarly moved to PROGMEM [#14443](https://github.com/esphome/esphome/pull/14443)
+- **Light**: Lambdas calling `set_effect(0)` to disable effects by integer index will get an ambiguous overload error. Use `set_effect(uint32_t{0})` or `set_effect("None")` instead [#14732](https://github.com/esphome/esphome/pull/14732)
 {/* BREAKING_CHANGES_USERS_END */}
 
 ### Undocumented API Changes
