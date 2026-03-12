@@ -412,20 +412,11 @@ Also thank you to [@ademuri](https://github.com/ademuri), [@anunayk](https://git
 ### Undocumented API Changes
 
 {/* UNDOCUMENTED_API_CHANGES_START */}
-Several internal C++ APIs have been changed for performance optimization. While these are not part of the public API, they may affect users who write lambdas or maintain external components.
-
-### Entity property setters removed
+These are changes to undocumented C++ APIs that may affect users who write lambdas or maintain external components. They are not part of the public API but are noted here for awareness.
 
 - **EntityBase**: `set_internal()`, `set_disabled_by_default()`, and `set_entity_category()` have been removed and packed into the existing `configure_entity_()` call. `set_device()` is renamed to `set_device_()` and made protected. These were codegen-only setters that were unsafe to call at runtime. [#14564](https://github.com/esphome/esphome/pull/14564)
-
-### Timezone API changes
-
 - **Time**: The libc functions `localtime()` and `localtime_r()` are overridden on embedded platforms to use ESPHome's custom timezone implementation. Code using `::mktime()` or `::strftime()` directly may need updating. The `setenv("TZ", ...)`/`tzset()` path is no longer used internally. [#13635](https://github.com/esphome/esphome/pull/13635)
-
-### Protobuf API changes
-
 - **API ProtoMessage**: `encode()` and `calculate_size()` are no longer virtual. `ProtoSize` class converted from accumulator-object API to pure static methods. Lambdas calling `calculate_size()` should now call it directly on the message (returns `uint32_t` instead of populating a `ProtoSize` object). [#14449](https://github.com/esphome/esphome/pull/14449)
-
   ```cpp
   // Before
   ProtoSize s;
@@ -435,19 +426,9 @@ Several internal C++ APIs have been changed for performance optimization. While 
   // After
   uint32_t size = msg.calculate_size();
   ```
-
 - **APIServer**: `is_connected(bool state_subscription_only)` overload removed. Use `is_connected()` (no args, inlined) for the common path, or `is_connected_with_state_subscription()` for the rare state-subscription-only check. [#14574](https://github.com/esphome/esphome/pull/14574)
-
-### OTA backend changes
-
 - **OTA**: The `OTABackend` abstract base class has been removed. Use `auto` for local variables from `make_ota_backend()`, and `ota::OTABackendPtr` for member variables. Include `ota_backend_factory.h` instead of `ota_backend.h`. [#14473](https://github.com/esphome/esphome/pull/14473)
-
-### OpenThread build changes
-
 - **OpenThread**: The OT console (`CONFIG_OPENTHREAD_CONSOLE_ENABLE`) and OT diagnostics (`CONFIG_OPENTHREAD_DIAG`) are now disabled by default, saving up to ~22KB flash. Custom lambdas using the OT console or diagnostics C API will need to re-enable these via sdkconfig. [#14390](https://github.com/esphome/esphome/pull/14390), [#14399](https://github.com/esphome/esphome/pull/14399)
-
-### Bug fixes affecting output values
-
 - **ByteBuffer**: `put_uint24(value, offset)` was writing 4 bytes instead of 3, corrupting the adjacent byte. Lambdas relying on the old (buggy) behavior may see different results. [#14555](https://github.com/esphome/esphome/pull/14555)
 - **INA2xx / MSA3xx**: `two_complement_()` / `twos_complement_()` had an off-by-one that returned the most-negative value as positive. Affected readings will now be correct. [#14555](https://github.com/esphome/esphome/pull/14555)
 {/* UNDOCUMENTED_API_CHANGES_END */}
