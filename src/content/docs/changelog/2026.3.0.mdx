@@ -56,7 +56,7 @@ GPIO binary sensors and touch sensors now wake the main loop immediately from in
 
 A new `millis_64()` HAL function provides native 64-bit uptime across all platforms, replacing the Scheduler's CAS/atomic rollover tracking with direct hardware register reads ([#14339](https://github.com/esphome/esphome/pull/14339)). On ESP32, this reads `esp_timer_get_time()` directly (26 bytes, lock-free) instead of the 193-byte rollover reconstruction path. RP2040 uses `time_us_64()` from the hardware timer ([#14356](https://github.com/esphome/esphome/pull/14356)), and Host uses `clock_gettime(CLOCK_MONOTONIC)` ([#14340](https://github.com/esphome/esphome/pull/14340)). Components like `uptime` and `web_server` now call `millis_64()` directly from `hal.h` instead of going through `App.scheduler`.
 
-The `millis()` function itself — called once per component per loop iteration — was also optimized with a custom 64-bit division algorithm that eliminates the `__udivdi3` software division routine, achieving 2-2.5x speedup on every call ([#14409](https://github.com/esphome/esphome/pull/14409)).
+The `millis()` function itself — called once per component per loop iteration — was also optimized with a [Euclidean decomposition](https://en.wikipedia.org/wiki/Euclidean_division) that eliminates the `__udivdi3` software 64-bit division routine, achieving 2-2.5x speedup on every call ([#14409](https://github.com/esphome/esphome/pull/14409)).
 
 **Loop Call Overhead**
 
