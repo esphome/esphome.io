@@ -382,30 +382,24 @@ Also thank you to [@ademuri](https://github.com/ademuri), [@anunayk](https://git
 ## Breaking Changes
 
 {/* BREAKING_CHANGES_USERS_START */}
-### Platform Changes
+### Action required (if you use these components)
 
-- **ESP32-P4**: The default board now targets production rev3+ silicon instead of engineering samples. If you have a pre-rev3 ESP32-P4 dev kit, add `engineering_sample: true` to your `esp32:` config [#14139](https://github.com/esphome/esphome/pull/14139)
-- **RP2040**: The arduino-pico framework has been updated from 3.9.4 to 5.5.0 (pico-sdk 2.0, GCC 14). Most user configs are unaffected, but external components targeting RP2040 may need updates [#14328](https://github.com/esphome/esphome/pull/14328)
-- **ESP8266**: `printf`/`vprintf`/`fprintf` are now wrapped with lightweight stubs to save ~1.6KB flash. External components that need full FILE*-based printf can set `enable_full_printf: true` under `esp8266:` [#14621](https://github.com/esphome/esphome/pull/14621)
-- **RP2040**: Same printf wrapping saves ~9.2KB flash. Use `enable_full_printf: true` under `rp2040:` if needed [#14622](https://github.com/esphome/esphome/pull/14622)
-
-### Component Changes
-
-- **Speaker Media Player**: The `codec_support_enabled` option now defaults to `needed` instead of building all codecs. Users who stream arbitrary audio formats via hardcoded URLs should set `codec_support_enabled: all` to restore the previous behavior [#13967](https://github.com/esphome/esphome/pull/13967)
 - **OpenTherm**: The deprecated `opentherm_version` config option has been removed. Use `opentherm_version_controller` instead [#14103](https://github.com/esphome/esphome/pull/14103)
+- **ESP32-P4**: The default board now targets production rev3+ silicon instead of engineering samples. If you have a pre-rev3 ESP32-P4 dev kit, add `engineering_sample: true` to your `esp32:` config [#14139](https://github.com/esphome/esphome/pull/14139)
+- **Speaker Media Player**: The `codec_support_enabled` option now defaults to `needed` instead of building all codecs. If you stream audio via hardcoded URLs (not through Home Assistant), set `codec_support_enabled: all` to restore the previous behavior [#13967](https://github.com/esphome/esphome/pull/13967)
+- **SGP30**: Fixed serial number truncation from 48-bit to 24-bit. This changes the preference hash, so existing stored baselines will no longer be found. Plan for up to 12 hours of recalibration [#14478](https://github.com/esphome/esphome/pull/14478)
+- **Time**: Lambdas calling `::mktime()`, `setenv("TZ", ...)`, or `tzset()` directly need updating to use ESPHome's `ESPTime` API. Most user lambdas are unaffected as `::localtime()` is overridden to continue working [#13635](https://github.com/esphome/esphome/pull/13635)
+
+### Most users unaffected
+
+- **RP2040**: The arduino-pico framework has been updated from 3.9.4 to 5.5.0 (pico-sdk 2.0, GCC 14). Most user configs are unaffected, but external components targeting RP2040 may need updates [#14328](https://github.com/esphome/esphome/pull/14328)
+- **ESP8266/RP2040**: `printf`/`vprintf`/`fprintf` are now wrapped with lightweight stubs to save flash. External components that need full FILE*-based printf can set `enable_full_printf: true` under their platform config [#14621](https://github.com/esphome/esphome/pull/14621), [#14622](https://github.com/esphome/esphome/pull/14622)
 - **Nextion**: The TFT upload HTTP timeout default changed from 15s to 4.5s to prevent watchdog resets. Users with slow connections can increase it via the new `tft_upload_http_timeout` option [#14234](https://github.com/esphome/esphome/pull/14234)
 - **OpenThread**: The log level is now statically set based on the `esp32.framework.log_level` setting instead of being dynamic [#14456](https://github.com/esphome/esphome/pull/14456)
-- **SGP30**: Fixed serial number truncation from 48-bit to 24-bit. This changes the preference hash, so existing stored baselines will no longer be found. The sensor will need to go through its warm-up/calibration period again (up to 12 hours) [#14478](https://github.com/esphome/esphome/pull/14478)
 - **Micronova**: A command queue has been added for read and write requests. Write requests are now prioritized, and read requests are deduplicated. This fixes silently ignored write requests and incomplete sensor updates [#12268](https://github.com/esphome/esphome/pull/12268)
-
-### Timezone Changes
-
-- **Time**: The libc timezone infrastructure has been replaced with a lightweight custom parser, saving ~9.5KB flash on ESP32 and ~2% RAM on ESP8266. The `dump_config()` output now shows human-readable timezone info (e.g., `UTC-6:00 (DST UTC-5:00)`) instead of raw POSIX strings. Lambdas using `::mktime()`, bare `::strftime()`, or calling `setenv("TZ", ...)`/`tzset()` directly may need updating, though most user lambdas are unaffected as `::localtime()` is overridden to continue working [#13635](https://github.com/esphome/esphome/pull/13635)
-
-### Entity String Changes (ESP8266)
-
-- **Icons**: Icon strings are now stored in PROGMEM (flash) on ESP8266, with a maximum length of 63 characters. All standard `mdi:*` icons are well under this limit [#14437](https://github.com/esphome/esphome/pull/14437)
-- **Device Classes**: Device class strings are similarly moved to PROGMEM on ESP8266 [#14443](https://github.com/esphome/esphome/pull/14443)
+- **Time**: The libc timezone infrastructure has been replaced with a lightweight custom parser, saving ~9.5KB flash on ESP32 and ~2% RAM on ESP8266. The `dump_config()` output now shows human-readable timezone info (e.g., `UTC-6:00 (DST UTC-5:00)`) instead of raw POSIX strings [#13635](https://github.com/esphome/esphome/pull/13635)
+- **Icons (ESP8266)**: Icon strings are now stored in PROGMEM (flash), with a maximum length of 63 characters. All standard `mdi:*` icons are well under this limit [#14437](https://github.com/esphome/esphome/pull/14437)
+- **Device Classes (ESP8266)**: Device class strings are similarly moved to PROGMEM [#14443](https://github.com/esphome/esphome/pull/14443)
 {/* BREAKING_CHANGES_USERS_END */}
 
 ### Undocumented API Changes
