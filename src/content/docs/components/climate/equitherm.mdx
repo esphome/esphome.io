@@ -141,6 +141,12 @@ climate:
   temperature is normalized between `min_flow_temp` (→ 0.0) and `max_flow_temp` (→ 1.0). Exactly one of
   `flow_setpoint` or `heat_output` must be specified.
 
+- **manual_flow_temp** (*Optional*, [ID](/guides/configuration-types#id)): A [number](/components/number/)
+  component that provides a manual flow temperature override. When configured, enables a "Manual" preset
+  in Home Assistant that bypasses the heating curve and PID entirely, sending the manual value directly
+  to the boiler. Rate limiting is also bypassed in manual mode for direct control. Useful for testing
+  or emergency override situations.
+
 - **fallback_outdoor_temp** (*Optional*, float, default: `0`): Temperature in °C
   to use when the outdoor sensor fails or becomes stale. Choose a value appropriate for your climate
   (conservative for winter). The default of 0°C ensures heating continues in cold weather — in mild
@@ -172,6 +178,31 @@ climate:
       - switch.turn_on: ch_enable    # Enable OpenTherm CH
     on_heating_stop:
       - switch.turn_off: ch_enable   # Disable OpenTherm CH
+```
+
+#### Manual Flow Temperature Example
+
+When `manual_flow_temp` is configured, a "Manual" preset appears in Home Assistant. Selecting it
+bypasses the heating curve entirely and sends the manual flow temperature directly to the boiler.
+
+```yaml
+number:
+  - platform: template
+    id: manual_flow_temp
+    name: "Manual Flow Temperature"
+    min_value: 25
+    max_value: 70
+    step: 1
+    unit_of_measurement: "°C"
+    optimistic: true
+    restore_value: true
+    initial_value: 40
+
+climate:
+  - platform: equitherm
+    id: heating
+    # ... other config ...
+    manual_flow_temp: manual_flow_temp
 ```
 
 - All other options from [Climate](/components/climate#config-climate).
