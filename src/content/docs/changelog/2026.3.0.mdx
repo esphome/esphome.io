@@ -24,7 +24,7 @@ import ImgTable from "@components/ImgTable.astro";
 {/* RELEASE_OVERVIEW_START */}
 ESPHome 2026.3.0 is a performance-focused release with deep optimizations across the entire stack. The main loop is up to 99x faster on socket polling, light gamma correction is 8-10x faster, API protobuf encoding is 6-12x faster, and `millis()` is 2.5x faster, all reducing CPU overhead and improving responsiveness, especially on single-core chips and Bluetooth proxy devices. Flash savings of 11-20KB+ are achieved through printf wrapping, scanf removal, timezone refactoring, and aggressive devirtualization.
 
-Alongside the performance work, a redesigned media player architecture with pluggable sources, playlists, and Ogg Opus support ships together with a major RP2040/RP2350 platform overhaul bringing pico-sdk 2.0, 143+ board definitions, BLE foundations, crash diagnostics, and captive portal support. ESP32 gains an automatic crash handler that captures backtraces across reboots and reports them over the API — no serial cable needed. ESP32-P4 and ESP32-C5 gain expanded hardware support, nRF52 gets BLE OTA, and new components include SEN6x, HDC302x, dew point, and serial proxy.
+Alongside the performance work, a redesigned media player architecture with pluggable sources, playlists, and Ogg Opus support ships together with a major RP2040/RP2350 platform overhaul bringing pico-sdk 2.0, 143+ board definitions, BLE foundations, crash diagnostics, and captive portal support. A long-standing LWIP use-after-free bug that caused heap corruption crashes on ESP8266 (and RP2040) has been fixed — both platforms now pass stress testing. ESP32 gains an automatic crash handler that captures backtraces across reboots and reports them over the API — no serial cable needed. ESP32-P4 and ESP32-C5 gain expanded hardware support, nRF52 gets BLE OTA, and new components include SEN6x, HDC302x, dew point, and serial proxy.
 {/* RELEASE_OVERVIEW_END */}
 
 ## Upgrade Checklist
@@ -86,9 +86,9 @@ The headline change for RP2040 is the **arduino-pico framework jump from 3.9.4 t
 
 **Reliability:**
 
+- **LWIP PCB use-after-free fixed** - A long-standing bug where `tcp_close()` left the PCB alive during the TCP close handshake, allowing LWIP `recv`/`err` callbacks to fire with dangling pointers after the socket object was destroyed, has been fixed ([#14706](https://github.com/esphome/esphome/pull/14706)). This caused `umm_malloc_core` heap corruption crashes that have plagued ESP8266 reliability for years, and also affected RP2040. Both platforms now pass the 500-iteration rapid connect/disconnect stress test with 4 concurrent clients.
 - **TCP race condition fixed** - A critical race between lwip IRQ callbacks and the main loop on Pico W was identified and fixed, preventing heap corruption under concurrent API connections ([#14679](https://github.com/esphome/esphome/pull/14679))
-- **Accept-in-IRQ heap corruption fixed** - Socket accept callbacks no longer allocate memory in IRQ context, eliminating crashes under rapid connect/disconnect stress testing (verified 500/500 iterations with 4 concurrent clients) ([#14687](https://github.com/esphome/esphome/pull/14687))
-- **LWIP PCB use-after-free fixed** - A long-standing bug where LWIP callbacks could fire with dangling pointers after socket close has been fixed, eliminating `umm_malloc_core` crashes on ESP8266 and RP2040 during rapid API reconnections ([#14706](https://github.com/esphome/esphome/pull/14706))
+- **Accept-in-IRQ heap corruption fixed** - Socket accept callbacks on RP2040 no longer allocate memory in IRQ context, eliminating crashes under rapid connect/disconnect stress testing ([#14687](https://github.com/esphome/esphome/pull/14687))
 
 **Flash and Performance:**
 
@@ -382,6 +382,8 @@ Also thank you to [@ademuri](https://github.com/ademuri), [@anunayk](https://git
 
 ## Breaking Changes
 
+Most users can update without any configuration changes. The items below are grouped by whether you need to take action.
+
 {/* BREAKING_CHANGES_USERS_START */}
 ### Action required (if you use these components)
 
@@ -478,6 +480,8 @@ For detailed migration guides and API documentation, see the [ESPHome Developers
 {/* markdownlint-disable MD013 */}
 
 ## Full list of changes
+
+The lists below are grouped by tag and may contain duplicates across sections.
 
 ### New Features
 
