@@ -436,30 +436,48 @@ These are changes to undocumented C++ APIs that may affect users who write lambd
 ### Breaking Changes for Developers
 
 {/* BREAKING_CHANGES_DEVELOPERS_START */}
-- **Entity icon API**: `get_icon_ref()` and `get_icon()` deprecated on non-ESP8266, `static_assert` error on ESP8266. Use `get_icon_to(std::span<char, MAX_ICON_LENGTH>)` instead [#14437](https://github.com/esphome/esphome/pull/14437)
-- **Entity device class API**: `get_device_class_ref()` and `get_device_class()` deprecated on non-ESP8266, `static_assert` error on ESP8266. Use `get_device_class_to(std::span<char, MAX_DEVICE_CLASS_LENGTH>)` instead [#14443](https://github.com/esphome/esphome/pull/14443)
+
+#### Devirtualization
+
+Several core virtual interfaces have been replaced with compile-time dispatch for performance. External components that override or depend on the virtual dispatch may need updates:
+
+- **Component**: `call_loop()`, `mark_failed()`, and `call_dump_config()` devirtualized [#14083](https://github.com/esphome/esphome/pull/14083), [#14355](https://github.com/esphome/esphome/pull/14355)
+- **Logger**: `LogListener` virtual interface replaced with `LogCallback` struct [#14084](https://github.com/esphome/esphome/pull/14084)
+- **Socket**: Socket abstraction layer devirtualized [#14398](https://github.com/esphome/esphome/pull/14398)
+- **OTA backend**: `OTABackend` abstract base class removed. Use `ota::OTABackendPtr` type alias and `auto` for `make_ota_backend()` return [#14473](https://github.com/esphome/esphome/pull/14473)
+- **Protobuf API**: `encode()` and `calculate_size()` are now non-virtual on `ProtoMessage`. `ProtoSize` converted to static methods. `send_message()` is now templated and deduces `MESSAGE_TYPE` [#14449](https://github.com/esphome/esphome/pull/14449)
+
+#### Entity API changes
+
+- **Entity icon/device class API**: `get_icon_ref()`, `get_icon()`, `get_device_class_ref()`, and `get_device_class()` deprecated on non-ESP8266, `static_assert` error on ESP8266. Use `get_icon_to(std::span<char, MAX_ICON_LENGTH>)` and `get_device_class_to(std::span<char, MAX_DEVICE_CLASS_LENGTH>)` instead [#14437](https://github.com/esphome/esphome/pull/14437), [#14443](https://github.com/esphome/esphome/pull/14443)
+- **EntityBase setters**: `set_internal()`, `set_disabled_by_default()`, `set_entity_category()` removed (now packed into `configure_entity_()`). `set_device()` renamed to `set_device_()` and made protected [#14564](https://github.com/esphome/esphome/pull/14564)
+- **Entity string properties**: Packed into PROGMEM-indexed `uint8_t` fields [#14171](https://github.com/esphome/esphome/pull/14171)
+
+#### Type and container changes
+
+- **esphome::optional**: Replaced with `std::optional` [#14368](https://github.com/esphome/esphome/pull/14368)
+- **Application name/friendly_name**: Changed from `std::string` to `StringRef` [#14532](https://github.com/esphome/esphome/pull/14532)
+- **http_request headers**: `std::map` and `std::list` replaced with `std::vector` [#14024](https://github.com/esphome/esphome/pull/14024), [#14027](https://github.com/esphome/esphome/pull/14027)
+- **SerializationBuffer**: New stack-first JSON serialization buffer [#13625](https://github.com/esphome/esphome/pull/13625)
+
+#### Removed deprecated APIs
+
+- **i2c**: Deprecated `stop` parameter overloads and `readv`/`writev` methods removed [#14106](https://github.com/esphome/esphome/pull/14106)
+- **ESP32 IDF components**: Deprecated `add_idf_component()` parameters removed [#14105](https://github.com/esphome/esphome/pull/14105)
+
+#### Platform and component changes
+
 - **RP2040 framework**: arduino-pico 3.9.4 → 5.5.0 with pico-sdk 2.0. Key API renames: `padsbank0_hw` → `pads_bank0_hw`, `SerialPIO::NOPIN` → `NOPIN` [#14328](https://github.com/esphome/esphome/pull/14328)
 - **UART flush()**: Return type changed from `void` to `FlushResult`. External components overriding `flush()` must update their signature [#14608](https://github.com/esphome/esphome/pull/14608)
 - **runtime_image**: `ImageFormat` enum moved from `esphome::online_image` to `esphome::runtime_image`. `OnlineImage` constructor signature changed [#10212](https://github.com/esphome/esphome/pull/10212)
-- **OTA backend**: `OTABackend` abstract base class removed. Use `ota::OTABackendPtr` type alias and `auto` for `make_ota_backend()` return [#14473](https://github.com/esphome/esphome/pull/14473)
-- **Protobuf API**: `encode()` and `calculate_size()` are now non-virtual on `ProtoMessage`. `ProtoSize` converted to static methods. `send_message()` is now templated and deduces `MESSAGE_TYPE` [#14449](https://github.com/esphome/esphome/pull/14449)
-- **EntityBase setters**: `set_internal()`, `set_disabled_by_default()`, `set_entity_category()` removed (now packed into `configure_entity_()`). `set_device()` renamed to `set_device_()` and made protected [#14564](https://github.com/esphome/esphome/pull/14564)
-- **Component**: `call_loop()` and `mark_failed()` devirtualized [#14083](https://github.com/esphome/esphome/pull/14083)
-- **Component**: `call_dump_config()` devirtualized [#14355](https://github.com/esphome/esphome/pull/14355)
-- **Logger**: `LogListener` virtual interface replaced with `LogCallback` struct [#14084](https://github.com/esphome/esphome/pull/14084)
-- **Socket**: Socket abstraction layer devirtualized [#14398](https://github.com/esphome/esphome/pull/14398)
-- **esphome::optional**: Replaced with `std::optional` [#14368](https://github.com/esphome/esphome/pull/14368)
-- **Application name/friendly_name**: Changed from `std::string` to `StringRef` [#14532](https://github.com/esphome/esphome/pull/14532)
-- **http_request headers**: `std::map` replaced with `std::vector` [#14024](https://github.com/esphome/esphome/pull/14024), [#14027](https://github.com/esphome/esphome/pull/14027)
-- **i2c**: Deprecated `stop` parameter overloads and `readv`/`writev` methods removed [#14106](https://github.com/esphome/esphome/pull/14106)
-- **ESP32 IDF components**: Deprecated `add_idf_component()` parameters removed [#14105](https://github.com/esphome/esphome/pull/14105)
+- **Modbus**: `get_uart()` added for timeout calculation; external modbus components may need update [#14614](https://github.com/esphome/esphome/pull/14614)
+
+#### Registration and build changes
+
 - **register_component**: Now protected, runtime checks removed [#14371](https://github.com/esphome/esphome/pull/14371)
 - **register_action**: Now requires explicit `synchronous=` parameter [#14606](https://github.com/esphome/esphome/pull/14606)
 - **build_info_data.h**: Moved out of `application.h` to fix incremental rebuilds [#14230](https://github.com/esphome/esphome/pull/14230)
-- **Entity string properties**: Packed into PROGMEM-indexed `uint8_t` fields [#14171](https://github.com/esphome/esphome/pull/14171)
 - **get_loop_priority**: Conditionally compiled with `USE_LOOP_PRIORITY` [#14210](https://github.com/esphome/esphome/pull/14210)
-- **SerializationBuffer**: New stack-first JSON serialization buffer [#13625](https://github.com/esphome/esphome/pull/13625)
-- **Modbus**: `get_uart()` added for timeout calculation; external modbus components may need update [#14614](https://github.com/esphome/esphome/pull/14614)
 
 For detailed migration guides and API documentation, see the [ESPHome Developers Documentation](https://developers.esphome.io/).
 {/* BREAKING_CHANGES_DEVELOPERS_END */}
