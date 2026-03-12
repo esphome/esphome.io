@@ -226,6 +226,10 @@ The entire libc timezone infrastructure has been replaced with a lightweight 32-
 - **ESP8266 printf stubs save ~1.6KB flash** ([#14621](https://github.com/esphome/esphome/pull/14621))
 - **RP2040 printf stubs save ~9.2KB flash** ([#14622](https://github.com/esphome/esphome/pull/14622))
 
+**JSON Serialization Without Heap Allocation:**
+
+JSON serialization for web_server, MQTT, and API responses now uses a stack-first `SerializationBuffer` that handles 99.9% of payloads (up to 640 bytes) without any heap allocation ([#13625](https://github.com/esphome/esphome/pull/13625)). Previously, every JSON response built a `std::string` on the heap. The new buffer falls back to heap only for unusually large payloads (40+ select options, extreme climate presets). User service string arguments also switched from `std::string` to `StringRef` ([#13974](https://github.com/esphome/esphome/pull/13974)).
+
 **Preferences Heap Churn Eliminated:**
 
 Most preference saves (switches, fans, covers, numbers, rotary encoders) now use a small inline buffer instead of heap-allocating for every save operation ([#13259](https://github.com/esphome/esphome/pull/13259)). A union-based `SmallInlineBuffer<8>` stores data inline when 8 bytes or smaller, eliminating heap fragmentation from repeated preference writes on long-running devices.
@@ -244,7 +248,7 @@ Entity string properties (`device_class`, `unit_of_measurement`, `icon`) were pa
 
 **ESP-IDF 5.5.3:**
 
-ESP-IDF has been bumped to 5.5.3 ([#14122](https://github.com/esphome/esphome/pull/14122)), fixing long-standing BLE bugs from 5.5.1 and 5.5.2 where Bluetooth would stop working on ESP32 devices. Users who experienced BLE connectivity drops or Bluetooth proxy failures should see these resolved.
+ESP-IDF has been bumped to 5.5.3 ([#14122](https://github.com/esphome/esphome/pull/14122)), fixing long-standing BLE bugs from 5.5.1 and 5.5.2 where Bluetooth would stop working on ESP32 devices. Users who experienced BLE connectivity drops or Bluetooth proxy failures should see these resolved. A follow-up bump to 5.5.3.1 ([#14147](https://github.com/esphome/esphome/pull/14147)) fixed a Bluedroid compile error, allowing the workaround that unconditionally enabled GATTS to be reverted.
 
 **Framework and Core Optimizations:**
 
