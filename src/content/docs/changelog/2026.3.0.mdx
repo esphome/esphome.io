@@ -22,7 +22,7 @@ import ImgTable from "@components/ImgTable.astro";
 ## Release Overview
 
 {/* RELEASE_OVERVIEW_START */}
-ESPHome 2026.3.0 is a performance-focused release with deep optimizations across the entire stack. The main loop is 17x faster on socket polling, light gamma correction is 8-10x faster, API protobuf encoding is 6-12x faster, and `millis()` is 2.5x faster, all reducing CPU overhead and improving responsiveness, especially on single-core chips and Bluetooth proxy devices. Flash savings of 11-20KB+ are achieved through printf wrapping, scanf removal, timezone refactoring, and aggressive devirtualization.
+ESPHome 2026.3.0 is a performance-focused release with deep optimizations across the entire stack. The main loop is up to 99x faster on socket polling, light gamma correction is 8-10x faster, API protobuf encoding is 6-12x faster, and `millis()` is 2.5x faster, all reducing CPU overhead and improving responsiveness, especially on single-core chips and Bluetooth proxy devices. Flash savings of 11-20KB+ are achieved through printf wrapping, scanf removal, timezone refactoring, and aggressive devirtualization.
 
 Alongside the performance work, a redesigned media player architecture with pluggable sources, playlists, and Ogg Opus support ships together with a major RP2040/RP2350 platform overhaul bringing pico-sdk 2.0, 143+ board definitions, BLE foundations, crash diagnostics, and captive portal support. ESP32-P4 and ESP32-C5 gain expanded hardware support, nRF52 gets BLE OTA, and new components include SEN6x, HDC302x, dew point, and serial proxy.
 {/* RELEASE_OVERVIEW_END */}
@@ -43,21 +43,31 @@ Alongside the performance work, a redesigned media player architecture with plug
 {/* UPGRADE_CHECKLIST_END */}
 
 {/* FEATURE_HIGHLIGHTS_START */}
-## New Media Player Architecture (speaker_source)
+## Main Loop Performance Overhaul
 
-ESPHome 2026.3.0 introduces a completely redesigned media player built around a modular **source-based architecture**. The new [speaker_source](/components/media_player/speaker_source) media player replaces the monolithic speaker media player with a flexible orchestrator that routes audio from pluggable [media_source](/components/media_source) components.
+This release delivers a major performance overhaul to the core event loop, reducing CPU overhead and improving responsiveness across all platforms.
 
-**Key Features:**
+**Socket Polling: Up to 99x Faster on ESP32**
 
-- **Pluggable media sources** - Audio can come from embedded [audio_file](/components/audio_file) files, HTTP streams, or future sources like Sendspin, each as a separate component
-- **Dual pipeline support** - Separate media and announcement pipelines with independent speakers, formats, and sources, allowing announcements to play alongside music
-- **Full playlist management** - Enqueue, next/previous track navigation, repeat (off/one/all), and shuffle with Fisher-Yates algorithm
-- **Volume persistence** - Volume and mute state are saved across reboots with configurable min/max/increment
-- **Ogg Opus codec support** - The new microOpus library enables decoding Opus audio streams, completing the codec lineup alongside FLAC and MP3 ([#13967](https://github.com/esphome/esphome/pull/13967))
-- **Smarter codec builds** - The `codec_support_enabled` option now defaults to `needed`, building only the codecs your configuration actually requires instead of all three (users streaming arbitrary URLs should set `codec_support_enabled: all`)
-- **Expanded media player commands** - New `next`, `previous`, `repeat_all`, `shuffle`, `unshuffle`, `group_join`, and `clear_playlist` actions ([#12258](https://github.com/esphome/esphome/pull/12258))
+The `lwip_select()` system call has been replaced with direct LwIP socket reads and FreeRTOS task notifications on ESP32 ([#14249](https://github.com/esphome/esphome/pull/14249)). The old `select()` call cost ~133 us per loop iteration due to internal locking overhead. The new pre-sleep scan costs just ~1.3 us (99x faster), the active poll path costs ~7.5 us (17x faster), and the wake mechanism dropped from ~130 us to ~1.8 us (72x faster), freeing ~1.55% of total CPU time. On single-core chips (ESP32-C3, C6, H2), this directly improves BLE scan responsiveness by eliminating mutex contention with the WiFi/BLE stacks. The optimization was also extended to all LibreTiny platforms (bk72xx, rtl87xx, ln882x) ([#14254](https://github.com/esphome/esphome/pull/14254)), where real-world testing showed WiFi connection times dropping from up to 60s to under 30s.
 
-The [audio_file](/components/audio_file) component lets you embed audio files (local or from URLs) directly into firmware for instant playback without network access. Files are decoded directly from flash, saving two buffer copies compared to the previous approach.
+**Instant ISR Wake**
+
+GPIO binary sensors and touch sensors now wake the main loop immediately from interrupts instead of waiting up to ~16ms for the select timeout ([#14383](https://github.com/esphome/esphome/pull/14383)). UART wake-on-RX was also redesigned -replacing a FreeRTOS task + event queue (~3.9KB heap per UART) with a direct ISR callback at essentially zero cost ([#14382](https://github.com/esphome/esphome/pull/14382)). With the new near-zero-cost mechanism, wake-on-RX is now enabled by default on all ESP32 UARTs ([#14391](https://github.com/esphome/esphome/pull/14391)), and ESP8266 gained ISR wake support for GPIO binary sensors ([#14392](https://github.com/esphome/esphome/pull/14392)).
+
+**Native 64-bit Time and Faster millis()**
+
+A new `millis_64()` HAL function provides native 64-bit uptime across all platforms, replacing the Scheduler's CAS/atomic rollover tracking with direct hardware register reads ([#14339](https://github.com/esphome/esphome/pull/14339)). On ESP32, this reads `esp_timer_get_time()` directly (26 bytes, lock-free) instead of the 193-byte rollover reconstruction path. RP2040 uses `time_us_64()` from the hardware timer ([#14356](https://github.com/esphome/esphome/pull/14356)), and Host uses `clock_gettime(CLOCK_MONOTONIC)` ([#14340](https://github.com/esphome/esphome/pull/14340)). Components like `uptime` and `web_server` now call `millis_64()` directly from `hal.h` instead of going through `App.scheduler`.
+
+The `millis()` function itself -called once per component per loop iteration -was also optimized with a custom 64-bit division algorithm that eliminates the `__udivdi3` software division routine, achieving 2-2.5x speedup on every call ([#14409](https://github.com/esphome/esphome/pull/14409)).
+
+**Loop Call Overhead**
+
+The main loop now calls `component->loop()` directly instead of going through `call()` → `call_loop_()` → `loop()`, eliminating 2 unnecessary function frames per component per iteration ([#14451](https://github.com/esphome/esphome/pull/14451)). On a device with 120 looping components, that's 240 function frames removed per loop cycle. Trivial component state accessors (`get_component_state()`, `is_failed()`, etc.) were moved to inline header definitions, eliminating function call overhead for what amounts to single-byte loads ([#14425](https://github.com/esphome/esphome/pull/14425)). The `is_high_frequency()` check, called every loop iteration, was also inlined ([#14423](https://github.com/esphome/esphome/pull/14423)).
+
+**Cached Connection Checks**
+
+WiFi `is_connected()` now caches connection state as a simple bool field, eliminating expensive SDK calls on every invocation ([#14463](https://github.com/esphome/esphome/pull/14463)). The `network::is_connected()` and `EthernetComponent::is_connected()` functions were moved to headers as inline ([#14464](https://github.com/esphome/esphome/pull/14464)). OpenThread connection state is now updated via callback instead of polling with a mutex lock on every loop ([#14484](https://github.com/esphome/esphome/pull/14484)). The API server's `is_connected()` was split into an inline fast path for the common no-arg case and an out-of-line path for state subscription checks, important for the BLE proxy hot path ([#14574](https://github.com/esphome/esphome/pull/14574)).
 
 ## RP2040/RP2350 Platform Overhaul
 
@@ -91,6 +101,40 @@ The headline change for RP2040 is the **arduino-pico framework jump from 3.9.4 t
 
 Note: The framework update is a breaking change for external components using old pico-sdk APIs (e.g., `padsbank0_hw` renamed to `pads_bank0_hw`, `SerialPIO::NOPIN` is now just `NOPIN`).
 
+## LibreTiny Platform Improvements
+
+The LibreTiny platforms (BK72xx, RTL87xx, LN882x) received a significant reliability and performance overhaul this release.
+
+**lwIP Memory Tuning (~26KB freed on BK72xx):**
+
+The SDK-default lwIP buffer sizes were tuned for WiFi Alliance throughput certification, not IoT devices. `TCP_SND_BUF` at 10xMSS (14.6KB per chunk) caused OOM on BK7231N when ESPAsyncWebServer allocated response buffers. Switching to system heap allocation (`MEM_LIBC_MALLOC=1`, `MEMP_MEM_MALLOC=1`) and right-sizing buffers freed ~26.5KB on BK7231N and ~20.2KB on RTL87xx ([#14186](https://github.com/esphome/esphome/pull/14186)). This also fixes OTA slowness on BK72xx caused by dedicated heap fragmentation during MSS-sized pbuf allocations. Socket counts are now auto-calculated from component registrations instead of hardcoded.
+
+**BK72xx Loop Stalls Fixed:**
+
+The BK72xx main task ran at FreeRTOS priority 3, below all WiFi (4-5) and LwIP (4) tasks, causing ~100ms loop stalls whenever WiFi background processing ran. Raising the priority to 6 (matching RTL87xx's effective priority) dropped loop times from ~110ms to ~14ms ([#14420](https://github.com/esphome/esphome/pull/14420)).
+
+**Other Improvements:**
+
+- **BK72xx -Os optimization** - ESPHome source code now compiles with `-Os` on BK72xx while the SDK stays at `-O1`, improving flash usage without triggering SDK bugs ([#14322](https://github.com/esphome/esphome/pull/14322))
+- **Fast select optimization** - The ESP32 socket polling optimization was ported to all LibreTiny platforms, with real-world WiFi connection times dropping from up to 60s to under 30s ([#14254](https://github.com/esphome/esphome/pull/14254))
+- **Direct SDK SSID retrieval** - WiFi SSID queries now call vendor SDK functions directly instead of going through Arduino's `String`-allocating `WiFi.SSID()` ([#14349](https://github.com/esphome/esphome/pull/14349))
+
+## New Media Player Architecture (speaker_source)
+
+ESPHome 2026.3.0 introduces a completely redesigned media player built around a modular **source-based architecture**. The new [speaker_source](/components/media_player/speaker_source) media player replaces the monolithic speaker media player with a flexible orchestrator that routes audio from pluggable [media_source](/components/media_source) components.
+
+**Key Features:**
+
+- **Pluggable media sources** - Audio can come from embedded [audio_file](/components/audio_file) files, HTTP streams, or future sources like Sendspin, each as a separate component
+- **Dual pipeline support** - Separate media and announcement pipelines with independent speakers, formats, and sources, allowing announcements to play alongside music
+- **Full playlist management** - Enqueue, next/previous track navigation, repeat (off/one/all), and shuffle with Fisher-Yates algorithm
+- **Volume persistence** - Volume and mute state are saved across reboots with configurable min/max/increment
+- **Ogg Opus codec support** - The new microOpus library enables decoding Opus audio streams, completing the codec lineup alongside FLAC and MP3 ([#13967](https://github.com/esphome/esphome/pull/13967))
+- **Smarter codec builds** - The `codec_support_enabled` option now defaults to `needed`, building only the codecs your configuration actually requires instead of all three (users streaming arbitrary URLs should set `codec_support_enabled: all`)
+- **Expanded media player commands** - New `next`, `previous`, `repeat_all`, `shuffle`, `unshuffle`, `group_join`, and `clear_playlist` actions ([#12258](https://github.com/esphome/esphome/pull/12258))
+
+The [audio_file](/components/audio_file) component lets you embed audio files (local or from URLs) directly into firmware for instant playback without network access. Files are decoded directly from flash, saving two buffer copies compared to the previous approach.
+
 ## ESP32-P4 and ESP32-C5 Improvements
 
 **ESP32-P4:**
@@ -103,32 +147,6 @@ Note: The framework update is a breaking change for external components using ol
 **ESP32-C5:**
 
 - **Dual-band WiFi configuration** - New `band_mode` option for selecting 2.4GHz, 5GHz, or auto band selection on the ESP32-C5's dual-band radio ([#14148](https://github.com/esphome/esphome/pull/14148))
-
-## Main Loop Performance Overhaul
-
-This release delivers a major performance overhaul to the core event loop, reducing CPU overhead and improving responsiveness across all platforms.
-
-**Socket Polling: 17x Faster on ESP32**
-
-The `lwip_select()` system call has been replaced with direct LwIP socket reads and FreeRTOS task notifications on ESP32 ([#14249](https://github.com/esphome/esphome/pull/14249)). The old `select()` call cost ~133 us per loop iteration due to internal locking overhead -the new path costs just ~7.5 us (poll) or ~1.3 us (pre-sleep scan), freeing ~1.55% of total CPU time. On single-core chips (ESP32-C3, C6, H2), this directly improves BLE scan responsiveness by eliminating mutex contention with the WiFi/BLE stacks. The optimization was also extended to all LibreTiny platforms (bk72xx, rtl87xx, ln882x) ([#14254](https://github.com/esphome/esphome/pull/14254)), where real-world testing showed WiFi connection times dropping from up to 60s to under 30s.
-
-**Instant ISR Wake**
-
-GPIO binary sensors and touch sensors now wake the main loop immediately from interrupts instead of waiting up to ~16ms for the select timeout ([#14383](https://github.com/esphome/esphome/pull/14383)). UART wake-on-RX was also redesigned -replacing a FreeRTOS task + event queue (~3.9KB heap per UART) with a direct ISR callback at essentially zero cost ([#14382](https://github.com/esphome/esphome/pull/14382)). With the new near-zero-cost mechanism, wake-on-RX is now enabled by default on all ESP32 UARTs ([#14391](https://github.com/esphome/esphome/pull/14391)), and ESP8266 gained ISR wake support for GPIO binary sensors ([#14392](https://github.com/esphome/esphome/pull/14392)).
-
-**Native 64-bit Time and Faster millis()**
-
-A new `millis_64()` HAL function provides native 64-bit uptime across all platforms, replacing the Scheduler's CAS/atomic rollover tracking with direct hardware register reads ([#14339](https://github.com/esphome/esphome/pull/14339)). On ESP32, this reads `esp_timer_get_time()` directly (26 bytes, lock-free) instead of the 193-byte rollover reconstruction path. RP2040 uses `time_us_64()` from the hardware timer ([#14356](https://github.com/esphome/esphome/pull/14356)), and Host uses `clock_gettime(CLOCK_MONOTONIC)` ([#14340](https://github.com/esphome/esphome/pull/14340)). Components like `uptime` and `web_server` now call `millis_64()` directly from `hal.h` instead of going through `App.scheduler`.
-
-The `millis()` function itself -called once per component per loop iteration -was also optimized with a custom 64-bit division algorithm that eliminates the `__udivdi3` software division routine, achieving 2-2.5x speedup on every call ([#14409](https://github.com/esphome/esphome/pull/14409)).
-
-**Loop Call Overhead**
-
-The main loop now calls `component->loop()` directly instead of going through `call()` → `call_loop_()` → `loop()`, eliminating 2 unnecessary function frames per component per iteration ([#14451](https://github.com/esphome/esphome/pull/14451)). On a device with 120 looping components, that's 240 function frames removed per loop cycle. Trivial component state accessors (`get_component_state()`, `is_failed()`, etc.) were moved to inline header definitions, eliminating function call overhead for what amounts to single-byte loads ([#14425](https://github.com/esphome/esphome/pull/14425)). The `is_high_frequency()` check, called every loop iteration, was also inlined ([#14423](https://github.com/esphome/esphome/pull/14423)).
-
-**Cached Connection Checks**
-
-WiFi `is_connected()` now caches connection state as a simple bool field, eliminating expensive SDK calls on every invocation ([#14463](https://github.com/esphome/esphome/pull/14463)). The `network::is_connected()` and `EthernetComponent::is_connected()` functions were moved to headers as inline ([#14464](https://github.com/esphome/esphome/pull/14464)). OpenThread connection state is now updated via callback instead of polling with a mutex lock on every loop ([#14484](https://github.com/esphome/esphome/pull/14484)). The API server's `is_connected()` was split into an inline fast path for the common no-arg case and an out-of-line path for state subscription checks, important for the BLE proxy hot path ([#14574](https://github.com/esphome/esphome/pull/14574)).
 
 ## Scheduler Performance
 
@@ -168,7 +186,7 @@ The noise-c library was bumped to 0.1.11 with libsodium 1.0.21, which optimizes 
 
 | Platform | Improvement (1KB packets) |
 |----------|--------------------------|
-| ESP32 (Xtensa LX6) | 34% faster |
+| ESP32 (Xtensa LX6) | 32% faster |
 | ESP32-S3 (Xtensa LX7) | 24% faster |
 | ESP32-C3 (RISC-V) | 21% faster |
 | RTL87xx | 12% faster |
@@ -274,24 +292,6 @@ The nRF52 platform gains critical OTA and debugging capabilities.
 **BLE NUS UART:**
 
 - The `ble_nus` component now supports bidirectional UART communication over Bluetooth, compatible with tools like [ble-serial](https://pypi.org/project/ble-serial/) ([#14320](https://github.com/esphome/esphome/pull/14320)).
-
-## LibreTiny Platform Improvements
-
-The LibreTiny platforms (BK72xx, RTL87xx, LN882x) received a significant reliability and performance overhaul this release.
-
-**lwIP Memory Tuning (~26KB freed on BK72xx):**
-
-The SDK-default lwIP buffer sizes were tuned for WiFi Alliance throughput certification, not IoT devices. `TCP_SND_BUF` at 10xMSS (14.6KB per chunk) caused OOM on BK7231N when ESPAsyncWebServer allocated response buffers. Switching to system heap allocation (`MEM_LIBC_MALLOC=1`, `MEMP_MEM_MALLOC=1`) and right-sizing buffers freed ~26.5KB on BK7231N and ~20.2KB on RTL87xx ([#14186](https://github.com/esphome/esphome/pull/14186)). This also fixes OTA slowness on BK72xx caused by dedicated heap fragmentation during MSS-sized pbuf allocations. Socket counts are now auto-calculated from component registrations instead of hardcoded.
-
-**BK72xx Loop Stalls Fixed:**
-
-The BK72xx main task ran at FreeRTOS priority 3, below all WiFi (4-5) and LwIP (4) tasks, causing ~100ms loop stalls whenever WiFi background processing ran. Raising the priority to 6 (matching RTL87xx's effective priority) dropped loop times from ~110ms to ~14ms ([#14420](https://github.com/esphome/esphome/pull/14420)).
-
-**Other Improvements:**
-
-- **BK72xx -Os optimization** - ESPHome source code now compiles with `-Os` on BK72xx while the SDK stays at `-O1`, improving flash usage without triggering SDK bugs ([#14322](https://github.com/esphome/esphome/pull/14322))
-- **Fast select optimization** - The ESP32 socket polling optimization was ported to all LibreTiny platforms, with real-world WiFi connection times dropping from up to 60s to under 30s ([#14254](https://github.com/esphome/esphome/pull/14254))
-- **Direct SDK SSID retrieval** - WiFi SSID queries now call vendor SDK functions directly instead of going through Arduino's `String`-allocating `WiFi.SSID()` ([#14349](https://github.com/esphome/esphome/pull/14349))
 
 ## New Sensor Components
 
