@@ -33,7 +33,7 @@ Alongside the performance work, a redesigned media player architecture with plug
 - If you use `opentherm` with the `opentherm_version` config key, rename it to `opentherm_version_controller`
 - If you use `speaker` media player and stream audio via hardcoded URLs (not through Home Assistant), set `codec_support_enabled: all` to keep all codecs available
 - If you have an ESP32-P4 engineering sample (pre-rev3), add `engineering_sample: true` to your `esp32:` config
-- If you use `sgp30` sensors, expect stored baselines to be lost after update (up to 12 hours recalibration)
+- If you use `sgp30` sensors, plan for up to 12 hours of recalibration after update as stored baselines will be invalidated by a serial number fix
 - If you use `nextion` TFT uploads over slow networks, set `tft_upload_http_timeout` to a higher value (default changed from 15s to 4.5s)
 - If you use `time` component and have lambdas calling `::mktime()`, `setenv("TZ", ...)`, or `tzset()` directly, update them to use ESPHome's `ESPTime` API
 - If you use external components on ESP8266 that call `get_icon_ref()` or `get_device_class_ref()`, update them to use the new `get_icon_to()` / `get_device_class_to()` buffer API
@@ -182,7 +182,7 @@ The native API communication layer received over 20 targeted optimizations this 
 
 **Encryption:**
 
-The noise-c library was bumped to 0.1.11 with libsodium 1.0.21, which optimizes ChaCha20-Poly1305 with aligned 32-bit loads for embedded targets ([#14632](https://github.com/esphome/esphome/pull/14632)). Every encrypted API packet benefits. Users can now enable API encryption without worrying about performance overhead.
+The noise-c library was bumped to 0.1.11, carrying ESPHome-maintained patches to libsodium's poly1305 and chacha20 implementations that replace unaligned byte loads with aligned 32-bit loads ([#14632](https://github.com/esphome/esphome/pull/14632)). On Xtensa, each unaligned `LOAD32_LE` decomposed into 4 byte-load instructions plus shifts; the patched path uses direct aligned loads. Every encrypted API packet benefits.
 
 | Platform | Improvement (1KB packets) |
 |----------|--------------------------|
