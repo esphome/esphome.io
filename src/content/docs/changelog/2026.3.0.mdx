@@ -119,34 +119,21 @@ The BK72xx main task ran at FreeRTOS priority 3, below all WiFi (4-5) and LwIP (
 - **Fast select optimization** - The ESP32 socket polling optimization was ported to all LibreTiny platforms, with real-world WiFi connection times dropping from up to 60s to under 30s ([#14254](https://github.com/esphome/esphome/pull/14254))
 - **Direct SDK SSID retrieval** - WiFi SSID queries now call vendor SDK functions directly instead of going through Arduino's `String`-allocating `WiFi.SSID()` ([#14349](https://github.com/esphome/esphome/pull/14349))
 
-## New Media Player Architecture (speaker_source)
+## nRF52 Platform Improvements
 
-ESPHome 2026.3.0 introduces a completely redesigned media player built around a modular **source-based architecture**. The new [speaker_source](/components/media_player/speaker_source) media player replaces the monolithic speaker media player with a flexible orchestrator that routes audio from pluggable [media_source](/components/media_source) components.
+The nRF52 platform gains critical OTA and debugging capabilities.
 
-**Key Features:**
+**BLE and Serial OTA:**
 
-- **Pluggable media sources** - Audio can come from embedded [audio_file](/components/audio_file) files, HTTP streams, or future sources like Sendspin, each as a separate component
-- **Dual pipeline support** - Separate media and announcement pipelines with independent speakers, formats, and sources, allowing announcements to play alongside music
-- **Full playlist management** - Enqueue, next/previous track navigation, repeat (off/one/all), and shuffle with Fisher-Yates algorithm
-- **Volume persistence** - Volume and mute state are saved across reboots with configurable min/max/increment
-- **Ogg Opus codec support** - The new microOpus library enables decoding Opus audio streams, completing the codec lineup alongside FLAC and MP3 ([#13967](https://github.com/esphome/esphome/pull/13967))
-- **Smarter codec builds** - The `codec_support_enabled` option now defaults to `needed`, building only the codecs your configuration actually requires instead of all three (users streaming arbitrary URLs should set `codec_support_enabled: all`)
-- **Expanded media player commands** - New `next`, `previous`, `repeat_all`, `shuffle`, `unshuffle`, `group_join`, and `clear_playlist` actions ([#12258](https://github.com/esphome/esphome/pull/12258))
+- The new [zephyr_mcumgr](/components/ota/zephyr_mcumgr) component enables over-the-air updates via BLE or serial using the MCUmgr protocol ([#11932](https://github.com/esphome/esphome/pull/11932)). This is a major step forward for nRF52 devices which previously lacked wireless update support.
 
-The [audio_file](/components/audio_file) component lets you embed audio files (local or from URLs) directly into firmware for instant playback without network access. Files are decoded directly from flash, saving two buffer copies compared to the previous approach.
+**Crash Debugging:**
 
-## ESP32-P4 and ESP32-C5 Improvements
+- Early boot debug messages are now available on nRF52, including boot reason logging and last crash PC/LR values stored in a no-init buffer ([#11685](https://github.com/esphome/esphome/pull/11685)). The logger waits up to 10 seconds for the CDC port to open, ensuring no early logs are lost.
 
-**ESP32-P4:**
+**BLE NUS UART:**
 
-- **Touch pad support** - The `esp32_touch` component has been migrated to ESP-IDF v5.5's unified touch sensor driver, adding ESP32-P4 as a supported variant with 14 touch channels (GPIO 2-15) ([#14033](https://github.com/esphome/esphome/pull/14033))
-- **Production silicon default** - The default board now targets rev3+ production chips instead of engineering samples. Users with pre-rev3 dev kits should set `engineering_sample: true` ([#14139](https://github.com/esphome/esphome/pull/14139))
-- **Execute from PSRAM** - Code execution from PSRAM is now enabled for P4, expanding available instruction memory ([#14329](https://github.com/esphome/esphome/pull/14329))
-- **LDO channels 1 & 2** - The `esp_ldo` component now supports internal LDO channels with an explicit `allow_internal_channel` guard, useful for boards like the Waveshare ESP32-P4 where these channels power external peripherals ([#14177](https://github.com/esphome/esphome/pull/14177))
-
-**ESP32-C5:**
-
-- **Dual-band WiFi configuration** - New `band_mode` option for selecting 2.4GHz, 5GHz, or auto band selection on the ESP32-C5's dual-band radio ([#14148](https://github.com/esphome/esphome/pull/14148))
+- The `ble_nus` component now supports bidirectional UART communication over Bluetooth, compatible with tools like [ble-serial](https://pypi.org/project/ble-serial/) ([#14320](https://github.com/esphome/esphome/pull/14320)).
 
 ## Scheduler Performance
 
@@ -182,17 +169,7 @@ The native API communication layer received over 20 targeted optimizations this 
 
 **Encryption:**
 
-The noise-c library was bumped to 0.1.11, carrying ESPHome-maintained patches to libsodium's poly1305 and chacha20 implementations that replace unaligned byte loads with aligned 32-bit loads ([#14632](https://github.com/esphome/esphome/pull/14632)). On Xtensa, each unaligned `LOAD32_LE` decomposed into 4 byte-load instructions plus shifts; the patched path uses direct aligned loads. Every encrypted API packet benefits.
-
-| Platform | Improvement (1KB packets) |
-|----------|--------------------------|
-| ESP32 (Xtensa LX6) | 32% faster |
-| ESP32-S3 (Xtensa LX7) | 24% faster |
-| ESP32-C3 (RISC-V) | 21% faster |
-| RTL87xx | 12% faster |
-| ESP8266 | 10% faster |
-| BK72xx | 10% faster |
-| RP2040 (Cortex-M0+) | 8% faster |
+- **ChaCha20-Poly1305 optimized for embedded** - ESPHome-maintained patches to libsodium replace unaligned byte loads with aligned 32-bit loads in the poly1305 and chacha20 implementations ([#14632](https://github.com/esphome/esphome/pull/14632)). On Xtensa, each unaligned `LOAD32_LE` decomposed into 4 byte-load instructions plus shifts; the patched path uses direct aligned loads. Every encrypted API packet benefits: 8-32% faster across all platforms (32% on ESP32, 24% on ESP32-S3, 21% on ESP32-C3, 12% on RTL87xx, 10% on ESP8266/BK72xx, 8% on RP2040, measured with 1KB packets).
 
 **Network Layer:**
 
@@ -277,21 +254,18 @@ ESP-IDF has been bumped to 5.5.3 ([#14122](https://github.com/esphome/esphome/pu
 - **Codebase-wide constexpr migration** - Over 20 PRs converted `static const` to `constexpr` across core, API, BLE, NFC, MQTT, and display components, moving constants to flash and enabling compiler optimizations ([#14071](https://github.com/esphome/esphome/pull/14071), [#14127](https://github.com/esphome/esphome/pull/14127), [#14129](https://github.com/esphome/esphome/pull/14129), and others)
 - **`esphome::optional` replaced with `std::optional`** - Eliminates a custom implementation in favor of the C++17 standard ([#14368](https://github.com/esphome/esphome/pull/14368))
 
-## nRF52 Platform Improvements
+## ESP32-P4 and ESP32-C5 Improvements
 
-The nRF52 platform gains critical OTA and debugging capabilities.
+**ESP32-P4:**
 
-**BLE and Serial OTA:**
+- **Touch pad support** - The `esp32_touch` component has been migrated to ESP-IDF v5.5's unified touch sensor driver, adding ESP32-P4 as a supported variant with 14 touch channels (GPIO 2-15) ([#14033](https://github.com/esphome/esphome/pull/14033))
+- **Production silicon default** - The default board now targets rev3+ production chips instead of engineering samples. Users with pre-rev3 dev kits should set `engineering_sample: true` ([#14139](https://github.com/esphome/esphome/pull/14139))
+- **Execute from PSRAM** - Code execution from PSRAM is now enabled for P4, expanding available instruction memory ([#14329](https://github.com/esphome/esphome/pull/14329))
+- **LDO channels 1 & 2** - The `esp_ldo` component now supports internal LDO channels with an explicit `allow_internal_channel` guard, useful for boards like the Waveshare ESP32-P4 where these channels power external peripherals ([#14177](https://github.com/esphome/esphome/pull/14177))
 
-- The new [zephyr_mcumgr](/components/ota/zephyr_mcumgr) component enables over-the-air updates via BLE or serial using the MCUmgr protocol ([#11932](https://github.com/esphome/esphome/pull/11932)). This is a major step forward for nRF52 devices which previously lacked wireless update support.
+**ESP32-C5:**
 
-**Crash Debugging:**
-
-- Early boot debug messages are now available on nRF52, including boot reason logging and last crash PC/LR values stored in a no-init buffer ([#11685](https://github.com/esphome/esphome/pull/11685)). The logger waits up to 10 seconds for the CDC port to open, ensuring no early logs are lost.
-
-**BLE NUS UART:**
-
-- The `ble_nus` component now supports bidirectional UART communication over Bluetooth, compatible with tools like [ble-serial](https://pypi.org/project/ble-serial/) ([#14320](https://github.com/esphome/esphome/pull/14320)).
+- **Dual-band WiFi configuration** - New `band_mode` option for selecting 2.4GHz, 5GHz, or auto band selection on the ESP32-C5's dual-band radio ([#14148](https://github.com/esphome/esphome/pull/14148))
 
 ## New Sensor Components
 
@@ -341,6 +315,22 @@ Several new display models are now supported out of the box:
 This release introduces UART mock-based integration tests, enabling automated testing of components that communicate over serial protocols. Tests can now simulate real device responses and verify component behavior end-to-end on the host platform.
 
 The LD24xx family (LD2410, LD2412, LD2420, LD2450) received comprehensive integration tests ([#14377](https://github.com/esphome/esphome/pull/14377), [#14448](https://github.com/esphome/esphome/pull/14448), [#14471](https://github.com/esphome/esphome/pull/14471), [#14611](https://github.com/esphome/esphome/pull/14611)) along with bug fixes and performance improvements: fixed signed char causing incorrect distance values on LD2410/LD2412 ([#14380](https://github.com/esphome/esphome/pull/14380)), fixed buffer overflows in LD2420 command parsing and calibration ([#14297](https://github.com/esphome/esphome/pull/14297), [#14458](https://github.com/esphome/esphome/pull/14458)), optimized LD2450 with single-pass zone counting ([#14387](https://github.com/esphome/esphome/pull/14387)), `atan2f` angle calculation ([#14388](https://github.com/esphome/esphome/pull/14388)), and integer dedup for direction updates ([#14386](https://github.com/esphome/esphome/pull/14386)). Modbus also gained integration tests using the same UART mock approach ([#14395](https://github.com/esphome/esphome/pull/14395)).
+
+## New Media Player Architecture (speaker_source)
+
+The media player has been redesigned around a modular **source-based architecture** to support the upcoming [Sendspin](https://www.sendspin-audio.com/spec/) multi-room audio protocol. The new [speaker_source](/components/media_player/speaker_source) media player replaces the monolithic speaker media player with a flexible orchestrator that routes audio from pluggable [media_source](/components/media_source) components.
+
+**Key Features:**
+
+- **Pluggable media sources** - Audio can come from embedded [audio_file](/components/audio_file) files, HTTP streams, or future sources like Sendspin, each as a separate component
+- **Dual pipeline support** - Separate media and announcement pipelines with independent speakers, formats, and sources, allowing announcements to play alongside music
+- **Full playlist management** - Enqueue, next/previous track navigation, repeat (off/one/all), and shuffle with Fisher-Yates algorithm
+- **Volume persistence** - Volume and mute state are saved across reboots with configurable min/max/increment
+- **Ogg Opus codec support** - The new microOpus library enables decoding Opus audio streams, completing the codec lineup alongside FLAC and MP3 ([#13967](https://github.com/esphome/esphome/pull/13967))
+- **Smarter codec builds** - The `codec_support_enabled` option now defaults to `needed`, building only the codecs your configuration actually requires instead of all three (users streaming arbitrary URLs should set `codec_support_enabled: all`)
+- **Expanded media player commands** - New `next`, `previous`, `repeat_all`, `shuffle`, `unshuffle`, `group_join`, and `clear_playlist` actions ([#12258](https://github.com/esphome/esphome/pull/12258))
+
+The [audio_file](/components/audio_file) component lets you embed audio files (local or from URLs) directly into firmware for instant playback without network access. Files are decoded directly from flash, saving two buffer copies compared to the previous approach.
 
 ## Other Notable Features
 
