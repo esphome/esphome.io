@@ -1,6 +1,6 @@
 ---
 title: "DLMS Meter"
-description: "Instructions for setting up DLMS (COSEM) smart meter integration using an M-Bus to UART adapter."
+description: "Instructions for setting up DLMS (COSEM) smart meter integration over UART."
 ---
 
 import APIClass from '@components/APIClass.astro';
@@ -8,10 +8,12 @@ import APIRef from '@components/APIRef.astro';
 import { Image } from 'astro:assets';
 
 The `dlms_meter` component connects to smart meters which use the encrypted **DLMS/COSEM** protocol over UART. These
-smart meters are (for example) widely deployed in Austria.
+smart meters are, for example, widely deployed in Austria and Denmark.
 
-**An M-Bus to UART adapter is required.** You must also request the 32‑character hexadecimal decryption key from your
-energy provider / grid operator.
+Most providers use M-Bus framed DLMS telegrams and therefore require **an M-Bus to UART adapter**. Some meters, such as `kamstrup-omnipower`, instead broadcast direct HDLC framed DLMS telegrams on the HAN interface. The component detects the transport type automatically from the received frame.
+
+You must also request the 32‑character hexadecimal decryption key from your energy provider / grid operator. Some
+meters additionally require a second 32-character hexadecimal authentication key.
 
 This component is passive; it does not transmit data to the meter. The meter periodically broadcasts frames (often
 about every 5 seconds). ESPHome listens, decrypts and updates the configured sensors as data arrives.
@@ -108,15 +110,112 @@ text_sensor:
       name: "Meter Number"
 ```
 
+### Example (Kamstrup / OMNIPOWER HAN)
+
+```yaml
+uart:
+  rx_pin: GPIOXX
+  baud_rate: 2400
+  rx_buffer_size: 1024
+
+dlms_meter:
+  decryption_key: "01234567890123456789012345678901"
+  authentication_key: "FEDCBA9876543210FEDCBA9876543210"
+  provider: kamstrup-omnipower
+
+sensor:
+  - platform: dlms_meter
+    voltage_l1:
+      name: "Voltage L1"
+    voltage_l2:
+      name: "Voltage L2"
+    voltage_l3:
+      name: "Voltage L3"
+    current_l1:
+      name: "Current L1"
+    current_l2:
+      name: "Current L2"
+    current_l3:
+      name: "Current L3"
+    active_power_plus:
+      name: "Active power import"
+    active_power_minus:
+      name: "Active power export"
+    reactive_power_plus:
+      name: "Reactive power import"
+    reactive_power_minus:
+      name: "Reactive power export"
+    active_power_plus_l1:
+      name: "Active power import L1"
+    active_power_plus_l2:
+      name: "Active power import L2"
+    active_power_plus_l3:
+      name: "Active power import L3"
+    active_power_minus_l1:
+      name: "Active power export L1"
+    active_power_minus_l2:
+      name: "Active power export L2"
+    active_power_minus_l3:
+      name: "Active power export L3"
+    power_factor_l1:
+      name: "Power factor L1"
+    power_factor_l2:
+      name: "Power factor L2"
+    power_factor_l3:
+      name: "Power factor L3"
+    power_factor_total:
+      name: "Power factor total"
+    active_energy_plus:
+      name: "Active energy import"
+    active_energy_minus:
+      name: "Active energy export"
+    reactive_energy_plus:
+      name: "Reactive energy import"
+    reactive_energy_minus:
+      name: "Reactive energy export"
+    active_energy_plus_l1:
+      name: "Active energy import L1"
+    active_energy_plus_l2:
+      name: "Active energy import L2"
+    active_energy_plus_l3:
+      name: "Active energy import L3"
+    active_energy_minus_l1:
+      name: "Active energy export L1"
+    active_energy_minus_l2:
+      name: "Active energy export L2"
+    active_energy_minus_l3:
+      name: "Active energy export L3"
+
+text_sensor:
+  - platform: dlms_meter
+    timestamp:
+      name: "Timestamp"
+    meter_number:
+      name: "Meter Number"
+    obis_list_version:
+      name: "OBIS List Version"
+```
+
+The `kamstrup-omnipower` provider is intended for Danish Kamstrup OMNIPOWER HAN interfaces. It expects direct HDLC
+DLMS frames over UART and DLMS security suite 0. Kamstrup meters commonly use separate encryption and authentication
+keys.
+
 ## Component Configuration
 
 ### Configuration Variables
 
 - **decryption_key** (**Required**, string, 32 hex chars, case-insensitive, templatable): Key used to decrypt DLMS telegrams.
   Obtain this from your provider / grid operator.
+- **authentication_key** (*Optional*, string, 32 hex chars, case-insensitive, templatable): Additional key used for
+  authenticated DLMS telegrams. Required by meters that use separate encryption and authentication keys, such as
+  Kamstrup OMNIPOWER HAN meters.
 - **provider** (*Optional*): Grid operator profile. Options:
   - `generic` (default) – works for most operators.
   - `netznoe` – Netz Noe / EVN specific mapping.
+  - `kamstrup-omnipower` – Kamstrup OMNIPOWER HAN mapping. This profile expects direct HDLC framed DLMS telegrams and
+    DLMS security suite 0.
+
+The component detects the transport type automatically from the received frame. The `provider` option selects the provider-specific decoding and security behavior.
 
 ## Sensor
 
@@ -134,6 +233,8 @@ Each of the following entries is *optional*; add only the ones you need. All sup
 - **current_l3**: Current Phase 3.
 - **active_power_plus**: Active power taken from grid.
 - **active_power_minus**: Active power put into grid.
+- **reactive_power_plus**: Reactive power taken from grid.
+- **reactive_power_minus**: Reactive power exported to grid.
 - **active_energy_plus**: Cumulative active energy taken from grid.
 - **active_energy_minus**: Cumulative active energy exported to grid.
 - **reactive_energy_plus**: Reactive energy taken from grid.
@@ -142,6 +243,25 @@ Each of the following entries is *optional*; add only the ones you need. All sup
 #### Netz Noe / EVN Additional Sensor
 
 - **power_factor**: Power factor. All options from [Sensor](/components/sensor).
+
+#### Kamstrup OMNIPOWER Additional Sensors
+
+- **active_power_plus_l1**: Active power taken from grid on phase L1.
+- **active_power_plus_l2**: Active power taken from grid on phase L2.
+- **active_power_plus_l3**: Active power taken from grid on phase L3.
+- **active_power_minus_l1**: Active power exported to grid on phase L1.
+- **active_power_minus_l2**: Active power exported to grid on phase L2.
+- **active_power_minus_l3**: Active power exported to grid on phase L3.
+- **power_factor_l1**: Power factor of phase L1.
+- **power_factor_l2**: Power factor of phase L2.
+- **power_factor_l3**: Power factor of phase L3.
+- **power_factor_total**: Total power factor.
+- **active_energy_plus_l1**: Cumulative active energy imported on phase L1.
+- **active_energy_plus_l2**: Cumulative active energy imported on phase L2.
+- **active_energy_plus_l3**: Cumulative active energy imported on phase L3.
+- **active_energy_minus_l1**: Cumulative active energy exported on phase L1.
+- **active_energy_minus_l2**: Cumulative active energy exported on phase L2.
+- **active_energy_minus_l3**: Cumulative active energy exported on phase L3.
 
 ## Text Sensor
 
@@ -154,6 +274,11 @@ All text sensor entries are *optional* and support standard [Text Sensor](/compo
 #### Netz Noe / EVN Additional Text Sensor
 
 - **meternumber**: Meter number reported by the device.
+
+#### Kamstrup Additional Text Sensor
+
+- **meter_number**: Meter number reported by the meter.
+- **obis_list_version**: OBIS push-list version identifier.
 
 ## See Also
 
