@@ -443,10 +443,15 @@ esp32:
 ## Partitions
 
 By default, ESPHome automatically generates a partition table based on `flash_size`. The `partitions` option allows you to either
-provide a custom partition table CSV file, or add extra partitions to the auto-generated table.
+provide a custom partition table CSV file for full control over the layout, or add extra partitions to the auto-generated table.
 
-When using a list of partitions, custom partitions are appended to the auto-generated table. The app partition size is automatically
-reduced to make room. Valid partition types and subtypes are documented in the
+```yaml
+esp32:
+  partitions: my_partitions.csv
+```
+
+Alternatively, you can provide a list of custom partitions to append to the auto-generated table. The app partition size is
+automatically reduced to make room. Valid partition types and subtypes are documented in the
 [ESP-IDF partition tables documentation](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-guides/partition-tables.html).
 
 ```yaml
@@ -464,13 +469,6 @@ esp32:
 - **type** (*Required*, string or integer): Partition type. One of `app` or `data`, or a custom type as an integer between 0x40 and 0xFE.
 - **subtype** (*Required*, string or integer): Partition subtype. For `app` type: `factory` or `test`. For `data` type: `nvs`, `nvs_keys`, `spiffs`, `coredump`, `efuse`, `fat`, `undefined`, or `littlefs`. Can also be an integer between 0x0 and 0xFE.
 - **size** (*Required*, integer): Partition size in bytes. Must be 4KB (0x1000) aligned.
-
-Alternatively, you can provide a path to a CSV file for full control over the partition layout:
-
-```yaml
-esp32:
-  partitions: my_partitions.csv
-```
 
 ## GPIO Pin Numbering
 
