@@ -91,6 +91,9 @@ The RP2040/RP2350 platform takes a major step toward first-class support in this
 - **TCP race condition fixed** - A critical race between lwip IRQ callbacks and the main loop on Pico W was identified and fixed, preventing heap corruption under concurrent API connections ([#14679](https://github.com/esphome/esphome/pull/14679))
 - **Accept-in-IRQ heap corruption fixed** - Socket accept callbacks on RP2040 no longer allocate memory in IRQ context, eliminating crashes under rapid connect/disconnect stress testing ([#14687](https://github.com/esphome/esphome/pull/14687))
 - **OTA timeout fixed** - OTA updates on ESP8266 and RP2040 no longer time out under load; switched from polling to `SO_RCVTIMEO` for reliable socket reads ([#14675](https://github.com/esphome/esphome/pull/14675))
+- **mDNS restart after WiFi reconnect** - mDNS on RP2040 now correctly restarts after WiFi reconnects, fixing service discovery failures ([#14737](https://github.com/esphome/esphome/pull/14737))
+- **I2C bus selection** - Fixed RP2040 I2C bus selection to correctly choose the hardware I2C peripheral based on pin assignment ([#14745](https://github.com/esphome/esphome/pull/14745))
+- **Debug reset reason** - The debug component now correctly reports the reset reason on RP2040/RP2350 ([#14740](https://github.com/esphome/esphome/pull/14740))
 
 **Flash and Performance:**
 
