@@ -7,11 +7,12 @@ import APIClass from '@components/APIClass.astro';
 import APIRef from '@components/APIRef.astro';
 import { Image } from 'astro:assets';
 
-The `dlms_meter` component connects to smart meters which use the encrypted **DLMS/COSEM** protocol over UART. These
+The `dlms_meter` component connects to smart meters which use the **DLMS/COSEM** protocol over UART. These
 smart meters are (for example) widely deployed in Austria.
 
-**An M-Bus to UART adapter is required.** You must also request the 32‑character hexadecimal decryption key from your
-energy provider / grid operator.
+**An M-Bus to UART or RS485 to UART adapter is required.**
+
+You may also need to request a 32‑character hexadecimal decryption key from your energy provider / grid operator.
 
 This component is passive; it does not transmit data to the meter. The meter periodically broadcasts frames (often
 about every 5 seconds). ESPHome listens, decrypts and updates the configured sensors as data arrives.
@@ -112,11 +113,14 @@ text_sensor:
 
 ### Configuration Variables
 
-- **decryption_key** (**Required**, string, 32 hex chars, case-insensitive, templatable): Key used to decrypt DLMS telegrams.
+- **decryption_key** (*Optional*, string, 32 hex chars, case-insensitive, templatable): Key used to decrypt DLMS telegrams.
   Obtain this from your provider / grid operator.
 - **provider** (*Optional*): Grid operator profile. Options:
   - `generic` (default) – works for most operators.
   - `netznoe` – Netz Noe / EVN specific mapping.
+- **transport** (*Optional*): Transport protocol. Options:
+  - `mbus` (default) – M-Bus over UART.
+  - `raw` – Raw DLMS frames over UART.
 
 ## Sensor
 
