@@ -1,0 +1,184 @@
+---
+description: "Instructions for setting up PM1003, PM1006 and PM1006K Particulate matter sensors, such as in the IKEA VINDRIKTNING or Levoit Air Purifiers"
+title: "PM100X Particulate Matter Sensors"
+---
+
+import { Image } from 'astro:assets';
+import Figure from '@components/Figure.astro';
+import pm1003Img from './images/pm1003.png';
+import pm1006Img from './images/pm1006.png';
+import pm1003ConnectorImg from './images/pm1003_connector.png';
+import pm1006ConnectorImg from './images/pm1006_connector.png';
+import APIRef from '@components/APIRef.astro';
+
+The PM1003, PM1006, and PM1006K particulate matter sensors are supported by ESPHome via two separate platforms:
+
+- **`pm100x_uart`** — UART-based, active polling at 9600 baud. Supports PM1003, PM1006, and PM1006K with PM1.0, PM2.5, and PM10.0 sensors.
+- **`pm100x_pwm`** — PWM duty-cycle based, requires a GPIO input pin. Reports PM2.5 via duty-cycle percentage. Supports PM1003 and PM1006K.
+
+| PM1003 | PM1006 and PM1006K |
+| --- | --- |
+| <Figure src={pm1003Img} alt="PM1003 Sensor" caption="PM1003 Sensor" layout="constrained" /> | <Figure src={pm1006Img} alt="PM1006(K) Sensor" caption="PM1006(K) Sensor" layout="constrained" /> |
+
+**Example configuration:**
+
+UART — PM1006K with PM1.0, PM2.5, PM10.0
+
+```yaml
+uart:
+  rx_pin: GPIO22
+  tx_pin: GPIO21
+  baud_rate: 9600
+
+sensor:
+  - platform: pm100x_uart
+    model: pm1006k
+    pm_1_0:
+      name: "PM1.0"
+    pm_2_5:
+      name: "PM2.5"
+    pm_10_0:
+      name: "PM10.0"
+```
+
+PWM — PM1003, PM2.5 only
+
+```yaml
+sensor:
+  - platform: pm100x_pwm
+    model: pm1003
+    pm_2_5:
+      name: "PM2.5"
+    pwm:
+      name: "PM2.5 Duty Cycle"
+      pin:
+        number: GPIO27
+        inverted: true
+```
+
+## Configuration variables: `pm100x_uart`
+
+- **model** (*Optional*): PM100x model selection. One of `pm1003`, `pm1006`, `pm1006k`. Defaults to `pm1003`.
+- **pm_2_5** (*Optional*): PM2.5 concentration in µg/m³. All options from [Sensor](/components/sensor).
+- **pm_1_0** (*Optional*): PM1.0 concentration in µg/m³. Only supported on `pm1006k`. All options from [Sensor](/components/sensor).
+- **pm_10_0** (*Optional*): PM10.0 concentration in µg/m³. Only supported on `pm1006k`. All options from [Sensor](/components/sensor).
+- **startup_delay** (*Optional*, [Time](/guides/configuration-types#time)): Time to wait after boot before publishing measurements. Defaults to `15s`.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): Interval between measurement requests. Set to `0s` to disable active requests (passive/sniffer mode). Defaults to `never` (one-shot on boot).
+- **uart_id** (*Optional*, [ID](/guides/configuration-types#id)): ID of the UART bus if multiple are configured.
+
+## Configuration variables: `pm100x_pwm`
+
+- **model** (*Optional*): PM100x model selection. One of `pm1003`, `pm1006k`. Defaults to `pm1003`.
+- **pm_2_5** (*Optional*): PM2.5 concentration in µg/m³. All options from [Sensor](/components/sensor).
+- **pwm** (**Required**): PWM duty-cycle sensor configuration.
+  - **pin** (**Required**, GPIO input): GPIO pin connected to the sensor's PWM output (P1). Uses the ESPHome GPIO input pin schema.
+  - **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): Duty-cycle polling interval. Defaults to `30s`.
+  - All other options from [Sensor](/components/sensor).
+- **startup_delay** (*Optional*, [Time](/guides/configuration-types#time)): Time to wait after boot before publishing measurements. Defaults to `15s`.
+
+## Model information
+
+| Model | Example devices | Measurement range | Interfaces | Measures |
+| --- | --- | --- | --- | --- |
+| PM1003 | Levoit air purifiers (Vital100s, LV-131PUR) | 0–500 µg/m³ | UART, PWM | PM2.5 |
+| PM1006 | IKEA VINDSTYRKA | 0–1000 µg/m³ | UART | PM2.5 |
+| PM1006K | — | 0–1000 µg/m³ | UART, PWM | PM1.0, PM2.5, PM10.0 |
+
+- **Supply voltage**: 5V
+- **Signal level**: 4.5V TTL (UART and PWM)
+
+## Wiring
+
+PM100x devices communicate via UART at 9600 baud or expose a PWM duty-cycle output on P1. Choose one method (UART or PWM).
+
+RX/TX and PWM are 4.5V TTL.
+Use a level shifter (e.g: BSS138) for UART for 3.3V ESP boards.
+For PWM, a 10k/20k resistor divider to GND is required to bring the signal to 3.3V.
+
+```text
+PM100X P1----[10k]----+----> ESP GPIO (3.3V)
+                      |
+                    [20k]
+                      |
+                     GND
+```
+
+## PM1003 Pinout
+
+<Figure src={pm1003ConnectorImg} alt="PM1003 Connector" caption="PM1003 Connector" layout="constrained" />
+
+| PM1003 pin | ESP pin | Notes |
+| --- | --- | --- |
+| 1 GND | GND | Ground. |
+| 2 TX | RX | UART data from PM1003 to ESP. |
+| 3 VDD | 5V | Power input. |
+| 4 P1 | Any GPIO input | PWM duty-cycle output for PM2.5. |
+| 5 RX | TX | UART data from ESP to PM1003. |
+
+## PM1006/PM1006K Pinout
+
+<Figure src={pm1006ConnectorImg} alt="PM1006(K) Connector" caption="PM1006(K) Connector" layout="constrained" />
+
+| PM1006(K) pin | ESP pin | Notes |
+| --- | --- | --- |
+| 1 GND | GND | Ground. |
+| 2 VDD | 5V | Power input. |
+| 3 RX | TX | UART data from ESP to PM1006/K. |
+| 4 TX | RX | UART data from PM1006/K to ESP. |
+
+:::note
+Pin 4 on the PM1006K outputs PWM if no UART commands are received after startup. This may also apply to the PM1006 (not verified).
+:::
+
+## Additional examples
+
+UART — PM1006 (PM2.5 only)
+
+```yaml
+uart:
+  rx_pin: GPIO22
+  tx_pin: GPIO21
+  baud_rate: 9600
+
+sensor:
+  - platform: pm100x_uart
+    model: pm1006
+    pm_2_5:
+      name: "PM2.5"
+```
+
+UART — passive IKEA VINDRIKTNING
+
+In common usage with the IKEA VINDRIKTNING still controlling the PM1006 sensor, set `update_interval: 0s` to disable active requests. The ESPHome device will passively pick up measurements requested by the VINDRIKTNING MCU.
+
+In this case you only need the `rx_pin` configured in UART.
+
+The implementation was inspired by [esp8266-vindriktning-particle-sensor](https://github.com/Hypfer/esp8266-vindriktning-particle-sensor); you can also see the pinout there.
+However, we recommend mounting your ESP below the fan (which blows out the front) so you do not obstruct the airflow.
+[This discussion thread on the HA forum](https://community.home-assistant.io/t/ikea-vindriktning-air-quality-sensor/324599) has several examples of how people have connected their ESP device to the IKEA sensor.
+
+```yaml
+uart:
+  rx_pin: GPIO22
+  baud_rate: 9600
+
+sensor:
+  - platform: pm100x_uart
+    model: pm1006
+    update_interval: 0s
+    pm_2_5:
+      name: "PM2.5"
+```
+
+## Notes
+
+- `pm1006` does not support PWM.
+- `pm_1_0` and `pm_10_0` are only available on `pm1006k` and require UART (`pm100x_uart`).
+- The `pwm` sensor measures duty-cycle percentage internally; the `pm_2_5` sensor publishes the converted µg/m³ value.
+
+## See also
+
+- [Sensor Filters](/components/sensor#sensor-filters)
+- [UART Component](/components/uart)
+- <APIRef text="pm100x/pm100x.h" path="pm100x/pm100x.h" />
+- [ESPHome Levoit Air Purifiers Project](https://github.com/tuct/esphome-projects/tree/main/projects/free-levoit)
