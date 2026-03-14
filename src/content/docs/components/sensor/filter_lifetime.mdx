@@ -282,10 +282,13 @@ sensor:
             condition:
               lambda: "return x < 10.0;"
             then:
-              - homeassistant.service:
-                  service: notify.mobile_app
+              - homeassistant.action:
+                  action: notify.mobile_app
                   data:
-                    message: "Filter needs replacement! Only {{ x | round(0) }}% remaining"
+                    message: !lambda |-
+                      char buffer[64];
+                      sprintf(buffer, "Filter needs replacement! Only %.0f%% remaining", x);
+                      return std::string(buffer);
 ```
 
 ### Water Filter Tracking
