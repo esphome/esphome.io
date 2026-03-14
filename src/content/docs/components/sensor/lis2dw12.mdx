@@ -14,7 +14,7 @@ import APIRef from '@components/APIRef.astro';
 
 The `lis2dw12` sensor platform allows you to use your ST LIS2DW12 tri-axial, low-g
 accelerometer ([datasheet](https://www.st.com/resource/en/datasheet/lis2dw12.pdf))
-with ESPHome. The [I²C](/components/i2c) is required to be set up in your configuration for this sensor to work.
+with ESPHome. The sensor supports both [I²C](/components/i2c) and [SPI](/components/spi) buses.
 
 LIS2DW12 is a 14-bit accelerometer with multiple power modes, tap/double-tap detection,
 free-fall detection, wake-up/activity detection, and 6D orientation recognition.
@@ -29,22 +29,31 @@ calibrated and transformed to match the physical orientation of the sensor.
   layout="constrained"
 />
 
-
 ```yaml
-# Example configuration entry
-lis2dw12:
+# Example I2C configuration
+lis2dw12_i2c:
   range: 4G
   power_mode: high_performance
-  data_rate: 100Hz
+  output_data_rate: 100Hz
+  update_interval: 10s
+```
+
+```yaml
+# Example SPI configuration
+lis2dw12_spi:
+  cs_pin: GPIO5
+  range: 4G
+  power_mode: high_performance
+  output_data_rate: 100Hz
   update_interval: 10s
 ```
 
 ### Configuration variables
 
-The configuration is made up of several parts: The central component, acceleration sensors,
+The configuration is made up of several parts: The central component (I2C or SPI variant), acceleration sensors,
 text sensor with orientation information, and binary sensors for taps, freefall, and movement detection.
 
-Base Configuration:
+Base Configuration (shared by both `lis2dw12_i2c` and `lis2dw12_spi`):
 
 - **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval for updating acceleration sensors.
   Defaults to `10s`.
@@ -56,7 +65,7 @@ Base Configuration:
   `low_power_2`, `low_power_3`, `low_power_4`. Mode `low_power_1` uses 12-bit resolution, all others use 14-bit.
   Defaults to `high_performance`.
 
-- **data_rate** (*Optional*, string): Output data rate. One of `1.6Hz`, `12.5Hz`, `25Hz`, `50Hz`, `100Hz`,
+- **output_data_rate** (*Optional*, string): Output data rate. One of `1.6Hz`, `12.5Hz`, `25Hz`, `50Hz`, `100Hz`,
   `200Hz`, `400Hz`, `800Hz`, `1600Hz`. Defaults to `100Hz`.
 
 - **filter_bandwidth** (*Optional*, string): Digital filter bandwidth. One of `odr_div_2`, `odr_div_4`,
@@ -77,6 +86,15 @@ Base Configuration:
   - **mirror_z** (*Optional*, boolean): Mirror Z-axis. Defaults to `false`.
   - **swap_xy** (*Optional*, boolean): Swap X and Y axis. Defaults to `false`.
 
+I2C-specific:
+
+- All options from [I²C Device](/components/i2c#i2c-device). Default address is `0x19`.
+
+SPI-specific:
+
+- **cs_pin** (**Required**, [Pin](/guides/configuration-types#pin)): The chip select pin.
+- All other options from [SPI Device](/components/spi#spi-device).
+
 ## Binary Sensor
 
 Four binary sensors available for use. Internal 500 ms debounce is applied for all sensors.
@@ -85,7 +103,7 @@ Shorthand notation also can be used.
 
 ```yaml
 binary_sensor:
-  - platform: lis2dw12
+  - platform: lis2dw12_base
     tap: Single tap          # shorthand notation for the sensor
     double_tap: Double tap   # -- "" --
     freefall: Freefall       # -- "" --
@@ -110,7 +128,7 @@ regular notation only the **name** is required. All options from [Sensor](/compo
 
 ```yaml
 sensor:
-  - platform: lis2dw12
+  - platform: lis2dw12_base
     acceleration_x: Accel X
     acceleration_y: Accel Y
     acceleration_z: Accel Z
@@ -129,7 +147,7 @@ Text sensor provides 6D orientation information. You can use shorthand notation 
 
 ```yaml
 text_sensor:
-  - platform: lis2dw12
+  - platform: lis2dw12_base
     orientation: Orientation
 ```
 
@@ -145,7 +163,7 @@ text_sensor:
 This automation will be triggered when single tap is detected.
 
 ```yaml
-lis2dw12:
+lis2dw12_i2c:  # or lis2dw12_spi
   # ...
   on_tap:
     - then:
@@ -157,7 +175,7 @@ lis2dw12:
 This automation will be triggered when double tap is detected.
 
 ```yaml
-lis2dw12:
+lis2dw12_i2c:  # or lis2dw12_spi
   # ...
   on_double_tap:
     - then:
@@ -169,7 +187,7 @@ lis2dw12:
 This automation will be triggered when free-fall is detected.
 
 ```yaml
-lis2dw12:
+lis2dw12_i2c:  # or lis2dw12_spi
   # ...
   on_freefall:
     - then:
@@ -181,7 +199,7 @@ lis2dw12:
 This automation will be triggered when device detects changes in motion.
 
 ```yaml
-lis2dw12:
+lis2dw12_i2c:  # or lis2dw12_spi
   # ...
   on_active:
     - then:
@@ -193,7 +211,7 @@ lis2dw12:
 This automation will be triggered when device orientation is changed with respect to the gravitation field vector `g`.
 
 ```yaml
-lis2dw12:
+lis2dw12_i2c:  # or lis2dw12_spi
   # ...
   on_orientation:
     - then:
@@ -203,4 +221,4 @@ lis2dw12:
 ## See Also
 
 - [Sensor Filters](/components/sensor#sensor-filters)
-- <APIRef text="lis2dw12.h" path="lis2dw12/lis2dw12.h" />
+- <APIRef text="lis2dw12_base.h" path="lis2dw12_base/lis2dw12_base.h" />
