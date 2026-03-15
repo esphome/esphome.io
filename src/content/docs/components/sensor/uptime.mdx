@@ -26,6 +26,21 @@ sensor:
 - **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The sensor reporting interval. Defaults to `60s`.
   Valid only with `type: seconds`.
 
+```
+# Working example
+time:
+  - platform: homeassistant
+    id: esptime
+
+sensor:
+  - platform: uptime
+    name: "My Device Last Boot"
+    type: timestamp
+    time_id: esptime
+    device_class: timestamp
+    entity_category: diagnostic
+```
+
 - All other options from [Sensor](/components/sensor).
 
 ## See Also
