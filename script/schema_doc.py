@@ -134,35 +134,12 @@ def open_file_lines(file):
         print(f"Error: File {file} not found")
 
 
-REGEX_INCLUDE = r"^{{<\sinclude\s\"([^\"]*)\"\s>}}"
-
-
-def mrkdwn_lines_includes(lines, md_file):
-    ret_lines = []
-    for index in range(0, len(lines)):
-        line = lines[index]
-        search = re.search(REGEX_INCLUDE, line, re.IGNORECASE)
-        if search:
-            include_path = md_file.parent / search.group(1)
-            if not include_path.exists():
-                print(f"{md_file}:{index + 1} cannot include {include_path}")
-                continue
-            # TODO: Check this code is used
-            include_lines = open_file_lines(include_path)
-            include_index = md_parse_frontmatter(None, include_lines)
-            ret_lines.extend(include_lines[include_index:])
-        else:
-            ret_lines.append(line)
-    return ret_lines
-
-
 def mrkdwn_lines(md_file):
     lines = md_docs.get(md_file, {}).get("lines")
     if lines:
         return lines
 
     if (lines := open_file_lines(md_file)) is not None:
-        lines = mrkdwn_lines_includes(lines, md_file)
         # cache into md_docs dict
         md_docs[md_file] = {"lines": lines}
         return lines
@@ -182,17 +159,6 @@ def fill_anchors(md_files):
                 slug = slugify(search.group(1))
                 if slug not in anchors:
                     anchors[slug] = md_file
-
-
-def get_doc_title(md_file):
-    title = md_docs.get(md_file, {}).get("title")
-    if title:
-        return title
-
-    lines = mrkdwn_lines(md_file)
-    md_parse_frontmatter(md_file, lines)
-
-    return md_docs.get(md_file, {}).get("title")
 
 
 def md_get_paragraph(lines, index):
@@ -277,13 +243,6 @@ def md_get_next_config(lines, index):
             else:
                 return index, ret, indent
         index += 1
-
-
-def json_exists(name):
-    json_file_name = os.path.join(args.schema_dir, name + ".json")
-    if os.path.exists(json_file_name):
-        return True
-    return False
 
 
 def json_get(name):
