@@ -105,6 +105,7 @@ stats = Stats()
 anchors = {}
 md_docs = {}
 json_docs = {}
+reverse_extends = {}  # id(parent_inner_schema) -> [child_inner_schema, ...]
 
 
 def unquote(s: str) -> str:
@@ -146,7 +147,7 @@ def mrkdwn_lines_includes(lines, md_file):
             if not include_path.exists():
                 print(f"{md_file}:{index + 1} cannot include {include_path}")
                 continue
-
+            # TODO: Check this code is used
             include_lines = open_file_lines(include_path)
             include_index = md_parse_frontmatter(None, include_lines)
             ret_lines.extend(include_lines[include_index:])
@@ -295,6 +296,8 @@ def json_get(name):
 
     json_file_name = os.path.join(args.schema_dir, name + ".json")
     if os.path.exists(json_file_name):
+        if args.debug_level > 12:
+            print(f"Loading {json_file_name}")
         with open(json_file_name, "r", encoding="utf-8-sig") as f:
             json_docs[name] = json_doc = json.loads(f.read())
             return json_doc
@@ -385,6 +388,65 @@ def find_schema_prop(schema, prop_name):
     return None
 
 
+def resolve_extends_ref(ref):
+    """Resolve an extends reference string to its inner schema dict."""
+    parts = ref.split(".")
+    ref_json = json_get(parts[0])
+    if not ref_json:
+        return None
+    if len(parts) == 3:
+        schema_def = (
+            ref_json.get(f"{parts[0]}.{parts[1]}", {})
+            .get("schemas", {})
+            .get(parts[2], {})
+        )
+    else:
+        schema_def = ref_json.get(parts[0], {}).get("schemas", {}).get(parts[1], {})
+    if schema_def.get(JSON_CV_TYPE) == JSON_CV_TYPE_SCHEMA and "schema" in schema_def:
+        return schema_def["schema"]
+    return None
+
+
+def fill_reverse_extends():
+    """Build reverse_extends map by scanning all loaded JSON schemas."""
+    for name, json_doc in json_docs.items():
+        for top_key in json_doc:
+            schemas = json_doc.get(top_key, {}).get("schemas", {})
+            for schema_name, schema_def in schemas.items():
+                if (
+                    schema_def.get(JSON_CV_TYPE) == JSON_CV_TYPE_SCHEMA
+                    and "schema" in schema_def
+                ):
+                    inner = schema_def["schema"]
+                    for ext in inner.get(JSON_EXTENDS, []):
+                        parent = resolve_extends_ref(ext)
+                        if parent is not None:
+                            reverse_extends.setdefault(id(parent), []).append(inner)
+
+
+def find_schema_props_in_children(schema, prop_name):
+    """Find prop_name in schemas that extend the given schema (directly or transitively).
+    Returns a list of matched config dicts."""
+    results = []
+    queue = [schema]
+    visited = set()
+
+    while queue:
+        current = queue.pop(0)
+        cid = id(current)
+        if cid in visited:
+            continue
+        visited.add(cid)
+
+        for child in reverse_extends.get(cid, []):
+            cv = child.get(JSON_CONFIG_VARS, {})
+            if prop_name in cv:
+                results.append(cv[prop_name])
+            queue.append(child)
+
+    return results
+
+
 def convert_links(md_file, index, docs):
     if docs is None:
         return None
@@ -452,6 +514,17 @@ def set_schema_doc(md_file, index, schema, prop_name, prop_types, doc):
         matched_config[JSON_DOCS] = converted_doc
 
         stats.props += 1
+        return matched_config
+
+    # Downward search: apply docs to all children that have this prop
+    children = find_schema_props_in_children(schema, prop_name)
+    if children:
+        converted_doc = make_doc_with_see_also(md_file, index, doc)
+        for child_config in children:
+            child_config[JSON_DOCS] = converted_doc
+            stats.props += 1
+        return children[0]
+
     return matched_config
 
 
@@ -551,6 +624,8 @@ def process_schema(
         search = re.search(REGEX_PROP, item_config, re.IGNORECASE)
         if search:
             prop_name = search.group(1)
+            if args.debug_level > 10:
+                print(f"{md_file}:{index}: prop {prop_name}")
 
             if typed_var and typed_var.get("typed_key") == prop_name:
                 typed_var["docs"] = search.group(3)
@@ -558,6 +633,8 @@ def process_schema(
                 matched_config = set_schema_doc(
                     md_file, index, schema, prop_name, search.group(2), search.group(3)
                 )
+                if not matched_config and args.debug_level > 8:
+                    print(f"{md_file}:{index}: prop {prop_name} not matched in schema")
 
 
 def process_config(md_file, lines, index, config_var, indent=0, parent_schema=None):
@@ -712,6 +789,11 @@ if __name__ == "__main__":
 
     esphome_json = json_get("esphome")
     core = esphome_json["core"]
+
+    # Pre-load all schema JSON files and build reverse extends map
+    for json_file in Path(args.schema_dir).glob("*.json"):
+        json_get(json_file.stem)
+    fill_reverse_extends()
 
     md_files = []
     for root, _, files in os.walk(DOCS_ROOT / "components"):
