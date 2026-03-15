@@ -29,6 +29,11 @@ const ignoreFolders = [
   '.astro/',
 ];
 
+// Files to ignore (skip all linting)
+const ignoreFiles = [
+  'script/release_notes_template.mdx',
+];
+
 // File types
 const fileTypes = [
   '.cfg', '.css', '.gif', '.h', '.html', '.ico', '.jpg', '.js', '.json',
@@ -417,6 +422,26 @@ function checkAutomationHeadings(fname, content) {
       addError(fname, lineno, 1,
         'Action/Condition suffix should be capitalized. Use "Action" or "Condition" (not lowercase).');
     }
+
+    // Check 5: Uppercase letters in backticked automation names (domain.name pattern)
+    // e.g. ### `MAX7219.invert_on` Action (should be `max7219.invert_on`)
+    const upperMatch = line.match(/^#{2,4}\s+.*`([\w.]*[A-Z][\w.]*)`/);
+    if (upperMatch) {
+      const name = upperMatch[1];
+      if (name.match(/^\w+\.[\w.]+$/)) {
+        addError(fname, lineno, 1,
+          `Action/Condition/Trigger name "\`${name}\`" contains uppercase letters. ` +
+          'ESPHome automation names should be all lowercase (e.g. `component.action_name`).');
+      }
+    }
+
+    // Check 6: Use `/` not `&` to separate paired automation names in headings
+    // e.g. ### `foo.bar` & `foo.baz` Action (should use `/`)
+    if (line.match(/^#{2,4}\s+`\w+(\.\w+)+`\s+&\s+`\w+(\.\w+)+`/)) {
+      addError(fname, lineno, 1,
+        'Use `/` instead of `&` to separate paired automation names in headings ' +
+        '(e.g. `foo.on` / `foo.off` Action).');
+    }
   }
 }
 
@@ -431,6 +456,11 @@ async function main() {
   for (const [fname, gitMode] of gitFiles) {
     // Skip ignored folders
     if (ignoreFolders.some(folder => fname.startsWith(folder) || fname.includes(`/${folder}`))) {
+      continue;
+    }
+
+    // Skip ignored files
+    if (ignoreFiles.includes(fname)) {
       continue;
     }
 
