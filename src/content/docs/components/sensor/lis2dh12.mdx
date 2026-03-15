@@ -11,7 +11,7 @@ import APIRef from '@components/APIRef.astro';
 
 The `lis2dh12` sensor platform allows you to use your ST LIS2DH12 ultra-low-power tri-axial
 accelerometer ([datasheet](https://www.st.com/resource/en/datasheet/lis2dh12.pdf))
-with ESPHome via the [I²C](/components/i2c) bus.
+with ESPHome. The sensor supports both [I²C](/components/i2c) and [SPI](/components/spi) buses.
 
 LIS2DH12 is a high-performance accelerometer with selectable resolution (12-bit, 10-bit, or 8-bit),
 tap/double-tap (click) detection, free-fall detection, activity/inactivity detection,
@@ -29,7 +29,22 @@ lis2dh12_i2c:
   update_interval: 10s
 ```
 
+```yaml
+# Example SPI configuration
+lis2dh12_spi:
+  cs_pin: GPIO5
+  range: 4G
+  resolution: high
+  output_data_rate: 100Hz
+  update_interval: 10s
+```
+
 ### Configuration variables
+
+The configuration is made up of several parts: The central component (I2C or SPI variant), acceleration sensors,
+text sensor with orientation information, and binary sensors for taps, freefall, and movement detection.
+
+Base Configuration (shared by both `lis2dh12_i2c` and `lis2dh12_spi`):
 
 - **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval for updating acceleration sensors.
   Defaults to `10s`.
@@ -56,7 +71,14 @@ lis2dh12_i2c:
   - **mirror_z** (*Optional*, boolean): Mirror Z-axis. Defaults to `false`.
   - **swap_xy** (*Optional*, boolean): Swap X and Y axis. Defaults to `false`.
 
+I2C-specific:
+
 - All options from [I²C Device](/components/i2c#i2c-device). Default address is `0x19`.
+
+SPI-specific:
+
+- **cs_pin** (**Required**, [Pin](/guides/configuration-types#pin)): The chip select pin.
+- All other options from [SPI Device](/components/spi#spi-device).
 
 ## Sensor
 
@@ -126,7 +148,7 @@ text_sensor:
 This automation will be triggered when single tap is detected.
 
 ```yaml
-lis2dh12_i2c:
+lis2dh12_i2c:  # or lis2dh12_spi
   # ...
   on_tap:
     - then:
@@ -138,7 +160,7 @@ lis2dh12_i2c:
 This automation will be triggered when double tap is detected.
 
 ```yaml
-lis2dh12_i2c:
+lis2dh12_i2c:  # or lis2dh12_spi
   # ...
   on_double_tap:
     - then:
@@ -150,7 +172,7 @@ lis2dh12_i2c:
 This automation will be triggered when free-fall is detected.
 
 ```yaml
-lis2dh12_i2c:
+lis2dh12_i2c:  # or lis2dh12_spi
   # ...
   on_freefall:
     - then:
@@ -162,7 +184,7 @@ lis2dh12_i2c:
 This automation will be triggered when device detects changes in motion.
 
 ```yaml
-lis2dh12_i2c:
+lis2dh12_i2c:  # or lis2dh12_spi
   # ...
   on_active:
     - then:
@@ -174,7 +196,7 @@ lis2dh12_i2c:
 This automation will be triggered when device orientation is changed with respect to the gravitation field vector `g`.
 
 ```yaml
-lis2dh12_i2c:
+lis2dh12_i2c:  # or lis2dh12_spi
   # ...
   on_orientation:
     - then:
