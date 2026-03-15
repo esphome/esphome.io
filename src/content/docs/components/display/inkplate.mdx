@@ -1,14 +1,14 @@
 ---
 description: "Instructions for setting up Inkplate E-Paper displays in ESPHome."
-title: "Inkplate 5, 6, 10 and 6 Plus"
+title: "Inkplate 5, 6, 10, 6 Plus and 4 Tempera"
 ---
 
 import { Image } from 'astro:assets';
 import Figure from '@components/Figure.astro';
 
-All-in-one e-paper display `Inkplate 5`, `Inkplate 6`, `Inkplate 10` and `Inkplate 6 Plus`.
+All-in-one e-paper display `Inkplate 5`, `Inkplate 6`, `Inkplate 10`, `Inkplate 6 Plus` and `Inkplate 4 Tempera`.
 
-The Inkplate 5, 6, 10 and 6 Plus are powerful, Wi-Fi enabled ESP32 based six-inch e-paper displays -
+The Inkplate 5, 6, 10, 6 Plus and 4 Tempera are powerful, Wi-Fi enabled ESP32 based six-inch e-paper displays -
 recycled from a Kindle e-reader. Its main feature is simplicity.
 
 Learn more at [Inkplate's documentation website](https://inkplate.readthedocs.io/en/stable/)
@@ -524,6 +524,75 @@ display:
     vcom_pin:
       pca6416a: pca6416a_hub
       number: 5
+```
+
+## Inkplate 4 Tempera
+
+The Inkplate 4 Tempera has the same GPIO expander as the models 5, 6 v2 and 10.
+
+Minimal display-only configuration:
+
+```yaml
+# Example minimal configuration entry
+
+psram:
+
+i2c:
+  sda: GPIO21
+  scl: GPIO22
+
+pca6416a:
+  - id: pca6416a_hub
+    address: 0x20
+
+display:
+- platform: inkplate
+  id: inkplate_display
+  greyscale: true
+  partial_updating: false
+  update_interval: never
+  model: inkplate_4_tempera
+
+  ckv_pin: 32
+  sph_pin: 33
+  gmod_pin:
+    pca6416a: pca6416a_hub
+    number: 1
+  gpio0_enable_pin:
+    pca6416a: pca6416a_hub
+    number: 8
+  oe_pin:
+    pca6416a: pca6416a_hub
+    number: 0
+  spv_pin:
+    pca6416a: pca6416a_hub
+    number: 2
+  powerup_pin:
+    pca6416a: pca6416a_hub
+    number: 4
+  wakeup_pin:
+    pca6416a: pca6416a_hub
+    number: 3
+  vcom_pin:
+    pca6416a: pca6416a_hub
+    number: 5
+```
+
+It has some additional sensors supported by ESPHome for climate and gesture that can be configured as below:
+
+```yaml
+# Air quality
+bme68x_bsec2_i2c:
+  address: 0x76
+  model: bme688
+  operating_age: 4d
+  sample_rate: LP
+  supply_voltage: 3.3V
+  id: 'bme'
+
+# Motion control
+apds9960:
+  address: 0x39
 ```
 
 ## See Also
