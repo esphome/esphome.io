@@ -13,10 +13,11 @@ The `lis2dh12` sensor platform allows you to use your ST LIS2DH12 ultra-low-powe
 accelerometer ([datasheet](https://www.st.com/resource/en/datasheet/lis2dh12.pdf))
 with ESPHome via the [I²C](/components/i2c) bus.
 
-LIS2DH12 is a high-performance accelerometer with selectable resolution (12-bit, 10-bit, or 8-bit)
-and configurable output data rates from 1 Hz to 5376 Hz.
+LIS2DH12 is a high-performance accelerometer with selectable resolution (12-bit, 10-bit, or 8-bit),
+tap/double-tap (click) detection, free-fall detection, activity/inactivity detection,
+and 6D orientation recognition.
 
-This component provides acceleration data in m/s². XYZ axes can be
+This component provides acceleration data in m/s², orientation information, and event detection. XYZ axes can be
 calibrated and transformed to match the physical orientation of the sensor.
 
 ```yaml
@@ -76,6 +77,109 @@ sensor:
 - **acceleration_x** (*Optional*): X-axis acceleration, m/s².
 - **acceleration_y** (*Optional*): Y-axis acceleration, m/s².
 - **acceleration_z** (*Optional*): Z-axis acceleration, m/s².
+
+## Binary Sensor
+
+Four binary sensors available for use. Internal 500 ms debounce is applied for all sensors.
+For every sensor **name** is required. All other options from [Binary Sensor](/components/binary_sensor#config-binary_sensor).
+Shorthand notation also can be used.
+
+```yaml
+binary_sensor:
+  - platform: lis2dh12_base
+    tap: Single tap          # shorthand notation for the sensor
+    double_tap: Double tap   # -- "" --
+    freefall: Freefall       # -- "" --
+    active:                  # regular notation for the sensor to be able
+      name: Active           # to use filters and other options
+      filters:
+        - delayed_off: 5000ms # example of prolongation of movement detection signal
+```
+
+### Configuration variables
+
+- **tap** (*Optional*): Single tap (click) detection.
+- **double_tap** (*Optional*): Double tap (double-click) detection.
+- **freefall** (*Optional*): Free-fall detection.
+- **active** (*Optional*): Movement detection.
+
+## Text Sensor
+
+Text sensor provides 6D orientation information based on the dominant gravity axis.
+Uses 6D position recognition mode with ~60° threshold per ST DT0097 application note.
+
+```yaml
+text_sensor:
+  - platform: lis2dh12_base
+    orientation: Orientation
+```
+
+### Configuration variables
+
+- **orientation** (*Optional*): 6D orientation. Can be one of `Face Up`, `Face Down`,
+  `Portrait Up`, `Portrait Down`, `Landscape Left`, `Landscape Right`.
+
+## Automations
+
+### `on_tap` trigger
+
+This automation will be triggered when single tap is detected.
+
+```yaml
+lis2dh12_i2c:
+  # ...
+  on_tap:
+    - then:
+        - logger.log: "Tapped"
+```
+
+### `on_double_tap` trigger
+
+This automation will be triggered when double tap is detected.
+
+```yaml
+lis2dh12_i2c:
+  # ...
+  on_double_tap:
+    - then:
+        - logger.log: "Double tapped"
+```
+
+### `on_freefall` trigger
+
+This automation will be triggered when free-fall is detected.
+
+```yaml
+lis2dh12_i2c:
+  # ...
+  on_freefall:
+    - then:
+        - logger.log: "Freefall detected"
+```
+
+### `on_active` trigger
+
+This automation will be triggered when device detects changes in motion.
+
+```yaml
+lis2dh12_i2c:
+  # ...
+  on_active:
+    - then:
+        - logger.log: "Activity detected"
+```
+
+### `on_orientation` trigger
+
+This automation will be triggered when device orientation is changed with respect to the gravitation field vector `g`.
+
+```yaml
+lis2dh12_i2c:
+  # ...
+  on_orientation:
+    - then:
+        - logger.log: "Orientation change detected"
+```
 
 ## See Also
 
