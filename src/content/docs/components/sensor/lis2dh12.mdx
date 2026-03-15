@@ -1,0 +1,83 @@
+---
+description: "Instructions for setting up the LIS2DH12 digital tri-axial accelerometer."
+title: "LIS2DH12 Sensor"
+---
+
+import APIRef from '@components/APIRef.astro';
+
+<span id="lis2dh12-component"></span>
+
+## Component/Hub
+
+The `lis2dh12` sensor platform allows you to use your ST LIS2DH12 ultra-low-power tri-axial
+accelerometer ([datasheet](https://www.st.com/resource/en/datasheet/lis2dh12.pdf))
+with ESPHome via the [I²C](/components/i2c) bus.
+
+LIS2DH12 is a high-performance accelerometer with selectable resolution (12-bit, 10-bit, or 8-bit)
+and configurable output data rates from 1 Hz to 5376 Hz.
+
+This component provides acceleration data in m/s². XYZ axes can be
+calibrated and transformed to match the physical orientation of the sensor.
+
+```yaml
+# Example I2C configuration
+lis2dh12_i2c:
+  range: 4G
+  resolution: high
+  output_data_rate: 100Hz
+  update_interval: 10s
+```
+
+### Configuration variables
+
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval for updating acceleration sensors.
+  Defaults to `10s`.
+
+- **range** (*Optional*, string): The range of the sensor measurements. One of `2G`, `4G`, `8G`, `16G`.
+  Defaults to `2G` which means it picks up accelerations between `-2g` and `2g`.
+
+- **resolution** (*Optional*, string): ADC resolution mode. One of `high` (12-bit), `medium` (10-bit), `low` (8-bit).
+  Defaults to `high`.
+
+- **output_data_rate** (*Optional*, string): Output data rate. One of `1Hz`, `10Hz`, `25Hz`, `50Hz`, `100Hz`,
+  `200Hz`, `400Hz`, `1620Hz`, `5376Hz`. Defaults to `100Hz`.
+
+- **calibration** (*Optional*):
+
+  - **offset_x** (*Optional*, float): X-axis zero position calibration, in m/s². From -4.5 to 4.5. Defaults to `0`.
+  - **offset_y** (*Optional*, float): Y-axis zero position calibration, in m/s². From -4.5 to 4.5. Defaults to `0`.
+  - **offset_z** (*Optional*, float): Z-axis zero position calibration, in m/s². From -4.5 to 4.5. Defaults to `0`.
+
+- **transform** (*Optional*):
+
+  - **mirror_x** (*Optional*, boolean): Mirror X-axis. Defaults to `false`.
+  - **mirror_y** (*Optional*, boolean): Mirror Y-axis. Defaults to `false`.
+  - **mirror_z** (*Optional*, boolean): Mirror Z-axis. Defaults to `false`.
+  - **swap_xy** (*Optional*, boolean): Swap X and Y axis. Defaults to `false`.
+
+- All options from [I²C Device](/components/i2c#i2c-device). Default address is `0x19`.
+
+## Sensor
+
+Acceleration data is available through sensors configuration.
+You can use shorthand notation like `acceleration_x: "Acceleration X"` or use regular notation. For
+regular notation only the **name** is required. All options from [Sensor](/components/sensor).
+
+```yaml
+sensor:
+  - platform: lis2dh12_base
+    acceleration_x: Accel X
+    acceleration_y: Accel Y
+    acceleration_z: Accel Z
+```
+
+### Configuration variables
+
+- **acceleration_x** (*Optional*): X-axis acceleration, m/s².
+- **acceleration_y** (*Optional*): Y-axis acceleration, m/s².
+- **acceleration_z** (*Optional*): Z-axis acceleration, m/s².
+
+## See Also
+
+- [Sensor Filters](/components/sensor#sensor-filters)
+- <APIRef text="lis2dh12_base.h" path="lis2dh12_base/lis2dh12_base.h" />
