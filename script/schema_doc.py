@@ -27,6 +27,22 @@ JSON_ACTION = "action"
 
 DOCS_ROOT = Path(".") / "src" / "content" / "docs"
 
+# (registry_json_key, title_suffix_or_None)
+# None suffix = backtick title pattern: `name`
+COMPONENT_REGISTRIES = {
+    "light": [("effects", " Effect")],
+    "binary_sensor": [("filter", None)],
+    "text_sensor": [("filter", None)],
+    "sensor": [("filter", " Filter")],  # standalone files only
+}
+
+# Display names that don't derive cleanly to their registry key via title_to_registry_key()
+# key: (component, registry_json_key, display_name_after_stripping_suffix)
+REGISTRY_KEY_ODDITIES = {
+    ("light", "effects", "Automation Light"): "automation",
+    ("light", "effects", "E1.31"): "e131",
+}
+
 args = None
 
 
@@ -94,6 +110,7 @@ class Stats:
     enum_docs = 0
     action_docs = 0
     condition_docs = 0
+    registry_docs = 0
     missing_anchors: list = None
 
     def __init__(self):
@@ -437,6 +454,42 @@ def is_templatable_type(type_part):
     return re.search(r"\[templatable\]", type_part) is not None
 
 
+def title_to_registry_key(name):
+    """Convert a display name to a registry key (lowercase, special chars → underscores)."""
+    return re.sub(r"[^a-zA-Z0-9]+", "_", name.lower()).strip("_")
+
+
+def find_registry_entry(title, config_component):
+    """Check if title matches a registry entry for config_component.
+    Returns (registry_json_key, entry_dict) or (None, None)."""
+    for registry_key, suffix in COMPONENT_REGISTRIES.get(config_component, []):
+        json_config = json_get(config_component)
+        if not json_config:
+            continue
+        registry = json_config.get(config_component, {}).get(registry_key, {})
+
+        if suffix is not None:
+            if not title.endswith(suffix):
+                continue
+            name = title[: -len(suffix)].strip()
+            key = REGISTRY_KEY_ODDITIES.get(
+                (config_component, registry_key, name)
+            ) or title_to_registry_key(name)
+            entry = registry.get(key)
+            if entry is not None:
+                return registry_key, entry
+        else:
+            # Backtick style: `name`
+            m = re.match(r"^`(.+)`$", title)
+            if m:
+                key = m.group(1)
+                entry = registry.get(key)
+                if entry is not None:
+                    return registry_key, entry
+
+    return None, None
+
+
 def set_schema_doc(md_file, index, schema, prop_name, prop_types, doc):
     matched_config = find_schema_prop(schema, prop_name)
     if matched_config:
@@ -508,6 +561,10 @@ def is_break_title(title):
         if get_platform_from_title(name):
             return True
         if name in ["action", "condition", "component"]:
+            return True
+        # Bare backtick heading (### `name`) — registry entry like a filter or effect.
+        # Nothing after the closing backtick, so it's not a property sub-heading.
+        if re.match(r"^#+\s+`[^`]+`\s*$", title):
             return True
     return False
 
@@ -821,6 +878,10 @@ if __name__ == "__main__":
                         config_component = file_name
         elif content_folder == "automations":
             config_component = "core"
+        elif content_folder == "filter":
+            parent_platform = md_file.parent.parent.name
+            if parent_platform in core["platforms"]:
+                config_component = parent_platform
 
         platform_name = content_folder if content_folder != "components" else None
         title_config_vars = None
@@ -914,6 +975,20 @@ if __name__ == "__main__":
                     print(
                         f"{md_file}:{index} Found title {title} in {config_component} config not found"
                     )
+
+            registry_key, registry_entry = find_registry_entry(title, config_component)
+            if (
+                registry_entry is None
+                and platform_name
+                and platform_name != config_component
+            ):
+                registry_key, registry_entry = find_registry_entry(title, platform_name)
+            if registry_entry is not None:
+                index, docs = md_get_paragraph(lines, index)
+                if docs:
+                    registry_entry[JSON_DOCS] = convert_links(md_file, index, docs)
+                title_config_vars = registry_entry
+                stats.registry_docs += 1
 
             if component_name:
                 is_platform = platform_name in core["platforms"]
