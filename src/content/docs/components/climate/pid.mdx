@@ -413,6 +413,29 @@ Configuration variables:
 This action updates the active runtime PID controller. The new values are used on the
 next PID computation cycle.
 
+## `climate.pid.set_deadband_threshold_parameters` Action
+
+This action sets runtime deadband threshold values for the PID controller. This can be
+used to manually tune the deadband zone. Make sure to update the values you want on
+the YAML file! They will reset on the next reboot.
+
+```yaml
+on_...:
+  - climate.pid.set_deadband_threshold_parameters:
+      id: pid_climate
+      threshold_high: 0.5°C
+      threshold_low: -1.0°C
+```
+
+Configuration variables:
+
+- **id** (**Required**, [ID](/guides/configuration-types#id)): ID of the PID Climate to update.
+- **threshold_high** (**Required**, float, [templatable](/automations/templates)): Upper deadband threshold relative to the target temperature.
+- **threshold_low** (**Required**, float, [templatable](/automations/templates)): Lower deadband threshold relative to the target temperature.
+
+This action updates the active runtime PID controller. The new values are used on the
+next PID computation cycle.
+
 ## `climate.pid.reset_integral_term` Action
 
 This action resets the integral term of the PID controller to 0. This might be necessary under certain
@@ -454,6 +477,8 @@ Configuration variables:
   - `KP` - The current factor for the proportional term of the PID controller.
   - `KI` - The current factor for the integral term of the PID controller.
   - `KD` - The current factor for the derivative term of the PID controller.
+  - `DEADBAND_THRESHOLD_HIGH` - The current upper deadband threshold.
+  - `DEADBAND_THRESHOLD_LOW` - The current lower deadband threshold.
   - `KP_DEADBAND_MULTIPLIER` - The current deadband multiplier for the proportional term.
   - `KI_DEADBAND_MULTIPLIER` - The current deadband multiplier for the integral term.
   - `KD_DEADBAND_MULTIPLIER` - The current deadband multiplier for the derivative term.
