@@ -1,0 +1,71 @@
+---
+description: "Instructions for setting up Modbus in ESPHome."
+title: "Modbus Component"
+---
+import APIRef from '@components/APIRef.astro';
+
+
+<span id="modbus"></span>
+
+The Modbus protocol is used by many consumer and industrial devices for communication.
+This component allows components in ESPHome to communicate to those devices via RTU protocol. You can access the coils, inputs, holding, read registers from your devices as sensors, switches, selects, numbers or various other ESPHome components and present them to your favorite Home Automation system. You can even write them as binary or float ouptputs from ESPHome.
+
+The various sub-components implement some of the Modbus functions below (depending on their required functionality):
+
+| Function Code | Description                |
+| ------------- | -------------------------- |
+| 1             | Read Coil Status           |
+| 2             | Read Discrete input Status |
+| 3 | Read Holding Registers |
+| 4 | Read Input Registers |
+| 5 | Write Single Coil |
+| 6 | Write Single Register |
+| 15 | Write Multiple Coils |
+| 16 | Write Multiple Registers |
+
+Modbus RTU requires a [UART Bus](/components/uart) to communicate.
+
+```yaml
+# Example configuration entry
+uart:
+  ...
+
+modbus:
+```
+
+## Configuration variables
+
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
+
+- **uart_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the [UART Component](/components/uart) if you want
+  to use multiple UART buses.
+
+- **flow_control_pin** (*Optional*, [Pin](/guides/configuration-types#pin)): The pin used to switch flow control.
+  This is useful for RS485 transceivers that do not have automatic flow control switching,
+  like the common MAX485. If your UART supports `flow_control_pin`, you should configure this in the `uart` component, not in the `modbus` component.
+
+- **send_wait_time** (*Optional*, [Time](/guides/configuration-types#time)): Time in milliseconds before the next ModBUS command is sent when an answer from a previous command has not yet started (i.e. when to timeout and assume no response is coming). Defaults to 250 ms.
+  Set this value to the maximum time required for the slowest device on the bus to begin responding (time to first byte).
+  If a device starts responding within this time, the next command will be queued and sent after the response is finished, no matter how long the response.
+
+- **turnaround_time** (*Optional*, [Time](/guides/configuration-types#time)): Time in milliseconds before the next ModBUS command is sent after last response is received. This interval allows other devices on the bus time to process messages. Defaults to 100 ms.
+  This value is ideally set to the maximum time required for the slowest device on the bus to process a message and be ready to process another. Note that all devices will receive all messages and will require time to process them even if they don't need to reply.
+  If devices don't respond sometimes, it can help to increase this value.
+
+- **disable_crc** (*Optional*, boolean): If set to `true`, invalid CRC values are ignored. This will reduce error messages but will not fix communication issues. Try increasing times above first if you see CRC errors. Defaults to `false`.
+
+- **role** (*Optional*, string): The role of this component, `client` or `server`. Defaults to `client`.
+
+## See Also
+
+- [Modbus Controller](/components/modbus_controller/)
+- [Modbus Controller Sensor](/components/sensor/modbus_controller/)
+- [Modbus Controller Binary Sensor](/components/binary_sensor/modbus_controller/)
+- [Modbus Controller Output](/components/output/modbus_controller/)
+- [Modbus Controller Switch](/components/switch/modbus_controller/)
+- [Modbus Controller Number](/components/number/modbus_controller/)
+- [Modbus Controller Select](/components/select/modbus_controller/)
+- [Modbus Controller Text Sensor](/components/text_sensor/modbus_controller/)
+- [Modbus RTU Protocol Description](https://www.modbustools.com/modbus.html)
+- [UART Bus](/components/uart)
+- <APIRef text="modbus.h" path="modbus/modbus.h" />
