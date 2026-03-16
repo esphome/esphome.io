@@ -217,6 +217,34 @@ on_...:
 - **command** (**Required**, int, [templatable](/automations/templates)): The command to send, e.g. 0x01=num1, 0x0d=mute,..., see dumper output for more info.
 - All other options from [Remote Transmitter Actions](#remote_transmitter-transmit_action).
 
+<span id="remote_transmitter-transmit_brennenstuhl"></span>
+
+### `remote_transmitter.transmit_brennenstuhl` Action
+
+This [action](/automations/actions#all-actions) sends a brennenstuhl protocol code to a remote transmitter.
+
+```yaml
+on_...:
+  - remote_transmitter.transmit_brennenstuhl:
+      code: !lambda |-
+        code=id(a_on)[id(idx)];
+        id(idx) = (id(idx) + 1) & 3;
+      
+```
+
+#### Configuration variables
+
+- **code** (**Required**, int, [templatable](/automations/templates)): The 24-bit rolling code from a vector.
+- All other options from [Remote Transmitter Actions](#remote_transmitter-transmit_action).
+
+> [!NOTE]
+> The brennenstuhl devices use rolling codes, i.e. each button of the remote generates 4 different codes in
+> a pseudo random manner. The yaml snippet from above handles the codes of the button **A-ON** that are stored
+> in the vector `id(a_on)[]`. The vector is looped with `id(idx)` to provide the transmit function with codes
+> that differ from the previous ones. See [Setting up RF Devices](/guides/setting_up_rmt_devices#remote-setting-up-rf)
+> and [Setting up RF Devices](/guides/setting_up_rmt_devices#remote-setting-up-rf) for details and a complete
+> YAML example
+
 <span id="remote_transmitter-transmit_byronsx"></span>
 
 ### `remote_transmitter.transmit_byronsx` Action
