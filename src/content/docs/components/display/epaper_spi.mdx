@@ -34,6 +34,7 @@ pins and dimensions specified.
 | JD79660                | Jadard       | [https://www.tdytech.com/en/](https://www.tdytech.com/en/) (B2B, see vendors instead) |
 | Spectra-E6             | Eink         | [https://www.eink.com/brand/detail/Spectra6](https://www.eink.com/brand/detail/Spectra6)       |
 | SSD1677                | Solomon      | [https://www.solomon-systech.com/product/ssd1677/](https://www.solomon-systech.com/product/ssd1677/) |
+| UC8179                 | UltraChip    | UC8179 tri-color (Black/White/Red) e-paper controller |
 
 ## Supported display panels
 
@@ -45,6 +46,7 @@ the pins used to interface to the display to be specified.
 | Waveshare-1.54in-G  | Waveshare    | [https://www.waveshare.com/1.54inch-e-paper-g.htm](https://www.waveshare.com/1.54inch-e-paper-g.htm) |
 | Waveshare-2.13in-v3 | Waveshare    | [https://www.waveshare.com/pico-epaper-2.13.htm](https://www.waveshare.com/pico-epaper-2.13.htm)   |
 | Waveshare-4.26in    | Waveshare    | [https://www.waveshare.com/4.26inch-e-paper.htm](https://www.waveshare.com/4.26inch-e-paper.htm)   |
+| 7.5in-bv3-bwr-xsrupb | Various      | 7.5" V3 BWR tri-color (800x480), UC8179 controller |
 
 ## Supported integrated display boards
 
@@ -81,6 +83,9 @@ but can be overridden if needed.
   - **mirror_y** (**Required**, boolean): If true, mirror the y axis.
 
 - **reset_duration** (*Optional*, [Time](/guides/configuration-types#time)): Duration for the display reset operation. Defaults to `200ms`.
+- **invert_red** (*Optional*, boolean): Invert the red color plane. Some BWR e-paper panels with OTP waveforms use
+  inverted red encoding (0 = red, 1 = no red). Only available for models that support it (e.g. `7.5in-bv3-bwr-xsrupb`).
+  Defaults to `true` for the `7.5in-bv3-bwr-xsrupb` model.
 - **lambda** (*Optional*, [lambda](/automations/templates#config-lambda)): The lambda to use for rendering the content on the display.
   See [Display Rendering Engine](/components/display#display-engine) for more information.
 - **pages** (*Optional*, list): Show pages instead of a single lambda. See [Display Pages](/components/display#display-pages).
