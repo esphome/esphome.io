@@ -153,7 +153,7 @@ export default function componentsJson(): AstroIntegration {
               components[key] = {
                 title,
                 url: `${siteURL}/components/${entry.name}/${slug}/`,
-                path: `components/${entry.name}/${slug}`,
+                path: `components/${slug}`,
                 ...(image && {
                   image: `${siteURL}/images/${image}`,
                 }),
