@@ -333,7 +333,7 @@ The media player has been redesigned around a modular **source-based architectur
 
 **Key Features:**
 
-- **Pluggable media sources** - Audio sources are separate components that plug into the media player. This release includes the [audio_file](/components/audio_file) source for embedded firmware files, with HTTP streams and Sendspin sources planned for future releases
+- **Pluggable media sources** - Audio sources are separate components that plug into the media player. This release includes the [audio_file](/components/media_source/audio_file) media source for embedded firmware files, with HTTP streams and Sendspin sources planned for future releases
 - **Dual pipeline support** - Separate media and announcement pipelines with independent speakers, formats, and sources, allowing announcements to play alongside music
 - **Full playlist management** - Enqueue, next/previous track navigation, repeat (off/one/all), and shuffle with Fisher-Yates algorithm
 - **Volume persistence** - Volume and mute state are saved across reboots with configurable min/max/increment
@@ -343,10 +343,8 @@ The [audio_file](/components/audio_file) component lets you embed audio files (l
 
 ## Audio Playback Improvements
 
-These improvements apply to both the new `speaker_source` and existing `speaker` media players:
-
-- **Ogg Opus codec support** - The new microOpus library enables decoding Opus audio streams, completing the codec lineup alongside FLAC and MP3 ([#13967](https://github.com/esphome/esphome/pull/13967))
-- **Smarter codec builds** - The `codec_support_enabled` option now defaults to `needed`, building only the codecs your configuration actually requires instead of all three (users streaming arbitrary URLs should set `codec_support_enabled: all`)
+- **Ogg Opus codec support** - The new microOpus library enables decoding Ogg Opus files, completing the codec lineup alongside FLAC and MP3 ([#13967](https://github.com/esphome/esphome/pull/13967))
+- **Smarter codec builds** - Only the codecs your configuration actually requires are built. The `speaker_source` media player does this automatically, while the `speaker` media player's `codec_support_enabled` option now defaults to `needed` (users streaming arbitrary URLs should set `codec_support_enabled: all`)
 - **Speaker media player on/off** - The speaker media player now supports explicit on/off power control ([#9295](https://github.com/esphome/esphome/pull/9295))
 
 ## Other Notable Features
