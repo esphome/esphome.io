@@ -1,6 +1,7 @@
 import type { AstroIntegration } from "astro";
 import fs from "fs";
 import path from "path";
+import { fileURLToPath } from "url";
 
 function getTitle(filePath: string): string | null {
   const content = fs.readFileSync(filePath, "utf-8");
@@ -14,7 +15,7 @@ function getSeoImage(filePath: string): string | null {
   return match ? match[1] : null;
 }
 
-const IMAGE_EXTENSIONS = [".png", ".jpg", ".svg"];
+const IMAGE_EXTENSIONS = [".png", ".jpg", ".svg", ".webp"];
 
 function findPublicImage(imagesDir: string, slug: string): string | null {
   for (const ext of IMAGE_EXTENSIONS) {
@@ -29,7 +30,7 @@ function findPublicImage(imagesDir: string, slug: string): string | null {
 /**
  * Parse the components index page to build a map from component URL path
  * to the image filename used in the ImgTable entries.
- * e.g. "/components/api/" -> "server-network.svg"
+ * e.g. "/components/api" -> "server-network.svg"
  */
 function buildIndexImageMap(indexPath: string): Record<string, string> {
   const map: Record<string, string> = {};
@@ -48,6 +49,8 @@ function buildIndexImageMap(indexPath: string): Record<string, string> {
 
 export default function componentsJson(): AstroIntegration {
   let siteURL = "https://esphome.io";
+  let rootDir = "";
+  let outDir = "";
 
   return {
     name: "components-json",
@@ -56,10 +59,10 @@ export default function componentsJson(): AstroIntegration {
         if (config.site) {
           siteURL = config.site.replace(/\/$/, "");
         }
+        rootDir = fileURLToPath(config.root);
+        outDir = fileURLToPath(config.outDir);
       },
-      "astro:build:done": async ({ dir, logger }) => {
-        const outDir = new URL(dir).pathname;
-        const rootDir = path.resolve(outDir, "..");
+      "astro:build:done": async ({ logger }) => {
         const imagesDir = path.join(rootDir, "public/images");
         const componentsDir = path.join(
           rootDir,
@@ -150,7 +153,7 @@ export default function componentsJson(): AstroIntegration {
               components[key] = {
                 title,
                 url: `${siteURL}/components/${entry.name}/${slug}/`,
-                path: `components/${slug}`,
+                path: `components/${entry.name}/${slug}`,
                 ...(image && {
                   image: `${siteURL}/images/${image}`,
                 }),
