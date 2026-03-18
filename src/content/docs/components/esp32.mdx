@@ -11,6 +11,34 @@ esp32:
   variant: esp32s3
 ```
 
+## Configuration variables
+
+- **variant** (*Optional*, string): The ESP32 mcu/chip to use for this device configuration. One of `esp32`,
+  `esp32s2`, `esp32s3`, `esp32c2`, `esp32c3`, `esp32c5`, `esp32c6`, `esp32c61`, `esp32h2` or `esp32p4`.
+  This must match the hardware in use, or it will fail to flash.
+
+- **board** (*Optional*, string): The PlatformIO board ID that should be used. Choose the appropriate board from
+  [this list](https://registry.platformio.org/platforms/platformio/espressif32/boards) (the icon next
+  to the name can be used to copy the board ID). *This only affects pin aliases and some internal settings*;
+  This setting is no longer recommended, `variant` should be used instead.
+
+> [!NOTE]
+> At least one of `board` or `variant` must be specified. If `variant` alone is specified (the recommended practice),
+> the board configuration will be automatically filled using a standard Espressif devkit board
+> suitable for that variant. Both may be specified (for backwards compatibility) but they must define the same variant.
+
+- **flash_size** (*Optional*, string): The amount of flash memory available on the ESP32 board/module. One of `2MB`,
+  `4MB`, `8MB`, `16MB` or `32MB`. Defaults to `4MB`. **Warning: specifying a size larger than that available
+  on your board will cause the ESP32 to fail to boot.**
+
+- **cpu_frequency** (*Optional*, string): The CPU frequency to use. One of `40MHz`, `80MHz`, `160MHz`, `240MHz`,
+  `360MHz` or `400MHz`. Defaults to `160MHz`. Not all values are available for all chips.
+
+- **partitions** (*Optional*, filename): The name of (optionally including the path to) the file containing the
+  partitioning scheme to be used. When not specified, partitions are automatically generated based on `flash_size`.
+
+- **framework** (*Optional*): Options for the underlying framework used by ESPHome. See [Framework](#esp32-framework).
+
 ## Variants
 
 ESPHome supports the following ESP32 variants. Use the `variant` configuration option to select the correct one
@@ -206,34 +234,6 @@ chip is required for wireless connectivity via [ESP-Hosted](/components/esp32_ho
 - **ADC:** 7 channels
 - **DAC:** None
 - **MIPI DSI/CSI:** Yes (display and camera interfaces)
-
-## Configuration variables
-
-- **variant** (*Optional*, string): The ESP32 mcu/chip to use for this device configuration. One of `esp32`,
-  `esp32s2`, `esp32s3`, `esp32c2`, `esp32c3`, `esp32c5`, `esp32c6`, `esp32c61`, `esp32h2` or `esp32p4`.
-  This must match the hardware in use, or it will fail to flash.
-
-- **board** (*Optional*, string): The PlatformIO board ID that should be used. Choose the appropriate board from
-  [this list](https://registry.platformio.org/platforms/platformio/espressif32/boards) (the icon next
-  to the name can be used to copy the board ID). *This only affects pin aliases and some internal settings*;
-  This setting is no longer recommended, `variant` should be used instead.
-
-> [!NOTE]
-> At least one of `board` or `variant` must be specified. If `variant` alone is specified (the recommended practice),
-> the board configuration will be automatically filled using a standard Espressif devkit board
-> suitable for that variant. Both may be specified (for backwards compatibility) but they must define the same variant.
-
-- **flash_size** (*Optional*, string): The amount of flash memory available on the ESP32 board/module. One of `2MB`,
-  `4MB`, `8MB`, `16MB` or `32MB`. Defaults to `4MB`. **Warning: specifying a size larger than that available
-  on your board will cause the ESP32 to fail to boot.**
-
-- **cpu_frequency** (*Optional*, string): The CPU frequency to use. One of `40MHz`, `80MHz`, `160MHz`, `240MHz`,
-  `360MHz` or `400MHz`. Defaults to `160MHz`. Not all values are available for all chips.
-
-- **partitions** (*Optional*, filename): The name of (optionally including the path to) the file containing the
-  partitioning scheme to be used. When not specified, partitions are automatically generated based on `flash_size`.
-
-- **framework** (*Optional*): Options for the underlying framework used by ESPHome. See [Framework](#esp32-framework).
 
 <span id="esp32-framework"></span>
 
