@@ -7,8 +7,8 @@ import APIRef from '@components/APIRef.astro';
 
 This ESPHome component enables *wired* Ethernet connections for ESP32 and RP2040 boards.
 
-- **ESP32**: Supports RMII PHY chips (LAN8720, RTL8201, etc.) and SPI Ethernet chips (W5500, DM9051).
-- **RP2040**: Supports SPI Ethernet chips (W5500).
+- **ESP32**: Supports RMII PHY chips (LAN8720, RTL8201, etc.) and SPI Ethernet chips (W5500, DM9051, ENC28J60).
+- **RP2040**: Supports SPI Ethernet chips (W5500, ENC28J60).
 
 This component and the Wi-Fi component may **not** be used simultaneously, even if both are physically available.
 
@@ -70,6 +70,7 @@ ethernet:
   - `W5500` (SPI, ESP32 and RP2040)
   - `OPENETH` (QEMU, ESP32 only)
   - `DM9051` (SPI, ESP32 only)
+  - `ENC28J60` (SPI, 10Mbps, ESP32 and RP2040)
   - `LAN8670` (RMII, ESP32 only)
 
 ### RMII configuration variables
@@ -413,6 +414,36 @@ ethernet:
 
 > [!NOTE]
 > Using a higher clock_speed, including default, might cause rx errors and dropped packets.
+
+**ENC28J60** (ESP32, SPI):
+
+```yaml
+ethernet:
+  type: ENC28J60
+  clk_pin: GPIOXX
+  mosi_pin: GPIOXX
+  miso_pin: GPIOXX
+  cs_pin: GPIOXX
+  interrupt_pin: GPIOXX
+  reset_pin: GPIOXX
+  clock_speed: 10MHz
+```
+
+> [!NOTE]
+> The ENC28J60 is a 10Mbps Ethernet controller. For higher throughput, consider using a W5500 (100Mbps) instead.
+
+**ENC28J60** (RP2040, SPI):
+
+```yaml
+ethernet:
+  type: ENC28J60
+  clk_pin: 18
+  mosi_pin: 19
+  miso_pin: 16
+  cs_pin: 17
+  interrupt_pin: 21
+  reset_pin: 20
+```
 
 **WIZnet W5500-EVB-Pico** (RP2040):
 
