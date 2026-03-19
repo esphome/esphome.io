@@ -5,7 +5,10 @@
  *
  * Only operates on tables below the "## Network Protocols" heading.
  * Within each table the pinned order is:
- *   1. "Core" item   — at most one, the first name ending with " Core"
+ *   1. "Core" item   — at most one, identified by name ending with " Core".
+ *      When multiple Core items exist in a table, the one matching the
+ *      section keyword is chosen (e.g. "Display Core" over "Display Menu Core"
+ *      in "Display Components").
  *   2. "Template" items — names starting with "Template " (e.g. "Template Sensor")
  * All remaining items must be sorted case-insensitively by display name.
  *
@@ -13,6 +16,7 @@
  *   node script/check_component_index.mjs                # check only (exit 1 if unsorted)
  *   node script/check_component_index.mjs --fix          # rewrite the file in-place
  *   node script/check_component_index.mjs --suggestions  # output JSON for CI review comments
+ *   node script/check_component_index.mjs --file <path>  # check a specific file (combine with above)
  */
 
 import { readFileSync, writeFileSync } from "fs";
@@ -35,29 +39,62 @@ function getName(line) {
 }
 
 /**
+ * Derive the section keyword from surrounding headings.
+ *
+ * Strips common suffixes like " Components" and " Hardware Platforms"
+ * from the parent `##` heading to get the base keyword used for
+ * disambiguating multiple Core items (e.g. "Display Components" → "Display").
+ *
+ * @param {string} parentHeading The nearest `##` heading
+ * @returns {string} Keyword for matching
+ */
+function sectionKeyword(parentHeading) {
+  return parentHeading
+    .replace(/\s+Components$/i, "")
+    .replace(/\s+Hardware\s+Platforms$/i, "");
+}
+
+/**
  * Identify the single "Core" entry in a table, if any.
  *
- * Each table has at most one core item — the primary entry point for
- * the section (e.g. "Sensor Core", "Display Core", "Switch Core").
- * A core item's display name ends with " Core".
+ * Looks for items whose display name ends with " Core" (preceded by
+ * whitespace to exclude product names like "iAQ-Core").
  *
- * Only the *first* matching item is treated as core. This avoids
- * false positives like "Display Menu Core", which lives in the
- * Display Components table but is not the section's core item
- * (that role belongs to "Display Core").
+ * - If exactly one item matches, it is the core item.
+ * - If multiple items match (e.g. "Display Core" and "Display Menu Core"
+ *   in the Display Components table), the one whose prefix best matches
+ *   the section keyword from the parent `##` heading is chosen.
+ *   Specifically, we look for `<keyword> Core` where keyword is derived
+ *   from the parent heading (e.g. "Display Components" → "Display").
+ * - If none match, returns -1.
  *
- * Product names that happen to contain "Core" as a substring
- * (e.g. "iAQ-Core") are not matched because the regex requires
- * a preceding whitespace character.
+ * @param {string[]} lines          Item lines from the ImgTable block
+ * @param {string}   parentHeading  Nearest ## heading
+ * @returns {number} Index of the core item, or -1
  */
-function identifyCoreItem(lines) {
+function identifyCoreItem(lines, parentHeading) {
+  const candidates = [];
   for (let i = 0; i < lines.length; i++) {
     const name = getName(lines[i]);
     if (/\sCore$/i.test(name)) {
-      return i;
+      candidates.push({ index: i, name });
     }
   }
-  return -1;
+
+  if (candidates.length === 0) return -1;
+  if (candidates.length === 1) return candidates[0].index;
+
+  // Multiple Core items — disambiguate using the section keyword.
+  // e.g. keyword "Display" matches "Display Core" over "Display Menu Core".
+  const keyword = sectionKeyword(parentHeading).toLowerCase();
+  const expected = `${keyword} core`;
+  const exactMatch = candidates.find(
+    (c) => c.name.toLowerCase() === expected,
+  );
+  if (exactMatch) return exactMatch.index;
+
+  // Fallback: first candidate (shouldn't normally happen)
+  return candidates[0].index;
 }
 
 /**
@@ -80,10 +117,10 @@ function normalizeLine(line) {
 
 // ── main logic ───────────────────────────────────────────────────────────────
 
-function processFile(content) {
+function processFile(content, path) {
   const headingIdx = content.indexOf(SORT_AFTER_HEADING);
   if (headingIdx === -1) {
-    console.error(`Could not find "${SORT_AFTER_HEADING}" in ${INDEX_PATH}`);
+    console.error(`Could not find "${SORT_AFTER_HEADING}" in ${path}`);
     process.exit(2);
   }
 
@@ -109,6 +146,14 @@ function processFile(content) {
         ? headingMatch[headingMatch.length - 1].replace(/^#+\s*/, "")
         : `table #${tableIndex}`;
 
+      // Extract the nearest ## (parent) heading for Core item disambiguation
+      const h2Headings = headingMatch
+        ? headingMatch.filter((h) => h.startsWith("## ") && !h.startsWith("### "))
+        : [];
+      const parentHeading = h2Headings.length > 0
+        ? h2Headings[h2Headings.length - 1].replace(/^#+\s*/, "")
+        : sectionName;
+
       // Parse item lines (skip blanks)
       const allItemLines = itemsText.split("\n");
       const lines = allItemLines.filter((l) => l.trim().length > 0);
@@ -116,7 +161,7 @@ function processFile(content) {
       if (lines.length <= 1) return match;
 
       // Core item stays first (at most one), then Template items, then the rest sorted
-      const coreIdx = identifyCoreItem(lines);
+      const coreIdx = identifyCoreItem(lines, parentHeading);
       const coreLines = coreIdx >= 0 ? [lines[coreIdx]] : [];
       const templateLines = lines.filter(
         (_, i) => i !== coreIdx && isTemplateItem(getName(lines[i])),
@@ -177,8 +222,14 @@ const mode = process.argv.includes("--fix")
     ? "suggestions"
     : "check";
 
-const content = readFileSync(INDEX_PATH, "utf-8");
-const { before, after, results } = processFile(content);
+const fileArgIdx = process.argv.indexOf("--file");
+const filePath =
+  fileArgIdx >= 0 && process.argv[fileArgIdx + 1]
+    ? process.argv[fileArgIdx + 1]
+    : INDEX_PATH;
+
+const content = readFileSync(filePath, "utf-8");
+const { before, after, results } = processFile(content, filePath);
 
 if (results.length === 0) {
   console.log("All ImgTable blocks are correctly sorted.");
@@ -187,8 +238,8 @@ if (results.length === 0) {
 
 switch (mode) {
   case "fix":
-    writeFileSync(INDEX_PATH, before + after, "utf-8");
-    console.log(`Fixed ${results.length} ImgTable block(s) in ${INDEX_PATH}`);
+    writeFileSync(filePath, before + after, "utf-8");
+    console.log(`Fixed ${results.length} ImgTable block(s) in ${filePath}`);
     process.exit(0);
     break;
 
