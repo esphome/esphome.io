@@ -314,6 +314,26 @@ however, be aware that this may lead to increased flash wearing and a shortened 
 
 For [ESP8266](/components/esp8266/), `restore_from_flash` must also be set to `true` for states to be written to flash.
 
+### Publice Methods available for use in Lambdas
+
+From a [lambda](/automations/templates#config-lambda), you can call two methods on the preferences component to stop and start the flash write.
+
+- `stop_poller()`  : Stop flushing persistant data to flash, even when stopped, a controlled shutdown or reboot will save persistent data to flash.
+
+- `start_poller()`  : Start flushing persistant data to flash on the flash_write_interval.
+
+> [!NOTE]
+> The preferences component's global pointer is `preferences_intervalsyncer_id`
+
+```yaml
+on_boot:
+  then:
+    - delay: 70sec
+    - lambda: |-
+        preferences_intervalsyncer_id->stop_poller();
+    - logger.log: "Disable preference sync"
+```
+
 <span id="esphome-changing_node_name"></span>
 
 ## Changing ESPHome Node Name
