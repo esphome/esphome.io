@@ -54,8 +54,8 @@ sensor:
   - **oversampling** (*Optional*): The oversampling rate for the temperature sensor.
     See [Oversampling Options](#spa06-oversampling).
 
-  - **update_rate** (*Optional*): The internal update rate for the temperature sensor
-    See [Update Rate](#spa06-update-rate).
+  - **sample_rate** (*Optional*): The internal sample rate for the temperature sensor
+    See [Sample Rate](#spa06-sample-rate).
 
   - All other options from [Sensor](/components/sensor).
 
@@ -64,8 +64,8 @@ sensor:
   - **oversampling** (*Optional*): The oversampling rate for the pressure sensor.
     See [Oversampling Options](#spa06-oversampling).
 
-  - **update_rate** (*Optional*): The internal update rate for the temperature sensor
-    See [Update Rate](#spa06-update-rate).
+  - **sample_rate** (*Optional*): The internal sample rate for the pressure sensor
+    See [Sample Rate](#spa06-sample-rate).
 
   - All other options from [Sensor](/components/sensor).
 
@@ -77,9 +77,9 @@ sensor:
 
 - **cs_pin** (*Required*, SPI only): Specify the chip select pin to use for this sensor.
 
-- **i2c_bus** (*Optional*, str) *(I²C only)*: Manually specify the I²C bus to use, if your device has multiple I²C busses.
+- **i2c_bus** (*Optional*, str) *(I²C only)*: Manually specify the I²C bus to use, if your device has multiple I²C buses.
 
-- **spi_bus** (*Optional*, str) *(SPI Only)*: Manually specify the SPI bus to use, if your device has multiple SPI busses
+- **spi_bus** (*Optional*, str) *(SPI only)*: Manually specify the SPI bus to use, if your device has multiple SPI buses
 
 
 <span id="spa06-oversampling"></span>
@@ -113,11 +113,14 @@ The datasheet (page 19) provides a table showing the tradeoff for oversampling:
 | `128x`                | 206.8                 | 0.2                        |
 
 
-<span id="spa06-update-rate"></span>
+<span id="spa06-sample-rate"></span>
 
-## Update Rate Options
+## Sample Rate Options
 
-The SPA06 can update measurements as frequently as 200 samples per second and as infrequently as 1 sample per second. The full list of update options are as follows:
+The SPA06 can sample measurements as frequently as 200 samples per second and as infrequently
+as 1 sample per second. Note that if `update_rate` is a higher rate than the sensor sample
+rate, the sensor will report data from the previous reading.
+The full list of sample options are as follows:
 
 - `1`: 1 Hz (default)
 - `2`: 2 Hz
@@ -138,11 +141,15 @@ The SPA06 can update measurements as frequently as 200 samples per second and as
 
 > [!WARNING]
 > The SPA06 sensor has a limit on the number of samples it can take per second, based on the
-oversampling and update rate configuration for temperature and pressure (datasheet page 26). Configured rates must meet the following equation:
+> oversampling and sample rate configuration for temperature and pressure sensors
+> (datasheet page 26). Configured rates must meet the following equation:
 > 
 > `1 > T_t * R_t + T_p * R_p`
 > 
-> Where `T_t` is the equivalent measurement time for the configured temperature oversampling rate, `R_t` is the temperature update rate in hertz, `T_p` is the equivalent measurement time for the configured pressure oversampling rate, and `R_p` is the pressure update rate in hertz. If pressure is not configured, `T_p*R_p` is equal to 0.
+> Where `T_t` is the equivalent measurement time for the configured temperature oversampling
+> rate, `R_t` is the temperature update rate in hertz, `T_p` is the equivalent measurement
+> time for the configured pressure oversampling rate, and `R_p` is the pressure update rate
+> in hertz. If pressure is not configured, `T_p*R_p` is equal to 0.
 
 ## See Also
 
