@@ -1,0 +1,203 @@
+---
+description: "Instructions for setting up ST25R NFC reader components in ESPHome"
+title: "ST25R NFC Reader"
+---
+
+import APIRef from '@components/APIRef.astro';
+
+<span id="st25r-component"></span>
+
+## Component/Hub
+
+The `st25r` component allows you to use STMicroelectronics ST25R family NFC readers with ESPHome.
+This includes the ST25R3916, ST25R3916B, ST25R300, and ST25R500 chips.
+
+The component supports multiple NFC protocols:
+- **ISO 14443A (NFC-A)**: 4/7/10-byte UIDs, multi-tag anticollision, Mifare Classic authentication
+- **ISO 14443B (NFC-B)**: 4-byte PUPI detection (passports, transit cards)
+- **ISO 14443-4 (ISO-DEP)**: RATS/ATS activation, I-Block APDU exchange, Type 4 NDEF read
+- **ISO 15693 (NFC-V)**: 8-byte UID detection, NDEF Type 5 read/write
+
+Using the [ST25R binary sensors](#st25r-tag) you can create individual binary sensors that track
+if a specific NFC tag is currently detected.
+
+## Over SPI (ST25R3916)
+
+```yaml
+spi:
+  clk_pin: GPIO19
+  miso_pin: GPIO10
+  mosi_pin: GPIO18
+
+st25r_spi:
+  cs_pin: GPIO6
+  irq_pin: GPIO7
+  update_interval: 1s
+  on_tag:
+    then:
+      - logger.log:
+          format: "Tag: %s"
+          args: ['x.c_str()']
+  on_tag_removed:
+    then:
+      - logger.log:
+          format: "Removed: %s"
+          args: ['x.c_str()']
+
+binary_sensor:
+  - platform: st25r
+    uid: 04-1A-A7-67-5F-61-80
+    name: "NFC Ring"
+```
+
+### Configuration variables
+
+- **cs_pin** (**Required**, [Pin Schema](/guides/configuration-types#pin-schema)): The SPI chip select pin.
+- **irq_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The IRQ GPIO pin. Recommended for fastest response.
+- **reset_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): Hardware reset GPIO. Optional but improves recovery.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): Tag polling rate. Defaults to `1s`.
+- **rf_power** (*Optional*, int): TX driver strength 0-15 (15 = max range). Defaults to `15`.
+- **rf_field_enabled** (*Optional*, boolean): Keep RF field on between scans. Defaults to `true`.
+- **nfcv_enabled** (*Optional*, boolean): Enable ISO 15693 (NFC-V) tag detection. Defaults to `true`.
+- **nfcb_enabled** (*Optional*, boolean): Enable ISO 14443B (NFC-B) tag detection. Defaults to `true`.
+- **aat_enabled** (*Optional*, boolean): Automatic Antenna Tuning at startup. Improves range on boards with varicap components. Defaults to `true`.
+- **ant_tune_a** (*Optional*, int): Starting ANT_TUNE_A value (0-255). Defaults to `0x80`.
+- **ant_tune_b** (*Optional*, int): Starting ANT_TUNE_B value (0-255). Defaults to `0x40`.
+- **mifare_key_a** (*Optional*, string): Mifare Classic Key A (12 hex characters). Defaults to `FFFFFFFFFFFF`.
+- **mifare_key_b** (*Optional*, string): Mifare Classic Key B (12 hex characters). Defaults to `FFFFFFFFFFFF`.
+- **miss_threshold** (*Optional*, int): Consecutive missed scans before tag_removed fires. Defaults to `3`.
+- **health_check_enabled** (*Optional*, boolean): Periodically verify chip identity. Defaults to `true`.
+- **health_check_interval** (*Optional*, [Time](/guides/configuration-types#time)): Health check interval. Defaults to `60s`.
+- **max_failed_checks** (*Optional*, int): Consecutive failures before auto-reset. Defaults to `3`.
+- **auto_reset_on_failure** (*Optional*, boolean): Auto-reinitialize after failures. Defaults to `true`.
+- **status** (*Optional*, [Binary Sensor](/components/binary_sensor)): Chip health status sensor.
+- **field_strength** (*Optional*, [Sensor](/components/sensor)): RF field amplitude sensor.
+- **on_tag** (*Optional*, [Automation](/automations)): Automation when a tag is first detected.
+- **on_tag_removed** (*Optional*, [Automation](/automations)): Automation when a tag is removed.
+
+## Over SPI (ST25R300)
+
+The ST25R300 family (X-NUCLEO-NFC12A1 board) uses a separate component with built-in NFC-V and NFC-B hardware codecs.
+
+```yaml
+st25r300_spi:
+  cs_pin: GPIO6
+  irq_pin: GPIO7
+  reset_pin: GPIO8
+  update_interval: 1s
+  on_tag:
+    then:
+      - logger.log:
+          format: "Tag: %s"
+          args: ['x.c_str()']
+```
+
+Configuration variables are the same as `st25r_spi` above. The **reset_pin** is required for ST25R300.
+
+## Over I²C (ST25R3916)
+
+```yaml
+i2c:
+  sda: GPIO10
+  scl: GPIO19
+  frequency: 50kHz
+
+st25r_i2c:
+  irq_pin: GPIO7
+  update_interval: 1s
+  on_tag:
+    then:
+      - logger.log:
+          format: "Tag: %s"
+          args: ['x.c_str()']
+```
+
+> Connect the I2C_EN pin to VDD_D on the Elechouse module to switch to I2C mode (GND = SPI).
+
+<span id="st25r-tag"></span>
+
+## Binary Sensor
+
+```yaml
+binary_sensor:
+  - platform: st25r
+    st25r_id: my_reader
+    uid: DE-A3-0D-00
+    name: "Access Card"
+```
+
+### Configuration variables
+
+- **st25r_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the ST25R hub. Required when using multiple readers.
+- **uid** (**Required**, string): The UID of the tag to track, separated by hyphens. Supports 4-byte (NFC-A), 7-byte (NFC-A), and 8-byte (NFC-V/ISO 15693) UIDs.
+- **name** (**Required**, string): The name of the binary sensor.
+
+<span id="st25r-on_tag"></span>
+
+## ``on_tag`` Trigger
+
+This automation is triggered when a new tag is detected. The tag UID is available as `x` (a `std::string`).
+
+```yaml
+st25r_spi:
+  on_tag:
+    then:
+      - homeassistant.event:
+          event: esphome.nfc_tag_detected
+          data:
+            uid: !lambda 'return x;'
+```
+
+## ``on_tag_removed`` Trigger
+
+This automation is triggered when a previously detected tag is no longer present (after `miss_threshold` consecutive missed scans).
+
+## Custom APDU Exchange
+
+For ISO-DEP capable tags (SAK bit 5 set), use `send_apdu()` from a lambda to send custom APDU commands.
+This enables reading data from payment cards, Yubikeys, and other smart cards.
+
+```yaml
+st25r_spi:
+  id: my_reader
+  cs_pin: GPIO6
+  irq_pin: GPIO7
+  on_tag:
+    then:
+      - lambda: |-
+          if (!id(my_reader).is_isodep_active()) return;
+          uint8_t resp[64];
+          uint8_t len = 0;
+
+          // Read Secure Element ID from payment card
+          uint8_t get_seid[] = {0x80, 0xCA, 0x9F, 0x7F, 0x2C};
+          if (id(my_reader).send_apdu(get_seid, sizeof(get_seid), resp, len) && len > 2) {
+            ESP_LOGI("apdu", "SEID read, SW=%02X%02X", resp[len-2], resp[len-1]);
+          }
+```
+
+`send_apdu()` can be called multiple times for multi-step APDU conversations (block numbers toggle automatically).
+
+## Supported Hardware
+
+### ST25R3916 Family (`st25r_spi` / `st25r_i2c`)
+
+| Chip | Status |
+|------|--------|
+| ST25R3916 | ✅ Verified (Elechouse module) |
+| ST25R3916B | ✅ Verified (STEVAL-MB17149B) |
+| ST25R3917/3918/3919B/3920 | ⚠️ Untested (register-compatible) |
+
+### ST25R300 Family (`st25r300_spi`)
+
+| Chip | Status |
+|------|--------|
+| ST25R300 | ✅ Verified (X-NUCLEO-NFC12A1) |
+| ST25R500/501/210 | ⚠️ Untested (register-compatible) |
+
+## See Also
+
+- [PN532](/components/binary_sensor/pn532)
+- [RC522](/components/binary_sensor/rc522)
+- [PN7160](/components/binary_sensor/pn7160)
+- [GitHub: esphome_st25r](https://github.com/JohnMcLear/esphome_st25r)
