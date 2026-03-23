@@ -112,9 +112,8 @@ st25r_i2c:
           args: ['x.c_str()']
 ```
 
-:::note
-Connect the I2C_EN pin to VDD_D on the Elechouse module to switch to I2C mode (GND = SPI).
-:::
+> [!NOTE]
+> Connect the I2C_EN pin to VDD_D on the Elechouse module to switch to I2C mode (GND = SPI).
 
 <span id="st25r-tag"></span>
 
@@ -132,7 +131,7 @@ binary_sensor:
 
 - **st25r_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the ST25R hub. Required when using multiple readers.
 - **uid** (**Required**, string): The UID of the tag to track, separated by hyphens. Supports 4-byte (NFC-A), 7-byte (NFC-A), and 8-byte (NFC-V/ISO 15693) UIDs.
-- All other options from [Binary Sensor](/components/binary_sensor).
+- All other options from [Binary Sensor](/components/binary_sensor/#config-binary-sensor).
 
 <span id="on_tag-trigger"></span>
 
@@ -154,7 +153,7 @@ st25r_spi:
 
 ## `on_tag_removed` Trigger
 
-This automation is triggered when a previously detected tag is no longer present (after `miss_threshold` consecutive missed scans).
+This automation is triggered when a previously detected tag is no longer present (after `miss_threshold` consecutive missed scans). The removed tag's UID is available as `x` (a `std::string`).
 
 ## Custom APDU Exchange
 
@@ -201,6 +200,6 @@ st25r_spi:
 
 ## See Also
 
-- [PN532](/components/binary_sensor/pn532)
-- [RC522](/components/binary_sensor/rc522)
+- [PN532](/components/binary_sensor/pn532/)
+- [RC522](/components/binary_sensor/rc522/)
 - [GitHub: esphome_st25r](https://github.com/JohnMcLear/esphome_st25r)
