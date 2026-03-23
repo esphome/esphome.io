@@ -1,0 +1,51 @@
+---
+description: "Instructions for setting up the XBD401 Pressure sensor."
+title: "XIDIBEI XBD401 Pressure Sensor"
+---
+
+import { Image } from 'astro:assets';
+import Figure from '@components/Figure.astro';
+import APIRef from '@components/APIRef.astro';
+
+XIDIBEI XBD401 came with I²C or anlong also with different max readings and unit often is Pa or Bar
+
+<Figure
+  src="/images/xdb401.jpg"
+  alt=""
+  caption="XBD401 Pressure Sensor. (Credit: [XIDIBEI](https://xdbsensor.com/product/xdb401-pro-ss316l-pressure-transducer-for-coffee-machine/), image cropped and compressed)"
+  layout="constrained"
+  width={300}
+  height={300}
+/>
+
+To use the sensor, set up an [I²C Bus](/components/i2c) and connect the sensor to the specified pins.
+
+```yaml
+# Example configuration entry
+# It uses a filter change the unit
+sensor:
+  - platform: xdb401
+    update_interval: 1s
+    temperature: 
+      id: temperature
+      name: "Temperature"
+      accuracy_decimals: 2
+    pressure:
+      id: pressure_bar
+      name: "Pressure"
+      unit_of_measurement: "bar"
+      accuracy_decimals: 2
+      filters:
+        - multiply: 0.00001   # Pa -> bar
+```
+
+## Configuration variables
+
+- **temperature** (*Optional*): All options from [Sensor](/components/sensor).
+- **pressure** (*Optional*): All options from [Sensor](/components/sensor).
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to check the sensor. Defaults to `60s`.
+
+## See Also
+
+- [esphome-pressure device](https://github.com/gcormier/esphome-pressure/)
+- [Sensor Filters](/components/sensor#sensor-filters)
