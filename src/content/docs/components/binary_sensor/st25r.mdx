@@ -3,8 +3,6 @@ description: "Instructions for setting up ST25R NFC reader components in ESPHome
 title: "ST25R NFC Reader"
 ---
 
-import APIRef from '@components/APIRef.astro';
-
 <span id="st25r-component"></span>
 
 ## Component/Hub
@@ -30,6 +28,7 @@ spi:
   mosi_pin: GPIO18
 
 st25r_spi:
+  id: my_reader
   cs_pin: GPIO6
   irq_pin: GPIO7
   update_interval: 1s
@@ -52,6 +51,7 @@ binary_sensor:
 
 ### Configuration variables
 
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation. Required when using `send_apdu()` from lambdas or with multiple readers.
 - **cs_pin** (**Required**, [Pin Schema](/guides/configuration-types#pin-schema)): The SPI chip select pin.
 - **irq_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The IRQ GPIO pin. Recommended for fastest response.
 - **reset_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): Hardware reset GPIO. Optional but improves recovery.
@@ -65,15 +65,15 @@ binary_sensor:
 - **ant_tune_b** (*Optional*, int): Starting ANT_TUNE_B value (0-255). Defaults to `0x40`.
 - **mifare_key_a** (*Optional*, string): Mifare Classic Key A (12 hex characters). Defaults to `FFFFFFFFFFFF`.
 - **mifare_key_b** (*Optional*, string): Mifare Classic Key B (12 hex characters). Defaults to `FFFFFFFFFFFF`.
-- **miss_threshold** (*Optional*, int): Consecutive missed scans before tag_removed fires. Defaults to `3`.
+- **miss_threshold** (*Optional*, int): Consecutive missed scans before `on_tag_removed` fires. Defaults to `3`.
 - **health_check_enabled** (*Optional*, boolean): Periodically verify chip identity. Defaults to `true`.
 - **health_check_interval** (*Optional*, [Time](/guides/configuration-types#time)): Health check interval. Defaults to `60s`.
 - **max_failed_checks** (*Optional*, int): Consecutive failures before auto-reset. Defaults to `3`.
 - **auto_reset_on_failure** (*Optional*, boolean): Auto-reinitialize after failures. Defaults to `true`.
 - **status** (*Optional*, [Binary Sensor](/components/binary_sensor)): Chip health status sensor.
 - **field_strength** (*Optional*, [Sensor](/components/sensor)): RF field amplitude sensor.
-- **on_tag** (*Optional*, [Automation](/automations)): Automation when a tag is first detected.
-- **on_tag_removed** (*Optional*, [Automation](/automations)): Automation when a tag is removed.
+- **on_tag** (*Optional*, [Automation](/automations)): Automation when a tag is first detected. See [`on_tag` Trigger](#on_tag-trigger).
+- **on_tag_removed** (*Optional*, [Automation](/automations)): Automation when a tag is removed. See [`on_tag_removed` Trigger](#on_tag_removed-trigger).
 
 ## Over SPI (ST25R300)
 
@@ -92,7 +92,7 @@ st25r300_spi:
           args: ['x.c_str()']
 ```
 
-Configuration variables are the same as `st25r_spi` above. The **reset_pin** is required for ST25R300.
+Configuration variables are the same as `st25r_spi` above (except `mifare_key_a`/`mifare_key_b` which are not applicable). The **reset_pin** is required for ST25R300.
 
 ## Over I²C (ST25R3916)
 
@@ -112,7 +112,9 @@ st25r_i2c:
           args: ['x.c_str()']
 ```
 
-> Connect the I2C_EN pin to VDD_D on the Elechouse module to switch to I2C mode (GND = SPI).
+:::note
+Connect the I2C_EN pin to VDD_D on the Elechouse module to switch to I2C mode (GND = SPI).
+:::
 
 <span id="st25r-tag"></span>
 
@@ -130,11 +132,11 @@ binary_sensor:
 
 - **st25r_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the ST25R hub. Required when using multiple readers.
 - **uid** (**Required**, string): The UID of the tag to track, separated by hyphens. Supports 4-byte (NFC-A), 7-byte (NFC-A), and 8-byte (NFC-V/ISO 15693) UIDs.
-- **name** (**Required**, string): The name of the binary sensor.
+- All other options from [Binary Sensor](/components/binary_sensor).
 
-<span id="st25r-on_tag"></span>
+<span id="on_tag-trigger"></span>
 
-## ``on_tag`` Trigger
+## `on_tag` Trigger
 
 This automation is triggered when a new tag is detected. The tag UID is available as `x` (a `std::string`).
 
@@ -148,7 +150,9 @@ st25r_spi:
             uid: !lambda 'return x;'
 ```
 
-## ``on_tag_removed`` Trigger
+<span id="on_tag_removed-trigger"></span>
+
+## `on_tag_removed` Trigger
 
 This automation is triggered when a previously detected tag is no longer present (after `miss_threshold` consecutive missed scans).
 
@@ -199,5 +203,5 @@ st25r_spi:
 
 - [PN532](/components/binary_sensor/pn532)
 - [RC522](/components/binary_sensor/rc522)
-- [PN7160](/components/binary_sensor/pn7160)
+- [PN7160](/components/pn7160/)
 - [GitHub: esphome_st25r](https://github.com/JohnMcLear/esphome_st25r)
