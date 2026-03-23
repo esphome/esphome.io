@@ -1430,14 +1430,14 @@ text_sensor:
         - lvgl.widget.update:
             id: btn_lightbulb
             state:
-              checked: !lambda return (0 == x.compare(std::string{"on"}));
-              disabled: !lambda return ((0 == x.compare(std::string{"unavailable"})) or (0 == x.compare(std::string{"unknown"})));
+              checked: !lambda return (x == "on");
+              disabled: !lambda return ((x == "unavailable") or (x == "unknown"));
         - lvgl.label.update:
             id: lbl_lightbulb
             text: !lambda |-
               static char buf[10];
               std::string icon;
-              if (0 == x.compare(std::string{"on"})) {
+              if (x == "on") {
                   icon = "\U000F0335";
               } else {
                   icon = "\U000F0336";
@@ -1451,8 +1451,7 @@ lvgl:
       - id: room_page
         widgets:
           - button:
-              x: 110
-              y: 40
+              align: CENTER
               width: 90
               height: 50
               checkable: true
