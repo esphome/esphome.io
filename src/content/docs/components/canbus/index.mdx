@@ -87,6 +87,11 @@ canbus:
   - `500KBPS`
   - `1000KBPS`
 
+- **max_frames_per_loop** (*Optional*, positive integer): Maximum number of received CAN frames ESPHome will process in a
+  single `loop()` iteration before deferring the remaining queued frames to the next pass. Defaults to `50`.
+  Lower this value if heavy bus traffic causes long blocking warnings; raise it only if your node can keep up without
+  delaying other components.
+
 - **on_frame** (*Optional*, [Automation](/automations)): An automation to perform when a
   CAN frame is received. See [`on_frame` Trigger](#canbus-on-frame).
 
