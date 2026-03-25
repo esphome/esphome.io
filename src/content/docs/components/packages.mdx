@@ -35,7 +35,7 @@ Note how the piece of configuration describing `api` component in `device_base.y
 definitions from main configuration file.
 
 ```yaml
-# In config.yaml
+# config.yaml
 packages:   # as a list
   - !include common/wifi.yaml
   - !include common/device_base.yaml
@@ -50,14 +50,14 @@ api:
 ```
 
 ```yaml
-# In wifi.yaml
+# wifi.yaml
 wifi:
   ssid: !secret wifi_ssid
   password: !secret wifi_password
 ```
 
 ```yaml
-# In device_base.yaml
+# device_base.yaml
 esphome:
   name: ${node_name}
 
@@ -140,7 +140,7 @@ As an example, if the configuration needed to support three garage doors using t
 `time_based` cover platform, it could be constructed like this:
 
 ```yaml
-# In config.yaml
+# config.yaml
 packages:
   left_garage_door: !include
     file: garage-door.yaml
@@ -157,7 +157,7 @@ packages:
 ```
 
 ```yaml
-# In garage-door.yaml
+# garage-door.yaml
 switch:
   - name: ${door_name} Garage Door Switch
     platform: gpio
@@ -170,7 +170,7 @@ You can include a package based on a condition, or choose a package dynamically 
 `!include` into a substitution variable instead of under `packages`:
 
 ```yaml
-# In config.yaml
+# config.yaml
 substitutions:
   left_garage_door: !include
     file: garage-door.yaml
@@ -197,7 +197,7 @@ To make changes or add additional configuration to included configurations, `!ex
 For example, to set a specific update interval on a common uptime sensor that is shared between configurations:
 
 ```yaml
-# In common.yaml
+# common.yaml
 captive_portal:
 
 sensor:
@@ -218,7 +218,7 @@ sensor:
 LVGL-style configuration hierarchies are also supported:
 
 ```yaml
-# In interface.yaml
+# interface.yaml
 lvgl:
   pages:
     - id: main_page
