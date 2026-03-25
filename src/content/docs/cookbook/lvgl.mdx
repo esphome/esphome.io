@@ -430,7 +430,7 @@ lvgl:
                     align: CENTER
                     bg_opa: TRANSP
                     indicator:
-                      bg_opa: transp
+                      bg_opa: TRANSP
                     scales:
                       - range_from: -15
                         range_to: 35
@@ -596,7 +596,7 @@ text_sensor:
       - if:
           condition:
             lambda: |-
-              return ((0 == x.compare(std::string{"opening"})) or (0 == x.compare(std::string{"closing"})));
+              return (x == "opening" or x == "closing");
           then:
             - lvgl.label.update:
                 id: cov_stop_myroom
@@ -1886,7 +1886,7 @@ key_collector:
     on_progress:
       - if:
           condition:
-            lambda: return (0 != x.compare(std::string{""}));
+            lambda: return (x != "");
           then:
             - lvgl.label.update:
                 id: lvgl_label
@@ -1898,7 +1898,7 @@ key_collector:
     on_result:
       - if:
           condition:
-            lambda: return (0 == x.compare(std::string{"1234"}));
+            lambda: return (x == "1234");
           then:
             - lvgl.led.update:
                 id: lvgl_led
