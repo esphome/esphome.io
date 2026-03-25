@@ -270,45 +270,37 @@ lvgl:
                     width: 100%
                     border_width: 0
                     bg_opa: TRANSP
+                    indicator:
+                      bg_opa: TRANSP
                     align: CENTER
                     scales:
                       - range_from: -10
                         range_to: 10
                         angle_range: 180 # sets the total angle to 180 = starts mid left and ends mid right
-                        ticks:
-                          count: 0
                         indicators:
-                          - line:
-                              id: val_needle
-                              width: 8
-                              length: 112% # needle length relative to the scale default radius
-                              value: -2
                           - arc: # first half of the scale background
                               color: 0xFF3000
-                              padding: 10 # offset from the scale default radius
                               width: 31
                               start_value: -10
                               end_value: 0
                           - arc: # second half of the scale background
                               color: 0x00FF00
-                              padding: 10
                               width: 31
                               start_value: 0
                               end_value: 10
-                - obj: # to cover the middle part of meter indicator line
-                    height: 146
-                    width: 146
-                    radius: 73
-                    align: CENTER
-                    border_width: 0
-                    bg_color: 0xFFFFFF
-                    pad_all: 0
+                          - line: # needle
+                              id: val_needle
+                              width: 8
+                              value: -3
+                              rounded: false
+                              length: 74
+                              radial_offset: 106
                 - label: # gauge numeric indicator
                     id: val_text
                     text_font: montserrat_48
                     align: CENTER
                     y: -5
-                    text: "0"
+                    text: "-3"
                 - label: # lower range indicator
                     text_font: montserrat_18
                     align: CENTER
@@ -322,10 +314,6 @@ lvgl:
                     x: 90
                     text: "+10"
 ```
-
-> [!TIP]
-> The `obj` used to hide the middle part of the meter indicator line has `radius` equal to half of the `width` and
-> `height`. This results in a circle - which is actually a square with extra large rounded corners.
 
 <span id="lvgl-cookbook-thermometer"></span>
 
