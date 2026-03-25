@@ -329,7 +329,7 @@ lvgl:
 
 <span id="lvgl-cookbook-thermometer"></span>
 
-## Thermometer
+## Thermometer classic
 
 A thermometer with a precise gauge also made from a [`meter`](/components/lvgl/widgets#lvgl-widget-meter) widget and a numeric display using
 [`label`](/components/lvgl/widgets#lvgl-widget-label):
@@ -409,6 +409,8 @@ lvgl:
                     y: 65
 ```
 
+## Thermometer semicircle
+
 And here's the same sensor configuration, but instead with a semicircle gauge with a gradient background drawn by a
 multitude of ticks:
 
@@ -438,14 +440,17 @@ lvgl:
                     border_width: 0
                     align: CENTER
                     bg_opa: TRANSP
+                    indicator:
+                      bg_opa: transp
                     scales:
                       - range_from: -15
                         range_to: 35
                         angle_range: 180
                         ticks:
-                          count: 70
-                          width: 1
-                          length: 31
+                          count: 100
+                          width: 10
+                          length: 30
+                          radial_offset: -2
                         indicators:
                           - tick_style:
                               start_value: -15
@@ -455,24 +460,16 @@ lvgl:
                       - range_from: -150
                         range_to: 350
                         angle_range: 180
-                        ticks:
-                          count: 0
                         indicators:
                           - line:
-                              id: temperature_needle
+                              id: temperature_needle2
                               width: 8
-                              length: 102%
                               value: -150
-                - obj: # to cover the middle part of meter indicator line
-                    height: 123
-                    width: 123
-                    radius: 73
-                    align: CENTER
-                    border_width: 0
-                    pad_all: 0
-                    bg_color: 0xFFFFFF
+                              rounded: false
+                              radial_offset: 100
+                              length: 60
                 - label:
-                    id: temperature_text
+                    id: temperature_text2
                     text: "--.-°C"
                     align: CENTER
                     y: -26
