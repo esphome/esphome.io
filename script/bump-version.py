@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 
 import argparse
+import yaml
+from pathlib import Path
 import re
 import sys
 from dataclasses import dataclass
@@ -49,18 +51,19 @@ def sub(path, pattern, repl, expected_count=1):
 
 
 def write_version(version: Version):
-    # ESPHOME_REF = 2021.8.0
-    sub(
-        "Makefile",
-        r"ESPHOME_REF = .*",
-        f"ESPHOME_REF = {version}" if not version.dev else "ESPHOME_REF = dev",
-    )
-    # version = '1.14'
-    sub("conf.py", r'version = ".*"', f'version = "{version.major}.{version.minor}"')
-    # release = '1.14.4'
-    sub("conf.py", r'release = ".*"', f'release = "{version}"')
-    with open("_static/version", "wt") as fh:
-        fh.write(str(version))
+    Path("data").mkdir(parents=True, exist_ok=True)
+    data = {
+        "release": str(version),
+        "version": f"{version.major}.{version.minor}",
+    }
+    print(f"Writing {data} to data/version.yaml")
+    with open("data/version.yaml", "w") as file:
+        yaml.dump(
+            {
+                "release": str(version),
+                "version": f"{version.major}.{version.minor}",
+            }, file
+        )
 
 
 def main():
