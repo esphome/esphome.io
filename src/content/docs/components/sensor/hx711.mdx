@@ -22,6 +22,16 @@ load cell amplifier
 Connect `GND` to `GND`, `VCC` to `3.3V` and the other two `DOUT` (or `DT` for short)
 and `CLK` (or `SCK`  ) to free GPIO pins.
 
+The HX711 includes a secondary input channel (Channel B) which can be accessed by setting the `gain` to `32`.
+According to the datasheet, instead of connecting another load cell to Channel B, it may be used for monitoring 
+the power supply voltage or performing other measurements. This makes Channel B a convenient option for 
+simple diagnostics or system monitoring in addition to weight measurements on Channel A.
+Reporting both Channel A and Channel B values is supported by enabling the optional `channel_b` sensor.
+
+For power-saving applications, the HX711 is automatically powered down during device shutdown or reboot,
+so there is no need to manually call `hx711.power_down` in those cases.
+This makes it particularly suitable for use with [Deep Sleep Component](/components/deep_sleep#deep_sleep-component) or [Shutdown Button](/components/button/shutdown).
+
 ```yaml
 # Example configuration entry
 sensor:
@@ -30,6 +40,8 @@ sensor:
     dout_pin: D0
     clk_pin: D1
     gain: 128
+    channel_b:
+      name: "HX711 Channel B Value"
     update_interval: 60s
 ```
 
@@ -37,15 +49,110 @@ sensor:
 
 - **dout_pin** (**Required**, [Pin Schema](/guides/configuration-types#pin-schema)): The DOUT (or DAT) pin.
 - **clk_pin** (**Required**, [Pin Schema](/guides/configuration-types#pin-schema)): The CLK pin.
-- **gain** (*Optional*, enum): The gain. Implicitly selects the channel. Defaults to `128`.
+- **gain** (*Optional*, enum): The gain. Implicitly selects the channel (can be changed during runtime using `hx711.set_gain`). Defaults to `128`.
 
   - `32` (Channel B, gain 32)
   - `64` (Channel A, gain 64)
   - `128` (Channel A, gain 128)
 
+- **settling_time** (*Optional*, [Time](/guides/configuration-types#time)): Time to wait after changing ADC parameters (e.g., power or gain) 
+  before taking a new reading. Taken from the datasheet: `Settling time refers to the time from power up, reset, 
+  input channel change and gain change to valid stable output data.` Defaults to `400ms`.
+- **power_down_after_reading** (*Optional*, boolean): If set to `true`, the HX711 will be powered down after each 
+  reading to save power. It will be powered up again automatically for the next measurement. Defaults to `false`.
+- **measurement_ready_timeout** (*Optional*, [Time](/guides/configuration-types#time)): Timeout for HX711 to signal that a measurement is 
+  ready. If the DOUT pin does not go low within this time, the component is marked as failed. Defaults to `2000ms`.
+- **channel_b** (*Optional*): Enables reading from Channel B in addition to the primary measurement. If `gain: 32` 
+  is already selected, the same value will be reported on both sensors.
+
 - **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to check the sensor. Defaults to `60s`.
 
 - All other options from [Sensor](/components/sensor).
+
+
+.. _hx711-actions:
+
+Actions
+-------
+
+.. _hx711-action_set_gain:
+
+``hx711.set_gain`` Action
+*************************
+
+Sets the gain (and implicitly the input channel) of the HX711 during runtime. The change is not 
+applied immediately but will take effect on the next reading cycle. This avoids unnecessary 
+power cycling and ensures proper settling time is respected.
+
+This allows dynamic adjustment of the input channel or amplification based on your application's needs.
+
+.. code-block:: yaml
+
+    on_...:
+      - hx711.set_gain:
+          gain: 64
+
+Configuration variables:
+````````````````````````
+
+- **gain** (**Required**, :ref:`templatable <config-templatable>`, enum): Gain value to set. 
+  Must be one of ``32``, ``64``, or ``128``. This option is templatable and also accepts 
+  values of the ``HX711Gain`` enum. See :apiref:`HX711 API reference <hx711/hx711.h>`.
+- **id** (*Optional*, :ref:`config-id`): Manually specify the ID of the HX711 component. 
+  If only one is defined, this can be omitted.
+
+
+.. _hx711-action_power_down:
+
+``hx711.power_down`` Action
+***************************
+
+Manually powers down the HX711, putting it into a low-power sleep mode. This also suspends the component, 
+stopping its regular polling updates. To resume operation, use :ref:`hx711.power_up <hx711-action_power_up>`.
+
+This is useful for power-constrained applications or to manually control when the sensor is active.
+
+.. note::
+
+    Internally, this action also performs the equivalent of :ref:`component.suspend <component-suspend_action>`.
+
+.. code-block:: yaml
+
+    on_...:
+      - hx711.power_down:
+
+Configuration variables:
+````````````````````````
+
+- **id** (*Optional*, :ref:`config-id`): Manually specify the ID of the HX711 component. 
+  If only one is defined, this can be omitted.
+
+
+.. _hx711-action_power_up:
+
+``hx711.power_up`` Action
+*************************
+
+Manually powers up the HX711 from sleep mode and resumes its operation.
+This also resumes polling by internally calling :ref:`component.resume <component-resume_action>`.
+
+Use this action after calling :ref:`hx711.power_down <hx711-action_power_down>` to 
+re-enable the sensor and continue measurements.
+
+.. note::
+
+    Internally, this action also performs the equivalent of :ref:`component.resume <component-resume_action>`.
+
+.. code-block:: yaml
+
+    on_...:
+      - hx711.power_down:
+
+Configuration variables:
+````````````````````````
+
+- **id** (*Optional*, :ref:`config-id`): Manually specify the ID of the HX711 component. 
+  If only one is defined, this can be omitted.
 
 ## Converting Units
 
@@ -80,3 +187,4 @@ Replace the masses and values `120.0`, `810.0`, etc with your values.
 - [Analog To Digital Sensor](/components/sensor/adc/)
 - [HX711 Library](https://github.com/bogde/HX711) by [@bogde](https://github.com/bogde)
 - <APIRef text="hx711.h" path="hx711/hx711.h" />
+
