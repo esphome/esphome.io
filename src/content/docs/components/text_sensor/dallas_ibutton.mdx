@@ -1,0 +1,53 @@
+---
+description: "Instructions for setting up Dallas iButton readers"
+title: "Dallas iButton Text Sensor"
+---
+import Figure from "@components/Figure.astro";
+import APIRef from "@components/APIRef.astro";
+
+
+The `dallas_ibutton` component allows you to use
+[DS1990A](https://www2.mouser.com/ProductDetail/Analog-Devices-Maxim-Integrated/DS1990AA-F5%2b?qs=doiCPypUmgFqbuvBweH2KA%3D%3D)
+([datasheet](https://www.analog.com/media/en/technical-documentation/data-sheets/DS1990A.pdf))
+and similar
+[iButtons](https://www2.mouser.com/c/embedded-solutions/memory-data-storage/memory-modules-memory-cards/ibuttons-accessories/?product=iButtons).
+A [1-Wire bus](/components/one_wire/) is
+required to be set up in your configuration for this sensor to work.
+
+<Figure
+  src="/images/dallas_ibutton.jpg"
+  alt="A image of an iButton from Dallas"
+  caption="Dallas iButton (Credit: [Mouser](https://www2.mouser.com/ProductDetail/Analog-Devices-Maxim-Integrated/DS1990AA-F5%2b?qs=doiCPypUmgFqbuvBweH2KA%3D%3D))"
+  layout="constrained"
+  width={300}
+  height={300}
+/>
+
+> [!NOTE]
+> If multiple iButtons are connected to a single 1-Wire bus, only the ID of the most recently
+> connected iButton is reported.
+
+```yaml
+# Example configuration entry
+text_sensor:
+  - platform: dallas_ibutton
+    name: "iButton Reader"
+    reset_value_after: 3s
+```
+
+## Configuration variables
+
+- **reset_value_after** (*Optional*, [Time](/guides/configuration-types#time)):
+  How long after the last detection the sensor value is cleared. Defaults to 3s.
+
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval that the sensors should be checked.
+  Defaults to 60 seconds.
+
+- **one_wire_id** (*Optional*, [One Wire](/components/one_wire/)): The ID of the 1-Wire bus to use.
+  Required if there is more than one bus.
+
+- All other options from [Sensor](/components/sensor).
+
+## See Also
+
+- <APIRef text="dallas_ibutton.h" path="dallas_ibutton/dallas_ibutton.h" />
