@@ -37,7 +37,7 @@ An example configuration YAML is shown below.
       - platform: ht16k33_char
         device: ADAFRUIT_14_SEG
         address: 0x71
-        buffer_size: 12
+        max_buffer_length: 12
         scroll: true
         continuous: false
         secondary_displays:
