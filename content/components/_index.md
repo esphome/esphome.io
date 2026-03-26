@@ -739,7 +739,6 @@ Often known as "tag" or "card" readers within the community.
 
 {{< imgtable >}}
 "Addressable Light","components/display/addressable_light","addressable_light.jpg"
-"HT16K33 Character","components/display/ht16k33-char","ht16k33-char.jpg"
 "MIPI DSI Displays","components/display/mipi_dsi","tab5.jpg"
 "MIPI RGB Displays","components/display/mipi_rgb","indicator.jpg"
 "MIPI SPI Displays","components/display/mipi_spi","t4-s3.jpg"
