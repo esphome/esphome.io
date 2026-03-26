@@ -150,12 +150,13 @@ In addition to the Jinja expressions, ESPHome supports a number of built-in func
 
 #### Using `Path` expressions
 
-`Path` object supports the following properties:
+`Path` objects support the following properties:
 
 - `.parent`: Returns a new `Path` to the parent folder
-- `.name`: Returns the file or folder name.
+- `.name`: Returns the file or folder name (last component of the path)
+- `.parts`: Returns a tuple of the path components
 
-The `/` operator allows to append a platform-dependent folder separator.
+The `/` operator appends a path component with the appropriate folder separator.
 
 ```yaml
 substitutions:
@@ -172,6 +173,29 @@ script:
     then:
       - logger.log: "My script in ${this.file.name} launched!"
       - logger.log: "Full path: ${this.file}"
+```
+
+For all available properties and methods, refer to the
+[Python `PurePath` documentation](https://docs.python.org/3/library/pathlib.html#pure-paths).
+
+#### `this` in included files
+
+When using `!include`, `this` is scoped to the included file. Each included file gets its own
+`this.file` and `this.dir` referring to its own location, not the location of the file that
+includes it. This makes it easy to reference files relative to the included file:
+
+```yaml
+# main.yaml
+esphome:
+  includes:
+    - !include my_component/component.yaml
+```
+
+```yaml
+# my_component/component.yaml — this.dir refers to my_component/, not the parent folder
+esphome:
+  includes:
+    - ${this.dir}/helper.h
 ```
 
 <span id="substitute-include-variables"></span>
