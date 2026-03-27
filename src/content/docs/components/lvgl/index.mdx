@@ -147,9 +147,6 @@ The following configuration variables apply to the main `lvgl` component, in ord
 - **draw_rounding** (*Optional*, int): An optional value to use for rounding draw areas to a specified boundary. Defaults to 2. Useful for displays that require draw windows to be on specified boundaries (usually powers of 2.)
 - **log_level** (*Optional*, string): Set the logger level specifically for the messages of the LVGL library: `TRACE`, `INFO`, `WARN`, `ERROR`, `USER`, `NONE`. Defaults to `WARN`.
 - **byte_order** (*Optional*, int16): The byte order of the data LVGL outputs; either `big_endian` or `little_endian`. Defaults to `big_endian`.
-- **disp_bg_color** (*Optional*, [color](#lvgl-color)): **Deprecated** — use `bottom_layer` with `bg_color` instead. Solid color used to fill the background.
-- **disp_bg_image** (*Optional*, [image](/components/image#display-image)): **Deprecated** — use `bottom_layer` with `bg_image_src` instead.
-- **disp_bg_opa** (*Optional*, [opacity](#lvgl-opacity)): **Deprecated** — use `bottom_layer` with `bg_opa` instead.
 - **default_font** (*Optional*, ID): The ID of the [font](#lvgl-fonts) used by default to render the text or symbols. Defaults to LVGL's internal `montserrat_14` if not specified.
 - **style_definitions** (*Optional*, list): A batch of style definitions to use in LVGL widget's `styles` configuration. See [below](#lvgl-theme) for more details.
 - **gradients** (*Optional*, list): A list of gradient definitions to use in *bg_grad* styles. See [below](#lvgl-gradients) for more details.
@@ -250,16 +247,10 @@ When using a lambda to provide a color you can use the `lv_color_hex` function t
 return a [Color](/components/display#config-color) ID - this is useful when using the [Mapping](/components/mapping/). Examples:
 
 ```yaml
-label:
-  id: my_label
-  text: 'Hello World!'
-  color: !lambda return lv_color_hex(0xFF0000);
-
-on_...:
-    lvgl.label.update:
+  - label:
       id: my_label
-      text: 'Hello Mars!'
-      color: !lambda return id(mapping_color_map)[x];
+      text: 'Hello World!'
+      text_color : !lambda return lv_color_hex(0xFF0000);
 ```
 
 <span id="lvgl-gradients"></span>
@@ -316,7 +307,7 @@ Check out [MDI icons in text](/cookbook/lvgl#lvgl-cookbook-icontext), [Toggle st
 
 #### Library fonts
 
-The LVGL library offers by default prerendered sets with ASCII characters (`0x20-0x7F`  ), the degree symbol (`0xB0`  ), the bullet symbol (`0x2022`  ) from [Montserrat Medium](https://fonts.google.com/specimen/Montserrat), and 60 symbols from [FontAwesome](https://fontawesome.com/) (see below). You can use the IDs below when specifying the `text_font` parameter:
+The LVGL library offers by default prerendered sets with ASCII characters (`0x20-0x7F`), the degree symbol (`0xB0`), the bullet symbol (`0x2022`) from [Montserrat Medium](https://fonts.google.com/specimen/Montserrat), and 60 symbols from [FontAwesome](https://fontawesome.com/) (see below). You can use the IDs below when specifying the `text_font` parameter:
 
 - `montserrat_8`  : 8px font
 - `montserrat_10`  : 10px font
@@ -353,10 +344,10 @@ You can display the embedded symbols among the text by their codepoint address p
 
 In addition to the above, the following special fonts are available from LVGL as built-in:
 
-- `unscii_8`  : 8 px pixel perfect font with only ASCII characters.
-- `unscii_16`  : 16 px pixel perfect font with only ASCII characters.
-- `simsun_16_cjk`  : 16 px font with normal range + 1000 most common [CJK Radicals](https://en.wikipedia.org/wiki/CJK_Radicals_Supplement).
-- `dejavu_16_persian_hebrew`  : 16 px font with normal range + Hebrew, Arabic, Persian letters and all their forms.
+- `unscii_8`: 8 px pixel perfect font with only ASCII characters.
+- `unscii_16`: 16 px pixel perfect font with only ASCII characters.
+- `simsun_16_cjk`: 16 px font with normal range + 1000 most common [CJK Radicals](https://en.wikipedia.org/wiki/CJK_Radicals_Supplement).
+- `dejavu_16_persian_hebrew`: 16 px font with normal range + Hebrew, Arabic, Persian letters and all their forms.
 
 <span id="lvgl-styling"></span>
 
@@ -538,17 +529,18 @@ Additionally, you can change the styles based on the [state](/components/lvgl/wi
 In the example below, you have an `arc` with some styles set here. Note how you change the `arc_color` of the `indicator` part, based on state changes:
 
 ```yaml
-- arc:
-    id: my_arc
-    value: 75
-    min_value: 1
-    max_value: 100
-    indicator:
-      arc_color: 0xF000FF
-      pressed:
-        arc_color: 0xFFFF00
-      focused:
-        arc_color: 0x808080
+  - arc:
+      id: my_arc
+      value: 75
+      min_value: 1
+      max_value: 100
+      adjustable: true
+      indicator:
+        arc_color: 0xF000FF
+        pressed:
+          arc_color: 0xFFFF00
+        focused:
+          arc_color: 0x808080
 ```
 
 So the precedence happens like this: state based styles override the locally specified styles, which override the style definitions, which override the theme, which overrides the top level styles. The value precedence of states is quite intuitive and it's something the user would expect naturally. For example, if a widget is focused the user will still want to see if it's pressed, therefore the pressed state has a higher precedence. (If the focused state had a higher precedence it would override the *pressed* color, defeating its purpose.)
@@ -664,7 +656,7 @@ on_...:
 
 ### `lvgl.update` Action
 
-This [action](/automations/actions#actions-action) allows changing/updating the background styling of the LVGL display layers at runtime. You can style the `top_layer` and/or `bottom_layer` using any [style properties](#lvgl-styling). The deprecated `disp_bg_color`, `disp_bg_image` and `disp_bg_opa` options are also still accepted but will be mapped to `bottom_layer` styling.
+This [action](/automations/actions#actions-action) allows changing/updating the background styling of the LVGL display layers at runtime. You can style the `top_layer` and/or `bottom_layer` using any [style properties](#lvgl-styling).
 
 ```yaml
 # Examples:
