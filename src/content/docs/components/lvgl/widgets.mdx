@@ -69,6 +69,7 @@ The properties below are common to all widgets.
   of the child in the X direction. One of `NONE` (default), `START`, `END`, `CENTER`.
 - **scroll_snap_y** (*Optional*, string): For a child of a scrollable object, this property defines the snap position
   of the child in the Y direction. One of `NONE` (default), `START`, `END`, `CENTER`.
+- **ext_click_area** (*Optional*, int16): Increase the area that will respond to pointer input (touch, mouse, etc.) outside the widget by a specified number of pixels. Use in conjunction with `adv_hittest` [flag](#lvgl-widget-flags) to fine-tune the sensitivity of the areas around the widgets that support this.
 - **align** (*Optional*, enum): Alignment of the widget relative to the parent. A child widget is clipped to its parent boundaries. One of the values *not* starting with `OUT_` (see picture below).
 - **align_to** (*Optional*, list): Alignment of the widget relative to another widget on the same level:
   - **id** (**Required**): The ID of a widget *to* which you want to align.
@@ -116,7 +117,7 @@ See [Cover status and control](/cookbook/lvgl#lvgl-cookbook-cover) for a cookboo
 
 In addition to visual styling, each widget supports some boolean **flags** to influence the behavior:
 
-- **adv_hittest** (*Optional*, boolean): allow performing more accurate hit (click) test. For example, may help by accounting for rounded corners.
+- **adv_hittest** (*Optional*, boolean): allow performing more accurate hit (click) test. For example, may help by accounting for rounded corners. Read further where applicable.
 - **checkable** (*Optional*, boolean): toggle checked state when the widget is clicked.
 - **click_focusable** (*Optional*, boolean): add focused state to the widget when clicked.
 - **clickable** (*Optional*, boolean): make the widget clickable by input devices. Defaults to `true`. If `false`, it will pass the click to the widgets behind it (clicking through).
@@ -325,7 +326,7 @@ The arc consists of a background and a foreground arc. The indicator foreground 
 - **value** (*Optional*, int16): Actual value of the indicator at start, in `0`  -`100` range. Defaults to `0`.
 - Any [Styling](/components/lvgl#lvgl-styling) and state-based option to override styles inherited from parent. The arc's size and position will respect the padding style properties.
 
-If the `adv_hittest` [flag](#lvgl-widget-flags) is enabled the arc can be clicked through in the middle. Clicks are recognized only on the ring of the background arc.
+By default the whole area of the widget is interactive. If the `adv_hittest` [flag](#lvgl-widget-flags) is enabled the arc can be clicked through in the middle. Clicks are recognized only on the ring of the background arc. If this is too narrow, you can use `ext_click_area` styling property to increase the sensitive area near the arc line.
 
 > [!NOTE]
 > The zero degree position is at the middle right (3 o'clock) of the widget and the degrees increase in a clockwise direction from there. Angles are specified in the `0`  -`360` range.
@@ -1604,7 +1605,7 @@ The slider widget looks like a bar supplemented with a knob. The user can drag t
 - **value** (*Optional*, int8): Actual value of the indicator at start, in `min_value`  -`max_value` range. Defaults to `0`.
 - Any [Styling](/components/lvgl#lvgl-styling) and state-based option for the background of the slider. Uses all the typical background style properties. Padding makes the indicator smaller in the respective direction.
 
-Normally, the slider can be adjusted either by dragging the knob, or by clicking on the slider bar. In the latter case the knob moves to the point clicked and slider value changes accordingly. In some cases it is desirable to set the slider to react on dragging the knob only. This feature is enabled by enabling the `adv_hittest` flag.
+Normally, the slider can be adjusted either by dragging the knob, or by clicking on the slider bar. In the latter case the knob moves to the point clicked and slider value changes accordingly. In some cases it is desirable to set the slider to react on dragging the knob only. This feature is enabled by enabling the `adv_hittest` [flag](#lvgl-widget-flags). Any extended click area (set by `ext_click_area` property to a number of pixels) increases the knob's click area.
 
 **Actions:**
 
