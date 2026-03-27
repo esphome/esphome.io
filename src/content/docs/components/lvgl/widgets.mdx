@@ -170,15 +170,16 @@ The possible parts are:
 # Example slider with knob and indicator styling
 - slider:
     # main (background) styles
-    bg_opa: cover
+    align: CENTER
+    bg_opa: COVER
     bg_grad: color_bar
     radius: 0
-    indicator:
-      bg_opa: transp    # Makes the indicator part invisible
-    knob:
-      radius: 1
-      width: 4
-      height: 10%
+    indicator: # Makes the indicator part invisible
+      bg_opa: TRANSP
+    knob: # Makes the cursor thinner
+      radius: 2
+      pad_left: -4
+      pad_right: -4
       bg_color: 0x000000
 ```
 
@@ -359,8 +360,7 @@ By default the whole area of the widget is interactive. If the `adv_hittest` [fl
 ```yaml
 # Example widget:
 - arc:
-    x: 10
-    y: 10
+    align: CENTER
     id: arc_id
     value: 75
     min_value: 0
@@ -434,8 +434,7 @@ Not only the end, but also the start value of the bar can be set, which changes 
 ```yaml
 # Example widget:
 - bar:
-    x: 10
-    y: 100
+    align: CENTER
     id: bar_id
     value: 75
     min_value: 1
@@ -495,6 +494,7 @@ To create an image button, add a child [`image`](#lvgl-widget-image) widget to i
 # Example toggle button with image:
 - button:
     id: btn_id
+    align: CENTER
     checkable: true
     widgets:
       - image:
@@ -651,18 +651,17 @@ on_...:
           control:
             checkable: true
           on_value: # Trigger for the individual button, returning the checked state
-            then:
-              - logger.log:
-                  format: "Button 2 checked: %d"
-                  args: [ x ]
+            - logger.log:
+                format: "Button 2 checked: %d"
+                args: [ x ]
     on_press: # Triggers for the matrix, to determine which button was pressed.
-      logger.log:
-        format: "Matrix button pressed: %d"
-        args: ["x"]  # If x is 65535, it was the container, (or through a disabled button).
+      - logger.log:
+          format: "Matrix button pressed: %d"
+          args: ["x"]  # If x is 65535, it was the container, (or through a disabled button).
     on_click:
-      logger.log:
-        format: "Matrix button clicked: %d, is button_2 = %u"
-        args: ["x", "id(button_2) == x"]
+      - logger.log:
+          format: "Matrix button clicked: %d, is button_2 = %u"
+          args: ["x", "id(button_2) == x"]
 ```
 
 > [!TIP]
@@ -784,29 +783,28 @@ Where a list of points is required, this can be provided in the form of a list o
     height: 240
     transparent: false
 
-# Example drawing actions, executed at startup:
-    on_boot:
-      then:
-        # Fill canvas with white
-        - lvgl.canvas.fill:
-            id: my_canvas
-            color: white
-        # Draw a blue rectangle
-        - lvgl.canvas.draw_rectangle:
-            id: my_canvas
-            x: 10
-            y: 10
-            width: 100
-            height: 50
-            bg_color: blue
-        # Draw some red text
-        - lvgl.canvas.draw_text:
-            id: my_canvas
-            x: 20
-            y: 20
-            text: "Hello World"
-            max_width: 100
-            color: red
+# Example drawing actions, executed with delay:
+on_...:
+  then:
+    - lvgl.canvas.fill: # Fill canvas with white
+        id: my_canvas
+        color: white
+    - delay: 1s
+    - lvgl.canvas.draw_rectangle: # Draw a blue rectangle
+        id: my_canvas
+        x: 10
+        y: 10
+        width: 100
+        height: 50
+        bg_color: blue
+    - delay: 1s
+    - lvgl.canvas.draw_text: # Draw some red text
+        id: my_canvas
+        x: 20
+        y: 20
+        text: "Hello World"
+        max_width: 100
+        color: red
 ```
 
 <span id="lvgl-widget-checkbox"></span>
@@ -840,8 +838,7 @@ The checkbox widget is made internally from a *tick box* and a label. When the c
 ```yaml
 # Example widget:
 - checkbox:
-    x: 10
-    y: 10
+    align: CENTER
     id: checkbox_id
     text: Checkbox
 
@@ -890,10 +887,10 @@ it is invisible. It has a default width and height of 100%.
 ```yaml
 # Example widget:
 - container:
-    x: 10
-    y: 10
-    width: 220
-    height: 300
+    align: CENTER
+    outline_width: 1 # set this temporarily to see where it is
+    width: 80%
+    height: 80%
     widgets:
       - ...
 ```
@@ -942,8 +939,9 @@ The Dropdown widget is built internally from a *button* part and a *list* part (
 # Example widget:
 - dropdown:
     id: dropdown_id
-    width: 90
+    width: 100
     align: CENTER
+    y: -40
     options:
       - Violin
       - Piano
@@ -959,9 +957,9 @@ The Dropdown widget is built internally from a *button* part and a *list* part (
 # Example action:
 on_...:
   then:
-    - lvgl.dropdown.update:
-        id: dropdown_id
-        selected_index: 4
+  - lvgl.dropdown.update:
+      id: dropdown_id
+      selected_index: 4
 
 # Example trigger:
 - dropdown:
