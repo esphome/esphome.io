@@ -34,14 +34,14 @@ Check out the detailed examples in [the Cookbook](/cookbook/lvgl#lvgl-cookbook) 
 To get started, it is sufficient to add a display and an empty LVGL configuration. If neither `pages` nor `widgets` is specified, then a default "hello world" page will be shown.
 
 ```yaml
-# Example minimal configuration entry
-lvgl:
-
+# Example testing configuration entry
 display:
   - platform: ...
     # ...
     auto_clear_enabled: false
     update_interval: never
+
+lvgl:
 ```
 
 <Image src={lvglHelloWorld} layout="constrained" alt="" />
@@ -49,6 +49,7 @@ display:
 To make LVGL your own you will need to add widgets to the display. For example, to show a label with the text "Hello World!" in the center of the screen:
 
 ```yaml
+# Example minimal configuration entry
 lvgl:
   widgets:
     - label:
@@ -172,7 +173,7 @@ The following configuration variables apply to the main `lvgl` component, in ord
 **Example:**
 
 ```yaml
-# Example configuration entry
+# Example pages configuration entry
 lvgl:
   displays:
     - my_display
@@ -209,6 +210,7 @@ This may however reduce the internal RAM available for other components. A buffe
 If you have multiple displays configured, and wish to have different content displayed on each display, you can configure multiple LVGL configurations. For example:
 
 ```yaml
+# Example multi-display configuration
 lvgl:
   - id: lvgl_1
       displays: display_1
@@ -247,10 +249,11 @@ When using a lambda to provide a color you can use the `lv_color_hex` function t
 return a [Color](/components/display#config-color) ID - this is useful when using the [Mapping](/components/mapping/). Examples:
 
 ```yaml
+# Example to set the color directly via Lambda
   - label:
       id: my_label
       text: 'Hello World!'
-      text_color : !lambda return lv_color_hex(0xFF0000);
+      text_color: !lambda return lv_color_hex(0xFF0000);
 ```
 
 <span id="lvgl-gradients"></span>
@@ -269,7 +272,6 @@ A gradient is a sequence of colors which can be applied to an object using the `
 
 ```yaml
 # Example gradient showing full hue range.
-
   gradients:
     - id: color_bar
       direction: hor
@@ -309,27 +311,27 @@ Check out [MDI icons in text](/cookbook/lvgl#lvgl-cookbook-icontext), [Toggle st
 
 The LVGL library offers by default prerendered sets with ASCII characters (`0x20-0x7F`), the degree symbol (`0xB0`), the bullet symbol (`0x2022`) from [Montserrat Medium](https://fonts.google.com/specimen/Montserrat), and 60 symbols from [FontAwesome](https://fontawesome.com/) (see below). You can use the IDs below when specifying the `text_font` parameter:
 
-- `montserrat_8`  : 8px font
-- `montserrat_10`  : 10px font
-- `montserrat_12`  : 12px font
-- `montserrat_14`  : 14px font (**default**, included if `default_font` option is missing)
-- `montserrat_16`  : 16px font
-- `montserrat_18`  : 18px font
-- `montserrat_20`  : 20px font
-- `montserrat_22`  : 22px font
-- `montserrat_24`  : 24px font
-- `montserrat_26`  : 26px font
-- `montserrat_28`  : 28px font
-- `montserrat_30`  : 30px font
-- `montserrat_32`  : 32px font
-- `montserrat_34`  : 34px font
-- `montserrat_36`  : 36px font
-- `montserrat_38`  : 38px font
-- `montserrat_40`  : 40px font
-- `montserrat_42`  : 42px font
-- `montserrat_44`  : 44px font
-- `montserrat_46`  : 46px font
-- `montserrat_48`  : 48px font
+- `montserrat_8`: 8px font
+- `montserrat_10`: 10px font
+- `montserrat_12`: 12px font
+- `montserrat_14`: 14px font (**default**, included if `default_font` option is missing)
+- `montserrat_16`: 16px font
+- `montserrat_18`: 18px font
+- `montserrat_20`: 20px font
+- `montserrat_22`: 22px font
+- `montserrat_24`: 24px font
+- `montserrat_26`: 26px font
+- `montserrat_28`: 28px font
+- `montserrat_30`: 30px font
+- `montserrat_32`: 32px font
+- `montserrat_34`: 34px font
+- `montserrat_36`: 36px font
+- `montserrat_38`: 38px font
+- `montserrat_40`: 40px font
+- `montserrat_42`: 42px font
+- `montserrat_44`: 44px font
+- `montserrat_46`: 46px font
+- `montserrat_48`: 48px font
 
 The binary will only include any of the above if used in the configuration.
 
@@ -474,6 +476,7 @@ These style properties may be applied to any widget, though not all widgets use 
 You can configure a global theme for all widgets of a given type at the top level with the `theme:` configuration variable. In the example below, all the `arc`, `slider` and `button` widgets will, by default, use the styles and properties defined here. A combination of styles and [states](/components/lvgl/widgets#lvgl-widgetproperty-state) can be chosen for every widget.
 
 ```yaml
+# Example theme configuration entry
 lvgl:
   theme:
     arc:
@@ -499,6 +502,7 @@ Naturally, you can override these at the individual configuration level of each 
 In the example below, you defined `date_style`  :
 
 ```yaml
+# Example style definition configuration entry
 lvgl:
   style_definitions:
     - id: date_style      # choose an ID for your definition
@@ -513,6 +517,7 @@ lvgl:
 And then you apply these selected styles to two labels, and only change very specific style `y` locally:
 
 ```yaml
+# Example style definition application
 widgets:
   - label:
       id: day_label
@@ -529,18 +534,19 @@ Additionally, you can change the styles based on the [state](/components/lvgl/wi
 In the example below, you have an `arc` with some styles set here. Note how you change the `arc_color` of the `indicator` part, based on state changes:
 
 ```yaml
-  - arc:
-      id: my_arc
-      value: 75
-      min_value: 1
-      max_value: 100
-      adjustable: true
-      indicator:
-        arc_color: 0xF000FF
-        pressed:
-          arc_color: 0xFFFF00
-        focused:
-          arc_color: 0x808080
+# Example style changes based on state
+- arc:
+    id: my_arc
+    value: 75
+    min_value: 1
+    max_value: 100
+    adjustable: true
+    indicator:
+      arc_color: 0xF000FF
+      pressed:
+        arc_color: 0xFFFF00
+      focused:
+        arc_color: 0x808080
 ```
 
 So the precedence happens like this: state based styles override the locally specified styles, which override the style definitions, which override the theme, which overrides the top level styles. The value precedence of states is quite intuitive and it's something the user would expect naturally. For example, if a widget is focused the user will still want to see if it's pressed, therefore the pressed state has a higher precedence. (If the focused state had a higher precedence it would override the *pressed* color, defeating its purpose.)
