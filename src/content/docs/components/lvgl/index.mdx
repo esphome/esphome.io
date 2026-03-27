@@ -352,19 +352,24 @@ floating point, instead uses scaled integers. Properties with the following nati
 
 These style properties may be applied to any widget, though not all widgets use all of them.
 
+- **opa** (*Optional*, [opacity](#lvgl-opacity)): Opacity of the entire widget. Inherited from parent. Defaults to `COVER`.
 - **bg_color** (*Optional*, [color](#lvgl-color)): Color for the background of the widget. Defaults to `0xFFFFFF` (white).
+- **bg_opa** (*Optional*, [opacity](#lvgl-opacity)): Opacity of the widget background.
+- **opa_layered** (*Optional*, [opacity](#lvgl-opacity)): Opacity of the entire layer the widget is on. Inherited from parent. Defaults to `COVER`.
 - **bg_grad** (*Optional*, [gradient](#lvgl-gradients)): A gradient to apply to the background.
 - **bg_grad_color** (*Optional*, [color](#lvgl-color)): Color to make the background gradually fade to. Defaults to `0` (black).
 - **bg_grad_dir** (*Optional*, dict): Choose the direction of the background gradient: `NONE`, `HOR`, `VER`. Defaults to `NONE`.
 - **bg_main_stop** (*Optional*, 0-255): Specify where the gradient should start: `0` = upper left, `128` = in the center, `255` = lower right. Defaults to `0`.
 - **bg_grad_stop** (*Optional*, 0-255): Specify where the gradient should stop: `0` = upper left, `128` = in the center, `255` = lower right. Defaults to `255`.
-- **opa** (*Optional*, [opacity](#lvgl-opacity)): Opacity of the entire widget. Inherited from parent. Defaults to `COVER`.
-- **bg_opa** (*Optional*, [opacity](#lvgl-opacity)): Opacity of the widget background.
-- **opa_layered** (*Optional*, [opacity](#lvgl-opacity)): Opacity of the entire layer the widget is on. Inherited from parent. Defaults to `COVER`.
+- **bg_main_opa** (*Optional*, [opacity](#lvgl-opacity)): Set opacity of the first gradient color. Defaults to `COVER`.
+- **bg_grad_opa** (*Optional*, [opacity](#lvgl-opacity)): Set opacity of the second gradient color. Defaults to `COVER`.
 - **bg_image_src** (*Optional*, [image](/components/image#display-image)): The ID of an existing image configuration, to show as the background of the widget.
 - **bg_image_opa** (*Optional*, [opacity](#lvgl-opacity)): Opacity of the background image of the widget.
 - **bg_image_recolor** (*Optional*, [color](#lvgl-color)): Color to mix with every pixel of the background image of the widget.
 - **bg_image_recolor_opa** (*Optional*, [opacity](#lvgl-opacity)): Opacity of the recoloring of the background image of the widget.
+- **blur_radius** (*Optional*, int16): Sets the intensity of blurring. Applied on each widget part separately before the children are rendered. Defaults to `0`.
+- **blur_backdrop** (*Optional*, boolean): If `true` the background of the widget will be blurred. The part should have opacity smaller to make it visible. If `false` the given part will be blurred when it's rendered but before drawing the children. Defaults to `false`.
+- **blur_quality** (*Optional*): One of `AUTO`, `SPEED`, `PRECISION`. Setting to `SPEED` the blurring algorithm will prefer speed over quality. `PRECISION` will force using higher quality but slower blur. With `AUTO` the quality will be selected automatically (default).
 - **border_width** (*Optional*, int16): Set the width of the border in pixels. Defaults to `0`.
 - **border_color** (*Optional*, [color](#lvgl-color)): Color to draw borders of the widget. Defaults to `0` (black).
 - **border_opa** (*Optional*, [opacity](#lvgl-opacity)): Opacity of the borders of the widget. Defaults to `COVER`.
@@ -380,35 +385,49 @@ These style properties may be applied to any widget, though not all widgets use 
 - **color_filter_opa** (*Optional*, [opacity](#lvgl-opacity)): Opacity of the color filter. Currently color filters are applied only by the default LVGL theme, this option allows the effect of those to be disabled by setting to `TRANSP`.
 - **image_recolor** (*Optional*, [color](#lvgl-color)): Color to mix with every pixel of an image Note that `image_recolor_opa` defaults to TRANSP, so it must also be set.
 - **image_recolor_opa** (*Optional*, [opacity](#lvgl-opacity)): Opacity of the image recoloring.
-- **outline_width** (*Optional*, int16): Set the width of the outline in pixels. Defaults to `0`.
-- **outline_color** (*Optional*, [color](#lvgl-color)): Color used to draw an outline around the widget. Defaults to `0` (black).
+- **image_opa** (*Optional*, [opacity](#lvgl-opacity)): Set opacity of an image.
+- **outline_width** (*Optional*, int16): Set the width of the outline in pixels. It's like a border but drawn outside of the rectangles. Defaults to `0`.
+- **outline_color** (*Optional*, [color](#lvgl-color)): Color used to draw the outline around the widget. Defaults to `0` (black).
 - **outline_opa** (*Optional*, [opacity](#lvgl-opacity)): Opacity of the outline of the widget. Defaults to `COVER`.
 - **outline_pad** (*Optional*, int16): Distance between the outline and the widget itself. Defaults to `0`.
-- **pad_all** (*Optional*, int16): Set the padding in all directions, in pixels.
-- **pad_top** (*Optional*, int16): Set the padding on the top, in pixels.
-- **pad_bottom** (*Optional*, int16): Set the padding on the bottom, in pixels.
-- **pad_left** (*Optional*, int16): Set the padding on the left, in pixels.
-- **pad_right** (*Optional*, int16): Set the padding on the right, in pixels.
-- **pad_row** (*Optional*, int16): Set the padding between the rows of the children elements, in pixels.
-- **pad_column** (*Optional*, int16): Set the padding between the columns of the children elements, in pixels.
+- **pad_all** (*Optional*, int16): Set the padding in all directions, in pixels. It makes the content area smaller in all directions.
+- **pad_top** (*Optional*, int16): Set the padding on the top, in pixels. It makes the content area smaller in this direction.
+- **pad_bottom** (*Optional*, int16): Set the padding on the bottom, in pixels. It makes the content area smaller in this direction.
+- **pad_left** (*Optional*, int16): Set the padding on the left, in pixels. It makes the content area smaller in this direction.
+- **pad_right** (*Optional*, int16): Set the padding on the right, in pixels. It makes the content area smaller in this direction.
+- **pad_row** (*Optional*, int16): Set the padding between the rows of the children elements, in pixels. See [Layouts](/components/lvgl/layouts#lvgl-layouts) for details.
+- **pad_column** (*Optional*, int16): Set the padding between the columns of the children elements, in pixels. See [Layouts](/components/lvgl/layouts#lvgl-layouts) for details.
+- **pad_radial** (*Optional*, int16): Pad text labels away from the scale ticks/remainder of the widget part.
+- **margin_top** (*Optional*, int16): Sets margin on the top. Widget will keep this space from its siblings in layouts.
+- **margin_bottom** (*Optional*, int16): Sets margin on the bottom. Widget will keep this space from its siblings in layouts.
+- **margin_left** (*Optional*, int16): Sets margin on the left. Widget will keep this space from its siblings in layouts.
+- **margin_right** (*Optional*, int16): Sets margin on the right. Widget will keep this space from its siblings in layouts.
 - **radius** (*Optional*, uint16): The radius to be used to form the widget's rounded corners. 0 = no radius (square corners); 65535 (max) = pill shaped widget (true circle if it has same width and height, radius then should be set to half the width/height).
-- **shadow_color** (*Optional*, [color](#lvgl-color)): Color used to create a drop shadow under the widget. Defaults to `0` (black).
+- **drop_shadow_opa** (*Optional*, [opacity](#lvgl-opacity)): Take a snapshot of a part of a widget and blur it. Set the opacity of the shadow. Defaults to `0`.
+- **drop_shadow_radius** (*Optional*, int16): Sets the intensity of blurring. Applied on each widget part separately before the children are rendered. Defaults to `0`.
+- **drop_shadow_offset_x** (*Optional*, int16): Set an offset on the shadow in pixels in X direction. Defaults to `0`.
+- **drop_shadow_offset_y** (*Optional*, int16): Set an offset on the shadow in pixels in Y direction. Defaults to `0`.
+- **drop_shadow_color (*Optional*, [color](#lvgl-color)): Set the color of the shadow. Defaults to `0` (black).
+- **drop_shadow_quality** (*Optional*): One of `AUTO`, `SPEED`, `PRECISION`. Setting to `SPEED` the blurring algorithm will prefer speed over quality. `PRECISION` will force using higher quality but slower blur. With `AUTO` the quality will be selected automatically. Defaults to `PRECISION`.
+- **shadow_color** (*Optional*, [color](#lvgl-color)): Color used to create a shadow under the widget rectangle. Defaults to `0` (black).
 - **shadow_offset_x** (*Optional*, int16): Horizontal offset of the shadow, in pixels. Defaults to `0`.
 - **shadow_offset_y** (*Optional*, int16): Vertical offset of the shadow, in pixels. Defaults to `0`.
 - **shadow_opa** (*Optional*, [opacity](#lvgl-opacity)): Opacity of the shadow. Defaults to `COVER`.
 - **shadow_spread** (*Optional*, int16): Spread of the shadow, in pixels. Defaults to `0`.
 - **shadow_width** (*Optional*, int16): Width of the shadow, in pixels. Defaults to `0`.
 - **transform_rotation** (*Optional*, 0-360): Transformation rotation angle of the widget.
-- **transform_height** (*Optional*, int16 or percentage): Transformation height of the widget (eg. stretching).
+- **transform_width** (*Optional*, int16 or percentage): Stretch widget wider on both sides with this value. Percentage values are relative to widget's width.
+- **transform_height** (*Optional*, int16 or percentage): Stretch widget higher on both sides with this value. Percentage values are relative to widget's height.
 - **transform_pivot_x** (*Optional*, int16): Horizontal anchor point of the transformation. Relative to the widget's top left corner.
 - **transform_pivot_y** (*Optional*, int16): Vertical anchor point of the transformation. Relative to the widget's top left corner.
 - **transform_scale** (*Optional*, 0.1-10): Transformation scale of the widget (uniform scaling).
-- **transform_scale_x** (*Optional*, 0.1-10): Horizontal transformation scale.
-- **transform_scale_y** (*Optional*, 0.1-10): Vertical transformation scale.
-- **transform_skew_x** (*Optional*, 0-360): Horizontal skew transformation angle.
-- **transform_skew_y** (*Optional*, 0-360): Vertical skew transformation angle.
-- **translate_x** (*Optional*, int16 or percentage): Movement of the widget with this value in horizontal direction.
-- **translate_y** (*Optional*, int16 or percentage): Movement of the widget with this value in vertical direction.
+- **transform_scale_x** (*Optional*, 0.1-10): Zoom widget horizontally.
+- **transform_scale_y** (*Optional*, 0.1-10): Zoom widget vertically.
+- **transform_skew_x** (*Optional*, 0-360): Skew widget horizontally by an angle.
+- **transform_skew_y** (*Optional*, 0-360): Skew widget vertically by an angle.
+- **translate_x** (*Optional*, int16 or percentage): Movement of the widget with this value in horizontal direction. Percentage values are relative to Widget's width. Applied after layouts, aligns and other positioning.
+- **translate_y** (*Optional*, int16 or percentage): Movement of the widget with this value in vertical direction. Percentage values are relative to Widget's height. Applied after layouts, aligns and other positioning.
+- **translate_radial** (*Optional*, int16 or percentage): Movement of the widget object the centre of the parent object (e.g. around the circumference of a scale).
 
 > [!NOTE]
 > The property names `transform_angle`, `transform_zoom`, `shadow_ofs_x` and `shadow_ofs_y` are deprecated. Use `transform_rotation`, `transform_scale`, `shadow_offset_x` and `shadow_offset_y` respectively.
@@ -527,7 +546,6 @@ A gradient is a sequence of colors which can be applied to an object using the `
 
 - **id** (**Required**, [ID](/guides/configuration-types#id)): The ID with which you will be able to reference the gradient later.
 - **direction** (**Required**, string): The direction of the gradient: `hor` (or `horizontal`) or `ver` (or `vertical`).
-- **dither** (*Optional*, string): **Deprecated** — dithering is not supported in LVGL 9.x and will be ignored.
 - **stops** (**Required**, list): A list of at least 2 color stop points. Each stop point has the following options:
   - **color** (**Required**, [Color](#lvgl-color)): The color of the stop point.
   - **opa** (*Optional*, [opacity](#lvgl-opacity)): The opacity at this stop point. Defaults to `COVER` (fully opaque).
@@ -539,7 +557,6 @@ A gradient is a sequence of colors which can be applied to an object using the `
   gradients:
     - id: color_bar
       direction: hor
-      dither: none
       stops:
         - color: 0xFF0000
           position: 0
