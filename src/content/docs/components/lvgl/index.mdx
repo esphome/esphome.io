@@ -223,6 +223,19 @@ lvgl:
             text: 'Hello World #2!'
 ```
 
+<span id="lvgl-opacity"></span>
+
+### Opacity
+
+Various parts of the widgets (like background, borders etc.) support opacity. It can be specified in one of several ways:
+
+- As a string: `TRANSP` for fully transparent, `COVER` for fully opaque
+- As a floating point value in the range 0.0-1.0
+- As a percentage between `0%` and `100%`.
+- From a lambda - return an integer in the range 0-255.
+
+Default values depend on widget specifics.
+
 <span id="lvgl-color"></span>
 
 ### Colors
@@ -247,18 +260,42 @@ on_...:
       color: !lambda return id(mapping_color_map)[x];
 ```
 
-<span id="lvgl-opacity"></span>
+<span id="lvgl-gradients"></span>
 
-### Opacity
+### Gradients
 
-Various parts of the widgets (like background, borders etc.) support opacity. It can be specified in one of several ways:
+A gradient is a sequence of colors which can be applied to an object using the `bg_grad` style option. Gradients are defined in the *gradients* section of the LVGL configuration by providing two or more color stop points.
+ Each entry has the following options:
 
-- As a string: `TRANSP` for fully transparent, `COVER` for fully opaque
-- As a floating point value in the range 0.0-1.0
-- As a percentage between `0%` and `100%`.
-- From a lambda - return an integer in the range 0-255.
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID with which you will be able to reference the gradient later.
+- **direction** (**Required**, string): The direction of the gradient: `hor` (or `horizontal`) or `ver` (or `vertical`).
+- **stops** (**Required**, list): A list of at least 2 color stop points. Each stop point has the following options:
+  - **color** (**Required**, [Color](#lvgl-color)): The color of the stop point.
+  - **opa** (*Optional*, [opacity](#lvgl-opacity)): The opacity at this stop point. Defaults to `COVER` (fully opaque).
+  - **position** (**Required**, float): The position of the stop point. Must be a float between 0.0 and 1.0, a percentage between 0% and 100%, or an integer between 0 and 255.
 
-Default values depend on widget specifics.
+```yaml
+# Example gradient showing full hue range.
+
+  gradients:
+    - id: color_bar
+      direction: hor
+      stops:
+        - color: 0xFF0000
+          position: 0
+        - color: 0xFFFF00
+          position: 42
+        - color: 0x00FF00
+          position: 84
+        - color: 0x00FFFF
+          position: 127
+        - color: 0x0000FF
+          position: 169
+        - color: 0xFF00FF
+          position: 212
+        - color: 0xFF0000
+          position: 255
+```
 
 <span id="lvgl-fonts"></span>
 
@@ -383,9 +420,14 @@ These style properties may be applied to any widget, though not all widgets use 
   - `INTERNAL`
 - **clip_corner** (*Optional*, boolean): If set to `true`, overflowing content will be clipped off by the widget's rounded corners (`radius` > `0`  ).
 - **color_filter_opa** (*Optional*, [opacity](#lvgl-opacity)): Opacity of the color filter. Currently color filters are applied only by the default LVGL theme, this option allows the effect of those to be disabled by setting to `TRANSP`.
-- **image_recolor** (*Optional*, [color](#lvgl-color)): Color to mix with every pixel of an image Note that `image_recolor_opa` defaults to TRANSP, so it must also be set.
-- **image_recolor_opa** (*Optional*, [opacity](#lvgl-opacity)): Opacity of the image recoloring.
+- **anim_duration** (*Optional*, int16): Animation duration in milliseconds. Its meaning is widget specific. E.g. blink time of the cursor on the Text Area or scroll time of a roller. See [Widgets](/components/lvgl/widgets/) documentation to learn more where this applies.
 - **image_opa** (*Optional*, [opacity](#lvgl-opacity)): Set opacity of an image.
+- **image_recolor** (*Optional*, [color](#lvgl-color)): Color to mix with every pixel of an image. Note that `image_recolor_opa` defaults to `TRANSP`, so it must also be set.
+- **image_recolor_opa** (*Optional*, [opacity](#lvgl-opacity)): Opacity of the image recoloring.
+- **recolor** (*Optional*, [color](#lvgl-color)): Color to mix with the widget. Defaults to `0` (black). Note that `recolor_opa` defaults to `TRANSP`, so it must also be set.
+- **recolor_opa** (*Optional*, [opacity](#lvgl-opacity)): Sets the intensity of color mixing. Intermediate values result in semi-transparency.
+
+
 - **outline_width** (*Optional*, int16): Set the width of the outline in pixels. It's like a border but drawn outside of the rectangles. Defaults to `0`.
 - **outline_color** (*Optional*, [color](#lvgl-color)): Color used to draw the outline around the widget. Defaults to `0` (black).
 - **outline_opa** (*Optional*, [opacity](#lvgl-opacity)): Opacity of the outline of the widget. Defaults to `COVER`.
@@ -513,67 +555,6 @@ Feel free to experiment to discover inheritance and precedence of the styles bas
 
 [Theme and style definitions](/cookbook/lvgl#lvgl-cookbook-theme) The Cookbook contains an example which demonstrates how to implement a gradient style for your widgets.
 
-### `lvgl.style.update` Action
-
-This [action](/automations/actions#actions-action) allows changing/updating the properties of a style at run time. This can be used to
-implement dynamic themes, e.g. light/dark mode, or to change the appearance of widgets based on user interaction.
-
-The action takes a style ID and a dictionary of properties to update. The properties can be any of the style properties listed above, and can be constants or lambdas.
-
-```yaml
-# Example configuration entry
-lvgl:
-  style_definitions:
-    - id: my_style
-      bg_color: 0xFFFFFF
-      border_color: 0x000000
-      border_width: 2
-
-# Action to update the style
-on_...:
-  - lvgl.style.update:
-      id: my_style
-      bg_color: 0xFF0000
-      border_color: 0x00FF00
-```
-
-<span id="lvgl-gradients"></span>
-
-### Gradients
-
-A gradient is a sequence of colors which can be applied to an object using the `bg_grad` style option. Gradients are defined in the *gradients* section of the LVGL configuration by providing two or more color stop points.
- Each entry has the following options:
-
-- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID with which you will be able to reference the gradient later.
-- **direction** (**Required**, string): The direction of the gradient: `hor` (or `horizontal`) or `ver` (or `vertical`).
-- **stops** (**Required**, list): A list of at least 2 color stop points. Each stop point has the following options:
-  - **color** (**Required**, [Color](#lvgl-color)): The color of the stop point.
-  - **opa** (*Optional*, [opacity](#lvgl-opacity)): The opacity at this stop point. Defaults to `COVER` (fully opaque).
-  - **position** (**Required**, float): The position of the stop point. Must be a float between 0.0 and 1.0, a percentage between 0% and 100%, or an integer between 0 and 255.
-
-```yaml
-# Example gradient showing full hue range.
-
-  gradients:
-    - id: color_bar
-      direction: hor
-      stops:
-        - color: 0xFF0000
-          position: 0
-        - color: 0xFFFF00
-          position: 42
-        - color: 0x00FF00
-          position: 84
-        - color: 0x00FFFF
-          position: 127
-        - color: 0x0000FF
-          position: 169
-        - color: 0xFF00FF
-          position: 212
-        - color: 0xFF0000
-          position: 255
-```
-
 ## Widgets
 
 LVGL supports a list of [Widgets](/components/lvgl/widgets/) which can be used to draw interactive objects on the screen.
@@ -621,6 +602,32 @@ widgets:
 on_...:
   then:
     - lvgl.widget.refresh: label1 # will update the label text using the lambda.
+```
+
+<span id="lvgl-style-update-action"></span>
+
+### `lvgl.style.update` Action
+
+This [action](/automations/actions#actions-action) allows changing/updating the properties of a style at run time. This can be used to
+implement dynamic themes, e.g. light/dark mode, or to change the appearance of widgets based on user interaction.
+
+The action takes a style ID and a dictionary of properties to update. The properties can be any of the style properties listed above, and can be constants or lambdas.
+
+```yaml
+# Example configuration entry
+lvgl:
+  style_definitions:
+    - id: my_style
+      bg_color: 0xFFFFFF
+      border_color: 0x000000
+      border_width: 2
+
+# Action to update the style
+on_...:
+  - lvgl.style.update:
+      id: my_style
+      bg_color: 0xFF0000
+      border_color: 0x00FF00
 ```
 
 <span id="lvgl-pause-action"></span>
