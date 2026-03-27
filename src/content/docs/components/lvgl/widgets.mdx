@@ -69,7 +69,7 @@ The properties below are common to all widgets.
   of the child in the X direction. One of `NONE` (default), `START`, `END`, `CENTER`.
 - **scroll_snap_y** (*Optional*, string): For a child of a scrollable object, this property defines the snap position
   of the child in the Y direction. One of `NONE` (default), `START`, `END`, `CENTER`.
-- **ext_click_area** (*Optional*, int16): Increase the area that will respond to pointer input (touch, mouse, etc.) outside the widget by a specified number of pixels. Use in conjunction with `adv_hittest` [flag](#lvgl-widget-flags) to fine-tune the sensitivity of the areas around the widgets that support this.
+- **ext_click_area** (*Optional*, int16): Increase the area that will respond to pointer input (touch, mouse, etc.) outside the widget by a specified number of pixels. Use in conjunction with `adv_hittest` [flag](#lvgl-widget-flags) to fine-tune the sensitivity of the areas around the widgets.
 - **align** (*Optional*, enum): Alignment of the widget relative to the parent. A child widget is clipped to its parent boundaries. One of the values *not* starting with `OUT_` (see picture below).
 - **align_to** (*Optional*, list): Alignment of the widget relative to another widget on the same level:
   - **id** (**Required**): The ID of a widget *to* which you want to align.
@@ -145,6 +145,9 @@ In addition to visual styling, each widget supports some boolean **flags** to in
 
 > [!NOTE]
 > LVGL only supports **integers** for numeric `value`. Visualizer widgets can't display floats directly, but they allow scaling by 10s. Some examples in the [Cookbook](/cookbook/lvgl/) cover how to do that.
+
+> [!TIP]
+> By default, widgets can be clicked only within their bounding area. However, especially with small widgets, it can be helpful to make a widget's "clickable" area larger. You can do this with `ext_click_area` styling property by specifying a number of pixels to extend the clickable area around the widget.
 
 <span id="lvgl-widget-parts"></span>
 
