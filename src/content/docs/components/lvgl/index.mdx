@@ -104,6 +104,7 @@ The following configuration variables apply to the main `lvgl` component, in ord
     - **right_button** (*Optional*, [ID](/guides/configuration-types#id)): The ID of a [Binary Sensor](/components/binary_sensor/), to be used as `RIGHT` key.
   - **long_press_time** (*Optional*, [Time](/guides/configuration-types#time)): For the rotary encoder, delay after which the `on_long_pressed` [interaction trigger](/components/lvgl/widgets#lvgl-automation-triggers) will be called. Defaults to `400ms`. Can be disabled with `never`.
   - **long_press_repeat_time** (*Optional*, [Time](/guides/configuration-types#time)): For the rotary encoder, repeated interval after `long_press_time`, when `on_long_pressed_repeat` [interaction trigger](/components/lvgl/widgets#lvgl-automation-triggers) will be called. Defaults to `100ms`. Can be disabled with `never`.
+- **rotary_sensitivity** (*Optional*, int16): Adjust sensitivity for rotary encoders in 1/256 unit. For example with 128 slow down the rotary to half, 512 speeds up to double, 256 no change.
 - **keypads** (*Optional*, list): A list of keypads interacting with the LVGL widgets on the display.
   - **group** (*Optional*, string): A name for a group of widgets which will interact with the input device. See the [common properties](/components/lvgl/widgets/) of the widgets for more information on groups.
   - **up** (*Optional*, [ID](/guides/configuration-types#id)): The ID of a [Binary Sensor](/components/binary_sensor/), to be used as `UP` key.
@@ -390,9 +391,10 @@ floating point, instead uses scaled integers. Properties with the following nati
 These style properties may be applied to any widget, though not all widgets use all of them.
 
 - **opa** (*Optional*, [opacity](#lvgl-opacity)): Opacity of the entire widget. Inherited from parent. Defaults to `COVER`.
+- **opa_layered** (*Optional*, [opacity](#lvgl-opacity)): Opacity of the entire layer the widget is on. Inherited from parent. Defaults to `COVER`.
+- **base_dir** (*Optional*): Set base direction of widget. One of `LTR` `RTL` `AUTO` (default).
 - **bg_color** (*Optional*, [color](#lvgl-color)): Color for the background of the widget. Defaults to `0xFFFFFF` (white).
 - **bg_opa** (*Optional*, [opacity](#lvgl-opacity)): Opacity of the widget background.
-- **opa_layered** (*Optional*, [opacity](#lvgl-opacity)): Opacity of the entire layer the widget is on. Inherited from parent. Defaults to `COVER`.
 - **bg_grad** (*Optional*, [gradient](#lvgl-gradients)): A gradient to apply to the background.
 - **bg_grad_color** (*Optional*, [color](#lvgl-color)): Color to make the background gradually fade to. Defaults to `0` (black).
 - **bg_grad_dir** (*Optional*, dict): Choose the direction of the background gradient: `NONE`, `HOR`, `VER`. Defaults to `NONE`.
@@ -404,6 +406,7 @@ These style properties may be applied to any widget, though not all widgets use 
 - **bg_image_opa** (*Optional*, [opacity](#lvgl-opacity)): Opacity of the background image of the widget.
 - **bg_image_recolor** (*Optional*, [color](#lvgl-color)): Color to mix with every pixel of the background image of the widget.
 - **bg_image_recolor_opa** (*Optional*, [opacity](#lvgl-opacity)): Opacity of the recoloring of the background image of the widget.
+- **blend_mode** (*Optional*): Describes how to blend the colors to the background. One of `NORMAL` (default), `ADDITIVE`, `SUBTRACTIVE`, `MULTIPLY`, `DIFFERENCE`.
 - **blur_radius** (*Optional*, int16): Sets the intensity of blurring. Applied on each widget part separately before the children are rendered. Defaults to `0`.
 - **blur_backdrop** (*Optional*, boolean): If `true` the background of the widget will be blurred. The part should have opacity smaller to make it visible. If `false` the given part will be blurred when it's rendered but before drawing the children. Defaults to `false`.
 - **blur_quality** (*Optional*): One of `AUTO`, `SPEED`, `PRECISION`. Setting to `SPEED` the blurring algorithm will prefer speed over quality. `PRECISION` will force using higher quality but slower blur. With `AUTO` the quality will be selected automatically (default).
@@ -411,14 +414,14 @@ These style properties may be applied to any widget, though not all widgets use 
 - **border_color** (*Optional*, [color](#lvgl-color)): Color to draw borders of the widget. Defaults to `0` (black).
 - **border_opa** (*Optional*, [opacity](#lvgl-opacity)): Opacity of the borders of the widget. Defaults to `COVER`.
 - **border_post** (*Optional*, boolean): If `true` the border will be drawn after all children of the widget have been drawn. Defaults to `false`.
-- **border_side** (*Optional*, list): Select which borders of the widgets to show (multiple can be specified as a YAML list, defaults to `NONE`  ):
+- **border_side** (*Optional*, list): Select which borders of the widgets to show (multiple can be specified as a YAML list, defaults to `NONE`):
   - `NONE`
   - `TOP`
   - `BOTTOM`
   - `LEFT`
   - `RIGHT`
   - `INTERNAL`
-- **clip_corner** (*Optional*, boolean): If set to `true`, overflowing content will be clipped off by the widget's rounded corners (`radius` > `0`  ).
+- **clip_corner** (*Optional*, boolean): If set to `true`, overflowing content will be clipped off by the widget's rounded corners (`radius` > `0`).
 - **color_filter_opa** (*Optional*, [opacity](#lvgl-opacity)): Opacity of the color filter. Currently color filters are applied only by the default LVGL theme, this option allows the effect of those to be disabled by setting to `TRANSP`.
 - **anim_duration** (*Optional*, int16): Animation duration in milliseconds. Its meaning is widget specific. E.g. blink time of the cursor on the Text Area or scroll time of a roller. See [Widgets](/components/lvgl/widgets/) documentation to learn more where this applies.
 - **image_opa** (*Optional*, [opacity](#lvgl-opacity)): Set opacity of an image.
