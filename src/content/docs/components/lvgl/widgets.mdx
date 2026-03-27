@@ -1276,10 +1276,10 @@ The meter widget can visualize data in very flexible ways. It can use arcs, need
   - **indicators** (**Required**, list): A list with indicators to be added to the scale. Multiple of each can be added. Their values are interpreted in the range of the scale:
     - **arc** (*Optional*): Add a background arc the scale:
       - **color**: [Color](/components/lvgl#lvgl-color) to draw the arc. Defaults to `0` (black).
-      - **end_value**: The value in the scale range to end drawing the arc to.
-      - **padding**: Adjust the position of the arc from the scale radius with this amount (can be negative). Defaults to `0`. (The deprecated name `r_mod` is also accepted.)
       - **start_value**: The value in the scale range to start drawing the arc from.
+      - **end_value**: The value in the scale range to end drawing the arc to.
       - **width**: Arc width in pixels. Defaults to `4`.
+      - **padding**: Adjust the position of the arc from the scale radius with this amount (can be negative). Defaults to `0`. (The deprecated name `r_mod` is also accepted.)
       - **opa**: Opacity of the arc.
     - **image** (*Optional*): Add a rotating needle image to the scale:
       - **id**: Manually specify the [ID](/guides/configuration-types#id) used for updating the indicator value at runtime.
@@ -1291,21 +1291,21 @@ The meter widget can visualize data in very flexible ways. It can use arcs, need
     - **line** (*Optional*): Add a needle line to the scale. By default, the length of the line is the same as the scale's radius:
       - **color**: [Color](/components/lvgl#lvgl-color) for the needle line. Defaults to `0` (black).
       - **id**: Manually specify the [ID](/guides/configuration-types#id) used for updating the indicator value at runtime.
+      - **width**: Needle line width in pixels. Defaults to `4`.
       - **length**: Length of the needle as a percentage (e.g. `80%`) or pixels. Defaults to `100%` of the scale radius. (The deprecated name `r_mod` is also accepted.)
       - **radial_offset**: Offset of the needle from the scale center, as a percentage or pixels. Defaults to `0`.
       - **value**: The value in the scale range to show at start. Defaults to `0`.
-      - **width**: Needle line width in pixels. Defaults to `4`.
       - **rounded**: Make the end points of the needle line rounded. `true` rounded, `false` perpendicular line ending.
       - **dash_width**: Set the width of the dashes in the needle line (in pixels).
       - **dash_gap**: Set the width of the gap between the dashes in the line (in pixels).
       - **opa**: Opacity of the needle. Defaults to 100%.
     - **tick_style** (*Optional*): Add tick style modifications:
-      - **color_end**: [Color](/components/lvgl#lvgl-color) for the gradient end of the ticks.
+      - **width**: Modifies the `width` of the tick lines.
       - **color_start**: [Color](/components/lvgl#lvgl-color) for the gradient start of the ticks.
+      - **color_end**: [Color](/components/lvgl#lvgl-color) for the gradient end of the ticks.
+      - **start_value**: The value in the scale range to modify the ticks from.
       - **end_value**: The value in the scale range to modify the ticks to.
       - **local**: If `true` the ticks' color will be faded from `color_start` to `color_end` in the start and end values specified above. If `false`, `color_start` and `color_end` will be mapped to the entire scale range (and only a *slice* of that color gradient will be visible in the indicator's start and end value range). Defaults to `false`.
-      - **start_value**: The value in the scale range to modify the ticks from.
-      - **width**: Modifies the `width` of the tick lines.
   - **draw_ticks_on_top** (*Optional*): If `true`, the ticks and their labels will be drawn on top of the indicators, otherwise they will be drawn under the indicators. Defaults to `true`.
   - **range_from** (**Required**): The minimum value of the tick scale. Defaults to `0`.
   - **range_to** (**Required**): The maximum value of the tick scale. Defaults to `100`.
@@ -1313,16 +1313,16 @@ The meter widget can visualize data in very flexible ways. It can use arcs, need
   - **ticks** (**Required**, list): A scale can have minor and major ticks and labels on the major ticks. To add the minor ticks:
     - **color** (*Optional*, [color](/components/lvgl#lvgl-color)): Color to draw the ticks. Required if `count` is greater than `0`. Defaults to `0x808080`.
     - **count** (**Required**): How many ticks to be on the scale. Defaults to `12`.
+    - **width** (*Optional*): Tick line width in pixels. Required if `count` is greater than `0`. Defaults to `2`.
     - **length** (*Optional*): Tick line length in pixels. Required if `count` is greater than `0`. Defaults to `10`.
     - **radial_offset** (*Optional*): Radial offset of the ticks from the default position, in pixels. Defaults to `0`.
-    - **width** (*Optional*): Tick line width in pixels. Required if `count` is greater than `0`. Defaults to `2`.
     - **major** (*Optional*, list): If you want major ticks and value labels displayed:
+      - **width**: Tick line width in pixels. Defaults to `5`.
+      - **length**: Tick line length in pixels or percentage. Defaults to `15%`.
       - **color**: [Color](/components/lvgl#lvgl-color) to draw the major ticks. Defaults to `0` (black).
       - **label_gap**: Label distance from the ticks with text proportional to the values of the tick line. Defaults to `4`.
-      - **length**: Tick line length in pixels or percentage. Defaults to `15%`.
       - **radial_offset** (*Optional*): Radial offset of the major ticks from the default position, in pixels. Defaults to `0`.
       - **stride**: How many minor ticks to skip when adding major ticks. Defaults to `3`.
-      - **width**: Tick line width in pixels. Defaults to `5`.
     - Style options from [Style properties](/components/lvgl#lvgl-styling) for the tick *lines* and *labels* using the [`line`](#lvgl-widget-line) and [`label`](#lvgl-widget-label) text style properties.
 - Style options from [Style properties](/components/lvgl#lvgl-styling) for the background of the meter, using the typical background properties.
 - **ticks** (*Optional*, dict): Styling options for the ticks *part*, which will be applied to the tick lines and labels using standard *line* and *label* styles.
@@ -1336,8 +1336,8 @@ The meter widget can visualize data in very flexible ways. It can use arcs, need
 
 - `lvgl.indicator.update` [action](/automations/actions#actions-action) updates indicator options as below. [lvgl.widget.update](#lvgl-automation-actions) action can be used for the common styles, states or flags of the meter widget.
   - **id** (**Required**): The ID or a list of IDs of indicators to update.
-  - **end_value** (*Optional*): The value in the scale range to end drawing the arc to.
   - **start_value** (*Optional*): The value in the scale range to start drawing the arc from.
+  - **end_value** (*Optional*): The value in the scale range to end drawing the arc to.
   - **opa** (*Optional*): Opacity of the indicator.
 
 **Triggers:**
@@ -1350,6 +1350,7 @@ The meter widget can visualize data in very flexible ways. It can use arcs, need
 # Example widget:
 - meter:
     align: center
+    pad_all: 3
     scales:
       range_from: -10
       range_to: 40
@@ -1360,19 +1361,19 @@ The meter widget can visualize data in very flexible ways. It can use arcs, need
         length: 3
         major:
           stride: 5
-          length: 13
-          label_gap: 13
+          length: 7
+          label_gap: 6
       indicators:
         - line:
             id: temperature_needle
             width: 2
             color: 0xFF0000
-            r_mod: -4
+            length: 90%
         - tick_style:
             start_value: -10
             end_value: 40
-            color_start: 0x0000bd #FF0000
-            color_end: 0xbd0000 #0000FF
+            color_start: 0x0000BD
+            color_end: 0xBD0000
 
 # Example action:
 on_...:
