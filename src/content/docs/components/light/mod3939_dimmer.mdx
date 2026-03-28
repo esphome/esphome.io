@@ -87,6 +87,9 @@ For each channel, you can have:
 - **max_value** (*Optional*, integer): Maximum brightness will be limited to this value when setting light to max.
 - All other options from [Light](/components/light#config-light).
 
+> [!NOTE]
+> The dimmer hardware performs a transition from and to OFF with a hardcoded timing, which cannot be overriden by `default_transition_length`.
+
 > [!TIP]
 > Use `light.dim_relative` [Action](/components/light#lightdim_relative-action) to implement dim up/down with long-press:
 > 
@@ -111,7 +114,6 @@ For each channel, you can have:
 >                 - light.dim_relative:
 >                     id: dimmer1
 >                     relative_brightness: 5%
->                     transition_length: 0.1s
 >                 - delay: 0.1s
 > ```
 
