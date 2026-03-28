@@ -303,13 +303,16 @@ def process_platform_component(md_file, lines, index, platform, name):
         return index, False
 
 
+def is_platform(name):
+    return name in json_get("esphome")["core"]["platforms"]
+
+
 def get_platform_from_title(title, config_component=None):
-    esphome_json = json_get("esphome")
     title = title.lower().replace("`", "")
     if config_component and title.startswith(config_component.lower()):
         title = title[len(config_component) + 1 :]
     name = title.replace(" ", "_")
-    if name in esphome_json["core"]["platforms"]:
+    if is_platform(name):
         return name
     return None
 
@@ -913,13 +916,21 @@ def parse_file(md_full_path):
                     .get(parts[1])
                 )
             elif len(parts) == 3:
-                # platform.component.action
-                pending_schema = (
-                    (json_get(parts[1]) or {})
-                    .get(f"{parts[1]}.{parts[0]}", {})
-                    .get(config_type, {})
-                    .get(parts[2])
-                )
+                # platform.component.action or # component.[action.name]
+                if is_platform(parts[0]):
+                    pending_schema = (
+                        (json_get(parts[1]) or {})
+                        .get(f"{parts[1]}.{parts[0]}", {})
+                        .get(config_type, {})
+                        .get(parts[2])
+                    )
+                else:
+                    pending_schema = (
+                        (json_get(parts[0]) or {})
+                        .get(parts[0], {})
+                        .get(config_type, {})
+                        .get(".".join(parts[1:]))
+                    )
 
             else:
                 print(f"{md_full_path}:{index} Found title {title} too many parts")
