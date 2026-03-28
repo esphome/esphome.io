@@ -27,10 +27,6 @@ JSON_ACTION = "action"
 
 DOCS_ROOT = Path(".") / "src" / "content" / "docs"
 
-#
-COMPONENT_TITLE_SCHEMA_ODDITIES = {
-    ("display_menu", "index", "Overview"): "DISPLAY_MENU_BASE"
-}
 
 # (registry_json_key, title_suffix_or_None)
 # None suffix = backtick title pattern: `name`
@@ -112,6 +108,9 @@ class Stats:
     core_platform_docs = 0
     platform_docs = 0
     props = 0
+    props_created = 0
+    props_skipped = 0
+    props_refined = 0
     enum_docs = 0
     action_docs = 0
     condition_docs = 0
@@ -344,13 +343,6 @@ def find_schema_prop(schema, prop_name):
         if extended.get(JSON_CV_TYPE) == JSON_CV_TYPE_SCHEMA:
             matched_config = find_schema_prop(extended["schema"], prop_name)
             if matched_config:
-                if JSON_DOCS in matched_config:
-                    new_docs_schema = schema.setdefault(
-                        JSON_CONFIG_VARS, {}
-                    ).setdefault(prop_name, {})
-                    new_docs_schema.setdefault(JSON_KEY, matched_config[JSON_KEY])
-                    return new_docs_schema  # document in upper level
-
                 return matched_config
     return None
 
@@ -488,50 +480,73 @@ def find_registry_entry(title, config_component):
 
 def set_schema_doc(md_file, index, schema, prop_name, prop_types, doc):
     matched_config = find_schema_prop(schema, prop_name)
-    if matched_config:
-        converted_doc = make_doc_with_see_also(md_file, index, doc)
 
-        if prop_types:
-            type_parts = [part.strip() for part in prop_types.split(",")]
-            optionality = type_parts[0].replace("*", "").lower()
-            config_optionality = matched_config.get(JSON_KEY, "")
-            if (
-                prop_name != "id"
-                and config_optionality != "GeneratedID"
-                and optionality != config_optionality.lower()
-                and args.debug_level > 5
-            ):
-                print(
-                    f"{md_file}:{index} {prop_name} Key {config_optionality} in ESPHome does not match {optionality} in docs"
-                )
+    if not matched_config:
+        # Check if an entry from this schema has prop
+        children = find_schema_props_in_children(schema, prop_name)
+        if not children:
+            # This prop not found either up or down the prop tree
+            if args.debug_level > 8:
+                print(f"{md_file}:{index}: prop {prop_name} not matched in schema")
 
-            templatable = any(is_templatable_type(p) for p in type_parts[1:])
-            config_templatable = matched_config.get(JSON_TEMPLATABLE, False)
-            if templatable != config_templatable and args.debug_level > 5:
-                print(
-                    f"{md_file}:{index} {prop_name} Templatable {config_templatable} in ESPHome does not match {templatable} in docs"
-                )
+            return None
 
-            # Document with type information, unless the type just says templatable
-            if len(type_parts) > 1 and not is_templatable_type(type_parts[1]):
-                prop_type = convert_links(md_file, index, type_parts[1])
-                matched_config[JSON_DOCS] = f"**{prop_type}**: {converted_doc}"
-                stats.props += 1
-                return matched_config
+        # document here
+        matched_config = schema.setdefault(JSON_CONFIG_VARS, {}).setdefault(
+            prop_name, {}
+        )
+        stats.props_created += 1
 
-        matched_config[JSON_DOCS] = converted_doc
+    converted_doc = make_doc_with_see_also(md_file, index, doc)
+    if prop_types:
+        type_parts = [part.strip() for part in prop_types.split(",")]
+        optionality = type_parts[0].replace("*", "").lower()
+        config_optionality = matched_config.get(JSON_KEY, "")
+        if (
+            prop_name != "id"
+            and config_optionality != "GeneratedID"
+            and optionality != config_optionality.lower()
+            and args.debug_level > 5
+        ):
+            print(
+                f"{md_file}:{index} {prop_name} Key {config_optionality} in ESPHome does not match {optionality} in docs"
+            )
 
-        stats.props += 1
+        templatable = any(is_templatable_type(p) for p in type_parts[1:])
+        config_templatable = matched_config.get(JSON_TEMPLATABLE, False)
+        if templatable != config_templatable and args.debug_level > 5:
+            print(
+                f"{md_file}:{index} {prop_name} Templatable {config_templatable} in ESPHome does not match {templatable} in docs"
+            )
+
+        # Document with type information, unless the type just says templatable
+        if len(type_parts) > 1 and not is_templatable_type(type_parts[1]):
+            prop_type = convert_links(md_file, index, type_parts[1])
+            converted_doc = f"**{prop_type}**: {converted_doc}"
+
+    if JSON_DOCS in matched_config and matched_config[JSON_DOCS] == converted_doc:
+        # skip re documenting
+
+        stats.props_skipped += 1
         return matched_config
 
-    # Downward search: apply docs to all children that have this prop
-    children = find_schema_props_in_children(schema, prop_name)
-    if children:
-        converted_doc = make_doc_with_see_also(md_file, index, doc)
-        for child_config in children:
-            child_config[JSON_DOCS] = converted_doc
-            stats.props += 1
-        return children[0]
+    is_extended_schema = matched_config != schema.get(JSON_CONFIG_VARS, {}).get(
+        prop_name
+    )
+
+    if JSON_DOCS in matched_config and is_extended_schema:
+        # override docs in extended schema here
+        new_docs_schema = schema.setdefault(JSON_CONFIG_VARS, {}).setdefault(
+            prop_name, {}
+        )
+        if JSON_KEY in matched_config:
+            new_docs_schema.setdefault(JSON_KEY, matched_config[JSON_KEY])
+        matched_config = new_docs_schema  # document in upper level
+        stats.props_refined += 1
+    else:
+        stats.props += 1
+
+    matched_config[JSON_DOCS] = converted_doc
 
     return matched_config
 
@@ -645,8 +660,6 @@ def process_schema(
                 matched_config = set_schema_doc(
                     md_file, index, schema, prop_name, search.group(2), search.group(3)
                 )
-                if not matched_config and args.debug_level > 8:
-                    print(f"{md_file}:{index}: prop {prop_name} not matched in schema")
 
 
 def process_config(md_file, lines, index, config_var, indent=0, parent_schema=None):
