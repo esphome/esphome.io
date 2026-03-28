@@ -60,6 +60,11 @@ opentherm:
   from disabling interrupts while we are talking to the boiler. Enable if you experience a lot of random intermittent
   invalid response errors (very likely to happen while using Dallas temperature sensors).
 
+- **communication_delay** (*Optional*, [Time](/guides/configuration-types#config-time), default `100ms`): The delay
+  between OpenTherm conversations. The OpenTherm specification requires the master to wait at least 100ms between
+  conversations. Additionally, the master must communicate at least every 1s; otherwise, the boiler will time out.
+  It is strongly recommended to keep this value at 100ms.
+
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation. Required if you have
   multiple busses.
 
@@ -162,7 +167,7 @@ There are three ways to set a numerical value:
 ```
 
 For the output and number variants, there are four more properties you can configure beyond those included in the
-output and number components by default:
+[output](/components/output/) and [number](/components/number/) components by default:
 
 - `min_value` (float): The minimum value. For a number this is the minimum value you are allowed to input. For an
   output this is the number that will be sent to the boiler when the output is at 0%.
@@ -335,6 +340,8 @@ available:
 - `max_t_set_lb`  : Lower bound for adjustment of max CH setpoint (°C)
 - `t_dhw_set`  : Domestic hot water temperature setpoint (°C)
 - `max_t_set`  : Maximum allowable CH water setpoint (°C)
+- `t_set`  : Control setpoint: temperature setpoint for the boiler's supply water (°C)
+- `t_set_ch2`  : Control setpoint 2: temperature setpoint for the boiler's supply water on the second heating circuit (°C)
 - `opentherm_version_device`  : Version of OpenTherm implemented by device
 - `device_type`  : Device product type
 - `device_version`  : Device product version
