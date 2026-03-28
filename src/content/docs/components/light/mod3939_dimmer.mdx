@@ -37,20 +37,20 @@ uart: # rx_pin is not required (not used)
 light:
   - platform: mod3939_dimmer
     channels:
-      - name: "Light CH1"
+      - name: "Light L1"
         id: dimmer1
         min_value: 0
         max_value: 255
-      - name: "Light CH2"
+      - name: "Light L2"
         id: dimmer2
         min_value: 0
         max_value: 255
 
 binary_sensor:
   - platform: gpio
-    id: light_switch_1
+    id: terminal_s1
     pin:
-      number: GPIO08 # fixed
+      number: GPIO08 # hardwired
       mode:
         input: true
         pullup: true
@@ -61,9 +61,9 @@ binary_sensor:
       - light.turn_off: dimmer1
 
   - platform: gpio
-    id: light_switch_2
+    id: terminal_s2
     pin:
-      number: GPIO09 # fixed
+      number: GPIO09 # hardwired
       mode:
         input: true
         pullup: true
@@ -76,9 +76,6 @@ binary_sensor:
 
 For a 1-channel dimmer omit the second channel from the `mod3939_dimmer` configuration.
 
-> [!TIP]
-> Use `light.dim_relative` [Action](/components/light#lightdim_relative-action) to implement dim up/down with long-press.
-
 ## Configuration variables
 
 - **channels** (**Required**, list): List of light channels to be configured. First one will control channel `0x01` and the second one will control channel `0x02`.
@@ -89,6 +86,34 @@ For each channel, you can have:
 - **min_value** (*Optional*, integer): Minimum brightness, lamp will be turned off below this value.
 - **max_value** (*Optional*, integer): Maximum brightness will be limited to this value when setting light to max.
 - All other options from [Light](/components/light#config-light).
+
+> [!TIP]
+> Use `light.dim_relative` [Action](/components/light#lightdim_relative-action) to implement dim up/down with long-press:
+> 
+> ```yaml
+> # Example for long press dimming
+> binary_sensor:
+>     ...
+>     on_multi_click:
+>       - timing:
+>           - ON for at most 0.5s
+>         then:
+>           - logger.log: "Short press"
+>           - light.toggle: dimmer1
+>       - timing:
+>           - ON for at least 0.7s
+>         then:
+>           - logger.log: "Long press"
+>           - while:
+>               condition:
+>                 binary_sensor.is_on: terminal_s1
+>               then:
+>                 - light.dim_relative:
+>                     id: dimmer1
+>                     relative_brightness: 5%
+>                     transition_length: 0.1s
+>                 - delay: 0.1s
+> ```
 
 ## Technical details
 
