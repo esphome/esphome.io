@@ -16,35 +16,43 @@ PMS5003T,
 [PMS7003](https://download.kamami.pl/p564008-PMS7003%20series%20data%20manua_English_V2.5.pdf),
 [PMS9003M](https://evelta.com/content/datasheets/203-PMS9003M.pdf),
 [PMSA003](https://evelta.com/content/datasheets/PMSA003%20series%20data%20manual_English_V2.5.pdf),
-laser based particulate matter sensors with ESPHome.
+
+And also the following models from [Luftmy](https://luftmy.com/article_list_30.html)
+[LD10](https://luftmy.com/article_read_84.html),
+[LD11](https://luftmy.com/article_read_85.html)
+[LD13](https://luftmy.com/article_read_89.html),
+[LD15](https://luftmy.com/article_read_87.html),
+[LD16](https://luftmy.com/article_read_88.html)
 
 As the communication with the PMSX003 is done using UART, you need
 to have an [UART bus](/components/uart) in your configuration with the `rx_pin` connected to the SEND/TX pin
 (may also be called the RX pin, depending on the model) of the PMS. Additionally, you need to set the baud rate to 9600.
+If you use an update_interval > 30 sec, you need to connect the tx_pin to the sensor.
+They all require 5V power but use 3.3V UART logic.
 
 This platform supports multiple sensor types, which you need to specify using the `type:` configuration
 value.
 
-| Type         | `PMS1003` | `PMS3003` | `PMSX003`                                  | `PMS5003S` | `PMS5003T` | `PMS5003ST` | `PMS9003M` |
-| ------------ | --------- | --------- | ------------------------------------------ | ---------- | ---------- | ----------- | ---------- |
-| Model        | `PMS1003` | `PMS3003` | `PMS5003`, `PMS6003`, `PMS7003`, `PMSA003` | `PMS5003S` | `PMS5003T` | `PMS5003ST` | `PMS9003M` |
-| PM1.0 STD    | ✅         | ✅         | ✅                                          | ✅          | ✅          | ✅           | ✅          |
-| PM2.5 STD    | ✅         | ✅         | ✅                                          | ✅          | ✅          | ✅           | ✅          |
-| PM10.0 STD   | ✅         | ✅         | ✅                                          | ✅          | ✅          | ✅           | ✅          |
-| PM1.0        | ✅         | ✅         | ✅                                          | ✅          | ✅          | ✅           | ✅          |
-| PM2.5        | ✅         | ✅         | ✅                                          | ✅          | ✅          | ✅           | ✅          |
-| PM10.0       | ✅         | ✅         | ✅                                          | ✅          | ✅          | ✅           | ✅          |
-| PM0.3 LoA    | ✅         | ❌         | ✅                                          | ✅          | ✅          | ✅           | ✅          |
-| PM0.5 LoA    | ✅         | ❌         | ✅                                          | ✅          | ✅          | ✅           | ✅          |
-| PM1.0 LoA    | ✅         | ❌         | ✅                                          | ✅          | ✅          | ✅           | ✅          |
-| PM2.5 LoA    | ✅         | ❌         | ✅                                          | ✅          | ✅          | ✅           | ✅          |
-| PM5.0 LoA    | ✅         | ❌         | ✅                                          | ✅          | ❌          | ✅           | ✅          |
-| PM10.0 LoA   | ✅         | ❌         | ✅                                          | ✅          | ❌          | ✅           | ✅          |
-| Formaldehyde | ❌         | ❌         | ❌                                          | ✅          | ❌          | ✅           | ❌          |
-| Temperature  | ❌         | ❌         | ❌                                          | ❌          | ✅          | ✅           | ❌          |
-| Humidity     | ❌         | ❌         | ❌                                          | ❌          | ✅          | ✅           | ❌          |
-| Version¹     | ✅         | ❌         | ❌                                          | ❌          | ❌          | ✅           | ✅          |
-| Error Code¹  | ✅         | ❌         | ❌                                          | ❌          | ❌          | ✅           | ✅          |
+| Type         | `PMS1003` | `PMS3003` | `PMSX003`                                  | `PMS5003S` | `PMS5003T` | `PMS5003ST` | `PMS9003M` | `LD1X`          |
+| ------------ | --------- | --------- | ------------------------------------------ | ---------- | ---------- | ----------- | ---------- | --------------- |
+| Model        | `PMS1003` | `PMS3003` | `PMS5003`, `PMS6003`, `PMS7003`, `PMSA003` | `PMS5003S` | `PMS5003T` | `PMS5003ST` | `PMS9003M` | `LD10`,`LD11`,`LD13`,`LD15`, `LD16`  |
+| PM1.0 STD    | ✅         | ✅         | ✅                                          | ✅          | ✅          | ✅           | ✅          | ✅              |
+| PM2.5 STD    | ✅         | ✅         | ✅                                          | ✅          | ✅          | ✅           | ✅          | ✅              |
+| PM10.0 STD   | ✅         | ✅         | ✅                                          | ✅          | ✅          | ✅           | ✅          | ✅              |
+| PM1.0        | ✅         | ✅         | ✅                                          | ✅          | ✅          | ✅           | ✅          | ❌              |
+| PM2.5        | ✅         | ✅         | ✅                                          | ✅          | ✅          | ✅           | ✅          | ❌              |
+| PM10.0       | ✅         | ✅         | ✅                                          | ✅          | ✅          | ✅           | ✅          | ❌              |
+| PM0.3 LoA    | ✅         | ❌         | ✅                                          | ✅          | ✅          | ✅           | ✅          | ✅              |
+| PM0.5 LoA    | ✅         | ❌         | ✅                                          | ✅          | ✅          | ✅           | ✅          | ✅              |
+| PM1.0 LoA    | ✅         | ❌         | ✅                                          | ✅          | ✅          | ✅           | ✅          | ✅              |
+| PM2.5 LoA    | ✅         | ❌         | ✅                                          | ✅          | ✅          | ✅           | ✅          | ✅              |
+| PM5.0 LoA    | ✅         | ❌         | ✅                                          | ✅          | ❌          | ✅           | ✅          | ✅              |
+| PM10.0 LoA   | ✅         | ❌         | ✅                                          | ✅          | ❌          | ✅           | ✅          | ✅              |
+| Formaldehyde | ❌         | ❌         | ❌                                          | ✅          | ❌          | ✅           | ❌          | ❌              |
+| Temperature  | ❌         | ❌         | ❌                                          | ❌          | ✅          | ✅           | ❌          | ❌              |
+| Humidity     | ❌         | ❌         | ❌                                          | ❌          | ✅          | ✅           | ❌          | ❌              |
+| Version¹     | ✅         | ❌         | ❌                                          | ❌          | ❌          | ✅           | ✅          | ❌              |
+| Error Code¹  | ✅         | ❌         | ❌                                          | ❌          | ❌          | ✅           | ✅          | ❌              |
 
 ¹ Currently not supported/provided as sensor by esphome
 
@@ -55,8 +63,81 @@ The laser diode inside the PMSX003 has a lifetime of about 8000 hours, nearly on
 If you wish to use the optional `update_interval` ensure you have a `tx_pin` set in the UART configuration and connected to the RECEIVE/RX pin
 (may also be called the TX pin, depending on the model) of the PMS. Setting `update_interval` to 120 seconds or higher may help extend the life span of the sensor.
 
+## LD1X Models
+
+The LD1X from luftmy offer are longer lifetime compared to the Plantower models.
+
+| Model | Short Description | Service Life |
+| :--- | :--- | :--- | :--- |
+| **LD10** | **Compact Cube Design** | $\ge$ 5 Years | 
+| **LD11** | **Classic Standard Unit** | $\ge$ 5 Years | 
+| **LD13** | **Ultra-Thin Specialist** | $\ge$ 3 Years | 
+| **LD15** | **High-End Metal Case** | $\ge$ 5 Years | 
+| **LD16** | **Industrial Automotive Grade** | $\ge$ 8 Years |
+
+## Pinout Reference
+
+### GroupA — Plantower 8-pin (1.25 mm Molex PicoBlade)
+> PMS1003, PMS3003, PMS5003, PMS5003S, PMS5003T, PMS5003ST, PMS6003
+
+| Pin | Name | Description |
+|-----|------|-------------|
+| 1 | VCC | +5 V supply |
+| 2 | GND | Ground |
+| 3 | SET | High/float = run · Low = sleep (3.3 V, internal pull-up) |
+| 4 | RX | UART receive — connect to host TX (3.3 V) |
+| 5 | TX | UART transmit — connect to host RX (3.3 V) |
+| 6 | RESET | Active-low reset (3.3 V, internal pull-up) |
+| 7 | NC | Leave open |
+| 8 | NC | Leave open |
+
+### GroupB — Plantower 10-pin (1.27 mm 5×2 header)
+> PMS7003, PMSA003
+
+| Pin | Name | Description |
+|-----|------|-------------|
+| 1 | VCC | +5 V supply |
+| 2 | VCC | +5 V supply (redundant) |
+| 3 | GND | Ground |
+| 4 | GND | Ground (redundant) |
+| 5 | RESET | Active-low reset (3.3 V, internal pull-up) |
+| 6 | NC | Leave open |
+| 7 | RX | UART receive — connect to host TX (3.3 V) |
+| 8 | NC | Leave open |
+| 9 | TX | UART transmit — connect to host RX (3.3 V) |
+| 10 | SET | High/float = run · Low = sleep (3.3 V, internal pull-up) |
+
+### GroupC — Plantower 8-pin (1.25 mm Molex PicoBlade)
+> PMS9003M
+
+Identical pin assignment to Group A.
+
+### GroupD — Luftmy 8-pin (1.25 mm Molex PicoBlade)
+> LD10, LD11, LD13, LD15, LD16
+
+| Pin | Name | Description |
+|-----|------|-------------|
+| 1 | VCC | +5 V supply |
+| 2 | GND | Ground |
+| 3 | SET | High/float = run · Low = sleep (3.3 V, internal pull-up) |
+| 4 | RXD | UART receive — connect to host TX (3.3 V) |
+| 5 | TXD | UART transmit — connect to host RX (3.3 V) |
+| 6 | RESET | Active-low reset (3.3 V, internal pull-up) |
+| 7 | DEBUG | Factory debug — **leave floating** (not a true NC) |
+| 8 | NC | Leave open |
+
+### UART settings (all models)
+`9600 baud · 8N1 · 3.3 V TTL · 5 V supply`
+
+### Notes
+- Logic pins (SET, RX/RXD, TX/TXD, RESET) are **3.3 V only** — add a level shifter for 5 V MCUs.
+- Wait **≥ 30 s** after power-on or wake before readings are reliable (fan spin-up).
+- **PMS3003** has no passive mode; outputs a shorter 24-byte frame (no particle-count data).
+- **Group B** (PMS7003, PMSA003): SET is on pin 10, RESET on pin 5 — opposite ends from Group A.
+- **LD11/LD15** multi-sensor variants add a secondary interface (I²C or UART) for temp/RH/VOC/HCHO — the 8-pin PM connector remains the same.
+
 ```yaml
-# Example configuration entry
+# Example configuration entry (Plantower PMS5003/6003/7003/PMSA003)
 sensor:
   - platform: pmsx003
     type: PMSX003
@@ -67,6 +148,27 @@ sensor:
     pm_10_0:
       name: "Particulate Matter <10.0µm Concentration"
 ```
+
+```yaml
+# Example configuration entry (Luftmy LD1X - LD15 / LD16)
+sensor:
+  - platform: pmsx003
+    type: LD15
+    pm_1_0_std:
+      name: "Particulate Matter <1.0µm Concentration"
+    pm_2_5_std:
+      name: "Particulate Matter <2.5µm Concentration"
+    pm_10_0_std:
+      name: "Particulate Matter <10.0µm Concentration"
+    pm_0_3um:
+      name: "Particulate Count >0.3µm"
+    pm_2_5um:
+      name: "Particulate Count >2.5µm"
+```
+
+> [!NOTE]
+> The Luftmy LD1X sensors do **not** provide atmospheric PM concentrations (`pm_1_0`, `pm_2_5`, `pm_10_0`).
+> Use the standard particle (`pm_1_0_std`, `pm_2_5_std`, `pm_10_0_std`) and particle count (`pm_*um`) sensors instead.
 
 ## Configuration variables
 
@@ -80,12 +182,15 @@ sensor:
   All options from [Sensor](/components/sensor).
 
 - **pm_1_0** (*Optional*): Use the concentration of particulates of size less than 1.0µm in µg per cubic meter under atmospheric environment.
+  Not supported by `LD1X` (`LD15`, `LD16`) type sensors.
   All options from [Sensor](/components/sensor).
 
 - **pm_2_5** (*Optional*): Use the concentration of particulates of size less than 2.5µm in µg per cubic meter under atmospheric environment.
+  Not supported by `LD1X` (`LD15`, `LD16`) type sensors.
   All options from [Sensor](/components/sensor).
 
 - **pm_10_0** (*Optional*): Use the concentration of particulates of size less than 10.0µm in µg per cubic meter under atmospheric environment.
+  Not supported by `LD1X` (`LD15`, `LD16`) type sensors.
   All options from [Sensor](/components/sensor).
 
 - **pm_0_3um** (*Optional*): Use the number of particles with diameter beyond 0.3um in 0.1L of air.
