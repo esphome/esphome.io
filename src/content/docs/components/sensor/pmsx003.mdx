@@ -16,26 +16,24 @@ PMS5003T,
 [PMS7003](https://download.kamami.pl/p564008-PMS7003%20series%20data%20manua_English_V2.5.pdf),
 [PMS9003M](https://evelta.com/content/datasheets/203-PMS9003M.pdf),
 [PMSA003](https://evelta.com/content/datasheets/PMSA003%20series%20data%20manual_English_V2.5.pdf),
-
-And also the following models from [Luftmy](https://luftmy.com/article_list_30.html)
+and the following models from [Luftmy](https://luftmy.com/article_list_30.html):
 [LD10](https://luftmy.com/article_read_84.html),
-[LD11](https://luftmy.com/article_read_85.html)
+[LD11](https://luftmy.com/article_read_85.html),
 [LD13](https://luftmy.com/article_read_89.html),
 [LD15](https://luftmy.com/article_read_87.html),
-[LD16](https://luftmy.com/article_read_88.html)
+and [LD16](https://luftmy.com/article_read_88.html).
 
 As the communication with the PMSX003 is done using UART, you need
 to have an [UART bus](/components/uart) in your configuration with the `rx_pin` connected to the SEND/TX pin
 (may also be called the RX pin, depending on the model) of the PMS. Additionally, you need to set the baud rate to 9600.
-If you use an update_interval > 30 sec, you need to connect the tx_pin to the sensor.
 They all require 5V power but use 3.3V UART logic.
 
 This platform supports multiple sensor types, which you need to specify using the `type:` configuration
 value.
 
-| Type         | `PMS1003` | `PMS3003` | `PMSX003`                                  | `PMS5003S` | `PMS5003T` | `PMS5003ST` | `PMS9003M` | `LD1X`          |
-| ------------ | --------- | --------- | ------------------------------------------ | ---------- | ---------- | ----------- | ---------- | --------------- |
-| Model        | `PMS1003` | `PMS3003` | `PMS5003`, `PMS6003`, `PMS7003`, `PMSA003` | `PMS5003S` | `PMS5003T` | `PMS5003ST` | `PMS9003M` | `LD10`,`LD11`,`LD13`,`LD15`, `LD16`  |
+| Type         | `PMS1003` | `PMS3003` | `PMSX003`                                  | `PMS5003S` | `PMS5003T` | `PMS5003ST` | `PMS9003M` | `LD10`/`LD11`/`LD13`/`LD15`/`LD16` |
+| ------------ | --------- | --------- | ------------------------------------------ | ---------- | ---------- | ----------- | ---------- | ----------------------------------- |
+| Model        | `PMS1003` | `PMS3003` | `PMS5003`, `PMS6003`, `PMS7003`, `PMSA003` | `PMS5003S` | `PMS5003T` | `PMS5003ST` | `PMS9003M` | `LD10`, `LD11`, `LD13`, `LD15`, `LD16` |
 | PM1.0 STD    | ✅         | ✅         | ✅                                          | ✅          | ✅          | ✅           | ✅          | ✅              |
 | PM2.5 STD    | ✅         | ✅         | ✅                                          | ✅          | ✅          | ✅           | ✅          | ✅              |
 | PM10.0 STD   | ✅         | ✅         | ✅                                          | ✅          | ✅          | ✅           | ✅          | ✅              |
@@ -65,10 +63,10 @@ If you wish to use the optional `update_interval` ensure you have a `tx_pin` set
 
 ## LD1X Models
 
-The LD1X from luftmy offer are longer lifetime compared to the Plantower models.
+Luftmy's LD1X models offer a longer service life compared to the Plantower models.
 
 | Model | Short Description | Service Life |
-| :--- | :--- | :--- | :--- |
+| :--- | :--- | :--- |
 | **LD10** | **Compact Cube Design** | $\ge$ 5 Years | 
 | **LD11** | **Classic Standard Unit** | $\ge$ 5 Years | 
 | **LD13** | **Ultra-Thin Specialist** | $\ge$ 3 Years | 
@@ -150,10 +148,10 @@ sensor:
 ```
 
 ```yaml
-# Example configuration entry (Luftmy LD1X - LD15 / LD16)
+# Example configuration entry (Luftmy LD1X — use type: LD10, LD11, LD13, LD15, or LD16)
 sensor:
   - platform: pmsx003
-    type: LD15
+    type: LD15  # replace with your model: LD10, LD11, LD13, LD15, or LD16
     pm_1_0_std:
       name: "Particulate Matter <1.0µm Concentration"
     pm_2_5_std:
@@ -182,15 +180,15 @@ sensor:
   All options from [Sensor](/components/sensor).
 
 - **pm_1_0** (*Optional*): Use the concentration of particulates of size less than 1.0µm in µg per cubic meter under atmospheric environment.
-  Not supported by `LD1X` (`LD15`, `LD16`) type sensors.
+  Not supported by `LD1X` (LD10, LD11, LD13, LD15, LD16) type sensors.
   All options from [Sensor](/components/sensor).
 
 - **pm_2_5** (*Optional*): Use the concentration of particulates of size less than 2.5µm in µg per cubic meter under atmospheric environment.
-  Not supported by `LD1X` (`LD15`, `LD16`) type sensors.
+  Not supported by `LD1X` (LD10, LD11, LD13, LD15, LD16) type sensors.
   All options from [Sensor](/components/sensor).
 
 - **pm_10_0** (*Optional*): Use the concentration of particulates of size less than 10.0µm in µg per cubic meter under atmospheric environment.
-  Not supported by `LD1X` (`LD15`, `LD16`) type sensors.
+  Not supported by `LD1X` (LD10, LD11, LD13, LD15, LD16) type sensors.
   All options from [Sensor](/components/sensor).
 
 - **pm_0_3um** (*Optional*): Use the number of particles with diameter beyond 0.3um in 0.1L of air.
