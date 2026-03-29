@@ -818,7 +818,7 @@ def parse_file(md_full_path):
     if file_name == "index" and file_folder == "components":
         return  # nothing here
 
-    if file_name in core["components"]:
+    if file_name in core["components"] and file_folder not in core["platforms"]:
         # fill root component docs
         index, success = process_component(md_full_path, lines, index, file_name)
         if success:
