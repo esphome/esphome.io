@@ -73,67 +73,6 @@ Luftmy's LD1X models offer a longer service life compared to the Plantower model
 | **LD15** | **High-End Metal Case** | $\ge$ 5 Years | 
 | **LD16** | **Industrial Automotive Grade** | $\ge$ 8 Years |
 
-## Pinout Reference
-
-### GroupA — Plantower 8-pin (1.25 mm Molex PicoBlade)
-> PMS1003, PMS3003, PMS5003, PMS5003S, PMS5003T, PMS5003ST, PMS6003
-
-| Pin | Name | Description |
-|-----|------|-------------|
-| 1 | VCC | +5 V supply |
-| 2 | GND | Ground |
-| 3 | SET | High/float = run · Low = sleep (3.3 V, internal pull-up) |
-| 4 | RX | UART receive — connect to host TX (3.3 V) |
-| 5 | TX | UART transmit — connect to host RX (3.3 V) |
-| 6 | RESET | Active-low reset (3.3 V, internal pull-up) |
-| 7 | NC | Leave open |
-| 8 | NC | Leave open |
-
-### GroupB — Plantower 10-pin (1.27 mm 5×2 header)
-> PMS7003, PMSA003
-
-| Pin | Name | Description |
-|-----|------|-------------|
-| 1 | VCC | +5 V supply |
-| 2 | VCC | +5 V supply (redundant) |
-| 3 | GND | Ground |
-| 4 | GND | Ground (redundant) |
-| 5 | RESET | Active-low reset (3.3 V, internal pull-up) |
-| 6 | NC | Leave open |
-| 7 | RX | UART receive — connect to host TX (3.3 V) |
-| 8 | NC | Leave open |
-| 9 | TX | UART transmit — connect to host RX (3.3 V) |
-| 10 | SET | High/float = run · Low = sleep (3.3 V, internal pull-up) |
-
-### GroupC — Plantower 8-pin (1.25 mm Molex PicoBlade)
-> PMS9003M
-
-Identical pin assignment to Group A.
-
-### GroupD — Luftmy 8-pin (1.25 mm Molex PicoBlade)
-> LD10, LD11, LD13, LD15, LD16
-
-| Pin | Name | Description |
-|-----|------|-------------|
-| 1 | VCC | +5 V supply |
-| 2 | GND | Ground |
-| 3 | SET | High/float = run · Low = sleep (3.3 V, internal pull-up) |
-| 4 | RXD | UART receive — connect to host TX (3.3 V) |
-| 5 | TXD | UART transmit — connect to host RX (3.3 V) |
-| 6 | RESET | Active-low reset (3.3 V, internal pull-up) |
-| 7 | DEBUG | Factory debug — **leave floating** (not a true NC) |
-| 8 | NC | Leave open |
-
-### UART settings (all models)
-`9600 baud · 8N1 · 3.3 V TTL · 5 V supply`
-
-### Notes
-- Logic pins (SET, RX/RXD, TX/TXD, RESET) are **3.3 V only** — add a level shifter for 5 V MCUs.
-- Wait **≥ 30 s** after power-on or wake before readings are reliable (fan spin-up).
-- **PMS3003** has no passive mode; outputs a shorter 24-byte frame (no particle-count data).
-- **Group B** (PMS7003, PMSA003): SET is on pin 10, RESET on pin 5 — opposite ends from Group A.
-- **LD11/LD15** multi-sensor variants add a secondary interface (I²C or UART) for temp/RH/VOC/HCHO — the 8-pin PM connector remains the same.
-
 ```yaml
 # Example configuration entry (Plantower PMS5003/6003/7003/PMSA003)
 sensor:
@@ -223,6 +162,67 @@ sensor:
 
 - **uart_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the [UART Component](/components/uart) if you want
   to use multiple UART buses.
+
+## Pinout Reference
+
+### GroupA — Plantower 8-pin (1.25 mm Molex PicoBlade)
+> PMS1003, PMS3003, PMS5003, PMS5003S, PMS5003T, PMS5003ST, PMS6003
+
+| Pin | Name | Description |
+|-----|------|-------------|
+| 1 | VCC | +5 V supply |
+| 2 | GND | Ground |
+| 3 | SET | High/float = run · Low = sleep (3.3 V, internal pull-up) |
+| 4 | RX | UART receive — connect to host TX (3.3 V) |
+| 5 | TX | UART transmit — connect to host RX (3.3 V) |
+| 6 | RESET | Active-low reset (3.3 V, internal pull-up) |
+| 7 | NC | Leave open |
+| 8 | NC | Leave open |
+
+### GroupB — Plantower 10-pin (1.27 mm 5×2 header)
+> PMS7003, PMSA003
+
+| Pin | Name | Description |
+|-----|------|-------------|
+| 1 | VCC | +5 V supply |
+| 2 | VCC | +5 V supply (redundant) |
+| 3 | GND | Ground |
+| 4 | GND | Ground (redundant) |
+| 5 | RESET | Active-low reset (3.3 V, internal pull-up) |
+| 6 | NC | Leave open |
+| 7 | RX | UART receive — connect to host TX (3.3 V) |
+| 8 | NC | Leave open |
+| 9 | TX | UART transmit — connect to host RX (3.3 V) |
+| 10 | SET | High/float = run · Low = sleep (3.3 V, internal pull-up) |
+
+### GroupC — Plantower 8-pin (1.25 mm Molex PicoBlade)
+> PMS9003M
+
+Identical pin assignment to Group A.
+
+### GroupD — Luftmy 8-pin (1.25 mm Molex PicoBlade)
+> LD10, LD11, LD13, LD15, LD16
+
+| Pin | Name | Description |
+|-----|------|-------------|
+| 1 | VCC | +5 V supply |
+| 2 | GND | Ground |
+| 3 | SET | High/float = run · Low = sleep (3.3 V, internal pull-up) |
+| 4 | RXD | UART receive — connect to host TX (3.3 V) |
+| 5 | TXD | UART transmit — connect to host RX (3.3 V) |
+| 6 | RESET | Active-low reset (3.3 V, internal pull-up) |
+| 7 | DEBUG | Factory debug — **leave floating** (not a true NC) |
+| 8 | NC | Leave open |
+
+### UART settings (all models)
+`9600 baud · 8N1 · 3.3 V TTL · 5 V supply`
+
+### Notes
+- Logic pins (SET, RX/RXD, TX/TXD, RESET) are **3.3 V only** — add a level shifter for 5 V MCUs.
+- Wait **≥ 30 s** after power-on or wake before readings are reliable (fan spin-up).
+- **PMS3003** has no passive mode; outputs a shorter 24-byte frame (no particle-count data).
+- **Group B** (PMS7003, PMSA003): SET is on pin 10, RESET on pin 5 — opposite ends from Group A.
+- **LD11/LD15** multi-sensor variants add a secondary interface (I²C or UART) for temp/RH/VOC/HCHO — the 8-pin PM connector remains the same.
 
 ## See Also
 
