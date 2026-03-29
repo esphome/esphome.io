@@ -284,8 +284,11 @@ def process_component(md_file, lines, index, name):
     if name not in core["components"]:
         return index, False
     index, docs = md_get_paragraph(lines, index)
-    core["components"][name][JSON_DOCS] = make_doc_with_see_also(md_file, index, docs)
-    stats.core_docs += 1
+    if JSON_DOCS not in core["components"][name]:
+        core["components"][name][JSON_DOCS] = make_doc_with_see_also(
+            md_file, index, docs
+        )
+        stats.core_docs += 1
     return index, True
 
 
@@ -818,7 +821,7 @@ def parse_file(md_full_path):
     if file_name == "index" and file_folder == "components":
         return  # nothing here
 
-    if file_name in core["components"] and file_folder not in core["platforms"]:
+    if file_name in core["components"]:
         # fill root component docs
         index, success = process_component(md_full_path, lines, index, file_name)
         if success:
