@@ -294,11 +294,10 @@ The animation image is similar to the normal `image` widget. The main difference
 
 # Example actions:
 on_...:
-  then:
-    - lvgl.animimg.update:
-        id: anim_id
-        repeat_count: 100
-        duration: 300ms
+  - lvgl.animimg.update:
+      id: anim_id
+      repeat_count: 100
+      duration: 300ms
 ```
 
 See [Battery charging animation](/cookbook/lvgl#lvgl-cookbook-animbatt) in the Cookbook for a more detailed example.
@@ -369,12 +368,11 @@ By default the whole area of the widget is interactive. If the `adv_hittest` [fl
 
 # Example action:
 on_...:
-  then:
-    - lvgl.arc.update:
-        id: arc_id
-        knob:
-          bg_color: 0x00FF00
-        value: 55
+  - lvgl.arc.update:
+      id: arc_id
+      knob:
+        bg_color: 0x00FF00
+      value: 55
 
 # Example trigger:
 - arc:
@@ -442,10 +440,9 @@ Not only the end, but also the start value of the bar can be set, which changes 
 
 # Example action:
 on_...:
-  then:
-    - lvgl.bar.update:
-        id: bar_id
-        value: 55
+  - lvgl.bar.update:
+      id: bar_id
+      value: 55
 ```
 
 The `bar` can be also integrated as [Number](/components/number/lvgl/) or [Sensor](/components/sensor/lvgl/) component.
@@ -504,11 +501,9 @@ To create an image button, add a child [`image`](#lvgl-widget-image) widget to i
 - button:
     ...
     on_value:
-      then:
-        - logger.log:
-            format: "Button checked state: %d"
-            args: [ x ]
-
+      - logger.log:
+          format: "Button checked state: %d"
+          args: [ x ]
 ```
 
 The `button` can be also integrated as a [Binary Sensor](/components/binary_sensor/lvgl/) or as a [Switch](/components/switch/lvgl/) component.
@@ -626,19 +621,18 @@ The button matrix widget is a lightweight way to display multiple buttons in row
 
 # Example action:
 on_...:
-  then:
-    - lvgl.matrix.button.update:
-        id: button_1
-        width: 1
-        selected: true
-        control:
-          checkable: false
-    - lvgl.buttonmatrix.update:
-        id: matrix_id
-        state:
-          disabled: true
-        items:
-          bg_color: 0xf0f0f0
+  - lvgl.matrix.button.update:
+      id: button_1
+      width: 1
+      selected: true
+      control:
+        checkable: false
+  - lvgl.buttonmatrix.update:
+      id: matrix_id
+      state:
+        disabled: true
+      items:
+        bg_color: 0xf0f0f0
 
 # Example trigger:
 - buttonmatrix:
@@ -785,26 +779,25 @@ Where a list of points is required, this can be provided in the form of a list o
 
 # Example drawing actions, executed with delay:
 on_...:
-  then:
-    - lvgl.canvas.fill: # Fill canvas with white
-        id: my_canvas
-        color: white
-    - delay: 1s
-    - lvgl.canvas.draw_rectangle: # Draw a blue rectangle
-        id: my_canvas
-        x: 10
-        y: 10
-        width: 100
-        height: 50
-        bg_color: blue
-    - delay: 1s
-    - lvgl.canvas.draw_text: # Draw some red text
-        id: my_canvas
-        x: 20
-        y: 20
-        text: "Hello World"
-        max_width: 100
-        color: red
+  - lvgl.canvas.fill: # Fill canvas with white
+      id: my_canvas
+      color: white
+  - delay: 1s
+  - lvgl.canvas.draw_rectangle: # Draw a blue rectangle
+      id: my_canvas
+      x: 10
+      y: 10
+      width: 100
+      height: 50
+      bg_color: blue
+  - delay: 1s
+  - lvgl.canvas.draw_text: # Draw some red text
+      id: my_canvas
+      x: 20
+      y: 20
+      text: "Hello World"
+      max_width: 100
+      color: red
 ```
 
 <span id="lvgl-widget-checkbox"></span>
@@ -844,21 +837,19 @@ The checkbox widget is made internally from a *tick box* and a label. When the c
 
 # Example action:
 on_...:
-  then:
-    - lvgl.checkbox.update:
-        id: checkbox_id
-        state:
-          checked: true
-        text: Checked
+  - lvgl.checkbox.update:
+      id: checkbox_id
+      state:
+        checked: true
+      text: Checked
 
 # Example trigger:
 - checkbox:
     ...
     on_value:
-      then:
-        - logger.log:
-            format: "Checkbox state: %d"
-            args: [ x ]
+      - logger.log:
+          format: "Checkbox state: %d"
+          args: [ x ]
 ```
 
 > [!NOTE]
@@ -956,7 +947,6 @@ The Dropdown widget is built internally from a *button* part and a *list* part (
 
 # Example action:
 on_...:
-  then:
   - lvgl.dropdown.update:
       id: dropdown_id
       selected_index: 4
@@ -1022,10 +1012,9 @@ Images are the basic widgets used to display images.
 
 # Example action:
 on_...:
-  then:
-    - lvgl.image.update:
-        id: img_id
-        src: cat_image_bowtie
+  - lvgl.image.update:
+      id: img_id
+      src: cat_image_bowtie
 ```
 
 > [!NOTE]
@@ -1075,21 +1064,18 @@ For styling, the `keyboard` widget uses the same settings as [`buttonmatrix`](#l
 
 # Example actions:
 on_focus:
-  then:
-    - lvgl.keyboard.update:
-        id: keyboard_id
-        mode: number
-        textarea: textarea_2
+  - lvgl.keyboard.update:
+      id: keyboard_id
+      mode: NUMBER
+      textarea: textarea_2
 
 # Example trigger:
 - keyboard:
     ...
     on_ready:
-      then:
-        - logger.log: Keyboard is ready
+      - logger.log: Keyboard is ready
     on_cancel:
-      then:
-        - logger.log: Keyboard cancelled
+      - logger.log: Keyboard cancelled
 ```
 
 > [!TIP]
@@ -1159,12 +1145,11 @@ A label is the basic widget type that is used to display text.
 
 # Example action (update label with a value from a sensor):
 on_...:
-  then:
-    - lvgl.label.update:
-        id: lbl_id
-        text:
-          format: "%.0fdBm"
-          args: [ 'id(wifi_signal_db).get_state()' ]
+  - lvgl.label.update:
+      id: lbl_id
+      text:
+        format: "%.0fdBm"
+        args: [ 'id(wifi_signal_db).get_state()' ]
 ```
 
 The `label` can be also integrated as [Text](/components/text/lvgl/) or [Text Sensor](/components/text_sensor/lvgl/) component.
@@ -1205,10 +1190,9 @@ The LED widgets are either circular or rectangular widgets whose brightness can 
 
 # Example action:
 on_...:
-  then:
-    - lvgl.led.update:
-        id: led_id
-        color: 0x00FF00
+  - lvgl.led.update:
+      id: led_id
+      color: 0x00FF00
 ```
 
 The `led` can be also integrated as [Light](/components/light/lvgl/) component.
@@ -1351,7 +1335,7 @@ The meter widget can visualize data in very flexible ways. It can use arcs, need
 ```yaml
 # Example widget:
 - meter:
-    align: center
+    align: CENTER
     pad_all: 3
     scales:
       range_from: -10
@@ -1379,10 +1363,9 @@ The meter widget can visualize data in very flexible ways. It can use arcs, need
 
 # Example action:
 on_...:
-  then:
-    - lvgl.indicator.update:
-        id: temperature_needle
-        value: 3
+  - lvgl.indicator.update:
+      id: temperature_needle
+      value: 3
 ```
 
 See [Semicircle gauge](/cookbook/lvgl#lvgl-cookbook-gauge), [Thermometer](/cookbook/lvgl#lvgl-cookbook-thermometer) and [An analog clock](/cookbook/lvgl#lvgl-cookbook-clock) in the Cookbook for examples which demonstrate how to effectively use this widget.
@@ -1436,8 +1419,7 @@ lvgl:
         - id: msgbox_close
           text: "\uF00D"
           on_click:
-            then:
-              - lvgl.widget.hide: message_box
+            - lvgl.widget.hide: message_box
 ```
 
 > [!TIP]
@@ -1468,10 +1450,9 @@ widgets.
 ```yaml
 # Example widget:
 - obj:
-    x: 10
-    y: 10
-    width: 220
-    height: 300
+    align: CENTER
+    width: 80%
+    height: 80%
     widgets:
       - ...
 ```
@@ -1517,10 +1498,9 @@ Use this widget to generate and display a QR-code containing a string at run tim
 
 # Example action:
 on_...:
-  then:
-    - lvgl.qrcode.update:
-        id: lv_qr
-        text: home-assistant.io
+  - lvgl.qrcode.update:
+      id: lv_qr
+      text: home-assistant.io
 ```
 
 <span id="lvgl-widget-roller"></span>
@@ -1571,10 +1551,9 @@ Roller allows you to simply select one option from a list by scrolling.
 
 # Example action:
 on_...:
-  then:
-    - lvgl.roller.update:
-        id: roller_id
-        selected_index: 4
+  - lvgl.roller.update:
+      id: roller_id
+      selected_index: 4
 
 # Example trigger:
 - roller:
@@ -1606,7 +1585,9 @@ The slider widget looks like a bar supplemented with a knob. The user can drag t
 - **value** (*Optional*, int8): Actual value of the indicator at start, in `min_value`  -`max_value` range. Defaults to `0`.
 - Any [Styling](/components/lvgl#lvgl-styling) and state-based option for the background of the slider. Uses all the typical background style properties. Padding makes the indicator smaller in the respective direction.
 
-Normally, the slider can be adjusted either by dragging the knob, or by clicking on the slider bar. In the latter case the knob moves to the point clicked and slider value changes accordingly. In some cases it is desirable to set the slider to react on dragging the knob only. This feature is enabled by enabling the `adv_hittest` [flag](#lvgl-widget-flags). Any extended click area (set by `ext_click_area` property to a number of pixels) increases the knob's click area.
+Normally, the slider can be adjusted either by dragging the knob, or by clicking on the slider bar. In the latter case the knob moves to the point clicked and slider value changes accordingly. In some cases it is desirable to set the slider to react on dragging the knob only. This feature is enabled by enabling the `adv_hittest` [flag](#lvgl-widget-flags). 
+
+If your slider is narrow, you can use `ext_click_area` styling property to increase the sensitive area around it without affecting it visually.
 
 **Actions:**
 
@@ -1627,9 +1608,7 @@ Normally, the slider can be adjusted either by dragging the knob, or by clicking
 ```yaml
 # Example widget:
 - slider:
-    x: 10
-    y: 10
-    width: 220
+    align: CENTER
     id: slider_id
     value: 75
     min_value: 0
@@ -1637,12 +1616,11 @@ Normally, the slider can be adjusted either by dragging the knob, or by clicking
 
 # Example action:
 on_...:
-  then:
-    - lvgl.slider.update:
-        id: slider_id
-        knob:
-          bg_color: 0x00FF00
-        value: 55
+  - lvgl.slider.update:
+      id: slider_id
+      knob:
+        bg_color: 0x00FF00
+      value: 55
 
 # Example trigger:
 - slider:
@@ -1706,8 +1684,9 @@ The spinbox contains a numeric value (as text) which can be increased or decreas
 ```yaml
 # Example widget:
 - spinbox:
+    align: CENTER
     id: spinbox_id
-    text_align: center
+    text_align: CENTER
     range_from: -10
     range_to: 40
     selected_digit: 2
@@ -1716,22 +1695,19 @@ The spinbox contains a numeric value (as text) which can be increased or decreas
 
 # Example actions:
 on_...:
-  then:
-    - lvgl.spinbox.decrement: spinbox_id
+  - lvgl.spinbox.decrement: spinbox_id
 on_...:
-  then:
-    - lvgl.spinbox.update:
-        id: spinbox_id
-        value: 25.5
+  - lvgl.spinbox.update:
+      id: spinbox_id
+      value: 25.5
 
 # Example trigger:
 - spinbox:
     ...
     on_value:
-      then:
-        - logger.log:
-            format: "Spinbox value is %f"
-            args: [ x ]
+      - logger.log:
+          format: "Spinbox value is %f"
+          args: [ x ]
 ```
 
 The `spinbox` can be also integrated as a [Number](/components/number/lvgl/) or [Sensor](/components/sensor/lvgl/) component.
@@ -1761,7 +1737,7 @@ The Spinner widget is a spinning arc over a ring.
 
 - `lvgl.spinner.update` [action](/automations/actions#actions-action), just like the [lvgl.widget.update](#lvgl-automation-actions) action is used for the common styles, states or flags.
   - **id** (**Required**): The ID or a list of IDs of spinner widgets to be updated.
-  - Style options from [Style properties](/components/lvgl#lvgl-styling).
+  - Style options from above and from [Style properties](/components/lvgl#lvgl-styling).
 
 **Triggers:**
 
@@ -1772,19 +1748,21 @@ The Spinner widget is a spinning arc over a ring.
 ```yaml
 # Example widget:
 - spinner:
-    align: center
+    align: CENTER
     spin_time: 2s
     arc_length: 60deg
     id: spinner_id
     indicator:
-      arc_color: 0xd4d4d4
+      arc_color: 0x18bcf2
 
 # Example action:
 on_...:
-  then:
-    - lvgl.spinner.update:
-        id: spinner_id
-        arc_color: 0x31de70
+  - lvgl.spinner.update:
+      id: spinner_id
+      spin_time: 500ms
+      arc_color: 0x31de70
+      indicator:
+        arc_color: 0xffbc02
 ```
 
 <span id="lvgl-widget-switch"></span>
@@ -1812,18 +1790,16 @@ The switch looks like a little slider and can be used to turn something on and o
 ```yaml
 # Example widget:
 - switch:
-    x: 10
-    y: 10
+    align: CENTER
     id: switch_id
 
 # Example trigger:
 - switch:
     ...
     on_value:
-      then:
-        - logger.log:
-            format: "Switch state: %d"
-            args: [ x ]
+      - logger.log:
+          format: "Switch state: %d"
+          args: [ x ]
 ```
 
 The `switch` can be also integrated as a [Switch](/components/switch/lvgl/) component.
@@ -1873,10 +1849,11 @@ The tabs are indexed (zero-based) in the order they appear in the configuration 
     id: tabview_id
     position: top
     tab_style:
-      border_color: 0x00FF00
-      border_width: 6
+      border_color: 0x18bcf2
+      border_width: 3
+      height: 40
       items:
-        text_color: 0x0000FF
+        text_color: 0xff0000
     tabs:
       - name: Dog
         id: tabview_tab_1
@@ -1888,22 +1865,20 @@ The tabs are indexed (zero-based) in the order they appear in the configuration 
 
 # Example action:
 on_...:
-  then:
-    - lvgl.tabview.select:
-        id: tabview_id
-        index: 1
-        animated: true
+  - lvgl.tabview.select:
+      id: tabview_id
+      index: 1
+      animated: true
 
 # Example trigger:
 - tabview:
     ...
     on_value:
-      then:
-        - if:
-            condition:
-              lambda: return tab == id(tabview_tab_1);
-            then:
-              - logger.log: "Dog tab is now showing"
+      - if:
+          condition:
+            lambda: return tab == id(tabview_tab_1);
+          then:
+            - logger.log: "Dog tab is now showing"
 ```
 
 <span id="lvgl-widget-textarea"></span>
@@ -1950,24 +1925,21 @@ For both triggers above, when triggered, the variable `text` (`std::string` type
 
 # Example action:
 on_...:
-  then:
-    - lvgl.textarea.update:
-        id: textarea_id
-        text: "Hello World!"
+  - lvgl.textarea.update:
+      id: textarea_id
+      text: "Hello World!"
 
 # Example trigger:
 - textarea:
     ...
     on_value:
-      then:
-        - logger.log:
-            format: "Textarea changed to: %s"
-            args: [ text.c_str() ]
+      - logger.log:
+          format: "Textarea changed to: %s"
+          args: [ text.c_str() ]
     on_ready:
-      then:
-        - logger.log:
-            format: "Textarea ready: %s"
-            args: [ text.c_str() ]
+      - logger.log:
+          format: "Textarea ready: %s"
+          args: [ text.c_str() ]
 ```
 
 The `textarea` can be also integrated as [Text](/components/text/lvgl/) or [Text Sensor](/components/text_sensor/lvgl/) component.
@@ -2022,11 +1994,10 @@ If the tileview is screen sized, the user interface resembles what you may have 
 
 # Example action:
 on_...:
-  then:
-    - lvgl.tileview.select:
-        id: tiv_id
-        tile_id: cat_tile
-        animated: true
+  - lvgl.tileview.select:
+      id: tiv_id
+      tile_id: cat_tile
+      animated: true
 
 # Example trigger:
 - tileview:
@@ -2060,19 +2031,17 @@ This powerful [action](/automations/actions#actions-action) allows changing/upda
 ```yaml
 # Example for updating styles (in states):
 on_...:
-  then:
-    - lvgl.widget.update:
-        id: my_button_id
-        bg_color: 0xFF0000
-        state:
-          disabled: true
+  - lvgl.widget.update:
+      id: my_button_id
+      bg_color: 0xFF0000
+      state:
+        disabled: true
 
 # Example for updating flag:
 on_...:
-  then:
-    - lvgl.widget.update:
-        id: my_label_id
-        hidden: true
+  - lvgl.widget.update:
+      id: my_label_id
+      hidden: true
 ```
 
 Check out in the Cookbook [Remote light button](/cookbook/lvgl#lvgl-cookbook-binent) for an example which demonstrates how to use a template to update the state.
@@ -2087,14 +2056,13 @@ These [actions](/automations/actions#actions-action) are shorthands for toggling
 
 ```yaml
 on_...:
-  then:
-    - lvgl.widget.hide: my_label_id                # a single widget
-    - lvgl.widget.show: [my_button_1, my_button_2] # a list of widgets
-    - delay: 0.5s
-    - lvgl.widget.show:
-        -id: my_label_id
-    - lvgl.widget.hide:
-        - id: [my_button_1, my_button_2]
+  - lvgl.widget.hide: my_label_id                # a single widget
+  - lvgl.widget.show: [my_button_1, my_button_2] # a list of widgets
+  - delay: 0.5s
+  - lvgl.widget.show:
+      -id: my_label_id
+  - lvgl.widget.hide:
+      - id: [my_button_1, my_button_2]
 ```
 
 #### `lvgl.widget.disable` / `lvgl.widget.enable` Action
@@ -2105,16 +2073,14 @@ These [actions](/automations/actions#actions-action) are shorthands for toggling
 
 ```yaml
 - on_...:
-    then:
-      - lvgl.widget.disable:
-          - my_button_1
-          - my_button_2
+    - lvgl.widget.disable:
+        - my_button_1
+        - my_button_2
 
 - on_...:
-    then:
-      - lvgl.widget.enable:
-          - id: my_button_1
-          - id: my_button_2
+    - lvgl.widget.enable:
+        - id: my_button_1
+        - id: my_button_2
 ```
 
 <span id="lvgl-automation-triggers"></span>
@@ -2158,20 +2124,17 @@ when the page becomes active or inactive respectively.
 - button:
     ...
     on_short_click:
-      then:
-        lvgl.page.show: main_page
+      - lvgl.page.show: main_page
     on_long_press:
-      then:
-        light.toggle: display_backlight
+      - light.toggle: display_backlight
 
 - slider:
     ...
     on_release:
-      then:
-        - light.turn_on:
-            id: display_backlight
-            transition_length: 0ms
-            brightness: !lambda return x / 100;
+      - light.turn_on:
+          id: display_backlight
+          transition_length: 0ms
+          brightness: !lambda return x / 100;
 ```
 
 ### `on_boot`
