@@ -577,9 +577,8 @@ any widget properties. It is mostly useful to redraw the screen after resuming L
 
 ```yaml
 on_...:
-  then:
-    - lvgl.widget.redraw:
-        lvgl_id: lvgl1  # optional when only one LVGL instance is configured
+  - lvgl.widget.redraw:
+      lvgl_id: lvgl1  # optional when only one LVGL instance is configured
 ```
 
 <span id="lvgl-refresh-action"></span>
@@ -600,8 +599,7 @@ widgets:
       text: !lambda return id(text_sensor).state;
 
 on_...:
-  then:
-    - lvgl.widget.refresh: label1 # will update the label text using the lambda.
+  - lvgl.widget.refresh: label1 # will update the label text using the lambda.
 ```
 
 <span id="lvgl-style-update-action"></span>
@@ -641,9 +639,8 @@ This [action](/automations/actions#actions-action) pauses the activity of LVGL, 
 
 ```yaml
 on_...:
-  then:
-    - lvgl.pause:
-        show_snow: true
+  - lvgl.pause:
+      show_snow: true
 ```
 
 <span id="lvgl-resume-action"></span>
@@ -656,8 +653,7 @@ This [action](/automations/actions#actions-action) resumes the activity of LVGL,
 
 ```yaml
 on_...:
-  then:
-    - lvgl.resume:
+  - lvgl.resume:
 ```
 
 ### `lvgl.update` Action
@@ -667,14 +663,13 @@ This [action](/automations/actions#actions-action) allows changing/updating the 
 ```yaml
 # Examples:
 on_...:
-  then:
-    - lvgl.update:
-        bottom_layer:
-          bg_color: 0x0000FF
-          bg_opa: cover
-    - lvgl.update:
-        top_layer:
-          opa: 0.5
+  - lvgl.update:
+      bottom_layer:
+        bg_color: 0x0000FF
+        bg_opa: cover
+  - lvgl.update:
+      top_layer:
+        opa: 0.5
 ```
 
 <span id="lvgl-page-next-previous-action"></span>
@@ -688,16 +683,14 @@ This [action](/automations/actions#actions-action) changes the page to the next/
 
 ```yaml
 on_...:
-  then:
-    - lvgl.page.next:
-        animation: OUT_LEFT
-        time: 300ms
+  - lvgl.page.next:
+      animation: OUT_LEFT
+      time: 300ms
 
 on_...:
-  then:
-    - lvgl.page.previous:
-        animation: OUT_RIGHT
-        time: 300ms
+  - lvgl.page.previous:
+      animation: OUT_RIGHT
+      time: 300ms
 ```
 
 <span id="lvgl-page-show-action"></span>
@@ -712,13 +705,11 @@ This [action](/automations/actions#actions-action) shows a specific page (includ
 
 ```yaml
 on_...:
-  then:
-    - lvgl.page.show:
-        id: secret_page
+  - lvgl.page.show:
+      id: secret_page
 
 on_...:
-  then:
-    - lvgl.page.show: secret_page  # shorthand version
+  - lvgl.page.show: secret_page  # shorthand version
 ```
 
 <span id="lvgl-widget-focus-action"></span>
@@ -747,25 +738,21 @@ The `mark` action will save the currently focused widget within the group, and r
 
 ```yaml
 on_...:
-  then:
-    - lvgl.widget.focus:
-        id: my_button
-        freeze: true
+  - lvgl.widget.focus:
+      id: my_button
+      freeze: true
 
 on_...:
-  then:
-    - lvgl.widget.focus: my_button
+  - lvgl.widget.focus: my_button
 
 on_...:
-  then:
-    - lvgl.widget.focus:
-        group: encoder_group
-        direction: next
-        freeze: true
+  - lvgl.widget.focus:
+      group: encoder_group
+      direction: next
+      freeze: true
 
 on_...:
-  then:
-    - lvgl.widget.focus: previous
+  - lvgl.widget.focus: previous
 ```
 
 <span id="lvgl-conditions"></span>
@@ -784,15 +771,14 @@ This [condition](/automations/actions#common_conditions) checks if the amount of
 ```yaml
 # In some trigger:
 on_...:
-  then:
-    - if:
-        condition:
-          lvgl.is_idle:
-            timeout: 5s
-        then:
-          - light.turn_off:
-              id: display_backlight
-              transition_length: 3s
+  - if:
+      condition:
+        lvgl.is_idle:
+          timeout: 5s
+      then:
+        - light.turn_off:
+            id: display_backlight
+            transition_length: 3s
 ```
 
 <span id="lvgl-is-paused-condition"></span>
@@ -806,11 +792,10 @@ This [condition](/automations/actions#common_conditions) checks if LVGL is in th
 ```yaml
 # In some trigger:
 on_...:
-  then:
-    - if:
-        condition: lvgl.is_paused
-        then:
-          - lvgl.resume:
+  - if:
+      condition: lvgl.is_paused
+      then:
+        - lvgl.resume:
 ```
 
 ### `lvgl.page.is_showing` Condition
@@ -822,12 +807,11 @@ This [condition](/automations/actions#common_conditions) checks if the nominated
 ```yaml
 # In some trigger:
 on_...:
-  then:
-    - if:
-        condition:
-          lvgl.page.is_showing: main_page
-        then:
-          - logger.log: "Main page is showing"
+  - if:
+      condition:
+        lvgl.page.is_showing: main_page
+      then:
+        - logger.log: "Main page is showing"
 ```
 
 ## Triggers
