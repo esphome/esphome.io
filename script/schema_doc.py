@@ -115,6 +115,7 @@ class Stats:
     action_docs = 0
     condition_docs = 0
     registry_docs = 0
+    changed_optionality = 0
 
 
 stats = Stats()
@@ -506,17 +507,21 @@ def set_schema_doc(md_file, index, schema, prop_name, prop_types, doc):
     converted_doc = make_doc_with_see_also(md_file, index, doc)
     if prop_types:
         type_parts = [part.strip() for part in prop_types.split(",")]
-        optionality = type_parts[0].replace("*", "").lower()
+        optionality = type_parts[0].replace("*", "")
         config_optionality = matched_config.get(JSON_KEY, "")
         if (
             prop_name != "id"
             and config_optionality != "GeneratedID"
-            and optionality != config_optionality.lower()
-            and args.debug_level > 5
+            and optionality.casefold() != config_optionality.casefold()
         ):
-            print(
-                f"{md_file}:{index} {prop_name} Key {config_optionality} in ESPHome does not match {optionality} in docs"
-            )
+            # The SSOT will be docs, retrieving precise optionality by reflecting into esphome schema
+            # is not accurate
+            stats.changed_optionality += 1
+            matched_config[JSON_KEY] = optionality.capitalize()
+            if args.debug_level > 5:
+                print(
+                    f"{md_file}:{index} {prop_name} Key {config_optionality} in ESPHome does not match {optionality} in docs"
+                )
 
         templatable = any(is_templatable_type(p) for p in type_parts[1:])
         config_templatable = matched_config.get(JSON_TEMPLATABLE, False)
