@@ -253,7 +253,7 @@ def json_get(name):
     if json_doc:
         return json_doc
 
-    json_file_name = os.path.join(args.schema_dir, name + ".json")
+    json_file_name = os.path.join(args.read_schema_dir, name + ".json")
     if os.path.exists(json_file_name):
         if args.debug_level > 12:
             print(f"Loading {json_file_name}")
@@ -1052,7 +1052,14 @@ def parse_file(md_full_path):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Add docs to ESPHome json schema")
-    parser.add_argument("schema_dir", help="Directory containing JSON files")
+    parser.add_argument(
+        "schema_dir", help="Directory to write filled JSON schema files"
+    )
+    parser.add_argument(
+        "--read-schema-dir",
+        help="Directory to read schema JSON files from (defaults to schema_dir)",
+        default=None,
+    )
     parser.add_argument("--single", help="Process a single json file", default=None)
     parser.add_argument(
         "--debug-level",
@@ -1071,12 +1078,14 @@ if __name__ == "__main__":
         default="https://api-docs.esphome.io",
     )
     args = parser.parse_args()
+    if args.read_schema_dir is None:
+        args.read_schema_dir = args.schema_dir
 
     esphome_json = json_get("esphome")
     core = esphome_json["core"]
 
     # Pre-load all schema JSON files and build reverse extends map
-    for json_file in Path(args.schema_dir).glob("*.json"):
+    for json_file in Path(args.read_schema_dir).glob("*.json"):
         json_get(json_file.stem)
     fill_reverse_extends()
 
