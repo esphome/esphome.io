@@ -1105,7 +1105,9 @@ A label is the basic widget type that is used to display text.
 - **text_decor** (*Optional*, list): Choose decorations for the text: `NONE`, `UNDERLINE`, `STRIKETHROUGH` (multiple can be specified as YAML list). Inherited from parent. Defaults to `NONE`.
 - **text_letter_space** (*Optional*, int16): Extra character spacing of the text. Inherited from parent. Defaults to `0`.
 - **text_line_space** (*Optional*, int16): Line spacing of the text. Inherited from parent. Defaults to `0`.
-- **text_decor** (*Optional*): One of `NONE`, `UNDERLINE`, `STRIKETHROUGH`. Defaults to `NONE`.
+- **text_outline_stroke_color** (*Optional*, [color](/components/lvgl#lvgl-color)): Color to draw an outline around the text glyphs.
+- **text_outline_stroke_width** (*Optional*, int16): Set the width of the outline in pixels.
+- **text_outline_stroke_opa** (*Optional*, [opacity](/components/lvgl#lvgl-opacity)): Opacity of the outline drawnd around the text glyphs.
 - **long_mode** (*Optional*, list): By default, the width and height of the label is set to `SIZE_CONTENT`. Therefore, the size of the label is automatically expanded to the text size. Otherwise, if the `width` or `height` are explicitly set (or set by [Layouts](/components/lvgl/layouts#lvgl-layouts)), the lines wider than the label's width can be manipulated according to the long mode policies below. These policies can be applied if the height of the text is greater than the height of the label.
   - `WRAP`  : Wrap lines which are too long. If the height is `SIZE_CONTENT`, the label's height will be expanded, otherwise the text will be clipped (default).
   - `DOT`  : Replaces the last 3 characters from bottom right corner of the label with dots.
@@ -1217,11 +1219,11 @@ The line widget is capable of drawing straight lines between a set of points.
 **Configuration variables:**
 
 - **line_color** (*Optional*, [color](/components/lvgl#lvgl-color)): Color for the line.
-- **line_dash_gap** (*Optional*, int16): Set the width of the gap between the dashes in the line (in pixels).
-- **line_dash_width** (*Optional*, int16): Set the width of the dashes in the line (in pixels).
-- **line_rounded** (*Optional*, boolean): Make the end points of the line rounded. `true` rounded, `false` perpendicular line ending.
 - **line_width** (*Optional*, int16): Set the width of the line in pixels.
 - **points** (**Required**, list): A list of `x, y` integer pairs for point coordinates (origin from top left of parent)
+- **line_rounded** (*Optional*, boolean): Make the end points of the line rounded. `true` rounded, `false` perpendicular line ending.
+- **line_dash_gap** (*Optional*, int16): Set the width of the gap between the dashes in the line (in pixels).
+- **line_dash_width** (*Optional*, int16): Set the width of the dashes in the line (in pixels).
 - Style options from [Style properties](/components/lvgl#lvgl-styling), all the typical background properties and line style properties.
 
 By default, the Line widget width and height dimensions are set to `SIZE_CONTENT`. This means it will automatically set its size to fit all the points. If the size is set explicitly, parts of the line may not be visible.
