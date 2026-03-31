@@ -1,15 +1,16 @@
 ---
-description: "Instructions for setting up Mk2PVRouter Telemetry"
-title: "Telemetry from Mk2PVRouter Diverter"
+description: "Instructions for setting up Mk2PVRouter telemetry and control"
+title: "Mk2PVRouter Surplus Energy Diverter"
 ---
 
 import Figure from '@components/Figure.astro';
 import mk2pvrouterFullImg from './images/mk2pvrouter-full.jpg';
 import APIRef from '@components/APIRef.astro';
 
-The `mk2pvrouter` component allows you to retrieve data from a
-Mk2PVRouter diverter using Telemetry. It works with any Mk2PVRouter
-diverter, as long as this feature has been activated on the router itself.
+The `mk2pvrouter` component allows you to retrieve telemetry data
+from a Mk2PVRouter diverter and to control it via GPIO switches. It
+works with any Mk2PVRouter diverter, as long as the telemetry
+feature has been activated on the router itself.
 
 This component can also be used to send data to a non-Home Assistant
 system via MQTT.
@@ -23,43 +24,54 @@ system via MQTT.
 
 ---
 
+## Hardware
+
+The recommended hardware is the
+[mk2Wifi-C6](https://github.com/FredM67/Mk2PVRouter/tree/main/hardware/expansion_boards/mk2Wifi-C6)
+expansion module, based on an **ESP32-C6-MINI-1**. It plugs directly
+into the mainboard via the TRIG_EXT and UART_EXT pin headers.
+
+The module also provides:
+
+- **MISC header** — 4 additional GPIOs (GPIO19--GPIO22) for extra
+  sensors or interfaces (e.g. I2C, 1-Wire, digital I/O)
+- **OLED connector** — a Molex SL 4-pin I2C connector (GPIO6 SDA,
+  GPIO7 SCL) for an optional display
+
+> [!NOTE]
+> Any ESP32 board can be used instead of the mk2Wifi module. In that
+> case, adapt the GPIO pin numbers in the examples below to match
+> your wiring.
+
 ## Wiring
 
-A simple electronic assembly with an ESP8266 or ESP32 allows you to
-retrieve detailed telemetry data from the diverter.
+With the mk2Wifi module, connections are handled automatically
+through the TRIG_EXT and UART_EXT pin sockets. No extra wiring is
+needed.
 
-Connect the **TX pin** of the Mk2PVRouter diverter to the **RX pin**
-of your ESP module. No TX connection from ESP to diverter is needed
-(communication is one-way).
+If using a standalone ESP32, connect the **TX pin** of the
+Mk2PVRouter mainboard to the **RX pin** of your ESP module. No TX
+connection from ESP to the mainboard is needed (communication is
+one-way).
 
 ## UART Configuration
 
 The communication uses UART with specific settings:
 **9600 baud, 7 data bits, even parity, 1 stop bit**.
 
-> [!WARNING]
-> **ESP32**: Avoid using GPIO1/GPIO3 (UART0) as these pins are used
-> for USB serial communication and will cause conflicts. Use UART2
-> pins instead (e.g., GPIO16 for RX, GPIO17 for TX).
-
-> [!NOTE]
-> **ESP8266**: You can use the default UART pins (GPIO3 for RX), but
-> you must disable serial logging by setting `baud_rate: 0` in the
-> logger component.
+On the mk2Wifi module, the mainboard transmits on UART_TX which is
+connected to the ESP32-C6 **GPIO17** (U0RXD), and **GPIO16**
+(U0TXD) is connected to UART_RX.
 
 ```yaml
-# ESP32 example configuration
+# mk2Wifi-C6 configuration
 uart:
-  tx_pin: GPIO17
-  rx_pin: GPIO16
+  tx_pin: GPIO16
+  rx_pin: GPIO17
   baud_rate: 9600
   parity: EVEN
   data_bits: 7
   stop_bits: 1
-
-# For ESP8266, also add:
-# logger:
-#   baud_rate: 0  # Disable serial logging to free up UART
 
 mk2pvrouter:
   update_interval: 5s
@@ -156,14 +168,15 @@ text_sensor:
 
 ## Complete Example
 
-Here's a complete configuration for a three-phase system:
+Here's a complete configuration for a three-phase system using the
+mk2Wifi-C6 module:
 
 ```yaml
 esphome:
   name: pvrouter-monitor
 
 esp32:
-  board: esp32dev
+  board: esp32-c6-devkitm-1
 
 logger:
   level: DEBUG
@@ -180,8 +193,8 @@ ota:
   - platform: esphome
 
 uart:
-  tx_pin: GPIO17
-  rx_pin: GPIO16
+  tx_pin: GPIO16
+  rx_pin: GPIO17
   baud_rate: 9600
   parity: EVEN
   data_bits: 7
@@ -194,6 +207,7 @@ sensor:
   - platform: mk2pvrouter
     tag_name: "P"
     name: "Total Power"
+    id: total_power
   - platform: mk2pvrouter
     tag_name: "P1"
     name: "Power Phase 1"
@@ -206,6 +220,7 @@ sensor:
   - platform: mk2pvrouter
     tag_name: "V1"
     name: "Voltage Phase 1"
+    id: voltage_phase1
   - platform: mk2pvrouter
     tag_name: "V2"
     name: "Voltage Phase 2"
@@ -221,9 +236,24 @@ binary_sensor:
 
 ## Controlling the Mk2PVRouter
 
-You can use GPIO switches on the ESP to control up to 4
-functionalities on the Mk2PVRouter by connecting ESP GPIO outputs to
-the router's digital inputs (D10-D13).
+The mk2Wifi module provides up to 5 trigger/control outputs
+(D5--D9) connected to the mainboard via the TRIG_EXT header. These
+GPIOs can control functionalities on the Mk2PVRouter.
+
+> [!NOTE]
+> The solder jumpers for D5--D9 on the mk2Wifi board are **open by
+> default**. You must close the corresponding jumper for each
+> control output you want to use.
+
+The GPIO mapping on the mk2Wifi-C6 module is:
+
+| Signal | GPIO |
+|--------|------|
+| D5 | GPIO0 |
+| D6 | GPIO5 |
+| D7 | GPIO4 |
+| D8 | GPIO3 |
+| D9 | GPIO1 |
 
 Common control functions include:
 
@@ -235,26 +265,26 @@ Common control functions include:
 ```yaml
 switch:
   - platform: gpio
-    pin: GPIO12
+    pin: GPIO0
     name: "Diversion ON/OFF"
     inverted: true
     restore_mode: RESTORE_DEFAULT_ON
 
   - platform: gpio
-    pin: GPIO13
+    pin: GPIO5
     name: "Forced Mode"
     inverted: true
     restore_mode: RESTORE_DEFAULT_OFF
 
   # Additional controls (optional)
   # - platform: gpio
-  #   pin: GPIO14
+  #   pin: GPIO4
   #   name: "Priority Select"
   #   inverted: true
   #   restore_mode: RESTORE_DEFAULT_OFF
   #
   # - platform: gpio
-  #   pin: GPIO27
+  #   pin: GPIO3
   #   name: "Temperature Override"
   #   inverted: true
   #   restore_mode: RESTORE_DEFAULT_OFF
@@ -271,6 +301,81 @@ switch:
 > - `RESTORE_DEFAULT_ON` - Restore previous state, default to ON
 > - `RESTORE_DEFAULT_OFF` - Restore previous state, default to OFF
 > - `ALWAYS_ON` / `ALWAYS_OFF` - Always start in a specific state
+
+## Optional Peripherals
+
+The mk2Wifi-C6 module supports additional peripherals through its
+connectors.
+
+### OLED Display
+
+An I2C OLED display (e.g. SSD1306 128x64) can be connected to the
+OLED Molex SL connector (GPIO6 SDA, GPIO7 SCL). See
+[SSD1306](/components/display/ssd1306/) for full configuration
+options.
+
+```yaml
+i2c:
+  sda: GPIO6
+  scl: GPIO7
+
+font:
+  - file: "gfonts://Roboto"
+    id: roboto
+    size: 14
+
+display:
+  - platform: ssd1306_i2c
+    model: "SSD1306 128x64"
+    lambda: |-
+      it.printf(0, 0, id(roboto), "P: %.0f W",
+                id(total_power).state);
+      it.printf(0, 20, id(roboto), "V: %.1f V",
+                id(voltage_phase1).state);
+```
+
+### DS18B20 Temperature Sensor
+
+The mainboard's DS18B20 1-Wire signal is passed through the
+UART_EXT connector to GPIO23. See
+[Dallas Temperature](/components/sensor/dallas_temp/) for details.
+
+```yaml
+one_wire:
+  - platform: gpio
+    pin: GPIO23
+
+sensor:
+  - platform: dallas_temp
+    name: "Water Temperature"
+```
+
+### MISC Header
+
+The 4 GPIOs on the MISC header (GPIO19--GPIO22) can be used as
+digital inputs, outputs, or for additional buses.
+
+For example, you can connect the S0 pulse output of an energy meter
+on the diverted load to track actual diverted energy. See
+[Pulse Counter](/components/sensor/pulse_counter/) and
+[Total Daily Energy](/components/sensor/total_daily_energy/) for
+full configuration options.
+
+```yaml
+sensor:
+  - platform: pulse_counter
+    pin:
+      number: GPIO19
+      mode: INPUT_PULLUP
+    id: diverted_power_meter
+    name: "Diverted Power (meter)"
+    unit_of_measurement: "W"
+    filters:
+      - multiply: 6.0  # 1000 pulses/kWh → W conversion
+  - platform: total_daily_energy
+    name: "Diverted Energy Today"
+    power_id: diverted_power_meter
+```
 
 ## MQTT Integration
 
@@ -306,6 +411,7 @@ With this configuration, data will be published to topics such as:
 ## See Also
 
 - [Mk2PVRouter documentation](https://fredm67.github.io/Mk2PVRouter/)
+- [mk2Wifi-C6 expansion module](https://github.com/FredM67/Mk2PVRouter/tree/main/hardware/expansion_boards/mk2Wifi-C6)
 - [Mk2PVRouter FW single phase](https://github.com/FredM67/PVRouter-1-phase)
 - [Mk2PVRouter FW three phase](https://github.com/FredM67/PVRouter-3-phase)
 - <APIRef text="mk2pvrouter.h" path="mk2pvrouter/mk2pvrouter.h" />
