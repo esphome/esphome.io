@@ -34,6 +34,40 @@ Widgets can have children, which can be any other widgets. Think of this as a ne
 
 By default, LVGL draws new widgets on top of old widgets, including their children. When widgets have children, property inheritance takes place. Some properties (typically those related to text and opacity) can be inherited from the parent widgets's styles. When the property is inheritable, the parent will be searched for an object which specifies a value for the property. The parents will use their own [state](#lvgl-widgetproperty-state) to determine the value. For example, if a button is pressed and the text color is defined by the "pressed" state, this "pressed" text color will be used.
 
+<span id="lvgl-widget-parts"></span>
+
+## Widget parts
+
+Widgets can composed of multiple parts, each of which can be styled independently. For example, a checkbox has a *main* part that styles the background and text label, and an *indicator* part that styles the tick box. All widgets have a *main* part, the available parts for other widgets are specified in the widget description.
+
+The possible parts are:
+
+- **main** (*Optional*, dict): The main part of the widget, i.e. the background. Any style properties applied at the top level of the widget are assumed to apply to this part, but may also be specified under the *main* config key.
+- **scrollbar** (*Optional*, dict): The scrollbar styles.
+- **indicator** (*Optional*, dict): The indicator part of the widget. The indicator part may be used to show tick boxes or other visual indicators in slider, bar or arc.
+- **knob** (*Optional*, dict): The knob part of the widget e.g. a draggable item in slider, bar or arc.
+- **selected** (*Optional*, dict): The currently selected part of the widget, e.g. text or the selected item in a roller.
+- **items** (*Optional*, dict): The items part of the widget, e.g. the items in a roller.
+- **ticks** (*Optional*, dict): Ticks on scales for a meter.
+- **cursor** (*Optional*, dict): The cursor part of the widget, e.g. the cursor in a spinbox.
+
+```yaml
+# Example slider with knob and indicator styling
+- slider:
+    # main (background) styles
+    align: CENTER
+    bg_opa: COVER
+    bg_grad: color_bar
+    radius: 0
+    indicator: # Makes the indicator part invisible
+      bg_opa: TRANSP
+    knob: # Makes the cursor thinner
+      radius: 2
+      pad_left: -4
+      pad_right: -4
+      bg_color: 0x000000
+```
+
 ## Common properties
 
 The properties below are common to all widgets.
@@ -148,40 +182,6 @@ In addition to visual styling, each widget supports some boolean **flags** to in
 
 > [!TIP]
 > By default, widgets can be clicked only within their bounding area. However, especially with small widgets, it can be helpful to make a widget's "clickable" area larger. You can do this with `ext_click_area` styling property by specifying a number of pixels to extend the clickable area around the widget.
-
-<span id="lvgl-widget-parts"></span>
-
-## Widget parts
-
-Widgets can have multiple parts, each of which can be styled independently. For example, a checkbox has a *main* part that styles the background and text label, and an *indicator* part that styles the tick box. All widgets have a *main* part, the available parts for other widgets are specified in the widget description.
-
-The possible parts are:
-
-- **main** (*Optional*, dict): The main part of the widget, i.e. the background. Any style properties applied at the top level of the widget are assumed to apply to this part, but may also be specified under the *main* config key.
-- **scrollbar** (*Optional*, dict): The scrollbar styles.
-- **indicator** (*Optional*, dict): The indicator part of the widget. The indicator part may be used to show tick boxes or other visual indicators in slider, bar or arc.
-- **knob** (*Optional*, dict): The knob part of the widget e.g. a draggable item in slider, bar or arc.
-- **selected** (*Optional*, dict): The currently selected part of the widget, e.g. text or the selected item in a roller.
-- **items** (*Optional*, dict): The items part of the widget, e.g. the items in a roller.
-- **ticks** (*Optional*, dict): Ticks on scales for a meter.
-- **cursor** (*Optional*, dict): The cursor part of the widget, e.g. the cursor in a spinbox.
-
-```yaml
-# Example slider with knob and indicator styling
-- slider:
-    # main (background) styles
-    align: CENTER
-    bg_opa: COVER
-    bg_grad: color_bar
-    radius: 0
-    indicator: # Makes the indicator part invisible
-      bg_opa: TRANSP
-    knob: # Makes the cursor thinner
-      radius: 2
-      pad_left: -4
-      pad_right: -4
-      bg_color: 0x000000
-```
 
 ## Widget-specific properties
 
