@@ -8,7 +8,7 @@ import APIRef from '@components/APIRef.astro';
 
 The HDC2080 Temperature+Humidity sensor allows you to use your HDC2080
 ([datasheet](https://www.ti.com/lit/ds/symlink/hdc2080.pdf)) sensors with
-ESPHome. The [I2C](/components/i2c/) is
+ESPHome. The [I²C Bus](/components/i2c) is
 required to be set up in your configuration for this sensor to work.
 
 <Image src="/images/hdc2080.png" width={588} height={418} layout="constrained" alt="HDC2080 Temperature & Humidity Sensor" />
@@ -33,26 +33,12 @@ sensor:
 
   - All options from [Sensor](/components/sensor/).
 
+- **address** (*Optional*, int): Manually specify the I²C address of the sensor. Defaults to `0x40`.
+
 - **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to check the sensor. Defaults to `60s`.
 
 Currently, the platform doesn't support activating the built-in heater or the data ready pin.
 If you need it, please open a feature request.
-
-## Notes
-
-This component also appears to be compatible with the [DFRobot CHT8305 I2C Temperature and Humidity Sensor](https://wiki.dfrobot.com/SKU_SEN0546_I2C_Temperature_and_Humidity_Sensor_Stainless_Steel_Shell) on address 0x40.
-
-```yaml
-# Example configuration entry
-sensor:
-  - platform: hdc2080
-    temperature:
-      name: "Outside Temperature"
-    humidity:
-      name: "Outside Humidity"
-    address: 0x40
-    update_interval: 60s
-```
 
 ## See Also
 
