@@ -3,8 +3,8 @@ description: "Instructions for setting up Mk2PVRouter Telemetry"
 title: "Telemetry from Mk2PVRouter diverter."
 params:
   seo:
-  description: Instructions for setting up Mk2PVRouter Telemetry
-  image: mk2pvrouter.jpg
+    description: Instructions for setting up Mk2PVRouter Telemetry
+    image: mk2pvrouter.jpg
 ---
 
 ## Component/Hub
