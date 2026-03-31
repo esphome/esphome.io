@@ -1,39 +1,51 @@
 ---
 description: "Instructions for setting up Mk2PVRouter Telemetry"
-title: "Telemetry from Mk2PVRouter diverter."
-params:
-  seo:
-    description: Instructions for setting up Mk2PVRouter Telemetry
-    image: mk2pvrouter.jpg
+title: "Telemetry from Mk2PVRouter Diverter"
 ---
 
-## Component/Hub
+import Figure from '@components/Figure.astro';
+import mk2pvrouterFullImg from './images/mk2pvrouter-full.jpg';
+import APIRef from '@components/APIRef.astro';
 
 The `mk2pvrouter` component allows you to retrieve data from a
 Mk2PVRouter diverter using Telemetry. It works with any Mk2PVRouter
 diverter, as long as this feature has been activated on the router itself.
 
-This component can also be used to send data to a non-Home Assistant system via MQTT.
+This component can also be used to send data to a non-Home Assistant
+system via MQTT.
 
-{{< img src="mk2pvrouter-full.jpg" alt="Mk2PVRouter diverter" caption="Mk2PVRouter diverter." width="50.0%" class="align-center" >}}
+<Figure
+  src={mk2pvrouterFullImg}
+  alt="Mk2PVRouter diverter"
+  caption="Mk2PVRouter diverter."
+  style="width: 50%"
+/>
 
 ---
 
 ## Wiring
 
-A simple electronic assembly with an ESP8266 or ESP32 allows you to retrieve detailed telemetry data from the diverter.
+A simple electronic assembly with an ESP8266 or ESP32 allows you to
+retrieve detailed telemetry data from the diverter.
 
-Connect the **TX pin** of the Mk2PVRouter diverter to the **RX pin** of your ESP module. No TX connection from ESP to diverter is needed (communication is one-way).
+Connect the **TX pin** of the Mk2PVRouter diverter to the **RX pin**
+of your ESP module. No TX connection from ESP to diverter is needed
+(communication is one-way).
 
 ## UART Configuration
 
-The communication uses UART with specific settings: **9600 baud, 7 data bits, even parity, 1 stop bit**.
+The communication uses UART with specific settings:
+**9600 baud, 7 data bits, even parity, 1 stop bit**.
 
 > [!WARNING]
-> **ESP32**: Avoid using GPIO1/GPIO3 (UART0) as these pins are used for USB serial communication and will cause conflicts. Use UART2 pins instead (e.g., GPIO16 for RX, GPIO17 for TX).
+> **ESP32**: Avoid using GPIO1/GPIO3 (UART0) as these pins are used
+> for USB serial communication and will cause conflicts. Use UART2
+> pins instead (e.g., GPIO16 for RX, GPIO17 for TX).
 
 > [!NOTE]
-> **ESP8266**: You can use the default UART pins (GPIO3 for RX), but you must disable serial logging by setting `baud_rate: 0` in the logger component.
+> **ESP8266**: You can use the default UART pins (GPIO3 for RX), but
+> you must disable serial logging by setting `baud_rate: 0` in the
+> logger component.
 
 ```yaml
 # ESP32 example configuration
@@ -53,15 +65,21 @@ mk2pvrouter:
   update_interval: 5s
 ```
 
-## Configuration variables
+## Configuration Variables
 
-- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation or multiple hubs.
-- **uart_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the UART Component if you want to use multiple UART buses.
-- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to check the sensor. Defaults to `5s`.
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)):
+  Manually specify the ID used for code generation or multiple hubs.
+- **uart_id** (*Optional*, [ID](/guides/configuration-types/#id)):
+  Manually specify the ID of the UART Component if you want to use
+  multiple UART buses.
+- **update_interval** (*Optional*,
+  [Time](/guides/configuration-types/#time)): The interval to check
+  the sensor. Defaults to `5s`.
 
 ## Available Tags
 
-The tags available depend on your Mk2PVRouter configuration. Common tags include:
+The tags available depend on your Mk2PVRouter configuration.
+Common tags include:
 
 | Tag | Description | Unit | Notes |
 |-----|-------------|------|-------|
@@ -77,7 +95,9 @@ The tags available depend on your Mk2PVRouter configuration. Common tags include
 | `N` | No-diversion counter | - | Count of cycles without diversion |
 
 > [!NOTE]
-> Voltage and temperature values are sent multiplied by 100 (centivolts/centi-degrees). The component automatically converts them to volts and °C.
+> Voltage and temperature values are sent multiplied by 100
+> (centivolts/centi-degrees). The component automatically converts
+> them to volts and °C.
 
 ## Sensors
 
@@ -94,11 +114,13 @@ sensor:
     name: "Diversion rate Load 1"
 ```
 
-- **tag_name** (**Required**, string): The tag to retrieve from the Telemetry.
-- All other options from [Sensor](/components/sensor).
+- **tag_name** (**Required**, string): The tag to retrieve from the
+  Telemetry.
+- All other options from [Sensor](/components/sensor/).
 
 > [!NOTE]
-> Sensor defaults (unit, device class, accuracy) are automatically set based on the tag name. You can override them if needed.
+> Sensor defaults (unit, device class, accuracy) are automatically
+> set based on the tag name. You can override them if needed.
 
 ## Binary Sensor
 
@@ -111,8 +133,10 @@ binary_sensor:
     name: "Relay 1"
 ```
 
-- **tag_name** (**Required**, string): The tag to retrieve from the Telemetry.
-- All other options from [Binary Sensor](/components/binary_sensor#config-binary_sensor).
+- **tag_name** (**Required**, string): The tag to retrieve from the
+  Telemetry.
+- All other options from
+  [Binary Sensor](/components/binary_sensor/#config-binary_sensor).
 
 ## Text Sensor
 
@@ -125,8 +149,10 @@ text_sensor:
     name: "Power at grid (raw)"
 ```
 
-- **tag_name** (**Required**, string): The tag to retrieve from the Telemetry.
-- All other options from [Text Sensor](/components/text_sensor#config-text_sensor).
+- **tag_name** (**Required**, string): The tag to retrieve from the
+  Telemetry.
+- All other options from
+  [Text Sensor](/components/text_sensor/#config-text_sensor).
 
 ## Complete Example
 
@@ -195,7 +221,9 @@ binary_sensor:
 
 ## Controlling the Mk2PVRouter
 
-You can use GPIO switches on the ESP to control up to 4 functionalities on the Mk2PVRouter by connecting ESP GPIO outputs to the router's digital inputs (D10-D13).
+You can use GPIO switches on the ESP to control up to 4
+functionalities on the Mk2PVRouter by connecting ESP GPIO outputs to
+the router's digital inputs (D10-D13).
 
 Common control functions include:
 
@@ -233,7 +261,9 @@ switch:
 ```
 
 > [!NOTE]
-> The Mk2PVRouter digital inputs are **active-low** by default, so `inverted: true` is required for correct operation (ON in Home Assistant = LOW on the GPIO = active on the router).
+> The Mk2PVRouter digital inputs are **active-low** by default, so
+> `inverted: true` is required for correct operation (ON in Home
+> Assistant = LOW on the GPIO = active on the router).
 
 > [!TIP]
 > Use `restore_mode` to define the switch state after reboot:
@@ -245,9 +275,17 @@ switch:
 ## MQTT Integration
 
 > [!WARNING]
-> If you enable MQTT forwarding and do *not* use the {{< docref "/components/api" >}} (i.e., the module is exclusively used for forwarding data via MQTT and is *not* connected to any Home Assistant instance), you must remove the `api:` configuration or set `reboot_timeout: 0s`, otherwise the ESP will reboot every 15 minutes.
+> If you enable MQTT forwarding and do *not* use the
+> [Native API](/components/api/) (i.e., the module is exclusively
+> used for forwarding data via MQTT and is *not* connected to any
+> Home Assistant instance), you must remove the `api:` configuration
+> or set `reboot_timeout: 0s`, otherwise the ESP will reboot every
+> 15 minutes.
 
-If you configure MQTT, you need to define the {{< docref "/components/mqtt" >}} component. The component will publish all sensor data to topics following this structure: `<topic_prefix>/<sensor_name>`
+If you configure MQTT, you need to define the
+[MQTT](/components/mqtt/) component. The component will publish all
+sensor data to topics following this structure:
+`<topic_prefix>/<sensor_name>`
 
 ```yaml
 mqtt:
@@ -270,4 +308,4 @@ With this configuration, data will be published to topics such as:
 - [Mk2PVRouter documentation](https://fredm67.github.io/Mk2PVRouter/)
 - [Mk2PVRouter FW single phase](https://github.com/FredM67/PVRouter-1-phase)
 - [Mk2PVRouter FW three phase](https://github.com/FredM67/PVRouter-3-phase)
-- {{< apiref "mk2pvrouter/mk2pvrouter.h" "mk2pvrouter/mk2pvrouter.h" >}}
+- <APIRef text="mk2pvrouter.h" path="mk2pvrouter/mk2pvrouter.h" />
