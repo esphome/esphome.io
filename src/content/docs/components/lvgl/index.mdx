@@ -562,43 +562,6 @@ Widgets support [general or specific](/components/lvgl/widgets#lvgl-automation-a
 
 Several actions are available for the LVGL component itself, these are outlined below. Note that if multiple LVGL instances are configured, an **lvgl_id** config entry will be required to specify which instance the action relates to. This is not required if there is only a single LVGL instance configured.
 
-<span id="lvgl-redraw-action"></span>
-
-### `lvgl.widget.redraw` Action
-
-This [action](/automations/actions#actions-action) redraws the entire screen, or optionally only selected widgets. It does not change
-any widget properties. It is mostly useful to redraw the screen after resuming LVGL from the paused state.
-
-- **id** (*Optional*): The ID (or a list of IDs) of a widget configured in LVGL which you want to redraw; if omitted, the entire screen will be redrawn.
-- **lvgl_id** (*Optional*): The ID of the LVGL instance to redraw.
-
-```yaml
-on_...:
-  - lvgl.widget.redraw:
-      lvgl_id: lvgl1  # optional when only one LVGL instance is configured
-```
-
-<span id="lvgl-refresh-action"></span>
-
-### `lvgl.widget.refresh` Action
-
-This [action](/automations/actions#actions-action) re-evaluates all properties specified with lambdas in the specified widget's configuration. This offers
-an alternative technique to using the `lvgl.widget.update` action, which updates specified properties.
-
-- **id** (**Required**): The ID of a widget configured in LVGL to refresh (may also be a list of widgets).
-
-Only properties with lambdas are refreshed. A build-time error will be raised if the widget has no lambda properties.
-
-```yaml
-widgets:
-  - label:
-      id: label1
-      text: !lambda return id(text_sensor).state;
-
-on_...:
-  - lvgl.widget.refresh: label1 # will update the label text using the lambda.
-```
-
 <span id="lvgl-style-update-action"></span>
 
 ### `lvgl.style.update` Action
@@ -708,49 +671,6 @@ on_...:
 
 on_...:
   - lvgl.page.show: secret_page  # shorthand version
-```
-
-<span id="lvgl-widget-focus-action"></span>
-
-### `lvgl.widget.focus` Action
-
-This [action](/automations/actions#actions-action) moves the input focus to the nominated widget. Used mainly with encoder inputs
-to select a specific widget to receive input events. It may also allow the focus to be frozen on that widget,
-or can be used to move the focus to the next or previous widget in the focus group.
-
-The required config options take one of several forms:
-
-- **id** (**Required**): The ID of the widget to be given focus.
-- **freeze** (*Optional*, boolean): If true will lock the focus to this widget.
-- **editing** (*Optional*, boolean): Sets the editing mode of the widget, i.e. encoder rotation will change the value
-  of the widget, not move the focus. Defaults to false.
-
-or
-
-- **action** (**Required**): Should be one of `next`, `previous`, `mark` or `restore`.
-- **group** (*Optional*): The ID of the group within which to move the focus. The default group will be used if not specified
-- **freeze** (*Optional*, boolean): If true will lock the focus to the now selected widget.
-
-The `next` and `previous` actions will move the focus to the next or previous widget within the group.
-The `mark` action will save the currently focused widget within the group, and restore it when the `restore` action is triggered.
-
-```yaml
-on_...:
-  - lvgl.widget.focus:
-      id: my_button
-      freeze: true
-
-on_...:
-  - lvgl.widget.focus: my_button
-
-on_...:
-  - lvgl.widget.focus:
-      group: encoder_group
-      direction: next
-      freeze: true
-
-on_...:
-  - lvgl.widget.focus: previous
 ```
 
 <span id="lvgl-conditions"></span>
