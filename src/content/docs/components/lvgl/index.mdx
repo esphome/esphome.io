@@ -240,7 +240,7 @@ LVGL follows CSS's [border-box model](https://developer.mozilla.org/en-US/docs/W
 
 You can adjust the appearance of widgets by changing their foreground, background, border color and/or font. Some widgets allow for more complex styling, effectively changing all or part of their appearance.
 
-#### Style properties
+#### Generic properties
 
 These style properties may be applied to any widget, though not all widgets use all of them.
 
@@ -322,19 +322,6 @@ These style properties may be applied to any widget, though not all widgets use 
 
 > [!NOTE]
 > The property names `transform_angle`, `transform_zoom`, `shadow_ofs_x` and `shadow_ofs_y` are deprecated. Use `transform_rotation`, `transform_scale`, `shadow_offset_x` and `shadow_offset_y` respectively.
-
-### Using Lambdas for Styling
-
-Most LVGL style and widget properties can be set as either constant values or lambdas (which will be evaluated at run time).
-When using lambdas, the returned value must be of the type and within the range expected by the native LVGL library, which may not be the same
-as is used in YAML. This applies particularly to any value represented as a floating point number - the LVGL library does not use
-floating point, instead uses scaled integers. Properties with the following native types should be noted:
-
-- **opacity** LVGL opacity is an integer between 0 and 255.
-- **angle** LVGL angles are represented in 1/10 degree, so usually in the range 0 - 3600.
-- **color** LVGL uses an internal color type - to construct a color in a lambda use `lv_color_hex(0xRRGGBB)`.
-- **scale** Scale levels should be multiplied by 256 (valid range is 0 to 2560, corresponding to 0-10.0).
-- **percentage** To convert a fractional value to a percentage, use `lv_pct(value * 100)`
 
 <span id="lvgl-opacity"></span>
 
@@ -551,6 +538,19 @@ So the precedence happens like this: state based styles override the locally spe
 Feel free to experiment to discover inheritance and precedence of the styles based on states between the nested widgets.
 
 [Theme and style definitions](/cookbook/lvgl#lvgl-cookbook-theme) The Cookbook contains an example which demonstrates how to implement a gradient style for your widgets.
+
+### Using Lambdas for Styling
+
+Most LVGL style and widget properties can be set as either constant values or lambdas (which will be evaluated at run time).
+When using lambdas, the returned value must be of the type and within the range expected by the native LVGL library, which may not be the same
+as is used in YAML. This applies particularly to any value represented as a floating point number - the LVGL library does not use
+floating point, instead uses scaled integers. Properties with the following native types should be noted:
+
+- **opacity** LVGL opacity is an integer between 0 and 255.
+- **angle** LVGL angles are represented in 1/10 degree, so usually in the range 0 - 3600.
+- **color** LVGL uses an internal color type - to construct a color in a lambda use `lv_color_hex(0xRRGGBB)`.
+- **scale** Scale levels should be multiplied by 256 (valid range is 0 to 2560, corresponding to 0-10.0).
+- **percentage** To convert a fractional value to a percentage, use `lv_pct(value * 100)`
 
 ## Widgets
 
