@@ -38,7 +38,7 @@ By default, LVGL draws new widgets on top of old widgets, including their childr
 
 ## Widget parts
 
-Widgets can composed of multiple parts, each of which can be styled independently. For example, a checkbox has a *main* part that styles the background and text label, and an *indicator* part that styles the tick box. All widgets have a *main* part, the available parts for other widgets are specified in the widget description.
+Widgets can be composed of multiple parts, each of which can be styled independently. For example, a checkbox has a *main* part that styles the background and text label, and an *indicator* part that styles the tick box. All widgets have a *main* part, the available parts for other widgets are specified in the widget description.
 
 The possible parts are:
 
@@ -1301,9 +1301,9 @@ The meter widget can visualize data in very flexible ways. It can use arcs, need
   - **range_from** (**Required**): The minimum value of the tick scale. Defaults to `0`.
   - **range_to** (**Required**): The maximum value of the tick scale. Defaults to `100`.
   - **rotation** (*Optional*): The rotation angle offset of the tick scale.
-- **ticks** (*Optional*, list): A scale can have minor and major ticks and labels on the major ticks. To add the minor ticks:
-- **color** (*Optional*, [color](/components/lvgl#lvgl-color)): Color to draw the ticks. Required if `count` is greater than `0`. Defaults to `0x808080`.
-- **count** (**Required**): How many ticks to be on the scale. Defaults to `12` and must be not less than `2`.
+  - **ticks** (*Optional*, list): A scale can have minor and major ticks and labels on the major ticks. To add the minor ticks:
+    - **color** (*Optional*, [color](/components/lvgl#lvgl-color)): Color to draw the ticks. Required if `count` is greater than `0`. Defaults to `0x808080`.
+    - **count** (**Required**): How many ticks to be on the scale. Defaults to `12` and must be not less than `2`.
     - **width** (*Optional*): Tick line width in pixels. Required if `count` is greater than `0`. Defaults to `2`.
     - **length** (*Optional*): Tick line length in pixels. Required if `count` is greater than `0`. Defaults to `10`.
     - **radial_offset** (*Optional*): Radial offset of the ticks from the outer edge, in pixels. Defaults to `0`.
@@ -2037,9 +2037,9 @@ on_...:
   - lvgl.widget.show: [my_button_1, my_button_2] # a list of widgets
   - delay: 0.5s
   - lvgl.widget.show:
-      -id: my_label_id
+      id: my_label_id
   - lvgl.widget.hide:
-      - id: [my_button_1, my_button_2]
+      id: [my_button_1, my_button_2]
 ```
 
 ### `lvgl.widget.disable` / `lvgl.widget.enable` Action
@@ -2049,15 +2049,15 @@ These [actions](/automations/actions#actions-action) are shorthands for toggling
 - **id** (**Required**): The ID or a list of IDs of widgets configured in LVGL which you want to disable or enable.
 
 ```yaml
-- on_...:
-    - lvgl.widget.disable:
-        - my_button_1
-        - my_button_2
+on_...:
+  - lvgl.widget.disable:
+      - my_button_1
+      - my_button_2
 
-- on_...:
-    - lvgl.widget.enable:
-        - id: my_button_1
-        - id: my_button_2
+on_...:
+  - lvgl.widget.enable:
+      - id: my_button_1
+      - id: my_button_2
 ```
 
 ### `lvgl.widget.update` Action
@@ -2158,7 +2158,7 @@ on_...:
 on_...:
   - lvgl.widget.focus:
       group: encoder_group
-      direction: next
+      action: next
       freeze: true
 
 on_...:
