@@ -227,9 +227,9 @@ when the power is switched off. The choice of relay type is not critical, but it
 small-signal and compact relay type such as a TQ2-5V or a G6K-2P-5V.
 
 To protect the GPIO pin when the power is off, alternatively, in stead of a relay, an 'i2c' level-shift
-chip can be used. Although the 3.3 volt level is already fine, an interface chip like a TXS0102 is designed
+chip can be used. Although the 3.3 volt level is already fine, an interface chip like a TXS0102 or TCA9517 is designed
 to withstand a bus line voltage even when the local power is off, and its `i2c` pull-down behavior is compatible
-with the cec bus protocol.
+with the cec bus protocol. Also, tiny PCB modules are easily available for i2c level conversion, which are fine as well.
 
 ### 2: Use a UART for sending messages
 
@@ -287,6 +287,11 @@ Use some 'strapping pin' to change the boot message mode, write an eFuse registe
 Please consult the device programming manual for details.
 However, especially when choosing a relatively fast UART baud_rate, other devices on the CEC bus do not seem to be
 bothered by the weird pattern.
+
+**Note**: Probably, the requirement for a diode on the UART output can be dropped on some of the newer microcontrollers,
+such as an `esp32s3` or an `rp2350`, thanks to their flexible GPIO matrix.
+*After* the UART driver has done its standard pin configuration,
+the pin mode can probably be overwritten. This needs further testing.
 
 ### 3: Connect the HDMI Hot Plug Detect pin
 
