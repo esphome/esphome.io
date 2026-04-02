@@ -600,6 +600,8 @@ binary_sensor:
       name: "Indoor Sensor Fault"
     rate_limiting_active:
       name: "Rate Limiting Active"
+    pid_active:
+      name: "PID Active"
 ```
 
 Configuration variables:
@@ -613,26 +615,7 @@ Configuration variables:
 
 - **rate_limiting_active** (*Optional*): `ON` when output is being limited by rate limiting.
 
-### Text Sensor Platform
-
-```yaml
-text_sensor:
-  - platform: equitherm
-    climate_id: heating
-    control_mode:
-      name: "Control Mode"
-```
-
-Configuration variables:
-
-- **climate_id** (**Required**, [ID](/guides/configuration-types#id)): ID of the equitherm climate component.
-  If only one equitherm climate is configured, this is automatically resolved.
-
-- **control_mode** (*Optional*): Text sensor showing current control mode:
-  - `Normal` - Both sensors working, full equitherm + PID control
-  - `Outdoor Fallback` - Outdoor sensor failed, using fallback temperature
-  - `Indoor Fallback` - Indoor sensor failed, PID disabled (pure equitherm)
-  - `Full Fallback` - Both sensors failed
+- **pid_active** (*Optional*): `ON` when at least one PID gain (`kp`, `ki`, or `kd`) is non-zero, indicating PID correction is active.
 
 ## Actions
 
