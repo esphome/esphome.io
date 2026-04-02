@@ -14,18 +14,22 @@ It allows exposing supported ESPHome components over a Zigbee network to Home As
 Additional properties must be configured manually in Home Assistant. Each ESPHome entity consumes one Zigbee endpoint.
 
 > [!NOTE]
-> Zigbee support is currently available only on `nRF52` platforms and on `ESP32` with IEEE 802.15.4
-> connectivity (`ESP32-C5`, `ESP32-C6`, or `ESP32-H2`).
-> On `nRF52` a maximum of 8 endpoints is supported.
-
-> [!NOTE]
 > You will need a Zigbee coordinator like **Zigbee2MQTT** or **ZHA**. Other commercial Zigbee hubs most likely don't
 > support esphome components and might have issues with changing firmware.
 > When using Zigbee2MQTT make sure to use at least version 2.8.0. Otherwise names cannot have spaces in them and you need to setup at least 2 endpoints.
 
+## Supported Hardware
+
+Zigbee is only supported on `nRF52` platforms and on `ESP32` with IEEE 802.15.4 connectivity (`ESP32-C5`, `ESP32-C6`, or `ESP32-H2` 
+and in the future `ESP32-H4` and `ESP32-H21`). Both platforms support different features and have different limitations:
+- On `nRF52` a maximum of 8 endpoints is supported.
+- `ESP32-H2` seems to work more reliable than `ESP32-C6`. There are reports of `ESP32-C6` boards that work only if placed next 
+to the coordinator. [Here is a list with known good boards.](https://github.com/luar123/zigbee_esphome/discussions/41)
+
 > [!CAUTION]
 > Whenever the configuration is changed, the device should be removed and re-added to the Zigbee network.
 > For Zigbee2MQTT, the device must also be re-interviewed. This is especially important if components are added or removed or if names change.
+> Sometimes a changed configuration can lead to boot loops. In this case use `wipe_on_boot` or erase the flash manually.
 
 <span id="config-zigbee"></span>
 
