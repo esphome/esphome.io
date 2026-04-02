@@ -306,12 +306,20 @@ sensor:
   - platform: ld2420
     moving_distance:
       name : Moving Distance
+    gate_0:
+      gate_energy:
+        name: Gate 0 Energy
+    gate_1:
+      gate_energy:
+        name: Gate 1 Energy
 ```
 
 ### Configuration variables
 
 - **moving_distance** (*Optional*): Distance between the sensor and the detected moving target. May contain any options
   from [Sensor](/components/sensor).
+- **gate_x** (*Optional*, 0-15): Per-gate energy level sensors. Requires firmware v1.5.4 or greater and Normal operating mode. Each gate covers approximately 70 cm. Available gates are `gate_0` through `gate_15`.
+  - **gate_energy** (*Optional*): The energy level detected at this gate. Higher values indicate stronger reflections. May contain any options from [Sensor](/components/sensor).
 
 ## Binary Sensor
 
