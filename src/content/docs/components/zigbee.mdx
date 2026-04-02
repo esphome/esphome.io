@@ -24,7 +24,12 @@ Zigbee is only supported on `nRF52` platforms and on `ESP32` with IEEE 802.15.4 
 and in the future `ESP32-H4` and `ESP32-H21`). Both platforms support different features and have different limitations:
 - On `nRF52` a maximum of 8 endpoints is supported.
 - `ESP32-H2` seems to work more reliable than `ESP32-C6`. There are reports of `ESP32-C6` boards that work only if placed next 
-to the coordinator. [Here is a list with known good boards.](https://github.com/luar123/zigbee_esphome/discussions/41)
+to the coordinator. [Here is a list with known good boards.](https://github.com/luar123/zigbee_esphome/discussions/41#discussioncomment-14978980)
+- On `ESP32` Zigbee can be used together with [wifi](/components/wifi) with some limitations:
+  - Wifi station mode + Zigbee end device is working fine.
+  - Wifi station mode + Zigbee router leads to a instable Zigbee network. Still can be used if wifi is only enabled for short times (e.g. OTA)
+  - Wifi access point + Zigbee end device could lead to a unstable access point with increased package loss. If the AP is only used as fallback there should be no issues.
+  - Wifi access point + Zigbee router is not supported
 
 > [!CAUTION]
 > Whenever the configuration is changed, the device should be removed and re-added to the Zigbee network.
