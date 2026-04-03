@@ -440,6 +440,30 @@ on_...:
 
   - All other options from [Remote Transmitter Actions](#remote_transmitter-transmit_action).
 
+<span id="remote_transmitter-transmit_intertechno"></span>
+
+### `remote_transmitter.transmit_intertechno` Action
+
+This [action](/automations/actions#all-actions) sends a Intertecho remote code to a transmitter.
+
+```yaml
+on_...:
+  - remote_transmitter.transmit_intertechno:
+      code: "F00F00000FF0"
+        repeat:
+          times: 5
+          wait_time: 0s
+```
+
+#### Configuration variables
+
+- **code** (**Required**, string, [templatable](/automations/templates)): The Intertechno code to send. It usually contains 12 symbols, where every symbol can be `0`, `1`, or `F`. More information about the code structure can be found in the [FHEM Wiki](https://wiki.fhem.de/wiki/Intertechno_Code_Berechnung) (in German).
+- All other options from [Remote Transmitter Actions](#remote_transmitter-transmit_action).
+
+**Important:**
+
+- Most receivers only respond if the code is repeated multiple times. It is recommend set `repeat` to (at least) 5 and `wait_time` to 0s.
+
 <span id="remote_transmitter-transmit_jvc"></span>
 
 ### `remote_transmitter.transmit_jvc` Action
