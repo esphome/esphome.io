@@ -227,10 +227,10 @@ documentation for detailed information and examples.
 ## "Took a long time for an operation" Warning
 
 ```log
-[W][component:511]: Component sensor.my_sensor took a long time for an operation (85 ms), max is 50 ms
+[W][component:511]: Component sensor.my_sensor took a long time for an operation (85 ms), max is 30 ms
 ```
 
-A component blocked the main loop for longer than the threshold (default 50ms). While it was blocking, no other components could run. Severe cases can trigger watchdog resets or Wi-Fi disconnections.
+A component blocked the main loop for longer than the expected maximum. While it was blocking, no other components could run. Severe cases can trigger watchdog resets or Wi-Fi disconnections.
 
 This measurement is wall time, not CPU time. On single-core chips (ESP32-C3, C2, H2), the warning can be triggered or inflated by FreeRTOS system tasks preempting the main loop. See the [Runtime Stats wall time documentation](/components/runtime_stats/#understanding-the-output) for more detail.
 
