@@ -232,6 +232,8 @@ documentation for detailed information and examples.
 
 A component blocked the main loop for longer than the threshold (default 50ms). While it was blocking, no other components could run. Severe cases can trigger watchdog resets or Wi-Fi disconnections.
 
+This measurement is wall time, not CPU time. On single-core chips (ESP32-C3, C2, H2), the warning can be triggered or inflated by FreeRTOS system tasks preempting the main loop. See the [Runtime Stats wall time documentation](/components/runtime_stats/#understanding-the-output) for more detail.
+
 If you see this, please comment on [GitHub issue #9517](https://github.com/esphome/esphome/issues/9517) with the log output and the relevant component configuration so the component can be fixed.
 
 To gather more detail, enable [Runtime Stats](/components/runtime_stats/) and look at the `max` column:
