@@ -1,0 +1,324 @@
+---
+description: "Instructions for setting up Fantini Cosmi Ecocomfort 2.0 VMC integration via BLE in ESPHome."
+title: "Ecocomfort2"
+---
+
+The `ecocomfort2` component allows you to control
+[Fantini Cosmi Aspirvelo Air Ecocomfort 2.0 Smart](https://www.fantinicosmi.it/prodotto/aspirvelo-air-ecocomfort-2-0-smart/) VMC
+(Mechanical Ventilation with Heat Recovery) units over BLE using an ESP32.
+
+The component uses a hub architecture: one `ecocomfort2` hub per VMC unit,
+with platform entities (fan, sensor, etc.) registered as children. A single
+ESP32 can control multiple VMC units simultaneously.
+
+## Requirements
+
+- ESP32 device with BLE support
+- [ESP-IDF framework](/components/esp32/) (`type: esp-idf`)
+- [BLE Tracker](/components/esp32_ble_tracker/) and
+  [BLE Client](/components/ble_client/) configured
+- VMC unit in pairing range
+
+## Hub Configuration
+
+```yaml
+esp32_ble_tracker:
+
+ble_client:
+  - mac_address: "AA:BB:CC:DD:EE:FF"
+    id: vmc_ble
+
+ecocomfort2:
+  - id: vmc_hub
+    ble_client_id: vmc_ble
+    time_id: sntp_time
+```
+
+### Configuration Variables
+
+- **id** (**Required**, [ID](/guides/configuration-types/#config-id)):
+  The ID of the hub.
+- **ble_client_id** (**Required**, [ID](/guides/configuration-types/#config-id)):
+  The ID of the BLE client connected to the VMC unit.
+- **time_id** (*Optional*, [ID](/guides/configuration-types/#config-id)):
+  A [Time](/components/time/) component for automatic clock synchronization
+  with the VMC unit. Clock sync retries every minute until the first success,
+  then every hour.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types/#config-time)):
+  How often to poll the VMC unit for state updates. Defaults to `30s`.
+
+## Fan Platform
+
+The fan entity provides the main operating control for the VMC unit.
+
+```yaml
+fan:
+  - platform: ecocomfort2
+    name: "VMC Fan"
+    ecocomfort2_id: vmc_hub
+```
+
+### Configuration Variables
+
+- **ecocomfort2_id** (**Required**, [ID](/guides/configuration-types/#config-id)):
+  The ID of the Ecocomfort2 hub.
+- All other options from [Fan](/components/fan/).
+
+### Preset Modes
+
+| Preset | Description |
+|--------|-------------|
+| In | Intake only |
+| Out | Exhaust only |
+| In-Out | Bidirectional ventilation |
+| Sensor | Sensor-driven automatic direction |
+| Auto | Fully automatic mode (speed and direction) |
+
+Speed can be set from 1 to 4. In Auto mode, speed is managed by the VMC
+unit; changing speed manually switches to Sensor mode.
+
+## Sensor Platform
+
+```yaml
+sensor:
+  - platform: ecocomfort2
+    ecocomfort2_id: vmc_hub
+    temperature:
+      name: "VMC Temperature"
+    humidity:
+      name: "VMC Humidity"
+    voc:
+      name: "VMC VOC"
+    direction:
+      name: "VMC Direction"
+    actual_mode:
+      name: "VMC Mode"
+    actual_speed:
+      name: "VMC Speed"
+    role:
+      name: "VMC Role"
+    temp_offset:
+      name: "VMC Temp Offset"
+    humidity_offset:
+      name: "VMC Humidity Offset"
+```
+
+### Configuration Variables
+
+- **ecocomfort2_id** (**Required**, [ID](/guides/configuration-types/#config-id)):
+  The ID of the Ecocomfort2 hub.
+- **temperature** (*Optional*): Indoor temperature in °C.
+  All options from [Sensor](/components/sensor/).
+- **humidity** (*Optional*): Indoor relative humidity in %.
+  All options from [Sensor](/components/sensor/).
+- **voc** (*Optional*): Volatile organic compounds level in ppb.
+  All options from [Sensor](/components/sensor/).
+- **direction** (*Optional*): Current airflow direction (raw value).
+  All options from [Sensor](/components/sensor/).
+- **actual_mode** (*Optional*): Current operating mode (raw value).
+  All options from [Sensor](/components/sensor/).
+- **actual_speed** (*Optional*): Current fan speed (raw value).
+  All options from [Sensor](/components/sensor/).
+- **role** (*Optional*): Unit role in a paired installation.
+  All options from [Sensor](/components/sensor/).
+- **temp_offset** (*Optional*): Temperature calibration offset in °C.
+  All options from [Sensor](/components/sensor/).
+- **humidity_offset** (*Optional*): Humidity calibration offset in %.
+  All options from [Sensor](/components/sensor/).
+
+At least one sensor must be configured.
+
+## Binary Sensor Platform
+
+```yaml
+binary_sensor:
+  - platform: ecocomfort2
+    ecocomfort2_id: vmc_hub
+    connected:
+      name: "VMC Connected"
+    boost:
+      name: "VMC Boost"
+```
+
+### Configuration Variables
+
+- **ecocomfort2_id** (**Required**, [ID](/guides/configuration-types/#config-id)):
+  The ID of the Ecocomfort2 hub.
+- **connected** (*Optional*): Whether the BLE link is encrypted and ready
+  for communication. All options from
+  [Binary Sensor](/components/binary_sensor/).
+- **boost** (*Optional*): Whether the VMC unit is in boost mode.
+  All options from [Binary Sensor](/components/binary_sensor/).
+
+At least one binary sensor must be configured.
+
+## Text Sensor Platform
+
+```yaml
+text_sensor:
+  - platform: ecocomfort2
+    ecocomfort2_id: vmc_hub
+    firmware:
+      name: "VMC Firmware"
+```
+
+### Configuration Variables
+
+- **ecocomfort2_id** (**Required**, [ID](/guides/configuration-types/#config-id)):
+  The ID of the Ecocomfort2 hub.
+- **firmware** (*Optional*): The firmware version of the VMC unit.
+  All options from [Text Sensor](/components/text_sensor/).
+
+At least one text sensor must be configured.
+
+## Select Platform
+
+```yaml
+select:
+  - platform: ecocomfort2
+    ecocomfort2_id: vmc_hub
+    season:
+      name: "VMC Season"
+    free_cooling:
+      name: "VMC Free Cooling"
+```
+
+### Configuration Variables
+
+- **ecocomfort2_id** (**Required**, [ID](/guides/configuration-types/#config-id)):
+  The ID of the Ecocomfort2 hub.
+- **season** (*Optional*): Season setting (Summer / Winter).
+  All options from [Select](/components/select/).
+- **free_cooling** (*Optional*): Free cooling level (Off / Level 1 /
+  Level 2 / Level 3). All options from [Select](/components/select/).
+
+At least one select must be configured.
+
+## Number Platform
+
+```yaml
+number:
+  - platform: ecocomfort2
+    ecocomfort2_id: vmc_hub
+    humidity_threshold:
+      name: "VMC Humidity Threshold"
+    luminosity_threshold:
+      name: "VMC Luminosity Threshold"
+    voc_threshold:
+      name: "VMC VOC Threshold"
+    temp_offset_number:
+      name: "VMC Temp Offset"
+    humidity_offset_number:
+      name: "VMC Humidity Offset"
+```
+
+### Configuration Variables
+
+- **ecocomfort2_id** (**Required**, [ID](/guides/configuration-types/#config-id)):
+  The ID of the Ecocomfort2 hub.
+- **humidity_threshold** (*Optional*): Humidity threshold level (0–5).
+  All options from [Number](/components/number/).
+- **luminosity_threshold** (*Optional*): Luminosity threshold level (0–5).
+  All options from [Number](/components/number/).
+- **voc_threshold** (*Optional*): VOC threshold level (0–5).
+  All options from [Number](/components/number/).
+- **temp_offset_number** (*Optional*): Temperature calibration offset
+  (-10.0 to 10.0 °C, step 0.1). All options from
+  [Number](/components/number/).
+- **humidity_offset_number** (*Optional*): Humidity calibration offset
+  (-20.0 to 20.0 %, step 0.1). All options from
+  [Number](/components/number/).
+
+At least one number must be configured.
+
+## Switch Platform
+
+```yaml
+switch:
+  - platform: ecocomfort2
+    ecocomfort2_id: vmc_hub
+    humidity_advanced:
+      name: "VMC Humidity Advanced"
+    voc_advanced:
+      name: "VMC VOC Advanced"
+```
+
+### Configuration Variables
+
+- **ecocomfort2_id** (**Required**, [ID](/guides/configuration-types/#config-id)):
+  The ID of the Ecocomfort2 hub.
+- **humidity_advanced** (*Optional*): Enable advanced humidity sensing
+  algorithm. All options from [Switch](/components/switch/).
+- **voc_advanced** (*Optional*): Enable advanced VOC sensing algorithm.
+  All options from [Switch](/components/switch/).
+
+At least one switch must be configured.
+
+## Button Platform
+
+```yaml
+button:
+  - platform: ecocomfort2
+    ecocomfort2_id: vmc_hub
+    pair:
+      name: "VMC Pair"
+```
+
+### Configuration Variables
+
+- **ecocomfort2_id** (**Required**, [ID](/guides/configuration-types/#config-id)):
+  The ID of the Ecocomfort2 hub.
+- **pair** (*Optional*): Manually trigger BLE pairing/encryption.
+  All options from [Button](/components/button/).
+
+## BLE Pairing
+
+The component requests BLE encryption automatically after connecting.
+If the VMC unit is already bonded (from a previous session), the encrypted
+link is restored without user interaction. BLE bonds persist across OTA
+updates.
+
+If pairing is required for the first time:
+
+1. Put the VMC unit into pairing mode (refer to the Ecocomfort 2.0 manual)
+2. The ESP32 will automatically attempt pairing on connect
+3. If automatic pairing fails, use the **Pair** button entity to retry
+
+If authentication times out (10 seconds), the component disconnects and
+retries the full connection cycle automatically.
+
+## Multiple Units
+
+A single ESP32 can control multiple VMC units. Define one hub and one set
+of platform entities per unit:
+
+```yaml
+ble_client:
+  - mac_address: "AA:BB:CC:DD:EE:FF"
+    id: vmc1_ble
+  - mac_address: "11:22:33:44:55:66"
+    id: vmc2_ble
+
+ecocomfort2:
+  - id: vmc1
+    ble_client_id: vmc1_ble
+    time_id: sntp_time
+  - id: vmc2
+    ble_client_id: vmc2_ble
+    time_id: sntp_time
+
+fan:
+  - platform: ecocomfort2
+    name: "VMC 1 Fan"
+    ecocomfort2_id: vmc1
+  - platform: ecocomfort2
+    name: "VMC 2 Fan"
+    ecocomfort2_id: vmc2
+```
+
+## See Also
+
+- [BLE Client](/components/ble_client/)
+- [ESP32 BLE Tracker](/components/esp32_ble_tracker/)
+- [Fan Component](/components/fan/)
+- [Sensor Component](/components/sensor/)
