@@ -55,12 +55,17 @@ fan:
 - **speed_datapoint** (**Required**, int): The datapoint id number of the fan speed.
 - **switch_datapoint** (**Required**, int): The datapoint id number of the fan switch.
 - **oscillation_datapoint** (*Optional*, int): The datapoint id number of the oscillation
-  switch. Probably not supported on any Tuya controllers currently, but it's there if need be.
+  switch.
 
 - **direction_datapoint** (*Optional*, int): The datapoint id number of the direction
   switch. Supported by some ceiling fans.
 
 - **speed_count** (*Optional*, int): Set the number of supported discrete speed levels. Defaults to `3`.
+- **preset_modes_datapoint** (*Optional*, int): The datapoint id number of the fan preset mode. Some fans support preset modes
+  controlled by the MCU. You must provide a list of `preset_modes` if you set this variable.
+- **preset_modes** (*Optional*): A list of preset modes supported by this fan. The position in the list determines what value
+  is sent to the MCU (the first item sends 0, etc.). You must set the `preset_modes_datapoint` variable if you provide this
+  list.
 - All other options from [Fan](/components/fan#config-fan).
 
 > [!NOTE]
