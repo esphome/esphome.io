@@ -26,20 +26,21 @@ be used, but some more complicated components that do communication through this
 
 The following devices have been tested with this component and can be used by setting the `device` in your YAML.
 
-| Device    | Number of Pins | I2C Address | Features |
-| ---       | ---            | ---         | I/O |
-| PCA9554   | 8              | 0x20-0x27   | I/O |
-| PCA9554A  | 8              | 0x38-0x3F   | I/O |
-| PCA9536   | 4              | 0x41        | I/O |
-| PCA9535   | 16             | 0x20-0x27   | I/O |
-| PCAL9538A | 8              | 0x70-0x73   | I/O, Pull Up/Down, Open Drain Outputs, Latching, Maskable Interrupt, Variable Drive Strength |
-| PCAL9555A | 16             | 0x20-0x27   | I/O, Pull Up/Down, Open Drain Outputs, Latching, Maskable Interrupt, Variable Drive Strength |
+| Device | Number of Pins | I2C Address | Features |
+| --- | --- | --- | --- | 
+| PCA9554 | 8 | 0x20-0x27 | I/O |
+| PCA9554A | 8 | 0x38-0x3F | I/O |
+| PCA9536 | 4 | 0x41 | I/O |
+| PCA9535 | 16 | 0x20-0x27 | I/O |
+| PCAL9538A | 8 | 0x70-0x73 | I/O, Pull Up/Down, Open Drain Outputs, Latching, Maskable Interrupt, Variable Drive Strength |
+| PCAL9555A | 16 | 0x20-0x27 | I/O, Pull Up/Down, Open Drain Outputs, Latching, Maskable Interrupt, Variable Drive Strength |
 
 Devices that show a range of I2C addresses have an address that can be set using strapping pins on the device.
 
 Other I/O expanders that use this command interface and up to 16 I/O pins should also work.
  * TCA9554
  * TCA9535
+
 If these devices have the same number of pins and features as the supported devices above, you can use that device
 name in your YAML. For many of the devices with different part numbers, the only change is the I2C address range,
 which can be set independently of the device type.
@@ -104,24 +105,24 @@ binary_sensor:
 
 ## Description of the mode settings
 
-###input
+`input`:
 Define the device as a high impedance input.
 
-###output
+`output`:
 Define the device as a push/pull output
 
-###pullup
+`pullup`:
 If the pin is configured as an `input` enable a 100K pull up.
 
-###pulldown
+`pulldown`:
 If the pin is configured as an `input` enable a 100K pull down.
 
-###latch
+`latch`:
 If the pin is configured as an `input`, latch the input. With this enabled, if the input changes state, the pin state will be latched
 at the new level, and will not change, even if the pin goes back to its original state. This latch is cleared when the pin state 
 register is read. This is likley only useful if you are trying to detect *very* fast transient signals.
 
-###interrupt
+`interrupt`:
 If the pin is configured as an `input`, enable interrupt generation on this pin. If this option is enabled, any level change on the pin
 will cause the interrupt pin on the device to pull low. If this pin is monitored by the main CPU, it can be used to asynchronously detect
 pin changes.
