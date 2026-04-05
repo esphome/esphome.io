@@ -59,6 +59,7 @@ switch:
     pin:
       pca9554: setup_expander
       number: 2
+      drive_strength: 2
       mode:
         output: true
 
@@ -98,10 +99,19 @@ binary_sensor:
 - **number** (**Required**, int): The pin number.
 - **inverted** (*Optional*, boolean): If all read and written values
   should be treated as inverted. Defaults to `false`.
-
+- **drive_strength** (*Optional*, int): If the pin is configured as an `output`, this controls the drive strength
+  of the output. Refer to the datasheet of your device for the maximum recommended drive strength. Defaults to full strength.
+  This option is only used with the PCAL series devices, setting it on other devices will have no effect.
+  - `0`: 1/4 drive strength
+  - `1`: 1/2 drive strength
+  - `2`: 3/4 drive strength
+  - `3`: full drive strength.
 - **mode** (*Optional*, boolean(s)): Pin mode settings for the selected pin. Multiple pin modes may be selected by
   indenting them after the `mode:` entry in the YAML as shown in the example above. All devices support `input` and `output`. 
   The PCAL series devices additionaly support `pullup`, `pulldown`, `latch`, and `interrupt`.
+
+> [!NOTE]
+> Pin numbers always start at 0. For devices with more than 8 pins, the datasheet may call them out in two ports (ex: P0_0..7 and P1_0..7). In this case, the port 0 pins are the lower eight pins of the expander, and the port 1 pins are the upper eight (ex: P0_4 is pin four, P1_4 is pin 12)
 
 ## Description of the mode settings
 
