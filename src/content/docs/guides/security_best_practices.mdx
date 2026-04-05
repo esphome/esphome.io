@@ -291,6 +291,54 @@ wifi_password: "your-wifi-password"
 
 **Important:** Even when using `secrets.yaml`, **each device must have unique API encryption keys, OTA passwords, and web server credentials**. Never reuse these across devices. Only WiFi credentials can be shared.
 
+### Dashboard Credentials with Docker Secrets
+
+To avoid placing your dashboard credentials in plaintext in a docker compose file, the [Docker Secrets Engine](https://docs.docker.com/compose/how-tos/use-secrets) is supported through the `USERNAME_FILE` and `PASSWORD_FILE` environment variables.
+
+To use secrets files, create a location for your secrets to live alongside your docker compose file. An example file structure might look like:
+```
+esphome
+├── compose.yaml
+├── config
+└── docker_secrets  <--- Name this whatever you want
+    ├── username.txt
+    └── password.txt
+```
+
+**Be sure to exclude the secrets from version control and to set appropriate file permissions** - `600` or similar.
+
+Then, to use the secrets in your docker compose file:
+```yaml
+# Tell docker about your secrets files
+secrets:
+  my_username:
+    file: ./docker_secrets/username.txt
+  my_password:
+    file: ./docker_secrets/password.txt
+
+services:
+  esphome:
+    container_name: esphome
+    image: ghcr.io/esphome/esphome
+
+    # Other configuration...
+
+    # Provide your secrets to the esphome container
+    secrets:
+      - my_username
+      - my_password
+    # Tell the dashboard where to find the secrets
+    environment:
+      - USERNAME_FILE=/run/secrets/my_username
+      - PASSWORD_FILE=/run/secrets/my_password
+```
+
+If credentials are passed using multiples methods, they are applied with the following order of priority:
+1. `--username`/`--password` flags passed directly to the `esphome` executable
+2. `USERNAME`/`PASSWORD` environment variables
+3. `USERNAME_FILE`/`PASSWORD_FILE` environment variables
+4. No credentials
+
 ### Version Control
 
 <details>
@@ -298,9 +346,10 @@ wifi_password: "your-wifi-password"
 
 **Add to `.gitignore`:**
 
-```txt
+```gitignore
 secrets.yaml
 *.backup
+docker_secrets/  # If applicable
 ```
 
 **Verify secrets.yaml is not tracked:**
