@@ -51,6 +51,7 @@ Multiple remote receivers can be configured as a list of dict definitions within
   - **gobox**: Decode and dump Go-Box infrared codes.
   - **keeloq**: Decode and dump KeeLoq RF codes.
   - **haier**: Decode and dump Haier infrared codes.
+  - **ira211**: Decode and dump Siemens IRA211 infrared codes.
   - **lg**: Decode and dump LG infrared codes.
   - **magiquest**: Decode and dump MagiQuest wand infrared codes.
   - **midea**: Decode and dump Midea infrared codes.
@@ -216,6 +217,10 @@ To enable signal demodulation, configure the signal carrier frequency and duty c
 
 - **on_haier** (*Optional*, [Automation](/automations)): An automation to perform when a
   Haier remote code has been decoded. A variable `x` of type <APIStruct text="remote_base::HaierData" path="remote_base::HaierData" />
+  is passed to the automation for use in lambdas.
+
+- **on_ira211** (*Optional*, [Automation](/automations)): An automation to perform when a
+  Siemens IRA211 remote code has been decoded. A variable `x` of type <APIStruct text="remote_base::IRA211Data" path="remote_base::IRA211Data" />
   is passed to the automation for use in lambdas.
 
 - **on_lg** (*Optional*, [Automation](/automations)): An automation to perform when a
@@ -470,6 +475,14 @@ Remote code selection (exactly one of these has to be included):
   - **code** (**Required**, 13-bytes list): The code to listen for, see
     [transmitter description](/components/remote_transmitter#remote_transmitter-transmit_haier) for more info. Usually you only need to copy
     this directly from the dumper output.
+
+- **ira211**: Trigger on a decoded Siemens IRA211 remote code with the given data.
+
+  - **command** (**Required**, string): The IRA211 command. One of `TEMP_UP`, `TEMP_DOWN`, `MODE`, `FAN`, `POWER`, `SYNC`.
+  - **temperature** (*Optional*, int): The target temperature (5–35). Defaults to `20`.
+  - **temp_tenths** (*Optional*, int): Tenths of a degree — `0` or `5`. Defaults to `0`.
+  - **mode** (*Optional*, string): The operating mode. One of `PROTECTION`, `TIMER`, `COMFORT`. Defaults to `COMFORT`.
+  - **fan_mode** (*Optional*, string): The fan speed. One of `AUTO`, `LOW`, `MEDIUM`, `HIGH`. Defaults to `AUTO`.
 
 - **lg**: Trigger on a decoded LG remote code with the given data.
 

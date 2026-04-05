@@ -31,6 +31,7 @@ submit a feature request (see FAQ).
 | [Midea](#midea_ir) | `midea_ir`                         | yes |
 | [Mitsubishi](#mitsubishi) | `mitsubishi`                       | yes |
 | Noblex | `noblex`                           | yes |
+| [Siemens IRA211](#siemens_ira211) | `climate_ir_siemens_ira211`        | yes |
 | Electrolux, TCL, Fuego | `tcl112`                           | yes |
 | [Toshiba](#toshiba) | `toshiba`                          | yes |
 | [Whirlpool](#whirlpool) | `whirlpool`                        | yes |
@@ -235,6 +236,45 @@ climate:
     vertical_default: "down"
 ```
 
+<span id="siemens_ira211"></span>
+
+### `climate_ir_siemens_ira211`
+
+The Siemens IRA211 is an infrared remote for wall-mount Siemens thermostats using an NRZ-encoded IR protocol.
+
+The following thermostats are supported:
+
+- RDF600T
+- RDF660T
+- RDG160TU
+
+EOL thermostats supported:
+
+- RDF110.../IR
+- RDF210…/IR
+- RDF310.21
+- RDF410.21
+- RDE410
+- RDG1…T
+
+
+Functions and variables:
+
+- Temperature range: 5–35 °C in 0.5 °C steps
+- Modes: Heat/Cool (or Heat-only/Cool-only depending on hardware)
+- Presets: Comfort, Eco, Protection (OFF mode)
+- Fan speeds: Auto, Low, Medium, High
+
+No protocol-specific configuration variables are required beyond the base climate IR options.
+
+```yaml
+# Example configuration entry
+climate:
+  - platform: climate_ir_siemens_ira211
+    name: "Siemens IRA211"
+    sensor: room_temperature
+```
+
 <span id="toshiba"></span>
 
 ### `toshiba`
@@ -393,6 +433,7 @@ Additional configuration must be specified for this platform:
 - <APIRef text="hitachi_ac344.h" path="hitachi_ac344/hitachi_ac344.h" />
 - <APIRef text="midea_ir.h" path="midea_ir/midea_ir.h" />
 - <APIRef text="mitsubishi.h" path="mitsubishi/mitsubishi.h" />
+- <APIRef text="climate_ir_siemens_ira211.h" path="climate_ir_siemens_ira211/climate_ir_siemens_ira211.h" />
 - <APIRef text="tcl112.h" path="tcl112/tcl112.h" />
 - <APIRef text="toshiba.h" path="toshiba/toshiba.h" />
 - <APIRef text="whirlpool.h" path="whirlpool/whirlpool.h" />

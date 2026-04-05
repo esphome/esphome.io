@@ -505,6 +505,31 @@ on_...:
 - All other options from [Remote Transmitter Actions](#remote_transmitter-transmit_action).
 - A repeat **wait_time** of 15ms as shown replicates the repetition of an HCS301.
 
+<span id="remote_transmitter-transmit_ira211"></span>
+
+### `remote_transmitter.transmit_ira211` Action
+
+This [action](/automations/actions#all-actions) sends a Siemens IRA211 infrared remote code to a remote transmitter.
+
+```yaml
+on_...:
+  - remote_transmitter.transmit_ira211:
+      command: SYNC
+      temperature: 22
+      temp_tenths: 5
+      mode: COMFORT
+      fan_mode: AUTO
+```
+
+#### Configuration variables
+
+- **command** (**Required**, string, [templatable](/automations/templates)): The IRA211 command to send. One of `TEMP_UP`, `TEMP_DOWN`, `MODE`, `FAN`, `POWER`, `SYNC`.
+- **temperature** (*Optional*, int, [templatable](/automations/templates)): The target temperature (5–35). Defaults to `20`.
+- **temp_tenths** (*Optional*, int, [templatable](/automations/templates)): Tenths of a degree — `0` or `5` (for 0.5 °C steps). Defaults to `0`.
+- **mode** (*Optional*, string, [templatable](/automations/templates)): The operating mode. One of `PROTECTION`, `TIMER`, `COMFORT`. Defaults to `COMFORT`.
+- **fan_mode** (*Optional*, string, [templatable](/automations/templates)): The fan speed. One of `AUTO`, `LOW`, `MEDIUM`, `HIGH`. Defaults to `AUTO`.
+- All other options from [Remote Transmitter Actions](#remote_transmitter-transmit_action).
+
 <span id="remote_transmitter-transmit_haier"></span>
 
 ### `remote_transmitter.transmit_haier` Action
