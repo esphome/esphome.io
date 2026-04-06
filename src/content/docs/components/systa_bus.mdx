@@ -3,6 +3,10 @@ description: "Instructions for integrating a PARADIGMA SystaSolar energy collect
 title: "Systa Bus Component"
 ---
 
+import { Image } from 'astro:assets';
+import systaBusCircuitImg from './images/systa_bus_circuit.png';
+import Figure from '@components/Figure.astro';
+
 The `systa_bus` Component provides status reading connectivity to solar heat energy collector controllers using the Systa Bus
 protocol.
 
@@ -24,9 +28,19 @@ The device must be connected via a [UART bus](/components/uart/) supporting the 
 The UART bus must be configured at 9600bps. The controller outputs data depending on the packet type up to multiple times per second.
 
 To convert the signal on the bus to UART that can be received by the ESPHome device, a converter circuit is needed.
-This circuit applies a lowpass filter to the signal and converts the voltage to a safe level for the ESPHome device.
+This circuit must apply a lowpass filter to the signal and convert the voltage to a safe level for the ESPHome device.
 
-A circuit design [can be found here](https://ringwelt.de/homeautomation/heizungsanlage/einfuehrung.html).
+The following circuit uses simple components and provides electrical isolation between the bus and the ESP.
+<Figure
+  src={systaBusCircuitImg}
+  caption="Systa Bus converter circuit"
+  layout="constrained"
+  alt=""
+/>
+
+[Simulation of this circuit](https://www.falstad.com/circuit/circuitjs.html?ctz=DwYwlgTgBAZgvAIgAwKgFwM6IEwDokCMAbAdgJxIDM22ArABxJEAstApgLQDsqYIizXHWwEk9bEklNsXMqhAAjRLRRQADkoTNKqAG4RlqALaZlnAgQQA+AFBQowXVAAeiDhPpQyRKO7G-iVHhkVAB3YOwggwQCFSljAENnXUMAelt7Rxc3DyhsZiRfXO8gxFVwssTknEj0uwdQ7IQ-Tw5iX28AolKQusyAcyaWvIKi-zpu2Eq+hxAm-MLOylpsL0ng1X4EIlx6TnpeFOR8QlQMaNVdABMcAiFKQi4C+hVmLh4Z4GhXBGXVzuYLDWPVU0TekgQnyuTUBzDy+SgsOBUxCUCMAHtEAQAHIFJDMSEZBowoGdFaeEoolCfOY-Ii0HyMKD0nw0AlU+SIHZ7DgHKBgI5IE6WKDnMq4EXXcVIWisB60ahEIiUMi0LikWiE+rARo-NU+CyrfXw9kbLWZXXKLishEsk0g83EukMk1QLgre0cz6WhALNYjQocagOz7fLkuoOrP2Rh1QMFcCGfNBNcn+42Us3qAB2WNQCjYtzkaMxCCubBgCQArgAbNB6fPi2hkOhMF6xJgEQGRKC6BRbIUsBMq+iMCREeiUZhyb0p61QJl2xghonABIYVY-NqMwOdJco7sQdE532g9EwYKiKRXiHoAAWOFwms+Tk37Wj7U7psqUAqvqiAkYVQjCSI4nxXH0tygT9fFJdZpnAoZOkgjhOhYZdtWhH5SApVlRgzb8MSxXFJAJT4AHk1DQdEQHRSs1GrNgwwQd1Vmw+dqCg7A+Qvax6kyZNewLZpKHwZgCBVSdqDISgVW7Xt+yEBgmyICQGCIdUiCYdkwB+WoV1SCiqJouiGIgFcXyxJAET+KCrLhNCUUCH9M2A6pflwHRQyaehmE8Ahm3nXyoD+WN40TFdBiwuzgo9URrPHdCLSaFioM0t0PTZRKnUQHzPBsuK4RCr0EJ+FKFxdPczRnKLbThXLmS-XoSpyoL-NWehOjarKdW81quMCzwHKq5qEHqtqBtS1Rhu1H0UrYsqpvg7VnCaChaDySQvA4iQdA5UUwBwVQ0CEgAlAANR0ep+JE2SgY1MuKmaYU8W6bvybqILfUZhgWD7EJ8JDijgpqntfXDCiC37HqSsH5whzxKqWmHwx8SNmQqxaQeRrQEfh5FpuxyGEUhgpupW508g-fzKaLTMMAOk9UGOxAACEAFUAGVfEu8muQNAg-IeTiRTphmJCZoT2a5gBqS6FCGagCF8F1KCVrieGhhxeeE0hfCFto1SKDXRcOiXEA59FqwSaAAGEjzQQ9q1MnmUzIZX1poN2OBWWN6dN9AhLtrNdEY47bcgEBKzAOtPm1jrKGC5h-koPLWF9sWjqEgBxbEABEXZ+DqAaV6T1rIRrVD9xmA8QSgADVPJXbW3j85U7roVLgcrhnSDNmJiKQD4m5TFVmS4O76B8BN06xbtmd9bEaBoAvEC4egldEN317dw0Z5iOehIABRt9eh9BgD-TY-CsYceW9VWbgKUNlUK5XmIVPnKMkC3zU9qr3ua79zxGfTI6IoBsGPHyDAagco9GcBIKyqAYEhCJJkNQPZvwYAUisBUa9B75AkOQSgICHCpHRLYYAqRwBmRsEAA)
+
+An alternative circuit design [can be found here](https://ringwelt.de/homeautomation/heizungsanlage/einfuehrung.html).
 
 ## Component
 
