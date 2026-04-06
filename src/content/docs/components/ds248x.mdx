@@ -102,6 +102,29 @@ one_wire:
     id: ds2484_bus
 ```
 
+## Finding Sensor Addresses
+
+To find the addresses of your 1-Wire devices, upload a configuration with the `ds248x` and `one_wire` components set
+up and check the logs during boot. Scanning also works before you define any `sensor` entries.
+
+```text
+[I][one_wire:161]:   Found device 0x1C0000031EDD2A28
+```
+
+Copy the discovered 64-bit address into the matching device configuration, for example in
+[`dallas_temp`](/components/sensor/dallas_temp/).
+
+## I2C Address Reference
+
+The I2C address depends on the chip variant and the state of its address pins.
+
+| Chip | Address Pins | Default Address | Address Range |
+| --- | --- | --- | --- |
+| DS2482-100 | AD0, AD1 | `0x18` | `0x18` to `0x1B` |
+| DS2482-101 | AD0 | `0x18` | `0x18` to `0x19` |
+| DS2482-800 | AD0, AD1, AD2 | `0x18` | `0x18` to `0x1F` |
+| DS2484 | AD0, AD1 | `0x18` | `0x18` to `0x1B` |
+
 ## Component Configuration Variables
 
 - **type** (**Required**, string): The DS248x chip variant. One of `ds2482-100`, `ds2482-101`, `ds2482-800`, or
@@ -150,4 +173,5 @@ resistance mappings.
 - [1-Wire Bus](/components/one_wire/)
 - [I²C Bus](/components/i2c/)
 - [Dallas Temperature Sensor](/components/sensor/dallas_temp/)
+- [Guidelines for Reliable Long Line 1-Wire Networks](https://www.analog.com/en/technical-articles/guidelines-for-reliable-long-line-1wire-networks.html)
 - <APIRef text="one_wire_bus.h" path="one_wire/one_wire_bus.h" />
