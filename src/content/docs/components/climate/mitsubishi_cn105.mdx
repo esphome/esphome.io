@@ -93,6 +93,16 @@ climate:
 
 - **uart_id** (*Optional*, [ID](/guides/configuration-types#id)): The UART bus to use.
 - **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): Interval between status updates. Defaults to `1s`. Lower values provide faster detection of external changes, for example when using the remote control.
+- **current_temperature_min_interval** (*Optional*, [Time](/guides/configuration-types#time)): Minimum time between consecutive room temperature reads.
+
+  This allows keeping a low `update_interval` (to quickly reflect changes, e.g. when using an IR remote) while avoiding excessive current temperature updates.
+
+  Room temperature is still requested during regular polling cycles, so the effective update frequency is bounded by `update_interval`.
+
+  Set to `never` to disable room temperature polling.
+
+  Defaults to `60s`
+
 - All other options from [Climate](/components/climate#config-climate).
 
 ## See Also
