@@ -120,21 +120,20 @@ The [CircuitSetup 6-Channel Energy Meter](https://circuitsetup.us/product/expand
 - **thresholds** (*Optional*): Override the voltage, current, and frequency thresholds used for ATM90E32 power quality monitoring and text sensor status reporting. If omitted, the defaults preserve the previous behavior: voltage sag and peak remain at `78%` and `122%` of nominal, current peak remains `65.53A`, and frequency limits remain `line_frequency ± 3Hz`.
 
   - **allow_unsafe_thresholds** (*Optional*, boolean): Allows `voltage_sag_pct` outside the recommended `50%` to `99%` range and `voltage_peak_pct` outside the recommended `101%` to `150%` range. Defaults to `false`. This does not bypass mutual exclusion or ordering validation.
-  - **voltage_nominal** (*Optional*): Nominal RMS voltage used to derive percentage-based voltage thresholds. Defaults to `120V` for `60Hz` systems and `220V` for `50Hz` systems.
+  - **voltage_nominal** (*Optional*): Nominal RMS voltage used to derive percentage-based voltage thresholds. Defaults to `120V` for `60Hz` systems and `220V` for `50Hz` systems as a compatibility fallback; set it explicitly for installations such as `220V/60Hz` or `120V/50Hz`.
   - **voltage_sag_pct** (*Optional*): Voltage sag threshold as a ratio like `0.78` or a percent string like `78%`. Mutually exclusive with `voltage_sag_v`. Defaults to `78%` of `voltage_nominal`.
   - **voltage_sag_v** (*Optional*): Absolute RMS voltage sag threshold. Mutually exclusive with `voltage_sag_pct`.
   - **voltage_peak_pct** (*Optional*): Over-voltage threshold as a ratio like `1.22` or a percent string like `122%`. Mutually exclusive with `voltage_peak_v`. Defaults to `122%` of `voltage_nominal`.
   - **voltage_peak_v** (*Optional*): Absolute RMS over-voltage threshold. Mutually exclusive with `voltage_peak_pct`.
-  - **current_peak** (*Optional*): Over-current threshold in amperes RMS. Defaults to `65.53A`.
-  - **frequency_nominal** (*Optional*): Nominal frequency used to derive the frequency thresholds. Defaults to `line_frequency`.
-  - **frequency_low_hz** (*Optional*): Absolute low-frequency threshold. Defaults to `frequency_nominal - 3Hz`.
-  - **frequency_high_hz** (*Optional*): Absolute high-frequency threshold. Defaults to `frequency_nominal + 3Hz`.
+  - **current_peak** (*Optional*): Over-current threshold in amperes RMS. Defaults to `65.53A` and must not exceed `65.535A`.
+  - **frequency_low_hz** (*Optional*): Absolute low-frequency threshold. Defaults to `line_frequency - 3Hz`.
+  - **frequency_high_hz** (*Optional*): Absolute high-frequency threshold. Defaults to `line_frequency + 3Hz`.
 
-  The effective voltage thresholds must satisfy `sag < nominal < peak`. Frequency thresholds must satisfy `low < high`, and if `frequency_nominal` is set then `low < nominal < high`.
+  The effective voltage thresholds must satisfy `sag < nominal < peak`. Frequency thresholds must satisfy `low < high`.
 
 ## Thresholds
 
-Use `thresholds` to tune the values written to the ATM90E32 power quality registers and the thresholds used by the status text sensors. Percentage-based voltage thresholds use `voltage_nominal`, while frequency thresholds default to a `±3Hz` band around `line_frequency`.
+Use `thresholds` to tune the values written to the ATM90E32 power quality registers and the thresholds used by the status text sensors. Percentage-based voltage thresholds use `voltage_nominal`, while frequency thresholds default to a `±3Hz` band around `line_frequency`. The `current_peak` threshold is limited by the chip's native current-register range before any user-applied scaling filters, so values above `65.535A` are rejected.
 
 You can provide `voltage_sag_v` and `voltage_peak_v` instead of `voltage_sag_pct` and `voltage_peak_pct`, but each sag or peak threshold can only be configured in one form at a time.
 
@@ -147,8 +146,7 @@ sensor:
       voltage_nominal: 120V
       voltage_sag_pct: 80%
       voltage_peak_pct: 120%
-      current_peak: 80A
-      frequency_nominal: 60Hz
+      current_peak: 65.53A
       frequency_low_hz: 58Hz
       frequency_high_hz: 62Hz
 ```
@@ -180,7 +178,7 @@ Configuration variables:
 
     Will Report:
 
-    - **Over Current**: Triggered when RMS current reaches `thresholds.current_peak`. Defaults to `65.53A`.
+    - **Over Current**: Triggered when RMS current reaches `thresholds.current_peak`. Defaults to `65.53A` and is capped at `65.535A`, which is the ATM90E32's native current-register limit before any user-applied scaling filters.
     - **Over Voltage / Voltage Sag**: Uses the effective voltage thresholds from `thresholds`. By default, `60Hz` systems use `120V` nominal with sag at \<`78%` and over-voltage at \>`122%`, while `50Hz` systems use `220V` nominal with the same percentage defaults.
 
     - **Phase Loss**: Indicates if the phase has dropped out.
@@ -471,7 +469,7 @@ magnitude reached during each cycle of the sinusoidal waveform. Peak current is 
 assessing the capacity of electrical equipment in the system. This advanced measurement is available from the ATM90E32.
 Peak current can be displayed in signed or unsigned format using a boolean parameter which spans all phases.
 The default is false which is unsigned.
-This setting only affects the `peak_current` sensor output; over-current detection is configured separately with `thresholds.current_peak`.
+This setting only affects the `peak_current` sensor output; over-current detection is configured separately with `thresholds.current_peak`, which is capped at `65.535A` by the chip's native current-register range.
 
 **Peak Current Example:**
 
@@ -660,8 +658,7 @@ sensor:
       voltage_nominal: 120V
       voltage_sag_pct: 80%
       voltage_peak_pct: 120%
-      current_peak: 80A
-      frequency_nominal: 60Hz
+      current_peak: 65.53A
       frequency_low_hz: 58Hz
       frequency_high_hz: 62Hz
     gain_pga: 1X
@@ -762,8 +759,7 @@ sensor:
       voltage_nominal: 120V
       voltage_sag_pct: 80%
       voltage_peak_pct: 120%
-      current_peak: 80A
-      frequency_nominal: 60Hz
+      current_peak: 65.53A
       frequency_low_hz: 58Hz
       frequency_high_hz: 62Hz
     gain_pga: 1X
