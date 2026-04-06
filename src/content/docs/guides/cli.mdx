@@ -27,7 +27,6 @@ esphome [OPTIONS] <COMMAND> <CONFIGURATION...> [ARGUMENTS]
 : Output possible `<commands>` and `[arguments]`.
 Note: you can also use `--help` for any command to get arguments specific to that command.
 
-
 ```shell
 esphome <some_command> --help
 ```
@@ -38,16 +37,14 @@ esphome <some_command> --help
 : Enable verbose esphome logs.
 Can also be enabled via environment variable `ESPHOME_VERBOSE=true`.
 
-
 ### `--quiet` Option
 
 **`-q|--quiet`**
 : Disable all esphome logs.
 
-
 ### `--substitution` Option
 
-*Can be issued multiple times.*
+_Can be issued multiple times._
 
 **`-s|--substitution KEY VALUE`**
 : Defines or overrides substitution KEY with value VALUE.
@@ -60,10 +57,10 @@ Please see [command line substitutions](/components/substitutions#command-line-s
 
 The `esphome run <CONFIG>` command is the most common command for ESPHome. It
 
-* Validates the configuration
-* Compiles a firmware
-* Uploads the firmware (over OTA or USB)
-* Starts the log view
+- Validates the configuration
+- Compiles a firmware
+- Uploads the firmware (over OTA or USB)
+- Starts the log view
 
 #### Options
 
@@ -82,41 +79,32 @@ Example:
 esphome run my-device.yaml --device 192.168.1.100 --device 2001:db8::1
 ```
 
-
 **`--upload_speed BAUD_RATE`**
 : The upload speed for serial flashing defaults to 460800 or as set with the environment variable `ESPHOME_UPLOAD_SPEED`.
 This can be overridden in the platformio options on a per-config
 basis, or set with this option at the time of uploading.
 
-
 **`--no-logs`**
 : Disable starting log view.
-
 
 **`--topic TOPIC`**
 : Manually set the topic to subscribe to for MQTT logs (defaults to the one in the configuration).
 
-
 **`--username USERNAME`**
 : Manually set the username to subscribe with for MQTT logs (defaults to the one in the configuration).
-
 
 **`--password PASSWORD`**
 : Manually set the password to subscribe with for MQTT logs (defaults to the one in the configuration).
 
-
 **`--client-id CLIENT_ID`**
 : Manually set the client ID to subscribe with for MQTT logs (defaults to a randomly chosen one).
-
 
 **`--host-port HOST_PORT`**
 : Specify the host port to use for legacy Over the Air uploads.
 
-
 **`--reset`**
 : If set, reset the device before starting the logs. May also be configured with the environment variable
 `ESPHOME_SERIAL_LOGGING_RESET=true`.
-
 
 ### `config` Command
 
@@ -130,7 +118,6 @@ The `esphome compile <CONFIG>` validates the configuration and compiles the firm
 
 **`--only-generate`**
 : If set, only generates the C++ source code and does not compile the firmware.
-
 
 ### `upload` Command
 
@@ -152,16 +139,13 @@ Example:
 esphome upload my-device.yaml --device 192.168.1.100 --device 2001:db8::1
 ```
 
-
 **`--upload_speed BAUD_RATE`**
 : The upload speed for serial flashing defaults to 460800 or as set with the environment variable `ESPHOME_UPLOAD_SPEED`.
 This can be overridden in the platformio options on a per-config
 basis, or set with this option at the time of uploading.
 
-
 **`--host-port HOST_PORT`**
 : Specify the host port to use for legacy Over the Air uploads.
-
 
 ### `clean-mqtt` Command
 
@@ -174,18 +158,14 @@ See [Using with Home Assistant MQTT entities](/components/mqtt#mqtt-using_with_h
 : Manually set the topic to clean retained messages from (defaults to the MQTT discovery topic of the
 node).
 
-
 **`--username USERNAME`**
 : Manually set the username to subscribe with.
-
 
 **`--password PASSWORD`**
 : Manually set the password to subscribe with.
 
-
 **`--client-id CLIENT_ID`**
 : Manually set the client ID to subscribe with.
-
 
 ### `wizard` Command
 
@@ -208,30 +188,25 @@ single configuration file.
 #### Options
 
 **`--address ADDRESS`**
-: Manually set the address to bind to (defaults to 0.0.0.0)
-
+: Manually set the address to bind to (defaults to 0.0.0.0). The value can be either an IP address or a network interface name (for example, eth0).
+If a network interface is specified, the dashboard will bind to all IPv4 and IPv6 addresses assigned to that interface.
 
 **`--port PORT`**
 : Manually set the HTTP port to open connections on (defaults to 6052)
-
 
 **`--socket SOCKET`**
 : Manually set the unix socket to bind to. If specified along with `--address` or `--port` the values
 for those parameters will be ignored. Cannot be used along with `--systemd-socket`.
 
-
 **`--username USERNAME`**
 : The optional username to require for authentication.
-
 
 **`--password PASSWORD`**
 : The optional password to require for authentication.
 
-
 **`--open-ui`**
 : If set, opens the dashboard UI in a browser once the server is up and running. Does not work when using
 `--socket`.
-
 
 ### `analyze-memory` Command
 
@@ -242,11 +217,11 @@ The `esphome analyze-memory <CONFIG>` command compiles the configuration and ana
 
 This command is useful for:
 
-* Understanding which components are consuming the most memory
-* Identifying optimization opportunities to reduce flash or RAM usage
-* Analyzing memory usage before adding more components to a tight build
-* Debugging builds that are approaching memory limits (especially on ESP8266)
-* Contributing to ESPHome development and optimization efforts
+- Understanding which components are consuming the most memory
+- Identifying optimization opportunities to reduce flash or RAM usage
+- Analyzing memory usage before adding more components to a tight build
+- Debugging builds that are approaching memory limits (especially on ESP8266)
+- Contributing to ESPHome development and optimization efforts
 
 The command automatically compiles the configuration if needed (or quickly relinks if sources haven't changed), then analyzes the resulting firmware to show a detailed breakdown of memory usage by component, including flash memory (code and data) and RAM usage (data and BSS).
 
@@ -259,18 +234,14 @@ The `esphome logs <CONFIG>` command validates the configuration and shows all lo
 **`--topic TOPIC`**
 : Manually set the topic to subscribe to.
 
-
 **`--username USERNAME`**
 : Manually set the username.
-
 
 **`--password PASSWORD`**
 : Manually set the password.
 
-
 **`--client-id CLIENT_ID`**
 : Manually set the client id.
-
 
 **`--device DEVICE`**
 : Manually specify a serial port/IP to use. For example `/dev/cu.SLAB_USBtoUART`.
@@ -287,11 +258,9 @@ Example:
 esphome logs my-device.yaml --device 192.168.1.100 --device 2001:db8::1
 ```
 
-
 **`--reset`**
 : If set, reset the device before starting the logs. May also be configured with the environment variable
 `ESPHOME_SERIAL_LOGGING_RESET=true`.
-
 
 ## Using Bash or ZSH auto-completion
 
@@ -351,4 +320,4 @@ The response lists info about currently available ESPHome devices:
 
 ## See Also
 
-* [Guides](/guides/)
+- [Guides](/guides/)
