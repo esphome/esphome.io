@@ -117,6 +117,41 @@ The [CircuitSetup 6-Channel Energy Meter](https://circuitsetup.us/product/expand
 
 - **enable_gain_calibration** (*Optional*, boolean): If true this enables gain calibration for voltage, `gain_voltage`, and current, `gain_ct`, based on the values entered in the corresponding voltage, `reference_voltage`, and current, `reference_current`, reference fields. With multiple ATM90E32 sensors each one is enabled individually, and it's buttons are mapped using an id value pair. e.g. `id: chip1` when more than one is defined. After running, the values are stored in chip memory and will be available upon reboot and OTA software updates.
 - **enable_offset_calibration** (*Optional*, boolean): If true this enables fine grained offset noise 0 level calibration for voltage, `offset_voltage`, and current sensors, `offset_current`, & power offset for active, `offset_active_power`, and reactive power, `offset_reactive_power`. Buttons are required to operate the calibration feature. With multiple ATM90E32 sensors each one is enabled individually, and it's buttons are mapped using an id value pair. e.g. `id: chip1` when more than one is defined. After running, the values are stored in chip memory and will be available upson reboot and OTA software updates. Offset calibration can only be performed when all voltage and current inputs are at a 0 value. USB power is recommended. For power offset calibration, only a voltage transformer should be connected.
+- **thresholds** (*Optional*): Override the voltage, current, and frequency thresholds used for ATM90E32 power quality monitoring and text sensor status reporting. If omitted, the defaults preserve the previous behavior: voltage sag and peak remain at `78%` and `122%` of nominal, current peak remains `65.53A`, and frequency limits remain `line_frequency ± 3Hz`.
+
+  - **allow_unsafe_thresholds** (*Optional*, boolean): Allows `voltage_sag_pct` outside the recommended `50%` to `99%` range and `voltage_peak_pct` outside the recommended `101%` to `150%` range. Defaults to `false`. This does not bypass mutual exclusion or ordering validation.
+  - **voltage_nominal** (*Optional*): Nominal RMS voltage used to derive percentage-based voltage thresholds. Defaults to `120V` for `60Hz` systems and `220V` for `50Hz` systems.
+  - **voltage_sag_pct** (*Optional*): Voltage sag threshold as a ratio like `0.78` or a percent string like `78%`. Mutually exclusive with `voltage_sag_v`. Defaults to `78%` of `voltage_nominal`.
+  - **voltage_sag_v** (*Optional*): Absolute RMS voltage sag threshold. Mutually exclusive with `voltage_sag_pct`.
+  - **voltage_peak_pct** (*Optional*): Over-voltage threshold as a ratio like `1.22` or a percent string like `122%`. Mutually exclusive with `voltage_peak_v`. Defaults to `122%` of `voltage_nominal`.
+  - **voltage_peak_v** (*Optional*): Absolute RMS over-voltage threshold. Mutually exclusive with `voltage_peak_pct`.
+  - **current_peak** (*Optional*): Over-current threshold in amperes RMS. Defaults to `65.53A`.
+  - **frequency_nominal** (*Optional*): Nominal frequency used to derive the frequency thresholds. Defaults to `line_frequency`.
+  - **frequency_low_hz** (*Optional*): Absolute low-frequency threshold. Defaults to `frequency_nominal - 3Hz`.
+  - **frequency_high_hz** (*Optional*): Absolute high-frequency threshold. Defaults to `frequency_nominal + 3Hz`.
+
+  The effective voltage thresholds must satisfy `sag < nominal < peak`. Frequency thresholds must satisfy `low < high`, and if `frequency_nominal` is set then `low < nominal < high`.
+
+## Thresholds
+
+Use `thresholds` to tune the values written to the ATM90E32 power quality registers and the thresholds used by the status text sensors. Percentage-based voltage thresholds use `voltage_nominal`, while frequency thresholds default to a `±3Hz` band around `line_frequency`.
+
+You can provide `voltage_sag_v` and `voltage_peak_v` instead of `voltage_sag_pct` and `voltage_peak_pct`, but each sag or peak threshold can only be configured in one form at a time.
+
+```yaml
+sensor:
+  - platform: atm90e32
+    cs_pin: GPIOXX
+    line_frequency: 60Hz
+    thresholds:
+      voltage_nominal: 120V
+      voltage_sag_pct: 80%
+      voltage_peak_pct: 120%
+      current_peak: 80A
+      frequency_nominal: 60Hz
+      frequency_low_hz: 58Hz
+      frequency_high_hz: 62Hz
+```
 
 ## Text Sensor
 
@@ -131,7 +166,7 @@ text_sensor:
         name: "Phase B Status"
       phase_c:
         name: "Phase C Status"
-    freq_status:
+    frequency_status:
       name: "Frequency Status"
 ```
 
@@ -145,11 +180,8 @@ Configuration variables:
 
     Will Report:
 
-    - **Over current**: Detected when current ≥ 65.53 A.
-    - **Over voltage / Voltage Sag**: Based on the configured `line_frequency`. For example:
-
-      - At `60Hz` (120V expected), sag = \<78%, over = \>122%.
-      - At `50Hz` (220V expected), sag = \<78%, over = \>122%.
+    - **Over Current**: Triggered when RMS current reaches `thresholds.current_peak`. Defaults to `65.53A`.
+    - **Over Voltage / Voltage Sag**: Uses the effective voltage thresholds from `thresholds`. By default, `60Hz` systems use `120V` nominal with sag at \<`78%` and over-voltage at \>`122%`, while `50Hz` systems use `220V` nominal with the same percentage defaults.
 
     - **Phase Loss**: Indicates if the phase has dropped out.
 
@@ -160,19 +192,14 @@ Configuration variables:
 
 - **frequency_status** (*Optional*): Reports status based on frequency thresholds.
 
-    All options from [Text Sensor](/components/text_sensor#config-text_sensor).
+  All options from [Text Sensor](/components/text_sensor#config-text_sensor).
 
-  - For `50Hz` systems:
+  Thresholds come from `thresholds.frequency_*`. If they are not configured, `50Hz` systems default to `47Hz` and `53Hz`, and `60Hz` systems default to `57Hz` and `63Hz`.
 
-    - `LOW` if frequency ≤ 47Hz
-    - `HIGH` if frequency ≥ 53Hz
+  - `LOW` if the measured frequency is at or below the low threshold.
+  - `HIGH` if the measured frequency is at or above the high threshold.
 
-  - For `60Hz` systems:
-
-    - `LOW` if frequency ≤ 57Hz
-    - `HIGH` if frequency ≥ 63Hz
-
-  If the frequency is within the expected range, the output will be `Normal`.
+  If the frequency is within the configured range, the output will be `Normal`.
 
 ## Button
 
@@ -444,6 +471,7 @@ magnitude reached during each cycle of the sinusoidal waveform. Peak current is 
 assessing the capacity of electrical equipment in the system. This advanced measurement is available from the ATM90E32.
 Peak current can be displayed in signed or unsigned format using a boolean parameter which spans all phases.
 The default is false which is unsigned.
+This setting only affects the `peak_current` sensor output; over-current detection is configured separately with `thresholds.current_peak`.
 
 **Peak Current Example:**
 
@@ -628,6 +656,14 @@ sensor:
     chip_temperature:
       name: ${main_meter_name1} Chip Temp
     line_frequency: 60Hz
+    thresholds:
+      voltage_nominal: 120V
+      voltage_sag_pct: 80%
+      voltage_peak_pct: 120%
+      current_peak: 80A
+      frequency_nominal: 60Hz
+      frequency_low_hz: 58Hz
+      frequency_high_hz: 62Hz
     gain_pga: 1X
     update_interval: ${update_time}
     enable_offset_calibration: true
@@ -722,6 +758,14 @@ sensor:
     chip_temperature:
       name: ${main_meter_name2} Chip Temp
     line_frequency: 60Hz
+    thresholds:
+      voltage_nominal: 120V
+      voltage_sag_pct: 80%
+      voltage_peak_pct: 120%
+      current_peak: 80A
+      frequency_nominal: 60Hz
+      frequency_low_hz: 58Hz
+      frequency_high_hz: 62Hz
     gain_pga: 1X
     update_interval: ${update_time}
     enable_offset_calibration: true
