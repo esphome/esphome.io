@@ -33,13 +33,16 @@ uart:
 dlms_meter:
   id: dlms_meter_hub
 
+  # Name of the uart component that is connected to the smart meter
+  uart_id: uart_dlms_bus
+
   # Optional. Decryption key. Specify if your smart meter uses encryption.
   # You should request this key from your electricity provider.
-  decryption_key: "01234567890123456789012345678901"
+  decryption_key: "00112233445566778899AABBCCDDEEFF"
 
   # Optional. Authentication key. Specify if your smart meter uses encryption with autentification.
   # You should request this key from your electricity provider.
-  auth_key: "01234567890123456789012345678901"
+  auth_key: "00112233445566778899AABBCCDDEEFF"
 
   # Optional. Skip CRC check. Some smart meters use wrong polinom to calculate CRC.
   # In such cases you can use this flag as a workaround.
@@ -57,11 +60,11 @@ dlms_meter:
                                  # captures no OBIS code. Requires 'name' to be set.
                                  # Format is like "1-0:96.1.0" or "1.0.96.1.0.255"
 
+# Specify sensors
 sensor:
-  # --- Dynamic Schema via OBIS Code (Recommended) ---
   - platform: dlms_meter
-    dlms_meter_id: dlms_meter_hub
-    obis_code: "1-0:1.7.0"
+    dlms_meter_id: dlms_meter_hub # Optional.
+    obis_code: "1-0:1.7.0" # OBIS code. Format is like "1-0:96.1.0" or "1.0.96.1.0.255"
     name: "Active power taken from grid"
 
   # --- Legacy Schema (Supported for backwards compatibility) ---
@@ -69,16 +72,18 @@ sensor:
     voltage_l1:
       name: "Voltage L1"
 
+# Specify text sensors
 text_sensor:
   - platform: dlms_meter
-    dlms_meter_id: dlms_meter_hub
-    obis_code: "0-0:96.1.0"
+    dlms_meter_id: dlms_meter_hub # Optional
+    obis_code: "0-0:96.1.0" # OBIS code. Format is like "1-0:96.1.0" or "1.0.96.1.0.255"
     name: "Meter Number"
 
+# Specify binary sensors
 binary_sensor:
   - platform: dlms_meter
     dlms_meter_id: dlms_meter_hub
-    obis_code: "0-1:2.3.4"
+    obis_code: "0-1:2.3.4" # OBIS code. Format is like "1-0:96.1.0" or "1.0.96.1.0.255"
     name: "Custom Binary Sensor"
 ```
 
@@ -105,18 +110,6 @@ binary_sensor:
 | `DN`           | descend into nested structure              | control token                   |
 | `UP`           | return from nested structure               | control token                   |
 ---
-
-## Platforms
-
-### Sensor / Text Sensor / Binary Sensor
-
-All platforms (`sensor`, `text_sensor`, `binary_sensor`) support dynamic mapping using the `obis_code` property.
-This allows you to decode nearly any property your meter emits.
-
-- **dlms_meter_id** (*Optional*, [ID](/guides/configuration-types#config-id)): Manually specify the ID of the
-`dlms_meter` hub if you have multiple.
-- **obis_code** (*Optional*, string): The OBIS code of the value you want to read. The code supports flexible
-formats like `1-0:32.7.0` or `1.0.32.7.0.255`.
 
 ### Legacy Keys
 For backwards compatibility, the legacy predefined keys from earlier versions are still fully supported and mapped
