@@ -67,6 +67,24 @@ This allows you to decode nearly any property your meter emits.
 - **obis_code** (**Required**, string): The OBIS code of the value you want to read. The code supports flexible formats
 like `1-0:32.7.0` or `1.0.32.7.0.255`.
 
+When defining your sensors, it is recommended to include standard ESPHome sensor properties such as
+`unit_of_measurement`, `accuracy_decimals`, `device_class`, and `state_class`.
+The exact configuration will vary depending on the specific value you are reading (e.g., energy vs. power vs. voltage).
+
+Here is an example of how to configure an energy sensor so it displays correctly with Home Assistant's Energy Dashboard:
+
+```yaml
+sensor:
+  - platform: dlms_meter
+    dlms_meter_id: dlms_meter_hub
+    obis_code: "1.0.1.8.0.255"
+    name: "Energy Consumed"
+    unit_of_measurement: "kWh"
+    accuracy_decimals: 3
+    device_class: energy
+    state_class: total_increasing
+```
+
 ### Finding your meter's OBIS codes
 
 Before using this method, it is highly recommended to check your meter's manual or your energy provider's documentation
