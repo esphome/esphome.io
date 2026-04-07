@@ -7,38 +7,55 @@ import APIClass from '@components/APIClass.astro';
 import APIRef from '@components/APIRef.astro';
 import { Image } from 'astro:assets';
 
-The `dlms_meter` component connects to smart meters which use the **DLMS/COSEM** protocol over UART.
-These smart meters are widely deployed globally.
+The `dlms_meter` component connects to smart meters which use the **DLMS/COSEM** protocol in PUSH mode over UART.<br>
+These smart meters are widely deployed globally.<br>
 
-By offloading the complex parsing logic to the dedicated [dlms_parser](https://github.com/esphome-libs/dlms_parser)
-library, the component is robust and capable of supporting a vast array of meters.
-
-This component is passive; it does not transmit data to the meter. The meter periodically broadcasts frames.
+The component does not transmit data to the meter. The meter periodically broadcasts frames.
 ESPHome listens, decodes (and decrypts if necessary), and updates the configured sensors as data arrives.
-
-**An appropriate UART adapter (like an M-Bus to UART module) is required.** For encrypted meters, you must request
-the 32‑character hexadecimal decryption key from your energy provider / grid operator. If your meter broadcasts
-in plaintext, the decryption key is not needed.
 
 <Image src="/images/dlms_meter.jpg" alt="Smart meter with M-Bus adapter board to ESP32" width={400} height={400} />
 
-## Example Configuration
+## Prerequisites
+
+* You should have a special adater to connect EspHome board to the smart meter. For example `M-Bus to UART module`.
+* If your meter uses encryption you should request the 32‑character hexadecimal decryption key. For some meter you also need an authentication key.
+
+## Configuration
 
 ```yaml
 uart:
-  id: uart_bus
-  rx_pin: GPIOXX              # Adjust for where the adapter RX is connected
-  baud_rate: 9600             # Adjust according to your meter's specification
-  rx_buffer_size: 1024        # Needed for large frames
+  id: uart_dlms_bus
+  rx_pin: GPIOXX       # pin that is connected to the RX pin of the adapter
+  baud_rate: 9600      # baud rate that the smart meter uses
+  rx_buffer_size: 1024 # recommended to avoid byte losses
 
+# Configure dlms_meter component
 dlms_meter:
   id: dlms_meter_hub
-  decryption_key: "01234567890123456789012345678901"  # Optional: Replace with your key if encrypted
-  auth_key: "..."                                     # Optional: Auth key if required
-  skip_crc: false                                     # Optional: Skip CRC checks
-  custom_patterns:                                    # Optional: For custom meter payloads
-    - pattern: "TO, TV"
-      name: "flat OBIS + value pairs"
+
+  # Optional. Decryption key. Specify if your smart meter uses encryption.
+  # You should request this key from your electricity provider.
+  decryption_key: "01234567890123456789012345678901"
+
+  # Optional. Authentication key. Specify if your smart meter uses encryption with autentification.
+  # You should request this key from your electricity provider.
+  auth_key: "01234567890123456789012345678901"
+
+  # Optional. Skip CRC check. Some smart meters use wrong polinom to calculate CRC.
+  # In such cases you can use this flag as a workaround.
+  skip_crc: false
+
+  # Optional. The dlms_meter already configured to correctly parse the data from most of the meters.
+  # Some meters use a different way to package the data into the payload.
+  # In such cases you must specify custom patterns to tell the dlms_meter how to parse the payload.
+  custom_patterns:
+    - pattern: "TO, TV" # The DSL-based pattern string
+      name: "flat OBIS + value pairs" # Optional. A name for the pattern.
+      priority: 15 # Optional. The priority of the pattern (lower number is tried first).
+                   # Default value is 0.
+      default_obis: "1-0:96.1.0" # Optional. The fallback OBIS code to use if the pattern
+                                 # captures no OBIS code. Requires 'name' to be set.
+                                 # Format is like "1-0:96.1.0" or "1.0.96.1.0.255"
 
 sensor:
   # --- Dynamic Schema via OBIS Code (Recommended) ---
@@ -65,30 +82,7 @@ binary_sensor:
     name: "Custom Binary Sensor"
 ```
 
-## Component Configuration
-
-### Core Configuration Variables
-
-- **id** (*Optional*, [ID](/guides/configuration-types#config-id)): The ID of the `dlms_meter` component.
-- **decryption_key** (*Optional*, string): Key used to decrypt DLMS telegrams (32 hex characters, case-insensitive).
-Obtain this from your provider if your meter is encrypted.
-- **auth_key** (*Optional*, string): Authentication key for `General-GLO-Ciphering` and `General-DED-Ciphering`
-APDUs (32 hex characters).
-- **skip_crc** (*Optional*, boolean): Skip CRC checks. Defaults to `false`.
-- **custom_patterns** (*Optional*, list): Define custom AXDR descriptor patterns to match your meter's telegram
-structure if the built-in patterns do not match.
-
-#### Custom Patterns
-You can define a custom pattern simply by passing its pattern string, or by defining an object with
-additional properties:
-- **pattern** (**Required**, string): The DSL-based pattern string (e.g., `"TO, TV"`).
-- **name** (*Optional*, string): A name for the pattern.
-- **priority** (*Optional*, integer): The priority of the pattern (lower number is tried first). Built-in patterns
-start at 10. Defaults to `0`.
-- **default_obis** (*Optional*, string): The fallback OBIS code to use if the pattern captures no OBIS code.
-Formatted like `1-0:96.1.0` or `1.0.96.1.0.255`. Requires **name** to be set.
-
-**Token Reference for Patterns:**
+## Token Reference for Patterns
 
 | Token          | Meaning                                    | Hex example                     |
 |----------------|--------------------------------------------|---------------------------------|
