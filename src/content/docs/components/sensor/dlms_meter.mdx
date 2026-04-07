@@ -51,14 +51,40 @@ binary_sensor:
     name: "Custom Binary Sensor"
 ```
 
+### Advanced Configuration Example
+
+This example demonstrates how to use the optional configuration variables for encrypted meters or those requiring custom
+parsing patterns.
+
+```yaml
+dlms_meter:
+  id: dlms_meter_hub
+  uart_id: uart_dlms_bus
+  decryption_key: "00112233445566778899AABBCCDDEEFF"
+  auth_key: "00112233445566778899AABBCCDDEEFF"
+  skip_crc: false
+  custom_patterns:
+    - pattern: "TO, TV"
+      name: "flat OBIS + value pairs"
+      priority: 15
+      default_obis: "1-0:96.1.0"
+```
+
 ## Configuration variables
 
 - **id** (*Optional*, [ID](/guides/configuration-types#config-id)): The ID of the `dlms_meter` component.
-- **uart_id** (*Optional*, [ID](/guides/configuration-types#config-id)): The ID of the UART bus to connect to.
-- **decryption_key** (*Optional*, string): Key used to decrypt DLMS telegrams (32 hex characters, case-insensitive).
-- **auth_key** (*Optional*, string): Authentication key for `General-GLO-Ciphering` and `General-DED-Ciphering` APDUs.
-- **skip_crc** (*Optional*, boolean): Skip CRC checks. Defaults to `false`.
-- **custom_patterns** (*Optional*, list): Define custom AXDR descriptor patterns to match the meter's telegram structure.
+- **uart_id** (*Optional*, [ID](/guides/configuration-types#config-id)): The ID of the UART component that is
+connected to the smart meter.
+- **decryption_key** (*Optional*, string): Specify if your smart meter uses encryption. You should request this key
+from your electricity provider (32 hex characters, case-insensitive).
+- **auth_key** (*Optional*, string): Authentication key. Specify if your smart meter uses encryption with
+authentication. You should request this key from your electricity provider. Used for `General-GLO-Ciphering` and
+`General-DED-Ciphering` APDUs.
+- **skip_crc** (*Optional*, boolean): Skip CRC check. Some smart meters use the wrong polynomial to calculate CRC.
+In such cases, you can use this flag as a workaround. Defaults to `false`.
+- **custom_patterns** (*Optional*, list): While the `dlms_meter` natively supports most devices, some meters use unique
+payload structures. If your meter's data isn't being read correctly, use this field to define a **custom AXDR
+descriptor pattern** that tells the system how to parse the incoming data.
 
 ### Custom Patterns
 
@@ -69,6 +95,40 @@ You can define a custom pattern simply by passing its pattern string, or by defi
 - **priority** (*Optional*, int): The priority of the pattern (lower number is tried first). Defaults to `0`.
 - **default_obis** (*Optional*, string): The fallback OBIS code to use if the pattern captures no OBIS code. Requires
 **name** to be set. Formatted like `1-0:96.1.0` or `1.0.96.1.0.255`.
+
+#### Built-in Patterns
+
+The `dlms_meter` component loads several built-in patterns by default. Your custom patterns will be evaluated alongside
+these based on their configured `priority`.
+
+| Name    | Priority | Typical use                               |
+|---------|---------:|-------------------------------------------|
+| `T1`    |       10 | class ID, tagged OBIS, scaler, value      |
+| `T2`    |       20 | tagged OBIS, value, scaler-unit structure |
+| `T3`    |       30 | value first, class ID, scaler-unit, OBIS  |
+| `U.ZPA` |       40 | untagged ZPA/Aidon-style layouts          |
+
+#### Common Custom Pattern Examples
+
+Here are some common structures you might encounter on less standard meters:
+
+```yaml
+dlms_meter:
+  # ...
+  custom_patterns:
+    - pattern: "TC, TO, TDTM"
+      name: "datetime value"
+    - pattern: "C, O, A, V, TS, TU"
+      name: "untagged flat"
+    - pattern: "TO, TV, S(TS, TU)"
+      name: "tagged with scaler-unit"
+    - pattern: "TO, TV"
+      name: "flat OBIS + value pairs (no scaler)"
+    - pattern: "L, TSTR"
+      name: "last element as string"
+    - pattern: "TOW, TV, TSU"
+      name: "Landis+Gyr swapped OBIS"
+```
 
 ### Token Reference for Patterns
 
@@ -98,8 +158,8 @@ You can define a custom pattern simply by passing its pattern string, or by defi
 
 ### Sensor / Text Sensor / Binary Sensor
 
-All platforms (`sensor`, `text_sensor`, `binary_sensor`) support dynamic mapping using the `obis_code` property. This
-allows you to decode nearly any property your meter emits.
+All platforms (`sensor`, `text_sensor`, `binary_sensor`) support dynamic mapping using the `obis_code` property.
+This allows you to decode nearly any property your meter emits.
 
 - **dlms_meter_id** (*Optional*, [ID](/guides/configuration-types#config-id)): Manually specify the ID of the
 `dlms_meter` hub if you have multiple.
