@@ -24,7 +24,8 @@ The component does not transmit data to the meter. The meter periodically broadc
 This component requires a [UART bus](/components/uart/) to be configured.
 
 > [!TIP]
-> The UART configuration depends on your specific meter hardware. Be sure to consult your meter's specifications.
+> The UART configuration depends on your specific meter hardware.
+> Be sure to consult your provider or meter's specifications.
 
 ```yaml
 dlms_meter:
@@ -66,6 +67,40 @@ This allows you to decode nearly any property your meter emits.
 - **obis_code** (**Required**, string): The OBIS code of the value you want to read. The code supports flexible formats
 like `1-0:32.7.0` or `1.0.32.7.0.255`.
 
+### Finding your meter's OBIS codes
+
+Before using this method, it is highly recommended to check your meter's manual or your energy provider's documentation
+for a list of supported OBIS codes.
+
+If you are configuring your meter for the first time and do not know which OBIS codes it broadcasts, you can temporarily
+increase the logging level to `VERBOSE`. The component will print all successfully parsed OBIS codes and their values to
+the ESPHome log.
+
+```yaml
+logger:
+  level: VERBOSE
+  initial_level: DEBUG
+  logs:
+    dlms_meter: VERBOSE
+```
+
+In this configuration, the global `level` is set to `VERBOSE` because ESPHome will otherwise exclude lower-severity log
+messages at compile time (any log message with a lower severity will not be shown).
+
+To prevent your console from being flooded with verbose messages from every component,
+`initial_level` restores the standard default of `DEBUG` dynamically at run time,
+while the `logs` mapping manually sets the specific `dlms_meter` tag to remain at `VERBOSE`.
+
+> [!WARNING]
+> Increasing the log level severity can impact the performance of your ESP application and increase memory size.
+> Always **revert to default log levels** for daily use.
+
+> [!TIP]
+> If you are building custom patterns or need to capture the raw hex payload for troubleshooting, change the `dlms_meter`
+> log level to `VERY_VERBOSE`. This will output the full raw buffer and the decrypted AXDR payload.
+
+For more details, refer to the [Logger Component](/components/logger/).
+
 ### Legacy keys
 
 For backwards compatibility, the legacy predefined keys from earlier versions are still fully supported and mapped
@@ -89,6 +124,7 @@ text_sensor:
 ```
 
 **Sensors:**
+
 - **voltage_l1** (`1-0:32.7.0`): Voltage Phase 1.
 - **voltage_l2** (`1-0:52.7.0`): Voltage Phase 2.
 - **voltage_l3** (`1-0:72.7.0`): Voltage Phase 3.
@@ -104,6 +140,7 @@ text_sensor:
 - **power_factor** (`1-0:13.7.0`): Power factor.
 
 **Text Sensors:**
+
 - **timestamp** (`0-0:1.0.0`): Timestamp included in the received frame.
 - **meternumber** (`0-0:96.1.0`): Meter number reported by the device.
 
@@ -195,7 +232,12 @@ dlms_meter:
 | `S(x, y, ...)` | inline sub-structure                       | `02 03`                         |
 | `DN`           | descend into nested structure              | control token                   |
 | `UP`           | return from nested structure               | control token                   |
----
+
+## Specific meter configurations
+
+*(Additional instructions and specific `custom_patterns` for meters
+from manufacturers like Landis+Gyr, Kaifa, Kamstrup, Iskra, etc.,
+can be added here as users report the specific setups required for their unique smart meter firmware.)*
 
 ## See also
 
