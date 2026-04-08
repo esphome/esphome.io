@@ -137,6 +137,7 @@ The following configuration variables apply to the main `lvgl` component, in ord
 > - If you press the encoder on a complex object (like a list, message box, etc.) the object will go to edit mode whereby you can adjust the value of the object by turning the encoder.
 > - To leave edit mode, long press the button.
 
+- **rotation** (*Optional*, int16): Rotate the display content by a specified angle. Valid values are `0`, `90`, `180` and `270`. Defaults to `0`.
 - **update_when_display_idle** (*Optional*, boolean): When using the [Epaper Spi](/components/display/epaper_spi/)
   or other displays with long update times, setting this option
   to `true` will cause the display to only be updated if the display is idle. During the update LVGL will pause.
@@ -151,7 +152,7 @@ The following configuration variables apply to the main `lvgl` component, in ord
 - **default_font** (*Optional*, ID): The ID of the [font](#lvgl-fonts) used by default to render the text or symbols. Defaults to LVGL's internal `montserrat_14` if not specified.
 - **style_definitions** (*Optional*, list): A batch of style definitions to use in LVGL widget's `styles` configuration. See [below](#lvgl-theme) for more details.
 - **gradients** (*Optional*, list): A list of gradient definitions to use in *bg_grad* styles. See [below](#lvgl-gradients) for more details.
-- **theme** (*Optional*, list): A list of styles to be applied to all widgets. See [below](#lvgl-theme) for more details.
+- **theme** (*Optional*, dict): Theme configuration. Supports `dark_mode` and per-widget style defaults. See [below](#lvgl-theme) for more details.
 - **widgets** (*Optional*, list): A list of [Widgets](/components/lvgl/widgets/) to be drawn on the root display. May not be used if `pages` (below) is configured.
 - **pages** (*Optional*, list): A list of page IDs. Each page acts as a parent for widgets placed on it. May not be used with `widgets` (above). Options for each page:
   - **skip** (*Optional*, boolean): Option to skip this page when navigating between them with [`lvgl.page.next`, `lvgl.page.previous`](#lvgl-page-next-previous-action).
@@ -225,6 +226,21 @@ lvgl:
 ```
 
 <span id="lvgl-styling"></span>
+
+### Display Rotation
+
+The `rotation` option allows you to rotate the display content by a specified angle. Valid values are `0`, `90`, `180` and `270`. Defaults to `0`.
+Using this in the LVGL configuration will automatically adjust both the display and touch input (if a touchscreen is configured) to the specified rotation.
+When using this the display configuration should not include a rotation option (it will be ignored if it does), and the touchscreen configuration should not
+transform the touchscreen unless required (for example if the touchscreen axes don't match the display.)
+
+If the display driver can rotate the display content in hardware, (for example, most `mipi_spi` display models can do this)
+LVGL will automatically use this to improve performance. If not, the rotation will be performed in software by LVGL,
+which will reduce performance.
+
+Touchscreen coordinates will be automatically rotated when using LVGL rotation.
+
+The display orientation may be changed at runtime with the [`lvgl.display.set_rotation`](#lvgl-display-set-rotation-action) action.
 
 ## Style properties
 
@@ -462,12 +478,24 @@ In addition to the above, the following special fonts are available from LVGL as
 
 ### Themes
 
-You can configure a global theme for all widgets of a given type at the top level with the `theme:` configuration variable. In the example below, all the `arc`, `slider` and `button` widgets will, by default, use the styles and properties defined here. A combination of styles and [states](/components/lvgl/widgets#lvgl-widgetproperty-state) can be chosen for every widget.
+You can configure a global theme at the top level with the `theme:` configuration variable.
+
+- **dark_mode** (*Optional*, boolean): Enables LVGL's built-in dark default theme, which applies a dark color scheme (dark backgrounds, light text) to all widgets automatically. Defaults to `false`.
+
+```yaml
+# Example: enable the dark theme
+lvgl:
+  theme:
+    dark_mode: true
+```
+
+You can also apply default styles to all widgets of a given type. In the example below, all the `arc`, `slider` and `button` widgets will, by default, use the styles and properties defined here. A combination of styles and [states](/components/lvgl/widgets#lvgl-widgetproperty-state) can be chosen for every widget. These per-widget styles work alongside `dark_mode` — you can enable the dark theme and still override specific widget styles.
 
 ```yaml
 # Example theme configuration entry
 lvgl:
   theme:
+    dark_mode: true
     arc:
       scroll_on_focus: true
       group: general
@@ -621,6 +649,21 @@ This [action](/automations/actions#actions-action) resumes the activity of LVGL,
 ```yaml
 on_...:
   - lvgl.resume:
+```
+
+<span id="lvgl-display-set-rotation-action"></span>
+
+### `lvgl.display.set_rotation` Action
+
+This [action](/automations/actions#actions-action) rotates the LVGL display.
+
+- **rotation** (**Required**, int): The angle to rotate the display to. Valid values are `0`, `90`, `180` and `270`. Note
+  that the angle is absolute, not relative, so the current rotation of the display does not affect the result.
+- **lvgl_id** (*Optional*): The ID of the LVGL instance to rotate.
+
+```yaml
+on_...:
+  - lvgl.display.set_rotation: 90
 ```
 
 ### `lvgl.update` Action
