@@ -53,6 +53,7 @@ wifi:
 
 ### SDIO Configuration variables
 
+- **type** (*Optional*, string): The transport mode. Set to `sdio` for SDIO transport. Defaults to `sdio`.
 - **variant** (*Required*, string): The variant of the ESP32 co-processor that is used by the
   host. One of `ESP32`, `ESP32S2`, `ESP32S3`, `ESP32C2`, `ESP32C3` and `ESP32C6`.
 - **reset_pin** (*Required*, [Pin](/guides/configuration-types#pin)): The reset pin of the co-processor.
@@ -66,9 +67,9 @@ wifi:
 - **d3_pin** (*Optional*, [Pin](/guides/configuration-types#pin)): The SDIO D3 pin. Required when `bus_width` is 4.
 - **bus_width** (*Optional*, int): The SDIO bus width. Either `1` or `4`. Defaults to `4`.
 - **slot** (*Optional*, int): The SDIO slot number. Defaults to `1`.
-- **sdio_frequency** (*Optional*): Set the speed of communication between the host and
+- **sdio_frequency** (*Optional*, frequency): Set the speed of communication between the host and
   the co-processor. If you experience loss of communication, or reboots, then try reducing this value.
-  The value can be between 400KHz and 50MHz, with a default of 40MHz.
+  The value can be between 400kHz and 50MHz, with a default of 40MHz.
 
 ## SPI Transport
 
@@ -93,6 +94,7 @@ wifi:
 
 ### SPI Configuration variables
 
+- **type** (*Required*, string): The transport mode. Set to `spi` for SPI transport.
 - **variant** (*Required*, string): The variant of the ESP32 co-processor that is used by the
   host. One of `ESP32`, `ESP32S2`, `ESP32S3`, `ESP32C2`, `ESP32C3` and `ESP32C6`.
 - **reset_pin** (*Required*, [Pin](/guides/configuration-types#pin)): The reset pin of the co-processor.
@@ -105,7 +107,7 @@ wifi:
 - **handshake_pin** (*Required*, [Pin](/guides/configuration-types#pin)): The handshake pin used by the co-processor to signal readiness.
 - **data_ready_pin** (*Required*, [Pin](/guides/configuration-types#pin)): The data ready pin used by the co-processor to signal available data.
 - **spi_mode** (*Optional*, int): The SPI mode (0-3). Defaults depend on the variant: mode 2 for ESP32, mode 3 for all others.
-- **frequency** (*Optional*): The SPI clock frequency. Maximum depends on variant: 10MHz for ESP32, 40MHz for ESP32C6, 40MHz for all others. Defaults to the maximum for each variant.
+- **frequency** (*Optional*, frequency): The SPI clock frequency. Maximum depends on variant: 10MHz for ESP32, 40MHz for all other variants. Defaults to the maximum for each variant.
 - **handshake_active_high** (*Optional*, boolean): Polarity of the handshake signal. Defaults to `true`.
 - **data_ready_active_high** (*Optional*, boolean): Polarity of the data ready signal. Defaults to `true`.
 
