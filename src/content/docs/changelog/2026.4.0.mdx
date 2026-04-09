@@ -108,17 +108,7 @@ State change logging has been fundamentally redesigned to eliminate the single b
 
 **The problem:** Every entity state change (`'CO2' >> 420 ppm`, `'Light' - Setting ON`) ran `vsnprintf` on the device to format a log string and sent it over UART -- even when nobody was watching the serial console (which is 99.9% of devices). CodSpeed benchmarks revealed this was consuming **95%+ of sensor publish time**.
 
-**The fix:** State change logs are moved from device-side formatting to client-side reconstruction. When `esphome logs` or the dashboard connects, it subscribes to compact protobuf state messages and reconstructs the log lines on the client. The protobuf messages are a fraction of the size of formatted strings, and formatting happens on your computer instead of the microcontroller.
-
-**Real-world impact (ESP32-C3):**
-
-| Metric | Before | After |
-|---|---|---|
-| API CPU time (60s) | 701.9ms | 306.6ms |
-| Per-call overhead | 0.096ms | 0.042ms |
-| Improvement | | **2.3x faster** |
-
-Flash savings of **1.4KB** (ESP32-C3) to **2.2KB** (ESP8266). State changes still appear in logs as `[S]` lines in bright cyan:
+**The fix:** State change logs are moved from device-side formatting to client-side reconstruction. When `esphome logs` or the dashboard connects, it subscribes to compact protobuf state messages and reconstructs the log lines on the client. The protobuf messages are a fraction of the size of formatted strings, and formatting happens on your computer instead of the microcontroller. This achieves up to **46x faster** in the publish path, with flash savings of **1.4KB** (ESP32-C3) to **2.2KB** (ESP8266). State changes still appear in logs as `[S]` lines in bright cyan:
 
 ```
 [18:03:14.677][S][sensor]: 'CO2' >> 420 ppm
