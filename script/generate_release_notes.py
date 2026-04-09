@@ -90,6 +90,7 @@ LABEL_BREAKING_CHANGE = "breaking-change"
 LABEL_NEW_FEATURE = "new-feature"
 LABEL_NEW_COMPONENT = "new-component"
 LABEL_UNDOCUMENTED_API_CHANGE = "undocumented-api-change"
+LABEL_CODE_QUALITY = "code-quality"
 
 # Bot accounts to exclude from contributor acknowledgments
 BOT_AUTHORS = {"app/dependabot", "app/copilot-swe-agent", "esphomebot"}
@@ -575,10 +576,11 @@ class ReleaseNotesGenerator:
         undocumented_api_changes = [
             pr for pr in prs if LABEL_UNDOCUMENTED_API_CHANGE in pr.labels
         ]
+        code_quality = [pr for pr in prs if LABEL_CODE_QUALITY in pr.labels]
 
         # Generate Combined Overview + Feature Highlights Prompt
         overview_and_highlights_prompt = self._generate_overview_and_highlights_prompt(
-            prs, new_features, new_components, breaking_changes
+            prs, new_features, new_components, breaking_changes, code_quality
         )
         overview_highlights_file = self.prompts_dir / "overview_and_highlights.txt"
         overview_highlights_file.write_text(overview_and_highlights_prompt)
@@ -661,6 +663,7 @@ class ReleaseNotesGenerator:
         new_features: list[PullRequest],
         new_components: list[PullRequest],
         breaking_changes: list[PullRequest],
+        code_quality: list[PullRequest],
     ) -> str:
         """Generate combined prompt for release overview and feature highlights"""
         template = self.jinja_env.get_template("overview_and_highlights.txt")
@@ -674,6 +677,7 @@ class ReleaseNotesGenerator:
             new_features=new_features,
             new_components=new_components,
             breaking_changes=breaking_changes,
+            code_quality=code_quality,
         )
 
     def _generate_breaking_changes_and_checklist_prompt(
