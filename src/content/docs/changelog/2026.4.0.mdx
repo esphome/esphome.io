@@ -312,14 +312,15 @@ esphome compile my_device.esphomebundle.tar.gz  # Compile from bundle
 
 ## LVGL v9 Upgrade
 
-ESPHome's LVGL integration has been upgraded to **LVGL v9.5.0**, a major library version jump that brings improved rendering performance and new capabilities ([#12312](https://github.com/esphome/esphome/pull/12312)). Existing configurations should compile and run, though some properties are deprecated.
+Led by [@clydebarrow](https://github.com/clydebarrow) with 27 PRs, ESPHome's LVGL integration has been upgraded from v8 to **LVGL v9.5.0** ([#12312](https://github.com/esphome/esphome/pull/12312)). This is a major library migration that brings a new rendering pipeline, improved performance, and new widget capabilities. Existing configurations should compile and run, though some properties are deprecated.
 
-**What's new with LVGL in this release:**
+**Key changes:**
 
-- **Native rotation support** - Rotation is now handled directly by LVGL instead of the display driver, with runtime rotation changes via `lvgl.display.set_rotation` and automatic use of hardware rotation when available ([#14955](https://github.com/esphome/esphome/pull/14955)). Users will need to move their `rotation` config from the display component to the `lvgl:` block.
+- **Native rotation with hardware acceleration** - Rotation is now handled directly by LVGL instead of the display driver, with runtime rotation changes via `lvgl.display.set_rotation` and automatic use of hardware rotation when available. On ESP32-P4, rotation uses the PPA (Pixel Processing Accelerator) for zero-CPU-cost transforms ([#14955](https://github.com/esphome/esphome/pull/14955), [#15453](https://github.com/esphome/esphome/pull/15453)). Users will need to move their `rotation` config from the display component to the `lvgl:` block.
 - **Built-in dark theme** - A single `dark_mode: true` under `theme:` enables LVGL's native dark default theme, replacing the tedious process of manually replicating dark theme properties ([#15389](https://github.com/esphome/esphome/pull/15389))
 - **All LVGL 9 events** - Complete mapping of LVGL 9 events to ESPHome automation triggers ([#15362](https://github.com/esphome/esphome/pull/15362))
 - **Drop shadow support** - New `bitmap_mask_src` style property and A8 image format for drop shadow effects ([#15334](https://github.com/esphome/esphome/pull/15334))
+- **Number-to-sensor and text-to-text_sensor bridges** - New `sensor` platform for `number` and `text_sensor` platform for `text` components, enabling read-only views of LVGL widget values in automations and Home Assistant ([#15125](https://github.com/esphome/esphome/pull/15125), [#15090](https://github.com/esphome/esphome/pull/15090))
 
 ## New Sensors and Hardware Support
 
