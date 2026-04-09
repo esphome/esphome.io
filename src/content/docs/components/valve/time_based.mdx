@@ -1,0 +1,75 @@
+---
+description: "Instructions for setting up time-based valves in ESPHome."
+title: "Time Based Valve"
+---
+
+import APIRef from '@components/APIRef.astro';
+
+The `time_based` valve platform allows you to create valves with position control that do not
+have any position feedback. The state of the valve is always an assumed one - the current
+position is approximated with the time the valve has been moving.
+
+The valve learns its endstops over time by tracking the measured position during each operation.
+Full position range (0.0 to 1.0) becomes available after the valve has traveled its full
+duration in either direction. Until then the position is clamped (0.01 to 0.99) to ensure the endstops will be reached.
+
+## Example Configuration
+
+```yaml
+valve:
+  - platform: time_based
+    name: "Time-Based Valve"
+    duration: 10s
+    open_action:
+      - switch.turn_on: open_valve_switch
+    close_action:
+      - switch.turn_on: close_valve_switch
+    stop_action:
+      - switch.turn_off: open_valve_switch
+      - switch.turn_off: close_valve_switch
+```
+
+## Configuration variables
+
+- **open_action** (**Required**, [Action](/automations/actions#all-actions)): The action that should
+  be performed when the valve is commanded to open.
+
+- **close_action** (**Required**, [Action](/automations/actions#all-actions)): The action that should
+  be performed when the valve is commanded to close.
+
+- **stop_action** (**Required**, [Action](/automations/actions#all-actions)): The action that should
+  be performed when the valve is commanded to stop.
+
+- **duration** (**Required**, [Time](/guides/configuration-types#time)): The time it takes for the valve
+  to travel from fully closed to fully open (or vice versa).
+
+- **restore_mode** (*Optional*, enum): Control how the valve attempts to restore state on bootup.
+  Defaults to `NO_RESTORE`.
+
+  - `NO_RESTORE` - Do not save or restore state.
+  - `RESTORE` - Attempts to restore the state on startup. The valve position is clamped to 0.01-0.99
+    until endstops are learned.
+  - `ALWAYS_OPEN` - Fully open on start.
+  - `ALWAYS_CLOSED` - Fully close on start.
+
+- All other options from [Valve](/components/valve#config-valve).
+
+## Lambda Functions
+
+From [lambdas](/automations/templates#config-lambda), you can access the current state of the valve:
+
+- `is_endstop_reached()`: Returns `true` if the valve has traveled its full duration in either
+  direction and now knows its complete position range. Before this is true, every `position` value 0.0 > x > 1.0 is assumed.
+
+```yaml
+// Example: Check if endstops are learned
+if (id(my_valve).is_endstop_reached()) {
+  // Valve knows its complete position range (0.0 to 1.0)
+}
+```
+
+## See Also
+
+- [Valve Component](/components/valve/)
+- [Automation](/automations)
+- <APIRef text="time_based_valve.h" path="time_based/time_based_valve.h" />
