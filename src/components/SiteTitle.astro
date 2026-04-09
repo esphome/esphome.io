@@ -1,0 +1,47 @@
+---
+import Default from '@astrojs/starlight/components/SiteTitle.astro';
+import fs from 'node:fs';
+import path from 'node:path';
+
+// Find the latest changelog version at build time
+const changelogDir = path.join(process.cwd(), 'src/content/docs/changelog');
+let latestVersion = '';
+try {
+  let best = 0;
+  for (const f of fs.readdirSync(changelogDir)) {
+    const m = f.match(/^(\d{4})\.(\d+)\.(\d+)\.mdx$/);
+    if (!m) continue;
+    const v = parseInt(m[1]) * 10000 + parseInt(m[2]) * 100 + parseInt(m[3]);
+    if (v > best) { best = v; latestVersion = `${m[1]}.${m[2]}.${m[3]}`; }
+  }
+} catch { /* empty changelog dir is fine */ }
+---
+
+<Default {...Astro.props}><slot /></Default>
+{latestVersion && (
+  <a href={`/changelog/${latestVersion}/`} class="version-badge" translate="no">
+    {latestVersion}
+  </a>
+)}
+
+<style>
+  .version-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.1em 0.45em;
+    margin-left: 0.4em;
+    font-size: 0.7rem;
+    font-weight: 500;
+    line-height: 1;
+    color: var(--sl-color-text-accent);
+    background-color: var(--sl-color-accent-low);
+    border-radius: 999px;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: background-color 0.2s;
+  }
+  .version-badge:hover {
+    background-color: var(--sl-color-accent);
+    color: var(--sl-color-black);
+  }
+</style>
