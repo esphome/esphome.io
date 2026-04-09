@@ -1,0 +1,108 @@
+---
+import { logos } from 'virtual:starlight/user-images';
+import config from 'virtual:starlight/user-config';
+import fs from 'node:fs';
+import path from 'node:path';
+
+const { siteTitle, siteTitleHref } = Astro.locals.starlightRoute;
+
+// Find the latest changelog version for the badge
+function getLatestVersion() {
+  const changelogDir = path.join(process.cwd(), 'src/content/docs/changelog');
+  try {
+    const files = fs.readdirSync(changelogDir).filter((f: string) => f.endsWith('.mdx'));
+    let latest = { slug: '', sortValue: 0 };
+    for (const f of files) {
+      const match = f.match(/^(\d{4})\.(\d+)\.(\d+)\.mdx$/);
+      if (match) {
+        const [, year, month, patch] = match;
+        const sortValue = parseInt(year) * 10000 + parseInt(month) * 100 + parseInt(patch);
+        if (sortValue > latest.sortValue) {
+          latest = { slug: `${year}.${month}.${patch}`, sortValue };
+        }
+      }
+    }
+    return latest.slug || null;
+  } catch {
+    return null;
+  }
+}
+
+const latestVersion = getLatestVersion();
+---
+
+<a href={siteTitleHref} class="site-title sl-flex">
+	{
+		config.logo && logos.dark && (
+			<>
+				<img
+					class:list={{ 'light:sl-hidden print:hidden': !('src' in config.logo) }}
+					alt={config.logo.alt}
+					src={logos.dark.src}
+					width={logos.dark.width}
+					height={logos.dark.height}
+				/>
+				{!('src' in config.logo) && (
+					<img
+						class="dark:sl-hidden print:block"
+						alt={config.logo.alt}
+						src={logos.light?.src}
+						width={logos.light?.width}
+						height={logos.light?.height}
+					/>
+				)}
+			</>
+		)
+	}
+	<span class:list={{ 'sr-only': config.logo?.replacesTitle }} translate="no">
+		{siteTitle}
+	</span>
+</a>
+{latestVersion && (
+	<a href={`/changelog/${latestVersion}/`} class="version-badge" translate="no">
+		{latestVersion}
+	</a>
+)}
+
+<style>
+	@layer starlight.core {
+		.site-title {
+			align-items: center;
+			gap: var(--sl-nav-gap);
+			font-size: var(--sl-text-h4);
+			font-weight: 600;
+			color: var(--sl-color-text-accent);
+			text-decoration: none;
+			white-space: nowrap;
+			min-width: 0;
+		}
+		span {
+			overflow: hidden;
+		}
+		img {
+			height: calc(var(--sl-nav-height) - 2 * var(--sl-nav-pad-y));
+			width: auto;
+			max-width: 100%;
+			object-fit: contain;
+			object-position: 0 50%;
+		}
+	}
+	.version-badge {
+		display: inline-flex;
+		align-items: center;
+		padding: 0.15em 0.5em;
+		font-size: 0.75rem;
+		font-weight: 600;
+		line-height: 1;
+		color: var(--sl-color-text-accent);
+		background-color: var(--sl-color-accent-low);
+		border-radius: 999px;
+		text-decoration: none;
+		white-space: nowrap;
+		transition: background-color 0.2s;
+	}
+	.version-badge:hover {
+		background-color: var(--sl-color-accent);
+		color: var(--sl-color-black);
+	}
+</style>
