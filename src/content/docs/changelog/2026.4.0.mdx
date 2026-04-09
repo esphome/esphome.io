@@ -79,11 +79,9 @@ esp32:
 
 **Custom partition tables** ([#7682](https://github.com/esphome/esphome/pull/7682)): Components and YAML configs can now define custom data/app partitions that are appended to the flash layout. The partition table generation has been unified across Arduino and IDF, and NVS has been moved to the end of flash with increased size (20KB to 384KB on Arduino). See the [ESP32 documentation](/components/esp32#esp32-partitions) for details.
 
-## ESP8266 Crash Handler
+## ESP8266 Crash Handler — Without a Serial Cable
 
-ESP8266 devices now have post-mortem crash diagnostics matching the existing ESP32 and RP2040 implementations ([#15465](https://github.com/esphome/esphome/pull/15465)). When a device crashes, the exception details and up to 16 backtrace addresses are saved to RTC memory and reported over the API on the next boot, no USB cable required.
-
-**What you'll see after a crash:**
+Completing the platform coverage started in [2026.3.0](/changelog/2026.3.0#crash-handlers-without-a-serial-cable) (which added crash handlers for ESP32 and RP2040), ESP8266 devices now have the same post-mortem crash diagnostics ([#15465](https://github.com/esphome/esphome/pull/15465)). When a device crashes, the exception details and up to 16 stack-scanned backtrace addresses are saved to RTC memory and reported over the API on the next boot. Crash data appears in `esphome logs` (which automatically decodes addresses to source locations via `addr2line`) and the Home Assistant log viewer, no serial cable needed.
 
 ```
 [E][esp8266]: *** CRASH DETECTED ON PREVIOUS BOOT ***
@@ -93,7 +91,7 @@ ESP8266 devices now have post-mortem crash diagnostics matching the existing ESP
 [E][esp8266]:   BT0: 0x40212F5A
 ```
 
-The crash info is logged both at boot and when an API client subscribes, so it's visible in the ESPHome logs viewer and Home Assistant. Resource cost is minimal: 0 bytes RAM, 119 bytes IRAM, ~1KB flash.
+No configuration needed — it's automatically enabled for all ESP8266 devices. Resource cost is minimal: 0 bytes RAM, 119 bytes IRAM, ~1KB flash.
 
 ## Client-Side State Logging
 
