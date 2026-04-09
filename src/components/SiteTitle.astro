@@ -3,24 +3,39 @@ import Default from '@astrojs/starlight/components/SiteTitle.astro';
 import fs from 'node:fs';
 import path from 'node:path';
 
-// Find the latest changelog version at build time
+// Find the latest version at build time.
+// Shows the latest patch version (e.g., 2026.3.3) but links to the base
+// changelog page (2026.3.0), matching how Home Assistant does it.
 const changelogDir = path.join(process.cwd(), 'src/content/docs/changelog');
-let latestVersion = '';
+let displayVersion = '';
+let changelogSlug = '';
 try {
-  let best = 0;
+  let bestFile = 0;
+  let bestFilename = '';
   for (const f of fs.readdirSync(changelogDir)) {
     const m = f.match(/^(\d{4})\.(\d+)\.(\d+)\.mdx$/);
     if (!m) continue;
     const v = parseInt(m[1]) * 10000 + parseInt(m[2]) * 100 + parseInt(m[3]);
-    if (v > best) { best = v; latestVersion = `${m[1]}.${m[2]}.${m[3]}`; }
+    if (v > bestFile) { bestFile = v; bestFilename = f; changelogSlug = `${m[1]}.${m[2]}.${m[3]}`; }
+  }
+  if (bestFilename) {
+    // Scan for patch release headers like "## Release 2026.3.1 - March 23"
+    const content = fs.readFileSync(path.join(changelogDir, bestFilename), 'utf-8');
+    let bestPatch = 0;
+    for (const match of content.matchAll(/^## Release (\d{4}\.\d+\.\d+)/gm)) {
+      const parts = match[1].split('.');
+      const p = parseInt(parts[2]);
+      if (p > bestPatch) { bestPatch = p; displayVersion = match[1]; }
+    }
+    if (!displayVersion) displayVersion = changelogSlug;
   }
 } catch { /* empty changelog dir is fine */ }
 ---
 
 <Default {...Astro.props}><slot /></Default>
-{latestVersion && (
-  <a href={`/changelog/${latestVersion}/`} class="version-badge" title={`ESPHome ${latestVersion}`} translate="no">
-    {latestVersion}
+{displayVersion && (
+  <a href={`/changelog/${changelogSlug}/`} class="version-badge" title={`ESPHome ${displayVersion}`} translate="no">
+    {displayVersion}
   </a>
 )}
 
