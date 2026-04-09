@@ -89,7 +89,10 @@ Completing the platform coverage started in [2026.3.0](/changelog/2026.3.0#crash
 [E][esp8266]:   PC: 0x40212EC5
 [E][esp8266]:   EXCVADDR: 0x00000000
 [E][esp8266]:   BT0: 0x40212F5A
+[E][esp8266]:   BT1: 0x40203B10
 ```
+
+The `PC` is the program counter where the crash occurred, `EXCVADDR` is the memory address that caused the fault, and `BT0`/`BT1`/etc. are the stack backtrace showing the call chain leading to the crash. When using `esphome logs`, these addresses are automatically decoded to source file and line numbers via `addr2line`, so you see the actual function names instead of raw hex.
 
 No configuration needed — it's automatically enabled for all ESP8266 devices. Resource cost is minimal: 0 bytes RAM, 119 bytes IRAM, ~1KB flash.
 
