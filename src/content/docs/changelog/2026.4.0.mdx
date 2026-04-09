@@ -320,7 +320,6 @@ Led by [@clydebarrow](https://github.com/clydebarrow) with 27 PRs, ESPHome's LVG
 - **Built-in dark theme** - A single `dark_mode: true` under `theme:` enables LVGL's native dark default theme, replacing the tedious process of manually replicating dark theme properties ([#15389](https://github.com/esphome/esphome/pull/15389))
 - **All LVGL 9 events** - Complete mapping of LVGL 9 events to ESPHome automation triggers ([#15362](https://github.com/esphome/esphome/pull/15362))
 - **Drop shadow support** - New `bitmap_mask_src` style property and A8 image format for drop shadow effects ([#15334](https://github.com/esphome/esphome/pull/15334))
-- **Number-to-sensor and text-to-text_sensor bridges** - New `sensor` platform for `number` and `text_sensor` platform for `text` components, enabling read-only views of LVGL widget values in automations and Home Assistant ([#15125](https://github.com/esphome/esphome/pull/15125), [#15090](https://github.com/esphome/esphome/pull/15090))
 
 ## New Sensors and Hardware Support
 
@@ -333,8 +332,20 @@ This release adds support for several new sensors and hardware platforms:
 - **BMP585 support** - Adds the newer BMP585 ASIC ID to the BMP581 component ([#15277](https://github.com/esphome/esphome/pull/15277))
 - **ESP32-C61 PSRAM** - Quad mode PSRAM support at 40MHz and 80MHz ([#14795](https://github.com/esphome/esphome/pull/14795))
 - **Internal temperature** for nRF52 Zephyr ([#15297](https://github.com/esphome/esphome/pull/15297)) and LN882H ([#15370](https://github.com/esphome/esphome/pull/15370))
-- **Number-to-sensor and text-to-text_sensor bridges** - Read-only sensor/text_sensor views of number/text components for use in automations and displays ([#15125](https://github.com/esphome/esphome/pull/15125), [#15090](https://github.com/esphome/esphome/pull/15090))
+## Other Notable Features
+
+- **Number-to-sensor and text-to-text_sensor bridges** - New read-only sensor/text_sensor views of number/text components for use in automations and displays ([#15125](https://github.com/esphome/esphome/pull/15125), [#15090](https://github.com/esphome/esphome/pull/15090))
 - **ESP32 Hosted SPI transport** - SPI transport and 1-bit SDIO bus width support for the `esp32_hosted` WiFi offloading component ([#15551](https://github.com/esphome/esphome/pull/15551))
+- **Nextion custom protocol triggers** - `on_custom_switch`, `on_custom_sensor`, `on_custom_text_sensor`, `on_custom_binary_sensor` triggers for event-driven Nextion workflows without entities ([#13248](https://github.com/esphome/esphome/pull/13248))
+- **MQTT alarm panel JSON payloads** - Alarm control panel command topic now accepts JSON payloads with PIN codes, e.g. `{"state": "DISARM", "code": "1234"}` ([#14731](https://github.com/esphome/esphome/pull/14731))
+- **Media player enqueue action** - New `media_player.enqueue` action for queueing media URLs from automations ([#14775](https://github.com/esphome/esphome/pull/14775))
+- **MIPI RGB optional sync pins** - `hsync_pin`/`vsync_pin` now optional for displays like the BigTreeTech PandaTouch ([#14870](https://github.com/esphome/esphome/pull/14870))
+- **Brennenstuhl remote switches** - New 433MHz rolling code protocol for Brennenstuhl comfort-line switches ([#9407](https://github.com/esphome/esphome/pull/9407))
+- **DSMR thermal MBUS id** - New `thermal_mbus_id` option for Warmtelink heat meters ([#7519](https://github.com/esphome/esphome/pull/7519))
+- **VBus DeltaSol CS4** - Support for Citrin Solar 1.3 controller ([#12477](https://github.com/esphome/esphome/pull/12477))
+- **TM1637 buffer manipulation** - `set_buffer` method for raw segment writes and custom glyphs ([#13686](https://github.com/esphome/esphome/pull/13686))
+- **HUB75 scan wiring** - New `SCAN_1_8_32PX_FULL` wiring option ([#15130](https://github.com/esphome/esphome/pull/15130))
+- **`*/N` cron syntax** - Time-based automations now support `*/5` style step expressions ([#15434](https://github.com/esphome/esphome/pull/15434))
 
 ## Mitsubishi CN105 Climate Component
 
