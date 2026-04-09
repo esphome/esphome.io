@@ -451,10 +451,10 @@ Several internal C++ APIs have changed in this release. While these are not part
 ### Breaking Changes for Developers
 
 {/* BREAKING_CHANGES_DEVELOPERS_START */}
-- **CallbackManager**: `std::function` replaced with lightweight `Callback` type. Components registering callbacks must use compatible function signatures. [#14853](https://github.com/esphome/esphome/pull/14853)
+- **CallbackManager**: `std::function` replaced with lightweight `Callback` type. Existing code continues to work but external components should migrate callback registration methods from `std::function` parameters to templates for optimal performance (non-template methods fall back to a heap-allocation path). [#14853](https://github.com/esphome/esphome/pull/14853)
 - **PollingComponent**: `set_update_interval()` is now non-virtual. Subclasses overriding this method should use alternative patterns. [#14938](https://github.com/esphome/esphome/pull/14938)
 - **UART FlushResult**: `FlushResult` renamed to `UARTFlushResult` with `UART_FLUSH_RESULT_` prefix for enum values. [#15101](https://github.com/esphome/esphome/pull/15101)
-- **Sensor raw_state**: `.raw_state` is deprecated. `raw_callback_` is now gated behind `USE_SENSOR_FILTER`. [#15094](https://github.com/esphome/esphome/pull/15094)
+- **Sensor raw_state**: `.raw_state` is deprecated. `raw_callback_` is now gated behind `USE_SENSOR_FILTER`, saving RAM on every sensor instance when no filters are configured. [#15094](https://github.com/esphome/esphome/pull/15094)
 - **Trigger trampolines eliminated**: Trigger objects for common entity automations (button, sensor, binary_sensor, switch, text_sensor, number, event) are no longer instantiated. `build_automation()` and Trigger subclasses remain available. [#15174](https://github.com/esphome/esphome/pull/15174)
 - **TemplatableFn**: `TEMPLATABLE_VALUE` macro now uses 4-byte `TemplatableFn` for trivially copyable types. External components calling macro-generated setters with raw C++ constants instead of going through `cg.templatable()` will fail to compile. [#15545](https://github.com/esphome/esphome/pull/15545)
 - **Climate/Fan custom modes**: Custom mode/preset vectors are now stored on the entity instead of heap-allocated. Constructors for climate and fan traits have changed. [#15206](https://github.com/esphome/esphome/pull/15206), [#15209](https://github.com/esphome/esphome/pull/15209)
