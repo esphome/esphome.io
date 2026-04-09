@@ -110,18 +110,6 @@ State change logging has been fundamentally redesigned to eliminate the single b
 
 **The fix:** State change logs are moved from device-side formatting to client-side reconstruction. When `esphome logs` or the dashboard connects, it subscribes to compact protobuf state messages and reconstructs the log lines on the client. The protobuf messages are a fraction of the size of formatted strings, and formatting happens on your computer instead of the microcontroller.
 
-**CodSpeed benchmark results ([view in CodSpeed](https://codspeed.io/esphome/esphome)):**
-
-| Benchmark | Before | After | Speedup |
-|---|---|---|---|
-| SensorPublish_NoCallbacks | 2,021 µs | 44 µs | **46x faster** |
-| SensorPublish_SameValue | 1,818 µs | 44 µs | **42x faster** |
-| SensorPublish_WithCallback | 2,042 µs | 64 µs | **32x faster** |
-| SensorFilter_ExponentialMovingAvg | 1,925 µs | 102 µs | **19x faster** |
-| SensorFilter_SlidingWindowAvg | 1,985 µs | 159 µs | **12x faster** |
-| SensorFilter_Chain3 | 2,091 µs | 208 µs | **10x faster** |
-| BinarySensorPublish_Alternating | 710 µs | 82 µs | **8.7x faster** |
-
 **Real-world impact (ESP32-C3):**
 
 | Metric | Before | After |
