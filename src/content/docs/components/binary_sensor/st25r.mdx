@@ -1,0 +1,120 @@
+---
+description: "Instructions for setting up ST25R NFC reader components in ESPHome"
+title: "ST25R NFC Reader"
+---
+
+import APIRef from '@components/APIRef.astro';
+
+<span id="st25r-component"></span>
+
+## Component/Hub
+
+The `st25r` component allows you to use STMicroelectronics ST25R3916 family NFC readers
+([datasheet](https://www.st.com/resource/en/datasheet/st25r3916.pdf))
+with ESPHome. This component is a global hub that establishes the connection to the ST25R3916 via
+[SPI](/components/spi) and detects ISO 14443A (NFC-A) tags with multi-tag anticollision support
+for 4-byte, 7-byte, and 10-byte UIDs.
+
+## Over SPI
+
+```yaml
+spi:
+  clk_pin: GPIO19
+  miso_pin: GPIO10
+  mosi_pin: GPIO18
+
+st25r_spi:
+  cs_pin: GPIO6
+  irq_pin: GPIO7
+  update_interval: 1s
+  on_tag:
+    then:
+      - logger.log:
+          format: "Tag: %s"
+          args: ['x.c_str()']
+  on_tag_removed:
+    then:
+      - logger.log:
+          format: "Removed: %s"
+          args: ['x.c_str()']
+```
+
+### Configuration variables
+
+- **cs_pin** (**Required**, [Pin Schema](/guides/configuration-types#pin-schema)): The SPI chip select pin.
+
+- **irq_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The IRQ GPIO pin.
+  Recommended for fastest tag detection response.
+
+- **reset_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): Hardware reset GPIO pin.
+  Optional but recommended for reliable recovery.
+
+- **rf_power** (*Optional*, int): TX driver strength 0--15 (15 = maximum range). Defaults to `15`.
+
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): Tag polling interval.
+  Defaults to `1s`.
+
+- **on_tag** (*Optional*, [Automation](/automations)): An automation to perform when a tag is first
+  detected. See [`on_tag` Trigger](#on_tag-trigger).
+
+- **on_tag_removed** (*Optional*, [Automation](/automations)): An automation to perform when a tag is
+  removed (no longer detected after 3 consecutive missed scans). See [`on_tag_removed` Trigger](#on_tag_removed-trigger).
+
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID for this component.
+
+<span id="on_tag-trigger"></span>
+
+## `on_tag` Trigger
+
+This automation is triggered when a new tag is detected. The tag UID is available as `x`
+(a `std::string` in the format `0410A7675F6180`).
+
+```yaml
+st25r_spi:
+  # ...
+  on_tag:
+    then:
+      - homeassistant.tag_scanned: !lambda 'return x;'
+```
+
+<span id="on_tag_removed-trigger"></span>
+
+## `on_tag_removed` Trigger
+
+This automation is triggered when a previously detected tag is no longer present. The removed
+tag's UID is available as `x` (a `std::string`).
+
+```yaml
+st25r_spi:
+  # ...
+  on_tag_removed:
+    then:
+      - logger.log:
+          format: "Tag removed: %s"
+          args: ['x.c_str()']
+```
+
+## Setting Up Tags
+
+To find your tags' UIDs, set up the component with the logger at DEBUG level. When you hold a tag
+near the reader, you will see a log message like:
+
+```log
+[st25r:INFO] Tag selected: 0410A7675F6180 (SAK=0x00)
+```
+
+Copy this UID for use in your automations.
+
+## Supported Hardware
+
+| Chip | Interface | Status |
+|------|-----------|--------|
+| ST25R3916 | SPI | Verified (Elechouse module) |
+| ST25R3916B | SPI | Verified (STEVAL-MB17149B) |
+
+## See Also
+
+- [PN532 NFC/RFID](/components/binary_sensor/pn532/)
+- [RC522 NFC/RFID](/components/binary_sensor/rc522/)
+- [Binary Sensor Component](/components/binary_sensor/)
+- <APIRef text="st25r.h" path="st25r/st25r.h" />
