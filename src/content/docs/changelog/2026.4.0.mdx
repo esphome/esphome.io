@@ -208,7 +208,7 @@ This release introduces comprehensive C++ benchmarking infrastructure using [Cod
 - Scheduler interval and timeout operations
 - Plaintext and encrypted API frame writes
 
-**API layer optimizations** (the native API is the primary communication path between ESPHome devices and Home Assistant). The goal was to make Bluetooth Proxy lightweight enough that every ESP32-C3 can run it without worrying about performance impact, and this release delivers: combined with changes from 2026.3.0, the API and BLE proxy now consume only ~2.3% of main loop runtime on ESP32-C3, down over 30% from the previous release:
+**API layer optimizations** (the native API is the primary communication path between ESPHome devices and Home Assistant). The goal was to make Bluetooth Proxy lightweight enough that every ESP32-C3 can run it without worrying about performance impact, and this release delivers: combined with changes from 2026.3.0, the API and BLE proxy now consume only ~2.3% of main loop runtime on ESP32-C3, down from ~3.3% in 2026.3.0 and a fraction of what it was a year ago:
 
 - **Protobuf encoding**: 17-20% faster with register-optimized write path ([#15290](https://github.com/esphome/esphome/pull/15290))
 - **Precomputed tag bytes**: Varint and length-delimited field tags computed at compile time ([#15067](https://github.com/esphome/esphome/pull/15067))
