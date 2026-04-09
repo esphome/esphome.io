@@ -60,7 +60,7 @@ Users on battery power or with thermal constraints can override with `cpu_freque
 
 **ESP32 crash handler improvements**: The existing crash handler now captures backtraces from **both cores** on dual-core ESP32 variants ([#15559](https://github.com/esphome/esphome/pull/15559)) and preserves crash data across OTA rollback reboots ([#15578](https://github.com/esphome/esphome/pull/15578)).
 
-**40KB extra IRAM on original ESP32** ([#14874](https://github.com/esphome/esphome/pull/14874)): A new option reclaims 40KB of previously reserved SRAM1 as IRAM, expanding the flash cache window and reducing cache misses for WiFi, BLE, and API operations -- at no cost to heap. ESPHome will automatically detect your bootloader version at boot and suggest enabling this option only when it is safe to do so. **Do not enable this option without the bootloader check confirming it is safe** -- enabling it with a pre-v5.1 bootloader will brick the device (requiring USB reflash to recover). See the [ESP32 documentation](/components/esp32#sram1-as-iram) for details.
+**40KB extra IRAM on original ESP32** ([#14874](https://github.com/esphome/esphome/pull/14874)): A new option reclaims 40KB of previously reserved SRAM1 as IRAM, expanding the flash cache window and reducing cache misses for WiFi, BLE, and API operations, at no cost to heap. ESPHome will automatically detect your bootloader version at boot and suggest enabling this option only when it is safe to do so. **Do not enable this option without the bootloader check confirming it is safe**; enabling it with a pre-v5.1 bootloader will brick the device (requiring USB reflash to recover). See the [ESP32 documentation](/components/esp32#sram1-as-iram) for details.
 
 **Signed OTA verification** ([#15357](https://github.com/esphome/esphome/pull/15357)): New `signed_ota_verification` option enables firmware signature verification during OTA updates without requiring hardware Secure Boot (eFuse burning). Two workflows are supported:
 
@@ -99,7 +99,7 @@ The crash info is logged both at boot and when an API client subscribes, so it's
 
 State change logging has been fundamentally redesigned to eliminate the single biggest CPU bottleneck on every ESPHome device ([#15155](https://github.com/esphome/esphome/pull/15155)).
 
-**The problem:** Every entity state change (`'CO2' >> 420 ppm`, `'Light' - Setting ON`) ran `vsnprintf` on the device to format a log string and sent it over UART -- even when nobody was watching the serial console (which is 99.9% of devices). CodSpeed benchmarks revealed this was consuming **95%+ of sensor publish time**.
+**The problem:** Every entity state change (`'CO2' >> 420 ppm`, `'Light' - Setting ON`) ran `vsnprintf` on the device to format a log string and sent it over UART, even when nobody was watching the serial console (which is 99.9% of devices). CodSpeed benchmarks revealed this was consuming **95%+ of sensor publish time**.
 
 **The fix:** State change logs are moved from device-side formatting to client-side reconstruction. When `esphome logs` or the dashboard connects, it subscribes to compact protobuf state messages and reconstructs the log lines on the client. The protobuf messages are a fraction of the size of formatted strings, and formatting happens on your computer instead of the microcontroller. This achieves up to **46x faster** in the publish path, with flash savings of **1.4KB** (ESP32-C3) to **2.2KB** (ESP8266). State changes still appear in logs as `[S]` lines in bright cyan:
 
@@ -109,7 +109,7 @@ State change logging has been fundamentally redesigned to eliminate the single b
 [18:03:51.747][S][light]: 'Light' >> ON
 ```
 
-A new `--no-states` flag ([#15160](https://github.com/esphome/esphome/pull/15160)) lets users suppress state change lines entirely for the first time -- useful for debugging when the log is flooded with sensor readings.
+A new `--no-states` flag ([#15160](https://github.com/esphome/esphome/pull/15160)) lets users suppress state change lines entirely for the first time, useful for debugging when the log is flooded with sensor readings.
 
 ## Preliminary ESP-IDF 6.0 Compatibility
 
@@ -138,7 +138,7 @@ The mbedTLS library in IDF 6.0 deprecates its legacy crypto APIs. All ESPHome cr
 
 ## Substitution System Overhaul
 
-The YAML configuration system receives two major improvements that make complex, multi-file configurations far more powerful and faster to load.
+Led by [@jpeletier](https://github.com/jpeletier), the YAML configuration system receives two major improvements that make complex, multi-file configurations far more powerful and faster to load.
 
 **Substitutions in `!include` paths** ([#12213](https://github.com/esphome/esphome/pull/12213)): You can now use substitution variables and Jinja expressions directly in `!include` filenames, enabling dynamic file selection:
 
@@ -210,7 +210,7 @@ This release introduces comprehensive C++ benchmarking infrastructure using [Cod
 - Scheduler interval and timeout operations
 - Plaintext and encrypted API frame writes
 
-**API layer optimizations** (the native API is the primary communication path between ESPHome devices and Home Assistant). Combined with changes from 2026.3.0, the API and BLE proxy now consume only ~2.3% of main loop runtime on ESP32-C3 -- down over 30% from the previous release:
+**API layer optimizations** (the native API is the primary communication path between ESPHome devices and Home Assistant). Combined with changes from 2026.3.0, the API and BLE proxy now consume only ~2.3% of main loop runtime on ESP32-C3, down over 30% from the previous release:
 
 - **Protobuf encoding**: 17-20% faster with register-optimized write path ([#15290](https://github.com/esphome/esphome/pull/15290))
 - **Precomputed tag bytes**: Varint and length-delimited field tags computed at compile time ([#15067](https://github.com/esphome/esphome/pull/15067))
@@ -240,7 +240,7 @@ This release introduces comprehensive C++ benchmarking infrastructure using [Cod
 - **Logger**: Reduced per-message overhead by inlining hot path helpers ([#14851](https://github.com/esphome/esphome/pull/14851))
 - **errno caching**: Avoids duplicate `__errno()` calls across API, async_tcp, captive_portal, and web_server_idf ([#14751](https://github.com/esphome/esphome/pull/14751))
 - **Loop elimination**: Many components were running their `loop()` every single main loop iteration just to check a condition or timestamp. These have been converted to event-driven patterns that only run when needed:
-  - `web_server`: Loop completely disabled when no SSE clients are connected -- most devices have zero browser clients 99%+ of the time ([#15428](https://github.com/esphome/esphome/pull/15428))
+  - `web_server`: Loop completely disabled when no SSE clients are connected; most devices have zero browser clients 99%+ of the time ([#15428](https://github.com/esphome/esphome/pull/15428))
   - `total_daily_energy`: Replaced loop() with a single timeout that fires at midnight ([#15432](https://github.com/esphome/esphome/pull/15432))
   - `CronTrigger`: Replaced loop() with `set_interval` ([#15433](https://github.com/esphome/esphome/pull/15433))
   - `preferences`: Loop compiled out entirely when `flash_write_interval` is non-zero ([#14943](https://github.com/esphome/esphome/pull/14943))
@@ -255,13 +255,13 @@ CodSpeed runs on every push to `dev`, providing a continuous baseline that catch
 
 Driven by the increased visibility from benchmarking and memory analysis tooling, this release includes significant RAM and flash savings across the framework.
 
-**Component allocations moved from heap to BSS** ([#15079](https://github.com/esphome/esphome/pull/15079)): This is a major architectural change -- all component instances (`new_Pvariable`) are now allocated via placement new into statically-sized BSS storage instead of individual heap allocations. Previously, every component, sensor, automation, and filter was a separate `new` call, fragmenting the heap over time. Now these allocations are packed into a single contiguous BSS region, freeing heap space for WiFi, BLE, and network buffers that genuinely need dynamic allocation. This eliminates hundreds of small heap allocations per device and significantly reduces heap fragmentation on long-running devices.
+**Component allocations moved from heap to BSS** ([#15079](https://github.com/esphome/esphome/pull/15079)): This is a major architectural change; all component instances (`new_Pvariable`) are now allocated via placement new into statically-sized BSS storage instead of individual heap allocations. Previously, every component, sensor, automation, and filter was a separate `new` call, fragmenting the heap over time. Now these allocations are packed into a single contiguous BSS region, freeing heap space for WiFi, BLE, and network buffers that genuinely need dynamic allocation. This eliminates hundreds of small heap allocations per device and significantly reduces heap fragmentation on long-running devices.
 
 **Core framework savings:**
 
 - **Component base class**: Shrunk from 12 to 8 bytes per instance, saving ~200-400 bytes across typical configs ([#15103](https://github.com/esphome/esphome/pull/15103))
-- **CallbackManager**: Replaced `std::function` (16 bytes) with lightweight `Callback` (8 bytes) across all callback registrations. Small lambdas like `[this]` are now stored inline in the function pointer context with zero heap allocation -- covering 96% of all callback registrations. Measured **+488 bytes free heap** on an ESP8266 config with MQTT + web_server + many entities ([#14853](https://github.com/esphome/esphome/pull/14853))
-- **Trigger trampolines eliminated across 23 components**: Previously, every `on_press`, `on_value`, `on_state`, etc. automation instantiated a separate Trigger object just to forward a callback -- a 4+ byte heap-allocated object that existed solely to hold a pointer. A new `build_callback_automation()` pattern collapses the trigger into a pointer-sized forwarder struct stored inline in the callback manager, eliminating the separate allocation entirely. The initial PR ([#15174](https://github.com/esphome/esphome/pull/15174)) migrated the core entity types (button, sensor, binary_sensor, switch, text_sensor, number, event) saving 88-208 bytes RAM, then **22 follow-up PRs** migrated alarm_control_panel, lock, media_player, ld2450, rtttl, online_image, rotary_encoder, dfplayer, hlk_fm22x, pn532, pn7150/pn7160, sim800l, fingerprint_grow, ltr_als_ps, ltr501, nextion, ezo, haier, modbus_controller, rf_bridge, factory_reset, sml, and safe_mode
+- **CallbackManager**: Replaced `std::function` (16 bytes) with lightweight `Callback` (8 bytes) across all callback registrations. Small lambdas like `[this]` are now stored inline in the function pointer context with zero heap allocation, covering 96% of all callback registrations. Measured **+488 bytes free heap** on an ESP8266 config with MQTT + web_server + many entities ([#14853](https://github.com/esphome/esphome/pull/14853))
+- **Trigger trampolines eliminated across 23 components**: Previously, every `on_press`, `on_value`, `on_state`, etc. automation instantiated a separate Trigger object just to forward a callback, a 4+ byte heap-allocated object that existed solely to hold a pointer. A new `build_callback_automation()` pattern collapses the trigger into a pointer-sized forwarder struct stored inline in the callback manager, eliminating the separate allocation entirely. The initial PR ([#15174](https://github.com/esphome/esphome/pull/15174)) migrated the core entity types (button, sensor, binary_sensor, switch, text_sensor, number, event) saving 88-208 bytes RAM, then **22 follow-up PRs** migrated alarm_control_panel, lock, media_player, ld2450, rtttl, online_image, rotary_encoder, dfplayer, hlk_fm22x, pn532, pn7150/pn7160, sim800l, fingerprint_grow, ltr_als_ps, ltr501, nextion, ezo, haier, modbus_controller, rf_bridge, factory_reset, sml, and safe_mode
 - **TemplatableValue → TemplatableFn**: The function-pointer pattern was first proven on `LightControlAction`, shrinking each instance from 128 to 72 bytes (44% reduction, saving 616 bytes RAM on an ESP8266 light config with 11 actions) ([#15132](https://github.com/esphome/esphome/pull/15132)). This was then generalized codebase-wide: ~340 `TEMPLATABLE_VALUE` fields automatically dropped from 8 to 4 bytes each by storing function pointers instead of tagged unions ([#15545](https://github.com/esphome/esphome/pull/15545))
 - **ActionList**: Removed `actions_end_` pointer to save RAM per automation ([#15283](https://github.com/esphome/esphome/pull/15283))
 
@@ -333,7 +333,7 @@ This release adds support for several new sensors and hardware platforms:
 
 ## Mitsubishi CN105 Climate Component
 
-The new [mitsubishi_cn105](/components/climate/mitsubishi_cn105) component brings native support for controlling Mitsubishi A/C units through the CN105 connector -- one of the most requested climate integrations in ESPHome. The component implements the same CN105 protocol used by the popular SwiCago HeatPump project, ensuring compatibility with the same [range of devices](https://github.com/SwiCago/HeatPump/issues/13) ([#15315](https://github.com/esphome/esphome/pull/15315), [#15358](https://github.com/esphome/esphome/pull/15358), [#15437](https://github.com/esphome/esphome/pull/15437), [#15462](https://github.com/esphome/esphome/pull/15462), [#15483](https://github.com/esphome/esphome/pull/15483)).
+The new [mitsubishi_cn105](/components/climate/mitsubishi_cn105) component brings native support for controlling Mitsubishi A/C units through the CN105 connector, one of the most requested climate integrations in ESPHome. The component implements the same CN105 protocol used by the popular SwiCago HeatPump project, ensuring compatibility with the same [range of devices](https://github.com/SwiCago/HeatPump/issues/13) ([#15315](https://github.com/esphome/esphome/pull/15315), [#15358](https://github.com/esphome/esphome/pull/15358), [#15437](https://github.com/esphome/esphome/pull/15437), [#15462](https://github.com/esphome/esphome/pull/15462), [#15483](https://github.com/esphome/esphome/pull/15483)).
 
 **Key Features:**
 
@@ -394,7 +394,7 @@ Also thank you to [@bdraco](https://github.com/bdraco), [@thomwiggers](https://g
 
 - **LVGL rotation**: The `rotation` option must now be configured under `lvgl:` instead of the display component. LVGL now handles rotation directly, with support for runtime rotation changes via `lvgl.display.set_rotation`. Users must move their `rotation` setting from the display config to the `lvgl:` block. [#14955](https://github.com/esphome/esphome/pull/14955)
 
-- **I2S Audio**: The legacy I2S driver (`use_legacy` option) has been removed. The new I2S driver is always used. The `i2s_audio` media player sub-component has been removed entirely -- users should migrate to the [speaker media player](/components/media_player/speaker) component. [#14932](https://github.com/esphome/esphome/pull/14932)
+- **I2S Audio**: The legacy I2S driver (`use_legacy` option) has been removed. The new I2S driver is always used. The `i2s_audio` media player sub-component has been removed entirely; users should migrate to the [speaker media player](/components/media_player/speaker) component. [#14932](https://github.com/esphome/esphome/pull/14932)
 
 - **Binary Sensor multi_click**: `on_multi_click` timing sequences are now limited to 255 entries (previously unlimited). No real config would approach this limit. [#15267](https://github.com/esphome/esphome/pull/15267)
 
