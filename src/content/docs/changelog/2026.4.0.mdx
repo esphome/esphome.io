@@ -58,6 +58,8 @@ ESP32, ESP32-S2, ESP32-S3, and ESP32-C5 now default to **240MHz** instead of 160
 
 Users on battery power or with thermal constraints can override with `cpu_frequency: 160MHZ`. This is a breaking change as it increases power consumption on affected variants.
 
+**ESP32 crash handler improvements**: The existing crash handler now captures backtraces from **both cores** on dual-core ESP32 variants ([#15559](https://github.com/esphome/esphome/pull/15559)) and preserves crash data across OTA rollback reboots ([#15578](https://github.com/esphome/esphome/pull/15578)).
+
 **40KB extra IRAM on original ESP32** ([#14874](https://github.com/esphome/esphome/pull/14874)): A new option reclaims 40KB of previously reserved SRAM1 as IRAM, expanding the flash cache window and reducing cache misses for WiFi, BLE, and API operations -- at no cost to heap. ESPHome will automatically detect your bootloader version at boot and suggest enabling this option only when it is safe to do so. **Do not enable this option without the bootloader check confirming it is safe** -- enabling it with a pre-v5.1 bootloader will brick the device (requiring USB reflash to recover). See the [ESP32 documentation](/components/esp32#sram1-as-iram) for details.
 
 **Signed OTA verification** ([#15357](https://github.com/esphome/esphome/pull/15357)): New `signed_ota_verification` option enables firmware signature verification during OTA updates without requiring hardware Secure Boot (eFuse burning). Two workflows are supported:
