@@ -37,6 +37,7 @@ complicated components that use the pin schema will not work. For example the I�
 sx1509:
   - id: sx1509_hub1
     address: 0x3E
+    interrupt_pin: GPIOXX
     # If you need a keypad
     keypad:
       key_rows: 3
@@ -51,6 +52,12 @@ sx1509:
 - **id** (**Required**, [ID](/guides/configuration-types#id)): The id to use for this SX1509 component.
 - **address** (*Optional*, int): The I²C address of the driver.
   Defaults to `0x3E`.
+- **interrupt_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The pin connected to the
+  INT output of the SX1509. When configured, the component becomes interrupt-driven instead of
+  polling — it only reads the chip when a pin actually changes state, significantly reducing I²C bus traffic
+  and CPU usage. The INT pin is active-low and open-drain, so an external or internal pull-up resistor is
+  required. Must be an internal GPIO pin (not another expander pin). When keypad mode is active, the loop
+  continues running for key scanning regardless of interrupt configuration.
 
 The SX1509 integrates a fully programmable keypad scanning engine to implement keypad applications.
 up to 8x8 matrix (i.e. 64 keys).
