@@ -256,7 +256,7 @@ Driven by the increased visibility from benchmarking and memory analysis tooling
 
 **Component allocations moved from heap to BSS** ([#15079](https://github.com/esphome/esphome/pull/15079)): This is a major architectural change; all component instances (`new_Pvariable`) are now allocated via placement new into statically-sized BSS storage instead of individual heap allocations. Previously, every component, sensor, automation, and filter was a separate `new` call, fragmenting the heap over time. Now these allocations are packed into a single contiguous BSS region, freeing heap space for WiFi, BLE, and network buffers that genuinely need dynamic allocation. This eliminates hundreds of small heap allocations per device and significantly reduces heap fragmentation on long-running devices.
 
-ESPHome's CI automatically runs a home-grown memory impact analysis on every pull request, showing contributors the exact flash and RAM impact of their changes before merging. Previously, component memory was invisible to this tooling because it was all allocated at runtime on the heap. Once the BSS change landed, every component's memory became a statically-visible symbol that the CI could measure and attribute. The `analyze-memory` tool was extended to attribute placement new storage symbols back to their owning components ([#15092](https://github.com/esphome/esphome/pull/15092)), making it easy to spot which components still had room for improvement. This visibility drove the wave of targeted optimizations below.
+ESPHome's CI automatically runs a home-grown memory impact analysis on every pull request, showing contributors the exact flash and RAM impact of their changes before merging. Previously, component memory was invisible to this tooling because it was all allocated at runtime on the heap. Once the BSS change landed, every component's memory became a statically-visible symbol that the CI could measure and attribute. The [`analyze-memory`](/guides/cli#analyze-memory-command) tool was extended to attribute placement new storage symbols back to their owning components ([#15092](https://github.com/esphome/esphome/pull/15092)), making it easy to spot which components still had room for improvement. This visibility drove the wave of targeted optimizations below.
 
 **Core framework savings:**
 
@@ -275,7 +275,7 @@ ESPHome's CI automatically runs a home-grown memory impact analysis on every pul
 - **GPIO switch**: Compiled out interlock fields when unused ([#15111](https://github.com/esphome/esphome/pull/15111))
 - **Climate/Fan**: Custom mode vectors stored on entity directly, eliminating heap allocation ([#15206](https://github.com/esphome/esphome/pull/15206), [#15209](https://github.com/esphome/esphome/pull/15209))
 - **WebServerBase**: Reduced by 4 bytes ([#15251](https://github.com/esphome/esphome/pull/15251))
-- **Runtime stats**: Stored inline on Component, eliminating `std::map` lookup ([#15345](https://github.com/esphome/esphome/pull/15345))
+- **[Runtime stats](/components/sensor/runtime_stats)**: Stored inline on Component, eliminating `std::map` lookup ([#15345](https://github.com/esphome/esphome/pull/15345))
 
 **Heap allocation elimination:**
 
