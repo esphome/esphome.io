@@ -9,9 +9,9 @@ import APIRef from '@components/APIRef.astro';
 
 ## Component/Hub
 
-The `st25r` component allows you to use STMicroelectronics ST25R3916 family NFC readers
+The `st25r_spi` component allows you to use STMicroelectronics ST25R3916 family NFC readers
 ([datasheet](https://www.st.com/resource/en/datasheet/st25r3916.pdf))
-with ESPHome. This component is a global hub that establishes the connection to the ST25R3916 via
+with ESPHome. This SPI hub component establishes the connection to the ST25R3916 via
 [SPI](/components/spi) and detects ISO 14443A (NFC-A) tags with multi-tag anticollision support
 for 4-byte, 7-byte, and 10-byte UIDs.
 
@@ -19,13 +19,13 @@ for 4-byte, 7-byte, and 10-byte UIDs.
 
 ```yaml
 spi:
-  clk_pin: GPIO19
-  miso_pin: GPIO10
-  mosi_pin: GPIO18
+  clk_pin: GPIO18
+  miso_pin: GPIO19
+  mosi_pin: GPIO23
 
 st25r_spi:
-  cs_pin: GPIO6
-  irq_pin: GPIO7
+  cs_pin: GPIO5
+  irq_pin: GPIO4
   update_interval: 1s
   on_tag:
     then:
@@ -49,7 +49,7 @@ st25r_spi:
 - **reset_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): Hardware reset GPIO pin.
   Optional but recommended for reliable recovery.
 
-- **rf_power** (*Optional*, int): TX driver strength 0--15 (15 = maximum range). Defaults to `15`.
+- **rf_power** (*Optional*, int): TX driver strength 0-15 (15 = maximum range). Defaults to `15`.
 
 - **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): Tag polling interval.
   Defaults to `1s`.
@@ -96,7 +96,7 @@ st25r_spi:
 
 ## Setting Up Tags
 
-To find your tags' UIDs, set up the component with the logger at DEBUG level. When you hold a tag
+To find your tags' UIDs, set up the component with the logger at INFO level (or lower). When you hold a tag
 near the reader, you will see a log message like:
 
 ```log
