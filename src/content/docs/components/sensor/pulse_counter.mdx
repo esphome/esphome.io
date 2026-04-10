@@ -29,13 +29,11 @@ sensor:
 - **count_mode** (*Optional*): Configure how the counter should behave
   on a detected rising edge/falling edge.
 
-  - **rising_edge** (*Optional*): What to do when a rising edge is
+  - **rising_edge** (**Required**): What to do when a rising edge is
     detected. One of `DISABLE`, `INCREMENT` and `DECREMENT`.
-    Defaults to `INCREMENT`.
 
-  - **falling_edge** (*Optional*): What to do when a falling edge is
+  - **falling_edge** (**Required**): What to do when a falling edge is
     detected. One of `DISABLE`, `INCREMENT` and `DECREMENT`.
-    Defaults to `DISABLE`.
 
 - **use_pcnt** (*Optional*, boolean): Use hardware `PCNT` pulse counter. Only supported on ESP32. Defaults to `true`.
 - **internal_filter** (*Optional*, [Time](/guides/configuration-types#time)): If a pulse shorter than this
@@ -92,7 +90,7 @@ sensor:
         - multiply: 0.001  # (1/1000 pulses per kWh)
 ```
 
-## (Re)Setting the total pulse count
+## `pulse_counter.set_total_pulses` Action
 
 Using this action, you are able to reset/set the total pulse count. This can be useful
 if you would like the `total` sensor to match what you see on your meter you are

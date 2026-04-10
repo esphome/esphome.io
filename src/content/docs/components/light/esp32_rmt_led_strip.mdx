@@ -7,6 +7,9 @@ import APIRef from '@components/APIRef.astro';
 
 This is a component using the ESP32 RMT peripheral to drive most addressable LED strips.
 
+> [!NOTE]
+> The ESP32-C2 and ESP32-C61 do not have RMT hardware and are not supported by this component.
+
 ```yaml
 light:
   - platform: esp32_rmt_led_strip
@@ -21,7 +24,7 @@ light:
 
 - **pin** (**Required**, [Pin Schema](/guides/configuration-types#pin-schema)): The pin for the data line of the light.
 - **num_leds** (**Required**, int): The number of LEDs in the strip.
-- **chipset** (**Required**, enum): The name of the chipset used; determines signal timing. Not required if
+- **chipset** (*Optional*, enum): The name of the chipset used; determines signal timing. Not required if
   [specifying the timings manually](#esp32-rmt-led-strip-manual_timings).
 
   - `WS2811`
@@ -59,7 +62,6 @@ light:
 | ESP32-C3      | 96 symbols       | 48 symbols |
 | ESP32-C5      | 96 symbols       | 48 symbols |
 | ESP32-C6      | 96 symbols       | 48 symbols |
-| ESP32-C61     | 96 symbols       | 48 symbols |
 | ESP32-H2      | 96 symbols       | 48 symbols |
 | ESP32-P4      | 192 symbols      | 48 symbols |
 | ESP32-S2      | 256 symbols      | 64 symbols |
@@ -91,4 +93,4 @@ please consider adding support to the codebase and add it to the list above.
 
 - [Light Component](/components/light/)
 - [Power Supply Component](/components/power_supply/)
-- <APIRef text="esp32_rmt_led_strip.h" path="esp32_rmt_led_strip/esp32_rmt_led_strip.h" />
+- <APIRef text="esp32_rmt_led_strip.h" path="esp32_rmt_led_strip/led_strip.h" />

@@ -9,6 +9,7 @@ import { imageBreakpoints } from "./src/lib/breakpoints.ts";
 import { remarkAlert } from "remark-github-blockquote-alert";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
+import componentsJson from "./src/integrations/components-json.ts";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -53,28 +54,6 @@ function getChangelogItems() {
     label: v.label,
     link: `/changelog/${v.slug}/`,
   }));
-}
-
-// Get the latest changelog version for redirects
-function getLatestChangelog() {
-  const changelogDir = path.join(__dirname, "src/content/docs/changelog");
-  const files = fs
-    .readdirSync(changelogDir)
-    .filter((f) => f.endsWith(".mdx") && f !== "index.mdx");
-
-  let latest = { sortValue: 0, slug: "" };
-  for (const f of files) {
-    const match = f.match(/^(\d{4})\.(\d+)\.(\d+)\.mdx$/);
-    if (match) {
-      const [, year, month, patch] = match;
-      const sortValue =
-        parseInt(year) * 10000 + parseInt(month) * 100 + parseInt(patch);
-      if (sortValue > latest.sortValue) {
-        latest = { sortValue, slug: `${year}.${month}.${patch}` };
-      }
-    }
-  }
-  return latest.slug;
 }
 
 // Generate component sidebar items with proper labels
@@ -141,15 +120,8 @@ function getComponentItems() {
   return items.map(({ sort, ...item }) => item);
 }
 
-const latestChangelog = getLatestChangelog();
-
 export default defineConfig({
   site: "https://esphome.io",
-  redirects: {
-    "/changelog/": `/changelog/${latestChangelog}/`,
-    "/changelog/index/": `/changelog/${latestChangelog}/`,
-    "/guides/changelog/": `/changelog/${latestChangelog}/`,
-  },
   vite: {
     resolve: {
       alias: {
@@ -196,8 +168,11 @@ export default defineConfig({
       editLink: {
         baseUrl: "https://github.com/esphome/esphome-docs/edit/current/",
       },
+      routeMiddleware: ["./src/routeData.ts"],
       components: {
         Footer: "./src/components/Footer.astro",
+        Head: "./src/components/Head.astro",
+        SiteTitle: "./src/components/SiteTitle.astro",
       },
       customCss: ["./src/styles/custom.css", "katex/dist/katex.min.css"],
       sidebar: [
@@ -282,14 +257,14 @@ export default defineConfig({
           tag: "meta",
           attrs: {
             property: "og:image",
-            content: "https://esphome.io/images/logo.svg",
+            content: "https://esphome.io/images/og.webp",
           },
         },
         {
           tag: "meta",
           attrs: {
             name: "twitter:image",
-            content: "https://esphome.io/images/logo.svg",
+            content: "https://esphome.io/images/og.webp",
           },
         },
         {
@@ -302,5 +277,6 @@ export default defineConfig({
       ],
     }),
     sitemap(),
+    componentsJson(),
   ],
 });

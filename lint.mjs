@@ -29,6 +29,11 @@ const ignoreFolders = [
   '.astro/',
 ];
 
+// Files to ignore (skip all linting)
+const ignoreFiles = [
+  'script/release_notes_template.mdx',
+];
+
 // File types
 const fileTypes = [
   '.cfg', '.css', '.gif', '.h', '.html', '.ico', '.jpg', '.js', '.json',
@@ -301,8 +306,10 @@ async function checkInternalLinks(fname, content, anchorCache) {
       continue;
     }
 
-    // Skip relative links without leading slash
+    // Flag relative links - all internal links should use absolute paths
     if (!linkUrl.startsWith('/')) {
+      addError(fname, lineno, col,
+        `Relative link '${linkUrl}' should use an absolute path (e.g., /components/...)`);
       continue;
     }
 
@@ -364,6 +371,82 @@ async function checkInternalLinks(fname, content, anchorCache) {
   }
 }
 
+function checkAutomationHeadings(fname, content) {
+  if (!fname.startsWith('src/content/docs/components/')) return;
+  if (!fname.endsWith('.md') && !fname.endsWith('.mdx')) return;
+
+  // Skip the main actions page which documents core actions (delay, if, lambda, etc.)
+  if (fname.includes('automations/')) return;
+
+  const lines = content.split('\n');
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    const lineno = i + 1;
+
+    // Only look at heading lines
+    if (!line.match(/^#{2,4}\s/)) continue;
+
+    // Check 1: Backticked `domain.name` without Action/Condition/Trigger suffix
+    // e.g. ### `wireguard.enabled`
+    if (line.match(/^#{2,4}\s+`[a-z_][a-z0-9_.]*\.[a-z_][a-z0-9_]*`\s*$/)) {
+      addError(fname, lineno, 1,
+        'Heading has backticked automation name but is missing Action/Condition/Trigger suffix. ' +
+        'Add " Action", " Condition", or " Trigger" after the closing backtick.');
+    }
+
+    // Check 2: Action/Condition with backticked name missing domain prefix (no dot)
+    // e.g. ### `arm_away` Action
+    const noDotMatch = line.match(/^#{2,4}\s+`([a-z_][a-z0-9_]*)`\s+(?:Action|Condition)s?\s*$/i);
+    if (noDotMatch) {
+      const name = noDotMatch[1];
+      // Exclude core actions/conditions documented on actions.mdx
+      const coreNames = [
+        'delay', 'if', 'lambda', 'repeat', 'wait_until', 'while',
+        'and', 'all', 'or', 'any', 'xor', 'not', 'for',
+      ];
+      if (!coreNames.includes(name) && !name.startsWith('on_')) {
+        addError(fname, lineno, 1,
+          `Heading "\`${name}\`" is missing the domain prefix. ` +
+          'Use the format: `domain.name` Action/Condition (e.g. `switch.toggle` Action).');
+      }
+    }
+
+    // Check 3: Bold **Action** or **Condition** suffix
+    // e.g. ### `remote_transmitter.transmit_nec` **Action**
+    if (line.match(/^#{2,4}\s+`[^`]+`.*\*\*(?:Action|Condition)s?\*\*/)) {
+      addError(fname, lineno, 1,
+        'Action/Condition suffix should not be bold. Use plain text: " Action" or " Condition".');
+    }
+
+    // Check 4: Lowercase action/condition suffix (not matching standard capitalization)
+    // e.g. ### `sprinkler.start_full_cycle` action
+    if (line.match(/^#{2,4}\s+`[a-z_][a-z0-9_.]*\.[a-z_][a-z0-9_]*`\s+(?:action|condition)s?\s*$/)) {
+      addError(fname, lineno, 1,
+        'Action/Condition suffix should be capitalized. Use "Action" or "Condition" (not lowercase).');
+    }
+
+    // Check 5: Uppercase letters in backticked automation names (domain.name pattern)
+    // e.g. ### `MAX7219.invert_on` Action (should be `max7219.invert_on`)
+    const upperMatch = line.match(/^#{2,4}\s+.*`([\w.]*[A-Z][\w.]*)`/);
+    if (upperMatch) {
+      const name = upperMatch[1];
+      if (name.match(/^\w+\.[\w.]+$/)) {
+        addError(fname, lineno, 1,
+          `Action/Condition/Trigger name "\`${name}\`" contains uppercase letters. ` +
+          'ESPHome automation names should be all lowercase (e.g. `component.action_name`).');
+      }
+    }
+
+    // Check 6: Use `/` not `&` to separate paired automation names in headings
+    // e.g. ### `foo.bar` & `foo.baz` Action (should use `/`)
+    if (line.match(/^#{2,4}\s+`\w+(\.\w+)+`\s+&\s+`\w+(\.\w+)+`/)) {
+      addError(fname, lineno, 1,
+        'Use `/` instead of `&` to separate paired automation names in headings ' +
+        '(e.g. `foo.on` / `foo.off` Action).');
+    }
+  }
+}
+
 // Main execution
 async function main() {
   console.log(`${colors.cyan}Running ESPHome documentation linter...${colors.reset}\n`);
@@ -375,6 +458,11 @@ async function main() {
   for (const [fname, gitMode] of gitFiles) {
     // Skip ignored folders
     if (ignoreFolders.some(folder => fname.startsWith(folder) || fname.includes(`/${folder}`))) {
+      continue;
+    }
+
+    // Skip ignored files
+    if (ignoreFiles.includes(fname)) {
       continue;
     }
 
@@ -410,6 +498,7 @@ async function main() {
       checkNewlines(fname, content);
       checkEndNewline(fname, content);
       checkEsphomeLinks(fname, content);
+      checkAutomationHeadings(fname, content);
       await checkInternalLinks(fname, content, anchorCache);
 
     } catch (error) {
