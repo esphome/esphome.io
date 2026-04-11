@@ -221,6 +221,23 @@ display:
       it.print(0, 10, id(my_font), "Hello World!");
 ```
 
+If the font is configured with `engine: pte`, choose the size at draw time with `pte_font(...)` instead of creating one font entry per size.
+
+```yaml
+font:
+  - id: ui_font
+    file: "fonts/Monocraft.ttf"
+    engine: pte
+
+display:
+  - platform: ...
+    lambda: |-
+      it.print(0, 0, pte_font(ui_font, 18), "Small text");
+      it.print(0, 24, pte_font(ui_font, 28), "Large text");
+```
+
+Passing `id(ui_font)` without `pte_font(...)` is still valid and uses the default PTE size of `20` pixels.
+
 By default, ESPHome will *align* the text at the top left. That means if you enter the coordinates
 `[0,10]` for your text, the top left of the text will be at `[0,10]`. If you want to draw some
 text at the right side of the display, it is however sometimes useful to choose a different **text alignment**.
@@ -556,6 +573,15 @@ on_...:
 >       - display.page.show_next: my_display
 >       - component.update: my_display
 > ```
+
+The same pattern works for PTE fonts too:
+
+```yaml
+display:
+  - platform: ...
+    lambda: |-
+      it.printf(0, 0, pte_font(ui_font, 20), "The sensor value is: %.1f", id(my_sensor).state);
+```
 
 <span id="display-is_displaying_page-condition"></span>
 

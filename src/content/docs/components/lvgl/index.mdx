@@ -269,6 +269,24 @@ You can use [fonts configured normally](/components/font#display-fonts), the gly
 > [!TIP]
 > For best results, set `bpp: 4` to get the glyphs rendered with proper anti-aliasing.
 
+Fonts configured with `engine: pte` stay unsized at definition time. For those fonts, set `text_font:` to the font ID and set `text_size:` on the widget, style, or theme entry where the text is rendered.
+
+```yaml
+font:
+  - id: ui_font
+    file: "fonts/NotoSans-Regular.ttf"
+    engine: pte
+
+lvgl:
+  widgets:
+    - label:
+        text: Hello
+        text_font: ui_font
+        text_size: 14
+```
+
+If `text_size:` is omitted, LVGL uses the PTE default size of `20` pixels.
+
 Check out [MDI icons in text](/cookbook/lvgl#lvgl-cookbook-icontext), [Toggle state icon button](/cookbook/lvgl#lvgl-cookbook-iconstat) and [Battery status icon](/cookbook/lvgl#lvgl-cookbook-iconbatt) in the Cookbook for examples which demonstrate how to use icons and text with TrueType/OpenType fonts.
 
 #### Library fonts

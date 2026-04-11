@@ -42,7 +42,7 @@ Configuration variables:
 - **display** (*Optional*, [ID](/guides/configuration-types#id)): ID of the display to render to. See
   [Drawing Modes](#drawing_modes) for more details
 
-- **font** (**Required**, [Font](/components/font#display-fonts)): Specifies the font to use
+- **font** (**Required**, [Font](/components/font#display-fonts)): Specifies the font to use. This can be a plain font ID, a mapping with `font:` and `size:`, or the shorthand string `pte_font(font_id, size)`.
 - **foreground_color** (*Optional*, [Color](/components/display#config-color)): Specifies the foreground color to use.
   Defaults to COLOR_ON
 
@@ -56,6 +56,20 @@ Automations:
   For example E-Ink displays that are used with `display_interval: never`.
 
 Additional configuration is described in the [Display Menu](/components/display_menu#display_menu) component.
+
+For example, a menu backed by a PTE font can choose its render size directly in the menu configuration:
+
+```yaml
+font:
+  - id: ui_font
+    file: "fonts/Roboto-Regular.ttf"
+    engine: pte
+
+graphical_display_menu:
+  id: my_graphical_display_menu
+  display: my_display_component
+  font: pte_font(ui_font, 18)
+```
 
 <span id="drawing_modes"></span>
 

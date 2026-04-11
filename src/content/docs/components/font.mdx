@@ -10,7 +10,7 @@ import APIRef from '@components/APIRef.astro';
 
 <span id="display-fonts"></span>
 
-ESPHome's graphical rendering engine also has a powerful font drawer which integrates seamlessly into the system. You have the option to use **any** OpenType/TrueType (`.ttf`, `.otf`, `.woff`  ) font file at **any** size, as well as fixed-size [PCF](https://en.wikipedia.org/wiki/Portable_Compiled_Format) and [BDF](https://en.wikipedia.org/wiki/Glyph_Bitmap_Distribution_Format) bitmap fonts.
+ESPHome's graphical rendering engine also has a powerful font drawer which integrates seamlessly into the system. By default it generates bitmap fonts at build time from **any** OpenType/TrueType (`.ttf`, `.otf`, `.woff`  ) file, and it can also use fixed-size [PCF](https://en.wikipedia.org/wiki/Portable_Compiled_Format) and [BDF](https://en.wikipedia.org/wiki/Glyph_Bitmap_Distribution_Format) bitmap fonts. Scalable OpenType/TrueType fonts can also be configured with the `pte` engine when you want to pick the render size later at runtime.
 
 These fonts can be used in ESPHome's [own rendering engine](/components/display#display-engine) or in the [LVGL Graphics](/components/lvgl/) component.
 
@@ -94,8 +94,115 @@ font:
     id: web_font2
     size: 24
 
+  - file: "fonts/Monocraft.ttf"
+    id: ui_font
+    engine: pte
+    glyphs: "Helo, Wrd!0123456789"
+
 display:
   # ...
+```
+
+## Portable Type Engine
+
+The `pte` font engine keeps a font definition unsized and renders it later at the size you request. Use it when one scalable font needs to be reused across different sizes in display lambdas, LVGL widgets, graph legends, or graphical display menus.
+
+Example configuration:
+
+```yaml
+font:
+  - id: ui_font
+    file: "fonts/Roboto-Regular.ttf"
+    engine: pte
+    glyphsets:
+      - GF_Latin_Kernel
+```
+
+Current `pte` requirements and restrictions:
+
+- The source font must be scalable, such as TTF, OTF, or WOFF.
+- `size:` is not allowed on the font definition.
+- `bpp:` is not allowed.
+- `extras:` is not supported.
+- If you omit both `glyphs:` and `glyphsets:`, ESPHome falls back to its built-in default glyph string instead of `GF_Latin_Kernel`.
+
+For explicit glyph coverage, prefer declaring either `glyphs:` or `glyphsets:`. Characters listed in `glyphs:` must exist in the source font or validation fails. Characters that come only from `glyphsets:` generate warnings when missing unless `ignore_missing_glyphs: true` is set.
+
+### PTE In Display Lambdas
+
+Use `pte_font(font_id, size)` when you want a specific render size inside a display lambda. The helper returns a normal font reference, so the existing `print`, `printf`, `strftime`, and `get_text_bounds` call shapes stay the same.
+
+```yaml
+font:
+  - id: ui_font
+    file: "fonts/Monocraft.ttf"
+    engine: pte
+
+display:
+  - platform: sdl
+    lambda: |-
+      it.print(0, 0, pte_font(ui_font, 18), "Small text");
+      it.printf(0, 24, pte_font(ui_font, 24), "Temp: %.1f C", id(room_temp).state);
+      it.strftime(0, 56, pte_font(ui_font, 32), "%H:%M", id(home_time).now());
+```
+
+If you pass only the bare font reference, ESPHome uses the PTE default render size of `20` pixels.
+
+```yaml
+display:
+  - platform: sdl
+    lambda: |-
+      it.print(0, 0, id(ui_font), "Uses the default PTE size");
+```
+
+### PTE In LVGL
+
+For LVGL, keep the font definition unsized and set the size where the text is used with `text_size:`.
+
+```yaml
+font:
+  - id: ui_font
+    file: "fonts/NotoSans-Regular.ttf"
+    engine: pte
+
+lvgl:
+  widgets:
+    - label:
+        text: Hello
+        text_font: ui_font
+        text_size: 14
+```
+
+This also works in styles and themes. If `text_size:` is omitted, LVGL uses the PTE default render size of `20` pixels.
+
+### PTE In YAML Font References
+
+Graph legends and graphical display menus now accept sized font references. You can use any of these forms:
+
+- A plain font ID such as `ui_font`
+- A mapping with `font:` and `size:`
+- The shorthand string `pte_font(ui_font, 18)`
+
+Examples:
+
+```yaml
+graph:
+  - id: room_graph
+    duration: 1h
+    width: 128
+    height: 64
+    traces:
+      - sensor: room_temp
+    legend:
+      - name_font:
+          font: ui_font
+          size: 14
+        value_font: pte_font(ui_font, 12)
+
+graphical_display_menu:
+  id: main_menu
+  display: my_display
+  font: pte_font(ui_font, 18)
 ```
 
 ## Font metrics
@@ -185,12 +292,14 @@ it.horizontal_line(0, height, it.get_width());
 - **id** (**Required**, [ID](/guides/configuration-types#id)): The ID with which you will be able to reference the font later
   in your display code.
 
+- **engine** (*Optional*, string): Rendering engine to use. Can be `bitmap` or `pte`. Defaults to `bitmap`.
+
 - **size** (*Optional*, int): The desired size of the font. This will be the size (height) of the font in pixels
   when rendered. If you want to use the same font in different sizes, create two font objects.
-  Defaults to `20` for scalable fonts and the first available size for bitmap fonts. Requesting a size that is not available in a bitmap-only font will result in an error.
+  Defaults to `20` for scalable fonts and the first available size for bitmap fonts. Requesting a size that is not available in a bitmap-only font will result in an error. This option is only valid with the `bitmap` engine.
 
 - **bpp** (*Optional*, int): The bit depth of the rendered font from OpenType/TrueType, for anti-aliasing. Can be `1`, `2`, `4`, `8`. Defaults to `1`.
-  If set to 1 and the font has a bitmap version available at the requested size, that will be used. Otherwise the font will be rendered from the vector representation.
+  If set to 1 and the font has a bitmap version available at the requested size, that will be used. Otherwise the font will be rendered from the vector representation. This option is only valid with the `bitmap` engine.
 
 - **glyphsets** (*Optional*, list): A list of glyphsets you plan to use. Defaults to
   `GF_Latin_Kernel`, which contains the basic characters and necessary punctuation and symbols for
@@ -201,7 +310,7 @@ it.horizontal_line(0, height, it.get_width());
   See the [Google Fonts Glyphset documentation](https://github.com/googlefonts/glyphsets/blob/main/GLYPHSETS.md)
   for an extensive list of all possible sets, along with their names and the languages supported by
   each of those sets. Note that `GF_Latin_Kernel` may need to be included for glyphs for basic
-  characters such as numbers (0-9) and whitespace to be present.
+  characters such as numbers (0-9) and whitespace to be present. For the `pte` engine, omitting both `glyphs:` and `glyphsets:` uses ESPHome's built-in default glyph string instead.
 
 - **glyphs** (*Optional*, list): A list of characters you plan to use, in addition to the characters
   defined by the **glyphsets** option above. Adjust this list if you need some special characters or
@@ -215,7 +324,7 @@ it.horizontal_line(0, height, it.get_width());
   (specified via the **glyphs** option) will always be treated as an error and will not be influenced
   by this setting.
 
-- **extras** (*Optional*, enum): A list of font glyph configurations you'd like to include within this font, from other OpenType/TrueType files (eg. icons from other font, but at the same size as the main font):
+- **extras** (*Optional*, enum): A list of font glyph configurations you'd like to include within this font, from other OpenType/TrueType files (eg. icons from other font, but at the same size as the main font). This option is only valid with the `bitmap` engine:
 
   - **file** (**Required**, string): The path of the font file with the extra glyphs.
   - **glyphs** (**Required**, list): A list of glyphs you want to include. Can't repeat the same glyph codepoint if it was declared in the level above.
