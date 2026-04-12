@@ -79,6 +79,10 @@ esp32:
 
 **Custom partition tables** ([#7682](https://github.com/esphome/esphome/pull/7682)): Components and YAML configs can now define custom data/app partitions that are appended to the flash layout. The partition table generation has been unified across Arduino and IDF, and NVS has been moved to the end of flash with increased size (20KB to 384KB on Arduino). See the [ESP32 documentation](/components/esp32#esp32-partitions) for details.
 
+**ESP-IDF 5.5.4 and Arduino 3.3.8** ([#15666](https://github.com/esphome/esphome/pull/15666)): Platform bumped to pioarduino 55.03.38 with ESP-IDF 5.5.4 and Arduino 3.3.8. PlatformIO is now run in a subprocess to isolate its virtualenv from ESPHome, preventing import errors after build.
+
+**mDNS crash fix** ([#15670](https://github.com/esphome/esphome/pull/15670)): Bumped espressif/mdns to 1.11.0, fixing heap corruption when processing sustained mDNS browse traffic that caused deterministic LoadProhibited crashes, and a null pointer exception in `mdns_parse_packet`.
+
 ## ESP8266 Crash Handler, Without a Serial Cable
 
 Completing the platform coverage started in [2026.3.0](/changelog/2026.3.0#crash-handlers-without-a-serial-cable) (which added crash handlers for ESP32 and RP2040), ESP8266 devices now have the same post-mortem crash diagnostics ([#15465](https://github.com/esphome/esphome/pull/15465)). When a device crashes, the exception details and up to 16 stack-scanned backtrace addresses are saved to RTC memory and reported over the API on the next boot. **No USB cable required**; crash data appears in `esphome logs` (which automatically decodes addresses to source locations via `addr2line`) and the Home Assistant log viewer, entirely over WiFi.
