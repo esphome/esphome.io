@@ -29,6 +29,11 @@ const ignoreFolders = [
   '.astro/',
 ];
 
+// Files to ignore (skip all linting)
+const ignoreFiles = [
+  'script/release_notes_template.mdx',
+];
+
 // File types
 const fileTypes = [
   '.cfg', '.css', '.gif', '.h', '.html', '.ico', '.jpg', '.js', '.json',
@@ -301,8 +306,10 @@ async function checkInternalLinks(fname, content, anchorCache) {
       continue;
     }
 
-    // Skip relative links without leading slash
+    // Flag relative links - all internal links should use absolute paths
     if (!linkUrl.startsWith('/')) {
+      addError(fname, lineno, col,
+        `Relative link '${linkUrl}' should use an absolute path (e.g., /components/...)`);
       continue;
     }
 
@@ -451,6 +458,11 @@ async function main() {
   for (const [fname, gitMode] of gitFiles) {
     // Skip ignored folders
     if (ignoreFolders.some(folder => fname.startsWith(folder) || fname.includes(`/${folder}`))) {
+      continue;
+    }
+
+    // Skip ignored files
+    if (ignoreFiles.includes(fname)) {
       continue;
     }
 
