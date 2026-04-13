@@ -6,7 +6,7 @@ params:
     description: Instructions for setting up the Texas Instruments BQ25186 battery charger in ESPHome.
 ---
 
-The `bq25186` component lets you configure and monitor the Texas Instruments BQ25186 1-cell battery charger and power-path IC via I2C. [Link to datasheet](https://www.ti.com/lit/ds/symlink/bq25186.pdf?ts=1749226888753). It exposes configuration for charging behavior, thermal settings, power-path regulation, and status reporting through binary and text sensors. It uses the [I2C Bus](/components/i2c) for communication.
+The `bq25186` component lets you configure and monitor the Texas Instruments BQ25186 1-cell battery charger and power-path IC via I2C. [Link to datasheet](https://www.ti.com/lit/ds/symlink/bq25186.pdf). It exposes configuration for charging behavior, thermal settings, power-path regulation, and status reporting through binary and text sensors. It uses the [I2C Bus](/components/i2c) for communication.
 
 ## Configuration
 
@@ -17,6 +17,7 @@ i2c:
   scl: GPIO22
 
 bq25186:
+  id: bq25186_charger
   address: 0x6A
   update_interval: 60s
   battery_regulation_voltage: 4200
@@ -26,6 +27,7 @@ bq25186:
 
 binary_sensor:
   - platform: bq25186
+    bq25186_id: bq25186_charger
     power_good:
       name: "BQ25186 Power Good"
     charging:
@@ -33,6 +35,7 @@ binary_sensor:
 
 text_sensor:
   - platform: bq25186
+    bq25186_id: bq25186_charger
     charge_status:
       name: "BQ25186 Charge Status"
     ts_status:
@@ -40,11 +43,13 @@ text_sensor:
 
 button:
   - platform: bq25186
+    bq25186_id: bq25186_charger
     ship_mode:
       name: "BQ25186 Ship Mode"
 
 switch:
   - platform: bq25186
+    bq25186_id: bq25186_charger
     pg_gpo:
       name: "BQ25186 PG/GPO"
 ```
@@ -168,7 +173,7 @@ Configuration for `switch` platform. All options from [Switch](/components/switc
 ```yaml
 on_boot:
   then:
-    - bq25186.configure: bq25186_id
+    - bq25186.configure: bq25186_charger
 ```
 
 ### See Also
