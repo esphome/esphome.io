@@ -3,7 +3,7 @@ description: "Instructions for setting up the watchdog component in ESPHome"
 title: "Watchdog Component"
 params:
   seo:
-    description: "A watchdog component for setting the main loop task watchdog timer."
+    description: "A watchdog component for setting the main loop task watchdog timeout."
     image: connection.svg
 ---
 
@@ -13,42 +13,9 @@ for esp-idf and rasp2040 from the default setting during ESPHome initialization.
 ```yaml
 # Example configuration entry
 watchdog:
-  timeout: 5sec
-
-switch:
-  - platform: template
-    name: "Extend watchdog timeout"
-    optimistic: true
-    restore_mode: ALWAYS_OFF
-    turn_on_action:
-      then:
-        - logger.log: "Set Watchdog Timeout to 25 seconds"
-        - watchdog.set_timeout: 25sec
-    turn_off_action:
-      then:
-        - logger.log: "Set Watchdog Timeout to 5 seconds"
-        - watchdog.set_timeout:
-            timeout: 5sec
+  timeout: 60sec
 ```
 
 ## Configuration variables
 
-- **timeout** (*Optional*, [Time](/guides/configuration-types#time)): set task watchdog timeout.
-
-## `watchdog.set_timeout` Action
-
-This [action](/automations/actions#all-actions) sets task watchdog timeout.
-
-```yaml
-on_...:
-  then:
-    - watchdog.set_timeout:
-        timeout: 10sec
-  # Short form
-    - watchdog.set_timeout: 10sec
-```
-
-#### Configuration variables
-
-- **timeout** (*Required*, [Time](/guides/configuration-types#time)): set task watchdog timeout.
-
+- **timeout** (*Optional*, [Time](/guides/configuration-types#time)): set main loop task watchdog timeout.
