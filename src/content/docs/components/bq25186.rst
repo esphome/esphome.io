@@ -2,8 +2,8 @@
 description: "Instructions for setting up the Texas Instruments BQ25186 battery charger in ESPHome."
 title: "Texas Instruments BQ25186 battery charger"
 params:
-	seo:
-		description: Instructions for setting up the Texas Instruments BQ25186 battery charger in ESPHome.
+  seo:
+    description: Instructions for setting up the Texas Instruments BQ25186 battery charger in ESPHome.
 ---
 
 The `bq25186` component lets you configure and monitor the Texas Instruments BQ25186 1-cell battery charger and power-path IC via I2C. [Link to datasheet](https://www.ti.com/lit/ds/symlink/bq25186.pdf?ts=1749226888753). It exposes configuration for charging behavior, thermal settings, power-path regulation, and status reporting through binary and text sensors. It uses the [I2C Bus](/components/i2c) for communication.
@@ -13,40 +13,40 @@ The `bq25186` component lets you configure and monitor the Texas Instruments BQ2
 ```yaml
 # Example configuration entry
 i2c:
-	sda: GPIO21
-	scl: GPIO22
+  sda: GPIO21
+  scl: GPIO22
 
 bq25186:
-	address: 0x6A
-	update_interval: 60s
-	battery_regulation_voltage: 4200
-	fast_charge_current: 500
-	charge_enabled: true
-	vindpm_mode: 4.5v
+  address: 0x6A
+  update_interval: 60s
+  battery_regulation_voltage: 4200
+  fast_charge_current: 500
+  charge_enabled: true
+  vindpm_mode: 4.5v
 
 binary_sensor:
-	- platform: bq25186
-		power_good:
-			name: "BQ25186 Power Good"
-		charging:
-			name: "BQ25186 Charging"
+  - platform: bq25186
+    power_good:
+      name: "BQ25186 Power Good"
+    charging:
+      name: "BQ25186 Charging"
 
 text_sensor:
-	- platform: bq25186
-		charge_status:
-			name: "BQ25186 Charge Status"
-		ts_status:
-			name: "BQ25186 TS Status"
+  - platform: bq25186
+    charge_status:
+      name: "BQ25186 Charge Status"
+    ts_status:
+      name: "BQ25186 TS Status"
 
 button:
-	- platform: bq25186
-		ship_mode:
-			name: "BQ25186 Ship Mode"
+  - platform: bq25186
+    ship_mode:
+      name: "BQ25186 Ship Mode"
 
 switch:
-	- platform: bq25186
-		pg_gpo:
-			name: "BQ25186 PG/GPO"
+  - platform: bq25186
+    pg_gpo:
+      name: "BQ25186 PG/GPO"
 ```
 
 ## BQ25186 Component
@@ -165,8 +165,8 @@ Configuration for `switch` platform. All options from [Switch](/components/switc
 
 ```yaml
 on_boot:
-	then:
-		- bq25186.configure: bq25186_id
+  then:
+    - bq25186.configure: bq25186_id
 ```
 
 ### See Also
