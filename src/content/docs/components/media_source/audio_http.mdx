@@ -1,0 +1,41 @@
+---
+description: "Instructions for setting up the Audio HTTP media source in ESPHome."
+title: "Audio HTTP Media Source"
+---
+
+import APIRef from '@components/APIRef.astro';
+
+The `audio_http` media source platform plays audio streamed from HTTP and HTTPS URLs. Audio is fetched over the network and decoded
+on the device.
+
+Files are played using the `http://` or `https://` URI scheme.
+
+This component only works on ESP32 based chips.
+
+```yaml
+# Example configuration entry
+
+media_source:
+  - platform: audio_http
+    id: http_source
+```
+
+To play a file, send a media URL like `https://example.com/audio/alert.mp3` to a media player that
+uses this media source.
+
+<span id="config-audio_http_media_source"></span>
+
+## Configuration variables
+
+- **buffer_size** (*Optional*, int): The size of the ring buffer in bytes used to transfer data
+  between the HTTP reader and the audio decoder. Minimum is `5000`, maximum is `1000000`. Defaults
+  to `50000`.
+- **task_stack_in_psram** (*Optional*, boolean): If `true`, the FreeRTOS decode task stack is
+  allocated in PSRAM instead of internal RAM. Requires the [psram](/components/psram/) component. Defaults to `false`.
+- All other options from [Media Source](/components/media_source/).
+
+## See Also
+
+- [Media Source Components](/components/media_source/)
+- <APIRef text="audio_http_media_source.h" path="esphome/components/audio_http/audio_http_media_source.h" />
+- [microDecoder Library (GitHub)](https://github.com/esphome-libs/micro-decoder)
