@@ -69,6 +69,11 @@ openthread:
 > [!NOTE]
 > esphome.ota does not work when poll_period > 0, instead use http_request.ota, timeout and watchdog_timeout need to be tested to find the correct values.  Values greater than 100sec may be required.
 
+- **light_sleep** (*Optional*, bool): Enables ESP32 light sleep between Thread poll periods for battery-powered Sleepy End Devices (SEDs). Requires ``poll_period`` to be set and ``device_type: MTD``. Defaults to ``false``.
+
+> [!NOTE]
+> On ESP32-C5, ESP32-C6, and ESP32-H2 variants, enabling ``light_sleep`` automatically disables the USB Serial JTAG peripheral at startup (``CONFIG_USJ_ENABLE_USB_SERIAL_JTAG=n``). These chips have a USB JTAG block that holds the BBPLL clock, preventing light sleep entry when a USB cable is connected (IDF-6395). Disabling the peripheral means the USB serial port will no longer be available — use hardware UART for logging instead (``logger: hardware_uart: UART0``).
+
 - **output_power** (*Optional*, integer): The amount of TX power for the Thread 802.15.4 radio in dBm.
   Range depends on the chip variant: ESP32-C5/C6 from ``-15dBm`` to ``20dBm``, ESP32-H2 from ``-24dBm`` to ``20dBm``.
   Defaults to the platform default (typically ``0dBm``). Ensure the configured value complies with local regulatory limits.
@@ -96,7 +101,17 @@ See [https://openthread.io/guides/thread-primer/node-roles-and-types](https://op
 
 ## Sleepy End Device (SED)
 
-The Poll Period makes the device behave as a SED.  Follow on work is needed utilizing Power Management and/or Light Sleep capability in esp-idf.
+Setting ``poll_period`` on an MTD device makes it behave as a Sleepy End Device (SED). The parent router enqueues messages and waits for the child to send a data poll request at each interval, allowing the radio to be inactive between polls.
+
+Enabling ``light_sleep: true`` in addition to ``poll_period`` allows the ESP32 to enter light sleep between poll periods, reducing power consumption further. The ESP32 power management (``esp_pm``) tickless idle and IEEE 802.15.4 sleep support are configured automatically.
+
+```yaml
+openthread:
+  device_type: MTD
+  poll_period: 30s
+  light_sleep: true
+```
+
 If the device is always awake, the API timeout is 60 seconds, so a ping request will force interaction with the parent when the poll period is greater than 60 seconds.
 
 ## OpenThread ESP-IDF Logging
