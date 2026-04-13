@@ -35,33 +35,39 @@ export const onSuccess = async function ({ utils }) {
     return;
   }
 
-  const hostname = new URL(siteUrl).hostname;
+  try {
+    const hostname = new URL(siteUrl).hostname;
 
-  console.log(`Purging Cloudflare cache for hostname: ${hostname}`);
+    console.log(`Purging Cloudflare cache for hostname: ${hostname}`);
 
-  const response = await fetch(
-    `https://api.cloudflare.com/client/v4/zones/${zoneId}/purge_cache`,
-    {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${apiToken}`,
-        "Content-Type": "application/json",
+    const response = await fetch(
+      `https://api.cloudflare.com/client/v4/zones/${zoneId}/purge_cache`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${apiToken}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ hosts: [hostname] }),
       },
-      body: JSON.stringify({ hosts: [hostname] }),
-    },
-  );
+    );
 
-  const result = await response.json();
+    const result = await response.json();
 
-  if (!result.success) {
-    const errors = result.errors.map((e) => `${e.code}: ${e.message}`).join(", ");
-    utils.build.failPlugin(`Cloudflare cache purge failed: ${errors}`);
-    return;
+    if (!result.success) {
+      const errors = result.errors
+        .map((e) => `${e.code}: ${e.message}`)
+        .join(", ");
+      utils.build.failPlugin(`Cloudflare cache purge failed: ${errors}`);
+      return;
+    }
+
+    console.log(`Cloudflare cache purge successful for ${hostname}`);
+    utils.status.show({
+      title: "Cloudflare Cache Purge",
+      summary: `Purged CDN cache for ${hostname}`,
+    });
+  } catch (error) {
+    utils.build.failPlugin("Cloudflare cache purge failed", { error });
   }
-
-  console.log(`Cloudflare cache purge successful for ${hostname}`);
-  utils.status.show({
-    title: "Cloudflare Cache Purge",
-    summary: `Purged CDN cache for ${hostname}`,
-  });
 };
