@@ -1,0 +1,255 @@
+---
+description: "Instructions for setting up the FUSB302B USB-C Power Delivery controller"
+title: "FUSB302B USB-C Power Delivery"
+---
+
+The `fusb302b` component adds support for the [FUSB302B](https://www.onsemi.com/products/interfaces/usb-type-c/fusb302b)
+USB-C Power Delivery PHY controller IC. It acts as a **PD sink**, automatically negotiating
+a power contract with a connected USB-C charger to request a specific voltage (5V–20V).
+
+When a USB-C source is connected, the component detects the cable orientation, selects the active
+CC (Configuration Channel) line, and runs the full USB PD protocol to request the configured
+voltage. If the source does not support Power Delivery, the component falls back to the default
+5V contract.
+
+> [!NOTE]
+> This component is only supported on **ESP32** platforms.
+
+```yaml
+# Example configuration entry
+fusb302b:
+  id: usb_pd
+  irq_pin: GPIO9
+  request_voltage: 20
+  contract_sensor:
+    name: "USB-C Contract"
+  on_power_ready:
+    then:
+      - logger.log: "Power contract established"
+```
+
+## Configuration variables
+
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for
+  code generation. Required when referencing the component in actions or conditions.
+
+- **irq_pin** (**Required**, [Pin](/guides/configuration-types#pin)): The GPIO pin connected to
+  the FUSB302B `INT_N` interrupt output. Must be an internal GPIO input pin number.
+
+- **request_voltage** (**Required**, int): The voltage (in volts) to request from the USB-C
+  source. Valid range: `5`–`20`. The component will select the best matching Power Data Object
+  (PDO) offered by the source that does not exceed this value.
+
+- **address** (*Optional*, int): The I2C address of the device. Defaults to `0x22`.
+
+- **i2c_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the
+  [I2C](/components/i2c/) bus the device is connected to.
+
+- **contract_sensor** (*Optional*, [Text Sensor](/components/text_sensor)): A text sensor that
+  publishes the current power contract. Publishes `"Detached"` when no USB-C source is connected,
+  or a string like `"1.5A @ 15V"` when a contract is active.
+
+Automations:
+
+- **on_connect** (*Optional*, [Automation](/automations)): Triggered when a USB-C device is
+  first detected and the initial 5V default contract is established.
+  See [`on_connect`](#fusb302b-on_connect).
+
+- **on_disconnect** (*Optional*, [Automation](/automations)): Triggered when the USB-C device
+  is removed. See [`on_disconnect`](#fusb302b-on_disconnect).
+
+- **on_power_ready** (*Optional*, [Automation](/automations)): Triggered when a power contract
+  is fully negotiated (either an explicit PD contract at the requested voltage, or a timeout
+  fallback to 5V). This is the best place to perform actions that require stable power.
+  See [`on_power_ready`](#fusb302b-on_power_ready).
+
+- **on_error** (*Optional*, [Automation](/automations)): Triggered when a PD negotiation error
+  occurs. See [`on_error`](#fusb302b-on_error).
+
+## Automations
+
+<span id="fusb302b-on_connect"></span>
+
+### `on_connect`
+
+This automation fires when a USB-C source is detected and the initial default 5V contract is
+entered. At this point the component is still actively negotiating the full PD contract — wait
+for [`on_power_ready`](#fusb302b-on_power_ready) before relying on a specific voltage.
+
+```yaml
+fusb302b:
+  irq_pin: GPIO9
+  request_voltage: 20
+  on_connect:
+    then:
+      - logger.log: "USB-C device connected"
+```
+
+<span id="fusb302b-on_disconnect"></span>
+
+### `on_disconnect`
+
+This automation fires when the USB-C cable is removed or the source is no longer detected.
+
+```yaml
+fusb302b:
+  irq_pin: GPIO9
+  request_voltage: 20
+  on_disconnect:
+    then:
+      - logger.log: "USB-C device disconnected"
+```
+
+<span id="fusb302b-on_power_ready"></span>
+
+### `on_power_ready`
+
+This automation fires once the power contract is fully settled. This happens in two cases:
+
+- An explicit PD contract was negotiated at the requested voltage (or the highest available
+  voltage up to `request_voltage`).
+- Negotiation timed out and the component fell back to the default 5V contract.
+
+Use this trigger to enable loads or take actions that depend on stable power being available.
+
+```yaml
+fusb302b:
+  irq_pin: GPIO9
+  request_voltage: 20
+  on_power_ready:
+    then:
+      - logger.log: "Power contract ready, enabling load"
+```
+
+<span id="fusb302b-on_error"></span>
+
+### `on_error`
+
+This automation fires when a PD protocol error occurs during negotiation.
+
+```yaml
+fusb302b:
+  irq_pin: GPIO9
+  request_voltage: 20
+  on_error:
+    then:
+      - logger.log: "Power Delivery error"
+```
+
+## Text Sensor
+
+<span id="fusb302b-contract_sensor"></span>
+
+### Contract Sensor
+
+The `contract_sensor` option exposes the current power contract as a text sensor entity. It
+updates whenever the connection state changes:
+
+| State | Published value |
+|---|---|
+| Disconnected | `"Detached"` |
+| Contract active | `"1.5A @ 15V"` (example) |
+
+```yaml
+fusb302b:
+  irq_pin: GPIO9
+  request_voltage: 20
+  contract_sensor:
+    name: "USB-C Contract"
+```
+
+All standard [Text Sensor](/components/text_sensor) options (e.g. `id`, `icon`, `filters`) are
+supported.
+
+## Actions
+
+<span id="fusb302b-action-request_voltage"></span>
+
+### `power_delivery.request_voltage` Action
+
+Requests a new voltage from the connected USB-C source at runtime. The component will
+renegotiate the PD contract to obtain the closest available voltage that does not exceed the
+requested value.
+
+> [!NOTE]
+> This action has no effect if a PD message exchange (AMS) is already in progress. There is a
+> 2-second guard window after each voltage change during which new requests are ignored.
+
+```yaml
+on_...:
+  - power_delivery.request_voltage: 15
+```
+
+Or with explicit ID and a templated value:
+
+```yaml
+on_...:
+  - power_delivery.request_voltage:
+      id: usb_pd
+      request_voltage: !lambda "return 15;"
+```
+
+#### Configuration variables
+
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the `fusb302b` component.
+  Required when multiple PD components are defined.
+
+- **request_voltage** (**Required**, int, [templatable](/automations/templates)): The voltage in
+  volts to request. Range: `5`–`20`.
+
+## Conditions
+
+<span id="fusb302b-condition-is_connected"></span>
+
+### `power_delivery.is_connected` Condition
+
+Returns `true` when a USB-C source is connected and a power contract (default or explicit) is
+active.
+
+```yaml
+on_...:
+  - if:
+      condition:
+        power_delivery.is_connected:
+          id: usb_pd
+      then:
+        - logger.log: "USB-C is connected"
+```
+
+#### Configuration variables
+
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the `fusb302b` component.
+
+## Full example
+
+```yaml
+i2c:
+  sda: GPIO8
+  scl: GPIO18
+
+fusb302b:
+  id: usb_pd
+  irq_pin: GPIO9
+  request_voltage: 20
+  contract_sensor:
+    name: "USB-C Contract"
+  on_connect:
+    then:
+      - logger.log: "USB-C connected"
+  on_disconnect:
+    then:
+      - logger.log: "USB-C disconnected"
+  on_power_ready:
+    then:
+      - logger.log: "Power ready"
+  on_error:
+    then:
+      - logger.log: "PD error"
+```
+
+## See Also
+
+- [I2C bus](/components/i2c)
+- [Text Sensor](/components/text_sensor)
+- [Automations](/automations)
+- [ID](/guides/configuration-types#id)
