@@ -59,8 +59,7 @@ switch:
 - **id** (*Optional*, [ID](/guides/configuration-types#config-id)): Manually specify the ID used to reference this BQ25186 hub from other components.
 - **address** (*Optional*, int): The I2C address of the device. Default: `0x6A`.
 - **update_interval** (*Optional*, time): How often to poll the device and update sensors. Default: `60s`.
-- **configure_on_boot** (*Optional*, boolean): Apply the configuration to the IC on boot. If `false`, the configuration can be applied manually by calling the [bq25186.configure action](#bq25186-configure_action). This can be useful to avoid repeatedly applying the same configuration after every reboot or to delay the I2C communication until after some other components have initialized. Default: `true`.
-- All other options from [I2C Device](/components/i2c#i2cdevice).
+- **configure_on_boot** (*Optional*, boolean): Apply the configuration to the IC on boot. If `false`, the configuration can be applied manually by calling the [bq25186.apply_configuration action](#bq25186-apply_configuration_action). This can be useful to avoid repeatedly applying the same configuration after every reboot or to delay the I2C communication until after some other components have initialized. Default: `true`.
 
 ### Charging configuration
 
@@ -172,14 +171,26 @@ Configuration for `switch` platform. All options from [Switch](/components/switc
 
 ### Actions
 
-<span id="bq25186-configure_action"></span>
+<span id="bq25186-apply_configuration_action"></span>
 
-- **bq25186.configure**: Apply the configuration to the IC. This only takes effect once per boot.
+- **bq25186.apply_configuration**: Apply the configuration to the IC. It can override any of the configuration options defined in the `bq25186` component configuration. This can be used to apply the configuration on demand instead of on boot (by setting `configure_on_boot` to `false`) or to change some options after the initial configuration has been applied.
 
 ```yaml
-on_boot:
-  then:
-    - bq25186.configure: bq25186_charger
+# Just apply the configuration defined in the bq25186 component configuration
+esphome:
+  on_boot:
+    priority: -100
+    then:
+      - bq25186.apply_configuration: bq25186_charger
+# Example of applying a configuration with some options overridden from the originally defined configuration
+esphome:
+  on_boot:
+    priority: -100
+    then:
+      - bq25186.apply_configuration:
+          id: bq25186_charger
+          battery_regulation_voltage: 4100
+          fast_charge_current: 200
 ```
 
 ### See Also
