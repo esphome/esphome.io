@@ -56,9 +56,11 @@ switch:
 
 ## BQ25186 Component
 
+- **id** (*Optional*, [ID](/guides/configuration-types#config-id)): Manually specify the ID used to reference this BQ25186 hub from other components.
 - **address** (*Optional*, int): The I2C address of the device. Default: `0x6A`.
 - **update_interval** (*Optional*, time): How often to poll the device and update sensors. Default: `60s`.
 - **configure_on_boot** (*Optional*, boolean): Apply the configuration to the IC on boot. If `false`, the configuration can be applied manually by calling the [bq25186.configure action](#bq25186-configure_action). This can be useful to avoid repeatedly applying the same configuration after every reboot or to delay the I2C communication until after some other components have initialized. Default: `true`.
+- All other options from [I2C Device](/components/i2c#i2cdevice).
 
 ### Charging configuration
 
@@ -117,6 +119,7 @@ switch:
 
 Configuration for `binary_sensor` platform. All options from [Binary Sensor](/components/binary_sensor).
 
+- **bq25186_id** (*Optional*, ID): The ID of the parent `bq25186` component. If only one `bq25186:` hub is defined, this defaults to that hub.
 - **ts** (*Optional*): TS open status.
 - **charging** (*Optional*): Charging status (constant current or constant voltage).
 - **charge_done** (*Optional*): Charge done (or disabled) status.
@@ -144,6 +147,7 @@ Configuration for `binary_sensor` platform. All options from [Binary Sensor](/co
 
 Configuration for `text_sensor` platform. All options from [Text Sensor](/components/text_sensor).
 
+- **bq25186_id** (*Optional*, ID): The ID of the `bq25186` component to use. Required when multiple `bq25186:` hubs are configured.
 - **charge_status** (*Optional*): Human-readable charge status. Values: `Not Charging`, `Constant Current`, `Constant Voltage`, `Charge Done/Disabled`.
 - **ts_status** (*Optional*): Human-readable TS status. Values: `Normal`, `Hot/Cold (Charging Suspended)`, `Cool (Current Reduced)`, `Warm (Voltage Reduced)`.
 
@@ -151,6 +155,7 @@ Configuration for `text_sensor` platform. All options from [Text Sensor](/compon
 
 Configuration for `button` platform. All options from [Button](/components/button).
 
+- **bq25186_id** (*Optional*, [ID](/guides/configuration-types/#config-id)): The ID of the configured `bq25186` component to use.
 - **software_reset** (*Optional*): Trigger a software reset.
 - **shutdown** (*Optional*): Trigger shutdown mode.
 - **ship_mode** (*Optional*): Trigger ship mode.
@@ -160,7 +165,8 @@ Configuration for `button` platform. All options from [Button](/components/butto
 
 Configuration for `switch` platform. All options from [Switch](/components/switch).
 
-- **pg_gpo** (*Required*): Control the /PG/GPO output in GPO mode. When configured, the component will force `pg_mode` to GPO.
+- **bq25186_id** (*Required*, [ID](/guides/configuration-types#config-id)): The ID of the `bq25186` component to use.
+- **pg_gpo** (*Optional*): Control the /PG/GPO output in GPO mode. When configured, the component will force `pg_mode` to GPO.
 
 ## Automations
 
