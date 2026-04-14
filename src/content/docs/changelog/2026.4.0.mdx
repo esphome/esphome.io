@@ -83,7 +83,7 @@ esp32:
 
 **ADC crash fix** ([#15717](https://github.com/esphome/esphome/pull/15717)): ADC oneshot control functions are now placed in IRAM for cache safety. Previously, ADC reads could crash when flash cache was disabled during background NVS writes by WiFi, BLE, Zigbee, Thread, or power management.
 
-**Web server OTA brick hazard fix** ([#15720](https://github.com/esphome/esphome/pull/15720)): Fixed a long-standing brick hazard in the captive portal and web server OTA flow where an interrupted upload followed by a retry could write concatenated firmware to flash, producing an invalid image that bricked the device. The OTA backend now resets on each new upload.
+**Web server OTA brick hazard fix** ([#15720](https://github.com/esphome/esphome/pull/15720)): Fixed a long-standing brick hazard in the captive portal and web server OTA flow where an interrupted upload followed by a retry could write concatenated firmware to flash, producing an invalid image that soft-bricked the device and required a serial flash to recover. The OTA backend now resets on each new upload.
 
 **mDNS crash fix** ([#15670](https://github.com/esphome/esphome/pull/15670)): Bumped espressif/mdns to 1.11.0, fixing heap corruption when processing sustained mDNS browse traffic that caused deterministic LoadProhibited crashes, and a null pointer exception in `mdns_parse_packet`.
 
