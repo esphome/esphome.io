@@ -73,6 +73,13 @@ openthread:
   Range depends on the chip variant: ESP32-C5/C6 from ``-15dBm`` to ``20dBm``, ESP32-H2 from ``-24dBm`` to ``20dBm``.
   Defaults to the platform default (typically ``0dBm``). Ensure the configured value complies with local regulatory limits.
 
+- **enable_dns64** (*Optional*, bool): Whether Thread DNS64 client is started during setup, allowing to perform e.g. Thread DNS lookups via Thread API.
+Disabling this may reduce footprint by few KB.
+If unsure, leave enabled. Defaults to `true`
+- **enable_srp** (*Optional*, bool): Whether Thread services shall be published via SRP on Thread radio network (i.e. mDNS in LAN). See below for details.
+Disabling this may reduce footprint by up to 100 KB.
+If unsure, leave enabled. Defaults to `true`
+
 ## Dataset TLV Configuration
 
 It is also possible to supply the entire dataset TLVs from the Thread information in Home Assistant and the individual values will be automatically extracted from it.
@@ -121,10 +128,25 @@ esp32:
     log_level: INFO
 ```
 
+## Service Registration Protocol (SRP)
+
+If enabled above, this package will first start the `OpenThreadSrpComponent` to register all services as stored in the MDNS component via OpenThread *Service Registration Protocol* (SRP).
+Usually, a Thread border router runs an SRP server and will republish SRP service lists received in the radio network via mDNS/DNS-SD into backbone LAN.
+This allows other LAN nodes to find Thread devices via service name.
+Consequently, disabling SRP will also prevent mDNS/DNS-SD device lookup in the LAN.
+
+However, often "Home Assistant over Thread" protocol setups do not require mDNS, unlike Matter setups.
+Instead, static IPs of ESPHome nodes may be used in Home Assistant to communicate directly,
+and nodes may be reidentified via MAC (relating to Thread EUI64).
+
+> [!NOTE]
+> Before disabling SRP/mDNS: See generic [FAQ: Notes on disabling MDNS](/guides/faq/#notes-on-disabling-mdns) for extensive hints and warnings.
+
 ## See Also
 
 - [OpenThread Info Text Sensor](/components/text_sensor/openthread_info/)
 - [Network component](/components/network/)
 - [ESP32 Platform](/components/esp32/)
+- [MDNS component](/components/mdns/)
 - [https://openthread.io/](https://openthread.io/)
 - <APIRef text="openthread.h" path="openthread/openthread.h" />
