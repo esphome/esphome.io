@@ -8,11 +8,14 @@ Pulse Counter ULP Sensor
 The pulse counter ULP sensor allows you to count the number of pulses and the frequency of a signal
 on a RTC_GPIO pin.
 
-This sensor uses the ESP32's Ultra-Low Power (ULP) processor, which remains
-active even in :doc:`deep sleep </components/deep_sleep>`. Only one ULP
-component can run at a time.
+This sensor uses the ESP32's Ultra-Low Power (ULP) Finite State Machine (FSM)
+processor, which remains active even in :doc:`deep sleep
+</components/deep_sleep>`. Only one ULP component can run at a time.
 
-This sensor is only available on the ESP32 using the IDF framework.
+This sensor is only available on the ESP32 variants supporting [ULP
+FSM](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/system/ulp.html)
+which as of writing, includes the ESP32, ESP32-S2 and ESP32-S3.
+
 
 .. code-block:: yaml
 
