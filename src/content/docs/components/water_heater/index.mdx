@@ -17,11 +17,16 @@ The `water_heater` component is a generic representation of water heaters (boile
 
 ## Base Water Heater Configuration
 
-All water heater config schemas inherit from this schema - you can set these keys for water heaters.
+All water heater platforms in ESPHome inherit from the water heater configuration schema. Use `unit_of_measurement` to configure the temperature unit used by this device. All temperature values in the configuration must either use that unit or omit the unit suffix. If no unit is specified anywhere, Celsius is assumed.
 
 ```yaml
 water_heater:
   - platform: ...
+    unit_of_measurement: °F
+    visual:
+      min_temperature: 100°F
+      max_temperature: 145°F
+      temperature_step: 1°F
 ```
 
 Configuration variables:
@@ -34,13 +39,14 @@ Configuration variables:
 > to use that name, you can set `name: None`.
 
 - **icon** (*Optional*, icon): Manually set the icon to use for the water heater in the frontend.
+- **unit_of_measurement** (*Optional*, string): The temperature unit for this device. One of `°C`, `°F`, or `K`. Defaults to `°C` if no unit is specified anywhere. Temperature values in `visual` may include an explicit unit suffix (e.g. `140°F`); if omitted, `unit_of_measurement` is assumed. All explicitly specified units must match. `unit_of_measurement` can also be set implicitly by including a unit suffix on any temperature field — if all suffixed values agree, that unit is used.
 
 Advanced options:
 
 - **visual** (*Optional*): Configuration for the frontend representation.
-  - **min_temperature** (*Optional*, float): Override the minimum temperature shown in the frontend.
-  - **max_temperature** (*Optional*, float): Override the maximum temperature shown in the frontend.
-  - **target_temperature_step** (*Optional*, float): Override the temperature steps shown in the frontend.
+  - **min_temperature** (*Optional*, float): Override the minimum temperature shown in the frontend. May include an explicit unit suffix (e.g. `40`, `104°F`).
+  - **max_temperature** (*Optional*, float): Override the maximum temperature shown in the frontend. May include an explicit unit suffix (e.g. `60`, `140°F`).
+  - **target_temperature_step** (*Optional*, float): Override the temperature step shown in the frontend. May include an explicit unit suffix (e.g. `1`, `1°F`).
 
 - **supported_modes** (*Optional*, list): Static list of operation modes that will be exposed to the frontend (for example Home Assistant). When not specified, all modes supported by the platform are exposed.
 

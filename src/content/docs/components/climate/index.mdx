@@ -28,15 +28,16 @@ and can be put in different modes like `HEAT`, `COOL`, `HEAT_COOL` or `OFF`.
 
 ## Base Climate Configuration
 
-All climate platforms in ESPHome inherit from the climate configuration schema. In ESPHome, `°C` is assumed for all temperature values. Some platforms allow conversion or setting in `°F`, this is specified separately.
+All climate platforms in ESPHome inherit from the climate configuration schema. Use `unit_of_measurement` to configure the temperature unit used by this device. All temperature values in the configuration must either use that unit or omit the unit suffix. If no unit is specified anywhere, Celsius is assumed.
 
 ```yaml
 climate:
   - platform: ...
+    unit_of_measurement: °F
     visual:
-      min_temperature: 18
-      max_temperature: 25
-      temperature_step: 0.1
+      min_temperature: 60°F
+      max_temperature: 86°F
+      temperature_step: 1°F
       min_humidity: 30%
       max_humidity: 99%
   - platform: ...
@@ -58,15 +59,16 @@ Configuration variables:
 > you want the climate to use that name, you can set `name: None`.
 
 - **icon** (*Optional*, icon): Manually set the icon to use for the climate device in the frontend.
+- **unit_of_measurement** (*Optional*, string): The temperature unit for this device. One of `°C`, `°F`, or `K`. Defaults to `°C` if no unit is specified anywhere. Temperature values in `visual` may include an explicit unit suffix (e.g. `60°F`); if omitted, `unit_of_measurement` is assumed. All explicitly specified units must match. `unit_of_measurement` can also be set implicitly by including a unit suffix on any temperature field — if all suffixed values agree, that unit is used.
 - **visual** (*Optional*): Visual settings for the climate device - these do not
   affect operation and are solely for controlling how the climate device shows up in the
   frontend.
 
   - **min_temperature** (*Optional*, float): The minimum temperature the climate device can reach.
-    Used to set the range of the frontend gauge.
+    Used to set the range of the frontend gauge. May include an explicit unit suffix (e.g. `18`, `64.4°F`).
 
   - **max_temperature** (*Optional*, float): The maximum temperature the climate device can reach.
-    Used to set the range of the frontend gauge.
+    Used to set the range of the frontend gauge. May include an explicit unit suffix (e.g. `25`, `77°F`).
 
   - **temperature_step** (*Optional*, float): The granularity with which the target temperature
     can be controlled. Can be a single number, or split as below:
