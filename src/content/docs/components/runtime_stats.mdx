@@ -79,20 +79,22 @@ A regression in `before` points at the scheduler or a component requesting `enab
 
 ## Example Output
 
+In the example below, `overhead_total` is the difference between `active_total` and the sum of per-component `total` times — for the period section, `479.1ms − (300.0 + 40.0 + 10.4)ms = 128.7ms`. The three overhead-section buckets (`before + tail + inter_component`) sum back to `overhead_total`.
+
 ```text
 [09:55:52][I][runtime_stats:042]: Component Runtime Statistics
 [09:55:52][I][runtime_stats:043]:  Period stats (last 60000ms): 3 active components
-[09:55:52][I][runtime_stats:066]:   wifi: count=60, avg=0.500ms, max=5.00ms, total=30.0ms
-[09:55:52][I][runtime_stats:066]:   api: count=120, avg=0.010ms, max=1.00ms, total=1.2ms
-[09:55:52][I][runtime_stats:066]:   sensor: count=600, avg=0.003ms, max=1.00ms, total=2.0ms
+[09:55:52][I][runtime_stats:066]:   wifi: count=60, avg=5.000ms, max=8.00ms, total=300.0ms
+[09:55:52][I][runtime_stats:066]:   api: count=120, avg=0.333ms, max=1.00ms, total=40.0ms
+[09:55:52][I][runtime_stats:066]:   sensor: count=600, avg=0.017ms, max=0.10ms, total=10.4ms
 [09:55:52][I][runtime_stats:068]:   main_loop: iters=7650, active_avg=0.063ms, active_max=10.67ms, active_total=479.1ms, overhead_total=128.7ms
-[09:55:52][I][runtime_stats:070]:   main_loop_overhead_section: before=55.2ms, tail=0.3ms, inter_component=73.2ms
+[09:55:52][I][runtime_stats:070]:   main_loop_overhead_section: before=45.0ms, tail=8.0ms, inter_component=75.7ms
 [09:55:52][I][runtime_stats:072]:  Total stats (since boot): 3 active components
-[09:55:52][I][runtime_stats:084]:   wifi: count=600, avg=0.450ms, max=5.00ms, total=270.0ms
-[09:55:52][I][runtime_stats:084]:   api: count=1200, avg=0.010ms, max=1.00ms, total=12.0ms
-[09:55:52][I][runtime_stats:084]:   sensor: count=6000, avg=0.003ms, max=1.00ms, total=20.0ms
+[09:55:52][I][runtime_stats:084]:   wifi: count=600, avg=5.000ms, max=8.00ms, total=3000.0ms
+[09:55:52][I][runtime_stats:084]:   api: count=1200, avg=0.333ms, max=1.00ms, total=400.0ms
+[09:55:52][I][runtime_stats:084]:   sensor: count=6000, avg=0.017ms, max=0.10ms, total=104.0ms
 [09:55:52][I][runtime_stats:094]:   main_loop: iters=76500, active_avg=0.063ms, active_max=14.30ms, active_total=4791.0ms, overhead_total=1287.0ms
-[09:55:52][I][runtime_stats:096]:   main_loop_overhead_section: before=552.0ms, tail=3.0ms, inter_component=732.0ms
+[09:55:52][I][runtime_stats:096]:   main_loop_overhead_section: before=450.0ms, tail=80.0ms, inter_component=757.0ms
 ```
 
 ## Use Cases
