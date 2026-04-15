@@ -1,0 +1,40 @@
+---
+description: "Instructions for setting up option control switches for Airton IR remote climate devices."
+title: "Airton Climate Switch"
+---
+import APIRef from '@components/APIRef.astro';
+
+
+Additional switches to support additional features for Airton-built AC internal units.
+
+```yaml
+# Example configuration entry
+switch:
+  - platform: airton
+    sleep_mode:
+      name: Sleep Mode
+    display:
+      name: Display Light
+```
+
+Possible return values for the optional lambda:
+
+- `return true;` if the switch should be reported as ON.
+- `return false;` if the switch should be reported as OFF.
+- `return {};` if the last state should be repeated.
+
+## Configuration variables
+
+- **airton_id** (**Required**, [ID](/guides/configuration-types#id): The id of Airton IR remote climate component
+
+- **display** (*Optional*): A switch that enables or disables Airton IR remote climate display light.
+
+- **sleep_mode** (*Optional*): A switch that enables or disables Airton IR remote climate sleep mode. Sleep mode not supported in Fan only mode and Auto heat or cool mode.
+
+- All other options from [Switch](/components/switch#config-switch).
+
+## See Also
+
+- [Airton IR Remote Climate](/components/climate/climate_ir)
+- [Airton IR Remote Select](/components/select/airton)
+- <APIRef text="display.h" path="/components/airton/switch" />
