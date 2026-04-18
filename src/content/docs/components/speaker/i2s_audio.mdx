@@ -55,6 +55,7 @@ speaker:
   - `pcm_long`
 - **buffer_duration** (*Optional*, [Time](/guides/configuration-types#time)): The duration of the internal ring buffer. Larger values can reduce stuttering but uses more memory. Defaults to `500ms`.
 - **timeout** (*Optional*, [Time](/guides/configuration-types#time)): How long to wait after finishing playback before releasing the bus. Set to `never` to never stop the speaker due to a timeout. Defaults to `500ms`.
+- **keep_alive** (*Optional*, boolean): If `true`, the I²S channel is kept allocated between audio sessions instead of being fully torn down. This prevents the audible pop/click caused by the I²S peripheral reinitializing on every audio event. A pre-warm step at boot moves the one-time initialization transient to startup. Defaults to `false`.
 - All other options from [Speaker Component](/components/speaker#config-speaker).
 
 ### External DAC
