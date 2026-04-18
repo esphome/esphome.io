@@ -1,29 +1,84 @@
 [build]
-  publish = "public"
-  command = "make netlify"
-  environment = { HUGO_BASEURL = "https://esphome.io", HUGOxPARAMSxAPI_DOCS_URL = "https://api-docs.esphome.io", PYTHON_VERSION = "3.12", HUGO_VERSION = "0.147.8" }
+  publish = "dist"
+  command = "sed -i \"s|{{API_DOCS_URL}}|${API_DOCS_URL}|g\" netlify.toml && npm run build"
+
+[build.environment]
+  NODE_VERSION = "24"
+  API_DOCS_URL = "https://api-docs.esphome.io"
 
 [context.beta]
-  environment = { HUGO_BASEURL = "https://beta.esphome.io", HUGOxPARAMSxAPI_DOCS_URL = "https://api-docs-beta.esphome.io" }
+  environment = { SITE_URL = "https://beta.esphome.io", API_DOCS_URL = "https://api-docs-beta.esphome.io" }
 
 [context.next]
-  environment = { HUGO_BASEURL = "https://next.esphome.io", HUGOxPARAMSxAPI_DOCS_URL = "https://api-docs-dev.esphome.io" }
+  environment = { SITE_URL = "https://next.esphome.io", API_DOCS_URL = "https://api-docs-dev.esphome.io" }
 
 [context.production]
-  environment = { HUGO_BASEURL = "https://esphome.io", HUGOxPARAMSxAPI_DOCS_URL = "https://api-docs.esphome.io" }
+  environment = { SITE_URL = "https://esphome.io", API_DOCS_URL = "https://api-docs.esphome.io" }
 
+# Purge Cloudflare CDN cache after successful deploy.
+[[plugins]]
+  package = "./plugins/cloudflare-cache-purge"
 
-# Caching HTML - 1 week
+# Default caching for all pages (HTML and everything else)
+# Browser: 1 hour, Cloudflare CDN: 1 week, serve stale while revalidating
+# Using /* as a catch-all since /*.html only matches single-level paths
 [[headers]]
-  for = "/*.html"
+  for = "/*"
   [headers.values]
-    Cache-Control = "public, max-age=604800"
+    Cache-Control = "public, max-age=3600, stale-while-revalidate=86400"
+    Cloudflare-CDN-Cache-Control = "public, max-age=604800, stale-while-revalidate=86400"
 
-# Images, CSS, JS - 1 year, immutable. CSS and JS are fingerprinted
+# Fingerprinted assets (Astro build output in /_astro/) - 1 year, immutable
 [[headers]]
-  for = "/*.{png,jpg,jpeg,gif,webp,svg,css,js}"
+  for = "/_astro/*"
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
+    Cloudflare-CDN-Cache-Control = "public, max-age=31536000, immutable"
+
+# Static images - browser: 1 week, CDN: 1 month
+[[headers]]
+  for = "/images/*"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"
+    Cloudflare-CDN-Cache-Control = "public, max-age=2592000, stale-while-revalidate=604800"
+
+# Project images
+[[headers]]
+  for = "/projects/*"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"
+    Cloudflare-CDN-Cache-Control = "public, max-age=2592000, stale-while-revalidate=604800"
+
+# Favicons - browser: 1 week, CDN: 1 month
+[[headers]]
+  for = "/favicon*"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"
+    Cloudflare-CDN-Cache-Control = "public, max-age=2592000"
+
+# Sitemap and robots.txt - browser: 1 hour, CDN: 1 day
+[[headers]]
+  for = "/sitemap*"
+  [headers.values]
+    Cache-Control = "public, max-age=3600"
+    Cloudflare-CDN-Cache-Control = "public, max-age=86400"
+
+[[headers]]
+  for = "/robots.txt"
+  [headers.values]
+    Cache-Control = "public, max-age=3600"
+    Cloudflare-CDN-Cache-Control = "public, max-age=86400"
+
+# Hugo taxonomy pages - redirect to homepage
+[[redirects]]
+  from = "/categories/*"
+  to = "/"
+  status = 301
+
+[[redirects]]
+  from = "/tags/*"
+  to = "/"
+  status = 301
 
 [[redirects]]
 from = "/_images/*"
@@ -41,11 +96,10 @@ status = 301
   to = "https://discord.gg/KhAMKrd"
   status = 301
 
-# This redirect is for the api docs that have been moved.
-# It is replaced by sed in the makefile when netlify is building the site.
+# API docs redirect - substituted per environment by build command
 [[redirects]]
   from = "/api/*"
-  to = "{{HUGOxPARAMSxAPI_DOCS_URL}}/:splat"
+  to = "{{API_DOCS_URL}}/:splat"
   status = 301
 
 # Webserver files
@@ -327,4 +381,11 @@ status = 301
 [[redirects]]
   from = "/components/display/qspi_amoled.html"
   to = "/components/display/mipi_spi.html"
+  status = 301
+
+# Starlight URL compatibility - trailing slash redirects
+# Hugo used .html extensions, Starlight uses trailing slashes
+[[redirects]]
+  from = "/*.html"
+  to = "/:splat/"
   status = 301
