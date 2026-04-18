@@ -1,0 +1,59 @@
+---
+description: "Instructions for setting up ZE15-CO sensor"
+title: "ZE15-CO Sensor"
+params:
+  seo:
+    description: Instructions for setting up ZE15-CO sensor
+    image: ze15-co.jpg
+---
+
+import { Image } from 'astro:assets';
+import Figure from '@components/Figure.astro';
+import ze15coFullImg from './images/ze15-co-full.jpg';
+import ze15coPinsImg from './images/ze15-co-pins.jpg';
+import APIRef from '@components/APIRef.astro';
+
+The `ze15_co` sensor platform allows you to use ZE15-CO sensor with ESPHome.
+
+<Figure
+  src={ze15coFullImg}
+  alt="Image"
+  caption="ZE15-CO Sensor."
+  layout="constrained"
+/>
+
+As the communication with the ZE15-CO is done using UART, you need
+to have an [UART bus](/components/uart) in your configuration with the `rx_pin` connected to the TX pin of the
+ZE15-CO and the `tx_pin` connected to the RX Pin of the ZE15-CO (it's switched because the
+TX/RX labels are from the perspective of the ZE15-CO). Additionally, you need to set the baud rate to 9600.
+
+```yaml
+# Example configuration entry
+sensor:
+  - platform: ze15_co
+    name: ZE15_CO Value
+```
+
+## Configuration variables
+
+- **mode** (*Optional*): Selects the sensor operating mode. Available options: `qa` (Query/Answer), where the sensor is polled at the specified `update_interval` or `stream`, where the sensor continuously streams measurements. Defaults to `qa`.
+
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval at which the sensor is queried in `qa` mode. Defaults to `60s`. This option is ignored in `stream` mode.
+
+- **uart_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the [UART Component](/components/uart) if you want to use multiple UART buses.
+
+- **warmup_time** (*Optional*, Time): Time required for the sensor to stabilize after startup. Readings are discarded during this period, as they may be inaccurate. Defaults to `30s`.
+
+- All other options from [Sensor](/components/sensor).
+
+<Figure
+  src={ze15coPinsImg}
+  alt="Image"
+  caption="Pins on the ZE15-CO. Only the ones marked with a red circle need to be connected."
+  layout="constrained"
+/>
+
+## See Also
+
+- [Sensor Filters](/components/sensor#sensor-filters)
+- <APIRef text="ze15_co.h" path="ze15_co/ze15_co.h" />
