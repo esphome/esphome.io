@@ -68,8 +68,10 @@ Where:
 | shift | heat_curve_shift |
 
 > [!NOTE]
-> When outdoor temperature exceeds your target (summer), the formula would produce invalid results.
-> The controller clamps output to `min_flow_temp` in this case.
+> When outdoor temperature is at or above your target (no heating demand), the formula is bypassed
+> entirely and the controller returns `min_flow_temp`. The shift offset is only applied within the
+> heating domain (outdoor < target) — adjusting shift has no effect when there is no heating demand.
+> This matches standard Warm Weather Shutdown behavior used by commercial boiler controllers.
 
 ### Example Heating Curve
 
@@ -570,6 +572,14 @@ sensor:
     climate_id: heating
     type: FALLBACK_DURATION
     name: "Fallback Duration"
+  - platform: equitherm
+    climate_id: heating
+    type: MIN_FLOW_TEMP
+    name: "Min Flow Temp"
+  - platform: equitherm
+    climate_id: heating
+    type: MAX_FLOW_TEMP
+    name: "Max Flow Temp"
 ```
 
 Configuration variables:
@@ -587,6 +597,8 @@ Configuration variables:
   - `PID_INTEGRAL` → PID integral term.
   - `PID_DERIVATIVE` → PID derivative term.
   - `FALLBACK_DURATION` → How long the system has been in fallback mode (seconds).
+  - `MIN_FLOW_TEMP` → Configured minimum flow temperature (°C).
+  - `MAX_FLOW_TEMP` → Configured maximum flow temperature (°C).
 
 ### Binary Sensor Platform
 
