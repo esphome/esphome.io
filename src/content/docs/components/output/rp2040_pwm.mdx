@@ -11,15 +11,15 @@ CPU overhead.
  
 At default clock speeds, output PWM frequencies between 7.5Hz and 62.5MHz are
 possible, however higher frequencies require a smaller bit depth, which reduces
-accuracy significantly above . For slower PWM output, consider using [Slow PWM](/components/output/slow_pwm/) or
+accuracy significantly at frequencies above 450kHz. For slower PWM output, consider using [Slow PWM](/components/output/slow_pwm/) or
 [Sigma-Delta](/components/output/sigma_delta_output/).
 
 On ESP32-based platforms, the [`ledc`](/components/output/ledc/) component provides similar functionality.
 
 ## Configuration variables
 
-- **pin** (**Required**, [Pin](/guides/configuration-types#pin)): The pin to configure with hardware PWM. [More information on output pins below](#output-rp2040-gpio_outputs).
-- **id** (**Required**,  [ID](/guides/configuration-types/#id)): The id to use for this output component.
+- **pin** (**Required**, [Pin](guides/configuration-types#pin)): The pin to configure with hardware PWM. [More information on output pins below](#output-rp2040-gpio_outputs).
+- **id** (**Required**,  [ID](guides/configuration-types/#id)): The id to use for this output component.
 - **frequency** (*Optional*, frequency): The frequency to run the PWM slice at. Defaults to `1kHz`.
 
 - All other options from [Output](/components/output#config-output).
@@ -28,9 +28,9 @@ On ESP32-based platforms, the [`ledc`](/components/output/ledc/) component provi
 ## Example configuration
 
 output:
-  platform: rp2040_pwm
-    pin: GPIO28
-    frequency: 5000Hz
+  - platform: rp2040_pwm
+      pin: GPIO28
+      frequency: 5000Hz
 ```
 
 ## PWM Frequency
@@ -66,7 +66,7 @@ $$ f_\text{PWM} = {f_{c} / ({(\text{TOP}+1) \times \text{DIV}}) } $$
 
 <span id="output-rp2040-gpio_outputs"></span>
 
-## RP2040/RP2360 PWM GPIO Outputs
+## RP2040/RP2350 PWM GPIO Outputs
 
 Each channel on every PWM slice on a RP2040 and RP2350 are attached to specific
 GPIOs, which cannot be changed. Each PWM slice shares a clock divider, and each
@@ -95,7 +95,7 @@ that share PWM slices and channels:
 > If you configure two pins that share a slice and a channel with `rp2040_pwm`,
 > **the output signal will be the same on each one, even if they are configured
 > as separate pins or devices!** Similarly, pins that share a PWM slice will use
-> the same clock divider, which may cause conflicts if you select frequences that
+> the same clock divider, which may cause conflicts if you select frequencies that
 > use a different clock divider.
 
 <span id="output-rp2040-set_frequency_action"></span>
