@@ -122,6 +122,13 @@ sensor:
 - **address** (*Optional*, int): The address of the sensor if multiple sensors are attached to
   the same UART bus. You will need to set the address of each device manually. Defaults to `1`.
 
+- **chunk_size** (*Optional*, int): Split the 80-register bulk read into smaller chunks of this many
+  registers each, accumulating the results before publishing. Defaults to `80` (single request,
+  original behaviour). Set to a smaller value (for example `16`) for SDM meter firmwares that
+  truncate large responses on the wire, or that return wrong/phantom values for very small reads.
+  The optimum value is device-specific; `16` is a reasonable starting point for affected SDM630
+  variants. Range: `1` to `80`.
+
 ## See Also
 
 - [Sensor Filters](/components/sensor#sensor-filters)
