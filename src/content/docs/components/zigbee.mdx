@@ -7,29 +7,30 @@ Zigbee is a low-power, mesh-based networking standard designed for IoT devices. 
 it well-suited for battery-powered smart-home devices, while its limited bandwidth is ideal for devices that exchange
 only small amounts of data, such as switches, sensors, and motion detectors.
 
-Zigbee uses the same RF technology as Thread (IEEE 802.15.4) but defines also multiple application standards.
+Zigbee uses the same RF technology as Thread (IEEE 802.15.4) but also defines multiple application standards.
 The `zigbee` component, however, supports only the Home Automation profile.
 It allows exposing supported ESPHome components over a Zigbee network to Home Assistant via
 **Zigbee2MQTT** or **ZHA**. Due to the limitations of the Zigbee protocol, only basic properties are exposed.
 Additional properties must be configured manually in Home Assistant. Each ESPHome entity consumes one Zigbee endpoint.
 
 > [!NOTE]
-> You will need a Zigbee coordinator like **Zigbee2MQTT** or **ZHA**. Other commercial Zigbee hubs most likely don't
-> support esphome components and might have issues with changing firmware.
-> When using Zigbee2MQTT make sure to use at least version 2.8.0. Otherwise names cannot have spaces in them and you need to setup at least 2 endpoints.
+> You will need a Zigbee coordinator like **Zigbee2MQTT** or **ZHA**. Other commercial Zigbee hubs most likely do not
+> support ESPHome components and might have issues with changing firmware.
+> When using Zigbee2MQTT, make sure to use at least version 2.8.0. Otherwise, names cannot contain spaces.
+> You also need to set up at least 2 endpoints.
 
 ## Supported Hardware
 
 Zigbee is only supported on `nRF52` platforms and on `ESP32` with IEEE 802.15.4 connectivity (`ESP32-C5`, `ESP32-C6`, or `ESP32-H2` 
 and in the future `ESP32-H4` and `ESP32-H21`). Both platforms support different features and have different limitations:
 - On `nRF52` a maximum of 8 endpoints is supported.
-- `ESP32-H2` seems to work more reliable than `ESP32-C6`. There are reports of `ESP32-C6` boards that work only if placed next 
+- `ESP32-H2` seems to work more reliably than `ESP32-C6`. There are reports of `ESP32-C6` boards that work only if placed next 
 to the coordinator. [Here is a list with known good boards.](https://github.com/luar123/zigbee_esphome/discussions/41#discussioncomment-14978980)
-- On `ESP32` Zigbee can be used together with [wifi](/components/wifi) with some limitations:
-  - Wifi station mode + Zigbee end device is working fine.
-  - Wifi station mode + Zigbee router leads to a instable Zigbee network. Still can be used if wifi is only enabled for short times (e.g. OTA)
-  - Wifi access point + Zigbee end device could lead to a unstable access point with increased package loss. If the AP is only used as fallback there should be no issues.
-  - Wifi access point + Zigbee router is not supported
+- On `ESP32` Zigbee can be used together with [WiFi](/components/wifi) with some limitations:
+  - WiFi station mode + Zigbee end device is working fine.
+  - WiFi station mode + Zigbee router leads to an unstable Zigbee network. Still can be used if WiFi is only enabled for short times (e.g. OTA)
+  - WiFi access point + Zigbee end device could lead to an unstable access point with increased packet loss. If the AP is only used as fallback there should be no issues.
+  - WiFi access point + Zigbee router is not supported
 
 > [!CAUTION]
 > Whenever the configuration is changed, the device should be removed and re-added to the Zigbee network.
@@ -51,11 +52,11 @@ zigbee:
 
 ## Configuration variables
 
-- **model** (*Optional*, string): Model Identifier of the Zigbee device. Defauts to the ESPHome node name.
+- **model** (*Optional*, string): Model Identifier of the Zigbee device. Defaults to the ESPHome node name.
 
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): The ID to use for this `zigbee` component.
 
-Only on `nrf52`:
+Only on `nRF52`:
 
 - **wipe_on_boot** (*Optional*): Erases all non-volatile memory data on boot, including
   Zigbee network pairing and preferences (e.g., last switch state). One of:
@@ -83,7 +84,7 @@ Only on `nrf52`:
 Only on `ESP32`:
 
 - **router** (*Optional*, boolean): If true the Zigbee role will be `router` instead of `end device` and it will
- forward Zigbee packets from other devices. Don't use this for battery powered devices. Defaults to `false`.
+  forward Zigbee packets from other devices. Don't use this for battery-powered devices. Defaults to `false`.
 
 
 ## Actions
@@ -131,8 +132,8 @@ Zigbee can have some overrides for specific options.
 Only on `ESP32`:
 
 - **report** (**Optional**, enum): Report the state. One of `yes`, `no`, `force`. `yes` activates reporting with default settings and uses
-the configuration from the coordinator if possible. `force` ignores the the coordinator settings and reports
-every change. On `nrf52` always the coordinator settings are used. Defaults to `yes`.
+the configuration from the coordinator if possible. `force` ignores the coordinator settings and reports
+every change. On `nRF52` always the coordinator settings are used. Defaults to `yes`.
 
 > [!NOTE]
 > ZHA sets the minimum reporting interval to 30 seconds for most sensor devices. If you need faster responses set `report` to `force`.
