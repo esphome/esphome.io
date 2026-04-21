@@ -54,17 +54,15 @@ api:
   - `5` for ESP32/BK72xx/RTL87xx/LN882x,
   - `8` for the host platform.
 
-  Each connection uses approximately 500–1000 bytes of RAM.
-
   > [!NOTE]
-  > `max_connections` is baked into the compiled firmware as a compile-time constant (the
-  > connection slots are statically allocated), so every slot counts against static RAM whether it
-  > is used or not. Raise this value only if you actually need more than the default number of
-  > simultaneous clients — the firmware must be re-flashed to change it.
-
-  > [!NOTE]
-  > Each API connection consumes approximately 500–1000 bytes of RAM while connected. ESP8266 and RP2040 devices have limited
-  > RAM available (ESP8266 typically has around 40KB of free RAM after boot, but this can drop to under 20KB once sensors and other components are configured; RP2040 uses LWIP raw sockets with similar constraints), so be careful not to set this value too high or it may cause out-of-memory crashes.
+  > `max_connections` is baked into the compiled firmware as a compile-time constant — the
+  > connection slots are statically allocated, so every slot costs a small amount of static RAM
+  > whether it is used or not, and the firmware must be re-flashed to change the value.
+  > In addition, each active API connection consumes approximately 500–1000 bytes of RAM while
+  > connected. ESP8266 and RP2040 devices have limited RAM available (ESP8266 typically has around
+  > 40KB of free RAM after boot, but this can drop to under 20KB once sensors and other components
+  > are configured; RP2040 uses LWIP raw sockets with similar constraints), so be careful not to
+  > set this value too high or it may cause out-of-memory crashes.
   > The defaults are set to balance memory usage with allowing multiple simultaneous connections.
 
 - **max_send_queue** (*Optional*, int): The maximum number of messages that can be queued for sending per connection before the connection is dropped. Must be between 1 and 64.
