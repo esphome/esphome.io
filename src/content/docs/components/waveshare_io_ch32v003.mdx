@@ -1,13 +1,11 @@
 ---
 description: "Instructions for setting up Waveshare CH32V003 digital port expanders in ESPHome."
 title: "Waveshare CH32V003 I/O Expander"
-params:
-  seo:
-    description: Instructions for setting up Waveshare CH32V003 digital port expanders in ESPHome.
-    image: waveshare_io_ch32v003.svg
 ---
+import APIRef from '@components/APIRef.astro';
 
-The Waveshare IO CH32V003 component allows you to use the Waveshare I/O expansion modules based on the CH32V003 microcontroller in ESPHome. It uses [I²C Bus](#i2c) for communication.
+
+The Waveshare IO CH32V003 component allows you to use the Waveshare I/O expansion modules based on the CH32V003 microcontroller in ESPHome. It uses the [I²C Bus](/components/i2c) for communication.
 
 The Waveshare IO CH32V003 module provides:
 
@@ -17,15 +15,14 @@ The Waveshare IO CH32V003 module provides:
 
 Once configured, you can use any of the 8 GPIO pins for digital I/O operations. Within ESPHome they emulate real internal GPIO pins and can therefore be used with many of ESPHome's components such as GPIO binary sensors and GPIO switches. The PWM output and ADC input are accessed through their dedicated components.
 
-Any GPIO option accepting a [Pin Schema](#config-pin_schema) can be used with the 8 digital pins.
+Any GPIO option accepting a [Pin Schema]((/guides/configuration-types#pin-schema) can be used with the 8 digital pins.
 
-{{< note >}}
-This I/O Expander chip is Waveshare replacement for older CH422 I/O expander and is used in several Waveshare display boards 2024+.
- {{< /note >}}
+> [!NOTE]
+> This I/O Expander chip is used in several Waveshare display boards since 2024.
 
 ## Component/Hub
 
-The Waveshare IO CH32V003 is an [I²C Bus](#i2c) slave device. Its default address is `0x24`.
+The Waveshare IO CH32V003 is an [I²C Bus](/components/i2c) slave device. Its default address is `0x24`.
 
 ```yaml
 waveshare_io_ch32v003:
@@ -36,7 +33,7 @@ waveshare_io_ch32v003:
 
 ### Configuration variables
 
-- **id** (**Required**, [ID](#config-id)): The id to use for this `waveshare_io_ch32v003` component.
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The id to use for this component.
 - **address** (*Optional*, int): The I²C address of the expander.
   Defaults to `0x24`.
 - **i2c_id** (*Optional*): The I²C Bus ID if you have multiple I²C buses.
@@ -202,10 +199,10 @@ sensor:
 
 ## See Also
 
-- [I²C Bus](#i2c)
-- {{< docref "switch/gpio" >}}
-- {{< docref "/components/binary_sensor" >}}
-- {{< docref "binary_sensor/gpio" >}}
-- {{< docref "light/monochromatic" >}}
-- {{< docref "/components/output" >}}
-- {{< apiref "waveshare_io_ch32v003/waveshare_io_ch32v003.h" "waveshare_io_ch32v003/waveshare_io_ch32v003.h" >}}
+
+- [I²C Bus](/components/i2c)
+- [GPIO Switch](/components/switch/gpio/)
+- [GPIO Binary Sensor](/components/binary_sensor/gpio/)
+- [Monochromatic Light](/components/light/monochromatic/)
+- [Output](/components/output/)
+- <APIRef text="waveshare_io_ch32v003.h" path="waveshare_io_ch32v003/waveshare_io_ch32v003.h" />
