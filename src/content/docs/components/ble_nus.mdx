@@ -1,0 +1,43 @@
+---
+description: "Nordic UART Service (NUS)"
+title: "Nordic UART Service (NUS)"
+---
+
+The BLE NUS component provides a Bluetooth Low Energy UART interface based on the Nordic UART Service.
+It can be used to stream logs or enable custom bidirectional communication with ESPHome.
+
+```yaml
+# Example configuration entry
+ble_nus:
+  type: logs
+```
+
+## Configuration variables
+
+- **type** (*Optional*, string): Mode of operation. One of `logs` or `uart`.
+  `logs` streams ESPHome logs. `uart` provides bi-directional communication. Defaults to `logs`.
+- **rx_buffer_size** (*Optional*, int): Size of the receive buffer in bytes. Range: 160-8192. Defaults to `512`.
+  Valid only for mode `uart`.
+- **tx_buffer_size** (*Optional*, int): Size of the transmit buffer in bytes. Range: 160-8192. Defaults to `512`.
+- **debug** (*Optional*, mapping): Options for debugging communication on the UART hub, see [Debugging](/components/uart#uart-debugging).
+
+## Usage
+
+To connect and view logs from the device over BLE:
+
+```bash
+esphome logs d.yaml --device BLE
+```
+
+Or connect to a specific BLE address:
+
+```bash
+esphome logs d.yaml --device 00:11:22:33:44:55
+```
+
+`uart` can be used with python BLE Serial
+
+## See Also
+
+- [Nordic UART Service](https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/libraries/bluetooth/services/nus.html)
+- [BLE Serial](https://pypi.org/project/ble-serial)
