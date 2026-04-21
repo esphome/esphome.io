@@ -86,6 +86,8 @@ esp32_ble:
 > [!NOTE]
 > The `max_notifications` option controls the `CONFIG_BT_GATTC_NOTIF_REG_MAX` ESP-IDF setting. This limit is per GATT client interface, not per connection. If you're using ESPHome as a Bluetooth proxy with multiple devices that have many characteristics requiring notifications, you may need to increase this value. The error `status=128` in logs indicates you've hit this limit.
 
+- **use_psram** (*Optional*, boolean): Requests that the Bluetooth stack allocate its memory buffers from PSRAM instead of internal RAM, freeing approximately 40 kB for other uses. Defaults to `false`. Requires PSRAM to be configured.
+
 ## `ble.disable` Action
 
 This action turns off the BLE interface on demand.
