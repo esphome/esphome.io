@@ -9,6 +9,7 @@ import { imageBreakpoints } from "./src/lib/breakpoints.ts";
 import { remarkAlert } from "remark-github-blockquote-alert";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
+import componentsJson from "./src/integrations/components-json.ts";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -171,6 +172,7 @@ export default defineConfig({
       components: {
         Footer: "./src/components/Footer.astro",
         Head: "./src/components/Head.astro",
+        SiteTitle: "./src/components/SiteTitle.astro",
       },
       customCss: ["./src/styles/custom.css", "katex/dist/katex.min.css"],
       sidebar: [
@@ -275,5 +277,6 @@ export default defineConfig({
       ],
     }),
     sitemap(),
+    componentsJson(),
   ],
 });
