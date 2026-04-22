@@ -104,11 +104,11 @@ waveshare_io_ch32v003:
 
 output:
   - platform: waveshare_io_ch32v003
-    waveshare_io_ch32v003_id: wave_hub
+    waveshare_io_ch32v003: wave_hub
     id: wave_pwm
     inverted: true  # Example: PWM is inverted on ESP32S3-Touch-LCD-7B board
     safe_pwm_levels:
-      min_value: 0
+      min_value: 1 # Example: safe level for power_supply component to work
       max_value: 247 # Example: safe level for ESP32S3-Touch-LCD-7B board
 
 light:
@@ -124,7 +124,7 @@ light:
 The PWM output includes configurable safety limits to protect hardware:
 
 - **safe_pwm_levels**: Configure minimum and maximum duty cycle limits
-  - **min_value** (*Optional*, integer): Minimum PWM duty cycle (0 to 255). Defaults to `0`.
+  - **min_value** (*Optional*, integer): Minimum PWM duty cycle (0 to 255). Defaults to `1`.
   - **max_value** (*Optional*, integer): Maximum PWM duty cycle (0 to 255). Defaults to `247`.
 
 These limits ensure that PWM values are clamped to safe ranges, preventing potential hardware damage from extreme duty cycles.
@@ -177,11 +177,25 @@ switch:
 # PWM output with safety limits
 output:
   - platform: waveshare_io_ch32v003
-    waveshare_io_ch32v003_id: wave_hub
     id: wave_pwm_out
+    waveshare_io_ch32v003: wave_hub
+    power_supply: wave_hub_backlight_enable
+    inverted: true
+    zero_means_zero: true
     safe_pwm_levels:
-      min_value: 0
+      min_value: 1
       max_value: 247
+
+# Power supply for controlling display on/off
+power_supply:
+  - id: wave_hub_backlight_enable
+    pin: 
+      waveshare_io_ch32v003: wave_hub
+      number: 2
+      mode: 
+        output: true
+    enable_time: 0ms
+    keep_on_time: 0ms
 
 # Light using PWM output
 light:
@@ -192,10 +206,11 @@ light:
 # ADC sensor
 sensor:
   - platform: waveshare_io_ch32v003
-    waveshare_io_ch32v003_id: wave_hub
-    name: "ADC Voltage"
-    reference_voltage: 9.9
-
+    name: "Battery level"
+    id: wave_adc
+    # Convert ADC value to voltage (10-bit ADC, 3.3V reference, and 3:1 voltage divider)
+    # value = adc * 3 * 3.3V / 1023.0
+    reference_voltage: 9.9  # so returned value is ADC * 9.9 / 1023.0
 ```
 
 ## See Also
