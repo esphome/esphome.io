@@ -1,0 +1,35 @@
+---
+description: "Instructions for setting up the Sendspin hub in ESPHome."
+title: "Sendspin"
+---
+
+The `sendspin` component adds support for [Sendspin](https://www.sendspin-audio.com),
+a multi-room synchronized audio protocol. The hub manages the connection to a Sendspin server and distributes state updates to any Sendspinchild components.
+
+On its own, the hub does not expose any user-facing entities. A Sendspin server can
+discover and connect to the device, and group state updates will be received, but
+audio playback, control, and metadata require the corresponding child components
+to be configured as well.
+
+This platform only works on ESP32-based chips using the [ESP-IDF framework](/components/esp32#esp32-framework).
+
+> [!WARNING]
+> The Sendspin protocol is not yet finalized and this component is considered
+> **experimental**. Breaking changes may occur in future ESPHome releases as the
+> protocol and component evolve.
+
+```yaml
+# Example configuration entry
+sendspin:
+```
+
+## Configuration variables
+
+- **task_stack_in_psram** (*Optional*, boolean): Place the internal HTTP server task
+  stack in PSRAM to reduce internal RAM usage. Requires the
+  [PSRAM](/components/psram) component to be configured. Defaults to `false`.
+
+## See Also
+
+- [Sendspin Audio](https://www.sendspin-audio.com)
+- [sendspin-cpp library](https://github.com/Sendspin/sendspin-cpp)
