@@ -25,7 +25,7 @@ Zigbee is only supported on `nRF52` platforms and on `ESP32` with IEEE 802.15.4 
 and in the future `ESP32-H4` and `ESP32-H21`). Both platforms support different features and have different limitations:
 - On `nRF52` a maximum of 8 endpoints is supported.
 - `ESP32-H2` seems to work more reliably than `ESP32-C6`. There are reports of `ESP32-C6` boards that work only if placed next 
-to the coordinator. [Here is a list with known good boards.](https://github.com/luar123/zigbee_esphome/discussions/41#discussioncomment-14978980)
+to the coordinator.
 - On `ESP32` Zigbee can be used together with [WiFi](/components/wifi) with some limitations:
   - WiFi station mode + Zigbee end device is working fine.
   - WiFi station mode + Zigbee router leads to an unstable Zigbee network. Still can be used if WiFi is only enabled for short times (e.g. OTA)
@@ -42,12 +42,19 @@ to the coordinator. [Here is a list with known good boards.](https://github.com/
 ## Full Configuration
 
 ```yaml
-# Example configuration entry
+# Example configuration entry on ESP32
+zigbee:
+  id: my_zigbee
+  router: true
+```
+```yaml
+# Example configuration entry on nRF52
 zigbee:
   id: my_zigbee
   on_join:
     then:
       - logger.log: "Joined network"
+  power_source: BATTERY
 ```
 
 ## Configuration variables
@@ -124,7 +131,7 @@ Only on `ESP32`:
 > ZHA sets the minimum reporting interval to 30 seconds for most sensor devices. If you need faster responses set `report` to `force`.
 
 
-### Supported Components
+## Supported Components
 
 The following components are exposed over Zigbee if they have a name and if they are not marked as internal:
 
@@ -151,7 +158,7 @@ Only on `nRF52`:
 ### Sensor
 
 [Sensors](/components/sensor#config-sensor) are implemented as analog input clusters with description, engineering_units,
-and present_value attributes.
+and present_value attributes. Available only on `nRF52` platforms.
 
 #### Additional configuration variables
 
@@ -163,12 +170,13 @@ and present_value attributes.
 ### Switch
 
 [Switches](/components/switch#config-switch) are implemented as binary output clusters with description and present_value attributes.
+Available only on `nRF52` platforms.
 
 
 ### Number
 
 [Numbers](/components/number#config-number) are implemented as analog output clusters with description, engineering_units,
-and present_value attributes.
+and present_value attributes. Available only on `nRF52` platforms.
 
 #### Additional configuration variables
 
