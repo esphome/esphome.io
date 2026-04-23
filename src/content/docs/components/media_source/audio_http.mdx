@@ -32,6 +32,20 @@ media_source:
 To play a file, send a media URL like `https://example.com/audio/alert.mp3` to a media player that
 uses this media source.
 
+## HTTPS and TLS certificates
+
+HTTPS URLs are validated against ESP-IDF's bundled X.509 certificate store (the same
+Mozilla root CA list used by other ESPHome components). By default, ESPHome includes only
+the common-CA subset, which covers the vast majority of public servers; set
+`use_full_certificate_bundle: true` under the [`esp32`](/components/esp32/) component's
+advanced options for the full bundle. Servers using self-signed certificates or private
+CAs will fail to connect.
+
+To allow connections to such servers, add the [`http_request`](/components/http_request/)
+component with `verify_ssl: false`. This disables server certificate verification globally
+for all TLS connections in the build, including the ones made by `audio_http`. Use it
+only on trusted networks.
+
 <span id="config-audio_http_media_source"></span>
 
 ## Configuration variables
