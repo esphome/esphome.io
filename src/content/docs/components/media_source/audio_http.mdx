@@ -12,6 +12,15 @@ Files are played using the `http://` or `https://` URI scheme.
 
 This component only works on ESP32 based chips.
 
+Decoding is provided by the [microDecoder library](https://github.com/esphome-libs/micro-decoder),
+which supports MP3, FLAC, Opus (Ogg-encapsulated), and WAV. To keep firmware size small, MP3,
+FLAC, and Opus decoders are compiled in only when another component in the configuration
+requests them; WAV is always available. A codec is enabled when any of the following is true:
+
+- An [`audio_file`](/components/media_source/audio_file/) media source is configured with a file of that format.
+- A [speaker media player](/components/media_player/speaker/) pipeline's `format` is set to that codec (or `codec_support_enabled: ALL` is used).
+- A [speaker_source media player](/components/media_player/speaker_source/) pipeline's `format` is set to that codec.
+
 ```yaml
 # Example configuration entry
 
