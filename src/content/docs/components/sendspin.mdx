@@ -8,6 +8,10 @@ import APIRef from '@components/APIRef.astro';
 The `sendspin` component adds support for [Sendspin](https://www.sendspin-audio.com),
 a multi-room synchronized audio protocol. The hub manages the connection to a Sendspin server and distributes state updates to any Sendspin child components.
 
+The device uses mDNS to discover Sendspin servers on the network, so mDNS
+traffic must not be blocked on your network. TCP port **8928** must also be
+reachable between the device and the server.
+
 On its own, the hub does not expose any user-facing entities. A Sendspin server can
 discover and connect to the device, and group state updates will be received, but
 audio playback, control, and metadata require the corresponding child components
