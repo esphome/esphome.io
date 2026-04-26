@@ -31,14 +31,14 @@ The IR/RF proxy provides two platform implementations:
 # Example configuration entry
 remote_receiver:
   id: ir_rx
-  pin: 5
+  pin: GPIOXX
 
 remote_transmitter:
   - id: ir_tx
-    pin: 4
+    pin: GPIOXX
     carrier_duty_percent: 50%
   - id: rf_tx
-    pin: 2
+    pin: GPIOXX
     carrier_duty_percent: 100%
 
 # Infrared platform — creates infrared entities
@@ -156,7 +156,7 @@ representing alternating mark (LED on) and space (LED off) periods.
 
 - **Raw timings array**: Alternating mark/space durations in microseconds (just as the
   [remote_transmitter.transmit_raw](/components/remote_transmitter#remote_transmittertransmit_raw-action) action uses)
-- **Carrier frequency** (infrared platform): Optional carrier frequency in Hz (0 = no carrier modulation, typical for RF)
+- **Carrier frequency** (infrared platform): Optional carrier frequency in Hz (0 = no carrier modulation)
 - **Repeat count**: Number of times to transmit the signal (defaults to 1)
 
 For the radio frequency platform, carrier frequency is always set to 0 (no IR carrier modulation) since dedicated RF
@@ -184,10 +184,10 @@ Reception is non-blocking, allowing other listeners to also process signals simu
 
 The IR/RF proxy can work with both infrared and RF hardware:
 
-- **Infrared** (infrared platform): Do not set `frequency` (or set `frequency: 0`, which is the default) and use
+- **Infrared** (`infrared` platform): Do not set `frequency` (or set `frequency: 0`, which is the default) and use
   standard IR LEDs/receivers. For receivers, you can set `receiver_frequency` to declare the demodulation frequency
   of the hardware (for example, `38kHz` for a TSOP38238).
-- **RF** (either platform): Use the radio frequency platform for new RF configurations. Set `frequency` to match
+- **RF** (`radio_frequency` platform): Use the radio frequency platform for RF configurations. Set `frequency` to match
   your RF hardware (for example, `433.92MHz`). The radio frequency platform reports RF-specific metadata
   (supported modulations, frequency range) to API clients.
 
