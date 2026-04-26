@@ -25,7 +25,7 @@ Unlike the [infrared component](/components/infrared), which handles both IR and
 entity type, the radio frequency component is dedicated to RF hardware and exposes RF-specific metadata such
 as carrier frequency range and supported modulation types.
 
-<span id="config-radio-frequency"></span>
+<span id="config-radio_frequency"></span>
 
 ## Base Radio Frequency Configuration
 
@@ -85,7 +85,7 @@ raw timings and transmit them through the radio frequency entity.
 ### Receiving Signals
 
 When a radio frequency entity supports receive capability, it captures raw timing sequences and sends them
-to API clients as events via the shared `InfraredRFReceiveEvent` API message. This enables:
+to API clients as events. This enables:
 
 - Learning RF commands from existing remotes
 - Analyzing unknown protocols
@@ -99,7 +99,7 @@ Each radio frequency entity reports hardware capability metadata to API clients:
 
 - **Frequency range**: The minimum and maximum tunable frequency in Hz. If both values are equal (and
   non-zero), the hardware is fixed-frequency. If both are zero, the range is unspecified.
-- **Supported modulations**: A bitmask of supported modulation types (bit 0 = OOK).
+- **Supported modulations**: The modulation types supported by the hardware (for example, OOK).
 - **Capabilities**: Whether the entity supports transmitting, receiving, or both.
 
 This metadata allows Home Assistant (and other API clients) to automatically discover which RF hardware is
