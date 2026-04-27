@@ -14,14 +14,47 @@ import tasmotaUploadImg from './images/tasmota_upload.png';
 Migrating from previous Tasmota setups is very easy. You just need to have
 ESPHome create a binary for you and then upload that in the Tasmota web interface.
 
-## Incompatible versions
+> [!CAUTION]
+When migrating via OTA on ESP32, from Tasmota v12 or higher (with safeboot partition) it is required to add the
+option `allow_partition_access: true` to your config on the first ESPHome firmware you upload to the device.
+Failing to do so will soft-brick your device by making OTA updates impossible!
 
-WARNING! Migrating via OTA on ESP32, from Tasmota v12 (with boot partition) and up is currently not possible! Trying
-it could soft-brick your device!
+## Writing a configuration
+
+First create a configuration for your device.
+
+Make sure it contains at least the following components: `esp8266` or `esp32`, `esphome`, `logger`, `api`, `ota` and `wifi`. 
+
+For OTA migration of ESP32 devices with Tasmota v12 or higher:
+- Remove all other components to make sure the size of the firmware image is `851968 bytes` or less. This will make the migration to the ESPHome partition table easier without requiring any intermediate steps. Check the size of the image after compiling.
+- Make sure the WiFi credentials are correct if you removed the `captive_portal` component.
+- Make sure to add `allow_partition_access: true` to the ota section of the config:
+
+```yaml
+# ESP32 only
+ota:
+  - platform: esphome
+    allow_partition_access: true
+```
+
+- Check the version of Tasmota on your device, it tells you which type of ESP32 you have. It is usually displayed at the bottom right.
+  - `solo1` -> Single-core ESP32
+  - `tasmota32` -> Dual-core ESP32
+  - `tasmota32xx` -> Different ESP32 variant where `xx` can be for example `c3`, `c6`, `s2`, `s3`. You need to pick the right variant when creating your ESPHome config.
+- If you have a single-core ESP32 device you need to compile ESPHome with single-core support or it will fail to boot.  If your device is single-core or you are not sure, add the following to your config:
+
+```yaml
+esp32:
+  ...
+  framework:
+    type: esp-idf
+    sdkconfig_options:
+      CONFIG_FREERTOS_UNICORE: y
+```
 
 ## Getting the Binary
 
-First create a configuration for your device. Then, generate and download the firmware image:
+Then, generate and download the firmware image:
 
 ### Using the Home Assistant add-on/dashboard
 
@@ -107,6 +140,18 @@ replacing `http://<MY-ESPHOME:6052>/` with the host and port of your ESPHome ins
 with your device configuration file name.
 
 If you need to use the uncompressed image for any reason, just remove `&compressed=1` from the above url.
+
+## Partition table migration via OTA (for ESP32 devices with Tasmota v12 or higher)
+
+After uploading ESPHome to your ESP32 device you need to update the partition table. Regular OTA updates are impossible until this step is completed.
+
+To update the partition table, open the logs to see more detailed information about potential errors. Then run the following command in a command line:
+
+```shell
+esphome upload --partition-table <MY_DEVICE>.yaml
+```
+
+If the update was successful, the ESP will reboot. You can now remove the line `allow_partition_access: true` from your config, add more components and install ESPHome updates via OTA.
 
 ## See Also
 
