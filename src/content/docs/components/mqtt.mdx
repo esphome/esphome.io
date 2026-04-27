@@ -104,6 +104,12 @@ mqtt:
 - **skip_cert_cn_check** (*Optional*, bool): Only on ESP32. Don't verify if the common name in the server
   certificate matches the value of `broker`.
 
+- **transport** (*Optional*, string): Only on ESP32 with the ESP-IDF framework. Underlying transport used to reach
+  the broker. One of `tcp` (default), `ws` (MQTT over plain WebSocket), or `wss` (MQTT over WebSocket Secure / TLS).
+  See [MQTT over WebSocket (ESP32 IDF)](#mqtt-websocket-idf).
+- **ws_path** (*Optional*, string): Only on ESP32 with the ESP-IDF framework. HTTP path used during the WebSocket
+  upgrade handshake when `transport` is `ws` or `wss`. Defaults to `/mqtt`.
+
 - **idf_send_async** (*Optional*, bool): Only on ESP32. If true publishing the message happens from a separate mqtt task.
   The client only enqueues the message. Defaults to `false`.
   The advantage of asynchronous publishing is that it doesn't block the esphome main thread for potentially tens of seconds.
@@ -413,6 +419,77 @@ mqtt:
     LdUdRudafMu5T5Xma182OC0/u/xRlEm+tvKGGmfFcN0piqVl8OrSPBgIlb+1IKJE
     m/XriWr/Cq4h/JfB7NTsezVslgkBaoU=
     -----END CERTIFICATE-----
+```
+
+<span id="mqtt-websocket-idf"></span>
+
+## MQTT over WebSocket (ESP32 IDF)
+
+On ESP32 devices built with the ESP-IDF framework, ESPHome can connect to the broker using MQTT over WebSocket
+([RFC 6455](https://datatracker.ietf.org/doc/html/rfc6455), see also section 6 of the
+[MQTT v3.1.1](https://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc398718128) and
+[MQTT v5.0](https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901263) specifications).
+
+This is useful when:
+
+- The broker is exposed only on an HTTP/HTTPS endpoint (for example behind a reverse proxy, a Cloudflare Tunnel,
+  or any service that does not allow raw TCP).
+- The device sits behind CGNAT or a restrictive firewall that allows outbound HTTP(S) but blocks the standard
+  MQTT ports.
+- You want to share a single TLS certificate / hostname between Home Assistant's MQTT broker and your other
+  HTTP services.
+
+Two transports are supported:
+
+- `transport: ws` — plain MQTT over WebSocket (port typically `9001`).
+- `transport: wss` — MQTT over WebSocket Secure, i.e. WebSocket over TLS (port typically `8883` or `443`).
+  When using `wss` you can additionally provide `certificate_authority`, `client_certificate`,
+  `client_certificate_key`, and `skip_cert_cn_check` exactly as you would for native TLS — those settings are
+  applied to the underlying TLS handshake.
+
+The HTTP path used by the WebSocket handshake is configured via `ws_path` and defaults to `/mqtt`. Most brokers
+use `/mqtt`; check your broker's documentation if connections fail with a 404 during the upgrade.
+
+> [!NOTE]
+> WebSocket transport is **only available on ESP32 with `framework: type: esp-idf`**. The Arduino framework's
+> MQTT library does not implement MQTT over WebSocket. Configuration validation will reject `ws` / `wss` on
+> other platforms.
+
+### Example: plain WebSocket against a local Mosquitto broker
+
+Enable the websockets listener in `/etc/mosquitto/conf.d/default.conf`:
+
+```text
+listener 9001
+protocol websockets
+```
+
+Then in your ESPHome configuration:
+
+```yaml
+esp32:
+  framework:
+    type: esp-idf
+
+mqtt:
+  broker: 192.168.1.10
+  port: 9001
+  transport: ws
+  ws_path: /mqtt
+  username: !secret mqtt_user
+  password: !secret mqtt_password
+```
+
+### Example: MQTT over WSS through a Cloudflare Tunnel
+
+```yaml
+mqtt:
+  broker: mqtt-ws.example.com
+  port: 443
+  transport: wss
+  ws_path: /mqtt
+  username: !secret mqtt_user
+  password: !secret mqtt_password
 ```
 
 <span id="config-mqtt-component"></span>
