@@ -132,6 +132,12 @@ wifi:
   Possible values are `AUTO` (use both 2.4 GHz and 5 GHz), `2.4GHZ` (2.4 GHz only), and `5GHZ` (5 GHz only).
   If not specified, it defaults to `AUTO`.
 
+- **phy_mode** (*Optional*, string): Only on `esp8266`. Pins the radio to a specific 802.11 PHY mode.
+  Possible values are `11B`, `11G`, and `11N`. If not specified, the default SDK behavior (auto-select)
+  is used. Some routers misbehave with ESP8266 802.11n associations (for example, repeated
+  disassociations or `lwIP error -16` while applying the hostname); setting `phy_mode: 11G` is a known
+  workaround for those cases.
+
 - **post_connect_roaming** (*Optional*, bool): Enable basic post-connect
   roaming for stationary devices. After connecting to a non-hidden network,
   the device will periodically check for better access points with the same
