@@ -84,12 +84,17 @@ esphome upload d.yaml
 
 ### Example Configuration
 
- Without a reset pin (uses software reset):                                                                                                                                                 
+Without a reset pin (uses software reset):
 
 ```yaml
-nrf52
+nrf52:
   dfu: true
 ```
+
+> [!NOTE]
+> The pinless path issues a software reset and triggers the bootloader via the
+> retained `GPREGRET` register. It is less reliable than the dedicated reset
+> pin and the upload may need to be retried.
 
 With a dedicated reset pin:
 
