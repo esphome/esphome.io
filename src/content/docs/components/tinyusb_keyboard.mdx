@@ -1,0 +1,120 @@
+---
+description: "Instructions for extending TinyUSB with keyboard functionality within ESPHome"
+title: "TinyUSB Keyboard"
+---
+
+
+The `tinyusb_keyboard` component expands the existing TinyUSB functionality with basic support for HID.
+
+[TinyUSB](/components/tinyusb/) is required to use the component.
+
+It is currently supported on the following ESP32 microcontroller variants:
+
+- ESP32-P4
+- ESP32-S2
+- ESP32-S3
+
+It supports pressing and releasing both regular keys and media keys using the following actions:
+
+- `tinyusb_keyboard.press`
+- `tinyusb_keyboard.release`
+- `tinyusb_keyboard.media_press`
+- `tinyusb_keyboard.media_release`
+
+```yaml
+# Example configuration entry
+tinyusb:
+
+tinyusb_keyboard:
+  id: kb
+
+binary_sensor:
+  - platform: gpio
+    pin: 13
+    name: "Shift + H Button"
+    on_press:
+      - tinyusb_keyboard.press:
+          id: kb
+          key: "h"
+          modifiers: 0x02  # Left Shift
+    on_release:
+      - tinyusb_keyboard.release:
+          id: kb
+
+  - platform: gpio
+    pin: 14
+    name: "Volume Up Button"
+    on_press:
+      - tinyusb_keyboard.media_press:
+          id: kb
+          usage: 0xE9  # Volume Up
+    on_release:
+      - tinyusb_keyboard.media_release:
+          id: kb
+```
+
+## Configuration variables
+
+- **id** (*Optional*, [ID](/guides/configuration-types#config-id)): Manually specify the ID for this component.
+
+## Actions
+
+### `tinyusb_keyboard.press`
+
+This is an [Action](/automations/actions#all-actions) for pressing a specific key.
+
+```yaml
+- tinyusb_keyboard.press:
+    id: kb
+    key: "h"
+    modifiers: 0x02  # Left Shift
+```
+
+Configuration variables:
+
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the tinyusb_keyboard instance.
+- **key** (**Required**, string): The key to press.
+- **modifiers** (*Optional*, uint8): An optional modifier byte.
+
+
+### `tinyusb_keyboard.release`
+
+This is an [Action](/automations/actions#all-actions) for releasing all non media keys.
+
+```yaml
+- tinyusb_keyboard.release:
+    id: kb
+```
+
+Configuration variables:
+
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the tinyusb_keyboard instance.
+
+
+### `tinyusb_keyboard.media_press`
+
+This is an [Action](/automations/actions#all-actions) for pressing a media keys
+
+```yaml
+- tinyusb_keyboard.release:
+    id: kb
+    usage: 0xE9
+```
+
+Configuration variables:
+
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the tinyusb_keyboard instance.
+- **usage** (**Required**, uint16): The media key to press represented by a two-byte usage.
+
+### `tinyusb_keyboard.media_release`
+
+This is an [Action](/automations/actions#all-actions) for releasing all media keys.
+
+```yaml
+- tinyusb_keyboard.media_release:
+    id: kb
+```
+
+Configuration variables:
+
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the tinyusb_keyboard instance.
