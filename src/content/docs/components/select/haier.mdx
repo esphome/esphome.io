@@ -1,0 +1,44 @@
+---
+title: Haier Climate Select
+description: Instructions for setting up additional select components for Haier climate devices.
+---
+
+Select components to support vertical and horizontal airflow direction settings for Haier AC.
+
+## Vertical airflow select
+
+```yaml
+select:
+  - platform: haier
+    haier_id: ${device_id}
+    vertical_airflow:
+      name: ${device_name} airflow vertical
+```
+
+## Horizontal airflow select
+
+```yaml
+select:
+  - platform: haier
+    haier_id: ${device_id}
+    horizontal_airflow:
+      name: ${device_name} airflow horizontal
+```
+
+Configuration variables
+
+- **haier_id** (**Required**): The ID of the Haier climate component.
+- **horizontal_airflow** (*Optional*):  
+  (supported only by hOn) Select component to control horizontal airflow mode (if supported by AC).  
+  This select has no state while horizontal swing is enabled.  
+  All options from `Select`.
+
+- **vertical_airflow** (*Optional*):  
+  (supported only by hOn) Select component to control vertical airflow mode (if supported by AC).  
+  This select has no state while vertical swing is enabled.  
+  All options from `Select`.
+
+## See Also
+
+- [Haier Climate](/components/climate/haier)
+
