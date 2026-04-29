@@ -85,7 +85,7 @@ If OTA is already enabled without a password, simply add a `password:` line to t
   - Build a new image locally.
   - Execute the OTA update directly via the ESP web server.
 
-## Updating the partition table
+## Updating the partition table on ESP32
 
 On the ESP32 it is possible to modify the partition table with an OTA update. This feature can be used to update devices that can't be flashed via serial and have an old partition table with a small NVS partition. It can also be used to convert devices running Tasmota to ESPHome. To allow changes to the partition table, the option `allow_partition_access: true` can be added to the configuration.
 
@@ -112,7 +112,7 @@ esphome upload --partition-table --file partitions.bin name-of-your-config.yaml
 ```
 
 > [!CAUTION]
-> When [converting a Tasmota device to ESPHome](/guides/migrate_sonoff_tasmota), it is required to add `allow_partition_access: true` on the first ESPHome firmware you upload to the device. Regular OTA updates will not work until the partition table update is completed.
+> When [converting a Tasmota ESP32 device to ESPHome](/guides/migrate_sonoff_tasmota), it is required to add `allow_partition_access: true` on the first ESPHome firmware you upload to the device. Regular OTA updates will not work until the partition table update is completed.
 
 ## See Also
 
