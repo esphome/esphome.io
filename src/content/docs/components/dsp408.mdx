@@ -1,0 +1,274 @@
+---
+description: "Instructions for controlling a Dayton Audio DSP-408 over USB host on ESPHome"
+title: "Dayton Audio DSP-408"
+---
+import APIRef from '@components/APIRef.astro';
+
+
+This component allows an ESP32-S2, S3, or P4 to drive a USB-attached
+**Dayton Audio DSP-408** 4-channel DSP amplifier as a native Home
+Assistant integration. The ESP32 acts as a USB host, claims the DSP-408's
+HID interface, and exposes its full configuration surface (master volume,
+per-channel volume / mute / polar / delay / crossover / EQ / routing /
+preset name / channel name) as standard ESPHome entities.
+
+Built on top of the [USB Host](/components/usb_host/) component.
+
+```yaml
+# Example minimal configuration entry
+usb_host:
+
+dsp408:
+  id: my_dsp
+
+text_sensor:
+  - platform: dsp408
+    dsp408_id: my_dsp
+    kind: MODEL
+    name: "DSP-408 Model"
+
+number:
+  - platform: dsp408
+    dsp408_id: my_dsp
+    kind: MASTER_VOLUME
+    name: "Master Volume"
+
+switch:
+  - platform: dsp408
+    dsp408_id: my_dsp
+    kind: MASTER_MUTE
+    name: "Master Mute"
+```
+
+## Hardware
+
+- **ESP32-S2, S3, or P4** with the native USB peripheral exposed (DevKitC-1,
+  ESP32-S3-Box, custom board). On the S3/S2 the USB pins are GPIO 19
+  (D-) and GPIO 20 (D+) — these are dedicated and not remappable.
+- **Dayton Audio DSP-408** (VID `0x0483`, PID `0x5750`) connected to the
+  ESP32's USB-OTG port. The DSP-408 is bus-powered, so the host port
+  must supply 5 V; a stock DevKitC-1 does **not** supply 5 V on the OTG
+  jack by default — wire VBUS externally or use a powered USB-A breakout.
+- **Console**: the ESP32-S3 has two USB peripherals sharing the same
+  internal PHY. ESPHome's USB host stack needs the PHY in host mode,
+  which conflicts with the boot-ROM USB-CDC console. Pin the console to
+  UART0 via the sdkconfig options shown below.
+
+## Component configuration
+
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): An ID to use
+  for this component.
+- **vid** (*Optional*, int): USB vendor ID. Defaults to `0x0483`.
+- **pid** (*Optional*, int): USB product ID. Defaults to `0x5750`.
+
+## Sub-platforms
+
+Each entity attaches to a parent `dsp408` instance via `dsp408_id:`.
+
+### Text sensor
+
+```yaml
+text_sensor:
+  - platform: dsp408
+    dsp408_id: my_dsp
+    kind: MODEL
+    name: "DSP-408 Model"
+```
+
+- **kind** (**Required**): One of:
+  - `MODEL` — firmware identity string returned by `GET_INFO`
+    (e.g. `MYDW-AV1.06`).
+
+### Number
+
+```yaml
+number:
+  - platform: dsp408
+    dsp408_id: my_dsp
+    kind: MASTER_VOLUME
+    name: "Master Volume"
+  - platform: dsp408
+    dsp408_id: my_dsp
+    kind: CHANNEL_VOLUME
+    channel: 0
+    name: "Ch1 Volume"
+```
+
+- **kind** (**Required**): One of `MASTER_VOLUME`, `CHANNEL_VOLUME`,
+  `CHANNEL_DELAY`, `CHANNEL_HPF_FREQ`, `CHANNEL_LPF_FREQ`,
+  `CHANNEL_COMP_ATTACK`, `CHANNEL_COMP_RELEASE`, `CHANNEL_COMP_THRESHOLD`.
+- **channel** (**Required for per-channel kinds**, int 0–7): Output channel
+  index. Must NOT be set for `MASTER_VOLUME`.
+
+| Kind                       | Range / step    | Notes                                                       |
+| -------------------------- | --------------- | ----------------------------------------------------------- |
+| `MASTER_VOLUME`            | -60..+6 dB / 1  | Master output level.                                        |
+| `CHANNEL_VOLUME`           | -60..0 dB / 0.5 | Per-channel level. Wire format is 0.1 dB native.            |
+| `CHANNEL_DELAY`            | 0..359 samples  | ≈ 8.143 ms @ 44.1 kHz.                                      |
+| `CHANNEL_HPF_FREQ`         | 10..20000 Hz    | High-pass cutoff.                                           |
+| `CHANNEL_LPF_FREQ`         | 100..22000 Hz   | Low-pass cutoff.                                            |
+| `CHANNEL_COMP_ATTACK`      | 0..2000 ms      | Compressor attack (firmware-inert in stock fw v1.06).       |
+| `CHANNEL_COMP_RELEASE`     | 0..10000 ms     | Compressor release (firmware-inert in stock fw v1.06).      |
+| `CHANNEL_COMP_THRESHOLD`   | 0..255          | Compressor threshold (firmware-inert in stock fw v1.06).    |
+
+### Switch
+
+```yaml
+switch:
+  - platform: dsp408
+    dsp408_id: my_dsp
+    kind: MASTER_MUTE
+    name: "Master Mute"
+  - platform: dsp408
+    dsp408_id: my_dsp
+    kind: CHANNEL_POLAR
+    channel: 0
+    name: "Ch1 Polar"
+```
+
+- **kind** (**Required**): One of `MASTER_MUTE`, `CHANNEL_MUTE`,
+  `CHANNEL_POLAR`, `INPUT_POLAR`.
+- **channel** (**Required for per-channel kinds**, int 0–7): Channel index
+  (output for `CHANNEL_*`, input for `INPUT_POLAR`). Must NOT be set for
+  `MASTER_MUTE`.
+
+### Select
+
+```yaml
+select:
+  - platform: dsp408
+    dsp408_id: my_dsp
+    kind: CHANNEL_HPF_FILTER
+    channel: 0
+    name: "Ch1 HPF Type"
+  - platform: dsp408
+    dsp408_id: my_dsp
+    kind: CHANNEL_HPF_SLOPE
+    channel: 0
+    name: "Ch1 HPF Slope"
+```
+
+- **kind** (**Required**): One of `CHANNEL_HPF_FILTER`, `CHANNEL_HPF_SLOPE`,
+  `CHANNEL_LPF_FILTER`, `CHANNEL_LPF_SLOPE`.
+- **channel** (**Required**, int 0–7): Output channel index.
+
+Filter type options: `Butterworth`, `Bessel`, `Linkwitz-Riley`.
+
+Slope options: `6 dB/oct`, `12 dB/oct`, `18 dB/oct`, `24 dB/oct`,
+`30 dB/oct`, `36 dB/oct`, `42 dB/oct`, `48 dB/oct`, `Off`.
+
+### Text
+
+```yaml
+text:
+  - platform: dsp408
+    dsp408_id: my_dsp
+    kind: PRESET_NAME
+    name: "Preset Name"
+    mode: text
+  - platform: dsp408
+    dsp408_id: my_dsp
+    kind: CHANNEL_NAME
+    channel: 0
+    name: "Ch1 Name"
+    mode: text
+```
+
+- **kind** (**Required**): One of `PRESET_NAME` (15-byte ASCII, persisted
+  in device flash) or `CHANNEL_NAME` (8-byte ASCII).
+- **channel** (**Required for `CHANNEL_NAME`**, int 0–7): Output channel index.
+
+## Service actions
+
+EQ band writes (10 bands × 8 channels) and the routing matrix (4
+inputs × 8 outputs) are too numerous to expose as entities, so they
+are written via user-defined `api: actions:` blocks calling lambdas
+on the parent component.
+
+```yaml
+api:
+  encryption:
+    key: !secret api_encryption_key
+  actions:
+    - action: set_eq_band
+      variables:
+        channel: int
+        band: int
+        freq_hz: int
+        gain_db: float
+        q: float
+      then:
+        - lambda: |-
+            id(my_dsp).request_eq_band(
+                static_cast<uint8_t>(channel),
+                static_cast<uint8_t>(band),
+                static_cast<uint16_t>(freq_hz),
+                gain_db, q);
+    - action: set_routing
+      variables:
+        channel: int
+        input_idx: int
+        enabled: bool
+      then:
+        - lambda: |-
+            id(my_dsp).request_routing(
+                static_cast<uint8_t>(channel),
+                static_cast<uint8_t>(input_idx),
+                enabled);
+    - action: save_channel_snapshot
+      variables:
+        channel: int
+      then:
+        - lambda: |-
+            id(my_dsp).request_save_channel_snapshot(
+                static_cast<uint8_t>(channel));
+```
+
+`request_eq_band(channel, band, freq_hz, gain_db, q)` writes a single
+parametric EQ band. `band` is 0–9 (10 bands per channel), `gain_db` is in
+the -60..+60 dB envelope, `q` is converted to the firmware's
+`b4 ≈ 256 / Q` byte encoding.
+
+`request_routing(channel, input_idx, enabled)` toggles a single mixer
+cell. `channel` is 0–7 (output), `input_idx` is 0–7 (input).
+
+`request_save_channel_snapshot(channel)` does a read-modify-write of the
+channel's full 296-byte state blob via a multi-frame USB write —
+preserves the EQ region from a fresh device read while overlaying the
+cached mute / volume / polar / delay / crossover / mixer / compressor /
+name fields. Used to commit changes to the device's flash.
+
+## ESP-IDF sdkconfig
+
+The ESP32-S3 / S2 share the internal USB PHY between USB-OTG (host) and
+USB-Serial-JTAG (device). The boot-ROM USB-CDC console grabs the PHY in
+device mode by default; pin the console to UART0 instead so USB host
+mode is available:
+
+```yaml
+esp32:
+  board: esp32-s3-devkitc-1
+  variant: esp32s3
+  framework:
+    type: esp-idf
+    sdkconfig_options:
+      CONFIG_ESP_CONSOLE_UART_DEFAULT: y
+      CONFIG_ESP_CONSOLE_USB_SERIAL_JTAG: n
+      CONFIG_ESP_CONSOLE_USB_CDC: n
+```
+
+After the first flash, OTA over WiFi works fine; logs go out UART0 (the
+on-board CP2102/CH340 bridge on the DevKitC-1's other USB-C jack).
+
+## Provenance
+
+The wire-format port is traceable to
+[**dsp408-py**](https://github.com/malaiwah/dsp408-py) — same 64-byte
+HID frame layout, XOR checksum, command codes, blob offsets, field
+semantics. dsp408-py did the protocol reverse-engineering against
+Windows GUI captures.
+
+## See Also
+
+- [USB Host Interface](/components/usb_host/)
+- <APIRef text="dsp408.h" path="dsp408/dsp408.h" />
