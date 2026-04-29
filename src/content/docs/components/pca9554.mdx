@@ -90,6 +90,12 @@ binary_sensor:
 - **pin_count** (*Optional*, int): The number of bits implemented in the expander. If you set the device type above,
   do not set this variable.
 
+- **interrupt_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The pin connected to the
+  INT output of the PCA9554/PCA9535. When configured, the component becomes interrupt-driven instead of
+  polling — it only reads the chip when a pin actually changes state, significantly reducing I²C bus traffic
+  and CPU usage. The INT pin is active-low and open-drain, so an external or internal pull-up resistor is
+  required. Must be an internal GPIO pin (not another expander pin).
+
 > [!NOTE]
 > If you define the device using pin_count, you **must** set pin_count to the total number of pins on the device.
 
