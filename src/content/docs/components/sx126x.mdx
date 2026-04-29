@@ -178,12 +178,12 @@ on_...:
 ```
 
 By default the radio enters warm sleep — config registers are retained so that
-on wake it is ready for `set_mode_rx` / `set_mode_tx` again. For battery-powered
-nodes that pair the radio with ESP32 deep sleep, `cold: true` switches to cold
-sleep (~0.6&nbsp;µA, vs ~600&nbsp;µA warm). Cold sleep does not retain config,
-so any wake path must reset the radio and call `configure()` again — the natural
-way to do this is to let the ESP32 reboot from deep sleep, which re-runs the
-component's `setup()`.
+on wake it is ready for `sx126x.set_mode_rx` / `sx126x.set_mode_tx` again. For
+battery-powered nodes that pair the radio with ESP32 deep sleep, `cold: true`
+switches to cold sleep (~0.6&nbsp;µA, vs ~600&nbsp;µA warm). Cold sleep does
+not retain config, so the radio must be reinitialized on wake. With ESP32
+deep sleep this happens automatically — the device reboots on wake and the
+component reinitializes the radio during startup.
 
 - **cold** (*Optional*, [templatable](/automations/templates), boolean): If true,
   enter cold sleep instead of warm sleep. Defaults to `false`.
