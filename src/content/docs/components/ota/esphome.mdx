@@ -96,16 +96,23 @@ ota:
 ```
 
 > [!CAUTION]
-> There is a risk of bricking the device if the power is interrupted or the ESP is reset during a partition table update, requiring serial flashing to repair it. Make sure you have a stable power supply.
+> There is a risk of bricking the device if the power is interrupted or the ESP is reset during a partition table update, requiring serial flashing to repair it. Make sure you have a stable power supply. The update is usually completed within less than 15 seconds after running the `esphome upload` command.
 
-To perform the partition table update you can run the following command:
+Open the ESPHome logs for detailed information about potential errors. To perform the partition table update you can run the following command:
 
 ```
 esphome upload --partition-table name-of-your-config.yaml
 ```
 
-> [!IMPORTANT]
-> When converting a Tasmota device to ESPHome, it is required to add `allow_partition_access: true` on the first ESPHome firmware you upload to the device. Regular OTA updates will not work until the partition table update is completed.
+To upload a custom partition table from a CSV file, you can run the commands below. `gen_esp32part.py` is part of ESP-IDF and can be found [here](https://github.com/espressif/esp-idf/blob/master/components/partition_table/gen_esp32part.py).
+
+```
+python3 gen_esp32part.py partitions.csv partitions.bin
+esphome upload --partition-table --file partitions.bin name-of-your-config.yaml
+```
+
+> [!CAUTION]
+> When [converting a Tasmota device to ESPHome](/guides/migrate_sonoff_tasmota), it is required to add `allow_partition_access: true` on the first ESPHome firmware you upload to the device. Regular OTA updates will not work until the partition table update is completed.
 
 ## See Also
 
