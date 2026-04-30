@@ -68,6 +68,30 @@ remote_transmitter:
 - **eot_level** (*Optional*, boolean): Overrides the default end of transmit level. Defaults to `false` unless `pin`
   is set to inverted or open-drain.
 
+## Radio Frequency
+
+The `remote_transmitter` component can act as a backend for the `radio_frequency` component, allowing you to use it in Home Assistant to control RF devices.
+
+When using an external RF module like the [CC1101](/components/cc1101/), ensure you configure its component separately and use the `on_transmit` and `on_complete` automations to switch the transceiver between transmission and reception modes.
+
+```yaml
+remote_transmitter:
+  id: cc1101_tx_hub
+  pin: GPIOXX # Must match GDO0
+  carrier_duty_percent: 100%
+  on_transmit:
+    then:
+      - cc1101.begin_tx
+  on_complete:
+    then:
+      - cc1101.begin_rx
+
+radio_frequency:
+  - platform: remote_transmitter
+    transmitter_id: cc1101_tx_hub
+    name: "CC1101 RF Transmitter"
+```
+
 ## Automations
 
 - **on_transmit** (*Optional*, [Automation](/automations)): An automation to perform before
