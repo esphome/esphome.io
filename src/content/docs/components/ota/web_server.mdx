@@ -131,7 +131,14 @@ esphome run device.yaml --ota-platform web_server
 ```
 
 If a `web_server` `auth` block is configured, the CLI sends those credentials as HTTP
-Basic auth automatically; no separate password is required.
+Basic auth automatically. The `--ota-platform web_server` path does **not** use the
+[ESPHome OTA password](/components/ota/esphome/) at all; it only uses the `web_server`
+`auth` credentials.
+
+> [!WARNING]
+> HTTP Basic auth credentials are sent in cleartext on the local network, the same as
+> the web UI upload flow. Treat the `web_server` `auth` username/password as a
+> "local-network-only" secret.
 
 ## See Also
 
