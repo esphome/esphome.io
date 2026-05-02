@@ -107,6 +107,32 @@ ota:
 > - The web interface may become unresponsive during the update process - this is normal
 > - Do not power off the device during an update
 
+## Using the Command Line
+
+`esphome upload` and `esphome run` can upload firmware via the `web_server` OTA platform too.
+This is useful when:
+
+- The device only has `platform: web_server` configured under `ota:` (no native API OTA).
+- You no longer have the [ESPHome OTA password](/components/ota/esphome/#removing-a-password)
+  but still know the `web_server` `auth` credentials.
+- The native API OTA port is blocked by a firewall while HTTP (port 80) is reachable.
+
+When `platform: web_server` is the only OTA platform configured, the CLI selects it
+automatically. When both `platform: esphome` and `platform: web_server` are configured,
+the CLI prefers the native API OTA path by default; pass `--ota-platform web_server`
+to force the HTTP path:
+
+```bash
+# Auto-select web_server OTA when it's the only platform configured:
+esphome upload device.yaml
+
+# Force the web_server OTA path even if `platform: esphome` is also configured:
+esphome run device.yaml --ota-platform web_server
+```
+
+If a `web_server` `auth` block is configured, the CLI sends those credentials as HTTP
+Basic auth automatically; no separate password is required.
+
 ## See Also
 
 - [Over-the-Air Updates](/components/ota/)
