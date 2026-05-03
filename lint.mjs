@@ -39,7 +39,7 @@ const fileTypes = [
   '.cfg', '.css', '.gif', '.h', '.html', '.ico', '.jpg', '.js', '.json',
   '.md', '.mdx', '.png', '.py', '.svg', '.toml', '.txt', '.webmanifest',
   '.xml', '.yaml', '.yml', '.mjs', '.ts', '.tsx', '.astro', '.sh', '.webp',
-  '' // empty string for files without extension (like .gitignore)
+  '.bin', '' // empty string for files without extension (like .gitignore)
 ];
 const imageTypes = ['.webp', '.jpg', '.ico', '.png', '.svg', '.gif'];
 
