@@ -13,7 +13,7 @@ The component does not transmit data to the meter. The meter periodically broadc
 (and decrypts if necessary), and updates the configured sensors as data arrives.
 
 > [!NOTE]
-> An adapter (like an `M-Bus to UART module`) is required to connect the EspHome board to the smart meter.
+> An adapter (like an M-Bus to UART module) is required to connect the EspHome board to the smart meter.
 >
 > For **encrypted meters**, you must request a 32-character hexadecimal **decryption key** from your energy provider.
 
@@ -64,7 +64,7 @@ This allows you to decode nearly any property your meter emits.
 
 - **dlms_meter_id** (*Optional*, [ID](/guides/configuration-types#config-id)): Manually specify the ID of the
 `dlms_meter` hub if you have multiple.
-- **obis_code** (**Required**, string): The OBIS code of the value you want to read. The code supports flexible formats
+- **obis_code** (**Required for dynamic mapping**, string): The OBIS code of the value you want to read. The code supports flexible formats
 like `1-0:32.7.0` or `1.0.32.7.0.255`.
 
 When defining your sensors, it is recommended to include standard ESPHome sensor properties such as
@@ -110,7 +110,8 @@ To prevent your console from being flooded with verbose messages from every comp
 while the `logs` mapping manually sets the specific `dlms_meter` tag to remain at `VERBOSE`.
 
 > [!WARNING]
-> Increasing the log level severity can impact the performance of your ESP application and increase memory size.
+> Increasing logging verbosity, for example by using `VERBOSE` or `VERY_VERBOSE`,
+> can impact the performance of your ESP application and increase memory size.
 > Always **revert to default log levels** for daily use.
 
 > [!TIP]
@@ -196,19 +197,26 @@ properties:
 
 #### Built-in patterns
 
-The `dlms_meter` component loads several built-in patterns by default. Your custom patterns will be evaluated alongside
-these based on their configured `priority`.
+The `dlms_meter` component loads several built-in patterns by default. Built-in patterns start at priority `10`.
+Your custom patterns will be evaluated alongside these based on their configured `priority`.
 
-| Name  | Priority | Typical use                               |
-|-------|---------:|-------------------------------------------|
-| `T1`  |       10 | class ID, tagged OBIS, scaler, value      |
-| `T2`  |       20 | tagged OBIS, value, scaler-unit structure |
-| `T3`  |       30 | value first, class ID, scaler-unit, OBIS  |
-| `ADV` |       40 | untagged ZPA/Aidon-style layouts          |
+| Name                                  | Priority | Typical use                               |
+|---------------------------------------|---------:|-------------------------------------------|
+| `classId-taggedObis-scaler-value`     |       10 | class ID, tagged OBIS, scaler, value      |
+| `taggedObis-value-scalerUnit`         |       20 | tagged OBIS, value, scaler-unit structure |
+| `value-classId-scalerUnit-taggedObis` |       30 | value first, class ID, scaler-unit, OBIS  |
+| `zpaAidon-untaggedLayout`             |       40 | untagged ZPA/Aidon-style layouts          |
+| `structuredObis-value-scalerUnit`     |       50 | OBIS, value, scaler-unit structure        |
+| `structuredObis-value`                |       60 | OBIS and value structure                  |
+| `flatObis-valuePair`                  |       70 | flat OBIS + value pairs                   |
+| `firstElement-dateTime`               |       80 | first-element date-time structure         |
+| `swappedTagObis-value-scalerUnit`     |       90 | swapped-tag OBIS, value, scaler-unit      |
 
 #### Common custom pattern examples
 
 Here are some common structures you might encounter on less standard meters:
+> [!NOTE]
+> Many of these are now covered by default built-ins, but can be customized further
 
 ```yaml
 dlms_meter:
