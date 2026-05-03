@@ -274,51 +274,18 @@ you generally only need to provide the UART pins and your desired OBIS codes.
 
 We have explicitly tested and confirmed native support for standard meters including (but not limited to):
 
-**Sagemcom XT211**, **Energomera**, and **Kaifa MA304H3E**.
+**Sagemcom XT211**, **Energomera**, **Kaifa MA304H3E**, **Salzburg Netz**, **Iskra 550**, and **Norway HAN (Aidon 1-phase and 3-phase)**.
 
 ### Specific meter configurations
 Some manufacturers implement the DLMS standard using non-standard object structuring or framing.
 Below are the tested configuration parameters required for these specific meters:
 
-**Salzburg Netz**
-```yaml
-dlms_meter:
-  # ...
-  custom_patterns:
-    - pattern: "TO, TDTM"
-    - pattern: "S(TO, TV)"
-```
-
-**Iskra 550**
-```yaml
-dlms_meter:
-  # ...
-  custom_patterns:
-    - pattern: "S(TO, TV)"
-```
-
-**Norway HAN (Aidon 1-phase and 3-phase)**
-```yaml
-dlms_meter:
-  # ...
-  custom_patterns:
-    - pattern: "F, S(TO, TDTM)"
-      name: "DateTime"
-    - pattern: "S(TO, TV, TSU)"
-      name: "Obis-Value-Scaler-Unit"
-    - pattern: "S(TO, TV)"
-```
-
 **Landis+Gyr ZMF100**
-*: This specific meter sends invalid Frame Check Sequences (FCS) and requires skipping the CRC check.*
+*: This specific meter sends invalid Frame Check Sequences (FCS) and requires skipping the CRC check. (Custom parsing patterns are natively supported)*
 ```yaml
 dlms_meter:
   # ...
   skip_crc: true
-  custom_patterns:
-    - pattern: "S(TO, TDTM)"
-    - pattern: "S(TO, TV)"
-    - pattern: "TOW, TV, TSU"
 ```
 
 **Landis+Gyr E450**
@@ -330,8 +297,6 @@ dlms_meter:
   custom_patterns:
     - pattern: "F, TDTM"
       name: "DateTime"
-    - pattern: "TO, TV"
-      name: "Obis-Value Pair"
 ```
 
 **Kamstrup Omnipower**
@@ -344,8 +309,6 @@ dlms_meter:
   custom_patterns:
     - pattern: "F, TSTR"
       name: "Obis List Ver"
-    - pattern: "TO, TV"
-      name: "Code-Value Pair"
 ```
 
 **Netz NOE P1 (M-Bus)**
@@ -358,8 +321,6 @@ dlms_meter:
     - pattern: "L, TSTR"
       name: "MeterID"
       default_obis: "0.0.96.1.0.255"
-    - pattern: "S(TO, TV, TSU)"
-      name: "Obis-Value-Scaler-Unit"
 ```
 
 *(Additional instructions and specific `custom_patterns` for meters from manufacturers can be added here
