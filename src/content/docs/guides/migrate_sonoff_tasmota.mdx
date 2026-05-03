@@ -25,7 +25,7 @@ First create a configuration for your device.
 
 ### ESP32 devices
 
-Check the version of Tasmota on your device, it tells you which type of ESP32 you have. It is usually displayed at the bottom right of the Tasmota web interface.
+Check the Tasmota image variant on your device, as it tells you which type of ESP32 you have. It is usually displayed at the bottom right of the Tasmota web interface.
   - `solo1`: Single-core ESP32
   - `tasmota32`: Dual-core ESP32
   - `tasmota32xx`: Different ESP32 variant where `xx` can be for example `c3`, `c6`, `s2`, `s3`. You need to pick the right variant when creating your ESPHome config.
@@ -41,7 +41,7 @@ esp32:
       CONFIG_FREERTOS_UNICORE: y
 ```
 
-**Important**: Make sure to add `allow_partition_access: true` to the ota section of the config:
+**Important**: When migrating from Tasmota v12 or higher, make sure to add `allow_partition_access: true` to the ota section of the config:
 
 ```yaml
 ota:
@@ -140,7 +140,7 @@ If you need to use the uncompressed image for any reason, just remove `&compress
 
 ## ESP32 Partition table migration
 
-After uploading ESPHome to your ESP32 device you need to update the partition table. Regular OTA updates are impossible until this step is completed.
+If you migrated an ESP32 device from Tasmota v12 or later using the safeboot-based layout, you need to update the partition table after uploading ESPHome. Regular OTA updates are impossible until this step is completed. Older or non-safeboot Tasmota layouts may not require this step.
 
 > [!CAUTION]
 > There is a risk of bricking the device if the power is interrupted or the ESP is reset during a partition table update, requiring serial flashing to repair it. Make sure you have a stable power supply. The update is usually completed within less than 15 seconds after running the `esphome upload` command.
