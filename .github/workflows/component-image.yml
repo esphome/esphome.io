@@ -14,11 +14,12 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       name: ${{ steps.get_component.outputs.name }}
+      name_lower: ${{ steps.get_component.outputs.name_lower }}
       comment_id: ${{ steps.create-comment.outputs.result }}
     steps:
       - name: Comment
         id: create-comment
-        uses: actions/github-script@v7.0.1
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         with:
           script: |
             const result = await github.rest.issues.createComment({
@@ -31,10 +32,20 @@ jobs:
 
       - name: Get Component name
         id: get_component
-        run: |-
-          comment="${{ github.event.comment.body }}"
-          component=$(echo $comment | sed -n 's/^@esphomebot generate image //p')
-          echo "name=$component" >> $GITHUB_OUTPUT
+        env:
+          COMMENT_BODY: ${{ github.event.comment.body }}
+        run: |
+          # Extract component name using bash parameter expansion (no external commands)
+          component="${COMMENT_BODY#@esphomebot generate image }"
+
+          # Validate component name: only lowercase alphanumeric and underscores
+          if [[ "$component" =~ ^[a-z0-9_]+$ ]]; then
+            echo "name=$component" >> $GITHUB_OUTPUT
+            echo "name_lower=${component,,}" >> $GITHUB_OUTPUT
+          else
+            echo "::error::Invalid component name. Must contain only lowercase letters, numbers, and underscores."
+            exit 1
+          fi
 
   generate:
     name: Generate
@@ -43,19 +54,19 @@ jobs:
     needs: prepare
     steps:
       - name: Generate
-        uses: esphome/component-image-generator@v1.0.0
+        uses: esphome/component-image-generator@d0d2a195b500e8c37c17f299ff6b90933f2197cf # v1.0.0
         with:
           component: ${{ needs.prepare.outputs.name }}
 
       - name: Upload
-        uses: actions/upload-artifact@v4.3.3
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         id: upload-artifact
         with:
           name: ${{ needs.prepare.outputs.name }}
-          path: ${{ needs.prepare.outputs.name }}.svg
+          path: ${{ needs.prepare.outputs.name_lower }}.svg
 
       - name: Update Comment
-        uses: actions/github-script@v7.0.1
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         with:
           script: |
             await github.rest.issues.updateComment({
