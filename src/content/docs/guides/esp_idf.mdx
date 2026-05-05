@@ -2,7 +2,7 @@
 description: "ESP-IDF toolchain"
 title: "ESP-IDF toolchain"
 ---
-# Automatic ESP-IDF Framework Installation
+## Automatic ESP-IDF Framework Installation
 
 ESPHome can automatically download, install, and manage the ESP-IDF framework and its Python environment, so you no longer need to manually clone ESP-IDF, run `install.sh`, or set `IDF_PATH` yourself.
 
@@ -12,7 +12,7 @@ This page explains how the automatic ESP-IDF management works, where it stores d
 
 When using the ESP-IDF toolchain (`toolchain: esp-idf` in the configuration or the `--toolchain esp-idf` CLI parameter), ESPHome provides automatic framework management:
 
-- ESPHome downloads a specific ESP-IDF release archive (v5.5.2 by default) into a per-version folder under the ESPHome data directory.
+- ESPHome downloads the ESP-IDF release archive specified by `esp32.framework.version` (which defaults to the recommended version) into a per-version folder under the ESPHome data directory.
 - ESPHome runs the ESP-IDF tool installer (`idf_tools.py`) to install the required tools such as `cmake` and `ninja` if they are not already available.
 - ESPHome creates and manages a dedicated Python virtual environment per ESP-IDF version and installs the ESP-IDF Python dependencies into it.
 - Builds and ESP-IDF tools (including `idf.py` and `esptool`) run using this managed environment, so you do not need to source `export.sh` or set `IDF_PATH`.
@@ -28,7 +28,7 @@ By default, ESPHome stores ESP-IDF frameworks and Python environments under its 
 - Frameworks: `<data_dir>/idf/frameworks/<version>/`
 - Python environments: `<data_dir>/idf/penvs/<version>/`
 
-On a typical installation, `<data_dir>` is the ESPHome data directory (for example `./.esphome`).
+On a typical installation, `<data_dir>` is the ESPHome data directory, stored in a `.esphome` folder located alongside the configuration file.
 
 You can override the base directory with the `ESPHOME_ESP_IDF_PREFIX` environment variable:
 
