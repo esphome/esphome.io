@@ -201,8 +201,67 @@ This [action](/automations/actions#all-actions) manually starts fan-cleaning.
 ```yaml
 on_...:
   then:
-    - sen5x.start_fan_autoclean: sen54
+    - sen5x.start_fan_autoclean: my_sen5x
 ```
+
+## Restart
+
+A restart reinitializes the device and resets internal states such as the automatic
+fan-cleaning interval.
+
+### `sen5x.start_restart` Action
+
+This [action](/automations/actions#all-actions) restarts the Sen5x sensor.
+
+```yaml
+on_...:
+  then:
+    - sen5x.start_restart: my_sen5x
+```
+
+## Measurement Modes
+
+### `sen5x.start_measurements` Action
+
+In this mode, all available measurements are active:
+
+* Particulate Matter (PM)
+* Temperature and Humidity
+* VOC (SEN54/SEN55)
+* NOx (SEN55)
+
+This is the default operating mode of the sensor.
+
+This [action](/automations/actions#all-actions) starts measurements in **normal mode**.
+
+```yaml
+on_...:
+  then:
+    - sen5x.start_measurements: my_sen5x
+```
+
+### `sen5x.start_measurements_rht_only` Action
+
+In this mode:
+
+* Only **temperature and humidity** measurements are active
+* The internal fan is **disabled**
+* No particulate matter (PM), VOC, or NOx measurements are performed
+
+This mode can be useful for:
+
+* Reducing noise (e.g., during nighttime)
+* Lowering power consumption
+* Applications where only climate data is required
+
+This [action](/automations/actions#all-actions) starts measurements in **RHT-only mode**.
+
+```yaml
+on_...:
+  then:
+    - sen5x.start_measurements_rht_only: my_sen5x
+```
+
 
 ## See Also
 
