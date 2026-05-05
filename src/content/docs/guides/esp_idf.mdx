@@ -1,6 +1,6 @@
 ---
-description: "Native ESP-IDF"
-title: "Native ESP-IDF"
+description: "ESP-IDF toolchain"
+title: "ESP-IDF toolchain"
 ---
 # Automatic ESP-IDF Framework Installation
 
@@ -10,7 +10,7 @@ This page explains how the automatic ESP-IDF management works, where it stores d
 
 ## Overview
 
-With the automatic framework management:
+When using the ESP-IDF toolchain (`toolchain: esp-idf` in the configuration or the `--toolchain esp-idf` CLI parameter), ESPHome provides automatic framework management:
 
 - ESPHome downloads a specific ESP-IDF release archive (v5.5.2 by default) into a per-version folder under the ESPHome data directory.
 - ESPHome runs the ESP-IDF tool installer (`idf_tools.py`) to install the required tools such as `cmake` and `ninja` if they are not already available.
@@ -18,7 +18,7 @@ With the automatic framework management:
 - Builds and ESP-IDF tools (including `idf.py` and `esptool`) run using this managed environment, so you do not need to source `export.sh` or set `IDF_PATH`.
 
 > [!NOTE]
-> If you already provide an <code>IDF_PATH</code> environment variable, ESPHome will honor it and use your existing ESP-IDF installation instead of managing its own copy.
+> If you are using the ESP-IDF toolchain and provide an <code>IDF_PATH</code> environment variable, ESPHome will honor it and use your existing ESP-IDF installation instead of managing its own copy.
 
 ## Storage locations
 
@@ -132,7 +132,7 @@ If the stamp file matches the expected values, ESPHome reuses the existing virtu
 
 ## Environment used for builds and tools
 
-When ESPHome needs to run ESP-IDF tools (for example `idf.py` or `esptool`), it:
+When ESPHome needs to run ESP-IDF tools, it:
 
 1. Ensures that the ESP-IDF framework and Python environment for the requested version are installed.
 2. Builds an environment dictionary with:
@@ -147,3 +147,5 @@ This environment is then used for:
 
 - `idf.py` commands (for example when building ESP32 firmware).
 - `esptool` invocations, such as when creating `factory.bin` images.
+- `python` execution, using the managed virtual environment interpreter.
+- `cmake` invocations (which drive the underlying `ninja` build system), resolved from either the host environment or ESPHome-managed tools depending on availability.

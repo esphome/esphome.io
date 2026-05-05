@@ -84,6 +84,7 @@ Advanced options:
 - **debug_scheduler** (*Optional*, boolean): If set, the scheduler will print debug information about scheduled tasks at log level DEBUG.
 - **areas** (*Optional*, list of [Area Configuration](#esphome-area)): Additional areas that can be referenced by devices.
 - **devices** (*Optional*, list of [Sub-Devices](#esphome-devices)): Sub-devices to group entities under.
+- **toolchain** (*Optional*, [Toolchain](#esphome-toolchain)): Toolchain used to build the firmware.
 
 Automations:
 
@@ -518,4 +519,33 @@ sensor:
     humidity:
       name: "Humidity"
       device_id: living_room_device
+```
+
+<span id="esphome-toolchain"></span>
+
+## Toolchain Configuration
+
+ESPHome supports multiple toolchains for building firmware. The toolchain determines how the firmware is compiled and which build system is used.
+
+Currently supported toolchains include:
+
+- `platformio` (default)
+- `esp-idf`
+
+**Example for using ESP-IDF toolchain:**
+
+```yaml
+esphome:
+  name: my-device
+  toolchain: esp-idf
+```
+
+When `esp-idf` is selected, ESPHome uses its native ESP-IDF integration, including automatic framework installation and environment management as described in this [documentation](/guides/esp_idf/).
+
+If no toolchain is specified, ESPHome defaults to `platformio`.
+
+You can also select the toolchain via the CLI:
+
+```bash
+esphome --toolchain esp-idf compile my_device.yaml
 ```
