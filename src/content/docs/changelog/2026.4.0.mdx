@@ -437,6 +437,8 @@ Also thank you to [@bdraco](https://github.com/bdraco), [@thomwiggers](https://g
 
 - **Binary Sensor autorepeat**: Autorepeat timing lists are now limited to 254 entries (previously unlimited). No real config would approach this limit. [#15268](https://github.com/esphome/esphome/pull/15268)
 
+- **GPIO Binary Sensor implicit debounce gone**: As of 2026.3.0 the main loop wakes immediately from inside the GPIO ISR ([#14383](https://github.com/esphome/esphome/pull/14383)) instead of waiting out the `select()` timeout, and 2026.4.0 keeps that behavior. Some configs were accidentally relying on the prior slow loop poll cadence to swallow mechanical switch bounce. With faster ISR-driven wakes, every bounce edge now reaches downstream automations, so timing-based triggers (`on_multi_click`, `on_click`, `on_double_click`, edge counters in `on_press` / `on_release`) on physical buttons may need an explicit debounce filter. Add `delayed_on_off: 20ms` (or `delayed_on` / `delayed_off`) to the `gpio` binary_sensor's `filters:` list; see [debouncing values](/components/binary_sensor/gpio#debouncing-values). The matcher logic itself is unchanged. [esphome#15323](https://github.com/esphome/esphome/issues/15323)
+
 ### Configuration System Changes
 
 - **Substitutions**: When two YAML keys in the same dict resolve to the same substituted name, the later-appearing key's value now takes precedence ("last writer wins"). Previously, the existing resolved value took precedence on dict merges. This only affects the edge case of duplicate substituted keys. [#14918](https://github.com/esphome/esphome/pull/14918)
