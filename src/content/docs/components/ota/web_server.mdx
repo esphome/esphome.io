@@ -135,11 +135,10 @@ esphome run <config.yaml> --ota-platform web_server
 ```
 
 If a `web_server` `auth` block is configured, the CLI sends those credentials as an
-HTTP Basic `Authorization` header (`requests.auth.HTTPBasicAuth`). The device's
-default `WWW-Authenticate` challenge is also Basic, so the credentials cross the
-network in cleartext. The `--ota-platform web_server` path does **not** use the
-[ESPHome OTA password](/components/ota/esphome/) at all; it only uses the `web_server`
-`auth` credentials.
+HTTP Basic `Authorization` header. The device challenges with `WWW-Authenticate: Basic`,
+so the credentials cross the network in cleartext. The `--ota-platform web_server` path
+does **not** use the [ESPHome OTA password](/components/ota/esphome/) at all; it only
+uses the `web_server` `auth` credentials.
 
 > [!WARNING]
 > HTTP Basic auth credentials are sent in cleartext on the local network, the same as
