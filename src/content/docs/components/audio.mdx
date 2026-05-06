@@ -35,20 +35,22 @@ audio:
 
 ## Configuration variables
 
-- **codecs** (*Optional*): A mapping that enables and configures individual audio codecs. Each codec key may be left
-  empty to enable the codec with default settings, or populated with the per-codec options described below.
+- **codecs** (*Optional*, mapping): A mapping that enables and configures individual audio codecs. Each codec key may
+  be left empty to enable the codec with default settings, or populated with the per-codec options described below.
 
-  - **flac** (*Optional*): Enable and configure the [FLAC](https://github.com/esphome-libs/micro-flac) decoder.
+  - **flac** (*Optional*, mapping): Enable and configure the [FLAC](https://github.com/esphome-libs/micro-flac)
+    decoder.
 
     - **buffer_memory** (*Optional*, string): Where to allocate the FLAC working buffer (typically 16–64 KB for stereo
       streams). One of `psram` or `internal`. Defaults to `psram` when available, otherwise `internal`.
 
-  - **mp3** (*Optional*): Enable and configure the [MP3](https://github.com/esphome-libs/micro-mp3) decoder.
+  - **mp3** (*Optional*, mapping): Enable and configure the [MP3](https://github.com/esphome-libs/micro-mp3) decoder.
 
     - **buffer_memory** (*Optional*, string): Where to allocate the MP3 decoder state buffers. One of `psram` or
       `internal`. Defaults to `psram` when available, otherwise `internal`.
 
-  - **opus** (*Optional*): Enable and configure the [Opus](https://github.com/esphome-libs/micro-opus) decoder.
+  - **opus** (*Optional*, mapping): Enable and configure the [Opus](https://github.com/esphome-libs/micro-opus)
+    decoder.
 
     - **floating_point** (*Optional*, boolean): Use the floating-point Opus implementation instead of the fixed-point
       one. Defaults to `true` on the ESP32-S3 (whose FPU is fast enough to benefit) and `false` on other targets,
@@ -58,8 +60,8 @@ audio:
       (roughly 30–50 KB per instance plus shared tables). One of `psram` or `internal`. Defaults to `psram` when
       available, otherwise `internal`.
 
-    - **pseudostack** (*Optional*): Configures the Opus pseudostack — a working-memory buffer used heavily for
-      temporary allocations during decode operations.
+    - **pseudostack** (*Optional*, mapping): Configures the Opus pseudostack — a working-memory buffer used heavily
+      for temporary allocations during decode operations.
 
       - **threadsafe** (*Optional*, boolean): When `true`, each FreeRTOS task that uses Opus gets its own pseudostack
         via pthread thread-local storage; safe for concurrent decoding from multiple tasks. When `false`, a single
