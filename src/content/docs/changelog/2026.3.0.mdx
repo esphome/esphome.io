@@ -36,6 +36,7 @@ Alongside the performance work, a redesigned media player architecture with plug
 - If you use `sgp30` sensors, plan for up to 12 hours of recalibration after update as stored baselines will be invalidated by a serial number fix
 - If you use `nextion` TFT uploads over slow networks, set `tft_upload_http_timeout` to a higher value (default changed from 15s to 4.5s)
 - If you use `time` component and have lambdas calling `::mktime()`, `::strftime()`, `setenv("TZ", ...)`, or `tzset()` directly, update them to use ESPHome's [`ESPTime` API](/components/time/)
+- If you use `on_multi_click`, `on_click`, `on_double_click`, or count edges in `on_press` / `on_release` on a physical button wired to the `gpio` binary_sensor *without a debounce filter*, add a `delayed_on_off: 20ms` filter (or `delayed_on` / `delayed_off`) to that sensor's `filters:` list. Most users already follow the documented guidance; this only affects configs that skipped it. The instant-ISR-wake change ([#14383](https://github.com/esphome/esphome/pull/14383)) means mechanical switch bounce now reaches downstream automations instead of being swallowed by the slow loop poll cadence. See [debouncing values](/components/binary_sensor/gpio#debouncing-values).
 {/* UPGRADE_CHECKLIST_END */}
 
 {/* FEATURE_HIGHLIGHTS_START */}
@@ -333,15 +334,19 @@ The media player has been redesigned around a modular **source-based architectur
 
 **Key Features:**
 
-- **Pluggable media sources** - Audio can come from embedded [audio_file](/components/audio_file) files, HTTP streams, or future sources like Sendspin, each as a separate component
+- **Pluggable media sources** - Audio sources are separate components that plug into the media player. This release includes the [audio_file](/components/media_source/audio_file) media source for embedded firmware files, with HTTP streams and Sendspin sources planned for future releases
 - **Dual pipeline support** - Separate media and announcement pipelines with independent speakers, formats, and sources, allowing announcements to play alongside music
 - **Full playlist management** - Enqueue, next/previous track navigation, repeat (off/one/all), and shuffle with Fisher-Yates algorithm
 - **Volume persistence** - Volume and mute state are saved across reboots with configurable min/max/increment
-- **Ogg Opus codec support** - The new microOpus library enables decoding Opus audio streams, completing the codec lineup alongside FLAC and MP3 ([#13967](https://github.com/esphome/esphome/pull/13967))
-- **Smarter codec builds** - The `codec_support_enabled` option now defaults to `needed`, building only the codecs your configuration actually requires instead of all three (users streaming arbitrary URLs should set `codec_support_enabled: all`)
 - **Expanded media player commands** - New `next`, `previous`, `repeat_all`, `shuffle`, `unshuffle`, `group_join`, and `clear_playlist` actions ([#12258](https://github.com/esphome/esphome/pull/12258))
 
 The [audio_file](/components/audio_file) component lets you embed audio files (local or from URLs) directly into firmware for instant playback without network access. Files are decoded directly from flash, saving two buffer copies compared to the previous approach.
+
+## Audio Playback Improvements
+
+- **Ogg Opus codec support** - The new microOpus library enables decoding Ogg Opus files, completing the codec lineup alongside FLAC and MP3 ([#13967](https://github.com/esphome/esphome/pull/13967))
+- **Smarter codec builds** - Only the codecs your configuration actually requires are built. The `speaker_source` media player does this automatically, while the `speaker` media player's `codec_support_enabled` option now defaults to `needed` (users streaming arbitrary URLs should set `codec_support_enabled: all`)
+- **Speaker media player on/off** - The speaker media player now supports explicit on/off power control ([#9295](https://github.com/esphome/esphome/pull/9295))
 
 ## Other Notable Features
 
@@ -350,7 +355,6 @@ The [audio_file](/components/audio_file) component lets you embed audio files (l
 - **Safe mode explicit boot success** - New `safe_mode.mark_boot_ok` action lets you explicitly notify safe mode that a boot is successful, solving the issue for deep sleep devices that boot and sleep within the safe mode timeout window ([#14306](https://github.com/esphome/esphome/pull/14306))
 - **CC1101 runtime configuration** - New actions to change frequency, modulation type, symbol rate, filter bandwidth, and other CC1101 radio settings on the fly ([#14141](https://github.com/esphome/esphome/pull/14141))
 - **ESP32 BLE authentication** - Configurable `min_key_size`, `max_key_size`, and `auth_req_mode` for BLE security ([#7138](https://github.com/esphome/esphome/pull/7138))
-- **Speaker media player on/off** - Media players now support explicit on/off power control ([#9295](https://github.com/esphome/esphome/pull/9295))
 - **Integration sensor set action** - New `set` method to publish and save a specific value to an integration sensor ([#13316](https://github.com/esphome/esphome/pull/13316))
 - **LPS22DF pressure sensor** - Support for the DF variant of the LPS22 pressure sensor family ([#14397](https://github.com/esphome/esphome/pull/14397))
 - **OpenThread TX power** - Configurable transmit power for OpenThread radios ([#14200](https://github.com/esphome/esphome/pull/14200))
@@ -404,6 +408,7 @@ Most users can update without any configuration changes. The items below are gro
 - **Speaker Media Player**: The `codec_support_enabled` option now defaults to `needed` instead of building all codecs. If you stream audio via hardcoded URLs (not through Home Assistant), set `codec_support_enabled: all` to restore the previous behavior [#13967](https://github.com/esphome/esphome/pull/13967)
 - **SGP30**: Fixed serial number truncation from 48-bit to 24-bit. This changes the preference hash, so existing stored baselines will no longer be found. Plan for up to 12 hours of recalibration [#14478](https://github.com/esphome/esphome/pull/14478)
 - **Time**: If you have lambdas calling `::mktime()`, `::strftime()`, `setenv("TZ", ...)`, or `tzset()` directly, update them to use ESPHome's [`ESPTime` API](/components/time/). Most users are unaffected, and `::localtime()` continues to work [#13635](https://github.com/esphome/esphome/pull/13635)
+- **GPIO Binary Sensor implicit debounce gone**: The main loop now wakes immediately from inside the GPIO ISR ([#14383](https://github.com/esphome/esphome/pull/14383)) instead of waiting out the `select()` timeout. Configs that already follow the [debouncing values](/components/binary_sensor/gpio#debouncing-values) guidance and have a filter on their physical button are unaffected. Configs that skipped it were getting accidental debouncing from the slow loop poll cadence; mechanical switch bounce now reaches downstream automations, so timing-based triggers (`on_multi_click`, `on_click`, `on_double_click`, edge counters in `on_press` / `on_release`) on raw physical buttons may need an explicit `delayed_on_off: 20ms` filter (or `delayed_on` / `delayed_off`) added to the `gpio` binary_sensor's `filters:` list. The matcher logic itself is unchanged. [esphome#15323](https://github.com/esphome/esphome/issues/15323)
 
 ### Most users unaffected
 
@@ -489,6 +494,76 @@ Several core virtual interfaces have been replaced with compile-time dispatch fo
 
 For detailed migration guides and API documentation, see the [ESPHome Developers Documentation](https://developers.esphome.io/).
 {/* BREAKING_CHANGES_DEVELOPERS_END */}
+
+## Release 2026.3.1 - March 23
+
+<details>
+<summary></summary>
+
+- Bump aioesphomeapi from 44.5.2 to 44.6.0 [esphome#14927](https://github.com/esphome/esphome/pull/14927) by [@dependabot[bot]](https://github.com/apps/dependabot)
+- [http_request] Prevent double update task launch [esphome#14910](https://github.com/esphome/esphome/pull/14910) by [@bdraco](https://github.com/bdraco)
+- [ble_client] Fix RSSI sensor reporting same value for all clients [esphome#14939](https://github.com/esphome/esphome/pull/14939) by [@swoboda1337](https://github.com/swoboda1337)
+- [openthread] Guard InstanceLock against uninitialized semaphore [esphome#14940](https://github.com/esphome/esphome/pull/14940) by [@swoboda1337](https://github.com/swoboda1337)
+- Bump aioesphomeapi from 44.6.0 to 44.6.1 [esphome#14954](https://github.com/esphome/esphome/pull/14954) by [@dependabot[bot]](https://github.com/apps/dependabot)
+- [time] Fix lookup of top-level IANA timezone keys like UTC and GMT [esphome#14952](https://github.com/esphome/esphome/pull/14952) by [@bdraco](https://github.com/bdraco)
+- [logger] Fix ESP8266 crash with VERY_VERBOSE log level [esphome#14980](https://github.com/esphome/esphome/pull/14980) by [@bdraco](https://github.com/bdraco)
+- [sdl] Fix get_width()/height() when rotation used [esphome#14950](https://github.com/esphome/esphome/pull/14950) by [@clydebarrow](https://github.com/clydebarrow)
+- [uart] Fix UART0 default pin IOMUX loopback on ESP32 [esphome#14978](https://github.com/esphome/esphome/pull/14978) by [@bdraco](https://github.com/bdraco)
+- [ld2450] Fix zone target counts including untracked ghost targets [esphome#15026](https://github.com/esphome/esphome/pull/15026) by [@kroehre](https://github.com/kroehre)
+- Bump aioesphomeapi from 44.6.1 to 44.6.2 [esphome#15027](https://github.com/esphome/esphome/pull/15027) by [@dependabot[bot]](https://github.com/apps/dependabot)
+- [api] Increase noise handshake timeout to 60s for slow WiFi environments [esphome#15022](https://github.com/esphome/esphome/pull/15022) by [@bdraco](https://github.com/bdraco)
+- [wifi] Fix ESP8266 power_save_mode mapping (LIGHT/HIGH were swapped) [esphome#15029](https://github.com/esphome/esphome/pull/15029) by [@bdraco](https://github.com/bdraco) (breaking-change)
+- [esp32_touch] Fix initial state never published when sensor untouched [esphome#15032](https://github.com/esphome/esphome/pull/15032) by [@swoboda1337](https://github.com/swoboda1337)
+- [web_server] Increase httpd task stack size to prevent stack overflow [esphome#14997](https://github.com/esphome/esphome/pull/14997) by [@bdraco](https://github.com/bdraco)
+- [core] Add copy() method to StringRef for std::string compatibility [esphome#15028](https://github.com/esphome/esphome/pull/15028) by [@bdraco](https://github.com/bdraco)
+- [time] Fix timezone_offset() and recalc_timestamp_local() always returning UTC [esphome#14996](https://github.com/esphome/esphome/pull/14996) by [@bdraco](https://github.com/bdraco)
+- [analog_threshhold] add missing header [esphome#15058](https://github.com/esphome/esphome/pull/15058) by [@ssieb](https://github.com/ssieb)
+- [mqtt] Rate-limit component resends to prevent task WDT on reconnect [esphome#15061](https://github.com/esphome/esphome/pull/15061) by [@bdraco](https://github.com/bdraco)
+- [light] Fix constant_brightness broken by gamma LUT refactor [esphome#15048](https://github.com/esphome/esphome/pull/15048) by [@bdraco](https://github.com/bdraco)
+- [sht4x] Fix heater causing measurement jitter [esphome#15030](https://github.com/esphome/esphome/pull/15030) by [@bdraco](https://github.com/bdraco)
+- [uart] Fix RTL87xx compilation failure due to SUCCESS macro collision [esphome#15054](https://github.com/esphome/esphome/pull/15054) by [@bdraco](https://github.com/bdraco)
+- [light] Fix gamma LUT quantizing small brightness to zero [esphome#15060](https://github.com/esphome/esphome/pull/15060) by [@bdraco](https://github.com/bdraco)
+- [ultrasonic] Fix ISR edge detection with debounce and trigger filtering [esphome#15014](https://github.com/esphome/esphome/pull/15014) by [@swoboda1337](https://github.com/swoboda1337)
+- [logger] Fix race condition in task log buffer initialization [esphome#15071](https://github.com/esphome/esphome/pull/15071) by [@bdraco](https://github.com/bdraco)
+- [pmsx003] Keep active-mode reads aligned [esphome#14832](https://github.com/esphome/esphome/pull/14832) by [@jkoelker](https://github.com/jkoelker)
+
+</details>
+
+## Release 2026.3.2 - April 1
+
+<details>
+<summary></summary>
+
+- [time] Point to valid IANA timezone list on validation failure [esphome#15110](https://github.com/esphome/esphome/pull/15110) by [@bdraco](https://github.com/bdraco)
+- [wifi] Fix roaming attempt counter reset on disconnect during scan [esphome#15099](https://github.com/esphome/esphome/pull/15099) by [@bdraco](https://github.com/bdraco)
+- [wifi] Reduce ESP8266 roaming scan dwell time to match ESP32 [esphome#15127](https://github.com/esphome/esphome/pull/15127) by [@bdraco](https://github.com/bdraco)
+- [sx127x] Fix FIFO read corruption [esphome#15114](https://github.com/esphome/esphome/pull/15114) by [@swoboda1337](https://github.com/swoboda1337)
+- [datetime] Fix state_as_esptime() returning invalid timestamp [esphome#15128](https://github.com/esphome/esphome/pull/15128) by [@bdraco](https://github.com/bdraco)
+- [wifi] Fix roaming counter reset from delayed disconnect and successful retry [esphome#15126](https://github.com/esphome/esphome/pull/15126) by [@bdraco](https://github.com/bdraco)
+- [wifi] Filter fast_connect by band_mode and use background scan for roaming [esphome#15152](https://github.com/esphome/esphome/pull/15152) by [@swoboda1337](https://github.com/swoboda1337)
+- [uart] Fix debug callback missing peeked byte and reading past end [esphome#15169](https://github.com/esphome/esphome/pull/15169) by [@swoboda1337](https://github.com/swoboda1337)
+- [sgp4x] Fix NOx index_offset default (should be 1, not 100) [esphome#15212](https://github.com/esphome/esphome/pull/15212) by [@swoboda1337](https://github.com/swoboda1337)
+- [esp32_ble_server] Fix set_value action with static data lists [esphome#15285](https://github.com/esphome/esphome/pull/15285) by [@bdraco](https://github.com/bdraco)
+- [esp8266] Add enable_scanf_float option [esphome#15284](https://github.com/esphome/esphome/pull/15284) by [@bdraco](https://github.com/bdraco) (new-feature)
+- [thermostat] Fix stale `max_runtime_exceeded` causing spurious supplemental heating/cooling [esphome#15274](https://github.com/esphome/esphome/pull/15274) by [@kbx81](https://github.com/kbx81)
+- [haier] Fix hOn half-degree temperature setting [esphome#15312](https://github.com/esphome/esphome/pull/15312) by [@swoboda1337](https://github.com/swoboda1337)
+- [tormatic] Fix UART stream desync on ESP32 [esphome#15337](https://github.com/esphome/esphome/pull/15337) by [@swoboda1337](https://github.com/swoboda1337)
+- [uart] fix baud rate not applied on `load_settings()` for ESP32 (IDF) [esphome#15341](https://github.com/esphome/esphome/pull/15341) by [@edwardtfn](https://github.com/edwardtfn)
+- [mixer] Fix memory leak in mixer task on stop/start cycles [esphome#15185](https://github.com/esphome/esphome/pull/15185) by [@kahrendt](https://github.com/kahrendt)
+- [esp32_ble_tracker] Restart BLE scan after OTA failure [esphome#15308](https://github.com/esphome/esphome/pull/15308) by [@bdraco](https://github.com/bdraco)
+
+</details>
+
+## Release 2026.3.3 - April 7
+
+<details>
+<summary></summary>
+
+- [nextion] Fix queue age check using inconsistent time sources [esphome#15317](https://github.com/esphome/esphome/pull/15317) by [@edwardtfn](https://github.com/edwardtfn)
+- [online_image] Clear LVGL dsc when image size changes. [esphome#15360](https://github.com/esphome/esphome/pull/15360) by [@clydebarrow](https://github.com/clydebarrow)
+- [esp32] Clean build when sdkconfig options change [esphome#15439](https://github.com/esphome/esphome/pull/15439) by [@clydebarrow](https://github.com/clydebarrow)
+
+</details>
 
 {/* markdownlint-disable MD013 */}
 
@@ -583,47 +658,7 @@ The lists below are grouped by tag and may contain duplicates across sections.
 - [esp8266] Wrap printf/vprintf/fprintf to eliminate _vfiprintf_r (~1.6 KB flash) [esphome#14621](https://github.com/esphome/esphome/pull/14621) by [@bdraco](https://github.com/bdraco) (breaking-change)
 - [nextion] Add configurable HTTP parameters for TFT upload [esphome#14234](https://github.com/esphome/esphome/pull/14234) by [@edwardtfn](https://github.com/edwardtfn) (new-feature) (breaking-change)
 - [micronova] Add command queue [esphome#12268](https://github.com/esphome/esphome/pull/12268) by [@edenhaus](https://github.com/edenhaus) (breaking-change)
-
-### Beta Changes
-
-- Bump tornado from 6.5.4 to 6.5.5 [esphome#14704](https://github.com/esphome/esphome/pull/14704) by [@dependabot[bot]](https://github.com/apps/dependabot)
-- [esp32_hosted] Bump esp_hosted to 2.12.1 [esphome#14708](https://github.com/esphome/esphome/pull/14708) by [@swoboda1337](https://github.com/swoboda1337)
-- [ethernet] ESP32-P4 Ethernet compilation fix [esphome#14714](https://github.com/esphome/esphome/pull/14714) by [@kbx81](https://github.com/kbx81)
-- [esp32] Add crash handler to capture and report backtrace across reboots [esphome#14709](https://github.com/esphome/esphome/pull/14709) by [@bdraco](https://github.com/bdraco) (new-feature)
-- [ethernet] ESP32-S3 Ethernet compilation fix [esphome#14717](https://github.com/esphome/esphome/pull/14717) by [@kbx81](https://github.com/kbx81)
-- [rp2040] Fix crash handler design flaws [esphome#14716](https://github.com/esphome/esphome/pull/14716) by [@bdraco](https://github.com/bdraco)
-- [modbus] Fix buffer overflow in modbus [esphome#14719](https://github.com/esphome/esphome/pull/14719) by [@ademuri](https://github.com/ademuri)
-- [ledc] Fix high-pressure crash & recovery [esphome#14720](https://github.com/esphome/esphome/pull/14720) by [@kbx81](https://github.com/kbx81)
-- [web_server] use DETAIL_ALL in update_all_json_generator [esphome#14711](https://github.com/esphome/esphome/pull/14711) by [@bkaufx](https://github.com/bkaufx)
-- [audio] Bump microOpus to v0.3.5 [esphome#14727](https://github.com/esphome/esphome/pull/14727) by [@kahrendt](https://github.com/kahrendt)
-- [mqtt] Fixed permission denied error for client certificates on Windows [esphome#13525](https://github.com/esphome/esphome/pull/13525) by [@NeoExtended](https://github.com/NeoExtended)
-- [socket] Fix use-after-free in LWIP PCB close/abort path [esphome#14706](https://github.com/esphome/esphome/pull/14706) by [@bdraco](https://github.com/bdraco)
-- [socket] Fast path for TCP_NODELAY bypasses lwip_setsockopt overhead [esphome#14693](https://github.com/esphome/esphome/pull/14693) by [@bdraco](https://github.com/bdraco)
-- [esp32_ble_client] Fix disconnect race that causes stuck connections  [esphome#14211](https://github.com/esphome/esphome/pull/14211) by [@bdraco](https://github.com/bdraco)
-- [time] Fix settimeofday() failure on ESP8266 [esphome#14707](https://github.com/esphome/esphome/pull/14707) by [@bdraco](https://github.com/bdraco)
-- [ota][socket] Fix ESP8266/RP2040 OTA timeout by using SO_RCVTIMEO instead of polling [esphome#14675](https://github.com/esphome/esphome/pull/14675) by [@bdraco](https://github.com/bdraco)
-- [adc] Fix PICO_VSYS_PIN compile error on RP2350 boards [esphome#14724](https://github.com/esphome/esphome/pull/14724) by [@bdraco](https://github.com/bdraco)
-- [api] Fix undefined behavior in noise handshake with empty rx buffer [esphome#14722](https://github.com/esphome/esphome/pull/14722) by [@bdraco](https://github.com/bdraco)
-- [uart] Allow hardware UART with single pin on RP2040 [esphome#14725](https://github.com/esphome/esphome/pull/14725) by [@bdraco](https://github.com/bdraco)
-- [api] Fix heap-buffer-overflow in protobuf message dump for StringRef [esphome#14721](https://github.com/esphome/esphome/pull/14721) by [@bdraco](https://github.com/bdraco)
-- [OTA] Stage exact uploaded size for ESP8266 web OTA (gzip fix) [esphome#14741](https://github.com/esphome/esphome/pull/14741) by [@bkaufx](https://github.com/bkaufx)
 - [light] Fix ambiguous set_effect overload for const char* [esphome#14732](https://github.com/esphome/esphome/pull/14732) by [@bdraco](https://github.com/bdraco) (breaking-change)
-- [rp2040] Use full flash for sketch in testing mode [esphome#14747](https://github.com/esphome/esphome/pull/14747) by [@bdraco](https://github.com/bdraco)
-- [debug] Fix missing reset reason for RP2040/RP2350 [esphome#14740](https://github.com/esphome/esphome/pull/14740) by [@bdraco](https://github.com/bdraco)
-- [captive_portal] Fix captive portal inaccessible when web_server auth is configured [esphome#14734](https://github.com/esphome/esphome/pull/14734) by [@bdraco](https://github.com/bdraco)
-- [water_heater] Set OPERATION_MODE feature flag when modes are configured [esphome#14748](https://github.com/esphome/esphome/pull/14748) by [@bdraco](https://github.com/bdraco)
-- [wifi] Reject EAP/WPA2 Enterprise config on unsupported platforms [esphome#14746](https://github.com/esphome/esphome/pull/14746) by [@bdraco](https://github.com/bdraco)
-- [light] Fix binary light spamming 'brightness not supported' warning with strobe effect [esphome#14735](https://github.com/esphome/esphome/pull/14735) by [@bdraco](https://github.com/bdraco)
-- [i2c] Fix RP2040 I2C bus selection based on pin assignment [esphome#14745](https://github.com/esphome/esphome/pull/14745) by [@bdraco](https://github.com/bdraco)
-- [mdns] Fix RP2040 mDNS not restarting after WiFi reconnect [esphome#14737](https://github.com/esphome/esphome/pull/14737) by [@bdraco](https://github.com/bdraco)
-- [rp2040] Fix compiler warnings in crash_handler and mdns [esphome#14739](https://github.com/esphome/esphome/pull/14739) by [@bdraco](https://github.com/bdraco)
-- [runtime_image] fix BMP parsing [esphome#14762](https://github.com/esphome/esphome/pull/14762) by [@afflux](https://github.com/afflux)
-- [select] Fix -Wmaybe-uninitialized warnings on ESP8266 [esphome#14759](https://github.com/esphome/esphome/pull/14759) by [@bdraco](https://github.com/bdraco)
-- [api] Increase log Nagle coalescing on all platforms except ESP8266 [esphome#14752](https://github.com/esphome/esphome/pull/14752) by [@bdraco](https://github.com/bdraco)
-- [template] Fix misleading 'Text value too long to save' warning [esphome#14753](https://github.com/esphome/esphome/pull/14753) by [@bdraco](https://github.com/bdraco)
-- [online_image] Log download duration in milliseconds instead of seconds [esphome#14803](https://github.com/esphome/esphome/pull/14803) by [@leccelecce](https://github.com/leccelecce)
-- [core] Inline LwIPLock as no-op on platforms without lwIP core locking [esphome#14787](https://github.com/esphome/esphome/pull/14787) by [@bdraco](https://github.com/bdraco)
-- [debug] Fix shared buffer between reset reason and wakeup cause [esphome#14813](https://github.com/esphome/esphome/pull/14813) by [@bdraco](https://github.com/bdraco)
 
 ### All changes
 
@@ -1117,6 +1152,7 @@ The lists below are grouped by tag and may contain duplicates across sections.
 - Bump aioesphomeapi from 44.5.0 to 44.5.1 [esphome#14624](https://github.com/esphome/esphome/pull/14624) by [@dependabot[bot]](https://github.com/apps/dependabot)
 - Bump setuptools from 82.0.0 to 82.0.1 [esphome#14665](https://github.com/esphome/esphome/pull/14665) by [@dependabot[bot]](https://github.com/apps/dependabot)
 - Bump tornado from 6.5.4 to 6.5.5 [esphome#14704](https://github.com/esphome/esphome/pull/14704) by [@dependabot[bot]](https://github.com/apps/dependabot)
+- Bump aioesphomeapi from 44.5.1 to 44.5.2 [esphome#14849](https://github.com/esphome/esphome/pull/14849) by [@dependabot[bot]](https://github.com/apps/dependabot)
 
 </details>
 
