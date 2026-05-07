@@ -29,14 +29,20 @@ const ignoreFolders = [
   '.astro/',
 ];
 
+// Files to ignore (skip all linting)
+const ignoreFiles = [
+  'script/release_notes_template.mdx',
+];
+
 // File types
 const fileTypes = [
   '.cfg', '.css', '.gif', '.h', '.html', '.ico', '.jpg', '.js', '.json',
   '.md', '.mdx', '.png', '.py', '.svg', '.toml', '.txt', '.webmanifest',
   '.xml', '.yaml', '.yml', '.mjs', '.ts', '.tsx', '.astro', '.sh', '.webp',
-  '' // empty string for files without extension (like .gitignore)
+  '.bin', '' // empty string for files without extension (like .gitignore)
 ];
 const imageTypes = ['.webp', '.jpg', '.ico', '.png', '.svg', '.gif'];
+const binaryTypes = ['.bin'];
 
 // Store errors
 const errors = new Map();
@@ -295,14 +301,20 @@ async function checkInternalLinks(fname, content, anchorCache) {
     if (linkUrl.startsWith('/images/') && /\.(png|jpg|jpeg|gif|svg|webp|pdf|zip)$/i.test(linkUrl)) {
       continue;
     }
+    if (linkUrl.startsWith('/files/') && /\.(bin|zip)$/i.test(linkUrl)) {
+      continue;
+    }
+
 
     // Skip links with spaces or parentheses (likely code)
     if (linkUrl.includes(' ') || linkUrl.includes('(') || linkUrl.includes(')')) {
       continue;
     }
 
-    // Skip relative links without leading slash
+    // Flag relative links - all internal links should use absolute paths
     if (!linkUrl.startsWith('/')) {
+      addError(fname, lineno, col,
+        `Relative link '${linkUrl}' should use an absolute path (e.g., /components/...)`);
       continue;
     }
 
@@ -417,6 +429,26 @@ function checkAutomationHeadings(fname, content) {
       addError(fname, lineno, 1,
         'Action/Condition suffix should be capitalized. Use "Action" or "Condition" (not lowercase).');
     }
+
+    // Check 5: Uppercase letters in backticked automation names (domain.name pattern)
+    // e.g. ### `MAX7219.invert_on` Action (should be `max7219.invert_on`)
+    const upperMatch = line.match(/^#{2,4}\s+.*`([\w.]*[A-Z][\w.]*)`/);
+    if (upperMatch) {
+      const name = upperMatch[1];
+      if (name.match(/^\w+\.[\w.]+$/)) {
+        addError(fname, lineno, 1,
+          `Action/Condition/Trigger name "\`${name}\`" contains uppercase letters. ` +
+          'ESPHome automation names should be all lowercase (e.g. `component.action_name`).');
+      }
+    }
+
+    // Check 6: Use `/` not `&` to separate paired automation names in headings
+    // e.g. ### `foo.bar` & `foo.baz` Action (should use `/`)
+    if (line.match(/^#{2,4}\s+`\w+(\.\w+)+`\s+&\s+`\w+(\.\w+)+`/)) {
+      addError(fname, lineno, 1,
+        'Use `/` instead of `&` to separate paired automation names in headings ' +
+        '(e.g. `foo.on` / `foo.off` Action).');
+    }
   }
 }
 
@@ -434,6 +466,11 @@ async function main() {
       continue;
     }
 
+    // Skip ignored files
+    if (ignoreFiles.includes(fname)) {
+      continue;
+    }
+
     try {
       const fileStat = await stat(fname);
 
@@ -446,6 +483,9 @@ async function main() {
 
       // Skip binary files
       if (imageTypes.includes(extname(fname))) {
+        continue;
+      }
+      if (binaryTypes.includes(extname(fname))) {
         continue;
       }
 
