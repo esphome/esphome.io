@@ -37,6 +37,23 @@ rp2040:
     platform_version: https://github.com/maxgerhardt/platform-raspberrypi.git
 ```
 
+## Initial Flashing (BOOTSEL Mode)
+
+To flash an RP2040 board for the first time over USB, you need to put it into **BOOTSEL mode**:
+
+1. Unplug the device from USB.
+2. Hold the **BOOT/BOOTSEL** button on the board.
+3. Plug in the USB cable while holding the button.
+4. Release the button — the device should appear as a USB drive (typically named `RPI-RP2`).
+
+Once in BOOTSEL mode, run `esphome run your_config.yaml`. ESPHome will automatically detect the
+mounted `RPI-RP2` volume and offer it as an upload target. The UF2 firmware will be copied to the
+device with a progress bar, and the device will automatically reboot into the new firmware.
+
+After the initial flash, subsequent updates can be done over-the-air (OTA) or via the serial
+port without needing to hold the BOOTSEL button — the `picotool` upload protocol will
+automatically reset the device into BOOTSEL mode.
+
 ## Configuration variables
 
 - **board** (**Required**, string): The PlatformIO board identifier. Common boards include `rpipicow`
@@ -47,6 +64,7 @@ rp2040:
 - **watchdog_timeout** (*Optional*, [Time](/guides/configuration-types#time)): The timeout to apply to the RP2040 watchdog.
   When the device hangs for that period of time, it will reboot. Defaults to `8388ms` (maximum). Set to `0s` to
   disable the watchdog entirely.
+- **enable_full_printf** (*Optional*, boolean): Enable full `FILE*`-based printf support. By default, ESPHome wraps `printf()`, `vprintf()`, and `fprintf()` with lightweight stubs that use `vsnprintf()` + `fwrite()`, saving ~9.2 KB of flash. ESPHome logging uses `snprintf`/`vsnprintf`, not libc printf, so these functions are typically unused unless an external component calls them. Set to `true` only if an external component needs full `FILE*`-based printf. Defaults to `false`.
 
 ## GPIO Pin Names
 
@@ -124,4 +142,5 @@ failures, WiFi issues, or crashes that prevent USB from initializing.
 
 ## See Also
 
+- [RP2040 BLE Component](/components/rp2040_ble/)
 - [ESPHome Core Configuration](/components/esphome/)
