@@ -322,8 +322,29 @@ def get_platform_from_title(title, config_component=None):
 
 
 REGEX_PROP = r"^\*\*(\w+)\*\*(?: \((.*?)\))?: (.*)"  # **<group1>** (<group2>): <group3> ## group2 optional
-REGEX_ENUM1 = r"^`([^`]*)`(?:(?: -|:) (.*)|\s\((.*)\))?"
-REGEX_ENUM2 = r"^\*\*([^\*]*)\*\*(?:(?: -|:) (.*)|\s\((.*)\))?"
+# Enum-bullet patterns:
+#   - `VALUE`                                  → value, no description
+#   - `VALUE`: description                     → value + description
+#   - `VALUE` - description                    → value + description
+#   - `VALUE` (default)                        → value, "default" annotation, no description
+#   - `VALUE` (*default*)                      → same, with markdown emphasis
+#   - `VALUE` (default): description           → value + description (annotation eaten)
+#   - `VALUE` (parenthetical-as-description)   → value + parenthetical-only description
+# The optional ``\s+\(\*?default\*?\)`` group is consumed BEFORE the
+# colon/dash alternation so the description-after-colon is captured
+# correctly even when an annotation precedes it. The parenthetical-
+# as-description branch uses ``[^)]*`` (non-greedy) instead of
+# ``.*`` so it doesn't swallow a trailing ``)`` that's part of the
+# description proper — the bug behind device-builder's
+# ``binary_sensor.gpio.interrupt_type`` rendering as
+# ``"default): Trigger on any edge change (high to low or low to
+# high"`` (issue esphome/device-builder#433).
+REGEX_ENUM1 = (
+    r"^`([^`]*)`(?:\s+\(\*?default\*?\))?(?:(?: -|:) (.*)|\s\(([^)]*)\))?"
+)
+REGEX_ENUM2 = (
+    r"^\*\*([^\*]*)\*\*(?:\s+\(\*?default\*?\))?(?:(?: -|:) (.*)|\s\(([^)]*)\))?"
+)
 REGEX_PROP_TITLE = r"^#+ `([^`]+)`(.*)"
 
 
