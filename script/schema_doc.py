@@ -322,29 +322,49 @@ def get_platform_from_title(title, config_component=None):
 
 
 REGEX_PROP = r"^\*\*(\w+)\*\*(?: \((.*?)\))?: (.*)"  # **<group1>** (<group2>): <group3> ## group2 optional
-# Enum-bullet patterns:
-#   - `VALUE`                                  → value, no description
-#   - `VALUE`: description                     → value + description
-#   - `VALUE` - description                    → value + description
-#   - `VALUE` (default)                        → value, "default" annotation, no description
-#   - `VALUE` (*default*)                      → same, with markdown emphasis
-#   - `VALUE` (default): description           → value + description (annotation eaten)
-#   - `VALUE` (parenthetical-as-description)   → value + parenthetical-only description
+# Enum-bullet patterns the parser handles. ``VALUE`` here is either
+# ``\`backticked\``` (REGEX_ENUM1) or ``**bold**`` (REGEX_ENUM2):
+#
+#   VALUE                                   → value, no description
+#   VALUE: description                      → value + description
+#   VALUE - description                     → value + description
+#   VALUE (default)                         → value, "default" annotation, no description
+#   VALUE (*default*)                       → same, with markdown emphasis
+#   VALUE (default): description            → value + description (annotation eaten)
+#   VALUE (default) description             → value + description (whitespace separator)
+#   VALUE (parenthetical-as-description)    → value + parenthetical-only description
+#   VALUE description                       → value + description (whitespace separator)
+#
 # The optional ``\s+\(\*?default\*?\)`` group is consumed BEFORE the
-# colon/dash alternation so the description-after-colon is captured
-# correctly even when an annotation precedes it. The parenthetical-
-# as-description branch uses ``[^)]*`` (non-greedy) instead of
-# ``.*`` so it doesn't swallow a trailing ``)`` that's part of the
-# description proper — the bug behind device-builder's
+# description alternation so the description that follows is
+# captured correctly even when an annotation precedes it. Three
+# description shapes the alternation accepts (groups 2 / 3 / 4):
+#
+#   2. ``[: -]\s+(.*)``       — explicit ``:`` / `` -`` separator
+#   3. ``\s\(([^)]*)\)``       — parenthetical, non-greedy
+#                                (bounded ``[^)]*``) so the regex
+#                                can't swallow a trailing ``)``
+#                                that's part of a structurally-
+#                                deeper description.
+#   4. ``\s+(\S.*)``           — whitespace + non-paren-non-colon
+#                                text, the shape used in
+#                                ``components/display/ili9xxx.mdx``
+#                                (`` `NONE` (*default*) Colors will
+#                                be 16 bit RGB565``) where the
+#                                description follows the value
+#                                (and optional annotation) without
+#                                an explicit separator.
+#
+# Issue history: original cause was the ``cv.Range`` chain in
 # ``binary_sensor.gpio.interrupt_type`` rendering as
 # ``"default): Trigger on any edge change (high to low or low to
-# high"`` (issue esphome/device-builder#433).
-REGEX_ENUM1 = (
-    r"^`([^`]*)`(?:\s+\(\*?default\*?\))?(?:(?: -|:) (.*)|\s\(([^)]*)\))?"
+# high"`` in the visual editor (esphome/device-builder#433).
+REGEX_ENUM_TAIL = (
+    r"(?:\s+\(\*?default\*?\))?"
+    r"(?:\s*[:\-]\s+(.*)|\s\(([^)]*)\)|\s+(\S.+))?"
 )
-REGEX_ENUM2 = (
-    r"^\*\*([^\*]*)\*\*(?:\s+\(\*?default\*?\))?(?:(?: -|:) (.*)|\s\(([^)]*)\))?"
-)
+REGEX_ENUM1 = r"^`([^`]*)`" + REGEX_ENUM_TAIL
+REGEX_ENUM2 = r"^\*\*([^\*]*)\*\*" + REGEX_ENUM_TAIL
 REGEX_PROP_TITLE = r"^#+ `([^`]+)`(.*)"
 
 
@@ -729,7 +749,7 @@ def process_config(md_file, lines, index, config_var, indent=0, parent_schema=No
             search = re.search(REGEX_ENUM1, item_config, re.IGNORECASE)
             if search:
                 enum_value = search.group(1)
-                enum_desc = search.group(2) or search.group(3)
+                enum_desc = search.group(2) or search.group(3) or search.group(4)
                 values = config_var.get("values", {})
                 if enum_value in values:
                     values[enum_value] = values.get(enum_value) or {}

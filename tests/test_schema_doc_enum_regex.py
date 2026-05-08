@@ -51,14 +51,15 @@ def _match_enum(pattern: str, line: str) -> tuple[str | None, str | None]:
     """Run *pattern* on *line* and return ``(value, description)``.
 
     Mirrors the production extractor's reading of the regex match:
-    group 1 is the value, group 2 (colon/dash branch) wins over
-    group 3 (parens-only branch) for the description.
+    group 1 is the value; description is the first non-None of
+    groups 2 / 3 / 4 (colon-or-dash branch / parens-only branch /
+    whitespace-only branch).
     """
     m = re.search(pattern, line, re.IGNORECASE)
     if m is None:
         return None, None
     value = m.group(1)
-    description = m.group(2) or m.group(3)
+    description = m.group(2) or m.group(3) or m.group(4)
     return value, description
 
 
@@ -146,6 +147,77 @@ def test_enum1_parenthetical_does_not_consume_trailing_paren() -> None:
     assert desc == "short"
 
 
+def test_enum1_default_annotation_then_whitespace_description() -> None:
+    """Issue surfaced by Copilot review on PR #6587.
+
+    ``components/display/ili9xxx.mdx`` writes the ``color_palette``
+    options as ``\\`NONE\\` (*default*) Colors will be 16 bit RGB565``
+    — annotation followed by a whitespace-separated description
+    (no ``:`` / `` -``). The whitespace-branch (group 4) catches
+    this shape so the description doesn't get dropped.
+    """
+    value, desc = _match_enum(
+        REGEX_ENUM1,
+        "`NONE` (*default*) Colors will be 16 bit RGB565",
+    )
+    assert value == "NONE"
+    assert desc == "Colors will be 16 bit RGB565"
+
+
+def test_enum1_whitespace_only_description() -> None:
+    """The whitespace-branch also catches non-annotated whitespace-separated form.
+
+    Same MDX file uses ``\\`8BIT\\` Colors will be 8 bit RGB332``
+    for the non-default options. Pinned so a future regex tighten
+    can't silently drop these descriptions either.
+    """
+    value, desc = _match_enum(REGEX_ENUM1, "`8BIT` Colors will be 8 bit RGB332")
+    assert value == "8BIT"
+    assert desc == "Colors will be 8 bit RGB332"
+
+
+def test_enum1_whitespace_branch_does_not_steal_parenthetical() -> None:
+    """The parens-only branch (group 3) wins over whitespace-only (group 4).
+
+    Alternation order matters: ``\\`VALUE\\` (parens-as-desc)``
+    must capture from inside the parens (group 3 = ``parens-as-desc``)
+    rather than fall through to the whitespace-only branch (which
+    would capture group 4 = ``(parens-as-desc)``, leaking the parens).
+    """
+    value, desc = _match_enum(REGEX_ENUM1, "`VALUE` (parens-as-desc)")
+    assert value == "VALUE"
+    assert desc == "parens-as-desc"
+
+
+def test_enum1_colon_branch_tolerates_double_space_separator() -> None:
+    """``\\`VALUE\\`  : description`` (double space before colon).
+
+    ``components/sensor/modbus_controller.mdx`` writes its
+    ``value_type`` options with this style:
+
+        - `U_QWORD`  : unsigned 64 bit integer ...
+
+    The original regex required exactly ``: `` (single space
+    after colon, no preceding whitespace) so these descriptions
+    were silently dropped. The lenient ``\\s*[:\\-]\\s+`` form
+    matches and captures the description without leaking the
+    colon into the body.
+
+    Without this leniency the whitespace-only branch (group 4)
+    would have caught the same input but with the leading colon
+    leaked in (``": unsigned 64 bit integer ..."``) — so this
+    test doubles as a regression net for the alternation order.
+    """
+    value, desc = _match_enum(
+        REGEX_ENUM1,
+        "`U_QWORD`  : unsigned 64 bit integer from 4 registers",
+    )
+    assert value == "U_QWORD"
+    assert desc == "unsigned 64 bit integer from 4 registers"
+    # Belt-and-suspenders: the colon must not leak in.
+    assert desc is not None and not desc.startswith(":")
+
+
 # ─── REGEX_ENUM2 — bold-wrapped value (**VALUE** shape) ───────────
 
 
@@ -210,12 +282,11 @@ if __name__ == "__main__":
     # Wrap the ``def test_*`` functions in a unittest.TestSuite so
     # ``python tests/test_schema_doc_enum_regex.py`` exits with the
     # right code for CI / a future pre-commit hook to gate on.
-    loader = unittest.TestLoader()
-    suite = unittest.TestSuite()
-    for name, obj in list(globals().items()):
-        if name.startswith("test_") and callable(obj):
-            test = unittest.FunctionTestCase(obj)
-            suite.addTest(test)
+    suite = unittest.TestSuite(
+        unittest.FunctionTestCase(obj)
+        for name, obj in list(globals().items())
+        if name.startswith("test_") and callable(obj)
+    )
     runner = unittest.TextTestRunner(verbosity=2)
     result = runner.run(suite)
     sys.exit(0 if result.wasSuccessful() else 1)
