@@ -122,7 +122,7 @@ esphome upload --partition-table --file partitions.bin name-of-your-config.yaml
 
 ## Updating the bootloader on ESP32
 
-On the ESP32 it is possible to update the bootloader with an OTA update. This feature can be used on devices that can't be flashed via serial and have an old bootloader which does not support OTA rollbacks and SRAM1 as IRAM. Before you can update the bootloader you need to add the option `allow_partition_access: true` to the config and install it to your device.
+On the ESP32 it is possible to replace the second-stage bootloader with an OTA update. This is most useful for devices that can't be flashed via serial and need a newer bootloader, for example to enable OTA rollback, SRAM1-as-IRAM, or to pick up bootloader changes from a newer ESP-IDF release. Before you can update the bootloader you need to add the option `allow_partition_access: true` to the config and install it to your device.
 
 ```yaml
 ota:
@@ -131,7 +131,7 @@ ota:
 ```
 
 > [!CAUTION]
-> There is a risk of bricking the device if the power is interrupted or the ESP is reset during a bootloader update, requiring serial flashing to repair it. Make sure you have a stable power supply. The update is usually completed within less than 15 seconds after running the `esphome upload` command.
+> There is a risk of bricking the device if the power is interrupted or the ESP is reset while the new bootloader is being copied to flash, requiring serial flashing to repair it. The danger window is short — only the few seconds between the `Starting bootloader update` and `Successfully installed the new bootloader` messages in the device's logs — but make sure you have a stable power supply during the upload, and have a USB cable handy in case recovery is needed.
 
 Open the ESPHome logs for detailed information about potential errors. To perform the bootloader update you can run the following command:
 
@@ -139,11 +139,16 @@ Open the ESPHome logs for detailed information about potential errors. To perfor
 esphome upload --bootloader name-of-your-config.yaml
 ```
 
-To upload a specific bootloader binary, you can run the command below.
+This uses the bootloader image produced by the most recent compile of your ESPHome configuration (`build/bootloader/bootloader.bin` for native ESP-IDF, `.pioenvs/<name>/bootloader.bin` for PlatformIO builds).
+
+To upload a different bootloader binary, for example one extracted from a separate ESP-IDF build tree, you can run:
 
 ```
 esphome upload --bootloader --file bootloader.bin name-of-your-config.yaml
 ```
+
+> [!NOTE]
+> After a successful bootloader update the device will **not** auto-reboot. The currently running app — loaded by the previous bootloader — keeps running so you can verify the device is healthy before committing to the new bootloader. The new bootloader takes effect on the next reboot. If the new bootloader fails to boot, the only recovery path is a serial flash, so reboot manually while physically present with a USB cable available.
 
 ## See Also
 
