@@ -73,6 +73,8 @@ openthread:
   Range depends on the chip variant: ESP32-C5/C6 from ``-15dBm`` to ``20dBm``, ESP32-H2 from ``-24dBm`` to ``20dBm``.
   Defaults to the platform default (typically ``0dBm``). Ensure the configured value complies with local regulatory limits.
 - **graceful_detach_on_shutdown** (*Optional, bool): When True, informs parent that child is detaching from mesh.  True is useful when deep sleeping for an extended period of time to prevent parent from attempting to contact a sleeping child.
+- **on_connect** (*Optional*, [Automation](/automations)): An action to be performed when a connection is established.
+- **on_disconnect** (*Optional*, [Automation](/automations)): An action to be performed when the connection is dropped.
 
 ## Dataset TLV Configuration
 
@@ -120,6 +122,19 @@ esp32:
   framework:
     type: esp-idf
     log_level: INFO
+```
+
+## `on_connect` / `on_disconnect` Trigger
+
+This trigger is activated when an OpenThread connection is established or dropped.
+
+```yaml
+openthread:
+  # ...
+  on_connect:
+    - switch.turn_on: switch1
+  on_disconnect:
+    - switch.turn_off: switch1
 ```
 
 ## See Also
