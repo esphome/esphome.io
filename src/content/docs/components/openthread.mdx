@@ -16,8 +16,10 @@ This component allows ESPHome nodes to communicate with Home Assistant over a Th
 
 ## Usage
 
-This component requires an ESP32 (ESP32-C5, ESP32-C6, or ESP32-H2 because they have Thread radio chip) and the use of
-ESP-IDF.
+This component is supported on the following platforms:
+
+- **ESP32** (ESP32-C5, ESP32-C6, or ESP32-H2) with the ESP-IDF framework.
+- **nRF52840** with the Zephyr framework.
 
 ```yaml
 # Example ESP-IDF configuration for ESP32-C6-DevKitM-1 board
@@ -25,16 +27,20 @@ esp32:
   board: esp32-c6-devkitm-1
   framework:
     type: esp-idf
+
+# Example Zephyr configuration for nRF52840 board
+nrf52:
+  board: adafruit_feather_nrf52840
 ```
 
 <span id="config-openthread"></span>
 
 ## Full Configuration
 
-This example show how to configure Thread Dataset for a node.
+The configuration options vary by platform. On ESP32, the full dataset can be specified with individual fields. On nRF52840, only the **TLV** approach is supported — provide the dataset as a hex-encoded TLV string from Home Assistant's Thread integration.
 
 ```yaml
-# Example OpenThread component configuration
+# Example OpenThread component configuration (ESP32)
 network:
   enable_ipv6: true
 
@@ -48,23 +54,38 @@ openthread:
   pskc: 0xc23a76e98f1a6483639b1ac1271e2e27
   mesh_local_prefix: fd53:145f:ed22:ad81::/64
   force_dataset: true
+
+# Example OpenThread component configuration (nRF52840)
+network:
+  enable_ipv6: true
+
+openthread:
+  device_type: FTD
+  tlv: 0e080000000000010000000300001035060004001fffe00208e227ac6a7f24052f0708fdb753eb517cb4d3051062b2442a928d9ea3b947a1618fc4085a030f4f70656e5468726561642d393837330102987304105330d857354330133c05e1fd7ae81a910c0402a0f7f8
+  force_dataset: true
 ```
 
 ### Configuration variables
 
 - **device_type** (*Optional*, enum): OpenThread Device Type, either `FTD` or `MTD`. Defaults to `FTD`.
-- **channel** (*Optional*, int): Channel number from 11 to 26
-- **network_name** (*Optional*, string): A human-readable Network Name
-- **network_key** (*Optional*, string): OpenThread network key
-- **pan_id** (*Optional*, string): 2-byte Personal Area Network ID (PAN ID)
-- **ext_pan_id** (*Optional*, string): 8-byte Extended Personal Area Network ID (XPAN ID)
-- **pskc** (*Optional*, string): PSKc is used to authenticate an external Thread Commissioner to a Thread network
-- **mesh_local_prefix** (*Optional*, ipv6network): Used to build Mesh-Local IPv6 addresses (ML-EIDs), which are unique to each Thread device within the network partition
+  Supported on both ESP32 and nRF52840.
+- **tlv** (*Optional*, string): dataset TLVs from the Thread information in Home Assistant. **Required** on nRF52840
+  (the individual key/channel/PAN fields below are ESP32-only).
+- **channel** (*Optional*, int): Channel number from 11 to 26. ESP32 only.
+- **network_name** (*Optional*, string): A human-readable Network Name. ESP32 only.
+- **network_key** (*Optional*, string): OpenThread network key. ESP32 only.
+- **pan_id** (*Optional*, string): 2-byte Personal Area Network ID (PAN ID). ESP32 only.
+- **ext_pan_id** (*Optional*, string): 8-byte Extended Personal Area Network ID (XPAN ID). ESP32 only.
+- **pskc** (*Optional*, string): PSKc is used to authenticate an external Thread Commissioner to a Thread network. ESP32 only.
+- **mesh_local_prefix** (*Optional*, ipv6network): Used to build Mesh-Local IPv6 addresses (ML-EIDs), which are unique to
+  each Thread device within the network partition. ESP32 only.
 - **force_dataset** (*Optional*, bool): Forces ESPHome configuration to override any previously stored OpenThread
-  network dataset on the device, ensuring configured parameters are always applied at startup. Defaults to `false`
+  network dataset on the device, ensuring configured parameters are always applied at startup. Defaults to `false`.
+  Supported on both platforms.
 - **use_address** (*Optional*, string): Manually override what address to use to connect
   to the ESP. Defaults to auto-generated value.
-- **poll_period** (*Optional*, [Time](/guides/configuration-types#config-time)): When Poll_Period is set on an MTD device, the parent router will enqueue any messages and wait for the child to submit a poll data request
+- **poll_period** (*Optional*, [Time](/guides/configuration-types#config-time)): When Poll_Period is set on an MTD device,
+  the parent router will enqueue any messages and wait for the child to submit a poll data request
 
 > [!NOTE]
 > esphome.ota does not work when poll_period > 0, instead use http_request.ota, timeout and watchdog_timeout need to be tested to find the correct values.  Values greater than 100sec may be required.
@@ -74,6 +95,9 @@ openthread:
   Defaults to the platform default (typically ``0dBm``). Ensure the configured value complies with local regulatory limits.
 
 ## Dataset TLV Configuration
+
+On nRF52840, the TLV approach is **required** for configuring the Thread dataset. On ESP32, it is an alternative
+to the individual field-based configuration shown above.
 
 It is also possible to supply the entire dataset TLVs from the Thread information in Home Assistant and the individual values will be automatically extracted from it.
 
@@ -121,10 +145,29 @@ esp32:
     log_level: INFO
 ```
 
+## OpenThread on nRF52840
+
+When using nRF52840 with Zephyr, the component is built on the Nordic Semiconductor nRF Connect SDK
+and includes the OpenThread stack natively. The device must be connected to a Thread network via a
+[Thread border router](https://www.home-assistant.io/integrations/thread).
+
+IPv6 networking is **required** on nRF52840 and is enabled by default. The ``network:`` component
+automatically configures the Zephyr networking stack for IPv6 when an nRF52 board is selected.
+
+The following Zephyr Kconfig options are automatically enabled:
+
+- ``NET_L2_OPENTHREAD`` — OpenThread L2 layer
+- ``OPENTHREAD_NORDIC_LIBRARY_FTD`` — Nordic FTD library
+- ``OPENTHREAD_SRP_CLIENT`` — SRP client for mDNS service registration
+- ``OPENTHREAD_SLAAC`` — Stateless Address Autoconfiguration
+
+For nRF52840, only the **FTD** device type is supported and it is set automatically.
+
 ## See Also
 
 - [OpenThread Info Text Sensor](/components/text_sensor/openthread_info/)
 - [Network component](/components/network/)
 - [ESP32 Platform](/components/esp32/)
+- [NRF52 Platform](/components/nrf52/)
 - [https://openthread.io/](https://openthread.io/)
 - <APIRef text="openthread.h" path="openthread/openthread.h" />
