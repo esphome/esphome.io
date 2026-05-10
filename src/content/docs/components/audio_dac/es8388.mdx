@@ -1,19 +1,19 @@
 ---
-description: "Instructions for using ESPHome's es8388 audio DAC platform to play media from your devices and to configure microphone inputs."
+description: "Use the ES8388 audio codec for DAC playback, ADC capture, and optional I²C-driven select controls."
 title: "ES8388"
 ---
 import APIRef from '@components/APIRef.astro';
 
 
-The `es8388` component allows your ESPHome devices to use the es8388 low power audio codec ([datasheet](http://www.everest-semi.com/pdf/ES8388%20DS.pdf))
-This allows the playback of audio through two channel high performance audio DAC output via the microcontroller from a range of sources via [Speaker](/components/speaker/) or
-[Media Player](/components/media_player/).
+The `es8388` component allows your ESPHome devices to use the ES8388 low power audio codec
+([datasheet](http://www.everest-semi.com/pdf/ES8388%20DS.pdf)). This allows playback of audio through
+two-channel high performance DAC output via the microcontroller from a range of sources using
+[Speaker](/components/speaker/) or [Media Player](/components/media_player/).
 
-It also allows your ESPHome devices to use the `es8388`  high performance two channel audio ADC.
+It also allows your ESPHome devices to use the ES8388 high performance two-channel ADC, for example with
+attached microphones as input via [I2S Audio](/components/microphone/i2s_audio/).
 
-This allows attached microphones to be used as a microphone input via [I2S Audio](/components/microphone/i2s_audio/).
-
-The [I²C bus](/components/i2c) is required in your configuration as this is used to communicate with the es8388.
+The [I²C bus](/components/i2c/) is required in your configuration as this is used to communicate with the ES8388.
 
 ## Audio DAC
 
@@ -26,12 +26,14 @@ audio_dac:
 ### Configuration variables
 
 - **address** (*Optional*, int): The I²C address of the driver. Defaults to `0x10`.
-- **i2c_id** (*Optional*): The ID of the [I²C bus](/components/i2c) the ES8388 is connected to.
+- **i2c_id** (*Optional*): The ID of the [I²C bus](/components/i2c/) the ES8388 is connected to.
 - All other options from [Audio DAC](/components/audio_dac#config-audio_dac).
 
 ## Select
 
-The `es8388` select allows you to control the `dac output` and the `adc input_mic` of your [Es8388](/components/audio_dac/es8388/).
+The `es8388` select platform exposes two optional selects on the same
+[ES8388](/components/audio_dac/es8388/) `audio_dac` instance: **dac_output** (which physical line feeds the DAC
+output) and **adc_input_mic** (which analog input feeds the ADC).
 
 ```yaml
 select:
@@ -45,22 +47,41 @@ select:
 
 ### Configuration variables
 
-- **es8388_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID for the [Es8388](/components/audio_dac/es8388/) component.
-- **dac_output** (*Optional*): Control the DAC Audio output.
+- **es8388_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the
+  [ES8388](/components/audio_dac/es8388/) `audio_dac` component. Use when you have more than one ES8388 or when the
+  select entry does not use the default `audio_dac` id.
 
-  - `LINE1` (default)
+- **dac_output** (*Optional*): Control the DAC output routing. Options:
+
+  - `LINE1`
   - `LINE2`
   - `BOTH`
 
-  All options from [Select](/components/select#config-select).
+  - **initial_option** (*Optional*, string): If set, must be `LINE1`, `LINE2`, or `BOTH` (case-insensitive). On
+    startup, this routing is written to the codec over I²C and then published to the select. If omitted, the
+    reported select state is inferred from the codec registers after initialization (the hardware may not match
+    `LINE1` until you change the select in the UI).
 
-- **adc_input_mic** (*Optional*): Control the ADC Mic Input.
+  All other options from [Select](/components/select#config-select), including **id**, **name**, and entity
+  settings.
 
-  - `LINE1` (default)
+- **adc_input_mic** (*Optional*): Control the ADC input routing. Options:
+
+  - `LINE1`
   - `LINE2`
   - `DIFFERENCE`
 
-  All options from [Select](/components/select#config-select).
+  - **initial_option** (*Optional*, string): If set, must be `LINE1`, `LINE2`, or `DIFFERENCE` (case-insensitive).
+    On startup, this routing is written to the codec over I²C and then published to the select. If omitted, the
+    reported select state is inferred from the codec registers after initialization.
+
+  All other options from [Select](/components/select#config-select), including **id**, **name**, and entity
+  settings.
+
+> [!NOTE]
+> When **initial_option** is used, the codec must accept the I²C writes during setup. If applying the option
+> fails, the ES8388 component is marked failed so the reported select state is not left out of sync with the
+> hardware.
 
 ## Automations
 
@@ -68,7 +89,7 @@ All [Audio DAC Automations](/components/audio_dac#automations-audio_dac) are sup
 
 ## Configuration Examples
 
-**ESP32 Audio Kit**:
+**ESP32 Audio Kit** (minimal select; routing follows the codec after boot):
 
 ```yaml
 i2c:
@@ -124,8 +145,24 @@ switch:
     restore_mode: ALWAYS_ON
 ```
 
+**Select: startup routing and IDs** (optional `initial_option` and nested `id` for automations):
+
+```yaml
+select:
+  - platform: es8388
+    es8388_id: es8388_dac
+    dac_output:
+      name: "DAC Output"
+      id: dac_output_select
+      initial_option: BOTH
+    adc_input_mic:
+      name: "ADC Input MIC"
+      id: adc_input_select
+      initial_option: LINE2
+```
+
 ## See Also
 
-- [Audio Dac Component](/components/audio_dac/)
+- [Audio DAC Component](/components/audio_dac/)
 - <APIRef text="es8388.h" path="es8388/es8388.h" />
 - <APIRef text="audio_dac.h" path="audio_dac/audio_dac.h" />
