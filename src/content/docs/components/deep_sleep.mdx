@@ -30,6 +30,7 @@ you can remove and re-add the device in Home Assistant.
 deep_sleep:
   run_duration: 10s
   sleep_duration: 10min
+  ota_timeout: 5min
 ```
 
 > [!NOTE]
@@ -46,6 +47,7 @@ deep_sleep:
   - **touch_wakeup_reason** (*Optional*, [Time](/guides/configuration-types#time)): run duration if woken up by touch.
 
 - **sleep_duration** (*Optional*, [Time](/guides/configuration-types#time)): The time duration to stay in deep sleep mode. On BK72xx, the maximum is 36 hours.
+- **ota_timeout** (*Optional*, [Time](/guides/configuration-types#time)): The time duration to pause deep sleep during an OTA update in case of failure.  Highly     recommended to set longer then 2 minutes.  On successful OTA update device will reboot resuming normal deep sleep behavior.
 - **touch_wakeup** (*Optional*, boolean): Only on ESP32. Use a touch event to wakeup from deep sleep. To be able
   to wakeup from a touch event, [Binary Sensor](/components/binary_sensor/esp32_touch#esp32-touch-binary-sensor) must be configured properly.
 
