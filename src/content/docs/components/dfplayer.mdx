@@ -20,8 +20,6 @@ allows you to play sound and music stored in an SD card or USB flash drive.
 
 For this component to work you need to have set up a [UART bus](/components/uart) in your configuration.
 
-## Overview
-
 The module can be powered by the 3.3V output of a NodeMCU. For communication you can connect only
 the `tx_pin` of the `uart` bus to the module's `RX` but if you need feedback of playback active
 you will also need to connect the `rx_pin` to the module's `TX`.
@@ -92,8 +90,8 @@ on_...:
 
 Configuration options:
 
-- **file** (*Optional*, int, [templatable](/automations/templates)): The global track
-  number (from all tracks in the device). If not specified plays the first track.
+- **file** (**Required**, int, [templatable](/automations/templates)): The global track
+  number (from all tracks in the device).
 
 - **loop** (*Optional*, boolean, [templatable](/automations/templates)): Repeats playing
   the same track. Defaults to `false`.
@@ -229,7 +227,7 @@ on_...:
 
 Configuration options:
 
-- **eq_preset** (**Required**): Eq Preset value. Valid values are `NORMAL`, `POP`, `ROCK`, `JAZZ`,
+- **eq_preset** (**Required**, enum, [templatable](/automations/templates)): Eq Preset value. Valid values are `NORMAL`, `POP`, `ROCK`, `JAZZ`,
   `CLASSIC` and `BASS`.
 
 ## `dfplayer.sleep` Action
