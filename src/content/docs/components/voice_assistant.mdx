@@ -31,6 +31,10 @@ voice_assistant:
 - **microphone** (*Optional*, [Microphone Source Configuration](/components/microphone#config-microphone-source)): The
   [microphone](/components/microphone/) settings to use for input.
 
+- **microphone2** (*Optional*, [Microphone Source Configuration](/components/microphone#config-microphone-source)): An
+  optional second [microphone](/components/microphone/) source carrying less-processed audio. When configured, audio from
+  both sources is streamed to Home Assistant. See [Second microphone channel](#second-microphone-channel) below.
+
 - **micro_wake_word** (*Optional*, [ID](/guides/configuration-types#id)): The [micro_wake_word](/components/micro_wake_word/)
   component used for wake word detection. Configuring this allows Home Assistant to change which wake word model is enabled.
 
@@ -168,6 +172,28 @@ Returns true if the voice assistant is currently running.
 ### `voice_assistant.connected` Condition
 
 Returns true if the voice assistant is currently connected to Home Assistant.
+
+## Second microphone channel
+
+A second microphone source may be provided via `microphone2`. When it's configured, audio from both `microphone` and
+`microphone2` is streamed to Home Assistant. The idea is that `microphone` carries the more-processed audio (gain, noise
+suppression, etc.) while `microphone2` carries less-processed audio; Home Assistant can then use whichever channel works
+best for each stage of the voice pipeline.
+
+```yaml
+voice_assistant:
+  id: va
+  microphone:
+    microphone: i2s_mics
+    channels: 0
+  microphone2:
+    microphone: i2s_mics
+    channels: 1
+```
+
+> [!NOTE]
+> Both microphone sources must use the same audio format that's required for `microphone` (16 kHz, 16 bits per sample,
+> mono). Home Assistant 2026.6.0 or later is required to make use of the second channel; older versions simply ignore it.
 
 ## Wake word detection
 
