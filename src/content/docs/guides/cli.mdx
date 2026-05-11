@@ -165,6 +165,21 @@ basis, or set with this option at the time of uploading.
 : Specify the host port to use for legacy Over the Air uploads.
 
 
+**`--prebuilt-dir PATH`**
+: Advanced flag for the ESPHome dashboard's transparent install flow.
+Points the upload helpers at a directory of prebuilt artifacts shipped
+from a paired build server, instead of re-deriving paths from the local
+build tree. End users running `esphome upload` from a shell should not
+need this flag; build the device locally and let `esphome upload`
+resolve artifacts on its own. The dashboard uses it so a remote Install
+button works on a machine that doesn't compile firmware itself.
+
+Files are looked up by canonical basename inside `<PATH>` (`firmware.bin`,
+`firmware.uf2`, `bootloader.bin`, `partitions.bin`, `idedata.json`,
+`app_update.bin`); which files are required depends on the target platform
+and upload path.
+
+
 ### `clean-mqtt` Command
 
 The `esphome clean-mqtt <CONFIG>` cleans retained MQTT discovery messages from the MQTT broker.
