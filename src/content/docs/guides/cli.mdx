@@ -54,6 +54,21 @@ Can also be enabled via environment variable `ESPHOME_VERBOSE=true`.
 
 Please see [command line substitutions](/components/substitutions#command-line-substitutions) for details.
 
+<span id="cli-toolchain"></span>
+### `--toolchain` Option
+
+**`--toolchain TOOLCHAIN`**
+: Selects which toolchain to use for compiling the project. Supported values are:
+
+* `platformio` (default)
+* `esp-idf`
+
+The toolchain can be configured using `esp32.toolchain` (see the [ESP32 toolchain configuration](/components/esp32#esp32-toolchain)).
+If not specified, `platformio` is used by default.
+If both `esp32.toolchain` and the `--toolchain` CLI option are set, the CLI option takes precedence.
+
+Please see [ESP-IDF toolchain documentation](/guides/esp_idf/) for details on using the ESP-IDF integration.
+
 ## Commands
 
 ### `run` Command
@@ -170,6 +185,15 @@ basis, or set with this option at the time of uploading.
 : Specify the host port to use for legacy Over the Air uploads.
 
 
+**`--ota-platform {esphome,web_server}`**
+: Also accepted by [`run`](#run-command). Force a specific OTA platform when uploading firmware.
+By default, ESPHome uses the OTA platform configured in the device's YAML; if both `platform: esphome`
+and `platform: web_server` are configured, the native `esphome` protocol is preferred. Use
+`--ota-platform web_server` to upload via the
+[Web Server OTA platform](/components/ota/web_server/#using-the-command-line) instead — for example,
+when the OTA password has been lost but the `web_server` `auth` credentials are still known.
+
+
 ### `clean-mqtt` Command
 
 The `esphome clean-mqtt <CONFIG>` cleans retained MQTT discovery messages from the MQTT broker.
@@ -205,6 +229,16 @@ The `esphome version` command shows the current ESPHome version and exits.
 ### `clean` Command
 
 The `esphome clean <CONFIG>` command cleans all build files and can help with some build issues.
+
+### `clean-all` Command
+
+The `esphome clean-all [<CONFIG>...]` command cleans all build files, PlatformIO platform and package
+files, and the PlatformIO core directory. Unlike `clean`, this command does not require a
+configuration file — if none is provided, it will clean the `.esphome` directory in the current
+working directory. Arguments can be YAML configuration files or directories containing them.
+
+Storage files (`.json` files and the `storage` directory inside `.esphome`) are preserved so that
+the dashboard continues to function correctly.
 
 ### `dashboard` Command
 
@@ -333,6 +367,13 @@ esphome logs my-device.yaml --device 192.168.1.100 --device 2001:db8::1
 state changes are shown as `[S]` lines (e.g., `[S][sensor]: 'Temperature' >> 22.5 °C`). Use this flag
 to suppress them and only see firmware log messages.
 
+
+### `update-all` Command
+
+The `esphome update-all <CONFIG>...` command compiles and uploads firmware to all devices via OTA.
+Arguments can be YAML configuration files or directories containing them. For each configuration
+found, it runs `esphome run <CONFIG> --no-logs --device OTA` and prints a summary of successes and
+failures at the end.
 
 ## Using Bash or ZSH auto-completion
 
