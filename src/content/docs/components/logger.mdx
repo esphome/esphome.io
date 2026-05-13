@@ -52,8 +52,15 @@ Advanced settings:
 - **hardware_uart** (*Optional*, string): The Hardware UART to use for logging. The default varies depending on
    the specific processor/chip and framework you are using. See the [table below](#logger-default_hardware_interfaces).
 
-- **esp8266_store_log_strings_in_flash** (*Optional*, boolean): If set to false, disables storing
-   log strings in the flash section of the device (uses more memory). Defaults to true.
+- **esp8266_store_log_strings_in_flash** (*Optional*, boolean): **ESP8266 only.** Compile-time
+   setting that controls where log format strings are placed in the firmware image. When `true`
+   (the default), log format strings are kept in flash (via `PROGMEM`) and read on demand. When
+   `false`, they are copied into RAM at boot, which uses significantly more of the ESP8266's
+   limited RAM but avoids the small flash-read cost each time a log message is formatted.
+   Defaults to `true`, and it is almost always the right choice to leave it that way: this
+   setting does not affect runtime log output or log levels, only the storage location of the
+   string data. There is no flash-wear concern because program flash is only written during
+   OTA updates, not at runtime.
 
 - **on_message** (*Optional*, [Automation](/automations)): An action to be
    performed when a message is to be logged. The variables `int level`, `const char* tag` and
