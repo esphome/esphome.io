@@ -107,6 +107,15 @@ See [https://openthread.io/guides/thread-primer/node-roles-and-types](https://op
 The Poll Period makes the device behave as a SED.  Follow on work is needed utilizing Power Management and/or Light Sleep capability in esp-idf.
 If the device is always awake, the API timeout is 60 seconds, so a ping request will force interaction with the parent when the poll period is greater than 60 seconds.
 
+The following values are set to define the parent-child relationship:
+
+- **Child Timeout** - The maximum time (in seconds) a parent will wait without hearing from a SED before assuming the child has detached.
+Set to the maximum of 240 seconds or 4 * poll_period in seconds.
+- **Child Supervision Check Timeout** - The duration a SED waits to receive a message from its parent.
+Set to the maximum of 190 seconds or 2 * poll_period in seconds.
+- **Child Supervision Interval** - A configured interval that the parent uses to ensure at least one message is sent to SED.
+Set to the maximum of 129 seconds or 1.5 * poll_period in seconds.
+
 ## OpenThread ESP-IDF Logging
 
 The OpenThread log level is controlled by the ``log_level`` setting in the ESP-IDF framework configuration.
