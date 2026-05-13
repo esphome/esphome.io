@@ -1,0 +1,58 @@
+---
+description: "Instructions for setting up Analog Devices MAX17048/MAX17049 battery fuel gauge in ESPHome."
+title: "Analog Devices MAX17048/MAX17049 battery fuel gauge"
+---
+
+import { Image } from "astro:assets";
+import Figure from "@components/Figure.astro";
+
+The max17048 platform allows you to accurately monitor the remaining capacity of one or more lithium-ion batteries using a MAX17048 or MAX17049 ([datasheet](https://www.analog.com/media/en/technical-documentation/data-sheets/MAX17048-MAX17049.pdf)) in ESPHome.
+
+The IC uses ModelGauge™, a sophisticated lithium-ion battery modeling scheme, to continuously track the battery’s state of charge (SOC) over a wide range of charge/discharge profiles.
+Unlike traditional fuel gauges, the ModelGauge™ algorithm eliminates the need for relearn cycles and an external current-sense resistor.
+The MAX17048 is designed to monitor one cell, while the MAX17049 is designed to monitor two cells. Apart from that, there are no significant differences between the two ICs. It uses the I²C Bus for communication.
+
+> [!NOTE]
+> See the datasheet to learn how the MAX17048/MAX17049 behaves in different situations.
+
+<Figure
+  src="/images/max17048.jpg"
+  alt=""
+  caption="Adafruit MAX17048 LiPoly / LiIon Fuel Gauge and Battery Monitor"
+  layout="constrained"
+  width={300}
+  height={300}
+/>
+
+## Configuration
+
+```yaml
+# Example configuration entry
+sensor:
+  - platform: max17048
+    address: 0x36
+    update_interval: 60s
+    battery_voltage:
+      name: "Battery Voltage"
+    battery_level:
+      name: "Battery Level"
+    rate:
+      name: "Battery Rate"
+```
+
+## Sensors
+
+- **battery_voltage** (_Optional_, float): The voltage measured at the LIPO battery.
+  All other options from [Sensor](/components/sensor).
+
+- **battery_level** (_Optional_, float): The percentage of battery remaining using the ModelGauge™ battery-modelling scheme.
+  All other options from [Sensor](/components/sensor).
+
+- **rate** (_Optional_, float): The percentage per hour (%/h) on which the cell is charged or discharged, calculated using the ModelGauge™ battery-modelling scheme.
+  All other options from [Sensor](/components/sensor).
+
+## See Also
+
+- [I²C Bus](/components/i2c)
+- [MAX17048 Product Overview - Analog Devices](https://www.analog.com/en/products/max17048.html)
+- [MAX17048 Datasheet](https://www.analog.com/media/en/technical-documentation/data-sheets/MAX17048-MAX17049.pdf)
