@@ -97,13 +97,21 @@ This release lands one of the most consequential changes to ESPHome's runtime in
 
 Beyond the structural changes above, this release contains an unusual concentration of measured micro-optimizations across the codebase, particularly on the API and audio paths. Led by [@bdraco](https://github.com/bdraco) and [@kahrendt](https://github.com/kahrendt).
 
-**ESP8266 `millis()` is now 2.7x faster** ([#15662](https://github.com/esphome/esphome/pull/15662)). Arduino's `millis()` uses four 64-bit multiplies routed through the LX106's software `__umulsidi3` helper. ESPHome now wraps `millis()` at link time with a 32-bit accumulator (3348 ns/call to 1077 ns/call). On a typical 10-component ESP8266 device, runtime stats showed `main_loop active_total` drop by **41 ms per minute of CPU**, roughly 7% of the scheduler+overhead budget reclaimed for actual work.
+**Cross-platform `millis()` overhaul.** A coordinated rewrite hits every supported runtime. ESP8266 ([#15662](https://github.com/esphome/esphome/pull/15662)) drops from 3348 ns/call to 1077 ns/call (**2.7x**) by wrapping Arduino's `millis()` at link time with a 32-bit accumulator, replacing four 64-bit multiplies routed through the LX106's software `__umulsidi3` helper. ESP32 ([#15661](https://github.com/esphome/esphome/pull/15661)) switches to `xTaskGetTickCount()` directly when the FreeRTOS tick rate is 1 kHz; LibreTiny ([#15918](https://github.com/esphome/esphome/pull/15918)) inlines the same `xTaskGetTickCount()` fast path; the host platform ([#15994](https://github.com/esphome/esphome/pull/15994)) replaces floating-point math with integer arithmetic; and `Millis64Impl::compute()` is force-inlined on single-threaded platforms ([#15684](https://github.com/esphome/esphome/pull/15684)). On a typical 10-component ESP8266 device, runtime stats showed `main_loop active_total` drop by **41 ms per minute of CPU**, roughly 7% of the scheduler+overhead budget reclaimed for actual work.
 
 **BLE advertisement encode is 20-33% faster** ([#15988](https://github.com/esphome/esphome/pull/15988)). A new `(mac_address)` proto field option unrolls the varint encoder for 48-bit MAC addresses into a 7-byte fast path. CodSpeed measured the `CalculateSize_BLERawAdvs12` benchmark improving by **33%** and the full `CalcAndEncode_BLERawAdvs12` benchmark by **22.5%**. On real ESP32 hardware, encode dropped 27.6% (11647 ns/op to 8430 ns/op) on a 12-advertisement batch.
 
 **API socket fast-path tightened** ([#15996](https://github.com/esphome/esphome/pull/15996), [#15888](https://github.com/esphome/esphome/pull/15888), [#15889](https://github.com/esphome/esphome/pull/15889)). The Xtensa `memw` instruction in the per-socket ready check is now hoisted to once per main-loop iteration; `api_is_connected()` is inlined and reduced to a single byte load; the proxy message families (Z-Wave, IR/RF, serial) are now marked `speed_optimized` and have CodSpeed coverage ([#16157](https://github.com/esphome/esphome/pull/16157), [#16159](https://github.com/esphome/esphome/pull/16159)).
 
 **Scheduler fast paths force-inlined** ([#15683](https://github.com/esphome/esphome/pull/15683), [#15685](https://github.com/esphome/esphome/pull/15685), [#15686](https://github.com/esphome/esphome/pull/15686), [#15947](https://github.com/esphome/esphome/pull/15947)). `cleanup_()`, `process_to_add()`, and `process_defer_queue_()` are inlined at the call site; the multi-threaded-no-atomics path now uses lock-free `__atomic` builtins.
+
+**Defer queue: don't sleep while non-empty** ([#15968](https://github.com/esphome/esphome/pull/15968)). The scheduler now skips its select/sleep when the defer queue still has items pending, eliminating a per-tick latency spike on action chains that defer between steps (`script.execute`, `delay`, etc.). Latency-sensitive automations no longer pay an extra select round-trip per deferred step.
+
+**HAL trivial dispatches inlined** ([#15977](https://github.com/esphome/esphome/pull/15977), [#16111](https://github.com/esphome/esphome/pull/16111)-[#16116](https://github.com/esphome/esphome/pull/16116), [#16183](https://github.com/esphome/esphome/pull/16183)). The HAL split moves bodies into per-platform `hal.cpp` files and inlines the trivial wrappers (`millis()`, `micros()`, `feed_wdt()`, etc.) at the call site, removing a per-call function-call overhead that compounded across every component's main-loop work.
+
+**`bluetooth_proxy` `loop()` fast paths inlined** ([#15887](https://github.com/esphome/esphome/pull/15887), [#15992](https://github.com/esphome/esphome/pull/15992), [#16000](https://github.com/esphome/esphome/pull/16000)). The Z-Wave/serial-style `response_handler_` and `process_uart_` hot-path branches are now inlined; a partial revert of an earlier `loop()`→`set_interval` migration restores tighter scheduling for proxy traffic; and a redundant `remote_bda_` write in the connect handler is gone. Bluetooth proxy is one of the most-deployed configurations, so these compound across thousands of devices.
+
+**mDNS update polling event-driven on ESP8266 and RP2040** ([#15961](https://github.com/esphome/esphome/pull/15961)). `MDNS.update()` is now driven by IP-state events on ESP8266 and RP2040 instead of being polled every main-loop tick. Idle devices stop touching the mDNS state machine entirely.
 
 **i2s_audio software volume control is 45% cheaper** ([#16278](https://github.com/esphome/esphome/pull/16278)). The new Q31 scaling factor uses Xtensa's `mulsh` instruction (30 bits of precision) and a precomputed scalar generated only when volume changes. Speaker-task CPU usage at 48 kHz stereo drops from **7.8% to 4.3%**.
 
@@ -128,6 +136,14 @@ A parallel effort focused on shrinking the per-instance and static-RAM cost of c
 **Loop task uses static allocation** ([#15659](https://github.com/esphome/esphome/pull/15659)): ~152 bytes of heap metadata reclaimed by moving the ESP32 loop task TCB and stack into `.bss` instead of being allocated at boot from the heap.
 
 **Ring buffer can target internal memory** ([#16187](https://github.com/esphome/esphome/pull/16187)). A new memory-preference parameter on `RingBuffer::create()` allows audio paths to skip the slow ESP32 PSRAM cache when small buffers benefit from the faster internal SRAM.
+
+**Scheduler pool replaced with intrusive freelist** ([#16172](https://github.com/esphome/esphome/pull/16172)). The previous `std::vector`-backed `SchedulerItem` pool grew via doubling reallocations and hung on to its peak capacity for the lifetime of the device. The replacement is an **unbounded intrusive freelist** that recycles freed items in O(1) without ever resizing or fragmenting an external container. Scheduler-heavy configurations stop carrying high-watermark vector capacity around as dead RAM.
+
+**`safe_mode` and `rtttl` callback storage gated** ([#16002](https://github.com/esphome/esphome/pull/16002), [#16003](https://github.com/esphome/esphome/pull/16003)). `on_safe_mode` callbacks now use a `StaticCallbackManager`, and `rtttl`'s `on_finished_playback` callback storage is gated behind a `#define` that only activates when the YAML actually subscribes. Both are tiny per-instance wins, but `safe_mode` is on essentially every device and `rtttl` is on every speaker setup that uses RTTTL playback.
+
+**`light` `validate_` clamp shrunk** ([#15728](https://github.com/esphome/esphome/pull/15728)). The unit-range clamp helper used by every light component dropped its branch count and code size, with the speed-up showing up across PWM, RGB, RGBW, RGBWW, monochromatic, and addressable light platforms.
+
+**`dsmr` no longer allocates during parsing** ([#15875](https://github.com/esphome/esphome/pull/15875)). The DSMR rewrite eliminates dynamic allocations in the parse path entirely and decrypts in place, saving roughly **1500 bytes** of runtime allocation per telegram. See *Other Notable Features* for the security-fix and OBIS-sensor side of the same PR.
 
 ## Native ESP-IDF Toolchain Support
 
@@ -181,7 +197,7 @@ Users with audio files referenced only via YAML actions (rather than embedded or
 
 ## OTA Platform Enhancements
 
-OTA gained the broadest set of capabilities it has had in any single release, led by [@Mat931](https://github.com/Mat931) and [@bdraco](https://github.com/bdraco).
+OTA gained the broadest set of capabilities it has had in any single release, led by [@Mat931](https://github.com/Mat931).
 
 **Partition table updates** ([#15780](https://github.com/esphome/esphome/pull/15780)) make it possible to convert devices from other firmwares (such as Tasmota) to ESPHome over the air. The updater verifies the new partition table, runs sanity checks, and only commits if it can prove the device will boot. Setting `allow_partition_access: true` under `ota: platform: esphome` enables the workflow; the docs walk through the Tasmota conversion step by step.
 
@@ -195,9 +211,11 @@ OTA gained the broadest set of capabilities it has had in any single release, le
 
 **Better OTA error messages** ([#16327](https://github.com/esphome/esphome/pull/16327)) and the use of `WatchdogManager` during ESP32 OTA writes ([#16138](https://github.com/esphome/esphome/pull/16138)) round out the package.
 
-## Faster Configuration Validation
+## Faster Configuration Validation and CLI Startup
 
-Three related changes by [@bdraco](https://github.com/bdraco) make `esphome compile`, `esphome upload`, and especially `esphome logs` noticeably faster on projects with remote dependencies.
+Four related changes by [@bdraco](https://github.com/bdraco) make `esphome compile`, `esphome upload`, and especially `esphome logs` noticeably faster on projects with remote dependencies, and shave wall-clock time off every CLI invocation.
+
+**Deferred heavy module-scope imports** ([#15955](https://github.com/esphome/esphome/pull/15955)). `esphome.__main__`, `esphome.loader`, and `esphome.config` no longer pull `voluptuous`, codegen, and the component registry at import time; the heavy imports happen lazily inside the codepaths that actually need them. Every `esphome` CLI invocation, including `esphome version`, `esphome config`, and the dashboard's per-request shells, starts faster, and the dashboard's import-time regression is now guarded by CI.
 
 **Skip external file refresh on `esphome logs`** ([#16016](https://github.com/esphome/esphome/pull/16016)). The `skip_external_update` flag is unified into a single `CORE.skip_external_update` source of truth and `external_files.download_content()` now honors it. For a Home Assistant Voice PE config (16+ remote audio files, several `micro_wake_word` models), the validation phase no longer spends ~20 sequential HTTP HEAD requests before logs can start streaming.
 
