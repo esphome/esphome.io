@@ -225,7 +225,7 @@ alarm_control_panel:
 
 <span id="alarm_control_panel_arm_away_action"></span>
 
-### `arm_away` Action
+### `alarm_control_panel.arm_away` Action
 
 This action arms the alarm in away mode. The `code` is required when *requires_code_to_arm* is *true*.
 
@@ -239,7 +239,7 @@ on_...:
 
 <span id="alarm_control_panel_arm_home_action"></span>
 
-### `arm_home` Action
+### `alarm_control_panel.arm_home` Action
 
 This action arms the alarm in home mode. The `code` is required when *requires_code_to_arm* is *true*.
 
@@ -253,7 +253,7 @@ on_...:
 
 <span id="alarm_control_panel_arm_night_action"></span>
 
-### `arm_night` Action
+### `alarm_control_panel.arm_night` Action
 
 This action arms the alarm in night mode. The `code` is required when *requires_code_to_arm* is *true*.
 
@@ -267,7 +267,7 @@ on_...:
 
 <span id="alarm_control_panel_disarm_action"></span>
 
-### `disarm` Action
+### `alarm_control_panel.disarm` Action
 
 This action disarms the alarm. The `code` is required when *codes* is not empty.
 
@@ -281,7 +281,7 @@ on_...:
 
 <span id="alarm_control_panel_pending_action"></span>
 
-### `pending` Action
+### `alarm_control_panel.pending` Action
 
 This action puts the alarm in pending state (the state before triggered after *pending_time*).
 
@@ -293,7 +293,7 @@ on_...:
 
 <span id="alarm_control_panel_triggered_action"></span>
 
-### `triggered` Action
+### `alarm_control_panel.triggered` Action
 
 This action puts the alarm in triggered state.
 
@@ -305,7 +305,7 @@ on_...:
 
 <span id="alarm_control_panel_is_armed_condition"></span>
 
-### `is_armed` Condition
+### `alarm_control_panel.is_armed` Condition
 
 This [Condition](/automations/actions#all-conditions) checks if the alarm control panel is armed.
 
@@ -335,6 +335,30 @@ id(acp1).arm_night();
 id(acp1).disarm(std::string("1234"));
 bool all_sensors_ready = id(acp1).get_all_sensors_ready();
 ```
+
+## MQTT Command Format
+
+When [MQTT](/components/mqtt) is enabled, the alarm control panel subscribes to a command topic. Commands can be sent as either a plain string or a JSON object.
+
+Plain string payloads set the alarm state directly:
+
+```bash
+mosquitto_pub -t "esphome/alarm_control_panel/my_alarm/command" -m "ARM_AWAY"
+```
+
+Valid plain string commands are: `ARM_AWAY`, `ARM_HOME`, `ARM_NIGHT`, `ARM_CUSTOM_BYPASS`, `DISARM`, `PENDING`, `TRIGGERED`.
+
+To include a PIN code with the command, send a JSON object with a required `state` key and an optional `code` key:
+
+```bash
+mosquitto_pub -t "esphome/alarm_control_panel/my_alarm/command" -m '{"state": "DISARM", "code": "1234"}'
+```
+
+```bash
+mosquitto_pub -t "esphome/alarm_control_panel/my_alarm/command" -m '{"state": "ARM_AWAY", "code": "1234"}'
+```
+
+The `code` is validated against the configured `codes` list. If `requires_code_to_arm` is `true`, arming commands must include a valid `code`.
 
 ## Platforms
 
