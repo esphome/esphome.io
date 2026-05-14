@@ -1,5 +1,9 @@
 ---
 import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
+import { getEntry } from "astro:content";
+import FAQ from "@components/FAQ.astro";
+
+const faq = await getEntry("faq", "starter-kit");
 ---
 
 <StarlightPage
@@ -9,4 +13,6 @@ import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
   }}
 >
   <p>Hello world!</p>
+
+  <FAQ heading="Frequently asked questions" items={faq.data.items} />
 </StarlightPage>
