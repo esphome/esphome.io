@@ -119,7 +119,9 @@ def test_returns_none_when_no_block_present():
 
 
 def test_returns_none_when_entry_missing_value(capsys):
-    """An entry without a 'value' key is malformed — surface and skip."""
+    """A malformed entry: caller sees None entries but a non-zero
+    end_index so it can advance past the broken block. Anything else
+    would put process_schema in an infinite loop on the same lines."""
     end, entries = parse(
         """\
 <EnumValues values={[
@@ -128,19 +130,20 @@ def test_returns_none_when_entry_missing_value(capsys):
 """
     )
     assert entries is None
-    assert end == 0
+    assert end == 3  # advanced past the broken block (regression: was 0)
     assert "needs a 'value'" in capsys.readouterr().out
 
 
-def test_unterminated_block_reports_and_falls_through(capsys):
-    end, entries = parse(
-        """\
+def test_unterminated_block_consumes_to_eof(capsys):
+    """Without a closing `/>` the block is treated as running to EOF —
+    the caller advances all the way so there's nothing left to loop on."""
+    text = """\
 <EnumValues values={[
   { value: "X" },
 """
-    )
+    end, entries = parse(text)
     assert entries is None
-    assert end == 0
+    assert end == len(text.splitlines())  # consumed to EOF
     assert "unterminated" in capsys.readouterr().out
 
 
@@ -248,6 +251,34 @@ def test_apply_enum_entries_skips_values_not_in_schema():
     ]
     _apply_enum_entries(config, entries, Path("dummy.mdx"), 0)
     assert config["values"] == {"A": {"docs": "first"}}
+
+
+def test_malformed_block_does_not_loop_forever():
+    """Regression: a malformed <EnumValues> block must return an
+    advanced end_index, not the same input index. Otherwise
+    process_schema would reach md_get_next_config (which now stops at
+    <EnumValues but doesn't consume it), get back the same index, and
+    spin forever on the same lines.
+    """
+    lines = [
+        "<EnumValues values={[",
+        "  { default: true },",  # missing 'value' key
+        "]} />",
+        "",
+    ]
+    end, entries = parse_enum_values_block(lines, 0)
+    assert entries is None
+    assert end > 0, "must advance past the broken block to avoid infinite loop"
+
+
+def test_no_block_present_does_not_advance():
+    """Counterpart to the loop-prevention test: when there's no
+    <EnumValues> block at the index, the parser MUST return the input
+    index unchanged so the caller falls through to bullet handling."""
+    lines = ["- `ANY` (default): Trigger on any edge change", ""]
+    end, entries = parse_enum_values_block(lines, 0)
+    assert entries is None
+    assert end == 0  # no advance — caller falls through
 
 
 def test_apply_enum_entries_default_only_no_description():
