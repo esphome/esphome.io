@@ -1,0 +1,102 @@
+<section id="collaboration" data-dsap>
+  <div class="container">
+    <div class="card">
+      <div class="card-inner">
+        <div class="partner">
+          Brought to you by <img
+            src="/images/collaboration/apollo-automation.svg"
+            alt="Apollo Automation Logo"
+          />
+        </div>
+        <h3>Every purchase supports the Open Home</h3>
+        <p class="body-medium">
+          Apollo Automation designs and builds official ESPHome hardware. As a
+          commercial partner of the Open Home Foundation, Apollo contributes the
+          majority of its profits to the foundation. This means every purchase
+          supports the development of projects like ESPHome and Home Assistant.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style lang="scss">
+  @use "../styles/mixins" as *;
+
+  section#collaboration {
+    &[data-dsap] {
+      &[data-dsap-seen] {
+        .card:after {
+          opacity: 0;
+        }
+      }
+    }
+
+    .card {
+      background-color: #000000;
+      // background-image: url("xxx.webp");
+      background-position: center bottom;
+      background-repeat: no-repeat;
+      background-size: 700px;
+      min-height: 500px;
+      display: flex;
+      align-items: center;
+      flex-direction: column;
+      border-radius: 16px;
+
+      @include bp(tablet) {
+        background-position: bottom left;
+        background-size: 50%;
+        justify-content: center;
+        min-height: 330px;
+      }
+
+      &:after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background-color: black;
+        z-index: 0;
+        opacity: 1;
+        transition: opacity 2s ease-out;
+      }
+
+      h3 {
+        text-wrap: balance;
+        margin: 0;
+      }
+
+      .partner {
+        font-weight: 300;
+        align-items: center;
+        display: flex;
+        gap: 16px;
+
+        @include bp(tablet) {
+          font-size: 20px;
+        }
+
+        img {
+          height: 25px;
+          margin: 0;
+
+          @include bp(tablet) {
+            height: 30px;
+          }
+        }
+      }
+
+      .card-inner {
+        margin-left: auto;
+        display: flex;
+        flex-direction: column;
+        z-index: 1;
+
+        @include bp(tablet) {
+          gap: 18px;
+          width: calc(6 / 12 * 100%);
+        }
+      }
+    }
+  }
+</style>
