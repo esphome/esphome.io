@@ -22,7 +22,7 @@ import ImgTable from "@components/ImgTable.astro";
 ## Release Overview
 
 {/* RELEASE_OVERVIEW_START */}
-ESPHome 2026.5.0 reworks the main loop and watchdog architecture for measurable CPU and power savings on every platform, lands a broad set of performance and memory optimizations across the API and audio stacks, and introduces a native ESP-IDF toolchain alongside a modernized audio decoder pipeline. OTA gains its most expansive feature set in years with partition-table and bootloader updates, web-server OTA, and soft-brick recovery, while ESP32-based Zigbee, the new Sendspin multi-room audio component family, and a fresh `radio_frequency` entity type round out a release that also accelerates configuration validation, expands hardware support, and lands a substantial codebase correctness sweep.
+The headline change in ESPHome 2026.5.0 is the public beta of the new **ESPHome Device Builder**, a from-scratch web app that replaces the legacy in-tree dashboard with a real configuration editor, a firmware job queue, multi-select bulk actions, labels and areas, out-of-sync detection, cross-config search, distributed builds, and a proper settings UI. On the firmware side, a fundamental rework of the main loop, scheduler, and task watchdog recovers measurable CPU and power on every platform, alongside a broad set of measured optimizations across the API, audio, and helper hot paths. A native ESP-IDF toolchain ships next to PlatformIO with ESP-IDF v6.0.1 readiness work, and the audio decoder pipeline is modernized on top of the new microMP3 / microWAV / microFLAC streaming libraries. OTA gains its most expansive feature set in years with partition-table and bootloader updates, web-server OTA, and soft-brick recovery, while ESP32-based Zigbee, the new Sendspin multi-room audio component family, a fresh `radio_frequency` entity type, expanded nRF52 / Zephyr platform work, and a substantial codebase correctness sweep round out the release.
 {/* RELEASE_OVERVIEW_END */}
 
 ## Upgrade Checklist
@@ -72,7 +72,7 @@ The legacy dashboard remains the default in 2026.5.0. Home Assistant users can t
 
 ![Toggle "Use new Device Builder Preview" under the ESPHome Device Builder Configuration tab in Home Assistant](/images/device-builder-settings.png)
 
-Both repos are open to contributions and the first community pull requests are already landing.
+Feedback from beta testers shapes the next release, and we're excited to already be seeing the first community pull requests landing on the [device-builder](https://github.com/esphome/device-builder) and [device-builder-frontend](https://github.com/esphome/device-builder-frontend) repos.
 
 ## Main Loop and Watchdog Architecture Overhaul
 
