@@ -29,6 +29,11 @@ sensor:
       name: Coolant Temperature
     battery_voltage:
       name: Battery Voltage
+    custom_pid:
+      - name: State of Charge
+        pid: "0xB201"
+        mode: 0x22
+        response_bytes: 1
 ```
 
 ## Configuration Variables
@@ -60,6 +65,37 @@ sensor:
 
 - **battery_voltage** (*Optional*): Vehicle battery voltage in V, read via the `ATRV` AT command.
   All options from [Sensor](/components/sensor).
+
+- **custom_pid** (*Optional*, list): One or more arbitrary OBD-II PIDs to query. Useful for
+  manufacturer-specific or non-standard PIDs used by EV battery management systems, charge
+  controllers, or other vehicle peripherals. The raw big-endian integer value of the response
+  bytes is published. Use [sensor filters](/components/sensor/#filters) to apply any
+  scaling or offset required by your vehicle. Each entry supports:
+
+  - **name** (*Required*, string): Name for this sensor. All options from [Sensor](/components/sensor).
+  - **pid** (*Required*): The PID to query, as a hex string (e.g. `"0xFF"`, `"0xB201"`) or integer.
+    1-byte PIDs (`0x00`–`0xFF`) and 2-byte PIDs (`0x0100`–`0xFFFF`) are both accepted.
+  - **mode** (*Optional*, int): OBD-II service mode. Defaults to `0x01` (standard current data).
+    Use `0x22` for UDS Enhanced Diagnostics, commonly required by EV battery management systems
+    and charge controllers.
+  - **response_bytes** (*Optional*, int): Number of data bytes to read from the response. Defaults
+    to `1`. Accepted range: `1`–`4`.
+
+  ```yaml
+  sensor:
+    - platform: elm327
+      custom_pid:
+        - name: State of Charge
+          pid: "0xB201"
+          mode: 0x22
+          response_bytes: 1
+        - name: Pack Voltage
+          pid: "0xB202"
+          mode: 0x22
+          response_bytes: 2
+          filters:
+            - multiply: 0.1
+  ```
 
 - **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): How often to query
   all configured sensors. Sensors are queried sequentially, one per round-trip. Defaults to `10s`.
