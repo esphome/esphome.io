@@ -16,7 +16,7 @@ import pytest
 REPO_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO_ROOT / "script"))
 
-from schema_doc import parse_enum_values_block  # noqa: E402
+from schema_doc import md_get_next_config, parse_enum_values_block  # noqa: E402
 
 
 def parse(text):
@@ -130,7 +130,7 @@ def test_unterminated_block_reports_and_falls_through(capsys):
     )
     assert entries is None
     assert end == 0
-    assert "Unterminated" in capsys.readouterr().out
+    assert "unterminated" in capsys.readouterr().out
 
 
 def test_trailing_commas_tolerated():
@@ -167,8 +167,6 @@ def test_jsx_block_terminates_parent_bullet():
     ``"**interrupt_type** … One of: <EnumValues values={["``, and the
     structured-enum walker downstream would never run.
     """
-    from schema_doc import md_get_next_config
-
     lines = [
         "- **interrupt_type** (*Optional*): One of:",
         "",

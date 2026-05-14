@@ -345,50 +345,54 @@ REGEX_ENUM_VALUES_BLOCK = re.compile(
 
 
 def parse_enum_values_block(lines, index):
-    """Detect and parse an ``<EnumValues …/>`` block starting near ``index``.
+    """Detect an ``<EnumValues …/>`` block at lines[index..] (after blanks).
 
-    Skips leading blank lines. If the next non-blank line opens an
-    ``<EnumValues>`` tag, walks to its closing ``/>`` line, parses the
-    ``values=[…]`` prop and returns ``(end_index, entries)``. Otherwise
-    returns ``(index, None)`` so the caller falls back to bullets.
+    On success returns ``(end_index, entries)``. Otherwise — no block
+    here, or block is malformed — returns ``(index, None)`` so the
+    caller can fall back to the bullet path. Malformed blocks are
+    reported on stdout so authors notice.
 
     Entries: ``[{"value": str, "description"?: str, "default"?: bool}, …]``.
     """
-    i = index
-    while i < len(lines) and not lines[i].strip():
-        i += 1
-    if i >= len(lines) or not lines[i].lstrip().startswith("<EnumValues"):
+    start = index
+    while start < len(lines) and not lines[start].strip():
+        start += 1
+    if start >= len(lines) or not lines[start].lstrip().startswith("<EnumValues"):
+        return index, None
+    try:
+        return _parse_enum_values(lines, start)
+    except ValueError as err:
+        print(f"<EnumValues> at line {start + 1}: {err}")
         return index, None
 
-    start = i
-    while i < len(lines) and not lines[i].rstrip().endswith("/>"):
-        i += 1
-    if i >= len(lines):
-        print(f"Unterminated <EnumValues> block at line {start + 1}")
-        return index, None
 
-    block_text = "\n".join(lines[start : i + 1])
-    m = REGEX_ENUM_VALUES_BLOCK.search(block_text)
+def _parse_enum_values(lines, start):
+    """Parse the block starting at ``start``. Returns ``(end_index, entries)``
+    or raises ``ValueError`` with a one-line reason on any malformation."""
+    end = start
+    while end < len(lines) and not lines[end].rstrip().endswith("/>"):
+        end += 1
+    if end >= len(lines):
+        raise ValueError("unterminated block")
+
+    m = REGEX_ENUM_VALUES_BLOCK.search("\n".join(lines[start : end + 1]))
     if not m:
-        print(f"Malformed <EnumValues> block at line {start + 1}")
-        return index, None
+        raise ValueError('expected values={[ {value: "…", …}, … ]} />')
 
     # JS object literal → JSON: quote the three allowed keys, strip
-    # trailing commas. Anything else is the author's mistake and json.loads
-    # will surface it.
+    # trailing commas. Anything beyond that is an author mistake and
+    # json.loads will surface it.
     body = re.sub(r"\b(value|description|default)\s*:", r'"\1":', m.group(1))
     body = re.sub(r",(\s*[\]\}])", r"\1", body)
     try:
         entries = json.loads(body)
     except json.JSONDecodeError as err:
-        print(f"<EnumValues> at line {start + 1}: {err}")
-        return index, None
-    if not isinstance(entries, list) or not all(
-        isinstance(e, dict) and "value" in e for e in entries
+        raise ValueError(str(err)) from err
+    if not isinstance(entries, list) or any(
+        not isinstance(e, dict) or "value" not in e for e in entries
     ):
-        print(f"<EnumValues> at line {start + 1}: each entry needs a 'value'")
-        return index, None
-    return i + 1, entries
+        raise ValueError("each entry needs a 'value'")
+    return end + 1, entries
 
 
 def find_schema_prop(schema, prop_name):
