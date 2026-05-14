@@ -1,0 +1,84 @@
+---
+description: "Instructions for setting up an ELM327 OBD-II adapter as a sensor in ESPHome."
+title: "ELM327 OBD-II Sensor"
+---
+
+import APIRef from '@components/APIRef.astro';
+
+The `elm327` sensor platform reads vehicle diagnostic data from an ELM327 OBD-II interpreter
+([datasheet](https://www.elmelectronics.com/wp-content/uploads/2016/07/ELM327DS.pdf))
+connected via UART. It supports any ELM327-compatible adapter wired directly to a microcontroller.
+
+Common use cases include monitoring engine RPM, vehicle speed, temperatures, and battery voltage
+and sending them to Home Assistant over Wi-Fi.
+
+As communication with the ELM327 is done over UART, you need to have a [UART bus](/components/uart)
+configured with the adapter's TX pin connected to the microcontroller's RX pin and vice versa.
+ELM327 adapters ship with various baud rates — consult your adapter's documentation. A common
+default is 38400 baud for clone adapters and 9600 for original ELM327 chips.
+
+```yaml
+# Example configuration entry
+sensor:
+  - platform: elm327
+    engine_rpm:
+      name: Engine RPM
+    vehicle_speed:
+      name: Vehicle Speed
+    coolant_temperature:
+      name: Coolant Temperature
+    battery_voltage:
+      name: Battery Voltage
+```
+
+## Configuration Variables
+
+- **engine_rpm** (*Optional*): Engine speed in RPM (OBD-II PID 0x0C).
+  All options from [Sensor](/components/sensor).
+
+- **vehicle_speed** (*Optional*): Vehicle speed in km/h (OBD-II PID 0x0D).
+  All options from [Sensor](/components/sensor).
+
+- **coolant_temperature** (*Optional*): Engine coolant temperature in °C (OBD-II PID 0x05).
+  All options from [Sensor](/components/sensor).
+
+- **engine_load** (*Optional*): Calculated engine load as a percentage (OBD-II PID 0x04).
+  All options from [Sensor](/components/sensor).
+
+- **throttle_position** (*Optional*): Throttle position as a percentage (OBD-II PID 0x11).
+  All options from [Sensor](/components/sensor).
+
+- **intake_air_temperature** (*Optional*): Intake manifold air temperature in °C (OBD-II PID 0x0F).
+  All options from [Sensor](/components/sensor).
+
+- **maf_rate** (*Optional*): Mass air flow rate in g/s (OBD-II PID 0x10).
+  All options from [Sensor](/components/sensor).
+
+- **fuel_level** (*Optional*): Fuel tank level as a percentage (OBD-II PID 0x2F).
+  Not supported by all vehicles.
+  All options from [Sensor](/components/sensor).
+
+- **battery_voltage** (*Optional*): Vehicle battery voltage in V, read via the `ATRV` AT command.
+  All options from [Sensor](/components/sensor).
+
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): How often to query
+  all configured sensors. Sensors are queried sequentially, one per round-trip. Defaults to `10s`.
+
+- **uart_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the
+  [UART Component](/components/uart) if you want to use multiple UART buses.
+
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for
+  code generation.
+
+At least one sensor must be configured.
+
+> [!NOTE]
+> Not all vehicles support all PIDs. `fuel_level` (PID 0x2F) is particularly inconsistent across
+> manufacturers. If the ECU does not support a PID, the adapter responds with `NO DATA` and that
+> sensor is skipped for that update cycle.
+
+## See Also
+
+- [UART Component](/components/uart)
+- [ELM327 datasheet](https://www.elmelectronics.com/wp-content/uploads/2016/07/ELM327DS.pdf)
+- <APIRef text="elm327.h" path="elm327/elm327.h" />
