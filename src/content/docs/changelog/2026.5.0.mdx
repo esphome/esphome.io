@@ -51,22 +51,22 @@ ESPHome 2026.5.0 reworks the main loop and watchdog architecture for measurable 
 
 The biggest change in 2026.5.0 is not in the firmware; it is in how you create configurations for it. The new **ESPHome Device Builder**, [announced at State of the Open Home 2026](https://www.openhomefoundation.org/blog/building-whats-next-state-of-the-open-home-2026/) and now in public beta, is a from-scratch web app that replaces the legacy in-tree dashboard. It lowers the on-ramp for first-time users so they can build a working device without ever hand-writing YAML, and at the same time it delivers a long list of dashboard improvements that experienced users have been asking for for years. It is also the software counterpart to partner hardware like the [Apollo Automation ESPHome Starter Kit (ESK-1)](https://apolloautomation.com/products/esk-1-esphome-starter-kit), an ESP32-C6 base board with snap-in PIR, temperature-humidity, LED-and-buzzer, and button modules, so the same flow that helps a newcomer go from unboxing to a working device also scales up to power users with dozens of devices already on their network.
 
-Headline capabilities that did not exist in the legacy dashboard in any form:
+Headline capabilities the legacy dashboard didn't offer:
 
 - **Visual component and automation builder.** A structured, form-driven editor for core config, components, and automations sits alongside a Monaco YAML view with a left-sidebar device navigator. The legacy dashboard was an Ace text editor over a `.yaml` file with no notion of "component" or "automation" as first-class UI objects.
 - **Component catalog with dependency resolution.** Searchable, categorized library; auto-prompts to add required dependencies before inserting a component.
 - **Pin info viewer.** Per-board GPIO map with capabilities (input-only, ADC, PWM…) and which component is using each pin.
-- **Web Serial flashing.** The browser flashes firmware over USB directly with no server-side serial port required. The install dialog adds three more transports too: server-side USB, Home Assistant host USB (auto-detected), and `web.esphome.io` download.
 - **Firmware job queue.** Compile / install / clean runs are first-class queued jobs with progress, history, and cancel. Legacy ran one operation at a time over a WebSocket with no concurrency, history, or cancellation.
 - **Remote builder.** One Device Builder instance can offload compile/install jobs to another over a peer-paired link with mDNS discovery, SHA-256 fingerprint confirmation, identity rotation, and per-peer auto-route. Distributed builds did not exist before.
-- **Labels and areas.** User-defined, colored, searchable labels and a first-class areas field, both surfaced as filter facets in the device list. Legacy had no tagging concept.
-- **Friendly name as a separate editable field** from the YAML hostname; **device cloning** with one-click duplicate-and-rename; **multi-select bulk operations** for update / delete / archive across many devices at once.
+- **Labels.** User-defined, colored, searchable labels assignable to devices, with a filter facet on the device list. Legacy had no tagging concept.
+- **Areas** as a first-class room/location field with a filter facet, **friendly name as a separate editable field** from the YAML hostname, **device cloning** with one-click duplicate-and-rename, and **multi-select bulk operations** for delete and archive (extending the legacy "update all" to arbitrary selections across actions).
 - **Out-of-sync detection.** Per-device badges for running-vs-deployed version mismatch, running-vs-deployed config hash mismatch, and encryption-state mismatch. Legacy showed only "update available."
-- **Take Control / Adopt** flow for discovered devices, with optional API-encryption auto-enable.
 - **YAML diff view** of unsaved edits against the last saved version, **cross-config YAML search** with surrounding context, and a **command palette** (⌘K / Ctrl-K) for jumping between devices, running actions, and searching YAML.
-- **Card view and table view** toggle with configurable columns (status, name, IP, MAC, platform, version, comment, area, labels, config file, build size), faceted filters, and a global search bar. Legacy had cards only.
+- **Card view and table view** toggle with configurable columns (status, name, IP, MAC, platform, version, comment, area, labels, config file, build size), faceted filters (platform / status / area / labels), and a global search bar. Legacy had cards only.
 - **Settings UI** with appearance (light / dark / system), language (English, Français, Nederlands), editor layout, and remote-builder controls. Legacy exposed almost nothing in-UI, so adjusting behavior meant env vars or config files.
 - **First-run Wi-Fi onboarding** that pre-fills SSID / password in future device wizards, and **USB-plug detection** with a "set this up" prompt when a board is connected.
+
+Existing features like Web Serial flashing, Take Control / Adopt of discovered devices, and "update all" carry over and are surfaced more prominently in the new install-method dialog and device list, alongside additional install transports (server-side USB, Home Assistant host USB auto-detection, `web.esphome.io` download).
 
 Device Builder is a months-long effort spread across two new repositories, [device-builder](https://github.com/esphome/device-builder) (Python backend) and [device-builder-frontend](https://github.com/esphome/device-builder-frontend) (web UI), that consume ESPHome through stable public interfaces rather than reaching into internal modules. A meaningful portion of 2026.5.0's ESPHome-side plumbing work exists to support that boundary:
 
