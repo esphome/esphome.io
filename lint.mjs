@@ -56,9 +56,13 @@ const fileTypes = [
   ".sh",
   ".webp",
   ".scss",
+  ".glb",
   "", // empty string for files without extension (like .gitignore)
 ];
 const imageTypes = [".webp", ".jpg", ".ico", ".png", ".svg", ".gif"];
+// Binary file types — extension check still applies, but content checks (tabs,
+// newlines, end-of-file newline, link checks) are skipped.
+const binaryTypes = [".glb"];
 
 // Store errors
 const errors = new Map();
@@ -603,7 +607,8 @@ async function main() {
       await checkImageSize(fname, fileStat);
 
       // Skip binary files
-      if (imageTypes.includes(extname(fname))) {
+      const ext = extname(fname);
+      if (imageTypes.includes(ext) || binaryTypes.includes(ext)) {
         continue;
       }
 
