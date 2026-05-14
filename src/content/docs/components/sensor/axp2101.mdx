@@ -1,0 +1,87 @@
+
+---
+description: "Instructions for setting up AXP2101 Battery Management IC"
+title: "AXP2101 Battery Management IC"
+---
+
+The `axp2101` component allows you to use the X-Powers AXP2101 battery management and charging ICs [AXP2101 Datasheet](https://files.waveshare.com/wiki/common/X-power-AXP2101_SWcharge_V1.0.pdf) with ESPHome.
+It offers basic functionality only for reading battery status, charging state and shutdown. Setting voltages is unsupported.
+This component is found for example in the WaveShare ESP32-S3-Touch-AMOLED-1.75.
+
+The [I²C Bus](/components/i2c) is required in your configuration for this component to work.
+
+This implementation was inspired by [lewisxhe/XPowersLib Arduino Library](https://github.com/lewisxhe/XPowersLib/).
+
+
+```yaml
+# Example configuration entry
+
+i2c:
+  - id: internal_i2c
+    sda: GPIO15
+    scl: GPIO14
+
+sensor:
+  - platform: axp2101
+    id: axp2101_id
+    i2c_id: internal_i2c
+    update_interval: 10s
+    internal_temperature:
+      name: "AXP2101 Temperature"
+    battery_level:
+      name: "Battery Level"
+    battery_voltage:
+      name: "Battery Voltage"
+    battery_present:
+      name: "Battery Present"
+    battery_charging:
+      name: "Battery Charging"
+    battery_status:
+      name: "Battery Status"
+
+button:
+  - platform: template
+    name: "Shutdown"
+    on_press:
+      then:
+      - lambda: 'id(axp2101_id).shutdown();'
+```
+
+## Configuration variables
+
+- **id** (*Optional*, [ID](/guides/configuration-types#config-id)): Manually specify the ID used for code generation.
+- **address** (*Optional*, int): The I²C address of the device. Defaults to `0x34`.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#config-time)): The interval to check the sensor. Defaults to `60s`.
+- All other options from [I²C Device](/components/i2c).
+- **internal_temperature** (*Optional*): The voltage on the VBUS (USB) input in volts.
+  - All options from [Sensor](/components/sensor).
+- **battery_level** (*Optional*): The battery level in percent.
+  - All options from [Sensor](/components/sensor).
+- **battery_voltage** (*Optional*): The battery voltage in volts.
+  - All options from [Sensor](/components/sensor).
+- **battery_present** (*Optional*): Whether a battery was detected.
+  - All options from [BinarySensor](/components/binary_sensor).
+- **battery_charging** (*Optional*): Whether the battery is currently charging.
+  - All options from [Binary Sensor](/components/binary_sensor).
+- **battery_status** (*Optional*): Current charging status. Possible values are:
+  - `not charging`
+  - `pre-charge`
+  - `tri-charge`
+  - `constant charge`
+  - `constant voltage`
+  - `charge done`
+  - `unknown`
+  - All options from [Text Sensor](/components/text_sensor).
+
+
+## Available Methods
+
+- `shutdown()` - Shutdown the system power
+
+## See Also
+
+- [AXP2101 Datasheet](https://files.waveshare.com/wiki/common/X-power-AXP2101_SWcharge_V1.0.pdf)
+- [Sensor Component](/components/sensor)
+- [Binary Sensor Component](/components/binary_sensor)
+- [Text Sensor Component](/components/text_sensor)
+- [I²C Bus](/components/i2c)
