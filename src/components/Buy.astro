@@ -1,0 +1,165 @@
+---
+const { strapline, dollars, euros } = Astro.props;
+---
+
+<section id="buy">
+  <div class="section-inner">
+    <div class="section-inner-content">
+      <div class="container">
+        <div class="content">
+          <div class="strap">
+            {strapline}
+          </div>
+          <h2 class="price">
+            <sub>$</sub>{dollars}<span>/</span><sub>€</sub>{euros}<sup>*</sup>
+          </h2>
+          <button class="buy buy-btn btn btn-primary">Buy now</button>
+        </div>
+        <p class="terms">
+          *Recommended MSRP. Prices differ between regions due to varying local
+          market costs and conditions, and subject to individual retailers.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style lang="scss">
+  @use "../styles/mixins" as *;
+
+  section#buy {
+    isolation: isolate;
+    max-height: 1000px;
+    margin: 0 auto;
+
+    @include bp(desktop) {
+      background-size: contain;
+      isolation: unset;
+      aspect-ratio: 16 / 9;
+    }
+
+    .cols {
+      align-items: center;
+      justify-content: center;
+    }
+
+    .container {
+      display: flex;
+      justify-content: center;
+      text-align: center;
+      flex-direction: column;
+      align-items: center;
+      gap: 80px;
+      padding-top: 5rem;
+
+      @include bp(desktop) {
+        padding-top: 0;
+      }
+    }
+
+    .section-inner {
+      position: relative;
+      z-index: 1;
+
+      @include bp(desktop) {
+        z-index: unset;
+        position: relative;
+      }
+    }
+
+    .section-inner-content {
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+    }
+
+    .strap {
+      font-size: 18px;
+      text-wrap: balance;
+      position: relative;
+      z-index: 2;
+      padding: 12px 0;
+
+      @include bp(tablet) {
+        font-size: 24px;
+      }
+
+      @include bp(desktop) {
+        font-size: 32px;
+      }
+    }
+
+    .price {
+      font-size: 64px;
+      font-weight: 700;
+      margin: 16px 0;
+      position: relative;
+
+      @include bp(tablet) {
+        font-size: 96px;
+      }
+
+      @include bp(desktop) {
+        font-size: 160px;
+      }
+
+      span {
+        opacity: 0.4;
+        position: relative;
+      }
+
+      sup {
+        font-size: 36px;
+        vertical-align: unset;
+        position: absolute;
+        top: 0;
+        line-height: 1;
+      }
+
+      sub {
+        vertical-align: initial;
+        bottom: 0;
+        margin-right: 6px;
+      }
+    }
+
+    .buy-btn {
+      margin-top: 40px;
+      cursor: pointer;
+    }
+
+    .terms {
+      background-color: rgba(0, 19, 38, 0.5);
+      backdrop-filter: blur(5px);
+      border-radius: 8px;
+      padding: 12px 16px;
+      max-width: 410px;
+      font-size: 12px;
+      color: #aaabae;
+
+      @include bp(1750px) {
+        max-width: 33rem;
+      }
+    }
+  }
+</style>
+
+<script>
+  (function () {
+    const section = document.querySelector("#buy");
+    const background = section.querySelector(".background");
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting && entry.intersectionRatio > 0.5) {
+            background.classList.add("active");
+          } else {
+            background.classList.remove("active");
+          }
+        });
+      },
+      { threshold: [0, 0.5, 1] },
+    );
+    observer.observe(section);
+  })();
+</script>
