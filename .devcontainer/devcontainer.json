@@ -3,6 +3,11 @@
 {
   "name": "ESPHome Astro Dev Container",
   "image": "mcr.microsoft.com/devcontainers/typescript-node:22-bookworm",
+  "features": {
+    "ghcr.io/devcontainers/features/python:1": {
+      "version": "3.12"
+    }
+  },
   "forwardPorts": [
     4321
   ],
@@ -38,7 +43,7 @@
       }
     }
   },
-  "postCreateCommand": "npm install",
+  "postCreateCommand": "npm install && pipx install pre-commit && pre-commit install",
   // Comment out connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
   "remoteUser": "node"
   // moved settings under customizations.vscode.settings
