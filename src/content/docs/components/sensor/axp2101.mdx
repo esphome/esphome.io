@@ -25,6 +25,7 @@ sensor:
   - platform: axp2101
     id: axp2101_id
     i2c_id: internal_i2c
+    icc_limit: 1000mA
     update_interval: 10s
     internal_temperature:
       name: "AXP2101 Temperature"
@@ -52,6 +53,7 @@ button:
 - **id** (*Optional*, [ID](/guides/configuration-types#config-id)): Manually specify the ID used for code generation.
 - **address** (*Optional*, int): The I²C address of the device. Defaults to `0x34`.
 - **update_interval** (*Optional*, [Time](/guides/configuration-types#config-time)): The interval to check the sensor. Defaults to `60s`.
+- **icc_limit** (*Optional*, enum): One of the supported ICC charging current settings from `0mA` to `1500mA`. Defaults to `100mA`.
 - All other options from [I²C Device](/components/i2c).
 - **internal_temperature** (*Optional*): The voltage on the VBUS (USB) input in volts.
   - All options from [Sensor](/components/sensor).
