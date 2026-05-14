@@ -95,7 +95,7 @@ This release lands one of the most consequential changes to ESPHome's runtime in
 
 ## Performance Optimizations
 
-Beyond the structural changes above, this release contains an unusual concentration of measured micro-optimizations across the codebase, particularly on the API and audio paths. Led by [@bdraco](https://github.com/bdraco) and [@kahrendt](https://github.com/kahrendt).
+Beyond the structural changes above, this release contains an unusual concentration of measured micro-optimizations across the codebase, particularly on the API and audio paths. Led by [@bdraco](https://github.com/bdraco) and [@kahrendt](https://github.com/kahrendt), with [@swoboda1337](https://github.com/swoboda1337) contributing the `CallbackManager` copy reduction ([#16093](https://github.com/esphome/esphome/pull/16093)) and a sweep of `performance-unnecessary-copy-initialization` fixes ([#16101](https://github.com/esphome/esphome/pull/16101)).
 
 **Cross-platform `millis()` overhaul.** A coordinated rewrite hits every supported runtime. ESP8266 ([#15662](https://github.com/esphome/esphome/pull/15662)) drops from 3348 ns/call to 1077 ns/call (**2.7x**) by wrapping Arduino's `millis()` at link time with a 32-bit accumulator, replacing four 64-bit multiplies routed through the LX106's software `__umulsidi3` helper. ESP32 ([#15661](https://github.com/esphome/esphome/pull/15661)) switches to `xTaskGetTickCount()` directly when the FreeRTOS tick rate is 1 kHz; LibreTiny ([#15918](https://github.com/esphome/esphome/pull/15918)) inlines the same `xTaskGetTickCount()` fast path; the host platform ([#15994](https://github.com/esphome/esphome/pull/15994)) replaces floating-point math with integer arithmetic; and `Millis64Impl::compute()` is force-inlined on single-threaded platforms ([#15684](https://github.com/esphome/esphome/pull/15684)). On a typical 10-component ESP8266 device, runtime stats showed `main_loop active_total` drop by **41 ms per minute of CPU**, roughly 7% of the scheduler+overhead budget reclaimed for actual work.
 
@@ -121,7 +121,7 @@ Beyond the structural changes above, this release contains an unusual concentrat
 
 ## Memory Footprint Reductions
 
-A parallel effort focused on shrinking the per-instance and static-RAM cost of common components.
+A parallel effort by [@bdraco](https://github.com/bdraco) and [@kahrendt](https://github.com/kahrendt), with [@schdro](https://github.com/schdro) contributing the static loop-task allocation, focused on shrinking the per-instance and static-RAM cost of common components.
 
 **APIServer client list moved to a compile-time array** ([#15889](https://github.com/esphome/esphome/pull/15889)) eliminates the persistent heap-held vector that grew via doubling reallocations. Measured **-92 B flash on ESP32-S3, -152 B flash on ESP8266**, plus zero heap fragmentation. At one client connected (the typical Home Assistant deployment), net RAM is **-4 B**. The new compile-time `MAX_API_CONNECTIONS` constant lets the array size and accept-time cap derive from one source.
 
@@ -175,7 +175,7 @@ Precedence is `--toolchain` (CLI), then `esp32.toolchain` (YAML), then `platform
 
 The default toolchain remains `platformio` in 2026.5.0, so existing projects keep building exactly as they did before. The native path is opt-in for power users and contributors who want to work against the unmodified upstream IDF.
 
-**ESP-IDF v6.0.1 readiness** lands across a chain of supporting PRs: a new ESP-IDF 6.0.1 platform entry ([#16146](https://github.com/esphome/esphome/pull/16146)), an `esp_wireguard` bump to 0.4.5 for v6 compatibility ([#15804](https://github.com/esphome/esphome/pull/15804)), newlib compatibility for the Zigbee SDK on IDF 6 ([#16174](https://github.com/esphome/esphome/pull/16174)) plus init-order and missing-field warning fixes on native ESP-IDF ([#16389](https://github.com/esphome/esphome/pull/16389)), relaxed `-Werror=reorder` and `-Werror=maybe-uninitialized` for managed components built under IDF 6 ([#16392](https://github.com/esphome/esphome/pull/16392)), and a PlatformIO-style RAM/Flash summary printed after native ESP-IDF builds for parity with the existing flow ([#16394](https://github.com/esphome/esphome/pull/16394)).
+**ESP-IDF v6.0.1 readiness** lands across a chain of supporting PRs, primarily by [@swoboda1337](https://github.com/swoboda1337) with [@diorcety](https://github.com/diorcety) and [@luar123](https://github.com/luar123) contributing the dependency bumps: a new ESP-IDF 6.0.1 platform entry ([#16146](https://github.com/esphome/esphome/pull/16146)), an `esp_wireguard` bump to 0.4.5 for v6 compatibility ([#15804](https://github.com/esphome/esphome/pull/15804)), newlib compatibility for the Zigbee SDK on IDF 6 ([#16174](https://github.com/esphome/esphome/pull/16174)) plus init-order and missing-field warning fixes on native ESP-IDF ([#16389](https://github.com/esphome/esphome/pull/16389)), relaxed `-Werror=reorder` and `-Werror=maybe-uninitialized` for managed components built under IDF 6 ([#16392](https://github.com/esphome/esphome/pull/16392)), and a PlatformIO-style RAM/Flash summary printed after native ESP-IDF builds for parity with the existing flow ([#16394](https://github.com/esphome/esphome/pull/16394)).
 
 ## Audio Stack Modernization
 
@@ -312,7 +312,7 @@ Follow-ups in this release expand the feature set:
 
 ## Codebase Correctness and Developer Tooling
 
-A substantial sweep of correctness work landed alongside the features.
+A substantial sweep of correctness work landed alongside the features, led by [@swoboda1337](https://github.com/swoboda1337) (59 PRs this release) with help from [@bdraco](https://github.com/bdraco) on the HAL split and CodSpeed coverage, [@jpeletier](https://github.com/jpeletier) on substitution error messages, and [@Komzpa](https://github.com/Komzpa) on reproducible builds.
 
 - **clang-tidy 22.1** ([#16078](https://github.com/esphome/esphome/pull/16078)) replaces the years-old 18.1.8, surfacing latent issues across components.
 - **Nested namespace concatenation** ([#16294](https://github.com/esphome/esphome/pull/16294)-[#16307](https://github.com/esphome/esphome/pull/16307)) walks the entire component tree (a→c, d→h, i→m, n→r, s, t→z plus tests) collapsing `namespace foo { namespace bar { ... } }` into the modern `namespace foo::bar { ... }` and enabling the check to prevent regression.
