@@ -10,13 +10,24 @@ structurally impossible.
 
 import sys
 from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO_ROOT / "script"))
 
-from schema_doc import md_get_next_config, parse_enum_values_block  # noqa: E402
+import schema_doc  # noqa: E402
+from schema_doc import (  # noqa: E402
+    _apply_enum_entries,
+    md_get_next_config,
+    parse_enum_values_block,
+)
+
+# convert_links() reads args.deploy_url even though plain-text
+# descriptions don't trigger link rewriting — set a dummy so tests don't
+# need a CLI invocation.
+schema_doc.args = SimpleNamespace(deploy_url="https://esphome.io")
 
 
 def parse(text):
@@ -179,6 +190,73 @@ def test_jsx_block_terminates_parent_bullet():
     assert item_config == "**interrupt_type** (*Optional*): One of:"
     assert item_indent == 0
     assert end_index == 2  # positioned at the JSX opener line
+
+
+def test_apply_enum_entries_writes_docs_and_default():
+    """End-to-end: parsed entries → schema dict matches what device-builder
+    consumes. This is the structured-output side of the device-builder#433
+    regression.
+
+    Compare with the un-migrated bullet form, which (still) produces:
+
+        "ANY":     {"docs": "default): Trigger on any edge change (high to low or low to high"}
+        "RISING":  {"docs": null}
+        "FALLING": {"docs": null}
+
+    against the structured form's clean output, asserted below.
+    """
+    # Schema as esphome generates it: an enum with empty value slots.
+    config = {
+        "type": "enum",
+        "values": {"ANY": None, "RISING": None, "FALLING": None},
+    }
+    entries = [
+        {
+            "value": "ANY",
+            "default": True,
+            "description": "Trigger on any edge change (high to low or low to high)",
+        },
+        {
+            "value": "RISING",
+            "description": "Trigger only on rising edge (low to high)",
+        },
+        {
+            "value": "FALLING",
+            "description": "Trigger only on falling edge (high to low)",
+        },
+    ]
+    _apply_enum_entries(config, entries, Path("dummy.mdx"), 0)
+
+    assert config["values"] == {
+        "ANY": {
+            "docs": "Trigger on any edge change (high to low or low to high)",
+            "default": True,
+        },
+        "RISING": {"docs": "Trigger only on rising edge (low to high)"},
+        "FALLING": {"docs": "Trigger only on falling edge (high to low)"},
+    }
+
+
+def test_apply_enum_entries_skips_values_not_in_schema():
+    """Authors typo a value name → entry is silently dropped, matching
+    the bullet path's behavior (which uses the same `if enum_value in
+    values` guard). No crash, no schema corruption."""
+    config = {"type": "enum", "values": {"A": None}}
+    entries = [
+        {"value": "A", "description": "first"},
+        {"value": "BOGUS", "description": "second"},
+    ]
+    _apply_enum_entries(config, entries, Path("dummy.mdx"), 0)
+    assert config["values"] == {"A": {"docs": "first"}}
+
+
+def test_apply_enum_entries_default_only_no_description():
+    """A value marked default but with no description gets the default flag
+    written without a docs key. (The es8388 / bmp581 enum-list shape.)"""
+    config = {"type": "enum", "values": {"OFF": None, "2x": None}}
+    entries = [{"value": "OFF", "default": True}, {"value": "2x"}]
+    _apply_enum_entries(config, entries, Path("dummy.mdx"), 0)
+    assert config["values"] == {"OFF": {"default": True}, "2x": {}}
 
 
 if __name__ == "__main__":
