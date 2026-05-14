@@ -143,23 +143,3 @@ const { strapline, dollars, euros } = Astro.props;
     }
   }
 </style>
-
-<script>
-  (function () {
-    const section = document.querySelector("#buy");
-    const background = section.querySelector(".background");
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting && entry.intersectionRatio > 0.5) {
-            background.classList.add("active");
-          } else {
-            background.classList.remove("active");
-          }
-        });
-      },
-      { threshold: [0, 0.5, 1] },
-    );
-    observer.observe(section);
-  })();
-</script>
