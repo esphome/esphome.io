@@ -1,0 +1,73 @@
+---
+description: "Embed the device's YAML configuration in firmware for recovery via the native API."
+title: "Store YAML"
+---
+import APIRef from '@components/APIRef.astro';
+
+The `store_yaml` component embeds the YAML configuration files that built the
+firmware (the entry YAML, any `!include` references, and packages) into the
+device's flash, so the original sources can be recovered from a running device
+if they are lost on your computer.
+
+The files are compressed with [zstd](https://facebook.github.io/zstd/) at build
+time and stored in `PROGMEM`. The compressed blob is streamed back over the
+[native API](/components/api/) on request; the device itself never decompresses
+the data, so there is no runtime decompression code or additional RAM cost
+beyond a small fixed streaming buffer.
+
+```yaml
+# Example configuration entry
+api:
+
+store_yaml:
+```
+
+`store_yaml` depends on the [Native API](/components/api/) and requires Python
+3.14 or newer on the build machine, or the `backports.zstd` package on older
+Python versions.
+
+## Configuration variables
+
+- **include_secrets** (*Optional*, boolean): If `true`, the contents of
+  `secrets.yaml` / `secrets.yml` are embedded verbatim. If `false` (the
+  default), any secrets file is replaced with a redaction placeholder before
+  it is compressed; only the file path is preserved.
+
+  :::caution
+  Setting `include_secrets: true` writes your Wi-Fi password, API key,
+  and any other secrets into the firmware binary. Anyone who can read
+  the firmware can read these values. Keep this off unless you understand
+  the trade-off.
+  :::
+
+## Retrieving the YAML
+
+The native API exposes a `GetYaml` request that streams the compressed bytes
+back to an authenticated client in 512-byte chunks (the
+[camera streaming](/components/camera/) pattern). Client tooling that
+decompresses the bytes and unpacks the file tree is shipped separately from
+this component.
+
+What lands on the device is a small envelope:
+
+```text
+magic "EHY1" | uint32 file_count
+  repeat: uint16 path_len | path (utf-8) | uint32 content_len | content
+```
+
+The whole envelope is then zstd-compressed. Recovery tooling decompresses the
+blob and writes each `(path, content)` pair back to disk.
+
+## Memory and flash impact
+
+- **Flash:** the compressed blob itself, plus a small amount of code in the
+  API streaming path. Real-world ESPHome YAML compresses to roughly
+  10-30 % of its original size at level 22.
+- **RAM:** zero per-instance overhead beyond the component object and a
+  single 512-byte streaming buffer shared by all API connections. No heap
+  is allocated during retrieval.
+
+## See Also
+
+- [Native API](/components/api/)
+- <APIRef text="store_yaml.h" path="store_yaml/store_yaml.h" />
