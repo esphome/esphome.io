@@ -14,6 +14,7 @@ Each measurement cycle produces **two BLE packets**:
 - **Packet 1** — weight + heart rate + `impedance_high` (250 kHz, high frequency, smaller value)
 - **Packet 2** — `impedance_low` only (50 kHz, low frequency, larger value)
 
+> [!NOTE]
 > **Impedance naming convention** follows the BIA standard used by [bodymiscale](https://github.com/dckiller51/bodymiscale):
 > `low`/`high` refers to the **measurement frequency**, not the numerical value.
 > At 50 kHz, current flows only through extracellular fluid → higher resistance.
@@ -45,12 +46,6 @@ Each measurement cycle produces **two BLE packets**:
 ### Minimal
 
 ```yaml
-external_components:
-  - source:
-      type: local
-      path: components
-    components: [xiaomi_body_scale_s400]
-
 esp32_ble_tracker:
 
 sensor:
@@ -169,8 +164,12 @@ Impedance packet routing (BIA frequency convention):
 
 1. Install [token_extractor](https://github.com/PiotrMachowski/Xiaomi-cloud-tokens-extractor)
 2. Run it and log in with your Xiaomi account
-3. Find your scale — look for model `yunmai.scales.ms103`, `ms104`, `ms107` or `xiaomi.scales.ms110`
-4. Copy the **BLE KEY** field (32 hex characters) — this is your `bindkey`
+3. Find your scale in the generated list.
+
+> [!NOTE]
+> In the Xiaomi Cloud, the S400 variants (`MJTZC01YM` / `MJTZC03YM`) do not appear by their commercial model name. Instead, they are identified as **`yunmai.scales.ms103`**, **`ms104`**, **`ms107`**, or **`xiaomi.scales.ms110`**.
+
+4. Copy the **BLE KEY** field (32 hex characters) — this is your `bindkey`.
 
 ---
 
