@@ -1,0 +1,49 @@
+name: ImgBot Auto Merge
+
+on:
+  pull_request_target:
+    types: [opened, reopened]
+
+permissions:
+  pull-requests: write
+  contents: write
+
+jobs:
+  auto-merge:
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.user.login == 'imgbot[bot]'
+    steps:
+      - name: Generate a token
+        id: generate-token
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          client-id: ${{ vars.ESPHOME_GITHUB_APP_CLIENT_ID }}
+          private-key: ${{ secrets.ESPHOME_GITHUB_APP_PRIVATE_KEY }}
+
+      - name: Verify only image files are changed
+        env:
+          GH_TOKEN: ${{ steps.generate-token.outputs.token }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+        run: |
+          if ! files=$(gh pr view "$PR_URL" --json files --jq '.files[].path'); then
+            echo "::error::Failed to fetch PR files."
+            exit 1
+          fi
+          if [ -z "$files" ]; then
+            echo "::error::PR has no changed files."
+            exit 1
+          fi
+          non_image=$(printf '%s\n' "$files" | grep -viE '\.(png|jpe?g|gif|svg|webp)$' || true)
+          if [ -n "$non_image" ]; then
+            echo "::error::PR touches non-image files; refusing to auto-merge:"
+            printf '%s\n' "$non_image"
+            exit 1
+          fi
+
+      - name: Approve and enable auto-merge
+        env:
+          GH_TOKEN: ${{ steps.generate-token.outputs.token }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+        run: |
+          gh pr review --approve "$PR_URL"
+          gh pr merge --auto --squash "$PR_URL"
