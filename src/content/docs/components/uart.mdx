@@ -76,6 +76,17 @@ uart:
 - **stop_bits** (*Optional*, int): The number of stop bits to send. Options: 1, 2. Defaults to 1.
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID for this UART hub if you need multiple UART hubs.
 - **debug** (*Optional*, mapping): Options for debugging communication on the UART hub, see [Debugging](#debugging).
+- **clock_source** (*Optional*): ESP32 only. The UART clock source. Options: `DEFAULT`, `APB`, `XTAL`, `RTC`,
+  `REF_TICK`. Defaults to `DEFAULT`, which uses the chip's ESP-IDF default.
+
+> [!NOTE]
+> Supported `clock_source` values and defaults vary by chip. For example, `DEFAULT` uses APB on ESP32
+> and a fixed PLL clock on ESP32-C6.
+> An unsupported selection logs a warning and uses the default.
+>
+> `XTAL` and `REF_TICK` keep the UART clock stable when APB frequency changes during
+> dynamic frequency scaling. Use `REF_TICK` on the original ESP32 or ESP32-S2; `XTAL` is available on
+> ESP32-C3, ESP32-S3 and other variants.
 
 ## Hardware UARTs
 
