@@ -74,8 +74,18 @@ uart:
 - **data_bits** (*Optional*, int): The number of data bits used on the UART bus. Options: 5 to 8. Defaults to 8.
 - **parity** (*Optional*): The parity used on the UART bus. Options: `NONE`, `EVEN`, `ODD`. Defaults to `NONE`.
 - **stop_bits** (*Optional*, int): The number of stop bits to send. Options: 1, 2. Defaults to 1.
+- **clock_source** (*Optional*): ESP32 only. The clock source driving the UART peripheral. Options: `DEFAULT`, `APB`,
+  `XTAL`, `RTC`, `REF_TICK`. Defaults to `DEFAULT`. See the note below about dynamic frequency scaling.
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID for this UART hub if you need multiple UART hubs.
 - **debug** (*Optional*, mapping): Options for debugging communication on the UART hub, see [Debugging](#uart-debugging).
+
+> [!NOTE]
+> The default UART clock source on most ESP32 variants tracks the APB clock. When ESP-IDF Dynamic Frequency Scaling
+> is enabled (for example via `CONFIG_PM_ENABLE` and `CONFIG_PM_DFS_INIT_AUTO`), the APB clock changes frequency at
+> runtime, which drifts the UART baud rate and corrupts communication. Setting `clock_source` to `XTAL` or `REF_TICK`
+> sources the UART from a clock that is independent of APB, keeping the baud rate stable. Available clock sources
+> differ by ESP32 variant (`XTAL` on the C-series, S3 and similar; `REF_TICK` only on the original ESP32 and S2); an
+> unsupported selection falls back to the default.
 
 <span id="uart-hardware_uarts"></span>
 
