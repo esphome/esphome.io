@@ -7,6 +7,7 @@ import { Image } from 'astro:assets';
 import canbusEsp325vImg from './images/canbus_esp32_5v.png';
 import canbusEsp323v3Img from './images/canbus_esp32_3v3.png';
 import APIRef from '@components/APIRef.astro';
+import EnumOptions from '@components/EnumOptions.astro';
 
 <span id="esp32-can"></span>
 
@@ -30,10 +31,14 @@ canbus:
 
 - **rx_pin** (**Required**, [Pin](/guides/configuration-types#pin)): Receive pin.
 - **tx_pin** (**Required**, [Pin](/guides/configuration-types#pin)): Transmit pin.
-- **mode** (*Optional*, enum): Operating mode. One of:
-
-  - `NORMAL`: Normal operation, sends ACK signals. *(default)*
-  - `LISTENONLY`: Receive data only, no ACK signals sent.
+- **mode** (*Optional*, enum): Operating mode.
+  <EnumOptions
+    options={[
+      { value: "NORMAL", description: "Normal operation, sends ACK signals." },
+      { value: "LISTENONLY", description: "Receive data only, no ACK signals sent." },
+    ]}
+    default="NORMAL"
+  />
 
 - **rx_queue_len** (*Optional*, int): Length of RX queue.
 - **tx_queue_len** (*Optional*, int): Length of TX queue, 0 to disable.

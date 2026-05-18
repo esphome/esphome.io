@@ -3,6 +3,7 @@ import { micromark } from "micromark";
 
 interface EnumOptionDetail {
   value: string;
+  aliases?: string[];
   description?: string;
 }
 
@@ -36,7 +37,7 @@ function renderInlineMarkdown(md: string): string {
   inline ? (
     <span class="enum-options-inline">
       One of{" "}
-      {items.map(({ value }, i) => {
+      {items.map(({ value, aliases }, i) => {
         const isLast = i === items.length - 1;
         const isFirst = i === 0;
         let sep = "";
@@ -49,6 +50,12 @@ function renderInlineMarkdown(md: string): string {
           <>
             {sep}
             <code>{value}</code>
+            {aliases?.map((a) => (
+              <>
+                {" / "}
+                <code>{a}</code>
+              </>
+            ))}
             {value === defaultValue ? <em> (default)</em> : null}
           </>
         );
@@ -57,9 +64,15 @@ function renderInlineMarkdown(md: string): string {
     </span>
   ) : (
     <ul class="enum-options">
-      {items.map(({ value, description }) => (
+      {items.map(({ value, aliases, description }) => (
         <li>
           <code>{value}</code>
+          {aliases?.map((a) => (
+            <>
+              {" / "}
+              <code>{a}</code>
+            </>
+          ))}
           {value === defaultValue ? <em> (default)</em> : null}
           {description ? (
             <Fragment set:html={" &mdash; " + renderInlineMarkdown(description)} />

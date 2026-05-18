@@ -7,6 +7,7 @@ import { Image } from 'astro:assets';
 import Figure from '@components/Figure.astro';
 import tsl2591UiImg from './images/tsl2591-ui.jpg';
 import APIRef from '@components/APIRef.astro';
+import EnumOptions from '@components/EnumOptions.astro';
 
 The `tsl2591` sensor platform allows you to use the AMS TSL2591 ambient light sensor with ESPHome.
 Communication with the device is over [I²C](/components/i2c), which must be present in your configuration.
@@ -123,24 +124,20 @@ For the TSL2591 device:
 
 - **integration_time** (*Optional*, [Time](/guides/configuration-types#time)):
   The time the device will use for each measurement. Longer means more accurate values.
-  You cannot specify an arbitrary amount of time. It must be the equivalent of one of:
-
-  - `100ms`   _(default)_
-  - `200ms`
-  - `300ms`
-  - `400ms`
-  - `500ms`
-  - `600ms`
+  <EnumOptions options={["100ms", "200ms", "300ms", "400ms", "500ms", "600ms"]} default="100ms" />
 
 - **gain** (*Optional*, string): The gain the device will use. Higher values are better in low-light conditions.
-  Multipliers here are approximate. Values below on the same line are aliases.
-  You cannot specify an arbitrary gain multiplier. It must be one of:
-
-  - `low`, `1x`
-  - `medium`, `med`, `25x`
-  - `high`, `400x`
-  - `maximum`, `max`, `9500x`
-  - `auto` _(default)_
+  Multipliers here are approximate.
+  <EnumOptions
+    options={[
+      { value: "low", aliases: ["1x"] },
+      { value: "medium", aliases: ["med", "25x"] },
+      { value: "high", aliases: ["400x"] },
+      { value: "maximum", aliases: ["max", "9500x"] },
+      { value: "auto" },
+    ]}
+    default="auto"
+  />
 
 - **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval for checking the sensors.
   Defaults to `60s`.

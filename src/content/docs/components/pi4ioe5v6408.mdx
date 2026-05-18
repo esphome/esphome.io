@@ -3,6 +3,7 @@ description: "Instructions for setting up PI4IOE5V6408 8-bit I2C I/O expander in
 title: "PI4IOE5V6408 8-Bit I2C I/O Expander"
 ---
 import APIRef from '@components/APIRef.astro';
+import EnumOptions from '@components/EnumOptions.astro';
 
 
 The PI4IOE5V6408 component allows you to use the Diodes Incorporated PI4IOE5V6408 8-bit I2C I/O
@@ -58,12 +59,15 @@ binary_sensor:
 - **inverted** (*Optional*, boolean): If all read and written values should be treated as inverted.
   Defaults to `false`.
 
-- **mode** (*Optional*, [Pin Mode](/guides/configuration-types#pin-schema)): A pin mode to set for the pin. One of:
-
-  - `INPUT` - Configure the pin as an input.
-  - `OUTPUT` - Configure the pin as an output.
-  - `PULLUP` - Enable internal pull-up resistor (input mode only).
-  - `PULLDOWN` - Enable internal pull-down resistor (input mode only).
+- **mode** (*Optional*, [Pin Mode](/guides/configuration-types#pin-schema)): A pin mode to set for the pin.
+  <EnumOptions
+    options={[
+      { value: "INPUT", description: "Configure the pin as an input." },
+      { value: "OUTPUT", description: "Configure the pin as an output." },
+      { value: "PULLUP", description: "Enable internal pull-up resistor (input mode only)." },
+      { value: "PULLDOWN", description: "Enable internal pull-down resistor (input mode only)." },
+    ]}
+  />
 
 ## Examples
 

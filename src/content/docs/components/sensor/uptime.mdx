@@ -3,6 +3,7 @@ description: "Instructions for setting up a sensor that tracks the uptime of the
 title: "Uptime Sensor"
 ---
 import APIRef from '@components/APIRef.astro';
+import EnumOptions from '@components/EnumOptions.astro';
 
 
 The `uptime` sensor allows you to track the time the ESP has stayed up for in seconds.
@@ -18,10 +19,14 @@ sensor:
 
 ## Configuration variables
 
-- **type** (*Optional*): Either:
-
-  - `seconds` (*default*): A simple counter.
-  - `timestamp`  : presents the time ESPHome last booted up. Requires a [Time](/components/time/).
+- **type** (*Optional*):
+  <EnumOptions
+    options={[
+      { value: "seconds", description: "A simple counter." },
+      { value: "timestamp", description: "presents the time ESPHome last booted up. Requires a [Time](/components/time/)." },
+    ]}
+    default="seconds"
+  />
 
 - **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The sensor reporting interval. Defaults to `60s`.
   Valid only with `type: seconds`.

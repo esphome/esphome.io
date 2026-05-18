@@ -111,11 +111,14 @@ wifi:
 
 - **min_auth_mode** (*Optional*, string): Only on `esp32` and `esp8266`. Sets the minimum WiFi authentication mode
   that the device will accept when connecting to access points. This controls the weakest encryption your device will
-  allow. Possible values are:
-
-  - `WPA` - Allows WPA, WPA2, and WPA3 networks (least secure, uses TKIP encryption with known vulnerabilities)
-  - `WPA2` - Allows WPA2 and WPA3 networks (recommended, uses AES encryption)
-  - `WPA3` - Only allows WPA3 networks (most secure, ESP32 only)
+  allow.
+  <EnumOptions
+    options={[
+      { value: "WPA", description: "Allows WPA, WPA2, and WPA3 networks (least secure, uses TKIP encryption with known vulnerabilities)" },
+      { value: "WPA2", description: "Allows WPA2 and WPA3 networks (recommended, uses AES encryption)" },
+      { value: "WPA3", description: "Only allows WPA3 networks (most secure, ESP32 only)" },
+    ]}
+  />
 
   Defaults to `WPA2` on ESP32 and `WPA` on ESP8266 (will change to `WPA2` in 2026.6.0).
 

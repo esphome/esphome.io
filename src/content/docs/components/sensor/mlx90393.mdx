@@ -7,6 +7,7 @@ import { Image } from 'astro:assets';
 import Figure from '@components/Figure.astro';
 import mlx90393FullImg from './images/mlx90393-full.jpg';
 import mlx90393ResolutionImg from './images/mlx90393-resolution.svg';
+import EnumOptions from '@components/EnumOptions.astro';
 
 The `mlx90393` sensor platform allows you to use your MLX90393
 ([datasheet](https://media.melexis.com/-/media/files/documents/datasheets/mlx90393-datasheet-melexis.pdf),
@@ -37,35 +38,20 @@ sensor:
 
 - **x_axis** (*Optional*): The information for the x-axis.
 
-  - **resolution** (*Optional*, int): Specify which part of the full 19-bit value to read. Defaults to `DIV_4`. Must be one of:
-
-    - `DIV_8`
-    - `DIV_4`
-    - `DIV_2`
-    - `DIV_1`
-
+  - **resolution** (*Optional*, int): Specify which part of the full 19-bit value to read.
+    <EnumOptions options={["DIV_8", "DIV_4", "DIV_2", "DIV_1"]} default="DIV_4" />
   - All other options from [Sensor](/components/sensor).
 
 - **y_axis** (*Optional*): The information for the y-axis.
 
-  - **resolution** (*Optional*, int): Specify which part of the full 19-bit value to read. Defaults to `DIV_4`. Must be one of:
-
-    - `DIV_8`
-    - `DIV_4`
-    - `DIV_2`
-    - `DIV_1`
-
+  - **resolution** (*Optional*, int): Specify which part of the full 19-bit value to read.
+    <EnumOptions options={["DIV_8", "DIV_4", "DIV_2", "DIV_1"]} default="DIV_4" />
   - All other options from [Sensor](/components/sensor).
 
 - **z_axis** (*Optional*): The information for the z-axis.
 
-  - **resolution** (*Optional*, int): Specify which part of the full 19-bit value to read. Defaults to `DIV_4`. Must be one of:
-
-    - `DIV_8`
-    - `DIV_4`
-    - `DIV_2`
-    - `DIV_1`
-
+  - **resolution** (*Optional*, int): Specify which part of the full 19-bit value to read.
+    <EnumOptions options={["DIV_8", "DIV_4", "DIV_2", "DIV_1"]} default="DIV_4" />
   - All other options from [Sensor](/components/sensor).
 
 - **temperature** (*Optional*): Built-in temperature sensor.
@@ -75,16 +61,8 @@ sensor:
 
 - **drdy_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): Data-ready pin. Often labelled `INT`. Using this pin might lead to slightly quicker read times.
 
-- **gain** (*Optional*, int): Sets the analog gain. Defaults to `1X`. Must be one of
-
-  - `1X`
-  - `1_25X`
-  - `1_67X`
-  - `2X`
-  - `2_5X`
-  - `3X`
-  - `3_75X`
-  - `5X`
+- **gain** (*Optional*, int): Sets the analog gain.
+  <EnumOptions options={["1X", "1_25X", "1_67X", "2X", "2_5X", "3X", "3_75X", "5X"]} default="1X" />
 
 - **oversampling** (*Optional*, int): On-chip oversampling. Defaults to `2`. Must be between `0` and `3`.
 

@@ -5,6 +5,7 @@ title: "GPIO Binary Sensor"
 
 import { Image } from 'astro:assets';
 import APIRef from '@components/APIRef.astro';
+import EnumOptions from '@components/EnumOptions.astro';
 
 <span id="gpio-binary-sensor"></span>
 
@@ -55,11 +56,15 @@ binary_sensor:
   for LibreTiny-based platforms (BK72xx, RTL87xx, LN882x) due to hardware limitations. Only supported
   on internal GPIO pins.
 
-- **interrupt_type** (*Optional*, string): The type of interrupt to use. One of:
-
-  - `ANY` (default): Trigger on any edge change (high to low or low to high)
-  - `RISING`  : Trigger only on rising edge (low to high)
-  - `FALLING`  : Trigger only on falling edge (high to low)
+- **interrupt_type** (*Optional*, string): The type of interrupt to use.
+  <EnumOptions
+    options={[
+      { value: "ANY", description: "Trigger on any edge change (high to low or low to high)" },
+      { value: "RISING", description: "Trigger only on rising edge (low to high)" },
+      { value: "FALLING", description: "Trigger only on falling edge (high to low)" },
+    ]}
+    default="ANY"
+  />
 
 - All other options from [Binary Sensor](/components/binary_sensor#config-binary_sensor).
 

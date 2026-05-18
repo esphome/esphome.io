@@ -2,6 +2,7 @@
 description: "Instructions for setting up SY6970 Battery Management IC"
 title: "SY6970 Battery Management IC"
 ---
+import EnumOptions from '@components/EnumOptions.astro';
 
 The `sy6970` component allows you to use the SY6970 battery management and charging ICs [SY6970 Datasheet](https://github.com/Xinyuan-LilyGO/LilyGo-AMOLED-Series/blob/master/datasheet/SY6970%20Datasheet.pdf) with ESPHome.
 
@@ -137,30 +138,44 @@ text_sensor:
 ## Text Sensor Configuration variables
 
 - **sy6970_id** (*Optional*, [ID](/guides/configuration-types#config-id)): The ID of the SY6970 component. Defaults to the only SY6970 component in your configuration.
-- **bus_status** (*Optional*): The type of power source connected. Possible values are:
-  - `No Input` - No power source connected
-  - `USB SDP` - USB Standard Downstream Port
-  - `USB CDP` - USB Charging Downstream Port
-  - `USB DCP` - USB Dedicated Charging Port
-  - `HVDCP` - High Voltage Dedicated Charging Port
-  - `Adapter` - Dedicated adapter
-  - `Non-Standard Adapter` - Non-standard adapter
-  - `OTG` - OTG mode
+- **bus_status** (*Optional*): The type of power source connected.
+  <EnumOptions
+    options={[
+      { value: "No Input", description: "No power source connected" },
+      { value: "USB SDP", description: "USB Standard Downstream Port" },
+      { value: "USB CDP", description: "USB Charging Downstream Port" },
+      { value: "USB DCP", description: "USB Dedicated Charging Port" },
+      { value: "HVDCP", description: "High Voltage Dedicated Charging Port" },
+      { value: "Adapter", description: "Dedicated adapter" },
+      { value: "Non-Standard Adapter", description: "Non-standard adapter" },
+      { value: "OTG", description: "OTG mode" },
+    ]}
+  />
   - All options from [Text Sensor](/components/text_sensor).
-- **charge_status** (*Optional*): The current charging status. Possible values are:
-  - `Not Charging` - Battery is not charging
-  - `Pre-charge` - Battery is in pre-charge phase
-  - `Fast Charge` - Battery is in fast charge phase
-  - `Charge Done` - Charging is complete
-  - All options from [Text Sensor](/components/text_sensor).
-- **ntc_status** (*Optional*): The battery temperature status based on NTC thermistor. Possible values are:
-  - `Normal` - Temperature is in normal range
-  - `Warm` - Battery is warm
-  - `Cool` - Battery is cool
-  - `Cold` - Battery is cold
-  - `Hot` - Battery is hot
-  - All options from [Text Sensor](/components/text_sensor).
-- All other options from [Text Sensor](/components/text_sensor).
+- **charge_status** (*Optional*): The current charging status.
+  <EnumOptions
+    options={[
+      { value: "Not Charging", description: "Battery is not charging" },
+      { value: "Pre-charge", description: "Battery is in pre-charge phase" },
+      { value: "Fast Charge", description: "Battery is in fast charge phase" },
+      { value: "Charge Done", description: "Charging is complete" },
+    ]}
+  />
+
+  All other options from [Text Sensor](/components/text_sensor).
+
+- **ntc_status** (*Optional*): The battery temperature status based on NTC thermistor.
+  <EnumOptions
+    options={[
+      { value: "Normal", description: "Temperature is in normal range" },
+      { value: "Warm", description: "Battery is warm" },
+      { value: "Cool", description: "Battery is cool" },
+      { value: "Cold", description: "Battery is cold" },
+      { value: "Hot", description: "Battery is hot" },
+    ]}
+  />
+
+  All other options from [Text Sensor](/components/text_sensor).
 
 ## Complete Example
 

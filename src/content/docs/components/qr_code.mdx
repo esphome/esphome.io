@@ -2,6 +2,7 @@
 description: "Instructions for displaying a QR Code in ESPHome"
 title: "QR Code Component"
 ---
+import EnumOptions from '@components/EnumOptions.astro';
 
 <span id="display-qrcode"></span>
 
@@ -19,13 +20,16 @@ qr_code:
   in your display code.
 
 - **value** (**Required**, string): The string which you want to encode in the QR-code.
-- **ecc** (*Optional*, string): The error correction code level you want to use. Defaults to `LOW`. You can use one of
-  the following values:
-
-  - `LOW`  : The QR Code can tolerate about 7% erroneous codewords
-  - `MEDIUM`  : The QR Code can tolerate about 15% erroneous codewords
-  - `QUARTILE`  : The QR Code can tolerate about 25% erroneous codewords
-  - `HIGH`  : The QR Code can tolerate about 30% erroneous codewords
+- **ecc** (*Optional*, string): The error correction code level you want to use.
+  <EnumOptions
+    options={[
+      { value: "LOW", description: "The QR Code can tolerate about 7% erroneous codewords" },
+      { value: "MEDIUM", description: "The QR Code can tolerate about 15% erroneous codewords" },
+      { value: "QUARTILE", description: "The QR Code can tolerate about 25% erroneous codewords" },
+      { value: "HIGH", description: "The QR Code can tolerate about 30% erroneous codewords" },
+    ]}
+    default="LOW"
+  />
 
 To draw the QR-code, call the `it.qr_code` function from your render lambda:
 
