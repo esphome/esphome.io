@@ -6,6 +6,7 @@ title: "Hydreon Rain Sensor"
 import { Image } from 'astro:assets';
 import Figure from '@components/Figure.astro';
 import hydreonRg9FullImg from './images/hydreon_rg9_full.jpg';
+import EnumOptions from '@components/EnumOptions.astro';
 
 The `hydreon_rgxx` sensor platform allows you to use rain sensors by Hydreon. Currently supported are the RG-9 and RG-15 sensors ([model comparison](https://rainsensors.com/products/model-comparison/)).
 
@@ -66,7 +67,8 @@ sensor:
 
 ## Configuration variables
 
-- **model** (**Required**, string): Specify which rain sensor you have connected. Must be either `RG_9` or `RG_15`.
+- **model** (**Required**, string): Specify which rain sensor you have connected.
+  <EnumOptions options={["RG_9", "RG_15"]} />
 
 - **disable_led** (*Optional*): Disables the on-board LED. Defaults to `false`. Only on RG-9 firmware version 1.200-onwards.
 
@@ -81,8 +83,8 @@ sensor:
 
   - All options from [Sensor](/components/sensor).
 
-- **resolution** (*Optional*, string): Specify rain sensor resolution. Must be either `low` or `high`. Default resolution is `high`.
-  Only applies to RG-15.
+- **resolution** (*Optional*, string): Specify rain sensor resolution. Only applies to RG-15.
+  <EnumOptions options={["low", "high"]} default="high" />
 
 - **acc** (*Optional*): Amount of rain since last message (see `update_interval`  ), in `mm`. Only on RG-15.
 

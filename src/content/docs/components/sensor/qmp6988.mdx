@@ -6,6 +6,7 @@ title: "QMP6988 Temperature+Pressure Sensor"
 import { Image } from 'astro:assets';
 import Figure from '@components/Figure.astro';
 import APIRef from '@components/APIRef.astro';
+import EnumOptions from '@components/EnumOptions.astro';
 
 The `qmp6988` sensor platform allows you to use your QMP6988
 ([datasheet](https://m5stack.oss-cn-shenzhen.aliyuncs.com/resource/docs/datasheet/unit/enviii/QMP6988%20Datasheet.pdf),
@@ -55,8 +56,8 @@ sensor:
 - **address** (*Optional*, int): Manually specify the I²C address of
   the sensor. Defaults to `0x70`. `0x56` is also configurable - see datasheet.
 
-- **iir_filter** (*Optional*): Set up an Infinite Impulse Response filter to increase accuracy. One of
-  `OFF`, `2x`, `4x`, `8x`, `16x`, `32x`. Defaults to `OFF`.
+- **iir_filter** (*Optional*): Set up an Infinite Impulse Response filter to increase accuracy.
+  <EnumOptions options={["OFF", "2x", "4x", "8x", "16x", "32x"]} default="OFF" />
 
 - **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to check the
   sensor. Defaults to `60s`.

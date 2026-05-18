@@ -2,6 +2,7 @@
 description: "Configuration for the ESP32 platform for ESPHome."
 title: "ESP32 Platform"
 ---
+import EnumOptions from '@components/EnumOptions.astro';
 
 This component contains platform-specific options for the ESP32 platform.
 
@@ -13,9 +14,8 @@ esp32:
 
 ## Configuration variables
 
-- **variant** (*Optional*, string): The ESP32 mcu/chip to use for this device configuration. One of `esp32`,
-  `esp32s2`, `esp32s3`, `esp32c2`, `esp32c3`, `esp32c5`, `esp32c6`, `esp32c61`, `esp32h2` or `esp32p4`.
-  This must match the hardware in use, or it will fail to flash.
+- **variant** (*Optional*, string): The ESP32 mcu/chip to use for this device configuration. This must match the hardware in use, or it will fail to flash.
+  <EnumOptions inline options={["esp32", "esp32s2", "esp32s3", "esp32c2", "esp32c3", "esp32c5", "esp32c6", "esp32c61", "esp32h2", "esp32p4"]} />
 
 - **board** (*Optional*, string): The PlatformIO board ID that should be used. Choose the appropriate board from
   [this list](https://registry.platformio.org/platforms/platformio/espressif32/boards) (the icon next
@@ -31,9 +31,8 @@ esp32:
   sample silicon (rev < 3.0). When using `variant: esp32p4` without specifying a `board`, a warning is logged
   if this option is not explicitly set. Defaults to `false`.
 
-- **flash_size** (*Optional*, string): The amount of flash memory available on the ESP32 board/module. One of `2MB`,
-  `4MB`, `8MB`, `16MB` or `32MB`. Defaults to `4MB`. **Warning: specifying a size larger than that available
-  on your board will cause the ESP32 to fail to boot.**
+- **flash_size** (*Optional*, string): The amount of flash memory available on the ESP32 board/module. **Warning: specifying a size larger than that available on your board will cause the ESP32 to fail to boot.**
+  <EnumOptions inline options={["2MB", "4MB", "8MB", "16MB", "32MB"]} default="4MB" />
 
 - **cpu_frequency** (*Optional*, string): The CPU frequency to use. Defaults to the maximum supported
   frequency for the variant. The allowed values depend on the variant:
@@ -287,7 +286,8 @@ esp32:
 
 ### Configuration variables
 
-- **type** (*Optional*, string): The framework type, either `esp-idf` or `arduino`. Defaults to `esp-idf` for all ESP32 variants.
+- **type** (*Optional*, string): The framework type. Defaults to `esp-idf` for all ESP32 variants.
+  <EnumOptions options={["esp-idf", "arduino"]} />
 
 - **version** (*Optional*, string): The base framework version number to use, from
   [ESP32 ESP-IDF releases](https://github.com/espressif/esp-idf/releases) or
@@ -317,8 +317,8 @@ esp32:
   [compiler options](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/kconfig.html#compiler-options)
   to set in the ESP-IDF project.
 
-- **log_level** (*Optional*, string): Log level of the framework, one of `ERROR` (default), `NONE`, `WARN`, `INFO`,
-  `DEBUG` or `VERBOSE`.
+- **log_level** (*Optional*, string): Log level of the framework.
+  <EnumOptions options={["ERROR", "NONE", "WARN", "INFO", "DEBUG", "VERBOSE"]} default="ERROR" />
 
 - **advanced** (*Optional*, mapping): See [Advanced Configuration](#esp32-advanced_configuration) below.
 - **components** (*Optional*, list of components): See [IDF Components](#esp32-idf_components) below.
@@ -327,16 +327,11 @@ esp32:
 
 ## Advanced Configuration
 
-- **assertion_level** (*Optional*, enum): One of `ENABLE` (default), `SILENT` or `DISABLE`. Changing away from
-  the default will reduce the size of the compiled binary, albeit at the expense of ease of troubleshooting. See
-  [Espressif's documentation](https://docs.espressif.com/projects/esp-idf/en/v5.3.3/esp32/api-reference/kconfig.html#config-compiler-optimization-assertion-level)
-  for more information.
+- **assertion_level** (*Optional*, enum). Changing away from the default will reduce the size of the compiled binary, albeit at the expense of ease of troubleshooting. See [Espressif's documentation](https://docs.espressif.com/projects/esp-idf/en/v5.3.3/esp32/api-reference/kconfig.html#config-compiler-optimization-assertion-level) for more information.
+  <EnumOptions options={["ENABLE", "SILENT", "DISABLE"]} default="ENABLE" />
 
-- **compiler_optimization** (*Optional*, enum): One of `SIZE` (default), `PERF`, `NONE` or `DEBUG`. Changing
-  away from the default will increase the size of the compiled binary but may increase performance or allow for easier
-  troubleshooting. See
-  [Espressif's documentation](https://docs.espressif.com/projects/esp-idf/en/v5.3.3/esp32/api-reference/kconfig.html#config-compiler-optimization)
-  for more information.
+- **compiler_optimization** (*Optional*, enum). Changing away from the default will increase the size of the compiled binary but may increase performance or allow for easier troubleshooting. See [Espressif's documentation](https://docs.espressif.com/projects/esp-idf/en/v5.3.3/esp32/api-reference/kconfig.html#config-compiler-optimization) for more information.
+  <EnumOptions options={["SIZE", "PERF", "NONE", "DEBUG"]} default="SIZE" />
 
 - **enable_lwip_assert** (*Optional*, boolean): Can be set to `false` to reduce the size of the compiled binary by
   disabling LWIP assertions. Defaults to `true` (as recommended by Espressif). See
@@ -355,7 +350,8 @@ esp32:
   `Base MAC address from BLK0 of EFUSE CRC error`. **Valid only on original ESP32 with** `esp-idf` **framework.**
 
 - **minimum_chip_revision** (*Optional*, string): Sets the minimum ESP32 chip revision required for the firmware.
-  One of `0.0`, `1.0`, `1.1`, `2.0`, `3.0`, or `3.1`. **Valid only on original ESP32.**
+  **Valid only on original ESP32.**
+  <EnumOptions options={["0.0", "1.0", "1.1", "2.0", "3.0", "3.1"]} />
 
   Setting this to `3.0` or higher reduces flash size by excluding workaround code for older chip bugs. For PSRAM
   users, it also saves significant IRAM by keeping C library functions in ROM instead of recompiling them with
@@ -420,8 +416,8 @@ esp32:
     > - For `ecdsa_v1` (Secure Boot V1): Raw binary format (`.bin`). Extract from a PEM private key using:
     >   `espsecure.py extract_public_key --keyfile private.pem public_key.bin`
 
-  - **signing_scheme** (*Optional*, string): The signing algorithm. One of `rsa3072`, `ecdsa256`, or `ecdsa_v1`.
-    Defaults to `rsa3072`. **Not all schemes are supported on all variants** — see the table below.
+  - **signing_scheme** (*Optional*, string): The signing algorithm. **Not all schemes are supported on all variants** — see the table below.
+    <EnumOptions options={["rsa3072", "ecdsa256", "ecdsa_v1"]} default="rsa3072" />
 
     - `rsa3072`: RSA-3072 (Secure Boot V2). Recommended for most variants.
     - `ecdsa256`: ECDSA with NIST P-256 (Secure Boot V2). For variants without RSA support.
@@ -779,8 +775,8 @@ esp32:
 ### Configuration Variables
 
 - **name** (*Required*, string): Name of the partition. Cannot be any of the reserved names: `nvs`, `app0`, `app1`, `otadata`, `eeprom`, `spiffs`, `phy_init`.
-- **type** (*Required*, string or integer): Partition type. One of `app` or `data`, or a custom type as an integer between 0x40 and 0xFE.
-- **subtype** (*Required*, string or integer): Partition subtype. For `app` type: `factory` or `test`. For `data` type: `nvs`, `nvs_keys`, `spiffs`, `coredump`, `efuse`, `fat`, `undefined`, or `littlefs`. Can also be an integer between 0x0 and 0xFE.
+- **type** (*Required*, string or integer): Partition type. One of `app`, `data`, or a custom type as an integer between `0x40` and `0xFE`.
+- **subtype** (*Required*, string or integer): Partition subtype. For `app` type: `factory` or `test`. For `data` type: `nvs`, `nvs_keys`, `spiffs`, `coredump`, `efuse`, `fat`, `undefined`, or `littlefs`. Can also be an integer between `0x0` and `0xFE`.
 - **size** (*Required*, integer): Partition size in bytes. Must be 4KB (0x1000) aligned.
 
 ## GPIO Pin Numbering

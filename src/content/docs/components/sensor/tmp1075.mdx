@@ -5,6 +5,7 @@ title: "TMP1075 Temperature Sensor"
 
 import { Image } from 'astro:assets';
 import Figure from '@components/Figure.astro';
+import EnumOptions from '@components/EnumOptions.astro';
 
 The TMP1075 Temperature sensor allows you to use your TMP1075
 ([datasheet](https://www.ti.com/lit/gpn/tmp1075))
@@ -55,13 +56,15 @@ sensor:
 - **conversion_rate** (*Optional*): The interval at which the IC performs a
   temperature measurement. This setting also determines how fast the alert pin
   responds to temperature changes, and is thus independent of how often ESPHome
-  checks the sensor. Possible values are `27.5ms`, `55ms`, `110ms`, and
-  `220ms`. Defaults to `27.5ms`.
+  checks the sensor.
+  <EnumOptions options={["27.5ms", "55ms", "110ms", "220ms"]} default="27.5ms" />
 
 - **alert** (*Optional*): Configure the alert pin behaviour.
 
-  - **function** (*Optional*, enum): Function of the alert pin, either `comparator` or `interrupt`. Defaults to `comparator`.
-  - **polarity** (*Optional*, enum): Polarity of the alert pin, either `active_high` or `active_low`. Defaults to `active_high`.
+  - **function** (*Optional*, enum): Function of the alert pin.
+    <EnumOptions options={["comparator", "interrupt"]} default="comparator" />
+  - **polarity** (*Optional*, enum): Polarity of the alert pin.
+    <EnumOptions options={["active_high", "active_low"]} default="active_high" />
   - **limit_low** (*Optional*, int): Lower temperature limit, in °C. Defaults to `-128` (the lowest possible limit value).
   - **limit_high** (*Optional*, int): Higher temperature limit, in °C. Defaults to `127.9375` (the highest possible limit value).
   - **fault_count** (*Optional*, int): Number of measurements. required for the alert pin to act. Must be between `1` and `4`, inclusive. Defaults to `1`.

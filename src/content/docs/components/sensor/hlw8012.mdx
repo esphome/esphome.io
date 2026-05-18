@@ -5,6 +5,7 @@ title: "HLW8012 Power Sensor"
 
 import HLW8012Calculator from '@components/HLW8012Calculator.astro';
 import APIRef from '@components/APIRef.astro';
+import EnumOptions from '@components/EnumOptions.astro';
 
 The `hlw8012` sensor platform allows you to use your HLW8012 voltage/current and power sensors
 ([datasheet](https://github.com/xoseperez/hlw8012/blob/master/docs/HLW8012.pdf)) sensors with
@@ -73,8 +74,8 @@ Advanced Options:
   Defaults to the Sonoff POW's value `2351`.
 
 - **model** (*Optional*, string): The sensor model on the board, to set internal constant factors to convert pulses to measurements.
-  Possible values are `HLW8012`, `CSE7759`, `BL0937`. Defaults to `HLW8012`.
   CSE7759 uses same constants and it also works with default. Must be set for BL0937 to be able to calibrate all three measurements at the same time.
+  <EnumOptions options={["HLW8012", "CSE7759", "BL0937"]} default="HLW8012" />
 
 - **change_mode_every** (*Optional*, int): After how many updates to cycle between the current/voltage measurement mode.
   Note that the first value after switching is discarded because it is often inaccurate. When set to `"never"` the measurement mode will stay at the

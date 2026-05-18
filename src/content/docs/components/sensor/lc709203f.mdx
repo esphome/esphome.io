@@ -10,6 +10,7 @@ import lc709203fUiImg from './images/LC709203f_ui.jpg';
 import lc709203fBatteryMarkingsImg from './images/LC709203f_battery_markings.jpg';
 import lc709203fBatteryProfilesImg from './images/LC709203f_battery_profiles.jpg';
 import lc709203fThermistorConnectionImg from './images/LC709203f_thermistor_connection.jpg';
+import EnumOptions from '@components/EnumOptions.astro';
 
 The `lc709203f` sensor platform allows you to use a LC709203F
 ([datasheet](https://cdn-learn.adafruit.com/assets/assets/000/094/597/original/LC709203F-D.PDF))
@@ -50,10 +51,16 @@ sensor:
 
 - **voltage** (*Optional*): nominal voltage of the battery pack in V.
 
-  - Valid values are `3.7` or `3.8`
-  - Defaults to `3.7`. This is the correct value for the Adafruit batteries.
-  - See [Pack Size and Nominal Voltage](#pack-size-and-voltage) for help if you don't know your pack voltage.
-  - See [Pack Voltage](#pack-voltage) for more information on how this value is used.
+  <EnumOptions
+    options={[
+      { value: "3.7", description: "This is the correct value for the Adafruit batteries." },
+      { value: "3.8" },
+    ]}
+    default="3.7"
+  />
+  > [!NOTE]
+  > - See [Pack Size and Nominal Voltage](#pack-size-and-voltage) for help if you don't know your pack voltage.
+  > - See [Pack Voltage](#pack-voltage) for more information on how this value is used.
 
 - **battery_voltage** (*Optional*): Configuration for the voltage sensor. All options from [sensor](/components/sensor).
 

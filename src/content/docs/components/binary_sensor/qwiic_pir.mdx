@@ -6,6 +6,7 @@ title: "Qwiic PIR Motion Binary Sensor"
 import { Image } from 'astro:assets';
 import Figure from '@components/Figure.astro';
 import APIRef from '@components/APIRef.astro';
+import EnumOptions from '@components/EnumOptions.astro';
 
 The Qwiic PIR Motion binary sensor allows you to use your Qwiic PIR ([EKMC4607112K based](https://www.sparkfun.com/products/17374), [EKMB1107112 based](https://www.sparkfun.com/products/17375), [firmware documentation](https://github.com/sparkfun/Qwiic_PIR))
 sensors from SparkFun with ESPHome.
@@ -34,7 +35,8 @@ binary_sensor:
 
 ## Configuration variables
 
-- **debounce_mode** (*Optional*, enum): How the component debounces the motion sensor's signal. Must be one of `HYBRID`, `NATIVE`, or `RAW`. See [Debounce Modes](#debounce-modes) for details. Defaults to `HYBRID`.
+- **debounce_mode** (*Optional*, enum): How the component debounces the motion sensor's signal. See [Debounce Modes](#debounce-modes) for details.
+  <EnumOptions options={["HYBRID", "NATIVE", "RAW"]} default="HYBRID" />
 - **debounce** (*Optional*, [Time](/guides/configuration-types#time)): Only valid when using `NATIVE` debounce mode. Configures the debounce time on the sensor to reduce noise and false detections. Defaults to `1ms`.
 
 - All other options from [Binary Sensor](/components/binary_sensor#config-binary_sensor).

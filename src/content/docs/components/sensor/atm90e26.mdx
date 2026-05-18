@@ -3,6 +3,7 @@ description: "Instructions for setting up ATM90E26 energy metering sensors"
 title: "ATM90E26 Power Sensor"
 ---
 import APIRef from '@components/APIRef.astro';
+import EnumOptions from '@components/EnumOptions.astro';
 
 
 The `atm90e26` sensor platform allows you to use your ATM90E26 voltage/current and power sensors
@@ -18,7 +19,8 @@ and additionally provides active, reactive, and apparent power, frequency, power
 ## Configuration variables
 
 - **cs_pin** (**Required**, [Pin Schema](/guides/configuration-types#pin-schema)): The pin CS is connected to. For the 6 channel meter main board, this will always be 5 and 4. For the add-on boards a jumper can be selected for each CS pin, but default to 0 and 16.
-- **line_frequency** (**Required**, string): The AC line frequency of the supply voltage. One of `50Hz`, `60Hz`.
+- **line_frequency** (**Required**, string): The AC line frequency of the supply voltage.
+  <EnumOptions inline options={["50Hz", "60Hz"]} />
 - **meter_constant** (**Required**, float): The number of pulses per kWh. The ATM90E26 internally works based on pulses and
   this value converts a pulse into Wh, which are emitted as `forward_active_energy` etc. Matching it against an existing
   meter is useful in that it allows visual confirmation for some devices that blink an LED for each pulse. Common values are
@@ -61,8 +63,8 @@ and additionally provides active, reactive, and apparent power, frequency, power
 - **gain_ct** (*Optional*, int): CT clamp calibration value.
   Defaults to `31251`.
 
-- **gain_pga** (*Optional*, string): The gain for the CT clamp. Valid values are `1X`, `4X`, `8X`, `16X`, and `24X`.
-  Defaults to `1X`.
+- **gain_pga** (*Optional*, string): The gain for the CT clamp.
+  <EnumOptions inline options={["1X", "4X", "8X", "16X", "24X"]} default="1X" />
 
 - **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to check the sensor. Defaults to `60s`.
 - **spi_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the [SPI Component](/components/spi) if you want

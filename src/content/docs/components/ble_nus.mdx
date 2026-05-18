@@ -2,6 +2,7 @@
 description: "Nordic UART Service (NUS)"
 title: "Nordic UART Service (NUS)"
 ---
+import EnumOptions from '@components/EnumOptions.astro';
 
 The BLE NUS component provides a Bluetooth Low Energy UART interface based on the Nordic UART Service.
 It can be used to stream logs or enable custom bidirectional communication with ESPHome.
@@ -14,8 +15,8 @@ ble_nus:
 
 ## Configuration variables
 
-- **type** (*Optional*, string): Mode of operation. One of `logs` or `uart`.
-  `logs` streams ESPHome logs. `uart` provides bi-directional communication. Defaults to `logs`.
+- **type** (*Optional*, string): Mode of operation. `logs` streams ESPHome logs. `uart` provides bi-directional communication.
+  <EnumOptions inline options={["logs", "uart"]} default="logs" />
 - **rx_buffer_size** (*Optional*, int): Size of the receive buffer in bytes. Range: 160-8192. Defaults to `512`.
   Valid only for mode `uart`.
 - **tx_buffer_size** (*Optional*, int): Size of the transmit buffer in bytes. Range: 160-8192. Defaults to `512`.

@@ -3,6 +3,7 @@ description: "Instructions for setting up BL0942 power monitors."
 title: "Belling BL0942 Energy Monitor"
 ---
 import APIRef from '@components/APIRef.astro';
+import EnumOptions from '@components/EnumOptions.astro';
 
 
 The `bl0942` sensor platform allows you to use BL0942 energy monitors sensors with
@@ -49,7 +50,8 @@ sensor:
 - **uart_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the [UART Component](/components/uart) if you want
   to use multiple UART buses.
 
-- **line_frequency** (*Optional*, string): The nominal AC line frequency of the supply voltage. One of `50Hz`, `60Hz`. Defaults to `50Hz`.
+- **line_frequency** (*Optional*, string): The nominal AC line frequency of the supply voltage.
+  <EnumOptions options={["50Hz", "60Hz"]} default="50Hz" />
 - **address** (*Optional*, int): The address of the BL0942 from its strapping pins. Defaults to `0`.
 - **reset** (*Optional*, boolean): Whether to reset the BL0942 chip on startup, resetting all internal counters. Defaults to `true`.
 - **current_reference** (*Optional*, float): The calibration parameter for current readings. Defaults to `251065.6814`.

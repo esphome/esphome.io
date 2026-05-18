@@ -3,6 +3,7 @@ description: "Instructions for setting up sensors that integrate values over tim
 title: "Integration Sensor"
 ---
 import APIRef from '@components/APIRef.astro';
+import EnumOptions from '@components/EnumOptions.astro';
 
 
 The `integration` sensor is a helper sensor that can integrate values from other sensors over
@@ -28,11 +29,11 @@ sensor:
 ## Configuration variables
 
 - **sensor** (**Required**, [ID](/guides/configuration-types#id)): The ID of the sensor to integrate over time.
-- **time_unit** (**Required**, string): The time unit to integrate with, one of
-  `ms`, `s`, `min`, `h` or `d`.
+- **time_unit** (**Required**, string): The time unit to integrate with.
+  <EnumOptions inline options={["ms", "s", "min", "h", "d"]} />
 
-- **integration_method** (*Optional*, string): The integration method to use. One of
-  `trapezoid`, `left` or `right`. Defaults to `trapezoid`.
+- **integration_method** (*Optional*, string): The integration method to use.
+  <EnumOptions options={["trapezoid", "left", "right"]} default="trapezoid" />
 
 - **restore** (*Optional*, boolean): Whether to store the intermediate result on the device so
   that the value can be restored upon power cycle or reboot.

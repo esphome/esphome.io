@@ -6,6 +6,7 @@ title: "MQTT Client Component"
 import { Image } from 'astro:assets';
 import mqttAvailabilityImg from './images/mqtt-availability.png';
 import APIRef from '@components/APIRef.astro';
+import EnumOptions from '@components/EnumOptions.astro';
 
 The MQTT Client Component sets up the MQTT connection to your broker.
 If you are connecting to Home Assistant, you may prefer to use the native API,
@@ -58,14 +59,23 @@ mqtt:
   Assistant's MQTT discovery. Should not contain trailing slash.
   Defaults to `homeassistant`.
 
-- **discovery_unique_id_generator** (*Optional*, string): The unique_id generator
-  to use. Can be one of `legacy` or `mac`. Defaults to `legacy`, which
-  generates unique_id in format `ESP<component_type><default_object_id>`.
-  `mac` generator uses format `<mac_address>-<component_type>-<fnv1_hash(friendly_name)>`.
+- **discovery_unique_id_generator** (*Optional*, string): The unique_id generator to use.
+  <EnumOptions
+    options={[
+      { value: "legacy", description: "generates unique_id in format `ESP<component_type><default_object_id>`" },
+      { value: "mac", description: "uses format `<mac_address>-<component_type>-<fnv1_hash(friendly_name)>`" },
+    ]}
+    default="legacy"
+  />
 
-- **discovery_object_id_generator** (*Optional*, string): The object_id generator
-  to use. Can be one of `none` or `device_name`. Defaults to `none` which
-  does not generate object_id. `device_name` generator uses format `<device_name>_<friendly_name>`.
+- **discovery_object_id_generator** (*Optional*, string): The object_id generator to use.
+  <EnumOptions
+    options={[
+      { value: "none", description: "does not generate object_id" },
+      { value: "device_name", description: "uses format `<device_name>_<friendly_name>`" },
+    ]}
+    default="none"
+  />
 
 - **use_abbreviations** (*Optional*, boolean): Whether to use
   [Abbreviations](https://www.home-assistant.io/docs/mqtt/discovery/)

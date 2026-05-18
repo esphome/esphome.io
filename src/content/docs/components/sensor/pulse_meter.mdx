@@ -6,6 +6,7 @@ title: "Pulse Meter Sensor"
 import { Image } from 'astro:assets';
 import pulseCounterVsPulseMeterImg from './images/pulse-counter_vs_pulse-meter.png';
 import APIRef from '@components/APIRef.astro';
+import EnumOptions from '@components/EnumOptions.astro';
 
 The pulse meter sensor allows you to count the number and frequency of pulses on any pin. It is intended to be a drop-in replacement
 for the [pulse counter component](/components/sensor/pulse_counter/).
@@ -34,10 +35,13 @@ sensor:
   This acts as a debounce filter to eliminate input noise, so choose a value a little less than your expected minimum pulse width.
 
 - **internal_filter_mode** (*Optional*, string): Determines how the internal filter is applied.
-  One of `EDGE` or `PULSE`. Defaults to `EDGE`.
-
-  - In `EDGE`  mode, subsequent rising edges are compared and if they fall into an interval lesser than the `internal filter` value, the last one is discarded. This is useful if your input signal bounces, but is otherwise clean.
-  - In `PULSE` mode, the rising edge is discarded if any further interrupts are detected before the `internal_filter` time has passed. In other words, a high pulse must be at least `internal_filter` long to be counted. This is useful if you have a noisy input signal that may have bounces before and/or after the main pulse.
+  <EnumOptions
+    options={[
+      { value: "EDGE", description: "subsequent rising edges are compared and if they fall into an interval lesser than the `internal filter` value, the last one is discarded. This is useful if your input signal bounces, but is otherwise clean." },
+      { value: "PULSE", description: "the rising edge is discarded if any further interrupts are detected before the `internal_filter` time has passed. In other words, a high pulse must be at least `internal_filter` long to be counted. This is useful if you have a noisy input signal that may have bounces before and/or after the main pulse." },
+    ]}
+    default="EDGE"
+  />
 
 - **timeout** (*Optional*, [Time](/guides/configuration-types#time)): If we don't see a pulse for this length of time, we assume *0 pulses/s*. Defaults to `5 min`.
 - **total** (*Optional*, [ID](/guides/configuration-types#id)): An additional sensor that outputs the total number of pulses counted.

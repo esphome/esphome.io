@@ -6,6 +6,7 @@ title: "CFSensor XGZP68xx Non-C Series Differential Pressure Sensor"
 import { Image } from 'astro:assets';
 import Figure from '@components/Figure.astro';
 import APIRef from '@components/APIRef.astro';
+import EnumOptions from '@components/EnumOptions.astro';
 
 CFSensor makes multiple generations of sensors with identical model numbers such as the 6899D or
 6897D, but unfortunately with completely different I²C interfaces. You can identify which from
@@ -54,7 +55,8 @@ sensor:
 
 - **temperature** (*Optional*): All options from [Sensor](/components/sensor).
 - **pressure** (*Optional*): All options from [Sensor](/components/sensor).
-  - **oversampling** (*Optional*): One of `256x`, `512x`, `1024x`, `2048x`, `4096x`, `8192x`, `16384x`, `32768x`. It is not possible to disable oversampling. If not specified, this defaults to `4096x`.
+  - **oversampling** (*Optional*). It is not possible to disable oversampling. If not specified, this
+    <EnumOptions inline options={["256x", "512x", "1024x", "2048x", "4096x", "8192x", "16384x", "32768x"]} default="4096x" />
 - **k_value** (*Optional*, int): The K value comes from the list below. It will default to 4096 if not specified.
 - **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to check the sensor. Defaults to `60s`.
 

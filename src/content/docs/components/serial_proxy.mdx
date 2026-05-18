@@ -3,6 +3,7 @@ description: "Instructions for setting up the Serial Proxy component in ESPHome.
 title: "Serial Proxy"
 ---
 import APIRef from '@components/APIRef.astro';
+import EnumOptions from '@components/EnumOptions.astro';
 
 
 > [!IMPORTANT]
@@ -34,10 +35,13 @@ serial_proxy:
 - **name** (**Required**, string): A human-readable name for this serial port, used to identify it to API clients.
 - **uart_id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the [UART](/components/uart/) component
   this proxy is attached to.
-- **port_type** (**Required**, string): The electrical type of the serial port. One of:
-  - `TTL`: Standard TTL logic-level UART (3.3V or 5V). Typically used for direct connections to most microcontrollers.
-  - `RS232`: RS-232 standard serial port (typically ±12V levels via an appropriate line-driver IC). Typically used for PC-style serial connections, often with a DB9-type connector.
-  - `RS485`: RS-485 differential serial bus. Typically used for industrial/multi-drop serial networks.
+- **port_type** (**Required**, string): The electrical type of the serial port.
+  <EnumOptions options={[
+      { value: "TTL", description: "Standard TTL logic-level UART (3.3V or 5V). Typically used for direct connections to most microcontrollers." },
+      { value: "RS232", description: "RS-232 standard serial port (typically ±12V levels via an appropriate line-driver IC). Typically used for PC-style serial connections, often with a DB9-type connector." },
+      { value: "RS485", description: "RS-485 differential serial bus. Typically used for industrial/multi-drop serial networks." },
+    ]}
+  />
 - **rts_pin** (*Optional*, [Pin](/guides/configuration-types#pin)): GPIO pin to use as the RTS (Request to Send)
   modem control output. The state of this pin may be controlled by the API client at runtime.
 - **dtr_pin** (*Optional*, [Pin](/guides/configuration-types#pin)): GPIO pin to use as the DTR (Data Terminal Ready)

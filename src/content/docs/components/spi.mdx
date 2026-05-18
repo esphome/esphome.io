@@ -3,6 +3,7 @@ description: "Instructions for setting up SPI components in ESPHome"
 title: "SPI Bus"
 ---
 import APIRef from '@components/APIRef.astro';
+import EnumOptions from '@components/EnumOptions.astro';
 
 
 <span id="spi"></span>
@@ -73,8 +74,7 @@ spi:
 - **clk_pin** (**Required**, [Pin Schema](/guides/configuration-types#pin-schema)): The pin used for the clock line of the SPI bus.
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID for this SPI hub if you need multiple SPI hubs.
 - **interface** (*Optional*): Controls which hardware or software SPI implementation should be used.
-  Value may be one of `any` (default), `software`, `hardware`, `spi`, `spi2` or `spi3`, depending on
-  the type and the particular chip used. See discussion below.
+  <EnumOptions options={["any", "software", "hardware", "spi", "spi2", "spi3"]} default="any" />
 
 For the conventional `single` bit bus at least one of `miso_pin` or `mosi_pin` is required.
 
@@ -145,10 +145,11 @@ spi_device:
 - **data_rate** (*Optional*): Set the data rate of the controller. This may be a numeric value in Hz or a string with
   a unit suffix, e.g. "100kHz" or "20MHz". Must be at least 1000Hz, see below for other constraints.
 
-- **spi_mode** (*Optional*): Set the controller mode - one of `mode0`, `mode1`, `mode2`, `mode3`. The default is `mode3`.
-  See table below for more information
+- **spi_mode** (*Optional*): Set the controller mode. See table below for more information
+  <EnumOptions options={["mode0", "mode1", "mode2", "mode3"]} default="mode3" />
 
-- **bit_order** (*Optional*): Set the bit order - choose one of `msb_first` (default) or `lsb_first`.
+- **bit_order** (*Optional*): Set the bit order.
+  <EnumOptions options={["msb_first", "lsb_first"]} default="msb_first" />
 - **cs_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The CS pin.
 - **release_device** (*Optional*, boolean): For ESP32, release the bus device between transactions. The default is
   `False`. Setting this to `True` will enable more than 6 devices to be connected to hardware SPI buses.

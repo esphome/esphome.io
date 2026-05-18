@@ -7,6 +7,7 @@ import { Image } from 'astro:assets';
 import Figure from '@components/Figure.astro';
 import ina226FullImg from './images/ina226-full.jpg';
 import APIRef from '@components/APIRef.astro';
+import EnumOptions from '@components/EnumOptions.astro';
 
 The `ina226` sensor platform allows you to use your INA226 DC Current and Power Sensor
 ([datasheet](http://www.ti.com/lit/ds/symlink/ina226.pdf), [eBay](https://www.ebay.com)) sensors with ESPHome.
@@ -59,15 +60,16 @@ sensor:
 - **max_current** (*Optional*, float): The maximum current you are expecting. ESPHome will use this to
   configure the sensor optimally. Defaults to `3.2A`.
 
-- **adc_time** (*Optional*, [Time](/guides/configuration-types#time) or both of the following nested options): The time in microseconds to perform a single ADC conversion.
-  Defaults to `1100us`. Valid values are `140us`, `204us`, `332us`, `588us`, `1100us`, `2116us`,
-  `4156us`, `8244us`.
+- **adc_time** (*Optional*, [Time](/guides/configuration-types#time) or mapping): The time in microseconds to perform a single ADC conversion. May be specified as a single time applied to all measurements, or as a mapping with separate times per measurement.
+  <EnumOptions options={["140us", "204us", "332us", "588us", "1100us", "2116us", "4156us", "8244us"]} default="1100us" />
 
-  - **voltage** (**Required**, [Time](/guides/configuration-types#time)): ADC conversion time for Bus Voltage
-  - **current** (**Required**, [Time](/guides/configuration-types#time)): ADC conversion time for Shunt Voltage (Current measurement)
+  When provided as a mapping, each sub-key accepts the same values shown above:
 
-- **adc_averaging** (*Optional*, integer): Selects ADC sample averaging count. Defaults to `4`. Valid values are
-  `1`, `4`, `16`, `64`, `128`, `256`, `512`, `1024`.
+  - **voltage** (**Required**, [Time](/guides/configuration-types#time)): ADC conversion time for Bus Voltage.
+  - **current** (**Required**, [Time](/guides/configuration-types#time)): ADC conversion time for Shunt Voltage (Current measurement).
+
+- **adc_averaging** (*Optional*, integer): Selects ADC sample averaging count.
+  <EnumOptions options={["1", "4", "16", "64", "128", "256", "512", "1024"]} default="4" />
 
 - **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to check the sensor. Defaults to `60s`.
 

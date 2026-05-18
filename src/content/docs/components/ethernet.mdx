@@ -3,6 +3,7 @@ description: "Instructions for setting up the Ethernet configuration for your ES
 title: "Ethernet Component"
 ---
 import APIRef from '@components/APIRef.astro';
+import EnumOptions from '@components/EnumOptions.astro';
 
 
 This ESPHome component enables *wired* Ethernet connections for ESP32 and RP2040 boards.
@@ -122,7 +123,7 @@ ethernet:
   set the time interval for periodic polling. Minimum is 1ms; defaults to 10ms. ESP32 only.
   Older frameworks may not support this variable. See below for details.
 - **interface** (*Optional*, string): Controls which ESP-IDF SPI implementation should be used.
-  Value may be either `spi2` or `spi3`.
+  <EnumOptions options={["spi2", "spi3"]} />
 
 On ESP32, the `interrupt_pin` and `polling_interval` options control how the SPI Ethernet
 chip is polled. On RP2040, the arduino-pico framework handles packet processing automatically.

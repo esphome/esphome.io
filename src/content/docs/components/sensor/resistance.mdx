@@ -7,6 +7,7 @@ import { Image } from 'astro:assets';
 import Figure from '@components/Figure.astro';
 import resistanceDownstreamImg from './images/resistance-downstream.png';
 import APIRef from '@components/APIRef.astro';
+import EnumOptions from '@components/EnumOptions.astro';
 
 The `resistance` platform is a helper sensor that allows you to convert readings
 from a voltage sensor (such as the [ADC Sensor](/components/sensor/adc/)) into resistance readings
@@ -67,8 +68,8 @@ Some boards like NodeMCUv2 needs to multiply ADC reading by 3.3 to provide accur
 - **sensor** (**Required**, [ID](/guides/configuration-types#id)): The sensor to read the voltage values from
   to convert to resistance readings.
 
-- **configuration** (**Required**, string): The type of circuit, one of `DOWNSTREAM` or
-  `UPSTREAM`.
+- **configuration** (**Required**, string): The type of circuit.
+  <EnumOptions options={["DOWNSTREAM", "UPSTREAM"]} />
 
 - **resistor** (**Required**, float): The value of the resistor with a constant value.
 

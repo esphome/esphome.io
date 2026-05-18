@@ -3,6 +3,7 @@ description: "Fetch numeric values from BLE devices."
 title: "BLE Client Sensor"
 ---
 import APIRef from '@components/APIRef.astro';
+import EnumOptions from '@components/EnumOptions.astro';
 
 
 The `ble_client` component is a sensor platform that can query BLE devices for RSSI or specific
@@ -44,14 +45,14 @@ sensor:
 
 ## Configuration variables
 
-- **type** (**Required**): One of `rssi`, `characteristic`.
+- **type** (**Required**): <EnumOptions inline options={["rssi", "characteristic"]} />
 
-rssi options:
+### RSSI
 
 - **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to poll the device.
 - All other options from [Sensor](/components/sensor).
 
-characteristic options:
+### Characteristic
 
 - **ble_client_id** (**Required**, [ID](/guides/configuration-types#id)): ID of the associated BLE client.
 - **service_uuid** (**Required**, UUID): UUID of the service on the device.
@@ -67,7 +68,7 @@ characteristic options:
 - **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to poll the device.
 - All other options from [Sensor](/components/sensor).
 
-Automations:
+### Automations
 
 - **on_notify** (*Optional*, [Automation](/automations)): An automation to
   perform when a notify message is received from the device. See [`on_notify`](#ble_sensor-on_notify).

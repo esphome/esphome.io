@@ -1,0 +1,71 @@
+---
+import { micromark } from "micromark";
+
+interface EnumOptionDetail {
+  value: string;
+  description?: string;
+}
+
+type EnumOption = string | EnumOptionDetail;
+
+interface Props {
+  options: EnumOption[];
+  default?: string;
+  inline?: boolean;
+}
+
+const { options, default: defaultValue, inline = false } = Astro.props;
+
+const items: EnumOptionDetail[] = options.map((o) =>
+  typeof o === "string" ? { value: o } : o,
+);
+
+if (inline && items.some((o) => o.description)) {
+  throw new Error(
+    "EnumOptions: `inline` cannot be used together with per-option descriptions. " +
+      "Remove `inline` or drop the descriptions.",
+  );
+}
+
+function renderInlineMarkdown(md: string): string {
+  return micromark(md).replace(/^<p>/, "").replace(/<\/p>\s*$/, "");
+}
+---
+
+{
+  inline ? (
+    <span class="enum-options-inline">
+      One of{" "}
+      {items.map(({ value }, i) => {
+        const isLast = i === items.length - 1;
+        const isFirst = i === 0;
+        let sep = "";
+        if (!isFirst) {
+          if (items.length === 2) sep = " or ";
+          else if (isLast) sep = ", or ";
+          else sep = ", ";
+        }
+        return (
+          <>
+            {sep}
+            <code>{value}</code>
+            {value === defaultValue ? <em> (default)</em> : null}
+          </>
+        );
+      })}
+      .
+    </span>
+  ) : (
+    <ul class="enum-options">
+      {items.map(({ value, description }) => (
+        <li>
+          <code>{value}</code>
+          {value === defaultValue ? <em> (default)</em> : null}
+          {description ? (
+            <Fragment set:html={" &mdash; " + renderInlineMarkdown(description)} />
+          ) : null}
+        </li>
+      ))}
+    </ul>
+  )
+}

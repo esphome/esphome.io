@@ -3,6 +3,7 @@ description: "Instructions for setting up a USB Host UART interface on an ESP32 
 title: "USB Host UART Interface"
 ---
 import APIRef from '@components/APIRef.astro';
+import EnumOptions from '@components/EnumOptions.astro';
 
 
 This component allows an ESP32-S3 or ESP32-S2 to host USB-serial peripheral devices. It uses the [Usb Host](/components/usb_host/)
@@ -34,7 +35,8 @@ usb_uart:
 ## Configuration variables
 
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): The id to use for this component.
-- **type** (**Required**, string): The type of USB-serial device to connect to. One of `ch34x`, `ch340`, `esp_jtag`, `stm32_vcp`, `cdc_acm`, `cp210x`.
+- **type** (**Required**, string): The type of USB-serial device to connect to.
+  <EnumOptions options={["ch34x", "ch340", "esp_jtag", "stm32_vcp", "cdc_acm", "cp210x"]} />
 - **channels** (**Required**, list): A list of channels to configure.
 - **vid** (*Optional*, int): The vendor ID of the device. Use 0 as a wildcard. Each type has a default VID which will be overridden if this is set.
 - **pid** (*Optional*, int): The product ID of the device. Use 0 as a wildcard. Each type has a default PID which will be overridden if this is set.
@@ -48,7 +50,8 @@ Setting both `vid` and `pid` to 0 will match any device.
 - **buffer_size** (*Optional*, int): The size of the buffer to use for the channel. Defaults to 256 bytes.
 - **stop_bits** (*Optional*, float): The number of stop bits to use. Defaults to 1. Other options are 1.5 and 2.
 - **data_bits** (*Optional*, int): The number of data bits to use in the range 5-8. Defaults to 8.
-- **parity** (*Optional*, string): The parity to use. One of `NONE`, `EVEN`, `ODD`, `MARK` and `SPACE`. Defaults to `NONE`.
+- **parity** (*Optional*, string): The parity to use.
+  <EnumOptions options={["NONE", "EVEN", "ODD", "MARK", "SPACE"]} default="NONE" />
 - **dummy_receiver** (*Optional*, boolean): If set to true, the channel will consume any data received. This is useful for debugging purposes. Defaults to false.
 - **debug** (*Optional*, boolean): If set to true, the channel will log all data sent and received. Defaults to false.
 - **debug_prefix** (*Optional*, string): A string prepended to every debug log line for this channel.

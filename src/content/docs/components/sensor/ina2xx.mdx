@@ -7,6 +7,7 @@ import { Image } from 'astro:assets';
 import Figure from '@components/Figure.astro';
 import ina228FullImg from './images/ina228-full.jpg';
 import APIRef from '@components/APIRef.astro';
+import EnumOptions from '@components/EnumOptions.astro';
 
 <Figure
   src={ina228FullImg}
@@ -67,12 +68,12 @@ sensor:
 - **adc_range** (*Optional*, `0` or `1`  ): Selects the range for differential input across shunt
   resistor. `0` for ±163.84 mV, `1` for ±40.96 mV range. Defaults to `0`.
 
-- **adc_time** (*Optional*, [Time](/guides/configuration-types#time)): The time in microseconds to perform a single ADC conversion.
-  Defaults to `4120 us`. Valid values are `50 us`, `84 us`, `150 us`, `280 us`, `540 us`,
-  `1052 us`, `2074 us`, `4120 us`.
+- **adc_time** (*Optional*, [Time](/guides/configuration-types#time) or mapping): The time in microseconds to perform a
+  single ADC conversion. May be specified as a single time applied to all measurements, or as a mapping with separate
+  times per measurement.
+  <EnumOptions options={["50 us", "84 us", "150 us", "280 us", "540 us", "1052 us", "2074 us", "4120 us"]} default="4120 us" />
 
-  Instead of one time for all ADC measurements, separate configuration of conversion times for shunt voltage,
-  bus voltage, and temperature measurements possible. Options are the same as for `adc_time`.
+  When provided as a mapping, each sub-key accepts the same values shown above:
 
   - **bus_voltage** (*Optional*, [Time](/guides/configuration-types#time)): Conversion time for bus voltage measurement.
   - **shunt_voltage** (*Optional*, [Time](/guides/configuration-types#time)): Conversion time for shunt voltage measurement.
@@ -122,12 +123,10 @@ sensor:
 - **adc_range** (*Optional*, `0` or `1`  ): Selects the range for differential input across shunt
   resistor. `0` for ±163.84 mV, `1` for ±40.96 mV range. Defaults to `0`.
 
-- **adc_time** (*Optional*, [Time](/guides/configuration-types#time)): The time in microseconds to perform a single ADC conversion.
-  Defaults to `4120 us`. Valid values are `50 us`, `84 us`, `150 us`, `280 us`, `540 us`,
-  `1052 us`, `2074 us`, `4120 us`.
+- **adc_time** (*Optional*, [Time](/guides/configuration-types#time) or mapping): The time in microseconds to perform a single ADC conversion. May be specified as a single time applied to all measurements, or as a mapping with separate times per measurement.
+  <EnumOptions options={["50 us", "84 us", "150 us", "280 us", "540 us", "1052 us", "2074 us", "4120 us"]} default="4120 us" />
 
-  Instead of one time for all ADC measurements, separate configuration of conversion times for shunt voltage,
-  bus voltage, and temperature measurements possible. Options are the same as for `adc_time`.
+  When provided as a mapping, each sub-key accepts the same values shown above:
 
   - **bus_voltage** (*Optional*, [Time](/guides/configuration-types#time)): Conversion time for bus voltage measurement.
   - **shunt_voltage** (*Optional*, [Time](/guides/configuration-types#time)): Conversion time for shunt voltage measurement.
@@ -145,7 +144,7 @@ sensor:
 
 - **reset_on_boot** (*Optional*, boolean): Whether or not to reset the device configuration (including counters) on
   component initialization. Defaults to `true`; set `false` to preserve counters through ESPHome resets.
-  
+
 - All other options from [Sensor](/components/sensor) and [SPI device](/components/spi).
 
 ## Sensors

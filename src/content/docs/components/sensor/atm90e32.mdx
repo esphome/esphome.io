@@ -8,6 +8,7 @@ import Figure from '@components/Figure.astro';
 import atm90e32Cs2chanFullImg from './images/atm90e32-cs-2chan-full.jpg';
 import atm90e32Cs6chanFullImg from './images/atm90e32-cs-6chan-full.jpg';
 import APIRef from '@components/APIRef.astro';
+import EnumOptions from '@components/EnumOptions.astro';
 
 The `atm90e32` sensor platform allows you to use your ATM90E32 voltage/current and power sensors
 ([datasheet](http://ww1.microchip.com/downloads/en/devicedoc/Atmel-46003-SE-M90E32AS-Datasheet.pdf)) with
@@ -41,7 +42,8 @@ The [CircuitSetup 6-Channel Energy Meter](https://circuitsetup.us/product/expand
 ## Configuration variables
 
 - **cs_pin** (**Required**, [Pin Schema](/guides/configuration-types#pin-schema)): The pin CS is connected to. For the 6 channel meter main board, this will always be 5 and 4. For the add-on boards a jumper can be selected for each CS pin, but default to 0 and 16.
-- **line_frequency** (**Required**, string): The AC line frequency of the supply voltage. One of `50Hz`, `60Hz`.
+- **line_frequency** (**Required**, string): The AC line frequency of the supply voltage.
+  <EnumOptions inline options={["50Hz", "60Hz"]} />
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): Required if using more than one `atm90e32` chip with buttons for calibration, reference voltage/current fields, and phase status fields
 - **phase_a** (*Optional*): The configuration options for the 1st phase.
 
@@ -105,8 +107,8 @@ The [CircuitSetup 6-Channel Energy Meter](https://circuitsetup.us/product/expand
 - **chip_temperature** (*Optional*): Use the chip temperature value. All options from
   [Sensor](/components/sensor).
 
-- **gain_pga** (*Optional*, string): Increase this when the output of the CT clamp is too low and `gain_ct` is maxed out. One of `1X`,
-  `2X`, `4X`. Defaults to `1X`, which is suitable for most CT clamps.
+- **gain_pga** (*Optional*, string): Increase this when the output of the CT clamp is too low and `gain_ct` is maxed out. which is suitable for most CT clamps.
+  <EnumOptions inline options={["1X", "2X", "4X"]} default="1X" />
 
 - **current_phases** (*Optional*): The number of phases the meter has, `2` or, `3`
   The 6 Channel Expandable Energy Meter should be set to `3`, and the Split Single Phase meter should be set to `2`. Defaults to `3`.

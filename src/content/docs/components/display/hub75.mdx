@@ -3,6 +3,7 @@ description: "Instructions for setting up HUB75 RGB LED matrix displays."
 title: "HUB75 RGB LED Matrix Display"
 ---
 import APIRef from '@components/APIRef.astro';
+import EnumOptions from '@components/EnumOptions.astro';
 
 
 The `hub75` display platform allows you to use HUB75 RGB LED matrix panels with ESPHome. This component uses a high-performance DMA-based driver that provides efficient, low-CPU-overhead driving of LED matrix panels.
@@ -166,46 +167,61 @@ For creating larger displays by chaining multiple panels:
 
 - **layout_rows** (*Optional*, int): Number of panels arranged vertically. Defaults to `1`.
 - **layout_cols** (*Optional*, int): Number of panels arranged horizontally. Defaults to `1`.
-- **layout** (*Optional*, enum): Physical panel chaining pattern. Defaults to `HORIZONTAL`. One of:
-  - `HORIZONTAL` - Simple left-to-right horizontal chain (single row)
-  - `TOP_LEFT_DOWN` - Serpentine: start top-left, rows top→bottom
-  - `TOP_RIGHT_DOWN` - Serpentine: start top-right, rows top→bottom
-  - `BOTTOM_LEFT_UP` - Serpentine: start bottom-left, rows bottom→top
-  - `BOTTOM_RIGHT_UP` - Serpentine: start bottom-right, rows bottom→top
-  - `TOP_LEFT_DOWN_ZIGZAG` - Zigzag: start top-left (all panels upright)
-  - `TOP_RIGHT_DOWN_ZIGZAG` - Zigzag: start top-right (all panels upright)
-  - `BOTTOM_LEFT_UP_ZIGZAG` - Zigzag: start bottom-left (all panels upright)
-  - `BOTTOM_RIGHT_UP_ZIGZAG` - Zigzag: start bottom-right (all panels upright)
+- **layout** (*Optional*, enum): Physical panel chaining pattern.
+  <EnumOptions default="HORIZONTAL"
+    options={[
+      { value: "HORIZONTAL", description: "Simple left-to-right horizontal chain (single row)" },
+      { value: "TOP_LEFT_DOWN", description: "Serpentine: start top-left, rows top→bottom" },
+      { value: "TOP_RIGHT_DOWN", description: "Serpentine: start top-right, rows top→bottom" },
+      { value: "BOTTOM_LEFT_UP", description: "Serpentine: start bottom-left, rows bottom→top" },
+      { value: "BOTTOM_RIGHT_UP", description: "Serpentine: start bottom-right, rows bottom→top" },
+      { value: "TOP_LEFT_DOWN_ZIGZAG", description: "Zigzag: start top-left (all panels upright)" },
+      { value: "TOP_RIGHT_DOWN_ZIGZAG", description: "Zigzag: start top-right (all panels upright)" },
+      { value: "BOTTOM_LEFT_UP_ZIGZAG", description: "Zigzag: start bottom-left (all panels upright)" },
+      { value: "BOTTOM_RIGHT_UP_ZIGZAG", description: "Zigzag: start bottom-right (all panels upright)" },
+    ]}
+  />
 
 > [!NOTE]
 > The total display size will be `panel_width × layout_cols` by `panel_height × layout_rows` pixels.
 
 ### Panel Hardware (Optional)
 
-- **scan_wiring** (*Optional*, enum): Panel scan wiring pattern. Defaults to `STANDARD_TWO_SCAN`. One of:
-  - `STANDARD_TWO_SCAN` - Standard 1/16 or 1/32 scan (most common)
-  - `SCAN_1_4_16PX_HIGH` - 1/4 scan for 16px high panels
-  - `SCAN_1_8_32PX_HIGH` - 1/8 scan for 32px high panels
-  - `SCAN_1_8_32PX_FULL` - 1/8 scan for 32px high panels where the segment width is the full length of the panel
-  - `SCAN_1_8_40PX_HIGH` - 1/8 scan for 40px high panels
-  - `SCAN_1_8_64PX_HIGH` - 1/8 scan for 64px high panels
+- **scan_wiring** (*Optional*, enum): Panel scan wiring pattern.
+  <EnumOptions default="STANDARD_TWO_SCAN"
+    options={[
+      { value: "STANDARD_TWO_SCAN", description: "Standard 1/16 or 1/32 scan (most common)" },
+      { value: "SCAN_1_4_16PX_HIGH", description: "1/4 scan for 16px high panels" },
+      { value: "SCAN_1_8_32PX_HIGH", description: "1/8 scan for 32px high panels" },
+      { value: "SCAN_1_8_32PX_FULL", description: "1/8 scan for 32px high panels where the segment width is the full length of the panel" },
+      { value: "SCAN_1_8_40PX_HIGH", description: "1/8 scan for 40px high panels" },
+      { value: "SCAN_1_8_64PX_HIGH", description: "1/8 scan for 64px high panels" },
+    ]}
+  />
 
-- **shift_driver** (*Optional*, enum): LED shift register driver chip type. Defaults to `GENERIC`. One of:
-  - `GENERIC` - Standard shift register (default)
-  - `FM6124` - FM6124 driver
-  - `FM6126A` - FM6126A / ICN2038S driver (very common)
-  - `ICN2038S` - Alias for FM6126A
-  - `MBI5124` - MBI5124 driver (requires `clock_phase: true`)
-  - `DP3246` - DP3246 driver
+- **shift_driver** (*Optional*, enum): LED shift register driver chip type.
+  <EnumOptions default="GENERIC"
+    options={[
+      { value: "GENERIC", description: "Standard shift register (default)" },
+      { value: "FM6124", description: "FM6124 driver" },
+      { value: "FM6126A", description: "FM6126A / ICN2038S driver (very common)" },
+      { value: "ICN2038S", description: "Alias for FM6126A" },
+      { value: "MBI5124", description: "MBI5124 driver (requires `clock_phase: true`)" },
+      { value: "DP3246", description: "DP3246 driver" },
+    ]}
+  />
 
 ### Display Configuration (Optional)
 
 - **brightness** (*Optional*, int): Initial brightness level (0-255). Defaults to `128`.
 - **bit_depth** (*Optional*, int): Color bit depth (4-12). Higher values = better color accuracy but slower refresh. Defaults to `8`.
-- **gamma_correct** (*Optional*, enum): Gamma correction mode. One of:
-  - `LINEAR` - No gamma correction (raw values)
-  - `CIE1931` - CIE 1931 perceptual curve (recommended for most displays)
-  - `GAMMA_2_2` - Standard 2.2 gamma curve
+- **gamma_correct** (*Optional*, enum): Gamma correction mode.
+  <EnumOptions options={[
+      { value: "LINEAR", description: "No gamma correction (raw values)" },
+      { value: "CIE1931", description: "CIE 1931 perceptual curve (recommended for most displays)" },
+      { value: "GAMMA_2_2", description: "Standard 2.2 gamma curve" },
+    ]}
+  />
 - **double_buffer** (*Optional*, boolean): Enable double buffering to prevent tearing. Defaults to `false`. Set to `false` when using LVGL.
 - **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): Display update frequency. Defaults to `16ms` (~60 FPS). Set to `never` when using LVGL.
 - **min_refresh_rate** (*Optional*, int): Minimum panel refresh rate in Hz (40-200). The panel may refresh faster than this, but won't go slower. Auto-calculated from `update_interval` (defaults to 60 Hz when `update_interval: never`). Rarely needs to be set manually.
@@ -231,11 +247,15 @@ For creating larger displays by chaining multiple panels:
 
 ### Advanced Timing (Optional)
 
-- **clock_speed** (*Optional*, enum): Output clock speed. Defaults to `20MHZ`. One of:
-  - `8MHZ` - 8 MHz
-  - `10MHZ` - 10 MHz
-  - `16MHZ` - 16 MHz
-  - `20MHZ` - 20 MHz (default)
+- **clock_speed** (*Optional*, enum): Output clock speed.
+  <EnumOptions default="20MHZ"
+    options={[
+      { value: "8MHZ", description: "8 MHz" },
+      { value: "10MHZ", description: "10 MHz" },
+      { value: "16MHZ", description: "16 MHz" },
+      { value: "20MHZ", description: "20 MHz (default)" },
+    ]}
+  />
 
 - **latch_blanking** (*Optional*, int): Number of clock cycles OE is blanked during LAT pulse. Defaults to `1`.
 - **clock_phase** (*Optional*, boolean): Invert clock phase. Defaults to `false`. Required to be `true` for MBI5124 driver.

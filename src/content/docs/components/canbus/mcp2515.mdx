@@ -7,6 +7,7 @@ import { Image } from 'astro:assets';
 import canbusMcp2515ResistorImg from './images/canbus_mcp2515_resistor.png';
 import canbusMcp2515Txs0108eImg from './images/canbus_mcp2515_txs0108e.png';
 import APIRef from '@components/APIRef.astro';
+import EnumOptions from '@components/EnumOptions.astro';
 
 The MCP2515 communicates with ESPHome via the [SPI bus](/components/spi); to use it, you must have at least one
 [SPI bus](/components/spi) with both the `mosi_pin` and `miso_pin` defined in your ESPHome configuration.
@@ -46,8 +47,8 @@ canbus:
 - **cs_pin** (**Required**, [Pin Schema](/guides/configuration-types#pin-schema)): Is used to signal to a SPI device when it should
   listen for data on the SPI bus. Each SPI device has its own `CS` line. Sometimes also called `SS`.
 
-- **clock** (*Optional*, enum): The frequency of the clock crystal used on the MCP2515 device. One of `8MHZ`,
-  `12MHZ`, `16MHZ` or `20MHZ`. Defaults to `8MHZ`.
+- **clock** (*Optional*, enum): The frequency of the clock crystal used on the MCP2515 device.
+  <EnumOptions options={["8MHZ", "12MHZ", "16MHZ", "20MHZ"]} default="8MHZ" />
 
 - **mode** (*Optional*, enum): Operating mode. One of:
 

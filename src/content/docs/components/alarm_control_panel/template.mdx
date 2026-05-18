@@ -4,6 +4,7 @@ title: "Template Alarm Control Panel"
 ---
 
 import APIRef from '@components/APIRef.astro';
+import EnumOptions from '@components/EnumOptions.astro';
 
 The `template` alarm control panel platform allows you to turn your binary sensors into a state machine
 managed alarm control panel.
@@ -42,8 +43,8 @@ alarm_control_panel:
     state.
   - **bypass_auto** (*Optional*, boolean): This binary sensor will be automatically bypassed if left on/open at the
     time of arming.
-  - **trigger_mode** (*Optional*, string): Sets the trigger mode for this sensor. One of `delayed`, `instant`,
-    `instant_always`, or `delayed_follower`. (`delayed` is the default if not specified)
+  - **trigger_mode** (*Optional*, string): Sets the trigger mode for this sensor.
+    <EnumOptions options={["delayed", "instant", "instant_always", "delayed_follower"]} default="delayed" />
   - **chime** (*Optional*, boolean): When set `true`, the chime callback will be called whenever the sensor goes from
     closed to open. (`false` is the default if not specified)
 

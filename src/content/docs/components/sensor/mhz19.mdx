@@ -8,6 +8,7 @@ import Figure from '@components/Figure.astro';
 import mhz19FullImg from './images/mhz19-full.jpg';
 import mhz19PinsImg from './images/mhz19-pins.jpg';
 import APIRef from '@components/APIRef.astro';
+import EnumOptions from '@components/EnumOptions.astro';
 
 The `mhz19` sensor platform allows you to use MH-Z19 CO_2 and temperature sensors
 ([Revspace](https://revspace.nl/MHZ19)) with ESPHome.
@@ -60,7 +61,8 @@ sensor:
 
 - **warmup_time** (*Optional*, Time): The sensor has a warmup time and before that, it returns bogus readings (eg: 500ppm, 505ppm...). This setting discards readings until the warmup time happened (`NAN` is returned). The datasheet says preheating takes 1min, but empirical tests have shown it often takes more, so the 75s default should be enough to accommodate for that.
 
-- **detection_range** (*Optional*): The CO_2 sensor can be configured to detect different ranges: 0-2000ppm, 0-5000ppm, or 0-10000ppm. Valid values are `2000ppm`, `5000ppm`, or `10000ppm`. Sensors come from the factory with one of these ranges pre-configured, and this setting persists in the sensor's non-volatile memory. If not specified, the previously configured range is used.
+- **detection_range** (*Optional*): The CO_2 sensor can be configured to detect different ranges: 0-2000ppm, 0-5000ppm, or 0-10000ppm. Sensors come from the factory with one of these ranges pre-configured, and this setting persists in the sensor's non-volatile memory. If not specified, the previously configured range is used.
+  <EnumOptions options={["2000ppm", "5000ppm", "10000ppm"]} />
 
 <Figure
   src={mhz19PinsImg}

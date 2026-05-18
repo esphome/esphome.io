@@ -2,6 +2,7 @@
 description: "Configuration for the LibreTiny platform for ESPHome."
 title: "LibreTiny Platform"
 ---
+import EnumOptions from '@components/EnumOptions.astro';
 
 This component contains platform-specific options for the [LibreTiny](https://docs.libretiny.eu/) platform.
 It provides support for the following microcontrollers, commonly used in Tuya devices, amongst others:
@@ -52,9 +53,8 @@ ln882x:
   - [Advanced options](#advanced-options)
 
 - **family** (*Optional*, string): The family of LibreTiny-supported microcontrollers that is used on this board.
-  One of `bk7231n`, `bk7231t`, `rtl8710b`, `rtl8720c`, `bk7251`, `bk7231q`, `ln882hki`.
-  Defaults to the variant that is detected from the board, if a board that's unknown to ESPHome is used,
-  this option is mandatory. **It's recommended not to include this option**.
+  Defaults to the variant that is detected from the board, if a board that's unknown to ESPHome is used, this option is mandatory. **It's recommended not to include this option**.
+  <EnumOptions options={["bk7231n", "bk7231t", "rtl8710b", "rtl8720c", "bk7251", "bk7231q", "ln882hki"]} />
 
 > [!NOTE]
 > Support for the LibreTiny platform is still in development and there could be issues or missing components.
@@ -185,8 +185,18 @@ bk72xx:
 
 - **loglevel** (*Optional*, string): Logging level for LibreTiny core. Controls the output of logging messages
   from the core (doesn't affect ESPHome logger!). *These messages are only visible on the physical UART*.
-  One of `verbose`, `trace` (same as `verbose`  ), `debug`, `info`,
-  `warn` (default), `error`, `fatal`, `none`.
+  <EnumOptions default="warn"
+    options={[
+      { value: "verbose" },
+      { value: "trace", description: "same as `verbose`" },
+      { value: "debug" },
+      { value: "info" },
+      { value: "warn" },
+      { value: "error" },
+      { value: "fatal" },
+      { value: "none" },
+    ]}
+  />
 
 - **debug** (*Optional*, string or string list): Modules to enable LibreTiny debugging for.
   Refer to [LibreTiny/Configuration](https://docs.libretiny.eu/link/config-debug)

@@ -2,6 +2,7 @@
 description: "Configuration for the ESP32 PSRAM platform for ESPHome."
 title: "PSRAM"
 ---
+import EnumOptions from '@components/EnumOptions.astro';
 
 This component enables and configures PSRAM if/when available on ESP32 modules/boards.
 Some components require PSRAM, while others may use it for optional features. In any case
@@ -18,10 +19,11 @@ psram:
 
 ## Configuration variables
 
-- **mode** (*Optional*): Defines the operating mode the PSRAM should utilize. One of `quad`, `octal` or `hex`.
-  Defaults to `quad` for ESP32, ESP32-C5, ESP32-C61, ESP32-S2 and `hex` for ESP32-P4. ESP32-S3 has no default and *requires* this option to be set.
-  See notes below.
-- **speed** (*Optional*, int): The speed at which the PSRAM should operate. One of `40MHz` (default), `80MHz` or `120MHz`.
+- **mode** (*Optional*): Defines the operating mode the PSRAM should utilize.
+  Defaults to `quad` for ESP32, ESP32-C5, ESP32-C61, ESP32-S2 and `hex` for ESP32-P4. ESP32-S3 has no default and *requires* this option to be set. See notes below.
+  <EnumOptions options={["quad", "octal", "hex"]} />
+- **speed** (*Optional*, int): The speed at which the PSRAM should operate.
+  <EnumOptions options={["40MHz", "80MHz", "120MHz"]} default="40MHz" />
 - **enable_ecc** (*Optional*, bool): For octal mode, enable ECC (Error Correction Code) for the PSRAM (default is off.)
   ECC is a method of detecting and correcting single-bit errors in memory. It will reduce the available PSRAM size and speed by
   1/16th, but also increases the rated temperature range of some ESP32 modules.

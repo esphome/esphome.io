@@ -2,6 +2,7 @@
 description: "Instructions for setting up MAX44009 ambient light sensors in ESPHome."
 title: "MAX44009 Ambient Light Sensor"
 ---
+import EnumOptions from '@components/EnumOptions.astro';
 
 The `max44009` sensor platform allows you to use your MAX44009
 ([datasheet](https://datasheets.maximintegrated.com/en/ds/MAX44009.pdf))
@@ -25,7 +26,8 @@ The `max44009` sensor can operate in two modes: `low_power` (default) and `conti
 ## Configuration variables
 
 - **address** (*Optional*, int): Manually specify the I²C address of the sensor. Defaults to `0x4A`.
-- **mode** (*Optional*, string): Measurement mode. One of `auto`, `low_power`, `continuous`.
+- **mode** (*Optional*, string): Measurement mode.
+  <EnumOptions options={["auto", "low_power", "continuous"]} />
 - **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to check the
   sensor. Defaults to `60s`.
 

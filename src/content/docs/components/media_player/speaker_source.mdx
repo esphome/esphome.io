@@ -2,6 +2,7 @@
 description: "Instructions for setting up a speaker source media player in ESPHome."
 title: "Speaker Source Media Player"
 ---
+import EnumOptions from '@components/EnumOptions.astro';
 
 The `speaker_source` media player platform orchestrates [media source](/components/media_source/) components that produce audio. When a media URL is received, the platform routes it to the appropriate source based on the URI prefix. For example, a URL starting with `audio-file://` is handled by the [Audio File media source](/components/media_source/audio_file/).
 
@@ -42,9 +43,11 @@ media_player:
 
   - **speaker** (**Required**, [ID](/guides/configuration-types#id)): The [speaker](/components/speaker/) to output the audio.
   - **sources** (**Required**, list of [IDs](/guides/configuration-types#id)): A list of [media source](/components/media_source/) component IDs to use for this pipeline. At least one source is required. When a media URL is received, the pipeline finds the first source that can handle the URI prefix. Each source can only belong to one pipeline; if both pipelines need the same type of source, configure separate instances.
-  - **format** (*Optional*, enum): The audio format Home Assistant will transcode audio to before sending it to the device. One of `FLAC`, `MP3`, `OPUS`, `WAV`, or `NONE`. `NONE` disables transcoding in Home Assistant. Defaults to `FLAC`.
+  - **format** (*Optional*, enum): The audio format Home Assistant will transcode audio to before sending it to the device. `NONE` disables transcoding in Home Assistant.
+    <EnumOptions options={["FLAC", "MP3", "OPUS", "WAV", "NONE"]} default="FLAC" />
   - **sample_rate** (*Optional*, positive integer): Sample rate for the transcoded audio. Should be supported by the configured `speaker` component. Defaults to the speaker's sample rate. The `OPUS` codec only supports a `48000` sample rate.
-  - **num_channels** (*Optional*, positive integer): Number of channels for the transcoded audio. Must be either `1` or `2`. Defaults to the speaker's number of channels.
+  - **num_channels** (*Optional*, positive integer): Number of channels for the transcoded audio. Defaults to the speaker's number of channels.
+    <EnumOptions options={["1", "2"]} />
 
 - **announcement_pipeline** (*Optional*, Pipeline Schema): Configuration settings for the announcement pipeline. Same options as `media_pipeline`. Must use a different speaker than `media_pipeline`.
 - **volume_increment** (*Optional*, percentage): Increment amount that the `media_player.volume_up` and `media_player.volume_down` actions will increase or decrease volume by. Defaults to `5%`.
@@ -134,7 +137,8 @@ on_...:
 Configuration variables:
 
 - **id** (**Required**, [ID](/guides/configuration-types#id)): The speaker source media player to control.
-- **pipeline** (**Required**, enum): Which pipeline to set the delay for. One of `media` or `announcement`.
+- **pipeline** (**Required**, enum): Which pipeline to set the delay for.
+  <EnumOptions options={["media", "announcement"]} />
 - **delay** (**Required**, [Time](/guides/configuration-types#time), [templatable](/automations/templates)): The delay between playlist tracks.
 
 ### Base Media Player Actions
