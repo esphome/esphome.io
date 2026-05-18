@@ -30,6 +30,8 @@ required to be set up in your configuration for this sensor to work.
 sensor:
   - platform: ina3221
     address: 0x40
+    mode: CONTINUOUS
+    power_down_on_shutdown: false
     averaging: 16
     bus_conversion_time: 1100us
     shunt_conversion_time: 1100us
@@ -59,6 +61,8 @@ sensor:
 ## Configuration variables
 
 - **address** (*Optional*, int): Manually specify the I²C address of the sensor. Defaults to `0x40`.
+- **mode** (*Optional*, string): The operating mode. Set to `SINGLE_SHOT` to put the sensor to sleep between readings, or `CONTINUOUS` to have the sensor constantly calculate background data. Defaults to `CONTINUOUS`.
+- **power_down_on_shutdown** (*Optional*): Put the INA3221 into low-power mode on shutdown or deep sleep. Defaults to `false`.
 - **averaging** (Optional, int): The number of internal samples to average before updating the data registers. This is useful for smoothing out noisy loads. Options are 1, 4, 16, 64, 128, 256, 512, or 1024. Defaults to 1.
 - **bus_conversion_time** (Optional, string): The integration time for the bus voltage measurement. Longer conversion times yield higher resolution and less noise. Options are 140us, 204us, 332us, 588us, 1100us, 2116us, 4156us, and 8244us. Defaults to 1100us.
 - **shunt_conversion_time** (Optional, string): The integration time for the shunt voltage measurement. Options are the same as bus_conversion_time. Defaults to 1100us.
@@ -88,7 +92,6 @@ sensor:
 
 - **channel_2** (*Optional*): The configuration options for the 2nd channel. Same options as 1st channel.
 - **channel_3** (*Optional*): The configuration options for the 3rd channel. Same options as 1st channel.
-- **power_down_on_shutdown** (*Optional*): Put the INA3221 into low-power mode on shutdown or deep sleep. Defaults to `false`.
 - **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to check the sensor. Defaults to `60s`.
 
 <Figure
