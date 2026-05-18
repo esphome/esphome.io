@@ -2,23 +2,23 @@
 import { micromark } from "micromark";
 
 interface EnumOptionDetail {
-  value: string;
-  aliases?: string[];
+  value: string | number;
+  aliases?: (string | number)[];
   description?: string;
 }
 
-type EnumOption = string | EnumOptionDetail;
+type EnumOption = string | number | EnumOptionDetail;
 
 interface Props {
   options: EnumOption[];
-  default?: string;
+  default?: string | number;
   inline?: boolean;
 }
 
 const { options, default: defaultValue, inline = false } = Astro.props;
 
 const items: EnumOptionDetail[] = options.map((o) =>
-  typeof o === "string" ? { value: o } : o,
+  typeof o === "string" || typeof o === "number" ? { value: o } : o,
 );
 
 if (inline && items.some((o) => o.description)) {
