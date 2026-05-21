@@ -1,0 +1,366 @@
+<div class="connect-nav">
+  <div class="connect-nav-inner">
+    <div class="container">
+      <div class="logo-wrapper">
+        <div class="logo">
+          <img
+            src="/images/starter-kit/esphome-starter-kit-logo-dark.svg"
+            class="dark"
+            width="259"
+            height="34"
+            alt="ESPHome Starter Kit Logo (dark)"
+          />
+          <img
+            src="/images/starter-kit/esphome-starter-kit-logo.svg"
+            class="light"
+            width="259"
+            height="34"
+            alt="ESPHome Starter Kit Logo"
+          />
+        </div>
+      </div>
+      <div class="nav-links">
+        <div class="nav-links-items">
+          <a href="#item">Item</a>
+          <a href="#item">Item</a>
+          <a href="#item">Item</a>
+          <a href="#item">Item</a>
+        </div>
+        <div class="nav-links-ctas">
+          <a href="#" class="buy btn btn-primary">Buy now</a>
+        </div>
+      </div>
+      <div class="burger">
+        <input type="checkbox" id="burger-toggle" />
+        <label for="burger-toggle"></label>
+        <div class="burger-icon"></div>
+      </div>
+    </div>
+    <div class="mobile-nav">
+      <div class="wrapper">
+        <div class="nav-links">
+          <a href="#item">Item</a>
+          <a href="#item">Item</a>
+          <a href="#item">Item</a>
+          <a href="#item">Item</a>
+          <a href="#" class="buy btn btn-primary">Buy now</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style lang="scss">
+  @use "../../styles/mixins" as *;
+
+  :global(.ha-connect) {
+    --header-height-large: 120px;
+    --header-height-small: 80px;
+    --header-height: var(--header-height-large);
+
+    &.sticky-header {
+      --header-height: var(--header-height-small);
+
+      .connect-nav {
+        &-inner {
+          &:before {
+            opacity: 1;
+          }
+          .logo {
+            img {
+              &.light {
+                opacity: 0;
+              }
+
+              &.dark {
+                opacity: 1;
+              }
+            }
+          }
+        }
+      }
+    }
+
+    // Navigation
+    .connect-nav {
+      height: var(--header-height-large);
+      margin-bottom: calc(-1 * var(--header-height-large));
+      pointer-events: none;
+      position: sticky;
+      top: var(--sl-nav-height);
+      z-index: 10;
+
+      &-inner {
+        --mobile-nav-display: none;
+        display: flex;
+        height: var(--header-height);
+        pointer-events: all;
+        transition:
+          height 0.3s ease-out,
+          background-color 0.3s ease-out;
+        position: relative;
+        width: 100%;
+
+        &:before {
+          background-color: rgba(255, 255, 255, 0.5);
+          content: "";
+          position: absolute;
+          inset: 0;
+          opacity: 0.001;
+          backdrop-filter: blur(10px);
+          transition: opacity 0.3s ease-out;
+          z-index: -1;
+        }
+      }
+
+      &:has(.burger input:checked) {
+        .connect-nav-inner {
+          background-color: unset;
+          backdrop-filter: unset;
+
+          &:before {
+            display: none;
+          }
+
+          .logo {
+            img {
+              &.light {
+                opacity: 0;
+              }
+
+              &.dark {
+                opacity: 1;
+              }
+            }
+          }
+        }
+
+        .mobile-nav {
+          display: block;
+          opacity: 1;
+          pointer-events: all;
+        }
+      }
+
+      .container {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        justify-content: space-between;
+
+        .nav-links {
+          align-items: center;
+          display: none;
+          gap: 40px;
+          margin: 0;
+
+          @include bp(1025px) {
+            display: flex;
+          }
+
+          &-items {
+            align-items: center;
+            display: flex;
+            gap: 24px;
+
+            a {
+              position: relative;
+
+              background-image: linear-gradient(
+                transparent calc(100% - 1px),
+                var(--sl-color-white) 1px
+              );
+              background-repeat: no-repeat;
+              background-size: 0% 100%;
+              transition: 0.3s background-size ease-in-out;
+
+              &:hover {
+                background-size: 100% 100%;
+              }
+            }
+          }
+
+          &-ctas {
+            display: flex;
+            gap: 24px;
+            align-items: center;
+            margin: 0;
+          }
+
+          a:not(.btn) {
+            text-decoration: none;
+            font-size: 14px;
+            color: var(--sl-color-white);
+          }
+
+          a.btn {
+            margin: 0;
+          }
+        }
+      }
+
+      .logo {
+        display: grid;
+
+        img {
+          height: 34px;
+          grid-area: 1/1;
+          width: auto;
+          transition: opacity 0.2s;
+          margin: 0;
+
+          &.dark {
+            opacity: 0;
+          }
+        }
+      }
+
+      .mobile-nav {
+        width: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        padding-top: var(--header-height);
+        transition: padding-top 0.3s ease-out;
+        z-index: -1;
+        opacity: 0;
+        pointer-events: none;
+
+        &:before {
+          background-color: rgba(255, 255, 255, 0.5);
+          content: "";
+          position: absolute;
+          inset: 0;
+          z-index: -1;
+          backdrop-filter: blur(10px);
+        }
+
+        .nav-links {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 16px;
+          padding: 0 2rem 1.5rem;
+
+          a:not(.btn) {
+            color: #002332;
+            text-decoration: none;
+          }
+
+          .btn {
+            margin: 0;
+          }
+        }
+      }
+
+      .burger {
+        --burger-bar-height: 2px;
+        --burger-bar-width: 16px;
+        --burger-border-radius: 0px;
+        --burger-bar-spacing: 6px;
+        --burger-bar-color: var(--sl-color-white);
+        --burger-transition-speed: 0.1s;
+        display: grid;
+        background-color: var(--sl-color-accent);
+        place-items: center;
+        flex-shrink: 0;
+        border-radius: 50%;
+        width: 32px;
+        height: 32px;
+        position: relative;
+        cursor: pointer;
+        margin: 0;
+
+        @include bp(1025px) {
+          display: none;
+        }
+
+        &-icon {
+          background-color: var(--burger-bar-color);
+          border-radius: var(--burger-border-radius);
+          height: var(--burger-bar-height);
+          width: var(--burger-bar-width);
+          position: absolute;
+          pointer-events: none;
+          top: 50%;
+          transform: translateY(-50%);
+          transition: background-color
+            calc(var(--burger-transition-speed) / 1.5);
+          margin: 0;
+
+          &:before,
+          &:after {
+            background-color: var(--burger-bar-color);
+            content: " ";
+            height: var(--burger-bar-height);
+            width: 100%;
+            border-radius: var(--burger-border-radius);
+            position: absolute;
+            transition:
+              transform var(--burger-transition-speed),
+              top var(--burger-transition-speed),
+              bottom var(--burger-transition-speed);
+          }
+
+          &:before {
+            top: calc(-1 * var(--burger-bar-spacing));
+          }
+
+          &:after {
+            bottom: calc(-1 * var(--burger-bar-spacing));
+          }
+        }
+
+        input[type="checkbox"] {
+          display: none;
+
+          &:checked ~ .burger-icon {
+            background-color: transparent;
+
+            &:before,
+            &:after {
+              transform-origin: 50% 50%;
+            }
+
+            &:before {
+              transform: rotate(45deg);
+              top: 0;
+            }
+
+            &:after {
+              transform: rotate(-45deg);
+              bottom: 0;
+            }
+          }
+        }
+
+        label {
+          position: absolute;
+          inset: 0;
+        }
+      }
+    }
+  }
+
+  .site-header {
+    position: relative;
+    margin-bottom: 0;
+  }
+</style>
+
+<script>
+  const connect = document.querySelector(".ha-connect");
+  const header = connect?.querySelector(".connect-nav");
+
+  if (connect && header) {
+    window.addEventListener("scroll", () => {
+      if (window.scrollY >= 68) {
+        connect.classList.add("sticky-header");
+      } else {
+        connect.classList.remove("sticky-header");
+      }
+    });
+  }
+</script>
