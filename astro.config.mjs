@@ -254,14 +254,14 @@ export default defineConfig({
               document.querySelector('button[data-open-modal]')?.click();
               return;
             }
-          
+
             // 2. New 'Enter' shortcut for first search result
             if (e.key === 'Enter' && e.target.classList.contains('pagefind-ui__search-input')) {
               const firstResult = document.querySelector('.pagefind-ui__result-link');
-              
+
               if (firstResult) {
                 // Prevent the default form submission or modal close behavior
-                e.preventDefault(); 
+                e.preventDefault();
                 e.stopImmediatePropagation();
                 firstResult.click();
               }
@@ -290,6 +290,9 @@ export default defineConfig({
           },
         },
       ],
+      components: {
+        PageTitle: "./src/components/PageTitle.astro",
+      },
     }),
     sitemap(),
     componentsJson(),
