@@ -46,27 +46,30 @@ const rendered = items.map((item) => ({
 }));
 ---
 
-<section class="faq">
-  {heading && <h2 class="faq-heading">{heading}</h2>}
-  <div class="faq-items">
-    {
-      rendered.map((item) => (
-        <details class="faq-item">
-          <summary class="faq-item-summary">
-            <span class="faq-item-title">{item.title}</span>
-            <span class="faq-item-icon" aria-hidden="true">
-              <span class="faq-item-icon-plus" />
-            </span>
-          </summary>
-          <div class="faq-item-content" set:html={item.html} />
-        </details>
-      ))
-    }
-  </div>
-</section>
+<div class="container">
+  <section class="faq">
+    {heading && <h2 class="faq-heading">{heading}</h2>}
+    <div class="faq-items">
+      {
+        rendered.map((item) => (
+          <details class="faq-item">
+            <summary class="faq-item-summary">
+              <span class="faq-item-title">{item.title}</span>
+              <span class="faq-item-icon" aria-hidden="true">
+                <span class="faq-item-icon-plus" />
+              </span>
+            </summary>
+            <div class="faq-item-content" set:html={item.html} />
+          </details>
+        ))
+      }
+    </div>
+  </section>
+</div>
 
 <style>
   .faq {
+    width: 100%;
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
