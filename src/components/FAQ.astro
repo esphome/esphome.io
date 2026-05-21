@@ -147,7 +147,7 @@ const rendered = items.map((item) => ({
   /* Circular +/× toggle icon. */
   .faq-item-icon {
     align-items: center;
-    background-color: var(--sl-color-accent, #2a6df4);
+    background-color: var(--esk-primary-color, var(--sl-color-accent));
     border-radius: 50%;
     display: inline-flex;
     flex-shrink: 0;
@@ -174,7 +174,9 @@ const rendered = items.map((item) => ({
     position: absolute;
     top: 50%;
     transform: translate(-50%, -50%);
-    transition: opacity 0.1s ease;
+    transition:
+      opacity 0.1s ease,
+      background-color 0.1s ease;
   }
 
   .faq-item-icon-plus::before {
@@ -196,7 +198,12 @@ const rendered = items.map((item) => ({
   }
 
   .faq-item-summary:hover .faq-item-icon {
-    background-color: var(--sl-color-accent-high, #1a4fb8);
+    background-color: transparent;
+  }
+
+  .faq-item-summary:hover .faq-item-icon .faq-item-icon-plus::before,
+  .faq-item-summary:hover .faq-item-icon .faq-item-icon-plus::after {
+    background-color: var(--sl-color-white, #002332);
   }
 
   .faq-item-content {
