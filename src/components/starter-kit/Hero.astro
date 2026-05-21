@@ -1,83 +1,33 @@
-<div id="scroll-content">
-  <div id="scene-pin">
-    <canvas id="scene"></canvas>
+<section class="block-hero">
+  <canvas id="scene"></canvas>
+  <div class="container">
+    <div class="block-hero__content">
+      <div class="section-card">
+        <h1>ESPHome Starter Kit</h1>
+        <p class="subtitle">BUILD. LEARN. AUTOMATE.</p>
+        <p>The easiest path to building your own smart home devices</p>
+
+        <div class="collaboration-badge">
+          <span>Designed and built by</span>
+          <div class="collaborators">
+            <div class="collaborator">
+              <img
+                src="/images/collaboration/apollo-automation.svg"
+                alt="Apollo Automation Logo"
+              />
+            </div>
+            <div class="collaborator">
+              <img
+                src="/images/collaboration/open-home-foundation.svg"
+                alt="Open Home Foundation Logo"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
-  <section id="hero-section">
-    <div class="section-card">
-      <h1>ESPHome Starter Kit</h1>
-      <p>Scroll to explore each component.</p>
-    </div>
-  </section>
-  <section
-    class="scroll-section"
-    data-mesh="Body5003,Body20004,Body1032_1,Body1032_2,Body1032_3,Body1032_4,Body1032_5,Body2,Body10003"
-  >
-    <div class="section-card">
-      <h2>Component 1</h2>
-      <p>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Perspiciatis
-        porro, fugit possimus cumque consectetur veniam blanditiis aspernatur
-        natus quam nostrum rem est, excepturi dolores magni molestias incidunt?
-        Culpa, at ut?
-      </p>
-    </div>
-  </section>
-  <section
-    class="scroll-section"
-    data-mesh="Body6006,Body5,Body20,Body1004_1,Body1004_2,Body1003_1,Body1003_2,Body1001_1,Body1001_2,Body1001_3,Body1001_4,Body1015_1,Body1015_2,Body1015_3"
-  >
-    <div class="section-card">
-      <h2>Component 2</h2>
-      <p>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Perspiciatis
-        porro, fugit possimus cumque consectetur veniam blanditiis aspernatur
-        natus quam nostrum rem est, excepturi dolores magni molestias incidunt?
-        Culpa, at ut?
-      </p>
-    </div>
-  </section>
-  <section
-    class="scroll-section"
-    data-mesh="Body8006,Body1035_1,Body1035_2,Body1035_3,Body20002,Body5001"
-  >
-    <div class="section-card">
-      <h2>Component 3</h2>
-      <p>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Perspiciatis
-        porro, fugit possimus cumque consectetur veniam blanditiis aspernatur
-        natus quam nostrum rem est, excepturi dolores magni molestias incidunt?
-        Culpa, at ut?
-      </p>
-    </div>
-  </section>
-  <section
-    class="scroll-section"
-    data-zOffset="0.65"
-    data-mesh="Body3002,Body2010_1,Body2010_2,Body2010_3,Body2010_4,Body2012_1,Body2012_2,Body2012_3,Body2012_4"
-  >
-    <div class="section-card">
-      <h2>Component 4</h2>
-      <p>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Perspiciatis
-        porro, fugit possimus cumque consectetur veniam blanditiis aspernatur
-        natus quam nostrum rem est, excepturi dolores magni molestias incidunt?
-        Culpa, at ut?
-      </p>
-    </div>
-  </section>
-  <section class="scroll-section" data-zOffset="1" data-mesh="Body141001">
-    <div class="section-card">
-      <h2>Component 5</h2>
-      <p>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Perspiciatis
-        porro, fugit possimus cumque consectetur veniam blanditiis aspernatur
-        natus quam nostrum rem est, excepturi dolores magni molestias incidunt?
-        Culpa, at ut?
-      </p>
-    </div>
-  </section>
-  <section id="outro-section"></section>
-</div>
+</section>
 
 <script>
   import * as THREE from "three";
@@ -87,17 +37,6 @@
 
   const DEBUG_ORBIT = true;
   import gsap from "gsap";
-  import { ScrollTrigger } from "gsap/ScrollTrigger";
-
-  gsap.registerPlugin(ScrollTrigger);
-
-  ScrollTrigger.create({
-    trigger: "#scroll-content",
-    start: "top top",
-    end: "bottom bottom",
-    pin: "#scene-pin",
-    pinSpacing: false,
-  });
 
   const canvas = document.getElementById("scene");
   const width = canvas.clientWidth;
@@ -179,24 +118,6 @@
     const initialCameraPos = camera.position.clone();
     const initialTarget = controls.target.clone();
 
-    // Hero section
-    ScrollTrigger.create({
-      trigger: "#hero-section",
-      start: "top center",
-      end: "bottom center",
-      onEnter: () => restoreHero(),
-      onEnterBack: () => restoreHero(),
-    });
-
-    // Outro section
-    ScrollTrigger.create({
-      trigger: "#outro-section",
-      start: "top center",
-      end: "bottom center",
-      onEnter: () => restoreHero(),
-      onEnterBack: () => restoreHero(),
-    });
-
     /**
      * Restores camera and mesh states to show the full model
      */
@@ -224,46 +145,6 @@
         mesh.material.depthWrite = true; // Restore depth writing for all meshes
       });
     }
-
-    /**
-     * Scrolltrigger
-     */
-    const sections = document.querySelectorAll(".scroll-section");
-    sections.forEach((section) => {
-      const group = section.dataset.mesh.split(",");
-
-      // Merge bounding boxes of all meshes in the group
-      const groupBox = new THREE.Box3();
-      group.forEach((name) => {
-        const mesh = allMeshes.find((m) => m.name === name);
-        if (mesh) groupBox.expandByObject(mesh);
-      });
-
-      if (groupBox.isEmpty()) return;
-
-      const center = new THREE.Vector3();
-      groupBox.getCenter(center);
-
-      let zOffset = 0.35;
-      if (section.dataset.zoffset) {
-        zOffset = parseFloat(section.dataset.zoffset);
-      }
-
-      const camOffset = new THREE.Vector3(
-        center.x,
-        center.y,
-        center.z + zOffset,
-      );
-
-      ScrollTrigger.create({
-        trigger: section,
-        start: "top center",
-        end: "bottom center",
-        markers: true,
-        onEnter: () => focusMesh(group, center, camOffset),
-        onEnterBack: () => focusMesh(group, center, camOffset),
-      });
-    });
 
     /**
      * Focuses the camera on a specific group of meshes
@@ -344,51 +225,83 @@
   window.addEventListener("resize", () => resize());
 </script>
 
-<style>
-  #scene-pin {
-    width: 100%;
-    height: 100vh;
-    margin-bottom: -100vh;
-    pointer-events: none;
-  }
-
+<style lang="scss">
   #scene {
     display: block;
     width: 100%;
     height: 100%;
-  }
 
-  #scroll-content {
-    position: relative;
+    position: absolute;
+    inset: 0;
     z-index: 1;
-    pointer-events: none;
-    margin: 0;
   }
 
   section {
     border: 1px solid crimson;
   }
 
-  #hero-section,
-  #outro-section,
-  .scroll-section {
-    height: 100vh;
+  .block-hero {
+    height: calc(100vh - var(--sl-nav-height));
+    margin: 0;
+    position: relative;
+
     display: flex;
     align-items: center;
-    position: relative;
-    z-index: 1;
+
+    &__content {
+      display: flex;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+      margin: 0;
+
+      position: relative;
+      z-index: 5;
+    }
   }
 
-  .section-card {
-    max-width: 360px;
-    color: #fff;
-  }
+  .collaboration-badge {
+    align-items: center;
+    backdrop-filter: blur(6px);
+    background-color: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.03);
+    display: flex;
+    gap: 20px;
+    justify-content: space-between;
+    padding: 12px;
 
-  .section-card h2 {
-    margin: 0 0 12px;
-  }
+    @media (min-width: 768px) {
+      padding: 8px 24px;
+    }
 
-  .section-card p {
-    margin: 0;
+    .collaborators {
+      display: flex;
+      gap: 20px;
+
+      .collaborator {
+        display: flex;
+        margin: 0;
+
+        img {
+          height: 18px;
+
+          @media (min-width: 768px) {
+            height: 20px;
+          }
+        }
+      }
+    }
+
+    span {
+      color: #f2f4f9;
+      font-size: 12px;
+      font-weight: 300;
+      padding: 4px 0;
+
+      @media (min-width: 768px) {
+        font-size: 16px;
+      }
+    }
   }
 </style>
