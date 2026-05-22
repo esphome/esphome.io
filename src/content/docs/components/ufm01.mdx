@@ -1,0 +1,160 @@
+---
+description: "Instructions for setting up the UFM-01 flow meter in ESPHome."
+title: "UFM-01 Flow Meter"
+---
+
+import APIRef from '@components/APIRef.astro';
+
+The `ufm01` component allows you to integrate the UFM-01 flow meter into your ESPHome device. This component reads accumulated flow (volume), current flow rate, and water temperature from the UFM-01 device via UART. It also provides several diagnostic binary sensors to monitor the device's status.
+
+The UFM-01 flow meter communicates using a specific UART protocol at 2400 baud with even parity and 1 stop bit.
+
+<span id="ufm01-configuration"></span>
+
+## Configuration
+
+The `ufm01` component requires a UART bus to be configured. Ensure your UART bus is set up with `baud_rate: 2400`, `parity: EVEN`, and `stop_bits: 1`.
+
+```yaml
+# Example UART configuration
+uart:
+  - id: uart_bus
+    tx_pin: GPIO17 # Adjust based on your board (e.g., ESP32 GPIO17, ESP8266 GPIO4, RP2040 GPIO0)
+    rx_pin: GPIO16 # Adjust based on your board (e.g., ESP32 GPIO16, ESP8266 GPIO5, RP2040 GPIO1)
+    baud_rate: 2400
+    parity: EVEN
+    stop_bits: 1
+```
+
+## Component/Hub
+
+To use the UFM-01 component, add the following to your `config.yaml`:
+
+<span id="ufm01-component"></span>
+
+```yaml
+# Basic UFM-01 configuration
+ufm01:
+  - id: ufm01_component
+    uart_id: uart_bus # The ID of your UART bus
+```
+
+### Configuration variables
+
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): The ID to use for the UFM-01 component.
+
+<span id="ufm01-configuration-variables"></span>
+
+- **uart_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the UART bus to use.
+- **accumulated_flow** (*Optional*): The accumulated flow sensor.
+  - `unit_of_measurement`: `L`
+  - `accuracy_decimals`: `3`
+  - `device_class`: `water`
+  - `state_class`: `total_increasing`
+  - All options from [Sensor](/components/sensor#config-sensor).
+- **flow** (*Optional*): The current flow rate sensor.
+  - `unit_of_measurement`: `m³/h`
+  - `accuracy_decimals`: `5`
+  - `device_class`: `volume_flow_rate`
+  - `state_class`: `measurement`
+  - `icon`: `mdi:waves-arrow-right`
+  - All options from [Sensor](/components/sensor#config-sensor).
+- **temperature** (*Optional*): The water temperature sensor.
+  - `unit_of_measurement`: `°C`
+  - `accuracy_decimals`: `2`
+  - `device_class`: `temperature`
+  - `state_class`: `measurement`
+  - `icon`: `mdi:thermometer-water`
+  - All options from [Sensor](/components/sensor#config-sensor).
+
+### Binary Sensors
+
+The UFM-01 component also exposes several diagnostic binary sensors to report the device's status. These can be configured under the `binary_sensor` section.
+
+<span id="ufm01-binary-sensors"></span>
+
+```yaml
+# Binary sensor configuration
+binary_sensor:
+  - platform: ufm01
+    ufm01_id: ufm01_component # The ID of your UFM-01 component
+    ufp_chip_error:
+      name: "UFM01 Chip Error"
+    flow_direction_wrong:
+      name: "UFM01 Flow Direction Wrong"
+    empty_tube:
+      name: "UFM01 Empty Tube"
+    flow_rate_out_of_range:
+      name: "UFM01 Flow Rate Out of Range"
+```
+
+### Configuration variables
+
+- **platform**: `ufm01`
+
+<span id="ufm01-binary-sensor-configuration-variables"></span>
+
+- **ufm01_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the `ufm01` component this binary sensor belongs to.
+- **ufp_chip_error** (*Optional*): Reports if there is an error with the UFP chip.
+  - `entity_category`: `diagnostic`
+  - `device_class`: `problem`
+- **flow_direction_wrong** (*Optional*): Reports if the flow direction is incorrect.
+  - `entity_category`: `diagnostic`
+  - `device_class`: `problem`
+- **empty_tube** (*Optional*): Reports if the tube is empty.
+  - `entity_category`: `diagnostic`
+  - `device_class`: `problem`
+- **flow_rate_out_of_range** (*Optional*): Reports if the flow rate is out of the measurable range.
+  - `entity_category`: `diagnostic`
+  - `device_class`: `problem`
+- All options from [Binary Sensor](/components/binary_sensor#config-binary_sensor).
+
+When `empty_tube` is active, `flow` and `temperature` are published as unknown (`NaN`) by the component.
+
+## Full Example Configuration
+
+<span id="ufm01-full-example"></span>
+
+```yaml
+uart:
+  - id: uart_bus
+    tx_pin: GPIO17
+    rx_pin: GPIO16
+    baud_rate: 2400
+    parity: EVEN
+    stop_bits: 1
+
+# Minimal UFM-01 configuration
+ufm01:
+  - id: ufm01_component
+    uart_id: uart_bus
+
+    accumulated_flow:
+      name: "UFM01 Accumulated Flow"
+      # Other sensor options...
+    flow:
+      name: "UFM01 Flow Rate"
+      # Other sensor options...
+    temperature:
+      name: "UFM01 Water Temperature"
+      # Other sensor options...
+
+binary_sensor:
+  - platform: ufm01
+    ufm01_id: ufm01_component
+    ufp_chip_error:
+      name: "UFM01 Chip Error"
+    flow_direction_wrong:
+      name: "UFM01 Flow Direction Wrong"
+    empty_tube:
+      name: "UFM01 Empty Tube Status"
+    flow_rate_out_of_range:
+      name: "UFM01 Flow Rate Out of Range"
+```
+
+## See Also
+
+- [UART](/components/uart/)
+- [Sensor](/components/sensor/)
+- [Binary Sensor](/components/binary_sensor/)
+- <APIRef text="ufm01.h" path="ufm01/ufm01.h" />
