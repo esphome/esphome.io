@@ -85,6 +85,13 @@ const base = `https://github.com/esphome/esphome-desktop/releases/download/${tag
         </p>
         <pre><code>docker run --rm --net=host -v "$PWD":/config -it ghcr.io/esphome/esphome</code></pre>
         <p>
+          Once it's running, open <a href="http://localhost:6052"
+            ><code>http://localhost:6052</code></a
+          > in your browser. <code>--net=host</code> is required so online
+          status indicators work; on Docker Desktop (where host networking is
+          unavailable) substitute <code>-p 6052:6052</code> instead.
+        </p>
+        <p>
           See the <a href="/guides/getting_started_command_line/"
             >command-line guide</a
           > for additional options.
@@ -332,6 +339,14 @@ const base = `https://github.com/esphome/esphome-desktop/releases/download/${tag
       const ua = navigator.userAgent;
       const platform =
         navigator.userAgentData?.platform || navigator.platform || "";
+      // iOS first — iPad/iPhone UAs contain "like Mac OS X" and modern iPad
+      // in desktop-mode reports as MacIntel but advertises touch points.
+      if (/iPhone|iPad|iPod/i.test(ua)) return null;
+      if (
+        (/Mac/i.test(platform) || /Mac OS X/i.test(ua)) &&
+        (navigator.maxTouchPoints ?? 0) > 1
+      )
+        return null;
       if (/Mac/i.test(platform) || /Mac OS X/i.test(ua)) return "macOS";
       if (/Linux|X11|CrOS/i.test(platform + " " + ua) && !/Android/i.test(ua))
         return "Linux";
