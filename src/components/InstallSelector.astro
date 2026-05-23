@@ -1,0 +1,477 @@
+---
+import { Tabs, TabItem, LinkButton } from "@astrojs/starlight/components";
+
+// Bump these manually when a significant esphome-desktop release ships.
+// See https://github.com/esphome/esphome-desktop/releases for the latest tag.
+const version = "0.9.0";
+const tag = `v${version}`;
+const base = `https://github.com/esphome/esphome-desktop/releases/download/${tag}/`;
+---
+
+<div class="install-selector not-content" data-release-tag={tag} data-release-version={version}>
+  <Tabs>
+    <TabItem label="Home Assistant">
+      <p class="install-selector__sub">
+        Run ESPHome Device Builder alongside your Home Assistant instance.
+      </p>
+      <div class="install-selector__row">
+        <div
+          class="install-selector__segmented"
+          role="group"
+          aria-label="Home Assistant flavor"
+          data-segmented="ha-flavor"
+        >
+          <button type="button" data-flavor="os" aria-pressed="true">
+            Home Assistant OS
+          </button>
+          <button type="button" data-flavor="container" aria-pressed="false">
+            Home Assistant Container
+          </button>
+        </div>
+      </div>
+
+      <div data-ha-install="os">
+        <p>Install the official ESPHome Device Builder app:</p>
+        <div class="install-selector__row">
+          <a
+            class="install-selector__my"
+            href="https://my.home-assistant.io/redirect/supervisor_addon/?addon=5c53de3b_esphome&repository_url=https%3A%2F%2Fgithub.com%2Fesphome%2Fhome-assistant-addon"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <img
+              src="https://my.home-assistant.io/badges/supervisor_addon.svg"
+              alt="Open your Home Assistant instance and show the ESPHome app."
+              loading="lazy"
+            />
+          </a>
+        </div>
+        <p>
+          Clicking the button above opens the ESPHome Device Builder app inside
+          your Home Assistant instance — click <strong>Install</strong>, then
+          <strong>Start</strong>, then <strong>Open Web UI</strong>.
+        </p>
+
+        <h4>Install Manually</h4>
+        <p>If the button doesn't work, you can install the app by hand:</p>
+        <ol class="install-selector__steps">
+          <li>
+            In Home Assistant, go to <strong>Settings</strong> → <strong>Apps</strong>
+            → <strong>Install App</strong>.
+          </li>
+          <li>
+            Find <strong>ESPHome Device Builder</strong> in the list and click
+            it.
+          </li>
+          <li>
+            Click <strong>Install</strong>, then <strong>Start</strong>, then
+            <strong>Open Web UI</strong>.
+          </li>
+        </ol>
+        <p class="install-selector__hint">
+          If the app isn't listed, the ESPHome repository hasn't been
+          registered. Click the <strong>⋮</strong> menu (top-right) → <strong
+            >Repositories</strong
+          >, paste
+          <code>https://github.com/esphome/home-assistant-addon</code>, click
+          <strong>Add</strong>, then close the dialog and look again.
+        </p>
+      </div>
+
+      <div data-ha-install="container" hidden>
+        <p>
+          Run the ESPHome Device Builder dashboard as a Docker container
+          alongside your Home Assistant Container install:
+        </p>
+        <pre><code>docker run --rm --net=host -v "$PWD":/config -it ghcr.io/esphome/esphome</code></pre>
+        <p>
+          See the <a href="/guides/getting_started_command_line/"
+            >command-line guide</a
+          > for additional options.
+        </p>
+      </div>
+    </TabItem>
+
+    <TabItem label="Windows">
+      <p class="install-selector__sub">Works on Windows 10 and Windows 11.</p>
+      <LinkButton
+        data-download="windows"
+        href={`${base}ESPHome.Device.Builder_${version}_x64-setup.exe`}
+      >
+        Download installer (.exe)
+      </LinkButton>
+      <ol class="install-selector__steps">
+        <li>Open the downloaded <code>.exe</code> file.</li>
+        <li>
+          If Windows asks <em>"Do you want to allow this app to make changes?"</em>,
+          choose <strong>Yes</strong>.
+        </li>
+        <li>Follow the installer prompts.</li>
+        <li>
+          Launch <strong>ESPHome Device Builder</strong> from the Start menu.
+        </li>
+      </ol>
+      <p class="install-selector__hint">
+        If you see <em>"Windows protected your PC"</em>, click
+        <strong>More info</strong> → <strong>Run anyway</strong>.
+      </p>
+    </TabItem>
+
+    <TabItem label="macOS">
+      <p class="install-selector__sub">macOS 10.15 Catalina or newer.</p>
+      <div class="install-selector__row">
+        <div
+          class="install-selector__segmented"
+          role="group"
+          aria-label="Mac architecture"
+          data-segmented="mac-arch"
+        >
+          <button type="button" data-arch="arm64" aria-pressed="true">
+            Apple Silicon
+          </button>
+          <button type="button" data-arch="x64" aria-pressed="false">
+            Intel
+          </button>
+        </div>
+      </div>
+      <LinkButton
+        data-download="mac"
+        href={`${base}ESPHome.Device.Builder_${version}_aarch64.dmg`}
+      >
+        Download disk image (.dmg)
+      </LinkButton>
+      <ol class="install-selector__steps">
+        <li>Open the downloaded <code>.dmg</code> file.</li>
+        <li>
+          Drag <strong>ESPHome Device Builder</strong> into the <strong
+            >Applications</strong
+          > folder.
+        </li>
+        <li>
+          Open the Applications folder and double-click
+          <strong>ESPHome Device Builder</strong>.
+        </li>
+        <li>
+          The first time you run it, macOS may ask you to confirm — click
+          <strong>Open</strong>.
+        </li>
+      </ol>
+      <p class="install-selector__hint">
+        Not sure which Mac you have? Click the Apple menu → <strong>About This
+          Mac</strong>. If you see <em>Apple M1/M2/M3/M4</em>, pick Apple
+        Silicon. If you see <em>Intel</em>, pick Intel.
+      </p>
+    </TabItem>
+
+    <TabItem label="Linux">
+      <p class="install-selector__sub">
+        Choose the package format that matches your distribution.
+      </p>
+      <div class="install-selector__row">
+        <div
+          class="install-selector__segmented"
+          role="group"
+          aria-label="Linux package format"
+          data-segmented="linux-format"
+        >
+          <button type="button" data-format="deb" aria-pressed="true">
+            Debian / Ubuntu
+          </button>
+          <button type="button" data-format="rpm" aria-pressed="false">
+            Fedora / openSUSE
+          </button>
+          <button type="button" data-format="aur" aria-pressed="false">
+            Arch (AUR)
+          </button>
+          <button type="button" data-format="appimage" aria-pressed="false">
+            AppImage
+          </button>
+        </div>
+        <div
+          class="install-selector__segmented"
+          role="group"
+          aria-label="Linux architecture"
+          data-segmented="linux-arch"
+          data-linux-arch-row
+        >
+          <button type="button" data-arch="x64" aria-pressed="true">
+            x86_64
+          </button>
+          <button type="button" data-arch="arm64" aria-pressed="false">
+            arm64
+          </button>
+        </div>
+      </div>
+      <LinkButton
+        data-download="linux"
+        href={`${base}ESPHome.Device.Builder_${version}_amd64.deb`}
+      >
+        <span data-linux-label>Download .deb</span>
+      </LinkButton>
+
+      <div data-linux-install="deb">
+        <p>Double-click the file in your file manager, or run:</p>
+        <pre><code>sudo apt install ./ESPHome.Device.Builder_*.deb</code></pre>
+      </div>
+      <div data-linux-install="rpm" hidden>
+        <p>Double-click the file in your file manager, or run:</p>
+        <pre><code>sudo dnf install ./ESPHome.Device.Builder-*.rpm</code></pre>
+      </div>
+      <div data-linux-install="aur" hidden>
+        <p>
+          Install the <code>esphome-desktop-bin</code> package with your
+          favourite AUR helper:
+        </p>
+        <pre><code>yay -S esphome-desktop-bin</code></pre>
+        <p>or:</p>
+        <pre><code>paru -S esphome-desktop-bin</code></pre>
+      </div>
+      <div data-linux-install="appimage" hidden>
+        <p>Make it executable and run it:</p>
+        <pre><code>chmod +x ESPHome.Device.Builder_*.AppImage
+./ESPHome.Device.Builder_*.AppImage</code></pre>
+      </div>
+
+      <p class="install-selector__hint">
+        If serial devices don't show up, add your user to the
+        <code><span data-linux-group>dialout</span></code> group and log out and
+        back in: <code>sudo usermod -a -G <span data-linux-group>dialout</span> $USER</code>.
+      </p>
+    </TabItem>
+  </Tabs>
+</div>
+
+<style>
+  .install-selector__sub {
+    color: var(--sl-color-gray-3);
+    margin-block: 0 1rem;
+  }
+
+  .install-selector__row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    align-items: center;
+    margin-block: 0.5rem 1.25rem;
+  }
+
+  .install-selector__segmented {
+    display: inline-flex;
+    flex-wrap: wrap;
+    padding: 3px;
+    background: var(--sl-color-gray-6);
+    border: 1px solid var(--sl-color-gray-5);
+    border-radius: 6px;
+    gap: 2px;
+  }
+  .install-selector__segmented button {
+    appearance: none;
+    background: none;
+    border: none;
+    padding: 0.35rem 0.75rem;
+    font: inherit;
+    font-size: 0.85rem;
+    color: var(--sl-color-gray-3);
+    cursor: pointer;
+    border-radius: 4px;
+    transition: color 0.15s ease, background-color 0.15s ease;
+  }
+  .install-selector__segmented button:hover {
+    color: var(--sl-color-white);
+  }
+  .install-selector__segmented button[aria-pressed="true"] {
+    background: var(--sl-color-bg);
+    color: var(--sl-color-white);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+  }
+
+  .install-selector__steps {
+    margin-block: 0 1rem;
+    padding-left: 1.4em;
+  }
+  .install-selector__steps li {
+    margin-bottom: 0.25rem;
+  }
+
+  .install-selector__hint {
+    font-size: 0.9em;
+    color: var(--sl-color-gray-3);
+    margin-block: 0.75rem 0;
+  }
+
+  .install-selector__my {
+    display: inline-block;
+    line-height: 0;
+  }
+  .install-selector__my img {
+    height: 36px;
+    width: auto;
+    display: block;
+  }
+
+  .install-selector h4 {
+    margin-block: 1.25rem 0.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+  }
+
+  .install-selector pre {
+    margin-block: 0.5rem 1rem;
+  }
+</style>
+
+<script define:vars={{ tag, version }}>
+  (() => {
+    const root = document.querySelector(".install-selector");
+    if (!root) return;
+    const releaseBase = `https://github.com/esphome/esphome-desktop/releases/download/${tag}/`;
+
+    // ---- Helpers --------------------------------------------------------
+
+    const detectOs = () => {
+      const ua = navigator.userAgent;
+      const platform =
+        navigator.userAgentData?.platform || navigator.platform || "";
+      if (/Mac/i.test(platform) || /Mac OS X/i.test(ua)) return "macOS";
+      if (/Linux|X11|CrOS/i.test(platform + " " + ua) && !/Android/i.test(ua))
+        return "Linux";
+      if (/Win/i.test(platform) || /Windows/i.test(ua)) return "Windows";
+      return null;
+    };
+
+    // Wire up a segmented-control button group and return a `select(value)`
+    // function for triggering a choice programmatically. `onChange` receives
+    // the value of `data-${attr}` for the active button.
+    const wireSegmented = (group, attr, onChange) => {
+      const buttons = root.querySelectorAll(
+        `[data-segmented="${group}"] button`,
+      );
+      const select = (value) => {
+        let matched = false;
+        buttons.forEach((b) => {
+          const isMatch = b.dataset[attr] === value;
+          if (isMatch) matched = true;
+          b.setAttribute("aria-pressed", isMatch ? "true" : "false");
+        });
+        if (matched) onChange(value);
+      };
+      buttons.forEach((b) =>
+        b.addEventListener("click", () => select(b.dataset[attr])),
+      );
+      return select;
+    };
+
+    // ---- Home Assistant -----------------------------------------------
+    (() => {
+      const blocks = root.querySelectorAll("[data-ha-install]");
+      if (!blocks.length) return;
+      wireSegmented("ha-flavor", "flavor", (flavor) => {
+        blocks.forEach((block) => {
+          block.hidden = block.dataset.haInstall !== flavor;
+        });
+      });
+    })();
+
+    // ---- Tab auto-selection --------------------------------------------
+    // Wait for <starlight-tabs> to upgrade — before upgrade the tab anchor
+    // has no click handler attached, and `.click()` just hash-navigates.
+    customElements.whenDefined("starlight-tabs").then(() => {
+      const detected = detectOs();
+      if (!detected) return;
+      const match = [
+        ...root.querySelectorAll('starlight-tabs [role="tab"]'),
+      ].find((t) => t.textContent?.trim() === detected);
+      if (match && match.getAttribute("aria-selected") !== "true") {
+        match.click();
+      }
+    });
+
+    // ---- macOS ---------------------------------------------------------
+    (() => {
+      const btn = root.querySelector('[data-download="mac"]');
+      if (!btn) return;
+      const files = {
+        arm64: `${releaseBase}ESPHome.Device.Builder_${version}_aarch64.dmg`,
+        x64: `${releaseBase}ESPHome.Device.Builder_${version}_x64.dmg`,
+      };
+      const selectArch = wireSegmented("mac-arch", "arch", (arch) => {
+        btn.href = files[arch];
+      });
+
+      // Auto-pick Intel when the UA-CH API reports an x86 architecture.
+      navigator.userAgentData
+        ?.getHighEntropyValues(["architecture"])
+        .then((info) => {
+          if (info.architecture === "x86") selectArch("x64");
+        })
+        .catch(() => {});
+    })();
+
+    // ---- Linux ---------------------------------------------------------
+    (() => {
+      const btn = root.querySelector('[data-download="linux"]');
+      const label = root.querySelector("[data-linux-label]");
+      const archRow = root.querySelector("[data-linux-arch-row]");
+      if (!btn || !label) return;
+      const installBlocks = root.querySelectorAll("[data-linux-install]");
+      const groupSpans = root.querySelectorAll("[data-linux-group]");
+
+      // Per-format: how to build the download URL given an arch, the button
+      // label, the serial-port group on this kind of distro, and the arch
+      // tokens used in this format's filenames (null = no arch choice).
+      const formats = {
+        deb: {
+          url: (a) => `${releaseBase}ESPHome.Device.Builder_${version}_${a}.deb`,
+          label: "Download .deb",
+          serialGroup: "dialout",
+          archMap: { x64: "amd64", arm64: "arm64" },
+        },
+        rpm: {
+          url: (a) => `${releaseBase}ESPHome.Device.Builder-${version}-1.${a}.rpm`,
+          label: "Download .rpm",
+          serialGroup: "dialout",
+          archMap: { x64: "x86_64", arm64: "aarch64" },
+        },
+        aur: {
+          url: () => "https://aur.archlinux.org/packages/esphome-desktop-bin",
+          label: "View on AUR",
+          serialGroup: "uucp",
+          archMap: null,
+        },
+        appimage: {
+          url: (a) => `${releaseBase}ESPHome.Device.Builder_${version}_${a}.AppImage`,
+          label: "Download AppImage",
+          serialGroup: "dialout",
+          archMap: { x64: "amd64", arm64: "aarch64" },
+        },
+      };
+
+      let currentFormat = "deb";
+      let currentArch = "x64";
+
+      const refreshDownload = () => {
+        const f = formats[currentFormat];
+        btn.href = f.archMap ? f.url(f.archMap[currentArch]) : f.url();
+        label.textContent = f.label;
+      };
+
+      wireSegmented("linux-format", "format", (format) => {
+        currentFormat = format;
+        const f = formats[format];
+        if (archRow) archRow.hidden = !f.archMap;
+        installBlocks.forEach((block) => {
+          block.hidden = block.dataset.linuxInstall !== format;
+        });
+        groupSpans.forEach((span) => {
+          span.textContent = f.serialGroup;
+        });
+        refreshDownload();
+      });
+
+      wireSegmented("linux-arch", "arch", (arch) => {
+        currentArch = arch;
+        refreshDownload();
+      });
+    })();
+  })();
+</script>
