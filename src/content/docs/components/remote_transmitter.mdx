@@ -1023,6 +1023,33 @@ on_...:
 - **nbits** (*Optional*, int, [templatable](/automations/templates)): The number of bits to send. Defaults to `12`.
 - All other options from [Remote Transmitter Actions](#remote_transmitter-transmit_action).
 
+<span id="remote_transmitter-transmit_somfy_rts"></span>
+
+### `remote_transmitter.transmit_somfy_rts` Action
+
+This [action](/automations/actions#all-actions) sends a somfy_rts command to a remote transmitter.
+It uses a rolling_code so the transmitter needs to be configured like a new remote for the receiving device.
+Configuring a new transmitter can be done with pressing the 'prog' button on the existing remote and sending a 'prog' message from the new
+transmitter.
+
+```yaml
+on_...:
+  id: rmt_sender
+  address: 0x123456
+  control: 0x08
+  key: 0xA0
+  rolling_code: 123
+  control_in_key: false
+```
+
+#### Configuration variables
+
+- **address** (**Required**, int, [templatable](/automations/templates/)): The address of the device to control.
+- **control** (**Required**, int, [templatable](/automations/templates/)): The control code to send to the device.
+- **key** (**Required**, int, [templatable](/automations/templates/)): The key to be used, most of the times 0xA0 works
+- **rolling_code** (**Required**, int, [templatable](/automations/templates/)): The rolling code to be used, use a variable stored in NVS storage.
+- **control_in_key** (**Optional**, bool, [templatable](/automations/templates/)): Set to true if the device doesnt seem to work, some implementations differ.
+
 <span id="remote_transmitter-transmit_toshiba_ac"></span>
 
 ### `remote_transmitter.transmit_toshiba_ac` Action
