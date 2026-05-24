@@ -91,6 +91,88 @@ stop_action:
       }
 ```
 
+## External Sensing & Manual Override
+
+If your cover (like a standing desk or motorized blind) has its own physical buttons that operate the motor directly, ESPHome can track the cover's position when it's moved manually.
+
+You can update the internal state of the `time_based` cover from a lambda using the `update_external_state(bool up_active, bool down_active)` method.
+When either of these states is true, the cover enters an "external override" mode, which actively ignores commands from Home Assistant to prevent conflicting movements.
+Once both are false, it resumes normal operation.
+
+**C++ Method:**
+
+```cpp
+// up_active: True if the cover is currently being manually opened/raised.
+// down_active: True if the cover is currently being manually closed/lowered.
+id(my_cover).update_external_state(up_active, down_active);
+```
+
+### Example Configuration:
+
+This example assumes you are using GPIO pins to monitor the voltage of physical "Up" and "Down" buttons.
+
+```yaml
+cover:
+  - platform: time_based
+    name: "Desk"
+    id: desk_cover
+    open_duration: 17s
+    close_duration: 16s
+    open_action:
+      - switch.turn_on: button_up
+    close_action:
+      - switch.turn_on: button_down
+    stop_action:
+      - switch.turn_off: button_up
+      - switch.turn_off: button_down
+
+script:
+  - id: process_desk_buttons
+    mode: restart
+    then:
+      - lambda: |-
+          // Check if the physical button is pressed but the relay (switch) is off.
+          // This indicates a human is pressing the button, not ESPHome.
+          bool human_up = id(desk_button_up).state && !id(button_up).state;
+          bool human_down = id(desk_button_down).state && !id(button_down).state;
+
+          // Ignore manual tracking if ESPHome is currently driving the motor
+          if (id(button_up).state && !human_down) return;
+          if (id(button_down).state && !human_up) return;
+
+          // Update the cover's internal state
+          id(desk_cover).update_external_state(human_up, human_down);
+
+binary_sensor:
+  - platform: gpio
+    id: desk_button_up
+    pin:
+      number: 18
+      mode: INPUT_OUTPUT_OPEN_DRAIN
+      allow_other_uses: true
+      inverted: true
+    filters:
+      - delayed_on: 50ms
+      - delayed_off: 50ms
+    on_state:
+      then:
+        - script.execute: process_desk_buttons
+
+  - platform: gpio
+    id: desk_button_down
+    pin:
+      number: 16
+      mode: INPUT_OUTPUT_OPEN_DRAIN
+      allow_other_uses: true
+      inverted: true
+    filters:
+      - delayed_on: 50ms
+      - delayed_off: 50ms
+    on_state:
+      then:
+        - script.execute: process_desk_buttons
+```
+
 ## See Also
 
 - [Cover Component](/components/cover/)
