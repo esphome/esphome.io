@@ -39,9 +39,10 @@ const fileTypes = [
   '.cfg', '.css', '.gif', '.h', '.html', '.ico', '.jpg', '.js', '.json',
   '.md', '.mdx', '.png', '.py', '.svg', '.toml', '.txt', '.webmanifest',
   '.xml', '.yaml', '.yml', '.mjs', '.ts', '.tsx', '.astro', '.sh', '.webp',
-  '' // empty string for files without extension (like .gitignore)
+  '.bin', '' // empty string for files without extension (like .gitignore)
 ];
 const imageTypes = ['.webp', '.jpg', '.ico', '.png', '.svg', '.gif'];
+const binaryTypes = ['.bin'];
 
 // Store errors
 const errors = new Map();
@@ -243,7 +244,8 @@ async function checkInternalLinks(fname, content, anchorCache) {
 
   // Skip template and documentation files with example links
   const ignoreFiles = [
-    '.claude/instructions.md',
+    'AGENTS.md',
+    'CONTRIBUTING.md',
     'script/release_notes_template.md',
   ];
   if (ignoreFiles.includes(fname)) return;
@@ -300,14 +302,20 @@ async function checkInternalLinks(fname, content, anchorCache) {
     if (linkUrl.startsWith('/images/') && /\.(png|jpg|jpeg|gif|svg|webp|pdf|zip)$/i.test(linkUrl)) {
       continue;
     }
+    if (linkUrl.startsWith('/files/') && /\.(bin|zip)$/i.test(linkUrl)) {
+      continue;
+    }
+
 
     // Skip links with spaces or parentheses (likely code)
     if (linkUrl.includes(' ') || linkUrl.includes('(') || linkUrl.includes(')')) {
       continue;
     }
 
-    // Skip relative links without leading slash
+    // Flag relative links - all internal links should use absolute paths
     if (!linkUrl.startsWith('/')) {
+      addError(fname, lineno, col,
+        `Relative link '${linkUrl}' should use an absolute path (e.g., /components/...)`);
       continue;
     }
 
@@ -454,6 +462,11 @@ async function main() {
 
   // Process files
   for (const [fname, gitMode] of gitFiles) {
+    // Skip symlinks - the target file is linted directly
+    if (gitMode === 120000) {
+      continue;
+    }
+
     // Skip ignored folders
     if (ignoreFolders.some(folder => fname.startsWith(folder) || fname.includes(`/${folder}`))) {
       continue;
@@ -476,6 +489,9 @@ async function main() {
 
       // Skip binary files
       if (imageTypes.includes(extname(fname))) {
+        continue;
+      }
+      if (binaryTypes.includes(extname(fname))) {
         continue;
       }
 
