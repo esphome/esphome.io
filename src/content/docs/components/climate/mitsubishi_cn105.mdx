@@ -62,6 +62,7 @@ climate:
     uart_id: ac_uart
     update_interval: 1s
     current_temperature_min_interval: 60s
+    supported_swing_modes: VERTICAL
 ```
 
 > [!WARNING]
@@ -79,6 +80,7 @@ climate:
 - Current temperature reporting
 - Modes: `OFF`, `HEAT`, `COOL`, `DRY`, `FAN_ONLY`, `HEAT_COOL` (called `AUTO` by Mitsubishi)
 - Fan modes: `AUTO`, `QUIET`, `LOW`, `MEDIUM`, `MIDDLE`, `HIGH`
+- Swing modes: `OFF`, `VERTICAL`, `HORIZONTAL`, `BOTH` (configurable via `supported_swing_modes`)
 
 > [!NOTE]
 > Fan modes map to the following Mitsubishi fan speeds:
@@ -93,8 +95,8 @@ climate:
 ## Configuration variables
 
 - **uart_id** (*Optional*, [ID](/guides/configuration-types#id)): The UART bus to use.
-- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): Interval between status updates. Defaults to `1s`. Lower values provide faster detection of external changes, for example when using the remote control.
-- **current_temperature_min_interval** (*Optional*, [Time](/guides/configuration-types#time)): Minimum time between consecutive room temperature reads.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time), Default: `1s`): Interval between status updates. Lower values provide faster detection of external changes, for example when using the remote control.
+- **current_temperature_min_interval** (*Optional*, [Time](/guides/configuration-types#time), Default: `60s`): Minimum time between consecutive room temperature reads.
 
   This allows keeping a low `update_interval` (to quickly reflect changes, e.g. when using an IR remote) while avoiding excessive current temperature updates.
 
@@ -102,7 +104,12 @@ climate:
 
   Set to `never` to disable room temperature polling.
 
-  Defaults to `60s`.
+- **supported_swing_modes** (*Optional*, enum, Default: `"OFF"`): Selects which swing modes are exposed by the climate entity.
+  
+  - `OFF` — no swing support  
+  - `VERTICAL` — exposes `OFF`, `VERTICAL`  
+  - `HORIZONTAL` — exposes `OFF`, `HORIZONTAL`  
+  - `BOTH` — exposes `OFF`, `VERTICAL`, `HORIZONTAL`, `BOTH`
 
 - All other options from [Climate](/components/climate#config-climate).
 
