@@ -1,0 +1,903 @@
+---
+description: "Instructions for setting up the RS485 Frame hub, a generic DLE-framing engine for RS485 buses."
+title: "RS485 Frame"
+params:
+  seo:
+    description: Instructions for setting up the RS485 Frame hub, a generic DLE-framing engine for RS-485 / RS485
+      buses, configured explicitly with framing bytes, CRC, and a command encoder.
+---
+
+The `rs485_frame` hub is a generic DLE-framing engine: it lets an ESPHome
+device participate in RS485 buses that wrap their payloads in
+DLE-STX/ETX-delimited, byte-stuffed frames. It receives and validates frames
+locally, allowing it to decode them and expose the state of devices on the bus
+as Home Assistant entities (e.g., pool water temperature). It also queues
+outbound commands so they transmit precisely during the narrow timing window of
+the controller's keep-alive cycle (e.g., a Home Assistant button entity to turn
+on the pool lights). Compared to performing these operations with a USB/TCP
+serial-based app or an ESPHome Serial Proxy, these capabilities provide reliable
+command delivery, low-latency feedback to observe the side effects of issued
+commands, and significant event reduction by exposing Home Assistant to
+low-frequency states instead of high-frequency frames.
+
+The component is **not** tied to any single product. You configure everything
+explicitly: the framing bytes (`framing:`), the CRC algorithm and variants
+(`crc:`, required), an optional command encoder (`command_format:`), the TX gate
+behaviour (`tx:`), and user-supplied frame decoders (`on_frame:`). The
+[Configuration variables](#configuration-variables) section documents each
+block; an illustrative explicit configuration for a Hayward AquaLogic wireless
+bus appears under [Basic usage](#basic-usage).
+
+It helps to think of the setup as a three-stage pipeline:
+
+- **[UART](/components/uart/)** moves raw bytes on and off the wire.
+- **`rs485_frame`** turns that byte stream into validated frames: delimiting,
+  escape de-stuffing, and CRC checking, and queues outbound frames onto the bus.
+- **Your `on_frame:` lambdas and `command:` buttons** decode frame payloads into
+  Home Assistant entities and produce outbound commands.
+
+> [!TIP]
+> Have a Hayward AquaLogic or Jandy AquaLink RS? Start with the ready-to-flash configurations in
+> the [rs485_frame-examples repository](https://github.com/b3nj1/rs485_frame-examples) — copy the
+> family's `example-device.yaml`, fill in your pins, uncomment the equipment you have, and flash.
+
+## Recommended framework: ESP-IDF
+
+Use the **ESP-IDF framework**, not Arduino:
+
+```yaml
+esp32:
+  board: BOARDXX   # replace with your board identifier
+  framework:
+    type: esp-idf
+```
+
+When `flow_control_pin` is set on the `uart:` component under ESP-IDF, the
+device's UART peripheral enters hardware RS485 half-duplex mode
+(`UART_MODE_RS485_HALF_DUPLEX`). The hardware asserts the DE/RE pin exactly when
+the TX FIFO fills and deasserts only after the **shift register** finishes
+clocking out the last bit — sub-bit precision that no software loop can match.
+
+Under the Arduino framework the `uart:` component does **not** drive
+`flow_control_pin`. Arduino users must therefore use an **auto-DE transceiver
+chip** (e.g. MAX13487, MAX22025) where DE follows the TX line state
+automatically. With auto-DE hardware, the `rs485_frame` TX path calls
+`Serial::flush()` after each frame to keep the TX line active for the full
+frame duration; on ESP-IDF the flush is omitted because the hardware mode
+already handles deassertion timing.
+
+`idle_gap` TX gate mode is sensitive to echo on the RX line — each transmitted
+frame updates `last_rx_time_` via the echo, which resets the idle timer and may
+prevent `idle_gap` from ever firing again. ESP-IDF's hardware RS485 mode
+suppresses TX echo automatically; on Arduino, prefer `frame_trigger` or
+`fixed_delay`, or use a transceiver that suppresses local echo in hardware.
+
+## Basic usage
+
+The following illustrates a Hayward AquaLogic wireless bus. The same structure applies to
+any DLE-framed bus — substitute the `uart:` settings, `framing.escape` scheme, `crc.type`,
+and `tx.gate.frame_type` for your controller. User payload decoding is done via `on_frame:`
+on the hub — one lambda per frame type, pushing values to `platform: template` sensors. Hub
+diagnostics (frame counters, CRC failures, queue depth) are exposed through the
+`rs485_frame` sensor and text_sensor platforms.
+
+```yaml
+uart:
+  id: pool_uart
+  tx_pin: GPIOXX
+  rx_pin: GPIOXX
+  baud_rate: 19200
+  data_bits: 8
+  parity: NONE
+  stop_bits: 2
+  flow_control_pin: GPIOXX  # DE/RE pin; omit if your adapter auto-manages direction
+
+rs485_frame:
+  id: pool
+  uart_id: pool_uart
+  framing:
+    escape:
+      mode: escape_byte   # Hayward stuffs a literal DLE as DLE + this byte
+      byte: 0x00
+  crc:
+    type: sum16_big_endian
+  command_format:                 # required for the command: button shorthand below
+    preamble: [0x00, 0x83, 0x01]  # Hayward AquaLogic wireless remote frame
+    command_size: 4
+    command_repeat: 2
+    postamble: [0x00]
+  tx:
+    gate:
+      frame_type: [0x01, 0x01]
+
+  on_frame:
+    # LED status frame: decode the 32-bit mask once, push to all LED sensors.
+    - frame_type: [0x01, 0x02]
+      then:
+        - lambda: |-
+            if (payload.size() < 6) return;
+            uint32_t mask = uint32_t(payload[2]) | (uint32_t(payload[3]) << 8) |
+                            (uint32_t(payload[4]) << 16) | (uint32_t(payload[5]) << 24);
+            id(led_filter).publish_state(bool(mask & (1UL << 5)));
+            id(led_lights).publish_state(bool(mask & (1UL << 6)));
+
+    # Display frame: decode the Hayward text encoding once, push to all display sensors.
+    # A static (BSS) buffer avoids heap allocation during character extraction; one
+    # std::string is constructed only at the publish_state call. Text sensors
+    # deduplicate internally so repeated equal values are not forwarded to Home Assistant.
+    - frame_type: [0x01, 0x03]
+      then:
+        - lambda: |-
+            // BUF_LEN sized for Hayward Pro Logic's widest displays (~40 chars) plus
+            // UTF-8 degree-symbol expansion. static: BSS-allocated once at program
+            // start -- no per-call stack or heap, matching the hub's setup-time
+            // buffer discipline.
+            const size_t BUF_LEN = 128;
+            static char out[BUF_LEN];
+            uint8_t olen = 0;
+            for (size_t i = 3; i < payload.size() && olen < (BUF_LEN - 2); i++) {
+              uint8_t b = payload[i];
+              if (b > 0x7F) b -= 0x80;
+              if (b == 0) continue;
+              if (b == '_') {
+                if (olen + 2 <= (BUF_LEN - 2)) { out[olen++] = '\xC2'; out[olen++] = '\xB0'; }
+              } else {
+                out[olen++] = char(b);
+              }
+            }
+            while (olen > 0 && out[olen - 1] == ' ') olen--;
+            out[olen] = '\0';
+            id(display_text).publish_state(std::string(out, olen));
+
+binary_sensor:
+  - platform: template
+    id: led_filter
+    name: "Filter"
+    device_class: running
+
+  - platform: template
+    id: led_lights
+    name: "Lights"
+    device_class: light
+
+text_sensor:
+  - platform: template
+    id: display_text
+    name: "Display"
+
+button:
+  - platform: rs485_frame
+    rs485_frame_id: pool
+    name: "Filter"
+    command: 0x80000000
+```
+
+## Writing `on_frame:` lambdas — best practices
+
+`on_frame:` fires at bus frequency (~10 Hz for Hayward, faster on polled buses
+like Jandy). To keep long-uptime devices stable, follow these patterns:
+
+- **No heap allocation in the lambda.** Decode into fixed-size buffers
+  (`char[BUF_LEN]`, `uint8_t[N]`, structs). Avoid `std::string text;` followed by
+  `text.push_back()` — even with `reserve()`, the underlying string is freshly
+  allocated each call. Build into a fixed buffer and construct one `std::string`
+  only at the `publish_state(...)` call site.
+- **Prefer `static` buffers for anything larger than a few bytes.** A `static`
+  buffer inside a lambda is BSS-allocated once at program start (the same
+  discipline the hub uses for its setup-time scratch buffers): no per-call
+  stack pressure and no heap. Example:
+
+  ```cpp
+  const size_t BUF_LEN = 128;   // sized to cover the widest payload you expect
+  static char text[BUF_LEN];    // allocated once in .bss; reused across calls
+  uint8_t tlen = 0;             // local, resets each call
+  // ... build into text[0..tlen) ...
+  id(display_text).publish_state(std::string(text, tlen));
+  ```
+
+  Use a named constant (`BUF_LEN`) instead of bare magic numbers so the bound
+  is obvious and easy to bump if your display turns out wider than expected.
+  ESPHome lambdas run on the single-threaded main loop, so static reuse is
+  race-free.
+- **Guard payload lengths.** Always `if (payload.size() < N) return;` before
+  indexing past the frame type. A short or malformed frame would otherwise
+  read past the vector end.
+- **Avoid `std::to_string`, `String::format`, and other allocating helpers**
+  inside the lambda. Use `snprintf` into a `static char[]` buffer if you need
+  formatted text.
+- **Don't block.** A long loop or `delay()` inside the lambda stalls every
+  other ESPHome component for the duration. Keep decode logic tight.
+- **Decoding multi-byte fields?** The `bytebuffer` helper provides endian-aware `get_*` accessors
+  over a byte span, which is cleaner (and allocation-free) than hand-assembling integers from
+  `payload[i]` shifts.
+
+For broader background, see [ESPHome Lambda Magic](/automations/templates/#config-lambda).
+
+## Raw frame transmission
+
+When the hub has a `command_format:` block, it can turn a 32-bit `command:` into the on-wire
+payload via a fixed preamble + command bytes + postamble. For anything that doesn't map
+cleanly to that shape — hubs with no `command_format:`, device-discovery probes,
+vendor-specific commands, multi-frame setup sequences — the component exposes a raw
+transmission path that hands the hub a frame type and the payload bytes directly. The hub
+still does DLE-STX/ETX wrapping, byte-stuffing, and CRC according to the configured
+`crc.type` and `crc.tx_variant`; only the payload-encoding step is the caller's
+responsibility.
+
+There are two surfaces:
+
+### `rs485_frame.send_frame` Action
+
+A general-purpose [Action](/automations/actions/) you can invoke from anywhere — scripts,
+on_frame: triggers, template buttons, schedule entries. Both fields are templatable.
+
+```yaml
+# Pool controller example: send a fixed AUX command frame from a script.
+script:
+  - id: pulse_aux1
+    then:
+      - rs485_frame.send_frame:
+          id: pool
+          frame_type: [0x00, 0x83]
+          payload: [0x00, 0x01, 0x02, 0x00, 0x02, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00]
+
+# Computed payload via lambda — useful when the bytes depend on entity state, a
+# trigger argument, or any other runtime value. Payload layout is protocol-specific.
+button:
+  - platform: template
+    name: "Set Pool Setpoint"   # pool controller example
+    on_press:
+      - rs485_frame.send_frame:
+          id: pool
+          frame_type: [0x00, 0x42]
+          payload: !lambda |-
+            return std::vector<uint8_t>{
+              0x42, 0x00, static_cast<uint8_t>(id(setpoint).state),
+              0x00, 0x00, 0x00,
+            };
+```
+
+#### Action configuration variables
+
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the `rs485_frame` hub.
+- **frame_type** (**Required**, list of hex bytes or
+  [Templatable](/automations/templates/#config-templatable)): The 2-byte (or longer, up to 8
+  bytes) frame type prefix.
+- **payload** (**Required**, list of hex bytes or
+  [Templatable](/automations/templates/#config-templatable)): The payload bytes that follow the
+  frame type. Caller-composed, not double-encoded.
+
+### Raw form on the button platform
+
+For static frames a template button + action is overkill; the
+[rs485_frame button platform](/components/button/rs485_frame/) also accepts a raw form
+that drops the `command:` field in favour of `frame_type:` + `payload:`. Use this when
+you have a fixed mapping between a button entity and a frame literal — typical for
+custom devices, or any hub configured without a `command_format:`.
+
+```yaml
+button:
+  - platform: rs485_frame
+    rs485_frame_id: pool
+    name: "Custom Probe Frame"
+    frame_type: [0x00, 0x83]
+    payload: [0x00, 0x01, 0x02, 0x00, 0x42, 0x00, 0x00, 0x00, 0x42, 0x00, 0x00, 0x00]
+```
+
+`command:` and (`frame_type:` + `payload:`) are mutually exclusive on the same button.
+The `command:` form encodes via the hub's `command_format:` and is only accepted when the
+hub has one set; add `command_format:` to the hub to use it, or use the raw form below.
+
+### When to use which
+
+| You want to... | Use |
+|---|---|
+| Send a command via the hub's encoder | `button: command:` (requires the hub's `command_format:`) |
+| Send a fixed custom frame to a generic device | `button: frame_type: + payload:` |
+| Send a frame computed from entity state or a trigger argument | `rs485_frame.send_frame:` with a lambda payload |
+| Send a multi-frame discovery sequence | several `rs485_frame.send_frame:` actions in a script |
+
+## Hardware setup
+
+Use an RS485-to-TTL adapter connected to a UART on your ESPHome device, or
+an integrated device like WaveShare's ESP32-S3-RS485-CAN which has both the
+RS485-to-TTL and an ESP32-S3. See the [UART](/components/uart/) component
+for wiring details.
+
+```
+GPIOXX (TX) → DI  (adapter data-in)
+GPIOXX (RX) → RO  (adapter data-out)
+GPIOXX      → DE + RE tied (half-duplex direction control)
+DC Supply   → VCC (match adapter supply voltage)
+GND         → GND
+A / B       → RS485 bus terminals
+```
+
+For half-duplex adapters with a DE/RE pin, set `flow_control_pin` on the
+**`uart:` component** (not on `rs485_frame:`). Under ESP-IDF this activates
+the UART peripheral's built-in RS485 half-duplex mode; the hardware drives
+DE with shift-register-level precision and suppresses the TX echo on RX
+automatically.
+
+```yaml
+uart:
+  flow_control_pin: GPIOXX  # DE/RE direction pin
+```
+
+If you receive no data, try swapping `tx_pin`/`rx_pin` or the A/B bus wires.
+Some adapters label DI/RO from the adapter's perspective, which is the reverse
+of the device's.
+
+## Configuring for a specific device
+
+Configure the bus explicitly: set the `uart:` parameters your device uses, declare the
+`framing.escape` scheme, choose the `crc:` algorithm, set `tx.gate.frame_type` to the bus
+keep-alive / poll frame, and (only if you want the `command:` button shorthand or
+`tx.idle_command`) add a `command_format:`. To find those values:
+
+- **Ready-to-flash configs** for Hayward AquaLogic and Jandy AquaLink RS (and a starting point
+  for contributing new ones) live in the
+  [rs485_frame-examples repository](https://github.com/b3nj1/rs485_frame-examples).
+- **Automatic discovery** — if you don't know your framing bytes yet, enable `discovery:` to
+  let the hub sniff them from the live bus (see [Getting started with an unknown bus](#getting-started-with-an-unknown-bus)).
+  Once framing is known, enable `sniffer_only: true` (see
+  [Step 3: Flash a passive sniffer](#step-3-flash-a-passive-sniffer)) to capture frame types before
+  committing to TX.
+- **Product and installer manuals** often list baud rate and frame format.
+- **Open-source reverse-engineering projects** for your controller family may have already
+  cataloged frame types, escape schemes, and CRC variants — a search turns up community
+  work for many pool, HVAC, and lighting controllers.
+
+> [!WARNING]
+> The Jandy AquaLink RS configurations in rs485_frame-examples are community-contributed and
+> **have not been verified on physical hardware** — the AllButton ACK byte and poll-cycle timing
+> are reverse-engineering guesses. Treat them as a starting point and confirm against a live bus.
+
+A Jandy AllButton emulator must also set `tx.idle_command` (typically `0x00`) unless
+`sniffer_only: true`: it has to ACK every probe within the poll cycle or the controller
+marks it offline. `tx.idle_command` requires a `command_format:` (see below).
+
+## Configuration variables
+
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the hub.
+- **uart_id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the [UART](/components/uart/) bus.
+- **sniffer_only** (*Optional*, boolean): Disable all TX including buttons. Defaults to `false`.
+- **dump_frames** (*Optional*, boolean): Log every validated RX frame payload and every TX
+  frame at DEBUG level. Defaults to `false`.
+- **max_frame_length** (*Optional*, integer, 6–1024): Discard frames longer than this many bytes. Defaults to `128`.
+- **frame_timeout** (*Optional*, [Time](/guides/configuration-types#time)): Reset receive
+  state if a partial frame sits on the bus longer than this. Prevents a noise burst or
+  mid-frame cable pull from permanently stalling reception. Defaults to `50ms`.
+- **framing** (**Required**): DLE-framing configuration. The `escape:` sub-block must be set
+  explicitly; the delimiter bytes default to the de-facto standard but can be overridden.
+
+  `dle`/`stx`/`etx` must be three distinct byte values, and in `escape_byte` mode the escape
+  `byte` must differ from `stx` and `etx`; an ambiguous set is rejected at config time.
+
+  - **dle** (*Optional*, hex byte): Frame delimiter byte. Defaults to `0x10`.
+  - **stx** (*Optional*, hex byte): Start-of-frame byte. Defaults to `0x02`.
+  - **etx** (*Optional*, hex byte): End-of-frame byte. Defaults to `0x03`.
+  - **escape** (**Required**): How a literal DLE inside the payload (and CRC) is byte-stuffed
+    on the wire. There is no default: the wrong scheme silently corrupts any frame that
+    contains a DLE, and which one a bus uses cannot be inferred, so you must declare it.
+
+    - **mode** (**Required**, string): `escape_byte` — a literal DLE is sent as DLE followed
+      by a marker byte (the scheme Hayward uses); or `double` — a literal DLE is sent as two
+      DLE bytes (the more common DLE-doubling convention).
+    - **byte** (**Required** with `mode: escape_byte`, hex byte): The marker byte emitted after
+      a DLE to mark it as literal data, e.g. `0x00`. Must be omitted when `mode: double`.
+
+- **crc** (**Required**): CRC algorithm configuration. There is no cross-bus default, so this
+  block (and its `type`) must be set explicitly.
+
+  - **type** (**Required**, string): `none`, `sum8`, `sum16_big_endian`, `sum16_little_endian`,
+    `xor8`, or `crc16_modbus`. Use `none` to accept any structurally valid frame (e.g. while
+    discovering an unknown bus).
+  - **rx_accept** (*Optional*, list): CRC variants accepted on RX — `header_inclusive`,
+    `payload_only`, or both. Defaults to both.
+  - **tx_variant** (*Optional*, string): CRC variant used when building outbound frames. Defaults to `header_inclusive`.
+
+  `header_inclusive` includes DLE+STX in the CRC sum (e.g. Hayward wireless).
+  `payload_only` computes the CRC over the unescaped payload only (e.g. Hayward wired remotes).
+
+<span id="command-format"></span>
+
+- **command_format** (*Optional*): How a 32-bit `command:` value is serialised into the
+  frame payload. Used by the `command:` form of
+  [rs485_frame buttons](/components/button/rs485_frame/) and by `tx.idle_command`. Left
+  unset by default. Without `command_format:`, the `command:` button form is rejected at
+  config time — use [raw frame transmission](#raw-frame-transmission) (`frame_type:` +
+  `payload:` on the button, or the [`rs485_frame.send_frame` action](#raw-frame-transmission))
+  instead, or add `command_format:` to opt into the encoder.
+
+  - **command_size** (**Required**, integer): Number of bytes used to serialise the
+    command value: `1`, `2`, or `4`. The command is taken from the low `command_size × 8`
+    bits of the 32-bit value.
+  - **preamble** (*Optional*, list of hex bytes): Bytes written to the payload before the
+    command field. Up to 8 bytes. Defaults to `[]` (none).
+  - **command_endian** (*Optional*, string): Byte order of the command field: `big`
+    (most-significant byte first) or `little`. Defaults to `big`.
+  - **command_repeat** (*Optional*, integer, 1–4): How many times the command field is
+    written consecutively. Hayward AquaLogic wired and wireless frames repeat the key
+    code twice; Jandy AllButton uses `1`. Defaults to `1`.
+  - **postamble** (*Optional*, list of hex bytes): Bytes written after the last command
+    repetition. Up to 8 bytes. Defaults to `[]` (none).
+
+  Two representative formats (exercises the full range of fields). Per-device sets are in the
+  [rs485_frame-examples repository](https://github.com/b3nj1/rs485_frame-examples).
+
+  ```yaml
+  # Hayward AquaLogic wireless remote — preamble + repeat + postamble
+  command_format:
+    preamble: [0x00, 0x83, 0x01]   # frame sub-type + channel byte
+    command_size: 4
+    command_repeat: 2
+    postamble: [0x00]              # trailing pad
+
+  # Jandy AquaLink RS AllButton ACK — minimal size-1 case
+  command_format:
+    preamble: [0x00, 0x01, 0x80]
+    command_size: 1
+  ```
+
+  **Hayward wired unit-address customisation:** Hayward AquaLogic distinguishes wired
+  keypads by the second byte of the frame type (`0x02` = main panel, `0x03` = registered
+  wired remote, `0x04` = unit 3, etc.). Choose which unit to impersonate via the second
+  `command_format.preamble` byte:
+
+  ```yaml
+  command_format:
+    preamble: [0x00, 0x04]   # impersonate unit 3
+    command_size: 4
+    command_repeat: 2
+  ```
+
+  What we have observed on a live Hayward AquaLogic / ProLogic bus:
+
+  - `0x02` — full command set accepted. Impersonates the main panel; may collide with
+    physical panel keypresses during simultaneous use.
+  - `0x03` — full command set accepted, no main-panel collision. Use this when your
+    AquaLogic system has a wired remote registered.
+  - `0x04` — partial: only menu / navigation buttons accepted. AUX toggles, Lights, and
+    Filter are silently ignored.
+
+- **on_frame** (*Optional*, [Automation](/automations/)): Automation(s) that fire when a
+  matching frame is received. Multiple entries may be listed; each fires independently based
+  on its `frame_type` filter. The automation receives the payload as `payload`
+  (`const std::vector<uint8_t> &`). Use `[]` to match every frame.
+
+  - **frame_type** (**Required**, list of hex bytes *or* list of byte-lists): Frame-type
+    prefix(es) to match against the start of each received payload. Two forms are
+    accepted:
+
+    ```yaml
+    # Single prefix — the most common case.
+    frame_type: [0x01, 0x03]
+
+    # List of prefixes — one lambda fires for any of the listed frame types. Useful
+    # when several frame types share the same decode (e.g. two display-screen frame
+    # types with identical payload layouts). Up to 4 alternates per entry.
+    frame_type:
+      - [0x01, 0x03]
+      - [0x01, 0x09]
+    ```
+
+    Use `[]` to match every frame. Each prefix is conventionally one or two bytes; up
+    to eight bytes per prefix are accepted (enforced at config time). See the lambda
+    best-practices section above.
+
+- **tx** (*Optional*): TX and command-queue configuration.
+
+  - **queue_policy** (*Optional*, string): `replace_latest` (new command overwrites pending)
+    or `fifo`. Defaults to `replace_latest`.
+  - **max_queue_size** (*Optional*, integer, 1–32): Maximum commands in queue. Must be `1`
+    for `replace_latest`. Defaults to `1`.
+  - **idle_command** (*Optional*, hex uint32): Command value to send on the gate trigger when
+    no real command is queued. **Requires a `command_format:`** on the hub so the value has a
+    defined encoding (rejected at config time otherwise). Encoded using the same rules as
+    `button.command`: the low `command_size × 8` bits are used. Idle transmissions are not
+    counted in the `commands_sent` diagnostic. Typically used (with `0x00`) to keep an
+    emulated bus device responding to every poll.
+
+  - **gate** (*Optional*): TX gate — controls when queued commands are transmitted.
+
+    - **mode** (*Optional*, string): `frame_trigger` (default), `idle_gap`, or `fixed_delay`.
+    - **frame_type** (*Optional*, list of hex bytes): Gate frame for `frame_trigger` mode —
+      the bus keep-alive / poll frame the hub transmits after. Has no default; it is
+      **required and must be non-empty** when `mode` is `frame_trigger` and `sniffer_only` is
+      false (a configuration that would never fire is rejected at config time). Not used by
+      `idle_gap` / `fixed_delay`.
+    - **delay** (*Optional*, [Time](/guides/configuration-types#time)): Additional delay
+      after the gate frame fires. Defaults to `0ms`.
+    - **min_silence** (*Optional*, [Time](/guides/configuration-types#time)): Bus silence
+      required for `idle_gap` mode. Defaults to `4ms`.
+    - **interval** (*Optional*, [Time](/guides/configuration-types#time)): TX interval for
+      `fixed_delay` mode. Defaults to `100ms`.
+
+- **discovery** (*Optional*): Turn the hub into a passive framing/CRC analyzer for an unknown
+  bus. When present, the hub does no framing, validation, or transmission — it captures raw
+  bytes, segments them into frames by idle gap, and periodically logs candidate framing bytes,
+  the escape scheme, and any CRC scheme that matches consistently (see
+  [Auto-discover framing and CRC](#step-2-auto-discover-framing-and-crc-optional)). With
+  `discovery:` set, `framing.escape` and `crc:` are not required (they are what it discovers),
+  and it cannot be combined with `sniffer_stats:`.
+
+  - **interval** (*Optional*, [Time](/guides/configuration-types#time)): How often the
+    discovery report is logged. Defaults to `30s`.
+  - **idle_gap** (*Optional*, [Time](/guides/configuration-types#time)): Idle time that marks
+    the end of a frame (burst). Roughly three character times at the bus baud rate. Defaults to
+    `5ms`. Raise it if frames are being split, lower it if separate frames are merging.
+  - **min_framing_confidence** (*Optional*, integer, 0–100): Minimum share (percent) of bursts
+    that must agree on the same opening (`dle`+`stx`) and closing (`dle`+`etx`) delimiter pair
+    before discovery reports the framing as confident and prints a ready-to-paste config. A real
+    DLE-framed bus sits at or near 100%; a non-DLE or noisy bus splits its votes across many
+    pairs and stays well below. Defaults to `80`. Set to `0` to always print the best guess. CRC
+    detection is independent of this gate and always runs against the current top candidate.
+  - **baud_sweep** (*Optional*, list of integers): When present, discovery first sweeps the UART
+    to find the baud rate (see [Auto-detecting the baud rate](#auto-detecting-the-baud-rate)). It
+    cycles through each listed baud rate — crossed with `data_bits_sweep` — holding each for
+    `dwell`, scores the framing, then locks onto the best before continuing normal analysis. Omit
+    it if you already know the baud rate. Runtime UART reconfiguration is implemented on ESP-IDF
+    and ESP8266; on other platforms the sweep cannot change the settings and is skipped.
+  - **data_bits_sweep** (*Optional*, list of integers, 5–8): Data-bit widths tried at each baud
+    rate. RS485 is almost always 8 data bits; `7` is the only other value worth trying on legacy
+    buses. Defaults to `[8]`. Only used when `baud_sweep` is set.
+  - **dwell** (*Optional*, [Time](/guides/configuration-types#time)): Capture time per sweep
+    candidate before it is scored. The framing must converge within this window, so it needs
+    enough traffic. Defaults to `10s`. Raise it for buses with sparse traffic. Only used when
+    `baud_sweep` is set.
+
+## Payload layout
+
+All `on_frame:` handlers receive the same payload byte vector:
+
+```
+Bytes 0..N-1   frame_type prefix bytes (N = length of the configured frame_type)
+Bytes N+      frame data
+              CRC bytes are stripped during validation
+```
+
+For most protocols `N` is 2, but the schema accepts up to 8. Always guard
+against short payloads in lambdas before indexing past the prefix:
+
+```yaml
+lambda: |-
+  if (payload.size() < 5) return;
+  // payload[2..] is frame data for a 2-byte frame_type
+```
+
+### Offset convention: payload-relative
+
+`rs485_frame` uses **payload-relative** byte offsets: `payload[0]` is the
+first byte of the `frame_type` prefix. For the typical 2-byte frame_type, the
+first data byte is at `payload[2]`. This matches what the lambda actually
+receives at the C++ level — the `payload` vector has already had the DLE+STX
+preamble stripped, escapes unwrapped, and CRC removed, but the frame_type
+bytes are still at the start.
+
+**Community references often use a different convention.** Some strip the
+frame_type before counting, so what they call "byte 0" of the frame is our
+`payload[2]`. When porting offsets from external research, add the
+`frame_type` length (usually 2) to translate. Per-source translation notes and
+examples for common open-source projects are in
+[rs485_frame-examples CONTRIBUTING.md](https://github.com/b3nj1/rs485_frame-examples/blob/main/CONTRIBUTING.md).
+
+## Getting started with an unknown bus
+
+Use this workflow when you don't yet have known-good settings for your controller.
+
+### Step 1: Gather existing research
+
+Search for prior work before touching hardware. The HA community forums and GitHub
+often have threads with baud rates, framing details, and frame-type catalogs for
+specific controllers.
+
+### Step 2: Auto-discover framing and CRC (optional)
+
+If you do not know the framing bytes at all, enable `discovery:` first. The hub then does no
+framing, validation, or transmission — it passively captures raw bytes, segments them into
+frames by idle gap, and every `interval` logs the candidate `dle`/`stx`/`etx` delimiters, the
+escape scheme, and any CRC scheme that matches consistently across captured frames, ending with
+a ready-to-paste `framing:` block.
+
+```yaml
+rs485_frame:
+  id: bus
+  uart_id: bus_uart
+  discovery: {}        # no framing/crc needed: this is what it discovers
+```
+
+```
+[I][rs485_frame.discovery]: RS485 discovery (cumulative since boot): 412 bursts, 431 frames extracted
+[I][rs485_frame.discovery]:   Framing: DLE=0x10 STX=0x02 ETX=0x03  (confidence 100%, start pair x412, end pair x412 of 412 bursts)
+[I][rs485_frame.discovery]:   Escape: escape_byte 0x00 - 100% of 37 in-frame DLEs
+[I][rs485_frame.discovery]:   CRC match: sum16_big_endian header_inclusive (unescaped) - 431/431 frames
+[I][rs485_frame.discovery]:   Suggested framing/escape config:
+[I][rs485_frame.discovery]:     framing:
+[I][rs485_frame.discovery]:       dle: 0x10
+...
+```
+
+Discovery tests the DLE-framing hypothesis. A length-prefixed, fixed-size, or Modbus-style bus
+produces no coherent candidate (the report says so), which itself tells you the bus is not
+DLE-framed. The framing line reports a `confidence` percentage: the share of bursts that agree
+on the same opening and closing delimiter pair. The ready-to-paste config is printed only once
+that clears `min_framing_confidence` (default 80%), so a bus that never converges (confidence
+stays low) is a strong signal it is not DLE-framed. Confidence scales with traffic: a 2-byte CRC
+is trusted after a handful of frames,
+a 1-byte checksum needs many more (it matches a wrong scheme 1 time in 256 by chance). The
+segmenter resolves idle gaps only at the loop cadence, so very tightly packed frames may merge;
+raise `discovery.idle_gap` if bursts look split, lower it if frames look merged. Feed the
+suggested values into the sniffer in the next step.
+
+> [!TIP]
+> If discovery reports zero bursts, set `flow_control_pin` on the `uart:` to your adapter's DE/RE
+> pin. Most half-duplex RS485 transceivers keep the receiver disabled until that pin is driven, so
+> without it you capture nothing. Discovery never transmits, so ESPHome just holds the pin in the
+> receive state.
+
+`discovery:` cannot be combined with `sniffer_stats:` (which needs the validated-frame path
+discovery bypasses).
+
+#### Auto-detecting the baud rate
+
+If you do not even know the bus baud rate, add `baud_sweep:` to `discovery:`. The hub then cycles
+the UART through each listed baud rate (crossed with `data_bits_sweep`), holds each setting for
+`dwell`, scores the framing with the same machinery described above, and locks onto the
+best-scoring candidate before continuing. The winner is the setting where the framing converges
+and a CRC matches — a wrong baud or data-bit width corrupts every byte, so no checksum can agree
+across frames.
+
+```yaml
+rs485_frame:
+  id: bus
+  uart_id: bus_uart
+  discovery:
+    baud_sweep: [9600, 19200, 38400, 57600, 115200]
+    dwell: 10s          # capture time per candidate; raise it for sparse buses
+```
+
+```
+[I][rs485_frame.discovery]: Starting baud/data-bits sweep: 5 candidate(s), 10000 ms each
+[I][rs485_frame.discovery]: Baud sweep: trying 9600 baud, 8 data bits (candidate 1/5) for 10000 ms
+[I][rs485_frame.discovery]: Baud sweep result: 9600 baud 8 data bits -> framing confidence 0%, no CRC match, 0 frames
+...
+[I][rs485_frame.discovery]: Baud sweep result: 19200 baud 8 data bits -> framing confidence 100%, CRC matched, 431 frames
+[I][rs485_frame.discovery]: Baud sweep complete: locked to 19200 baud, 8 data bits (framing confidence 100%, CRC matched). Continuing discovery at these settings.
+```
+
+After the sweep locks, the normal framing/escape/CRC report follows, now prefixed with a
+ready-to-paste `uart:` snippet for the detected settings.
+
+**What the sweep can and cannot determine.** Passive listening can recover the **baud rate** and
+**data-bit width** reliably: a wrong value yields garbage that never frames or checksums, so it is
+rejected. It *cannot* determine **parity** or **stop bits**, because a receiver decodes a stream
+correctly even when its parity/stop settings disagree with the transmitter's (the parity bit is
+simply ignored on receive, and an extra stop bit is tolerated). The sweep therefore does not try
+them, and the suggested `uart:` snippet omits them — start with `parity: NONE` and `stop_bits: 1`.
+
+> [!NOTE]
+> Parity and stop bits only matter once you start **transmitting**. If commands you send are
+> ignored by the device even though receive and framing look correct, iterate the `uart:`
+> `parity:` and `stop_bits:` settings: try `parity: EVEN` then `parity: ODD`, and `stop_bits: 2`,
+> until the device responds. RS485 buses overwhelmingly use 8 data bits with either `NONE`/`1` or
+> `EVEN`/`1`; `stop_bits: 2` is the next most common. There are only a handful of combinations, so
+> a short manual sweep of the `uart:` block settles it.
+
+> [!NOTE]
+> `baud_sweep` needs runtime UART reconfiguration, which is implemented on ESP-IDF and ESP8266. On
+> other platforms the sweep is skipped and discovery runs at the `uart:` settings as configured.
+
+### Step 3: Flash a passive sniffer
+
+Create a YAML with `sniffer_only: true` and `dump_frames: true`. Set
+`crc: {type: none}` so every framing-valid frame is logged regardless of CRC.
+`sniffer_only` hubs need no `tx.gate.frame_type`.
+
+`framing.escape` is still required: pick `mode: double` (DLE doubling, the more common
+convention) or `mode: escape_byte` with the marker byte your bus uses. On a bus you have not
+yet characterized, start with `double`; if payloads decode with stray `0x10` bytes, switch to
+`escape_byte` and re-check.
+
+```yaml
+rs485_frame:
+  id: bus
+  uart_id: bus_uart
+  sniffer_only: true
+  dump_frames: true
+  framing:
+    escape:
+      mode: double
+  crc:
+    type: none
+
+text_sensor:
+  - platform: rs485_frame
+    rs485_frame_id: bus
+    name: "Last Frame Type"
+
+sensor:
+  - platform: rs485_frame
+    rs485_frame_id: bus
+    name: "Frames Received"
+    decode: frames_received
+    # The rs485_frame sensor platform fills in state_class, unit_of_measurement, and
+    # entity_category automatically per decode value — no extra YAML needed.
+    filters:
+      - throttle: 10s
+```
+
+### Step 4: Catalog frame types from logs
+
+With `dump_frames: true` and logger at DEBUG level, each validated frame is logged:
+
+```
+[D][rs485_frame:xxx]: RX 010101
+[D][rs485_frame:xxx]: RX 0102010200000800000800
+[D][rs485_frame:xxx]: RX 010301035000506f6f6c2054...
+```
+
+The first four hex chars are the two-byte frame type. Collect these over a few
+minutes and note cadence. Press physical buttons and watch for new frame types.
+
+### Step 5: Confirm the CRC
+
+Once you have captured payloads, test CRC candidates. Temporarily set `rx_accept`
+to only one variant and watch whether `crc_failures` climbs.
+
+### Step 6: Configure decoders
+
+Replace the sniffer config with `on_frame:` handlers that decode each frame type
+of interest, plus `template` sensors that receive the decoded values via
+`id(...).publish_state(...)`. See the [Basic usage](#basic-usage) example.
+
+### Optional: enable sniffer stats
+
+When you want to characterize an unfamiliar bus quickly — cadences, which
+frame types are common vs. rare, how variable each payload is — add a
+`sniffer_stats:` block to the hub. Every `interval` it logs one compact table
+sorted by frame count, then clears its per-period counters. The table includes
+per-frame-type min/median/max for two delays (since the reference frame and
+since the previous frame of the same type) plus a unique-payload count.
+
+```yaml
+rs485_frame:
+  id: bus
+  uart_id: bus_uart
+  sniffer_only: true
+  framing:
+    escape:
+      mode: double
+  crc:
+    type: none
+  sniffer_stats:
+    interval: 30s
+    payload_dump_top: 3      # also dump hex+ASCII for the top 3 frame types
+```
+
+Example output on an idle Hayward AquaLogic bus:
+
+```
+[I][rs485_frame.stats]: RS485 sniffer stats over 30000 ms (sorted by count):
+[I][rs485_frame.stats]:   type  cnt    d-ref(min/med/max)    d-same(min/med/max)   payloads
+[I][rs485_frame.stats]:   0101   297       -     -     -        98   100   110   1 unique
+[I][rs485_frame.stats]:   0102    30       0     3    15       980  1000  1100   2 unique
+[I][rs485_frame.stats]:   0103    30       0     4    18       980  1000  1100   4 unique +12
+```
+
+The reference frame defaults to whatever `tx.gate.frame_type` is set to
+(typically the bus keep-alive) so `d-ref` measures the offset of each frame
+from the last keep-alive. The row for the reference frame itself always shows
+`-` in the `d-ref` column. Set `reference_frame_type:` explicitly if you want
+to measure delays against a different frame type.
+
+> [!TIP]
+> On a brand-new bus you will not know the keep-alive frame yet, so leave both
+> `tx.gate.frame_type` and `reference_frame_type` unset for the first capture (with no reference,
+> the `d-ref` column shows `-` for every row). The keep-alive is the frame type that stands out
+> in the table: highest `cnt` and a tight, regular cadence — its `d-same` min, median, and max
+> are nearly equal (low jitter). Pick that frame type as your `tx.gate.frame_type` (and, if you
+> want, `reference_frame_type`) and re-capture; the `d-ref` column then becomes meaningful.
+
+Every period starts with an empty payload list and freshly-zeroed counters.
+That way each dump is an independent capture window: press one set of buttons,
+copy the table, then press a different set in the next window without having
+to reboot the ESP. The `+N` suffix on the payloads column means N additional
+unique payloads arrived but did not fit in the per-frame-type capture buffer
+(`max_unique_payloads` slots). With `payload_dump_top: N`, the top N frame
+types by count get their captured payloads logged in hex + ASCII immediately
+after the table, each prefixed by the count of times it was observed.
+
+The whole feature is compiled out of the firmware unless `sniffer_stats:`
+appears in the YAML — production builds pay no flash or RAM cost.
+
+#### Sniffer-stats configuration variables
+
+- **interval** (*Optional*, [Time](/guides/configuration-types#time)): How often to log the table. Defaults to `30s`.
+- **max_frame_types** (*Optional*, integer, 1–64): Maximum distinct frame types tracked. Frame types past this cap are
+  counted as "dropped events" and logged after the table. Defaults to `32`.
+- **max_unique_payloads** (*Optional*, integer, 1–64): Distinct payloads remembered per frame type during one dump
+  period. Additional unique payloads beyond this cap are counted in the `+N` overflow. Defaults to `16`.
+- **payload_capture_bytes** (*Optional*, integer, 1–255): Maximum payload bytes captured per unique sample. Longer
+  payloads are truncated at this length for uniqueness comparison and hex/ASCII display. Defaults to `32`.
+- **payload_dump_top** (*Optional*, integer, 0–32): After the table, dump hex+ASCII payloads for the top N frame types
+  by count. `0` (default) disables.
+- **reference_frame_type** (*Optional*, list of hex bytes): Frame type used as the `d-ref` timing reference. Defaults
+  to `tx.gate.frame_type`.
+- **ascii_strip_high_bit** (*Optional*, boolean): When `true`, bit 7 is masked before the printable-range gate in
+  the hex+ASCII payload preview. Enable for display-frame buses that pack an attribute flag (e.g. blink/inverse) into
+  the high bit, so the underlying character renders instead of `'.'`. Leave `false` (default) on binary buses where
+  the high bit carries data — otherwise distinct values like `0x41` and `0xC1` would both print as `A`.
+
+Each tracked frame type holds `max_unique_payloads × payload_capture_bytes`
+of payload buffer plus small bookkeeping. With defaults of 32 frame types ×
+16 payloads × 32 bytes that's ~16 KB during sniffing — fine for ESP32, tight
+on ESP8266 where you'll likely want to lower one of the three knobs.
+
+## Diagnostics
+
+The `rs485_frame` sensor and text_sensor platforms expose hub-state diagnostics
+as Home Assistant entities. They do **not** decode user payloads — for that, use
+`on_frame:`.
+
+| sensor `decode` | Description | `state_class` | `unit_of_measurement` | other |
+|---|---|---|---|---|
+| `frames_received` | Validated frames received. | `total_increasing` | `frames` | |
+| `crc_failures` | Frames that failed validation (CRC or structural). | `total_increasing` | `frames` | |
+| `commands_sent` | User commands transmitted (idle keepalives excluded). | `total_increasing` | `commands` | |
+| `command_drops` | Commands dropped (queue full or sniffer mode). | `total_increasing` | `commands` | |
+| `last_keepalive_ms` | Gate-frame interval in ms. | `measurement` | `ms` | `device_class: duration` |
+| `queue_depth` | Current TX queue depth (including any pending delayed). | `measurement` | `commands` | |
+
+All diagnostic sensors are emitted with `entity_category: diagnostic` so Home
+Assistant groups them under the device's Diagnostic section. You can override
+any of the defaults above by setting the same key explicitly in your YAML.
+
+The text_sensor exposes one diagnostic: the most recent validated frame type as a
+4-character hex string (e.g. `"0083"`, no separator). It also defaults to
+`entity_category: diagnostic` and publishes only on change.
+
+```yaml
+sensor:
+  - platform: rs485_frame
+    rs485_frame_id: pool
+    name: "Frames Received"
+    decode: frames_received
+
+  - platform: rs485_frame
+    rs485_frame_id: pool
+    name: "CRC Failures"
+    decode: crc_failures
+
+text_sensor:
+  - platform: rs485_frame
+    rs485_frame_id: pool
+    name: "Last Frame Type"
+```
+
+A rising `crc_failures` with zero `frames_received` usually means the wrong baud
+rate or UART settings. A small steady `crc_failures` alongside healthy
+`frames_received` suggests `crc.type` or `crc.rx_accept` needs adjustment.
+
+## Why buttons, not switches
+
+Each `rs485_frame` button sends a single frame event onto the bus. What the bus device
+does with it — and whether the device state changes — depends on the device. The ESP has
+no way to know the outcome from the send alone; the ground truth is in whatever response
+frame the bus emits afterward. Read that state with `on_frame:` handlers and expose it
+through `platform: template` binary sensors; do not infer it from the fact that a command
+was sent.
+
+On Hayward AquaLogic this maps directly to pressing a physical panel key: the controller
+decides whether to change state, and the LED status frame that follows is the authoritative
+answer.
+
+## See also
+
+- [rs485_frame-examples](https://github.com/b3nj1/rs485_frame-examples) — ready-to-use
+  configurations for Hayward AquaLogic and other DLE-framed RS485 controllers.
+- [rs485_frame sensor](/components/sensor/rs485_frame/) — hub diagnostic sensors.
+- [rs485_frame text\_sensor](/components/text_sensor/rs485_frame/) — `last_frame_type` diagnostic.
+- [rs485_frame button](/components/button/rs485_frame/)
+- [rs485_frame number](/components/number/rs485_frame/)
+- [UART](/components/uart/)

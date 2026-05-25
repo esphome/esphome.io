@@ -1,0 +1,71 @@
+---
+description: "Instructions for setting up RS485 Frame diagnostic sensors."
+title: "RS485 Frame Sensor"
+params:
+  seo:
+    description: Instructions for setting up RS485 Frame diagnostic sensors that expose hub counters and statistics.
+---
+
+The `rs485_frame` sensor platform exposes hub-state diagnostics (frame counters,
+CRC failures, queue depth, etc.) as Home Assistant sensors. It requires the
+[RS485 Frame](/components/rs485_frame/) hub to be configured.
+
+User payload decoding is **not** done on this platform. To decode the contents
+of received frames, use [`on_frame:` on the hub](/components/rs485_frame/#configuration-variables)
+with `platform: template` sensors — that pattern handles every case from a
+single bit-field LED mask through a multi-field temperature/text frame.
+
+## Configuration variables
+
+- **rs485_frame_id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the `rs485_frame` hub.
+- **decode** (**Required**, string): Which hub diagnostic value to publish. Each
+  decode value carries Home-Assistant-conformant defaults (state class, unit, and
+  for `last_keepalive_ms` a device class) so you do not have to set them yourself:
+
+  | decode | Description | `state_class` | `unit_of_measurement` | other |
+  |---|---|---|---|---|
+  | `frames_received` | Validated frames received. | `total_increasing` | `frames` | |
+  | `crc_failures` | Frames that failed validation (CRC or structural). | `total_increasing` | `frames` | |
+  | `commands_sent` | User commands transmitted (idle keepalives excluded). | `total_increasing` | `commands` | |
+  | `command_drops` | Commands dropped (queue full or sniffer mode). | `total_increasing` | `commands` | |
+  | `last_keepalive_ms` | Gate-frame interval in ms. | `measurement` | `ms` | `device_class: duration` |
+  | `queue_depth` | Current TX queue depth (including any pending delayed). | `measurement` | `commands` | |
+
+All other options from [Sensor](/components/sensor/#base-sensor-configuration).
+Every diagnostic also defaults to `entity_category: diagnostic`. You can override
+any of the per-decode defaults by setting the same key explicitly in YAML.
+
+Sensors publish on change only. A counter that has not advanced does not generate
+API traffic, so no `throttle` filter is required for steady-state operation.
+
+## Example
+
+```yaml
+sensor:
+  - platform: rs485_frame
+    rs485_frame_id: pool
+    name: "Frames Received"
+    decode: frames_received
+
+  - platform: rs485_frame
+    rs485_frame_id: pool
+    name: "CRC Failures"
+    decode: crc_failures
+
+  - platform: rs485_frame
+    rs485_frame_id: pool
+    name: "Queue Depth"
+    decode: queue_depth
+```
+
+## Interpreting the counters
+
+- A rising `crc_failures` with zero `frames_received` usually means the wrong
+  baud rate or UART settings.
+- A small steady `crc_failures` alongside healthy `frames_received` suggests
+  `crc.type` or `crc.rx_accept` needs adjustment.
+- `command_drops` should stay at 0 in normal operation. With `queue_policy: replace_latest`,
+  every press that arrives while another command is pending increments the counter — useful for
+  detecting button mash. With `queue_policy: fifo`, drops indicate the queue is too small.
+- `last_keepalive_ms` shows the bus poll interval. Sudden changes here often
+  indicate bus contention or controller reboots.

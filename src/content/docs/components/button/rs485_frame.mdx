@@ -1,0 +1,168 @@
+---
+description: "Instructions for setting up RS485 Frame buttons."
+title: "RS485 Frame Button"
+params:
+  seo:
+    description: Instructions for setting up RS485 Frame buttons to send commands on a DLE-framed RS485 bus.
+---
+
+Each `rs485_frame` button entity is a shortcut for sending one pre-configured frame onto the
+bus. Pressing the button dispatches that frame immediately — no encoding or byte-assembly
+needed at automation time. On buses where the target device treats incoming frames as
+commands (like pressing a key on a physical panel), a button entity gives you direct
+control from Home Assistant. It requires the [RS485 Frame](/components/rs485_frame/) hub to
+be configured, and supports three construction forms:
+
+- **`command:`** — encodes a 32-bit key value into the on-wire payload using the hub's
+  [`command_format:`](/components/rs485_frame/#command-format) block. Requires the hub to have
+  a `command_format:` set. Note that `command_format.command_size` may serialise only the low
+  1 or 2 bytes of the value (see the hub's `command_format` docs).
+- **`frame_type:` + `payload:`** — bypasses `command_format:` entirely. The supplied
+  frame type and payload bytes are sent as-is after DLE-framing, byte-stuffing, and CRC.
+  Use this for hubs with no `command_format:`, probe frames, or any custom frame layout. See
+  also the [rs485_frame.send_frame action](/components/rs485_frame/#raw-frame-transmission)
+  for invoking raw frames from scripts or computed-payload contexts.
+- **`command:` + `command_format:`** — encodes a 32-bit key value using a button-level
+  `command_format:` block instead of the hub's. Use this when one button needs a different
+  encoding than the hub default (different preamble, size, repeat, or postamble), or when
+  the hub has no `command_format:` set and you want the `command:` shorthand on a single
+  button without adding a hub-level encoder.
+
+The `command:` form and the `frame_type:` + `payload:` form are mutually exclusive.
+`command_format:` on the button can only be combined with `command:`, not with
+`frame_type:` / `payload:`.
+
+## How commands work
+
+A button press queues a frame on the hub, which transmits it during the next TX gate
+window. What happens after depends on your bus: the remote device may toggle a state,
+execute an action, or send back an acknowledgement — the ESP cannot know the outcome until
+it reads a subsequent response frame. That is why each button entity models a single
+outbound frame event rather than a stateful on/off switch.
+
+On Hayward AquaLogic pool controllers, for example, this maps directly to pressing a key
+on the physical panel: the controller receives the frame (typically within its 100 ms
+keep-alive cycle) and decides whether to change state; the LED status frame that follows
+reflects the result.
+
+### Finding command values
+
+Enable `dump_frames: true` and `sniffer_only: true` on the hub, then press a physical
+button on your controller and watch the ESP log. Each validated frame is printed in hex;
+the first two bytes are the frame type. Identify which new frame type appears and capture
+its payload. If the payload follows a preamble / command-bytes / postamble structure that
+repeats across buttons, describe it with `command_format:` on the hub and derive the
+`command:` value from the changing portion. If the frame layout does not fit that shape,
+use the raw `frame_type:` + `payload:` form instead.
+
+Known `command:` values for Hayward AquaLogic and Jandy AquaLink RS are in the
+[rs485_frame-examples](https://github.com/b3nj1/rs485_frame-examples) repository,
+confirmed from live bus captures. AUX outputs are controller-wiring-dependent — rename
+and verify against your physical panel.
+
+## Configuration variables
+
+- **rs485_frame_id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the `rs485_frame` hub.
+
+Provide **exactly one** of the following forms:
+
+- **command** (**Required**, hex uint32): Command value (e.g. `0x00010000`). Encoded by the
+  hub's `command_format:`, which may use only the low 1 or 2 bytes depending on
+  `command_size`. Rejected at config time if the hub has no `command_format:` — use the raw
+  form, add `command_format:` to the hub, or add `command_format:` directly to this button.
+- **frame_type** + **payload** (**Required together** when not using `command:`):
+
+  - **frame_type** (list of hex bytes): 2-byte (or longer, up to 8 bytes) frame type prefix.
+    Same convention as `gate.frame_type` and `on_frame.frame_type` elsewhere in the component.
+  - **payload** (list of hex bytes): The payload bytes that follow the frame type.
+    Caller-composed; the hub adds framing and CRC.
+
+- **command_format** (*Optional*): Overrides the hub's `command_format:` for this button
+  only. Accepts the same sub-keys as [`command_format:` on the hub](/components/rs485_frame/#command-format):
+  `preamble`, `command_size`, `command_endian`, `command_repeat`, `postamble`. When present,
+  the `command:` form is accepted even if the hub has no `command_format:` set. Cannot be
+  combined with `frame_type:` / `payload:`.
+
+All other options from [Button](/components/button/#base-button-configuration).
+
+## Examples
+
+### Command form (hub with a `command_format:`)
+
+```yaml
+button:
+  - platform: rs485_frame
+    rs485_frame_id: pool
+    name: "Pool Lights"
+    command: 0x00010000  # confirmed from bus capture
+
+  - platform: rs485_frame
+    rs485_frame_id: pool
+    name: "Filter"
+    command: 0x80000000
+
+  - platform: rs485_frame
+    rs485_frame_id: pool
+    name: "Pool/Spa Mode"
+    command: 0x40000000
+```
+
+### Raw form (custom devices, no `command_format:`)
+
+```yaml
+button:
+  - platform: rs485_frame
+    rs485_frame_id: my_device
+    name: "Open Door"
+    frame_type: [0x00, 0xA1]
+    payload: [0x01, 0x00, 0x55]
+
+  - platform: rs485_frame
+    rs485_frame_id: my_device
+    name: "Close Door"
+    frame_type: [0x00, 0xA1]
+    payload: [0x01, 0x00, 0xAA]
+```
+
+### Per-button command_format override
+
+Use when a single button needs a different encoding than the hub default, or when the hub
+has no `command_format:` set (for example, a Hayward AquaLogic setup where most buttons
+use the wired-remote preamble but one must use the wireless preamble):
+
+```yaml
+button:
+  - platform: rs485_frame
+    rs485_frame_id: pool
+    name: "System Off"
+    command: 0x08000000
+    command_format:
+      preamble: [0x00, 0x83, 0x01]
+      command_size: 4
+      command_endian: big
+      command_repeat: 2
+      postamble: [0x00]
+```
+
+Read the resulting state from a response frame on the bus — decode the relevant frame type
+in `on_frame:` on the hub and push to `template` binary sensors. See the
+[Basic usage example](/components/rs485_frame/#basic-usage) for the general pattern. For a
+single status bit decoded from a Hayward AquaLogic LED-mask frame:
+
+```yaml
+rs485_frame:
+  id: pool
+  on_frame:
+    - frame_type: [0x01, 0x02]
+      then:
+        - lambda: |-
+            if (payload.size() < 6) return;
+            uint32_t mask = uint32_t(payload[2]) | (uint32_t(payload[3]) << 8) |
+                            (uint32_t(payload[4]) << 16) | (uint32_t(payload[5]) << 24);
+            id(led_filter).publish_state(bool(mask & (1UL << 5)));
+
+binary_sensor:
+  - platform: template
+    id: led_filter
+    name: "Filter"
+```
