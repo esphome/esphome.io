@@ -347,22 +347,11 @@ esp32:
   - `https://github.com/user/esp-idf.git#branch`
   - `symlink:///path/to/esp-idf`
 
-  When the [native ESP-IDF toolchain](/guides/esp_idf/) is selected, the value must be one of:
+  When the [native ESP-IDF toolchain](/guides/esp_idf/) is selected, the value may also be one of the
+  following GitHub forms, which clone the repository with submodules:
 
-  - A pre-bundled framework archive URL (`.tar.xz`, `.tar.gz`, or `.zip`) that **includes git submodules**
-    inside the archive — for example a tarball from
-    [esphome-libs/esp-idf releases](https://github.com/esphome-libs/esp-idf/releases) (the same place the
-    default mirrors point to).
-  - One of the following GitHub forms, which clone the repository with submodules:
-
-    - `github://owner/repo` or `github://owner/repo@branch-or-tag`
-    - `https://github.com/owner/repo.git` or `https://github.com/owner/repo.git@branch-or-tag`
-
-  GitHub's auto-generated archive URLs (anything matching
-  `https://github.com/owner/repo/archive/...zip` or `.../archive/refs/heads/...tar.gz`) do **not** work
-  with the native ESP-IDF toolchain: they strip git submodules, and ESP-IDF needs them for components like
-  `mbedtls`, `openthread`, `esptool`, and `bootloader`. Use one of the `github://` / `.git` forms above to
-  clone from such a repository instead.
+  - `github://owner/repo` or `github://owner/repo@branch-or-tag`
+  - `https://github.com/owner/repo.git` or `https://github.com/owner/repo.git@branch-or-tag`
 
 - **platform_version** (*Optional*, string): The version of the
   [pioarduino/espressif32](https://github.com/pioarduino/platform-espressif32/releases/) package to use. For known framework versions
