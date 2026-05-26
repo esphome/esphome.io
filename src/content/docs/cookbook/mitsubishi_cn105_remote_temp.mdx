@@ -7,7 +7,7 @@ Mitsubishi heatpumps equipped with the `CN105` internal connector support readin
 The advantage of this feature is that a remote sensor can be placed more optimally in the room to get information about the
 real temperature.
 
-The `mitsubishi_cn105` component supports this feature by providing [actions and lambdas](/automations/) to update the hardware
+The [Mitsubishi CN105 Climate](/components/climate/mitsubishi_cn105/) component supports this feature by providing [actions and lambdas](/automations/) to update the hardware
 with any temperature values available in ESPHome.
 
 The following is a possible configuration to implement this. Some heatpumps require frequent tempearture updates to prevent from
@@ -16,6 +16,11 @@ failing sensors - that's when one would still want to continue operation, based 
 possibility to choose at run time between which temperature source to use with the heatpump.
 
 ```yaml
+climate:
+  - platform: mitsubishi_cn105
+    id: ac
+    ...
+
 sensor:
   - platform: ...
     ...
