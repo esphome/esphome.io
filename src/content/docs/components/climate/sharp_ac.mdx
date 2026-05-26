@@ -1,0 +1,134 @@
+---
+description: "Instructions for setting up Sharp/Bosch/Buderus/IVT UART climate devices."
+title: "Sharp AC Climate"
+---
+
+import Figure from '@components/Figure.astro';
+import CN13PinoutImg from './images/cn13.png';
+
+The `sharp_ac` component allows communication with compatible Sharp/Bosch/Buderus/IVT indoor units over UART.
+
+The component communicates with the indoor unit over UART and provides control and state reporting.
+
+## Hardware Connection
+
+The indoor unit UART header exposes power and serial communication lines.
+
+### CN13 pinout
+
+<Figure
+  src={CN13PinoutImg}
+  alt="CN13 wiring diagram"
+  caption="CN13 connector wiring"
+  layout="constrained"
+/>
+
+### Pin mapping (HVAC to ESP)
+
+| Wire color | HVAC signal | ESP signal |
+| ---------- | ----------- | ---------- |
+| Black      | GND         | GND        |
+| White      | RX          | TX         |
+| Green      | TX          | RX         |
+| Red        | 5V          | VCC        |
+
+> [!WARNING]
+> Verify connector pinout and voltage levels before connecting.
+
+This component requires a [UART bus](/components/uart/) configured with:
+
+- 8 data bits
+- EVEN parity
+- 1 stop bit
+- Baud rate `9600`
+
+> [!NOTE]
+> Many indoor units use 5V UART levels. If your ESP board is 3.3V-only, use a proper level shifter.
+
+## Example configuration
+
+```yaml
+logger:
+  baud_rate: 0
+
+uart:
+  id: ac_uart
+  tx_pin: GPIO1
+  rx_pin: GPIO3
+  data_bits: 8
+  baud_rate: 9600
+  parity: EVEN
+  stop_bits: 1
+
+climate:
+  - platform: sharp_ac
+    id: hvac
+    name: "Living Room AC"
+    uart_id: ac_uart
+    vane:
+      horizontal:
+        name: "Horizontal Vane"
+      vertical:
+        name: "Vertical Vane"
+    ion_switch:
+      name: "Plasmacluster"
+    connection_status:
+      name: "Connection Status"
+    reconnect_button:
+      name: "Reconnect"
+```
+
+> [!WARNING]
+> If you are using the [Logger Component](/components/logger#logger), make sure you are not using the same pins, or disable UART
+> logging with:
+>
+> ```yaml
+> logger:
+>   baud_rate: 0
+> ```
+
+## Supported features
+
+- Target temperature range: `16 °C` to `30 °C`
+- HVAC modes: `OFF`, `COOL`, `HEAT`, `DRY`, `FAN_ONLY`
+- Fan modes: `AUTO`, `LOW`, `MEDIUM`, `HIGH`
+- Presets: `NONE`, `ECO`, `BOOST`
+- Swing modes: `OFF`, `HORIZONTAL`, `VERTICAL`, `BOTH`
+- Current temperature reporting
+
+## Configuration variables
+
+- **uart_id** (*Optional*, [ID](/guides/configuration-types#id)): The UART bus to use.
+- **vane** (*Optional*): Additional vane position controls.
+
+  - **horizontal** (*Optional*): Horizontal vane `select` entity.
+
+    - All options from [Select](/components/select).
+
+  - **vertical** (*Optional*): Vertical vane `select` entity.
+
+    - All options from [Select](/components/select).
+
+- **ion_switch** (*Optional*): Optional ion/plasmacluster switch entity.
+
+  - All options from [Switch](/components/switch).
+
+- **connection_status** (*Optional*): Optional connection state text sensor.
+
+  - All options from [Text Sensor](/components/text_sensor).
+
+- **reconnect_button** (*Optional*): Optional button that restarts the UART session.
+
+  - All options from [Button](/components/button).
+
+- All other options from [Climate](/components/climate#config-climate).
+
+## Notes
+
+- The integration initializes a connection sequence on boot and continuously polls status updates.
+- `connection_status` reports setup progress (`Connecting (x/8)`) and `Connected` once initialization completes.
+- `reconnect_button` can be used to manually re-trigger the protocol initialization if communication stalls.
+
+## See Also
+
+- [Climate Component](/components/climate/)
