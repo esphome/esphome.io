@@ -42,6 +42,17 @@ For repository structure and local development setup, see the [README](README.md
 
 @CONTRIBUTING.md
 
+## Verifying Style Before Submitting
+
+After generating or modifying MDX content, verify against the
+[Before Submitting](CONTRIBUTING.md#before-submitting) checklist in CONTRIBUTING.md. Items easy to overlook:
+
+- Section titles in Title Case
+- Variable names and short code snippets wrapped in backticks
+- Markdown syntax preferred when it produces the same result as raw HTML
+- Repeated HTML or CSS structure may be a candidate for a reusable Astro component — flag in the PR description
+  if you're not sure
+
 ## Guidelines for AI Generated Reviews and PR Summaries
 
 Avoid the use of flowery language and weasel-words that add no useful content. Keep comments concise and technically
