@@ -23,10 +23,10 @@ climate:
 
 sensor:
   - platform: ...
-    ...
     id: my_temp
-    update_interval: 10s
+    ...
     accuracy_decimals: 1
+    update_interval: 10s
     force_update: true
     filters:
       - filter_out: nan  # occasional NaNs are OK
@@ -48,13 +48,13 @@ sensor:
 
 select:
   - platform: template
-    name: "Temperature Source"
     id: sel_temp
+    name: "Temperature Source"
     optimistic: true
+    restore_value: true
     options:
       - Internal
       - External
-    restore_value: true
     initial_option: "Internal"
     on_value:
       - if:
