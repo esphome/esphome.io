@@ -8,6 +8,7 @@ sidebar:
 import APIClass from '@components/APIClass.astro';
 import APIStruct from '@components/APIStruct.astro';
 import APIRef from '@components/APIRef.astro';
+import LightEffectPreview from '@components/LightEffectPreview.astro';
 
 In ESPHome, `light` components allow you to create lights usable from Home Assistant's frontend and have many
 features such as colors, transitions and even effects.
@@ -498,305 +499,43 @@ light:
 > After setting a light effect, it is possible to reset the in-use effect back to a static light by setting the
 > `effect` to `none` when it is being called through Home Assistant or directly on the device.
 
-<style>{`
-  .fx-preview { display: inline-flex; align-items: center; background: #111; padding: 4px 6px; border-radius: 4px; line-height: 0; vertical-align: middle; }
-  .fx-bulb { width: 24px; height: 24px; border-radius: 50%; background: #ffd24a; display: inline-block; }
-  .fx-strip { display: inline-flex; gap: 1px; }
-  .fx-pixel { width: 6px; height: 14px; background: #000; display: inline-block; }
-
-  .fx-pulse .fx-bulb { animation: fx-pulse 1.6s ease-in-out infinite; }
-  @keyframes fx-pulse { 0%, 100% { opacity: 0.2; } 50% { opacity: 1; } }
-
-  .fx-random .fx-bulb { animation: fx-random 2.4s steps(1) infinite; }
-  @keyframes fx-random { 0% { background: #ff3860; } 25% { background: #23d160; } 50% { background: #209cee; } 75% { background: #ffdd57; } 100% { background: #ff3860; } }
-
-  .fx-strobe .fx-bulb { animation: fx-strobe 0.4s steps(1) infinite; }
-  @keyframes fx-strobe { 0% { opacity: 1; } 50% { opacity: 0.05; } 100% { opacity: 1; } }
-
-  .fx-flicker .fx-bulb { background: #ffb04a; animation: fx-flicker 1.3s linear infinite; }
-  @keyframes fx-flicker { 0% { opacity: 0.9; } 13% { opacity: 1.0; } 21% { opacity: 0.65; } 34% { opacity: 0.95; } 47% { opacity: 0.75; } 61% { opacity: 1.0; } 73% { opacity: 0.7; } 88% { opacity: 0.9; } 100% { opacity: 0.85; } }
-
-  .fx-lambda .fx-bulb { background: #444; display: inline-flex; align-items: center; justify-content: center; color: #fff; font: bold 14px/1 monospace; }
-  .fx-lambda .fx-bulb::before { content: "\\03BB"; }
-
-  .fx-rainbow .fx-pixel { animation: fx-rainbow 2.2s linear infinite; }
-  .fx-rainbow .fx-pixel:nth-child(1)  { animation-delay: 0s; }
-  .fx-rainbow .fx-pixel:nth-child(2)  { animation-delay: -0.11s; }
-  .fx-rainbow .fx-pixel:nth-child(3)  { animation-delay: -0.22s; }
-  .fx-rainbow .fx-pixel:nth-child(4)  { animation-delay: -0.33s; }
-  .fx-rainbow .fx-pixel:nth-child(5)  { animation-delay: -0.44s; }
-  .fx-rainbow .fx-pixel:nth-child(6)  { animation-delay: -0.55s; }
-  .fx-rainbow .fx-pixel:nth-child(7)  { animation-delay: -0.66s; }
-  .fx-rainbow .fx-pixel:nth-child(8)  { animation-delay: -0.77s; }
-  .fx-rainbow .fx-pixel:nth-child(9)  { animation-delay: -0.88s; }
-  .fx-rainbow .fx-pixel:nth-child(10) { animation-delay: -0.99s; }
-  .fx-rainbow .fx-pixel:nth-child(11) { animation-delay: -1.10s; }
-  .fx-rainbow .fx-pixel:nth-child(12) { animation-delay: -1.21s; }
-  .fx-rainbow .fx-pixel:nth-child(13) { animation-delay: -1.32s; }
-  .fx-rainbow .fx-pixel:nth-child(14) { animation-delay: -1.43s; }
-  .fx-rainbow .fx-pixel:nth-child(15) { animation-delay: -1.54s; }
-  .fx-rainbow .fx-pixel:nth-child(16) { animation-delay: -1.65s; }
-  .fx-rainbow .fx-pixel:nth-child(17) { animation-delay: -1.76s; }
-  .fx-rainbow .fx-pixel:nth-child(18) { animation-delay: -1.87s; }
-  .fx-rainbow .fx-pixel:nth-child(19) { animation-delay: -1.98s; }
-  .fx-rainbow .fx-pixel:nth-child(20) { animation-delay: -2.09s; }
-  @keyframes fx-rainbow {
-    0%   { background: hsl(  0, 100%, 50%); }
-    17%  { background: hsl( 60, 100%, 50%); }
-    33%  { background: hsl(120, 100%, 50%); }
-    50%  { background: hsl(180, 100%, 50%); }
-    67%  { background: hsl(240, 100%, 50%); }
-    83%  { background: hsl(300, 100%, 50%); }
-    100% { background: hsl(360, 100%, 50%); }
-  }
-
-  .fx-color-wipe .fx-pixel { animation: fx-wipe 4s steps(1) infinite; background: #000; }
-  .fx-color-wipe .fx-pixel:nth-child(1)  { animation-delay: 0s; }
-  .fx-color-wipe .fx-pixel:nth-child(2)  { animation-delay: 0.10s; }
-  .fx-color-wipe .fx-pixel:nth-child(3)  { animation-delay: 0.20s; }
-  .fx-color-wipe .fx-pixel:nth-child(4)  { animation-delay: 0.30s; }
-  .fx-color-wipe .fx-pixel:nth-child(5)  { animation-delay: 0.40s; }
-  .fx-color-wipe .fx-pixel:nth-child(6)  { animation-delay: 0.50s; }
-  .fx-color-wipe .fx-pixel:nth-child(7)  { animation-delay: 0.60s; }
-  .fx-color-wipe .fx-pixel:nth-child(8)  { animation-delay: 0.70s; }
-  .fx-color-wipe .fx-pixel:nth-child(9)  { animation-delay: 0.80s; }
-  .fx-color-wipe .fx-pixel:nth-child(10) { animation-delay: 0.90s; }
-  .fx-color-wipe .fx-pixel:nth-child(11) { animation-delay: 1.00s; }
-  .fx-color-wipe .fx-pixel:nth-child(12) { animation-delay: 1.10s; }
-  .fx-color-wipe .fx-pixel:nth-child(13) { animation-delay: 1.20s; }
-  .fx-color-wipe .fx-pixel:nth-child(14) { animation-delay: 1.30s; }
-  .fx-color-wipe .fx-pixel:nth-child(15) { animation-delay: 1.40s; }
-  .fx-color-wipe .fx-pixel:nth-child(16) { animation-delay: 1.50s; }
-  .fx-color-wipe .fx-pixel:nth-child(17) { animation-delay: 1.60s; }
-  .fx-color-wipe .fx-pixel:nth-child(18) { animation-delay: 1.70s; }
-  .fx-color-wipe .fx-pixel:nth-child(19) { animation-delay: 1.80s; }
-  .fx-color-wipe .fx-pixel:nth-child(20) { animation-delay: 1.90s; }
-  @keyframes fx-wipe { 0%, 50% { background: #209cee; } 50.01%, 100% { background: #000; } }
-
-  .fx-scan .fx-strip { position: relative; }
-  .fx-scan .fx-pixel { background: #000; }
-  .fx-scan .fx-strip::after {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 6px;
-    height: 100%;
-    background: #ffd24a;
-    animation: fx-scan 1.6s ease-in-out infinite alternate;
-  }
-  @keyframes fx-scan {
-    from { transform: translateX(0); }
-    to   { transform: translateX(133px); }
-  }
-
-  .fx-twinkle .fx-pixel { background: #000; animation: fx-twinkle 1.8s ease-in-out infinite; }
-  .fx-twinkle .fx-pixel:nth-child(3n)   { animation-delay: 0s; }
-  .fx-twinkle .fx-pixel:nth-child(3n+1) { animation-delay: 0.6s; }
-  .fx-twinkle .fx-pixel:nth-child(3n+2) { animation-delay: 1.2s; }
-  .fx-twinkle .fx-pixel:nth-child(5n)   { animation-delay: 0.3s; }
-  .fx-twinkle .fx-pixel:nth-child(7n)   { animation-delay: 0.9s; }
-  @keyframes fx-twinkle { 0%, 100% { background: #000; } 10% { background: #fff; } 20% { background: #000; } }
-
-  .fx-random-twinkle .fx-pixel { background: #000; animation: fx-rtwinkle 1.8s ease-in-out infinite; }
-  .fx-random-twinkle .fx-pixel:nth-child(3n)   { animation-delay: 0s; }
-  .fx-random-twinkle .fx-pixel:nth-child(3n+1) { animation-delay: 0.6s; }
-  .fx-random-twinkle .fx-pixel:nth-child(3n+2) { animation-delay: 1.2s; }
-  .fx-random-twinkle .fx-pixel:nth-child(4n)   { animation-name: fx-rtwinkle-alt; }
-  .fx-random-twinkle .fx-pixel:nth-child(5n)   { animation-name: fx-rtwinkle-warm; }
-  @keyframes fx-rtwinkle      { 0%, 100% { background: #000; } 10% { background: #209cee; } 20% { background: #000; } }
-  @keyframes fx-rtwinkle-alt  { 0%, 100% { background: #000; } 10% { background: #ff3860; } 20% { background: #000; } }
-  @keyframes fx-rtwinkle-warm { 0%, 100% { background: #000; } 10% { background: #ffd24a; } 20% { background: #000; } }
-
-  .fx-fireworks .fx-pixel { background: #000; animation: fx-fireworks 2.4s ease-out infinite; }
-  .fx-fireworks .fx-pixel:nth-child(4n)   { animation-delay: 0s; }
-  .fx-fireworks .fx-pixel:nth-child(4n+1) { animation-delay: 0.6s; }
-  .fx-fireworks .fx-pixel:nth-child(4n+2) { animation-delay: 1.2s; }
-  .fx-fireworks .fx-pixel:nth-child(4n+3) { animation-delay: 1.8s; }
-  @keyframes fx-fireworks { 0% { background: #000; } 5% { background: #fff; } 100% { background: #000; } }
-
-  .fx-addr-flicker .fx-pixel { background: #ffb04a; animation: fx-flicker 1.3s linear infinite; }
-  .fx-addr-flicker .fx-pixel:nth-child(2n) { animation-delay: -0.4s; }
-  .fx-addr-flicker .fx-pixel:nth-child(3n) { animation-delay: -0.8s; }
-  .fx-addr-flicker .fx-pixel:nth-child(5n) { animation-delay: -0.2s; }
-
-  .fx-addr-lambda .fx-strip { background: #444; color: #fff; font: bold 12px/14px monospace; text-align: center; padding: 0 6px; width: 140px; letter-spacing: 4px; }
-  .fx-addr-lambda .fx-strip::before { content: "\\03BB \\03BB \\03BB"; }
-  .fx-addr-lambda .fx-pixel { display: none; }
-
-  table.fx-table { border-collapse: collapse; width: 100%; margin: 0 0 1em; font-size: 0.95em; }
-  table.fx-table th, table.fx-table td { border: 1px solid #e3e3e3; padding: 6px 10px; vertical-align: middle; text-align: left; }
-  table.fx-table th { background: #f7f7f7; font-weight: 600; }
-  table.fx-table tbody tr:hover { background: #fafafa; }
-  table.fx-table td.fx-preview-cell { width: 170px; text-align: center; padding: 4px; }
-  table.fx-table td.fx-name a { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
-  table.fx-table td.fx-params { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.85em; color: #555; }
-
-  @media (prefers-reduced-motion: reduce) {
-    .fx-preview *, .fx-preview { animation: none !important; transition: none !important; }
-    .fx-pulse        .fx-bulb { opacity: 0.7; }
-    .fx-strobe       .fx-bulb { opacity: 1; }
-    .fx-random       .fx-bulb { background: #23d160; }
-    .fx-flicker      .fx-bulb { opacity: 0.9; }
-    .fx-rainbow      .fx-pixel:nth-child(1)  { background: hsl(  0, 100%, 50%); }
-    .fx-rainbow      .fx-pixel:nth-child(2)  { background: hsl( 18, 100%, 50%); }
-    .fx-rainbow      .fx-pixel:nth-child(3)  { background: hsl( 36, 100%, 50%); }
-    .fx-rainbow      .fx-pixel:nth-child(4)  { background: hsl( 54, 100%, 50%); }
-    .fx-rainbow      .fx-pixel:nth-child(5)  { background: hsl( 72, 100%, 50%); }
-    .fx-rainbow      .fx-pixel:nth-child(6)  { background: hsl( 90, 100%, 50%); }
-    .fx-rainbow      .fx-pixel:nth-child(7)  { background: hsl(108, 100%, 50%); }
-    .fx-rainbow      .fx-pixel:nth-child(8)  { background: hsl(126, 100%, 50%); }
-    .fx-rainbow      .fx-pixel:nth-child(9)  { background: hsl(144, 100%, 50%); }
-    .fx-rainbow      .fx-pixel:nth-child(10) { background: hsl(162, 100%, 50%); }
-    .fx-rainbow      .fx-pixel:nth-child(11) { background: hsl(180, 100%, 50%); }
-    .fx-rainbow      .fx-pixel:nth-child(12) { background: hsl(198, 100%, 50%); }
-    .fx-rainbow      .fx-pixel:nth-child(13) { background: hsl(216, 100%, 50%); }
-    .fx-rainbow      .fx-pixel:nth-child(14) { background: hsl(234, 100%, 50%); }
-    .fx-rainbow      .fx-pixel:nth-child(15) { background: hsl(252, 100%, 50%); }
-    .fx-rainbow      .fx-pixel:nth-child(16) { background: hsl(270, 100%, 50%); }
-    .fx-rainbow      .fx-pixel:nth-child(17) { background: hsl(288, 100%, 50%); }
-    .fx-rainbow      .fx-pixel:nth-child(18) { background: hsl(306, 100%, 50%); }
-    .fx-rainbow      .fx-pixel:nth-child(19) { background: hsl(324, 100%, 50%); }
-    .fx-rainbow      .fx-pixel:nth-child(20) { background: hsl(342, 100%, 50%); }
-    .fx-color-wipe   .fx-pixel:nth-child(-n+10) { background: #209cee; }
-    .fx-scan         .fx-strip::after { display: none; }
-    .fx-scan         .fx-pixel:nth-child(5), .fx-scan .fx-pixel:nth-child(6) { background: #ffd24a; }
-    .fx-twinkle      .fx-pixel:nth-child(3n) { background: #fff; }
-    .fx-random-twinkle .fx-pixel:nth-child(3n)   { background: #209cee; }
-    .fx-random-twinkle .fx-pixel:nth-child(3n+1) { background: #ff3860; }
-    .fx-random-twinkle .fx-pixel:nth-child(3n+2) { background: #ffd24a; }
-    .fx-fireworks    .fx-pixel:nth-child(4n) { background: #fff; }
-    .fx-addr-flicker .fx-pixel { opacity: 0.9; }
-  }
-`}</style>
-
-### Basic animations
+### Basic Animations
 
 These effects work on any light platform.
 
-<table class="fx-table">
-  <thead><tr><th>Preview</th><th>Effect</th><th>Description</th><th>Parameters</th></tr></thead>
-  <tbody>
-    <tr>
-      <td class="fx-preview-cell"><span class="fx-preview fx-pulse" role="img" aria-label="Animated preview of the Pulse effect"><span class="fx-bulb"></span></span></td>
-      <td class="fx-name"><a href="#pulse-effect">Pulse</a></td>
-      <td>Smooth brightness pulse</td>
-      <td class="fx-params">name, transition_length, update_interval, min_brightness, max_brightness</td>
-    </tr>
-    <tr>
-      <td class="fx-preview-cell"><span class="fx-preview fx-random" role="img" aria-label="Animated preview of the Random effect"><span class="fx-bulb"></span></span></td>
-      <td class="fx-name"><a href="#random-effect">Random</a></td>
-      <td>Random colors at fixed intervals</td>
-      <td class="fx-params">name, transition_length, update_interval</td>
-    </tr>
-    <tr>
-      <td class="fx-preview-cell"><span class="fx-preview fx-strobe" role="img" aria-label="Animated preview of the Strobe effect"><span class="fx-bulb"></span></span></td>
-      <td class="fx-name"><a href="#strobe-effect">Strobe</a></td>
-      <td>Cycle through a list of colors with set durations</td>
-      <td class="fx-params">name, colors</td>
-    </tr>
-    <tr>
-      <td class="fx-preview-cell"><span class="fx-preview fx-flicker" role="img" aria-label="Animated preview of the Flicker effect"><span class="fx-bulb"></span></span></td>
-      <td class="fx-name"><a href="#flicker-effect">Flicker</a></td>
-      <td>Candle-like brightness variation</td>
-      <td class="fx-params">name, alpha, intensity</td>
-    </tr>
-    <tr>
-      <td class="fx-preview-cell"><span class="fx-preview fx-lambda" role="img" aria-label="Lambda effect runs user code; no canonical visual"><span class="fx-bulb"></span></span></td>
-      <td class="fx-name"><a href="#lambda-effect">Lambda</a></td>
-      <td>Run custom C++ on each update</td>
-      <td class="fx-params">name, update_interval, lambda</td>
-    </tr>
-  </tbody>
-</table>
+| Preview | Effect | Description | Parameters |
+| --- | --- | --- | --- |
+| <LightEffectPreview type="pulse" label="Animated preview of the Pulse effect" /> | [Pulse](#pulse-effect) | Smooth brightness pulse | `name`, `transition_length`, `update_interval`, `min_brightness`, `max_brightness` |
+| <LightEffectPreview type="random" label="Animated preview of the Random effect" /> | [Random](#random-effect) | Random colors at fixed intervals | `name`, `transition_length`, `update_interval` |
+| <LightEffectPreview type="strobe" label="Animated preview of the Strobe effect" /> | [Strobe](#strobe-effect) | Cycle through a list of colors with set durations | `name`, `colors` |
+| <LightEffectPreview type="flicker" label="Animated preview of the Flicker effect" /> | [Flicker](#flicker-effect) | Candle-like brightness variation | `name`, `alpha`, `intensity` |
+| <LightEffectPreview type="lambda" label="Lambda effect runs user code; no canonical visual" /> | [Lambda](#lambda-effect) | Run custom C++ on each update | `name`, `update_interval`, `lambda` |
 
-### Strip animations
+### Strip Animations
 
 These effects require an addressable light (LED strip).
 
-<table class="fx-table">
-  <thead><tr><th>Preview</th><th>Effect</th><th>Description</th><th>Parameters</th></tr></thead>
-  <tbody>
-    <tr>
-      <td class="fx-preview-cell"><span class="fx-preview fx-rainbow" role="img" aria-label="Animated preview of the Addressable Rainbow effect"><span class="fx-strip"><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span></span></span></td>
-      <td class="fx-name"><a href="#addressable-rainbow-effect">Addressable Rainbow</a></td>
-      <td>Hue sweeps the length of the strip</td>
-      <td class="fx-params">name, speed, width</td>
-    </tr>
-    <tr>
-      <td class="fx-preview-cell"><span class="fx-preview fx-color-wipe" role="img" aria-label="Animated preview of the Addressable Color Wipe effect"><span class="fx-strip"><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span></span></span></td>
-      <td class="fx-name"><a href="#addressable-color-wipe-effect">Addressable Color Wipe</a></td>
-      <td>New colors shift in at the start of the strip</td>
-      <td class="fx-params">name, colors, add_led_interval, reverse</td>
-    </tr>
-    <tr>
-      <td class="fx-preview-cell"><span class="fx-preview fx-scan" role="img" aria-label="Animated preview of the Addressable Scan effect"><span class="fx-strip"><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span></span></span></td>
-      <td class="fx-name"><a href="#addressable-scan-effect">Addressable Scan</a></td>
-      <td>Single dot slides back and forth across the strip</td>
-      <td class="fx-params">name, move_interval, scan_width</td>
-    </tr>
-    <tr>
-      <td class="fx-preview-cell"><span class="fx-preview fx-twinkle" role="img" aria-label="Animated preview of the Addressable Twinkle effect"><span class="fx-strip"><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span></span></span></td>
-      <td class="fx-name"><a href="#addressable-twinkle-effect">Addressable Twinkle</a></td>
-      <td>Random pixels brighten and fade</td>
-      <td class="fx-params">name, twinkle_probability, progress_interval</td>
-    </tr>
-    <tr>
-      <td class="fx-preview-cell"><span class="fx-preview fx-random-twinkle" role="img" aria-label="Animated preview of the Addressable Random Twinkle effect"><span class="fx-strip"><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span></span></span></td>
-      <td class="fx-name"><a href="#addressable-random-twinkle-effect">Addressable Random Twinkle</a></td>
-      <td>Twinkle, but each pixel gets a random color</td>
-      <td class="fx-params">name, twinkle_probability, progress_interval</td>
-    </tr>
-    <tr>
-      <td class="fx-preview-cell"><span class="fx-preview fx-fireworks" role="img" aria-label="Animated preview of the Addressable Fireworks effect"><span class="fx-strip"><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span></span></span></td>
-      <td class="fx-name"><a href="#addressable-fireworks-effect">Addressable Fireworks</a></td>
-      <td>Sparks burst from random pixels</td>
-      <td class="fx-params">name, update_interval, spark_probability, use_random_color, fade_out_rate</td>
-    </tr>
-    <tr>
-      <td class="fx-preview-cell"><span class="fx-preview fx-addr-flicker" role="img" aria-label="Animated preview of the Addressable Flicker effect"><span class="fx-strip"><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span></span></span></td>
-      <td class="fx-name"><a href="#addressable-flicker-effect">Addressable Flicker</a></td>
-      <td>Per-pixel candle flicker</td>
-      <td class="fx-params">name, update_interval, intensity</td>
-    </tr>
-    <tr>
-      <td class="fx-preview-cell"><span class="fx-preview fx-addr-lambda" role="img" aria-label="Addressable Lambda effect runs user code; no canonical visual"><span class="fx-strip"><span class="fx-pixel"></span><span class="fx-pixel"></span><span class="fx-pixel"></span></span></span></td>
-      <td class="fx-name"><a href="#addressable-lambda-effect">Addressable Lambda</a></td>
-      <td>Run custom C++ per LED</td>
-      <td class="fx-params">name, update_interval, lambda</td>
-    </tr>
-  </tbody>
-</table>
+| Preview | Effect | Description | Parameters |
+| --- | --- | --- | --- |
+| <LightEffectPreview type="rainbow" label="Animated preview of the Addressable Rainbow effect" /> | [Addressable Rainbow](#addressable-rainbow-effect) | Hue sweeps the length of the strip | `name`, `speed`, `width` |
+| <LightEffectPreview type="color-wipe" label="Animated preview of the Addressable Color Wipe effect" /> | [Addressable Color Wipe](#addressable-color-wipe-effect) | New colors shift in at the start of the strip | `name`, `colors`, `add_led_interval`, `reverse` |
+| <LightEffectPreview type="scan" label="Animated preview of the Addressable Scan effect" /> | [Addressable Scan](#addressable-scan-effect) | Single dot slides back and forth across the strip | `name`, `move_interval`, `scan_width` |
+| <LightEffectPreview type="twinkle" label="Animated preview of the Addressable Twinkle effect" /> | [Addressable Twinkle](#addressable-twinkle-effect) | Random pixels brighten and fade | `name`, `twinkle_probability`, `progress_interval` |
+| <LightEffectPreview type="random-twinkle" label="Animated preview of the Addressable Random Twinkle effect" /> | [Addressable Random Twinkle](#addressable-random-twinkle-effect) | Twinkle, but each pixel gets a random color | `name`, `twinkle_probability`, `progress_interval` |
+| <LightEffectPreview type="fireworks" label="Animated preview of the Addressable Fireworks effect" /> | [Addressable Fireworks](#addressable-fireworks-effect) | Sparks burst from random pixels | `name`, `update_interval`, `spark_probability`, `use_random_color`, `fade_out_rate` |
+| <LightEffectPreview type="addr-flicker" label="Animated preview of the Addressable Flicker effect" /> | [Addressable Flicker](#addressable-flicker-effect) | Per-pixel candle flicker | `name`, `update_interval`, `intensity` |
+| <LightEffectPreview type="addr-lambda" label="Addressable Lambda effect runs user code; no canonical visual" /> | [Addressable Lambda](#addressable-lambda-effect) | Run custom C++ per LED | `name`, `update_interval`, `lambda` |
 
-### External control
+### External Control
 
 These effects receive frames from an external source instead of generating animation locally.
 
-<table class="fx-table">
-  <thead><tr><th>Effect</th><th>Description</th><th>Parameters</th></tr></thead>
-  <tbody>
-    <tr>
-      <td class="fx-name"><a href="#automation-light-effect">Automation</a></td>
-      <td>Run ESPHome automation actions on a loop</td>
-      <td class="fx-params">name, sequence</td>
-    </tr>
-    <tr>
-      <td class="fx-name"><a href="#e131-effect">E1.31</a></td>
-      <td>Receive sACN / E1.31 frames over the network</td>
-      <td class="fx-params">universe, channels</td>
-    </tr>
-    <tr>
-      <td class="fx-name"><a href="#adalight-effect">Adalight</a></td>
-      <td>Receive Adalight protocol over UART</td>
-      <td class="fx-params">uart_id</td>
-    </tr>
-    <tr>
-      <td class="fx-name"><a href="#wled-effect">WLED</a></td>
-      <td>Receive WLED UDP sync protocol</td>
-      <td class="fx-params">port, blank_on_start, sync_group_mask</td>
-    </tr>
-  </tbody>
-</table>
+| Effect | Description | Parameters |
+| --- | --- | --- |
+| [Automation](#automation-light-effect) | Run ESPHome automation actions on a loop | `name`, `sequence` |
+| [E1.31](#e131-effect) | Receive sACN / E1.31 frames over the network | `universe`, `channels` |
+| [Adalight](#adalight-effect) | Receive Adalight protocol over UART | `uart_id` |
+| [WLED](#wled-effect) | Receive WLED UDP sync protocol | `port`, `blank_on_start`, `sync_group_mask` |
 
 ### Pulse Effect
 
