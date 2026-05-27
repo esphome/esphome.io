@@ -11,8 +11,8 @@ The scale broadcasts encrypted MiBeacon packets (UUID `0xFE95`). A **bindkey** i
 
 Each measurement cycle produces **two BLE packets**:
 
-- **Packet 1** — weight + heart rate + `impedance_high` (250 kHz, high frequency, smaller value)
-- **Packet 2** — `impedance_low` only (50 kHz, low frequency, larger value)
+- **Packet 1** — weight + heart rate + `impedance_low` only (50 kHz, low frequency, larger value)
+- **Packet 2** — `impedance_high` (250 kHz, high frequency, smaller value)
 
 > [!NOTE]
 > **Impedance naming convention** follows the BIA standard used by [bodymiscale](https://github.com/dckiller51/bodymiscale):
@@ -62,11 +62,13 @@ sensor:
       name: "Scale Heart Rate"
     profile_id:
       name: "Scale Profile ID"
+    stabilized:
+      name: "Scale Stabilized"
 ```
 
-### With auto-reset (recommended for bodymiscale)
+### With auto-reset
 
-Adding a `timeout` filter resets all sensors to `0` after 30 seconds if no new measurement is received. This ensures [bodymiscale](https://github.com/dckiller51/bodymiscale) always gets a fresh update on the next weigh-in and never uses stale values.
+Adding a `timeout` filter resets all sensors to `0` after 30 seconds if no new measurement is received.
 
 ```yaml
 sensor:
@@ -103,6 +105,8 @@ sensor:
         - timeout:
             timeout: 30s
             value: !lambda return 0;
+    stabilized:
+      name: "Scale Stabilized"
 ```
 
 ---
@@ -113,9 +117,9 @@ sensor:
 - **bindkey** (**Required**, string): 32-character hex key to decrypt the BLE payload.
 - **weight** (_Optional_): Stabilized weight in kg.
   - All options from [Sensor](/components/sensor/).
-- **impedance_low** (_Optional_): Low-frequency impedance at **50 kHz** in Ω. Numerically larger value (~558 Ω). Published in the second packet without weight or heart rate.
+- **impedance_low** (_Optional_): Low-frequency impedance at **50 kHz** in Ω. Numerically larger value (~558 Ω). Published together with weight and heart rate.
   - All options from [Sensor](/components/sensor/).
-- **impedance_high** (_Optional_): High-frequency impedance at **250 kHz** in Ω. Numerically smaller value (~503 Ω). Published together with weight and heart rate.
+- **impedance_high** (_Optional_): High-frequency impedance at **250 kHz** in Ω. Numerically smaller value (~503 Ω). Published in the second packet without weight or heart rate.
   - All options from [Sensor](/components/sensor/).
 - **impedance** (_Optional_): Alias for `impedance_high` (250 kHz). Provided for single-frequency compatibility.
   - All options from [Sensor](/components/sensor/).
@@ -123,6 +127,9 @@ sensor:
   - All options from [Sensor](/components/sensor/).
 - **profile_id** (_Optional_): User profile slot (1–5, matches the Xiaomi Home app user assignment).
   - All options from [Sensor](/components/sensor/).
+- **stabilized** (_Optional_): Binary sensor that turns `ON` when the measurement
+  cycle is complete (last BLE packet received). Turns `OFF` during the measurement.
+  - All options from [Binary Sensor](/components/binary_sensor/).
 
 ---
 
@@ -155,8 +162,8 @@ Impedance packet routing (BIA frequency convention):
 
 | Packet content           | Frequency | Sensor           | Typical value |
 | ------------------------ | --------- | ---------------- | ------------- |
-| with weight + heart rate | 250 kHz   | `impedance_high` | ~503 Ω        |
-| without weight           | 50 kHz    | `impedance_low`  | ~558 Ω        |
+| with weight + heart rate | 50 kHz    | `impedance_low`  | ~558 Ω        |
+| without weight           | 250 kHz   | `impedance_high` | ~503 Ω        |
 
 ---
 
