@@ -1,5 +1,4 @@
 <section class="block-hero">
-  <canvas id="scene"></canvas>
   <div class="container">
     <div class="block-hero__content-container">
       <div class="block-hero__content">
@@ -26,246 +25,347 @@
         </div>
       </div>
     </div>
+    <div class="block-hero__asset-container">
+      <model-viewer
+        src="/starter-kit/combined-panel-compute-optimised.glb"
+        alt="ESPHome Starter Kit 3D model"
+        ar
+        ar-modes="webxr scene-viewer quick-look"
+        camera-controls
+        disable-zoom
+        disable-pan
+        disable-tap
+        touch-action="pan-y"
+        min-camera-orbit="auto auto 0m"
+        tone-mapping="neutral"
+        poster="/starter-kit/poster.webp"
+        shadow-intensity="0"
+        tone-mapping="aces"
+      >
+        <button
+          class="hotspot"
+          slot="hotspot-1"
+          data-position="-0.5605654272973684m 2.3497694925085417m 0.1577726669933136m"
+          data-normal="0m -4.7181972549813103e-7m 0.9999999999998889m"
+          data-visibility-attribute="visible"
+          aria-label="Button module"></button>
+        <button
+          class="hotspot"
+          slot="hotspot-2"
+          data-position="0.06594962962506401m 2.505031394564349m 0.04108281874086464m"
+          data-normal="0m -3.021140994925911e-7m 0.9999999999999545m"
+          data-visibility-attribute="visible"
+          aria-label="Temp & hum module"></button>
+        <button
+          class="hotspot"
+          slot="hotspot-3"
+          data-position="0.6767021090234897m 2.551928830256844m 0.10511088381804498m"
+          data-normal="-7.549788288176731e-8m 1.352368577797927e-7m 0.999999999999988m"
+          data-visibility-attribute="visible"
+          aria-label="Motion module"></button>
+        <button
+          class="hotspot"
+          slot="hotspot-4"
+          data-position="0.03080501274970332m 1.3308043464158432m 0.0410827821529187m"
+          data-normal="0m -6.28895230895957e-8m 0.999999999999998m"
+          data-visibility-attribute="visible"
+          aria-label="LED & buzzer module"></button>
+        <button
+          class="hotspot"
+          slot="hotspot-5"
+          data-position="-0.2379975457681977m 0.06684272313252704m 0.10484313944579174m"
+          data-normal="0m -6.74608119632293e-8m 0.9999999999999979m"
+          data-visibility-attribute="visible"
+          aria-label="ESP32 Microcontroller"></button>
+
+        <svg
+          class="hotspot-lines"
+          xmlns="http://www.w3.org/2000/svg"
+          aria-hidden="true"
+        >
+          <line class="hotspot-line" data-hotspot="hotspot-1"></line>
+          <line class="hotspot-line" data-hotspot="hotspot-2"></line>
+          <line class="hotspot-line" data-hotspot="hotspot-3"></line>
+          <line class="hotspot-line" data-hotspot="hotspot-4"></line>
+          <line class="hotspot-line" data-hotspot="hotspot-5"></line>
+        </svg>
+
+        <div class="hotspot-labels">
+          <button
+            class="hotspot-label hotspot-label--button"
+            data-hotspot="hotspot-1"
+            data-zoom="1.8m"
+          >
+            Button module
+          </button>
+          <button
+            class="hotspot-label hotspot-label--temp"
+            data-hotspot="hotspot-2"
+            data-zoom="1.5m"
+          >
+            Temp & hum module
+          </button>
+          <button
+            class="hotspot-label hotspot-label--motion"
+            data-hotspot="hotspot-3"
+            data-zoom="1.5m"
+          >
+            Motion module
+          </button>
+          <button
+            class="hotspot-label hotspot-label--led"
+            data-hotspot="hotspot-4"
+            data-zoom="3.8m"
+          >
+            LED & buzzer module
+          </button>
+          <button
+            class="hotspot-label hotspot-label--esp32"
+            data-hotspot="hotspot-5"
+            data-zoom="2.5m"
+          >
+            ESP32 Microcontroller
+          </button>
+        </div>
+      </model-viewer>
+      <button type="button" class="block-hero__close" aria-label="Reset view">
+        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+          <path
+            d="M6 6L18 18M6 18L18 6"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"></path>
+        </svg>
+      </button>
+    </div>
   </div>
 </section>
 
+<script is:inline type="module" src="/vendor/model-viewer/model-viewer.min.js"
+></script>
+
+<script is:inline type="module">
+  await customElements.whenDefined("model-viewer");
+  customElements.get("model-viewer").meshoptDecoderLocation =
+    "/vendor/model-viewer/meshopt_decoder.module.js";
+</script>
+
 <script>
-  import * as THREE from "three";
-  import { OrbitControls } from "three/addons/controls/OrbitControls.js";
-  import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
-  import Stats from "three/addons/libs/stats.module.js";
+  const assetContainer = document.querySelector<HTMLElement>(
+    ".block-hero__asset-container",
+  );
+  const mv = assetContainer?.querySelector("model-viewer") as any;
+  const closeBtn =
+    assetContainer?.querySelector<HTMLButtonElement>(".block-hero__close");
+  const hotspots =
+    assetContainer?.querySelectorAll<HTMLElement>(".hotspot") ?? [];
+  const labels =
+    assetContainer?.querySelectorAll<HTMLElement>(".hotspot-label") ?? [];
+  const lines =
+    assetContainer?.querySelectorAll<SVGLineElement>(".hotspot-line") ?? [];
 
-  const DEBUG_ORBIT = true;
-  import gsap from "gsap";
+  const clearActive = () => {
+    hotspots.forEach((h) => h.classList.remove("is-active"));
+    labels.forEach((l) => l.classList.remove("is-active"));
+    lines.forEach((l) => l.classList.remove("is-active"));
+  };
 
-  const canvas = document.getElementById("scene");
-  const width = canvas.clientWidth;
-  const height = canvas.clientHeight;
+  const resetView = () => {
+    if (!mv) return;
+    mv.cameraTarget = "auto";
+    mv.cameraOrbit = "auto auto auto";
+    assetContainer?.classList.remove("is-zoomed");
+    clearActive();
+  };
 
-  const camera = new THREE.PerspectiveCamera(70, width / height, 0.05, 1000);
-  camera.position.set(0, 0, 1);
+  const DEFAULT_ZOOM = "1.5m";
 
-  const controls = new OrbitControls(camera, canvas);
-  controls.enableDamping = true;
-  controls.enabled = DEBUG_ORBIT;
-  controls.enableZoom = false; // Disables zooming with the mouse wheel or pinch gestures
+  const zoomTo = (slot: string | undefined) => {
+    if (!mv || !slot) return;
+    const hotspot = mv.querySelector(`.hotspot[slot="${slot}"]`);
+    if (!hotspot) return;
+    const label = assetContainer?.querySelector<HTMLElement>(
+      `.hotspot-label[data-hotspot="${slot}"]`,
+    );
+    const zoom = label?.dataset.zoom ?? DEFAULT_ZOOM;
+    const { theta, phi } = mv.getCameraOrbit();
+    mv.cameraTarget = hotspot.dataset.position;
+    mv.cameraOrbit = `${theta}rad ${phi}rad ${zoom}`;
+    assetContainer?.classList.add("is-zoomed");
+    clearActive();
+    hotspot.classList.add("is-active");
+    label?.classList.add("is-active");
+    assetContainer
+      ?.querySelector(`.hotspot-line[data-hotspot="${slot}"]`)
+      ?.classList.add("is-active");
+  };
 
-  const scene = new THREE.Scene();
+  hotspots.forEach((h) =>
+    h.addEventListener("click", () =>
+      zoomTo(h.getAttribute("slot") ?? undefined),
+    ),
+  );
+  labels.forEach((l) =>
+    l.addEventListener("click", () => zoomTo(l.dataset.hotspot)),
+  );
+  closeBtn?.addEventListener("click", resetView);
 
-  const ambientLight = new THREE.AmbientLight(0xffffff, 0.5); // 1.5 / 0.5
-  scene.add(ambientLight);
+  const svg = assetContainer?.querySelector<SVGSVGElement>(".hotspot-lines");
 
-  const directionalLight = new THREE.DirectionalLight(0xffffff, 1.5);
-  directionalLight.position.set(1, 1, 1);
-  scene.add(directionalLight);
-  scene.add(new THREE.DirectionalLightHelper(directionalLight, 0.2));
+  type LineCache = {
+    line: SVGLineElement;
+    labelCenterX: number;
+    labelCenterY: number;
+  };
+  let lineCaches: LineCache[] = [];
+  let mvOffsetX = 0;
+  let mvOffsetY = 0;
 
-  scene.add(new THREE.AxesHelper(5));
-  scene.add(new THREE.GridHelper(10, 10));
-
-  const lightHelpers: THREE.Object3D[] = [];
-
-  const scrollDemoModel = "/starter-kit/esphome-starter-kit-alt-light.glb";
-
-  const loader = new GLTFLoader();
-  loader.load(scrollDemoModel + "?" + Date.now(), (gltf) => {
-    const modelScaleMult = 10;
-
-    console.log("GLTF loaded:", gltf);
-
-    const model = gltf.scene;
-    model.scale.set(modelScaleMult, modelScaleMult, modelScaleMult);
-    scene.add(model);
-
-    // Force world matrix update so bounding boxes are correct
-    model.updateWorldMatrix(true, true);
-
-    // Clone materials and enable transparency on all meshes
-    const allMeshes = [];
-    model.traverse((child) => {
-      if (child.isMesh) {
-        child.material = child.material.clone();
-        child.material.transparent = true;
-        allMeshes.push(child);
-
-        console.log(`Mesh: ${child.name}`); // Debug
-      }
-
-      if (child.isLight) {
-        console.log(child);
-
-        child.intensity = 1000;
-
-        let helper;
-        if (child.isPointLight) {
-          helper = new THREE.PointLightHelper(child, 0.5, 0xffff00);
-        } else if (child.isSpotLight) {
-          helper = new THREE.SpotLightHelper(child, 0xffff00);
-        } else if (child.isDirectionalLight) {
-          helper = new THREE.DirectionalLightHelper(child, 0.5, 0xffff00);
-        }
-        if (helper) {
-          scene.add(helper);
-          lightHelpers.push(helper);
-        }
-        console.log(
-          `Light: ${child.name} (${child.type}) intensity=${child.intensity}`,
-        );
-      }
+  const refreshGeometry = () => {
+    if (!mv || !svg) return;
+    const mvRect = mv.getBoundingClientRect();
+    const svgRect = svg.getBoundingClientRect();
+    mvOffsetX = mvRect.left - svgRect.left;
+    mvOffsetY = mvRect.top - svgRect.top;
+    lineCaches = [];
+    lines.forEach((line) => {
+      const slot = line.dataset.hotspot;
+      if (!slot) return;
+      const label = assetContainer?.querySelector<HTMLElement>(
+        `.hotspot-label[data-hotspot="${slot}"]`,
+      );
+      if (!label) return;
+      const r = label.getBoundingClientRect();
+      lineCaches.push({
+        line,
+        labelCenterX: (r.left + r.right) / 2 - svgRect.left,
+        labelCenterY: (r.top + r.bottom) / 2 - svgRect.top,
+      });
     });
+  };
 
-    // Store initial camera state for hero restore
-    const initialCameraPos = camera.position.clone();
-    const initialTarget = controls.target.clone();
-
-    /**
-     * Restores camera and mesh states to show the full model
-     */
-    function restoreHero() {
-      controls.enabled = DEBUG_ORBIT;
-
-      gsap.to(camera.position, {
-        x: initialCameraPos.x,
-        y: initialCameraPos.y,
-        z: initialCameraPos.z,
-        duration: 1,
-        ease: "power2.inOut",
-      });
-
-      gsap.to(controls.target, {
-        x: initialTarget.x,
-        y: initialTarget.y,
-        z: initialTarget.z,
-        duration: 1,
-        ease: "power2.inOut",
-      });
-
-      allMeshes.forEach((mesh) => {
-        gsap.to(mesh.material, { opacity: 1, duration: 0.6 });
-        mesh.material.depthWrite = true; // Restore depth writing for all meshes
-      });
+  const drawLines = () => {
+    if (!mv) return;
+    for (const { line, labelCenterX, labelCenterY } of lineCaches) {
+      const slot = line.dataset.hotspot;
+      if (!slot) continue;
+      const hotspot = mv.queryHotspot(slot);
+      if (!hotspot) continue;
+      line.setAttribute("x1", String(hotspot.canvasPosition.x + mvOffsetX));
+      line.setAttribute("y1", String(hotspot.canvasPosition.y + mvOffsetY));
+      line.setAttribute("x2", String(labelCenterX));
+      line.setAttribute("y2", String(labelCenterY));
     }
+    requestAnimationFrame(drawLines);
+  };
 
-    /**
-     * Focuses the camera on a specific group of meshes
-     * @param group Array of mesh names to focus on
-     * @param center Center position of the group
-     * @param camOffset Camera offset from the center
-     */
-    function focusMesh(group, center, camOffset) {
-      // controls.enabled = false;
+  let resizeTimer: number | undefined;
+  const onResize = () => {
+    if (resizeTimer !== undefined) clearTimeout(resizeTimer);
+    resizeTimer = window.setTimeout(refreshGeometry, 150);
+  };
+  window.addEventListener("resize", onResize, { passive: true });
 
-      gsap.to(camera.position, {
-        x: camOffset.x,
-        y: camOffset.y,
-        z: camOffset.z,
-        duration: 1,
-        ease: "power2.inOut",
-      });
-
-      gsap.to(controls.target, {
-        x: center.x,
-        y: center.y,
-        z: center.z,
-        duration: 1,
-        ease: "power2.inOut",
-      });
-
-      allMeshes.forEach((mesh) => {
-        const isTarget = group.includes(mesh.name);
-        gsap.to(mesh.material, {
-          opacity: isTarget ? 1 : 0.1,
-          duration: 0.6,
-        });
-
-        mesh.material.depthWrite = isTarget; // Prevent transparent meshes from occluding targets
-      });
-    }
+  mv?.addEventListener("load", () => {
+    refreshGeometry();
+    requestAnimationFrame(drawLines);
+    assetContainer?.classList.add("is-loaded");
   });
-
-  const stats = new Stats();
-  document.body.appendChild(stats.dom);
-  stats.domElement.style.top = "auto";
-  stats.domElement.style.bottom = 0;
-
-  const renderer = new THREE.WebGLRenderer({
-    canvas,
-    antialias: true,
-    transparent: true,
-    preserveDrawingBuffer: false,
-    toneMapping: THREE.ACESFilmicToneMapping,
-    toneMappingExposure: 1.2,
-    outputColorSpace: THREE.SRGBColorSpace,
-    outputEncoding: THREE.sRGBEncoding,
-    // alpha: true,
-  });
-
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-  renderer.setSize(width, height);
-  renderer.setAnimationLoop(animate);
-  // renderer.setClearColor(0x000000, 0); // Set background to transparent
-
-  function animate() {
-    stats.begin();
-    controls.update();
-    lightHelpers.forEach((h: any) => h.update && h.update());
-    renderer.render(scene, camera);
-    stats.end();
-  }
-
-  function resize() {
-    const width = canvas.clientWidth;
-    const height = canvas.clientHeight;
-    if (canvas.width !== width || canvas.height !== height) {
-      renderer.setSize(width, height, false);
-      camera.aspect = width / height;
-      camera.updateProjectionMatrix();
-    }
-  }
-  window.addEventListener("resize", () => resize());
 </script>
 
 <style lang="scss">
-  #scene {
-    display: block;
-    width: 100%;
-    height: 100%;
-
-    position: absolute;
-    inset: 0;
-    z-index: 1;
-  }
-
-  section {
-    border: 1px solid crimson;
-  }
+  @use "../../styles/mixins" as *;
 
   .block-hero {
-    height: calc(100vh - var(--sl-nav-height));
+    min-height: 600px;
     margin: 0;
     position: relative;
+    padding-top: 8.75rem;
 
     display: flex;
-    align-items: center;
+    align-items: stretch;
 
-    &__content-container {
-      width: 50%;
+    @include bp(tablet) {
+      height: calc(100vh - var(--sl-nav-height));
+    }
+
+    .container {
+      flex-direction: column;
+      gap: 2rem;
+
+      @include bp(tablet) {
+        flex-direction: row;
+      }
+    }
+
+    &__content-container,
+    &__asset-container {
+      width: 100%;
       display: flex;
       align-items: center;
       position: relative;
-      z-index: 1;
       margin: 0;
-
-      position: relative;
       z-index: 5;
+    }
+
+    &__asset-container {
+      height: 100%;
+      min-height: 440px;
+
+      display: flex;
+
+      model-viewer {
+        width: 100%;
+        height: 100%;
+        min-height: 440px;
+      }
+
+      &.is-zoomed {
+        .block-hero__close {
+          opacity: 1;
+          pointer-events: auto;
+        }
+
+        .hotspot:not(.is-active) {
+          opacity: 0;
+          pointer-events: none;
+        }
+      }
+    }
+
+    &__close {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--esk-primary-color);
+      backdrop-filter: blur(6px);
+      border: none;
+      color: #fff;
+      cursor: pointer;
+      z-index: 10;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+
+      &:hover {
+        background: var(--esk-primary-color--light);
+        color: #000;
+      }
     }
 
     &__content {
       h1 {
         font-weight: 300;
         letter-spacing: -0.02em;
-        font-size: 4rem;
-        margin-bottom: 3.25rem;
+        @include fluid(28px, 52px, $property: margin-bottom);
+        @include fluid(36px, 64px);
 
         strong {
           font-weight: 600;
@@ -274,6 +374,7 @@
 
       p {
         font-size: 1.5rem;
+        @include fluid(20px, 24px);
         margin: 0;
         text-wrap: balance;
         line-height: 1.2;
@@ -281,9 +382,9 @@
         &.subtitle {
           text-transform: uppercase;
           margin: 0;
-          font-size: 1.25rem;
+          @include fluid(16px, 20px);
           font-weight: 700;
-          margin-bottom: 1.5rem;
+          @include fluid(16px, 24px, $property: margin-bottom);
         }
       }
     }
@@ -333,6 +434,149 @@
       @media (min-width: 768px) {
         font-size: 16px;
       }
+    }
+  }
+
+  .hotspot {
+    width: 8px;
+    height: 8px;
+    background: var(--esk-primary-color);
+    border-radius: 32px;
+    border: 0;
+    box-sizing: border-box;
+    cursor: pointer;
+    padding: 4px;
+    position: relative;
+    opacity: 0;
+    pointer-events: none;
+    transform: translate(0%, -50%) scale(0);
+    transition:
+      opacity 0.3s,
+      transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+    &:focus {
+      border: 4px solid var(--esk-primary-color);
+      outline: none;
+    }
+  }
+
+  .hotspot-lines {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    overflow: visible;
+  }
+
+  .hotspot-line {
+    stroke: var(--esk-primary-color);
+    stroke-width: 1;
+    stroke-dasharray: 2 3;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .hotspot-labels {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  .hotspot-label {
+    position: absolute;
+    pointer-events: none;
+    background-color: var(--esk-primary-color--light);
+    border-radius: 4px;
+    border: 1px solid var(--esk-primary-color);
+    color: #000;
+    cursor: pointer;
+    display: block;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 8px;
+    width: max-content;
+    max-width: 160px;
+    opacity: 0;
+    translate: 0 8px;
+    transition:
+      opacity 0.3s,
+      translate 0.4s;
+
+    @include bp(tablet) {
+      padding: 9px 12px;
+    }
+
+    &--button {
+      top: -3%;
+      left: 3%;
+
+      @include bp(tablet) {
+        left: 3%;
+        top: 10%;
+      }
+    }
+
+    &--temp {
+      top: 20%;
+      left: 0%;
+
+      @include bp(tablet) {
+        top: 27%;
+        left: 0%;
+      }
+    }
+
+    &--motion {
+      top: -7%;
+      right: 0%;
+
+      @include bp(tablet) {
+        top: 18%;
+        right: 3%;
+      }
+    }
+
+    &--led {
+      top: 40%;
+      right: 0%;
+    }
+
+    &--esp32 {
+      left: 4%;
+      bottom: 0%;
+
+      @include bp(tablet) {
+        left: 4%;
+        bottom: 18%;
+      }
+    }
+  }
+
+  .block-hero__asset-container.is-loaded {
+    .hotspot {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translate(0%, -50%) scale(1);
+    }
+
+    .hotspot-line {
+      opacity: 1;
+    }
+
+    .hotspot-label {
+      opacity: 1;
+      pointer-events: auto;
+      translate: 0 0;
+    }
+  }
+
+  .block-hero__asset-container.is-zoomed {
+    .hotspot-label:not(.is-active),
+    .hotspot-line:not(.is-active) {
+      opacity: 0;
+      pointer-events: none;
     }
   }
 </style>
