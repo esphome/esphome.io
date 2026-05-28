@@ -193,4 +193,3 @@ var MeshoptDecoder = (function () {
 	};
 })();
 
-export { MeshoptDecoder };
