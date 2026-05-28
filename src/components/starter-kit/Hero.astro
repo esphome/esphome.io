@@ -91,21 +91,10 @@
           <line class="hotspot-line" data-hotspot="hotspot-4"></line>
           <line class="hotspot-line" data-hotspot="hotspot-5"></line>
         </svg>
-
-        <!--
-          Each label is anchored at data-position (world coords).
-          Editing axes (default camera angle):
-            • Y up  = label moves UP on screen
-            • X right = label moves RIGHT on screen
-            • Z (0.1m ≈ panel surface) — keep near 0.1 unless you want parallax
-          Modules sit at:
-            button (-0.56, 2.35), temp (0.07, 2.50), motion (0.68, 2.55),
-            led (0.03, 1.33), esp32 (-0.24, 0.07)
-        -->
         <button
           class="hotspot-label"
           slot="hotspot-label-1"
-          data-position="-0.8m 2.4m 0m"
+          data-position="-0.8m 2.6m 0m"
           data-normal="0m 0m 1m"
           data-visibility-attribute="visible"
           data-hotspot="hotspot-1"
@@ -116,7 +105,7 @@
         <button
           class="hotspot-label"
           slot="hotspot-label-2"
-          data-position="0.07m 2.8m 0.1m"
+          data-position="0.25m 2.8m 0.1m"
           data-normal="0m 0m 1m"
           data-visibility-attribute="visible"
           data-hotspot="hotspot-2"
@@ -127,7 +116,7 @@
         <button
           class="hotspot-label"
           slot="hotspot-label-3"
-          data-position="0.9m 2.8m 0.1m"
+          data-position="1.0m 2.8m 0.1m"
           data-normal="0m 0m 1m"
           data-visibility-attribute="visible"
           data-hotspot="hotspot-3"
@@ -387,12 +376,20 @@
       const label = mv.queryHotspot(labelSlot);
       if (!dot || !label) continue;
       const labelEl = labelByDotSlot.get(dotSlot);
+      const lineOffsetX = labelEl ? labelEl.offsetWidth / 2 : 0;
+      const lineOffsetY = labelEl ? labelEl.offsetHeight / 2 : 0;
       const occluded = labelEl ? !labelEl.hasAttribute("data-visible") : false;
       line.classList.toggle("is-occluded", occluded);
       line.setAttribute("x1", String(dot.canvasPosition.x + mvOffsetX));
       line.setAttribute("y1", String(dot.canvasPosition.y + mvOffsetY));
-      line.setAttribute("x2", String(label.canvasPosition.x + mvOffsetX));
-      line.setAttribute("y2", String(label.canvasPosition.y + mvOffsetY));
+      line.setAttribute(
+        "x2",
+        String(label.canvasPosition.x + mvOffsetX - lineOffsetX),
+      );
+      line.setAttribute(
+        "y2",
+        String(label.canvasPosition.y + mvOffsetY + lineOffsetY * 0.5),
+      );
     }
     requestAnimationFrame(drawLines);
   };
@@ -691,6 +688,19 @@
     transform: translate(-50%, -50%);
     transition: opacity 0.3s;
     backdrop-filter: blur(6px);
+
+    &:after {
+      width: 8px;
+      height: 8px;
+      background: var(--esk-primary-color);
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translate3d(-50%, 50%, 0);
+      border-radius: 50%;
+      z-index: 1;
+    }
 
     @include bp(tablet) {
       padding: 9px 12px;
