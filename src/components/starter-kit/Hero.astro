@@ -105,7 +105,7 @@
         <button
           class="hotspot-label"
           slot="hotspot-label-1"
-          data-position="-0.6m 2.7m 0.1m"
+          data-position="-0.8m 2.4m 0m"
           data-normal="0m 0m 1m"
           data-visibility-attribute="visible"
           data-hotspot="hotspot-1"
@@ -127,18 +127,18 @@
         <button
           class="hotspot-label"
           slot="hotspot-label-3"
-          data-position="0.55m 2.8m 0.1m"
+          data-position="0.9m 2.8m 0.1m"
           data-normal="0m 0m 1m"
           data-visibility-attribute="visible"
           data-hotspot="hotspot-3"
-          data-zoom="1.5m"
+          data-zoom="1.8m"
         >
           Motion module
         </button>
         <button
           class="hotspot-label"
           slot="hotspot-label-4"
-          data-position="0.45m 1.4m 0.1m"
+          data-position="0.8m 1.8m 0.1m"
           data-normal="0m 0m 1m"
           data-visibility-attribute="visible"
           data-hotspot="hotspot-4"
@@ -624,6 +624,32 @@
       opacity 0.3s,
       transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
 
+    &:before,
+    &:after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      background-color: var(--esk-primary-color);
+      opacity: 0.5;
+      animation: pulse 2s infinite;
+    }
+
+    &:after {
+      animation-delay: 1s;
+    }
+
+    @keyframes pulse {
+      0% {
+        transform: scale(1);
+        opacity: 0.5;
+      }
+      100% {
+        transform: scale(2.5);
+        opacity: 0;
+      }
+    }
+
     &:focus {
       border: 4px solid var(--esk-primary-color);
       outline: none;
@@ -664,16 +690,10 @@
     opacity: 0;
     transform: translate(-50%, -50%);
     transition: opacity 0.3s;
+    backdrop-filter: blur(6px);
 
     @include bp(tablet) {
       padding: 9px 12px;
-    }
-
-    @media (prefers-color-scheme: dark) {
-      background-color: rgba(0, 0, 0, 0.55);
-      color: #fff;
-      border-color: var(--esk-primary-color);
-      backdrop-filter: blur(6px);
     }
 
     &:not([data-visible]) {
