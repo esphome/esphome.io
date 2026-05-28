@@ -31,16 +31,18 @@
         alt="ESPHome Starter Kit 3D model"
         ar
         ar-modes="webxr scene-viewer quick-look"
+        ar-scale="fixed"
         camera-controls
         disable-zoom
         disable-pan
         disable-tap
         touch-action="pan-y"
         min-camera-orbit="auto auto 0m"
-        tone-mapping="neutral"
+        interaction-prompt-threshold="6000"
+        interpolation-decay="80"
+        tone-mapping="aces"
         poster="/starter-kit/poster.webp"
         shadow-intensity="0"
-        tone-mapping="aces"
       >
         <button
           class="hotspot"
@@ -90,43 +92,71 @@
           <line class="hotspot-line" data-hotspot="hotspot-5"></line>
         </svg>
 
-        <div class="hotspot-labels">
-          <button
-            class="hotspot-label hotspot-label--button"
-            data-hotspot="hotspot-1"
-            data-zoom="1.8m"
-          >
-            Button module
-          </button>
-          <button
-            class="hotspot-label hotspot-label--temp"
-            data-hotspot="hotspot-2"
-            data-zoom="1.5m"
-          >
-            Temp & hum module
-          </button>
-          <button
-            class="hotspot-label hotspot-label--motion"
-            data-hotspot="hotspot-3"
-            data-zoom="1.5m"
-          >
-            Motion module
-          </button>
-          <button
-            class="hotspot-label hotspot-label--led"
-            data-hotspot="hotspot-4"
-            data-zoom="3.8m"
-          >
-            LED & buzzer module
-          </button>
-          <button
-            class="hotspot-label hotspot-label--esp32"
-            data-hotspot="hotspot-5"
-            data-zoom="2.5m"
-          >
-            ESP32 Microcontroller
-          </button>
-        </div>
+        <!--
+          Each label is anchored at data-position (world coords).
+          Editing axes (default camera angle):
+            • Y up  = label moves UP on screen
+            • X right = label moves RIGHT on screen
+            • Z (0.1m ≈ panel surface) — keep near 0.1 unless you want parallax
+          Modules sit at:
+            button (-0.56, 2.35), temp (0.07, 2.50), motion (0.68, 2.55),
+            led (0.03, 1.33), esp32 (-0.24, 0.07)
+        -->
+        <button
+          class="hotspot-label"
+          slot="hotspot-label-1"
+          data-position="-0.6m 2.7m 0.1m"
+          data-normal="0m 0m 1m"
+          data-visibility-attribute="visible"
+          data-hotspot="hotspot-1"
+          data-zoom="1.8m"
+        >
+          Button module
+        </button>
+        <button
+          class="hotspot-label"
+          slot="hotspot-label-2"
+          data-position="0.07m 2.8m 0.1m"
+          data-normal="0m 0m 1m"
+          data-visibility-attribute="visible"
+          data-hotspot="hotspot-2"
+          data-zoom="1.5m"
+        >
+          Temp & hum module
+        </button>
+        <button
+          class="hotspot-label"
+          slot="hotspot-label-3"
+          data-position="0.55m 2.8m 0.1m"
+          data-normal="0m 0m 1m"
+          data-visibility-attribute="visible"
+          data-hotspot="hotspot-3"
+          data-zoom="1.5m"
+        >
+          Motion module
+        </button>
+        <button
+          class="hotspot-label"
+          slot="hotspot-label-4"
+          data-position="0.45m 1.4m 0.1m"
+          data-normal="0m 0m 1m"
+          data-visibility-attribute="visible"
+          data-hotspot="hotspot-4"
+          data-zoom="3.8m"
+        >
+          LED & buzzer module
+        </button>
+        <button
+          class="hotspot-label"
+          slot="hotspot-label-5"
+          data-position="-0.5m 0.25m 0.1m"
+          data-normal="0m 0m 1m"
+          data-visibility-attribute="visible"
+          data-hotspot="hotspot-5"
+          data-zoom="4m"
+        >
+          ESP32 Microcontroller
+        </button>
       </model-viewer>
       <button type="button" class="block-hero__close" aria-label="Reset view">
         <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
@@ -148,6 +178,20 @@
   await customElements.whenDefined("model-viewer");
   customElements.get("model-viewer").meshoptDecoderLocation =
     "/vendor/model-viewer/meshopt_decoder.module.js";
+
+  try {
+    const PROMPT_KEY = "esk-hero-prompt-views";
+    const seen = Number(localStorage.getItem(PROMPT_KEY) ?? 0);
+    if (seen >= 3) {
+      document
+        .querySelector(".block-hero model-viewer")
+        ?.setAttribute("interaction-prompt", "none");
+    } else {
+      localStorage.setItem(PROMPT_KEY, String(seen + 1));
+    }
+  } catch {
+    // localStorage blocked (private mode, etc.) — leave the prompt on
+  }
 </script>
 
 <script>
@@ -164,10 +208,26 @@
   const lines =
     assetContainer?.querySelectorAll<SVGLineElement>(".hotspot-line") ?? [];
 
+  const labelByDotSlot = new Map<string, HTMLElement>();
+  labels.forEach((l) => {
+    const dotSlot = l.dataset.hotspot;
+    if (dotSlot) labelByDotSlot.set(dotSlot, l);
+  });
+
   const clearActive = () => {
     hotspots.forEach((h) => h.classList.remove("is-active"));
     labels.forEach((l) => l.classList.remove("is-active"));
     lines.forEach((l) => l.classList.remove("is-active"));
+  };
+
+  const IDLE_RESET_MS = 15000;
+  let idleTimer: number | undefined;
+
+  const scheduleIdleReset = () => {
+    if (idleTimer !== undefined) clearTimeout(idleTimer);
+    idleTimer = window.setTimeout(() => {
+      if (assetContainer?.classList.contains("is-zoomed")) resetView();
+    }, IDLE_RESET_MS);
   };
 
   const resetView = () => {
@@ -176,9 +236,23 @@
     mv.cameraOrbit = "auto auto auto";
     assetContainer?.classList.remove("is-zoomed");
     clearActive();
+    if (idleTimer !== undefined) {
+      clearTimeout(idleTimer);
+      idleTimer = undefined;
+    }
   };
 
   const DEFAULT_ZOOM = "1.5m";
+  // Fixed "front view" angle for all hotspot zooms. All modules are on the
+  // same face of the panel, so they share a target viewing angle.
+  const ZOOM_THETA = "0deg";
+  const ZOOM_PHI = "75deg";
+
+  const parseTriplet = (s: string | undefined): [number, number, number] => {
+    if (!s) return [0, 0, 1];
+    const parts = s.split(/\s+/).map((p) => parseFloat(p));
+    return [parts[0] ?? 0, parts[1] ?? 0, parts[2] ?? 1];
+  };
 
   const zoomTo = (slot: string | undefined) => {
     if (!mv || !slot) return;
@@ -188,9 +262,8 @@
       `.hotspot-label[data-hotspot="${slot}"]`,
     );
     const zoom = label?.dataset.zoom ?? DEFAULT_ZOOM;
-    const { theta, phi } = mv.getCameraOrbit();
     mv.cameraTarget = hotspot.dataset.position;
-    mv.cameraOrbit = `${theta}rad ${phi}rad ${zoom}`;
+    mv.cameraOrbit = `${ZOOM_THETA} ${ZOOM_PHI} ${zoom}`;
     assetContainer?.classList.add("is-zoomed");
     clearActive();
     hotspot.classList.add("is-active");
@@ -198,6 +271,7 @@
     assetContainer
       ?.querySelector(`.hotspot-line[data-hotspot="${slot}"]`)
       ?.classList.add("is-active");
+    scheduleIdleReset();
   };
 
   hotspots.forEach((h) =>
@@ -210,14 +284,88 @@
   );
   closeBtn?.addEventListener("click", resetView);
 
+  mv?.addEventListener("camera-change", scheduleIdleReset);
+
+  // ── Click-on-mesh + click-outside-to-close ─────────────────────────────
+  // We listen for click (vs pointerup) so the browser's own click-vs-drag
+  // arbitration kicks in. We also track pointer travel distance ourselves
+  // as a backstop: any movement > 6px between down and up disqualifies
+  // the click from triggering a zoom/dismiss.
+
+  const HOTSPOT_PICK_RADIUS = 1.2; // metres
+  const DRAG_THRESHOLD = 6; // pixels
+
+  const hotspotPositions: { slot: string; x: number; y: number; z: number }[] =
+    [];
+  hotspots.forEach((h) => {
+    const slot = h.getAttribute("slot");
+    if (!slot) return;
+    const [x, y, z] = parseTriplet(h.dataset.position);
+    hotspotPositions.push({ slot, x, y, z });
+  });
+
+  const findNearestHotspot = (p: {
+    x: number;
+    y: number;
+    z: number;
+  }): string | null => {
+    let bestSlot: string | null = null;
+    let bestDist2 = HOTSPOT_PICK_RADIUS * HOTSPOT_PICK_RADIUS;
+    for (const hp of hotspotPositions) {
+      const dx = hp.x - p.x;
+      const dy = hp.y - p.y;
+      const dz = hp.z - p.z;
+      const d2 = dx * dx + dy * dy + dz * dz;
+      if (d2 < bestDist2) {
+        bestDist2 = d2;
+        bestSlot = hp.slot;
+      }
+    }
+    return bestSlot;
+  };
+
+  let pointerDownX = 0;
+  let pointerDownY = 0;
+  let pointerMaxDistance = 0;
+
+  mv?.addEventListener("pointerdown", (e: PointerEvent) => {
+    pointerDownX = e.clientX;
+    pointerDownY = e.clientY;
+    pointerMaxDistance = 0;
+  });
+
+  mv?.addEventListener("pointermove", (e: PointerEvent) => {
+    const dx = e.clientX - pointerDownX;
+    const dy = e.clientY - pointerDownY;
+    const d = Math.hypot(dx, dy);
+    if (d > pointerMaxDistance) pointerMaxDistance = d;
+  });
+
+  mv?.addEventListener("click", async (e: MouseEvent) => {
+    const wasDrag = pointerMaxDistance > DRAG_THRESHOLD;
+    pointerMaxDistance = 0;
+    if (wasDrag) return;
+
+    const target = e.target as HTMLElement | null;
+    // Dot / label / close-button clicks already have their own handlers
+    if (target?.closest(".hotspot, .hotspot-label, .block-hero__close")) return;
+
+    // Try to pick a module under the click
+    const hit = await mv.positionAndNormalFromPoint(e.clientX, e.clientY);
+    if (hit?.position) {
+      const slot = findNearestHotspot(hit.position);
+      if (slot) {
+        zoomTo(slot);
+        return;
+      }
+    }
+
+    // No module hit — if currently zoomed, dismiss
+    if (assetContainer?.classList.contains("is-zoomed")) resetView();
+  });
+
   const svg = assetContainer?.querySelector<SVGSVGElement>(".hotspot-lines");
 
-  type LineCache = {
-    line: SVGLineElement;
-    labelCenterX: number;
-    labelCenterY: number;
-  };
-  let lineCaches: LineCache[] = [];
   let mvOffsetX = 0;
   let mvOffsetY = 0;
 
@@ -227,34 +375,24 @@
     const svgRect = svg.getBoundingClientRect();
     mvOffsetX = mvRect.left - svgRect.left;
     mvOffsetY = mvRect.top - svgRect.top;
-    lineCaches = [];
-    lines.forEach((line) => {
-      const slot = line.dataset.hotspot;
-      if (!slot) return;
-      const label = assetContainer?.querySelector<HTMLElement>(
-        `.hotspot-label[data-hotspot="${slot}"]`,
-      );
-      if (!label) return;
-      const r = label.getBoundingClientRect();
-      lineCaches.push({
-        line,
-        labelCenterX: (r.left + r.right) / 2 - svgRect.left,
-        labelCenterY: (r.top + r.bottom) / 2 - svgRect.top,
-      });
-    });
   };
 
   const drawLines = () => {
     if (!mv) return;
-    for (const { line, labelCenterX, labelCenterY } of lineCaches) {
-      const slot = line.dataset.hotspot;
-      if (!slot) continue;
-      const hotspot = mv.queryHotspot(slot);
-      if (!hotspot) continue;
-      line.setAttribute("x1", String(hotspot.canvasPosition.x + mvOffsetX));
-      line.setAttribute("y1", String(hotspot.canvasPosition.y + mvOffsetY));
-      line.setAttribute("x2", String(labelCenterX));
-      line.setAttribute("y2", String(labelCenterY));
+    for (const line of lines) {
+      const dotSlot = line.dataset.hotspot;
+      if (!dotSlot) continue;
+      const labelSlot = dotSlot.replace("hotspot-", "hotspot-label-");
+      const dot = mv.queryHotspot(dotSlot);
+      const label = mv.queryHotspot(labelSlot);
+      if (!dot || !label) continue;
+      const labelEl = labelByDotSlot.get(dotSlot);
+      const occluded = labelEl ? !labelEl.hasAttribute("data-visible") : false;
+      line.classList.toggle("is-occluded", occluded);
+      line.setAttribute("x1", String(dot.canvasPosition.x + mvOffsetX));
+      line.setAttribute("y1", String(dot.canvasPosition.y + mvOffsetY));
+      line.setAttribute("x2", String(label.canvasPosition.x + mvOffsetX));
+      line.setAttribute("y2", String(label.canvasPosition.y + mvOffsetY));
     }
     requestAnimationFrame(drawLines);
   };
@@ -310,14 +448,18 @@
 
     &__asset-container {
       height: 100%;
-      min-height: 440px;
+      min-height: clamp(440px, 60vh, 720px);
+      user-select: none;
+      -webkit-user-select: none;
+      overflow: visible;
 
       display: flex;
 
       model-viewer {
         width: 100%;
         height: 100%;
-        min-height: 440px;
+        min-height: clamp(440px, 60vh, 720px);
+        overflow: visible;
       }
 
       &.is-zoomed {
@@ -361,6 +503,23 @@
     }
 
     &__content {
+      > * {
+        animation: heroContentIn 0.7s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+
+        &:nth-child(1) {
+          animation-delay: 0.2s;
+        }
+        &:nth-child(2) {
+          animation-delay: 0.45s;
+        }
+        &:nth-child(3) {
+          animation-delay: 0.7s;
+        }
+        &:nth-child(4) {
+          animation-delay: 0.95s;
+        }
+      }
+
       h1 {
         font-weight: 300;
         letter-spacing: -0.02em;
@@ -437,6 +596,17 @@
     }
   }
 
+  @keyframes heroContentIn {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
   .hotspot {
     width: 8px;
     height: 8px;
@@ -477,14 +647,7 @@
     transition: opacity 0.3s;
   }
 
-  .hotspot-labels {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-  }
-
   .hotspot-label {
-    position: absolute;
     pointer-events: none;
     background-color: var(--esk-primary-color--light);
     border-radius: 4px;
@@ -499,63 +662,28 @@
     width: max-content;
     max-width: 160px;
     opacity: 0;
-    translate: 0 8px;
-    transition:
-      opacity 0.3s,
-      translate 0.4s;
+    transform: translate(-50%, -50%);
+    transition: opacity 0.3s;
 
     @include bp(tablet) {
       padding: 9px 12px;
     }
 
-    &--button {
-      top: -3%;
-      left: 3%;
-
-      @include bp(tablet) {
-        left: 3%;
-        top: 10%;
-      }
+    @media (prefers-color-scheme: dark) {
+      background-color: rgba(0, 0, 0, 0.55);
+      color: #fff;
+      border-color: var(--esk-primary-color);
+      backdrop-filter: blur(6px);
     }
 
-    &--temp {
-      top: 20%;
-      left: 0%;
-
-      @include bp(tablet) {
-        top: 27%;
-        left: 0%;
-      }
-    }
-
-    &--motion {
-      top: -7%;
-      right: 0%;
-
-      @include bp(tablet) {
-        top: 18%;
-        right: 3%;
-      }
-    }
-
-    &--led {
-      top: 40%;
-      right: 0%;
-    }
-
-    &--esp32 {
-      left: 4%;
-      bottom: 0%;
-
-      @include bp(tablet) {
-        left: 4%;
-        bottom: 18%;
-      }
+    &:not([data-visible]) {
+      opacity: 0;
+      pointer-events: none;
     }
   }
 
   .block-hero__asset-container.is-loaded {
-    .hotspot {
+    .hotspot[data-visible] {
       opacity: 1;
       pointer-events: auto;
       transform: translate(0%, -50%) scale(1);
@@ -565,10 +693,13 @@
       opacity: 1;
     }
 
-    .hotspot-label {
+    .hotspot-line.is-occluded {
+      opacity: 0;
+    }
+
+    .hotspot-label[data-visible] {
       opacity: 1;
       pointer-events: auto;
-      translate: 0 0;
     }
   }
 
