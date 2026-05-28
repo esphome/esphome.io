@@ -1,35 +1,19 @@
 ---
-import { iconData, type Icon } from "src/lib/icons";
-
-interface Props {
-  icon: Icon;
-  icon_text?: string;
-}
-
-const { icon, icon_text } = Astro.props;
-const { viewBox, body } = iconData[icon];
 ---
 
 <div class="card">
   <div class="card-content">
-    <div class="card-icon">
-      <svg
-        viewBox={viewBox}
-        fill="currentColor"
-        aria-hidden="true"
-        set:html={body}
-      />
-      {{ icon_text }}
-    </div>
+    {
+      Astro.slots.has("icon-text") && (
+        <div class="card-icon-text">
+          <slot name="icon-text" />
+        </div>
+      )
+    }
     <slot />
   </div>
 </div>
 
 <style lang="scss">
   @use "../styles/mixins" as *;
-
-  .card-icon svg {
-    width: 16px;
-    height: 16px;
-  }
 </style>

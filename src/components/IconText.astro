@@ -1,0 +1,36 @@
+---
+import { iconData, type Icon } from "src/lib/icons";
+
+interface Props {
+  icon?: Icon;
+  text?: string;
+}
+
+const { icon, text } = Astro.props;
+const { viewBox, body } = icon
+  ? iconData[icon]
+  : { viewBox: "0 0 24 24", body: "" };
+---
+
+<div class="icon-text">
+  {
+    icon && (
+      <svg
+        viewBox={viewBox}
+        fill="currentColor"
+        aria-hidden="true"
+        set:html={body}
+      />
+    )
+  }
+  {text}
+</div>
+
+<style lang="scss">
+  @use "../styles/mixins" as *;
+
+  .icon-text svg {
+    width: 16px;
+    height: 16px;
+  }
+</style>
