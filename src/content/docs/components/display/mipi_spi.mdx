@@ -163,7 +163,8 @@ most of the configuration will be set by default, but can be overridden if neede
 - **pixel_mode** (*Optional*): Select the interface mode for the display driver. Options are `16bit` (default) and `18bit`. Most displays require 16 bit mode, and it is preferred unless the display requires 18 bit mode.
 - **spi_16** (*Optional*): Set to `true` on boards where single bit SPI is used but drives the display in parallel via a 16 bit shift register.
 - **data_rate** (*Optional*): The SPI data rate. Defaults to 10MHz but board presets may override this.
-- **spi_mode** (*Optional*): The SPI mode. Options are `MODE0`, `MODE1`, `MODE2`, and `MODE3`. Defaults to `MODE0` for single bit SPI and `MODE3` for octal SPI (parallel bus.)
+- **spi_mode** (*Optional*): The SPI mode. Options are `MODE0`, `MODE1`, `MODE2`, and `MODE3`. Defaults to `MODE3` for
+  octal SPI and single bit SPI with no CS pin, or `MODE0` otherwise.
 - **draw_rounding** (*Optional*): The rounding factor for drawing operations. Defaults to 2. Some chips require a higher value to avoid display artifacts. Must be a power of 2.
 - **use_axis_flips** (*Optional*): If true, the driver will use alternate bits in the MADCTL register to implement x and y mirroring. Defaults to false.
 - **byte_order** (*Optional*): The byte order of the display buffer. Options are `big_endian` (default) and `little_endian`. This affects the byte order for the buffer when
