@@ -63,6 +63,10 @@ climate:
     update_interval: 1s
     current_temperature_min_interval: 60s
     supported_swing_modes: BOTH
+    vane:
+      vertical:
+        direction:
+          name: "Vertical Vane"    
 ```
 
 > [!WARNING]
@@ -81,6 +85,7 @@ climate:
 - Modes: `OFF`, `HEAT`, `COOL`, `DRY`, `FAN_ONLY`, `HEAT_COOL` (called `AUTO` by Mitsubishi)
 - Fan modes: `AUTO`, `QUIET`, `LOW`, `MEDIUM`, `MIDDLE`, `HIGH`
 - Swing modes: `OFF`, `VERTICAL`, `HORIZONTAL`, `BOTH` (configurable via `supported_swing_modes`)
+- Optional vertical vane direction select: `Auto`, `1`–`5`, `Swing`
 
 > [!NOTE]
 > Fan modes map to the following Mitsubishi fan speeds:
@@ -112,6 +117,24 @@ climate:
   - `VERTICAL` — exposes `'OFF'`, `VERTICAL`  
   - `HORIZONTAL` — exposes `'OFF'`, `HORIZONTAL`  
   - `BOTH` — exposes `'OFF'`, `VERTICAL`, `HORIZONTAL`, `BOTH`
+
+- **vane** (*Optional*): Additional vane controls exposed as separate entities.
+
+  - **vertical** (*Optional*): Vertical vane controls.
+
+    - **direction** (*Optional*, [Select](/components/select/)): Exposes the vertical vane direction as a select entity.
+
+      Available options are:
+
+      - `Auto`
+      - `1`
+      - `2`
+      - `3`
+      - `4`
+      - `5`
+      - `Swing`
+
+      All options from [Select](/components/select#config-select) are supported.
 
 - All other options from [Climate](/components/climate#config-climate).
 
