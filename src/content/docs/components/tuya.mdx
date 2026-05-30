@@ -66,9 +66,19 @@ Here is another example output for a Tuya ME-81H thermostat:
 - **ignore_mcu_update_on_datapoints** (*Optional*, list): A list of datapoints to ignore MCU updates for. Useful for
   certain broken/erratic hardware and debugging.
 
+- **wifi_reset** (*Optional*, boolean, default `false`): When enabled, the module clears saved WiFi credentials and
+  reboots when the MCU sends a Wi-Fi reset command. When disabled (default), the module acknowledges the command
+  and sends a fake Wi-Fi status progression to the MCU without performing any actual reset.
+
 Automations:
 
 - **on_datapoint_update** (*Optional*): An automation to perform when a Tuya datapoint update is received. See [`on_datapoint_update`](#tuya-on_datapoint_update).
+
+- **on_wifi_reset** (*Optional*): An automation to perform when the MCU sends the Wi-Fi reset command (EZ pairing mode).
+  See [`on_wifi_reset`](#tuya-on_wifi_reset).
+
+- **on_wifi_select** (*Optional*): An automation to perform when the MCU sends the Wi-Fi select command (AP pairing mode).
+  See [`on_wifi_select`](#tuya-on_wifi_select).
 
 ## Tuya Automation
 
@@ -126,6 +136,55 @@ tuya:
 - **sensor_datapoint** (**Required**, int): The datapoint id number of the sensor.
 - **datapoint_type** (*Optional*, string): The datapoint type one of *raw*, *string*, *bool*, *int*, *uint*, *enum*,
   *bitmask* or *any*.
+- See [Automation](/automations).
+
+<span id="tuya-on_wifi_reset"></span>
+
+### `on_wifi_reset`
+
+This automation will be triggered when the MCU sends the Wi-Fi reset command (0x04), requesting the module to enter
+EZ pairing mode. This typically happens when the user long-presses a physical button on the device.
+
+When `wifi_reset` is `true`, the automation fires before the credentials are cleared and the device reboots.
+When `wifi_reset` is `false` (default), the automation fires before the fake Wi-Fi status progression is sent.
+
+```yaml
+tuya:
+  on_wifi_reset:
+    - logger.log: "MCU requested EZ pairing mode"
+```
+
+You can combine this trigger with `wifi_reset: false` to reboot the device without clearing credentials:
+
+```yaml
+tuya:
+  on_wifi_reset:
+    - lambda: App.safe_reboot();
+  on_wifi_select:
+    - lambda: App.safe_reboot();
+```
+
+- See [Automation](/automations).
+
+<span id="tuya-on_wifi_select"></span>
+
+### `on_wifi_select`
+
+This automation will be triggered when the MCU sends the Wi-Fi select command (0x05), requesting the module to enter
+AP pairing mode. This typically happens when the user long-presses a physical button on the device (different timing
+or sequence than EZ mode).
+
+The behavior is the same as `on_wifi_reset` regarding `wifi_reset` interaction.
+
+```yaml
+tuya:
+  wifi_reset: true
+  on_wifi_reset:
+    - logger.log: "Entering EZ pairing mode"
+  on_wifi_select:
+    - logger.log: "Entering AP pairing mode"
+```
+
 - See [Automation](/automations).
 
 ## See Also
