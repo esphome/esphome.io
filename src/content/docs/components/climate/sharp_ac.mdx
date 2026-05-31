@@ -120,6 +120,10 @@ logger:
 
   - All options from [Text Sensor](/components/text_sensor).
 
+  - During startup this reports `Connecting (x/8)` while the component completes
+    the eight-step protocol handshake, then switches to `Connected` once the
+    final ACK is received.
+
 - **reconnect_button** (*Optional*): Optional button that restarts the UART session.
 
   - All options from [Button](/components/button).
@@ -129,6 +133,9 @@ logger:
 ## Notes
 
 - The integration initializes a connection sequence on boot and continuously polls status updates.
+- The startup counter in `connection_status` covers the full handshake:
+  `INIT_MSG2`, `SUBSCRIBE_MSG`, ACK, `SUBSCRIBE_MSG2`, `GET_STATE`, `GET_STATUS`,
+  `CONNECTED_MSG`, and the final ACK.
 - `connection_status` reports setup progress (`Connecting (x/8)`) and `Connected` once initialization completes.
 - `reconnect_button` can be used to manually re-trigger the protocol initialization if communication stalls.
 
