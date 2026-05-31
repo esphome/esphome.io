@@ -32,8 +32,9 @@ The indoor unit UART header exposes power and serial communication lines.
 | Green      | TX          | RX         |
 | Red        | 5V          | VCC        |
 
-> [!WARNING]
-> Verify connector pinout and voltage levels before connecting.
+:::warning
+Verify connector pinout and voltage levels before connecting.
+:::
 
 This component requires a [UART bus](/components/uart/) configured with:
 
@@ -42,8 +43,9 @@ This component requires a [UART bus](/components/uart/) configured with:
 - 1 stop bit
 - Baud rate `9600`
 
-> [!NOTE]
-> Many indoor units use 5V UART levels. If your ESP board is 3.3V-only, use a proper level shifter.
+:::note
+Many indoor units use 5V UART levels. If your ESP board is 3.3V-only, use a proper level shifter.
+:::
 
 ## Example configuration
 
@@ -78,14 +80,15 @@ climate:
       name: "Reconnect"
 ```
 
-> [!WARNING]
-> If you are using the [Logger Component](/components/logger#logger), make sure you are not using the same pins, or disable UART
-> logging with:
->
-> ```yaml
-> logger:
->   baud_rate: 0
-> ```
+:::warning
+If you are using the [Logger Component](/components/logger#logger), make sure you are not using the same pins, or disable UART
+logging with:
+
+```yaml
+logger:
+  baud_rate: 0
+```
+:::
 
 ## Supported features
 
