@@ -1,0 +1,16 @@
+---
+interface Props {
+  line?: Boolean;
+  direction?: "horizontal" | "vertical";
+}
+
+const { line = false, direction = "horizontal" } = Astro.props;
+---
+
+<div class={`icon-text-group ${direction} ${line ? "line" : ""}`}>
+  <slot />
+</div>
+
+<style lang="scss">
+  @use "../styles/mixins" as *;
+</style>

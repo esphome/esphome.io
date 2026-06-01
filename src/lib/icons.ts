@@ -18,3 +18,33 @@ export const icons = {
 } as const;
 
 export type Icon = keyof typeof icons;
+
+/**
+ * Parsed icon data: the original strings are full `<svg>` markup, but
+ * consumers usually want to write a literal `<svg>` element in their own
+ * component template (so Astro's scoped styles can target it without
+ * needing `:global()`). `iconData[name]` exposes the inner body and viewBox
+ * so callers can do:
+ *
+ *     <svg class="icon" viewBox={iconData[name].viewBox} set:html={iconData[name].body} />
+ */
+export interface IconData {
+  viewBox: string;
+  body: string;
+}
+
+function parseIcon(svg: string): IconData {
+  const viewBox = /viewBox="([^"]+)"/.exec(svg)?.[1] ?? "0 0 24 24";
+  const body = svg
+    .replace(/^\s*<svg\b[^>]*>/, "")
+    .replace(/<\/svg>\s*$/, "")
+    .trim();
+  return { viewBox, body };
+}
+
+export const iconData: Record<Icon, IconData> = Object.fromEntries(
+  (Object.entries(icons) as [Icon, string][]).map(([name, svg]) => [
+    name,
+    parseIcon(svg),
+  ]),
+) as Record<Icon, IconData>;

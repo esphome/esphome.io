@@ -1,41 +1,11 @@
 ---
-import { icons, type Icon } from "src/lib/icons";
 
-interface Props {
-  icon: Icon;
-  dollars: string;
-  euros: string;
-}
-
-const { icon, dollars, euros } = Astro.props;
 ---
 
 <div class="card">
-  <div class="card-content">
-    <Fragment set:html={icons[icon]} />
-    <slot />
-  </div>
+  <slot />
 </div>
 
 <style lang="scss">
   @use "../styles/mixins" as *;
-
-  .card-content {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-    padding: 12px;
-    border: 1px solid var(--esk-primary-color, #9abd32);
-    border-radius: 4px;
-    background-color: rgba(154, 189, 50, 0.1);
-    color: var(--esk-primary-color, #9abd32);
-
-    svg {
-      display: block;
-      width: 100%;
-      height: 100%;
-    }
-  }
 </style>

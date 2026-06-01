@@ -1,0 +1,74 @@
+---
+import { iconData, type Icon } from "src/lib/icons";
+
+interface Props {
+  icon?: Icon;
+  text?: string;
+}
+
+const { icon, text } = Astro.props;
+const { viewBox, body } = icon
+  ? iconData[icon]
+  : { viewBox: "0 0 24 24", body: "" };
+---
+
+<div class="icon-text">
+  {
+    icon && (
+      <div class="icon">
+        <svg
+          viewBox={viewBox}
+          fill="currentColor"
+          aria-hidden="true"
+          set:html={body}
+        />
+      </div>
+    )
+  }
+  {text && <div class="text">{text}</div>}
+</div>
+
+<style lang="scss">
+  @use "../styles/mixins" as *;
+
+  .icon-text {
+    display: flex;
+    gap: 12px;
+    .icon,
+    .text {
+      border-radius: 4px;
+      border: 1px solid var(--esk-primary-color);
+      display: grid;
+      height: 40px;
+      margin-top: 0;
+      padding: 0 12px;
+      place-items: center;
+      position: relative;
+
+      &:before {
+        background-color: var(--esk-primary-color);
+        content: "";
+        inset: 0;
+        opacity: 0.1;
+        position: absolute;
+      }
+    }
+
+    .icon {
+      display: grid;
+      place-items: center;
+      width: 40px;
+      svg {
+        // max 16px height or width, depending on the aspect ratio
+        max-height: 16px;
+        max-width: 16px;
+        width: 100%;
+        height: 100%;
+      }
+    }
+    .text {
+      padding-left: 20px;
+      padding-right: 20px;
+    }
+  }
+</style>
