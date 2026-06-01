@@ -29,40 +29,13 @@ const ignoreFiles = ["script/release_notes_template.mdx"];
 
 // File types
 const fileTypes = [
-  ".cfg",
-  ".css",
-  ".gif",
-  ".h",
-  ".html",
-  ".ico",
-  ".jpg",
-  ".js",
-  ".json",
-  ".md",
-  ".mdx",
-  ".png",
-  ".py",
-  ".svg",
-  ".toml",
-  ".txt",
-  ".webmanifest",
-  ".xml",
-  ".yaml",
-  ".yml",
-  ".mjs",
-  ".ts",
-  ".tsx",
-  ".astro",
-  ".sh",
-  ".webp",
-  ".scss",
-  ".glb",
-  "", // empty string for files without extension (like .gitignore)
+  '.cfg', '.css', '.gif', '.h', '.html', '.ico', '.jpg', '.js', '.json',
+  '.md', '.mdx', '.png', '.py', '.svg', '.toml', '.txt', '.webmanifest',
+  '.xml', '.yaml', '.yml', '.mjs', '.ts', '.tsx', '.astro', '.sh', '.webp',
+  '.bin', '' // empty string for files without extension (like .gitignore)
 ];
-const imageTypes = [".webp", ".jpg", ".ico", ".png", ".svg", ".gif"];
-// Binary file types — extension check still applies, but content checks (tabs,
-// newlines, end-of-file newline, link checks) are skipped.
-const binaryTypes = [".glb"];
+const imageTypes = ['.webp', '.jpg', '.ico', '.png', '.svg', '.gif'];
+const binaryTypes = ['.bin'];
 
 // Store errors
 const errors = new Map();
@@ -297,8 +270,9 @@ async function checkInternalLinks(fname, content, anchorCache) {
 
   // Skip template and documentation files with example links
   const ignoreFiles = [
-    ".claude/instructions.md",
-    "script/release_notes_template.md",
+    'AGENTS.md',
+    'CONTRIBUTING.md',
+    'script/release_notes_template.md',
   ];
   if (ignoreFiles.includes(fname)) return;
 
@@ -367,6 +341,10 @@ async function checkInternalLinks(fname, content, anchorCache) {
     ) {
       continue;
     }
+    if (linkUrl.startsWith('/files/') && /\.(bin|zip)$/i.test(linkUrl)) {
+      continue;
+    }
+
 
     // Skip links with spaces or parentheses (likely code)
     if (
@@ -582,6 +560,11 @@ async function main() {
 
   // Process files
   for (const [fname, gitMode] of gitFiles) {
+    // Skip symlinks - the target file is linted directly
+    if (gitMode === 120000) {
+      continue;
+    }
+
     // Skip ignored folders
     if (
       ignoreFolders.some(
@@ -609,6 +592,9 @@ async function main() {
       // Skip binary files
       const ext = extname(fname);
       if (imageTypes.includes(ext) || binaryTypes.includes(ext)) {
+        continue;
+      }
+      if (binaryTypes.includes(extname(fname))) {
         continue;
       }
 
