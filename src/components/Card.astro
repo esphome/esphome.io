@@ -1,11 +1,162 @@
 ---
+import IconText from "@components/IconText.astro";
 
+const { span, bleed = false, href, ...attrs } = Astro.props;
+const hasMedia = Astro.slots.has("media");
+const spanValue =
+  span === "full" ? "1 / -1" : typeof span === "number" ? `span ${span}` : null;
+
+const Tag = href ? "a" : "div";
 ---
 
-<div class="card">
-  <slot />
-</div>
+<Tag
+  class:list={[
+    "card",
+    {
+      "card--with-media": hasMedia,
+      "card--bleed": bleed && hasMedia,
+      "card--link": !!href,
+    },
+  ]}
+  style={{ "--card-span": spanValue }}
+  href={href}
+  {...attrs}
+>
+  {
+    hasMedia && (
+      <div class="card__media">
+        <slot name="media" />
+      </div>
+    )
+  }
+  <div class="card__content">
+    <slot />
+  </div>
+  {
+    href && (
+      <span class="card__arrow" aria-hidden="true">
+        <IconText icon="arrow_outward" />
+      </span>
+    )
+  }
+</Tag>
 
 <style lang="scss">
   @use "../styles/mixins" as *;
+
+  .card {
+    border: 1px solid var(--esk-primary-color);
+    border-radius: 8px;
+    @include fluid(16, 32, $property: padding);
+
+    display: flex;
+    flex-direction: column;
+
+    background: var(--esk-card-background);
+
+    grid-column: var(--card-span, auto);
+    position: relative;
+
+    @include bp(tablet) {
+      border-radius: 12px;
+    }
+
+    :global(h3) {
+      margin-top: 1.75rem;
+      margin-bottom: 0.5rem;
+
+      @include bp(tablet) {
+        margin-top: 2.75rem;
+        margin-bottom: 0.75rem;
+      }
+    }
+
+    :global(p) {
+      @include fluid(12, 16);
+      line-height: 1.2;
+    }
+  }
+
+  .card--link {
+    color: inherit;
+    text-decoration: none;
+    transition: border-color 0.2s ease, transform 0.2s ease;
+
+    &:hover,
+    &:focus-visible {
+      border-color: var(--esk-title-colour);
+
+      .card__arrow {
+        transform: translate(2px, -2px);
+      }
+    }
+  }
+
+  .card__arrow {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    display: block;
+    transition: transform 0.2s ease;
+    pointer-events: none;
+
+    @include bp(tablet) {
+      top: 1.5rem;
+      right: 1.5rem;
+    }
+  }
+
+  .card__media {
+    overflow: hidden;
+
+    :global(img),
+    :global(svg),
+    :global(picture) {
+      width: 100%;
+      height: auto;
+      display: flex;
+    }
+  }
+
+  .card--with-media {
+    min-height: 342px;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+
+    @include bp(tablet) {
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+      gap: 2rem;
+
+      .card__media {
+        position: relative;
+        min-height: 100%;
+
+        :global(img),
+        :global(svg),
+        :global(picture) {
+          position: absolute;
+          inset: 0;
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+      }
+    }
+
+    :global(h2),
+    :global(h3) {
+      margin-top: 0;
+    }
+  }
+
+  .card--bleed {
+    overflow: hidden;
+    padding: 0;
+
+    .card__content {
+      @include fluid(16, 32, $property: padding);
+    }
+  }
 </style>
