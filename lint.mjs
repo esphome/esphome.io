@@ -22,20 +22,26 @@ const colors = {
 };
 
 // Folders to ignore
-const ignoreFolders = ["pagefind/", "node_modules/", "dist/", ".astro/"];
+const ignoreFolders = [
+  "pagefind/",
+  "node_modules/",
+  "dist/",
+  ".astro/",
+  "public/vendor/",
+];
 
 // Files to ignore (skip all linting)
 const ignoreFiles = ["script/release_notes_template.mdx"];
 
 // File types
 const fileTypes = [
-  '.cfg', '.css', '.gif', '.h', '.html', '.ico', '.jpg', '.js', '.json',
-  '.md', '.mdx', '.png', '.py', '.svg', '.toml', '.txt', '.webmanifest',
+  '.cfg', '.css', '.gif', '.glb', '.h', '.html', '.ico', '.jpg', '.js', '.json',
+  '.md', '.mdx', '.png', '.py', '.scss', '.svg', '.toml', '.txt', '.webmanifest',
   '.xml', '.yaml', '.yml', '.mjs', '.ts', '.tsx', '.astro', '.sh', '.webp',
   '.bin', '' // empty string for files without extension (like .gitignore)
 ];
 const imageTypes = ['.webp', '.jpg', '.ico', '.png', '.svg', '.gif'];
-const binaryTypes = ['.bin'];
+const binaryTypes = ['.bin', '.glb'];
 
 // Store errors
 const errors = new Map();
