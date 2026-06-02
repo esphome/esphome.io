@@ -13,9 +13,9 @@ The component does not transmit data to the meter. The meter periodically broadc
 (and decrypts if necessary), and updates the configured sensors as data arrives.
 
 > [!NOTE]
-> An adapter (like an M-Bus to UART module) is required to connect the EspHome board to the smart meter.
->
-> For **encrypted meters**, you must request a 32-character hexadecimal **decryption key** from your energy provider.
+> * **Hardware adapter:** An adapter (like an M-Bus to UART module) is required to connect the ESP board to the smart meter.
+> * **ESP Board:** An **ESP32 is strongly recommended**. ESP8266 boards are unsuitable for large or multi-frame DLMS telegrams and may result in truncated or corrupted frames.
+> * **Encryption:** For encrypted meters, you must request a 32-character hexadecimal **decryption key** from your energy provider.
 
 ![Smart meter with M-Bus adapter board to ESP32](/images/dlms_meter.jpg)
 
@@ -91,6 +91,11 @@ sensor:
 Before using this method, it is highly recommended to check your meter's manual or your energy provider's documentation
 for a list of supported OBIS codes.
 
+> [!TIP]
+> If you are building custom patterns or need to capture the raw hex payload for troubleshooting, change the `dlms_meter`
+> log level to `VERY_VERBOSE`. This will output the full raw buffer and the decrypted AXDR payload.
+
+
 If you are configuring your meter for the first time and do not know which OBIS codes it broadcasts, you can temporarily
 increase the logging level to `VERBOSE`. The component will print all successfully parsed OBIS codes and their values to
 the ESPHome log.
@@ -106,18 +111,14 @@ logger:
 In this configuration, the global `level` is set to `VERBOSE` because ESPHome will otherwise exclude lower-severity log
 messages at compile time (any log message with a lower severity will not be shown).
 
-To prevent your console from being flooded with verbose messages from every component,
-`initial_level` restores the standard default of `DEBUG` dynamically at run time,
-while the `logs` mapping manually sets the specific `dlms_meter` tag to remain at `VERBOSE`.
-
 > [!WARNING]
 > Increasing logging verbosity, for example by using `VERBOSE` or `VERY_VERBOSE`,
 > can impact the performance of your ESP application and increase memory size.
 > Always **revert to default log levels** for daily use.
 
-> [!TIP]
-> If you are building custom patterns or need to capture the raw hex payload for troubleshooting, change the `dlms_meter`
-> log level to `VERY_VERBOSE`. This will output the full raw buffer and the decrypted AXDR payload.
+To prevent your console from being flooded with verbose messages from every component,
+`initial_level` restores the standard default of `DEBUG` dynamically at run time,
+while the `logs` mapping manually sets the specific `dlms_meter` tag to remain at `VERBOSE`.
 
 For more details, refer to the [Logger Component](/components/logger/).
 
