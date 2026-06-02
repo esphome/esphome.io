@@ -35,24 +35,26 @@ const { viewBox, body } = icon
     display: flex;
     gap: 12px;
 
+    // Default (dark mode): solid muted-olive background.
+    --icon-text-bg: rgba(49, 57, 32, 0.6);
+
+    :global([data-theme="light"]) & {
+      // Light mode: solid pale-green so labels stay legible on light pages.
+      --icon-text-bg: rgba(220, 228, 197, 0.6);
+    }
+
     .icon,
     .text {
       height: 40px;
       border-radius: 4px;
       border: 1px solid var(--esk-primary-color);
+      background-color: var(--icon-text-bg);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
       display: grid;
       margin-top: 0;
       padding: 0 12px;
       place-items: center;
-      position: relative;
-
-      &:before {
-        background-color: var(--esk-primary-color);
-        content: "";
-        inset: 0;
-        opacity: 0.1;
-        position: absolute;
-      }
     }
 
     .icon {

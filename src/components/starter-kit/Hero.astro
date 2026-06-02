@@ -41,7 +41,7 @@
   import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
   import { MeshoptDecoder } from "three/addons/libs/meshopt_decoder.module.js";
 
-  const MODEL_URL = "/starter-kit/combined-panel-compute-optimised.glb";
+  const MODEL_URL = "/starter-kit/ESK.glb";
 
   const canvas = document.getElementById(
     "hero-scene",
@@ -64,6 +64,7 @@
       canvas,
       antialias: true,
       alpha: true,
+      depth: true,
     });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.setSize(width, height, false);
@@ -132,6 +133,7 @@
     };
 
     const SVG_NS = "http://www.w3.org/2000/svg";
+    let cycleUpdater: (now: number) => void = () => {};
     const labels: LabelRef[] = labelEls.map((el) => {
       let line: SVGLineElement | null = null;
       let dot: SVGCircleElement | null = null;
@@ -211,6 +213,162 @@
       model.traverse((obj) => {
         if (obj.name) byName.set(obj.name.toLowerCase(), obj);
       });
+
+      const topLevel = [...model.children];
+      // Ensure world matrices reflect the model's scale/position before we
+      // sample bounding boxes for zoom focus.
+      model.updateMatrixWorld(true);
+      console.info(
+        "[Hero] Top-level groups:",
+        topLevel.map((c) => c.name || "(unnamed)"),
+      );
+      console.info("[Hero] All named objects:", [...byName.keys()]);
+      console.groupCollapsed("[Hero] Model hierarchy");
+      const dumpTree = (obj: THREE.Object3D, depth = 0) => {
+        const indent = "  ".repeat(depth);
+        const kind = (obj as THREE.Mesh).isMesh ? "Mesh" : obj.type;
+        console.info(`${indent}${obj.name || "(unnamed)"} [${kind}]`);
+        for (const child of obj.children) dumpTree(child, depth + 1);
+      };
+      for (const child of topLevel) dumpTree(child);
+      console.groupEnd();
+
+      // Click any module to make it the active (solid) group; the rest
+      // stay as the blueprint wireframe. Each frame, opacities and the
+      // camera lerp toward the active group's state.
+      const SOLID_LERP = 0.08;
+      const ZOOM_LERP = 0.06;
+      // Wireframe opacity when a group is fully inactive.
+      const WIRE_DIM = 0.6;
+      // Blueprint-style colour for inactive edges.
+      const BLUEPRINT_COLOR = new THREE.Color(0x3a6b8f);
+
+      type GroupFade = {
+        root: THREE.Object3D;
+        solid: THREE.Material[];
+        wire: THREE.Material[];
+        meshes: THREE.Mesh[];
+      };
+
+      const groupFades: GroupFade[] = topLevel.map((obj, idx) => {
+        const solid: THREE.Material[] = [];
+        const wire: THREE.Material[] = [];
+        const meshes: THREE.Mesh[] = [];
+        const overlays: { parent: THREE.Mesh; mesh: THREE.LineSegments }[] = [];
+        // Group 0 starts solid; the rest start as dim wireframe.
+        const initialSolid = idx === 0 ? 1 : 0;
+        obj.traverse((o) => {
+          const mesh = o as THREE.Mesh;
+          if (!mesh.isMesh) return;
+          const src = Array.isArray(mesh.material)
+            ? mesh.material[0]
+            : mesh.material;
+          if (!src) return;
+          const solidMat = src.clone();
+          solidMat.transparent = true;
+          solidMat.opacity = initialSolid;
+          solidMat.depthWrite = true;
+          // Wireframe overlay: only feature edges (>30° dihedral angle)
+          // rendered as line segments in a blueprint cyan, so inactive
+          // groups read as a schematic rather than a dense mesh.
+          const lineMat = new THREE.LineBasicMaterial({
+            color: BLUEPRINT_COLOR.clone(),
+            transparent: true,
+            opacity: initialSolid === 1 ? 0 : WIRE_DIM,
+            depthWrite: false,
+          });
+          const edges = new THREE.EdgesGeometry(mesh.geometry, 30);
+          const overlay = new THREE.LineSegments(edges, lineMat);
+          overlay.name = `${mesh.name || "mesh"}-edges`;
+          mesh.material = solidMat;
+          overlays.push({ parent: mesh, mesh: overlay });
+          solid.push(solidMat);
+          wire.push(lineMat);
+          meshes.push(mesh);
+        });
+        for (const { parent, mesh } of overlays) parent.add(mesh);
+        return { root: obj, solid, wire, meshes };
+      });
+
+      // Precompute per-group bounding spheres for the zoom animation.
+      const fovY = (camera.fov * Math.PI) / 180;
+      const homeTarget = controls.target.clone();
+      const homeDistance = camera.position.distanceTo(homeTarget);
+      const groupFocus = topLevel.map((obj) => {
+        const box = new THREE.Box3().setFromObject(obj);
+        const center = new THREE.Vector3();
+        const sphere = new THREE.Sphere();
+        box.getCenter(center);
+        box.getBoundingSphere(sphere);
+        const radius = Math.max(sphere.radius, 0.05);
+        // Distance so the sphere fits the vertical FOV with margin.
+        const distance = (radius / Math.sin(fovY / 2)) * 1.6;
+        return { center, distance };
+      });
+
+      const desiredTarget = new THREE.Vector3();
+      const desiredCamPos = new THREE.Vector3();
+      const dirFromTarget = new THREE.Vector3();
+
+      let activeIdx = 0;
+
+      const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
+
+      cycleUpdater = () => {
+        if (!groupFades.length) return;
+
+        // Lerp every group's solid/wire opacity toward its target state.
+        for (let i = 0; i < groupFades.length; i++) {
+          const { solid, wire } = groupFades[i];
+          const targetSolid = i === activeIdx ? 1 : 0;
+          const targetWire = WIRE_DIM * (1 - targetSolid);
+          for (const m of solid)
+            m.opacity = lerp(m.opacity, targetSolid, SOLID_LERP);
+          for (const m of wire)
+            m.opacity = lerp(m.opacity, targetWire, SOLID_LERP);
+        }
+
+        // Lerp camera target/position toward the active group's focus,
+        // keeping the current orbit direction.
+        const focus = groupFocus[activeIdx] ?? {
+          center: homeTarget,
+          distance: homeDistance,
+        };
+        desiredTarget.copy(focus.center);
+        dirFromTarget.subVectors(camera.position, controls.target);
+        const currentDist = dirFromTarget.length() || 1;
+        dirFromTarget.divideScalar(currentDist);
+        desiredCamPos
+          .copy(desiredTarget)
+          .addScaledVector(dirFromTarget, focus.distance);
+        controls.target.lerp(desiredTarget, ZOOM_LERP);
+        camera.position.lerp(desiredCamPos, ZOOM_LERP);
+      };
+
+      // Raycaster click handling: pick whichever top-level group contains
+      // the intersected mesh and make it active.
+      const raycaster = new THREE.Raycaster();
+      const pointer = new THREE.Vector2();
+      const allMeshes = groupFades.flatMap((g) => g.meshes);
+      const groupForObject = (obj: THREE.Object3D | null): number => {
+        while (obj) {
+          const idx = topLevel.indexOf(obj);
+          if (idx !== -1) return idx;
+          obj = obj.parent;
+        }
+        return -1;
+      };
+      canvas.addEventListener("pointerdown", (event) => {
+        const rect = canvas.getBoundingClientRect();
+        pointer.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+        pointer.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+        raycaster.setFromCamera(pointer, camera);
+        const hits = raycaster.intersectObjects(allMeshes, false);
+        if (!hits.length) return;
+        const idx = groupForObject(hits[0].object);
+        if (idx !== -1) activeIdx = idx;
+      });
+      canvas.style.cursor = "pointer";
 
       for (const label of labels) {
         const positionAttr = label.el.dataset.position;
@@ -402,6 +560,7 @@
     renderer.setAnimationLoop(() => {
       resize();
       controls.update();
+      cycleUpdater(performance.now());
       renderer.render(scene, camera);
       updateLabels();
     });
