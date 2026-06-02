@@ -26,386 +26,386 @@
       </div>
     </div>
     <div class="block-hero__asset-container">
-      <model-viewer
-        src="/starter-kit/combined-panel-compute-optimised.glb"
-        alt="ESPHome Starter Kit 3D model"
-        ar
-        ar-modes="webxr scene-viewer quick-look"
-        ar-scale="fixed"
-        camera-controls
-        disable-zoom
-        disable-pan
-        disable-tap
-        touch-action="pan-y"
-        min-camera-orbit="auto auto 0m"
-        interaction-prompt-threshold="6000"
-        interpolation-decay="80"
-        tone-mapping="aces"
-        poster="/starter-kit/poster.webp"
-        shadow-intensity="0"
-      >
-        <button
-          class="hotspot"
-          slot="hotspot-1"
-          data-position="-0.5605654272973684m 2.3497694925085417m 0.1577726669933136m"
-          data-normal="0m -4.7181972549813103e-7m 0.9999999999998889m"
-          data-visibility-attribute="visible"
-          aria-label="Button module"></button>
-        <button
-          class="hotspot"
-          slot="hotspot-2"
-          data-position="0.06594962962506401m 2.505031394564349m 0.04108281874086464m"
-          data-normal="0m -3.021140994925911e-7m 0.9999999999999545m"
-          data-visibility-attribute="visible"
-          aria-label="Temp & hum module"></button>
-        <button
-          class="hotspot"
-          slot="hotspot-3"
-          data-position="0.6767021090234897m 2.551928830256844m 0.10511088381804498m"
-          data-normal="-7.549788288176731e-8m 1.352368577797927e-7m 0.999999999999988m"
-          data-visibility-attribute="visible"
-          aria-label="Motion module"></button>
-        <button
-          class="hotspot"
-          slot="hotspot-4"
-          data-position="0.03080501274970332m 1.3308043464158432m 0.0410827821529187m"
-          data-normal="0m -6.28895230895957e-8m 0.999999999999998m"
-          data-visibility-attribute="visible"
-          aria-label="LED & buzzer module"></button>
-        <button
-          class="hotspot"
-          slot="hotspot-5"
-          data-position="-0.2379975457681977m 0.06684272313252704m 0.10484313944579174m"
-          data-normal="0m -6.74608119632293e-8m 0.9999999999999979m"
-          data-visibility-attribute="visible"
-          aria-label="ESP32 Microcontroller"></button>
-
-        <svg
-          class="hotspot-lines"
-          xmlns="http://www.w3.org/2000/svg"
-          aria-hidden="true"
-        >
-          <line class="hotspot-line" data-hotspot="hotspot-1"></line>
-          <line class="hotspot-line" data-hotspot="hotspot-2"></line>
-          <line class="hotspot-line" data-hotspot="hotspot-3"></line>
-          <line class="hotspot-line" data-hotspot="hotspot-4"></line>
-          <line class="hotspot-line" data-hotspot="hotspot-5"></line>
-        </svg>
-        <button
-          class="hotspot-label"
-          slot="hotspot-label-1"
-          data-position="-0.8m 2.6m 0m"
-          data-normal="0m 0m 1m"
-          data-visibility-attribute="visible"
-          data-hotspot="hotspot-1"
-          data-zoom="1.8m"
-        >
-          Button module
-        </button>
-        <button
-          class="hotspot-label"
-          slot="hotspot-label-2"
-          data-position="0.25m 2.8m 0.1m"
-          data-normal="0m 0m 1m"
-          data-visibility-attribute="visible"
-          data-hotspot="hotspot-2"
-          data-zoom="1.5m"
-        >
-          Temp & hum module
-        </button>
-        <button
-          class="hotspot-label"
-          slot="hotspot-label-3"
-          data-position="1.0m 2.8m 0.1m"
-          data-normal="0m 0m 1m"
-          data-visibility-attribute="visible"
-          data-hotspot="hotspot-3"
-          data-zoom="1.8m"
-        >
-          Motion module
-        </button>
-        <button
-          class="hotspot-label"
-          slot="hotspot-label-4"
-          data-position="0.8m 1.8m 0.1m"
-          data-normal="0m 0m 1m"
-          data-visibility-attribute="visible"
-          data-hotspot="hotspot-4"
-          data-zoom="3.8m"
-        >
-          LED & buzzer module
-        </button>
-        <button
-          class="hotspot-label"
-          slot="hotspot-label-5"
-          data-position="-0.5m 0.25m 0.1m"
-          data-normal="0m 0m 1m"
-          data-visibility-attribute="visible"
-          data-hotspot="hotspot-5"
-          data-zoom="4m"
-        >
-          ESP32 Microcontroller
-        </button>
-      </model-viewer>
-      <button type="button" class="block-hero__close" aria-label="Reset view">
-        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
-          <path
-            d="M6 6L18 18M6 18L18 6"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"></path>
-        </svg>
-      </button>
+      <div class="block-hero__asset-stage">
+        <canvas id="hero-scene"></canvas>
+        <svg class="block-hero__label-lines" aria-hidden="true"></svg>
+        <slot name="labels" />
+      </div>
     </div>
   </div>
 </section>
 
-<script is:inline type="module" src="/vendor/model-viewer/model-viewer.min.js"
-></script>
-
-<script is:inline type="module">
-  await customElements.whenDefined("model-viewer");
-  customElements.get("model-viewer").meshoptDecoderLocation =
-    "/vendor/model-viewer/meshopt_decoder.module.js";
-
-  try {
-    const PROMPT_KEY = "esk-hero-prompt-views";
-    const seen = Number(localStorage.getItem(PROMPT_KEY) ?? 0);
-    if (seen >= 3) {
-      document
-        .querySelector(".block-hero model-viewer")
-        ?.setAttribute("interaction-prompt", "none");
-    } else {
-      localStorage.setItem(PROMPT_KEY, String(seen + 1));
-    }
-  } catch {
-    // localStorage blocked (private mode, etc.) — leave the prompt on
-  }
-</script>
-
 <script>
-  const assetContainer = document.querySelector<HTMLElement>(
-    ".block-hero__asset-container",
-  );
-  const mv = assetContainer?.querySelector("model-viewer") as any;
-  const closeBtn =
-    assetContainer?.querySelector<HTMLButtonElement>(".block-hero__close");
-  const hotspots =
-    assetContainer?.querySelectorAll<HTMLElement>(".hotspot") ?? [];
-  const labels =
-    assetContainer?.querySelectorAll<HTMLElement>(".hotspot-label") ?? [];
-  const lines =
-    assetContainer?.querySelectorAll<SVGLineElement>(".hotspot-line") ?? [];
+  import * as THREE from "three";
+  import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+  import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+  import { MeshoptDecoder } from "three/addons/libs/meshopt_decoder.module.js";
 
-  const labelByDotSlot = new Map<string, HTMLElement>();
-  labels.forEach((l) => {
-    const dotSlot = l.dataset.hotspot;
-    if (dotSlot) labelByDotSlot.set(dotSlot, l);
-  });
+  const MODEL_URL = "/starter-kit/combined-panel-compute-optimised.glb";
 
-  const clearActive = () => {
-    hotspots.forEach((h) => h.classList.remove("is-active"));
-    labels.forEach((l) => l.classList.remove("is-active"));
-    lines.forEach((l) => l.classList.remove("is-active"));
-  };
+  const canvas = document.getElementById(
+    "hero-scene",
+  ) as HTMLCanvasElement | null;
 
-  const IDLE_RESET_MS = 15000;
-  let idleTimer: number | undefined;
+  if (canvas) {
+    const getSize = () => ({
+      width: canvas.clientWidth || 1,
+      height: canvas.clientHeight || 1,
+    });
 
-  const scheduleIdleReset = () => {
-    if (idleTimer !== undefined) clearTimeout(idleTimer);
-    idleTimer = window.setTimeout(() => {
-      if (assetContainer?.classList.contains("is-zoomed")) resetView();
-    }, IDLE_RESET_MS);
-  };
+    let { width, height } = getSize();
 
-  const resetView = () => {
-    if (!mv) return;
-    mv.cameraTarget = "auto";
-    mv.cameraOrbit = "auto auto auto";
-    assetContainer?.classList.remove("is-zoomed");
-    clearActive();
-    if (idleTimer !== undefined) {
-      clearTimeout(idleTimer);
-      idleTimer = undefined;
-    }
-  };
+    const scene = new THREE.Scene();
 
-  const DEFAULT_ZOOM = "1.5m";
-  // Fixed "front view" angle for all hotspot zooms. All modules are on the
-  // same face of the panel, so they share a target viewing angle.
-  const ZOOM_THETA = "0deg";
-  const ZOOM_PHI = "75deg";
+    const camera = new THREE.PerspectiveCamera(35, width / height, 0.1, 100);
+    camera.position.set(2, 1.5, 3);
 
-  const parseTriplet = (s: string | undefined): [number, number, number] => {
-    if (!s) return [0, 0, 1];
-    const parts = s.split(/\s+/).map((p) => parseFloat(p));
-    return [parts[0] ?? 0, parts[1] ?? 0, parts[2] ?? 1];
-  };
+    const renderer = new THREE.WebGLRenderer({
+      canvas,
+      antialias: true,
+      alpha: true,
+    });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setSize(width, height, false);
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.1;
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
 
-  const zoomTo = (slot: string | undefined) => {
-    if (!mv || !slot) return;
-    const hotspot = mv.querySelector(`.hotspot[slot="${slot}"]`);
-    if (!hotspot) return;
-    const label = assetContainer?.querySelector<HTMLElement>(
-      `.hotspot-label[data-hotspot="${slot}"]`,
-    );
-    const zoom = label?.dataset.zoom ?? DEFAULT_ZOOM;
-    mv.cameraTarget = hotspot.dataset.position;
-    mv.cameraOrbit = `${ZOOM_THETA} ${ZOOM_PHI} ${zoom}`;
-    assetContainer?.classList.add("is-zoomed");
-    clearActive();
-    hotspot.classList.add("is-active");
-    label?.classList.add("is-active");
-    assetContainer
-      ?.querySelector(`.hotspot-line[data-hotspot="${slot}"]`)
-      ?.classList.add("is-active");
-    scheduleIdleReset();
-  };
+    scene.add(new THREE.AmbientLight(0xffffff, 0.6));
 
-  hotspots.forEach((h) =>
-    h.addEventListener("click", () =>
-      zoomTo(h.getAttribute("slot") ?? undefined),
-    ),
-  );
-  labels.forEach((l) =>
-    l.addEventListener("click", () => zoomTo(l.dataset.hotspot)),
-  );
-  closeBtn?.addEventListener("click", resetView);
+    const keyLight = new THREE.DirectionalLight(0xffffff, 2.0);
+    keyLight.position.set(3, 4, 2);
+    scene.add(keyLight);
 
-  mv?.addEventListener("camera-change", scheduleIdleReset);
+    const fillLight = new THREE.DirectionalLight(0xa9c8ff, 0.8);
+    fillLight.position.set(-3, 1, -2);
+    scene.add(fillLight);
 
-  // ── Click-on-mesh + click-outside-to-close ─────────────────────────────
-  // We listen for click (vs pointerup) so the browser's own click-vs-drag
-  // arbitration kicks in. We also track pointer travel distance ourselves
-  // as a backstop: any movement > 6px between down and up disqualifies
-  // the click from triggering a zoom/dismiss.
+    const controls = new OrbitControls(camera, canvas);
+    controls.enableDamping = true;
+    controls.enableZoom = false;
+    controls.enablePan = false;
+    controls.autoRotate = true;
+    controls.autoRotateSpeed = 0.6;
 
-  const HOTSPOT_PICK_RADIUS = 1.2; // metres
-  const DRAG_THRESHOLD = 6; // pixels
+    // Pause auto-rotation while the user interacts, resume after 2s of idle.
+    const AUTO_ROTATE_RESUME_MS = 2000;
+    let resumeTimer: ReturnType<typeof setTimeout> | undefined;
 
-  const hotspotPositions: { slot: string; x: number; y: number; z: number }[] =
-    [];
-  hotspots.forEach((h) => {
-    const slot = h.getAttribute("slot");
-    if (!slot) return;
-    const [x, y, z] = parseTriplet(h.dataset.position);
-    hotspotPositions.push({ slot, x, y, z });
-  });
+    controls.addEventListener("start", () => {
+      controls.autoRotate = false;
+      if (resumeTimer) clearTimeout(resumeTimer);
+    });
 
-  const findNearestHotspot = (p: {
-    x: number;
-    y: number;
-    z: number;
-  }): string | null => {
-    let bestSlot: string | null = null;
-    let bestDist2 = HOTSPOT_PICK_RADIUS * HOTSPOT_PICK_RADIUS;
-    for (const hp of hotspotPositions) {
-      const dx = hp.x - p.x;
-      const dy = hp.y - p.y;
-      const dz = hp.z - p.z;
-      const d2 = dx * dx + dy * dy + dz * dz;
-      if (d2 < bestDist2) {
-        bestDist2 = d2;
-        bestSlot = hp.slot;
+    controls.addEventListener("end", () => {
+      if (resumeTimer) clearTimeout(resumeTimer);
+      resumeTimer = setTimeout(() => {
+        controls.autoRotate = true;
+      }, AUTO_ROTATE_RESUME_MS);
+    });
+
+    const loader = new GLTFLoader();
+    loader.setMeshoptDecoder(MeshoptDecoder);
+
+    const assetContainer = canvas.parentElement as HTMLElement | null;
+    const labelOverlay =
+      assetContainer?.querySelector<SVGSVGElement>(
+        ".block-hero__label-lines",
+      ) ?? null;
+    const labelEls = assetContainer
+      ? Array.from(
+          assetContainer.querySelectorAll<HTMLElement>("[data-hero-label]"),
+        )
+      : [];
+
+    type LabelRef = {
+      el: HTMLElement;
+      target: THREE.Object3D | null;
+      line: SVGLineElement | null;
+      dot: SVGCircleElement | null;
+      anchor: THREE.Vector3;
+      offsetX: number;
+      offsetY: number;
+      currentX: number;
+      currentY: number;
+      hasPosition: boolean;
+    };
+
+    const SVG_NS = "http://www.w3.org/2000/svg";
+    const labels: LabelRef[] = labelEls.map((el) => {
+      let line: SVGLineElement | null = null;
+      let dot: SVGCircleElement | null = null;
+      if (labelOverlay) {
+        line = document.createElementNS(SVG_NS, "line");
+        line.setAttribute("class", "block-hero__label-line");
+        line.setAttribute("stroke", "rgba(255, 255, 255, 0.7)");
+        line.setAttribute("stroke-width", "1");
+        line.setAttribute("stroke-dasharray", "3 3");
+        line.setAttribute("visibility", "hidden");
+        labelOverlay.appendChild(line);
+
+        dot = document.createElementNS(SVG_NS, "circle");
+        dot.setAttribute("class", "block-hero__label-dot");
+        dot.setAttribute("r", "4");
+        dot.setAttribute("fill", "#fff");
+        dot.setAttribute("stroke", "rgba(255, 255, 255, 0.25)");
+        dot.setAttribute("stroke-width", "4");
+        dot.setAttribute("visibility", "hidden");
+        labelOverlay.appendChild(dot);
       }
-    }
-    return bestSlot;
-  };
+      return {
+        el,
+        target: null,
+        line,
+        dot,
+        anchor: new THREE.Vector3(),
+        offsetX: Number(el.dataset.offsetX ?? 0),
+        offsetY: Number(el.dataset.offsetY ?? -80),
+        currentX: 0,
+        currentY: 0,
+        hasPosition: false,
+      };
+    });
 
-  let pointerDownX = 0;
-  let pointerDownY = 0;
-  let pointerMaxDistance = 0;
+    loader.load(MODEL_URL, (gltf) => {
+      const model = gltf.scene;
 
-  mv?.addEventListener("pointerdown", (e: PointerEvent) => {
-    pointerDownX = e.clientX;
-    pointerDownY = e.clientY;
-    pointerMaxDistance = 0;
-  });
+      // Measure model in its local space, then scale uniformly.
+      const localBox = new THREE.Box3().setFromObject(model);
+      const localSize = new THREE.Vector3();
+      localBox.getSize(localSize);
 
-  mv?.addEventListener("pointermove", (e: PointerEvent) => {
-    const dx = e.clientX - pointerDownX;
-    const dy = e.clientY - pointerDownY;
-    const d = Math.hypot(dx, dy);
-    if (d > pointerMaxDistance) pointerMaxDistance = d;
-  });
+      const maxDim = Math.max(localSize.x, localSize.y, localSize.z) || 1;
+      const targetSize = 1.6;
+      const scale = targetSize / maxDim;
+      model.scale.setScalar(scale);
 
-  mv?.addEventListener("click", async (e: MouseEvent) => {
-    const wasDrag = pointerMaxDistance > DRAG_THRESHOLD;
-    pointerMaxDistance = 0;
-    if (wasDrag) return;
+      // Recompute the bbox AFTER scaling, then offset so the model is
+      // centered on the origin in world space.
+      const scaledBox = new THREE.Box3().setFromObject(model);
+      const scaledSize = new THREE.Vector3();
+      const scaledCenter = new THREE.Vector3();
+      scaledBox.getSize(scaledSize);
+      scaledBox.getCenter(scaledCenter);
+      model.position.sub(scaledCenter);
 
-    const target = e.target as HTMLElement | null;
-    // Dot / label / close-button clicks already have their own handlers
-    if (target?.closest(".hotspot, .hotspot-label, .block-hero__close")) return;
+      scene.add(model);
 
-    // Try to pick a module under the click
-    const hit = await mv.positionAndNormalFromPoint(e.clientX, e.clientY);
-    if (hit?.position) {
-      const slot = findNearestHotspot(hit.position);
-      if (slot) {
-        zoomTo(slot);
-        return;
+      // Frame the camera so the scaled model fits both dimensions.
+      const fitDistance = (() => {
+        const fovY = (camera.fov * Math.PI) / 180;
+        const fovX = 2 * Math.atan(Math.tan(fovY / 2) * camera.aspect);
+        const distY = scaledSize.y / 2 / Math.tan(fovY / 2);
+        const distX = scaledSize.x / 2 / Math.tan(fovX / 2);
+        return Math.max(distX, distY) + scaledSize.z / 2;
+      })();
+
+      const dir = camera.position.clone().normalize();
+      camera.position.copy(dir.multiplyScalar(fitDistance * 1.15));
+      camera.lookAt(0, 0, 0);
+      controls.target.set(0, 0, 0);
+      controls.update();
+
+      // Resolve each label's target object by name (case-insensitive fallback).
+      const byName = new Map<string, THREE.Object3D>();
+      model.traverse((obj) => {
+        if (obj.name) byName.set(obj.name.toLowerCase(), obj);
+      });
+
+      for (const label of labels) {
+        const positionAttr = label.el.dataset.position;
+        if (positionAttr) {
+          const [px, py, pz] = positionAttr.split(",").map(Number);
+          const anchor = new THREE.Object3D();
+          anchor.position.set(px || 0, py || 0, pz || 0);
+          scene.add(anchor);
+          label.target = anchor;
+          continue;
+        }
+
+        const name = label.el.dataset.target?.toLowerCase();
+        if (!name) continue;
+        const obj = byName.get(name) ?? null;
+        label.target = obj;
+        if (!obj) {
+          console.warn(
+            `[Hero] No object named "${label.el.dataset.target}" found in model.`,
+          );
+        }
       }
-    }
+    });
 
-    // No module hit — if currently zoomed, dismiss
-    if (assetContainer?.classList.contains("is-zoomed")) resetView();
-  });
+    const resize = () => {
+      const next = getSize();
+      if (next.width === width && next.height === height) return;
+      width = next.width;
+      height = next.height;
+      renderer.setSize(width, height, false);
+      camera.aspect = width / height;
+      camera.updateProjectionMatrix();
+    };
 
-  const svg = assetContainer?.querySelector<SVGSVGElement>(".hotspot-lines");
+    window.addEventListener("resize", resize);
 
-  let mvOffsetX = 0;
-  let mvOffsetY = 0;
+    const projected = new THREE.Vector3();
 
-  const refreshGeometry = () => {
-    if (!mv || !svg) return;
-    const mvRect = mv.getBoundingClientRect();
-    const svgRect = svg.getBoundingClientRect();
-    mvOffsetX = mvRect.left - svgRect.left;
-    mvOffsetY = mvRect.top - svgRect.top;
-  };
+    const updateLabels = () => {
+      if (!assetContainer || !labels.length) return;
+      const w = width;
+      const h = height;
+      if (labelOverlay) {
+        labelOverlay.setAttribute("viewBox", `0 0 ${w} ${h}`);
+      }
 
-  const drawLines = () => {
-    if (!mv) return;
-    for (const line of lines) {
-      const dotSlot = line.dataset.hotspot;
-      if (!dotSlot) continue;
-      const labelSlot = dotSlot.replace("hotspot-", "hotspot-label-");
-      const dot = mv.queryHotspot(dotSlot);
-      const label = mv.queryHotspot(labelSlot);
-      if (!dot || !label) continue;
-      const labelEl = labelByDotSlot.get(dotSlot);
-      const lineOffsetX = labelEl ? labelEl.offsetWidth / 2 : 0;
-      const lineOffsetY = labelEl ? labelEl.offsetHeight / 2 : 0;
-      const occluded = labelEl ? !labelEl.hasAttribute("data-visible") : false;
-      line.classList.toggle("is-occluded", occluded);
-      line.setAttribute("x1", String(dot.canvasPosition.x + mvOffsetX));
-      line.setAttribute("y1", String(dot.canvasPosition.y + mvOffsetY));
-      line.setAttribute(
-        "x2",
-        String(label.canvasPosition.x + mvOffsetX - lineOffsetX),
-      );
-      line.setAttribute(
-        "y2",
-        String(label.canvasPosition.y + mvOffsetY + lineOffsetY * 0.5),
-      );
-    }
-    requestAnimationFrame(drawLines);
-  };
+      // Pass 1: project anchors, compute initial label positions, hide
+      // anything off-screen.
+      const visible: Array<{
+        label: (typeof labels)[number];
+        targetX: number;
+        targetY: number;
+        labelX: number;
+        labelY: number;
+        halfW: number;
+        halfH: number;
+      }> = [];
 
-  let resizeTimer: number | undefined;
-  const onResize = () => {
-    if (resizeTimer !== undefined) clearTimeout(resizeTimer);
-    resizeTimer = window.setTimeout(refreshGeometry, 150);
-  };
-  window.addEventListener("resize", onResize, { passive: true });
+      for (const label of labels) {
+        if (!label.target) continue;
 
-  mv?.addEventListener("load", () => {
-    refreshGeometry();
-    requestAnimationFrame(drawLines);
-    assetContainer?.classList.add("is-loaded");
-  });
+        label.target.getWorldPosition(label.anchor);
+        projected.copy(label.anchor).project(camera);
+
+        const onScreen =
+          projected.z > -1 &&
+          projected.z < 1 &&
+          projected.x > -1.1 &&
+          projected.x < 1.1 &&
+          projected.y > -1.1 &&
+          projected.y < 1.1;
+
+        if (!onScreen) {
+          label.el.classList.remove("is-ready");
+          label.hasPosition = false;
+          if (label.line) label.line.setAttribute("visibility", "hidden");
+          if (label.dot) label.dot.setAttribute("visibility", "hidden");
+          continue;
+        }
+
+        const targetX = ((projected.x + 1) / 2) * w;
+        const targetY = ((-projected.y + 1) / 2) * h;
+
+        if (label.dot) {
+          label.dot.setAttribute("cx", String(targetX));
+          label.dot.setAttribute("cy", String(targetY));
+          label.dot.removeAttribute("visibility");
+        }
+
+        visible.push({
+          label,
+          targetX,
+          targetY,
+          labelX: targetX + label.offsetX,
+          labelY: targetY + label.offsetY,
+          halfW: label.el.offsetWidth / 2,
+          halfH: label.el.offsetHeight / 2,
+        });
+      }
+
+      // Pass 2: iteratively separate any overlapping label boxes.
+      // Boxes are centred on (labelX, labelY) because of translate(-50%, -50%).
+      const PADDING = 6;
+      const MAX_ITER = 8;
+      for (let iter = 0; iter < MAX_ITER; iter++) {
+        let moved = false;
+        for (let i = 0; i < visible.length; i++) {
+          for (let j = i + 1; j < visible.length; j++) {
+            const a = visible[i];
+            const b = visible[j];
+            const dx = b.labelX - a.labelX;
+            const dy = b.labelY - a.labelY;
+            const minDistX = a.halfW + b.halfW + PADDING;
+            const minDistY = a.halfH + b.halfH + PADDING;
+            const overlapX = minDistX - Math.abs(dx);
+            const overlapY = minDistY - Math.abs(dy);
+            if (overlapX <= 0 || overlapY <= 0) continue;
+
+            // Separate along the axis with the smaller overlap.
+            if (overlapY <= overlapX) {
+              const push = overlapY / 2;
+              const sign = dy === 0 ? 1 : Math.sign(dy);
+              a.labelY -= sign * push;
+              b.labelY += sign * push;
+            } else {
+              const push = overlapX / 2;
+              const sign = dx === 0 ? 1 : Math.sign(dx);
+              a.labelX -= sign * push;
+              b.labelX += sign * push;
+            }
+            moved = true;
+          }
+        }
+        if (!moved) break;
+      }
+
+      // Pass 3: smooth toward the resolved positions and commit them.
+      // First appearance snaps; subsequent frames ease for a softer feel.
+      const LERP = 0.18;
+      for (const v of visible) {
+        const desiredX = v.labelX;
+        const desiredY = v.labelY;
+
+        if (!v.label.hasPosition) {
+          v.label.currentX = desiredX;
+          v.label.currentY = desiredY;
+          v.label.hasPosition = true;
+        } else {
+          v.label.currentX += (desiredX - v.label.currentX) * LERP;
+          v.label.currentY += (desiredY - v.label.currentY) * LERP;
+        }
+
+        const finalX = v.label.currentX;
+        const finalY = v.label.currentY;
+
+        v.label.el.style.left = `${finalX}px`;
+        v.label.el.style.top = `${finalY}px`;
+
+        if (v.label.line) {
+          // Clip the label-side endpoint to the edge of the label's box so
+          // the line doesn't disappear inside the pill. Small padding keeps
+          // it from visually touching the border.
+          const LINE_GAP = 2;
+          const dx = finalX - v.targetX;
+          const dy = finalY - v.targetY;
+          let edgeX = finalX;
+          let edgeY = finalY;
+          if (dx !== 0 || dy !== 0) {
+            const halfW = v.halfW + LINE_GAP;
+            const halfH = v.halfH + LINE_GAP;
+            const tx = dx !== 0 ? halfW / Math.abs(dx) : Infinity;
+            const ty = dy !== 0 ? halfH / Math.abs(dy) : Infinity;
+            const t = Math.min(tx, ty, 1);
+            edgeX = finalX - dx * t;
+            edgeY = finalY - dy * t;
+          }
+
+          v.label.line.setAttribute("x1", String(edgeX));
+          v.label.line.setAttribute("y1", String(edgeY));
+          v.label.line.setAttribute("x2", String(v.targetX));
+          v.label.line.setAttribute("y2", String(v.targetY));
+          v.label.line.removeAttribute("visibility");
+        }
+
+        v.label.el.classList.add("is-ready");
+      }
+    };
+
+    renderer.setAnimationLoop(() => {
+      resize();
+      controls.update();
+      renderer.render(scene, camera);
+      updateLabels();
+    });
+  }
 </script>
 
 <style lang="scss">
@@ -451,52 +451,42 @@
       overflow: visible;
 
       display: flex;
+      position: relative;
+    }
 
-      model-viewer {
+    &__asset-stage {
+      // Visually overflow the column by 20% on each side while keeping
+      // the asset container itself in the grid.
+      position: relative;
+      width: 140%;
+      margin-left: -20%;
+      margin-right: -20%;
+      height: 100%;
+      min-height: inherit;
+      display: flex;
+
+      #hero-scene {
+        display: block;
         width: 100%;
         height: 100%;
-        min-height: clamp(440px, 60vh, 720px);
-        overflow: visible;
-      }
-
-      &.is-zoomed {
-        .block-hero__close {
-          opacity: 1;
-          pointer-events: auto;
-        }
-
-        .hotspot:not(.is-active) {
-          opacity: 0;
-          pointer-events: none;
-        }
+        touch-action: none;
       }
     }
 
-    &__close {
+    &__label-lines {
       position: absolute;
-      top: 1rem;
-      right: 1rem;
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      background: var(--esk-primary-color);
-      backdrop-filter: blur(6px);
-      border: none;
-      color: #fff;
-      cursor: pointer;
-      z-index: 10;
-      opacity: 0;
+      inset: 0;
+      width: 100%;
+      height: 100%;
       pointer-events: none;
-      transition: opacity 0.3s;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 0;
+      overflow: visible;
+      z-index: 9;
+    }
 
-      &:hover {
-        background: var(--esk-primary-color--light);
-        color: #000;
-      }
+    &__label-line {
+      stroke: rgba(255, 255, 255, 0.5);
+      stroke-width: 1;
+      stroke-dasharray: 3 3;
     }
 
     &__content {
@@ -601,143 +591,6 @@
     to {
       opacity: 1;
       transform: none;
-    }
-  }
-
-  .hotspot {
-    width: 8px;
-    height: 8px;
-    background: var(--esk-primary-color);
-    border-radius: 32px;
-    border: 0;
-    box-sizing: border-box;
-    cursor: pointer;
-    padding: 4px;
-    position: relative;
-    opacity: 0;
-    pointer-events: none;
-    transform: translate(0%, -50%) scale(0);
-    transition:
-      opacity 0.3s,
-      transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-
-    &:before,
-    &:after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      border-radius: 50%;
-      background-color: var(--esk-primary-color);
-      opacity: 0.5;
-      animation: pulse 2s infinite;
-    }
-
-    &:after {
-      animation-delay: 1s;
-    }
-
-    @keyframes pulse {
-      0% {
-        transform: scale(1);
-        opacity: 0.5;
-      }
-      100% {
-        transform: scale(2.5);
-        opacity: 0;
-      }
-    }
-
-    &:focus {
-      border: 4px solid var(--esk-primary-color);
-      outline: none;
-    }
-  }
-
-  .hotspot-lines {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    overflow: visible;
-  }
-
-  .hotspot-line {
-    stroke: var(--esk-primary-color);
-    stroke-width: 1;
-    stroke-dasharray: 2 3;
-    opacity: 0;
-    transition: opacity 0.3s;
-  }
-
-  .hotspot-label {
-    pointer-events: none;
-    background-color: var(--esk-primary-color--light);
-    border-radius: 4px;
-    border: 1px solid var(--esk-primary-color);
-    color: #000;
-    cursor: pointer;
-    display: block;
-    font-size: 10px;
-    font-weight: 700;
-    text-transform: uppercase;
-    padding: 8px;
-    width: max-content;
-    max-width: 160px;
-    opacity: 0;
-    transform: translate(-50%, -50%);
-    transition: opacity 0.3s;
-    backdrop-filter: blur(6px);
-
-    &:after {
-      width: 8px;
-      height: 8px;
-      background: var(--esk-primary-color);
-      content: "";
-      position: absolute;
-      bottom: 0;
-      left: 50%;
-      transform: translate3d(-50%, 50%, 0);
-      border-radius: 50%;
-      z-index: 1;
-    }
-
-    @include bp(tablet) {
-      padding: 9px 12px;
-    }
-
-    &:not([data-visible]) {
-      opacity: 0;
-      pointer-events: none;
-    }
-  }
-
-  .block-hero__asset-container.is-loaded {
-    .hotspot[data-visible] {
-      opacity: 1;
-      pointer-events: auto;
-      transform: translate(0%, -50%) scale(1);
-    }
-
-    .hotspot-line {
-      opacity: 1;
-    }
-
-    .hotspot-line.is-occluded {
-      opacity: 0;
-    }
-
-    .hotspot-label[data-visible] {
-      opacity: 1;
-      pointer-events: auto;
-    }
-  }
-
-  .block-hero__asset-container.is-zoomed {
-    .hotspot-label:not(.is-active),
-    .hotspot-line:not(.is-active) {
-      opacity: 0;
-      pointer-events: none;
     }
   }
 </style>
