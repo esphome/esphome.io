@@ -4,14 +4,16 @@ import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
 import Nav from "@components/starter-kit/Nav.astro";
 import Hero from "@components/starter-kit/Hero.astro";
 import HeroLabel from "@components/starter-kit/HeroLabel.astro";
+import YourWay from "@components/starter-kit/YourWay.astro";
+import GallerySection from "@components/starter-kit/GallerySection.astro";
+import Succeed from "@components/starter-kit/Succeed.astro";
+import WhatsPossible from "@components/starter-kit/WhatsPossible.astro";
 import Collaboration from "@components/Collaboration.astro";
 import Buy from "@components/Buy.astro";
 
 import { getEntry } from "astro:content";
-import FAQ from "@components/FAQ.astro";
-import YourWay from "@components/starter-kit/YourWay.astro";
-
 const faq = await getEntry("faq", "starter-kit");
+import FAQ from "@components/FAQ.astro";
 ---
 
 <StarlightPage
@@ -73,6 +75,9 @@ const faq = await getEntry("faq", "starter-kit");
       />
     </Hero>
     <YourWay />
+    <GallerySection />
+    <Succeed />
+    <WhatsPossible />
     <Collaboration />
 
     <Buy
@@ -95,7 +100,10 @@ const faq = await getEntry("faq", "starter-kit");
   }
 
   :root {
-    --sl-color-text: var(--sl-color-white);
+    --esk-body-colour: #8193a2;
+    --esk-title-colour: #ffffff;
+
+    --sl-color-text: var(--esk-body-colour);
 
     --container-max-width: 1200px;
     --container-full-max-width: 1200px;
@@ -106,6 +114,19 @@ const faq = await getEntry("faq", "starter-kit");
 
     --esk-heading-font: "Figtree", "Helvetica Neue", Arial, sans-serif;
     --esk-body-font: "Figtree", "Helvetica Neue", Arial, sans-serif;
+
+    --sl-content-gap-y: 0;
+
+    --esk-card-background: radial-gradient(
+      233.58% 121.31% at 0% 2.72%,
+      rgba(154, 189, 50, 0) 0%,
+      rgba(154, 189, 50, 0.05) 100%
+    );
+  }
+
+  :root[data-theme="light"] {
+    --esk-body-colour: #4f606e;
+    --esk-title-colour: #002e3e;
   }
 
   body {
@@ -119,6 +140,12 @@ const faq = await getEntry("faq", "starter-kit");
 
     border: none;
     outline: none;
+  }
+
+  :global(h2),
+  :global(h3) {
+    color: var(--esk-title-colour);
+    letter-spacing: -1px;
   }
 
   :global(.container),
@@ -162,5 +189,16 @@ const faq = await getEntry("faq", "starter-kit");
 
   :global(.content-panel) {
     padding: 0;
+  }
+
+  :global(section) {
+    &.block-your-way,
+    &.block-gallery,
+    &.block-succeed,
+    &.block-whats-possible,
+    &.block-collaboration,
+    &.block-buy {
+      @include fluid(52, 128, $property: padding-bottom);
+    }
   }
 </style>

@@ -1,0 +1,26 @@
+---
+const { columns = 2, ...attrs } = Astro.props;
+const cols =
+  typeof columns === "number" ? `repeat(${columns}, 1fr)` : String(columns);
+---
+
+<div class="container" {...attrs}>
+  <div class="card-group" style={{ "--card-group-cols": cols }}>
+    <slot />
+  </div>
+</div>
+
+<style lang="scss">
+  @use "../styles/mixins" as *;
+
+  .card-group {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+
+    @include bp(tablet) {
+      gap: 20px;
+      grid-template-columns: var(--card-group-cols);
+    }
+  }
+</style>
