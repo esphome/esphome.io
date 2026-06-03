@@ -67,9 +67,7 @@
             <span>Active group</span>
             <select id="dbg-active-group"></select>
           </label>
-          <div class="hero-debug__readout" id="dbg-camera-readout">
-            cam: –
-          </div>
+          <div class="hero-debug__readout" id="dbg-camera-readout">cam: –</div>
           <button type="button" id="dbg-toggle-camera">
             Toggle camera mode
           </button>
@@ -170,10 +168,7 @@
     composer.setPixelRatio(pixelRatio);
     const renderPass = new RenderPass(scene, camera);
     composer.addPass(renderPass);
-    const smaaPass = new SMAAPass(
-      width * pixelRatio,
-      height * pixelRatio,
-    );
+    const smaaPass = new SMAAPass(width * pixelRatio, height * pixelRatio);
     composer.addPass(smaaPass);
     composer.addPass(new OutputPass());
 
@@ -285,9 +280,10 @@
       const LED_PIVOT = new THREE.Vector3(0, 0.05, 0.05);
       const ROT_AXIS = new THREE.Vector3(1, 0, 0);
       const ROT_ANGLE = -Math.PI / 2;
-      model.position.sub(LED_PIVOT).applyAxisAngle(ROT_AXIS, ROT_ANGLE).add(
-        LED_PIVOT,
-      );
+      model.position
+        .sub(LED_PIVOT)
+        .applyAxisAngle(ROT_AXIS, ROT_ANGLE)
+        .add(LED_PIVOT);
       model.rotateOnWorldAxis(ROT_AXIS, ROT_ANGLE);
 
       scene.add(model);
@@ -595,7 +591,8 @@
         thicknessInput?.addEventListener("input", () => {
           const v = Number(thicknessInput.value);
           for (const g of groupFades) {
-            for (const m of g.outlineMats) m.uniforms.outlineThickness.value = v;
+            for (const m of g.outlineMats)
+              m.uniforms.outlineThickness.value = v;
           }
           if (thicknessOut) thicknessOut.value = v.toFixed(3);
         });
@@ -606,10 +603,7 @@
           const angle = Number(angleInput.value);
           for (const e of allEdgeOverlays) {
             e.mesh.geometry.dispose();
-            e.mesh.geometry = new THREE.EdgesGeometry(
-              e.sourceGeometry,
-              angle,
-            );
+            e.mesh.geometry = new THREE.EdgesGeometry(e.sourceGeometry, angle);
           }
           if (angleOut) angleOut.value = String(angle);
         });
