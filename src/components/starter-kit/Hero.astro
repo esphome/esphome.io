@@ -23,55 +23,6 @@
             </div>
           </div>
         </div>
-
-        {/* TEMP: hero debug UI. Remove before ship. */}
-        <div class="hero-debug" id="hero-debug">
-          <div class="hero-debug__title">Hero debug</div>
-          <label>
-            <span>Outline thickness</span>
-            <input
-              type="range"
-              id="dbg-outline-thickness"
-              min="0"
-              max="0.15"
-              step="0.001"
-              value="0.022"
-            />
-            <output id="dbg-outline-thickness-out">0.022</output>
-          </label>
-          <label>
-            <span>Edge angle (°)</span>
-            <input
-              type="range"
-              id="dbg-edge-angle"
-              min="0"
-              max="90"
-              step="1"
-              value="30"
-            />
-            <output id="dbg-edge-angle-out">30</output>
-          </label>
-          <label class="hero-debug__check">
-            <input type="checkbox" id="dbg-show-outline" checked />
-            <span>Show outline</span>
-          </label>
-          <label class="hero-debug__check">
-            <input type="checkbox" id="dbg-show-edges" checked />
-            <span>Show edges</span>
-          </label>
-          <label class="hero-debug__check">
-            <input type="checkbox" id="dbg-show-mask" checked />
-            <span>Depth-mask back faces</span>
-          </label>
-          <label>
-            <span>Active group</span>
-            <select id="dbg-active-group"></select>
-          </label>
-          <div class="hero-debug__readout" id="dbg-camera-readout">cam: –</div>
-          <button type="button" id="dbg-toggle-camera">
-            Toggle camera mode
-          </button>
-        </div>
       </div>
     </div>
     <div class="block-hero__asset-container">
@@ -79,6 +30,14 @@
         <canvas id="hero-scene"></canvas>
         <svg class="block-hero__label-lines" aria-hidden="true"></svg>
         <slot name="labels" />
+        <aside
+          class="hero-detail-card"
+          id="hero-detail-card"
+          aria-hidden="true"
+        >
+          <h3 class="hero-detail-card__title" data-detail-title></h3>
+          <div class="hero-detail-card__body" data-detail-body></div>
+        </aside>
       </div>
     </div>
   </div>
@@ -215,6 +174,9 @@
       currentX: number;
       currentY: number;
       hasPosition: boolean;
+      groupIdx: number;
+      detailHTML: string;
+      labelText: string;
     };
 
     const SVG_NS = "http://www.w3.org/2000/svg";
@@ -251,6 +213,10 @@
         currentX: 0,
         currentY: 0,
         hasPosition: false,
+        groupIdx: -1,
+        detailHTML:
+          el.querySelector<HTMLElement>("[data-label-detail]")?.innerHTML ?? "",
+        labelText: el.dataset.labelText ?? "",
       };
     });
 
@@ -274,12 +240,14 @@
       scaledBox.getCenter(scaledCenter);
       model.position.sub(scaledCenter);
 
-      // TEMP: rotate the model 90° around the world X axis (the long edge
-      // through the LED at the model's center). Pivot at the LED's position
-      // so the LED stays put while the board hinges around that edge.
+      // TEMP: keep the model standing upright (no flat-down flip) and
+      // give it a small yaw around the world Y axis so the device faces
+      // inward toward the page center instead of straight at the camera.
+      // Pivot at the LED's position so the LED stays put. Flip the sign
+      // of YAW_ANGLE if it ends up facing outward.
       const LED_PIVOT = new THREE.Vector3(0, 0.05, 0.05);
-      const ROT_AXIS = new THREE.Vector3(1, 0, 0);
-      const ROT_ANGLE = -Math.PI / 2;
+      const ROT_AXIS = new THREE.Vector3(0, 1, 0);
+      const ROT_ANGLE = 0; // face flat toward the camera
       model.position
         .sub(LED_PIVOT)
         .applyAxisAngle(ROT_AXIS, ROT_ANGLE)
@@ -353,9 +321,20 @@
       const SOLID_LERP = 0.08;
       const ZOOM_LERP = 0.06;
       // Wireframe opacity when a group is fully inactive.
-      const WIRE_DIM = 0.6;
-      // Blueprint-style colour for inactive edges.
-      const BLUEPRINT_COLOR = new THREE.Color(0x3a6b8f);
+      const WIRE_DIM = 0.1;
+      // Monochrome wireframe palette. Adapts to the Starlight theme so the
+      // sketch stays readable on either bg:
+      //   dark theme  → near-black fill, white edges
+      //   light theme → near-white fill, black edges
+      const EDGE_DARK = new THREE.Color(0xffffff);
+      const EDGE_LIGHT = new THREE.Color(0x000000);
+      const TINT_DARK = new THREE.Color(0x1f2127);
+      const TINT_LIGHT = new THREE.Color(0xf3f4f7);
+      const isLightTheme = () =>
+        document.documentElement.dataset.theme === "light";
+      const BLUEPRINT_COLOR = (isLightTheme() ? EDGE_LIGHT : EDGE_DARK).clone();
+      const TINT_COLOR = (isLightTheme() ? TINT_LIGHT : TINT_DARK).clone();
+      const TINT_OPACITY = 0.9;
       // Silhouette outline thickness (object-space units, pre model
       // scale). Tune up/down for a bolder/finer outside line.
       const OUTLINE_THICKNESS = 0.022;
@@ -382,6 +361,8 @@
         root: THREE.Object3D;
         solid: THREE.Material[];
         wire: THREE.Material[];
+        tint: THREE.MeshBasicMaterial[];
+        tintMeshes: THREE.Mesh[];
         outlineMats: THREE.ShaderMaterial[];
         meshes: THREE.Mesh[];
       };
@@ -398,12 +379,14 @@
       const groupFades: GroupFade[] = topLevel.map((obj, idx) => {
         const solid: THREE.Material[] = [];
         const wire: THREE.Material[] = [];
+        const tint: THREE.MeshBasicMaterial[] = [];
+        const tintMeshes: THREE.Mesh[] = [];
         const outlineMats: THREE.ShaderMaterial[] = [];
         const meshes: THREE.Mesh[] = [];
         const overlays: { parent: THREE.Mesh; mesh: THREE.LineSegments }[] = [];
         const masks: { parent: THREE.Mesh; mesh: THREE.Mesh }[] = [];
         const outlines: { parent: THREE.Mesh; mesh: THREE.Mesh }[] = [];
-        // Group 0 starts solid; the rest start as dim wireframe.
+        // Group 0 starts solid; the rest start as wireframe.
         const initialSolid = idx === 0 ? 1 : 0;
         obj.traverse((o) => {
           const mesh = o as THREE.Mesh;
@@ -416,12 +399,15 @@
           solidMat.transparent = true;
           solidMat.opacity = initialSolid;
           solidMat.depthWrite = true;
-          // Invisible depth-only mesh that fills the z-buffer in the
-          // opaque pass so wireframe edges behind geometry get depth-
-          // rejected. polygonOffset pushes the mask slightly away from
-          // the camera so the on-surface edge lines win the z-fight.
+          // Invisible depth-only mesh: fills the z-buffer in the opaque
+          // pre-pass so back-side wire edges (and edges of other groups
+          // behind this one) get depth-rejected. polygonOffset pushes it
+          // slightly away from the camera so the on-surface edge lines
+          // win the z-fight. No visible fill — the schematic lines float
+          // against the page background.
           const maskMat = new THREE.MeshBasicMaterial({
             colorWrite: false,
+            transparent: false,
             depthWrite: true,
             polygonOffset: true,
             polygonOffsetFactor: 1,
@@ -429,10 +415,8 @@
           });
           const mask = new THREE.Mesh(mesh.geometry, maskMat);
           mask.name = `${mesh.name || "mesh"}-depth-mask`;
-          // Depth mask must run before the outline so the outline's
-          // hidden back faces get depth-rejected — otherwise the whole
-          // expanded hull is visible and everything turns blue.
           mask.renderOrder = -1;
+          mask.visible = true;
           // Silhouette outline: inverted-hull clone rendered back-side
           // only, expanded along normals so a uniform border peeks out
           // around the visible mesh. Only shown for inactive (wireframe)
@@ -477,13 +461,43 @@
           });
           solid.push(solidMat);
           wire.push(lineMat);
+          tint.push(maskMat);
+          tintMeshes.push(mask);
           outlineMats.push(outlineMat);
           meshes.push(mesh);
         });
         for (const { parent, mesh } of masks) parent.add(mesh);
-        for (const { parent, mesh } of outlines) parent.add(mesh);
+        // Outline effect disabled — the wireframe alone reads cleanly.
+        // for (const { parent, mesh } of outlines) parent.add(mesh);
         for (const { parent, mesh } of overlays) parent.add(mesh);
-        return { root: obj, solid, wire, outlineMats, meshes };
+        return {
+          root: obj,
+          solid,
+          wire,
+          tint,
+          tintMeshes,
+          outlineMats,
+          meshes,
+        };
+      });
+
+      // Re-apply tint + edge colours whenever Starlight flips the theme.
+      const applyThemePalette = () => {
+        const edge = isLightTheme() ? EDGE_LIGHT : EDGE_DARK;
+        const tint = isLightTheme() ? TINT_LIGHT : TINT_DARK;
+        BLUEPRINT_COLOR.copy(edge);
+        TINT_COLOR.copy(tint);
+        for (const m of allMasks) {
+          (m.material as THREE.MeshBasicMaterial).color.copy(tint);
+        }
+        for (const e of allEdgeOverlays) {
+          (e.mesh.material as THREE.LineBasicMaterial).color.copy(edge);
+        }
+      };
+      const themeObserver = new MutationObserver(applyThemePalette);
+      themeObserver.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ["data-theme"],
       });
 
       // Precompute per-group bounding spheres for the zoom animation.
@@ -506,7 +520,63 @@
       const desiredCamPos = new THREE.Vector3();
       const dirFromTarget = new THREE.Vector3();
 
-      let activeIdx = 0;
+      let activeIdx = -1; // -1 = all groups active (default state)
+
+      // Card host that appears when a component is focused; populated
+      // from the matching label's [data-label-detail] slot content.
+      const detailCard =
+        assetContainer?.querySelector<HTMLElement>("#hero-detail-card") ?? null;
+      const detailTitleEl =
+        detailCard?.querySelector<HTMLElement>("[data-detail-title]") ?? null;
+      const detailBodyEl =
+        detailCard?.querySelector<HTMLElement>("[data-detail-body]") ?? null;
+
+      const applyActiveState = (idx: number) => {
+        const focusing = idx !== -1;
+        for (const label of labels) {
+          const isMatch = focusing && label.groupIdx === idx;
+          // Hide labels for other groups while one is focused; restore
+          // all when returning to the overview.
+          label.el.classList.toggle("is-other-active", focusing && !isMatch);
+        }
+        if (!detailCard) return;
+        if (!focusing) {
+          detailCard.classList.remove("is-active");
+          detailCard.setAttribute("aria-hidden", "true");
+          return;
+        }
+        const match = labels.find((l) => l.groupIdx === idx);
+        if (!match || (!match.detailHTML && !match.labelText)) {
+          detailCard.classList.remove("is-active");
+          detailCard.setAttribute("aria-hidden", "true");
+          return;
+        }
+        if (detailTitleEl) detailTitleEl.textContent = match.labelText;
+        if (detailBodyEl) detailBodyEl.innerHTML = match.detailHTML;
+        detailCard.classList.add("is-active");
+        detailCard.setAttribute("aria-hidden", "false");
+      };
+
+      const setActive = (idx: number) => {
+        if (idx === activeIdx) return;
+        activeIdx = idx;
+        applyActiveState(idx);
+      };
+
+      const IDLE_REVERT_MS = 3000;
+      let revertTimer: ReturnType<typeof setTimeout> | undefined;
+      const scheduleRevert = () => {
+        if (revertTimer) clearTimeout(revertTimer);
+        revertTimer = setTimeout(() => {
+          setActive(-1);
+        }, IDLE_REVERT_MS);
+      };
+      const cancelRevert = () => {
+        if (revertTimer) {
+          clearTimeout(revertTimer);
+          revertTimer = undefined;
+        }
+      };
 
       const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 
@@ -515,22 +585,34 @@
 
         // Lerp every group's solid/wire opacity toward its target state.
         for (let i = 0; i < groupFades.length; i++) {
-          const { solid, wire, outlineMats } = groupFades[i];
-          const targetSolid = i === activeIdx ? 1 : 0;
+          const { solid, wire } = groupFades[i];
+          // activeIdx === -1 means "all active" — every group reads solid;
+          // otherwise the selected group is solid, the rest go wireframe.
+          const isActive = activeIdx === -1 || i === activeIdx;
+          const targetSolid = isActive ? 1 : 0;
           const targetWire = WIRE_DIM * (1 - targetSolid);
-          // Outline is at full opacity only when fully in wireframe state.
-          const targetOutline = 1 - targetSolid;
           for (const m of solid)
             m.opacity = lerp(m.opacity, targetSolid, SOLID_LERP);
           for (const m of wire)
             m.opacity = lerp(m.opacity, targetWire, SOLID_LERP);
-          for (const m of outlineMats) {
-            const u = m.uniforms.outlineOpacity;
-            u.value = lerp(u.value as number, targetOutline, SOLID_LERP);
-          }
         }
 
-        // TEMP: per-group zoom focus disabled while we lock to isometric.
+        // Camera zoom: lerp toward the focused group when one is selected,
+        // otherwise lerp back to the home (overview) framing. Direction is
+        // preserved so OrbitControls drag still works.
+        const focus = activeIdx !== -1 ? groupFocus[activeIdx] : null;
+        const zoomTarget = focus ? focus.center : homeTarget;
+        const zoomDistance = focus ? focus.distance : homeDistance;
+        desiredTarget.copy(controls.target).lerp(zoomTarget, ZOOM_LERP);
+        controls.target.copy(desiredTarget);
+        dirFromTarget.copy(camera.position).sub(controls.target);
+        const currentDist = dirFromTarget.length() || 0.001;
+        dirFromTarget.normalize();
+        const nextDist = lerp(currentDist, zoomDistance, ZOOM_LERP);
+        desiredCamPos
+          .copy(controls.target)
+          .addScaledVector(dirFromTarget, nextDist);
+        camera.position.copy(desiredCamPos);
       };
 
       // Raycaster click handling: pick whichever top-level group contains
@@ -554,7 +636,17 @@
         const hits = raycaster.intersectObjects(allMeshes, false);
         if (!hits.length) return;
         const idx = groupForObject(hits[0].object);
-        if (idx !== -1) activeIdx = idx;
+        if (idx !== -1) {
+          setActive(idx);
+          cancelRevert();
+        }
+      });
+      // While the user is actively manipulating OrbitControls (drag/zoom)
+      // pause the idle timer; restart it on release so the 3s countdown
+      // measures inactivity rather than total elapsed time.
+      controls.addEventListener("start", cancelRevert);
+      controls.addEventListener("end", () => {
+        if (activeIdx !== -1) scheduleRevert();
       });
       canvas.style.cursor = "pointer";
 
@@ -580,82 +672,23 @@
         }
       }
 
-      // TEMP: debug UI wiring. Remove with the markup before ship.
-      const dbgPanel = document.getElementById("hero-debug");
-      if (dbgPanel) {
-        const $ = <T extends HTMLElement>(id: string) =>
-          document.getElementById(id) as T | null;
-
-        const thicknessInput = $<HTMLInputElement>("dbg-outline-thickness");
-        const thicknessOut = $<HTMLOutputElement>("dbg-outline-thickness-out");
-        thicknessInput?.addEventListener("input", () => {
-          const v = Number(thicknessInput.value);
-          for (const g of groupFades) {
-            for (const m of g.outlineMats)
-              m.uniforms.outlineThickness.value = v;
+      // Map each label to its nearest top-level group so we know which
+      // labels to keep visible (and which detail card to show) when a
+      // component is focused.
+      const tmpWorld = new THREE.Vector3();
+      for (const label of labels) {
+        if (!label.target) continue;
+        label.target.getWorldPosition(tmpWorld);
+        let bestIdx = -1;
+        let bestDist = Infinity;
+        for (let i = 0; i < groupFocus.length; i++) {
+          const d = tmpWorld.distanceToSquared(groupFocus[i].center);
+          if (d < bestDist) {
+            bestDist = d;
+            bestIdx = i;
           }
-          if (thicknessOut) thicknessOut.value = v.toFixed(3);
-        });
-
-        const angleInput = $<HTMLInputElement>("dbg-edge-angle");
-        const angleOut = $<HTMLOutputElement>("dbg-edge-angle-out");
-        angleInput?.addEventListener("input", () => {
-          const angle = Number(angleInput.value);
-          for (const e of allEdgeOverlays) {
-            e.mesh.geometry.dispose();
-            e.mesh.geometry = new THREE.EdgesGeometry(e.sourceGeometry, angle);
-          }
-          if (angleOut) angleOut.value = String(angle);
-        });
-
-        const outlineToggle = $<HTMLInputElement>("dbg-show-outline");
-        outlineToggle?.addEventListener("change", () => {
-          for (const o of allOutlines) o.visible = outlineToggle.checked;
-        });
-
-        const edgesToggle = $<HTMLInputElement>("dbg-show-edges");
-        edgesToggle?.addEventListener("change", () => {
-          for (const e of allEdgeOverlays) e.mesh.visible = edgesToggle.checked;
-        });
-
-        const maskToggle = $<HTMLInputElement>("dbg-show-mask");
-        maskToggle?.addEventListener("change", () => {
-          for (const m of allMasks) m.visible = maskToggle.checked;
-        });
-
-        const groupSelect = $<HTMLSelectElement>("dbg-active-group");
-        if (groupSelect) {
-          for (let i = 0; i < topLevel.length; i++) {
-            const opt = document.createElement("option");
-            opt.value = String(i);
-            opt.textContent = `${i}: ${topLevel[i].name || "(unnamed)"}`;
-            if (i === 0) opt.selected = true;
-            groupSelect.appendChild(opt);
-          }
-          groupSelect.addEventListener("change", () => {
-            activeIdx = Number(groupSelect.value);
-          });
         }
-
-        const camReadout = $<HTMLDivElement>("dbg-camera-readout");
-        if (camReadout) {
-          setInterval(() => {
-            const p = camera.position;
-            const t = controls.target;
-            camReadout.textContent = `${cameraMode} cam (${p.x.toFixed(
-              2,
-            )}, ${p.y.toFixed(2)}, ${p.z.toFixed(2)}) → (${t.x.toFixed(
-              2,
-            )}, ${t.y.toFixed(2)}, ${t.z.toFixed(2)})`;
-          }, 100);
-        }
-
-        const cameraToggle = $<HTMLButtonElement>("dbg-toggle-camera");
-        cameraToggle?.addEventListener("click", () => {
-          const params = new URLSearchParams(window.location.search);
-          params.set("camera", cameraMode === "ortho" ? "persp" : "ortho");
-          window.location.search = params.toString();
-        });
+        label.groupIdx = bestIdx;
       }
     });
 
@@ -720,7 +753,10 @@
           projected.y > -1.1 &&
           projected.y < 1.1;
 
-        if (!onScreen) {
+        // Hide the SVG line/dot for labels that are off-screen OR
+        // suppressed because another component is currently focused.
+        const suppressed = label.el.classList.contains("is-other-active");
+        if (!onScreen || suppressed) {
           label.el.classList.remove("is-ready");
           label.hasPosition = false;
           if (label.line) label.line.setAttribute("visibility", "hidden");
@@ -849,90 +885,6 @@
 <style lang="scss">
   @use "../../styles/mixins" as *;
 
-  // TEMP: hero debug UI. Remove with the markup before ship.
-  .hero-debug {
-    margin-top: 1.5rem;
-    padding: 0.75rem 1rem;
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    border-radius: 8px;
-    background: rgba(0, 19, 38, 0.55);
-    backdrop-filter: blur(6px);
-    font-size: 12px;
-    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-    color: #d8e0e6;
-    display: grid;
-    gap: 0.4rem;
-    max-width: 320px;
-
-    &__title {
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      font-size: 11px;
-      opacity: 0.7;
-    }
-
-    label {
-      display: grid;
-      grid-template-columns: 1fr auto;
-      align-items: center;
-      gap: 0.5rem;
-
-      span {
-        grid-column: 1 / -1;
-        opacity: 0.8;
-      }
-
-      input[type="range"] {
-        grid-column: 1;
-      }
-
-      output {
-        grid-column: 2;
-        font-variant-numeric: tabular-nums;
-        opacity: 0.7;
-        min-width: 3ch;
-        text-align: right;
-      }
-
-      select {
-        grid-column: 1 / -1;
-        width: 100%;
-      }
-    }
-
-    &__check {
-      grid-template-columns: auto 1fr;
-
-      input {
-        grid-column: 1;
-      }
-      span {
-        grid-column: 2;
-      }
-    }
-
-    &__readout {
-      opacity: 0.7;
-      font-size: 11px;
-      word-break: break-all;
-    }
-
-    button {
-      font: inherit;
-      padding: 0.35rem 0.6rem;
-      border-radius: 4px;
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      background: rgba(255, 255, 255, 0.08);
-      color: inherit;
-      cursor: pointer;
-
-      &:hover {
-        background: rgba(255, 255, 255, 0.15);
-      }
-    }
-  }
-
   .block-hero {
     min-height: 600px;
     margin: 0;
@@ -1010,7 +962,57 @@
       stroke-width: 1;
       stroke-dasharray: 3 3;
     }
+  }
 
+  .hero-detail-card {
+    position: absolute;
+    right: 1.5rem;
+    bottom: 1.5rem;
+    z-index: 11;
+    max-width: 320px;
+    padding: 1rem 1.25rem;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: rgba(0, 19, 38, 0.7);
+    backdrop-filter: blur(8px);
+    color: var(--esk-body-colour, #d8e0e6);
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(8px);
+    transition:
+      opacity 0.3s ease,
+      transform 0.3s ease;
+
+    &.is-active {
+      opacity: 1;
+      pointer-events: auto;
+      transform: none;
+    }
+
+    &__title {
+      margin: 0 0 0.5rem;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--esk-title-colour, #fff);
+    }
+
+    &__body {
+      font-size: 0.875rem;
+      line-height: 1.5;
+
+      :global(p) {
+        margin: 0 0 0.5rem;
+
+        &:last-child {
+          margin-bottom: 0;
+        }
+      }
+    }
+  }
+
+  // Closing of .block-hero is below; reopen so subsequent nested rules
+  // continue to scope correctly.
+  .block-hero {
     &__content {
       > * {
         animation: heroContentIn 0.7s cubic-bezier(0.16, 1, 0.3, 1) backwards;

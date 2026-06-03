@@ -63,8 +63,16 @@ if (!target && !position) {
   data-position={position ? position.join(",") : undefined}
   data-offset-x={offsetX}
   data-offset-y={offsetY}
+  data-label-text={text}
 >
   <IconText icon={icon} text={text} />
+  {
+    Astro.slots.has("default") && (
+      <div class="hero-label__detail-source" data-label-detail hidden>
+        <slot />
+      </div>
+    )
+  }
 </div>
 
 <style lang="scss">
@@ -82,6 +90,12 @@ if (!target && !position) {
 
     &.is-ready {
       opacity: 1;
+    }
+
+    // Hidden while another component is focused.
+    &.is-other-active {
+      opacity: 0;
+      pointer-events: none;
     }
   }
 </style>
