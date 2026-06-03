@@ -1,11 +1,15 @@
 ---
-const { columns = 2, ...attrs } = Astro.props;
+const { columns = 2, gap, ...attrs } = Astro.props;
 const cols =
   typeof columns === "number" ? `repeat(${columns}, 1fr)` : String(columns);
+const gapValue =
+  gap !== undefined
+    ? { "--card-group-gap": typeof gap === "number" ? `${gap}px` : gap }
+    : {};
 ---
 
 <div class="container" {...attrs}>
-  <div class="card-group" style={{ "--card-group-cols": cols }}>
+  <div class="card-group" style={{ "--card-group-cols": cols, ...gapValue }}>
     <slot />
   </div>
 </div>
@@ -16,10 +20,10 @@ const cols =
   .card-group {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 12px;
+    gap: var(--card-group-gap, 12px);
 
     @include bp(tablet) {
-      gap: 20px;
+      gap: var(--card-group-gap, 20px);
       grid-template-columns: var(--card-group-cols);
     }
   }

@@ -10,10 +10,8 @@ import Succeed from "@components/starter-kit/Succeed.astro";
 import WhatsPossible from "@components/starter-kit/WhatsPossible.astro";
 import Collaboration from "@components/Collaboration.astro";
 import Buy from "@components/Buy.astro";
-
-import { getEntry } from "astro:content";
-const faq = await getEntry("faq", "starter-kit");
-import FAQ from "@components/FAQ.astro";
+import WhatsInTheBox from "@components/starter-kit/WhatsInTheBox.astro";
+import FaqSection from "@components/starter-kit/FaqSection.astro";
 ---
 
 <StarlightPage
@@ -86,9 +84,40 @@ import FAQ from "@components/FAQ.astro";
       euros="XX"
     />
 
-    <FAQ heading="Frequently asked questions" items={faq.data.items} />
+    <WhatsInTheBox />
+    <FaqSection />
   </div>
 </StarlightPage>
+
+<script>
+  document.querySelectorAll<HTMLVideoElement>(".lazy-video").forEach((video) => {
+    const playButton = document.querySelector<HTMLButtonElement>(
+      `.play-button[data-video-id="${video.id}"]`,
+    );
+
+    function setPlaying(playing: boolean) {
+      video.classList.toggle("lazy-video--playing", playing);
+      playButton?.classList.toggle("lazy-video--playing", playing);
+    }
+
+    video.addEventListener("ended", () => setPlaying(false));
+
+    playButton?.addEventListener("click", () => {
+      video.play().then(() => setPlaying(true)).catch(() => {});
+    });
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          video.play().then(() => setPlaying(true)).catch(() => {});
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.5 },
+    );
+    observer.observe(video);
+  });
+</script>
 
 <style lang="scss">
   @use "../styles/mixins" as *;
@@ -111,17 +140,14 @@ import FAQ from "@components/FAQ.astro";
 
     --esk-primary-color: #9abd32;
     --esk-primary-color--light: #f5f8ea;
+    --esk-secondary-color: #5C8048;
 
     --esk-heading-font: "Figtree", "Helvetica Neue", Arial, sans-serif;
     --esk-body-font: "Figtree", "Helvetica Neue", Arial, sans-serif;
 
     --sl-content-gap-y: 0;
 
-    --esk-card-background: radial-gradient(
-      233.58% 121.31% at 0% 2.72%,
-      rgba(154, 189, 50, 0) 0%,
-      rgba(154, 189, 50, 0.05) 100%
-    );
+    --esk-card-background: rgba(92, 128, 72, 0.05);
   }
 
   :root[data-theme="light"] {
@@ -137,9 +163,55 @@ import FAQ from "@components/FAQ.astro";
     border-radius: 2.5rem;
     background-color: var(--esk-primary-color);
     text-transform: uppercase;
-
+    transition: background-color 0.2s ease-in-out;
     border: none;
     outline: none;
+
+    &:hover {
+      background-color: var(--esk-secondary-color);
+    }
+  }
+
+  :global(.play-button) {
+    width: 48px;
+    height: 48px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: 10;
+    transform: translate(-50%, -50%);
+    background-color: var(--esk-primary-color);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 1;
+    transition: background-color 0.2s ease-in-out, opacity 0.2s ease-in-out;
+    border: none;
+    cursor: pointer;
+
+    &:after {
+      width: 90%;
+      height: 90%;
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: calc(50% + 3px);
+      transform: translate(-50%, -50%);
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath fill='%23fff' d='M3 22v-20l18 10-18 10z'/%3E%3C/svg%3E");
+      background-size: 60% 60%;
+      background-repeat: no-repeat;
+      background-position: center;
+    }
+
+    &:hover {
+      background-color: var(--esk-secondary-color);
+    }
+
+    &.lazy-video--playing {
+      opacity: 0;
+      pointer-events: none;
+    }
   }
 
   :global(h2),
@@ -189,6 +261,15 @@ import FAQ from "@components/FAQ.astro";
 
   :global(.content-panel) {
     padding: 0;
+  }
+
+  :global(.lazy-video) {
+    opacity: 0;
+    transition: opacity 0.5s ease;
+  }
+
+  :global(.lazy-video--playing) {
+    opacity: 1;
   }
 
   :global(section) {
