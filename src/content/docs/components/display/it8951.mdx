@@ -22,7 +22,7 @@ to be specified. Other options can be overridden if needed.
 ```yaml
 display:
   - platform: it8951
-    model: M5EPD
+    model: m5stack-m5paper
     lambda: |-
       it.filled_circle(it.get_width() / 2, it.get_height() / 2, 50, Color::BLACK);
 ```
@@ -45,9 +45,14 @@ model name needs to be configured.
 
 | Model name             | Manufacturer | Dimensions | Description                                                                             |
 | ---------------------- | ------------ | ---------- | --------------------------------------------------------------------------------------- |
-| M5EPD                  | M5Stack      | 960×540    | M5Paper 4.7" e-ink, 16-level grayscale. [Doc](https://docs.m5stack.com/en/core/m5paper) |
+| m5stack-m5paper        | M5Stack      | 960×540    | M5Paper 4.7" e-ink, 16-level grayscale. [Doc](https://docs.m5stack.com/en/core/m5paper) |
 | Seeed-reTerminal-E1003 | Seeed Studio | 1872×1404  | [Product page](https://www.seeedstudio.com/reTerminal-E1003.html)                       |
 | Seeed-EE03             | Seeed Studio | 1872×1404  | Seeed EE03 board with 10.3" e-paper.                                                    |
+
+> [!IMPORTANT]
+> `m5stack-m5paper` model work with the SKU K049 model and variants (K049-B, K049-C)
+>
+> Newer (but EOL) M5PaperS3 does not use the IT8951 nor any driver, but rather a direct connection to the ESP32S3 which is **not** supported by this component.
 
 ## Configuration variables
 
@@ -55,7 +60,7 @@ When using an integrated display board model, most configuration (pins,
 dimensions, VCOM) is preset but can be overridden.
 
 - **model** (**Required**): The model of the IT8951 display. See the table above
-  for options (case is not significant). One of `IT8951`, `M5EPD`,
+  for options (case is not significant). One of `IT8951`, `m5stack-m5paper`,
   `Seeed-reTerminal-E1003`, `Seeed-EE03`.
 - **cs_pin** (**Required** for generic, _Optional_ for integrated boards,
   [Pin Schema](/guides/configuration-types#pin-schema)): The SPI chip select pin.
@@ -80,8 +85,9 @@ dimensions, VCOM) is preset but can be overridden.
   rotation.
   - **mirror_x** (**Required**, boolean): If true, mirror the x axis.
   - **mirror_y** (**Required**, boolean): If true, mirror the y axis.
+  - **swap_xy** (**Required**, boolean): If true, swap x and y axis.
 
-- **update_mode** (_Optional_, string): Default waveform mode for display
+- **update_mode** (_Optional_, enum): Default waveform mode for display
   updates. If not set, defaults to `GC16` (full grayscale). Can be overridden
   per-update via the `it8951.update` action. One of:
 
@@ -101,12 +107,12 @@ dimensions, VCOM) is preset but can be overridden.
   to disable forced full updates.
 - **vcom** (_Optional_, int): VCOM voltage in millivolts. Each e-paper panel has
   a specific VCOM value printed on its flex cable. Defaults to `2300` (2.3V) for
-  M5EPD. Incorrect VCOM can cause image quality issues.
+  m5stack-m5paper. Incorrect VCOM can cause image quality issues.
 - **reversed** (_Optional_, boolean): Invert the color mapping (swap black and
   white). Defaults to `false`.
 - **sleep_when_done** (_Optional_, boolean): Put the IT8951 controller into
   deep sleep after each display update completes. Reduces power consumption but
-  adds wake-up latency for the next update. Defaults to `true` for M5EPD,
+  adds wake-up latency for the next update. Defaults to `true` for m5stack-m5paper,
   `false` for Seeed boards.
 - **force_1bpp** (_Optional_, boolean): Force 1-bit-per-pixel transfer mode
   even when the framebuffer contains grayscale data. The driver automatically
@@ -163,7 +169,7 @@ spi:
 
 display:
   - platform: it8951
-    model: M5EPD
+    model: m5stack-m5paper
     update_interval: 30s
     update_mode: DU
     full_update_every: 20
@@ -207,7 +213,7 @@ When using with LVGL, set `update_interval: never` and let LVGL manage updates:
 ```yaml
 display:
   - platform: it8951
-    model: M5EPD
+    model: m5stack-m5paper
     id: my_display
     update_interval: never
     rotation: 270
@@ -220,7 +226,7 @@ Use fast mode for interactive elements and full mode for periodic cleanup:
 ```yaml
 display:
   - platform: it8951
-    model: M5EPD
+    model: m5stack-m5paper
     id: my_display
     update_mode: DU
     full_update_every: 30
