@@ -1,25 +1,30 @@
 ---
 import { iconData, type Icon } from "src/lib/icons";
+import { animatedIconData, type AnimatedIcon } from "src/lib/animated-icons";
 
 interface Props {
   icon?: Icon;
+  animated?: AnimatedIcon;
   text?: string;
 }
 
-const { icon, text } = Astro.props;
-const { viewBox, body } = icon
-  ? iconData[icon]
-  : { viewBox: "0 0 24 24", body: "" };
+const { icon, animated, text } = Astro.props;
+const { viewBox, body } = animated
+  ? animatedIconData[animated]
+  : icon
+    ? iconData[icon]
+    : { viewBox: "0 0 24 24", body: "" };
 ---
 
 <div class="icon-text">
   {
-    icon && (
+    (icon || animated) && (
       <div class="icon">
         <svg
           viewBox={viewBox}
           fill="currentColor"
           aria-hidden="true"
+          class:list={[{ "is-animated": animated }]}
           set:html={body}
         />
       </div>
@@ -78,6 +83,562 @@ const { viewBox, body } = icon
       font-size: 0.75rem;
       text-transform: uppercase;
       font-weight: 700;
+    }
+  }
+</style>
+
+<style is:global>
+  /* lights */
+  .icon-light-ray {
+    animation: icon-light-ray 1900ms linear infinite;
+  }
+
+  @keyframes icon-light-ray {
+    0% {
+      stroke-dashoffset: 4.36;
+      animation-timing-function: cubic-bezier(0.645, 0.045, 0.355, 1);
+    }
+    26.315789% {
+      stroke-dashoffset: 2.18;
+      animation-timing-function: cubic-bezier(0.645, 0.045, 0.355, 1);
+    }
+    52.631579% {
+      stroke-dashoffset: 0;
+    }
+    100% {
+      stroke-dashoffset: 0;
+    }
+  }
+
+  /* automate */
+  .icon-automate-gear {
+    animation: icon-automate-gear 2000ms linear infinite;
+  }
+
+  @keyframes icon-automate-gear {
+    0% {
+      transform: translate(8.5px, 8px) rotate(0deg);
+      animation-timing-function: cubic-bezier(0.42, 0, 0.58, 1);
+    }
+    50% {
+      transform: translate(8.5px, 8px) rotate(180deg);
+    }
+    100% {
+      transform: translate(8.5px, 8px) rotate(180deg);
+    }
+  }
+
+  /* build */
+  .icon-build-wrench-bottom {
+    animation: icon-build-wrench-bottom 2000ms linear infinite;
+  }
+
+  @keyframes icon-build-wrench-bottom {
+    0% {
+      transform: translate(2.666665px, 12.888965px);
+      animation-timing-function: cubic-bezier(0.77, 0, 0.175, 1);
+    }
+    25% {
+      transform: translate(2.666665px, 10.888865px);
+      animation-timing-function: cubic-bezier(0.77, 0, 0.175, 1);
+    }
+    50% {
+      transform: translate(2.666665px, 10.888865px);
+      animation-timing-function: cubic-bezier(0.77, 0, 0.175, 1);
+    }
+    75% {
+      transform: translate(2.666665px, 12.888965px);
+    }
+    100% {
+      transform: translate(2.666665px, 12.888965px);
+    }
+  }
+
+  .icon-build-wrench-top {
+    animation: icon-build-wrench-top 2000ms linear infinite;
+  }
+
+  @keyframes icon-build-wrench-top {
+    0% {
+      transform: translate(13.30385px, 3.11111px);
+    }
+    25% {
+      transform: translate(13.30385px, 3.11111px);
+      animation-timing-function: cubic-bezier(0.77, 0, 0.175, 1);
+    }
+    50% {
+      transform: translate(13.30385px, 5.11111px);
+      animation-timing-function: cubic-bezier(0.77, 0, 0.175, 1);
+    }
+    75% {
+      transform: translate(13.30385px, 5.11111px);
+      animation-timing-function: cubic-bezier(0.77, 0, 0.175, 1);
+    }
+    100% {
+      transform: translate(13.30385px, 3.11111px);
+    }
+  }
+
+  /* call */
+  .icon-call-pupil {
+    animation: icon-call-pupil 2000ms linear infinite;
+  }
+
+  @keyframes icon-call-pupil {
+    0% {
+      opacity: 1;
+    }
+    5% {
+      opacity: 0;
+    }
+    10% {
+      opacity: 0;
+    }
+    15% {
+      opacity: 1;
+    }
+    25% {
+      opacity: 1;
+    }
+    30% {
+      opacity: 0;
+    }
+    35% {
+      opacity: 0;
+    }
+    40% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 1;
+    }
+    55% {
+      opacity: 0;
+    }
+    60% {
+      opacity: 0;
+    }
+    65% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+
+  /* click */
+  .icon-click-cursor {
+    animation: icon-click-cursor 2000ms linear infinite;
+  }
+
+  @keyframes icon-click-cursor {
+    0% {
+      transform: translate(11.902515px, 11.902515px) scale(1, 1);
+      animation-timing-function: cubic-bezier(0.42, 0, 0.58, 1);
+    }
+    25% {
+      transform: translate(11.902515px, 11.902515px) scale(0.6, 0.6);
+      animation-timing-function: cubic-bezier(0.42, 0, 0.58, 1);
+    }
+    50% {
+      transform: translate(11.902515px, 11.902515px) scale(1, 1);
+    }
+    100% {
+      transform: translate(11.902515px, 11.902515px) scale(1, 1);
+    }
+  }
+
+  /* heater */
+  .icon-heater-flame-left {
+    animation: icon-heater-flame-left 1300ms linear infinite;
+  }
+
+  @keyframes icon-heater-flame-left {
+    0% {
+      stroke-dashoffset: 6.86;
+    }
+    76.923077% {
+      stroke-dashoffset: 0;
+    }
+    100% {
+      stroke-dashoffset: 0;
+    }
+  }
+
+  .icon-heater-flame-mid {
+    animation: icon-heater-flame-mid 1300ms linear infinite;
+  }
+
+  @keyframes icon-heater-flame-mid {
+    0% {
+      stroke-dashoffset: 6.86;
+    }
+    76.923077% {
+      stroke-dashoffset: 0;
+    }
+    100% {
+      stroke-dashoffset: 0;
+    }
+  }
+
+  .icon-heater-flame-right {
+    animation: icon-heater-flame-right 1300ms linear infinite;
+  }
+
+  @keyframes icon-heater-flame-right {
+    0% {
+      stroke-dashoffset: 6.86;
+    }
+    76.923077% {
+      stroke-dashoffset: 0;
+    }
+    100% {
+      stroke-dashoffset: 0;
+    }
+  }
+
+  /* learn */
+  .icon-learn-page {
+    animation: icon-learn-page 1400ms linear infinite;
+  }
+
+  @keyframes icon-learn-page {
+    0% {
+      transform: translate(9.02649px, 5.9487px) scale(1, 1);
+    }
+    35.714286% {
+      transform: translate(9.02649px, 5.9487px) scale(-0.993482, 1);
+    }
+    71.428571% {
+      transform: translate(9.02649px, 5.9487px) scale(1, 1);
+    }
+    100% {
+      transform: translate(9.02649px, 5.9487px) scale(1, 1);
+    }
+  }
+
+  .icon-learn-mask1-shape {
+    animation: icon-learn-mask1-shape 1400ms linear infinite;
+  }
+
+  @keyframes icon-learn-mask1-shape {
+    0% {
+      d: path(
+        "M-0.47351,15L-0.47351,1.21698L9.02649,1.21698L9.02649,10.68042L16.41137,10.68042L16.41137,1.21698L18.52649,1.21698L18.52649,15L-0.47351,15Z"
+      );
+    }
+    35.714286% {
+      d: path(
+        "M-0.47351,15L-0.47351,1.21698L1.64161,1.21698L1.64161,10.68042L9.02649,10.68042L9.02649,1.21698L18.52649,1.21698L18.52649,15L-0.47351,15Z"
+      );
+    }
+    71.428571% {
+      d: path(
+        "M-0.47351,15L-0.47351,1.21698L9.02649,1.21698L9.02649,10.68042L16.41137,10.68042L16.41137,1.21698L18.52649,1.21698L18.52649,15L-0.47351,15Z"
+      );
+    }
+    100% {
+      d: path(
+        "M-0.47351,15L-0.47351,1.21698L9.02649,1.21698L9.02649,10.68042L16.41137,10.68042L16.41137,1.21698L18.52649,1.21698L18.52649,15L-0.47351,15Z"
+      );
+    }
+  }
+
+  .icon-learn-mask2-shape {
+    animation: icon-learn-mask2-shape 1400ms linear infinite;
+  }
+
+  @keyframes icon-learn-mask2-shape {
+    0% {
+      d: path(
+        "M-0.47351,15L-0.47351,1.21698L9.02649,1.21698L9.02649,13.68042L16.41137,13.68042L16.41137,1.21698L18.52649,1.21698L18.52649,15L-0.47351,15Z"
+      );
+    }
+    35.714286% {
+      d: path(
+        "M-0.47351,15L-0.47351,1.21698L1.64161,1.21698L1.64161,13.68042L9.02649,13.68042L9.02649,1.21698L18.52649,1.21698L18.52649,15L-0.47351,15Z"
+      );
+    }
+    71.428571% {
+      d: path(
+        "M-0.47351,15L-0.47351,1.21698L9.02649,1.21698L9.02649,13.68042L16.41137,13.68042L16.41137,1.21698L18.52649,1.21698L18.52649,15L-0.47351,15Z"
+      );
+    }
+    100% {
+      d: path(
+        "M-0.47351,15L-0.47351,1.21698L9.02649,1.21698L9.02649,13.68042L16.41137,13.68042L16.41137,1.21698L18.52649,1.21698L18.52649,15L-0.47351,15Z"
+      );
+    }
+  }
+
+  /* motion */
+  .icon-motion-ring-left {
+    animation: icon-motion-ring-left 1900ms linear infinite;
+  }
+
+  @keyframes icon-motion-ring-left {
+    0% {
+      opacity: 1;
+    }
+    26.315789% {
+      opacity: 1;
+    }
+    52.631579% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 0;
+    }
+  }
+
+  .icon-motion-ring-right {
+    animation: icon-motion-ring-right 1900ms linear infinite;
+  }
+
+  @keyframes icon-motion-ring-right {
+    0% {
+      opacity: 1;
+    }
+    26.315789% {
+      opacity: 1;
+    }
+    52.631579% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 0;
+    }
+  }
+
+  .icon-motion-inner-left-scale {
+    animation: icon-motion-inner-left-scale 1900ms linear infinite;
+  }
+
+  @keyframes icon-motion-inner-left-scale {
+    0% {
+      transform: translate(0px, 0px) scale(1, 1);
+    }
+    26.315789% {
+      transform: translate(0px, 0px) scale(1, 1);
+    }
+    52.631579% {
+      transform: translate(0px, 0px) scale(2.382517, 2.382521);
+    }
+    100% {
+      transform: translate(0px, 0px) scale(2.382517, 2.382521);
+    }
+  }
+
+  .icon-motion-inner-left {
+    animation: icon-motion-inner-left 1900ms linear infinite;
+  }
+
+  @keyframes icon-motion-inner-left {
+    0% {
+      stroke-width: 1.5;
+    }
+    26.315789% {
+      stroke-width: 1.5;
+    }
+    52.631579% {
+      stroke-width: 0.65;
+    }
+    100% {
+      stroke-width: 0.65;
+    }
+  }
+
+  .icon-motion-corner-tl {
+    animation: icon-motion-corner-tl 1900ms linear infinite;
+  }
+
+  @keyframes icon-motion-corner-tl {
+    0% {
+      transform: translate(-2.10326px, -2.10326px);
+    }
+    26.315789% {
+      transform: translate(-2.10326px, -2.10326px);
+    }
+    52.631579% {
+      transform: translate(0px, 0px);
+    }
+    100% {
+      transform: translate(0px, 0px);
+    }
+  }
+
+  .icon-motion-corner-tr {
+    animation: icon-motion-corner-tr 1900ms linear infinite;
+  }
+
+  @keyframes icon-motion-corner-tr {
+    0% {
+      transform: translate(16.441024px, -2.116018px);
+    }
+    26.315789% {
+      transform: translate(16.441024px, -2.116018px);
+    }
+    52.631579% {
+      transform: translate(14.325px, 0px);
+    }
+    100% {
+      transform: translate(14.325px, 0px);
+    }
+  }
+
+  .icon-motion-inner-right-scale {
+    animation: icon-motion-inner-right-scale 1900ms linear infinite;
+  }
+
+  @keyframes icon-motion-inner-right-scale {
+    0% {
+      transform: translate(14.325px, 0px) scale(1, 1);
+    }
+    26.315789% {
+      transform: translate(14.325px, 0px) scale(1, 1);
+    }
+    52.631579% {
+      transform: translate(14.325px, 0px) scale(2.382517, 2.382521);
+    }
+    100% {
+      transform: translate(14.325px, 0px) scale(2.382517, 2.382521);
+    }
+  }
+
+  .icon-motion-inner-right {
+    animation: icon-motion-inner-right 1900ms linear infinite;
+  }
+
+  @keyframes icon-motion-inner-right {
+    0% {
+      stroke-width: 1.5;
+    }
+    26.315789% {
+      stroke-width: 1.5;
+    }
+    52.631579% {
+      stroke-width: 0.65;
+    }
+    100% {
+      stroke-width: 0.65;
+    }
+  }
+
+  /* music */
+  .icon-music-note-to {
+    animation: icon-music-note-to 2000ms linear infinite;
+  }
+
+  @keyframes icon-music-note-to {
+    0% {
+      transform: translate(8px, 8px);
+      animation-timing-function: cubic-bezier(0.42, 0, 0.58, 1);
+    }
+    30% {
+      transform: translate(8px, 9.910573px);
+      animation-timing-function: cubic-bezier(0.42, 0, 0.58, 1);
+    }
+    50% {
+      transform: translate(6.880997px, 7.089425px);
+      animation-timing-function: cubic-bezier(0.42, 0, 0.58, 1);
+    }
+    80% {
+      transform: translate(8px, 9.910573px);
+      animation-timing-function: cubic-bezier(0.42, 0, 0.58, 1);
+    }
+    100% {
+      transform: translate(8px, 8px);
+    }
+  }
+
+  .icon-music-note-tr {
+    animation: icon-music-note-tr 2000ms linear infinite;
+  }
+
+  @keyframes icon-music-note-tr {
+    0% {
+      transform: rotate(0deg);
+    }
+    30% {
+      transform: rotate(0deg);
+      animation-timing-function: cubic-bezier(0.42, 0, 0.58, 1);
+    }
+    50% {
+      transform: rotate(-7.449983deg);
+      animation-timing-function: cubic-bezier(0.42, 0, 0.58, 1);
+    }
+    80% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(0deg);
+    }
+  }
+
+  .icon-music-note-ts {
+    animation: icon-music-note-ts 2000ms linear infinite;
+  }
+
+  @keyframes icon-music-note-ts {
+    0% {
+      transform: scale(0.772058, 0.772058);
+      animation-timing-function: cubic-bezier(0.42, 0, 0.58, 1);
+    }
+    30% {
+      transform: scale(0.772058, 0.666699);
+      animation-timing-function: cubic-bezier(0.42, 0, 0.58, 1);
+    }
+    50% {
+      transform: scale(0.772058, 0.829819);
+      animation-timing-function: cubic-bezier(0.42, 0, 0.58, 1);
+    }
+    80% {
+      transform: scale(0.772058, 0.666699);
+      animation-timing-function: cubic-bezier(0.42, 0, 0.58, 1);
+    }
+    100% {
+      transform: scale(0.772058, 0.772058);
+    }
+  }
+
+  /* temp-low */
+  .icon-temp-low-mercury {
+    animation: icon-temp-low-mercury 2000ms linear infinite;
+  }
+
+  @keyframes icon-temp-low-mercury {
+    0% {
+      transform: translate(4.378295px, 16.24292px) scale(1, 0.809769);
+      animation-timing-function: cubic-bezier(0.42, 0, 0.58, 1);
+    }
+    50% {
+      transform: translate(4.378295px, 16.24292px) scale(1, 0.311896);
+      animation-timing-function: cubic-bezier(0.42, 0, 0.58, 1);
+    }
+    100% {
+      transform: translate(4.378295px, 16.24292px) scale(1, 0.809769);
+    }
+  }
+
+  /* led */
+  .icon-led-ray {
+    animation: icon-led-ray 2000ms linear infinite;
+  }
+
+  @keyframes icon-led-ray {
+    0% {
+      stroke-dashoffset: 4.6;
+      animation-timing-function: cubic-bezier(0.645, 0.045, 0.355, 1);
+    }
+    25% {
+      stroke-dashoffset: 2.3;
+      animation-timing-function: cubic-bezier(0.645, 0.045, 0.355, 1);
+    }
+    50% {
+      stroke-dashoffset: 0;
+    }
+    100% {
+      stroke-dashoffset: 0;
     }
   }
 </style>

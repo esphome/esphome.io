@@ -90,33 +90,41 @@ import FaqSection from "@components/starter-kit/FaqSection.astro";
 </StarlightPage>
 
 <script>
-  document.querySelectorAll<HTMLVideoElement>(".lazy-video").forEach((video) => {
-    const playButton = document.querySelector<HTMLButtonElement>(
-      `.play-button[data-video-id="${video.id}"]`,
-    );
+  document
+    .querySelectorAll<HTMLVideoElement>(".lazy-video")
+    .forEach((video) => {
+      const playButton = document.querySelector<HTMLButtonElement>(
+        `.play-button[data-video-id="${video.id}"]`,
+      );
 
-    function setPlaying(playing: boolean) {
-      video.classList.toggle("lazy-video--playing", playing);
-      playButton?.classList.toggle("lazy-video--playing", playing);
-    }
+      function setPlaying(playing: boolean) {
+        video.classList.toggle("lazy-video--playing", playing);
+        playButton?.classList.toggle("lazy-video--playing", playing);
+      }
 
-    video.addEventListener("ended", () => setPlaying(false));
+      video.addEventListener("ended", () => setPlaying(false));
 
-    playButton?.addEventListener("click", () => {
-      video.play().then(() => setPlaying(true)).catch(() => {});
+      playButton?.addEventListener("click", () => {
+        video
+          .play()
+          .then(() => setPlaying(true))
+          .catch(() => {});
+      });
+
+      const observer = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting) {
+            video
+              .play()
+              .then(() => setPlaying(true))
+              .catch(() => {});
+            observer.disconnect();
+          }
+        },
+        { threshold: 0.5 },
+      );
+      observer.observe(video);
     });
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          video.play().then(() => setPlaying(true)).catch(() => {});
-          observer.disconnect();
-        }
-      },
-      { threshold: 0.5 },
-    );
-    observer.observe(video);
-  });
 </script>
 
 <style lang="scss">
@@ -140,7 +148,7 @@ import FaqSection from "@components/starter-kit/FaqSection.astro";
 
     --esk-primary-color: #9abd32;
     --esk-primary-color--light: #f5f8ea;
-    --esk-secondary-color: #5C8048;
+    --esk-secondary-color: #5c8048;
 
     --esk-heading-font: "Figtree", "Helvetica Neue", Arial, sans-serif;
     --esk-body-font: "Figtree", "Helvetica Neue", Arial, sans-serif;
@@ -159,7 +167,7 @@ import FaqSection from "@components/starter-kit/FaqSection.astro";
     font-family: var(--esk-body-font);
   }
 
-  :global(.esk-btn) {
+  :global(.btn.esk-btn) {
     border-radius: 2.5rem;
     background-color: var(--esk-primary-color);
     text-transform: uppercase;
@@ -186,7 +194,9 @@ import FaqSection from "@components/starter-kit/FaqSection.astro";
     align-items: center;
     justify-content: center;
     opacity: 1;
-    transition: background-color 0.2s ease-in-out, opacity 0.2s ease-in-out;
+    transition:
+      background-color 0.2s ease-in-out,
+      opacity 0.2s ease-in-out;
     border: none;
     cursor: pointer;
 
