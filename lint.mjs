@@ -38,10 +38,10 @@ const fileTypes = [
   '.cfg', '.css', '.gif', '.glb', '.h', '.html', '.ico', '.jpg', '.js', '.json',
   '.md', '.mdx', '.png', '.py', '.scss', '.svg', '.toml', '.txt', '.webmanifest',
   '.xml', '.yaml', '.yml', '.mjs', '.ts', '.tsx', '.astro', '.sh', '.webp',
-  '.bin', '' // empty string for files without extension (like .gitignore)
+  '.bin', '.mp4', '' // empty string for files without extension (like .gitignore)
 ];
 const imageTypes = ['.webp', '.jpg', '.ico', '.png', '.svg', '.gif'];
-const binaryTypes = ['.bin', '.glb'];
+const binaryTypes = ['.bin', '.glb', '.mp4'];
 
 // Store errors
 const errors = new Map();
