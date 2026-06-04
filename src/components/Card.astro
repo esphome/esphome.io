@@ -5,9 +5,12 @@ const { span, bleed = false, href, delay, ...attrs } = Astro.props;
 const hasMedia = Astro.slots.has("media");
 const spanValue =
   span === "full" ? "1 / -1" : typeof span === "number" ? `span ${span}` : null;
-const delayValue = delay !== undefined
-  ? typeof delay === "number" ? `${delay}ms` : delay
-  : null;
+const delayValue =
+  delay !== undefined
+    ? typeof delay === "number"
+      ? `${delay}ms`
+      : delay
+    : null;
 
 const Tag = href ? "a" : "div";
 
@@ -205,7 +208,9 @@ const { line = false, direction = "horizontal" } = Astro.props;
       border-color: var(--esk-title-colour);
 
       .card__arrow {
-        transform: translate(2px, -2px);
+        :global(.icon-text .icon svg) {
+          transform: translate(3px, -3px);
+        }
       }
     }
   }
@@ -215,12 +220,18 @@ const { line = false, direction = "horizontal" } = Astro.props;
     top: 1rem;
     right: 1rem;
     display: block;
-    transition: transform 0.2s ease;
+
     pointer-events: none;
 
     @include bp(tablet) {
       top: 1.5rem;
       right: 1.5rem;
+    }
+
+    :global(.icon-text .icon svg) {
+      width: 14px;
+      height: 14px;
+      transition: transform 0.2s ease;
     }
   }
 
