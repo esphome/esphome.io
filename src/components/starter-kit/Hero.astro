@@ -143,9 +143,8 @@
 
     const controls = new OrbitControls(camera, canvas);
     controls.enableDamping = true;
-    // TEMP: all interaction enabled, auto-rotate off.
-    controls.enableZoom = true;
-    controls.enablePan = true;
+    controls.enableZoom = false;
+    controls.enablePan = false;
     controls.enableRotate = true;
     controls.autoRotate = false;
 
@@ -481,6 +480,103 @@
         };
       });
 
+      // ---- Intro animation -------------------------------------------------
+      // Each top-level module fades + scales in. The GLB has every
+      // ---- Intro animation -------------------------------------------------
+      // The "LED & buzzer" group (named "leds") fades in instantly. The
+      // remaining modules follow with small random delays, each fading
+      // in while translating into place from an offset along the camera
+      // axis (so they appear to slide forward toward their final spot).
+      const ledsIdx = Math.max(
+        0,
+        topLevel.findIndex((g) => g.name === "leds"),
+      );
+      const INTRO_LEAD_DURATION_MS = 180;
+      const INTRO_FOLLOW_DURATION_MS = 650;
+      const INTRO_FOLLOW_GAP_MS = 120;
+      // Distance (in model-local units) each follower starts offset from
+      // its final position along the camera-direction axis.
+      const INTRO_OFFSET_DISTANCE = 1.6;
+      const introStart = performance.now();
+      const introDelays: number[] = topLevel.map((_, i) =>
+        i === ledsIdx ? 0 : INTRO_FOLLOW_GAP_MS + Math.random() * 480,
+      );
+      const introDurations: number[] = topLevel.map((_, i) =>
+        i === ledsIdx ? INTRO_LEAD_DURATION_MS : INTRO_FOLLOW_DURATION_MS,
+      );
+      // Followers start displaced along +Z (model-local) and slide back
+      // along -Z to their final position. Tweak the sign if it ends up
+      // pointing into the wrong half-space for this model's axes.
+      const _offsetAxis = new THREE.Vector3(0, 0, -1).multiplyScalar(
+        INTRO_OFFSET_DISTANCE,
+      );
+      const introOriginalPos: THREE.Vector3[] = topLevel.map((g) =>
+        g.position.clone(),
+      );
+      const introOffset: THREE.Vector3[] = topLevel.map((_, i) =>
+        i === ledsIdx ? new THREE.Vector3() : _offsetAxis.clone(),
+      );
+      // Hide every material on frame 0 so the model doesn't flash before
+      // its intro begins. cycleUpdater fades them back in via the
+      // per-material `logicalOpacity` we capture here.
+      for (const g of groupFades) {
+        for (const m of g.solid) {
+          (m as any).logicalOpacity = m.opacity;
+          m.opacity = 0;
+        }
+        for (const m of g.wire) {
+          (m as any).logicalOpacity = m.opacity;
+          m.opacity = 0;
+        }
+        for (const m of g.outlineMats) {
+          (m as any).logicalOpacity = m.uniforms.outlineOpacity.value;
+          m.uniforms.outlineOpacity.value = 0;
+        }
+      }
+      const introFactor = (i: number, now: number) => {
+        const t = (now - introStart - introDelays[i]) / introDurations[i];
+        if (t <= 0) return 0;
+        if (t >= 1) return 1;
+        // ease-out cubic
+        return 1 - Math.pow(1 - t, 3);
+      };
+
+      // ---- Stage-2 camera intro -------------------------------------------
+      // After the per-module items have entered, the camera rotates from
+      // a near head-on view to the steady-state isometric direction. The
+      // CSS in this component runs a synchronised slide on the outer
+      // .block-hero__asset-container so the model also translates from
+      // page-centre back to its right-hand column home.
+      const homeTarget = controls.target.clone();
+      const homeDistance = camera.position.distanceTo(homeTarget);
+      const INTRO_CAM_DELAY_MS = 900;
+      const INTRO_CAM_DURATION_MS = 900;
+      const FRONT_CAM_DIR = new THREE.Vector3(0, 0.35, 1).normalize();
+      const HOME_CAM_DIR = CAM_DIR.clone();
+      // Head-on view shows the model's full X×Y face while the iso view
+      // foreshortens both axes — multiply the home distance so the
+      // frontal pose doesn't blow up out of frame.
+      const FRONT_CAM_DIST_MUL = 1.5;
+      const _introCamDir = new THREE.Vector3();
+      const easeInOutCubic = (t: number) =>
+        t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+      // Place the camera in its starting (head-on) pose immediately so
+      // the first rendered frame doesn't flash the isometric view.
+      _introCamDir.copy(FRONT_CAM_DIR);
+      camera.position
+        .copy(controls.target)
+        .addScaledVector(_introCamDir, homeDistance * FRONT_CAM_DIST_MUL);
+      camera.lookAt(controls.target);
+      // Lock OrbitControls until the intro completes so user drags can't
+      // fight the choreographed rotation.
+      controls.enabled = false;
+      window.setTimeout(
+        () => {
+          controls.enabled = true;
+        },
+        INTRO_CAM_DELAY_MS + INTRO_CAM_DURATION_MS + 100,
+      );
+
       // Re-apply tint + edge colours whenever Starlight flips the theme.
       const applyThemePalette = () => {
         const edge = isLightTheme() ? EDGE_LIGHT : EDGE_DARK;
@@ -502,8 +598,6 @@
 
       // Precompute per-group bounding spheres for the zoom animation.
       const fovY = (camera.fov * Math.PI) / 180;
-      const homeTarget = controls.target.clone();
-      const homeDistance = camera.position.distanceTo(homeTarget);
       const groupFocus = topLevel.map((obj) => {
         const box = new THREE.Box3().setFromObject(obj);
         const center = new THREE.Vector3();
@@ -580,21 +674,68 @@
 
       const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 
-      cycleUpdater = () => {
+      cycleUpdater = (now: number) => {
         if (!groupFades.length) return;
 
         // Lerp every group's solid/wire opacity toward its target state.
         for (let i = 0; i < groupFades.length; i++) {
-          const { solid, wire } = groupFades[i];
+          const { solid, wire, outlineMats, root } = groupFades[i];
           // activeIdx === -1 means "all active" — every group reads solid;
           // otherwise the selected group is solid, the rest go wireframe.
           const isActive = activeIdx === -1 || i === activeIdx;
           const targetSolid = isActive ? 1 : 0;
           const targetWire = WIRE_DIM * (1 - targetSolid);
-          for (const m of solid)
-            m.opacity = lerp(m.opacity, targetSolid, SOLID_LERP);
-          for (const m of wire)
-            m.opacity = lerp(m.opacity, targetWire, SOLID_LERP);
+          const targetOutline = 1 - targetSolid;
+          const introF = introFactor(i, now);
+          // Translate the group from its start offset (along the camera
+          // axis) back to its final position as the intro progresses.
+          // The lead "leds" group has a zero offset so it only fades.
+          root.position
+            .copy(introOriginalPos[i])
+            .addScaledVector(introOffset[i], 1 - introF);
+          for (const m of solid) {
+            const lg = (m as any).logicalOpacity ?? m.opacity;
+            const next = lerp(lg, targetSolid, SOLID_LERP);
+            (m as any).logicalOpacity = next;
+            m.opacity = next * introF;
+          }
+          for (const m of wire) {
+            const lg = (m as any).logicalOpacity ?? m.opacity;
+            const next = lerp(lg, targetWire, SOLID_LERP);
+            (m as any).logicalOpacity = next;
+            m.opacity = next * introF;
+          }
+          for (const m of outlineMats) {
+            const lg =
+              (m as any).logicalOpacity ?? m.uniforms.outlineOpacity.value;
+            const next = lerp(lg, targetOutline, SOLID_LERP);
+            (m as any).logicalOpacity = next;
+            m.uniforms.outlineOpacity.value = next * introF;
+          }
+        }
+
+        // Stage-2 intro: override camera direction (and distance) while
+        // it rotates from the head-on starting pose to the isometric
+        // home direction. The standard zoom-lerp below preserves
+        // whatever direction we leave here, so once the intro completes
+        // this block becomes a no-op.
+        const camT =
+          (now - introStart - INTRO_CAM_DELAY_MS) / INTRO_CAM_DURATION_MS;
+        if (camT < 1) {
+          const eased = easeInOutCubic(Math.max(0, Math.min(1, camT)));
+          _introCamDir
+            .copy(FRONT_CAM_DIR)
+            .lerp(HOME_CAM_DIR, eased)
+            .normalize();
+          const dist = lerp(
+            homeDistance * FRONT_CAM_DIST_MUL,
+            homeDistance,
+            eased,
+          );
+          camera.position
+            .copy(controls.target)
+            .addScaledVector(_introCamDir, dist);
+          camera.lookAt(controls.target);
         }
 
         // Camera zoom: lerp toward the focused group when one is selected,
@@ -628,7 +769,27 @@
         }
         return -1;
       };
+      // Distinguish click vs drag: if the pointer travels more than a few
+      // pixels between down and up we treat it as a drag (orbit) and skip
+      // focusing the model.
+      const CLICK_MOVE_THRESHOLD_SQ = 25;
+      let pointerDown: { x: number; y: number; id: number } | null = null;
       canvas.addEventListener("pointerdown", (event) => {
+        pointerDown = {
+          x: event.clientX,
+          y: event.clientY,
+          id: event.pointerId,
+        };
+      });
+      canvas.addEventListener("pointerup", (event) => {
+        const start = pointerDown;
+        pointerDown = null;
+        if (!start || start.id !== event.pointerId) return;
+        const dx = event.clientX - start.x;
+        const dy = event.clientY - start.y;
+        // Treat as a click only if the pointer barely moved between
+        // down and up; otherwise it was a drag (orbit) and we ignore it.
+        if (dx * dx + dy * dy > CLICK_MOVE_THRESHOLD_SQ) return;
         const rect = canvas.getBoundingClientRect();
         pointer.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
         pointer.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
@@ -637,9 +798,19 @@
         if (!hits.length) return;
         const idx = groupForObject(hits[0].object);
         if (idx !== -1) {
-          setActive(idx);
-          cancelRevert();
+          // Clicking the already-active module zooms back out to the
+          // overview; clicking another module focuses it.
+          if (idx === activeIdx) {
+            setActive(-1);
+            cancelRevert();
+          } else {
+            setActive(idx);
+            cancelRevert();
+          }
         }
+      });
+      canvas.addEventListener("pointercancel", () => {
+        pointerDown = null;
       });
       // While the user is actively manipulating OrbitControls (drag/zoom)
       // pause the idle timer; restart it on release so the 3s countdown
@@ -926,6 +1097,15 @@
 
       display: flex;
       position: relative;
+
+      // Stage-2 intro: on tablet+ the asset starts shifted so the model
+      // sits roughly at the centre of the viewport, then slides back to
+      // its right-hand column home. Synchronised with the JS camera
+      // rotate via matching delay/duration.
+      @include bp(tablet) {
+        animation: heroAssetSlideIn 0.9s cubic-bezier(0.65, 0, 0.35, 1) 0.9s
+          both;
+      }
     }
 
     &__asset-stage {
@@ -1015,19 +1195,20 @@
   .block-hero {
     &__content {
       > * {
+        // Stage-3: text appears after the asset has slid into place.
         animation: heroContentIn 0.7s cubic-bezier(0.16, 1, 0.3, 1) backwards;
 
         &:nth-child(1) {
-          animation-delay: 0.2s;
+          animation-delay: 1.7s;
         }
         &:nth-child(2) {
-          animation-delay: 0.45s;
+          animation-delay: 1.95s;
         }
         &:nth-child(3) {
-          animation-delay: 0.7s;
+          animation-delay: 2.2s;
         }
         &:nth-child(4) {
-          animation-delay: 0.95s;
+          animation-delay: 2.45s;
         }
       }
 
@@ -1115,6 +1296,15 @@
     to {
       opacity: 1;
       transform: none;
+    }
+  }
+
+  @keyframes heroAssetSlideIn {
+    from {
+      transform: translateX(-50%);
+    }
+    to {
+      transform: translateX(0);
     }
   }
 </style>
