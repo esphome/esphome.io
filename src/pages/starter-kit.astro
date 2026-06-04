@@ -111,7 +111,8 @@ import FaqSection from "@components/starter-kit/FaqSection.astro";
 
   document.querySelectorAll<HTMLElement>(".fade-up").forEach((el) => {
     const delay = el.dataset.delay;
-    if (delay) el.style.setProperty("--fade-delay", `${delay}ms`);
+    if (delay && !el.style.getPropertyValue("--fade-delay"))
+      el.style.setProperty("--fade-delay", `${delay}ms`);
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
