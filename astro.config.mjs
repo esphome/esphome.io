@@ -10,6 +10,7 @@ import { remarkAlert } from "remark-github-blockquote-alert";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
 import componentsJson from "./src/integrations/components-json.ts";
+import routeIndex from "./src/integrations/route-index.ts";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -166,12 +167,15 @@ export default defineConfig({
         },
       ],
       editLink: {
-        baseUrl: "https://github.com/esphome/esphome-docs/edit/current/",
+        baseUrl: `https://github.com/esphome/esphome.io/edit/${
+          ["next", "beta"].includes(process.env.BRANCH) ? "next" : "current"
+        }/`,
       },
       routeMiddleware: ["./src/routeData.ts"],
       components: {
         Footer: "./src/components/Footer.astro",
         Head: "./src/components/Head.astro",
+        SiteTitle: "./src/components/SiteTitle.astro",
       },
       customCss: ["./src/styles/custom.css", "katex/dist/katex.min.css"],
       sidebar: [
@@ -246,9 +250,23 @@ export default defineConfig({
         {
           tag: "script",
           content: `document.addEventListener('keydown', function(e) {
+            // 1. Existing '/' shortcut to open search
             if (e.key === '/' && !['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement?.tagName)) {
               e.preventDefault();
               document.querySelector('button[data-open-modal]')?.click();
+              return;
+            }
+
+            // 2. New 'Enter' shortcut for first search result
+            if (e.key === 'Enter' && e.target.classList.contains('pagefind-ui__search-input')) {
+              const firstResult = document.querySelector('.pagefind-ui__result-link');
+
+              if (firstResult) {
+                // Prevent the default form submission or modal close behavior
+                e.preventDefault();
+                e.stopImmediatePropagation();
+                firstResult.click();
+              }
             }
           });`,
         },
@@ -277,5 +295,6 @@ export default defineConfig({
     }),
     sitemap(),
     componentsJson(),
+    routeIndex(),
   ],
 });
