@@ -90,6 +90,40 @@ import FaqSection from "@components/starter-kit/FaqSection.astro";
 </StarlightPage>
 
 <script>
+  const animatedIconObserver = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.remove("playing");
+          void (entry.target as HTMLElement).offsetWidth;
+          entry.target.classList.add("playing");
+        } else {
+          entry.target.classList.remove("playing");
+        }
+      });
+    },
+    { threshold: 0.5 },
+  );
+
+  document.querySelectorAll<SVGElement>(".is-animated").forEach((el) => {
+    animatedIconObserver.observe(el);
+  });
+
+  document.querySelectorAll<HTMLElement>(".fade-up").forEach((el) => {
+    const delay = el.dataset.delay;
+    if (delay) el.style.setProperty("--fade-delay", `${delay}ms`);
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          el.classList.add("in-view");
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.2 },
+    );
+    observer.observe(el);
+  });
+
   document
     .querySelectorAll<HTMLVideoElement>(".lazy-video")
     .forEach((video) => {
@@ -271,6 +305,20 @@ import FaqSection from "@components/starter-kit/FaqSection.astro";
 
   :global(.content-panel) {
     padding: 0;
+  }
+
+  :global(.fade-up) {
+    opacity: 0;
+    translate: 0 24px;
+    transition:
+      opacity 0.5s ease-in-out,
+      translate 0.5s ease-in-out;
+    transition-delay: var(--fade-delay, 0ms);
+
+    &.in-view {
+      opacity: 1;
+      translate: 0 0;
+    }
   }
 
   :global(.lazy-video) {

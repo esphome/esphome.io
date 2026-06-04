@@ -14,6 +14,7 @@ const { line = false, direction = "horizontal" } = Astro.props;
 <Tag
   class:list={[
     "card",
+    "fade-up",
     {
       "card--with-media": hasMedia,
       "card--bleed": bleed && hasMedia,
@@ -25,7 +26,13 @@ const { line = false, direction = "horizontal" } = Astro.props;
   href={href}
   {...attrs}
 >
-  {line && <div class="card__line" aria-hidden="true"><div class="card__line-pulse" /></div>}
+  {
+    line && (
+      <div class="card__line" aria-hidden="true">
+        <div class="card__line-pulse" />
+      </div>
+    )
+  }
   {
     hasMedia && (
       <div class="card__media">
@@ -60,6 +67,15 @@ const { line = false, direction = "horizontal" } = Astro.props;
 
     grid-column: var(--card-span, auto);
     position: relative;
+    transition: border-color 0.2s ease;
+
+    &:hover {
+      border-color: var(--esk-title-colour);
+
+      :global(.is-animated.playing *) {
+        animation-iteration-count: infinite;
+      }
+    }
 
     @include bp(tablet) {
       border-radius: 12px;
@@ -119,7 +135,7 @@ const { line = false, direction = "horizontal" } = Astro.props;
     &:after {
       width: 0.5rem;
       height: 0.5rem;
-      content: '';
+      content: "";
       background-color: var(--esk-primary-color);
       border-radius: 50%;
       position: absolute;
@@ -268,3 +284,15 @@ const { line = false, direction = "horizontal" } = Astro.props;
     }
   }
 </style>
+
+<script>
+  document.querySelectorAll<HTMLElement>(".card").forEach((card) => {
+    card.addEventListener("mouseenter", () => {
+      card.querySelectorAll<SVGElement>(".is-animated").forEach((icon) => {
+        icon.classList.remove("playing");
+        void icon.offsetWidth;
+        icon.classList.add("playing");
+      });
+    });
+  });
+</script>
