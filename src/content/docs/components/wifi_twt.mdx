@@ -22,9 +22,11 @@ wifi_twt:
 > request will be ignored and the device will operate without power savings.
 
 > [!WARNING]
-> If you use `native_api` together with `wifi_twt`, set `wake_interval` to `10s` or less. Longer sleep
-> periods will cause the native API keepalive to time out and drop the connection. Use MQTT or CoAP instead
-> for longer intervals.
+> The [Native API](/components/api/) sends keepalive pings every 20 s and disconnects if no response
+> arrives within 90 s. While the device is asleep the radio is off and pings go unanswered, so keep
+> `wake_interval` below 90 s to ensure the device wakes before that timeout fires. Any traffic sent by
+> the device during a wake window resets the timer, so frequent sensor updates can sustain the connection
+> at longer intervals. For wake intervals above 90 s, use MQTT instead.
 
 > [!WARNING]
 > Broadcast and multicast UDP packets received while the device is asleep are silently dropped. Routers and
@@ -47,11 +49,21 @@ wifi_twt:
 - **wake_duration** (**Required**, [Time](/guides/configuration-types#time)): How long the device stays
   awake each wake window. Maximum is 65 ms (802.11ax wire limit of 255 × 256 µs).
 - **setup_cmd** (*Optional*, string): How the device negotiates the TWT schedule with the access point.
-  One of `request`, `suggest`, or `demand`. Defaults to `request`.
+  One of `request`, `suggest`, or `demand`. Defaults to `demand`.
+
+  - `request`: Join a TWT session without providing parameters. The access point assigns the schedule
+    entirely; `wake_interval` and `wake_duration` are ignored.
+  - `suggest`: Offer `wake_interval` and `wake_duration` as preferred parameters. The access point may
+    accept them as-is or respond with a counter-proposal, which the device will accept.
+  - `demand`: Require the access point to accept exactly the specified `wake_interval` and
+    `wake_duration`. If the access point cannot accommodate the parameters, setup fails.
 - **flow_type** (*Optional*, string): TWT flow type. One of `announced` or `unannounced`. In `announced`
-  mode the access point buffers frames for the device and sends them at the start of each wake window.
-  In `unannounced` mode the device may transmit at any time within its wake window without an AP trigger
-  frame. Defaults to `announced`.
+  mode the device sends a QoS Null frame at the start of each wake window to signal the access point it
+  is awake; the AP then delivers any buffered downlink frames immediately. In `unannounced` mode the
+  device wakes and transmits without any announcement; the AP does not know the device is awake until it
+  hears from it, so buffered downlink may be delayed until the next DTIM beacon. Use `announced` when the
+  device needs to receive data each wake window; use `unannounced` for pure uplink devices such as sensors
+  that only push data. Defaults to `announced`.
 - **auto_setup** (*Optional*, boolean): Automatically start the TWT session after WiFi connects.
   Set to `false` to start the session manually using the `wifi_twt.start` action. Defaults to `true`.
 - **on_twt_start** (*Optional*, [Automation](/automations/)): Automation to run when a TWT session is
@@ -84,9 +96,11 @@ on_...:
   for this session. Supports [templates](/automations/templates/).
 - **wake_duration** (*Optional*, [Time](/guides/configuration-types#time)): Override the wake duration
   for this session. Supports [templates](/automations/templates/).
-- **setup_cmd** (*Optional*, string): Override the setup command for this session. Supports
+- **setup_cmd** (*Optional*, string): Override the setup command (`request`, `suggest`, or `demand`)
+  for this session. See [Configuration Variables](#configuration-variables) for details. Supports
   [templates](/automations/templates/).
-- **flow_type** (*Optional*, string): Override the flow type for this session. Supports
+- **flow_type** (*Optional*, string): Override the flow type (`announced` or `unannounced`) for this
+  session. See [Configuration Variables](#configuration-variables) for details. Supports
   [templates](/automations/templates/).
 
 ### `wifi_twt.stop` Action
