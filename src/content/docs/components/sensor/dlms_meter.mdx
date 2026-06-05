@@ -127,6 +127,20 @@ For more details, refer to the [Logger Component](/components/logger/).
 > [!WARNING]
 > The `dlms_meter` schema using predefined legacy keys (e.g., `voltage_l1`, `timestamp`) is **deprecated** and will be removed in the **2026.11.0** release.
 > Please update your configuration to use the new schema with the `obis_code` variable as shown above.
+>
+> Additionally, the `provider` configuration option is **deprecated** and will be completely removed in the 2026.11.0 release:
+> * For most providers, the new parsing library dynamically handles meter quirks, rendering the manual provider definition unnecessary. The key will be safely ignored and should be removed.
+> * For `provider: netznoe`, the required `custom_patterns` are automatically injected for this release to maintain compatibility. However, you **must** update your configuration before 2026.11.0 by removing the `provider` key and explicitly replacing it with the following:
+>
+> ```yaml
+> custom_patterns:
+>   - pattern: "L, TSTR"
+>     name: "MeterID"
+>     default_obis: "0.0.96.1.0.255"
+>   - pattern: "F, TDTM"
+>     name: "DateTime"
+>     default_obis: "0.0.1.0.0.255"
+> ```
 
 For backwards compatibility until the deprecation deadline, the legacy predefined keys from earlier versions are still supported and mapped automatically to their respective OBIS codes.
 Add only the ones you need. All support standard options from their
@@ -328,6 +342,24 @@ dlms_meter:
     - pattern: "L, TSTR"
       name: "MeterID"
       default_obis: "0.0.96.1.0.255"
+    - pattern: "F, TDTM"
+      name: "DateTime"
+      default_obis: "0.0.1.0.0.255"
+```
+
+**KAIFA MA309M**
+*: Requires the custom patterns below to decode the Meter ID and timestamp correctly. Note: this meter does not emit reactive power, power factor, or frequency.*
+```yaml
+dlms_meter:
+  # ...
+  decryption_key: "YOUR_32_CHAR_HEX_KEY"
+  custom_patterns:
+    - pattern: "L, TSTR"
+      name: "MeterID"
+      default_obis: "0.0.96.1.0.255"
+    - pattern: "F, TDTM"
+      name: "DateTime"
+      default_obis: "0.0.1.0.0.255"
 ```
 
 *(Additional instructions and specific `custom_patterns` for meters from manufacturers can be added here
