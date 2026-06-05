@@ -52,22 +52,22 @@ switch:
 
 - **pcm5122** (**Required**, [ID](/guides/configuration-types#id)): The ID of the PCM5122 component.
 - **number** (**Required**, int): The GPIO pin number. Must be between `3` and `6`.
-- **mode** (*Optional*): Configure the pin direction.
+- **mode** (**Required**): Configure the pin direction. Exactly one of `input` or `output` must be set to `true`.
   - **input** (*Optional*, bool): Set as input pin. Defaults to `false`.
-  - **output** (*Optional*, bool): Set as output pin. Defaults to `true`.
+  - **output** (*Optional*, bool): Set as output pin. Defaults to `false`.
 - **inverted** (*Optional*, bool): Invert the logic level of the pin. Defaults to `false`.
 
 ## Configuration Example
 
 ```yaml
 i2c:
-  sda: GPIO21
-  scl: GPIO22
+  sda: GPIOXX
+  scl: GPIOXX
 
 i2s_audio:
   - id: i2s_output
-    i2s_lrclk_pin: GPIO25
-    i2s_bclk_pin: GPIO26
+    i2s_lrclk_pin: GPIOXX
+    i2s_bclk_pin: GPIOXX
 
 audio_dac:
   - platform: pcm5122
@@ -78,7 +78,7 @@ speaker:
   - platform: i2s_audio
     i2s_audio_id: i2s_output
     id: speaker_id
-    i2s_dout_pin: GPIO22
+    i2s_dout_pin: GPIOXX
     dac_type: external
     audio_dac: pcm5122_dac
 
