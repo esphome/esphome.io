@@ -26,13 +26,15 @@ wifi_twt:
 > arrives within 90 s. While the device is asleep the radio is off and pings go unanswered, so keep
 > `wake_interval` below 90 s to ensure the device wakes before that timeout fires. Any traffic sent by
 > the device during a wake window resets the timer, so frequent sensor updates can sustain the connection
-> at longer intervals. For wake intervals above 90 s, use MQTT instead.
+> at longer intervals. For wake intervals above 90 s, use MQTT instead.  Both Native API and MQTT use TCP
+> connections that routers will typically cache and send to device when it is awake.
 
 > [!WARNING]
 > Broadcast and multicast UDP packets received while the device is asleep are silently dropped. Routers and
 > access points only buffer unicast frames for sleeping clients; broadcast traffic is never cached. Protocols
 > that rely on broadcast or multicast for discovery or delivery — such as mDNS, CoAP multicast, and SSDP —
-> will not reach the device during sleep periods.
+> will not reach the device during sleep periods.  Unicast UDP packets may be cached and passed through to device,
+> however, most routers do not do a good job of this and only a portion of the UDP packets may reach the device.
 
 > [!WARNING]
 > UDP packets queued for transmission while the radio is off may be silently dropped. The device's transmit
