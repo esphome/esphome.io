@@ -99,6 +99,7 @@ sensor:
 - **voltage_low** (*Optional*): Voltage of the lowest cell. All options from [Sensor](/components/sensor).
 - **voltage_high** (*Optional*): Voltage of the highest cell. All options from [Sensor](/components/sensor).
 - **mos_temperature** (*Optional*): Temperature of the mosfets. All options from [Sensor](/components/sensor).
+- **cells** (*Optional*): Entries to monitor individual cells. See [Monitoring individual cells](#monitoring-individual-cells).
 
 ## Text Sensor
 
@@ -122,6 +123,56 @@ text_sensor:
 - **voltage_state** (*Optional*): Voltage state. Usually reads `Normal`. All options from [Text Sensor](/components/text_sensor#config-text_sensor).
 - **current_state** (*Optional*): Current state. Usually reads `Normal`. All options from [Text Sensor](/components/text_sensor#config-text_sensor).
 - **temperature_state** (*Optional*): Temperature state. Usually reads `Normal`. All options from [Text Sensor](/components/text_sensor#config-text_sensor).
+
+
+## Monitoring individual cells
+
+The cells inside each battery can also be monitored.
+
+```yaml
+# Example configuration entry
+sensor:
+  - platform: pylontech
+    battery: 1
+    cells:
+      - cell: 0
+        voltage:
+          name: "Battery1 Cell0 Voltage"
+        temperature:
+          name: "Battery1 Cell0 Temperature"
+      - cell: 1
+        voltage:
+          name: "Battery1 Cell1 Voltage"
+        temperature:
+          name: "Battery1 Cell1 Temperature"
+```
+
+- **cell** (**Required**): Which cell to monitor. Starts counting from zero.
+- **voltage** (*Optional*): Voltage of the singular cell. All options from [Sensor](/components/sensor).
+- **temperature** (*Optional*): Temperature of the singular cell. All options from [Sensor](/components/sensor).
+
+### `pylontech.set_cell_polling` Action
+
+Monitoring individual cells causes some additional overhead.
+In case it is not always needed, it can be dynamically disabled.
+
+```yaml
+switch:
+  - platform: template
+    name: "Pylontech poll individual cells"
+    restore_mode: RESTORE_DEFAULT_ON
+    optimistic: true
+    internal: false
+    entity_category: "config"
+    turn_on_action:
+      - pylontech.set_cell_polling:
+          id: pylontech0
+          enabled: true
+    turn_off_action:
+      - pylontech.set_cell_polling:
+          id: pylontech0
+          enabled: false
+```
 
 ## Energy Monitoring
 
