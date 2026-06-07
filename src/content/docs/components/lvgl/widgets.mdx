@@ -1031,6 +1031,78 @@ on_...:
 > [!TIP]
 > `offset_x` and `offset_y` can be useful when the widget size is set to be smaller than the image source size. A "running image" effect can be created by animating these values.
 
+<span id="lvgl-widget-lottie"></span>
+
+### `lottie`
+
+The Lottie widget renders a Lottie JSON animation through LVGL's ThorVG/vector support. Animations may be embedded into the firmware from a local file or loaded from a filesystem path at runtime.
+
+**Configuration variables:**
+
+- **file** (*Optional*, string): Local Lottie JSON file to embed into the firmware. The widget can auto-detect its size from the JSON unless `width` and `height` are specified.
+- **src** (*Optional*, string): Absolute filesystem path to a Lottie JSON file on the device, such as `/sdcard/animation.json`. When `src` is used, `width` and `height` are required.
+- **width** (*Optional*, [size](#lvgl-size)): Render width. Required with `src`; optional with `file`.
+- **height** (*Optional*, [size](#lvgl-size)): Render height. Required with `src`; optional with `file`.
+- **loop** (*Optional*, boolean): Loop the animation. Defaults to `true`.
+- **auto_start** (*Optional*, boolean): Start the animation automatically when the widget is shown. Defaults to `true`.
+- Style options from [Style properties](/components/lvgl#lvgl-styling).
+
+Exactly one of `file` or `src` must be configured.
+
+**Actions:**
+
+- `lvgl.lottie.start` [action](/automations/actions#actions-action) starts or resumes the animation.
+  - **id** (**Required**): The ID of the Lottie widget.
+- `lvgl.lottie.stop` [action](/automations/actions#actions-action) stops the animation and resets it to the beginning.
+  - **id** (**Required**): The ID of the Lottie widget.
+- `lvgl.lottie.pause` [action](/automations/actions#actions-action) pauses the animation at the current frame.
+  - **id** (**Required**): The ID of the Lottie widget.
+
+**Example:**
+
+```yaml
+# Embedded animation:
+- lottie:
+    id: loading_animation
+    file: animations/loading.json
+    width: 160
+    height: 160
+    loop: true
+    auto_start: true
+
+# Runtime control:
+on_...:
+  - lvgl.lottie.pause:
+      id: loading_animation
+```
+
+<span id="lvgl-widget-svg"></span>
+
+### `svg`
+
+The SVG widget renders a static SVG image through LVGL's ThorVG/vector support and displays the rendered result on an LVGL canvas. SVG files may be embedded into the firmware from a local file or loaded from a filesystem path at runtime.
+
+**Configuration variables:**
+
+- **file** (*Optional*, string): Local SVG file to embed into the firmware. The widget can auto-detect its size from the SVG `viewBox` or explicit `width` and `height` attributes unless `width` and `height` are specified.
+- **src** (*Optional*, string): Absolute filesystem path to an SVG file on the device, such as `/sdcard/icons/home.svg`. When `src` is used, `width` and `height` are required.
+- **width** (*Optional*, [size](#lvgl-size)): Render width. Required with `src`; optional with `file` if the SVG size can be detected.
+- **height** (*Optional*, [size](#lvgl-size)): Render height. Required with `src`; optional with `file` if the SVG size can be detected.
+- Style options from [Style properties](/components/lvgl#lvgl-styling).
+
+Exactly one of `file` or `src` must be configured.
+
+**Example:**
+
+```yaml
+# Embedded SVG icon:
+- svg:
+    id: home_icon
+    file: icons/home.svg
+    width: 64
+    height: 64
+```
+
 <span id="lvgl-widget-keyboard"></span>
 
 ### `keyboard`
