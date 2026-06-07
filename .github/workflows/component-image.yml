@@ -6,6 +6,7 @@ on:
 
 permissions:
   pull-requests: write
+  contents: read
 
 jobs:
   prepare:
@@ -58,20 +59,140 @@ jobs:
         with:
           component: ${{ needs.prepare.outputs.name }}
 
+      # Always publish the raw SVG as an unarchived artifact (downloads as a bare
+      # .svg, not a zip) so there is a fallback when the image cannot be pushed
+      # to the PR branch (e.g. organization-owned forks).
       - name: Upload
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         id: upload-artifact
         with:
-          name: ${{ needs.prepare.outputs.name }}
           path: ${{ needs.prepare.outputs.name_lower }}.svg
+          archive: false
 
-      - name: Update Comment
+      # Move the generated image out of the workspace before checkout wipes it.
+      - name: Stash generated image
+        run: |
+          mkdir -p "${{ runner.temp }}/component-image"
+          mv "${{ needs.prepare.outputs.name_lower }}.svg" "${{ runner.temp }}/component-image/"
+
+      - name: Generate a token
+        id: app-token
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          client-id: ${{ vars.ESPHOME_GITHUB_APP_CLIENT_ID }}
+          private-key: ${{ secrets.ESPHOME_GITHUB_APP_PRIVATE_KEY }}
+
+      - name: Get app user id
+        id: app-user
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+        run: |
+          user_id=$(gh api "/users/${{ steps.app-token.outputs.app-slug }}[bot]" --jq .id)
+          echo "user-id=$user_id" >> "$GITHUB_OUTPUT"
+
+      - name: Get PR head info
+        id: pr
         uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         with:
           script: |
+            const { data: pr } = await github.rest.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.issue.number,
+            });
+            core.setOutput('head_repo', pr.head.repo.full_name);
+            core.setOutput('head_ref', pr.head.ref);
+
+      - name: Checkout PR branch
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          repository: ${{ steps.pr.outputs.head_repo }}
+          ref: ${{ steps.pr.outputs.head_ref }}
+          token: ${{ steps.app-token.outputs.token }}
+          persist-credentials: true
+
+      - name: Place image
+        run: |
+          mv -f "${{ runner.temp }}/component-image/${{ needs.prepare.outputs.name_lower }}.svg" \
+            "public/images/${{ needs.prepare.outputs.name_lower }}.svg"
+
+      - name: Update component index
+        id: index
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        env:
+          COMPONENT: ${{ needs.prepare.outputs.name }}
+          IMG: ${{ needs.prepare.outputs.name_lower }}.svg
+        with:
+          script: |
+            const fs = require('fs');
+            const path = 'src/content/docs/components/index.mdx';
+            const name = process.env.COMPONENT;
+            const img = process.env.IMG;
+            // Component name is validated to [a-z0-9_]+, so it is safe in a regex.
+            const re = new RegExp('("/components/' + name + '/",\\s*")[^"]*(")', 'g');
+            let count = 0;
+            const updated = fs.readFileSync(path, 'utf8')
+              .replace(re, (_m, p1, p2) => { count++; return p1 + img + p2; });
+            if (count > 0) fs.writeFileSync(path, updated);
+            core.setOutput('updated', count > 0 ? 'true' : 'false');
+
+      - name: Commit and push
+        id: push
+        continue-on-error: true
+        env:
+          APP_SLUG: ${{ steps.app-token.outputs.app-slug }}
+          USER_ID: ${{ steps.app-user.outputs.user-id }}
+          IMG: ${{ needs.prepare.outputs.name_lower }}.svg
+          COMPONENT: ${{ needs.prepare.outputs.name }}
+          HEAD_REF: ${{ steps.pr.outputs.head_ref }}
+        run: |
+          git config user.name "${APP_SLUG}[bot]"
+          git config user.email "${USER_ID}+${APP_SLUG}[bot]@users.noreply.github.com"
+          git add "public/images/${IMG}" src/content/docs/components/index.mdx
+          if git diff --cached --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "No changes to commit."
+            exit 0
+          fi
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+          git commit -m "[${COMPONENT}] Add generated component image"
+          git push origin "HEAD:${HEAD_REF}"
+
+      - name: Update Comment
+        if: always()
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        env:
+          PUSH_OUTCOME: ${{ steps.push.outcome }}
+          CHANGED: ${{ steps.push.outputs.changed }}
+          INDEX_UPDATED: ${{ steps.index.outputs.updated }}
+          ARTIFACT_URL: ${{ steps.upload-artifact.outputs.artifact-url }}
+          IMG: ${{ needs.prepare.outputs.name_lower }}.svg
+        with:
+          script: |
+            const outcome = process.env.PUSH_OUTCOME;
+            const changed = process.env.CHANGED;
+            const indexUpdated = process.env.INDEX_UPDATED === 'true';
+            const url = process.env.ARTIFACT_URL;
+            const img = process.env.IMG;
+            const actor = context.actor;
+            let body;
+            if (outcome === 'success' && changed === 'true') {
+              body = `@${actor} Committed \`public/images/${img}\` to this PR` +
+                (indexUpdated
+                  ? ' and updated the component index.'
+                  : ' (no matching index entry found — update it manually).') +
+                `\n\nArtifact: ${url}`;
+            } else if (outcome === 'success' && changed === 'false') {
+              body = `@${actor} No changes needed — \`public/images/${img}\` is already up to date.` +
+                `\n\nArtifact: ${url}`;
+            } else {
+              body = `@${actor} Couldn't push the image to this PR branch automatically ` +
+                `(organization-owned fork, or "Allow edits by maintainers" is disabled). ` +
+                `Download it here: ${url}`;
+            }
             await github.rest.issues.updateComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
               comment_id: ${{ needs.prepare.outputs.comment_id }},
-              body: `@${context.actor} Here is the image for the component ${{ steps.upload-artifact.outputs.artifact-url }}`
-            })
+              body,
+            });
