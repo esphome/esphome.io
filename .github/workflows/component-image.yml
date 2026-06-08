@@ -6,31 +6,25 @@ on:
 
 permissions:
   pull-requests: write
+  issues: write
   contents: read
 
 jobs:
   prepare:
     name: Prepare
-    if: github.event.issue.pull_request && startsWith(github.event.comment.body, '@esphomebot generate image')
+    if: >-
+      github.event.issue.pull_request &&
+      startsWith(github.event.comment.body, '@esphomebot generate image') &&
+      (
+        contains(fromJSON('["OWNER", "MEMBER", "COLLABORATOR"]'), github.event.comment.author_association) ||
+        github.event.comment.user.login == github.event.issue.user.login
+      )
     runs-on: ubuntu-latest
     outputs:
       name: ${{ steps.get_component.outputs.name }}
       name_lower: ${{ steps.get_component.outputs.name_lower }}
       comment_id: ${{ steps.create-comment.outputs.result }}
     steps:
-      - name: Comment
-        id: create-comment
-        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
-        with:
-          script: |
-            const result = await github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: `@${context.actor} Generating image...`
-            })
-            return result.data.id
-
       - name: Get Component name
         id: get_component
         env:
@@ -48,13 +42,51 @@ jobs:
             exit 1
           fi
 
+      # Tell the commenter why nothing happened when the name fails validation.
+      # The raw name is never interpolated into the script (code-injection risk);
+      # the message is intentionally generic.
+      - name: Comment on invalid name
+        if: failure() && steps.get_component.outcome == 'failure'
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        with:
+          script: |
+            await github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `@${context.actor} Invalid component name. Use lowercase letters, numbers, ` +
+                'and underscores only (e.g. `bme280`, `sht3x`, `dallas_temp`).'
+            })
+
+      # Posted only after the component name validates, so an invalid name never
+      # leaves a dangling "Generating image..." comment on the PR.
+      - name: Comment
+        id: create-comment
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        with:
+          script: |
+            const result = await github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `@${context.actor} Generating image...`
+            })
+            return result.data.id
+
   generate:
     name: Generate
-    if: github.event.issue.pull_request && startsWith(github.event.comment.body, '@esphomebot generate image')
+    if: >-
+      github.event.issue.pull_request &&
+      startsWith(github.event.comment.body, '@esphomebot generate image') &&
+      (
+        contains(fromJSON('["OWNER", "MEMBER", "COLLABORATOR"]'), github.event.comment.author_association) ||
+        github.event.comment.user.login == github.event.issue.user.login
+      )
     runs-on: ubuntu-latest
     needs: prepare
     steps:
       - name: Generate
+        id: generate
         uses: esphome/component-image-generator@d0d2a195b500e8c37c17f299ff6b90933f2197cf # v1.0.0
         with:
           component: ${{ needs.prepare.outputs.name }}
@@ -71,9 +103,11 @@ jobs:
 
       # Move the generated image out of the workspace before checkout wipes it.
       - name: Stash generated image
+        env:
+          IMG: ${{ needs.prepare.outputs.name_lower }}.svg
         run: |
           mkdir -p "${{ runner.temp }}/component-image"
-          mv "${{ needs.prepare.outputs.name_lower }}.svg" "${{ runner.temp }}/component-image/"
+          mv "$IMG" "${{ runner.temp }}/component-image/"
 
       - name: Generate a token
         id: app-token
@@ -112,9 +146,10 @@ jobs:
           persist-credentials: true
 
       - name: Place image
+        env:
+          IMG: ${{ needs.prepare.outputs.name_lower }}.svg
         run: |
-          mv -f "${{ runner.temp }}/component-image/${{ needs.prepare.outputs.name_lower }}.svg" \
-            "public/images/${{ needs.prepare.outputs.name_lower }}.svg"
+          mv -f "${{ runner.temp }}/component-image/$IMG" "public/images/$IMG"
 
       - name: Update component index
         id: index
@@ -162,6 +197,8 @@ jobs:
         if: always()
         uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         env:
+          GENERATE_OUTCOME: ${{ steps.generate.outcome }}
+          UPLOAD_OUTCOME: ${{ steps.upload-artifact.outcome }}
           PUSH_OUTCOME: ${{ steps.push.outcome }}
           CHANGED: ${{ steps.push.outputs.changed }}
           INDEX_UPDATED: ${{ steps.index.outputs.updated }}
@@ -169,26 +206,34 @@ jobs:
           IMG: ${{ needs.prepare.outputs.name_lower }}.svg
         with:
           script: |
-            const outcome = process.env.PUSH_OUTCOME;
+            const generateOutcome = process.env.GENERATE_OUTCOME;
+            const uploadOutcome = process.env.UPLOAD_OUTCOME;
+            const pushOutcome = process.env.PUSH_OUTCOME;
             const changed = process.env.CHANGED;
             const indexUpdated = process.env.INDEX_UPDATED === 'true';
             const url = process.env.ARTIFACT_URL;
             const img = process.env.IMG;
             const actor = context.actor;
+            const artifactLine = url ? `\n\nArtifact: ${url}` : '';
             let body;
-            if (outcome === 'success' && changed === 'true') {
+            if (generateOutcome !== 'success') {
+              body = `@${actor} Image generation failed. Check the workflow logs for details.`;
+            } else if (uploadOutcome !== 'success') {
+              body = `@${actor} The image was generated but could not be uploaded. ` +
+                `Check the workflow logs for details.`;
+            } else if (pushOutcome === 'success' && changed === 'true') {
               body = `@${actor} Committed \`public/images/${img}\` to this PR` +
                 (indexUpdated
                   ? ' and updated the component index.'
                   : ' (no matching index entry found — update it manually).') +
-                `\n\nArtifact: ${url}`;
-            } else if (outcome === 'success' && changed === 'false') {
+                artifactLine;
+            } else if (pushOutcome === 'success' && changed === 'false') {
               body = `@${actor} No changes needed — \`public/images/${img}\` is already up to date.` +
-                `\n\nArtifact: ${url}`;
+                artifactLine;
             } else {
-              body = `@${actor} Couldn't push the image to this PR branch automatically ` +
-                `(organization-owned fork, or "Allow edits by maintainers" is disabled). ` +
-                `Download it here: ${url}`;
+              body = `@${actor} Couldn't commit the image to this PR branch automatically ` +
+                `(this happens for pull requests from forks — the bot can only push to ` +
+                `branches in this repository). Download it here:${url ? ` ${url}` : ' check the workflow logs.'}`;
             }
             await github.rest.issues.updateComment({
               owner: context.repo.owner,
