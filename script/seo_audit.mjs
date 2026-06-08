@@ -18,6 +18,16 @@ const LIVE_SITE = "https://esphome.io";
 const DIST_DIR = "dist";
 const SAMPLE_SIZE = 50; // Number of pages to audit
 
+// Resolve an href against the live site and return true if it points at the esphome.io host.
+function isEsphomeHost(href) {
+  try {
+    const { hostname } = new URL(href, LIVE_SITE);
+    return hostname === "esphome.io" || hostname.endsWith(".esphome.io");
+  } catch {
+    return false;
+  }
+}
+
 /**
  * Extract SEO data from HTML
  */
@@ -46,11 +56,11 @@ function extractSEO(html, url) {
   const allLinks = [...doc.querySelectorAll("a[href]")];
   const internalLinks = allLinks.filter((a) => {
     const href = a.getAttribute("href");
-    return href?.startsWith("/") || href?.includes("esphome.io");
+    return href?.startsWith("/") || (href ? isEsphomeHost(href) : false);
   }).length;
   const externalLinks = allLinks.filter((a) => {
     const href = a.getAttribute("href");
-    return href?.startsWith("http") && !href?.includes("esphome.io");
+    return href?.startsWith("http") === true && !isEsphomeHost(href);
   }).length;
 
   // Images
