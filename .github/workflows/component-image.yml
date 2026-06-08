@@ -5,13 +5,13 @@ on:
     types: [created]
 
 permissions:
-  pull-requests: write
-  issues: write
   contents: read
 
 jobs:
   prepare:
     name: Prepare
+    permissions:
+      issues: write
     if: >-
       github.event.issue.pull_request &&
       startsWith(github.event.comment.body, '@esphomebot generate image') &&
@@ -75,6 +75,10 @@ jobs:
 
   generate:
     name: Generate
+    permissions:
+      issues: write
+      pull-requests: read
+      contents: read
     if: >-
       github.event.issue.pull_request &&
       startsWith(github.event.comment.body, '@esphomebot generate image') &&
@@ -136,12 +140,16 @@ jobs:
             });
             core.setOutput('head_repo', pr.head.repo.full_name);
             core.setOutput('head_ref', pr.head.ref);
+            core.setOutput('head_sha', pr.head.sha);
 
+      # Check out the immutable head SHA rather than the branch ref: the ref can
+      # be moved between the authorization check and this checkout, so pinning to
+      # the SHA prevents a swapped-in commit (untrusted-checkout TOCTOU).
       - name: Checkout PR branch
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           repository: ${{ steps.pr.outputs.head_repo }}
-          ref: ${{ steps.pr.outputs.head_ref }}
+          ref: ${{ steps.pr.outputs.head_sha }}
           token: ${{ steps.app-token.outputs.token }}
           persist-credentials: true
 
@@ -232,8 +240,8 @@ jobs:
                 artifactLine;
             } else {
               body = `@${actor} Couldn't commit the image to this PR branch automatically ` +
-                `(this happens for pull requests from forks — the bot can only push to ` +
-                `branches in this repository). Download it here:${url ? ` ${url}` : ' check the workflow logs.'}`;
+                `(the bot doesn't have write access to this fork). ` +
+                `Download the generated image here:${url ? ` ${url}` : ' check the workflow logs.'}`;
             }
             await github.rest.issues.updateComment({
               owner: context.repo.owner,
