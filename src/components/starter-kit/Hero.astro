@@ -26,9 +26,10 @@
       </div>
     </div>
     <div class="block-hero__asset-container">
-      <div class="block-hero__asset-stage">
+      <div class="block-hero__asset-stage" data-hero-loading>
         <canvas id="hero-scene"></canvas>
         <svg class="block-hero__label-lines" aria-hidden="true"></svg>
+        <div class="block-hero__loader" aria-hidden="true"></div>
         <slot name="labels" />
         <aside
           class="hero-detail-card"
@@ -48,11 +49,6 @@
   import { OrbitControls } from "three/addons/controls/OrbitControls.js";
   import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
   import { MeshoptDecoder } from "three/addons/libs/meshopt_decoder.module.js";
-  import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
-  import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
-  import { SMAAPass } from "three/addons/postprocessing/SMAAPass.js";
-  import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
-
   const MODEL_URL = "/starter-kit/ESK.glb";
 
   const canvas = document.getElementById(
@@ -69,30 +65,11 @@
 
     const scene = new THREE.Scene();
 
-    // TEMP: camera mode via `?camera=ortho|persp` URL param. Defaults
-    // to perspective. Debug button toggles by reloading with the flag.
-    const cameraMode: "ortho" | "persp" =
-      new URLSearchParams(window.location.search).get("camera") === "ortho"
-        ? "ortho"
-        : "persp";
+    // Isometric-style direction: 45° azimuth, ~23° elevation (Y=0.5 flattens
+    // from the classic 35° to keep the model readable without a bird's-eye feel).
+    const CAM_DIR = new THREE.Vector3(1, 0.5, 1).normalize();
 
-    // TEMP: classic isometric direction (45° azimuth, ~35° elevation).
-    const CAM_DIR = new THREE.Vector3(1, 1, 1).normalize();
-
-    // Orthographic frustum size — recomputed once the model loads.
-    let frustumSize = 2;
-    const aspect = () => width / height;
-    const camera: THREE.OrthographicCamera | THREE.PerspectiveCamera =
-      cameraMode === "ortho"
-        ? new THREE.OrthographicCamera(
-            (-frustumSize * aspect()) / 2,
-            (frustumSize * aspect()) / 2,
-            frustumSize / 2,
-            -frustumSize / 2,
-            0.1,
-            100,
-          )
-        : new THREE.PerspectiveCamera(35, width / height, 0.1, 100);
+    const camera = new THREE.PerspectiveCamera(35, width / height, 0.1, 100);
 
     camera.position.copy(CAM_DIR).multiplyScalar(10);
     camera.lookAt(0, 0, 0);
@@ -112,25 +89,6 @@
     renderer.toneMappingExposure = 1.1;
     renderer.outputColorSpace = THREE.SRGBColorSpace;
 
-    // Post-processing: MSAA render target + SMAA pass for crisp edges on
-    // thin wireframe lines and the inverted-hull outline.
-    const pixelRatio = renderer.getPixelRatio();
-    const rtSamples = 8;
-    const composer = new EffectComposer(
-      renderer,
-      new THREE.WebGLRenderTarget(width * pixelRatio, height * pixelRatio, {
-        type: THREE.HalfFloatType,
-        samples: rtSamples,
-      }),
-    );
-    composer.setSize(width, height);
-    composer.setPixelRatio(pixelRatio);
-    const renderPass = new RenderPass(scene, camera);
-    composer.addPass(renderPass);
-    const smaaPass = new SMAAPass(width * pixelRatio, height * pixelRatio);
-    composer.addPass(smaaPass);
-    composer.addPass(new OutputPass());
-
     scene.add(new THREE.AmbientLight(0xffffff, 0.6));
 
     const keyLight = new THREE.DirectionalLight(0xffffff, 2.0);
@@ -147,6 +105,11 @@
     controls.enablePan = false;
     controls.enableRotate = true;
     controls.autoRotate = false;
+    // OrbitControls sets touch-action: none inline. Override on touch devices
+    // so vertical swipes scroll the page rather than rotating the model.
+    if (window.matchMedia("(pointer: coarse)").matches) {
+      canvas.style.touchAction = "pan-y";
+    }
 
     const loader = new GLTFLoader();
     loader.setMeshoptDecoder(MeshoptDecoder);
@@ -219,649 +182,544 @@
       };
     });
 
-    loader.load(MODEL_URL, (gltf) => {
-      const model = gltf.scene;
+    loader.load(
+      MODEL_URL,
+      (gltf: { scene: THREE.Group }) => {
+        assetContainer?.removeAttribute("data-hero-loading");
 
-      // Measure model in its local space, then scale uniformly.
-      const localBox = new THREE.Box3().setFromObject(model);
-      const localSize = new THREE.Vector3();
-      localBox.getSize(localSize);
+        const model = gltf.scene;
 
-      const maxDim = Math.max(localSize.x, localSize.y, localSize.z) || 1;
-      const targetSize = 1.6;
-      const scale = targetSize / maxDim;
-      model.scale.setScalar(scale);
+        // Measure model in its local space, then scale uniformly.
+        const localBox = new THREE.Box3().setFromObject(model);
+        const localSize = new THREE.Vector3();
+        localBox.getSize(localSize);
 
-      // Recompute the bbox AFTER scaling, then offset so the model is
-      // centered on the origin in world space.
-      const scaledBox = new THREE.Box3().setFromObject(model);
-      const scaledCenter = new THREE.Vector3();
-      scaledBox.getCenter(scaledCenter);
-      model.position.sub(scaledCenter);
+        const maxDim = Math.max(localSize.x, localSize.y, localSize.z) || 1;
+        const targetSize = 1.6;
+        const scale = targetSize / maxDim;
+        model.scale.setScalar(scale);
 
-      // TEMP: keep the model standing upright (no flat-down flip) and
-      // give it a small yaw around the world Y axis so the device faces
-      // inward toward the page center instead of straight at the camera.
-      // Pivot at the LED's position so the LED stays put. Flip the sign
-      // of YAW_ANGLE if it ends up facing outward.
-      const LED_PIVOT = new THREE.Vector3(0, 0.05, 0.05);
-      const ROT_AXIS = new THREE.Vector3(0, 1, 0);
-      const ROT_ANGLE = 0; // face flat toward the camera
-      model.position
-        .sub(LED_PIVOT)
-        .applyAxisAngle(ROT_AXIS, ROT_ANGLE)
-        .add(LED_PIVOT);
-      model.rotateOnWorldAxis(ROT_AXIS, ROT_ANGLE);
+        // Recompute the bbox AFTER scaling, then offset so the model is
+        // centered on the origin in world space.
+        const scaledBox = new THREE.Box3().setFromObject(model);
+        const scaledCenter = new THREE.Vector3();
+        scaledBox.getCenter(scaledCenter);
+        model.position.sub(scaledCenter);
 
-      scene.add(model);
+        // Yaw the model ~22.5° around world Y, pivoting at the LED position,
+        // so it faces the page centre in the isometric resting view.
+        const LED_PIVOT = new THREE.Vector3(0, 0.05, 0.05);
+        const ROT_AXIS = new THREE.Vector3(0, 1, 0);
+        // Rotate the model ~22.5° counter-clockwise (viewed from above) so it
+        // faces more toward the page centre in the isometric resting view.
+        const ROT_ANGLE = Math.PI / 8;
+        model.position
+          .sub(LED_PIVOT)
+          .applyAxisAngle(ROT_AXIS, ROT_ANGLE)
+          .add(LED_PIVOT);
+        model.rotateOnWorldAxis(ROT_AXIS, ROT_ANGLE);
 
-      // Re-measure post-rotation so camera framing uses the rotated extents.
-      model.updateMatrixWorld(true);
-      const finalBox = new THREE.Box3().setFromObject(model);
-      const scaledSize = new THREE.Vector3();
-      finalBox.getSize(scaledSize);
+        scene.add(model);
 
-      // Frame the camera so the scaled model fits both dimensions with
-      // a small margin. Branches on camera type.
-      const fitMargin = 1.15;
-      if (cameraMode === "ortho") {
-        const ortho = camera as THREE.OrthographicCamera;
-        frustumSize =
-          Math.max(scaledSize.x, scaledSize.y, scaledSize.z) * fitMargin;
-        const a = width / height;
-        ortho.left = (-frustumSize * a) / 2;
-        ortho.right = (frustumSize * a) / 2;
-        ortho.top = frustumSize / 2;
-        ortho.bottom = -frustumSize / 2;
-        ortho.updateProjectionMatrix();
-        camera.position.copy(CAM_DIR).multiplyScalar(10);
-      } else {
-        const persp = camera as THREE.PerspectiveCamera;
-        const fovY = (persp.fov * Math.PI) / 180;
-        const fovX = 2 * Math.atan(Math.tan(fovY / 2) * persp.aspect);
+        // Re-measure post-rotation so camera framing uses the rotated extents.
+        model.updateMatrixWorld(true);
+        const finalBox = new THREE.Box3().setFromObject(model);
+        const scaledSize = new THREE.Vector3();
+        finalBox.getSize(scaledSize);
+
+        // Fit to vertical FOV only — distY is stable across aspect ratios,
+        // avoiding the far-back push that distX causes on narrow viewports.
+        const fitMargin = 1.15;
+        const fovY = (camera.fov * Math.PI) / 180;
         const distY = scaledSize.y / 2 / Math.tan(fovY / 2);
-        const distX = scaledSize.x / 2 / Math.tan(fovX / 2);
-        const fitDistance =
-          (Math.max(distX, distY) + scaledSize.z / 2) * fitMargin;
+        const fitDistance = (distY + scaledSize.z / 2) * fitMargin;
         camera.position.copy(CAM_DIR).multiplyScalar(fitDistance);
-      }
-      camera.lookAt(0, 0, 0);
-      controls.target.set(0, 0, 0);
-      controls.update();
+        camera.lookAt(0, 0, 0);
+        controls.target.set(0, 0, 0);
+        controls.update();
 
-      // Resolve each label's target object by name (case-insensitive fallback).
-      const byName = new Map<string, THREE.Object3D>();
-      model.traverse((obj) => {
-        if (obj.name) byName.set(obj.name.toLowerCase(), obj);
-      });
-
-      const topLevel = [...model.children];
-      // Ensure world matrices reflect the model's scale/position before we
-      // sample bounding boxes for zoom focus.
-      model.updateMatrixWorld(true);
-      console.info(
-        "[Hero] Top-level groups:",
-        topLevel.map((c) => c.name || "(unnamed)"),
-      );
-      console.info("[Hero] All named objects:", [...byName.keys()]);
-      console.groupCollapsed("[Hero] Model hierarchy");
-      const dumpTree = (obj: THREE.Object3D, depth = 0) => {
-        const indent = "  ".repeat(depth);
-        const kind = (obj as THREE.Mesh).isMesh ? "Mesh" : obj.type;
-        console.info(`${indent}${obj.name || "(unnamed)"} [${kind}]`);
-        for (const child of obj.children) dumpTree(child, depth + 1);
-      };
-      for (const child of topLevel) dumpTree(child);
-      console.groupEnd();
-
-      // Click any module to make it the active (solid) group; the rest
-      // stay as the blueprint wireframe. Each frame, opacities and the
-      // camera lerp toward the active group's state.
-      const SOLID_LERP = 0.08;
-      const ZOOM_LERP = 0.06;
-      // Wireframe opacity when a group is fully inactive.
-      const WIRE_DIM = 0.1;
-      // Monochrome wireframe palette. Adapts to the Starlight theme so the
-      // sketch stays readable on either bg:
-      //   dark theme  → near-black fill, white edges
-      //   light theme → near-white fill, black edges
-      const EDGE_DARK = new THREE.Color(0xffffff);
-      const EDGE_LIGHT = new THREE.Color(0x000000);
-      const TINT_DARK = new THREE.Color(0x1f2127);
-      const TINT_LIGHT = new THREE.Color(0xf3f4f7);
-      const isLightTheme = () =>
-        document.documentElement.dataset.theme === "light";
-      const BLUEPRINT_COLOR = (isLightTheme() ? EDGE_LIGHT : EDGE_DARK).clone();
-      const TINT_COLOR = (isLightTheme() ? TINT_LIGHT : TINT_DARK).clone();
-      const TINT_OPACITY = 0.9;
-      // Silhouette outline thickness (object-space units, pre model
-      // scale). Tune up/down for a bolder/finer outside line.
-      const OUTLINE_THICKNESS = 0.022;
-
-      // Vertex shader for the inverted-hull outline: each vertex is
-      // pushed outward along its normal so the back-side render shows
-      // up as a uniform border around the silhouette of the mesh.
-      const outlineVertexShader = /* glsl */ `
-        uniform float outlineThickness;
-        void main() {
-          vec3 pushed = position + normalize(normal) * outlineThickness;
-          gl_Position = projectionMatrix * modelViewMatrix * vec4(pushed, 1.0);
-        }
-      `;
-      const outlineFragmentShader = /* glsl */ `
-        uniform vec3 outlineColor;
-        uniform float outlineOpacity;
-        void main() {
-          gl_FragColor = vec4(outlineColor, outlineOpacity);
-        }
-      `;
-
-      type GroupFade = {
-        root: THREE.Object3D;
-        solid: THREE.Material[];
-        wire: THREE.Material[];
-        tint: THREE.MeshBasicMaterial[];
-        tintMeshes: THREE.Mesh[];
-        outlineMats: THREE.ShaderMaterial[];
-        meshes: THREE.Mesh[];
-      };
-
-      // Flat collections for the debug UI to toggle/update everything
-      // at once without walking groupFades.
-      const allMasks: THREE.Mesh[] = [];
-      const allOutlines: THREE.Mesh[] = [];
-      const allEdgeOverlays: {
-        mesh: THREE.LineSegments;
-        sourceGeometry: THREE.BufferGeometry;
-      }[] = [];
-
-      const groupFades: GroupFade[] = topLevel.map((obj, idx) => {
-        const solid: THREE.Material[] = [];
-        const wire: THREE.Material[] = [];
-        const tint: THREE.MeshBasicMaterial[] = [];
-        const tintMeshes: THREE.Mesh[] = [];
-        const outlineMats: THREE.ShaderMaterial[] = [];
-        const meshes: THREE.Mesh[] = [];
-        const overlays: { parent: THREE.Mesh; mesh: THREE.LineSegments }[] = [];
-        const masks: { parent: THREE.Mesh; mesh: THREE.Mesh }[] = [];
-        const outlines: { parent: THREE.Mesh; mesh: THREE.Mesh }[] = [];
-        // Group 0 starts solid; the rest start as wireframe.
-        const initialSolid = idx === 0 ? 1 : 0;
-        obj.traverse((o) => {
-          const mesh = o as THREE.Mesh;
-          if (!mesh.isMesh) return;
-          const src = Array.isArray(mesh.material)
-            ? mesh.material[0]
-            : mesh.material;
-          if (!src) return;
-          const solidMat = src.clone();
-          solidMat.transparent = true;
-          solidMat.opacity = initialSolid;
-          solidMat.depthWrite = true;
-          // Invisible depth-only mesh: fills the z-buffer in the opaque
-          // pre-pass so back-side wire edges (and edges of other groups
-          // behind this one) get depth-rejected. polygonOffset pushes it
-          // slightly away from the camera so the on-surface edge lines
-          // win the z-fight. No visible fill — the schematic lines float
-          // against the page background.
-          const maskMat = new THREE.MeshBasicMaterial({
-            colorWrite: false,
-            transparent: false,
-            depthWrite: true,
-            polygonOffset: true,
-            polygonOffsetFactor: 1,
-            polygonOffsetUnits: 1,
-          });
-          const mask = new THREE.Mesh(mesh.geometry, maskMat);
-          mask.name = `${mesh.name || "mesh"}-depth-mask`;
-          mask.renderOrder = -1;
-          mask.visible = true;
-          // Silhouette outline: inverted-hull clone rendered back-side
-          // only, expanded along normals so a uniform border peeks out
-          // around the visible mesh. Only shown for inactive (wireframe)
-          // groups; faded out for the active solid group.
-          const outlineMat = new THREE.ShaderMaterial({
-            uniforms: {
-              outlineColor: { value: BLUEPRINT_COLOR.clone() },
-              outlineThickness: { value: OUTLINE_THICKNESS },
-              outlineOpacity: { value: initialSolid === 1 ? 0 : 1 },
-            },
-            vertexShader: outlineVertexShader,
-            fragmentShader: outlineFragmentShader,
-            side: THREE.BackSide,
-            transparent: true,
-            depthWrite: true,
-            depthTest: true,
-          });
-          const outline = new THREE.Mesh(mesh.geometry, outlineMat);
-          outline.name = `${mesh.name || "mesh"}-outline`;
-          // Wireframe overlay: only feature edges (>30° dihedral angle)
-          // rendered as line segments in a blueprint cyan, so inactive
-          // groups read as a schematic rather than a dense mesh.
-          const lineMat = new THREE.LineBasicMaterial({
-            color: BLUEPRINT_COLOR.clone(),
-            transparent: true,
-            opacity: initialSolid === 1 ? 0 : WIRE_DIM,
-            depthWrite: false,
-            depthTest: true,
-          });
-          const edges = new THREE.EdgesGeometry(mesh.geometry, 30);
-          const overlay = new THREE.LineSegments(edges, lineMat);
-          overlay.name = `${mesh.name || "mesh"}-edges`;
-          mesh.material = solidMat;
-          masks.push({ parent: mesh, mesh: mask });
-          outlines.push({ parent: mesh, mesh: outline });
-          overlays.push({ parent: mesh, mesh: overlay });
-          allMasks.push(mask);
-          allOutlines.push(outline);
-          allEdgeOverlays.push({
-            mesh: overlay,
-            sourceGeometry: mesh.geometry,
-          });
-          solid.push(solidMat);
-          wire.push(lineMat);
-          tint.push(maskMat);
-          tintMeshes.push(mask);
-          outlineMats.push(outlineMat);
-          meshes.push(mesh);
+        // Resolve each label's target object by name (case-insensitive fallback).
+        const byName = new Map<string, THREE.Object3D>();
+        model.traverse((obj: THREE.Object3D) => {
+          if (obj.name) byName.set(obj.name.toLowerCase(), obj);
         });
-        for (const { parent, mesh } of masks) parent.add(mesh);
-        // Outline effect disabled — the wireframe alone reads cleanly.
-        // for (const { parent, mesh } of outlines) parent.add(mesh);
-        for (const { parent, mesh } of overlays) parent.add(mesh);
-        return {
-          root: obj,
-          solid,
-          wire,
-          tint,
-          tintMeshes,
-          outlineMats,
-          meshes,
+
+        const topLevel = [...model.children];
+        model.updateMatrixWorld(true);
+
+        // Click any module to make it the active (solid) group; the rest
+        // stay as the blueprint wireframe. Each frame, opacities and the
+        // camera lerp toward the active group's state.
+        const SOLID_LERP = 0.08;
+        const ZOOM_LERP = 0.06;
+        // Wireframe opacity when a group is fully inactive.
+        const WIRE_DIM = 0.1;
+        // Monochrome wireframe palette. Adapts to the Starlight theme so the
+        // sketch stays readable on either bg:
+        //   dark theme  → near-black fill, white edges
+        //   light theme → near-white fill, black edges
+        const EDGE_DARK = new THREE.Color(0xffffff);
+        const EDGE_LIGHT = new THREE.Color(0x000000);
+        const TINT_DARK = new THREE.Color(0x1f2127);
+        const TINT_LIGHT = new THREE.Color(0xf3f4f7);
+        const isLightTheme = () =>
+          document.documentElement.dataset.theme === "light";
+        const BLUEPRINT_COLOR = (
+          isLightTheme() ? EDGE_LIGHT : EDGE_DARK
+        ).clone();
+        const TINT_COLOR = (isLightTheme() ? TINT_LIGHT : TINT_DARK).clone();
+        type GroupFade = {
+          root: THREE.Object3D;
+          solid: THREE.Material[];
+          wire: THREE.Material[];
+          meshes: THREE.Mesh[];
         };
-      });
 
-      // ---- Intro animation -------------------------------------------------
-      // Each top-level module fades + scales in. The GLB has every
-      // ---- Intro animation -------------------------------------------------
-      // The "LED & buzzer" group (named "leds") fades in instantly. The
-      // remaining modules follow with small random delays, each fading
-      // in while translating into place from an offset along the camera
-      // axis (so they appear to slide forward toward their final spot).
-      const ledsIdx = Math.max(
-        0,
-        topLevel.findIndex((g) => g.name === "leds"),
-      );
-      const INTRO_LEAD_DURATION_MS = 180;
-      const INTRO_FOLLOW_DURATION_MS = 650;
-      const INTRO_FOLLOW_GAP_MS = 120;
-      // Distance (in model-local units) each follower starts offset from
-      // its final position along the camera-direction axis.
-      const INTRO_OFFSET_DISTANCE = 1.6;
-      const introStart = performance.now();
-      const introDelays: number[] = topLevel.map((_, i) =>
-        i === ledsIdx ? 0 : INTRO_FOLLOW_GAP_MS + Math.random() * 480,
-      );
-      const introDurations: number[] = topLevel.map((_, i) =>
-        i === ledsIdx ? INTRO_LEAD_DURATION_MS : INTRO_FOLLOW_DURATION_MS,
-      );
-      // Followers start displaced along +Z (model-local) and slide back
-      // along -Z to their final position. Tweak the sign if it ends up
-      // pointing into the wrong half-space for this model's axes.
-      const _offsetAxis = new THREE.Vector3(0, 0, -1).multiplyScalar(
-        INTRO_OFFSET_DISTANCE,
-      );
-      const introOriginalPos: THREE.Vector3[] = topLevel.map((g) =>
-        g.position.clone(),
-      );
-      const introOffset: THREE.Vector3[] = topLevel.map((_, i) =>
-        i === ledsIdx ? new THREE.Vector3() : _offsetAxis.clone(),
-      );
-      // Hide every material on frame 0 so the model doesn't flash before
-      // its intro begins. cycleUpdater fades them back in via the
-      // per-material `logicalOpacity` we capture here.
-      for (const g of groupFades) {
-        for (const m of g.solid) {
-          (m as any).logicalOpacity = m.opacity;
-          m.opacity = 0;
-        }
-        for (const m of g.wire) {
-          (m as any).logicalOpacity = m.opacity;
-          m.opacity = 0;
-        }
-        for (const m of g.outlineMats) {
-          (m as any).logicalOpacity = m.uniforms.outlineOpacity.value;
-          m.uniforms.outlineOpacity.value = 0;
-        }
-      }
-      const introFactor = (i: number, now: number) => {
-        const t = (now - introStart - introDelays[i]) / introDurations[i];
-        if (t <= 0) return 0;
-        if (t >= 1) return 1;
-        // ease-out cubic
-        return 1 - Math.pow(1 - t, 3);
-      };
+        const allEdgeOverlays: THREE.LineSegments[] = [];
 
-      // ---- Stage-2 camera intro -------------------------------------------
-      // After the per-module items have entered, the camera rotates from
-      // a near head-on view to the steady-state isometric direction. The
-      // CSS in this component runs a synchronised slide on the outer
-      // .block-hero__asset-container so the model also translates from
-      // page-centre back to its right-hand column home.
-      const homeTarget = controls.target.clone();
-      const homeDistance = camera.position.distanceTo(homeTarget);
-      const INTRO_CAM_DELAY_MS = 900;
-      const INTRO_CAM_DURATION_MS = 900;
-      const FRONT_CAM_DIR = new THREE.Vector3(0, 0.35, 1).normalize();
-      const HOME_CAM_DIR = CAM_DIR.clone();
-      // Head-on view shows the model's full X×Y face while the iso view
-      // foreshortens both axes — multiply the home distance so the
-      // frontal pose doesn't blow up out of frame.
-      const FRONT_CAM_DIST_MUL = 1.5;
-      const _introCamDir = new THREE.Vector3();
-      const easeInOutCubic = (t: number) =>
-        t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
-      // Place the camera in its starting (head-on) pose immediately so
-      // the first rendered frame doesn't flash the isometric view.
-      _introCamDir.copy(FRONT_CAM_DIR);
-      camera.position
-        .copy(controls.target)
-        .addScaledVector(_introCamDir, homeDistance * FRONT_CAM_DIST_MUL);
-      camera.lookAt(controls.target);
-      // Lock OrbitControls until the intro completes so user drags can't
-      // fight the choreographed rotation.
-      controls.enabled = false;
-      window.setTimeout(
-        () => {
-          controls.enabled = true;
-        },
-        INTRO_CAM_DELAY_MS + INTRO_CAM_DURATION_MS + 100,
-      );
+        const logicalOpacity = new WeakMap<THREE.Material, number>();
 
-      // Re-apply tint + edge colours whenever Starlight flips the theme.
-      const applyThemePalette = () => {
-        const edge = isLightTheme() ? EDGE_LIGHT : EDGE_DARK;
-        const tint = isLightTheme() ? TINT_LIGHT : TINT_DARK;
-        BLUEPRINT_COLOR.copy(edge);
-        TINT_COLOR.copy(tint);
-        for (const m of allMasks) {
-          (m.material as THREE.MeshBasicMaterial).color.copy(tint);
-        }
-        for (const e of allEdgeOverlays) {
-          (e.mesh.material as THREE.LineBasicMaterial).color.copy(edge);
-        }
-      };
-      const themeObserver = new MutationObserver(applyThemePalette);
-      themeObserver.observe(document.documentElement, {
-        attributes: true,
-        attributeFilter: ["data-theme"],
-      });
+        const groupFades: GroupFade[] = topLevel.map((obj, idx) => {
+          const solid: THREE.Material[] = [];
+          const wire: THREE.Material[] = [];
+          const meshes: THREE.Mesh[] = [];
+          const overlays: { parent: THREE.Mesh; mesh: THREE.LineSegments }[] =
+            [];
+          const masks: { parent: THREE.Mesh; mesh: THREE.Mesh }[] = [];
+          // Group 0 starts solid; the rest start as wireframe.
+          const initialSolid = idx === 0 ? 1 : 0;
+          obj.traverse((o: THREE.Object3D) => {
+            const mesh = o as THREE.Mesh;
+            if (!mesh.isMesh) return;
+            const src = Array.isArray(mesh.material)
+              ? mesh.material[0]
+              : mesh.material;
+            if (!src) return;
+            const solidMat = src.clone();
+            solidMat.transparent = true;
+            solidMat.opacity = initialSolid;
+            solidMat.depthWrite = true;
+            // Depth-only mask: fills the z-buffer so back-face wire edges of
+            // other groups get depth-rejected. polygonOffset keeps edge lines
+            // from z-fighting with the surface they lie on.
+            const maskMat = new THREE.MeshBasicMaterial({
+              colorWrite: false,
+              depthWrite: true,
+              polygonOffset: true,
+              polygonOffsetFactor: 1,
+              polygonOffsetUnits: 1,
+            });
+            const mask = new THREE.Mesh(mesh.geometry, maskMat);
+            mask.renderOrder = -1;
+            const lineMat = new THREE.LineBasicMaterial({
+              color: BLUEPRINT_COLOR.clone(),
+              transparent: true,
+              opacity: initialSolid === 1 ? 0 : WIRE_DIM,
+              depthWrite: false,
+              depthTest: true,
+            });
+            const overlay = new THREE.LineSegments(
+              new THREE.EdgesGeometry(mesh.geometry, 30),
+              lineMat,
+            );
+            mesh.material = solidMat;
+            masks.push({ parent: mesh, mesh: mask });
+            overlays.push({ parent: mesh, mesh: overlay });
+            allEdgeOverlays.push(overlay);
+            solid.push(solidMat);
+            wire.push(lineMat);
+            meshes.push(mesh);
+          });
+          for (const { parent, mesh } of masks) parent.add(mesh);
+          for (const { parent, mesh } of overlays) parent.add(mesh);
+          return { root: obj, solid, wire, meshes };
+        });
 
-      // Precompute per-group bounding spheres for the zoom animation.
-      const fovY = (camera.fov * Math.PI) / 180;
-      const groupFocus = topLevel.map((obj) => {
-        const box = new THREE.Box3().setFromObject(obj);
-        const center = new THREE.Vector3();
-        const sphere = new THREE.Sphere();
-        box.getCenter(center);
-        box.getBoundingSphere(sphere);
-        const radius = Math.max(sphere.radius, 0.05);
-        // Distance so the sphere fits the vertical FOV with margin.
-        const distance = (radius / Math.sin(fovY / 2)) * 1.6;
-        return { center, distance };
-      });
-
-      const desiredTarget = new THREE.Vector3();
-      const desiredCamPos = new THREE.Vector3();
-      const dirFromTarget = new THREE.Vector3();
-
-      let activeIdx = -1; // -1 = all groups active (default state)
-
-      // Card host that appears when a component is focused; populated
-      // from the matching label's [data-label-detail] slot content.
-      const detailCard =
-        assetContainer?.querySelector<HTMLElement>("#hero-detail-card") ?? null;
-      const detailTitleEl =
-        detailCard?.querySelector<HTMLElement>("[data-detail-title]") ?? null;
-      const detailBodyEl =
-        detailCard?.querySelector<HTMLElement>("[data-detail-body]") ?? null;
-
-      const applyActiveState = (idx: number) => {
-        const focusing = idx !== -1;
-        for (const label of labels) {
-          const isMatch = focusing && label.groupIdx === idx;
-          // Hide labels for other groups while one is focused; restore
-          // all when returning to the overview.
-          label.el.classList.toggle("is-other-active", focusing && !isMatch);
-        }
-        if (!detailCard) return;
-        if (!focusing) {
-          detailCard.classList.remove("is-active");
-          detailCard.setAttribute("aria-hidden", "true");
-          return;
-        }
-        const match = labels.find((l) => l.groupIdx === idx);
-        if (!match || (!match.detailHTML && !match.labelText)) {
-          detailCard.classList.remove("is-active");
-          detailCard.setAttribute("aria-hidden", "true");
-          return;
-        }
-        if (detailTitleEl) detailTitleEl.textContent = match.labelText;
-        if (detailBodyEl) detailBodyEl.innerHTML = match.detailHTML;
-        detailCard.classList.add("is-active");
-        detailCard.setAttribute("aria-hidden", "false");
-      };
-
-      const setActive = (idx: number) => {
-        if (idx === activeIdx) return;
-        activeIdx = idx;
-        applyActiveState(idx);
-      };
-
-      const IDLE_REVERT_MS = 3000;
-      let revertTimer: ReturnType<typeof setTimeout> | undefined;
-      const scheduleRevert = () => {
-        if (revertTimer) clearTimeout(revertTimer);
-        revertTimer = setTimeout(() => {
-          setActive(-1);
-        }, IDLE_REVERT_MS);
-      };
-      const cancelRevert = () => {
-        if (revertTimer) {
-          clearTimeout(revertTimer);
-          revertTimer = undefined;
-        }
-      };
-
-      const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
-
-      cycleUpdater = (now: number) => {
-        if (!groupFades.length) return;
-
-        // Lerp every group's solid/wire opacity toward its target state.
-        for (let i = 0; i < groupFades.length; i++) {
-          const { solid, wire, outlineMats, root } = groupFades[i];
-          // activeIdx === -1 means "all active" — every group reads solid;
-          // otherwise the selected group is solid, the rest go wireframe.
-          const isActive = activeIdx === -1 || i === activeIdx;
-          const targetSolid = isActive ? 1 : 0;
-          const targetWire = WIRE_DIM * (1 - targetSolid);
-          const targetOutline = 1 - targetSolid;
-          const introF = introFactor(i, now);
-          // Translate the group from its start offset (along the camera
-          // axis) back to its final position as the intro progresses.
-          // The lead "leds" group has a zero offset so it only fades.
-          root.position
-            .copy(introOriginalPos[i])
-            .addScaledVector(introOffset[i], 1 - introF);
-          for (const m of solid) {
-            const lg = (m as any).logicalOpacity ?? m.opacity;
-            const next = lerp(lg, targetSolid, SOLID_LERP);
-            (m as any).logicalOpacity = next;
-            m.opacity = next * introF;
+        // ---- Intro animation -------------------------------------------------
+        // The "LED & buzzer" group (named "leds") fades in instantly. The
+        // remaining modules follow with small random delays, each fading
+        // in while translating into place from an offset along the camera
+        // axis (so they appear to slide forward toward their final spot).
+        const ledsIdx = Math.max(
+          0,
+          topLevel.findIndex((g) => g.name === "leds"),
+        );
+        const INTRO_LEAD_DURATION_MS = 180;
+        const INTRO_FOLLOW_DURATION_MS = 650;
+        const INTRO_FOLLOW_GAP_MS = 120;
+        // Distance (in model-local units) each follower starts offset from
+        // its final position along the camera-direction axis.
+        const INTRO_OFFSET_DISTANCE = 1.6;
+        const introStart = performance.now();
+        const introDelays: number[] = topLevel.map((_, i) =>
+          i === ledsIdx ? 0 : INTRO_FOLLOW_GAP_MS + Math.random() * 480,
+        );
+        const introDurations: number[] = topLevel.map((_, i) =>
+          i === ledsIdx ? INTRO_LEAD_DURATION_MS : INTRO_FOLLOW_DURATION_MS,
+        );
+        // Followers start displaced along +Z (model-local) and slide back
+        // along -Z to their final position. Tweak the sign if it ends up
+        // pointing into the wrong half-space for this model's axes.
+        const _offsetAxis = new THREE.Vector3(0, 0, -1).multiplyScalar(
+          INTRO_OFFSET_DISTANCE,
+        );
+        const introOriginalPos: THREE.Vector3[] = topLevel.map((g) =>
+          g.position.clone(),
+        );
+        const introOffset: THREE.Vector3[] = topLevel.map((_, i) =>
+          i === ledsIdx ? new THREE.Vector3() : _offsetAxis.clone(),
+        );
+        // Hide every material on frame 0 so the model doesn't flash before
+        // its intro begins. cycleUpdater fades them in via logicalOpacity.
+        for (const g of groupFades) {
+          for (const m of g.solid) {
+            logicalOpacity.set(m, m.opacity);
+            m.opacity = 0;
           }
-          for (const m of wire) {
-            const lg = (m as any).logicalOpacity ?? m.opacity;
-            const next = lerp(lg, targetWire, SOLID_LERP);
-            (m as any).logicalOpacity = next;
-            m.opacity = next * introF;
-          }
-          for (const m of outlineMats) {
-            const lg =
-              (m as any).logicalOpacity ?? m.uniforms.outlineOpacity.value;
-            const next = lerp(lg, targetOutline, SOLID_LERP);
-            (m as any).logicalOpacity = next;
-            m.uniforms.outlineOpacity.value = next * introF;
+          for (const m of g.wire) {
+            logicalOpacity.set(m, m.opacity);
+            m.opacity = 0;
           }
         }
+        const introFactor = (i: number, now: number) => {
+          const t = (now - introStart - introDelays[i]) / introDurations[i];
+          if (t <= 0) return 0;
+          if (t >= 1) return 1;
+          // ease-out cubic
+          return 1 - Math.pow(1 - t, 3);
+        };
 
-        // Stage-2 intro: override camera direction (and distance) while
-        // it rotates from the head-on starting pose to the isometric
-        // home direction. The standard zoom-lerp below preserves
-        // whatever direction we leave here, so once the intro completes
-        // this block becomes a no-op.
-        const camT =
-          (now - introStart - INTRO_CAM_DELAY_MS) / INTRO_CAM_DURATION_MS;
-        if (camT < 1) {
-          const eased = easeInOutCubic(Math.max(0, Math.min(1, camT)));
-          _introCamDir
-            .copy(FRONT_CAM_DIR)
-            .lerp(HOME_CAM_DIR, eased)
-            .normalize();
-          const dist = lerp(
-            homeDistance * FRONT_CAM_DIST_MUL,
-            homeDistance,
-            eased,
-          );
-          camera.position
-            .copy(controls.target)
-            .addScaledVector(_introCamDir, dist);
-          camera.lookAt(controls.target);
-        }
-
-        // Camera zoom: lerp toward the focused group when one is selected,
-        // otherwise lerp back to the home (overview) framing. Direction is
-        // preserved so OrbitControls drag still works.
-        const focus = activeIdx !== -1 ? groupFocus[activeIdx] : null;
-        const zoomTarget = focus ? focus.center : homeTarget;
-        const zoomDistance = focus ? focus.distance : homeDistance;
-        desiredTarget.copy(controls.target).lerp(zoomTarget, ZOOM_LERP);
-        controls.target.copy(desiredTarget);
-        dirFromTarget.copy(camera.position).sub(controls.target);
-        const currentDist = dirFromTarget.length() || 0.001;
-        dirFromTarget.normalize();
-        const nextDist = lerp(currentDist, zoomDistance, ZOOM_LERP);
-        desiredCamPos
+        // ---- Stage-2 camera intro -------------------------------------------
+        // After the per-module items have entered, the camera rotates from
+        // a near head-on view to the steady-state isometric direction. The
+        // CSS in this component runs a synchronised slide on the outer
+        // .block-hero__asset-container so the model also translates from
+        // page-centre back to its right-hand column home.
+        const homeTarget = controls.target.clone();
+        const homeDistance = camera.position.distanceTo(homeTarget);
+        const INTRO_CAM_DELAY_MS = 900;
+        const INTRO_CAM_DURATION_MS = 900;
+        // Match the model's yaw so the intro starts face-on to the model's
+        // actual front regardless of ROT_ANGLE.
+        const FRONT_CAM_DIR = new THREE.Vector3(
+          Math.sin(ROT_ANGLE),
+          0.35,
+          Math.cos(ROT_ANGLE),
+        ).normalize();
+        const HOME_CAM_DIR = CAM_DIR.clone();
+        // Head-on view shows the model's full X×Y face while the iso view
+        // foreshortens both axes — multiply the home distance so the
+        // frontal pose doesn't blow up out of frame.
+        const FRONT_CAM_DIST_MUL = 1.5;
+        const _introCamDir = new THREE.Vector3();
+        const easeInOutCubic = (t: number) =>
+          t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+        // Place the camera in its starting (head-on) pose immediately so
+        // the first rendered frame doesn't flash the isometric view.
+        _introCamDir.copy(FRONT_CAM_DIR);
+        camera.position
           .copy(controls.target)
-          .addScaledVector(dirFromTarget, nextDist);
-        camera.position.copy(desiredCamPos);
-      };
+          .addScaledVector(_introCamDir, homeDistance * FRONT_CAM_DIST_MUL);
+        camera.lookAt(controls.target);
+        // Lock OrbitControls until the intro completes so user drags can't
+        // fight the choreographed rotation.
+        controls.enabled = false;
+        window.setTimeout(
+          () => {
+            controls.enabled = true;
+            // Camera has reached its resting position — snap labels so they
+            // don't lerp from their intro-animation snap position to here.
+            for (const label of labels) label.hasPosition = false;
+          },
+          INTRO_CAM_DELAY_MS + INTRO_CAM_DURATION_MS + 100,
+        );
 
-      // Raycaster click handling: pick whichever top-level group contains
-      // the intersected mesh and make it active.
-      const raycaster = new THREE.Raycaster();
-      const pointer = new THREE.Vector2();
-      const allMeshes = groupFades.flatMap((g) => g.meshes);
-      const groupForObject = (obj: THREE.Object3D | null): number => {
-        while (obj) {
-          const idx = topLevel.indexOf(obj);
-          if (idx !== -1) return idx;
-          obj = obj.parent;
-        }
-        return -1;
-      };
-      // Distinguish click vs drag: if the pointer travels more than a few
-      // pixels between down and up we treat it as a drag (orbit) and skip
-      // focusing the model.
-      const CLICK_MOVE_THRESHOLD_SQ = 25;
-      let pointerDown: { x: number; y: number; id: number } | null = null;
-      canvas.addEventListener("pointerdown", (event) => {
-        pointerDown = {
-          x: event.clientX,
-          y: event.clientY,
-          id: event.pointerId,
+        // Re-apply edge colour whenever Starlight flips the theme.
+        const applyThemePalette = () => {
+          const edge = isLightTheme() ? EDGE_LIGHT : EDGE_DARK;
+          BLUEPRINT_COLOR.copy(edge);
+          TINT_COLOR.copy(isLightTheme() ? TINT_LIGHT : TINT_DARK);
+          for (const overlay of allEdgeOverlays) {
+            (overlay.material as THREE.LineBasicMaterial).color.copy(edge);
+          }
         };
-      });
-      canvas.addEventListener("pointerup", (event) => {
-        const start = pointerDown;
-        pointerDown = null;
-        if (!start || start.id !== event.pointerId) return;
-        const dx = event.clientX - start.x;
-        const dy = event.clientY - start.y;
-        // Treat as a click only if the pointer barely moved between
-        // down and up; otherwise it was a drag (orbit) and we ignore it.
-        if (dx * dx + dy * dy > CLICK_MOVE_THRESHOLD_SQ) return;
-        const rect = canvas.getBoundingClientRect();
-        pointer.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-        pointer.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
-        raycaster.setFromCamera(pointer, camera);
-        const hits = raycaster.intersectObjects(allMeshes, false);
-        if (!hits.length) return;
-        const idx = groupForObject(hits[0].object);
-        if (idx !== -1) {
-          // Clicking the already-active module zooms back out to the
-          // overview; clicking another module focuses it.
-          if (idx === activeIdx) {
+        const themeObserver = new MutationObserver(applyThemePalette);
+        themeObserver.observe(document.documentElement, {
+          attributes: true,
+          attributeFilter: ["data-theme"],
+        });
+
+        // Precompute per-group bounding spheres for the zoom animation.
+        const groupFocus = topLevel.map((obj: THREE.Object3D) => {
+          const box = new THREE.Box3().setFromObject(obj);
+          const center = new THREE.Vector3();
+          const sphere = new THREE.Sphere();
+          box.getCenter(center);
+          box.getBoundingSphere(sphere);
+          const radius = Math.max(sphere.radius, 0.05);
+          // Distance so the sphere fits the vertical FOV with margin.
+          const distance = (radius / Math.sin(fovY / 2)) * 1.6;
+          return { center, distance };
+        });
+
+        const desiredTarget = new THREE.Vector3();
+        const desiredCamPos = new THREE.Vector3();
+        const dirFromTarget = new THREE.Vector3();
+
+        let activeIdx = -1; // -1 = all groups active (default state)
+
+        // Card host that appears when a component is focused; populated
+        // from the matching label's [data-label-detail] slot content.
+        const detailCard =
+          assetContainer?.querySelector<HTMLElement>("#hero-detail-card") ??
+          null;
+        const detailTitleEl =
+          detailCard?.querySelector<HTMLElement>("[data-detail-title]") ?? null;
+        const detailBodyEl =
+          detailCard?.querySelector<HTMLElement>("[data-detail-body]") ?? null;
+
+        const applyActiveState = (idx: number) => {
+          const focusing = idx !== -1;
+          for (const label of labels) {
+            const isMatch = focusing && label.groupIdx === idx;
+            // Hide labels for other groups while one is focused; restore
+            // all when returning to the overview.
+            label.el.classList.toggle("is-other-active", focusing && !isMatch);
+          }
+          if (!detailCard) return;
+          if (!focusing) {
+            detailCard.classList.remove("is-active");
+            detailCard.setAttribute("aria-hidden", "true");
+            return;
+          }
+          const match = labels.find((l) => l.groupIdx === idx);
+          if (!match || (!match.detailHTML && !match.labelText)) {
+            detailCard.classList.remove("is-active");
+            detailCard.setAttribute("aria-hidden", "true");
+            return;
+          }
+          if (detailTitleEl) detailTitleEl.textContent = match.labelText;
+          if (detailBodyEl) detailBodyEl.innerHTML = match.detailHTML;
+          detailCard.classList.add("is-active");
+          detailCard.setAttribute("aria-hidden", "false");
+        };
+
+        const setActive = (idx: number) => {
+          if (idx === activeIdx) return;
+          activeIdx = idx;
+          applyActiveState(idx);
+        };
+
+        const IDLE_REVERT_MS = 3000;
+        let revertTimer: ReturnType<typeof setTimeout> | undefined;
+        const scheduleRevert = () => {
+          if (revertTimer) clearTimeout(revertTimer);
+          revertTimer = setTimeout(() => {
             setActive(-1);
-            cancelRevert();
-          } else {
-            setActive(idx);
-            cancelRevert();
+          }, IDLE_REVERT_MS);
+        };
+        const cancelRevert = () => {
+          if (revertTimer) {
+            clearTimeout(revertTimer);
+            revertTimer = undefined;
+          }
+        };
+
+        const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
+
+        cycleUpdater = (now: number) => {
+          if (!groupFades.length) return;
+
+          // Lerp every group's solid/wire opacity toward its target state.
+          for (let i = 0; i < groupFades.length; i++) {
+            const { solid, wire, root } = groupFades[i];
+            // activeIdx === -1 means "all active" — every group reads solid;
+            // otherwise the selected group is solid, the rest go wireframe.
+            const isActive = activeIdx === -1 || i === activeIdx;
+            const targetSolid = isActive ? 1 : 0;
+            const targetWire = WIRE_DIM * (1 - targetSolid);
+            const introF = introFactor(i, now);
+            root.position
+              .copy(introOriginalPos[i])
+              .addScaledVector(introOffset[i], 1 - introF);
+            for (const m of solid) {
+              const next = lerp(
+                logicalOpacity.get(m) ?? m.opacity,
+                targetSolid,
+                SOLID_LERP,
+              );
+              logicalOpacity.set(m, next);
+              m.opacity = next * introF;
+            }
+            for (const m of wire) {
+              const next = lerp(
+                logicalOpacity.get(m) ?? m.opacity,
+                targetWire,
+                SOLID_LERP,
+              );
+              logicalOpacity.set(m, next);
+              m.opacity = next * introF;
+            }
+          }
+
+          // Stage-2 intro: override camera direction (and distance) while
+          // it rotates from the head-on starting pose to the isometric
+          // home direction. The standard zoom-lerp below preserves
+          // whatever direction we leave here, so once the intro completes
+          // this block becomes a no-op.
+          const camT =
+            (now - introStart - INTRO_CAM_DELAY_MS) / INTRO_CAM_DURATION_MS;
+          if (camT < 1) {
+            const eased = easeInOutCubic(Math.max(0, Math.min(1, camT)));
+            _introCamDir
+              .copy(FRONT_CAM_DIR)
+              .lerp(HOME_CAM_DIR, eased)
+              .normalize();
+            const dist = lerp(
+              homeDistance * FRONT_CAM_DIST_MUL,
+              homeDistance,
+              eased,
+            );
+            camera.position
+              .copy(controls.target)
+              .addScaledVector(_introCamDir, dist);
+            camera.lookAt(controls.target);
+          }
+
+          // Camera zoom: lerp toward the focused group when one is selected,
+          // otherwise lerp back to the home (overview) framing. Direction is
+          // preserved so OrbitControls drag still works.
+          const focus = activeIdx !== -1 ? groupFocus[activeIdx] : null;
+          const zoomTarget = focus ? focus.center : homeTarget;
+          const zoomDistance = focus ? focus.distance : homeDistance;
+          desiredTarget.copy(controls.target).lerp(zoomTarget, ZOOM_LERP);
+          controls.target.copy(desiredTarget);
+          dirFromTarget.copy(camera.position).sub(controls.target);
+          const currentDist = dirFromTarget.length() || 0.001;
+          dirFromTarget.normalize();
+          const nextDist = lerp(currentDist, zoomDistance, ZOOM_LERP);
+          desiredCamPos
+            .copy(controls.target)
+            .addScaledVector(dirFromTarget, nextDist);
+          camera.position.copy(desiredCamPos);
+        };
+
+        // Raycaster click handling: pick whichever top-level group contains
+        // the intersected mesh and make it active.
+        const raycaster = new THREE.Raycaster();
+        const pointer = new THREE.Vector2();
+        const allMeshes = groupFades.flatMap((g) => g.meshes);
+        const groupForObject = (obj: THREE.Object3D | null): number => {
+          while (obj) {
+            const idx = topLevel.indexOf(obj);
+            if (idx !== -1) return idx;
+            obj = obj.parent;
+          }
+          return -1;
+        };
+        // Distinguish click vs drag: if the pointer travels more than a few
+        // pixels between down and up we treat it as a drag (orbit) and skip
+        // focusing the model.
+        const CLICK_MOVE_THRESHOLD_SQ = 25;
+        let pointerDown: { x: number; y: number; id: number } | null = null;
+        canvas.addEventListener("pointerdown", (event) => {
+          pointerDown = {
+            x: event.clientX,
+            y: event.clientY,
+            id: event.pointerId,
+          };
+        });
+        canvas.addEventListener("pointerup", (event) => {
+          const start = pointerDown;
+          pointerDown = null;
+          if (!start || start.id !== event.pointerId) return;
+          const dx = event.clientX - start.x;
+          const dy = event.clientY - start.y;
+          // Treat as a click only if the pointer barely moved between
+          // down and up; otherwise it was a drag (orbit) and we ignore it.
+          if (dx * dx + dy * dy > CLICK_MOVE_THRESHOLD_SQ) return;
+          const rect = canvas.getBoundingClientRect();
+          pointer.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+          pointer.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+          raycaster.setFromCamera(pointer, camera);
+          const hits = raycaster.intersectObjects(allMeshes, false);
+          if (!hits.length) return;
+          const idx = groupForObject(hits[0].object);
+          if (idx !== -1) {
+            // Clicking the already-active module zooms back out to the
+            // overview; clicking another module focuses it.
+            if (idx === activeIdx) {
+              setActive(-1);
+              cancelRevert();
+            } else {
+              setActive(idx);
+              cancelRevert();
+            }
+          }
+        });
+        canvas.addEventListener("pointercancel", () => {
+          pointerDown = null;
+        });
+        // While the user is actively manipulating OrbitControls (drag/zoom)
+        // pause the idle timer; restart it on release so the 3s countdown
+        // measures inactivity rather than total elapsed time.
+        controls.addEventListener("start", cancelRevert);
+        controls.addEventListener("end", () => {
+          if (activeIdx !== -1) scheduleRevert();
+        });
+        canvas.style.cursor = "pointer";
+
+        for (const label of labels) {
+          const positionAttr = label.el.dataset.position;
+          if (positionAttr) {
+            const [px, py, pz] = positionAttr.split(",").map(Number);
+            const anchor = new THREE.Object3D();
+            anchor.position.set(px || 0, py || 0, pz || 0);
+            anchor.position
+              .sub(LED_PIVOT)
+              .applyAxisAngle(ROT_AXIS, ROT_ANGLE)
+              .add(LED_PIVOT);
+            scene.add(anchor);
+            label.target = anchor;
+            continue;
+          }
+
+          const name = label.el.dataset.target?.toLowerCase();
+          if (!name) continue;
+          const obj = byName.get(name) ?? null;
+          label.target = obj;
+          if (!obj) {
+            console.warn(
+              `[Hero] No object named "${label.el.dataset.target}" found in model.`,
+            );
           }
         }
-      });
-      canvas.addEventListener("pointercancel", () => {
-        pointerDown = null;
-      });
-      // While the user is actively manipulating OrbitControls (drag/zoom)
-      // pause the idle timer; restart it on release so the 3s countdown
-      // measures inactivity rather than total elapsed time.
-      controls.addEventListener("start", cancelRevert);
-      controls.addEventListener("end", () => {
-        if (activeIdx !== -1) scheduleRevert();
-      });
-      canvas.style.cursor = "pointer";
 
-      for (const label of labels) {
-        const positionAttr = label.el.dataset.position;
-        if (positionAttr) {
-          const [px, py, pz] = positionAttr.split(",").map(Number);
-          const anchor = new THREE.Object3D();
-          anchor.position.set(px || 0, py || 0, pz || 0);
-          scene.add(anchor);
-          label.target = anchor;
-          continue;
-        }
-
-        const name = label.el.dataset.target?.toLowerCase();
-        if (!name) continue;
-        const obj = byName.get(name) ?? null;
-        label.target = obj;
-        if (!obj) {
-          console.warn(
-            `[Hero] No object named "${label.el.dataset.target}" found in model.`,
-          );
-        }
-      }
-
-      // Map each label to its nearest top-level group so we know which
-      // labels to keep visible (and which detail card to show) when a
-      // component is focused.
-      const tmpWorld = new THREE.Vector3();
-      for (const label of labels) {
-        if (!label.target) continue;
-        label.target.getWorldPosition(tmpWorld);
-        let bestIdx = -1;
-        let bestDist = Infinity;
-        for (let i = 0; i < groupFocus.length; i++) {
-          const d = tmpWorld.distanceToSquared(groupFocus[i].center);
-          if (d < bestDist) {
-            bestDist = d;
-            bestIdx = i;
+        // Map each label to its nearest top-level group so we know which
+        // labels to keep visible (and which detail card to show) when a
+        // component is focused.
+        const tmpWorld = new THREE.Vector3();
+        for (const label of labels) {
+          if (!label.target) continue;
+          label.target.getWorldPosition(tmpWorld);
+          let bestIdx = -1;
+          let bestDist = Infinity;
+          for (let i = 0; i < groupFocus.length; i++) {
+            const d = tmpWorld.distanceToSquared(groupFocus[i].center);
+            if (d < bestDist) {
+              bestDist = d;
+              bestIdx = i;
+            }
           }
+          label.groupIdx = bestIdx;
         }
-        label.groupIdx = bestIdx;
-      }
-    });
+      },
+      undefined,
+      (error: unknown) => {
+        console.error("[Hero] Failed to load model:", error);
+        assetContainer?.removeAttribute("data-hero-loading");
+      },
+    );
 
     const resize = () => {
       const next = getSize();
@@ -869,24 +727,14 @@
       width = next.width;
       height = next.height;
       renderer.setSize(width, height, false);
-      composer.setSize(width, height);
-      smaaPass.setSize(width * pixelRatio, height * pixelRatio);
-      const orthoCam = camera as THREE.OrthographicCamera;
-      if (orthoCam.isOrthographicCamera) {
-        // Re-fit the ortho frustum on resize so the model stays framed.
-        const a = width / height;
-        const half = (orthoCam.top - orthoCam.bottom) / 2;
-        orthoCam.left = -half * a;
-        orthoCam.right = half * a;
-        orthoCam.updateProjectionMatrix();
-      } else {
-        const persp = camera as THREE.PerspectiveCamera;
-        persp.aspect = width / height;
-        persp.updateProjectionMatrix();
-      }
+      camera.aspect = width / height;
+      camera.updateProjectionMatrix();
+      // Snap labels to the correct positions for the new layout rather than
+      // lerping from stale coordinates (fixes wrong positions on mobile initial load).
+      for (const label of labels) label.hasPosition = false;
     };
 
-    window.addEventListener("resize", resize);
+    new ResizeObserver(resize).observe(canvas);
 
     const projected = new THREE.Vector3();
 
@@ -1044,10 +892,9 @@
     };
 
     renderer.setAnimationLoop(() => {
-      resize();
       controls.update();
       cycleUpdater(performance.now());
-      composer.render();
+      renderer.render(scene, camera);
       updateLabels();
     });
   }
@@ -1061,6 +908,7 @@
     margin: 0;
     position: relative;
     padding-top: 8.75rem;
+    overflow: hidden;
 
     display: flex;
     align-items: stretch;
@@ -1109,21 +957,61 @@
     }
 
     &__asset-stage {
-      // Visually overflow the column by 20% on each side while keeping
-      // the asset container itself in the grid.
       position: relative;
-      width: 140%;
-      margin-left: -20%;
-      margin-right: -20%;
+      width: 100%;
       height: 100%;
       min-height: inherit;
       display: flex;
+
+      // On tablet+ the container is a half-width column, so overflow it
+      // by 20% each side to fill more of the viewport.
+      @include bp(tablet) {
+        width: 140%;
+        margin-left: -20%;
+        margin-right: -20%;
+      }
 
       #hero-scene {
         display: block;
         width: 100%;
         height: 100%;
         touch-action: none;
+      }
+    }
+
+    &__loader {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 40px;
+      height: 40px;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+      z-index: 8;
+
+      [data-hero-loading] & {
+        opacity: 1;
+        transition-delay: 0.5s;
+      }
+
+      &::before,
+      &::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: 50%;
+        border: 1.5px solid transparent;
+      }
+
+      &::before {
+        border-color: rgba(255, 255, 255, 0.12);
+      }
+
+      &::after {
+        border-top-color: rgba(255, 255, 255, 0.55);
+        animation: heroLoaderSpin 0.9s linear infinite;
       }
     }
 
@@ -1146,16 +1034,16 @@
 
   .hero-detail-card {
     position: absolute;
-    right: 1.5rem;
+    left: 1.5rem;
     bottom: 1.5rem;
     z-index: 11;
     max-width: 320px;
     padding: 1rem 1.25rem;
     border-radius: 12px;
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    background: rgba(0, 19, 38, 0.7);
+    border: 1px solid var(--esk-primary-color);
+    background: var(--esk-primary-color--light);
     backdrop-filter: blur(8px);
-    color: var(--esk-body-colour, #d8e0e6);
+    color: #4f606e;
     opacity: 0;
     pointer-events: none;
     transform: translateY(8px);
@@ -1173,7 +1061,7 @@
       margin: 0 0 0.5rem;
       font-size: 1rem;
       font-weight: 700;
-      color: var(--esk-title-colour, #fff);
+      color: #4f606e;
     }
 
     &__body {
@@ -1245,9 +1133,9 @@
     max-width: 410px;
     align-items: center;
     backdrop-filter: blur(6px);
-    background-color: rgba(255, 255, 255, 0.05);
+    background-color: var(--esk-collaboration-bg);
     border-radius: 8px;
-    border: 1px solid rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--esk-collaboration-border);
     display: flex;
     gap: 20px;
     justify-content: space-between;
@@ -1277,7 +1165,7 @@
     }
 
     span {
-      color: #f2f4f9;
+      color: var(--esk-collaboration-text);
       font-size: 12px;
       font-weight: 300;
       padding: 4px 0;
@@ -1305,6 +1193,12 @@
     }
     to {
       transform: translateX(0);
+    }
+  }
+
+  @keyframes heroLoaderSpin {
+    to {
+      transform: rotate(360deg);
     }
   }
 </style>

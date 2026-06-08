@@ -39,6 +39,15 @@ import FaqSection from "@components/starter-kit/FaqSection.astro";
           href: "https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,300..900;1,300..900&display=swap",
         },
       },
+      {
+        tag: "link",
+        attrs: {
+          rel: "preload",
+          href: "/starter-kit/ESK.glb",
+          as: "fetch",
+          crossorigin: "anonymous",
+        },
+      },
     ],
   }}
 >
@@ -190,6 +199,10 @@ import FaqSection from "@components/starter-kit/FaqSection.astro";
     --esk-heading-font: "Figtree", "Helvetica Neue", Arial, sans-serif;
     --esk-body-font: "Figtree", "Helvetica Neue", Arial, sans-serif;
 
+    --esk-collaboration-bg: rgba(255, 255, 255, 0.03);
+    --esk-collaboration-border: rgba(255, 255, 255, 0.03);
+    --esk-collaboration-text: #f2f4f9;
+
     --sl-content-gap-y: 0;
 
     --esk-card-background: rgba(92, 128, 72, 0.05);
@@ -198,6 +211,10 @@ import FaqSection from "@components/starter-kit/FaqSection.astro";
   :root[data-theme="light"] {
     --esk-body-colour: #4f606e;
     --esk-title-colour: #002e3e;
+
+    --esk-collaboration-bg: rgba(0, 0, 0, 0.03);
+    --esk-collaboration-border: rgba(0, 0, 0, 0.05);
+    --esk-collaboration-text: #1d2126;
   }
 
   body {
@@ -339,7 +356,8 @@ import FaqSection from "@components/starter-kit/FaqSection.astro";
     &.block-succeed,
     &.block-whats-possible,
     &.block-collaboration,
-    &.block-buy {
+    &.block-buy,
+    &.block-specs {
       @include fluid(52, 128, $property: padding-bottom);
     }
   }
