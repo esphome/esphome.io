@@ -77,26 +77,17 @@ sensor:
 
 - **platform**: `ufm01`
 - **ufm01_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the `ufm01` component this sensor belongs to.
-- **accumulated_flow** (*Optional*): The accumulated flow sensor.
-  - `unit_of_measurement`: `L`
-  - `accuracy_decimals`: `3`
-  - `device_class`: `water`
-  - `state_class`: `total_increasing`
-  - All options from [Sensor](/components/sensor#config-sensor).
+- **accumulated_flow** (*Optional*): The accumulated flow (volume) sensor.
+
+  - All options from [Sensor](/components/sensor).
+
 - **flow** (*Optional*): The current flow rate sensor.
-  - `unit_of_measurement`: `m³/h`
-  - `accuracy_decimals`: `5`
-  - `device_class`: `volume_flow_rate`
-  - `state_class`: `measurement`
-  - `icon`: `mdi:waves-arrow-right`
-  - All options from [Sensor](/components/sensor#config-sensor).
+
+  - All options from [Sensor](/components/sensor).
+
 - **temperature** (*Optional*): The water temperature sensor.
-  - `unit_of_measurement`: `°C`
-  - `accuracy_decimals`: `2`
-  - `device_class`: `temperature`
-  - `state_class`: `measurement`
-  - `icon`: `mdi:thermometer-water`
-  - All options from [Sensor](/components/sensor#config-sensor).
+
+  - All options from [Sensor](/components/sensor).
 
 When `empty_tube` is active, `flow` and `temperature` are published as unknown (`NaN`). `accumulated_flow` continues
 to update.
@@ -125,18 +116,20 @@ binary_sensor:
 - **platform**: `ufm01`
 - **ufm01_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the `ufm01` component this binary sensor belongs to.
 - **ufp_chip_error** (*Optional*): Reports if there is an error with the UFP chip.
-  - `entity_category`: `diagnostic`
-  - `device_class`: `problem`
+
+  - All options from [Binary Sensor](/components/binary_sensor#config-binary_sensor).
+
 - **flow_direction_wrong** (*Optional*): Reports if the flow direction is incorrect.
-  - `entity_category`: `diagnostic`
-  - `device_class`: `problem`
+
+  - All options from [Binary Sensor](/components/binary_sensor#config-binary_sensor).
+
 - **empty_tube** (*Optional*): Reports if the tube is empty.
-  - `entity_category`: `diagnostic`
-  - `device_class`: `problem`
+
+  - All options from [Binary Sensor](/components/binary_sensor#config-binary_sensor).
+
 - **flow_rate_out_of_range** (*Optional*): Reports if the flow rate is out of the measurable range.
-  - `entity_category`: `diagnostic`
-  - `device_class`: `problem`
-- All options from [Binary Sensor](/components/binary_sensor#config-binary_sensor).
+
+  - All options from [Binary Sensor](/components/binary_sensor#config-binary_sensor).
 
 ## Full Example Configuration
 
