@@ -32,8 +32,8 @@ more `one_wire` buses.
 ```yaml
 # Example for a single-channel DS2482-100
 i2c:
-  sda: GPIO21
-  scl: GPIO22
+  sda: GPIOXX
+  scl: GPIOXX
 
 ds248x:
   - id: hub_1wire
@@ -124,7 +124,7 @@ The I2C address depends on the chip variant and the state of its address pins.
 | DS2482-800 | AD0, AD1, AD2 | `0x18` | `0x18` to `0x1F` |
 | DS2484 | AD0, AD1 | `0x18` | `0x18` to `0x1B` |
 
-## Component Configuration Variables
+## Configuration variables
 
 - **type** (**Required**, string): The DS248x chip variant. One of `ds2482-100`, `ds2482-101`, `ds2482-800`, or
   `ds2484`.
@@ -142,7 +142,7 @@ The I2C address depends on the chip variant and the state of its address pins.
 - **i2c_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the [I²C bus](/components/i2c/) to use.
   Required if you have configured multiple I²C buses.
 
-## 1-Wire Platform Configuration Variables
+## One-Wire Platform Configuration Variables
 
 The `one_wire` platform named `ds248x` creates the actual 1-Wire bus instances used by devices such as
 [`dallas_temp`](/components/sensor/dallas_temp/).
