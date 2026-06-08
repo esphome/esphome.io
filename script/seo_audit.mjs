@@ -57,14 +57,16 @@ function extractSEO(html, url) {
   const internalLinks = allLinks.filter(a => {
     const href = a.getAttribute('href');
     if (!href) return false;
-    if (href.startsWith('//')) return false; // protocol-relative URLs are external
-    return href.startsWith('/') || isEsphomeHost(href);
+    if (href.startsWith('//')) return isEsphomeHost(href); // protocol-relative: classify by host
+    if (href.startsWith('/')) return true; // root-relative path
+    if (href.startsWith('http')) return isEsphomeHost(href); // absolute URL
+    return false; // anchors, mailto:, bare relative paths
   }).length;
   const externalLinks = allLinks.filter(a => {
     const href = a.getAttribute('href');
     if (!href) return false;
-    if (href.startsWith('//')) return true; // protocol-relative URLs are external
-    return href.startsWith('http') && !isEsphomeHost(href);
+    if (href.startsWith('//') || href.startsWith('http')) return !isEsphomeHost(href);
+    return false;
   }).length;
 
   // Images
