@@ -9,31 +9,31 @@ import Figure from '@components/Figure.astro';
 The `ufm01` component allows you to integrate the UFM-01 flow meter
 ([datasheet](https://www.sciosense.com/wp-content/uploads/2025/06/UFM-01-Datasheet-1.pdf),
 [manufacturer page](https://www.sciosense.com/ufm-01-ultrasonic-flow-sensing-module/))
-into your ESPHome device. This component reads accumulated flow (volume), current flow rate, and water temperature from the UFM-01 device via UART. It also provides several diagnostic binary sensors to monitor the device's status.
+into your ESPHome device. This component reads accumulated flow (volume), current flow rate, and water temperature
+from the UFM-01 device via UART. It also provides several diagnostic binary sensors to monitor the device's status.
 
 The UFM-01 flow meter communicates using a specific UART protocol at 2400 baud with even parity and 1 stop bit.
 
 <Figure
   src="/images/ufm01.png"
-  alt=""
+  alt="UFM-01 ultrasonic flow meter"
   caption="UFM-01 flow meter"
   layout="constrained"
   width={236}
   height={278}
 />
 
-<span id="ufm01-configuration"></span>
-
 ## Configuration
 
-The `ufm01` component requires a UART bus to be configured. Ensure your UART bus is set up with `baud_rate: 2400`, `parity: EVEN`, and `stop_bits: 1`.
+The `ufm01` component requires a UART bus to be configured. Ensure your UART bus is set up with `baud_rate: 2400`,
+`parity: EVEN`, and `stop_bits: 1`.
 
 ```yaml
 # Example UART configuration
 uart:
   - id: uart_bus
-    tx_pin: GPIO17 # Adjust based on your board (e.g., ESP32 GPIO17, ESP8266 GPIO4, RP2040 GPIO0)
-    rx_pin: GPIO16 # Adjust based on your board (e.g., ESP32 GPIO16, ESP8266 GPIO5, RP2040 GPIO1)
+    tx_pin: GPIOXX
+    rx_pin: GPIOXX
     baud_rate: 2400
     parity: EVEN
     stop_bits: 1
@@ -42,8 +42,6 @@ uart:
 ## Component/Hub
 
 To use the UFM-01 component, add the following to your `config.yaml`:
-
-<span id="ufm01-component"></span>
 
 ```yaml
 # Basic UFM-01 configuration
@@ -55,14 +53,12 @@ ufm01:
 ### Configuration variables
 
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): The ID to use for the UFM-01 component.
-
-<span id="ufm01-configuration-variables"></span>
-
 - **uart_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the UART bus to use.
 
 ## Sensor
 
-The `ufm01` sensor platform allows you to read accumulated flow, current flow rate, and water temperature from the UFM-01 device.
+The `ufm01` sensor platform allows you to read accumulated flow, current flow rate, and water temperature from the
+UFM-01 device.
 
 ```yaml
 # Sensor configuration
@@ -80,9 +76,6 @@ sensor:
 ### Configuration variables
 
 - **platform**: `ufm01`
-
-<span id="ufm01-sensor-configuration-variables"></span>
-
 - **ufm01_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the `ufm01` component this sensor belongs to.
 - **accumulated_flow** (*Optional*): The accumulated flow sensor.
   - `unit_of_measurement`: `L`
@@ -105,13 +98,12 @@ sensor:
   - `icon`: `mdi:thermometer-water`
   - All options from [Sensor](/components/sensor#config-sensor).
 
-When `empty_tube` is active, `flow` and `temperature` are published as unknown (`NaN`). `accumulated_flow` continues to update.
+When `empty_tube` is active, `flow` and `temperature` are published as unknown (`NaN`). `accumulated_flow` continues
+to update.
 
 ## Binary Sensor
 
 The UFM-01 component also exposes several diagnostic binary sensors to report the device's status.
-
-<span id="ufm01-binary-sensors"></span>
 
 ```yaml
 # Binary sensor configuration
@@ -131,9 +123,6 @@ binary_sensor:
 ### Configuration variables
 
 - **platform**: `ufm01`
-
-<span id="ufm01-binary-sensor-configuration-variables"></span>
-
 - **ufm01_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the `ufm01` component this binary sensor belongs to.
 - **ufp_chip_error** (*Optional*): Reports if there is an error with the UFP chip.
   - `entity_category`: `diagnostic`
@@ -151,13 +140,11 @@ binary_sensor:
 
 ## Full Example Configuration
 
-<span id="ufm01-full-example"></span>
-
 ```yaml
 uart:
   - id: uart_bus
-    tx_pin: GPIO17
-    rx_pin: GPIO16
+    tx_pin: GPIOXX
+    rx_pin: GPIOXX
     baud_rate: 2400
     parity: EVEN
     stop_bits: 1
@@ -184,7 +171,7 @@ binary_sensor:
     flow_direction_wrong:
       name: "UFM01 Flow Direction Wrong"
     empty_tube:
-      name: "UFM01 Empty Tube Status"
+      name: "UFM01 Empty Tube"
     flow_rate_out_of_range:
       name: "UFM01 Flow Rate Out of Range"
 ```
