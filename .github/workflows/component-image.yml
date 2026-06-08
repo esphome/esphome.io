@@ -172,7 +172,9 @@ jobs:
             const name = process.env.COMPONENT;
             const img = process.env.IMG;
             // Component name is validated to [a-z0-9_]+, so it is safe in a regex.
-            const re = new RegExp('("/components/' + name + '/",\\s*")[^"]*(")', 'g');
+            // Match case-insensitively: a few index paths use mixed case (e.g.
+            // /components/mcp23Sxx/) while the requested name is always lowercase.
+            const re = new RegExp('("/components/' + name + '/",\\s*")[^"]*(")', 'gi');
             let count = 0;
             const updated = fs.readFileSync(path, 'utf8')
               .replace(re, (_m, p1, p2) => { count++; return p1 + img + p2; });
@@ -240,7 +242,8 @@ jobs:
                 artifactLine;
             } else {
               body = `@${actor} Couldn't commit the image to this PR branch automatically ` +
-                `(the bot doesn't have write access to this fork). ` +
+                `(usually the bot lacks write access to a fork; the push can also fail ` +
+                `for other reasons — see the workflow logs). ` +
                 `Download the generated image here:${url ? ` ${url}` : ' check the workflow logs.'}`;
             }
             await github.rest.issues.updateComment({
