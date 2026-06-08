@@ -89,12 +89,11 @@ ds248x:
     type: ds2484
     address: 0x18
     active_pullup: true
-    strong_pullup: true
-    ds2484_active_pullup_resistance: 500ohm
-    ds2484_reset_low_time: 8
-    ds2484_master_sample_time: 8
-    ds2484_write_0_low_time: 8
-    ds2484_recovery_time: 8
+    active_pullup_resistance: 500ohm
+    reset_low_time: 8
+    master_sample_time: 8
+    write_0_low_time: 8
+    recovery_time: 8
 
 one_wire:
   - platform: ds248x
@@ -132,8 +131,6 @@ The I2C address depends on the chip variant and the state of its address pins.
 - **address** (*Optional*, int): The I²C address of the device. Defaults to `0x18`.
 - **active_pullup** (*Optional*, boolean): Enable the active pullup feature. Useful for long lines or heavier bus
   loads. Defaults to `false`.
-- **strong_pullup** (*Optional*, boolean): Enable strong pullup support for parasitically powered devices. Defaults to
-  `false`.
 - **sleep_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): A GPIO pin connected to the `SLPZ`
   pin. Only available for `ds2482-101` and `ds2484`.
 - **bus_sleep** (*Optional*, boolean): Put the 1-Wire bus to sleep when not in use. Only available for `ds2482-101`
@@ -161,11 +158,11 @@ The `one_wire` platform named `ds248x` creates the actual 1-Wire bus instances u
 These options are only available when `type: ds2484` is selected. See the datasheet for the exact timing and
 resistance mappings.
 
-- **ds2484_reset_low_time** (*Optional*, int): Adjust the reset low time (`tRSTL`). Value from `0` to `15`.
-- **ds2484_master_sample_time** (*Optional*, int): Adjust the master sample time (`tMSP`). Value from `0` to `15`.
-- **ds2484_write_0_low_time** (*Optional*, int): Adjust the write-0 low time (`tW0L`). Value from `0` to `15`.
-- **ds2484_recovery_time** (*Optional*, int): Adjust the recovery time (`tREC0`). Value from `0` to `15`.
-- **ds2484_active_pullup_resistance** (*Optional*, string): The active pullup resistance. One of `500ohm` or
+- **reset_low_time** (*Optional*, int): Adjust the reset low time (`tRSTL`). Value from `0` to `15`.
+- **master_sample_time** (*Optional*, int): Adjust the master sample time (`tMSP`). Value from `0` to `15`.
+- **write_0_low_time** (*Optional*, int): Adjust the write-0 low time (`tW0L`). Value from `0` to `15`.
+- **recovery_time** (*Optional*, int): Adjust the recovery time (`tREC0`). Value from `0` to `15`.
+- **active_pullup_resistance** (*Optional*, string): The active pullup resistance. One of `500ohm` or
   `1000ohm`.
 
 ## See Also
