@@ -24,22 +24,17 @@ using the `ds248x` platform.
 - **DS2482-800**: 8-channel 1-Wire master.
 - **DS2484**: Single-channel 1-Wire master with adjustable timing and active pullup resistance settings.
 
-## Configuration
+## Component/Hub
 
-To use a DS248x bridge, first configure the [I²C Bus](/components/i2c/), then add the `ds248x` component and one or
-more `one_wire` buses.
+The `ds248x` component is an I²C-to-1-Wire bridge. An [I²C Bus](/components/i2c/) must be defined in your
+configuration to use it. The bridge itself is configured under `ds248x`; each entry then exposes one or more
+1-Wire buses via the [`ds248x` platform](#one-wire-bus).
 
 ```yaml
 # Example for a single-channel DS2482-100
-i2c:
-  sda: GPIOXX
-  scl: GPIOXX
-
 ds248x:
   - id: hub_1wire
     type: ds2482-100
-    address: 0x18
-    active_pullup: true
 
 one_wire:
   - platform: ds248x
@@ -53,13 +48,48 @@ sensor:
     name: Temperature
 ```
 
+### Configuration variables
+
+- **type** (**Required**, string): The DS248x chip variant. One of `ds2482-100`, `ds2482-101`, `ds2482-800`, or
+  `ds2484`.
+- **address** (*Optional*, int): The I²C address of the device. Defaults to `0x18`.
+- **active_pullup** (*Optional*, boolean): Enable the active pullup feature. Useful for long lines or heavier bus
+  loads. Defaults to `false`.
+- **sleep_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): A GPIO pin connected to the `SLPZ`
+  pin. Only available for `ds2482-101` and `ds2484`.
+- **bus_sleep** (*Optional*, boolean): Put the 1-Wire bus to sleep when not in use. Only available for `ds2482-101`
+  and `ds2484`. Defaults to `false`.
+- **hub_sleep** (*Optional*, boolean): Put the bridge chip to sleep when not in use. Requires `sleep_pin` and is only
+  available for `ds2482-101` and `ds2484`. Defaults to `false`.
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID for this DS248x bridge if you
+  need more than one.
+- **i2c_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the [I²C bus](/components/i2c/) to use.
+  Required if you have configured multiple I²C buses.
+
+### DS2484-Specific Options
+
+These options are only available when `type: ds2484` is selected. See the datasheet for the exact timing and
+resistance mappings.
+
+- **reset_low_time** (*Optional*, int): Adjust the reset low time (`tRSTL`). Value from `0` to `15`.
+- **master_sample_time** (*Optional*, int): Adjust the master sample time (`tMSP`). Value from `0` to `15`.
+- **write_0_low_time** (*Optional*, int): Adjust the write-0 low time (`tW0L`). Value from `0` to `15`.
+- **recovery_time** (*Optional*, int): Adjust the recovery time (`tREC0`). Value from `0` to `15`.
+- **active_pullup_resistance** (*Optional*, string): The active pullup resistance. One of `500ohm` or
+  `1000ohm`.
+
+<span id="one-wire-bus"></span>
+
+## 1-Wire Bus
+
+The `one_wire` platform named `ds248x` creates the actual 1-Wire bus instances used by devices such as
+[`dallas_temp`](/components/sensor/dallas_temp/). Create one entry per channel you want to use.
+
 ```yaml
 # Example for an 8-channel DS2482-800
 ds248x:
   - id: ds2482_hub
     type: ds2482-800
-    address: 0x18
-    active_pullup: true
 
 one_wire:
   - platform: ds248x
@@ -87,7 +117,6 @@ sensor:
 ds248x:
   - id: ds2484_hub
     type: ds2484
-    address: 0x18
     active_pullup: true
     active_pullup_resistance: 500ohm
     reset_low_time: 8
@@ -100,6 +129,14 @@ one_wire:
     ds248x_id: ds2484_hub
     id: ds2484_bus
 ```
+
+### Configuration variables
+
+- **ds248x_id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the parent `ds248x` component.
+- **channel** (*Optional*, int): The channel index to use. Defaults to `0`. For `ds2482-800`, valid values are
+  `0` to `7`. For `ds2482-100`, `ds2482-101`, and `ds2484`, leave this omitted or set it to `0`.
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the 1-Wire bus. Required if
+  you have configured multiple 1-Wire buses.
 
 ## Finding Sensor Addresses
 
@@ -123,47 +160,6 @@ The I2C address depends on the chip variant and the state of its address pins.
 | DS2482-101 | AD0 | `0x18` | `0x18` to `0x19` |
 | DS2482-800 | AD0, AD1, AD2 | `0x18` | `0x18` to `0x1F` |
 | DS2484 | AD0, AD1 | `0x18` | `0x18` to `0x1B` |
-
-## Configuration variables
-
-- **type** (**Required**, string): The DS248x chip variant. One of `ds2482-100`, `ds2482-101`, `ds2482-800`, or
-  `ds2484`.
-- **address** (*Optional*, int): The I²C address of the device. Defaults to `0x18`.
-- **active_pullup** (*Optional*, boolean): Enable the active pullup feature. Useful for long lines or heavier bus
-  loads. Defaults to `false`.
-- **sleep_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): A GPIO pin connected to the `SLPZ`
-  pin. Only available for `ds2482-101` and `ds2484`.
-- **bus_sleep** (*Optional*, boolean): Put the 1-Wire bus to sleep when not in use. Only available for `ds2482-101`
-  and `ds2484`. Defaults to `false`.
-- **hub_sleep** (*Optional*, boolean): Put the bridge chip to sleep when not in use. Requires `sleep_pin` and is only
-  available for `ds2482-101` and `ds2484`. Defaults to `false`.
-- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID for this DS248x bridge if you
-  need more than one.
-- **i2c_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the [I²C bus](/components/i2c/) to use.
-  Required if you have configured multiple I²C buses.
-
-## One-Wire Platform Configuration Variables
-
-The `one_wire` platform named `ds248x` creates the actual 1-Wire bus instances used by devices such as
-[`dallas_temp`](/components/sensor/dallas_temp/).
-
-- **ds248x_id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the parent `ds248x` component.
-- **channel** (*Optional*, int): The channel index to use. Defaults to `0`. For `ds2482-800`, valid values are
-  `0` to `7`. For `ds2482-100`, `ds2482-101`, and `ds2484`, leave this omitted or set it to `0`.
-- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the 1-Wire bus. Required if
-  you have configured multiple 1-Wire buses.
-
-## DS2484 Specific Options
-
-These options are only available when `type: ds2484` is selected. See the datasheet for the exact timing and
-resistance mappings.
-
-- **reset_low_time** (*Optional*, int): Adjust the reset low time (`tRSTL`). Value from `0` to `15`.
-- **master_sample_time** (*Optional*, int): Adjust the master sample time (`tMSP`). Value from `0` to `15`.
-- **write_0_low_time** (*Optional*, int): Adjust the write-0 low time (`tW0L`). Value from `0` to `15`.
-- **recovery_time** (*Optional*, int): Adjust the recovery time (`tREC0`). Value from `0` to `15`.
-- **active_pullup_resistance** (*Optional*, string): The active pullup resistance. One of `500ohm` or
-  `1000ohm`.
 
 ## See Also
 
