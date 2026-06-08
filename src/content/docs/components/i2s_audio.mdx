@@ -21,7 +21,14 @@ i2s_audio:
 - **i2s_bclk_pin** (*Optional*, [Pin](/guides/configuration-types#pin)): The GPIO pin to use for the I²S `BCLK` *(Bit Clock)* signal, also referred to as `SCK` *(Serial Clock)*.
 - **i2s_mclk_pin** (*Optional*, [Pin](/guides/configuration-types#pin)): The GPIO pin to use for the I²S `MCLK` *(Master Clock)* signal.
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID for this I²S bus if you need multiple.
+- **full_duplex** (*Optional*, boolean): Enable simultaneous input and output on the same I2S bus. This is useful
+  for devices that use the output channel to provide the clock required by an external ADC while microphone input is
+  active. Defaults to `false`.
 - **use_legacy** (*Optional, boolean*): Use the legacy I²S driver when using esp-idf framework version 5.x.x. Not valid for Arduino framework or esp-idf version < 5. All `i2s_audio` components need to use the same setting. Defaults to `false`.
+
+> [!NOTE]
+> Full duplex mode requires the microphone and speaker to use the same `i2s_audio` component. It is intended for
+> standard I2S input/output devices and does not support PDM microphones.
 
 ## See Also
 

@@ -1,0 +1,54 @@
+---
+description: "Instructions for setting up resampler microphones in ESPHome."
+title: "Resampler Microphone"
+---
+
+The `resampler` microphone platform converts audio from another [microphone component](/components/microphone/) to a
+different sample rate before passing it to consumers such as [Voice Assistant](/components/voice_assistant/) or
+[Micro Wake Word](/components/micro_wake_word/).
+
+If the input microphone already uses the configured sample rate, audio is passed through without resampling.
+
+This platform only works on ESP32 based chips.
+
+> [!WARNING]
+> Audio and voice components consume a significant amount of resources (RAM and CPU) on the device.
+>
+> **Crashes are likely to occur** if you include too many additional components in your device's configuration. In
+> particular, Bluetooth/BLE components are known to cause issues when used with Voice Assistant and other audio
+> components.
+
+```yaml
+# Example configuration entry
+microphone:
+  - platform: resampler
+    id: resampled_microphone
+    microphone:
+      microphone: source_microphone
+    sample_rate: 16000
+```
+
+## Configuration Variables
+
+- **microphone** (**Required**, [Microphone Source Configuration](/components/microphone#config-microphone-source)):
+  The [microphone](/components/microphone/) source to resample.
+- **sample_rate** (*Optional*, positive integer): Sample rate to convert to. Defaults to `16000`.
+- **buffer_duration** (*Optional*, [Time](/guides/configuration-types#time)): The duration of the internal ring
+  buffer. Larger values may reduce stuttering but use more memory. Defaults to `100ms`.
+- **filters** (*Optional*, positive integer): The number of windowed sinc interpolation filters to use. Must be
+  between `2` and `1024`. Defaults to `16`.
+- **taps** (*Optional*, positive integer): The number of taps per windowed sinc interpolation filter. Must be between
+  `16` and `128` and divisible by 4. Defaults to `16`.
+- **task_stack_in_psram** (*Optional*, boolean): Run the resampling task in external memory. Defaults to `false`.
+- All other options from [Microphone Component](/components/microphone#config-microphone).
+
+## Improving Quality
+
+Resampling is processor intensive and should be avoided when possible. Higher `filters` values increase memory usage,
+and higher `taps` values increase CPU usage.
+
+## See Also
+
+- [ART Audio Resampler (GitHub)](https://github.com/dbry/audio-resampler)
+- [Microphone Component](/components/microphone/)
+- [Resampler Speaker](/components/speaker/resampler/)
