@@ -1,14 +1,21 @@
 ---
 title: "WiFi TWT Component"
-description: "Use WiFi 6 Individual Target Wake Time (iTWT) on ESP32-C5/C6/C61 to reduce power consumption between sensor readings."
+description: "WiFi 6 Individual Target Wake Time (iTWT) on ESP32-C5/C6/C61: scheduled radio sleep, CPU stays running."
 ---
 
 The `wifi_twt` component enables WiFi 6 Individual Target Wake Time (iTWT) on ESP32-C5, ESP32-C6, and ESP32-C61
 devices. iTWT allows the device to negotiate a schedule with the access point to sleep between wake windows,
 reducing current draw significantly during idle periods.
 
-This component requires the [WiFi](/components/wifi/) component and an access point that supports WiFi 6 (802.11ax).
-It is only supported on the ESP-IDF framework.
+Unlike [Deep Sleep](/components/deep_sleep/), iTWT keeps the CPU running and maintains the WiFi association.
+The device wakes on its scheduled window without rebooting, resumes execution immediately, and responds to
+hardware interrupts (GPIO, timers, sensor thresholds) with microsecond latency at any time.
+
+This component requires the [WiFi](/components/wifi/) component and an access point that supports WiFi 6
+(802.11ax). It is only supported on the ESP-IDF framework.
+
+This component cannot be used together with [Deep Sleep](/components/deep_sleep/) or
+[ESP-NOW](/components/espnow/).
 
 ```yaml
 # Example configuration entry
@@ -67,8 +74,8 @@ wifi_twt:
   hears from it, so buffered downlink may be delayed until the next DTIM beacon. Use `announced` when the
   device needs to receive data each wake window; use `unannounced` for pure uplink devices such as sensors
   that only push data. Defaults to `announced`.
-- **auto_setup** (*Optional*, boolean): Automatically start the TWT session after WiFi connects.
-  Set to `false` to start the session manually using the `wifi_twt.start` action. Defaults to `true`.
+- **auto_setup** (*Optional*, boolean): Automatically negotiate a TWT session after WiFi connects.
+  Set to `false` to negotiate manually using `wifi_twt.start`. Defaults to `true`.
 - **on_twt_start** (*Optional*, [Automation](/automations/)): Automation to run when a TWT session is
   successfully established with the access point.
 - **on_twt_stop** (*Optional*, [Automation](/automations/)): Automation to run when a TWT session ends,
@@ -82,8 +89,9 @@ wifi_twt:
 
 ### `wifi_twt.start` Action
 
-Start a TWT session. When called while a session is already active, the existing session is torn down first
-and a new one is negotiated. All parameters are optional; any omitted parameter keeps its current value.
+Negotiate a TWT session. When called while a session is already active, the existing session is torn down
+first and a new one is negotiated. All parameters are optional; any omitted parameter keeps its current
+value.
 
 ```yaml
 on_...:
@@ -108,12 +116,46 @@ on_...:
 
 ### `wifi_twt.stop` Action
 
-Tear down the active TWT session. The device returns to normal WiFi power save behavior.
+Tear down the active TWT session. The device returns to normal WiFi power save behavior. The session is
+not renegotiated on the next WiFi reconnect.
 
 ```yaml
 on_...:
   then:
     - wifi_twt.stop:
+        id: my_twt
+```
+
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the `wifi_twt` component.
+
+### `wifi_twt.disable` Action
+
+Block TWT from starting and tear down any active session. If a session was active when `disable` was
+called, `wifi_twt.enable` will renegotiate it. Calling `disable` when already disabled logs a warning
+and does nothing.
+
+Use `disable` when the device must remain reachable for an extended period — for example, to receive an
+OTA update or respond to user input — and `enable` when that period ends.
+
+```yaml
+on_...:
+  then:
+    - wifi_twt.disable:
+        id: my_twt
+```
+
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the `wifi_twt` component.
+
+### `wifi_twt.enable` Action
+
+Lift the block set by `wifi_twt.disable`. If a session was active when `wifi_twt.disable` was called,
+it is renegotiated immediately. If no session was previously active, TWT is permitted again but not
+started — call `wifi_twt.start` explicitly to begin a new session.
+
+```yaml
+on_...:
+  then:
+    - wifi_twt.enable:
         id: my_twt
 ```
 
@@ -130,6 +172,11 @@ Values above 65 ms are rejected at configuration time.
 
 ESP-IDF requires the service period (`wake_interval`) to exceed `wake_duration` by at least 10 ms. For
 example, with `wake_duration: 50ms` the minimum `wake_interval` is 60 ms.
+
+## OTA Updates
+
+When the [OTA](/components/ota/) component is present, TWT is automatically suspended when an OTA update
+begins and renegotiated when it completes or is aborted. No additional configuration is required.
 
 ## Example: Low-Power Sensor Node
 
