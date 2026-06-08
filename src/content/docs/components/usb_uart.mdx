@@ -5,28 +5,45 @@ title: "USB Host UART Interface"
 import APIRef from '@components/APIRef.astro';
 
 
-This component allows an ESP32-S3 or ESP32-S2 to host USB-serial peripheral devices. It uses the [Usb Host](/components/usb_host/)
+This component allows an ESP32-S3, ESP32-S2 or ESP32-P4 to host USB-serial peripheral devices. It uses the [Usb Host](/components/usb_host/)
 component to interface to the device as a USB-OTG host.
 
 Currently supported devices are listed in the table below:
 
 ### Supported Devices
 
-| Name       | VID    | PID    | Description                                             |
-| ---------- | ------ | ------ | ------------------------------------------------------- |
-| CDC_ACM | 0x0000 | 0x0000 | USB CDC ACM (Abstract Control Model) |
-| CH34X      | 0x1A86 | 0x55D5 | USB to serial adapter, multi-channel |
-| CH340      | 0x1A86 | 0x7523 | USB to serial adapter, single channel |
-| CP210X | 0x10C4 | 0xEA60 | Silicon Labs USB to UART Bridge |
-| ESP_JTAG | 0x303A | 0x1001 | ESP32 JTAG interface |
-| FT232     | 0x0403 | 0x6001 | FTDI USB to serial adapter single port |
-| FT2232     | 0x0403 | 0x6010 | FTDI USB to serial adapter dual port |
-| FT4232     | 0x0403 | 0x6011 | FTDI USB to serial adapter dual port |
-| STM32_VCP | 0x0483 | 0x5740 | STM32 Virtual COM Port |
+| Name       | VID    | PID    | Max channels | Description                                                  |
+| ---------- | ------ | ------ | ------------ | ------------------------------------------------------------ |
+| CDC_ACM    | 0x0000 | 0x0000 | 1            | USB CDC ACM (Abstract Control Model)                         |
+| CH340      | 0x1A86 | 0x7523 | 1            | WCH USB to serial adapter, single channel                    |
+| CH34X      | 0x1A86 | 0x55D5 | 4            | WCH USB to serial adapter, multi-channel                     |
+| CH9344     | 0x1A86 | 0xE018 | 4            | WCH CH934X series, 4-port USB to serial adapter              |
+| CH9344L    | 0x1A86 | 0xE018 | 4            | WCH CH934X series, 4-port USB to serial adapter              |
+| CH9344Q    | 0x1A86 | 0xE018 | 4            | WCH CH934X series, 4-port USB to serial adapter              |
+| CH348      | 0x1A86 | 0x55D9 | 8            | WCH CH934X series, 8-port USB to serial adapter              |
+| CH348L     | 0x1A86 | 0x55D9 | 8            | WCH CH934X series, 8-port USB to serial adapter              |
+| CH348Q     | 0x1A86 | 0x55D9 | 8            | WCH CH934X series, 8-port USB to serial adapter              |
+| CP210X     | 0x10C4 | 0xEA60 | 3            | Silicon Labs USB to UART Bridge                              |
+| ESP_JTAG   | 0x303A | 0x1001 | 1            | ESP32 JTAG interface                                         |
+| FT232      | 0x0403 | 0x6001 | 1            | FTDI USB to serial adapter, single port                      |
+| FT2232     | 0x0403 | 0x6010 | 2            | FTDI USB to serial adapter, dual port                        |
+| FT4232     | 0x0403 | 0x6011 | 4            | FTDI USB to serial adapter, quad port                        |
+| STM32_VCP  | 0x0483 | 0x5740 | 1            | STM32 Virtual COM Port                                       |
 
+:::note
+**ESP32-S3**: standard multi-port adapters (CH34X, CP210X, FT4232, …) are limited to **3 channels** because
+the hardware provides only 8 USB endpoints in total and each standard CDC channel requires a bulk IN, bulk OUT
+and interrupt endpoint — leaving room for exactly 3 channels (6 IN/OUT endpoints and the mandatory control endpoint).
 
-Note that devices with 4 channels will only allow 3 channels to be used at any one time on an ESP32-S3 due to
-hardware limitations. The ESP32-P4 is not affected by this limitation and can use all 4 channels.
+**ESP32-P4**: 16 USB endpoints are available (8 IN, 8 OUT). The mandatory control endpoint uses one IN and one
+OUT, leaving 7 IN and 7 OUT for data. Each standard CDC channel requires one bulk IN, one bulk OUT and one
+interrupt IN, so up to **7 standard channels** can be used simultaneously. Mixed setups combining CH934X ports
+(which share a single bulk IN/OUT pair across all their ports) with standard CDC channels are also possible.
+
+The **CH934X family** (CH9344, CH9344L, CH9344Q, CH348, CH348L, CH348Q) is **not subject to these limits**.
+These chips multiplex all serial ports over a single shared bulk IN/OUT endpoint pair using an internal framing
+protocol, so all 4 or 8 ports count as just one channel against the endpoint budget, regardless of ESP32 variant.
+:::
 
 ```yaml
 # Example minimal configuration entry
@@ -41,7 +58,9 @@ usb_uart:
 ## Configuration variables
 
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): The id to use for this component.
-- **type** (**Required**, string): The type of USB-serial device to connect to. One of `ft23xx`, `ch34x`, `ch340`, `esp_jtag`, `stm32_vcp`, `cdc_acm`, `cp210x`.
+- **type** (**Required**, string): The type of USB-serial device to connect to. One of `ch9344`, `ch9344l`,
+  `ch9344q`, `ch348`, `ch348l`, `ch348q`, `ch34x`, `ch340`, `cp210x`, `esp_jtag`, `ft232`, `ft2232`, `ft4232`,
+  `stm32_vcp`, `cdc_acm`.
 - **channels** (**Required**, list): A list of channels to configure.
 - **vid** (*Optional*, int): The vendor ID of the device. Use 0 as a wildcard. Each type has a default VID which will be overridden if this is set.
 - **pid** (*Optional*, int): The product ID of the device. Use 0 as a wildcard. Each type has a default PID which will be overridden if this is set.
@@ -63,6 +82,8 @@ Useful when multiple channels have debugging enabled, to distinguish their outpu
 - **flush_timeout** (*Optional*, [Time](/guides/configuration-types#time)): The maximum time to wait for the USB output queue to drain when `flush()` is called. If the queue does not drain within this time, `flush()` returns a `TIMEOUT` result. Defaults to `100ms`.
 
 ## Device types
+
+### CDC ACM
 
 The `cdc_acm` type is a generic USB CDC ACM (Abstract Control Model) device. This is a common USB device class for serial communication.
 This driver does not strictly enforce the CDC-ACM configuration specification, so it may work with devices that do not properly implement that specification. It expects to find a single interrupt endpoint, a single bulk in endpoint, and a single bulk out endpoint.
