@@ -54,33 +54,47 @@ import FaqSection from "@components/starter-kit/FaqSection.astro";
   <div class="ha-connect">
     <Nav />
     <Hero>
+      <p class="hero-prompt">
+        Rotate to explore, click any module for details.
+      </p>
+      <HeroLabel slot="labels" text="Button module" target="button">
+        <p>
+          A physical, clickable button that triggers any smart home automation
+          you set up, built for repeated everyday use.
+        </p>
+      </HeroLabel>
       <HeroLabel
         slot="labels"
-        position={[-0.34, 0.7, 0.05]}
-        text="Button module"
-      />
-      <HeroLabel
-        slot="labels"
-        position={[0.0, 0.75, 0.05]}
         text="Temperature & humidity module"
-      />
-      <HeroLabel
-        slot="labels"
-        position={[0.37, 0.7, 0.05]}
-        text="Motion module"
-      />
-      <HeroLabel
-        slot="labels"
-        position={[0.0, 0.05, 0.05]}
-        offsetX={-160}
-        text="LED & buzzer module"
-      />
-      <HeroLabel
-        slot="labels"
-        position={[0.0, -0.65, 0.05]}
-        offsetY={80}
-        text="ESP32 microcontroller"
-      />
+        target="temp"
+      >
+        <p>
+          Keep track of your home’s climate in real time: and use that data to
+          trigger automations to make your home more comfortable and energy
+          efficient.
+        </p>
+      </HeroLabel>
+      <HeroLabel slot="labels" text="Motion module" target="pir">
+        <p>
+          A reliable motion sensor that detects the heat given off by moving
+          people and/or animals: one of the most practical and widely used
+          sensors in home automation.
+        </p>
+      </HeroLabel>
+      <HeroLabel slot="labels" text="LED & buzzer module" target="leds">
+        <p>
+          Programmable lights and a small buzzer give you visual and audio
+          control over your automations: from subtle status indicators to
+          attention-grabbing alerts.
+        </p>
+      </HeroLabel>
+      <HeroLabel slot="labels" text="ESP32 microcontroller" target="compute">
+        <p>
+          The ESP32-C6 is a small-but-mighty chip that powers the entire kit;
+          capable of handling connectivity, device logic, and communication with
+          your smart home setup.
+        </p>
+      </HeroLabel>
     </Hero>
     <YourWay />
     <GallerySection />
@@ -215,6 +229,11 @@ import FaqSection from "@components/starter-kit/FaqSection.astro";
     --esk-collaboration-bg: rgba(0, 0, 0, 0.03);
     --esk-collaboration-border: rgba(0, 0, 0, 0.05);
     --esk-collaboration-text: #1d2126;
+  }
+
+  :global([data-theme="light"] .light\:sl-hidden),
+  :global([data-theme="dark"] .dark\:sl-hidden) {
+    display: none !important;
   }
 
   body {

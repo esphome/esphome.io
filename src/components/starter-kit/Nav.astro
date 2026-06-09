@@ -27,7 +27,7 @@
           <a href="#item">Item</a>
         </div>
         <div class="nav-links-ctas">
-          <a href="#" class="buy btn btn-primary esk-btn">Buy now</a>
+          <a href="#" class="btn esk-btn">Buy now</a>
         </div>
       </div>
       <div class="burger">
@@ -43,7 +43,7 @@
           <a href="#item">Item</a>
           <a href="#item">Item</a>
           <a href="#item">Item</a>
-          <a href="#" class="buy btn btn-primary">Buy now</a>
+          <a href="#" class="btn esk-btn">Buy now</a>
         </div>
       </div>
     </div>
@@ -200,6 +200,7 @@
             margin: 0;
             font-size: 0.875rem;
             font-weight: 600;
+            color: #fff;
           }
         }
       }
@@ -253,6 +254,7 @@
           }
 
           .btn {
+            color: #fff;
             margin: 0;
           }
         }
@@ -265,8 +267,9 @@
         --burger-bar-spacing: 6px;
         --burger-bar-color: var(--sl-color-white);
         --burger-transition-speed: 0.1s;
+
         display: grid;
-        background-color: var(--sl-color-accent);
+        background-color: var(--esk-primary-color);
         place-items: center;
         flex-shrink: 0;
         border-radius: 50%;
@@ -275,6 +278,10 @@
         position: relative;
         cursor: pointer;
         margin: 0;
+
+        &:hover {
+          background-color: var(--esk-secondary-color);
+        }
 
         @include bp(1025px) {
           display: none;
@@ -342,6 +349,22 @@
         label {
           position: absolute;
           inset: 0;
+        }
+      }
+    }
+  }
+
+  :global([data-theme="light"]) {
+    .connect-nav {
+      .logo {
+        img {
+          &.light {
+            opacity: 0;
+          }
+
+          &.dark {
+            opacity: 1;
+          }
         }
       }
     }
