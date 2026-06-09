@@ -80,7 +80,7 @@ We'll update our recommendations here as support matures for newer microcontroll
 You can use the [ESPHome Device Builder](/guides/getting_started_hassio#installing-esphome-device-builder) directly; after editing your device's
 configuration to your liking, click "INSTALL" and follow the prompts. Note that the first time you install ESPHome onto
 a (new) device, you need to connect it with a (USB) cable; this installation method requires a browser that supports
-WebSerial, like Google Chrome or Microsoft Edge.
+WebSerial, like Firefox, Google Chrome or Microsoft Edge.
 
 If you prefer the more manual way:
 
@@ -104,7 +104,7 @@ If you prefer the more manual way:
 
    - [ESPHome Web](https://web.esphome.io/), our web-based installer. This is the easiest approach but requires a
 
-       browser that supports WebSerial, like Google Chrome or Microsoft Edge.
+       browser that supports WebSerial, like Firefox, Google Chrome or Microsoft Edge.
 
        1. Connect the board to your computer, make sure it's detected as a [serial port](/guides/physical_device_connection#esphome-phy-con-drv) and
           click **Connect**.
@@ -450,16 +450,28 @@ current can spike to 300-500mA. The most common causes:
 
 ### Quick fixes
 
-1. **Reduce WiFi transmit power** -- this is the most effective single change:
+1. **Reduce WiFi transmit power** -- this is the most effective single change. See
+   [`output_power`](/components/wifi/#configuration-variables) on the WiFi component page for the full range:
 
 ```yaml
 wifi:
   output_power: 13dB  # default is 20dB
 ```
 
-2. **Use a quality power supply** -- a dedicated 5V/2A supply with a short, thick USB cable.
+2. **Lower the CPU frequency** -- on the ESP32, current draw scales roughly with clock speed. If you cannot
+   change the upstream power hardware (e.g. a modded consumer device or a board wired into an existing circuit),
+   dropping the CPU frequency can keep transient current within what the regulator can supply. The allowed
+   values are variant-specific; see [`cpu_frequency`](/components/esp32/#configuration-variables) on the ESP32
+   platform page for the values supported by your chip:
 
-3. **Add a capacitor** -- a 100-1000µF electrolytic capacitor across the 3.3V and GND pins can absorb brief current spikes.
+```yaml
+esp32:
+  cpu_frequency: 160MHz
+```
+
+3. **Use a quality power supply** -- a dedicated 5V/2A supply with a short, thick USB cable.
+
+4. **Add a capacitor** -- a 100-1000µF electrolytic capacitor across the 3.3V and GND pins can absorb brief current spikes.
 
 ## Component states not restored after reboot
 
