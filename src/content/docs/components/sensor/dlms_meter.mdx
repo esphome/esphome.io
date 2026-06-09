@@ -3,6 +3,7 @@ title: "DLMS Meter"
 description: "Instructions for setting up DLMS (COSEM) smart meter integration"
 ---
 
+import { Image } from 'astro:assets';
 import APIClass from '@components/APIClass.astro';
 import APIRef from '@components/APIRef.astro';
 
@@ -17,7 +18,7 @@ The component does not transmit data to the meter. The meter periodically broadc
 > * **ESP Board:** An **ESP32 is strongly recommended**. ESP8266 boards are unsuitable for large or multi-frame DLMS telegrams and may result in truncated or corrupted frames.
 > * **Encryption:** For encrypted meters, you must request a 32-character hexadecimal **decryption key** from your energy provider.
 
-![Smart meter with M-Bus adapter board to ESP32](/images/dlms_meter.jpg)
+<Image src="/images/dlms_meter.jpg" alt="Smart meter with M-Bus adapter board to ESP32" layout="constrained" />
 
 ## Configuration
 
@@ -39,7 +40,7 @@ sensor:
     name: "Active power taken from grid"
 ```
 
-## Configuration variables
+## Configuration Variables
 
 - **id** (*Optional*, [ID](/guides/configuration-types#config-id)): The ID of the `dlms_meter` component.
 - **uart_id** (*Optional*, [ID](/guides/configuration-types#config-id)): The ID of the UART component that is
@@ -58,7 +59,7 @@ descriptor pattern** that tells the system how to parse the incoming data.
 
 ## Platforms
 
-### Sensor, text sensor, and binary sensor
+### Sensor, Text Sensor, and Binary Sensor
 
 All platforms (`sensor`, `text_sensor`, `binary_sensor`) support dynamic mapping using the `obis_code` property.
 This allows you to decode nearly any property your meter emits.
@@ -86,7 +87,7 @@ sensor:
     state_class: total_increasing
 ```
 
-### Finding your meter's OBIS codes
+### Finding Your Meter's OBIS Codes
 
 Before using this method, it is highly recommended to check your meter's manual or your energy provider's documentation
 for a list of supported OBIS codes.
@@ -94,7 +95,6 @@ for a list of supported OBIS codes.
 > [!TIP]
 > If you are building custom patterns or need to capture the raw hex payload for troubleshooting, change the `dlms_meter`
 > log level to `VERY_VERBOSE`. This will output the full raw buffer and the decrypted AXDR payload.
-
 
 If you are configuring your meter for the first time and do not know which OBIS codes it broadcasts, you can temporarily
 increase the logging level to `VERBOSE`. The component will print all successfully parsed OBIS codes and their values to
@@ -122,7 +122,7 @@ while the `logs` mapping manually sets the specific `dlms_meter` tag to remain a
 
 For more details, refer to the [Logger Component](/components/logger/).
 
-### Legacy keys (Deprecated)
+### Legacy Keys (Deprecated)
 
 > [!WARNING]
 > The `dlms_meter` schema using predefined legacy keys (e.g., `voltage_l1`, `timestamp`) is **deprecated** and will be removed in the **2026.11.0** release.
@@ -183,9 +183,9 @@ text_sensor:
 - **timestamp** (`0.0.1.0.0.255`): Timestamp included in the received frame.
 - **meternumber** (`0.0.96.1.0.255`): Meter number reported by the device.
 
-## Advanced configuration
+## Advanced Configuration
 
-### Advanced configuration example
+### Advanced Configuration Example
 
 This example demonstrates how to use the optional configuration variables for encrypted meters or those requiring custom
 parsing patterns.
@@ -205,7 +205,7 @@ dlms_meter:
       default_obis: "1.0.96.1.0.255"
 ```
 
-### Custom patterns
+### Custom Patterns
 
 You can define a custom pattern simply by passing its pattern string, or by defining an object with additional
 properties:
@@ -216,7 +216,7 @@ properties:
 - **default_obis** (*Optional*, string): The fallback OBIS code to use if the pattern captures no OBIS code. Requires
 **name** to be set. Formatted like `1-0:96.1.0` or `1.0.96.1.0.255`.
 
-#### Built-in patterns
+#### Built-in Patterns
 
 The `dlms_meter` component loads several built-in patterns by default. Built-in patterns start at priority `10`.
 Your custom patterns will be evaluated alongside these based on their configured `priority`.
@@ -233,9 +233,10 @@ Your custom patterns will be evaluated alongside these based on their configured
 | `firstElement-dateTime`               |       80 | first-element date-time structure         |
 | `swappedTagObis-value-scalerUnit`     |       90 | swapped-tag OBIS, value, scaler-unit      |
 
-#### Common custom pattern examples
+#### Common Custom Pattern Examples
 
 Here are some common structures you might encounter on less standard meters:
+
 > [!NOTE]
 > Many of these are now covered by default built-ins, but can be customized further
 
@@ -257,7 +258,7 @@ dlms_meter:
       name: "Landis+Gyr swapped OBIS"
 ```
 
-### Token reference for patterns
+### Token Reference for Patterns
 
 | Token          | Meaning                                    | Hex example                     |
 |----------------|--------------------------------------------|---------------------------------|
@@ -297,7 +298,7 @@ We have explicitly tested and confirmed native support for standard meters inclu
 
 **Sagemcom XT211**, **Energomera**, **Kaifa MA304H3E**, **Salzburg Netz**, **Iskra 550**, and **Norway HAN (Aidon 1-phase and 3-phase)**.
 
-### Specific meter configurations
+### Specific Meter Configurations
 Some manufacturers implement the DLMS standard using non-standard object structuring or framing.
 Below are the tested configuration parameters required for these specific meters:
 
@@ -365,7 +366,7 @@ dlms_meter:
 *(Additional instructions and specific `custom_patterns` for meters from manufacturers can be added here
 as users report the specific setups required for their unique smart meter firmware.)*
 
-## See also
+## See Also
 
 - <APIClass text="DlmsMeterComponent" path="dlms_meter::DlmsMeterComponent" />
 - <APIRef text="dlms_meter.h" path="dlms_meter/dlms_meter.h" />
