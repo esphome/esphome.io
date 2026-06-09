@@ -3,11 +3,7 @@ description: "Instructions for setting up the XDB401 Pressure sensor."
 title: "XIDIBEI XDB401 Pressure Sensor"
 ---
 
-import { Image } from 'astro:assets';
-import Figure from '@components/Figure.astro';
-import APIRef from '@components/APIRef.astro';
-
-XIDIBEI XDB401 came with I²C or anlong also with different max readings and unit often is Pa or Bar
+The XIDIBEI XDB401 is available with either I²C or analog output. This ESPHome platform supports the I²C variant; different models have different maximum pressure ranges and may report in Pa or bar.
 
 <Figure
   src="/images/xdb401.jpg"
@@ -22,7 +18,7 @@ To use the sensor, set up an [I²C Bus](/components/i2c) and connect the sensor 
 
 ```yaml
 # Example configuration entry
-# It uses a filter change the unit
+# It uses a filter to change the unit
 sensor:
   - platform: xdb401
     update_interval: 1s
@@ -43,6 +39,7 @@ sensor:
 ## Configuration variables
 
 - **temperature** (*Optional*): All options from [Sensor](/components/sensor).
+- **pressure_range_bar** (*Optional*, int): Maximum pressure range of your sensor in bar (for example, `10` for a 0–10 bar sensor).
 - **pressure** (*Optional*): All options from [Sensor](/components/sensor).
 - **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to check the sensor. Defaults to `60s`.
 
