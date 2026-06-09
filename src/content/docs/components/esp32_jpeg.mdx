@@ -1,0 +1,69 @@
+---
+description: "Instructions for setting up the ESP32 hardware JPEG codec helper in ESPHome."
+title: "ESP32 JPEG Codec"
+---
+
+import APIRef from "@components/APIRef.astro";
+
+The `esp32_jpeg` component enables ESPHome components to use the hardware JPEG
+encoder/decoder available on supported ESP32 variants.
+
+It is a helper component and does not create Home Assistant entities on its own.
+Other components, or custom C++ code, can use it to compress raw RGB/gray images
+to JPEG or decode JPEG images back to RGB/gray buffers without using a software
+JPEG implementation.
+
+> [!NOTE]
+> This component currently supports ESP32-P4 with the ESP-IDF framework.
+
+```yaml
+# Example configuration entry
+esp32:
+  board: esp32-p4-evboard
+  variant: esp32p4
+  framework:
+    type: esp-idf
+    advanced:
+      enable_idf_experimental_features: true
+
+esp32_jpeg:
+```
+
+## Configuration variables
+
+- **apply_idf_patches** (*Optional*, boolean): Apply ESP-IDF JPEG/DMA2D compatibility
+  patches needed by ESPHome's hardware JPEG helper on supported ESP-IDF versions.
+  These patches correct RGB color-space conversion selection for JPEGs using
+  different YUV subsampling modes and use full-range YUV-to-RGB conversion
+  matrices. Defaults to `true`.
+
+## Usage
+
+The component provides a C++ helper API for encode/decode paths. It is primarily
+intended for other ESPHome components that need a reusable JPEG hardware backend,
+such as camera, display, LVGL, or snapshot/cache implementations.
+
+The helper supports:
+
+- Encoding RGB565, RGB888, or grayscale input buffers to JPEG.
+- Decoding JPEG images to RGB565, RGB888, or grayscale output buffers.
+- RGB/BGR element order selection for RGB888 decode output.
+- BT.601 and BT.709 YUV/RGB conversion standards.
+- YUV444, YUV422, YUV420, and grayscale JPEG sampling modes where supported by
+  the ESP-IDF driver and target chip.
+
+## Limitations
+
+- Only ESP32 variants with `SOC_JPEG_CODEC_SUPPORTED` can use the hardware
+  encoder/decoder.
+- The initial ESPHome integration is limited to ESP32-P4 and ESP-IDF.
+- This component provides the codec backend only. Higher-level components decide
+  when to capture, resize, cache, stream, or display image data.
+
+## See Also
+
+- [ESP32 Platform](/components/esp32/)
+- [ESP32 Camera](/components/esp32_camera/)
+- [Camera Encoder](/components/camera/camera_encoder/)
+- [LVGL Graphics](/components/lvgl/)
+- <APIRef text="esp32_jpeg.h" path="esp32_jpeg/esp32_jpeg.h" />
