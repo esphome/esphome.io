@@ -546,11 +546,9 @@
           }
           for (const label of labels) {
             if (focusing) {
-              // Hide labels for groups other than the focused one.
-              label.el.classList.toggle(
-                "is-other-active",
-                label.groupIdx !== idx,
-              );
+              // Hide all labels when a module is focused — the detail card
+              // shows the title and content instead.
+              label.el.classList.add("is-other-active");
             }
             // When reverting, leave is-other-active in place — cycleUpdater
             // removes it once the camera has returned to home position so
@@ -617,6 +615,20 @@
             progressFill.style.transition = "none";
             progressFill.style.width = "0%";
             progressBar.style.opacity = "0";
+          }
+        };
+
+        // Shared handler for both mesh clicks and label clicks.
+        // Clicking the active module reverts; clicking any other focuses it
+        // and starts the idle-revert countdown.
+        const focusModule = (idx: number) => {
+          if (idx === activeIdx) {
+            setActive(-1);
+            cancelRevert();
+          } else {
+            setActive(idx);
+            cancelRevert();
+            scheduleRevert();
           }
         };
 
@@ -826,17 +838,7 @@
           const hits = raycaster.intersectObjects(allMeshes, false);
           if (!hits.length) return;
           const idx = groupForObject(hits[0].object);
-          if (idx !== -1) {
-            // Clicking the already-active module zooms back out to the
-            // overview; clicking another module focuses it.
-            if (idx === activeIdx) {
-              setActive(-1);
-              cancelRevert();
-            } else {
-              setActive(idx);
-              cancelRevert();
-            }
-          }
+          if (idx !== -1) focusModule(idx);
         });
         canvas.addEventListener("pointercancel", () => {
           pointerDown = null;
@@ -905,6 +907,15 @@
           }
           label.groupIdx = bestIdx;
         }
+
+        // Wire up label clicks — same behaviour as clicking the mesh directly.
+        for (const label of labels) {
+          label.el.addEventListener("click", () => {
+            heroPrompt?.classList.add("hero-prompt--hidden");
+            if (label.groupIdx !== -1) focusModule(label.groupIdx);
+          });
+        }
+
         setTimeout(() => {
           labelsEnabled = true;
         }, 600);
@@ -1342,10 +1353,6 @@
       margin: 0 0 0.4rem;
       color: #002e3e;
       text-transform: uppercase;
-
-      @include bp(tablet) {
-        display: none;
-      }
     }
 
     &__body {
