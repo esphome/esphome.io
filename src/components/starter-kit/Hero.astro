@@ -291,8 +291,14 @@
         // camera lerp toward the active group's state.
         const SOLID_LERP = 0.08;
         const ZOOM_LERP = 0.06;
-        // Wireframe opacity when a group is fully inactive.
-        const WIRE_DIM = 0.1;
+        // Wireframe opacity when a group is fully inactive (shown while
+        // another module is focused). Kept high enough that the unfocused
+        // modules read as the connected blueprint they actually are.
+        const WIRE_DIM = 0.3;
+        // Minimum edge opacity for the active/default state. A faint sketch
+        // outline is kept on every module at rest so the kit reads as one
+        // designed board rather than disconnected, floating parts.
+        const WIRE_MIN = 0.05;
         // Monochrome wireframe palette. Adapts to the Starlight theme so the
         // sketch stays readable on either bg:
         //   dark theme  → near-black fill, white edges
@@ -506,6 +512,12 @@
         // Scratch vector for the mobile-adjusted orbit target (avoids allocating
         // a new Vector3 every frame).
         const _mobileFocusTarget = new THREE.Vector3();
+        // Scratch + smoothed state for the detail card's per-frame screen
+        // positioning (see cycleUpdater).
+        const _detailProj = new THREE.Vector3();
+        let _detailCardCurrentLeft = 0;
+        let _detailCardCurrentTop = 0;
+        let _detailCardHasPos = false;
         // On mobile the popup covers the bottom of the canvas, so shift the
         // orbit target down (world Y) so the module frames toward the upper
         // portion of the canvas. Also zoom in tighter.
@@ -620,7 +632,11 @@
             // otherwise the selected group is solid, the rest go wireframe.
             const isActive = activeIdx === -1 || i === activeIdx;
             const targetSolid = isActive ? 1 : 0;
-            const targetWire = WIRE_DIM * (1 - targetSolid);
+            // Keep a faint pencil-sketch edge on every module even in the
+            // fully-solid state so the assembly reads as one designed board.
+            const targetWire = isActive
+              ? WIRE_MIN
+              : WIRE_DIM * (1 - targetSolid) + WIRE_MIN * targetSolid;
             const introF = introFactor(i, now);
             root.position
               .copy(introOriginalPos[i])
@@ -707,6 +723,56 @@
             .copy(controls.target)
             .addScaledVector(dirFromTarget, nextDist);
           camera.position.copy(desiredCamPos);
+
+          // Detail card placement: when a module is focused, anchor the card
+          // just below the projected centre of that module so it reads as a
+          // callout for the zoomed-in part rather than a corner overlay.
+          // Mobile (width < 768) keeps the bottom-sheet behaviour from CSS.
+          if (detailCard) {
+            if (width < 768 || activeIdx === -1) {
+              if (_detailCardHasPos) {
+                detailCard.style.left = "";
+                detailCard.style.top = "";
+                detailCard.style.bottom = "";
+                _detailCardHasPos = false;
+              }
+            } else {
+              const focusGroup = groupFocus[activeIdx];
+              if (focusGroup) {
+                _detailProj.copy(focusGroup.center).project(camera);
+                const screenX = ((_detailProj.x + 1) / 2) * width;
+                const screenY = ((-_detailProj.y + 1) / 2) * height;
+                const cardW = detailCard.offsetWidth || 280;
+                const cardH = detailCard.offsetHeight || 100;
+                const MARGIN = 16;
+                // Drop the card below the projected module centre by a
+                // distance that scales with viewport height, so on tall
+                // viewports the card doesn't crowd the module.
+                const drop = Math.min(140, Math.max(70, height * 0.18));
+                const desiredLeft = Math.max(
+                  MARGIN,
+                  Math.min(width - cardW - MARGIN, screenX - cardW / 2),
+                );
+                const desiredTop = Math.max(
+                  MARGIN,
+                  Math.min(height - cardH - MARGIN, screenY + drop),
+                );
+                if (!_detailCardHasPos) {
+                  _detailCardCurrentLeft = desiredLeft;
+                  _detailCardCurrentTop = desiredTop;
+                  _detailCardHasPos = true;
+                } else {
+                  _detailCardCurrentLeft +=
+                    (desiredLeft - _detailCardCurrentLeft) * 0.18;
+                  _detailCardCurrentTop +=
+                    (desiredTop - _detailCardCurrentTop) * 0.18;
+                }
+                detailCard.style.left = `${_detailCardCurrentLeft}px`;
+                detailCard.style.top = `${_detailCardCurrentTop}px`;
+                detailCard.style.bottom = "auto";
+              }
+            }
+          }
         };
 
         // Raycaster click handling: pick whichever top-level group contains

@@ -55,20 +55,53 @@ import TitleText from "@components/starter-kit/TitleText.astro";
     </Card>
     <Card data-delay="150">
       <IconTextGroup line>
-        <IconText animated="call" text="Hop on a call" />
+        <IconText animated="temp-low" text="Temperature drops" />
         <IconText
           animated="led"
           delay="0.5s"
-          text="Turn on LEDs and sound an alarm"
+          text="Flash LEDs and sound an alarm"
         />
       </IconTextGroup>
-      <h3>Call indicator</h3>
+      <h3>Frost warning</h3>
       <p>
-        Program LEDs to turn red and a chime to sound when you're busy so people
-        know not to disturb you.
+        Get a visual and audible alert before pipes freeze: when the sensor
+        reads near zero, the LEDs flash red and the buzzer chimes.
       </p>
     </Card>
   </CardGroup>
+
+  <p class="examples-note">
+    These are just a few starting points. Each module can drive a huge range of
+    automations &mdash; combine them however you like, then take what you learn
+    and build something new. <a
+      href="https://wiki.apolloautomation.com/products/ESPHome-Starter-Kit/start-here/"
+      target="_blank"
+      rel="noopener">See more in the Wiki &rarr;</a
+    >
+  </p>
 </section>
 
-<style lang="scss"></style>
+<style lang="scss">
+  @use "../../styles/mixins" as *;
+
+  .examples-note {
+    @include fluid(14, 16);
+    margin: 2.5rem auto 0;
+    max-width: 720px;
+    text-align: center;
+    text-wrap: balance;
+    color: var(--esk-body-colour);
+    line-height: 1.5;
+
+    a {
+      color: var(--esk-title-colour);
+      font-weight: 600;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+
+      &:hover {
+        text-decoration-thickness: 2px;
+      }
+    }
+  }
+</style>

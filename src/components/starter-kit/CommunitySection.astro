@@ -1,0 +1,74 @@
+---
+import CardGroup from "@components/CardGroup.astro";
+import Card from "@components/Card.astro";
+import IconText from "@components/IconText.astro";
+import TitleText from "@components/starter-kit/TitleText.astro";
+
+interface CommunityLink {
+  title: string;
+  description: string;
+  href: string;
+  icon?: "stand" | "board" | "book";
+  delay?: number;
+}
+
+// Placeholder community links \u2014 swap for real URLs as the community shares
+// them. The intent is to mirror the VPE pattern: tie the product into the
+// broader maker community so people see they're joining something.
+const links: CommunityLink[] = [
+  {
+    title: "3D-printable cases",
+    description:
+      "Community-designed enclosures, stands and mounts for every module \u2014 ready to print and remix.",
+    href: "https://wiki.apolloautomation.com/products/ESPHome-Starter-Kit/community/",
+    icon: "stand",
+    delay: 0,
+  },
+  {
+    title: "Configurations to copy",
+    description:
+      "Browse YAML configs from other builders, fork what works, and share your own creations back.",
+    href: "https://github.com/esphome/esphome-devices",
+    icon: "board",
+    delay: 150,
+  },
+  {
+    title: "Join the conversation",
+    description:
+      "Show off what you've built, get help, and find inspiration in the ESPHome community.",
+    href: "https://discord.gg/KhAMKrd",
+    icon: "book",
+    delay: 300,
+  },
+];
+---
+
+<section id="community" class="block-community">
+  <TitleText>
+    <h2 slot="title" class="title">Built with the community</h2>
+    <p slot="text">
+      The Starter Kit is just the starting point. Tap into a community of makers
+      already designing cases, sharing configurations, and remixing the kit into
+      projects of their own.
+    </p>
+  </TitleText>
+
+  <CardGroup columns={3}>
+    {
+      links.map((link) => (
+        <Card
+          href={link.href}
+          rel="noopener noreferrer"
+          target="_blank"
+          data-delay={link.delay}
+        >
+          {link.icon && <IconText icon={link.icon} />}
+          <h3>{link.title}</h3>
+          <p>{link.description}</p>
+        </Card>
+      ))
+    }
+  </CardGroup>
+</section>
+
+<style lang="scss"></style>
