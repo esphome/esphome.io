@@ -126,13 +126,13 @@ Zigbee can have some overrides for specific options.
 
 Only on `ESP32`:
 
-- **report** (*Optional*, enum): Report the state. One of `coordinator`, `enable`, `force`. `coordinator` uses the configuration from
-  the coordinator, `enable` activates reporting with default settings and uses the configuration from the coordinator if possible.
-  `force` ignores the coordinator configuration and reports every change. On `nRF52` the coordinator configuration is always used.
-  Defaults to `coordinator`.
+- **report** (*Optional*, enum): How the state is reported. One of `default` or `force`. `default` activates reporting with default settings
+  and uses the configuration from the coordinator if possible. `force` sends manual reports for every change to the coordinator.
+  On `nRF52` the coordinator configuration is always used.
+  Defaults to `default`.
 
 > [!NOTE]
-> ZHA sets the minimum reporting interval to 30 seconds for most sensor devices. If you need faster responses set `report` to `force`.
+> ZHA sets the minimum reporting interval to 30 seconds for some sensor devices. If a faster response is needed set `report` to `force`.
 
 
 ## Supported Components
