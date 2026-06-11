@@ -121,7 +121,7 @@ async function checkFileExtension(fname) {
 }
 
 async function checkExecutableBit(fname, gitMode) {
-  const exclude = ["script/", ".devcontainer/", "lint.py"];
+  const exclude = ["script/", ".devcontainer/"];
   if (exclude.some((ex) => fname.startsWith(ex) || fname === ex)) {
     return;
   }
