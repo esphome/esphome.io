@@ -47,7 +47,8 @@ const PIXEL_COUNT = 20;
 // the scan's dot lights each pixel at two different phases (out and back), and the
 // fireworks sparks bloom into their neighbours. Rather than animate from client-side JS,
 // we generate per-pixel @keyframes here at build time, so the rendered page stays pure CSS.
-// Only the scan/fireworks instances emit a block, so each keyframe set appears once per page.
+// Each scan/fireworks preview injects its own block; the light page uses a single instance of
+// each, so the keyframes appear once. Repeating the same effect on one page would duplicate them.
 
 type Rgb = [number, number, number];
 
@@ -661,15 +662,19 @@ if (type === "scan") {
     .fx-fireworks .fx-pixel:nth-child(6) {
       background: #5e1320;
     }
-    .fx-fireworks .fx-pixel:nth-child(13) {
+    .fx-fireworks .fx-pixel:nth-child(8) {
       background: #209cee;
     }
-    .fx-fireworks .fx-pixel:nth-child(12),
-    .fx-fireworks .fx-pixel:nth-child(14) {
+    .fx-fireworks .fx-pixel:nth-child(7),
+    .fx-fireworks .fx-pixel:nth-child(9) {
       background: #0c3a57;
     }
-    .fx-fireworks .fx-pixel:nth-child(18) {
+    .fx-fireworks .fx-pixel:nth-child(17) {
       background: #23d160;
+    }
+    .fx-fireworks .fx-pixel:nth-child(16),
+    .fx-fireworks .fx-pixel:nth-child(18) {
+      background: #0d4d24;
     }
     .fx-addr-flicker .fx-pixel {
       opacity: 0.9;
