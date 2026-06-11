@@ -203,7 +203,7 @@ See [Page navigation footer](/cookbook/lvgl#lvgl-cookbook-navigator) in the Cook
 
 The `buffer_size` option is a percentage of the display size. For example, if you have a 320x240 display, the buffer size is `320 * 240 * 2` bytes (for RGB565) = `153600` bytes. If you set the buffer size to `50%`,
 then the buffer will be `76800` bytes. If you set it to `25%`, then the buffer will be `38400` bytes. The default value is `100%`.
-Internally, configured percentages are mapped to supported draw-buffer fractions such as `100%`, `50%`, `25%`, `12.5%`, `6.25%`, `3.125%` and `1.5625%`.
+Internally, configured percentages are mapped to supported draw-buffer fractions such as `100%`, `50%`, `25%`, `12.5%`, `6.25%`, `3.125%` and `1.5625%`. This allows memory-constrained or performance-tuned ESP32 display configurations to request smaller partial draw buffers instead of being rounded up to `12.5%` / 1/8 of the screen.
 
 When using larger displays on devices with limited RAM (i.e. no PSRAM), you may want to reduce the buffer size to avoid running out of RAM.
 If not specified, the buffer size will be 100%, but a fallback
