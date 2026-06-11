@@ -42,9 +42,6 @@
     <div class="block-hero__asset-container">
       <div class="block-hero__asset-stage" data-hero-loading>
         <canvas id="hero-scene"></canvas>
-        <div class="hero-progress" id="hero-progress" aria-hidden="true">
-          <div class="hero-progress__fill"></div>
-        </div>
         <svg class="block-hero__label-lines" aria-hidden="true"></svg>
         <div class="block-hero__loader" aria-hidden="true"></div>
         <slot name="labels" />
@@ -54,7 +51,19 @@
           id="hero-detail-card"
           aria-hidden="true"
         >
-          <h3 class="hero-detail-card__title" data-detail-title></h3>
+          <div class="hero-detail-card__header">
+            <h3 class="hero-detail-card__title" data-detail-title></h3>
+            <button
+              class="hero-detail-card__close"
+              type="button"
+              aria-label="Close"
+              data-detail-close
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+              </svg>
+            </button>
+          </div>
           <div class="hero-detail-card__body" data-detail-body></div>
         </aside>
       </div>
@@ -559,11 +568,6 @@
             _returningHome = true;
             detailCard.classList.remove("is-active");
             detailCard.setAttribute("aria-hidden", "true");
-            if (progressBar && progressFill) {
-              progressFill.style.transition = "none";
-              progressFill.style.width = "0%";
-              progressBar.style.opacity = "0";
-            }
             return;
           }
           const match = labels.find((l) => l.groupIdx === idx);
@@ -584,38 +588,17 @@
           applyActiveState(idx);
         };
 
-        const IDLE_REVERT_MS = 5000;
+        const IDLE_REVERT_MS = 15_000;
         let revertTimer: ReturnType<typeof setTimeout> | undefined;
-        const progressBar =
-          assetContainer?.querySelector<HTMLElement>("#hero-progress") ?? null;
-        const progressFill =
-          progressBar?.querySelector<HTMLElement>(".hero-progress__fill") ??
-          null;
-        const scheduleRevert = () => {
-          if (revertTimer) clearTimeout(revertTimer);
-          revertTimer = setTimeout(() => {
-            setActive(-1);
-          }, IDLE_REVERT_MS);
-          if (progressBar && progressFill) {
-            progressFill.style.transition = "none";
-            progressFill.style.width = "0%";
-            progressBar.style.opacity = "1";
-            requestAnimationFrame(() => {
-              progressFill.style.transition = `width ${IDLE_REVERT_MS}ms linear`;
-              progressFill.style.width = "100%";
-            });
-          }
-        };
         const cancelRevert = () => {
           if (revertTimer) {
             clearTimeout(revertTimer);
             revertTimer = undefined;
           }
-          if (progressBar && progressFill) {
-            progressFill.style.transition = "none";
-            progressFill.style.width = "0%";
-            progressBar.style.opacity = "0";
-          }
+        };
+        const scheduleRevert = () => {
+          cancelRevert();
+          revertTimer = setTimeout(() => setActive(-1), IDLE_REVERT_MS);
         };
 
         // Shared handler for both mesh clicks and label clicks.
@@ -627,7 +610,6 @@
             cancelRevert();
           } else {
             setActive(idx);
-            cancelRevert();
             scheduleRevert();
           }
         };
@@ -843,9 +825,6 @@
         canvas.addEventListener("pointercancel", () => {
           pointerDown = null;
         });
-        // While the user is actively manipulating OrbitControls (drag/zoom)
-        // pause the idle timer; restart it on release so the 3s countdown
-        // measures inactivity rather than total elapsed time.
         controls.addEventListener("start", () => {
           _zoomingIn = false;
           cancelRevert();
@@ -915,6 +894,13 @@
             if (label.groupIdx !== -1) focusModule(label.groupIdx);
           });
         }
+
+        detailCard
+          ?.querySelector<HTMLElement>("[data-detail-close]")
+          ?.addEventListener("click", () => {
+            setActive(-1);
+            cancelRevert();
+          });
 
         setTimeout(() => {
           labelsEnabled = true;
@@ -1214,23 +1200,6 @@
         touch-action: none;
       }
 
-      .hero-progress {
-        position: absolute;
-        top: 0;
-        left: 0;
-        height: 2px;
-        width: 100%;
-        background-color: var(--esk-primary-color--light);
-        pointer-events: none;
-        opacity: 0;
-        z-index: 20;
-
-        &__fill {
-          height: 100%;
-          width: 0%;
-          background-color: var(--esk-primary-color);
-        }
-      }
     }
 
     &__loader {
@@ -1347,12 +1316,39 @@
       transform: none;
     }
 
+    &__header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 0.5rem;
+      margin-bottom: 0.4rem;
+    }
+
     &__title {
       font-size: 0.875rem;
       font-weight: 700;
-      margin: 0 0 0.4rem;
+      margin: 0;
       color: #002e3e;
       text-transform: uppercase;
+    }
+
+    &__close {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: none;
+      border: none;
+      padding: 0;
+      margin-top: -2px;
+      cursor: pointer;
+      color: #002e3e;
+      opacity: 0.5;
+      transition: opacity 0.15s;
+
+      &:hover {
+        opacity: 1;
+      }
     }
 
     &__body {
