@@ -122,67 +122,6 @@ while the `logs` mapping manually sets the specific `dlms_meter` tag to remain a
 
 For more details, refer to the [Logger Component](/components/logger/).
 
-### Legacy Keys (Deprecated)
-
-> [!WARNING]
-> The `dlms_meter` schema using predefined legacy keys (e.g., `voltage_l1`, `timestamp`) is **deprecated** and will be removed in the **2026.11.0** release.
-> Please update your configuration to use the new schema with the `obis_code` variable as shown above.
->
-> Additionally, the `provider` configuration option is **deprecated** and will be completely removed in the 2026.11.0 release:
-> * For most providers, the new parsing library dynamically handles meter quirks, rendering the manual provider definition unnecessary. The key will be safely ignored and should be removed.
-> * For `provider: netznoe`, the required `custom_patterns` are automatically injected for this release to maintain compatibility. However, you **must** update your configuration before 2026.11.0 by removing the `provider` key and explicitly replacing it with the following:
->
-> ```yaml
-> custom_patterns:
->   - pattern: "L, TSTR"
->     name: "MeterID"
->     default_obis: "0.0.96.1.0.255"
->   - pattern: "F, TDTM"
->     name: "DateTime"
->     default_obis: "0.0.1.0.0.255"
-> ```
-
-For backwards compatibility until the deprecation deadline, the legacy predefined keys from earlier versions are still supported and mapped automatically to their respective OBIS codes.
-Add only the ones you need. All support standard options from their
-respective platform domains.
-
-```yaml
-sensor:
-  - platform: dlms_meter
-    dlms_meter_id: dlms_meter_hub
-    voltage_l1:
-      name: "Voltage Phase 1"
-    voltage_l2:
-      name: "Voltage Phase 2"
-
-text_sensor:
-  - platform: dlms_meter
-    dlms_meter_id: dlms_meter_hub
-    meternumber:
-      name: "Meter Number"
-```
-
-**Sensors:**
-
-- **voltage_l1** (`1.0.32.7.0.255`): Voltage Phase 1.
-- **voltage_l2** (`1.0.52.7.0.255`): Voltage Phase 2.
-- **voltage_l3** (`1.0.72.7.0.255`): Voltage Phase 3.
-- **current_l1** (`1.0.31.7.0.255`): Current Phase 1.
-- **current_l2** (`1.0.51.7.0.255`): Current Phase 2.
-- **current_l3** (`1.0.71.7.0.255`): Current Phase 3.
-- **active_power_plus** (`1.0.1.7.0.255`): Active power taken from grid.
-- **active_power_minus** (`1.0.2.7.0.255`): Active power put into grid.
-- **active_energy_plus** (`1.0.1.8.0.255`): Cumulative active energy taken from grid.
-- **active_energy_minus** (`1.0.2.8.0.255`): Cumulative active energy exported to grid.
-- **reactive_energy_plus** (`1.0.3.8.0.255`): Reactive energy taken from grid.
-- **reactive_energy_minus** (`1.0.4.8.0.255`): Reactive energy exported to grid.
-- **power_factor** (`1.0.13.7.0.255`): Power factor.
-
-**Text Sensors:**
-
-- **timestamp** (`0.0.1.0.0.255`): Timestamp included in the received frame.
-- **meternumber** (`0.0.96.1.0.255`): Meter number reported by the device.
-
 ## Advanced Configuration
 
 ### Advanced Configuration Example
@@ -223,15 +162,16 @@ Your custom patterns will be evaluated alongside these based on their configured
 
 | Name                                  | Priority | Typical use                               |
 |---------------------------------------|---------:|-------------------------------------------|
-| `classId-taggedObis-scaler-value`     |       10 | class ID, tagged OBIS, scaler, value      |
-| `taggedObis-value-scalerUnit`         |       20 | tagged OBIS, value, scaler-unit structure |
-| `value-classId-scalerUnit-taggedObis` |       30 | value first, class ID, scaler-unit, OBIS  |
-| `zpaAidon-untaggedLayout`             |       40 | untagged ZPA/Aidon-style layouts          |
-| `structuredObis-value-scalerUnit`     |       50 | OBIS, value, scaler-unit structure        |
-| `structuredObis-value`                |       60 | OBIS and value structure                  |
-| `flatObis-valuePair`                  |       70 | flat OBIS + value pairs                   |
-| `firstElement-dateTime`               |       80 | first-element date-time structure         |
-| `swappedTagObis-value-scalerUnit`     |       90 | swapped-tag OBIS, value, scaler-unit      |
+| `SelfDescribing`                      |       10 | definitions array + values                |
+| `classId-taggedObis-scaler-value`     |       20 | class ID, tagged OBIS, scaler, value      |
+| `taggedObis-value-scalerUnit`         |       30 | tagged OBIS, value, scaler-unit structure |
+| `value-classId-scalerUnit-taggedObis` |       40 | value first, class ID, scaler-unit, OBIS  |
+| `zpaAidon-untaggedLayout`             |       50 | untagged ZPA/Aidon-style layouts          |
+| `structuredObis-value-scalerUnit`     |       60 | OBIS, value, scaler-unit structure        |
+| `structuredObis-value`                |       70 | OBIS and value structure                  |
+| `flatObis-valuePair`                  |       80 | flat OBIS + value pairs                   |
+| `firstElement-dateTime`               |       90 | first-element date-time structure         |
+| `swappedTagObis-value-scalerUnit`     |      100 | swapped-tag OBIS, value, scaler-unit      |
 
 #### Common Custom Pattern Examples
 
