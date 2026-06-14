@@ -37,7 +37,13 @@ esp_video_camera:
   - `uvc` / `uvc0` … `uvc9`: a USB-UVC camera.
   - `csi`: the raw MIPI-CSI device.
   - `/dev/videoN`: an explicit V4L2 device path.
-- **resolution** (*Optional*, string): `auto` (sensor native, default), an alias (`QVGA`, `VGA`/`480P`, `720P`, `1080P`) or `WIDTHxHEIGHT`. Applied best-effort for the hardware JPEG path; reliable for USB-UVC.
+- **resolution** (*Optional*, string): Capture resolution. Defaults to `auto`,
+  which uses the detected sensor's native format and is the most reliable
+  choice. You can also request a specific resolution **that the sensor
+  supports** — an alias (`QVGA`, `VGA`/`480P`, `720P`, `1080P`) or
+  `WIDTHxHEIGHT` (e.g. `1280x720`). A specific value is applied best-effort: if
+  the sensor cannot provide it, the current format is kept. The available
+  resolutions depend on the detected sensor.
 - **jpeg_quality** (*Optional*, int): `1`–`63` for the hardware JPEG encoder. Defaults to `10`.
 - **max_framerate** (*Optional*, float): Maximum frames per second delivered to Home Assistant. Defaults to `10`.
 - **xclk_pin** (*Optional*, pin): Sensor XCLK pin, or `-1` for an on-board oscillator. Defaults to `GPIO36`.
@@ -49,4 +55,5 @@ esp_video_camera:
 ## See Also
 
 - [Camera Component](/components/camera/)
+
 
