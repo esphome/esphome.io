@@ -1,1 +1,52 @@
+---
+title: ESP-Video Camera
+description: Instructions for setting up an ESP-Video (V4L2) camera on the ESP32-P4 in ESPHome.
+---
+
+The `esp_video_camera` [camera](/components/camera/) platform exposes the camera of an
+**ESP32-P4** to Home Assistant as a native camera entity, using Espressif's
+`esp_video` (V4L2) framework. It works with auto-detected MIPI-CSI sensors
+(SC202CS, OV5647, OV02C10, SC2336) through the hardware JPEG encoder, and with
+USB-UVC cameras on the USB-OTG port.
+
+Requires an [I²C](/components/i2c/) bus and the ESP-IDF framework on the ESP32-P4.
+
+```yaml
+# Shared I2C bus for the camera sensor
+i2c:
+  - id: bus_a
+    sda: GPIO31
+    scl: GPIO32
+    frequency: 400kHz
+
+esp_video_camera:
+  name: ESP32-P4 Camera
+  i2c_id: bus_a
+  device: jpeg
+  resolution: auto
+  jpeg_quality: 10
+  max_framerate: 10
+```
+
+## Configuration variables
+
+- **name** (**Required**, string): The name of the camera entity.
+- **i2c_id** (**Required**, ID): The [I²C](/components/i2c/) bus used to talk to the MIPI-CSI sensor (SCCB).
+- **device** (*Optional*, string): Frame source. Defaults to `jpeg`.
+  - `jpeg`: the hardware JPEG encoder — works with every auto-detected MIPI sensor.
+  - `uvc` / `uvc0` … `uvc9`: a USB-UVC camera.
+  - `csi`: the raw MIPI-CSI device.
+  - `/dev/videoN`: an explicit V4L2 device path.
+- **resolution** (*Optional*, string): `auto` (sensor native, default), an alias (`QVGA`, `VGA`/`480P`, `720P`, `1080P`) or `WIDTHxHEIGHT`. Applied best-effort for the hardware JPEG path; reliable for USB-UVC.
+- **jpeg_quality** (*Optional*, int): `1`–`63` for the hardware JPEG encoder. Defaults to `10`.
+- **max_framerate** (*Optional*, float): Maximum frames per second delivered to Home Assistant. Defaults to `10`.
+- **xclk_pin** (*Optional*, pin): Sensor XCLK pin, or `-1` for an on-board oscillator. Defaults to `GPIO36`.
+- **xclk_frequency** (*Optional*, float): XCLK frequency (1–40 MHz). Defaults to `24MHz`.
+- **enable_xclk** (*Optional*, boolean): Generate XCLK via LEDC (non-M5Stack boards). Defaults to `false`.
+- **enable_uvc** (*Optional*, boolean): Bring up the USB host + UVC driver for an external USB camera. Defaults to `false`.
+- All other options from the [Camera](/components/camera/) component.
+
+## See Also
+
+- [Camera Component](/components/camera/)
 
