@@ -120,8 +120,6 @@ If behavior is not as expected, it is recommended to use esphome_locks: True and
 > [!NOTE]
 > It is very important to understand the section: [Dynamic Frequency Scaling and Peripheral Drivers](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/system/power_management.html#dynamic-frequency-scaling-and-peripheral-drivers)
 
-When enable_light_sleep = true, and the main task loop is the only loop holding a lock, typically `rtos0`, the power_management component will set a task notification of `CONFIG_ESP_TASK_WDT_TIMEOUT_S * 1000) - 100` to allow the device to enter light sleep.
-
 ## Using esp_pm_dump_locks
 
 When using profiling: True, the esp-id function esp_pm_dump_locks can be output to stdout and provide insight into how Power Management is setting and removing locks:
