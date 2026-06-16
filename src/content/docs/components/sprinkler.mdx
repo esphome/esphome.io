@@ -1033,6 +1033,121 @@ queue entry will be picked up *before* the next valve that would run as a part o
 behavior cannot be changed. It should also be noted that the queue has a hard-coded limit of 100 entries to limit
 memory use.
 
+### The Sprinkler Controller Queue
+
+The queuing mechanism is an unusual feature for a sprinkler controller; it becomes useful as a result of the
+extreme flexibility of both ESPHome and Home Assistant. Given the extensive ecosystem of devices available today,
+the sprinkler controller's queuing mechanism provides an advanced feature aimed at allowing even more advanced automation.
+
+In general, it comes down to flexibility: the more traditional "run full cycle" and "run single valve" functionality
+is intended for use by humans (via the front end or physical control interface) while the queuing mechanism is aimed
+at supporting automation.
+
+Here's a practical example:
+
+### Example: Soil-Moisture-Based Smart Irrigation
+
+The sprinkler controller queue can be combined with capacitive soil moisture sensors to create an automated irrigation system that waters only the areas that need it.
+
+#### Hardware
+
+* ESP32
+* Capacitive soil moisture sensors
+* Relay module or sprinkler valve controller
+* Sprinkler Controller component
+* Home Assistant (optional)
+
+#### Concept
+
+Each irrigation zone is associated with a dedicated soil moisture sensor.
+
+For example:
+
+| Zone   | Area             | Moisture Sensor |
+| ------ | ---------------- | --------------- |
+| Zone 1 | Front Lawn       | Sensor 1        |
+| Zone 2 | Vegetable Garden | Sensor 2        |
+| Zone 3 | Flower Bed       | Sensor 3        |
+
+The moisture value of each sensor is monitored continuously.
+
+When the measured value falls below a configured threshold, that zone is added to the sprinkler controller queue.
+
+#### Example Automation Logic
+
+```yaml
+if:
+  condition:
+    lambda: 'return id(front_lawn_moisture).state < 30;'
+  then:
+    - sprinkler.queue_valve:
+        id: yard_controller
+        valve_number: 1
+        run_duration: 10min
+```
+
+Additional zones can be queued independently based on their own moisture readings.
+
+#### Scheduled Watering
+
+Instead of watering immediately, queued zones can be processed at a fixed time each day.
+
+For example, Home Assistant can call:
+
+```yaml
+service: sprinkler.start_from_queue
+```
+
+every morning at 6:00 AM.
+
+This allows irrigation to occur during cooler hours while still responding to real-time soil conditions.
+
+#### Dynamic Run Times
+
+Run duration can be adjusted according to soil moisture levels.
+
+Example strategy:
+
+| Soil Moisture | Run Time |
+| ------------- | -------- |
+| 25–30%        | 5 min    |
+| 20–25%        | 10 min   |
+| 15–20%        | 15 min   |
+| Below 15%     | 20 min   |
+
+This enables water-efficient irrigation while preventing overwatering.
+
+#### Benefits
+
+* Waters only zones that require irrigation
+* Reduces water consumption
+* Supports multiple gardens and lawn areas
+* Easily integrated with Home Assistant automations
+* Can be expanded with weather forecasts, rainfall sensors, or water usage monitoring
+* Demonstrates a practical smart agriculture and smart landscaping use case
+
+```
+```
+
+
+Consider a home with a yard divided into a number of sprinkler zones -- perhaps it even includes a garden or two
+(flowers and vegetables, of course!). An array of soil moisture sensors could be deployed throughout the various
+zones and gardens and when a given sensor falls below some defined threshold, that sensor's zone is entered into
+the sprinkler controller's queue.
+
+Then, each morning at some specific hour, Home Assistant (or even the ESP device itself!) calls the sprinkler
+controller's `sprinkler.start_from_queue` action, causing the controller to iterate only through queued zones.
+Because the run duration may be specified as a part of the queue request, this could be extended to compute a
+specific run duration for each zone depending on the specific moisture level of the soil on any given day. The
+possibilities are endless and are only limited by your creativity!
+
+It is important to note that, if *both* the auto-advance and queue switches are turned on/enabled, **queued valves
+take precedence over valves that would run as a part of a full cycle of the system.** In other words, if the queue
+is enabled and a valve is entered into the queue while a full cycle is active, at the next valve transition, the
+queue entry will be picked up *before* the next valve that would run as a part of the full cycle. At present, this
+behavior cannot be changed. It should also be noted that the queue has a hard-coded limit of 100 entries to limit
+memory use.
+
 ### Expose Sprinkler Controller Actions via user-API
 
 This configuration snippet illustrates how user-defined ESPHome API actions may be used to expose
