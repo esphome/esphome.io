@@ -33,7 +33,7 @@ It helps to think of the setup as a three-stage pipeline:
 - **[UART](/components/uart/)** moves raw bytes on and off the wire.
 - **`rs485_frame`** turns that byte stream into validated frames: delimiting,
   escape de-stuffing, and CRC checking, and queues outbound frames onto the bus.
-- **Your `on_frame:` lambdas and `command:` buttons** decode frame payloads into
+- **Your `on_frame:` lambdas and `value:` buttons** decode frame payloads into
   Home Assistant entities and produce outbound commands.
 
 > [!TIP]
@@ -101,10 +101,9 @@ rs485_frame:
       byte: 0x00
   crc:
     type: sum16_big_endian
-  command_format:                 # required for the command: button shorthand below
+  command_format:                    # required for the value: button shorthand below
     preamble: [0x00, 0x83, 0x01]  # Hayward AquaLogic wireless remote frame
-    command_size: 4
-    command_repeat: 2
+    value_element_bytes: 4
     postamble: [0x00]
   tx:
     gate:
@@ -169,7 +168,7 @@ button:
   - platform: rs485_frame
     rs485_frame_id: pool
     name: "Filter"
-    command: 0x80000000
+    value: 0x80000000
 ```
 
 ## Writing `on_frame:` lambdas — best practices
@@ -215,8 +214,8 @@ For broader background, see [ESPHome Lambda Magic](/automations/templates/#confi
 
 ## Raw frame transmission
 
-When the hub has a `command_format:` block, it can turn a 32-bit `command:` into the on-wire
-payload via a fixed preamble + command bytes + postamble. For anything that doesn't map
+When the hub has a `command_format:` block, it can turn `value:` entries into the on-wire
+payload via a fixed preamble + value bytes + postamble. For anything that doesn't map
 cleanly to that shape — hubs with no `command_format:`, device-discovery probes,
 vendor-specific commands, multi-frame setup sequences — the component exposes a raw
 transmission path that hands the hub a frame type and the payload bytes directly. The hub
@@ -284,15 +283,15 @@ button:
     payload: [0x00, 0x01, 0x02, 0x00, 0x42, 0x00, 0x00, 0x00, 0x42, 0x00, 0x00, 0x00]
 ```
 
-`command:` and (`frame_type:` + `payload:`) are mutually exclusive on the same button.
-The `command:` form encodes via the hub's `command_format:` and is only accepted when the
+`value:` and (`frame_type:` + `payload:`) are mutually exclusive on the same button.
+The `value:` form encodes via the hub's `command_format:` and is only accepted when the
 hub has one set; add `command_format:` to the hub to use it, or use the raw form below.
 
 ### When to use which
 
 | You want to... | Use |
 |---|---|
-| Send a command via the hub's encoder | `button: command:` (requires the hub's `command_format:`) |
+| Send a command via the hub's encoder | `button: value:` (requires the hub's `command_format:`) |
 | Send a fixed custom frame to a generic device | `button: frame_type: + payload:` |
 | Send a frame computed from entity state or a trigger argument | `rs485_frame.send_frame:` with a lambda payload |
 | Send a multi-frame discovery sequence | several `rs485_frame.send_frame:` actions in a script |
@@ -332,7 +331,7 @@ of the device's.
 
 Configure the bus explicitly: set the `uart:` parameters your device uses, declare the
 `framing.escape` scheme, choose the `crc:` algorithm, set `tx.gate.frame_type` to the bus
-keep-alive / poll frame, and (only if you want the `command:` button shorthand or
+keep-alive / poll frame, and (only if you want the `value:` button shorthand or
 `tx.idle_command`) add a `command_format:`. To find those values:
 
 - **Ready-to-flash configs** for Hayward AquaLogic and Jandy AquaLink RS (and a starting point
@@ -402,42 +401,38 @@ marks it offline. `tx.idle_command` requires a `command_format:` (see below).
 
 <span id="command-format"></span>
 
-- **command_format** (*Optional*): How a 32-bit `command:` value is serialised into the
-  frame payload. Used by the `command:` form of
+- **command_format** (*Optional*): How `value:` button entries are serialised into the
+  frame payload. Used by the `value:` form of
   [rs485_frame buttons](/components/button/rs485_frame/) and by `tx.idle_command`. Left
-  unset by default. Without `command_format:`, the `command:` button form is rejected at
+  unset by default. Without `command_format:`, the `value:` button form is rejected at
   config time — use [raw frame transmission](#raw-frame-transmission) (`frame_type:` +
   `payload:` on the button, or the [`rs485_frame.send_frame` action](#raw-frame-transmission))
   instead, or add `command_format:` to opt into the encoder.
 
-  - **command_size** (**Required**, integer): Number of bytes used to serialise the
-    command value: `1`, `2`, or `4`. The command is taken from the low `command_size × 8`
-    bits of the 32-bit value.
+  - **value_element_bytes** (**Required**, integer): Number of bytes written per value element:
+    `1`, `2`, `3`, or `4`. Each element is taken from the low `value_element_bytes × 8` bits of its
+    32-bit value; elements are written back-to-back between the preamble and postamble.
   - **preamble** (*Optional*, list of hex bytes): Bytes written to the payload before the
-    command field. Up to 8 bytes. Defaults to `[]` (none).
-  - **command_endian** (*Optional*, string): Byte order of the command field: `big`
+    value field(s). Up to 8 bytes. Defaults to `[]` (none).
+  - **endian** (*Optional*, string): Byte order of each value element: `big`
     (most-significant byte first) or `little`. Defaults to `big`.
-  - **command_repeat** (*Optional*, integer, 1–4): How many times the command field is
-    written consecutively. Hayward AquaLogic wired and wireless frames repeat the key
-    code twice; Jandy AllButton uses `1`. Defaults to `1`.
-  - **postamble** (*Optional*, list of hex bytes): Bytes written after the last command
-    repetition. Up to 8 bytes. Defaults to `[]` (none).
+  - **postamble** (*Optional*, list of hex bytes): Bytes written after the value field(s).
+    Up to 8 bytes. Defaults to `[]` (none).
 
   Two representative formats (exercises the full range of fields). Per-device sets are in the
   [rs485_frame-examples repository](https://github.com/b3nj1/rs485_frame-examples).
 
   ```yaml
-  # Hayward AquaLogic wireless remote — preamble + repeat + postamble
+  # Hayward AquaLogic wireless remote — preamble + postamble
   command_format:
     preamble: [0x00, 0x83, 0x01]   # frame sub-type + channel byte
-    command_size: 4
-    command_repeat: 2
+    value_element_bytes: 4
     postamble: [0x00]              # trailing pad
 
   # Jandy AquaLink RS AllButton ACK — minimal size-1 case
   command_format:
     preamble: [0x00, 0x01, 0x80]
-    command_size: 1
+    value_element_bytes: 1
   ```
 
   **Hayward wired unit-address customisation:** Hayward AquaLogic distinguishes wired
@@ -448,9 +443,14 @@ marks it offline. `tx.idle_command` requires a `command_format:` (see below).
   ```yaml
   command_format:
     preamble: [0x00, 0x04]   # impersonate unit 3
-    command_size: 4
-    command_repeat: 2
+    value_element_bytes: 4
   ```
+
+  > [!NOTE]
+  > `value:` accepts a single value or a list of up to 8, each serialized back-to-back with the
+  > same `command_format`. This is shorthand for protocols whose frame carries more than one
+  > value in a single payload, without repeating the preamble/postamble per value. See the
+  > [rs485_frame-examples repository](https://github.com/b3nj1/rs485_frame-examples) for worked examples.
 
   What we have observed on a live Hayward AquaLogic / ProLogic bus:
 
@@ -492,10 +492,10 @@ marks it offline. `tx.idle_command` requires a `command_format:` (see below).
     or `fifo`. Defaults to `replace_latest`.
   - **max_queue_size** (*Optional*, integer, 1–32): Maximum commands in queue. Must be `1`
     for `replace_latest`. Defaults to `1`.
-  - **idle_command** (*Optional*, hex uint32): Command value to send on the gate trigger when
+  - **idle_command** (*Optional*, hex uint32): Value to send on the gate trigger when
     no real command is queued. **Requires a `command_format:`** on the hub so the value has a
     defined encoding (rejected at config time otherwise). Encoded using the same rules as
-    `button.command`: the low `command_size × 8` bits are used. Idle transmissions are not
+    `button.value`: the low `value_element_bytes × 8` bits are used. Idle transmissions are not
     counted in the `commands_sent` diagnostic. Typically used (with `0x00`) to keep an
     emulated bus device responding to every poll.
 
