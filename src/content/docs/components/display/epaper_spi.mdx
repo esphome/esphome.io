@@ -43,6 +43,7 @@ the pins used to interface to the display to be specified.
 
 | Display name              | Manufacturer        | Product Description                                |
 |---------------------------|---------------------|----------------------------------------------------|
+| 13.3in-Spectra-E6         | Dalian Good Display | [https://www.good-display.com/product/559.html](https://www.good-display.com/product/559.html) - GDEP133C02, 6-color, 1200×1600px. Requires PSRAM. |
 | GooDisplay-GDEY042T81-4.2 | Dalian Good Display | [https://www.good-display.com/product/386.html](https://www.good-display.com/product/386.html) |
 | Waveshare-1.54in-G        | Waveshare           | [https://www.waveshare.com/1.54inch-e-paper-g.htm](https://www.waveshare.com/1.54inch-e-paper-g.htm) |
 | Waveshare-2.13in-v3       | Waveshare           | [https://www.waveshare.com/pico-epaper-2.13.htm](https://www.waveshare.com/pico-epaper-2.13.htm)   |
@@ -70,15 +71,20 @@ but can be overridden if needed.
 
 - **model** (**Required**): The model of the ePaper display. See the table above for options (case is not significant).
 - **cs_pin** (**Required**, [Pin Schema](/guides/configuration-types#pin-schema)): The CS pin. Predefined for integrated boards.
-- **dc_pin** (**Required**, [Pin Schema](/guides/configuration-types#pin-schema)): The DC pin. Predefined for integrated boards.
+- **cs_secondary_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): A second chip-select pin for displays with dual driver ICs, such as `13.3in-Spectra-E6`.
+  Required when using a dual chip-select model.
+- **dc_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The DC pin. Predefined for integrated boards. Not required for displays
+  that distinguish commands from data through chip-select framing (e.g. `13.3in-Spectra-E6`).
 - **busy_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The BUSY pin, if used.
 
   > [!NOTE]
   > Some displays use inverted busy pin polarity (LOW = busy, HIGH = idle). For these models, set `inverted: true`
-  > on the busy pin. This applies to: `Waveshare-1.54in-G`, `Waveshare-7.5in-H`.
+  > on the busy pin. This applies to: `Waveshare-1.54in-G`, `Waveshare-7.5in-H`, `13.3in-Spectra-E6` (default).
 
 - **reset_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The RESET pin, if used.
   Make sure you pull this pin high (by connecting it to 3.3V with a resistor) if not connected to a GPIO pin.
+- **enable_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): A power-enable pin driven high during setup to switch on the panel's
+  source-driver power supply. Used by `13.3in-Spectra-E6` (LOAD_SW).
 - **dimensions** (**Required**, dict): Dimensions of the screen, specified either as *width* **x** *height* (e.g `320x240`  )
   or with separate config keys. For integrated boards with full pre-defined configuration this is optional and will be preset by
   the model selected. The dimensions are specified in pixels, and the width and height must be greater than 0.
@@ -155,6 +161,44 @@ display:
       it.filled_rectangle(50, 50, 80, 80, BLACK);
       it.filled_rectangle(150, 50, 80, 80, RED);
       it.filled_rectangle(250, 50, 80, 80, YELLOW);
+```
+
+### 6-color display example
+
+The `13.3in-Spectra-E6` supports six colors: black, white, red, yellow, blue, and green. It uses a dual chip-select
+architecture requiring both `cs_pin` and `cs_secondary_pin`. The 960KB framebuffer requires PSRAM on the ESP32.
+Full refresh times for 6-color displays are typically 60 seconds or more.
+
+```yaml
+spi:
+  clk_pin: GPIOXX
+  mosi_pin: GPIOXX
+
+display:
+  - platform: epaper_spi
+    model: 13.3in-Spectra-E6
+    cs_pin: GPIOXX
+    cs_secondary_pin: GPIOXX
+    reset_pin: GPIOXX
+    busy_pin:
+      number: GPIOXX
+      inverted: true
+    enable_pin: GPIOXX
+    update_interval: 60s
+    lambda: |-
+      auto BLACK  = Color(0,   0,   0);
+      auto WHITE  = Color(255, 255, 255);
+      auto RED    = Color(255, 0,   0);
+      auto YELLOW = Color(255, 255, 0);
+      auto BLUE   = Color(0,   0,   255);
+      auto GREEN  = Color(0,   128, 0);
+
+      it.fill(WHITE);
+      it.filled_rectangle(0,   0, 200, 200, BLACK);
+      it.filled_rectangle(200, 0, 200, 200, RED);
+      it.filled_rectangle(400, 0, 200, 200, YELLOW);
+      it.filled_rectangle(600, 0, 200, 200, BLUE);
+      it.filled_rectangle(800, 0, 200, 200, GREEN);
 ```
 
 ## See Also
