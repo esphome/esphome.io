@@ -523,6 +523,34 @@ esp32:
   espsecure.py extract_public_key --keyfile secure_boot_signing_key.pem secure_boot_verification_key.pem
   ```
 
+- **nvs_encryption** (*Optional*, mapping): Encrypts the device's non-volatile storage (NVS), where ESPHome
+  may save sensitive data such as Wi-Fi credentials and the API encryption key. This keeps that data
+  unreadable to anyone who reads the device's flash memory. The encryption key is created on the device itself
+  the first time it boots, so no key material is stored in your configuration. For background, see the ESP-IDF
+  [NVS encryption documentation](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/storage/nvs_encryption.html).
+  Contains the following option:
+
+  - **key_id** (*Required*, integer): Which hardware key slot (`0`–`5`) the device uses to store its encryption
+    key. Pick a slot that isn't used by anything else.
+
+  This feature is available only on the following variants, which have the required hardware support:
+
+  - ESP32-S2
+  - ESP32-S3
+  - ESP32-C3
+  - ESP32-C5
+  - ESP32-C6
+  - ESP32-H2
+  - ESP32-P4
+
+  It is not available on the original ESP32 or the ESP32-C2.
+
+  > [!WARNING]
+  > - The encryption key is written to the chip **permanently** (yes, **we mean permanently**) the first time the device
+  >   boots and **cannot be changed or removed afterwards**, so choose the `key_id` carefully.
+  > - Turning encryption on (or off later) clears any previously saved preferences once, because the older data can no
+  >   longer be read.
+
 **LWIP Optimization Options (ESP-IDF only):**
 
 The following options are available under the `advanced` section when using the ESP-IDF framework to optimize
