@@ -105,7 +105,7 @@ climate:
 - **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): Interval between status updates. Defaults to `1s`. Lower values provide faster detection of external changes, for example when using the remote control.
 - **telemetry_request_min_interval** (*Optional*, [Time](/guides/configuration-types#time)): Minimum time between consecutive telemetry reads. Defaults to `60s`.
 
-  This allows keeping a low `update_interval` (to quickly reflect changes, e.g. when using an IR remote) while avoiding excessive current temperature updates.
+  This allows keeping a low `update_interval` (to quickly reflect changes, e.g. when using an IR remote) while avoiding excessive telemetry requests (for example room temperature reads).
 
   Telemetry is still requested during regular polling cycles, so the effective update frequency is bounded by `update_interval`.
 
@@ -172,10 +172,10 @@ sensor:
 
 ## Migration from climate-owned configuration
 
-Older configurations that define Mitsubishi CN105 UART/protocol options under `climate.mitsubishi_cn105` are still accepted temporarily, but new configurations should use the top-level `mitsubishi_cn105` hub.
+Older configurations that define Mitsubishi CN105 UART/protocol options inside the `climate:` entry (`platform: mitsubishi_cn105`) are still accepted temporarily, but new configurations should use the top-level `mitsubishi_cn105` hub.
 
-- Move `uart_id` and `update_interval` from `climate.mitsubishi_cn105` to top-level `mitsubishi_cn105`.
-- Replace `current_temperature_min_interval` with top-level `telemetry_request_min_interval`.
+- Move `uart_id` and `update_interval` from the Mitsubishi CN105 climate entry to top-level `mitsubishi_cn105`.
+- Replace `current_temperature_min_interval` (in the climate entry) with top-level `telemetry_request_min_interval`.
 - Replace `climate.mitsubishi_cn105.set_remote_temperature` and `climate.mitsubishi_cn105.clear_remote_temperature` with `mitsubishi_cn105.set_remote_temperature` and `mitsubishi_cn105.clear_remote_temperature`.
 
 Legacy climate-owned configuration compatibility is planned for removal in ESPHome `2027.1.0`.
