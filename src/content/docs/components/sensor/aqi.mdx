@@ -35,10 +35,11 @@ or [Sps30](/components/sensor/sps30/).
 > [HM3301](/components/sensor/hm3301) component. The standalone platform is more
 > flexible as it works with any PM sensor.
 
-Two calculation types are supported:
+Three calculation types are supported:
 
 - **AQI**: US EPA Air Quality Index (0-500 scale)
 - **CAQI**: European Common Air Quality Index (0-100+ scale)
+- **EAQI**: European Air Quality Index (1-6 scale)
 
 ```yaml
 # Example configuration entry
@@ -80,6 +81,14 @@ sensor:
     higher values indicate worse air quality. Typically 0-25 is very low, 25-50 is low,
     50-75 is medium, 75-100 is high, and >100 is very high.
 
+  - `EAQI`: European Air Quality Index. Returns values from 1 to 6:
+    - 1: Good
+    - 2: Fair
+    - 3: Moderate
+    - 4: Poor
+    - 5: Very poor
+    - 6: Extremely poor
+
 - All other options from [Sensor](/components/sensor).
 
 ## Example with CAQI
@@ -100,6 +109,45 @@ sensor:
     pm_10_0: pm10
     calculation_type: CAQI
 ```
+
+## Example with EAQI
+
+```yaml
+sensor:
+  - platform: hm3301
+    pm_2_5:
+      id: pm25
+      name: "PM2.5"
+    pm_10_0:
+      id: pm10
+      name: "PM10"
+
+  - platform: aqi
+    name: "EAQI_index"
+    id: eaqi
+    pm_2_5: pm25
+    pm_10_0: pm10
+    calculation_type: EAQI
+
+text_sensor:
+  - platform: template
+    name: "EAQI Level"
+    id: eaqi_level
+    lambda: |-
+      if (isnan(id(eaqi).state)) return {};
+      switch ((int) id(eaqi).state) {
+        case 1: return {"Good"};
+        case 2: return {"Fair"};
+        case 3: return {"Moderate"};
+        case 4: return {"Poor"};
+        case 5: return {"Very poor"};
+        case 6: return {"Extremely poor"};
+        default: return {"Unknown"};
+      }
+```
+> [!NOTE]
+> EAQI returns a numeric band from 1 to 6. If you want a human-readable label, add a text_sensor as
+> shown above.
 
 ## See Also
 
