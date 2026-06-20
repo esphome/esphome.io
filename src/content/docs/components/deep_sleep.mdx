@@ -49,12 +49,12 @@ deep_sleep:
 - **touch_wakeup** (*Optional*, boolean): Only on ESP32. Use a touch event to wakeup from deep sleep. To be able
   to wakeup from a touch event, [Binary Sensor](/components/binary_sensor/esp32_touch#esp32-touch-binary-sensor) must be configured properly.
 
-- **wakeup_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema) / list): Only on ESP32/BK72xx. A single pin to wake up to once
+- **wakeup_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema) / list): Only on ESP32/BK72xx/nRF52. A single pin to wake up to once
   in deep sleep mode. Use the inverted property to wake up to LOW signals.
   If you want to specify multiple wake-up pins (BK72xx only) specify them under `wakeup_pin` using a list of entries consisting of:
   - **pin** (**Required**, [Pin Schema](/guides/configuration-types#pin-schema))
   - **wakeup_pin_mode** (*Optional*) see below
-- **wakeup_pin_mode** (*Optional*): Only on ESP32/BK72xx. Specify how to handle waking up from a `wakeup_pin` if
+- **wakeup_pin_mode** (*Optional*): Only on ESP32/BK72xx/nRF52. Specify how to handle waking up from a `wakeup_pin` if
   the wakeup pin is already in the state with which it would wake up when attempting to enter deep sleep.
   See [Wakeup Pin Mode](#deep_sleep-esp32_wakeup_pin_mode). Defaults to `IGNORE`
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
@@ -143,6 +143,14 @@ The following integers are the wakeup causes:
 
 When `sleep_duration` is configured or Zigbee is used, the nRF52 resumes normal operation after waking up.
 Otherwise, the nRF52 performs a full reset instead of continuing execution.
+
+A `wakeup_pin` may also be configured to wake the device from System OFF, the path used when no `sleep_duration` is
+set, via the GPIO SENSE latch. All three `wakeup_pin_mode` values are supported: `IGNORE` (default), `KEEP_AWAKE`
+(defer entering System OFF while the pin is in its active state), and `INVERT_WAKEUP` (flip the wake level when the
+pin is already active at sleep time). The pin's `inverted:` flag selects the active level.
+
+`KEEP_AWAKE` only defers sleep on the System OFF path. When `sleep_duration` is configured, the device enters timed
+sleep regardless of the pin state.
 
 <span id="deep_sleep-enter_action"></span>
 
