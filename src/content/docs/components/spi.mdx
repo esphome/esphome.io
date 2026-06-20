@@ -110,7 +110,8 @@ ESP8266 has a more limited selection of pins that can be used; check the datashe
 Quad and octal modes requires a hardware interface, so `software` and `any` are not permitted values.
 
 On nRF52 (Zephyr), a single hardware SPI bus (`spi2`) is available; the `interface:` option does not apply and only one
-`spi:` bus may be configured. Assign `clk_pin`/`mosi_pin`/`miso_pin` to any free GPIOs.
+`spi:` bus may be configured. Assign `clk_pin`/`mosi_pin`/`miso_pin` to any free GPIOs. This bus is limited to a maximum
+clock of 8 MHz.
 
 ## Generic SPI device component
 
@@ -168,7 +169,7 @@ be achieved by division from the SPI clock source. Clock source frequencies are:
 | ESP32    | 80MHz        |
 | ESP8266  | 40MHz        |
 | RP2040   | 62.5MHz      |
-| nRF52    | 32MHz        |
+| nRF52    | 8MHz         |
 
 The requested rate must be able to be generated from the clock source with integer division, with a 5% error allowed.
 
