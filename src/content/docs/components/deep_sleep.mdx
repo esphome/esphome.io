@@ -91,6 +91,10 @@ when the deep sleep should start? There are three ways of handling this using th
   then re-configure deep sleep to wake up on a LOW signal and vice versa. Useful in situations when you want to
   use observe the state changes of a pin using deep sleep and the ON/OFF values last longer.
 
+> [!NOTE]
+> These `wakeup_pin_mode` values also apply on nRF52, where they govern entry into System OFF rather than RTC-pin
+> wakeup. See the [nRF52](#nrf52) section for the details and restrictions specific to that platform.
+
 ```yaml
 # Example configuration with single pin wakeup on BK72xx
 deep_sleep:
@@ -149,8 +153,23 @@ set and Zigbee is not in use, via the GPIO SENSE latch. All three `wakeup_pin_mo
 (default), `KEEP_AWAKE` (defer entering System OFF while the pin is in its active state), and `INVERT_WAKEUP` (flip
 the wake level when the pin is already active at sleep time). The pin's `inverted:` flag selects the active level.
 
-`KEEP_AWAKE` only defers sleep on the System OFF path. When `sleep_duration` is configured, the device enters timed
-sleep regardless of the pin state.
+> [!IMPORTANT]
+> On nRF52 the `wakeup_pin` can only wake the device when `sleep_duration` is omitted (and Zigbee is not in use), so
+> that the device enters System OFF. When `sleep_duration` is set, the device instead takes a timed-sleep path that is
+> a kernel delay which the GPIO SENSE latch cannot interrupt — the wakeup pin never wakes the device (and `KEEP_AWAKE`
+> likewise has no effect). Configuring `sleep_duration` and `wakeup_pin` together therefore emits a validation warning
+> at compile time. To resolve it, omit `sleep_duration` to wake from the pin, or remove `wakeup_pin` for a pure timer
+> wakeup.
+
+```yaml
+# Example pin-only wakeup on nRF52 (no sleep_duration)
+deep_sleep:
+  run_duration: 15s
+  wakeup_pin:
+    number: P0.05
+    inverted: true
+  wakeup_pin_mode: INVERT_WAKEUP
+```
 
 <span id="deep_sleep-enter_action"></span>
 
