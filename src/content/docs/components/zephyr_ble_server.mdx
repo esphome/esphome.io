@@ -23,6 +23,29 @@ zephyr_ble_server:
 
 - **on_numeric_comparison_request** (*Optional*, [Automation](/automations)): An automation to
   compare the passkeys shown on the two BLE devices. See [`on_numeric_comparison_request`](#on_numeric_comparison_request).
+- **mtu** (*Optional*, int): The ATT MTU to advertise, in bytes. Range: 23-247. Defaults to `23`.
+  See [BLE MTU](#ble-mtu).
+
+## BLE MTU
+
+The ATT MTU determines how many bytes of payload each BLE notification can carry. At the BLE default
+of `23`, a notification carries only 20 bytes, so streaming logs or OTA updates are split into many
+small packets. Raising the MTU lets a central that negotiates a larger value (for example, macOS)
+receive up to `mtu - 3` bytes per notification, which is the single biggest throughput win for BLE
+log streaming and [OTA](/components/ota/zephyr_mcumgr).
+
+```yaml
+# Faster BLE log streaming and OTA (opt-in larger notifications)
+zephyr_ble_server:
+  mtu: 247
+```
+
+> [!NOTE]
+> Raising the MTU is opt-in because it costs RAM. The default of `23` keeps Zephyr's stock Bluetooth
+> buffer footprint, so the default build has no extra RAM cost. Setting `mtu` above `23` enables LL
+> Data Length Extension (DLE) and enlarges the ACL buffers to hold the larger packets. This peripheral
+> serves a single connection, so the buffer counts are trimmed to offset most of that cost, but some
+> additional RAM is still used.
 
 ## BLE Server Automation
 
