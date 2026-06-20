@@ -145,9 +145,9 @@ When `sleep_duration` is configured or Zigbee is used, the nRF52 resumes normal 
 Otherwise, the nRF52 performs a full reset instead of continuing execution.
 
 A `wakeup_pin` may also be configured to wake the device from System OFF, the path used when no `sleep_duration` is
-set, via the GPIO SENSE latch. All three `wakeup_pin_mode` values are supported: `IGNORE` (default), `KEEP_AWAKE`
-(defer entering System OFF while the pin is in its active state), and `INVERT_WAKEUP` (flip the wake level when the
-pin is already active at sleep time). The pin's `inverted:` flag selects the active level.
+set and Zigbee is not in use, via the GPIO SENSE latch. All three `wakeup_pin_mode` values are supported: `IGNORE`
+(default), `KEEP_AWAKE` (defer entering System OFF while the pin is in its active state), and `INVERT_WAKEUP` (flip
+the wake level when the pin is already active at sleep time). The pin's `inverted:` flag selects the active level.
 
 `KEEP_AWAKE` only defers sleep on the System OFF path. When `sleep_duration` is configured, the device enters timed
 sleep regardless of the pin state.
