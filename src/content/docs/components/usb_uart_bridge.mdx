@@ -68,8 +68,10 @@ ignored.
 
 > [!NOTE]
 > UART parameter changes are debounced with a 20ms minimum interval to coalesce the rapid updates a host often sends
-> when opening a port. The new settings are applied to the running UART driver in place, so in-flight data on the
-> other tasks is not disturbed.
+> when opening a port. The new settings are applied to the running UART driver in place (without tearing it down), so
+> the bridge keeps forwarding data across the change. The new framing takes effect immediately, so a byte that is
+> mid-transmission when the host re-codes the line may be corrupted; this is expected and normally harmless, since
+> hosts set the line coding when opening the port, before data flows.
 
 ### Control Signals
 
