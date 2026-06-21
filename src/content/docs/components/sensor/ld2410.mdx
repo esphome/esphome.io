@@ -46,6 +46,10 @@ ld2410:
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID for this [Ld2410](/components/sensor/ld2410/) component if you need multiple
   components.
 
+- **background_correction_duration** (*Optional*, [Time](/guides/configuration-types#time)): The window the module
+  spends measuring the background noise floor when the [`background_correction`](#ld2410-background-correction) button
+  is pressed. Value between `10s` and `120s` inclusive. Defaults to `10s`. Requires module firmware V2.44 or later.
+
 ## Binary Sensor
 
 The `ld2410` binary sensors allow you to quickly determine various states reported by the sensor.
@@ -61,6 +65,8 @@ binary_sensor:
       name: Still Target
     out_pin_presence_status:
       name: Out pin presence status
+    calibration:
+      name: Calibration running
 ```
 
 ### Configuration variables
@@ -77,6 +83,10 @@ binary_sensor:
 - **out_pin_presence_status** (*Optional*): When in [engineering mode](#ld2410-engineering-mode), indicates the
   status of the OUT pin, otherwise `false`. OUT pin indication depends on the
   [light function](#ld2410-light-function) configuration. Might need to update to the latest firmware to use this.
+  All options from [Binary Sensor](/components/binary_sensor#config-binary_sensor).
+
+- **calibration** (*Optional*): Reports whether the [`background_correction`](#ld2410-background-correction) routine
+  is currently running. Defaults to `device_class: running`.
   All options from [Binary Sensor](/components/binary_sensor#config-binary_sensor).
 
 - **ld2410_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID for the [Ld2410](/components/sensor/ld2410/) component if you are
@@ -368,7 +378,11 @@ button:
       name: Restart
     query_params:
       name: Query params
+    background_correction:
+      name: Calibrate radar
 ```
+
+<span id="ld2410-background-correction"></span>
 
 ### Configuration variables
 
@@ -379,6 +393,14 @@ button:
   All options from [Button](/components/button#config-button).
 
 - **query_params** (*Optional*): Refresh all sensors values of the device.
+  All options from [Button](/components/button#config-button).
+
+- **background_correction** (*Optional*): Triggers the module's native automatic background-noise correction routine.
+  The module measures the noise floor for the configured
+  [`background_correction_duration`](#ld2410-component) and rewrites all gate thresholds. People **must** be absent
+  while it runs; leave other clutter such as fans or HVAC in place. The optional
+  [`calibration`](#binary-sensor) binary sensor reflects the routine's running state, and the gate
+  [thresholds](#ld2410-number) refresh on completion. Requires module firmware V2.44 or later.
   All options from [Button](/components/button#config-button).
 
 - **ld2410_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID for the [Ld2410](/components/sensor/ld2410/) component if you are
