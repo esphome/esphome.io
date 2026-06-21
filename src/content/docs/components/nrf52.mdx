@@ -58,6 +58,11 @@ After the initial SWD flash, the MCUboot two-slot layout enables [OTA updates](/
 or USB CDC, so a programmer is no longer required for subsequent updates. The dashboard offers a **HEX package** for the
 initial SWD flash and an **app update package** for OTA.
 
+> [!IMPORTANT]
+> OTA works only if the [`zephyr_mcumgr`](/components/ota/zephyr_mcumgr/) OTA component is part of the firmware you flash
+> over SWD. Add `transport.ble: true` for updates over BLE and `transport.hardware_uart: CDC` for updates over USB CDC.
+> If the initial SWD-flashed firmware has no OTA endpoint, a programmer is still required for subsequent updates.
+
 ## Flashing with Adafruit nRF52 Bootloader
 
 For flashing via a flash drive.
