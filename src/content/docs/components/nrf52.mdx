@@ -41,7 +41,22 @@ Flashing with MCUboot requires an SWD connection, for which a programmer is nece
 # Example configuration entry
 nrf52:
   board: adafruit_feather_nrf52840
+  bootloader: mcuboot
 ```
+
+The Seeed XIAO nRF52840 (`xiao_ble`) also supports the MCUboot two-slot bootloader. Select it explicitly with
+`bootloader: mcuboot`:
+
+```yaml
+# Example configuration entry
+nrf52:
+  board: xiao_ble
+  bootloader: mcuboot
+```
+
+After the initial SWD flash, the MCUboot two-slot layout enables [OTA updates](/components/ota/zephyr_mcumgr/) over BLE
+or USB CDC, so a programmer is no longer required for subsequent updates. The dashboard offers a **HEX package** for the
+initial SWD flash and an **app update package** for OTA.
 
 ## Flashing with Adafruit nRF52 Bootloader
 
