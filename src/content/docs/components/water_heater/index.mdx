@@ -148,6 +148,28 @@ Available C++ enums for modes:
 - `water_heater::WATER_HEATER_MODE_HEAT_PUMP`
 - `water_heater::WATER_HEATER_MODE_GAS`
 
+### Custom C++ Components: Setting Temperature Unit
+
+Custom C++ water heater components can set the temperature unit reported to Home Assistant by configuring it in the component's traits. This is useful when a device natively operates in Fahrenheit or Kelvin.
+
+```cpp
+WaterHeaterTraits traits() override {
+  auto traits = WaterHeaterTraits();
+  // Tell HA this device reports temperatures in Fahrenheit
+  traits.set_temperature_unit(esphome::TemperatureUnit::FAHRENHEIT);
+  // ...
+  return traits;
+}
+```
+
+The `TemperatureUnit` enum is defined in `esphome/core/helpers.h`:
+
+- `esphome::TemperatureUnit::CELSIUS` (default)
+- `esphome::TemperatureUnit::FAHRENHEIT`
+- `esphome::TemperatureUnit::KELVIN`
+
+The temperature unit is conveyed via the ESPHome API to clients such as Home Assistant, which will display temperatures accordingly.
+
 ## See Also
 
 - [Template Water Heater](/components/water_heater/template/)

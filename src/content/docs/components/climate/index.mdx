@@ -289,6 +289,27 @@ advanced stuff.
     call.perform();
 ```
 
+### Custom C++ Components: Setting Temperature Unit
+
+Custom C++ climate components can set the temperature unit reported to Home Assistant by configuring it in the component's traits. This is useful when a device natively operates in Fahrenheit or Kelvin.
+
+```cpp
+void setup() override {
+  // Tell HA this device reports temperatures in Fahrenheit
+  auto traits = make_traits();
+  traits.set_temperature_unit(esphome::TemperatureUnit::FAHRENHEIT);
+  // ...
+}
+```
+
+The `TemperatureUnit` enum is defined in `esphome/core/helpers.h`:
+
+- `esphome::TemperatureUnit::CELSIUS` (default)
+- `esphome::TemperatureUnit::FAHRENHEIT`
+- `esphome::TemperatureUnit::KELVIN`
+
+The temperature unit is conveyed via the ESPHome API to clients such as Home Assistant, which will display temperatures accordingly.
+
 <span id="climate-on_state_trigger"></span>
 
 ### `climate.on_state` Trigger
