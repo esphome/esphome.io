@@ -289,30 +289,6 @@ advanced stuff.
     call.perform();
 ```
 
-### Custom C++ Components: Setting Temperature Unit
-
-Custom C++ climate components can set the temperature unit in their traits so the component can work in its native unit without converting values. When set, the unit is communicated to all clients — both the ESPHome web UI and Home Assistant will display temperatures in the declared unit.
-
-```cpp
-climate::ClimateTraits traits() override {
-  traits_.set_temperature_unit(esphome::TemperatureUnit::FAHRENHEIT);
-  // ... other traits_ configuration ...
-  return traits_;
-}
-
-climate::ClimateTraits traits_;
-```
-
-The `TemperatureUnit` enum is defined in `esphome/core/helpers.h`:
-
-- `esphome::TemperatureUnit::CELSIUS` (default)
-- `esphome::TemperatureUnit::FAHRENHEIT`
-- `esphome::TemperatureUnit::KELVIN`
-
-This avoids manual Celsius/Fahrenheit conversion in component code: publish temperatures in the device's native unit and let the clients handle display.
-
-<span id="climate-on_state_trigger"></span>
-
 ### `climate.on_state` Trigger
 
 This trigger is activated each time the state of the climate device is updated
@@ -353,6 +329,30 @@ climate:
               x.set_target_temperature(25.0f);
           }
 ```
+
+## Custom C++ Components: Setting Temperature Unit
+
+Custom C++ climate components can set the temperature unit in their traits so the component can work in its native unit without converting values. When set, the unit is communicated to all clients — both the ESPHome web UI and Home Assistant will display temperatures in the declared unit.
+
+```cpp
+climate::ClimateTraits traits() override {
+  traits_.set_temperature_unit(esphome::TemperatureUnit::FAHRENHEIT);
+  // ... other traits_ configuration ...
+  return traits_;
+}
+
+climate::ClimateTraits traits_;
+```
+
+The `TemperatureUnit` enum is defined in `esphome/core/helpers.h`:
+
+- `esphome::TemperatureUnit::CELSIUS` (default)
+- `esphome::TemperatureUnit::FAHRENHEIT`
+- `esphome::TemperatureUnit::KELVIN`
+
+This avoids manual Celsius/Fahrenheit conversion in component code: publish temperatures in the device's native unit and let the clients handle display.
+
+<span id="climate-on_state_trigger"></span>
 
 ## See Also
 
