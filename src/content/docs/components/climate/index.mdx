@@ -294,11 +294,13 @@ advanced stuff.
 Custom C++ climate components can set the temperature unit in their traits so the component can work in its native unit without converting values. When set, the unit is communicated to all clients — both the ESPHome web UI and Home Assistant will display temperatures in the declared unit.
 
 ```cpp
-void setup() override {
-  auto traits = make_traits();
-  traits.set_temperature_unit(esphome::TemperatureUnit::FAHRENHEIT);
-  // ...
+climate::ClimateTraits traits() override {
+  traits_.set_temperature_unit(esphome::TemperatureUnit::FAHRENHEIT);
+  // ... other traits_ configuration ...
+  return traits_;
 }
+
+climate::ClimateTraits traits_;
 ```
 
 The `TemperatureUnit` enum is defined in `esphome/core/helpers.h`:

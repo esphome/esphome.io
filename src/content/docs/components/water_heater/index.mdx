@@ -153,12 +153,12 @@ Available C++ enums for modes:
 Custom C++ water heater components can set the temperature unit in their traits so the component can work in its native unit without converting values. When set, the unit is communicated to all clients — both the ESPHome web UI and Home Assistant will display temperatures in the declared unit.
 
 ```cpp
-WaterHeaterTraits traits() override {
+water_heater::WaterHeaterTraits traits() override {
   auto traits = WaterHeaterTraits();
   traits.set_temperature_unit(esphome::TemperatureUnit::FAHRENHEIT);
-  // ...
   return traits;
 }
+
 ```
 
 The `TemperatureUnit` enum is defined in `esphome/core/helpers.h`:
