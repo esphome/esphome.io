@@ -130,7 +130,7 @@
     });
     // Use the device's full pixel ratio so thin wireframe lines and edge
     // outlines stay crisp on hi-DPI displays.
-    renderer.setPixelRatio(window.devicePixelRatio);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.setSize(width, height, false);
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.1;
@@ -157,6 +157,10 @@
     if (window.matchMedia("(pointer: coarse)").matches) {
       canvas.style.touchAction = "pan-y";
     }
+
+    const reducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
 
     const loader = new GLTFLoader();
     loader.setMeshoptDecoder(MeshoptDecoder);
@@ -412,7 +416,7 @@
         // Distance (in model-local units) each follower starts offset from
         // its final position along the camera-direction axis.
         const INTRO_OFFSET_DISTANCE = 1.6;
-        const introStart = performance.now();
+        const introStart = reducedMotion ? -Infinity : performance.now();
         const introDelays: number[] = topLevel.map((_, i) =>
           i === ledsIdx ? 0 : INTRO_FOLLOW_GAP_MS + Math.random() * 480,
         );
@@ -431,16 +435,18 @@
         const introOffset: THREE.Vector3[] = topLevel.map((_, i) =>
           i === ledsIdx ? new THREE.Vector3() : _offsetAxis.clone(),
         );
-        // Hide every material on frame 0 so the model doesn't flash before
-        // its intro begins. cycleUpdater fades them in via logicalOpacity.
-        for (const g of groupFades) {
-          for (const m of g.solid) {
-            logicalOpacity.set(m, m.opacity);
-            m.opacity = 0;
-          }
-          for (const m of g.wire) {
-            logicalOpacity.set(m, m.opacity);
-            m.opacity = 0;
+        if (!reducedMotion) {
+          // Hide every material on frame 0 so the model doesn't flash before
+          // its intro begins. cycleUpdater fades them in via logicalOpacity.
+          for (const g of groupFades) {
+            for (const m of g.solid) {
+              logicalOpacity.set(m, m.opacity);
+              m.opacity = 0;
+            }
+            for (const m of g.wire) {
+              logicalOpacity.set(m, m.opacity);
+              m.opacity = 0;
+            }
           }
         }
         const introFactor = (i: number, now: number) => {
@@ -475,25 +481,27 @@
         const _introCamDir = new THREE.Vector3();
         const easeInOutCubic = (t: number) =>
           t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
-        // Place the camera in its starting (head-on) pose immediately so
-        // the first rendered frame doesn't flash the isometric view.
-        _introCamDir.copy(FRONT_CAM_DIR);
-        camera.position
-          .copy(controls.target)
-          .addScaledVector(_introCamDir, homeDistance * FRONT_CAM_DIST_MUL);
-        camera.lookAt(controls.target);
-        // Lock OrbitControls until the intro completes so user drags can't
-        // fight the choreographed rotation.
-        controls.enabled = false;
-        window.setTimeout(
-          () => {
-            controls.enabled = true;
-            // Camera has reached its resting position — snap labels so they
-            // don't lerp from their intro-animation snap position to here.
-            for (const label of labels) label.hasPosition = false;
-          },
-          INTRO_CAM_DELAY_MS + INTRO_CAM_DURATION_MS + 100,
-        );
+        if (!reducedMotion) {
+          // Place the camera in its starting (head-on) pose immediately so
+          // the first rendered frame doesn't flash the isometric view.
+          _introCamDir.copy(FRONT_CAM_DIR);
+          camera.position
+            .copy(controls.target)
+            .addScaledVector(_introCamDir, homeDistance * FRONT_CAM_DIST_MUL);
+          camera.lookAt(controls.target);
+          // Lock OrbitControls until the intro completes so user drags can't
+          // fight the choreographed rotation.
+          controls.enabled = false;
+          window.setTimeout(
+            () => {
+              controls.enabled = true;
+              // Camera has reached its resting position — snap labels so they
+              // don't lerp from their intro-animation snap position to here.
+              for (const label of labels) label.hasPosition = false;
+            },
+            INTRO_CAM_DELAY_MS + INTRO_CAM_DURATION_MS + 100,
+          );
+        }
 
         // Re-apply edge colour whenever Starlight flips the theme.
         const applyThemePalette = () => {
@@ -1101,12 +1109,20 @@
       }
     };
 
-    renderer.setAnimationLoop(() => {
+    const loopFn = () => {
       controls.update();
       cycleUpdater(performance.now());
       renderer.render(scene, camera);
       updateLabels();
-    });
+    };
+    renderer.setAnimationLoop(loopFn);
+
+    new IntersectionObserver(
+      (entries) => {
+        renderer.setAnimationLoop(entries[0].isIntersecting ? loopFn : null);
+      },
+      { threshold: 0 },
+    ).observe(canvas);
   }
 </script>
 
@@ -1180,6 +1196,10 @@
       @include bp(tablet) {
         animation: heroAssetSlideIn 0.9s cubic-bezier(0.65, 0, 0.35, 1) 0.9s
           both;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        animation: none;
       }
     }
 
@@ -1392,6 +1412,10 @@
         &:nth-child(4) {
           animation-delay: 2.45s;
         }
+
+        @media (prefers-reduced-motion: reduce) {
+          animation: none;
+        }
       }
 
       h1 {
@@ -1489,6 +1513,11 @@
     backdrop-filter: blur(6px);
     opacity: 0;
     animation: heroContentIn 0.8s ease 2.5s forwards;
+
+    @media (prefers-reduced-motion: reduce) {
+      animation: none;
+      opacity: 1;
+    }
 
     @include bp(tablet) {
       width: auto;
