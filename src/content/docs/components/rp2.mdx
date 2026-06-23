@@ -1,9 +1,15 @@
 ---
-description: "Configuration for the RP2040 platform for ESPHome."
-title: "RP2040 Platform"
+description: "Configuration for the RP2 platform (RP2040 and RP2350) for ESPHome."
+title: "RP2 Platform"
 ---
 
-This component contains platform-specific options for the RP2040 platform.
+This component contains platform-specific options for the RP2 platform, which covers both the RP2040 and
+RP2350 chips from the Raspberry Pi RP-series.
+
+> [!NOTE]
+> The platform key was renamed from `rp2040` to `rp2` in ESPHome 2026.7.0 so the family name reflects that
+> the toolchain covers both the RP2040 and RP2350 chips. The legacy `rp2040:` key continues to work as a
+> deprecated alias and will be removed in 2027.7.0.
 
 > [!NOTE]
 > The Raspberry Pi **Pico W** and other RP2040 boards with the Cypress **CYW43439** chip providing wireless
@@ -19,7 +25,7 @@ This component contains platform-specific options for the RP2040 platform.
 
 ```yaml
 # Example configuration entry
-rp2040:
+rp2:
   board: rpipicow
 ```
 
@@ -31,7 +37,7 @@ rp2040:
 
 ```yaml
 # Example configuration entry
-rp2040:
+rp2:
   board: rpipicow
   framework:
     platform_version: https://github.com/maxgerhardt/platform-raspberrypi.git
@@ -56,7 +62,7 @@ automatically reset the device into BOOTSEL mode.
 
 ## Configuration variables
 
-- **variant** (*Optional*, string): The RP2040-series chip to target. One of `rp2040` or `rp2350`.
+- **variant** (*Optional*, string): The RP2-series chip to target. One of `rp2040` or `rp2350`.
   This must match the hardware in use, or it will fail to flash.
 
 - **board** (*Optional*, string): The PlatformIO board identifier. Common boards include `rpipicow`
@@ -110,7 +116,7 @@ resolved to the correct GPIO number for your board:
 ### Onboard LED Example
 
 ```yaml
-rp2040:
+rp2:
   board: rpipicow
 
 output:
@@ -148,7 +154,7 @@ Then connect a USB-to-serial adapter to your board's UART0 pins:
 > [!TIP]
 > The `TX` and `RX` [pin names](#gpio-pin-names) resolve to the default UART0 pins for your board.
 > If your board differs from the Pico W defaults above, search for your board name (e.g. `seeed_xiao_rp2040`)
-> in [boards.py](https://github.com/esphome/esphome/blob/dev/esphome/components/rp2040/boards.py) and look
+> in [boards.py](https://github.com/esphome/esphome/blob/dev/esphome/components/rp2/boards.py) and look
 > for the `TX` and `RX` entries in its pin map. Note that the GPIO numbers may not match the labels
 > silkscreened on your board. For example, on the
 > [Seeed XIAO RP2040](https://wiki.seeedstudio.com/XIAO-RP2040/), TX (GPIO 0) and RX (GPIO 1) are
