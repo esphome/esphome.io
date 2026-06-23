@@ -1,0 +1,401 @@
+---
+description: "Instructions for setting up BME690 temperature, humidity, pressure, gas, and optional BSEC air-quality sensors."
+title: "BME690 Temperature+Pressure+Humidity+Gas Sensor"
+---
+
+import Figure from '@components/Figure.astro';
+import bme690FullImg from './images/bme690-full.jpg';
+import APIRef from '@components/APIRef.astro';
+
+## Component/Hub
+
+The `bme690` sensor platform allows you to use your BME690 temperature, pressure, humidity, and gas sensor with
+ESPHome. Without Bosch's proprietary BSEC library, the component publishes raw temperature, pressure, humidity, and gas
+resistance values directly from the sensor.
+
+If you configure a Bosch Sensortec Environmental Cluster (BSEC) library archive, ESPHome can also enable Bosch's
+proprietary air-quality algorithm. BSEC adds an Index for Air Quality (IAQ), estimated equivalent values for CO₂ and
+VOC outputs, heat-compensated temperature and humidity, gas percentage, IAQ accuracy, and saved calibration state.
+
+> [!NOTE]
+> - BSEC features are only available after accepting Bosch's software license agreement. By configuring
+>   `bsec_library`, you are explicitly agreeing to the terms of the
+>   [BSEC license agreement](https://www.bosch-sensortec.com/media/boschsensortec/downloads/software/bme688_development_software/2024_12/20241219_clickthrough_license_terms_bsec_bme680_bme688_bme690.pdf).
+>   You must not distribute any compiled firmware binaries that include the BSEC library.
+>
+> - This component requires ESP32 with the ESP-IDF framework. BSEC features additionally require a target-compatible
+>   Bosch `libalgobsec.a` archive.
+>
+> - Multiple BME690 instances can be configured, but this is not yet tested. All instances must use the same BSEC
+>   library archive because it is linked into the firmware as a single static library.
+
+The [I²C](/components/i2c) bus is required to be set up in your configuration for this sensor to work.
+
+<Figure
+  src={bme690FullImg}
+  alt=""
+  caption="BME690 temperature, pressure, humidity, and gas sensor."
+  layout="constrained"
+/>
+
+```yaml
+# Minimal raw-only example configuration
+i2c:
+
+bme690:
+  id: bme690_sensor
+  address: 0x76
+  update_interval: 5s
+
+sensor:
+  - platform: bme690
+    bme690_id: bme690_sensor
+    temperature:
+      name: "BME690 Temperature"
+    pressure:
+      name: "BME690 Pressure"
+    humidity:
+      name: "BME690 Humidity"
+    gas_resistance:
+      name: "BME690 Gas Resistance"
+```
+
+```yaml
+# Example configuration with BSEC air-quality outputs
+i2c:
+
+bme690:
+  id: bme690_sensor
+  address: 0x76
+  bsec_library: /config/esphome/bme690/libalgobsec.a
+  bsec_config: /config/esphome/bme690/bsec_iaq.config
+  sample_rate: LP
+  update_interval: 3s
+  state_save_interval: 6h
+
+sensor:
+  - platform: bme690
+    bme690_id: bme690_sensor
+    temperature:
+      name: "BME690 Temperature"
+    pressure:
+      name: "BME690 Pressure"
+    humidity:
+      name: "BME690 Humidity"
+    gas_resistance:
+      name: "BME690 Gas Resistance"
+    iaq:
+      name: "BME690 IAQ"
+    co2_equivalent:
+      name: "BME690 CO2 Equivalent"
+    compensated_temperature:
+      name: "BME690 Compensated Temperature"
+    compensated_humidity:
+      name: "BME690 Compensated Humidity"
+
+text_sensor:
+  - platform: bme690
+    bme690_id: bme690_sensor
+    iaq_accuracy:
+      name: "BME690 IAQ Accuracy"
+```
+
+Configuration variables:
+
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation. Use
+  this ID in the sensor section to refer to the correct BME690 if you have more than one device. This ID is also used
+  to derive the saved BSEC state preference key.
+
+- **address** (*Optional*, int): Manually specify the I²C address of the sensor. Defaults to `0x76`. Another address
+  can be `0x77`.
+
+- **bsec_library** (*Optional*, string): Path or URL to the Bosch `libalgobsec.a` archive to link into the firmware.
+  This is required for BSEC air-quality outputs. Use the archive that matches your ESP32 target and BSEC release.
+  Bosch provides the BSEC package from
+  [BME688 and BME690 Software](https://www.bosch-sensortec.com/en/software-tools/software-downloads.html?downloadId=bsec3300).
+
+- **bsec_config** (*Optional*, string): Path or URL to a Bosch BSEC `.config` file. Requires `bsec_library`. The file
+  must match the selected BSEC library release, sensor voltage, sample rate, and history window. Bosch `.config` files
+  can be used directly. If omitted while BSEC is enabled, ESPHome uses built-in BME690 33V 4-day IAQ configurations for
+  BSEC 3.3.0.0, selected from `bme690_iaq_33v_3s_4d` or `bme690_iaq_33v_300s_4d` based on `sample_rate`.
+
+- **sample_rate** (*Optional*, string): Sample rate. Default is `LP` for low power consumption, sampling every 3
+  seconds. Can be `ULP` for ultra-low power, sampling every 5 minutes. This controls the BSEC sampling cadence and
+  governs the interval at which the sensor heater is operated. Only used when `bsec_library` is configured.
+
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): Raw polling interval when BSEC is not
+  configured. With BSEC, this is the fallback polling interval used before BSEC is ready or if BSEC setup fails. When
+  BSEC is running, BSEC drives the next measurement time. Defaults to `3s`. For BSEC `LP`, use `3s`; slower polling can
+  trigger BSEC timing warnings.
+
+- **temperature_offset** (*Optional*, float): Board self-heating offset in °C. BSEC subtracts this value from the raw
+  die temperature for heat compensated temperature and humidity outputs. Only used when `bsec_library` is configured.
+  Defaults to `0`.
+
+- **state_save_interval** (*Optional*, [Time](/guides/configuration-types#time)): The minimum interval at which to
+  save calibrated BSEC algorithm state to flash so that calibration doesn't have to start from zero on device restart.
+  Only used when `bsec_library` is configured. Defaults to `6h`.
+
+## Sensor
+
+Configuration variables:
+
+- **bme690_id** (*Optional*, [ID](/guides/configuration-types#id)): Sets the ID of the `bme690` component to refer to.
+  Useful when working with multiple devices.
+
+- **temperature** (*Optional*): The information for the raw temperature sensor. Available without BSEC.
+
+  - All options from [Sensor](/components/sensor).
+
+- **pressure** (*Optional*): The information for the pressure sensor. Available without BSEC.
+
+  - All options from [Sensor](/components/sensor).
+
+- **humidity** (*Optional*): The information for the raw humidity sensor. Available without BSEC.
+
+  - All options from [Sensor](/components/sensor).
+
+- **gas_resistance** (*Optional*): The information for the gas resistance sensor. Available without BSEC.
+
+  - All options from [Sensor](/components/sensor).
+
+- **iaq** (*Optional*): The information for the IAQ sensor. Requires BSEC.
+
+  - All options from [Sensor](/components/sensor).
+
+- **iaq_accuracy** (*Optional*): The information for the numeric IAQ accuracy sensor. Requires BSEC.
+
+  - All options from [Sensor](/components/sensor).
+
+- **static_iaq** (*Optional*): The information for the static IAQ sensor. Requires BSEC.
+
+  - All options from [Sensor](/components/sensor).
+
+- **co2_equivalent** (*Optional*): The information for the estimated CO₂ equivalent sensor, in ppm. Requires BSEC.
+
+  - All options from [Sensor](/components/sensor).
+
+- **breath_voc_equivalent** (*Optional*): The information for the Breath VOC equivalent sensor, in ppm. This output is
+  available with BSEC 3.2.x libraries.
+
+  - All options from [Sensor](/components/sensor).
+
+- **tvoc_equivalent** (*Optional*): The information for the TVOC equivalent sensor, in ppb. This output is available
+  with BSEC 3.3.x libraries in `LP` mode.
+
+  - All options from [Sensor](/components/sensor).
+
+- **gas_percentage** (*Optional*): The information for the gas percentage sensor. Requires BSEC.
+
+  - All options from [Sensor](/components/sensor).
+
+- **compensated_temperature** (*Optional*): The information for the BSEC heat compensated temperature sensor. Requires
+  BSEC.
+
+  - All options from [Sensor](/components/sensor).
+
+- **compensated_humidity** (*Optional*): The information for the BSEC heat compensated humidity sensor. Requires BSEC.
+
+  - All options from [Sensor](/components/sensor).
+
+## Text Sensor
+
+When BSEC is configured, IAQ accuracy can be reported in text format.
+
+Configuration variables:
+
+- **bme690_id** (*Optional*, [ID](/guides/configuration-types#id)): Sets the ID of the `bme690` component to refer to.
+  Useful when working with multiple devices.
+
+- **iaq_accuracy** (*Optional*): The information for the IAQ accuracy sensor. Shows: Stabilizing, Uncertain,
+  Calibrating, Calibrated. Requires BSEC.
+
+  - All options from [TextSensor](/components/text_sensor#config-text_sensor).
+
+## Advanced configuration
+
+The following configuration shows all the available BSEC sensors and optional settings for the component.
+
+```yaml
+bme690:
+  # Identifier for this component, useful when working with multiple devices.
+  # Default: auto-computed
+  id: bme690_internal
+
+  # Common I²C addresses are 0x76 and 0x77.
+  # Default: 0x76
+  address: 0x76
+
+  # Optional BSEC static archive for your target MCU.
+  # Required only for BSEC air-quality outputs.
+  bsec_library: /config/esphome/bme690/libalgobsec.a
+
+  # Optional BSEC configuration. Use a config that matches the BSEC library,
+  # sample rate, voltage, and history window.
+  bsec_config: /config/esphome/bme690/bsec_iaq.config
+
+  # Available options:
+  # - LP: low power, samples every 3 seconds
+  # - ULP: ultra-low power, samples every 5 minutes
+  # Default: LP
+  sample_rate: LP
+
+  # Fallback polling interval. BSEC controls the normal measurement cadence.
+  # Default: 3s
+  update_interval: 3s
+
+  # Board self-heating compensation in °C.
+  # Default: 0
+  temperature_offset: 0
+
+  # Interval at which to save BSEC state.
+  # Default: 6h
+  state_save_interval: 6h
+
+sensor:
+  - platform: bme690
+    # ID of the bme690 component to use for these sensors.
+    bme690_id: bme690_internal
+
+    temperature:
+      # Raw die temperature in °C
+      name: "BME690 Temperature"
+    pressure:
+      # Pressure in hPa
+      name: "BME690 Pressure"
+    humidity:
+      # Raw relative humidity %
+      name: "BME690 Humidity"
+    gas_resistance:
+      # Gas resistance in Ω
+      name: "BME690 Gas Resistance"
+    iaq:
+      # Indoor air quality value
+      name: "BME690 IAQ"
+    iaq_accuracy:
+      # IAQ accuracy as a numeric value of 0, 1, 2, 3
+      name: "BME690 Numeric IAQ Accuracy"
+    static_iaq:
+      name: "BME690 Static IAQ"
+    co2_equivalent:
+      # CO₂ equivalent estimate in ppm
+      name: "BME690 CO2 Equivalent"
+    breath_voc_equivalent:
+      # Breath VOC equivalent estimate in ppm, available with BSEC 3.2.x
+      name: "BME690 Breath VOC Equivalent"
+    tvoc_equivalent:
+      # TVOC equivalent estimate in ppb, available with BSEC 3.3.x LP
+      name: "BME690 TVOC Equivalent"
+    gas_percentage:
+      name: "BME690 Gas Percentage"
+    compensated_temperature:
+      # Heat compensated temperature in °C
+      name: "BME690 Compensated Temperature"
+    compensated_humidity:
+      # Heat compensated relative humidity %
+      name: "BME690 Compensated Humidity"
+
+text_sensor:
+  - platform: bme690
+    bme690_id: bme690_internal
+    iaq_accuracy:
+      # IAQ accuracy as a text value of Stabilizing, Uncertain, Calibrating, Calibrated
+      name: "BME690 IAQ Accuracy"
+```
+
+## Multiple sensors
+
+The following configuration shows how to set up multiple BME690 devices. They can be configured to use the same I²C bus
+or different busses, but remember that the BME690 can only be set to operate on I²C address `0x76` or `0x77`.
+
+> [!NOTE]
+> Multiple BME690 instances are supported by configuration but are not yet tested. If BSEC is enabled, all instances
+> must use the same `bsec_library`.
+
+```yaml
+i2c:
+  - id: i2c_bme
+    sda: GPIO18
+    scl: GPIO19
+    scan: true
+
+bme690:
+  - id: bme690_internal
+    i2c_id: i2c_bme
+    address: 0x76
+    bsec_library: /config/esphome/bme690/libalgobsec.a
+  - id: bme690_external
+    i2c_id: i2c_bme
+    address: 0x77
+    bsec_library: /config/esphome/bme690/libalgobsec.a
+
+sensor:
+  - platform: bme690
+    bme690_id: bme690_internal
+    temperature:
+      name: "Internal BME690 Temperature"
+    iaq:
+      name: "Internal BME690 IAQ"
+
+  - platform: bme690
+    bme690_id: bme690_external
+    temperature:
+      name: "External BME690 Temperature"
+    iaq:
+      name: "External BME690 IAQ"
+```
+
+## BSEC library and configuration
+
+The `bsec_library` archive and `bsec_config` file are coupled. Use files from the same Bosch BSEC release and choose
+the archive for the ESP32 variant you are compiling for. The configuration file must match the selected sensor voltage,
+sample rate, and history window. For example, `sample_rate: LP` should use a `3s` BSEC IAQ configuration, and
+`sample_rate: ULP` should use a `300s` configuration.
+
+If you do not provide `bsec_config`, ESPHome uses built-in BME690 33V 4-day BSEC 3.3.0.0 IAQ configurations. Provide
+an explicit `bsec_config` when using BSEC 3.2.x, a 1.8V sensor configuration, or a different history window such as
+28 days.
+
+## Index for Air Quality (IAQ) Measurement
+
+The measurements are expressed with an index scale ranging from 0 to 500. The index itself is deduced from tests using
+ethanol gas, as well as important VOC in the exhaled breath of healthy humans. The BSEC software library defines the
+levels as follows:
+
+| IAQ Index | Air Quality         |
+| --------- | ------------------- |
+| 0 - 50    | Excellent           |
+| 51 - 100  | Good                |
+| 101 - 150 | Lightly polluted    |
+| 151 - 200 | Moderately polluted |
+| 201 - 250 | Heavily polluted    |
+| 251 - 350 | Severely polluted   |
+| > 351     | Extremely polluted  |
+
+<span id="bsec-calibration"></span>
+
+## IAQ Accuracy and Calibration
+
+The BSEC software automatically calibrates in the background to provide consistent IAQ performance. The calibration
+process considers the recent measurement history so that a value of 50 corresponds to a "typical good" level and a
+value of 200 to a "typical polluted" level. The IAQ Accuracy sensor will give one of the following values:
+
+- `Stabilizing`  : The device has just started, and the sensor is stabilizing.
+- `Uncertain`  : The background history of BSEC is uncertain. This typically means the gas sensor data was too stable
+  for BSEC to clearly define its reference.
+- `Calibrating`  : BSEC found new calibration data and is currently calibrating.
+- `Calibrated`  : BSEC calibrated successfully.
+
+Every `state_save_interval`, or as soon thereafter as full calibration is reached, the current algorithm state is saved
+to flash so that the process does not have to start from zero on device restart.
+
+## See Also
+
+- [Sensor Filters](/components/sensor#sensor-filters)
+- [Absolute Humidity](/components/sensor/absolute_humidity/)
+- [BME680 Temperature+Pressure+Humidity+Gas Sensor](/components/sensor/bme680/)
+- [BME680 Temperature+Pressure+Humidity+Gas Sensor via BSEC](/components/sensor/bme680_bsec/)
+- [BME68x Temperature+Pressure+Humidity+Gas Sensor via BSEC2](/components/sensor/bme68x_bsec2/)
+- [Bosch Sensortec Downloads](https://www.bosch-sensortec.com/en/products/downloads)
+- [Bosch Sensortec Community](https://community.bosch-sensortec.com/)
+- <APIRef text="bme690.h" path="bme690/bme690.h" />
