@@ -1,0 +1,69 @@
+---
+description: "Instructions for setting up BTHome v2 and ATC Mi Thermometer BLE sensors in ESPHome."
+title: "BTHome / Mi Thermometer Sensor"
+---
+
+import APIRef from '@components/APIRef.astro';
+
+The `bthome_mithermometer` sensor platform reads temperature, humidity, and battery data from
+[BTHome v2](https://bthome.io/) compatible devices and ATC Mi Thermometer custom firmware variants
+over Bluetooth Low Energy.
+
+This platform works with [ESP32 BLE Tracker](/components/esp32_ble_tracker/) and
+[LN882H BLE Tracker](/components/ln882h_ble_tracker/).
+
+```yaml
+# Example configuration entry
+esp32_ble_tracker:
+
+sensor:
+  - platform: bthome_mithermometer
+    mac_address: "XX:XX:XX:XX:XX:XX"
+    temperature:
+      name: "Temperature"
+    humidity:
+      name: "Humidity"
+    battery_level:
+      name: "Battery Level"
+    signal_strength:
+      name: "RSSI"
+```
+
+> [!NOTE]
+> On LN882H, replace `esp32_ble_tracker:` with
+> [`ln882h_ble_tracker:`](/components/ln882h_ble_tracker/) in your configuration.
+> AES-CCM encrypted advertisements are **not** supported on LN882H — see [`bindkey`](#bindkey) below.
+
+## Configuration variables
+
+- **mac_address** (**Required**, MAC Address): The Bluetooth MAC address of the sensor device.
+
+- **temperature** (*Optional*): Report the temperature in °C.
+  - All options from [Sensor](/components/sensor).
+
+- **humidity** (*Optional*): Report the relative humidity in %.
+  - All options from [Sensor](/components/sensor).
+
+- **battery_level** (*Optional*): Report the battery level as a percentage.
+  - All options from [Sensor](/components/sensor).
+
+- **battery_voltage** (*Optional*): Report the battery voltage in volts (V).
+  - All options from [Sensor](/components/sensor).
+
+- **signal_strength** (*Optional*): Report the received signal strength (RSSI) in dBm.
+  - All options from [Sensor](/components/sensor).
+
+<span id="bindkey"></span>
+
+- **bindkey** (*Optional*, list of bytes): 16-byte AES-CCM decryption key for encrypted BTHome v2
+  advertisements. Only supported on ESP32. On LN882H this option is accepted by the YAML parser
+  but logs a warning at boot and encrypted frames are silently skipped, since the LN882H BLE
+  implementation does not include the AES-CCM decryption stack.
+
+## See Also
+
+- [LN882H Bluetooth Low Energy Tracker Hub](/components/ln882h_ble_tracker/)
+- [ESP32 Bluetooth Low Energy Tracker Hub](/components/esp32_ble_tracker/)
+- [Sensor Component](/components/sensor/)
+- BTHome protocol — [https://bthome.io/](https://bthome.io/)
+- <APIRef text="bthome_ble.h" path="ln882h_ble_tracker/bthome_ble.h" />
