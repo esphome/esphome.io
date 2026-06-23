@@ -1,5 +1,5 @@
 ---
-description: "Instructions for setting up BME690 temperature, humidity, pressure, gas, and optional BSEC air-quality sensors."
+description: "Instructions for setting up BME690 temperature, humidity, pressure, gas, and BSEC 3 air-quality sensors."
 title: "BME690 Temperature+Pressure+Humidity+Gas Sensor"
 ---
 
@@ -9,27 +9,31 @@ import APIRef from '@components/APIRef.astro';
 
 ## Component/Hub
 
-The `bme690` sensor platform allows you to use your BME690 temperature, pressure, humidity, and gas sensor with
-ESPHome. Without Bosch's proprietary BSEC library, the component publishes raw temperature, pressure, humidity, and gas
-resistance values directly from the sensor.
+The `bme690` sensor platform allows you to use your [BME690](https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bme690-ds001.pdf)
+temperature, pressure, humidity, and gas sensor with ESPHome. Using the Bosch
+Sensortec Environmental Cluster (BSEC) version 3 library is optional. Without
+BSEC 3, the component publishes raw temperature, pressure, humidity, and gas
+resistance values.
 
-If you configure a Bosch Sensortec Environmental Cluster (BSEC) library archive, ESPHome can also enable Bosch's
-proprietary air-quality algorithm. BSEC adds an Index for Air Quality (IAQ), estimated equivalent values for CO₂ and
-VOC outputs, heat-compensated temperature and humidity, gas percentage, IAQ accuracy, and saved calibration state.
+If you configure a BSEC 3 library, ESPHome enables Bosch's proprietary
+air-quality algorithm. BSEC 3 adds an Index for Air Quality (IAQ), estimated
+equivalent values for CO₂ and VOC outputs, heat-compensated temperature and
+humidity, gas percentage, IAQ accuracy, and saved calibration state.
 
 > [!NOTE]
-> - BSEC features are only available after accepting Bosch's software license agreement. By configuring
->   `bsec_library`, you are explicitly agreeing to the terms of the
->   [BSEC license agreement](https://www.bosch-sensortec.com/media/boschsensortec/downloads/software/bme688_development_software/2024_12/20241219_clickthrough_license_terms_bsec_bme680_bme688_bme690.pdf).
->   You must not distribute any compiled firmware binaries that include the BSEC library.
+> - BSEC 3 features are only available after accepting Bosch's software license
+>   agreement. By configuring `bsec_library`, you are explicitly agreeing to the
+>   terms of the [BSEC license agreement](https://www.bosch-sensortec.com/media/boschsensortec/downloads/software/bme688_development_software/2024_12/20241219_clickthrough_license_terms_bsec_bme680_bme688_bme690.pdf).
+>   You must not distribute any compiled firmware binaries that include the BSEC
+>   library.
 >
-> - This component requires ESP32 with the ESP-IDF framework. BSEC features additionally require a target-compatible
->   Bosch `libalgobsec.a` archive.
+> - This component requires ESP32 with the ESP-IDF framework.
 >
-> - Multiple BME690 instances can be configured, but this is not yet tested. If BSEC is enabled, all instances must use
->   the same BSEC library archive because it is linked into the firmware as a single static library.
+> - Multiple BME690 instances can be configured, but this is not yet tested. Use
+>   the same BSEC library for all sensors.
 
-The [I²C](/components/i2c) bus is required to be set up in your configuration for this sensor to work.
+The [I²C](/components/i2c) bus is required to be set up in your configuration
+for this sensor to work.
 
 <Figure
   src={bme690FullImg}
