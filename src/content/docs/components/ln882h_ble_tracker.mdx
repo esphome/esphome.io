@@ -1,0 +1,333 @@
+---
+description: "Instructions for setting up LN882H Bluetooth Low Energy device tracking using ESPHome."
+title: "LN882H Bluetooth Low Energy Tracker Hub"
+---
+
+import APIClass from '@components/APIClass.astro';
+import APIRef from '@components/APIRef.astro';
+
+The `ln882h_ble_tracker` component creates a global hub so that you can track Bluetooth Low Energy
+devices using your LN882H node (LibreTiny `lightning-ln882h` family, such as the WL2H-U and
+LN-CB3S V1.0 modules).
+
+This component provides the **BLE scanner**, its automation triggers, and the listener
+interface used by ESPHome's advertisement-based BLE sensor platforms — for example
+[BLE RSSI](/components/sensor/ble_rssi/), [BLE Presence](/components/binary_sensor/ble_presence/),
+[BLE Scanner](/components/text_sensor/ble_scanner/) and [Xiaomi BLE](/components/sensor/xiaomi_ble/)
+— which attach to this tracker automatically.
+
+> [!NOTE]
+> Connection-based BLE components (`ble_client`, `bluetooth_proxy`) are not available on this
+> platform — the tracker is scan-only.
+
+> [!NOTE]
+> The tracker builds on the [LN882H BLE](/components/ln882h_ble/) controller component and
+> loads it automatically — the BLE stack (`CFG_SUPPORT_BLE`) is enabled in the build with no
+> manual `platformio_options` flag.
+
+> [!NOTE]
+> The LN882H is a **single-core SoC** — WiFi and BLE share the same ARM CPU core.
+> Running continuous BLE scanning during the ESPHome Native API connection handshake can prevent
+> WiFi from completing the TCP handshake. The recommended approach is to set `continuous: false`
+> so scanning does not start on boot, then start it once Home Assistant is connected.
+> See [Use on a single-core chip](#use-on-a-single-core-chip) below.
+
+```yaml
+# Example configuration — passive scanning, starts only when HA is connected
+ln882h_ble_tracker:
+  scan_parameters:
+    continuous: false   # do not start on boot — let api: automation control this
+
+api:
+  on_client_connected:
+    - ln882h_ble_tracker.start_scan:
+        continuous: true
+  on_client_disconnected:
+    # fires for EVERY departing client (log viewer, CLI) — only stop
+    # scanning when the last client is gone (Home Assistant no longer connected)
+    - if:
+        condition:
+          not:
+            api.connected:
+        then:
+          - ln882h_ble_tracker.stop_scan:
+```
+
+<span id="config-ln882h_ble_tracker"></span>
+
+## Configuration variables
+
+- **scan_parameters** (*Optional*): Advanced parameters for configuring the scan behaviour.
+  See also [this guide by Texas Instruments](https://dev.ti.com/tirex/explore/content/simplelink_academy_cc2640r2sdk_5_10_02_00/modules/blestack/ble_scan_adv_basic/ble_scan_adv_basic.html#scanning-basics)
+  for background reading.
+
+  - **interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval between
+    each consecutive scan window. The scanner cycles through the three BLE advertising channels
+    at this rate. Defaults to `100ms` — the LN882H SDK's recommended `SCAN_INTERVAL_DEF` (`0xA0`),
+    which together with the default `window` gives a 50 % duty cycle (the value the chip is
+    designed to scan at). A larger interval lowers the duty cycle and frees more CPU time for WiFi
+    on the single-core SoC, at the cost of catching fewer advertisements.
+
+  - **window** (*Optional*, [Time](/guides/configuration-types#time)): The time the receiver is
+    actively listening for packets on a channel during each scan interval. Must be ≤ `interval`.
+    Defaults to `50ms` — the LN882H SDK's recommended `SCAN_WINDOW_DEF` (`0x50`).
+
+  - **duration** (*Optional*, [Time](/guides/configuration-types#time)): The length of each
+    complete scan session. When `continuous` is `true` the scanner restarts immediately after each
+    session ends. Defaults to `5min`.
+
+  - **active** (*Optional*, boolean): When `true` the scanner sends scan-request packets to
+    request additional advertisement data (scan response). Defaults to `true`, matching
+    [ESP32 BLE Tracker](/components/esp32_ble_tracker/).
+
+    > [!NOTE]
+    > As on ESP32 (where ESP-IDF performs the merge), an advertisement and its scan
+    > response are combined into a single result, so automations and sensor platforms
+    > receive one merged frame containing both payloads — this is where device names come from.
+
+  - **continuous** (*Optional*, boolean): When `true` the scanner restarts automatically after
+    each `duration` period. When `false` scanning must be started explicitly with the
+    `ln882h_ble_tracker.start_scan` action. Defaults to `true`.
+
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used to
+  reference this component in lambdas and actions.
+
+> [!NOTE]
+> BLE sensor platforms attach to this tracker automatically — no extra configuration is
+> required. See [Use on a single-core chip](#use-on-a-single-core-chip) below.
+
+Automations:
+
+- **on_ble_advertise** (*Optional*, [Automation](/automations)): An automation to perform
+  when a BLE advertising packet is received. See
+  [`on_ble_advertise` Trigger](#ln882h_ble_tracker-on_ble_advertise).
+
+- **on_ble_manufacturer_data_advertise** (*Optional*, [Automation](/automations)): An automation
+  to perform when a BLE advertising packet with manufacturer-specific data is received. See
+  [`on_ble_manufacturer_data_advertise` Trigger](#ln882h_ble_tracker-on_ble_manufacturer_data_advertise).
+
+- **on_ble_service_data_advertise** (*Optional*, [Automation](/automations)): An automation to
+  perform when a BLE advertising packet with service data is received. See
+  [`on_ble_service_data_advertise` Trigger](#ln882h_ble_tracker-on_ble_service_data_advertise).
+
+- **on_scan_end** (*Optional*, [Automation](/automations)): An automation to perform when a
+  BLE scan session ends (duration elapsed or `stop_scan` called). Fires on every cycle when
+  `continuous` is `true`. See [`on_scan_end` Trigger](#ln882h_ble_tracker-on_scan_end).
+
+## LN882H BLE Tracker Automation
+
+<span id="ln882h_ble_tracker-on_ble_advertise"></span>
+
+### `on_ble_advertise` Trigger
+
+This automation will be triggered when a BLE advertising packet is received. A variable `x` of
+type <APIClass text="ble_device_base::ESPBTDevice" path="ble_device_base::ESPBTDevice" /> is
+passed to the automation for use in lambdas.
+
+```yaml
+ln882h_ble_tracker:
+  on_ble_advertise:
+    - then:
+        - lambda: |-
+            ESP_LOGD("ble_adv", "Advertisement from %s (RSSI %d), name '%s'",
+                     x.address_str().c_str(), x.get_rssi(), x.get_name().c_str());
+```
+
+Add an optional `mac_address` filter (a list) to restrict the automation to specific devices, and
+use the device accessors — `x.get_service_uuids()`, `x.get_service_datas()`,
+`x.get_manufacturer_datas()` — to inspect the advertisement payload.
+
+#### Configuration variables
+
+- **mac_address** (*Optional*, list of MAC Address): The MAC address to filter for this automation.
+- See [Automation](/automations).
+
+<span id="ln882h_ble_tracker-on_ble_manufacturer_data_advertise"></span>
+
+### `on_ble_manufacturer_data_advertise` Trigger
+
+This automation will be triggered when a BLE advertising packet with manufacturer-specific data
+is received. A variable `x` of type `std::vector<uint8_t>` is passed to the automation for use
+in lambdas.
+
+```yaml
+ln882h_ble_tracker:
+  on_ble_manufacturer_data_advertise:
+    - mac_address: XX:XX:XX:XX:XX:XX
+      manufacturer_id: 0590
+      then:
+        - lambda: |-
+            ESP_LOGD("ble_man_data", "Manufacturer data of length %i", x.size());
+```
+
+#### Configuration variables
+
+- **mac_address** (*Optional*, MAC Address): The MAC address to filter for this automation.
+- **manufacturer_id** (**Required**, string): 16-bit, 32-bit, or 128-bit BLE manufacturer ID in hex.
+- See [Automation](/automations).
+
+<span id="ln882h_ble_tracker-on_ble_service_data_advertise"></span>
+
+### `on_ble_service_data_advertise` Trigger
+
+This automation will be triggered when a BLE advertising packet with service data is received. A
+variable `x` of type `std::vector<uint8_t>` is passed to the automation for use in lambdas.
+
+```yaml
+ln882h_ble_tracker:
+  on_ble_service_data_advertise:
+    - mac_address: XX:XX:XX:XX:XX:XX
+      service_uuid: FCD2
+      then:
+        - lambda: |-
+            ESP_LOGD("ble_svc_data", "Service data of length %i", x.size());
+```
+
+#### Configuration variables
+
+- **mac_address** (*Optional*, MAC Address): The MAC address to filter for this automation.
+- **service_uuid** (**Required**, string): 16-bit, 32-bit, or 128-bit BLE service UUID in hex
+  (e.g. `FCD2` for BTHome v2, `181A` for Environmental Sensing).
+- See [Automation](/automations).
+
+<span id="ln882h_ble_tracker-on_scan_end"></span>
+
+### `on_scan_end` Trigger
+
+This automation will be triggered when a Bluetooth scan session has completed. When `continuous`
+is `true` this fires at the end of every scan cycle.
+
+```yaml
+ln882h_ble_tracker:
+  on_scan_end:
+    - then:
+        - lambda: |-
+            ESP_LOGD("ble_auto", "The scan has ended!");
+```
+
+#### Configuration variables
+
+- None.
+- See [Automation](/automations).
+
+### `ln882h_ble_tracker.start_scan` Action
+
+Start a Bluetooth scan. Invoked while a scan is already running, the action applies the scan
+mode and re-anchors the running scan's `duration` window instead of restarting the radio.
+
+```yaml
+ln882h_ble_tracker:
+  scan_parameters:
+    continuous: false
+
+on_...:
+  - ln882h_ble_tracker.start_scan:
+      continuous: true
+```
+
+#### Configuration variables
+
+- **continuous** (*Optional*, [templatable](/automations/templates#config-templatable), boolean):
+  Override the scan mode for this start only. When omitted, the mode configured under
+  `scan_parameters` is restored — a previous `stop_scan` does not stick as "one-shot".
+
+### `ln882h_ble_tracker.stop_scan` Action
+
+Stop the running Bluetooth scan; also cancels a start that is still being retried. It can be
+restarted with `ln882h_ble_tracker.start_scan`.
+
+```yaml
+on_...:
+  - ln882h_ble_tracker.stop_scan:
+```
+
+<span id="single-core"></span>
+
+## Use on a single-core chip
+
+Unlike the ESP32 which runs BLE on a dedicated core, the LN882H runs both WiFi and BLE on the
+same ARM CPU core at 160 MHz. Continuous BLE scanning during the initial ESPHome Native
+API TCP connection handshake can prevent WiFi from completing the connection. The recommended
+workaround is to start scanning only once Home Assistant is connected, and stop it when HA
+disconnects.
+
+### Scanner only
+
+The tracker on its own, driven by its automation triggers — start scanning only once Home
+Assistant is connected:
+
+```yaml
+ln882h_ble_tracker:
+  scan_parameters:
+    continuous: false   # do not start on boot
+
+api:
+  on_client_connected:
+    - ln882h_ble_tracker.start_scan:
+        continuous: true
+  on_client_disconnected:
+    # fires for EVERY departing client (log viewer, CLI) — only stop
+    # scanning when the last client is gone (Home Assistant no longer connected)
+    - if:
+        condition:
+          not:
+            api.connected:
+        then:
+          - ln882h_ble_tracker.stop_scan:
+```
+
+### With BLE sensors
+
+Sensor platforms attach to the tracker automatically (identical to ESP32). Drive scanning the
+same way as the scanner-only setup above, so it runs only while Home Assistant is connected,
+keeping BLE off the single-core radio during the boot handshake:
+
+```yaml
+ln882h_ble_tracker:
+  scan_parameters:
+    active: true
+    continuous: false   # no scan on boot
+
+sensor:
+  - platform: xiaomi_lywsd03mmc
+    mac_address: A4:C1:38:XX:XX:XX
+    bindkey: "eef418daf699a0c188f3bfd17e4565d9"
+    temperature:
+      name: "Temperature"
+    humidity:
+      name: "Humidity"
+  - platform: ble_rssi
+    mac_address: AC:37:43:77:5F:4C
+    name: "BLE Beacon RSSI"
+
+api:
+  on_client_connected:
+    - ln882h_ble_tracker.start_scan:
+        continuous: true
+  on_client_disconnected:
+    # fires for EVERY departing client (log viewer, CLI) — only stop
+    # scanning when the last client is gone (Home Assistant no longer connected)
+    - if:
+        condition:
+          not:
+            api.connected:
+        then:
+          - ln882h_ble_tracker.stop_scan:
+```
+
+> [!NOTE]
+> **BLE / WiFi balance (single-core).** WiFi and BLE share one ARM core, so the `window` /
+> `interval` ratio sets how the core is split between BLE scanning and WiFi. Keep `window: 50ms`
+> and choose the `interval`:
+>
+> - `interval: 100ms` → **50 / 50** BLE / WiFi — the LN882H SDK's recommended default
+> - `interval: 200ms` → **25 / 75** BLE / WiFi — catches fewer advertisements, but leaves more of
+>   the core for WiFi
+
+## See Also
+
+- [LN882H Bluetooth Low Energy](/components/ln882h_ble/)
+- [ESP32 Bluetooth Low Energy Tracker Hub](/components/esp32_ble_tracker/)
+- [BLE RSSI Sensor](/components/sensor/ble_rssi/)
+- [BLE Presence Binary Sensor](/components/binary_sensor/ble_presence/)
+- <APIRef text="ln882h_ble_tracker.h" path="ln882h_ble_tracker/ln882h_ble_tracker.h" />
