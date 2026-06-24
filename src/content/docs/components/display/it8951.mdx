@@ -117,6 +117,11 @@ dimensions, VCOM) is preset but can be overridden.
   monochrome mode (`grayscale: false`) the intervening updates use the fast
   `DU` waveform; in grayscale mode they remain `GC16` (see the note under
   **update_mode**).
+- **auto_clear_enabled** (_Optional_, boolean): When `true` (the default when a
+  `lambda` or `pages` is configured), the framebuffer is cleared before every
+  render, so each update redraws and refreshes the whole screen. Set to `false`
+  to enable partial **area updates**, where only the changed region is
+  transferred and refreshed — see [Area updates](#area-updates-partial-regions).
 - **vcom** (_Optional_, int): VCOM voltage in millivolts. Each e-paper panel has
   a specific VCOM value printed on its flex cable. Defaults to `2300` (2.3V) for
   m5stack-m5paper. Incorrect VCOM can cause image quality issues.
@@ -252,6 +257,44 @@ display:
       it.fill(Color::WHITE);
       it.strftime(10, 10, id(my_font), "%H:%M:%S", id(my_time).now());
 ```
+
+### Area updates (partial regions)
+
+By default every update redraws and refreshes the whole screen, because
+`auto_clear_enabled` defaults to `true` and clears the framebuffer before each
+render. Setting `auto_clear_enabled: false` enables **area updates**: the
+framebuffer persists between updates, and only the bounding box of whatever your
+lambda draws is transferred to the controller and refreshed on the panel. This
+is much faster and flashes only the changed region.
+
+Because the buffer persists, your lambda must **erase** the area it is about to
+redraw (drawing over the old pixels), otherwise remnants of the previous content
+remain. Erasing counts as drawing, so it is included in the changed region:
+
+```yaml
+display:
+  - platform: it8951
+    model: m5stack-m5paper
+    id: my_display
+    auto_clear_enabled: false
+    update_mode: DU
+    full_update_every: 30
+    update_interval: 1s
+    rotation: 270
+    lambda: |-
+      // Erase just the clock area, then redraw it. Only this rectangle is
+      // transferred and refreshed; the rest of the panel is untouched.
+      it.filled_rectangle(0, 0, 360, 90, Color::WHITE);
+      it.strftime(0, 0, id(my_font), Color::BLACK, "%H:%M:%S", id(my_time).now());
+```
+
+Notes:
+
+- The changed region's horizontal extent is rounded out to a multiple of 16
+  pixels (a hardware alignment requirement); vertical extent is exact.
+- A full `GC16` refresh is still forced every `full_update_every` updates, and
+  on the first update after boot, to clear accumulated ghosting.
+- If a lambda draws nothing, the update is skipped entirely.
 
 ## Technical notes
 
