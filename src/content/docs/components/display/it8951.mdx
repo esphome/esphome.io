@@ -102,9 +102,21 @@ dimensions, VCOM) is preset but can be overridden.
   | `DU4`   | 4-level grayscale, fast update. Good for anti-aliased text in menus.                    |
   | `A2`    | Fastest mode. Black/white only, minimal ghosting. Good for animations/page turns.       |
 
-- **full_update_every** (_Optional_, int): Number of partial updates before a
-  full (GC16) update is forced to clear ghosting. Defaults to `30`. Set to `0`
-  to disable forced full updates.
+  > [!NOTE]
+  > Not every waveform is present in every panel's waveform LUT. On the
+  > supported Seeed panels only `GC16` (grayscale) and `DU` (monochrome) have
+  > been verified to render correctly; the reduced-grayscale modes (`GL16`,
+  > `GLR16`, `GLD16`, `DU4`) and `A2` can leave a white background rendered as
+  > grey. The driver's automatic mode selection therefore only ever uses `GC16`
+  > and `DU`; set `update_mode` to another value only if you have confirmed it
+  > works on your panel.
+
+- **full_update_every** (_Optional_, int): Number of updates between forced
+  full `GC16` refreshes, which clear accumulated ghosting. Defaults to `30`;
+  range `1`–`255`. The first update after boot is always a full refresh. In
+  monochrome mode (`grayscale: false`) the intervening updates use the fast
+  `DU` waveform; in grayscale mode they remain `GC16` (see the note under
+  **update_mode**).
 - **vcom** (_Optional_, int): VCOM voltage in millivolts. Each e-paper panel has
   a specific VCOM value printed on its flex cable. Defaults to `2300` (2.3V) for
   m5stack-m5paper. Incorrect VCOM can cause image quality issues.
@@ -114,9 +126,13 @@ dimensions, VCOM) is preset but can be overridden.
   deep sleep after each display update completes. Reduces power consumption but
   adds wake-up latency for the next update. Defaults to `true` for m5stack-m5paper,
   `false` for Seeed boards.
-- **force_1bpp** (_Optional_, boolean): Force 1-bit-per-pixel transfer mode
-  even when the framebuffer contains grayscale data. The driver automatically
-  uses 1bpp when all pixels are pure black or white. Defaults to `false`.
+- **grayscale** (_Optional_, boolean): Selects the framebuffer pixel format.
+  When `true` (default), the framebuffer stores 16-level grayscale (4 bits per
+  pixel) and updates use the `GC16` waveform. When `false`, the framebuffer is
+  packed monochrome (1 bit per pixel): this halves RAM use, roughly halves the
+  transfer time, and enables fast `DU` partial refreshes between full cleans.
+  Choose `false` for pure black/white content (text, QR codes, line art) where
+  speed and memory matter more than gray levels.
 - **reset_duration** (_Optional_, [Time](/guides/configuration-types#time)):
   Duration of the hardware reset pulse. Defaults to `10ms`. Maximum `500ms`.
 - **lambda** (_Optional_,
@@ -240,8 +256,9 @@ display:
 ## Technical notes
 
 - The IT8951 controller supports up to 16 levels of grayscale (4 bits per
-  pixel). When all content is pure black and white, the driver automatically
-  switches to a 1bpp transfer mode that is 4× faster.
+  pixel). Set `grayscale: false` to store the framebuffer as packed 1-bit
+  monochrome instead, which uses a quarter of the RAM and transfers far less
+  data per update for pure black/white content.
 - The driver is fully non-blocking. SPI operations are queued and executed one
   per main loop iteration, gated on the HRDY pin. Row data transfer is
   time-sliced to stay within the loop tick budget.
