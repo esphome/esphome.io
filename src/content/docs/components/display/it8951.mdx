@@ -125,8 +125,8 @@ dimensions, VCOM) is preset but can be overridden.
 - **vcom** (_Optional_, int): VCOM voltage in millivolts. Each e-paper panel has
   a specific VCOM value printed on its flex cable. Defaults to `2300` (2.3V) for
   m5stack-m5paper. Incorrect VCOM can cause image quality issues.
-- **reversed** (_Optional_, boolean): Invert the color mapping (swap black and
-  white). Defaults to `false`.
+- **invert_colors** (_Optional_, boolean): Invert the color mapping (swap black
+  and white). Defaults to `false`.
 - **sleep_when_done** (_Optional_, boolean): Put the IT8951 controller into
   deep sleep after each display update completes. Reduces power consumption but
   adds wake-up latency for the next update. Defaults to `true` for m5stack-m5paper,
@@ -138,6 +138,13 @@ dimensions, VCOM) is preset but can be overridden.
   transfer time, and enables fast `DU` partial refreshes between full cleans.
   Choose `false` for pure black/white content (text, QR codes, line art) where
   speed and memory matter more than gray levels.
+- **dithering** (_Optional_, boolean): Monochrome only (no effect when
+  `grayscale` is `true`). When `true` (default), colors are reproduced with
+  ordered (Bayer) dithering, so pale shades — button fills, spinner arcs, light
+  grays — render as a visible black/white stipple instead of vanishing to
+  white. Pure black and pure white stay solid. Set to `false` for a hard 50%
+  black/white threshold (crisper, stipple-free text at the cost of pale fills
+  disappearing).
 - **reset_duration** (_Optional_, [Time](/guides/configuration-types#time)):
   Duration of the hardware reset pulse. Defaults to `10ms`. Maximum `500ms`.
 - **lambda** (_Optional_,
@@ -290,7 +297,7 @@ display:
 
 Notes:
 
-- The changed region's horizontal extent is rounded out to a multiple of 16
+- The changed region's horizontal extent is rounded out to a multiple of 32
   pixels (a hardware alignment requirement); vertical extent is exact.
 - A full `GC16` refresh is still forced every `full_update_every` updates, and
   on the first update after boot, to clear accumulated ghosting.
