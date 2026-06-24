@@ -115,18 +115,6 @@ api:
   the ESP is connected to the network, when in fact it is not - only a full reboot fixes it.
   Can be disabled by setting this to `0s`. Defaults to `15min`.
 
-- **provisioning_timeout** (*Optional*, [Time](/guides/configuration-types#time)): Closes the provisioning window this
-  long after boot if the device is still unprovisioned. This is intended for boxed products that ship with `encryption`
-  enabled but no `key` set, where Home Assistant configures the key the first time it connects — helping to meet the
-  secure-communication requirements of standards such as EN18031. Requires `encryption` to be enabled **without** a
-  `key`. Defaults to `0s` (disabled).
-
-  While the device is unprovisioned, the API's `reboot_timeout` (and the WiFi component's `reboot_timeout`) are
-  suppressed, so the device does not reboot itself and silently reopen the window. Once the window closes, the device
-  refuses further provisioning: the API immediately disconnects new clients with a "provisioning closed" reason, and
-  Improv (Serial and BLE) stop accepting credentials. The [`on_provisioning_timeout` Trigger](#api-on_provisioning_timeout_trigger)
-  also fires. The closed state is **not** stored — power-cycling or resetting the device reopens the window.
-
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
 
 - **on_client_connected** (*Optional*, [Action](/automations/actions#all-actions)): An automation to perform when a client
@@ -134,10 +122,6 @@ api:
 
 - **on_client_disconnected** (*Optional*, [Action](/automations/actions#all-actions)): An automation to perform when a client
   disconnects from the API. See [`on_client_disconnected` Trigger](#api-on_client_disconnected_trigger).
-
-- **on_provisioning_timeout** (*Optional*, [Action](/automations/actions#all-actions)): An automation to perform when the
-  provisioning window closes. See [`on_provisioning_timeout` Trigger](#api-on_provisioning_timeout_trigger). Requires
-  `provisioning_timeout` to be set.
 
 <span id="api-actions"></span>
 
@@ -410,21 +394,6 @@ api:
   # ...
   on_client_disconnected:
     - logger.log: "API client disconnected!"
-```
-
-<span id="api-on_provisioning_timeout_trigger"></span>
-
-### `on_provisioning_timeout` Trigger
-
-This trigger is activated when [`provisioning_timeout`](#configuration-variables) elapses while the device is still
-unprovisioned, closing the provisioning window. No variables are available to actions called from within this trigger.
-
-```yaml
-api:
-  encryption:
-  provisioning_timeout: 5min
-  on_provisioning_timeout:
-    - logger.log: "Provisioning window closed; reset the device to reopen it"
 ```
 
 ## Conditions
