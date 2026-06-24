@@ -62,9 +62,13 @@
   @use "../../styles/mixins" as *;
 
   :global(.ha-connect) {
-    --header-height-large: 120px;
+    --header-height-large: 80px;
     --header-height-small: 80px;
     --header-height: var(--header-height-large);
+
+    @include bp(tablet) {
+      --header-height-large: 120px;
+    }
 
     &.sticky-header {
       --header-height: var(--header-height-small);
@@ -357,6 +361,7 @@
         label {
           position: absolute;
           inset: 0;
+          cursor: pointer;
         }
       }
     }

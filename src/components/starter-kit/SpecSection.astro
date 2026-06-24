@@ -139,11 +139,11 @@ import SpecItem from "@components/starter-kit/SpecItem.astro";
     @use "../../styles/mixins" as *;
 
     .container {
-      flex-direction: column;
+      // flex-direction: column;
 
-      @include bp(tablet) {
-        flex-direction: row;
-      }
+      // @include bp(tablet) {
+      //   flex-direction: row;
+      // }
     }
 
     .specs {
@@ -159,16 +159,15 @@ import SpecItem from "@components/starter-kit/SpecItem.astro";
     }
 
     .asset-col {
-      width: 100%;
+      width: 50%;
       height: 70vw;
       max-height: 480px;
+      position: sticky;
+      top: calc(var(--sl-nav-height) + 80px);
 
       @include bp(tablet) {
-        width: 50%;
         height: calc(100vh - var(--sl-nav-height) - 80px);
         max-height: unset;
-        position: sticky;
-        top: calc(var(--sl-nav-height) + 80px);
       }
 
       canvas {
@@ -242,19 +241,17 @@ import SpecItem from "@components/starter-kit/SpecItem.astro";
         alpha: true,
         powerPreference: "high-performance",
       });
-      renderer.setPixelRatio(window.devicePixelRatio);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
       renderer.setSize(width, height, false);
-      renderer.toneMapping = THREE.ACESFilmicToneMapping;
-      renderer.toneMappingExposure = 1.1;
       renderer.outputColorSpace = THREE.SRGBColorSpace;
 
-      scene.add(new THREE.AmbientLight(0xffffff, 0.6));
-      const keyLight = new THREE.DirectionalLight(0xffffff, 2.0);
-      keyLight.position.set(3, 4, 2);
-      scene.add(keyLight);
-      const fillLight = new THREE.DirectionalLight(0xa9c8ff, 0.8);
-      fillLight.position.set(-3, 1, -2);
-      scene.add(fillLight);
+      // Blueprint palette — mirrors the hero section.
+      const EDGE_DARK = new THREE.Color(0xffffff);
+      const EDGE_LIGHT = new THREE.Color(0x000000);
+      const isLightTheme = () =>
+        document.documentElement.dataset.theme === "light";
+
+      const edgeMaterials: THREE.LineBasicMaterial[] = [];
 
       let modelTarget = new THREE.Vector3();
       let modelSize = new THREE.Vector3();
@@ -265,7 +262,6 @@ import SpecItem from "@components/starter-kit/SpecItem.astro";
       const fitCamera = () => {
         const fovRad = (camera.fov * Math.PI) / 180;
         const aspect = width / height;
-        // Use the larger of: height-fit dim or width-fit dim (accounting for aspect)
         const fitDim = Math.max(modelSize.y, modelSize.x / aspect);
         const dist =
           (fitDim / 2 / Math.tan(fovRad / 2) + modelSize.z / 2) * 1.15;
@@ -278,15 +274,118 @@ import SpecItem from "@components/starter-kit/SpecItem.astro";
 
       loader.load("/starter-kit/ESK.glb", (gltf) => {
         const model = gltf.scene;
+
+        // Scale and centre — matches the hero section exactly.
+        const localBox = new THREE.Box3().setFromObject(model);
+        const localSize = new THREE.Vector3();
+        localBox.getSize(localSize);
+        const maxDim = Math.max(localSize.x, localSize.y, localSize.z) || 1;
+        model.scale.setScalar(1.6 / maxDim);
+
+        const scaledBox = new THREE.Box3().setFromObject(model);
+        const scaledCenter = new THREE.Vector3();
+        scaledBox.getCenter(scaledCenter);
+        model.position.sub(scaledCenter);
+
+        // Apply the same yaw as the hero so both sections show the same face.
+        const LED_PIVOT = new THREE.Vector3(0, 0.05, 0.05);
+        const ROT_AXIS = new THREE.Vector3(0, 1, 0);
+        const ROT_ANGLE = Math.PI / 8;
+        model.position
+          .sub(LED_PIVOT)
+          .applyAxisAngle(ROT_AXIS, ROT_ANGLE)
+          .add(LED_PIVOT);
+        model.rotateOnWorldAxis(ROT_AXIS, ROT_ANGLE);
+
         scene.add(model);
 
-        const box = new THREE.Box3().setFromObject(model);
-        modelTarget = box.getCenter(new THREE.Vector3());
-        modelSize = box.getSize(new THREE.Vector3());
+        // Collect meshes first — adding children inside traverse causes
+        // Three.js to visit those children too, which recurses infinitely.
+        const meshesToDecorate: THREE.Mesh[] = [];
+        model.traverse((obj: THREE.Object3D) => {
+          const mesh = obj as THREE.Mesh;
+          if (mesh.isMesh) meshesToDecorate.push(mesh);
+        });
+
+        // Replace each mesh with blueprint tint fill + edge overlay.
+        const masks: { parent: THREE.Mesh; child: THREE.Mesh }[] = [];
+        const overlays: { parent: THREE.Mesh; child: THREE.LineSegments }[] =
+          [];
+
+        for (const mesh of meshesToDecorate) {
+          // Depth-only mask: fills the z-buffer so back-face edges of
+          // occluded geometry get depth-rejected. polygonOffset prevents
+          // z-fighting with the surface the lines sit on.
+          const maskMat = new THREE.MeshBasicMaterial({
+            colorWrite: false,
+            depthWrite: true,
+            polygonOffset: true,
+            polygonOffsetFactor: 1,
+            polygonOffsetUnits: 1,
+          });
+          const mask = new THREE.Mesh(mesh.geometry, maskMat);
+          mask.renderOrder = -1;
+          masks.push({ parent: mesh, child: mask });
+
+          // Clone the original material and zero its opacity — invisible but
+          // still writes depth, matching the hero's inactive-module state.
+          const src = Array.isArray(mesh.material)
+            ? mesh.material[0]
+            : mesh.material;
+          if (src) {
+            const solidMat = (
+              src as THREE.Material
+            ).clone() as THREE.Material & {
+              transparent: boolean;
+              opacity: number;
+              depthWrite: boolean;
+            };
+            solidMat.transparent = true;
+            solidMat.opacity = 0;
+            solidMat.depthWrite = true;
+            mesh.material = solidMat;
+          }
+
+          // Edge lines at WIRE_DIM (0.3) — matches the hero's inactive state.
+          const lineMat = new THREE.LineBasicMaterial({
+            color: isLightTheme() ? EDGE_LIGHT : EDGE_DARK,
+            transparent: true,
+            opacity: 0.3,
+            depthWrite: false,
+            depthTest: true,
+          });
+          overlays.push({
+            parent: mesh,
+            child: new THREE.LineSegments(
+              new THREE.EdgesGeometry(mesh.geometry, 30),
+              lineMat,
+            ),
+          });
+          edgeMaterials.push(lineMat);
+        }
+
+        // Add children only after the loop — same pattern as the hero section.
+        for (const { parent, child } of masks) parent.add(child);
+        for (const { parent, child } of overlays) parent.add(child);
+
+        model.updateMatrixWorld(true);
+        const finalBox = new THREE.Box3().setFromObject(model);
+        modelTarget = finalBox.getCenter(new THREE.Vector3());
+        modelSize = finalBox.getSize(new THREE.Vector3());
 
         fitCamera();
         modelLoaded = true;
         renderScene();
+      });
+
+      new MutationObserver(() => {
+        if (!modelLoaded) return;
+        const edge = isLightTheme() ? EDGE_LIGHT : EDGE_DARK;
+        for (const m of edgeMaterials) m.color.copy(edge);
+        renderScene();
+      }).observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ["data-theme"],
       });
 
       const resize = () => {

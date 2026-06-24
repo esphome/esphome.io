@@ -84,7 +84,7 @@
   import { OrbitControls } from "three/addons/controls/OrbitControls.js";
   import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
   import { MeshoptDecoder } from "three/addons/libs/meshopt_decoder.module.js";
-  const MODEL_URL = "/starter-kit/ESK.glb";
+  const MODEL_URL = "/starter-kit/wip.glb";
 
   const canvas = document.getElementById(
     "hero-scene",
@@ -112,8 +112,8 @@
 
     const scene = new THREE.Scene();
 
-    // Isometric-style direction: 45° azimuth, ~23° elevation (Y=0.5 flattens
-    // from the classic 35° to keep the model readable without a bird's-eye feel).
+    // 45° azimuth, level horizontal (Y=0). The intro animates in from a
+    // face-on pose and settles here as the steady-state isometric direction.
     const CAM_DIR = new THREE.Vector3(1, 0, 1).normalize();
 
     const camera = new THREE.PerspectiveCamera(35, width / height, 0.01, 100);
@@ -128,8 +128,8 @@
       depth: true,
       powerPreference: "high-performance",
     });
-    // Use the device's full pixel ratio so thin wireframe lines and edge
-    // outlines stay crisp on hi-DPI displays.
+    // Cap at 2× — keeps fill-rate manageable on 3× retina screens while
+    // still rendering crisp wireframe edges on hi-DPI displays.
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.setSize(width, height, false);
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -162,6 +162,7 @@
       "(prefers-reduced-motion: reduce)",
     ).matches;
 
+    const fovY = (camera.fov * Math.PI) / 180;
     const loader = new GLTFLoader();
     loader.setMeshoptDecoder(MeshoptDecoder);
 
@@ -278,7 +279,6 @@
         // Fit to vertical FOV only — distY is stable across aspect ratios,
         // avoiding the far-back push that distX causes on narrow viewports.
         modelScaledSize = scaledSize;
-        const fovY = (camera.fov * Math.PI) / 180;
         const distY = scaledSize.y / 2 / Math.tan(fovY / 2);
         homeDistance = (distY + scaledSize.z / 2) * homeZoom();
         camera.position.copy(CAM_DIR).multiplyScalar(homeDistance);
@@ -294,18 +294,6 @@
 
         const topLevel = [...model.children];
         model.updateMatrixWorld(true);
-        const bboxLog = new THREE.Box3();
-        const bboxCtr = new THREE.Vector3();
-        console.group("[Hero] named objects + bbox centres");
-        byName.forEach((obj, name) => {
-          bboxLog.setFromObject(obj);
-          bboxLog.getCenter(bboxCtr);
-          console.log(
-            `  "${name}"`,
-            `  centre: (${bboxCtr.x.toFixed(3)}, ${bboxCtr.y.toFixed(3)}, ${bboxCtr.z.toFixed(3)})`,
-          );
-        });
-        console.groupEnd();
 
         // Click any module to make it the active (solid) group; the rest
         // stay as the blueprint wireframe. Each frame, opacities and the
@@ -342,6 +330,14 @@
         };
 
         const allEdgeOverlays: THREE.LineSegments[] = [];
+
+        // Materials belonging to snap1–4 descendants are permanently locked to
+        // the inactive-module wireframe state once the intro finishes.
+        const snapNames = new Set(["snap1", "snap2", "snap3", "snap4"]);
+        const snapSolidMats = new Set<THREE.Material>();
+        const snapWireMats = new Set<THREE.Material>();
+        const snapMeshes = new Set<THREE.Mesh>();
+        let snapLocked = false;
 
         const logicalOpacity = new WeakMap<THREE.Material, number>();
 
@@ -395,6 +391,17 @@
             solid.push(solidMat);
             wire.push(lineMat);
             meshes.push(mesh);
+            // Walk up the hierarchy to detect snap1-4 descendants.
+            let _cur: THREE.Object3D | null = mesh;
+            while (_cur) {
+              if (snapNames.has(_cur.name.toLowerCase())) {
+                snapSolidMats.add(solidMat);
+                snapWireMats.add(lineMat);
+                snapMeshes.add(mesh);
+                break;
+              }
+              _cur = _cur.parent;
+            }
           });
           for (const { parent, mesh } of masks) parent.add(mesh);
           for (const { parent, mesh } of overlays) parent.add(mesh);
@@ -423,9 +430,8 @@
         const introDurations: number[] = topLevel.map((_, i) =>
           i === ledsIdx ? INTRO_LEAD_DURATION_MS : INTRO_FOLLOW_DURATION_MS,
         );
-        // Followers start displaced along +Z (model-local) and slide back
-        // along -Z to their final position. Tweak the sign if it ends up
-        // pointing into the wrong half-space for this model's axes.
+        // Each follower starts offset toward the camera (-Z in model space)
+        // and slides to its final position as introFactor reaches 1.
         const _offsetAxis = new THREE.Vector3(0, 0, -1).multiplyScalar(
           INTRO_OFFSET_DISTANCE,
         );
@@ -498,9 +504,12 @@
               // Camera has reached its resting position — snap labels so they
               // don't lerp from their intro-animation snap position to here.
               for (const label of labels) label.hasPosition = false;
+              snapLocked = true;
             },
             INTRO_CAM_DELAY_MS + INTRO_CAM_DURATION_MS + 100,
           );
+        } else {
+          snapLocked = true;
         }
 
         // Re-apply edge colour whenever Starlight flips the theme.
@@ -518,6 +527,16 @@
           attributeFilter: ["data-theme"],
         });
 
+        // Per-group camera overrides — only declared where the auto-computed
+        // values need adjustment. distanceScale multiplies the auto distance;
+        // centerOffset shifts the orbit target from the bbox centre.
+        const groupCameraOverrides: Record<
+          string,
+          { distanceScale?: number; centerOffset?: [number, number, number] }
+        > = {
+          pir: { distanceScale: 1.4 },
+        };
+
         // Precompute per-group bounding spheres for the zoom animation.
         const groupFocus = topLevel.map((obj: THREE.Object3D) => {
           const box = new THREE.Box3().setFromObject(obj);
@@ -526,8 +545,14 @@
           box.getCenter(center);
           box.getBoundingSphere(sphere);
           const radius = Math.max(sphere.radius, 0.05);
-          // Distance so the sphere fits the vertical FOV with margin.
-          const distance = (radius / Math.sin(fovY / 2)) * 1.6;
+          const override = groupCameraOverrides[obj.name.toLowerCase()] ?? {};
+          const distance =
+            (radius / Math.sin(fovY / 2)) * 1.6 * (override.distanceScale ?? 1);
+          if (override.centerOffset) {
+            center.x += override.centerOffset[0];
+            center.y += override.centerOffset[1];
+            center.z += override.centerOffset[2];
+          }
           return { center, distance };
         });
 
@@ -543,10 +568,11 @@
         let _detailCardCurrentLeft = 0;
         let _detailCardCurrentTop = 0;
         let _detailCardHasPos = false;
-        // On mobile the popup covers the bottom of the canvas, so shift the
-        // orbit target down (world Y) so the module frames toward the upper
-        // portion of the canvas. Also zoom in tighter.
-        const MOBILE_FOCUS_Y_OFFSET = -0.05;
+        // On mobile the detail card anchors to the bottom of the canvas, so
+        // shift the orbit target upward (positive world Y) to push the focused
+        // module into the lower portion of the frame and leave headroom above
+        // the card.
+        const MOBILE_FOCUS_Y_OFFSET = 0.03;
         const MOBILE_ZOOM_SCALE = 0.95;
 
         let activeIdx = -1; // -1 = all groups active (default state)
@@ -642,28 +668,29 @@
             // otherwise the selected group is solid, the rest go wireframe.
             const isActive = activeIdx === -1 || i === activeIdx;
             const targetSolid = isActive ? 1 : 0;
-            // Keep a faint pencil-sketch edge on every module even in the
-            // fully-solid state so the assembly reads as one designed board.
-            const targetWire = isActive
-              ? WIRE_MIN
-              : WIRE_DIM * (1 - targetSolid) + WIRE_MIN * targetSolid;
+            // Active module keeps a faint sketch edge; inactive modules show
+            // the full dim wireframe so the assembly reads as one board.
+            const targetWire = isActive ? WIRE_MIN : WIRE_DIM;
             const introF = introFactor(i, now);
             root.position
               .copy(introOriginalPos[i])
               .addScaledVector(introOffset[i], 1 - introF);
             for (const m of solid) {
+              const tgt = snapLocked && snapSolidMats.has(m) ? 0 : targetSolid;
               const next = lerp(
                 logicalOpacity.get(m) ?? m.opacity,
-                targetSolid,
+                tgt,
                 SOLID_LERP,
               );
               logicalOpacity.set(m, next);
               m.opacity = next * introF;
             }
             for (const m of wire) {
+              const tgt =
+                snapLocked && snapWireMats.has(m) ? WIRE_DIM : targetWire;
               const next = lerp(
                 logicalOpacity.get(m) ?? m.opacity,
-                targetWire,
+                tgt,
                 SOLID_LERP,
               );
               logicalOpacity.set(m, next);
@@ -700,7 +727,7 @@
           // preserved so OrbitControls drag still works.
           const focus = activeIdx !== -1 ? groupFocus[activeIdx] : null;
           const isMobile = width < 768;
-          const ZOOM_LERParget = focus
+          const zoomTarget = focus
             ? isMobile
               ? _mobileFocusTarget
                   .copy(focus.center)
@@ -710,7 +737,7 @@
           const zoomDistance = focus
             ? focus.distance * (isMobile ? MOBILE_ZOOM_SCALE : 1)
             : homeDistance;
-          desiredTarget.copy(controls.target).lerp(ZOOM_LERParget, ZOOM_LERP);
+          desiredTarget.copy(controls.target).lerp(zoomTarget, ZOOM_LERP);
           controls.target.copy(desiredTarget);
           dirFromTarget.copy(camera.position).sub(controls.target);
           const currentDist = dirFromTarget.length() || 0.001;
@@ -789,7 +816,9 @@
         // the intersected mesh and make it active.
         const raycaster = new THREE.Raycaster();
         const pointer = new THREE.Vector2();
-        const allMeshes = groupFades.flatMap((g) => g.meshes);
+        const allMeshes = groupFades
+          .flatMap((g) => g.meshes)
+          .filter((m) => !snapMeshes.has(m));
         const groupForObject = (obj: THREE.Object3D | null): number => {
           while (obj) {
             const idx = topLevel.indexOf(obj);
@@ -933,8 +962,7 @@
     // to that distance along its current direction. No-op until model loads.
     const refitCamera = () => {
       if (!modelScaledSize) return;
-      const fovRad = (camera.fov * Math.PI) / 180;
-      const distY = modelScaledSize.y / 2 / Math.tan(fovRad / 2);
+      const distY = modelScaledSize.y / 2 / Math.tan(fovY / 2);
       homeDistance = (distY + modelScaledSize.z / 2) * homeZoom();
       const dir = camera.position.clone().sub(controls.target).normalize();
       camera.position.copy(controls.target).addScaledVector(dir, homeDistance);
@@ -1133,7 +1161,7 @@
     min-height: 600px;
     margin: 0;
     position: relative;
-    padding-top: 8.75rem;
+    padding-top: 5.5rem;
     overflow: hidden;
 
     display: flex;
@@ -1141,6 +1169,7 @@
 
     @include bp(tablet) {
       height: calc(100vh - var(--sl-nav-height));
+      padding-top: 8.75rem;
     }
 
     .container {
@@ -1314,10 +1343,11 @@
 
   .hero-detail-card {
     position: absolute;
-    left: 0;
-    bottom: 0;
+    left: 50%;
+    top: 0;
     z-index: 11;
-    max-width: 320px;
+    width: 96%;
+    max-width: 380px;
     padding: 0.85rem;
     border-radius: 12px;
     border: 1px solid var(--esk-primary-color);
@@ -1326,21 +1356,20 @@
     color: #002e3e;
     opacity: 0;
     pointer-events: none;
-    transform: translateY(8px);
+    transform: translate3d(-50%, 8px, 0);
     transition:
       opacity 0.3s ease,
       transform 0.3s ease;
 
     @include bp(tablet) {
-      left: 1.5rem;
-      bottom: 1.5rem;
+      width: auto;
+      max-width: 320px;
       padding: 1rem 1.25rem;
     }
 
     &.is-active {
       opacity: 1;
       pointer-events: auto;
-      transform: none;
     }
 
     &__header {
