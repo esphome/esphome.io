@@ -701,11 +701,11 @@ This [action](/automations/actions#all-actions) sends a Pioneer Wyt infrared rem
 
 ```yaml
 on_...:
-  # Sending via raw code array:
+  # Sending via raw code list:
   - remote_transmitter.transmit_pioneer_wyt:
       code: [0xD3, 0x26, 0x00, 0x01, 0x00, 0x20, 0x00, 0x00, 0x30, 0x00, 0x00, 0x00, 0x00]
 
-  # Sending via friendly fields (default sends both Fan and General commands sequentially):
+  # Sending via friendly fields (default sends both `FAN` and `GENERAL` commands sequentially):
   - remote_transmitter.transmit_pioneer_wyt:
       power: true
       mode: COOL
@@ -716,7 +716,7 @@ on_...:
 
 #### Configuration variables
 
-- **code** (*Optional*, array of 13 hex bytes, [templatable](/automations/templates)): The 13 bytes representing the raw payload.
+- **code** (*Optional*, list of 13 bytes, [templatable](/automations/templates)): The 13 bytes representing the raw payload.
 - **type** (*Optional*, string, [templatable](/automations/templates)): The command type to send. One of `GENERAL`, `FAN`, or `BOTH` (default: `BOTH`).
 - **power** (*Optional*, boolean, [templatable](/automations/templates)): Power state of the AC. Defaults to `true`.
 - **mode** (*Optional*, string, [templatable](/automations/templates)): Operation mode. One of `HEAT`, `DRY`, `COOL`, `FAN`, `AUTO`. Defaults to `COOL`.
@@ -727,7 +727,7 @@ on_...:
 - **turbo** (*Optional*, boolean, [templatable](/automations/templates)): Enable/disable Turbo mode. Defaults to `false`.
 - **sleep** (*Optional*, boolean, [templatable](/automations/templates)): Enable/disable Sleep mode. Defaults to `false`.
 - **follow_me** (*Optional*, boolean, [templatable](/automations/templates)): Enable/disable Follow Me (I-Feel) mode. Defaults to `false`.
-- **remote_temp** (*Optional*, integer, [templatable](/automations/templates)): Current room temperature feedback for Follow Me mode. Defaults to `0`.
+- **remote_temp** (*Optional*, int, [templatable](/automations/templates)): Current room temperature feedback for Follow Me mode. Defaults to `0`.
 - **fan_speed** (*Optional*, string, [templatable](/automations/templates)): The fan speed. One of `AUTO`, `LOW`, `MEDIUM_LOW`, `MEDIUM`, `MEDIUM_HIGH`, `HIGH`. Defaults to `AUTO`.
 - **mute** (*Optional*, boolean, [templatable](/automations/templates)): Enable/disable Silent mode. Defaults to `false`.
 - **vertical_swing** (*Optional*, boolean, [templatable](/automations/templates)): Enable/disable vertical swing. Defaults to `false`.
