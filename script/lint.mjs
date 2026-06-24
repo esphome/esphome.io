@@ -212,14 +212,16 @@ async function buildAnchorCache() {
   }
 
   function generateSlug(text) {
-    return text
-      .toLowerCase()
-      // Mirror src/lib/rehype-heading-slugs.mjs: dots in automation headings
-      // (e.g. `light.turn_on`) map to `-` so the anchor becomes `light-turn_on`.
-      .replace(/\./g, "-")
-      .replace(/[^\w\s-]/g, "")
-      .replace(/[-\s]+/g, "-")
-      .replace(/^-+|-+$/g, "");
+    return (
+      text
+        .toLowerCase()
+        // Mirror src/lib/rehype-heading-slugs.mjs: dots in automation headings
+        // (e.g. `light.turn_on`) map to `-` so the anchor becomes `light-turn_on`.
+        .replace(/\./g, "-")
+        .replace(/[^\w\s-]/g, "")
+        .replace(/[-\s]+/g, "-")
+        .replace(/^-+|-+$/g, "")
+    );
   }
 
   async function processDir(dir, basePath = "") {
