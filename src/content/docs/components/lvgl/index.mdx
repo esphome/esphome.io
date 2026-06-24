@@ -23,13 +23,18 @@ To use LVGL with a [display](/components#display-hw) in ESPHome, you'll need an 
 The graphic display should be configured with `auto_clear_enabled: false` and should not have any `lambda` set.
 The LVGL component will take care of the display rendering. For most displays, the `update_interval` should be
 set to `never`, but note that some displays such as OLED and e-paper will need the update interval set to a suitable
-interval, or the `update_when_display_idle` option used, or make use of the [`on_draw_end`](#on_draw_end) trigger to manually update the display.
+interval, or the `update_when_display_idle` option used, or make use of the [`on_draw_end`](#lvgl-on-draw-end-trigger) trigger to manually update the display.
 
 For interactivity, a [Touchscreen](/components/touchscreen/) (capacitive highly preferred), a [Rotary Encoder](/components/sensor/rotary_encoder/) or a custom keypad made up from discrete [Binary Sensors](/components/binary_sensor/) can be used.
 
 Check out the detailed examples in [the Cookbook](/cookbook/lvgl#lvgl-cookbook) which demonstrate a number of ways you can integrate your environment with LVGL and ESPHome.
 
 ## TL;DR
+
+> [!NOTE]
+> It is strongly recommended that you verify correct display and LVGL configuration on a new device by using this example
+> *before* attempting to add your own content. Check that the display colors match the example image (layout will vary
+> depending on display dimensions.)
 
 To get started, it is sufficient to add a display and an empty LVGL configuration. If neither `pages` nor `widgets` is specified, then a default "hello world" page will be shown.
 
@@ -137,6 +142,7 @@ The following configuration variables apply to the main `lvgl` component, in ord
 > - If you press the encoder on a complex object (like a list, message box, etc.) the object will go to edit mode whereby you can adjust the value of the object by turning the encoder.
 > - To leave edit mode, long press the button.
 
+- **rotation** (*Optional*, int16): Rotate the display content by a specified angle. Valid values are `0`, `90`, `180` and `270`. Defaults to `0`.
 - **update_when_display_idle** (*Optional*, boolean): When using the [Epaper Spi](/components/display/epaper_spi/)
   or other displays with long update times, setting this option
   to `true` will cause the display to only be updated if the display is idle. During the update LVGL will pause.
@@ -147,11 +153,11 @@ The following configuration variables apply to the main `lvgl` component, in ord
 - **buffer_size** (*Optional*, percentage): The percentage of screen size to allocate buffer memory. If unconfigured, the default is `100%` with runtime fallback to `12%` if a full size buffer allocation fails. For devices without PSRAM, the recommended value is `25%`.
 - **draw_rounding** (*Optional*, int): An optional value to use for rounding draw areas to a specified boundary. Defaults to 2. Useful for displays that require draw windows to be on specified boundaries (usually powers of 2.)
 - **log_level** (*Optional*, string): Set the logger level specifically for the messages of the LVGL library: `VERBOSE`, `DEBUG`, `INFO`, `WARN`, `ERROR`, `NONE`. Defaults to `WARN`.
-- **byte_order** (*Optional*, int16): The byte order of the data LVGL outputs; either `big_endian` or `little_endian`. Defaults to `big_endian`.
+- **byte_order** (*Optional*, string): The byte order of the data LVGL outputs; either `big_endian` or `little_endian`. Will try to auto-configure based on the display metadata. Defaults to `big_endian` if the display driver does not supply the information.
 - **default_font** (*Optional*, ID): The ID of the [font](#lvgl-fonts) used by default to render the text or symbols. Defaults to LVGL's internal `montserrat_14` if not specified.
 - **style_definitions** (*Optional*, list): A batch of style definitions to use in LVGL widget's `styles` configuration. See [below](#lvgl-theme) for more details.
 - **gradients** (*Optional*, list): A list of gradient definitions to use in *bg_grad* styles. See [below](#lvgl-gradients) for more details.
-- **theme** (*Optional*, list): A list of styles to be applied to all widgets. See [below](#lvgl-theme) for more details.
+- **theme** (*Optional*, dict): Theme configuration. Supports `dark_mode` and per-widget style defaults. See [below](#lvgl-theme) for more details.
 - **widgets** (*Optional*, list): A list of [Widgets](/components/lvgl/widgets/) to be drawn on the root display. May not be used if `pages` (below) is configured.
 - **pages** (*Optional*, list): A list of page IDs. Each page acts as a parent for widgets placed on it. May not be used with `widgets` (above). Options for each page:
   - **skip** (*Optional*, boolean): Option to skip this page when navigating between them with [`lvgl.page.next`, `lvgl.page.previous`](#lvgl-page-next-previous-action).
@@ -225,6 +231,21 @@ lvgl:
 ```
 
 <span id="lvgl-styling"></span>
+
+### Display Rotation
+
+The `rotation` option allows you to rotate the display content by a specified angle. Valid values are `0`, `90`, `180` and `270`. Defaults to `0`.
+Using this in the LVGL configuration will automatically adjust both the display and touch input (if a touchscreen is configured) to the specified rotation.
+When using this the display configuration should not include a rotation option and the touchscreen configuration should not
+transform the touchscreen unless required (for example if the touchscreen axes don't match the display.)
+
+If the display driver can rotate the display content in hardware, (for example, most `mipi_spi` display models can do this)
+LVGL will automatically use this to improve performance. If not, the rotation will be performed in software by LVGL,
+which will reduce performance. On ESP32P4 the software rotation is hardware accelerated using the PPA peripheral.
+
+Touchscreen coordinates will be automatically rotated when using LVGL rotation.
+
+The display orientation may be changed at runtime with the [`lvgl.display.set_rotation`](#lvgl-display-set-rotation-action) action.
 
 ## Style properties
 
@@ -462,12 +483,24 @@ In addition to the above, the following special fonts are available from LVGL as
 
 ### Themes
 
-You can configure a global theme for all widgets of a given type at the top level with the `theme:` configuration variable. In the example below, all the `arc`, `slider` and `button` widgets will, by default, use the styles and properties defined here. A combination of styles and [states](/components/lvgl/widgets#lvgl-widgetproperty-state) can be chosen for every widget.
+You can configure a global theme at the top level with the `theme:` configuration variable.
+
+- **dark_mode** (*Optional*, boolean): Enables LVGL's built-in dark default theme, which applies a dark color scheme (dark backgrounds, light text) to all widgets automatically. Defaults to `false`.
+
+```yaml
+# Example: enable the dark theme
+lvgl:
+  theme:
+    dark_mode: true
+```
+
+You can also apply default styles to all widgets of a given type. In the example below, all the `arc`, `slider` and `button` widgets will, by default, use the styles and properties defined here. A combination of styles and [states](/components/lvgl/widgets#lvgl-widgetproperty-state) can be chosen for every widget. These per-widget styles work alongside `dark_mode` — you can enable the dark theme and still override specific widget styles.
 
 ```yaml
 # Example theme configuration entry
 lvgl:
   theme:
+    dark_mode: true
     arc:
       scroll_on_focus: true
       group: general
@@ -623,6 +656,21 @@ on_...:
   - lvgl.resume:
 ```
 
+<span id="lvgl-display-set-rotation-action"></span>
+
+### `lvgl.display.set_rotation` Action
+
+This [action](/automations/actions#actions-action) rotates the LVGL display.
+
+- **rotation** (**Required**, int): The angle to rotate the display to. Valid values are `0`, `90`, `180` and `270`. Note
+  that the angle is absolute, not relative, so the current rotation of the display does not affect the result.
+- **lvgl_id** (*Optional*): The ID of the LVGL instance to rotate.
+
+```yaml
+on_...:
+  - lvgl.display.set_rotation: 90
+```
+
 ### `lvgl.update` Action
 
 This [action](/automations/actions#actions-action) allows changing/updating the background styling of the LVGL display layers at runtime. You can style the `top_layer` and/or `bottom_layer` using any [style properties](#lvgl-styling).
@@ -744,7 +792,7 @@ Widget level [interaction triggers](/components/lvgl/widgets#lvgl-automation-tri
 
 <span id="lvgl-on-idle-trigger"></span>
 
-### `on_idle`
+### `on_idle` trigger
 
 LVGL has a notion of screen inactivity -- i.e. the time since the last user interaction with the screen is tracked. This can, for example, be used to dim the display backlight or turn it off after a moment of inactivity (like a screen saver). Every use of an input device (touchscreen, rotary encoder) counts as an activity and resets the inactivity counter.
 
@@ -769,25 +817,27 @@ See [Turn off screen when idle](/cookbook/lvgl#lvgl-cookbook-idlescreen) for an 
 
 <span id="lvgl_on_pause_trigger"></span>
 
-### `on_pause`
+### `on_pause` trigger
 
 This [trigger](/components/lvgl/widgets#lvgl-automation-triggers) is triggered when LVGL is paused. This can be used to perform any desired actions when the screen is locked, such as turning off the display backlight.
 
 <span id="lvgl_on_resume_trigger"></span>
 
-### `on_resume`
+### `on_resume` trigger
 
 This [trigger](/components/lvgl/widgets#lvgl-automation-triggers) is triggered when LVGL is resumed. This can be used to perform any desired actions when the screen is unlocked, such as turning on the display backlight.
 
-### `on_boot`
+### `on_boot` trigger
 
 This [trigger](/components/lvgl/widgets#lvgl-automation-triggers) is triggered after LVGL has been setup. It is available on the `lvgl` component and any widget and can be used to perform any LVGL related setup that is not possible with static configuration. When used on a widget, it does not act specifically on that widget but can be used to keep actions related to that widget together with its configuration.
 
-### `on_draw_start`
+### `on_draw_start` trigger
 
 This [trigger](/components/lvgl/widgets#lvgl-automation-triggers) is executed before each LVGL drawing operation.
 
-### `on_draw_end`
+<span id="lvgl-on-draw-end-trigger"></span>
+
+### `on_draw_end` trigger
 
 This [trigger](/components/lvgl/widgets#lvgl-automation-triggers) is executed after LVGL has completed drawing all updated screen elements. It
 may be used for example to trigger an update of a display component like an e-paper screen that requires the buffer
@@ -798,6 +848,25 @@ lvgl:
   on_draw_end:
     - component.update: my_display_id
 ```
+
+### Display event triggers
+
+- `on_invalidate_area`: Occurs when an area is invalidated (marked for redraw).
+- `on_resolution_change`: Occurs when the display resolution changed.
+- `on_color_format_change`: Occurs when the display color format changed.
+- `on_refr_request`: Occurs when something happened that requires a redraw.
+- `on_refr_start`: Sent before a refreshing cycle starts.
+- `on_refr_ready`: Sent when refreshing has been completed.
+- `on_render_start`: Sent just before rendering begins.
+- `on_render_ready`: Sent after rendering has been completed.
+- `on_flush_start`: Sent before the flush callback is called.
+- `on_flush_finish`: Sent after the flush callback has returned.
+- `on_flush_wait_start`: Sent before the flush wait callback is called.
+- `on_flush_wait_finish`: Sent after the flush wait callback has returned.
+- `on_update_layout_complete`: Sent after a layout update completes.
+- `on_vsync`: Vertical sync event.
+- `on_vsync_request`: Vertical sync request.
+
 
 ## See Also
 

@@ -73,6 +73,7 @@ For further help, see the ESPHome documentation or contact maintainers.
 from __future__ import annotations
 
 import argparse
+from collections import Counter
 from collections.abc import Callable
 from dataclasses import dataclass
 from datetime import datetime
@@ -89,6 +90,10 @@ LABEL_BREAKING_CHANGE = "breaking-change"
 LABEL_NEW_FEATURE = "new-feature"
 LABEL_NEW_COMPONENT = "new-component"
 LABEL_UNDOCUMENTED_API_CHANGE = "undocumented-api-change"
+LABEL_CODE_QUALITY = "code-quality"
+
+# Bot accounts to exclude from contributor acknowledgments
+BOT_AUTHORS = {"app/dependabot", "app/copilot-swe-agent", "esphomebot"}
 
 
 @dataclass
@@ -341,8 +346,11 @@ class ReleaseNotesGenerator:
         """Extract PR numbers from commits between two refs"""
         print(f"Comparing {base_ref}...{head_ref}")
 
-        # Use --paginate with --jq to get all commit messages across all pages
-        # This automatically handles pagination and extracts just what we need
+        # Use --paginate with --jq to get all commit subjects across all pages.
+        # Only the first line of each commit message is used: GitHub appends the
+        # merged PR number as a trailing "(#1234)" on the subject line. Scanning
+        # the body would wrongly pick up issue references (e.g. "Fixes #16420")
+        # and other PR mentions, which are not PRs merged in this range.
         result = subprocess.run(
             [
                 "gh",
@@ -350,23 +358,26 @@ class ReleaseNotesGenerator:
                 f"repos/esphome/esphome/compare/{base_ref}...{head_ref}",
                 "--paginate",
                 "--jq",
-                ".commits[].commit.message",
+                '.commits[].commit.message | split("\\n")[0]',
             ],
             capture_output=True,
             text=True,
             check=True,
         )
 
-        # Each line is a commit message
-        commit_messages = [line for line in result.stdout.strip().split("\n") if line]
+        # One subject line per commit
+        commit_subjects = [line for line in result.stdout.strip().split("\n") if line]
 
-        print(f"Found {len(commit_messages)} commits")
+        print(f"Found {len(commit_subjects)} commits")
 
         pr_numbers = set()
-        for message in commit_messages:
-            # Extract PR numbers from patterns like (#12345)
-            matches = re.findall(r"\(#(\d+)\)", message)
-            pr_numbers.update(int(m) for m in matches)
+        for subject in commit_subjects:
+            # Take the trailing "(#1234)" that GitHub appends on squash merge.
+            # Using the last match also handles reverts like
+            # 'Revert "[x] foo (#123)" (#456)', where #456 is the actual PR.
+            matches = re.findall(r"\(#(\d+)\)", subject)
+            if matches:
+                pr_numbers.add(int(matches[-1]))
 
         return sorted(pr_numbers)
 
@@ -571,10 +582,11 @@ class ReleaseNotesGenerator:
         undocumented_api_changes = [
             pr for pr in prs if LABEL_UNDOCUMENTED_API_CHANGE in pr.labels
         ]
+        code_quality = [pr for pr in prs if LABEL_CODE_QUALITY in pr.labels]
 
         # Generate Combined Overview + Feature Highlights Prompt
         overview_and_highlights_prompt = self._generate_overview_and_highlights_prompt(
-            prs, new_features, new_components, breaking_changes
+            prs, new_features, new_components, breaking_changes, code_quality
         )
         overview_highlights_file = self.prompts_dir / "overview_and_highlights.txt"
         overview_highlights_file.write_text(overview_and_highlights_prompt)
@@ -587,6 +599,12 @@ class ReleaseNotesGenerator:
         breaking_file = self.prompts_dir / "breaking_changes.txt"
         breaking_file.write_text(breaking_prompt)
 
+        # Generate Contributors Prompt
+        self._generate_contributor_stats_file(prs)
+        contributors_prompt = self._generate_contributors_prompt(prs)
+        contributors_file = self.prompts_dir / "contributors.txt"
+        contributors_file.write_text(contributors_prompt)
+
         # Print instructions
         print("\n" + "=" * 80)
         print("STEP 1: Process prompts through Claude Code CLI")
@@ -595,6 +613,7 @@ class ReleaseNotesGenerator:
         print("  claude")
         print(f"  > Please read {overview_highlights_file} and follow the instructions")
         print(f"  > Please read {breaking_file} and follow the instructions")
+        print(f"  > Please read {contributors_file} and follow the instructions")
 
         print("\nPrompt 1: Overview + Feature Highlights (COMBINED)")
         print(f"  Prompt: {overview_highlights_file}")
@@ -610,6 +629,10 @@ class ReleaseNotesGenerator:
         print(f"           {self.responses_dir / 'upgrade_checklist.md'}")
         if undocumented_api_changes:
             print(f"           {self.responses_dir / 'undocumented_api_changes.md'}")
+
+        print("\nPrompt 3: Contributor Acknowledgments")
+        print(f"  Prompt: {contributors_file}")
+        print(f"  Output: {self.responses_dir / 'contributors.md'}")
 
         print("\nNote: Each prompt will generate multiple output files automatically.")
 
@@ -646,6 +669,7 @@ class ReleaseNotesGenerator:
         new_features: list[PullRequest],
         new_components: list[PullRequest],
         breaking_changes: list[PullRequest],
+        code_quality: list[PullRequest],
     ) -> str:
         """Generate combined prompt for release overview and feature highlights"""
         template = self.jinja_env.get_template("overview_and_highlights.txt")
@@ -659,6 +683,7 @@ class ReleaseNotesGenerator:
             new_features=new_features,
             new_components=new_components,
             breaking_changes=breaking_changes,
+            code_quality=code_quality,
         )
 
     def _generate_breaking_changes_and_checklist_prompt(
@@ -681,6 +706,108 @@ class ReleaseNotesGenerator:
             undocumented_api_changes=undocumented_api_prs,
             all_prs=all_prs,
         )
+
+    def _get_contributor_stats(
+        self, prs: list[PullRequest]
+    ) -> list[tuple[str, int, list[str]]]:
+        """Get contributor stats sorted by PR count.
+
+        Returns list of (author, pr_count, pr_titles) excluding bots,
+        sorted by PR count descending.
+        """
+        author_counts: Counter[str] = Counter()
+        author_titles: dict[str, list[str]] = {}
+        for pr in prs:
+            if pr.author in BOT_AUTHORS:
+                continue
+            author_counts[pr.author] += 1
+            author_titles.setdefault(pr.author, []).append(pr.title)
+
+        return [
+            (author, count, author_titles[author])
+            for author, count in author_counts.most_common()
+        ]
+
+    def _generate_contributor_stats_file(self, prs: list[PullRequest]) -> None:
+        """Generate contributor statistics file for AI prompt input."""
+        stats = self._get_contributor_stats(prs)
+        human_count = len(stats)
+
+        lines = [
+            f"# Contributor Statistics for ESPHome {self.version}",
+            f"# Total PRs: {len([pr for pr in prs if pr.author not in BOT_AUTHORS])}",
+            f"# Unique contributors: {human_count}",
+            "",
+        ]
+
+        for author, count, titles in stats:
+            lines.append(f"## @{author} ({count} PRs)")
+            lines.extend(f"  - {title}" for title in titles)
+            lines.append("")
+
+        stats_file = self.version_dir / "contributor_stats.txt"
+        stats_file.write_text("\n".join(lines))
+        print(f"✓ Saved contributor stats to {stats_file}")
+
+    def _generate_contributors_prompt(self, prs: list[PullRequest]) -> str:
+        """Generate prompt for contributor acknowledgments."""
+        template = self.jinja_env.get_template("contributors.txt")
+
+        stats = self._get_contributor_stats(prs)
+        human_count = len(stats)
+        total_prs = len([pr for pr in prs if pr.author not in BOT_AUTHORS])
+
+        return template.render(
+            version=str(self.version),
+            contributors_file=self.responses_dir / "contributors.md",
+            prs_cache_dir=self.prs_cache_dir,
+            stats_file=self.version_dir / "contributor_stats.txt",
+            total_prs=total_prs,
+            human_count=human_count,
+            stats=stats,
+        )
+
+    def _generate_fallback_contributors(self, prs: list[PullRequest]) -> str:
+        """Generate a basic contributor section without AI descriptions."""
+        stats = self._get_contributor_stats(prs)
+        human_count = len(stats)
+        total_prs = len([pr for pr in prs if pr.author not in BOT_AUTHORS])
+
+        if human_count < 10:
+            contributors_phrase = f"from {human_count} contributors. "
+        else:
+            rounded_contributors = ((human_count - 1) // 10) * 10
+            contributors_phrase = f"from over {rounded_contributors} contributors. "
+
+        lines = [
+            f"This release includes {total_prs} pull requests "
+            f"{contributors_phrase}"
+            f"A huge thank you to everyone who made {self.version} possible:",
+            "",
+        ]
+
+        # Contributors with 2+ PRs get a bullet point
+        highlighted = [(a, c, t) for a, c, t in stats if c >= 2]
+        single_pr = [(a, c, t) for a, c, t in stats if c == 1]
+
+        for author, count, _titles in highlighted:
+            lines.append(
+                f"- [@{author}](https://github.com/{author}) - {count} PRs"
+            )
+
+        if single_pr:
+            lines.append("")
+            names = [
+                f"[@{author}](https://github.com/{author})"
+                for author, _, _ in single_pr
+            ]
+            lines.append(
+                f"Also thank you to {', '.join(names)} for their contributions, "
+                f"and to everyone who reported issues, tested pre-releases, "
+                f"and helped in the community."
+            )
+
+        return "\n".join(lines)
 
     def assemble_changelog(self) -> bool:
         """Assemble final changelog from template and AI responses"""
@@ -758,6 +885,11 @@ class ReleaseNotesGenerator:
         if undocumented_api_file.exists():
             undocumented_api = undocumented_api_file.read_text().strip()
 
+        contributors_file = self.responses_dir / "contributors.md"
+        contributors = ""
+        if contributors_file.exists():
+            contributors = contributors_file.read_text().strip()
+
         # Load the PR numbers for this version from a manifest file
         manifest_file = self.version_dir / "pr_numbers.txt"
         if not manifest_file.exists():
@@ -804,6 +936,17 @@ class ReleaseNotesGenerator:
         if breaking_devs:
             template = self._replace_marker_content(
                 template, "BREAKING_CHANGES_DEVELOPERS", breaking_devs
+            )
+
+        # Contributors section: use AI response if available, otherwise fallback
+        if contributors:
+            template = self._replace_marker_content(
+                template, "CONTRIBUTORS", contributors
+            )
+        else:
+            fallback_contributors = self._generate_fallback_contributors(prs)
+            template = self._replace_marker_content(
+                template, "CONTRIBUTORS", fallback_contributors
             )
 
         # Generate auto sections
