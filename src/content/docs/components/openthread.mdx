@@ -64,14 +64,13 @@ openthread:
   network dataset on the device, ensuring configured parameters are always applied at startup. Defaults to `false`
 - **use_address** (*Optional*, string): Manually override what address to use to connect
   to the ESP. Defaults to auto-generated value.
+- **output_power** (*Optional*, integer): The amount of TX power for the Thread 802.15.4 radio in dBm.
+  Range depends on the chip variant: ESP32-C5/C6 from ``-15dBm`` to ``20dBm``, ESP32-H2 from ``-24dBm`` to ``20dBm``.
+  Defaults to the platform default (typically ``0dBm``). Ensure the configured value complies with local regulatory limits.
 - **poll_period** (*Optional*, [Time](/guides/configuration-types#config-time)): When Poll_Period is set on an MTD device, the parent router will enqueue any messages and wait for the child to submit a poll data request
 
 > [!NOTE]
 > `esphome.ota` does not work when `poll_period` > 0. Use `openthread.set_poll_period` to set the poll period to 0 before attempting OTA, then set it back to the original value afterwards to restore sleepy (SED) behavior.
-
-- **output_power** (*Optional*, integer): The amount of TX power for the Thread 802.15.4 radio in dBm.
-  Range depends on the chip variant: ESP32-C5/C6 from ``-15dBm`` to ``20dBm``, ESP32-H2 from ``-24dBm`` to ``20dBm``.
-  Defaults to the platform default (typically ``0dBm``). Ensure the configured value complies with local regulatory limits.
 
 ## Dataset TLV Configuration
 
