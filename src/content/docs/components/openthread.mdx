@@ -67,7 +67,7 @@ openthread:
 - **poll_period** (*Optional*, [Time](/guides/configuration-types#config-time)): When Poll_Period is set on an MTD device, the parent router will enqueue any messages and wait for the child to submit a poll data request
 
 > [!NOTE]
-> esphome.ota does not work when poll_period > 0.  Use openthread.pollperiod to set poll_period to 0 before attempting ota.
+> esphome.ota does not work when poll_period > 0.  Use openthread.set_poll_period to set poll_period to 0 before attempting ota.
 
 - **output_power** (*Optional*, integer): The amount of TX power for the Thread 802.15.4 radio in dBm.
   Range depends on the chip variant: ESP32-C5/C6 from ``-15dBm`` to ``20dBm``, ESP32-H2 from ``-24dBm`` to ``20dBm``.
@@ -87,7 +87,7 @@ openthread:
 
 - **tlv** (*Optional*, string): dataset TLVs from the Thread information in Home Assistant
 
-## `openthread.pollperiod` Action
+## `openthread.set_poll_period` Action
 
 If poll_period > 0, radio is off during idle, otherwise radio is always on.
 
@@ -95,12 +95,12 @@ If poll_period > 0, radio is off during idle, otherwise radio is always on.
 on_...:
   then:
   # Long form turns radio on all the time
-    - openthread.poll_period:
+    - openthread.set_poll_period:
         poll_period: 0s
   # Short form turns radio on all the time
-    - openthread.poll_period: 0s
+    - openthread.set_poll_period: 0s
   # Short form turns radio off when idle
-    - openthread.radio: 5s
+    - openthread.set_poll_period: 5s
 ```
 
 ### Configuration variables
