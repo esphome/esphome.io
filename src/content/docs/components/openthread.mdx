@@ -67,7 +67,7 @@ openthread:
 - **poll_period** (*Optional*, [Time](/guides/configuration-types#config-time)): When Poll_Period is set on an MTD device, the parent router will enqueue any messages and wait for the child to submit a poll data request
 
 > [!NOTE]
-> esphome.ota does not work when poll_period > 0. Use openthread.set_poll_period to set poll_period to 0 before attempting ota, then set it back to the original value afterwards to restore sleepy (SED) behavior.
+> `esphome.ota` does not work when `poll_period` > 0. Use `openthread.set_poll_period` to set the poll period to 0 before attempting OTA, then set it back to the original value afterwards to restore sleepy (SED) behavior.
 
 - **output_power** (*Optional*, integer): The amount of TX power for the Thread 802.15.4 radio in dBm.
   Range depends on the chip variant: ESP32-C5/C6 from ``-15dBm`` to ``20dBm``, ESP32-H2 from ``-24dBm`` to ``20dBm``.
@@ -89,23 +89,23 @@ openthread:
 
 ## `openthread.set_poll_period` Action
 
-If poll_period > 0, radio is off during idle, otherwise radio is always on.
+Sets the poll period at runtime on an MTD device. When `poll_period` > 0 the radio is off while idle (sleepy end device); when 0 the radio is always on. This action is a no-op on FTD devices.
 
 ```yaml
 on_...:
   then:
-  # Long form turns radio on all the time
+    # Long form turns radio on all the time
     - openthread.set_poll_period:
         poll_period: 0s
-  # Short form turns radio on all the time
+    # Short form turns radio on all the time
     - openthread.set_poll_period: 0s
-  # Short form turns radio off when idle
+    # Short form turns radio off when idle
     - openthread.set_poll_period: 5s
 ```
 
 ### Configuration variables
 
-- **poll_period** (*Required*, [Time](/guides/configuration-types#config-time)): The poll period to apply. It must always be provided, including in the short form (`openthread.set_poll_period: 5s`). This is distinct from the component-level `poll_period:` option above, which is set once at boot. On FTD devices the action is a no-op.
+- **poll_period** (*Required*, [Time](/guides/configuration-types#config-time)): The poll period to apply. It must always be provided, including in the short form (`openthread.set_poll_period: 5s`). This is distinct from the component-level `poll_period:` option above, which is set once at boot.
 
 ## OpenThread Device Type
 
@@ -116,7 +116,7 @@ See [https://openthread.io/guides/thread-primer/node-roles-and-types](https://op
 
 ## Sleepy End Device (SED)
 
-The Poll Period makes the device behave as a SED.  Follow on work is needed utilizing Power Management and/or Light Sleep capability in esp-idf.
+The Poll Period makes the device behave as a SED. Follow on work is needed utilizing Power Management and/or Light Sleep capability in esp-idf.
 If the device is always awake, the API timeout is 60 seconds, so a ping request will force interaction with the parent when the poll period is greater than 60 seconds.
 
 ### Public API
