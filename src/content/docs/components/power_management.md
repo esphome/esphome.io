@@ -103,7 +103,7 @@ Framework components express their requirements by creating, acquiring, and rele
 
 Using power_management component comes at the cost of increased interrupt latency and can be upwards of 40 us.
 
-When power_down_flash: True, device will try to power down flash when entering Light Sleep, which costs more time when device wakes up. Can only be enabled if there is no SPIRAM configured.
+When power_down_flash: True, device will try to power down flash when entering Light Sleep, which costs more time when device wakes up. Can only be enabled if there is no PSRAM configured.
 This option will power down flash under a strict but relatively safe condition.  Condition is related to a calculation that device will not attempt wake up while flash is powering down.
 This is a valuable option in reducing power consumption, and usage is encouraged with proper testing to ensure that flash is not corrupted.
 
