@@ -31,7 +31,7 @@ submit a feature request (see FAQ).
 | [Midea](#midea_ir) | `midea_ir`                         | yes |
 | [Mitsubishi](#mitsubishi) | `mitsubishi`                       | yes |
 | Noblex | `noblex`                           | yes |
-| Remko, Fischer ClimaButler, TROTEC, Novamaster, Rexair, freecom | `remko_ar715` | |
+| Remko, Fischer ClimaButler, TROTEC, Novamatic, Rexair, freecom | `remko_ar715` | |
 | Electrolux, TCL, Fuego | `tcl112`                           | yes |
 | [Toshiba](#toshiba) | `toshiba`                          | yes |
 | [Whirlpool](#whirlpool) | `whirlpool`                        | yes |
@@ -247,7 +247,7 @@ Supports air conditioners using the **Remko AR-715** IR remote (model 1613138).
 | Remko | RKL 490, RKL 491, RKL 494, RKL 495 |
 | Fischer | ClimaButler RCS-SD43UAI, RCS-SD43UWI |
 | TROTEC | PAC 4600 |
-| Novamaster | CL 990, CL 1590 |
+| Novamatic | CL 990, CL 1590 |
 | Rexair | C15000N |
 | freecom | RCS-SD43UAI, RCS-SD43UWI |
 
@@ -258,6 +258,15 @@ unit selects the fan speed automatically based on room temperature.
 > The IRremoteESP8266 library refers to this protocol as *ClimaButler* after one
 > of the rebranded models. The OEM and original manufacturer is Remko.
 
+> Fan speed selection is only available in Cool mode.
+> In Dry and Fan Only mode the unit controls the fan speed automatically.
+
+> The hardware timer function (1–24h) of the AR-715 remote is not implemented.
+> Use Home Assistant automations for equivalent functionality.
+
+> Heat and Heat/Cool modes are not supported by the AR-715 remote and are
+> not available in this component.
+
 ```yaml
 # Example configuration entry
 remote_transmitter:
@@ -267,7 +276,6 @@ remote_transmitter:
 climate:
   - platform: remko_ar715
     name: "Air Conditioner"
-    supports_heat: false
 ```
 
 <span id="toshiba"></span>
