@@ -1,0 +1,164 @@
+---
+description: "Instructions for setting up BK7231N / BK7238 Bluetooth Low Energy device trackers using ESPHome."
+title: "BK72xx Bluetooth Low Energy Tracker Hub"
+---
+
+The `bk72xx_ble_tracker` component creates a global hub so that you can track Bluetooth Low Energy
+devices using a BK7231N / BK7238 node (the LibreTiny `bk72xx` platform). It exposes the same
+advertisement-tracking interface as the [ESP32 BLE Tracker](/components/esp32_ble_tracker), so BLE
+sensor components (such as [BLE Presence](/components/binary_sensor/ble_presence),
+[BLE RSSI](/components/sensor/ble_rssi) and BTHome) work without modification.
+
+It also provides the scan source for the [Bluetooth Proxy](/components/bluetooth_proxy) on these chips.
+
+> [!NOTE]
+> Only the BLE 5.x parts BK7231N and BK7238 are supported. BK7231T, BK7231Q and BK7251 have a
+> BLE 4.2 stack or no BLE radio at all and cannot run this component.
+
+```yaml
+# Example configuration entry
+bk72xx_ble_tracker:
+
+binary_sensor:
+  - platform: ble_presence
+    mac_address: XX:XX:XX:XX:XX:XX
+    name: "ESP BLE Presence Google Home Mini"
+
+sensor:
+  - platform: ble_rssi
+    mac_address: XX:XX:XX:XX:XX:XX
+    name: "BLE Google Home Mini RSSI value"
+```
+
+## Configuration variables
+
+- **scan_parameters** (*Optional*): Advanced parameters for configuring the scan behavior.
+  - **interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval between the start of
+    two consecutive scan windows. Defaults to `100ms`.
+  - **window** (*Optional*, [Time](/guides/configuration-types#time)): The time the radio is actively
+    listening for packets during each scan interval. Must be smaller than or equal to `interval`. A value
+    close to `interval` means the radio listens almost continuously, at the cost of more power. Defaults to
+    `30ms` (a 30% duty cycle, the BK reference scan rate).
+  - **duration** (*Optional*, [Time](/guides/configuration-types#time)): The duration of each complete scan.
+    This has no real effect during normal continuous operation; it mainly governs how often the
+    `on_scan_end` trigger fires. Must be at least three times `interval`. Defaults to `5min`.
+  - **continuous** (*Optional*, boolean): Whether to scan continuously (forever) or to only scan when asked
+    to with the `start_scan` action. Defaults to `true`.
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID for this hub.
+
+> [!NOTE]
+> BK7231N / BK7238 scan **passively** only — they do not send scan requests for additional scan-response
+> data. This is sufficient for advertisement-based sensors (such as BTHome) and for the Bluetooth proxy.
+
+## BK72xx Bluetooth Low Energy Tracker Automation
+
+<span id="bk72xx_ble_tracker-on_ble_advertise"></span>
+
+### `on_ble_advertise` Trigger
+
+This trigger is activated each time a Bluetooth advertisement is received. Optionally, you can filter the
+triggered automations by the MAC address of the advertising device by setting the `mac_address` filter.
+
+```yaml
+bk72xx_ble_tracker:
+  on_ble_advertise:
+    - then:
+        - lambda: |-
+            ESP_LOGD("ble_adv", "New BLE device");
+            ESP_LOGD("ble_adv", "  address: %s", x.address_str().c_str());
+            ESP_LOGD("ble_adv", "  name: %s", x.get_name().c_str());
+            ESP_LOGD("ble_adv", "  RSSI: %d", x.get_rssi());
+```
+
+#### Configuration variables
+
+- **mac_address** (*Optional*, list of MAC Address): The MAC address(es) to filter for this automation.
+- See [Automation](/automations) and [Lambdas](/automations/templates).
+
+### `on_ble_manufacturer_data_advertise` Trigger
+
+This trigger is activated each time a Bluetooth advertisement with manufacturer data is received for the
+configured manufacturer ID.
+
+```yaml
+bk72xx_ble_tracker:
+  on_ble_manufacturer_data_advertise:
+    - manufacturer_id: 0x004C
+      then:
+        - lambda: |-
+            ESP_LOGD("ble_man_data", "Manufacturer data length: %i", x.size());
+```
+
+#### Configuration variables
+
+- **mac_address** (*Optional*, MAC Address): The MAC address to filter for this automation.
+- **manufacturer_id** (**Required**, string): 16 bit, 32 bit, or 128 bit BLE Manufacturer ID.
+
+### `on_ble_service_data_advertise` Trigger
+
+This trigger is activated each time a Bluetooth advertisement with service data is received for the
+configured service UUID.
+
+```yaml
+bk72xx_ble_tracker:
+  on_ble_service_data_advertise:
+    - service_uuid: 0x4C00
+      then:
+        - lambda: |-
+            ESP_LOGD("ble_svc_data", "Service data length: %i", x.size());
+```
+
+#### Configuration variables
+
+- **mac_address** (*Optional*, MAC Address): The MAC address to filter for this automation.
+- **service_uuid** (**Required**, string): 16 bit, 32 bit, or 128 bit BLE Service UUID.
+
+### `on_scan_end` Trigger
+
+This trigger is activated every time a scan ends, whether `continuous` is set to `true` or `false`.
+
+```yaml
+bk72xx_ble_tracker:
+  on_scan_end:
+    - then:
+        - lambda: |-
+            ESP_LOGD("ble_scan_end", "Scan ended");
+```
+
+### `bk72xx_ble_tracker.start_scan` Action
+
+Start a scan. This is useful in combination with `continuous: false` to scan only on demand.
+
+```yaml
+bk72xx_ble_tracker:
+  id: ble_tracker
+  scan_parameters:
+    continuous: false
+
+# in some trigger
+on_...:
+  - bk72xx_ble_tracker.start_scan:
+      continuous: false
+```
+
+#### Configuration variables
+
+- **continuous** (*Optional*, boolean, [templatable](/automations/templates)): Whether to start the scan in
+  continuous mode. Defaults to `false`.
+
+### `bk72xx_ble_tracker.stop_scan` Action
+
+Stop a running scan.
+
+```yaml
+# in some trigger
+on_...:
+  - bk72xx_ble_tracker.stop_scan:
+```
+
+## See Also
+
+- [ESP32 Bluetooth Low Energy Tracker Hub](/components/esp32_ble_tracker)
+- [Bluetooth Proxy](/components/bluetooth_proxy)
+- [BLE Presence](/components/binary_sensor/ble_presence)
+- [BLE RSSI](/components/sensor/ble_rssi)
