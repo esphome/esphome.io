@@ -123,13 +123,13 @@ If the device is always awake, the API timeout is 60 seconds, so a ping request 
 
 The `OpenThreadComponent` exposes the following method for use in lambdas and custom components:
 
-- **`bool is_sed() const`**: Returns `true` when the device is operating as a Sleepy End Device (i.e. `poll_period > 0`), `false` otherwise.
+- **`uint32_t get_poll_period()`: method only exists on MTDs, Returns the current poll_period.
 
 ```yaml
 on_...:
   then:
     - lambda: |-
-        if (id(openthread_id).is_sed()) {
+        if (id(openthread_id).get_poll_period() > 0) {
           // device is sleeping between polls
         }
 ```
