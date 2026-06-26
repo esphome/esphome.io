@@ -1,0 +1,115 @@
+---
+description: "Instructions for setting up Vevor 7-in-1 weather station sensors using the internal DTX signal"
+title: "Vevor DTX Weather Station"
+---
+
+import Figure from '@components/Figure.astro';
+import APIRef from '@components/APIRef.astro';
+import vevorDtxSignalTapImg from './images/vevor_dtx_signal_tap.jpg';
+
+The `vevor_dtx` sensor platform decodes the internal DTX data signal used by some Vevor 7-in-1 weather station
+receiver displays. It is intended for installations where an ESP is connected to the receiver board data signal,
+rather than receiving the outdoor sensor's RF transmission directly.
+
+<Figure
+  src={vevorDtxSignalTapImg}
+  alt="Vevor receiver board with the DTX signal tap point marked"
+  caption="DTX signal tap point on a Vevor receiver board."
+  layout="constrained"
+/>
+
+```yaml
+# Example configuration entry
+vevor_dtx:
+  pin: GPIOXX
+  temperature:
+    name: Outdoor Temperature
+  humidity:
+    name: Outdoor Humidity
+  wind_speed:
+    name: Wind Speed
+  wind_gust:
+    name: Wind Gust
+  wind_direction_degrees:
+    name: Wind Direction
+  rain:
+    name: Rain
+  uv_index:
+    name: UV Index
+  illuminance:
+    name: Illuminance
+  sensor_id:
+    name: Vevor Sensor ID
+  tx_counter:
+    name: TX Counter
+  low_battery:
+    name: Vevor Low Battery
+```
+
+## Configuration Variables
+
+- **pin** (**Required**, [Pin](/guides/configuration-types#pin)): The GPIO pin connected to the DTX signal.
+  This pin must support interrupts.
+
+- **temperature** (*Optional*): Outdoor temperature in degrees Celsius.
+  All options from [Sensor](/components/sensor/).
+
+- **humidity** (*Optional*): Outdoor relative humidity.
+  All options from [Sensor](/components/sensor/).
+
+- **wind_speed** (*Optional*): Wind speed in meters per second.
+  All options from [Sensor](/components/sensor/).
+
+- **wind_gust** (*Optional*): Wind gust speed in meters per second.
+  All options from [Sensor](/components/sensor/).
+
+- **wind_direction_degrees** (*Optional*): Wind direction in degrees.
+  All options from [Sensor](/components/sensor/).
+
+- **rain** (*Optional*): Rain amount in millimeters.
+  All options from [Sensor](/components/sensor/).
+
+- **uv_index** (*Optional*): UV index.
+  All options from [Sensor](/components/sensor/).
+
+- **illuminance** (*Optional*): Illuminance in lux.
+  All options from [Sensor](/components/sensor/).
+
+- **tx_counter** (*Optional*): Diagnostic transmit counter. The raw counter wraps in the transmitter data, so ESPHome
+  extends it while the device is running. It resets after the ESP restarts.
+  All options from [Sensor](/components/sensor/).
+
+- **sensor_id** (*Optional*): Outdoor sensor identifier as a hexadecimal string.
+  All options from [Text Sensor](/components/text_sensor/).
+
+- **low_battery** (*Optional*): Outdoor sensor low battery flag.
+  All options from [Binary Sensor](/components/binary_sensor/).
+
+- **bit_time** (*Optional*, [Time](/guides/configuration-types#time)): Expected DTX bit timing. Defaults to `88us`.
+
+- **max_gap** (*Optional*, [Time](/guides/configuration-types#time)): Gap used to split incoming pulses into frames.
+  Defaults to `2ms`.
+
+- **filter** (*Optional*, [Time](/guides/configuration-types#time)): Pulses shorter than this are ignored. Defaults
+  to `20us`.
+
+- **buffer_size** (*Optional*, int): Number of pulse durations stored in the interrupt buffer. Defaults to `512b`.
+
+## Hardware Notes
+
+The DTX signal is a logic-level signal on the Vevor receiver board. Connect the ESP ground to the receiver board
+ground and connect the DTX signal to the configured GPIO. A series resistor, for example `47 kOhm` to `100 kOhm`, is
+recommended between the receiver board and the ESP input.
+
+> [!CAUTION]
+> Confirm that the signal presented to the ESP GPIO is 3.3V logic level. Do not connect a 5V signal directly to an
+> ESP input.
+
+On ESP8266 boards, use a GPIO that supports interrupts. `GPIO14` is a common choice on ESP8266 modules such as the
+ESP-WROOM-02. Avoid `GPIO16`, boot strap pins, and UART pins unless your board design specifically accounts for them.
+
+## See Also
+
+- [Sensor Filters](/components/sensor#sensor-filters)
+- [GPIO Pin Numbering](/guides/configuration-types#pin)
+- <APIRef text="vevor_dtx.h" path="vevor_dtx/vevor_dtx.h" />
