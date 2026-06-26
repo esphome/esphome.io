@@ -58,7 +58,6 @@ Multiple remote receivers can be configured as a list of dict definitions within
   - **nexa**: Decode and dump Nexa (RF) codes.
   - **panasonic**: Decode and dump Panasonic infrared codes.
   - **pioneer**: Decode and dump Pioneer infrared codes.
-  - **pioneer_wyt**: Decode and dump Pioneer Wyt infrared codes.
   - **pronto**: Print remote code in Pronto form. Useful for using arbitrary protocols.
   - **raw**: Print all remote codes in their raw form. Also useful for using arbitrary protocols.
   - **rc5**: Decode and dump RC5 IR codes.
@@ -245,10 +244,6 @@ To enable signal demodulation, configure the signal carrier frequency and duty c
 
 - **on_pioneer** (*Optional*, [Automation](/automations)): An automation to perform when a
   pioneer remote code has been decoded. A variable `x` of type <APIStruct text="remote_base::PioneerData" path="remote_base::PioneerData" />
-  is passed to the automation for use in lambdas.
-
-- **on_pioneer_wyt** (*Optional*, [Automation](/automations)): An automation to perform when a
-  Pioneer Wyt remote code has been decoded. A variable `x` of type <APIStruct text="remote_base::PioneerWytData" path="remote_base::PioneerWytData" />
   is passed to the automation for use in lambdas.
 
 - **on_pronto** (*Optional*, [Automation](/automations)): An automation to perform when a
@@ -512,10 +507,6 @@ Remote code selection (exactly one of these has to be included):
 - **pioneer**: Trigger on a decoded Pioneer remote code with the given data.
 
   - **rc_code_1** (**Required**, int): The remote control code to trigger on, see dumper output for more details.
-
-- **pioneer_wyt**: Trigger on a decoded Pioneer Wyt remote code with the given data.
-
-  - **code** (**Required**, 13-bytes list): The 13 bytes representing the Pioneer Wyt payload to trigger on.
 
 - **pronto**: Trigger on a Pronto remote code with the given code.
 
