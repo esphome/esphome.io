@@ -35,6 +35,16 @@ esp32:
   `4MB`, `8MB`, `16MB` or `32MB`. Defaults to `4MB`. **Warning: specifying a size larger than that available
   on your board will cause the ESP32 to fail to boot.**
 
+- **flash_mode** (*Optional*, string): The SPI mode used to access the flash chip. One of `qio`, `qout`, `dio`,
+  `dout` or `opi` (octal flash chips only). When not set, the board definition (PlatformIO) or the ESP-IDF
+  default decides. **Warning: specifying a mode your flash chip does not support will cause the ESP32 to fail
+  to boot.**
+
+- **flash_frequency** (*Optional*, string): The SPI frequency used to access the flash chip, for example `80MHz`
+  or `40MHz`. The supported values depend on the variant and are checked at build time. When not set, the board
+  definition (PlatformIO) or the ESP-IDF default decides. **Warning: specifying a frequency your flash chip does
+  not support will cause the ESP32 to fail to boot.**
+
 - **cpu_frequency** (*Optional*, string): The CPU frequency to use. Defaults to the maximum supported
   frequency for the variant. The allowed values depend on the variant:
 
@@ -52,9 +62,9 @@ esp32:
   lower) to work around this.
 
 - **partitions** (*Optional*, filename or list): A partition table CSV file or a list of custom partitions to add.
-  See [Partitions](#esp32-partitions).
+  See [Partitions](#partitions).
 
-- **framework** (*Optional*): Options for the underlying framework used by ESPHome. See [Framework](#esp32-framework).
+- **framework** (*Optional*): Options for the underlying framework used by ESPHome. See [Framework](#framework).
 
 - **watchdog_timeout** (*Optional*, [Time](/guides/configuration-types#time)): The timeout applied to the
   ESP-IDF task watchdog. If a subscribed task fails to feed the watchdog within this period, the device
@@ -289,8 +299,6 @@ esphome --toolchain esp-idf compile my_device.yaml
 If not specified, `platformio` is used by default.
 If both `esp32.toolchain` and the `--toolchain` CLI option are set, the CLI option takes precedence.
 
-<span id="esp32-framework"></span>
-
 ## Framework
 
 ESPHome supports two framework options for ESP32 chips:
@@ -335,16 +343,24 @@ esp32:
   - `latest`  : Use the latest *release*, even if it hasn't been recommended yet.
   - `recommended`  : Use the recommended framework version.
 
-- **source** (*Optional*, string): The PlatformIO package to use for the framework. This variable provides
-  the URL of the git repository or file archive of a custom or patched version of the
+- **source** (*Optional*, string): Override the framework source. The accepted forms depend on the active toolchain.
+
+  When the PlatformIO toolchain is selected, this is a PlatformIO package spec for a custom or patched version of the
   [pioarduino/framework-arduinoespressif32](https://github.com/espressif/arduino-esp32) or
-  [pioarduino/framework-espidf](https://github.com/pioarduino/esp-idf) package for the framework type. Refer to
+  [pioarduino/framework-espidf](https://github.com/pioarduino/esp-idf) package. Refer to
   [PlatformIO package specifications](https://docs.platformio.org/en/latest/core/userguide/pkg/cmd_install.html#package-specifications)
   for the supported URL schemes. Examples:
 
   - `https://github.com/user/arduino-esp32/releases/download/archive.zip`
   - `https://github.com/user/esp-idf.git#branch`
   - `symlink:///path/to/esp-idf`
+
+  When the [native ESP-IDF toolchain](/guides/esp_idf/) is selected, the value may be either:
+  - A pre-bundled framework archive URL (`.tar.xz`, `.tar.gz`, or `.zip`), for example
+    `https://github.com/esphome-libs/esp-idf/releases/download/v5.2.7/esp-idf-v5.2.7.tar.gz`
+  - A GitHub repository, cloned with submodules at the optional branch or tag:
+    - `github://owner/repo[@branch-or-tag]`
+    - `https://github.com/owner/repo.git[@branch-or-tag]`
 
 - **platform_version** (*Optional*, string): The version of the
   [pioarduino/espressif32](https://github.com/pioarduino/platform-espressif32/releases/) package to use. For known framework versions
@@ -357,10 +373,8 @@ esp32:
 - **log_level** (*Optional*, string): Log level of the framework, one of `ERROR` (default), `NONE`, `WARN`, `INFO`,
   `DEBUG` or `VERBOSE`.
 
-- **advanced** (*Optional*, mapping): See [Advanced Configuration](#esp32-advanced_configuration) below.
-- **components** (*Optional*, list of components): See [IDF Components](#esp32-idf_components) below.
-
-<span id="esp32-advanced_configuration"></span>
+- **advanced** (*Optional*, mapping): See [Advanced Configuration](#advanced-configuration) below.
+- **components** (*Optional*, list of components): See [IDF Components](#idf-components) below.
 
 ## Advanced Configuration
 
@@ -744,8 +758,6 @@ esp32:
 > [!NOTE]
 > If you were already adding libraries via `libraries` config or calling `cg.add_library()`, no action is needed. If you were previously using Arduino library APIs directly in lambdas (e.g. `Preferences`, `Wire`, `SPI`) without adding them to the `libraries` config, you will need to explicitly add them.
 
-<span id="esp32-idf_components"></span>
-
 ## IDF Components
 
 The `components` option allows you to include IDF components. These components will then be compiled into the resulting
@@ -787,8 +799,6 @@ esp32:
   custom or patched version of the component.
 - **path** (*Optional*, string): The path of the component in the git repository or a local path to the
   component if `source` is not set.
-
-<span id="esp32-partitions"></span>
 
 ## Partitions
 
