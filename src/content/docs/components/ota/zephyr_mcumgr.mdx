@@ -40,7 +40,23 @@ ota:
 ### Configuration variables
 
 - **ble** (*Optional*, boolean): Enable Bluetooth Low Energy transport for MCUmgr OTA. Default `false`.
+- **udp** (*Optional*, boolean): Enable SMP-over-UDP transport for MCUmgr OTA over the network (IPv6). This is used to update devices remotely over [Thread](/components/openthread/). Requires the [`network`](/components/network/) component. Default `false`.
 - **hardware_uart** (*Optional*, enum): Select a hardware UART interface to use for MCUmgr OTA communication. This is used when updating devices over a serial interface rather than BLE. Options: `CDC`, `CDC1`, `UART0`, `UART1`.
+
+### Updating over the network (Thread)
+
+The `udp` transport runs the MCUmgr SMP server over UDP so the device can be updated remotely over [Thread](/components/openthread/) by IP address, hostname, or mDNS (`.local`) name. Because Thread is IPv6-only, it requires the [`network`](/components/network/) component to provide the IP stack, together with a connectivity provider such as [`openthread`](/components/openthread/):
+
+```yaml
+# Example configuration entry
+network:
+  enable_ipv6: true
+
+ota:
+  - platform: zephyr_mcumgr
+    transport:
+      udp: true
+```
 
 ## Usage
 
@@ -68,11 +84,19 @@ Or connect to a specific serial:
 esphome upload nrf52_device.yaml --device /dev/ttyACM0
 ```
 
+To connect and update the device over the network (Thread) using its hostname, mDNS (`.local`) name, or IP address:
+
+```bash
+esphome upload nrf52_device.yaml --device my-device.local
+```
+
 ## See Also
 
 - [Over-the-Air Updates](/components/ota/)
 - [ESPHome OTA Updates](/components/ota/esphome/)
 - [Safe Mode](/components/safe_mode/)
 - [nRF52](/components/nrf52/)
+- [OpenThread](/components/openthread/)
+- [Network](/components/network/)
 - <APIRef text="ota_backend.h" path="ota/ota_backend.h" />
 - [Building and using MCUboot with Zephyr](https://docs.nordicsemi.com/bundle/ncs-latest/page/mcuboot/readme-zephyr.html)
