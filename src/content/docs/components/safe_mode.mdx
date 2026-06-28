@@ -20,8 +20,6 @@ for `num_attempts` times (see below).
 safe_mode:
 ```
 
-<span id="safe_mode-configuration_variables"></span>
-
 ## Configuration variables
 
 - **disabled** (*Optional*, boolean): Set to `true` to disable safe_mode. [Ota](/components/ota/) automatically
@@ -46,8 +44,6 @@ safe_mode:
 >
 > **All other components (for example, displays and sensors) are disabled and cannot be used.**
 
-<span id="safe_mode-mark_successful_action"></span>
-
 ## `safe_mode.mark_successful` Action
 
 This action marks the boot as successful, preventing safe mode from being invoked. This is useful for devices that
@@ -58,6 +54,17 @@ on_...:
   then:
     - safe_mode.mark_successful
 ```
+
+## Rebooting to the recovery app on ESP32
+
+If safe_mode detects that OTA updates are impossible because of the partition layout on the device,
+the message `OTA updates are impossible` will appear in the config section of the logs, followed by the suggested next step.
+
+In case a valid recovery app is found but OTA is impossible with the current app, invoking safe mode will automatically reboot to it.
+Depending on the recovery app's features this can allow you to install an OTA update and recover your soft-bricked device.
+The recovery app can for example be a previous version of ESPHome or the Tasmota safeboot app. It is recommended to
+[update the partition table](/components/ota/esphome/#updating-the-partition-table-on-esp32) while recovering your device
+to make future OTA updates possible.
 
 ## See Also
 

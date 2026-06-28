@@ -29,8 +29,7 @@ to the coordinator.
 - On `ESP32` Zigbee can be used together with [WiFi](/components/wifi) with some limitations:
   - WiFi station mode + Zigbee end device is working fine.
   - WiFi station mode + Zigbee router leads to an unstable Zigbee network. Still can be used if WiFi is only enabled for short times (e.g. OTA)
-  - WiFi access point + Zigbee end device could lead to an unstable access point with increased packet loss. If the AP is only used as fallback there should be no issues.
-  - WiFi access point + Zigbee router is not supported
+  - WiFi access point + Zigbee is not supported
 
 > [!CAUTION]
 > Whenever the configuration is changed, the device should be removed and re-added to the Zigbee network.
@@ -53,7 +52,9 @@ zigbee:
   id: my_zigbee
   on_join:
     then:
-      - logger.log: "Joined network"
+      - logger.log:
+          format: "%s network."
+          args: ['x ? "Joined" : "Rejoined"']
   power_source: BATTERY
 ```
 
@@ -63,6 +64,18 @@ zigbee:
 
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): The ID to use for this `zigbee` component.
 
+- **router** (*Optional*, boolean): If true the Zigbee role will be `router` instead of `end device` and it will
+  forward Zigbee packets from other devices. Routers drain more power than end devices and need to be always on
+  for a stable Zigbee network. For this reasons battery-powered devices should not be used as routers.
+  Defaults to `false`.
+
+- **power_source** (*Optional*, enum): Indicates what kind of power the device uses. Affects
+  sleep behavior. One of `UNKNOWN`, `MAINS_SINGLE_PHASE`, `MAINS_THREE_PHASE`, `BATTERY`,
+  `DC_SOURCE`, `EMERGENCY_MAINS_CONST`, or `EMERGENCY_MAINS_TRANSF`. Defaults to `DC_SOURCE`.
+
+- **on_join** (*Optional*, [Automation](/automations#automation)): Automation to run when the device joins the network.
+  In [Lambdas](/automations/templates#config-lambda) you can get the join type with `x`. It is `true` for join and `false` for rejoin.
+
 Only on `nRF52`:
 
 - **wipe_on_boot** (*Optional*): Erases all non-volatile memory data on boot, including
@@ -71,12 +84,6 @@ Only on `nRF52`:
   - `true`: Erase all data on every boot. Use only for recovery from boot loops when
     you don't have an SWD programmer.
   - `once`: Erase data only on first boot after flashing new firmware, then preserve.
-
-- **on_join** (*Optional*, [Automation](/automations#automation)): Automation to run when the device joins the network.
-
-- **power_source** (*Optional*, enum): Indicates what kind of power the device uses. Affects
-  sleep behavior. One of `UNKNOWN`, `MAINS_SINGLE_PHASE`, `MAINS_THREE_PHASE`, `BATTERY`,
-  `DC_SOURCE`, `EMERGENCY_MAINS_CONST`, or `EMERGENCY_MAINS_TRANSF`. Defaults to `DC_SOURCE`.
 
 - **ieee802154_vendor_oui** (*Optional*, int): Sets the Vendor Organizationally Unique Identifier (OUI).
   This allows replacing Nordic Semiconductor's default company ID with your own.
@@ -90,12 +97,6 @@ Only on `nRF52`:
 
 > [!WARNING]
 > Overusing `random` may exhaust memory in the Zigbee coordinator by creating many "ghost" devices.
-
-Only on `ESP32`:
-
-- **router** (*Optional*, boolean): If true the Zigbee role will be `router` instead of `end device` and it will
-  forward Zigbee packets from other devices. Don't use this for battery-powered devices. Defaults to `false`.
-
 
 ## Actions
 
@@ -140,10 +141,10 @@ The following components are exposed over Zigbee if they have a name and if they
 
 - [Binary Sensor](/components/binary_sensor#config-binary_sensor): only **state** and **name** are exposed over Zigbee.
 
-Only on `nRF52`:
-
 - [Sensor](/components/sensor#config-sensor): **state**, **name** and **unit_of_measurement** are exposed
   over Zigbee. If no unit is given or if it is not supported it will fall back to unitless.
+
+Only on `nRF52`:
 
 - [Switch](/components/switch#config-switch): only **state** and **name** are exposed over Zigbee.
 
@@ -161,7 +162,7 @@ Only on `nRF52`:
 ### Sensor
 
 [Sensors](/components/sensor#config-sensor) are implemented as analog input clusters with description, engineering_units,
-and present_value attributes. Available only on `nRF52` platforms.
+and present_value attributes. On `ESP32` additionally the application type attribute is set if applicable.
 
 #### Additional configuration variables
 
