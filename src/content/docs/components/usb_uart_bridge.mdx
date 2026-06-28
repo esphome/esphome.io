@@ -38,10 +38,11 @@ bridge:
   to use for the USB side of the bridge.
 - **dtr_pin** (*Optional*, [Pin](/guides/configuration-types#pin)): GPIO pin that mirrors the host's DTR (Data Terminal
   Ready) line state. This is typically asserted when the host opens the serial port and is commonly used to drive the
-  reset line of an attached device.
+  reset line of an attached device. The pin carries the logical line state (asserted/deasserted); for a conventional
+  active-low interface (`DTR#`), set `inverted: true` on the pin (see [Control Signals](#control-signals)).
 - **rts_pin** (*Optional*, [Pin](/guides/configuration-types#pin)): GPIO pin that mirrors the host's RTS (Request to
   Send) line state. Combined with `dtr_pin`, this is commonly used to drive the bootloader/reset sequence of an
-  attached device.
+  attached device. As with `dtr_pin`, set `inverted: true` for a conventional active-low interface (`RTS#`).
 - **uart_rx_buffer_size** (*Optional*, int): Size of the internal buffer for data received from UART (going to USB).
   Range: 64-65535. Defaults to `256`.
 - **uart_tx_buffer_size** (*Optional*, int): Size of the internal buffer for data received from USB (going to UART).
@@ -80,6 +81,26 @@ If `dtr_pin` and `rts_pin` are configured, they output the state of these signal
 - **DTR**: Typically asserted when the host opens the serial port and de-asserted when it closes.
 - **RTS**: State depends on the host application. Together with DTR, this is most commonly used to trigger
   auto-reset/bootloader entry on an attached microcontroller.
+
+The pins carry the **logical** line state — driven active (high) when the host asserts the signal and inactive (low)
+when it de-asserts it — and they start **de-asserted** at boot, before any host has connected. A real serial interface
+drives DTR/RTS **active-low** (the `DTR#`/`RTS#` pins idle high and go low when asserted), so to match conventional
+wiring — and most auto-reset/bootloader circuits — set `inverted: true` on the pins:
+
+```yaml
+bridge:
+  - platform: usb_uart
+    uart_id: uart_bus
+    usb_cdc_acm_id: cdc_interface
+    dtr_pin:
+      number: GPIOXX
+      inverted: true
+    rts_pin:
+      number: GPIOXX
+      inverted: true
+```
+
+With `inverted: true`, the pin idles high at boot (de-asserted) and is driven low while the host asserts the signal.
 
 ## Buffer Sizing
 
