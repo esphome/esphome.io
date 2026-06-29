@@ -1,14 +1,19 @@
 ---
 const { ...attrs } = Astro.props;
+const hasText = Astro.slots.has("text");
 ---
 
 <div class="container block-title-text">
   <div class="title-container fade-up">
     <slot name="title" class="title" {...attrs} />
   </div>
-  <div class="content-container fade-up" data-delay="150">
-    <slot name="text" {...attrs} />
-  </div>
+  {
+    hasText && (
+      <div class="content-container fade-up" data-delay="150">
+        <slot name="text" {...attrs} />
+      </div>
+    )
+  }
 </div>
 
 <style lang="scss">
@@ -63,5 +68,4 @@ const { ...attrs } = Astro.props;
       }
     }
   }
-
 </style>

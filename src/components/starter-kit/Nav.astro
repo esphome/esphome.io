@@ -114,14 +114,19 @@
         width: 100%;
 
         &:before {
-          background-color: rgba(255, 255, 255, 0.5);
+          background-color: rgba(255, 255, 255, 0.85);
           content: "";
           position: absolute;
           inset: 0;
           opacity: 0.001;
-          backdrop-filter: blur(10px);
+
           transition: opacity 0.3s ease-out;
           z-index: -1;
+
+          @supports (backdrop-filter: blur(1px)) {
+            background-color: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(10px);
+          }
         }
       }
 
@@ -245,12 +250,16 @@
         pointer-events: none;
 
         &:before {
-          background-color: rgba(255, 255, 255, 0.5);
+          background-color: rgba(255, 255, 255, 0.85);
           content: "";
           position: absolute;
           inset: 0;
           z-index: -1;
-          backdrop-filter: blur(10px);
+
+          @supports (backdrop-filter: blur(1px)) {
+            background-color: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(10px);
+          }
         }
 
         .nav-links {
