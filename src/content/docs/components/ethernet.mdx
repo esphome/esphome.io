@@ -36,6 +36,7 @@ ethernet:
   type: GENERIC
   mdc_pin: GPIO5
   mdio_pin: GPIO6
+  power_pin: GPIOXX   # the PHY reset pin
 ```
 
 ```yaml
@@ -122,6 +123,8 @@ taken from the ESP-IDF per-target default configuration, so only the management 
 - **mdc_pin** (**Required**, [Pin](/guides/configuration-types#pin)): The MDC pin. On the ESP32-S31 this is `GPIO5`.
 - **mdio_pin** (**Required**, [Pin](/guides/configuration-types#pin)): The MDIO pin. On the ESP32-S31 this is `GPIO6`.
 - **phy_addr** (*Optional*, int): The PHY address of the Ethernet controller. Defaults to `0`.
+- **power_pin** (*Optional*, [Pin](/guides/configuration-types#pin)): The PHY reset/power pin. Recommended so the
+  PHY is reset cleanly at startup.
 
 ### SPI configuration variables
 
