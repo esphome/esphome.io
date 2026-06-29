@@ -125,6 +125,10 @@ taken from the ESP-IDF per-target default configuration, so only the management 
 - **phy_addr** (*Optional*, int): The PHY address of the Ethernet controller. Defaults to `0`.
 - **power_pin** (*Optional*, [Pin](/guides/configuration-types#pin)): The PHY reset/power pin. On the ESP32-S31
   this is `GPIO7`. Recommended so the PHY is reset cleanly at startup.
+- **phy_registers** (*Optional*, mapping): Arbitrary PHY register values to set after Ethernet
+  initialization, with the same `address`/`value`/`page_id` sub-options as the
+  [RMII configuration variables](#rmii-configuration-variables) above. For example, some PHYs do not
+  advertise gigabit by default and need `address: 0x09`, `value: 0x0200` to do so.
 
 ### SPI configuration variables
 
