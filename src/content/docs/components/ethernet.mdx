@@ -31,6 +31,14 @@ ethernet:
 ```
 
 ```yaml
+# Example configuration entry for the GENERIC RGMII PHY (ESP32-S31)
+ethernet:
+  type: GENERIC
+  mdc_pin: GPIO5
+  mdio_pin: GPIO6
+```
+
+```yaml
 # Example configuration entry for SPI chips (ESP32)
 ethernet:
   type: W5500
@@ -75,6 +83,7 @@ ethernet:
   - `W6100` (SPI, RP2040/RP2350 only)
   - `W6300` (PIO QSPI, RP2040/RP2350 only)
   - `LAN8670` (RMII, ESP32 only)
+  - `GENERIC` (RGMII, ESP32-S31 only)
 
 ### RMII configuration variables
 
@@ -102,6 +111,17 @@ ethernet:
 
 - **power_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The pin controlling the
   power/reset status of the Ethernet controller. Leave unspecified for no power pin (default).
+
+### GENERIC (RGMII) configuration variables
+
+The `GENERIC` type drives a standard IEEE 802.3 PHY over the internal EMAC's RGMII (Reduced Gigabit
+Media-Independent Interface, gigabit) interface, using ESP-IDF's built-in generic PHY driver. It is only supported on gigabit-capable variants (currently the ESP32-S31).
+The RGMII data, control and clock GPIOs are taken from the ESP-IDF per-target default configuration, so only the
+management pins need to be set:
+
+- **mdc_pin** (**Required**, [Pin](/guides/configuration-types#pin)): The MDC pin. On the ESP32-S31 this is `GPIO5`.
+- **mdio_pin** (**Required**, [Pin](/guides/configuration-types#pin)): The MDIO pin. On the ESP32-S31 this is `GPIO6`.
+- **phy_addr** (*Optional*, int): The PHY address of the Ethernet controller. Defaults to `0`.
 
 ### SPI configuration variables
 
