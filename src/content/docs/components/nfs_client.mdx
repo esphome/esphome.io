@@ -3,14 +3,13 @@ title: "NFS Client"
 description: "Access Network File System (NFSv3) shares from ESPHome devices over Wi-Fi or Ethernet."
 ---
 
-The `nfs_client` component provides access to Network File System (NFSv3) shares over TCP. It implements the
-[Storage](/components/storage/) `NetworkStorage` interface and registers each configured share with the storage
-registry, making files available to components such as [HTTP File Browser](/components/http_file_browser/).
+The `nfs_client` component provides access to Network File System (NFSv3) shares over TCP. It implements
+the `NetworkStorage` interface and registers each configured share with the storage registry.
 
 The NFS client uses a built-in RPC/XDR implementation — no external NFS library is required.
 
 > [!NOTE]
-> `nfs_client` requires a working network connection. It auto-loads the [Storage](/components/storage/) component.
+> `nfs_client` requires a working network connection. It auto-loads the `storage` component.
 
 > [!NOTE]
 > Multiple NFS shares can be configured. Each share must have a unique `mount_path`.
@@ -78,8 +77,3 @@ portmapper (port 111) to discover the mount and NFS daemon ports, then mounts th
 connection drops, it retries every 30 seconds.
 
 File handles are cached per path to reduce round-trips during sequential chunked reads.
-
-## See Also
-
-- [Storage](/components/storage/)
-- [HTTP File Browser](/components/http_file_browser/)
