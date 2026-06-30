@@ -583,6 +583,22 @@ esp32:
   espsecure.py extract_public_key --keyfile secure_boot_signing_key.pem secure_boot_verification_key.pem
   ```
 
+- **enable_ota_downgrade_protection** (*Optional*, boolean): Reject OTA updates whose firmware version is older
+  than the version the device is currently running. The version is taken from the `version` under the
+  [`project`](/components/esphome#esphome-creators_project) key, which is embedded into the firmware image and
+  compared on the device before the new image is allowed to boot. Defaults to `false`.
+
+  This option requires:
+
+  - A `project` with a `version` that is dotted-numeric (such as `1.2.3` or `2024.1.0`). The version is compared
+    one number at a time, so `1.10.0` is newer than `1.9.0`. Flashing the same version is always allowed.
+  - `signed_ota_verification` to be enabled. The version is read from inside the signed image, so signature
+    verification is what prevents a tampered update from claiming a higher version than it actually contains.
+
+  > [!NOTE]
+  > This protects the over-the-air update path on the device. A direct serial flash is not version-checked, so you
+  > can always recover a device by flashing over serial.
+
 **LWIP Optimization Options (ESP-IDF only):**
 
 The following options are available under the `advanced` section when using the ESP-IDF framework to optimize
