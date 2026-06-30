@@ -1,0 +1,85 @@
+---
+title: "NFS Client"
+description: "Access Network File System (NFSv3) shares from ESPHome devices over Wi-Fi or Ethernet."
+---
+
+The `nfs_client` component provides access to Network File System (NFSv3) shares over TCP. It implements the
+[Storage](/components/storage/) `NetworkStorage` interface and registers each configured share with the storage
+registry, making files available to components such as [HTTP File Browser](/components/http_file_browser/).
+
+The NFS client uses a built-in RPC/XDR implementation — no external NFS library is required.
+
+> [!NOTE]
+> `nfs_client` requires a working network connection. It auto-loads the [Storage](/components/storage/) component.
+
+> [!NOTE]
+> Multiple NFS shares can be configured. Each share must have a unique `mount_path`.
+
+## Configuration
+
+```yaml
+# Minimal configuration
+nfs_client:
+  - server: 192.168.1.100
+    export: /volume1/data
+```
+
+```yaml
+# Multiple shares with all options
+nfs_client:
+  - id: nas_data
+    server: 192.168.1.100
+    export: /volume1/data
+    port: 2049
+    mount_path: /nfs/data
+    uid: 1000
+    gid: 1000
+
+  - id: nas_media
+    server: nas.local
+    export: /volume1/media
+    mount_path: /nfs/media
+```
+
+## Configuration Variables
+
+- **server** (**Required**, string): Hostname or IP address of the NFS server.
+- **export** (**Required**, string): The exported path on the NFS server (e.g. `/volume1/data`).
+- **id** (*Optional*, ID): Manually specify the ID for this share.
+- **port** (*Optional*, int): NFS server port. Defaults to `2049`.
+- **mount_path** (*Optional*, string): The local path under which the share is accessible
+  (e.g. `/nfs/data`). Must be unique across all configured NFS shares. If omitted, the share is
+  registered with the storage registry but not accessible via a path.
+- **uid** (*Optional*, int): Unix user ID sent in RPC AUTH_UNIX credentials. Range `0`–`65535`.
+  Defaults to `0` (root). Set this to match the UID that has read/write access on the NFS server.
+- **gid** (*Optional*, int): Unix group ID sent in RPC AUTH_UNIX credentials. Range `0`–`65535`.
+  Defaults to `0`.
+
+## NFS Server Setup
+
+The NFS server must export the path with appropriate permissions. Example `/etc/exports` entry for Linux:
+
+```
+/volume1/data  192.168.1.0/24(rw,sync,no_subtree_check,all_squash,anonuid=1000,anongid=1000)
+```
+
+For read-only access use `ro` instead of `rw`. The ESPHome device connects from its assigned IP address,
+so ensure the export allows the device's subnet or IP.
+
+> [!TIP]
+> If the NFS server uses UID/GID mapping (`all_squash`, `anonuid`, `anongid`), the `uid` and `gid`
+> configuration variables have no effect — all access is mapped to the server-side anonymous user.
+> In that case, leave `uid` and `gid` at their defaults.
+
+## Connection Behaviour
+
+The NFS client connects automatically after Wi-Fi or Ethernet is established. It queries the server's
+portmapper (port 111) to discover the mount and NFS daemon ports, then mounts the export. If the
+connection drops, it retries every 30 seconds.
+
+File handles are cached per path to reduce round-trips during sequential chunked reads.
+
+## See Also
+
+- [Storage](/components/storage/)
+- [HTTP File Browser](/components/http_file_browser/)
