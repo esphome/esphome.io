@@ -20,7 +20,7 @@ audio_dac:
 
 <span id="config-pcm5122"></span>
 
-## Configuration Variables
+## Configuration variables
 
 - **address** (*Optional*, int): The I²C address of the device. Defaults to `0x4D`.
 - **bits_per_sample** (*Optional*, enum): The bit depth of the audio samples. One of `16bit`, `24bit`, or `32bit`.
@@ -84,7 +84,7 @@ output:
         output: true
 ```
 
-### Pin Configuration Variables
+### Pin configuration variables
 
 - **pcm5122** (**Required**, [ID](/guides/configuration-types#id)): The ID of the PCM5122 component.
 - **number** (**Required**, int): The GPIO pin number. Must be between `3` and `6`.
@@ -108,7 +108,8 @@ i2s_audio:
 audio_dac:
   - platform: pcm5122
     id: pcm5122_dac
-    bits_per_sample: 32bit
+    address: 0x4D
+    bits_per_sample: 16bit
     analog_gain: -6db
     channel_mix: stereo
     volume_min_db: -60dB
@@ -124,14 +125,15 @@ speaker:
     audio_dac: pcm5122_dac
 
 # Use PCM5122 GPIO4 to control an external amplifier enable pin
-output:
+switch:
   - platform: gpio
-    id: pcm5122_amp_enable
+    name: "Amplifier Enable"
     pin:
       pcm5122: pcm5122_dac
       number: 4
       mode:
         output: true
+    restore_mode: RESTORE_DEFAULT_ON
 
 # Use PCM5122 GPIO5 as a binary sensor input
 binary_sensor:
