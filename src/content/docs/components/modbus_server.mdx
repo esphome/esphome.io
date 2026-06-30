@@ -96,25 +96,23 @@ On the bus side, you need 120 Ohm termination resistors at the ends of the bus c
     ``ILLEGAL_DATA_ADDRESS`` exception. Has no effect on single-register types
     (``U_WORD``/``S_WORD``). Defaults to ``false``.
 
-  .. note::
+    > [!NOTE]
+    > Even with `allow_partial_read` enabled, the `read_lambda` is still
+    > evaluated **once per request**, so the registers returned within a single
+    > request are always consistent with each other. A client that reads the
+    > parts of a value in *separate* requests may observe a value that changed
+    > in between — this is inherent to register-by-register Modbus access.
+    >
+    > This option affects reads only. Writes are always atomic: a write must
+    > cover a whole value, since a partial value cannot be reconstructed for the
+    > `write_lambda`.
 
-      Even with ``allow_partial_read`` enabled, the ``read_lambda`` is still
-      evaluated **once per request**, so the registers returned within a single
-      request are always consistent with each other. A client that reads the
-      parts of a value in *separate* requests may observe a value that changed
-      in between — this is inherent to register-by-register Modbus access.
-
-      This option affects reads only. Writes are always atomic: a write must
-      cover a whole value, since a partial value cannot be reconstructed for the
-      ``write_lambda``.
-
-.. note::
-
-    Each register entry occupies ``register_count`` consecutive addresses based
-    on its ``value_type`` (1 for ``*_WORD``, 2 for ``*_DWORD``/``FP32``, 4 for
-    ``*_QWORD``). Register address ranges within one ``modbus_server`` must not
-    overlap and must fit within the 16-bit address space (``0x0000``–``0xFFFF``);
-    the configuration is rejected otherwise.
+> [!NOTE]
+> Each register entry occupies `register_count` consecutive addresses based
+> on its `value_type` (1 for `*_WORD`, 2 for `*_DWORD`/`FP32`, 4 for
+> `*_QWORD`). Register address ranges within one `modbus_server` must not
+> overlap and must fit within the 16-bit address space (`0x0000`–`0xFFFF`);
+> the configuration is rejected otherwise.
 
 ## Example
 
