@@ -20,10 +20,25 @@ audio_dac:
 
 <span id="config-pcm5122"></span>
 
-## Configuration variables
+## Configuration Variables
 
 - **address** (*Optional*, int): The I²C address of the device. Defaults to `0x4D`.
-- **bits_per_sample** (*Optional*, enum): The bit depth of the audio samples. One of `16bit`, `24bit`, or `32bit`. Defaults to `16bit`.
+- **bits_per_sample** (*Optional*, enum): The bit depth of the audio samples. One of `16bit`, `24bit`, or `32bit`.
+  Defaults to `16bit`.
+- **analog_gain** (*Optional*, enum): The analog output gain applied by the PCM5122. One of `0db` or `-6db`.
+  Defaults to `0db`.
+- **channel_mix** (*Optional*, enum): How audio channel data is routed to the left and right outputs. One of:
+  - `stereo` (default): Left data to left output, right data to right output.
+  - `left`: Left channel data to both outputs.
+  - `right`: Right channel data to both outputs.
+  - `inverted`: Left and right outputs swapped.
+- **volume_min_db** (*Optional*, dB): The volume level that maps to the minimum volume (fully turned down).
+  Must be less than `volume_max_db`. Range: `-103.0dB` to `24.0dB`. Defaults to `-52.5dB`.
+- **volume_max_db** (*Optional*, dB): The volume level that maps to the maximum volume (fully turned up).
+  Must be greater than `volume_min_db`. Range: `-103.0dB` to `24.0dB`. Defaults to `0dB`.
+- **enable_pin** (*Optional*, [Pin](/guides/configuration-types#pin)): GPIO pin connected to the PCM5122's XSMT
+  (soft mute) pin. Held low during `setup()` and driven high once initialization succeeds. Omit if XSMT is
+  hardwired high.
 - **i2c_id** (*Optional*): The ID of the [I²C bus](/components/i2c) the PCM5122 is connected to.
 - All other options from [Audio DAC](/components/audio_dac#config-audio_dac).
 
@@ -31,30 +46,50 @@ audio_dac:
 
 All [Audio DAC Automations](/components/audio_dac#automations-audio_dac) are supported by this platform.
 
-## Pin configuration
+## Switch
+
+The `pcm5122` switch platform provides a switch to place the PCM5122 into standby or powerdown mode.
+
+```yaml
+switch:
+  - platform: pcm5122
+    pcm5122: pcm5122_dac
+    name: "PCM5122 Power Down"
+```
+
+### Switch Configuration Variables
+
+- **pcm5122** (**Required**, [ID](/guides/configuration-types#id)): The ID of the PCM5122 component.
+- **power_mode** (*Optional*, enum): The power state to enter when the switch is turned on. One of `standby` or
+  `powerdown`. Defaults to `powerdown`.
+- All other options from [Switch](/components/switch/).
+
+## Pin Configuration
 
 The PCM5122 exposes GPIO pins 3 through 6 that can be used as general-purpose input or output pins
 within ESPHome. These pins can be used anywhere a GPIO pin is accepted.
 
+> [!NOTE]
+> GPIO6 cannot be used as an input pin on the PCM5122.
+
 ```yaml
 # Example: use PCM5122 GPIO4 as an output (e.g. to enable an amplifier)
-switch:
+output:
   - platform: gpio
-    name: "Amplifier Enable"
+    id: pcm5122_amp_enable
     pin:
       pcm5122: pcm5122_dac
       number: 4
       mode:
         output: true
-      inverted: false
 ```
 
-### Pin configuration variables
+### Pin Configuration Variables
 
 - **pcm5122** (**Required**, [ID](/guides/configuration-types#id)): The ID of the PCM5122 component.
 - **number** (**Required**, int): The GPIO pin number. Must be between `3` and `6`.
 - **mode** (**Required**): Configure the pin direction. Exactly one of `input` or `output` must be set to `true`.
-  - **input** (*Optional*, bool): Set as input pin. Defaults to `false`.
+  - **input** (*Optional*, bool): Set as input pin. Defaults to `false`. Not available on GPIO6.
   - **output** (*Optional*, bool): Set as output pin. Defaults to `false`.
 - **inverted** (*Optional*, bool): Invert the logic level of the pin. Defaults to `false`.
 
@@ -73,8 +108,12 @@ i2s_audio:
 audio_dac:
   - platform: pcm5122
     id: pcm5122_dac
-    address: 0x4D
-    bits_per_sample: 16bit
+    bits_per_sample: 32bit
+    analog_gain: -6db
+    channel_mix: stereo
+    volume_min_db: -60dB
+    volume_max_db: -3dB
+    enable_pin: GPIOXX
 
 speaker:
   - platform: i2s_audio
@@ -85,15 +124,29 @@ speaker:
     audio_dac: pcm5122_dac
 
 # Use PCM5122 GPIO4 to control an external amplifier enable pin
-switch:
+output:
   - platform: gpio
-    name: "Amplifier Enable"
+    id: pcm5122_amp_enable
     pin:
       pcm5122: pcm5122_dac
       number: 4
       mode:
         output: true
-    restore_mode: RESTORE_DEFAULT_ON
+
+# Use PCM5122 GPIO5 as a binary sensor input
+binary_sensor:
+  - platform: gpio
+    id: pcm5122_gpio_input
+    pin:
+      pcm5122: pcm5122_dac
+      number: 5
+      mode:
+        input: true
+
+switch:
+  - platform: pcm5122
+    pcm5122: pcm5122_dac
+    name: "PCM5122 Power Down"
 ```
 
 ## See Also
