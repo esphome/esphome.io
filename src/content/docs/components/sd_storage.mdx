@@ -5,8 +5,7 @@ title: "SD Card Storage"
 import APIRef from '@components/APIRef.astro';
 
 This component allows an ESP32 to access an SD card as a storage device. The card is mounted into
-the ESP-IDF virtual filesystem (VFS) and made available to other components (such as
-[HTTP File Browser](/components/http_file_browser/)) through the
+the ESP-IDF virtual filesystem (VFS) and made available to other components through the
 [Storage](/components/storage/) abstraction.
 
 Two hardware interfaces are supported:
@@ -118,7 +117,7 @@ sd_storage:
 
 The variable `mount_path` (type `const char *`) contains the VFS mount point (the value of `path:`).
 
-### `sd_storage.mount` action
+### `sd_storage.mount` Action
 
 Manually mount the SD card.
 
@@ -128,7 +127,7 @@ on_...:
       id: my_sd
 ```
 
-### `sd_storage.unmount` action
+### `sd_storage.unmount` Action
 
 Unmount the SD card. All open file handles should be closed before unmounting.
 
@@ -138,7 +137,7 @@ on_...:
       id: my_sd
 ```
 
-### `sd_storage.list_files` action
+### `sd_storage.list_files` Action
 
 Log all files in a directory on the SD card to the console.
 
@@ -152,7 +151,7 @@ on_...:
 - **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the `sd_storage` component.
 - **path** (*Optional*, string): Directory to list. Defaults to the root of the mount point.
 
-### `sd_storage.is_mounted` condition
+### `sd_storage.is_mounted` Condition
 
 Returns `true` if the SD card is currently mounted.
 
