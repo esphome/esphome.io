@@ -535,7 +535,7 @@
 
         // LED emissive — the effect engine writes into ledState; the render
         // loop maps those RGB values onto each mesh's emissive each frame.
-        const LED_EMISSIVE_INTENSITY = 3.0;
+        const LED_EMISSIVE_INTENSITY = 6.0;
         const NUM_LEDS = 10;
         const ledState: number[][] = Array.from({ length: NUM_LEDS }, () => [
           0, 0, 0,
@@ -766,7 +766,7 @@
             const sec = n.dur / 1000;
             if (n.freq > 0) {
               osc.frequency.setValueAtTime(n.freq, cursor);
-              gain.gain.setValueAtTime(0.15, cursor);
+              gain.gain.setValueAtTime(0.075, cursor);
               gain.gain.setValueAtTime(0, cursor + sec * 0.9);
             } else {
               gain.gain.setValueAtTime(0, cursor);
@@ -1294,15 +1294,17 @@
           // Also toggle BLOOM_LAYER per LED so unlit LEDs don't glow from their base colour.
           for (let _i = 0; _i < ledMeshes.length; _i++) {
             const [r, g, b] = ledState[_i] ?? [0, 0, 0];
-            const _on = Math.max(r, g, b) > 0;
+            const _max = Math.max(r, g, b);
+            const _on = _max > 0;
             const _mesh = ledMeshes[_i];
             if (_on) _mesh.layers.enable(BLOOM_LAYER);
             else _mesh.layers.disable(BLOOM_LAYER);
             const _mat = _mesh.material as THREE.MeshStandardMaterial;
             if (!_mat.emissive) continue;
-            _mat.emissive.setRGB(r / 255, g / 255, b / 255);
-            _mat.emissiveIntensity =
-              (Math.max(r, g, b) / 255) * LED_EMISSIVE_INTENSITY;
+            // Normalise to full saturation so the effect brightness-scaling
+            // doesn't desaturate the colour — drive brightness via intensity only.
+            _mat.emissive.setRGB(r / _max || 0, g / _max || 0, b / _max || 0);
+            _mat.emissiveIntensity = (_max / 255) * LED_EMISSIVE_INTENSITY;
           }
 
           // Button colour: red while playing, white on hover, original otherwise
