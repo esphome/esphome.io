@@ -18,6 +18,11 @@ Depending on the `mode`, a device can expose:
 > [!NOTE]
 > `binary_storage` auto-loads the `storage` component.
 
+> [!NOTE]
+> **Platform support:** Raw byte access (`mode: raw`) works on all platforms. LittleFS filesystem
+> mounting (`mode: littlefs`, `mode: both`) and `FLASH_PARTITION` require **ESP32 with the ESP-IDF
+> framework**.
+
 ## Supported Device Types
 
 | Type | Interface | Typical Use |
@@ -70,6 +75,7 @@ These variables apply to all device types unless noted otherwise.
 ### External Memory Devices (EEPROM, FRAM, MRAM, SPI Flash, OneWire)
 
 - **mode** (*Optional*, string): Access mode. One of `raw`, `littlefs`, or `both`. Defaults to `raw`.
+  `littlefs` and `both` require ESP32 with ESP-IDF framework.
 - **model** (*Optional*, string): Device model name. Used for capacity/page-size lookup and logging.
   See examples below for common model names.
 - **capacity** (*Optional*, size): Storage capacity. Accepts units: `B`, `KB`, `KiB`, `MB`, `MiB`.
@@ -109,6 +115,9 @@ Extends the SPI device schema. See [SPI Bus](/components/spi/) for bus configura
 - **page_size** (*Optional*, int): Write page size in bytes. Range `8`–`32`.
 
 ### Flash Partition (FLASH_PARTITION)
+
+> [!NOTE]
+> `FLASH_PARTITION` requires ESP32 with ESP-IDF framework.
 
 - **partition_label** (**Required**, string): Label of the partition in the partition table
   (e.g. `storage`, `spiffs`).
