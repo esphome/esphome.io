@@ -39,22 +39,35 @@ Depending on the `mode`, a device can expose:
 
 ```yaml
 # I²C EEPROM — raw mode
+i2c:
+  id: i2c_bus
+  sda: GPIOXX
+  scl: GPIOXX
+
 binary_storage:
   - type: EEPROM
+    i2c_id: i2c_bus
     address: 0x50
 ```
 
 ```yaml
-# SPI Flash — LittleFS filesystem
+# SPI Flash — LittleFS filesystem (ESP32-IDF only)
+spi:
+  id: spi_bus
+  clk_pin: GPIOXX
+  mosi_pin: GPIOXX
+  miso_pin: GPIOXX
+
 binary_storage:
   - type: SPI_FLASH
+    spi_id: spi_bus
     cs_pin: GPIOXX
     mode: littlefs
     mount_path: /flash
 ```
 
 ```yaml
-# Internal flash partition — LittleFS
+# Internal flash partition — LittleFS (ESP32-IDF only)
 binary_storage:
   - type: FLASH_PARTITION
     partition_label: storage
@@ -175,12 +188,14 @@ Extends the SPI device schema. See [SPI Bus](/components/spi/) for bus configura
 ## Examples
 
 ```yaml
-# Multiple devices — raw EEPROM and LittleFS SPI flash
+# Multiple devices — raw EEPROM and LittleFS SPI flash (ESP32-IDF only)
 i2c:
+  id: i2c_bus
   sda: GPIOXX
   scl: GPIOXX
 
 spi:
+  id: spi_bus
   clk_pin: GPIOXX
   mosi_pin: GPIOXX
   miso_pin: GPIOXX
@@ -188,6 +203,7 @@ spi:
 binary_storage:
   - type: EEPROM
     id: config_eeprom
+    i2c_id: i2c_bus
     address: 0x50
     model: AT24C256
     mode: raw
@@ -195,6 +211,7 @@ binary_storage:
 
   - type: SPI_FLASH
     id: data_flash
+    spi_id: spi_bus
     cs_pin: GPIOXX
     model: W25Q64
     mode: littlefs
@@ -258,9 +275,15 @@ Fills the entire device with a single byte value.
 ### Automation Example
 
 ```yaml
+i2c:
+  id: i2c_bus
+  sda: GPIOXX
+  scl: GPIOXX
+
 binary_storage:
   - type: EEPROM
     id: my_eeprom
+    i2c_id: i2c_bus
     address: 0x50
     mode: raw
 
@@ -285,6 +308,17 @@ Returns `true` if the device is initialised and ready for access.
 - **id** (**Required**, ID): The raw storage device.
 
 ```yaml
+i2c:
+  id: i2c_bus
+  sda: GPIOXX
+  scl: GPIOXX
+
+binary_storage:
+  - type: EEPROM
+    id: my_eeprom
+    i2c_id: i2c_bus
+    address: 0x50
+
 if:
   condition:
     binary_storage.is_ready:
