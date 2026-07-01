@@ -1,27 +1,14 @@
 ---
 title: "Binary Storage"
-description: "Access I²C/SPI EEPROM, FRAM, MRAM, SPI flash, OneWire EEPROM, and internal flash partitions from ESPHome."
+description: "Access I²C/SPI EEPROM, FRAM, MRAM, SPI flash, and OneWire EEPROM from ESPHome."
 ---
 
-The `binary_storage` component provides access to a variety of non-volatile memory devices over I²C, SPI, and
-OneWire, as well as internal flash partitions formatted with LittleFS. It implements the storage interfaces
-and registers each configured device with the storage registry.
-
-Depending on the `mode`, a device can expose:
-
-- **Raw byte access** (`mode: raw`) — offset-based read/write/erase via automations
-- **LittleFS filesystem** (`mode: littlefs`) — path-based file access via the storage registry
-- **Both** (`mode: both`) — raw access via automations and filesystem via the storage registry simultaneously
-
-`FLASH_PARTITION` always mounts LittleFS on an internal flash partition and has no `mode` option.
+The `binary_storage` component provides raw byte access to a variety of non-volatile memory devices over
+I²C, SPI, and OneWire. It implements the storage interfaces and registers each configured device with the
+storage registry.
 
 > [!NOTE]
 > `binary_storage` auto-loads the `storage` component.
-
-> [!NOTE]
-> **Platform support:** Raw byte access (`mode: raw`) works on all platforms. LittleFS filesystem
-> mounting (`mode: littlefs`, `mode: both`) and `FLASH_PARTITION` require **ESP32 with the ESP-IDF
-> framework**.
 
 ## Supported Device Types
 
@@ -33,7 +20,6 @@ Depending on the `mode`, a device can expose:
 | `SPI_FRAM` | SPI | Fast byte-addressable, unlimited writes |
 | `SPI_MRAM` / `MRAM` | SPI | Fast byte-addressable, unlimited writes |
 | `ONEWIRE_EEPROM` / `ONEWIRE` | OneWire | Very small, single-wire bus |
-| `FLASH_PARTITION` / `PARTITION` | Internal flash | LittleFS on a partition table entry |
 
 ## Configuration
 
@@ -50,30 +36,6 @@ binary_storage:
     address: 0x50
 ```
 
-```yaml
-# SPI Flash — LittleFS filesystem (ESP32-IDF only)
-spi:
-  id: spi_bus
-  clk_pin: GPIOXX
-  mosi_pin: GPIOXX
-  miso_pin: GPIOXX
-
-binary_storage:
-  - type: SPI_FLASH
-    spi_id: spi_bus
-    cs_pin: GPIOXX
-    mode: littlefs
-    mount_path: /flash
-```
-
-```yaml
-# Internal flash partition — LittleFS (ESP32-IDF only)
-binary_storage:
-  - type: FLASH_PARTITION
-    partition_label: storage
-    mount_path: /littlefs
-```
-
 ## Common Configuration Variables
 
 These variables apply to all device types unless noted otherwise.
@@ -85,26 +47,14 @@ These variables apply to all device types unless noted otherwise.
 - **storage_id** (*Optional*, string): Identifier used in the storage registry. Defaults to the
   component's generated ID.
 
-### External Memory Devices (EEPROM, FRAM, MRAM, SPI Flash, OneWire)
-
-- **mode** (*Optional*, string): Access mode. One of `raw`, `littlefs`, or `both`. Defaults to `raw`.
-  `littlefs` and `both` require ESP32 with ESP-IDF framework.
-- **model** (*Optional*, string): Device model name. Used for capacity/page-size lookup and logging.
-  See examples below for common model names.
-- **capacity** (*Optional*, size): Storage capacity. Accepts units: `B`, `KB`, `KiB`, `MB`, `MiB`.
-  If omitted, the value is derived from the model name where known.
-- **mount_path** (*Optional*, string): VFS mount path for LittleFS access (e.g. `/eeprom`).
-  Required when `mode` is `littlefs` or `both`.
-- **auto_format** (*Optional*, boolean): Automatically format the LittleFS filesystem if not formatted.
-  Defaults to `true`.
-- **mount_id** (*Optional*, ID): Manually specify the ID for the auto-created `LittleFSMount` component
-  when using `mode: littlefs` or `mode: both`.
-
 ### I²C Devices (EEPROM, FRAM)
 
 Extends the I²C device schema. See [I²C Bus](/components/i2c/) for bus configuration.
 
 - **address** (*Optional*, hex int): I²C address of the device. Defaults to `0x50`.
+- **model** (*Optional*, string): Device model name. Used for capacity/page-size lookup and logging.
+- **capacity** (*Optional*, size): Storage capacity. Accepts units: `B`, `KB`, `KiB`, `MB`, `MiB`.
+  If omitted, the value is derived from the model name where known.
 - **page_size** (*Optional*, int): Write page size in bytes. Range `8`–`128`. For EEPROM only.
 - **addressing_bits** (*Optional*, int): Address width in bits. Valid values depend on device type.
 
@@ -113,6 +63,8 @@ Extends the I²C device schema. See [I²C Bus](/components/i2c/) for bus configu
 Extends the SPI device schema. See [SPI Bus](/components/spi/) for bus configuration.
 
 - **cs_pin** (**Required**, Pin): Chip select pin.
+- **model** (*Optional*, string): Device model name. Used for capacity lookup and logging.
+- **capacity** (*Optional*, size): Storage capacity. Accepts units: `B`, `KB`, `KiB`, `MB`, `MiB`.
 - **erase_size** (*Optional*, int): Erase block size. One of `4096`, `32768`, `65536`. SPI Flash only.
 - **jedec_id** (*Optional*, hex int): Expected JEDEC ID. Used for device verification on startup.
   SPI Flash only.
@@ -123,19 +75,11 @@ Extends the SPI device schema. See [SPI Bus](/components/spi/) for bus configura
 ### OneWire EEPROM
 
 - **pin** (**Required**, Pin): OneWire data pin (open-drain output).
+- **model** (*Optional*, string): Device model name.
+- **capacity** (*Optional*, size): Storage capacity.
 - **address** (*Optional*, hex int): 64-bit ROM address of the device. If omitted, the first device
   found on the bus is used.
 - **page_size** (*Optional*, int): Write page size in bytes. Range `8`–`32`.
-
-### Flash Partition (FLASH_PARTITION)
-
-> [!NOTE]
-> `FLASH_PARTITION` requires ESP32 with ESP-IDF framework.
-
-- **partition_label** (**Required**, string): Label of the partition in the partition table
-  (e.g. `storage`, `spiffs`).
-- **mount_path** (*Optional*, string): VFS mount path. Defaults to `/littlefs`.
-- **auto_format** (*Optional*, boolean): Format if not already formatted. Defaults to `true`.
 
 ## Common Device Models
 
@@ -188,7 +132,7 @@ Extends the SPI device schema. See [SPI Bus](/components/spi/) for bus configura
 ## Examples
 
 ```yaml
-# Multiple devices — raw EEPROM and LittleFS SPI flash (ESP32-IDF only)
+# Multiple raw-access devices
 i2c:
   id: i2c_bus
   sda: GPIOXX
@@ -206,7 +150,6 @@ binary_storage:
     i2c_id: i2c_bus
     address: 0x50
     model: AT24C256
-    mode: raw
     storage_name: "Config EEPROM"
 
   - type: SPI_FLASH
@@ -214,24 +157,12 @@ binary_storage:
     spi_id: spi_bus
     cs_pin: GPIOXX
     model: W25Q64
-    mode: littlefs
-    mount_path: /flash
     storage_name: "Data Flash"
-```
-
-```yaml
-# Internal flash partition
-binary_storage:
-  - type: FLASH_PARTITION
-    partition_label: storage
-    mount_path: /littlefs
-    storage_name: "Internal Flash"
 ```
 
 ## Automations
 
-Automations are available for raw-mode devices (`mode: raw` or `mode: both`). The `id` must reference
-a `BinaryStorage` device (not a `FLASH_PARTITION`).
+Automations are available for all raw-access devices.
 
 ### `binary_storage.read` Action
 
@@ -285,7 +216,6 @@ binary_storage:
     id: my_eeprom
     i2c_id: i2c_bus
     address: 0x50
-    mode: raw
 
 on_boot:
   then:
