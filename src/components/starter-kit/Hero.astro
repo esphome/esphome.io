@@ -84,7 +84,13 @@
   import { OrbitControls } from "three/addons/controls/OrbitControls.js";
   import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
   import { MeshoptDecoder } from "three/addons/libs/meshopt_decoder.module.js";
-  const MODEL_URL = "/starter-kit/wip.glb";
+  import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
+  import Stats from "three/addons/libs/stats.module.js";
+  import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
+  import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
+  import { ShaderPass } from "three/addons/postprocessing/ShaderPass.js";
+  import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
+  const MODEL_URL = "/starter-kit/ESK.glb";
 
   const canvas = document.getElementById(
     "hero-scene",
@@ -135,6 +141,90 @@
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.1;
     renderer.outputColorSpace = THREE.SRGBColorSpace;
+
+    // Selective bloom — only objects on BLOOM_LAYER glow.
+    const BLOOM_LAYER = 1;
+    const bloomLayer = new THREE.Layers();
+    bloomLayer.set(BLOOM_LAYER);
+
+    // HalfFloat gives 16-bit precision — eliminates banding in bloom gradients.
+    const bloomRenderTarget = new THREE.WebGLRenderTarget(width, height, {
+      type: THREE.HalfFloatType,
+    });
+    const bloomComposer = new EffectComposer(renderer, bloomRenderTarget);
+    bloomComposer.renderToScreen = false;
+    bloomComposer.addPass(new RenderPass(scene, camera));
+    const unrealBloomPass = new UnrealBloomPass(
+      new THREE.Vector2(width, height),
+      3.0, // strength
+      1.0, // radius
+      0.0, // threshold
+    );
+    bloomComposer.addPass(unrealBloomPass);
+
+    const BLOOM_MIX = 1.0; // raise to intensify, lower to reduce
+    const mixPass = new ShaderPass(
+      new THREE.ShaderMaterial({
+        uniforms: {
+          baseTexture: { value: null },
+          bloomTexture: { value: null },
+          bloomStrength: { value: BLOOM_MIX },
+        },
+        vertexShader: `
+          varying vec2 vUv;
+          void main() { vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }
+        `,
+        fragmentShader: `
+          uniform sampler2D baseTexture;
+          uniform sampler2D bloomTexture;
+          uniform float bloomStrength;
+          varying vec2 vUv;
+          void main() {
+            vec4 base = texture2D(baseTexture, vUv);
+            vec3 bloom = texture2D(bloomTexture, vUv).rgb * bloomStrength;
+            // Fade bloom to zero within 6% of each canvas edge so it can't
+            // bleed outside the canvas into surrounding page content.
+            vec2 edge = smoothstep(0.0, 0.15, vUv) * smoothstep(1.0, 0.85, vUv);
+            bloom *= edge.x * edge.y;
+            float bloomAlpha = max(max(bloom.r, bloom.g), bloom.b);
+            gl_FragColor = vec4(base.rgb + bloom, max(base.a, bloomAlpha));
+          }
+        `,
+      }),
+      "baseTexture",
+    );
+    mixPass.needsSwap = true;
+    const msaaTarget = new THREE.WebGLRenderTarget(width, height, {
+      samples: 4,
+      type: THREE.HalfFloatType,
+    });
+    const finalComposer = new EffectComposer(renderer, msaaTarget);
+    finalComposer.addPass(new RenderPass(scene, camera));
+    finalComposer.addPass(mixPass);
+    finalComposer.addPass(new OutputPass());
+
+    // Helpers: darken non-bloom meshes/lines before bloom pass, restore after.
+    const _darkMat = new THREE.MeshBasicMaterial({ color: 0x000000 });
+    const _darkLineMat = new THREE.LineBasicMaterial({ color: 0x000000 });
+    const _savedMats = new Map<string, THREE.Material | THREE.Material[]>();
+    const darkenNonBloom = (obj: THREE.Object3D) => {
+      if (bloomLayer.test(obj.layers)) return;
+      const mesh = obj as THREE.Mesh;
+      const line = obj as THREE.Line;
+      if (mesh.isMesh) {
+        _savedMats.set(obj.uuid, mesh.material);
+        mesh.material = _darkMat;
+      } else if (line.isLine) {
+        _savedMats.set(obj.uuid, line.material);
+        line.material = _darkLineMat;
+      }
+    };
+    const restoreMaterials = (obj: THREE.Object3D) => {
+      if (!_savedMats.has(obj.uuid)) return;
+      const mat = _savedMats.get(obj.uuid)!;
+      (obj as THREE.Mesh).material = mat as THREE.Material;
+      _savedMats.delete(obj.uuid);
+    };
 
     scene.add(new THREE.AmbientLight(0xffffff, 0.6));
 
@@ -290,6 +380,16 @@
         const byName = new Map<string, THREE.Object3D>();
         model.traverse((obj: THREE.Object3D) => {
           if (obj.name) byName.set(obj.name.toLowerCase(), obj);
+          let depth = 0;
+          let p = obj.parent;
+          while (p && p !== model) {
+            depth++;
+            p = p.parent;
+          }
+          const type = (obj as THREE.Mesh).isMesh ? "mesh" : obj.type;
+          console.log(
+            `[Hero] ${"  ".repeat(depth)}${type}: ${obj.name || "(unnamed)"}`,
+          );
         });
 
         const topLevel = [...model.children];
@@ -407,6 +507,384 @@
           for (const { parent, mesh } of overlays) parent.add(mesh);
           return { root: obj, solid, wire, meshes };
         });
+
+        // Collect buttonpress meshes for hover highlight + press animation
+        const buttonpressMeshes: THREE.Mesh[] = [];
+        const buttonpressOrigColors: THREE.Color[] = [];
+        const buttonpressObj = byName.get("buttonpress");
+        const buttonpressOrigPos = buttonpressObj
+          ? buttonpressObj.position.clone()
+          : new THREE.Vector3();
+        let buttonUnlocked = false; // unlocks after user zooms into the leds module
+        let buttonPressT = 0;
+        let buttonPressTarget = 0;
+        const BUTTON_PRESS_MS = 150;
+        const BUTTON_PRESS_DIST = 0.2;
+        const BUTTON_PRESS_AXIS = new THREE.Vector3(0, -1, 0);
+        if (buttonpressObj) {
+          buttonpressObj.traverse((o: THREE.Object3D) => {
+            if ((o as THREE.Mesh).isMesh) {
+              const m = o as THREE.Mesh;
+              buttonpressMeshes.push(m);
+              buttonpressOrigColors.push(
+                (m.material as THREE.MeshStandardMaterial).color.clone(),
+              );
+            }
+          });
+        }
+
+        // LED emissive — the effect engine writes into ledState; the render
+        // loop maps those RGB values onto each mesh's emissive each frame.
+        const LED_EMISSIVE_INTENSITY = 3.0;
+        const NUM_LEDS = 10;
+        const ledState: number[][] = Array.from({ length: NUM_LEDS }, () => [
+          0, 0, 0,
+        ]);
+        // One entry per LED, 1:1 with ledState. groupFades adds a mask child
+        // mesh to each original mesh, so we stop at the first emissive-capable
+        // mesh to avoid doubling up.
+        const ledMeshes: THREE.Mesh[] = [];
+        for (let i = 1; i <= 10; i++) {
+          const ledObj = byName.get(`ledlight${i}`);
+          if (!ledObj) continue;
+          let found = false;
+          ledObj.traverse((o: THREE.Object3D) => {
+            if (found) return;
+            const m = o as THREE.Mesh;
+            if (!m.isMesh) return;
+            const mat = m.material as THREE.MeshStandardMaterial;
+            if (!mat.emissive) return;
+            mat.emissiveIntensity = 0;
+            ledMeshes.push(m);
+            found = true;
+          });
+        }
+
+        // ---- Effect engine (mirrors esk-lights.html) -----------------------
+        let effectTimers: ReturnType<typeof setInterval>[] = [];
+        const clearEffect = () => {
+          effectTimers.forEach(clearInterval);
+          effectTimers = [];
+        };
+        const setAll = (rgb: number[]) => {
+          for (let i = 0; i < NUM_LEDS; i++) ledState[i] = rgb.slice();
+        };
+        const scaleLed = (rgb: number[], k: number) => [
+          rgb[0] * k,
+          rgb[1] * k,
+          rgb[2] * k,
+        ];
+        const hsvLed = (h: number) => {
+          const c = 255,
+            x = c * (1 - Math.abs(((h / 60) % 2) - 1));
+          if (h < 60) return [c, x, 0];
+          if (h < 120) return [x, c, 0];
+          if (h < 180) return [0, c, x];
+          if (h < 240) return [0, x, c];
+          if (h < 300) return [x, 0, c];
+          return [c, 0, x];
+        };
+
+        const effectColorWipe = (
+          colors: { rgb: number[]; num: number }[],
+          brightness: number,
+          intervalMs: number,
+        ) => {
+          clearEffect();
+          setAll([0, 0, 0]);
+          const pattern: number[][] = [];
+          colors.forEach((c) => {
+            for (let n = 0; n < c.num; n++) pattern.push(c.rgb);
+          });
+          let pIdx = 0;
+          effectTimers.push(
+            setInterval(() => {
+              for (let i = NUM_LEDS - 1; i > 0; i--)
+                ledState[i] = ledState[i - 1];
+              ledState[0] = scaleLed(pattern[pIdx], brightness);
+              pIdx = (pIdx + 1) % pattern.length;
+            }, intervalMs),
+          );
+        };
+        const effectTwinkle = (
+          base: number[],
+          brightness: number,
+          probability: number,
+          intervalMs: number,
+        ) => {
+          clearEffect();
+          const level = new Array(NUM_LEDS).fill(0);
+          effectTimers.push(
+            setInterval(() => {
+              for (let i = 0; i < NUM_LEDS; i++)
+                if (level[i] > 0) level[i] = Math.max(0, level[i] - 0.06);
+              if (Math.random() < probability) {
+                const i = Math.floor(Math.random() * NUM_LEDS);
+                if (level[i] <= 0) level[i] = 1;
+              }
+              for (let i = 0; i < NUM_LEDS; i++)
+                ledState[i] = scaleLed(base, brightness * level[i]);
+            }, intervalMs),
+          );
+        };
+        const effectRandomTwinkle = (
+          brightness: number,
+          probability: number,
+          intervalMs: number,
+        ) => {
+          clearEffect();
+          const level = new Array(NUM_LEDS).fill(0);
+          const col: number[][] = Array.from({ length: NUM_LEDS }, () => [
+            0, 0, 0,
+          ]);
+          effectTimers.push(
+            setInterval(() => {
+              for (let i = 0; i < NUM_LEDS; i++)
+                if (level[i] > 0) level[i] = Math.max(0, level[i] - 0.06);
+              if (Math.random() < probability) {
+                const i = Math.floor(Math.random() * NUM_LEDS);
+                if (level[i] <= 0) {
+                  level[i] = 1;
+                  col[i] = hsvLed(Math.random() * 360);
+                }
+              }
+              for (let i = 0; i < NUM_LEDS; i++)
+                ledState[i] = scaleLed(col[i], brightness * level[i]);
+            }, intervalMs),
+          );
+        };
+        const effectFlicker = (
+          base: number[],
+          brightness: number,
+          intensity: number,
+          intervalMs: number,
+        ) => {
+          clearEffect();
+          effectTimers.push(
+            setInterval(() => {
+              for (let i = 0; i < NUM_LEDS; i++)
+                ledState[i] = scaleLed(
+                  base,
+                  brightness * (1 - Math.random() * intensity),
+                );
+            }, intervalMs),
+          );
+        };
+
+        // ---- RTTTL parser --------------------------------------------------
+        const parseRTTTL = (str: string) => {
+          const [, defaults, body] = str.split(":");
+          let d = 4,
+            o = 6,
+            bpm = 63;
+          defaults.split(",").forEach((p) => {
+            const [k, v] = p.split("=");
+            if (k.trim() === "d") d = +v;
+            else if (k.trim() === "o") o = +v;
+            else if (k.trim() === "b") bpm = +v;
+          });
+          const whole = (60000 / bpm) * 4;
+          const SEMI: Record<string, number> = {
+            c: 0,
+            d: 2,
+            e: 4,
+            f: 5,
+            g: 7,
+            a: 9,
+            b: 11,
+            p: -1,
+          };
+          const notes: { freq: number; dur: number }[] = [];
+          body.split(",").forEach((raw) => {
+            const s = raw.trim().toLowerCase();
+            let idx = 0,
+              num = "";
+            while (idx < s.length && s[idx] >= "0" && s[idx] <= "9")
+              num += s[idx++];
+            let dur = num ? whole / parseInt(num) : whole / d;
+            let semi = SEMI[s[idx]] ?? -1;
+            idx++;
+            if (s[idx] === "#") {
+              semi++;
+              idx++;
+            }
+            let dotted = s[idx] === ".";
+            if (dotted) idx++;
+            let oct = o;
+            if (s[idx] >= "0" && s[idx] <= "9") {
+              oct = parseInt(s[idx]);
+              idx++;
+            }
+            if (s[idx] === ".") {
+              dotted = true;
+            }
+            if (dotted) dur *= 1.5;
+            const freq =
+              semi >= 0
+                ? 440 * Math.pow(2, ((oct + 1) * 12 + semi - 69) / 12)
+                : 0;
+            notes.push({ freq, dur });
+          });
+          return notes;
+        };
+
+        // ---- Web Audio buzzer (square wave ≈ piezo) ------------------------
+        let audioCtx: AudioContext | null = null;
+        let curOsc: OscillatorNode | null = null;
+        let curGain: GainNode | null = null;
+        let songTimer: ReturnType<typeof setTimeout> | null = null;
+
+        const stopAudio = () => {
+          if (songTimer) {
+            clearTimeout(songTimer);
+            songTimer = null;
+          }
+          try {
+            curOsc?.stop();
+          } catch (_) {}
+          curGain?.disconnect();
+          curOsc = null;
+          curGain = null;
+        };
+        const playRTTTL = (
+          notes: { freq: number; dur: number }[],
+          onEnd?: () => void,
+        ) => {
+          stopAudio();
+          if (!audioCtx) audioCtx = new AudioContext();
+          if (audioCtx.state === "suspended") audioCtx.resume();
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = "square";
+          gain.gain.value = 0;
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          let cursor = audioCtx.currentTime + 0.05;
+          const start = cursor;
+          osc.start(cursor);
+          for (const n of notes) {
+            const sec = n.dur / 1000;
+            if (n.freq > 0) {
+              osc.frequency.setValueAtTime(n.freq, cursor);
+              gain.gain.setValueAtTime(0.15, cursor);
+              gain.gain.setValueAtTime(0, cursor + sec * 0.9);
+            } else {
+              gain.gain.setValueAtTime(0, cursor);
+            }
+            cursor += sec;
+          }
+          osc.stop(cursor + 0.05);
+          curOsc = osc;
+          curGain = gain;
+          songTimer = setTimeout(
+            () => {
+              songTimer = null;
+              onEnd?.();
+            },
+            (cursor - start) * 1000 + 60,
+          );
+        };
+
+        // ---- Songs (mirrors esk-lights.html) -------------------------------
+        type Song = { name: string; rtttl: string; start: () => void };
+        const songs: Song[] = [
+          // Colors sourced directly from esk-1.yaml song scripts + light effect definitions.
+          {
+            name: "Rickroll",
+            rtttl:
+              "GiveYouUp:d=4,o=5,b=200:8g,8a,8c6,8a,e6,8p,e6,8p,d.6,p,8p,8g,8a,8c6,8a,d6,8p,d6,8p,c6,8b,a.,8g,8a,8c6,8a,2c6,d6,b,a,g.,8p,g,2d6,2c.6,p,8g,8a,8c6,8a,e6,8p,e6,8p,d.6,p,8p,8g,8a,8c6,8a,2g6,b,c.6,8b,a,8g,8a,8c6,8a,2c6,d6,b,a,g.,8p,g,2d6,2c.6",
+            start: () =>
+              effectColorWipe(
+                [
+                  { rgb: [255, 0, 128], num: 3 },
+                  { rgb: [204, 0, 204], num: 3 },
+                  { rgb: [255, 77, 0], num: 2 },
+                  { rgb: [255, 0, 0], num: 2 },
+                ],
+                0.5,
+                100,
+              ),
+          },
+          {
+            name: "Mario",
+            rtttl:
+              "Mario:d=4,o=5,b=100:16e6,16e6,32p,8e6,16c6,8e6,8g6,8p,8g,8p,8c6,16p,8g,16p,8e,16p,8a,8b,16a#,8a,16g.,16e6,16g6,8a6,16f6,8g6,8e6,16c6,16d6,8b,16p",
+            start: () =>
+              effectColorWipe(
+                [
+                  { rgb: [255, 0, 0], num: 5 },
+                  { rgb: [0, 0, 255], num: 5 },
+                ],
+                0.5,
+                100,
+              ),
+          },
+          {
+            name: "Cantina",
+            rtttl:
+              "Cantina:d=8,o=5,b=250:a,p,d6,p,a,p,d6,p,a,d6,p,a,p,g#,4a,a,g#,a,4g,f#,g,f#,4f.,d.,16p,4p.,a,p,d6,p,a,p,d6,p,a,d6,p,a,p,g#,a,p,g,p,4g.,f#,g,p,c6,4a#,4a,4g",
+            start: () => effectTwinkle([153, 0, 255], 1.0, 0.45, 15),
+          },
+          {
+            name: "Take On Me",
+            rtttl:
+              "TakeOnMe:d=4,o=5,b=160:8f#,8f#,8f#,8d,8p,8b4,8p,8e,8p,8e,8p,8e,8g#,8g#,8a,8b,8a,8a,8a,8e,8p,8d,8p,8f#,8p,8f#,8p,8f#,8e,8e,8f#,8e",
+            start: () =>
+              effectColorWipe(
+                [
+                  { rgb: [0, 128, 255], num: 3 },
+                  { rgb: [153, 0, 255], num: 3 },
+                  { rgb: [255, 0, 153], num: 2 },
+                  { rgb: [0, 204, 255], num: 2 },
+                ],
+                0.5,
+                80,
+              ),
+          },
+          {
+            name: "Imperial",
+            rtttl:
+              "Imperial:d=4,o=5,b=100:e,e,e,8c,16p,16g,e,8c,16p,16g,e,p,b,b,b,8c6,16p,16g,d#,8c,16p,16g,e,8p",
+            start: () => effectFlicker([255, 0, 0], 0.5, 0.3, 50),
+          },
+          {
+            name: "Scatman",
+            rtttl:
+              "Scatman:d=16,o=5,b=200:8b,b,32p,8b,b,32p,8b,2d6,p,c#6.,p.,8d6,p,c#6,8b,p,8f#,2p.,c#6,8p,d6.,p.,c#6,b,8p,8f#,2p,32p,2d6,p,c#6,8p,d6.,p.,c#6,a.,p.,8e,2p.,c#6,8p,d6.,p.,c#6,b,8p,8b,b,32p,8b,b,32p,8b,2d6,p,c#6.,p.,8d6,p,c#6,8b,p,8f#,2p.,c#6,8p,d6.,p.,c#6,b,8p,8f#,2p,32p,2d6,p,c#6,8p,d6.,p.,c#6,a.,p.,8e,2p.,c#6,8p,d6.,p.,c#6,a,8p,8e,2p,32p,f#6.,p.,b.,p.",
+            start: () => effectRandomTwinkle(1.0, 0.7, 10),
+          },
+        ];
+
+        let songCycleIdx = 0;
+        const playSong = () => {
+          if (songTimer) {
+            stopAudio();
+            clearEffect();
+            setAll([0, 0, 0]);
+            showLabels();
+            return;
+          }
+          const s = songs[songCycleIdx % songs.length];
+          songCycleIdx++;
+          hideLabels();
+          s.start();
+          playRTTTL(parseRTTTL(s.rtttl), () => {
+            clearEffect();
+            setAll([0, 0, 0]);
+            showLabels();
+          });
+        };
+        const stopAll = () => {
+          stopAudio();
+          clearEffect();
+          setAll([0, 0, 0]);
+          showLabels();
+          songCycleIdx = 0;
+        };
+        const hideLabels = () =>
+          labels.forEach((l) => l.el.classList.add("is-other-active"));
+        const showLabels = () =>
+          labels.forEach((l) => l.el.classList.remove("is-other-active"));
 
         // ---- Intro animation -------------------------------------------------
         // The "LED & buzzer" group (named "leds") fades in instantly. The
@@ -647,6 +1125,7 @@
         // Clicking the active module reverts; clicking any other focuses it
         // and starts the idle-revert countdown.
         const focusModule = (idx: number) => {
+          if (idx === ledsIdx) buttonUnlocked = true;
           if (idx === activeIdx) {
             setActive(-1);
             cancelRevert();
@@ -810,6 +1289,43 @@
               }
             }
           }
+
+          // LED glow — map ledState[i] RGB (0-255) onto each mesh's emissive.
+          // Also toggle BLOOM_LAYER per LED so unlit LEDs don't glow from their base colour.
+          for (let _i = 0; _i < ledMeshes.length; _i++) {
+            const [r, g, b] = ledState[_i] ?? [0, 0, 0];
+            const _on = Math.max(r, g, b) > 0;
+            const _mesh = ledMeshes[_i];
+            if (_on) _mesh.layers.enable(BLOOM_LAYER);
+            else _mesh.layers.disable(BLOOM_LAYER);
+            const _mat = _mesh.material as THREE.MeshStandardMaterial;
+            if (!_mat.emissive) continue;
+            _mat.emissive.setRGB(r / 255, g / 255, b / 255);
+            _mat.emissiveIntensity =
+              (Math.max(r, g, b) / 255) * LED_EMISSIVE_INTENSITY;
+          }
+
+          // Button colour: red while playing, white on hover, original otherwise
+          {
+            const _playing = songTimer !== null;
+            buttonpressMeshes.forEach((_bm, _bi) => {
+              const _bmat = _bm.material as THREE.MeshStandardMaterial;
+              if (_playing) _bmat.color.setRGB(1, 0, 0);
+              else if (buttonpressHovered) _bmat.color.setRGB(1, 1, 1);
+              else _bmat.color.copy(buttonpressOrigColors[_bi]);
+            });
+          }
+
+          // Button press animation
+          if (buttonpressObj) {
+            buttonPressT += (buttonPressTarget - buttonPressT) * 0.2;
+            buttonpressObj.position
+              .copy(buttonpressOrigPos)
+              .addScaledVector(
+                BUTTON_PRESS_AXIS,
+                buttonPressT * BUTTON_PRESS_DIST,
+              );
+          }
         };
 
         // Raycaster click handling: pick whichever top-level group contains
@@ -862,6 +1378,21 @@
           pointer.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
           pointer.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
           raycaster.setFromCamera(pointer, camera);
+          if (
+            buttonUnlocked &&
+            buttonpressMeshes.length &&
+            raycaster.intersectObjects(buttonpressMeshes, false).length
+          ) {
+            buttonPressTarget = 1;
+            setTimeout(() => {
+              buttonPressTarget = 0;
+            }, BUTTON_PRESS_MS);
+            setTimeout(() => {
+              playSong();
+            }, BUTTON_PRESS_MS + 50);
+            return;
+          }
+          if (songTimer) return;
           const hits = raycaster.intersectObjects(allMeshes, false);
           if (!hits.length) return;
           const idx = groupForObject(hits[0].object);
@@ -870,6 +1401,21 @@
         canvas.addEventListener("pointercancel", () => {
           pointerDown = null;
         });
+
+        let buttonpressHovered = false;
+        canvas.addEventListener("pointermove", (event) => {
+          if (!buttonpressMeshes.length || !buttonUnlocked) {
+            buttonpressHovered = false;
+            return;
+          }
+          const rect = canvas.getBoundingClientRect();
+          pointer.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+          pointer.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+          raycaster.setFromCamera(pointer, camera);
+          buttonpressHovered =
+            raycaster.intersectObjects(buttonpressMeshes, false).length > 0;
+        });
+
         controls.addEventListener("start", () => {
           _zoomingIn = false;
           cancelRevert();
@@ -974,6 +1520,8 @@
       width = next.width;
       height = next.height;
       renderer.setSize(width, height, false);
+      bloomComposer.setSize(width, height);
+      finalComposer.setSize(width, height);
       camera.aspect = width / height;
       camera.updateProjectionMatrix();
       refitCamera();
@@ -1137,11 +1685,22 @@
       }
     };
 
+    const isDebug = new URLSearchParams(window.location.search).has("debug");
+    const stats = isDebug ? new Stats() : null;
+    if (stats) document.body.appendChild(stats.dom);
+
     const loopFn = () => {
+      stats?.begin();
       controls.update();
       cycleUpdater(performance.now());
-      renderer.render(scene, camera);
+      scene.traverse(darkenNonBloom);
+      bloomComposer.render();
+      scene.traverse(restoreMaterials);
+      mixPass.material.uniforms.bloomTexture.value =
+        bloomComposer.readBuffer.texture;
+      finalComposer.render();
       updateLabels();
+      stats?.end();
     };
     renderer.setAnimationLoop(loopFn);
 
