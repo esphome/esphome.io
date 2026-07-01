@@ -1380,6 +1380,7 @@
           raycaster.setFromCamera(pointer, camera);
           if (
             buttonUnlocked &&
+            activeIdx === -1 &&
             buttonpressMeshes.length &&
             raycaster.intersectObjects(buttonpressMeshes, false).length
           ) {
@@ -1404,7 +1405,7 @@
 
         let buttonpressHovered = false;
         canvas.addEventListener("pointermove", (event) => {
-          if (!buttonpressMeshes.length || !buttonUnlocked) {
+          if (!buttonpressMeshes.length || !buttonUnlocked || activeIdx !== -1) {
             buttonpressHovered = false;
             return;
           }
