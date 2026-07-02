@@ -1,6 +1,6 @@
 ---
 title: "HTTP OTA Updates via MQTT"
-description: "Trigger OTA updates from the ESPHome dashboard using an HTTP server and MQTT."
+description: "Trigger OTA updates from the ESPHome CLI using an HTTP server and MQTT."
 ---
 
 This guide shows how to set up a workflow where the compiled firmware is uploaded to a webserver
@@ -102,15 +102,14 @@ mqtt:
 
 ## Usage
 
-Once configured, the **Publish** button appears in the ESPHome dashboard install dialog for any
-device that has `publish_shell_command` set. Clicking it compiles the firmware and runs the
-publish script automatically.
-
-You can also trigger the same workflow from the command line:
+Once configured, compile and publish the firmware from the command line by using `PUBLISH` as the
+upload device:
 
 ```bash
-esphome upload mydevice.yaml --device PUBLISH
+esphome run mydevice.yaml --device PUBLISH
 ```
+
+This compiles the firmware and then runs the configured `publish_shell_command`.
 
 ## See Also
 
