@@ -1,3 +1,5 @@
+<link rel="preload" href="/starter-kit/ESK.glb" as="fetch" crossorigin>
+
 <section class="block-hero">
   <div class="container">
     <div class="block-hero__content-container">
@@ -894,14 +896,14 @@
         const seenModules = new Set<number>();
         let buttonUnlocked = false;
         const INTRO_LEAD_DURATION_MS = 180;
-        const INTRO_FOLLOW_DURATION_MS = 650;
-        const INTRO_FOLLOW_GAP_MS = 120;
+        const INTRO_FOLLOW_DURATION_MS = 400;
+        const INTRO_FOLLOW_GAP_MS = 60;
         // Distance (in model-local units) each follower starts offset from
         // its final position along the camera-direction axis.
         const INTRO_OFFSET_DISTANCE = 1.6;
         const introStart = reducedMotion ? -Infinity : performance.now();
         const introDelays: number[] = topLevel.map((_, i) =>
-          i === ledsIdx ? 0 : INTRO_FOLLOW_GAP_MS + Math.random() * 480,
+          i === ledsIdx ? 0 : INTRO_FOLLOW_GAP_MS + Math.random() * 200,
         );
         const introDurations: number[] = topLevel.map((_, i) =>
           i === ledsIdx ? INTRO_LEAD_DURATION_MS : INTRO_FOLLOW_DURATION_MS,
@@ -1844,7 +1846,7 @@
         min-height: inherit;
         touch-action: none;
         opacity: 0;
-        transition: opacity 0.8s ease;
+        transition: opacity 0.15s ease;
       }
 
       &.is-model-ready #hero-scene {
