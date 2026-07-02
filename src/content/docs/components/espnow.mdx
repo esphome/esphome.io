@@ -24,7 +24,8 @@ espnow:
 - **enable_on_boot** (*Optional*, boolean): Enable the ESP-NOW component on boot. Defaults to `true`.
 - **max_payload_size** (*Optional*, int): The largest payload, in bytes, this device can send and receive in one frame.
   Values above `250` use ESP-NOW v2 frames (up to `1470` bytes), only work with peers that also support them, and
-  reserve proportionally more RAM for packet buffers. Defaults to `250`.
+  reserve proportionally more RAM for packet buffers. This only sizes this device's buffers; the protocol version
+  itself is negotiated with each peer automatically. Defaults to `250`.
 - **peers** (*Optional*, list of MAC Address): The list of MAC addresses of the devices that this device is allowed to
   communicate with. See [Peers](#peers) below.
 
