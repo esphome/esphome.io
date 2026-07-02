@@ -43,7 +43,6 @@
       <div class="block-hero__asset-stage" data-hero-loading>
         <canvas id="hero-scene"></canvas>
         <svg class="block-hero__label-lines" aria-hidden="true"></svg>
-        <div class="block-hero__loader" aria-hidden="true"></div>
         <slot name="labels" />
         <slot />
         <aside
@@ -156,7 +155,7 @@
     bloomComposer.addPass(new RenderPass(scene, camera));
     const unrealBloomPass = new UnrealBloomPass(
       new THREE.Vector2(width, height),
-      3.0, // strength
+      1.2, // strength
       1.0, // radius
       0.0, // threshold
     );
@@ -182,12 +181,11 @@
           void main() {
             vec4 base = texture2D(baseTexture, vUv);
             vec3 bloom = texture2D(bloomTexture, vUv).rgb * bloomStrength;
-            // Fade bloom to zero within 6% of each canvas edge so it can't
-            // bleed outside the canvas into surrounding page content.
-            vec2 edge = smoothstep(0.0, 0.15, vUv) * smoothstep(1.0, 0.85, vUv);
-            bloom *= edge.x * edge.y;
             float bloomAlpha = max(max(bloom.r, bloom.g), bloom.b);
-            gl_FragColor = vec4(base.rgb + bloom, max(base.a, bloomAlpha));
+            // Soft vignette confined to the outer edge — model area stays clear.
+            float vignette = 1.0 - smoothstep(0.38, 0.6, length(vUv - 0.5));
+            vignette = mix(1.0, vignette, 0.85);
+            gl_FragColor = vec4((base.rgb + bloom) * vignette, max(base.a, bloomAlpha));
           }
         `,
       }),
@@ -329,6 +327,7 @@
       MODEL_URL,
       (gltf: { scene: THREE.Group }) => {
         assetContainer?.removeAttribute("data-hero-loading");
+        assetContainer?.classList.add("is-model-ready");
 
         const model = gltf.scene;
 
@@ -380,16 +379,6 @@
         const byName = new Map<string, THREE.Object3D>();
         model.traverse((obj: THREE.Object3D) => {
           if (obj.name) byName.set(obj.name.toLowerCase(), obj);
-          let depth = 0;
-          let p = obj.parent;
-          while (p && p !== model) {
-            depth++;
-            p = p.parent;
-          }
-          const type = (obj as THREE.Mesh).isMesh ? "mesh" : obj.type;
-          console.log(
-            `[Hero] ${"  ".repeat(depth)}${type}: ${obj.name || "(unnamed)"}`,
-          );
         });
 
         const topLevel = [...model.children];
@@ -765,7 +754,7 @@
             const sec = n.dur / 1000;
             if (n.freq > 0) {
               osc.frequency.setValueAtTime(n.freq, cursor);
-              gain.gain.setValueAtTime(0.075, cursor);
+              gain.gain.setValueAtTime(0.02, cursor);
               gain.gain.setValueAtTime(0, cursor + sec * 0.9);
             } else {
               gain.gain.setValueAtTime(0, cursor);
@@ -876,14 +865,6 @@
             bloomActive = false;
           });
         };
-        const stopAll = () => {
-          stopAudio();
-          clearEffect();
-          setAll([0, 0, 0]);
-          showLabels();
-          bloomActive = false;
-          songCycleIdx = 0;
-        };
         const hideLabels = () =>
           labels.forEach((l) => l.el.classList.add("is-other-active"));
         const showLabels = () =>
@@ -958,7 +939,7 @@
         // .block-hero__asset-container so the model also translates from
         // page-centre back to its right-hand column home.
         const homeTarget = controls.target.clone();
-        const INTRO_CAM_DELAY_MS = 900;
+        const INTRO_CAM_DELAY_MS = 200;
         const INTRO_CAM_DURATION_MS = 900;
         // Match the model's yaw so the intro starts face-on to the model's
         // actual front regardless of ROT_ANGLE.
@@ -1136,7 +1117,8 @@
         // and starts the idle-revert countdown.
         const focusModule = (idx: number) => {
           if (idx === ledsIdx) ledsZoomed = true;
-          if (buttonModuleIdx !== -1 && idx === buttonModuleIdx) buttonModuleZoomed = true;
+          if (buttonModuleIdx !== -1 && idx === buttonModuleIdx)
+            buttonModuleZoomed = true;
           // Unlock only once BOTH the leds group and the button group have been focused.
           // If button isn't its own top-level group (buttonModuleIdx === -1), require leds only.
           buttonUnlocked =
@@ -1316,9 +1298,17 @@
             else _mesh.layers.disable(BLOOM_LAYER);
             const _mat = _mesh.material as THREE.MeshStandardMaterial;
             if (!_mat.emissive) continue;
-            // Normalise to full saturation so the effect brightness-scaling
-            // doesn't desaturate the colour — drive brightness via intensity only.
-            _mat.emissive.setRGB(r / _max || 0, g / _max || 0, b / _max || 0);
+            // Normalise to full saturation then pull back 5% toward grey.
+            const _DESAT = 0.05;
+            const _nr = r / _max || 0,
+              _ng = g / _max || 0,
+              _nb = b / _max || 0;
+            const _grey = (_nr + _ng + _nb) / 3;
+            _mat.emissive.setRGB(
+              _nr * (1 - _DESAT) + _grey * _DESAT,
+              _ng * (1 - _DESAT) + _grey * _DESAT,
+              _nb * (1 - _DESAT) + _grey * _DESAT,
+            );
             _mat.emissiveIntensity = (_max / 255) * LED_EMISSIVE_INTENSITY;
           }
 
@@ -1422,7 +1412,11 @@
 
         let buttonpressHovered = false;
         canvas.addEventListener("pointermove", (event) => {
-          if (!buttonpressMeshes.length || !buttonUnlocked || activeIdx !== -1) {
+          if (
+            !buttonpressMeshes.length ||
+            !buttonUnlocked ||
+            activeIdx !== -1
+          ) {
             buttonpressHovered = false;
             return;
           }
@@ -1748,7 +1742,6 @@
     position: relative;
     padding-top: 5.5rem;
     overflow: hidden;
-
     display: flex;
     align-items: stretch;
 
@@ -1799,22 +1792,8 @@
       user-select: none;
       -webkit-user-select: none;
       overflow: visible;
-
       display: flex;
       position: relative;
-
-      // Stage-2 intro: on tablet+ the asset starts shifted so the model
-      // sits roughly at the centre of the viewport, then slides back to
-      // its right-hand column home. Synchronised with the JS camera
-      // rotate via matching delay/duration.
-      @include bp(tablet) {
-        animation: heroAssetSlideIn 0.9s cubic-bezier(0.65, 0, 0.35, 1) 0.9s
-          both;
-      }
-
-      @media (prefers-reduced-motion: reduce) {
-        animation: none;
-      }
     }
 
     &__asset-stage {
@@ -1824,14 +1803,6 @@
       min-height: inherit;
       display: flex;
 
-      // On tablet+ the container is a half-width column, so overflow it
-      // by 20% each side to fill more of the viewport.
-      // @include bp(tablet) {
-      //   width: 140%;
-      //   margin-left: -20%;
-      //   margin-right: -20%;
-      // }
-
       #hero-scene {
         display: block;
         width: 100%;
@@ -1840,42 +1811,12 @@
         // propagates the same clamp floor so clientHeight is never 0.
         min-height: inherit;
         touch-action: none;
+        opacity: 0;
+        transition: opacity 0.8s ease;
       }
-    }
 
-    &__loader {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 40px;
-      height: 40px;
-      pointer-events: none;
-      opacity: 0;
-      transition: opacity 0.4s ease;
-      z-index: 8;
-
-      [data-hero-loading] & {
+      &.is-model-ready #hero-scene {
         opacity: 1;
-        transition-delay: 0.5s;
-      }
-
-      &::before,
-      &::after {
-        content: "";
-        position: absolute;
-        inset: 0;
-        border-radius: 50%;
-        border: 1.5px solid transparent;
-      }
-
-      &::before {
-        border-color: rgba(255, 255, 255, 0.12);
-      }
-
-      &::after {
-        border-top-color: rgba(255, 255, 255, 0.55);
-        animation: heroLoaderSpin 0.9s linear infinite;
       }
     }
 
@@ -1892,16 +1833,6 @@
       @include bp(tablet) {
         display: block;
       }
-    }
-  }
-
-  :global([data-theme="light"] .block-hero__loader) {
-    &:before {
-      border-color: rgba(0, 46, 62, 0.12);
-    }
-
-    &:after {
-      border-top-color: rgba(0, 46, 62, 0.55);
     }
   }
 
@@ -2011,20 +1942,19 @@
   .block-hero {
     &__content {
       > * {
-        // Stage-3: text appears after the asset has slid into place.
         animation: heroContentIn 0.7s cubic-bezier(0.16, 1, 0.3, 1) backwards;
 
         &:nth-child(1) {
-          animation-delay: 1.7s;
+          animation-delay: 0.1s;
         }
         &:nth-child(2) {
-          animation-delay: 1.95s;
+          animation-delay: 0.25s;
         }
         &:nth-child(3) {
-          animation-delay: 2.2s;
+          animation-delay: 0.4s;
         }
         &:nth-child(4) {
-          animation-delay: 2.45s;
+          animation-delay: 0.6s;
         }
 
         @media (prefers-reduced-motion: reduce) {
@@ -2126,7 +2056,7 @@
     padding: 0.5rem;
     backdrop-filter: blur(6px);
     opacity: 0;
-    animation: heroContentIn 0.8s ease 2.5s forwards;
+    animation: heroContentIn 0.8s ease 1.2s forwards;
 
     @media (prefers-reduced-motion: reduce) {
       animation: none;
@@ -2158,21 +2088,6 @@
     to {
       opacity: 1;
       transform: none;
-    }
-  }
-
-  @keyframes heroAssetSlideIn {
-    from {
-      transform: translateX(-50%);
-    }
-    to {
-      transform: translateX(0);
-    }
-  }
-
-  @keyframes heroLoaderSpin {
-    to {
-      transform: rotate(360deg);
     }
   }
 </style>
