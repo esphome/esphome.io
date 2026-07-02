@@ -41,6 +41,7 @@
     </div>
     <div class="block-hero__asset-container">
       <div class="block-hero__asset-stage" data-hero-loading>
+        <div class="block-hero__loader" aria-hidden="true"></div>
         <canvas id="hero-scene"></canvas>
         <svg class="block-hero__label-lines" aria-hidden="true"></svg>
         <slot name="labels" />
@@ -48,7 +49,7 @@
         <aside
           class="hero-detail-card"
           id="hero-detail-card"
-          aria-hidden="true"
+          inert
         >
           <div class="hero-detail-card__header">
             <h3 class="hero-detail-card__title" data-detail-title></h3>
@@ -506,6 +507,7 @@
           : new THREE.Vector3();
         let buttonPressT = 0;
         let buttonPressTarget = 0;
+        let buttonHoverT = 0;
         const BUTTON_PRESS_MS = 150;
         const BUTTON_PRESS_DIST = 0.2;
         const BUTTON_PRESS_AXIS = new THREE.Vector3(0, -1, 0);
@@ -851,6 +853,7 @@
             setAll([0, 0, 0]);
             showLabels();
             bloomActive = false;
+            controls.enabled = true;
             return;
           }
           const s = songs[songCycleIdx % songs.length];
@@ -858,11 +861,13 @@
           hideLabels();
           s.start();
           bloomActive = true;
+          controls.enabled = false;
           playRTTTL(parseRTTTL(s.rtttl), () => {
             clearEffect();
             setAll([0, 0, 0]);
             showLabels();
             bloomActive = false;
+            controls.enabled = true;
           });
         };
         const hideLabels = () =>
@@ -879,12 +884,14 @@
           0,
           topLevel.findIndex((g) => g.name === "leds"),
         );
-        // button may be its own top-level group or a child of leds depending on the model.
-        const buttonModuleIdx = topLevel.findIndex(
-          (g) => g.name.toLowerCase() === "button",
+        // Unlock only once every clickable module has been zoomed into.
+        const clickableGroupIndices = new Set(
+          groupFades
+            .map((g, i) => ({ i, meshes: g.meshes }))
+            .filter(({ meshes }) => meshes.some((m) => !snapMeshes.has(m)))
+            .map(({ i }) => i),
         );
-        let ledsZoomed = false;
-        let buttonModuleZoomed = false;
+        const seenModules = new Set<number>();
         let buttonUnlocked = false;
         const INTRO_LEAD_DURATION_MS = 180;
         const INTRO_FOLLOW_DURATION_MS = 650;
@@ -1077,20 +1084,21 @@
           if (!detailCard) return;
           if (!focusing) {
             _returningHome = true;
+            controls.enabled = false;
             detailCard.classList.remove("is-active");
-            detailCard.setAttribute("aria-hidden", "true");
+            detailCard.setAttribute("inert", "");
             return;
           }
           const match = labels.find((l) => l.groupIdx === idx);
           if (!match || !match.detailHTML) {
             detailCard.classList.remove("is-active");
-            detailCard.setAttribute("aria-hidden", "true");
+            detailCard.setAttribute("inert", "");
             return;
           }
           if (detailTitleEl) detailTitleEl.textContent = match.labelText;
           if (detailBodyEl) detailBodyEl.innerHTML = match.detailHTML;
           detailCard.classList.add("is-active");
-          detailCard.setAttribute("aria-hidden", "false");
+          detailCard.removeAttribute("inert");
         };
 
         const setActive = (idx: number) => {
@@ -1116,13 +1124,10 @@
         // Clicking the active module reverts; clicking any other focuses it
         // and starts the idle-revert countdown.
         const focusModule = (idx: number) => {
-          if (idx === ledsIdx) ledsZoomed = true;
-          if (buttonModuleIdx !== -1 && idx === buttonModuleIdx)
-            buttonModuleZoomed = true;
-          // Unlock only once BOTH the leds group and the button group have been focused.
-          // If button isn't its own top-level group (buttonModuleIdx === -1), require leds only.
-          buttonUnlocked =
-            ledsZoomed && (buttonModuleIdx === -1 || buttonModuleZoomed);
+          if (clickableGroupIndices.has(idx)) {
+            seenModules.add(idx);
+            buttonUnlocked = seenModules.size >= clickableGroupIndices.size;
+          }
           if (idx === activeIdx) {
             setActive(-1);
             cancelRevert();
@@ -1227,8 +1232,11 @@
             dirFromTarget.lerp(CAM_DIR, ZOOM_LERP).normalize();
             if (dirFromTarget.dot(CAM_DIR) > 0.9998) {
               _returningHome = false;
-              for (const label of labels)
-                label.el.classList.remove("is-other-active");
+              if (!songTimer) {
+                controls.enabled = true;
+                for (const label of labels)
+                  label.el.classList.remove("is-other-active");
+              }
             }
           }
           const nextDist = lerp(currentDist, zoomDistance, ZOOM_LERP);
@@ -1312,14 +1320,28 @@
             _mat.emissiveIntensity = (_max / 255) * LED_EMISSIVE_INTENSITY;
           }
 
-          // Button colour: red while playing, white on hover, original otherwise
+          // Button colour: red while playing, fade to white on hover,
+          // slow #9abd32 pulse when unlocked+idle, original otherwise.
           {
             const _playing = songTimer !== null;
+            const _hoverTarget = (!_playing && buttonpressHovered) ? 1 : 0;
+            buttonHoverT += (_hoverTarget - buttonHoverT) * 0.12;
+            const _pulse = buttonUnlocked && !_playing && activeIdx === -1
+              ? (Math.sin(now * 0.0015) * 0.5 + 0.5) * 0.45
+              : 0;
+            const _hintColor = new THREE.Color(0x9abd32);
+            const _white = new THREE.Color(1, 1, 1);
             buttonpressMeshes.forEach((_bm, _bi) => {
               const _bmat = _bm.material as THREE.MeshStandardMaterial;
-              if (_playing) _bmat.color.setRGB(1, 0, 0);
-              else if (buttonpressHovered) _bmat.color.setRGB(1, 1, 1);
-              else _bmat.color.copy(buttonpressOrigColors[_bi]);
+              if (_playing) {
+                _bmat.color.setRGB(1, 0, 0);
+              } else if (buttonHoverT > 0.001) {
+                _bmat.color.copy(buttonpressOrigColors[_bi]).lerp(_white, buttonHoverT);
+              } else if (_pulse > 0) {
+                _bmat.color.copy(buttonpressOrigColors[_bi]).lerp(_hintColor, _pulse);
+              } else {
+                _bmat.color.copy(buttonpressOrigColors[_bi]);
+              }
             });
           }
 
@@ -1392,12 +1414,10 @@
             raycaster.intersectObjects(buttonpressMeshes, false).length
           ) {
             buttonPressTarget = 1;
-            setTimeout(() => {
-              buttonPressTarget = 0;
-            }, BUTTON_PRESS_MS);
-            setTimeout(() => {
-              playSong();
-            }, BUTTON_PRESS_MS + 50);
+            _returningHome = true;
+            _zoomingIn = false;
+            setTimeout(() => { buttonPressTarget = 0; }, BUTTON_PRESS_MS);
+            setTimeout(() => { playSong(); }, BUTTON_PRESS_MS + 50);
             return;
           }
           if (songTimer) return;
@@ -1541,6 +1561,18 @@
     };
 
     new ResizeObserver(resize).observe(canvas);
+
+    // Debounced window resize: recalculates homeZoom after the viewport has
+    // settled so breakpoint changes (desktop→tablet/mobile) use the correct
+    // zoom constant — the ResizeObserver alone can read stale window.innerWidth.
+    let _resizeDebounce: ReturnType<typeof setTimeout> | undefined;
+    window.addEventListener("resize", () => {
+      clearTimeout(_resizeDebounce);
+      _resizeDebounce = setTimeout(() => {
+        resize();
+        refitCamera();
+      }, 150);
+    });
 
     const projected = new THREE.Vector3();
 
@@ -1818,6 +1850,39 @@
       &.is-model-ready #hero-scene {
         opacity: 1;
       }
+
+      .block-hero__loader {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 40px;
+        height: 40px;
+        pointer-events: none;
+        z-index: 8;
+        opacity: 1;
+        transition: opacity 0.4s ease;
+
+        &::before,
+        &::after {
+          content: "";
+          position: absolute;
+          inset: 0;
+          border-radius: 50%;
+          border: 1.5px solid transparent;
+        }
+
+        &::before { border-color: rgba(255, 255, 255, 0.15); }
+
+        &::after {
+          border-top-color: rgba(255, 255, 255, 0.6);
+          animation: heroLoaderSpin 0.9s linear infinite;
+        }
+      }
+
+      &.is-model-ready .block-hero__loader {
+        opacity: 0;
+      }
     }
 
     &__label-lines {
@@ -1839,6 +1904,13 @@
   :global(.block-hero__label-line) {
     stroke: rgba(255, 255, 255, 0.5);
     stroke: var(--esk-primary-color);
+  }
+
+  :global([data-theme="light"] .block-hero__loader::before) {
+    border-color: rgba(0, 46, 62, 0.12);
+  }
+  :global([data-theme="light"] .block-hero__loader::after) {
+    border-top-color: rgba(0, 46, 62, 0.55);
   }
 
   :global(.block-hero__label-dot) {
@@ -2040,43 +2112,48 @@
   }
 
   :global(.hero-prompt) {
-    width: 100%;
     position: absolute;
-    top: -20px;
-    left: 0;
+    bottom: 5%;
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
     text-align: center;
-    border: 1px solid var(--esk-primary-color);
     z-index: 10;
-    color: #002e3e;
-    background-color: var(--esk-primary-color--light);
+    background: rgba(255, 255, 255, 0.88);
+    border: 1px solid rgba(0, 0, 0, 0.25);
     border-radius: 2.5rem;
+    color: #111;
     text-transform: uppercase;
     font-weight: 700;
     font-size: 0.725rem;
-    padding: 0.5rem;
+    padding: 0.5rem 0.85rem;
     backdrop-filter: blur(6px);
     opacity: 0;
-    animation: heroContentIn 0.8s ease 1.2s forwards;
+    animation: heroPromptIn 0.8s ease 1.2s forwards;
 
     @media (prefers-reduced-motion: reduce) {
       animation: none;
       opacity: 1;
     }
 
-    @include bp(tablet) {
-      width: auto;
-      top: auto;
-      right: 0;
-      bottom: 5%;
-      left: auto;
-      padding: 0.5rem 0.75rem;
-      text-align: left;
-      font-size: 0.75rem;
-    }
-
     &.hero-prompt--hidden {
       opacity: 0 !important;
       pointer-events: none;
+    }
+  }
+
+  @keyframes heroLoaderSpin {
+    to { transform: rotate(360deg); }
+  }
+
+  @keyframes heroPromptIn {
+    from {
+      opacity: 0;
+      transform: translateX(-50%) translateY(12px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(-50%);
     }
   }
 
