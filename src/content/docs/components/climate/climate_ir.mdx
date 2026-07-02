@@ -27,6 +27,7 @@ submit a feature request (see FAQ).
 | Fujitsu General | `fujitsu_general`                  | yes |
 | [GREE](#gree_ir) | `gree`                             | |
 | Hitachi | `hitachi_ac344`, `hitachi_ac424` | yes |
+| [Hisense/BGH (Argentina)](#hisense_arg) | `hisense_arg`                    | yes |
 | [LG](#climate_ir_lg) | `climate_ir_lg`                    | yes |
 | [Midea](#midea_ir) | `midea_ir`                         | yes |
 | [Mitsubishi](#mitsubishi) | `mitsubishi`                       | yes |
@@ -77,6 +78,42 @@ climate:
 ### Advanced Options
 
 - **transmitter_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the remote transmitter.
+
+<span id="hisense_arg"></span>
+
+### `hisense_arg`
+
+The `hisense_arg` platform supports Hisense and BGH-branded air conditioners sold in Argentina,
+including Tadiran units that respond to the BGH Smart Control (HPA-4911) WiFi module.
+
+The protocol uses a 3-frame IR transmission (21 bytes total) with NEC-like pulse-distance encoding.
+Power on/off is tracked as a state transition rather than a mode code, so the component maintains
+internal power state.
+
+> [!NOTE]
+> The remote receiver requires a higher idle timeout to capture the full 3-frame signal.
+> Set `idle: 50ms` and `buffer_size: 1024` on your `remote_receiver` configuration.
+
+```yaml
+# Example configuration entry
+remote_transmitter:
+  pin: GPIOXX
+  carrier_duty_percent: 50%
+
+remote_receiver:
+  id: rcvr
+  pin:
+    number: GPIOXX
+    inverted: true
+  tolerance: 30%
+  idle: 50ms
+  buffer_size: 1024
+
+climate:
+  - platform: hisense_arg
+    name: "AC"
+    receiver_id: rcvr
+```
 
 ### `climate_ir_lg`
 
@@ -372,6 +409,7 @@ Additional configuration must be specified for this platform:
 - <APIRef text="daikin.h" path="daikin/daikin.h" />
 - <APIRef text="fujitsu_general.h" path="fujitsu_general/fujitsu_general.h" />
 - <APIRef text="gree.h" path="gree/gree.h" />
+- <APIRef text="hisense_arg.h" path="hisense_arg/hisense_arg.h" />
 - <APIRef text="hitachi_ac344.h" path="hitachi_ac344/hitachi_ac344.h" />
 - <APIRef text="midea_ir.h" path="midea_ir/midea_ir.h" />
 - <APIRef text="mitsubishi.h" path="mitsubishi/mitsubishi.h" />
