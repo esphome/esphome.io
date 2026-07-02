@@ -17,6 +17,48 @@ are supported.
 If you'd like to buy a ready-made Bluetooth proxy or flash your own device, see
 [ESPHome projects with Bluetooth proxy support](/projects/?type=bluetooth).
 
+## Scan source and platform support
+
+The Bluetooth proxy does not scan on its own. It attaches to a **BLE tracker hub** — the BLE scanner for
+your chip — which supplies the advertisements, and forwards them to Home Assistant. Add the tracker for
+your platform to the configuration alongside `bluetooth_proxy`:
+
+| Platform | BLE tracker hub | Raw advertisements | Active connections |
+|---|---|:---:|:---:|
+| ESP32 | [ESP32 BLE Tracker](/components/esp32_ble_tracker) | ✅ | ✅ |
+| BK72xx (LibreTiny)\* | `bk72xx_ble_tracker` | ✅ | — |
+| LN882H (LibreTiny) | `ln882h_ble_tracker` | ✅ | — |
+
+\* BK72xx requires a **BLE 5.x** Beken SDK, so only the BLE-5.x BK72xx chips are supported. See the
+`bk72xx_ble_tracker` docs for the supported-chip list.
+
+**Raw advertisement proxying** — forwarding the advertisements that BLE devices broadcast (BTHome, ATC,
+iBeacon and similar) — works on every platform. **Active connections**, which let Home Assistant read from
+and write to a device over a live GATT connection, are **ESP32-only**; on LibreTiny hubs the Bluetooth proxy
+is an advertisement proxy.
+
+```yaml
+# ESP32
+esp32_ble_tracker:
+bluetooth_proxy:
+```
+
+```yaml
+# BK72xx — BLE 5.x (LibreTiny)
+bk72xx_ble_tracker:
+bluetooth_proxy:
+```
+
+```yaml
+# LN882H (LibreTiny)
+ln882h_ble_tracker:
+bluetooth_proxy:
+```
+
+In every case the proxy attaches to the BLE tracker declared alongside it. You can also write
+`bluetooth_proxy:` on its own — the matching tracker for your chip (`esp32_ble_tracker`,
+`bk72xx_ble_tracker` or `ln882h_ble_tracker`) is added automatically.
+
 ## Configuration
 
 ```yaml
@@ -26,22 +68,26 @@ bluetooth_proxy:
   # active: false
 ```
 
+The options below configure **active connections and apply to ESP32 only**. On LibreTiny hubs the proxy
+accepts only `id` and `ble_id` (the BLE tracker to attach to — auto-resolved when a single tracker is
+configured).
+
 - **active** (*Optional*, boolean): Enables proxying active GATT connections to BLE devices.
-  This is separate from active *scanning* (configured in [ESP32 BLE Tracker](/components/esp32_ble_tracker)).
-  Defaults to `true`.
+  This is separate from active *scanning* (configured on the BLE tracker). Defaults to `true`. *ESP32-only.*
 - **cache_services** (*Optional*, boolean): Enables caching GATT services in NVS flash storage which
-  significantly speeds up active connections. Defaults to `true`.
+  significantly speeds up active connections. Defaults to `true`. *ESP32-only.*
 - **connection_slots** (*Optional*, int): The maximum number of BLE connection slots to use.
   Each configured slot consumes ~1KB of RAM, with a maximum of `9`. It is recommended not to exceed `5`
   connection slots to avoid stability and memory issues. Defaults to `3`.
   Ethernet-based proxies can generally handle `4` connection slots reliably.
   The value must not exceed the total configured `max_connections`
-  for [ESP32 BLE](/components/esp32_ble).
+  for [ESP32 BLE](/components/esp32_ble). *ESP32-only.*
 
-The Bluetooth proxy depends on [ESP32 BLE Tracker](/components/esp32_ble_tracker) so make sure to add that
-to your configuration.
+The Bluetooth proxy depends on the BLE tracker for your platform — [ESP32 BLE Tracker](/components/esp32_ble_tracker)
+on ESP32, or `bk72xx_ble_tracker` / `ln882h_ble_tracker` on LibreTiny — so make sure to add it to your
+configuration.
 
-### How Active Connections Work
+### How active connections work (ESP32 only)
 
 The Bluetooth proxy provides Home Assistant with a limited number of simultaneous active GATT connections
 (configured via `connection_slots`). The default is 3 slots. Ethernet-based proxies can generally handle
@@ -53,13 +99,10 @@ Devices that connect briefly to exchange data and then disconnect (like many sen
 for other devices, so you can use more devices than you have slots.
 
 Passively broadcasted sensor data (advertised by devices without requiring active connections, such as
-many BTHome sensors) is received separately and is not limited by the number of connection slots.
+many BTHome sensors) is received separately and is not limited by the number of connection slots — and is
+the only mode used by LibreTiny hubs.
 
 ## Improving reception performance
-
-Use a board with an Ethernet connection to the network to offload ESP32's radio module
-from WiFi traffic, which improves Bluetooth performance. For best results, use a board
-with an external antenna (e.g., Olimex ESP32-PoE-ISO-EA over Olimex ESP32-PoE-ISO).
 
 > [!NOTE]
 > The default scan parameters are recommended for most users. Changing `interval` or
@@ -67,16 +110,25 @@ with an external antenna (e.g., Olimex ESP32-PoE-ISO-EA over Olimex ESP32-PoE-IS
 > CPU usage and network traffic. Aggressive scan settings can cause overheating on
 > PoE-based proxies and WiFi instability on WiFi-based proxies.
 
-### Passive vs Active Scanning
+On **ESP32**, use a board with an Ethernet connection to the network to offload the radio module from WiFi
+traffic, which improves Bluetooth performance. For best results, use a board with an external antenna (e.g.,
+Olimex ESP32-PoE-ISO-EA over Olimex ESP32-PoE-ISO).
+
+On **LibreTiny**, the BK72xx (BLE 5.x) and LN882H are single-core, WiFi-only modules — WiFi and BLE share one
+CPU core, so continuous scanning can interfere with the initial connection to Home Assistant. Start scanning
+only once Home Assistant connects; see the single-core guidance on the `bk72xx_ble_tracker` /
+`ln882h_ble_tracker` pages (and the [LibreTiny sample](#libretiny-sample) below).
+
+### Passive vs active scanning
 
 Passive scanning works for most BLE devices and is sufficient for ongoing operation.
 Active scanning requests additional scan response data from devices and is typically
 only needed when initially adding new devices to Home Assistant. Active scanning also
 increases battery drain on battery-powered BLE devices.
 
-The [ESP32 BLE Tracker](/components/esp32_ble_tracker) component defaults to active scanning
-(`active: true`). If you experience overheating, you can try switching to passive scanning
-if your devices don't require active scans:
+Passive vs active scanning is configured on the **BLE tracker**, not on the proxy. The
+[ESP32 BLE Tracker](/components/esp32_ble_tracker) defaults to active scanning (`active: true`); if you
+experience overheating you can switch to passive scanning when your devices don't require active scans:
 
 ```yaml
 esp32_ble_tracker:
@@ -84,15 +136,19 @@ esp32_ble_tracker:
     active: false
 ```
 
-Avoid placing the ESP node in racks, close to routers/switches or other network equipment as EMI
+On LibreTiny, set `active:` on `ln882h_ble_tracker` the same way; the BK72xx chips scan passively only.
+
+Avoid placing the node in racks, close to routers/switches or other network equipment as EMI
 interference will degrade Bluetooth signal reception. For best results put as far away as possible,
 at least 3 meters distance from any other such equipment. Place your ESPHome devices close to the
 Bluetooth devices that you want to interact with for the best experience.
 
-## Complete sample recommended configuration for a WiFi-connected Bluetooth proxy
+## Complete sample configurations
 
-Below is a complete sample recommended configuration for a WiFi-connected Bluetooth proxy. If you
-experience issues with your proxy, try reducing your configuration to be as similar to this as possible.
+### ESP32 — Wi-Fi
+
+A complete sample recommended configuration for a Wi-Fi-connected Bluetooth proxy. If you experience issues
+with your proxy, try reducing your configuration to be as similar to this as possible.
 
 ```yaml
 substitutions:
@@ -126,11 +182,11 @@ bluetooth_proxy:
   active: true
 ```
 
-## Complete sample recommended configuration for an ethernet-connected Bluetooth proxy
+### ESP32 — Ethernet
 
-Below is a complete sample recommended configuration for an ethernet-connected Bluetooth proxy. This
-configuration is not for a Wi-Fi based proxy. If you experience issues with your proxy, try reducing
-your configuration to be as similar to this as possible.
+A complete sample recommended configuration for an Ethernet-connected Bluetooth proxy. This configuration is
+not for a Wi-Fi-based proxy. If you experience issues with your proxy, try reducing your configuration to be
+as similar to this as possible.
 
 This configuration is for an Olimex ESP32-PoE-ISO board with an Ethernet connection to the network.
 If you use a different board, you must change the `board` substitution to match your board.
@@ -180,11 +236,55 @@ bluetooth_proxy:
   connection_slots: 4
 ```
 
+<span id="libretiny-sample"></span>
+
+### LibreTiny — BK72xx / LN882H
+
+A LibreTiny hub is Wi-Fi-only and proxies advertisements only. Because WiFi and BLE share a single CPU core,
+this configuration starts scanning only once Home Assistant connects, which keeps the radio free for the
+initial handshake.
+
+```yaml
+substitutions:
+  name: my-bluetooth-proxy
+
+esphome:
+  name: ${name}
+  name_add_mac_suffix: true
+
+bk72xx:                  # or ln882x for the LN882H
+  board: cb3s            # set to your module's board
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+# Enable logging
+logger:
+
+ota:
+  platform: esphome
+
+bk72xx_ble_tracker:      # or ln882h_ble_tracker
+  scan_parameters:
+    continuous: false    # WiFi/BLE share one core — start scanning only when HA connects
+
+bluetooth_proxy:
+
+# Enable Home Assistant API and drive scanning from its connection state
+api:
+  on_client_connected:
+    - bk72xx_ble_tracker.start_scan:
+        continuous: true
+  on_client_disconnected:
+    - bk72xx_ble_tracker.stop_scan:
+```
+
 ## Troubleshooting
 
-### Memory Issues
+### Memory issues (ESP32)
 
-If you experience memory issues, consider the following:
+If you experience memory issues on ESP32, consider the following:
 
 - **Framework:** The `esp-idf` framework is recommended over `arduino` as it uses less memory.
 - **NVS Partition Size:** If you last updated your ESP32 via serial before 2022.12.0 on `esp-idf`
@@ -194,7 +294,7 @@ If you experience memory issues, consider the following:
 - **Web Server:** The [Web Server](/components/web_server) component uses additional RAM.
   Disabling it can help if you experience memory-related issues.
 
-### Device Compatibility
+### Device compatibility
 
 Not all BLE devices are supported and ESPHome does not decode or keep a list. To find out if your device
 is supported, please search for it in the
@@ -203,5 +303,7 @@ is supported, please search for it in the
 ## See Also
 
 - [ESP32 Bluetooth Low Energy Tracker Hub](/components/esp32_ble_tracker)
+- `bk72xx_ble_tracker` — BK72xx (BLE 5.x) BLE tracker hub
+- `ln882h_ble_tracker` — LN882H BLE tracker hub
 - BTHome [https://bthome.io/](https://bthome.io/)
 - <APIRef text="bluetooth_proxy.h" path="bluetooth_proxy/bluetooth_proxy.h" />
