@@ -1,20 +1,17 @@
 ---
 import Default from "@astrojs/starlight/components/SocialIcons.astro";
+import { headerNavItems } from "../headerNav";
 ---
 
-<a href="/blog/" class="blog-link">Blog</a>
+{
+  headerNavItems.length > 0 && (
+    <nav class="header-nav">
+      {headerNavItems.map((item) => (
+        <a href={item.href} class="header-nav-link">
+          {item.label}
+        </a>
+      ))}
+    </nav>
+  )
+}
 <Default {...Astro.props} />
-
-<style>
-  .blog-link {
-    display: flex;
-    align-items: center;
-    color: var(--sl-color-text-accent);
-    font-weight: 600;
-    text-decoration: none;
-    white-space: nowrap;
-  }
-  .blog-link:hover {
-    color: var(--sl-color-white);
-  }
-</style>
