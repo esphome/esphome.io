@@ -1,5 +1,6 @@
 import { defineConfig } from "astro/config";
 import starlight from "@astrojs/starlight";
+import starlightBlog from "starlight-blog";
 import sitemap from "@astrojs/sitemap";
 import { fileURLToPath } from "url";
 import path from "path";
@@ -141,7 +142,16 @@ export default defineConfig({
       titleDelimiter: "-",
       favicon: "/favicon.ico",
       pagination: false,
-      plugins: [],
+      plugins: [
+        starlightBlog({
+          navigation: "none",
+          authors: {
+            jesse: {
+              name: "Jesse Hills",
+            },
+          },
+        }),
+      ],
       logo: {
         light: "./src/assets/logo-dark.svg",
         dark: "./src/assets/logo-light.svg",
@@ -169,6 +179,7 @@ export default defineConfig({
         Footer: "./src/components/Footer.astro",
         Head: "./src/components/Head.astro",
         SiteTitle: "./src/components/SiteTitle.astro",
+        SocialIcons: "./src/components/SocialIcons.astro",
       },
       customCss: ["./src/styles/custom.css", "katex/dist/katex.min.css"],
       sidebar: [
@@ -215,7 +226,7 @@ export default defineConfig({
         {
           label: "Keeping Up",
           items: [
-            //{ label: "Blog", link: "/blog/" },
+            { label: "Blog", link: "/blog/" },
             { label: "Changelog", link: "/changelog/" },
             { label: "Discord", link: "https://discord.gg/KhAMKrd" },
             {
