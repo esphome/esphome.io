@@ -10,6 +10,7 @@ import { remarkAlert } from "remark-github-blockquote-alert";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
 import { rehypeHeadingSlugs } from "./src/lib/rehype-heading-slugs.mjs";
+import { rehypeExternalLinksBlog } from "./src/lib/rehype-external-links-blog.mjs";
 import componentsJson from "./src/integrations/components-json.ts";
 import routeIndex from "./src/integrations/route-index.ts";
 
@@ -122,6 +123,7 @@ export default defineConfig({
     resolve: {
       alias: {
         "@components": path.resolve(__dirname, "./src/components"),
+        "@assets": path.resolve(__dirname, "./src/assets"),
       },
     },
   },
@@ -134,7 +136,7 @@ export default defineConfig({
     // to .mdx files when this is explicitly truthy. Without it, GFM tables render as literal text.
     gfm: true,
     remarkPlugins: [remarkAlert, remarkMath],
-    rehypePlugins: [rehypeHeadingSlugs, rehypeKatex],
+    rehypePlugins: [rehypeHeadingSlugs, rehypeKatex, rehypeExternalLinksBlog],
   },
   integrations: [
     starlight({
@@ -211,17 +213,17 @@ export default defineConfig({
         {
           label: "Automations",
           collapsed: true,
-          items: [{ autogenerate: { directory: "automations", collapsed: true } }],
+          autogenerate: { directory: "automations" },
         },
         {
           label: "Guides",
           collapsed: true,
-          items: [{ autogenerate: { directory: "guides", collapsed: true } }],
+          autogenerate: { directory: "guides" },
         },
         {
           label: "Cookbook",
           collapsed: true,
-          items: [{ autogenerate: { directory: "cookbook", collapsed: true } }],
+          autogenerate: { directory: "cookbook" },
         },
         {
           label: "Keeping Up",
