@@ -30,24 +30,25 @@ The `modbus_controller` platform creates an output from a modbus_controller. The
 - **multiply** (*Optional*, float): multiply the incoming value with this factor before writing it to the device. Ignored if `write_lambda` is defined. Only valid for `register_type: holding`.
 - **use_write_multiple** (*Optional*, boolean): By default the modbus command *Function Code 6 (Preset Single Registers)* is used for setting the holding register if only one register is set. If your device only supports *Function Code 16 (Preset Multiple Registers)* set this option to `true`.
 - **write_lambda** (*Optional*, [lambda](/automations/templates#config-lambda)):
-  Lambda is evaluated before the modbus write command is created. The value is passed in as `float x` and an empty vector is passed in as `std::vector<uint16_t> &payload`.
-  You can directly define the payload by adding data to payload then the return value is ignored and the content of payload is used.
+  Lambda is evaluated before the modbus write command is created. If you fill the supplied vector, the return value is
+  ignored and the vector contents are used instead.
 
   Parameters passed into the lambda
 
   - **x** (float or bool): The float value to be sent to the modbus device for `register_type: holding` or the boolean value to be sent to the modbus device for `register_type: coil`
-  - **payload** (`std::vector<uint16_t> &payload`):
-
-    - for `register_type: holding`  : empty vector for the payload. The lamdba can add 16 bit raw modbus register words.
-    - for `register_type: coil`  : empty vector for the payload. If payload is set in the lambda it is sent as a custom command and must include all required bytes for a modbus request
-      note: because the response contains data for all registers in the same range you have to use `data[item->offset]` to get the first response byte for your sensor.
+  - For `register_type: holding` — **payload** (`std::vector<uint16_t> &payload`): empty vector for the register
+    values. The lambda can add 16 bit raw modbus register words which are written to the output's `address`.
+  - For `register_type: coil` — **custom_pdu** (`std::vector<uint8_t> &custom_pdu`): empty vector for a custom PDU.
+    If it is filled in the lambda, its contents are sent as a raw PDU (function code + data). The PDU must not include
+    the device address; the controller's `address` is used and the CRC is appended automatically.
 
   - **item** (const pointer to a SensorItem derived object): The sensor object itself.
 
   Possible return values for the lambda:
 
   - `return <FLOATING_POINT_NUMBER / BOOL>;` the new value for the sensor.
-  - `return <anything>; and fill payload with data` if the payload is added from the lambda then these 16 bit words will be sent
+  - `return <anything>;` and fill the supplied vector with data — for `holding` these 16 bit register words are written,
+    for `coil` the PDU is sent.
   - `return {};` if you don't want write the command to the device (or do it from the lambda).
 
 - **offset** (*Optional*, int): Offset from start address in bytes (only required for uncommon response encodings). If more than one register is written in a command this value is used to find the start of this datapoint relative to start address. The component calculates the size of the range based on offset and size of the value type.

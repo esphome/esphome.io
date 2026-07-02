@@ -30,20 +30,21 @@ and requires [Modbus Controller](/components/modbus_controller/) to be configure
   Parameters passed into the lambda
 
   - **x** (float): The float value to be sent to the modbus device
-  - **payload** (`std::vector<uint8_t> &payload`): empty vector for the payload. If payload is set in the lambda it is sent as a custom command and must include all required bytes for a modbus request
-    *note:* because the response contains data for all registers in the same range you have to use `data[item->offset]` to get the first response byte for your sensor.
+  - **custom_pdu** (`std::vector<uint8_t> &custom_pdu`): empty vector for a custom PDU. If it is filled in the lambda,
+    its contents are sent as a raw PDU (function code + data). The PDU must not include the device address; the
+    controller's `address` is used and the CRC is appended automatically.
 
   - **item** (const pointer to a Switch derived object): The sensor object itself.
 
   Possible return values for the lambda:
 
   - `return true;` or `return false;` the new value for the sensor.
-  - `return <anything>;` and fill payload with data if the payload is added from the lambda then these bytes will be sent.
+  - `return <anything>;` and fill `custom_pdu` with data if a PDU is added from the lambda then it will be sent.
   - `return {};` in the case the lambda handles the sending of the value itself.
 
-- **custom_command** (*Optional*, list of bytes): raw bytes for modbus command. This allows using non-standard commands. If `custom_command` is used `address` and `register_type` can't be used.
-  Custom data must contain all required bytes including the modbus device address. The CRC is automatically calculated and appended to the command.
-  See [Using `custom_command`](/components/modbus_controller#modbus_custom_command) how to use `custom_command`
+- **custom_pdu** (*Optional*, list of bytes): raw PDU (function code + data) for a modbus command. This allows using non-standard commands. If `custom_pdu` is used `address` and `register_type` can't be used.
+  The PDU must not include the device address; the controller's `address` is used and the CRC is automatically calculated and appended to the command.
+  See [Using `custom_pdu`](/components/modbus_controller#modbus_custom_pdu) how to use `custom_pdu`
 
 - **offset** (*Optional*, int): Offset from start address in bytes (only required for uncommon response encodings). If more than one register is written in a command, this value is used to find the start of this datapoint relative to the start address. The component calculates the size of the range based on offset and size of the value type. The value for offset depends on the register type. For holding input registers, the offset is in bytes. For coil and discrete input resisters, the LSB of the first data byte contains the coil addressed in the request. The other coils follow toward the high-order end of this byte and from low order to high order in subsequent bytes. For registers, the offset is the position of the relevant bit. To get the value of the coil register, 2 can be retrieved using `address: 2` / `offset: 0` or `address: 0` / `offset 2`.
 - **restore_mode** (*Optional*): See [Switch](/components/switch#config-switch), since this configuration variable is inherited. The default value for this setting is `DISABLED` (recommended).
@@ -74,12 +75,12 @@ switch:
     write_lambda: |-
       ESP_LOGD("main","Modbus Switch incoming state = %f",x);
       // return false ; // use this to just change the value
-      payload.push_back(0x1);  // device address
-      payload.push_back(0x5);  // force single coil
-      payload.push_back(0x00); // high byte address of the coil
-      payload.push_back(0x6);  // low byte address of the coil
-      payload.push_back(0xFF); // ON = 0xFF00 OFF=0000
-      payload.push_back(0x00);
+      // custom_pdu is a PDU: function code + data, no device address
+      custom_pdu.push_back(0x5);  // force single coil (function code)
+      custom_pdu.push_back(0x00); // high byte address of the coil
+      custom_pdu.push_back(0x6);  // low byte address of the coil
+      custom_pdu.push_back(0xFF); // ON = 0xFF00 OFF=0000
+      custom_pdu.push_back(0x00);
       return true;
 ```
 

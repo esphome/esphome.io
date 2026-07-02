@@ -131,11 +131,12 @@ esphome:
           }
 
           esphome::modbus_controller::ModbusController *controller = id(pzem);
-          auto set_addr_cmd = esphome::modbus_controller::ModbusCommandItem::create_write_single_command(
-            controller, 0x0002, new_address);
+          static std::optional<esphome::modbus_controller::ModbusCommandItem> set_addr_cmd;
+          set_addr_cmd.emplace(esphome::modbus_controller::ModbusCommandItem::create_write_single_command(
+            controller, 0x0002, new_address));
 
           delay(200) ;
-          controller->queue_command(set_addr_cmd);
+          set_addr_cmd->send();
           ESP_LOGI("ModbusLambda", "PZEM Addr set");
 
 modbus:
@@ -151,7 +152,6 @@ modbus_controller:
     # to the uart bus.
     # address: 0xF8
     modbus_id: mod_bus_pzem
-    command_throttle: 0ms
     setup_priority: -10
     update_interval: 30s
 ```
