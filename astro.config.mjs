@@ -13,6 +13,7 @@ import { rehypeHeadingSlugs } from "./src/lib/rehype-heading-slugs.mjs";
 import { rehypeExternalLinksBlog } from "./src/lib/rehype-external-links-blog.mjs";
 import componentsJson from "./src/integrations/components-json.ts";
 import routeIndex from "./src/integrations/route-index.ts";
+import { authors } from "./src/authors.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -148,11 +149,7 @@ export default defineConfig({
       plugins: [
         starlightBlog({
           navigation: "none",
-          authors: {
-            jesse: {
-              name: "Jesse Hills",
-            },
-          },
+          authors,
         }),
       ],
       logo: {
