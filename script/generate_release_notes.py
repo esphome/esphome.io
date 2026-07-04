@@ -57,7 +57,7 @@ Step 3: Review AI Responses (CRITICAL!)
 
 Step 4: Assemble Changelog
   $ python script/generate_release_notes.py 2025.11.0 --assemble
-  This combines AI responses with auto-generated PR lists into content/changelog/2025.11.0.md
+  This combines AI responses with auto-generated PR lists into src/content/docs/changelog/2025.11.0.mdx
 
 Troubleshooting Common Issues:
 -----------------------------
@@ -73,6 +73,7 @@ For further help, see the ESPHome documentation or contact maintainers.
 from __future__ import annotations
 
 import argparse
+from collections import Counter
 from collections.abc import Callable
 from dataclasses import dataclass
 from datetime import datetime
@@ -88,6 +89,11 @@ from jinja2 import Environment, FileSystemLoader, select_autoescape
 LABEL_BREAKING_CHANGE = "breaking-change"
 LABEL_NEW_FEATURE = "new-feature"
 LABEL_NEW_COMPONENT = "new-component"
+LABEL_UNDOCUMENTED_API_CHANGE = "undocumented-api-change"
+LABEL_CODE_QUALITY = "code-quality"
+
+# Bot accounts to exclude from contributor acknowledgments
+BOT_AUTHORS = {"app/dependabot", "app/copilot-swe-agent", "esphomebot"}
 
 
 @dataclass
@@ -340,8 +346,11 @@ class ReleaseNotesGenerator:
         """Extract PR numbers from commits between two refs"""
         print(f"Comparing {base_ref}...{head_ref}")
 
-        # Use --paginate with --jq to get all commit messages across all pages
-        # This automatically handles pagination and extracts just what we need
+        # Use --paginate with --jq to get all commit subjects across all pages.
+        # Only the first line of each commit message is used: GitHub appends the
+        # merged PR number as a trailing "(#1234)" on the subject line. Scanning
+        # the body would wrongly pick up issue references (e.g. "Fixes #16420")
+        # and other PR mentions, which are not PRs merged in this range.
         result = subprocess.run(
             [
                 "gh",
@@ -349,23 +358,26 @@ class ReleaseNotesGenerator:
                 f"repos/esphome/esphome/compare/{base_ref}...{head_ref}",
                 "--paginate",
                 "--jq",
-                ".commits[].commit.message",
+                '.commits[].commit.message | split("\\n")[0]',
             ],
             capture_output=True,
             text=True,
             check=True,
         )
 
-        # Each line is a commit message
-        commit_messages = [line for line in result.stdout.strip().split("\n") if line]
+        # One subject line per commit
+        commit_subjects = [line for line in result.stdout.strip().split("\n") if line]
 
-        print(f"Found {len(commit_messages)} commits")
+        print(f"Found {len(commit_subjects)} commits")
 
         pr_numbers = set()
-        for message in commit_messages:
-            # Extract PR numbers from patterns like (#12345)
-            matches = re.findall(r"\(#(\d+)\)", message)
-            pr_numbers.update(int(m) for m in matches)
+        for subject in commit_subjects:
+            # Take the trailing "(#1234)" that GitHub appends on squash merge.
+            # Using the last match also handles reverts like
+            # 'Revert "[x] foo (#123)" (#456)', where #456 is the actual PR.
+            matches = re.findall(r"\(#(\d+)\)", subject)
+            if matches:
+                pr_numbers.add(int(matches[-1]))
 
         return sorted(pr_numbers)
 
@@ -567,21 +579,31 @@ class ReleaseNotesGenerator:
         breaking_changes = [pr for pr in prs if LABEL_BREAKING_CHANGE in pr.labels]
         new_features = [pr for pr in prs if LABEL_NEW_FEATURE in pr.labels]
         new_components = [pr for pr in prs if LABEL_NEW_COMPONENT in pr.labels]
+        undocumented_api_changes = [
+            pr for pr in prs if LABEL_UNDOCUMENTED_API_CHANGE in pr.labels
+        ]
+        code_quality = [pr for pr in prs if LABEL_CODE_QUALITY in pr.labels]
 
         # Generate Combined Overview + Feature Highlights Prompt
         overview_and_highlights_prompt = self._generate_overview_and_highlights_prompt(
-            prs, new_features, new_components, breaking_changes
+            prs, new_features, new_components, breaking_changes, code_quality
         )
         overview_highlights_file = self.prompts_dir / "overview_and_highlights.txt"
         overview_highlights_file.write_text(overview_and_highlights_prompt)
 
-        # Generate Combined Breaking Changes Prompt (user + developer)
-        if breaking_changes:
-            breaking_prompt = self._generate_combined_breaking_changes_prompt(
-                breaking_changes
-            )
-            breaking_file = self.prompts_dir / "breaking_changes.txt"
-            breaking_file.write_text(breaking_prompt)
+        # Generate Breaking Changes + Upgrade Checklist + Undocumented API Changes Prompt
+        # Always generated because the Upgrade Checklist is always needed
+        breaking_prompt = self._generate_breaking_changes_and_checklist_prompt(
+            breaking_changes, undocumented_api_changes, prs
+        )
+        breaking_file = self.prompts_dir / "breaking_changes.txt"
+        breaking_file.write_text(breaking_prompt)
+
+        # Generate Contributors Prompt
+        self._generate_contributor_stats_file(prs)
+        contributors_prompt = self._generate_contributors_prompt(prs)
+        contributors_file = self.prompts_dir / "contributors.txt"
+        contributors_file.write_text(contributors_prompt)
 
         # Print instructions
         print("\n" + "=" * 80)
@@ -590,21 +612,29 @@ class ReleaseNotesGenerator:
         print("\nStart Claude Code CLI and read the prompt files:\n")
         print("  claude")
         print(f"  > Please read {overview_highlights_file} and follow the instructions")
-        if breaking_changes:
-            print(f"  > Please read {breaking_file} and follow the instructions")
+        print(f"  > Please read {breaking_file} and follow the instructions")
+        print(f"  > Please read {contributors_file} and follow the instructions")
 
         print("\nPrompt 1: Overview + Feature Highlights (COMBINED)")
         print(f"  Prompt: {overview_highlights_file}")
         print(f"  Outputs: {self.responses_dir / 'release_overview.md'}")
         print(f"           {self.responses_dir / 'feature_highlights.md'}")
 
-        if breaking_changes:
-            print("\nPrompt 2: Breaking Changes - Users + Developers (COMBINED)")
-            print(f"  Prompt: {breaking_file}")
-            print(f"  Outputs: {self.responses_dir / 'breaking_changes_users.md'}")
-            print(f"           {self.responses_dir / 'breaking_changes_developers.md'}")
+        print(
+            "\nPrompt 2: Breaking Changes + Upgrade Checklist + Undocumented API Changes"
+        )
+        print(f"  Prompt: {breaking_file}")
+        print(f"  Outputs: {self.responses_dir / 'breaking_changes_users.md'}")
+        print(f"           {self.responses_dir / 'breaking_changes_developers.md'}")
+        print(f"           {self.responses_dir / 'upgrade_checklist.md'}")
+        if undocumented_api_changes:
+            print(f"           {self.responses_dir / 'undocumented_api_changes.md'}")
 
-        print("\nNote: Each prompt will generate TWO output files automatically.")
+        print("\nPrompt 3: Contributor Acknowledgments")
+        print(f"  Prompt: {contributors_file}")
+        print(f"  Output: {self.responses_dir / 'contributors.md'}")
+
+        print("\nNote: Each prompt will generate multiple output files automatically.")
 
         print("\n" + "=" * 80)
         print("STEP 2: Assemble the changelog")
@@ -622,7 +652,7 @@ class ReleaseNotesGenerator:
         print("=" * 80)
         print("\n⚠️  WARNING: AI-generated content MUST be reviewed for accuracy!")
         print("\nCarefully review and edit the assembled changelog:")
-        print(f"  content/changelog/{self.version}.md")
+        print(f"  src/content/docs/changelog/{self.version}.mdx")
         print("\nCheck for:")
         print("  ✓ Hallucinations or inaccurate technical claims")
         print(
@@ -639,6 +669,7 @@ class ReleaseNotesGenerator:
         new_features: list[PullRequest],
         new_components: list[PullRequest],
         breaking_changes: list[PullRequest],
+        code_quality: list[PullRequest],
     ) -> str:
         """Generate combined prompt for release overview and feature highlights"""
         template = self.jinja_env.get_template("overview_and_highlights.txt")
@@ -652,21 +683,131 @@ class ReleaseNotesGenerator:
             new_features=new_features,
             new_components=new_components,
             breaking_changes=breaking_changes,
+            code_quality=code_quality,
         )
 
-    def _generate_combined_breaking_changes_prompt(
-        self, breaking_prs: list[PullRequest]
+    def _generate_breaking_changes_and_checklist_prompt(
+        self,
+        breaking_prs: list[PullRequest],
+        undocumented_api_prs: list[PullRequest],
+        all_prs: list[PullRequest],
     ) -> str:
-        """Generate combined prompt for both user and developer breaking changes"""
+        """Generate prompt for breaking changes, upgrade checklist, and undocumented API changes"""
         template = self.jinja_env.get_template("breaking_changes.txt")
 
         return template.render(
             version=str(self.version),
             users_file=self.responses_dir / "breaking_changes_users.md",
             devs_file=self.responses_dir / "breaking_changes_developers.md",
+            checklist_file=self.responses_dir / "upgrade_checklist.md",
+            undocumented_file=self.responses_dir / "undocumented_api_changes.md",
             prs_cache_dir=self.prs_cache_dir,
             breaking_changes=breaking_prs,
+            undocumented_api_changes=undocumented_api_prs,
+            all_prs=all_prs,
         )
+
+    def _get_contributor_stats(
+        self, prs: list[PullRequest]
+    ) -> list[tuple[str, int, list[str]]]:
+        """Get contributor stats sorted by PR count.
+
+        Returns list of (author, pr_count, pr_titles) excluding bots,
+        sorted by PR count descending.
+        """
+        author_counts: Counter[str] = Counter()
+        author_titles: dict[str, list[str]] = {}
+        for pr in prs:
+            if pr.author in BOT_AUTHORS:
+                continue
+            author_counts[pr.author] += 1
+            author_titles.setdefault(pr.author, []).append(pr.title)
+
+        return [
+            (author, count, author_titles[author])
+            for author, count in author_counts.most_common()
+        ]
+
+    def _generate_contributor_stats_file(self, prs: list[PullRequest]) -> None:
+        """Generate contributor statistics file for AI prompt input."""
+        stats = self._get_contributor_stats(prs)
+        human_count = len(stats)
+
+        lines = [
+            f"# Contributor Statistics for ESPHome {self.version}",
+            f"# Total PRs: {len([pr for pr in prs if pr.author not in BOT_AUTHORS])}",
+            f"# Unique contributors: {human_count}",
+            "",
+        ]
+
+        for author, count, titles in stats:
+            lines.append(f"## @{author} ({count} PRs)")
+            lines.extend(f"  - {title}" for title in titles)
+            lines.append("")
+
+        stats_file = self.version_dir / "contributor_stats.txt"
+        stats_file.write_text("\n".join(lines))
+        print(f"✓ Saved contributor stats to {stats_file}")
+
+    def _generate_contributors_prompt(self, prs: list[PullRequest]) -> str:
+        """Generate prompt for contributor acknowledgments."""
+        template = self.jinja_env.get_template("contributors.txt")
+
+        stats = self._get_contributor_stats(prs)
+        human_count = len(stats)
+        total_prs = len([pr for pr in prs if pr.author not in BOT_AUTHORS])
+
+        return template.render(
+            version=str(self.version),
+            contributors_file=self.responses_dir / "contributors.md",
+            prs_cache_dir=self.prs_cache_dir,
+            stats_file=self.version_dir / "contributor_stats.txt",
+            total_prs=total_prs,
+            human_count=human_count,
+            stats=stats,
+        )
+
+    def _generate_fallback_contributors(self, prs: list[PullRequest]) -> str:
+        """Generate a basic contributor section without AI descriptions."""
+        stats = self._get_contributor_stats(prs)
+        human_count = len(stats)
+        total_prs = len([pr for pr in prs if pr.author not in BOT_AUTHORS])
+
+        if human_count < 10:
+            contributors_phrase = f"from {human_count} contributors. "
+        else:
+            rounded_contributors = ((human_count - 1) // 10) * 10
+            contributors_phrase = f"from over {rounded_contributors} contributors. "
+
+        lines = [
+            f"This release includes {total_prs} pull requests "
+            f"{contributors_phrase}"
+            f"A huge thank you to everyone who made {self.version} possible:",
+            "",
+        ]
+
+        # Contributors with 2+ PRs get a bullet point
+        highlighted = [(a, c, t) for a, c, t in stats if c >= 2]
+        single_pr = [(a, c, t) for a, c, t in stats if c == 1]
+
+        for author, count, _titles in highlighted:
+            lines.append(
+                f"- [@{author}](https://github.com/{author}) - {count} PRs"
+            )
+
+        if single_pr:
+            lines.append("")
+            names = [
+                f"[@{author}](https://github.com/{author})"
+                for author, _, _ in single_pr
+            ]
+            lines.append(
+                f"Also thank you to {', '.join(names)} for their contributions, "
+                f"and to everyone who reported issues, tested pre-releases, "
+                f"and helped in the community."
+            )
+
+        return "\n".join(lines)
 
     def assemble_changelog(self) -> bool:
         """Assemble final changelog from template and AI responses"""
@@ -680,7 +821,7 @@ class ReleaseNotesGenerator:
             return False
 
         # Load template
-        template_file = Path("script/release_notes_template.md")
+        template_file = Path("script/release_notes_template.mdx")
         if not template_file.exists():
             print(f"Error: Template not found: {template_file}")
             return False
@@ -688,19 +829,22 @@ class ReleaseNotesGenerator:
         template = template_file.read_text()
 
         # Check if destination file exists and has content to preserve
-        output_file = Path("content/changelog") / f"{self.version}.md"
+        output_file = Path("src/content/docs/changelog") / f"{self.version}.mdx"
         existing_imgtable = None
         existing_full_list = None
         if output_file.exists():
             existing_content = output_file.read_text()
 
-            # Extract existing imgtable content
+            # Extract existing ImgTable content
             imgtable_match = re.search(
-                r"{{< imgtable >}}(.*?){{< /imgtable >}}", existing_content, re.DOTALL
+                r"<ImgTable items=\{\[.*?\]\} />", existing_content, re.DOTALL
             )
-            if imgtable_match and imgtable_match.group(1).strip():
-                existing_imgtable = imgtable_match.group(0)
-                print("✓ Preserving existing imgtable")
+            if imgtable_match:
+                items_content = imgtable_match.group(0)
+                # Only preserve if it has actual entries (not just comments/empty)
+                if re.search(r'\[".+?"', items_content):
+                    existing_imgtable = items_content
+                    print("✓ Preserving existing ImgTable")
 
             # Extract existing "Full list of changes" section
             # This regex matches from "## Full list of changes" to end of file
@@ -731,6 +875,21 @@ class ReleaseNotesGenerator:
         if highlights_file.exists():
             highlights = highlights_file.read_text().strip()
 
+        upgrade_checklist_file = self.responses_dir / "upgrade_checklist.md"
+        upgrade_checklist = ""
+        if upgrade_checklist_file.exists():
+            upgrade_checklist = upgrade_checklist_file.read_text().strip()
+
+        undocumented_api_file = self.responses_dir / "undocumented_api_changes.md"
+        undocumented_api = ""
+        if undocumented_api_file.exists():
+            undocumented_api = undocumented_api_file.read_text().strip()
+
+        contributors_file = self.responses_dir / "contributors.md"
+        contributors = ""
+        if contributors_file.exists():
+            contributors = contributors_file.read_text().strip()
+
         # Load the PR numbers for this version from a manifest file
         manifest_file = self.version_dir / "pr_numbers.txt"
         if not manifest_file.exists():
@@ -754,6 +913,11 @@ class ReleaseNotesGenerator:
         # Replace AI-generated sections
         template = self._replace_marker_content(template, "RELEASE_OVERVIEW", overview)
 
+        if upgrade_checklist:
+            template = self._replace_marker_content(
+                template, "UPGRADE_CHECKLIST", upgrade_checklist
+            )
+
         if highlights:
             template = self._replace_marker_content(
                 template, "FEATURE_HIGHLIGHTS", highlights
@@ -764,9 +928,25 @@ class ReleaseNotesGenerator:
                 template, "BREAKING_CHANGES_USERS", breaking_users
             )
 
+        if undocumented_api:
+            template = self._replace_marker_content(
+                template, "UNDOCUMENTED_API_CHANGES", undocumented_api
+            )
+
         if breaking_devs:
             template = self._replace_marker_content(
                 template, "BREAKING_CHANGES_DEVELOPERS", breaking_devs
+            )
+
+        # Contributors section: use AI response if available, otherwise fallback
+        if contributors:
+            template = self._replace_marker_content(
+                template, "CONTRIBUTORS", contributors
+            )
+        else:
+            fallback_contributors = self._generate_fallback_contributors(prs)
+            template = self._replace_marker_content(
+                template, "CONTRIBUTORS", fallback_contributors
             )
 
         # Generate auto sections
@@ -778,7 +958,7 @@ class ReleaseNotesGenerator:
         # Replace imgtable if we have one preserved
         if existing_imgtable:
             template = re.sub(
-                r"<!-- MANUAL: Add featured components here -->\s*{{< imgtable >}}.*?{{< /imgtable >}}",
+                r"<ImgTable items=\{\[.*?\]\} />",
                 existing_imgtable,
                 template,
                 flags=re.DOTALL,
@@ -809,9 +989,9 @@ class ReleaseNotesGenerator:
         return True
 
     def _replace_marker_content(self, template: str, marker: str, content: str) -> str:
-        """Replace content between <!-- MARKER_START --> and <!-- MARKER_END -->"""
-        pattern = f"<!-- {marker}_START -->.*?<!-- {marker}_END -->"
-        replacement = f"<!-- {marker}_START -->\n{content}\n<!-- {marker}_END -->"
+        """Replace content between {/* MARKER_START */} and {/* MARKER_END */}"""
+        pattern = re.escape("{/* ") + marker + re.escape("_START */}") + ".*?" + re.escape("{/* ") + marker + re.escape("_END */}")
+        replacement = "{/* " + marker + "_START */}\n" + content + "\n{/* " + marker + "_END */}"
 
         result, count = re.subn(pattern, replacement, template, flags=re.DOTALL)
 
@@ -828,11 +1008,15 @@ class ReleaseNotesGenerator:
         new_features = [pr for pr in prs if "new-feature" in pr.labels]
         new_components = [pr for pr in prs if "new-component" in pr.labels]
         breaking_changes = [pr for pr in prs if "breaking-change" in pr.labels]
+        undocumented_api_changes = [
+            pr for pr in prs if "undocumented-api-change" in pr.labels
+        ]
 
         # Generate lists
         features_list = self._format_pr_list(new_features)
         components_list = self._format_pr_list(new_components)
         breaking_list = self._format_pr_list(breaking_changes)
+        undocumented_list = self._format_pr_list(undocumented_api_changes)
         all_list = self._format_pr_list(prs)
 
         # Replace sections
@@ -844,6 +1028,11 @@ class ReleaseNotesGenerator:
         )
         template = self._replace_marker_content(
             template, "AUTO_GENERATED_BREAKING_CHANGES_LIST", breaking_list
+        )
+        template = self._replace_marker_content(
+            template,
+            "AUTO_GENERATED_UNDOCUMENTED_API_CHANGES_LIST",
+            undocumented_list,
         )
         return self._replace_marker_content(
             template, "AUTO_GENERATED_ALL_CHANGES", all_list

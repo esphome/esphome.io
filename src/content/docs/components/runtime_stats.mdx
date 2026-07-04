@@ -1,0 +1,140 @@
+---
+description: "Instructions for setting up the runtime statistics component to analyze component performance in ESPHome."
+title: "Runtime Statistics"
+---
+import APIRef from '@components/APIRef.astro';
+
+
+The `runtime_stats` component allows you to collect and analyze runtime performance statistics for all components in your ESPHome device. This is a powerful debugging and optimization tool that helps identify components that may be blocking the event loop or consuming excessive processing time.
+
+> [!WARNING]
+> This component is intended for **debugging and troubleshooting**. While it can be temporarily enabled in production to diagnose issues, it should not be left enabled long-term because:
+>
+> - The statistics collection adds overhead to every component execution
+> - It increases memory usage to store statistics
+> - The periodic logging can clutter your logs
+>
+> Enable it when needed to find problems, then disable it once your investigation is complete.
+
+```yaml
+# Example configuration entry
+runtime_stats:
+  log_interval: 60s
+```
+
+## Configuration variables
+
+- **log_interval** (*Optional*, [Time](/guides/configuration-types#time)): How often to log the statistics. Defaults to `60s`.
+
+  - Minimum value is `1s`
+  - Setting this too low will increase log spam
+
+## Understanding the Output
+
+> [!IMPORTANT]
+> **Wall time, not CPU time:** Runtime statistics measure wall time (elapsed real time), not CPU time.
+> This means the measured time includes any FreeRTOS context switches that occur while a component is
+> executing. On **single-core chips** (ESP32-C3, C2, H2), Wi-Fi, BLE, and other system tasks share the
+> same core and can preempt the main loop, inflating the measured times. On **dual-core chips** (ESP32, S3),
+> system tasks mostly run on the protocol core (core 0) while the main loop runs on core 1, so measured
+> times are much closer to actual CPU time spent in the component.
+>
+> For example, the same bluetooth_proxy component may show `avg=1.8ms` on an ESP32-C3 but only `avg=0.4ms`
+> on a dual-core ESP32. The C3 is slower, but not by as much as the numbers suggest — the difference is
+> inflated by system task preemption on the single core.
+>
+> Runtime statistics are still valuable for identifying blocking components, but keep in mind that the
+> absolute times will appear higher than the actual CPU time consumed, especially on single-core
+> FreeRTOS-based systems.
+
+The component logs two types of statistics:
+
+**Period Statistics**
+  Shows statistics for the most recent logging interval. Useful for identifying transient performance issues.
+
+**Total Statistics**
+  Shows cumulative statistics since boot. Useful for understanding overall system behavior.
+
+For each component, the following metrics are reported:
+
+- **count**: Number of times the component executed
+- **avg**: Average execution time in milliseconds
+- **max**: Maximum execution time observed
+- **total**: Total cumulative execution time
+
+Components are sorted by total execution time (descending) to highlight the most impactful components first.
+
+### Main loop metrics
+
+In addition to per-component timings, two main-loop lines are emitted in both the Period and Total sections. They describe the wall time spent in `Application::loop()` **excluding** the sleep/yield at the end of each iteration, so they reflect real work the CPU is doing for ESPHome — not idle time.
+
+**`main_loop:` line**
+
+- **iters**: Number of main-loop iterations observed in this window.
+- **active_avg**: Average per-iteration active time (loop start to just before yield/sleep).
+- **active_max**: Largest single-iteration active time seen (outliers often point to a component that blocked the loop).
+- **active_total**: Sum of per-iteration active time across the window — i.e. total non-sleeping CPU time in the main loop.
+- **overhead_total**: `active_total` minus the sum of all per-component `total` times. Represents time spent in the main loop that is *not* attributable to any single component (scheduler dispatch, inter-component bookkeeping, framework glue).
+
+**`main_loop_overhead_section:` line**
+
+Breaks `overhead_total` down into three buckets so you can tell *where* overhead is being spent:
+
+- **before**: Time inside `before_loop_tasks_` — scheduler dispatch and ISR `enable_loop` processing.
+- **tail**: Time inside `after_loop_tasks_` plus the small prefix before stats recording. Normally near zero.
+- **inter_component**: Residual per-iteration bookkeeping that runs between components (`set_current_component`, per-component timing guard construction/destruction, `feed_wdt_with_time` calls, the for-loop itself).
+
+A regression in `before` points at the scheduler or a component requesting `enable_loop` frequently from an ISR; a regression in `inter_component` points at the per-component dispatch path; `tail` should stay flat.
+
+## Example Output
+
+In the example below, `overhead_total` is the difference between `active_total` and the sum of per-component `total` times — for the period section, `479.1ms − (300.0 + 40.0 + 10.4)ms = 128.7ms`. The three overhead-section buckets (`before + tail + inter_component`) sum back to `overhead_total`.
+
+```text
+[09:55:52][I][runtime_stats:042]: Component Runtime Statistics
+[09:55:52][I][runtime_stats:043]:  Period stats (last 60000ms): 3 active components
+[09:55:52][I][runtime_stats:066]:   wifi: count=60, avg=5.000ms, max=8.00ms, total=300.0ms
+[09:55:52][I][runtime_stats:066]:   api: count=120, avg=0.333ms, max=1.00ms, total=40.0ms
+[09:55:52][I][runtime_stats:066]:   sensor: count=600, avg=0.017ms, max=0.10ms, total=10.4ms
+[09:55:52][I][runtime_stats:068]:   main_loop: iters=7650, active_avg=0.063ms, active_max=10.67ms, active_total=479.1ms, overhead_total=128.7ms
+[09:55:52][I][runtime_stats:070]:   main_loop_overhead_section: before=45.0ms, tail=8.0ms, inter_component=75.7ms
+[09:55:52][I][runtime_stats:072]:  Total stats (since boot): 3 active components
+[09:55:52][I][runtime_stats:084]:   wifi: count=600, avg=5.000ms, max=8.00ms, total=3000.0ms
+[09:55:52][I][runtime_stats:084]:   api: count=1200, avg=0.333ms, max=1.00ms, total=400.0ms
+[09:55:52][I][runtime_stats:084]:   sensor: count=6000, avg=0.017ms, max=0.10ms, total=104.0ms
+[09:55:52][I][runtime_stats:094]:   main_loop: iters=76500, active_avg=0.063ms, active_max=14.30ms, active_total=4791.0ms, overhead_total=1287.0ms
+[09:55:52][I][runtime_stats:096]:   main_loop_overhead_section: before=450.0ms, tail=80.0ms, inter_component=757.0ms
+```
+
+## Use Cases
+
+**Identifying Blocking Components**
+  Look for components with high `max` times. These may be blocking the event loop and causing issues with other components.
+
+**Optimization Targets**
+  Components with high `total` times are good candidates for optimization, especially if they execute frequently.
+
+**Performance Regression Testing**
+  Compare statistics before and after changes to ensure performance hasn't degraded.
+
+**Troubleshooting Timing Issues**
+  If components are missing deadlines or behaving erratically, runtime statistics can help identify the cause.
+
+## Tips for Effective Use
+
+1. **Start with default interval**: The 60-second default provides a good balance between detail and log volume.
+
+1. **Focus on outliers**: Components with significantly higher execution times than others are usually the best optimization targets.
+
+1. **Consider execution frequency**: A component that takes 1ms but runs 1000 times per minute has more impact than one that takes 10ms but runs once per minute.
+
+1. **Watch for patterns**: Execution times that increase over time may indicate memory leaks or resource exhaustion.
+
+1. **Disable when done**: Always remove or comment out the runtime_stats component when you're finished debugging.
+
+## See Also
+
+- [Debug Component](/components/debug/)
+- [Logger Component](/components/logger/)
+- [Automation](/automations)
+- <APIRef text="runtime_stats.h" path="runtime_stats/runtime_stats.h" />

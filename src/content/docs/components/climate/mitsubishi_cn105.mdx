@@ -1,0 +1,166 @@
+---
+description: "Instructions for setting up the Mitsubishi CN105 climate component."
+title: "Mitsubishi CN105 Climate"
+---
+
+import Figure from '@components/Figure.astro';
+import CN105PinoutImg from './images/cn105_wiring.png';
+
+The `mitsubishi_cn105` component allows communication with Mitsubishi Electric indoor units using the CN105 connector.
+
+The component communicates with the unit over UART and provides control and state reporting.
+
+## Hardware Connection
+
+The CN105 connector exposes power and UART communication lines.
+
+### CN105 pinout
+
+| Pin | Function | Wire color | Device |
+| --- | -------- | ---------- | ------ |
+| 1   | NC       |            |        |
+| 2   | GND      | orange     | GND    |
+| 3   | 5V       | brown      | 5V     |
+| 4   | TX       | blue       | RX     |
+| 5   | RX       | red        | TX     |
+
+<Figure
+  src={CN105PinoutImg}
+  alt="CN105 wiring diagram"
+  caption="CN105 connector wired to a D1 Mini Pro"
+  layout="constrained"
+/>
+
+> [!WARNING]
+> Verify the pinout and voltage levels before connecting.
+
+This component requires a [UART bus](/components/uart/) configured with:
+
+- 8 data bits
+- EVEN parity
+- 1 stop bit
+- Baud rate `2400` or `9600`
+
+> [!NOTE]
+> The required baud rate depends on the indoor unit. During initial setup, try both supported values if communication does not work.
+
+## Example configuration
+
+```yaml
+uart:
+  id: ac_uart
+  tx_pin: GPIO1
+  rx_pin: GPIO3
+  data_bits: 8
+  baud_rate: 2400
+  parity: EVEN
+  stop_bits: 1
+
+climate:
+  - platform: mitsubishi_cn105
+    name: "Living Room AC"
+    uart_id: ac_uart
+    update_interval: 1s
+    current_temperature_min_interval: 60s
+    supported_swing_modes: BOTH
+```
+
+> [!WARNING]
+> If you are using the [Logger Component](/components/logger#logger), make sure you are not using the same pins, or disable UART
+> logging with:
+>
+> ```yaml
+> logger:
+>   baud_rate: 0
+> ```
+
+## Supported features
+
+- Target temperature range: `16 °C` to `31 °C`
+- Current temperature reporting
+- Modes: `OFF`, `HEAT`, `COOL`, `DRY`, `FAN_ONLY`, `HEAT_COOL` (called `AUTO` by Mitsubishi)
+- Fan modes: `AUTO`, `QUIET`, `LOW`, `MEDIUM`, `MIDDLE`, `HIGH`
+- Swing modes: `OFF`, `VERTICAL`, `HORIZONTAL`, `BOTH` (configurable via `supported_swing_modes`)
+
+> [!NOTE]
+> Fan modes map to the following Mitsubishi fan speeds:
+>
+> - `AUTO` → `AUTO`
+> - `QUIET` → `QUIET`
+> - `LOW` → `SPEED 1`
+> - `MEDIUM` → `SPEED 2`
+> - `MIDDLE` → `SPEED 3`
+> - `HIGH` → `SPEED 4`
+
+## Configuration variables
+
+- **uart_id** (*Optional*, [ID](/guides/configuration-types#id)): The UART bus to use.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): Interval between status updates. Defaults to `1s`. Lower values provide faster detection of external changes, for example when using the remote control.
+- **current_temperature_min_interval** (*Optional*, [Time](/guides/configuration-types#time)): Minimum time between consecutive room temperature reads.
+
+  This allows keeping a low `update_interval` (to quickly reflect changes, e.g. when using an IR remote) while avoiding excessive current temperature updates.
+
+  Room temperature is still requested during regular polling cycles, so the effective update frequency is bounded by `update_interval`.
+
+  Set to `never` to disable room temperature polling.
+
+  Defaults to `60s`.
+
+- **supported_swing_modes** (*Optional*, enum): Selects which swing modes are exposed by the climate entity. Defaults to `'OFF'`.
+
+  - `'OFF'` — no swing support  
+  - `VERTICAL` — exposes `'OFF'`, `VERTICAL`  
+  - `HORIZONTAL` — exposes `'OFF'`, `HORIZONTAL`  
+  - `BOTH` — exposes `'OFF'`, `VERTICAL`, `HORIZONTAL`, `BOTH`
+
+- All other options from [Climate](/components/climate#config-climate).
+
+## Remote temperature actions
+
+- **climate.mitsubishi_cn105.set_remote_temperature**
+  - Sends an external (remote) room temperature to the indoor unit.
+  - Overrides the unit’s internal temperature sensor.
+  - Supported temperature range: `8.0–39.5 °C`.
+
+- **climate.mitsubishi_cn105.clear_remote_temperature**
+  - Clears the externally provided temperature.
+  - Restores use of the unit’s internal temperature sensor.
+
+**Example:**
+
+```yaml
+climate:
+  - platform: mitsubishi_cn105
+    id: ac
+    # ...
+
+sensor:
+  - platform: homeassistant
+    id: living_room_temp
+    entity_id: sensor.living_room_temperature
+    on_value:
+      then:
+        - climate.mitsubishi_cn105.set_remote_temperature:
+            id: ac
+            temperature: !lambda 'return x;'
+```
+
+> [!NOTE]
+> This does not modify the temperature reported by the A/C unit in its status/room temperature packets. 
+> The reported current temperature remains the value provided by the unit itself. Some units may reflect 
+> the externally provided temperature, while others may continue to report their internal sensor value.
+>
+> Some units may automatically fall back to the internal sensor if no external temperature is sent. In such cases, 
+> the external temperature should be sent periodically (for example using an `interval`). Alternatively, 
+> `climate.mitsubishi_cn105.clear_remote_temperature` can be called if the external sensor becomes unavailable
+> for an extended period.
+>
+> It is the user’s responsibility to tailor the update strategy and usage to their specific A/C unit and setup.
+>
+> This is an advanced feature; users are expected to understand the implications of overriding the internal sensor. Depending 
+> on the unit, it may be necessary to explicitly call `climate.mitsubishi_cn105.clear_remote_temperature` to restore normal 
+> operation. Improper use may lead to unexpected behavior.
+
+## See Also
+
+- [Climate Component](/components/climate/)
