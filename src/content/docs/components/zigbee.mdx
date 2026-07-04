@@ -131,6 +131,11 @@ Only on `ESP32`:
   On `nRF52` the coordinator configuration is always used.
   Defaults to `default`.
 
+- **cluster** (*Optional*, enum): Zigbee cluster to be used. One of `basic` and `default`. `basic` uses basic analog/binary Zigbee
+  clusters and works for all device classes. `default` can only be used for supported device classes and uses a Zigbee cluster
+  fitting to the device class. Benefits are better support by Z2M/ZHA and compatibility with 3rd party Zigbee devices. Component
+  names are not exported when using `default`. On `nRF52` only basic clusters are supported. Defaults to `basic`.
+
 > [!NOTE]
 > ZHA sets the minimum reporting interval to 30 seconds for some sensor devices. If a faster response is needed set `report` to `force`.
 
@@ -156,13 +161,16 @@ Only on `nRF52`:
 
 ### Binary Sensor
 
-[Binary Sensors](/components/binary_sensor#config-binary_sensor) are implemented as binary input clusters with description and present_value attributes.
+[Binary Sensors](/components/binary_sensor#config-binary_sensor) are implemented by default as binary input clusters with description and present_value attributes.
+If `cluster` is set to `default` the occupancy cluster is used if device class is set to occupancy. 
 
 
 ### Sensor
 
-[Sensors](/components/sensor#config-sensor) are implemented as analog input clusters with description, engineering_units,
+[Sensors](/components/sensor#config-sensor) are implemented by default as analog input clusters with description, engineering_units,
 and present_value attributes. On `ESP32` additionally the application type attribute is set if applicable.
+`cluster = default` is supported for temperature, humidity, atmospheric pressure, pressure, volume flow rate, illuminance,
+pm25, and co2 device classes.
 
 #### Additional configuration variables
 
