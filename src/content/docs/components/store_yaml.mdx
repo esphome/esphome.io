@@ -6,18 +6,19 @@ import APIRef from '@components/APIRef.astro';
 
 The `store_yaml` component embeds the YAML configuration files that built the
 firmware (the entry YAML, any `!include` references, and packages) into the
-device's flash, so the original sources can be recovered from a running device
-if they are lost on your computer.
+device's flash, so a working configuration can be recovered from a running
+device if the original files are lost on your computer.
 
 The files are compressed with [zstd](https://facebook.github.io/zstd/) at build
 time and stored in `PROGMEM`. The compressed blob is streamed back over the
 [native API](/components/api/) on request; the device itself never decompresses
-the data, so there is no runtime decompression code or additional RAM cost
-beyond a small fixed streaming buffer.
+the data, so there is no runtime decompression code or additional RAM cost.
 
 ```yaml
 # Example configuration entry
 api:
+  encryption:
+    key: !secret api_encryption_key
 
 store_yaml:
 ```
@@ -26,12 +27,27 @@ store_yaml:
 3.14 or newer on the build machine, or the `backports.zstd` package on older
 Python versions.
 
+Because the embedded YAML may contain network credentials, `store_yaml`
+requires [API encryption](/components/api/#configuration-variables) to be
+configured. For isolated lab setups you can set `allow_unencrypted: true` to
+override this after acknowledging the risk.
+
 ## Configuration variables
 
-- **include_secrets** (*Optional*, boolean): If `true`, the contents of
-  `secrets.yaml` / `secrets.yml` are embedded verbatim. If `false` (the
-  default), any secrets file is replaced with a redaction placeholder before
-  it is compressed; only the file path is preserved.
+- **include_secrets** (*Optional*, boolean): Controls how secrets are handled
+  in the embedded files. Defaults to `false`.
+
+  With the default `false`, each file is re-generated from its parsed form
+  with every secret value replaced by a `!secret` reference: values loaded
+  through `!secret` keep their names, and values written inline in the YAML
+  get a name derived from where they appear (for example `wifi_password`).
+  The `secrets.yaml` content is replaced with a skeleton listing every
+  referenced key. To make a recovered configuration flashable, fill in the
+  skeleton's values; nothing else needs to change. Because the files are
+  re-generated, comments and formatting are not preserved in this mode.
+
+  With `include_secrets: true`, every file, including `secrets.yaml`, is
+  embedded byte for byte, exactly as written.
 
   :::caution
   Setting `include_secrets: true` writes your Wi-Fi password, API key,
@@ -39,6 +55,30 @@ Python versions.
   the firmware can read these values. Keep this off unless you understand
   the trade-off.
   :::
+
+- **allow_unencrypted** (*Optional*, boolean): Allow `store_yaml` without
+  [API encryption](/components/api/#configuration-variables). When enabled,
+  any client that can reach the device on the network can pull the embedded
+  YAML. Defaults to `false`.
+
+## What gets redacted
+
+Secret redaction covers values that ESPHome validates as sensitive (Wi-Fi
+credentials, API encryption keys, OTA and MQTT passwords, BLE bind keys, and
+similar). A credential placed in an option that is not marked sensitive, for
+example in a custom or external component, is embedded as written, so prefer
+`!secret` for any value you consider secret.
+
+If a sensitive value cannot be replaced (for example because it is assembled
+from several substitutions), the build fails rather than embedding it.
+Reference the value with `!secret`, or set `include_secrets: true` to embed
+secrets deliberately.
+
+`!include` paths that contain substitution variables (such as
+`!include ${board}.yaml`) cannot be captured at build time. The referenced
+files are omitted from the embedded set, and a `store_yaml_uncaptured.yaml`
+note listing them is included in the recovered files so you know to restore
+them manually.
 
 ## Retrieving the YAML
 
@@ -63,9 +103,10 @@ blob and writes each `(path, content)` pair back to disk.
 - **Flash:** the compressed blob itself, plus a small amount of code in the
   API streaming path. Real-world ESPHome YAML compresses to roughly
   10-30 % of its original size at level 22.
-- **RAM:** zero per-instance overhead beyond the component object and a
-  single 512-byte streaming buffer shared by all API connections. No heap
-  is allocated during retrieval.
+- **RAM:** zero per-instance overhead beyond the component object. Chunks are
+  streamed directly from flash on most platforms; only ESP8266 uses a single
+  512-byte bounce buffer shared by all API connections. No heap is allocated
+  during retrieval.
 
 ## See Also
 
