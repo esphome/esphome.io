@@ -89,12 +89,12 @@ On the bus side, you need 120 Ohm termination resistors at the ends of the bus c
     a ModBUS exception code `4` will be sent to the client.
 
   - **allow_partial_read** (*Optional*, boolean): For a multi-register value type
-    (``U_DWORD``, ``S_QWORD``, ``FP32``, …), allow a read request to cover only
+    (`U_DWORD`, `S_QWORD`, `FP32`, …), allow a read request to cover only
     part of the value — starting inside it or stopping short of its end — and
-    return just the requested registers. When ``false`` the value is treated as
+    return just the requested registers. When `false` the value is treated as
     atomic and any read that does not cover the whole value is rejected with an
-    ``ILLEGAL_DATA_ADDRESS`` exception. Has no effect on single-register types
-    (``U_WORD``/``S_WORD``). Defaults to ``false``.
+    `ILLEGAL_DATA_ADDRESS` exception. Has no effect on single-register types
+    (`U_WORD`/`S_WORD`). Defaults to `false`.
 
     > [!NOTE]
     > Even with `allow_partial_read` enabled, the `read_lambda` is still
@@ -108,7 +108,7 @@ On the bus side, you need 120 Ohm termination resistors at the ends of the bus c
     > `write_lambda`.
 
 > [!NOTE]
-> Each register entry occupies `register_count` consecutive addresses based
+> Each register entry occupies multiple consecutive addresses based
 > on its `value_type` (1 for `*_WORD`, 2 for `*_DWORD`/`FP32`, 4 for
 > `*_QWORD`). Register address ranges within one `modbus_server` must not
 > overlap and must fit within the 16-bit address space (`0x0000`–`0xFFFF`);
