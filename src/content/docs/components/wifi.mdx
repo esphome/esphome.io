@@ -99,6 +99,28 @@ wifi:
   In case it fails, all networks are then tested one after the other in their declared order, starting with the first
   one in the list.
 
+  Instead of a boolean, this option also accepts a settings block:
+
+  ```yaml
+  wifi:
+    # ...
+    fast_connect:
+      enabled: true
+      storage: rtc
+  ```
+
+  - **enabled** (*Optional*, boolean): Whether fast connect is active. Defaults to `true` when the block form is used.
+  - **storage** (*Optional*, string): Where to persist the connection details (BSSID and channel) that fast connect
+    saves after each successful connection. One of:
+
+    - `flash`: survives power loss but wears flash a little on each save.
+    - `rtc`: stored in RTC memory, which survives software reboots and deep sleep but **not** power loss, and avoids
+      flash wear. A good fit for battery-powered devices that wake from deep sleep frequently.
+
+    Defaults to `rtc` on ESP8266 and `flash` on ESP32, matching each platform's previous behavior. Only `flash` is
+    available on platforms without RTC-backed storage (the RP2040 and the ESP32-C2 and C61 variants, which have no
+    RTC memory), where `rtc` is rejected.
+
   > [!NOTE]
   > While `fast_connect` skips the initial scan, if the connection attempt fails, ESPHome will still perform a scan
   > to find available networks. For hidden networks, use `hidden: true` on the network configuration (see
