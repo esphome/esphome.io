@@ -30,12 +30,18 @@ storage:
   device to another (e.g. SD card to USB, or USB to a network share). Must be a multiple of 512 and between
   4096 and 131072. Larger values can speed up copies slightly at the cost of more RAM held during the copy;
   the default is a good fit for SD/USB media. Defaults to `16384` (16 kB).
+- **max_blocking_transfer_size** (*Optional*, int): Maximum size, in bytes, that whole-file copy/read/write
+  operations are allowed to process in one blocking call. Transfers larger than this are rejected with the
+  `TRANSFER_TOO_LARGE` error instead of freezing the device for the duration of the transfer. `0` means
+  unlimited. Defaults to `0`. Once an asynchronous storage worker is available, this setting lets you keep
+  large transfers off the blocking path while it's still the only option.
 
 ## Behavior notes
 
 Storage operations are blocking. Copying or transferring very large files can make the device temporarily
-unresponsive to sensor updates and API requests while the operation is in progress. An asynchronous storage
-worker is planned for a future release to address this.
+unresponsive to sensor updates and API requests while the operation is in progress. Use
+`max_blocking_transfer_size` to cap how large a single blocking transfer is allowed to get. An asynchronous
+storage worker is planned for a future release to handle large transfers without blocking.
 
 ## See Also
 
