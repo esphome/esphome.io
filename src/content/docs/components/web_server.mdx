@@ -97,7 +97,8 @@ web_server:
   is recommended for maximum compatibility. Defaults to `gzip`.
 
 - **version** (*Optional*, string): `1`, `2` or `3`. Version 1 displays as a table. Version 2 uses web components
-  and has more functionality. Version 3 uses HA-Styling. Defaults to `2`.
+  and has more functionality. Version 3 uses HA-Styling. Defaults to `2`. Version 1 is deprecated and will be removed
+  in 2027.1.0; please migrate to version 2 (the default) or version 3.
 
 - **sorting_groups** (*Optional*, list): Available only on `version: 3`. A list of group ID's and names to group the
   entities. See [Webserver Entity Grouping](#config-webserver-grouping).
@@ -157,6 +158,9 @@ web_server:
 
 Use version 1 user interface:
 
+> [!WARNING]
+> Version 1 is deprecated and will be removed in 2027.1.0; please migrate to version 2 (the default) or version 3.
+
 ```yaml
 # Example configuration entry
 web_server:
@@ -189,16 +193,16 @@ captive_portal:
 
 The following assume copies of the files with local paths - which are config dependent.
 
-Example `web_server` version 1 configuration with CSS and JS included from esphome-docs.
+Example `web_server` version 1 configuration with CSS and JS included from a local folder.
 CSS and JS URL's are set to empty value, so no internet access is needed for this device to show it's web interface.
 
 ```yaml
 web_server:
   port: 80
   version: 1
-  css_include: "../../../esphome-docs/_static/webserver-v1.min.css"
+  css_include: "<some_folder>/webserver-v1.min.css"
   css_url: ""
-  js_include: "../../../esphome-docs/_static/webserver-v1.min.js"
+  js_include: "<some_folder>/webserver-v1.min.js"
   js_url: ""
 ```
 
