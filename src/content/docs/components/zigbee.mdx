@@ -134,6 +134,14 @@ Only on `ESP32`:
 > [!NOTE]
 > ZHA sets the minimum reporting interval to 30 seconds for some sensor devices. If a faster response is needed set `report` to `force`.
 
+- **endpoint** (*Optional*, int): Endpoint number in the range from 1 to 239. This can be used to define which entity goes on which endpoint to
+  get a more stable configuration and to manually combine multiple entities that logically belong together. Only entities of different categories
+  or device classes can be combined. If more than one entity on the same endpoint has a Zigbee device type set, one needs to set `use_device_type = true`.
+- **use_device_type** (*Optional*, boolean): Use the Zigbee Home Automation device type of this entity for the endpoint. Some entities have a
+  [device type](https://community.nxp.com/pwmxy87654/attachments/pwmxy87654/wireless-connectivity/698/1/075367r03ZB_AFG-Home_Automation_Profile_for_Public_Download.pdf#G12.1028193)
+  that can be used by 3rd party devices to discover the device capabilities. Typically, this should be set for the main entity of an endpoint.
+  For exposing entities to Home Assitant device types are not needed. Can be set only for one entity on each endpoint.
+
 
 ## Supported Components
 
