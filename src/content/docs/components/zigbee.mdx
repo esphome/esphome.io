@@ -11,7 +11,7 @@ Zigbee uses the same RF technology as Thread (IEEE 802.15.4) but also defines mu
 The `zigbee` component, however, supports only the Home Automation profile.
 It allows exposing supported ESPHome components over a Zigbee network to Home Assistant via
 **Zigbee2MQTT** or **ZHA**. Due to the limitations of the Zigbee protocol, only basic properties are exposed.
-Additional properties must be configured manually in Home Assistant. Each ESPHome entity consumes one Zigbee endpoint.
+Additional properties must be configured manually in Home Assistant.
 
 > [!NOTE]
 > You will need a Zigbee coordinator like **Zigbee2MQTT** or **ZHA**. Other commercial Zigbee hubs most likely do not
@@ -23,7 +23,8 @@ Additional properties must be configured manually in Home Assistant. Each ESPHom
 
 Zigbee is only supported on `nRF52` platforms and on `ESP32` with IEEE 802.15.4 connectivity (`ESP32-C5`, `ESP32-C6`, or `ESP32-H2` 
 and in the future `ESP32-H4` and `ESP32-H21`). Both platforms support different features and have different limitations:
-- On `nRF52` a maximum of 8 endpoints is supported.
+- On `nRF52` a maximum of 8 endpoints is supported and each ESPHome entity consumes one Zigbee endpoint.
+- On `ESP32` a maximum of 239 endpoints is supported and ESPHome entities are combined on Zigbee endpoints.
 - `ESP32-H2` seems to work more reliably than `ESP32-C6`. There are reports of `ESP32-C6` boards that work only if placed next 
 to the coordinator.
 - On `ESP32` Zigbee can be used together with [WiFi](/components/wifi) with some limitations:
