@@ -371,6 +371,27 @@ From [lambdas](/automations/templates#config-lambda), you can call several metho
     }
 ```
 
+## Example
+
+Setting up three options and set component state to selected option value.
+
+```yaml
+select:
+  - platform: template
+    name: Mode
+    id: mode
+    options:
+     - "Option1"
+     - "Option2"
+     - "Option3"
+    initial_option: "Option1"
+    optimistic: true
+    set_action:
+      - logger.log:
+          format: "Chosen option: %s"
+          args: ["x.c_str()"]
+```
+
 ## See Also
 
 - <APIClass text="Select" path="select::Select" />
