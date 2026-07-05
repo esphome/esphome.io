@@ -221,13 +221,12 @@ nrf52:
   - `2.9.2-0`  : Experimental
   - `3.2.0-0`  : Experimental (no Zigbee support)
 
-- **libc** (*Optional*, string): The C library variant to link against. One of:
-  - `newlib_libc_nano` (default): Newlib nano — smaller binary size, but does not support
-    all printf format specifiers. Notably, the `%zu` specifier (used for `size_t` values)
-    is not handled correctly, which can cause incorrect log output when the
-    [logger](/components/logger) component is used.
-  - `newlib_libc`: Full newlib — larger binary size, but supports all standard printf format
-    specifiers including `%zu` and 64-bit integers.
+- **libc_nano** (*Optional*, boolean): Use the newlib-nano C library variant. Defaults to `true`.
+  Newlib-nano produces a smaller binary but does not support all printf format specifiers.
+  Notably, the `%zu` specifier is not handled correctly, which can
+  cause incorrect log output when the [logger](/components/logger) component is used.
+  Set to `false` to use the full newlib, which supports all standard printf format specifiers
+  including `%zu` and 64-bit integers at the cost of a larger binary.
 
 - **advanced** (*Optional*, mapping): See [Advanced Configuration](#advanced-configuration) below.
 
