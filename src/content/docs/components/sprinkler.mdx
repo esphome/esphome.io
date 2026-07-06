@@ -1025,6 +1025,90 @@ queue entry will be picked up *before* the next valve that would run as a part o
 behavior cannot be changed. It should also be noted that the queue has a hard-coded limit of 100 entries to limit
 memory use.
 
+### Example: Soil-Moisture-Based Smart Irrigation
+
+The sprinkler controller queue can be combined with capacitive soil moisture sensors to create an automated irrigation system that waters only the areas that need it.
+
+#### Hardware
+
+* ESP32
+* Capacitive soil moisture sensors
+* Relay module or sprinkler valve controller
+* Sprinkler Controller component
+* Home Assistant (optional)
+
+#### Concept
+
+Each irrigation zone is associated with a dedicated soil moisture sensor.
+
+For example:
+
+| Zone   | Area             | Moisture Sensor |
+| ------ | ---------------- | --------------- |
+| Zone 1 | Front Lawn       | Sensor 1        |
+| Zone 2 | Vegetable Garden | Sensor 2        |
+| Zone 3 | Flower Bed       | Sensor 3        |
+
+The moisture value of each sensor is monitored continuously.
+
+When the measured value falls below a configured threshold, that zone is added to the sprinkler controller queue.
+
+#### Example Automation Logic
+
+```yaml
+if:
+  condition:
+    lambda: 'return id(front_lawn_moisture).state < 30;'
+  then:
+    - sprinkler.queue_valve:
+        id: yard_controller
+        valve_number: 1
+        run_duration: 10min
+```
+
+Additional zones can be queued independently based on their own moisture readings.
+
+#### Scheduled Watering
+
+Instead of watering immediately, queued zones can be processed at a fixed time each day.
+
+For example, Home Assistant can call:
+
+```yaml
+service: sprinkler.start_from_queue
+```
+
+every morning at 6:00 AM.
+
+This allows irrigation to occur during cooler hours while still responding to real-time soil conditions.
+
+#### Dynamic Run Times
+
+Run duration can be adjusted according to soil moisture levels.
+
+Example strategy:
+
+| Soil Moisture | Run Time |
+| ------------- | -------- |
+| 25–30%        | 5 min    |
+| 20–25%        | 10 min   |
+| 15–20%        | 15 min   |
+| Below 15%     | 20 min   |
+
+This enables water-efficient irrigation while preventing overwatering.
+
+#### Benefits
+
+* Waters only zones that require irrigation
+* Reduces water consumption
+* Supports multiple gardens and lawn areas
+* Easily integrated with Home Assistant automations
+* Can be expanded with weather forecasts, rainfall sensors, or water usage monitoring
+* Demonstrates a practical smart agriculture and smart landscaping use case
+
+
+
+
 ### Expose Sprinkler Controller Actions via user-API
 
 This configuration snippet illustrates how user-defined ESPHome API actions may be used to expose
