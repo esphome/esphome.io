@@ -99,9 +99,6 @@ Automations:
 - **on_loop** (*Optional*, [Automation](/automations)): An automation to perform
   on each `loop()` iteration. See [`on_loop`](#esphome-on_loop).
 
-- **provisioning** (*Optional*): Configure a provisioning window for devices that
-  ship unprovisioned. See [`provisioning`](#esphome-provisioning).
-
 <span id="esphome-on_boot"></span>
 
 ## `on_boot`
@@ -177,52 +174,6 @@ esphome:
     then:
       # do something
 ```
-
-<span id="esphome-provisioning"></span>
-
-## `provisioning`
-
-Sets up a **provisioning window** for devices that ship without their credentials
-configured — for example a boxed product whose API encryption key is set by Home
-Assistant the first time it connects. This helps meet the secure-communication
-requirements of standards such as EN18031.
-
-The device opens the provisioning window when it boots. Once it has been
-provisioned — the API encryption key has been set — the window closes on its own.
-If `timeout` elapses while the device is still unprovisioned, the window closes
-anyway and the device stops accepting provisioning:
-
-- New API clients are turned away with a "provisioning closed" reason.
-- BLE Improv ([`esp32_improv`](/components/esp32_improv/)) stops accepting Wi-Fi
-  credentials. Serial Improv ([`improv_serial`](/components/improv_serial/)) is
-  left enabled, since it requires a physical connection to the device.
-- The `on_timeout` automation runs.
-
-While the device is unprovisioned, the [API](/components/api/) and
-[WiFi](/components/wifi/) `reboot_timeout`s are paused so it does not reboot itself
-while waiting to be set up. Power-cycling (or pressing a physical reset button)
-reopens the window.
-
-```yaml
-esphome:
-  provisioning:
-    timeout: 60s
-    on_timeout:
-      then:
-        - logger.log: "Provisioning window closed; reset the device to reopen it"
-
-# A device that boots unprovisioned: encryption enabled, no key set.
-api:
-  encryption:
-```
-
-### Configuration variables
-
-- **timeout** (**Required**, [Time](/guides/configuration-types#time)): How long
-  after boot the provisioning window stays open before closing if the device is
-  still unprovisioned.
-- **on_timeout** (*Optional*, [Automation](/automations)): An automation to perform
-  when the provisioning window closes.
 
 <span id="esphome-platformio_options"></span>
 
