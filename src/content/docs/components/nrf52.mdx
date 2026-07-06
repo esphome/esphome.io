@@ -211,15 +211,22 @@ nrf52:
 # Example configuration entry
 nrf52:
   framework:
-    version: 2.6.1-7
+    version: 2.9.2
 ```
 
 ### Configuration variables
 
 - **version** (*Optional*, string): The nrf-sdk version. One of:
-  - `2.6.1-7`  : Stable (default)
-  - `2.9.2-0`  : Experimental
-  - `3.2.0-0`  : Experimental (no Zigbee support)
+  - `2.6.1`  : Legacy
+  - `2.9.2`  : Stable (default)
+  - `3.2.0`  : Experimental (no Zigbee support)
+
+- **libc_nano** (*Optional*, boolean): Use the newlib-nano C library variant,
+  newlib-nano produces a smaller binary but does not support all printf format specifiers.
+  Notably, the `%zu` specifier is not handled correctly, which can
+  cause incorrect log output when the [logger](/components/logger) component is used.
+  Set to `false` to use the full newlib, which supports all standard printf format specifiers
+  including `%zu` and 64-bit integers at the cost of a larger binary. Defaults to `true`.
 
 - **advanced** (*Optional*, mapping): See [Advanced Configuration](#advanced-configuration) below.
 
