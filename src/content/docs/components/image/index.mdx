@@ -9,10 +9,10 @@ with [LVGL](/components/lvgl/) widgets.
 `image` is a platform component: each entry in the `image:` list selects a platform which determines where the image
 data comes from:
 
-- **[`file`](#the-file-platform)**: Static images embedded into the firmware at compile time from a local file,
-  a URL or a Material Design Icon. Documented below.
-- **[`animation`](/components/image/animation/)**: Multi-frame (animated) images embedded into the firmware at compile
-  time.
+- **[`file`](/components/image/file/)**: Static images embedded into the firmware at compile time, from a local
+  file, a URL or a Material Design Icon.
+- **[`animation`](/components/image/animation/)**: Multi-frame (animated) images embedded into the firmware at
+  compile time.
 - **[`online_image`](/components/image/online_image/)**: Images downloaded, decoded and drawn at runtime.
 
 ```yaml
@@ -24,101 +24,6 @@ image:
     id: my_image
     resize: 100x100
 ```
-
-## The `file` Platform
-
-The `file` platform embeds a static image into the firmware at compile time. The image can come from a file stored
-alongside your configuration, be downloaded from a URL, or be one of the freely available Material Design Icons.
-
-```yaml
-image:
-  - platform: file
-    file: mdi:alert-outline
-    id: alert
-    type: GRAYSCALE
-    transparency: alpha_channel
-    resize: 80x80
-```
-
-### Configuration Variables
-
-- **file** (**Required**, string):
-
-  - **Local files**: The path (relative to where the .yaml file is) of the image file.
-  - **Material Design Icons**: Specify the [Material Design Icon](https://pictogrammers.com/library/mdi/)
-    id in the format `mdi:icon-name`, and that icon will automatically be downloaded and added to the configuration.
-
-  - **Material Design Light Icons**: Specify the [Material Design Light Icon](https://pictogrammers.com/library/mdil/)
-    id in the format `mdil:icon-name`, and that icon will automatically be downloaded and added to the configuration.
-
-  - **Memory Icons**: Specify the [Memory Icon](https://pictogrammers.com/library/memory/)
-    id in the format `memory:icon-name`, and that icon will automatically be downloaded and added to the configuration.
-
-  - **Remote files**: The URL of the image file, starting with `http://` or `https://`. The file is downloaded once
-    at compile time.
-
-  SVG files are supported for all sources; they are rendered at the size given by `resize` at compile time.
-
-- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID with which you will be able to reference the image later
-  in your display code.
-
-- **resize** (*Optional*, string): If set, this will resize the image to fit inside the given dimensions `WIDTHxHEIGHT`
-  and preserve the aspect ratio.
-
-- **type** (**Required**): Specifies how to encode image internally.
-
-  - `BINARY`  : Two colors, suitable for 1 color displays or 2 color image in color displays. Uses 1 bit
-    per pixel, 8 pixels per byte. Only `chroma_key` transparency is available.
-
-  - `GRAYSCALE`  : Full scale grey. Uses 8 bits per pixel, 1 pixel per byte.
-  - `RGB565`  : Lossy RGB color stored. Uses 2 bytes per pixel, 3 with an alpha channel.
-  - `RGB`  : Full RGB color stored. Uses 3 bytes per pixel, 4 with an alpha channel.
-
-- **transparency** (*Optional*): If set the alpha channel of the input image will be taken into account. The possible values are `opaque` (default), `chroma_key` and `alpha_channel`. Binary images do not support `alpha_channel`. See discussion on transparency below.
-- **invert_alpha** (*Optional*, boolean): Applicable to binary and grayscale only, this will invert the colors, i.e. make black white and vice versa. Useful for e-ink displays. Defaults to `false`.
-
-- **dither** (*Optional*): Specifies which dither method used to process the image, only used in GRAYSCALE and BINARY type image. Defaults to `NONE`. You can read more about it on the [Pillow documentation](https://pillow.readthedocs.io/en/stable/reference/Image.html?highlight=Dither#PIL.Image.Image.convert) and on [Wikipedia](https://en.wikipedia.org/wiki/Dither).
-
-  - `NONE`  : Every pixel converts to its nearest color.
-  - `FLOYDSTEINBERG`  : Uses Floyd-Steinberg dither to approximate the original image luminosity levels.
-
-- **byte_order** (*Optional*, string): For RGB565 images, the pixels are converted to 16 bit values. By default these will be stored in little endian byte order (LSB first),
-  but you can override this by setting `byte_order` to `big_endian`. Options are `little_endian` (default) and `big_endian`.
-  Not applicable to other image formats.
-  Images used in displays and LVGL are expected to be in little endian format.
-
-### Typed Sources
-
-Instead of the string shorthand, the `file` option also accepts a typed `source:` form:
-
-```yaml
-image:
-  - platform: file
-    id: local_image
-    file:
-      source: local
-      path: "image.png"
-    type: RGB565
-
-  - platform: file
-    id: web_image
-    file:
-      source: web
-      url: "https://media.esphome.io/logo/logo.png"
-    type: RGB565
-
-  - platform: file
-    id: alert_icon
-    file:
-      source: mdi
-      icon: alert-outline
-    type: BINARY
-```
-
-- **source** (**Required**, string): One of `local`, `web`, `mdi`, `mdil` or `memory`.
-- **path** (**Required** for `local`, string): The path (relative to where the .yaml file is) of the image file.
-- **url** (**Required** for `web`, url): The URL to download the image file from.
-- **icon** (**Required** for `mdi`, `mdil` and `memory`, string): The icon name, without the `mdi:` style prefix.
 
 ## Displaying Images
 
@@ -191,6 +96,7 @@ pixel. GRAYSCALE images with transparency store the alpha channel only, and rema
 
 ## See Also
 
+- [File](/components/image/file/)
 - [Animation](/components/image/animation/)
 - [Online Image](/components/image/online_image/)
 - [Display](/components/display/)
