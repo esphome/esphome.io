@@ -5,12 +5,14 @@ title: "Animation"
 
 <span id="display-animation"></span>
 
-Allows to use animated images on displays. Animation inherits all options from the image component.
-It adds additional lambda methods: `next_frame()`, `prev_frame()` and `set_frame()` to change the shown picture of a gif.
+The `animation` platform of the [image](/components/image/) component allows to use animated images (e.g. GIF files)
+on displays. Animations support all options of the [`file` platform](/components/image#the-file-platform) and add
+lambda methods: `next_frame()`, `prev_frame()` and `set_frame()` to change the shown picture.
 
 ```yaml
-animation:
-  - file: "animation.gif"
+image:
+  - platform: animation
+    file: "animation.gif"
     id: my_animation
     resize: 100x100
     type: RGB565
@@ -45,27 +47,12 @@ Additionally, you can use the `animation.next_frame`, `animation.prev_frame` or 
 >         animation.next_frame: my_animation
 > ```
 
-## Configuration variables
+## Configuration Variables
 
-- **file** (**Required**, string): The path (relative to where the .yaml file is) of the gif file.
-- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID with which you will be able to reference the animation later
-  in your display code.
+The `animation` platform supports all options of the [`file` platform](/components/image#the-file-platform), such as
+`file`, `type`, `resize` and `transparency`. The `file` option points to the animated image (e.g. a GIF file) whose
+frames will be embedded. In addition, the following options are available:
 
-- **resize** (*Optional*, string): If set, this will resize all the frames to fit inside the given dimensions `WIDTHxHEIGHT`
-  and preserve the aspect ratio.
-
-- **type** (**Required**): Specifies how to encode image internally. See the [image component](/components/image#display-image) for
-  more information.
-
-  - `BINARY`  : Two colors, suitable for 1 color displays or 2 color image in color displays. Uses 1 bit
-    per pixel, 8 pixels per byte. Only `chroma_key` transparency is available.
-
-  - `GRAYSCALE`  : Full scale grey. Uses 8 bits per pixel, 1 pixel per byte.
-  - `RGB565`  : Lossy RGB color stored. Uses 2 bytes per pixel, 3 with an alpha channel.
-  - `RGB`  : Full RGB color stored. Uses 3 bytes per pixel, 4 with an alpha channel.
-
-- **transparency** (*Optional*): If set the alpha channel of the input image will be taken into account. The possible
-  values are `opaque` (default), `chroma_key` and `alpha_channel`. See discussion on transparency in the [image component](/components/image#display-image).
 - **loop** (*Optional*): If you want to loop over a subset of your animation (e.g. a fire animation where the fire
   "starts", then "burns" and "dies") you can specify some frames to loop over.
 
@@ -100,3 +87,8 @@ Moves the animation to a specific frame. This is equivalent to the
 
 - **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the animation to animate.
 - **frame** (**Required**, int): The frame index to show next.
+
+## See Also
+
+- [Images](/components/image/)
+- [Display](/components/display/)
