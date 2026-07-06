@@ -14,7 +14,8 @@ esp32:
 ## Configuration variables
 
 - **variant** (*Optional*, string): The ESP32 mcu/chip to use for this device configuration. One of `esp32`,
-  `esp32s2`, `esp32s3`, `esp32c2`, `esp32c3`, `esp32c5`, `esp32c6`, `esp32c61`, `esp32h2` or `esp32p4`.
+  `esp32s2`, `esp32s3`, `esp32s31`, `esp32c2`, `esp32c3`, `esp32c5`, `esp32c6`, `esp32c61`, `esp32h2`,
+  `esp32h4`, `esp32h21` or `esp32p4`.
   This must match the hardware in use, or it will fail to flash.
 
 - **board** (*Optional*, string): The PlatformIO board ID that should be used. Choose the appropriate board from
@@ -53,6 +54,8 @@ esp32:
   - ESP32-C3: `80MHz`, `160MHz`
   - ESP32-C6, ESP32-C61: `80MHz`, `120MHz`, `160MHz`
   - ESP32-H2: `16MHz`, `32MHz`, `48MHz`, `64MHz`, `96MHz`
+  - ESP32-H4, ESP32-H21: `48MHz`, `64MHz`, `96MHz`
+  - ESP32-S31: `240MHz`, `320MHz`
   - ESP32-P4: `40MHz`, `360MHz`, `400MHz` (engineering samples are limited to `360MHz`)
 
   Some ESP32 modules -- typically OEM/single-core variants found in commercial
@@ -62,9 +65,9 @@ esp32:
   lower) to work around this.
 
 - **partitions** (*Optional*, filename or list): A partition table CSV file or a list of custom partitions to add.
-  See [Partitions](#esp32-partitions).
+  See [Partitions](#partitions).
 
-- **framework** (*Optional*): Options for the underlying framework used by ESPHome. See [Framework](#esp32-framework).
+- **framework** (*Optional*): Options for the underlying framework used by ESPHome. See [Framework](#framework).
 
 - **watchdog_timeout** (*Optional*, [Time](/guides/configuration-types#time)): The timeout applied to the
   ESP-IDF task watchdog. If a subscribed task fails to feed the watchdog within this period, the device
@@ -270,6 +273,67 @@ chip is required for wireless connectivity via [ESP-Hosted](/components/esp32_ho
 - **DAC:** None
 - **MIPI DSI/CSI:** Yes (display and camera interfaces)
 
+### ESP32-S31
+
+The ESP32-S31 is a high-performance RISC-V chip with Wi-Fi, Bluetooth LE, and a built-in 802.15.4 radio
+for Thread and Zigbee. It requires ESP-IDF 6.1 or later.
+
+- **CPU:** RISC-V HP core, up to 320 MHz + LP core
+- **Wi-Fi:** 802.11 b/g/n 2.4 GHz
+- **Bluetooth:** BLE
+- **802.15.4:** Thread and Zigbee
+- **USB:** Native USB OTG; USB Serial/JTAG peripheral mode
+- **Ethernet:** Built-in MAC (requires external PHY)
+- **GPIO:** 62 pins (0–61)
+- **UART:** 4 full-featured + 1 lite
+- **I2C:** 2 (plus 1 low-power)
+- **SPI:** 3
+- **I2S:** Yes
+- **ADC:** 2 units, 8 channels
+- **DAC:** None
+- **Touch:** Yes (v3)
+- **LCD:** Parallel RGB / LCD_CAM
+
+### ESP32-H4
+
+The ESP32-H4 is a low-power RISC-V chip with Bluetooth LE and a built-in 802.15.4 radio for Thread and
+Zigbee. It has no Wi-Fi. It requires ESP-IDF 6.1 or later.
+
+- **CPU:** RISC-V single-core, up to 96 MHz
+- **Wi-Fi:** None
+- **Bluetooth:** BLE
+- **802.15.4:** Thread and Zigbee
+- **USB:** Native USB OTG; USB Serial/JTAG peripheral mode
+- **Ethernet:** None built-in (SPI-based controllers supported)
+- **GPIO:** 40 pins (0–39)
+- **UART:** 2
+- **I2C:** 2
+- **SPI:** 3
+- **I2S:** Yes
+- **ADC:** 1 unit, 5 channels
+- **DAC:** None
+- **Touch:** Yes (v3)
+
+### ESP32-H21
+
+The ESP32-H21 is a low-power RISC-V chip with Bluetooth LE and a built-in 802.15.4 radio for Thread and
+Zigbee. It has no Wi-Fi. It requires ESP-IDF 6.1 or later.
+
+- **CPU:** RISC-V single-core, up to 96 MHz
+- **Wi-Fi:** None
+- **Bluetooth:** BLE
+- **802.15.4:** Thread and Zigbee
+- **USB:** USB Serial/JTAG peripheral mode (no USB OTG)
+- **Ethernet:** None built-in (SPI-based controllers supported)
+- **GPIO:** 26 pins (0–25)
+- **UART:** 2
+- **I2C:** 2
+- **SPI:** 2
+- **I2S:** Yes
+- **ADC:** 1 unit, 5 channels
+- **DAC:** None
+- **Touch:** None
+
 <span id="esp32-toolchain"></span>
 
 ## Toolchain Configuration
@@ -278,28 +342,26 @@ ESPHome supports multiple toolchains for building firmware. The toolchain determ
 
 Currently supported toolchains include:
 
-- `platformio` (default)
-- `esp-idf`
+- `esp-idf` (default)
+- `platformio`
 
-**Example for using ESP-IDF toolchain:**
+By default, ESPHome uses its native ESP-IDF integration, including automatic framework installation and environment management as described in this [documentation](/guides/esp_idf/).
+
+**Example for using the PlatformIO toolchain:**
 
 ```yaml
 esp32:
-  toolchain: esp-idf
+  toolchain: platformio
 ```
-
-When `esp-idf` is selected, ESPHome uses its native ESP-IDF integration, including automatic framework installation and environment management as described in this [documentation](/guides/esp_idf/).
 
 You can also select the toolchain via the [CLI](/guides/cli#cli-toolchain):
 
 ```bash
-esphome --toolchain esp-idf compile my_device.yaml
+esphome --toolchain platformio compile my_device.yaml
 ```
 
-If not specified, `platformio` is used by default.
+If not specified, `esp-idf` is used by default.
 If both `esp32.toolchain` and the `--toolchain` CLI option are set, the CLI option takes precedence.
-
-<span id="esp32-framework"></span>
 
 ## Framework
 
@@ -375,10 +437,8 @@ esp32:
 - **log_level** (*Optional*, string): Log level of the framework, one of `ERROR` (default), `NONE`, `WARN`, `INFO`,
   `DEBUG` or `VERBOSE`.
 
-- **advanced** (*Optional*, mapping): See [Advanced Configuration](#esp32-advanced_configuration) below.
-- **components** (*Optional*, list of components): See [IDF Components](#esp32-idf_components) below.
-
-<span id="esp32-advanced_configuration"></span>
+- **advanced** (*Optional*, mapping): See [Advanced Configuration](#advanced-configuration) below.
+- **components** (*Optional*, list of components): See [IDF Components](#idf-components) below.
 
 ## Advanced Configuration
 
@@ -762,8 +822,6 @@ esp32:
 > [!NOTE]
 > If you were already adding libraries via `libraries` config or calling `cg.add_library()`, no action is needed. If you were previously using Arduino library APIs directly in lambdas (e.g. `Preferences`, `Wire`, `SPI`) without adding them to the `libraries` config, you will need to explicitly add them.
 
-<span id="esp32-idf_components"></span>
-
 ## IDF Components
 
 The `components` option allows you to include IDF components. These components will then be compiled into the resulting
@@ -805,8 +863,6 @@ esp32:
   custom or patched version of the component.
 - **path** (*Optional*, string): The path of the component in the git repository or a local path to the
   component if `source` is not set.
-
-<span id="esp32-partitions"></span>
 
 ## Partitions
 
