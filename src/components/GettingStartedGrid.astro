@@ -13,7 +13,11 @@
  *     button_text: "Home Assistant Guide"
  *   },
  * ]} />
+ *
+ * Pass `includeLatestBlogPost` to append a card linking to the most recently published blog post.
  */
+
+import { getCollection } from "astro:content";
 
 interface GettingStartedItem {
   icon: string;
@@ -26,18 +30,39 @@ interface GettingStartedItem {
 
 interface Props {
   items: GettingStartedItem[];
+  includeLatestBlogPost?: boolean;
 }
 
-const { items } = Astro.props;
+const { items, includeLatestBlogPost } = Astro.props;
 
 function getIconPath(icon: string): string {
   return `/images/icons/${icon}.svg`;
+}
+
+let allItems = items;
+
+if (includeLatestBlogPost) {
+  const posts = await getCollection("docs", (entry) => entry.id.startsWith("blog/") && Boolean(entry.data.date));
+  const [latest] = posts.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+  if (latest) {
+    allItems = [
+      ...items,
+      {
+        icon: "edit",
+        title: "Latest from the Blog",
+        description: `${latest.data.title} — ${latest.data.excerpt ?? latest.data.description ?? ""}`,
+        url: `/${latest.id}/`,
+        button_text: "Read the Post",
+      },
+    ];
+  }
 }
 ---
 
 <div class="getting-started-grid">
   {
-    items.map((item) => (
+    allItems.map((item) => (
       <div class="feature-card">
         <div class="feature-icon">
           <img src={getIconPath(item.icon)} alt="" loading="lazy" />

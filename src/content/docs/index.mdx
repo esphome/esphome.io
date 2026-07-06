@@ -6,70 +6,187 @@ head:
     content: "ESPHome - Smart Home Made Simple"
 template: splash
 hero:
-  tagline: Turn your ESP32, ESP8266, BK72xx, RP2040, and other supported boards into powerful smart home devices with simple YAML configuration.
+  tagline: ESPHome is an open-source system for building your own smart home devices - just describe what you want
+    in simple YAML, no firmware coding required.
   image:
-    html: <img src="/images/hero.png" alt="ESPHome dashboard showing connected devices" loading="eager" decoding="async" />
+    file: ./images/hero-placeholder.jpg
+    alt: A top-down view of someone wiring an ESP32 microcontroller on a breadboard, surrounded by soldering and
+      electronics tools.
   actions:
-    - text: Installation Guide
+    - text: Get Started
       link: /guides/getting_started_hassio/
       icon: right-arrow
-    - text: Browse Components
-      link: /components/
-      variant: minimal
-    - text: Device List
-      link: https://devices.esphome.io/
-      variant: minimal
 ---
 
-<div class="feature-grid not-content">
-  <div class="feature-card">
-    <div class="feature-text">No Coding Required</div>
-    <p>Simple YAML configuration files instead of complex C++ code.</p>
+import FeatureGrid from '@components/FeatureGrid.astro';
+import GettingStartedGrid from '@components/GettingStartedGrid.astro';
+import ImgTable from '@components/ImgTable.astro';
+
+<div class="homepage">
+
+<FeatureGrid items={[
+  {
+    icon: "code",
+    title: "No Coding Required",
+    description: "Simple YAML configuration files instead of complex C++ code."
+  },
+  {
+    icon: "wifi",
+    title: "Wireless Updates",
+    description: "Update your devices over-the-air without physical access."
+  },
+  {
+    icon: "puzzle-piece",
+    title: "Modular Design",
+    description: "Support for hundreds of sensors, displays, and other components."
+  },
+  {
+    icon: "home",
+    title: "Local Control",
+    description: "Devices work locally without cloud dependencies."
+  },
+]} />
+
+## Why Use ESPHome?
+
+Building your own smart home devices usually means writing and debugging low-level firmware code - a steep barrier
+for anyone who isn't already a C++ developer. ESPHome removes that barrier: describe the sensors, switches, and
+behavior you want in a YAML configuration file, and ESPHome generates and compiles the firmware for you.
+
+<div class="code-comparison not-content">
+  <div>
+    <p class="code-comparison-label">Traditional Firmware</p>
+
+    ```cpp
+    void setup() {
+      pinMode(GPIOXX, INPUT);
+      dht.begin();
+    }
+
+    void loop() {
+      float temp = dht.readTemperature();
+      mqttClient.publish("sensor/temp", String(temp));
+    }
+    ```
   </div>
-  <div class="feature-card">
-    <div class="feature-text">Wireless Updates</div>
-    <p>Update your devices over-the-air without physical access.</p>
-  </div>
-  <div class="feature-card">
-    <div class="feature-text">Modular Design</div>
-    <p>Support for hundreds of sensors, displays, and other components.</p>
-  </div>
-  <div class="feature-card">
-    <div class="feature-text">Local Control</div>
-    <p>Devices work locally without cloud dependencies.</p>
+  <div>
+    <p class="code-comparison-label">ESPHome Configuration</p>
+
+    ```yaml
+    sensor:
+      - platform: dht
+        pin: GPIOXX
+        temperature:
+          name: "Temperature"
+    ```
   </div>
 </div>
 
-## Who Uses ESPHome?
+### Who Uses ESPHome?
 
 - **DIY Enthusiasts** - Create custom sensors, switches, and displays tailored to specific needs
 - **Smart Home Hobbyists** - Extend their home automation systems with affordable custom devices
 - **Professional Integrators** - Deploy reliable, locally-controlled smart devices for clients
 - **Manufacturers** - Create [Made for ESPHome](/guides/made_for_esphome/) certified products with standardized firmware
 
-## Which microcontrollers does ESPHome support?
+## Initial Ideas & Inspiration
 
-- **Espressif ESP32 and ESP8266** - Wide support for ESP32 and ESP8266 microcontrollers, the heart of many IoT projects.
-- **RP2040** - Support for Raspberry Pi's RP2040 microcontroller.
-- **Others** - Nordic Semiconductor nRF52, Realtek RTL87xx, and Beken BK72xx chips are supported.
-- **Desktop** - Many ESPHome components can be run on a desktop computer using the *host* platform!
+Not sure what to build first? These Cookbook recipes walk through common projects at a range of difficulty levels:
 
-## Getting Started
+<FeatureGrid items={[
+  {
+    icon: "bolt",
+    title: "Environment Sensor",
+    description: 'Beginner &mdash; read temperature, humidity, and pressure with a BME280. ' +
+      '<a href="/cookbook/bme280_environment/">View recipe</a>'
+  },
+  {
+    icon: "computer",
+    title: "Time & Temperature Display",
+    description: 'Intermediate &mdash; show live sensor data on an OLED display. ' +
+      '<a href="/cookbook/display_time_temp_oled/">View recipe</a>'
+  },
+  {
+    icon: "magic",
+    title: "Custom LVGL Dashboard",
+    description: 'Advanced &mdash; build a touchscreen UI with the LVGL display engine. ' +
+      '<a href="/cookbook/lvgl/">View recipe</a>'
+  },
+]} />
 
-<div class="getting-started-grid not-content">
-  <div class="feature-card">
-    <div class="getting-started-heading">From Home Assistant</div>
-    <p>The easiest way to get started with ESPHome is through the Home Assistant app.</p>
-    <a href="/guides/getting_started_hassio/" class="btn btn-primary">Home Assistant Guide</a>
-  </div>
-  <div class="feature-card">
-    <div class="getting-started-heading">Command Line</div>
-    <p>For advanced users who prefer working with the command line.</p>
-    <a href="/guides/getting_started_command_line/" class="btn btn-primary">Command Line Guide</a>
-  </div>
-  <div class="feature-card">
-    <div class="getting-started-heading">Ready-Made Projects</div>
-    <p>Start with a pre-configured project for common use cases.</p>
-    <a href="/projects/" class="btn btn-primary">Browse Projects</a>
-  </div>
+Browse the full [Cookbook](/cookbook/) for more recipes, or explore [Ready-Made Projects](/projects/) you can
+install without writing any configuration at all.
+
+## Get Started
+
+<GettingStartedGrid items={[
+  {
+    icon: "home-assistant",
+    title: "From Home Assistant",
+    description: "The easiest way to get started with ESPHome is through the Home Assistant app.",
+    url: "/guides/getting_started_hassio/",
+    button_text: "Home Assistant Guide"
+  },
+  {
+    icon: "terminal",
+    title: "Command Line",
+    description: "For advanced users who prefer working with the command line.",
+    url: "/guides/getting_started_command_line/",
+    button_text: "Command Line Guide"
+  },
+  {
+    icon: "puzzle-piece",
+    title: "Ready-Made Projects",
+    description: "Start with a pre-configured project for common use cases.",
+    url: "/projects/",
+    button_text: "Browse Projects"
+  },
+  {
+    icon: "magic",
+    title: "ESPHome Device Builder",
+    description: "Configure your device visually with the new guided, no-YAML-required workspace.",
+    url: "/blog/2026/07/02/unbox-your-creativity-with-esphome-2026-6-0/",
+    button_text: "See What's New"
+  },
+]} includeLatestBlogPost />
+
+## Community Projects & Social Proof
+
+Thousands of makers, integrators, and hardware partners are already building with ESPHome. Browse the
+[Device List](https://devices.esphome.io/) for community-documented devices, or check out
+[Made for ESPHome](/guides/made_for_esphome/) certified products built by hardware manufacturers.
+
+## What Can Run ESPHome?
+
+<ImgTable items={[
+  ["ESP32", "/components/esp32/", "esp32.svg", "Espressif's Wi-Fi & Bluetooth SoC"],
+  ["ESP8266", "/components/esp8266/", "esp8266.svg", "The original low-cost Wi-Fi microcontroller"],
+  ["RP2040", "/components/rp2040/", "rp2040.svg", "Raspberry Pi's microcontroller"],
+  ["BK72xx", "/components/libretiny/", "bk72xx.svg", "Beken Wi-Fi SoCs, via LibreTiny"],
+  ["RTL87xx", "/components/libretiny/", "rtl87xx.svg", "Realtek Wi-Fi SoCs, via LibreTiny"],
+  ["Desktop", "/components/host/", "host.svg", "Run components on your own computer"],
+]} />
+
+## Join the Community
+
+<FeatureGrid items={[
+  {
+    icon: "discord",
+    title: "Discord",
+    description: 'Chat with the community in real time. <a href="https://discord.gg/KhAMKrd">Join Discord</a>'
+  },
+  {
+    icon: "comments",
+    title: "Home Assistant Forum",
+    description: 'Ask questions and share projects. ' +
+      '<a href="https://community.home-assistant.io/c/esphome/">Visit the Forum</a>'
+  },
+  {
+    icon: "github",
+    title: "GitHub",
+    description: 'Follow development or contribute to ESPHome. ' +
+      '<a href="https://github.com/esphome/esphome">View on GitHub</a>'
+  },
+]} />
+
 </div>
