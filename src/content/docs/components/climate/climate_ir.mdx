@@ -112,7 +112,35 @@ remote_receiver:
 climate:
   - platform: hisense_arg
     name: "AC"
+    id: hisense_ac
     receiver_id: rcvr
+```
+
+#### Power State Sync
+
+This protocol uses a power **toggle** command rather than discrete on/off codes. The component
+tracks power state internally, but it can get out of sync if the AC is controlled by another
+remote or powered externally. When state is wrong, the next command may accidentally toggle
+power instead of changing settings.
+
+Two methods are exposed to sync the assumed power state with an external source (such as a
+power consumption sensor in Home Assistant):
+
+- `set_power_off()`: Forces the component to assume the AC is off (sets mode to OFF).
+- `set_power_on()`: Forces the component to assume the AC is on (sets mode to heat/cool as unknown).
+
+```yaml
+# Example: buttons for power state sync from Home Assistant
+button:
+  - platform: template
+    name: "AC Sync Power Off"
+    on_press:
+      - lambda: id(hisense_ac).set_power_off();
+
+  - platform: template
+    name: "AC Sync Power On"
+    on_press:
+      - lambda: id(hisense_ac).set_power_on();
 ```
 
 ### `climate_ir_lg`
