@@ -1,0 +1,236 @@
+---
+description: "Setting up Hörmann garage door operators in ESPHome."
+title: "Hörmann Cover"
+---
+
+import APIRef from '@components/APIRef.astro';
+
+The `hoermann_hcp` component allows you to control Hörmann garage door operators through the HCP bus built
+into the operator. It emulates the Hörmann UAP1 module, so the operator's bus controller communicates
+with ESPHome just like it would with Hörmann's own accessory.
+
+The following Serie 4 operators communicate over the HCP bus (Modbus RTU) and should be supported:
+
+* SupraMatic E/P Serie 4
+* ProMatic Serie 4
+
+> [!NOTE]
+> Only Serie 4 operators are supported. Older operators use a different connector pinout and a
+> completely different protocol.
+>
+> This component implements the same protocol as the [HCPBridge](https://github.com/hkiam/HCPBridge)
+> project.
+
+Communication with the operator happens over [Modbus](/components/modbus/) with the `role` set to
+`server`, which in turn requires a [UART bus](/components/uart/). The UART **must** be configured with
+a baud rate of `57600`, even parity and one stop bit.
+
+```yaml
+# Example configuration entry
+uart:
+  id: uart_bus
+  tx_pin: GPIOXX
+  rx_pin: GPIOXX
+  baud_rate: 57600
+  parity: EVEN
+  stop_bits: 1
+
+modbus:
+  uart_id: uart_bus
+  role: server
+
+hoermann_hcp:
+
+cover:
+  - platform: hoermann_hcp
+    name: Garage Door
+    device_class: garage
+```
+
+## Hardware
+
+The HCP bus is a two-wire RS485 connection that also carries the operator's ~25 V supply, so a single
+cable provides both communication and power — no separate power supply is required. To connect an
+ESP32 (or another ESPHome-supported chip) you need three things:
+
+- an **RS485 transceiver** wired to the [UART bus](/components/uart/);
+- a **step-down (buck) converter** that derives 5 V for the ESP32 and the transceiver from the bus
+  voltage; and
+- a **120 Ω termination resistor** across the RS485 data lines, as required by the RS485/Modbus
+  standard.
+
+The operator exposes the bus on a 6-pin socket with the following pinout:
+
+| Pin | Signal          | Example wire colour |
+| --- | --------------- | ------------------- |
+| 1   | GND             | Blue                |
+| 2   | GND             | Yellow              |
+| 3   | B− (RS485 data) | Green               |
+| 4   | A+ (RS485 data) | Red                 |
+| 5   | +25 V           | Black               |
+| 6   | +25 V           | White               |
+
+> [!NOTE]
+> The wire colours depend on the cable you use — the pin positions are what matter. The GND (pins 1
+> and 2) and +25 V (pins 5 and 6) contacts are each duplicated on the operator side, so you only need
+> to connect **one** pin from each pair.
+
+Wire the adapter as shown below: a +25 V pin feeds the buck converter's input, its 5 V output powers
+both the ESP32 and the RS485 transceiver, the A+/B− data lines connect to the transceiver (with the
+120 Ω resistor bridging them), and the transceiver's serial pins connect to the ESP32 UART pins you
+set in the `uart:` block.
+
+<figure>
+  <svg viewBox="0 0 900 460" width="100%" role="img" aria-labelledby="hoermann-wiring-title" xmlns="http://www.w3.org/2000/svg">
+    <title id="hoermann-wiring-title">Wiring diagram: Hörmann HCP bus to ESP32 via a buck converter and RS485 transceiver</title>
+    <rect x="40" y="150" width="170" height="250" rx="8" fill="#94a3b8" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.45" />
+    <rect x="420" y="80" width="190" height="95" rx="8" fill="#94a3b8" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.45" />
+    <rect x="420" y="305" width="190" height="120" rx="8" fill="#94a3b8" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.45" />
+    <rect x="720" y="185" width="150" height="245" rx="8" fill="#94a3b8" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.45" />
+    <g fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M210,378 H250 V110 H420" stroke="#f59e0b" />
+      <path d="M210,238 H232 V150 H420" stroke="#64748b" />
+      <path d="M500,175 V305" stroke="#ef4444" />
+      <path d="M500,205 H700 V222 H720" stroke="#ef4444" />
+      <path d="M560,175 V305" stroke="#64748b" />
+      <path d="M560,245 H700 V258 H720" stroke="#64748b" />
+      <path d="M210,308 H400 V378 H420" stroke="#22c55e" />
+      <path d="M210,273 H388 V405 H420" stroke="#3b82f6" />
+      <path d="M610,378 H720" stroke="#a855f7" />
+      <path d="M610,405 H720" stroke="#06b6d4" />
+    </g>
+    <path d="M300,273 L300,277 L307,280 L293,284 L307,288 L293,292 L307,296 L293,300 L300,304 L300,308" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+    <g fill="currentColor">
+      <circle cx="500" cy="205" r="3" fill="#ef4444" />
+      <circle cx="560" cy="245" r="3" fill="#64748b" />
+      <circle cx="300" cy="273" r="3" />
+      <circle cx="300" cy="308" r="3" />
+    </g>
+    <g stroke="currentColor" stroke-opacity="0.5">
+      <circle cx="210" cy="203" r="3" fill="#64748b" />
+      <circle cx="210" cy="238" r="3" fill="#64748b" />
+      <circle cx="210" cy="273" r="3" fill="#3b82f6" />
+      <circle cx="210" cy="308" r="3" fill="#22c55e" />
+      <circle cx="210" cy="343" r="3" fill="#f59e0b" />
+      <circle cx="210" cy="378" r="3" fill="#f59e0b" />
+      <circle cx="420" cy="110" r="3" fill="#f59e0b" />
+      <circle cx="420" cy="150" r="3" fill="#64748b" />
+      <circle cx="500" cy="175" r="3" fill="#ef4444" />
+      <circle cx="560" cy="175" r="3" fill="#64748b" />
+      <circle cx="500" cy="305" r="3" fill="#ef4444" />
+      <circle cx="560" cy="305" r="3" fill="#64748b" />
+      <circle cx="420" cy="378" r="3" fill="#22c55e" />
+      <circle cx="420" cy="405" r="3" fill="#3b82f6" />
+      <circle cx="610" cy="378" r="3" fill="#a855f7" />
+      <circle cx="610" cy="405" r="3" fill="#06b6d4" />
+      <circle cx="720" cy="222" r="3" fill="#ef4444" />
+      <circle cx="720" cy="258" r="3" fill="#64748b" />
+      <circle cx="720" cy="378" r="3" fill="#a855f7" />
+      <circle cx="720" cy="405" r="3" fill="#06b6d4" />
+    </g>
+    <g font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif" fill="currentColor">
+      <text x="125" y="176" text-anchor="middle" font-size="14" font-weight="600">Operator bus</text>
+      <text x="125" y="192" text-anchor="middle" font-size="11" opacity="0.7">6-pin socket</text>
+      <rect x="46" y="197" width="12" height="12" rx="2" fill="#64748b" />
+      <rect x="46" y="232" width="12" height="12" rx="2" fill="#64748b" />
+      <rect x="46" y="267" width="12" height="12" rx="2" fill="#3b82f6" />
+      <rect x="46" y="302" width="12" height="12" rx="2" fill="#22c55e" />
+      <rect x="46" y="337" width="12" height="12" rx="2" fill="#f59e0b" />
+      <rect x="46" y="372" width="12" height="12" rx="2" fill="#f59e0b" />
+      <text x="68" y="207" font-size="12.5">1&#160;&#160;GND</text>
+      <text x="68" y="242" font-size="12.5">2&#160;&#160;GND</text>
+      <text x="68" y="277" font-size="12.5">3&#160;&#160;B−</text>
+      <text x="68" y="312" font-size="12.5">4&#160;&#160;A+</text>
+      <text x="68" y="347" font-size="12.5">5&#160;&#160;+25 V</text>
+      <text x="68" y="382" font-size="12.5">6&#160;&#160;+25 V</text>
+      <text x="125" y="416" text-anchor="middle" font-size="10" opacity="0.7">1 &amp; 2 = GND · 5 &amp; 6 = +25 V</text>
+      <text x="125" y="430" text-anchor="middle" font-size="10" opacity="0.7">duplicated — connect one of each</text>
+      <text x="515" y="105" text-anchor="middle" font-size="13" font-weight="600">DC-DC buck</text>
+      <text x="515" y="122" text-anchor="middle" font-size="11" opacity="0.8">25 V → 5 V</text>
+      <text x="430" y="114" font-size="11">IN+</text>
+      <text x="430" y="154" font-size="11">IN−</text>
+      <text x="500" y="167" text-anchor="middle" font-size="11">5 V</text>
+      <text x="560" y="167" text-anchor="middle" font-size="11">GND</text>
+      <text x="515" y="352" text-anchor="middle" font-size="13" font-weight="600">RS485 transceiver</text>
+      <text x="500" y="322" text-anchor="middle" font-size="11">VCC</text>
+      <text x="560" y="322" text-anchor="middle" font-size="11">GND</text>
+      <text x="430" y="382" font-size="11">A+</text>
+      <text x="430" y="409" font-size="11">B−</text>
+      <text x="600" y="382" text-anchor="end" font-size="11">RO</text>
+      <text x="600" y="409" text-anchor="end" font-size="11">DI</text>
+      <text x="795" y="212" text-anchor="middle" font-size="14" font-weight="600">ESP32</text>
+      <text x="732" y="226" font-size="11">5 V (VIN)</text>
+      <text x="732" y="262" font-size="11">GND</text>
+      <text x="732" y="382" font-size="11">rx_pin</text>
+      <text x="732" y="409" font-size="11">tx_pin</text>
+    </g>
+    <g font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="11">
+      <text x="335" y="104" text-anchor="middle" fill="#f59e0b" font-weight="600">+25 V</text>
+      <text x="350" y="144" text-anchor="middle" fill="#64748b" font-weight="600">GND</text>
+      <text x="628" y="199" text-anchor="middle" fill="#ef4444" font-weight="600">5 V</text>
+      <text x="635" y="239" text-anchor="middle" fill="#64748b" font-weight="600">GND</text>
+      <text x="314" y="294" fill="currentColor" font-weight="600">120 Ω</text>
+      <text x="665" y="372" fill="#a855f7" font-weight="600">RO → rx_pin</text>
+      <text x="665" y="399" fill="#06b6d4" font-weight="600">DI → tx_pin</text>
+    </g>
+  </svg>
+  <figcaption>
+    Example adapter: the operator's +25 V powers a buck converter that supplies 5 V to the ESP32 and an
+    RS485 transceiver; A+/B− carry the HCP (Modbus RTU) data, terminated with 120 Ω.
+  </figcaption>
+</figure>
+
+> [!NOTE]
+> The example above uses a transceiver module with automatic direction control, so no separate DE/RE
+> flow-control pin is needed. If your module labels its serial pins differently, connect its receiver
+> output (RO/RXD) to the ESP32 `rx_pin` and its driver input (DI/TXD) to the ESP32 `tx_pin`; swap the
+> two if data doesn't flow.
+
+> [!IMPORTANT]
+> The operator only powers the adapter after a successful bus scan. Trigger a bus scan from the
+> operator's menu with the adapter connected; the operator keeps supplying power only if the adapter
+> answers during the scan.
+
+## Component/Hub
+
+The `hoermann_hcp` hub handles the communication with the operator's bus controller and exposes its state
+to the `cover` platform below.
+
+### Configuration variables
+
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code
+  generation.
+- **modbus_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the
+  [Modbus](/components/modbus/) hub.
+- **address** (*Optional*, int): The Modbus server address the component answers on. Defaults to `2`,
+  which is the address the operator's bus controller expects the UAP1 module on. You should not need
+  to change this.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval at which
+  the connection to the bus controller is checked. Defaults to `500ms`.
+
+## Cover
+
+The `hoermann_hcp` cover platform exposes the garage door as a [cover](/components/cover/). It supports
+opening, closing, stopping and moving to a position, and reports the position and operation as
+provided by the operator.
+
+```yaml
+cover:
+  - platform: hoermann_hcp
+    name: Garage Door
+    device_class: garage
+```
+
+### Configuration variables
+
+- **hoermann_hcp_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the
+  `hoermann_hcp` hub. Only required if you have more than one hub.
+- All other options from [Cover](/components/cover#config-cover).
+
+## See Also
+
+- [Cover Component](/components/cover/)
+- [Modbus](/components/modbus/)
+- [HCPBridge project](https://github.com/hkiam/HCPBridge)
+- [Automation](/automations)
+- <APIRef text="hoermann_cover.h" path="hoermann_hcp/cover/hoermann_cover.h" />
