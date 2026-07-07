@@ -36,7 +36,7 @@ information about ESPHome configuration files.
 <ImgTable items={[
   ["ESP32", "/components/esp32/", "esp32.svg"],
   ["ESP8266", "/components/esp8266/", "esp8266.svg"],
-  ["RP2040", "/components/rp2040/", "rp2040.svg"],
+  ["RP2", "/components/rp2/", "rp2040.svg"],
   ["BK72xx", "/components/libretiny/", "bk72xx.svg"],
   ["RTL87xx", "/components/libretiny/", "rtl87xx.svg"],
   ["LN882x", "/components/libretiny/", "ln882x.svg"],
@@ -194,6 +194,7 @@ Create update entities simplifying management of OTA updates.
   ["SX1509", "/components/sx1509/", "sx1509.jpg"],
   ["TCA9548A I²C Multiplexer", "/components/tca9548a/", "tca9548a.jpg"],
   ["TCA9555", "/components/tca9555/", "tca9555.svg"],
+  ["Waveshare CH32V003 IO Expander", "/components/waveshare_io_ch32v003/","waveshare_io_ch32v003.svg"],
   ["WeiKai SPI/I²C UART/IO Expander", "/components/weikai/", "wk2168.jpg"],
   ["XL9535", "/components/xl9535/", "xl9535.svg"],
 ]} />
@@ -524,6 +525,7 @@ Sensors are organized into categories; if a given sensor fits into more than one
   ["TX20", "/components/sensor/tx20/", "tx20.jpg", "Wind speed & Wind direction"],
   ["uFire EC sensor", "/components/sensor/ufire_ec/", "ufire_ec.png", "EC & Temperature"],
   ["uFire ISE sensor", "/components/sensor/ufire_ise/", "ufire_ise.png", "pH & Temperature"],
+  ["UFM-01 Flow Meter", "/components/ufm01/", "ufm01.png", "Flow & Temperature"],
   ["WireGuard", "/components/wireguard/", "wireguard_custom_logo.svg", "dark-invert"],
 ]} />
 
@@ -543,6 +545,7 @@ Sensors are organized into categories; if a given sensor fits into more than one
   ["MPU6886", "/components/sensor/mpu6886/", "mpu6886.jpg", "Accelerometer & Gyroscope"],
   ["MSA301", "/components/sensor/msa3xx/", "msa301.jpg", "Accelerometer"],
   ["MSA311", "/components/sensor/msa3xx/", "msa311.jpg", "Accelerometer"],
+  ["QMI8658", "/components/motion/qmi8658/", "imu.svg", "Accelerometer & Gyroscope", "dark-invert"],
   ["RD-03D", "/components/sensor/rd03d/", "rd03d.webp", "Motion & Presence"],
   ["RuuviTag", "/components/sensor/ruuvitag/", "ruuvitag.jpg", "Temperature & Humidity & Accelerometer"],
   ["Seeed Studio MR24HPC1 mmWave", "/components/seeed_mr24hpc1/", "seeed-mr24hpc1.jpg", "Motion & Presence"],
@@ -766,6 +769,7 @@ Often known as "tag" or "card" readers within the community.
   ["ILI9488", "/components/display/ili9xxx/", "ili9488.svg"],
   ["ILI9xxx", "/components/display/ili9xxx/", "ili9341.jpg"],
   ["Inkplate", "/components/display/inkplate/", "inkplate6.jpg"],
+  ["IT8951", "/components/display/it8951/", "it8951.svg"],
   ["LCD Display", "/components/display/lcd_display/", "lcd.jpg"],
   ["MAX7219", "/components/display/max7219/", "max7219.jpg"],
   ["MAX7219 Dot Matrix", "/components/display/max7219digit/", "max7219digit.jpg"],
@@ -774,6 +778,7 @@ Often known as "tag" or "card" readers within the community.
   ["MIPI SPI Displays", "/components/display/mipi_spi/", "t4-s3.jpg"],
   ["Nextion", "/components/display/nextion/", "nextion.jpg"],
   ["PCD8544 (Nokia 5110/ 3310)", "/components/display/pcd8544/", "pcd8544.jpg"],
+  ["Pixoo", "/components/display/pixoo/", "pixoo.svg"],
   ["PVVX MiThermometer", "/components/display/pvvx_mithermometer/", "xiaomi_lywsd03mmc.jpg"],
   ["Quad SPI Displays", "/components/display/qspi_dbi/", "t4-s3.jpg"],
   ["RPI_DPI_RGB", "/components/display/rpi_dpi_rgb/", "waveshare_touch-s3.jpg"],
@@ -879,6 +884,7 @@ Used for creating infrared (IR) remote control transmitters and/or receivers.
   ["LVGL widget", "/components/light/lvgl/", "lvgl_c_lig.png"],
   ["Monochromatic Light", "/components/light/monochromatic/", "brightness-medium.svg", "dark-invert"],
   ["NeoPixelBus Light", "/components/light/neopixelbus/", "color_lens.svg", "dark-invert"],
+  ["Pixoo Brightness", "/components/light/pixoo/", "brightness-medium.svg", "dark-invert"],
   ["RGB Light", "/components/light/rgb/", "rgb.png"],
   ["RGBCT Light", "/components/light/rgbct/", "rgbw.png"],
   ["RGBW Light", "/components/light/rgbw/", "rgbw.png"],
@@ -936,6 +942,7 @@ Used for creating infrared (IR) remote control transmitters and/or receivers.
   ["Motion Core", "/components/motion/", "imu.svg", "IMU", "dark-invert"],
   ["BMI270", "/components/motion/bmi270/", "imu.svg", "Accelerometer & Gyroscope", "dark-invert"],
   ["LSM6DS", "/components/motion/lsm6ds/", "imu.svg", "Accelerometer & Gyroscope", "dark-invert"],
+  ["QMI8658", "/components/motion/qmi8658/", "imu.svg", "Accelerometer & Gyroscope", "dark-invert"],
 ]} />
 
 ## Number Components
@@ -1088,11 +1095,14 @@ Used for creating infrared (IR) remote control transmitters and/or receivers.
   ["AXS15231", "/components/touchscreen/axs15231/", "axs15231.svg"],
   ["CHSC6X", "/components/touchscreen/chsc6x/", "chsc6x.png"],
   ["CST226", "/components/touchscreen/cst226/", "t4-s3.jpg"],
+  ["CST328", "/components/touchscreen/cst328/", "touch.svg", "dark-invert"],
   ["CST816", "/components/touchscreen/cst816/", "cst816.jpg"],
+  ["CST9220", "/components/touchscreen/cst9220/", "touch.svg"],
   ["EKTF2232", "/components/touchscreen/ektf2232/", "ektf2232.svg", "Inkplate 6 Plus"],
   ["FT63X6", "/components/touchscreen/ft63x6/", "wt32-sc01.png"],
   ["GT911", "/components/touchscreen/gt911/", "esp32_s3_box_3.png"],
   ["Lilygo T5 4.7", "/components/touchscreen/lilygo_t5_47/", "lilygo_t5_47_touch.jpg"],
+  ["ST7123", "/components/touchscreen/st7123/", "touch.svg", "dark-invert"],
   ["TT21100", "/components/touchscreen/tt21100/", "esp32-s3-korvo-2-lcd.png"],
   ["XPT2046", "/components/touchscreen/xpt2046/", "xpt2046.jpg"],
 ]} />
@@ -1148,8 +1158,6 @@ ESPHome to cellular networks. **Does not encompass Wi-Fi.**
   ["Tuya MCU", "/components/tuya/", "tuya.png"],
   ["Z-Wave Proxy", "/components/zwave_proxy/", "server-network.svg", "dark-invert"],
 ]} />
-
-<span id="cookbook"></span>
 
 ## Cookbook
 
