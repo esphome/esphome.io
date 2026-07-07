@@ -81,98 +81,206 @@ both the ESP32 and the RS485 transceiver, the A+/B− data lines connect to the 
 set in the `uart:` block.
 
 <figure>
-  <svg viewBox="0 0 900 460" width="100%" role="img" aria-labelledby="hoermann-wiring-title" xmlns="http://www.w3.org/2000/svg">
-    <title id="hoermann-wiring-title">Wiring diagram: Hörmann HCP bus to ESP32 via a buck converter and RS485 transceiver</title>
-    <rect x="40" y="150" width="170" height="250" rx="8" fill="#94a3b8" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.45" />
-    <rect x="420" y="80" width="190" height="95" rx="8" fill="#94a3b8" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.45" />
-    <rect x="420" y="305" width="190" height="120" rx="8" fill="#94a3b8" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.45" />
-    <rect x="720" y="185" width="150" height="245" rx="8" fill="#94a3b8" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.45" />
-    <g fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M210,378 H250 V110 H420" stroke="#f59e0b" />
-      <path d="M210,238 H232 V150 H420" stroke="#64748b" />
-      <path d="M500,175 V305" stroke="#ef4444" />
-      <path d="M500,205 H700 V222 H720" stroke="#ef4444" />
-      <path d="M560,175 V305" stroke="#64748b" />
-      <path d="M560,245 H700 V258 H720" stroke="#64748b" />
-      <path d="M210,308 H400 V378 H420" stroke="#22c55e" />
-      <path d="M210,273 H388 V405 H420" stroke="#3b82f6" />
-      <path d="M610,378 H720" stroke="#a855f7" />
-      <path d="M610,405 H720" stroke="#06b6d4" />
-    </g>
-    <path d="M300,273 L300,277 L307,280 L293,284 L307,288 L293,292 L307,296 L293,300 L300,304 L300,308" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-    <g fill="currentColor">
-      <circle cx="500" cy="205" r="3" fill="#ef4444" />
-      <circle cx="560" cy="245" r="3" fill="#64748b" />
-      <circle cx="300" cy="273" r="3" />
-      <circle cx="300" cy="308" r="3" />
-    </g>
-    <g stroke="currentColor" stroke-opacity="0.5">
-      <circle cx="210" cy="203" r="3" fill="#64748b" />
-      <circle cx="210" cy="238" r="3" fill="#64748b" />
-      <circle cx="210" cy="273" r="3" fill="#3b82f6" />
-      <circle cx="210" cy="308" r="3" fill="#22c55e" />
-      <circle cx="210" cy="343" r="3" fill="#f59e0b" />
-      <circle cx="210" cy="378" r="3" fill="#f59e0b" />
-      <circle cx="420" cy="110" r="3" fill="#f59e0b" />
-      <circle cx="420" cy="150" r="3" fill="#64748b" />
-      <circle cx="500" cy="175" r="3" fill="#ef4444" />
-      <circle cx="560" cy="175" r="3" fill="#64748b" />
-      <circle cx="500" cy="305" r="3" fill="#ef4444" />
-      <circle cx="560" cy="305" r="3" fill="#64748b" />
-      <circle cx="420" cy="378" r="3" fill="#22c55e" />
-      <circle cx="420" cy="405" r="3" fill="#3b82f6" />
-      <circle cx="610" cy="378" r="3" fill="#a855f7" />
-      <circle cx="610" cy="405" r="3" fill="#06b6d4" />
-      <circle cx="720" cy="222" r="3" fill="#ef4444" />
-      <circle cx="720" cy="258" r="3" fill="#64748b" />
-      <circle cx="720" cy="378" r="3" fill="#a855f7" />
-      <circle cx="720" cy="405" r="3" fill="#06b6d4" />
-    </g>
-    <g font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif" fill="currentColor">
-      <text x="125" y="176" text-anchor="middle" font-size="14" font-weight="600">Operator bus</text>
-      <text x="125" y="192" text-anchor="middle" font-size="11" opacity="0.7">6-pin socket</text>
-      <rect x="46" y="197" width="12" height="12" rx="2" fill="#64748b" />
-      <rect x="46" y="232" width="12" height="12" rx="2" fill="#64748b" />
-      <rect x="46" y="267" width="12" height="12" rx="2" fill="#3b82f6" />
-      <rect x="46" y="302" width="12" height="12" rx="2" fill="#22c55e" />
-      <rect x="46" y="337" width="12" height="12" rx="2" fill="#f59e0b" />
-      <rect x="46" y="372" width="12" height="12" rx="2" fill="#f59e0b" />
-      <text x="68" y="207" font-size="12.5">1&#160;&#160;GND</text>
-      <text x="68" y="242" font-size="12.5">2&#160;&#160;GND</text>
-      <text x="68" y="277" font-size="12.5">3&#160;&#160;B−</text>
-      <text x="68" y="312" font-size="12.5">4&#160;&#160;A+</text>
-      <text x="68" y="347" font-size="12.5">5&#160;&#160;+25 V</text>
-      <text x="68" y="382" font-size="12.5">6&#160;&#160;+25 V</text>
-      <text x="125" y="416" text-anchor="middle" font-size="10" opacity="0.7">1 &amp; 2 = GND · 5 &amp; 6 = +25 V</text>
-      <text x="125" y="430" text-anchor="middle" font-size="10" opacity="0.7">duplicated — connect one of each</text>
-      <text x="515" y="105" text-anchor="middle" font-size="13" font-weight="600">DC-DC buck</text>
-      <text x="515" y="122" text-anchor="middle" font-size="11" opacity="0.8">25 V → 5 V</text>
-      <text x="430" y="114" font-size="11">IN+</text>
-      <text x="430" y="154" font-size="11">IN−</text>
-      <text x="500" y="167" text-anchor="middle" font-size="11">5 V</text>
-      <text x="560" y="167" text-anchor="middle" font-size="11">GND</text>
-      <text x="515" y="352" text-anchor="middle" font-size="13" font-weight="600">RS485 transceiver</text>
-      <text x="500" y="322" text-anchor="middle" font-size="11">VCC</text>
-      <text x="560" y="322" text-anchor="middle" font-size="11">GND</text>
-      <text x="430" y="382" font-size="11">A+</text>
-      <text x="430" y="409" font-size="11">B−</text>
-      <text x="600" y="382" text-anchor="end" font-size="11">RO</text>
-      <text x="600" y="409" text-anchor="end" font-size="11">DI</text>
-      <text x="795" y="212" text-anchor="middle" font-size="14" font-weight="600">ESP32</text>
-      <text x="732" y="226" font-size="11">5 V (VIN)</text>
-      <text x="732" y="262" font-size="11">GND</text>
-      <text x="732" y="382" font-size="11">rx_pin</text>
-      <text x="732" y="409" font-size="11">tx_pin</text>
-    </g>
-    <g font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="11">
-      <text x="335" y="104" text-anchor="middle" fill="#f59e0b" font-weight="600">+25 V</text>
-      <text x="350" y="144" text-anchor="middle" fill="#64748b" font-weight="600">GND</text>
-      <text x="628" y="199" text-anchor="middle" fill="#ef4444" font-weight="600">5 V</text>
-      <text x="635" y="239" text-anchor="middle" fill="#64748b" font-weight="600">GND</text>
-      <text x="314" y="294" fill="currentColor" font-weight="600">120 Ω</text>
-      <text x="665" y="372" fill="#a855f7" font-weight="600">RO → rx_pin</text>
-      <text x="665" y="399" fill="#06b6d4" font-weight="600">DI → tx_pin</text>
-    </g>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="16 134 1074 498" font-family="Helvetica, Arial, sans-serif">
+  <defs><filter id="shadow" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="#1f273322"/></filter></defs>
+  <rect x="16" y="134" width="1074" height="498" rx="0" ry="0" fill="#f6f8fb" stroke="none" stroke-width="1"/>
+  <rect x="89" y="165" width="22" height="22" rx="5" ry="5" fill="#e7ebf1" stroke="#9aa6b6" stroke-width="1.6"/>
+  <text x="80" y="180" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="600" fill="#1f2733" text-anchor="end">1. GND</text>
+  <rect x="89" y="205" width="22" height="22" rx="5" ry="5" fill="#eef1f6" stroke="#c2cad4" stroke-width="1.4"/>
+  <text x="80" y="220" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="500" fill="#9aa4b0" text-anchor="end">2. GND</text>
+  <rect x="89" y="275" width="22" height="22" rx="5" ry="5" fill="#e7ebf1" stroke="#9aa6b6" stroke-width="1.6"/>
+  <text x="80" y="290" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="600" fill="#1f2733" text-anchor="end">3. B–</text>
+  <rect x="89" y="339" width="22" height="22" rx="5" ry="5" fill="#e7ebf1" stroke="#9aa6b6" stroke-width="1.6"/>
+  <text x="80" y="354" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="600" fill="#1f2733" text-anchor="end">4. A+</text>
+  <rect x="89" y="403" width="22" height="22" rx="5" ry="5" fill="#e7ebf1" stroke="#9aa6b6" stroke-width="1.6"/>
+  <text x="80" y="418" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="600" fill="#1f2733" text-anchor="end">5. +25V</text>
+  <rect x="89" y="443" width="22" height="22" rx="5" ry="5" fill="#eef1f6" stroke="#c2cad4" stroke-width="1.4"/>
+  <text x="80" y="458" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="500" fill="#9aa4b0" text-anchor="end">6. +25V</text>
+  <rect x="540" y="150" width="216" height="100" rx="12" ry="12" fill="#164a86" stroke="#0a2c52" stroke-width="2" filter="shadow"/>
+  <rect x="545" y="155" width="206" height="90" rx="9" ry="9" fill="none" stroke="#3767a0" stroke-width="1" opacity="0.3"/>
+  <polyline points="582,202 606,202" fill="none" stroke="#3767a0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.7"/>
+  <polyline points="640,190 668,190" fill="none" stroke="#3767a0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.7"/>
+  <polyline points="714,202 726,202" fill="none" stroke="#3767a0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.7"/>
+  <circle cx="576" cy="170" r="7" fill="#ccd4dc" stroke="#95a0ac" stroke-width="1.3"/>
+  <circle cx="576" cy="170" r="4" fill="#0e3968"/>
+  <circle cx="722" cy="232" r="7" fill="#ccd4dc" stroke="#95a0ac" stroke-width="1.3"/>
+  <circle cx="722" cy="232" r="4" fill="#0e3968"/>
+  <circle cx="582" cy="202" r="15" fill="#1b2431"/>
+  <circle cx="582" cy="202" r="15" fill="none" stroke="#47566e" stroke-width="2.2"/>
+  <circle cx="582" cy="202" r="9.0" fill="none" stroke="#47566e" stroke-width="1.4" opacity="0.8"/>
+  <line x1="574.5" y1="202" x2="589.5" y2="202" stroke="#5b6a83" stroke-width="1.3"/>
+  <line x1="582" y1="194.5" x2="582" y2="209.5" stroke="#5b6a83" stroke-width="1.3"/>
+  <path d="M573.75,196.75 A 10.5 10.5 0 0 1 585.0,192.7" fill="none" stroke="#8f9fb6" stroke-width="1.3" opacity="0.7"/>
+  <text x="600" y="186" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="700" fill="#e8eff7">+</text>
+  <rect x="606" y="168" width="32" height="4.5" rx="1.5" fill="#b8bec6"/>
+  <rect x="606" y="172" width="32" height="22" rx="2.5" fill="#15181d"/>
+  <rect x="608.5" y="193" width="3.2" height="5" rx="1" fill="#aeb4bd"/>
+  <rect x="614.5" y="193" width="3.2" height="5" rx="1" fill="#aeb4bd"/>
+  <rect x="620.5" y="193" width="3.2" height="5" rx="1" fill="#aeb4bd"/>
+  <rect x="626.5" y="193" width="3.2" height="5" rx="1" fill="#aeb4bd"/>
+  <rect x="632.5" y="193" width="3.2" height="5" rx="1" fill="#aeb4bd"/>
+  <rect x="644.0" y="160.0" width="20" height="20" rx="3" fill="#2f6fb0" stroke="#1d4f86" stroke-width="1.3"/>
+  <circle cx="654" cy="170" r="6.800000000000001" fill="#c9a24b" stroke="#9a7a2f" stroke-width="1.2"/>
+  <line x1="648.0" y1="170" x2="660.0" y2="170" stroke="#6e5a24" stroke-width="1.6"/>
+  <rect x="672" y="182" width="40" height="40" rx="8" fill="#1a1e24" stroke="#33383f" stroke-width="1.4"/>
+  <rect x="677" y="187" width="30" height="30" rx="6" fill="none" stroke="#2b2f36" stroke-width="1.4"/>
+  <circle cx="692.0" cy="202.0" r="8.8" fill="none" stroke="#30353c" stroke-width="1.4"/>
+  <circle cx="726" cy="202" r="15" fill="#1b2431"/>
+  <circle cx="726" cy="202" r="15" fill="none" stroke="#47566e" stroke-width="2.2"/>
+  <circle cx="726" cy="202" r="9.0" fill="none" stroke="#47566e" stroke-width="1.4" opacity="0.8"/>
+  <line x1="718.5" y1="202" x2="733.5" y2="202" stroke="#5b6a83" stroke-width="1.3"/>
+  <line x1="726" y1="194.5" x2="726" y2="209.5" stroke="#5b6a83" stroke-width="1.3"/>
+  <path d="M717.75,196.75 A 10.5 10.5 0 0 1 729.0,192.7" fill="none" stroke="#8f9fb6" stroke-width="1.3" opacity="0.7"/>
+  <text x="703" y="186" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="700" fill="#e8eff7">+</text>
+  <text x="553" y="182" font-family="Helvetica, Arial, sans-serif" font-size="11.5" font-weight="700" fill="#e8eff7" text-anchor="start">IN+</text>
+  <text x="553" y="226" font-family="Helvetica, Arial, sans-serif" font-size="11.5" font-weight="700" fill="#e8eff7" text-anchor="start">IN–</text>
+  <text x="743" y="182" font-family="Helvetica, Arial, sans-serif" font-size="11.5" font-weight="700" fill="#e8eff7" text-anchor="end">OUT+</text>
+  <text x="743" y="226" font-family="Helvetica, Arial, sans-serif" font-size="11.5" font-weight="700" fill="#e8eff7" text-anchor="end">OUT–</text>
+  <text x="648.0" y="284" font-family="Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#5b6675" text-anchor="middle">LM2596</text>
+  <rect x="250" y="240" width="220" height="140" rx="12" ry="12" fill="#164a86" stroke="#0a2c52" stroke-width="2" filter="shadow"/>
+  <rect x="255" y="245" width="210" height="130" rx="9" ry="9" fill="none" stroke="#3767a0" stroke-width="1" opacity="0.3"/>
+  <polyline points="268,256 300,256" fill="none" stroke="#3767a0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.7"/>
+  <polyline points="268,286 296,286" fill="none" stroke="#3767a0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.7"/>
+  <polyline points="268,350 300,350" fill="none" stroke="#3767a0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.7"/>
+  <polyline points="408,300 452,300" fill="none" stroke="#3767a0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.7"/>
+  <polyline points="408,334 452,334" fill="none" stroke="#3767a0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.7"/>
+  <rect x="300" y="252" width="22" height="11" rx="2" fill="#242a32" stroke="#12151a" stroke-width="1"/>
+  <rect x="300" y="300" width="22" height="11" rx="2" fill="#242a32" stroke="#12151a" stroke-width="1"/>
+  <rect x="300" y="316" width="24" height="13" rx="2.5" fill="#c07f2a" stroke="#8a5a1c" stroke-width="1.2"/>
+  <line x1="303" y1="322.5" x2="321" y2="322.5" stroke="#8a5a1c" stroke-width="1" opacity="0.6"/>
+  <rect x="300" y="333" width="24" height="13" rx="2.5" fill="#c07f2a" stroke="#8a5a1c" stroke-width="1.2"/>
+  <line x1="303" y1="339.5" x2="321" y2="339.5" stroke="#8a5a1c" stroke-width="1" opacity="0.6"/>
+  <rect x="336" y="295.0" width="5" height="4" rx="1" fill="#aeb4bd"/>
+  <rect x="365" y="295.0" width="5" height="4" rx="1" fill="#aeb4bd"/>
+  <rect x="336" y="305.0" width="5" height="4" rx="1" fill="#aeb4bd"/>
+  <rect x="365" y="305.0" width="5" height="4" rx="1" fill="#aeb4bd"/>
+  <rect x="336" y="315.0" width="5" height="4" rx="1" fill="#aeb4bd"/>
+  <rect x="365" y="315.0" width="5" height="4" rx="1" fill="#aeb4bd"/>
+  <rect x="340" y="292" width="26" height="30" rx="2.5" fill="#15181d"/>
+  <circle cx="345" cy="297" r="1.7" fill="#7d838c"/>
+  <rect x="378" y="287.5" width="5" height="4" rx="1" fill="#aeb4bd"/>
+  <rect x="411" y="287.5" width="5" height="4" rx="1" fill="#aeb4bd"/>
+  <rect x="378" y="298.5" width="5" height="4" rx="1" fill="#aeb4bd"/>
+  <rect x="411" y="298.5" width="5" height="4" rx="1" fill="#aeb4bd"/>
+  <rect x="378" y="309.5" width="5" height="4" rx="1" fill="#aeb4bd"/>
+  <rect x="411" y="309.5" width="5" height="4" rx="1" fill="#aeb4bd"/>
+  <rect x="378" y="320.5" width="5" height="4" rx="1" fill="#aeb4bd"/>
+  <rect x="411" y="320.5" width="5" height="4" rx="1" fill="#aeb4bd"/>
+  <rect x="382" y="284" width="30" height="44" rx="2.5" fill="#15181d"/>
+  <circle cx="387" cy="289" r="1.7" fill="#7d838c"/>
+  <rect x="332" y="262" width="11" height="8" rx="2" fill="#242a32" stroke="#12151a" stroke-width="1"/>
+  <rect x="356" y="352" width="11" height="8" rx="2" fill="#242a32" stroke="#12151a" stroke-width="1"/>
+  <rect x="420" y="300" width="11" height="8" rx="2" fill="#242a32" stroke="#12151a" stroke-width="1"/>
+  <rect x="424" y="330" width="11" height="8" rx="2" fill="#242a32" stroke="#12151a" stroke-width="1"/>
+  <rect x="400" y="352" width="11" height="8" rx="2" fill="#242a32" stroke="#12151a" stroke-width="1"/>
+  <circle cx="250" cy="256" r="7" fill="#ccd4dc" stroke="#95a0ac" stroke-width="1.3"/>
+  <circle cx="250" cy="256" r="2.94" fill="#5f6874"/>
+  <circle cx="250" cy="286" r="7" fill="#ccd4dc" stroke="#95a0ac" stroke-width="1.3"/>
+  <circle cx="250" cy="286" r="2.94" fill="#5f6874"/>
+  <circle cx="250" cy="350" r="7" fill="#ccd4dc" stroke="#95a0ac" stroke-width="1.3"/>
+  <circle cx="250" cy="350" r="2.94" fill="#5f6874"/>
+  <circle cx="470" cy="262" r="7" fill="#ccd4dc" stroke="#95a0ac" stroke-width="1.3"/>
+  <circle cx="470" cy="262" r="2.94" fill="#5f6874"/>
+  <circle cx="470" cy="300" r="7" fill="#ccd4dc" stroke="#95a0ac" stroke-width="1.3"/>
+  <circle cx="470" cy="300" r="2.94" fill="#5f6874"/>
+  <circle cx="470" cy="334" r="7" fill="#ccd4dc" stroke="#95a0ac" stroke-width="1.3"/>
+  <circle cx="470" cy="334" r="2.94" fill="#5f6874"/>
+  <circle cx="470" cy="364" r="7" fill="#ccd4dc" stroke="#95a0ac" stroke-width="1.3"/>
+  <circle cx="470" cy="364" r="2.94" fill="#5f6874"/>
+  <g stroke="#e8eff7" stroke-width="1.7" stroke-linecap="round"><line x1="268" y1="250" x2="268" y2="255"/><line x1="262" y1="255" x2="274" y2="255"/><line x1="264" y1="258" x2="272" y2="258"/><line x1="266" y1="261" x2="270" y2="261"/></g>
+  <text x="279" y="259" font-family="Helvetica, Arial, sans-serif" font-size="10.5" font-weight="700" fill="#e8eff7" text-anchor="start">GND</text>
+  <text x="264" y="290" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="700" fill="#e8eff7" text-anchor="start">B–</text>
+  <text x="264" y="354" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="700" fill="#e8eff7" text-anchor="start">A+</text>
+  <text x="456" y="266" font-family="Helvetica, Arial, sans-serif" font-size="10.5" font-weight="700" fill="#e8eff7" text-anchor="end">GND</text>
+  <text x="456" y="304" font-family="Helvetica, Arial, sans-serif" font-size="10.5" font-weight="700" fill="#e8eff7" text-anchor="end">RXD</text>
+  <text x="456" y="338" font-family="Helvetica, Arial, sans-serif" font-size="10.5" font-weight="700" fill="#e8eff7" text-anchor="end">TXD</text>
+  <text x="456" y="368" font-family="Helvetica, Arial, sans-serif" font-size="10.5" font-weight="700" fill="#e8eff7" text-anchor="end">VCC</text>
+  <text x="360.0" y="400" font-family="Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#5b6675" text-anchor="middle">RS485 converter</text>
+  <rect x="850" y="250" width="192" height="340" rx="14" ry="14" fill="#2b2f38" stroke="none" stroke-width="1" filter="shadow"/>
+  <rect x="930.0" y="240" width="32" height="16" rx="4" ry="4" fill="#c9ccd2" stroke="none" stroke-width="1"/>
+  <rect x="890" y="396" width="112" height="150" rx="8" ry="8" fill="#3b4048" stroke="#565c66" stroke-width="1.5"/>
+  <text x="946.0" y="478" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="600" fill="#c3c8d0" text-anchor="middle">ESP-WROOM-32</text>
+  <text x="946.0" y="610" font-family="Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#5b6675" text-anchor="middle">ESP32 DevKit</text>
+  <rect x="847" y="275" width="8" height="6" rx="1.5" fill="#4a4f58"/>
+  <rect x="1037" y="275" width="8" height="6" rx="1.5" fill="#4a4f58"/>
+  <rect x="847" y="297" width="8" height="6" rx="1.5" fill="#4a4f58"/>
+  <rect x="1037" y="297" width="8" height="6" rx="1.5" fill="#4a4f58"/>
+  <rect x="847" y="319" width="8" height="6" rx="1.5" fill="#4a4f58"/>
+  <rect x="1037" y="319" width="8" height="6" rx="1.5" fill="#4a4f58"/>
+  <rect x="847" y="341" width="8" height="6" rx="1.5" fill="#4a4f58"/>
+  <rect x="1037" y="341" width="8" height="6" rx="1.5" fill="#4a4f58"/>
+  <rect x="847" y="363" width="8" height="6" rx="1.5" fill="#4a4f58"/>
+  <rect x="1037" y="363" width="8" height="6" rx="1.5" fill="#4a4f58"/>
+  <rect x="847" y="385" width="8" height="6" rx="1.5" fill="#4a4f58"/>
+  <rect x="1037" y="385" width="8" height="6" rx="1.5" fill="#4a4f58"/>
+  <rect x="847" y="407" width="8" height="6" rx="1.5" fill="#4a4f58"/>
+  <rect x="1037" y="407" width="8" height="6" rx="1.5" fill="#4a4f58"/>
+  <rect x="847" y="429" width="8" height="6" rx="1.5" fill="#4a4f58"/>
+  <rect x="1037" y="429" width="8" height="6" rx="1.5" fill="#4a4f58"/>
+  <rect x="847" y="451" width="8" height="6" rx="1.5" fill="#4a4f58"/>
+  <rect x="1037" y="451" width="8" height="6" rx="1.5" fill="#4a4f58"/>
+  <rect x="847" y="473" width="8" height="6" rx="1.5" fill="#4a4f58"/>
+  <rect x="1037" y="473" width="8" height="6" rx="1.5" fill="#4a4f58"/>
+  <rect x="847" y="495" width="8" height="6" rx="1.5" fill="#4a4f58"/>
+  <rect x="1037" y="495" width="8" height="6" rx="1.5" fill="#4a4f58"/>
+  <rect x="847" y="517" width="8" height="6" rx="1.5" fill="#4a4f58"/>
+  <rect x="1037" y="517" width="8" height="6" rx="1.5" fill="#4a4f58"/>
+  <rect x="847" y="539" width="8" height="6" rx="1.5" fill="#4a4f58"/>
+  <rect x="1037" y="539" width="8" height="6" rx="1.5" fill="#4a4f58"/>
+  <rect x="847" y="561" width="8" height="6" rx="1.5" fill="#4a4f58"/>
+  <rect x="1037" y="561" width="8" height="6" rx="1.5" fill="#4a4f58"/>
+  <circle cx="850" cy="286" r="5" fill="#ffffff" stroke="#e11400" stroke-width="2.4"/>
+  <circle cx="850" cy="520" r="5" fill="#ffffff" stroke="#2f9e46" stroke-width="2.4"/>
+  <circle cx="850" cy="546" r="5" fill="#ffffff" stroke="#2f7fd6" stroke-width="2.4"/>
+  <circle cx="1042" cy="286" r="5" fill="#ffffff" stroke="#e11400" stroke-width="2.4"/>
+  <circle cx="1042" cy="310" r="5" fill="#ffffff" stroke="#20242b" stroke-width="2.4"/>
+  <text x="863" y="290" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="700" fill="#e9edf2" text-anchor="start">3V3</text>
+  <text x="863" y="524" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="700" fill="#e9edf2" text-anchor="start">RXD0</text>
+  <text x="863" y="550" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="700" fill="#e9edf2" text-anchor="start">TXD0</text>
+  <text x="1029" y="290" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="700" fill="#e9edf2" text-anchor="end">VIN</text>
+  <text x="1029" y="314" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="700" fill="#e9edf2" text-anchor="end">GND</text>
+  <polyline points="111,414 228,414 228,178 540,178" fill="none" stroke="#8a34c9" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round"/>
+  <polyline points="111,176 150,176 150,222 540,222" fill="none" stroke="#20242b" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round"/>
+  <polyline points="250,222 250,256" fill="none" stroke="#20242b" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="250" cy="222" r="4.4" fill="#20242b"/>
+  <polyline points="111,286 250,286" fill="none" stroke="#f2b100" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round"/>
+  <polyline points="111,350 250,350" fill="none" stroke="#8b97a6" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M182,286 L182,295" stroke="#f2b100" stroke-width="3"/>
+  <rect x="175" y="295" width="14" height="46" rx="3" fill="#d9c08a" stroke="#8a6d2f" stroke-width="1.5"/>
+  <rect x="175" y="306" width="14" height="3.2" fill="#7a3b1e"/>
+  <rect x="175" y="313" width="14" height="3.2" fill="#111"/>
+  <rect x="175" y="320" width="14" height="3.2" fill="#a51e1e"/>
+  <path d="M182,341 L182,350" stroke="#8b97a6" stroke-width="3"/>
+  <circle cx="182" cy="286" r="4.4" fill="#f2b100"/>
+  <circle cx="182" cy="350" r="4.4" fill="#8b97a6"/>
+  <text x="169" y="322.0" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="700" fill="#1f2733" text-anchor="end">120 Ω</text>
+  <polyline points="756,222 1060,222 1060,310 1042,310" fill="none" stroke="#20242b" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round"/>
+  <polyline points="756,222 756,262 470,262" fill="none" stroke="#20242b" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="756" cy="222" r="4.4" fill="#20242b"/>
+  <polyline points="756,178 1070,178 1070,286 1042,286" fill="none" stroke="#e11400" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round"/>
+  <polyline points="850,286 824,286 824,364 470,364" fill="none" stroke="#e11400" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="818" y="352" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="700" fill="#e11400" text-anchor="end">3.3 V</text>
+  <polyline points="470,300 700,300 700,520 850,520" fill="none" stroke="#2f9e46" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round"/>
+  <polyline points="470,334 680,334 680,546 850,546" fill="none" stroke="#2f7fd6" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="250" cy="256" r="7" fill="#ccd4dc" stroke="#95a0ac" stroke-width="1.3"/>
+  <circle cx="250" cy="256" r="2.94" fill="#5f6874"/>
+  <circle cx="250" cy="286" r="7" fill="#ccd4dc" stroke="#95a0ac" stroke-width="1.3"/>
+  <circle cx="250" cy="286" r="2.94" fill="#5f6874"/>
+  <circle cx="250" cy="350" r="7" fill="#ccd4dc" stroke="#95a0ac" stroke-width="1.3"/>
+  <circle cx="250" cy="350" r="2.94" fill="#5f6874"/>
+  <circle cx="470" cy="262" r="7" fill="#ccd4dc" stroke="#95a0ac" stroke-width="1.3"/>
+  <circle cx="470" cy="262" r="2.94" fill="#5f6874"/>
+  <circle cx="470" cy="300" r="7" fill="#ccd4dc" stroke="#95a0ac" stroke-width="1.3"/>
+  <circle cx="470" cy="300" r="2.94" fill="#5f6874"/>
+  <circle cx="470" cy="334" r="7" fill="#ccd4dc" stroke="#95a0ac" stroke-width="1.3"/>
+  <circle cx="470" cy="334" r="2.94" fill="#5f6874"/>
+  <circle cx="470" cy="364" r="7" fill="#ccd4dc" stroke="#95a0ac" stroke-width="1.3"/>
+  <circle cx="470" cy="364" r="2.94" fill="#5f6874"/>
+  <circle cx="850" cy="286" r="5" fill="#ffffff" stroke="#e11400" stroke-width="2.4"/>
+  <circle cx="850" cy="520" r="5" fill="#ffffff" stroke="#2f9e46" stroke-width="2.4"/>
+  <circle cx="850" cy="546" r="5" fill="#ffffff" stroke="#2f7fd6" stroke-width="2.4"/>
+  <circle cx="1042" cy="286" r="5" fill="#ffffff" stroke="#e11400" stroke-width="2.4"/>
+  <circle cx="1042" cy="310" r="5" fill="#ffffff" stroke="#20242b" stroke-width="2.4"/>
   </svg>
   <figcaption>
     Example adapter: the operator's +25 V powers a buck converter that supplies 5 V to the ESP32 and an
