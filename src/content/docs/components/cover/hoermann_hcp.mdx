@@ -1,5 +1,5 @@
 ---
-description: "Setting up Hörmann garage door operators in ESPHome."
+description: "Setting up Hörmann garage door motors in ESPHome."
 title: "Hörmann Cover"
 ---
 
@@ -7,23 +7,23 @@ import Figure from '@components/Figure.astro';
 import APIRef from '@components/APIRef.astro';
 import hoermannHcpWiringImg from './images/hoermann_hcp_wiring.svg';
 
-The `hoermann_hcp` component allows you to control Hörmann garage door operators through the HCP bus built
-into the operator. It emulates the Hörmann UAP1 module, so the operator's bus controller communicates
+The `hoermann_hcp` component allows you to control Hörmann garage door motors through the HCP bus built
+into the motor. It emulates the Hörmann UAP1 module, so the motor's bus controller communicates
 with ESPHome just like it would with Hörmann's own accessory.
 
-The following Serie 4 operators communicate over the HCP bus (Modbus RTU) and should be supported:
+The following Serie 4 motors communicate over the HCP bus (Modbus RTU) and should be supported:
 
 * SupraMatic E/P Serie 4
 * ProMatic Serie 4
 
 > [!NOTE]
-> Only Serie 4 operators are supported. Older operators use a different connector pinout and a
+> Only Serie 4 motors are supported. Older motors use a different connector pinout and a
 > completely different protocol.
 >
 > This component implements the same protocol as the [HCPBridge](https://github.com/hkiam/HCPBridge)
 > project.
 
-Communication with the operator happens over [Modbus](/components/modbus/) with the `role` set to
+Communication with the motor happens over [Modbus](/components/modbus/) with the `role` set to
 `server`, which in turn requires a [UART bus](/components/uart/). The UART **must** be configured with
 a baud rate of `57600`, even parity and one stop bit.
 
@@ -51,17 +51,18 @@ cover:
 
 ## Hardware
 
-The HCP bus is a two-wire RS485 connection that also carries the operator's ~25 V supply, so a single
+The HCP bus is a two-wire RS485 connection that also carries the motor's ~25 V supply, so a single
 cable provides both communication and power — no separate power supply is required. To connect an
-ESP32 (or another ESPHome-supported chip) you need three things:
+ESP32 (or another ESPHome-supported chip) you need four things:
 
+- an **RJ12 plug and cable** to connect to the motor's 6-pin bus socket;
 - an **RS485 transceiver** wired to the [UART bus](/components/uart/);
 - a **step-down (buck) converter** that derives 5 V for the ESP32 and the transceiver from the bus
   voltage (e.g. LM2596S); and
 - a **120 Ω termination resistor** across the RS485 data lines, as required by the RS485/Modbus
   standard.
 
-The operator exposes the bus on a 6-pin socket with the following pinout:
+The motor exposes the bus on a 6-pin socket with the following pinout:
 
 | Pin | Signal          | Example wire colour |
 | --- | --------------- | ------------------- |
@@ -74,7 +75,7 @@ The operator exposes the bus on a 6-pin socket with the following pinout:
 
 > [!NOTE]
 > The wire colours depend on the cable you use — the pin positions are what matter. The GND (pins 1
-> and 2) and +25 V (pins 5 and 6) contacts are each duplicated on the operator side, so you only need
+> and 2) and +25 V (pins 5 and 6) contacts are each duplicated on the motor side, so you only need
 > to connect **one** pin from each pair (the diagram uses pins 1 and 5).
 
 Wire the adapter as shown below: a +25 V pin feeds the buck converter's input, its 5 V output powers
@@ -84,8 +85,8 @@ set in the `uart:` block.
 
 <Figure
   src={hoermannHcpWiringImg}
-  alt="Wiring diagram of a Hörmann operator connected to an ESP32 through a buck converter and an RS485 transceiver"
-  caption="Example adapter: the operator's +25 V powers a buck converter that supplies 5 V to the ESP32 and an RS485 transceiver; A+/B− carry the HCP (Modbus RTU) data, terminated with 120 Ω."
+  alt="Wiring diagram of a Hörmann motor connected to an ESP32 through a buck converter and an RS485 transceiver"
+  caption="Example adapter: the motor's +25 V powers a buck converter that supplies 5 V to the ESP32 and an RS485 transceiver; A+/B− carry the HCP (Modbus RTU) data, terminated with 120 Ω."
   layout="constrained"
 />
 
@@ -96,17 +97,17 @@ set in the `uart:` block.
 > two if data doesn't flow.
 
 > [!IMPORTANT]
-> The adapter gets **no power until a bus scan is run** on the operator. The +25 V on the bus stays
-> switched off until then, and the operator keeps it on only if the emulated UAP1 answers during the
+> The adapter gets **no power until a bus scan is run** on the motor. The +25 V on the bus stays
+> switched off until then, and the motor keeps it on only if the emulated UAP1 answers during the
 > scan — otherwise it cuts the power again.
 >
-> After wiring the adapter to the bus, trigger a bus scan (usually done by flicking the bottommost switch in the motor on and off again) from the operator's menu to power it up and
-> let the operator detect it. Repeat the bus scan procedure (on/off) if something goes wrong, or before
+> After wiring the adapter to the bus, trigger a bus scan (usually done by flicking the bottommost switch in the motor on and off again) from the motor's menu to power it up and
+> let the motor detect it. Repeat the bus scan procedure (on/off) if something goes wrong, or before
 > you disconnect the adapter.
 
 ## Component/Hub
 
-The `hoermann_hcp` hub handles the communication with the operator's bus controller and exposes its state
+The `hoermann_hcp` hub handles the communication with the motor's bus controller and exposes its state
 to the `cover` platform below.
 
 ### Configuration variables
@@ -116,7 +117,7 @@ to the `cover` platform below.
 - **modbus_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the
   [Modbus](/components/modbus/) hub.
 - **address** (*Optional*, int): The Modbus server address the component answers on. Defaults to `2`,
-  which is the address the operator's bus controller expects the UAP1 module on. You should not need
+  which is the address the motor's bus controller expects the UAP1 module on. You should not need
   to change this.
 - **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval at which
   the connection to the bus controller is checked. Defaults to `500ms`.
@@ -125,7 +126,7 @@ to the `cover` platform below.
 
 The `hoermann_hcp` cover platform exposes the garage door as a [cover](/components/cover/). It supports
 opening, closing, stopping and moving to a position, and reports the position and operation as
-provided by the operator.
+provided by the motor.
 
 ```yaml
 cover:
