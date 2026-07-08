@@ -15,8 +15,9 @@ for the ESPHome device to show up under the discovered section (can take up to 5
 the device manually by choosing "ESPHome" from the integration overview and entering
 "\<NODE_NAME\>.local" or the IP address of the unit in the "Host" field.
 
-The ESPHome native API is based on a custom TCP protocol using protocol buffers. You can find
-the protocol data structure definitions here: [api.proto](https://github.com/esphome/esphome/blob/dev/esphome/components/api/api.proto)
+The ESPHome native API uses a custom protocol based on Protocol Buffers.
+It runs over TCP when using IP transport, or over L2CAP when using Bluetooth Low Energy (BLE) transport.
+You can findthe protocol data structure definitions here: [api.proto](https://github.com/esphome/esphome/blob/dev/esphome/components/api/api.proto)
 A Python library that implements this protocol is [aioesphomeapi](https://github.com/esphome/aioesphomeapi).
 
 > [!NOTE]
@@ -45,7 +46,8 @@ api:
 
 ## Configuration variables
 
-- **port** (*Optional*, int): The port to run the API server on. Defaults to `6053`.
+- **transport** (Optional, `ip` or `ble`): The transport to use. Specify `ip` (default) to communicate over Wi-Fi or OpenThread, or `ble` to communicate over Bluetooth Low Energy (BLE). BLE transport is supported only on the ESP32, nRF52, and RP2040 (rp2) platforms.
+- **port** (*Optional*, int): The port to run the API server on. Defaults to `6053`. Only valid if transport is set to `ip`.
 - **listen_backlog** (*Optional*, int): The maximum number of pending connections in the listen queue. Must be between 1 and 10.
   Defaults to `1` for ESP8266/RP2040, `4` for ESP32 and other platforms. Lower values use less memory but may reject connections during bursts.
 - **max_connections** (*Optional*, int): The maximum number of simultaneous API connections allowed. Must be between 1 and 20.
