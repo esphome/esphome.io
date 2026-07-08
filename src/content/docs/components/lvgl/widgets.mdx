@@ -200,6 +200,13 @@ which allows use of [strftime](http://www.cplusplus.com/reference/ctime/strftime
 When formatting a single floating point value, it is possible to provide a substitute string to be used when the
 value is `nan` or `inf`. The substitute string is specified with the `if_nan` option.
 
+The text may also be looked up from a [Mapping](/components/mapping/) component by specifying a `mapping` ID and a `value`
+(the lookup key). The mapping must have a `to` type of `string`. The `value` can be either a literal or a lambda, and
+should match the `from` type of the mapping.
+
+- **mapping** (**Required**, [ID](/guides/configuration-types#id)): The ID of a `mapping` component whose `to` type is `string`.
+- **value** (**Required**, templatable): The key to look up in the mapping.
+
 **Examples:**
 
 ```yaml
@@ -240,6 +247,16 @@ on_...:
         format: "%.1f"
         args: [id(sensor_id).state]
         if_nan: "N/A"
+  - lvgl.label.update:
+      id: label_id
+      text:
+        mapping: string_map    # a mapping component with `to: string`
+        value: 2               # literal key
+  - lvgl.label.update:
+      id: label_id
+      text:
+        mapping: string_map
+        value: !lambda return id(my_sensor).state;
 ```
 
 For styling text, see the properties of the [`label`](#label) widget.
@@ -963,7 +980,11 @@ Images are the basic widgets used to display images.
 
 **Configuration variables:**
 
-- **src** (**Required**, [image](/components/image/)): The ID of an existing image configuration.
+- **src** (**Required**): The image to display. May be specified in one of two ways:
+  - An [Image](/components/image/) ID referring to an existing image configuration.
+  - A [Mapping](/components/mapping/) lookup, by providing a dict with the following keys. The referenced mapping must have a `to` type of `image`.
+    - **mapping** (**Required**, [ID](/guides/configuration-types#id)): The ID of a `mapping` component whose `to` type is `image`.
+    - **value** (**Required**, templatable): The key to look up in the mapping.
 - **rotation** (*Optional*, 0-360): Rotation of the image. Defaults to `0.0`. (The deprecated name `angle` is also accepted.)
 - **antialias** (*Optional*): The quality of the rotation or scale transformation. When anti-aliasing is enabled, the transformations are higher quality but slower. Defaults to `false`.
 - **offset_x** (*Optional*): Add a horizontal offset to the image position.
@@ -1002,6 +1023,12 @@ on_...:
   - lvgl.image.update:
       id: img_id
       src: cat_image_bowtie
+  # Select the image via a mapping component lookup
+  - lvgl.image.update:
+      id: img_id
+      src:
+        mapping: image_map     # a mapping component with `to: image`
+        value: 0               # literal key; may also be a lambda
 ```
 
 > [!NOTE]
