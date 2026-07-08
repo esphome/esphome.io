@@ -583,6 +583,51 @@ esp32:
   espsecure.py extract_public_key --keyfile secure_boot_signing_key.pem secure_boot_verification_key.pem
   ```
 
+- **nvs_encryption** (*Optional*, mapping): Encrypts the device's non-volatile storage (NVS), where ESPHome
+  may save sensitive data such as Wi-Fi credentials and the API encryption key. This keeps that data
+  unreadable to anyone who reads the device's flash memory. The encryption key is created on the device itself
+  the first time it boots, so no key material is stored in your configuration. For background, see the ESP-IDF
+  [NVS encryption documentation](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/storage/nvs_encryption.html).
+  Contains the following option:
+
+  - **key_id** (*Required*, integer): Which hardware key slot (`0`–`5`) the device uses to store its encryption
+    key. Pick a slot that isn't used by anything else.
+
+  This feature is available only on the following variants, which have the required hardware support:
+
+  - ESP32-S2
+  - ESP32-S3
+  - ESP32-C3
+  - ESP32-C5
+  - ESP32-C6
+  - ESP32-H2
+  - ESP32-P4
+
+  It is not available on the original ESP32 or the ESP32-C2.
+
+  > [!WARNING]
+  > - The encryption key is written to the chip **permanently** (yes, **we mean permanently**) the first time the device
+  >   boots and **cannot be changed or removed afterwards**--even if you erase and/or re-flash your ESP--so choose the
+  >   `key_id` carefully. In most cases, this shouldn't be a problem -- just pick a key slot and stick to it.
+  > - Turning encryption on (or off later) clears any previously saved preferences once, because the older data can no
+  >   longer be read.
+
+- **enable_ota_downgrade_protection** (*Optional*, boolean): Reject OTA updates whose firmware version is older
+  than the version the device is currently running. The version is taken from the `version` under the
+  [`project`](/components/esphome#esphome-creators_project) key, which is embedded into the firmware image and
+  compared on the device before the new image is allowed to boot. Defaults to `false`.
+
+  This option requires:
+
+  - A `project` with a `version` that is dotted-numeric (such as `1.2.3` or `2024.1.0`). The version is compared
+    one number at a time, so `1.10.0` is newer than `1.9.0`. Flashing the same version is always allowed.
+  - `signed_ota_verification` to be enabled. The version is read from inside the signed image, so signature
+    verification is what prevents a tampered update from claiming a higher version than it actually contains.
+
+  > [!NOTE]
+  > This protects the over-the-air update path on the device. A direct serial flash is not version-checked, so you
+  > can always recover a device by flashing over serial.
+
 **LWIP Optimization Options (ESP-IDF only):**
 
 The following options are available under the `advanced` section when using the ESP-IDF framework to optimize
