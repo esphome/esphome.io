@@ -10,10 +10,12 @@ ship without their credentials configured — for example, a boxed product whose
 encryption key is set by Home Assistant the first time it connects. This helps
 meet the secure-communication requirements of standards such as EN18031.
 
-The device opens the provisioning window when it boots. Once it has been
-provisioned — the API encryption key has been set — the window closes on its own.
-If `timeout` elapses while the device is still unprovisioned, the window closes
-anyway and the device stops accepting provisioning:
+The device opens the provisioning window when it boots and closes it once the
+device is provisioned. A device is considered provisioned once it has connected to
+a network (over [WiFi](/components/wifi/), [Ethernet](/components/ethernet/), or
+another interface) and, when the [API](/components/api/) is set up with encryption,
+its key has been set. If `timeout` elapses while the device is still unprovisioned,
+the window closes anyway and the device stops accepting provisioning:
 
 - New [API](/components/api/) clients are turned away with a "provisioning closed"
   reason.
@@ -35,8 +37,10 @@ provisioning:
       - logger.log: "Provisioning window closed; reset the device to reopen it"
 ```
 
-At least one provisioning-capable component must be present; the API with
-`encryption:` and no `key:` is currently the only one.
+At least one provisioning-capable component must be present. A configured network
+interface such as [WiFi](/components/wifi/) or [Ethernet](/components/ethernet/)
+satisfies this, as does the [API](/components/api/) with `encryption:` and no
+`key:`.
 
 ## Configuration variables
 
