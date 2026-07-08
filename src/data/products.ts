@@ -18,7 +18,7 @@ export const products: Record<string, Product> = {
     distributors: [
       {
         name: "Ameridroid",
-        url: "https://apolloautomation.com/products/esphome-starter-kit",
+        url: "https://ameridroid.com/products/esphome-starter-kit",
         shipFrom: "US & Canada",
         shipTo: "North America",
         logo: "/images/distributors/ameridroid-logo.webp",
@@ -46,7 +46,7 @@ export const products: Record<string, Product> = {
       },
       {
         name: "The Pi Hut",
-        url: "https://apolloautomation.com/products/esphome-starter-kit",
+        url: "https://thepihut.com/products/esphome-starter-kit",
         shipFrom: "UK",
         shipTo: "UK",
         logo: "/images/distributors/the-pi-hut-logo.webp",
