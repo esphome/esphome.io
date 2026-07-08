@@ -135,14 +135,18 @@ Only on `ESP32`:
 > [!NOTE]
 > ZHA sets the minimum reporting interval to 30 seconds for some sensor devices. If a faster response is needed set `report` to `force`.
 
-- **endpoint** (*Optional*, int): Endpoint number in the range from 1 to 239. This can be used to define which entity goes on which endpoint to
-  get a more stable configuration and to manually combine multiple entities that logically belong together. Only entities of different categories
-  or device classes can be combined. If more than one entity on the same endpoint has a Zigbee device type set, one needs to set `use_device_type = true`.
-- **use_device_type** (*Optional*, boolean): Use the Zigbee Home Automation device type of this entity for the endpoint. Some entities have a
+- **endpoint** (*Optional*, int): Endpoint number in the range from 1 to 239. This defines which entity goes on which
+  endpoint, giving a more stable configuration and letting you manually combine entities that logically belong together.
+  Only entities that map to different Zigbee clusters can be combined (for example a `binary_sensor` and a `sensor`);
+  two entities of the same type, such as two sensors, cannot share an endpoint. If more than one entity on an endpoint
+  has a Zigbee device type, set `use_device_type: true` on one of them.
+- **use_device_type** (*Optional*, boolean): Use the Zigbee Home Automation device type of this entity for the endpoint.
+  Some entities have a
   [device type](https://community.nxp.com/pwmxy87654/attachments/pwmxy87654/wireless-connectivity/698/1/075367r03ZB_AFG-Home_Automation_Profile_for_Public_Download.pdf#G12.1028193)
-  that can be used by 3rd party devices to discover the device capabilities. Typically, this should be set for the main entity of an endpoint.
-  For exposing entities to Home Assitant device types are not needed. Can be set only for one entity on each endpoint.
-
+  that can be used by 3rd party devices to discover the device capabilities. Typically this should be set on the main
+  entity of an endpoint. If the selected entity has no device type of its own, the endpoint uses the generic
+  `CUSTOM_ATTR` type, which is how a default such as `SIMPLE_SENSOR` can be overridden. For exposing entities to Home
+  Assistant, device types are not needed. It can be set on only one entity per endpoint.
 
 ## Supported Components
 
