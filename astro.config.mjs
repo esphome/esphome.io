@@ -141,6 +141,8 @@ export default defineConfig({
     rehypePlugins: [rehypeHeadingSlugs, rehypeKatex, rehypeExternalLinksBlog],
   },
   redirects: {
+    "/blog/2026/07/02/unbox-your-creativity-with-esphome-2026-6-0":
+      "/blog/2026/07/02/unbox-your-creativity-with-the-esphome-device-builder/",
     "/blog/2026/07/02/unbox-your-creativity-with-esphome-2026-6-0/":
       "/blog/2026/07/02/unbox-your-creativity-with-the-esphome-device-builder/",
   },
