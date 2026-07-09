@@ -46,7 +46,7 @@ dashboard is retired in favor of the external Device Builder, and Python 3.11 su
 - If you have an ESP32 config without an explicit `toolchain:` setting, it now compiles with native ESP-IDF; add `toolchain: platformio` to keep the previous behavior
 - If you install ESPHome with `pip` on Python 3.11, upgrade to Python 3.12 or newer
 - If you install ESPHome with `pip` and use the built-in `esphome dashboard` command, install and run `esphome-device-builder` instead
-- If you have Zigbee devices, you must re-join, re-interview, and re-configure each device after upgrading
+- If you have ESP32 Zigbee devices, you must re-join, re-interview, and re-configure each device after upgrading
 - If you set `enabled` or `coordinator` under Zigbee `reporting:`, remove those keys
 - If you use `web_server: version: 1`, plan to migrate to v2 or v3 before 2027.1.0
 - If you address `web_server` URLs by object ID, switch to the entity name
@@ -343,8 +343,8 @@ new file platform. The legacy top-level `image:`, `animation:`, and `online_imag
 
 ## Zigbee: SDK 2.0.2 and Endpoint Merging
 
-[@luar123](https://github.com/luar123) bumped the [zigbee](/components/zigbee/) component to the new Zigbee SDK
-2.0.2 for better ESP-IDF compatibility and picked up ESP32-H4, H21, and S31 variants (compile-only for now)
+[@luar123](https://github.com/luar123) bumped the [zigbee](/components/zigbee/) component on ESP32 to the new esp-zigbee-sdk
+2.0.2 for better ESP-IDF compatibility and picked up ESP32-H4, H21, and S31 variants
 ([#16869](https://github.com/esphome/esphome/pull/16869)). The dedicated Zigbee storage partition has been retired
 in favor of the default NVS, and reporting configuration is simplified: the enabled/coordinator distinction is
 gone.
@@ -503,10 +503,10 @@ tested pre-releases, and helped in the community.
 - **Web Server**: Version 1 is deprecated. A configuration warning is emitted when `version: 1` is set;
   removal is targeted for 2027.1.0. Migrate to v2 (the default) or v3
   [#17109](https://github.com/esphome/esphome/pull/17109)
-- **Zigbee**: The Zigbee SDK bump to 2.0.2 changes the storage layout, so devices must be re-joined and
+- **Zigbee**: The Zigbee SDK bump to 2.0.2 changes the storage layout, so ESP32 devices must be re-joined and
   reconfigured after upgrading. The `reporting:` config values `enabled` and `coordinator` are no longer valid
   [#16869](https://github.com/esphome/esphome/pull/16869)
-- **Zigbee**: Endpoint merging now combines endpoints of components by default and lets users manually
+- **Zigbee**: on ESP32 endpoint merging now combines endpoints of components by default and lets users manually
   combine them. Existing configurations require re-joining, re-interviewing, and re-configuring
   [#17402](https://github.com/esphome/esphome/pull/17402)
 {/* BREAKING_CHANGES_USERS_END */}
