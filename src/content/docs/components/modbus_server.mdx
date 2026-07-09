@@ -81,7 +81,10 @@ On the bus side, you need 120 Ohm termination resistors at the ends of the bus c
     Defaults to `U_WORD`.
 
   - **read_lambda** (**Required**, [lambda](/automations/templates#config-lambda)):
-    Lambda that returns the value of this register.
+    Lambda that returns the value of this register. Returning an empty optional (`return {};`) declines
+    the read, and the client's request is answered with a ModBUS exception instead. This is useful when
+    the value isn't available right now, for example while a sensor is still warming up. A plain
+    `return <value>;` still works as before and does not need to change.
 
   - **write_lambda** (*Optional*, [lambda](/automations/templates#config-lambda)):
     Lambda that sets the value of this register. A variable `x` of the appropriate type (`uint16_t`, `int32_t`, etc, see above) is provided with the value,
@@ -114,6 +117,32 @@ On the bus side, you need 120 Ohm termination resistors at the ends of the bus c
 > overlap and must fit within the 16-bit address space (`0x0000`–`0xFFFF`);
 > the configuration is rejected otherwise.
 
+- **bits** (*Optional*): A list of bits that are responded to when acting as a server. Bits serve
+  Modbus coils and discrete inputs from one shared table: a coil and a discrete input at the same
+  address are the same bit, the same way holding and input registers share the register table above.
+  A client can read a bit as a coil or as a discrete input and gets the same value either way. Each
+  bit address must be unique within the `bits` list.
+
+  - **address** (**Required**, integer): the address of this bit.
+
+  - **read_lambda** (**Required**, [lambda](/automations/templates#config-lambda)):
+    Lambda that returns the value of this bit, as a `bool`. `address` is provided with the address
+    of this bit. Returning an empty optional (`return {};`) declines the read, and the client's
+    request is answered with a ModBUS exception instead of a value.
+
+  - **write_lambda** (*Optional*, [lambda](/automations/templates#config-lambda)):
+    Lambda that sets the value of this bit. A `bool` variable `x` is provided with the new value, as
+    well as `address` containing the address of this bit. You must return `true` if the operation was
+    successful, `false` otherwise, in which case a ModBUS exception code `4` will be sent to the client.
+    If this is not set, the bit can be read but not written.
+
+  > [!NOTE]
+  > A write covering several bits (for example a "write multiple coils" request) is atomic in the
+  > same way as a multi-register write: every targeted bit must exist and have a `write_lambda`, or
+  > the whole request is rejected before anything is changed. Once that check passes, each
+  > `write_lambda` is called in turn; if one of them returns `false`, the write stops there — the
+  > bits already written stay changed, and the client's request is answered with a ModBUS exception.
+
 ## Example
 
 The following code allows a ModBUS client to read a sensor value from your ESPHome node, that the node itself read from some local sensor.
@@ -141,6 +170,25 @@ modbus_server:
 sensor:
   - platform: uptime
     id: uptime_sens
+```
+
+The following code adds two bits: a read-only bit reporting a relay's state, and a read/write bit
+that lets a ModBUS client both read and control whether a pump is running.
+
+```yaml
+modbus_server:
+  - modbus_id: modbus_server
+    address: 0x4
+    bits:
+      - address: 0x00
+        read_lambda: |-
+          return id(relay_state);
+      - address: 0x01
+        read_lambda: |-
+          return id(pump_running);
+        write_lambda: |-
+          id(pump_running) = x;
+          return true;
 ```
 
 ## See Also
