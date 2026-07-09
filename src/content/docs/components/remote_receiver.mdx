@@ -57,6 +57,7 @@ Multiple remote receivers can be configured as a list of dict definitions within
   - **nec**: Decode and dump NEC infrared codes.
   - **nexa**: Decode and dump Nexa (RF) codes.
   - **panasonic**: Decode and dump Panasonic infrared codes.
+  - **pd_pioneer**: Decode and dump PD Pioneer mini-split infrared codes.
   - **pioneer**: Decode and dump Pioneer infrared codes.
   - **pronto**: Print remote code in Pronto form. Useful for using arbitrary protocols.
   - **raw**: Print all remote codes in their raw form. Also useful for using arbitrary protocols.
@@ -240,6 +241,10 @@ To enable signal demodulation, configure the signal carrier frequency and duty c
 
 - **on_panasonic** (*Optional*, [Automation](/automations)): An automation to perform when a
   Panasonic remote code has been decoded. A variable `x` of type <APIStruct text="remote_base::PanasonicData" path="remote_base::PanasonicData" />
+  is passed to the automation for use in lambdas.
+
+- **on_pd_pioneer** (*Optional*, [Automation](/automations)): An automation to perform when a
+  PD Pioneer mini-split remote code has been decoded. A variable `x` of type <APIStruct text="remote_base::PDPioneerData" path="remote_base::PDPioneerData" />
   is passed to the automation for use in lambdas.
 
 - **on_pioneer** (*Optional*, [Automation](/automations)): An automation to perform when a
@@ -503,6 +508,12 @@ Remote code selection (exactly one of these has to be included):
 
   - **address** (**Required**, int): The address to trigger on, see dumper output for more info.
   - **command** (**Required**, int): The command.
+
+- **pd_pioneer**: Trigger on a decoded PD Pioneer mini-split remote code with the given data.
+
+  - **code** (**Required**, 13- or 14-byte list): The code to listen for, see
+    [transmitter description](/components/remote_transmitter#remote_transmitter-transmit_pd_pioneer) for more info.
+    Usually you only need to copy this directly from the dumper output.
 
 - **pioneer**: Trigger on a decoded Pioneer remote code with the given data.
 

@@ -662,6 +662,26 @@ on_...:
 - **command** (**Required**, int, [templatable](/automations/templates)): The command to send.
 - All other options from [Remote Transmitter Actions](#remote_transmitter-transmit_action).
 
+<span id="remote_transmitter-transmit_pd_pioneer"></span>
+
+### `remote_transmitter.transmit_pd_pioneer` Action
+
+This [action](/automations/actions#all-actions) sends a PD Pioneer mini-split infrared code to a remote transmitter.
+The checksum byte is added automatically when 13 data bytes are provided.
+
+```yaml
+on_...:
+  - remote_transmitter.transmit_pd_pioneer:
+      code: [0xA1, 0xC0, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00]
+```
+
+#### Configuration variables
+
+- **code** (**Required**, list, [templatable](/automations/templates)): The 13- or 14-byte PD Pioneer code to send as a
+  list of hex or integers. See dumper output for more info.
+
+- All other options from [Remote Transmitter Actions](#remote_transmitter-transmit_action).
+
 <span id="remote_transmitter-transmit_pioneer"></span>
 
 ### `remote_transmitter.transmit_pioneer` Action
