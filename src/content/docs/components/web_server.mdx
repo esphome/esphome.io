@@ -139,6 +139,30 @@ interface are externally hosted at oi.esphome.io. If you want to use your own se
 >
 > See [Web Server](/components/ota/web_server/) for more information.
 
+## Security
+
+The web server exposes an HTTP API for viewing and controlling your device's entities. When the
+[`web_server` OTA platform](/components/ota/web_server/) is enabled, it can also update firmware.
+
+> [!WARNING]
+> The web server has no cross-site protections, by design. It performs no CSRF, `Origin`, or `Referer` checks and uses
+> a permissive CORS policy, so it can be called from other origins, including a web page you open while on the same
+> network as the device. Its only access controls are the `auth:` option and the network the device is on. Treat it as
+> an open control surface unless you enable `auth:`.
+
+Recommendations:
+
+- Enable `auth:` if the device is on a network you do not fully trust.
+- Keep devices on a trusted, segmented network and never expose the web server to the internet. See
+  [Security Best Practices](/guides/security_best_practices/).
+- If web OTA is enabled without `auth:`, anyone who can reach the device, including cross-origin through your browser,
+  can upload firmware. Protect it with web `auth:`, disable web OTA when it is not needed (`ota: false`), or use
+  password-protected [native OTA](/components/ota/) instead.
+
+Whether this cross-origin behavior is a bug is answered by the project
+[threat model](https://github.com/esphome/esphome/blob/dev/THREAT_MODEL.md): it is intentional and not a defended
+boundary.
+
 ## Example configurations
 
 Enabling HTTP authentication:
