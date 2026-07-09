@@ -198,9 +198,10 @@ multiple PRs.
 
 **Client and server split** ([#11969](https://github.com/esphome/esphome/pull/11969)) — `Modbus` is split into
 `ModbusClientHub` and `ModbusServerHub`, retiring the role enum entirely. Client components move to
-`ModbusClientDevice` ([#11987](https://github.com/esphome/esphome/pull/11987)) and the API is finalized before the
-release ([#17434](https://github.com/esphome/esphome/pull/17434), [#17378](https://github.com/esphome/esphome/pull/17378)).
-External components need to update against the new API.
+`ModbusClientDevice` ([#11987](https://github.com/esphome/esphome/pull/11987)), and the core API surface was
+renamed and settled before the release ([#17434](https://github.com/esphome/esphome/pull/17434),
+[#17378](https://github.com/esphome/esphome/pull/17378)). External components need to update against the new
+API now, and further client-mode API cleanup is planned for the next release.
 
 **Rewritten parser** — Byte-by-byte parsing is replaced with a buffer-based, frame-length-aware parser that
 handles peer server responses, unsupported function codes, and custom function codes correctly. Response tracking
@@ -378,6 +379,10 @@ happening, and suggests `packages:` for a deep merge instead. Toggle with `espho
   already route to Device Builder.
 - **Python 3.11 support dropped** ([#17280](https://github.com/esphome/esphome/pull/17280)) — Minimum Python
   version is now 3.12. Home Assistant add-on and Docker images are already on 3.12.
+- **BK7238 and Tuya T1 board support** ([#17288](https://github.com/esphome/esphome/pull/17288)) — The
+  [LibreTiny](/components/libretiny/) 1.13.0 update adds BK7238 boards to the `bk72xx` platform:
+  `generic-bk7238`, `generic-bk7238-tuya`, and the Tuya T1 module family (`t1-2s`, `t1-3s`, `t1-m`, `t1-u`),
+  which is becoming common in devices on the market.
 - **PSRAM for ESP32-S31 and H4** ([#17192](https://github.com/esphome/esphome/pull/17192)) — Both new variants
   gain PSRAM wiring: S31 octal at 40/100/200/250 MHz and H4 quad at 32/64 MHz. Values come from the `esp_psram`
   Kconfig on ESP-IDF release/v6.1, and octal-mode validation is now data-driven rather than hardcoded to S3.
@@ -578,7 +583,8 @@ methods were deprecated 6 months ago in favor of buffer-based variants that avoi
   ([#11969](https://github.com/esphome/esphome/pull/11969),
   [#11987](https://github.com/esphome/esphome/pull/11987),
   [#12376](https://github.com/esphome/esphome/pull/12376))
-- **Modbus API naming**: Public API surface renamed and finalized before release
+- **Modbus API naming**: Core public API surface renamed and settled before release; further client-mode API
+  cleanup is planned for the next release
   ([#17378](https://github.com/esphome/esphome/pull/17378),
   [#17434](https://github.com/esphome/esphome/pull/17434))
 - **Modbus function code comparisons**: Ordering operators (`<`, `<=`, `>`, `>=`) between `ModbusFunctionCode`
