@@ -4,13 +4,14 @@ name: Seed npm cache
 # to a branch scope. Without a branch-scoped copy every pull request misses,
 # downloads all dependencies, and saves a ~120MB copy into its own merge ref
 # that no other run can reuse, crowding the 10GB Actions cache quota. This
-# workflow saves one shared copy on the default branch that all pull request
-# runs restore; an exact-key hit there also stops setup-node from saving
-# per-PR copies.
+# workflow saves one shared copy per branch that pull request runs restore
+# (current is the default branch, readable by every run; next covers pull
+# requests based on next when the branches' lock files diverge); an
+# exact-key hit there also stops setup-node from saving per-PR copies.
 
 on:
   push:
-    branches: [current]
+    branches: [current, next]
     paths:
       - package-lock.json
       - .github/workflows/seed-npm-cache.yml
