@@ -2,14 +2,22 @@
 description: "Instructions for setting up the TFLite Micro helper component in ESPHome"
 title: "TFLite Micro Helper"
 ---
+import APIRef from '@components/APIRef.astro';
 
-The `tflite_micro_helper` component provides a reusable TensorFlow Lite Micro runtime for ESP32 microcontrollers using the ESP-IDF
-framework. It manages model loading, tensor arena memory allocation, operator registration, and inference execution, serving
-as a foundation for TFLite-based components such as meter readers or object classifiers.
+The `tflite_micro_helper` component provides a reusable TensorFlow Lite Micro runtime for ESP32 microcontrollers
+using the ESP-IDF framework. It encapsulates model loading, tensor arena memory allocation, operator
+registration (via `OpResolver`), and inference execution through the `TFLiteMicroHelper` and `ModelHandler`
+classes.
+
+This component serves as a foundation for TFLite-based components such as the
+[`meter_reader_tflite`](https://github.com/nliaudat/esphome_ai_component) AI meter reader. A complete working
+demo with multiple ESP32 boards, pre-trained digit recognition models, and camera integration is available at
+[github.com/nliaudat/esphome_ai_component](https://github.com/nliaudat/esphome_ai_component).
 
 > [!NOTE]
-> This is a **helper/library component** that is typically used as a dependency by other components. It does not expose sensors
-> or entities directly. It currently supports **ESP32** targets with the **ESP-IDF** framework only.
+> This is a **helper/library component** that is typically used as a dependency by other components. It does not
+> expose sensors or entities directly. It currently supports **ESP32** targets with the **ESP-IDF** framework
+> only.
 
 ```yaml
 # Example configuration entry
@@ -19,9 +27,9 @@ tflite_micro_helper:
 
 ## Configuration variables
 
-- **debug** (*Optional*, boolean): Enable debug logging and diagnostic features. Defaults to `false`. When enabled, the
-  `DEBUG_TFLITE_MICRO_HELPER` define is set, which enables additional verbose logging for model loading, tensor inspection,
-  and inference debugging.
+- **debug** (*Optional*, boolean): Enable debug logging and diagnostic features. Defaults to `false`. When
+  enabled, the `DEBUG_TFLITE_MICRO_HELPER` define is set, enabling CRC32 model verification, model
+  architecture inspection, tensor input/output analysis, and memory status reporting.
 
 ## Platform Support
 
@@ -36,19 +44,25 @@ tflite_micro_helper:
 | ESP8266    | No        | N/A       |
 | RP2040     | No        | N/A       |
 
+> [!IMPORTANT]
+> This component requires the **ESP-IDF** framework. Arduino framework is not supported. Set
+> `esp32:` `framework:` to `esp-idf` in your device configuration.
+
 ## ESP-IDF Component Dependencies
 
 This component automatically adds the following ESP-IDF components:
 
-- `espressif/esp-tflite-micro` (version 1.3.7)
-- `espressif/esp-nn` (version 1.2.3)
+- **`espressif/esp-tflite-micro`** (version 1.3.7): The TensorFlow Lite Micro runtime ported and maintained by
+  Espressif for ESP32-series chips.
+- **`espressif/esp-nn`** (version 1.2.3): Espressif's optimized neural network kernels providing hardware
+  acceleration for common TFLite operators.
 
 Build flags:
 
-- `-DTF_LITE_STATIC_MEMORY`
-- `-DTF_LITE_DISABLE_X86_NEON`
-- `-DESP_NN`
-- `-DOPTIMIZED_KERNEL=esp_nn`
+- **`-DTF_LITE_STATIC_MEMORY`**: Use static memory allocation within the TFLite Micro runtime.
+- **`-DTF_LITE_DISABLE_X86_NEON`**: Disable x86 NEON intrinsics (not applicable to ESP32 targets).
+- **`-DESP_NN`**: Enable ESP-NN optimized kernels.
+- **`-DOPTIMIZED_KERNEL=esp_nn`**: Select ESP-NN as the kernel provider for TFLite Micro.
 
 ## Usage as a Dependency
 
@@ -58,15 +72,154 @@ Components that require TFLite Micro should declare a dependency in their `__ini
 DEPENDENCIES = ["tflite_micro_helper"]
 ```
 
-This ensures the required build flags and IDF components are configured before the dependent component's code generation runs.
+This ensures the required build flags and IDF components are configured before the dependent component's code
+generation runs.
+
+> [!NOTE]
+> Consumer components load a `.tflite` model file by referencing its path in their YAML configuration. For
+> example:
+>
+> ```yaml
+> meter_reader_tflite:
+>   model: "models/digit_recognizer_v24_quantized_integer_quant_uint8.tflite"
+> ```
+>
+> The model file must be accompanied by a `.txt` report file containing the operator list and metadata for
+> code generation. Generate this report using `regenerate_txt_reports.py` from the
+> [esphome_ai_component](https://github.com/nliaudat/esphome_ai_component) repository. If no `.txt` report is
+> present, the tensor arena size must be set manually in the consumer component's YAML configuration.
+
+## C++ API
+
+The `TFLiteMicroHelper` class is the main entry point for consumer components. It wraps the lower-level
+`ModelHandler` class which manages the TFLite Micro interpreter, operator resolver, and tensor arena.
+
+<APIRef text="tflite_micro_helper.h" path="tflite_micro_helper/tflite_micro_helper.h" />
+
+### Key Methods
+
+| Method                              | Description                                         |
+|-------------------------------------|-----------------------------------------------------|
+| `set_model(data, size)`             | Set the TFLite model data pointer and size.         |
+| `set_tensor_arena_size(size)`       | Request a specific tensor arena size in bytes.      |
+| `set_debug(bool)`                   | Enable or disable debug diagnostics.                |
+| `load_model()`                      | Load the model and allocate the tensor arena.       |
+| `unload_model()`                    | Unload the model and free resources.                |
+| `invoke()`                          | Run a single inference pass.                        |
+| `run_inference(src_data, src_size)` | Copy preprocessed data into the input tensor and invoke. Returns a `ProcessedOutput` struct (value + confidence). |
+| `input_tensor()`                    | Get the input `TfLiteTensor` (for writing data).    |
+| `output_tensor()`                   | Get the output `TfLiteTensor` (for reading results). |
+| `get_arena_stats()`                 | Get tensor arena utilization statistics.            |
+| `get_model_spec()`                  | Get the `ModelSpec` describing input dimensions.    |
+
+### ModelConfig struct
+
+```cpp
+struct ModelConfig {
+  std::string description;
+  std::string tensor_arena_size;    // Size string e.g. "110KB", "2MB", "51200"
+  std::string output_processing;    // Processing strategy: "direct_class", "softmax", etc.
+  float scale_factor{1.0f};
+  std::string input_type;           // "uint8" or "float32"
+  int input_channels{3};
+  std::string input_order{"RGB"};
+  std::vector<int> input_size;      // [width, height]
+  bool normalize{false};
+  bool invert{false};
+};
+```
+
+### ArenaStats struct
+
+```cpp
+struct ArenaStats {
+  size_t total_size;     // Total allocated tensor arena size in bytes
+  size_t used_bytes;     // Bytes currently used by the interpreter
+  size_t wasted_bytes;   // Unused bytes (arena fragmentation)
+  float efficiency;      // Used / total ratio
+};
+```
+
+### Example Usage in a Consumer Component
+
+```cpp
+#include "esphome/components/tflite_micro_helper/tflite_micro_helper.h"
+#include "esphome/components/tflite_micro_helper/model_handler.h"
+
+using namespace esphome::tflite_micro_helper;
+
+// In your component setup:
+TFLiteMicroHelper tflite;
+
+// Configure model specifics
+tflite.set_model(my_model_data, my_model_size);
+tflite.set_tensor_arena_size(200 * 1024);  // 200KB arena
+tflite.set_debug(true);
+
+// Load model and allocate arena
+if (!tflite.load_model()) {
+  ESP_LOGE("my_component", "Failed to load TFLite model");
+  return;
+}
+
+// Run inference on preprocessed image data
+tflite.run_inference(image_buffer, image_size);
+
+// Read results
+TfLiteTensor *output = tflite.output_tensor();
+float *output_data = output->data.f;
+
+// Check memory usage
+ArenaStats stats = tflite.get_arena_stats();
+ESP_LOGI("my_component", "Arena: %u used / %u total (%.1f%%)",
+         stats.used_bytes, stats.total_size, stats.efficiency * 100.0f);
+```
 
 ## Memory Management
 
 The tensor arena is allocated using one of three strategies (in priority order):
 
-1. **PSRAM** (preferred): When PSRAM is available, the tensor arena is allocated there to avoid exhausting internal SRAM.
+1. **PSRAM** (preferred): When PSRAM is available, the tensor arena is allocated there to avoid exhausting
+   internal SRAM.
 2. **Internal SRAM** (fallback): When no PSRAM is present, the arena is allocated from internal RAM.
-3. **Force flags**: Build flags `-DTFLITE_FORCE_SRAM` or `-DTFLITE_FORCE_PSRAM` override the automatic selection.
+3. **Force flags**: Build flags `-DTFLITE_FORCE_SRAM` or `-DTFLITE_FORCE_PSRAM` override the automatic
+   selection.
+
+### Arena Size Configuration
+
+Arena size can be specified as a parsed size string using the `MemoryManager::parse_size_string()` utility,
+which supports:
+
+- Suffixed strings: `"110KB"`, `"2MB"`, `"51200"` (raw bytes)
+- Fallback to raw bytes if parsing fails
+
+> [!TIP]
+> On ESP32-S3 devices, the arena size is automatically increased by 1.5x when the initial allocation fails, to
+> accommodate the larger memory requirements of the S3 architecture.
+
+### Arena Statistics
+
+After loading a model, use `get_arena_stats()` to inspect memory utilization:
+
+- **total_size**: The actual allocated arena size (may differ from the requested size).
+- **used_bytes**: Memory consumed by the TFLite interpreter for tensors and scratch buffers.
+- **wasted_bytes**: Allocated but unused memory due to arena fragmentation.
+- **efficiency**: Ratio of used bytes to total bytes (1.0 = no waste).
+
+## Debug Features
+
+When `debug: true` is set in the configuration, the `DEBUG_TFLITE_MICRO_HELPER` preprocessor define is
+activated, enabling:
+
+- **CRC32 Model Verification**: The `ModelHandler::verify_model_crc()` method computes and checks the model
+  file CRC32 to detect data corruption.
+- **Model Architecture Inspection**: `debug_model_architecture()` logs operator types, tensor shapes, and
+  quantization parameters.
+- **Input/Output Analysis**: Tensor data statistics (min, max, mean), quantization details, and output
+  distribution.
+- **Memory Status**: `report_memory_status()` prints arena allocation, usage, and peak memory consumption.
+- **Parameter Sweeping** (advanced): `debug_test_parameters()` runs inference across multiple configurations
+  to find optimal settings.
 
 ## See Also
 
@@ -74,4 +227,5 @@ The tensor arena is allocated using one of three strategies (in priority order):
 - [PSRAM Component](/components/psram/)
 - [TensorFlow Lite Micro](https://www.tensorflow.org/lite/micro)
 - [ESP-TFLite-Micro](https://components.espressif.com/components/espressif/esp-tflite-micro)
-
+- [esphome_ai_component Demo](https://github.com/nliaudat/esphome_ai_component) — Working ESPHome external
+  component with AI meter reader, camera integration, and pre-trained models
