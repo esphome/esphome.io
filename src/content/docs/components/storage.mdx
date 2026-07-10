@@ -126,7 +126,7 @@ result to a [global variable](/components/globals) and/or an `on_value` trigger.
           args: ["x.c_str()"]
 ```
 
-- **path** (**Required**, string, [templatable](/automations/templates)): Full VFS path of the file.
+- **path** (**Required**, string): Full VFS path of the file.
 - **extract** (*Optional*, list): Extraction pipeline. Each step is exactly one of:
   - **line** (int): Pick the Nth line (1-based).
   - **split** (string) + **index** (*Optional*, int): Split at a separator string and pick the Nth element
@@ -141,7 +141,7 @@ result to a [global variable](/components/globals) and/or an `on_value` trigger.
 - **to_global** (*Optional*, [ID](/guides/configuration-types#id)): A global variable to assign the result
   to. `float`, `int`, `bool` and `std::string` globals are supported; the string result is converted
   automatically. If conversion fails, the global is left unchanged and a warning is logged.
-- **on_value** (*Optional*, [Automation](/automations/basics)): Triggered with the extracted value as
+- **on_value** (*Optional*): Triggered with the extracted value as
   `x` (an `std::string`).
 
 At least one of `to_global` or `on_value` is required. If the file is missing or an extraction step fails
