@@ -155,22 +155,3 @@ Extraction of values from JSON files (JSON-pointer based) is planned as a follow
 The synchronous helpers keep individual blocking calls short (chunked I/O with watchdog feeding), but very
 large synchronous transfers can still make the device temporarily unresponsive — cap them with
 `max_blocking_transfer_size` and let the asynchronous worker handle anything bigger.
-
-## See Also
-
-- <APIRef text="storage.h" path="storage/storage.h" />
-- <APIRef text="storage_worker.h" path="storage/storage_worker.h" />
-EOF
-cat > src/content/docs/components/storage_worker.mdx << 'EOF'
----
-title: "Storage Worker"
-description: "Non-blocking file copy/move for ESPHome storage devices — part of the storage component."
----
-
-The asynchronous storage transfer worker is **part of the [storage](/components/storage/) component** —
-it is not configured separately. It is compiled in automatically whenever a path-based storage driver
-(such as `sd_storage`, `usb_storage`, or `nfs_client`) is configured, and picks the best execution
-strategy (background task or loop-sliced) per transfer on its own.
-
-See the [storage documentation](/components/storage/#asynchronous-transfers) for how it works and for the
-optional tuning knobs (`task_stack_size`, `task_priority`, `max_pending`, `max_streams`).
