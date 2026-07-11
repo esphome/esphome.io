@@ -12,6 +12,9 @@ The `sendspin` media player platform exposes controls for an entire [Sendspin](/
 
 The Sendspin [hub](/components/sendspin/) must be configured on the same device. This platform only works on ESP32-based chips.
 
+> [!NOTE]
+> The reported state distinguishes `paused` from `idle` only when a [`sendspin` sensor](/components/sensor/sendspin/) or [`text_sensor`](/components/text_sensor/sendspin/) is also configured on the same hub. Pausing is only visible in the metadata role's playback progress, not in the group state this platform reads on its own, so without a metadata entity configured a paused group is reported as `playing`.
+
 ```yaml
 # Example configuration entry
 sendspin:
