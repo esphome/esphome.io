@@ -664,13 +664,11 @@ on_...:
   - lvgl.display.set_rotation: !lambda "return id(my_rotation_number).state;"
 ```
 
-<span id="lvgl-update-action"></span>
-
 ### `lvgl.update` Action
 
 This [action](/automations/actions#actions-action) allows changing/updating the styling and layout of the active screen and the LVGL display layers at runtime. Top-level [style properties](#lvgl-styling) and a `layout:` apply to the currently active screen; you can also style and lay out the `top_layer` and/or `bottom_layer`.
 
-- **layout** (*Optional*): Update the [layout](/components/lvgl/layouts#lvgl-layouts-update) options of the active screen. Only the layout options may be changed, not the layout type.
+- **layout** (*Optional*): Update the [layout](/components/lvgl/layouts#updating-a-layout-at-runtime) options of the active screen. Only the layout options may be changed, not the layout type.
 - **top_layer** / **bottom_layer** (*Optional*): Update the [style properties](#lvgl-styling) and `layout:` of the respective display layer.
 
 ```yaml
@@ -848,15 +846,13 @@ lvgl:
     - component.update: my_display_id
 ```
 
-<span id="lvgl-on-landscape-trigger"></span>
-
 ### `on_landscape` / `on_portrait` triggers
 
-These [triggers](/components/lvgl/widgets#lvgl-automation-triggers) fire when the display orientation changes, as
+These [triggers](/components/lvgl/widgets#triggers) fire when the display orientation changes, as
 determined by the effective width/height ratio of the display: `on_landscape` fires when the display becomes wider than
 it is tall (a square display is treated as landscape), and `on_portrait` fires when it becomes taller than it is wide.
 The matching trigger also fires once at boot to establish the initial orientation. A subsequent change typically results
-from the [`lvgl.display.set_rotation`](#lvgl-display-set-rotation-action) action.
+from the [`lvgl.display.set_rotation`](#lvgl-display-set_rotation-action) action.
 
 ```yaml
 lvgl:
