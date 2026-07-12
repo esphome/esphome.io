@@ -115,13 +115,13 @@ async function checkFileExtension(fname) {
       fname,
       1,
       1,
-      "This file extension is not a registered file type. If this is an error, please update lint.mjs.",
+      "This file extension is not a registered file type. If this is an error, please update script/lint.mjs.",
     );
   }
 }
 
 async function checkExecutableBit(fname, gitMode) {
-  const exclude = ["script/", ".devcontainer/", "lint.py", "lint.mjs"];
+  const exclude = ["script/", ".devcontainer/"];
   if (exclude.some((ex) => fname.startsWith(ex) || fname === ex)) {
     return;
   }
@@ -203,7 +203,7 @@ function checkEsphomeLinks(fname, content) {
 // Build anchor cache for link validation
 async function buildAnchorCache() {
   const cache = new Map();
-  const contentDir = join(__dirname, "src/content/docs");
+  const contentDir = join(__dirname, "..", "src/content/docs");
 
   try {
     await stat(contentDir);
@@ -212,11 +212,16 @@ async function buildAnchorCache() {
   }
 
   function generateSlug(text) {
-    return text
-      .toLowerCase()
-      .replace(/[^\w\s-]/g, "")
-      .replace(/[-\s]+/g, "-")
-      .replace(/^-+|-+$/g, "");
+    return (
+      text
+        .toLowerCase()
+        // Mirror src/lib/rehype-heading-slugs.mjs: dots in automation headings
+        // (e.g. `light.turn_on`) map to `-` so the anchor becomes `light-turn_on`.
+        .replace(/\./g, "-")
+        .replace(/[^\w\s-]/g, "")
+        .replace(/[-\s]+/g, "-")
+        .replace(/^-+|-+$/g, "")
+    );
   }
 
   async function processDir(dir, basePath = "") {
