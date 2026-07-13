@@ -5,40 +5,57 @@ title: "Template Climate"
 
 import APIRef from '@components/APIRef.astro';
 
-The `template` climate platform lets you create a climate entity backed by lambda expressions
-and automation actions. It is useful for wrapping custom UART/I²C climate controllers,
-integrating hardware that lacks a dedicated ESPHome component, or prototyping climate
-integrations.
+The `template` climate platform lets you create a fully-featured climate entity out of plain
+ESPHome primitives. It is useful for wrapping custom UART/I²C climate controllers, integrating
+hardware that lacks a dedicated ESPHome component, or prototyping climate integrations.
 
-**Read lambdas** (`current_temperature`, `mode`, `target_temperature`, etc.) are polled each
-`loop()` iteration to populate the entity with the device's current state. **Set actions**
-(`set_mode_action`, `set_target_temperature_action`, etc.) are fired when the frontend or an
-automation sends a command to the device.
+Settable properties (`mode`, `target_temperature`, `target_temperature_low` /
+`target_temperature_high`, `target_humidity`, `fan_mode`, `custom_fan_mode`, `swing_mode`,
+`preset`, `custom_preset`) are plain internal state, not lambdas:
+
+- With `optimistic: true` (the default), a command is applied to the entity immediately.
+- With `optimistic: false`, a command is left unapplied until a
+  [`climate.template.publish`](#climate-template-publish_action) call reports the device's
+  actual state.
+
+Either way, every command also fires
+[`on_control`](/components/climate/#climate-on_control_trigger) with the full `ClimateCall`, so
+you can forward it to real hardware (e.g. write it out over UART or I²C).
+
+`current_temperature` / `current_humidity` (the *measured* values) are not lambdas either: point
+`sensor` / `humidity_sensor` at an existing sensor entity and the climate device updates
+automatically whenever that sensor reports a new value -- there is no polling involved. `action`
+has no sensor of its own; set `supports_action: true` and report it (along with anything else)
+with `climate.template.publish`.
 
 Once defined, the entity will automatically appear in Home Assistant and can be controlled
 through the frontend.
 
 ## Simple example
 
-A minimal setup with no read lambdas. The entity state is updated immediately when set actions
-fire (`optimistic: true`, the default).
+A minimal, fully optimistic climate entity with no backing sensors. Every command is applied to
+the entity immediately; `on_control` just logs what was requested (in a real config, this is
+where you'd write the command out to the device).
 
 ```yaml
 climate:
   - platform: template
     name: "Living Room Climate"
+    optimistic: true
     supported_modes:
       - "OFF"
       - HEAT
       - COOL
-    set_mode_action:
-      - logger.log:
-          format: "Mode: %d"
-          args: ["(int) x"]
-    set_target_temperature_action:
-      - logger.log:
-          format: "Target temperature: %.1f"
-          args: ["x"]
+    supported_fan_modes:
+      - AUTO
+      - LOW
+      - HIGH
+    on_control:
+      - lambda: |-
+          if (x.get_mode().has_value())
+            ESP_LOGD("climate", "Mode requested: %d", (int) *x.get_mode());
+          if (x.get_target_temperature().has_value())
+            ESP_LOGD("climate", "Target temperature requested: %.1f", *x.get_target_temperature());
     visual:
       min_temperature: 16.0
       max_temperature: 30.0
@@ -47,50 +64,31 @@ climate:
 
 ## External device example
 
-A full example showing both read lambdas and set actions. The read lambdas poll the device
-state each loop; the set actions send new settings to the device. In a real scenario the actions
-would write over UART or I²C. The `globals` here simulate that external device.
+A full example wrapping a device that's controlled and read over some external protocol
+(UART/I²C/etc. -- shown here as `logger.log`/`ESP_LOGD` calls standing in for the real writes).
+`current_temperature` / `current_humidity` are backed by two real sensors, so they update as soon
+as the device reports new readings -- no polling required. `on_control` forwards outgoing
+commands; elsewhere (e.g. when a response comes back over UART, or from a button as shown here) a
+`climate.template.publish` call simulates the device reporting its own authoritative state, e.g.
+because someone changed a setting on a physical remote -- overriding whatever was applied
+optimistically by an earlier command.
 
 ```yaml
-globals:
-  - id: ext_mode
-    type: int
-    initial_value: "0"   # CLIMATE_MODE_OFF
-  - id: ext_target_temp
-    type: float
-    initial_value: "21.0"
-  - id: ext_fan_mode
-    type: int
-    initial_value: "2"   # CLIMATE_FAN_AUTO
-  - id: ext_swing_mode
-    type: int
-    initial_value: "0"   # CLIMATE_SWING_OFF
-  - id: ext_preset
-    type: int
-    initial_value: "5"   # CLIMATE_PRESET_ECO
-  - id: ext_action
-    type: int
-    initial_value: "4"   # CLIMATE_ACTION_IDLE
-  - id: ext_current_humidity
-    type: float
-    initial_value: "55.0"
-  - id: ext_target_humidity
-    type: float
-    initial_value: "50.0"
+sensor:
+  - platform: ...   # your real ambient-temperature sensor
+    id: room_temperature
+  - platform: ...   # your real ambient-humidity sensor
+    id: room_humidity
 
 climate:
   - platform: template
+    id: external_heatpump
     name: "External Heatpump"
-    current_temperature: !lambda "return id(temp_sensor).state;"
-    current_humidity: !lambda "return id(ext_current_humidity);"
-    target_temperature: !lambda "return id(ext_target_temp);"
-    target_humidity: !lambda "return id(ext_target_humidity);"
-    mode: !lambda "return static_cast<climate::ClimateMode>(id(ext_mode));"
-    action: !lambda "return static_cast<climate::ClimateAction>(id(ext_action));"
-    fan_mode: !lambda "return static_cast<climate::ClimateFanMode>(id(ext_fan_mode));"
-    swing_mode: !lambda "return static_cast<climate::ClimateSwingMode>(id(ext_swing_mode));"
-    preset: !lambda "return static_cast<climate::ClimatePreset>(id(ext_preset));"
     optimistic: true
+    sensor: room_temperature
+    humidity_sensor: room_humidity
+    supports_action: true
+    supports_target_humidity: true
     supported_modes:
       - "OFF"
       - HEAT
@@ -107,50 +105,45 @@ climate:
       - NONE
       - ECO
       - AWAY
-    set_mode_action:
-      - lambda: "id(ext_mode) = (int) x;"
-    set_target_temperature_action:
-      - lambda: "id(ext_target_temp) = x;"
-    set_target_humidity_action:
-      - lambda: "id(ext_target_humidity) = x;"
-    set_fan_mode_action:
-      - lambda: "id(ext_fan_mode) = (int) x;"
-    set_swing_mode_action:
-      - lambda: "id(ext_swing_mode) = (int) x;"
-    set_preset_action:
-      - lambda: "id(ext_preset) = (int) x;"
-    visual:
-      min_temperature: 16.0
-      max_temperature: 30.0
-      temperature_step: 0.5
+    on_control:
+      - lambda: |-
+          if (x.get_mode().has_value())
+            ESP_LOGD("heatpump", "Sending mode to device: %d", (int) *x.get_mode());
+          if (x.get_target_temperature().has_value())
+            ESP_LOGD("heatpump", "Sending target temperature to device: %.1f", *x.get_target_temperature());
+
+button:
+  - platform: template
+    name: "Simulate Device Report"
+    on_press:
+      # Stands in for e.g. a parsed UART response reporting the device's real state.
+      - climate.template.publish:
+          id: external_heatpump
+          mode: HEAT
+          action: HEATING
+          target_humidity: 45.0
 ```
 
 ## Two-point (range) temperature example
 
 Some devices expose separate low and high target temperatures for `HEAT_COOL` mode. Use
 `target_temperature_low` / `target_temperature_high` instead of `target_temperature` for these
-devices. The two keys are mutually exclusive with `target_temperature`.
+devices; enable `supports_two_point_target_temperature: true` to advertise the feature. The two
+keys are mutually exclusive with `target_temperature`.
 
 ```yaml
-globals:
-  - id: ext_mode
-    type: int
-    initial_value: "1"   # CLIMATE_MODE_HEAT_COOL
-  - id: ext_target_temp_low
-    type: float
-    initial_value: "18.0"
-  - id: ext_target_temp_high
-    type: float
-    initial_value: "24.0"
+sensor:
+  - platform: ...
+    id: room_temperature
 
 climate:
   - platform: template
+    id: two_point_heatpump
     name: "Two-Point Heatpump"
     optimistic: true
-    current_temperature: !lambda "return id(temp_sensor).state;"
-    target_temperature_low: !lambda "return id(ext_target_temp_low);"
-    target_temperature_high: !lambda "return id(ext_target_temp_high);"
-    mode: !lambda "return static_cast<climate::ClimateMode>(id(ext_mode));"
+    sensor: room_temperature
+    supports_two_point_target_temperature: true
+    supports_target_humidity: true
     supported_modes:
       - "OFF"
       - HEAT_COOL
@@ -160,36 +153,43 @@ climate:
       min_temperature: 16.0
       max_temperature: 30.0
       temperature_step: 0.5
-    set_mode_action:
-      - lambda: "id(ext_mode) = (int) x;"
-    set_target_temperature_low_action:
-      - lambda: "id(ext_target_temp_low) = x;"
-    set_target_temperature_high_action:
-      - lambda: "id(ext_target_temp_high) = x;"
+    on_control:
+      - lambda: |-
+          if (x.get_target_temperature_low().has_value())
+            ESP_LOGD("heatpump", "Sending low setpoint to device: %.1f", *x.get_target_temperature_low());
+          if (x.get_target_temperature_high().has_value())
+            ESP_LOGD("heatpump", "Sending high setpoint to device: %.1f", *x.get_target_temperature_high());
+
+button:
+  - platform: template
+    name: "Simulate Device Report"
+    on_press:
+      - climate.template.publish:
+          id: two_point_heatpump
+          mode: HEAT_COOL
+          target_temperature_low: 18.0
+          target_temperature_high: 24.0
+          target_humidity: 50.0
 ```
 
 ## Custom fan modes and presets example
 
 Devices that have proprietary operating modes not covered by the built-in enums can use
-`custom_fan_modes` and `custom_presets`. Use `custom_fan_mode` / `custom_preset` read lambdas
-together with `set_custom_fan_mode_action` / `set_custom_preset_action`.
+`custom_fan_modes` and `custom_presets`. Handle them the same way as the enum-based fields:
+forward them out via `on_control`, and report the device's actual custom mode/preset with
+`climate.template.publish`.
 
 ```yaml
-globals:
-  - id: ext_custom_fan_mode
-    type: std::string
-    initial_value: '"turbo"'
-  - id: ext_custom_preset
-    type: std::string
-    initial_value: '"eco_plus"'
+sensor:
+  - platform: ...
+    id: room_temperature
 
 climate:
   - platform: template
+    id: custom_mode_heatpump
     name: "Heatpump with custom modes"
     optimistic: true
-    current_temperature: !lambda "return id(temp_sensor).state;"
-    custom_fan_mode: !lambda "return id(ext_custom_fan_mode);"
-    custom_preset: !lambda "return id(ext_custom_preset);"
+    sensor: room_temperature
     custom_fan_modes:
       - turbo
       - silent
@@ -198,94 +198,41 @@ climate:
       - eco_plus
       - power_save
       - max
-    visual:
-      min_temperature: 16.0
-      max_temperature: 30.0
-      temperature_step: 0.5
-    set_custom_fan_mode_action:
-      - lambda: "id(ext_custom_fan_mode) = x;"
-    set_custom_preset_action:
-      - lambda: "id(ext_custom_preset) = x;"
+    on_control:
+      - lambda: |-
+          if (x.has_custom_fan_mode())
+            ESP_LOGD("heatpump", "Sending custom fan mode to device: %s", x.get_custom_fan_mode());
+          if (x.has_custom_preset())
+            ESP_LOGD("heatpump", "Sending custom preset to device: %s", x.get_custom_preset());
+
+button:
+  - platform: template
+    name: "Simulate Device Report"
+    on_press:
+      - climate.template.publish:
+          id: custom_mode_heatpump
+          custom_fan_mode: "eco"
+          custom_preset: "max"
 ```
 
 ## Configuration variables
 
-- **current_temperature** (*Optional*, [lambda](/automations/templates#config-lambda)):
-  Lambda evaluated on every loop to get the measured (ambient) temperature. Return a `float`
-  value, or `{}` to leave the current temperature unchanged.
+- **sensor** (*Optional*, [ID](/guides/configuration-types#id)): The ID of a
+  [sensor](/components/sensor/) that provides the measured (ambient) temperature. The climate
+  entity subscribes to the sensor and updates `current_temperature` whenever the sensor reports a
+  new reading -- there is no polling. Also advertises the current-temperature feature. If you
+  need to feed in a reading that isn't backed by real hardware (e.g. parsed out of a UART
+  response), publish it to a plain `platform: template` sensor with
+  [`sensor.template.publish`](/components/sensor/template/#sensor-template-publish_action) and
+  point `sensor` at that.
 
-- **current_humidity** (*Optional*, [lambda](/automations/templates#config-lambda)):
-  Lambda evaluated on every loop to get the measured relative humidity. Return a `float`
-  value (percentage, e.g. `55.0`), or `{}` to leave the current humidity unchanged.
+- **humidity_sensor** (*Optional*, [ID](/guides/configuration-types#id)): The ID of a
+  [sensor](/components/sensor/) that provides the measured (ambient) relative humidity. Same
+  push-based behavior as `sensor`, but for `current_humidity`.
 
-- **target_temperature** (*Optional*, [lambda](/automations/templates#config-lambda)):
-  Lambda evaluated on every loop to read the target (setpoint) temperature from the device.
-  Return a `float` value, or `{}` to leave the target temperature unchanged. Cannot be used
-  together with `target_temperature_low` / `target_temperature_high`.
-
-- **target_temperature_low** (*Optional*, [lambda](/automations/templates#config-lambda)):
-  Lambda for the lower bound of a two-point temperature range (used with `HEAT_COOL` mode).
-  Must be used together with `target_temperature_high`. Cannot be used together with
-  `target_temperature`.
-
-- **target_temperature_high** (*Optional*, [lambda](/automations/templates#config-lambda)):
-  Lambda for the upper bound of a two-point temperature range (used with `HEAT_COOL` mode).
-  Must be used together with `target_temperature_low`. Cannot be used together with
-  `target_temperature`.
-
-- **target_humidity** (*Optional*, [lambda](/automations/templates#config-lambda)):
-  Lambda evaluated on every loop to read the target relative humidity from the device. Return a
-  `float` value (percentage), or `{}` to leave the target humidity unchanged.
-
-- **mode** (*Optional*, [lambda](/automations/templates#config-lambda)):
-  Lambda evaluated on every loop to read the current operating mode from the device. Return a
-  `ClimateMode` value (e.g. `climate::CLIMATE_MODE_HEAT`), or `{}` to leave the mode
-  unchanged.
-
-- **action** (*Optional*, [lambda](/automations/templates#config-lambda)):
-  Lambda evaluated on every loop to read the current climate action from the device. Return a
-  `ClimateAction` value (e.g. `climate::CLIMATE_ACTION_HEATING`), or `{}` to leave the action
-  unchanged. Valid values: `CLIMATE_ACTION_OFF`, `CLIMATE_ACTION_COOLING`,
-  `CLIMATE_ACTION_HEATING`, `CLIMATE_ACTION_IDLE`, `CLIMATE_ACTION_DRYING`,
-  `CLIMATE_ACTION_FAN`, `CLIMATE_ACTION_DEFROSTING`.
-
-- **fan_mode** (*Optional*, [lambda](/automations/templates#config-lambda)):
-  Lambda evaluated on every loop to read the current fan mode from the device. Return a
-  `ClimateFanMode` value (e.g. `climate::CLIMATE_FAN_AUTO`), or `{}` to leave the fan mode
-  unchanged. Exclusive with `custom_fan_mode`.
-
-- **custom_fan_mode** (*Optional*, [lambda](/automations/templates#config-lambda)):
-  Lambda evaluated on every loop to read the current custom fan mode string from the device.
-  Return a `std::string` (must match one of the strings in `custom_fan_modes`), or `{}` to
-  leave unchanged. Exclusive with `fan_mode`.
-
-- **swing_mode** (*Optional*, [lambda](/automations/templates#config-lambda)):
-  Lambda evaluated on every loop to read the current swing mode from the device. Return a
-  `ClimateSwingMode` value (e.g. `climate::CLIMATE_SWING_OFF`), or `{}` to leave the swing
-  mode unchanged.
-
-- **preset** (*Optional*, [lambda](/automations/templates#config-lambda)):
-  Lambda evaluated on every loop to read the current preset from the device. Return a
-  `ClimatePreset` value (e.g. `climate::CLIMATE_PRESET_ECO`), or `{}` to leave the preset
-  unchanged. Exclusive with `custom_preset`.
-
-- **custom_preset** (*Optional*, [lambda](/automations/templates#config-lambda)):
-  Lambda evaluated on every loop to read the current custom preset string from the device.
-  Return a `std::string` (must match one of the strings in `custom_presets`), or `{}` to
-  leave unchanged. Exclusive with `preset`.
-
-- **optimistic** (*Optional*, boolean): Controls whether the entity state is updated immediately
-  after a set action fires (`true`, default) or only after the next read-lambda poll reflects the
-  device's actual state (`false`).
-
-  - `true` (default): Entity state updates immediately after a set action so the UI shows the
-    new value right away. If the device does not accept the command, the read lambdas will
-    correct it on the next loop.
-  - `false`: Entity state does not update after a set action. The UI only updates when the
-    read lambdas detect a change in the device state.
-
-  When no read lambdas are configured, entity state always updates immediately (there is nothing
-  polling the device).
+- **supports_action** (*Optional*, boolean): Whether to advertise the current climate action
+  (`IDLE`, `HEATING`, `COOLING`, etc.) trait. `action` has no sensor of its own -- report it with
+  `climate.template.publish`. Defaults to `false`.
 
 - **supported_modes** (*Optional*, list): List of operating modes to expose to the frontend.
   Valid values: `OFF`, `HEAT`, `COOL`, `AUTO`, `HEAT_COOL`, `FAN_ONLY`, `DRY`.
@@ -298,64 +245,138 @@ climate:
   `QUIET`.
 
 - **custom_fan_modes** (*Optional*, list of strings): List of arbitrary fan mode names to expose
-  to the frontend. Use together with the `custom_fan_mode` read lambda and
-  `set_custom_fan_mode_action`.
+  to the frontend, for devices with proprietary fan modes not covered by `supported_fan_modes`.
 
 - **supported_swing_modes** (*Optional*, list): List of swing modes to expose to the frontend.
   Valid values: `OFF`, `BOTH`, `VERTICAL`, `HORIZONTAL`.
 
-- **supported_presets** (*Optional*, list): List of presets to expose to the frontend.
-  Valid values: `NONE`, `ECO`, `AWAY`, `BOOST`, `COMFORT`, `HOME`, `SLEEP`, `ACTIVITY`.
+- **supported_presets** (*Optional*, list): List of presets to expose to the frontend. Valid
+  values: `NONE`, `ECO`, `AWAY`, `BOOST`, `COMFORT`, `HOME`, `SLEEP`, `ACTIVITY`.
 
 - **custom_presets** (*Optional*, list of strings): List of arbitrary preset names to expose to
-  the frontend. Use together with the `custom_preset` read lambda and
-  `set_custom_preset_action`.
+  the frontend, for devices with proprietary presets not covered by `supported_presets`.
 
-- **set_mode_action** (*Optional*, [Action](/automations/actions#all-actions)):
-  Action executed when a mode command is received. The requested mode is available as
-  `x` of type `ClimateMode`.
+- **supports_two_point_target_temperature** (*Optional*, boolean): Whether to advertise
+  `target_temperature_low` / `target_temperature_high` (used for `HEAT_COOL` mode) instead of a
+  single `target_temperature`. Defaults to `false`.
 
-- **set_target_temperature_action** (*Optional*, [Action](/automations/actions#all-actions)):
-  Action executed when a target temperature command is received. The requested temperature is
-  available as `x` of type `float`.
+- **supports_target_humidity** (*Optional*, boolean): Whether to advertise a settable
+  `target_humidity`. Defaults to `false`.
 
-- **set_target_temperature_low_action** (*Optional*, [Action](/automations/actions#all-actions)):
-  Action executed when a two-point lower-bound temperature command is received. The requested
-  temperature is available as `x` of type `float`. Use with `set_target_temperature_high_action`.
+- **optimistic** (*Optional*, boolean): Controls whether a settable property (mode, target
+  temperature, fan mode, swing mode, preset, etc.) updates immediately when a command is
+  received (`true`, default) or only once `climate.template.publish` reports the device's actual
+  state (`false`).
 
-- **set_target_temperature_high_action** (*Optional*, [Action](/automations/actions#all-actions)):
-  Action executed when a two-point upper-bound temperature command is received. The requested
-  temperature is available as `x` of type `float`. Use with `set_target_temperature_low_action`.
+  - `true` (default): The entity state updates immediately so the UI shows the new value right
+    away. `on_control` still fires so you can forward the command to the real device.
+  - `false`: The entity state does not change on command. The UI only updates once
+    `climate.template.publish` reports the device's actual state.
 
-- **set_target_humidity_action** (*Optional*, [Action](/automations/actions#all-actions)):
-  Action executed when a target humidity command is received. The requested humidity is
-  available as `x` of type `float`.
-
-- **set_fan_mode_action** (*Optional*, [Action](/automations/actions#all-actions)):
-  Action executed when a fan mode command is received. The requested fan mode is available as
-  `x` of type `ClimateFanMode`.
-
-- **set_custom_fan_mode_action** (*Optional*, [Action](/automations/actions#all-actions)):
-  Action executed when a custom fan mode command is received. The requested fan mode name is
-  available as `x` of type `std::string`.
-
-- **set_swing_mode_action** (*Optional*, [Action](/automations/actions#all-actions)):
-  Action executed when a swing mode command is received. The requested swing mode is available
-  as `x` of type `ClimateSwingMode`.
-
-- **set_preset_action** (*Optional*, [Action](/automations/actions#all-actions)):
-  Action executed when a preset command is received. The requested preset is available as
-  `x` of type `ClimatePreset`.
-
-- **set_custom_preset_action** (*Optional*, [Action](/automations/actions#all-actions)):
-  Action executed when a custom preset command is received. The requested preset name is
-  available as `x` of type `std::string`.
-
-- All other options from [Climate](/components/climate#config-climate).
+- All other options from [Climate](/components/climate/#config-climate), including
+  [`on_control`](/components/climate/#climate-on_control_trigger) (fired for every incoming
+  command, with the `ClimateCall` available as `x`) and
+  [`on_state`](/components/climate/#climate-on_state_trigger).
 
 > [!NOTE]
 > Climate state (mode, target temperature, fan mode, swing mode, and preset) is automatically
 > persisted to flash and restored on reboot via the standard ESPHome climate restore mechanism.
+
+<span id="climate-template-publish_action"></span>
+
+## `climate.template.publish` Action
+
+Report the device's actual state from elsewhere in your YAML file (e.g. after parsing a UART
+response) with the `climate.template.publish` action. Unlike a command coming from the frontend,
+this is a pure state report: it sets the fields you specify and publishes once, but it never
+triggers `on_control`.
+
+```yaml
+climate:
+  - platform: template
+    id: template_climate
+
+# in some trigger, e.g. after parsing a response from the real device
+on_...:
+  - climate.template.publish:
+      id: template_climate
+      current_temperature: 21.5
+      mode: HEAT
+      action: HEATING
+      target_temperature: 23.0
+
+  # Templated
+  - climate.template.publish:
+      id: template_climate
+      current_temperature: !lambda "return id(temp_sensor).state;"
+      mode: !lambda "return climate::CLIMATE_MODE_COOL;"
+```
+
+Configuration variables:
+
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the template climate
+  device.
+
+- **current_temperature** (*Optional*, float, [templatable](/automations/templates)): The
+  measured temperature to publish. Usually not needed -- prefer wiring up `sensor` instead, so
+  the value stays live automatically. Only visible over the API if `sensor` is also configured
+  (i.e. the current-temperature feature is advertised).
+
+- **current_humidity** (*Optional*, percentage, [templatable](/automations/templates)): The
+  measured humidity to publish. Same caveat as `current_temperature`, but for `humidity_sensor`.
+
+- **target_temperature** (*Optional*, float, [templatable](/automations/templates)): The target
+  temperature to publish. Cannot be used together with `target_temperature_low` /
+  `target_temperature_high`.
+
+- **target_temperature_low** (*Optional*, float, [templatable](/automations/templates)): The
+  lower bound of a two-point target temperature range to publish. Must be used together with
+  `target_temperature_high`.
+
+- **target_temperature_high** (*Optional*, float, [templatable](/automations/templates)): The
+  upper bound of a two-point target temperature range to publish. Must be used together with
+  `target_temperature_low`.
+
+- **target_humidity** (*Optional*, percentage, [templatable](/automations/templates)): The
+  target humidity to publish.
+
+- **mode** (*Optional*, string, [templatable](/automations/templates)): The operating mode to
+  publish. One of `OFF`, `HEAT`, `COOL`, `AUTO`, `HEAT_COOL`, `FAN_ONLY`, `DRY`. If using a
+  lambda, use e.g. `climate::CLIMATE_MODE_HEAT`.
+
+- **action** (*Optional*, string, [templatable](/automations/templates)): The climate action to
+  publish. Only takes effect if `supports_action: true` is set. One of `OFF`, `COOLING`,
+  `HEATING`, `IDLE`, `DRYING`, `FAN`, `DEFROSTING`. If using a lambda, use e.g.
+  `climate::CLIMATE_ACTION_HEATING`.
+
+- **fan_mode** (*Optional*, string, [templatable](/automations/templates)): The fan mode to
+  publish. Exclusive with `custom_fan_mode`.
+
+- **custom_fan_mode** (*Optional*, string, [templatable](/automations/templates)): The custom fan
+  mode to publish (must match one of the strings in `custom_fan_modes`). Exclusive with
+  `fan_mode`.
+
+- **swing_mode** (*Optional*, string, [templatable](/automations/templates)): The swing mode to
+  publish.
+
+- **preset** (*Optional*, string, [templatable](/automations/templates)): The preset to publish.
+  Exclusive with `custom_preset`.
+
+- **custom_preset** (*Optional*, string, [templatable](/automations/templates)): The custom
+  preset to publish (must match one of the strings in `custom_presets`). Exclusive with `preset`.
+
+> [!NOTE]
+> This action can also be written directly in a lambda -- with the exception of `fan_mode` /
+> `custom_fan_mode` / `preset` / `custom_preset`, which need to go through the validated
+> `publish_*` setters shown below:
+>
+> ```cpp
+> id(template_climate).current_temperature = 21.5f;
+> id(template_climate).mode = climate::CLIMATE_MODE_HEAT;
+> id(template_climate).action = climate::CLIMATE_ACTION_HEATING;
+> id(template_climate).publish_fan_mode(climate::CLIMATE_FAN_HIGH);
+> id(template_climate).publish_state();
+> ```
 
 ## See Also
 
