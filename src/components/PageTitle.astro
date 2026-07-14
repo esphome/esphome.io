@@ -1,0 +1,13 @@
+---
+/**
+ * PageTitle override
+ *
+ * The homepage renders its own <h1> inside its custom Hero markup, so Starlight's default
+ * page title (the h1#_top normally shown above the content) is suppressed there.
+ */
+import Default from "@astrojs/starlight/components/PageTitle.astro";
+
+const isHomepage = Astro.url.pathname === "/";
+---
+
+{!isHomepage && <Default {...Astro.props} />}
