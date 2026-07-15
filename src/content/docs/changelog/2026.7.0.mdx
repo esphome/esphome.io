@@ -89,8 +89,13 @@ described below, and `toolchain: platformio` remains available as an opt-out her
 ## ESPHome Device Builder 1.6.1
 
 The [Device Builder](https://github.com/esphome/device-builder) moved from 1.1.0, which reached users in the
-2026.6.x patch releases, to 1.6.1 here. Most of the work went into the remote build server, which lets one
-Device Builder compile firmware for another.
+2026.6.x patch releases, to 1.6.1 here. Most of the work went into the remote build server.
+
+Compiling firmware is the slowest thing the Device Builder does, and on a small host such as a Home Assistant
+Green or a Raspberry Pi a single build can take several minutes. A remote build server lets that dashboard hand
+the compile to a faster machine on your network, such as a desktop or laptop running
+[ESPHome Desktop](https://desktop.esphome.io), which builds the firmware and sends it back to be installed as
+usual. Your devices, configurations, and dashboard all stay where they are; only the build moves.
 
 **Pairing With a Build Server Is Much Easier**
 
@@ -145,27 +150,51 @@ a UNIX socket with `--socket` for reverse-proxy setups, contributed by [@vexofp]
 
 **Quickstart Tour**
 
-New installs are offered a guided tour at the end of setup, added by [@stvncode](https://github.com/stvncode) and
-reshaped by [@marcelveldt](https://github.com/marcelveldt)
+Getting from a fresh install to a working device has always been the hardest part of ESPHome, and this release
+takes a real run at it. Setup now ends by offering you a guided tour, and the tour teaches the Device Builder by
+using it rather than by describing it.
+
+It spotlights one real control at a time, explains what it is for, and on the steps that matter it waits for you
+to click it rather than moving on without you. Over eleven steps it walks you through creating your first device,
+picking a board, naming it, entering your WiFi details, finding your way around the device navigator and the
+editor, watching the YAML pane stay in sync as you go, and installing the result to your board, finishing on your
+new device sitting on the dashboard. It takes about five minutes, it is a real device at the end rather than a
+throwaway, you can close it and pick it up where you left off, and it is always available afterwards from the
+menu in the top right.
+
+The tour is the work of a team, [@Erioldoesdesign](https://github.com/Erioldoesdesign),
+[@stvncode](https://github.com/stvncode), [@marcelveldt](https://github.com/marcelveldt), and
+[@breti](https://github.com/breti), across design, wireframes, build, and review
 ([frontend#1045](https://github.com/esphome/device-builder-frontend/pull/1045),
-[frontend#1232](https://github.com/esphome/device-builder-frontend/pull/1232)). It spotlights each control in
-turn and walks you through creating, configuring, and installing a real first device, including entering your
-WiFi details. It takes about five minutes, you can close it and come back, and it is available later from the
-menu in the top right. Onboarding also notices when another Device Builder is already running on your network and
-points you at it rather than letting you set up a second one by accident
-([frontend#1235](https://github.com/esphome/device-builder-frontend/pull/1235)).
+[frontend#1232](https://github.com/esphome/device-builder-frontend/pull/1232)). The setup flow around it was
+rebuilt at the same time: a new welcome screen, an experience question that lets beginners take the recommended
+path with a single click, and a closing screen that hands you to the tour. Setup also notices when another Device
+Builder is already running on your network and points you at it, rather than letting you set up a second one by
+accident ([frontend#1235](https://github.com/esphome/device-builder-frontend/pull/1235)).
 
 **YAML Errors Explained and Auto-Fixed**
 
-Indentation mistakes used to surface as raw parser text on hover, such as `mapping values are not allowed here`,
-usually naming the line where parsing broke rather than the line you got wrong. The editor now explains the
-problem in plain language and offers a one-click **Try auto-fix**, which is checked against the config before it
-is applied and can be undone
+Indentation is where most people bounce off YAML, and the editor used to be no help at all. A misplaced space got
+you the raw parser output, `mapping values are not allowed here` or `could not find expected ':'`, only if you
+hovered over the squiggle, and the line it pointed at was where the parser gave up rather than where you made the
+mistake.
+
+The editor now reads the error and tells you what is actually wrong, in a banner that stays put, naming the line
+you need to change and what to do to it: *"Indentation mismatch: line 12 `- platform` is indented less than its
+properties. Indent line 12 by 2 spaces so `- platform` lines up with them."* Next to it is a **Try auto-fix**
+button that makes exactly that change for you. The fix is checked against your config before it is applied, so it
+cannot leave you worse off than you started, and it lands as a normal edit you can undo
 ([frontend#1121](https://github.com/esphome/device-builder-frontend/pull/1121),
 [frontend#1147](https://github.com/esphome/device-builder-frontend/pull/1147),
-[frontend#1149](https://github.com/esphome/device-builder-frontend/pull/1149)). The same repair is offered for
-keys indented into the wrong section, for example an `api.encryption.key` that has slipped out of its parent
-([frontend#1164](https://github.com/esphome/device-builder-frontend/pull/1164)).
+[frontend#1148](https://github.com/esphome/device-builder-frontend/pull/1148)).
+
+Indentation is not the only thing it explains. Tabs used where YAML wants spaces, a value starting with `@`, `%`,
+or `*` that needs quotes, an unterminated quote, a duplicate key, and an unclosed `[` or `{` all get the same
+plain-language treatment. A list marker missing its space, `-platform: gpio`, is offered a one-click repair to
+`- platform: gpio` ([frontend#1149](https://github.com/esphome/device-builder-frontend/pull/1149)). So is a key
+that has drifted into the wrong section, such as an `api.encryption.key` that has slipped out of `api`, in either
+direction; the Device Builder checks its component catalog first to confirm where the key really belongs before
+it offers to move it ([frontend#1164](https://github.com/esphome/device-builder-frontend/pull/1164)).
 
 Device log lines now link to the documentation that explains them
 ([frontend#1116](https://github.com/esphome/device-builder-frontend/pull/1116),
