@@ -88,8 +88,8 @@ described below, and `toolchain: platformio` remains available as an opt-out her
 
 ## ESPHome Device Builder 1.6.1
 
-The [Device Builder](https://github.com/esphome/device-builder) moved from 1.1.0, which reached users in the
-2026.6.x patch releases, to 1.6.1 here. Most of the work went into the remote build server.
+The [Device Builder](https://github.com/esphome/device-builder) is now at 1.6.1, and most of the work this cycle
+went into the remote build server.
 
 Compiling firmware is the slowest thing the Device Builder does, and on a small host such as a Home Assistant
 Green or a Raspberry Pi a single build can take several minutes. A remote build server lets that dashboard hand
@@ -160,14 +160,12 @@ fails.
 install to it, the Device Builder compiles the firmware, queues the update, and flashes it the moment the device
 next checks in. You no longer have to be sitting there when the device wakes.
 
-This landed quietly in a patch release during the 2026.6 cycle and was never written up, and it is billed here
-because this is the release where it came together. Bulk updates in particular did not work with it until now:
-selecting a fleet and hitting update once queued an upload for every offline device that could not possibly
-succeed, and each retry paid for a second compile. Offline devices are now deferred properly
-([#1929](https://github.com/esphome/device-builder/pull/1929)), a device that drops offline after you hit install
-is deferred rather than failed ([#1964](https://github.com/esphome/device-builder/pull/1964)), and a deferred
-install reopens as a normal install carrying its queued message
-([frontend#1181](https://github.com/esphome/device-builder-frontend/pull/1181)).
+This works across a whole fleet, too. Select any number of devices and hit update, and the ones that are asleep
+or unreachable are compiled once and queued for their next check-in rather than failing
+([#1929](https://github.com/esphome/device-builder/pull/1929)). A device that drops offline between hitting
+install and the build finishing is queued as well, instead of failing at the last step
+([#1964](https://github.com/esphome/device-builder/pull/1964)), and a queued update reopens as a normal install
+when you come back to it ([frontend#1181](https://github.com/esphome/device-builder-frontend/pull/1181)).
 
 **Quickstart Tour**
 
