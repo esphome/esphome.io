@@ -88,145 +88,159 @@ described below, and `toolchain: platformio` remains available as an opt-out her
 
 ## ESPHome Device Builder
 
-The bundled [ESPHome Device Builder](https://github.com/esphome/device-builder) has been updated, and most of the
-work this cycle went into the remote build server.
+The bundled [ESPHome Device Builder](https://github.com/esphome/device-builder) has been updated, and most of the work
+this cycle went into the remote build server.
 
-Compiling firmware is the slowest thing the Device Builder does, and on a small host such as a Home Assistant
-Green or a Raspberry Pi a single build can take several minutes. A remote build server lets that dashboard hand
-the compile to a faster machine on your network, such as a desktop or laptop running
-[ESPHome Desktop](https://desktop.esphome.io), which builds the firmware and sends it back to be installed as
-usual. Your devices, configurations, and dashboard all stay where they are; only the build moves.
+Compiling firmware is the slowest thing the Device Builder does, and on a small host such as a Home Assistant Green or a
+Raspberry Pi a single build can take several minutes. A remote build server lets that dashboard hand the compile to a
+faster machine on your network, such as a desktop or laptop running [ESPHome Desktop](https://desktop.esphome.io), which
+builds the firmware and sends it back to be installed as usual. Your devices, configurations, and dashboard all stay
+where they are; only the build moves.
 
 **Pairing With a Build Server Is Much Easier**
 
 A machine that builds for other dashboards now says so on its own dashboard
-([frontend#1240](https://github.com/esphome/device-builder-frontend/pull/1240)). A Build server section appears above the device list once another dashboard is paired
-with it, or once remote building is turned on, and it walks you through pairing in three steps instead of leaving
-you to find the pieces in Settings.
+([frontend#1240](https://github.com/esphome/device-builder-frontend/pull/1240)). A Build server section appears above
+the device list once another dashboard is paired with it, or once remote building is turned on, and it walks you through
+pairing in three steps instead of leaving you to find the pieces in Settings.
 
 ![Pairing a build server in the ESPHome Device Builder](/images/device-builder-build-server.png)
 
-From there you can open the pairing window and watch its countdown, copy the address to enter on the sending
-dashboard ([#2075](https://github.com/esphome/device-builder/pull/2075)), and compare the identity fingerprint against the one the sender shows. Once peers
-are paired the section lists them with their connection state and the build queue, and any pairing request
-waiting on you appears at the top. Settings gained a matching explainer, and the old **Only use this for remote
-compute** switch is now **Remote compute dashboard**, which decides which section opens first rather than hiding
+From there you can open the pairing window and watch its countdown, copy the address to enter on the sending dashboard
+([#2075](https://github.com/esphome/device-builder/pull/2075)), and compare the identity fingerprint against the one the
+sender shows. Once peers are paired the section lists them with their connection state and the build queue, and any
+pairing request waiting on you appears at the top. Settings gained a matching explainer, and the old **Only use this for
+remote compute** switch is now **Remote compute dashboard**, which decides which section opens first rather than hiding
 anything.
 
-Remote builds are steadier once they are running, too. If a receiver restarts, the sender now reconnects as soon
-as it reappears on mDNS instead of waiting out its backoff ([#2084](https://github.com/esphome/device-builder/pull/2084)). Receivers can now also provision
-beta versions of ESPHome, so a build server running a different version to a sender on the beta channel no longer
-quietly falls back to building locally ([#2082](https://github.com/esphome/device-builder/pull/2082)). The first build for a version installs ESPHome from
-PyPI and can take a few minutes, which the job log now says out loud instead of sitting silent
+Remote builds are steadier once they are running, too. If a receiver restarts, the sender now reconnects as soon as it
+reappears on mDNS instead of waiting out its backoff ([#2084](https://github.com/esphome/device-builder/pull/2084)).
+Receivers can now also provision beta versions of ESPHome, so a build server running a different version to a sender on
+the beta channel no longer quietly falls back to building locally
+([#2082](https://github.com/esphome/device-builder/pull/2082)). The first build for a version installs ESPHome from PyPI
+and can take a few minutes, which the job log now says out loud instead of sitting silent
 ([#2083](https://github.com/esphome/device-builder/pull/2083)).
 
-If you have never tried this, the terminal now shows a build timer, and a local compile that runs longer than
-five minutes on a dashboard with no build server paired suggests sending your builds to a faster machine
+If you have never tried this, the terminal now shows a build timer, and a local compile that runs longer than five
+minutes on a dashboard with no build server paired suggests sending your builds to a faster machine
 ([frontend#1183](https://github.com/esphome/device-builder-frontend/pull/1183)).
 
 **Offline and Deep Sleep Updates**
 
-Updating a device that is not awake has always been a matter of timing. An OTA aimed at a device that is asleep
-or otherwise unreachable simply fails, which is a familiar problem if you run anything on
-[deep sleep](/components/deep_sleep/).
+Updating a device that is not awake has always been a matter of timing. An OTA aimed at a device that is asleep or
+otherwise unreachable simply fails, which is a familiar problem if you run anything on [deep
+sleep](/components/deep_sleep/).
 
 Queued offline updates, contributed by [@rwalker777](https://github.com/rwalker777), fix that
-([#1430](https://github.com/esphome/device-builder/pull/1430), [frontend#911](https://github.com/esphome/device-builder-frontend/pull/911)). If a device is offline when you install to it, the Device Builder
-compiles the firmware, queues the update, and flashes it when the device next appears on the network, with no
-need for you to be watching at the time.
+([#1430](https://github.com/esphome/device-builder/pull/1430),
+[frontend#911](https://github.com/esphome/device-builder-frontend/pull/911)). If a device is offline when you install to
+it, the Device Builder compiles the firmware, queues the update, and flashes it when the device next appears on the
+network, with no need for you to be watching at the time.
 
-The groundwork for this landed in 2026.6.0, and it is ready for production use now. It works across a whole
-fleet: select any number of devices and hit update, and the ones that are unreachable are compiled once and
-queued for their next appearance rather than failing ([#1929](https://github.com/esphome/device-builder/pull/1929)). A device that drops offline between
-hitting install and the build finishing is queued as well, instead of failing at the last step
-([#1964](https://github.com/esphome/device-builder/pull/1964)), and a queued update reopens as an install, carrying its queued message, when you come back to
-it ([frontend#1181](https://github.com/esphome/device-builder-frontend/pull/1181)).
+The groundwork for this landed in 2026.6.0, and it is ready for production use now. It works across a whole fleet:
+select any number of devices and hit update, and the ones that are unreachable are compiled once and queued for their
+next appearance rather than failing ([#1929](https://github.com/esphome/device-builder/pull/1929)). A device that drops
+offline between hitting install and the build finishing is queued as well, instead of failing at the last step
+([#1964](https://github.com/esphome/device-builder/pull/1964)), and a queued update reopens as an install, carrying its
+queued message, when you come back to it
+([frontend#1181](https://github.com/esphome/device-builder-frontend/pull/1181)).
 
 **Quickstart Tour**
 
-Getting from a fresh install to a working device has always been the hardest part of ESPHome, and this release
-takes a real run at it. Setup now ends by offering you a guided tour, and the tour teaches the Device Builder by
-using it rather than by describing it.
+Getting from a fresh install to a working device has always been the hardest part of ESPHome, and this release takes a
+real run at it. Setup now ends by offering you a guided tour, and the tour teaches the Device Builder by using it rather
+than by describing it.
 
-It spotlights one real control at a time, explains what it is for, and on the steps that matter it waits for you
-to click it rather than moving on without you. Over eleven steps it walks you through creating your first device,
-picking a board, naming it, entering your WiFi details, finding your way around the device navigator and the
-editor, watching the YAML pane stay in sync as you go, and how installing to your board works, finishing on your
-new device sitting on the dashboard. It takes about five minutes, it leaves you with a real device rather than a
-throwaway, you can close it and pick it up where you left off, and it is always available afterwards from the
-menu in the top right.
+It spotlights one real control at a time, explains what it is for, and on the steps that matter it waits for you to
+click it rather than moving on without you. Over eleven steps it walks you through creating your first device, picking a
+board, naming it, entering your WiFi details, finding your way around the device navigator and the editor, watching the
+YAML pane stay in sync as you go, and how installing to your board works, finishing on your new device sitting on the
+dashboard. It takes about five minutes, it leaves you with a real device rather than a throwaway, you can close it and
+pick it up where you left off, and it is always available afterwards from the menu in the top right.
 
 The tour was a team effort from [@Erioldoesdesign](https://github.com/Erioldoesdesign),
-[@stvncode](https://github.com/stvncode), and [@marcelveldt](https://github.com/marcelveldt), across design,
-wireframes, and build ([frontend#1045](https://github.com/esphome/device-builder-frontend/pull/1045), [frontend#1232](https://github.com/esphome/device-builder-frontend/pull/1232)). The setup flow around it was rebuilt
-at the same time: a new welcome screen, an experience question that lets beginners take the recommended path with
-a single click, and a closing screen that hands you to the tour. If you set up the desktop app while another
-Device Builder is already running on your network, setup now points that out and explains how to pair the two, so
-you can put the new machine to work building for the dashboard you already have
+[@stvncode](https://github.com/stvncode), and [@marcelveldt](https://github.com/marcelveldt), across design, wireframes,
+and build ([frontend#1045](https://github.com/esphome/device-builder-frontend/pull/1045),
+[frontend#1232](https://github.com/esphome/device-builder-frontend/pull/1232)). The setup flow around it was rebuilt at
+the same time: a new welcome screen, an experience question that lets beginners take the recommended path with a single
+click, and a closing screen that hands you to the tour. If you set up the desktop app while another Device Builder is
+already running on your network, setup now points that out and explains how to pair the two, so you can put the new
+machine to work building for the dashboard you already have
 ([frontend#1235](https://github.com/esphome/device-builder-frontend/pull/1235)).
 
 **YAML Errors Explained and Auto-Fixed**
 
-A number of issues reported against ESPHome turn out not to be bugs at all, but a small mistake made while
-editing YAML. This release goes after that whole class of problem.
+A number of issues reported against ESPHome turn out not to be bugs at all, but a small mistake made while editing YAML.
+This release goes after that whole class of problem.
 
-Getting a space wrong used to earn you the raw parser output, `mapping values are not allowed here` or
-`could not find expected ':'`, and only if you thought to hover over the squiggle. The line it pointed at was
-usually where the parser gave up rather than where you made the mistake, which is little help if you are not
-already fluent in YAML.
+Getting a space wrong used to earn you the raw parser output, `mapping values are not allowed here` or `could not find
+expected ':'`, and only if you thought to hover over the squiggle. The line it pointed at was usually where the parser
+gave up rather than where you made the mistake, which is little help if you are not already fluent in YAML.
 
-The editor now reads the error and tells you what is actually wrong, in a banner that stays put, naming the line
-you need to change and what to do to it: *"Indentation mismatch: line 12 `- platform` is indented less than its
-properties. Indent line 12 by 2 spaces so `- platform` lines up with them."* Next to it is a **Try auto-fix**
-button that makes exactly that change for you. It is a best-effort guess rather than magic, so it is validated
-against your config before it is applied, it tells you if other errors remain, and it lands as a normal edit you
-can undo ([frontend#1121](https://github.com/esphome/device-builder-frontend/pull/1121), [frontend#1147](https://github.com/esphome/device-builder-frontend/pull/1147), [frontend#1148](https://github.com/esphome/device-builder-frontend/pull/1148)).
+The editor now reads the error and tells you what is actually wrong, in a banner that stays put, naming the line you
+need to change and what to do to it: *"Indentation mismatch: line 12 `- platform` is indented less than its properties.
+Indent line 12 by 2 spaces so `- platform` lines up with them."* Next to it is a **Try auto-fix** button that makes
+exactly that change for you. It is a best-effort guess rather than magic, so it is validated against your config before
+it is applied, it tells you if other errors remain, and it lands as a normal edit you can undo
+([frontend#1121](https://github.com/esphome/device-builder-frontend/pull/1121),
+[frontend#1147](https://github.com/esphome/device-builder-frontend/pull/1147),
+[frontend#1148](https://github.com/esphome/device-builder-frontend/pull/1148)).
 
-Indentation is not the only thing it explains. Tabs used where YAML wants spaces, a value starting with `@`, `%`,
-or `*` that needs quotes, an unterminated quote, a duplicate key, and an unclosed bracket or brace all get the
-same plain-language treatment. A list marker missing its space, `-platform: gpio`, is offered a one-click repair
-to `- platform: gpio` ([frontend#1149](https://github.com/esphome/device-builder-frontend/pull/1149)). So is a key that has drifted out of the block it belongs to,
-such as an `encryption` key left sitting directly under `api:`, in either direction; the Device Builder checks
-its component catalog first to confirm where the key really belongs, and offers nothing rather than a wrong guess
-if it cannot tell ([frontend#1164](https://github.com/esphome/device-builder-frontend/pull/1164)).
+Indentation is not the only thing it explains. Tabs used where YAML wants spaces, a value starting with `@`, `%`, or `*`
+that needs quotes, an unterminated quote, a duplicate key, and an unclosed bracket or brace all get the same
+plain-language treatment. A list marker missing its space, `-platform: gpio`, is offered a one-click repair to `-
+platform: gpio` ([frontend#1149](https://github.com/esphome/device-builder-frontend/pull/1149)). So is a key that has
+drifted out of the block it belongs to, such as an `encryption` key left sitting directly under `api:`, in either
+direction; the Device Builder checks its component catalog first to confirm where the key really belongs, and offers
+nothing rather than a wrong guess if it cannot tell
+([frontend#1164](https://github.com/esphome/device-builder-frontend/pull/1164)).
 
 Device log lines now link to the documentation that explains them
-([frontend#1116](https://github.com/esphome/device-builder-frontend/pull/1116), [frontend#1118](https://github.com/esphome/device-builder-frontend/pull/1118)). Ten common warnings and errors get a curated explanation,
-including `took a long time for an operation`, WiFi reconnect loops, repeated resets, OTA rollbacks, and running
-out of Bluetooth proxy connection slots, and any other line tagged with a component links straight to that
-component's page.
+([frontend#1116](https://github.com/esphome/device-builder-frontend/pull/1116),
+[frontend#1118](https://github.com/esphome/device-builder-frontend/pull/1118)). Ten common warnings and errors get a
+curated explanation, including `took a long time for an operation`, WiFi reconnect loops, repeated resets, OTA
+rollbacks, and running out of Bluetooth proxy connection slots, and any other line tagged with a component links
+straight to that component's page.
 
 **Headless Build Servers**
 
-[@jesserockz](https://github.com/jesserockz) added `--remote-build-only`, which runs Device Builder as a
-dedicated build box with no web interface at all ([#1861](https://github.com/esphome/device-builder/pull/1861)):
+[@jesserockz](https://github.com/jesserockz) added `--remote-build-only`, which runs Device Builder as a dedicated build
+box with no web interface at all ([#1861](https://github.com/esphome/device-builder/pull/1861)):
 
 ```bash
 esphome-device-builder --remote-build-only /var/lib/esphome-builder
 ```
 
-It serves only the peer link, so there is no interface for anyone to click Accept in. Instead it opens a pairing
-window on first start and prints its identity fingerprint and a one-time key to the console. You pair from the
-sending dashboard, check that the fingerprint matches the console, and type in the key, which the pair dialog
-knows to ask for up front ([#1881](https://github.com/esphome/device-builder/pull/1881), [frontend#1120](https://github.com/esphome/device-builder-frontend/pull/1120)). That window pairs exactly one dashboard
+It serves only the peer link, so there is no interface for anyone to click Accept in. Instead it opens a pairing window
+on first start and prints its identity fingerprint and a one-time key to the console. You pair from the sending
+dashboard, check that the fingerprint matches the console, and type in the key, which the pair dialog knows to ask for
+up front ([#1881](https://github.com/esphome/device-builder/pull/1881),
+[frontend#1120](https://github.com/esphome/device-builder-frontend/pull/1120)). That window pairs exactly one dashboard
 and then closes.
 
 If you would rather keep the web interface but still dedicate the machine to building, turn on **Remote compute
-dashboard** in Settings and a **Hide the Device builder** option appears beneath it, leaving only the Build
-server view ([#2077](https://github.com/esphome/device-builder/pull/2077), [frontend#1244](https://github.com/esphome/device-builder-frontend/pull/1244)). Device Builder can also listen on a UNIX socket with
-`--socket` for reverse-proxy setups, contributed by [@vexofp](https://github.com/vexofp) ([#1862](https://github.com/esphome/device-builder/pull/1862)).
+dashboard** in Settings and a **Hide the Device builder** option appears beneath it, leaving only the Build server view
+([#2077](https://github.com/esphome/device-builder/pull/2077),
+[frontend#1244](https://github.com/esphome/device-builder-frontend/pull/1244)). Device Builder can also listen on a UNIX
+socket with `--socket` for reverse-proxy setups, contributed by [@vexofp](https://github.com/vexofp)
+([#1862](https://github.com/esphome/device-builder/pull/1862)).
 
 **Builds**
 
-Starting a build no longer greys out the buttons that would take you back to it. Update and Install now open the
-running job, and Edit stays clickable so you can read your YAML while it compiles
-([frontend#1191](https://github.com/esphome/device-builder-frontend/pull/1191), [frontend#1193](https://github.com/esphome/device-builder-frontend/pull/1193), [frontend#1197](https://github.com/esphome/device-builder-frontend/pull/1197)). Download and Retry now wait for a
-running build to finish instead of cancelling and restarting it, which also means Download can no longer hand you
-a half-written binary ([frontend#1199](https://github.com/esphome/device-builder-frontend/pull/1199), [frontend#1201](https://github.com/esphome/device-builder-frontend/pull/1201), [frontend#1204](https://github.com/esphome/device-builder-frontend/pull/1204)).
+Starting a build no longer greys out the buttons that would take you back to it. Update and Install now open the running
+job, and Edit stays clickable so you can read your YAML while it compiles
+([frontend#1191](https://github.com/esphome/device-builder-frontend/pull/1191),
+[frontend#1193](https://github.com/esphome/device-builder-frontend/pull/1193),
+[frontend#1197](https://github.com/esphome/device-builder-frontend/pull/1197)). Download and Retry now wait for a
+running build to finish instead of cancelling and restarting it, which also means Download can no longer hand you a
+half-written binary ([frontend#1199](https://github.com/esphome/device-builder-frontend/pull/1199),
+[frontend#1201](https://github.com/esphome/device-builder-frontend/pull/1201),
+[frontend#1204](https://github.com/esphome/device-builder-frontend/pull/1204)).
 
 A bulk **Compile only** action lets you check a change across many devices before deploying any of it
-([frontend#1176](https://github.com/esphome/device-builder-frontend/pull/1176)). ESP-IDF builds now show compile progress, which is read from the ninja build counters
-rather than the percentage that ESP-IDF never prints ([#1880](https://github.com/esphome/device-builder/pull/1880)).
+([frontend#1176](https://github.com/esphome/device-builder-frontend/pull/1176)). ESP-IDF builds now show compile
+progress, which is read from the ninja build counters rather than the percentage that ESP-IDF never prints
+([#1880](https://github.com/esphome/device-builder/pull/1880)).
 
 ## Security and Provisioning Groundwork for EN18031
 
