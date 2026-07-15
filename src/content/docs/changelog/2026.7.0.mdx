@@ -108,11 +108,8 @@ shared build queue, and pairing requests arrive at the top of it. Settings gaine
 old **Only use this for remote compute** switch is now **Remote compute dashboard**, which decides which section
 opens first rather than hiding anything.
 
-Pairing itself is also harder to get wrong. The receiver prints a one-time key next to its fingerprint, and the
-sending dashboard asks for that key up front rather than failing the first attempt
-([#1881](https://github.com/esphome/device-builder/pull/1881),
-[frontend#1120](https://github.com/esphome/device-builder-frontend/pull/1120)). If a receiver restarts, the
-sender now reconnects as soon as it reappears on mDNS instead of waiting out its backoff
+Remote builds are steadier once they are running, too. If a receiver restarts, the sender now reconnects as soon
+as it reappears on mDNS instead of waiting out its backoff
 ([#2084](https://github.com/esphome/device-builder/pull/2084)). Receivers can also provision beta ESPHome
 versions; before this, anyone on the beta channel had remote builds quietly falling back to a local build
 ([#2082](https://github.com/esphome/device-builder/pull/2082)). The first build for a version installs ESPHome
@@ -133,10 +130,15 @@ dedicated build box with no web interface at all
 esphome-device-builder --remote-build-only /var/lib/esphome-builder
 ```
 
-It serves only the peer link, opens a pairing window on first start, and prints the fingerprint and pairing key
-to the console for you to accept from the sending dashboard. If you would rather keep the web interface but still
-dedicate the machine to building, **Hide the Device builder** in Settings leaves only the Build server view
-([#2077](https://github.com/esphome/device-builder/pull/2077),
+It serves only the peer link, so there is no interface for anyone to click Accept in. Instead it opens a pairing
+window on first start and prints its identity fingerprint and a one-time key to the console. You pair from the
+sending dashboard, check that the fingerprint matches the console, and type in the key, which the pair dialog
+knows to ask for up front ([#1881](https://github.com/esphome/device-builder/pull/1881),
+[frontend#1120](https://github.com/esphome/device-builder-frontend/pull/1120)). That window pairs exactly one
+dashboard and then closes.
+
+If you would rather keep the web interface but still dedicate the machine to building, **Hide the Device builder**
+in Settings leaves only the Build server view ([#2077](https://github.com/esphome/device-builder/pull/2077),
 [frontend#1244](https://github.com/esphome/device-builder-frontend/pull/1244)). Device Builder can also listen on
 a UNIX socket with `--socket` for reverse-proxy setups, contributed by [@vexofp](https://github.com/vexofp)
 ([#1862](https://github.com/esphome/device-builder/pull/1862)).
