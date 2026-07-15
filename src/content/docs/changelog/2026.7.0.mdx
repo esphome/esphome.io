@@ -148,6 +148,27 @@ in Settings leaves only the Build server view ([#2077](https://github.com/esphom
 a UNIX socket with `--socket` for reverse-proxy setups, contributed by [@vexofp](https://github.com/vexofp)
 ([#1862](https://github.com/esphome/device-builder/pull/1862)).
 
+**Offline and Deep Sleep Updates**
+
+A device running [deep sleep](/components/deep_sleep/) is only awake for a few seconds at a time, which has
+always made updating one a game of catching it at the right moment. An OTA aimed at a sleeping device simply
+fails.
+
+[@rwalker777](https://github.com/rwalker777) fixed that with queued offline updates
+([#1430](https://github.com/esphome/device-builder/pull/1430),
+[frontend#911](https://github.com/esphome/device-builder-frontend/pull/911)). If a device is offline when you
+install to it, the Device Builder compiles the firmware, queues the update, and flashes it the moment the device
+next checks in. You no longer have to be sitting there when the device wakes.
+
+This landed quietly in a patch release during the 2026.6 cycle and was never written up, and it is billed here
+because this is the release where it came together. Bulk updates in particular did not work with it until now:
+selecting a fleet and hitting update once queued an upload for every offline device that could not possibly
+succeed, and each retry paid for a second compile. Offline devices are now deferred properly
+([#1929](https://github.com/esphome/device-builder/pull/1929)), a device that drops offline after you hit install
+is deferred rather than failed ([#1964](https://github.com/esphome/device-builder/pull/1964)), and a deferred
+install reopens as a normal install carrying its queued message
+([frontend#1181](https://github.com/esphome/device-builder-frontend/pull/1181)).
+
 **Quickstart Tour**
 
 Getting from a fresh install to a working device has always been the hardest part of ESPHome, and this release
@@ -218,12 +239,8 @@ you a half-written binary ([frontend#1199](https://github.com/esphome/device-bui
 [frontend#1204](https://github.com/esphome/device-builder-frontend/pull/1204)).
 
 A bulk **Compile only** action lets you check a change across many devices before deploying any of it
-([frontend#1176](https://github.com/esphome/device-builder-frontend/pull/1176)). Updating a device that is
-offline now compiles once and defers the upload until the device is back, rather than queuing an upload that
-cannot succeed and charging you a second compile on retry
-([#1929](https://github.com/esphome/device-builder/pull/1929),
-[#1964](https://github.com/esphome/device-builder/pull/1964)). ESP-IDF builds now show compile progress, which
-is read from the ninja build counters rather than the percentage that ESP-IDF never prints
+([frontend#1176](https://github.com/esphome/device-builder-frontend/pull/1176)). ESP-IDF builds now show compile
+progress, which is read from the ninja build counters rather than the percentage that ESP-IDF never prints
 ([#1880](https://github.com/esphome/device-builder/pull/1880)).
 
 ## Security and Provisioning Groundwork for EN18031
