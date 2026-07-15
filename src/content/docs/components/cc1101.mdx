@@ -78,8 +78,21 @@ and optional CRC checking.
 
 - **packet_mode** (*Optional*, boolean): Enable FIFO packet mode. When enabled, `gdo0_pin` is
   required. Defaults to `false`.
-- **packet_length** (*Optional*, int): Packet length in bytes. Set to `0` for variable length packets
-  (length byte prepended to data). Range: `0` to `64`. Defaults to `0`.
+- **packet_length** (*Required* when `packet_mode` is enabled, int): Packet length in bytes. Set to `0`
+  for native variable length packets, where the first byte after the sync word is the length byte.
+  Range: `0` to `1024`.
+- **packet_length_lambda** (*Optional*, lambda): Compute the received packet length from the bytes
+  received so far. Requires `packet_mode: true` and `packet_length: 0`. Return a negative value to discard
+  the current packet, return `0` while the length is still unknown, or return the full packet length in
+  bytes. A positive returned length must be greater than the number of bytes already received and must not
+  exceed `1024`.
+
+Packet lengths above 64 bytes and `packet_length_lambda` are supported for receive only. The receiver
+drains the CC1101 RX FIFO while the packet is being received and uses the packet length handling described
+in the CC1101 datasheet sections 15.2.1 and 15.2.2. Long packet reception depends on the ESPHome loop
+draining the RX FIFO before it overflows. Long packet transmission is not implemented; `cc1101.send_packet`
+only supports packets that fit into the CC1101 TX FIFO.
+
 - **crc_enable** (*Optional*, boolean): Enable CRC-16 calculation and checking. The CC1101 uses
   CRC-16-IBM (polynomial 0x8005). Defaults to `false`.
 - **whitening** (*Optional*, boolean): Enable data whitening to improve DC balance. Defaults to `false`.
@@ -173,10 +186,13 @@ This [action](/automations/actions#all-actions) resets the CC1101 chip and re-ap
 ### `cc1101.send_packet` Action
 
 This [action](/automations/actions#all-actions) transmits a packet. Only available when `packet_mode` is enabled.
+Long packet transmission is not implemented.
 
 #### Configuration variables
 
-- **data** (**Required**, list, [templatable](/automations/templates)): The packet to send, length should match the configured `packet_length`.
+- **data** (**Required**, list, [templatable](/automations/templates)): The packet to send. The packet
+  must fit into the CC1101 TX FIFO: up to 64 bytes in fixed length mode, or up to 63 payload bytes in
+  native variable length mode.
 
 ```yaml
 on_...:
