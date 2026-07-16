@@ -47,14 +47,15 @@ of a component. Each of these JSON payloads has the following identifier field:
 - `id`: Identifier using the format `domain/entity_name` (for example `sensor/Temperature`),
   or `domain/device_name/entity_name` for sub-device entities.
 
-Since ESPHome 2026.8.0 the `id` field uses this format and the temporary `name_id` field is
-no longer sent. Between 2026.1.3 and 2026.8.0, `name_id` carried this format while `id` still
-carried the legacy `domain-object_id` format (for example `sensor-temperature`).
+Since ESPHome 2026.8.0, the `id` field uses this format and the temporary `name_id` field is no
+longer sent. From 2026.1.3 up to 2026.8.0, `name_id` carried this format while `id` still carried
+the legacy `domain-object_id` format (for example `sensor-temperature`). Before 2026.1.3, only the
+legacy format was available.
 
-Third-party integrations that support both old and new firmware should read `name_id` and fall
-back to `id`, which selects the new format on either version. An identifier is in the new format
-when it contains a `/`. Integrations that require the legacy format must build it themselves
-(similar to `aioesphomeapi`).
+Third-party integrations that also support firmware from the 2026.1.3 up to 2026.8.0 window should
+read `name_id` and fall back to `id`, which gives the new format on both those versions and the
+legacy format on older firmware. An identifier is in the new format when it contains a `/`.
+Integrations that require the legacy format must build it themselves (similar to `aioesphomeapi`).
 
 The `state` field contains a simple text-based representation of the state of the underlying
 component, for example ON/OFF or 21.4 °C. Several components also have additional fields in
