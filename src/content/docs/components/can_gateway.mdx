@@ -99,6 +99,12 @@ most one route.
 Modifications are prepared in advance, so applying them to a frame only costs a few table lookups in the
 interrupt. The frame's data length (DLC) is never changed.
 
+The values here are not templatable, since a lambda would have to run inside the receive interrupt. They are
+not fixed either: give the rule an [`id`](#filter-rules) and update the values at any time with
+[`can_gateway.set_patch`](#can_gateway-set_patch-action), where they are templatable. Every following frame
+then carries the last committed values at unchanged forwarding speed. See
+[Live Value Injection](#live-value-injection) for the full pattern.
+
 - **can_id** (*Optional*, int): Replace the frame's CAN ID.
 - **use_extended_id** (*Optional*, boolean): Change the frame type. Promoting standard to extended keeps the
   matched ID unless a new `can_id` is given. Demoting extended to standard requires an explicit `can_id`.
