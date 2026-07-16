@@ -31,7 +31,9 @@ dialog::backdrop {
   padding: 0.75rem;
   border-radius: 8px;
   border: 1px solid var(--sl-color-gray-5);
-  transition: background-color 0.2s ease, border-color 0.2s ease;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease;
   min-height: 150px;
   display: flex;
   align-items: center;
@@ -76,7 +78,7 @@ dialog::backdrop {
 }
 
 /* Dark mode image inversion */
-:root[data-theme='dark'] .dark-invert img {
+:root[data-theme="dark"] .dark-invert img {
   filter: invert(1) hue-rotate(180deg);
 }
 
@@ -151,8 +153,47 @@ dialog::backdrop {
   padding-block: 0.5em;
 }
 
-.sidebar-content ul li>a {
+.sidebar-content ul li > a {
   padding-block: 0.5em;
+}
+
+/* Hide the blog "Tags" group in the sidebar (added by starlight-blog). The group
+   is the only sidebar entry that links to /blog/tags/, so target it via :has(). */
+.sidebar-content li:has(> details a[href*="/blog/tags/"]) {
+  display: none;
+}
+
+/* Header nav items (rendered by the SocialIcons override, to the left of the
+   social icons). Defined here rather than as scoped component styles so they are
+   reliably present on every page load. */
+.header-nav {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+/* Vertical rule separating the nav items from the social icons, matching the
+   divider Starlight renders between the social icons and the theme picker. */
+.header-nav::after {
+  content: "";
+  height: 2rem;
+  border-inline-end: 1px solid var(--sl-color-gray-5);
+}
+.header-nav-link {
+  display: flex;
+  align-items: center;
+  color: var(--sl-color-text-accent);
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.header-nav-link:hover {
+  color: var(--sl-color-white);
+}
+
+/* Blog list post previews (starlight-blog): tighten the default 1.5rem gap
+   between the title/metadata, excerpt paragraph and tags. */
+article.preview {
+  gap: 1rem;
 }
 
 /* Anchor styling */
@@ -161,6 +202,24 @@ dialog::backdrop {
   position: relative;
   top: -5rem;
   visibility: hidden;
+}
+
+/* Tighten loose lists: blank lines between list items in source produce
+   <li><p>...</p></li> output. Strip the leading/trailing paragraph margins so
+   single-paragraph items sit flush against each other while items with multiple
+   paragraphs still get spacing between their internal paragraphs. The class is
+   repeated to win specificity against Starlight's own li > :last-child rule. */
+.sl-markdown-content.sl-markdown-content li > p:first-child {
+  margin-block-start: 0;
+}
+
+.sl-markdown-content.sl-markdown-content li > p:last-child {
+  margin-block-end: 0;
+}
+
+.sl-markdown-content.sl-markdown-content li > ul,
+.sl-markdown-content.sl-markdown-content li > ol {
+  margin-block-start: 0;
 }
 
 /* GitHub Alerts - Custom ESPHome Colors (matching Hugo theme style) */
@@ -242,7 +301,7 @@ dialog::backdrop {
 }
 
 /* Dark mode adjustments */
-:root[data-theme='dark'] .markdown-alert {
+:root[data-theme="dark"] .markdown-alert {
   background-color: #23272e;
 }
 
@@ -256,8 +315,8 @@ dialog::backdrop {
 }
 
 /* Ensure Image component wrapper centers its content */
-.sl-markdown-content>p>img,
-.sl-markdown-content>img {
+.sl-markdown-content > p > img,
+.sl-markdown-content > img {
   display: block;
   margin-left: auto;
   margin-right: auto;
@@ -313,8 +372,7 @@ html[data-has-hero] .hero img {
   width: clamp(3.25rem, 11vw, 7.5rem);
   height: clamp(3.25rem, 11vw, 7.5rem);
   border-radius: 50%;
-  background:
-    radial-gradient(circle at 50% 50%, #ff6a6a 0%, #c92d2d 55%, #6a1111 100%);
+  background: radial-gradient(circle at 50% 50%, #ff6a6a 0%, #c92d2d 55%, #6a1111 100%);
   box-shadow:
     0 0 16px 3px rgba(255, 70, 70, 0.55),
     inset 0 0 14px rgba(0, 0, 0, 0.45);
@@ -336,12 +394,14 @@ html[data-has-hero] .hero img {
 }
 
 @keyframes error-404-led-pulse {
-  0%, 100% {
+  0%,
+  100% {
     filter: brightness(0.8);
     box-shadow:
       0 0 10px 2px rgba(255, 70, 70, 0.4),
       inset 0 0 14px rgba(0, 0, 0, 0.5);
   }
+
   50% {
     filter: brightness(1.15);
     box-shadow:
@@ -352,7 +412,9 @@ html[data-has-hero] .hero img {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .error-404__led { animation: none; }
+  .error-404__led {
+    animation: none;
+  }
 }
 
 .error-404__title {
@@ -407,8 +469,14 @@ html[data-has-hero] .hero img {
 }
 
 @keyframes error-404-pulse {
-  0%, 100% { opacity: 1; }
-  50%      { opacity: 0.4; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.4;
+  }
 }
 
 .error-404__terminal-title {
@@ -431,22 +499,52 @@ html[data-has-hero] .hero img {
 }
 
 .error-404__terminal-body > div,
-.error-404__output > div { white-space: nowrap; }
+.error-404__output > div {
+  white-space: nowrap;
+}
 
-.error-404__log-info { color: #7cb342; font-weight: 600; }
-.error-404__log-warn { color: #ffcc32; font-weight: 600; }
-.error-404__log-err  { color: #ff5f57; font-weight: 600; }
-.error-404__log-tag  { color: #7a828c; }
-.error-404__log-text { color: #d5dae1; }
-.error-404__log-path { color: #5dade2; font-weight: 600; }
-.error-404__log-suggest { color: #5dade2; }
+.error-404__log-info {
+  color: #7cb342;
+  font-weight: 600;
+}
+
+.error-404__log-warn {
+  color: #ffcc32;
+  font-weight: 600;
+}
+
+.error-404__log-err {
+  color: #ff5f57;
+  font-weight: 600;
+}
+
+.error-404__log-tag {
+  color: #7a828c;
+}
+
+.error-404__log-text {
+  color: #d5dae1;
+}
+
+.error-404__log-path {
+  color: #5dade2;
+  font-weight: 600;
+}
+
+.error-404__log-suggest {
+  color: #5dade2;
+}
+
 .error-404__log-link {
   color: #5dade2;
   text-decoration: underline;
   text-decoration-color: rgba(93, 173, 226, 0.35);
   text-underline-offset: 2px;
 }
-.error-404__log-link:hover { color: #8cc8ef; }
+
+.error-404__log-link:hover {
+  color: #8cc8ef;
+}
 
 .error-404__prompt-form {
   display: flex;
@@ -463,7 +561,11 @@ html[data-has-hero] .hero img {
   flex-shrink: 0;
 }
 
-.error-404__prompt-arrow { color: #5dade2; margin: 0 0.35em 0 0.15em; font-weight: 600; }
+.error-404__prompt-arrow {
+  color: #5dade2;
+  margin: 0 0.35em 0 0.15em;
+  font-weight: 600;
+}
 
 .error-404__prompt-input {
   flex: 1;
@@ -479,7 +581,9 @@ html[data-has-hero] .hero img {
   caret-color: #ff5f57;
 }
 
-.error-404__prompt-input::placeholder { color: #525a63; }
+.error-404__prompt-input::placeholder {
+  color: #525a63;
+}
 
 .error-404__suggestions {
   display: grid;
@@ -500,7 +604,9 @@ html[data-has-hero] .hero img {
   border: 1px solid var(--sl-color-gray-5);
   color: inherit;
   text-decoration: none;
-  transition: border-color 0.15s ease, background-color 0.15s ease;
+  transition:
+    border-color 0.15s ease,
+    background-color 0.15s ease;
 }
 
 .error-404__suggestion:hover {
@@ -543,7 +649,10 @@ html[data-has-hero] .hero img {
   border: 1px solid var(--sl-color-gray-5);
   color: inherit;
   text-decoration: none;
-  transition: transform 0.15s ease, border-color 0.15s ease, background-color 0.15s ease;
+  transition:
+    transform 0.15s ease,
+    border-color 0.15s ease,
+    background-color 0.15s ease;
 }
 
 .error-404__card:hover {
@@ -586,11 +695,50 @@ html[data-has-hero] .hero img {
 }
 
 /* Light-mode tweaks so the cards stay readable */
-:root[data-theme='light'] .error-404__card {
+:root[data-theme="light"] .error-404__card {
   background: var(--sl-color-gray-7, #f6f7f8);
   border-color: var(--sl-color-gray-5);
 }
 
-:root[data-theme='light'] .error-404__card:hover {
+:root[data-theme="light"] .error-404__card:hover {
   background: var(--sl-color-gray-6);
+}
+
+/**
+ * Blog Styles
+ */
+.main-pane:has(.sl-markdown-content .posts),
+.main-pane:has(.post-footer) {
+  --sl-content-width: 50rem;
+}
+
+.main-pane:has(.post-footer) figure img,
+.sl-markdown-content .posts figure img {
+  max-height: 100%;
+  margin-left: 0;
+}
+
+.metadata.not-content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 2rem;
+}
+
+.posts .metadata.not-content {
+  margin-bottom: 0;
+}
+
+.metadata.not-content .dates:before {
+  display: none;
+}
+
+.metadata.not-content .authors {
+  order: 1;
+}
+
+.metadata.not-content .authors img {
+  border: none;
 }
