@@ -177,6 +177,7 @@ The following configuration variables apply to the main `lvgl` component, in ord
   - **widgets** (*Optional*, list): A list of [Widgets](/components/lvgl/widgets/) to be drawn on this layer.
   - All other options from [Style properties](#lvgl-styling) to be applied to this layer.
 - **layout** (*Optional*): See [Layouts](/components/lvgl/layouts#lvgl-layouts) for details. Defaults to `NONE`.
+- **animations** (*Optional*, list): A list of [Animations](/components/lvgl/animation#lvgl-animations) that change widget style properties over time.
 - All other options from [Style properties](#lvgl-styling) to be applied to all widgets directly.
 
 **Example:**
@@ -280,7 +281,7 @@ These style properties may be applied to any widget, though not all widgets use 
 - **bg_grad_stop** (*Optional*, 0-255): Specify where the gradient should stop: `0` = upper left, `128` = in the center, `255` = lower right. Defaults to `255`.
 - **bg_main_opa** (*Optional*, [opacity](#opacity)): Set opacity of the first gradient color. Defaults to `COVER`.
 - **bg_grad_opa** (*Optional*, [opacity](#opacity)): Set opacity of the second gradient color. Defaults to `COVER`.
-- **bg_image_src** (*Optional*, [image](/components/image#display-image)): The ID of an existing image configuration, to show as the background of the widget.
+- **bg_image_src** (*Optional*, [image](/components/image/)): The ID of an existing image configuration, to show as the background of the widget.
 - **bg_image_opa** (*Optional*, [opacity](#opacity)): Opacity of the background image of the widget.
 - **bg_image_recolor** (*Optional*, [color](#lvgl-color)): Color to mix with every pixel of the background image of the widget.
 - **bg_image_recolor_opa** (*Optional*, [opacity](#opacity)): Opacity of the recoloring of the background image of the widget.
@@ -651,18 +652,24 @@ on_...:
 
 This [action](/automations/actions#actions-action) rotates the LVGL display.
 
-- **rotation** (**Required**, int): The angle to rotate the display to. Valid values are `0`, `90`, `180` and `270`. Note
-  that the angle is absolute, not relative, so the current rotation of the display does not affect the result.
+- **rotation** (**Required**, [templatable](/automations/templates), int): The angle in degrees to rotate the display to.
+  Valid values are `0`, `90`, `180` and `270`. Note that the angle is absolute, not relative, so the current rotation of
+  the display does not affect the result. When a lambda is used, it must return the angle in degrees.
 - **lvgl_id** (*Optional*): The ID of the LVGL instance to rotate.
 
 ```yaml
 on_...:
   - lvgl.display.set_rotation: 90
+  # or with a lambda returning the angle in degrees:
+  - lvgl.display.set_rotation: !lambda "return id(my_rotation_number).state;"
 ```
 
 ### `lvgl.update` Action
 
-This [action](/automations/actions#actions-action) allows changing/updating the background styling of the LVGL display layers at runtime. You can style the `top_layer` and/or `bottom_layer` using any [style properties](#lvgl-styling).
+This [action](/automations/actions#actions-action) allows changing/updating the styling and layout of the active screen and the LVGL display layers at runtime. Top-level [style properties](#lvgl-styling) and a `layout:` apply to the currently active screen; you can also style and lay out the `top_layer` and/or `bottom_layer`.
+
+- **layout** (*Optional*): Update the [layout](/components/lvgl/layouts#updating-a-layout-at-runtime) options of the active screen. Only the layout options may be changed, not the layout type.
+- **top_layer** / **bottom_layer** (*Optional*): Update the [style properties](#lvgl-styling) and `layout:` of the respective display layer.
 
 ```yaml
 # Examples:
@@ -674,6 +681,9 @@ on_...:
   - lvgl.update:
       top_layer:
         opa: 0.5
+  - lvgl.update:
+      layout:
+        flex_flow: column
 ```
 
 <span id="lvgl-page-next-previous-action"></span>
@@ -713,6 +723,12 @@ on_...:
 on_...:
   - lvgl.page.show: secret_page  # shorthand version
 ```
+
+### `lvgl.animation.start` / `lvgl.animation.stop` Action
+
+Start or stop one or more [animations](/components/lvgl/animation#lvgl-animations) that change widget
+style properties over time. See [LVGL Animations](/components/lvgl/animation#lvgl-animation-start-action)
+for details.
 
 ## Conditions
 
@@ -830,6 +846,22 @@ lvgl:
     - component.update: my_display_id
 ```
 
+### `on_landscape` / `on_portrait` triggers
+
+These [triggers](/components/lvgl/widgets#triggers) fire when the display orientation changes, as
+determined by the effective width/height ratio of the display: `on_landscape` fires when the display becomes wider than
+it is tall (a square display is treated as landscape), and `on_portrait` fires when it becomes taller than it is wide.
+The matching trigger also fires once at boot to establish the initial orientation. A subsequent change typically results
+from the [`lvgl.display.set_rotation`](#lvgl-display-set_rotation-action) action.
+
+```yaml
+lvgl:
+  on_landscape:
+    - logger.log: Display is now landscape
+  on_portrait:
+    - logger.log: Display is now portrait
+```
+
 ### Display event triggers
 
 - `on_invalidate_area`: Occurs when an area is invalidated (marked for redraw).
@@ -853,6 +885,7 @@ lvgl:
 
 - [LVGL Examples in the Cookbook](/cookbook/lvgl/)
 - [LVGL Widgets](/components/lvgl/widgets/)
+- [LVGL Animations](/components/lvgl/animation/)
 - [Display Component](/components/display/)
 - [Touchscreen Components](/components/touchscreen/)
 - [Rotary Encoder Sensor](/components/sensor/rotary_encoder/)
