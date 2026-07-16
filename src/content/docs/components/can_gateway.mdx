@@ -7,7 +7,7 @@ import APIRef from '@components/APIRef.astro';
 
 The `can_gateway` component turns an ESP32-C6 into a two-port CAN gateway: frames received on one CAN bus are
 filtered, optionally modified, and transmitted on the other bus. All per-frame work happens inside the receive
-interrupt, so forwarding does not depend on the main loop — a busy or blocked application cannot delay or drop
+interrupt, so forwarding does not depend on the main loop. A busy or blocked application cannot delay or drop
 crossing traffic. Forwarding latency is in the tens of microseconds and stays there even under full bus load.
 
 Typical uses are bridging an old device onto a newer bus (translating IDs and fixing payload bits on the way),
@@ -54,16 +54,16 @@ the second `TWAI1`.
 - **rx_pin** (**Required**, [Pin](/guides/configuration-types#pin)): Receive pin (to the transceiver's RX output).
 - **tx_pin** (**Required**, [Pin](/guides/configuration-types#pin)): Transmit pin.
 - **bit_rate** (**Required**): The bus bit rate, for example `125kbps`, `500kbps` or `1Mbps`.
-  Anything from `10kbps` to `1Mbps` is accepted; both buses may run at different rates.
-- **listen_only** (*Optional*, boolean): Receive without ever transmitting or acknowledging — the port is
+  Anything from `10kbps` to `1Mbps` is accepted, and both buses may run at different rates.
+- **listen_only** (*Optional*, boolean): Receive without ever transmitting or acknowledging, so the port is
   invisible on the bus. Routes cannot target a listen-only port. Defaults to `false`.
 - **tx_queue_depth** (*Optional*, int): Depth of the hardware transmit queue, `1` to `64`. When the destination
   bus cannot drain fast enough, excess frames are shed and counted. Defaults to `8`.
 - **on_bus_off** (*Optional*, [Automation](/automations/)): Runs when the port enters the bus-off error state.
 - **on_recovered** (*Optional*, [Automation](/automations/)): Runs when the port has recovered from bus-off.
-- **self_test** (*Optional*, boolean): Bench aid — the controller acknowledges its own frames, so a single node
+- **self_test** (*Optional*, boolean): Bench aid. The controller acknowledges its own frames, so a single node
   works without a second bus participant. Never use on a real bus. Defaults to `false`.
-- **open_drain_tx** (*Optional*, boolean): Bench aid — open-drain TX so both controllers can share one wire
+- **open_drain_tx** (*Optional*, boolean): Bench aid. Open-drain TX lets both controllers share one wire
   without transceivers (an external pull-up is required). Never use with a transceiver. Defaults to `false`.
 
 ### Routes
@@ -76,7 +76,7 @@ most one route.
 - **to** (**Required**, [ID](/guides/configuration-types#id)): The port the frames are transmitted on.
 - **default_action** (*Optional*, string): What happens to frames that match no filter rule: `accept` (forward)
   or `drop`. With `drop`, the filter list becomes an allow-list. Defaults to `accept`.
-- **filters** (*Optional*, list): Filter rules, evaluated in order — the first matching rule decides.
+- **filters** (*Optional*, list): Filter rules, evaluated in order. The first matching rule decides.
   See [Filter Rules](#filter-rules).
 
 #### Filter Rules
@@ -92,20 +92,20 @@ most one route.
 - **modify** (*Optional*): Changes applied to accepted frames before transmission. See
   [Modifications](#modifications).
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): Gives the rule's modification an ID so its values
-  can be updated at runtime with [`can_gateway.set_patch`](#can_gatewayset_patch-action). Requires `modify`.
+  can be updated at runtime with [`can_gateway.set_patch`](#can_gateway-set_patch-action). Requires `modify`.
 
 #### Modifications
 
-Modifications are prepared in advance: applying them to a frame costs a few table lookups in the interrupt, never
-a computation. The frame's data length (DLC) is never changed.
+Modifications are prepared in advance, so applying them to a frame only costs a few table lookups in the
+interrupt. The frame's data length (DLC) is never changed.
 
 - **can_id** (*Optional*, int): Replace the frame's CAN ID.
 - **use_extended_id** (*Optional*, boolean): Change the frame type. Promoting standard to extended keeps the
-  matched ID unless a new `can_id` is given; demoting extended to standard requires an explicit `can_id`.
+  matched ID unless a new `can_id` is given. Demoting extended to standard requires an explicit `can_id`.
 - **data** (*Optional*, list): Per-byte payload patches, each with:
   - **index** (**Required**, int): Byte position, `0` to `7`.
   - **value** (**Required**, int): The value to write into the masked bits.
-  - **mask** (*Optional*, int): Which bits of the byte to overwrite; other bits pass through unchanged.
+  - **mask** (*Optional*, int): Which bits of the byte to overwrite. Other bits pass through unchanged.
     Defaults to `0xFF` (the whole byte).
 
 ```yaml
@@ -126,9 +126,9 @@ routes:
 
 ### Cyclic Sends
 
-Cyclic sends transmit a frame with a staged payload at a fixed interval — for example a heartbeat or keepalive.
-The payload can be updated at runtime with [`can_gateway.set_cyclic_data`](#can_gatewayset_cyclic_data-action);
-each transmission simply sends the most recently staged bytes.
+Cyclic sends transmit a frame with a staged payload at a fixed interval, for example a heartbeat or keepalive.
+The payload can be updated at runtime with [`can_gateway.set_cyclic_data`](#can_gateway-set_cyclic_data-action).
+Each transmission simply sends the most recently staged bytes.
 
 - **id** (**Required**, [ID](/guides/configuration-types#id)): The ID used by the cyclic-send actions.
 - **port** (**Required**, [ID](/guides/configuration-types#id)): The port to transmit on (not listen-only).
@@ -166,18 +166,18 @@ block (and without a `bus_load` sensor) none of the accounting code runs in the 
 ## How Forwarding Works
 
 Received frames are handled entirely in the receive interrupt: the frame is read into a preallocated
-transmit slot, matched against the route's rules, patched in place, and handed to the destination controller —
-one copy, no allocation, no queue through the main loop. The interrupt code stays executable while the flash
-cache is disabled, so forwarding continues during OTA updates and flash writes.
+transmit slot, matched against the route's rules, patched in place, and handed to the destination controller.
+The frame is copied exactly once and never waits for the main loop. The interrupt code stays executable while
+the flash cache is disabled, so forwarding continues during OTA updates and flash writes.
 
-Under overload the gateway sheds rather than stalls: when the destination's transmit queue is full, when the
-destination is bus-off, or when the gateway is disabled, the frame is dropped and the corresponding
-[route counter](#sensor) is incremented. Every received frame is accounted for by exactly one counter.
+Under overload the gateway sheds frames instead of stalling. A frame is dropped and the corresponding
+[route counter](#sensor) incremented when the destination's transmit queue is full, when the destination is
+bus-off, or when the gateway is disabled. Every received frame is accounted for by exactly one counter.
 
 ## Bus-Off Recovery
 
 A port that is forced bus-off (for example by a wiring fault) recovers automatically with exponential backoff,
-from 100 ms up to 3.2 s between attempts; the backoff resets after the bus has stayed healthy for ten seconds.
+from 100 ms up to 3.2 s between attempts. The backoff resets after the bus has stayed healthy for ten seconds.
 While a port is bus-off, frames routed to it are shed and counted. The `on_bus_off` and `on_recovered`
 automations plus the [`bus_off` binary sensor](#binary-sensor) report the state.
 
@@ -185,9 +185,9 @@ automations plus the [`bus_off` binary sensor](#binary-sensor) report the state.
 
 ### `can_gateway.set_patch` Action
 
-Update the values of a rule's modification at runtime. The *shape* of the modification is fixed by the YAML —
+Update the values of a rule's modification at runtime. The *shape* of the modification is fixed by the YAML:
 only bytes declared there (and `can_id`, if declared) can be updated, and each byte's `mask` is re-applied.
-The update is atomic: a forwarded frame sees either the complete old or the complete new modification.
+The update is atomic, so a forwarded frame sees either the complete old or the complete new modification.
 
 ```yaml
 on_...:
@@ -226,7 +226,7 @@ on_...:
 
 ### `can_gateway.set_cyclic_data` Action
 
-Stage a new payload for a [cyclic send](#cyclic-sends); it is used from the next transmission on.
+Stage a new payload for a [cyclic send](#cyclic-sends). It is used from the next transmission on.
 
 ```yaml
 on_...:
@@ -252,7 +252,7 @@ on_...:
 ## Switch
 
 A switch that enables or disables forwarding. Diagnostics, bus-off recovery, injection and cyclic sends keep
-working while forwarding is off; shed frames are counted as `disabled`. Only one such switch is allowed, and its
+working while forwarding is off, and shed frames are counted as `disabled`. Only one such switch is allowed, and its
 `restore_mode` (default `RESTORE_DEFAULT_ON`) is applied before the controllers start, so a gateway switched off
 stays off across a reboot. Without a switch the gateway always forwards.
 
@@ -291,8 +291,8 @@ sensor:
 - **port_id** (*Optional*, [ID](/guides/configuration-types#id)): The port these sensors belong to.
 - **injected** (*Optional*): Frames sent through `can_gateway.inject` and cyclic sends.
 - **tx_fail** (*Optional*): Transmissions that failed on the wire.
-- **bus_err** (*Optional*): Genuine bus errors (derived from the controller's error counters; arbitration
-  losses on a busy bus are not counted).
+- **bus_err** (*Optional*): Genuine bus errors, derived from the controller's error counters. Arbitration
+  losses on a busy bus are not counted.
 - **recoveries** (*Optional*): Completed bus-off recoveries.
 - **tec** / **rec** (*Optional*): The controller's transmit/receive error counters.
 - **bus_load** (*Optional*): Estimated bus utilization in percent. Requires the port to be a route source, since
@@ -327,7 +327,7 @@ text_sensor:
 
 - **port_id** (**Required**, [ID](/guides/configuration-types#id)): The port to watch.
 - **last_frame** (**Required**): The text sensor. All options from
-  [Text Sensor](/components/text_sensor/#config-text-sensor).
+  [Text Sensor](/components/text_sensor/#config-text_sensor).
 - **throttle** (*Optional*, [Time](/guides/configuration-types#time)): Minimum time between updates.
   Defaults to `1s`.
 
@@ -335,7 +335,7 @@ text_sensor:
 
 ### Firewall
 
-Only the listed IDs may cross from the device bus to the main bus; nothing else gets through.
+Only the listed IDs may cross from the device bus to the main bus. Nothing else gets through.
 
 ```yaml
 can_gateway:
@@ -360,9 +360,9 @@ can_gateway:
 
 ### Live Value Injection
 
-A battery reports a charge-limit frame; the gateway rewrites one byte of it with a value the application stages
-at runtime. The frame keeps crossing at full speed regardless of what the application is doing — it always
-carries the most recently committed value.
+A battery reports a charge-limit frame and the gateway rewrites one byte of it with a value the application
+stages at runtime. The frame keeps crossing at full speed regardless of what the application is doing and
+always carries the most recently committed value.
 
 ```yaml
 can_gateway:
@@ -411,7 +411,7 @@ can_gateway:
 
 ## See Also
 
-- [Canbus Component](/components/canbus/) — for receiving and sending CAN frames in automations, without
+- [Canbus Component](/components/canbus/): receiving and sending CAN frames in automations, without
   interrupt-level forwarding
 - [ESP32 CAN](/components/canbus/esp32_can/)
 - <APIRef text="can_gateway.h" path="can_gateway/can_gateway.h" />
