@@ -93,7 +93,8 @@ To bring in grayscale images:
 
 ```yaml
 image:
-  - file: "image.jpg"
+  - platform: file
+    file: "image.jpg"
     id: my_image
     resize: 120x120
     type: GRAYSCALE
@@ -110,14 +111,16 @@ In this case, the image will be converted to grayscale (regardless of its origin
 when drawn on the display. Note that the original image may require some adjustment as not all images immediately
 convert nicely to the 4-bit grayscale format this display supports.
 
-Note that if `type: GRAYSCALE` is omitted, the image will render as a binary image (no grayscale); in this
+Note that if `type: BINARY` is used, the image will render as a binary image (no grayscale); in this
 case, a color attribute may be passed to the `image()` method as follows:
 
 ```yaml
 image:
-  - file: "image.jpg"
+  - platform: file
+    file: "image.jpg"
     id: my_image
     resize: 120x120
+    type: BINARY
 
 ...
 
