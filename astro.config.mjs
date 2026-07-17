@@ -1,5 +1,6 @@
 import { defineConfig } from "astro/config";
 import starlight from "@astrojs/starlight";
+import starlightBlog from "starlight-blog";
 import sitemap from "@astrojs/sitemap";
 import { fileURLToPath } from "url";
 import path from "path";
@@ -8,8 +9,11 @@ import { imageBreakpoints } from "./src/lib/breakpoints.ts";
 import { remarkAlert } from "remark-github-blockquote-alert";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
+import { rehypeHeadingSlugs } from "./src/lib/rehype-heading-slugs.mjs";
+import { rehypeExternalLinksBlog } from "./src/lib/rehype-external-links-blog.mjs";
 import componentsJson from "./src/integrations/components-json.ts";
 import routeIndex from "./src/integrations/route-index.ts";
+import { authors } from "./src/authors.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -120,19 +124,21 @@ export default defineConfig({
     resolve: {
       alias: {
         "@components": path.resolve(__dirname, "./src/components"),
+        "@assets": path.resolve(__dirname, "./src/assets"),
       },
     },
   },
   image: {
     breakpoints: imageBreakpoints,
     responsiveStyles: true,
+    domains: ["assets.openhomefoundation.org"],
   },
   markdown: {
     // Astro 6 no longer defaults `markdown.gfm` to true, and @astrojs/mdx only applies remark-gfm
     // to .mdx files when this is explicitly truthy. Without it, GFM tables render as literal text.
     gfm: true,
     remarkPlugins: [remarkAlert, remarkMath],
-    rehypePlugins: [rehypeKatex],
+    rehypePlugins: [rehypeHeadingSlugs, rehypeKatex, rehypeExternalLinksBlog],
   },
   integrations: [
     starlight({
@@ -140,7 +146,12 @@ export default defineConfig({
       titleDelimiter: "-",
       favicon: "/favicon.ico",
       pagination: false,
-      plugins: [],
+      plugins: [
+        starlightBlog({
+          navigation: "none",
+          authors,
+        }),
+      ],
       logo: {
         light: "./src/assets/logo-dark.svg",
         dark: "./src/assets/logo-light.svg",
@@ -168,6 +179,7 @@ export default defineConfig({
         Footer: "./src/components/Footer.astro",
         Head: "./src/components/Head.astro",
         SiteTitle: "./src/components/SiteTitle.astro",
+        SocialIcons: "./src/components/SocialIcons.astro",
       },
       customCss: ["./src/styles/custom.css", "katex/dist/katex.min.css"],
       sidebar: [
@@ -214,7 +226,7 @@ export default defineConfig({
         {
           label: "Keeping Up",
           items: [
-            //{ label: "Blog", link: "/blog/" },
+            { label: "Blog", link: "/blog/" },
             { label: "Changelog", link: "/changelog/" },
             { label: "Discord", link: "https://discord.gg/KhAMKrd" },
             {
