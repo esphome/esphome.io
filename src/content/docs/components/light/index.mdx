@@ -8,6 +8,7 @@ sidebar:
 import APIClass from '@components/APIClass.astro';
 import APIStruct from '@components/APIStruct.astro';
 import APIRef from '@components/APIRef.astro';
+import LightEffectPreview from '@components/LightEffectPreview.astro';
 
 In ESPHome, `light` components allow you to create lights usable from Home Assistant's frontend and have many
 features such as colors, transitions and even effects.
@@ -34,7 +35,7 @@ light:
 - **name** (*Optional*, string): The name of the light. At least one of **id** and **name** must be specified.
 
 > [!NOTE]
-> If you have a [friendly_name](/components/esphome#esphome-configuration_variables) set for your device and you want the light
+> If you have a [friendly_name](/components/esphome#configuration-variables) set for your device and you want the light
 > to use that name, you can set `name: None`.
 
 - **icon** (*Optional*, icon): Manually set the icon to use for the light in the frontend.
@@ -70,7 +71,7 @@ light:
   See [`light.on_turn_on` / `light.on_turn_off` Trigger](#light-on_turn_on_off_trigger).
 
 - **on_state** (*Optional*, [Action](/automations/actions#all-actions)): An automation to perform when the light's set state is
-  changed. See [`light.on_state` Trigger](#light-on_state_trigger).
+  changed. See [`light.on_state` Trigger](#light-on_state-trigger).
 
 **Additional configuration variables for addressable lights:**
 
@@ -156,8 +157,6 @@ explicitly set them to zero.
 
 ## Light Automations
 
-<span id="light-toggle_action"></span>
-
 ### `light.toggle` Action
 
 This action toggles a light with the given ID when executed.
@@ -185,8 +184,6 @@ on_...:
 > // perform action:
 > call.perform();
 > ```
-
-<span id="light-turn_on_action"></span>
 
 ### `light.turn_on` Action
 
@@ -266,8 +263,6 @@ on_...:
 >     white: 75%
 > ```
 
-<span id="light-turn_off_action"></span>
-
 ### `light.turn_off` Action
 
 This action turns a light with the given ID off when executed.
@@ -298,8 +293,6 @@ on_...:
 > call.perform();
 > ```
 
-<span id="light-control_action"></span>
-
 ### `light.control` Action
 
 This [Action](/automations/actions#all-actions) is a generic call to change the state of a light - it is essentially just a
@@ -318,8 +311,6 @@ on_...:
 - **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the light.
 - **state** (*Optional*, [templatable](/automations/templates), boolean): Change the ON/OFF state of the light.
 - All other options from [light state](#light-state_config).
-
-<span id="light-dim_relative_action"></span>
 
 ### `light.dim_relative` Action
 
@@ -409,8 +400,6 @@ on_...:
 > The action turns the light on if it isn't already on, so the chosen effect starts immediately. To cycle effects only
 > while the light is on, gate the action with the [`light.is_on`](#light-is_on_condition) condition.
 
-<span id="light-addressable_set_action"></span>
-
 ### `light.addressable_set` Action
 
 This [Action](/automations/actions#all-actions) allows you to manually set a range of LEDs on an addressable light to a specific
@@ -483,8 +472,6 @@ light:
     - logger.log: "Light Turned Off!"
 ```
 
-<span id="light-on_state_trigger"></span>
-
 ### `light.on_state` Trigger
 
 This trigger is activated each time the set light state is changed. It is not triggered based on current state, but
@@ -499,8 +486,6 @@ light:
     on_state:
     - logger.log: "Light State Changed!"
 ```
-
-<span id="light-effects"></span>
 
 ## Light Effects
 
@@ -531,6 +516,44 @@ light:
 > [!NOTE]
 > After setting a light effect, it is possible to reset the in-use effect back to a static light by setting the
 > `effect` to `none` when it is being called through Home Assistant or directly on the device.
+
+### Basic Animations
+
+These effects work on any light platform.
+
+| Preview | Effect | Description | Parameters |
+| --- | --- | --- | --- |
+| <LightEffectPreview type="pulse" label="Animated preview of the Pulse effect" /> | [Pulse](#pulse-effect) | Smooth brightness pulse | `name`, `transition_length`, `update_interval`, `min_brightness`, `max_brightness` |
+| <LightEffectPreview type="random" label="Animated preview of the Random effect" /> | [Random](#random-effect) | Random colors at fixed intervals | `name`, `transition_length`, `update_interval` |
+| <LightEffectPreview type="strobe" label="Animated preview of the Strobe effect" /> | [Strobe](#strobe-effect) | Cycle through a list of colors with set durations | `name`, `colors` |
+| <LightEffectPreview type="flicker" label="Animated preview of the Flicker effect" /> | [Flicker](#flicker-effect) | Candle-like brightness variation | `name`, `alpha`, `intensity` |
+| <LightEffectPreview type="lambda" label="Lambda effect runs user code; no canonical visual" /> | [Lambda](#lambda-effect) | Run custom C++ on each update | `name`, `update_interval`, `lambda` |
+
+### Strip Animations
+
+These effects require an addressable light (LED strip).
+
+| Preview | Effect | Description | Parameters |
+| --- | --- | --- | --- |
+| <LightEffectPreview type="rainbow" label="Animated preview of the Addressable Rainbow effect" /> | [Addressable Rainbow](#addressable-rainbow-effect) | Hue sweeps the length of the strip | `name`, `speed`, `width` |
+| <LightEffectPreview type="color-wipe" label="Animated preview of the Addressable Color Wipe effect" /> | [Addressable Color Wipe](#addressable-color-wipe-effect) | New colors shift in at the start of the strip | `name`, `colors`, `add_led_interval`, `reverse` |
+| <LightEffectPreview type="scan" label="Animated preview of the Addressable Scan effect" /> | [Addressable Scan](#addressable-scan-effect) | Single dot slides back and forth across the strip | `name`, `move_interval`, `scan_width` |
+| <LightEffectPreview type="twinkle" label="Animated preview of the Addressable Twinkle effect" /> | [Addressable Twinkle](#addressable-twinkle-effect) | Random pixels brighten and fade | `name`, `twinkle_probability`, `progress_interval` |
+| <LightEffectPreview type="random-twinkle" label="Animated preview of the Addressable Random Twinkle effect" /> | [Addressable Random Twinkle](#addressable-random-twinkle-effect) | Twinkle, but each pixel gets a random color | `name`, `twinkle_probability`, `progress_interval` |
+| <LightEffectPreview type="fireworks" label="Animated preview of the Addressable Fireworks effect" /> | [Addressable Fireworks](#addressable-fireworks-effect) | Sparks burst from random pixels | `name`, `update_interval`, `spark_probability`, `use_random_color`, `fade_out_rate` |
+| <LightEffectPreview type="addr-flicker" label="Animated preview of the Addressable Flicker effect" /> | [Addressable Flicker](#addressable-flicker-effect) | Per-pixel candle flicker | `name`, `update_interval`, `intensity` |
+| <LightEffectPreview type="addr-lambda" label="Addressable Lambda effect runs user code; no canonical visual" /> | [Addressable Lambda](#addressable-lambda-effect) | Run custom C++ per LED | `name`, `update_interval`, `lambda` |
+
+### External Control
+
+These effects receive frames from an external source instead of generating animation locally.
+
+| Effect | Description | Parameters |
+| --- | --- | --- |
+| [Automation](#automation-light-effect) | Run ESPHome automation actions on a loop | `name`, `sequence` |
+| [E1.31](#e1-31-effect) | Receive sACN / E1.31 frames over the network | `universe`, `channels` |
+| [Adalight](#adalight-effect) | Receive Adalight protocol over UART | `uart_id` |
+| [WLED](#wled-effect) | Receive WLED UDP sync protocol | `port`, `blank_on_start`, `sync_group_mask` |
 
 ### Pulse Effect
 
