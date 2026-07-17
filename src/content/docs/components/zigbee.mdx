@@ -11,7 +11,7 @@ Zigbee uses the same RF technology as Thread (IEEE 802.15.4) but also defines mu
 The `zigbee` component, however, supports only the Home Automation profile.
 It allows exposing supported ESPHome components over a Zigbee network to Home Assistant via
 **Zigbee2MQTT** or **ZHA**. Due to the limitations of the Zigbee protocol, only basic properties are exposed.
-Additional properties must be configured manually in Home Assistant. Each ESPHome entity consumes one Zigbee endpoint.
+Additional properties must be configured manually in Home Assistant.
 
 > [!NOTE]
 > You will need a Zigbee coordinator like **Zigbee2MQTT** or **ZHA**. Other commercial Zigbee hubs most likely do not
@@ -23,14 +23,14 @@ Additional properties must be configured manually in Home Assistant. Each ESPHom
 
 Zigbee is only supported on `nRF52` platforms and on `ESP32` with IEEE 802.15.4 connectivity (`ESP32-C5`, `ESP32-C6`, or `ESP32-H2` 
 and in the future `ESP32-H4` and `ESP32-H21`). Both platforms support different features and have different limitations:
-- On `nRF52` a maximum of 8 endpoints is supported.
+- On `nRF52` a maximum of 8 endpoints is supported and each ESPHome entity consumes one Zigbee endpoint.
+- On `ESP32` a maximum of 239 endpoints is supported and ESPHome entities are combined on Zigbee endpoints.
 - `ESP32-H2` seems to work more reliably than `ESP32-C6`. There are reports of `ESP32-C6` boards that work only if placed next 
 to the coordinator.
 - On `ESP32` Zigbee can be used together with [WiFi](/components/wifi) with some limitations:
   - WiFi station mode + Zigbee end device is working fine.
   - WiFi station mode + Zigbee router leads to an unstable Zigbee network. Still can be used if WiFi is only enabled for short times (e.g. OTA)
-  - WiFi access point + Zigbee end device could lead to an unstable access point with increased packet loss. If the AP is only used as fallback there should be no issues.
-  - WiFi access point + Zigbee router is not supported
+  - WiFi access point + Zigbee is not supported
 
 > [!CAUTION]
 > Whenever the configuration is changed, the device should be removed and re-added to the Zigbee network.
@@ -53,7 +53,9 @@ zigbee:
   id: my_zigbee
   on_join:
     then:
-      - logger.log: "Joined network"
+      - logger.log:
+          format: "%s network."
+          args: ['x ? "Joined" : "Rejoined"']
   power_source: BATTERY
 ```
 
@@ -64,7 +66,16 @@ zigbee:
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): The ID to use for this `zigbee` component.
 
 - **router** (*Optional*, boolean): If true the Zigbee role will be `router` instead of `end device` and it will
-  forward Zigbee packets from other devices. Don't use this for battery-powered devices. Defaults to `false`.
+  forward Zigbee packets from other devices. Routers drain more power than end devices and need to be always on
+  for a stable Zigbee network. For this reasons battery-powered devices should not be used as routers.
+  Defaults to `false`.
+
+- **power_source** (*Optional*, enum): Indicates what kind of power the device uses. Affects
+  sleep behavior. One of `UNKNOWN`, `MAINS_SINGLE_PHASE`, `MAINS_THREE_PHASE`, `BATTERY`,
+  `DC_SOURCE`, `EMERGENCY_MAINS_CONST`, or `EMERGENCY_MAINS_TRANSF`. Defaults to `DC_SOURCE`.
+
+- **on_join** (*Optional*, [Automation](/automations#automation)): Automation to run when the device joins the network.
+  In [Lambdas](/automations/templates#config-lambda) you can get the join type with `x`. It is `true` for join and `false` for rejoin.
 
 Only on `nRF52`:
 
@@ -74,12 +85,6 @@ Only on `nRF52`:
   - `true`: Erase all data on every boot. Use only for recovery from boot loops when
     you don't have an SWD programmer.
   - `once`: Erase data only on first boot after flashing new firmware, then preserve.
-
-- **on_join** (*Optional*, [Automation](/automations#automation)): Automation to run when the device joins the network.
-
-- **power_source** (*Optional*, enum): Indicates what kind of power the device uses. Affects
-  sleep behavior. One of `UNKNOWN`, `MAINS_SINGLE_PHASE`, `MAINS_THREE_PHASE`, `BATTERY`,
-  `DC_SOURCE`, `EMERGENCY_MAINS_CONST`, or `EMERGENCY_MAINS_TRANSF`. Defaults to `DC_SOURCE`.
 
 - **ieee802154_vendor_oui** (*Optional*, int): Sets the Vendor Organizationally Unique Identifier (OUI).
   This allows replacing Nordic Semiconductor's default company ID with your own.
@@ -122,14 +127,26 @@ Zigbee can have some overrides for specific options.
 
 Only on `ESP32`:
 
-- **report** (*Optional*, enum): Report the state. One of `coordinator`, `enable`, `force`. `coordinator` uses the configuration from
-  the coordinator, `enable` activates reporting with default settings and uses the configuration from the coordinator if possible.
-  `force` ignores the coordinator configuration and reports every change. On `nRF52` the coordinator configuration is always used.
-  Defaults to `coordinator`.
+- **report** (*Optional*, enum): How the state is reported. One of `default` or `force`. `default` activates reporting with default settings
+  and uses the configuration from the coordinator if possible. `force` sends manual reports for every change to the coordinator.
+  On `nRF52` the coordinator configuration is always used.
+  Defaults to `default`.
 
 > [!NOTE]
-> ZHA sets the minimum reporting interval to 30 seconds for most sensor devices. If you need faster responses set `report` to `force`.
+> ZHA sets the minimum reporting interval to 30 seconds for some sensor devices. If a faster response is needed set `report` to `force`.
 
+- **endpoint** (*Optional*, int): Endpoint number in the range from 1 to 239. This defines which entity goes on which
+  endpoint, giving a more stable configuration and letting you manually combine entities that logically belong together.
+  Only entities that map to different Zigbee clusters can be combined (for example a `binary_sensor` and a `sensor`);
+  two entities of the same type, such as two sensors, cannot share an endpoint. If more than one entity on an endpoint
+  has a Zigbee device type, set `use_device_type: true` on one of them.
+- **use_device_type** (*Optional*, boolean): Use the Zigbee Home Automation device type of this entity for the endpoint.
+  Some entities have a
+  [device type](https://community.nxp.com/pwmxy87654/attachments/pwmxy87654/wireless-connectivity/698/1/075367r03ZB_AFG-Home_Automation_Profile_for_Public_Download.pdf#G12.1028193)
+  that can be used by 3rd party devices to discover the device capabilities. Typically this should be set on the main
+  entity of an endpoint. Set this to `false` to remove the device type of the entity. In this case, or if the
+  entity has no device type of its own, the endpoint uses the generic `CUSTOM_ATTR` type. For exposing entities to Home
+  Assistant, device types are not needed. It can be set to `true` on only one entity per endpoint.
 
 ## Supported Components
 
@@ -137,10 +154,10 @@ The following components are exposed over Zigbee if they have a name and if they
 
 - [Binary Sensor](/components/binary_sensor#config-binary_sensor): only **state** and **name** are exposed over Zigbee.
 
-Only on `nRF52`:
-
 - [Sensor](/components/sensor#config-sensor): **state**, **name** and **unit_of_measurement** are exposed
   over Zigbee. If no unit is given or if it is not supported it will fall back to unitless.
+
+Only on `nRF52`:
 
 - [Switch](/components/switch#config-switch): only **state** and **name** are exposed over Zigbee.
 
@@ -158,7 +175,7 @@ Only on `nRF52`:
 ### Sensor
 
 [Sensors](/components/sensor#config-sensor) are implemented as analog input clusters with description, engineering_units,
-and present_value attributes. Available only on `nRF52` platforms.
+and present_value attributes. On `ESP32` additionally the application type attribute is set if applicable.
 
 #### Additional configuration variables
 
