@@ -28,6 +28,13 @@ safe_mode:
 - **boot_is_good_after** (*Optional*, [Time](/guides/configuration-types#time)): The amount of time after which the boot is considered successful.
    Defaults to `1min`.
 
+- **boot_is_good_on_shutdown** (*Optional*, boolean): Whether an orderly shutdown (entering deep sleep, a restart or
+   a shutdown) counts as a successful boot. When enabled, shutting down cleanly also confirms the running firmware
+   on platforms with OTA bootloader rollback support, so the bootloader does not roll back a fresh OTA update. Set
+   to `false` for strict rollback semantics: only `boot_is_good_after` elapsing or the
+   [`safe_mode.mark_successful`](#safe_mode-mark_successful-action) action confirm the firmware, so an update that
+   goes back to sleep before proving itself healthy is still rolled back on the next wake. Defaults to `true`.
+
 - **num_attempts** (*Optional*, int): The number of failed boot attempts which must occur before invoking safe mode.
    Defaults to `10`.
 
@@ -68,6 +75,18 @@ on_...:
   then:
     - safe_mode.mark_successful
 ```
+
+On platforms with OTA bootloader rollback support enabled (see `enable_ota_rollback` for
+[ESP32](/components/esp32#advanced-configuration) and [nRF52](/components/nrf52#advanced-configuration)), marking the
+boot as successful also confirms the currently running firmware, so the bootloader does not roll back to the previous
+version after an OTA update.
+
+> [!NOTE]
+> Since ESPHome 2026.8.0, an orderly shutdown — entering deep sleep, a restart or a shutdown — automatically marks
+> the boot as successful and confirms the firmware, so devices that sleep before `boot_is_good_after` elapses no
+> longer need to run this action to keep OTA updates from being rolled back. This can be disabled with the
+> `boot_is_good_on_shutdown` option, in which case only `boot_is_good_after` elapsing or this action confirm the
+> firmware. See [Deep Sleep and OTA Rollback](/components/deep_sleep#deep-sleep-and-ota-rollback) for details.
 
 ## Rebooting to the recovery app on ESP32
 
