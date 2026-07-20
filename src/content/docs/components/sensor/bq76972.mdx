@@ -1,0 +1,122 @@
+---
+description: "Instructions for setting up Texas Instruments BQ76972 battery monitor in ESPHome."
+title: "Texas Instruments BQ27220 battery fuel gauge"
+---
+
+The `bq76972` platform allows you to use a BQ76972 high accuracy battery monitor
+([datasheet](https://www.ti.com/lit/ds/slusfc9/slusfc9.pdf),
+[Technical Reference Manual](https://www.ti.com/lit/ug/sluucw9/sluucw9.pdf))
+in ESPHome. It uses the [I²C Bus](/components/i2c) for communication. The default I²C address is `0x08`.
+
+The BQ76972 is a 3-series to 16-series cell battery monitor that provides cell voltage readings, 
+pack current measurements, coulomb counting, and flexible thermistor monitoring options across multiple pins.
+
+## Configuration
+
+```yaml
+# Example configuration entry
+bq76972:
+  id: bq76972_id
+  address: 0x08
+  crc_enabled: true
+  update_interval: 10s
+  stack_voltage:
+    name: "Pack Total Voltage"
+  internal_temperature:
+    name: "Temperature - Internal"
+  ts1_temperature:
+    name: "Temperature - Pin TS1"
+  ts2_temperature:
+    name: "Temperature - Pin TS2"
+  ts3_temperature:
+    name: "Temperature - Pin TS3"
+  hdq_temperature:
+    name: "Temperature - Pin HDQ"
+  cell_1_voltage:
+    name: "Cell 1 Voltage"
+  cell_2_voltage:
+    name: "Cell 2 Voltage"
+  cell_3_voltage:
+    name: "Cell 3 Voltage"
+  cell_4_voltage:
+    name: "Cell 4 Voltage"
+  cell_5_voltage:
+    name: "Cell 5 Voltage"
+  cell_6_voltage:
+    name: "Cell 6 Voltage"
+  cell_7_voltage:
+    name: "Cell 7 Voltage"
+  cell_8_voltage:
+    name: "Cell 8 Voltage"
+  cell_9_voltage:
+    name: "Cell 9 Voltage"
+  cell_10_voltage:
+    name: "Cell 10 Voltage"
+  cell_11_voltage:
+    name: "Cell 11 Voltage"
+  cell_12_voltage:
+    name: "Cell 12 Voltage"
+  cell_13_voltage:
+    name: "Cell 13 Voltage"
+  cell_14_voltage:
+    name: "Cell 14 Voltage"
+  cell_15_voltage:
+    name: "Cell 15 Voltage"
+  cell_16_voltage:
+    name: "Cell 16 Voltage"
+  i2c_address_setter:
+    name: "New I2C Address"
+    mode: box
+
+button:
+  - platform: template
+    name: "Program BQ I2C Address"
+    icon: "mdi:chip"
+    on_press:
+      then:
+        - lambda: |-
+            id(bq76972_id).program_address_from_number();
+```
+
+## Configuration Variables
+
+- **address** (*Optional*, int): The I²C address of the device. Defaults to `0x08`.
+- **id** (**Required**, [ID](/guides/configuration-types/#config-id)): Manually specify an ID for this component instance to be referenced by child sensors.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): How often to poll the sensor. Defaults to `10s`.
+- **address** (*Optional*, int): The initial I²C address of the device. Defaults to `0x08`.
+- **crc_enabled** (*Optional*, boolean): Whether to enable CRC validation for communication. Defaults to `false`.
+- **reg_disabled** (*Optional*, boolean): Sets REG0 disabling option in configuration. Defaults to `true`.
+
+---
+
+## Temperature Sensor Variables
+
+All temperature entries are placed under the `sensor` platform pointing to your `bq76972_id`. Each entry is optional.
+
+- **bq76972_id** (**Required**, [ID](/guides/configuration-types/#config-id)): The ID of the parent `bq76972` component.
+- **internal_temperature** (*Optional*): Internal die temperature in °C.
+- **cfetoff_temperature** (*Optional*): Temperature recorded by thermistor connected to the CFETOFF pin in °C.
+- **dfetoff_temperature** (*Optional*): Temperature recorded by thermistor connected to the DFETOFF pin in °C.
+- **alert_temperature** (*Optional*): Temperature recorded by thermistor connected to the ALERT pin in °C.
+- **ts1_temperature** (*Optional*): Temperature recorded by thermistor connected to the TS1 pin in °C.
+- **ts2_temperature** (*Optional*): Temperature recorded by thermistor connected to the TS2 pin in °C.
+- **ts3_temperature** (*Optional*): Temperature recorded by thermistor connected to the TS3 pin in °C.
+- **hdq_temperature** (*Optional*): Temperature recorded by thermistor connected to the HDQ pin in °C.
+- **dchg_temperature** (*Optional*): Temperature recorded by thermistor connected to the DCHG pin in °C.
+- **ddsg_temperature** (*Optional*): Temperature recorded by thermistor connected to the DDSG pin in °C.
+
+---
+
+## Number Entity Variables (I²C Address Reprogramming)
+
+Allows updating the internal Data Memory of the BQ76972 to switch its hardware I²C address.
+
+- **bq76972_id** (**Required**, [ID](/guides/configuration-types/#config-id)): The ID of the parent `bq76972` component.
+- **i2c_address_setter** (**Required**): Configures a numeric text box in Home Assistant. Pre-populates with the device's currently active address.
+  - All standard options from [Number](/components/number).
+
+## See Also
+
+- [I²C Bus](/components/i2c)
+- [Sensor Component](/components/sensor)
+- [Number Component](/components/number)
