@@ -21,12 +21,6 @@ manufacturer and board. BLE GATT services and characteristics can be added to th
 esp32_ble_server:
   manufacturer: "Orange"
   manufacturer_data: [0x4C, 0, 0x23, 77, 0xF0 ]
-  on_connect:
-    - lambda: |-
-        ESP_LOGD("BLE", "Connection from %d", id);
-  on_disconnect:
-    - lambda: |-
-        ESP_LOGD("BLE", "Disconnection from %d", id);
 ```
 
 ## Configuration variables
@@ -42,10 +36,162 @@ esp32_ble_server:
   accept. When set to a value greater than 1, the server resumes advertising after a client connects so that
   additional clients can discover and connect, up to this limit. Must not exceed the `max_connections` value
   configured in the [ESP32 BLE](/components/esp32_ble) component. Defaults to `1`. Range: 1 to 9.
-
-- **on_connect** (*Optional*, [Automation](/automations)): An action to be performed when a client connects to the BLE server. It provides the `id` variable which contains the ID of the client that connected.
-- **on_disconnect** (*Optional*, [Automation](/automations)): An action to be performed when a client disconnects from the BLE server. It provides the `id` variable which contains the ID of the client that disconnected.
+- **passkey** (*Optional*, int): A fixed passkey for notification or numeric comparison. Range: 1 to 999999. Useful if there is no display. Can be empty for random passkey.
 - **services** (*Optional*, list of [Service Configuration](#esp32_ble_server-service)): A list of services to expose on the BLE GATT server.
+- **on_connect** (*Optional*, [Automation](/automations)): An action to be performed when a client connects to the BLE server. It provides the `id` variable which contains the ID of the client that connected. See [`on_connect`](#esp32_ble_server-on_connect).
+- **on_disconnect** (*Optional*, [Automation](/automations)): An action to be performed when a client disconnects from the BLE server. It provides the `id` variable which contains the ID of the client that disconnected. See [`on_disconnect`](#esp32_ble_server-on_disconnect).
+- **on_passkey_request** (*Optional*, [Automation](/automations)): An automation to enter
+  the passkey required by the other BLE device. See [`on_passkey_request`](#esp32_ble_server-on_passkey_request).
+- **on_passkey_notification** (*Optional*, [Automation](/automations)): An automation to
+  display the passkey to the user. See [`on_passkey_notification`](#esp32_ble_server-on_passkey_notification).
+- **on_numeric_comparison_request** (*Optional*, [Automation](/automations)): An automation to
+  compare the passkeys shown on the two BLE devices. See [`on_numeric_comparison_request`](#esp32_ble_server-on_numeric_comparison_request).
+
+## Automations
+
+<span id="esp32_ble_server-on_connect"></span>
+
+### `on_connect`
+
+This automation is triggered when a client connects to the BLE server.
+
+```yaml
+esp32_ble_server:
+    id: ble_itag
+    on_connect:
+      then:
+        - lambda: |-
+            ESP_LOGD("BLE", "Connection from %d", id);
+```
+
+<span id="esp32_ble_server-on_disconnect"></span>
+
+### `on_disconnect`
+
+This automation is triggered when the client disconnects from a BLE server.
+
+```yaml
+esp32_ble_server:
+    id: ble_itag
+    on_disconnect:
+      then:
+        - lambda: |-
+            ESP_LOGD("BLE", "Disconnection from %d", id);
+```
+
+<span id="esp32_ble_server-on_passkey_request"></span>
+
+### `on_passkey_request`
+
+This automation is triggered when the BLE peer requests a passkey for authentication.
+
+```yaml
+esp32_ble_server:
+    id: ble_itag
+    on_passkey_request:
+      then:
+        - esp32_ble_server.passkey_reply:
+            id: ble_itag
+            passkey: 123456
+```
+
+<span id="esp32_ble_server-on_passkey_notification"></span>
+
+### `on_passkey_notification`
+
+This automation is triggered when a passkey must be entered on the BLE peer.
+
+```yaml
+esp32_ble_server:
+    id: ble_itag
+    on_passkey_notification:
+      then:
+        - logger.log:
+            format: "Enter this passkey on your BLE device: %06d"
+            args: [ passkey ]
+```
+
+<span id="esp32_ble_server-on_numeric_comparison_request"></span>
+
+### `on_numeric_comparison_request`
+
+This automation is triggered when a numeric comparison is required by the BLE peer.
+
+```yaml
+esp32_ble_server:
+    id: ble_itag
+    on_numeric_comparison_request:
+      then:
+        - logger.log:
+            format: "Compare this passkey with the one on your BLE device: %06d"
+            args: [ passkey ]
+        - esp32_ble_server.numeric_comparison_reply:
+            id: ble_itag
+            accept: True
+```
+
+## Actions
+
+### `esp32_ble_server.passkey_reply`
+
+This action triggers an authentication attempt using the specified `passkey`.
+
+Example usage:
+
+```yaml
+on_...:
+  then:
+    - esp32_ble_server.passkey_reply:
+        id: my_esp32_ble_server
+        passkey: 123456
+```
+
+#### Configuration variables
+
+- **id** (**Required**, [ID](/guides/configuration-types#id)): ID of the associated BLE client.
+- **passkey** (**Required**, int, [templatable](/automations/templates)): The 6-digit passkey.
+
+### `esp32_ble_server.numeric_comparison_reply`
+
+This action triggers an authentication attempt after a numeric comparison.
+
+Example usage:
+
+```yaml
+on_...:
+  then:
+    - esp32_ble_server.numeric_comparison_reply:
+        id: my_esp32_ble_server
+        accept: True
+```
+
+#### Configuration variables
+
+- **id** (**Required**, [ID](/guides/configuration-types#id)): ID of the associated BLE client.
+- **accept** (**Required**, boolean, [templatable](/automations/templates)): Should be `true` if the passkeys
+  displayed on both BLE devices are matching.
+
+### `esp32_ble_server.remove_bond`
+
+This action removes a device from the security database and manages
+unpairing.
+
+Example usage:
+
+```yaml
+esp32_ble_server:
+  - mac_address: XX:XX:XX:XX:XX:XX
+    id: my_esp32_ble_server
+    on_connect:
+      then:
+        - esp32_ble_server.remove_bond:
+            id: my_esp32_ble_server
+```
+
+#### Configuration variables
+
+- **id** (**Required**, [ID](/guides/configuration-types#id)): ID of the associated BLE client.
+
 
 <span id="esp32_ble_server-service"></span>
 
@@ -103,7 +249,9 @@ esp32_ble_server:
 - **uuid** (**Required**, string, int): The UUID of the characteristic.
 - **description** (*Optional*, [Value Configuration](#esp32_ble_server-value)): The description of the characteristic - not templatable. It will add a `CUD` descriptor (0x2901) to the characteristic with the value of the description.
 - **read** (*Optional*, boolean): If the characteristic should be readable. Defaults to `false`.
+- **read_encrypt** (*Optional*, boolean): If the characteristic should be readable only through a secure connection. Defaults to `false`. See [Security](#esp32_ble_server-security).
 - **write** (*Optional*, boolean): If the characteristic should be writable. Defaults to `false`.
+- **write_encrypt** (*Optional*, boolean): If the characteristic should be writable only through a secure connection. Defaults to `false`. See [Security](#esp32_ble_server-security).
 - **broadcast** (*Optional*, boolean): If the characteristic should be broadcast. Defaults to `false`.
 - **notify** (*Optional*, boolean): If the characteristic supports notifications. If `true`, a `CCCD` descriptor will be automatically added to the characteristic. Defaults to `false`.
 - **indicate** (*Optional*, boolean): If the characteristic supports indications. If `true`, a `CCCD` descriptor will be automatically added to the characteristic. Defaults to `false`.
@@ -253,6 +401,89 @@ on_...:
 
 - **id** (**Required**, string): The ID of the descriptor to set the value of.
 - **value** (**Required**, [Value Configuration](#esp32_ble_server-value)): The new value of the descriptor.
+
+<span id="esp32_ble_server-security"></span>
+
+## BLE Security
+
+By default, connections to your BLE server are not encrypted and can be made by any device in range. Implementing security requires **pairing**. Pairing is a process whereby two BLE devices authenticate each other and exchange keys to enable a secure connection. Following successfull pairing, devices can optionally save these keys for future connections without authenticating again, a process known as **bonding**.
+
+Several types of authentication are supported depending on the IO capabilities of your device:
+
+- **Just Works**: Both peers generate and exchange keys without any verification. Requires no display or input, but is vulnerable to MITM attacks.
+- **Passkey Entry**: A 6-digit passkey is displayed on one device and entered into the other device.
+- **Numeric comparison**: Both devices display a 6-digit number. The user compares the number and confirms of each device.
+
+The IO capabilities of your BLE device and the desired authentication mode are defined in the [`esp32_ble`](/components/esp32_ble) component.
+
+> [!NOTE]
+> A secure connection is only initiated when the client device tries to access one of your characteristcs defined with `read_encrypt: True` or `write_encrypt: True`.
+
+### Examples
+
+A device implementing "Just-Works" pairing without authentication:
+
+```yaml
+esp32_ble:
+  io_capability: none # just-works pairing method
+  auth_req_mode: sc_bond # create bond
+
+esp32_ble_server:
+  id: my_ble_server
+  services: ...
+```
+
+A device with a screen to display the pairing passcode. The passcode must be entered on the peer device.
+
+```yaml
+esp32_ble:
+  io_capability: display_only
+  auth_req_mode: sc_mitm_bond
+
+esp32_ble_server:
+  id: my_ble_server
+  on_passkey_notification:
+    - logger.log:
+        format: "Passkey: %06d"
+        args: [ passkey ]
+#   - DISPLAY PASSKEY FOR USER TO ENTER ON OTHER DEVICE
+  services: ...
+```
+
+A variation of the above, but with a fixed passkey. This is useful if the device does not have a display. You could include the static passkey on a label or in documentation.
+
+```yaml
+esp32_ble:
+  io_capability: display_only
+  auth_req_mode: sc_mitm_bond
+
+esp32_ble_server:
+  id: my_ble_server
+  passkey: 123456
+  services: ...
+```
+
+Device implementing numeric comparison. Note that both devices must confirm the pin. Confirmation on the ESP device is done using the numeric_comparison_reply action. This example always accepts the pin. A real device might call the service in response to a confirmation button press.
+
+
+```yaml
+esp32_ble:
+  io_capability: display_yes_no
+  auth_req_mode: sc_mitm_bond
+
+esp32_ble_server:
+  id: my_ble_server
+  on_numeric_comparison_request:
+    then:
+      - logger.log:
+          format: "Compare this passkey with the one on your BLE device: %06d"
+          args: [ passkey ]
+      - esp32_ble_server.numeric_comparison_reply: # FIXME: Should require user-action
+          id: my_ble_device
+          address: !lambda return address;
+          accept: True
+  services: ...
+```
 
 ## See Also
 
