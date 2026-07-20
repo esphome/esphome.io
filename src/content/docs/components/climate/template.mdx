@@ -9,26 +9,26 @@ The `template` climate platform lets you create a fully-featured climate entity 
 ESPHome primitives. It is useful for wrapping custom UART/I²C climate controllers, integrating
 hardware that lacks a dedicated ESPHome component, or prototyping climate integrations.
 
-Settable properties (`mode`, `target_temperature`, `target_temperature_low` /
+Declare which modes, fan modes, swing modes, presets, and other traits (`supports_action`,
+`supports_target_humidity`, etc.) the entity supports in YAML -- see
+[Configuration variables](#configuration-variables) below for the full list. Everything the
+entity can actually be set *to* (`mode`, `target_temperature`, `target_temperature_low` /
 `target_temperature_high`, `target_humidity`, `fan_mode`, `custom_fan_mode`, `swing_mode`,
-`preset`, `custom_preset`) are plain internal state, not lambdas:
+`preset`, `custom_preset`, `current_temperature`, `current_humidity`, `action`) is runtime state,
+not something you assign a value to in YAML.
 
-- With `optimistic: true` (the default), a command is applied to the entity immediately.
-- With `optimistic: false`, a command is left unapplied until a
-  [`climate.template.publish`](#climate-template-publish_action) call reports the device's
-  actual state.
+To handle an incoming command, either let ESPHome apply it for you (`optimistic: true`, the
+default) or take care of it yourself: set `optimistic: false` and update the entity once your
+device confirms the command took effect. Either way, use
+[`on_control`](/components/climate/#climate-on_control_trigger) to forward every command (the
+full `ClimateCall` is available as `x`) out to your hardware, e.g. over UART or I²C.
 
-Either way, every command also fires
-[`on_control`](/components/climate/#climate-on_control_trigger) with the full `ClimateCall`, so
-you can forward it to real hardware (e.g. write it out over UART or I²C).
-
-`current_temperature` / `current_humidity` (the *measured* values) are not lambdas either: point
-`sensor` / `humidity_sensor` at an existing sensor entity and the climate device updates
-automatically whenever that sensor reports a new value -- there is no polling involved. If you'd
-rather report the value yourself instead of wiring up a sensor entity, set
-`supports_current_temperature: true` / `supports_current_humidity: true` and publish it with
-`climate.template.publish`. `action` has no sensor of its own; set `supports_action: true` and
-report it (along with anything else) with `climate.template.publish`.
+To report the entity's actual state -- a command being confirmed, or a change made independently
+of any command (e.g. from a physical remote) -- use
+[`climate.template.publish`](#climate-template-publish_action). `current_temperature` /
+`current_humidity` are the one exception: point `sensor` / `humidity_sensor` at an existing
+sensor entity and they're kept up to date for you automatically whenever that sensor reports a
+new value, with no need to publish them yourself.
 
 Once defined, the entity will automatically appear in Home Assistant and can be controlled
 through the frontend.
@@ -71,9 +71,15 @@ A full example wrapping a device that's controlled and read over some external p
 `current_temperature` / `current_humidity` are backed by two real sensors, so they update as soon
 as the device reports new readings -- no polling required. `on_control` forwards outgoing
 commands; elsewhere (e.g. when a response comes back over UART, or from a button as shown here) a
-`climate.template.publish` call simulates the device reporting its own authoritative state, e.g.
-because someone changed a setting on a physical remote -- overriding whatever was applied
-optimistically by an earlier command.
+`climate.template.publish` call reports the device's own authoritative state, e.g. because
+someone changed a setting on a physical remote -- overriding whatever was applied optimistically
+by an earlier command.
+
+This device also happens to report a two-point (`HEAT_COOL`) target temperature range instead of
+a single `target_temperature` (enable `supports_two_point_target_temperature: true`; the two keys
+are mutually exclusive with `target_temperature`), and has a couple of proprietary fan
+modes/presets not covered by the built-in enums (`custom_fan_modes` / `custom_presets`, handled
+the same way as their enum counterparts). Drop whichever of these your own device doesn't need.
 
 ```yaml
 sensor:
@@ -91,8 +97,10 @@ climate:
     humidity_sensor: room_humidity
     supports_action: true
     supports_target_humidity: true
+    supports_two_point_target_temperature: true
     supported_modes:
       - "OFF"
+      - HEAT_COOL
       - HEAT
       - COOL
       - FAN_ONLY
@@ -100,6 +108,10 @@ climate:
       - AUTO
       - LOW
       - HIGH
+    custom_fan_modes:
+      - turbo
+      - silent
+      - eco
     supported_swing_modes:
       - "OFF"
       - VERTICAL
@@ -107,101 +119,22 @@ climate:
       - NONE
       - ECO
       - AWAY
-    on_control:
-      - lambda: |-
-          if (x.get_mode().has_value())
-            ESP_LOGD("heatpump", "Sending mode to device: %d", (int) *x.get_mode());
-          if (x.get_target_temperature().has_value())
-            ESP_LOGD("heatpump", "Sending target temperature to device: %.1f", *x.get_target_temperature());
-
-button:
-  - platform: template
-    name: "Simulate Device Report"
-    on_press:
-      # Stands in for e.g. a parsed UART response reporting the device's real state.
-      - climate.template.publish:
-          id: external_heatpump
-          mode: HEAT
-          action: HEATING
-          target_humidity: 45.0
-```
-
-## Two-point (range) temperature example
-
-Some devices expose separate low and high target temperatures for `HEAT_COOL` mode. Use
-`target_temperature_low` / `target_temperature_high` instead of `target_temperature` for these
-devices; enable `supports_two_point_target_temperature: true` to advertise the feature. The two
-keys are mutually exclusive with `target_temperature`.
-
-```yaml
-sensor:
-  - platform: ...
-    id: room_temperature
-
-climate:
-  - platform: template
-    id: two_point_heatpump
-    name: "Two-Point Heatpump"
-    optimistic: true
-    sensor: room_temperature
-    supports_two_point_target_temperature: true
-    supports_target_humidity: true
-    supported_modes:
-      - "OFF"
-      - HEAT_COOL
-      - HEAT
-      - COOL
+    custom_presets:
+      - eco_plus
+      - power_save
+      - max
     visual:
       min_temperature: 16.0
       max_temperature: 30.0
       temperature_step: 0.5
     on_control:
       - lambda: |-
+          if (x.get_mode().has_value())
+            ESP_LOGD("heatpump", "Sending mode to device: %d", (int) *x.get_mode());
           if (x.get_target_temperature_low().has_value())
             ESP_LOGD("heatpump", "Sending low setpoint to device: %.1f", *x.get_target_temperature_low());
           if (x.get_target_temperature_high().has_value())
             ESP_LOGD("heatpump", "Sending high setpoint to device: %.1f", *x.get_target_temperature_high());
-
-button:
-  - platform: template
-    name: "Simulate Device Report"
-    on_press:
-      - climate.template.publish:
-          id: two_point_heatpump
-          mode: HEAT_COOL
-          target_temperature_low: 18.0
-          target_temperature_high: 24.0
-          target_humidity: 50.0
-```
-
-## Custom fan modes and presets example
-
-Devices that have proprietary operating modes not covered by the built-in enums can use
-`custom_fan_modes` and `custom_presets`. Handle them the same way as the enum-based fields:
-forward them out via `on_control`, and report the device's actual custom mode/preset with
-`climate.template.publish`.
-
-```yaml
-sensor:
-  - platform: ...
-    id: room_temperature
-
-climate:
-  - platform: template
-    id: custom_mode_heatpump
-    name: "Heatpump with custom modes"
-    optimistic: true
-    sensor: room_temperature
-    custom_fan_modes:
-      - turbo
-      - silent
-      - eco
-    custom_presets:
-      - eco_plus
-      - power_save
-      - max
-    on_control:
-      - lambda: |-
           if (x.has_custom_fan_mode())
             ESP_LOGD("heatpump", "Sending custom fan mode to device: %s", x.get_custom_fan_mode());
           if (x.has_custom_preset())
@@ -211,8 +144,14 @@ button:
   - platform: template
     name: "Simulate Device Report"
     on_press:
+      # Stands in for e.g. a parsed UART response reporting the device's real state.
       - climate.template.publish:
-          id: custom_mode_heatpump
+          id: external_heatpump
+          mode: HEAT_COOL
+          action: HEATING
+          target_temperature_low: 18.0
+          target_temperature_high: 24.0
+          target_humidity: 45.0
           custom_fan_mode: "eco"
           custom_preset: "max"
 ```
