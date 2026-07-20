@@ -24,9 +24,11 @@ you can forward it to real hardware (e.g. write it out over UART or I²C).
 
 `current_temperature` / `current_humidity` (the *measured* values) are not lambdas either: point
 `sensor` / `humidity_sensor` at an existing sensor entity and the climate device updates
-automatically whenever that sensor reports a new value -- there is no polling involved. `action`
-has no sensor of its own; set `supports_action: true` and report it (along with anything else)
-with `climate.template.publish`.
+automatically whenever that sensor reports a new value -- there is no polling involved. If you'd
+rather report the value yourself instead of wiring up a sensor entity, set
+`supports_current_temperature: true` / `supports_current_humidity: true` and publish it with
+`climate.template.publish`. `action` has no sensor of its own; set `supports_action: true` and
+report it (along with anything else) with `climate.template.publish`.
 
 Once defined, the entity will automatically appear in Home Assistant and can be controlled
 through the frontend.
@@ -230,6 +232,13 @@ button:
   [sensor](/components/sensor/) that provides the measured (ambient) relative humidity. Same
   push-based behavior as `sensor`, but for `current_humidity`.
 
+- **supports_current_temperature** (*Optional*, boolean): Whether to advertise the
+  current-temperature trait without binding a `sensor` -- for reporting the value yourself via
+  `climate.template.publish`. Automatically enabled when `sensor` is set. Defaults to `false`.
+
+- **supports_current_humidity** (*Optional*, boolean): Same as `supports_current_temperature`,
+  but for the current-humidity trait / `humidity_sensor`. Defaults to `false`.
+
 - **supports_action** (*Optional*, boolean): Whether to advertise the current climate action
   (`IDLE`, `HEATING`, `COOLING`, etc.) trait. `action` has no sensor of its own -- report it with
   `climate.template.publish`. Defaults to `false`.
@@ -273,14 +282,34 @@ button:
   - `false`: The entity state does not change on command. The UI only updates once
     `climate.template.publish` reports the device's actual state.
 
+- **restore_mode** (*Optional*): Controls whether climate state (mode, target temperature, fan
+  mode, swing mode, and preset) is persisted to flash and restored on reboot. One of:
+
+  - `RESTORE` (default): Restore the last known state on boot.
+  - `NO_RESTORE`: Always start from the plain defaults (or `initial_state:`, if set) --
+    never restore.
+
+- **initial_state** (*Optional*): Sets a boot-time default for any of the settable properties,
+  for use before anything has been restored (with `restore_mode: RESTORE`) or reported (with
+  `climate.template.publish`). Accepts the same keys as
+  [`climate.template.publish`](#climate-template-publish_action), except `current_temperature` /
+  `current_humidity` / `action`, which are reported values rather than static defaults:
+
+  ```yaml
+  climate:
+    - platform: template
+      id: template_climate
+      restore_mode: NO_RESTORE
+      initial_state:
+        mode: "OFF"
+        target_temperature: 21.0
+        fan_mode: AUTO
+  ```
+
 - All other options from [Climate](/components/climate/#config-climate), including
   [`on_control`](/components/climate/#climate-on_control_trigger) (fired for every incoming
   command, with the `ClimateCall` available as `x`) and
   [`on_state`](/components/climate/#climate-on_state_trigger).
-
-> [!NOTE]
-> Climate state (mode, target temperature, fan mode, swing mode, and preset) is automatically
-> persisted to flash and restored on reboot via the standard ESPHome climate restore mechanism.
 
 <span id="climate-template-publish_action"></span>
 
@@ -319,11 +348,13 @@ Configuration variables:
 
 - **current_temperature** (*Optional*, float, [templatable](/automations/templates)): The
   measured temperature to publish. Usually not needed -- prefer wiring up `sensor` instead, so
-  the value stays live automatically. Only visible over the API if `sensor` is also configured
-  (i.e. the current-temperature feature is advertised).
+  the value stays live automatically. Only visible over the API if `sensor` or
+  `supports_current_temperature: true` is also configured (i.e. the current-temperature feature
+  is advertised).
 
 - **current_humidity** (*Optional*, percentage, [templatable](/automations/templates)): The
-  measured humidity to publish. Same caveat as `current_temperature`, but for `humidity_sensor`.
+  measured humidity to publish. Same caveat as `current_temperature`, but for `humidity_sensor` /
+  `supports_current_humidity`.
 
 - **target_temperature** (*Optional*, float, [templatable](/automations/templates)): The target
   temperature to publish. Cannot be used together with `target_temperature_low` /
@@ -368,13 +399,13 @@ Configuration variables:
 > [!NOTE]
 > This action can also be written directly in a lambda -- with the exception of `fan_mode` /
 > `custom_fan_mode` / `preset` / `custom_preset`, which need to go through the validated
-> `publish_*` setters shown below:
+> `set_*` setters shown below:
 >
 > ```cpp
 > id(template_climate).current_temperature = 21.5f;
 > id(template_climate).mode = climate::CLIMATE_MODE_HEAT;
 > id(template_climate).action = climate::CLIMATE_ACTION_HEATING;
-> id(template_climate).publish_fan_mode(climate::CLIMATE_FAN_HIGH);
+> id(template_climate).set_fan_mode(climate::CLIMATE_FAN_HIGH);
 > id(template_climate).publish_state();
 > ```
 
