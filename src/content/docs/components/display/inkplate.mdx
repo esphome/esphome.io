@@ -49,7 +49,8 @@ display:
     pca6416a_id: pca6416a_hub
     update_interval: 60s
     lambda: |-
-      it.print(0, 0, id(my_font), "Hello World!");
+      it.fill(COLOR_OFF);
+      it.rectangle(10, 10, 200, 100);
 ```
 
 > [!NOTE]
@@ -285,6 +286,15 @@ to clear ghosting.
 > enabled, partial updates are silently ignored and every update is a full refresh.
 
 ```yaml
+time:
+  - platform: sntp
+    id: esptime
+
+font:
+  - file: "gfonts://Roboto"
+    id: roboto_48
+    size: 48
+
 display:
   - platform: inkplate
     model: inkplate6v2
