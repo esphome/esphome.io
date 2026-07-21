@@ -128,6 +128,37 @@ wifi:
   > Be aware that marking networks as hidden prevents ESPHome from finding the best access point to connect to,
   > so the device may not connect to the AP with the best signal strength.
 
+- **lease_cache** (*Optional*): Only on `esp32` with the ESP-IDF framework. Remembers the DHCP lease the device is
+  assigned and, on the next boot, re-applies it as a static IP **without running DHCP** while it is still valid. This
+  skips the DHCP handshake, so the network is usable in milliseconds. It is most useful for battery-powered devices
+  that wake from deep sleep frequently. Disabled by default. Accepts a boolean, or a settings block:
+
+  ```yaml
+  wifi:
+    # ...
+    lease_cache:
+      storage: rtc
+      max_age: 12h
+  ```
+
+  - **enabled** (*Optional*, boolean): Whether the lease cache is active. Defaults to `true` when the block form is used.
+  - **storage** (*Optional*, string): Where to persist the cached lease. One of:
+
+    - `rtc`: stored in RTC memory, which survives software reboots and deep sleep but **not** power loss, and avoids
+      flash wear. This is the default where RTC memory is available.
+    - `flash`: survives power loss, but a DHCP lease changes on every renewal, so persisting it wears flash. It must
+      be selected explicitly.
+
+    On the ESP32-C2 and C61 variants, which have no RTC memory, the cache is inactive unless `storage: flash` is set.
+
+  - **max_age** (*Optional*, [Time](/guides/configuration-types#time)): Do not re-use a cached lease older than this,
+    regardless of the lease length the DHCP server granted. Defaults to the lease's own length.
+
+  > [!NOTE]
+  > A cached lease is only re-applied after a deep-sleep wake or a software reboot, where the device can measure how
+  > much time has passed; after a power cycle it cannot, so it falls back to a normal DHCP request. A user-configured
+  > `manual_ip` always takes precedence and disables the cache.
+
 - **min_auth_mode** (*Optional*, string): Only on `esp32` and `esp8266`. Sets the minimum WiFi authentication mode
   that the device will accept when connecting to access points. This controls the weakest encryption your device will
   allow. Possible values are:
