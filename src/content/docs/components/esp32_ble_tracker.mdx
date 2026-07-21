@@ -288,6 +288,8 @@ api:
     - esp32_ble_tracker.start_scan:
        continuous: true
   on_client_disconnected:
+    # fires for EVERY departing client (log viewer, CLI) — only stop
+    # scanning when the last client is gone (Home Assistant no longer connected)
     - if:
         condition:
           not:
