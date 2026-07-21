@@ -64,6 +64,7 @@ a minimum only the model name need be configured. Other options can be overridde
 | Model name              | Manufacturer         | Product Description                                                                                                          |
 |-------------------------|----------------------|------------------------------------------------------------------------------------------------------------------------------|
 | inkplate2               | Soldered Electronics | Soldered Inkplate 2: 2.13" 3-color (black/white/red) e-paper, 104x212. [https://soldered.com/products/inkplate-2](https://soldered.com/products/inkplate-2) |
+| inkplate13spectra       | Soldered Electronics | Soldered Inkplate 13 Spectra: 13.3" 6-color (black/white/red/yellow/blue/green) e-paper, 1200x1600, dual-chip controller. Requires PSRAM. [https://docs.soldered.com/inkplate/13spectra/overview/](https://docs.soldered.com/inkplate/13spectra/overview/) |
 | Seeed-ee04-mono-4.26    | Seeed Studio         | Seeed EE04 board with Waveshare 4.26" mono epaper. [https://www.seeedstudio.com/XIAO-ePaper-Display-Board-EE04-p-6560.html](https://www.seeedstudio.com/XIAO-ePaper-Display-Board-EE04-p-6560.html)  |
 | Seeed-reTerminal-E1002  | Seeed Studio         | [https://www.seeedstudio.com/reTerminal-E1002-p-6533.html](https://www.seeedstudio.com/reTerminal-E1002-p-6533.html)         |
 | Seeed-reTerminal-E1004 | Seeed Studio | 13.3" 6-color e-paper (1200x1600, T133A01). Requires PSRAM. [https://www.seeedstudio.com/reTerminal-E1004-p-6692.html](https://www.seeedstudio.com/reTerminal-E1004-p-6692.html) |
@@ -76,7 +77,7 @@ but can be overridden if needed.
 
 - **model** (**Required**): The model of the ePaper display. See the table above for options (case is not significant).
 - **cs_pin** (**Required**, [Pin Schema](/guides/configuration-types#pin-schema)): The CS pin. Predefined for integrated boards.
-- **cs1_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The secondary CS pin for dual-CS displays (e.g. T133A01). Predefined for integrated boards that require it.
+- **cs1_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The secondary CS pin for dual-CS displays (e.g. T133A01, `inkplate13spectra`). Predefined for integrated boards that require it.
 - **dc_pin** (**Required**, [Pin Schema](/guides/configuration-types#pin-schema)): The DC pin. Predefined for integrated boards.
 - **busy_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The BUSY pin, if used.
 
@@ -195,6 +196,58 @@ display:
       it.filled_circle(600, 300, 80, GREEN);
       it.filled_circle(200, 550, 80, BLUE);
       it.filled_circle(400, 550, 80, YELLOW);
+```
+
+### 6-color display example (Inkplate 13 Spectra)
+
+The Soldered Inkplate 13 Spectra features a 13.3" 6-color e-paper display (1200x1600, dual-chip
+controller) that supports black, white, red, green, blue, and yellow. Since it is an integrated
+board, only the model name is needed. The display buffer requires approximately 960KB, so PSRAM
+is required.
+
+Full refresh times are typically 30 seconds or more.
+
+```yaml
+display:
+  - platform: epaper_spi
+    model: inkplate13spectra
+    update_interval: 5min
+    lambda: |-
+      auto BLACK = Color(0, 0, 0);
+      auto WHITE = Color(255, 255, 255);
+      auto RED = Color(255, 0, 0);
+      auto GREEN = Color(0, 255, 0);
+      auto BLUE = Color(0, 0, 255);
+      auto YELLOW = Color(255, 255, 0);
+
+      it.fill(WHITE);
+      it.filled_circle(200, 300, 80, BLACK);
+      it.filled_circle(400, 300, 80, RED);
+      it.filled_circle(600, 300, 80, GREEN);
+      it.filled_circle(200, 550, 80, BLUE);
+      it.filled_circle(400, 550, 80, YELLOW);
+```
+
+### Partial update example (Inkplate 13 Spectra)
+
+The `inkplate13spectra` model additionally exposes a `display_partial(x, y, w, h)` method that
+refreshes only a sub-rectangle of the screen instead of the full panel, which is much faster than
+a full 6-color refresh. This is only available on this model — call it directly from a `lambda:`
+after drawing the updated pixels; it does not run the display's own `lambda:` first, so the
+region must already be up to date in the buffer before calling it.
+
+```yaml
+interval:
+  - interval: 20s
+    then:
+      - lambda: |-
+          auto *disp = id(my_display);
+          const int x = 40, y = 40, w = 340, h = 60;
+          disp->start_clipping(x, y, x + w, y + h);
+          disp->fill(Color(255, 255, 255));
+          disp->print(x, y, id(my_font), Color(0, 0, 0), display::TextAlign::TOP_LEFT, "Updated");
+          disp->end_clipping();
+          disp->display_partial(x, y, w, h);
 ```
 
 ## See Also
