@@ -159,6 +159,12 @@ sensor:
 - **address** (*Optional*, int): Manually specify the I²C address of the sensor.
   Defaults to `0x69`.
 
+- **model** (*Optional*): Force the sensor model instead of relying on the product name
+  reported by the device. One of `sen50`, `sen54` or `sen55`. By default the model is
+  detected automatically. If the configured model does not match what the device reports,
+  a warning is logged and the configured model is used; readings for capabilities the
+  physical device does not have may be invalid.
+
 > [!NOTE]
 > The sensor needs about a minute "warm-up". The VOC and NOx gas index algorithm needs a
 > number of samples before the values stabilize.
@@ -217,3 +223,4 @@ on_...:
 - [SPS30 Particulate Matter Sensor](/components/sensor/sps30/)
 - [SGP40 Volatile Organic Compound Sensor and SGP41 VOC and NOx Sensor](/components/sensor/sgp4x/)
 - <APIRef text="sen5x.h" path="sen5x/sen5x.h" />
+
