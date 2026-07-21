@@ -19,7 +19,7 @@ network:
 - **enable_ipv6** (*Optional*, boolean): Enables IPv6 support. Defaults to `false`.
 - **min_ipv6_addr_count** (*Optional*, integer): ESPHome considers the network to be connected when it has one IPv4 address and this number of IPv6 addresses. Defaults to `0` so as to not hang on boot with networks where IPv6 is not enabled. `2` is typically a reasonable value for configurations requiring IPv6.
 - **enable_high_performance** (*Optional*, boolean): Explicitly enables or disables high-performance networking optimizations. Only supported on ESP32 devices. When not specified, this is automatically enabled by components that benefit from optimized network settings. Set to `false` to disable these optimizations if they cause memory issues on your device. Defaults to component-driven behavior.
-- **priority** (*Optional*, list): Order in which network interfaces are brought up at boot. Each list entry names one of the supported interface types (`ethernet`, `wifi`, `openthread`, or `modem`) and may optionally specify a per-interface `timeout`. See [Multi-Interface Support](#multi-interface-support).
+- **priority** (*Optional*, list): Order of preference for network interfaces when more than one is configured. Each list entry names one of the supported interface types (`ethernet` or `wifi`); the first entry is the most preferred. Required when both `ethernet:` and `wifi:` are configured. See [Multi-Interface Support](#multi-interface-support).
 
 ## High-performance networking
 
@@ -50,7 +50,7 @@ The optimization level depends on whether PSRAM is guaranteed to be available (c
 
 ## Multi-Interface Support
 
-Devices with more than one network interface — for example an ESP32 with both [WiFi](/components/wifi/) and SPI [Ethernet](/components/ethernet/) — can declare a `priority` list to control the order in which interfaces are brought up at boot and which one ESPHome prefers when more than one is connected.
+Devices with more than one network interface — for example an ESP32 with both [WiFi](/components/wifi/) and SPI [Ethernet](/components/ethernet/) — can declare a `priority` list stating which interface ESPHome should prefer. This list is required to use `wifi:` and `ethernet:` together; without it, configuring both is rejected during validation, matching the single-interface behavior of earlier releases.
 
 ```yaml
 network:
@@ -59,27 +59,20 @@ network:
     - wifi
 ```
 
-In the example above, Ethernet is started first and used as the default route while it is connected; WiFi is started afterwards and is used only if Ethernet is unavailable. The first entry in the list is the most-preferred interface.
+Each entry is a plain interface name, either `ethernet` or `wifi`. Each interface may appear at most once, and every interface named in the list must also have its own component block configured. The first entry is the most-preferred interface. Support for other interface types is planned.
 
-Each entry may either be a plain interface name or a mapping with an optional per-interface `timeout`:
+The priority list controls two things:
 
-```yaml
-network:
-  priority:
-    - ethernet:
-        timeout: 30s
-    - wifi
-```
-
-The `timeout` value bounds how long ESPHome waits for that interface to come up before starting the next one in the list. It accepts the usual ESPHome [time format](/guides/configuration-types/#time) (for example `30s`, `1min`, `500ms`). A plain integer is interpreted as seconds. When omitted, ESPHome waits indefinitely for that interface.
-
-### Configuration variables (priority entries)
-
-- **interface** (**Required**, string): One of `ethernet`, `wifi`, `openthread`, or `modem`. The entry is written as the interface name itself (either as a string list item or as the single key of a mapping). Each interface may appear at most once. Every interface named here must also have its own top-level component block configured.
-- **timeout** (*Optional*, [Time](/guides/configuration-types/#time)): How long to wait for this interface to come up before moving on to the next one in the list. Defaults to waiting indefinitely.
+- **Setup order**: interfaces are brought up at boot in list order, so the preferred interface connects first.
+- **Reported address**: the preferred interface determines the address used to reach the device — its `use_address` (when configured) applies, and its IP addresses are the ones ESPHome reports. If the preferred interface has no valid IP address, for example while it is disabled or still connecting, ESPHome falls back to the other interface's addresses.
 
 > [!NOTE]
-> Not every combination of interfaces is supported on every chip. WiFi and Ethernet may be used together on ESP32 family devices that have the necessary memory headroom; OpenThread and modem support depend on additional hardware and may be limited to specific variants. If `priority` is omitted, behavior is unchanged from earlier ESPHome releases and only a single interface component may be configured.
+> When both interfaces are connected at the same time, the underlying network stack still chooses which one carries the device's outgoing traffic. Making the priority list control this choice, along with automatic failover between interfaces, is planned for a future release.
+
+Running both network stacks at the same time uses a significant amount of memory. To keep the less-preferred interface powered down until it is needed, set `enable_on_boot: false` on that interface and turn it on later with the [`wifi.enable`](/components/wifi/#wifi-on_enable) or `ethernet.enable` action.
+
+> [!NOTE]
+> WiFi and Ethernet may be used together only on ESP32 family devices that have the necessary memory headroom. If `priority` is omitted, behavior is unchanged from earlier ESPHome releases and only a single interface component may be configured.
 
 ## See Also
 
