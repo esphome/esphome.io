@@ -8,13 +8,20 @@ import APIRef from '@components/APIRef.astro';
 The `improv_serial` component in ESPHome implements the open [Improv standard](https://www.improv-wifi.com/)
 for configuring Wi-Fi on an ESPHome device by using a serial connection to the device, eg. USB.
 
+Improv clients can also ask the device whether it is online through any type of network connection, not just Wi-Fi.
+This means `improv_serial` is useful even on devices which connect using `ethernet` instead of `wifi`: a tool such as
+[ESP Web Tools](https://esphome.github.io/esp-web-tools/) can show that the device is online and, when the device has
+a `web_server` configured, offer a link to open its web interface. When the device's configuration does not include
+`wifi`, Wi-Fi provisioning is reported to the client as unavailable, so it will not present a Wi-Fi setup form which
+cannot work.
+
 The `improv_serial` component requires the serial `logger` to be configured.
 
 The `improv_serial` component will use the project name and version instead of ESPHomes version whenever it's available.
 
 ```yaml
 # Example configuration entry
-wifi:
+wifi:  # or another network component, such as ethernet
   # ...
 
 improv_serial:
@@ -42,6 +49,7 @@ improv_serial:
 ## See Also
 
 - [WiFi Component](/components/wifi/)
+- [Ethernet Component](/components/ethernet/)
 - [Captive Portal](/components/captive_portal/)
 - [Improv via BLE](/components/esp32_improv/)
 - [Improv Wi-Fi](https://www.improv-wifi.com/)
