@@ -7,9 +7,6 @@ slug: "changelog/2026.7.0"
 
 import ImgTable from "@components/ImgTable.astro";
 
-> [!NOTE]
-> This is a beta release. Details on this page may change before the stable release is published.
-
 {/* MANUAL: Add featured components here */}
 <ImgTable items={[
   ["UFM-01 Flow Meter", "/components/ufm01/", "ufm01.png", "Flow & Temperature"],
@@ -52,6 +49,8 @@ dashboard is retired in favor of the external Device Builder, and Python 3.11 su
 - If you set `enabled` or `coordinator` under Zigbee `reporting:`, remove those keys
 - If you use `web_server: version: 1`, plan to migrate to v2 or v3 before 2027.1.0
 - If you address `web_server` URLs by object ID, switch to the entity name
+- If a browser page hosted elsewhere calls your `web_server` endpoints, add its origin to `web_server: allowed_origins:`
+- If you relied on `web_server` Private Network Access being on by default, set `enable_private_network_access: true` and add the calling origins to `allowed_origins:`
 - If you use `packages: !include mypackage.yaml`, wrap the include in a list: `packages: [!include mypackage.yaml]`
 - If you use `FOUR_SCAN_16PX_HIGH`, `FOUR_SCAN_32PX_HIGH`, or `FOUR_SCAN_64PX_HIGH` for hub75 `scan_wiring`, rename to `SCAN_1_4_16PX_HIGH`, `SCAN_1_8_32PX_HIGH`, or `SCAN_1_8_64PX_HIGH`
 - If you set `disable_crc` under `modbus:`, remove it
@@ -85,6 +84,165 @@ The `nrf52` platform makes the same move: native nRF Connect SDK builds, added e
 now the default toolchain ([#17319](https://github.com/esphome/esphome/pull/17319)). Configurations without an
 explicit `toolchain:` option build against nRF Connect SDK 2.9.2, installed into the new shared toolchain cache
 described below, and `toolchain: platformio` remains available as an opt-out here as well.
+
+## ESPHome Device Builder
+
+The bundled [ESPHome Device Builder](https://github.com/esphome/device-builder) has been updated, and most of the work
+this cycle went into the remote build server.
+
+Compiling firmware is the slowest thing the Device Builder does, and on a small host such as a Home Assistant Green or a
+Raspberry Pi a single build can take several minutes. A remote build server lets that dashboard hand the compile to a
+faster machine on your network, such as a desktop or laptop running [ESPHome Desktop](https://desktop.esphome.io), which
+builds the firmware and sends it back to be installed as usual. Your devices, configurations, and dashboard all stay
+where they are; only the build moves.
+
+**Pairing With a Build Server Is Much Easier**
+
+A machine that builds for other dashboards now says so on its own dashboard
+([frontend#1240](https://github.com/esphome/device-builder-frontend/pull/1240)). A **Build server** section appears
+above the device list once another dashboard is paired with it, or once remote building is turned on, and it walks you
+through pairing in three steps instead of leaving you to find the pieces in Settings.
+
+![Pairing a build server in the ESPHome Device Builder](/images/device-builder-build-server.png)
+
+From there you can open the pairing window and watch its countdown, copy the address to enter on the sending dashboard
+([#2075](https://github.com/esphome/device-builder/pull/2075)), and compare the identity fingerprint against the one the
+sender shows. Once peers are paired the section lists them with their connection state and the build queue, and any
+pairing request waiting on you appears at the top. Settings gained a matching explainer, and the old **Only use this for
+remote compute** switch is now **Remote compute dashboard**, which decides which section opens first rather than hiding
+anything.
+
+Remote builds are steadier once they are running, too. If a receiver restarts, the sender now reconnects as soon as it
+reappears on mDNS instead of waiting out its backoff ([#2084](https://github.com/esphome/device-builder/pull/2084)).
+Receivers can now also provision beta versions of ESPHome, so a build server running a different version to a sender on
+the beta channel no longer quietly falls back to building locally
+([#2082](https://github.com/esphome/device-builder/pull/2082)). The first build for a version installs ESPHome from PyPI
+and can take a few minutes, which the job log now says out loud instead of sitting silent
+([#2083](https://github.com/esphome/device-builder/pull/2083)).
+
+If you have never tried this, the terminal now shows a build timer, and a local compile that runs longer than five
+minutes on a dashboard with no build server paired suggests sending your builds to a faster machine
+([frontend#1183](https://github.com/esphome/device-builder-frontend/pull/1183)).
+
+**Offline and Deep Sleep Updates**
+
+Updating a device that is not awake has always been a matter of timing. An OTA aimed at a device that is asleep or
+otherwise unreachable simply fails, which is a familiar problem if you run anything on [deep
+sleep](/components/deep_sleep/).
+
+Queued offline updates, contributed by [@rwalker777](https://github.com/rwalker777), fix that
+([#1430](https://github.com/esphome/device-builder/pull/1430),
+[frontend#911](https://github.com/esphome/device-builder-frontend/pull/911)). If a device is offline when you install to
+it, the Device Builder compiles the firmware, queues the update, and flashes it when the device next appears on the
+network, with no need for you to be watching at the time.
+
+The groundwork for this landed in 2026.6.0, and it is ready for production use now. It works across a whole fleet:
+select any number of devices and hit update, and the ones that are unreachable are compiled once and queued for their
+next appearance rather than failing ([#1929](https://github.com/esphome/device-builder/pull/1929)). A device that drops
+offline between hitting install and the build finishing is queued as well, instead of failing at the last step
+([#1964](https://github.com/esphome/device-builder/pull/1964)), and a queued update reopens as an install, carrying its
+queued message, when you come back to it
+([frontend#1181](https://github.com/esphome/device-builder-frontend/pull/1181)).
+
+**Quickstart Tour**
+
+Getting from a fresh install to a working device has always been the hardest part of ESPHome, and this release takes a
+real run at it. Setup now ends by offering you a guided tour, and the tour teaches the Device Builder by using it rather
+than by describing it.
+
+It spotlights one real control at a time, explains what it is for, and on the steps that matter it waits for you to
+click it rather than moving on without you. Over eleven steps it walks you through creating your first device, picking a
+board, naming it, entering your WiFi details, finding your way around the device navigator and the editor, watching the
+YAML pane stay in sync as you go, and how installing to your board works, finishing on your new device sitting on the
+dashboard. It takes about five minutes, it leaves you with a real device rather than a throwaway, you can close it and
+pick it up where you left off, and it is always available afterwards from the menu in the top right.
+
+The tour was a team effort from [@Erioldoesdesign](https://github.com/Erioldoesdesign),
+[@stvncode](https://github.com/stvncode), and [@marcelveldt](https://github.com/marcelveldt), across design, wireframes,
+and build ([frontend#1045](https://github.com/esphome/device-builder-frontend/pull/1045),
+[frontend#1232](https://github.com/esphome/device-builder-frontend/pull/1232)). The setup flow around it was rebuilt at
+the same time: a new welcome screen, an experience question that lets beginners take the recommended path with a single
+click, and a closing screen that hands you to the tour. If you set up the desktop app while another Device Builder is
+already running on your network, setup now points that out and explains how to pair the two, so you can put the new
+machine to work building for the dashboard you already have
+([frontend#1235](https://github.com/esphome/device-builder-frontend/pull/1235)).
+
+**YAML Errors Explained and Auto-Fixed**
+
+A number of issues reported against ESPHome turn out not to be bugs at all, but a small mistake made while editing YAML.
+This release goes after that whole class of problem.
+
+Getting a space wrong used to earn you the raw parser output, `mapping values are not allowed here` or `could not find
+expected ':'`, and only if you thought to hover over the squiggle. The line it pointed at was usually where the parser
+gave up rather than where you made the mistake, which is little help if you are not already fluent in YAML.
+
+The editor now reads the error and tells you what is actually wrong, in a banner that stays put, naming the line you
+need to change and what to do to it: *"Indentation mismatch: line 12 `- platform` is indented less than its properties.
+Indent line 12 by 2 spaces so `- platform` lines up with them."* Next to it is a **Try auto-fix** button that makes
+exactly that change for you. It is a best-effort guess rather than magic, so it is validated against your config before
+it is applied, it tells you if other errors remain, and it lands as a normal edit you can undo
+([frontend#1121](https://github.com/esphome/device-builder-frontend/pull/1121),
+[frontend#1147](https://github.com/esphome/device-builder-frontend/pull/1147),
+[frontend#1148](https://github.com/esphome/device-builder-frontend/pull/1148)).
+
+Indentation is not the only thing it explains. Tabs used where YAML wants spaces, a value starting with `@`, `%`, or `*`
+that needs quotes, an unterminated quote, a duplicate key, and an unclosed bracket or brace all get the same
+plain-language treatment. A list marker missing its space, `-platform: gpio`, is offered a one-click repair to `-
+platform: gpio` ([frontend#1149](https://github.com/esphome/device-builder-frontend/pull/1149)). So is a key that has
+drifted out of the block it belongs to, such as an `encryption` key left sitting directly under `api:`, in either
+direction; the Device Builder checks its component catalog first to confirm where the key really belongs, and offers
+nothing rather than a wrong guess if it cannot tell
+([frontend#1164](https://github.com/esphome/device-builder-frontend/pull/1164)).
+
+Device log lines now link to the documentation that explains them
+([frontend#1116](https://github.com/esphome/device-builder-frontend/pull/1116),
+[frontend#1118](https://github.com/esphome/device-builder-frontend/pull/1118)). Ten common warnings and errors get a
+curated explanation, including `took a long time for an operation`, WiFi reconnect loops, repeated resets, OTA
+rollbacks, and running out of Bluetooth proxy connection slots, and any other line tagged with a component links
+straight to that component's page.
+
+**Headless Build Servers**
+
+[@jesserockz](https://github.com/jesserockz) added `--remote-build-only`, which runs Device Builder as a dedicated build
+box with no web interface at all ([#1861](https://github.com/esphome/device-builder/pull/1861)):
+
+```bash
+esphome-device-builder --remote-build-only /var/lib/esphome-builder
+```
+
+It serves only the peer link, so there is no interface for anyone to click Accept in. Instead it opens a pairing window
+on first start and prints its identity fingerprint and a one-time key to the console. You pair from the sending
+dashboard, check that the fingerprint matches the console, and type in the key, which the pair dialog knows to ask for
+up front ([#1881](https://github.com/esphome/device-builder/pull/1881),
+[frontend#1120](https://github.com/esphome/device-builder-frontend/pull/1120)). That window pairs exactly one dashboard
+and then closes.
+
+If you would rather keep the web interface but still dedicate the machine to building, turn on **Remote compute
+dashboard** in Settings and a **Hide the Device builder** option appears beneath it, leaving only the **Build server**
+view ([#2077](https://github.com/esphome/device-builder/pull/2077),
+[frontend#1244](https://github.com/esphome/device-builder-frontend/pull/1244)). Device Builder can also listen on a UNIX
+socket with `--socket` for reverse-proxy setups, contributed by [@vexofp](https://github.com/vexofp)
+([#1862](https://github.com/esphome/device-builder/pull/1862)).
+
+**Builds**
+
+Starting a build no longer greys out the buttons that would take you back to it. Update and Install now open the running
+job, and Edit stays clickable so you can read your YAML while it compiles
+([frontend#1191](https://github.com/esphome/device-builder-frontend/pull/1191),
+[frontend#1193](https://github.com/esphome/device-builder-frontend/pull/1193),
+[frontend#1197](https://github.com/esphome/device-builder-frontend/pull/1197)). Download and Retry now wait for a
+running build to finish instead of cancelling and restarting it, which also means Download can no longer hand you a
+half-written binary ([frontend#1199](https://github.com/esphome/device-builder-frontend/pull/1199),
+[frontend#1201](https://github.com/esphome/device-builder-frontend/pull/1201),
+[frontend#1204](https://github.com/esphome/device-builder-frontend/pull/1204)).
+
+A bulk **Compile only** action lets you check a change across many devices before deploying any of it
+([frontend#1176](https://github.com/esphome/device-builder-frontend/pull/1176)). ESP-IDF builds now show compile
+progress, which is read from the ninja build counters rather than the percentage that ESP-IDF never prints
+([#1880](https://github.com/esphome/device-builder/pull/1880)).
+
+Special thanks to [@breti](https://github.com/breti), whose QA testing and detailed issue reports ran through this whole
+release and do not show up in any pull request count.
 
 ## Security and Provisioning Groundwork for EN18031
 
@@ -392,6 +550,12 @@ happening, and suggests `packages:` for a deep merge instead. Toggle with `espho
 - **Web server SSE optimization** ([#17400](https://github.com/esphome/esphome/pull/17400)) — Logger's known
   message length is now threaded through the SSE send path, avoiding `strlen` and `strchr` rescans on every log
   event. No wire changes.
+- **Web server HTTP digest authentication** ([#17541](https://github.com/esphome/esphome/pull/17541)) —
+  [`web_server`](/components/web_server/) `auth:` gains a new `type:` option to select `basic` or `digest`.
+  Digest keeps the password off the network (only hashes are sent) instead of the trivially reversible Base64
+  that Basic uses; both look identical in the browser. The scheme is fixed at build time so the unused code
+  path is compiled out. The default stays `basic` for now to avoid breaking non-browser REST clients and will
+  change to `digest` in 2027.1.0; set `type: basic` explicitly to keep the current behavior after that release.
 - **WiFi roaming scan suppression** ([#17012](https://github.com/esphome/esphome/pull/17012)) — A new internal API
   lets components request that post-connect roaming scans be paused. First user is
   [sendspin](/components/sendspin/), which now suppresses roaming scans while playing to prevent audible hiccups
@@ -520,6 +684,13 @@ tested pre-releases, and helped in the community.
 - **Web Server**: Version 1 is deprecated. A configuration warning is emitted when `version: 1` is set;
   removal is targeted for 2027.1.0. Migrate to v2 (the default) or v3
   [#17109](https://github.com/esphome/esphome/pull/17109)
+- **Web Server**: Cross-origin browser requests carrying an `Origin` header are now rejected unless the origin
+  matches the request `Host` (same-origin) or is listed in the new `allowed_origins:` option. Requests with
+  no `Origin` header (curl, native API, other non-browser clients) are always allowed, so this
+  is defense-in-depth against the browser confused-deputy/CSRF case, not an authentication boundary. Private
+  Network Access is now off by default (previously on) and, when enabled, reuses `allowed_origins:` to
+  authorize preflights; enabling PNA without any allowed origins is rejected at config validation
+  [#17530](https://github.com/esphome/esphome/pull/17530)
 - **Zigbee**: The Zigbee SDK bump to 2.0.2 changes the storage layout, so ESP32 devices must be re-joined and
   reconfigured after upgrading. The `reporting:` config values `enabled` and `coordinator` are no longer valid
   [#16869](https://github.com/esphome/esphome/pull/16869)
@@ -630,6 +801,67 @@ For detailed migration guides and API documentation, see the
 
 {/* markdownlint-disable MD013 */}
 
+## Release 2026.7.1 - July 21
+
+<details>
+<summary></summary>
+
+- [emc2101] Fix negative external temperatures reported as large positives [esphome#17494](https://github.com/esphome/esphome/pull/17494) by [@swoboda1337](https://github.com/swoboda1337)
+- [haier] Fix outdoor defrost temperature reporting the coil temperature [esphome#17492](https://github.com/esphome/esphome/pull/17492) by [@swoboda1337](https://github.com/swoboda1337)
+- [zephyr] implement ISRInternalGPIOPin::digital_write [esphome#17601](https://github.com/esphome/esphome/pull/17601) by [@quantum5](https://github.com/quantum5)
+- [as3935_i2c] Use repeated start when reading registers [esphome#17584](https://github.com/esphome/esphome/pull/17584) by [@swoboda1337](https://github.com/swoboda1337)
+- [micro_wake_word] Include the local model file in bundles [esphome#17604](https://github.com/esphome/esphome/pull/17604) by [@bdraco](https://github.com/bdraco)
+- [core] Improve framework mirror selection, download errors, and version parsing [esphome#17615](https://github.com/esphome/esphome/pull/17615) by [@swoboda1337](https://github.com/swoboda1337)
+- [http_request] Fix use-after-return of header collection state in IDF backend [esphome#17627](https://github.com/esphome/esphome/pull/17627) by [@swoboda1337](https://github.com/swoboda1337)
+- [web_server_idf] Use core format_hex_to helper for digest auth (fixes Arduino build) [esphome#17608](https://github.com/esphome/esphome/pull/17608) by [@swoboda1337](https://github.com/swoboda1337)
+- [nrf52] Set ZEPHYR_SDK_INSTALL_DIR for Zephyr SDK discovery [esphome#17633](https://github.com/esphome/esphome/pull/17633) by [@jesserockz](https://github.com/jesserockz)
+- Bump bundled esphome-device-builder to 1.6.2 [esphome#17640](https://github.com/esphome/esphome/pull/17640) by [@esphome[bot]](https://github.com/apps/esphome)
+- Bump aioesphomeapi from 45.6.0 to 45.6.1 [esphome#17653](https://github.com/esphome/esphome/pull/17653) by [@dependabot[bot]](https://github.com/apps/dependabot)
+- Bump aioesphomeapi from 45.6.1 to 45.6.2 [esphome#17654](https://github.com/esphome/esphome/pull/17654) by [@dependabot[bot]](https://github.com/apps/dependabot)
+- Bump bundled esphome-device-builder to 1.6.3 [esphome#17651](https://github.com/esphome/esphome/pull/17651) by [@esphome[bot]](https://github.com/apps/esphome)
+- [espidf] Suggest installing missing system libraries when the tools install fails [esphome#17619](https://github.com/esphome/esphome/pull/17619) by [@swoboda1337](https://github.com/swoboda1337)
+- [core] Fix srcFilter exclusions being silently ignored on Windows [esphome#17648](https://github.com/esphome/esphome/pull/17648) by [@bharvey88](https://github.com/bharvey88)
+- Pin cryptography to 48.0.1 on Intel macOS [esphome#17658](https://github.com/esphome/esphome/pull/17658) by [@bdraco](https://github.com/bdraco)
+- Ship component requirements.txt files in the sdist and wheel [esphome#17660](https://github.com/esphome/esphome/pull/17660) by [@bdraco](https://github.com/bdraco)
+- [logs] Cap the logs reconnect backoff for deep-sleep devices [esphome#17656](https://github.com/esphome/esphome/pull/17656) by [@bdraco](https://github.com/bdraco)
+- [nrf52] Install PlatformIO toolchain Python packages into a dedicated venv [esphome#17635](https://github.com/esphome/esphome/pull/17635) by [@jesserockz](https://github.com/jesserockz)
+- Bump bundled esphome-device-builder to 1.6.4 [esphome#17662](https://github.com/esphome/esphome/pull/17662) by [@esphome[bot]](https://github.com/apps/esphome)
+- [esp32] Bump recommended ESP-IDF to 5.5.5 and Arduino to 3.3.10 [esphome#17669](https://github.com/esphome/esphome/pull/17669) by [@swoboda1337](https://github.com/swoboda1337)
+- Bump bundled esphome-device-builder to 1.6.5 [esphome#17675](https://github.com/esphome/esphome/pull/17675) by [@esphome[bot]](https://github.com/apps/esphome)
+- Bump bundled esphome-device-builder to 1.6.6 [esphome#17681](https://github.com/esphome/esphome/pull/17681) by [@esphome[bot]](https://github.com/apps/esphome)
+- Bump bundled esphome-device-builder to 1.6.7 [esphome#17696](https://github.com/esphome/esphome/pull/17696) by [@esphome[bot]](https://github.com/apps/esphome)
+- Split multi-token build.flags entries when generating ESP-IDF component CMakeLists [esphome#17649](https://github.com/esphome/esphome/pull/17649) by [@bharvey88](https://github.com/bharvey88)
+- [ssd1306] Fix offset_x being ignored on SH1106/SH1107 displays [esphome#17700](https://github.com/esphome/esphome/pull/17700) by [@jesserockz](https://github.com/jesserockz)
+- [micro_wake_word] Download models in parallel [esphome#17701](https://github.com/esphome/esphome/pull/17701) by [@bdraco](https://github.com/bdraco)
+- [platformio] Accept git URLs passed as the library name [esphome#17697](https://github.com/esphome/esphome/pull/17697) by [@bdraco](https://github.com/bdraco)
+- [git] Detect interrupted clones and re-clone automatically [esphome#17690](https://github.com/esphome/esphome/pull/17690) by [@bdraco](https://github.com/bdraco)
+- [espidf] Make openocd-esp32 optional so its libusb check cannot break installs [esphome#17686](https://github.com/esphome/esphome/pull/17686) by [@bdraco](https://github.com/bdraco)
+- [light] Fix pulse and other effects [esphome#17645](https://github.com/esphome/esphome/pull/17645) by [@clydebarrow](https://github.com/clydebarrow)
+- Bump bundled esphome-device-builder to 1.6.8 [esphome#17708](https://github.com/esphome/esphome/pull/17708) by [@esphome[bot]](https://github.com/apps/esphome)
+- [core] Auto-clean the PlatformIO build environment when the Python version changes [esphome#17671](https://github.com/esphome/esphome/pull/17671) by [@bdraco](https://github.com/bdraco)
+- [platformio] Re-download library when cached copy is missing its manifest [esphome#17691](https://github.com/esphome/esphome/pull/17691) by [@bdraco](https://github.com/bdraco)
+- [http_request] Fix usage of http response body [esphome#17713](https://github.com/esphome/esphome/pull/17713) by [@kamaradclimber](https://github.com/kamaradclimber)
+- [platformio] Include cache path in invalid library error [esphome#17692](https://github.com/esphome/esphome/pull/17692) by [@bdraco](https://github.com/bdraco)
+- [espidf] Resume interrupted toolchain downloads instead of restarting [esphome#17706](https://github.com/esphome/esphome/pull/17706) by [@bdraco](https://github.com/bdraco)
+- [wireguard] Mark private keys sensitive, stop redacting public keys [esphome#17736](https://github.com/esphome/esphome/pull/17736) by [@bdraco](https://github.com/bdraco)
+- [esp8266] Fail fast when Rosetta 2 is missing on Apple Silicon Macs [esphome#17737](https://github.com/esphome/esphome/pull/17737) by [@bdraco](https://github.com/bdraco)
+
+</details>
+
+## Release 2026.7.2 - July 23
+
+<details>
+<summary></summary>
+
+- Bump aioesphomeapi from 45.6.2 to 45.7.0 [esphome#17768](https://github.com/esphome/esphome/pull/17768) by [@dependabot[bot]](https://github.com/apps/dependabot)
+- [sen5x] Add model option to override autodetection [esphome#17764](https://github.com/esphome/esphome/pull/17764) by [@bharvey88](https://github.com/bharvey88)
+- [sendspin] Bump sendspin-cpp to v0.7.0 [esphome#17781](https://github.com/esphome/esphome/pull/17781) by [@kahrendt](https://github.com/kahrendt)
+- [mipi_spi] fix partial update bug [esphome#17747](https://github.com/esphome/esphome/pull/17747) by [@Flautz](https://github.com/Flautz)
+- [bundle] Remap absolute file paths when compiling an extracted bundle [esphome#17765](https://github.com/esphome/esphome/pull/17765) by [@bdraco](https://github.com/bdraco)
+- Bump bundled esphome-device-builder to 1.6.9 [esphome#17793](https://github.com/esphome/esphome/pull/17793) by [@esphome[bot]](https://github.com/apps/esphome)
+
+</details>
+
 ## Full list of changes
 
 ### New Features
@@ -674,6 +906,8 @@ For detailed migration guides and API documentation, see the
 - [image] Restructure into a platform component [esphome#17416](https://github.com/esphome/esphome/pull/17416) by [@jesserockz](https://github.com/jesserockz) (new-component) (new-feature)
 - [lvgl] Dynamic rotation features [esphome#16773](https://github.com/esphome/esphome/pull/16773) by [@clydebarrow](https://github.com/clydebarrow) (new-feature)
 - [gsl3670] Add new touchscreen component [esphome#16285](https://github.com/esphome/esphome/pull/16285) by [@clydebarrow](https://github.com/clydebarrow) (new-component) (new-feature) (new-platform)
+- [mipi_dsi] New model for M5Stack Tab5 [esphome#17500](https://github.com/esphome/esphome/pull/17500) by [@clydebarrow](https://github.com/clydebarrow) (new-feature)
+- [web_server] Add HTTP digest authentication with selectable scheme [esphome#17541](https://github.com/esphome/esphome/pull/17541) by [@jesserockz](https://github.com/jesserockz) (new-feature)
 
 ### New Components
 
@@ -719,6 +953,8 @@ For detailed migration guides and API documentation, see the
 - [nrf52] allow to build for non nrf52840 boards [esphome#17373](https://github.com/esphome/esphome/pull/17373) by [@tomaszduda23](https://github.com/tomaszduda23) (breaking-change)
 - [light] Preserve brightness on turn-off. [esphome#17103](https://github.com/esphome/esphome/pull/17103) by [@clydebarrow](https://github.com/clydebarrow) (breaking-change)
 - [zigbee] Allow to combine and merge endpoints on esp32 [esphome#17402](https://github.com/esphome/esphome/pull/17402) by [@luar123](https://github.com/luar123) (new-feature) (breaking-change)
+- [mipi][mipi_spi][mipi_dsi][mipi_rgb] Transform cleanup [esphome#17405](https://github.com/esphome/esphome/pull/17405) by [@clydebarrow](https://github.com/clydebarrow) (breaking-change)
+- [web_server] Add CORS origin checking with allowed_origins [esphome#17530](https://github.com/esphome/esphome/pull/17530) by [@jesserockz](https://github.com/jesserockz) (breaking-change)
 
 ### All changes
 
@@ -935,6 +1171,44 @@ For detailed migration guides and API documentation, see the
 - [lvgl] Dynamic rotation features [esphome#16773](https://github.com/esphome/esphome/pull/16773) by [@clydebarrow](https://github.com/clydebarrow) (new-feature)
 - [core] Hide build & framework internals from the visual editor [esphome#17449](https://github.com/esphome/esphome/pull/17449) by [@jesserockz](https://github.com/jesserockz)
 - [gsl3670] Add new touchscreen component [esphome#16285](https://github.com/esphome/esphome/pull/16285) by [@clydebarrow](https://github.com/clydebarrow) (new-component) (new-feature) (new-platform)
+- [gsl3670] Reference the test display explicitly so grouped CI builds validate [esphome#17462](https://github.com/esphome/esphome/pull/17462) by [@swoboda1337](https://github.com/swoboda1337)
+- [usb_uart] Fix output chunk length truncated to 8 bits [esphome#17480](https://github.com/esphome/esphome/pull/17480) by [@swoboda1337](https://github.com/swoboda1337)
+- [mcp4461] Fix wiper increment/decrement write length [esphome#17487](https://github.com/esphome/esphome/pull/17487) by [@swoboda1337](https://github.com/swoboda1337)
+- [web_server] Serialize entity state strings without a copy buffer [esphome#17488](https://github.com/esphome/esphome/pull/17488) by [@swoboda1337](https://github.com/swoboda1337)
+- Bump bundled esphome-device-builder to 1.4.0 [esphome#17495](https://github.com/esphome/esphome/pull/17495) by [@esphome[bot]](https://github.com/apps/esphome)
+- Bump bundled esphome-device-builder to 1.4.1 [esphome#17507](https://github.com/esphome/esphome/pull/17507) by [@esphome[bot]](https://github.com/apps/esphome)
+- [mipi][mipi_spi][mipi_dsi][mipi_rgb] Transform cleanup [esphome#17405](https://github.com/esphome/esphome/pull/17405) by [@clydebarrow](https://github.com/clydebarrow) (breaking-change)
+- Bump bundled esphome-device-builder to 1.4.2 [esphome#17512](https://github.com/esphome/esphome/pull/17512) by [@esphome[bot]](https://github.com/apps/esphome)
+- [mipi][mipi_spi] SWRESET handling improved [esphome#17504](https://github.com/esphome/esphome/pull/17504) by [@clydebarrow](https://github.com/clydebarrow)
+- [mipi_dsi] New model for M5Stack Tab5 [esphome#17500](https://github.com/esphome/esphome/pull/17500) by [@clydebarrow](https://github.com/clydebarrow) (new-feature)
+- [deep_sleep] feed watchdog in deep sleep [esphome#17516](https://github.com/esphome/esphome/pull/17516) by [@tomaszduda23](https://github.com/tomaszduda23)
+- Bump bundled esphome-device-builder to 1.4.3 [esphome#17522](https://github.com/esphome/esphome/pull/17522) by [@esphome[bot]](https://github.com/apps/esphome)
+- [core] Make config-hash independent of machine-local paths [esphome#17523](https://github.com/esphome/esphome/pull/17523) by [@bdraco](https://github.com/bdraco)
+- [mdns] Fix missing device info TXT records when native API is not enabled [esphome#17520](https://github.com/esphome/esphome/pull/17520) by [@bdraco](https://github.com/bdraco)
+- [web_server] Fix unused function warning for json_state_str [esphome#17524](https://github.com/esphome/esphome/pull/17524) by [@bdraco](https://github.com/bdraco)
+- [zigbee] Fix merge endpoint [esphome#17511](https://github.com/esphome/esphome/pull/17511) by [@luar123](https://github.com/luar123)
+- [zigbee] prevent task watchdog trigger with large configs. [esphome#17506](https://github.com/esphome/esphome/pull/17506) by [@luar123](https://github.com/luar123)
+- [core] Classify entity metadata visibility for the visual editor [esphome#17503](https://github.com/esphome/esphome/pull/17503) by [@jesserockz](https://github.com/jesserockz)
+- [api] Provision encryption keys over an encrypted zero-PSK noise connection [esphome#17482](https://github.com/esphome/esphome/pull/17482) by [@bdraco](https://github.com/bdraco)
+- [zwave_proxy] Fix parser gaps and harden frame and subscription handling [esphome#17461](https://github.com/esphome/esphome/pull/17461) by [@kbx81](https://github.com/kbx81)
+- [mipi_rgb] Test in isolation to avoid bus/pin merge conflicts [esphome#17534](https://github.com/esphome/esphome/pull/17534) by [@swoboda1337](https://github.com/swoboda1337)
+- [gsl3670] Fix i2c package variant in esp32-s3-idf test [esphome#17535](https://github.com/esphome/esphome/pull/17535) by [@jesserockz](https://github.com/jesserockz)
+- [web_server] Add CORS origin checking with allowed_origins [esphome#17530](https://github.com/esphome/esphome/pull/17530) by [@jesserockz](https://github.com/jesserockz) (breaking-change)
+- [esp32] Do not require verification_key with Secure Boot V2 signing schemes [esphome#17497](https://github.com/esphome/esphome/pull/17497) by [@kbx81](https://github.com/kbx81)
+- [web_server] Use dict-style packages in tests so they can be batch-grouped [esphome#17544](https://github.com/esphome/esphome/pull/17544) by [@jesserockz](https://github.com/jesserockz)
+- [web_server] Add HTTP digest authentication with selectable scheme [esphome#17541](https://github.com/esphome/esphome/pull/17541) by [@jesserockz](https://github.com/jesserockz) (new-feature)
+- [libretiny] Keep renamed board generic-ln882hki validating against generic-ln882h [esphome#17542](https://github.com/esphome/esphome/pull/17542) by [@bdraco](https://github.com/bdraco)
+- [veml7700][as7341][ltr501] Fix device class on raw-count sensors [esphome#17549](https://github.com/esphome/esphome/pull/17549) by [@swoboda1337](https://github.com/swoboda1337)
+- [nextion] Fix unbounded queue growth and OOM crash when display sends no data [esphome#17553](https://github.com/esphome/esphome/pull/17553) by [@kbx81](https://github.com/kbx81)
+- [script] Recursively expand nested packages when merging component tests [esphome#17557](https://github.com/esphome/esphome/pull/17557) by [@jesserockz](https://github.com/jesserockz)
+- [mcp23017] reset IPOL registers to 0x00 on setup [esphome#17177](https://github.com/esphome/esphome/pull/17177) by [@Rocco83](https://github.com/Rocco83)
+- Bump bundled esphome-device-builder to 1.5.0 [esphome#17558](https://github.com/esphome/esphome/pull/17558) by [@esphome[bot]](https://github.com/apps/esphome)
+- [atc_mithermometer] Make duplicate-packet counter per-instance [esphome#17496](https://github.com/esphome/esphome/pull/17496) by [@swoboda1337](https://github.com/swoboda1337)
+- [zigbee] bump esp-zigbee-sdk to 2.0.3 [esphome#17564](https://github.com/esphome/esphome/pull/17564) by [@luar123](https://github.com/luar123)
+- Bump bundled esphome-device-builder to 1.6.0 [esphome#17573](https://github.com/esphome/esphome/pull/17573) by [@esphome[bot]](https://github.com/apps/esphome)
+- [api] Warn when Home Assistant actions are sent with no subscribed client [esphome#17560](https://github.com/esphome/esphome/pull/17560) by [@jesserockz](https://github.com/jesserockz)
+- Bump bundled esphome-device-builder to 1.6.1 [esphome#17575](https://github.com/esphome/esphome/pull/17575) by [@esphome[bot]](https://github.com/apps/esphome)
+- [core] Fix wait_until crash when re-entered from its own continuation [esphome#17571](https://github.com/esphome/esphome/pull/17571) by [@jesserockz](https://github.com/jesserockz)
 
 </details>
 
@@ -992,5 +1266,6 @@ For detailed migration guides and API documentation, see the
 - Bump astral-sh/setup-uv from 8.3.1 to 8.3.2 [esphome#17454](https://github.com/esphome/esphome/pull/17454) by [@dependabot[bot]](https://github.com/apps/dependabot)
 - Bump CodSpeedHQ/action from 4.18.2 to 4.18.4 [esphome#17455](https://github.com/esphome/esphome/pull/17455) by [@dependabot[bot]](https://github.com/apps/dependabot)
 - Bump github/codeql-action/analyze from 4.36.3 to 4.37.0 [esphome#17456](https://github.com/esphome/esphome/pull/17456) by [@dependabot[bot]](https://github.com/apps/dependabot)
+- Bump aioesphomeapi from 45.5.2 to 45.6.0 [esphome#17490](https://github.com/esphome/esphome/pull/17490) by [@dependabot[bot]](https://github.com/apps/dependabot)
 
 </details>
