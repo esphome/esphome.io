@@ -1,30 +1,26 @@
 ---
 title: "Storage"
-description: "Base storage interface with registry, async transfer worker and global file-op actions — automatically loaded by storage drivers such as sd_storage, usb_storage, nfs_client, and binary_storage."
+description: "Base storage registry component, automatically loaded by storage drivers such as sd_storage, usb_storage, nfs_client, and binary_storage."
 ---
 
-The `storage` component is the shared base layer for all ESPHome storage drivers. It provides a common
-interface, a runtime registry that tracks every configured storage device (and notifies subscribers on
-hotplug register/unregister), an asynchronous transfer worker for non-blocking copy/move, and globally
-available file-operation actions.
+import APIRef from '@components/APIRef.astro';
 
-On its own, `storage` exposes no files or entities — a storage driver component (such as `sd_storage`,
-`usb_storage`, `nfs_client`, or `binary_storage`) is always needed on top of it to actually access a
-device. You do not need to add `storage:` to your configuration manually; it is automatically loaded by
-any storage driver that depends on it, and all of its settings are optional.
+The `storage` component is the shared base layer for all ESPHome storage drivers. It provides a common
+interface plus a runtime registry that tracks every configured storage device and notifies subscribers
+when devices register or unregister (e.g. on hotplug events).
+
+On its own, `storage` exposes no files or entities — it has nothing to mount or read from. A storage
+driver component (such as `sd_storage`, `usb_storage`, `nfs_client`, or `binary_storage`) is always needed
+on top of it to actually access a device. You do not need to add `storage:` to your configuration manually;
+it is automatically loaded by any storage driver that depends on it.
 
 > [!WARNING]
 > The storage interface is **experimental**. Breaking changes may occur in future ESPHome releases as the
 > component and its drivers evolve.
 
 ```yaml
-# Example configuration entry (all values shown are the defaults)
+# Example configuration entry
 storage:
-  copy_chunk_size: 16384
-  max_blocking_transfer_size: 0
-  task_stack_size: 8192
-  task_priority: 1
-  max_pending: 4
 ```
 
 ## Configuration variables
@@ -34,124 +30,68 @@ storage:
   device to another (e.g. SD card to USB, or USB to a network share). Must be a multiple of 512 and between
   4096 and 131072. Larger values can speed up copies slightly at the cost of more RAM held during the copy;
   the default is a good fit for SD/USB media. Defaults to `16384` (16 kB).
-- **max_blocking_transfer_size** (*Optional*, int): Maximum size, in bytes, that the *blocking* whole-file
-  copy/read/write helpers are allowed to process in one call. Larger transfers are rejected with the
-  `TRANSFER_TOO_LARGE` error instead of freezing the device — use the asynchronous transfer path (below)
-  for those. `0` means unlimited. Defaults to `0`.
+- **path_max** (*Optional*, int): Longest relative path, in bytes, that the storage API carries. Must be
+  between 64 and 1024. Raising it also raises RAM use during directory walks, since two buffers of this
+  size are held per directory level. Defaults to the largest value any configured driver requires, so you
+  normally do not need to set this.
+- **max_blocking_transfer_size** (*Optional*, int): Maximum size, in bytes, that whole-file copy/read/write
+  operations are allowed to process in one blocking call. These hold the entire file in RAM, so transfers
+  larger than this are rejected with the `TRANSFER_TOO_LARGE` error instead of freezing the device for the
+  duration of the transfer. `0` disables the check. Defaults to `16384` (16 kB).
+- **move_fallback_copy** (*Optional*, boolean): What to do when a move within a single storage device is
+  refused. Such a move is normally a rename, which some backends reject even within themselves — an NFS
+  export can span several file systems, and a rename never crosses one. When enabled, the move is retried
+  as copy + delete so it still completes; when disabled, the refusal is reported instead of quietly turning
+  a directory-entry update into a full file copy. Defaults to `true`.
 
-The following are tuning knobs for the asynchronous transfer worker. They only take effect on nodes where
-the worker is compiled in (see below); on all other nodes they are accepted and ignored.
+## Triggers
 
-- **task_stack_size** (*Optional*, int): Stack size, in bytes, for the background worker task on platforms
-  that have one (currently ESP32). Needs headroom for FATFS long-filename handling and NFS/lwIP transfers.
-  Must be between 4096 and 32768. Defaults to `8192`.
-- **task_priority** (*Optional*, int): FreeRTOS priority for the background worker task. Should be above
-  idle and below networking-related tasks. Must be between 1 and 23. Defaults to `1`.
-- **max_pending** (*Optional*, int): Maximum number of async copy/move requests queued at once. Must be
-  between 1 and 16. Defaults to `4`. Submitting while the queue is full is rejected immediately.
-- **max_streams** (*Optional*, int): Maximum number of concurrently open chunked read/write streams.
-  Defaults to `4`.
+### `on_registered`
 
-## Asynchronous transfers
-
-Storage I/O is blocking by design, so a large file transfer done synchronously would make the node
-unresponsive for its duration. The built-in transfer worker moves copy/move off the main loop's critical
-path. There is nothing to configure or enable:
-
-- The worker is compiled in **automatically** whenever a path-based (filesystem or network) storage driver
-  is configured. Nodes that only use raw storage (small memory ICs like FRAM/EEPROM) never pay any flash or
-  RAM for it. Its RAM (request pool, task stack) is allocated lazily on first use.
-- Per transfer, the worker automatically picks the best execution strategy: a background FreeRTOS task
-  when the platform supports it **and** both involved storages declare task-safe I/O (e.g. SD cards on the
-  dedicated SDMMC controller), or otherwise a loop-sliced engine that processes one chunk per main-loop
-  iteration (the only mode on platforms without a background task, and the fallback for bus-sharing
-  drivers like SPI-attached SD cards). The API and behavior are identical either way — only timing differs.
-- Completion callbacks always run on the main loop, regardless of which engine performed the transfer.
-- Hotplug-safe: removing/unmounting a storage cancels its pending transfers and drains in-flight work
-  before the device is torn down.
-
-## File-operation actions
-
-The following actions are available in automations on **every** node that has any storage driver — no
-preparation in other components is needed. Paths are full VFS paths (mount point + file path, e.g.
-`/sdcard/logs/temp.log`); the storage component routes them to the correct device automatically, so
-multi-device setups work transparently.
-
-These actions use the blocking helpers and are intended for *small* files (log lines, setpoints,
-configuration values); `max_blocking_transfer_size` guards against misuse with large files.
-
-### `storage.file_write` / `storage.file_append` Action
-
-Writes content to a file. `file_write` truncates the file first, `file_append` appends and adds a trailing
-newline by default (`newline: false` to disable; also available on `file_write`, default off there).
+This trigger fires when a storage device becomes available — at boot once the driver has brought it up, or
+later on a hotplug event such as inserting a USB stick.
 
 ```yaml
-on_value:
-  - storage.file_append:
-      path: /sdcard/logs/temp.log        # templatable
-      format: "temp=%.1f at %s"          # printf-style, like logger.log
-      args: [x, 'id(sntp_time).now().strftime("%H:%M")']
-  - storage.file_write:
-      path: /sdcard/state/last.txt
-      content: !lambda 'return to_string(x);'   # alternative to format/args
+storage:
+  on_registered:
+    - logger.log: "A storage device became available"
 ```
 
-- **path** (**Required**, string, [templatable](/automations/templates)): Full VFS path of the file.
-- **content** (*Optional*, string, [templatable](/automations/templates)): The content to write. Exactly
-  one of `content` or `format` must be given.
-- **format** (*Optional*, string): printf-style format string, rendered with **args** — same syntax as
-  [`logger.log`](/components/logger#logger-log-action).
-- **args** (*Optional*, list): Arguments for `format`.
-- **newline** (*Optional*, boolean): Append a trailing newline. Defaults to `true` for `file_append`,
-  `false` for `file_write`.
-
-Errors (no device mounted for the path, write failure) are logged as warnings; the automation continues.
-
-### `storage.file_read` Action
-
-Reads a file, optionally extracts a value from its content through a chainable pipeline, and delivers the
-result to a [global variable](/components/globals) and/or an `on_value` trigger.
+The device is available as the variable `x` in [lambdas](/automations/templates#config-lambda). Note that
+`x` is the generic base type: a mount path only exists on devices that have a file system, so query the
+device through `get_info()` rather than assuming one:
 
 ```yaml
-- storage.file_read:
-    path: /sdcard/config/device.conf
-    extract:                 # steps run in order, each on the previous result
-      - key: setpoint        # take the value of a "setpoint=..." line
-        separator: "="       #   (separator defaults to "=")
-      - trim: true           # strip surrounding whitespace
-    to_global: my_setpoint   # converted automatically to the global's type
-    on_value:                # x = extracted value (std::string)
-      - logger.log:
-          format: "setpoint is now %s"
-          args: ["x.c_str()"]
+storage:
+  on_registered:
+    - lambda: |-
+        esphome::storage::StorageInfo info{};
+        if (x->get_info(&info) == esphome::storage::StorageError::OK) {
+          ESP_LOGI("storage", "%s is now available", info.name);
+        }
 ```
 
-- **path** (**Required**, string): Full VFS path of the file.
-- **extract** (*Optional*, list): Extraction pipeline. Each step is exactly one of:
-  - **line** (int): Pick the Nth line (1-based).
-  - **split** (string) + **index** (*Optional*, int): Split at a separator string and pick the Nth element
-    (0-based, defaults to `0`).
-  - **key** (string) + **separator** (*Optional*, string, default `=`): Find the first line starting with
-    `<key><separator>` and yield the remainder.
-  - **regex** (string) + **group** (*Optional*, int): Match a regular expression (ECMAScript grammar) and
-    yield the given capture group. Defaults to group 1 when the pattern has capture groups, otherwise the
-    whole match. The pattern is validated at config time. Note: regex support compiles in `std::regex`
-    (roughly 50–100 kB of flash) — it only does so when a configuration actually uses a `regex:` step.
-  - **trim** (boolean): Strip leading/trailing whitespace.
-- **to_global** (*Optional*, [ID](/guides/configuration-types#id)): A global variable to assign the result
-  to. `float`, `int`, `bool` and `std::string` globals are supported; the string result is converted
-  automatically. If conversion fails, the global is left unchanged and a warning is logged.
-- **on_value** (*Optional*): Triggered with the extracted value as
-  `x` (an `std::string`).
+### `on_unregistered`
 
-At least one of `to_global` or `on_value` is required. If the file is missing or an extraction step fails
-(line out of range, key not found, regex not matching), a warning is logged, the global stays untouched and
-`on_value` does not fire.
+This trigger fires when a storage device stops being available, for example when a USB stick is unplugged
+or a network share disconnects. It also runs before a clean shutdown of a device.
 
-Extraction of values from JSON files (JSON-pointer based) is planned as a follow-up.
+```yaml
+storage:
+  on_unregistered:
+    - logger.log: "A storage device went away"
+```
+
+The same `x` variable is available. Do not start any file operation from this trigger — by the time it
+runs, the device is already gone.
 
 ## Behavior notes
 
-The synchronous helpers keep individual blocking calls short (chunked I/O with watchdog feeding), but very
-large synchronous transfers can still make the device temporarily unresponsive — cap them with
-`max_blocking_transfer_size` and let the asynchronous worker handle anything bigger.
+Storage operations are blocking. Copying or transferring very large files can make the device temporarily
+unresponsive to sensor updates and API requests while the operation is in progress. Use
+`max_blocking_transfer_size` to cap how large a single blocking transfer is allowed to get. An asynchronous
+storage worker is planned for a future release to handle large transfers without blocking.
+
+## See Also
+
+- <APIRef text="storage.h" path="storage/storage.h" />
