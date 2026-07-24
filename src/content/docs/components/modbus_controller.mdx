@@ -5,7 +5,7 @@ title: "Modbus Controller"
 
 import { Image } from 'astro:assets';
 
-The `modbus_controller` component creates a RS485 connection to control a Modbus server (slave) device, letting your ESPHome node act as a Modbus client (master). You can access the coils, inputs, holding, read registers from your devices as sensors, switches, selects, numbers or various other ESPHome components and present them to your favorite Home Automation system. You can even write them as binary or float outputs from ESPHome.
+The `modbus_controller` component creates an RS485 connection to control a Modbus server (slave) device, letting your ESPHome node act as a Modbus client (master). You can access the coils, inputs, holding, read registers from your devices as sensors, switches, selects, numbers or various other ESPHome components and present them to your favorite Home Automation system. You can even write them as binary or float outputs from ESPHome.
 
 Set the `role` attribute of the [Modbus](/components/modbus/) upon which this `modbus_controller` component relies to `client`, which is the default.
 
@@ -71,9 +71,9 @@ Automations:
 
 ## Example Client
 
-The following code creates a `modbus_controller` hub talking to a ModBUS device at address `1` with `115200` bps
+The following code creates a `modbus_controller` hub talking to a Modbus device at address `1` with `115200` bps
 
-ModBUS sensors can be directly defined (inline) under the `modbus_controller` hub or as standalone components
+Modbus sensors can be directly defined (inline) under the `modbus_controller` hub or as standalone components
 Technically there is no difference between the "inline" and the standard definitions approach.
 
 ```yaml
@@ -125,7 +125,7 @@ The configuration example above creates a `modbus_controller` hub talking to a M
 
 ## Example Server
 
-The following code allows a ModBUS client to read a sensor value from your ESPHome node, that the node itself read from a ModBUS server.
+The following code allows a Modbus client to read a sensor value from your ESPHome node, that the node itself read from a Modbus server.
 
 ```yaml
 uart:
@@ -248,12 +248,12 @@ uart:
 modbus:
   send_wait_time: 200ms
   uart_id: mod_uart
-  id: mod_bus
+  id: modbus
 
 modbus_controller:
 - id: sdm
   address: 2
-  modbus_id: mod_bus
+  modbus_id: modbus
   command_throttle: 100ms
   setup_priority: -10
   update_interval: 30s
@@ -578,7 +578,7 @@ The response is mapped to the sensor based on `register_count` and offset in byt
 >           ESP_LOGI("ModbusLambda", "EPSOLAR Battery set");
 >
 > uart:
->   id: mod_bus
+>   id: mod_uart
 >   tx_pin: GPIOXX
 >   rx_pin: GPIOXX
 >   baud_rate: 115200
@@ -587,13 +587,13 @@ The response is mapped to the sensor based on `register_count` and offset in byt
 > modbus:
 >   #flow_control_pin: GPIOXX
 >   send_wait_time: 200ms
->   id: mod_bus_epever
+>   id: modbus_epever
 >
 > modbus_controller:
 >   - id: epever
 >     ## the Modbus device addr
 >     address: 0x1
->     modbus_id: mod_bus_epever
+>     modbus_id: modbus_epever
 >     command_throttle: 0ms
 >     setup_priority: -10
 >     update_interval: ${updates}
