@@ -10,11 +10,22 @@ import APIRef from '@components/APIRef.astro';
 This component allows reception and transmission of data over a network using the [User Datagram Protocol (UDP)](https://en.wikipedia.org/wiki/User_Datagram_Protocol).
 In conjunction with the [Packet Transport Component](/components/packet_transport#packet-transport) it can be used to broadcast sensor data.
 
+On Zephyr platforms (nRF52 with Thread), the network stack is IPv6-only. IPv4-only platforms (ESP32, ESP8266, RP2040, LibreTiny) are unchanged.
+
 ```yaml
 # Example configuration entry
 udp:
     listen_address: 239.0.60.53
     addresses: ["255.255.255.255", "208.87.135.110"]
+```
+
+```yaml
+# Example Zephyr Thread (IPv6-only) configuration
+network:
+  enable_ipv6: true
+
+udp:
+    addresses: ["2001:db8::1", "ff02::1"]
 ```
 
 ## Configuration variables
@@ -24,10 +35,12 @@ udp:
   - **listen_port** (**Required**, int): The port to listen on for received packets.
   - **broadcast_port** (**Required**, int): The port to send packets to.
 - **addresses** (*Optional*, list of IPv4 addresses): One or more IP addresses to broadcast data to. Defaults to `255.255.255.255`
-  which is the local network broadcast address.
+  which is the local network broadcast address. On Zephyr (nRF52 Thread) the network is IPv6-only, so addresses must be
+  valid **IPv6** addresses.
 
 - **listen_address** (*Optional*, IPv4 address): Changes to multicast, adding an address to listen to. Defaults to no multicast address, just
   local network broadcast address `255.255.255.255`. **NOTE**: Adding a multicast address stops it from listening on the broadcast address.
+  Multicast `listen_address` is **not yet implemented** on Zephyr platforms.
 
 ## Reliability
 
