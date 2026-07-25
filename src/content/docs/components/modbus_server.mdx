@@ -114,6 +114,22 @@ On the bus side, you need 120 Ohm termination resistors at the ends of the bus c
 > overlap and must fit within the 16-bit address space (`0x0000`–`0xFFFF`);
 > the configuration is rejected otherwise.
 
+When acting as a server, `modbus_server` also answers function code `0x17`
+(Read/Write Multiple Registers), which combines a write and a read into a single
+request. It reuses the same `write_lambda` and `read_lambda` as the standalone
+write and read functions, so any writable and readable register supports it
+without additional configuration.
+
+> [!WARNING]
+> As mandated by the Modbus specification (§6.17), the write is performed
+> **before** the read, and the write is **not rolled back** if the read half
+> then fails. If the read targets an unmapped or otherwise invalid register, the
+> client receives an exception response even though the write has already taken
+> effect. A client that treats the exception as "nothing happened" and retries
+> the request will apply the write a second time — harmless for idempotent
+> registers, but potentially problematic for command or counter registers where
+> each write has a side effect.
+
 ## Example
 
 The following code allows a ModBUS client to read a sensor value from your ESPHome node, that the node itself read from some local sensor.
