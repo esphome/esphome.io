@@ -1,0 +1,104 @@
+esphome:
+  name: chart-types-shot
+
+host:
+logger:
+
+sensor:
+  - platform: template
+    id: s1
+    update_interval: 300ms
+    lambda: return 20.0 + 5.0 * sinf(millis() / 1500.0f);
+  - platform: template
+    id: s2
+    update_interval: 300ms
+    lambda: return 15.0 + 4.0 * cosf(millis() / 1800.0f);
+
+interval:
+  - interval: 300ms
+    then:
+      - lvgl.chart.add_point:
+          id: chart_scatter
+          series: 0
+          x: !lambda return millis() / 60.0f;
+          y: !lambda return 15.0f + 8.0f * sinf(millis() / 900.0f);
+      - lvgl.chart.add_point:
+          id: chart_scatter
+          series: 1
+          x: !lambda return millis() / 60.0f;
+          y: !lambda return 10.0f + 6.0f * cosf(millis() / 700.0f);
+
+display:
+  - platform: sdl
+    id: disp
+    dimensions:
+      width: 480
+      height: 700
+
+lvgl:
+  displays:
+    - disp
+  style_definitions:
+    - id: title_style
+      text_font: montserrat_16
+      pad_bottom: 2px
+  pages:
+    - id: p1
+      layout:
+        type: flex
+        flex_flow: column
+      pad_row: 6px
+      pad_all: 8px
+      widgets:
+        - label:
+            text: "LINE"
+            styles: title_style
+        - chart:
+            id: chart_line
+            type: LINE
+            height: 130px
+            point_count: 30
+            series:
+              - sensor: s1
+                color: 0x4269d0
+              - sensor: s2
+                color: 0xf4bd4a
+        - label:
+            text: "BAR"
+            styles: title_style
+        - chart:
+            id: chart_bar
+            type: BAR
+            height: 130px
+            point_count: 20
+            series:
+              - sensor: s1
+                color: 0x4269d0
+              - sensor: s2
+                color: 0xf4bd4a
+        - label:
+            text: "STACKED"
+            styles: title_style
+        - chart:
+            id: chart_stacked
+            type: STACKED
+            height: 130px
+            point_count: 20
+            min_value: 0
+            max_value: 40
+            series:
+              - sensor: s1
+                color: 0x4269d0
+              - sensor: s2
+                color: 0xf4bd4a
+        - label:
+            text: "SCATTER"
+            styles: title_style
+        - chart:
+            id: chart_scatter
+            type: SCATTER
+            height: 130px
+            point_count: 30
+            series:
+              - color: 0x4269d0
+              - color: 0xf4bd4a
