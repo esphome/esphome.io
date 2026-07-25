@@ -810,6 +810,83 @@ on_...:
       color: red
 ```
 
+### `chart`
+
+The chart widget plots one or more sensors as a line or bar chart over time. Each series is pushed a new point either
+whenever its sensor publishes a new state, or, if `update_interval` is set, at a fixed interval read from the
+sensor's current state.
+
+**Configuration variables:**
+
+- **series** (**Required**, list): The sensors to plot.
+  - **sensor** (**Required**, [ID](/guides/configuration-types#id)): The sensor providing the series' values.
+  - **color** (*Optional*, [Color](/components/lvgl#lvgl-styling)): The color of the series' line or bars.
+  - **format** (*Optional*, string): A `printf`-style format string used to show the series' last value in a small
+    legend label at the top left of the chart.
+- **type** (*Optional*, string): The chart type, either `LINE` or `BAR`. Defaults to `LINE`.
+- **point_count** (*Optional*, int): The number of points kept per series. Each point occupies 4 bytes of RAM per
+  series (plus 4 bytes of flash per series when `persist` is enabled), so large values increase memory usage.
+  Defaults to `100`.
+- **decimals** (*Optional*, 0-4): The number of decimal places kept when storing values, which also sets the
+  resolution of the automatic Y-axis range. Defaults to `1`.
+- **min_value** / **max_value** (*Optional*, float): Fixed bounds for the Y-axis. If either is set, both must be
+  set. When neither is set, the Y-axis automatically rescales to fit the data, rounded outward to a whole unit (for
+  example, values between 12.7 and 21.3 give a range of 12 to 22).
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): If set, a timer samples every series'
+  current sensor state at this interval. If not set, a point is pushed each time a series' sensor publishes a new
+  state.
+- **point_radius** (*Optional*, int): The radius of the point markers, shared by all series on the chart (LVGL does
+  not support a separate marker size per series).
+- **persist** (*Optional*, boolean): ESP32 only. Saves the series history to flash so it survives a reboot. Defaults
+  to `false`.
+- **time_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of a [time](/components/time/) component.
+  Used together with `persist` and `update_interval` to fill the time the device was powered off with gaps instead
+  of resuming as if no time had passed.
+- **y_axis** (*Optional*, dict): If set, shows the current Y-axis bounds as two labels at the top-left and
+  bottom-left of the chart.
+  - **format** (**Required**, string): A `printf`-style format string used to format the bounds, for example `"%.0f°"`.
+- Style options from [Style properties](/components/lvgl#lvgl-styling). Unlike most other widgets, `width` and
+  `height` default to `100%`.
+
+A sensor value of `NaN` leaves a gap in the corresponding series' line.
+
+**Widget parts:** `main`, `items`, `indicator`, `cursor`.
+
+**Actions:**
+
+- `lvgl.chart.update` [action](/automations/actions#actions-action) changes the Y-axis bounds of a chart created
+  with fixed `min_value`/`max_value`. All other options are set once, when the chart is created.
+  - **id** (**Required**): The ID or a list of IDs of chart widgets to be updated.
+  - **min_value** / **max_value** (**Required**, float): The new Y-axis bounds.
+
+**Triggers:**
+
+- [interaction](#triggers) LVGL event triggers.
+
+**Example:**
+
+```yaml
+# Example widget:
+- chart:
+    id: chart_id
+    point_count: 20
+    update_interval: 5s
+    y_axis:
+      format: "%.0f°"
+    series:
+      - sensor: indoor_temperature_sensor
+        color: 0xFF0000
+        format: "%.1f°"
+      - sensor: outdoor_temperature_sensor
+
+# Example action:
+on_...:
+  - lvgl.chart.update:
+      id: chart_id
+      min_value: 0
+      max_value: 40
+```
+
 ### `checkbox`
 
 The checkbox widget is made internally from a *tick box* and a label. When the checkbox is clicked the tick box's `checked` state will be toggled.
