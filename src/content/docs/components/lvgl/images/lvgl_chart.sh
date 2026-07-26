@@ -62,12 +62,12 @@ xvfb_pid=$!
 sleep 1
 export DISPLAY=":$display_num"
 
-# The demo data uses a virtual clock and freezes once every chart is full (see lvgl_chart.yaml),
-# so this no longer races the capture against the real-time scroll -- any delay comfortably past
-# the ~9s it takes to fill 30 samples at 300ms gives the identical, frozen image.
+# The demo data is pushed in one burst at boot (see lvgl_chart.yaml's lvgl.on_boot), not trickled
+# in over real time, so this doesn't race the capture against anything -- a couple of seconds is
+# just to let LVGL finish its own startup and draw the result.
 "$binary" >"$work_dir/run.log" 2>&1 &
 program_pid=$!
-sleep 12
+sleep 3
 
 raw_shot="$work_dir/screenshot.png"
 import -window root "$raw_shot"
