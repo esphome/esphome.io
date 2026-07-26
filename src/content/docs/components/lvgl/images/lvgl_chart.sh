@@ -62,11 +62,12 @@ xvfb_pid=$!
 sleep 1
 export DISPLAY=":$display_num"
 
-# Run long enough for the sensors and the `interval:` driving lvgl.chart.add_point to fill every
-# chart's point_count before the screenshot is taken.
+# The demo data uses a virtual clock and freezes once every chart is full (see lvgl_chart.yaml),
+# so this no longer races the capture against the real-time scroll -- any delay comfortably past
+# the ~9s it takes to fill 30 samples at 300ms gives the identical, frozen image.
 "$binary" >"$work_dir/run.log" 2>&1 &
 program_pid=$!
-sleep 9
+sleep 12
 
 raw_shot="$work_dir/screenshot.png"
 import -window root "$raw_shot"

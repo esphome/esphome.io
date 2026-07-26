@@ -4,29 +4,55 @@ esphome:
 host:
 logger:
 
+# The demo data below is deliberately driven by a virtual clock (a sample counter, not millis())
+# and freezes once every chart is full. That's what makes lvgl_chart.sh's screenshot reproducible:
+# with a real wall clock the curves' phase and the charts' scroll position would both depend on
+# the exact moment the screenshot is taken. If you raise any chart's point_count, raise the sample
+# cap (30 below) to match.
 sensor:
   - platform: template
     id: s1
     update_interval: 300ms
-    lambda: return 20.0 + 5.0 * sinf(millis() / 1500.0f);
+    lambda: |-
+      static uint32_t n = 0;
+      if (n >= 30)
+        return {};              // freeze: charts stop scrolling
+      float t = n++ * 300.0f;   // nominal sample time, no jitter
+      return 20.0 + 5.0 * sinf(t / 1500.0f);
   - platform: template
     id: s2
     update_interval: 300ms
-    lambda: return 15.0 + 4.0 * cosf(millis() / 1800.0f);
+    lambda: |-
+      static uint32_t n = 0;
+      if (n >= 30)
+        return {};
+      float t = n++ * 300.0f;
+      return 15.0 + 4.0 * cosf(t / 1800.0f);
+
+globals:
+  - id: demo_tick
+    type: uint32_t
+    restore_value: false
+    initial_value: "0"
 
 interval:
   - interval: 300ms
     then:
-      - lvgl.chart.add_point:
-          id: chart_scatter
-          series: 0
-          x: !lambda return millis() / 60.0f;
-          y: !lambda return 15.0f + 8.0f * sinf(millis() / 900.0f);
-      - lvgl.chart.add_point:
-          id: chart_scatter
-          series: 1
-          x: !lambda return millis() / 60.0f;
-          y: !lambda return 10.0f + 6.0f * cosf(millis() / 700.0f);
+      - if:
+          condition:
+            lambda: return id(demo_tick) < 30;
+          then:
+            - lvgl.chart.add_point:
+                id: chart_scatter
+                series: 0
+                x: !lambda return id(demo_tick) * 300.0f / 60.0f;
+                y: !lambda return 15.0f + 8.0f * sinf(id(demo_tick) * 300.0f / 900.0f);
+            - lvgl.chart.add_point:
+                id: chart_scatter
+                series: 1
+                x: !lambda return id(demo_tick) * 300.0f / 60.0f;
+                y: !lambda return 10.0f + 6.0f * cosf(id(demo_tick) * 300.0f / 700.0f);
+            - lambda: id(demo_tick) += 1;
 
 display:
   - platform: sdl
