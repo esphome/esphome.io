@@ -70,6 +70,32 @@ zephyr:
 All three `esp32*` variants build only the single scheduled core Zephyr's Wi-Fi/BLE drivers require;
 where the chip has more than one core, only the main application core's image is built.
 
+## SMP and AMP status
+
+**SMP** (symmetric multiprocessing) is one kernel image and one scheduler shared across cores;
+threads run on whichever core is free. **AMP** (asymmetric multiprocessing) is two separate compiled
+images, each with its own Kconfig and memory space — this is how every multi-core Espressif chip
+under Zephyr works today, including the single-core-image builds below.
+
+- **`esp32`** (original) is dual-core silicon (PRO_CPU + APP_CPU). By default only PRO_CPU is used —
+  Zephyr logs a warning at config time reminding you of this unless `kconfig_options: CONFIG_SMP: true`
+  is set. With that set, both cores boot and run real application code; this has been fixed and
+  confirmed working on real hardware, but the fix is not yet in mainline Zephyr — it requires
+  `sdk_source` pointed at the `esphome-platform-zephyr` branch of
+  [`esphomeplatformzephyr/zephyr`](https://github.com/esphomeplatformzephyr/zephyr) (the same branch
+  needed for [mDNS](#mdns-status)).
+  - **SMP and Wi-Fi together do not work yet.** Zephyr's `WIFI_ESP32` driver has `depends on !SMP` —
+    a thread-safety gap specific to this one driver (no other vendor's Wi-Fi driver in the Zephyr tree
+    has this restriction). Lifting it for the original ESP32 specifically (task pinning plus a DPORT
+    cross-core stall handler) is in-progress, unfinished work, not usable yet.
+- **`esp32c6`** has an asymmetric HP/LP core pair in silicon, but only the HP core is built or used —
+  no platform-zephyr variant targets the LP core.
+- **`esp32h2`** is single-core; SMP/AMP don't apply.
+- **`nativesim`** is a single host process; SMP/AMP don't apply.
+- **ESP32-P4** (dual RISC-V cores) is not currently a platform-zephyr variant. Espressif's own stated
+  intent is for the P4 to be their first RISC-V chip with genuine Zephyr SMP support, but that isn't
+  implemented in Zephyr yet.
+
 ## GPIO Pin Numbering
 
 Pins are referenced by a flat number regardless of variant, either as a plain integer or with a `GPIO` prefix —
