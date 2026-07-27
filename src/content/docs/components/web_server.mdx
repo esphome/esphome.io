@@ -15,6 +15,7 @@ import tabHeaderExpandControlsExpandedImg from './images/tab-header-expand-contr
 import tabHeaderExpandLogsExpandedImg from './images/tab-header-expand-logs-expanded.png';
 import sensorHistoryGraphImg from './images/sensor-history-graph.png';
 import APIRef from '@components/APIRef.astro';
+import EnumValues from '@components/EnumValues.astro';
 
 The `web_server` component creates a simple web server on the node that can be accessed
 through any browser and a simple [REST API](/web-api#api-rest). Please note that enabling this component
@@ -67,18 +68,35 @@ web_server:
   Contents of this file will be served as `/0.js` and used as JS script by internal webserver.
   Useful when building device without internet access, where you want to use built-in AP and webserver.
 
-- **auth** (*Optional*): Enables a simple *Digest* authentication with username and password.
+- **auth** (*Optional*): Enables HTTP authentication with a username and password.
 
   - **username** (**Required**, string): The username to use for authentication.
   - **password** (**Required**, string): The password to check for authentication.
+  - **type** (*Optional*, string): The HTTP authentication scheme. Both show the same login prompt
+    in the browser; the difference is on the network. One of:
+
+    <EnumValues values={[
+      { value: "basic",  default: true, description: "Sends the password in an easily reversible (Base64) form on every request." },
+      { value: "digest", description: "Sends only hashes, keeping the password off the network. Recommended." },
+    ]} />
+
+    The default is currently `basic` but will change to `digest` in ESPHome `2027.1.0`; set
+    `type: basic` explicitly to keep it after that release. When using `digest`, REST API clients
+    must request it too (for example, `curl --digest`); plain `basic` clients are rejected.
 
 - **include_internal** (*Optional*, boolean): Whether `internal` entities should be displayed on the
   web interface. Defaults to `false`.
 
+- **allowed_origins** (*Optional*, list of strings): A list of origins that browsers are allowed to make
+  cross-origin requests from. See [Cross-Origin Requests](#cross-origin-requests) for details. Each entry
+  must exactly match the requesting page's `Origin` header (e.g. `https://app.esphome.io`). A single `"*"`
+  entry (quoted, since an unquoted `*` is invalid YAML) allows any origin, but this is not recommended.
+
 - **enable_private_network_access** (*Optional*, boolean): Enables support for
   [Private Network Access](https://wicg.github.io/private-network-access) and the
   [Private Network Access Permission Prompt](https://wicg.github.io/private-network-access/#permission-prompt).
-  Defaults to `true`.
+  When enabled, preflight requests are authorized against `allowed_origins`, so `allowed_origins` must also
+  be set. Defaults to `false`.
 
 - **log** (*Optional*, boolean): Turn on or off the log feature inside webserver. Defaults to `true`.
 - **ota** (*Optional*, boolean): Explicitly disable OTA updates through the web server interface. Only accepts `false`.
@@ -97,7 +115,8 @@ web_server:
   is recommended for maximum compatibility. Defaults to `gzip`.
 
 - **version** (*Optional*, string): `1`, `2` or `3`. Version 1 displays as a table. Version 2 uses web components
-  and has more functionality. Version 3 uses HA-Styling. Defaults to `2`.
+  and has more functionality. Version 3 uses HA-Styling. Defaults to `2`. Version 1 is deprecated and will be removed
+  in 2027.1.0; please migrate to version 2 (the default) or version 3.
 
 - **sorting_groups** (*Optional*, list): Available only on `version: 3`. A list of group ID's and names to group the
   entities. See [Webserver Entity Grouping](#config-webserver-grouping).
@@ -139,6 +158,48 @@ interface are externally hosted at oi.esphome.io. If you want to use your own se
 >
 > See [Web Server](/components/ota/web_server/) for more information.
 
+## Security
+
+The web server exposes an HTTP API for viewing and controlling your device's entities. When the
+[`web_server` OTA platform](/components/ota/web_server/) is enabled, it can also update firmware.
+
+Recommendations:
+
+- Enable `auth:` if the device is on a network you do not fully trust.
+- Keep devices on a trusted, segmented network and never expose the web server to the internet. See
+  [Security Best Practices](/guides/security_best_practices/).
+- If web OTA is enabled without `auth:`, anyone who can reach the device, including cross-origin through your browser,
+  can upload firmware. Protect it with web `auth:`, disable web OTA when it is not needed (`ota: false`), or use
+  password-protected [native OTA](/components/ota/) instead.
+
+### Cross-Origin Requests
+
+By default the web server rejects cross-origin browser requests to its entity control and state endpoints.
+When a request carries an `Origin` header, it is allowed only if it is *same-origin* — that is, the `Origin`
+matches the address the device is served on (its IP address, mDNS `<node_name>.local` name, or DNS name) — or
+if the origin is listed in `allowed_origins`. This is defense-in-depth against the browser "confused deputy"
+(CSRF) case, where a page the operator visits is used to drive the device through their browser.
+
+Requests that do not carry an `Origin` header — `curl`, scripts, the native API, and other non-browser
+clients — are always allowed. The `Origin` check only constrains browsers; it is **not** an authentication
+boundary, and it does not cover the web OTA `/update` endpoint. To restrict access itself, use `auth:` and keep
+devices on a trusted, segmented network. See the project
+[threat model](https://github.com/esphome/esphome/blob/dev/THREAT_MODEL.md) for the full scope.
+
+To allow a specific external site to make cross-origin requests, list its origin:
+
+```yaml
+web_server:
+  port: 80
+  allowed_origins:
+    - https://app.esphome.io
+```
+
+> [!WARNING]
+> This is a breaking change introduced in 2026.7.0. Configurations that relied on cross-origin browser
+> access must now add those origins to `allowed_origins`. Additionally, `enable_private_network_access`
+> now defaults to `false` (previously `true`), and when enabled it requires `allowed_origins` to be set.
+
 ## Example configurations
 
 Enabling HTTP authentication:
@@ -156,6 +217,9 @@ web_server:
 > Always enable authentication when using the web server. See the [Security Best Practices](/guides/security_best_practices#2-web-server-authentication) guide for recommendations.
 
 Use version 1 user interface:
+
+> [!WARNING]
+> Version 1 is deprecated and will be removed in 2027.1.0; please migrate to version 2 (the default) or version 3.
 
 ```yaml
 # Example configuration entry
@@ -189,16 +253,16 @@ captive_portal:
 
 The following assume copies of the files with local paths - which are config dependent.
 
-Example `web_server` version 1 configuration with CSS and JS included from esphome-docs.
+Example `web_server` version 1 configuration with CSS and JS included from a local folder.
 CSS and JS URL's are set to empty value, so no internet access is needed for this device to show it's web interface.
 
 ```yaml
 web_server:
   port: 80
   version: 1
-  css_include: "../../../esphome-docs/_static/webserver-v1.min.css"
+  css_include: "<some_folder>/webserver-v1.min.css"
   css_url: ""
-  js_include: "../../../esphome-docs/_static/webserver-v1.min.js"
+  js_include: "<some_folder>/webserver-v1.min.js"
   js_url: ""
 ```
 

@@ -6,8 +6,6 @@ title: "LVGL Layouts"
 import { Image } from 'astro:assets';
 import lvglGridLayoutImg from './images/lvgl_grid_layout.png';
 
-<span id="lvgl-layouts"></span>
-
 ## LVGL Layouts
 
 Layouts aim to position widgets automatically, eliminating the need to specify `x` and `y` coordinates to position each
@@ -295,3 +293,43 @@ Values for use with `grid_column_align`, `grid_row_align`, `grid_cell_x_align`, 
 
 > [!TIP]
 > To visualize real, calculated sizes of transparent widgets you can temporarily set `outline_width: 1` on them.
+
+### Updating a layout at runtime
+
+A `layout:` option may be supplied to the [`lvgl.update`](/components/lvgl#lvgl-update-action) and
+[`lvgl.widget.update`](/components/lvgl/widgets#lvgl-automation-actions) actions to change the layout options of a
+container while the device is running. This is useful, for example, to re-flow a screen when the display orientation
+changes.
+
+Only the layout *options* may be changed this way. The layout **type** (`FLEX`/`GRID`) and the grid structure
+(`grid_rows`/`grid_columns`) are fixed when the widget is created, because they determine which options are available to
+the child widgets and which grid cells those children occupy. Attempting to set them in an update is a configuration
+error. The options that may be updated are:
+
+- For flex layouts: `flex_flow`, `flex_align_main`, `flex_align_cross`, `flex_align_track`
+- For grid layouts: `grid_column_align`, `grid_row_align`
+- For either layout: `pad_row`, `pad_column`
+
+Only the options actually specified are changed; any option left out keeps its current value.
+
+When applied to the `lvgl.update` action, a top-level `layout:` updates the currently active screen, while a `layout:`
+under `top_layer:` or `bottom_layer:` updates that display layer.
+
+```yaml
+# Re-flow widgets when the display orientation changes
+lvgl:
+  on_landscape:
+    - lvgl.widget.update:
+        id: my_container
+        layout:
+          flex_flow: row
+  on_portrait:
+    - lvgl.widget.update:
+        id: my_container
+        layout:
+          flex_flow: column
+    # Update the layout of the active screen itself
+    - lvgl.update:
+        layout:
+          pad_row: 8px
+```
