@@ -20,13 +20,14 @@ import ImgTable from "@components/ImgTable.astro";
 ## Release Overview
 
 {/* RELEASE_OVERVIEW_START */}
-ESPHome 2026.6.0 raises the default WiFi security mode on ESP8266 to WPA2, finally makes WiFi and ethernet
-`enable_on_boot: false` reclaim the 15–30 KB and 3–8 KB of internal SRAM they were always supposed to, and
-delivers up to 4.5× faster LVGL config validation that the new device builder relies on. A wide audio-stack
-modernization brings zero-copy ring buffers, any-bit-depth mixing, and a new `router` speaker, while a
-multi-PR effort prepares the codebase for ESP-IDF 6 and native RISC-V clang-tidy. The release also adds a new
-`motion` IMU framework with BMI270 and LSM6DS drivers, two USB-serial drivers, a PCM5122 audio DAC, YAML
-frontmatter, and a top-level `build_flags` option that finally works on native IDF.
+ESPHome 2026.6.0 retires the legacy in-tree dashboard, replacing it with the new **ESPHome Device Builder**,
+which reached 1.0.0 this release. The release also raises the default WiFi
+security mode on ESP8266 to WPA2 and finally makes WiFi and ethernet `enable_on_boot: false` reclaim the
+15–30 KB and 3–8 KB of internal SRAM they were always supposed to, and delivers up to 4.5× faster LVGL config
+validation. A wide audio-stack modernization brings zero-copy ring buffers, any-bit-depth mixing, and a new
+`router` speaker, while a multi-PR effort prepares the codebase for ESP-IDF 6 and native RISC-V clang-tidy. It
+also adds a new `motion` IMU framework with BMI270 and LSM6DS drivers, two USB-serial drivers, a PCM5122 audio
+DAC, YAML frontmatter, and a top-level `build_flags` option that finally works on native IDF.
 {/* RELEASE_OVERVIEW_END */}
 
 ## Upgrade Checklist
@@ -45,6 +46,42 @@ frontmatter, and a top-level `build_flags` option that finally works on native I
 {/* UPGRADE_CHECKLIST_END */}
 
 {/* FEATURE_HIGHLIGHTS_START */}
+## ESPHome Device Builder Replaces the Legacy Dashboard
+
+The new **ESPHome Device Builder**, shipped as an opt-in public beta in 2026.5.0, reached
+[1.0.0](https://github.com/esphome/device-builder/releases/tag/1.0.0) this release and replaces the legacy
+in-tree dashboard, which is being retired. The Device Builder lives in two repos,
+[device-builder](https://github.com/esphome/device-builder) (Python backend) and
+[device-builder-frontend](https://github.com/esphome/device-builder-frontend) (web UI), and as of 2026.6.0 it
+is the dashboard bundled by default in the official Home Assistant ESPHome add-on.
+
+![The ESPHome Device Builder device list](/images/device-builder-dashboard.png)
+
+What it brings over the legacy dashboard:
+
+- **Visual component and automation builder** alongside a CodeMirror YAML editor, with a left-sidebar device
+  navigator. The legacy dashboard was a plain text editor over a `.yaml` file.
+- **Component catalog with dependency resolution** and a **per-board pin info viewer** that maps GPIO
+  capabilities and shows which component is using each pin.
+- **Firmware job queue** with progress, history, and cancel for compile / install / clean, replacing the
+  legacy one-operation-at-a-time model.
+- **Remote builder:** one Device Builder instance can offload OTA builds to another over a peer-paired link
+  (mDNS discovery, out-of-band fingerprint confirmation, identity rotation, per-peer auto-route).
+- **Labels**, **areas**, an editable **friendly name**, **device cloning**, and **multi-select bulk actions**
+  (update, delete, archive, and label across an arbitrary set of devices).
+- **Out-of-sync detection:** an encryption-state mismatch badge on every device, plus version and config-hash
+  in-sync diagnostics in the device drawer.
+- **YAML diff view**, **cross-config YAML search** with surrounding context, and a **command palette**
+  (⌘K / Ctrl-K).
+- **Card and table views** with configurable columns and faceted filters (platform / status / area / labels).
+- **Real settings UI** with light / dark / system theme and localization underway across multiple languages.
+- **First-run WiFi onboarding** and an expanded install-method dialog: Web Serial flashing, server-side USB
+  (relabeled for the Home Assistant host when running as the add-on), `web.esphome.io` download, and manual
+  `.bin` download.
+
+The 2026.5.0 **Use new Device Builder Preview** opt-in toggle is gone; the Device Builder is simply the
+dashboard now.
+
 ## ESP8266 Default WiFi Security Raised to WPA2
 
 ESP8266 now defaults to `min_auth_mode: WPA2`, matching the ESP32 default that has shipped for years. ESPHome
@@ -473,6 +510,96 @@ For detailed migration guides and API documentation, see the
 
 {/* markdownlint-disable MD013 */}
 
+## Release 2026.6.1 - June 19
+
+<details>
+<summary></summary>
+
+- [core] Honor transferred address cache in has_resolvable_address [esphome#17025](https://github.com/esphome/esphome/pull/17025) by [@bdraco](https://github.com/bdraco)
+- [build] Skip target-platform deps when populating host unit-test config [esphome#17039](https://github.com/esphome/esphome/pull/17039) by [@swoboda1337](https://github.com/swoboda1337)
+- [uptime] Revert timestamp sensor device_class to timestamp [esphome#17037](https://github.com/esphome/esphome/pull/17037) by [@swoboda1337](https://github.com/swoboda1337)
+- [esp32] Support `esphome idedata` with the native ESP-IDF toolchain [esphome#17040](https://github.com/esphome/esphome/pull/17040) by [@swoboda1337](https://github.com/swoboda1337)
+- [esp32] Don't overwrite PlatformIO's factory.bin [esphome#17042](https://github.com/esphome/esphome/pull/17042) by [@swoboda1337](https://github.com/swoboda1337)
+- [logger] Hold recursion guard while draining the task log buffer [esphome#17044](https://github.com/esphome/esphome/pull/17044) by [@bdraco](https://github.com/bdraco)
+- Bump bundled esphome-device-builder to 1.0.10 [esphome#17051](https://github.com/esphome/esphome/pull/17051) by [@esphome[bot]](https://github.com/apps/esphome)
+
+</details>
+
+## Release 2026.6.2 - June 20
+
+<details>
+<summary></summary>
+
+- [espidf] Resolve IDF tools path to avoid unnormalized path warning [esphome#17055](https://github.com/esphome/esphome/pull/17055) by [@swoboda1337](https://github.com/swoboda1337)
+- [fastled_base] Fix RMT5 intr_priority conflict [esphome#17072](https://github.com/esphome/esphome/pull/17072) by [@swoboda1337](https://github.com/swoboda1337)
+- [packet_transport] Mark encryption key as cv.sensitive [esphome#17066](https://github.com/esphome/esphome/pull/17066) by [@swoboda1337](https://github.com/swoboda1337)
+- Bump bundled esphome-device-builder to 1.0.11 [esphome#17081](https://github.com/esphome/esphome/pull/17081) by [@esphome[bot]](https://github.com/apps/esphome)
+- [ha-addon] Expose the device-builder public port only when port 6052 is mapped [esphome#17076](https://github.com/esphome/esphome/pull/17076) by [@bdraco](https://github.com/bdraco)
+- Bump bundled esphome-device-builder to 1.0.12 [esphome#17091](https://github.com/esphome/esphome/pull/17091) by [@esphome[bot]](https://github.com/apps/esphome)
+
+</details>
+
+## Release 2026.6.3 - June 26
+
+<details>
+<summary></summary>
+
+- [core] Clarify resolve error when a device has no network log/OTA transport [esphome#17107](https://github.com/esphome/esphome/pull/17107) by [@bdraco](https://github.com/bdraco)
+- [audio] Fix mono channel MP3 playback [esphome#17106](https://github.com/esphome/esphome/pull/17106) by [@kahrendt](https://github.com/kahrendt)
+- [mipi_rgb] Fix offsets for Wave 5 1024x600 [esphome#17057](https://github.com/esphome/esphome/pull/17057) by [@clydebarrow](https://github.com/clydebarrow)
+- [json] Bump ArduinoJson to 7.4.3 [esphome#17126](https://github.com/esphome/esphome/pull/17126) by [@bdraco](https://github.com/bdraco)
+- Bump bundled esphome-device-builder to 1.0.13 [esphome#17132](https://github.com/esphome/esphome/pull/17132) by [@esphome[bot]](https://github.com/apps/esphome)
+- Bump zeroconf from 0.149.16 to 0.150.0 [esphome#17137](https://github.com/esphome/esphome/pull/17137) by [@dependabot[bot]](https://github.com/apps/dependabot)
+- [espidf] Don't fail framework check on broken unrelated PATH tools [esphome#17053](https://github.com/esphome/esphome/pull/17053) by [@swoboda1337](https://github.com/swoboda1337)
+- Bump bundled esphome-device-builder to 1.0.14 [esphome#17139](https://github.com/esphome/esphome/pull/17139) by [@esphome[bot]](https://github.com/apps/esphome)
+- [esp32_ble_server] Fix set_value action with by-reference triggers [esphome#17156](https://github.com/esphome/esphome/pull/17156) by [@swoboda1337](https://github.com/swoboda1337)
+- [esp32] Use POSIX path for secure-boot signing/verification keys Fixes #17164 [esphome#17166](https://github.com/esphome/esphome/pull/17166) by [@mnewton25](https://github.com/mnewton25)
+- [mipi_spi] Warn on MODE3 default for display without CS pin [esphome#17153](https://github.com/esphome/esphome/pull/17153) by [@clydebarrow](https://github.com/clydebarrow)
+- Bump bundled esphome-device-builder to 1.0.15 [esphome#17170](https://github.com/esphome/esphome/pull/17170) by [@esphome[bot]](https://github.com/apps/esphome)
+- [mipi_spi] Suppress sequence errors when page selection used [esphome#17176](https://github.com/esphome/esphome/pull/17176) by [@clydebarrow](https://github.com/clydebarrow)
+- [opentherm] Support power scaling disabled [esphome#17183](https://github.com/esphome/esphome/pull/17183) by [@GeoffreyFrogeye](https://github.com/GeoffreyFrogeye)
+- Bump bundled esphome-device-builder to 1.0.16 [esphome#17182](https://github.com/esphome/esphome/pull/17182) by [@esphome[bot]](https://github.com/apps/esphome)
+- Bump bundled esphome-device-builder to 1.0.17 [esphome#17199](https://github.com/esphome/esphome/pull/17199) by [@esphome[bot]](https://github.com/apps/esphome)
+- [esp32] Accept '#' as ESP-IDF source ref separator [esphome#17193](https://github.com/esphome/esphome/pull/17193) by [@swoboda1337](https://github.com/swoboda1337)
+- [network] Set IPv4 type tag on all lwIP platforms, not just esp32 [esphome#17200](https://github.com/esphome/esphome/pull/17200) by [@swoboda1337](https://github.com/swoboda1337)
+- [wifi] Report STA IP, not SoftAP IP, in wifi_info on ESP8266 [esphome#17185](https://github.com/esphome/esphome/pull/17185) by [@swoboda1337](https://github.com/swoboda1337)
+- [mipi][mipi_spi] Swap native dimensions for swap_xy hardware transform [esphome#17201](https://github.com/esphome/esphome/pull/17201) by [@clydebarrow](https://github.com/clydebarrow)
+- [hbridge] Fix light stuck on one polarity [esphome#17162](https://github.com/esphome/esphome/pull/17162) by [@swoboda1337](https://github.com/swoboda1337)
+- Bump bundled esphome-device-builder to 1.0.18 [esphome#17212](https://github.com/esphome/esphome/pull/17212) by [@esphome[bot]](https://github.com/apps/esphome)
+- Bump bundled esphome-device-builder to 1.0.19 [esphome#17217](https://github.com/esphome/esphome/pull/17217) by [@esphome[bot]](https://github.com/apps/esphome)
+
+</details>
+
+## Release 2026.6.4 - July 1
+
+<details>
+<summary></summary>
+
+- [adc] Only call cyw43_thread_enter/exit for VSYS when WiFi is active on RP2040 [esphome#17203](https://github.com/esphome/esphome/pull/17203) by [@jlunz](https://github.com/jlunz)
+- [config_validation] Fix multicast typo in error message [esphome#17206](https://github.com/esphome/esphome/pull/17206) by [@jesserockz](https://github.com/jesserockz)
+- [es8388] Fix DAC unable to unmute once muted [esphome#17221](https://github.com/esphome/esphome/pull/17221) by [@frenck](https://github.com/frenck)
+- [mipi_spi] Bug fixes [esphome#17247](https://github.com/esphome/esphome/pull/17247) by [@clydebarrow](https://github.com/clydebarrow)
+- [bluetooth_proxy] Fix -Wtype-limits warning with active: false [esphome#17273](https://github.com/esphome/esphome/pull/17273) by [@swoboda1337](https://github.com/swoboda1337)
+- [espnow] Drop oversized received frames to prevent buffer overflow [esphome#17271](https://github.com/esphome/esphome/pull/17271) by [@swoboda1337](https://github.com/swoboda1337)
+- Bump bundled esphome-device-builder to 1.0.23 [esphome#17316](https://github.com/esphome/esphome/pull/17316) by [@esphome[bot]](https://github.com/apps/esphome)
+
+</details>
+
+## Release 2026.6.5 - July 9
+
+<details>
+<summary></summary>
+
+- Bump bundled esphome-device-builder to 1.0.24 [esphome#17332](https://github.com/esphome/esphome/pull/17332) by [@esphome[bot]](https://github.com/apps/esphome)
+- Bump bundled esphome-device-builder to 1.0.25 [esphome#17333](https://github.com/esphome/esphome/pull/17333) by [@esphome[bot]](https://github.com/apps/esphome)
+- Bump bundled esphome-device-builder to 1.0.26 [esphome#17369](https://github.com/esphome/esphome/pull/17369) by [@esphome[bot]](https://github.com/apps/esphome)
+- Bump bundled esphome-device-builder to 1.0.27 [esphome#17370](https://github.com/esphome/esphome/pull/17370) by [@esphome[bot]](https://github.com/apps/esphome)
+- Bump bundled esphome-device-builder to 1.0.28 [esphome#17382](https://github.com/esphome/esphome/pull/17382) by [@esphome[bot]](https://github.com/apps/esphome)
+- Bump bundled esphome-device-builder to 1.0.29 [esphome#17384](https://github.com/esphome/esphome/pull/17384) by [@esphome[bot]](https://github.com/apps/esphome)
+- Bump bundled esphome-device-builder to 1.1.0 [esphome#17412](https://github.com/esphome/esphome/pull/17412) by [@esphome[bot]](https://github.com/apps/esphome)
+
+</details>
+
 ## Full list of changes
 
 ### New Features
@@ -507,6 +634,7 @@ For detailed migration guides and API documentation, see the
 - [bmi270] Support Bosch BMI270 IMU [esphome#16202](https://github.com/esphome/esphome/pull/16202) by [@clydebarrow](https://github.com/clydebarrow) (new-component) (new-feature) (new-platform)
 - [lsm6ds] Add motion platform for STMicro LSM6DS IMU [esphome#16232](https://github.com/esphome/esphome/pull/16232) by [@clydebarrow](https://github.com/clydebarrow) (new-component) (new-feature) (new-platform)
 - [resampler] Allow resampler to passthrough bits per sample instead of converting [esphome#16892](https://github.com/esphome/esphome/pull/16892) by [@kahrendt](https://github.com/kahrendt) (new-feature)
+- [esp32] Add flash_mode and flash_frequency config options [esphome#16920](https://github.com/esphome/esphome/pull/16920) by [@swoboda1337](https://github.com/swoboda1337) (new-feature)
 
 ### New Components
 
@@ -536,25 +664,6 @@ For detailed migration guides and API documentation, see the
 - [core] Sensitive redaction via yaml_util representer [esphome#16690](https://github.com/esphome/esphome/pull/16690) by [@bdraco](https://github.com/bdraco) (breaking-change)
 - [dmsr] [breaking] Fix decryption that uses custom auth key. Add CRC to telegram sensor. Automatic hex string detection in equipment_id fields. Support EON Hungary smart meters [esphome#16561](https://github.com/esphome/esphome/pull/16561) by [@PolarGoose](https://github.com/PolarGoose) (breaking-change)
 - [dlms_meter] dlms_parser library [esphome#15458](https://github.com/esphome/esphome/pull/15458) by [@Tomer27cz](https://github.com/Tomer27cz) (new-feature) (breaking-change) (new-platform)
-
-### Beta Changes
-
-- [esp8266] Decode crash handler PC and backtrace in logs [esphome#16911](https://github.com/esphome/esphome/pull/16911) by [@bdraco](https://github.com/bdraco)
-- [spi] Skip logging on begin_transaction() of an auto-releasing write-only SPI device [esphome#16921](https://github.com/esphome/esphome/pull/16921) by [@tjakubo](https://github.com/tjakubo)
-- [lvgl] Fix schema extraction  [esphome#16895](https://github.com/esphome/esphome/pull/16895) by [@clydebarrow](https://github.com/clydebarrow)
-- [mipi_spi] Implement automatic mapping of offsets [esphome#16722](https://github.com/esphome/esphome/pull/16722) by [@clydebarrow](https://github.com/clydebarrow)
-- [esp32] Fix idedata generation failing on unset ESPHOME_ARDUINO [esphome#16925](https://github.com/esphome/esphome/pull/16925) by [@swoboda1337](https://github.com/swoboda1337)
-- [core] Support platformio_options on the native ESP-IDF toolchain [esphome#16917](https://github.com/esphome/esphome/pull/16917) by [@swoboda1337](https://github.com/swoboda1337)
-- [esp32] Add flash_mode and flash_frequency config options [esphome#16920](https://github.com/esphome/esphome/pull/16920) by [@swoboda1337](https://github.com/swoboda1337) (new-feature)
-- [psram] Make schema extractable with per-variant options [esphome#16949](https://github.com/esphome/esphome/pull/16949) by [@jesserockz](https://github.com/jesserockz)
-- [mipi_dsi] Add SWRESET command to M5Stack Tab5-V2 init sequence [esphome#16975](https://github.com/esphome/esphome/pull/16975) by [@clydebarrow](https://github.com/clydebarrow)
-- [core] Attribute "took a long time" blocking warning to the owning script [esphome#16768](https://github.com/esphome/esphome/pull/16768) by [@bdraco](https://github.com/bdraco)
-- [audio] Bump microMP3 to v0.2.3 [esphome#16977](https://github.com/esphome/esphome/pull/16977) by [@kahrendt](https://github.com/kahrendt)
-- [openthread] Fix InstanceLock releasing the lock twice on try_acquire [esphome#16980](https://github.com/esphome/esphome/pull/16980) by [@swoboda1337](https://github.com/swoboda1337)
-- [docker] Remove alpine base, build only on debian [esphome#16991](https://github.com/esphome/esphome/pull/16991) by [@jesserockz](https://github.com/jesserockz)
-- [ci] Push branch-tagged docker images to ghcr.io for local testing [esphome#16992](https://github.com/esphome/esphome/pull/16992) by [@jesserockz](https://github.com/jesserockz)
-- [core] Stop parent git repos from breaking ESP-IDF/PlatformIO builds [esphome#16994](https://github.com/esphome/esphome/pull/16994) by [@jesserockz](https://github.com/jesserockz)
-- [docker] Bundle device-builder 1.0.1, make HA add-on builder-only [esphome#16989](https://github.com/esphome/esphome/pull/16989) by [@jesserockz](https://github.com/jesserockz)
 
 ### All changes
 
@@ -739,6 +848,28 @@ For detailed migration guides and API documentation, see the
 - [core] Make set_cpp_standard work on the native IDF toolchain [esphome#16907](https://github.com/esphome/esphome/pull/16907) by [@swoboda1337](https://github.com/swoboda1337)
 - [resampler] Allow resampler to passthrough bits per sample instead of converting [esphome#16892](https://github.com/esphome/esphome/pull/16892) by [@kahrendt](https://github.com/kahrendt) (new-feature)
 - [improv_serial] Report stopped state when Wi-Fi is disabled [esphome#16904](https://github.com/esphome/esphome/pull/16904) by [@kbx81](https://github.com/kbx81)
+- [tests] Mock target branch in memory-impact exclusion test [esphome#16913](https://github.com/esphome/esphome/pull/16913) by [@jesserockz](https://github.com/jesserockz)
+- [esp8266] Decode crash handler PC and backtrace in logs [esphome#16911](https://github.com/esphome/esphome/pull/16911) by [@bdraco](https://github.com/bdraco)
+- [spi] Skip logging on begin_transaction() of an auto-releasing write-only SPI device [esphome#16921](https://github.com/esphome/esphome/pull/16921) by [@tjakubo](https://github.com/tjakubo)
+- [lvgl] Fix schema extraction  [esphome#16895](https://github.com/esphome/esphome/pull/16895) by [@clydebarrow](https://github.com/clydebarrow)
+- [mipi_spi] Implement automatic mapping of offsets [esphome#16722](https://github.com/esphome/esphome/pull/16722) by [@clydebarrow](https://github.com/clydebarrow)
+- [esp32] Fix idedata generation failing on unset ESPHOME_ARDUINO [esphome#16925](https://github.com/esphome/esphome/pull/16925) by [@swoboda1337](https://github.com/swoboda1337)
+- [core] Support platformio_options on the native ESP-IDF toolchain [esphome#16917](https://github.com/esphome/esphome/pull/16917) by [@swoboda1337](https://github.com/swoboda1337)
+- [esp32] Add flash_mode and flash_frequency config options [esphome#16920](https://github.com/esphome/esphome/pull/16920) by [@swoboda1337](https://github.com/swoboda1337) (new-feature)
+- [psram] Make schema extractable with per-variant options [esphome#16949](https://github.com/esphome/esphome/pull/16949) by [@jesserockz](https://github.com/jesserockz)
+- [mipi_dsi] Add SWRESET command to M5Stack Tab5-V2 init sequence [esphome#16975](https://github.com/esphome/esphome/pull/16975) by [@clydebarrow](https://github.com/clydebarrow)
+- [core] Attribute "took a long time" blocking warning to the owning script [esphome#16768](https://github.com/esphome/esphome/pull/16768) by [@bdraco](https://github.com/bdraco)
+- [audio] Bump microMP3 to v0.2.3 [esphome#16977](https://github.com/esphome/esphome/pull/16977) by [@kahrendt](https://github.com/kahrendt)
+- [openthread] Fix InstanceLock releasing the lock twice on try_acquire [esphome#16980](https://github.com/esphome/esphome/pull/16980) by [@swoboda1337](https://github.com/swoboda1337)
+- [docker] Remove alpine base, build only on debian [esphome#16991](https://github.com/esphome/esphome/pull/16991) by [@jesserockz](https://github.com/jesserockz)
+- [ci] Push branch-tagged docker images to ghcr.io for local testing [esphome#16992](https://github.com/esphome/esphome/pull/16992) by [@jesserockz](https://github.com/jesserockz)
+- [core] Stop parent git repos from breaking ESP-IDF/PlatformIO builds [esphome#16994](https://github.com/esphome/esphome/pull/16994) by [@jesserockz](https://github.com/jesserockz)
+- [docker] Bundle device-builder 1.0.1, make HA add-on builder-only [esphome#16989](https://github.com/esphome/esphome/pull/16989) by [@jesserockz](https://github.com/jesserockz)
+- [esp32_hosted] Bump esp_hosted to 2.12.9 [esphome#16999](https://github.com/esphome/esphome/pull/16999) by [@swoboda1337](https://github.com/swoboda1337)
+- [ota] Scale ESP-IDF OTA erase watchdog to image size [esphome#16998](https://github.com/esphome/esphome/pull/16998) by [@swoboda1337](https://github.com/swoboda1337)
+- Bump bundled esphome-device-builder to 1.0.3 [esphome#17005](https://github.com/esphome/esphome/pull/17005) by [@esphome[bot]](https://github.com/apps/esphome)
+- Bump bundled esphome-device-builder to 1.0.4 [esphome#17013](https://github.com/esphome/esphome/pull/17013) by [@esphome[bot]](https://github.com/apps/esphome)
+- Bump bundled esphome-device-builder to 1.0.6 [esphome#17016](https://github.com/esphome/esphome/pull/17016) by [@esphome[bot]](https://github.com/apps/esphome)
 
 </details>
 
