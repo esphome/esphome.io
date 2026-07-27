@@ -4,25 +4,25 @@ title: "Zephyr Platform"
 ---
 
 > [!NOTE]
-> Support for the Zephyr platform is still in development. Not every ESPHome component or feature
+> Support for the Zephyr platform is still experimental. Not every ESPHome component or feature
 > is available yet on every variant.
 
-This component contains platform-specific options for the [Zephyr RTOS](https://zephyrproject.org/)
-platform. Zephyr is a separate operating system from Espressif's own ESP-IDF/Arduino frameworks, and
-is used by ESPHome to target chips through their upstream, silicon-vendor-agnostic driver and
-subsystem stack (network stack, USB, watchdog, settings storage, etc.) instead of a vendor SDK.
+This component contains platform-specific options for an ESPHome platform enabling [Zephyr RTOS](https://zephyrproject.org/).
+Zephyr RTOS is a Linux Foundation initiative to provide a common operating system across vendors.
+
+
 
 ```yaml
 # Example configuration entry
 zephyr:
-  variant: esp32c6
-  board: esp32c6_devkitc
+  variant: nativesim
+  mac_address: "61:23:45:AF:B3:DE"
 ```
 
 ## Configuration variables
 
-- **variant** (**Required**, string): The chip family Zephyr should build for. One of `esp32`,
-  `esp32h2`, `esp32c6`, `nativesim`. See [Variants](#variants) below for what each one supports.
+- **variant** (**Required**, string): The chip Zephyr will build for. See [Variants](#variants) below
+  for the current list of variants available
 - **board** (*Optional*, string): The Zephyr board identifier to build for, e.g. `esp32c6_devkitc`.
   Defaults to a variant-specific development board (see [Variants](#variants)). Accepts either a bare
   board name or a fully-qualified `board/soc/qualifier` string; ESPHome automatically qualifies a
@@ -41,9 +41,9 @@ zephyr:
   **board_source** or **sdk_source** is re-checked for updates (via `git pull`), mirroring
   [external components' `refresh`](/components/external_components/#refresh). Defaults to `1d`.
 - **west_version** (*Optional*, string): Override the version of `west` used to fetch and build the
-  Zephyr workspace. Defaults to the version ESPHome has tested against.
-- **ninja_version** (*Optional*, string): Override the version of `ninja` used to build. Defaults to
-  the version ESPHome has tested against.
+  Zephyr workspace. Defaults to the version in esphome/components/zephyr/requirements_west.txt.
+- **ninja_version** (*Optional*, string): Override the version of `ninja` used to build. Defaults to the
+  version in esphome/components/zephyr/requirements_west.txt.
 - **mac_address** (*Optional*, MAC Address): A fixed MAC address to report. Only valid for the
   `nativesim` variant, which has no real network hardware of its own; every other variant uses the
   chip's burned-in MAC address.
@@ -55,8 +55,7 @@ zephyr:
   ESPHome's `logger:` `level:`, and off by default. One of `NONE`, `ERROR`, `WARN`, `INFO`, `DEBUG`,
   `VERBOSE`. Defaults to `ERROR`. See [Zephyr's own logging vs. heavy debug levels](#zephyr-s-own-logging-vs-heavy-debug-levels)
   before turning this up.
-- **kconfig_options** (*Optional*, mapping): Raw Zephyr Kconfig passthrough, ESPHome's equivalent of
-  ESP-IDF's `sdkconfig_options:`. See [`kconfig_options`](#kconfig_options).
+- **kconfig_options** (*Optional*, mapping): Raw Zephyr Kconfig passthrough. See [`kconfig_options`](#kconfig_options).
 
 ## Variants
 
@@ -70,12 +69,16 @@ zephyr:
 All three `esp32*` variants build only the single scheduled core Zephyr's Wi-Fi/BLE drivers require;
 where the chip has more than one core, only the main application core's image is built.
 
+It is not recommended to use esp variants for other than experimental purposes, the esp32 platform,
+esp-idf framework delivers superior functionality and stability.  These variants are being used to test
+and learn how to implement Zephyr, but again are not recommended for everyday use.
+
 ## SMP and AMP status
 
 **SMP** (symmetric multiprocessing) is one kernel image and one scheduler shared across cores;
-threads run on whichever core is free. **AMP** (asymmetric multiprocessing) is two separate compiled
-images, each with its own Kconfig and memory space — this is how every multi-core Espressif chip
-under Zephyr works today, including the single-core-image builds below.
+threads run on whichever core is free (also can be pinned). **AMP** (asymmetric multiprocessing) is
+separate compiled images, each with its own Kconfig and memory space — this is how every multi-core
+Espressif chip under Zephyr works today, including the single-core-image builds below.
 
 - **`esp32`** (original) is dual-core silicon (PRO_CPU + APP_CPU). By default only PRO_CPU is used —
   Zephyr logs a warning at config time reminding you of this unless `kconfig_options: CONFIG_SMP: true`
@@ -90,11 +93,13 @@ under Zephyr works today, including the single-core-image builds below.
     cross-core stall handler) is in-progress, unfinished work, not usable yet.
 - **`esp32c6`** has an asymmetric HP/LP core pair in silicon, but only the HP core is built or used —
   no platform-zephyr variant targets the LP core.
-- **`esp32h2`** is single-core; SMP/AMP don't apply.
-- **`nativesim`** is a single host process; SMP/AMP don't apply.
+- **`esp32h2`** is single-core; SMP/AMP doesn't apply.
+- **`nativesim`** is a single host process; SMP/AMP doesn't apply.
 - **ESP32-P4** (dual RISC-V cores) is not currently a platform-zephyr variant. Espressif's own stated
   intent is for the P4 to be their first RISC-V chip with genuine Zephyr SMP support, but that isn't
   implemented in Zephyr yet.
+  
+We have noted that Espressif is very active in the Zephyr repository and will monitor for any changes.
 
 ## GPIO Pin Numbering
 
@@ -122,6 +127,9 @@ zephyr:
 
 `board_source` requires **board** to also be set, and the source must contain a
 `boards/<vendor>/<my_custom_board>/board.yml` for the board named.
+
+[custom_zephyr_boards] https://github.com/esphomeplatformzephyr/custom_zephyr_boards is provided to allow
+for commonly needed board definitions.
 
 > [!NOTE]
 > ESPHome always appends the current variant's own SoC/qualifier segments (e.g. `/esp32c6/hpcore`)
@@ -235,3 +243,13 @@ Kconfig logging at once (for example, several `*_LOG_LEVEL_DBG` options set via 
 been observed to cause spurious watchdog resets and crash-hangs under load, since heavy logging
 contends with the same threads the watchdog is timing. Prefer enabling one subsystem's debug logging
 at a time when troubleshooting, rather than turning everything up simultaneously.
+
+## See Also
+
+- [I²C Bus](/components/i2c/)
+- [Network Component](/components/network/)
+- [OpenThread Component](/components/openthread/)
+- [ESPHome Core Configuration (OTA/`safe_mode`)](/components/ota/esphome/)
+- [ADC Sensor](/components/sensor/adc/)
+- [UART Bus](/components/uart/)
+- [WiFi Component](/components/wifi/)
