@@ -1,0 +1,163 @@
+---
+description: "Configuration for the Zephyr platform for ESPHome."
+title: "Zephyr Platform"
+---
+
+> [!NOTE]
+> Support for the Zephyr platform is still in development. Not every ESPHome component or feature
+> is available yet on every variant.
+
+This component contains platform-specific options for the [Zephyr RTOS](https://zephyrproject.org/)
+platform. Zephyr is a separate operating system from Espressif's own ESP-IDF/Arduino frameworks, and
+is used by ESPHome to target chips through their upstream, silicon-vendor-agnostic driver and
+subsystem stack (network stack, USB, watchdog, settings storage, etc.) instead of a vendor SDK.
+
+```yaml
+# Example configuration entry
+zephyr:
+  variant: esp32c6
+  board: esp32c6_devkitc
+```
+
+## Configuration variables
+
+- **variant** (**Required**, string): The chip family Zephyr should build for. One of `esp32`,
+  `esp32h2`, `esp32c6`, `nativesim`. See [Variants](#variants) below for what each one supports.
+- **board** (*Optional*, string): The Zephyr board identifier to build for, e.g. `esp32c6_devkitc`.
+  Defaults to a variant-specific development board (see [Variants](#variants)). Accepts either a bare
+  board name or a fully-qualified `board/soc/qualifier` string; ESPHome automatically qualifies a
+  bare name using the variant's own SoC/qualifier.
+- **board_source** (*Optional*): Fetch board definitions (a `boards/<vendor>/<board>/board.yml` and
+  friends) from somewhere other than the variant's own upstream Zephyr tree — for example a custom
+  board not yet merged upstream. See [`board_source`](#board_source).
+- **sdk_source** (*Optional*): Override where the Zephyr SDK itself (the `zephyr` west manifest) is
+  fetched from — a fork, a pre-release branch, or an already-initialized local west workspace. See
+  [`sdk_source`](#sdk_source). Mutually exclusive with **version**.
+- **version** (*Optional*, string): The Zephyr version to build against. Defaults to the variant's
+  recommended version. The literal value `recommended` is also accepted as an explicit alias for that
+  default. Ignored (and disallowed) when **sdk_source** is set, since the source itself determines the
+  version.
+- **refresh** (*Optional*, [Time](/guides/configuration-types#time)): How often a git-based
+  **board_source** or **sdk_source** is re-checked for updates (via `git pull`), mirroring
+  [external components' `refresh`](/components/external_components/#refresh). Defaults to `1d`.
+- **west_version** (*Optional*, string): Override the version of `west` used to fetch and build the
+  Zephyr workspace. Defaults to the version ESPHome has tested against.
+- **ninja_version** (*Optional*, string): Override the version of `ninja` used to build. Defaults to
+  the version ESPHome has tested against.
+- **mac_address** (*Optional*, MAC Address): A fixed MAC address to report. Only valid for the
+  `nativesim` variant, which has no real network hardware of its own; every other variant uses the
+  chip's burned-in MAC address.
+- **watchdog_timeout** (*Optional*, [Time](/guides/configuration-types#time)): How long the main loop
+  may go without checking in before Zephyr's hardware watchdog resets the device. Must be between 5
+  and 60 seconds. Defaults to `5s`. Not valid for the `nativesim` variant, which has no real watchdog
+  hardware.
+- **log_level** (*Optional*, string): Zephyr's own native logging verbosity — separate from
+  ESPHome's `logger:` `level:`, and off by default. One of `NONE`, `ERROR`, `WARN`, `INFO`, `DEBUG`,
+  `VERBOSE`. Defaults to `ERROR`. See [Zephyr's own logging vs. heavy debug levels](#zephyr-s-own-logging-vs-heavy-debug-levels)
+  before turning this up.
+- **kconfig_options** (*Optional*, mapping): Raw Zephyr Kconfig passthrough, ESPHome's equivalent of
+  ESP-IDF's `sdkconfig_options:`. See [`kconfig_options`](#kconfig_options).
+
+## Variants
+
+| Variant | Chip family | Default board | Supports |
+| --- | --- | --- | --- |
+| `esp32` | Original ESP32 (Xtensa, dual-core) | `esp32_devkitc` | Wi-Fi, BLE |
+| `esp32h2` | ESP32-H2 (RISC-V) | `esp32h2_devkitm` | BLE, Thread (via `openthread:`) |
+| `esp32c6` | ESP32-C6 (RISC-V) | `esp32c6_devkitc` | Wi-Fi, BLE, Thread (via `openthread:`) |
+| `nativesim` | Host binary, no real hardware | `native_sim/native/64` | Simulation on your PC |
+
+All three `esp32*` variants build only the single scheduled core Zephyr's Wi-Fi/BLE drivers require;
+where the chip has more than one core, only the main application core's image is built.
+
+## `board_source`
+
+By default, ESPHome resolves **board** against the boards already known to the variant's own Zephyr
+tree. `board_source` points at a different tree to search instead, using the same shape as
+[external components' `source`](/components/external_components/#configuration-variables):
+
+```yaml
+# Example configuration entry
+zephyr:
+  variant: esp32c6
+  board: my_custom_board
+  board_source:
+    type: git
+    url: https://github.com/example/my-zephyr-boards
+    ref: main
+```
+
+`board_source` requires **board** to also be set, and the source must contain a
+`boards/<vendor>/<my_custom_board>/board.yml` for the board named.
+
+> [!NOTE]
+> ESPHome always appends the current variant's own SoC/qualifier segments (e.g. `/esp32c6/hpcore`)
+> to a bare board name, including for boards coming from `board_source`. If your custom board uses a
+> different qualifier scheme than the variant it's based on, type the fully-qualified `board:` string
+> yourself (e.g. `my_custom_board/esp32c6/my_qualifier`) instead of a bare name.
+
+## `sdk_source`
+
+`sdk_source` overrides *where the Zephyr SDK is fetched from*, as opposed to `board_source`, which only
+overrides where board definitions come from. This is for building against a fork or an unreleased
+branch of Zephyr itself:
+
+```yaml
+# Example configuration entry
+zephyr:
+  variant: esp32c6
+  sdk_source:
+    ref: v4.5.0-rc1  # a branch/tag of the variant's own official Zephyr manifest
+```
+
+```yaml
+# Example configuration entry, alternate remote
+zephyr:
+  variant: esp32c6
+  sdk_source:
+    type: git
+    url: https://github.com/my-fork/zephyr
+    ref: my-branch
+```
+
+```yaml
+# Example configuration entry, already-initialized local west workspace
+zephyr:
+  variant: esp32c6
+  sdk_source:
+    type: local
+    path: /home/me/zephyrproject
+```
+
+`url` may be omitted to target a branch of the variant's own official manifest (for example, an
+alpha or pre-release). Setting `sdk_source` determines the Zephyr version from the source itself, so
+it cannot be combined with **version**.
+
+## `kconfig_options`
+
+Every ESPHome component that needs a Zephyr Kconfig option sets a sensible default itself.
+`kconfig_options` is an escape hatch for anything not already exposed as its own YAML option, and
+always wins over a value set by a component:
+
+```yaml
+# Example configuration entry
+zephyr:
+  variant: esp32c6
+  kconfig_options:
+    NET_TCP_TIME_WAIT_DELAY: 1000
+    # a mapping value targets that sysbuild child image's own config instead of the
+    # main application image
+    mcuboot:
+      BOOT_MAX_IMG_SECTORS: 512
+```
+
+Option names are accepted with or without the leading `CONFIG_`/`SB_CONFIG_` prefix.
+
+## Zephyr's own logging vs. heavy debug levels
+
+`log_level` controls Zephyr's own subsystem logging (network stack, USB, drivers, etc.), which is
+independent of ESPHome's `logger:` component. Turning on several subsystems' `DEBUG`/`VERBOSE`
+Kconfig logging at once (for example, several `*_LOG_LEVEL_DBG` options set via `kconfig_options`) has
+been observed to cause spurious watchdog resets and crash-hangs under load, since heavy logging
+contends with the same threads the watchdog is timing. Prefer enabling one subsystem's debug logging
+at a time when troubleshooting, rather than turning everything up simultaneously.
