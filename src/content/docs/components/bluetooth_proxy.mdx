@@ -38,8 +38,35 @@ bluetooth_proxy:
   The value must not exceed the total configured `max_connections`
   for [ESP32 BLE](/components/esp32_ble).
 
-The Bluetooth proxy depends on [ESP32 BLE Tracker](/components/esp32_ble_tracker) so make sure to add that
-to your configuration.
+On ESP32 the Bluetooth proxy depends on [ESP32 BLE Tracker](/components/esp32_ble_tracker) so make sure to
+add that to your configuration.
+
+## Platform support
+
+The proxy runs on any platform that provides a BLE hub, but the feature set depends on what the
+controller can do:
+
+- **ESP32** — the full proxy: advertisements plus **active connections**, so Home Assistant can read
+  and write GATT characteristics through the device (`active: true`, `connection_slots`).
+- **RP2 (Raspberry Pi Pico W family)** — **advertisement-only**. The controller does not expose the
+  GATT client the proxy needs for connections, so `active` must stay `false` and Home Assistant
+  treats the device as a passive scanner. Advertisement forwarding — which is what integrations
+  such as BTHome, Xiaomi and most sensors rely on — works exactly as it does on ESP32.
+
+Platforms whose controller can only scan **passively** (BK72xx) are not supported yet: current
+Home Assistant releases assume every ESPHome proxy can scan actively and would drive a
+passive-only proxy incorrectly. Support follows once the API lets a proxy declare
+passive-only scanning.
+
+```yaml
+# Advertisement-only proxy on an RP2 BLE platform
+bluetooth_proxy:
+```
+
+> [!NOTE]
+> On advertisement-only platforms a scanner-mode request from Home Assistant is applied when the
+> tracker supports the requested mode (a running scan restarts with the new mode); otherwise the
+> device declines it, logs a single warning and reports its real state back.
 
 ### How Active Connections Work
 
