@@ -14,7 +14,8 @@ esp32:
 ## Configuration variables
 
 - **variant** (*Optional*, string): The ESP32 mcu/chip to use for this device configuration. One of `esp32`,
-  `esp32s2`, `esp32s3`, `esp32c2`, `esp32c3`, `esp32c5`, `esp32c6`, `esp32c61`, `esp32h2` or `esp32p4`.
+  `esp32s2`, `esp32s3`, `esp32s31`, `esp32c2`, `esp32c3`, `esp32c5`, `esp32c6`, `esp32c61`, `esp32h2`,
+  `esp32h4`, `esp32h21` or `esp32p4`.
   This must match the hardware in use, or it will fail to flash.
 
 - **board** (*Optional*, string): The PlatformIO board ID that should be used. Choose the appropriate board from
@@ -53,6 +54,8 @@ esp32:
   - ESP32-C3: `80MHz`, `160MHz`
   - ESP32-C6, ESP32-C61: `80MHz`, `120MHz`, `160MHz`
   - ESP32-H2: `16MHz`, `32MHz`, `48MHz`, `64MHz`, `96MHz`
+  - ESP32-H4, ESP32-H21: `48MHz`, `64MHz`, `96MHz`
+  - ESP32-S31: `240MHz`, `320MHz`
   - ESP32-P4: `40MHz`, `360MHz`, `400MHz` (engineering samples are limited to `360MHz`)
 
   Some ESP32 modules -- typically OEM/single-core variants found in commercial
@@ -270,6 +273,67 @@ chip is required for wireless connectivity via [ESP-Hosted](/components/esp32_ho
 - **DAC:** None
 - **MIPI DSI/CSI:** Yes (display and camera interfaces)
 
+### ESP32-S31
+
+The ESP32-S31 is a high-performance RISC-V chip with Wi-Fi, Bluetooth LE, and a built-in 802.15.4 radio
+for Thread and Zigbee. It requires ESP-IDF 6.1 or later.
+
+- **CPU:** RISC-V HP core, up to 320 MHz + LP core
+- **Wi-Fi:** 802.11 b/g/n 2.4 GHz
+- **Bluetooth:** BLE
+- **802.15.4:** Thread and Zigbee
+- **USB:** Native USB OTG; USB Serial/JTAG peripheral mode
+- **Ethernet:** Built-in MAC (requires external PHY)
+- **GPIO:** 62 pins (0–61)
+- **UART:** 4 full-featured + 1 lite
+- **I2C:** 2 (plus 1 low-power)
+- **SPI:** 3
+- **I2S:** Yes
+- **ADC:** 2 units, 8 channels
+- **DAC:** None
+- **Touch:** Yes (v3)
+- **LCD:** Parallel RGB / LCD_CAM
+
+### ESP32-H4
+
+The ESP32-H4 is a low-power RISC-V chip with Bluetooth LE and a built-in 802.15.4 radio for Thread and
+Zigbee. It has no Wi-Fi. It requires ESP-IDF 6.1 or later.
+
+- **CPU:** RISC-V single-core, up to 96 MHz
+- **Wi-Fi:** None
+- **Bluetooth:** BLE
+- **802.15.4:** Thread and Zigbee
+- **USB:** Native USB OTG; USB Serial/JTAG peripheral mode
+- **Ethernet:** None built-in (SPI-based controllers supported)
+- **GPIO:** 40 pins (0–39)
+- **UART:** 2
+- **I2C:** 2
+- **SPI:** 3
+- **I2S:** Yes
+- **ADC:** 1 unit, 5 channels
+- **DAC:** None
+- **Touch:** Yes (v3)
+
+### ESP32-H21
+
+The ESP32-H21 is a low-power RISC-V chip with Bluetooth LE and a built-in 802.15.4 radio for Thread and
+Zigbee. It has no Wi-Fi. It requires ESP-IDF 6.1 or later.
+
+- **CPU:** RISC-V single-core, up to 96 MHz
+- **Wi-Fi:** None
+- **Bluetooth:** BLE
+- **802.15.4:** Thread and Zigbee
+- **USB:** USB Serial/JTAG peripheral mode (no USB OTG)
+- **Ethernet:** None built-in (SPI-based controllers supported)
+- **GPIO:** 26 pins (0–25)
+- **UART:** 2
+- **I2C:** 2
+- **SPI:** 2
+- **I2S:** Yes
+- **ADC:** 1 unit, 5 channels
+- **DAC:** None
+- **Touch:** None
+
 <span id="esp32-toolchain"></span>
 
 ## Toolchain Configuration
@@ -278,25 +342,25 @@ ESPHome supports multiple toolchains for building firmware. The toolchain determ
 
 Currently supported toolchains include:
 
-- `platformio` (default)
-- `esp-idf`
+- `esp-idf` (default)
+- `platformio`
 
-**Example for using ESP-IDF toolchain:**
+By default, ESPHome uses its native ESP-IDF integration, including automatic framework installation and environment management as described in this [documentation](/guides/esp_idf/).
+
+**Example for using the PlatformIO toolchain:**
 
 ```yaml
 esp32:
-  toolchain: esp-idf
+  toolchain: platformio
 ```
-
-When `esp-idf` is selected, ESPHome uses its native ESP-IDF integration, including automatic framework installation and environment management as described in this [documentation](/guides/esp_idf/).
 
 You can also select the toolchain via the [CLI](/guides/cli#cli-toolchain):
 
 ```bash
-esphome --toolchain esp-idf compile my_device.yaml
+esphome --toolchain platformio compile my_device.yaml
 ```
 
-If not specified, `platformio` is used by default.
+If not specified, `esp-idf` is used by default.
 If both `esp32.toolchain` and the `--toolchain` CLI option are set, the CLI option takes precedence.
 
 ## Framework
@@ -457,19 +521,34 @@ esp32:
   Both Secure Boot V2 (RSA-3072 or ECDSA-V2) and Secure Boot V1 (ECDSA) signing schemes are supported.
   Contains the following options:
 
+  Adding this block — even with no options inside — compiles signature verification into the firmware: the
+  device will reject any OTA update that is not signed with a trusted key. The options below only control how
+  the firmware gets signed.
+
   - **signing_key** (*Optional*, filename): Path to a PEM-encoded private signing key. When provided, the firmware
     is **automatically signed during build** using `espsecure`. This is the simplest workflow — the public key is
-    derived automatically and embedded in the signature block. **Mutually exclusive with `verification_key`.**
-  - **verification_key** (*Optional*, filename): Path to a public verification key. When provided, the
-    public key is embedded for verification but the binary is **not signed during build**. You must sign the firmware
-    externally before flashing. This is useful for CI/CD pipelines where the private key is stored in a secure vault.
+    derived automatically and embedded in the signature block. When omitted, the firmware is **not signed during
+    build**; you must sign it externally before flashing, which is useful for CI/CD pipelines where the private
+    key is stored in a secure vault. **Mutually exclusive with `verification_key`.**
+  - **verification_key** (*Optional*, filename): Path to a public verification key, **only for the `ecdsa_v1`
+    scheme**. Secure Boot V1 signatures do not carry the public key, so when the firmware is signed externally
+    the public key must be embedded in the build to verify updates. The key is in raw binary format (`.bin`);
+    extract it from the PEM private key using
+    `espsecure.py extract_public_key --keyfile private.pem public_key.bin`.
     **Mutually exclusive with `signing_key`.**
 
     > [!NOTE]
-    > The verification key format depends on the signing scheme:
-    > - For `rsa3072` and `ecdsa256` (Secure Boot V2): PEM-encoded public key.
-    > - For `ecdsa_v1` (Secure Boot V1): Raw binary format (`.bin`). Extract from a PEM private key using:
-    >   `espsecure.py extract_public_key --keyfile private.pem public_key.bin`
+    > The Secure Boot V2 schemes (`rsa3072` and `ecdsa256`) do not use a verification key — updates are verified
+    > against the public key carried in the running firmware's own signature block. To sign externally with a V2
+    > scheme, omit both keys; a bare block is a complete configuration:
+    >
+    > ```yaml
+    > esp32:
+    >   framework:
+    >     advanced:
+    >       # Verify OTA updates against externally-applied rsa3072 signatures
+    >       signed_ota_verification:
+    > ```
 
   - **signing_scheme** (*Optional*, string): The signing algorithm. One of `rsa3072`, `ecdsa256`, or `ecdsa_v1`.
     Defaults to `rsa3072`. **Not all schemes are supported on all variants** — see the table below.
@@ -503,7 +582,8 @@ esp32:
 
   > [!NOTE]
   > The **first firmware** flashed to a device must also be signed. When using `signing_key`, this happens
-  > automatically. Flash the initial firmware via serial — serial flashing does not perform signature verification.
+  > automatically; when signing externally, sign the image before flashing it via serial — a device running
+  > unsigned firmware has no trusted key and cannot verify (or accept) any OTA update.
   > All subsequent OTA updates will be verified against the public key in the running firmware.
 
   To generate a signing key, use the `espsecure.py` tool from ESP-IDF:
@@ -515,9 +595,54 @@ esp32:
   # Generate an ECDSA signing key (Secure Boot V1 — original ESP32 pre-rev 3.0)
   espsecure.py generate-signing-key --version 1 secure_boot_signing_key.pem
 
-  # Extract the public verification key (for the verification_key workflow)
-  espsecure.py extract_public_key --keyfile secure_boot_signing_key.pem secure_boot_verification_key.pem
+  # Extract the public verification key (only needed for ecdsa_v1 external signing)
+  espsecure.py extract_public_key --keyfile secure_boot_signing_key.pem secure_boot_verification_key.bin
   ```
+
+- **nvs_encryption** (*Optional*, mapping): Encrypts the device's non-volatile storage (NVS), where ESPHome
+  may save sensitive data such as Wi-Fi credentials and the API encryption key. This keeps that data
+  unreadable to anyone who reads the device's flash memory. The encryption key is created on the device itself
+  the first time it boots, so no key material is stored in your configuration. For background, see the ESP-IDF
+  [NVS encryption documentation](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/storage/nvs_encryption.html).
+  Contains the following option:
+
+  - **key_id** (*Required*, integer): Which hardware key slot (`0`–`5`) the device uses to store its encryption
+    key. Pick a slot that isn't used by anything else.
+
+  This feature is available only on the following variants, which have the required hardware support:
+
+  - ESP32-S2
+  - ESP32-S3
+  - ESP32-C3
+  - ESP32-C5
+  - ESP32-C6
+  - ESP32-H2
+  - ESP32-P4
+
+  It is not available on the original ESP32 or the ESP32-C2.
+
+  > [!WARNING]
+  > - The encryption key is written to the chip **permanently** (yes, **we mean permanently**) the first time the device
+  >   boots and **cannot be changed or removed afterwards**--even if you erase and/or re-flash your ESP--so choose the
+  >   `key_id` carefully. In most cases, this shouldn't be a problem -- just pick a key slot and stick to it.
+  > - Turning encryption on (or off later) clears any previously saved preferences once, because the older data can no
+  >   longer be read.
+
+- **enable_ota_downgrade_protection** (*Optional*, boolean): Reject OTA updates whose firmware version is older
+  than the version the device is currently running. The version is taken from the `version` under the
+  [`project`](/components/esphome#esphome-creators_project) key, which is embedded into the firmware image and
+  compared on the device before the new image is allowed to boot. Defaults to `false`.
+
+  This option requires:
+
+  - A `project` with a `version` that is dotted-numeric (such as `1.2.3` or `2024.1.0`). The version is compared
+    one number at a time, so `1.10.0` is newer than `1.9.0`. Flashing the same version is always allowed.
+  - `signed_ota_verification` to be enabled. The version is read from inside the signed image, so signature
+    verification is what prevents a tampered update from claiming a higher version than it actually contains.
+
+  > [!NOTE]
+  > This protects the over-the-air update path on the device. A direct serial flash is not version-checked, so you
+  > can always recover a device by flashing over serial.
 
 **LWIP Optimization Options (ESP-IDF only):**
 

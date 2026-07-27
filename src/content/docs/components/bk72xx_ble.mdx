@@ -1,0 +1,47 @@
+---
+description: "Instructions for setting up the BK72xx BLE controller in ESPHome."
+title: "BK72xx Bluetooth Low Energy"
+---
+
+import APIRef from '@components/APIRef.astro';
+
+The `bk72xx_ble` component enables the Bluetooth Low Energy controller of the BLE-5.x
+LibreTiny Beken chips (`beken-72xx` family) — the platform analog of
+[ESP32 BLE](/components/esp32_ble/). It owns the BLE stack bring-up and the controller's
+BLE address; higher-level consumers (such as the BK72xx BLE tracker) build on it and
+load it automatically.
+
+**Supported chips.** Support is gated on the BLE 5.x SDK itself, not on a fixed chip
+list: **BK7231N** and **BK7238** (e.g. the CB2S, CB3S, CBU and T34 modules) are
+selectable today; BK7236, BK7252N and BK7253 are covered automatically once LibreTiny
+exposes them. BK7231T, BK7251 and BK7271 (BLE 4.2) and BK7231Q (no BLE) are not
+supported — building for one fails with a clear error.
+
+```yaml
+# Example configuration entry
+bk72xx_ble:
+  enable_on_boot: false
+```
+
+## Configuration variables
+
+- **enable_on_boot** (*Optional*, boolean): Bring the BLE stack up during boot. Defaults
+  to `false`: on the single-core BK72xx, stack init during boot competes with the WiFi
+  connection handshake, so consumers enable the stack lazily on first use instead.
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used
+  to reference this component.
+
+> [!NOTE]
+> **BLE adapter address.** On BK7231N the BLE MAC is the controller's own address; on the
+> other BLE-5.x chips (whose BLE stack does not expose one) it is derived as **WiFi MAC + 1**
+> (only the last byte incremented, OUI unchanged) — the standard factory pairing.
+
+> [!NOTE]
+> The component automatically builds against `beken-bdk` 3.0.78; no manual
+> `platformio_options` are needed. The bundled 3.0.33 has an older BLE
+> header/library layout and can crash the device at boot when BLE is compiled in.
+
+## See Also
+
+- [ESP32 Bluetooth Low Energy](/components/esp32_ble/)
+- <APIRef text="bk72xx_ble.h" path="bk72xx_ble/bk72xx_ble.h" />
