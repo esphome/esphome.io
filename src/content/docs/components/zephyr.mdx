@@ -160,6 +160,47 @@ zephyr:
 
 Option names are accepted with or without the leading `CONFIG_`/`SB_CONFIG_` prefix.
 
+## mDNS status
+
+[`mdns:`](/components/mdns/) works on the `esp32` and `esp32c6` variants when Wi-Fi is configured
+without `openthread:` (on `esp32c6`/`esp32h2` with `openthread:`, discovery instead goes through
+OpenThread's own SRP client; `nativesim` uses the host's own mDNS backend, not Zephyr's).
+
+As of Zephyr 4.4.1/mainline, `subsys/net/lib/dns/mdns_responder.c` has two known bugs that keep mDNS
+from actually working correctly out of the box:
+
+- A DHCP-bound announce race that can permanently prevent the mDNS listener from starting at all.
+- `send_sd_response()` only parses the first Question in a DNS-SD query packet and can't follow DNS
+  name-compression pointers, so multi-question queries — such as `avahi-browse`'s own default query,
+  which batches many question types into one packet — are frequently never answered.
+
+Fixes for both exist as Zephyr source patches, but aren't merged upstream yet. Until they land in
+mainline Zephyr, get a working mDNS by pointing `sdk_source` at the `esphome-platform-zephyr` branch
+of [`esphomeplatformzephyr/zephyr`](https://github.com/esphomeplatformzephyr/zephyr), which carries
+both patches:
+
+```yaml
+# Example configuration entry
+zephyr:
+  variant: esp32c6
+  sdk_source:
+    type: git
+    url: https://github.com/esphomeplatformzephyr/zephyr
+    ref: esphome-platform-zephyr
+  kconfig_options:
+    # Only meaningful against esphome-platform-zephyr -- enables its DNS-SD announce-completeness
+    # fix. Unknown on mainline Zephyr, which doesn't have this Kconfig symbol yet.
+    MDNS_RESPONDER_ANNOUNCE_DNS_SD: true
+
+mdns:
+```
+
+ESPHome's own `mdns:` component already sets the mainline-safe Kconfig values it needs (`DNS_SD`,
+`MDNS_RESPONDER`, `MDNS_RESPONDER_PROBE`, and larger stack sizes for the responder's worker and
+socket-service dispatcher threads) regardless of which Zephyr source is used. Only
+`MDNS_RESPONDER_ANNOUNCE_DNS_SD` needs setting by hand, since it's specific to the patched fork and
+doesn't exist on mainline Zephyr.
+
 ## Zephyr's own logging vs. heavy debug levels
 
 `log_level` controls Zephyr's own subsystem logging (network stack, USB, drivers, etc.), which is
