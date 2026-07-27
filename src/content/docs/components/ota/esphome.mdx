@@ -39,6 +39,12 @@ ota:
   - `2040` for the RP2040
   - `8892` for Beken chips
   - `8082` for the [host platform](/components/host/)
+  - `4232` for the `zephyr` platform
+
+- **swap_method** (*Optional*, string): `zephyr` platform only. The MCUboot image-swap algorithm to use for
+  applying an update. One of `scratch`, `move`, `offset`. Defaults to `scratch`. Every `esp32`/`esp32h2`/`esp32c6`
+  variant only supports `scratch` and `move`; `offset` is not available on any Zephyr esp32-family variant. Not
+  applicable to the `native_sim` variant, which has no real bootloader.
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
 - **version** (*Optional*, int): Version of OTA protocol to use. Version 2 is more stable. To downgrade to legacy
    ESPHome, the device should be updated with OTA version 1 first. Defaults to `2`.

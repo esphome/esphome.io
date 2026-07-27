@@ -70,6 +70,13 @@ zephyr:
 All three `esp32*` variants build only the single scheduled core Zephyr's Wi-Fi/BLE drivers require;
 where the chip has more than one core, only the main application core's image is built.
 
+## GPIO Pin Numbering
+
+Pins are referenced by a flat number regardless of variant, either as a plain integer or with a `GPIO` prefix —
+`14` and `GPIO14` are equivalent. Internally, ESPHome splits this number into a devicetree GPIO controller
+port and a pin-within-port, but this is transparent to configuration; use the number silk-screened on the
+board or listed in the board's pinout.
+
 ## `board_source`
 
 By default, ESPHome resolves **board** against the boards already known to the variant's own Zephyr

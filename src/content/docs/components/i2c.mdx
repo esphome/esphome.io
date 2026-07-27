@@ -7,7 +7,7 @@ import APIRef from '@components/APIRef.astro';
 
 <span id="i2c"></span>
 
-This component sets up the I²C bus for your `esp32`, `esp8266`, `rp2040`, `nrf52`, or `host` platform. In order for these components
+This component sets up the I²C bus for your `esp32`, `esp8266`, `rp2040`, `nrf52`, `zephyr`, or `host` platform. In order for these components
 to work correctly, you need to define the I²C bus in your configuration. On ESP32 (both Arduino and ESP-IDF
 frameworks), internal pullup resistors are enabled by default. On ESP8266, the internal 10kΩ pullup resistors
 are always enabled. External pullups are still recommended for longer wire runs or multiple devices.
@@ -68,6 +68,45 @@ i2c:
 ### `host`
 
 - **device** (**Required**, string): The I²C device path to use (e.g., `/dev/i2c-0`, `/dev/i2c-1`).
+
+### `zephyr`
+
+- **sda**, **scl** (*Optional*, [Pin](/guides/configuration-types#pin)): If not set, ESPHome tries to read the
+  pin assignments from the board's devicetree. If they can't be determined this way (for example, a custom
+  board with flexible pin muxing, like nRF52), both must be set explicitly.
+- **device** (*Optional*, string): A Linux I²C device path (e.g. `/dev/i2c-1`) to pass through to the host's
+  real I²C bus. Only supported on the `native_sim` variant.
+- **dts_node_override** (*Optional*, string): The devicetree node label of the I²C controller to use (e.g.
+  `i2c0`), for when ESPHome can't automatically determine which of the board's I²C buses is enabled. Only
+  needed if config validation reports it couldn't resolve the bus automatically.
+- **emulation** (*Optional*, list): Defines one or more emulated I²C devices instead of a real bus, useful for
+  testing sensor/output components without physical hardware. Only supported on the `native_sim` variant. Each
+  item has:
+
+  - **id** (**Required**, [ID](/guides/configuration-types#id)): The ID to reference this emulated device by.
+  - **address** (**Required**, int): The I²C address to emulate.
+  - **registers** (**Required**, mapping): Register address to canned response value(s). A scalar returns the
+    same byte on every read; a list cycles through single-byte values on successive reads; a list of
+    same-length lists cycles through multi-byte reads.
+
+  ```yaml
+  # Example configuration entry
+  zephyr:
+    variant: nativesim
+
+  i2c:
+    emulation:
+      - id: fake_bme280
+        address: 0x76
+        registers:
+          0xD0: 0x60 # chip ID
+          0xF7: [[0x50, 0x00, 0x00, 0x80, 0x00, 0x80, 0x00]] # pressure/temp/humidity burst read
+  ```
+
+  `emulation:` and `device:` are mutually exclusive on the same bus; `emulation:` wins if both are set.
+
+> [!NOTE]
+> Only a single I²C bus is currently supported on the `zephyr` platform.
 
 ## Multiple I²C buses
 

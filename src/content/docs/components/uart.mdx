@@ -54,15 +54,17 @@ uart:
 
 - **baud_rate** (**Required**, int): The baud rate of the UART bus.
 - **tx_pin** (*Optional*, [Pin](/guides/configuration-types#pin)): The pin to send data to from the ESP's perspective. Use the full pin
-  schema and set `inverted: true` to invert logic levels. Not supported by host platform.
+  schema and set `inverted: true` to invert logic levels. Not supported by host platform. On the `zephyr` platform,
+  only the `esp32`/`esp32h2`/`esp32c6` variants support this (see [`zephyr` notes](#zephyr) below); `native_sim` does not.
 
 - **rx_pin** (*Optional*, [Pin](/guides/configuration-types#pin)): The pin to receive data on from the ESP's perspective. Use the full pin
-  schema and set `inverted: true` to invert logic levels. Not supported by host platform.
+  schema and set `inverted: true` to invert logic levels. Not supported by host platform. Same `zephyr` variant restriction as **tx_pin**.
 
 - **flow_control_pin** (*Optional*, [Pin](/guides/configuration-types#pin)): ESP32 only. The pin used to for hardware RS485 flow control.
   Use of this setting enables half-duplex mode. Use the full pin schema and set `inverted: true` to invert logic levels.
 
-- **port** (*Optional*, string): Host platform only. Unix style name of the port to use.
+- **port** (*Optional*, string): Host and `zephyr` platforms only. On host, a Unix-style device path. On `zephyr`,
+  the UART peripheral to use — see [`zephyr` notes](#zephyr) below.
 - **rx_buffer_size** (*Optional*, int): The size of the buffer used for receiving UART messages. Increase if you use an
   integration that needs to read big payloads from UART. Defaults to `256`.
 
@@ -307,6 +309,26 @@ uart:
   baud_rate: 9600
   port: "/dev/ttyUSB0"
 ```
+
+## `zephyr`
+
+On the `zephyr` platform, UART peripherals are identified by `port:` (Zephyr's own devicetree-driven UART
+numbering) rather than by pins alone:
+
+```yaml
+# Example configuration entry for the zephyr platform
+uart:
+  port: uart1
+  baud_rate: 115200
+```
+
+- **port** accepts `uart0` or `uart1`. Defaults to `uart0` if not set.
+- **tx_pin**/**rx_pin** may be set together with **port** on the `esp32`/`esp32h2`/`esp32c6` variants, whose UART
+  TX/RX are routed through the chip's GPIO matrix — this overrides which physical pins the chosen `port` uses.
+  Only pins in that variant's own valid TX/RX set are accepted; an invalid pin is rejected at config time. The
+  `native_sim` variant does not support pin selection at all — omit **tx_pin**/**rx_pin** there.
+- Ports other than `uart0` have no pinctrl configured on stock development boards, so **tx_pin**/**rx_pin** are
+  required together with `port: uart1` on those boards.
 
 ## See Also
 
