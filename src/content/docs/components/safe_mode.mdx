@@ -20,8 +20,6 @@ for `num_attempts` times (see below).
 safe_mode:
 ```
 
-<span id="safe_mode-configuration_variables"></span>
-
 ## Configuration variables
 
 - **disabled** (*Optional*, boolean): Set to `true` to disable safe_mode. [Ota](/components/ota/) automatically
@@ -36,6 +34,20 @@ safe_mode:
 - **reboot_timeout** (*Optional*, [Time](/guides/configuration-types#time)): The amount of time to wait before rebooting when in safe mode.
    Defaults to `5min`.
 
+- **storage** (*Optional*, string): Where to persist the boot-attempt counter. One of:
+
+  - `flash`: store the counter in flash. It survives power loss but causes a small amount of flash wear on each boot.
+  - `rtc`: store the counter in RTC memory. It survives software reboots (restarts, OTA updates, crashes) and deep
+    sleep but **not** power loss, and avoids flash wear.
+
+  Defaults to `flash` on ESP32 and `rtc` on ESP8266. Only `flash` is available on platforms without RTC-backed storage
+  (the RP2040 and the ESP32-C2 and C61 variants, which have no RTC memory), where `rtc` is rejected.
+
+  Note that on the original ESP32, pressing the hardware reset button (the EN pin) also clears RTC memory, so it
+  counts as power loss rather than as a reboot. On newer variants (S3, C3, C6) RTC memory survives a chip reset
+  triggered over USB. Safe mode itself is unaffected either way: crash loops always consist of software resets, which
+  RTC memory survives on all variants.
+
 - **on_safe_mode** (*Optional*, [Automation](/automations)): An action to be performed once when safe mode is invoked.
 
 > [!WARNING]
@@ -45,8 +57,6 @@ safe_mode:
 > and OTA component(s).
 >
 > **All other components (for example, displays and sensors) are disabled and cannot be used.**
-
-<span id="safe_mode-mark_successful_action"></span>
 
 ## `safe_mode.mark_successful` Action
 
@@ -58,6 +68,17 @@ on_...:
   then:
     - safe_mode.mark_successful
 ```
+
+## Rebooting to the recovery app on ESP32
+
+If safe_mode detects that OTA updates are impossible because of the partition layout on the device,
+the message `OTA updates are impossible` will appear in the config section of the logs, followed by the suggested next step.
+
+In case a valid recovery app is found but OTA is impossible with the current app, invoking safe mode will automatically reboot to it.
+Depending on the recovery app's features this can allow you to install an OTA update and recover your soft-bricked device.
+The recovery app can for example be a previous version of ESPHome or the Tasmota safeboot app. It is recommended to
+[update the partition table](/components/ota/esphome/#updating-the-partition-table-on-esp32) while recovering your device
+to make future OTA updates possible.
 
 ## See Also
 

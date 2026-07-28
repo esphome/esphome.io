@@ -1,9 +1,15 @@
 ---
-description: "Configuration for the RP2040 platform for ESPHome."
-title: "RP2040 Platform"
+description: "Configuration for the RP2 platform (RP2040 and RP2350) for ESPHome."
+title: "RP2 Platform"
 ---
 
-This component contains platform-specific options for the RP2040 platform.
+This component contains platform-specific options for the RP2 platform, which covers both the RP2040 and
+RP2350 chips from the Raspberry Pi RP-series.
+
+> [!NOTE]
+> The platform key was renamed from `rp2040` to `rp2` in ESPHome 2026.7.0 so the family name reflects that
+> the toolchain covers both the RP2040 and RP2350 chips. The legacy `rp2040:` key continues to work as a
+> deprecated alias and will be removed in 2027.7.0.
 
 > [!NOTE]
 > The Raspberry Pi **Pico W** and other RP2040 boards with the Cypress **CYW43439** chip providing wireless
@@ -19,7 +25,7 @@ This component contains platform-specific options for the RP2040 platform.
 
 ```yaml
 # Example configuration entry
-rp2040:
+rp2:
   board: rpipicow
 ```
 
@@ -31,7 +37,7 @@ rp2040:
 
 ```yaml
 # Example configuration entry
-rp2040:
+rp2:
   board: rpipicow
   framework:
     platform_version: https://github.com/maxgerhardt/platform-raspberrypi.git
@@ -56,11 +62,28 @@ automatically reset the device into BOOTSEL mode.
 
 ## Configuration variables
 
-- **board** (**Required**, string): The PlatformIO board identifier. Common boards include `rpipicow`
+- **variant** (*Optional*, string): The RP2-series chip to target. One of `rp2040` or `rp2350`.
+  This must match the hardware in use, or it will fail to flash.
+
+- **board** (*Optional*, string): The PlatformIO board identifier. Common boards include `rpipicow`
   (Raspberry Pi Pico W), `rpipico` (Raspberry Pi Pico), `rpipico2w` (Raspberry Pi Pico 2 W), and
   `rpipico2` (Raspberry Pi Pico 2). Over 140 boards from the
   [arduino-pico](https://github.com/earlephilhower/arduino-pico) framework are supported. Any board
   supported by the framework can be used here.
+
+> [!NOTE]
+> At least one of `board` or `variant` must be specified. If `variant` alone is specified, the board
+> configuration will be automatically filled using the canonical Raspberry Pi Foundation reference board
+> for that variant: `rpipicow` (Pico W) for `rp2040` and `rpipico2w` (Pico 2 W) for `rp2350`. Both may
+> be specified, but they must define the same variant. If the board is not recognised by ESPHome,
+> `variant` must be specified explicitly.
+
+> [!WARNING]
+> Some components are restricted to specific boards rather than the whole variant. The [WiFi](/components/wifi/)
+> component, for example, requires a board with the Cypress CYW43439 wireless chip (such as `rpipicow` or
+> `rpipico2w`); selecting a board without it (such as `rpipico` or `rpipico2`) will fail validation even though
+> the variant is otherwise capable.
+
 - **watchdog_timeout** (*Optional*, [Time](/guides/configuration-types#time)): The timeout to apply to the RP2040 watchdog.
   When the device hangs for that period of time, it will reboot. Defaults to `8388ms` (maximum). Set to `0s` to
   disable the watchdog entirely.
@@ -93,7 +116,7 @@ resolved to the correct GPIO number for your board:
 ### Onboard LED Example
 
 ```yaml
-rp2040:
+rp2:
   board: rpipicow
 
 output:
@@ -131,7 +154,7 @@ Then connect a USB-to-serial adapter to your board's UART0 pins:
 > [!TIP]
 > The `TX` and `RX` [pin names](#gpio-pin-names) resolve to the default UART0 pins for your board.
 > If your board differs from the Pico W defaults above, search for your board name (e.g. `seeed_xiao_rp2040`)
-> in [boards.py](https://github.com/esphome/esphome/blob/dev/esphome/components/rp2040/boards.py) and look
+> in [boards.py](https://github.com/esphome/esphome/blob/dev/esphome/components/rp2/boards.py) and look
 > for the `TX` and `RX` entries in its pin map. Note that the GPIO numbers may not match the labels
 > silkscreened on your board. For example, on the
 > [Seeed XIAO RP2040](https://wiki.seeedstudio.com/XIAO-RP2040/), TX (GPIO 0) and RX (GPIO 1) are

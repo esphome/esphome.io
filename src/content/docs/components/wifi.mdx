@@ -36,8 +36,6 @@ wifi:
 > [!TIP]
 > For WiFi security recommendations including `min_auth_mode` configuration, see the [Security Best Practices](/guides/security_best_practices#wifi-security) guide.
 
-<span id="wifi-configuration_variables"></span>
-
 ## Configuration variables
 
 - **ssid** (*Optional*, string): The name (or [service set identifier](https://www.lifewire.com/definition-of-service-set-identifier-816547))
@@ -89,7 +87,7 @@ wifi:
   Does not apply when in access point mode.
 
 - **power_save_mode** (*Optional*, string): The power save mode for the WiFi interface.
-  See [Power Save Mode](#wifi-power_save_mode)
+  See [Power Save Mode](#power-save-mode)
 
 - **output_power** (*Optional*, string): The amount of TX power for the WiFi interface from 8.5dB to 20.5dB. Default
   for ESP8266 is 20dB, 20.5dB might cause unexpected restarts.
@@ -100,6 +98,28 @@ wifi:
   better ones are available. If multiple networks are configured, the last successfully connected one is tested first.
   In case it fails, all networks are then tested one after the other in their declared order, starting with the first
   one in the list.
+
+  Instead of a boolean, this option also accepts a settings block:
+
+  ```yaml
+  wifi:
+    # ...
+    fast_connect:
+      enabled: true
+      storage: rtc
+  ```
+
+  - **enabled** (*Optional*, boolean): Whether fast connect is active. Defaults to `true` when the block form is used.
+  - **storage** (*Optional*, string): Where to persist the connection details (BSSID and channel) that fast connect
+    saves after each successful connection. One of:
+
+    - `flash`: survives power loss but wears flash a little on each save.
+    - `rtc`: stored in RTC memory, which survives software reboots and deep sleep but **not** power loss, and avoids
+      flash wear. A good fit for battery-powered devices that wake from deep sleep frequently.
+
+    Defaults to `rtc` on ESP8266 and `flash` on ESP32, matching each platform's previous behavior. Only `flash` is
+    available on platforms without RTC-backed storage (the RP2040 and the ESP32-C2 and C61 variants, which have no
+    RTC memory), where `rtc` is rejected.
 
   > [!NOTE]
   > While `fast_connect` skips the initial scan, if the connection attempt fails, ESPHome will still perform a scan
@@ -116,7 +136,7 @@ wifi:
   - `WPA2` - Allows WPA2 and WPA3 networks (recommended, uses AES encryption)
   - `WPA3` - Only allows WPA3 networks (most secure, ESP32 only)
 
-  Defaults to `WPA2` on ESP32 and `WPA` on ESP8266 (will change to `WPA2` in 2026.6.0).
+  Defaults to `WPA2` on ESP32 and ESP8266.
 
   **Security Warning:** Setting `min_auth_mode: WPA` allows connection to networks using deprecated WPA/TKIP encryption,
   which has known security vulnerabilities. Only use this setting for legacy routers that cannot be upgraded to WPA2 or WPA3.
@@ -132,6 +152,11 @@ wifi:
   Possible values are `AUTO` (use both 2.4 GHz and 5 GHz), `2.4GHZ` (2.4 GHz only), and `5GHZ` (5 GHz only).
   If not specified, it defaults to `AUTO`.
 
+- **phy_mode** (*Optional*, string): Only on `esp8266`. Pins the radio to a specific 802.11 PHY mode.
+  Possible values are `AUTO`, `11B`, `11G`, and `11N`. Defaults to `AUTO`, which leaves the SDK at
+  its default behavior. There is a known compatibility issue with some routers when ESP8266 devices use
+  802.11n; you can work around it by limiting the ESP to 802.11g with `phy_mode: 11G`.
+
 - **post_connect_roaming** (*Optional*, bool): Enable basic post-connect
   roaming for stationary devices. After connecting to a non-hidden network,
   the device will periodically check for better access points with the same
@@ -139,7 +164,7 @@ wifi:
   This helps devices recover from scenarios where they connect to a suboptimal
   AP (e.g., after an AP reboot or site power loss). Automatically disabled if
   `enable_btm` or `enable_rrm` is enabled. See
-  [Post-Connect Roaming](#wifi-post_connect_roaming). Defaults to `true`.
+  [Post-Connect Roaming](#post-connect-roaming). Defaults to `true`.
 
 - **on_connect** (*Optional*, [Automation](/automations)): An action to be performed when a connection is established.
 - **on_disconnect** (*Optional*, [Automation](/automations)): An action to be performed when the connection is dropped.
@@ -217,8 +242,6 @@ the OTA process will automatically choose that as the target for the upload.
 > [!NOTE]
 > See also [Changing ESPHome Node Name](/components/esphome#esphome-changing_node_name).
 
-<span id="wifi-power_save_mode"></span>
-
 ## Power Save Mode
 
 The WiFi interface of all ESPs offer three power save modes to reduce the amount of power spent on
@@ -270,8 +293,6 @@ wifi:
   password: VerySafePassword
   min_auth_mode: WPA3  # Only connect to WPA3 networks (most secure)
 ```
-
-<span id="wifi-post_connect_roaming"></span>
 
 ## Post-Connect Roaming
 
@@ -551,8 +572,6 @@ on_...:
 
 ## Conditions
 
-<span id="wifi-connected_condition"></span>
-
 ### `wifi.connected` Condition
 
 This [Condition](/automations/actions#all-conditions) checks if the WiFi client is currently connected to a station.
@@ -567,8 +586,6 @@ on_...:
 ```
 
 The lambda equivalent for this is `id(wifi_id).is_connected()`.
-
-<span id="wifi-enabled_condition"></span>
 
 ### `wifi.enabled` Condition
 
@@ -585,8 +602,6 @@ on_...:
 ```
 
 The lambda equivalent for this is `!id(wifi_id).is_disabled()`.
-
-<span id="wifi-ap-active_condition"></span>
 
 ### `wifi.ap_active` Condition
 
