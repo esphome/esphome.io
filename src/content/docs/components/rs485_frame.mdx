@@ -376,6 +376,9 @@ marks it offline. `tx.idle_command` requires a `command_format:` (see below).
   - **dle** (*Optional*, hex byte): Frame delimiter byte. Defaults to `0x10`.
   - **stx** (*Optional*, hex byte): Start-of-frame byte. Defaults to `0x02`.
   - **etx** (*Optional*, hex byte): End-of-frame byte. Defaults to `0x03`.
+
+  <span id="framing-escape"></span>
+
   - **escape** (**Required**): How a literal DLE inside the payload (and CRC) is byte-stuffed
     on the wire. There is no default: the wrong scheme silently corrupts any frame that
     contains a DLE, and which one a bus uses cannot be inferred, so you must declare it.
@@ -791,6 +794,12 @@ from the last keep-alive. The row for the reference frame itself always shows
 `-` in the `d-ref` column. Set `reference_frame_type:` explicitly if you want
 to measure delays against a different frame type.
 
+Frames the hub transmits are recorded into the same table, on a row prefixed
+with `>` (unmarked rows are received). Set `reference_mode: send` to measure
+`d-ref` against the timestamp of your own last transmission instead of
+`reference_frame_type` — useful for answering "how long after our own send
+did frame X arrive."
+
 > [!TIP]
 > On a brand-new bus you will not know the keep-alive frame yet, so leave both
 > `tx.gate.frame_type` and `reference_frame_type` unset for the first capture (with no reference,
@@ -821,9 +830,13 @@ appears in the YAML — production builds pay no flash or RAM cost.
 - **payload_capture_bytes** (*Optional*, integer, 1–255): Maximum payload bytes captured per unique sample. Longer
   payloads are truncated at this length for uniqueness comparison and hex/ASCII display. Defaults to `32`.
 - **payload_dump_top** (*Optional*, integer, 0–32): After the table, dump hex+ASCII payloads for the top N frame types
-  by count. `0` (default) disables.
-- **reference_frame_type** (*Optional*, list of hex bytes): Frame type used as the `d-ref` timing reference. Defaults
-  to `tx.gate.frame_type`.
+  by count. `0` (default) disables. Measured cost on real hardware: a 73 ms RX-path stall per dump, enough to split a
+  frame — keep it `0` in production, and prefer `dump_frames: true` (no measured stall) for timing measurements.
+- **reference_frame_type** (*Optional*, list of hex bytes): Frame type used as the `d-ref` timing reference in
+  `reference_mode: receive`. Defaults to `tx.gate.frame_type`.
+- **reference_mode** (*Optional*, string): `receive` (default) or `send`. `receive` measures `d-ref` against the last
+  RX frame matching `reference_frame_type`, unchanged from before this option existed. `send` measures `d-ref`
+  against the timestamp of the hub's own last transmission instead, and ignores `reference_frame_type`.
 - **ascii_strip_high_bit** (*Optional*, boolean): When `true`, bit 7 is masked before the printable-range gate in
   the hex+ASCII payload preview. Enable for display-frame buses that pack an attribute flag (e.g. blink/inverse) into
   the high bit, so the underlying character renders instead of `'.'`. Leave `false` (default) on binary buses where
