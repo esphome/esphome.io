@@ -1553,9 +1553,26 @@
       camera.position.copy(controls.target).addScaledVector(dir, homeDistance);
     };
 
-    const resize = () => {
+    const RESIZE_EPSILON_PX = 2;
+    // Mobile browsers can still shave/restore a few dozen px of visual
+    // viewport height as the address bar hides on scroll, independent of the
+    // svh-based CSS sizing above. On coarse-pointer devices, ignore
+    // height-only deltas within that range so toolbar movement can't retrigger
+    // a full renderer/composer resize every animation frame.
+    const isCoarsePointer = window.matchMedia("(pointer: coarse)").matches;
+    const TOOLBAR_HEIGHT_GUARD_PX = 150;
+
+    let resizeScheduled = false;
+
+    const applyResize = () => {
+      resizeScheduled = false;
       const next = getSize();
-      if (next.width === width && next.height === height) return;
+      const dw = Math.abs(next.width - width);
+      const dh = Math.abs(next.height - height);
+      if (dw < RESIZE_EPSILON_PX && dh < RESIZE_EPSILON_PX) return;
+      if (isCoarsePointer && dw < RESIZE_EPSILON_PX && dh < TOOLBAR_HEIGHT_GUARD_PX)
+        return;
+
       width = next.width;
       height = next.height;
       renderer.setSize(width, height, false);
@@ -1565,6 +1582,16 @@
       camera.updateProjectionMatrix();
       refitCamera();
       for (const label of labels) label.hasPosition = false;
+    };
+
+    // Coalesced to one application per animation frame — the ResizeObserver
+    // can otherwise fire faster than the frame budget on slower devices,
+    // which is what causes "ResizeObserver loop completed with undelivered
+    // notifications" to repeat indefinitely.
+    const resize = () => {
+      if (resizeScheduled) return;
+      resizeScheduled = true;
+      requestAnimationFrame(applyResize);
     };
 
     new ResizeObserver(resize).observe(canvas);
@@ -1785,7 +1812,7 @@
     align-items: stretch;
 
     @include bp(tablet) {
-      height: calc(100vh - var(--sl-nav-height));
+      height: calc(100svh - var(--sl-nav-height));
       padding-top: 8.75rem;
     }
 
@@ -1827,7 +1854,7 @@
 
     &__asset-container {
       height: 100%;
-      min-height: clamp(440px, 60vh, 720px);
+      min-height: clamp(440px, 60svh, 720px);
       user-select: none;
       -webkit-user-select: none;
       overflow: visible;
