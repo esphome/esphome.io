@@ -1,4 +1,4 @@
-<link rel="preload" href="/starter-kit/ESK.glb" as="fetch" crossorigin>
+<link rel="preload" href="/starter-kit/ESK.glb" as="fetch" crossorigin />
 
 <section class="block-hero">
   <div class="container">
@@ -48,11 +48,7 @@
         <svg class="block-hero__label-lines" aria-hidden="true"></svg>
         <slot name="labels" />
         <slot />
-        <aside
-          class="hero-detail-card"
-          id="hero-detail-card"
-          inert
-        >
+        <aside class="hero-detail-card" id="hero-detail-card" inert>
           <div class="hero-detail-card__header">
             <h3 class="hero-detail-card__title" data-detail-title></h3>
             <button
@@ -1326,11 +1322,12 @@
           // slow #9abd32 pulse when unlocked+idle, original otherwise.
           {
             const _playing = songTimer !== null;
-            const _hoverTarget = (!_playing && buttonpressHovered) ? 1 : 0;
+            const _hoverTarget = !_playing && buttonpressHovered ? 1 : 0;
             buttonHoverT += (_hoverTarget - buttonHoverT) * 0.12;
-            const _pulse = buttonUnlocked && !_playing && activeIdx === -1
-              ? (Math.sin(now * 0.0015) * 0.5 + 0.5) * 0.45
-              : 0;
+            const _pulse =
+              buttonUnlocked && !_playing && activeIdx === -1
+                ? (Math.sin(now * 0.0015) * 0.5 + 0.5) * 0.45
+                : 0;
             const _hintColor = new THREE.Color(0x9abd32);
             const _white = new THREE.Color(1, 1, 1);
             buttonpressMeshes.forEach((_bm, _bi) => {
@@ -1338,9 +1335,13 @@
               if (_playing) {
                 _bmat.color.setRGB(1, 0, 0);
               } else if (buttonHoverT > 0.001) {
-                _bmat.color.copy(buttonpressOrigColors[_bi]).lerp(_white, buttonHoverT);
+                _bmat.color
+                  .copy(buttonpressOrigColors[_bi])
+                  .lerp(_white, buttonHoverT);
               } else if (_pulse > 0) {
-                _bmat.color.copy(buttonpressOrigColors[_bi]).lerp(_hintColor, _pulse);
+                _bmat.color
+                  .copy(buttonpressOrigColors[_bi])
+                  .lerp(_hintColor, _pulse);
               } else {
                 _bmat.color.copy(buttonpressOrigColors[_bi]);
               }
@@ -1418,8 +1419,12 @@
             buttonPressTarget = 1;
             _returningHome = true;
             _zoomingIn = false;
-            setTimeout(() => { buttonPressTarget = 0; }, BUTTON_PRESS_MS);
-            setTimeout(() => { playSong(); }, BUTTON_PRESS_MS + 50);
+            setTimeout(() => {
+              buttonPressTarget = 0;
+            }, BUTTON_PRESS_MS);
+            setTimeout(() => {
+              playSong();
+            }, BUTTON_PRESS_MS + 50);
             return;
           }
           if (songTimer) return;
@@ -1874,7 +1879,9 @@
           border: 1.5px solid transparent;
         }
 
-        &::before { border-color: rgba(255, 255, 255, 0.15); }
+        &::before {
+          border-color: rgba(255, 255, 255, 0.15);
+        }
 
         &::after {
           border-top-color: rgba(255, 255, 255, 0.6);
@@ -2151,7 +2158,9 @@
   }
 
   @keyframes heroLoaderSpin {
-    to { transform: rotate(360deg); }
+    to {
+      transform: rotate(360deg);
+    }
   }
 
   @keyframes heroPromptIn {
