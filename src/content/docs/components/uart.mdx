@@ -326,7 +326,8 @@ uart:
 - **tx_pin**/**rx_pin** may be set together with **port** on the `esp32`/`esp32h2`/`esp32c6` variants, whose UART
   TX/RX are routed through the chip's GPIO matrix — this overrides which physical pins the chosen `port` uses.
   Only pins in that variant's own valid TX/RX set are accepted; an invalid pin is rejected at config time. The
-  `native_sim` variant does not support pin selection at all — omit **tx_pin**/**rx_pin** there.
+  `native_sim` and `nrf52` variants do not support pin selection at all — omit **tx_pin**/**rx_pin** there; on
+  `nrf52`, each `port`'s pins come entirely from the board's own devicetree.
 - Ports other than `uart0` have no pinctrl configured on stock development boards, so **tx_pin**/**rx_pin** are
   required together with `port: uart1` on those boards.
 

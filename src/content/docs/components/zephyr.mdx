@@ -56,6 +56,10 @@ zephyr:
   `VERBOSE`. Defaults to `ERROR`. See [Zephyr's own logging vs. heavy debug levels](#zephyrs-own-logging-vs-heavy-debug-levels)
   before turning this up.
 - **kconfig_options** (*Optional*, mapping): Raw Zephyr Kconfig passthrough. See [`kconfig_options`](#kconfig_options).
+- **advanced** (*Optional*, mapping): Variant-specific advanced options that most users won't need.
+  Currently only used by `nrf52`:
+  - **mcuboot_serial_recovery** (*Optional*, boolean): Enable MCUboot Kconfig options for USB
+    CDC-ACM serial recovery. Defaults to `false`. See [MCUboot and nRF52 flashing](#mcuboot-and-nrf52-flashing).
 
 ## Variants
 
@@ -65,6 +69,7 @@ zephyr:
 | `esp32h2` | ESP32-H2 (RISC-V) | `esp32h2_devkitm` | BLE, Thread (via `openthread:`) |
 | `esp32c6` | ESP32-C6 (RISC-V) | `esp32c6_devkitc` | Wi-Fi, BLE, Thread (via `openthread:`) |
 | `nativesim` | Host binary, no real hardware | `native_sim/native/64` | Simulation on your PC |
+| `nrf52` | nRF52840 (Cortex-M4) | `adafruit_feather_nrf52840` | BLE, Thread (via `openthread:`) |
 
 All three `esp32*` variants build only the single scheduled core Zephyr's Wi-Fi/BLE drivers require;
 where the chip has more than one core, only the main application core's image is built.
@@ -72,34 +77,6 @@ where the chip has more than one core, only the main application core's image is
 It is not recommended to use esp variants for other than experimental purposes, the esp32 platform,
 esp-idf framework delivers superior functionality and stability.  These variants are being used to test
 and learn how to implement Zephyr, but again are not recommended for everyday use.
-
-## SMP and AMP status
-
-**SMP** (symmetric multiprocessing) is one kernel image and one scheduler shared across cores;
-threads run on whichever core is free (also can be pinned). **AMP** (asymmetric multiprocessing) is
-separate compiled images, each with its own Kconfig and memory space — this is how every multi-core
-Espressif chip under Zephyr works today, including the single-core-image builds below.
-
-- **`esp32`** (original) is dual-core silicon (PRO_CPU + APP_CPU). By default only PRO_CPU is used —
-  Zephyr logs a warning at config time reminding you of this unless `kconfig_options: CONFIG_SMP: true`
-  is set. With that set, both cores boot and run real application code; this has been fixed and
-  confirmed working on real hardware, but the fix is not yet in mainline Zephyr — it requires
-  `sdk_source` pointed at the `esphome-platform-zephyr` branch of
-  [`esphomeplatformzephyr/zephyr`](https://github.com/esphomeplatformzephyr/zephyr) (the same branch
-  needed for [mDNS](#mdns-status)).
-  - **SMP and Wi-Fi together do not work yet.** Zephyr's `WIFI_ESP32` driver has `depends on !SMP` —
-    a thread-safety gap specific to this one driver (no other vendor's Wi-Fi driver in the Zephyr tree
-    has this restriction). Lifting it for the original ESP32 specifically (task pinning plus a DPORT
-    cross-core stall handler) is in-progress, unfinished work, not usable yet.
-- **`esp32c6`** has an asymmetric HP/LP core pair in silicon, but only the HP core is built or used —
-  no platform-zephyr variant targets the LP core.
-- **`esp32h2`** is single-core; SMP/AMP doesn't apply.
-- **`nativesim`** is a single host process; SMP/AMP doesn't apply.
-- **ESP32-P4** (dual RISC-V cores) is not currently a platform-zephyr variant. Espressif's own stated
-  intent is for the P4 to be their first RISC-V chip with genuine Zephyr SMP support, but that isn't
-  implemented in Zephyr yet.
-  
-We have noted that Espressif is very active in the Zephyr repository and will monitor for any changes.
 
 ## GPIO Pin Numbering
 
@@ -194,11 +171,21 @@ zephyr:
 
 Option names are accepted with or without the leading `CONFIG_`/`SB_CONFIG_` prefix.
 
+## Zephyr's own logging vs. heavy debug levels
+
+`log_level` controls Zephyr's own subsystem logging (network stack, USB, drivers, etc.), which is
+independent of ESPHome's `logger:` component. Turning on several subsystems' `DEBUG`/`VERBOSE`
+Kconfig logging at once (for example, several `*_LOG_LEVEL_DBG` options set via `kconfig_options`) has
+been observed to cause spurious watchdog resets and crash-hangs under load, since heavy logging
+contends with the same threads the watchdog is timing. Prefer enabling one subsystem's debug logging
+at a time when troubleshooting, rather than turning everything up simultaneously.
+
 ## mDNS status
 
 [`mdns:`](/components/mdns/) works on the `esp32` and `esp32c6` variants when Wi-Fi is configured
-without `openthread:` (on `esp32c6`/`esp32h2` with `openthread:`, discovery instead goes through
-OpenThread's own SRP client; `nativesim` uses the host's own mDNS backend, not Zephyr's).
+without `openthread:` (on `esp32c6`/`esp32h2` with `openthread:`, and on `nrf52` — which always uses
+`openthread:` — discovery instead goes through OpenThread's own SRP client; `nativesim` uses the
+host's own mDNS backend, not Zephyr's).
 
 As of Zephyr 4.4.1/mainline, `subsys/net/lib/dns/mdns_responder.c` has two known bugs that keep mDNS
 from actually working correctly out of the box:
@@ -235,14 +222,141 @@ socket-service dispatcher threads) regardless of which Zephyr source is used. On
 `MDNS_RESPONDER_ANNOUNCE_DNS_SD` needs setting by hand, since it's specific to the patched fork and
 doesn't exist on mainline Zephyr.
 
-## Zephyr's own logging vs. heavy debug levels
+## SMP and AMP status
 
-`log_level` controls Zephyr's own subsystem logging (network stack, USB, drivers, etc.), which is
-independent of ESPHome's `logger:` component. Turning on several subsystems' `DEBUG`/`VERBOSE`
-Kconfig logging at once (for example, several `*_LOG_LEVEL_DBG` options set via `kconfig_options`) has
-been observed to cause spurious watchdog resets and crash-hangs under load, since heavy logging
-contends with the same threads the watchdog is timing. Prefer enabling one subsystem's debug logging
-at a time when troubleshooting, rather than turning everything up simultaneously.
+**SMP** (symmetric multiprocessing) is one kernel image and one scheduler shared across cores;
+threads run on whichever core is free (also can be pinned). **AMP** (asymmetric multiprocessing) is
+separate compiled images, each with its own Kconfig and memory space — this is how every multi-core
+Espressif chip under Zephyr works today, including the single-core-image builds below.
+
+- **`esp32`** (original) is dual-core silicon (PRO_CPU + APP_CPU). By default only PRO_CPU is used —
+  Zephyr logs a warning at config time reminding you of this unless `kconfig_options: CONFIG_SMP: true`
+  is set. With that set, both cores boot and run real application code; this has been fixed and
+  confirmed working on real hardware, but the fix is not yet in mainline Zephyr — it requires
+  `sdk_source` pointed at the `esphome-platform-zephyr` branch of
+  [`esphomeplatformzephyr/zephyr`](https://github.com/esphomeplatformzephyr/zephyr) (the same branch
+  needed for [mDNS](#mdns-status)).
+  - **SMP and Wi-Fi together do not work yet.** Zephyr's `WIFI_ESP32` driver has `depends on !SMP` —
+    a thread-safety gap specific to this one driver (no other vendor's Wi-Fi driver in the Zephyr tree
+    has this restriction). Lifting it for the original ESP32 specifically (task pinning plus a DPORT
+    cross-core stall handler) is in-progress, unfinished work, not usable yet.
+- **`esp32c6`** has an asymmetric HP/LP core pair in silicon, but only the HP core is built or used —
+  no platform-zephyr variant targets the LP core.
+- **`esp32h2`** is single-core; SMP/AMP doesn't apply.
+- **`nativesim`** is a single host process; SMP/AMP doesn't apply.
+- **ESP32-P4** (dual RISC-V cores) is not currently a platform-zephyr variant. Espressif's own stated
+  intent is for the P4 to be their first RISC-V chip with genuine Zephyr SMP support, but that isn't
+  implemented in Zephyr yet.
+  
+We have noted that Espressif is very active in the Zephyr repository and will monitor for any changes.
+
+## MCUboot and nRF52 flashing
+
+Unlike the `esp32*` variants, which have a ROM-resident bootloader and can be flashed over serial
+from blank silicon, `nrf52` has no ROM bootloader at all. [MCUboot](https://docs.mcuboot.com/) must
+be flashed onto the chip once via an SWD debug probe (e.g. an ST-Link, J-Link, or Black Magic
+Probe) before ESPHome can do anything with it — `esphome run`/`esphome compile` alone cannot get a
+first image onto blank nRF52 silicon.
+
+ESPHome does not currently have a USB-based upload path for this variant. The first application
+image also has to be flashed via the same SWD probe used for MCUboot (`esphome compile` produces a
+signed image suitable for this). Once that first image is running and the device is on the
+network, subsequent updates go through the normal OTA path (`esphome run` without `--device`, or
+`ota:` from the dashboard) like any other ESPHome device.
+
+- **advanced** -> **mcuboot_serial_recovery** enables MCUboot's own USB CDC-ACM serial-recovery
+  Kconfig options, so the bootloader itself listens for a firmware upload over USB for a short
+  window after each reset. This is bootloader-side configuration only; ESPHome's own tooling does
+  not currently drive an upload through it.
+
+> [!IMPORTANT]
+> A board used with `nrf52` needs an MCUboot `boot_partition` large enough for ECDSA-P256 signing,
+> plus (if `mcuboot_serial_recovery` is set) the USB CDC-ACM stack. Many upstream Zephyr nRF52
+> board definitions ship a `boot_partition` sized only for a minimal build and will overflow; see
+> [`board_source`](#board_source) for pointing at a corrected board definition.
+
+## Adding a new variant
+
+> [!NOTE]
+> This section is for contributors extending `platform: zephyr` with a new chip family (e.g. a
+> future STM32 or Nordic nRF54 variant), not for end users writing device configuration.
+
+Every `variant:` carries its own SDK/board/capability data, and the build infrastructure
+(`zephyr/build_zephyr.py`, `zephyr/framework_west.py`, `zephyr/sdk_setup_west.py`) is generic,
+driven entirely by that data. A new variant is a new entry plus variant-specific `config_schema`/
+`to_code` logic — it should not need its own build/framework/SDK-setup files.
+
+1. **Create `esphome/components/zephyr/variants/<name>.py`.** It must export:
+   - `VARIANT_NAME` — the string stored in `zephyr: variant:` (e.g. `"ESP32C6"`).
+   - `VARIANT` — a `ZephyrVariant` instance (see `zephyr/variants/__init__.py`) describing the
+     chip: its `ZephyrSDK` (manifest URL, minimum/default Zephyr version), `boards`,
+     `valid_toolchains`, any binary `blobs` the west manifest needs, which ESPHome `transports`
+     it supports (`wifi`, `ble`, `openthread`, `zigbee`, `ethernet`, `modem`), MCUboot
+     `swap_methods`, and hardware facts like `adc1_channel_map`/`uart_valid_pins`/
+     `gpio_port_width`/`soc`/`qualifier` that aren't discoverable from devicetree. Use an
+     existing module (e.g. `variants/esp32_c6.py`) as the template.
+   - Set `family` if the new variant shares a silicon vendor with an existing variant (e.g.
+     another Nordic or another Espressif chip) — shared behavior should be gated on
+     `zephyr_variant_family()` in the generic components, not duplicated per-variant `elif`
+     chains. Only add a variant-unique field when the underlying hardware model genuinely
+     differs from an existing one; don't assume a sibling variant's field shape applies to
+     yours just because the chips look similar. For example, ESP32's `adc1_channel_map` maps a
+     devicetree channel index to the real silicon ADC channel; nRF52's SAADC has no such
+     mapping, since its devicetree channel index is an arbitrary config slot and the real pin
+     comes from a separate `zephyr,input-positive` property — this needed its own `adc_ain_map`
+     field rather than reusing `adc1_channel_map`.
+   - `config_schema(config)` — validates/normalizes the variant's config and calls
+     `set_core_data(...)`.
+   - `to_code(config)` — calls the shared `zephyr_to_code(config)` plus any variant-specific
+     codegen (build flags, defines, `zephyr_add_prj_conf(...)` calls).
+2. **Register the module** by adding its name to `_VARIANT_MODULES` in
+   `zephyr/variants/__init__.py`. This alone makes the variant a valid value for `zephyr:
+   variant:` — the schema validates against `cv.one_of(*VARIANTS, ...)`, which reads the
+   registry, so no separate schema change is needed.
+3. **Add a `ZEPHYR_VARIANT_<NAME>` constant** in `zephyr/const.py`, matching `VARIANT_NAME`.
+4. **Wire up dispatch** in `zephyr/__init__.py`: add one `elif variant == ZEPHYR_VARIANT_<NAME>:`
+   branch in `_variant_config_schema` (which calls your module's `config_schema`) and one in
+   `to_code` (which calls your module's `to_code`).
+5. **Check every component that already handles `platform: zephyr`**, not just the ones that
+   seem obviously relevant. A new hardware variant can expose gaps in components you wouldn't
+   guess at up front — internal temperature sensing and USB-based logging both needed real
+   fixes for the nRF52 variant that weren't caught until compiled against real hardware, because
+   the initial review only checked components assumed to be relevant. Most components gate on
+   `CORE.is_zephyr` combined with `zephyr_variant() != ZEPHYR_VARIANT_NATIVE_SIM` (i.e. "not the
+   simulator") rather than listing every hardware variant by name, so a new hardware variant
+   usually needs no changes to those. Two things to watch for specifically:
+   - Some conditionals are keyed to a *different, unrelated* platform's own flag — for example
+     `CORE.is_nrf52`, which belongs to the separate NCS-based `platform: nrf52`, not this one. A
+     new same-silicon `platform: zephyr` variant is not automatically covered by these checks and
+     may need its own, separate branch.
+   - Never import from, or edit, a sibling platform's component code to get equivalent behavior,
+     even when the underlying hardware is identical — keep each platform's implementation fully
+     independent.
+6. **Update `esphome/core/defines.h`.** Any `cg.add_define()` or build flag your variant's codegen
+   emits — directly, or via a shared component gating on `zephyr_variant_family()` — must also be
+   added here by hand. This file is static-analysis-only and isn't populated automatically, and is
+   easy to forget since nothing fails at build time when an entry is missing.
+7. **DTS-driven board/bus resolution** (`zephyr/dts_fetch.py`, `zephyr/dts_lookup.py`) is also
+   generic, keyed off the registered `ZephyrVariant`. If the new chip family needs its own way of
+   deriving default bus pins from devicetree, add a `pinctrl_extractors` entry to the variant
+   (e.g. `variants/esp32_c6.py`'s `{"i2c": get_i2c_pinctrl_esp32}`); otherwise nothing else to do
+   here.
+8. **Add tests**: `tests/components/zephyr/test.zephyr-<slug>.yaml` for the variant itself, plus
+   `tests/test_build_components/build_components_base.zephyr-<slug>.yaml` and `test.zephyr-<slug>.yaml`
+   files under the components the new variant supports (see the existing `esp32-c6`/`esp32-h2`/
+   `native-sim` files for the pattern). Test targets are auto-discovered by filename suffix, so
+   no separate CI registration step is needed. Verify new code paths against a real
+   `esphome compile`/`esphome run`, not just against Kconfig/devicetree documentation — several
+   real gaps (ADC handling, toolchain selection, exception-stack-trace linking) were only found
+   this way.
+
+> [!NOTE]
+> A per-variant lookup table can end up living outside the `ZephyrVariant` registry itself — for
+> example, `zephyr/build_zephyr.py`'s toolchain selection is (as of this writing) a separate dict
+> keyed by variant name, not a `ZephyrVariant` field. A missing entry here fails silently by
+> falling back to the host's own compiler instead of the correct cross-toolchain, rather than
+> raising an error. Check `build_zephyr.py` for tables like this when adding a variant, until
+> they're folded into the registry.
 
 ## See Also
 

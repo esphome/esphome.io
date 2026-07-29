@@ -110,6 +110,10 @@ Pin availability on the `zephyr` platform's `esp32`/`esp32h2`/`esp32c6` variants
 [ESP32 pins and Hardware Details](#adc-esp32_pins) above (ADC2 is not exposed). `attenuation:` behaves the
 same as on ESP32, defaulting to `0db`.
 
+On the `nrf52` variant, `pin:` is a GPIO number that maps to one of the SoC's SAADC analog inputs
+(`AIN0`-`AIN7`); which GPIO maps to which `AIN` channel is fixed by the chip, not configurable.
+`attenuation:` does not apply on this variant — gain and reference are fixed internally.
+
 ```yaml
 # Example configuration entry
 sensor:
