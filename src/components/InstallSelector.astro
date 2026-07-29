@@ -1,14 +1,30 @@
 ---
-import { Tabs, TabItem, LinkButton } from "@astrojs/starlight/components";
+import { Code, Tabs, TabItem, LinkButton } from "@astrojs/starlight/components";
 
-// Bump these manually when a significant esphome-desktop release ships.
-// See https://github.com/esphome/esphome-desktop/releases for the latest tag.
-const version = "0.9.0";
+// Every esphome-desktop release publishes a version-independent `latest.json`,
+// so the download links resolve at build time and never go stale. The constant
+// is only a fallback for when the fetch fails (offline build, GitHub outage).
+const FALLBACK_VERSION = "0.16.1";
+const LATEST_JSON = "https://github.com/esphome/esphome-desktop/releases/latest/download/latest.json";
+
+let version = FALLBACK_VERSION;
+try {
+  const response = await fetch(LATEST_JSON);
+  if (response.ok) {
+    const latest = await response.json();
+    if (typeof latest?.version === "string") version = latest.version;
+  } else {
+    console.warn(`InstallSelector: ${LATEST_JSON} returned ${response.status}, using ${FALLBACK_VERSION}`);
+  }
+} catch (error) {
+  console.warn(`InstallSelector: could not fetch ${LATEST_JSON}, using ${FALLBACK_VERSION}`, error);
+}
+
 const tag = `v${version}`;
 const base = `https://github.com/esphome/esphome-desktop/releases/download/${tag}/`;
 ---
 
-<div class="install-selector not-content" data-release-tag={tag} data-release-version={version}>
+<div class="install-selector not-content">
   <Tabs>
     <TabItem label="Home Assistant">
       <p class="install-selector__sub">Run ESPHome Device Builder alongside your Home Assistant instance.</p>
@@ -35,7 +51,7 @@ const base = `https://github.com/esphome/esphome-desktop/releases/download/${tag
           >
             <img
               src="https://my.home-assistant.io/badges/supervisor_addon.svg"
-              alt="Open your Home Assistant instance and show the ESPHome app."
+              alt="Open your Home Assistant instance and show the ESPHome Device Builder app."
               loading="lazy"
             />
           </a>
@@ -47,7 +63,7 @@ const base = `https://github.com/esphome/esphome-desktop/releases/download/${tag
           <strong>Start</strong>, then <strong>Open Web UI</strong>.
         </p>
 
-        <h4>Install Manually</h4>
+        <h3>Install Manually</h3>
         <p>If the button doesn't work, you can install the app by hand:</p>
         <ol class="install-selector__steps">
           <li>
@@ -75,7 +91,7 @@ const base = `https://github.com/esphome/esphome-desktop/releases/download/${tag
           Run the ESPHome Device Builder dashboard as a Docker container alongside your Home Assistant Container
           install:
         </p>
-        <pre><code>docker run --rm --net=host -v "$PWD":/config -it ghcr.io/esphome/esphome</code></pre>
+        <Code code={'docker run --rm --net=host -v "$PWD":/config -it ghcr.io/esphome/esphome'} lang="bash" />
         <p>
           Once it's running, open <a href="http://localhost:6052"><code>http://localhost:6052</code></a> in your browser.
           <code>--net=host</code> is required so online status indicators work; on Docker Desktop (where host networking is
@@ -171,24 +187,21 @@ const base = `https://github.com/esphome/esphome-desktop/releases/download/${tag
 
       <div data-linux-install="deb">
         <p>Double-click the file in your file manager, or run:</p>
-        <pre><code>sudo apt install ./ESPHome.Device.Builder_*.deb</code></pre>
+        <Code code="sudo apt install ./ESPHome.Device.Builder_*.deb" lang="bash" />
       </div>
       <div data-linux-install="rpm" hidden>
         <p>Double-click the file in your file manager, or run:</p>
-        <pre><code>sudo dnf install ./ESPHome.Device.Builder-*.rpm</code></pre>
+        <Code code="sudo dnf install ./ESPHome.Device.Builder-*.rpm" lang="bash" />
       </div>
       <div data-linux-install="aur" hidden>
         <p>
-          Install the <code>esphome-desktop-bin</code> package with your favourite AUR helper:
+          Install the <code>esphome-desktop-bin</code> package with your favorite AUR helper:
         </p>
-        <pre><code>yay -S esphome-desktop-bin</code></pre>
-        <p>or:</p>
-        <pre><code>paru -S esphome-desktop-bin</code></pre>
+        <Code code={"yay -S esphome-desktop-bin\n# or\nparu -S esphome-desktop-bin"} lang="bash" />
       </div>
       <div data-linux-install="appimage" hidden>
         <p>Make it executable and run it:</p>
-        <pre><code>chmod +x ESPHome.Device.Builder_*.AppImage
-./ESPHome.Device.Builder_*.AppImage</code></pre>
+        <Code code={"chmod +x ESPHome.Device.Builder_*.AppImage\n./ESPHome.Device.Builder_*.AppImage"} lang="bash" />
       </div>
 
       <p class="install-selector__hint">
@@ -223,6 +236,11 @@ const base = `https://github.com/esphome/esphome-desktop/releases/download/${tag
     border: 1px solid var(--sl-color-gray-5);
     border-radius: 6px;
     gap: 2px;
+  }
+  /* `display` here is an author rule, so it beats the UA `[hidden]` rule and
+     the arch row would stay visible when the script hides it. */
+  .install-selector__segmented[hidden] {
+    display: none;
   }
   .install-selector__segmented button {
     appearance: none;
@@ -271,13 +289,13 @@ const base = `https://github.com/esphome/esphome-desktop/releases/download/${tag
     display: block;
   }
 
-  .install-selector h4 {
+  .install-selector h3 {
     margin-block: 1.25rem 0.5rem;
     font-size: 1rem;
     font-weight: 600;
   }
 
-  .install-selector pre {
+  .install-selector :global(.expressive-code) {
     margin-block: 0.5rem 1rem;
   }
 </style>
@@ -360,8 +378,8 @@ const base = `https://github.com/esphome/esphome-desktop/releases/download/${tag
 
       // Auto-pick Intel when the UA-CH API reports an x86 architecture.
       navigator.userAgentData
-        ?.getHighEntropyValues(["architecture"])
-        .then((info) => {
+        ?.getHighEntropyValues?.(["architecture"])
+        ?.then((info) => {
           if (info.architecture === "x86") selectArch("x64");
         })
         .catch(() => {});

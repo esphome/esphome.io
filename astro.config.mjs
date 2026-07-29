@@ -186,6 +186,7 @@ export default defineConfig({
         {
           label: "Getting Started",
           items: [
+            { label: "Install Device Builder", link: "/install/" },
             {
               label: "From Home Assistant",
               link: "/guides/getting_started_hassio/",
