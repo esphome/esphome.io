@@ -91,7 +91,12 @@ function githubUrlsFor(type: ProjectType): (string | undefined)[] {
             <div class="types not-content">
               {device.variants!.map((variant, index) => (
                 <label>
-                  <input type="radio" name={`${device.id}-variant`} value={variant.value} checked={index === 0} />
+                  <input
+                    type="radio"
+                    name={`${type.id}-${device.id}-variant`}
+                    value={variant.value}
+                    checked={index === 0}
+                  />
                   <div class="name">{variant.name}</div>
                 </label>
               ))}
@@ -230,9 +235,12 @@ function githubUrlsFor(type: ProjectType): (string | undefined)[] {
       // a fixed manifest and live inside a .project-info block.
       const button = typeRoot.querySelector(":scope > esp-web-install-button");
       if (manifestRoot && button) {
-        const variant = typeRoot.querySelector(`input[name="${radio.value}-variant"]:checked`);
+        const variant = typeRoot.querySelector(`[data-device="${radio.value}"] input[name$="-variant"]:checked`);
         const segment = variant ? variant.value : radio.value;
-        button.manifest = `${manifestRoot}/${segment}/manifest.json`;
+        // esp-web-tools reads `manifest || getAttribute("manifest")` when the
+        // button is clicked, so use the attribute the per-device buttons already
+        // carry rather than a second mechanism.
+        button.setAttribute("manifest", `${manifestRoot}/${segment}/manifest.json`);
       }
       // Show the blocks belonging to this device, hide every other device's
       typeRoot.querySelectorAll("[data-device]").forEach((el) => {
@@ -255,7 +263,9 @@ function githubUrlsFor(type: ProjectType): (string | undefined)[] {
     const params = new URLSearchParams(window.location.search);
     const type = params.get("type");
     if (type) {
-      const typeRadio = document.querySelector(`input[name="type"][value="${type}"]`);
+      // Matched by value rather than by selector: ?type=%22%5D would otherwise
+      // throw out of querySelector and abort the rest of this script.
+      const typeRadio = [...document.querySelectorAll('input[name="type"]')].find((el) => el.value === type);
       if (typeRadio) typeRadio.checked = true;
     }
     if (params.has("diy")) {
@@ -294,7 +304,6 @@ function githubUrlsFor(type: ProjectType): (string | undefined)[] {
   .types label {
     display: flex;
     margin-bottom: 24px;
-    align-items: top;
     flex-direction: column;
     position: relative;
     padding-left: 48px;
@@ -369,11 +378,5 @@ function githubUrlsFor(type: ProjectType): (string | undefined)[] {
   }
   body.show-diy .diy {
     display: initial;
-  }
-  .installer-footer {
-    margin-top: 56px;
-    padding-top: 16px;
-    font-size: 0.8em;
-    border-top: 1px solid darkgrey;
   }
 </style>

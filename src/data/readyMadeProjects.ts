@@ -119,7 +119,7 @@ export const PROJECT_TYPES: ProjectType[] = [
         ],
         title: "ESP32-S3-BOX-3",
         body: [
-          "The open-source reference design for voice assistants by Espressif. The non-3 and lite variant are older versions that are no longer for sale.",
+          "The open-source reference design for voice assistants by Espressif. The non-3 and lite variants are older versions that are no longer for sale.",
         ],
         linksLabel: "Buy ESP32-S3-BOX-3",
         links: [
@@ -267,7 +267,7 @@ export const PROJECT_TYPES: ProjectType[] = [
     id: "media",
     name: "Media Player",
     description:
-      'Create a multi-speaker music listening experience powered by <a href="https://www.sendspin-audio.com" target="_blank">Sendspin</a>.',
+      'Create a multi-speaker music listening experience powered by <a href="https://www.sendspin-audio.com" target="_blank" rel="noopener noreferrer">Sendspin</a>.',
     devicePrompt: "Pick the device you want to turn into a media player:",
     manifestRoot: "https://firmware.esphome.io/media-player",
     advanced: { githubUrl: "https://github.com/esphome/media-players" },
