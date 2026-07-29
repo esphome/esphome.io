@@ -24,7 +24,7 @@ export interface Device {
    * key that ties this device's blocks to its radio button.
    */
   id: string;
-  /** Path under `public/`. */
+  /** Absolute URL path, e.g. `/projects/serial-proxy/board.png` for `public/projects/serial-proxy/board.png`. */
   image: string;
   imageAlt: string;
   /** Overrides the project type's `manifestRoot` for this device. */
