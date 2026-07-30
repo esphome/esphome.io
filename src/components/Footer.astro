@@ -1,6 +1,9 @@
 ---
 import EditLink from "virtual:starlight/components/EditLink";
 import LastUpdated from "virtual:starlight/components/LastUpdated";
+import CrosspostBadges from "./CrosspostBadges.astro";
+
+const isBlogPage = Astro.url.pathname.startsWith("/blog");
 
 const footerLinks = [
   {
@@ -30,6 +33,8 @@ const footerLinks = [
   },
 ];
 ---
+
+{isBlogPage && <CrosspostBadges />}
 
 <footer class="sl-flex">
   <div class="meta sl-flex">

@@ -131,7 +131,7 @@ export default defineConfig({
   image: {
     breakpoints: imageBreakpoints,
     responsiveStyles: true,
-    domains: ["assets.openhomefoundation.org"],
+    domains: ["assets.openhomefoundation.org", "www.openhomefoundation.org"],
   },
   markdown: {
     // Astro 6 no longer defaults `markdown.gfm` to true, and @astrojs/mdx only applies remark-gfm

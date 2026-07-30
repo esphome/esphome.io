@@ -228,15 +228,20 @@ pip install tornado esptool
 # Start the dashboard
 esphome dashboard config
 
-# On Docker, host networking mode is required for online status indicators
+# On Docker, host networking mode lets the dashboard find devices and track their status
 docker run --rm --net=host -v "${PWD}":/config -it ghcr.io/esphome/esphome
 
-# On Docker with MacOS, the host networking option doesn't work as expected. An
-# alternative is to use the following command if you are a MacOS user.
-docker run --rm -p 6052:6052 -e ESPHOME_DASHBOARD_USE_PING=true -v "${PWD}":/config -it ghcr.io/esphome/esphome
+# On Docker Desktop, where host networking is not enabled by default, publish the port instead
+docker run --rm -p 6052:6052 -v "${PWD}":/config -it ghcr.io/esphome/esphome
 ```
 
 After that, you will be able to access the ESPHome Device Builder at `localhost:6052`.
+
+> [!NOTE]
+> `--net=host` lets the ESPHome Device Builder see mDNS, which is how it finds devices and tracks whether they are
+> online. Without host networking the Device Builder still runs, but `.local` names will not resolve, so it can only
+> reach devices that have a fixed address - one set with `use_address` or
+> [`manual_ip`](/components/wifi#wifi-manual_ip) in the device's own configuration.
 
 Logging level can be set with the env var `ESPHOME_LOG_LEVEL` (default is `INFO`).
 
