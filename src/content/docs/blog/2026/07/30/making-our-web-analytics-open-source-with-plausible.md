@@ -4,6 +4,10 @@ head:
     attrs:
       rel: "canonical"
       href: "https://www.openhomefoundation.org/blog/making-our-web-analytics-open-source-with-plausible/"
+  - tag: meta
+    attrs:
+      http-equiv: "refresh"
+      content: "0; url=https://www.openhomefoundation.org/blog/making-our-web-analytics-open-source-with-plausible/"
   - tag: script
     content: |
       window.location.replace("https://www.openhomefoundation.org/blog/making-our-web-analytics-open-source-with-plausible/");
