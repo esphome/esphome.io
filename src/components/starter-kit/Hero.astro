@@ -120,7 +120,7 @@
     // face-on pose and settles here as the steady-state isometric direction.
     const CAM_DIR = new THREE.Vector3(1, 0, 1).normalize();
 
-    const camera = new THREE.PerspectiveCamera(35, width / height, 0.01, 100);
+    const camera = new THREE.PerspectiveCamera(35, width / height, 0.05, 20);
 
     camera.position.copy(CAM_DIR).multiplyScalar(10);
     camera.lookAt(0, 0, 0);
@@ -132,6 +132,7 @@
       depth: true,
       powerPreference: "high-performance",
     });
+
     // Cap at 2× — keeps fill-rate manageable on 3× retina screens while
     // still rendering crisp wireframe edges on hi-DPI displays.
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -1570,7 +1571,11 @@
       const dw = Math.abs(next.width - width);
       const dh = Math.abs(next.height - height);
       if (dw < RESIZE_EPSILON_PX && dh < RESIZE_EPSILON_PX) return;
-      if (isCoarsePointer && dw < RESIZE_EPSILON_PX && dh < TOOLBAR_HEIGHT_GUARD_PX)
+      if (
+        isCoarsePointer &&
+        dw < RESIZE_EPSILON_PX &&
+        dh < TOOLBAR_HEIGHT_GUARD_PX
+      )
         return;
 
       width = next.width;
@@ -1813,7 +1818,12 @@
 
     @include bp(tablet) {
       height: calc(100svh - var(--sl-nav-height));
+      max-height: 45rem;
       padding-top: 8.75rem;
+    }
+
+    @include bp(desktop) {
+      max-height: 100%;
     }
 
     .container {
