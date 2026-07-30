@@ -54,6 +54,12 @@ ota:
 - All [automations](/automations) supported by [Ota](/components/ota/).
 
 > [!NOTE]
+> On the `zephyr` platform, the OTA file checksum uses SHA256 instead of MD5 (NCS's crypto drivers don't implement
+> MD5). The device requires this from the uploading client, rather than falling back to MD5 -- an `esphome` version
+> that doesn't support it yet cannot OTA a `zephyr` device at all. Once a device is running `zephyr` platform
+> firmware, going back to an older `esphome` requires a wired reflash; it cannot be done over the air.
+
+> [!NOTE]
 > After a serial upload, ESP8266 modules must be reset before OTA updates will work. If you attempt to perform an OTA
 > update and receive the error message `Bad Answer: ERR: ERROR[11]: Invalid bootstrapping`, the ESP module/board
 > must be power-cycled.

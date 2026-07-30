@@ -28,18 +28,14 @@ zephyr:
   board name or a fully-qualified `board/soc/qualifier` string; ESPHome automatically qualifies a
   bare name using the variant's own SoC/qualifier.
 - **board_source** (*Optional*): Fetch board definitions (a `boards/<vendor>/<board>/board.yml` and
-  friends) from somewhere other than the variant's own upstream Zephyr tree — for example a custom
-  board not yet merged upstream. See [`board_source`](#board_source).
-- **sdk_source** (*Optional*): Override where the Zephyr SDK itself (the `zephyr` west manifest) is
-  fetched from — a fork, a pre-release branch, or an already-initialized local west workspace. See
-  [`sdk_source`](#sdk_source). Mutually exclusive with **version**.
-- **version** (*Optional*, string): The Zephyr version to build against. Defaults to the variant's
-  recommended version. The literal value `recommended` is also accepted as an explicit alias for that
-  default. Ignored (and disallowed) when **sdk_source** is set, since the source itself determines the
-  version.
-- **refresh** (*Optional*, [Time](/guides/configuration-types#time)): How often a git-based
-  **board_source** or **sdk_source** is re-checked for updates (via `git pull`), mirroring
-  [external components' `refresh`](/components/external_components/#refresh). Defaults to `1d`.
+  friends) from somewhere other than the selected framework's own upstream tree — for example a
+  custom board not yet merged upstream. A git source takes its own **refresh** (*Optional*,
+  [Time](/guides/configuration-types#time)), independent of **framework** → **refresh**, mirroring
+  [external components' `refresh`](/components/external_components/#refresh). Defaults to `1d`. See
+  [`board_source`](#board_source).
+- **framework** (*Optional*, mapping): Which SDK to build against, its version, where to fetch it
+  from, and (for a git **source**) its own **refresh** — independent of **board_source**'s. See
+  [`framework`](#framework).
 - **west_version** (*Optional*, string): Override the version of `west` used to fetch and build the
   Zephyr workspace. Defaults to the version in esphome/components/zephyr/requirements_west.txt.
 - **ninja_version** (*Optional*, string): Override the version of `ninja` used to build. Defaults to the
@@ -49,13 +45,16 @@ zephyr:
   chip's burned-in MAC address.
 - **watchdog_timeout** (*Optional*, [Time](/guides/configuration-types#time)): How long the main loop
   may go without checking in before Zephyr's hardware watchdog resets the device. Must be between 5
-  and 60 seconds. Defaults to `5s`. Not valid for the `nativesim` variant, which has no real watchdog
-  hardware.
+  and 60 seconds. Defaults to `10s` (covers heavier startup workloads like Zigbee's ZBOSS stack
+  without needing a separate bump). Not valid for the `nativesim` variant, which has no real
+  watchdog hardware.
 - **log_level** (*Optional*, string): Zephyr's own native logging verbosity — separate from
   ESPHome's `logger:` `level:`, and off by default. One of `NONE`, `ERROR`, `WARN`, `INFO`, `DEBUG`,
   `VERBOSE`. Defaults to `ERROR`. See [Zephyr's own logging vs. heavy debug levels](#zephyrs-own-logging-vs-heavy-debug-levels)
   before turning this up.
 - **kconfig_options** (*Optional*, mapping): Raw Zephyr Kconfig passthrough. See [`kconfig_options`](#kconfig_options).
+- **snippets** (*Optional*, list of strings): Zephyr snippet names passed through to `west build -S`.
+  See [`snippets`](#snippets).
 - **advanced** (*Optional*, mapping): Variant-specific advanced options that most users won't need.
   Currently only used by `nrf52`:
   - **mcuboot_serial_recovery** (*Optional*, boolean): Enable MCUboot Kconfig options for USB
@@ -63,16 +62,20 @@ zephyr:
 
 ## Variants
 
-| Variant | Chip family | Default board | Supports |
-| --- | --- | --- | --- |
-| `esp32` | Original ESP32 (Xtensa, dual-core) | `esp32_devkitc` | Wi-Fi, BLE |
-| `esp32h2` | ESP32-H2 (RISC-V) | `esp32h2_devkitm` | BLE, Thread (via `openthread:`) |
-| `esp32c6` | ESP32-C6 (RISC-V) | `esp32c6_devkitc` | Wi-Fi, BLE, Thread (via `openthread:`) |
-| `nativesim` | Host binary, no real hardware | `native_sim/native/64` | Simulation on your PC |
-| `nrf52` | nRF52840 (Cortex-M4) | `adafruit_feather_nrf52840` | BLE, Thread (via `openthread:`) |
+| Variant | Chip family | Default board | Default framework | Supports |
+| --- | --- | --- | --- | --- |
+| `esp32` | Original ESP32 (Xtensa, dual-core) | [`esp32_devkitc`](https://docs.zephyrproject.org/latest/boards/espressif/esp32_devkitc/doc/index.html) | mainline Zephyr | Wi-Fi, BLE |
+| `esp32h2` | ESP32-H2 (RISC-V) | [`esp32h2_devkitm`](https://docs.zephyrproject.org/latest/boards/espressif/esp32h2_devkitm/doc/index.html) | mainline Zephyr | BLE, Thread (via `openthread:`) |
+| `esp32c6` | ESP32-C6 (RISC-V) | [`esp32c6_devkitc`](https://docs.zephyrproject.org/latest/boards/espressif/esp32c6_devkitc/doc/index.html) | mainline Zephyr | Wi-Fi, BLE, Thread (via `openthread:`) |
+| `nativesim` | Host binary, no real hardware | [`native_sim/native/64`](https://docs.zephyrproject.org/latest/boards/native/native_sim/doc/index.html) | mainline Zephyr | Simulation on your PC |
+| `nrf52` | nRF52840 (Cortex-M4) | [`adafruit_feather_nrf52840`](https://docs.zephyrproject.org/latest/boards/adafruit/feather_nrf52840/doc/index.html) | nRF Connect SDK (NCS) | BLE, Thread (via `openthread:`) |
 
 All three `esp32*` variants build only the single scheduled core Zephyr's Wi-Fi/BLE drivers require;
 where the chip has more than one core, only the main application core's image is built.
+
+`nrf52` is the only variant with more than one selectable framework today — it defaults to Nordic's
+own nRF Connect SDK (NCS), but `framework: type: zephyr` builds it against mainline Zephyr instead
+(the same source the `esp32*` family uses). See [`framework`](#framework).
 
 It is not recommended to use esp variants for other than experimental purposes, the esp32 platform,
 esp-idf framework delivers superior functionality and stability.  These variants are being used to test
@@ -87,8 +90,8 @@ board or listed in the board's pinout.
 
 ## `board_source`
 
-By default, ESPHome resolves **board** against the boards already known to the variant's own Zephyr
-tree. `board_source` points at a different tree to search instead, using the same shape as
+By default, ESPHome resolves **board** against the boards already known to the selected framework's
+own tree. `board_source` points at a different tree to search instead, using the same shape as
 [external components' `source`](/components/external_components/#configuration-variables):
 
 ```yaml
@@ -100,10 +103,13 @@ zephyr:
     type: git
     url: https://github.com/example/my-zephyr-boards
     ref: main
+    refresh: 1d   # how often to re-check this git source -- own knob, independent of framework's
 ```
 
 `board_source` requires **board** to also be set, and the source must contain a
-`boards/<vendor>/<my_custom_board>/board.yml` for the board named.
+`boards/<vendor>/<my_custom_board>/board.yml` for the board named. A git `board_source` accepts its
+own **refresh** (defaults to `1d`); a bare `github://` shorthand always uses that default, since
+there's no field to override it on.
 
 [custom_zephyr_boards] https://github.com/esphomeplatformzephyr/custom_zephyr_boards is provided to allow
 for commonly needed board definitions.
@@ -114,42 +120,84 @@ for commonly needed board definitions.
 > different qualifier scheme than the variant it's based on, type the fully-qualified `board:` string
 > yourself (e.g. `my_custom_board/esp32c6/my_qualifier`) instead of a bare name.
 
-## `sdk_source`
+> [!TIP]
+> If your board only differs from a stock upstream board by flash or PSRAM size, a
+> [`snippets`](#snippets) entry (e.g. `espressif-flash-4M`) is usually simpler than a custom
+> `board_source` board.
 
-`sdk_source` overrides *where the Zephyr SDK is fetched from*, as opposed to `board_source`, which only
-overrides where board definitions come from. This is for building against a fork or an unreleased
-branch of Zephyr itself:
+## `framework`
+
+`framework` selects which SDK a variant builds against, its version, and (optionally) where to fetch
+it from:
+
+- **type** (*Optional*, string): Which SDK to use. Most variants only support one (mainline Zephyr);
+  `nrf52` supports `ncs` (the default) and `zephyr` (mainline, as an alternate). See
+  [Variants](#variants) for each variant's default.
+- **version** (*Optional*, string): The version to build against, in **that SDK's own numbering** —
+  defaults to the SDK's own recommended version. The literal value `recommended` is also accepted as
+  an explicit alias for that default. Mutually exclusive with **source**, since a source determines
+  the version from itself.
+- **source** (*Optional*): Overrides *where the selected SDK is fetched from* — a fork, an unreleased
+  branch, or an already-initialized local west workspace — as opposed to `board_source`, which only
+  overrides where board definitions come from.
+- **refresh** (*Optional*, [Time](/guides/configuration-types#time)): How often a git **source** is
+  re-checked for updates (via `git pull`). Own knob, independent of `board_source`'s — they're
+  different git sources with potentially different update cadences. Defaults to `1d`.
+
+> [!IMPORTANT]
+> A version number only means something within the SDK that produced it — NCS's own release numbers
+> (e.g. `3.4.0`) do not track mainline Zephyr's version numbers, and Nordic cherry-picks fixes into
+> NCS independently of upstream release cadence. Never assume a version comparison is meaningful
+> across a `type:` change.
 
 ```yaml
-# Example configuration entry
+# Example configuration entry -- default framework and version for the variant
 zephyr:
   variant: esp32c6
-  sdk_source:
-    ref: v4.5.0-rc1  # a branch/tag of the variant's own official Zephyr manifest
 ```
 
 ```yaml
-# Example configuration entry, alternate remote
+# Example configuration entry -- explicit type and version
 zephyr:
-  variant: esp32c6
-  sdk_source:
-    type: git
-    url: https://github.com/my-fork/zephyr
-    ref: my-branch
+  variant: nrf52
+  framework:
+    type: zephyr   # mainline, instead of nrf52's NCS default
+    version: "4.4.1"
 ```
 
 ```yaml
-# Example configuration entry, already-initialized local west workspace
+# Example configuration entry -- source: branch/tag of the selected SDK's own official manifest
 zephyr:
   variant: esp32c6
-  sdk_source:
-    type: local
-    path: /home/me/zephyrproject
+  framework:
+    source:
+      type: git
+      ref: v4.5.0-rc1
 ```
 
-`url` may be omitted to target a branch of the variant's own official manifest (for example, an
-alpha or pre-release). Setting `sdk_source` determines the Zephyr version from the source itself, so
-it cannot be combined with **version**.
+```yaml
+# Example configuration entry -- source: alternate remote (a fork)
+zephyr:
+  variant: esp32c6
+  framework:
+    source:
+      type: git
+      url: https://github.com/my-fork/zephyr
+      ref: my-branch
+```
+
+```yaml
+# Example configuration entry -- source: already-initialized local west workspace
+zephyr:
+  variant: esp32c6
+  framework:
+    source:
+      type: local
+      path: /home/me/zephyrproject
+```
+
+`source: url` may be omitted to target a branch of the selected SDK's own official manifest (for
+example, an alpha or pre-release) — `source: {type: git, ref: v4.5.0-rc1}` alone is enough.
 
 ## `kconfig_options`
 
@@ -170,6 +218,26 @@ zephyr:
 ```
 
 Option names are accepted with or without the leading `CONFIG_`/`SB_CONFIG_` prefix.
+
+## `snippets`
+
+`snippets` is a raw passthrough to Zephyr's own snippet mechanism (`west build -S <name>`) — named
+devicetree overlay and Kconfig fragments that can be applied to a stock, upstream board. One `-S` is
+passed per entry:
+
+```yaml
+# Example configuration entry
+zephyr:
+  variant: esp32c6
+  board: esp32c6_devkitc
+  snippets:
+    - espressif-flash-4M
+```
+
+Espressif ships its own official `espressif-flash-2M`/`-4M`/`-8M`/`-16M`/.../`-128M` (and matching
+`espressif-psram-*`) snippets for exactly this: adjusting a board's flash/PSRAM size without forking
+the whole board. If your board only differs from an upstream one by flash or PSRAM size, prefer a
+snippet over a [`board_source`](#board_source) custom board.
 
 ## Zephyr's own logging vs. heavy debug levels
 
@@ -196,18 +264,19 @@ from actually working correctly out of the box:
   which batches many question types into one packet — are frequently never answered.
 
 Fixes for both exist as Zephyr source patches, but aren't merged upstream yet. Until they land in
-mainline Zephyr, get a working mDNS by pointing `sdk_source` at the `esphome-platform-zephyr` branch
-of [`esphomeplatformzephyr/zephyr`](https://github.com/esphomeplatformzephyr/zephyr), which carries
-both patches:
+mainline Zephyr, get a working mDNS by pointing `framework: source:` at the `esphome-platform-zephyr`
+branch of [`esphomeplatformzephyr/zephyr`](https://github.com/esphomeplatformzephyr/zephyr), which
+carries both patches:
 
 ```yaml
 # Example configuration entry
 zephyr:
   variant: esp32c6
-  sdk_source:
-    type: git
-    url: https://github.com/esphomeplatformzephyr/zephyr
-    ref: esphome-platform-zephyr
+  framework:
+    source:
+      type: git
+      url: https://github.com/esphomeplatformzephyr/zephyr
+      ref: esphome-platform-zephyr
   kconfig_options:
     # Only meaningful against esphome-platform-zephyr -- enables its DNS-SD announce-completeness
     # fix. Unknown on mainline Zephyr, which doesn't have this Kconfig symbol yet.
@@ -233,7 +302,7 @@ Espressif chip under Zephyr works today, including the single-core-image builds 
   Zephyr logs a warning at config time reminding you of this unless `kconfig_options: CONFIG_SMP: true`
   is set. With that set, both cores boot and run real application code; this has been fixed and
   confirmed working on real hardware, but the fix is not yet in mainline Zephyr — it requires
-  `sdk_source` pointed at the `esphome-platform-zephyr` branch of
+  `framework: source:` pointed at the `esphome-platform-zephyr` branch of
   [`esphomeplatformzephyr/zephyr`](https://github.com/esphomeplatformzephyr/zephyr) (the same branch
   needed for [mDNS](#mdns-status)).
   - **SMP and Wi-Fi together do not work yet.** Zephyr's `WIFI_ESP32` driver has `depends on !SMP` —
@@ -289,12 +358,17 @@ driven entirely by that data. A new variant is a new entry plus variant-specific
 1. **Create `esphome/components/zephyr/variants/<name>.py`.** It must export:
    - `VARIANT_NAME` — the string stored in `zephyr: variant:` (e.g. `"ESP32C6"`).
    - `VARIANT` — a `ZephyrVariant` instance (see `zephyr/variants/__init__.py`) describing the
-     chip: its `ZephyrSDK` (manifest URL, minimum/default Zephyr version), `boards`,
-     `valid_toolchains`, any binary `blobs` the west manifest needs, which ESPHome `transports`
-     it supports (`wifi`, `ble`, `openthread`, `zigbee`, `ethernet`, `modem`), MCUboot
-     `swap_methods`, and hardware facts like `adc1_channel_map`/`uart_valid_pins`/
-     `gpio_port_width`/`soc`/`qualifier` that aren't discoverable from devicetree. Use an
-     existing module (e.g. `variants/esp32_c6.py`) as the template.
+     chip: its default `ZephyrSDK` (manifest URL, minimum/default version) and `sdk_name` (the
+     `framework: type:` key naming it), `boards`, `valid_toolchains`, any binary `blobs` the west
+     manifest needs, which ESPHome `transports` it supports (`wifi`, `ble`, `openthread`,
+     `zigbee`, `ethernet`, `modem`), MCUboot `swap_methods`, and hardware facts like
+     `adc1_channel_map`/`uart_valid_pins`/`gpio_port_width`/`soc`/`qualifier` that aren't
+     discoverable from devicetree. Use an existing module (e.g. `variants/esp32_c6.py`) as the
+     template. If the chip has more than one buildable SDK (like `nrf52`'s NCS/mainline choice),
+     add the others to `alt_sdks` — see `variants/nrf52.py`. A `ZephyrSDK` whose board-owning repo
+     ref isn't derivable from its own version number (e.g. a vendor SDK that bundles a Zephyr fork
+     under its own, unrelated tag scheme) sets `resolve_boards_ref_via_manifest=True` so
+     `dts_fetch.py` reads the real ref from the SDK's own manifest instead of guessing.
    - Set `family` if the new variant shares a silicon vendor with an existing variant (e.g.
      another Nordic or another Espressif chip) — shared behavior should be gated on
      `zephyr_variant_family()` in the generic components, not duplicated per-variant `elif`
