@@ -59,10 +59,11 @@ The entry's own `id` refers to the slot, which is what actions and conditions ta
   [Cross-fading between tracks](#cross-fading-between-tracks).
 
   - **id** (**Required**, [ID](/guides/configuration-types#id)): The ID to reference the outgoing artwork.
-- **source** (*Optional*): Which artwork to display. One of `album` (default), `artist` or `none`.
+- **source** (*Optional*): Which artwork to display. One of `album` (default) or `artist`.
 - **display_offset** (*Optional*, [Time](/guides/configuration-types#time)): Request a shift when
   `on_image_display` fires relative to the moment the server asked for the artwork to appear. A positive value
-  fires it early, a negative value delays it. Must be between `-60s` and `60s`. Defaults to `0ms`.
+  fires it early, a negative value delays it. Must be a whole number of milliseconds between `-60s` and `60s`.
+  Defaults to `0ms`.
 - **transparency** (*Optional*): If set, the alpha channel of the artwork will be taken into account. The
   possible values are `opaque` (default), `chroma_key` and `alpha_channel`. See the discussion on transparency
   in the [image component](/components/image/#transparency-options).
@@ -103,7 +104,8 @@ for more. Only needed when a `transition_image` is configured.
 
 > [!IMPORTANT]
 > Every `on_image_display` must run this action exactly once if `transition_image` is configured. If it
-> is not run, no further artwork appears until the artwork is cleared.
+> is not run, no further artwork appears until the artwork is cleared, and a warning naming the slot is
+> logged ten seconds after the artwork was displayed.
 
 #### Configuration variables
 
