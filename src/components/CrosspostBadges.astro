@@ -6,7 +6,7 @@ import { getCollection } from "astro:content";
 
 const crosspostEntries = await getCollection("docs", (entry) => Boolean(entry.data.crosspostSource));
 const crossposts = crosspostEntries.map((entry) => ({
-  path: `/${entry.id}/`,
+  path: `/${entry.data.slug ?? entry.id}/`,
   label: `This article is shared from the ${entry.data.crosspostSource}`,
 }));
 ---
