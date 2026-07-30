@@ -543,8 +543,8 @@ services:
       # if needed, add esp device(s) as in command line examples above
       - /dev/ttyUSB0:/dev/ttyUSB0
       - /dev/ttyACM0:/dev/ttyACM0
-    # The host networking driver only works on Linux hosts, but is available as a Beta feature,
-    # on Docker Desktop version 4.29 and later.
+    # The host networking driver only works on Linux hosts; on Docker Desktop version 4.34 and
+    # later it must first be enabled under Settings > Resources > Network.
     network_mode: host
     restart: always
 ```
@@ -556,8 +556,9 @@ services:
 > [ESPHome Device Builder](/guides/getting_started_hassio#installing-esphome-device-builder) finds devices and tracks
 > whether they are online. In order for mDNS to work, you must use Docker's host networking mode.
 >
-> The [host networking driver](https://docs.docker.com/network/drivers/host/) only works on Linux hosts; it is
-> available on Docker Desktop version 4.29 and later.
+> The [host networking driver](https://docs.docker.com/engine/network/drivers/host/) only works on Linux hosts. On
+> Docker Desktop version 4.34 and later it is available, but must first be enabled under
+> Settings > Resources > Network.
 >
 > If you don't use the host networking driver, the Device Builder still runs, and it still checks devices with a
 > periodic ICMP ping sweep. Without multicast, however, `.local` names cannot be resolved, so the sweep only has an
