@@ -432,8 +432,13 @@ const base = `https://github.com/esphome/esphome-desktop/releases/download/${tag
         },
       };
 
-      let currentFormat = "deb";
-      let currentArch = "x64";
+      // Derived from the markup so the pressed buttons stay the single source
+      // of truth for what the download button points at.
+      const pressed = (group, attr, fallback) =>
+        root.querySelector(`[data-segmented="${group}"] button[aria-pressed="true"]`)?.dataset[attr] ?? fallback;
+
+      let currentFormat = pressed("linux-format", "format", "deb");
+      let currentArch = pressed("linux-arch", "arch", "x64");
 
       const refreshDownload = () => {
         const f = formats[currentFormat];
@@ -458,6 +463,9 @@ const base = `https://github.com/esphome/esphome-desktop/releases/download/${tag
         currentArch = arch;
         refreshDownload();
       });
+
+      // Reconcile the server-rendered href/label with the pressed buttons.
+      refreshDownload();
     })();
   })();
 </script>
