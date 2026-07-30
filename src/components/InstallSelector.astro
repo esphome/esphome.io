@@ -94,8 +94,10 @@ const base = `https://github.com/esphome/esphome-desktop/releases/download/${tag
         <Code code={'docker run --rm --net=host -v "$PWD":/config -it ghcr.io/esphome/esphome'} lang="bash" />
         <p>
           Once it's running, open <a href="http://localhost:6052"><code>http://localhost:6052</code></a> in your browser.
-          <code>--net=host</code> is required so online status indicators work; on Docker Desktop (where host networking is
-          unavailable) substitute <code>-p 6052:6052</code> instead.
+          <code>--net=host</code> lets the dashboard use mDNS, which it needs to discover devices and to resolve their
+          <code>.local</code> names. On Docker Desktop (where host networking is unavailable) substitute
+          <code>-p 6052:6052</code>; the dashboard still runs, but without mDNS it can only reach devices you give a
+          fixed address.
         </p>
         <p>
           See the <a href="/guides/getting_started_command_line/">command-line guide</a> for additional options.
