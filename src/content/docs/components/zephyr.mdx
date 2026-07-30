@@ -333,16 +333,8 @@ signed image suitable for this). Once that first image is running and the device
 network, subsequent updates go through the normal OTA path (`esphome run` without `--device`, or
 `ota:` from the dashboard) like any other ESPHome device.
 
-- **advanced** -> **mcuboot_serial_recovery** enables MCUboot's own USB CDC-ACM serial-recovery
-  Kconfig options, so the bootloader itself listens for a firmware upload over USB for a short
-  window after each reset. This is bootloader-side configuration only; ESPHome's own tooling does
-  not currently drive an upload through it.
-
 > [!IMPORTANT]
-> A board used with `nrf52` needs an MCUboot `boot_partition` large enough for ECDSA-P256 signing,
-> plus (if `mcuboot_serial_recovery` is set) the USB CDC-ACM stack. Many upstream Zephyr nRF52
-> board definitions ship a `boot_partition` sized only for a minimal build and will overflow; see
-> [`board_source`](#board_source) for pointing at a corrected board definition.
+> A board used with `nrf52` needs an MCUboot `boot_partition` large enough for ECDSA-P256 signing.
 
 ## Adding a new variant
 
