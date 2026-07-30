@@ -9,12 +9,18 @@ const LATEST_JSON = "https://github.com/esphome/esphome-desktop/releases/latest/
 
 let version = FALLBACK_VERSION;
 try {
-  const response = await fetch(LATEST_JSON);
-  if (response.ok) {
-    const latest = await response.json();
-    if (typeof latest?.version === "string") version = latest.version;
-  } else {
+  // Bounded so an unresponsive GitHub cannot stall the build; every failure
+  // path below leaves FALLBACK_VERSION in place.
+  const response = await fetch(LATEST_JSON, { signal: AbortSignal.timeout(10_000) });
+  if (!response.ok) {
     console.warn(`InstallSelector: ${LATEST_JSON} returned ${response.status}, using ${FALLBACK_VERSION}`);
+  } else {
+    const latest = await response.json();
+    if (typeof latest?.version === "string" && latest.version.trim() !== "") {
+      version = latest.version.trim();
+    } else {
+      console.warn(`InstallSelector: no usable "version" in ${LATEST_JSON}, using ${FALLBACK_VERSION}`);
+    }
   }
 } catch (error) {
   console.warn(`InstallSelector: could not fetch ${LATEST_JSON}, using ${FALLBACK_VERSION}`, error);
