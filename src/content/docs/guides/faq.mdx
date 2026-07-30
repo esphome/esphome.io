@@ -520,8 +520,8 @@ docker run --rm -v "${PWD}":/config --device=/dev/ttyUSB0 -it ghcr.io/esphome/es
 # Warning: this command is currently not working with Docker on MacOS. (see note below)
 docker run --rm -v "${PWD}":/config --net=host -it ghcr.io/esphome/esphome
 
-# Start dashboard on port 6052 (MacOS specific command)
-docker run --rm -p 6052:6052 -e ESPHOME_DASHBOARD_USE_PING=true -v "${PWD}":/config -it ghcr.io/esphome/esphome
+# Start dashboard on port 6052 (without host networking, for example on MacOS)
+docker run --rm -p 6052:6052 -v "${PWD}":/config -it ghcr.io/esphome/esphome
 
 # Setup a bash alias:
 alias esphome='docker run --rm -v "${PWD}":/config --net=host -it ghcr.io/esphome/esphome'
@@ -552,14 +552,17 @@ services:
 <span id="docker-reference-notes"></span>
 
 > [!NOTE]
-> By default, ESPHome uses mDNS to resolve device IPs on the network; this is used to determine online/offline state
-> in the [ESPHome Device Builder](/guides/getting_started_hassio#installing-esphome-device-builder). In order for this feature to work, you
-> must use Docker's host networking mode.
+> By default, ESPHome uses mDNS to discover devices and resolve their IPs on the network; this is how the
+> [ESPHome Device Builder](/guides/getting_started_hassio#installing-esphome-device-builder) finds devices and tracks
+> whether they are online. In order for mDNS to work, you must use Docker's host networking mode.
 >
 > The [host networking driver](https://docs.docker.com/network/drivers/host/) only works on Linux hosts; it is
 > available on Docker Desktop version 4.29 and later.
 >
-> If you don't want to use the host networking driver, you have to use an alternate method as described below.
+> If you don't use the host networking driver, the Device Builder still runs, and it still checks devices with a
+> periodic ICMP ping sweep. Without multicast, however, `.local` names cannot be resolved, so the sweep only has an
+> address to ping for devices that have a fixed one - set with `use_address` or
+> [`manual_ip`](/components/wifi#wifi-manual_ip) in the device's own configuration. Other devices will show no status.
 >
 > Note that mDNS might not work if your Home Assistant server and your ESPHome nodes are on different subnets
 > and/or VLANs. If your router supports Avahi, you can configure mDNS to work across different subnets.
@@ -567,10 +570,6 @@ services:
 >
 > 1. Enable Avahi on both subnets (install Avahi modules on OpenWRT or pfSense).
 > 1. Enable UDP traffic from your ESPHome device's subnet to 224.0.0.251/32 on port 5353.
->
-> Alternatively, you can configure the [ESPHome Device Builder](/guides/getting_started_hassio#installing-esphome-device-builder) to use ICMP
-> pings to check the status of devices by setting `"status_use_ping": true` or, with Docker:
-> `-e ESPHOME_DASHBOARD_USE_PING=true`
 >
 > See also [https://github.com/esphome/issues/issues/641#issuecomment-534156628](https://github.com/esphome/issues/issues/641#issuecomment-534156628).
 
