@@ -146,60 +146,75 @@
     const bloomLayer = new THREE.Layers();
     bloomLayer.set(BLOOM_LAYER);
 
-    // HalfFloat gives 16-bit precision — eliminates banding in bloom gradients.
-    const bloomRenderTarget = new THREE.WebGLRenderTarget(width, height, {
-      type: THREE.HalfFloatType,
-    });
-    const bloomComposer = new EffectComposer(renderer, bloomRenderTarget);
-    bloomComposer.renderToScreen = false;
-    bloomComposer.addPass(new RenderPass(scene, camera));
-    const unrealBloomPass = new UnrealBloomPass(
-      new THREE.Vector2(width, height),
-      1.2, // strength
-      1.0, // radius
-      0.0, // threshold
-    );
-    bloomComposer.addPass(unrealBloomPass);
+    // The bloom/MSAA composite pipeline is only ever used during song
+    // playback, which can't start until every module has been clicked
+    // (buttonUnlocked, see focusModule below) and the button is then
+    // pressed — so it's built lazily the moment buttonUnlocked flips true
+    // instead of unconditionally on every page load, saving render-target
+    // allocation and pass setup for the (common) case where a visitor never
+    // gets that far.
+    let bloomComposer: EffectComposer | null = null;
+    let finalComposer: EffectComposer | null = null;
+    let mixPass: ShaderPass | null = null;
 
-    const BLOOM_MIX = 1.0; // raise to intensify, lower to reduce
-    const mixPass = new ShaderPass(
-      new THREE.ShaderMaterial({
-        uniforms: {
-          baseTexture: { value: null },
-          bloomTexture: { value: null },
-          bloomStrength: { value: BLOOM_MIX },
-        },
-        vertexShader: `
-          varying vec2 vUv;
-          void main() { vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }
-        `,
-        fragmentShader: `
-          uniform sampler2D baseTexture;
-          uniform sampler2D bloomTexture;
-          uniform float bloomStrength;
-          varying vec2 vUv;
-          void main() {
-            vec4 base = texture2D(baseTexture, vUv);
-            vec3 bloom = texture2D(bloomTexture, vUv).rgb * bloomStrength;
-            float bloomAlpha = max(max(bloom.r, bloom.g), bloom.b);
-            // Soft vignette confined to the outer edge — model area stays clear.
-            float vignette = 1.0 - smoothstep(0.38, 0.6, length(vUv - 0.5));
-            vignette = mix(1.0, vignette, 0.85);
-            gl_FragColor = vec4((base.rgb + bloom) * vignette, max(base.a, bloomAlpha));
-          }
-        `,
-      }),
-      "baseTexture",
-    );
-    mixPass.needsSwap = true;
-    const msaaTarget = new THREE.WebGLRenderTarget(width, height, {
-      samples: 4,
-      type: THREE.HalfFloatType,
-    });
-    const finalComposer = new EffectComposer(renderer, msaaTarget);
-    finalComposer.addPass(new RenderPass(scene, camera));
-    finalComposer.addPass(mixPass);
-    finalComposer.addPass(new OutputPass());
+    const ensureBloomPipeline = () => {
+      if (bloomComposer) return;
+
+      // HalfFloat gives 16-bit precision — eliminates banding in bloom gradients.
+      const bloomRenderTarget = new THREE.WebGLRenderTarget(width, height, {
+        type: THREE.HalfFloatType,
+      });
+      bloomComposer = new EffectComposer(renderer, bloomRenderTarget);
+      bloomComposer.renderToScreen = false;
+      bloomComposer.addPass(new RenderPass(scene, camera));
+      const unrealBloomPass = new UnrealBloomPass(
+        new THREE.Vector2(width, height),
+        1.2, // strength
+        1.0, // radius
+        0.0, // threshold
+      );
+      bloomComposer.addPass(unrealBloomPass);
+
+      const BLOOM_MIX = 1.0; // raise to intensify, lower to reduce
+      mixPass = new ShaderPass(
+        new THREE.ShaderMaterial({
+          uniforms: {
+            baseTexture: { value: null },
+            bloomTexture: { value: null },
+            bloomStrength: { value: BLOOM_MIX },
+          },
+          vertexShader: `
+            varying vec2 vUv;
+            void main() { vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }
+          `,
+          fragmentShader: `
+            uniform sampler2D baseTexture;
+            uniform sampler2D bloomTexture;
+            uniform float bloomStrength;
+            varying vec2 vUv;
+            void main() {
+              vec4 base = texture2D(baseTexture, vUv);
+              vec3 bloom = texture2D(bloomTexture, vUv).rgb * bloomStrength;
+              float bloomAlpha = max(max(bloom.r, bloom.g), bloom.b);
+              // Soft vignette confined to the outer edge — model area stays clear.
+              float vignette = 1.0 - smoothstep(0.38, 0.6, length(vUv - 0.5));
+              vignette = mix(1.0, vignette, 0.85);
+              gl_FragColor = vec4((base.rgb + bloom) * vignette, max(base.a, bloomAlpha));
+            }
+          `,
+        }),
+        "baseTexture",
+      );
+      mixPass.needsSwap = true;
+      const msaaTarget = new THREE.WebGLRenderTarget(width, height, {
+        samples: 4,
+        type: THREE.HalfFloatType,
+      });
+      finalComposer = new EffectComposer(renderer, msaaTarget);
+      finalComposer.addPass(new RenderPass(scene, camera));
+      finalComposer.addPass(mixPass);
+      finalComposer.addPass(new OutputPass());
+    };
 
     // Helpers: darken non-bloom meshes/lines before bloom pass, restore after.
     const _darkMat = new THREE.MeshBasicMaterial({ color: 0x000000 });
@@ -496,6 +511,13 @@
           for (const { parent, mesh } of overlays) parent.add(mesh);
           return { root: obj, solid, wire, meshes };
         });
+
+        // Warm every material's shader program now, while the browser is
+        // still busy with the (non-rendering) setup below, rather than
+        // paying for on-the-fly compilation inside the render loop's first
+        // call to renderer.render() — which happens right as the intro is
+        // meant to become visible.
+        renderer.compileAsync(scene, camera);
 
         // Collect buttonpress meshes for hover highlight + press animation
         const buttonpressMeshes: THREE.Mesh[] = [];
@@ -1125,7 +1147,12 @@
         const focusModule = (idx: number) => {
           if (clickableGroupIndices.has(idx)) {
             seenModules.add(idx);
+            const wasUnlocked = buttonUnlocked;
             buttonUnlocked = seenModules.size >= clickableGroupIndices.size;
+            // Song/bloom playback can't start until the button is unlocked
+            // (see the pointerup handler below), so this is the earliest
+            // possible moment the bloom pipeline could be needed.
+            if (buttonUnlocked && !wasUnlocked) ensureBloomPipeline();
           }
           if (idx === activeIdx) {
             setActive(-1);
@@ -1581,8 +1608,8 @@
       width = next.width;
       height = next.height;
       renderer.setSize(width, height, false);
-      bloomComposer.setSize(width, height);
-      finalComposer.setSize(width, height);
+      bloomComposer?.setSize(width, height);
+      finalComposer?.setSize(width, height);
       camera.aspect = width / height;
       camera.updateProjectionMatrix();
       refitCamera();
@@ -1780,7 +1807,7 @@
       stats?.begin();
       controls.update();
       cycleUpdater(performance.now());
-      if (bloomActive) {
+      if (bloomActive && bloomComposer && finalComposer && mixPass) {
         scene.traverse(darkenNonBloom);
         bloomComposer.render();
         scene.traverse(restoreMaterials);
