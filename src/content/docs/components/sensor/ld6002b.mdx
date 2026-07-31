@@ -18,6 +18,12 @@ index.
 The [UART](/components/uart) component is required. `baud_rate`, `data_bits`, `parity` and
 `stop_bits` **must be** `115200`, `8`, `NONE` and `1`.
 
+> [!WARNING]
+> Avoid the ESP's UART0 pins (`GPIO1`/`GPIO3` on the classic ESP32; other variants differ). The
+> bootloader prints its boot log on UART0 TX at 115200 baud on every reset, and this stray data
+> can corrupt the radar's internal state until it is power cycled. The module has no reset pin or
+> reset command, so use a UART that stays quiet during boot.
+
 <Figure src={ld6002bImg} alt="HLK-LD6002B module, antenna side" caption="HLK-LD6002B 3D presence radar module, shown in the intended mounting orientation" />
 
 ```yaml
