@@ -517,10 +517,10 @@ docker run --rm -v "${PWD}":/config -it ghcr.io/esphome/esphome logs livingroom.
 docker run --rm -v "${PWD}":/config --device=/dev/ttyUSB0 -it ghcr.io/esphome/esphome ...
 
 # Start dashboard on port 6052 (general command)
-# Warning: this command is currently not working with Docker on MacOS. (see note below)
+# Note: on Docker Desktop 4.34+, host networking must be enabled first. (see note below)
 docker run --rm -v "${PWD}":/config --net=host -it ghcr.io/esphome/esphome
 
-# Start dashboard on port 6052 (without host networking, for example on MacOS)
+# Start dashboard on port 6052 (without host networking, for example on macOS)
 docker run --rm -p 6052:6052 -v "${PWD}":/config -it ghcr.io/esphome/esphome
 
 # Setup a bash alias:
@@ -560,10 +560,14 @@ services:
 > Docker Desktop version 4.34 and later it is available, but must first be enabled under
 > Settings > Resources > Network.
 >
-> If you don't use the host networking driver, the Device Builder still runs, and it still checks devices with a
-> periodic ICMP ping sweep. Without multicast, however, `.local` names cannot be resolved, so the sweep only has an
-> address to ping for devices that have a fixed one - set with `use_address` or
-> [`manual_ip`](/components/wifi#wifi-manual_ip) in the device's own configuration. Other devices will show no status.
+> Without the host networking driver the Device Builder still runs, and a periodic ICMP ping sweep still tracks every
+> node - but multicast no longer reaches the container, so `.local` names stop resolving through mDNS. That leaves
+> whatever your network can resolve on its own: a literal IP, or a hostname served by regular DNS. A `.local` name
+> may still work, because the Device Builder retries the bare hostname without the suffix, which your DNS may serve.
+> Devices that resolve no other way are shown as offline.
+>
+> To give a device an address that doesn't depend on mDNS, [`manual_ip`](/components/wifi#wifi-manual_ip) assigns it
+> a static IP, and [`use_address`](/components/wifi/) overrides the address used to connect to it.
 >
 > Note that mDNS might not work if your Home Assistant server and your ESPHome nodes are on different subnets
 > and/or VLANs. If your router supports Avahi, you can configure mDNS to work across different subnets.
@@ -584,16 +588,18 @@ is bound to cause problems -- mDNS is used to determine the IP address of each E
 
 If you disable mDNS, expect the following repercussions:
 
-- You will not be able to use the node's hostname to ping, find it's IP address or otherwise connect to it.
+- You will not be able to use the node's hostname to ping, find its IP address or otherwise connect to it, unless
+  your regular DNS serves that hostname as well.
 - Automatic discovery in Home Assistant when using the [native API](/components/api/) relies on
   mDNS broadcast messages to detect the presence of new ESPHome nodes. If you need to use the native API with
   mDNS disabled, then you will have to use a static IP address and manually add the ESPHome component with its
   (static) IP address.
 
-- Because status detection in the [ESPHome Device Builder](/guides/getting_started_hassio#installing-esphome-device-builder) uses mDNS by
-  default, nodes with mDNS disabled will always appear as "offline". This does not affect any functionality; however,
-  if you want to see the online/offline status of your nodes, you may configure the ESPHome Device Builder to ping each
-  node instead. See the [notes in the Docker Reference section](#docker-reference-notes) for more information.
+- Status detection in the [ESPHome Device Builder](/guides/getting_started_hassio#installing-esphome-device-builder)
+  uses mDNS where it is available, but a periodic ICMP ping sweep runs for every node regardless, so a node with
+  mDNS disabled is still tracked as long as its address resolves some other way - see the
+  [notes in the Docker Reference section](#docker-reference-notes). A node whose address cannot be resolved at all
+  is shown as "offline".
 
 ## Can configuration files be recovered from the device?
 

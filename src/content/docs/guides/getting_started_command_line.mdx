@@ -218,20 +218,19 @@ The ESPHome Device Builder allows you to easily manage your nodes from a nice we
 as a [Home Assistant app](/guides/getting_started_hassio/), but can run in docker independently from
 Home Assistant.
 
-To start the ESPHome Device Builder, simply start ESPHome with the following command (with `config/` pointing to a
-directory where you want to store your configurations):
+When installing with `pip`, the Device Builder is a separate package from ESPHome itself; the Docker image already
+bundles it. Start it with one of the following commands (with `config` pointing to a directory where you want to
+store your configurations):
 
 ```bash
-# Install dashboard dependencies
-pip install tornado esptool
+# Option 1: install and run with pip
+pip install esphome-device-builder
+esphome-device-builder config
 
-# Start the dashboard
-esphome dashboard config
-
-# On Docker, host networking mode lets the dashboard find devices and track their status
+# Option 2: run in Docker. Host networking lets the Device Builder find devices and track their status
 docker run --rm --net=host -v "${PWD}":/config -it ghcr.io/esphome/esphome
 
-# On Docker Desktop, where host networking is not enabled by default, publish the port instead
+# Option 3: on Docker Desktop, where host networking is not enabled by default, publish the port instead
 docker run --rm -p 6052:6052 -v "${PWD}":/config -it ghcr.io/esphome/esphome
 ```
 
@@ -239,9 +238,11 @@ After that, you will be able to access the ESPHome Device Builder at `localhost:
 
 > [!NOTE]
 > `--net=host` lets the ESPHome Device Builder see mDNS, which is how it finds devices and tracks whether they are
-> online. Without host networking the Device Builder still runs, but `.local` names will not resolve, so it can only
-> reach devices that have a fixed address - one set with `use_address` or
-> [`manual_ip`](/components/wifi#wifi-manual_ip) in the device's own configuration.
+> online. Without host networking it still runs and still pings devices to track their status, but `.local` names
+> stop resolving through mDNS, so it can only reach devices your network resolves another way: a literal IP, or a
+> hostname served by regular DNS. [`manual_ip`](/components/wifi#wifi-manual_ip) assigns a device a static IP, and
+> [`use_address`](/components/wifi/) overrides the address used to connect to it. See the
+> [FAQ](/guides/faq#docker-reference-notes) for the full details.
 
 Logging level can be set with the env var `ESPHOME_LOG_LEVEL` (default is `INFO`).
 

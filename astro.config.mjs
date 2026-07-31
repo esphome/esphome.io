@@ -1,4 +1,5 @@
 import { defineConfig } from "astro/config";
+import { unified } from "@astrojs/markdown-remark";
 import starlight from "@astrojs/starlight";
 import starlightBlog from "starlight-blog";
 import sitemap from "@astrojs/sitemap";
@@ -134,11 +135,14 @@ export default defineConfig({
     domains: ["assets.openhomefoundation.org", "www.openhomefoundation.org"],
   },
   markdown: {
-    // Astro 6 no longer defaults `markdown.gfm` to true, and @astrojs/mdx only applies remark-gfm
-    // to .mdx files when this is explicitly truthy. Without it, GFM tables render as literal text.
-    gfm: true,
-    remarkPlugins: [remarkAlert, remarkMath],
-    rehypePlugins: [rehypeHeadingSlugs, rehypeKatex, rehypeExternalLinksBlog],
+    // Astro 7 defaults `markdown.processor` to Sätteri, which does not run remark/rehype plugins.
+    // The alert, math and heading-slug plugins below are unified plugins, so opt back into the
+    // unified processor. @astrojs/mdx inherits these settings for .mdx files.
+    processor: unified({
+      gfm: true,
+      remarkPlugins: [remarkAlert, remarkMath],
+      rehypePlugins: [rehypeHeadingSlugs, rehypeKatex, rehypeExternalLinksBlog],
+    }),
   },
   integrations: [
     starlight({
