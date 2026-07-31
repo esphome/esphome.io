@@ -222,16 +222,14 @@ The Device Builder is a separate package from ESPHome itself. Start it with one 
 `config/` pointing to a directory where you want to store your configurations):
 
 ```bash
-# Install the Device Builder
+# Option 1: install and run with pip
 pip install esphome-device-builder
-
-# Start the Device Builder
 esphome-device-builder config
 
-# On Docker, host networking mode lets the Device Builder find devices and track their status
+# Option 2: run in Docker. Host networking lets the Device Builder find devices and track their status
 docker run --rm --net=host -v "${PWD}":/config -it ghcr.io/esphome/esphome
 
-# On Docker Desktop, where host networking is not enabled by default, publish the port instead
+# Option 3: on Docker Desktop, where host networking is not enabled by default, publish the port instead
 docker run --rm -p 6052:6052 -v "${PWD}":/config -it ghcr.io/esphome/esphome
 ```
 
