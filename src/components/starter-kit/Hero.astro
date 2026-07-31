@@ -1,4 +1,10 @@
 <link rel="preload" href="/starter-kit/ESK.glb" as="fetch" crossorigin />
+<link
+  rel="preload"
+  href="/starter-kit/ESK-edges.bin"
+  as="fetch"
+  crossorigin
+/>
 
 <section class="block-hero">
   <div class="container">
@@ -89,6 +95,62 @@
   import { ShaderPass } from "three/addons/postprocessing/ShaderPass.js";
   import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
   const MODEL_URL = "/starter-kit/ESK.glb";
+  // Precomputed via script/generate_hero_edges.mjs — see that file for the
+  // binary layout. Ships the THREE.EdgesGeometry results for every mesh so
+  // the runtime doesn't have to recompute them (the dominant cost in the
+  // time between the loading spinner and the model appearing). Re-run the
+  // script whenever ESK.glb changes; a missing/stale/mismatched file falls
+  // back to computing edges live, per mesh.
+  const EDGES_URL = "/starter-kit/ESK-edges.bin";
+  const EDGES_MAGIC = 0x454b4531; // "EKE1"
+  const EDGES_FORMAT_VERSION = 2;
+  const EDGES_QUANT_MAX = 65535;
+
+  type ParsedEdgeMesh = { sourceVertexCount: number; positions: Float32Array };
+
+  const parseEdgesBuffer = (
+    buffer: ArrayBuffer | null,
+  ): ParsedEdgeMesh[] | null => {
+    if (!buffer) return null;
+    try {
+      const header = new Uint32Array(buffer, 0, 3);
+      if (header[0] !== EDGES_MAGIC || header[1] !== EDGES_FORMAT_VERSION)
+        return null;
+      const groupCount = header[2];
+      let offset = 3 * 4;
+      const meshCounts = new Uint32Array(buffer, offset, groupCount);
+      offset += groupCount * 4;
+      const meshCount = meshCounts.reduce((a, b) => a + b, 0);
+      const sourceVertexCounts = new Uint32Array(buffer, offset, meshCount);
+      offset += meshCount * 4;
+      const edgeVertexCounts = new Uint32Array(buffer, offset, meshCount);
+      offset += meshCount * 4;
+      // Per-mesh quantization origin (min) + span (range), one triplet each.
+      const quantParams = new Float32Array(buffer, offset, meshCount * 6);
+      offset += meshCount * 6 * 4;
+      const meshes: ParsedEdgeMesh[] = [];
+      for (let i = 0; i < meshCount; i++) {
+        const vertCount = edgeVertexCounts[i];
+        const quantized = new Uint16Array(buffer, offset, vertCount * 3);
+        offset += vertCount * 3 * 2;
+        const [minX, minY, minZ, rangeX, rangeY, rangeZ] = quantParams.slice(
+          i * 6,
+          i * 6 + 6,
+        );
+        const min = [minX, minY, minZ];
+        const range = [rangeX, rangeY, rangeZ];
+        const positions = new Float32Array(vertCount * 3);
+        for (let v = 0; v < vertCount * 3; v++) {
+          const a = v % 3;
+          positions[v] = min[a] + (quantized[v] / EDGES_QUANT_MAX) * range[a];
+        }
+        meshes.push({ sourceVertexCount: sourceVertexCounts[i], positions });
+      }
+      return meshes;
+    } catch {
+      return null;
+    }
+  };
 
   const canvas = document.getElementById(
     "hero-scene",
@@ -338,11 +400,25 @@
       };
     });
 
-    loader.load(
-      MODEL_URL,
-      (gltf: { scene: THREE.Group }) => {
+    const loadGLTF = () =>
+      new Promise<{ scene: THREE.Group }>((resolve, reject) => {
+        loader.load(MODEL_URL, resolve, undefined, reject);
+      });
+
+    // Missing/stale/mismatched edge data falls back to computing edges live
+    // per mesh below, so a failed fetch here is non-fatal — never reject.
+    const loadEdgesBuffer = () =>
+      fetch(EDGES_URL)
+        .then((res) => (res.ok ? res.arrayBuffer() : null))
+        .catch(() => null);
+
+    Promise.all([loadGLTF(), loadEdgesBuffer()])
+      .then(([gltf, edgesBuffer]) => {
         assetContainer?.removeAttribute("data-hero-loading");
         assetContainer?.classList.add("is-model-ready");
+
+        const precomputedEdges = parseEdgesBuffer(edgesBuffer);
+        let edgeCursor = 0;
 
         const model = gltf.scene;
 
@@ -484,10 +560,22 @@
               depthWrite: false,
               depthTest: true,
             });
-            const overlay = new THREE.LineSegments(
-              new THREE.EdgesGeometry(mesh.geometry, 30),
-              lineMat,
-            );
+            // Use the precomputed edge geometry when available and it still
+            // matches this mesh's vertex count (i.e. the model hasn't
+            // changed since script/generate_hero_edges.mjs last ran);
+            // otherwise fall back to computing it live for this mesh only.
+            const precomputed = precomputedEdges?.[edgeCursor];
+            edgeCursor++;
+            const edgeGeometry =
+              precomputed &&
+              precomputed.sourceVertexCount ===
+                mesh.geometry.attributes.position.count
+                ? new THREE.BufferGeometry().setAttribute(
+                    "position",
+                    new THREE.BufferAttribute(precomputed.positions, 3),
+                  )
+                : new THREE.EdgesGeometry(mesh.geometry, 30);
+            const overlay = new THREE.LineSegments(edgeGeometry, lineMat);
             mesh.material = solidMat;
             masks.push({ parent: mesh, mesh: mask });
             overlays.push({ parent: mesh, mesh: overlay });
@@ -1563,13 +1651,11 @@
         setTimeout(() => {
           labelsEnabled = true;
         }, 600);
-      },
-      undefined,
-      (error: unknown) => {
+      })
+      .catch((error: unknown) => {
         console.error("[Hero] Failed to load model:", error);
         assetContainer?.removeAttribute("data-hero-loading");
-      },
-    );
+      });
 
     // Recomputes homeDistance for the current viewport and snaps the camera
     // to that distance along its current direction. No-op until model loads.
