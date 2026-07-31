@@ -561,10 +561,11 @@ services:
 > Settings > Resources > Network.
 >
 > If you don't use the host networking driver, the Device Builder still runs, and it still checks devices with a
-> periodic ICMP ping sweep. Without multicast, however, `.local` names cannot be resolved, so the sweep only has an
-> address to ping for devices it can address by IP: either a static IP assigned with
-> [`manual_ip`](/components/wifi#wifi-manual_ip), or an IP given to `use_address`, which overrides the address used
-> to connect to the device. Other devices will show no status.
+> periodic ICMP ping sweep. Without multicast, however, `.local` names cannot be resolved by mDNS, so the sweep can
+> only reach devices whose address resolves another way: a literal IP, or a hostname your regular DNS serves. A
+> `.local` name also works when DNS resolves the bare hostname without the suffix.
+> [`manual_ip`](/components/wifi#wifi-manual_ip) gives a device a static IP; `use_address` overrides the address used
+> to connect to it. Devices that resolve no other way are shown as offline.
 >
 > Note that mDNS might not work if your Home Assistant server and your ESPHome nodes are on different subnets
 > and/or VLANs. If your router supports Avahi, you can configure mDNS to work across different subnets.
