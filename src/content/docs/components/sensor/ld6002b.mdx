@@ -5,7 +5,7 @@ title: "LD6002B 3D Presence Radar"
 
 import Figure from '@components/Figure.astro';
 import APIRef from '@components/APIRef.astro';
-import ld6002bImg from './images/ld6002b.jpg';
+import ld6002bImg from './images/ld6002b.png';
 
 ## Component
 
@@ -15,14 +15,15 @@ The `ld6002b` component allows you to use the Hi-Link HLK-LD6002B 60 GHz 3D pres
 ESPHome. It can track up to 3 people and reports per-target position (X/Y/Z), cluster ID, and Doppler
 index.
 
-The [UART](/components/uart) component is required. Use 115200 baud, 8 data bits, no parity, and 1
-stop bit.
+The [UART](/components/uart) component is required. `baud_rate`, `data_bits`, `parity` and
+`stop_bits` **must be** `115200`, `8`, `NONE` and `1`.
 
-<Figure src={ld6002bImg} alt="HLK-LD6002B module" caption="HLK-LD6002B 3D presence radar module" />
+<Figure src={ld6002bImg} alt="HLK-LD6002B module, antenna side" caption="HLK-LD6002B 3D presence radar module, shown in the intended mounting orientation" />
 
 ```yaml
 # Example configuration entry
 ld6002b:
+  id: ld6002b_radar
 ```
 
 ### Configuration Variables
@@ -31,13 +32,14 @@ ld6002b:
 - **uart_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the
   [UART Component](/components/uart) to use. Required if you have multiple UARTs configured.
 - **wakeup_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): Pin used to wake the
-  radar from low power mode. Required if you want `auto_wake` or the `wake` button to function.
-- **wakeup_pulse_ms** (*Optional*, [Time](/guides/configuration-types#time), default: `50ms`): Pulse
-  length for the wakeup pin.
-- **auto_wake** (*Optional*, boolean, default: `true`): When enabled *and* a `wakeup_pin` is
-  configured, the component pulses `wakeup_pin` before sending a command. Has no effect if no
-  `wakeup_pin` is set.
-- **max_data_len** (*Optional*, int, range `256`–`65535`): Maximum frame payload length in bytes. When
+  radar from low power mode. Required if you want `auto_wake` or the `wake` button to function. With
+  `low_power` enabled and no `wakeup_pin` wired, the first command after an idle period is consumed as
+  a wake-up and is retried automatically; wiring `wakeup_pin` avoids that retry.
+- **wakeup_pulse** (*Optional*, [Time](/guides/configuration-types#time), default: `50ms`): Pulse
+  length for the wakeup pin. **Requires** `wakeup_pin`.
+- **auto_wake** (*Optional*, boolean, default: `true`): Pulse `wakeup_pin` before sending a command.
+  **Requires** `wakeup_pin`.
+- **max_data_len** (*Optional*, int, range `256`–`8192`): Maximum frame payload length in bytes. When
   unset, defaults to `4096` if point-cloud output is configured (the `point_count` sensor or the
   `point_cloud` switch) and `1024` otherwise. Increase only if you enable point-cloud output and see
   dropped frames.
@@ -71,6 +73,10 @@ ld6002b:
 The module supports top and side mounting. The horizontal and vertical beam angles are ±60° and the
 maximum detection distance is 6 m. A typical ceiling installation at 2.7 m height yields a detection
 area of roughly 5 m by 3 m.
+
+Mount the module in the orientation shown at the top of this page, with the antenna side facing the
+detection area and the pin header along the bottom edge; the reported X/Y/Z axes assume this
+orientation.
 
 Target and area coordinates are reported in meters. The origin is the module projection onto the
 reference plane (floor for ceiling installs, wall for side installs). X is left/right, Y is
@@ -117,8 +123,9 @@ binary_sensor:
   LD6002B component.
 - **target** (*Optional*): True if any target is detected. All options from
   [Binary Sensor](/components/binary_sensor#config-binary_sensor).
-- **target_N** (*Optional*): True if the specific target (N = 1 to 3) is detected: `target_1`,
-  `target_2`, `target_3`. All options from
+- **target_N** (*Optional*): True if target slot N (N = 1 to 3) is occupied: `target_1`, `target_2`,
+  `target_3`. A person keeps the same slot for as long as they are tracked continuously, and a new
+  person takes the lowest free slot. All options from
   [Binary Sensor](/components/binary_sensor#config-binary_sensor).
 - **area_N** (*Optional*): True if presence is detected in detection area N (0 to 3): `area_0`,
   `area_1`, `area_2`, `area_3`. All options from
@@ -160,7 +167,8 @@ sensor:
 - **point_count** (*Optional*, int): Total number of point-cloud points reported by the radar. All
   options from [Sensor](/components/sensor).
 - **target_N** (*Optional*): Details about each target (N = 1 to 3). Up to 3 targets can be tracked
-  simultaneously: `target_1`, `target_2`, `target_3`.
+  simultaneously: `target_1`, `target_2`, `target_3`. A tracked person keeps the same `target_N`
+  slot for as long as they remain tracked, and a new person takes the lowest free slot.
 
   - **x** (*Optional*, float): X coordinate of the target in meters.
   - **y** (*Optional*, float): Y coordinate of the target in meters.
@@ -182,6 +190,12 @@ sensor:
 > Target reporting is controlled by the **Target Display** switch. The component enables target
 > reporting automatically if any target sensors are configured. If target reporting is disabled,
 > target sensors will remain `unknown`.
+
+> [!NOTE]
+> Slot identity comes from the module's own spatial clustering, so it is stable rather than perfect:
+> two people standing very close together can merge into a single target, a track's cluster ID can
+> occasionally change while the person is still in the room, and a slot left by someone who leaves is
+> reused by the next new person. Watch `cluster_id` to see when a slot changes hands.
 
 > [!NOTE]
 > If you configure any area sensors or area configuration numbers, the component requests stored
@@ -268,10 +282,11 @@ number:
 - **z_min** / **z_max** (*Optional*, range `-10`–`10` m, step `0.1`): Global Z-axis detection range, in
   meters. All options from
   [Number](/components/number#config-number).
-- **low_power_sleep_time** (*Optional*, range `0`–`600000` ms, step `100`): Low power sleep time in
-  milliseconds (default 500 ms in the 2025 protocol spec). When low-power mode is enabled and the area
-  is unattended, the module sleeps for this interval between scans; higher values reduce idle power but
-  increase detection latency. All options from [Number](/components/number#config-number).
+- **low_power_sleep_time** (*Optional*, range `0`–`500` ms, step `100`): Low power sleep time in
+  milliseconds (default 500 ms, which the datasheet also gives as the highest recommended value). When
+  low-power mode is enabled and the area is unattended, the module sleeps for this interval between
+  scans; higher values reduce idle power but increase detection latency. All options from
+  [Number](/components/number#config-number).
 - **area_config** (*Optional*): Coordinate values (`x_min`/`x_max`/`y_min`/`y_max`/`z_min`/`z_max`, each
   range `-10`–`10` m, step `0.1`) for the selected area ID. **Requires** both a `select.area_id` and a
   `button.apply_area` on the same `ld6002b` (enforced at compile time); set the values, then press
@@ -487,7 +502,7 @@ ld6002b:
   id: ld6002b_radar
   uart_id: uart_bus
   wakeup_pin: GPIOZZ
-  wakeup_pulse_ms: 50ms
+  wakeup_pulse: 50ms
   auto_wake: true
   max_data_len: 1024
   throttle: 1s
