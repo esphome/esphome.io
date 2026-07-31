@@ -55,6 +55,8 @@ zephyr:
 - **kconfig_options** (*Optional*, mapping): Raw Zephyr Kconfig passthrough. See [`kconfig_options`](#kconfig_options).
 - **snippets** (*Optional*, list of strings): Zephyr snippet names passed through to `west build -S`.
   See [`snippets`](#snippets).
+- **overlays** (*Optional*, mapping): Raw devicetree overlay passthrough for the main application image
+  and/or the `mcuboot` bootloader image. See [`overlays`](#overlays).
 
 ## Variants
 
@@ -107,8 +109,9 @@ zephyr:
 own **refresh** (defaults to `1d`); a bare `github://` shorthand always uses that default, since
 there's no field to override it on.
 
-[custom_zephyr_boards] https://github.com/esphomeplatformzephyr/custom_zephyr_boards is provided to allow
-for commonly needed board definitions.
+[`custom_zephyr_boards`](https://github.com/esphomeplatformzephyr/custom_zephyr_boards) provides board
+definitions for cases [`overlays`](#overlays) can't cover — a different pin-control scheme or a chip
+mainline Zephyr doesn't already support, for example.
 
 > [!NOTE]
 > ESPHome always appends the current variant's own SoC/qualifier segments (e.g. `/esp32c6/hpcore`)
@@ -119,7 +122,8 @@ for commonly needed board definitions.
 > [!TIP]
 > If your board only differs from a stock upstream board by flash or PSRAM size, a
 > [`snippets`](#snippets) entry (e.g. `espressif-flash-4M`) is usually simpler than a custom
-> `board_source` board.
+> `board_source` board. If it differs by partition table or needs a devicetree node the stock board
+> doesn't declare, [`overlays`](#overlays) is usually simpler still.
 
 ## `framework`
 
@@ -234,6 +238,138 @@ Espressif ships its own official `espressif-flash-2M`/`-4M`/`-8M`/`-16M`/.../`-1
 `espressif-psram-*`) snippets for exactly this: adjusting a board's flash/PSRAM size without forking
 the whole board. If your board only differs from an upstream one by flash or PSRAM size, prefer a
 snippet over a [`board_source`](#board_source) custom board.
+
+## `overlays`
+
+`overlays` is a raw devicetree overlay passthrough — it lets a stock, upstream board's hardware
+description be patched (a partition table redefined, a peripheral enabled, a node added) without
+forking the whole board into a [`board_source`](#board_source). It accepts up to two keys:
+
+- **app** (*Optional*, string): Overlay text applied to the main application image.
+- **mcuboot** (*Optional*, string): Overlay text applied to the `mcuboot` bootloader image. These are
+  two separate images, built independently — an `app` overlay is never automatically applied to
+  `mcuboot`, or vice versa.
+
+A board whose flash layout was never designed for MCUboot commonly needs the same partition
+redefinition on **both** images, since the bootloader and the application must agree on where flash
+slots actually are:
+
+```yaml
+# Example configuration entry -- Seeed XIAO nRF52840's stock devicetree ships a UF2/SoftDevice
+# partition table with no slot0/slot1 labels; MCUboot needs those to swap between app images.
+# includes the kconfig_options needed to prevent use of uart in MCUboot
+zephyr:
+  variant: nrf52
+  board: xiao_ble
+  overlays:
+    app: |
+      /delete-node/ &reserved_partition_0;
+      /delete-node/ &code_partition;
+      /delete-node/ &storage_partition;
+      /delete-node/ &boot_partition;
+
+      &flash0 {
+        partitions {
+          compatible = "fixed-partitions";
+          #address-cells = <1>;
+          #size-cells = <1>;
+
+          boot_partition: partition@0 {
+            reg = <0x0 0x9000>;
+          };
+          slot0_partition: partition@9000 {
+            reg = <0x9000 0x77000>;
+          };
+          slot1_partition: partition@80000 {
+            reg = <0x80000 0x77000>;
+          };
+          storage_partition: partition@f7000 {
+            reg = <0xf7000 0x8000>;
+          };
+        };
+      };
+
+      / {
+        chosen {
+          zephyr,code-partition = &slot0_partition;
+        };
+      };
+    mcuboot: |
+      /delete-node/ &reserved_partition_0;
+      /delete-node/ &code_partition;
+      /delete-node/ &storage_partition;
+      /delete-node/ &boot_partition;
+
+      &flash0 {
+        partitions {
+          compatible = "fixed-partitions";
+          #address-cells = <1>;
+          #size-cells = <1>;
+
+          boot_partition: partition@0 {
+            reg = <0x0 0x9000>;
+          };
+          slot0_partition: partition@9000 {
+            reg = <0x9000 0x77000>;
+          };
+          slot1_partition: partition@80000 {
+            reg = <0x80000 0x77000>;
+          };
+          storage_partition: partition@f7000 {
+            reg = <0xf7000 0x8000>;
+          };
+        };
+      };
+
+      / {
+        chosen {
+          zephyr,code-partition = &boot_partition;
+        };
+      };
+  kconfig_options:
+    mcuboot:
+      CONFIG_UART_CONSOLE: false
+      CONFIG_CONSOLE: false
+```
+
+> [!IMPORTANT]
+> Point each image's own `zephyr,code-partition` at its own partition (`slot0_partition` for `app`,
+> `boot_partition` for `mcuboot`), never both images at the same one. MCUboot resolves its own load
+> address from `zephyr,code-partition` too, not just the application's — pointing both at the same
+> partition makes MCUboot link itself into the application's own slot, which on real hardware
+> silently corrupts the application's image header on every boot rather than failing at build time.
+
+The [`kconfig_options`](#kconfig_options) block above is needed for a different reason: `xiao_ble` has
+no physical UART bridge, so its stock devicetree assigns the console to its native USB CDC-ACM device
+instead. MCUboot's build inherits that same assignment from the board's devicetree but doesn't enable
+`CONFIG_USB_DEVICE_STACK` to actually drive it, so the link fails on an unresolved console reference —
+turning `CONFIG_UART_CONSOLE`/`CONFIG_CONSOLE` off for the `mcuboot` image avoids attaching a console
+that has nothing working to attach to. A board with a real physical UART console doesn't need this.
+
+Other overlay needs only affect the application image. Original ESP32's stock partition table
+reserves two 32K slots for an LP co-processor the chip doesn't have — an `app`-only overlay can
+reclaim that space instead:
+
+```yaml
+# Example configuration entry -- reclaim the LP-core partitions original ESP32 never uses
+zephyr:
+  variant: esp32
+  overlays:
+    app: |
+      /delete-node/ &slot0_lpcore_partition;
+      /delete-node/ &slot1_lpcore_partition;
+      /delete-node/ &storage_partition;
+
+      &flash0 {
+        partitions {
+          storage_partition: partition@3a0000 {
+            compatible = "zephyr,mapped-partition";
+            label = "storage";
+            reg = <0x3a0000 DT_SIZE_K(256)>;
+          };
+        };
+      };
+```
 
 ## Zephyr's own logging vs. heavy debug levels
 
