@@ -235,8 +235,10 @@ nrf52:
 - **enable_ota_rollback** (*Optional*, boolean): Enable OTA rollback support. When enabled, the bootloader will
   automatically roll back to the previous firmware if the device crashes or resets before the boot is marked as
   successful. This works in conjunction with the [safe_mode](/components/safe_mode) component - after the
-  `boot_is_good_after` time (default 60s), the firmware is marked as valid. If the device crashes before that,
-  it will roll back to the previous working firmware. Defaults to `true`.
+  `boot_is_good_after` time (default 60s), the firmware is marked as valid. Since ESPHome 2026.8.0, an orderly
+  shutdown — entering [deep sleep](/components/deep_sleep#deep-sleep-and-ota-rollback), a restart or a shutdown —
+  also counts as a successful boot and marks the firmware as valid. If the device crashes before the firmware is
+  marked as valid, it will roll back to the previous working firmware. Defaults to `true`.
 
 ## See Also
 
