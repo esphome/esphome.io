@@ -517,7 +517,7 @@ docker run --rm -v "${PWD}":/config -it ghcr.io/esphome/esphome logs livingroom.
 docker run --rm -v "${PWD}":/config --device=/dev/ttyUSB0 -it ghcr.io/esphome/esphome ...
 
 # Start dashboard on port 6052 (general command)
-# Note: on Docker Desktop, host networking must be enabled first. (see note below)
+# Note: on Docker Desktop 4.34+, host networking must be enabled first. (see note below)
 docker run --rm -v "${PWD}":/config --net=host -it ghcr.io/esphome/esphome
 
 # Start dashboard on port 6052 (without host networking, for example on macOS)
@@ -561,10 +561,10 @@ services:
 > Settings > Resources > Network.
 >
 > Without the host networking driver the Device Builder still runs, and a periodic ICMP ping sweep still tracks every
-> node - but multicast no longer reaches it, so `.local` names stop resolving through mDNS. That leaves whatever your
-> network can resolve on its own: a literal IP, or a hostname served by regular DNS. A `.local` name may still work,
-> because the Device Builder retries the bare hostname without the suffix. Devices that resolve no other way are
-> shown as offline.
+> node - but multicast no longer reaches the container, so `.local` names stop resolving through mDNS. That leaves
+> whatever your network can resolve on its own: a literal IP, or a hostname served by regular DNS. A `.local` name
+> may still work, because the Device Builder retries the bare hostname without the suffix, which your DNS may serve.
+> Devices that resolve no other way are shown as offline.
 >
 > To give a device an address that doesn't depend on mDNS, [`manual_ip`](/components/wifi#wifi-manual_ip) assigns it
 > a static IP, and [`use_address`](/components/wifi/) overrides the address used to connect to it.
