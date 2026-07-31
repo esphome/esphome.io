@@ -182,6 +182,7 @@ If you're just seeing `Connecting....____....` on the screen and installation ("
 - Some devices may require you to keep `GPIO0` and `GND` connected at least until flashing has begun.
 - Some devices may require you to power-cycle them to restart programming mode after erasing flash; they won't
   auto-reset.
+- Some devices may require you to double-click the RST or reset button.  Connecting RST to GND, disconnecting, then reconnecting quickly and disconnecting may also work.
 
 - Last but not least, this could be a sign that your microcontroller is defective, damaged or otherwise cannot be
   programmed. :(
@@ -263,7 +264,7 @@ If you *still* can't get it to work, you might want to revisit
 That's no good. Here are some steps that resolve some problems:
 
 - **If you're having Wi-Fi problems**: See [My node keeps reconnecting randomly](#wifi-problems).
-- [Enable verbose logs](/components/logger#logger-log_levels) in your ESPHome device's `logger:` section.
+- [Enable verbose logs](/components/logger#log-levels) in your ESPHome device's `logger:` section.
 - **If your device is crashing**: See the [Troubleshooting](/guides/troubleshooting/) guide for how to get a backtrace.
 - **Still seeing an error?** Check if there is a known issue in the
   [ESPHome issue tracker](https://github.com/esphome/esphome/issues). If not, you can create a new issue to describe
@@ -289,7 +290,7 @@ If you want the issue you're experiencing to be fixed quickly:
   Please read [How to create a Minimal, Complete, and Verifiable example](https://stackoverflow.com/help/mcve).
 
 - If it's a hardware communication issue (such as with an I²C or SPI device), try setting the
-  [log level](/components/logger#logger-log_levels) to `VERY_VERBOSE` as it may provide better insight into what is going on.
+  [log level](/components/logger#log-levels) to `VERY_VERBOSE` as it may provide better insight into what is going on.
 
 - Please describe what troubleshooting steps you've already tried as that may also help us track down the issue.
 
@@ -297,7 +298,7 @@ You can find our issue tracker [on GitHub](https://github.com/esphome/esphome/is
 
 ## How do I update to the latest version?
 
-In Home Assistant, an update notification will appear when there's an update available (as with all add-ons).
+In Home Assistant, an update notification will appear when there's an update available (as with all apps).
 
 If you're running the Docker container independently of Home Assistant, run:
 
@@ -314,7 +315,7 @@ docker pull ghcr.io/esphome/esphome:stable
 ESPHome has a beta release cycle so that new releases can easily be tested before the changes are deployed to the
 stable channel. You can help test ESPHome (and use new features) by installing the beta:
 
-- For Home Assistant supervised installs, search for "ESPHome" in the Add-on Store. Note that the add-ons are named
+- For Home Assistant supervised installs, search for "ESPHome" in the App Store. Note that the apps are named
   accordingly; for the beta version, you'll want "ESPHome Device Builder (beta)".
 
 - If you're running the container in Docker independently of Home Assistant:
@@ -337,7 +338,7 @@ only developers use.
 
 That aside, if you want to install the `dev` version of ESPHome:
 
-- For Home Assistant supervised installs, search for "ESPHome" in the Add-on Store. Note that the add-ons are named
+- For Home Assistant supervised installs, search for "ESPHome" in the App Store. Note that the apps are named
   accordingly; for the dev version, you'll want "ESPHome Device Builder (dev)".
 
 - From `pip`  :
@@ -405,7 +406,7 @@ Here are some steps that may help mitigate the issue:
 
 - Give your ESPHome device a [static IP](/components/wifi#wifi-manual_ip).
 - Set the `power_save_mode` to `light` in your `wifi:` configuration. Note, however, that this may exacerbate the
-  problem in some situations. See [Power Save Mode](/components/wifi#wifi-power_save_mode).
+  problem in some situations. See [Power Save Mode](/components/wifi#power-save-mode).
 
 - The issue seems to happen with "cheap" boards more frequently -- especially the "cheap" NodeMCU boards from eBay
   which sometimes have bad antennas.
@@ -436,8 +437,6 @@ Here are some steps that may help mitigate the issue:
   reliability and responsiveness. This will cause Wi-Fi devices in power save mode to wake up more frequently. This
   may mitigate disconnections at the expense of increasing power (and possibly battery) usage of other devices also
   using power save modes.
-
-<span id="brownout-detector-was-triggered"></span>
 
 ## "Brownout detector was triggered"
 
@@ -518,11 +517,11 @@ docker run --rm -v "${PWD}":/config -it ghcr.io/esphome/esphome logs livingroom.
 docker run --rm -v "${PWD}":/config --device=/dev/ttyUSB0 -it ghcr.io/esphome/esphome ...
 
 # Start dashboard on port 6052 (general command)
-# Warning: this command is currently not working with Docker on MacOS. (see note below)
+# Note: on Docker Desktop 4.34+, host networking must be enabled first. (see note below)
 docker run --rm -v "${PWD}":/config --net=host -it ghcr.io/esphome/esphome
 
-# Start dashboard on port 6052 (MacOS specific command)
-docker run --rm -p 6052:6052 -e ESPHOME_DASHBOARD_USE_PING=true -v "${PWD}":/config -it ghcr.io/esphome/esphome
+# Start dashboard on port 6052 (without host networking, for example on macOS)
+docker run --rm -p 6052:6052 -v "${PWD}":/config -it ghcr.io/esphome/esphome
 
 # Setup a bash alias:
 alias esphome='docker run --rm -v "${PWD}":/config --net=host -it ghcr.io/esphome/esphome'
@@ -544,8 +543,8 @@ services:
       # if needed, add esp device(s) as in command line examples above
       - /dev/ttyUSB0:/dev/ttyUSB0
       - /dev/ttyACM0:/dev/ttyACM0
-    # The host networking driver only works on Linux hosts, but is available as a Beta feature,
-    # on Docker Desktop version 4.29 and later.
+    # The host networking driver only works on Linux hosts; on Docker Desktop version 4.34 and
+    # later it must first be enabled under Settings > Resources > Network.
     network_mode: host
     restart: always
 ```
@@ -553,14 +552,22 @@ services:
 <span id="docker-reference-notes"></span>
 
 > [!NOTE]
-> By default, ESPHome uses mDNS to resolve device IPs on the network; this is used to determine online/offline state
-> in the [ESPHome Device Builder](/guides/getting_started_hassio#installing-esphome-device-builder). In order for this feature to work, you
-> must use Docker's host networking mode.
+> By default, ESPHome uses mDNS to discover devices and resolve their IPs on the network; this is how the
+> [ESPHome Device Builder](/guides/getting_started_hassio#installing-esphome-device-builder) finds devices and tracks
+> whether they are online. In order for mDNS to work, you must use Docker's host networking mode.
 >
-> The [host networking driver](https://docs.docker.com/network/drivers/host/) only works on Linux hosts; it is
-> available on Docker Desktop version 4.29 and later.
+> The [host networking driver](https://docs.docker.com/engine/network/drivers/host/) only works on Linux hosts. On
+> Docker Desktop version 4.34 and later it is available, but must first be enabled under
+> Settings > Resources > Network.
 >
-> If you don't want to use the host networking driver, you have to use an alternate method as described below.
+> Without the host networking driver the Device Builder still runs, and a periodic ICMP ping sweep still tracks every
+> node - but multicast no longer reaches the container, so `.local` names stop resolving through mDNS. That leaves
+> whatever your network can resolve on its own: a literal IP, or a hostname served by regular DNS. A `.local` name
+> may still work, because the Device Builder retries the bare hostname without the suffix, which your DNS may serve.
+> Devices that resolve no other way are shown as offline.
+>
+> To give a device an address that doesn't depend on mDNS, [`manual_ip`](/components/wifi#wifi-manual_ip) assigns it
+> a static IP, and [`use_address`](/components/wifi/) overrides the address used to connect to it.
 >
 > Note that mDNS might not work if your Home Assistant server and your ESPHome nodes are on different subnets
 > and/or VLANs. If your router supports Avahi, you can configure mDNS to work across different subnets.
@@ -569,13 +576,7 @@ services:
 > 1. Enable Avahi on both subnets (install Avahi modules on OpenWRT or pfSense).
 > 1. Enable UDP traffic from your ESPHome device's subnet to 224.0.0.251/32 on port 5353.
 >
-> Alternatively, you can configure the [ESPHome Device Builder](/guides/getting_started_hassio#installing-esphome-device-builder) to use ICMP
-> pings to check the status of devices by setting `"status_use_ping": true` or, with Docker:
-> `-e ESPHOME_DASHBOARD_USE_PING=true`
->
 > See also [https://github.com/esphome/issues/issues/641#issuecomment-534156628](https://github.com/esphome/issues/issues/641#issuecomment-534156628).
-
-<span id="faq-notes_on_disabling_mdns"></span>
 
 ## Notes on disabling mDNS
 
@@ -587,16 +588,18 @@ is bound to cause problems -- mDNS is used to determine the IP address of each E
 
 If you disable mDNS, expect the following repercussions:
 
-- You will not be able to use the node's hostname to ping, find it's IP address or otherwise connect to it.
+- You will not be able to use the node's hostname to ping, find its IP address or otherwise connect to it, unless
+  your regular DNS serves that hostname as well.
 - Automatic discovery in Home Assistant when using the [native API](/components/api/) relies on
   mDNS broadcast messages to detect the presence of new ESPHome nodes. If you need to use the native API with
   mDNS disabled, then you will have to use a static IP address and manually add the ESPHome component with its
   (static) IP address.
 
-- Because status detection in the [ESPHome Device Builder](/guides/getting_started_hassio#installing-esphome-device-builder) uses mDNS by
-  default, nodes with mDNS disabled will always appear as "offline". This does not affect any functionality; however,
-  if you want to see the online/offline status of your nodes, you may configure the ESPHome Device Builder to ping each
-  node instead. See the [notes in the Docker Reference section](#docker-reference-notes) for more information.
+- Status detection in the [ESPHome Device Builder](/guides/getting_started_hassio#installing-esphome-device-builder)
+  uses mDNS where it is available, but a periodic ICMP ping sweep runs for every node regardless, so a node with
+  mDNS disabled is still tracked as long as its address resolves some other way - see the
+  [notes in the Docker Reference section](#docker-reference-notes). A node whose address cannot be resolved at all
+  is shown as "offline".
 
 ## Can configuration files be recovered from the device?
 
