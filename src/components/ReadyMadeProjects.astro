@@ -355,11 +355,24 @@ function githubUrlsFor(type: ProjectType): (string | undefined)[] {
   .project-info {
     margin-bottom: 1em;
   }
-  .project-info ol {
+  /* `not-content` strips Starlight's typography, including every vertical margin,
+     which leaves the heading, description and buy list flush against each other. */
+  .project-info h3 {
+    margin-bottom: 8px;
+  }
+  .project-info p {
+    margin-bottom: 1em;
+  }
+  /* A paragraph introducing a list labels it, so keep the two together. */
+  .project-info p:has(+ ul),
+  .project-info p:has(+ ol) {
+    margin-bottom: 8px;
+  }
+  .project-info :is(ul, ol) {
     margin-top: 0;
     margin-bottom: 24px;
   }
-  .project-info ol li {
+  .project-info :is(ul, ol) li {
     margin-bottom: 8px;
   }
   .diy::after {
