@@ -239,10 +239,11 @@ After that, you will be able to access the ESPHome Device Builder at `localhost:
 
 > [!NOTE]
 > `--net=host` lets the ESPHome Device Builder see mDNS, which is how it finds devices and tracks whether they are
-> online. Without host networking the Device Builder still runs, but `.local` names will not resolve via mDNS, so it
-> can only reach devices whose address resolves another way: a literal IP, or a hostname your regular DNS serves.
-> [`manual_ip`](/components/wifi#wifi-manual_ip) gives a device a static IP; `use_address` overrides the address used
-> to connect to it.
+> online. Without host networking it still runs and still pings devices to track their status, but `.local` names
+> stop resolving through mDNS, so it can only reach devices your network resolves another way: a literal IP, or a
+> hostname served by regular DNS. [`manual_ip`](/components/wifi#wifi-manual_ip) assigns a device a static IP, and
+> [`use_address`](/components/wifi/) overrides the address used to connect to it. See the
+> [FAQ](/guides/faq#docker-reference-notes) for the full details.
 
 Logging level can be set with the env var `ESPHOME_LOG_LEVEL` (default is `INFO`).
 
