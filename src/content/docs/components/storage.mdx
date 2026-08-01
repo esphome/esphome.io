@@ -1,0 +1,140 @@
+---
+title: "Storage"
+description: "Base storage interface with registry and asynchronous transfer worker, automatically loaded by storage drivers such as sd_storage, usb_storage, nfs_client, and binary_storage."
+---
+
+import APIRef from '@components/APIRef.astro';
+
+The `storage` component is the shared base layer for all ESPHome storage drivers. It provides a common
+interface, a runtime registry that tracks every configured storage device and notifies subscribers when
+devices register or unregister (e.g. on hotplug events), and an asynchronous transfer worker for
+non-blocking copy and move operations.
+
+On its own, `storage` exposes no files or entities — it has nothing to mount or read from. A storage
+driver component (such as `sd_storage`, `usb_storage`, `nfs_client`, or `binary_storage`) is always needed
+on top of it to actually access a device. You do not need to add `storage:` to your configuration manually;
+it is automatically loaded by any storage driver that depends on it.
+
+> [!WARNING]
+> The storage interface is **experimental**. Breaking changes may occur in future ESPHome releases as the
+> component and its drivers evolve.
+
+```yaml
+# Example configuration entry
+storage:
+```
+
+## Configuration variables
+
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID for this component.
+- **copy_chunk_size** (*Optional*, int): Buffer size, in bytes, used when copying a file from one storage
+  device to another (e.g. SD card to USB, or USB to a network share). Must be a multiple of 512 and between
+  4096 and 131072. Larger values can speed up copies slightly at the cost of more RAM held during the copy;
+  the default is a good fit for SD/USB media. Defaults to `16384` (16 kB).
+- **path_max** (*Optional*, int): Longest relative path, in bytes, that the storage API carries. Must be
+  between 64 and 1024. Raising it also raises RAM use during directory walks, since two buffers of this
+  size are held per directory level. Defaults to the largest value any configured driver requires, so you
+  normally do not need to set this.
+- **max_blocking_transfer_size** (*Optional*, int): Maximum size, in bytes, that whole-file copy/read/write
+  operations are allowed to process in one blocking call. These hold the entire file in RAM, so transfers
+  larger than this are rejected with the `TRANSFER_TOO_LARGE` error instead of freezing the device for the
+  duration of the transfer. Use the asynchronous transfer path described below for anything larger. `0`
+  disables the check. Defaults to `16384` (16 kB).
+- **move_fallback_copy** (*Optional*, boolean): What to do when a move within a single storage device is
+  refused. Such a move is normally a rename, which some backends reject even within themselves — an NFS
+  export can span several file systems, and a rename never crosses one. When enabled, the move is retried
+  as copy + delete so it still completes; when disabled, the refusal is reported instead of quietly turning
+  a directory-entry update into a full file copy. Defaults to `true`.
+
+The following options only take effect on nodes where the asynchronous worker is compiled in — that is,
+whenever a filesystem or network storage driver is configured. On nodes with only raw storage devices they
+are simply unused.
+
+- **task_stack_size** (*Optional*, int): Stack size, in bytes, for the background worker task on platforms
+  that support one. Must be between 4096 and 32768. Directory walks and network file systems need the most
+  headroom here. Defaults to `8192`.
+- **task_priority** (*Optional*, int): FreeRTOS priority for the background worker task. Must be between 1
+  and 23 — above the idle task, and below the networking tasks. Defaults to `1`.
+- **max_pending** (*Optional*, int): Maximum number of asynchronous transfers queued at once. Must be
+  between 1 and 16. The pool is allocated once, so this directly determines the worker's RAM use. Further
+  submissions while the pool is full are rejected until a slot frees up. Defaults to `4`.
+- **max_streams** (*Optional*, int): Maximum number of chunked read/write streams open at the same time.
+  Must be between 1 and 8. Streams are used by components that feed data in piece by piece, such as a file
+  upload arriving over HTTP, and they live much longer than a single copy — a node handling one upload at
+  a time needs very few slots. Defaults to `2`.
+- **worker_update_interval** (*Optional*, [Time](/guides/configuration-types#time)): How often the worker's
+  engine runs. This paces transfers that are processed on the main loop rather than on a background task; a
+  small value keeps them moving without busy-spinning the CPU. Defaults to `5ms`.
+
+## Triggers
+
+### `on_registered`
+
+This trigger fires when a storage device becomes available — at boot once the driver has brought it up, or
+later on a hotplug event such as inserting a USB stick.
+
+```yaml
+storage:
+  on_registered:
+    - logger.log: "A storage device became available"
+```
+
+The device is available as the variable `x` in [lambdas](/automations/templates#config-lambda). Note that
+`x` is the generic base type: a mount path only exists on devices that have a file system, so query the
+device through `get_info()` rather than assuming one:
+
+```yaml
+storage:
+  on_registered:
+    - lambda: |-
+        esphome::storage::StorageInfo info{};
+        if (x->get_info(&info) == esphome::storage::StorageError::OK) {
+          ESP_LOGI("storage", "%s is now available", info.name);
+        }
+```
+
+### `on_unregistered`
+
+This trigger fires when a storage device stops being available, for example when a USB stick is unplugged
+or a network share disconnects. It also runs before a clean shutdown of a device.
+
+```yaml
+storage:
+  on_unregistered:
+    - logger.log: "A storage device went away"
+```
+
+The same `x` variable is available. Do not start any file operation from this trigger — by the time it
+runs, the device is already gone.
+
+## Asynchronous transfers
+
+Storage I/O is blocking by design, so a large file transfer done synchronously would make the node
+unresponsive for its duration. The transfer worker moves copy and move operations off the main loop's
+critical path. There is nothing to enable:
+
+- The worker is compiled in **automatically** whenever a filesystem or network storage driver is
+  configured. Nodes that only use raw storage (small memory ICs such as FRAM or EEPROM) never pay any flash
+  or RAM for it. Its RAM — request pool, stream pool, task stack — is allocated lazily on first use, so a
+  node that never transfers anything pays nothing either.
+- Per transfer, the worker picks the execution strategy automatically. It uses a background FreeRTOS task
+  when the platform provides one, the driver declares that its I/O is task-safe, and every storage involved
+  confirms it at runtime — an SD card on the dedicated SDMMC controller, for example. Otherwise it uses a
+  loop-sliced engine that processes one chunk per scheduler tick (see `worker_update_interval`), which is
+  also the only mode on platforms without background tasks and the fallback for drivers that share a bus,
+  such as SPI-attached SD cards. Behavior is identical either way — only timing differs.
+- Completion callbacks always run on the main loop, regardless of which engine performed the transfer.
+- Hotplug-safe: removing or unmounting a storage device cancels its pending transfers and drains in-flight
+  work before the device is torn down.
+
+## Behavior notes
+
+The blocking whole-file helpers hold the entire file in RAM and stop the node for the duration of the
+transfer. `max_blocking_transfer_size` caps how large such a transfer may get; anything beyond that belongs
+on the asynchronous path described above, which streams the data in chunks and never holds more than
+`copy_chunk_size` at a time.
+
+## See Also
+
+- <APIRef text="storage.h" path="storage/storage.h" />
+- <APIRef text="storage_worker.h" path="storage/storage_worker.h" />
