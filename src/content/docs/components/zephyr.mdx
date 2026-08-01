@@ -67,13 +67,16 @@ zephyr:
 | `esp32c6` | ESP32-C6 (RISC-V) | [`esp32c6_devkitc`](https://docs.zephyrproject.org/latest/boards/espressif/esp32c6_devkitc/doc/index.html) | mainline Zephyr | Wi-Fi, BLE, Thread (via `openthread:`) |
 | `nativesim` | Host binary, no real hardware | [`native_sim/native/64`](https://docs.zephyrproject.org/latest/boards/native/native_sim/doc/index.html) | mainline Zephyr | Simulation on your PC |
 | `nrf52` | nRF52840 (Cortex-M4) | [`adafruit_feather_nrf52840`](https://docs.zephyrproject.org/latest/boards/adafruit/feather_nrf52840/doc/index.html) | nRF Connect SDK (NCS) | BLE, Thread (via `openthread:`) |
+| `nrf54l15` | nRF54L15 (Cortex-M33) | [`nrf54l15dk`](https://docs.zephyrproject.org/latest/boards/nordic/nrf54l15dk/doc/index.html) | nRF Connect SDK (NCS) | BLE, Thread (via `openthread:`) |
 
 All three `esp32*` variants build only the single scheduled core Zephyr's Wi-Fi/BLE drivers require;
-where the chip has more than one core, only the main application core's image is built.
+where the chip has more than one core, only the main application core's image is built. `nrf54l15`
+likewise only builds for the application core (`cpuapp`) — the board's separate RISC-V co-processor
+core (`cpuflpr`) is not a build target.
 
-`nrf52` is the only variant with more than one selectable framework today — it defaults to Nordic's
-own nRF Connect SDK (NCS), but `framework: type: zephyr` builds it against mainline Zephyr instead
-(the same source the `esp32*` family uses). See [`framework`](#framework).
+`nrf52` and `nrf54l15` are the only variants with more than one selectable framework today — both
+default to Nordic's own nRF Connect SDK (NCS), but `framework: type: zephyr` builds either against
+mainline Zephyr instead (the same source the `esp32*` family uses). See [`framework`](#framework).
 
 It is not recommended to use esp variants for other than experimental purposes, the esp32 platform,
 esp-idf framework delivers superior functionality and stability.  These variants are being used to test
@@ -131,7 +134,7 @@ mainline Zephyr doesn't already support, for example.
 it from:
 
 - **type** (*Optional*, string): Which SDK to use. Most variants only support one (mainline Zephyr);
-  `nrf52` supports `ncs` (the default) and `zephyr` (mainline, as an alternate). See
+  `nrf52` and `nrf54l15` support `ncs` (the default) and `zephyr` (mainline, as an alternate). See
   [Variants](#variants) for each variant's default.
 - **version** (*Optional*, string): The version to build against, in **that SDK's own numbering** —
   defaults to the SDK's own recommended version. The literal value `recommended` is also accepted as
@@ -383,9 +386,9 @@ at a time when troubleshooting, rather than turning everything up simultaneously
 ## mDNS status
 
 [`mdns:`](/components/mdns/) works on the `esp32` and `esp32c6` variants when Wi-Fi is configured
-without `openthread:` (on `esp32c6`/`esp32h2` with `openthread:`, and on `nrf52` — which always uses
-`openthread:` — discovery instead goes through OpenThread's own SRP client; `nativesim` uses the
-host's own mDNS backend, not Zephyr's).
+without `openthread:` (on `esp32c6`/`esp32h2` with `openthread:`, and on `nrf52`/`nrf54l15` — which
+always use `openthread:` — discovery instead goes through OpenThread's own SRP client; `nativesim`
+uses the host's own mDNS backend, not Zephyr's).
 
 As of Zephyr 4.4.1/mainline, `subsys/net/lib/dns/mdns_responder.c` has two known bugs that keep mDNS
 from actually working correctly out of the box:
@@ -451,28 +454,38 @@ Espressif chip under Zephyr works today, including the single-core-image builds 
   
 We have noted that Espressif is very active in the Zephyr repository and will monitor for any changes.
 
-## MCUboot and nRF52 flashing
+## MCUboot and nRF52/nRF54L15 flashing
 
 Unlike the `esp32*` variants, which have a ROM-resident bootloader and can be flashed over serial
-from blank silicon, `nrf52` has no ROM bootloader at all. [MCUboot](https://docs.mcuboot.com/) must
-be flashed onto the chip once via an SWD debug probe (e.g. an ST-Link, J-Link, or Black Magic
-Probe) before ESPHome can do anything with it — `esphome run`/`esphome compile` alone cannot get a
-first image onto blank nRF52 silicon.
+from blank silicon, `nrf52` and `nrf54l15` have no ROM bootloader at all. [MCUboot](https://docs.mcuboot.com/)
+must be flashed onto the chip once via SWD before ESPHome can do anything with it — `esphome
+run`/`esphome compile` alone cannot get a first image onto blank silicon. What that SWD access
+looks like in practice differs by board:
 
-ESPHome does not currently have a USB-based upload path for this variant. The first application
-image also has to be flashed via the same SWD probe used for MCUboot (`esphome compile` produces a
-signed image suitable for this). Once that first image is running and the device is on the
-network, subsequent updates go through the normal OTA path (`esphome run` without `--device`, or
-`ota:` from the dashboard) like any other ESPHome device.
+- The `nrf52` default board (Adafruit Feather nRF52840) has no onboard debug probe — only bare SWD
+  pads/pins — so a separate probe (e.g. an ST-Link, J-Link, or Black Magic Probe) has to be wired up.
+- The `nrf54l15` default board (nRF54L15 DK) has an onboard J-Link debug probe, so SWD is reachable
+  over the DK's own USB port with no separate probe hardware needed.
+
+Once a probe is connected — the nRF54L15 DK's onboard J-Link, or a separate probe wired to `nrf52`'s
+SWD pads — `esphome upload yourfile.yaml --device PYOCD` flashes the current build over SWD, the
+same `--device PYOCD` convention used by the separate `platform: nrf52` component. This is still SWD
+underneath (`pyocd` talks to the debug probe over USB, not to a target-chip USB DFU endpoint), but
+ESPHome drives it directly instead of requiring a separate manual flashing tool. `pyocd` itself is
+fetched automatically; no extra install step is needed. The very first image (MCUboot, then the
+signed application image) can be flashed this way too. Once that first image is running and the
+device is on the network, subsequent updates can also go through the normal OTA path (`esphome run`
+without `--device`, or `ota:` from the dashboard) like any other ESPHome device.
 
 > [!IMPORTANT]
-> A board used with `nrf52` needs an MCUboot `boot_partition` large enough for ECDSA-P256 signing.
+> A board used with `nrf52` or `nrf54l15` needs an MCUboot `boot_partition` large enough for
+> ECDSA-P256 signing.
 
 ## Adding a new variant
 
 > [!NOTE]
 > This section is for contributors extending `platform: zephyr` with a new chip family (e.g. a
-> future STM32 or Nordic nRF54 variant), not for end users writing device configuration.
+> future STM32 variant), not for end users writing device configuration.
 
 Every `variant:` carries its own SDK/board/capability data, and the build infrastructure
 (`zephyr/build_zephyr.py`, `zephyr/framework_west.py`, `zephyr/sdk_setup_west.py`) is generic,
@@ -547,14 +560,6 @@ driven entirely by that data. A new variant is a new entry plus variant-specific
    `esphome compile`/`esphome run`, not just against Kconfig/devicetree documentation — several
    real gaps (ADC handling, toolchain selection, exception-stack-trace linking) were only found
    this way.
-
-> [!NOTE]
-> A per-variant lookup table can end up living outside the `ZephyrVariant` registry itself — for
-> example, `zephyr/build_zephyr.py`'s toolchain selection is (as of this writing) a separate dict
-> keyed by variant name, not a `ZephyrVariant` field. A missing entry here fails silently by
-> falling back to the host's own compiler instead of the correct cross-toolchain, rather than
-> raising an error. Check `build_zephyr.py` for tables like this when adding a variant, until
-> they're folded into the registry.
 
 ## See Also
 
