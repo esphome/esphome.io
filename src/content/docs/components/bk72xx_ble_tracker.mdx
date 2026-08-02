@@ -65,19 +65,57 @@ bk72xx_ble_tracker:
     complete scan session. When `continuous` is `true` the scanner restarts immediately after each
     session ends. Defaults to `5min`.
 
-  - **continuous** (*Optional*, boolean): Leave this at `true`. When `true` the scanner runs
-    permanently, with the `duration` period used only for per-session bookkeeping. When `false`
-    a started scan runs for `duration` and then stops. Defaults to `true`.
+  - **continuous** (*Optional*, boolean): When `true` the scanner runs permanently, with the
+    `duration` period used only for per-session bookkeeping. When `false` a started scan runs
+    for `duration` and then stops — note that nothing starts the first scan automatically, so
+    pair it with the `bk72xx_ble_tracker.start_scan` action (for example from
+    `api.on_client_connected`, so the single-core radio only scans while Home Assistant is
+    connected). Defaults to `true`.
+
+- **on_ble_advertise** (*Optional*, [Automation](/automations)): An automation to perform
+  when a Bluetooth advertisement is received. An optional `mac_address` (single address or list)
+  filters to specific devices. A variable `x` of type
+  `ble_device_base::ESPBTDevice` is passed to the automation.
+
+- **on_ble_service_data_advertise** (*Optional*, [Automation](/automations)): An
+  automation to perform when an advertisement carries service data for the given
+  `service_uuid` (16, 32 or 128 bit; optional `mac_address` filter). A variable `x` with the
+  service data bytes (`std::vector<uint8_t>`) is passed to the automation.
+
+- **on_ble_manufacturer_data_advertise** (*Optional*, [Automation](/automations)): The
+  same for manufacturer data, filtered by `manufacturer_id`.
+
+- **on_scan_end** (*Optional*, [Automation](/automations)): An automation to perform
+  when a scan session ends (its `duration` elapsed, or `stop_scan` was called).
 
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used to
   reference this component in lambdas.
 
-> [!WARNING]
-> Automation triggers (`on_ble_advertise`, `on_scan_end`, …) and the
-> `start_scan` / `stop_scan` actions are not available on this platform yet. Because nothing
-> else starts a scan, setting `continuous: false` leaves the scanner permanently idle: there is
-> no config error and no scan-start log line, and every attached BLE sensor simply stays
-> unknown. Starting a scan is currently only possible from C++ (`start_scan()`).
+## Actions
+
+- **bk72xx_ble_tracker.start_scan**: Start a scan. The optional
+  [templatable](/automations/templates#config-templatable) `continuous` overrides the scan mode
+  for this start only; without it the mode configured under `scan_parameters` is restored (a
+  previous `stop_scan` does not stick as "one-shot"). Invoked while a scan is already running,
+  the action applies the mode and re-anchors the running scan's `duration` window instead of
+  restarting the radio.
+
+- **bk72xx_ble_tracker.stop_scan**: Stop a running scan; also cancels a start that is still
+  being retried.
+
+```yaml
+api:
+  on_client_connected:
+    - bk72xx_ble_tracker.start_scan:
+        continuous: true
+  on_client_disconnected:
+    - if:
+        condition:
+          not:
+            api.connected:
+        then:
+          - bk72xx_ble_tracker.stop_scan:
+```
 
 ## With BLE sensors
 
