@@ -77,7 +77,7 @@ We'll update our recommendations here as support matures for newer microcontroll
 
 ## How do I install ESPHome onto my device?
 
-You can use the [ESPHome Device Builder](/guides/getting_started_hassio#installing-esphome-device-builder) directly; after editing your device's
+You can use the [ESPHome Device Builder](/install/) directly; after editing your device's
 configuration to your liking, click "INSTALL" and follow the prompts. Note that the first time you install ESPHome onto
 a (new) device, you need to connect it with a (USB) cable; this installation method requires a browser that supports
 WebSerial, like Firefox, Google Chrome or Microsoft Edge.
@@ -429,7 +429,7 @@ Here are some steps that may help mitigate the issue:
 
 - Too many clients simultaneously connected to the native API server on the device may also result in this behavior.
   For example, the Home Assistant ESPHome integration and the log viewer on the
-  [ESPHome Device Builder](/guides/getting_started_hassio#installing-esphome-device-builder) each establish a connection to the device. In
+  [ESPHome Device Builder](/install/) each establish a connection to the device. In
   production, you will likely only have a single connection from Home Assistant, making this less of an issue. Still,
   beware that attaching a log viewer might have an impact.
 
@@ -553,8 +553,8 @@ services:
 
 > [!NOTE]
 > By default, ESPHome uses mDNS to discover devices and resolve their IPs on the network; this is how the
-> [ESPHome Device Builder](/guides/getting_started_hassio#installing-esphome-device-builder) finds devices and tracks
-> whether they are online. In order for mDNS to work, you must use Docker's host networking mode.
+> [ESPHome Device Builder](/install/) finds devices and tracks whether they are online. In order for mDNS to work, you
+> must use Docker's host networking mode.
 >
 > The [host networking driver](https://docs.docker.com/engine/network/drivers/host/) only works on Linux hosts. On
 > Docker Desktop version 4.34 and later it is available, but must first be enabled under
@@ -595,7 +595,7 @@ If you disable mDNS, expect the following repercussions:
   mDNS disabled, then you will have to use a static IP address and manually add the ESPHome component with its
   (static) IP address.
 
-- Status detection in the [ESPHome Device Builder](/guides/getting_started_hassio#installing-esphome-device-builder)
+- Status detection in the [ESPHome Device Builder](/install/)
   uses mDNS where it is available, but a periodic ICMP ping sweep runs for every node regardless, so a node with
   mDNS disabled is still tracked as long as its address resolves some other way - see the
   [notes in the Docker Reference section](#docker-reference-notes). A node whose address cannot be resolved at all
