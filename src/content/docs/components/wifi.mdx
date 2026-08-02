@@ -6,9 +6,13 @@ import APIRef from '@components/APIRef.astro';
 
 
 This core ESPHome component sets up WiFi connections to access points
-for you. You need to have a network configuration (either Wifi or Ethernet)
-or ESPHome will fail in the config validation stage. You also can't have both Wifi
-and Ethernet setup in same time (even if your ESP has both wired).
+for you. You need to have a network configuration (such as WiFi or [Ethernet](/components/ethernet/))
+or ESPHome will fail in the config validation stage.
+
+On ESP32 family devices, WiFi may be configured alongside [Ethernet](/components/ethernet/) in the same
+configuration; this requires a `network:` `priority:` list naming both interfaces — see
+[Multi-Interface Support](/components/network/#multi-interface-support) on the [Network](/components/network/)
+component. Using more than one network interface is not supported on other platforms.
 
 It's recommended to provide a static IP for your node, as it can
 dramatically improve connection times.
@@ -98,6 +102,28 @@ wifi:
   better ones are available. If multiple networks are configured, the last successfully connected one is tested first.
   In case it fails, all networks are then tested one after the other in their declared order, starting with the first
   one in the list.
+
+  Instead of a boolean, this option also accepts a settings block:
+
+  ```yaml
+  wifi:
+    # ...
+    fast_connect:
+      enabled: true
+      storage: rtc
+  ```
+
+  - **enabled** (*Optional*, boolean): Whether fast connect is active. Defaults to `true` when the block form is used.
+  - **storage** (*Optional*, string): Where to persist the connection details (BSSID and channel) that fast connect
+    saves after each successful connection. One of:
+
+    - `flash`: survives power loss but wears flash a little on each save.
+    - `rtc`: stored in RTC memory, which survives software reboots and deep sleep but **not** power loss, and avoids
+      flash wear. A good fit for battery-powered devices that wake from deep sleep frequently.
+
+    Defaults to `rtc` on ESP8266 and `flash` on ESP32, matching each platform's previous behavior. Only `flash` is
+    available on platforms without RTC-backed storage (the RP2040 and the ESP32-C2 and C61 variants, which have no
+    RTC memory), where `rtc` is rejected.
 
   > [!NOTE]
   > While `fast_connect` skips the initial scan, if the connection attempt fails, ESPHome will still perform a scan

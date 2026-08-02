@@ -1,0 +1,123 @@
+---
+description: "Instructions for setting up BK72xx (BLE 5.x) Bluetooth Low Energy device tracking using ESPHome."
+title: "BK72xx Bluetooth Low Energy Tracker Hub"
+---
+
+import APIRef from '@components/APIRef.astro';
+
+The `bk72xx_ble_tracker` component creates a global hub so that you can scan Bluetooth Low Energy
+advertisements on a **BLE 5.x** Beken node in the LibreTiny `beken-72xx` family.
+
+Chip support is inherited from the [BK72xx BLE](/components/bk72xx_ble/) controller component,
+which lists the supported and unsupported SoCs.
+
+This component provides the **BLE scanner** and the listener interface used by ESPHome's
+advertisement-based BLE sensor platforms —
+for example [BLE RSSI](/components/sensor/ble_rssi/),
+[BLE Presence](/components/binary_sensor/ble_presence/),
+[BLE Scanner](/components/text_sensor/ble_scanner/) and
+[Xiaomi BLE](/components/sensor/xiaomi_ble/) — which attach to this tracker automatically.
+
+> [!NOTE]
+> This tracker is **scan-only**: it receives advertisements but cannot open GATT connections,
+> so connection-based components such as [`ble_client`](/components/ble_client/) and
+> [`bluetooth_proxy`](/components/bluetooth_proxy/) are not available on this platform.
+
+> [!NOTE]
+> The tracker builds on the [BK72xx BLE](/components/bk72xx_ble/) controller component and
+> loads it automatically — the BLE stack (`CFG_SUPPORT_BLE`) is enabled in the build with no
+> manual `platformio_options` flag.
+
+> [!NOTE]
+> The BK72xx are **single-core SoCs** — WiFi and BLE share the same ARM CPU core.
+> See [Use on a single-core chip](#use-on-a-single-core-chip) below for how the scan `window` / `interval`
+> ratio balances BLE against WiFi.
+
+```yaml
+# Example configuration entry
+bk72xx_ble_tracker:
+```
+
+<span id="config-bk72xx_ble_tracker"></span>
+
+## Configuration variables
+
+- **scan_parameters** (*Optional*): Advanced parameters for configuring the scan behavior.
+  See also [this guide by Texas Instruments](https://dev.ti.com/tirex/explore/content/simplelink_academy_cc2640r2sdk_5_10_02_00/modules/blestack/ble_scan_adv_basic/ble_scan_adv_basic.html#scanning-basics)
+  for background reading.
+
+  > [!NOTE]
+  > The BK72xx controller scans **passive only** — there is no `active` option. Passive
+  > scanning is sufficient for BTHome/ATC thermometers and most beacons, which broadcast all
+  > their data in the advertisement (no scan response).
+
+  - **interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval between
+    each consecutive scan window. The scanner cycles through the three BLE advertising channels
+    at this rate. Defaults to `100ms` — the BK reference scan rate, which together with the
+    default `window` gives a 30% duty cycle. A larger interval lowers the duty cycle and frees
+    more CPU time for WiFi on the single-core SoC, at the cost of catching fewer advertisements.
+
+  - **window** (*Optional*, [Time](/guides/configuration-types#time)): The time the receiver is
+    actively listening for packets on a channel during each scan interval. Must be ≤ `interval`.
+    Defaults to `30ms` (a 30% duty cycle with the default `interval`).
+
+  - **duration** (*Optional*, [Time](/guides/configuration-types#time)): The length of each
+    complete scan session. When `continuous` is `true` the scanner restarts immediately after each
+    session ends. Defaults to `5min`.
+
+  - **continuous** (*Optional*, boolean): Leave this at `true`. When `true` the scanner runs
+    permanently, with the `duration` period used only for per-session bookkeeping. When `false`
+    a started scan runs for `duration` and then stops. Defaults to `true`.
+
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used to
+  reference this component in lambdas.
+
+> [!WARNING]
+> Automation triggers (`on_ble_advertise`, `on_scan_end`, …) and the
+> `start_scan` / `stop_scan` actions are not available on this platform yet. Because nothing
+> else starts a scan, setting `continuous: false` leaves the scanner permanently idle: there is
+> no config error and no scan-start log line, and every attached BLE sensor simply stays
+> unknown. Starting a scan is currently only possible from C++ (`start_scan()`).
+
+## With BLE sensors
+
+Sensor platforms attach to the tracker automatically (identical to ESP32). The BK72xx scans
+passive-only, which is sufficient for BTHome/ATC-style sensors that broadcast all their data
+in the advertisement:
+
+```yaml
+bk72xx_ble_tracker:
+
+sensor:
+  - platform: xiaomi_lywsd03mmc
+    mac_address: XX:XX:XX:XX:XX:XX
+    bindkey: "00112233445566778899aabbccddeeff"
+    temperature:
+      name: "Temperature"
+    humidity:
+      name: "Humidity"
+  - platform: ble_rssi
+    mac_address: XX:XX:XX:XX:XX:XX
+    name: "BLE Beacon RSSI"
+```
+
+## Use on a single-core chip
+
+Unlike the ESP32 which runs BLE on a dedicated core, the BK72xx run both WiFi and BLE on the
+same single ARM CPU core. The scan `window` / `interval` ratio decides how that core is split
+between BLE and WiFi, and passive-only scanning (no scan requests) keeps the radio cost of each
+window minimal:
+
+- `interval: 100ms`, `window: 30ms` → **30/70** BLE / WiFi — the BK reference default
+- `interval: 200ms`, `window: 50ms` → **25/75** BLE / WiFi — catches fewer advertisements,
+  but leaves more of the core for WiFi
+
+## See Also
+
+- [BK72xx Bluetooth Low Energy](/components/bk72xx_ble/)
+- [ESP32 Bluetooth Low Energy Tracker Hub](/components/esp32_ble_tracker/)
+- [BLE RSSI Sensor](/components/sensor/ble_rssi/)
+- [BLE Presence Binary Sensor](/components/binary_sensor/ble_presence/)
+- [BLE Scanner Text Sensor](/components/text_sensor/ble_scanner/)
+- [Xiaomi BLE Sensor](/components/sensor/xiaomi_ble/)
+- <APIRef text="bk72xx_ble_tracker.h" path="bk72xx_ble_tracker/bk72xx_ble_tracker.h" />
