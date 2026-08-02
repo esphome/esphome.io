@@ -46,8 +46,13 @@ const sources = await Promise.all(
   ),
 );
 
-// The <img> fallback keeps the original format for browsers with neither.
-const fallback = await getImage({ src: light, widths, format: light.format });
+// <picture> requires an <img>, and the preload scanner fetches its src before
+// the script below can correct the media queries. That fetch is discarded for
+// anyone whose chosen theme differs from their OS, so the baseline is WebP
+// rather than the original PNG: same role, roughly a quarter of the bytes.
+// The cost is browsers that support neither AVIF nor WebP, which means Safari
+// below 14 and IE.
+const fallback = await getImage({ src: light, widths, format: "webp" });
 ---
 
 <picture>
