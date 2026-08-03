@@ -484,6 +484,45 @@ Configuration variables:
 
 RGB displays use red, green, and blue, while grayscale displays may use white.
 
+<span id="display-sleep-action"></span>
+
+### `display.sleep` Action
+
+Puts a supported display controller into its low-power sleep mode. This is separate from turning off the display
+backlight. For the largest power saving, turn off the backlight and put the display controller to sleep.
+
+ESPHome validates this action against the selected display model. Configuration fails if the driver or model does not
+support sleep, or if the configured hardware interface cannot send the sleep command. See the display driver's
+documentation for its supported models and any wiring restrictions.
+
+```yaml
+lvgl:
+  on_idle:
+    timeout: 30s
+    then:
+      - light.turn_off: display_backlight
+      - lvgl.pause:
+      - delay: 1s
+      - display.sleep: my_display
+```
+
+### `display.wakeup` Action
+
+Wakes a supported display controller from sleep. Wake the controller before resuming drawing or turning its backlight
+on.
+
+```yaml
+touchscreen:
+  - on_release:
+      - if:
+          condition:
+            lvgl.is_paused:
+          then:
+            - display.wakeup: my_display
+            - lvgl.resume:
+            - light.turn_on: display_backlight
+```
+
 ### Display Pages
 
 Certain display types also allow you to show "pages". With pages you can create drawing lambdas

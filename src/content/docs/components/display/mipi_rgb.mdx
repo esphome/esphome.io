@@ -168,6 +168,15 @@ it will be inferred from the number of bytes provided. The SLPOUT, PIXFMT, INVON
 commands will be automatically appended based on config options and should not be included in
 the init sequence in yaml.
 
+## Sleep and Wakeup
+
+The [`display.sleep` and `display.wakeup` actions](/components/display/#display-sleep-action) are currently supported by
+the `GUITION-4848S040` model. The display must retain a usable SPI control interface after the RGB interface starts.
+
+ESPHome rejects these actions during configuration validation if the display has no SPI control interface or if an RGB
+or control pin is shared with another function. The validation error identifies the shared GPIO. This restriction is
+configuration-dependent because model pin defaults can be overridden and the SPI bus is configured separately.
+
 ## Example configurations
 
 This is an example of a custom configuration.
