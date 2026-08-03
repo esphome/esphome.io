@@ -1,0 +1,51 @@
+---
+description: "Instructions for setting up the RP2 BLE tracker to scan for Bluetooth Low Energy devices on the Raspberry Pi Pico W."
+title: "RP2 BLE Tracker"
+---
+
+import APIRef from '@components/APIRef.astro';
+
+The `rp2_ble_tracker` component scans for Bluetooth Low Energy advertisements on the
+Raspberry Pi **Pico W** and **Pico 2 W** — the platform analog of
+[ESP32 BLE Tracker](/components/esp32_ble_tracker/). It builds on the
+[RP2040 BLE](/components/rp2040_ble/) stack component and loads it automatically.
+
+Scanning is **passive only**: the tracker listens for advertisements but does not send
+scan requests, so scan response data (such as some device names) is not requested. The
+radio is shared between WiFi and Bluetooth on these boards; the default scan parameters
+use a 30 % duty cycle to leave the radio mostly free for WiFi.
+
+```yaml
+# Example configuration entry
+rp2_ble_tracker:
+  scan_parameters:
+    interval: 100ms
+    window: 30ms
+```
+
+## Configuration variables
+
+- **scan_parameters** (*Optional*): Tune how the scan runs.
+
+  - **interval** (*Optional*, [Time](/guides/configuration-types#time)): How often the
+    radio opens a scan window. The controller accepts 2.5 ms to 10240 ms in 0.625 ms
+    steps. Defaults to `100ms`.
+  - **window** (*Optional*, [Time](/guides/configuration-types#time)): How long the radio
+    listens within each interval. Must not be larger than the interval; the same range
+    and step apply. Defaults to `30ms`.
+  - **duration** (*Optional*, [Time](/guides/configuration-types#time)): Length of one
+    scan period. In continuous mode a scan end event fires each period; in
+    non-continuous mode the scan stops after this long. Must cover at least three scan
+    intervals. Defaults to `5min`.
+  - **continuous** (*Optional*, boolean): If true, scanning runs forever. If false, a
+    started scan stops after `duration` and is restarted from an automation. Defaults to
+    `true`.
+
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used
+  to reference this component.
+
+## See Also
+
+- [RP2040 BLE](/components/rp2040_ble/)
+- [ESP32 BLE Tracker](/components/esp32_ble_tracker/)
+- <APIRef text="rp2_ble_tracker.h" path="rp2_ble_tracker/rp2_ble_tracker.h" />
