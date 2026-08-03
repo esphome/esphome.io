@@ -280,6 +280,38 @@ on_...:
 Only devices that actually support mounting can be given here; anything else is rejected while the
 configuration is validated.
 
+### `storage.format` Action
+
+Formats a filesystem storage device, given by its `id`, erasing everything on it. This runs on the
+transfer worker and returns immediately; use `on_complete` to know when it has finished.
+
+```yaml
+on_...:
+  - storage.format:
+      id: my_sd_card
+      on_complete:
+        - logger.log: "card formatted"
+```
+
+Configuration variables:
+
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The filesystem storage device to
+  format.
+- **on_complete** (*Optional*, [Automation](/automations/actions)): Triggered when the format
+  finishes. The error text is available as `x`; it is empty on success. A backend that does not
+  support formatting reports `NOT_SUPPORTED` here.
+
+> [!WARNING]
+> Unlike a copy, a format cannot be sliced into chunks — it is a single operation that runs to
+> completion in one go. When the driver supports a task-safe (background-task) format, it runs off
+> the main loop and the node stays responsive. Otherwise it runs on the main loop and **blocks it for
+> the entire format**, which on a large medium can be long enough to trip the task watchdog and reboot
+> the node mid-format.
+>
+> If your device does not support a task-safe format, either format the medium beforehand on another
+> machine (e.g. a PC), or raise the task watchdog timeout past the expected format time — only when
+> that headroom is acceptable for the rest of the node.
+
 ### Raw device actions
 
 `storage.raw_read`, `storage.raw_write` and `storage.raw_erase` address a raw memory device — a flash chip,
