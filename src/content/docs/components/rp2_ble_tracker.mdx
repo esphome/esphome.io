@@ -10,10 +10,10 @@ Raspberry Pi **Pico W** and **Pico 2 W** — the platform analog of
 [ESP32 BLE Tracker](/components/esp32_ble_tracker/). It builds on the
 [RP2040 BLE](/components/rp2040_ble/) stack component and loads it automatically.
 
-Scanning is **passive only**: the tracker listens for advertisements but does not send
-scan requests, so scan response data (such as some device names) is not requested. The
-radio is shared between WiFi and Bluetooth on these boards; the default scan parameters
-use a 30% duty cycle to leave the radio mostly free for WiFi.
+Scanning can be passive or active. An active scan sends scan requests, and the scan
+response arrives as a separate advertisement report rather than being merged into the
+advertisement. The radio is shared between WiFi and Bluetooth on these boards; the
+default scan parameters use a 30% duty cycle to leave the radio mostly free for WiFi.
 
 > [!NOTE]
 > BLE sensor platforms such as `ble_presence` do not yet bind to this tracker; support
@@ -38,6 +38,11 @@ rp2_ble_tracker:
     scan period. In continuous mode the scan period restarts every `duration`; in
     non-continuous mode the scan stops after this long. Must cover at least three scan
     intervals. Defaults to `5min`.
+  - **active** (*Optional*, boolean): Whether to send scan requests asking devices for
+    more data after their advertisement. The scan response arrives as a separate report;
+    it is not merged into the advertisement. Turning this off saves power on the
+    advertising devices and radio time on the shared CYW43. Defaults to `true`.
+
   - **continuous** (*Optional*, boolean): If true, scanning starts at boot and runs
     forever. If false, scanning does **not** start automatically; a scan must be started
     from a lambda (`id(my_tracker).start_scan();`) and stops again after `duration`.
