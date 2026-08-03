@@ -170,8 +170,12 @@ the init sequence in yaml.
 
 ## Sleep and Wakeup
 
-The [`display.sleep` and `display.wakeup` actions](/components/display/#display-sleep-action) are currently supported by
-the `GUITION-4848S040` model. The display must retain a usable SPI control interface after the RGB interface starts.
+The [`display.sleep` and `display.wakeup` actions](/components/display/#display-sleep-action) are enabled only for the
+following models:
+
+- `GUITION-4848S040`
+
+The display must retain a usable SPI control interface after the RGB interface starts.
 
 ESPHome rejects these actions during configuration validation if the display has no SPI control interface or if an RGB
 or control pin is shared with another function. The validation error identifies the shared GPIO. This restriction is
