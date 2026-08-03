@@ -18,9 +18,6 @@ use a 30 % duty cycle to leave the radio mostly free for WiFi.
 ```yaml
 # Example configuration entry
 rp2_ble_tracker:
-  scan_parameters:
-    interval: 100ms
-    window: 30ms
 ```
 
 ## Configuration variables
@@ -37,9 +34,10 @@ rp2_ble_tracker:
     scan period. In continuous mode a scan end event fires each period; in
     non-continuous mode the scan stops after this long. Must cover at least three scan
     intervals. Defaults to `5min`.
-  - **continuous** (*Optional*, boolean): If true, scanning runs forever. If false, a
-    started scan stops after `duration` and is restarted from an automation. Defaults to
-    `true`.
+  - **continuous** (*Optional*, boolean): If true, scanning starts at boot and runs
+    forever. If false, scanning does **not** start automatically; a scan must be started
+    from a lambda (`id(my_tracker).start_scan();`) and stops again after `duration`.
+    Defaults to `true`.
 
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used
   to reference this component.
