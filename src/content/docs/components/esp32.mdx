@@ -567,6 +567,12 @@ esp32:
     with `espsecure.py digest-sbv2-public-key --keyfile public_key.pem digest.bin`.
     **Requires `signing_scheme: rsa3072` and no `signing_key`.**
 
+    > [!NOTE]
+    > If you also enable `allow_partition_access` on the OTA platform to update the **bootloader**
+    > over-the-air, the bootloader image must be externally signed and 4 KiB-padded too — the standard
+    > build signs only the app, so an unsigned bootloader update is rejected. Pad and sign `bootloader.bin`
+    > with a trusted key (`espsecure.py sign-data --version 2 --keyfile key.pem ...`) before pushing it.
+
   - **signing_scheme** (*Optional*, string): The signing algorithm. One of `rsa3072`, `ecdsa256`, or `ecdsa_v1`.
     Defaults to `rsa3072`. **Not all schemes are supported on all variants** — see the table below.
 
