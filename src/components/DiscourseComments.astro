@@ -20,17 +20,40 @@ const embedUrl = new URL(Astro.url.pathname, Astro.site).href;
   <h2 id="comments">Comments</h2>
   <div id="discourse-comments"></div>
   <script is:inline define:vars={{ discourseUrl, embedUrl }}>
-    window.DiscourseEmbed = {
-      discourseUrl,
-      discourseEmbedUrl: embedUrl,
-    };
-
     (function () {
+      // Starlight sets data-theme="light"|"dark" on <html>.
+      function siteTheme() {
+        return document.documentElement.dataset.theme === "dark" ? "dark" : "light";
+      }
+
+      // Mirror the site's light/dark mode into the cross-origin embed. Discourse
+      // applies className as a class on the iframe's own <html> element, so the
+      // forum's Embedded CSS can target it (e.g. `html.dark`).
+      window.DiscourseEmbed = {
+        discourseUrl,
+        discourseEmbedUrl: embedUrl,
+        className: siteTheme(),
+      };
+
       const d = document.createElement("script");
       d.type = "text/javascript";
       d.async = true;
       d.src = window.DiscourseEmbed.discourseUrl + "javascripts/embed.js";
       (document.getElementsByTagName("head")[0] || document.getElementsByTagName("body")[0]).appendChild(d);
+
+      // The class is baked into the iframe URL, so re-point the frame whenever
+      // the visitor toggles the site theme to keep the comments in sync.
+      new MutationObserver(function () {
+        const frame = document.getElementById("discourse-embed-frame");
+        if (!frame || !frame.src) return;
+        const url = new URL(frame.src);
+        if (url.searchParams.get("class_name") === siteTheme()) return;
+        url.searchParams.set("class_name", siteTheme());
+        frame.src = url.toString();
+      }).observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ["data-theme"],
+      });
     })();
   </script>
 </section>
