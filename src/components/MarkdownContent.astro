@@ -5,10 +5,12 @@
 // actual blog post pages (not the blog index, tag or author listings, or
 // paginated pages); this mirrors starlight-blog's isAnyBlogPostPage.
 import StarlightBlogMarkdownContent from "starlight-blog/overrides/MarkdownContent.astro";
+import { getBlogConfigFromPath, isAnyBlogPostPage } from "starlight-blog/libs/page";
 import DiscourseComments from "./DiscourseComments.astro";
 
-const { id } = Astro.locals.starlightRoute;
-const isBlogPost = /^blog\/(?!(\d+\/?|tags\/.+|authors\/.+)$).+$/.test(id);
+const { starlightRoute } = Astro.locals;
+const config = getBlogConfigFromPath(starlightRoute);
+const isBlogPost = !!config && isAnyBlogPostPage(config, starlightRoute.id);
 ---
 
 <StarlightBlogMarkdownContent>
