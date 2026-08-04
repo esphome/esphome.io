@@ -87,9 +87,9 @@ Rest of content...
 
 Creates a production-ready blog post at:
 
-- `src/content/docs/blog/<slug>.mdx` - The formatted MDX blog post
-- `src/content/docs/blog/images/<slug>-hero.webp` - Optional lead image (optimized from `create-blog-post/art.*`, if provided)
-- `src/content/docs/blog/images/<slug>-2.webp`, `<slug>-3.webp`, etc. - Additional images (optimized)
+- `src/content/docs/blog/YYYY/MM/DD/<slug>.mdx` - The formatted MDX blog post
+- `src/content/docs/blog/YYYY/MM/DD/images/<slug>-hero.webp` - Optional lead image (optimized from `create-blog-post/art.*`, if provided)
+- `src/content/docs/blog/YYYY/MM/DD/images/<slug>-2.webp`, `<slug>-3.webp`, etc. - Additional images (optimized)
 
 The social/OpenGraph image is not stored in the repo — it is generated on demand by the Open Home Foundation OG
 generator and referenced from the post's front matter (see [Build Blog Post](#6-build-blog-post)).
