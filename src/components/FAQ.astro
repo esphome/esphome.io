@@ -43,10 +43,7 @@ const { heading, items } = Astro.props;
 // All links open in a new tab — FAQ answers often link to external resources.
 const rendered = items.map((item) => ({
   title: item.title,
-  html: micromark(item.content ?? "").replace(
-    /<a /g,
-    '<a target="_blank" rel="noreferrer noopener" ',
-  ),
+  html: micromark(item.content ?? "").replace(/<a /g, '<a target="_blank" rel="noreferrer noopener" '),
 }));
 ---
 

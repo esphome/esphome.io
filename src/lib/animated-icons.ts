@@ -28,9 +28,6 @@ function parseIcon(svg: string): AnimatedIconData {
   return { viewBox, body };
 }
 
-export const animatedIconData: Record<AnimatedIcon, AnimatedIconData> =
-  Object.fromEntries(
-    (Object.entries(animatedIcons) as [AnimatedIcon, string][]).map(
-      ([name, svg]) => [name, parseIcon(svg)],
-    ),
-  ) as Record<AnimatedIcon, AnimatedIconData>;
+export const animatedIconData: Record<AnimatedIcon, AnimatedIconData> = Object.fromEntries(
+  (Object.entries(animatedIcons) as [AnimatedIcon, string][]).map(([name, svg]) => [name, parseIcon(svg)]),
+) as Record<AnimatedIcon, AnimatedIconData>;

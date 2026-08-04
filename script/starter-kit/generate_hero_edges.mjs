@@ -18,20 +18,8 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const MODEL_PATH = path.join(
-  __dirname,
-  "..",
-  "public",
-  "starter-kit",
-  "ESK.glb",
-);
-const OUTPUT_PATH = path.join(
-  __dirname,
-  "..",
-  "public",
-  "starter-kit",
-  "ESK-edges.bin",
-);
+const MODEL_PATH = path.join(__dirname, "..", "public", "starter-kit", "ESK.glb");
+const OUTPUT_PATH = path.join(__dirname, "..", "public", "starter-kit", "ESK-edges.bin");
 
 // Must match the threshold angle passed to `new THREE.EdgesGeometry(...)`
 // in Hero.astro.
@@ -64,8 +52,7 @@ function quantizeMesh(positions) {
   for (let i = 0; i < positions.length; i += 3) {
     for (let a = 0; a < 3; a++) {
       const r = range[a];
-      quantized[i + a] =
-        r > 0 ? Math.round(((positions[i + a] - min[a]) / r) * QUANT_MAX) : 0;
+      quantized[i + a] = r > 0 ? Math.round(((positions[i + a] - min[a]) / r) * QUANT_MAX) : 0;
     }
   }
   return { min, range, quantized };
@@ -81,10 +68,7 @@ function loadGLTF(arrayBuffer) {
 
 async function main() {
   const fileBuffer = fs.readFileSync(MODEL_PATH);
-  const arrayBuffer = fileBuffer.buffer.slice(
-    fileBuffer.byteOffset,
-    fileBuffer.byteOffset + fileBuffer.byteLength,
-  );
+  const arrayBuffer = fileBuffer.buffer.slice(fileBuffer.byteOffset, fileBuffer.byteOffset + fileBuffer.byteLength);
 
   const gltf = await loadGLTF(arrayBuffer);
   const topLevel = [...gltf.scene.children];
@@ -107,13 +91,8 @@ async function main() {
   const t0 = performance.now();
   for (const meshes of groups) {
     for (const mesh of meshes) {
-      const edges = new THREE.EdgesGeometry(
-        mesh.geometry,
-        EDGE_THRESHOLD_ANGLE,
-      );
-      const { min, range, quantized } = quantizeMesh(
-        edges.attributes.position.array,
-      );
+      const edges = new THREE.EdgesGeometry(mesh.geometry, EDGE_THRESHOLD_ANGLE);
+      const { min, range, quantized } = quantizeMesh(edges.attributes.position.array);
       meshRecords.push({
         sourceVertexCount: mesh.geometry.attributes.position.count,
         vertexCount: quantized.length / 3,
@@ -171,20 +150,14 @@ async function main() {
   // Uint16Array must start on a 2-byte boundary within the final buffer —
   // header (uint32) and quantParams (float32) sections are both already
   // multiples of 4 bytes, so the body starts safely aligned.
-  const out = Buffer.concat([
-    Buffer.from(header.buffer),
-    Buffer.from(quantParams.buffer),
-    Buffer.from(body.buffer),
-  ]);
+  const out = Buffer.concat([Buffer.from(header.buffer), Buffer.from(quantParams.buffer), Buffer.from(body.buffer)]);
   fs.writeFileSync(OUTPUT_PATH, out);
 
   console.log(`Wrote ${OUTPUT_PATH}`);
   console.log(`  groups: ${groupCount}, meshes: ${meshCount}`);
   console.log(`  total edge line vertices: ${totalEdgeVerts}`);
   console.log(`  file size: ${(out.byteLength / 1024).toFixed(1)} KB`);
-  console.log(
-    `  EdgesGeometry compute time (offline): ${elapsedMs.toFixed(1)} ms`,
-  );
+  console.log(`  EdgesGeometry compute time (offline): ${elapsedMs.toFixed(1)} ms`);
 }
 
 main().catch((err) => {

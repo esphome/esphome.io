@@ -7,9 +7,8 @@ import SpecItem from "@components/starter-kit/SpecItem.astro";
   <TitleText>
     <h2 slot="title" class="title">Specifications</h2>
     <p slot="text">
-      The ESPHome Starter Kit uses the same high-performance parts found in
-      professional smart home devices, ensuring what you build today stays in
-      your home for years to come.
+      The ESPHome Starter Kit uses the same high-performance parts found in professional smart home devices, ensuring
+      what you build today stays in your home for years to come.
     </p>
   </TitleText>
 
@@ -48,8 +47,8 @@ import SpecItem from "@components/starter-kit/SpecItem.astro";
         <div class="spec-title-container">
           <h3 class="spec-title">Module specifications</h3>
           <p>
-            Each module connects to the main board with a 14-pin FPC ribbon
-            cable. Two modules can run on the main board at the same time.
+            Each module connects to the main board with a 14-pin FPC ribbon cable. Two modules can run on the main board
+            at the same time.
           </p>
         </div>
 
@@ -67,14 +66,8 @@ import SpecItem from "@components/starter-kit/SpecItem.astro";
             <li>Operating temperature: -25 °C to +85 °C (typical)</li>
           </SpecItem>
           <SpecItem title="Notification module">
-            <li>
-              ESPHome “Casita” board: 10 × programmable RGB LEDs and piezo
-              buzzer
-            </li>
-            <li>
-              Operating temperature: -20 °C to +70 °C (typical for LEDs and
-              piezo)
-            </li>
+            <li>ESPHome “Casita” board: 10 × programmable RGB LEDs and piezo buzzer</li>
+            <li>Operating temperature: -20 °C to +70 °C (typical for LEDs and piezo)</li>
           </SpecItem>
           <SpecItem title="Stand">
             <li>Included</li>
@@ -94,20 +87,11 @@ import SpecItem from "@components/starter-kit/SpecItem.astro";
             <li>-20 °C to +70 °C</li>
             <li>-4 °F to +158 °F</li>
             <li>Humidity: non-condensing</li>
-            <li>
-              (Overall range bound by the narrowest component: the Casita
-              module’s RGB LEDs and piezo buzzer)
-            </li>
+            <li>(Overall range bound by the narrowest component: the Casita module’s RGB LEDs and piezo buzzer)</li>
           </SpecItem>
           <SpecItem title="Storage and care">
-            <li>
-              Keep in a dry, not excessively dusty environment to avoid damage
-              to the unit.
-            </li>
-            <li>
-              Do not leave the unit in direct sunlight or near any heat source,
-              as this can cause overheating.
-            </li>
+            <li>Keep in a dry, not excessively dusty environment to avoid damage to the unit.</li>
+            <li>Do not leave the unit in direct sunlight or near any heat source, as this can cause overheating.</li>
           </SpecItem>
         </div>
 
@@ -122,8 +106,8 @@ import SpecItem from "@components/starter-kit/SpecItem.astro";
           <SpecItem title="In the box">
             <li>ESPHome ESP32-C6 main board</li>
             <li>
-              ESPHome Starter Kit module board (temperature and humidity sensor,
-              button, and ESPHome “Casita” notification modules)
+              ESPHome Starter Kit module board (temperature and humidity sensor, button, and ESPHome “Casita”
+              notification modules)
             </li>
             <li>PIR motion sensor</li>
             <li>Stand</li>
@@ -224,9 +208,7 @@ import SpecItem from "@components/starter-kit/SpecItem.astro";
     import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
     import { MeshoptDecoder } from "three/addons/libs/meshopt_decoder.module.js";
 
-    const canvas = document.getElementById(
-      "spec-scene",
-    ) as HTMLCanvasElement | null;
+    const canvas = document.getElementById("spec-scene") as HTMLCanvasElement | null;
 
     if (canvas) {
       const getSize = () => ({
@@ -253,8 +235,7 @@ import SpecItem from "@components/starter-kit/SpecItem.astro";
       // Blueprint palette — mirrors the hero section.
       const EDGE_DARK = new THREE.Color(0xffffff);
       const EDGE_LIGHT = new THREE.Color(0x000000);
-      const isLightTheme = () =>
-        document.documentElement.dataset.theme === "light";
+      const isLightTheme = () => document.documentElement.dataset.theme === "light";
 
       const edgeMaterials: THREE.LineBasicMaterial[] = [];
 
@@ -268,8 +249,7 @@ import SpecItem from "@components/starter-kit/SpecItem.astro";
         const fovRad = (camera.fov * Math.PI) / 180;
         const aspect = width / height;
         const fitDim = Math.max(modelSize.y, modelSize.x / aspect);
-        const dist =
-          (fitDim / 2 / Math.tan(fovRad / 2) + modelSize.z / 2) * 1.15;
+        const dist = (fitDim / 2 / Math.tan(fovRad / 2) + modelSize.z / 2) * 1.15;
         camera.position.copy(CAM_DIR).multiplyScalar(dist).add(modelTarget);
         camera.lookAt(modelTarget);
       };
@@ -296,10 +276,7 @@ import SpecItem from "@components/starter-kit/SpecItem.astro";
         const LED_PIVOT = new THREE.Vector3(0, 0.05, 0.05);
         const ROT_AXIS = new THREE.Vector3(0, 1, 0);
         const ROT_ANGLE = Math.PI / 8;
-        model.position
-          .sub(LED_PIVOT)
-          .applyAxisAngle(ROT_AXIS, ROT_ANGLE)
-          .add(LED_PIVOT);
+        model.position.sub(LED_PIVOT).applyAxisAngle(ROT_AXIS, ROT_ANGLE).add(LED_PIVOT);
         model.rotateOnWorldAxis(ROT_AXIS, ROT_ANGLE);
 
         scene.add(model);
@@ -314,8 +291,7 @@ import SpecItem from "@components/starter-kit/SpecItem.astro";
 
         // Replace each mesh with blueprint tint fill + edge overlay.
         const masks: { parent: THREE.Mesh; child: THREE.Mesh }[] = [];
-        const overlays: { parent: THREE.Mesh; child: THREE.LineSegments }[] =
-          [];
+        const overlays: { parent: THREE.Mesh; child: THREE.LineSegments }[] = [];
 
         for (const mesh of meshesToDecorate) {
           // Depth-only mask: fills the z-buffer so back-face edges of
@@ -334,13 +310,9 @@ import SpecItem from "@components/starter-kit/SpecItem.astro";
 
           // Clone the original material and zero its opacity — invisible but
           // still writes depth, matching the hero's inactive-module state.
-          const src = Array.isArray(mesh.material)
-            ? mesh.material[0]
-            : mesh.material;
+          const src = Array.isArray(mesh.material) ? mesh.material[0] : mesh.material;
           if (src) {
-            const solidMat = (
-              src as THREE.Material
-            ).clone() as THREE.Material & {
+            const solidMat = (src as THREE.Material).clone() as THREE.Material & {
               transparent: boolean;
               opacity: number;
               depthWrite: boolean;
@@ -361,10 +333,7 @@ import SpecItem from "@components/starter-kit/SpecItem.astro";
           });
           overlays.push({
             parent: mesh,
-            child: new THREE.LineSegments(
-              new THREE.EdgesGeometry(mesh.geometry, 30),
-              lineMat,
-            ),
+            child: new THREE.LineSegments(new THREE.EdgesGeometry(mesh.geometry, 30), lineMat),
           });
           edgeMaterials.push(lineMat);
         }

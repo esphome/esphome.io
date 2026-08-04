@@ -48,8 +48,5 @@ function parseIcon(svg: string): IconData {
 }
 
 export const iconData: Record<Icon, IconData> = Object.fromEntries(
-  (Object.entries(icons) as [Icon, string][]).map(([name, svg]) => [
-    name,
-    parseIcon(svg),
-  ]),
+  (Object.entries(icons) as [Icon, string][]).map(([name, svg]) => [name, parseIcon(svg)]),
 ) as Record<Icon, IconData>;
