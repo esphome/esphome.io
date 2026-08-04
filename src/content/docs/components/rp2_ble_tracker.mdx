@@ -13,7 +13,11 @@ Raspberry Pi **Pico W** and **Pico 2 W** — the platform analog of
 Scanning is **passive only**: the tracker listens for advertisements but does not send
 scan requests, so scan response data (such as some device names) is not requested. The
 radio is shared between WiFi and Bluetooth on these boards; the default scan parameters
-use a 30 % duty cycle to leave the radio mostly free for WiFi.
+use a 30% duty cycle to leave the radio mostly free for WiFi.
+
+> [!NOTE]
+> BLE sensor platforms such as `ble_presence` do not yet bind to this tracker; support
+> arrives as those platforms migrate to the shared BLE layer in follow-up releases.
 
 ```yaml
 # Example configuration entry
@@ -31,7 +35,7 @@ rp2_ble_tracker:
     listens within each interval. Must not be larger than the interval; the same range
     and step apply. Defaults to `30ms`.
   - **duration** (*Optional*, [Time](/guides/configuration-types#time)): Length of one
-    scan period. In continuous mode a scan end event fires each period; in
+    scan period. In continuous mode the scan period restarts every `duration`; in
     non-continuous mode the scan stops after this long. Must cover at least three scan
     intervals. Defaults to `5min`.
   - **continuous** (*Optional*, boolean): If true, scanning starts at boot and runs
@@ -39,6 +43,8 @@ rp2_ble_tracker:
     from a lambda (`id(my_tracker).start_scan();`) and stops again after `duration`.
     Defaults to `true`.
 
+- **rp2040_ble_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify
+  the ID of the [RP2040 BLE](/components/rp2040_ble/) component this tracker uses.
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used
   to reference this component.
 
