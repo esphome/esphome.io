@@ -243,7 +243,9 @@ Per CONTRIBUTING.md, prefer Markdown over raw HTML. Keep all links as Markdown l
   ```
 
   These `head` entries override the site-wide default OG image (set in `astro.config.mjs`) for this post. The generator
-  renders the OpenGraph image on demand from the post's URL, so no image file needs to be created or committed.
+  renders the OpenGraph image on demand from the post's URL, so no image file needs to be created or committed. Always
+  reference this as a remote URL — never import it through Astro (`astro:assets`/`import`), because the generator output
+  can change and must not be fingerprinted or cached. Set the same URL on the `cover.image` front-matter field too.
 
 - After the front matter, add the component imports (`Image`, `Figure` as needed, and each image import).
 - Add a byline line with the author and publish date near the top of the body (there is no author/date field in the
@@ -299,11 +301,16 @@ This would create:
 - Image directory: `src/content/docs/blog/images/`.
 - Front matter: quoted `title` and `description`. Do not repeat the title as an H1 in the body; body starts at H2.
 
-**OpenGraph image:**
+**OpenGraph / cover image:**
 
-- Generated on demand by the Open Home Foundation OG generator; not stored in the repo.
-- Set per post via the front-matter `head` meta tags using
-  `https://assets.openhomefoundation.org/opengraph?url=https://esphome.io/blog/<slug>`.
+- **Always reference a remote URL.** Never import the OpenGraph or `cover.image` through Astro (no local file,
+  no `import`, no `astro:assets`). These images are served live from a remote generator whose output can change over
+  time, so Astro must not fingerprint, optimize, or cache them.
+- **Standard posts:** use the Open Home Foundation OG generator, which renders the image on demand from the post URL:
+  `https://assets.openhomefoundation.org/opengraph?url=https://esphome.io/blog/<slug>`. Set it on both the
+  `cover.image` field and the `og:image` / `twitter:image` `head` meta tags. No source file is created or committed.
+- **Crossposts:** use the source site's own card image instead of the generator (for example, the Open Home Foundation
+  site card at `https://www.openhomefoundation.org/assets/images/blog/<slug>/card.webp`) — again as a remote URL only.
 
 **Link handling:**
 
