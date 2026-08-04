@@ -2,7 +2,6 @@
 import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
 
 import BuyDialog from "@components/BuyDialog.astro";
-import DebugConsole from "@components/starter-kit/DebugConsole.astro";
 import Nav from "@components/starter-kit/Nav.astro";
 import Hero from "@components/starter-kit/Hero.astro";
 import HeroLabel from "@components/starter-kit/HeroLabel.astro";
@@ -63,49 +62,38 @@ import FaqSection from "@components/starter-kit/FaqSection.astro";
   }}
 >
   <div class="ha-connect">
-    <DebugConsole />
     <BuyDialog product="esphome-starter-kit" />
     <Nav />
     <Hero>
-      <p class="hero-prompt">
-        Rotate to explore, click any module for details.
-      </p>
+      <p class="hero-prompt">Rotate to explore, click any module for details.</p>
       <HeroLabel slot="labels" text="Button module" target="button">
         <p>
-          A physical, clickable button that triggers any smart home automation
-          you set up, built for repeated everyday use.
+          A physical, clickable button that triggers any smart home automation you set up, built for repeated everyday
+          use.
         </p>
       </HeroLabel>
-      <HeroLabel
-        slot="labels"
-        text="Temperature & humidity module"
-        target="temp"
-      >
+      <HeroLabel slot="labels" text="Temperature & humidity module" target="temp">
         <p>
-          Keep track of your home’s climate in real time: and use that data to
-          trigger automations to make your home more comfortable and energy
-          efficient.
+          Keep track of your home’s climate in real time: and use that data to trigger automations to make your home
+          more comfortable and energy efficient.
         </p>
       </HeroLabel>
       <HeroLabel slot="labels" text="Motion module" target="pir">
         <p>
-          A reliable motion sensor that detects the heat given off by moving
-          people and/or animals: one of the most practical and widely used
-          sensors in home automation.
+          A reliable motion sensor that detects the heat given off by moving people and/or animals: one of the most
+          practical and widely used sensors in home automation.
         </p>
       </HeroLabel>
       <HeroLabel slot="labels" text="LED & buzzer module" target="leds">
         <p>
-          Programmable lights and a small buzzer give you visual and audio
-          control over your automations: from subtle status indicators to
-          attention-grabbing alerts.
+          Programmable lights and a small buzzer give you visual and audio control over your automations: from subtle
+          status indicators to attention-grabbing alerts.
         </p>
       </HeroLabel>
       <HeroLabel slot="labels" text="ESP32-C6 Board" target="compute">
         <p>
-          The ESP32-C6 Board is a small-but-mighty chip that powers the entire kit;
-          capable of handling connectivity, device logic, and communication with
-          your smart home setup.
+          The ESP32-C6 Board is a small-but-mighty chip that powers the entire kit; capable of handling connectivity,
+          device logic, and communication with your smart home setup.
         </p>
       </HeroLabel>
     </Hero>
@@ -116,11 +104,7 @@ import FaqSection from "@components/starter-kit/FaqSection.astro";
     <CommunitySection />
     <Collaboration />
 
-    <Buy
-      strapline="Ready to build, learn, and automate?"
-      dollars="40"
-      euros="41"
-    />
+    <Buy strapline="Ready to build, learn, and automate?" dollars="40" euros="41" />
 
     <SpecSection />
     <FaqSection />
@@ -149,8 +133,7 @@ import FaqSection from "@components/starter-kit/FaqSection.astro";
 
   document.querySelectorAll<HTMLElement>(".fade-up").forEach((el) => {
     const delay = el.dataset.delay;
-    if (delay && !el.style.getPropertyValue("--fade-delay"))
-      el.style.setProperty("--fade-delay", `${delay}ms`);
+    if (delay && !el.style.getPropertyValue("--fade-delay")) el.style.setProperty("--fade-delay", `${delay}ms`);
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
@@ -163,41 +146,37 @@ import FaqSection from "@components/starter-kit/FaqSection.astro";
     observer.observe(el);
   });
 
-  document
-    .querySelectorAll<HTMLVideoElement>(".lazy-video")
-    .forEach((video) => {
-      const playButton = document.querySelector<HTMLButtonElement>(
-        `.play-button[data-video-id="${video.id}"]`,
-      );
+  document.querySelectorAll<HTMLVideoElement>(".lazy-video").forEach((video) => {
+    const playButton = document.querySelector<HTMLButtonElement>(`.play-button[data-video-id="${video.id}"]`);
 
-      function setPlaying(playing: boolean) {
-        video.classList.toggle("lazy-video--playing", playing);
-        playButton?.classList.toggle("lazy-video--playing", playing);
-      }
+    function setPlaying(playing: boolean) {
+      video.classList.toggle("lazy-video--playing", playing);
+      playButton?.classList.toggle("lazy-video--playing", playing);
+    }
 
-      video.addEventListener("ended", () => setPlaying(false));
+    video.addEventListener("ended", () => setPlaying(false));
 
-      playButton?.addEventListener("click", () => {
-        video
-          .play()
-          .then(() => setPlaying(true))
-          .catch(() => {});
-      });
-
-      const observer = new IntersectionObserver(
-        ([entry]) => {
-          if (entry.isIntersecting) {
-            video
-              .play()
-              .then(() => setPlaying(true))
-              .catch(() => {});
-            observer.disconnect();
-          }
-        },
-        { threshold: 0.5 },
-      );
-      observer.observe(video);
+    playButton?.addEventListener("click", () => {
+      video
+        .play()
+        .then(() => setPlaying(true))
+        .catch(() => {});
     });
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          video
+            .play()
+            .then(() => setPlaying(true))
+            .catch(() => {});
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.5 },
+    );
+    observer.observe(video);
+  });
 </script>
 
 <style lang="scss">
@@ -326,9 +305,7 @@ import FaqSection from "@components/starter-kit/FaqSection.astro";
     height: 100%;
     display: flex;
     margin: 0 auto;
-    max-width: calc(
-      var(--container-max-width) + (var(--container-gutters) * 2)
-    );
+    max-width: calc(var(--container-max-width) + (var(--container-gutters) * 2));
     padding: 12px calc(var(--container-gutters) / 2);
 
     @include bp(desktop) {
@@ -345,9 +322,7 @@ import FaqSection from "@components/starter-kit/FaqSection.astro";
     width: 100%;
     margin: 0 auto;
     padding: 0 calc(var(--container-gutters) / 2);
-    max-width: calc(
-      var(--container-full-max-width) + (var(--container-gutters) * 2)
-    );
+    max-width: calc(var(--container-full-max-width) + (var(--container-gutters) * 2));
 
     @include bp(desktop) {
       padding: 0 var(--container-gutters);

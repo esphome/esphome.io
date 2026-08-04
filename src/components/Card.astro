@@ -3,18 +3,12 @@ import IconText from "@components/IconText.astro";
 
 const { span, bleed = false, href, delay, ...attrs } = Astro.props;
 const hasMedia = Astro.slots.has("media");
-const spanValue =
-  span === "full" ? "1 / -1" : typeof span === "number" ? `span ${span}` : null;
-const delayValue =
-  delay !== undefined
-    ? typeof delay === "number"
-      ? `${delay}ms`
-      : delay
-    : null;
+const spanValue = span === "full" ? "1 / -1" : typeof span === "number" ? `span ${span}` : null;
+const delayValue = delay !== undefined ? (typeof delay === "number" ? `${delay}ms` : delay) : null;
 
 const Tag = href ? "a" : "div";
 
-const { line = false, direction = "horizontal" } = Astro.props;
+const { line = false } = Astro.props;
 ---
 
 <Tag
