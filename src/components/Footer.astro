@@ -2,8 +2,17 @@
 import EditLink from "virtual:starlight/components/EditLink";
 import LastUpdated from "virtual:starlight/components/LastUpdated";
 import CrosspostBadges from "./CrosspostBadges.astro";
+import DiscourseComments from "./DiscourseComments.astro";
 
 const isBlogPage = Astro.url.pathname.startsWith("/blog");
+
+// Only actual blog post pages get a comments section (not the blog index, tag
+// or author listings, or paginated pages). Mirrors starlight-blog's
+// isAnyBlogPostPage. Injected here rather than via a MarkdownContent override so
+// starlight-blog keeps ownership of MarkdownContent (importing its components
+// directly trips a rolldown exports-field error on starlight-blog/libs/page).
+const { id } = Astro.locals.starlightRoute;
+const isBlogPost = /^blog\/(?!(\d+\/?|tags\/.+|authors\/.+)$).+$/.test(id);
 
 const footerLinks = [
   {
@@ -35,6 +44,7 @@ const footerLinks = [
 ---
 
 {isBlogPage && <CrosspostBadges />}
+{isBlogPost && <DiscourseComments />}
 
 <footer class="sl-flex">
   <div class="meta sl-flex">
