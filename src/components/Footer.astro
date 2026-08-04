@@ -14,6 +14,12 @@ const isBlogPage = Astro.url.pathname.startsWith("/blog");
 const { id } = Astro.locals.starlightRoute;
 const isBlogPost = /^blog\/(?!(\d+\/?|tags\/.+|authors\/.+)$).+$/.test(id);
 
+// Only load the Discourse comments embed on the production deploy. Netlify sets
+// CONTEXT to "production" only for the main production build; branch deploys
+// (e.g. beta/next) and deploy previews get "branch-deploy"/"deploy-preview", so
+// comments (including the heading) are hidden there.
+const isProduction = process.env.CONTEXT === "production";
+
 const footerLinks = [
   {
     name: "Documentation",
@@ -44,7 +50,7 @@ const footerLinks = [
 ---
 
 {isBlogPage && <CrosspostBadges />}
-{isBlogPost && <DiscourseComments />}
+{isBlogPost && isProduction && <DiscourseComments />}
 
 <footer class="sl-flex">
   <div class="meta sl-flex">
