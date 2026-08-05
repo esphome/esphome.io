@@ -48,10 +48,11 @@ controller can do:
 
 - **ESP32** — the full proxy: advertisements plus **active connections**, so Home Assistant can read
   and write GATT characteristics through the device (`active: true`, `connection_slots`).
-- **RP2 (Raspberry Pi Pico W family)** — **advertisement-only**. The controller does not expose the
-  GATT client the proxy needs for connections, so `active` must stay `false` and Home Assistant
-  treats the device as a passive scanner. Advertisement forwarding — which is what integrations
-  such as BTHome, Xiaomi and most sensors rely on — works exactly as it does on ESP32.
+- **LN882x and RP2 (Raspberry Pi Pico W family)** — **advertisement-only**. These controllers do
+  not expose the GATT client the proxy needs for connections, so `active` must stay `false` and
+  Home Assistant treats the device as a passive scanner. Advertisement forwarding — which is what
+  integrations such as BTHome, Xiaomi and most sensors rely on — works exactly as it does on
+  ESP32.
 
 Platforms whose controller can only scan **passively** (BK72xx) are not supported yet: current
 Home Assistant releases assume every ESPHome proxy can scan actively and would drive a
@@ -59,7 +60,7 @@ passive-only proxy incorrectly. Support follows once the API lets a proxy declar
 passive-only scanning.
 
 ```yaml
-# Advertisement-only proxy on an RP2 BLE platform
+# Advertisement-only proxy on an LN882x or RP2 BLE platform
 bluetooth_proxy:
 ```
 
