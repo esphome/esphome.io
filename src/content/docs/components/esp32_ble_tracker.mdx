@@ -130,7 +130,8 @@ esp32_ble_tracker:
       then:
         - lambda: |-
             ESP_LOGD("ble_adv", "New BLE device");
-            ESP_LOGD("ble_adv", "  address: %s", x.address_str().c_str());
+            char addr[MAC_ADDRESS_PRETTY_BUFFER_SIZE];
+            ESP_LOGD("ble_adv", "  address: %s", x.address_str_to(addr));
             ESP_LOGD("ble_adv", "  name: %s", x.get_name().c_str());
             ESP_LOGD("ble_adv", "  Advertised service UUIDs:");
             for (auto uuid : x.get_service_uuids()) {
