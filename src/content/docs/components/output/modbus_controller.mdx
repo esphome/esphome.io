@@ -12,6 +12,8 @@ The `modbus_controller` platform creates an output from a modbus_controller. The
 
   - `U_WORD` (unsigned 16 bit integer from 1 register = 16bit)
   - `S_WORD` (signed 16 bit integer from 1 register = 16bit)
+  - `U_WORD_S` (unsigned 16 bit integer from 1 register with bytes swapped within the register)
+  - `S_WORD_S` (signed 16 bit integer from 1 register with bytes swapped within the register)
   - `U_DWORD` (unsigned 32 bit integer from 2 registers = 32bit)
   - `S_DWORD` (signed 32 bit integer from 2 registers = 32bit)
   - `U_DWORD_R` (unsigned 32 bit integer from 2 registers low word first)
@@ -22,6 +24,13 @@ The `modbus_controller` platform creates an output from a modbus_controller. The
   - `S_QWORD_R` (signed 64 bit integer from 4 registers low word first)
   - `FP32` (32 bit IEEE 754 floating point from 2 registers)
   - `FP32_R` (32 bit IEEE 754 floating point - same as FP32 but low word first)
+
+> [!WARNING]
+> `U_WORD_S` and `S_WORD_S` are a **rare, non-standard** configuration: bytes are swapped **within**
+> the register (byte-swapped). Modbus registers are big-endian (MSB first) per the specification.
+> The `_S` suffix is not the same as `_R` (word order reversed / low word first across multiple
+> registers).
+
 
 - **register_type** (*Optional*):
   - `coil`  : Write Coil - Write the ON/OFF status of a discrete coil in the device with *Function Code 5 or 15*. This will create a binary output.
