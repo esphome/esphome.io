@@ -6,9 +6,13 @@ import APIRef from '@components/APIRef.astro';
 
 
 This core ESPHome component sets up WiFi connections to access points
-for you. You need to have a network configuration (either Wifi or Ethernet)
-or ESPHome will fail in the config validation stage. You also can't have both Wifi
-and Ethernet setup in same time (even if your ESP has both wired).
+for you. You need to have a network configuration (such as WiFi or [Ethernet](/components/ethernet/))
+or ESPHome will fail in the config validation stage.
+
+On ESP32 family devices, WiFi may be configured alongside [Ethernet](/components/ethernet/) in the same
+configuration; this requires a `network:` `priority:` list naming both interfaces — see
+[Multi-Interface Support](/components/network/#multi-interface-support) on the [Network](/components/network/)
+component. Using more than one network interface is not supported on other platforms.
 
 It's recommended to provide a static IP for your node, as it can
 dramatically improve connection times.
