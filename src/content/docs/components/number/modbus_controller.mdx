@@ -34,9 +34,9 @@ When the Number is updated a modbus write command is created sent to the device.
 - **response_size** (*Optional*): Size of the response for the register in bytes. Defaults to register_count*2.
 - **force_new_range** (*Optional*, boolean): If possible sensors with sequential addresses are grouped together and requested in one range. Setting `force_new_range: true` enforces the start of a new range at that address.
 - **offset** (*Optional*, int): Offset from start address in bytes (only required for uncommon response encodings). If more than one register is written in a command this value is used to find the start of this datapoint relative to start address. The component calculates the size of the range based on offset and size of the value type.
-- **custom_pdu** (*Optional*, list of bytes): raw PDU (function code + data) for a modbus command. This allows using non-standard commands. If `custom_pdu` is used `address` and `register_type` can't be used.
-  The PDU must not include the device address; the controller's `address` is used and the CRC is automatically calculated and appended to the command.
-  See [Using `custom_pdu`](/components/modbus_controller#modbus_custom_pdu) how to use `custom_pdu`
+- **custom_command** (*Optional*, list of bytes): raw bytes for modbus command. This allows using non-standard commands. If `custom_command` is used `address` and `register_type` can't be used.
+  custom data must contain all required bytes including the modbus device address. The crc is automatically calculated and appended to the command.
+  See [Using `custom_command`](/components/modbus_controller#modbus_custom_command) how to use `custom_command`
 
 - **lambda** (*Optional*, [lambda](/automations/templates#config-lambda)):
   Lambda to be evaluated every update interval to get the new value of the sensor.
@@ -44,7 +44,7 @@ When the Number is updated a modbus write command is created sent to the device.
   Parameters passed into the lambda
 
   - **x** (float): The parsed float value of the modbus data
-  - **data** (`std::vector<uint8_t>`): vector containing the complete raw modbus response bytes for this sensor
+  - **data** (`std::span<const uint8_t>`): span containing the complete raw modbus response bytes for this sensor
     *note:* because the response contains data for all registers in the same range you have to use `data[item->offset]` to get the first response byte for your sensor.
 
   - **item** (const pointer to a SensorItem derived object): The sensor object itself.
@@ -60,16 +60,15 @@ When the Number is updated a modbus write command is created sent to the device.
   Parameters passed into the lambda
 
   - **x** (float): The float value to be sent to the modbus device
-  - **custom_pdu** (`std::vector<uint16_t> &custom_pdu`): empty vector for a custom PDU. If it is filled in the lambda,
-    its contents are sent as a raw PDU (function code + data) instead of the standard write command. The PDU must not
-    include the device address; the controller's `address` is used and the CRC is appended automatically.
+  - **payload** (`std::vector<uint16_t> &payload`): empty vector for the payload. The lambda can add 16 bit raw modbus register words.
+    *note:* because the response contains data for all registers in the same range you have to use `data[item->offset]` to get the first response byte for your sensor.
 
   - **item** (const pointer to a SensorItem derived object): The sensor object itself.
 
   Possible return values for the lambda:
 
   - `return <FLOATING_POINT_NUMBER>;` the new value for the sensor.
-  - `return <anything>;` and fill `custom_pdu` with data if a PDU is added from the lambda then it will be sent.
+  - `return <anything>; and fill payload with data` if the payload is added from the lambda then these 16 bit words will be sent
   - `return {};` if you don't want write the command to the device (or do it from the lambda).
 
 - All other options from [Number](/components/number#config-number).
@@ -95,6 +94,8 @@ number:
     lambda: "return  x * 1.0; "
     write_lambda: |-
       ESP_LOGD("main","Modbus Number incoming value = %f",x);
+      uint16_t b_capacity = x ;
+      payload.push_back(b_capacity);
       return x * 1.0 ;
 ```
 

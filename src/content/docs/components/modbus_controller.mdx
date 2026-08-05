@@ -60,6 +60,12 @@ On the bus side, you need 120 Ohm termination resistors at the ends of the bus c
 
 - **max_cmd_retries** (*Optional*, integer): How many times a command will be retried if no response is received. It doesn't include the initial transmition. Defaults to 4.
 
+Non-responses are counted per device, not per command or register. After `max_cmd_retries` consecutive timeouts the
+whole device is marked offline (triggering [`on_offline`](#modbus_controller-on_offline)), its queued frames are
+dropped, and all of its updates are skipped. Every `offline_skip_updates + 1` update intervals the controller sends
+a single retry attempt (with the normal retry ladder). Any response, or a Modbus exception response, brings the
+device back online (triggering [`on_online`](#modbus_controller-on_online)) and normal polling resumes.
+
 Automations:
 
 - **on_command_sent** (*Optional*, [Automation](/automations)): An automation to perform when a modbus command has been sent. See [`on_command_sent`](#modbus_controller-on_command_sent)
@@ -70,7 +76,9 @@ Automations:
 > Several options have been removed and now raise a validation error:
 >
 > - **command_throttle**: Use [`turnaround_time`](/components/modbus/) on the `modbus` component instead.
-> - **allow_duplicate_commands**: Command queuing (including de-duplication) is now handled in the `modbus` component.
+> - **allow_duplicate_commands**: Polling commands are now always deduplicated by the `modbus` hub while an identical
+>   frame is already pending. One-shot commands (writes and custom commands) are always transmitted; avoiding duplicate
+>   one-shot commands is the caller's responsibility.
 > - **server_registers** and **server_courtesy_response**: Use the [Modbus Server](/components/modbus_server/) component
 >   instead.
 
@@ -237,21 +245,13 @@ binary_sensor:
   bitmask: 0x8000
 ```
 
-<span id="modbus_custom_pdu"></span>
+<span id="modbus_custom_command"></span>
 
-## Using `custom_pdu`
+## Using `custom_command`
 
-`custom_pdu` can be used to create an arbitrary modbus command. Combined with a lambda any response can be handled.
+`custom_command` can be used to create an arbitrary modbus command. Combined with a lambda any response can be handled.
 This example re-implements the command to read the registers 0x156 (Total active energy) and 0x158 Total (reactive energy) from a SDM-120.
 SDM-120 returns the values as floats using 32 bits in 2 registers.
-
-The value of `custom_pdu` is a PDU: the modbus function code followed by its data. Do **not** include the leading
-device address byte — the controller's `address` is used automatically and the CRC is appended for you.
-
-> [!WARNING]
-> `custom_command` has been renamed to `custom_pdu`. A configuration still using `custom_command` now fails validation
-> with an error asking you to rename it to `custom_pdu` and drop the leading device address byte. As a result, a custom
-> command can no longer target a different address than its controller.
 
 ```yaml
 uart:
@@ -277,13 +277,14 @@ sensors:
   id: total_energy
   #    address: 0x156
   #    register_type: "read"
-  ## reimplement using custom_pdu (no device address byte)
+  ## reimplement using custom_command
+  # 0x2 : modbus device address
   # 0x4 : modbus function code
   # 0x1 : high byte of modbus register address
   # 0x56: low byte of modbus register address
   # 0x00: high byte of total number of registers requested
   # 0x02: low byte of total number of registers requested
-  custom_pdu: [0x4, 0x1, 0x56, 0x00, 0x02]
+  custom_command: [ 0x2, 0x4, 0x1, 0x56,0x00, 0x02]
   value_type: FP32
   unit_of_measurement: kWh
   accuracy_decimals: 1
@@ -293,7 +294,7 @@ sensors:
   name: "Total reactive energy"
   #   address: 0x158
   #   register_type: "read"
-  custom_pdu: [0x4, 0x1, 0x58, 0x00, 0x02]
+  custom_command: [0x2, 0x4, 0x1, 0x58, 0x00, 0x02]
   ## the command returns an float value using 4 bytes
   lambda: |-
       ESP_LOGD("Modbus Sensor Lambda","Got new data" );
@@ -513,10 +514,6 @@ The response is mapped to the sensor based on `register_count` and offset in byt
 >
 > These methods can be called from a lambda.
 >
-> To send a command, hold a `std::optional<ModbusCommandItem>` and call `.send()` on it, as shown below.
-> `ModbusController::queue_command()` is deprecated (from 2026.8.0, removed in 2027.2.0); replace calls such as
-> `controller->queue_command(command)` with a `command.emplace(...); command->send();` pattern.
->
 > Here is an example how to set config values to for an EPEVER Trace AN controller.
 > The code synchronizes the local time of the MCU to the epever controller.
 > The time is set by writing 12 bytes to register 0x9013.
@@ -547,11 +544,10 @@ The response is mapped to the sensor based on `register_count` and offset in byt
 >             std::vector<uint16_t> rtc_data = {uint16_t((minutes << 8) | seconds), uint16_t((day << 8) | hour),
 >                                               uint16_t((year << 8) | month)};
 >             // Create a Modbus command item with the time information as the payload
->             static std::optional<esphome::modbus_controller::ModbusCommandItem> set_rtc_command;
->             set_rtc_command.emplace(
->                 esphome::modbus_controller::ModbusCommandItem::create_write_multiple_command(controller, 0x9013, 3, rtc_data));
->             // Submit the command
->             set_rtc_command->send();
+>             esphome::modbus_controller::ModbusCommandItem set_rtc_command =
+>                 esphome::modbus_controller::ModbusCommandItem::create_write_multiple_command(controller, 0x9013, 3, rtc_data);
+>             // Submit the command to the send queue
+>             epever->queue_command(set_rtc_command);
 >             ESP_LOGI("ModbusLambda", "EPSOLAR RTC set to %02d:%02d:%02d %02d.%02d.%04d", hour, minutes, seconds, day, month,
 >                     year + 2000);
 >           }
@@ -580,19 +576,17 @@ The response is mapped to the sensor based on `register_count` and offset in byt
 >               0x0000,  // 906B Equalize Duration (min.) 0
 >               0x0075   // 906C Boost Duration (aka absorb) 117 mins
 >           };
->           static std::optional<esphome::modbus_controller::ModbusCommandItem> set_battery1_command;
->           set_battery1_command.emplace(
->               esphome::modbus_controller::ModbusCommandItem::create_write_multiple_command(controller, 0x9000, battery_settings1.size(),
->                                                                                           battery_settings1));
+>           esphome::modbus_controller::ModbusCommandItem set_battery1_command =
+>               esphome::modbus_controller::ModbusCommandItem::create_write_multiple_command(controller, 0x9000, battery_settings1.size() ,
+>                                                                                           battery_settings1);
 >
->           static std::optional<esphome::modbus_controller::ModbusCommandItem> set_battery2_command;
->           set_battery2_command.emplace(
->               esphome::modbus_controller::ModbusCommandItem::create_write_multiple_command(controller, 0x906B, battery_settings2.size(),
->                                                                                           battery_settings2));
+>           esphome::modbus_controller::ModbusCommandItem set_battery2_command =
+>               esphome::modbus_controller::ModbusCommandItem::create_write_multiple_command(controller, 0x906B, battery_settings3.size(),
+>                                                                                           battery_settings2);
 >           delay(200) ;
->           set_battery1_command->send();
+>           controller->queue_command(set_battery1_command);
 >           delay(200) ;
->           set_battery2_command->send();
+>           controller->queue_command(set_battery2_command);
 >           ESP_LOGI("ModbusLambda", "EPSOLAR Battery set");
 >
 > uart:
