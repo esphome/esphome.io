@@ -63,7 +63,7 @@ On the bus side, you need 120 Ohm termination resistors at the ends of the bus c
 - **registers** (*Optional*): A list of registers that are responded to when acting as a server.
 
   - **address** (**Required**, integer): start address of the first register in a range.
-  - **value_type** (*Optional*): data type of the modbus register data. The default data type for modbus is a 16-bit integer in **big endian** format (network byte order, MSB first).
+  - **value_type** (*Optional*): data type of the Modbus register data. The default data type for Modbus is a 16-bit integer in **big endian** format (network byte order, MSB first).
 
     - `U_WORD`  : unsigned 16 bit integer, 1 register, `uint16_t`
     - `S_WORD`  : signed 16 bit integer, 1 register, `int16_t`
@@ -81,10 +81,10 @@ On the bus side, you need 120 Ohm termination resistors at the ends of the bus c
     - `FP32_R`  : 32 bit IEEE 754 floating point, 2 registers, **low word first**, `float`
 
     > [!WARNING]
-    > `U_WORD_S` and `S_WORD_S` are a **rare, non-standard** configuration: bytes are swapped **within**
-    > one 16-bit register (byte-swapped). Modbus registers are big-endian (MSB first) per the
-    > specification. The `_S` suffix is not the same as `_R` (word order reversed / **low word first**
-    > across multiple registers).
+    > `U_WORD_S` and `S_WORD_S` are a **rare, non-standard** configuration: the two bytes
+    > **within** one 16-bit register are reversed (LSB first on the wire within that register).
+    > Modbus registers are big-endian (MSB first) per the specification. The `_S` suffix is not
+    > the same as `_R` (word order reversed / **low word first** across multiple registers).
 
     > [!NOTE]
     > The `_R` suffix means word order is reversed (**low word first**). It is not little-endian byte
