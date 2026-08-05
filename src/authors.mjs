@@ -5,4 +5,10 @@ export const authors = {
     picture: "https://avatars.githubusercontent.com/jesserockz?size=64",
     url: "https://github.com/jesserockz",
   },
+  darren: {
+    name: "Darren Griffin",
+    title: "Web Developer",
+    picture: "https://avatars.githubusercontent.com/mrdarrengriffin?size=64",
+    url: "https://github.com/mrdarrengriffin",
+  },
 };
