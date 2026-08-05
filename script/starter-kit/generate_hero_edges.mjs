@@ -18,8 +18,8 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const MODEL_PATH = path.join(__dirname, "..", "public", "starter-kit", "ESK.glb");
-const OUTPUT_PATH = path.join(__dirname, "..", "public", "starter-kit", "ESK-edges.bin");
+const MODEL_PATH = path.join(__dirname, "..", "..", "public", "starter-kit", "ESK.glb");
+const OUTPUT_PATH = path.join(__dirname, "..", "..", "public", "starter-kit", "ESK-edges.bin");
 
 // Must match the threshold angle passed to `new THREE.EdgesGeometry(...)`
 // in Hero.astro.

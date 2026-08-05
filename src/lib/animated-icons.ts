@@ -1,3 +1,5 @@
+import { parseIcon, type IconData } from "./icons";
+
 export const animatedIcons = {
   lights: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8,3.63636c1.15731,0,2.2672.45974,3.0856,1.27808s1.278,1.92825,1.278,3.08556c0,1.61455-.88,3.0255-2.1818,3.7818v1.3091c0,.1929-.0766.3779-.21299.5143s-.32138.213-.51426.213h-2.9091c-.19288,0-.37786-.0766-.51425-.213s-.21302-.3214-.21302-.5143v-1.3091C4.51636,11.0255,3.63636,9.61455,3.63636,8c0-1.15731.45974-2.26722,1.27808-3.08556s1.92825-1.27808,3.08556-1.27808ZM9.45455,14.5455v.7272c0,.1929-.07663.3779-.21302.5143s-.32137.213-.51426.213h-1.45454c-.19289,0-.37787-.0766-.51426-.213s-.21302-.3214-.21302-.5143v-.7272h2.9091ZM7.27273,12.3636h1.45454v-1.5491C9.98545,10.4945,10.9091,9.35273,10.9091,8c0-.77154-.3065-1.51148-.8521-2.05704s-1.28546-.85205-2.057-.85205-1.51148.30649-2.05704.85205-.85205,1.2855-.85205,2.05704c0,1.35273.92364,2.4945,2.18182,2.8145v1.5491Z"/><line class="icon-light-ray" x1="1.087264" y1="0" x2="-1.087264" y2="0" transform="matrix(-0.707107 0.707107 -0.707107 -0.707107 12.877712 3.113036)" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dashoffset="4.36" stroke-dasharray="2.18,2.18"/><line class="icon-light-ray" x1="1.087264" y1="0" x2="-1.087264" y2="0" transform="matrix(0 1 -1 0 8 1.087264)" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dashoffset="4.36" stroke-dasharray="2.18,2.18"/><line class="icon-light-ray" x1="1.087264" y1="0" x2="-1.087264" y2="0" transform="matrix(0.707107 0.707107 -0.707107 0.707107 3.123922 3.113036)" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dashoffset="4.36" stroke-dasharray="2.18,2.18"/><line class="icon-light-ray" x1="1.087264" y1="0" x2="-1.087264" y2="0" transform="translate(1.087264 8)" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dashoffset="4.36" stroke-dasharray="2.18,2.18"/><line class="icon-light-ray" x1="1.087264" y1="0" x2="-1.087264" y2="0" transform="matrix(-1 0 0 -1 14.913788 7.986095)" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dashoffset="4.36" stroke-dasharray="2.18,2.18"/></svg>`,
   automate: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 17 16" fill="currentColor" aria-hidden="true"><g class="icon-automate-gear" transform="translate(8.5,8) rotate(0)"><path d="M5.84,16l-.32-2.56c-.17333-.0667-.33667-.1467-.49-.24s-.30333-.1933-.45-.3l-2.38,1L0,10.1L2.06,8.54c-.01333-.09333-.02-.18333-.02-.27v-.54c0-.08667.00667-.17667.02-.27L0,5.9L2.2,2.1l2.38,1c.14667-.10667.3-.20667.46-.3s.32-.17333.48-.24L5.84,0h4.4l.32,2.56c.1733.06667.3367.14667.49.24s.3033.19333.45.3l2.38-1l2.2,3.8-2.06,1.56c.0133.09333.02.18333.02.27v.54c0,.08667-.0133.17667-.04.27l2.06,1.56-2.2,3.8-2.36-1c-.1467.1067-.3.2067-.46.3s-.32.1733-.48.24L10.24,16h-4.4Zm1.4-1.6h1.58l.28-2.12c.41333-.1067.79667-.2633,1.15-.47s.6767-.4567.97-.75l1.98.82.78-1.36-1.72-1.3c.0667-.18667.1133-.38333.14-.59s.04-.41667.04-.63-.0133-.42333-.04-.63-.0733-.40333-.14-.59l1.72-1.3-.78-1.36-1.98.84c-.2933-.30667-.6167-.56333-.97-.77s-.73667-.36333-1.15-.47L8.84,1.6h-1.58L6.98,3.72c-.41333.10667-.79667.26333-1.15.47s-.67667.45667-.97.75L2.88,4.12L2.1,5.48L3.82,6.76c-.06667.2-.11333.4-.14.6s-.04.41333-.04.64c0,.21333.01333.42.04.62s.07333.4.14.6L2.1,10.52l.78,1.36l1.98-.84c.29333.3067.61667.5633.97.77s.73667.3633,1.15.47l.26,2.12Zm.84-3.6c.77333,0,1.43333-.2733,1.98-.82s.82-1.20667.82-1.98-.2733-1.43333-.82-1.98-1.20667-.82-1.98-.82c-.78667,0-1.45.27333-1.99.82s-.81,1.20667-.81,1.98.27,1.43333.81,1.98s1.20333.82,1.99.82Z" transform="translate(-8.04,-8)"/></g></svg>`,
@@ -14,19 +16,7 @@ export const animatedIcons = {
 
 export type AnimatedIcon = keyof typeof animatedIcons;
 
-export interface AnimatedIconData {
-  viewBox: string;
-  body: string;
-}
-
-function parseIcon(svg: string): AnimatedIconData {
-  const viewBox = /viewBox="([^"]+)"/.exec(svg)?.[1] ?? "0 0 24 24";
-  const body = svg
-    .replace(/^\s*<svg\b[^>]*>/, "")
-    .replace(/<\/svg>\s*$/, "")
-    .trim();
-  return { viewBox, body };
-}
+export type AnimatedIconData = IconData;
 
 export const animatedIconData: Record<AnimatedIcon, AnimatedIconData> = Object.fromEntries(
   (Object.entries(animatedIcons) as [AnimatedIcon, string][]).map(([name, svg]) => [name, parseIcon(svg)]),

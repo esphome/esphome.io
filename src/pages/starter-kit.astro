@@ -160,7 +160,9 @@ import FaqSection from "@components/starter-kit/FaqSection.astro";
       video
         .play()
         .then(() => setPlaying(true))
-        .catch(() => {});
+        .catch((error: unknown) => {
+          console.error("[starter-kit] Failed to play video:", error);
+        });
     });
 
     const observer = new IntersectionObserver(

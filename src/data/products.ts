@@ -17,18 +17,25 @@ export const products: Record<string, Product> = {
     name: "ESPHome Starter Kit",
     distributors: [
       {
+        name: "Apollo Automation",
+        url: "https://apolloautomation.com/products/esk-1-esphome-starter-kit",
+        shipFrom: "USA and Canada",
+        shipTo: "North America",
+        logo: "/images/distributors/apollo.webp",
+      },
+      {
         name: "Ameridroid",
         url: "https://ameridroid.com/products/esphome-starter-kit",
-        shipFrom: "US & Canada",
+        shipFrom: "USA Only",
         shipTo: "North America",
         logo: "/images/distributors/ameridroid-logo.webp",
       },
       {
-        name: "Slim-husije",
-        url: "https://eu.apolloautomation.com/products/esphome-starter-kit",
+        name: "Apollo Automation",
+        url: "https://apolloautomation.com/products/esk-1-esphome-starter-kit",
         shipFrom: "Europe",
         shipTo: "Europe",
-        logo: "/images/distributors/slim-husije-logo.webp",
+        logo: "/images/distributors/apollo.webp",
       },
       {
         name: "Domadoo",
@@ -36,6 +43,13 @@ export const products: Record<string, Product> = {
         shipFrom: "Europe",
         shipTo: "Europe",
         logo: "/images/distributors/domadoo-logo.webp",
+      },
+      {
+        name: "Slim Huisje",
+        url: "https://eu.apolloautomation.com/products/esphome-starter-kit",
+        shipFrom: "Europe",
+        shipTo: "Europe",
+        logo: "/images/distributors/slim-husije-logo.webp",
       },
       {
         name: "Domo-supply",
@@ -50,6 +64,18 @@ export const products: Record<string, Product> = {
         shipFrom: "UK",
         shipTo: "UK",
         logo: "/images/distributors/the-pi-hut-logo.webp",
+      },
+      {
+        name: "Apollo Automation",
+        url: "https://apolloautomation.com/products/esk-1-esphome-starter-kit",
+        shipTo: "Australia",
+        logo: "/images/distributors/apollo.webp",
+      },
+      {
+        name: "Apollo Automation",
+        url: "https://apolloautomation.com/products/esk-1-esphome-starter-kit",
+        shipTo: "Global",
+        logo: "/images/distributors/apollo.webp",
       },
     ],
   },

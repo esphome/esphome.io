@@ -38,7 +38,7 @@ export interface IconData {
   body: string;
 }
 
-function parseIcon(svg: string): IconData {
+export function parseIcon(svg: string): IconData {
   const viewBox = /viewBox="([^"]+)"/.exec(svg)?.[1] ?? "0 0 24 24";
   const body = svg
     .replace(/^\s*<svg\b[^>]*>/, "")
