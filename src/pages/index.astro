@@ -1,5 +1,13 @@
 ---
 import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
+import Hero from "@components/Homepage/Hero.astro";
+import HowEsphomeWorks from "@components/Homepage/HowEsphomeWorks.astro";
+import ExploreCommunityProjects from "@components/Homepage/ExploreCommunityProjects.astro";
+import NewToEsphome from "@components/Homepage/NewToEsphome.astro";
+import GetStarted from "@components/Homepage/GetStarted.astro";
+import PickYourFirstProject from "@components/Homepage/PickYourFirstProject.astro";
+import SupportedMicrocontrollers from "@components/Homepage/SupportedMicrocontrollers.astro";
+import JoinOurCommunity from "@components/Homepage/JoinOurCommunity.astro";
 ---
 
 <StarlightPage
@@ -11,14 +19,28 @@ import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
   }}
   hasSidebar={false}
 >
-  <div class="custom-hero">
-    <p>HERO</p>
-  </div>
+  <Hero />
+  <HowEsphomeWorks />
+  <ExploreCommunityProjects />
+  <NewToEsphome />
+  <GetStarted />
+  <PickYourFirstProject />
+  <SupportedMicrocontrollers />
+  <JoinOurCommunity />
 </StarlightPage>
 
 <style>
   html:not([data-has-sidebar]) {
     --sl-content-width: 100%;
+  }
+
+  :root {
+    --sl-content-gap-y: 0;
+    --esphome-card-background-color: #23272e;
+  }
+
+  html[data-theme="light"]:root {
+    --esphome-card-background-color: #23272e;
   }
 
   :global(.content-panel) {
@@ -35,17 +57,18 @@ import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
     padding: 0 var(--sl-content-pad-x);
   }
 
-  .custom-hero {
-    text-align: center;
-    padding: 4rem 1rem;
+  :global(.container) {
+    width: 100%;
+    max-width: 1920px;
+    margin: 0 auto;
+    padding: 4rem 0;
   }
-  .cta-button {
-    display: inline-block;
-    background: var(--sl-color-accent);
-    color: white;
-    padding: 0.75rem 1.5rem;
-    border-radius: 0.5rem;
-    text-decoration: none;
-    margin-top: 1rem;
+
+  :global(section) {
+    border: 1px solid var(--pagefind-ui-primary);
+  }
+
+  :global(.card-bgc) {
+    background-color: var(--esphome-card-background-color);
   }
 </style>
