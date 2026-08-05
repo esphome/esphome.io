@@ -205,6 +205,10 @@ if (!urls) {
           <button type="button" data-arch="x64" aria-pressed="false"> Intel </button>
         </div>
       </div>
+      <p class="install-selector__warning" data-mac-intel-warning role="status" hidden>
+        Support for Intel Macs will be removed soon. The Python ecosystem is dropping Intel macOS; the{" "}
+        <code>cryptography</code> package no longer publishes Intel builds as of version 49.
+      </p>
       <LinkButton data-download="mac" href={urls["mac-arm64"]}> Download disk image (.dmg) </LinkButton>
       <ol class="install-selector__steps">
         <li>Open the downloaded <code>.dmg</code> file.</li>
@@ -385,6 +389,15 @@ if (!urls) {
     margin-block: 0.75rem 0;
   }
 
+  .install-selector__warning {
+    font-size: 0.9em;
+    background: var(--sl-color-orange-low);
+    border-left: 3px solid var(--sl-color-orange);
+    border-radius: 0 4px 4px 0;
+    padding: 0.6rem 0.8rem;
+    margin-block: 0 1.25rem;
+  }
+
   .install-selector__my {
     display: inline-block;
     line-height: 0;
@@ -473,8 +486,10 @@ if (!urls) {
     (() => {
       const btn = root.querySelector('[data-download="mac"]');
       if (!btn) return;
+      const intelWarning = root.querySelector("[data-mac-intel-warning]");
       const selectArch = wireSegmented("mac-arch", "arch", (arch) => {
         btn.href = urls[`mac-${arch}`];
+        if (intelWarning) intelWarning.hidden = arch !== "x64";
       });
 
       // Auto-pick Intel when the UA-CH API reports an x86 architecture.
