@@ -131,9 +131,11 @@ esphome:
           }
 
           esphome::modbus_controller::ModbusController *controller = id(pzem);
+          auto set_addr_cmd = esphome::modbus_controller::ModbusCommandItem::create_write_single_command(
+            controller, 0x0002, new_address);
+
           delay(200) ;
-          controller->queue_command(esphome::modbus_controller::ModbusCommandItem::create_write_single_command(
-            controller, 0x0002, new_address));
+          controller->queue_command(set_addr_cmd);
           ESP_LOGI("ModbusLambda", "PZEM Addr set");
 
 modbus:

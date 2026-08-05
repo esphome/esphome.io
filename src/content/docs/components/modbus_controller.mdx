@@ -45,20 +45,20 @@ On the bus side, you need 120 Ohm termination resistors at the ends of the bus c
 - **modbus_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the `modbus` hub.
 
 - **address** (**Required**, [ID](/guides/configuration-types#id)): The Modbus address of the slave device.
-  It is now possible to have two `modbus_controller` instances with the same `address` in one configuration, for
-  example if each should poll the same device at a different `update_interval`.
 
 - **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval that the sensors should be checked.
   Defaults to 60 seconds.
 
 <span id="modbus_controller-offline_skip_updates"></span>
 
-- **offline_skip_updates** (*Optional*, integer): When a slave doesn't respond to a command, it is
-  marked as offline, you can specify how many updates will be skipped while it is offline. If using a bus with multiple
-  slaves, this avoids waiting for timeouts allowing to read other slaves in the same bus. When the slave
-  responds to a command, it'll be marked online again.
+- **offline_skip_updates** (*Optional*, integer): How many update intervals to wait between retry attempts while a
+  device is offline (see below). If using a bus with multiple slaves, this avoids waiting for timeouts on an
+  unresponsive device, allowing the other slaves on the same bus to be read on time.
 
-- **max_cmd_retries** (*Optional*, integer): How many times a command will be retried if no response is received. It doesn't include the initial transmition. Defaults to 4.
+- **max_cmd_retries** (*Optional*, integer): How many times a command will be retried if no response is received. It doesn't include the initial transmission. Defaults to 4.
+
+Multiple `modbus_controller` instances sharing the same `address` works — for example, to poll the same device at
+different `update_interval`s.
 
 Non-responses are counted per device, not per command or register. After `max_cmd_retries` consecutive timeouts the
 whole device is marked offline (triggering [`on_offline`](#modbus_controller-on_offline)), its queued frames are
@@ -73,15 +73,15 @@ Automations:
 - **on_offline** (*Optional*, [Automation](/automations)): An automation to perform when a modbus controller goes offline. See [`on_offline`](#modbus_controller-on_offline)
 
 > [!WARNING]
-> These options no longer have any effect. They are still accepted so existing configurations keep working, and will
-> be removed in 2027.2.0:
+> These options no longer have any effect. They are still accepted so existing configurations keep working — setting
+> either one logs a validation warning at compile time — and will be removed in 2027.2.0:
 >
 > - **command_throttle**: Use [`turnaround_time`](/components/modbus/) on the `modbus` component instead.
 > - **allow_duplicate_commands**: Polling commands are deduplicated by the `modbus` hub while an identical frame is
 >   already pending. One-shot commands (writes and custom commands) are always transmitted; avoiding duplicate
 >   one-shot commands is the caller's responsibility.
 >
-> These options have been removed and raise a validation error:
+> These options have been removed and raise a validation error at compile time:
 >
 > - **server_registers** and **server_courtesy_response**: Use the [Modbus Server](/components/modbus_server/) component
 >   instead.
