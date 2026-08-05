@@ -73,12 +73,16 @@ Automations:
 - **on_offline** (*Optional*, [Automation](/automations)): An automation to perform when a modbus controller goes offline. See [`on_offline`](#modbus_controller-on_offline)
 
 > [!WARNING]
-> Several options have been removed and now raise a validation error:
+> These options no longer have any effect. They are still accepted so existing configurations keep working, and will
+> be removed in 2027.2.0:
 >
 > - **command_throttle**: Use [`turnaround_time`](/components/modbus/) on the `modbus` component instead.
-> - **allow_duplicate_commands**: Polling commands are now always deduplicated by the `modbus` hub while an identical
->   frame is already pending. One-shot commands (writes and custom commands) are always transmitted; avoiding duplicate
+> - **allow_duplicate_commands**: Polling commands are deduplicated by the `modbus` hub while an identical frame is
+>   already pending. One-shot commands (writes and custom commands) are always transmitted; avoiding duplicate
 >   one-shot commands is the caller's responsibility.
+>
+> These options have been removed and raise a validation error:
+>
 > - **server_registers** and **server_courtesy_response**: Use the [Modbus Server](/components/modbus_server/) component
 >   instead.
 
