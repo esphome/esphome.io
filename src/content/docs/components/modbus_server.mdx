@@ -67,6 +67,8 @@ On the bus side, you need 120 Ohm termination resistors at the ends of the bus c
 
     - `U_WORD`  : unsigned 16 bit integer, 1 register, `uint16_t`
     - `S_WORD`  : signed 16 bit integer, 1 register, `int16_t`
+    - `U_WORD_S`  : unsigned 16 bit integer, 1 register, **byte-swapped**, `uint16_t`
+    - `S_WORD_S`  : signed 16 bit integer, 1 register, **byte-swapped**, `int16_t`
     - `U_DWORD`  : unsigned 32 bit integer, 2 registers, `uint32_t`
     - `S_DWORD`  : signed 32 bit integer, 2 registers, `int32_t`
     - `U_DWORD_R`  : unsigned 32 bit integer, 2 registers, **low word first**, `uint32_t`
@@ -77,6 +79,12 @@ On the bus side, you need 120 Ohm termination resistors at the ends of the bus c
     - `S_QWORD_R`  : signed 64 bit integer, 4 registers, **low word first**, `int64_t`
     - `FP32`  : 32 bit IEEE 754 floating point, 2 registers, `float`
     - `FP32_R`  : 32 bit IEEE 754 floating point, 2 registers, **low word first**, `float`
+
+    > [!WARNING]
+    > `U_WORD_S` and `S_WORD_S` are a **rare, non-standard** configuration: bytes are swapped **within**
+    > one 16-bit register (byte-swapped). Modbus registers are big-endian (MSB first) per the
+    > specification. The `_S` suffix is not the same as `_R` (word order reversed / **low word first**
+    > across multiple registers).
 
     > [!NOTE]
     > The `_R` suffix means word order is reversed (**low word first**). It is not little-endian byte
