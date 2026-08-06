@@ -49,6 +49,32 @@ sensor:
 - **counts** (*Optional*): The raw per-channel readings to publish. Each channel is optional; only the channels
   you list are published. The available channels depend on `type`, see [Channels](#channels) below. Each channel
   accepts all options from [Sensor](/components/sensor/), or just a name as a shorthand.
+- **basic_counts** (*Optional*): The same channels as `counts`, but converted to basic counts, which are
+  comparable across different `gain` and integration time settings. See [Basic Counts](#basic-counts) below.
+  Each channel accepts all options from [Sensor](/components/sensor/), or just a name as a shorthand.
+- **normalize_basic_counts** (*Optional*, string): Divide every basic count by a common reference, so the
+  published values describe the shape of the spectrum rather than its strength. Defaults to `NONE`. Must be one
+  of:
+
+  - `NONE` (*default*): publish the basic counts as they are.
+  - `ALL`: divide by the largest basic count of any channel.
+  - `BANDS`: divide by the largest basic count among the visible bands, ignoring `clear` and `nir`.
+  - `CLEAR`: divide by the basic count of the `clear` channel.
+
+- **saturation_level** (*Optional*): The highest channel reading as a percentage of the full-scale count. All
+  options from [Sensor](/components/sensor/), or just a name as a shorthand.
+- **calibration** (*Optional*): Corrections applied while converting raw counts to basic counts. See
+  [Calibration](#calibration) below.
+
+  - **channel_correction** (*Optional*, list of float): One factor per channel, in the channel order listed in
+    [Channels](#channels). The list length must match the model: 10 values for the AS7341, 13 for the AS7343.
+    Defaults to the manufacturer's factors for the AS7343, and to all ones for the AS7341.
+  - **dark_current** (*Optional*, list of float): One dark current offset per channel, in basic counts,
+    subtracted before the corrections are applied. Same length rule as `channel_correction`. Defaults to all
+    zeroes.
+  - **glass_attenuation_factor** (*Optional*, float): A single factor compensating for any cover glass in front
+    of the sensor. Defaults to `1.0`, meaning no cover.
+
 - **gain** (*Optional*): The gain used by the device. A higher gain may be more suitable for lower-light
   environments. Defaults to `X8`. Must be one of:
 
@@ -108,6 +134,41 @@ and `astep`. Changing any of those three options changes the counts for the same
 The largest count a channel can reach is $(\text{ATIME} + 1) \times (\text{ASTEP} + 1)$, or 65535 if that product
 is larger. With the default `atime` and `astep` that limit is 18000. A channel sitting at the limit is saturated
 and its reading should be discarded; lower the `gain` or the integration time until it drops below the limit.
+
+The `saturation_level` sensor reports how close the brightest channel is to that limit, as a percentage. It is a
+convenient thing to watch while choosing `gain`, `atime` and `astep`: a reading near 100% means at least one
+channel is clipping, and a reading of a few percent means most of the sensor's range is going unused.
+
+## Basic Counts
+
+A basic count is the raw count scaled to one unit of gain and one millisecond of integration time. Two basic
+counts taken with different `gain`, `atime` or `astep` settings can be compared directly, which raw counts
+cannot. The conversion is:
+
+$$
+\text{basic count} = \frac{\text{raw count}}{\text{gain} \times t}
+$$
+
+where $t$ is the integration time in milliseconds. The [calibration](#calibration) corrections are then applied.
+Because basic counts are small fractional numbers, these sensors default to six decimal places.
+
+Setting `normalize_basic_counts` divides every channel by a common reference, which turns the readings into a
+spectral shape that does not move when the light gets brighter or dimmer. `BANDS` is the usual choice for
+comparing the colour of a light source, since it ignores the wideband `clear` and the `nir` channels.
+
+## Calibration
+
+Basic counts are corrected in this order: the `dark_current` offset for the channel is subtracted and the result
+is clamped at zero, the device's own gain correction is applied, then `channel_correction`, then
+`glass_attenuation_factor`.
+
+The AS7343 defaults ship with the manufacturer's per-channel factors for a golden reference device. The AS7341
+has no published equivalent, so its `channel_correction` defaults to all ones and the channels are left as the
+device reports them.
+
+To measure your own `dark_current`, cover the sensor completely and record the basic counts each channel
+reports. Those values are the offsets to subtract. Set `glass_attenuation_factor` when the sensor sits behind a
+window or enclosure that dims everything it sees by a known amount.
 
 ## Integration Time
 
