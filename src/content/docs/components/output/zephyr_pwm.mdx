@@ -1,0 +1,48 @@
+---
+description: "Instructions for setting up hardware PWM on the Zephyr nRF52 platform."
+title: "Zephyr nRF52 PWM Output"
+---
+import APIRef from '@components/APIRef.astro';
+
+The Zephyr PWM platform allows you to use the nRF52840's hardware PWM peripheral from
+`platform: zephyr`'s [`nrf52` variant](/components/zephyr/#variants).
+
+```yaml
+# Example configuration entry
+output:
+  - platform: zephyr_pwm
+    pin: 13
+    frequency: 1kHz
+    id: pwm_output
+
+# Example usage in a light
+light:
+  - platform: monochromatic
+    output: pwm_output
+    name: "Kitchen Light"
+```
+
+## Configuration variables
+
+- **pin** (**Required**, [Pin Schema](/guides/configuration-types#pin-schema)): The pin to use PWM on.
+  `allow_other_uses` is not supported.
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The id to use for this output component.
+- **frequency** (*Optional*, frequency): The frequency to run the PWM with. Defaults to `1kHz`. Must be
+  between `3.815Hz` and `10MHz`.
+
+- All other options from [Output](/components/output#config-output).
+
+## Hardware Limits
+
+The nRF52840 has 4 PWM blocks of 4 channels each. All channels within a block must share the same
+**frequency** — ESPHome packs `zephyr_pwm` outputs into blocks by frequency automatically, but raises a
+config error if more than 4 distinct frequencies are configured across all `zephyr_pwm` outputs, or more
+than 4 outputs share the same frequency.
+
+## See Also
+
+- [Output Component](/components/output/)
+- [Zephyr Platform](/components/zephyr/)
+- [Monochromatic Light](/components/light/monochromatic/)
+- [Speed Fan](/components/fan/speed/)
+- <APIRef text="zephyr_pwm.h" path="zephyr_pwm/zephyr_pwm.h" />

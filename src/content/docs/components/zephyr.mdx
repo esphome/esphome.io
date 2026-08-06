@@ -69,9 +69,10 @@ zephyr:
 | `esp32h2` | ESP32-H2 (RISC-V) | [`esp32h2_devkitm`](https://docs.zephyrproject.org/latest/boards/espressif/esp32h2_devkitm/doc/index.html) | mainline Zephyr | BLE, Thread (via `openthread:`) |
 | `esp32c6` | ESP32-C6 (RISC-V) | [`esp32c6_devkitc`](https://docs.zephyrproject.org/latest/boards/espressif/esp32c6_devkitc/doc/index.html) | mainline Zephyr | Wi-Fi, BLE, Thread (via `openthread:`) |
 | `nativesim` | Host binary, no real hardware | [`native_sim/native/64`](https://docs.zephyrproject.org/latest/boards/native/native_sim/doc/index.html) | mainline Zephyr | Simulation on your PC |
-| `nrf52` | nRF52840 (Cortex-M4) | [`adafruit_feather_nrf52840`](https://docs.zephyrproject.org/latest/boards/adafruit/feather_nrf52840/doc/index.html) | nRF Connect SDK (NCS) | BLE, Thread (via `openthread:`) |
-| `nrf54l15` | nRF54L15 (Cortex-M33) | [`nrf54l15dk`](https://docs.zephyrproject.org/latest/boards/nordic/nrf54l15dk/doc/index.html) | nRF Connect SDK (NCS) | BLE, Thread (via `openthread:`) |
-| `nrf54lm20a` | nRF54LM20A (Cortex-M33) | [`nrf54lm20dk`](https://docs.zephyrproject.org/latest/boards/nordic/nrf54lm20dk/doc/index.html) | nRF Connect SDK (NCS) | BLE, Thread (via `openthread:`) |
+| `nrf52` | nRF52840 (Cortex-M4) | [`adafruit_feather_nrf52840`](https://docs.zephyrproject.org/latest/boards/adafruit/feather_nrf52840/doc/index.html) | nRF Connect SDK (NCS) | BLE, Thread (via `openthread:`), Zigbee (via `zigbee:`, `framework: type: zigbee`) |
+| `nrf54l15` | nRF54L15 (Cortex-M33) | [`nrf54l15dk`](https://docs.zephyrproject.org/latest/boards/nordic/nrf54l15dk/doc/index.html) | nRF Connect SDK (NCS) | BLE, Thread (via `openthread:`), Zigbee (via `zigbee:`, `framework: type: zigbee`) |
+| `nrf54lm20a` | nRF54LM20A (Cortex-M33) | [`nrf54lm20dk`](https://docs.zephyrproject.org/latest/boards/nordic/nrf54lm20dk/doc/index.html) | nRF Connect SDK (NCS) | BLE, Thread (via `openthread:`), Zigbee (via `zigbee:`, `framework: type: zigbee`) |
+| `efr32mg24` | Silicon Labs EFR32MG24 (Cortex-M33) | [`xg24_ek2703a`](https://docs.zephyrproject.org/latest/boards/silabs/dev_kits/xg24_ek2703a/doc/index.html) | mainline Zephyr | BLE |
 
 All three `esp32*` variants build only the single scheduled core Zephyr's Wi-Fi/BLE drivers require;
 where the chip has more than one core, only the main application core's image is built. `nrf54l15`
@@ -90,6 +91,11 @@ any tagged Zephyr release yet either — `board: xiao_nrf54lm20a` needs an expli
 `framework: {type: zephyr, source: {type: git, ref: main}}` pointed at mainline's `main` branch, not
 just `type: zephyr` alone.
 
+`efr32mg24` is a Silicon Labs device. Its GPIO ports are lettered (`PA`/`PB`/`PC`/`PD`) rather than
+numbered; see [GPIO Pin Numbering](#gpio-pin-numbering). Scope is currently base board bring-up
+(GPIO/I2C/ADC/UART, MCUboot-signed boot) — OTA (`zephyr_mcumgr`) isn't wired up yet, and this Zephyr
+tree has no `ieee802154` driver for Silicon Labs Series 2, so Thread/Zigbee aren't available.
+
 It is not recommended to use esp variants for other than experimental purposes, the esp32 platform,
 esp-idf framework delivers superior functionality and stability.  These variants are being used to test
 and learn how to implement Zephyr, but again are not recommended for everyday use.
@@ -100,6 +106,10 @@ Pins are referenced by a flat number regardless of variant, either as a plain in
 `14` and `GPIO14` are equivalent. Internally, ESPHome splits this number into a devicetree GPIO controller
 port and a pin-within-port, but this is transparent to configuration; use the number silk-screened on the
 board or listed in the board's pinout.
+
+On variants with lettered GPIO ports (currently only `efr32mg24`), the vendor's own notation is also
+accepted directly — `PA4`, `PB2`, and so on, the same string logs and `dump_config` print back. This
+notation is rejected with an error on variants that use flat numbering instead.
 
 ## `board_source`
 
@@ -596,3 +606,5 @@ driven entirely by that data. A new variant is a new entry plus variant-specific
 - [ADC Sensor](/components/sensor/adc/)
 - [UART Bus](/components/uart/)
 - [WiFi Component](/components/wifi/)
+- [Zephyr nRF52 PWM Output](/components/output/zephyr_pwm/)
+- [Zigbee Component](/components/zigbee/)
