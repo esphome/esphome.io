@@ -1,5 +1,12 @@
 ---
+import { LinkButton } from "@astrojs/starlight/components";
 
+const marqueeItems = [
+  { title: "No complex coding", text: "Simple configuration files do the work for you" },
+  { title: "Wireless updates", text: "Upgrade devices remotely over WiFi – no cables needed" },
+  { title: "Modular design", text: "Choose from hundreds of components to suit your project" },
+  { title: "Local control", text: "Run your devices on your own network, without the cloud" },
+];
 ---
 
 <section class="hero">
@@ -11,7 +18,59 @@
       sensors, switches, displays, and more – just tell ESPHome what to do and it handles the rest, with no need to code
       unless you want to.
     </p>
+    <LinkButton href="/install/">Get started</LinkButton>
+  </div>
+  <div class="marquee">
+    <div class="marquee__track">
+      {
+        [...marqueeItems, ...marqueeItems].map((item) => (
+          <div class="item">
+            <span>{item.title}</span> {item.text}
+          </div>
+        ))
+      }
+    </div>
   </div>
 </section>
 
-<style lang="scss"></style>
+<style lang="scss">
+  .marquee {
+    overflow: hidden;
+    width: 100%;
+
+    &__track {
+      display: flex;
+      width: max-content;
+      animation: marquee-scroll 40s linear infinite;
+    }
+  }
+
+  .item {
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+
+    span {
+      font-weight: bold;
+      margin-right: 1rem;
+
+      &::after {
+        content: ":";
+      }
+    }
+
+    &::after {
+      content: "•";
+      margin: 0 2rem;
+    }
+  }
+
+  @keyframes marquee-scroll {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-50%);
+    }
+  }
+</style>
