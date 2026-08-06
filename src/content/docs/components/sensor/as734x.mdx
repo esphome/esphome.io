@@ -64,6 +64,21 @@ sensor:
 
 - **saturation_level** (*Optional*): The highest channel reading as a percentage of the full-scale count. All
   options from [Sensor](/components/sensor/), or just a name as a shorthand.
+- **illuminance** (*Optional*): Brightness as the human eye perceives it, in lux. All options from
+  [Sensor](/components/sensor/), or just a name as a shorthand.
+- **irradiance** (*Optional*): Total radiant power over the range the sensor covers, in W/m². All options from
+  [Sensor](/components/sensor/), or just a name as a shorthand.
+- **irradiance_photopic** (*Optional*): Radiant power weighted by the eye's response curve, in W/m². All options
+  from [Sensor](/components/sensor/), or just a name as a shorthand.
+- **irradiance_par** (*Optional*): Radiant power over the 400nm to 700nm range plants use, in W/m². All options
+  from [Sensor](/components/sensor/), or just a name as a shorthand.
+- **ppfd** (*Optional*): Photosynthetic photon flux density, the same 400nm to 700nm range counted as photons
+  rather than power, in µmol/s⋅m². All options from [Sensor](/components/sensor/), or just a name as a
+  shorthand.
+- **color_temperature** (*Optional*): Correlated colour temperature of the light, in kelvin. All options from
+  [Sensor](/components/sensor/), or just a name as a shorthand.
+- **rgb_hex** (*Optional*): The colour of the light as an sRGB hex string. All options from
+  [Text Sensor](/components/text_sensor/), or just a name as a shorthand.
 - **calibration** (*Optional*): Corrections applied while converting raw counts to basic counts. See
   [Calibration](#calibration) below.
 
@@ -271,6 +286,44 @@ sensor:
 > channel and `f5` is narrow, so `f5` reading lower than `fy` is expected rather than a fault. Compare a channel
 > against a reference instrument or a known source before correcting it, and use a smooth broadband source: a
 > narrow LED peak that falls between two filters looks exactly like a broken channel.
+
+## Derived Light Metrics
+
+Beyond the per-channel readings, the component can publish several whole-light measurements. Each one is a
+weighted sum over the channels, using per-channel factors from the manufacturer, and each is calculated from the
+[basic counts](#basic-counts). You do not have to configure the `basic_counts` sensors to use them, but they do
+share the same [calibration](#calibration), so anything you change there moves these values too.
+
+- `irradiance` is the total radiant power the sensor sees. `irradiance_photopic` weights the same measurement by
+  the eye's sensitivity curve, and `illuminance` is that photopic figure converted to lux.
+- `irradiance_par` and `ppfd` both cover the 400nm to 700nm band that drives photosynthesis. The first counts
+  power, the second counts photons, which is the figure horticultural equipment is usually rated in.
+- `color_temperature` and `rgb_hex` describe the colour rather than the strength of the light. Both come from
+  CIE 1931 tristimulus values summed over the channels, with the colour temperature using McCamy's
+  approximation.
+
+> [!NOTE]
+> These are estimates from a 10 or 13 channel sensor, not laboratory measurements. Treat them as good for
+> tracking change over time and for comparing one light against another, rather than as absolute values. In very
+> dim light there is not enough signal to place a colour, and `color_temperature` reports 0.
+
+```yaml
+# Example configuration entry with derived metrics
+sensor:
+  - platform: as734x
+    type: AS7343
+    illuminance:
+      name: "Illuminance"
+    ppfd:
+      name: "PPFD"
+    color_temperature:
+      name: "Color Temperature"
+    rgb_hex:
+      name: "Colour"
+```
+
+`rgb_hex` publishes a [Text Sensor](/components/text_sensor/), but it is configured here alongside the other
+sensors rather than under a separate `text_sensor:` block.
 
 ## Integration Time
 
