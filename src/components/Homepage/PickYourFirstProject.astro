@@ -132,6 +132,24 @@ const swiperOptions = {
       }
     }
 
+    // Reserve slide width up front so the layout matches the desktop `slidesPerView` from the
+    // moment the page paints, instead of jumping to it once swiper's JS initializes.
+    :global(.cards:not(.swiper-initialized) .swiper-wrapper) {
+      gap: 1rem;
+    }
+
+    :global(.cards:not(.swiper-initialized) .swiper-slide) {
+      width: 80%;
+
+      @include bp(tablet) {
+        width: 44.44%;
+      }
+
+      @include bp(desktop) {
+        width: 33.33%;
+      }
+    }
+
     :global(.card) {
       display: flex;
       flex-direction: column;
