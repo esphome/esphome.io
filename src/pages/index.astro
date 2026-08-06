@@ -40,11 +40,13 @@ import JoinOurCommunity from "@components/Homepage/JoinOurCommunity.astro";
     --sl-content-gap-y: 0;
     --esphome-card-background-color: #23272e;
     --esphome-card-border-color: #2d3748;
+    --esphome-card-tag-background-color: #b3c7ff;
   }
 
   html[data-theme="light"]:root {
     --esphome-card-background-color: #23272e;
     --esphome-card-border-color: #2d3748;
+    --esphome-card-tag-background-color: #b3c7ff;
   }
 
   :global(.content-panel) {
@@ -82,10 +84,6 @@ import JoinOurCommunity from "@components/Homepage/JoinOurCommunity.astro";
     }
   }
 
-  :global(section) {
-    border: 1px solid var(--pagefind-ui-primary);
-  }
-
   :global(h2),
   :global(.h2),
   :global(h3),
@@ -108,6 +106,49 @@ import JoinOurCommunity from "@components/Homepage/JoinOurCommunity.astro";
 
     :global(p) {
       font-size: 0.875rem;
+    }
+
+    :global(.card__tag-row) {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+
+      :global(.card__tag) {
+        background-color: transparent;
+        border: 1px solid var(--esphome-card-border-color);
+        color: var(--sl-color-text);
+      }
+    }
+
+    :global(.card__tag) {
+      &.beginner {
+        --esphome-card-tag-background-color: #7cb342;
+        --sl-color-text-accent: #7cb342;
+      }
+
+      &.intermediate {
+        --esphome-card-tag-background-color: #ffcc32;
+        --sl-color-text-accent: #ffcc32;
+      }
+
+      &.advanced {
+        --esphome-card-tag-background-color: #e74c3c;
+        --sl-color-text-accent: #e74c3c;
+      }
+
+      &.beginner,
+      &.intermediate,
+      &.advanced {
+        text-transform: none;
+      }
+
+      border-radius: px-to-rem(100);
+      padding: 0.55rem 1rem 0.5rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      background-color: color-mix(in srgb, var(--esphome-card-tag-background-color) 10%, transparent);
+      color: var(--sl-color-text-accent);
     }
 
     :global(.card__title) {
