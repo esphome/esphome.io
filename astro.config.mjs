@@ -184,7 +184,6 @@ export default defineConfig({
         Head: "./src/components/Head.astro",
         PageTitle: "./src/components/PageTitle.astro",
         SiteTitle: "./src/components/SiteTitle.astro",
-        PageTitle: "./src/components/PageTitle.astro",
         ThemeProvider: "./src/components/ThemeProvider.astro",
         SocialIcons: "./src/components/SocialIcons.astro",
       },
