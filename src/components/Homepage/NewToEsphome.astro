@@ -1,9 +1,37 @@
 ---
-
+import { Image } from "astro:assets";
+import { LinkButton } from "@astrojs/starlight/components";
+import newToEsphomeImg from "../../assets/images/homepage/new-to-esphome.webp";
 ---
 
 <section class="new-to-esphome card-bgc">
-  <div class="container"></div>
+  <div class="container">
+    <div class="content-container">
+      <h2>New to ESPHome? Read this!</h2>
+      <p>
+        Every ESPHome device is built around a small, inexpensive chip called a microcontroller – commonly an ESP32
+        (hence the name ESPHome!), but it also works with others like RP2040 or BK72xx. The chip is the programmable
+        part that controls your sensors, switches, and displays. ESPHome generates the firmware (the internal software
+        operating system) that runs on that chip to give it its instructions. Once installed, the chip can then “talk”
+        directly to Home Assistant or any other smart home system that supports it.
+      </p>
+
+      <Image src={newToEsphomeImg} alt="New to ESPHome" layout="constrained" />
+
+      <LinkButton href="/install/">Get started</LinkButton>
+    </div>
+  </div>
 </section>
 
-<style lang="scss"></style>
+<style lang="scss">
+  @use "../../styles/mixins" as *;
+
+  .new-to-esphome {
+    img {
+      max-height: 100%;
+      border-radius: 0.5rem;
+      @include fluid(16, 32, $property: margin-top);
+      @include fluid(16, 32, $property: margin-bottom);
+    }
+  }
+</style>
