@@ -555,25 +555,16 @@ esp32:
     > For `rsa3072` you can instead list the trusted keys explicitly with `verification_keys` (below) to enable
     > key rotation and backup keys.
 
-  - **verification_keys** (*Optional*, list): For externally-signed `rsa3072` only: the public keys the firmware
-    trusts to verify OTA updates, compiled into the build as a fixed trust anchor. When set, ESPHome verifies each
-    update against this list itself — accepting an update signed by **any** listed key — instead of ESP-IDF's
-    built-in check, which accepts only an update signed by the single key already in the running firmware. This
-    enables **key rotation** (introduce a new key with a release signed by both the old and new key, then drop the
-    old one in a later release) and **multi-provider backup keys** (sign each release with two independent keys so
-    either one can produce an accepted update). List up to three keys — the Secure Boot V2 signature-block limit.
-    Each entry is either a path to a PEM public (or private) key, or the key's 64-character hex digest directly;
-    the digest form lets a CI pipeline inject the trusted keys without committing key files. Get a key's digest
-    with `espsecure.py digest-sbv2-public-key --keyfile public_key.pem digest.bin`.
+  - **verification_keys** (*Optional*, list): For externally-signed `rsa3072`, the public keys your device trusts
+    when checking OTA updates. Listing more than one lets you rotate signing keys or keep a backup key — an update
+    signed by any listed key is accepted. Each entry is a public key file, or the key's digest (handy for CI,
+    where you may not want a key file in your configuration). Up to three keys.
     **Requires `signing_scheme: rsa3072` and no `signing_key`.**
 
     > [!NOTE]
-    > If you also enable `allow_partition_access` on the OTA platform to update the **bootloader**
-    > over-the-air, the bootloader image must be externally signed and 4 KiB-padded too — the standard
-    > build signs only the app, so an unsigned bootloader update is rejected. Pad and sign `bootloader.bin`
-    > with a trusted key (`espsecure.py sign-data --version 2 --keyfile key.pem ...`) before pushing it.
-    > `verification_keys` gates the app and bootloader images; the partition-table update path is not
-    > signature-verified (partition tables carry an MD5 checksum, not a signature), so it isn't gated.
+    > Both app and bootloader OTA updates are verified. If you update the bootloader over the air (with
+    > `allow_partition_access`), sign it with one of your trusted keys first — the normal build signs only the
+    > app, so an unsigned bootloader update is rejected.
 
   - **signing_scheme** (*Optional*, string): The signing algorithm. One of `rsa3072`, `ecdsa256`, or `ecdsa_v1`.
     Defaults to `rsa3072`. **Not all schemes are supported on all variants** — see the table below.
