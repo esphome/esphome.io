@@ -294,13 +294,40 @@ weighted sum over the channels, using per-channel factors from the manufacturer,
 [basic counts](#basic-counts). You do not have to configure the `basic_counts` sensors to use them, but they do
 share the same [calibration](#calibration), so anything you change there moves these values too.
 
-- `irradiance` is the total radiant power the sensor sees. `irradiance_photopic` weights the same measurement by
-  the eye's sensitivity curve, and `illuminance` is that photopic figure converted to lux.
-- `irradiance_par` and `ppfd` both cover the 400nm to 700nm band that drives photosynthesis. The first counts
-  power, the second counts photons, which is the figure horticultural equipment is usually rated in.
-- `color_temperature` and `rgb_hex` describe the colour rather than the strength of the light. Both come from
-  CIE 1931 tristimulus values summed over the channels, with the colour temperature using McCamy's
-  approximation.
+`color_temperature` and `rgb_hex` describe the colour rather than the strength of the light. Both come from CIE
+1931 tristimulus values summed over the channels, with the colour temperature using McCamy's approximation. The
+four brightness measurements are explained below.
+
+### What the Brightness Measurements Mean
+
+All four answer the question "how much light is there", but each counts a different thing, so their values are
+not interchangeable and generally do not track each other between light sources.
+
+**Irradiance** is radiant power arriving on a surface, in watts per square metre, across the whole range the
+sensor responds to. Every wavelength contributes in proportion to its energy, whether or not anything can see or
+use it. This is the plain physical energy figure, with no weighting applied.
+
+**Photopic irradiance** is the same power weighted by the standard curve for human vision, which describes how
+sensitive the light-adapted eye is at each wavelength. That curve peaks at 555nm in the green and falls to
+nothing below about 400nm and above about 700nm, so a watt of green light contributes almost all of itself, a
+watt of deep red very little, and a watt of infrared nothing at all. **Illuminance** is this same quantity
+multiplied by 683 lm/W, the luminous efficacy of light at 555nm, which converts it to lux. Photopic irradiance
+and illuminance are therefore one measurement in two units; use lux when you care about how bright a space looks
+to people.
+
+**PAR irradiance** covers photosynthetically active radiation: the power falling in the 400nm to 700nm band that
+plants use. Inside that band nothing is weighted, so a watt of blue counts exactly as much as a watt of red;
+outside it, nothing counts at all. It is irradiance with a 400nm to 700nm window applied and no curve.
+
+**PPFD**, photosynthetic photon flux density, covers the same 400nm to 700nm window but counts photons per
+second instead of watts, in micromoles per second per square metre. Photosynthesis responds to the number of
+photons absorbed rather than the energy they carry: one photon drives one reaction whether it is a high-energy
+blue photon or a low-energy red one. Since blue photons carry more energy than red ones, a watt of blue light is
+fewer photons than a watt of red, which is why PPFD and PAR irradiance disagree between lights of different
+colour. PPFD is what horticultural lighting is rated in and the figure to compare grow lights on.
+
+In short: use `illuminance` for spaces people occupy, `ppfd` for growing plants, and `irradiance` when you want
+the total energy regardless of who or what can use it.
 
 > [!NOTE]
 > These are estimates from a 10 or 13 channel sensor, not laboratory measurements. Treat them as good for
