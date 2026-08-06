@@ -22,10 +22,12 @@ This component is supported on the following platforms:
   ESP-IDF framework.
 - **nRF52840** with the [`nrf52` platform](/components/nrf52/) — uses Nordic's prebuilt OpenThread
   libraries (Thread 1.3.1).
-- The `zephyr` platform's `esp32h2`, `esp32c6`, and `nrf52` variants — see the
-  [Zephyr platform's variant table](/components/zephyr/#variants). Not available on `esp32` (original) or
-  `native_sim`. These build OpenThread from mainline Zephyr source (Thread 1.4) rather than Nordic's
-  prebuilt libraries, regardless of variant.
+- The `zephyr` platform's `esp32h2`, `esp32c6`, `nrf52`, `nrf54l15`, `nrf54lm20a`, and `efr32mg24`
+  variants — see the [Zephyr platform's variant table](/components/zephyr/#variants). Not available on
+  `esp32` (original) or `native_sim`. These build OpenThread from mainline Zephyr source (Thread 1.4)
+  rather than Nordic's prebuilt libraries, regardless of variant. `efr32mg24` additionally needs an
+  explicit `framework: {source: {type: git, ref: main}}` — see that variant's notes on
+  the [Zephyr platform page](/components/zephyr/#variants).
 
 <span id="config-openthread"></span>
 
@@ -33,8 +35,8 @@ This component is supported on the following platforms:
 
 The configuration depends on the platform. On ESP32 (ESP-IDF framework), the Thread dataset can be specified using
 the individual fields shown below or a `tlv` string. On the `nrf52` platform and every `zephyr` platform variant
-(`esp32h2`, `esp32c6`, `nrf52`), the dataset must be provided as a hex-encoded `tlv` string from Home Assistant's
-Thread integration — individual fields are not yet supported there.
+(`esp32h2`, `esp32c6`, `nrf52`, `nrf54l15`, `nrf54lm20a`, `efr32mg24`), the dataset must be provided as a
+hex-encoded `tlv` string from Home Assistant's Thread integration — individual fields are not yet supported there.
 
 ```yaml
 # Example OpenThread configuration (ESP32)

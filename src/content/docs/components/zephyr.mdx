@@ -72,7 +72,7 @@ zephyr:
 | `nrf52` | nRF52840 (Cortex-M4) | [`adafruit_feather_nrf52840`](https://docs.zephyrproject.org/latest/boards/adafruit/feather_nrf52840/doc/index.html) | nRF Connect SDK (NCS) | BLE, Thread (via `openthread:`), Zigbee (via `zigbee:`, `framework: type: zigbee`) |
 | `nrf54l15` | nRF54L15 (Cortex-M33) | [`nrf54l15dk`](https://docs.zephyrproject.org/latest/boards/nordic/nrf54l15dk/doc/index.html) | nRF Connect SDK (NCS) | BLE, Thread (via `openthread:`), Zigbee (via `zigbee:`, `framework: type: zigbee`) |
 | `nrf54lm20a` | nRF54LM20A (Cortex-M33) | [`nrf54lm20dk`](https://docs.zephyrproject.org/latest/boards/nordic/nrf54lm20dk/doc/index.html) | nRF Connect SDK (NCS) | BLE, Thread (via `openthread:`), Zigbee (via `zigbee:`, `framework: type: zigbee`) |
-| `efr32mg24` | Silicon Labs EFR32MG24 (Cortex-M33) | [`xg24_ek2703a`](https://docs.zephyrproject.org/latest/boards/silabs/dev_kits/xg24_ek2703a/doc/index.html) | mainline Zephyr | BLE |
+| `efr32mg24` | Silicon Labs EFR32MG24 (Cortex-M33) | [`xg24_ek2703a`](https://docs.zephyrproject.org/latest/boards/silabs/dev_kits/xg24_ek2703a/doc/index.html) | mainline Zephyr | BLE, Thread (via `openthread:`) |
 
 All three `esp32*` variants build only the single scheduled core Zephyr's Wi-Fi/BLE drivers require;
 where the chip has more than one core, only the main application core's image is built. `nrf54l15`
@@ -92,9 +92,16 @@ any tagged Zephyr release yet either — `board: xiao_nrf54lm20a` needs an expli
 just `type: zephyr` alone.
 
 `efr32mg24` is a Silicon Labs device. Its GPIO ports are lettered (`PA`/`PB`/`PC`/`PD`) rather than
-numbered; see [GPIO Pin Numbering](#gpio-pin-numbering). Scope is currently base board bring-up
-(GPIO/I2C/ADC/UART, MCUboot-signed boot) — OTA (`zephyr_mcumgr`) isn't wired up yet, and this Zephyr
-tree has no `ieee802154` driver for Silicon Labs Series 2, so Thread/Zigbee aren't available.
+numbered; see [GPIO Pin Numbering](#gpio-pin-numbering). Two OTA paths are available:
+[`zephyr_mcumgr`](/components/ota/zephyr_mcumgr/) over BLE or UART (this board has no USB peripheral,
+so `hardware_uart: CDC`/`CDC1` isn't available — use `UART0` or `ble: true` instead), or the standard
+network-based `ota: platform: esphome` once `openthread:` is configured, the same path `esp32c6`/
+`esp32h2` already use over their own network transports. Thread itself is available via
+`openthread:`, but needs an explicit `framework: {source: {type: git, ref: main}}` — the
+`ieee802154` driver for this SoC landed on Zephyr's `main` branch on 2026-02-12 (commit `bd89985e6`)
+and postdates the last tagged release (`v4.4.1`); once a release containing it ships, this
+requirement goes away. Zigbee isn't available — this fork has no Zigbee support for Silicon Labs
+Series 2 radios yet.
 
 It is not recommended to use esp variants for other than experimental purposes, the esp32 platform,
 esp-idf framework delivers superior functionality and stability.  These variants are being used to test
@@ -603,6 +610,7 @@ driven entirely by that data. A new variant is a new entry plus variant-specific
 - [Network Component](/components/network/)
 - [OpenThread Component](/components/openthread/)
 - [ESPHome Core Configuration (OTA/`safe_mode`)](/components/ota/esphome/)
+- [Zephyr MCUmgr OTA Updates](/components/ota/zephyr_mcumgr/)
 - [ADC Sensor](/components/sensor/adc/)
 - [UART Bus](/components/uart/)
 - [WiFi Component](/components/wifi/)
