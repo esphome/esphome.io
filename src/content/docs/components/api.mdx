@@ -229,6 +229,14 @@ on_...:
 - **on_error** (*Optional*, [Automation](/automations)): Optional automation to execute when the Home Assistant action
   call fails. See [Action Response Handling](#action-response-handling).
 
+> [!NOTE]
+> Home Assistant starts listening for device actions shortly *after* the API connection is established, so actions
+> triggered right at connection time (for example from `on_client_connected` or `on_time_sync`) can fire before
+> Home Assistant is ready for them. Such actions are not delivered and ESPHome logs a warning
+> (versions before 2026.8.0 dropped them silently). The same applies to `homeassistant.event`. If you need to
+> perform an action as soon as a connection is made, add a short `delay` before it so Home Assistant has time to
+> start listening.
+
 Data structures are not possible, but you can create a script in Home Assistant and call with all
 the parameters in plain format.
 

@@ -75,7 +75,8 @@ esp32:
   windows. Defaults to `5s`, valid range is `5s` to `60s`. Note: OTA updates temporarily raise the
   watchdog to `15s` when the configured timeout is below that threshold.
 
-- **toolchain** (*Optional*, [Toolchain](#esp32-toolchain)): Toolchain used to build the firmware.
+- **toolchain** (*Optional*, [Toolchain](#esp32-toolchain)): Toolchain used to build the firmware. The
+  `platformio` toolchain is deprecated and will be removed in 2027.2.0.
 
 ## Variants
 
@@ -343,9 +344,14 @@ ESPHome supports multiple toolchains for building firmware. The toolchain determ
 Currently supported toolchains include:
 
 - `esp-idf` (default)
-- `platformio`
+- `platformio` (deprecated)
 
 By default, ESPHome uses its native ESP-IDF integration, including automatic framework installation and environment management as described in this [documentation](/guides/esp_idf/).
+
+> [!WARNING]
+> The `platformio` toolchain is deprecated and will be removed in 2027.2.0. Both the ESP-IDF and Arduino
+> frameworks build on the default `esp-idf` toolchain; remove `toolchain: platformio` from your configuration
+> to migrate.
 
 **Example for using the PlatformIO toolchain:**
 
@@ -507,8 +513,10 @@ esp32:
 - **enable_ota_rollback** (*Optional*, boolean): Enable OTA rollback support. When enabled, the bootloader will
   automatically roll back to the previous firmware if the device crashes or resets before the boot is marked as
   successful. This works in conjunction with the [safe_mode](/components/safe_mode) component - after the
-  `boot_is_good_after` time (default 60s), the firmware is marked as valid. If the device crashes before that,
-  it will roll back to the previous working firmware. Defaults to `true`.
+  `boot_is_good_after` time (default 60s), the firmware is marked as valid. Since ESPHome 2026.8.0, an orderly
+  shutdown — entering [deep sleep](/components/deep_sleep#deep-sleep-and-ota-rollback), a restart or a shutdown —
+  also counts as a successful boot and marks the firmware as valid. If the device crashes before the firmware is
+  marked as valid, it will roll back to the previous working firmware. Defaults to `true`.
 
   > [!NOTE]
   > OTA rollback requires the bootloader to be compiled with rollback support. Existing devices may need to be
@@ -521,19 +529,48 @@ esp32:
   Both Secure Boot V2 (RSA-3072 or ECDSA-V2) and Secure Boot V1 (ECDSA) signing schemes are supported.
   Contains the following options:
 
+  Adding this block — even with no options inside — compiles signature verification into the firmware: the
+  device will reject any OTA update that is not signed with a trusted key. The options below only control how
+  the firmware gets signed.
+
   - **signing_key** (*Optional*, filename): Path to a PEM-encoded private signing key. When provided, the firmware
     is **automatically signed during build** using `espsecure`. This is the simplest workflow — the public key is
-    derived automatically and embedded in the signature block. **Mutually exclusive with `verification_key`.**
-  - **verification_key** (*Optional*, filename): Path to a public verification key. When provided, the
-    public key is embedded for verification but the binary is **not signed during build**. You must sign the firmware
-    externally before flashing. This is useful for CI/CD pipelines where the private key is stored in a secure vault.
+    derived automatically and embedded in the signature block. When omitted, the firmware is **not signed during
+    build**; you must sign it externally before flashing, which is useful for CI/CD pipelines where the private
+    key is stored in a secure vault. **Mutually exclusive with `verification_key`.**
+  - **verification_key** (*Optional*, filename): Path to a public verification key, **only for the `ecdsa_v1`
+    scheme**. Secure Boot V1 signatures do not carry the public key, so when the firmware is signed externally
+    the public key must be embedded in the build to verify updates. The key is in raw binary format (`.bin`);
+    extract it from the PEM private key using
+    `espsecure.py extract_public_key --keyfile private.pem public_key.bin`.
     **Mutually exclusive with `signing_key`.**
 
     > [!NOTE]
-    > The verification key format depends on the signing scheme:
-    > - For `rsa3072` and `ecdsa256` (Secure Boot V2): PEM-encoded public key.
-    > - For `ecdsa_v1` (Secure Boot V1): Raw binary format (`.bin`). Extract from a PEM private key using:
-    >   `espsecure.py extract_public_key --keyfile private.pem public_key.bin`
+    > The Secure Boot V2 schemes (`rsa3072` and `ecdsa256`) do not use a verification key — updates are verified
+    > against the public key carried in the running firmware's own signature block. To sign externally with a V2
+    > scheme, omit both keys; a bare block is a complete configuration:
+    >
+    > ```yaml
+    > esp32:
+    >   framework:
+    >     advanced:
+    >       # Verify OTA updates against externally-applied rsa3072 signatures
+    >       signed_ota_verification:
+    > ```
+    >
+    > For `rsa3072` you can instead list the trusted keys explicitly with `verification_keys` (below) to enable
+    > key rotation and backup keys.
+
+  - **verification_keys** (*Optional*, list): For externally-signed `rsa3072`, the public keys your device trusts
+    when checking OTA updates. Listing more than one lets you rotate signing keys or keep a backup key — an update
+    signed by any listed key is accepted. Each entry is a public key file, or the key's digest (handy for CI,
+    where you may not want a key file in your configuration). Up to three keys.
+    **Requires `signing_scheme: rsa3072` and no `signing_key`.**
+
+    > [!NOTE]
+    > Both app and bootloader OTA updates are verified. If you update the bootloader over the air (with
+    > `allow_partition_access`), sign it with one of your trusted keys first — the normal build signs only the
+    > app, so an unsigned bootloader update is rejected.
 
   - **signing_scheme** (*Optional*, string): The signing algorithm. One of `rsa3072`, `ecdsa256`, or `ecdsa_v1`.
     Defaults to `rsa3072`. **Not all schemes are supported on all variants** — see the table below.
@@ -567,7 +604,8 @@ esp32:
 
   > [!NOTE]
   > The **first firmware** flashed to a device must also be signed. When using `signing_key`, this happens
-  > automatically. Flash the initial firmware via serial — serial flashing does not perform signature verification.
+  > automatically; when signing externally, sign the image before flashing it via serial — a device running
+  > unsigned firmware has no trusted key and cannot verify (or accept) any OTA update.
   > All subsequent OTA updates will be verified against the public key in the running firmware.
 
   To generate a signing key, use the `espsecure.py` tool from ESP-IDF:
@@ -579,8 +617,8 @@ esp32:
   # Generate an ECDSA signing key (Secure Boot V1 — original ESP32 pre-rev 3.0)
   espsecure.py generate-signing-key --version 1 secure_boot_signing_key.pem
 
-  # Extract the public verification key (for the verification_key workflow)
-  espsecure.py extract_public_key --keyfile secure_boot_signing_key.pem secure_boot_verification_key.pem
+  # Extract the public verification key (only needed for ecdsa_v1 external signing)
+  espsecure.py extract_public_key --keyfile secure_boot_signing_key.pem secure_boot_verification_key.bin
   ```
 
 - **nvs_encryption** (*Optional*, mapping): Encrypts the device's non-volatile storage (NVS), where ESPHome

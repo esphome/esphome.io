@@ -69,11 +69,12 @@ sensor:
 
   - **interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval between each consecutive scan window.
     This is the time the ESP spends on each of the 3 BLE advertising channels.
-    Defaults to `320ms`.
+    The controller accepts `2.5ms` to `10240ms` in `0.625ms` steps. Defaults to `320ms`.
 
   - **window** (*Optional*, [Time](/guides/configuration-types#time)): The time the ESP is actively listening for packets
     on a channel during each scan interval. If this is close to the `interval` value, the ESP will
-    spend more time listening to packets (but also consume more power). Defaults to `30ms`
+    spend more time listening to packets (but also consume more power). Must not be larger than
+    `interval`; the same range and step apply. Defaults to `30ms`.
 
   - **duration** (*Optional*, [Time](/guides/configuration-types#time)): The duration of each complete scan. This has no real
     impact on the device but can be used to debug the BLE stack. Defaults to `5min`.
@@ -129,7 +130,8 @@ esp32_ble_tracker:
       then:
         - lambda: |-
             ESP_LOGD("ble_adv", "New BLE device");
-            ESP_LOGD("ble_adv", "  address: %s", x.address_str().c_str());
+            char addr[MAC_ADDRESS_PRETTY_BUFFER_SIZE];
+            ESP_LOGD("ble_adv", "  address: %s", x.address_str_to(addr));
             ESP_LOGD("ble_adv", "  name: %s", x.get_name().c_str());
             ESP_LOGD("ble_adv", "  Advertised service UUIDs:");
             for (auto uuid : x.get_service_uuids()) {
