@@ -1,9 +1,231 @@
 ---
+import { LinkButton } from "@astrojs/starlight/components";
+import { Image } from "astro:assets";
+import { Swiper, SwiperWrapper, SwiperSlide, SwiperPagination } from "astro-swiper";
 
+import kitImg from "../starter-kit/images/esphome-starter-kit.webp";
+
+const swiperOptions = {
+  slidesPerView: 1.25,
+  spaceBetween: 16,
+  pagination: {
+    clickable: true,
+    el: ".explore-community-projects .swiper-pagination",
+  },
+  breakpoints: {
+    768: {
+      slidesPerView: 2.25,
+    },
+    1024: {
+      slidesPerView: 3.05,
+    },
+  },
+};
 ---
 
 <section class="explore-community-projects">
-  <div class="container"></div>
+  <div class="container">
+    <div class="content-container">
+      <h2>Explore what our community is building</h2>
+      <p>
+        Be inspired by our community’s clever ideas for unique, customized smart home gear – and borrow their recipes
+        for your next project.
+      </p>
+    </div>
+
+    <Swiper class="cards" options={swiperOptions}>
+      <SwiperWrapper>
+        <SwiperSlide class="card card-bgc">
+          <div class="card__media">
+            <Image src={kitImg} alt="ESPHome Starter Kit" width={330} height={230} />
+          </div>
+          <div class="card__body">
+            <span class="card__tag">Community</span>
+            <h3 class="card__title">Environment sensor</h3>
+            <p>Measure temperature, humidity, and air pressure using a BME280 sensor.</p>
+            <div class="card__tag-row">
+              <span class="card__tag">Sensor</span>
+              <span class="card__tag">ESP32</span>
+              <span class="card__tag">Global</span>
+            </div>
+            <LinkButton
+              href="/components/#supported-microcontrollers"
+              class="card__text-link"
+              icon="right-arrow"
+              iconPlacement="start">View recipe</LinkButton
+            >
+          </div>
+        </SwiperSlide>
+        <SwiperSlide class="card card-bgc">
+          <div class="card__media">
+            <Image src={kitImg} alt="ESPHome Starter Kit" width={330} height={230} />
+          </div>
+          <div class="card__body">
+            <span class="card__tag">Community</span>
+            <h3 class="card__title">Environment sensor</h3>
+            <p>Measure temperature, humidity, and air pressure using a BME280 sensor.</p>
+            <div class="card__tag-row">
+              <span class="card__tag">Sensor</span>
+              <span class="card__tag">ESP32</span>
+              <span class="card__tag">Global</span>
+            </div>
+            <LinkButton
+              href="/components/#supported-microcontrollers"
+              class="card__text-link"
+              icon="right-arrow"
+              iconPlacement="start">View recipe</LinkButton
+            >
+          </div>
+        </SwiperSlide>
+        <SwiperSlide class="card card-bgc">
+          <div class="card__media">
+            <Image src={kitImg} alt="ESPHome Starter Kit" width={330} height={230} />
+          </div>
+          <div class="card__body">
+            <span class="card__tag">Community</span>
+            <h3 class="card__title">Environment sensor</h3>
+            <p>Measure temperature, humidity, and air pressure using a BME280 sensor.</p>
+            <div class="card__tag-row">
+              <span class="card__tag">Sensor</span>
+              <span class="card__tag">ESP32</span>
+              <span class="card__tag">Global</span>
+            </div>
+            <LinkButton
+              href="/components/#supported-microcontrollers"
+              class="card__text-link"
+              icon="right-arrow"
+              iconPlacement="start">View recipe</LinkButton
+            >
+          </div>
+        </SwiperSlide>
+        <SwiperSlide class="card card-bgc">
+          <div class="card__media">
+            <Image src={kitImg} alt="ESPHome Starter Kit" width={330} height={230} />
+          </div>
+          <div class="card__body">
+            <span class="card__tag">Community</span>
+            <h3 class="card__title">Environment sensor</h3>
+            <p>Measure temperature, humidity, and air pressure using a BME280 sensor.</p>
+            <div class="card__tag-row">
+              <span class="card__tag">Sensor</span>
+              <span class="card__tag">ESP32</span>
+              <span class="card__tag">Global</span>
+            </div>
+            <LinkButton
+              href="/components/#supported-microcontrollers"
+              class="card__text-link"
+              icon="right-arrow"
+              iconPlacement="start">View recipe</LinkButton
+            >
+          </div>
+        </SwiperSlide>
+        <SwiperSlide class="card card-bgc">
+          <div class="card__media">
+            <Image src={kitImg} alt="ESPHome Starter Kit" width={330} height={230} />
+          </div>
+          <div class="card__body">
+            <span class="card__tag">Community</span>
+            <h3 class="card__title">Environment sensor</h3>
+            <p>Measure temperature, humidity, and air pressure using a BME280 sensor.</p>
+            <div class="card__tag-row">
+              <span class="card__tag">Sensor</span>
+              <span class="card__tag">ESP32</span>
+              <span class="card__tag">Global</span>
+            </div>
+            <LinkButton
+              href="/components/#supported-microcontrollers"
+              class="card__text-link"
+              icon="right-arrow"
+              iconPlacement="start">View recipe</LinkButton
+            >
+          </div>
+        </SwiperSlide>
+      </SwiperWrapper>
+      <SwiperPagination />
+    </Swiper>
+
+    <p class="note">
+      Browse the <a href="https://devices.esphome.io/">Device List</a> for community-documented devices, or check out <a
+        href="/guides/made_for_esphome/">Made for ESPHome</a
+      > certified products built by hardware manufacturers.
+    </p>
+  </div>
 </section>
 
-<style lang="scss"></style>
+<style lang="scss">
+  @use "../../styles/mixins" as *;
+
+  .explore-community-projects {
+    overflow: clip;
+
+    .content-container {
+      @include bp(tablet) {
+        max-width: 60%;
+      }
+    }
+
+    :global(.cards) {
+      margin-top: 1.5rem;
+      padding-bottom: 2.5rem;
+
+      @include bp(desktop) {
+        margin-top: 3rem;
+      }
+
+      &.swiper {
+        overflow: visible;
+      }
+
+      :global(.swiper-pagination) {
+        bottom: 0;
+      }
+
+      :global(.swiper-pagination-bullet) {
+        background: var(--sl-color-gray-3);
+        opacity: 1;
+      }
+
+      :global(.swiper-pagination-bullet-active) {
+        background: var(--sl-color-accent);
+      }
+    }
+
+    :global(.card) {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      height: auto;
+
+      .card__media {
+        border-radius: 0.5rem;
+        overflow: hidden;
+        margin-bottom: 1.5rem;
+        width: 100%;
+
+        :global(img) {
+          max-height: 100%;
+          width: 100%;
+          object-fit: cover;
+          margin: 0;
+        }
+      }
+
+      .card__body {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1.5rem;
+        width: 100%;
+
+        .card__title,
+        .card__text-link {
+          margin: 0;
+        }
+      }
+    }
+
+    .note {
+      margin-top: 1.5rem;
+    }
+  }
+</style>
