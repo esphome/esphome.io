@@ -20,6 +20,8 @@ and requires [Modbus Controller](/components/modbus_controller/) to be configure
 
   - `U_WORD`  : unsigned 16 bit integer from 1 register = 16bit
   - `S_WORD`  : signed 16 bit integer from 1 register = 16bit
+  - `U_WORD_S`  : unsigned 16 bit integer from 1 register with bytes swapped within the register = 16bit
+  - `S_WORD_S`  : signed 16 bit integer from 1 register with bytes swapped within the register = 16bit
   - `U_DWORD`  : unsigned 32 bit integer from 2 registers = 32bit
   - `S_DWORD`  : signed 32 bit integer from 2 registers = 32bit
   - `U_DWORD_R`  : unsigned 32 bit integer from 2 registers low word first
@@ -30,6 +32,13 @@ and requires [Modbus Controller](/components/modbus_controller/) to be configure
   - `S_QWORD_R`  : signed 64 bit integer from 4 registers low word first
   - `FP32`  : 32 bit IEEE 754 floating point from 2 registers
   - `FP32_R`  : 32 bit IEEE 754 floating point - same as FP32 but low word first
+
+> [!WARNING]
+> `U_WORD_S` and `S_WORD_S` are a **rare, non-standard** configuration: the two bytes
+> **within** one 16-bit register are reversed (LSB first on the wire within that register).
+> Modbus registers are big-endian (MSB first) per the specification. The `_S` suffix is not
+> the same as `_R` (word order reversed / **low word first** across multiple registers).
+
 
 - **bitmask** (*Optional*, int): sometimes multiple values are packed in a single register's response. The bitmask can be used to extract a value from the response. See [Bitmasks](/components/modbus_controller#bitmasks).
 - **skip_updates** (*Optional*, int): By default, all sensors of a modbus_controller are updated together. For data points that don't change very frequently, updates can be skipped. A value of 5 would only update this sensor range in every 6th update cycle. Note: The modbus_controller groups components by address ranges to reduce number of transactions. All components with the same starting address will be updated in one request. `skip_updates` applies for *all* components in the same range.
