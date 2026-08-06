@@ -28,15 +28,15 @@ and requires [Modbus Controller](/components/modbus_controller/) to be configure
   See [Using `custom_command`](/components/modbus_controller#modbus_custom_command) how to use `custom_command`.
 
 - **lambda** (*Optional*, [lambda](/automations/templates#config-lambda)):
-  Lambda to be evaluated every update interval to get the new value of the sensor. Parameters:
+  Lambda to be evaluated every update interval to get the new value of the binary sensor. Parameters:
 
-  - **x** (bool): The parsed float value of the modbus data
-  - **data** (`std::span<const uint8_t>`): span containing the complete raw modbus response bytes for this sensor
-  - **item** (const pointer to a ModbusBinarySensor object): The sensor object itself.
+  - **x** (bool): The parsed boolean value of the modbus data
+  - **data** (`std::span<const uint8_t>`): span containing the complete raw modbus response bytes for this binary sensor
+  - **item** (const pointer to a ModbusBinarySensor object): The binary sensor object itself.
 
   Possible return values for the lambda:
 
-  - `return true/false;` the new value for the sensor.
+  - `return true/false;` the new value for the binary sensor.
 
 - **offset** (*Optional*, int): Offset from start address in bytes (only required for uncommon response encodings). If more than one register is written in a command, this value is used to find the start of this datapoint relative to the start address. The component calculates the size of the range based on offset and size of the value type. The value for offset depends on the register type. If a binary_sensor is created from an input register, the offset is in bytes. For coil and discrete input resisters, the LSB of the first data byte contains the coil addressed in the request. The other coils follow toward the high-order end of this byte and from low order to high order in subsequent bytes. For registers, the offset is the position of the relevant bit. To get the value of the coil register, 2 can be retrieved using `address: 2` / `offset: 0` or `address: 0` / `offset 2`.
 
