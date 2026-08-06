@@ -17,16 +17,17 @@ are supported.
 If you'd like to buy a ready-made Bluetooth proxy or flash your own device, see
 [ESPHome projects with Bluetooth proxy support](/projects/?type=bluetooth).
 
-## Supported platforms
+## Supported Platforms
 
 - **ESP32**: full proxy with active GATT connections; requires the
-  [ESP32 BLE Tracker](/components/esp32_ble_tracker) component.
+  [ESP32 BLE Tracker](/components/esp32_ble_tracker/) component.
 - **RP2040/RP2350** (Raspberry Pi Pico W and Pico 2 W): full proxy with active GATT connections
-  through the [RP2040 BLE](/components/rp2040_ble) BTstack stack; requires the
-  [RP2 BLE Tracker](/components/rp2_ble_tracker) component. The framework's Bluetooth library supports one concurrent GATT connection, so
-  `connection_slots` is limited to `1` on this platform.
+  through the [RP2040 BLE](/components/rp2040_ble/) BTstack stack; requires the
+  [RP2 BLE Tracker](/components/rp2_ble_tracker/) component. The framework's Bluetooth library
+  supports one concurrent GATT connection, so `connection_slots` is limited to `1` on this
+  platform.
 - **LN882x**: advertisement forwarding only (no active connections); requires the
-  `ln882h_ble_tracker` component.
+  [LN882H BLE Tracker](/components/ln882h_ble_tracker/) component.
 
 ## Configuration
 
@@ -39,12 +40,14 @@ bluetooth_proxy:
 
 - **active** (*Optional*, boolean): Enables proxying active GATT connections to BLE devices.
   This is separate from active *scanning* (configured in the BLE tracker component).
-  Defaults to `true` on ESP32 and RP2040/RP2350; LN882x supports advertisement forwarding only.
+  Defaults to `true` on ESP32 and RP2040/RP2350; LN882x supports advertisement forwarding
+  only.
   RP2040/RP2350 proxies were advertisement only before active connection support landed, so
   existing Pico W configurations that omit this option gain a connection slot on their next
   update; set `active: false` to keep an advertisement only proxy.
 - **cache_services** (*Optional*, boolean): Enables caching GATT services in NVS flash storage which
-  significantly speeds up active connections. Defaults to `true`. Only on ESP32.
+  significantly speeds up active connections. Defaults to `true`. Only available on ESP32;
+  other platforms reject the option.
 - **connection_slots** (*Optional*, int): The maximum number of BLE connection slots to use.
   Each configured slot consumes ~1KB of RAM, with a maximum of `9`. It is recommended not to exceed `5`
   connection slots to avoid stability and memory issues. Defaults to `3`.
@@ -53,15 +56,17 @@ bluetooth_proxy:
   for [ESP32 BLE](/components/esp32_ble). On RP2040/RP2350 the maximum (and default) is `1`.
 
 The Bluetooth proxy depends on the platform's BLE tracker component, so make sure to add that to your
-configuration: [ESP32 BLE Tracker](/components/esp32_ble_tracker) on ESP32, the
-[RP2 BLE Tracker](/components/rp2_ble_tracker) on RP2040/RP2350, or `ln882h_ble_tracker` on LN882x.
+configuration: [ESP32 BLE Tracker](/components/esp32_ble_tracker/) on ESP32, the
+[RP2 BLE Tracker](/components/rp2_ble_tracker/) on RP2040/RP2350, or the
+[LN882H BLE Tracker](/components/ln882h_ble_tracker/) on LN882x.
 
 ### How Active Connections Work
 
 The Bluetooth proxy provides Home Assistant with a limited number of simultaneous active GATT connections
-(configured via `connection_slots`). The default is 3 slots. Ethernet-based proxies can generally handle
-4 slots reliably since they don't share the radio with WiFi traffic. Set `connection_slots: 4` if you need
-more connections (each slot uses additional RAM).
+(configured via `connection_slots`). On ESP32 the default is 3 slots; Ethernet-based proxies can generally
+handle 4 slots reliably since they don't share the radio with WiFi traffic, so set `connection_slots: 4`
+there if you need more connections (each slot uses additional RAM). RP2040/RP2350 proxies always have a
+single slot.
 
 Devices that stay connected continuously (like some locks or thermostats) use one slot the entire time.
 Devices that connect briefly to exchange data and then disconnect (like many sensors) free up the slot
