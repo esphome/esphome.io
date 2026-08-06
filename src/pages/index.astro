@@ -1,0 +1,99 @@
+---
+import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
+import Hero from "@components/Homepage/Hero.astro";
+import HowEsphomeWorks from "@components/Homepage/HowEsphomeWorks.astro";
+import ExploreCommunityProjects from "@components/Homepage/ExploreCommunityProjects.astro";
+import NewToEsphome from "@components/Homepage/NewToEsphome.astro";
+import GetStarted from "@components/Homepage/GetStarted.astro";
+import PickYourFirstProject from "@components/Homepage/PickYourFirstProject.astro";
+import SupportedMicrocontrollers from "@components/Homepage/SupportedMicrocontrollers.astro";
+import JoinOurCommunity from "@components/Homepage/JoinOurCommunity.astro";
+---
+
+<StarlightPage
+  frontmatter={{
+    title: "ESPHome",
+    description: "Smart Home Made Simple.",
+    template: "splash",
+    head: [{ tag: "title", content: "ESPHome - Smart Home Made Simple" }],
+  }}
+  hasSidebar={false}
+>
+  <Hero />
+  <HowEsphomeWorks />
+  <ExploreCommunityProjects />
+  <NewToEsphome />
+  <GetStarted />
+  <PickYourFirstProject />
+  <SupportedMicrocontrollers />
+  <JoinOurCommunity />
+</StarlightPage>
+
+<style>
+  html:not([data-has-sidebar]) {
+    --sl-content-width: 100%;
+  }
+
+  :root {
+    --sl-content-gap-y: 0;
+    --esphome-card-background-color: #23272e;
+    --esphome-card-border-color: #2d3748;
+  }
+
+  html[data-theme="light"]:root {
+    --esphome-card-background-color: #23272e;
+    --esphome-card-border-color: #2d3748;
+  }
+
+  :global(.content-panel) {
+    padding: 0;
+    border: none;
+  }
+
+  :global(footer) {
+    --sl-content-width: 75rem;
+
+    width: 100%;
+    max-width: var(--sl-content-width);
+    margin: 0 auto;
+    padding: 0 var(--sl-content-pad-x);
+  }
+
+  :global(.container) {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 4rem 0;
+  }
+
+  :global(section) {
+    border: 1px solid var(--pagefind-ui-primary);
+  }
+
+  :global(h2),
+  :global(.h2),
+  :global(h3),
+  :global(.h3) {
+    margin-bottom: 1.25rem;
+  }
+
+  :global(.card) {
+    border: 1px solid var(--esphome-card-border-color);
+    border-radius: 1rem;
+    padding: 1.75rem;
+
+    :global(p) {
+      font-size: 0.875rem;
+    }
+
+    :global(.card__title) {
+      font-weight: 600;
+      color: var(--sl-color-white);
+      font-size: 1.125rem;
+    }
+  }
+
+  :global(.card-bgc) {
+    background-color: var(--esphome-card-background-color);
+  }
+</style>
