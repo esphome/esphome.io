@@ -11,7 +11,7 @@ Zigbee uses the same RF technology as Thread (IEEE 802.15.4) but also defines mu
 The `zigbee` component, however, supports only the Home Automation profile.
 It allows exposing supported ESPHome components over a Zigbee network to Home Assistant via
 **Zigbee2MQTT** or **ZHA**. Due to the limitations of the Zigbee protocol, only basic properties are exposed.
-Additional properties must be configured manually in Home Assistant. Each ESPHome entity consumes one Zigbee endpoint.
+Additional properties must be configured manually in Home Assistant.
 
 > [!NOTE]
 > You will need a Zigbee coordinator like **Zigbee2MQTT** or **ZHA**. Other commercial Zigbee hubs most likely do not
@@ -23,7 +23,8 @@ Additional properties must be configured manually in Home Assistant. Each ESPHom
 
 Zigbee is only supported on `nRF52` platforms and on `ESP32` with IEEE 802.15.4 connectivity (`ESP32-C5`, `ESP32-C6`, or `ESP32-H2` 
 and in the future `ESP32-H4` and `ESP32-H21`). Both platforms support different features and have different limitations:
-- On `nRF52` a maximum of 8 endpoints is supported.
+- On `nRF52` a maximum of 8 endpoints is supported and each ESPHome entity consumes one Zigbee endpoint.
+- On `ESP32` a maximum of 239 endpoints is supported and ESPHome entities are combined on Zigbee endpoints.
 - `ESP32-H2` seems to work more reliably than `ESP32-C6`. There are reports of `ESP32-C6` boards that work only if placed next 
 to the coordinator.
 - On `ESP32` Zigbee can be used together with [WiFi](/components/wifi) with some limitations:
@@ -126,14 +127,26 @@ Zigbee can have some overrides for specific options.
 
 Only on `ESP32`:
 
-- **report** (*Optional*, enum): Report the state. One of `coordinator`, `enable`, `force`. `coordinator` uses the configuration from
-  the coordinator, `enable` activates reporting with default settings and uses the configuration from the coordinator if possible.
-  `force` ignores the coordinator configuration and reports every change. On `nRF52` the coordinator configuration is always used.
-  Defaults to `coordinator`.
+- **report** (*Optional*, enum): How the state is reported. One of `default` or `force`. `default` activates reporting with default settings
+  and uses the configuration from the coordinator if possible. `force` sends manual reports for every change to the coordinator.
+  On `nRF52` the coordinator configuration is always used.
+  Defaults to `default`.
 
 > [!NOTE]
-> ZHA sets the minimum reporting interval to 30 seconds for most sensor devices. If you need faster responses set `report` to `force`.
+> ZHA sets the minimum reporting interval to 30 seconds for some sensor devices. If a faster response is needed set `report` to `force`.
 
+- **endpoint** (*Optional*, int): Endpoint number in the range from 1 to 239. This defines which entity goes on which
+  endpoint, giving a more stable configuration and letting you manually combine entities that logically belong together.
+  Only entities that map to different Zigbee clusters can be combined (for example a `binary_sensor` and a `sensor`);
+  two entities of the same type, such as two sensors, cannot share an endpoint. If more than one entity on an endpoint
+  has a Zigbee device type, set `use_device_type: true` on one of them.
+- **use_device_type** (*Optional*, boolean): Use the Zigbee Home Automation device type of this entity for the endpoint.
+  Some entities have a
+  [device type](https://community.nxp.com/pwmxy87654/attachments/pwmxy87654/wireless-connectivity/698/1/075367r03ZB_AFG-Home_Automation_Profile_for_Public_Download.pdf#G12.1028193)
+  that can be used by 3rd party devices to discover the device capabilities. Typically this should be set on the main
+  entity of an endpoint. Set this to `false` to remove the device type of the entity. In this case, or if the
+  entity has no device type of its own, the endpoint uses the generic `CUSTOM_ATTR` type. For exposing entities to Home
+  Assistant, device types are not needed. It can be set to `true` on only one entity per endpoint.
 
 ## Supported Components
 
@@ -162,7 +175,7 @@ Only on `nRF52`:
 ### Sensor
 
 [Sensors](/components/sensor#config-sensor) are implemented as analog input clusters with description, engineering_units,
-and present_value attributes. On `ESP32` additionally the application type attribute is set if applicable.
+and present_value attributes. On `ESP32` additionally the application type and resolution attributes are set if applicable.
 
 #### Additional configuration variables
 
