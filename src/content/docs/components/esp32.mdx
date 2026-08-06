@@ -75,7 +75,8 @@ esp32:
   windows. Defaults to `5s`, valid range is `5s` to `60s`. Note: OTA updates temporarily raise the
   watchdog to `15s` when the configured timeout is below that threshold.
 
-- **toolchain** (*Optional*, [Toolchain](#esp32-toolchain)): Toolchain used to build the firmware.
+- **toolchain** (*Optional*, [Toolchain](#esp32-toolchain)): Toolchain used to build the firmware. The
+  `platformio` toolchain is deprecated and will be removed in 2027.2.0.
 
 ## Variants
 
@@ -343,9 +344,14 @@ ESPHome supports multiple toolchains for building firmware. The toolchain determ
 Currently supported toolchains include:
 
 - `esp-idf` (default)
-- `platformio`
+- `platformio` (deprecated)
 
 By default, ESPHome uses its native ESP-IDF integration, including automatic framework installation and environment management as described in this [documentation](/guides/esp_idf/).
+
+> [!WARNING]
+> The `platformio` toolchain is deprecated and will be removed in 2027.2.0. Both the ESP-IDF and Arduino
+> frameworks build on the default `esp-idf` toolchain; remove `toolchain: platformio` from your configuration
+> to migrate.
 
 **Example for using the PlatformIO toolchain:**
 
