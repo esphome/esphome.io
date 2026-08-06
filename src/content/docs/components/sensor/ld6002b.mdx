@@ -45,15 +45,6 @@ ld6002b:
   length for the wakeup pin. **Requires** `wakeup_pin`.
 - **auto_wake** (*Optional*, boolean, default: `true`): Pulse `wakeup_pin` before sending a command.
   **Requires** `wakeup_pin`.
-- **max_data_len** (*Optional*, int, range `256`–`8192`): Maximum frame payload length in bytes. When
-  unset, defaults to `4096` if point-cloud output is configured (the `point_count` sensor or the
-  `point_cloud` switch) and `1024` otherwise. Increase only if you enable point-cloud output and see
-  dropped frames.
-- **throttle** (*Optional*, [Time](/guides/configuration-types#time), default: `1s`): Minimum time
-  between sensor updates. The radar sends data very frequently; use this to reduce the update rate.
-
-> [!NOTE]
-> Point-cloud output can generate much larger frames. On memory-constrained devices, keep `max_data_len` low unless you enable point-cloud output and need the larger buffer.
 
 ## Power and Hardware Requirements
 
@@ -158,7 +149,7 @@ sensor:
         name: Target-1 Y
       z:
         name: Target-1 Z
-      dop_idx:
+      doppler_index:
         name: Target-1 Doppler Index
       cluster_id:
         name: Target-1 Cluster
@@ -179,7 +170,8 @@ sensor:
   - **x** (*Optional*, float): X coordinate of the target in meters.
   - **y** (*Optional*, float): Y coordinate of the target in meters.
   - **z** (*Optional*, float): Z coordinate of the target in meters.
-  - **dop_idx** (*Optional*, int): Doppler index for the target (speed indicator, not a direct speed).
+  - **doppler_index** (*Optional*, int): Doppler index for the target (speed indicator, not a direct
+    speed).
   - **cluster_id** (*Optional*, int): Cluster ID for the target.
 
   All options above inherit from [Sensor](/components/sensor).
@@ -193,6 +185,20 @@ sensor:
   [Sensor](/components/sensor).
 
 > [!NOTE]
+> The per-target `x`, `y`, `z` and `doppler_index` sensors come with these
+> [filters](/components/sensor#sensor-filters) by default. They hold the last reading for a second, so a
+> dropped frame does not read as a gap, and then limit how often updates reach the frontend:
+>
+> ```yaml
+> - timeout:
+>     timeout: 1s
+>     value: last
+> - throttle_with_priority: 1s
+> ```
+>
+> Giving a sensor its own `filters:` replaces the defaults; use `filters: []` to drop them.
+
+> [!NOTE]
 > Target reporting is controlled by the **Target Display** switch. The component enables target
 > reporting automatically if any target sensors are configured. If target reporting is disabled,
 > target sensors will remain `unknown`.
@@ -201,14 +207,18 @@ sensor:
 > Slot identity comes from the module's own spatial clustering, so it is stable rather than perfect:
 > two people standing very close together can merge into a single target, a track's cluster ID can
 > occasionally change while the person is still in the room, and a slot left by someone who leaves is
-> reused by the next new person. Watch `cluster_id` to see when a slot changes hands.
+> reused by the next new person. Watch `cluster_id` to see when a slot changes hands; it is published
+> only when the value changes, not on every frame.
 
 > [!NOTE]
 > If you configure any area sensors or area configuration numbers, the component requests stored
 > area data on boot. You can also use **Get Areas** to refresh the values.
 
 > [!NOTE]
-> Point count updates are only produced when point-cloud reporting is enabled.
+> The point cloud stream is started only by the `point_cloud` switch; configuring `point_count` on its
+> own does not start it. The switch is off by default, so `point_count` stays `unknown` until you turn
+> it on. The stream sends large frames over the 115200 baud link, so leave it on only while you need the
+> count. Configuring the switch or the sensor also reserves a larger 4 KB frame buffer at boot.
 
 ## Text Sensor
 
@@ -328,7 +338,7 @@ select:
   LD6002B component.
 - **sensitivity** (*Optional*): `low`, `medium`, or `high`. `low` only detects motion. All options
   from [Select](/components/select#config-select).
-- **trigger_speed** (*Optional*): `fast` (~0.5 s), `medium` (~1 s), or `slow` (~5 s) — the time from
+- **trigger_speed** (*Optional*): `fast` (~0.5 s), `medium` (~1 s), or `slow` (~5 s), the time from
   detecting a person to triggering. All options from [Select](/components/select#config-select).
 - **installation_mode** (*Optional*): `top` or `side`. All options from
   [Select](/components/select#config-select).
@@ -463,7 +473,7 @@ sensor:
         name: Target-1 Y
       z:
         name: Target-1 Z
-      dop_idx:
+      doppler_index:
         name: Target-1 Doppler Index
     target_2:
       x:
@@ -472,7 +482,7 @@ sensor:
         name: Target-2 Y
       z:
         name: Target-2 Z
-      dop_idx:
+      doppler_index:
         name: Target-2 Doppler Index
     target_3:
       x:
@@ -481,7 +491,7 @@ sensor:
         name: Target-3 Y
       z:
         name: Target-3 Z
-      dop_idx:
+      doppler_index:
         name: Target-3 Doppler Index
 
 binary_sensor:
@@ -510,8 +520,6 @@ ld6002b:
   wakeup_pin: GPIOZZ
   wakeup_pulse: 50ms
   auto_wake: true
-  max_data_len: 1024
-  throttle: 1s
 
 binary_sensor:
   - platform: ld6002b
@@ -547,7 +555,7 @@ sensor:
         name: Target-1 Y
       z:
         name: Target-1 Z
-      dop_idx:
+      doppler_index:
         name: Target-1 Doppler Index
       cluster_id:
         name: Target-1 Cluster
@@ -558,7 +566,7 @@ sensor:
         name: Target-2 Y
       z:
         name: Target-2 Z
-      dop_idx:
+      doppler_index:
         name: Target-2 Doppler Index
       cluster_id:
         name: Target-2 Cluster
@@ -569,7 +577,7 @@ sensor:
         name: Target-3 Y
       z:
         name: Target-3 Z
-      dop_idx:
+      doppler_index:
         name: Target-3 Doppler Index
       cluster_id:
         name: Target-3 Cluster
