@@ -29,7 +29,9 @@ import JoinOurCommunity from "@components/Homepage/JoinOurCommunity.astro";
   <JoinOurCommunity />
 </StarlightPage>
 
-<style>
+<style lang="scss">
+  @use "../styles/mixins" as *;
+
   html:not([data-has-sidebar]) {
     --sl-content-width: 100%;
   }
@@ -63,7 +65,21 @@ import JoinOurCommunity from "@components/Homepage/JoinOurCommunity.astro";
     width: 100%;
     max-width: 1200px;
     margin: 0 auto;
-    padding: 4rem 0;
+    padding: 2rem 1.25rem;
+
+    @include bp(large-desktop) {
+      padding: 4rem 0;
+    }
+  }
+
+  :global(.content-container) {
+    :global(p) {
+      margin-bottom: 1.25rem;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
   }
 
   :global(section) {
@@ -74,7 +90,7 @@ import JoinOurCommunity from "@components/Homepage/JoinOurCommunity.astro";
   :global(.h2),
   :global(h3),
   :global(.h3) {
-    margin-bottom: 1.25rem;
+    margin-bottom: 1.5rem;
   }
 
   :global(.card) {

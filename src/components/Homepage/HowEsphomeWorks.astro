@@ -5,8 +5,8 @@
 <section class="how-esphome-works">
   <div class="container">
     <div class="columns">
-      <div class="content">
-        <h2>How ESPHome works</h2>
+      <div class="content content-container">
+        <h2>How ESPHome works!</h2>
         <p>
           Building your own smart home device from scratch can feel daunting, particularly if you’re not familiar with
           coding. Not with ESPHome. Its intuitive <a
@@ -49,17 +49,39 @@
 </section>
 
 <style lang="scss">
+  @use "../../styles/mixins" as *;
+
   .how-esphome-works {
     .columns {
       display: flex;
       flex-direction: column;
       gap: 48px;
+      margin: 0 auto;
+
+      @include bp(tablet) {
+        flex-direction: row;
+      }
+    }
+
+    .content,
+    .cards {
+      @include bp(tablet) {
+        flex-basis: 50%;
+      }
+
+      @include bp(desktop) {
+        flex-basis: 55%;
+      }
     }
 
     .cards {
       display: flex;
       flex-direction: column;
       gap: 0.75rem;
+
+      @include bp(desktop) {
+        flex-basis: 45%;
+      }
     }
 
     .card {
