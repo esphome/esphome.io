@@ -1,0 +1,186 @@
+---
+description: "Instructions for setting up AS7341 and AS7343 spectral color sensors."
+title: "AS7341 / AS7343 Spectral Color Sensor"
+---
+
+import Figure from '@components/Figure.astro';
+import APIRef from '@components/APIRef.astro';
+
+The `as734x` sensor platform allows you to use the AS7341
+([datasheet](https://look.ams-osram.com/m/24266a3e584de4db/original/AS7341-DS000504.pdf),
+[Adafruit](https://www.adafruit.com/product/4698)) and AS7343
+([datasheet](https://look.ams-osram.com/m/5f2d27fff9a874d2/original/AS7343-14-Channel-Multi-Spectral-Sensor.pdf))
+spectral color sensors with ESPHome. The sensor is selected with the `type` option. The
+[I²C Bus](/components/i2c/) is required to be set up in your configuration for this sensor to work.
+
+<Figure
+  src="/images/as7341.jpg"
+  alt="AS7341 Spectral Color Sensor"
+  caption="AS7341 Spectral Color Sensor"
+  layout="constrained"
+  width={250}
+  height={182}
+/>
+
+> [!NOTE]
+> This platform replaces the [`as7341`](/components/sensor/as7341/) platform, which is deprecated and will be
+> removed in ESPHome 2027.2.0. See [Migrating From `as7341`](#migrating-from-as7341) below.
+
+```yaml
+# Example configuration entry
+sensor:
+  - platform: as734x
+    type: AS7341
+    counts:
+      f1:
+        name: "415nm"
+      clear:
+        name: "Clear"
+      nir:
+        name: "NIR"
+```
+
+## Configuration variables
+
+- **type** (**Required**, string): The sensor model. Must be either `AS7341` or `AS7343`.
+- **counts** (*Optional*): The raw per-channel readings to publish. Each channel is optional; only the channels
+  you list are published. The available channels depend on `type`, see [Channels](#channels) below. Each channel
+  accepts all options from [Sensor](/components/sensor/), or just a name as a shorthand.
+- **gain** (*Optional*): The gain used by the device. A higher gain may be more suitable for lower-light
+  environments. Defaults to `X8`. Must be one of:
+
+  - `X0.5`
+  - `X1`
+  - `X2`
+  - `X4`
+  - `X8` (*default*)
+  - `X16`
+  - `X32`
+  - `X64`
+  - `X128`
+  - `X256`
+  - `X512`
+  - `X1024` (`AS7343` only)
+  - `X2048` (`AS7343` only)
+
+- **atime** (*Optional*, int): The number of integration steps. Defaults to `29`. Must be between `0` and `255`.
+- **astep** (*Optional*, int): The length of one integration step in increments of 2.78µs. Defaults to `599`.
+  Must be between `0` and `65534`.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to check the sensor.
+  Defaults to `60s`.
+- **address** (*Optional*, int): The I²C address of the sensor. Defaults to `0x39`.
+- All other options from [Sensor](/components/sensor/) and [I²C Bus](/components/i2c/).
+
+> [!NOTE]
+> `atime` and `astep` must not both be `0`, as that would leave the sensor with no integration time.
+
+## Channels
+
+Each channel is a photodiode with an optical filter in front of it, centered on the wavelength listed below. The
+`clear` channel has no filter and responds to the whole visible range, and `nir` responds to near-infrared light.
+
+The AS7343 has three channels the AS7341 does not have (`fz`, `fy` and `fxl`), and the channels the two models
+share are not centered on the same wavelengths. The same channel key therefore does not mean the same thing on
+both models.
+
+### AS7341
+
+| Channel | Wavelength    |
+| ------- | ------------- |
+| `f1`    | 415nm         |
+| `f2`    | 445nm         |
+| `f3`    | 480nm         |
+| `f4`    | 515nm         |
+| `f5`    | 555nm         |
+| `f6`    | 590nm         |
+| `f7`    | 630nm         |
+| `f8`    | 680nm         |
+| `clear` | Clear         |
+| `nir`   | Near-infrared |
+
+### AS7343
+
+| Channel | Wavelength    |
+| ------- | ------------- |
+| `f1`    | 405nm         |
+| `f2`    | 425nm         |
+| `fz`    | 450nm         |
+| `f3`    | 475nm         |
+| `f4`    | 515nm         |
+| `fy`    | 555nm         |
+| `f5`    | 550nm         |
+| `fxl`   | 600nm         |
+| `f6`    | 640nm         |
+| `f7`    | 690nm         |
+| `f8`    | 745nm         |
+| `clear` | Clear         |
+| `nir`   | Near-infrared |
+
+## Raw Counts
+
+The `counts` sensors report the raw ADC counts read from the device. They are not calibrated and carry no
+physical unit, so a value is only meaningful when compared with another value taken at the same `gain`, `atime`
+and `astep`. Changing any of those three options changes the counts for the same light.
+
+The largest count a channel can reach is $(\text{ATIME} + 1) \times (\text{ASTEP} + 1)$, or 65535 if that product
+is larger. With the default `atime` and `astep` that limit is 18000. A channel sitting at the limit is saturated
+and its reading should be discarded; lower the `gain` or the integration time until it drops below the limit.
+
+## Integration Time
+
+The integration time determines how long a single channel measurement takes and depends on `atime` and `astep`.
+The formula for the total integration time is:
+
+$$
+t = (\text{ATIME} + 1) \times (\text{ASTEP} + 1) \times 2.78\mu S
+$$
+
+The defaults of `atime: 29` and `astep: 599` give an integration time of 50ms.
+
+One update does not take exactly this long. The AS7341 has more channels than it has ADCs, so it measures them
+in two passes and takes two integration times per update. The AS7343 cycles internally and takes three. The
+sensor is read without blocking the rest of the device, so a long integration time does not stall other
+components, but keep the total below your `update_interval`.
+
+## Migrating From `as7341`
+
+The `as7341` platform still works and is unchanged apart from a deprecation warning at compile time. When you
+are ready to move, change the platform name, add `type: AS7341`, and move the channels under `counts`. The
+`gain`, `atime` and `astep` options keep their names and their defaults.
+
+```yaml
+# Old configuration
+sensor:
+  - platform: as7341
+    f1:
+      name: "415nm"
+    clear:
+      name: "Clear"
+```
+
+```yaml
+# New configuration
+sensor:
+  - platform: as734x
+    type: AS7341
+    counts:
+      f1:
+        name: "415nm"
+      clear:
+        name: "Clear"
+```
+
+> [!WARNING]
+> The reported values change when you migrate. The AS7341 returns its data registers low byte first, and the
+> `as7341` platform never accounted for this, so its counts come out byte-swapped. The `as734x` platform reads
+> them correctly. In practice a reading below 256 on the old platform was reported 256 times too large, and a
+> larger reading had its two bytes the wrong way round. Any automation, filter or long-term statistic built on
+> the old values will need to be revisited.
+
+## See Also
+
+- [Sensor Filters](/components/sensor#sensor-filters)
+- [AS7341 Spectral Color Sensor (deprecated)](/components/sensor/as7341/)
+- [Adafruit_AS7341](https://github.com/adafruit/Adafruit_AS7341)
+- [SparkFun_AS7341X_Arduino_Library](https://github.com/sparkfun/SparkFun_AS7341X_Arduino_Library)
+- <APIRef text="as734x.h" path="as734x/as734x.h" />
