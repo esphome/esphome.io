@@ -17,9 +17,10 @@ ESPHome's advertisement-based BLE sensor platforms — for example
 — which attach to this tracker automatically.
 
 > [!NOTE]
-> Connection-based BLE components (`ble_client`) are not available on this platform — the
-> tracker is scan-only. The [Bluetooth Proxy](/components/bluetooth_proxy/) is supported in
-> advertisement-only mode (no active connections).
+> The tracker is scan-only and cannot open GATT connections, so
+> [`ble_client`](/components/ble_client/) is not available on this platform.
+> [`bluetooth_proxy`](/components/bluetooth_proxy/) works in advertisement-only mode — see
+> [Platform Support](/components/bluetooth_proxy/#platform-support).
 
 > [!NOTE]
 > The tracker builds on the [LN882H BLE](/components/ln882h_ble/) controller component and
@@ -67,19 +68,170 @@ ln882h_ble_tracker:
     > As on ESP32 (where ESP-IDF performs the merge), an advertisement and its scan
     > response are combined into a single result, so automations and sensor platforms
     > receive one merged frame containing both payloads — this is where device names come from.
+    > The merge is best-effort: a scannable advertisement is held briefly (up to 300 ms) waiting
+    > for its scan response, and a device that does not answer the scan request is delivered
+    > unmerged (without a name) after that timeout.
 
   - **continuous** (*Optional*, boolean): When `true` the scanner restarts automatically after
-    each `duration` period. Defaults to `true`.
+    each `duration` period. When `false` a scan runs once for `duration` after
+    `ln882h_ble_tracker.start_scan`; nothing scans on boot unless an automation starts it.
+    Defaults to `true`.
 
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used to
   reference this component in lambdas.
 
-> [!WARNING]
-> Automation triggers (`on_ble_advertise`, `on_scan_end`, …) and the
-> `start_scan` / `stop_scan` actions are not available on this platform yet. Because nothing
-> else starts a scan, setting `continuous: false` leaves the scanner permanently idle: there is
-> no config error and no scan-start log line, and every attached BLE sensor simply stays
-> unknown. Starting a scan is currently only possible from C++ (`start_scan()`).
+Automations:
+
+- **on_ble_advertise** (*Optional*, [Automation](/automations)): An automation to perform
+  when a BLE advertising packet is received. Optionally filtered to a list of `mac_address`es.
+  See [`on_ble_advertise` Trigger](#ln882h_ble_tracker-on_ble_advertise).
+- **on_ble_manufacturer_data_advertise** (*Optional*, [Automation](/automations)): An automation
+  to perform when a BLE advertising packet with matching manufacturer data is received.
+  See [`on_ble_manufacturer_data_advertise` Trigger](#ln882h_ble_tracker-on_ble_manufacturer_data_advertise).
+- **on_ble_service_data_advertise** (*Optional*, [Automation](/automations)): An automation to
+  perform when a BLE advertising packet with service data for `service_uuid` is received.
+  See [`on_ble_service_data_advertise` Trigger](#ln882h_ble_tracker-on_ble_service_data_advertise).
+- **on_scan_end** (*Optional*, [Automation](/automations)): An automation to perform when a scan
+  session ends (its `duration` elapsed, or `stop_scan` was called). Fires on every cycle when
+  `continuous` is `true`. See [`on_scan_end` Trigger](#ln882h_ble_tracker-on_scan_end).
+
+## LN882H BLE Tracker Automation
+
+<span id="ln882h_ble_tracker-on_ble_advertise"></span>
+
+### `on_ble_advertise` Trigger
+
+This automation will be triggered when a BLE advertising packet is received. A variable `x` of
+type <APIClass text="ble_device_base::ESPBTDevice" path="ble_device_base::ESPBTDevice" /> is
+passed to the automation for use in lambdas.
+
+```yaml
+ln882h_ble_tracker:
+  on_ble_advertise:
+    # Optional multi-device filter; omit mac_address to fire on every advertisement.
+    - mac_address:
+        - XX:XX:XX:XX:XX:XX
+        - XX:XX:XX:XX:XX:XX
+      then:
+        - lambda: |-
+            ESP_LOGD("ble_adv", "Advertisement from %s (RSSI %d), name '%s'",
+                     x.address_str().c_str(), x.get_rssi(), x.get_name().c_str());
+```
+
+Add an optional `mac_address` filter (a list) to restrict the automation to specific devices, and
+use the device accessors — `x.get_service_uuids()`, `x.get_service_datas()`,
+`x.get_manufacturer_datas()` — to inspect the advertisement payload.
+
+#### Configuration variables
+
+- **mac_address** (*Optional*, list of MAC Address): The MAC address to filter for this automation.
+- See [Automation](/automations).
+
+<span id="ln882h_ble_tracker-on_ble_manufacturer_data_advertise"></span>
+
+### `on_ble_manufacturer_data_advertise` Trigger
+
+This automation will be triggered when a BLE advertising packet with manufacturer-specific data
+is received. A variable `x` of type `std::vector<uint8_t>` is passed to the automation for use
+in lambdas.
+
+```yaml
+ln882h_ble_tracker:
+  on_ble_manufacturer_data_advertise:
+    - mac_address: XX:XX:XX:XX:XX:XX
+      manufacturer_id: 0590
+      then:
+        - lambda: |-
+            ESP_LOGD("ble_man_data", "Manufacturer data of length %i", x.size());
+```
+
+#### Configuration variables
+
+- **mac_address** (*Optional*, MAC Address): The MAC address to filter for this automation.
+- **manufacturer_id** (**Required**, string): 16-bit, 32-bit, or 128-bit BLE manufacturer ID in hex.
+- See [Automation](/automations).
+
+<span id="ln882h_ble_tracker-on_ble_service_data_advertise"></span>
+
+### `on_ble_service_data_advertise` Trigger
+
+This automation will be triggered when a BLE advertising packet with service data is received. A
+variable `x` of type `std::vector<uint8_t>` is passed to the automation for use in lambdas.
+
+```yaml
+ln882h_ble_tracker:
+  on_ble_service_data_advertise:
+    - mac_address: XX:XX:XX:XX:XX:XX
+      service_uuid: FCD2
+      then:
+        - lambda: |-
+            ESP_LOGD("ble_svc_data", "Service data of length %i", x.size());
+```
+
+#### Configuration variables
+
+- **mac_address** (*Optional*, MAC Address): The MAC address to filter for this automation.
+- **service_uuid** (**Required**, string): 16-bit, 32-bit, or 128-bit BLE service UUID in hex
+  (e.g. `FCD2` for BTHome v2, `181A` for Environmental Sensing).
+- See [Automation](/automations).
+
+<span id="ln882h_ble_tracker-on_scan_end"></span>
+
+### `on_scan_end` Trigger
+
+This automation will be triggered when a Bluetooth scan session has completed. When `continuous`
+is `true` this fires at the end of every scan cycle.
+
+```yaml
+ln882h_ble_tracker:
+  on_scan_end:
+    - then:
+        - lambda: |-
+            ESP_LOGD("ble_auto", "The scan has ended!");
+```
+
+#### Configuration variables
+
+- None.
+- See [Automation](/automations).
+
+### `ln882h_ble_tracker.start_scan` Action
+
+Start a Bluetooth scan. The optional [templatable](/automations/templates#config-templatable)
+`continuous` overrides the scan mode until the next `start_scan` or `stop_scan` (the
+YAML-configured value itself is untouched); without it the mode configured under
+`scan_parameters` is restored (a previous `stop_scan` does not stick as "one-shot"). This
+differs from `esp32_ble_tracker.start_scan`, where an omitted `continuous` always forces a
+one-shot scan. Invoked while a scan is already running, a mode switch re-anchors the running
+scan's `duration` window instead of restarting the radio; a same-mode call is a no-op.
+
+```yaml
+ln882h_ble_tracker:
+  scan_parameters:
+    continuous: false
+
+on_...:
+  - ln882h_ble_tracker.start_scan:
+      continuous: true
+```
+
+#### Configuration variables
+
+- **continuous** (*Optional*, [templatable](/automations/templates#config-templatable), boolean):
+  Override the scan mode until the next `start_scan` or `stop_scan` (the YAML-configured value
+  itself is untouched). When omitted, the mode configured under `scan_parameters` is
+  restored — a previous `stop_scan` does not stick as "one-shot".
+
+### `ln882h_ble_tracker.stop_scan` Action
+
+Stop the running Bluetooth scan; also cancels a start latched before setup (an `on_boot`
+`start_scan`). Accepts the bare-id shorthand (`ln882h_ble_tracker.stop_scan: my_tracker`). It
+can be restarted with `ln882h_ble_tracker.start_scan`.
+
+```yaml
+on_...:
+  - ln882h_ble_tracker.stop_scan:
+```
 
 ## With BLE sensors
 
@@ -104,12 +256,42 @@ sensor:
 ## Use on a single-core chip
 
 Unlike the ESP32 which runs BLE on a dedicated core, the LN882H runs both WiFi and BLE on the
-same ARM CPU core at 160 MHz. The scan `window` / `interval` ratio decides how that core is
-split between BLE scanning and WiFi. Keep `window: 50ms` and choose the `interval`:
+same ARM CPU core at 160 MHz. Continuous scanning during the ESPHome Native API TCP handshake
+can prevent WiFi from completing the connection; the scan actions exist to time-share instead —
+scan only while Home Assistant is connected:
+
+```yaml
+ln882h_ble_tracker:
+  scan_parameters:
+    continuous: false   # do not start on boot
+
+api:
+  on_client_connected:
+    - ln882h_ble_tracker.start_scan:
+        continuous: true
+  on_client_disconnected:
+    # fires for EVERY departing client (log viewer, CLI) — state_subscription_only
+    # ignores logger-only clients, so scanning stops only when Home Assistant is gone
+    - if:
+        condition:
+          not:
+            api.connected:
+              state_subscription_only: true
+        then:
+          - ln882h_ble_tracker.stop_scan:
+```
+
+The scan `window` / `interval` ratio decides how the core is split between BLE scanning and
+WiFi while a scan runs. Keep `window: 50ms` and choose the `interval`:
 
 - `interval: 100ms` → **50 / 50** BLE / WiFi — the LN882H SDK's recommended default
 - `interval: 200ms` → **25 / 75** BLE / WiFi — catches fewer advertisements, but leaves more of
   the core for WiFi
+
+Setting `active: false` is a second lever: the scanner no longer sends scan requests to request
+more data after receiving an advertising packet, keeping the radio cost of each window minimal.
+BTHome/ATC-style sensors that broadcast all their data in the advertisement don't need active
+scanning.
 
 ## See Also
 
