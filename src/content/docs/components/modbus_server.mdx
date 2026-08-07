@@ -126,21 +126,27 @@ On the bus side, you need 120 Ohm termination resistors at the ends of the bus c
 > overlap and must fit within the 16-bit address space (`0x0000`–`0xFFFF`);
 > the configuration is rejected otherwise.
 
-When acting as a server, `modbus_server` also answers function code `0x17`
-(Read/Write Multiple Registers), which combines a write and a read into a single
-request. It reuses the same `write_lambda` and `read_lambda` as the standalone
-write and read functions, so any writable and readable register supports it
-without additional configuration.
+## Read/Write Multiple Registers (Function Code 0x17)
+
+When acting as a server, `modbus_server` also answers function code `0x17` (Read/Write Multiple Registers), which
+combines a write and a read into a single request. It reuses the same `write_lambda` and `read_lambda` as the standalone
+write and read functions, so any writable and readable register supports it without additional configuration.
+`allow_partial_read` and `courtesy_response` apply to the read half exactly as they do to a standalone read.
 
 > [!WARNING]
-> As mandated by the Modbus specification (§6.17), the write is performed
-> **before** the read, and the write is **not rolled back** if the read half
-> then fails. If the read targets an unmapped or otherwise invalid register, the
-> client receives an exception response even though the write has already taken
-> effect. A client that treats the exception as "nothing happened" and retries
-> the request will apply the write a second time — harmless for idempotent
-> registers, but potentially problematic for command or counter registers where
-> each write has a side effect.
+> The [Modbus Application Protocol Specification](https://www.modbus.org/docs/Modbus_Application_Protocol_V1_1b3.pdf)
+> (section 6.17) mandates that the write is performed **before** the read, and neither half is rolled back when the
+> request subsequently fails:
+>
+> - If the read half fails — for example because it targets an unmapped or write-only register — the client receives an
+>   exception response even though the write has already taken effect.
+> - If a `write_lambda` rejects a value part-way through a multi-register write, the registers written before it keep
+>   their new values. Unwritable addresses and incomplete values are rejected before anything is written, and the read
+>   half is skipped whenever the write half fails.
+>
+> A client that treats the exception as "nothing happened" and retries the request will apply the write a second time —
+> harmless for idempotent registers, but potentially problematic for command or counter registers where each write has
+> a side effect.
 
 ## Example
 
