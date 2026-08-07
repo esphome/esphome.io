@@ -427,10 +427,9 @@ from actually working correctly out of the box:
   name-compression pointers, so multi-question queries — such as `avahi-browse`'s own default query,
   which batches many question types into one packet — are frequently never answered.
 
-Fixes for both exist as Zephyr source patches, but aren't merged upstream yet. Until they land in
-mainline Zephyr, get a working mDNS by pointing `framework: source:` at the `esphome-platform-zephyr`
-branch of [`esphomeplatformzephyr/zephyr`](https://github.com/esphomeplatformzephyr/zephyr), which
-carries both patches:
+Fixes for both exist as Zephyr source merges on main, but aren't backported to 4.4 yet. Until they are
+backported, get a working mDNS by pointing `framework: source:` at the `main`
+branch of [`zephyrproject-rtos/zephyr`](https://github.com/zephyrproject-rtos/zephyr):
 
 ```yaml
 # Example configuration entry
@@ -439,11 +438,11 @@ zephyr:
   framework:
     source:
       type: git
-      url: https://github.com/esphomeplatformzephyr/zephyr
-      ref: esphome-platform-zephyr
+      url: https://github.com/zephyrproject-rtos/zephyr
+      ref: main
   kconfig_options:
-    # Only meaningful against esphome-platform-zephyr -- enables its DNS-SD announce-completeness
-    # fix. Unknown on mainline Zephyr, which doesn't have this Kconfig symbol yet.
+    # Only meaningful against main until backported -- enables its DNS-SD announce-completeness
+    # fix.
     MDNS_RESPONDER_ANNOUNCE_DNS_SD: true
 
 mdns:
@@ -452,8 +451,8 @@ mdns:
 ESPHome's own `mdns:` component already sets the mainline-safe Kconfig values it needs (`DNS_SD`,
 `MDNS_RESPONDER`, `MDNS_RESPONDER_PROBE`, and larger stack sizes for the responder's worker and
 socket-service dispatcher threads) regardless of which Zephyr source is used. Only
-`MDNS_RESPONDER_ANNOUNCE_DNS_SD` needs setting by hand, since it's specific to the patched fork and
-doesn't exist on mainline Zephyr.
+`MDNS_RESPONDER_ANNOUNCE_DNS_SD` needs setting by hand, since it's specific to the patches that
+are not in 4.4 yet
 
 ## SMP and AMP status
 
@@ -467,8 +466,7 @@ Espressif chip under Zephyr works today, including the single-core-image builds 
   is set. With that set, both cores boot and run real application code; this has been fixed and
   confirmed working on real hardware, but the fix is not yet in mainline Zephyr — it requires
   `framework: source:` pointed at the `esphome-platform-zephyr` branch of
-  [`esphomeplatformzephyr/zephyr`](https://github.com/esphomeplatformzephyr/zephyr) (the same branch
-  needed for [mDNS](#mdns-status)).
+  [`esphomeplatformzephyr/zephyr`](https://github.com/esphomeplatformzephyr/zephyr).
   - **SMP and Wi-Fi together do not work yet.** Zephyr's `WIFI_ESP32` driver has `depends on !SMP` —
     a thread-safety gap specific to this one driver (no other vendor's Wi-Fi driver in the Zephyr tree
     has this restriction). Lifting it for the original ESP32 specifically (task pinning plus a DPORT
