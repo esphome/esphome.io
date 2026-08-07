@@ -21,13 +21,14 @@ If you'd like to buy a ready-made Bluetooth proxy or flash your own device, see
 
 ```yaml
 bluetooth_proxy:
-  # Active connections are now enabled by default
+  # On ESP32, active connections are enabled by default
   # To disable active connections (previous default behavior), use:
   # active: false
 ```
 
 - **active** (*Optional*, boolean): Enables proxying active GATT connections to BLE devices.
-  This is separate from active *scanning* (configured in [ESP32 BLE Tracker](/components/esp32_ble_tracker)).
+  This is separate from active *scanning* (configured in [ESP32 BLE Tracker](/components/esp32_ble_tracker)
+  or your platform's BLE tracker).
   Defaults to `true` on ESP32. On advertisement-only platforms it defaults to `false` and
   enabling it fails validation — see [Platform Support](#platform-support).
 - **cache_services** (*Optional*, boolean): ESP32 only. Enables caching GATT services in NVS flash
@@ -58,8 +59,8 @@ many BTHome sensors) is received separately and is not limited by the number of 
 
 ## Platform Support
 
-The proxy runs on any platform that provides a BLE hub, but the feature set depends on what the
-controller can do:
+The proxy runs on platforms whose BLE hub can scan actively, and the feature set depends on what
+the controller can do beyond scanning:
 
 - **ESP32** — the full proxy: advertisements plus **active connections**, so Home Assistant can read
   and write GATT characteristics through the device (`active: true`, `connection_slots`).
@@ -241,5 +242,7 @@ is supported, please search for it in the
 ## See Also
 
 - [ESP32 Bluetooth Low Energy Tracker Hub](/components/esp32_ble_tracker)
+- [LN882H Bluetooth Low Energy Tracker Hub](/components/ln882h_ble_tracker/)
+- [RP2 BLE Tracker](/components/rp2_ble_tracker/)
 - BTHome [https://bthome.io/](https://bthome.io/)
 - <APIRef text="bluetooth_proxy.h" path="bluetooth_proxy/bluetooth_proxy.h" />
