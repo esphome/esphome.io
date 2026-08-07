@@ -35,19 +35,19 @@ and requires [Modbus Controller](/components/modbus_controller/) to be configure
   See [Using `custom_command`](/components/modbus_controller#modbus_custom_command) how to use `custom_command`
 
 - **lambda** (*Optional*, [lambda](/automations/templates#config-lambda)):
-  Lambda to be evaluated every update interval to get the new value of the sensor. It is called after the encoding according to **raw_encode**.
+  Lambda to be evaluated every update interval to get the new value of the text sensor. It is called after the encoding according to **raw_encode**.
 
   Parameters passed into the lambda
 
-  - **x** (std:string): The parsed value of the modbus data according to **raw_encode**
-  - **data** (`std::vector<uint8_t>`): vector containing the complete raw modbus response bytes for this sensor
-    *note:* because the response contains data for all registers in the same range you have to use `data[item->offset]` to get the first response byte for your sensor.
+  - **x** (std::string): The parsed value of the modbus data according to **raw_encode**
+  - **data** (`std::span<const uint8_t>`): span containing the complete raw modbus response bytes for this text sensor
+    *note:* because the response contains data for all registers in the same range you have to use `data[item->offset]` to get the first response byte for your text sensor.
 
-  - **item** (const pointer to a SensorItem derived object): The sensor object itself.
+  - **item** (const pointer to a SensorItem derived object): The text sensor object itself.
 
   Possible return values for the lambda:
 
-  - `return <std::string>;` the new value for the sensor.
+  - `return <std::string>;` the new value for the text sensor.
   - `return {};` uses the parsed value for the state (same as `return x;`  ).
 
 - **offset** (*Optional*, int): Offset from start address in bytes (only required for uncommon response encodings). If more than one register is written in a command this value is used to find the start of this datapoint relative to start address. The component calculates the size of the range based on offset and size of the value type. The value for offset depends on the register type.
