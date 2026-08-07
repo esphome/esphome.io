@@ -5,6 +5,7 @@ title: "AS7341 / AS7343 / TCS3448 Spectral Color Sensor"
 
 import Figure from '@components/Figure.astro';
 import APIRef from '@components/APIRef.astro';
+import spectrumCardImg from './images/as734x-spectrum-card.jpg';
 
 The `as734x` sensor platform allows you to use the AS7341
 ([datasheet](https://look.ams-osram.com/m/24266a3e584de4db/original/AS7341-DS000504.pdf),
@@ -155,6 +156,23 @@ Because basic counts are small fractional numbers, these sensors default to six 
 Setting `normalize_basic_counts` divides every channel by a common reference, which turns the readings into a
 spectral shape that does not move when the light gets brighter or dimmer. `BANDS` is the usual choice for
 comparing the colour of a light source, since it ignores the wideband `clear` and the `nir` channels.
+
+## Charting the Spectrum
+
+The [AS734x Spectrum Card](https://github.com/latonita/HA-par-spectrum-card) is a Home Assistant Lovelace card
+that plots these channels as a spectrum. It reads either the `counts` or the `basic_counts` sensors, and given a
+full set of `basic_counts` it can also rebuild the spectrum between the channels using the manufacturer's
+per-channel weights.
+
+<Figure
+  src={spectrumCardImg}
+  alt="Spectrum card showing an AS7341 and an AS7343 under a 3000K LED bulb"
+  caption="Both sensors under a 3000K LED bulb: rebuilt spectrum above, basic counts below"
+  layout="constrained"
+/>
+
+The lamp above is a blue emitter behind a phosphor, which is why the rebuilt curve shows a narrow spike near
+450nm from the emitter and a broad hump near 600nm from the phosphor.
 
 ## Calibration
 
@@ -308,6 +326,7 @@ sensor:
 ## See Also
 
 - [Sensor Filters](/components/sensor#sensor-filters)
+- [AS734x Spectrum Card](https://github.com/latonita/HA-par-spectrum-card), a Home Assistant card that charts these channels
 - [AS7341 Spectral Color Sensor (deprecated)](/components/sensor/as7341/)
 - [Adafruit_AS7341](https://github.com/adafruit/Adafruit_AS7341)
 - [SparkFun_AS7341X_Arduino_Library](https://github.com/sparkfun/SparkFun_AS7341X_Arduino_Library)
