@@ -199,9 +199,10 @@ sensor:
 > Giving a sensor its own `filters:` replaces the defaults; use `filters: []` to drop them.
 
 > [!NOTE]
-> Target reporting is controlled by the **Target Display** switch. The component enables target
-> reporting automatically if any target sensors are configured. If target reporting is disabled,
-> target sensors will remain `unknown`.
+> If a **Target Display** switch is configured, its `restore_mode` decides whether target reporting
+> starts on boot; the default is `RESTORE_DEFAULT_ON`. Without that switch, the component enables
+> target reporting automatically when any target sensors are configured. While target reporting is
+> disabled, target sensors remain `unknown`.
 
 > [!NOTE]
 > Slot identity comes from the module's own spatial clustering, so it is stable rather than perfect:
@@ -215,9 +216,9 @@ sensor:
 > area data on boot. You can also use **Get Areas** to refresh the values.
 
 > [!NOTE]
-> The point cloud stream is started only by the `point_cloud` switch; configuring `point_count` on its
-> own does not start it. The switch is off by default, so `point_count` stays `unknown` until you turn
-> it on. The stream sends large frames over the 115200 baud link, so leave it on only while you need the
+> If a `point_cloud` switch is configured, it owns the point cloud stream and its `restore_mode` decides
+> the boot state. Without that switch, configuring `point_count` starts the stream on boot on its own.
+> The stream sends large frames over the 115200 baud link, so leave it on only while you need the
 > count. Configuring the switch or the sensor also reserves a larger 4 KB frame buffer at boot.
 
 ## Text Sensor
@@ -375,17 +376,19 @@ switch:
   lower duty cycle when the area is empty and returns to full tracking on motion. The module
   documentation reports ~2.5 mA average current in low power idle and ~135 mA in normal tracking.
   All options from [Switch](/components/switch#config-switch).
-- **point_cloud** (*Optional*): Enable or disable point-cloud reporting (required for `point_count`
-  updates). All options from
+- **point_cloud** (*Optional*): Enable or disable point-cloud reporting, which is what `point_count`
+  reads. All options from
   [Switch](/components/switch#config-switch).
 - **target_display** (*Optional*): Enable or disable target reporting (`0x0A04`). If disabled, target
   sensors will show `unknown` until re-enabled. All options from
   [Switch](/components/switch#config-switch).
 
 > [!NOTE]
-> Point-cloud reporting is disabled on boot to reduce traffic. Enable **Point Cloud** to start
-> streaming point-cloud data. The full point cloud is not exposed as a text sensor; use
-> `point_count` to monitor how many points are returned.
+> Each switch applies its own [`restore_mode`](/components/switch#config-switch) on boot. `point_cloud`
+> and `low_power` keep the standard `ALWAYS_OFF` default, so enable **Point Cloud** when you want the
+> stream. `target_display` defaults to `RESTORE_DEFAULT_ON`, so target reporting starts on unless a
+> stored state or your own `restore_mode` says otherwise. The full point cloud is not exposed as a text
+> sensor; use `point_count` to monitor how many points are returned.
 >
 > The `low_power` switch enables or disables low-power mode. The `work_mode` text sensor reflects the
 > current operating state, which may stay in `normal` while movement is detected.
