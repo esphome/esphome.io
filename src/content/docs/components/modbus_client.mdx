@@ -145,6 +145,9 @@ to `address`, and routes the reply straight back to that action's own handlers, 
 - **modbus_id** (*Optional*, [ID](/guides/configuration-types#id)): The Modbus hub to send on. Automatically assigned
   when a single hub is configured.
 - **start_address** (**Required**, templatable, 16-bit hex): The starting register or coil address.
+  `start_address + count` (or `+ values.size()` for a write) must not exceed `0x10000`; a literal value is rejected
+  at config time, but a templated one bypasses that check and fails at runtime - an out-of-range address
+  produces an empty PDU, and `on_not_sent` fires instead of the send.
 - **on_sent** (*Optional*, [Automation](/automations/)): Fires when the frame is written to the wire. Lambda
   variable: `request` (`std::span<const uint8_t>`, the PDU sent).
 - **on_response** (*Optional*, [Automation](/automations/)): Fires on a standard-conforming reply. The lambda
@@ -152,7 +155,8 @@ to `address`, and routes the reply straight back to that action's own handlers, 
 - **on_custom_response** (*Optional*, [Automation](/automations/)): Fires instead of `on_response` when the reply
   doesn't parse as a standard-conforming transaction for this function code. Lambda variables: `request`, `response`
   (raw `std::span<const uint8_t>` PDUs) - the same shape `modbus_client.send`'s `on_response` uses, so a
-  non-conforming device is still handleable.
+  non-conforming device is still handleable. If left unconfigured, no handler runs for that transmission - the first
+  non-conforming reply for this action logs a warning, and any after that log at verbose level instead.
 - **on_error** (*Optional*, [Automation](/automations/)): Fires on a Modbus exception response. Lambda variables:
   `request` (`std::span<const uint8_t>`) and `exception_code` (`modbus::ExceptionCode`, an enum - cast to
   `int`/`uint8_t` to print).
@@ -160,7 +164,8 @@ to `address`, and routes the reply straight back to that action's own handlers, 
   three forms as `modbus_client.send`'s `on_no_response` above: a returning lambda, a `then:` automation, or a
   `then:` automation with a nested `retry:` returning lambda.
 - **on_not_sent** (*Optional*, [Automation](/automations/)): Fires when the frame never reached the wire - a
-  duplicate write already pending, a full send queue, or an invalid request. See [Behavior](#behavior).
+  duplicate write already pending, a full send queue, or an invalid request. See [Behavior](#behavior). Lambda
+  variable: `request` (`std::span<const uint8_t>`, the PDU that was not sent).
 
 ### `modbus_client.read_holding_registers` Action
 
@@ -186,7 +191,8 @@ button:
           on_response:
             then:
               - lambda: |-
-                  ESP_LOGD("modbus", "reg0=%u reg1=%u", values[0], values[1]);
+                  if (values.size() >= 2)
+                    ESP_LOGD("modbus", "reg0=%u reg1=%u", values[0], values[1]);
           on_error:
             then:
               - lambda: 'ESP_LOGW("modbus", "exception 0x%02X", (uint8_t) exception_code);'
@@ -278,7 +284,7 @@ Writes a single holding register (function code `0x06`).
 
 - **value** (**Required**, templatable, 16-bit hex): The value to write.
 
-`on_response` fires once the write is acknowledged; it carries no extra lambda variable beyond `request`.
+`on_response` fires once the write is acknowledged; it carries no lambda variables at all.
 
 ```yaml
 button:
@@ -299,7 +305,7 @@ Writes a single coil (function code `0x05`).
 
 - **value** (**Required**, templatable, boolean): The value to write.
 
-`on_response` fires once the write is acknowledged; it carries no extra lambda variable beyond `request`.
+`on_response` fires once the write is acknowledged; it carries no lambda variables at all.
 
 ```yaml
 button:
@@ -319,9 +325,9 @@ Writes one or more consecutive holding registers (function code `0x10`).
 #### Configuration Variables
 
 - **values** (**Required**, templatable, list of 16-bit hex): Registers to write, `start_address` first. 1-123
-  registers.
+  registers. As a lambda it must return a `std::vector<uint16_t>`.
 
-`on_response` fires once the write is acknowledged; it carries no extra lambda variable beyond `request`.
+`on_response` fires once the write is acknowledged; it carries no lambda variables at all.
 
 ```yaml
 button:
@@ -343,9 +349,10 @@ Writes one or more consecutive coils (function code `0x0F`).
 
 #### Configuration Variables
 
-- **values** (**Required**, templatable, list of boolean): Coils to write, `start_address` first. 1-1968 coils.
+- **values** (**Required**, templatable, list of boolean): Coils to write, `start_address` first. 1-1968 coils. As a
+  lambda it must return a `std::vector<bool>`.
 
-`on_response` fires once the write is acknowledged; it carries no extra lambda variable beyond `request`.
+`on_response` fires once the write is acknowledged; it carries no lambda variables at all.
 
 ```yaml
 button:
