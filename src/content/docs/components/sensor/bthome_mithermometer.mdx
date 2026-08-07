@@ -5,12 +5,14 @@ title: "BTHome MiThermometer Sensor"
 import APIRef from '@components/APIRef.astro';
 
 
-The `bthome_mithermometer` sensor platform lets you receive measurements broadcast by
-[BTHome](https://bthome.io/)-format Bluetooth Low Energy devices — for example Xiaomi/Mijia
-thermometers running the [ATC](https://github.com/atc1441/ATC_MiThermometer) or
-[PVVX](https://github.com/pvvx/ATC_MiThermometer) custom firmware in BTHome mode. The component
-listens passively to the advertisements, so it does not pair with the device and has no impact on
-its battery life.
+The `bthome_mithermometer` sensor platform lets you receive measurements from Xiaomi/Mijia
+thermometers broadcasting in [BTHome](https://bthome.io/) v2 format — that is, devices flashed with
+[PVVX MiThermometer](https://github.com/pvvx/ATC_MiThermometer) firmware and set to the "BTHome v2"
+advertisement type. The component listens passively to the advertisements, so it does not pair with
+the device and has no impact on its battery life.
+
+It requires a BLE tracker, for example the [ESP32 BLE Tracker](/components/esp32_ble_tracker), to
+receive the advertisements.
 
 For choosing between the firmware options of these thermometers (stock MiBeacon, ATC, PVVX and
 their advertisement formats) and for flashing/bindkey instructions, see
@@ -23,9 +25,8 @@ esp32_ble_tracker:
 
 sensor:
   - platform: bthome_mithermometer
-    mac_address: "A4:C1:38:XX:XX:XX"
-    # bindkey is only needed for devices that encrypt their advertisements
-    bindkey: "231d39c1d7cc1ab1aee224cd096db932"
+    mac_address: "XX:XX:XX:XX:XX:XX"
+    bindkey: "00112233445566778899aabbccddeeff"
     temperature:
       name: "BTHome Temperature"
     humidity:
