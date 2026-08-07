@@ -443,10 +443,15 @@ esp32:
 - **log_level** (*Optional*, string): Log level of the framework, one of `ERROR` (default), `NONE`, `WARN`, `INFO`,
   `DEBUG` or `VERBOSE`.
 
-- **advanced** (*Optional*, mapping): See [Advanced Configuration](#advanced-configuration) below.
+- **advanced** (*Optional*, mapping): See [Advanced Configuration](#advanced-configuration) and [Security](#security)
+  below.
 - **components** (*Optional*, list of components): See [IDF Components](#idf-components) below.
 
 ## Advanced Configuration
+
+> [!NOTE]
+> Signed OTA verification, OTA downgrade protection and NVS encryption are also configured under `advanced:` but are
+> documented under [Security](#security) below.
 
 - **assertion_level** (*Optional*, enum): One of `ENABLE` (default), `SILENT` or `DISABLE`. Changing away from
   the default will reduce the size of the compiled binary, albeit at the expense of ease of troubleshooting. See
@@ -763,9 +768,10 @@ esp32:
 
 ## Security
 
-ESPHome can protect an ESP32 device on several fronts. These options are all configured under `esp32:` → `framework:` → `advanced:`, and can be combined for defense in depth.
+ESPHome can protect an ESP32 device on several fronts. These options are all configured under `esp32:` →
+`framework:` → `advanced:`, and can be combined for defense in depth.
 
-### Signed OTA verification
+### Signed OTA Verification
 
 - **signed_ota_verification** (*Optional*, mapping): Enable
   [Signed App Verification Without Hardware Secure Boot](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/security/secure-boot-v2.html#signed-app-verification-without-hardware-secure-boot).
@@ -865,7 +871,7 @@ ESPHome can protect an ESP32 device on several fronts. These options are all con
   espsecure.py extract_public_key --keyfile secure_boot_signing_key.pem secure_boot_verification_key.bin
   ```
 
-### OTA downgrade protection
+### OTA Downgrade Protection
 
 - **enable_ota_downgrade_protection** (*Optional*, boolean): Reject OTA updates whose firmware version is older
   than the version the device is currently running. The version is taken from the `version` under the
@@ -883,7 +889,7 @@ ESPHome can protect an ESP32 device on several fronts. These options are all con
   > This protects the over-the-air update path on the device. A direct serial flash is not version-checked, so you
   > can always recover a device by flashing over serial.
 
-### NVS encryption
+### NVS Encryption
 
 - **nvs_encryption** (*Optional*, mapping): Encrypts the device's non-volatile storage (NVS), where ESPHome
   may save sensitive data such as Wi-Fi credentials and the API encryption key. This keeps that data
@@ -909,8 +915,8 @@ ESPHome can protect an ESP32 device on several fronts. These options are all con
 
   > [!WARNING]
   > - The encryption key is written to the chip **permanently** (yes, **we mean permanently**) the first time the device
-  >   boots and **cannot be changed or removed afterwards**--even if you erase and/or re-flash your ESP--so choose the
-  >   `key_id` carefully. In most cases, this shouldn't be a problem -- just pick a key slot and stick to it.
+  >   boots and **cannot be changed or removed afterwards** — even if you erase and/or re-flash your ESP — so choose
+  >   the `key_id` carefully. In most cases, this shouldn't be a problem — just pick a key slot and stick to it.
   > - Turning encryption on (or off later) clears any previously saved preferences once, because the older data can no
   >   longer be read.
 
