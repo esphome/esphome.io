@@ -28,10 +28,11 @@ bluetooth_proxy:
 
 - **active** (*Optional*, boolean): Enables proxying active GATT connections to BLE devices.
   This is separate from active *scanning* (configured in [ESP32 BLE Tracker](/components/esp32_ble_tracker)).
-  Defaults to `true`.
-- **cache_services** (*Optional*, boolean): Enables caching GATT services in NVS flash storage which
-  significantly speeds up active connections. Defaults to `true`.
-- **connection_slots** (*Optional*, int): The maximum number of BLE connection slots to use.
+  Defaults to `true` on ESP32. On advertisement-only platforms it defaults to `false` and
+  enabling it fails validation — see [Platform Support](#platform-support).
+- **cache_services** (*Optional*, boolean): ESP32 only. Enables caching GATT services in NVS flash
+  storage which significantly speeds up active connections. Defaults to `true`.
+- **connection_slots** (*Optional*, int): ESP32 only. The maximum number of BLE connection slots to use.
   Each configured slot consumes ~1KB of RAM, with a maximum of `9`. It is recommended not to exceed `5`
   connection slots to avoid stability and memory issues. Defaults to `3`.
   Ethernet-based proxies can generally handle `4` connection slots reliably.
@@ -40,34 +41,6 @@ bluetooth_proxy:
 
 On ESP32 the Bluetooth proxy depends on [ESP32 BLE Tracker](/components/esp32_ble_tracker) so make sure to
 add that to your configuration.
-
-## Platform support
-
-The proxy runs on any platform that provides a BLE hub, but the feature set depends on what the
-controller can do:
-
-- **ESP32** — the full proxy: advertisements plus **active connections**, so Home Assistant can read
-  and write GATT characteristics through the device (`active: true`, `connection_slots`).
-- **LN882x and RP2 (Raspberry Pi Pico W family)** — **advertisement-only**. These controllers do
-  not expose the GATT client the proxy needs for connections, so `active` must stay `false` and
-  Home Assistant treats the device as a passive scanner. Advertisement forwarding — which is what
-  integrations such as BTHome, Xiaomi and most sensors rely on — works exactly as it does on
-  ESP32.
-
-Platforms whose controller can only scan **passively** (BK72xx) are not supported yet: current
-Home Assistant releases assume every ESPHome proxy can scan actively and would drive a
-passive-only proxy incorrectly. Support follows once the API lets a proxy declare
-passive-only scanning.
-
-```yaml
-# Advertisement-only proxy on an LN882x or RP2 BLE platform
-bluetooth_proxy:
-```
-
-> [!NOTE]
-> On advertisement-only platforms a scanner-mode request from Home Assistant is applied when the
-> tracker supports the requested mode (a running scan restarts with the new mode); otherwise the
-> device declines it, logs a single warning and reports its real state back.
 
 ### How Active Connections Work
 
@@ -82,6 +55,43 @@ for other devices, so you can use more devices than you have slots.
 
 Passively broadcasted sensor data (advertised by devices without requiring active connections, such as
 many BTHome sensors) is received separately and is not limited by the number of connection slots.
+
+## Platform Support
+
+The proxy runs on any platform that provides a BLE hub, but the feature set depends on what the
+controller can do:
+
+- **ESP32** — the full proxy: advertisements plus **active connections**, so Home Assistant can read
+  and write GATT characteristics through the device (`active: true`, `connection_slots`).
+- **LN882x and RP2 (Raspberry Pi Pico W family)** — **advertisement-only**. These controllers do
+  not expose the GATT client the proxy needs for connections, so Home Assistant uses the device
+  for advertisements only and will not route connections through it. This is independent of the
+  [scan mode](#passive-vs-active-scanning), which the platform's tracker controls. Advertisement
+  forwarding — which is what integrations such as BTHome, Xiaomi and most sensors rely on — works
+  exactly as it does on ESP32.
+
+Platforms whose controller can only scan **passively** (BK72xx) are not supported yet: current
+Home Assistant releases assume every ESPHome proxy can scan actively and would drive a
+passive-only proxy incorrectly. Support follows once the API lets a proxy declare
+passive-only scanning.
+
+On the advertisement-only platforms the proxy cannot be switched to active connections: `active`
+defaults to `false` there and setting `active: true` fails validation, as do the
+connection-oriented options (`connection_slots`, `cache_services`). The platform's tracker hub
+must be part of the configuration — [LN882H BLE Tracker](/components/ln882h_ble_tracker/) or
+[RP2 BLE Tracker](/components/rp2_ble_tracker/):
+
+```yaml
+# Advertisement-only proxy on an LN882x board
+ln882h_ble_tracker:
+
+bluetooth_proxy:
+```
+
+> [!NOTE]
+> A scanner-mode request from Home Assistant (active or passive scanning) is honored on these
+> platforms: the tracker applies the requested mode, and a running scan restarts with the new
+> mode.
 
 ## Improving reception performance
 
