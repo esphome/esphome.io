@@ -118,20 +118,22 @@ bk72xx_ble_tracker:
 
 ## Actions
 
-- **bk72xx_ble_tracker.start_scan**: Start a scan. The optional
-  [templatable](/automations/templates#config-templatable) `continuous` overrides the scan mode
-  until the next `start_scan` or `stop_scan` (the YAML-configured value itself is untouched);
-  without it the mode configured under `scan_parameters` is restored (a previous `stop_scan`
-  does not stick as "one-shot"). This differs from `esp32_ble_tracker.start_scan`, where an
-  omitted `continuous` always forces a one-shot scan. Invoked while a scan is already running,
-  a mode switch re-anchors the running scan's `duration` window instead of restarting the
-  radio (the `on_scan_end` period clock is unaffected); a same-mode call is a no-op — it does
-  not extend the running scan.
+### `bk72xx_ble_tracker.start_scan` Action
 
-- **bk72xx_ble_tracker.stop_scan**: Stop a running scan; also cancels a start that is still
-  being retried, and switches the scanner to one-shot until a later `start_scan` restores the
-  configured mode. Accepts the bare-id shorthand (`bk72xx_ble_tracker.stop_scan: my_tracker`)
-  like its esp32 counterpart.
+Start a scan. The optional [templatable](/automations/templates#config-templatable) `continuous`
+overrides the scan mode until the next `start_scan` or `stop_scan` (the YAML-configured value
+itself is untouched); without it the mode configured under `scan_parameters` is restored (a
+previous `stop_scan` does not stick as "one-shot"). This differs from
+`esp32_ble_tracker.start_scan`, where an omitted `continuous` always forces a one-shot scan.
+Invoked while a scan is already running, a mode switch re-anchors the running scan's `duration`
+window instead of restarting the radio (the `on_scan_end` period clock is unaffected); a
+same-mode call is a no-op — it does not extend the running scan.
+
+### `bk72xx_ble_tracker.stop_scan` Action
+
+Stop a running scan; also cancels a start that is still being retried, and switches the scanner
+to one-shot until a later `start_scan` restores the configured mode. Accepts the bare-id
+shorthand (`bk72xx_ble_tracker.stop_scan: my_tracker`) like `esp32_ble_tracker.stop_scan`.
 
 Scan only while Home Assistant is connected — the time-share pattern from
 [Use on a single-core chip](#use-on-a-single-core-chip):
