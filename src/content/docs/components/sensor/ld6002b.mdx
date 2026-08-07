@@ -24,7 +24,11 @@ The [UART](/components/uart) component is required. `baud_rate`, `data_bits`, `p
 > can corrupt the radar's internal state until it is power cycled. The module has no reset pin or
 > reset command, so use a UART that stays quiet during boot.
 
-<Figure src={ld6002bImg} alt="HLK-LD6002B module, antenna side" caption="HLK-LD6002B 3D presence radar module, shown in the intended mounting orientation" />
+<Figure
+  src={ld6002bImg}
+  alt="HLK-LD6002B module, antenna side"
+  caption="HLK-LD6002B 3D presence radar module, shown in the intended mounting orientation"
+/>
 
 ```yaml
 # Example configuration entry
@@ -85,16 +89,20 @@ origin.
 
 ## Area Configuration Notes
 
-Detection areas define where presence is considered valid for the TX2 output and the `area_N` binary
-sensors. Interference areas mask known noise sources (fans, air conditioners, curtains) so they do
-not trigger presence. Areas are stored in the module and persist across power cycles.
+Detection areas define where presence is considered valid for the TX2 output and the
+`detection_area_N` binary sensors. Interference areas mask known noise sources (fans, air
+conditioners, curtains) so they do not trigger presence. Areas are stored in the module and persist
+across power cycles.
 
 Use `area_id` to select the area, set `area_config`, then press **Apply Area**. Use **Get Areas** to
 read back stored values.
 
 > [!NOTE]
-> If you change only some coordinates, ESPHome will fetch the current area values and apply the update
-> once all coordinates are known. This can take a moment after pressing **Apply Area**.
+> **Apply Area** writes all six coordinates of the selected area, combining the values you set with
+> the ones cached from the last area read, which happens on boot and after **Auto Interference**,
+> **Clear Interference** and **Reset Detection Area**. If a bound is still unknown, the component
+> requests the current areas first and applies the update once a fresh report arrives; if that report
+> is still incomplete, the update is dropped with a warning.
 
 ## Binary Sensor
 
@@ -110,7 +118,7 @@ binary_sensor:
       name: Presence
     target_1:
       name: Target-1 Presence
-    area_0:
+    detection_area_0:
       name: Area-0 Presence
 ```
 
@@ -124,8 +132,8 @@ binary_sensor:
   `target_3`. A person keeps the same slot for as long as they are tracked continuously, and a new
   person takes the lowest free slot. All options from
   [Binary Sensor](/components/binary_sensor#config-binary_sensor).
-- **area_N** (*Optional*): True if presence is detected in detection area N (0 to 3): `area_0`,
-  `area_1`, `area_2`, `area_3`. All options from
+- **detection_area_N** (*Optional*): True if presence is detected in detection area N (0 to 3):
+  `detection_area_0`, `detection_area_1`, `detection_area_2`, `detection_area_3`. All options from
   [Binary Sensor](/components/binary_sensor#config-binary_sensor).
 
 ## Sensor
@@ -201,8 +209,8 @@ sensor:
 > [!NOTE]
 > If a **Target Display** switch is configured, its `restore_mode` decides whether target reporting
 > starts on boot; the default is `RESTORE_DEFAULT_ON`. Without that switch, the component enables
-> target reporting automatically when any target sensors are configured. While target reporting is
-> disabled, target sensors remain `unknown`.
+> target reporting automatically when any target sensors or the `work_mode` text sensor are
+> configured. While target reporting is disabled, target sensors remain `unknown`.
 
 > [!NOTE]
 > Slot identity comes from the module's own spatial clustering, so it is stable rather than perfect:
@@ -217,7 +225,8 @@ sensor:
 
 > [!NOTE]
 > If a `point_cloud` switch is configured, it owns the point cloud stream and its `restore_mode` decides
-> the boot state. Without that switch, configuring `point_count` starts the stream on boot on its own.
+> the boot state, and turning it off returns `point_count` to `unknown`. Without that switch,
+> configuring `point_count` starts the stream on boot on its own.
 > The stream sends large frames over the 115200 baud link, so leave it on only while you need the
 > count. Configuring the switch or the sensor also reserves a larger 4 KB frame buffer at boot.
 
@@ -299,7 +308,7 @@ number:
 - **z_min** / **z_max** (*Optional*, range `-10`–`10` m, step `0.1`): Global Z-axis detection range, in
   meters. All options from
   [Number](/components/number#config-number).
-- **low_power_sleep_time** (*Optional*, range `0`–`500` ms, step `100`): Low power sleep time in
+- **low_power_sleep_time** (*Optional*, range `0`–`60000` ms, step `100`): Low power sleep time in
   milliseconds (default 500 ms, which the datasheet also gives as the highest recommended value). When
   low-power mode is enabled and the area is unattended, the module sleeps for this interval between
   scans; higher values reduce idle power but increase detection latency. All options from
@@ -307,7 +316,8 @@ number:
 - **area_config** (*Optional*): Coordinate values (`x_min`/`x_max`/`y_min`/`y_max`/`z_min`/`z_max`, each
   range `-10`–`10` m, step `0.1`) for the selected area ID. **Requires** both a `select.area_id` and a
   `button.apply_area` on the same `ld6002b` (enforced at compile time); set the values, then press
-  **Apply Area** to send them.
+  **Apply Area** to send them. A minimum above its matching maximum is rejected with a warning
+  instead of being written.
 
 > [!NOTE]
 > The module documentation recommends keeping the low power sleep time at or below 500 ms.
@@ -343,9 +353,9 @@ select:
   detecting a person to triggering. All options from [Select](/components/select#config-select).
 - **installation_mode** (*Optional*): `top` or `side`. All options from
   [Select](/components/select#config-select).
-- **area_id** (*Optional*): Area to edit with `area_config`. Options are `interference_0` through
-  `interference_3` and `detection_0` through `detection_3` (mapped internally to IDs 0–7). All options
-  from [Select](/components/select#config-select).
+- **area_id** (*Optional*): Area to edit with `area_config`. Options are `interference_area_0` through
+  `interference_area_3` and `detection_area_0` through `detection_area_3` (mapped internally to IDs
+  0–7). All options from [Select](/components/select#config-select).
 
 > [!NOTE]
 > If no area ID is selected, **Apply Area** is ignored to prevent writing to the wrong region.
@@ -380,8 +390,8 @@ switch:
   reads. All options from
   [Switch](/components/switch#config-switch).
 - **target_display** (*Optional*): Enable or disable target reporting (`0x0A04`). If disabled, target
-  sensors will show `unknown` until re-enabled. All options from
-  [Switch](/components/switch#config-switch).
+  sensors will show `unknown` and target presence binary sensors turn off until re-enabled. All
+  options from [Switch](/components/switch#config-switch).
 
 > [!NOTE]
 > Each switch applies its own [`restore_mode`](/components/switch#config-switch) on boot. `point_cloud`
@@ -458,7 +468,7 @@ button:
 ```yaml
 uart:
   tx_pin: GPIOXX
-  rx_pin: GPIOYY
+  rx_pin: GPIOXX
   baud_rate: 115200
 
 ld6002b:
@@ -514,13 +524,13 @@ binary_sensor:
 uart:
   id: uart_bus
   tx_pin: GPIOXX
-  rx_pin: GPIOYY
+  rx_pin: GPIOXX
   baud_rate: 115200
 
 ld6002b:
   id: ld6002b_radar
   uart_id: uart_bus
-  wakeup_pin: GPIOZZ
+  wakeup_pin: GPIOXX
   wakeup_pulse: 50ms
   auto_wake: true
 
@@ -535,13 +545,13 @@ binary_sensor:
       name: Target-2 Presence
     target_3:
       name: Target-3 Presence
-    area_0:
+    detection_area_0:
       name: Area-0 Presence
-    area_1:
+    detection_area_1:
       name: Area-1 Presence
-    area_2:
+    detection_area_2:
       name: Area-2 Presence
-    area_3:
+    detection_area_3:
       name: Area-3 Presence
 
 sensor:
