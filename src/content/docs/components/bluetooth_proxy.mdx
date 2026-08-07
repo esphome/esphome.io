@@ -32,15 +32,16 @@ bluetooth_proxy:
   `false` and enabling it fails validation — see [Platform Support](#platform-support).
   RP2040/RP2350 proxies were advertisement only before active connection support landed, so
   existing Pico W configurations that omit this option gain a connection slot on their next
-  update; set `active: false` to keep an advertisement only proxy.
-- **cache_services** (*Optional*, boolean): ESP32 only. Enables caching GATT services in NVS flash
-  storage which significantly speeds up active connections. Defaults to `true`.
-- **connection_slots** (*Optional*, int): ESP32 and RP2040/RP2350. The maximum number of BLE connection slots to use.
-  Each configured slot consumes ~1KB of RAM, with a maximum of `9`. It is recommended not to exceed `5`
-  connection slots to avoid stability and memory issues. Defaults to `3`.
-  Ethernet-based proxies can generally handle `4` connection slots reliably.
-  The value must not exceed the total configured `max_connections`
-  for [ESP32 BLE](/components/esp32_ble/). On RP2040/RP2350 the maximum (and default) is `1`.
+  update; set `active: false` to keep an advertisement-only proxy.
+- **cache_services** (*Optional*, boolean): ESP32 only; setting it on any other platform is a
+  configuration error. Enables caching GATT services in NVS flash storage which significantly
+  speeds up active connections. Defaults to `true`.
+- **connection_slots** (*Optional*, int): ESP32 and RP2040/RP2350. The maximum number of BLE
+  connection slots to use. On RP2040/RP2350 the maximum and default are both `1`. On ESP32, each
+  configured slot consumes ~1KB of RAM, with a maximum of `9`; it is recommended not to exceed `5`
+  connection slots to avoid stability and memory issues, the default is `3`, Ethernet-based
+  proxies can generally handle `4` slots reliably, and the value must not exceed the total
+  configured `max_connections` for [ESP32 BLE](/components/esp32_ble/).
 
 The Bluetooth proxy depends on the platform's BLE tracker component, so make sure to add that to your
 configuration: [ESP32 BLE Tracker](/components/esp32_ble_tracker/) on ESP32, the
@@ -75,9 +76,9 @@ the controller can do beyond scanning:
   and write GATT characteristics through the device (`active: true`, `connection_slots`); requires
   the [ESP32 BLE Tracker](/components/esp32_ble_tracker/) component.
 - **RP2040/RP2350 (Raspberry Pi Pico W family)** — the full proxy, with active connections through
-  the framework's BTstack GATT client; requires the
-  [RP2 BLE Tracker](/components/rp2_ble_tracker/) component. The prebuilt Bluetooth library
-  supports one concurrent GATT connection, so `connection_slots` is limited to `1`.
+  the framework's prebuilt BTstack GATT client; requires the
+  [RP2 BLE Tracker](/components/rp2_ble_tracker/) component. That library supports one
+  concurrent GATT connection, so `connection_slots` is limited to `1`.
 - **LN882x** — **advertisement-only**. The controller does not expose the GATT client the proxy
   needs for connections, so Home Assistant uses the device for advertisements only and will not
   route connections through it. This is independent of the
