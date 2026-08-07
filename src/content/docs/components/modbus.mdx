@@ -2,6 +2,7 @@
 description: "Instructions for setting up Modbus in ESPHome."
 title: "Modbus Component"
 ---
+import { Image } from 'astro:assets';
 import APIRef from '@components/APIRef.astro';
 
 
@@ -9,6 +10,12 @@ import APIRef from '@components/APIRef.astro';
 
 The Modbus protocol is used by many consumer and industrial devices for communication.
 This component allows components in ESPHome to communicate to those devices via RTU protocol. You can access the coils, inputs, holding, read registers from your devices as sensors, switches, selects, numbers or various other ESPHome components and present them to your favorite Home Automation system. You can even write them as binary or float outputs from ESPHome.
+
+> [!NOTE]
+> This page is the starting point for everything Modbus in ESPHome, including hardware setup. See
+> [Modbus Controller](/components/modbus_controller/) for polling registers/coils into sensors,
+> [Modbus Client](/components/modbus_client/) for ad-hoc requests, and [Modbus Server](/components/modbus_server/)
+> for serving registers to another device.
 
 The various sub-components implement some of the Modbus functions below (depending on their required functionality):
 
@@ -98,8 +105,9 @@ On the bus side, you need 120 Ohm termination resistors at the ends of the bus c
 > ```
 
 ## See Also
+
 - For polling multiple registers/coils and mapping the response to various kinds of sensors, use [Modbus Controller](/components/modbus_controller/)
-- For YAML actions & lambdas to send ad-hoc requests to individual devices use [Modbus Client](/components/modbus_client)
+- For YAML actions & lambdas to send ad-hoc requests to individual devices use [Modbus Client](/components/modbus_client/)
 - For serving registers in response to client requests from another device, use [Modbus Server](/components/modbus_server/)
 - There are many components which communicate directly via the modbus hub (no controller needed): [Growatt Solar](/components/sensor/growatt_solar), [Havells Solar](/components/sensor/havells_solar), [Kuntze Pool Monitor](/components/sensor/kuntze), [PZEMAC](/components/sensor/pzemac), [SDM Meter](/components/sensor/sdm_meter), [Selec Meter](/components/sensor/selec_meter)
 - [Modbus RTU Protocol Description](https://www.modbustools.com/modbus.html)

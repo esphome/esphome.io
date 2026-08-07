@@ -435,9 +435,9 @@ Handling the error and timeout branches:
 ## Lambda Hook Component
 
 If the above methods don't give you the flexibility you need, you can set up a `modbus_client` component as a hook into lambdas.
-This is useful for doing a one-off write to a coil or some registers. 
+This is useful for doing a one-off write to a coil or some registers.
 This method does not provide a way to read back the response - it's a true fire-and-forget - so it's not so useful for read functions.
-Commands sent using this method are queued on the hub just like any other, so sending multiple requests in quick is supported.
+Commands sent using this method are queued on the hub just like any other, so sending multiple requests in quick succession is supported.
 
 ```yaml
 modbus_client:
@@ -446,24 +446,22 @@ modbus_client:
 
 on_xxx:
   - lambda: 'id(ad_hoc_client).write_single_register(0x1234, 0x99AB);'
-  - lambda: |- 
-      uint16_t[] registers = {0x00FF, 0xAABC, 0xF00D};
-      id(ad_hoc_client)->write_multiple_registers(0x9013, registers);
+  - lambda: |-
+      uint16_t registers[] = {0x00FF, 0xAABC, 0xF00D};
+      id(ad_hoc_client).write_multiple_registers(0x9013, registers);
   - lambda: 'id(ad_hoc_client).write_single_coil(0x1234, true);'
   - lambda: |-
-      bool[] coils = {true, false, false, true};
+      bool coils[] = {true, false, false, true};
       id(ad_hoc_client).write_multiple_coils(0x1234, coils);
   # Any arbitrary PDU (function code + data)
-  - lambda: |- 
-      uint8_t[] pdu = {42};
+  - lambda: |-
+      uint8_t pdu[] = {42};
       id(ad_hoc_client).send_pdu(pdu);
-  # Clear the send queue for all commands targetting this client's address
+  # Clear the send queue for all commands targeting this client's address
   - lambda: 'id(ad_hoc_client).clear_tx_queue_for_address();'
   # Clear the send queue for all commands sent from this client component
   - lambda: 'id(ad_hoc_client).clear_tx_queue_for_device();'
-  
 ```
-
 
 ## See Also
 

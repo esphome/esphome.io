@@ -15,34 +15,7 @@ You must set the `role` attribute of the [Modbus](/components/modbus/) to `serve
 
 <Image src="/images/modbus.png" width={190} height={200} layout="constrained" alt="" />
 
-## Hardware setup
-
-You need an RS485 transceiver module:
-
-<Image src="/images/rs485.jpg" width={300} height={145} layout="constrained" alt="" />
-
-See [How is this RS485 module working?](https://electronics.stackexchange.com/questions/244425/how-is-this-rs485-module-working) on stackexchange for more details.
-
-The transceiver connects to the UART of the MCU. For ESP32, pin `16` to `TXD` and pin `17` to `RXD` are the default ones but any other pins can be used as well. `3.3V` to `VCC` and naturally `GND` to `GND`.
-
-On the bus side, you need 120 Ohm termination resistors at the ends of the bus cable as per Modbus standard. Some transceivers have this already soldered onboard, while some slave devices may have them available via a jumper or a DIP switch.
-
-> [!NOTE]
-> If you are using an ESP8266, serial logging may cause problems reading from UART. For best results, hardware serial is recommended. Software serial may not be able to read all received data if other components spend a lot of time in the `loop()`.
->
-> For hardware serial only a limited set of pins can be used. Either `tx_pin: GPIO1` and `rx_pin: GPIO3`  or `tx_pin: GPIO15` and `rx_pin: GPIO13`.
->
-> The disadvantage of using the hardware UART is that you can't use serial logging because the serial logs would be sent to the Modbus device(s) instead, causing errors.
->
-> Serial logging can be disabled by setting `baud_rate: 0`.
->
-> See [Logger](/components/logger/) for more details
->
-> ```yaml
-> logger:
->     level: <level>
->     baud_rate: 0
-> ```
+See [Modbus](/components/modbus/#hardware-setup) for RS485 hardware setup instructions.
 
 ## Configuration variables
 
