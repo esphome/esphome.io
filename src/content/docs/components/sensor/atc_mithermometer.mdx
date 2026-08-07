@@ -6,16 +6,18 @@ title: "ATC MiThermometer"
 import APIRef from '@components/APIRef.astro';
 
 The `atc_mithermometer` sensor platform lets you track the output of Xiaomi LYWSD03MMC
-Bluetooth Low Energy devices running the alternative
-[ATC firmware](https://github.com/atc1441/ATC_MiThermometer), using a BLE tracker (for example
-the [ESP32 BLE Tracker](/components/esp32_ble_tracker/)). This component listens passively to
-the advertisement packets the device broadcasts in the ATC format (temperature, humidity,
+Bluetooth Low Energy devices broadcasting in the ATC1441 advertisement format — that is, devices
+running the [ATC firmware](https://github.com/atc1441/ATC_MiThermometer), or
+[PVVX MiThermometer](https://github.com/pvvx/ATC_MiThermometer) firmware set to the "ATC1441"
+advertisement type — using a BLE tracker (for example the
+[ESP32 BLE Tracker](/components/esp32_ble_tracker)). This component listens passively to
+the advertisement packets the device broadcasts in that format (temperature, humidity,
 battery level and battery voltage) and does not pair with or connect to the device, so it has
 no impact on the device's battery life.
 
-The ATC "custom" advertisement format is unencrypted, so no bindkey is required. Note that both
-the ATC and PVVX firmware projects have deprecated this format in favor of BTHome v2 — prefer the
-`bthome_mithermometer` platform for new setups.
+The ATC1441 advertisement format is unencrypted, so no bindkey is required. Note that both the
+ATC and PVVX firmware projects have deprecated this format in favor of BTHome v2 — prefer the
+[BTHome MiThermometer](/components/sensor/bthome_mithermometer) platform for new setups.
 
 For choosing between the firmware options of these thermometers (stock MiBeacon, ATC, PVVX and
 their advertisement formats) and for flashing instructions, see
