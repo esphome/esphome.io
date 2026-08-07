@@ -1,6 +1,24 @@
 ---
 import EditLink from "virtual:starlight/components/EditLink";
 import LastUpdated from "virtual:starlight/components/LastUpdated";
+import CrosspostBadges from "./CrosspostBadges.astro";
+import DiscourseComments from "./DiscourseComments.astro";
+
+const isBlogPage = Astro.url.pathname.startsWith("/blog");
+
+// Only actual blog post pages get a comments section (not the blog index, tag
+// or author listings, or paginated pages). Mirrors starlight-blog's
+// isAnyBlogPostPage. Injected here rather than via a MarkdownContent override so
+// starlight-blog keeps ownership of MarkdownContent (importing its components
+// directly trips a rolldown exports-field error on starlight-blog/libs/page).
+const { id } = Astro.locals.starlightRoute;
+const isBlogPost = /^blog\/(?!(\d+\/?|tags\/.+|authors\/.+)$).+$/.test(id);
+
+// Only load the Discourse comments embed on the production deploy. Netlify sets
+// CONTEXT to "production" only for the main production build; branch deploys
+// (e.g. beta/next) and deploy previews get "branch-deploy"/"deploy-preview", so
+// comments (including the heading) are hidden there.
+const isProduction = process.env.CONTEXT === "production";
 
 const footerLinks = [
   {
@@ -30,6 +48,9 @@ const footerLinks = [
   },
 ];
 ---
+
+{isBlogPage && <CrosspostBadges />}
+{isBlogPost && isProduction && <DiscourseComments />}
 
 <footer class="sl-flex">
   <div class="meta sl-flex">

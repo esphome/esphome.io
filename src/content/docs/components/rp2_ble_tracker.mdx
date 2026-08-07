@@ -1,0 +1,69 @@
+---
+description: "Instructions for setting up the RP2 BLE tracker to scan for Bluetooth Low Energy devices on the Raspberry Pi Pico W."
+title: "RP2 BLE Tracker"
+---
+
+import APIRef from '@components/APIRef.astro';
+
+The `rp2_ble_tracker` component scans for Bluetooth Low Energy advertisements on the
+Raspberry Pi **Pico W** and **Pico 2 W** — the platform analog of
+[ESP32 BLE Tracker](/components/esp32_ble_tracker/). It builds on the
+[RP2040 BLE](/components/rp2040_ble/) stack component and loads it automatically.
+
+Scanning is **active by default**: the tracker sends scan requests asking devices for
+more data, and the scan response (which can carry extra data such as some device names)
+arrives as a separate advertisement report rather than being merged into the
+advertisement. Set `active: false` under `scan_parameters` for a lighter passive
+scan. The radio is shared
+between WiFi and Bluetooth on these boards; the default scan parameters use a 30% duty
+cycle to leave the radio mostly free for WiFi.
+
+> [!NOTE]
+> BLE sensor platforms such as `ble_presence` do not yet bind to this tracker; support
+> arrives as those platforms migrate to the shared BLE layer in follow-up releases.
+
+> [!NOTE]
+> [`bluetooth_proxy`](/components/bluetooth_proxy/) works with this tracker in
+> advertisement-only mode — see
+> [Platform Support](/components/bluetooth_proxy/#platform-support).
+
+```yaml
+# Example configuration entry
+rp2_ble_tracker:
+```
+
+## Configuration variables
+
+- **scan_parameters** (*Optional*): Tune how the scan runs.
+
+  - **interval** (*Optional*, [Time](/guides/configuration-types#time)): How often the
+    radio opens a scan window. The controller accepts 2.5 ms to 10240 ms in 0.625 ms
+    steps. Defaults to `100ms`.
+  - **window** (*Optional*, [Time](/guides/configuration-types#time)): How long the radio
+    listens within each interval. Must not be larger than the interval; the same range
+    and step apply. Defaults to `30ms`.
+  - **duration** (*Optional*, [Time](/guides/configuration-types#time)): Length of one
+    scan period. In continuous mode the scan period restarts every `duration`; in
+    non-continuous mode the scan stops after this long. Must cover at least three scan
+    intervals. Defaults to `5min`.
+  - **active** (*Optional*, boolean): Whether to send scan requests asking devices for
+    more data after their advertisement. The scan response arrives as a separate report;
+    it is not merged into the advertisement. Turning this off saves power on the
+    advertising devices and radio time on the shared CYW43439. Defaults to `true`.
+  - **continuous** (*Optional*, boolean): If true, scanning starts at boot and runs
+    forever. If false, scanning does **not** start automatically; a scan must be started
+    from a lambda (`id(my_tracker).start_scan();`) and stops again after `duration`.
+    Defaults to `true`.
+
+- **rp2040_ble_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify
+  the ID of the [RP2040 BLE](/components/rp2040_ble/) component this tracker uses.
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used
+  to reference this component.
+
+## See Also
+
+- [RP2 Platform](/components/rp2/)
+- [RP2040 BLE](/components/rp2040_ble/)
+- [ESP32 BLE Tracker](/components/esp32_ble_tracker/)
+- [Bluetooth Proxy](/components/bluetooth_proxy/)
+- <APIRef text="rp2_ble_tracker.h" path="rp2_ble_tracker/rp2_ble_tracker.h" />
