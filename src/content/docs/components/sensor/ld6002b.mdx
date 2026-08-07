@@ -95,7 +95,8 @@ conditioners, curtains) so they do not trigger presence. Areas are stored in the
 across power cycles.
 
 Use `area_id` to select the area, set `area_config`, then press **Apply Area**. Use **Get Areas** to
-read back stored values.
+read back stored values. A value you set on one of the `area_config` numbers is kept until you apply
+it or switch to another `area_id`, so an area read does not overwrite an edit in progress.
 
 > [!NOTE]
 > **Apply Area** writes all six coordinates of the selected area, combining the values you set with
@@ -135,6 +136,11 @@ binary_sensor:
 - **detection_area_N** (*Optional*): True if presence is detected in detection area N (0 to 3):
   `detection_area_0`, `detection_area_1`, `detection_area_2`, `detection_area_3`. All options from
   [Binary Sensor](/components/binary_sensor#config-binary_sensor).
+
+> [!NOTE]
+> The `detection_area_N` sensors are cleared when the module reports that it entered unattended
+> low-power mode. If a target is still being tracked at that moment the clear is skipped, because a
+> tracked target is the more recent statement about the room.
 
 ## Sensor
 
