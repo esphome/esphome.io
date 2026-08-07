@@ -158,17 +158,101 @@ comparing the colour of a light source, since it ignores the wideband `clear` an
 
 ## Calibration
 
-Basic counts are corrected in this order: the `dark_current` offset for the channel is subtracted and the result
-is clamped at zero, the device's own gain correction is applied, then `channel_correction`, then
-`glass_attenuation_factor`.
+The `calibration` block holds the corrections applied while a raw count becomes a basic count. They run in this
+order:
 
-The AS7343 defaults ship with the manufacturer's per-channel factors for a golden reference device. The AS7341
-has no published equivalent, so its `channel_correction` defaults to all ones and the channels are left as the
-device reports them.
+1. The channel's `dark_current` is subtracted and the result is clamped at zero.
+2. The device's own gain correction is applied.
+3. The channel's `channel_correction` is applied.
+4. `glass_attenuation_factor` is applied.
 
-To measure your own `dark_current`, cover the sensor completely and record the basic counts each channel
-reports. Those values are the offsets to subtract. Set `glass_attenuation_factor` when the sensor sits behind a
-window or enclosure that dims everything it sees by a known amount.
+These corrections move the `basic_counts` sensors and everything computed from them. They do not touch the
+`counts` sensors, which always report what the device returned.
+
+Set `glass_attenuation_factor` when the sensor sits behind a window or enclosure that dims everything it sees by
+a known amount. To measure your own `dark_current`, cover the sensor completely and record the basic counts each
+channel reports; those values are the offsets to subtract.
+
+### Channel Order
+
+`channel_correction` and `dark_current` both take one value per channel, and the list length has to match the
+model exactly: 10 values for the AS7341, 13 for the AS7343. There is no syntax for setting a single channel, so
+changing one value means supplying the whole list.
+
+The values are read in the order ESPHome lists the channels, which is not wavelength order. On the AS7343, `fy`
+(555nm) comes before `f5` (550nm):
+
+- AS7341: `f1`, `f2`, `f3`, `f4`, `f5`, `f6`, `f7`, `f8`, `nir`, `clear`
+- AS7343: `f1`, `f2`, `fz`, `f3`, `f4`, `fy`, `f5`, `fxl`, `f6`, `f7`, `f8`, `nir`, `clear`
+
+### Default Channel Correction
+
+The AS7341 has no published per-device calibration, so all ten of its factors default to `1.0` and the channels
+are left as the device reports them.
+
+The AS7343 defaults to the manufacturer's factors for a golden reference device:
+
+| Position | Channel | Wavelength | Default factor |
+| -------- | ------- | ---------- | -------------- |
+| 1        | `f1`    | 405nm      | 1.055464349    |
+| 2        | `f2`    | 425nm      | 1.043509797    |
+| 3        | `fz`    | 450nm      | 1.029576268    |
+| 4        | `f3`    | 475nm      | 1.017505200    |
+| 5        | `f4`    | 515nm      | 1.004418990    |
+| 6        | `fy`    | 555nm      | 0.987356499    |
+| 7        | `f5`    | 550nm      | 0.957597044    |
+| 8        | `fxl`   | 600nm      | 0.995863485    |
+| 9        | `f6`    | 640nm      | 1.014628964    |
+| 10       | `f7`    | 690nm      | 0.996500814    |
+| 11       | `f8`    | 745nm      | 0.933072749    |
+| 12       | `nir`   | 855nm      | 1.052236338    |
+| 13       | `clear` |            | 0.999570232    |
+
+`dark_current` defaults to `0.0` for every channel on both models.
+
+> [!WARNING]
+> Supplying `channel_correction` replaces the entire list, defaults included. To adjust one channel on an
+> AS7343, copy the other twelve values from the table above into your own list, or you will silently drop the
+> manufacturer's calibration for them.
+
+### Adjusting One Channel
+
+Compare the channel against a reference, then scale its existing factor by how far off it reads:
+
+$$
+\text{new factor} = \text{current factor} \times \frac{\text{expected reading}}{\text{observed reading}}
+$$
+
+For example, if `f5` on an AS7343 reads half of what it should, its factor becomes
+`0.957597044 * 2 = 1.915194088`, and the whole list is given with that one value changed:
+
+```yaml
+sensor:
+  - platform: as734x
+    type: AS7343
+    calibration:
+      channel_correction:
+        - 1.055464349 # f1
+        - 1.043509797 # f2
+        - 1.029576268 # fz
+        - 1.017505200 # f3
+        - 1.004418990 # f4
+        - 0.987356499 # fy
+        - 1.915194088 # f5, adjusted
+        - 0.995863485 # fxl
+        - 1.014628964 # f6
+        - 0.996500814 # f7
+        - 0.933072749 # f8
+        - 1.052236338 # nir
+        - 0.999570232 # clear
+```
+
+> [!NOTE]
+> Channels differ in bandwidth as well as centre wavelength, so two neighbouring channels do not read the same
+> under the same light even when both are working correctly. On the AS7343 in particular, `fy` is a wideband
+> channel and `f5` is narrow, so `f5` reading lower than `fy` is expected rather than a fault. Compare a channel
+> against a reference instrument or a known source before correcting it, and use a smooth broadband source: a
+> narrow LED peak that falls between two filters looks exactly like a broken channel.
 
 ## Integration Time
 
