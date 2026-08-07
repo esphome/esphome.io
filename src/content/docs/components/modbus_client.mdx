@@ -40,8 +40,8 @@ on_...:
 
 - **modbus_id** (*Optional*, [ID](/guides/configuration-types#id)): The Modbus hub to send on. Automatically assigned
   when a single hub is configured.
-- **address** (**Required**, templatable, int): The device address the frame is sent to. Accepts `0`-`255`; the valid
-  Modbus device range is `1`-`247`, and `0` is broadcast (no reply will ever arrive; see
+- **address** (**Required**, templatable, 8-bit hex): The device address the frame is sent to. Accepts `0`-`255`; the
+  valid Modbus device range is `1`-`247`, and `0` is broadcast (no reply will ever arrive; see
   [Behavior](#behavior)).
 - **pdu** (**Required**, templatable, list of bytes): The PDU to send: function code followed by data. The device
   address and CRC are added automatically - do **not** include them. Maximum 253 bytes (the Modbus PDU limit): an
@@ -139,10 +139,12 @@ to `address`, and routes the reply straight back to that action's own handlers, 
 
 ### Common Configuration Variables
 
-- **address** (**Required**, templatable, int): The Modbus device address the frame is sent to.
+- **address** (**Required**, templatable, 8-bit hex): The Modbus device address the frame is sent to. Accepts
+  `0`-`255`; the valid Modbus device range is `1`-`247`, and `0` is broadcast (no reply will ever arrive; see
+  [Behavior](#behavior)).
 - **modbus_id** (*Optional*, [ID](/guides/configuration-types#id)): The Modbus hub to send on. Automatically assigned
   when a single hub is configured.
-- **start_address** (**Required**, templatable, int): The starting register or coil address.
+- **start_address** (**Required**, templatable, 16-bit hex): The starting register or coil address.
 - **on_sent** (*Optional*, [Automation](/automations/)): Fires when the frame is written to the wire. Lambda
   variable: `request` (`std::span<const uint8_t>`, the PDU sent).
 - **on_response** (*Optional*, [Automation](/automations/)): Fires on a standard-conforming reply. The lambda
@@ -166,15 +168,17 @@ Reads one or more holding registers (function code `0x03`).
 
 #### Configuration Variables
 
-- **count** (*Optional*, templatable, int): Number of registers to read. Defaults to `1`.
+- **count** (*Optional*, templatable, int): 1-125 registers to read. Defaults to `1`.
 
-`on_response` lambda variable: **values** (`std::span<const uint16_t>`, host byte order).
+`on_response` lambda variable: **values** (`std::span<const uint16_t>`, host byte order). `values.size()` is the
+register count actually returned.
 
 ```yaml
 button:
   - platform: template
     name: "Read holding registers"
     on_press:
+      - globals.set: { id: retries, value: '0' }  # reset before each new send, not in a handler
       - modbus_client.read_holding_registers:
           address: 0x01
           start_address: 0x0010
@@ -195,9 +199,10 @@ Reads one or more input registers (function code `0x04`).
 
 #### Configuration Variables
 
-- **count** (*Optional*, templatable, int): Number of registers to read. Defaults to `1`.
+- **count** (*Optional*, templatable, int): 1-125 registers to read. Defaults to `1`.
 
-`on_response` lambda variable: **values** (`std::span<const uint16_t>`, host byte order).
+`on_response` lambda variable: **values** (`std::span<const uint16_t>`, host byte order). `values.size()` is the
+register count actually returned.
 
 ```yaml
 button:
@@ -219,10 +224,11 @@ Reads one or more coils (function code `0x01`).
 
 #### Configuration Variables
 
-- **count** (*Optional*, templatable, int): Number of coils to read. Defaults to `1`.
+- **count** (*Optional*, templatable, int): 1-2000 coils to read. Defaults to `1`.
 
 `on_response` lambda variable: **bits** (`modbus::PackedBits`, an indexable bit view - `bits[i]` is coil
-`start_address + i`).
+`start_address + i`). `bits.size()` is the coil count actually returned; `operator[]` is unchecked, so don't index
+past it.
 
 ```yaml
 button:
@@ -244,10 +250,11 @@ Reads one or more discrete inputs (function code `0x02`).
 
 #### Configuration Variables
 
-- **count** (*Optional*, templatable, int): Number of discrete inputs to read. Defaults to `1`.
+- **count** (*Optional*, templatable, int): 1-2000 discrete inputs to read. Defaults to `1`.
 
 `on_response` lambda variable: **bits** (`modbus::PackedBits`, an indexable bit view - `bits[i]` is input
-`start_address + i`).
+`start_address + i`). `bits.size()` is the input count actually returned; `operator[]` is unchecked, so don't index
+past it.
 
 ```yaml
 button:
@@ -327,7 +334,7 @@ button:
           values: [0x0001, 0x0002, 0x0003]
           on_not_sent:
             then:
-              - logger.log: "write refused at the door"
+              - logger.log: "write refused: hub queue full or duplicate pending"
 ```
 
 ### `modbus_client.write_multiple_coils` Action
@@ -336,7 +343,7 @@ Writes one or more consecutive coils (function code `0x0F`).
 
 #### Configuration Variables
 
-- **values** (**Required**, templatable, list of boolean): Coils to write, `start_address` first.
+- **values** (**Required**, templatable, list of boolean): Coils to write, `start_address` first. 1-1968 coils.
 
 `on_response` fires once the write is acknowledged; it carries no extra lambda variable beyond `request`.
 
@@ -361,10 +368,6 @@ button:
 - The reply handlers run with the action's own context - they do **not** see the enclosing automation's local
   variables (such as the `x` of a containing `on_value`), and the targeted `address` is not passed back to them;
   recompute the configured expression if a handler needs it.
-- None of the reply handlers (`on_sent`, `on_response`, `on_custom_response`, `on_error`, `on_no_response`,
-  `on_not_sent`) may contain deferring actions (`delay`, `wait_until`, `script.wait`, ...) - the request/response
-  data is only valid while the handler runs. Copy any bytes you need into a global first, then defer from a separate
-  script or automation.
 - **Duplicate suppression**: sending an identical frame while one from the same action is already in flight is
   safe. For a read, the second send is rescheduled for a second transmission at the back of the queue once the
   first completes, and still gets its own terminal. For a write or custom command, only one may be in flight - a
@@ -374,6 +377,12 @@ button:
   so a broadcast blocks the bus for that long even though nothing will ever reply. Since exactly one terminal always
   fires, a broadcast always ends in `on_no_response` - a `retry:` lambda attached to it can never be satisfied, so
   without its own counter cap the frame retransmits forever.
+
+> [!NOTE]
+> None of the reply handlers (`on_sent`, `on_response`, `on_custom_response`, `on_error`, `on_no_response`,
+> `on_not_sent`) may contain deferring actions (`delay`, `wait_until`, `script.wait`, ...) - the request/response
+> data is only valid while the handler runs. Copy any bytes you need into a global first, then defer from a separate
+> script or automation.
 
 ## Examples
 
