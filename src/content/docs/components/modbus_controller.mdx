@@ -503,7 +503,7 @@ The response is mapped to the sensor based on `register_count` and offset in byt
 > These methods can be called from a lambda.
 >
 > Here is an example how to set config values to for an EPEVER Trace AN controller.
-> The code synchronizes the local time of the MCU to the epever controller.
+> The code synchronizes the local time of the MCU to the epever device.
 > The time is set by writing 12 bytes to register 0x9013.
 > Then battery charge settings are sent.
 >
@@ -517,7 +517,7 @@ The response is mapped to the sensor based on `register_count` and offset in byt
 >     priority: -100
 >     then:
 >       - lambda: |-
->           // get local time and sync to controller
+>           // get local time and sync to device
 >           auto time = ESPTime::from_epoch_local(::time(nullptr));
 >           int seconds = time.second;
 >           int minutes = time.minute;
@@ -525,23 +525,20 @@ The response is mapped to the sensor based on `register_count` and offset in byt
 >           int day = time.day_of_month;
 >           int month = time.month;
 >           int year = time.year % 100;
->           esphome::modbus_controller::ModbusController *controller = id(epever);
+>           auto *client = id(epever_client);
 >           // if time is not yet synced, skip RTC update
 >           if (time.is_valid()) {
 >             // create the payload
->             std::vector<uint16_t> rtc_data = {uint16_t((minutes << 8) | seconds), uint16_t((day << 8) | hour),
+>             uint16_t[] rtc_data = {uint16_t((minutes << 8) | seconds), uint16_t((day << 8) | hour),
 >                                               uint16_t((year << 8) | month)};
->             // Create a Modbus command item with the time information as the payload
->             esphome::modbus_controller::ModbusCommandItem set_rtc_command =
->                 esphome::modbus_controller::ModbusCommandItem::create_write_multiple_command(controller, 0x9013, 3, rtc_data);
->             // Submit the command to the send queue
->             epever->queue_command(set_rtc_command);
+>             // Send an ad-hoc modbus command
+>             client->write_multiple_registers(0x9013, rtc_data);
 >             ESP_LOGI("ModbusLambda", "EPSOLAR RTC set to %02d:%02d:%02d %02d.%02d.%04d", hour, minutes, seconds, day, month,
 >                     year + 2000);
 >           }
 >           // Battery settings
 >           // Note: these values are examples only and apply my AGM Battery
->           std::vector<uint16_t> battery_settings1 = {
+>           uint16_t[] battery_settings1 = {
 >               0,       // 9000 Battery Type 0 =  User
 >               0x0073,  // 9001 Battery Cap 0x55 == 115AH
 >               0x012C,  // 9002 Temp compensation -3V /°C/2V
@@ -560,21 +557,12 @@ The response is mapped to the sensor based on `register_count` and offset in byt
 >           };
 >
 >           // Boost and equalization periods
->           std::vector<uint16_t> battery_settings2 = {
+>           uint16_t[] battery_settings2 = {
 >               0x0000,  // 906B Equalize Duration (min.) 0
 >               0x0075   // 906C Boost Duration (aka absorb) 117 mins
 >           };
->           esphome::modbus_controller::ModbusCommandItem set_battery1_command =
->               esphome::modbus_controller::ModbusCommandItem::create_write_multiple_command(controller, 0x9000, battery_settings1.size() ,
->                                                                                           battery_settings1);
->
->           esphome::modbus_controller::ModbusCommandItem set_battery2_command =
->               esphome::modbus_controller::ModbusCommandItem::create_write_multiple_command(controller, 0x906B, battery_settings3.size(),
->                                                                                           battery_settings2);
->           delay(200) ;
->           controller->queue_command(set_battery1_command);
->           delay(200) ;
->           controller->queue_command(set_battery2_command);
+>           client->write_multiple_registers(0x9000, battery_settings1);
+>           client->write_multiple_registers(0x906B, battery_settings2);
 >           ESP_LOGI("ModbusLambda", "EPSOLAR Battery set");
 >
 > uart:
@@ -597,6 +585,12 @@ The response is mapped to the sensor based on `register_count` and offset in byt
 >     command_throttle: 0ms
 >     setup_priority: -10
 >     update_interval: ${updates}
+> 
+> # This is just a hook for the lambdas above
+> modbus_client:
+>   - id: epever_client
+>     address: 0x1
+>     modbus_id: mod_bus_epever
 >
 > sensor:
 >   - platform: modbus_controller

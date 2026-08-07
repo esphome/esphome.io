@@ -8,7 +8,7 @@ import APIRef from '@components/APIRef.astro';
 <span id="modbus"></span>
 
 The Modbus protocol is used by many consumer and industrial devices for communication.
-This component allows components in ESPHome to communicate to those devices via RTU protocol. You can access the coils, inputs, holding, read registers from your devices as sensors, switches, selects, numbers or various other ESPHome components and present them to your favorite Home Automation system. You can even write them as binary or float ouptputs from ESPHome.
+This component allows components in ESPHome to communicate to those devices via RTU protocol. You can access the coils, inputs, holding, read registers from your devices as sensors, switches, selects, numbers or various other ESPHome components and present them to your favorite Home Automation system. You can even write them as binary or float outputs from ESPHome.
 
 The various sub-components implement some of the Modbus functions below (depending on their required functionality):
 
@@ -31,6 +31,13 @@ uart:
   ...
 
 modbus:
+  role: client
+  id: my_client_hub
+  
+on_xxx:
+  then:
+    - lambda: id(my_client_hub).send_pdu(0x07, modbus::helpers::create_write_single_register_pdu(0x05, 0xBEEF));
+
 ```
 
 ## Configuration variables
@@ -56,21 +63,11 @@ modbus:
 
 - **role** (*Optional*, string): The role of this component, `client` or `server`. Defaults to `client`.
 
-Ad-hoc requests from automations and lambdas are provided by the [Modbus Client](/components/modbus_client/)
-actions; `modbus_client.send` without reply handlers is the fire-and-forget way to put a frame on the bus.
-
 ## See Also
-
-- [Modbus Client](/components/modbus_client/)
-- [Modbus Controller](/components/modbus_controller/)
-- [Modbus Server](/components/modbus_server/)
-- [Modbus Controller Sensor](/components/sensor/modbus_controller/)
-- [Modbus Controller Binary Sensor](/components/binary_sensor/modbus_controller/)
-- [Modbus Controller Output](/components/output/modbus_controller/)
-- [Modbus Controller Switch](/components/switch/modbus_controller/)
-- [Modbus Controller Number](/components/number/modbus_controller/)
-- [Modbus Controller Select](/components/select/modbus_controller/)
-- [Modbus Controller Text Sensor](/components/text_sensor/modbus_controller/)
+- For polling multiple registers/coils and mapping the response to various kinds of sensors, use [Modbus Controller](/components/modbus_controller/)
+- For YAML actions to send ad-hoc requests to individual devices use [Modbus Client](/components/modbus_client)
+- For serving registers in response to client requests from another device, use [Modbus Server](/components/modbus_server/)
 - [Modbus RTU Protocol Description](https://www.modbustools.com/modbus.html)
 - [UART Bus](/components/uart)
+- C++ client component authors should subclass `modbus::ModbusClientDevice`
 - <APIRef text="modbus.h" path="modbus/modbus.h" />

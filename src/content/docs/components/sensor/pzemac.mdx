@@ -121,22 +121,16 @@ esphome:
     ## make sure priority is lower than setup_priority of modbus_controller
     priority: -100
     then:
-      - lambda: |-
-          auto new_address = 0x03;
-
-          if(new_address < 0x01 || new_address > 0xF7) // sanity check
-          {
-            ESP_LOGE("ModbusLambda", "Address needs to be between 0x01 and 0xF7");
-            return;
-          }
-
-          esphome::modbus_controller::ModbusController *controller = id(pzem);
-          auto set_addr_cmd = esphome::modbus_controller::ModbusCommandItem::create_write_single_command(
-            controller, 0x0002, new_address);
-
-          delay(200) ;
-          controller->queue_command(set_addr_cmd);
-          ESP_LOGI("ModbusLambda", "PZEM Addr set");
+      - modbus_client.write_single_register:
+          address: 0x01 # current address
+          start_address: 0x02
+          value: 0x0003 # new address
+          on_response: 
+            then: 
+              - log: "PZEM address set"
+          on_error:
+            then:
+              - log: "PZEM address could not be set!"
 
 modbus:
   send_wait_time: 200ms
