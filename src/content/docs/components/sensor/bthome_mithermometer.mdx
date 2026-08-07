@@ -1,0 +1,63 @@
+---
+description: "Instructions for setting up BTHome BLE thermometer/hygrometer sensors in ESPHome."
+title: "BTHome MiThermometer Sensor"
+---
+import APIRef from '@components/APIRef.astro';
+
+
+The `bthome_mithermometer` sensor platform lets you receive measurements broadcast by
+[BTHome](https://bthome.io/)-format Bluetooth Low Energy devices — for example Xiaomi/Mijia
+thermometers running the [ATC](https://github.com/atc1441/ATC_MiThermometer) or
+[PVVX](https://github.com/pvvx/ATC_MiThermometer) custom firmware in BTHome mode. The component
+listens passively to the advertisements, so it does not pair with the device and has no impact on
+its battery life.
+
+For choosing between the firmware options of these thermometers (stock MiBeacon, ATC, PVVX and
+their advertisement formats) and for flashing/bindkey instructions, see
+[LYWSD03MMC on the Xiaomi BLE page](/components/sensor/xiaomi_ble#lywsd03mmc) — this page is the
+option reference for the `bthome_mithermometer` platform itself.
+
+```yaml
+# Example configuration entry
+esp32_ble_tracker:
+
+sensor:
+  - platform: bthome_mithermometer
+    mac_address: "A4:C1:38:XX:XX:XX"
+    # bindkey is only needed for devices that encrypt their advertisements
+    bindkey: "231d39c1d7cc1ab1aee224cd096db932"
+    temperature:
+      name: "BTHome Temperature"
+    humidity:
+      name: "BTHome Humidity"
+    battery_level:
+      name: "BTHome Battery Level"
+```
+
+> [!NOTE]
+> A `bindkey` is only required for devices configured to **encrypt** their BTHome advertisements;
+> unencrypted devices work without one. It is the same 32-character (16-byte) hex key you set when
+> enabling encryption on the device (for example in the ATC/PVVX web configurator).
+
+## Configuration variables
+
+- **mac_address** (**Required**, MAC Address): The MAC address of the device to receive data from.
+- **bindkey** (*Optional*, 32-character hex string): The encryption key for devices that broadcast
+  encrypted BTHome advertisements. Omit it for unencrypted devices.
+- **temperature** (*Optional*): The temperature, in °C. All options from [Sensor](/components/sensor).
+- **humidity** (*Optional*): The relative humidity, in %. All options from [Sensor](/components/sensor).
+- **battery_level** (*Optional*): The battery level, in %. All options from [Sensor](/components/sensor).
+- **battery_voltage** (*Optional*): The battery voltage, in V. All options from [Sensor](/components/sensor).
+- **signal_strength** (*Optional*): The signal strength (RSSI), in dBm. All options from [Sensor](/components/sensor).
+- **esp32_ble_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the
+  [ESP32 BLE Tracker](/components/esp32_ble_tracker) to receive advertisements from.
+  Only needed when more than one tracker is configured.
+
+## See Also
+
+- [ESP32 Bluetooth Low Energy Tracker Hub](/components/esp32_ble_tracker/)
+- [Bluetooth Low Energy RSSI Sensor](/components/sensor/ble_rssi/)
+- [Sensor Component](/components/sensor/)
+- [Xiaomi BLE — LYWSD03MMC firmware guide](/components/sensor/xiaomi_ble#lywsd03mmc)
+- [BTHome](https://bthome.io/)
+- <APIRef text="bthome_ble.h" path="bthome_mithermometer/bthome_ble.h" />
