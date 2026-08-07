@@ -23,6 +23,16 @@ templatable and overlapping sends from different actions do not interfere with e
 A [Modbus](/components/modbus/) hub in the client role (the default) is required. `modbus_id` is only needed when
 multiple hubs are configured.
 
+> [!TIP]
+> Three ways to send an ad-hoc command, in order of preference:
+>
+> - **Typed Read/Write Actions** (below) for a standard read or write with a static function code - use this unless
+>   one of the next two applies.
+> - **`modbus_client.send`** for a non-standard PDU, or a function code chosen at runtime instead of fixed in the
+>   YAML.
+> - **Lambda Hook Component** for a write from inside a lambda that's already doing other C++ work, rather than as
+>   a separate automation action - it has no way to read a reply back.
+
 ## Typed Read/Write Actions
 
 Instead of hand-assembling a PDU with `modbus_client.send`, these actions issue a single standard Modbus
@@ -318,34 +328,29 @@ on_...:
 
 ### Building PDUs with Helpers
 
-Instead of hand-assembling bytes, a `pdu` lambda can call the builders in `modbus::helpers` and return the result
-directly (all return types convert to `PduBuffer`).
+The typed actions above call these same builders internally, so for static YAML config, use a typed action instead.
+Reach for a builder directly only when a typed action can't fit: the function code needs to be chosen at runtime
+(`create_read_pdu` takes a `modbus::FunctionCode` value, so one lambda can serve all four read types), or you're
+already writing a `pdu` lambda for something non-standard and want part of it built for you.
 
-- `create_read_pdu(function_code, start_address, count)` - reads; takes a `modbus::FunctionCode` enum value
-  (`READ_COILS`, `READ_DISCRETE_INPUTS`, `READ_HOLDING_REGISTERS`, `READ_INPUT_REGISTERS`).
-- `create_write_single_register_pdu(address, value)` / `create_write_single_coil_pdu(address, on_off)`: single
-  writes.
-- `create_write_registers_pdu(start_address, values)`: function code `0x10` multi-write; `values` is a span of
-  `uint16_t`.
-- `create_write_coils_pdu(start_address, values)`: function code `0x0F` multi-write; `values` is a span of `bool`.
-  `std::vector<bool>` is bit-packed and won't convert to a span - pass a `std::array<bool, N>` or other contiguous
-  bool container instead. An overload taking `PackedBits` (bits already packed as they go on the wire) is also
-  available for callers who need to write a large number of coils.
+- `create_read_pdu(function_code, start_address, count)` - `READ_COILS`, `READ_DISCRETE_INPUTS`,
+  `READ_HOLDING_REGISTERS`, `READ_INPUT_REGISTERS`.
+- `create_write_single_register_pdu(address, value)` / `create_write_single_coil_pdu(address, on_off)`.
+- `create_write_registers_pdu(start_address, values)` - `values` is a span of `uint16_t`.
+- `create_write_coils_pdu(start_address, values)` - `values` is a span of `bool`. `std::vector<bool>` is bit-packed
+  and won't convert to a span - pass a `std::array<bool, N>` instead, or use the `PackedBits` overload if the bits
+  are already packed.
 
-The builders validate their inputs per the Modbus specification (for example read counts and payload sizes) and
-return an *empty* PDU on invalid input, logging the reason. An empty PDU is never sent - the action's `on_not_sent`
-fires instead, so bad inputs fail safe, and loud enough to show up in the logs.
+All return types convert to `PduBuffer`. Invalid input (bad counts, oversize payloads, ...) returns an *empty* PDU
+and logs the reason - the action's `on_not_sent` fires, same as any other empty PDU (see above).
 
 ```yaml
 - modbus_client.send:
     address: 0x01
     pdu: !lambda |-
-      return modbus::helpers::create_read_pdu(
-          modbus::FunctionCode::READ_HOLDING_REGISTERS, 0x0010, 2);
-    on_response:
-      - lambda: |-
-          if (response.size() >= 4)
-            ESP_LOGI("app", "reg 0x10 = %u", (response[2] << 8) | response[3]);
+      auto fc = id(use_input_registers) ? modbus::FunctionCode::READ_INPUT_REGISTERS
+                                         : modbus::FunctionCode::READ_HOLDING_REGISTERS;
+      return modbus::helpers::create_read_pdu(fc, 0x0010, 2);   # function code chosen at runtime
 ```
 
 The enum and the builders live in the `modbus` component's namespaces (`modbus::FunctionCode`,
@@ -434,10 +439,12 @@ Handling the error and timeout branches:
 
 ## Lambda Hook Component
 
-If the above methods don't give you the flexibility you need, you can set up a `modbus_client` component as a hook into lambdas.
-This is useful for doing a one-off write to a coil or some registers.
-This method does not provide a way to read back the response - it's a true fire-and-forget - so it's not so useful for read functions.
-Commands sent using this method are queued on the hub just like any other, so sending multiple requests in quick succession is supported.
+A simpler alternative to the actions above, for use only inside a lambda - not a YAML automation action. It's
+syntactic sugar over the `id(hub).send_pdu(address, pdu)` call shown on the [Modbus](/components/modbus/) page: the
+device's `address` is configured once instead of passed to every call, and the `write_*` methods build the PDU for
+you. There's no callback of any kind, so there's no way to read a reply back - useful for writes only, never reads.
+Commands sent this way are queued on the hub just like any other, so firing off several in quick succession from
+the same lambda is supported.
 
 ```yaml
 modbus_client:
