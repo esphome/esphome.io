@@ -61,10 +61,17 @@
 <style lang="scss">
   @use "../../styles/mixins" as *;
 
+  html[data-theme="light"]:root {
+    :global(.ha-connect) {
+      --nav-links-color: var(--sl-color-white);
+    }
+  }
+
   :global(.ha-connect) {
     --header-height-large: 80px;
     --header-height-small: 80px;
     --header-height: var(--header-height-large);
+    --nav-links-color: var(--sl-color-white);
 
     @include bp(tablet) {
       --header-height-large: 120px;
@@ -72,6 +79,7 @@
 
     &.sticky-header {
       --header-height: var(--header-height-small);
+      --nav-links-color: var(--sl-color-black);
 
       .connect-nav {
         &-inner {
@@ -79,6 +87,8 @@
             opacity: 1;
           }
           .logo {
+            opacity: 1;
+
             img {
               &.light {
                 opacity: 0;
@@ -207,7 +217,7 @@
             text-decoration: none;
             font-size: 0.875rem;
             font-weight: 500;
-            color: var(--sl-color-white);
+            color: var(--nav-links-color);
           }
 
           a.btn {
@@ -221,6 +231,12 @@
 
       .logo {
         display: grid;
+        opacity: 0;
+        transition: opacity 0.3s ease-out;
+
+        @include bp(desktop) {
+          opacity: 1;
+        }
 
         img {
           height: 34px;
