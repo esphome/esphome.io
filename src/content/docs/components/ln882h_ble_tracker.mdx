@@ -66,6 +66,9 @@ ln882h_ble_tracker:
     > As on ESP32 (where ESP-IDF performs the merge), an advertisement and its scan
     > response are combined into a single result, so automations and sensor platforms
     > receive one merged frame containing both payloads — this is where device names come from.
+    > The merge is best-effort: a scannable advertisement is held briefly (up to 300 ms) waiting
+    > for its scan response, and a device that does not answer the scan request is delivered
+    > unmerged (without a name) after that timeout.
 
   - **continuous** (*Optional*, boolean): When `true` the scanner restarts automatically after
     each `duration` period. When `false` a scan runs once for `duration` after
@@ -265,12 +268,13 @@ api:
     - ln882h_ble_tracker.start_scan:
         continuous: true
   on_client_disconnected:
-    # fires for EVERY departing client (log viewer, CLI) — only stop
-    # scanning when the last client is gone (Home Assistant no longer connected)
+    # fires for EVERY departing client (log viewer, CLI) — state_subscription_only
+    # ignores logger-only clients, so scanning stops only when Home Assistant is gone
     - if:
         condition:
           not:
             api.connected:
+              state_subscription_only: true
         then:
           - ln882h_ble_tracker.stop_scan:
 ```
@@ -281,6 +285,11 @@ WiFi while a scan runs. Keep `window: 50ms` and choose the `interval`:
 - `interval: 100ms` → **50 / 50** BLE / WiFi — the LN882H SDK's recommended default
 - `interval: 200ms` → **25 / 75** BLE / WiFi — catches fewer advertisements, but leaves more of
   the core for WiFi
+
+Setting `active: false` is a second lever: the scanner no longer sends scan requests to request
+more data after receiving an advertising packet, keeping the radio cost of each window minimal.
+BTHome/ATC-style sensors that broadcast all their data in the advertisement don't need active
+scanning.
 
 ## See Also
 
