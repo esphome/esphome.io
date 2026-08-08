@@ -138,8 +138,9 @@ write and read functions, so any writable and readable register supports it with
 > (section 6.17) mandates that the write is performed **before** the read, and neither half is rolled back when the
 > request subsequently fails:
 >
-> - If the read half fails — for example because it targets an unmapped or write-only register — the client receives an
->   exception response even though the write has already taken effect.
+> - If the read half fails — for example because it targets an address that is neither mapped nor covered by
+>   `courtesy_response`, or covers only part of a multi-register value that does not set `allow_partial_read` — the
+>   client receives an exception response even though the write has already taken effect.
 > - If a `write_lambda` rejects a value part-way through a multi-register write, the registers written before it keep
 >   their new values. Unwritable addresses and incomplete values are rejected before anything is written, and the read
 >   half is skipped whenever the write half fails.
