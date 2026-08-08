@@ -178,6 +178,74 @@ If you already have a stack trace but need to decode it, you can use the
    > This tool runs entirely in your browser - no data is sent to any server, ensuring your firmware and
    > debug information remain private.
 
+## Boot Loops
+
+A device in a boot loop restarts before it finishes starting up, over and over. It usually never stays online long
+enough to accept an OTA update, which is what makes the problem hard to recover from.
+
+### Recognizing a Boot Loop
+
+[Safe Mode](/components/safe_mode/) counts boots that did not stay up, and reports the count at every boot:
+
+```log
+[C][safe_mode:xxx]: Unsuccessful boot attempts: 3
+[W][safe_mode:xxx]: Last reset too quick; invoke in 7 restarts
+```
+
+Once the counter reaches `num_attempts` (ten by default), safe mode takes over:
+
+```log
+[E][safe_mode:xxx]: Boot loop detected
+[W][safe_mode:xxx]: SAFE MODE IS ACTIVE
+```
+
+A device that starts normally clears the counter after `boot_is_good_after` (one minute by default):
+
+```log
+[I][safe_mode:xxx]: Boot seems successful; resetting boot loop counter
+```
+
+### How Safe Mode Helps
+
+In safe mode every component is disabled except serial logging, the network and OTA. That is enough to upload a
+working firmware, and it is the intended recovery window. Safe mode reboots the device again after
+`reboot_timeout` (five minutes by default), so upload promptly or the device returns to the looping firmware.
+
+You do not have to wait for the counter: pressing the reset button `num_attempts` times in quick succession has the
+same effect, and a [safe mode button](/components/button/safe_mode/) or
+[switch](/components/switch/safe_mode/) can request it from a device that is still reachable.
+
+> [!IMPORTANT]
+> The boot attempt counter is stored in RTC memory by default on the ESP8266, and RTC memory does not survive a
+> power cycle. Repeatedly power cycling a looping device therefore resets the counter and safe mode never triggers.
+> Let the device restart on its own, or set `storage: flash` on the [safe mode](/components/safe_mode/) component.
+
+### Common Causes
+
+- **Inadequate power supply.** Brownouts during the WiFi transmit burst reset the device at roughly the same point
+  in every boot. See ["Brownout detector was triggered"](/guides/faq/#brownout-detector-was-triggered).
+- **A component crashing during setup.** This is the most common software cause. Capture the backtrace as
+  described in [Getting a Stack Trace from Crashes](#getting-a-stack-trace-from-crashes) — it names the component.
+- **A watchdog reset.** A component that blocks the main loop for too long during startup is killed by the
+  watchdog before the boot is ever marked successful. Look for
+  ["Took a long time for an operation"](#took-a-long-time-for-an-operation-warning) warnings in the last boot.
+- **Deep sleep that starts too early.** A device that sleeps before `boot_is_good_after` elapses never marks the
+  boot successful, so it looks like a boot loop. Call the
+  [`safe_mode.mark_successful` action](/components/safe_mode/#safe_mode-mark_successful-action) before sleeping.
+- **A bad OTA update.** On the ESP32, the bootloader can revert to the previous image; this is reported as
+  `OTA rollback detected!` at boot.
+
+Adding the [Debug component](/components/debug/) with its `reset_reason` text sensor makes the distinction between
+these visible directly: a brownout, a watchdog reset and a software restart all report differently.
+
+### Recovering
+
+1. Wait for `SAFE MODE IS ACTIVE`, then upload a known-good configuration over OTA.
+1. If safe mode never activates, the device is crashing before the safe mode component runs, or the counter is
+   being cleared — check the note about power cycling above.
+1. If OTA cannot be used at all, flash over USB. See
+   [Physical Device Connection](/guides/physical_device_connection/).
+
 ## Adjusting Log Levels for Debugging
 
 When troubleshooting issues with your ESPHome device, increasing the log level can provide more detailed information
