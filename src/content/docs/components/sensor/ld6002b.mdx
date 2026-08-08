@@ -218,7 +218,16 @@ sensor:
 > - throttle_with_priority: 1s
 > ```
 >
-> Giving a sensor its own `filters:` replaces the defaults; use `filters: []` to drop them.
+> Giving a sensor its own `filters:` replaces the defaults; use `filters: []` to drop them. For
+> example, to get faster updates on a single axis:
+>
+> ```yaml
+>     target_1:
+>       x:
+>         name: Target-1 X
+>         filters:
+>           - throttle_with_priority: 300ms
+> ```
 
 If a **Target Display** switch is configured, its `restore_mode` decides whether target reporting
 starts on boot; the default is `RESTORE_DEFAULT_ON`. Without that switch, the component enables
