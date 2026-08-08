@@ -360,8 +360,7 @@ rf_bridge:
             low: !lambda 'char buf[5]; return format_hex_to(buf, data.low);'
             high: !lambda 'char buf[5]; return format_hex_to(buf, data.high);'
             code: !lambda 'char buf[9]; return format_hex_to(buf, data.code);'
-
-    - homeassistant.event:
+      - homeassistant.event:
           event: esphome.rf_code_received
           data:
             sync: !lambda 'return data.sync;'

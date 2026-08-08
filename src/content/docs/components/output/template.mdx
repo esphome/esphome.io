@@ -51,16 +51,16 @@ It is possible to access the state value inside Lambdas:
 
 ```yaml
 - platform: template
-    id: my_output
-    type: float
-    write_action:
-      - if:
-          condition:
-            lambda: return ((state > 0) && (state < .4));
-          then:
-            - output.turn_on: button_off
-            - delay: 500ms
-            - output.turn_off: button_off
+  id: my_output
+  type: float
+  write_action:
+    - if:
+        condition:
+          lambda: return ((state > 0) && (state < .4));
+        then:
+          - output.turn_on: button_off
+          - delay: 500ms
+          - output.turn_off: button_off
 ```
 
 Complete example: [Sonoff Dual Light Switch](https://devices.esphome.io/devices/Sonoff-Dual-DIY-light).

@@ -126,43 +126,43 @@ spi:
   mosi_pin: GPIOXX
 
 sensor:
-    - platform: atm90e26
-        cs_pin: GPIOXX
-        voltage:
-            name: House Voltage
-            accuracy_decimals: 1
-            filters:
-                - multiply: 4
-        current:
-            name: House Amps
-  # The max value for current that the meter can output is 65.535. If you expect to measure current over 65A,
-  # divide the gain_ct by 2 (120A CT) or 4 (200A CT) and multiply the current and power values by 2 or 4 by uncommenting the filter below
-  #      filters:
-  #        - multiply: 2
-        power:
-            name: House Watts
-            accuracy_decimals: 1
-            filters:
-                - multiply: 4
-        reactive_power:
-            name: House Reactive Power
-        power_factor:
-            name: House Power Factor
-            accuracy_decimals: 2
-        forward_active_energy:
-            name: House Forward Active Energy
-        reverse_active_energy:
-            name: House Reverse Active Energy
-        frequency:
-            name: House Freq
-        line_frequency: 50Hz
-        pl_const: ${plconst_cal}
-        meter_constant: '3200.0'  # My old rotating-disc meter has a meter constant of 1666.66
-        gain_metering: ${metering_cal}
-        gain_voltage: ${voltage_cal}
-        gain_ct: ${current_cal}
-        gain_pga: 1X
-        update_interval: '10s'
+  - platform: atm90e26
+    cs_pin: GPIOXX
+    voltage:
+      name: House Voltage
+      accuracy_decimals: 1
+      filters:
+        - multiply: 4
+    current:
+      name: House Amps
+      # The max value for current that the meter can output is 65.535. If you expect to measure current over 65A,
+      # divide the gain_ct by 2 (120A CT) or 4 (200A CT) and multiply the current and power values by 2 or 4 by uncommenting the filter below
+      #      filters:
+      #        - multiply: 2
+    power:
+      name: House Watts
+      accuracy_decimals: 1
+      filters:
+        - multiply: 4
+    reactive_power:
+      name: House Reactive Power
+    power_factor:
+      name: House Power Factor
+      accuracy_decimals: 2
+    forward_active_energy:
+      name: House Forward Active Energy
+    reverse_active_energy:
+      name: House Reverse Active Energy
+    frequency:
+      name: House Freq
+    line_frequency: 50Hz
+    pl_const: ${plconst_cal}
+    meter_constant: '3200.0'  # My old rotating-disc meter has a meter constant of 1666.66
+    gain_metering: ${metering_cal}
+    gain_voltage: ${voltage_cal}
+    gain_ct: ${current_cal}
+    gain_pga: 1X
+    update_interval: '10s'
 ```
 
 ## See Also

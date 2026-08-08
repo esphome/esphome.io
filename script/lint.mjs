@@ -4,6 +4,7 @@ import { readFile, stat, readdir } from "fs/promises";
 import { join, basename, dirname, extname } from "path";
 import { execSync } from "child_process";
 import { fileURLToPath } from "url";
+import YAML from "yaml";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -532,6 +533,76 @@ function checkAutomationHeadings(fname, content) {
   }
 }
 
+// ---------------------------------------------------------------------------
+// YAML example validation
+// ---------------------------------------------------------------------------
+
+// Documentation examples are often deliberately incomplete, and two idioms mark them as such:
+// a line consisting only of "..." ("and the rest of your configuration here"), and an "on_...:" /
+// "on...:" key standing in for whichever trigger applies. Neither can be parsed as YAML, so blocks
+// carrying either marker are skipped; everything else is expected to parse, because a reader will
+// paste it into their own configuration.
+const yamlSkipMarkers = [/^\s*\.\.\.\s*$/, /^\s*on[a-z_]*\.\.\.\s*:/];
+
+// Errors a valid ESPHome example still produces:
+//   TAG_RESOLVE_FAILED - custom tags (!lambda, !secret, !include, ...) are unknown to a stock parser.
+//   DUPLICATE_KEY      - one block commonly shows two alternative configurations for the same key.
+const yamlIgnoredErrors = new Set(["TAG_RESOLVE_FAILED", "DUPLICATE_KEY"]);
+
+// Extract fenced ```yaml blocks, remembering the line the fence opened on and the indentation to
+// strip from blocks nested inside a list item.
+function extractYamlBlocks(content) {
+  const lines = content.split("\n");
+  const blocks = [];
+  let open = null;
+
+  for (let i = 0; i < lines.length; i++) {
+    if (!open) {
+      const fence = lines[i].match(/^(\s*)(`{3,})\s*([A-Za-z0-9_-]*)\s*$/);
+      if (fence) {
+        open = { indent: fence[1], fence: fence[2], lang: fence[3].toLowerCase(), start: i + 1, body: [] };
+      }
+      continue;
+    }
+
+    const close = lines[i].match(/^\s*(`{3,})\s*$/);
+    if (close && close[1].length >= open.fence.length) {
+      if (open.lang === "yaml" || open.lang === "yml") blocks.push(open);
+      open = null;
+      continue;
+    }
+
+    open.body.push(lines[i].startsWith(open.indent) ? lines[i].slice(open.indent.length) : lines[i]);
+  }
+
+  return blocks;
+}
+
+function checkYamlExamples(fname, content) {
+  for (const { start, body } of extractYamlBlocks(content)) {
+    if (body.some((line) => yamlSkipMarkers.some((marker) => marker.test(line)))) continue;
+
+    let errors;
+    try {
+      errors = YAML.parseDocument(body.join("\n"), { logLevel: "silent" }).errors;
+    } catch (error) {
+      addError(fname, start, 1, `YAML example could not be parsed: ${error.message.split("\n")[0]}`);
+      continue;
+    }
+
+    // One report per block: later errors are usually cascades from the first.
+    const error = errors.find((e) => !yamlIgnoredErrors.has(e.code));
+    if (!error) continue;
+
+    addError(
+      fname,
+      start + (error.linePos?.[0]?.line ?? 1),
+      error.linePos?.[0]?.col ?? 1,
+      `Invalid YAML example (${error.code}): ${error.message.split("\n")[0]}`,
+    );
+  }
+}
+
 // Main execution
 async function main() {
   console.log(`${colors.cyan}Running ESPHome documentation linter...${colors.reset}\n`);
@@ -592,6 +663,7 @@ async function main() {
       checkEndNewline(fname, content);
       checkEsphomeLinks(fname, content);
       checkAutomationHeadings(fname, content);
+      checkYamlExamples(fname, content);
       await checkInternalLinks(fname, content, anchorCache);
     } catch (error) {
       if (error.code !== "ENOENT") {
