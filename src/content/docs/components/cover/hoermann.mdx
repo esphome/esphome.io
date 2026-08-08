@@ -11,13 +11,13 @@ The `hoermann` component allows you to control Hörmann garage door motors throu
 into the motor. It emulates the Hörmann UAP1 module, so the motor's bus controller communicates
 with ESPHome just like it would with Hörmann's own accessory.
 
-The following Serie 4 motors communicate over the HCP bus (Modbus RTU) and should be supported:
+The following Series 4 motors communicate over the HCP bus (Modbus RTU) and should be supported:
 
-* SupraMatic E/P Serie 4
-* ProMatic Serie 4
+* SupraMatic E/P Series 4
+* ProMatic Series 4
 
 > [!NOTE]
-> Only Serie 4 motors are supported. Older motors use a different connector pinout and a
+> Only Series 4 motors are supported. Older motors use a different connector pinout and a
 > completely different protocol.
 >
 > This component implements the same protocol as the [HCPBridge](https://github.com/hkiam/HCPBridge)
@@ -57,8 +57,8 @@ ESP32 (or another ESPHome-supported chip) you need four things:
 
 - an **RJ12 plug and cable** to connect to the motor's 6-pin bus socket;
 - an **RS485 transceiver** wired to the [UART bus](/components/uart/);
-- a **step-down (buck) converter** that derives 5 V for the ESP32 and the transceiver from the bus
-  voltage (e.g. LM2596S); and
+- a **step-down (buck) converter** that derives 5 V for the ESP32 from the bus voltage
+  (e.g. LM2596S); and
 - a **120 Ω termination resistor** across the RS485 data lines, as required by the RS485/Modbus
   standard.
 
@@ -78,15 +78,20 @@ The motor exposes the bus on a 6-pin socket with the following pinout:
 > and 2) and +25 V (pins 5 and 6) contacts are each duplicated on the motor side, so you only need
 > to connect **one** pin from each pair (the diagram uses pins 1 and 5).
 
-Wire the adapter as shown below: a +25 V pin feeds the buck converter's input, its 5 V output powers
-both the ESP32 and the RS485 transceiver, the A+/B− data lines connect to the transceiver (with the
-120 Ω resistor bridging them), and the transceiver's serial pins connect to the ESP32 UART pins you
-set in the `uart:` block.
+Wire the adapter as shown below: a +25 V pin feeds the buck converter's input and its 5 V output
+powers the ESP32, whose 3.3 V rail in turn supplies the RS485 transceiver. The A+/B− data lines
+connect to the transceiver (with the 120 Ω resistor bridging them), and the transceiver's serial pins
+connect to the ESP32 UART pins you set in the `uart:` block.
+
+> [!IMPORTANT]
+> Power the transceiver from the ESP32's 3.3 V rail, not from the buck converter's 5 V output. The
+> ESP32's GPIOs are not 5 V tolerant, so a 5 V-powered transceiver would drive its receiver output
+> above what the `rx_pin` can safely accept.
 
 <Figure
   src={hoermannWiringImg}
   alt="Wiring diagram of a Hörmann motor connected to an ESP32 through a buck converter and an RS485 transceiver"
-  caption="Example adapter: the motor's +25 V powers a buck converter that supplies 5 V to the ESP32 and an RS485 transceiver; A+/B− carry the HCP (Modbus RTU) data, terminated with 120 Ω."
+  caption="Example adapter: a buck converter powers the ESP32 from the bus's +25 V supply."
   layout="constrained"
 />
 
@@ -101,9 +106,10 @@ set in the `uart:` block.
 > switched off until then, and the motor keeps it on only if the emulated UAP1 answers during the
 > scan — otherwise it cuts the power again.
 >
-> After wiring the adapter to the bus, trigger a bus scan (usually done by flicking the bottommost switch in the motor on and off again) from the motor's menu to power it up and
-> let the motor detect it. Repeat the bus scan procedure (on/off) if something goes wrong, or before
-> you disconnect the adapter.
+> After wiring the adapter to the bus, trigger a bus scan from the motor's menu to power it up and
+> let the motor detect it. This is usually done by flicking the bottommost switch in the motor on and
+> off again. Repeat the bus scan procedure (on/off) if something goes wrong, or before you disconnect
+> the adapter.
 
 ## Component/Hub
 
