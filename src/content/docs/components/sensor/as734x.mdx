@@ -1,6 +1,6 @@
 ---
-description: "Instructions for setting up AS7341 and AS7343 spectral color sensors."
-title: "AS7341 / AS7343 Spectral Color Sensor"
+description: "Instructions for setting up AS7341, AS7343 and TCS3448 spectral color sensors."
+title: "AS7341 / AS7343 / TCS3448 Spectral Color Sensor"
 ---
 
 import Figure from '@components/Figure.astro';
@@ -10,7 +10,10 @@ The `as734x` sensor platform allows you to use the AS7341
 ([datasheet](https://look.ams-osram.com/m/24266a3e584de4db/original/AS7341-DS000504.pdf),
 [Adafruit](https://www.adafruit.com/product/4698)) and AS7343
 ([datasheet](https://look.ams-osram.com/m/5f2d27fff9a874d2/original/AS7343-14-Channel-Multi-Spectral-Sensor.pdf))
-spectral color sensors with ESPHome. The sensor is selected with the `type` option. The
+spectral color sensors with ESPHome. The TCS3448
+([datasheet](https://look.ams-osram.com/m/1c24b057e65ee61e/original/TCS3448-14-Channel-multi-spectral-sensor.pdf))
+is supported as well: it replaces the AS7343 and shares its channels, register map and calibration, so
+everything written below about the AS7343 applies to it too. The sensor is selected with the `type` option. The
 [I²C Bus](/components/i2c/) is required to be set up in your configuration for this sensor to work.
 
 <Figure
@@ -42,7 +45,7 @@ sensor:
 
 ## Configuration variables
 
-- **type** (**Required**, string): The sensor model. Must be either `AS7341` or `AS7343`.
+- **type** (**Required**, string): The sensor model. Must be `AS7341`, `AS7343` or `TCS3448`.
 - **counts** (*Optional*): The raw per-channel readings to publish. Each channel is optional; only the channels
   you list are published. The available channels depend on `type`, see [Channels](#channels) below. Each channel
   accepts all options from [Sensor](/components/sensor/), or just a name as a shorthand.
@@ -60,15 +63,16 @@ sensor:
   - `X128`
   - `X256`
   - `X512`
-  - `X1024` (`AS7343` only)
-  - `X2048` (`AS7343` only)
+  - `X1024` (`AS7343` and `TCS3448` only)
+  - `X2048` (`AS7343` and `TCS3448` only)
 
 - **atime** (*Optional*, int): The number of integration steps. Defaults to `29`. Must be between `0` and `255`.
 - **astep** (*Optional*, int): The length of one integration step in increments of 2.78µs. Defaults to `599`.
   Must be between `0` and `65534`.
 - **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to check the sensor.
   Defaults to `60s`.
-- **address** (*Optional*, int): The I²C address of the sensor. Defaults to `0x39`.
+- **address** (*Optional*, int): The I²C address of the sensor. Defaults to `0x39`, or to `0x59` when `type`
+  is `TCS3448`, which answers on a different address than the AS7343.
 - All other options from [Sensor](/components/sensor/) and [I²C Bus](/components/i2c/).
 
 > [!NOTE]
@@ -81,7 +85,7 @@ Each channel is a photodiode with an optical filter in front of it, centered on 
 
 The AS7343 has three channels the AS7341 does not have (`fz`, `fy` and `fxl`), and the channels the two models
 share are not centered on the same wavelengths. The same channel key therefore does not mean the same thing on
-both models.
+both models. The TCS3448 has the same channels as the AS7343.
 
 ### AS7341
 
