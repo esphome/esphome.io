@@ -10,7 +10,10 @@ This ESPHome component enables *wired* Ethernet connections for ESP32 and RP2040
 - **ESP32**: Supports RMII PHY chips (LAN8720, RTL8201, etc.) and SPI Ethernet chips (W5500, DM9051, ENC28J60).
 - **RP2040/RP2350**: Supports SPI/PIO Ethernet chips (W5100, W5500, W6100, W6300, ENC28J60).
 
-This component and the Wi-Fi component may **not** be used simultaneously, even if both are physically available.
+On ESP32 family devices, Ethernet may be configured alongside [WiFi](/components/wifi/) in the same configuration;
+this requires a `network:` `priority:` list naming both interfaces — see
+[Multi-Interface Support](/components/network/#multi-interface-support) on the [Network](/components/network/)
+component. Using more than one network interface is not supported on other platforms.
 
 ```yaml
 # Example configuration entry for RMII chips
