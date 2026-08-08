@@ -51,7 +51,11 @@ function addWordBreaks(text: string): string {
         }
       }
 
-      const resolvedLink = link.endsWith("/") ? link : `${link}/`;
+      // Pages are served with a trailing slash, but only site-relative paths are ours to
+      // canonicalise, and the slash belongs before any fragment.
+      const [path, fragment] = link.split("#");
+      const isPage = link.startsWith("/") && !/\.[a-z0-9]{2,5}$/i.test(path);
+      const resolvedLink = isPage ? path.replace(/\/?$/, "/") + (fragment ? `#${fragment}` : "") : link;
       const resolvedImage = resolveImagePath(image);
 
       return (
