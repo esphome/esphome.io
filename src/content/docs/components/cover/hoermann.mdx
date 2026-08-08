@@ -147,10 +147,34 @@ cover:
   `hoermann` hub. Only required if you have more than one hub.
 - All other options from [Cover](/components/cover#config-cover).
 
+## Binary Sensor
+
+The `hoermann` binary sensor platform exposes diagnostic information about the connection to the
+motor's bus controller.
+
+```yaml
+binary_sensor:
+  - platform: hoermann
+    is_connected:
+      name: Garage Connected
+```
+
+### Configuration variables
+
+- **is_connected** (*Optional*): `true` while the motor's bus controller is polling the emulated UAP1
+  module. Turns `false` if the motor stops responding, for example after the bus power is cut.
+
+  - All options from [Binary Sensor](/components/binary_sensor#config-binary_sensor).
+
+- **hoermann_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the
+  `hoermann` hub. Only required if you have more than one hub.
+
 ## See Also
 
 - [Cover Component](/components/cover/)
+- [Binary Sensor Component](/components/binary_sensor/)
 - [Modbus](/components/modbus/)
 - [HCPBridge project](https://github.com/hkiam/HCPBridge)
 - [Automation](/automations)
 - <APIRef text="hoermann_cover.h" path="hoermann/cover/hoermann_cover.h" />
+- <APIRef text="hoermann_binary_sensor.h" path="hoermann/binary_sensor/hoermann_binary_sensor.h" />
