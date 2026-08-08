@@ -314,7 +314,7 @@ number:
   meters. All options from
   [Number](/components/number#config-number).
 - **low_power_sleep_time** (*Optional*, range `0`–`60000` ms, step `100`): Low power sleep time in
-  milliseconds (default 500 ms, which the datasheet also gives as the highest recommended value). When
+  milliseconds (default 500 ms). When
   low-power mode is enabled and the area is unattended, the module sleeps for this interval between
   scans; higher values reduce idle power but increase detection latency. All options from
   [Number](/components/number#config-number).
@@ -399,8 +399,9 @@ switch:
 > Each switch applies its own [`restore_mode`](/components/switch#config-switch) on boot. `point_cloud`
 > and `low_power` keep the standard `ALWAYS_OFF` default, so enable **Point Cloud** when you want the
 > stream. `target_display` defaults to `RESTORE_DEFAULT_ON`, so target reporting starts on unless a
-> stored state or your own `restore_mode` says otherwise. The full point cloud is not exposed as a text
-> sensor; use `point_count` to monitor how many points are returned.
+> stored state or your own `restore_mode` says otherwise. `inverted` is not available on these
+> switches: they report what the module is doing, not how something is wired to it. The full point
+> cloud is not exposed as a text sensor; use `point_count` to monitor how many points are returned.
 >
 > The `low_power` switch enables or disables low-power mode. The `work_mode` text sensor reflects the
 > current operating state, which may stay in `normal` while movement is detected.
