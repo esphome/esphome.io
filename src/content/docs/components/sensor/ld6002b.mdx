@@ -5,7 +5,6 @@ title: "LD6002B 3D Presence Radar"
 
 import Figure from '@components/Figure.astro';
 import APIRef from '@components/APIRef.astro';
-import ld6002bImg from './images/ld6002b.png';
 
 ## Component
 
@@ -25,7 +24,7 @@ The [UART](/components/uart) component is required. `baud_rate`, `data_bits`, `p
 > reset command, so use a UART that stays quiet during boot.
 
 <Figure
-  src={ld6002bImg}
+  src="/images/ld6002b.png"
   alt="HLK-LD6002B module, antenna side"
   caption="HLK-LD6002B 3D presence radar module, shown in the intended mounting orientation"
 />
@@ -190,6 +189,12 @@ sensor:
 
   All options above inherit from [Sensor](/components/sensor).
 
+  Slot identity comes from the module's own spatial clustering, so it is stable rather than perfect:
+  two people standing very close together can merge into a single target, a track's cluster ID can
+  occasionally change while the person is still in the room, and a slot left by someone who leaves is
+  reused by the next new person. Watch `cluster_id` to see when a slot changes hands; it is published
+  only when the value changes, not on every frame.
+
 - **interference_area_N** (*Optional*): Interference (mask) area coordinates (N = 0 to 3). Each area
   provides `x_min`, `x_max`, `y_min`, `y_max`, `z_min`, `z_max` sensors. All options from
   [Sensor](/components/sensor).
@@ -212,22 +217,13 @@ sensor:
 >
 > Giving a sensor its own `filters:` replaces the defaults; use `filters: []` to drop them.
 
-> [!NOTE]
-> If a **Target Display** switch is configured, its `restore_mode` decides whether target reporting
-> starts on boot; the default is `RESTORE_DEFAULT_ON`. Without that switch, the component enables
-> target reporting automatically when any target sensors or the `work_mode` text sensor are
-> configured. While target reporting is disabled, target sensors remain `unknown`.
+If a **Target Display** switch is configured, its `restore_mode` decides whether target reporting
+starts on boot; the default is `RESTORE_DEFAULT_ON`. Without that switch, the component enables
+target reporting automatically when any target sensors or the `work_mode` text sensor are
+configured. While target reporting is disabled, target sensors remain `unknown`.
 
-> [!NOTE]
-> Slot identity comes from the module's own spatial clustering, so it is stable rather than perfect:
-> two people standing very close together can merge into a single target, a track's cluster ID can
-> occasionally change while the person is still in the room, and a slot left by someone who leaves is
-> reused by the next new person. Watch `cluster_id` to see when a slot changes hands; it is published
-> only when the value changes, not on every frame.
-
-> [!NOTE]
-> If you configure any area sensors or area configuration numbers, the component requests stored
-> area data on boot. You can also use **Get Areas** to refresh the values.
+If you configure any area sensors or area configuration numbers, the component requests stored
+area data on boot. You can also use **Get Areas** to refresh the values.
 
 > [!NOTE]
 > If a `point_cloud` switch is configured, it owns the point cloud stream and its `restore_mode` decides
@@ -324,9 +320,6 @@ number:
   `button.apply_area` on the same `ld6002b` (enforced at compile time); set the values, then press
   **Apply Area** to send them. A minimum above its matching maximum is rejected with a warning
   instead of being written.
-
-> [!NOTE]
-> The module documentation recommends keeping the low power sleep time at or below 500 ms.
 
 ## Select
 
@@ -613,45 +606,6 @@ sensor:
         name: Interference-0 Z Min
       z_max:
         name: Interference-0 Z Max
-    interference_area_1:
-      x_min:
-        name: Interference-1 X Min
-      x_max:
-        name: Interference-1 X Max
-      y_min:
-        name: Interference-1 Y Min
-      y_max:
-        name: Interference-1 Y Max
-      z_min:
-        name: Interference-1 Z Min
-      z_max:
-        name: Interference-1 Z Max
-    interference_area_2:
-      x_min:
-        name: Interference-2 X Min
-      x_max:
-        name: Interference-2 X Max
-      y_min:
-        name: Interference-2 Y Min
-      y_max:
-        name: Interference-2 Y Max
-      z_min:
-        name: Interference-2 Z Min
-      z_max:
-        name: Interference-2 Z Max
-    interference_area_3:
-      x_min:
-        name: Interference-3 X Min
-      x_max:
-        name: Interference-3 X Max
-      y_min:
-        name: Interference-3 Y Min
-      y_max:
-        name: Interference-3 Y Max
-      z_min:
-        name: Interference-3 Z Min
-      z_max:
-        name: Interference-3 Z Max
     detection_area_0:
       x_min:
         name: Detection-0 X Min
@@ -665,45 +619,7 @@ sensor:
         name: Detection-0 Z Min
       z_max:
         name: Detection-0 Z Max
-    detection_area_1:
-      x_min:
-        name: Detection-1 X Min
-      x_max:
-        name: Detection-1 X Max
-      y_min:
-        name: Detection-1 Y Min
-      y_max:
-        name: Detection-1 Y Max
-      z_min:
-        name: Detection-1 Z Min
-      z_max:
-        name: Detection-1 Z Max
-    detection_area_2:
-      x_min:
-        name: Detection-2 X Min
-      x_max:
-        name: Detection-2 X Max
-      y_min:
-        name: Detection-2 Y Min
-      y_max:
-        name: Detection-2 Y Max
-      z_min:
-        name: Detection-2 Z Min
-      z_max:
-        name: Detection-2 Z Max
-    detection_area_3:
-      x_min:
-        name: Detection-3 X Min
-      x_max:
-        name: Detection-3 X Max
-      y_min:
-        name: Detection-3 Y Min
-      y_max:
-        name: Detection-3 Y Max
-      z_min:
-        name: Detection-3 Z Min
-      z_max:
-        name: Detection-3 Z Max
+    # interference_area_1..3 and detection_area_1..3 follow the same shape
 
 text_sensor:
   - platform: ld6002b
@@ -795,7 +711,7 @@ button:
 
 ## See Also
 
-- [HLK-LD6002B 3D Presence Module Communication Protocol V1.2](http://h.hlktech.com/download/HLK-LD6002B/1/HLK-LD6002B-3D%E5%AD%98%E5%9C%A8%E6%A8%A1%E7%BB%84%E9%80%9A%E4%BF%A1%E5%8D%8F%E8%AE%AEV1.2.pdf)
+- [HLK-LD6002B 3D Presence Module Communication Protocol V1.2](https://h.hlktech.com/download/HLK-LD6002B/1/HLK-LD6002B-3D%E5%AD%98%E5%9C%A8%E6%A8%A1%E7%BB%84%E9%80%9A%E4%BF%A1%E5%8D%8F%E8%AE%AEV1.2.pdf)
 - [LD2410 Sensor](/components/sensor/ld2410)
 - [LD2420 24GHz mmWave Radar Sensor](/components/sensor/ld2420)
 - [LD2450 Sensor](/components/sensor/ld2450)
