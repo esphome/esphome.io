@@ -125,7 +125,9 @@ Use **relative paths** starting with `/`:
 - Check out the [Deep Sleep](/components/deep_sleep/) component
 ```
 
-**Important**: Always include trailing slash `/` for internal links.
+**Important**: Always include trailing slash `/` for internal links. The build canonicalises
+site-absolute links to this form as a backstop, so a missing slash will not produce a redirect,
+but write it explicitly so the source matches what is served.
 
 #### Anchors
 

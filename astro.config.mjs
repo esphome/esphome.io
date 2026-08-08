@@ -12,6 +12,7 @@ import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
 import { rehypeHeadingSlugs } from "./src/lib/rehype-heading-slugs.mjs";
 import { rehypeExternalLinksBlog } from "./src/lib/rehype-external-links-blog.mjs";
+import { rehypeInternalTrailingSlash } from "./src/lib/rehype-internal-trailing-slash.mjs";
 import componentsJson from "./src/integrations/components-json.ts";
 import routeIndex from "./src/integrations/route-index.ts";
 import { authors } from "./src/authors.mjs";
@@ -141,7 +142,7 @@ export default defineConfig({
     processor: unified({
       gfm: true,
       remarkPlugins: [remarkAlert, remarkMath],
-      rehypePlugins: [rehypeHeadingSlugs, rehypeKatex, rehypeExternalLinksBlog],
+      rehypePlugins: [rehypeHeadingSlugs, rehypeKatex, rehypeExternalLinksBlog, rehypeInternalTrailingSlash],
     }),
   },
   integrations: [

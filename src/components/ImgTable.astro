@@ -11,6 +11,8 @@
  * ]} />
  */
 
+import { withTrailingSlash } from "../lib/canonical-url.mjs";
+
 interface Props {
   items: Array<[string, string, string, string?, string?]>;
 }
@@ -51,7 +53,7 @@ function addWordBreaks(text: string): string {
         }
       }
 
-      const resolvedLink = link.endsWith("/") ? link : `${link}/`;
+      const resolvedLink = withTrailingSlash(link);
       const resolvedImage = resolveImagePath(image);
 
       return (
