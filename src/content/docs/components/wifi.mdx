@@ -617,6 +617,120 @@ on_...:
 
 The lambda equivalent for this is `id(wifi_id).is_ap_active()`.
 
+## Disconnect Reasons
+
+When the device loses its WiFi connection it logs a line like this:
+
+```txt
+[W][wifi:xxx]: Disconnected ssid='MyHomeNetwork' bssid=AA:BB:CC:DD:EE:FF reason='Beacon Timeout'
+```
+
+The `reason` is reported by the access point or by the WiFi stack, and each one points at a different fix. The
+common reasons are covered below; [Other Reasons](#other-reasons) lists everything else ESPHome can print.
+
+> [!NOTE]
+> The Raspberry Pi Pico W (RP2040) WiFi stack does not expose a disconnect reason, so these devices always log
+> `reason='UNKNOWN'`.
+
+### Probe Request Unsuccessful
+
+The device scanned but never heard back from the configured network. This is also reported as `AP Not Found`.
+
+- Check the SSID for typos; it is case-sensitive.
+- Only the ESP32-C5 can use 5 GHz (see [`band_mode`](#configuration-variables)); every other supported chip is
+  2.4 GHz only. If your access point publishes one SSID on both bands, make sure the 2.4 GHz radio is enabled.
+- Access points on channels 12 to 14 may not be scanned, depending on the regulatory domain of your device.
+- A hidden network is not returned by a normal scan; see
+  [Connecting to a Hidden Network](#example-connecting-to-a-hidden-network).
+- The device may simply be out of range.
+
+### Authentication Failed
+
+The access point rejected the device before or during the security handshake.
+
+- The `password` (PSK) is wrong.
+- `min_auth_mode` defaults to `WPA2` on ESP8266 and ESP32. Connecting to an open, WEP or WPA-only network fails
+  until you lower it -- see [WiFi Authentication Mode](#wifi-authentication-mode).
+- The access point uses MAC address filtering and the device is not on the allow list.
+- The access point is WPA3-only and the device cannot negotiate WPA3.
+
+### Handshake Failed
+
+Also reported as `4-Way Handshake Timeout`. The credentials were accepted but the WPA key exchange did not
+complete in time. This is usually a radio problem rather than a credentials problem.
+
+- Weak signal; check the [WiFi Signal sensor](/components/sensor/wifi_signal/) for the actual RSSI.
+- Try `power_save_mode: none` -- see [Power Save Mode](#power-save-mode).
+- A congested channel or an overloaded access point can delay the handshake past its timeout.
+- Some access points require Protected Management Frames (802.11w); set them to optional rather than required.
+
+### Beacon Timeout
+
+The device stopped hearing beacons from the access point it was connected to. This is nearly always signal
+strength or power save related.
+
+- Try `power_save_mode: none` -- see [Power Save Mode](#power-save-mode).
+- Move the device closer to the access point, or reduce interference between them.
+- Lower the DTIM interval on the access point so devices in power save wake up more often.
+- If the same SSID is served on 2.4 GHz and 5 GHz, band steering on the access point may be pushing the device
+  toward a band it cannot use.
+
+### Association Leave
+
+Also reported as `Auth Leave`. One side explicitly ended the session. ESPHome logs this when *it* disconnects --
+for example the [`wifi.disable` action](#wifi-disable-action) or a switch to another configured network -- so it
+is expected in those cases. Otherwise the access point dropped the device:
+
+- The access point reached its client limit.
+- Band steering, airtime fairness or a similar feature moved the device off the current radio.
+- The access point rebooted or applied a firmware update.
+- MAC address filtering removed the device.
+
+### Association Expired
+
+Also reported as `Disassociated Due to Inactivity`. The access point aged the device out of its client table
+because it did not hear from it for too long. Deep power save combined with a long DTIM interval, or an access
+point with an aggressive inactivity timeout, are the usual causes. Try `power_save_mode: none`.
+
+### Too Many Associations
+
+The access point is already serving as many clients as it allows. Reduce the number of clients on that access
+point, raise its client limit, or move the device to another one.
+
+### Group Key Update Timeout
+
+The device missed the periodic group key (GTK) rekey. Weak signal and power save are the common causes; some
+access points also rekey aggressively enough to cause problems. Try `power_save_mode: none` or increase the
+group key rotation interval on the access point.
+
+### Station Roaming
+
+Informational only, and logged at `INFO` rather than `WARN`. [Post-Connect Roaming](#post-connect-roaming) moved
+the device to a better access point for the same network. No action is required.
+
+### Other Reasons
+
+| Reason | Meaning |
+| ------ | ------- |
+| `Auth Expired` | The authentication session timed out. |
+| `Not Authenticated`, `Class 2 Frame from Non-Authenticated STA` | The access point received a frame from a device it does not consider authenticated. |
+| `Not Associated`, `Class 3 Frame from Non-Associated STA` | The access point received a frame from a device it does not consider associated. |
+| `Association not Authenticated` | The device tried to associate without authenticating first. |
+| `Association Failed` | The access point refused the association request. |
+| `Connection Failed` | The WiFi stack gave up on the connection attempt. |
+| `Disassociate Power Cap Bad`, `Disassociate Supported Channel Bad` | The access point rejected the power or channel capabilities the device advertised. |
+| `IE Invalid`, `IE In 4-Way Handshake Differs` | Malformed or inconsistent information elements were exchanged. |
+| `Mic Failure` | A message integrity check failed; usually interference or a key mismatch. |
+| `Group Cipher Invalid`, `Pairwise Cipher Invalid`, `AKMP Invalid`, `Cipher Suite Rejected` | The device and the access point could not agree on a cipher suite. |
+| `Unsupported RSN IE version`, `Invalid RSN IE Cap` | The access point advertised security capabilities the device cannot use. |
+| `802.1x Authentication Failed` | Enterprise authentication failed; see [Enterprise Authentication](#enterprise-authentication). |
+| `AP TSF reset` | The access point restarted its timing synchronization, typically after a reboot. |
+| `Association comeback time too long`, `SA query timeout` | 802.11w management frame protection exchanges failed or timed out. |
+| `No AP found with compatible security`, `No AP found in auth mode threshold` | The network was found but did not satisfy `min_auth_mode`. |
+| `No AP found in RSSI threshold` | The network was found but its signal was below the configured threshold. |
+| `Unspecified` | The access point gave no reason. |
+| `UNKNOWN` | This platform does not report disconnect reasons. |
+
 ## See Also
 
 - [Captive Portal](/components/captive_portal/)
