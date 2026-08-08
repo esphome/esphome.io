@@ -298,6 +298,14 @@ share the same [calibration](#calibration), so anything you change there moves t
 1931 tristimulus values summed over the channels, with the colour temperature using McCamy's approximation. The
 four brightness measurements are explained below.
 
+> [!NOTE]
+> These factors, and the AS7343 defaults in [Calibration](#calibration), come from ams OSRAM measurements of a
+> golden device: one reference part characterised under known light. Your sensor is not that part. Filter
+> response and sensitivity vary a little between individual chips, so two sensors under the same light can
+> report somewhat different absolute values. Readings taken from one sensor stay comparable with each other,
+> which is what most automations need. For absolute accuracy, compare the sensor against a reference
+> instrument and fold the difference into `channel_correction`.
+
 ### What the Brightness Measurements Mean
 
 All four answer the question "how much light is there", but each counts a different thing, so their values are
@@ -351,6 +359,24 @@ sensor:
 
 `rgb_hex` publishes a [Text Sensor](/components/text_sensor/), but it is configured here alongside the other
 sensors rather than under a separate `text_sensor:` block.
+
+## Optical Setup
+
+The sensor only measures the light that actually reaches its photodiodes, so what sits in front of it matters
+as much as the settings. The optical design guide for these parts asks for a diffuser above the sensor, chosen
+so that:
+
+- The top of the diffuser is lit evenly, whatever the size and position of the light source.
+- The field of view is wide, so a source is still detected when the device is turned away from it.
+- Nothing in front of the diffuser casts a hot spot or a shadow. Both move as the angle of the incoming light
+  changes, and because the photodiodes sit side by side, a hot spot covers some of them more than others. The
+  same light is then measured as a different spectrum.
+- The diffuser scatters the incoming rays completely, leaving no directional information for the sensor to
+  pick up.
+
+Without one, a bare sensor still produces readings, but they shift as the light moves around the room, and the
+colour values are the first to suffer. Any cover you do add absorbs some light, which is what
+`glass_attenuation_factor` compensates for.
 
 ## Integration Time
 
