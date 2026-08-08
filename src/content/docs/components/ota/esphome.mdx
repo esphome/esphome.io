@@ -151,6 +151,88 @@ To upload a custom bootloader binary, run:
 esphome upload --bootloader --file bootloader.bin name-of-your-config.yaml
 ```
 
+## Troubleshooting
+
+The messages below are logged by the *device*, so they appear in the serial or API logs rather than in the output
+of the upload command.
+
+### Magic Bytes Mismatch
+
+```log
+[W][esphome.ota:xxx]: Magic bytes mismatch! 0x47-0x45-0x54-0x20-0x2F
+```
+
+Something connected to the OTA port and did not start with the ESPHome OTA handshake. This check happens during
+the handshake, **before** any firmware data is transferred, so it does not mean the binary is wrong, truncated or
+corrupted -- the device never got as far as looking at a binary.
+
+The bytes in the message are what was actually received. The example above is `GET /` in ASCII: a web browser or an
+HTTP health check reached the OTA port. Other common sources are network scanners, monitoring probes and tools that
+speak a different OTA protocol, such as the Arduino or Tasmota uploaders.
+
+If your uploads still succeed, the message is coming from something else on the network and can be ignored. If they
+do not, check that the upload is actually reaching the device -- most often the wrong host is configured, or another
+service is listening on the OTA port.
+
+### Update Errors
+
+When the update itself fails, the device logs a numeric error code:
+
+```log
+[W][esphome.ota:xxx]: End update err 139
+```
+
+The same code is translated into a message by the upload command. `Flash write err` is reported while the firmware
+is being written, and `End update err` while the update is being finalized.
+
+| Code | Meaning |
+| ---- | ------- |
+| 128 | Invalid magic byte. |
+| 129 | Flash memory could not be prepared for the update; the binary may be too large. |
+| 130 | Authentication failed; check the OTA password. |
+| 131 | Writing the OTA data to flash failed. |
+| 132 | Finishing the update failed. |
+| 133 | The device needs a manual reset. This is required on the first OTA update after flashing over USB. |
+| 134 | The device was flashed with the wrong flash size; select the correct `board` and flash over USB. |
+| 135 | The device does not have the requested flash size; select the correct `board`. |
+| 136 | Not enough space on an ESP8266; try a minimal configuration containing only `ota`. |
+| 137 | The OTA partition on an ESP32 is too small; see [Updating the partition table on ESP32](#updating-the-partition-table-on-esp32). |
+| 138 | No OTA partition was found; flash over USB. |
+| 139 | MD5 mismatch: the firmware that arrived does not match what was sent. |
+| 140 | Not enough space on an RP2040. |
+| 141 | Firmware signature verification failed; the signing key does not match. |
+| 142 | The requested OTA type is not supported by the device. |
+| 143 | The partition table update could not be verified; no changes were made. |
+| 144 | The partition table update failed and the device may not boot; retry without rebooting. |
+| 145 | The bootloader update could not be verified; no changes were made. |
+| 146 | The bootloader update failed and the device may not boot; retry without rebooting. |
+| 147 | The update was rejected by OTA downgrade protection; the new version must be newer. |
+| 255 | Unknown error. |
+
+An MD5 mismatch (code 139) means the transfer was corrupted in flight rather than that the wrong file was chosen.
+Retry the upload; if it keeps failing, the connection between the device and the machine running ESPHome is
+unreliable. Flashing over USB with a good quality cable is the fallback.
+
+### Handshake Timeout
+
+```log
+[W][esphome.ota:xxx]: Handshake timeout
+```
+
+A connection was opened to the OTA port but the handshake was never completed. As with a magic byte mismatch, this
+is usually an unrelated connection rather than a failed update -- a scanner or probe that connects and then does
+nothing.
+
+### Authentication Failures
+
+```log
+[W][esphome.ota:xxx]: Auth: Password mismatch
+```
+
+The `password` in your configuration does not match the one in the firmware currently running on the device. See
+[Updating the Password](#updating-the-password): the *running* firmware validates the upload, so the old password
+must be used for the update that changes it.
+
 ## See Also
 
 - [Over-the-Air Updates](/components/ota/)
