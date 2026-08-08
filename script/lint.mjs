@@ -4,6 +4,7 @@ import { readFile, stat, readdir } from "fs/promises";
 import { join, basename, dirname, extname } from "path";
 import { execSync } from "child_process";
 import { fileURLToPath } from "url";
+import Slugger from "github-slugger";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -211,19 +212,6 @@ async function buildAnchorCache() {
     return cache;
   }
 
-  function generateSlug(text) {
-    return (
-      text
-        .toLowerCase()
-        // Mirror src/lib/rehype-heading-slugs.mjs: dots in automation headings
-        // (e.g. `light.turn_on`) map to `-` so the anchor becomes `light-turn_on`.
-        .replace(/\./g, "-")
-        .replace(/[^\w\s-]/g, "")
-        .replace(/[-\s]+/g, "-")
-        .replace(/^-+|-+$/g, "")
-    );
-  }
-
   async function processDir(dir, basePath = "") {
     const entries = await readdir(dir, { withFileTypes: true });
 
@@ -245,14 +233,16 @@ async function buildAnchorCache() {
 
         const content = await readFile(fullPath, "utf-8");
         const anchors = new Set();
+        // Same slugger, and the same `.` -> `-` pre-mapping, as src/lib/rehype-heading-slugs.mjs,
+        // so this agrees with the ids the build emits (including duplicate-heading suffixes).
+        const slugger = new Slugger();
 
         for (const line of content.split("\n")) {
           // Match headings
           const headingMatch = line.match(/^(#{1,6})\s+(.*)/);
           if (headingMatch) {
             const headingText = headingMatch[2].trim();
-            const anchorId = generateSlug(headingText);
-            anchors.add(anchorId);
+            anchors.add(slugger.slug(headingText.replace(/\./g, "-")));
           }
 
           // Match anchor shortcodes (old Hugo style)
