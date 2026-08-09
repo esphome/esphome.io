@@ -1,5 +1,5 @@
 ---
-description: "Configuration of the BLE client on ESP32."
+description: "Configuration of the BLE client on ESP32 and Raspberry Pi Pico W."
 title: "BLE Client"
 ---
 import APIRef from '@components/APIRef.astro';
@@ -8,6 +8,12 @@ import APIRef from '@components/APIRef.astro';
 The `ble_client` component enables connections to Bluetooth Low Energy devices in order to query and
 control them. This component does not expose any sensors or output components itself, but merely manages
 connections to them for use by other components.
+
+It is supported on the ESP32 and on the Raspberry Pi Pico W / Pico 2 W. On the Pico the component
+provides connections, the `on_connect`/`on_disconnect` automations and the `ble_client.connect`,
+`ble_client.disconnect` and `ble_client.ble_write` actions; the pairing automations and actions, and
+the components that build on `ble_client` (such as the sensor, text sensor, switch and output
+platforms), are currently available on the ESP32 only.
 
 > [!WARNING]
 > The BLE software stack on the ESP32 consumes a significant amount of RAM on the device.
@@ -26,10 +32,12 @@ connections to them for use by other components.
 > [Esp32 Ble Tracker](/components/esp32_ble_tracker/) as they listen to advertisements which are only sent by devices
 > without an active connection.
 
-Despite the last point above, the `ble_client` component requires the `esp32_ble_tracker` component in order
-to discover available client devices.
+Despite the last point above, the `ble_client` component requires a BLE tracker component in order
+to discover available client devices: [Esp32 Ble Tracker](/components/esp32_ble_tracker/) on the ESP32,
+`rp2_ble_tracker` on the Pico.
 
 ```yaml
+# ESP32
 esp32_ble_tracker:
 
 ble_client:
@@ -37,6 +45,20 @@ ble_client:
     id: itag_black
     auto_connect: true
 ```
+
+```yaml
+# Raspberry Pi Pico W
+rp2_ble_tracker:
+
+ble_client:
+  - mac_address: XX:XX:XX:XX:XX:XX
+    id: itag_black
+```
+
+> [!NOTE]
+> The Pico's BLE stack supports one GATT client connection: a single `ble_client` entry, which also
+> shares that slot with an active [Bluetooth Proxy](/components/bluetooth_proxy/) — configure one or
+> the other.
 
 ## Configuration variables
 
@@ -52,13 +74,13 @@ Automations:
 - **on_disconnect** (*Optional*, [Automation](/automations)): An automation to perform
   when the client disconnects from a device. See [`on_disconnect`](#ble_client-on_disconnect).
 
-- **on_passkey_request** (*Optional*, [Automation](/automations)): An automation to enter
+- **on_passkey_request** (*Optional*, [Automation](/automations), ESP32 only): An automation to enter
   the passkey required by the other BLE device. See [`on_passkey_request`](#ble_client-on_passkey_request).
 
-- **on_passkey_notification** (*Optional*, [Automation](/automations)): An automation to
+- **on_passkey_notification** (*Optional*, [Automation](/automations), ESP32 only): An automation to
   display the passkey to the user. See [`on_passkey_notification`](#ble_client-on_passkey_notification).
 
-- **on_numeric_comparison_request** (*Optional*, [Automation](/automations)): An automation to
+- **on_numeric_comparison_request** (*Optional*, [Automation](/automations), ESP32 only): An automation to
   compare the passkeys shown on the two BLE devices. See [`on_numeric_comparison_request`](#ble_client-on_numeric_comparison_request).
 
 ## BLE Client Automation
