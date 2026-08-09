@@ -254,6 +254,45 @@ button:
           values: [true, false, true]
 ```
 
+### `modbus_client.read_write_multiple_registers` Action
+
+Writes one block of holding registers and reads another back in a single transaction (function code `0x17`). Per the
+Modbus specification the write is performed **before** the read, so when the two ranges overlap the read returns the
+values just written.
+
+This action does **not** use the common `start_address`; it has a separate read range and write range instead.
+
+#### Configuration Variables
+
+- **write_address** (**Required**, templatable, int): Address of the first holding register to write.
+- **values** (**Required**, templatable, list of 16-bit hex): Registers to **write**, `write_address` first. Up to
+  121 registers - the `0x17` write ceiling, lower than the 123 of a plain write.
+- **read_address** (**Required**, templatable, int): Address of the first holding register to read back.
+- **read_count** (*Optional*, templatable, int): Number of registers to read back, up to 125. Defaults to `1`.
+
+`on_response` lambda variable: **values** (`std::span<const uint16_t>`, host byte order) - the block that was **read
+back**, the same shape as `read_holding_registers`. Note this is a different `values` from the block being written in
+the configuration above.
+
+```yaml
+button:
+  - platform: template
+    name: "Read/write multiple registers"
+    on_press:
+      - modbus_client.read_write_multiple_registers:
+          address: 0x01
+          write_address: 0x0010
+          values: [0x1234, 0x5678]
+          read_address: 0x0020
+          read_count: 4
+          on_response:
+            then:
+              - lambda: |-
+                  // `values` here is the read-back block, not the block written above
+                  for (auto v : values)
+                    ESP_LOGD("modbus", "read 0x%04X", v);
+```
+
 ## `modbus_client.send` Action
 
 This action queues a custom Modbus frame for transmission and optionally handles the outcome.
