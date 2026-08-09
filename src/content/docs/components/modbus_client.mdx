@@ -147,7 +147,9 @@ to `address`, and routes the reply straight back to that action's own handlers, 
 - **start_address** (**Required**, templatable, 16-bit hex): The starting register or coil address.
   `start_address + count` (or `+ values.size()` for a write) must not exceed `0x10000`; a literal value is rejected
   at config time, but a templated one bypasses that check and fails at runtime - an out-of-range address
-  produces an empty PDU, and `on_not_sent` fires instead of the send.
+  produces an empty PDU, and `on_not_sent` fires instead of the send. The same holds for the per-action `count` and
+  `values` bounds below: a lambda returning a count or list length outside its documented range also produces an
+  empty PDU and fires `on_not_sent`.
 - **on_sent** (*Optional*, [Automation](/automations/)): Fires when the frame is written to the wire. Lambda
   variable: `request` (`std::span<const uint8_t>`, the PDU sent).
 - **on_response** (*Optional*, [Automation](/automations/)): Fires on a standard-conforming reply. The lambda
@@ -175,10 +177,16 @@ Reads one or more holding registers (function code `0x03`).
 
 - **count** (*Optional*, templatable, int): 1-125 registers to read. Defaults to `1`.
 
-`on_response` lambda variable: **values** (`std::span<const uint16_t>`, host byte order). `values.size()` is the
-register count actually returned.
+`on_response` lambda variable: **values** (`std::span<const uint16_t>`, host byte order). A reply whose length
+doesn't match the requested `count` is diverted to `on_custom_response`, so inside `on_response` `values.size()`
+always equals `count`.
 
 ```yaml
+globals:
+  - id: retries
+    type: int
+    initial_value: '0'
+
 button:
   - platform: template
     name: "Read holding registers"
@@ -190,9 +198,7 @@ button:
           count: 2
           on_response:
             then:
-              - lambda: |-
-                  if (values.size() >= 2)
-                    ESP_LOGD("modbus", "reg0=%u reg1=%u", values[0], values[1]);
+              - lambda: 'ESP_LOGD("modbus", "reg0=%u reg1=%u", values[0], values[1]);'
           on_error:
             then:
               - lambda: 'ESP_LOGW("modbus", "exception 0x%02X", (uint8_t) exception_code);'
@@ -207,8 +213,9 @@ Reads one or more input registers (function code `0x04`).
 
 - **count** (*Optional*, templatable, int): 1-125 registers to read. Defaults to `1`.
 
-`on_response` lambda variable: **values** (`std::span<const uint16_t>`, host byte order). `values.size()` is the
-register count actually returned.
+`on_response` lambda variable: **values** (`std::span<const uint16_t>`, host byte order). A reply whose length
+doesn't match the requested `count` is diverted to `on_custom_response`, so inside `on_response` `values.size()`
+always equals `count`.
 
 ```yaml
 button:
@@ -233,8 +240,8 @@ Reads one or more coils (function code `0x01`).
 - **count** (*Optional*, templatable, int): 1-2000 coils to read. Defaults to `1`.
 
 `on_response` lambda variable: **bits** (`modbus::PackedBits`, an indexable bit view - `bits[i]` is coil
-`start_address + i`). `bits.size()` is the coil count actually returned; `operator[]` is unchecked, so don't index
-past it.
+`start_address + i`). A reply whose length doesn't match the requested `count` is diverted to `on_custom_response`,
+so inside `on_response` `bits.size()` always equals `count`. `operator[]` is unchecked, so don't index past it.
 
 ```yaml
 button:
@@ -259,8 +266,8 @@ Reads one or more discrete inputs (function code `0x02`).
 - **count** (*Optional*, templatable, int): 1-2000 discrete inputs to read. Defaults to `1`.
 
 `on_response` lambda variable: **bits** (`modbus::PackedBits`, an indexable bit view - `bits[i]` is input
-`start_address + i`). `bits.size()` is the input count actually returned; `operator[]` is unchecked, so don't index
-past it.
+`start_address + i`). A reply whose length doesn't match the requested `count` is diverted to `on_custom_response`,
+so inside `on_response` `bits.size()` always equals `count`. `operator[]` is unchecked, so don't index past it.
 
 ```yaml
 button:
