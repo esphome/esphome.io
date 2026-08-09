@@ -13,6 +13,11 @@ The `modbus_server` component creates an RS485 connection to let your ESPHome no
 
 You must set the `role` attribute of the [Modbus](/components/modbus/) to `server`.
 
+> [!NOTE]
+> Modbus broadcast writes use address `0`. They are delivered to every registered server device on the same hub and
+> do not send a response. Only write function codes `0x06` and `0x10` are handled as broadcasts; all other requests
+> addressed to `0`, including reads and coil writes, are ignored.
+
 <Image src="/images/modbus.png" width={190} height={200} layout="constrained" alt="" />
 
 ## Hardware setup
@@ -48,7 +53,8 @@ On the bus side, you need 120 Ohm termination resistors at the ends of the bus c
 
 - **modbus_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the `modbus` hub.
 
-- **address** (**Required**, integer): The Modbus address of the server device.
+- **address** (**Required**, integer): The Modbus address of the server device. Address `0` is reserved
+  for broadcasts and cannot be assigned to a server device.
 
 - **courtesy_response** (*Optional*): Configuration block to enable the courtesy response feature when the device is acting as a Modbus server.
 
