@@ -1,5 +1,5 @@
 ---
-description: "Configuration of the BLE client on ESP32 and Raspberry Pi Pico W."
+description: "Configuration of the BLE client on the ESP32 and Raspberry Pi Pico W / Pico 2 W."
 title: "BLE Client"
 ---
 import APIRef from '@components/APIRef.astro';
@@ -34,7 +34,7 @@ platforms), are currently available on the ESP32 only.
 
 Despite the last point above, the `ble_client` component requires a BLE tracker component in order
 to discover available client devices: [Esp32 Ble Tracker](/components/esp32_ble_tracker/) on the ESP32,
-`rp2_ble_tracker` on the Pico.
+[RP2 BLE Tracker](/components/rp2_ble_tracker/) on the Pico.
 
 ```yaml
 # ESP32
@@ -121,6 +121,9 @@ ble_client:
 
 ### `on_passkey_request`
 
+> [!NOTE]
+> This is available on the ESP32 only.
+
 This automation is triggered when the BLE device requests a passkey for authentication.
 
 ```yaml
@@ -138,6 +141,9 @@ ble_client:
 
 ### `on_passkey_notification`
 
+> [!NOTE]
+> This is available on the ESP32 only.
+
 This automation is triggered when a passkey is received from the BLE device.
 
 ```yaml
@@ -154,6 +160,9 @@ ble_client:
 <span id="ble_client-on_numeric_comparison_request"></span>
 
 ### `on_numeric_comparison_request`
+
+> [!NOTE]
+> This is available on the ESP32 only.
 
 This automation is triggered when a numeric comparison is requested by the BLE device.
 
@@ -259,6 +268,9 @@ switch:
 
 ## `ble_client.passkey_reply` Action
 
+> [!NOTE]
+> This is available on the ESP32 only.
+
 This action triggers an authentication attempt using the specified `passkey`.
 
 Example usage:
@@ -277,6 +289,9 @@ on_...:
 - **passkey** (**Required**, int, [templatable](/automations/templates)): The 6-digit passkey.
 
 ## `ble_client.numeric_comparison_reply` Action
+
+> [!NOTE]
+> This is available on the ESP32 only.
 
 This action triggers an authentication attempt after a numeric comparison.
 
@@ -297,6 +312,9 @@ on_...:
   displayed on both BLE devices are matching.
 
 ## `ble_client.remove_bond` Action
+
+> [!NOTE]
+> This is available on the ESP32 only.
 
 This action removes a device from the security database and manages
 unpairing.
