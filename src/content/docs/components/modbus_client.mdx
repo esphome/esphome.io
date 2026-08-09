@@ -40,9 +40,8 @@ on_...:
 
 - **modbus_id** (*Optional*, [ID](/guides/configuration-types#id)): The Modbus hub to send on. Automatically assigned
   when a single hub is configured.
-- **address** (**Required**, templatable, 8-bit hex): The device address the frame is sent to. Accepts `0`-`255`; the
-  valid Modbus device range is `1`-`247`, and `0` is broadcast (no reply will ever arrive; see
-  [Behavior](#behavior)).
+- **address** (**Required**, templatable, int): The device address the frame is sent to. Accepts `0`-`255`; the valid
+  Modbus device range is `1`-`247`, and `0` is broadcast (no reply will ever arrive; see [Behavior](#behavior)).
 - **pdu** (**Required**, templatable, list of bytes): The PDU to send: function code followed by data. The device
   address and CRC are added automatically - do **not** include them. Maximum 253 bytes (the Modbus PDU limit): an
   empty or over-long YAML list fails config validation. As a lambda it must return a `modbus::helpers::PduBuffer` (a
@@ -139,12 +138,12 @@ to `address`, and routes the reply straight back to that action's own handlers, 
 
 ### Common Configuration Variables
 
-- **address** (**Required**, templatable, 8-bit hex): The Modbus device address the frame is sent to. Accepts
-  `0`-`255`; the valid Modbus device range is `1`-`247`, and `0` is broadcast (no reply will ever arrive; see
+- **address** (**Required**, templatable, int): The Modbus device address the frame is sent to. Accepts `0`-`255`;
+  the valid Modbus device range is `1`-`247`, and `0` is broadcast (no reply will ever arrive; see
   [Behavior](#behavior)).
 - **modbus_id** (*Optional*, [ID](/guides/configuration-types#id)): The Modbus hub to send on. Automatically assigned
   when a single hub is configured.
-- **start_address** (**Required**, templatable, 16-bit hex): The starting register or coil address.
+- **start_address** (**Required**, templatable, int): The starting register or coil address.
   `start_address + count` (or `+ values.size()` for a write) must not exceed `0x10000`; a literal value is rejected
   at config time, but a templated one bypasses that check and fails at runtime - an out-of-range address
   produces an empty PDU, and `on_not_sent` fires instead of the send. The same holds for the per-action `count` and
@@ -166,8 +165,9 @@ to `address`, and routes the reply straight back to that action's own handlers, 
   three forms as `modbus_client.send`'s `on_no_response` above: a returning lambda, a `then:` automation, or a
   `then:` automation with a nested `retry:` returning lambda.
 - **on_not_sent** (*Optional*, [Automation](/automations/)): Fires when the frame never reached the wire - a
-  duplicate write already pending, a full send queue, or an invalid request. See [Behavior](#behavior). Lambda
-  variable: `request` (`std::span<const uint8_t>`, the PDU that was not sent).
+  duplicate write already pending, a full send queue, an invalid request, or a queued frame cancelled by another
+  device or automation clearing the queue for the same address. See [Behavior](#behavior). Lambda variable:
+  `request` (`std::span<const uint8_t>`, the PDU that was not sent).
 
 ### `modbus_client.read_holding_registers` Action
 
@@ -289,7 +289,7 @@ Writes a single holding register (function code `0x06`).
 
 #### Configuration Variables
 
-- **value** (**Required**, templatable, 16-bit hex): The value to write.
+- **value** (**Required**, templatable, int): The value to write.
 
 `on_response` fires once the write is acknowledged; it carries no lambda variables at all.
 
@@ -331,7 +331,7 @@ Writes one or more consecutive holding registers (function code `0x10`).
 
 #### Configuration Variables
 
-- **values** (**Required**, templatable, list of 16-bit hex): Registers to write, `start_address` first. 1-123
+- **values** (**Required**, templatable, list of int): Registers to write, `start_address` first. 1-123
   registers. As a lambda it must return a `std::vector<uint16_t>`.
 
 `on_response` fires once the write is acknowledged; it carries no lambda variables at all.
@@ -395,8 +395,8 @@ button:
 > [!NOTE]
 > None of the reply handlers (`on_sent`, `on_response`, `on_custom_response`, `on_error`, `on_no_response`,
 > `on_not_sent`) may contain deferring actions (`delay`, `wait_until`, `script.wait`, ...) - the request/response
-> data is only valid while the handler runs. Copy any bytes you need into a global first, then defer from a separate
-> script or automation.
+> data is only valid while the handler runs. Config validation rejects such a handler with an error. Copy any bytes
+> you need into a global first, then defer from a separate script or automation.
 
 ## Examples
 
