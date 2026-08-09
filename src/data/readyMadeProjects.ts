@@ -93,7 +93,10 @@ export const PROJECT_TYPES: ProjectType[] = [
     description: "Create a device to control Home Assistant with your voice.",
     devicePrompt: "Pick the device you want to turn into a voice assistant:",
     manifestRoot: "https://firmware.esphome.io/wake-word-voice-assistant",
-    advanced: { githubUrl: "https://github.com/esphome/wake-word-voice-assistants" },
+    advanced: {
+      component: "voice_assistant",
+      githubUrl: "https://github.com/esphome/wake-word-voice-assistants",
+    },
     devices: [
       {
         id: "m5stack-atom-echo",
@@ -276,7 +279,7 @@ export const PROJECT_TYPES: ProjectType[] = [
       'Create a multi-speaker music listening experience powered by <a href="https://www.sendspin-audio.com" target="_blank" rel="noopener noreferrer">Sendspin</a>.',
     devicePrompt: "Pick the device you want to turn into a media player:",
     manifestRoot: "https://firmware.esphome.io/media-player",
-    advanced: { githubUrl: "https://github.com/esphome/media-players" },
+    advanced: { component: "sendspin", githubUrl: "https://github.com/esphome/media-players" },
     devices: [
       {
         id: "home-assistant-voice",
@@ -307,7 +310,7 @@ export const PROJECT_TYPES: ProjectType[] = [
         manifestRoot: "https://firmware.esphome.io/infrared-proxy",
         githubUrl: "https://github.com/esphome/infrared-proxies",
         title: "Xiao IR Mate",
-        body: ["Small but powerful infrared emitter."],
+        body: ["XIAO ESP32-C3 board with an infrared transmitter and receiver, so it can both learn and send codes."],
         linksLabel: "Learn more &amp; buy",
         links: [
           {
