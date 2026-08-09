@@ -55,11 +55,11 @@ registers.
   Parameters passed into lambda
 
   - **x** (`int64_t`  ): The parsed integer value of the modbus data.
-  - **data** (`const std::vector<uint8_t> &`): vector containing the complete raw modbus response bytes for this
-    sensor. Note: because the response contains data for all registers in the same range you have to
-    use `data[item->offset]` to get the first response byte for your sensor.
+  - **data** (`std::span<const uint8_t>`): span containing the complete raw modbus response bytes for this
+    select. Note: because the response contains data for all registers in the same range you have to
+    use `data[item->offset]` to get the first response byte for your select.
 
-  - **item** (`ModbusSelect*const`  ): The sensor object itself.
+  - **item** (`ModbusSelect*const`  ): The select object itself.
 
   Possible return values for the lambda:
 
@@ -67,7 +67,7 @@ registers.
   - `return {};` Use default mapping (see `optionsmap`  ).
 
 - **write_lambda** (*Optional*, [lambda](/automations/templates#config-lambda)): Lambda to be evaluated on every update
-  of the Sensor, before the new value is written to the modbus registers.
+  of the Select, before the new value is written to the modbus registers.
 
 - **use_write_multiple** (*Optional*, boolean): By default the modbus command *Function Code 6 (Preset Single Registers)*
   is used for setting the holding register if only one register is set. If your device only supports *Function Code 16 (Preset Multiple Registers)* set this option to `true`.
@@ -95,7 +95,7 @@ lambda: |-
 - **payload** (`std::vector<uint16_t> &payload`): Empty vector for the payload. The lambda can add
   16 bit raw modbus register words which are send to the modbus device.
 
-- **item** (`ModbusSelect*const`  ): The sensor object itself.
+- **item** (`ModbusSelect*const`  ): The select object itself.
 
 Possible return values for the lambda:
 
