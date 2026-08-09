@@ -508,6 +508,56 @@ into logical devices that appear separately in Home Assistant. This is particula
 - **name** (**Required**, string): Display name for the device.
 - **area_id** (*Optional*, string): Reference to an area ID defined in `areas`.
 
+### `device.set_available` Action
+
+Sub-devices are available by default. Use this action when a sub-device becomes unavailable or available again.
+
+When the native API client supports sub-device availability, Home Assistant marks every entity assigned to an
+unavailable sub-device as unavailable. ESPHome continues to send entity state updates. When the sub-device becomes
+available again, Home Assistant shows the latest entity states.
+
+If a connected API client does not support sub-device availability, the ESPHome node logs a warning when it cannot
+report an unavailable sub-device.
+
+Call the applicable script from the automation that detects the sub-device's availability:
+
+```yaml
+esphome:
+  name: battery-gateway
+
+  devices:
+    - id: battery_pack
+      name: "Battery Pack"
+
+script:
+  - id: mark_battery_pack_unavailable
+    then:
+      - device.set_available:
+          id: battery_pack
+          available: false
+
+  - id: mark_battery_pack_available
+    then:
+      - device.set_available:
+          id: battery_pack
+          available: true
+```
+
+Configuration variables:
+
+- **id** (**Required**, [ID](/guides/configuration-types/#id)): The ID of the sub-device.
+- **available** (**Required**, boolean, [templatable](/automations/templates/)): Whether the sub-device is available.
+
+You can also set the availability from a lambda:
+
+```cpp
+id(battery_pack).set_available(false);
+```
+
+> [!NOTE]
+> This action only reports availability. It does not power off the sub-device or stop ESPHome from updating its
+> entities.
+
 ### Example: RF Bridge Gateway
 
 ```yaml
