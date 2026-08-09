@@ -45,15 +45,21 @@ sensor:
       name: Temperature
     humidity:
       name: Humidity
-    voc:
-      name: VOC
-    nox:
-      name: NOx
+    voc_index:
+      name: VOC Index
+    nox_index:
+      name: NOx Index
     co2:
       name: Carbon Dioxide
     formaldehyde:
       name: Formaldehyde
 ```
+
+> [!NOTE]
+> The `voc` and `nox` keys were renamed to `voc_index` and `nox_index`, since
+> these sensors report Sensirion's unitless Gas Index rather than a
+> concentration. The old keys still work but are deprecated and will be removed
+> in ESPHome 2027.2.0.
 
 ## Configuration variables
 
@@ -95,12 +101,12 @@ sensor:
 
   - All options from [Sensor](/components/sensor).
 
-- **voc** (*Optional*): VOC Index. Note: only available with SEN65, SEN66, SEN68 or SEN69C. The sensor will be
+- **voc_index** (*Optional*): VOC Index. Note: only available with SEN65, SEN66, SEN68 or SEN69C. The sensor will be
   ignored on unsupported models.
 
   - All options from [Sensor](/components/sensor).
 
-- **nox** (*Optional*): NOx Index. Note: only available with SEN65, SEN66, SEN68 or SEN69C. The sensor will be
+- **nox_index** (*Optional*): NOx Index. Note: only available with SEN65, SEN66, SEN68 or SEN69C. The sensor will be
   ignored on unsupported models.
 
   - All options from [Sensor](/components/sensor).

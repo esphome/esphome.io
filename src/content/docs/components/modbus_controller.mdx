@@ -5,7 +5,7 @@ title: "Modbus Controller"
 
 import { Image } from 'astro:assets';
 
-The `modbus_controller` component creates a RS485 connection to control a Modbus server (slave) device, letting your ESPHome node act as a Modbus client (master). You can access the coils, inputs, holding, read registers from your devices as sensors, switches, selects, numbers or various other ESPHome components and present them to your favorite Home Automation system. You can even write them as binary or float outputs from ESPHome.
+The `modbus_controller` component creates an RS485 connection to control a Modbus server (slave) device, letting your ESPHome node act as a Modbus client (master). You can access the coils, inputs, holding, read registers from your devices as sensors, switches, selects, numbers or various other ESPHome components and present them to your favorite Home Automation system. You can even write them as binary or float outputs from ESPHome.
 
 Set the `role` attribute of the [Modbus](/components/modbus/) upon which this `modbus_controller` component relies to `client`, which is the default.
 
@@ -19,22 +19,29 @@ See [Modbus](/components/modbus/#hardware-setup) for RS485 hardware setup instru
 
 - **address** (**Required**, [ID](/guides/configuration-types#id)): The Modbus address of the slave device.
 
-- **allow_duplicate_commands** (*Optional*, boolean): Whether to allow duplicate commands in the queue. Defaults to `false`.
-
-- **command_throttle** (*Optional*, [Time](/guides/configuration-types#time)): minimum time in between 2 requests to the device. Default is `0ms`.
-  Some Modbus slave devices limit the rate of requests from the master, so this allows the interval between requests to be altered.
-
 - **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval that the sensors should be checked.
   Defaults to 60 seconds.
 
 <span id="modbus_controller-offline_skip_updates"></span>
 
-- **offline_skip_updates** (*Optional*, integer): When a slave doesn't respond to a command, it is
-  marked as offline, you can specify how many updates will be skipped while it is offline. If using a bus with multiple
-  slaves, this avoids waiting for timeouts allowing to read other slaves in the same bus. When the slave
-  responds to a command, it'll be marked online again.
+- **offline_skip_updates** (*Optional*, integer): How many update intervals to wait between retry attempts while a
+  device is offline (see below). Defaults to `0` (retry every update interval). If using a bus with multiple slaves,
+  this avoids waiting for timeouts on an unresponsive device, allowing the other slaves on the same bus to be read
+  on time.
 
-- **max_cmd_retries** (*Optional*, integer): How many times a command will be retried if no response is received. It doesn't include the initial transmition. Defaults to 4.
+- **max_cmd_retries** (*Optional*, integer): How many times a command will be retried if no response is received. It doesn't include the initial transmission. Defaults to 4.
+
+Multiple `modbus_controller` instances can share the same `address` — for example, to poll different registers on
+the same device at different `update_interval`s.
+
+<span id="modbus_controller-offline-behavior"></span>
+
+Non-responses are counted per device, not per command or register. Once the initial send and all `max_cmd_retries`
+retries have timed out - `max_cmd_retries + 1` consecutive timeouts in total - the whole device is marked offline
+(triggering [`on_offline`](#modbus_controller-on_offline)), its queued frames are dropped, and all of its updates
+are skipped. Every `offline_skip_updates + 1` update intervals the controller probes again by polling all of its
+ranges (each following the normal retry ladder). Any response, including a Modbus exception response, brings the
+device back online (triggering [`on_online`](#modbus_controller-on_online)) and normal polling resumes.
 
 Automations:
 
@@ -42,11 +49,24 @@ Automations:
 - **on_online** (*Optional*, [Automation](/automations)): An automation to perform when a modbus controller goes online. See [`on_online`](#modbus_controller-on_online)
 - **on_offline** (*Optional*, [Automation](/automations)): An automation to perform when a modbus controller goes offline. See [`on_offline`](#modbus_controller-on_offline)
 
+> [!WARNING]
+> These options no longer have any effect. They are still accepted so existing configurations keep working — setting
+> either one logs a validation warning at compile time — and will be removed in 2027.2.0:
+>
+> - **command_throttle**: Use [`turnaround_time`](/components/modbus/) on the `modbus` component instead.
+> - **allow_duplicate_commands**: The request queue (including duplicate handling) is the responsibility of the
+>   `modbus` hub. No configuration is required.
+>
+> These options have been removed and raise a validation error at compile time:
+>
+> - **server_registers** and **server_courtesy_response**: Use the [Modbus Server](/components/modbus_server/) component
+>   instead.
+
 ## Example Client
 
-The following code creates a `modbus_controller` hub talking to a ModBUS device at address `1` with `115200` bps
+The following code creates a `modbus_controller` hub talking to a Modbus device at address `1` with `115200` bps
 
-ModBUS sensors can be directly defined (inline) under the `modbus_controller` hub or as standalone components
+Modbus sensors can be directly defined (inline) under the `modbus_controller` hub or as standalone components
 Technically there is no difference between the "inline" and the standard definitions approach.
 
 ```yaml
@@ -98,7 +118,7 @@ The configuration example above creates a `modbus_controller` hub talking to a M
 
 ## Example Server
 
-The following code allows a ModBUS client to read a sensor value from your ESPHome node, that the node itself read from a ModBUS server.
+The following code allows a Modbus client to read a sensor value from your ESPHome node, that the node itself read from a Modbus server.
 
 ```yaml
 uart:
@@ -125,7 +145,7 @@ modbus_controller:
 modbus_server:
   - modbus_id: modbus_server
     address: 0x4
-    server_registers:
+    registers:
       - address: 0x0002
         value_type: S_DWORD_R
         read_lambda: |-
@@ -221,13 +241,12 @@ uart:
 modbus:
   send_wait_time: 200ms
   uart_id: mod_uart
-  id: mod_bus
+  id: modbus
 
 modbus_controller:
 - id: sdm
   address: 2
-  modbus_id: mod_bus
-  command_throttle: 100ms
+  modbus_id: modbus
   setup_priority: -10
   update_interval: 30s
 
@@ -472,7 +491,6 @@ The response is mapped to the sensor based on `register_count` and offset in byt
 
 > [!NOTE]
 > Write support is only implemented for numbers, outputs, switches and selects. If you want ad-hoc write support see [Modbus Client](/components/modbus_client/).
-
 <span id="modbus_controller-automations"></span>
 
 ## Automation
@@ -513,7 +531,8 @@ modbus_controller:
 
 ### `on_offline`
 
-This automation will be triggered when a `modbus_controller` goes `offline` (See [offline_skip_updates](#modbus_controller-offline_skip_updates)). In [Lambdas](/automations/templates#config-lambda)
+This automation will be triggered when a `modbus_controller` goes `offline`
+(see [Offline behavior](#modbus_controller-offline-behavior)). In [Lambdas](/automations/templates#config-lambda)
 you can get the function code in `function_code` and the register address in `address`.
 
 ```yaml

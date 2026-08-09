@@ -29,6 +29,10 @@ The various sub-components implement some of the Modbus functions below (dependi
 | 6 | Write Single Register |
 | 15 | Write Multiple Coils |
 | 16 | Write Multiple Registers |
+| 23 | Read/Write Multiple Registers |
+
+Function code 23 (`0x17`) is implemented for the `server` role only; see
+[Read/Write Multiple Registers](/components/modbus_server/#readwrite-multiple-registers-function-code-0x17).
 
 Modbus RTU requires a [UART Bus](/components/uart) to communicate.
 
@@ -110,6 +114,7 @@ On the bus side, you need 120 Ohm termination resistors at the ends of the bus c
 - For YAML actions & lambdas to send ad-hoc requests to individual devices use [Modbus Client](/components/modbus_client/)
 - For serving registers in response to client requests from another device, use [Modbus Server](/components/modbus_server/)
 - There are many components which communicate directly via the modbus hub (no controller needed): [Growatt Solar](/components/sensor/growatt_solar), [Havells Solar](/components/sensor/havells_solar), [Kuntze Pool Monitor](/components/sensor/kuntze), [PZEMAC](/components/sensor/pzemac), [SDM Meter](/components/sensor/sdm_meter), [Selec Meter](/components/sensor/selec_meter)
+- Modbus Controller platform pages: [Sensor](/components/sensor/modbus_controller/), [Binary Sensor](/components/binary_sensor/modbus_controller/), [Output](/components/output/modbus_controller/), [Switch](/components/switch/modbus_controller/), [Number](/components/number/modbus_controller/), [Select](/components/select/modbus_controller/), [Text Sensor](/components/text_sensor/modbus_controller/)
 - [Modbus RTU Protocol Description](https://www.modbustools.com/modbus.html)
 - All modbus components require a [UART Bus](/components/uart)
 - C++ client component authors should subclass `modbus::ModbusClientDevice`
