@@ -5,9 +5,9 @@ title: "Hörmann Cover"
 
 import Figure from '@components/Figure.astro';
 import APIRef from '@components/APIRef.astro';
-import hoermannWiringImg from './images/hoermann_wiring.svg';
+import hoermannHcpWiringImg from './images/hoermann_hcp_wiring.svg';
 
-The `hoermann` component allows you to control Hörmann garage door motors through the HCP bus built
+The `hoermann_hcp` component allows you to control Hörmann garage door motors through the HCP bus built
 into the motor. It emulates the Hörmann UAP1 module, so the motor's bus controller communicates
 with ESPHome just like it would with Hörmann's own accessory.
 
@@ -41,10 +41,10 @@ modbus:
   uart_id: uart_bus
   role: server
 
-hoermann:
+hoermann_hcp:
 
 cover:
-  - platform: hoermann
+  - platform: hoermann_hcp
     name: Garage Door
     device_class: garage
 ```
@@ -89,7 +89,7 @@ connect to the ESP32 UART pins you set in the `uart:` block.
 > above what the `rx_pin` can safely accept.
 
 <Figure
-  src={hoermannWiringImg}
+  src={hoermannHcpWiringImg}
   alt="Wiring diagram of a Hörmann motor connected to an ESP32 through a buck converter and an RS485 transceiver"
   caption="Example adapter: a buck converter powers the ESP32 from the bus's +25 V supply."
   layout="constrained"
@@ -113,7 +113,7 @@ connect to the ESP32 UART pins you set in the `uart:` block.
 
 ## Component/Hub
 
-The `hoermann` hub handles the communication with the motor's bus controller and exposes its state
+The `hoermann_hcp` hub handles the communication with the motor's bus controller and exposes its state
 to the `cover` platform below.
 
 ### Configuration variables
@@ -130,21 +130,21 @@ to the `cover` platform below.
 
 ## Cover
 
-The `hoermann` cover platform exposes the garage door as a [cover](/components/cover/). It supports
+The `hoermann_hcp` cover platform exposes the garage door as a [cover](/components/cover/). It supports
 opening, closing, stopping and moving to a position, and reports the position and operation as
 provided by the motor.
 
 ```yaml
 cover:
-  - platform: hoermann
+  - platform: hoermann_hcp
     name: Garage Door
     device_class: garage
 ```
 
 ### Configuration variables
 
-- **hoermann_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the
-  `hoermann` hub. Only required if you have more than one hub.
+- **hoermann_hcp_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the
+  `hoermann_hcp` hub. Only required if you have more than one hub.
 - All other options from [Cover](/components/cover#config-cover).
 
 ## See Also
@@ -153,4 +153,4 @@ cover:
 - [Modbus](/components/modbus/)
 - [HCPBridge project](https://github.com/hkiam/HCPBridge)
 - [Automation](/automations)
-- <APIRef text="hoermann_cover.h" path="hoermann/cover/hoermann_cover.h" />
+- <APIRef text="hoermann_hcp_cover.h" path="hoermann_hcp/cover/hoermann_hcp_cover.h" />
