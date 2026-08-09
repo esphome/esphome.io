@@ -71,6 +71,8 @@ export interface ProjectType {
   installPlacement?: "type" | "device";
   devices: Device[];
   advanced?: {
+    /** Name of the component this project is built on; linked to `/components/<component>/`. */
+    component?: string;
     /** Repository holding the YAML, for devices that do not name their own. */
     githubUrl?: string;
     /** Offer the "Show DIY devices" link. */
@@ -148,11 +150,14 @@ export const PROJECT_TYPES: ProjectType[] = [
   {
     id: "bluetooth",
     name: "Bluetooth proxy",
-    description:
-      'Create a device to allow Home Assistant to control Bluetooth devices. Uses the <a href="/components/bluetooth_proxy/">bluetooth_proxy</a> component.',
+    description: "Create a device to allow Home Assistant to control Bluetooth devices.",
     devicePrompt: "Pick the device you want to turn into a Bluetooth proxy:",
     manifestRoot: "https://firmware.esphome.io/bluetooth-proxy",
-    advanced: { githubUrl: "https://github.com/esphome/bluetooth-proxies", diyToggle: true },
+    advanced: {
+      component: "bluetooth_proxy",
+      githubUrl: "https://github.com/esphome/bluetooth-proxies",
+      diyToggle: true,
+    },
     devices: [
       {
         id: "esp32-generic",
@@ -291,10 +296,9 @@ export const PROJECT_TYPES: ProjectType[] = [
   {
     id: "irrf",
     name: "Infrared &amp; radio frequency proxy",
-    description:
-      'Create a device to allow Home Assistant to control infrared and radio frequency devices. Uses the <a href="/components/ir_rf_proxy/">ir_rf_proxy</a> component.',
+    description: "Create a device to allow Home Assistant to control infrared and radio frequency devices.",
     devicePrompt: "Pick the device you want to turn into an infrared or radio frequency proxy:",
-    advanced: { githubUrl: "https://github.com/esphome/rf-proxies" },
+    advanced: { component: "ir_rf_proxy", githubUrl: "https://github.com/esphome/rf-proxies" },
     devices: [
       {
         id: "xiao-ir-mate",
@@ -338,11 +342,10 @@ export const PROJECT_TYPES: ProjectType[] = [
   {
     id: "serial",
     name: "Serial &amp; Modbus proxy",
-    description:
-      'Create a device to allow Home Assistant to talk to serial and Modbus devices. Uses the <a href="/components/serial_proxy/">serial_proxy</a> component.',
+    description: "Create a device to allow Home Assistant to talk to serial and Modbus devices.",
     devicePrompt: "Pick the device you want to turn into a serial proxy:",
     manifestRoot: "https://firmware.esphome.io/serial-proxy",
-    advanced: { githubUrl: "https://github.com/esphome/serial-proxies" },
+    advanced: { component: "serial_proxy", githubUrl: "https://github.com/esphome/serial-proxies" },
     devices: [
       {
         id: "atoms3-lite-rs485",
