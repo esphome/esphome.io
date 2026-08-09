@@ -60,6 +60,8 @@ zephyr:
   See [`snippets`](#snippets).
 - **overlays** (*Optional*, mapping): Raw devicetree overlay passthrough for the main application image
   and/or the `mcuboot` bootloader image. See [`overlays`](#overlays).
+- **advanced** (*Optional*, mapping): Variant-specific options that don't apply across every variant.
+  See [`advanced`](#advanced).
 
 ## Variants
 
@@ -73,6 +75,7 @@ zephyr:
 | `nrf54l15` | nRF54L15 (Cortex-M33) | [`nrf54l15dk`](https://docs.zephyrproject.org/latest/boards/nordic/nrf54l15dk/doc/index.html) | nRF Connect SDK (NCS) | BLE, Thread (via `openthread:`), Zigbee (via `zigbee:`, `framework: type: zigbee`) |
 | `nrf54lm20a` | nRF54LM20A (Cortex-M33) | [`nrf54lm20dk`](https://docs.zephyrproject.org/latest/boards/nordic/nrf54lm20dk/doc/index.html) | nRF Connect SDK (NCS) | BLE, Thread (via `openthread:`), Zigbee (via `zigbee:`, `framework: type: zigbee`) |
 | `efr32mg24` | Silicon Labs EFR32MG24 (Cortex-M33) | [`xg24_ek2703a`](https://docs.zephyrproject.org/latest/boards/silabs/dev_kits/xg24_ek2703a/doc/index.html) | mainline Zephyr | BLE, Thread (via `openthread:`) |
+| `rp2040` | Raspberry Pi RP2040 (Cortex-M0+) | [`rpi_pico`](https://docs.zephyrproject.org/latest/boards/raspberrypi/rpi_pico/doc/index.html) | mainline Zephyr | No wireless yet |
 
 All three `esp32*` variants build only the single scheduled core Zephyr's Wi-Fi/BLE drivers require;
 where the chip has more than one core, only the main application core's image is built. `nrf54l15`
@@ -102,6 +105,16 @@ network-based `ota: platform: esphome` once `openthread:` is configured, the sam
 and postdates the last tagged release (`v4.4.1`); once a release containing it ships, this
 requirement goes away. Zigbee isn't available — this fork has no Zigbee support for Silicon Labs
 Series 2 radios yet.
+
+`efr32mg24` also supports Silicon Labs' own vendor SDK, "Simplicity SDK for Zephyr"
+(`framework: type: silabs`), as an alternate to the default mainline Zephyr build — see
+[`advanced`](#advanced) for its `commander_version` option.
+
+`rp2040` has no ROM bootloader requirement of its own — the RP2040's built-in USB (BOOTSEL)
+bootloader flashes it directly, so MCUboot is optional here, unlike every other variant with an
+MCUboot-capable board. It defaults to `advanced: bootloader: none` (direct-flash BOOTSEL boot);
+set it to `mcuboot` for OTA/rollback support, at the cost of a second board target — see
+[`advanced`](#advanced). `rp2040` has no wireless transport support yet.
 
 It is not recommended to use esp variants for other than experimental purposes, the esp32 platform,
 esp-idf framework delivers superior functionality and stability.  These variants are being used to test
@@ -168,7 +181,8 @@ it from:
 
 - **type** (*Optional*, string): Which SDK to use. Most variants only support one (mainline Zephyr);
   `nrf52`, `nrf54l15`, and `nrf54lm20a` support `ncs` (the default) and `zephyr` (mainline, as an
-  alternate). See [Variants](#variants) for each variant's default.
+  alternate); `efr32mg24` supports mainline Zephyr (the default) and `silabs` (Silicon Labs' own
+  Simplicity SDK for Zephyr, as an alternate). See [Variants](#variants) for each variant's default.
 - **version** (*Optional*, string): The version to build against, in **that SDK's own numbering** —
   defaults to the SDK's own recommended version. The literal value `recommended` is also accepted as
   an explicit alias for that default. Mutually exclusive with **source**, since a source determines
@@ -234,6 +248,41 @@ zephyr:
 
 `source: url` may be omitted to target a branch of the selected SDK's own official manifest (for
 example, an alpha or pre-release) — `source: {type: git, ref: v4.5.0-rc1}` alone is enough.
+
+## `advanced`
+
+Options that only apply to one variant, rather than every variant the way **framework** or
+**watchdog_timeout** do. An option is rejected with an error if used on a variant it doesn't apply to.
+
+- **bootloader** (*Optional*, string, `rp2040` only): `none` (the default) or `mcuboot`. RP2040's
+  ROM has its own USB (BOOTSEL) bootloader, so unlike every other variant, MCUboot is optional rather
+  than required to flash at all — the default direct-flashes without it. Choosing `mcuboot` only
+  controls the sysbuild/signing config; it does not qualify **board** for you — supply the fully
+  qualified board yourself (for example `board: rpi_pico/rp2040/mcuboot`), the same way you'd supply
+  your own MCUboot-shaped partitions via `overlays` for a board without one.
+- **commander_version** (*Optional*, string, `efr32mg24` with `framework: type: silabs` only):
+  Override the version of Silicon Labs' Simplicity Commander CLI used for secure-boot image signing.
+  Defaults to a pinned known-good version. Commander is downloaded and cached automatically; no
+  extra install step is needed.
+
+```yaml
+# Example configuration entry -- RP2040 with MCUboot enabled
+zephyr:
+  variant: rp2040
+  board: rpi_pico/rp2040/mcuboot
+  advanced:
+    bootloader: mcuboot
+```
+
+```yaml
+# Example configuration entry -- EFR32MG24 on Silicon Labs' own SDK
+zephyr:
+  variant: efr32mg24
+  framework:
+    type: silabs
+  advanced:
+    commander_version: "1.24.1"
+```
 
 ## `kconfig_options`
 
