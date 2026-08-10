@@ -15,8 +15,8 @@ You must set the `role` attribute of the [Modbus](/components/modbus/) to `serve
 
 > [!NOTE]
 > Modbus broadcast writes use address `0`. They are delivered to every registered server device on the same hub and
-> do not send a response. Only write function codes `0x06` and `0x10` are handled as broadcasts; all other requests
-> addressed to `0`, including reads and coil writes, are ignored.
+> do not send a response. Only write function codes are handled as broadcasts - `0x06` and `0x10` for registers,
+> `0x05` and `0x0F` for coils; all other requests addressed to `0`, including reads, are ignored.
 
 <Image src="/images/modbus.png" width={190} height={200} layout="constrained" alt="" />
 
@@ -121,7 +121,7 @@ See [Modbus](/components/modbus/#hardware-setup) for RS485 hardware setup instru
     Lambda that returns the value of this bit, as a `bool`. `address` is provided with the address
     of this bit. Anything that converts to `bool` is accepted, and that conversion is implicit: an
     entity such as `return id(my_switch);` hands back a pointer, which is always `true`, and the bit
-    reads `1` forever. Make sure the lambda returns the state you mean - `return id(my_switch).state;`
+    reads `1` forever. Make sure the lambda returns the state you mean — `return id(my_switch).state;`
     for a switch, or the value of a `globals` bool. Returning an empty optional (`return {};`) declines
     the read, and the client's request is answered with a `SERVICE_DEVICE_FAILURE` (code `4`) exception
     instead of a value.
@@ -135,24 +135,24 @@ See [Modbus](/components/modbus/#hardware-setup) for RS485 hardware setup instru
   > [!NOTE]
   > A read is all-or-nothing: if any address in the requested span has no configured bit, the whole
   > request is rejected with an `ILLEGAL_DATA_ADDRESS` (code `2`) exception rather than answering with
-  > the bits that do exist. `courtesy_response` does not apply here - it is only consulted for
-  > registers - so a client reading coils `0x00`-`0x0F` from a server that defines only `0x00` and
+  > the bits that do exist. `courtesy_response` does not apply here — it is only consulted for
+  > registers — so a client reading coils `0x00`-`0x0F` from a server that defines only `0x00` and
   > `0x01` gets an exception either way. Define every address a client will ask for.
 
   > [!NOTE]
   > A write covering several bits (for example a "write multiple coils" request) is atomic in the
   > same way as a multi-register write: every targeted bit must exist and have a `write_lambda`, or
-  > the whole request is rejected before anything is changed. Once that check passes, each
-  > `write_lambda` is called in turn; if one of them returns `false`, the write stops there — the
-  > bits already written stay changed, and the client's request is answered with a `SERVICE_DEVICE_FAILURE`
-  > (code `4`) exception.
+  > the whole request is rejected before anything is changed, with an `ILLEGAL_DATA_ADDRESS` (code `2`)
+  > exception. Once that check passes, each `write_lambda` is called in turn; if one of them returns
+  > `false`, the write stops there — the bits already written stay changed, and the client's request is
+  > answered with a `SERVICE_DEVICE_FAILURE` (code `4`) exception.
 
   > [!NOTE]
   > A server that configures no `bits` at all does not implement the coil and discrete-input functions:
   > those requests are answered with `ILLEGAL_FUNCTION` (code `1`) rather than `ILLEGAL_DATA_ADDRESS`
   > (code `2`), which is what a request for an address that simply isn't in a populated `bits` list
   > gets. The same holds the other way round: a bits-only server with no `registers` answers
-  > `ILLEGAL_FUNCTION` to register requests - to reads unless `courtesy_response` is configured, and to
+  > `ILLEGAL_FUNCTION` to register requests — to reads unless `courtesy_response` is configured, and to
   > writes always, since `courtesy_response` only covers reads.
 
 ## Read/Write Multiple Registers (Function Code 0x17)
@@ -208,7 +208,7 @@ sensor:
 ```
 
 The following code serves two bits: a read-only bit reporting a relay's state, and a read/write bit
-that lets a ModBUS client both read and control whether a pump is running.
+that lets a Modbus client both read and control whether a pump is running.
 
 ```yaml
 uart:
