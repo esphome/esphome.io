@@ -45,10 +45,10 @@ The `modbus_controller` platform creates an output from a modbus_controller. The
   Parameters passed into the lambda
 
   - **x** (float or bool): the value to be sent — a `float` for `register_type: holding`, or a `bool` for `register_type: coil`
-  - **payload**: an empty vector to fill; if filled, the return value is ignored and the payload is sent as a custom command that must include all required bytes for a modbus request. Its element type depends on `register_type`:
+  - **payload**: an empty vector to fill; if filled, the return value is ignored and the payload is sent instead. Its element type, and what the bytes mean, depend on `register_type`:
 
-    - for `register_type: holding`  : `std::vector<uint16_t> &payload` - add 16-bit raw modbus register words.
-    - for `register_type: coil`  : `std::vector<uint8_t> &payload` - add the raw PDU bytes.
+    - for `register_type: holding`  : `std::vector<uint16_t> &payload` - add 16-bit raw modbus register words. The write covers exactly the registers you add, so the payload must not be wider than `register_count` or the write is dropped with an error.
+    - for `register_type: coil`  : `std::vector<uint8_t> &payload` - add the raw PDU bytes. This is sent as a custom command, so it must include all required bytes for a modbus request.
 
   - **item** (const pointer to a SensorItem derived object): The sensor object itself.
 

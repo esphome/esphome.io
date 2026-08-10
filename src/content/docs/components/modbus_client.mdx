@@ -15,10 +15,11 @@ lambdas, using an existing [Modbus](/components/modbus/) hub in the client role.
 
 <Image src="/images/modbus.png" width={190} height={200} layout="constrained" alt="" />
 
-The actions below do not require a `modbus_client:` configuration block: the component loads automatically together with the `modbus` hub. Each
-action instance is its own client device on the hub, and the hub routes the reply back to the exact action that sent
-the request. Because replies are matched by action identity rather than by device address, the `address` can be
-templatable and overlapping sends from different actions do not interfere with each other.
+The actions below do not require a `modbus_client:` configuration block: the component loads automatically
+together with the `modbus` hub. Each action instance is its own client device on the hub, and the hub routes the
+reply back to the exact action that sent the request. Because replies are matched by action identity rather than by
+device address, the `address` can be templatable and overlapping sends from different actions do not interfere with
+each other.
 
 A [Modbus](/components/modbus/) hub in the client role (the default) is required. `modbus_id` is only needed when
 multiple hubs are configured.
@@ -106,7 +107,7 @@ on_...:
 
 ### Building PDUs with Helpers
 
-The typed actions above call these same builders internally, so for static YAML config, use a typed action instead.
+The typed actions below call these same builders internally, so for static YAML config, use a typed action instead.
 Reach for a builder directly only when a typed action can't fit: the function code needs to be chosen at runtime
 (`create_read_pdu` takes a `modbus::FunctionCode` value, so one lambda can serve all four read types), or you're
 already writing a `pdu` lambda for something non-standard and want part of it built for you.
@@ -115,20 +116,27 @@ already writing a `pdu` lambda for something non-standard and want part of it bu
   `READ_HOLDING_REGISTERS`, `READ_INPUT_REGISTERS`.
 - `create_write_single_register_pdu(address, value)` / `create_write_single_coil_pdu(address, on_off)`.
 - `create_write_registers_pdu(start_address, values)` - `values` is a span of `uint16_t`.
-- `create_write_coils_pdu(start_address, values)` - `values` is a span of `bool`. `std::vector<bool>` is bit-packed
-  and won't convert to a span - pass a `std::array<bool, N>` instead, or use the `PackedBits` overload if the bits
-  are already packed.
+- `create_write_coils_pdu(start_address, values)` - `values` is a span of `bool`, a `std::vector<bool>` (which is
+  bit-packed and so needs its own overload), or `PackedBits` if the bits are already packed. The device-level
+  `write_multiple_coils()` takes only the span and `PackedBits` forms.
 
 All return types convert to `PduBuffer`. Invalid input (bad counts, oversize payloads, ...) returns an *empty* PDU
 and logs the reason - the action's `on_not_sent` fires, same as any other empty PDU (see above).
 
 ```yaml
-- modbus_client.send:
-    address: 0x01
-    pdu: !lambda |-
-      auto fc = id(use_input_registers) ? modbus::FunctionCode::READ_INPUT_REGISTERS
-                                         : modbus::FunctionCode::READ_HOLDING_REGISTERS;
-      return modbus::helpers::create_read_pdu(fc, 0x0010, 2);   # function code chosen at runtime
+globals:
+  - id: use_input_registers
+    type: bool
+    initial_value: 'false'
+
+on_...:
+  - modbus_client.send:
+      address: 0x01
+      pdu: !lambda |-
+        // the function code is chosen at runtime, which a typed action can't do
+        auto fc = id(use_input_registers) ? modbus::FunctionCode::READ_INPUT_REGISTERS
+                                          : modbus::FunctionCode::READ_HOLDING_REGISTERS;
+        return modbus::helpers::create_read_pdu(fc, 0x0010, 2);
 ```
 
 The enum and the builders live in the `modbus` component's namespaces (`modbus::FunctionCode`,
@@ -435,9 +443,9 @@ button:
   second identical send is refused (`on_not_sent`).
 - **Broadcast** (address `0`): no device replies to a broadcast, so use it fire-and-forget (omit `on_response`). The
   hub doesn't special-case address `0` - it still waits the full `send_wait_time` before considering the send done,
-  so a broadcast blocks the bus for that long even though nothing will ever reply. Since exactly one reply handler always
-  fires, a broadcast always ends in `on_no_response` - a `retry:` lambda attached to it can never be satisfied, so
-  without its own counter cap the frame retransmits forever.
+  so a broadcast blocks the bus for that long even though nothing will ever reply. Since exactly one reply handler
+  always fires, a broadcast always ends in `on_no_response` - a `retry:` lambda attached to it can never be
+  satisfied, so without its own counter cap the frame retransmits forever.
 
 > [!NOTE]
 > None of the reply handlers (`on_sent`, `on_response`, `on_custom_response`, `on_error`, `on_no_response`,
@@ -504,18 +512,29 @@ Handling the error and timeout branches:
 ## Lambda Hook Component
 
 A simpler alternative to the actions above, for use only inside a lambda - not a YAML automation action. It's
-syntactic sugar over the `id(hub).send_pdu(address, pdu)` call shown on the [Modbus](/components/modbus/) page: the
+syntactic sugar over the `id(hub).queue_pdu(address, pdu)` call shown on the [Modbus](/components/modbus/) page: the
 device's `address` is configured once instead of passed to every call, and the `write_*` methods build the PDU for
 you. There's no callback of any kind, so there's no way to read a reply back - useful for writes only, never reads.
 Commands sent this way are queued on the hub just like any other, so firing off several in quick succession from
 the same lambda is supported.
 
+### Configuration Variables
+
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID to use in lambdas. Unlike most components it is
+  not generated for you: the device is only reachable through `id()`, so an entry without one is rejected.
+- **address** (**Required**, int): The Modbus device address every call from this client targets. Unlike
+  [Modbus Controller](/components/modbus_controller/), there is no default.
+- **modbus_id** (*Optional*, [ID](/guides/configuration-types#id)): The Modbus hub to send on. Automatically assigned
+  when a single hub is configured.
+
+Several clients may be configured, each bound to its own device address.
+
 ```yaml
 modbus_client:
-  address: 0x01
-  id: ad_hoc_client
+  - id: ad_hoc_client
+    address: 0x01
 
-on_xxx:
+on_...:
   - lambda: 'id(ad_hoc_client).write_single_register(0x1234, 0x99AB);'
   - lambda: |-
       uint16_t registers[] = {0x00FF, 0xAABC, 0xF00D};
@@ -527,7 +546,7 @@ on_xxx:
   # Any arbitrary PDU (function code + data)
   - lambda: |-
       uint8_t pdu[] = {42};
-      id(ad_hoc_client).send_pdu(pdu);
+      id(ad_hoc_client).queue_pdu(pdu);
   # Clear the send queue for all commands targeting this client's address
   - lambda: 'id(ad_hoc_client).clear_tx_queue_for_address();'
   # Clear the send queue for all commands sent from this client component
