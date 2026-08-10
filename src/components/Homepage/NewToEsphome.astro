@@ -1,24 +1,29 @@
 ---
-import { Image } from "astro:assets";
 import { LinkButton } from "@astrojs/starlight/components";
-import newToEsphomeImg from "../../assets/images/homepage/new-to-esphome.webp";
 ---
 
 <section class="new-to-esphome card-bgc">
   <div class="container">
+    <input type="checkbox" id="new-to-esphome-toggle" class="accordion__toggle" />
     <div class="content-container">
-      <h2>New to ESPHome? Read this!</h2>
-      <p>
-        Every ESPHome device is built around a small, inexpensive chip called a microcontroller – commonly an ESP32
-        (hence the name ESPHome!), but it also works with others like the Raspberry Pi RP2040. The chip is the
-        programmable part that controls your sensors, switches, and displays. ESPHome creates the programming that runs
-        on the chip, telling it what to do. Once installed, the chip can then “talk” directly to Home Assistant or any
-        other smart home system that supports it.
-      </p>
+      <label for="new-to-esphome-toggle" class="accordion__header">
+        <h2>New to ESPHome? Read this!</h2>
+        <span class="accordion__icon" aria-hidden="true"></span>
+      </label>
 
-      <Image src={newToEsphomeImg} alt="New to ESPHome" layout="constrained" />
+      <div class="accordion__content">
+        <div class="accordion__content-inner">
+          <p>
+            Every ESPHome device is built around a small, inexpensive chip called a microcontroller – commonly an ESP32
+            (hence the name ESPHome!), but it also works with others like the Raspberry Pi RP2040. The chip is the
+            programmable part that controls your sensors, switches, and displays. ESPHome creates the programming that
+            runs on the chip, telling it what to do. Once installed, the chip can then “talk” directly to Home Assistant
+            or any other smart home system that supports it.
+          </p>
 
-      <LinkButton href="/install/">Get started</LinkButton>
+          <LinkButton href="/install/">Get started</LinkButton>
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -27,11 +32,91 @@ import newToEsphomeImg from "../../assets/images/homepage/new-to-esphome.webp";
   @use "../../styles/mixins" as *;
 
   .new-to-esphome {
-    img {
-      max-height: 100%;
-      border-radius: 0.5rem;
-      @include fluid(16, 32, $property: margin-top);
-      @include fluid(16, 32, $property: margin-bottom);
+    :global(.container) {
+      @include bp(large-desktop) {
+        padding: 3rem 0;
+      }
+    }
+
+    .accordion__toggle {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+      white-space: nowrap;
+    }
+
+    .accordion__header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      cursor: pointer;
+
+      h2 {
+        margin-bottom: 0;
+      }
+    }
+
+    .accordion__toggle:focus-visible ~ .content-container .accordion__header {
+      outline: 2px solid var(--sl-color-accent);
+      outline-offset: 4px;
+    }
+
+    .accordion__icon {
+      position: relative;
+      flex-shrink: 0;
+      width: 1rem;
+      height: 1rem;
+
+      &::before,
+      &::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        background: currentColor;
+        transform: translate(-50%, -50%);
+        transition: transform 0.2s ease;
+      }
+
+      &::before {
+        width: 100%;
+        height: 2px;
+      }
+
+      &::after {
+        width: 2px;
+        height: 100%;
+      }
+    }
+
+    .accordion__toggle:checked ~ .content-container .accordion__icon::after {
+      transform: translate(-50%, -50%) scaleY(0);
+    }
+
+    .accordion__content {
+      display: grid;
+      grid-template-rows: 0fr;
+      transition: grid-template-rows 0.3s ease;
+
+      a {
+        margin: 1.5rem 0 0;
+      }
+    }
+
+    .accordion__toggle:checked ~ .content-container .accordion__content {
+      grid-template-rows: 1fr;
+    }
+
+    .accordion__content-inner {
+      overflow: hidden;
+    }
+
+    p {
+      @include fluid(16, 24, $property: padding-top);
+      margin-bottom: 1.5rem;
     }
   }
 </style>
