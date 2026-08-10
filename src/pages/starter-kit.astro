@@ -165,19 +165,21 @@ import FaqSection from "@components/starter-kit/FaqSection.astro";
         });
     });
 
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          video
-            .play()
-            .then(() => setPlaying(true))
-            .catch(() => {});
-          observer.disconnect();
-        }
-      },
-      { threshold: 0.5 },
-    );
-    observer.observe(video);
+if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+const observer = new IntersectionObserver(
+  ([entry]) => {
+    if (entry.isIntersecting) {
+      video
+        .play()
+        .then(() => setPlaying(true))
+        .catch(() => {});
+      observer.disconnect();
+    }
+  },
+  { threshold: 0.5 },
+);
+observer.observe(video);
   });
 </script>
 
