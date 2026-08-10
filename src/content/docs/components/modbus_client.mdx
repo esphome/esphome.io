@@ -107,7 +107,7 @@ on_...:
 
 ### Building PDUs with Helpers
 
-The typed actions above call these same builders internally, so for static YAML config, use a typed action instead.
+The typed actions below call these same builders internally, so for static YAML config, use a typed action instead.
 Reach for a builder directly only when a typed action can't fit: the function code needs to be chosen at runtime
 (`create_read_pdu` takes a `modbus::FunctionCode` value, so one lambda can serve all four read types), or you're
 already writing a `pdu` lambda for something non-standard and want part of it built for you.
@@ -129,14 +129,14 @@ globals:
     type: bool
     initial_value: 'false'
 
-# ...
-- modbus_client.send:
-    address: 0x01
-    pdu: !lambda |-
-      // the function code is chosen at runtime, which a typed action can't do
-      auto fc = id(use_input_registers) ? modbus::FunctionCode::READ_INPUT_REGISTERS
-                                        : modbus::FunctionCode::READ_HOLDING_REGISTERS;
-      return modbus::helpers::create_read_pdu(fc, 0x0010, 2);
+on_...:
+  - modbus_client.send:
+      address: 0x01
+      pdu: !lambda |-
+        // the function code is chosen at runtime, which a typed action can't do
+        auto fc = id(use_input_registers) ? modbus::FunctionCode::READ_INPUT_REGISTERS
+                                          : modbus::FunctionCode::READ_HOLDING_REGISTERS;
+        return modbus::helpers::create_read_pdu(fc, 0x0010, 2);
 ```
 
 The enum and the builders live in the `modbus` component's namespaces (`modbus::FunctionCode`,
@@ -489,8 +489,8 @@ Several clients may be configured, each bound to its own device address.
 
 ```yaml
 modbus_client:
-  address: 0x01
-  id: ad_hoc_client
+  - id: ad_hoc_client
+    address: 0x01
 
 on_...:
   - lambda: 'id(ad_hoc_client).write_single_register(0x1234, 0x99AB);'
