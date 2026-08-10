@@ -26,8 +26,8 @@ multiple hubs are configured.
 > [!TIP]
 > Three ways to send an ad-hoc command, in order of preference:
 >
-> - **Typed Read/Write Actions** (below) for a standard read or write with a static function code - use this unless
->   one of the next two applies.
+> - **Typed Read/Write Actions** (below) for a standard read, write, or combined read/write with a static function
+>   code - use this unless one of the next two applies.
 > - **`modbus_client.send`** for a non-standard PDU, or a function code chosen at runtime instead of fixed in the
 >   YAML.
 > - **Lambda Hook Component** for a write from inside a lambda that's already doing other C++ work, rather than as
@@ -36,16 +36,18 @@ multiple hubs are configured.
 ## Typed Read/Write Actions
 
 Instead of hand-assembling a PDU with `modbus_client.send`, these actions issue a single standard Modbus
-function-code transaction directly: a register or coil read, or a register or coil write. Like `modbus_client.send`,
-each is its own hub device - it resolves the hub (automatically when a single one is configured), sends the request
-to `address`, and routes the reply straight back to that action's own handlers, never another action's.
+function-code transaction directly: a register or coil read, a register or coil write, or a combined read/write in a
+single transaction. Like `modbus_client.send`, each is its own hub device - it resolves the hub (automatically when
+a single one is configured), sends the request to `address`, and routes the reply straight back to that action's
+own handlers, never another action's.
 
 ### Common Configuration Variables
 
 - **address** (**Required**, templatable, int): The Modbus device address the frame is sent to.
 - **modbus_id** (*Optional*, [ID](/guides/configuration-types#id)): The Modbus hub to send on. Automatically assigned
   when a single hub is configured.
-- **start_address** (**Required**, templatable, int): The starting register or coil address.
+- **start_address** (**Required**, templatable, int): The starting register or coil address. Not used by
+  `read_write_multiple_registers`, which takes separate `read_address` and `write_address` instead.
 - **on_sent** (*Optional*, [Automation](/automations/)): Fires when the frame is written to the wire. Lambda
   variable: `request` (`std::span<const uint8_t>`, the PDU sent).
 - **on_response** (*Optional*, [Automation](/automations/)): Fires on a standard-conforming reply. The lambda
@@ -258,14 +260,15 @@ button:
 
 Writes one block of holding registers and reads another back in a single transaction (function code `0x17`). Per the
 Modbus specification the write is performed **before** the read, so when the two ranges overlap the read returns the
-values just written.
+values just written. Because the write travels in the same frame, an `on_no_response` retry re-sends it - avoid
+retries on registers whose writes have side effects (command or trigger registers, counters, one-shot commits).
 
 This action does **not** use the common `start_address`; it has a separate read range and write range instead.
 
 #### Configuration Variables
 
 - **write_address** (**Required**, templatable, int): Address of the first holding register to write.
-- **values** (**Required**, templatable, list of 16-bit hex): Registers to **write**, `write_address` first. Up to
+- **values** (**Required**, templatable, list of int): Registers to **write**, `write_address` first. Up to
   121 registers - the `0x17` write ceiling, lower than the 123 of a plain write.
 - **read_address** (**Required**, templatable, int): Address of the first holding register to read back.
 - **read_count** (*Optional*, templatable, int): Number of registers to read back, up to 125. Defaults to `1`.
