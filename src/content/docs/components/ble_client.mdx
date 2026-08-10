@@ -56,14 +56,14 @@ ble_client:
 ```
 
 > [!NOTE]
-> The Pico's BLE stack supports one GATT client connection: a single `ble_client` entry, which also
-> shares that slot with an active [Bluetooth Proxy](/components/bluetooth_proxy/) — configure one or
-> the other.
+> The Pico's BLE stack supports a single GATT client connection. This means at most one
+> `ble_client` entry, and the slot is shared with an active
+> [Bluetooth Proxy](/components/bluetooth_proxy/) — configure one or the other, not both.
 
 ## Configuration variables
 
 - **mac_address** (**Required**, MAC Address): The MAC address of the BLE device to connect to.
-- **auto_connect** (*Optional*, boolean): If true the device will be automatically connected when found by the [Esp32 Ble Tracker](/components/esp32_ble_tracker/). Defaults to true.
+- **auto_connect** (*Optional*, boolean): If true the device will be automatically connected when found by the BLE tracker (available on all supported platforms). Defaults to true.
 - **id** (**Required**, [ID](/guides/configuration-types#id)): The ID to use for code generation, and for reference by dependent components.
 
 Automations:
@@ -187,7 +187,9 @@ within an automation. Once connected other actions like `ble_write` can be used.
 a BLE server needs only to be interacted with occasionally, and thus does not need a constant
 connection held.
 
-The following example updates the time of a Xiaomi MHO-C303 clock once per hour. Note that the BLE tracker must
+The following example updates the time of a Xiaomi MHO-C303 clock once per hour (an ESP32 example —
+the `esp32_ble_tracker.stop_scan`/`start_scan` actions it uses are ESP32-specific; the
+`ble_client.connect` action itself works on both platforms). Note that the BLE tracker must
 be stopped during the connect attempt, and restarted afterwards. This would not be necessary if the tracker had
 `continuous: false` set. In this example scenario there is another BLE device that does require the scanner to be
 on, hence the stop and start of the scan during connect.
@@ -392,14 +394,14 @@ is only obtained through dependent components, such as [Ble Client](/components/
 See the documentation for these components for details on setting up
 specific devices.
 
-In order to use the `ble_client` component, you need to enable the
-[Esp32 Ble Tracker](/components/esp32_ble_tracker/) component. This will also allow you to discover
-the MAC address of the device.
+In order to use the `ble_client` component, you need to enable the BLE tracker for your platform —
+[Esp32 Ble Tracker](/components/esp32_ble_tracker/) or [RP2 BLE Tracker](/components/rp2_ble_tracker/).
+This will also allow you to discover the MAC address of the device.
 
 When you have discovered the MAC address of the device, you can add it
 to the `ble_client` stanza.
 
-If you then build and upload this configuration, the ESP will listen for
+If you then build and upload this configuration, the device will listen for
 the device and attempt to connect to it when it is discovered. The component
 will then query the device for all available services and characteristics and
 display them in the log:
