@@ -49,9 +49,9 @@ bk72xx_ble_tracker:
 
   > [!NOTE]
   > Scanning defaults to **active**, like the other BLE trackers. Passive scanning
-  > (`active: false`) is sufficient for BTHome/ATC thermometers and most beacons — they
-  > broadcast all their data in the advertisement (no scan response) — and keeps the radio
-  > cost of each window minimal on the single-core SoC.
+  > (`scan_parameters.active: false`) is sufficient for BTHome/ATC thermometers and most
+  > beacons — they broadcast all their data in the advertisement (no scan response) — and
+  > keeps the radio cost of each window minimal on the single-core SoC.
 
   - **interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval between
     each consecutive scan window. The scanner cycles through the three BLE advertising channels
@@ -172,9 +172,9 @@ api:
 
 ## With BLE sensors
 
-Sensor platforms attach to the tracker automatically (identical to ESP32). The default passive
-scanning is sufficient for BTHome/ATC-style sensors that broadcast all their data in the
-advertisement:
+Sensor platforms attach to the tracker automatically (identical to ESP32). Passive scanning
+(`scan_parameters.active: false`) is sufficient for BTHome/ATC-style sensors that broadcast
+all their data in the advertisement:
 
 ```yaml
 bk72xx_ble_tracker:
@@ -197,12 +197,16 @@ sensor:
 Unlike the ESP32 which runs BLE on a dedicated core, the BK72xx run both WiFi and BLE on the
 same single ARM CPU core. The scan `window` / `interval` ratio decides how that core is split
 between BLE and WiFi. Active scanning adds a transmission per discovered device, so set
-`active: false` when scan responses are not needed (BTHome/ATC beacons) to keep the radio
-cost of each window minimal:
+`scan_parameters.active: false` when scan responses are not needed (BTHome/ATC beacons) to
+keep the radio cost of each window minimal:
 
 - `interval: 100ms`, `window: 30ms` → **30/70** BLE / WiFi — the BK reference default
 - `interval: 200ms`, `window: 50ms` → **25/75** BLE / WiFi — catches fewer advertisements,
   but leaves more of the core for WiFi
+
+Note that `scan_parameters.active` only governs standalone configurations: with
+[`bluetooth_proxy`](/components/bluetooth_proxy/), a connected Home Assistant drives the scan
+mode at runtime.
 
 ## See Also
 
