@@ -120,6 +120,7 @@ import JoinOurCommunity from "@components/Homepage/JoinOurCommunity.astro";
     border: 1px solid var(--esphome-card-border-color);
     border-radius: 1rem;
     padding: 1.75rem;
+    transition: border-color 0.2s ease;
 
     &.card--ghost {
       border-color: transparent;
@@ -230,7 +231,18 @@ import JoinOurCommunity from "@components/Homepage/JoinOurCommunity.astro";
       display: inline-flex;
       align-items: center;
       gap: 0.5rem;
+      transition: color 0.2s ease;
+
+      &:hover {
+        color: var(--sl-color-accent);
+      }
     }
+  }
+
+  // Whole-card links (e.g. `<a class="card">`) get a subtle border colour change on hover.
+  // Scoped to the `a` tag so non-interactive `<div class="card">` cards aren't affected.
+  :global(a.card:hover) {
+    border-color: var(--sl-color-text-accent);
   }
 
   :global(.card-bgc) {
