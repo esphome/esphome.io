@@ -184,7 +184,6 @@ export default defineConfig({
         Head: "./src/components/Head.astro",
         PageTitle: "./src/components/PageTitle.astro",
         SiteTitle: "./src/components/SiteTitle.astro",
-        ThemeProvider: "./src/components/ThemeProvider.astro",
         SocialIcons: "./src/components/SocialIcons.astro",
       },
       customCss: ["./src/styles/custom.css", "katex/dist/katex.min.css"],

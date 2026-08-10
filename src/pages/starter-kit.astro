@@ -74,8 +74,8 @@ import FaqSection from "@components/starter-kit/FaqSection.astro";
       </HeroLabel>
       <HeroLabel slot="labels" text="Temperature & humidity module" target="temp">
         <p>
-Keep track of your home’s climate in real time and use that data to trigger automations to make your home
-more comfortable and energy efficient.
+          Keep track of your home’s climate in real time and use that data to trigger automations to make your home more
+          comfortable and energy efficient.
         </p>
       </HeroLabel>
       <HeroLabel slot="labels" text="Motion module" target="pir">
@@ -165,21 +165,21 @@ more comfortable and energy efficient.
         });
     });
 
-if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
-const observer = new IntersectionObserver(
-  ([entry]) => {
-    if (entry.isIntersecting) {
-      video
-        .play()
-        .then(() => setPlaying(true))
-        .catch(() => {});
-      observer.disconnect();
-    }
-  },
-  { threshold: 0.5 },
-);
-observer.observe(video);
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          video
+            .play()
+            .then(() => setPlaying(true))
+            .catch(() => {});
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.5 },
+    );
+    observer.observe(video);
   });
 </script>
 
@@ -246,12 +246,16 @@ observer.observe(video);
     text-transform: uppercase;
     transition: background-color 0.2s ease-in-out;
     border: none;
-    outline: none;
     padding: 0.5rem 1rem 0.3rem;
     text-decoration: none;
 
     &:hover {
       background-color: var(--esk-secondary-color);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--esk-primary-color);
+      outline-offset: 2px;
     }
   }
 

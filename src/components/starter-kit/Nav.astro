@@ -8,7 +8,8 @@
             class="dark"
             width="259"
             height="34"
-            alt="ESPHome Starter Kit Logo (dark)"
+            alt=""
+            aria-hidden="true"
           />
           <img
             src="/images/starter-kit/esphome-starter-kit-logo.svg"
@@ -35,7 +36,7 @@
         </div>
       </div>
       <div class="burger">
-        <input type="checkbox" id="burger-toggle" />
+        <input type="checkbox" id="burger-toggle" aria-label="Toggle navigation menu" />
         <label for="burger-toggle"></label>
         <div class="burger-icon"></div>
       </div>
@@ -357,7 +358,17 @@
         }
 
         input[type="checkbox"] {
-          display: none;
+          position: absolute;
+          width: 1px;
+          height: 1px;
+          overflow: hidden;
+          clip: rect(0 0 0 0);
+          white-space: nowrap;
+
+          &:focus-visible ~ .burger-icon {
+            outline: 2px solid var(--esk-primary-color);
+            outline-offset: 2px;
+          }
 
           &:checked ~ .burger-icon {
             background-color: transparent;
@@ -425,4 +436,11 @@
     window.addEventListener("scroll", stickyHeader);
     stickyHeader();
   }
+
+  const burgerToggle = document.querySelector<HTMLInputElement>("#burger-toggle");
+  document.querySelectorAll<HTMLAnchorElement>(".mobile-nav a").forEach((link) => {
+    link.addEventListener("click", () => {
+      if (burgerToggle) burgerToggle.checked = false;
+    });
+  });
 </script>

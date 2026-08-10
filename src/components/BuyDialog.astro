@@ -40,10 +40,18 @@ const regions = [...regionMap.entries()];
     <div class="ha-buy-dialog-content">
       <div class="ha-buy-dialog-sidebar">
         <div class="ha-buy-dialog-sidebar-label">Shipping to</div>
-        <div class="ha-buy-dialog-sidebar-tabs">
+        <div class="ha-buy-dialog-sidebar-tabs" role="tablist">
           {
             regions.map(([region], i) => (
-              <div class:list={["ha-buy-dialog-sidebar-tab", i === 0 && "active"]} data-tab={`#${slugify(region)}`}>
+              <div
+                class:list={["ha-buy-dialog-sidebar-tab", i === 0 && "active"]}
+                data-tab={`#${slugify(region)}`}
+                role="tab"
+                id={`tab-${slugify(region)}`}
+                aria-controls={slugify(region)}
+                aria-selected={i === 0}
+                tabindex={i === 0 ? 0 : -1}
+              >
                 {region}
               </div>
             ))
@@ -54,7 +62,12 @@ const regions = [...regionMap.entries()];
       <div class="ha-buy-dialog-tab-content-wrapper">
         {
           regions.map(([region, distributors], i) => (
-            <div class:list={["ha-buy-dialog-tab-content", i === 0 && "active"]} id={slugify(region)}>
+            <div
+              class:list={["ha-buy-dialog-tab-content", i === 0 && "active"]}
+              id={slugify(region)}
+              role="tabpanel"
+              aria-labelledby={`tab-${slugify(region)}`}
+            >
               <div class="ha-buy-dialog-distributor-items">
                 {distributors.map((d) => (
                   <a href={d.url} target="_blank" rel="noopener noreferrer" class="ha-buy-dialog-distributor-item">
@@ -89,20 +102,20 @@ const regions = [...regionMap.entries()];
 
   function focusDistributors() {
     if (!dialog) return;
-    const tabs = dialog.querySelectorAll<HTMLElement>(".ha-buy-dialog-sidebar-tab");
-    const tabContents = dialog.querySelectorAll<HTMLElement>(".ha-buy-dialog-tab-content");
 
     const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
     const tzPrefix = timezone.split("/")[0].toLowerCase();
 
-    // Map IANA timezone area to region tab slug
+    // Map IANA timezone area to region tab slug. Regions with no dedicated
+    // distributor tab (e.g. Asia/Pacific/Indian/Africa) fall back to Global.
     const tzMap: Record<string, string> = {
       america: "#north-america",
       europe: "#europe",
       australia: "#australia",
-      asia: "#asia-pacific",
-      pacific: "#asia-pacific",
-      indian: "#asia-pacific",
+      asia: "#global",
+      pacific: "#global",
+      indian: "#global",
+      africa: "#global",
     };
 
     const targetSlug = tzMap[tzPrefix];
@@ -111,22 +124,32 @@ const regions = [...regionMap.entries()];
     const defaultTab = dialog.querySelector<HTMLElement>(`.ha-buy-dialog-sidebar-tab[data-tab="${targetSlug}"]`);
     if (!defaultTab) return;
 
-    tabs.forEach((t) => t.classList.remove("active"));
-    tabContents.forEach((tc) => tc.classList.remove("active"));
-    defaultTab.classList.add("active");
-    dialog.querySelector<HTMLElement>(targetSlug)?.classList.add("active");
+    activateTab(defaultTab);
+  }
+
+  function activateTab(tab: HTMLElement) {
+    if (!dialog) return;
+    dialog.querySelectorAll<HTMLElement>(".ha-buy-dialog-sidebar-tab").forEach((t) => {
+      t.classList.remove("active");
+      t.setAttribute("aria-selected", "false");
+      t.tabIndex = -1;
+    });
+    dialog.querySelectorAll<HTMLElement>(".ha-buy-dialog-tab-content").forEach((tc) => tc.classList.remove("active"));
+    tab.classList.add("active");
+    tab.setAttribute("aria-selected", "true");
+    tab.tabIndex = 0;
+    dialog.querySelector<HTMLElement>(tab.dataset.tab!)?.classList.add("active");
   }
 
   if (dialog) {
-    // Tab switching
+    // Tab switching — click and keyboard (Enter/Space) activation
     dialog.querySelectorAll<HTMLElement>(".ha-buy-dialog-sidebar-tab").forEach((tab) => {
-      tab.addEventListener("click", () => {
-        dialog.querySelectorAll<HTMLElement>(".ha-buy-dialog-sidebar-tab").forEach((t) => t.classList.remove("active"));
-        dialog
-          .querySelectorAll<HTMLElement>(".ha-buy-dialog-tab-content")
-          .forEach((tc) => tc.classList.remove("active"));
-        tab.classList.add("active");
-        dialog.querySelector<HTMLElement>(tab.dataset.tab!)?.classList.add("active");
+      tab.addEventListener("click", () => activateTab(tab));
+      tab.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          activateTab(tab);
+        }
       });
     });
 

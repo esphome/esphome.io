@@ -1411,9 +1411,16 @@
 
         // Wire up label clicks — same behaviour as clicking the mesh directly.
         for (const label of labels) {
-          label.el.addEventListener("click", () => {
+          const activateLabel = () => {
             heroPrompt?.classList.add("hero-prompt--hidden");
             if (label.groupIdx !== -1) focusModule(label.groupIdx);
+          };
+          label.el.addEventListener("click", activateLabel);
+          label.el.addEventListener("keydown", (event: KeyboardEvent) => {
+            if (event.key === "Enter" || event.key === " ") {
+              event.preventDefault();
+              activateLabel();
+            }
           });
         }
 
