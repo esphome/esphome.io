@@ -73,7 +73,7 @@ on_...:
   - a `then:` automation with a nested `retry:` returning lambda - runs the actions **and** decides the retry:
 
     ```yaml
-    - globals.set: { id: tries, value: '0' }  # reset before each new send, not in a handler
+    - lambda: "id(tries) = 0;"  # reset before each new send, not in a handler
     - modbus_client.send:
         address: 0x01
         pdu: [0x03, 0x00, 0x10, 0x00, 0x01]
@@ -191,7 +191,7 @@ button:
   - platform: template
     name: "Read holding registers"
     on_press:
-      - globals.set: { id: retries, value: '0' }  # reset before each new send, not in a handler
+      - lambda: "id(retries) = 0;"  # reset before each new send, not in a handler
       - modbus_client.read_holding_registers:
           address: 0x01
           start_address: 0x0010
