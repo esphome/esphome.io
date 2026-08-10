@@ -59,8 +59,6 @@ uart:
 mitsubishi_cn105:
   id: hp
   uart_id: ac_uart
-  update_interval: 1s
-  telemetry_request_min_interval: 60s
 
 climate:
   - platform: mitsubishi_cn105
@@ -100,14 +98,20 @@ climate:
 
 ### Mitsubishi CN105
 
-- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of this Mitsubishi CN105 hub. Use this ID to reference the hub from climate entities and actions.
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of this Mitsubishi CN105 hub.
+  Use this ID to reference the hub from climate entities and actions.
 - **uart_id** (*Optional*, [ID](/guides/configuration-types#id)): The UART bus to use.
-- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): Interval between status updates. Defaults to `1s`. Lower values provide faster detection of external changes, for example when using the remote control.
-- **telemetry_request_min_interval** (*Optional*, [Time](/guides/configuration-types#time)): Minimum time between consecutive telemetry reads. Defaults to `60s`.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): Interval between status updates.
+  Defaults to `1s`. Lower values provide faster detection of external changes, for example when using the remote
+  control.
+- **telemetry_request_min_interval** (*Optional*, [Time](/guides/configuration-types#time)): Minimum time between
+  consecutive telemetry reads. Defaults to `60s`.
 
-  This allows keeping a low `update_interval` (to quickly reflect changes, e.g. when using an IR remote) while avoiding excessive telemetry requests (for example room temperature reads).
+  This allows keeping a low `update_interval` (to quickly reflect changes, e.g. when using an IR remote) while avoiding
+  excessive telemetry requests (for example room temperature reads).
 
-  Telemetry is still requested during regular polling cycles, so the effective update frequency is bounded by `update_interval`.
+  Telemetry is still requested during regular polling cycles, so the effective update frequency is bounded by
+  `update_interval`.
 
   Set to `never` to disable telemetry polling.
 
@@ -169,15 +173,20 @@ sensor:
 > on the unit, it may be necessary to explicitly call `mitsubishi_cn105.clear_remote_temperature` to restore normal
 > operation. Improper use may lead to unexpected behavior.
 
-## Migration from climate-owned configuration
+## Migration From Climate-Owned Configuration
 
-Older configurations that define Mitsubishi CN105 UART/protocol options inside the `climate:` entry (`platform: mitsubishi_cn105`) are still accepted temporarily, but new configurations should use the top-level `mitsubishi_cn105` hub.
+Older configurations that define Mitsubishi CN105 UART/protocol options inside the `climate:` entry
+(`platform: mitsubishi_cn105`) are still accepted temporarily when no top-level `mitsubishi_cn105` hub is configured,
+but they emit a deprecation warning at compile time. All Mitsubishi CN105 climate entries must be migrated together;
+once a top-level hub is configured, legacy hub options in any climate entry are rejected.
 
 - Move `uart_id` and `update_interval` from the Mitsubishi CN105 climate entry to top-level `mitsubishi_cn105`.
 - Replace `current_temperature_min_interval` (in the climate entry) with top-level `telemetry_request_min_interval`.
-- Replace `climate.mitsubishi_cn105.set_remote_temperature` and `climate.mitsubishi_cn105.clear_remote_temperature` with `mitsubishi_cn105.set_remote_temperature` and `mitsubishi_cn105.clear_remote_temperature`.
+- Replace `climate.mitsubishi_cn105.set_remote_temperature` and
+  `climate.mitsubishi_cn105.clear_remote_temperature` with `mitsubishi_cn105.set_remote_temperature` and
+  `mitsubishi_cn105.clear_remote_temperature`.
 
-Legacy climate-owned configuration compatibility is planned for removal in ESPHome `2027.1.0`.
+Legacy climate-owned configuration compatibility will be removed in ESPHome `2027.2.0`.
 
 ## See Also
 
