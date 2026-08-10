@@ -46,7 +46,7 @@ modbus:
 
 on_...:
   then:
-    - lambda: id(my_client_hub).send_pdu(0x07, modbus::helpers::create_write_single_register_pdu(0x05, 0xBEEF));
+    - lambda: id(my_client_hub).queue_pdu(0x07, modbus::helpers::create_write_single_register_pdu(0x05, 0xBEEF));
 
 ```
 
@@ -74,9 +74,18 @@ on_...:
 - **role** (*Optional*, string): The role of this component, `client` or `server`. Defaults to `client`.
 
 ## Performance vs Stability
-The default settings are aimed to provide high stability (low error rate) for a wide variety of devices. If you are pushing for high throughput performance (i.e. lots of transmissions per minute) you will need to change the defaults.
-The most impactful way to increase throughput is to reduce `turnaround_time`. If all your devices are able to process messages quickly without missing any, it's safe to reduce this number, potentially all the way to 0. If you see devices failing to respond or responding when they shouldn't (talking over each other) then you need to increase it.
-Reducing `send_wait_time` generally does not impact performance at all, unless you have devices that are physically offline. When all devices are responding, `send_wait_time` does nothing. 
+
+The default settings are aimed to provide high stability (low error rate) for a wide variety of devices. If you are
+pushing for high throughput performance (i.e. lots of transmissions per minute) you will need to change the
+defaults.
+
+The most impactful way to increase throughput is to reduce `turnaround_time`. If all your devices are able to
+process messages quickly without missing any, it's safe to reduce this number, potentially all the way to 0. If you
+see devices failing to respond or responding when they shouldn't (talking over each other) then you need to
+increase it.
+
+Reducing `send_wait_time` generally does not impact performance at all, unless you have devices that are physically
+offline. When all devices are responding, `send_wait_time` does nothing.
 
 ## Hardware setup
 
