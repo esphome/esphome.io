@@ -132,6 +132,13 @@ See [Modbus](/components/modbus/#hardware-setup) for RS485 hardware setup instru
     sent to the client. If this is not set, the bit can be read but not written.
 
   > [!NOTE]
+  > A read is all-or-nothing: if any address in the requested span has no configured bit, the whole
+  > request is rejected with an `ILLEGAL_DATA_ADDRESS` (code `2`) exception rather than answering with
+  > the bits that do exist. `courtesy_response` does not apply here - it is only consulted for
+  > registers - so a client reading coils `0x00`-`0x0F` from a server that defines only `0x00` and
+  > `0x01` gets an exception either way. Define every address a client will ask for.
+
+  > [!NOTE]
   > A write covering several bits (for example a "write multiple coils" request) is atomic in the
   > same way as a multi-register write: every targeted bit must exist and have a `write_lambda`, or
   > the whole request is rejected before anything is changed. Once that check passes, each
