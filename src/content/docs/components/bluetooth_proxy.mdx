@@ -81,12 +81,12 @@ the controller can do beyond scanning:
   concurrent GATT connection, so `connection_slots` is limited to `1`.
 - **BK72xx and LN882x** — **advertisement-only**. These controllers do not expose the GATT client
   the proxy needs for connections, so Home Assistant uses the device for advertisements only and
-  will not route connections through it. This is independent of the
+  will not route connections through it; requires the
+  [BK72xx BLE Tracker](/components/bk72xx_ble_tracker/) or
+  [LN882H BLE Tracker](/components/ln882h_ble_tracker/) component. This is independent of the
   [scan mode](#passive-vs-active-scanning), which the platform's tracker controls. Advertisement
   forwarding — which is what integrations such as BTHome, Xiaomi and most sensors rely on — works
-  exactly as it does on ESP32; requires the
-  [BK72xx BLE Tracker](/components/bk72xx_ble_tracker/) or
-  [LN882H BLE Tracker](/components/ln882h_ble_tracker/) component.
+  exactly as it does on ESP32.
 
 On the advertisement-only platforms the proxy cannot be switched to active connections: `active`
 defaults to `false` there and setting `active: true` fails validation, as do the
