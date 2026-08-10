@@ -117,8 +117,8 @@ You must set the `address` of the `modbus_client` action to the current address,
 esphome:
   ...
   on_boot:
-    ## configure controller settings at setup
-    ## make sure priority is lower than setup_priority of modbus_controller
+    ## configure the device at setup
+    ## make sure priority is lower than setup_priority of the modbus hub
     priority: -100
     then:
       - modbus_client.write_single_register:
@@ -128,12 +128,12 @@ esphome:
           address: 0x01 # current address
           start_address: 0x02
           value: 0x0003 # new address
-          on_response: 
-            then: 
-              - log: "PZEM address set"
+          on_response:
+            then:
+              - logger.log: "PZEM address set"
           on_error:
             then:
-              - log: "PZEM address could not be set!"
+              - logger.log: "PZEM address could not be set!"
 
 modbus:
   send_wait_time: 200ms

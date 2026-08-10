@@ -468,12 +468,23 @@ you. There's no callback of any kind, so there's no way to read a reply back - u
 Commands sent this way are queued on the hub just like any other, so firing off several in quick succession from
 the same lambda is supported.
 
+### Configuration Variables
+
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID to use in lambdas. Unlike most components it is
+  not generated for you: the device is only reachable through `id()`, so an entry without one is rejected.
+- **address** (**Required**, int): The Modbus device address every call from this client targets. Unlike
+  [Modbus Controller](/components/modbus_controller/), there is no default.
+- **modbus_id** (*Optional*, [ID](/guides/configuration-types#id)): The Modbus hub to send on. Automatically assigned
+  when a single hub is configured.
+
+Several clients may be configured, each bound to its own device address.
+
 ```yaml
 modbus_client:
   address: 0x01
   id: ad_hoc_client
 
-on_xxx:
+on_...:
   - lambda: 'id(ad_hoc_client).write_single_register(0x1234, 0x99AB);'
   - lambda: |-
       uint16_t registers[] = {0x00FF, 0xAABC, 0xF00D};
