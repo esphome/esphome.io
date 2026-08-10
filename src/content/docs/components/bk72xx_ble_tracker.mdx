@@ -48,11 +48,10 @@ bk72xx_ble_tracker:
   for background reading.
 
   > [!NOTE]
-  > Scanning defaults to **passive**, which is sufficient for BTHome/ATC thermometers and most
-  > beacons — they broadcast all their data in the advertisement (no scan response). Active
-  > scanning is available via `active: true`; the Beken SDK's own scan API is passive-only, so
-  > the active start goes through a lower-level path that has seen less field exposure, which is
-  > why it is opt-in for now.
+  > Scanning defaults to **active**, like the other BLE trackers. Passive scanning
+  > (`active: false`) is sufficient for BTHome/ATC thermometers and most beacons — they
+  > broadcast all their data in the advertisement (no scan response) — and keeps the radio
+  > cost of each window minimal on the single-core SoC.
 
   - **interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval between
     each consecutive scan window. The scanner cycles through the three BLE advertising channels
@@ -76,15 +75,13 @@ bk72xx_ble_tracker:
     connected). Defaults to `true`.
 
   - **active** (*Optional*, boolean): Whether to send scan requests and receive scan responses
-    (device names and other data some devices only put in the scan response). Scan responses
-    are delivered as separate advertisement reports; receivers that merge per address (Home
-    Assistant does) see the combined data. Active scanning transmits during each window, which
-    adds radio cost on the single-core SoC — see
-    [Use on a single-core chip](#use-on-a-single-core-chip). Defaults to `false`, unlike the
-    other trackers: the active start bypasses the Beken SDK's passive-only scan API and is
-    opt-in until proven broadly on hardware. A scanner-mode request from Home Assistant (for
-    example through [`bluetooth_proxy`](/components/bluetooth_proxy/)) switches the mode at
-    runtime regardless of this default.
+    (device names and other data some devices only put in the scan response). An advertisement
+    and its scan response are merged and delivered as one frame, the same behavior as the
+    ESP32 tracker. Active scanning transmits during each window, which adds radio cost on the
+    single-core SoC — see [Use on a single-core chip](#use-on-a-single-core-chip). Defaults to
+    `true`. A scanner-mode request from Home Assistant (for example through
+    [`bluetooth_proxy`](/components/bluetooth_proxy/)) switches the mode at runtime regardless
+    of this setting.
 
 - **on_ble_advertise** (*Optional*, [Automation](/automations)): An automation to perform
   when a Bluetooth advertisement is received. A variable `x` of type
@@ -199,9 +196,9 @@ sensor:
 
 Unlike the ESP32 which runs BLE on a dedicated core, the BK72xx run both WiFi and BLE on the
 same single ARM CPU core. The scan `window` / `interval` ratio decides how that core is split
-between BLE and WiFi, and the default passive scanning (no scan requests) keeps the radio cost
-of each window minimal; `active: true` adds a transmission per discovered device, so prefer
-passive when scan responses are not needed:
+between BLE and WiFi. Active scanning adds a transmission per discovered device, so set
+`active: false` when scan responses are not needed (BTHome/ATC beacons) to keep the radio
+cost of each window minimal:
 
 - `interval: 100ms`, `window: 30ms` → **30/70** BLE / WiFi — the BK reference default
 - `interval: 200ms`, `window: 50ms` → **25/75** BLE / WiFi — catches fewer advertisements,
