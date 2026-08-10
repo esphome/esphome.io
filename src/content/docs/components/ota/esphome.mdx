@@ -42,14 +42,9 @@ ota:
   - `4232` for the `zephyr` platform
 
 - **swap_method** (*Optional*, string): `zephyr` platform only. The MCUboot image-swap algorithm to use for
-  applying an update. One of `scratch`, `move`, `offset`. Defaults to `scratch` on `esp32`/`esp32h2`/
-  `esp32c6`; `nrf52`, `rp2040`, and `rp2350` default to `offset`; `nrf54l15`, `nrf54lm20a`, and
-  `efr32mg24` default to `move` (pending `offset` testing on those boards, after which the default may
-  change to match `nrf52`). Every `esp32`/`esp32h2`/`esp32c6` variant only supports `scratch` and
-  `move` -- `offset` is not available on any Zephyr esp32-family variant. `nrf52`, `nrf54l15`,
-  `nrf54lm20a`, `efr32mg24`, `rp2040`, and `rp2350` are the opposite: they only support `move` and
-  `offset` -- none of their boards defines a `scratch` partition. Not applicable to the `native_sim`
-  variant, which has no real bootloader.
+  applying an update. One of `scratch`, `move`, `offset`. Not applicable to the `native_sim` variant,
+  which has no real bootloader. See [Swap methods](#swap-methods) below for what each one does and
+  the per-variant defaults/availability.
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
 - **version** (*Optional*, int): Version of OTA protocol to use. Version 2 is more stable. To downgrade to legacy
    ESPHome, the device should be updated with OTA version 1 first. Defaults to `2`.
@@ -66,6 +61,38 @@ ota:
 > After a serial upload, ESP8266 modules must be reset before OTA updates will work. If you attempt to perform an OTA
 > update and receive the error message `Bad Answer: ERR: ERROR[11]: Invalid bootstrapping`, the ESP module/board
 > must be power-cycled.
+
+## Swap methods
+
+`swap_method` (`zephyr` platform only) picks which of [MCUboot](https://docs.mcuboot.com/)'s image-swap
+algorithms applies an update. All three write the new image into the secondary (update) slot first,
+then swap it into the primary (boot) slot in place, sector by sector -- they differ in what extra flash
+space that swap needs and how the work is split between the two slots:
+
+| Method | Extra flash needed | How it swaps | Erase cycles per update |
+| --- | --- | --- | --- |
+| `scratch` | A separate scratch partition (at least as large as the biggest sector being swapped) | Each sector is copied out to scratch, the primary slot's copy erased, the secondary slot's copy moved into its place, then scratch's copy moved into the secondary slot | Highest -- scratch is erased on every sector swapped, on top of one erase per slot |
+| `move` | One extra sector at the *end* of the primary slot | Primary slot's sectors shift up by one to free room at the start, then secondary and primary alternate copying into place | Two erases on the primary slot, one on the secondary slot |
+| `offset` | One extra sector at the *end* of the secondary slot (equal-sized slots are also accepted) | Primary and secondary swap sector-by-sector using the secondary slot's extra sector as a staging area, rather than shifting the whole primary slot | One erase on each slot -- the most balanced of the three |
+
+`scratch` needs a dedicated scratch partition and wears it out fastest of the three, but it's the
+original/most conservative algorithm and needs no extra sector in either slot. `move` avoids the
+scratch partition at the cost of an extra sector in the primary slot and uneven wear between the two
+slots. `offset` is a newer algorithm that also avoids the scratch partition, needs an extra sector in
+the secondary slot instead, and spreads wear evenly across both slots -- generally the preferred choice
+where a variant's port supports it.
+
+Which methods a given variant/board's flash layout supports (and which one it defaults to) varies:
+
+| Variant | Supported methods | Default |
+| --- | --- | --- |
+| `esp32`, `esp32h2`, `esp32c6` | `scratch`, `move` | `scratch` |
+| `nrf52`, `rp2040`, `rp2350` | `move`, `offset` | `offset` |
+| `nrf54l15`, `nrf54lm20a`, `efr32mg24` | `move`, `offset` | `move` (pending `offset` testing; may switch to match `nrf52` once done) |
+
+`nrf52`, `nrf54l15`, `nrf54lm20a`, `efr32mg24`, `rp2040`, and `rp2350` never define a `scratch`
+partition, so `scratch` isn't available there; `esp32`/`esp32h2`/`esp32c6` are the reverse -- `offset`
+isn't available on any Zephyr esp32-family variant.
 
 ## Updating the Password
 
