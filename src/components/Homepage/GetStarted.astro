@@ -3,6 +3,7 @@ import { LinkButton } from "@astrojs/starlight/components";
 import { Image } from "astro:assets";
 
 import GalleryItem from "@components/GalleryItem.astro";
+import Icon from "@components/Icon.astro";
 
 import kitImg from "../starter-kit/images/esphome-starter-kit.webp";
 ---
@@ -12,56 +13,64 @@ import kitImg from "../starter-kit/images/esphome-starter-kit.webp";
     <div class="content-container">
       <h2>Get started</h2>
       <p>
-        Ready to bring your smart home ideas to life? Grab a board (such as our official ESPHome Starter Kit or ESP32)
-        and install in the way that suits you:
+        Ready to bring your smart home ideas to life? Grab a board (such as our official ESPHome Starter Kit or an ESP32
+        development board) and install in the way that suits you:
       </p>
     </div>
 
-    <div class="card-row">
-      <div class="card card__half card-bgc">
-        <p class="card__title h2">For the simplest setup: ESPHome Desktop App</p>
-        <p>A complete package containing everything you need to install with one click.</p>
+    <div class="card-columns">
+      <div class="card-column">
+        <div class="card card-bgc">
+          <Icon icon="build" class="card__icon" />
+          <p class="card__title h2">For the simplest setup: ESPHome Desktop App</p>
+          <p>A complete package containing everything you need to install with one click.</p>
 
-        <LinkButton href="/install/" class="card__text-link" icon="right-arrow" iconPlacement="start"
-          >Download Desktop App</LinkButton
-        >
-      </div>
+          <LinkButton href="/install/" class="card__text-link" icon="right-arrow" iconPlacement="start"
+            >Download Desktop App</LinkButton
+          >
+        </div>
 
-      <div class="card card__half card-bgc">
-        <p class="card__title h2">Ready-Made Projects: The fast route to a finished device</p>
-        <p>
-          While installing ESPHome gives you freedom to build smart home devices your way, you may not need custom
-          configuration. If you just want to quickly turn a board into a Bluetooth proxy, voice assistant, or media
-          player for example, our Ready-Made Projects are the answer. They’re pre-configured to work with Home Assistant
-          straightaway, so you can flash them directly from your browser in a single click: no need to install ESPHome.
-        </p>
-
-        <LinkButton href="/projects/" class="card__text-link" icon="right-arrow" iconPlacement="start"
-          >Explore Ready-Made Projects</LinkButton
-        >
-      </div>
-    </div>
-
-    <div class="card-row">
-      <div class="card card--split card-bgc">
-        <div class="card__content">
-          <p class="card__title h2">Choose your hardware</p>
+        <div class="card card-bgc">
+          <Icon icon="extension" class="card__icon" />
+          <p class="card__title h2">Ready-Made Projects: The fast route to a finished device</p>
           <p>
-            If you’re new to this type of hardware, we recommend the ESPHome Starter Kit: it includes an ESP32 board
-            plus all the sensors and components you’ll need to begin so you can skip the guesswork and start building
-            right away.
+            While installing ESPHome gives you freedom to build smart home devices your way, you may not need custom
+            configuration. If you just want to quickly turn a board into a Bluetooth proxy, voice assistant, or media
+            player for example, our Ready-Made Projects are the answer. They’re pre-configured to work with Home
+            Assistant straightaway, so you can flash them directly from your browser in a single click: no need to
+            install ESPHome.
           </p>
 
-          <LinkButton href="/starter-kit/">Get the Starter Kit</LinkButton>
+          <LinkButton href="/projects/" class="card__text-link" icon="right-arrow" iconPlacement="start"
+            >Explore Ready-Made Projects</LinkButton
+          >
         </div>
-        <div class="card__media">
-          <GalleryItem>
-            <Image src={kitImg} alt="ESPHome Starter Kit with snap mounts attached" />
-            <video id="disassembly-video" class="lazy-video" muted playsinline preload="metadata">
-              <source src="/videos/starter-kit/kit-disassembly.mp4" type="video/mp4" />
-            </video>
-            <button class="play-button" data-video-id="disassembly-video" aria-label="Play disassembly video"></button>
-          </GalleryItem>
+      </div>
+
+      <div class="card-column">
+        <div class="card card-bgc">
+          <div class="card__content">
+            <Icon icon="hardware" class="card__icon" />
+            <p class="card__title h2">Choose your hardware</p>
+            <p>
+              If you’re new to this type of hardware, we recommend the ESPHome Starter Kit: the easiest way to make your
+              own smart home devices, and your gateway to learning ESPHome. The kit includes an ESP32 board plus all the
+              sensors and components you’ll need to begin so you can skip the guesswork and start building right away.
+            </p>
+          </div>
+          <div class="card__media">
+            <GalleryItem>
+              <Image src={kitImg} alt="ESPHome Starter Kit with snap mounts attached" />
+              <video id="disassembly-video" class="lazy-video" muted playsinline preload="metadata">
+                <source src="/videos/starter-kit/kit-disassembly.mp4" type="video/mp4" />
+              </video>
+              <button class="play-button" data-video-id="disassembly-video" aria-label="Play disassembly video"
+              ></button>
+            </GalleryItem>
+          </div>
+          <div class="card__content">
+            <LinkButton href="/starter-kit/">Get the Starter Kit</LinkButton>
+          </div>
         </div>
       </div>
     </div>
@@ -114,31 +123,46 @@ import kitImg from "../starter-kit/images/esphome-starter-kit.webp";
       }
     }
 
-    .card-row {
+    .card-columns {
       display: flex;
       flex-direction: column;
       gap: 1.5rem;
       margin-top: 1.5rem;
 
-      @include bp(tablet) {
-        flex-direction: row;
-      }
-
       @include bp(desktop) {
+        flex-direction: row;
+        align-items: stretch;
         margin-top: 3rem;
       }
     }
 
-    .card {
-      &.card--split {
+    .card-column {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+
+      @include bp(desktop) {
+        flex: 1 1 50%;
+      }
+
+      .card {
         display: flex;
         flex-direction: column;
-        gap: 1.5rem;
 
-        @include bp(tablet) {
-          flex-direction: row;
-          align-items: center;
+        @include bp(desktop) {
+          flex: 1;
         }
+      }
+
+      :global(.card__text-link) {
+        margin-top: auto;
+        padding-top: 1.25rem;
+      }
+    }
+
+    .card {
+      &__icon {
+        margin-bottom: 1rem;
       }
 
       &__content {
@@ -148,6 +172,8 @@ import kitImg from "../starter-kit/images/esphome-starter-kit.webp";
       }
 
       &__media {
+        margin: 1.5rem;
+
         @include bp(tablet) {
           flex-basis: 50%;
           aspect-ratio: 4 / 3;

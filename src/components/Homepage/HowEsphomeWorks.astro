@@ -1,5 +1,5 @@
 ---
-
+import Icon from "@components/Icon.astro";
 ---
 
 <section class="how-esphome-works">
@@ -21,7 +21,10 @@
       </div>
       <div class="cards">
         <div class="card">
-          <p class="card__title">[icon] - Step 1: Choose & configure</p>
+          <div class="card__title--icon-row">
+            <Icon icon="manufacturing" class="card__icon" inline />
+            <p class="card__title card__title--has-icon">Step 1: Choose & configure</p>
+          </div>
           <p>
             Select your board and components using the visual Device Builder or a YAML file. Pick sensors from the
             catalog and set your options without writing code.
@@ -29,15 +32,20 @@
         </div>
 
         <div class="card">
-          <p class="card__title">[icon] - Step 2: Build & flash</p>
+          <div class="card__title--icon-row">
+            <Icon icon="build" class="card__icon" inline />
+            <p class="card__title card__title--has-icon">Step 2: Build & install</p>
+          </div>
           <p>
-            ESPHome compiles your configuration into working firmware and installs it to your device straight from your
-            browser, or wirelessly over the air.
+            ESPHome installs your configuration to your device straight from your browser, or wirelessly over the air.
           </p>
         </div>
 
         <div class="card">
-          <p class="card__title">[icon] - Step 3: Connect & control</p>
+          <div class="card__title--icon-row">
+            <Icon icon="automation" class="card__icon" inline />
+            <p class="card__title card__title--has-icon">Step 3: Connect & control</p>
+          </div>
           <p>
             Your new device automatically pops up in Home Assistant over your local network: no cloud accounts or
             external servers required.
@@ -88,6 +96,13 @@
       padding: 1.25rem 1.75rem;
       display: flex;
       flex-direction: column;
+
+      &__title--icon-row {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 0.75rem;
+      }
     }
   }
 </style>
