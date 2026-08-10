@@ -15,8 +15,6 @@ esphome:
     area: Living Room
 ```
 
-<span id="esphome-configuration_variables"></span>
-
 ## Configuration variables
 
 - **name** (**Required**, string): This is the name of the node. It
@@ -56,13 +54,13 @@ Advanced options:
 
 - **includes** (*Optional*, list of files): A list of C/C++ files to include in the (auto-generated) `main` file.
   The paths in this list are relative to the directory where the YAML configuration file is located or `<...>` includes.
-  See [`includes`](#esphome-includes).
+  See [`includes`](#includes).
 
 - **includes_c** (*Optional*, list of files): The same as `includes` but for files that require C linkage. All includes
-  will be wrapped in `extern "C" {}`. See [`includes`](#esphome-includes).
+  will be wrapped in `extern "C" {}`. See [`includes`](#includes).
 
 - **libraries** (*Optional*, list of libraries): A list of libraries to include in the project. See
-  [`libraries`](#esphome-libraries).
+  [`libraries`](#libraries).
 
 - **comment** (*Optional*, string): Additional text information about this node. Only for display in UI.
 - **name_add_mac_suffix** (*Optional*, boolean): Appends the last 3 bytes of the mac address of the device to
@@ -85,6 +83,8 @@ Advanced options:
   Defaults to the number of cores of the CPU which is also the maximum you can set.
 
 - **debug_scheduler** (*Optional*, boolean): If set, the scheduler will print debug information about scheduled tasks at log level DEBUG.
+- **merge_warnings** (*Optional*, boolean): Whether to warn when a YAML merge key (`<<:`)
+  silently drops a key. Defaults to `true`. See [Merge key warnings](#esphome-merge_warnings).
 - **areas** (*Optional*, list of [Area Configuration](#esphome-area)): Additional areas that can be referenced by devices.
 - **devices** (*Optional*, list of [Sub-Devices](#esphome-devices)): Sub-devices to group entities under.
 
@@ -238,8 +238,6 @@ esphome:
 > Environment variables set here are only available during the build process. They do not affect
 > the runtime behavior of your device.
 
-<span id="esphome-includes"></span>
-
 ## `includes`
 
 With `includes` you can include source files in the generated PlatformIO project.
@@ -272,8 +270,6 @@ This option behaves differently depending on what the included file is pointing 
 - If the include string points to a regular source file (.c, .cpp), it is copied in the src/ folder
    AND compiled into the binary. This way implementation of classes and functions in header files can
    be provided.
-
-<span id="esphome-libraries"></span>
 
 ## `libraries`
 
@@ -324,6 +320,13 @@ preferences:
 - **flash_write_interval** (*Optional*, [Time](/guides/configuration-types#time)): Customize the frequency in which data is
   flushed to the flash. This setting helps to prevent rapid changes to a component from being quickly
   written to the flash and wearing it out. Defaults to `1min`. Set to `never` to disable this feature.
+
+- **rtc_storage** (*Optional*, boolean): Only useful on ESP32. Compile RTC-memory-backed preference storage into the
+  firmware even when no other option selects it (options such as `safe_mode`'s and `fast_connect`'s `storage: rtc`
+  enable it automatically). This is intended for external components that request RTC storage through the C++
+  preferences API; without it, such requests fall back to flash (NVS) with a warning in the log. Not available on
+  ESP32 variants without RTC memory (C2 and C61). On ESP8266, RTC storage is integral and always enabled: `true` is
+  accepted (and does nothing), while `false` is rejected since it cannot be disabled.
 
 As all devices have a limited number of flash write cycles, this setting helps to reduce the number of flash writes
 due to quickly changing components. In the past, when components such as `light`, `switch`, `fan` and `globals`
@@ -422,6 +425,38 @@ available in a newer version of ESPHome. This allows for a more friendly error m
 # Example configuration
 esphome:
   min_version: 2025.11.0
+```
+
+<span id="esphome-merge_warnings"></span>
+
+## Merge key warnings
+
+YAML merge keys (`<<:`), often combined with `!include`, merge mappings *shallowly*
+following the [YAML merge spec](https://yaml.org/type/merge.html): each key is inserted
+only if it does not already exist, and the first definition wins. This means that if two
+merged-in files both define the same top-level key, the second one is **dropped entirely**
+rather than combined:
+
+```yaml
+# main.yaml
+<<: !include a.yaml   # defines api: { reboot_timeout: 5min }
+<<: !include b.yaml   # also defines api: { encryption: ... }  -> silently dropped
+```
+
+In the example above only the `api:` block from `a.yaml` survives; the one from `b.yaml`
+is discarded. By default ESPHome prints a warning whenever this happens so the data loss
+is not silent.
+
+If you want to *combine* sections instead of having one win, use [`packages:`](/components/packages/),
+which performs a recursive deep merge.
+
+To silence the warning (for example when the drop is intentional), set `merge_warnings` to
+`false`:
+
+```yaml
+esphome:
+  name: my_device
+  merge_warnings: false
 ```
 
 <span id="esphome-area"></span>
