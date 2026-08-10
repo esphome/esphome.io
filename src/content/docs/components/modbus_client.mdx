@@ -137,9 +137,10 @@ The enum and the builders live in the `modbus` component's namespaces (`modbus::
 ## Typed Read/Write Actions
 
 Instead of hand-assembling a PDU with `modbus_client.send`, these actions issue a single standard Modbus
-function-code transaction directly: a register or coil read, or a register or coil write. Like `modbus_client.send`,
-each is its own hub device - it resolves the hub (automatically when a single one is configured), sends the request
-to `address`, and routes the reply straight back to that action's own handlers, never another action's.
+function-code transaction directly: a register or coil read, a register or coil write, or a combined read/write in a
+single transaction. Like `modbus_client.send`, each is its own hub device - it resolves the hub (automatically when
+a single one is configured), sends the request to `address`, and routes the reply straight back to that action's own
+handlers, never another action's.
 
 ### Common Configuration Variables
 
