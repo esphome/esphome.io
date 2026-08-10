@@ -76,6 +76,7 @@ zephyr:
 | `nrf54lm20a` | nRF54LM20A (Cortex-M33) | [`nrf54lm20dk`](https://docs.zephyrproject.org/latest/boards/nordic/nrf54lm20dk/doc/index.html) | nRF Connect SDK (NCS) | BLE, Thread (via `openthread:`), Zigbee (via `zigbee:`, `framework: type: zigbee`) |
 | `efr32mg24` | Silicon Labs EFR32MG24 (Cortex-M33) | [`xg24_ek2703a`](https://docs.zephyrproject.org/latest/boards/silabs/dev_kits/xg24_ek2703a/doc/index.html) | mainline Zephyr | BLE, Thread (via `openthread:`) |
 | `rp2040` | Raspberry Pi RP2040 (Cortex-M0+) | [`rpi_pico`](https://docs.zephyrproject.org/latest/boards/raspberrypi/rpi_pico/doc/index.html) | mainline Zephyr | No wireless yet |
+| `rp2350` | Raspberry Pi RP2350 (Cortex-M33, dual-core) | [`rpi_pico2`](https://docs.zephyrproject.org/latest/boards/raspberrypi/rpi_pico2/doc/index.html) | mainline Zephyr | No wireless yet |
 
 All three `esp32*` variants build only the single scheduled core Zephyr's Wi-Fi/BLE drivers require;
 where the chip has more than one core, only the main application core's image is built. `nrf54l15`
@@ -110,11 +111,18 @@ Series 2 radios yet.
 (`framework: type: silabs`), as an alternate to the default mainline Zephyr build — see
 [`advanced`](#advanced) for its `commander_version` option.
 
-`rp2040` has no ROM bootloader requirement of its own — the RP2040's built-in USB (BOOTSEL)
-bootloader flashes it directly, so MCUboot is optional here, unlike every other variant with an
-MCUboot-capable board. It defaults to `advanced: bootloader: none` (direct-flash BOOTSEL boot);
-set it to `mcuboot` for OTA/rollback support, at the cost of a second board target — see
-[`advanced`](#advanced). `rp2040` has no wireless transport support yet.
+`rp2040` and `rp2350` have no ROM bootloader requirement of their own — the RP2040/RP2350's built-in
+USB (BOOTSEL) bootloader flashes them directly, so MCUboot is optional here, unlike every other
+variant with an MCUboot-capable board. Both default to `advanced: bootloader: none` (direct-flash
+BOOTSEL boot); set it to `mcuboot` for OTA/rollback support, at the cost of a second board target —
+see [`advanced`](#advanced). Uploading over BOOTSEL no longer requires holding the physical button —
+see [RP2040/RP2350 BOOTSEL uploads](#rp2040rp2350-bootsel-uploads). Neither variant has wireless
+transport support yet.
+
+`rp2350` is dual-core silicon, but mainline Zephyr has no SMP support for RP2350 yet either (same as
+`rp2040`) — only one core is used; a warning is logged at config time as a reminder. `rp2350`'s real
+hardware TRNG hangs the boot sequence under Zephyr's current driver, so it uses the same
+software-PRNG fallback (`TEST_RANDOM_GENERATOR`) as `rp2040` until that's fixed upstream.
 
 It is not recommended to use esp variants for other than experimental purposes, the esp32 platform,
 esp-idf framework delivers superior functionality and stability.  These variants are being used to test
@@ -254,12 +262,13 @@ example, an alpha or pre-release) — `source: {type: git, ref: v4.5.0-rc1}` alo
 Options that only apply to one variant, rather than every variant the way **framework** or
 **watchdog_timeout** do. An option is rejected with an error if used on a variant it doesn't apply to.
 
-- **bootloader** (*Optional*, string, `rp2040` only): `none` (the default) or `mcuboot`. RP2040's
-  ROM has its own USB (BOOTSEL) bootloader, so unlike every other variant, MCUboot is optional rather
-  than required to flash at all — the default direct-flashes without it. Choosing `mcuboot` only
-  controls the sysbuild/signing config; it does not qualify **board** for you — supply the fully
-  qualified board yourself (for example `board: rpi_pico/rp2040/mcuboot`), the same way you'd supply
-  your own MCUboot-shaped partitions via `overlays` for a board without one.
+- **bootloader** (*Optional*, string, `rp2040`/`rp2350` only): `none` (the default) or `mcuboot`.
+  RP2040/RP2350's ROM has its own USB (BOOTSEL) bootloader, so unlike every other variant, MCUboot is
+  optional rather than required to flash at all — the default direct-flashes without it. Choosing
+  `mcuboot` only controls the sysbuild/signing config; it does not qualify **board** for you — supply
+  the fully qualified board yourself (for example `board: rpi_pico/rp2040/mcuboot` or
+  `board: rpi_pico2/rp2350a/m33/mcuboot`), the same way you'd supply your own MCUboot-shaped
+  partitions via `overlays` for a board without one.
 - **commander_version** (*Optional*, string, `efr32mg24` with `framework: type: silabs` only):
   Override the version of Silicon Labs' Simplicity Commander CLI used for secure-boot image signing.
   Defaults to a pinned known-good version. Commander is downloaded and cached automatically; no
@@ -568,6 +577,41 @@ without `--device`, or `ota:` from the dashboard) like any other ESPHome device.
 > [!IMPORTANT]
 > A board used with `nrf52`, `nrf54l15`, or `nrf54lm20a` needs an MCUboot `boot_partition` large
 > enough for ECDSA-P256 signing.
+
+With two or more debug-probe boards connected at once, ESPHome resolves the probe's own USB serial
+number from the serial port selected (`--device`/`--upload-port`) and forwards it to `west flash`, so
+the correct board is flashed rather than whichever probe the runner happens to find first. This only
+works for runners that support selecting a device by ID upstream (`jlink`, `pyocd`, `nrfjprog`,
+`nrfutil`, `silabs_commander`, `linkserver`, `probe_rs`) — a board whose default runner is `openocd`
+(for example Seeed's `xiao_mg24`) has no such selection available, so with more than one connected at
+once the wrong one may still be picked; disconnect the others before flashing in that case.
+
+## RP2040/RP2350 BOOTSEL uploads
+
+`rp2040` and `rp2350` boards use the cross-ecosystem "1200 baud touch" convention: opening the
+board's USB CDC port at 1200 baud tells firmware built with this platform to reboot into the ROM
+USB (BOOTSEL) bootloader, so `esphome run` no longer needs the physical BOOTSEL button held during
+power-up — matching the existing seamless experience on `esp32*` variants. This also works on
+`advanced: bootloader: mcuboot` builds — MCUboot's own separate sysbuild image carries the same
+retention setup as the application image, so the reboot works whichever image is currently running.
+
+> [!IMPORTANT]
+> This only works once the board is already running firmware built by this platform — the touch is
+> handled by ESPHome's own poll loop, not by anything in the RP2040/RP2350 ROM. On blank silicon, or
+> a board currently running unrelated firmware, there is nothing listening for the 1200-baud touch, so
+> the first upload still needs BOOTSEL entered manually (hold the button while plugging in). Every
+> upload after that first one goes through this automatic path.
+
+> [!IMPORTANT]
+> Once triggered, BOOTSEL mode is anonymous — there is no serial number or bus-address selection
+> available to prove that whatever device appears in BOOTSEL afterward is actually the one that was
+> touched, rather than some other RP-family board connected at the same time. To avoid flashing the
+> wrong device, the automatic touch-and-reboot refuses to run at all whenever more than one candidate
+> device is present — counting every serial port (including the target's own) plus every device
+> already sitting in BOOTSEL. This is intentionally conservative: an unrelated serial device (even one
+> from a different platform) connected alongside the target also blocks the automatic path. When that
+> happens, disconnect the other device before uploading, or put the target into BOOTSEL mode manually
+> (hold the button while plugging in) and select it explicitly.
 
 ## Adding a new variant
 

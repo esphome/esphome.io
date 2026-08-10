@@ -8,8 +8,8 @@ The nRF52 platform supports firmware updates via Over-the-Air (OTA) mechanisms. 
 
 > [!NOTE]
 > This OTA platform also works on `platform: zephyr` builds — variant: `nrf52`, `nrf54l15`,
-> `nrf54lm20a`, and `efr32mg24` — not just the legacy `platform: nrf52` component named in this
-> page's title. See the [Zephyr platform's variant table](/components/zephyr/#variants).
+> `nrf54lm20a`, `efr32mg24`, `rp2040`, and `rp2350` — not just the legacy `platform: nrf52` component
+> named in this page's title. See the [Zephyr platform's variant table](/components/zephyr/#variants).
 
 To flash firmware onto the device, you can use any of the tools or libraries listed in the [Zephyr MCUmgr documentation](https://docs.zephyrproject.org/latest/services/device_mgmt/mcumgr.html#tools-libraries).
 Firmware updates are also available via the ESPHome command-line interface.
@@ -28,6 +28,10 @@ ota:
 ## Configuration variables
 
 - **transport** (*Optional*, mapping): Specifies the transport method used by Zephyr MCUmgr for OTA updates. By default, Bluetooth Low Energy (`ble: true`) is enabled.
+- **swap_method** (*Optional*, string): `platform: zephyr` only. The MCUboot image-swap algorithm to
+  use for applying an update. Same option, same per-variant defaults and support, as
+  [`ota: platform: esphome`'s `swap_method`](/components/ota/esphome/#configuration-variables) — see
+  that page for the full list. Not applicable to the legacy `platform: nrf52` component.
 
 ## `transport`
 

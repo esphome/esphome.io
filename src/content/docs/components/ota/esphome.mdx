@@ -42,11 +42,14 @@ ota:
   - `4232` for the `zephyr` platform
 
 - **swap_method** (*Optional*, string): `zephyr` platform only. The MCUboot image-swap algorithm to use for
-  applying an update. One of `scratch`, `move`, `offset`. Defaults to `scratch`, except on the `nrf52`
-  variant, which defaults to `offset`. Every `esp32`/`esp32h2`/`esp32c6` variant only supports `scratch`
-  and `move`; `offset` is not available on any Zephyr esp32-family variant. The `nrf52` variant is the
-  opposite: it only supports `move` and `offset` -- neither of its boards defines a `scratch` partition.
-  Not applicable to the `native_sim` variant, which has no real bootloader.
+  applying an update. One of `scratch`, `move`, `offset`. Defaults to `scratch` on `esp32`/`esp32h2`/
+  `esp32c6`; `nrf52`, `rp2040`, and `rp2350` default to `offset`; `nrf54l15`, `nrf54lm20a`, and
+  `efr32mg24` default to `move` (pending `offset` testing on those boards, after which the default may
+  change to match `nrf52`). Every `esp32`/`esp32h2`/`esp32c6` variant only supports `scratch` and
+  `move` -- `offset` is not available on any Zephyr esp32-family variant. `nrf52`, `nrf54l15`,
+  `nrf54lm20a`, `efr32mg24`, `rp2040`, and `rp2350` are the opposite: they only support `move` and
+  `offset` -- none of their boards defines a `scratch` partition. Not applicable to the `native_sim`
+  variant, which has no real bootloader.
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
 - **version** (*Optional*, int): Version of OTA protocol to use. Version 2 is more stable. To downgrade to legacy
    ESPHome, the device should be updated with OTA version 1 first. Defaults to `2`.
