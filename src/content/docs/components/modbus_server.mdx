@@ -72,7 +72,8 @@ See [Modbus](/components/modbus/#hardware-setup) for RS485 hardware setup instru
     Defaults to `U_WORD`.
 
   - **read_lambda** (**Required**, [lambda](/automations/templates#config-lambda)):
-    Lambda that returns the value of this register. Returning an empty optional (`return {};`) declines
+    Lambda that returns the value of this register. `address` is provided with the address being read.
+    Returning an empty optional (`return {};`) declines
     the read, and the client's request is answered with a `SERVICE_DEVICE_FAILURE` (code `4`) exception
     instead. This is useful when the value isn't available right now, for example while a sensor is
     still warming up. A plain `return <value>;` still works as before and does not need to change.
@@ -150,8 +151,9 @@ See [Modbus](/components/modbus/#hardware-setup) for RS485 hardware setup instru
   > A server that configures no `bits` at all does not implement the coil and discrete-input functions:
   > those requests are answered with `ILLEGAL_FUNCTION` (code `1`) rather than `ILLEGAL_DATA_ADDRESS`
   > (code `2`), which is what a request for an address that simply isn't in a populated `bits` list
-  > gets. The same holds the other way round: a bits-only server with no `registers` and no
-  > `courtesy_response` answers `ILLEGAL_FUNCTION` to register reads.
+  > gets. The same holds the other way round: a bits-only server with no `registers` answers
+  > `ILLEGAL_FUNCTION` to register requests - to reads unless `courtesy_response` is configured, and to
+  > writes always, since `courtesy_response` only covers reads.
 
 ## Read/Write Multiple Registers (Function Code 0x17)
 
@@ -183,8 +185,8 @@ The following code allows a Modbus client to read a sensor value from your ESPHo
 ```yaml
 uart:
   - id: uart_modbus_server
-    tx_pin: 25
-    rx_pin: 35
+    tx_pin: GPIOXX
+    rx_pin: GPIOXX
 
 modbus:
   - uart_id: uart_modbus_server
@@ -211,8 +213,8 @@ that lets a ModBUS client both read and control whether a pump is running.
 ```yaml
 uart:
   - id: uart_modbus_server
-    tx_pin: 25
-    rx_pin: 35
+    tx_pin: GPIOXX
+    rx_pin: GPIOXX
 
 modbus:
   - uart_id: uart_modbus_server
