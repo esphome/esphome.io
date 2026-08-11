@@ -92,12 +92,17 @@ const regions = [...regionMap.entries()];
 <script>
   const dialog = document.getElementById("buy-dialog") as HTMLDialogElement | null;
 
-  function openBuyDialog() {
+  function openBuyDialog(context?: string) {
     if (!dialog) return;
     focusDistributors();
     document.body.classList.add("buy-dialog-open");
     if (typeof dialog.showModal === "function") dialog.showModal();
     else dialog.setAttribute("open", "");
+    // if plausible is available, track the event
+    if (typeof window.plausible === "function") {
+      if (context) window.plausible("Buy Dialog", { props: { context } });
+      else window.plausible("Buy Dialog");
+    }
   }
 
   function focusDistributors() {
@@ -172,7 +177,9 @@ const regions = [...regionMap.entries()];
     document.querySelectorAll<HTMLElement>(".buy").forEach((el) => {
       el.addEventListener("click", (e) => {
         e.preventDefault();
-        openBuyDialog();
+        // element might have data-context attribute
+        const context = el.getAttribute("data-context") || undefined;
+        openBuyDialog(context);
       });
     });
 
@@ -180,13 +187,15 @@ const regions = [...regionMap.entries()];
     document.querySelectorAll<HTMLAnchorElement>('a[href="#buy"]').forEach((a) => {
       a.addEventListener("click", (e) => {
         e.preventDefault();
-        openBuyDialog();
+        // element might have data-context attribute
+        const context = a.getAttribute("data-context") || undefined;
+        openBuyDialog(context);
       });
     });
 
     // Auto-open if page loaded with #buy in URL
     if (window.location.hash === "#buy") {
-      openBuyDialog();
+      openBuyDialog("fragment");
     }
   }
 </script>
