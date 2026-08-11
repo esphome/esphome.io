@@ -1,0 +1,385 @@
+---
+import config from "virtual:starlight/user-config";
+import SiteTitle from "virtual:starlight/components/SiteTitle";
+import Search from "virtual:starlight/components/Search";
+import ThemeSelect from "virtual:starlight/components/ThemeSelect";
+
+import { headerNavItems } from "../headerNav";
+
+const shouldRenderSearch = config.pagefind || config.components.Search !== "@astrojs/starlight/components/Search.astro";
+---
+
+<div class="header__inner">
+  <div class="header__logo">
+    <SiteTitle />
+  </div>
+
+  {
+    headerNavItems.length > 0 && (
+      <nav class="header__nav" aria-label="Site navigation">
+        {headerNavItems.map((item) => (
+          <a href={item.href} class="header__nav-link">
+            {item.label}
+          </a>
+        ))}
+      </nav>
+    )
+  }
+
+  <div class="header__search">{shouldRenderSearch && <Search />}</div>
+
+  <div class="header__theme">
+    <ThemeSelect />
+  </div>
+
+  <a href="/install/getting-started/" class="header__cta">Get started</a>
+
+  <button
+    type="button"
+    class="header__toggle"
+    aria-expanded="false"
+    aria-controls="header__dropdown"
+    aria-label="Toggle navigation menu"
+  >
+    <span class="header__toggle-bar"></span>
+  </button>
+
+  <div class="header__overlay" data-header-overlay></div>
+
+  <div id="header__dropdown" class="header__dropdown">
+    {
+      headerNavItems.length > 0 && (
+        <nav class="header__dropdown-nav" aria-label="Site navigation">
+          {headerNavItems.map((item) => (
+            <a href={item.href} class="header__dropdown-link">
+              {item.label}
+            </a>
+          ))}
+        </nav>
+      )
+    }
+
+    <a href="/install/getting-started/" class="header__dropdown-cta">Get started</a>
+  </div>
+</div>
+
+<style>
+  :global(html[data-has-sidebar] .header) {
+    padding-inline-end: var(--sl-nav-pad-x);
+    z-index: 100;
+  }
+
+  .header__inner {
+    display: flex;
+    align-items: center;
+    gap: var(--sl-nav-gap);
+    width: 100%;
+    max-width: 1400px;
+    margin-inline: auto;
+  }
+
+  .header__logo {
+    display: flex;
+    flex-shrink: 0;
+    overflow: clip;
+    padding: 0;
+    margin: 0;
+    min-width: 0;
+  }
+
+  .header__nav {
+    display: none;
+    align-items: center;
+    gap: 1.25rem;
+    flex-shrink: 0;
+  }
+
+  .header__nav-link {
+    color: var(--sl-color-text-accent);
+    font-weight: 600;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: color 0.2s ease;
+    font-size: 0.875rem;
+
+    &:hover {
+      color: var(--sl-color-white);
+    }
+  }
+
+  .header__social {
+    display: none;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .header__search {
+    flex-grow: 1;
+    min-width: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+  }
+
+  .header__theme {
+    display: none;
+    flex-shrink: 0;
+  }
+
+  .header__cta {
+    display: none;
+    flex-shrink: 0;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    border-radius: 999px;
+    background-color: var(--sl-color-text-accent);
+    color: var(--sl-color-black);
+    font-weight: 600;
+    white-space: nowrap;
+    text-decoration: none;
+    transition: opacity 0.2s ease;
+
+    &:hover {
+      opacity: 0.85;
+    }
+  }
+
+  .header__toggle,
+  .header__overlay,
+  .header__dropdown {
+    display: none;
+  }
+
+  @media (min-width: 64rem) {
+    .header__nav,
+    .header__social,
+    .header__theme,
+    .header__cta {
+      display: flex;
+    }
+
+    /* Nav is the sole flexible spacer between the (fixed-width) logo and the
+       (fixed-width) search button, so it sits centered in that gap rather than
+       hugging the logo. */
+    .header__nav {
+      flex: 1;
+      justify-content: center;
+    }
+
+    .header__search {
+      flex-grow: 0;
+    }
+  }
+
+  @media (max-width: 63.9375rem) {
+    .header__search :global(.sl-hidden.md\:sl-block),
+    .header__search :global(kbd.md\:sl-flex) {
+      display: none;
+    }
+
+    .header__search :global(button[data-open-modal]) {
+      border: 0;
+      border-radius: 0;
+      padding-inline: 0;
+      background-color: transparent;
+      color: var(--sl-color-gray-1);
+      font-size: var(--sl-text-xl);
+      width: auto;
+      max-width: none;
+
+      &:hover {
+        border-color: transparent;
+      }
+    }
+  }
+
+  @media (max-width: 63.9375rem) {
+    .header__toggle {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      width: var(--sl-menu-button-size);
+      height: var(--sl-menu-button-size);
+      border: 0;
+      border-radius: 50%;
+      padding: 0;
+      background-color: var(--sl-color-gray-6);
+      color: var(--sl-color-white);
+      cursor: pointer;
+    }
+
+    .header__toggle-bar {
+      position: relative;
+      width: 1rem;
+      height: 2px;
+      background-color: currentColor;
+      transition: background-color 0.2s ease;
+
+      &::before,
+      &::after {
+        content: "";
+        position: absolute;
+        inset-inline-start: 0;
+        width: 100%;
+        height: 2px;
+        background-color: currentColor;
+        transition:
+          transform 0.2s ease,
+          top 0.2s ease,
+          bottom 0.2s ease,
+          opacity 0.2s ease;
+      }
+
+      &::before {
+        top: -6px;
+      }
+
+      &::after {
+        bottom: -6px;
+      }
+    }
+
+    .header__toggle[aria-expanded="true"] .header__toggle-bar {
+      background-color: transparent;
+
+      &::before {
+        top: 0;
+        transform: rotate(45deg);
+      }
+
+      &::after {
+        bottom: 0;
+        transform: rotate(-45deg);
+      }
+    }
+
+    .header__overlay {
+      display: block;
+      position: fixed;
+      inset: var(--sl-nav-height) 0 0 0;
+      z-index: 11;
+      background-color: rgba(0, 0, 0, 0.3);
+      opacity: 0;
+      visibility: hidden;
+      transition:
+        opacity 0.2s ease,
+        visibility 0.2s ease;
+    }
+
+    .header__dropdown {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      position: fixed;
+      top: calc(var(--sl-nav-height) + 1rem);
+      inset-inline-end: var(--sl-nav-pad-x);
+      z-index: 12;
+      min-width: 14rem;
+      padding: 1rem;
+      border: 1px solid var(--sl-color-gray-5);
+      border-radius: 0.5rem;
+      background-color: var(--sl-color-bg-nav);
+      box-shadow: var(--sl-shadow-md);
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-0.5rem);
+      transition:
+        opacity 0.2s ease,
+        visibility 0.2s ease,
+        transform 0.2s ease;
+    }
+
+    .header__toggle[aria-expanded="true"] ~ .header__overlay,
+    .header__toggle[aria-expanded="true"] ~ .header__dropdown {
+      opacity: 1;
+      visibility: visible;
+      transform: none;
+    }
+
+    .header__dropdown-nav {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .header__dropdown-link {
+      padding: 0.5rem 0;
+      border-radius: 0.375rem;
+      color: var(--sl-color-text);
+      font-weight: 600;
+      text-decoration: none;
+
+      &:hover {
+        color: var(--sl-color-white);
+      }
+    }
+
+    .header__dropdown-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-block: 0.5rem;
+      border-block: 1px solid var(--sl-color-gray-6);
+    }
+
+    .header__dropdown-cta {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.5rem 1rem;
+      border-radius: 999px;
+      background-color: var(--sl-color-text-accent);
+      color: var(--sl-color-black);
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    :global(body.header-nav-open) {
+      overflow: hidden;
+    }
+  }
+</style>
+
+<script>
+  const toggle = document.querySelector<HTMLButtonElement>(".header__toggle");
+  const overlay = document.querySelector<HTMLElement>("[data-header-overlay]");
+  const dropdown = document.getElementById("header__dropdown");
+  const mainFrame = document.querySelector<HTMLElement>(".main-frame");
+
+  if (toggle && overlay && dropdown) {
+    const setOpen = (open: boolean) => {
+      toggle.setAttribute("aria-expanded", String(open));
+      document.body.classList.toggle("header-nav-open", open);
+      mainFrame?.toggleAttribute("inert", open);
+
+      if (open) {
+        dropdown.querySelector<HTMLAnchorElement>("a")?.focus();
+      }
+    };
+
+    toggle.addEventListener("click", () => {
+      const open = toggle.getAttribute("aria-expanded") !== "true";
+      setOpen(open);
+      if (!open) toggle.focus();
+    });
+
+    dropdown.querySelectorAll("a").forEach((link) => {
+      link.addEventListener("click", () => setOpen(false));
+    });
+
+    document.addEventListener("click", (event) => {
+      if (toggle.getAttribute("aria-expanded") !== "true") return;
+      const target = event.target as Node;
+      if (toggle.contains(target) || dropdown.contains(target)) return;
+      setOpen(false);
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && toggle.getAttribute("aria-expanded") === "true") {
+        setOpen(false);
+        toggle.focus();
+      }
+    });
+  }
+</script>

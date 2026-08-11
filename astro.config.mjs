@@ -182,9 +182,11 @@ export default defineConfig({
       components: {
         Footer: "./src/components/Footer.astro",
         Head: "./src/components/Head.astro",
+        Header: "./src/components/Header.astro",
+        MobileMenuToggle: "./src/components/MobileMenuToggle.astro",
+        MobileTableOfContents: "./src/components/MobileTableOfContents.astro",
         PageTitle: "./src/components/PageTitle.astro",
         SiteTitle: "./src/components/SiteTitle.astro",
-        SocialIcons: "./src/components/SocialIcons.astro",
       },
       customCss: ["./src/styles/custom.css", "katex/dist/katex.min.css"],
       sidebar: [
