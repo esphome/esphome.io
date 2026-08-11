@@ -72,7 +72,9 @@ See [Modbus](/components/modbus/#hardware-setup) for RS485 hardware setup instru
     Defaults to `U_WORD`.
 
   - **read_lambda** (**Required**, [lambda](/automations/templates#config-lambda)):
-    Lambda that returns the value of this register. `address` is provided with the address being read.
+    Lambda that returns the value of this register. `address` is provided with this register's own
+    start address, which is not necessarily the address the client asked for: under
+    `allow_partial_read` a request may start inside the value.
     Returning an empty optional (`return {};`) declines the read, and the client's request is answered
     with a `SERVICE_DEVICE_FAILURE` (code `4`) exception
     instead. This is useful when the value isn't available right now, for example while a sensor is
@@ -113,7 +115,8 @@ See [Modbus](/components/modbus/#hardware-setup) for RS485 hardware setup instru
   Modbus coils and discrete inputs from one shared table: a coil and a discrete input at the same
   address are the same bit, the same way holding and input registers share the register table above.
   A client can read a bit as a coil or as a discrete input and gets the same value either way. Each
-  bit address must be unique within the `bits` list.
+  bit address must be unique within the `bits` list. Bit addresses are independent of register
+  addresses: a bit at `0x0000` and a register at `0x0000` are different things and do not collide.
 
   - **address** (**Required**, integer): the address of this bit.
 
@@ -152,7 +155,7 @@ See [Modbus](/components/modbus/#hardware-setup) for RS485 hardware setup instru
   > those requests are answered with `ILLEGAL_FUNCTION` (code `1`) rather than `ILLEGAL_DATA_ADDRESS`
   > (code `2`), which is what a request for an address that simply isn't in a populated `bits` list
   > gets. The same holds the other way round: a bits-only server with no `registers` answers
-  > `ILLEGAL_FUNCTION` to register requests — to reads unless `courtesy_response` is configured, and to
+  > `ILLEGAL_FUNCTION` to register requests — to reads unless `courtesy_response` is enabled, and to
   > writes always, since `courtesy_response` only covers reads.
 
 ## Read/Write Multiple Registers (Function Code 0x17)
@@ -221,10 +224,12 @@ modbus:
     id: modbus_server
     role: server
 
+binary_sensor:
+  - platform: gpio
+    id: relay_state
+    pin: GPIOXX
+
 globals:
-  - id: relay_state
-    type: bool
-    initial_value: 'false'
   - id: pump_running
     type: bool
     initial_value: 'false'
@@ -235,7 +240,7 @@ modbus_server:
     bits:
       - address: 0x00
         read_lambda: |-
-          return id(relay_state);
+          return id(relay_state).state;
       - address: 0x01
         read_lambda: |-
           return id(pump_running);
