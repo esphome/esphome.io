@@ -8,6 +8,5 @@ export interface HeaderNavItem {
 export const headerNavItems: HeaderNavItem[] = [
   { label: "Components", href: "/components/" },
   { label: "ESPHome Starter Kit", href: "/starter-kit/" },
-  { label: "Docs", href: "/install/" },
   { label: "Blog", href: "/blog/" },
 ];

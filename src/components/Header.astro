@@ -7,6 +7,8 @@ import ThemeSelect from "virtual:starlight/components/ThemeSelect";
 import { headerNavItems } from "../headerNav";
 
 const shouldRenderSearch = config.pagefind || config.components.Search !== "@astrojs/starlight/components/Search.astro";
+
+const isHomepage = Astro.url.pathname === "/";
 ---
 
 <div class="header__inner">
@@ -34,48 +36,49 @@ const shouldRenderSearch = config.pagefind || config.components.Search !== "@ast
 
   <a href="/install/getting-started/" class="header__cta">Get started</a>
 
-  <button
-    type="button"
-    class="header__toggle"
-    aria-expanded="false"
-    aria-controls="header__dropdown"
-    aria-label="Toggle navigation menu"
-  >
-    <span class="header__toggle-bar"></span>
-  </button>
+  {
+    isHomepage && (
+      <>
+        <button
+          type="button"
+          class="header__toggle"
+          aria-expanded="false"
+          aria-controls="header__dropdown"
+          aria-label="Toggle navigation menu"
+        >
+          <span class="header__toggle-bar" />
+        </button>
 
-  <div class="header__overlay" data-header-overlay></div>
+        <div class="header__overlay" data-header-overlay />
 
-  <div id="header__dropdown" class="header__dropdown">
-    {
-      headerNavItems.length > 0 && (
-        <nav class="header__dropdown-nav" aria-label="Site navigation">
-          {headerNavItems.map((item) => (
-            <a href={item.href} class="header__dropdown-link">
-              {item.label}
-            </a>
-          ))}
-        </nav>
-      )
-    }
+        <div id="header__dropdown" class="header__dropdown">
+          {headerNavItems.length > 0 && (
+            <nav class="header__dropdown-nav" aria-label="Site navigation">
+              {headerNavItems.map((item) => (
+                <a href={item.href} class="header__dropdown-link">
+                  {item.label}
+                </a>
+              ))}
+            </nav>
+          )}
 
-    <a href="/install/getting-started/" class="header__dropdown-cta">Get started</a>
-  </div>
+          <a href="/install/getting-started/" class="header__dropdown-cta">
+            Get started
+          </a>
+        </div>
+      </>
+    )
+  }
 </div>
 
 <style>
-  :global(html[data-has-sidebar] .header) {
-    padding-inline-end: var(--sl-nav-pad-x);
-    z-index: 100;
-  }
-
   .header__inner {
     display: flex;
     align-items: center;
     gap: var(--sl-nav-gap);
     width: 100%;
-    max-width: 1400px;
     margin-inline: auto;
+    font-family: var(--__sl-font);
   }
 
   .header__logo {
@@ -159,16 +162,29 @@ const shouldRenderSearch = config.pagefind || config.components.Search !== "@ast
       display: flex;
     }
 
-    /* Nav is the sole flexible spacer between the (fixed-width) logo and the
-       (fixed-width) search button, so it sits centered in that gap rather than
-       hugging the logo. */
     .header__nav {
       flex: 1;
       justify-content: center;
     }
 
     .header__search {
-      flex-grow: 0;
+      flex-grow: 0.1;
+    }
+
+    .header__search :global(button[data-open-modal]) {
+      max-width: 28rem;
+    }
+  }
+
+  @media (min-width: 50rem) {
+    :global(html[data-has-sidebar]) .header__theme {
+      display: flex;
+    }
+
+    :global(html[data-has-sidebar]) .header__nav {
+      display: flex;
+      flex: 1;
+      justify-content: center;
     }
   }
 

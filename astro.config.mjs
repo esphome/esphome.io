@@ -183,8 +183,6 @@ export default defineConfig({
         Footer: "./src/components/Footer.astro",
         Head: "./src/components/Head.astro",
         Header: "./src/components/Header.astro",
-        MobileMenuToggle: "./src/components/MobileMenuToggle.astro",
-        MobileTableOfContents: "./src/components/MobileTableOfContents.astro",
         PageTitle: "./src/components/PageTitle.astro",
         SiteTitle: "./src/components/SiteTitle.astro",
       },
@@ -203,6 +201,11 @@ export default defineConfig({
             },
             { label: "FAQ and Tips", link: "/guides/faq/" },
           ],
+        },
+        {
+          label: "ESPHome Starter Kit",
+          link: "/starter-kit/",
+          attrs: { class: "starter-kit-mobile-link" },
         },
         { label: "Components", link: "/components/" },
         {
