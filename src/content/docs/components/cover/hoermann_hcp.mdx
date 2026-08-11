@@ -156,6 +156,10 @@ The `hoermann_hcp` light platform controls the courtesy light built into the mot
 light and follows the state reported by the motor, so it also updates when the light is switched by
 the motor itself — for example when it turns on while the door moves.
 
+> [!NOTE]
+> The light only accepts commands once the motor has reported the lamp state. Until then, the entity is
+> flagged and switching it has no effect.
+
 ```yaml
 light:
   - platform: hoermann_hcp
@@ -166,7 +170,8 @@ light:
 
 - **hoermann_hcp_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the
   `hoermann_hcp` hub. Only required if you have more than one hub.
-- All other options from [Binary Light](/components/light/binary/).
+- All other options from [Light](/components/light#config-light), except `restore_mode`, which has no effect because the
+  lamp state always comes from the motor.
 
 ## Binary Sensor
 
@@ -196,7 +201,7 @@ binary_sensor:
 
 - [Cover Component](/components/cover/)
 - [Binary Sensor Component](/components/binary_sensor/)
-- [Binary Light](/components/light/binary/)
+- [Light Component](/components/light/)
 - [Modbus](/components/modbus/)
 - [HCPBridge project](https://github.com/hkiam/HCPBridge)
 - [Automation](/automations)
