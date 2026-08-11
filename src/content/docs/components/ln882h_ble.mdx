@@ -1,0 +1,36 @@
+---
+description: "Instructions for setting up the LN882H BLE controller in ESPHome."
+title: "LN882H Bluetooth Low Energy"
+---
+
+import APIRef from '@components/APIRef.astro';
+
+The `ln882h_ble` component enables the Bluetooth Low Energy controller of the LN882H
+(LibreTiny `ln882x` platform) — the platform analog of
+[ESP32 BLE](/components/esp32_ble/). It owns the BLE stack bring-up and the controller's
+persistent BLE address; higher-level consumers (such as the LN882H BLE tracker) build on
+it and load it automatically.
+
+```yaml
+# Example configuration entry
+ln882h_ble:
+  enable_on_boot: false
+```
+
+## Configuration variables
+
+- **enable_on_boot** (*Optional*, boolean): Bring the BLE stack up during boot. Defaults
+  to `false`: on the single-core LN882H, stack init during boot competes with the WiFi
+  connection handshake, so consumers enable the stack lazily on first use instead.
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used
+  to reference this component.
+
+> [!NOTE]
+> **BLE adapter address.** The address is loaded from the device's persistent storage;
+> when none is stored it is derived once as **WiFi MAC + 1** (only the last byte
+> incremented, OUI unchanged — the standard factory pairing) and persisted.
+
+## See Also
+
+- [ESP32 Bluetooth Low Energy](/components/esp32_ble/)
+- <APIRef text="ln882h_ble.h" path="ln882h_ble/ln882h_ble.h" />
