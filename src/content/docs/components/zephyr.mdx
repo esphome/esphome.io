@@ -70,6 +70,7 @@ zephyr:
 | `esp32` | Original ESP32 (Xtensa, dual-core) | [`esp32_devkitc`](https://docs.zephyrproject.org/latest/boards/espressif/esp32_devkitc/doc/index.html) | mainline Zephyr | Wi-Fi, BLE |
 | `esp32h2` | ESP32-H2 (RISC-V) | [`esp32h2_devkitm`](https://docs.zephyrproject.org/latest/boards/espressif/esp32h2_devkitm/doc/index.html) | mainline Zephyr | BLE, Thread (via `openthread:`) |
 | `esp32c6` | ESP32-C6 (RISC-V) | [`esp32c6_devkitc`](https://docs.zephyrproject.org/latest/boards/espressif/esp32c6_devkitc/doc/index.html) | mainline Zephyr | Wi-Fi, BLE, Thread (via `openthread:`) |
+| `esp32c5` | ESP32-C5 (RISC-V, dual-band Wi-Fi 6) | [`esp32c5_devkitc`](https://docs.zephyrproject.org/latest/boards/espressif/esp32c5_devkitc/doc/index.html) | mainline Zephyr | Wi-Fi (2.4GHz + 5GHz), BLE, Thread (via `openthread:`) |
 | `nativesim` | Host binary, no real hardware | [`native_sim/native/64`](https://docs.zephyrproject.org/latest/boards/native/native_sim/doc/index.html) | mainline Zephyr | Simulation on your PC |
 | `nrf52` | nRF52840 (Cortex-M4) | [`adafruit_feather_nrf52840`](https://docs.zephyrproject.org/latest/boards/adafruit/feather_nrf52840/doc/index.html) | nRF Connect SDK (NCS) | BLE, Thread (via `openthread:`), Zigbee (via `zigbee:`, `framework: type: zigbee`) |
 | `nrf54l15` | nRF54L15 (Cortex-M33) | [`nrf54l15dk`](https://docs.zephyrproject.org/latest/boards/nordic/nrf54l15dk/doc/index.html) | nRF Connect SDK (NCS) | BLE, Thread (via `openthread:`), Zigbee (via `zigbee:`, `framework: type: zigbee`) |
@@ -78,7 +79,7 @@ zephyr:
 | `rp2040` | Raspberry Pi RP2040 (Cortex-M0+) | [`rpi_pico`](https://docs.zephyrproject.org/latest/boards/raspberrypi/rpi_pico/doc/index.html) | mainline Zephyr | No wireless yet |
 | `rp2350` | Raspberry Pi RP2350 (Cortex-M33, dual-core) | [`rpi_pico2`](https://docs.zephyrproject.org/latest/boards/raspberrypi/rpi_pico2/doc/index.html) | mainline Zephyr | No wireless yet |
 
-All three `esp32*` variants build only the single scheduled core Zephyr's Wi-Fi/BLE drivers require;
+All four `esp32*` variants build only the single scheduled core Zephyr's Wi-Fi/BLE drivers require;
 where the chip has more than one core, only the main application core's image is built. `nrf54l15`
 and `nrf54lm20a` likewise only build for the application core (`cpuapp`) — each chip's separate
 RISC-V co-processor core (`cpuflpr`) is not a build target.
@@ -476,10 +477,10 @@ at a time when troubleshooting, rather than turning everything up simultaneously
 
 ## mDNS status
 
-[`mdns:`](/components/mdns/) works on the `esp32` and `esp32c6` variants when Wi-Fi is configured
-without `openthread:` (on `esp32c6`/`esp32h2` with `openthread:`, and on `nrf52`/`nrf54l15` — which
-always use `openthread:` — discovery instead goes through OpenThread's own SRP client; `nativesim`
-uses the host's own mDNS backend, not Zephyr's).
+[`mdns:`](/components/mdns/) works on the `esp32`, `esp32c6`, and `esp32c5` variants when Wi-Fi is
+configured without `openthread:` (on `esp32c6`/`esp32c5`/`esp32h2` with `openthread:`, and on
+`nrf52`/`nrf54l15` — which always use `openthread:` — discovery instead goes through OpenThread's
+own SRP client; `nativesim` uses the host's own mDNS backend, not Zephyr's).
 
 As of Zephyr 4.4.1/mainline, `subsys/net/lib/dns/mdns_responder.c` has two known bugs that keep mDNS
 from actually working correctly out of the box:
