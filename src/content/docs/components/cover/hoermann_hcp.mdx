@@ -97,9 +97,11 @@ connect to the ESP32 UART pins you set in the `uart:` block.
 
 > [!NOTE]
 > The example above uses a transceiver module with automatic direction control, so no separate DE/RE
-> flow-control pin is needed. If your module labels its serial pins differently, connect its receiver
-> output (RO/RXD) to the ESP32 `rx_pin` and its driver input (DI/TXD) to the ESP32 `tx_pin`; swap the
-> two if data doesn't flow.
+> flow-control pin is needed. If your module has a DE/RE pin instead, connect it to a spare GPIO and
+> set `flow_control_pin` on the [Modbus](/components/modbus/) component — or on the
+> [UART bus](/components/uart/) if your platform's UART supports it. If your module labels its serial
+> pins differently, connect its receiver output (RO/RXD) to the ESP32 `rx_pin` and its driver input
+> (DI/TXD) to the ESP32 `tx_pin`; swap the two if data doesn't flow.
 
 > [!IMPORTANT]
 > The adapter gets **no power until a bus scan is run** on the motor. The +25 V on the bus stays
