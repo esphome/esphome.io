@@ -22,7 +22,7 @@ const colors = {
 };
 
 // Folders to ignore
-const ignoreFolders = ["pagefind/", "node_modules/", "dist/", ".astro/"];
+const ignoreFolders = ["pagefind/", "node_modules/", "dist/", ".astro/", ".claude/"];
 
 // Files to ignore (skip all linting)
 const ignoreFiles = ["script/release_notes_template.mdx"];
@@ -212,11 +212,16 @@ async function buildAnchorCache() {
   }
 
   function generateSlug(text) {
-    return text
-      .toLowerCase()
-      .replace(/[^\w\s-]/g, "")
-      .replace(/[-\s]+/g, "-")
-      .replace(/^-+|-+$/g, "");
+    return (
+      text
+        .toLowerCase()
+        // Mirror src/lib/rehype-heading-slugs.mjs: dots in automation headings
+        // (e.g. `light.turn_on`) map to `-` so the anchor becomes `light-turn_on`.
+        .replace(/\./g, "-")
+        .replace(/[^\w\s-]/g, "")
+        .replace(/[-\s]+/g, "-")
+        .replace(/^-+|-+$/g, "")
+    );
   }
 
   async function processDir(dir, basePath = "") {
