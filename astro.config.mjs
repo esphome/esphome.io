@@ -128,6 +128,18 @@ export default defineConfig({
         "@assets": path.resolve(__dirname, "./src/assets"),
       },
     },
+    // Same-origin proxy for the Open Home Foundation livestream API so the
+    // browser isn't blocked by CORS during local dev. Production uses the
+    // matching Netlify rewrite in netlify.toml.
+    server: {
+      proxy: {
+        "/livestream-api": {
+          target: "https://web-api.openhomefoundation.org/livestream",
+          changeOrigin: true,
+          rewrite: (p) => p.replace(/^\/livestream-api/, ""),
+        },
+      },
+    },
   },
   image: {
     breakpoints: imageBreakpoints,

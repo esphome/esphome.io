@@ -1,0 +1,152 @@
+---
+import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
+import LivestreamCard from "@components/Homepage/LivestreamCard.astro";
+---
+
+<StarlightPage
+  frontmatter={{
+    title: "Livestream card states",
+    description: "Preview of the homepage livestream card in each of its states.",
+    template: "splash",
+    head: [{ tag: "meta", attrs: { name: "robots", content: "noindex, nofollow" } }],
+  }}
+  hasSidebar={false}
+>
+  <div class="ls-demo">
+    <p>
+      Preview of the homepage livestream card. Each card below is driven by mock data so all states render regardless of
+      what the live API currently reports.
+    </p>
+
+    <section class="ls-demo__live">
+      <h2>Current API result</h2>
+      <p>Fetched live from the Open Home Foundation API for the <code>esphome</code> channel.</p>
+      <div class="ls-demo__live-grid">
+        <figure>
+          <figcaption>Rendered card (hidden if there is nothing to show)</figcaption>
+          <LivestreamCard slug="esphome" />
+        </figure>
+        <figure>
+          <figcaption>Raw response</figcaption>
+          <pre class="ls-demo__json" id="ls-demo-json">Loading…</pre>
+        </figure>
+      </div>
+    </section>
+
+    <div class="ls-demo__grid">
+      <figure>
+        <figcaption>Live — non-interactive muted embed, clicking opens the stream</figcaption>
+        <LivestreamCard data-demo="live" />
+      </figure>
+
+      <figure>
+        <figcaption>Upcoming — within 48 hours</figcaption>
+        <LivestreamCard data-demo="upcoming" />
+      </figure>
+
+      <figure>
+        <figcaption>Past — ended within the last 12 hours</figcaption>
+        <LivestreamCard data-demo="past" />
+      </figure>
+
+      <figure>
+        <figcaption>None / loading — card is hidden (nothing renders here)</figcaption>
+        <div class="ls-demo__empty">
+          <LivestreamCard data-demo="none" />
+          <span>No card shown</span>
+        </div>
+      </figure>
+    </div>
+  </div>
+</StarlightPage>
+
+<style lang="scss">
+  @use "../styles/mixins" as *;
+
+  .ls-demo {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 2rem 1.25rem 4rem;
+
+    &__grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 2rem;
+      margin-top: 2rem;
+
+      @include bp(tablet) {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    figure {
+      margin: 0;
+    }
+
+    figcaption {
+      margin-bottom: 0.75rem;
+      font-size: 0.875rem;
+      color: var(--sl-color-gray-3);
+    }
+
+    &__empty {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      aspect-ratio: 16 / 9;
+      border: 1px dashed var(--sl-color-gray-4);
+      border-radius: 12px;
+      color: var(--sl-color-gray-3);
+      font-size: 0.875rem;
+    }
+  }
+</style>
+
+<script>
+  import { applyLivestreamState, type LivestreamInfo } from "../lib/livestream";
+
+  const now = Date.now();
+  // The Open Home Foundation API's own example video id.
+  const VIDEO = "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
+
+  const mock: Record<string, LivestreamInfo> = {
+    live: {
+      channel: "esphome",
+      channelName: "ESPHome",
+      status: "live",
+      title: "ESPHome 2026.8 Release Party",
+      url: VIDEO,
+      startTime: new Date(now - 25 * 60000).toISOString(),
+      updatedAt: new Date(now - 25 * 60000).toISOString(),
+    },
+    upcoming: {
+      channel: "esphome",
+      channelName: "ESPHome",
+      status: "upcoming",
+      title: "ESPHome 2026.9 Release Party",
+      url: VIDEO,
+      startTime: new Date(now + 3 * 60 * 60000).toISOString(),
+      updatedAt: new Date(now - 60 * 60000).toISOString(),
+    },
+    past: {
+      channel: "esphome",
+      channelName: "ESPHome",
+      status: "past",
+      title: "ESPHome 2026.7 Release Party",
+      url: VIDEO,
+      startTime: new Date(now - 4 * 60 * 60000).toISOString(),
+      updatedAt: new Date(now - 2 * 60 * 60000).toISOString(),
+    },
+    none: {
+      channel: "esphome",
+      channelName: "ESPHome",
+      status: "none",
+      updatedAt: new Date(now - 3 * 24 * 60 * 60000).toISOString(),
+    },
+  };
+
+  document.querySelectorAll<HTMLElement>("[data-demo]").forEach((card) => {
+    const key = card.dataset.demo;
+    if (key && mock[key]) applyLivestreamState(card, mock[key], now);
+  });
+</script>
