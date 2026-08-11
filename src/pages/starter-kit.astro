@@ -19,6 +19,8 @@ import FaqSection from "@components/starter-kit/FaqSection.astro";
 <StarlightPage
   frontmatter={{
     title: "ESPHome Starter Kit",
+    description:
+      "The ESPHome Starter Kit bundles an ESP32-C6 board with sensors and modules so you can build your first smart home devices without any prior electronics experience.",
     template: "splash",
     head: [
       {
@@ -112,24 +114,28 @@ import FaqSection from "@components/starter-kit/FaqSection.astro";
 </StarlightPage>
 
 <script>
-  const animatedIconObserver = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.remove("playing");
-          void (entry.target as HTMLElement).offsetWidth;
-          entry.target.classList.add("playing");
-        } else {
-          entry.target.classList.remove("playing");
-        }
-      });
-    },
-    { threshold: 0.5 },
-  );
+  import { initLazyVideos } from "../lib/lazy-video";
 
-  document.querySelectorAll<SVGElement>(".is-animated").forEach((el) => {
-    animatedIconObserver.observe(el);
-  });
+  if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    const animatedIconObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.remove("playing");
+            void (entry.target as HTMLElement).offsetWidth;
+            entry.target.classList.add("playing");
+          } else {
+            entry.target.classList.remove("playing");
+          }
+        });
+      },
+      { threshold: 0.5 },
+    );
+
+    document.querySelectorAll<SVGElement>(".is-animated").forEach((el) => {
+      animatedIconObserver.observe(el);
+    });
+  }
 
   document.querySelectorAll<HTMLElement>(".fade-up").forEach((el) => {
     const delay = el.dataset.delay;
@@ -146,41 +152,7 @@ import FaqSection from "@components/starter-kit/FaqSection.astro";
     observer.observe(el);
   });
 
-  document.querySelectorAll<HTMLVideoElement>(".lazy-video").forEach((video) => {
-    const playButton = document.querySelector<HTMLButtonElement>(`.play-button[data-video-id="${video.id}"]`);
-
-    function setPlaying(playing: boolean) {
-      video.classList.toggle("lazy-video--playing", playing);
-      playButton?.classList.toggle("lazy-video--playing", playing);
-    }
-
-    video.addEventListener("ended", () => setPlaying(false));
-
-    playButton?.addEventListener("click", () => {
-      video
-        .play()
-        .then(() => setPlaying(true))
-        .catch((error: unknown) => {
-          console.error("[starter-kit] Failed to play video:", error);
-        });
-    });
-
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          video
-            .play()
-            .then(() => setPlaying(true))
-            .catch(() => {});
-          observer.disconnect();
-        }
-      },
-      { threshold: 0.5 },
-    );
-    observer.observe(video);
-  });
+  initLazyVideos("starter-kit");
 </script>
 
 <style lang="scss">
