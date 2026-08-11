@@ -60,11 +60,11 @@ Please see [command line substitutions](/components/substitutions#command-line-s
 **`--toolchain TOOLCHAIN`**
 : Selects which toolchain to use for compiling the project. Supported values are:
 
-* `platformio` (default)
-* `esp-idf`
+* `esp-idf` (ESP32 only)
+* `platformio`
 
 The toolchain can be configured using `esp32.toolchain` (see the [ESP32 toolchain configuration](/components/esp32#esp32-toolchain)).
-If not specified, `platformio` is used by default.
+If not specified, ESP32 devices default to `esp-idf`; all other platforms use `platformio`.
 If both `esp32.toolchain` and the `--toolchain` CLI option are set, the CLI option takes precedence.
 
 Please see [ESP-IDF toolchain documentation](/guides/esp_idf/) for details on using the ESP-IDF integration.
@@ -255,41 +255,14 @@ configuration file — if none is provided, it will clean the `.esphome` directo
 working directory. Arguments can be YAML configuration files or directories containing them.
 
 Storage files (`.json` files and the `storage` directory inside `.esphome`) are preserved so that
-the dashboard continues to function correctly.
+the ESPHome Device Builder continues to function correctly.
 
 ### `dashboard` Command
 
-The `esphome dashboard <CONFIG>` command starts the ESPHome dashboard server for using ESPHome
-through a graphical user interface. This command accepts a configuration directory instead of a
-single configuration file.
-
-#### Options
-
-**`--address ADDRESS`**
-: Manually set the address to bind to (defaults to 0.0.0.0)
-
-
-**`--port PORT`**
-: Manually set the HTTP port to open connections on (defaults to 6052)
-
-
-**`--socket SOCKET`**
-: Manually set the unix socket to bind to. If specified along with `--address` or `--port` the values
-for those parameters will be ignored. Cannot be used along with `--systemd-socket`.
-
-
-**`--username USERNAME`**
-: The optional username to require for authentication.
-
-
-**`--password PASSWORD`**
-: The optional password to require for authentication.
-
-
-**`--open-ui`**
-: If set, opens the dashboard UI in a browser once the server is up and running. Does not work when using
-`--socket`.
-
+> [!NOTE]
+> The built-in `dashboard` command has been removed. To use ESPHome through a graphical user interface, run the
+> [ESPHome Device Builder](/install/) instead. Home
+> Assistant app and Docker users are unaffected. Both already run the Device Builder.
 
 ### `analyze-memory` Command
 
