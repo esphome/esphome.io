@@ -18,7 +18,15 @@ export function parseEdgesBuffer(buffer: ArrayBuffer | null): ParsedEdgeMesh[] |
   if (!buffer) return null;
   try {
     const header = new Uint32Array(buffer, 0, 3);
-    if (header[0] !== EDGES_MAGIC || header[1] !== EDGES_FORMAT_VERSION) return null;
+    if (header[0] !== EDGES_MAGIC || header[1] !== EDGES_FORMAT_VERSION) {
+      // Non-fatal for users (falls back to live computation), but worth surfacing to
+      // developers — this only happens if the precomputed file is missing/stale/corrupt,
+      // e.g. generate_hero_edges.mjs wasn't re-run after ESK.glb changed.
+      if (import.meta.env.DEV) {
+        console.warn(`[starter-kit-edges] ${EDGES_URL} is missing or stale — falling back to live edge computation.`);
+      }
+      return null;
+    }
     const groupCount = header[2];
     let offset = 3 * 4;
     const meshCounts = new Uint32Array(buffer, offset, groupCount);
