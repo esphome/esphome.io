@@ -8,7 +8,7 @@ The `modbus_controller` platform creates an output from a modbus_controller. The
 ## Configuration variables
 
 - **address** (**Required**, int): start address of the first register in a range (can be decimal or hexadecimal).
-- **value_type** (*Optional*, default `U_WORD`): data type of the modbus register data. The default data type for modbus is a 16 bit integer in big endian format (MSB first).
+- **value_type** (*Optional*, default `U_WORD`): data type of the modbus register data. The default data type for modbus is a 16 bit integer in big endian format (MSB first). This option applies only to `register_type: holding`; it is not a valid option with `register_type: coil`.
 
   - `U_WORD` (unsigned 16 bit integer from 1 register = 16bit)
   - `S_WORD` (signed 16 bit integer from 1 register = 16bit)
@@ -50,7 +50,7 @@ The `modbus_controller` platform creates an output from a modbus_controller. The
     - for `register_type: holding`  : `std::vector<uint16_t> &payload` - add 16-bit raw modbus register words. The write covers exactly the registers you add, so the payload must not be wider than the register count implied by `value_type` (1 for the word types, 2 for the dword/float types, 4 for the qword types) or the write is dropped with an error.
     - for `register_type: coil`  : `std::vector<uint8_t> &payload` - add the raw PDU bytes. This is sent as a custom command, so it must include all required bytes for a modbus request.
 
-  - **item** (const pointer to a SensorItem derived object): The sensor object itself.
+  - **item** (pointer to a SensorItem derived object): The sensor object itself.
 
   Possible return values for the lambda:
 
