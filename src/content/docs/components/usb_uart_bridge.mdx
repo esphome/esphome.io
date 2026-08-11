@@ -32,9 +32,9 @@ bridge:
 
 ## Configuration variables
 
-- **uart_id** (**Required**, [ID](/guides/configuration-types#config-id)): The ID of the UART bus to bridge to the USB
+- **uart_id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the UART bus to bridge to the USB
   CDC-ACM interface.
-- **usb_cdc_acm_id** (**Required**, [ID](/guides/configuration-types#config-id)): The ID of the USB CDC-ACM interface
+- **usb_cdc_acm_id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the USB CDC-ACM interface
   to use for the USB side of the bridge.
 - **dtr_pin** (*Optional*, [Pin](/guides/configuration-types#pin)): GPIO pin that mirrors the host's DTR (Data Terminal
   Ready) line state. This is typically asserted when the host opens the serial port and is commonly used to drive the
@@ -47,7 +47,12 @@ bridge:
   Range: 64-65535. Defaults to `256`.
 - **uart_tx_buffer_size** (*Optional*, int): Size of the internal buffer for data received from USB (going to UART).
   Range: 64-65535. Defaults to `256`.
-- **id** (*Optional*, [ID](/guides/configuration-types#config-id)): Manually specify the ID for this component.
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID for this component.
+
+> [!NOTE]
+> A bridge requires exclusive use of both its UART and its USB CDC-ACM interface. Configurations where another
+> component (or another bridge) also uses either of them are rejected during validation, since two readers on the same
+> interface would each receive only fragments of the data.
 
 ## How It Works
 
@@ -65,7 +70,9 @@ The USB UART Bridge creates a transparent data bridge between the UART and USB i
 When the host computer changes serial port parameters (baud rate, data bits, stop bits, parity), those changes are
 automatically applied to the UART interface. This lets the bridge adapt to different device requirements without
 reconfiguration. Mark and space parity, and any data-bit count outside 5-8, are not supported by the UART and are
-ignored.
+ignored. Baud rate requests of zero or above 5 Mbit/s (the fastest these microcontrollers support) are ignored as
+well, with a warning in the log; anything in between is passed to the UART driver, which keeps the previous rate if
+the requested one is too low for its clock divider to reach.
 
 > [!NOTE]
 > UART parameter changes are debounced with a 20ms minimum interval to coalesce the rapid updates a host often sends
