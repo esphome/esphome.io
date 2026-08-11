@@ -13,10 +13,10 @@ and requires [Modbus Controller](/components/modbus_controller/) to be configure
   - `coil`  : Coils are 1-bit registers (ON/OFF values) that are used to control discrete outputs. They may be read and/or written. Modbus *Function Code 1 (Read Coil Status)* will be used.
   - `discrete_input`  : discrete input register (read only coil) are similar to coils but can only be read. Modbus *Function Code 2 (Read Input Status)* will be used.
   - `holding`  : Holding Registers - Holding registers are the most universal 16-bit register. They may be read and/or written. Modbus *Function Code 3 (Read Holding Registers)* will be used.
-  - `read`  : Read Input Registers - registers are 16-bit registers used for input, and may only be read. Modbus *Function Code 4 (Read Input Registers)* will be used.
+  - `input`  : Input Registers - 16-bit registers used for input; may only be read. Modbus *Function Code 4 (Read Input Registers)* will be used. `read` is an accepted alias for this value.
 
 - **address** (**Required**, int): start address of the first register in a range (can be decimal or hexadecimal).
-- **value_type** (**Required**): data type of the modbus register data. The default data type for modbus is a 16 bit integer in big endian format (MSB first).
+- **value_type** (*Optional*): data type of the modbus register data. Defaults to `U_WORD`, a 16 bit integer in big endian format (MSB first).
 
   - `U_WORD`  : unsigned 16 bit integer from 1 register = 16bit
   - `S_WORD`  : signed 16 bit integer from 1 register = 16bit
@@ -42,8 +42,8 @@ and requires [Modbus Controller](/components/modbus_controller/) to be configure
 
 - **bitmask** (*Optional*, int): sometimes multiple values are packed in a single register's response. The bitmask can be used to extract a value from the response. See [Bitmasks](/components/modbus_controller#bitmasks).
 - **skip_updates** (*Optional*, int): By default, all sensors of a modbus_controller are updated together. For data points that don't change very frequently, updates can be skipped. A value of 5 would only update this sensor range in every 6th update cycle. Note: The modbus_controller groups components by address ranges to reduce number of transactions. All components with the same starting address will be updated in one request. `skip_updates` applies for *all* components in the same range.
-- **register_count** (*Optional*, int): The number of consecutive registers this read request should span or skip in a single command. Default is 1. See [Optimizing modbus communications](/components/modbus_controller#modbus_register_count) for more details.
-- **response_size** (*Optional*, int): Size of the response for the register in bytes. Defaults to register_count*2.
+- **register_count** (*Optional*, int): The number of consecutive registers this read request should span or skip in a single command. Defaults to the number of registers implied by `value_type` (1 for the word types). See [Optimizing modbus communications](/components/modbus_controller#modbus_register_count) for more details.
+- **response_size** (*Optional*, int): Size of the response for the register in bytes. If unset, defaults to `register_count` × 2 (2 bytes per register).
 - **force_new_range** (*Optional*, boolean): If possible sensors with sequential addresses are grouped together and requested in one range. Setting `force_new_range: true` enforces the start of a new range at that address.
 - **lambda** (*Optional*, [lambda](/automations/templates#config-lambda)):
   Lambda to be evaluated every update interval to get the new value of the sensor.
@@ -84,7 +84,7 @@ The example below will send 2 modbus commands (device address 1 assumed):
   name: "PV array input voltage"
   address: 0x3100
   unit_of_measurement: "V" ## for any other unit the value is returned in minutes
-  register_type: read
+  register_type: input
   value_type: U_WORD
   accuracy_decimals: 1
   filters:

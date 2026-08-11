@@ -15,17 +15,28 @@ lambdas, using an existing [Modbus](/components/modbus/) hub in the client role.
 
 <Image src="/images/modbus.png" width={190} height={200} layout="constrained" alt="" />
 
-There is no `modbus_client:` configuration block: the component loads automatically together with the hub. Each
-action instance is its own client device on the hub, and the hub routes the reply back to the exact action that sent
-the request. Because replies are matched by action identity rather than by device address, the `address` can be
-templatable and overlapping sends from different actions do not interfere with each other.
+The actions below do not require a `modbus_client:` configuration block: the component loads automatically
+together with the `modbus` hub. Each action instance is its own client device on the hub, and the hub routes the
+reply back to the exact action that sent the request. Because replies are matched by action identity rather than by
+device address, the `address` can be templatable and overlapping sends from different actions do not interfere with
+each other.
 
 A [Modbus](/components/modbus/) hub in the client role (the default) is required. `modbus_id` is only needed when
 multiple hubs are configured.
 
+> [!TIP]
+> Three ways to send an ad-hoc command, in order of preference:
+>
+> - **Typed Read/Write Actions** (below) for a standard read, write, or combined read/write with a static function
+>   code - use this unless one of the next two applies.
+> - **`modbus_client.send`** for a non-standard PDU, or a function code chosen at runtime instead of fixed in the
+>   YAML.
+> - **Lambda Hook Component** for a write from inside a lambda that's already doing other C++ work, rather than as
+>   a separate automation action - it has no way to read a reply back.
+
 ## `modbus_client.send` Action
 
-This action queues a Modbus frame for transmission and optionally handles the outcome.
+This action queues a custom Modbus frame for transmission and optionally handles the outcome.
 
 ```yaml
 on_...:
@@ -41,8 +52,7 @@ on_...:
 - **modbus_id** (*Optional*, [ID](/guides/configuration-types#id)): The Modbus hub to send on. Automatically assigned
   when a single hub is configured.
 - **address** (**Required**, templatable, int): The device address the frame is sent to. Accepts `0`-`255`; the valid
-  Modbus device range is `1`-`247`, and `0` is broadcast (no reply will ever arrive; see
-  [Behavior](#behavior)).
+  Modbus device range is `1`-`247`, and `0` is broadcast (no reply will ever arrive; see [Behavior](#behavior)).
 - **pdu** (**Required**, templatable, list of bytes): The PDU to send: function code followed by data. The device
   address and CRC are added automatically - do **not** include them. Maximum 253 bytes (the Modbus PDU limit): an
   empty or over-long YAML list fails config validation. As a lambda it must return a `modbus::helpers::PduBuffer` (a
@@ -52,12 +62,6 @@ on_...:
   length-checked: one over 253 bytes is silently truncated to the limit rather than rejected. An empty lambda result
   (or a builder that fails - see below) also produces an empty PDU; the hub refuses to send it, and `on_not_sent`
   fires.
-
-> [!NOTE]
-> None of the handlers below (`on_sent`, `on_response`, `on_error`, `on_no_response`, `on_not_sent`) may contain
-> deferring actions (`delay`, `wait_until`, `script.wait`, ...) - the request/response spans are only valid while the
-> handler runs. Copy any bytes you need into a global first, then defer from a separate script or automation.
-
 - **on_sent** (*Optional*, [Automation](/automations/)): Fires when the frame is written to the wire. Lambda
   variable: `request` (`std::span<const uint8_t>`, the PDU sent). This fires once per transmission, before any reply,
   and does not fire when the send ends in `on_not_sent` (nothing was transmitted). Exactly one of
@@ -80,7 +84,7 @@ on_...:
   - a `then:` automation with a nested `retry:` returning lambda - runs the actions **and** decides the retry:
 
     ```yaml
-    - globals.set: { id: tries, value: '0' }  # reset before each new send, not in a handler
+    - lambda: "id(tries) = 0;"  # reset before each new send, not in a handler
     - modbus_client.send:
         address: 0x01
         pdu: [0x03, 0x00, 0x10, 0x00, 0x01]
@@ -103,55 +107,356 @@ on_...:
 
 ### Building PDUs with Helpers
 
-Instead of hand-assembling bytes, a `pdu` lambda can call the builders in `modbus::helpers` and return the result
-directly (all return types convert to `PduBuffer`):
+The typed actions below call these same builders internally, so for static YAML config, use a typed action instead.
+Reach for a builder directly only when a typed action can't fit: the function code needs to be chosen at runtime
+(`create_read_pdu` takes a `modbus::FunctionCode` value, so one lambda can serve all four read types), or you're
+already writing a `pdu` lambda for something non-standard and want part of it built for you.
 
-- `create_read_pdu(function_code, start_address, count)` - reads; takes a `modbus::FunctionCode` enum value
-  (`READ_COILS`, `READ_DISCRETE_INPUTS`, `READ_HOLDING_REGISTERS`, `READ_INPUT_REGISTERS`).
-- `create_write_single_register_pdu(address, value)` / `create_write_single_coil_pdu(address, on_off)`: single
-  writes.
-- `create_write_registers_pdu(start_address, values)`: function code `0x10` multi-write; `values` is a span of
-  `uint16_t`.
-- `create_write_coils_pdu(start_address, values)`: function code `0x0F` multi-write; `values` is a span of `bool`.
-  `std::vector<bool>` is bit-packed and won't convert to a span - pass a `std::array<bool, N>` or other contiguous
-  bool container instead. An overload taking `PackedBits` (bits already packed as they go on the wire) is also
-  available for callers who need to write a large number of coils.
+- `create_read_pdu(function_code, start_address, count)` - `READ_COILS`, `READ_DISCRETE_INPUTS`,
+  `READ_HOLDING_REGISTERS`, `READ_INPUT_REGISTERS`.
+- `create_write_single_register_pdu(address, value)` / `create_write_single_coil_pdu(address, on_off)`.
+- `create_write_registers_pdu(start_address, values)` - `values` is a span of `uint16_t`.
+- `create_write_coils_pdu(start_address, values)` - `values` is a span of `bool`, a `std::vector<bool>` (which is
+  bit-packed and so needs its own overload), or `PackedBits` if the bits are already packed. The device-level
+  `write_multiple_coils()` takes only the span and `PackedBits` forms.
 
-The builders validate their inputs per the Modbus specification (for example read counts and payload sizes) and
-return an *empty* PDU on invalid input, logging the reason. An empty PDU is never sent - the action's `on_not_sent`
-fires instead, so bad inputs fail safe, and loud enough to show up in the logs.
+All return types convert to `PduBuffer`. Invalid input (bad counts, oversize payloads, ...) returns an *empty* PDU
+and logs the reason - the action's `on_not_sent` fires, same as any other empty PDU (see above).
 
 ```yaml
-- modbus_client.send:
-    address: 0x01
-    pdu: !lambda |-
-      return modbus::helpers::create_read_pdu(
-          modbus::FunctionCode::READ_HOLDING_REGISTERS, 0x0010, 2);
-    on_response:
-      - lambda: |-
-          if (response.size() >= 4)
-            ESP_LOGI("app", "reg 0x10 = %u", (response[2] << 8) | response[3]);
+globals:
+  - id: use_input_registers
+    type: bool
+    initial_value: 'false'
+
+on_...:
+  - modbus_client.send:
+      address: 0x01
+      pdu: !lambda |-
+        // the function code is chosen at runtime, which a typed action can't do
+        auto fc = id(use_input_registers) ? modbus::FunctionCode::READ_INPUT_REGISTERS
+                                          : modbus::FunctionCode::READ_HOLDING_REGISTERS;
+        return modbus::helpers::create_read_pdu(fc, 0x0010, 2);
 ```
 
 The enum and the builders live in the `modbus` component's namespaces (`modbus::FunctionCode`,
 `modbus::helpers::*`); no extra include is needed in YAML lambdas.
 
+## Typed Read/Write Actions
+
+Instead of hand-assembling a PDU with `modbus_client.send`, these actions issue a single standard Modbus
+function-code transaction directly: a register or coil read, a register or coil write, or a combined read/write in a
+single transaction. Like `modbus_client.send`, each is its own hub device - it resolves the hub (automatically when
+a single one is configured), sends the request to `address`, and routes the reply straight back to that action's own
+handlers, never another action's.
+
+### Common Configuration Variables
+
+- **address** (**Required**, templatable, int): The Modbus device address the frame is sent to. Accepts `0`-`255`;
+  the valid Modbus device range is `1`-`247`, and `0` is broadcast (no reply will ever arrive; see
+  [Behavior](#behavior)).
+- **modbus_id** (*Optional*, [ID](/guides/configuration-types#id)): The Modbus hub to send on. Automatically assigned
+  when a single hub is configured.
+- **start_address** (**Required**, templatable, int): The starting register or coil address. Not used by
+  `read_write_multiple_registers`, which takes separate `read_address` and `write_address` instead.
+  `start_address + count` (or `+ values.size()` for a write) must not exceed `0x10000`; a literal value is rejected
+  at config time, but a templated one bypasses that check and fails at runtime - an out-of-range address
+  produces an empty PDU, and `on_not_sent` fires instead of the send. The same holds for the per-action `count` and
+  `values` bounds below: a lambda returning a count or list length outside its documented range also produces an
+  empty PDU and fires `on_not_sent`.
+- **on_sent** (*Optional*, [Automation](/automations/)): Fires when the frame is written to the wire. Lambda
+  variable: `request` (`std::span<const uint8_t>`, the PDU sent).
+- **on_response** (*Optional*, [Automation](/automations/)): Fires on a standard-conforming reply. The lambda
+  variable it carries depends on the action - see below.
+- **on_custom_response** (*Optional*, [Automation](/automations/)): Fires instead of `on_response` when the reply
+  doesn't parse as a standard-conforming transaction for this function code. Lambda variables: `request`, `response`
+  (raw `std::span<const uint8_t>` PDUs) - the same shape `modbus_client.send`'s `on_response` uses, so a
+  non-conforming device is still handleable. If left unconfigured, no handler runs for that transmission - the first
+  non-conforming reply for this action logs a warning, and any after that log at verbose level instead.
+- **on_error** (*Optional*, [Automation](/automations/)): Fires on a Modbus exception response. Lambda variables:
+  `request` (`std::span<const uint8_t>`) and `exception_code` (`modbus::ExceptionCode`, an enum - cast to
+  `int`/`uint8_t` to print).
+- **on_no_response** (*Optional*): Fires when the device does not answer within the hub's `send_wait_time`. Same
+  three forms as `modbus_client.send`'s `on_no_response` above: a returning lambda, a `then:` automation, or a
+  `then:` automation with a nested `retry:` returning lambda.
+- **on_not_sent** (*Optional*, [Automation](/automations/)): Fires when the frame never reached the wire - a
+  duplicate write already pending, a full send queue, an invalid request, or a queued frame cancelled by another
+  device or automation clearing the queue for the same address. See [Behavior](#behavior). Lambda variable:
+  `request` (`std::span<const uint8_t>`, the PDU that was not sent).
+
+### `modbus_client.read_holding_registers` Action
+
+Reads one or more holding registers (function code `0x03`).
+
+#### Configuration Variables
+
+- **count** (*Optional*, templatable, int): 1-125 registers to read. Defaults to `1`.
+
+`on_response` lambda variable: **values** (`std::span<const uint16_t>`, host byte order). A reply whose length
+doesn't match the requested `count` is diverted to `on_custom_response`, so inside `on_response` `values.size()`
+always equals `count`.
+
+```yaml
+globals:
+  - id: retries
+    type: int
+    initial_value: '0'
+
+button:
+  - platform: template
+    name: "Read holding registers"
+    on_press:
+      - lambda: "id(retries) = 0;"  # reset before each new send, not in a handler
+      - modbus_client.read_holding_registers:
+          address: 0x01
+          start_address: 0x0010
+          count: 2
+          on_response:
+            then:
+              - lambda: 'ESP_LOGD("modbus", "reg0=%u reg1=%u", values[0], values[1]);'
+          on_error:
+            then:
+              - lambda: 'ESP_LOGW("modbus", "exception 0x%02X", (uint8_t) exception_code);'
+          on_no_response: !lambda "return id(retries)++ < 3;"
+```
+
+### `modbus_client.read_input_registers` Action
+
+Reads one or more input registers (function code `0x04`).
+
+#### Configuration Variables
+
+- **count** (*Optional*, templatable, int): 1-125 registers to read. Defaults to `1`.
+
+`on_response` lambda variable: **values** (`std::span<const uint16_t>`, host byte order). A reply whose length
+doesn't match the requested `count` is diverted to `on_custom_response`, so inside `on_response` `values.size()`
+always equals `count`.
+
+```yaml
+button:
+  - platform: template
+    name: "Read input registers"
+    on_press:
+      - modbus_client.read_input_registers:
+          address: 0x01
+          start_address: 0x0000
+          count: 1
+          on_response:
+            then:
+              - lambda: 'ESP_LOGD("modbus", "input reg = %u", values[0]);'
+```
+
+### `modbus_client.read_coils` Action
+
+Reads one or more coils (function code `0x01`).
+
+#### Configuration Variables
+
+- **count** (*Optional*, templatable, int): 1-2000 coils to read. Defaults to `1`.
+
+`on_response` lambda variable: **bits** (`modbus::PackedBits`, an indexable bit view - `bits[i]` is coil
+`start_address + i`). A reply whose length doesn't match the requested `count` is diverted to `on_custom_response`,
+so inside `on_response` `bits.size()` always equals `count`. `operator[]` is unchecked, so don't index past it.
+
+```yaml
+button:
+  - platform: template
+    name: "Read coils"
+    on_press:
+      - modbus_client.read_coils:
+          address: 0x01
+          start_address: 0x0000
+          count: 8
+          on_response:
+            then:
+              - lambda: 'ESP_LOGD("modbus", "coil 0 = %d", (int) bits[0]);'
+```
+
+### `modbus_client.read_discrete_inputs` Action
+
+Reads one or more discrete inputs (function code `0x02`).
+
+#### Configuration Variables
+
+- **count** (*Optional*, templatable, int): 1-2000 discrete inputs to read. Defaults to `1`.
+
+`on_response` lambda variable: **bits** (`modbus::PackedBits`, an indexable bit view - `bits[i]` is input
+`start_address + i`). A reply whose length doesn't match the requested `count` is diverted to `on_custom_response`,
+so inside `on_response` `bits.size()` always equals `count`. `operator[]` is unchecked, so don't index past it.
+
+```yaml
+button:
+  - platform: template
+    name: "Read discrete inputs"
+    on_press:
+      - modbus_client.read_discrete_inputs:
+          address: 0x01
+          start_address: 0x0000
+          count: 4
+          on_response:
+            then:
+              - lambda: 'ESP_LOGD("modbus", "input 0 = %d", (int) bits[0]);'
+```
+
+### `modbus_client.write_single_register` Action
+
+Writes a single holding register (function code `0x06`).
+
+#### Configuration Variables
+
+- **value** (**Required**, templatable, int): The value to write.
+
+`on_response` fires once the write is acknowledged; it carries no lambda variables at all.
+
+```yaml
+button:
+  - platform: template
+    name: "Write single register"
+    on_press:
+      - modbus_client.write_single_register:
+          address: 0x01
+          start_address: 0x0020
+          value: 0x1234
+```
+
+### `modbus_client.write_single_coil` Action
+
+Writes a single coil (function code `0x05`).
+
+#### Configuration Variables
+
+- **value** (**Required**, templatable, boolean): The value to write.
+
+`on_response` fires once the write is acknowledged; it carries no lambda variables at all.
+
+```yaml
+button:
+  - platform: template
+    name: "Write single coil"
+    on_press:
+      - modbus_client.write_single_coil:
+          address: 0x01
+          start_address: 0x0000
+          value: true
+```
+
+### `modbus_client.write_multiple_registers` Action
+
+Writes one or more consecutive holding registers (function code `0x10`).
+
+#### Configuration Variables
+
+- **values** (**Required**, templatable, list of int): Registers to write, `start_address` first. 1-123
+  registers. As a lambda it must return a `std::vector<uint16_t>`.
+
+`on_response` fires once the write is acknowledged; it carries no lambda variables at all.
+
+```yaml
+button:
+  - platform: template
+    name: "Write multiple registers"
+    on_press:
+      - modbus_client.write_multiple_registers:
+          address: 0x01
+          start_address: 0x0020
+          values: [0x0001, 0x0002, 0x0003]
+          on_not_sent:
+            then:
+              - logger.log: "write refused: hub queue full or duplicate pending"
+```
+
+### `modbus_client.write_multiple_coils` Action
+
+Writes one or more consecutive coils (function code `0x0F`).
+
+#### Configuration Variables
+
+- **values** (**Required**, templatable, list of boolean): Coils to write, `start_address` first. 1-1968 coils. As a
+  lambda it must return a `std::vector<bool>`.
+
+`on_response` fires once the write is acknowledged; it carries no lambda variables at all.
+
+```yaml
+button:
+  - platform: template
+    name: "Write multiple coils"
+    on_press:
+      - modbus_client.write_multiple_coils:
+          address: 0x01
+          start_address: 0x0000
+          values: [true, false, true]
+```
+
+### `modbus_client.read_write_multiple_registers` Action
+
+Writes one block of holding registers and reads another back in a single transaction (function code `0x17`). Per the
+Modbus specification the write is performed **before** the read, so when the two ranges overlap the read returns the
+values just written. Because the write travels in the same frame, an `on_no_response` retry re-sends it - avoid
+retries on registers whose writes have side effects (command or trigger registers, counters, one-shot commits).
+For queue priority and duplicate suppression the hub classifies `0x17` as a write, so a second identical send while
+one is in flight is refused with `on_not_sent` rather than requeued the way a plain read would be.
+
+This action does **not** use the common `start_address`; it has a separate read range and write range instead.
+The `0x10000` range rule described there applies to each pair independently - `read_address + read_count` and
+`write_address + values.size()`.
+
+#### Configuration Variables
+
+- **write_address** (**Required**, templatable, int): Address of the first holding register to write.
+- **values** (**Required**, templatable, list of int): Registers to **write**, `write_address` first. 1-121
+  registers - the `0x17` write ceiling, lower than the 123 of a plain write. As a lambda it must return a
+  `std::vector<uint16_t>`.
+- **read_address** (**Required**, templatable, int): Address of the first holding register to read back.
+- **read_count** (*Optional*, templatable, int): 1-125 registers to read back. Defaults to `1`.
+
+`on_response` lambda variable: **values** (`std::span<const uint16_t>`, host byte order) - the block that was **read
+back**, the same shape as `read_holding_registers`. Note this is a different `values` from the block being written in
+the configuration above.
+
+```yaml
+button:
+  - platform: template
+    name: "Read/write multiple registers"
+    on_press:
+      - modbus_client.read_write_multiple_registers:
+          address: 0x01
+          write_address: 0x0010
+          values: [0x1234, 0x5678]
+          read_address: 0x0020
+          read_count: 4
+          on_response:
+            then:
+              - lambda: |-
+                  // `values` here is the read-back block, not the block written above
+                  for (auto v : values)
+                    ESP_LOGD("modbus", "read 0x%04X", v);
+```
+
 ## Behavior
 
 - **Fire-and-continue**: the action queues the frame and the enclosing automation continues immediately; the reply
   handlers run later, when the outcome is known. Exactly one of `on_response`/`on_error`/`on_no_response`/
-  `on_not_sent` fires per transmission attempt; a retried frame runs the timeout branch again on each attempt.
+  `on_not_sent` fires per transmission attempt; a retried frame runs the timeout branch again on each attempt. The
+  typed read/write actions also have `on_custom_response`, which fires in place of `on_response` for a
+  non-conforming reply.
 - The reply handlers run with the action's own context - they do **not** see the enclosing automation's local
-  variables (such as the `x` of a containing `on_value`).
+  variables (such as the `x` of a containing `on_value`), and the targeted `address` is not passed back to them;
+  recompute the configured expression if a handler needs it.
 - **Duplicate suppression**: sending an identical frame while one from the same action is already in flight is
   safe. For a read, the second send is rescheduled for a second transmission at the back of the queue once the
-  first completes, and still gets its own terminal. For a write or custom command, only one may be in flight - a
+  first completes, and still gets its own reply handler. For a write or custom command, only one may be in flight - a
   second identical send is refused (`on_not_sent`).
 - **Broadcast** (address `0`): no device replies to a broadcast, so use it fire-and-forget (omit `on_response`). The
   hub doesn't special-case address `0` - it still waits the full `send_wait_time` before considering the send done,
-  so a broadcast blocks the bus for that long even though nothing will ever reply. Since exactly one terminal always
-  fires, a broadcast always ends in `on_no_response` - a `retry:` lambda attached to it can never be satisfied, so
-  without its own counter cap the frame retransmits forever.
+  so a broadcast blocks the bus for that long even though nothing will ever reply. Since exactly one reply handler
+  always fires, a broadcast always ends in `on_no_response` - a `retry:` lambda attached to it can never be
+  satisfied, so without its own counter cap the frame retransmits forever.
+
+> [!NOTE]
+> None of the reply handlers (`on_sent`, `on_response`, `on_custom_response`, `on_error`, `on_no_response`,
+> `on_not_sent`) may contain deferring actions (`delay`, `wait_until`, `script.wait`, ...) - the request/response
+> data is only valid while the handler runs. Config validation rejects such a handler with an error. Copy any bytes
+> you need into a global first, then defer from a separate script or automation.
 
 ## Examples
 
@@ -207,6 +512,50 @@ Handling the error and timeout branches:
                    request.empty() ? 0 : request[0], (int) exception_code);
     on_no_response:
       - lambda: 'id(device_online).publish_state(false);'
+```
+
+## Lambda Hook Component
+
+A simpler alternative to the actions above, for use only inside a lambda - not a YAML automation action. It's
+syntactic sugar over the `id(hub).queue_pdu(address, pdu)` call shown on the [Modbus](/components/modbus/) page: the
+device's `address` is configured once instead of passed to every call, and the `write_*` methods build the PDU for
+you. There's no callback of any kind, so there's no way to read a reply back - useful for writes only, never reads.
+Commands sent this way are queued on the hub just like any other, so firing off several in quick succession from
+the same lambda is supported.
+
+### Configuration Variables
+
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID to use in lambdas. Unlike most components it is
+  not generated for you: the device is only reachable through `id()`, so an entry without one is rejected.
+- **address** (**Required**, int): The Modbus device address every call from this client targets. Unlike
+  [Modbus Controller](/components/modbus_controller/), there is no default.
+- **modbus_id** (*Optional*, [ID](/guides/configuration-types#id)): The Modbus hub to send on. Automatically assigned
+  when a single hub is configured.
+
+Several clients may be configured, each bound to its own device address.
+
+```yaml
+modbus_client:
+  - id: ad_hoc_client
+    address: 0x01
+
+on_...:
+  - lambda: 'id(ad_hoc_client).write_single_register(0x1234, 0x99AB);'
+  - lambda: |-
+      uint16_t registers[] = {0x00FF, 0xAABC, 0xF00D};
+      id(ad_hoc_client).write_multiple_registers(0x9013, registers);
+  - lambda: 'id(ad_hoc_client).write_single_coil(0x1234, true);'
+  - lambda: |-
+      bool coils[] = {true, false, false, true};
+      id(ad_hoc_client).write_multiple_coils(0x1234, coils);
+  # Any arbitrary PDU (function code + data)
+  - lambda: |-
+      uint8_t pdu[] = {42};
+      id(ad_hoc_client).queue_pdu(pdu);
+  # Clear the send queue for all commands targeting this client's address
+  - lambda: 'id(ad_hoc_client).clear_tx_queue_for_address();'
+  # Clear the send queue for all commands sent from this client component
+  - lambda: 'id(ad_hoc_client).clear_tx_queue_for_device();'
 ```
 
 ## See Also
