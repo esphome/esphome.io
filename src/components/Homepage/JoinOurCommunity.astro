@@ -77,28 +77,23 @@ import HomeAssistantIcon from "./HomeAssistantIcon.astro";
     .cards {
       display: grid;
       grid-template-columns: 1fr;
-      gap: 1.5rem;
+      gap: 1rem;
       margin-top: 2rem;
 
       @include bp(tablet) {
         margin-top: 3rem;
-        grid-template-columns: repeat(4, 1fr);
+        grid-template-columns: repeat(3, 1fr);
       }
 
       @include bp(desktop) {
         grid-template-columns: repeat(6, 1fr);
+        gap: 1.5rem;
       }
 
       .card {
         text-align: center;
         display: flex;
         flex-direction: column;
-
-        @media (min-width: 768px) and (max-width: 1023px) {
-          &:nth-last-child(1):nth-child(2n + 1) {
-            grid-column: span 4;
-          }
-        }
 
         @include bp(desktop) {
           grid-column: span 2;
@@ -129,7 +124,11 @@ import HomeAssistantIcon from "./HomeAssistantIcon.astro";
         }
 
         .card__text-link {
-          margin: 3rem auto 0;
+          margin: 1rem auto 0;
+
+          @include bp(desktop) {
+            margin: 3rem auto 0;
+          }
         }
       }
     }
