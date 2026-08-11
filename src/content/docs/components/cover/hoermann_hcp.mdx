@@ -168,12 +168,38 @@ light:
   `hoermann_hcp` hub. Only required if you have more than one hub.
 - All other options from [Binary Light](/components/light/binary/).
 
+## Binary Sensor
+
+The `hoermann_hcp` binary sensor platform exposes diagnostic information about the connection to the
+motor's bus controller.
+
+```yaml
+binary_sensor:
+  - platform: hoermann_hcp
+    is_connected:
+      name: Garage Connected
+```
+
+### Configuration variables
+
+- **hoermann_hcp_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the
+  `hoermann_hcp` hub. Only required if you have more than one hub.
+
+- **is_connected** (*Required*): `true` while the motor's bus controller is polling the emulated UAP1
+  module. Turns `false` about two seconds after the motor stops responding, for example after the bus
+  power is cut. Defaults to the `connectivity` device class and the `diagnostic` entity category, so
+  the entity appears under the device's diagnostics rather than on its main card.
+
+- All options from [Binary Sensor](/components/binary_sensor#config-binary_sensor).
+
 ## See Also
 
 - [Cover Component](/components/cover/)
+- [Binary Sensor Component](/components/binary_sensor/)
 - [Binary Light](/components/light/binary/)
 - [Modbus](/components/modbus/)
 - [HCPBridge project](https://github.com/hkiam/HCPBridge)
 - [Automation](/automations)
 - <APIRef text="hoermann_hcp_cover.h" path="hoermann_hcp/cover/hoermann_hcp_cover.h" />
 - <APIRef text="hoermann_hcp_light.h" path="hoermann_hcp/light/hoermann_hcp_light.h" />
+- <APIRef text="hoermann_hcp_binary_sensor.h" path="hoermann_hcp/binary_sensor/hoermann_hcp_binary_sensor.h" />
