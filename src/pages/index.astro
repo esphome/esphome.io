@@ -2,12 +2,11 @@
 import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
 import Hero from "@components/Homepage/Hero.astro";
 import HowEsphomeWorks from "@components/Homepage/HowEsphomeWorks.astro";
-import NewToEsphome from "@components/Homepage/NewToEsphome.astro";
 import ExploreCommunityProjects from "@components/Homepage/ExploreCommunityProjects.astro";
 import GetStarted from "@components/Homepage/GetStarted.astro";
 import PickYourFirstProject from "@components/Homepage/PickYourFirstProject.astro";
-import SupportedMicrocontrollers from "@components/Homepage/SupportedMicrocontrollers.astro";
 import JoinOurCommunity from "@components/Homepage/JoinOurCommunity.astro";
+import SupportedMicrocontrollers from "@components/Homepage/SupportedMicrocontrollers.astro";
 ---
 
 <StarlightPage
@@ -22,12 +21,11 @@ import JoinOurCommunity from "@components/Homepage/JoinOurCommunity.astro";
 >
   <Hero />
   <HowEsphomeWorks />
-  <NewToEsphome />
   <ExploreCommunityProjects />
   <GetStarted />
   <PickYourFirstProject />
-  <SupportedMicrocontrollers />
   <JoinOurCommunity />
+  <SupportedMicrocontrollers />
 </StarlightPage>
 
 <style lang="scss">
@@ -95,6 +93,10 @@ import JoinOurCommunity from "@components/Homepage/JoinOurCommunity.astro";
     margin: 0 auto;
     padding: 2rem 1.25rem;
 
+    @include bp(desktop) {
+      padding: 4rem 1.25rem;
+    }
+
     @include bp(large-desktop) {
       padding: 4rem 0;
     }
@@ -120,8 +122,12 @@ import JoinOurCommunity from "@components/Homepage/JoinOurCommunity.astro";
   :global(.card) {
     border: 1px solid var(--esphome-card-border-color);
     border-radius: 1rem;
-    padding: 1.75rem;
+    padding: 1rem;
     transition: border-color 0.2s ease;
+
+    @include bp(desktop) {
+      padding: 1.75rem;
+    }
 
     &.card--ghost {
       border-color: transparent;
@@ -145,6 +151,14 @@ import JoinOurCommunity from "@components/Homepage/JoinOurCommunity.astro";
     }
 
     :global(.card__tag) {
+      border-radius: px-to-rem(100);
+      padding: 0.55rem 1rem 0.5rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      background-color: var(--esphome-card-background-color--transparent);
+      color: var(--sl-color-text-accent);
+
       &.beginner {
         --esphome-card-tag-background-color: #7cb342;
         --esphome-card-background-color--transparent: color-mix(
@@ -207,14 +221,6 @@ import JoinOurCommunity from "@components/Homepage/JoinOurCommunity.astro";
       &.advanced {
         text-transform: none;
       }
-
-      border-radius: px-to-rem(100);
-      padding: 0.55rem 1rem 0.5rem;
-      font-size: 0.75rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      background-color: var(--esphome-card-background-color--transparent);
-      color: var(--sl-color-text-accent);
     }
 
     :global(.card__title) {
@@ -240,8 +246,6 @@ import JoinOurCommunity from "@components/Homepage/JoinOurCommunity.astro";
     }
   }
 
-  // Whole-card links (e.g. `<a class="card">`) get a subtle border colour change on hover.
-  // Scoped to the `a` tag so non-interactive `<div class="card">` cards aren't affected.
   :global(a.card:hover) {
     border-color: var(--sl-color-text-accent);
   }
