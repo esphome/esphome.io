@@ -13,8 +13,8 @@ with ESPHome just like it would with Hörmann's own accessory.
 
 The following Series 4 motors communicate over the HCP bus (Modbus RTU) and should be supported:
 
-* SupraMatic E/P Series 4
-* ProMatic Series 4
+- SupraMatic E/P Series 4
+- ProMatic Series 4
 
 > [!NOTE]
 > Only Series 4 motors are supported. Older motors use a different connector pinout and a
@@ -97,9 +97,11 @@ connect to the ESP32 UART pins you set in the `uart:` block.
 
 > [!NOTE]
 > The example above uses a transceiver module with automatic direction control, so no separate DE/RE
-> flow-control pin is needed. If your module labels its serial pins differently, connect its receiver
-> output (RO/RXD) to the ESP32 `rx_pin` and its driver input (DI/TXD) to the ESP32 `tx_pin`; swap the
-> two if data doesn't flow.
+> flow-control pin is needed. If your module has a DE/RE pin instead, connect it to a spare GPIO and
+> set `flow_control_pin` on the [UART bus](/components/uart/) — that option is ESP32-only, so on other
+> platforms set it on the [Modbus](/components/modbus/) component instead. If your module labels its
+> serial pins differently, connect its receiver output (RO/RXD) to the ESP32 `rx_pin` and its driver
+> input (DI/TXD) to the ESP32 `tx_pin`; swap the two if data doesn't flow.
 
 > [!IMPORTANT]
 > The adapter gets **no power until a bus scan is run** on the motor. The +25 V on the bus stays
@@ -126,7 +128,8 @@ to the `cover` platform below.
   which is the address the motor's bus controller expects the UAP1 module on. You should not need
   to change this.
 - **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval at which
-  the connection to the bus controller is checked. Defaults to `500ms`.
+  the connection to the bus controller is checked and state changes are published. Raising it delays
+  every door state update by the same amount. Defaults to `500ms`.
 
 ## Cover
 
