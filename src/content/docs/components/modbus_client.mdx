@@ -393,16 +393,21 @@ Writes one block of holding registers and reads another back in a single transac
 Modbus specification the write is performed **before** the read, so when the two ranges overlap the read returns the
 values just written. Because the write travels in the same frame, an `on_no_response` retry re-sends it - avoid
 retries on registers whose writes have side effects (command or trigger registers, counters, one-shot commits).
+For queue priority and duplicate suppression the hub classifies `0x17` as a write, so a second identical send while
+one is in flight is refused with `on_not_sent` rather than requeued the way a plain read would be.
 
 This action does **not** use the common `start_address`; it has a separate read range and write range instead.
+The `0x10000` range rule described there applies to each pair independently - `read_address + read_count` and
+`write_address + values.size()`.
 
 #### Configuration Variables
 
 - **write_address** (**Required**, templatable, int): Address of the first holding register to write.
-- **values** (**Required**, templatable, list of int): Registers to **write**, `write_address` first. Up to 121
-  registers - the `0x17` write ceiling, lower than the 123 of a plain write.
+- **values** (**Required**, templatable, list of int): Registers to **write**, `write_address` first. 1-121
+  registers - the `0x17` write ceiling, lower than the 123 of a plain write. As a lambda it must return a
+  `std::vector<uint16_t>`.
 - **read_address** (**Required**, templatable, int): Address of the first holding register to read back.
-- **read_count** (*Optional*, templatable, int): Number of registers to read back, up to 125. Defaults to `1`.
+- **read_count** (*Optional*, templatable, int): 1-125 registers to read back. Defaults to `1`.
 
 `on_response` lambda variable: **values** (`std::span<const uint16_t>`, host byte order) - the block that was **read
 back**, the same shape as `read_holding_registers`. Note this is a different `values` from the block being written in
