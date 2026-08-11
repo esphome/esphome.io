@@ -116,6 +116,11 @@ climate:
 
   Set to `never` to disable telemetry polling.
 
+- **vane** (*Optional*): Vane state automation configuration.
+  - **on_state** (*Optional*, [Automation](/automations/)): An automation to run whenever the hub publishes its current
+    state. The automation receives the current vane state as `x`. See
+    [Vane State Trigger](#vane-state-trigger) for the available values and an example.
+
 ### Climate
 
 - **mitsubishi_cn105_id** (*Optional*, [ID](/guides/configuration-types#id)): The Mitsubishi CN105 hub to use.
@@ -161,6 +166,42 @@ defines the hub options on the `climate:` entry.
       vertical_vane_direction:
         name: "Vertical Vane"
   ```
+
+## Vane State Trigger
+
+The `vane.on_state` trigger runs whenever the Mitsubishi CN105 hub publishes its current state. This includes updates
+received from the indoor unit and changes requested through ESPHome. It is a snapshot trigger, not a change-only
+trigger, so it can run repeatedly when the vane direction has not changed.
+
+The trigger passes a `VaneState` value named `x` to lambdas. The current vertical vane direction is available as
+`x.vertical.direction` and can have one of these values:
+
+- `VERTICAL_VANE_MODE_AUTO`
+- `VERTICAL_VANE_MODE_POSITION_1`
+- `VERTICAL_VANE_MODE_POSITION_2`
+- `VERTICAL_VANE_MODE_POSITION_3`
+- `VERTICAL_VANE_MODE_POSITION_4`
+- `VERTICAL_VANE_MODE_POSITION_5`
+- `VERTICAL_VANE_MODE_SWING`
+
+```yaml
+mitsubishi_cn105:
+  id: hp
+  vane:
+    on_state:
+      - lambda: |-
+          switch (x.vertical.direction) {
+            case VERTICAL_VANE_MODE_AUTO:
+              ESP_LOGI("vane", "Vertical vane is automatic");
+              break;
+            case VERTICAL_VANE_MODE_SWING:
+              ESP_LOGI("vane", "Vertical vane is swinging");
+              break;
+            default:
+              ESP_LOGI("vane", "Vertical vane is in a fixed position");
+              break;
+          }
+```
 
 ## Remote temperature actions
 
