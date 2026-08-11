@@ -7,7 +7,7 @@ export interface HeaderNavItem {
 // Add or reorder entries here to change the header nav.
 export const headerNavItems: HeaderNavItem[] = [
   { label: "Components", href: "/components/" },
-  { label: "Device List", href: "https://devices.esphome.io/" },
-  { label: "Docs", href: "/guides/getting_started_hassio/" },
+  { label: "ESPHome Starter Kit", href: "/starter-kit/" },
+  { label: "Docs", href: "/install/" },
   { label: "Blog", href: "/blog/" },
 ];
