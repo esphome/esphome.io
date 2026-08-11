@@ -19,18 +19,10 @@ const marqueeItems = [
         into sensors, switches, displays, and more – just tell ESPHome what to do and it handles the rest, with no need
         to code unless you want to.
       </p>
-      <LinkButton href="/install/">Get started</LinkButton>
+      <LinkButton href="/#get-started">Get started</LinkButton>
     </div>
 
     <div class="links">
-      <div class="card card-bgc">
-        <p class="card__title h2">New to ESPHome?</p>
-
-        <LinkButton href="/#how-it-works" class="card__text-link" icon="right-arrow" iconPlacement="start"
-          >How it works</LinkButton
-        >
-      </div>
-
       <div class="card card-bgc">
         <p class="card__title h2">Already using ESPHome?</p>
 
@@ -39,6 +31,9 @@ const marqueeItems = [
         >
         <LinkButton href="/components/" class="card__text-link" icon="right-arrow" iconPlacement="start"
           >Browse components</LinkButton
+        >
+        <LinkButton href="https://devices.esphome.io/" class="card__text-link" icon="right-arrow" iconPlacement="start"
+          >Device list</LinkButton
         >
       </div>
     </div>
@@ -70,17 +65,40 @@ const marqueeItems = [
     display: flex;
     flex-direction: column;
     background-color: black;
-    padding-bottom: 2rem;
+    background-image: url("/images/homepage/esphome-hero-bg.webp");
+    background-size: cover;
+    background-position: center;
+    padding-bottom: 1rem;
+    position: relative;
+
+    @include bp(desktop) {
+      padding-bottom: 2rem;
+    }
+
+    &:before {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      content: "";
+      inset: 0;
+      pointer-events: none;
+      background-color: #000;
+      opacity: 0.7;
+    }
 
     .container {
       display: flex;
       flex-direction: column;
       gap: 2rem;
-      padding-top: 6rem;
-      padding-bottom: 6rem;
+      padding-top: 3rem;
+      padding-bottom: 3rem;
       color: #fff;
+      position: relative;
+      z-index: 1;
 
       @include bp(desktop) {
+        padding-top: 6rem;
+        padding-bottom: 6rem;
         flex-direction: row;
         justify-content: space-between;
       }
