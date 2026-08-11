@@ -170,7 +170,7 @@ export default defineConfig({
         {
           icon: "discord",
           label: "Discord",
-          href: "https://discord.gg/KhAMKrd",
+          href: "https://esphome.io/chat",
         },
       ],
       editLink: {
@@ -233,7 +233,7 @@ export default defineConfig({
           items: [
             { label: "Blog", link: "/blog/" },
             { label: "Changelog", link: "/changelog/" },
-            { label: "Discord", link: "https://discord.gg/KhAMKrd" },
+            { label: "Discord", link: "https://esphome.io/chat" },
             {
               label: "Forums",
               link: "https://community.home-assistant.io/c/esphome/",
