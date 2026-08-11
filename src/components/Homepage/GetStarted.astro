@@ -97,21 +97,21 @@ import kitImg from "../starter-kit/images/esphome-starter-kit.webp";
         });
     });
 
-if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
-const observer = new IntersectionObserver(
-  ([entry]) => {
-    if (entry.isIntersecting) {
-      video
-        .play()
-        .then(() => setPlaying(true))
-        .catch(() => {});
-      observer.disconnect();
-    }
-  },
-  { threshold: 0.5 },
-);
-observer.observe(video);
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          video
+            .play()
+            .then(() => setPlaying(true))
+            .catch(() => {});
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.5 },
+    );
+    observer.observe(video);
   });
 </script>
 
