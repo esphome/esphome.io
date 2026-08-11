@@ -119,7 +119,7 @@ climate:
 - **vane** (*Optional*): Vane state automation configuration.
   - **on_state** (*Optional*, [Automation](/automations/)): An automation to run whenever the hub publishes its current
     state. The automation receives the current vane state as `x`. See
-    [Vane State Trigger](#vane-state-trigger) for the available values and an example.
+    [`vane.on_state` Trigger](#vane-on_state-trigger) for the available values and an example.
 
 ### Climate
 
@@ -167,11 +167,12 @@ defines the hub options on the `climate:` entry.
         name: "Vertical Vane"
   ```
 
-## Vane State Trigger
+## `vane.on_state` Trigger
 
-The `vane.on_state` trigger runs whenever the Mitsubishi CN105 hub publishes its current state. This includes updates
-received from the indoor unit and changes requested through ESPHome. It is a snapshot trigger, not a change-only
-trigger, so it can run repeatedly when the vane direction has not changed.
+The `vane.on_state` trigger runs whenever the Mitsubishi CN105 hub publishes a known vane state. This includes updates
+received from the indoor unit and changes requested through ESPHome. It does not run before the indoor unit has reported
+a valid vane direction. It is a snapshot trigger, not a change-only trigger, so it can run repeatedly when the vane
+direction has not changed.
 
 The trigger passes a `VaneState` value named `x` to lambdas. The current vertical vane direction is available as
 `x.vertical.direction` and can have one of these values:
@@ -187,6 +188,7 @@ The trigger passes a `VaneState` value named `x` to lambdas. The current vertica
 ```yaml
 mitsubishi_cn105:
   id: hp
+  # ...
   vane:
     on_state:
       - lambda: |-
