@@ -15,8 +15,8 @@ You must set the `role` attribute of the [Modbus](/components/modbus/) to `serve
 
 > [!NOTE]
 > Modbus broadcast writes use address `0`. They are delivered to every registered server device on the same hub and
-> do not send a response. Only write function codes `0x06` and `0x10` are handled as broadcasts; all other requests
-> addressed to `0`, including reads and coil writes, are ignored.
+> do not send a response. Only write function codes are handled as broadcasts - `0x06` and `0x10` for registers,
+> `0x05` and `0x0F` for coils; all other requests addressed to `0`, including reads, are ignored.
 
 <Image src="/images/modbus.png" width={190} height={200} layout="constrained" alt="" />
 
@@ -72,12 +72,18 @@ See [Modbus](/components/modbus/#hardware-setup) for RS485 hardware setup instru
     Defaults to `U_WORD`.
 
   - **read_lambda** (**Required**, [lambda](/automations/templates#config-lambda)):
-    Lambda that returns the value of this register.
+    Lambda that returns the value of this register. `address` is provided with this register's own
+    start address, which is not necessarily the address the client asked for: under
+    `allow_partial_read` a request may start inside the value. Returning an empty optional
+    (`return {};`) declines the read, and the client's **whole** request is answered with a
+    `SERVICE_DEVICE_FAILURE` (code `4`) exception instead - any other register in the same request goes
+    unread. This is useful when the value isn't available right now, for example while a sensor is
+    still warming up. A plain `return <value>;` still works as before and does not need to change.
 
   - **write_lambda** (*Optional*, [lambda](/automations/templates#config-lambda)):
     Lambda that sets the value of this register. A variable `x` of the appropriate type (`uint16_t`, `int32_t`, etc, see above) is provided with the value,
     as well as `address` containing the address of this register. You must return `true` if the operation was successful, `false` otherwise, in which case
-    a Modbus exception code `4` will be sent to the client.
+    a `SERVICE_DEVICE_FAILURE` (code `4`) exception will be sent to the client.
 
   - **allow_partial_read** (*Optional*, boolean): For a multi-register value type
     (`U_DWORD`, `S_QWORD`, `FP32`, …), allow a read request to cover only
@@ -104,6 +110,55 @@ See [Modbus](/components/modbus/#hardware-setup) for RS485 hardware setup instru
 > `*_QWORD`). Register address ranges within one `modbus_server` must not
 > overlap and must fit within the 16-bit address space (`0x0000`–`0xFFFF`);
 > the configuration is rejected otherwise.
+
+- **bits** (*Optional*): A list of bits that are responded to when acting as a server. Bits answer the
+  coil and discrete-input function codes - `0x01` and `0x02` to read, `0x05` and `0x0F` to write - from
+  one shared table: a coil and a discrete input at the same address are the same bit, the same way
+  holding and input registers share the register table above. A client can read a bit as a coil or as
+  a discrete input and gets the same value either way. Each
+  bit address must be unique within the `bits` list. Bit addresses are independent of register
+  addresses: a bit at `0x0000` and a register at `0x0000` are different things and do not collide.
+
+  - **address** (**Required**, integer): the address of this bit.
+
+  - **read_lambda** (**Required**, [lambda](/automations/templates#config-lambda)):
+    Lambda that returns the value of this bit, as a `bool`. `address` is provided with the address
+    of this bit. Anything that converts to `bool` is accepted, and that conversion is implicit: an
+    entity such as `return id(my_switch);` hands back a pointer, which is always `true`, and the bit
+    reads `1` forever. Make sure the lambda returns the state you mean — `return id(my_switch).state;`
+    for a switch, or the value of a `globals` bool. Returning an empty optional (`return {};`) declines
+    the read, and the client's **whole** request is answered with a `SERVICE_DEVICE_FAILURE` (code `4`)
+    exception instead of a value - the other bits in the same request go unread, so this is not a
+    per-bit "not ready" signal.
+
+  - **write_lambda** (*Optional*, [lambda](/automations/templates#config-lambda)):
+    Lambda that sets the value of this bit. A `bool` variable `x` is provided with the new value, as
+    well as `address` containing the address of this bit. You must return `true` if the operation was
+    successful, `false` otherwise, in which case a `SERVICE_DEVICE_FAILURE` (code `4`) exception will be
+    sent to the client. If this is not set, the bit can be read but not written.
+
+  > [!NOTE]
+  > A read is all-or-nothing: if any address in the requested span has no configured bit, the whole
+  > request is rejected with an `ILLEGAL_DATA_ADDRESS` (code `2`) exception rather than answering with
+  > the bits that do exist. `courtesy_response` does not apply here — it is only consulted for
+  > registers — so a client reading coils `0x00`-`0x0F` from a server that defines only `0x00` and
+  > `0x01` gets an exception either way. Define every address a client will ask for.
+
+  > [!NOTE]
+  > A write covering several bits (for example a "write multiple coils" request) is atomic in the
+  > same way as a multi-register write: every targeted bit must exist and have a `write_lambda`, or
+  > the whole request is rejected before anything is changed, with an `ILLEGAL_DATA_ADDRESS` (code `2`)
+  > exception. Once that check passes, each `write_lambda` is called in turn; if one of them returns
+  > `false`, the write stops there — the bits already written stay changed, and the client's request is
+  > answered with a `SERVICE_DEVICE_FAILURE` (code `4`) exception.
+
+  > [!NOTE]
+  > A server that configures no `bits` at all does not implement the coil and discrete-input functions:
+  > those requests are answered with `ILLEGAL_FUNCTION` (code `1`) rather than `ILLEGAL_DATA_ADDRESS`
+  > (code `2`), which is what a request for an address that simply isn't in a populated `bits` list
+  > gets. The same holds the other way round: a bits-only server with no `registers` answers
+  > `ILLEGAL_FUNCTION` to register requests — to reads unless `courtesy_response` is enabled, and to
+  > writes always, since `courtesy_response` only covers reads.
 
 ## Read/Write Multiple Registers (Function Code 0x17)
 
@@ -135,8 +190,8 @@ The following code allows a Modbus client to read a sensor value from your ESPHo
 ```yaml
 uart:
   - id: uart_modbus_server
-    tx_pin: 25
-    rx_pin: 35
+    tx_pin: GPIOXX
+    rx_pin: GPIOXX
 
 modbus:
   - uart_id: uart_modbus_server
@@ -155,6 +210,45 @@ modbus_server:
 sensor:
   - platform: uptime
     id: uptime_sens
+```
+
+The following code serves two bits: a read-only bit reporting a relay's state, and a read/write bit
+that lets a Modbus client both read and control whether a pump is running.
+
+```yaml
+uart:
+  - id: uart_modbus_server
+    tx_pin: GPIOXX
+    rx_pin: GPIOXX
+
+modbus:
+  - uart_id: uart_modbus_server
+    id: modbus_server
+    role: server
+
+binary_sensor:
+  - platform: gpio
+    id: relay_state
+    pin: GPIOXX
+
+globals:
+  - id: pump_running
+    type: bool
+    initial_value: 'false'
+
+modbus_server:
+  - modbus_id: modbus_server
+    address: 0x4
+    bits:
+      - address: 0x00
+        read_lambda: |-
+          return id(relay_state).state;
+      - address: 0x01
+        read_lambda: |-
+          return id(pump_running);
+        write_lambda: |-
+          id(pump_running) = x;
+          return true;
 ```
 
 ## See Also

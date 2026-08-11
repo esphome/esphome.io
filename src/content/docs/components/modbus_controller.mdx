@@ -17,7 +17,9 @@ See [Modbus](/components/modbus/#hardware-setup) for RS485 hardware setup instru
 
 - **modbus_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the `modbus` hub.
 
-- **address** (*Optional*, int): The Modbus device address (a hex byte, `0x00`-`0xFF`). Defaults to `0x01`.
+- **address** (*Optional*, int): The Modbus device address (can be decimal or hexadecimal, `0`-`255`; the valid
+  Modbus device range is `1`-`247`). `0` is the broadcast address, which no device ever answers, so it cannot be
+  polled. Defaults to `0x01`.
 
 - **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval that the sensors should be checked.
   Defaults to 60 seconds.
@@ -250,7 +252,7 @@ modbus_controller:
   setup_priority: -10
   update_interval: 30s
 
-sensors:
+sensor:
 - platform: modbus_controller
   modbus_controller_id: sdm
   name: "Total active energy"
@@ -289,8 +291,8 @@ sensors:
       raw_to_float.raw =   data[0] << 24 | data[1] << 16 | data[2] << 8 |  data[3];
       ESP_LOGD("Modbus Sensor Lambda", "FP32 = 0x%08X => %f", raw_to_float.raw, raw_to_float.float_value);
       return raw_to_float.float_value;
-    unit_of_measurement: kVArh
-    accuracy_decimals: 1
+  unit_of_measurement: kVArh
+  accuracy_decimals: 1
 ```
 
 <span id="modbus_register_count"></span>
@@ -361,7 +363,7 @@ Because the option `register_count: 6` is used for the first sensor, *one* comma
 ## Protocol decoding example
 
 ```yaml
-sensors:
+sensor:
 - platform: modbus_controller
   modbus_controller_id: epever
   id: array_rated_voltage
@@ -436,7 +438,8 @@ sensors:
     - multiply: 0.01
 
 - platform: modbus_controller
-  modbus_controller_id: epever id: charging_mode
+  modbus_controller_id: epever
+  id: charging_mode
   name: "charging_mode"
   address: 0x3008
   unit_of_measurement: ""
