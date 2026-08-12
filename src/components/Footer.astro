@@ -1,6 +1,24 @@
 ---
 import EditLink from "virtual:starlight/components/EditLink";
 import LastUpdated from "virtual:starlight/components/LastUpdated";
+import CrosspostBadges from "./CrosspostBadges.astro";
+import DiscourseComments from "./DiscourseComments.astro";
+
+const isBlogPage = Astro.url.pathname.startsWith("/blog");
+
+// Only actual blog post pages get a comments section (not the blog index, tag
+// or author listings, or paginated pages). Mirrors starlight-blog's
+// isAnyBlogPostPage. Injected here rather than via a MarkdownContent override so
+// starlight-blog keeps ownership of MarkdownContent (importing its components
+// directly trips a rolldown exports-field error on starlight-blog/libs/page).
+const { id } = Astro.locals.starlightRoute;
+const isBlogPost = /^blog\/(?!(\d+\/?|tags\/.+|authors\/.+)$).+$/.test(id);
+
+// Only load the Discourse comments embed on the production deploy. Netlify sets
+// CONTEXT to "production" only for the main production build; branch deploys
+// (e.g. beta/next) and deploy previews get "branch-deploy"/"deploy-preview", so
+// comments (including the heading) are hidden there.
+const isProduction = process.env.CONTEXT === "production";
 
 const footerLinks = [
   {
@@ -30,6 +48,9 @@ const footerLinks = [
   },
 ];
 ---
+
+{isBlogPage && <CrosspostBadges />}
+{isBlogPost && isProduction && <DiscourseComments />}
 
 <footer class="sl-flex">
   <div class="meta sl-flex">
@@ -78,6 +99,16 @@ const footerLinks = [
           height="44"
         />
       </a>
+
+      <p class="analytics-note">
+        This website uses <a
+          href="https://www.openhomefoundation.org/blog/making-our-web-analytics-open-source-with-plausible/"
+          rel="noopener">privacy-first analytics</a
+        > to help us improve the site. You can view all data in our <a
+          href="https://plausible.openhomefoundation.org/esphome.io"
+          rel="noopener">public dashboard</a
+        >.
+      </p>
     </div>
   </div>
 </footer>
@@ -147,8 +178,25 @@ const footerLinks = [
 
   .footer-bottom {
     text-align: center;
-    padding: 1rem 0;
+    padding: 1rem 0 0;
     border-top: 1px solid var(--sl-color-gray-6);
+  }
+
+  .analytics-note {
+    max-width: 30rem;
+    margin: 2rem auto 0;
+    text-wrap: balance;
+    font-size: var(--sl-text-xs);
+    color: var(--sl-color-gray-3);
+  }
+
+  .analytics-note a {
+    color: inherit;
+    text-decoration: underline;
+  }
+
+  .analytics-note a:hover {
+    color: var(--sl-color-white);
   }
 
   .ohf-link {
