@@ -1,0 +1,237 @@
+---
+import { LinkButton } from "@astrojs/starlight/components";
+import { Image } from "astro:assets";
+
+import GalleryItem from "@components/GalleryItem.astro";
+import Icon from "@components/Icon.astro";
+
+import kitImg from "../starter-kit/images/esphome-starter-kit.webp";
+---
+
+<section id="begin-here" class="get-started">
+  <div class="container">
+    <div class="content-container">
+      <h2>Begin setup</h2>
+      <p>
+        Ready to bring your smart home ideas to life? Grab a board (such as our official <a href="/starter-kit/"
+          >ESPHome Starter Kit</a
+        > or an ESP32 development board) and install in the way that suits you:
+      </p>
+    </div>
+
+    <div class="card-columns">
+      <div class="card-column">
+        <div class="card card-bgc">
+          <div class="card__content">
+            <Icon icon="hardware" class="card__icon" />
+            <p class="card__title h2">Choose your hardware</p>
+            <p>
+              If you’re new to this type of hardware, we recommend the <a href="/starter-kit/">ESPHome Starter Kit</a>:
+              the easiest way to make your own smart home devices, and your gateway to learning ESPHome. The kit
+              includes an ESP-32 board, ribbon cables, and a snap-apart panel with four modules (motion, temperature and
+              humidity, notification, and button) – each one ready to become its own smart device. With all the
+              components you need, along with a Learning Wiki and the visual ESPHome Device Builder, you can skip the
+              guesswork and start building right away.
+            </p>
+          </div>
+          <div class="card__media">
+            <GalleryItem>
+              <Image src={kitImg} alt="ESPHome Starter Kit with snap mounts attached" />
+              <video id="disassembly-video" class="lazy-video" muted playsinline preload="metadata">
+                <source src="/videos/starter-kit/kit-disassembly.mp4" type="video/mp4" />
+              </video>
+              <button class="play-button" data-video-id="disassembly-video" aria-label="Play disassembly video"
+              ></button>
+            </GalleryItem>
+          </div>
+          <div class="card__content">
+            <LinkButton href="/starter-kit/">Get the ESPHome Starter Kit</LinkButton>
+          </div>
+        </div>
+      </div>
+      <div class="card-column">
+        <div class="card card-bgc">
+          <Icon icon="build" class="card__icon" />
+          <p class="card__title h2">For the simplest setup: ESPHome Desktop App</p>
+          <p>A complete package containing everything you need to install with one click.</p>
+          <p>Available for Windows, macOS, and Linux.</p>
+
+          <LinkButton href="/install/" class="card__text-link" icon="right-arrow" iconPlacement="start"
+            >Download Desktop App</LinkButton
+          >
+        </div>
+
+        <div class="card card-bgc">
+          <Icon icon="build" class="card__icon" />
+          <p class="card__title h2">A step-by-step guide</p>
+          <p>
+            Our documentation walks you through everything from setting up your first device to more advanced
+            configurations. Begin with our Get Started guide, then explore from there.
+          </p>
+
+          <LinkButton href="/install/getting-started/" class="card__text-link" icon="right-arrow" iconPlacement="start"
+            >Open the Get Started guide</LinkButton
+          >
+        </div>
+
+        <div class="card card-bgc">
+          <Icon icon="extension" class="card__icon" />
+          <p class="card__title h2">Ready-Made Projects: The fast route to a finished device</p>
+          <p>
+            While installing ESPHome gives you freedom to build smart home devices your way, you may not need custom
+            configuration. If you just want to quickly turn a board into a Bluetooth proxy, voice assistant, or media
+            player for example, our Ready-Made Projects are the answer. They’re pre-configured to work with Home
+            Assistant straightaway, so you can install them directly from your browser in a single click: no need to
+            install ESPHome.
+          </p>
+
+          <LinkButton href="/projects/" class="card__text-link" icon="right-arrow" iconPlacement="start"
+            >Explore Ready-Made Projects</LinkButton
+          >
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  import { initLazyVideos } from "../../lib/lazy-video";
+
+  initLazyVideos("get-started");
+</script>
+
+<style lang="scss">
+  @use "../../styles/mixins" as *;
+
+  .get-started {
+    .content-container {
+      @include bp(tablet) {
+        max-width: 50%;
+      }
+    }
+
+    .card-columns {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      margin-top: 1.5rem;
+
+      @include bp(desktop) {
+        flex-direction: row;
+        align-items: flex-start;
+        margin-top: 3rem;
+      }
+    }
+
+    .card-column {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+
+      @include bp(desktop) {
+        flex: 1 1 50%;
+      }
+
+      .card {
+        display: flex;
+        flex-direction: column;
+
+        @include bp(desktop) {
+          flex: 1;
+        }
+      }
+
+      :global(.card__text-link) {
+        margin-top: auto;
+        padding-top: 1.25rem;
+      }
+
+      &:first-child {
+        @include bp(desktop) {
+          position: sticky;
+          top: calc(var(--sl-nav-height) + 2rem);
+        }
+      }
+    }
+
+    .card {
+      &__icon {
+        margin-bottom: 1rem;
+      }
+
+      &__content {
+        @include bp(tablet) {
+          flex-basis: 50%;
+        }
+      }
+
+      &__media {
+        margin: 1.5rem;
+
+        @include bp(tablet) {
+          flex-basis: 50%;
+          aspect-ratio: 16/9;
+          margin-right: 0;
+          margin-left: 0;
+        }
+
+        :global(.gallery-item-media) {
+          height: 100%;
+        }
+      }
+    }
+
+    .lazy-video {
+      opacity: 0;
+      transition: opacity 0.5s ease;
+
+      &--playing {
+        opacity: 1;
+      }
+    }
+
+    .play-button {
+      width: 48px;
+      height: 48px;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      z-index: 10;
+      transform: translate(-50%, -50%);
+      background-color: var(--sl-color-accent);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 1;
+      transition:
+        background-color 0.2s ease-in-out,
+        opacity 0.2s ease-in-out;
+      border: none;
+      cursor: pointer;
+
+      &:after {
+        width: 90%;
+        height: 90%;
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: calc(50% + 3px);
+        transform: translate(-50%, -50%);
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath fill='%23fff' d='M3 22v-20l18 10-18 10z'/%3E%3C/svg%3E");
+        background-size: 60% 60%;
+        background-repeat: no-repeat;
+        background-position: center;
+      }
+
+      &:hover {
+        background-color: var(--sl-color-accent-high);
+      }
+
+      &.lazy-video--playing {
+        opacity: 0;
+        pointer-events: none;
+      }
+    }
+  }
+</style>

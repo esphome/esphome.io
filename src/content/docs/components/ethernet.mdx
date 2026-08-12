@@ -7,10 +7,13 @@ import APIRef from '@components/APIRef.astro';
 
 This ESPHome component enables *wired* Ethernet connections for ESP32 and RP2040 boards.
 
-- **ESP32**: Supports RMII PHY chips (LAN8720, RTL8201, etc.) and SPI Ethernet chips (W5500, DM9051, ENC28J60).
+- **ESP32**: Supports RMII PHY chips (LAN8720, RTL8201, etc.) and SPI Ethernet chips (W5500, DM9051, CH390, ENC28J60).
 - **RP2040/RP2350**: Supports SPI/PIO Ethernet chips (W5100, W5500, W6100, W6300, ENC28J60).
 
-This component and the Wi-Fi component may **not** be used simultaneously, even if both are physically available.
+On ESP32 family devices, Ethernet may be configured alongside [WiFi](/components/wifi/) in the same configuration;
+this requires a `network:` `priority:` list naming both interfaces — see
+[Multi-Interface Support](/components/network/#multi-interface-support) on the [Network](/components/network/)
+component. Using more than one network interface is not supported on other platforms.
 
 ```yaml
 # Example configuration entry for RMII chips
@@ -80,6 +83,7 @@ ethernet:
   - `W5500` (SPI, ESP32 and RP2040)
   - `OPENETH` (QEMU, ESP32 only)
   - `DM9051` (SPI, ESP32 only)
+  - `CH390` (SPI, ESP32 only)
   - `ENC28J60` (SPI, 10Mbps, ESP32 and RP2040)
   - `W6100` (SPI, RP2040/RP2350 only)
   - `W6300` (PIO QSPI, RP2040/RP2350 only)
@@ -460,6 +464,22 @@ ethernet:
 
 > [!NOTE]
 > Using a higher clock_speed, including default, might cause rx errors and dropped packets.
+
+**CH390** (ESP32, SPI):
+
+```yaml
+ethernet:
+  type: CH390
+  clk_pin: GPIOXX
+  mosi_pin: GPIOXX
+  miso_pin: GPIOXX
+  cs_pin: GPIOXX
+  interrupt_pin: GPIOXX
+```
+
+> [!NOTE]
+> The WCH CH390 shares the Davicom DM9051 register map but reports its own vendor and product IDs, so the
+> `DM9051` type rejects it during initialization with a `wrong Vendor ID` error. Use `CH390`.
 
 **ENC28J60** (ESP32, SPI):
 
