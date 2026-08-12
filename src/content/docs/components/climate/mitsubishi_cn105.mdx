@@ -213,9 +213,24 @@ mitsubishi_cn105:
 The `mitsubishi_cn105.vane.control` action changes the vane direction. Its `id` must reference the top-level
 Mitsubishi CN105 hub. The currently supported setting is `vertical.direction`, which accepts `AUTO`, `1`, `2`, `3`,
 `4`, `5`, or `SWING`. It can also be a lambda returning one of the corresponding
-`VERTICAL_VANE_MODE_*` values.
+`VERTICAL_VANE_MODE_*` values. A lambda returning `VERTICAL_VANE_MODE_UNKNOWN` is ignored and does not change the
+vane direction.
 
-### Custom vertical vane select
+```yaml
+on_...:
+  - mitsubishi_cn105.vane.control:
+      id: hp
+      vertical:
+        direction: SWING
+```
+
+Configuration variables:
+
+- **id** (**Required**, ID): The ID of the top-level `mitsubishi_cn105` hub.
+- **vertical** (*Optional*): Vertical vane settings.
+  - **direction** (*Optional*, string, templatable): One of `AUTO`, `1`, `2`, `3`, `4`, `5`, or `SWING`.
+
+### Custom Vertical Vane Select
 
 This example maps a template select to the indoor unit's vertical vane positions. Add a `vane.on_state` automation,
 as shown above, if the select should also reflect changes made using the unit's remote control.
