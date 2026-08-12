@@ -38,15 +38,8 @@ export const products: Record<string, Product> = {
         logo: "/images/distributors/apollo.webp",
       },
       {
-        name: "Domadoo",
-        url: "https://apolloautomation.com/products/esk-1-esphome-starter-kit",
-        shipFrom: "Europe",
-        shipTo: "Europe",
-        logo: "/images/distributors/domadoo-logo.webp",
-      },
-      {
         name: "Slim Huisje",
-        url: "https://apolloautomation.com/products/esk-1-esphome-starter-kit",
+        url: "https://slimhuisje.nl/products/esphome-starter-kit",
         shipFrom: "Europe",
         shipTo: "Europe",
         logo: "/images/distributors/slim-husije-logo.webp",
