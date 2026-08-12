@@ -53,7 +53,7 @@ export const products: Record<string, Product> = {
       },
       {
         name: "Domo-supply",
-        url: "https://apolloautomation.com/products/esk-1-esphome-starter-kit",
+        url: "https://www.swiss-domotique.ch/de/hausautomationspakete/apollo-esphome-starter-kit-diy-einsteigerset-esp32-c6-wi-fi-thread",
         shipFrom: "Europe",
         shipTo: "Europe",
         logo: "/images/distributors/domo-supply-logo.webp",
