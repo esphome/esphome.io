@@ -1074,7 +1074,11 @@
             // Song/bloom playback can't start until the button is unlocked
             // (see the pointerup handler below), so this is the earliest
             // possible moment the bloom pipeline could be needed.
-            if (buttonUnlocked && !wasUnlocked) ensureBloomPipeline();
+            if (buttonUnlocked && !wasUnlocked) {
+              ensureBloomPipeline();
+              const { plausible } = window as unknown as { plausible?: (event: string) => void };
+              if (typeof plausible === "function") plausible("Easter Egg");
+            }
           }
           if (idx === activeIdx) {
             setActive(-1);
