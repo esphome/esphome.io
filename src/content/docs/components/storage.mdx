@@ -426,6 +426,13 @@ on_...:
 
 - **path** (**Required**, string, [templatable](/automations/templates)): Full VFS path.
 
+> [!WARNING]
+> While a background transfer is running on the same storage device, `storage.file_exists` reports the path
+> as **absent** (it returns `false`, logged at `WARNING`) — it cannot check the file without a `stat()` that
+> would break the serialization the running transfer relies on. An `if not file_exists` → write pattern can
+> therefore overwrite a file that is mid-copy: guard such a write from the transfer's `on_complete` instead of
+> with `file_exists`.
+
 ## Behavior notes
 
 The blocking whole-file helpers hold the entire file in RAM and stop the node for the duration of the
