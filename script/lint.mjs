@@ -203,6 +203,25 @@ function checkEsphomeLinks(fname, content) {
   }
 }
 
+// Routes served by standalone src/pages/*.astro files rather than
+// src/content/docs — invisible to buildAnchorCache's content-dir walk, so
+// register them here to avoid false "non-existent page" link errors.
+async function registerAstroPageRoutes(cache) {
+  const pagesDir = join(__dirname, "..", "src/pages");
+
+  try {
+    const entries = await readdir(pagesDir, { withFileTypes: true });
+    for (const entry of entries) {
+      if (!entry.isFile() || !entry.name.endsWith(".astro") || entry.name.includes("[")) continue;
+      const slug = entry.name.replace(/\.astro$/, "");
+      if (slug === "index") continue; // "/" is already treated as always-valid
+      if (!cache.has(slug)) cache.set(slug, new Set());
+    }
+  } catch {
+    // No src/pages directory - nothing to register
+  }
+}
+
 // Build anchor cache for link validation
 async function buildAnchorCache() {
   const cache = new Map();
@@ -211,6 +230,7 @@ async function buildAnchorCache() {
   try {
     await stat(contentDir);
   } catch {
+    await registerAstroPageRoutes(cache);
     return cache;
   }
 
@@ -277,6 +297,7 @@ async function buildAnchorCache() {
   }
 
   await processDir(contentDir);
+  await registerAstroPageRoutes(cache);
   return cache;
 }
 
