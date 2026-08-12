@@ -150,6 +150,29 @@ cover:
   `hoermann_hcp` hub. Only required if you have more than one hub.
 - All other options from [Cover](/components/cover#config-cover).
 
+## Light
+
+The `hoermann_hcp` light platform controls the courtesy light built into the motor. It is an on/off
+light and follows the state reported by the motor, so it also updates when the light is switched by
+the motor itself — for example when it turns on while the door moves.
+
+> [!NOTE]
+> The light only accepts commands once the motor has reported the lamp state. Until then, the entity is
+> flagged and switching it has no effect.
+
+```yaml
+light:
+  - platform: hoermann_hcp
+    name: Garage Light
+```
+
+### Configuration variables
+
+- **hoermann_hcp_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the
+  `hoermann_hcp` hub. Only required if you have more than one hub.
+- All other options from [Light](/components/light#config-light), except `restore_mode`, which has no effect because the
+  lamp state always comes from the motor.
+
 ## Binary Sensor
 
 The `hoermann_hcp` binary sensor platform exposes diagnostic information about the connection to the
@@ -172,14 +195,16 @@ binary_sensor:
   power is cut. Defaults to the `connectivity` device class and the `diagnostic` entity category, so
   the entity appears under the device's diagnostics rather than on its main card.
 
-  - All options from [Binary Sensor](/components/binary_sensor#config-binary_sensor).
+- All options from [Binary Sensor](/components/binary_sensor#config-binary_sensor).
 
 ## See Also
 
 - [Cover Component](/components/cover/)
 - [Binary Sensor Component](/components/binary_sensor/)
+- [Light Component](/components/light/)
 - [Modbus](/components/modbus/)
 - [HCPBridge project](https://github.com/hkiam/HCPBridge)
 - [Automation](/automations)
 - <APIRef text="hoermann_hcp_cover.h" path="hoermann_hcp/cover/hoermann_hcp_cover.h" />
+- <APIRef text="hoermann_hcp_light.h" path="hoermann_hcp/light/hoermann_hcp_light.h" />
 - <APIRef text="hoermann_hcp_binary_sensor.h" path="hoermann_hcp/binary_sensor/hoermann_hcp_binary_sensor.h" />
