@@ -20,16 +20,21 @@ const marqueeItems = [
         into sensors, switches, displays, and more – just tell ESPHome what to do and it handles the rest, with no need
         to code unless you want to.
       </p>
-      <div class="button-container">
-        <LinkButton href="/install/getting-started/">Get started</LinkButton>
-        <LinkButton href="/components/" class="card__text-link" variant="secondary">Browse components</LinkButton>
-        <LinkButton href="https://devices.esphome.io/" class="card__text-link" variant="secondary"
-          >Device list</LinkButton
-        >
-      </div>
+      <LinkButton href="/install/getting-started/">Get started</LinkButton>
     </div>
 
     <div class="links">
+      <div class="card card-bgc">
+        <p class="card__title h2">Already using ESPHome?</p>
+
+        <LinkButton href="/components/" class="card__text-link" icon="right-arrow" iconPlacement="start"
+          >Browse components</LinkButton
+        >
+        <LinkButton href="https://devices.esphome.io/" class="card__text-link" icon="right-arrow" iconPlacement="start"
+          >Device list</LinkButton
+        >
+      </div>
+
       <LivestreamCard slug="esphome" class="hero-livestream" />
     </div>
   </div>
@@ -38,13 +43,6 @@ const marqueeItems = [
       {
         marqueeItems.map((item) => (
           <div class="item">
-            <span>{item.title}</span> {item.text}
-          </div>
-        ))
-      }
-      {
-        marqueeItems.map((item) => (
-          <div class="item" aria-hidden="true">
             <span>{item.title}</span> {item.text}
           </div>
         ))
@@ -116,6 +114,7 @@ const marqueeItems = [
     }
 
     .links {
+      width: 100%;
       display: flex;
       flex-direction: column;
       align-items: flex-end;
@@ -170,49 +169,47 @@ const marqueeItems = [
     .marquee {
       overflow: hidden;
       width: 100%;
+      max-width: 1200px;
+      padding: 0 20px;
       margin-top: auto;
+      position: relative;
+      margin: 0 auto;
+      z-index: 5;
 
       &__track {
-        display: flex;
-        width: max-content;
-        animation: marquee-scroll 40s linear infinite;
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1rem;
 
-        @media (prefers-reduced-motion: reduce) {
-          animation: none;
+        @include bp(tablet) {
+          grid-template-columns: repeat(2, 1fr);
+        }
+
+        @include bp(desktop) {
+          grid-template-columns: repeat(4, 1fr);
         }
       }
     }
 
     .item {
       display: flex;
+      flex-direction: column;
       align-items: center;
-      white-space: nowrap;
       color: #c1c3c9;
+      text-wrap: balance;
+      font-size: 0.875rem;
+      text-align: center;
+
+      @include bp(tablet) {
+        align-items: flex-start;
+        text-align: left;
+      }
 
       span {
         font-weight: bold;
-        margin-right: 1rem;
-        font-size: 1.125rem;
+        font-size: 1rem;
         color: #ffffff;
-
-        &::after {
-          content: ":";
-        }
       }
-
-      &::after {
-        content: "•";
-        margin: 0 2rem;
-      }
-    }
-  }
-
-  @keyframes marquee-scroll {
-    from {
-      transform: translateX(0);
-    }
-    to {
-      transform: translateX(-50%);
     }
   }
 </style>
