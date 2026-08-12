@@ -21,7 +21,9 @@ try {
 <!-- prettier-ignore -->
 <script is:inline async src="https://plausible.openhomefoundation.org/js/pa-IT3qGllOk_UiNLNNQsPlX.js"></script>
 <!-- Allowlist is fetched at build time and echoed into the page here. -->
-<script is:inline set:html={`var OHF_ALLOWED_REFERRERS = ${JSON.stringify(allowedReferrers)};`} />
+<script is:inline define:vars={{ allowedReferrers }}>
+  var OHF_ALLOWED_REFERRERS = allowedReferrers;
+</script>
 <script is:inline>
   /* eslint-disable */
   // Visitors arriving from their own Home Assistant or ESPHome instance send
