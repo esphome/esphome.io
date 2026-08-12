@@ -148,6 +148,35 @@ dialog::backdrop {
   color: #fff;
 }
 
+/* Starter Kit launch banner */
+.starter-kit-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 2.5rem;
+  padding: 1rem 1.5rem;
+  border: 1px solid var(--sl-color-accent);
+  border-radius: 8px;
+  background-color: var(--sl-color-accent-low);
+  text-align: left;
+}
+
+.starter-kit-banner__text {
+  margin: 0;
+  flex: 1 1 16rem;
+  font-weight: 500;
+  color: var(--sl-color-white);
+  text-align: left;
+}
+
+.starter-kit-banner__btn {
+  margin-top: 0;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
 /* Sidebar nav item spacing */
 .sidebar-content ul li summary {
   padding-block: 0.5em;
@@ -155,6 +184,48 @@ dialog::backdrop {
 
 .sidebar-content ul li > a {
   padding-block: 0.5em;
+}
+
+/* Hide the blog "Tags" group in the sidebar (added by starlight-blog). The group
+   is the only sidebar entry that links to /blog/tags/, so target it via :has(). */
+.sidebar-content li:has(> details a[href*="/blog/tags/"]) {
+  display: none;
+}
+
+/* Header nav items (rendered by the SocialIcons override, to the left of the
+   social icons). Defined here rather than as scoped component styles so they are
+   reliably present on every page load. */
+.header-nav {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* Vertical rule separating the nav items from the social icons, matching the
+   divider Starlight renders between the social icons and the theme picker. */
+.header-nav::after {
+  content: "";
+  height: 2rem;
+  border-inline-end: 1px solid var(--sl-color-gray-5);
+}
+
+.header-nav-link {
+  display: flex;
+  align-items: center;
+  color: var(--sl-color-text-accent);
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.header-nav-link:hover {
+  color: var(--sl-color-white);
+}
+
+/* Blog list post previews (starlight-blog): tighten the default 1.5rem gap
+   between the title/metadata, excerpt paragraph and tags. */
+article.preview {
+  gap: 1rem;
 }
 
 /* Anchor styling */
@@ -173,9 +244,11 @@ dialog::backdrop {
 .sl-markdown-content.sl-markdown-content li > p:first-child {
   margin-block-start: 0;
 }
+
 .sl-markdown-content.sl-markdown-content li > p:last-child {
   margin-block-end: 0;
 }
+
 .sl-markdown-content.sl-markdown-content li > ul,
 .sl-markdown-content.sl-markdown-content li > ol {
   margin-block-start: 0;
@@ -360,6 +433,7 @@ html[data-has-hero] .hero img {
       0 0 10px 2px rgba(255, 70, 70, 0.4),
       inset 0 0 14px rgba(0, 0, 0, 0.5);
   }
+
   50% {
     filter: brightness(1.15);
     box-shadow:
@@ -431,6 +505,7 @@ html[data-has-hero] .hero img {
   100% {
     opacity: 1;
   }
+
   50% {
     opacity: 0.4;
   }
@@ -464,33 +539,41 @@ html[data-has-hero] .hero img {
   color: #7cb342;
   font-weight: 600;
 }
+
 .error-404__log-warn {
   color: #ffcc32;
   font-weight: 600;
 }
+
 .error-404__log-err {
   color: #ff5f57;
   font-weight: 600;
 }
+
 .error-404__log-tag {
   color: #7a828c;
 }
+
 .error-404__log-text {
   color: #d5dae1;
 }
+
 .error-404__log-path {
   color: #5dade2;
   font-weight: 600;
 }
+
 .error-404__log-suggest {
   color: #5dade2;
 }
+
 .error-404__log-link {
   color: #5dade2;
   text-decoration: underline;
   text-decoration-color: rgba(93, 173, 226, 0.35);
   text-underline-offset: 2px;
 }
+
 .error-404__log-link:hover {
   color: #8cc8ef;
 }
@@ -651,4 +734,43 @@ html[data-has-hero] .hero img {
 
 :root[data-theme="light"] .error-404__card:hover {
   background: var(--sl-color-gray-6);
+}
+
+/**
+ * Blog Styles
+ */
+.main-pane:has(.sl-markdown-content .posts),
+.main-pane:has(.post-footer) {
+  --sl-content-width: 50rem;
+}
+
+.main-pane:has(.post-footer) figure img,
+.sl-markdown-content .posts figure img {
+  max-height: 100%;
+  margin-left: 0;
+}
+
+.metadata.not-content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 2rem;
+}
+
+.posts .metadata.not-content {
+  margin-bottom: 0;
+}
+
+.metadata.not-content .dates:before {
+  display: none;
+}
+
+.metadata.not-content .authors {
+  order: 1;
+}
+
+.metadata.not-content .authors img {
+  border: none;
 }
