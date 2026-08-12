@@ -9,12 +9,14 @@ export interface Distributor {
 
 export interface Product {
   name: string;
+  new?: boolean;
   distributors: Distributor[];
 }
 
 export const products: Record<string, Product> = {
   "esphome-starter-kit": {
     name: "ESPHome Starter Kit",
+    new: true,
     distributors: [
       {
         name: "Apollo Automation",
