@@ -8,10 +8,10 @@ import Icon from "@components/Icon.astro";
 import kitImg from "../starter-kit/images/esphome-starter-kit.webp";
 ---
 
-<section id="get-started" class="get-started">
+<section id="begin-setup" class="get-started">
   <div class="container">
     <div class="content-container">
-      <h2>Get started</h2>
+      <h2>Begin setup</h2>
       <p>
         Ready to bring your smart home ideas to life? Grab a board (such as our official <a href="/starter-kit/"
           >ESPHome Starter Kit</a
@@ -62,6 +62,19 @@ import kitImg from "../starter-kit/images/esphome-starter-kit.webp";
         </div>
 
         <div class="card card-bgc">
+          <Icon icon="build" class="card__icon" />
+          <p class="card__title h2">A step-by-step guide</p>
+          <p>
+            Our documentation walks you through everything from setting up your first device to more advanced
+            configurations. Begin with our Get Started guide, then explore from there.
+          </p>
+
+          <LinkButton href="/install/getting-started/" class="card__text-link" icon="right-arrow" iconPlacement="start"
+            >Open the Get Started guide</LinkButton
+          >
+        </div>
+
+        <div class="card card-bgc">
           <Icon icon="extension" class="card__icon" />
           <p class="card__title h2">Ready-Made Projects: The fast route to a finished device</p>
           <p>
@@ -105,7 +118,7 @@ import kitImg from "../starter-kit/images/esphome-starter-kit.webp";
 
       @include bp(desktop) {
         flex-direction: row;
-        align-items: stretch;
+        align-items: flex-start;
         margin-top: 3rem;
       }
     }
@@ -131,6 +144,13 @@ import kitImg from "../starter-kit/images/esphome-starter-kit.webp";
       :global(.card__text-link) {
         margin-top: auto;
         padding-top: 1.25rem;
+      }
+
+      &:first-child {
+        @include bp(desktop) {
+          position: sticky;
+          top: calc(var(--sl-nav-height) + 2rem);
+        }
       }
     }
 
