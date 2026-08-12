@@ -11,13 +11,12 @@ The `sfa40` sensor platform allows you to use your Sensirion SFA40 formaldehyde
 with ESPHome. The sensor also reports temperature and relative humidity. The [I²C Bus](/components/i2c/) is required
 to be set up in your configuration for this sensor to work.
 
-<Image src="/images/sfa40.webp" width={300} height={169} layout="constrained" alt="SFA40 formaldehyde sensor" />
+<Image src="/images/sfa40.webp" width={300} height={173} layout="constrained" alt="SFA40 formaldehyde sensor" />
 
 ```yaml
 # Example configuration entry
 sensor:
   - platform: sfa40
-    wait_for_ready: true
     formaldehyde:
       name: "Formaldehyde"
     temperature:
@@ -40,7 +39,9 @@ sensor:
 - **address** (*Optional*, int): Manually specify the I²C address of the sensor.
   Defaults to `0x5D`.
 
-- **wait_for_ready** (*Optional*, boolean): If enabled, formaldehyde readings are not published while the sensor is warming up. Readings are also not published when the sensor reports an out-of-spec condition, regardless of this setting. Defaults to `true`.
+- **wait_for_ready** (*Optional*, boolean): If enabled, formaldehyde readings are not published while the sensor
+  is warming up. Readings are also not published when the sensor reports an out-of-spec condition, regardless of
+  this setting. Defaults to `true`.
 
 - **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): The interval to check the sensor.
   Defaults to `60s`.
