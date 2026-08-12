@@ -36,6 +36,18 @@ zephyr:
   [Time](/guides/configuration-types#time)), independent of **framework** → **refresh**, mirroring
   [external components' `refresh`](/components/external_components/#refresh). Defaults to `1d`. See
   [`board_source`](#board_source).
+- **shields** (*Optional*, list of strings): Zephyr shields to stack onto **board** — physical
+  add-on boards (e.g. an nRF7002 Wi-Fi/Zigbee companion board) that plug into a connector the base
+  board exposes (`arduino_header`, `mikrobus`, etc.) and contribute their own devicetree
+  overlay/Kconfig fragments. See [`shields`](#shields).
+- **shield_source** (*Optional*): Fetch shield definitions from somewhere other than **board_source**
+  (or the selected framework's own upstream tree, if **board_source** isn't set either) — only needed
+  when a shield genuinely lives in a different repo than the board. Same shape as **board_source**,
+  including its own **refresh**. See [`shields`](#shields).
+- **snippet_source** (*Optional*): Fetch snippet definitions from somewhere other than
+  **board_source** (or the selected framework's own upstream tree) — only needed when a snippet
+  genuinely lives in a different repo than the board. Same shape as **board_source**, including its
+  own **refresh**. See [`snippets`](#snippets).
 - **framework** (*Optional*, mapping): Which SDK to build against, its version, where to fetch it
   from, and (for a git **source**) its own **refresh** — independent of **board_source**'s. See
   [`framework`](#framework).
@@ -187,6 +199,46 @@ mainline Zephyr doesn't already support, for example.
 > `board_source` board. If it differs by partition table or needs a devicetree node the stock board
 > doesn't declare, [`overlays`](#overlays) is usually simpler still.
 
+## `shields`
+
+A Zephyr shield is a physical add-on board — for example an nRF7002 Wi-Fi/Zigbee companion board —
+that stacks onto **board** via a connector it exposes (`arduino_header`, `mikrobus`, etc.) and
+contributes its own devicetree overlay and Kconfig fragments, applied natively via `west build`'s
+`-DSHIELD=`. `shields` accepts a list, since Zephyr's own `-DSHIELD=` natively stacks multiple
+shields together:
+
+```yaml
+# Example configuration entry -- an in-tree shield, no shield_source needed
+zephyr:
+  variant: nrf52
+  framework:
+    type: zephyr
+  board: nrf52840dk
+  shields:
+    - nrf7002ek
+```
+
+`shield_source` resolves against **board_source**'s own root by default — shields conventionally live
+at `<root>/boards/shields/<shield>/`, a sibling of `<root>/boards/<vendor>/<board>/` under the same
+root, mirroring Zephyr's own repo layout and its own `SHIELD_ROOT` default. An explicit
+`shield_source` is only needed for the less common case where a shield lives in a genuinely different
+repo than the board:
+
+```yaml
+# Example configuration entry -- shield from a different repo than board_source
+zephyr:
+  variant: esp32c6
+  board: my_custom_board
+  board_source:
+    type: git
+    url: https://github.com/example/my-zephyr-boards
+  shield_source:
+    type: git
+    url: https://github.com/example/my-zephyr-shields
+  shields:
+    - my_custom_shield
+```
+
 ## `framework`
 
 `framework` selects which SDK a variant builds against, its version, and (optionally) where to fetch
@@ -337,6 +389,26 @@ Espressif ships its own official `espressif-flash-2M`/`-4M`/`-8M`/`-16M`/.../`-1
 `espressif-psram-*`) snippets for exactly this: adjusting a board's flash/PSRAM size without forking
 the whole board. If your board only differs from an upstream one by flash or PSRAM size, prefer a
 snippet over a [`board_source`](#board_source) custom board.
+
+`snippet_source` resolves against **board_source**'s own root by default (falling back to the
+selected framework's own tree if **board_source** isn't set either), the same way
+[`shield_source`](#shields) does. An explicit `snippet_source` is only needed when a snippet lives in
+a genuinely different repo than the board:
+
+```yaml
+# Example configuration entry -- snippet from a different repo than board_source
+zephyr:
+  variant: esp32c6
+  board: my_custom_board
+  board_source:
+    type: git
+    url: https://github.com/example/my-zephyr-boards
+  snippet_source:
+    type: git
+    url: https://github.com/example/my-zephyr-snippets
+  snippets:
+    - my_custom_snippet
+```
 
 ## `overlays`
 
