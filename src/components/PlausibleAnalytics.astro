@@ -1,23 +1,6 @@
 ---
-// Fetched at build time. Source of truth: https://www.openhomefoundation.org/allowed-referrers.json
-// On any failure we keep the list empty so every referrer is replaced with the .invalid
-// placeholder: privacy is preserved and the site still deploys.
-let allowedReferrers: string[] = [];
-try {
-  const response = await fetch("https://www.openhomefoundation.org/allowed-referrers.json", {
-    headers: { "User-Agent": "esphome.io-build" },
-  });
-  if (!response.ok) {
-    throw new Error(`${response.status} ${response.statusText}`);
-  }
-  const data: unknown = await response.json();
-  if (!Array.isArray(data) || !data.every((d) => typeof d === "string")) {
-    throw new Error("payload is not an array of strings");
-  }
-  allowedReferrers = data.map((d) => d.trim().toLowerCase().replace(/\.$/, "")).filter((d) => d.length > 0);
-} catch (e) {
-  console.warn("Failed to load allowed referrers list; all referrers will be filtered.", e);
-}
+// Downloaded at build time by script/fetch_allowed_referrers.mjs (prebuild hook).
+import allowedReferrers from "../data/allowed-referrers.json";
 ---
 
 <!-- prettier-ignore -->
