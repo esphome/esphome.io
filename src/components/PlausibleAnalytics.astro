@@ -20,11 +20,8 @@ try {
 
 <!-- prettier-ignore -->
 <script is:inline async src="https://plausible.openhomefoundation.org/js/pa-IT3qGllOk_UiNLNNQsPlX.js"></script>
-<!-- Allowlist is fetched at build time and echoed into the page here. -->
+<!-- allowedReferrers is fetched at build time and echoed into the page here. -->
 <script is:inline define:vars={{ allowedReferrers }}>
-  var OHF_ALLOWED_REFERRERS = allowedReferrers;
-</script>
-<script is:inline>
   /* eslint-disable */
   // Visitors arriving from their own Home Assistant or ESPHome instance send
   // their private URL as the referrer. Anything not on the allowlist is
@@ -51,8 +48,8 @@ try {
         // Unparseable referrer: falls through and gets replaced.
       }
 
-      for (var i = 0; i < OHF_ALLOWED_REFERRERS.length; i++) {
-        var d = OHF_ALLOWED_REFERRERS[i];
+      for (var i = 0; i < allowedReferrers.length; i++) {
+        var d = allowedReferrers[i];
         if (host === d || (host.length > d.length && host.slice(-(d.length + 1)) === "." + d)) {
           return payload;
         }
