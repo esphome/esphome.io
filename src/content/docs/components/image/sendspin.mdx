@@ -30,13 +30,13 @@ image:
       id: album_art
 ```
 
-The entry's own `id` refers to the slot, which is what actions and conditions target. The `id` inside
+The entry's own `id` refers to the slot, which is what the action targets. The `id` inside
 `current_image` is the image itself, and is what you reference from a display lambda or an LVGL widget.
 
 ## Configuration variables
 
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the artwork slot. Use this to target the
-  actions and conditions below.
+  action below.
 - **format** (**Required**): The format the artwork is encoded with. One of `JPEG`, `PNG` or `BMP`.
 - **resize** (**Required**, string): The size the artwork is requested and rendered at, as `WIDTHxHEIGHT`. The
   Sendspin server scales the artwork to these dimensions before sending it.
@@ -103,9 +103,10 @@ Report that the transition for the artwork just displayed has finished, telling 
 for more. Only needed when a `transition_image` is configured.
 
 > [!IMPORTANT]
-> Every `on_image_display` must run this action exactly once if `transition_image` is configured. If it
-> is not run, no further artwork appears until the artwork is cleared, and a warning naming the slot is
-> logged ten seconds after the artwork was displayed.
+> Every displayed artwork must be acknowledged with this action exactly once if `transition_image` is
+> configured, either from `on_image_display` or from whatever finishes the transition it starts. If it is not
+> run, no further artwork appears until the artwork is cleared, and a warning naming the slot is logged ten
+> seconds after the artwork was displayed.
 
 #### Configuration variables
 
@@ -170,8 +171,8 @@ image:
 ### Cross-fading between tracks
 
 To dissolve the old artwork into the new one, both have to be on screen at once, so this needs a
-`transition_image` and two stacked LVGL widgets. Declaration order sets which widget is on top, so declare the
-incoming one first.
+`transition_image` and two stacked LVGL widgets. Later-declared widgets render on top, so declare the incoming
+one first and let the outgoing one fade out above it.
 
 A widget keeps drawing whichever artwork it was last pointed at, so both widgets are pointed at their image
 again on every display. `display_offset` starts the fade early so it is centered on the change of track.
