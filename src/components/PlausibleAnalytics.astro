@@ -1,0 +1,66 @@
+---
+// Fetched at build time. Source of truth: https://openhomefoundation.org/allowed-referrers.json
+// On any failure we keep the list empty so every referrer is replaced with the .invalid
+// placeholder: privacy is preserved and the site still deploys.
+let allowedReferrers: string[] = [];
+try {
+  const response = await fetch("https://openhomefoundation.org/allowed-referrers.json");
+  if (!response.ok) {
+    throw new Error(`${response.status} ${response.statusText}`);
+  }
+  const data: unknown = await response.json();
+  if (!Array.isArray(data) || !data.every((d) => typeof d === "string")) {
+    throw new Error("payload is not an array of strings");
+  }
+  allowedReferrers = data.map((d) => d.trim().toLowerCase().replace(/\.$/, "")).filter((d) => d.length > 0);
+} catch (e) {
+  console.warn(`Failed to load allowed referrers list; all referrers will be filtered. ${e}`);
+}
+---
+
+<!-- prettier-ignore -->
+<script is:inline async src="https://plausible.openhomefoundation.org/js/pa-IT3qGllOk_UiNLNNQsPlX.js"></script>
+<!-- Allowlist is fetched at build time and echoed into the page here. -->
+<script is:inline set:html={`var OHF_ALLOWED_REFERRERS = ${JSON.stringify(allowedReferrers)};`} />
+<script is:inline>
+  /* eslint-disable */
+  // Visitors arriving from their own Home Assistant or ESPHome instance send
+  // their private URL as the referrer. Anything not on the allowlist is
+  // replaced before Plausible ever sees it, so those URLs are never recorded.
+  ((window.plausible =
+    window.plausible ||
+    function () {
+      (plausible.q = plausible.q || []).push(arguments);
+    }),
+    (plausible.init =
+      plausible.init ||
+      function (i) {
+        plausible.o = i || {};
+      }));
+  plausible.init({
+    transformRequest: function (payload) {
+      var ref = payload.r;
+      if (!ref) return payload;
+
+      var host = "";
+      try {
+        host = new URL(ref).hostname.replace(/\.$/, "");
+      } catch (e) {
+        // Unparseable referrer: falls through and gets replaced.
+      }
+
+      for (var i = 0; i < OHF_ALLOWED_REFERRERS.length; i++) {
+        var d = OHF_ALLOWED_REFERRERS[i];
+        if (host === d || (host.length > d.length && host.slice(-(d.length + 1)) === "." + d)) {
+          return payload;
+        }
+      }
+
+      // One aggregate bucket in Plausible, so we can see how much we filter
+      // without learning anything about individual visitors. .invalid is
+      // reserved by RFC 2606 and can never collide with a real domain.
+      payload.r = "https://unlisted.invalid/";
+      return payload;
+    },
+  });
+</script>
