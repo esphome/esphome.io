@@ -1,0 +1,2120 @@
+<link rel="preload" href="/starter-kit/ESK.glb" as="fetch" crossorigin />
+<link rel="preload" href="/starter-kit/ESK-edges.bin" as="fetch" crossorigin />
+
+<section class="block-hero">
+  <div class="container">
+    <div class="block-hero__content-container">
+      <div class="block-hero__content">
+        <h1><strong>ESPHome</strong> Starter Kit</h1>
+        <p class="subtitle">BUILD. LEARN. AUTOMATE.</p>
+        <p>The easiest path to building your own smart home devices.</p>
+
+        <div class="collaboration-badge">
+          <span>Designed and built by</span>
+          <div class="collaborators">
+            <div class="collaborator">
+              <a href="https://apolloautomation.com/">
+                <img
+                  src="/images/collaboration/apollo-automation.svg"
+                  alt="Apollo Automation Logo"
+                  class="light:sl-hidden"
+                />
+              </a>
+              <a href="https://apolloautomation.com/">
+                <img
+                  src="/images/collaboration/apollo-automation--light.svg"
+                  alt="Apollo Automation Logo"
+                  aria-hidden="true"
+                  class="dark:sl-hidden"
+                />
+              </a>
+            </div>
+            <div class="collaborator">
+              <a href="https://www.openhomefoundation.org/">
+                <img
+                  src="/images/collaboration/open-home-foundation.svg"
+                  alt="Open Home Foundation Logo"
+                  class="light:sl-hidden"
+                />
+              </a>
+              <a href="https://www.openhomefoundation.org/">
+                <img
+                  src="/images/collaboration/open-home-foundation--light.svg"
+                  alt="Open Home Foundation Logo"
+                  aria-hidden="true"
+                  class="dark:sl-hidden"
+                />
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="block-hero__asset-container">
+      <div class="block-hero__asset-stage" data-hero-loading>
+        <div class="block-hero__loader" aria-hidden="true"></div>
+        <canvas id="hero-scene"></canvas>
+        <svg class="block-hero__label-lines" aria-hidden="true"></svg>
+        <slot name="labels" />
+        <slot />
+        <aside class="hero-detail-card" id="hero-detail-card" inert>
+          <div class="hero-detail-card__header">
+            <h3 class="hero-detail-card__title" data-detail-title></h3>
+            <button class="hero-detail-card__close" type="button" aria-label="Close" data-detail-close>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path
+                  d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"
+                ></path>
+              </svg>
+            </button>
+          </div>
+          <div class="hero-detail-card__body" data-detail-body></div>
+        </aside>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  import * as THREE from "three";
+  import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+  import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+  import { MeshoptDecoder } from "three/addons/libs/meshopt_decoder.module.js";
+  import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
+  import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
+  import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
+  import { ShaderPass } from "three/addons/postprocessing/ShaderPass.js";
+  import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
+  import { loadEdgesBuffer, parseEdgesBuffer, createEdgeGeometry } from "src/lib/starter-kit-edges";
+  const MODEL_URL = "/starter-kit/ESK.glb";
+
+  const canvas = document.getElementById("hero-scene") as HTMLCanvasElement | null;
+
+  if (canvas) {
+    const getSize = () => ({
+      width: canvas.clientWidth || 1,
+      height: canvas.clientHeight || 1,
+    });
+
+    let { width, height } = getSize();
+    let homeDistance = 10;
+    const HOME_ZOOM_MOBILE = 0.98;
+    const HOME_ZOOM_TABLET = 1.85;
+    const HOME_ZOOM_DESKTOP = 1.15;
+
+    const homeZoom = () =>
+      window.innerWidth <= 767 ? HOME_ZOOM_MOBILE : window.innerWidth <= 1024 ? HOME_ZOOM_TABLET : HOME_ZOOM_DESKTOP;
+    let modelScaledSize: THREE.Vector3 | null = null;
+
+    const scene = new THREE.Scene();
+
+    // 45° azimuth, level horizontal (Y=0). The intro animates in from a
+    // face-on pose and settles here as the steady-state isometric direction.
+    const CAM_DIR = new THREE.Vector3(1, 0, 1).normalize();
+
+    const camera = new THREE.PerspectiveCamera(35, width / height, 0.05, 20);
+
+    camera.position.copy(CAM_DIR).multiplyScalar(10);
+    camera.lookAt(0, 0, 0);
+
+    const renderer = new THREE.WebGLRenderer({
+      canvas,
+      antialias: true,
+      alpha: true,
+      depth: true,
+      powerPreference: "high-performance",
+    });
+
+    // Cap at 2× — keeps fill-rate manageable on 3× retina screens while
+    // still rendering crisp wireframe edges on hi-DPI displays.
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setSize(width, height, false);
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.1;
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+
+    // Selective bloom — only objects on BLOOM_LAYER glow.
+    const BLOOM_LAYER = 1;
+    const bloomLayer = new THREE.Layers();
+    bloomLayer.set(BLOOM_LAYER);
+
+    // The bloom/MSAA composite pipeline is only ever used during song
+    // playback, which can't start until every module has been clicked
+    // (buttonUnlocked, see focusModule below) and the button is then
+    // pressed — so it's built lazily the moment buttonUnlocked flips true
+    // instead of unconditionally on every page load, saving render-target
+    // allocation and pass setup for the (common) case where a visitor never
+    // gets that far.
+    let bloomComposer: EffectComposer | null = null;
+    let finalComposer: EffectComposer | null = null;
+    let mixPass: ShaderPass | null = null;
+
+    const ensureBloomPipeline = () => {
+      if (bloomComposer) return;
+
+      // HalfFloat gives 16-bit precision — eliminates banding in bloom gradients.
+      const bloomRenderTarget = new THREE.WebGLRenderTarget(width, height, {
+        type: THREE.HalfFloatType,
+      });
+      bloomComposer = new EffectComposer(renderer, bloomRenderTarget);
+      bloomComposer.renderToScreen = false;
+      bloomComposer.addPass(new RenderPass(scene, camera));
+      const unrealBloomPass = new UnrealBloomPass(
+        new THREE.Vector2(width, height),
+        1.2, // strength
+        1.0, // radius
+        0.0, // threshold
+      );
+      bloomComposer.addPass(unrealBloomPass);
+
+      const BLOOM_MIX = 1.0; // raise to intensify, lower to reduce
+      mixPass = new ShaderPass(
+        new THREE.ShaderMaterial({
+          uniforms: {
+            baseTexture: { value: null },
+            bloomTexture: { value: null },
+            bloomStrength: { value: BLOOM_MIX },
+          },
+          vertexShader: `
+            varying vec2 vUv;
+            void main() { vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }
+          `,
+          fragmentShader: `
+            uniform sampler2D baseTexture;
+            uniform sampler2D bloomTexture;
+            uniform float bloomStrength;
+            varying vec2 vUv;
+            void main() {
+              vec4 base = texture2D(baseTexture, vUv);
+              vec3 bloom = texture2D(bloomTexture, vUv).rgb * bloomStrength;
+              float bloomAlpha = max(max(bloom.r, bloom.g), bloom.b);
+              // Soft vignette confined to the outer edge — model area stays clear.
+              float vignette = 1.0 - smoothstep(0.38, 0.6, length(vUv - 0.5));
+              vignette = mix(1.0, vignette, 0.85);
+              gl_FragColor = vec4((base.rgb + bloom) * vignette, max(base.a, bloomAlpha));
+            }
+          `,
+        }),
+        "baseTexture",
+      );
+      mixPass.needsSwap = true;
+      const msaaTarget = new THREE.WebGLRenderTarget(width, height, {
+        samples: 4,
+        type: THREE.HalfFloatType,
+      });
+      finalComposer = new EffectComposer(renderer, msaaTarget);
+      finalComposer.addPass(new RenderPass(scene, camera));
+      finalComposer.addPass(mixPass);
+      finalComposer.addPass(new OutputPass());
+    };
+
+    // Helpers: darken non-bloom meshes/lines before bloom pass, restore after.
+    const _darkMat = new THREE.MeshBasicMaterial({ color: 0x000000 });
+    const _darkLineMat = new THREE.LineBasicMaterial({ color: 0x000000 });
+    const _savedMats = new Map<string, THREE.Material | THREE.Material[]>();
+    const darkenNonBloom = (obj: THREE.Object3D) => {
+      if (bloomLayer.test(obj.layers)) return;
+      const mesh = obj as THREE.Mesh;
+      const line = obj as THREE.Line;
+      if (mesh.isMesh) {
+        _savedMats.set(obj.uuid, mesh.material);
+        mesh.material = _darkMat;
+      } else if (line.isLine) {
+        _savedMats.set(obj.uuid, line.material);
+        line.material = _darkLineMat;
+      }
+    };
+    const restoreMaterials = (obj: THREE.Object3D) => {
+      if (!_savedMats.has(obj.uuid)) return;
+      const mat = _savedMats.get(obj.uuid)!;
+      (obj as THREE.Mesh).material = mat as THREE.Material;
+      _savedMats.delete(obj.uuid);
+    };
+
+    scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+
+    const keyLight = new THREE.DirectionalLight(0xffffff, 2.0);
+    keyLight.position.set(3, 4, 2);
+    scene.add(keyLight);
+
+    const fillLight = new THREE.DirectionalLight(0xa9c8ff, 0.8);
+    fillLight.position.set(-3, 1, -2);
+    scene.add(fillLight);
+
+    const controls = new OrbitControls(camera, canvas);
+    controls.enableDamping = true;
+    controls.enableZoom = false;
+    controls.enablePan = false;
+    controls.enableRotate = true;
+    controls.autoRotate = false;
+    // OrbitControls sets touch-action: none inline. Override on touch devices
+    // so vertical swipes scroll the page rather than rotating the model.
+    if (window.matchMedia("(pointer: coarse)").matches) {
+      canvas.style.touchAction = "pan-y";
+    }
+
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    const fovY = (camera.fov * Math.PI) / 180;
+    const loader = new GLTFLoader();
+    loader.setMeshoptDecoder(MeshoptDecoder);
+
+    const assetContainer = canvas.parentElement as HTMLElement | null;
+    const labelOverlay = assetContainer?.querySelector<SVGSVGElement>(".block-hero__label-lines") ?? null;
+    const labelEls = assetContainer
+      ? Array.from(assetContainer.querySelectorAll<HTMLElement>("[data-hero-label]"))
+      : [];
+
+    type LabelRef = {
+      el: HTMLElement;
+      target: THREE.Object3D | null;
+      line: SVGLineElement | null;
+      dot: SVGCircleElement | null;
+      anchor: THREE.Vector3;
+      offsetX: number;
+      offsetY: number;
+      currentX: number;
+      currentY: number;
+      hasPosition: boolean;
+      groupIdx: number;
+      detailHTML: string;
+      labelText: string;
+    };
+
+    const SVG_NS = "http://www.w3.org/2000/svg";
+    let cycleUpdater: (now: number) => void = () => {};
+    let labelsEnabled = false;
+    const labels: LabelRef[] = labelEls.map((el) => {
+      let line: SVGLineElement | null = null;
+      let dot: SVGCircleElement | null = null;
+      if (labelOverlay) {
+        line = document.createElementNS(SVG_NS, "line");
+        line.setAttribute("class", "block-hero__label-line");
+        line.setAttribute("stroke", "rgba(255, 255, 255, 0.7)");
+        line.setAttribute("stroke-width", "1");
+        line.setAttribute("stroke-dasharray", "3 3");
+        line.setAttribute("visibility", "hidden");
+        labelOverlay.appendChild(line);
+
+        dot = document.createElementNS(SVG_NS, "circle");
+        dot.setAttribute("class", "block-hero__label-dot");
+        dot.setAttribute("r", "4");
+        dot.setAttribute("fill", "#fff");
+        dot.setAttribute("stroke", "rgba(255, 255, 255, 0.25)");
+        dot.setAttribute("stroke-width", "4");
+        dot.setAttribute("visibility", "hidden");
+        labelOverlay.appendChild(dot);
+      }
+      return {
+        el,
+        target: null,
+        line,
+        dot,
+        anchor: new THREE.Vector3(),
+        offsetX: Number(el.dataset.offsetX ?? 0),
+        offsetY: Number(el.dataset.offsetY ?? -80),
+        currentX: 0,
+        currentY: 0,
+        hasPosition: false,
+        groupIdx: -1,
+        detailHTML: el.querySelector<HTMLElement>("[data-label-detail]")?.innerHTML ?? "",
+        labelText: el.dataset.labelText ?? "",
+      };
+    });
+
+    const loadGLTF = () =>
+      new Promise<{ scene: THREE.Group }>((resolve, reject) => {
+        loader.load(MODEL_URL, resolve, undefined, reject);
+      });
+
+    Promise.all([loadGLTF(), loadEdgesBuffer()])
+      .then(([gltf, edgesBuffer]) => {
+        assetContainer?.removeAttribute("data-hero-loading");
+        assetContainer?.classList.add("is-model-ready");
+
+        const precomputedEdges = parseEdgesBuffer(edgesBuffer);
+        let edgeCursor = 0;
+
+        const model = gltf.scene;
+
+        // Measure model in its local space, then scale uniformly.
+        const localBox = new THREE.Box3().setFromObject(model);
+        const localSize = new THREE.Vector3();
+        localBox.getSize(localSize);
+
+        const maxDim = Math.max(localSize.x, localSize.y, localSize.z) || 1;
+        const targetSize = 1.6;
+        const scale = targetSize / maxDim;
+        model.scale.setScalar(scale);
+
+        // Recompute the bbox AFTER scaling, then offset so the model is
+        // centered on the origin in world space.
+        const scaledBox = new THREE.Box3().setFromObject(model);
+        const scaledCenter = new THREE.Vector3();
+        scaledBox.getCenter(scaledCenter);
+        model.position.sub(scaledCenter);
+
+        const LED_PIVOT = new THREE.Vector3(0, 0.05, 0.05);
+        const ROT_AXIS = new THREE.Vector3(0, 1, 0);
+        const ROT_ANGLE = Math.PI / 8;
+        model.position.sub(LED_PIVOT).applyAxisAngle(ROT_AXIS, ROT_ANGLE).add(LED_PIVOT);
+        model.rotateOnWorldAxis(ROT_AXIS, ROT_ANGLE);
+
+        scene.add(model);
+
+        // Re-measure post-rotation so camera framing uses the rotated extents.
+        model.updateMatrixWorld(true);
+        const finalBox = new THREE.Box3().setFromObject(model);
+        const scaledSize = new THREE.Vector3();
+        finalBox.getSize(scaledSize);
+
+        // Fit to vertical FOV only — distY is stable across aspect ratios,
+        // avoiding the far-back push that distX causes on narrow viewports.
+        modelScaledSize = scaledSize;
+        const distY = scaledSize.y / 2 / Math.tan(fovY / 2);
+        homeDistance = (distY + scaledSize.z / 2) * homeZoom();
+        camera.position.copy(CAM_DIR).multiplyScalar(homeDistance);
+        camera.lookAt(0, 0, 0);
+        controls.target.set(0, 0, 0);
+        controls.update();
+
+        // Resolve each label's target object by name (case-insensitive fallback).
+        const byName = new Map<string, THREE.Object3D>();
+        model.traverse((obj: THREE.Object3D) => {
+          if (obj.name) byName.set(obj.name.toLowerCase(), obj);
+        });
+
+        const topLevel = [...model.children];
+        model.updateMatrixWorld(true);
+
+        // Click any module to make it the active (solid) group; the rest
+        // stay as the blueprint wireframe. Each frame, opacities and the
+        // camera lerp toward the active group's state.
+        const SOLID_LERP = 0.08;
+        const ZOOM_LERP = 0.06;
+        // Wireframe opacity when a group is fully inactive (shown while
+        // another module is focused). Kept high enough that the unfocused
+        // modules read as the connected blueprint they actually are.
+        const WIRE_DIM = 0.3;
+        // Minimum edge opacity for the active/default state. A faint sketch
+        // outline is kept on every module at rest so the kit reads as one
+        // designed board rather than disconnected, floating parts.
+        const WIRE_MIN = 0.05;
+        // Monochrome wireframe palette. Adapts to the Starlight theme so the
+        // sketch stays readable on either bg:
+        //   dark theme  → near-black fill, white edges
+        //   light theme → near-white fill, black edges
+        const EDGE_DARK = new THREE.Color(0x8899aa); // cool blue-grey, less harsh than pure white
+        const EDGE_LIGHT = new THREE.Color(0x000000);
+        const TINT_DARK = new THREE.Color(0x1f2127);
+        const TINT_LIGHT = new THREE.Color(0xf3f4f7);
+        const isLightTheme = () => document.documentElement.dataset.theme === "light";
+        const BLUEPRINT_COLOR = (isLightTheme() ? EDGE_LIGHT : EDGE_DARK).clone();
+        const TINT_COLOR = (isLightTheme() ? TINT_LIGHT : TINT_DARK).clone();
+        type GroupFade = {
+          root: THREE.Object3D;
+          solid: THREE.Material[];
+          wire: THREE.Material[];
+          meshes: THREE.Mesh[];
+        };
+
+        const allEdgeOverlays: THREE.LineSegments[] = [];
+
+        // Materials belonging to snap1–4 descendants are permanently locked to
+        // the inactive-module wireframe state once the intro finishes.
+        const snapNames = new Set(["snap1", "snap2", "snap3", "snap4"]);
+        const snapSolidMats = new Set<THREE.Material>();
+        const snapWireMats = new Set<THREE.Material>();
+        const snapMeshes = new Set<THREE.Mesh>();
+        let snapLocked = false;
+
+        const logicalOpacity = new WeakMap<THREE.Material, number>();
+
+        const groupFades: GroupFade[] = topLevel.map((obj, idx) => {
+          const solid: THREE.Material[] = [];
+          const wire: THREE.Material[] = [];
+          const meshes: THREE.Mesh[] = [];
+          const overlays: { parent: THREE.Mesh; mesh: THREE.LineSegments }[] = [];
+          const masks: { parent: THREE.Mesh; mesh: THREE.Mesh }[] = [];
+          // Group 0 starts solid; the rest start as wireframe.
+          const initialSolid = idx === 0 ? 1 : 0;
+          obj.traverse((o: THREE.Object3D) => {
+            const mesh = o as THREE.Mesh;
+            if (!mesh.isMesh) return;
+            const src = Array.isArray(mesh.material) ? mesh.material[0] : mesh.material;
+            if (!src) return;
+            const solidMat = src.clone();
+            solidMat.transparent = true;
+            solidMat.opacity = initialSolid;
+            solidMat.depthWrite = true;
+            // Depth-only mask: fills the z-buffer so back-face wire edges of
+            // other groups get depth-rejected. polygonOffset keeps edge lines
+            // from z-fighting with the surface they lie on.
+            const maskMat = new THREE.MeshBasicMaterial({
+              colorWrite: false,
+              depthWrite: true,
+              polygonOffset: true,
+              polygonOffsetFactor: 1,
+              polygonOffsetUnits: 1,
+            });
+            const mask = new THREE.Mesh(mesh.geometry, maskMat);
+            mask.renderOrder = -1;
+            const lineMat = new THREE.LineBasicMaterial({
+              color: BLUEPRINT_COLOR.clone(),
+              transparent: true,
+              opacity: initialSolid === 1 ? 0 : WIRE_DIM,
+              depthWrite: false,
+              depthTest: true,
+            });
+            const precomputed = precomputedEdges?.[edgeCursor];
+            edgeCursor++;
+            const edgeGeometry = createEdgeGeometry(mesh, precomputed);
+            const overlay = new THREE.LineSegments(edgeGeometry, lineMat);
+            mesh.material = solidMat;
+            masks.push({ parent: mesh, mesh: mask });
+            overlays.push({ parent: mesh, mesh: overlay });
+            allEdgeOverlays.push(overlay);
+            solid.push(solidMat);
+            wire.push(lineMat);
+            meshes.push(mesh);
+            // Walk up the hierarchy to detect snap1-4 descendants.
+            let _cur: THREE.Object3D | null = mesh;
+            while (_cur) {
+              if (snapNames.has(_cur.name.toLowerCase())) {
+                snapSolidMats.add(solidMat);
+                snapWireMats.add(lineMat);
+                snapMeshes.add(mesh);
+                break;
+              }
+              _cur = _cur.parent;
+            }
+          });
+          for (const { parent, mesh } of masks) parent.add(mesh);
+          for (const { parent, mesh } of overlays) parent.add(mesh);
+          return { root: obj, solid, wire, meshes };
+        });
+
+        // Warm every material's shader program now, while the browser is
+        // still busy with the (non-rendering) setup below, rather than
+        // paying for on-the-fly compilation inside the render loop's first
+        // call to renderer.render() — which happens right as the intro is
+        // meant to become visible.
+        renderer.compileAsync(scene, camera);
+
+        // Collect buttonpress meshes for hover highlight + press animation
+        const buttonpressMeshes: THREE.Mesh[] = [];
+        const buttonpressOrigColors: THREE.Color[] = [];
+        const buttonpressObj = byName.get("buttonpress");
+        const buttonpressOrigPos = buttonpressObj ? buttonpressObj.position.clone() : new THREE.Vector3();
+        let buttonPressT = 0;
+        let buttonPressTarget = 0;
+        let buttonHoverT = 0;
+        const BUTTON_PRESS_MS = 150;
+        const BUTTON_PRESS_DIST = 0.2;
+        const BUTTON_PRESS_AXIS = new THREE.Vector3(0, -1, 0);
+        if (buttonpressObj) {
+          buttonpressObj.traverse((o: THREE.Object3D) => {
+            if ((o as THREE.Mesh).isMesh) {
+              const m = o as THREE.Mesh;
+              buttonpressMeshes.push(m);
+              buttonpressOrigColors.push((m.material as THREE.MeshStandardMaterial).color.clone());
+            }
+          });
+        }
+
+        // LED emissive — the effect engine writes into ledState; the render
+        // loop maps those RGB values onto each mesh's emissive each frame.
+        const LED_EMISSIVE_INTENSITY = 6.0;
+        const NUM_LEDS = 10;
+        const ledState: number[][] = Array.from({ length: NUM_LEDS }, () => [0, 0, 0]);
+        // One entry per LED, 1:1 with ledState. groupFades adds a mask child
+        // mesh to each original mesh, so we stop at the first emissive-capable
+        // mesh to avoid doubling up.
+        const ledMeshes: THREE.Mesh[] = [];
+        for (let i = 1; i <= 10; i++) {
+          const ledObj = byName.get(`ledlight${i}`);
+          if (!ledObj) continue;
+          let found = false;
+          ledObj.traverse((o: THREE.Object3D) => {
+            if (found) return;
+            const m = o as THREE.Mesh;
+            if (!m.isMesh) return;
+            const mat = m.material as THREE.MeshStandardMaterial;
+            if (!mat.emissive) return;
+            mat.emissiveIntensity = 0;
+            ledMeshes.push(m);
+            found = true;
+          });
+        }
+
+        // ---- Effect engine (mirrors esk-lights.html) -----------------------
+        let effectTimers: ReturnType<typeof setInterval>[] = [];
+        const clearEffect = () => {
+          effectTimers.forEach(clearInterval);
+          effectTimers = [];
+        };
+        const setAll = (rgb: number[]) => {
+          for (let i = 0; i < NUM_LEDS; i++) ledState[i] = rgb.slice();
+        };
+        const scaleLed = (rgb: number[], k: number) => [rgb[0] * k, rgb[1] * k, rgb[2] * k];
+        const hsvLed = (h: number) => {
+          const c = 255,
+            x = c * (1 - Math.abs(((h / 60) % 2) - 1));
+          if (h < 60) return [c, x, 0];
+          if (h < 120) return [x, c, 0];
+          if (h < 180) return [0, c, x];
+          if (h < 240) return [0, x, c];
+          if (h < 300) return [x, 0, c];
+          return [c, 0, x];
+        };
+
+        const effectColorWipe = (colors: { rgb: number[]; num: number }[], brightness: number, intervalMs: number) => {
+          clearEffect();
+          setAll([0, 0, 0]);
+          const pattern: number[][] = [];
+          colors.forEach((c) => {
+            for (let n = 0; n < c.num; n++) pattern.push(c.rgb);
+          });
+          let pIdx = 0;
+          effectTimers.push(
+            setInterval(() => {
+              for (let i = NUM_LEDS - 1; i > 0; i--) ledState[i] = ledState[i - 1];
+              ledState[0] = scaleLed(pattern[pIdx], brightness);
+              pIdx = (pIdx + 1) % pattern.length;
+            }, intervalMs),
+          );
+        };
+        const effectTwinkle = (base: number[], brightness: number, probability: number, intervalMs: number) => {
+          clearEffect();
+          const level = new Array(NUM_LEDS).fill(0);
+          effectTimers.push(
+            setInterval(() => {
+              for (let i = 0; i < NUM_LEDS; i++) if (level[i] > 0) level[i] = Math.max(0, level[i] - 0.06);
+              if (Math.random() < probability) {
+                const i = Math.floor(Math.random() * NUM_LEDS);
+                if (level[i] <= 0) level[i] = 1;
+              }
+              for (let i = 0; i < NUM_LEDS; i++) ledState[i] = scaleLed(base, brightness * level[i]);
+            }, intervalMs),
+          );
+        };
+        const effectRandomTwinkle = (brightness: number, probability: number, intervalMs: number) => {
+          clearEffect();
+          const level = new Array(NUM_LEDS).fill(0);
+          const col: number[][] = Array.from({ length: NUM_LEDS }, () => [0, 0, 0]);
+          effectTimers.push(
+            setInterval(() => {
+              for (let i = 0; i < NUM_LEDS; i++) if (level[i] > 0) level[i] = Math.max(0, level[i] - 0.06);
+              if (Math.random() < probability) {
+                const i = Math.floor(Math.random() * NUM_LEDS);
+                if (level[i] <= 0) {
+                  level[i] = 1;
+                  col[i] = hsvLed(Math.random() * 360);
+                }
+              }
+              for (let i = 0; i < NUM_LEDS; i++) ledState[i] = scaleLed(col[i], brightness * level[i]);
+            }, intervalMs),
+          );
+        };
+        const effectFlicker = (base: number[], brightness: number, intensity: number, intervalMs: number) => {
+          clearEffect();
+          effectTimers.push(
+            setInterval(() => {
+              for (let i = 0; i < NUM_LEDS; i++)
+                ledState[i] = scaleLed(base, brightness * (1 - Math.random() * intensity));
+            }, intervalMs),
+          );
+        };
+
+        // ---- RTTTL parser --------------------------------------------------
+        const parseRTTTL = (str: string) => {
+          const [, defaults, body] = str.split(":");
+          let d = 4,
+            o = 6,
+            bpm = 63;
+          defaults.split(",").forEach((p) => {
+            const [k, v] = p.split("=");
+            if (k.trim() === "d") d = +v;
+            else if (k.trim() === "o") o = +v;
+            else if (k.trim() === "b") bpm = +v;
+          });
+          const whole = (60000 / bpm) * 4;
+          const SEMI: Record<string, number> = {
+            c: 0,
+            d: 2,
+            e: 4,
+            f: 5,
+            g: 7,
+            a: 9,
+            b: 11,
+            p: -1,
+          };
+          const notes: { freq: number; dur: number }[] = [];
+          body.split(",").forEach((raw) => {
+            const s = raw.trim().toLowerCase();
+            let idx = 0,
+              num = "";
+            while (idx < s.length && s[idx] >= "0" && s[idx] <= "9") num += s[idx++];
+            let dur = num ? whole / parseInt(num) : whole / d;
+            let semi = SEMI[s[idx]] ?? -1;
+            idx++;
+            if (s[idx] === "#") {
+              semi++;
+              idx++;
+            }
+            let dotted = s[idx] === ".";
+            if (dotted) idx++;
+            let oct = o;
+            if (s[idx] >= "0" && s[idx] <= "9") {
+              oct = parseInt(s[idx]);
+              idx++;
+            }
+            if (s[idx] === ".") {
+              dotted = true;
+            }
+            if (dotted) dur *= 1.5;
+            const freq = semi >= 0 ? 440 * Math.pow(2, ((oct + 1) * 12 + semi - 69) / 12) : 0;
+            notes.push({ freq, dur });
+          });
+          return notes;
+        };
+
+        // ---- Web Audio buzzer (square wave ≈ piezo) ------------------------
+        let audioCtx: AudioContext | null = null;
+        let curOsc: OscillatorNode | null = null;
+        let curGain: GainNode | null = null;
+        let songTimer: ReturnType<typeof setTimeout> | null = null;
+
+        const stopAudio = () => {
+          if (songTimer) {
+            clearTimeout(songTimer);
+            songTimer = null;
+          }
+          try {
+            curOsc?.stop();
+          } catch (_) {}
+          curGain?.disconnect();
+          curOsc = null;
+          curGain = null;
+        };
+        const playRTTTL = (notes: { freq: number; dur: number }[], onEnd?: () => void) => {
+          stopAudio();
+          if (!audioCtx) audioCtx = new AudioContext();
+          if (audioCtx.state === "suspended") {
+            audioCtx.resume().catch((error: unknown) => {
+              console.error("[Hero] Failed to resume audio context:", error);
+            });
+          }
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = "square";
+          gain.gain.value = 0;
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          let cursor = audioCtx.currentTime + 0.05;
+          const start = cursor;
+          osc.start(cursor);
+          for (const n of notes) {
+            const sec = n.dur / 1000;
+            if (n.freq > 0) {
+              osc.frequency.setValueAtTime(n.freq, cursor);
+              gain.gain.setValueAtTime(0.02, cursor);
+              gain.gain.setValueAtTime(0, cursor + sec * 0.9);
+            } else {
+              gain.gain.setValueAtTime(0, cursor);
+            }
+            cursor += sec;
+          }
+          osc.stop(cursor + 0.05);
+          curOsc = osc;
+          curGain = gain;
+          songTimer = setTimeout(
+            () => {
+              songTimer = null;
+              onEnd?.();
+            },
+            (cursor - start) * 1000 + 60,
+          );
+        };
+
+        // ---- Songs (mirrors esk-lights.html) -------------------------------
+        type Song = { name: string; rtttl: string; start: () => void };
+        const songs: Song[] = [
+          // Colors sourced directly from esk-1.yaml song scripts + light effect definitions.
+          {
+            name: "Rickroll",
+            rtttl:
+              "GiveYouUp:d=4,o=5,b=200:8g,8a,8c6,8a,e6,8p,e6,8p,d.6,p,8p,8g,8a,8c6,8a,d6,8p,d6,8p,c6,8b,a.,8g,8a,8c6,8a,2c6,d6,b,a,g.,8p,g,2d6,2c.6,p,8g,8a,8c6,8a,e6,8p,e6,8p,d.6,p,8p,8g,8a,8c6,8a,2g6,b,c.6,8b,a,8g,8a,8c6,8a,2c6,d6,b,a,g.,8p,g,2d6,2c.6",
+            start: () =>
+              effectColorWipe(
+                [
+                  { rgb: [255, 0, 128], num: 3 },
+                  { rgb: [204, 0, 204], num: 3 },
+                  { rgb: [255, 77, 0], num: 2 },
+                  { rgb: [255, 0, 0], num: 2 },
+                ],
+                0.5,
+                100,
+              ),
+          },
+          {
+            name: "Mario",
+            rtttl:
+              "Mario:d=4,o=5,b=100:16e6,16e6,32p,8e6,16c6,8e6,8g6,8p,8g,8p,8c6,16p,8g,16p,8e,16p,8a,8b,16a#,8a,16g.,16e6,16g6,8a6,16f6,8g6,8e6,16c6,16d6,8b,16p",
+            start: () =>
+              effectColorWipe(
+                [
+                  { rgb: [255, 0, 0], num: 5 },
+                  { rgb: [0, 0, 255], num: 5 },
+                ],
+                0.5,
+                100,
+              ),
+          },
+          {
+            name: "Cantina",
+            rtttl:
+              "Cantina:d=8,o=5,b=250:a,p,d6,p,a,p,d6,p,a,d6,p,a,p,g#,4a,a,g#,a,4g,f#,g,f#,4f.,d.,16p,4p.,a,p,d6,p,a,p,d6,p,a,d6,p,a,p,g#,a,p,g,p,4g.,f#,g,p,c6,4a#,4a,4g",
+            start: () => effectTwinkle([153, 0, 255], 1.0, 0.45, 15),
+          },
+          {
+            name: "Take On Me",
+            rtttl:
+              "TakeOnMe:d=4,o=5,b=160:8f#,8f#,8f#,8d,8p,8b4,8p,8e,8p,8e,8p,8e,8g#,8g#,8a,8b,8a,8a,8a,8e,8p,8d,8p,8f#,8p,8f#,8p,8f#,8e,8e,8f#,8e",
+            start: () =>
+              effectColorWipe(
+                [
+                  { rgb: [0, 128, 255], num: 3 },
+                  { rgb: [153, 0, 255], num: 3 },
+                  { rgb: [255, 0, 153], num: 2 },
+                  { rgb: [0, 204, 255], num: 2 },
+                ],
+                0.5,
+                80,
+              ),
+          },
+          {
+            name: "Imperial",
+            rtttl: "Imperial:d=4,o=5,b=100:e,e,e,8c,16p,16g,e,8c,16p,16g,e,p,b,b,b,8c6,16p,16g,d#,8c,16p,16g,e,8p",
+            start: () => effectFlicker([255, 0, 0], 0.5, 0.3, 50),
+          },
+          {
+            name: "Scatman",
+            rtttl:
+              "Scatman:d=16,o=5,b=200:8b,b,32p,8b,b,32p,8b,2d6,p,c#6.,p.,8d6,p,c#6,8b,p,8f#,2p.,c#6,8p,d6.,p.,c#6,b,8p,8f#,2p,32p,2d6,p,c#6,8p,d6.,p.,c#6,a.,p.,8e,2p.,c#6,8p,d6.,p.,c#6,b,8p,8b,b,32p,8b,b,32p,8b,2d6,p,c#6.,p.,8d6,p,c#6,8b,p,8f#,2p.,c#6,8p,d6.,p.,c#6,b,8p,8f#,2p,32p,2d6,p,c#6,8p,d6.,p.,c#6,a.,p.,8e,2p.,c#6,8p,d6.,p.,c#6,a,8p,8e,2p,32p,f#6.,p.,b.,p.",
+            start: () => effectRandomTwinkle(1.0, 0.7, 10),
+          },
+        ];
+
+        let songCycleIdx = 0;
+        const playSong = () => {
+          if (songTimer) {
+            stopAudio();
+            clearEffect();
+            setAll([0, 0, 0]);
+            showLabels();
+            bloomActive = false;
+            controls.enabled = true;
+            return;
+          }
+          const s = songs[songCycleIdx % songs.length];
+          songCycleIdx++;
+          hideLabels();
+          s.start();
+          bloomActive = true;
+          controls.enabled = false;
+          playRTTTL(parseRTTTL(s.rtttl), () => {
+            clearEffect();
+            setAll([0, 0, 0]);
+            showLabels();
+            bloomActive = false;
+            controls.enabled = true;
+          });
+        };
+        const hideLabels = () => labels.forEach((l) => l.el.classList.add("is-other-active"));
+        const showLabels = () => labels.forEach((l) => l.el.classList.remove("is-other-active"));
+
+        // ---- Intro animation -------------------------------------------------
+        // The "LED & buzzer" group (named "leds") fades in instantly. The
+        // remaining modules follow with small random delays, each fading
+        // in while translating into place from an offset along the camera
+        // axis (so they appear to slide forward toward their final spot).
+        const ledsIdx = Math.max(
+          0,
+          topLevel.findIndex((g) => g.name === "leds"),
+        );
+        // Unlock only once every clickable module has been zoomed into.
+        const clickableGroupIndices = new Set(
+          groupFades
+            .map((g, i) => ({ i, meshes: g.meshes }))
+            .filter(({ meshes }) => meshes.some((m) => !snapMeshes.has(m)))
+            .map(({ i }) => i),
+        );
+        const seenModules = new Set<number>();
+        let buttonUnlocked = false;
+        const INTRO_LEAD_DURATION_MS = 180;
+        const INTRO_FOLLOW_DURATION_MS = 400;
+        const INTRO_FOLLOW_GAP_MS = 60;
+        // Distance (in model-local units) each follower starts offset from
+        // its final position along the camera-direction axis.
+        const INTRO_OFFSET_DISTANCE = 1.6;
+        const introStart = reducedMotion ? -Infinity : performance.now();
+        const introDelays: number[] = topLevel.map((_, i) =>
+          i === ledsIdx ? 0 : INTRO_FOLLOW_GAP_MS + Math.random() * 200,
+        );
+        const introDurations: number[] = topLevel.map((_, i) =>
+          i === ledsIdx ? INTRO_LEAD_DURATION_MS : INTRO_FOLLOW_DURATION_MS,
+        );
+        // Each follower starts offset toward the camera (-Z in model space)
+        // and slides to its final position as introFactor reaches 1.
+        const _offsetAxis = new THREE.Vector3(0, 0, -1).multiplyScalar(INTRO_OFFSET_DISTANCE);
+        const introOriginalPos: THREE.Vector3[] = topLevel.map((g) => g.position.clone());
+        const introOffset: THREE.Vector3[] = topLevel.map((_, i) =>
+          i === ledsIdx ? new THREE.Vector3() : _offsetAxis.clone(),
+        );
+        if (!reducedMotion) {
+          // Hide every material on frame 0 so the model doesn't flash before
+          // its intro begins. cycleUpdater fades them in via logicalOpacity.
+          for (const g of groupFades) {
+            for (const m of g.solid) {
+              logicalOpacity.set(m, m.opacity);
+              m.opacity = 0;
+            }
+            for (const m of g.wire) {
+              logicalOpacity.set(m, m.opacity);
+              m.opacity = 0;
+            }
+          }
+        }
+        const introFactor = (i: number, now: number) => {
+          const t = (now - introStart - introDelays[i]) / introDurations[i];
+          if (t <= 0) return 0;
+          if (t >= 1) return 1;
+          // ease-out cubic
+          return 1 - Math.pow(1 - t, 3);
+        };
+
+        // ---- Stage-2 camera intro -------------------------------------------
+        // After the per-module items have entered, the camera rotates from
+        // a near head-on view to the steady-state isometric direction. The
+        // CSS in this component runs a synchronised slide on the outer
+        // .block-hero__asset-container so the model also translates from
+        // page-centre back to its right-hand column home.
+        const homeTarget = controls.target.clone();
+        const INTRO_CAM_DELAY_MS = 200;
+        const INTRO_CAM_DURATION_MS = 900;
+        // Match the model's yaw so the intro starts face-on to the model's
+        // actual front regardless of ROT_ANGLE.
+        const FRONT_CAM_DIR = new THREE.Vector3(Math.sin(ROT_ANGLE), 0.35, Math.cos(ROT_ANGLE)).normalize();
+        const HOME_CAM_DIR = CAM_DIR.clone();
+        // Head-on view shows the model's full X×Y face while the iso view
+        // foreshortens both axes — multiply the home distance so the
+        // frontal pose doesn't blow up out of frame.
+        const FRONT_CAM_DIST_MUL = 1.5;
+        const _introCamDir = new THREE.Vector3();
+        const easeInOutCubic = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+        if (!reducedMotion) {
+          // Place the camera in its starting (head-on) pose immediately so
+          // the first rendered frame doesn't flash the isometric view.
+          _introCamDir.copy(FRONT_CAM_DIR);
+          camera.position.copy(controls.target).addScaledVector(_introCamDir, homeDistance * FRONT_CAM_DIST_MUL);
+          camera.lookAt(controls.target);
+          // Lock OrbitControls until the intro completes so user drags can't
+          // fight the choreographed rotation.
+          controls.enabled = false;
+          window.setTimeout(
+            () => {
+              controls.enabled = true;
+              // Camera has reached its resting position — snap labels so they
+              // don't lerp from their intro-animation snap position to here.
+              for (const label of labels) label.hasPosition = false;
+              snapLocked = true;
+            },
+            INTRO_CAM_DELAY_MS + INTRO_CAM_DURATION_MS + 100,
+          );
+        } else {
+          snapLocked = true;
+        }
+
+        // Re-apply edge colour whenever Starlight flips the theme.
+        const applyThemePalette = () => {
+          const edge = isLightTheme() ? EDGE_LIGHT : EDGE_DARK;
+          BLUEPRINT_COLOR.copy(edge);
+          TINT_COLOR.copy(isLightTheme() ? TINT_LIGHT : TINT_DARK);
+          for (const overlay of allEdgeOverlays) {
+            (overlay.material as THREE.LineBasicMaterial).color.copy(edge);
+          }
+        };
+        const themeObserver = new MutationObserver(applyThemePalette);
+        themeObserver.observe(document.documentElement, {
+          attributes: true,
+          attributeFilter: ["data-theme"],
+        });
+
+        // Per-group camera overrides — only declared where the auto-computed
+        // values need adjustment. distanceScale multiplies the auto distance;
+        // centerOffset shifts the orbit target from the bbox centre.
+        const groupCameraOverrides: Record<
+          string,
+          { distanceScale?: number; centerOffset?: [number, number, number] }
+        > = {
+          pir: { distanceScale: 1.4 },
+        };
+
+        // Precompute per-group bounding spheres for the zoom animation.
+        const groupFocus = topLevel.map((obj: THREE.Object3D) => {
+          const box = new THREE.Box3().setFromObject(obj);
+          const center = new THREE.Vector3();
+          const sphere = new THREE.Sphere();
+          box.getCenter(center);
+          box.getBoundingSphere(sphere);
+          const radius = Math.max(sphere.radius, 0.05);
+          const override = groupCameraOverrides[obj.name.toLowerCase()] ?? {};
+          const distance = (radius / Math.sin(fovY / 2)) * 1.6 * (override.distanceScale ?? 1);
+          if (override.centerOffset) {
+            center.x += override.centerOffset[0];
+            center.y += override.centerOffset[1];
+            center.z += override.centerOffset[2];
+          }
+          return { center, distance };
+        });
+
+        const desiredTarget = new THREE.Vector3();
+        const desiredCamPos = new THREE.Vector3();
+        const dirFromTarget = new THREE.Vector3();
+        // Scratch vector for the mobile-adjusted orbit target (avoids allocating
+        // a new Vector3 every frame).
+        const _mobileFocusTarget = new THREE.Vector3();
+        // Scratch + smoothed state for the detail card's per-frame screen
+        // positioning (see cycleUpdater).
+        const _detailProj = new THREE.Vector3();
+        let _detailCardCurrentLeft = 0;
+        let _detailCardCurrentTop = 0;
+        let _detailCardHasPos = false;
+        // On mobile the detail card anchors to the bottom of the canvas, so
+        // shift the orbit target upward (positive world Y) to push the focused
+        // module into the lower portion of the frame and leave headroom above
+        // the card.
+        const MOBILE_FOCUS_Y_OFFSET = 0.03;
+        const MOBILE_ZOOM_SCALE = 0.95;
+
+        let activeIdx = -1; // -1 = all groups active (default state)
+        let _returningHome = false;
+        let _zoomingIn = false;
+
+        // Card host that appears when a component is focused; populated
+        // from the matching label's [data-label-detail] slot content.
+        const detailCard = assetContainer?.querySelector<HTMLElement>("#hero-detail-card") ?? null;
+        const detailBodyEl = detailCard?.querySelector<HTMLElement>("[data-detail-body]") ?? null;
+        const detailTitleEl = detailCard?.querySelector<HTMLElement>("[data-detail-title]") ?? null;
+
+        const applyActiveState = (idx: number) => {
+          const focusing = idx !== -1;
+          if (focusing) {
+            _zoomingIn = true;
+            _returningHome = false;
+          }
+          for (const label of labels) {
+            if (focusing) {
+              // Hide all labels when a module is focused — the detail card
+              // shows the title and content instead.
+              label.el.classList.add("is-other-active");
+            }
+            // When reverting, leave is-other-active in place — cycleUpdater
+            // removes it once the camera has returned to home position so
+            // labels don't fade in while still at the wrong zoom/position.
+          }
+          if (!detailCard) return;
+          if (!focusing) {
+            _returningHome = true;
+            controls.enabled = false;
+            detailCard.classList.remove("is-active");
+            detailCard.setAttribute("inert", "");
+            return;
+          }
+          const match = labels.find((l) => l.groupIdx === idx);
+          if (!match || !match.detailHTML) {
+            detailCard.classList.remove("is-active");
+            detailCard.setAttribute("inert", "");
+            return;
+          }
+          if (detailTitleEl) detailTitleEl.textContent = match.labelText;
+          if (detailBodyEl) detailBodyEl.innerHTML = match.detailHTML;
+          detailCard.classList.add("is-active");
+          detailCard.removeAttribute("inert");
+        };
+
+        const setActive = (idx: number) => {
+          if (idx === activeIdx) return;
+          activeIdx = idx;
+          applyActiveState(idx);
+        };
+
+        const IDLE_REVERT_MS = 15_000;
+        let revertTimer: ReturnType<typeof setTimeout> | undefined;
+        const cancelRevert = () => {
+          if (revertTimer) {
+            clearTimeout(revertTimer);
+            revertTimer = undefined;
+          }
+        };
+        const scheduleRevert = () => {
+          cancelRevert();
+          revertTimer = setTimeout(() => setActive(-1), IDLE_REVERT_MS);
+        };
+
+        // Shared handler for both mesh clicks and label clicks.
+        // Clicking the active module reverts; clicking any other focuses it
+        // and starts the idle-revert countdown.
+        const focusModule = (idx: number) => {
+          if (clickableGroupIndices.has(idx)) {
+            seenModules.add(idx);
+            const wasUnlocked = buttonUnlocked;
+            buttonUnlocked = seenModules.size >= clickableGroupIndices.size;
+            // Song/bloom playback can't start until the button is unlocked
+            // (see the pointerup handler below), so this is the earliest
+            // possible moment the bloom pipeline could be needed.
+            if (buttonUnlocked && !wasUnlocked) ensureBloomPipeline();
+          }
+          if (idx === activeIdx) {
+            setActive(-1);
+            cancelRevert();
+          } else {
+            setActive(idx);
+            scheduleRevert();
+          }
+        };
+
+        const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
+
+        cycleUpdater = (now: number) => {
+          if (!groupFades.length) return;
+
+          // Lerp every group's solid/wire opacity toward its target state.
+          for (let i = 0; i < groupFades.length; i++) {
+            const { solid, wire, root } = groupFades[i];
+            // activeIdx === -1 means "all active" — every group reads solid;
+            // otherwise the selected group is solid, the rest go wireframe.
+            const isActive = activeIdx === -1 || i === activeIdx;
+            const targetSolid = isActive ? 1 : 0;
+            // Active module keeps a faint sketch edge; inactive modules show
+            // the full dim wireframe so the assembly reads as one board.
+            const targetWire = isActive ? WIRE_MIN : WIRE_DIM;
+            const introF = introFactor(i, now);
+            root.position.copy(introOriginalPos[i]).addScaledVector(introOffset[i], 1 - introF);
+            for (const m of solid) {
+              const tgt = snapLocked && snapSolidMats.has(m) ? 0 : targetSolid;
+              const next = lerp(logicalOpacity.get(m) ?? m.opacity, tgt, SOLID_LERP);
+              logicalOpacity.set(m, next);
+              m.opacity = next * introF;
+            }
+            for (const m of wire) {
+              const tgt = snapLocked && snapWireMats.has(m) ? WIRE_DIM : targetWire;
+              const next = lerp(logicalOpacity.get(m) ?? m.opacity, tgt, SOLID_LERP);
+              logicalOpacity.set(m, next);
+              m.opacity = next * introF;
+            }
+          }
+
+          // Stage-2 intro: override camera direction (and distance) while
+          // it rotates from the head-on starting pose to the isometric
+          // home direction. The standard zoom-lerp below preserves
+          // whatever direction we leave here, so once the intro completes
+          // this block becomes a no-op.
+          const camT = (now - introStart - INTRO_CAM_DELAY_MS) / INTRO_CAM_DURATION_MS;
+          if (camT < 1) {
+            const eased = easeInOutCubic(Math.max(0, Math.min(1, camT)));
+            _introCamDir.copy(FRONT_CAM_DIR).lerp(HOME_CAM_DIR, eased).normalize();
+            const dist = lerp(homeDistance * FRONT_CAM_DIST_MUL, homeDistance, eased);
+            camera.position.copy(controls.target).addScaledVector(_introCamDir, dist);
+            camera.lookAt(controls.target);
+          }
+
+          // Camera zoom: lerp toward the focused group when one is selected,
+          // otherwise lerp back to the home (overview) framing. Direction is
+          // preserved so OrbitControls drag still works.
+          const focus = activeIdx !== -1 ? groupFocus[activeIdx] : null;
+          const isMobile = width < 768;
+          const zoomTarget = focus
+            ? isMobile
+              ? _mobileFocusTarget.copy(focus.center).setY(focus.center.y + MOBILE_FOCUS_Y_OFFSET)
+              : focus.center
+            : homeTarget;
+          const zoomDistance = focus ? focus.distance * (isMobile ? MOBILE_ZOOM_SCALE : 1) : homeDistance;
+          desiredTarget.copy(controls.target).lerp(zoomTarget, ZOOM_LERP);
+          controls.target.copy(desiredTarget);
+          dirFromTarget.copy(camera.position).sub(controls.target);
+          const currentDist = dirFromTarget.length() || 0.001;
+          dirFromTarget.normalize();
+          // Steer direction only during active transitions — never while the
+          // user is freely browsing, so drags aren't fought or snapped back.
+          if (_zoomingIn) {
+            dirFromTarget.lerp(FRONT_CAM_DIR, ZOOM_LERP).normalize();
+            if (dirFromTarget.dot(FRONT_CAM_DIR) > 0.9998) _zoomingIn = false;
+          } else if (_returningHome) {
+            dirFromTarget.lerp(CAM_DIR, ZOOM_LERP).normalize();
+            if (dirFromTarget.dot(CAM_DIR) > 0.9998) {
+              _returningHome = false;
+              if (!songTimer) {
+                controls.enabled = true;
+                for (const label of labels) label.el.classList.remove("is-other-active");
+              }
+            }
+          }
+          const nextDist = lerp(currentDist, zoomDistance, ZOOM_LERP);
+          desiredCamPos.copy(controls.target).addScaledVector(dirFromTarget, nextDist);
+          camera.position.copy(desiredCamPos);
+
+          // Detail card placement: when a module is focused, anchor the card
+          // just below the projected centre of that module so it reads as a
+          // callout for the zoomed-in part rather than a corner overlay.
+          // Mobile (width < 768) keeps the bottom-sheet behaviour from CSS.
+          if (detailCard) {
+            if (width < 768 || activeIdx === -1) {
+              if (_detailCardHasPos) {
+                detailCard.style.left = "";
+                detailCard.style.top = "";
+                detailCard.style.bottom = "";
+                _detailCardHasPos = false;
+              }
+            } else {
+              const focusGroup = groupFocus[activeIdx];
+              if (focusGroup) {
+                _detailProj.copy(focusGroup.center).project(camera);
+                const screenX = ((_detailProj.x + 1) / 2) * width;
+                const screenY = ((-_detailProj.y + 1) / 2) * height;
+                const cardW = detailCard.offsetWidth || 280;
+                const cardH = detailCard.offsetHeight || 100;
+                const MARGIN = 16;
+                // Drop the card below the projected module centre by a
+                // distance that scales with viewport height, so on tall
+                // viewports the card doesn't crowd the module.
+                const drop = Math.min(140, Math.max(70, height * 0.18));
+                const desiredLeft = Math.max(MARGIN, Math.min(width - cardW - MARGIN, screenX - cardW / 2));
+                const desiredTop = Math.max(MARGIN, Math.min(height - cardH - MARGIN, screenY + drop));
+                if (!_detailCardHasPos) {
+                  _detailCardCurrentLeft = desiredLeft;
+                  _detailCardCurrentTop = desiredTop;
+                  _detailCardHasPos = true;
+                } else {
+                  _detailCardCurrentLeft += (desiredLeft - _detailCardCurrentLeft) * 0.18;
+                  _detailCardCurrentTop += (desiredTop - _detailCardCurrentTop) * 0.18;
+                }
+                detailCard.style.left = `${_detailCardCurrentLeft}px`;
+                detailCard.style.top = `${_detailCardCurrentTop}px`;
+                detailCard.style.bottom = "auto";
+              }
+            }
+          }
+
+          // LED glow — map ledState[i] RGB (0-255) onto each mesh's emissive.
+          // Also toggle BLOOM_LAYER per LED so unlit LEDs don't glow from their base colour.
+          for (let _i = 0; _i < ledMeshes.length; _i++) {
+            const [r, g, b] = ledState[_i] ?? [0, 0, 0];
+            const _max = Math.max(r, g, b);
+            const _on = _max > 0;
+            const _mesh = ledMeshes[_i];
+            if (_on) _mesh.layers.enable(BLOOM_LAYER);
+            else _mesh.layers.disable(BLOOM_LAYER);
+            const _mat = _mesh.material as THREE.MeshStandardMaterial;
+            if (!_mat.emissive) continue;
+            // Normalise to full saturation then pull back 5% toward grey.
+            const _DESAT = 0.05;
+            const _nr = r / _max || 0,
+              _ng = g / _max || 0,
+              _nb = b / _max || 0;
+            const _grey = (_nr + _ng + _nb) / 3;
+            _mat.emissive.setRGB(
+              _nr * (1 - _DESAT) + _grey * _DESAT,
+              _ng * (1 - _DESAT) + _grey * _DESAT,
+              _nb * (1 - _DESAT) + _grey * _DESAT,
+            );
+            _mat.emissiveIntensity = (_max / 255) * LED_EMISSIVE_INTENSITY;
+          }
+
+          // Button colour: red while playing, fade to white on hover,
+          // slow #9abd32 pulse when unlocked+idle, original otherwise.
+          {
+            const _playing = songTimer !== null;
+            const _hoverTarget = !_playing && buttonpressHovered ? 1 : 0;
+            buttonHoverT += (_hoverTarget - buttonHoverT) * 0.12;
+            const _pulse =
+              buttonUnlocked && !_playing && activeIdx === -1 ? (Math.sin(now * 0.0015) * 0.5 + 0.5) * 0.45 : 0;
+            const _hintColor = new THREE.Color(0x9abd32);
+            const _white = new THREE.Color(1, 1, 1);
+            buttonpressMeshes.forEach((_bm, _bi) => {
+              const _bmat = _bm.material as THREE.MeshStandardMaterial;
+              if (_playing) {
+                _bmat.color.setRGB(1, 0, 0);
+              } else if (buttonHoverT > 0.001) {
+                _bmat.color.copy(buttonpressOrigColors[_bi]).lerp(_white, buttonHoverT);
+              } else if (_pulse > 0) {
+                _bmat.color.copy(buttonpressOrigColors[_bi]).lerp(_hintColor, _pulse);
+              } else {
+                _bmat.color.copy(buttonpressOrigColors[_bi]);
+              }
+            });
+          }
+
+          // Button press animation
+          if (buttonpressObj) {
+            buttonPressT += (buttonPressTarget - buttonPressT) * 0.2;
+            buttonpressObj.position
+              .copy(buttonpressOrigPos)
+              .addScaledVector(BUTTON_PRESS_AXIS, buttonPressT * BUTTON_PRESS_DIST);
+          }
+        };
+
+        // Raycaster click handling: pick whichever top-level group contains
+        // the intersected mesh and make it active.
+        const raycaster = new THREE.Raycaster();
+        const pointer = new THREE.Vector2();
+        const allMeshes = groupFades.flatMap((g) => g.meshes).filter((m) => !snapMeshes.has(m));
+        const groupForObject = (obj: THREE.Object3D | null): number => {
+          while (obj) {
+            const idx = topLevel.indexOf(obj);
+            if (idx !== -1) return idx;
+            obj = obj.parent;
+          }
+          return -1;
+        };
+        // Distinguish click vs drag: if the pointer travels more than a few
+        // pixels between down and up we treat it as a drag (orbit) and skip
+        // focusing the model.
+        const heroPrompt = assetContainer?.querySelector<HTMLElement>(".hero-prompt") ?? null;
+        canvas.addEventListener(
+          "pointerdown",
+          () => {
+            heroPrompt?.classList.add("hero-prompt--hidden");
+          },
+          { once: true },
+        );
+
+        const CLICK_MOVE_THRESHOLD_SQ = 25;
+        let pointerDown: { x: number; y: number; id: number } | null = null;
+        canvas.addEventListener("pointerdown", (event) => {
+          pointerDown = {
+            x: event.clientX,
+            y: event.clientY,
+            id: event.pointerId,
+          };
+        });
+        canvas.addEventListener("pointerup", (event) => {
+          const start = pointerDown;
+          pointerDown = null;
+          if (!start || start.id !== event.pointerId) return;
+          const dx = event.clientX - start.x;
+          const dy = event.clientY - start.y;
+          // Treat as a click only if the pointer barely moved between
+          // down and up; otherwise it was a drag (orbit) and we ignore it.
+          if (dx * dx + dy * dy > CLICK_MOVE_THRESHOLD_SQ) return;
+          const rect = canvas.getBoundingClientRect();
+          pointer.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+          pointer.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+          raycaster.setFromCamera(pointer, camera);
+          if (
+            buttonUnlocked &&
+            activeIdx === -1 &&
+            buttonpressMeshes.length &&
+            raycaster.intersectObjects(buttonpressMeshes, false).length
+          ) {
+            buttonPressTarget = 1;
+            _returningHome = true;
+            _zoomingIn = false;
+            setTimeout(() => {
+              buttonPressTarget = 0;
+            }, BUTTON_PRESS_MS);
+            setTimeout(() => {
+              playSong();
+            }, BUTTON_PRESS_MS + 50);
+            return;
+          }
+          if (songTimer) return;
+          const hits = raycaster.intersectObjects(allMeshes, false);
+          if (!hits.length) return;
+          const idx = groupForObject(hits[0].object);
+          if (idx !== -1) focusModule(idx);
+        });
+        canvas.addEventListener("pointercancel", () => {
+          pointerDown = null;
+        });
+
+        let buttonpressHovered = false;
+        canvas.addEventListener("pointermove", (event) => {
+          if (!buttonpressMeshes.length || !buttonUnlocked || activeIdx !== -1) {
+            buttonpressHovered = false;
+            return;
+          }
+          const rect = canvas.getBoundingClientRect();
+          pointer.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+          pointer.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+          raycaster.setFromCamera(pointer, camera);
+          buttonpressHovered = raycaster.intersectObjects(buttonpressMeshes, false).length > 0;
+        });
+
+        controls.addEventListener("start", () => {
+          _zoomingIn = false;
+          cancelRevert();
+        });
+        controls.addEventListener("end", () => {
+          if (activeIdx !== -1) scheduleRevert();
+        });
+        canvas.style.cursor = "pointer";
+
+        for (const label of labels) {
+          const positionAttr = label.el.dataset.position;
+          if (positionAttr) {
+            const [px, py, pz] = positionAttr.split(",").map(Number);
+            const anchor = new THREE.Object3D();
+            anchor.position.set(px || 0, py || 0, pz || 0);
+            anchor.position.sub(LED_PIVOT).applyAxisAngle(ROT_AXIS, ROT_ANGLE).add(LED_PIVOT);
+            scene.add(anchor);
+            label.target = anchor;
+            continue;
+          }
+
+          const name = label.el.dataset.target?.toLowerCase();
+          if (!name) continue;
+          const obj = byName.get(name) ?? null;
+          if (!obj) {
+            console.warn(`[Hero] No object named "${label.el.dataset.target}" found in model.`);
+            continue;
+          }
+          // Place the anchor at the bbox centre of the named group so the
+          // dot appears at the visual midpoint rather than the group origin.
+          const bboxCenter = new THREE.Vector3();
+          new THREE.Box3().setFromObject(obj).getCenter(bboxCenter);
+          const anchor = new THREE.Object3D();
+          anchor.position.copy(bboxCenter);
+          scene.add(anchor);
+          label.target = anchor;
+        }
+
+        // Map each label to its nearest top-level group so we know which
+        // labels to keep visible (and which detail card to show) when a
+        // component is focused.
+        const tmpWorld = new THREE.Vector3();
+        for (const label of labels) {
+          if (!label.target) continue;
+          label.target.getWorldPosition(tmpWorld);
+          let bestIdx = -1;
+          let bestDist = Infinity;
+          for (let i = 0; i < groupFocus.length; i++) {
+            const d = tmpWorld.distanceToSquared(groupFocus[i].center);
+            if (d < bestDist) {
+              bestDist = d;
+              bestIdx = i;
+            }
+          }
+          label.groupIdx = bestIdx;
+        }
+
+        // Wire up label clicks — same behaviour as clicking the mesh directly.
+        for (const label of labels) {
+          const activateLabel = () => {
+            heroPrompt?.classList.add("hero-prompt--hidden");
+            if (label.groupIdx !== -1) focusModule(label.groupIdx);
+          };
+          label.el.addEventListener("click", activateLabel);
+          label.el.addEventListener("keydown", (event: KeyboardEvent) => {
+            if (event.key === "Enter" || event.key === " ") {
+              event.preventDefault();
+              activateLabel();
+            }
+          });
+        }
+
+        detailCard?.querySelector<HTMLElement>("[data-detail-close]")?.addEventListener("click", () => {
+          setActive(-1);
+          cancelRevert();
+        });
+
+        setTimeout(() => {
+          labelsEnabled = true;
+        }, 600);
+      })
+      .catch((error: unknown) => {
+        console.error("[Hero] Failed to load model:", error);
+        assetContainer?.removeAttribute("data-hero-loading");
+        assetContainer?.classList.add("is-load-error");
+      });
+
+    // Recomputes homeDistance for the current viewport and snaps the camera
+    // to that distance along its current direction. No-op until model loads.
+    const refitCamera = () => {
+      if (!modelScaledSize) return;
+      const distY = modelScaledSize.y / 2 / Math.tan(fovY / 2);
+      homeDistance = (distY + modelScaledSize.z / 2) * homeZoom();
+      const dir = camera.position.clone().sub(controls.target).normalize();
+      camera.position.copy(controls.target).addScaledVector(dir, homeDistance);
+    };
+
+    const RESIZE_EPSILON_PX = 2;
+    // Mobile browsers can still shave/restore a few dozen px of visual
+    // viewport height as the address bar hides on scroll, independent of the
+    // svh-based CSS sizing above. On coarse-pointer devices, ignore
+    // height-only deltas within that range so toolbar movement can't retrigger
+    // a full renderer/composer resize every animation frame.
+    const isCoarsePointer = window.matchMedia("(pointer: coarse)").matches;
+    const TOOLBAR_HEIGHT_GUARD_PX = 150;
+
+    let resizeScheduled = false;
+
+    const applyResize = () => {
+      resizeScheduled = false;
+      const next = getSize();
+      const dw = Math.abs(next.width - width);
+      const dh = Math.abs(next.height - height);
+      if (dw < RESIZE_EPSILON_PX && dh < RESIZE_EPSILON_PX) return;
+      if (isCoarsePointer && dw < RESIZE_EPSILON_PX && dh < TOOLBAR_HEIGHT_GUARD_PX) return;
+
+      width = next.width;
+      height = next.height;
+      renderer.setSize(width, height, false);
+      bloomComposer?.setSize(width, height);
+      finalComposer?.setSize(width, height);
+      camera.aspect = width / height;
+      camera.updateProjectionMatrix();
+      refitCamera();
+      for (const label of labels) label.hasPosition = false;
+    };
+
+    // Coalesced to one application per animation frame — the ResizeObserver
+    // can otherwise fire faster than the frame budget on slower devices,
+    // which is what causes "ResizeObserver loop completed with undelivered
+    // notifications" to repeat indefinitely.
+    const resize = () => {
+      if (resizeScheduled) return;
+      resizeScheduled = true;
+      requestAnimationFrame(applyResize);
+    };
+
+    new ResizeObserver(resize).observe(canvas);
+
+    // Debounced window resize: recalculates homeZoom after the viewport has
+    // settled so breakpoint changes (desktop→tablet/mobile) use the correct
+    // zoom constant — the ResizeObserver alone can read stale window.innerWidth.
+    let _resizeDebounce: ReturnType<typeof setTimeout> | undefined;
+    window.addEventListener("resize", () => {
+      clearTimeout(_resizeDebounce);
+      _resizeDebounce = setTimeout(() => {
+        resize();
+        refitCamera();
+      }, 150);
+    });
+
+    const projected = new THREE.Vector3();
+
+    const updateLabels = () => {
+      if (!assetContainer || !labels.length) return;
+      const w = width;
+      const h = height;
+      if (labelOverlay) {
+        labelOverlay.setAttribute("viewBox", `0 0 ${w} ${h}`);
+      }
+
+      // Pass 1: project anchors, compute initial label positions, hide
+      // anything off-screen.
+      const visible: Array<{
+        label: (typeof labels)[number];
+        targetX: number;
+        targetY: number;
+        labelX: number;
+        labelY: number;
+        halfW: number;
+        halfH: number;
+      }> = [];
+
+      for (const label of labels) {
+        if (!label.target) continue;
+
+        label.target.getWorldPosition(label.anchor);
+        projected.copy(label.anchor).project(camera);
+
+        const onScreen =
+          projected.z > -1 &&
+          projected.z < 1 &&
+          projected.x > -1.1 &&
+          projected.x < 1.1 &&
+          projected.y > -1.1 &&
+          projected.y < 1.1;
+
+        // Hide the SVG line/dot for labels that are off-screen OR
+        // suppressed because another component is currently focused.
+        const suppressed = label.el.classList.contains("is-other-active");
+        if (!onScreen || suppressed) {
+          label.el.classList.remove("is-ready");
+          label.hasPosition = false;
+          if (label.line) label.line.setAttribute("visibility", "hidden");
+          if (label.dot) label.dot.setAttribute("visibility", "hidden");
+          continue;
+        }
+
+        const targetX = ((projected.x + 1) / 2) * w;
+        const targetY = ((-projected.y + 1) / 2) * h;
+
+        if (label.dot) {
+          label.dot.setAttribute("cx", String(targetX));
+          label.dot.setAttribute("cy", String(targetY));
+          if (labelsEnabled) label.dot.removeAttribute("visibility");
+        }
+
+        visible.push({
+          label,
+          targetX,
+          targetY,
+          labelX: targetX + label.offsetX,
+          labelY: targetY + label.offsetY,
+          halfW: label.el.offsetWidth / 2,
+          halfH: label.el.offsetHeight / 2,
+        });
+      }
+
+      // Pass 2: iteratively separate any overlapping label boxes.
+      // Boxes are centred on (labelX, labelY) because of translate(-50%, -50%).
+      const PADDING = 6;
+      const MAX_ITER = 8;
+      for (let iter = 0; iter < MAX_ITER; iter++) {
+        let moved = false;
+        for (let i = 0; i < visible.length; i++) {
+          for (let j = i + 1; j < visible.length; j++) {
+            const a = visible[i];
+            const b = visible[j];
+            const dx = b.labelX - a.labelX;
+            const dy = b.labelY - a.labelY;
+            const minDistX = a.halfW + b.halfW + PADDING;
+            const minDistY = a.halfH + b.halfH + PADDING;
+            const overlapX = minDistX - Math.abs(dx);
+            const overlapY = minDistY - Math.abs(dy);
+            if (overlapX <= 0 || overlapY <= 0) continue;
+
+            // Separate along the axis with the smaller overlap.
+            if (overlapY <= overlapX) {
+              const push = overlapY / 2;
+              const sign = dy === 0 ? 1 : Math.sign(dy);
+              a.labelY -= sign * push;
+              b.labelY += sign * push;
+            } else {
+              const push = overlapX / 2;
+              const sign = dx === 0 ? 1 : Math.sign(dx);
+              a.labelX -= sign * push;
+              b.labelX += sign * push;
+            }
+            moved = true;
+          }
+        }
+        if (!moved) break;
+      }
+
+      // Pass 3: smooth toward the resolved positions and commit them.
+      // First appearance snaps; subsequent frames ease for a softer feel.
+      const LERP = 0.18;
+      for (const v of visible) {
+        const desiredX = v.labelX;
+        const desiredY = v.labelY;
+
+        if (!v.label.hasPosition) {
+          v.label.currentX = desiredX;
+          v.label.currentY = desiredY;
+          v.label.hasPosition = true;
+        } else {
+          v.label.currentX += (desiredX - v.label.currentX) * LERP;
+          v.label.currentY += (desiredY - v.label.currentY) * LERP;
+        }
+
+        const finalX = v.label.currentX;
+        const finalY = v.label.currentY;
+
+        v.label.el.style.left = `${finalX}px`;
+        v.label.el.style.top = `${finalY}px`;
+
+        if (v.label.line) {
+          // Clip the label-side endpoint to the edge of the label's box so
+          // the line doesn't disappear inside the pill. Small padding keeps
+          // it from visually touching the border.
+          const LINE_GAP = 2;
+          const dx = finalX - v.targetX;
+          const dy = finalY - v.targetY;
+          let edgeX = finalX;
+          let edgeY = finalY;
+          if (dx !== 0 || dy !== 0) {
+            const halfW = v.halfW + LINE_GAP;
+            const halfH = v.halfH + LINE_GAP;
+            const tx = dx !== 0 ? halfW / Math.abs(dx) : Infinity;
+            const ty = dy !== 0 ? halfH / Math.abs(dy) : Infinity;
+            const t = Math.min(tx, ty, 1);
+            edgeX = finalX - dx * t;
+            edgeY = finalY - dy * t;
+          }
+
+          v.label.line.setAttribute("x1", String(edgeX));
+          v.label.line.setAttribute("y1", String(edgeY));
+          v.label.line.setAttribute("x2", String(v.targetX));
+          v.label.line.setAttribute("y2", String(v.targetY));
+          if (labelsEnabled) v.label.line.removeAttribute("visibility");
+        }
+
+        if (labelsEnabled) v.label.el.classList.add("is-ready");
+      }
+    };
+
+    // Bloom pipeline is only activated during song playback — idle rendering
+    // uses a plain renderer.render() which restores native canvas MSAA.
+    let bloomActive = false;
+
+    const loopFn = () => {
+      controls.update();
+      cycleUpdater(performance.now());
+      if (bloomActive && bloomComposer && finalComposer && mixPass) {
+        scene.traverse(darkenNonBloom);
+        bloomComposer.render();
+        scene.traverse(restoreMaterials);
+        mixPass.material.uniforms.bloomTexture.value = bloomComposer.readBuffer.texture;
+        finalComposer.render();
+      } else {
+        renderer.render(scene, camera);
+      }
+      updateLabels();
+    };
+    renderer.setAnimationLoop(loopFn);
+
+    new IntersectionObserver(
+      (entries) => {
+        renderer.setAnimationLoop(entries[0].isIntersecting ? loopFn : null);
+      },
+      { threshold: 0 },
+    ).observe(canvas);
+  }
+</script>
+
+<style lang="scss">
+  @use "../../styles/mixins" as *;
+
+  .block-hero {
+    min-height: 600px;
+    margin: 0;
+    position: relative;
+    padding-top: 5.5rem;
+    overflow: hidden;
+    display: flex;
+    align-items: stretch;
+
+    @include bp(tablet) {
+      height: calc(100svh - var(--sl-nav-height));
+      max-height: 45rem;
+      padding-top: 8.75rem;
+    }
+
+    @include bp(desktop) {
+      max-height: 100%;
+    }
+
+    .container {
+      flex-direction: column;
+      gap: 2rem;
+
+      @include bp(tablet) {
+        flex-direction: row;
+        padding-right: 0;
+        padding-left: 0;
+      }
+
+      @include bp(desktop) {
+        padding-right: calc(var(--container-gutters) / 2);
+        padding-left: calc(var(--container-gutters) / 2);
+      }
+    }
+
+    &__content-container,
+    &__asset-container {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      position: relative;
+      margin: 0;
+      z-index: 5;
+    }
+
+    &__content-container {
+      @include bp(tablet) {
+        padding-left: calc(var(--container-gutters) / 2);
+      }
+
+      @include bp(large-desktop) {
+        padding-left: 0;
+      }
+    }
+
+    &__asset-container {
+      height: 100%;
+      min-height: clamp(440px, 60svh, 720px);
+      user-select: none;
+      -webkit-user-select: none;
+      overflow: visible;
+      display: flex;
+      position: relative;
+    }
+
+    &__asset-stage {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      min-height: inherit;
+      display: flex;
+
+      #hero-scene {
+        display: block;
+        width: 100%;
+        height: 100%;
+        // height:100% can't resolve through a min-height-only parent; this
+        // propagates the same clamp floor so clientHeight is never 0.
+        min-height: inherit;
+        touch-action: none;
+        opacity: 0;
+        transition: opacity 0.15s ease;
+      }
+
+      &.is-model-ready #hero-scene {
+        opacity: 1;
+      }
+
+      .block-hero__loader {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 40px;
+        height: 40px;
+        pointer-events: none;
+        z-index: 8;
+        opacity: 1;
+        transition: opacity 0.4s ease;
+
+        &::before,
+        &::after {
+          content: "";
+          position: absolute;
+          inset: 0;
+          border-radius: 50%;
+          border: 1.5px solid transparent;
+        }
+
+        &::before {
+          border-color: rgba(255, 255, 255, 0.15);
+        }
+
+        &::after {
+          border-top-color: rgba(255, 255, 255, 0.6);
+          animation: heroLoaderSpin 0.9s linear infinite;
+        }
+      }
+
+      &.is-model-ready .block-hero__loader {
+        opacity: 0;
+      }
+
+      &.is-load-error .block-hero__loader {
+        opacity: 0;
+      }
+    }
+
+    &__label-lines {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      overflow: visible;
+      z-index: 9;
+      display: none;
+
+      @include bp(tablet) {
+        display: block;
+      }
+    }
+  }
+
+  :global(.block-hero__label-line) {
+    stroke: rgba(255, 255, 255, 0.5);
+    stroke: var(--esk-primary-color);
+  }
+
+  :global([data-theme="light"] .block-hero__loader::before) {
+    border-color: rgba(0, 46, 62, 0.12);
+  }
+  :global([data-theme="light"] .block-hero__loader::after) {
+    border-top-color: rgba(0, 46, 62, 0.55);
+  }
+
+  :global(.block-hero__label-dot) {
+    fill: var(--esk-primary-color--light);
+    stroke: var(--esk-primary-color);
+    stroke-width: 1;
+  }
+
+  // Hero labels are floating DOM elements positioned over the canvas. Hide
+  // them (and their SVG lines/dots) on mobile — interaction is tap-to-popup only.
+  :global(.hero-label) {
+    display: none;
+
+    @include bp(tablet) {
+      display: block;
+    }
+  }
+
+  .hero-detail-card {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    z-index: 11;
+    width: 96%;
+    max-width: 380px;
+    padding: 0.85rem;
+    border-radius: 12px;
+    border: 1px solid var(--esk-primary-color);
+    background: var(--esk-primary-color--light);
+    backdrop-filter: blur(8px);
+    color: #002e3e;
+    opacity: 0;
+    pointer-events: none;
+    transform: translate3d(-50%, 8px, 0);
+    transition:
+      opacity 0.3s ease,
+      transform 0.3s ease;
+
+    @include bp(tablet) {
+      width: auto;
+      max-width: 320px;
+      padding: 1rem 1.25rem;
+    }
+
+    &.is-active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    &__header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 0.5rem;
+      margin-bottom: 0.4rem;
+    }
+
+    &__title {
+      font-size: 0.875rem;
+      font-weight: 700;
+      margin: 0;
+      color: #002e3e;
+      text-transform: uppercase;
+    }
+
+    &__close {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: none;
+      border: none;
+      padding: 0;
+      margin-top: -2px;
+      cursor: pointer;
+      color: #002e3e;
+      opacity: 0.5;
+      transition: opacity 0.15s;
+
+      &:hover {
+        opacity: 1;
+      }
+    }
+
+    &__body {
+      font-size: 0.875rem;
+      line-height: 1.3;
+
+      :global(p) {
+        margin: 0 0 0.5rem;
+
+        &:last-child {
+          margin-bottom: 0;
+        }
+      }
+    }
+  }
+
+  // Closing of .block-hero is below; reopen so subsequent nested rules
+  // continue to scope correctly.
+  .block-hero {
+    &__content {
+      > * {
+        animation: heroContentIn 0.7s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+
+        &:nth-child(1) {
+          animation-delay: 0.1s;
+        }
+        &:nth-child(2) {
+          animation-delay: 0.25s;
+        }
+        &:nth-child(3) {
+          animation-delay: 0.4s;
+        }
+        &:nth-child(4) {
+          animation-delay: 0.6s;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          animation: none;
+        }
+      }
+
+      h1 {
+        font-weight: 300;
+        letter-spacing: -0.02em;
+        @include fluid(28px, 52px, $property: margin-bottom);
+        @include fluid(36px, 64px);
+        text-wrap: balance;
+
+        strong {
+          font-weight: 600;
+        }
+      }
+
+      p {
+        font-size: 1.5rem;
+        @include fluid(20px, 24px);
+        margin: 0;
+        text-wrap: balance;
+        line-height: 1.2;
+
+        &.subtitle {
+          text-transform: uppercase;
+          margin: 0;
+          @include fluid(16px, 20px);
+          font-weight: 700;
+          @include fluid(16px, 24px, $property: margin-bottom);
+        }
+      }
+    }
+  }
+
+  .collaboration-badge {
+    max-width: 410px;
+    align-items: center;
+    backdrop-filter: blur(6px);
+    background-color: var(--esk-collaboration-bg);
+    border-radius: 8px;
+    border: 1px solid var(--esk-collaboration-border);
+    display: flex;
+    gap: 20px;
+    justify-content: space-between;
+    padding: 12px;
+    margin-top: 2.5rem;
+
+    @include bp(desktop) {
+      padding: 8px 24px;
+    }
+
+    .collaborators {
+      display: flex;
+      gap: 20px;
+
+      .collaborator {
+        display: flex;
+        margin: 0;
+
+        img {
+          height: 18px;
+
+          @media (min-width: 768px) {
+            height: 20px;
+          }
+        }
+      }
+    }
+
+    span {
+      color: var(--esk-collaboration-text);
+      font-size: 12px;
+      font-weight: 300;
+      padding: 4px 0;
+      flex-shrink: 0;
+
+      @media (min-width: 768px) {
+        font-size: 16px;
+      }
+    }
+  }
+
+  :global(.hero-prompt) {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    text-align: center;
+    z-index: 10;
+    background: rgba(255, 255, 255, 0.88);
+    border: 1px solid rgba(0, 0, 0, 0.25);
+    border-radius: 2.5rem;
+    color: #111;
+    text-transform: uppercase;
+    font-weight: 700;
+    font-size: 0.725rem;
+    padding: 0.5rem 0.85rem;
+    backdrop-filter: blur(6px);
+    opacity: 0;
+    animation: heroPromptIn 0.8s ease 1.2s forwards;
+
+    @media (prefers-reduced-motion: reduce) {
+      animation: none;
+      opacity: 1;
+    }
+
+    @include bp(tablet) {
+      bottom: 15%;
+    }
+
+    @include bp(desktop) {
+      bottom: 5%;
+    }
+
+    &.hero-prompt--hidden {
+      opacity: 0 !important;
+      pointer-events: none;
+    }
+  }
+
+  :global([data-theme="light"] .hero-prompt) {
+    background: rgba(0, 0, 0, 0.72);
+    border-color: rgba(0, 0, 0, 0.15);
+    color: #fff;
+  }
+
+  @keyframes heroLoaderSpin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  @keyframes heroPromptIn {
+    from {
+      opacity: 0;
+      transform: translateX(-50%) translateY(12px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(-50%);
+    }
+  }
+
+  @keyframes heroContentIn {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+</style>
