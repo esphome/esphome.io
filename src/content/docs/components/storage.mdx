@@ -5,6 +5,10 @@ description: "Base storage interface with registry and asynchronous transfer wor
 
 import APIRef from '@components/APIRef.astro';
 
+> [!IMPORTANT]
+> This component is EXPERIMENTAL. The API may change at any time without following the normal breaking
+> changes policy. Use at your own risk. Once the API is considered stable, this warning will be removed.
+
 The `storage` component is the shared base layer for all ESPHome storage drivers. It provides a common
 interface, a runtime registry that tracks every configured storage device and notifies subscribers when
 devices register or unregister (e.g. on hotplug events), and an asynchronous transfer worker for
@@ -14,10 +18,6 @@ On its own, `storage` exposes no files or entities — it has nothing to mount o
 driver component (such as `sd_storage`, `usb_storage`, `nfs_client`, or `binary_storage`) is always needed
 on top of it to actually access a device. You do not need to add `storage:` to your configuration manually;
 it is automatically loaded by any storage driver that depends on it.
-
-> [!WARNING]
-> The storage interface is **experimental**. Breaking changes may occur in future ESPHome releases as the
-> component and its drivers evolve.
 
 ```yaml
 # Example configuration entry
