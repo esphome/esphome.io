@@ -62,6 +62,9 @@ zephyr:
   and/or the `mcuboot` bootloader image. See [`overlays`](#overlays).
 - **advanced** (*Optional*, mapping): Variant-specific options that don't apply across every variant.
   See [`advanced`](#advanced).
+- **single_slot** (*Optional*, boolean): MCUboot single-slot option for variants too
+  flash-constrained for the normal two-slot layout. No live OTA path — serial/wired flashing only.
+  Defaults to `false`. See [`single_slot`](#single_slot).
 
 ## Variants
 
@@ -466,6 +469,69 @@ zephyr:
         };
       };
 ```
+
+## `single_slot`
+
+`single_slot: true` builds [MCUboot](https://docs.mcuboot.com/) with only a single application slot
+(`slot0_partition`) instead of the normal two-slot layout — for variants too flash-constrained to fit
+a primary and secondary slot side by side.
+
+There is no live OTA path under `single_slot: true` — any `ota:` platform (`esphome`, `zephyr_mcumgr`)
+is rejected in configuration. The reason isn't only that a single slot loses revert-on-power-loss
+safety: `slot0_partition` is the flash region the application is actively executing from, so writing
+a new image into it while the application keeps running risks corrupting the running image mid-update,
+not just failing to recover from an interrupted one. Updates on a `single_slot: true` build are
+serial/wired flashing only.
+
+`single_slot: true` requires the MCUboot bootloader. Every variant except `rp2040`/`rp2350` uses
+MCUboot by default already; those two default to no bootloader at all and need
+`advanced: bootloader: mcuboot` set explicitly first — see
+[MCUboot and nRF52/nRF54L15/nRF54LM20A flashing](#mcuboot-and-nrf52nrf54l15nrf54lm20a-flashing).
+
+There's no per-variant allowlist for `single_slot: true` — whether it actually works depends entirely
+on the board's flash layout having no `slot1_partition` left in it, which is checked at compile time:
+the build fails if a `slot1_partition` is still present, whether from the board's own stock devicetree,
+an [`overlays`](#overlays) entry, or `to_code()`.
+
+Most boards ship a stock two-slot layout, so getting to single-slot means reclaiming
+`slot1_partition`'s space into `slot0_partition` via [`overlays`](#overlays) — deleting the second
+slot and growing the first to fill the space it frees up. As covered in [`overlays`](#overlays)
+above, the same edit is needed on **both** the `app` and `mcuboot` images, since MCUboot needs to
+agree with the application on where the (now single) slot actually is:
+
+```yaml
+# Example configuration entry -- nrf52dk/nrf52810 (192KB flash) stock layout reserves only 56KB per
+# slot (boot_partition 48K, slot0_partition 56K, slot1_partition 56K, storage_partition 32K).
+# Reclaiming slot1_partition's 56K into slot0_partition doubles the usable application budget to 112K.
+zephyr:
+  variant: nrf52
+  board: nrf52dk/nrf52810
+  single_slot: true
+  overlays:
+    app: |
+      /delete-node/ &slot1_partition;
+      &slot0_partition {
+        reg = <0xc000 0x1c000>;
+      };
+    mcuboot: |
+      / {
+        chosen {
+          zephyr,code-partition = &boot_partition;
+        };
+      };
+      /delete-node/ &slot1_partition;
+      &slot0_partition {
+        reg = <0xc000 0x1c000>;
+      };
+
+logger:
+  # nrf52810 has no USB peripheral (USB is nRF52840-only), so logger's default UART
+  # selection for this variant (USB CDC-ACM) doesn't apply here -- pick a real UART.
+  hardware_uart: UART0
+```
+
+See the [`overlays`](#overlays) `IMPORTANT` note above for why each image's `zephyr,code-partition`
+must point at its own partition.
 
 ## Zephyr's own logging vs. heavy debug levels
 
