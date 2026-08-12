@@ -5,9 +5,6 @@ pagefind: false
 slug: "changelog/2026.8.0"
 ---
 
-> [!NOTE]
-> This is a beta release. Details on this page may change before the stable release is published.
-
 import ImgTable from "@components/ImgTable.astro";
 
 {/* MANUAL: Add featured components here */}
@@ -23,6 +20,448 @@ import ImgTable from "@components/ImgTable.astro";
   ["Zephyr PWM", "/components/output/zephyr_pwm/", "pwm.png"],
   ["Modbus Client", "/components/modbus_client/", "modbus.png"],
 ]} />
+
+## Release Overview
+
+{/* RELEASE_OVERVIEW_START */}
+ESPHome 2026.8.0 brings Bluetooth to more chips than ever: a new platform-neutral BLE layer moves all 39 BLE
+sensor platforms off their ESP32-only foundation and powers new BLE trackers, and Bluetooth Proxy, on the
+Raspberry Pi Pico W, BK72xx and LN882H. Builds get dramatically faster with ccache support on ESP8266, LibreTiny,
+RP2040 and host, ESP-IDF toolchain installs shrink by roughly half, and ESP32 crash reports now capture the
+faulting address. The release also delivers multi-interface networking with Ethernet and WiFi in one config, a
+major Modbus overhaul with the new `modbus_client` component, multi-key OTA signature verification, and runtime
+wake word management, alongside new components including the LD6002B 60 GHz presence radar and Hörmann garage
+door support.
+{/* RELEASE_OVERVIEW_END */}
+
+## Upgrade Checklist
+
+{/* UPGRADE_CHECKLIST_START */}
+- If you set `esp32_ble_id` explicitly on any BLE sensor platform, rename it to `ble_hub_id` (the old key warns
+  until 2027.2.0)
+- If you use `voc` or `nox` sensor keys on `sgp4x`, `sen5x` or `sen6x`, rename them to `voc_index` and
+  `nox_index`
+- If you use `command_throttle` on `modbus_controller`, move the setting to `turnaround_time` on the `modbus`
+  component; `allow_duplicate_commands` no longer has any effect
+- If you use `modbus_server` with `address: 0`, assign a unique address from 1-247 instead
+- If you use `modbus_controller` sensors with `custom_command: [0x17, ...]`, subtract one from their `offset:`
+- If you write `modbus_controller` lambdas, note `data` is now `std::span` and `payload_to_number()` returns an
+  optional, so add `.value_or(0)` or a check
+- If you use the `aqi` sensor, expect readings above the previous caps (`301` US AQI, `101` CAQI) to report real
+  interpolated values during heavy pollution
+- If you use an `rc522_i2c` reader that relied on the old default address, set `address: 0x2C` explicitly
+- If you use LVGL animations with `ease_in`/`ease_out` weights greater than 1.0, remove them; they are now
+  rejected at validation
+- If you have a custom web server frontend or integration, update it for the new `id` format and the
+  `alarm_control_panel` domain spelling
+- If you use `pin: TEMPERATURE` on the `adc` sensor for the RP2 on-die sensor, migrate to the
+  `internal_temperature` component
+- If your automations relied on non-iBeacon Apple manufacturer payloads being parsed as iBeacons, note these no
+  longer match
+{/* UPGRADE_CHECKLIST_END */}
+
+{/* FEATURE_HIGHLIGHTS_START */}
+## Bluetooth on More Chips: Platform-Neutral BLE
+
+Led by [@Bl00d-B0b](https://github.com/Bl00d-B0b) across dozens of PRs, this release completes a major architectural
+effort: the shared BLE advertisement layer moved out of `esp32_ble_tracker` into a new platform-neutral
+`ble_device_base` component ([#17150](https://github.com/esphome/esphome/pull/17150)), and every one of the 39
+advertisement-based BLE sensor platforms was migrated onto it in a 13-batch series
+([#17716](https://github.com/esphome/esphome/pull/17716) through
+[#18183](https://github.com/esphome/esphome/pull/18183)). BLE sensors like `ble_rssi`, `atc_mithermometer`,
+BTHome, Mopeka, RuuviTag and the entire Xiaomi family are no longer tied to ESP32; they work on any chip with a
+BLE tracker.
+
+**New BLE trackers this release:**
+
+- **Raspberry Pi Pico W / Pico 2 W** - the new [rp2_ble_tracker](/components/rp2_ble_tracker/) scans passively
+  and actively while WiFi holds an API connection
+- **BK72xx (Beken)** - [bk72xx_ble_tracker](/components/bk72xx_ble_tracker/) by
+  [@Bl00d-B0b](https://github.com/Bl00d-B0b) brings BLE 5.x scanning to the chips inside many Tuya-based
+  wall switches, thermostats and smart plugs, validated in production on a 20-device fleet
+- **LN882H** - [ln882h_ble_tracker](/components/ln882h_ble_tracker/) by
+  [@Bl00d-B0b](https://github.com/Bl00d-B0b) adds BLE 5.1 scanning with scan-response merging on LibreTiny
+  LN882H devices
+
+**Bluetooth Proxy beyond ESP32:** [bluetooth_proxy](/components/bluetooth_proxy/) now consumes the neutral layer
+([#17880](https://github.com/esphome/esphome/pull/17880)), so more chips can feed advertisements to Home
+Assistant. The Pico W goes further: it supports full active connections
+([#18132](https://github.com/esphome/esphome/pull/18132)) and now offers 3 connection slots with ESP32 parity
+([#18247](https://github.com/esphome/esphome/pull/18247)), so Home Assistant can read, write and subscribe to
+BLE devices through a Pico W proxy. BK72xx gained active scanning by packing the vendor SDK's start command
+([#18169](https://github.com/esphome/esphome/pull/18169)), which admitted it to Bluetooth Proxy as well.
+
+One config note: on migrated sensor platforms the auto-generated tracker reference key `esp32_ble_id:` is now
+`ble_hub_id:`. Most configs never set it explicitly; those that do keep validating with a warning until
+2027.2.0. See the Breaking Changes section for details.
+
+## Faster Builds and Smaller Toolchain Installs
+
+Compilation now runs through `ccache` when it is installed on ESP8266, LibreTiny, RP2040 and host builds
+([#17722](https://github.com/esphome/esphome/pull/17722),
+[#17726](https://github.com/esphome/esphome/pull/17726),
+[#17727](https://github.com/esphome/esphome/pull/17727),
+[#17728](https://github.com/esphome/esphome/pull/17728)), matching what ESP-IDF builds already did. The cache is
+shared across devices and projects, so a fleet of similar devices compiles almost entirely from cache: in testing,
+six Sonoff S31 devices built in 15 seconds for the first and 4 to 5 seconds for each of the rest. Set
+`ESPHOME_CCACHE_ENABLE=0` to opt out; `esphome clean-all` removes the cache.
+
+ESP-IDF installs also slimmed down considerably:
+
+- **Only the toolchains for the variants you build** are installed
+  ([#17688](https://github.com/esphome/esphome/pull/17688)), roughly halving a fresh install; the RISC-V
+  toolchain alone is a 292 MB download and 2.0 GB on disk
+- **The gdb and ULP toolchains** ESPHome never runs are skipped
+  ([#17687](https://github.com/esphome/esphome/pull/17687))
+- **Tool download caches are pruned** after install ([#17661](https://github.com/esphome/esphome/pull/17661))
+
+## Leaner and More Responsive CLI
+
+A long series of changes trimmed the `esphome upload` and `esphome logs` fast paths, which matters because the
+device builder runs several of these subprocesses concurrently. Imports the fast path never uses are now
+deferred ([#18093](https://github.com/esphome/esphome/pull/18093),
+[#18105](https://github.com/esphome/esphome/pull/18105)), and the validated-config cache is stored as JSON so a
+cache hit never loads the YAML stack ([#18106](https://github.com/esphome/esphome/pull/18106)); cache parsing
+dropped from 1-2 ms to 0.05 ms and the upload subprocess uses measurably less RAM.
+
+Log and build output streaming also improved: output flushes live instead of buffering
+([#18261](https://github.com/esphome/esphome/pull/18261),
+[#18264](https://github.com/esphome/esphome/pull/18264)), complete lines are no longer held back behind an
+unfinished one ([#18279](https://github.com/esphome/esphome/pull/18279)), and an out-of-flash build now shows the
+helpful tip instead of crashing ([#18280](https://github.com/esphome/esphome/pull/18280)).
+
+`esphome logs` can now also tail a device over the `web_server` event stream
+([#17110](https://github.com/esphome/esphome/pull/17110)), so a device with `web_server:` but no `api:` can
+finally be followed from the CLI. The native API is still preferred, then MQTT, then the web server.
+
+## Better ESP32 Crash Reports
+
+The `esp32` crash handler now captures the faulting memory address (EXCVADDR on Xtensa, MTVAL on RISC-V) and the
+raw exception cause, so heap corruption and pointer bugs leave a usable trail in the post-reboot report
+([#17769](https://github.com/esphome/esphome/pull/17769)). Crash records are also stamped with the build they
+were captured by ([#17770](https://github.com/esphome/esphome/pull/17770)): a record left over from a previous
+firmware is flagged instead of being decoded against the wrong ELF, which used to produce convincing but
+meaningless backtraces.
+
+## Ethernet and WiFi Together: Multi-Interface Networking
+
+Built by [@rwalker777](https://github.com/rwalker777) and [@kbx81](https://github.com/kbx81), ESP32 devices can
+now configure both `ethernet:` and `wifi:` in the same YAML. A new `network: priority:` list declares which
+interface the device prefers ([#14255](https://github.com/esphome/esphome/pull/14255)), and the default route is
+arbitrated at runtime from that list ([#17797](https://github.com/esphome/esphome/pull/17797)): the first
+connected interface in your priority order carries the traffic, DNS follows the active interface, and failover
+plus failback happen automatically within milliseconds of a link change. Verified on hardware with cable pulls,
+VLAN changes and runtime enable/disable cycles. See [network](/components/network/) for configuration.
+
+## Performance Optimizations
+
+Several components stopped doing busy-work on every loop iteration:
+
+- **espnow** no longer polls the WiFi driver every loop and disables its loop entirely while idle
+  ([#18027](https://github.com/esphome/esphome/pull/18027)); it was one of the most expensive idle components at
+  0.056 ms per iteration, and its idle cost is now zero
+- **script** components with queued mode stop polling while the queue is empty
+  ([#18121](https://github.com/esphome/esphome/pull/18121))
+- **improv_serial** reduced its per-loop overhead ([#16019](https://github.com/esphome/esphome/pull/16019))
+- The blocking-warning log time no longer cascades into false warnings for subsequent components
+  ([#17710](https://github.com/esphome/esphome/pull/17710))
+
+## Modbus Overhaul Continues
+
+Led by [@exciton](https://github.com/exciton), the multi-release Modbus rework reached a milestone. The
+`modbus_controller` message handling was rebuilt ([#11781](https://github.com/esphome/esphome/pull/11781)):
+commands from all controllers now share the hub's queue fairly (previously some controllers could starve),
+responses are routed straight back to the command that sent them so a reply can no longer be applied to the
+wrong sensor, offline devices are tracked per device instead of per command, and the common command path is
+heap-free. Two controllers may now even share one device address to poll at different intervals.
+
+A new [modbus_client](/components/modbus_client/) component
+([#17676](https://github.com/esphome/esphome/pull/17676)) enables ad-hoc Modbus transactions straight from YAML
+automations, with typed read/write actions ([#18078](https://github.com/esphome/esphome/pull/18078)), a plain
+device handle for lambdas ([#18146](https://github.com/esphome/esphome/pull/18146)), and read/write multiple
+registers in one transaction ([#18215](https://github.com/esphome/esphome/pull/18215)).
+
+Server mode grew too, with contributions from [@zweckj](https://github.com/zweckj) and
+[@marpi82](https://github.com/marpi82): coil and discrete-input support
+([#17464](https://github.com/esphome/esphome/pull/17464)), read/write multiple registers (function code 0x17,
+[#17357](https://github.com/esphome/esphome/pull/17357)), spec-compliant broadcast writes
+([#17387](https://github.com/esphome/esphome/pull/17387)) and byte-swapped word types
+([#17829](https://github.com/esphome/esphome/pull/17829)).
+
+Note that `command_throttle` and `allow_duplicate_commands` on `modbus_controller` are deprecated and no longer
+have any effect; use `turnaround_time` on the `modbus` hub instead. See Breaking Changes for migration details.
+
+## Multi-Key OTA Signature Verification
+
+For externally signed firmware, [@kbx81](https://github.com/kbx81) added ESPHome-side OTA signature verification
+with a compiled-in trusted key list ([#17981](https://github.com/esphome/esphome/pull/17981)). An update is
+accepted if any of up to three signature blocks matches a trusted key, which enables signing key rotation
+(dual-sign a bridge release with old and new keys) and independent backup keys across signing providers.
+Bootloader updates are now signature-checked as well, closing a path where they previously installed unverified.
+See the [OTA documentation](/components/ota/) for setup.
+
+## Voice and Media
+
+[@kahrendt](https://github.com/kahrendt) landed the groundwork for wake words that are not baked into firmware:
+[micro_wake_word](/components/micro_wake_word/) can now add and remove wake word models at runtime
+([#17927](https://github.com/esphome/esphome/pull/17927)). Models load into PSRAM with validation, the `models`
+option is now optional, and a follow-up voice assistant integration will download models advertised by Home
+Assistant.
+
+The [sendspin](/components/sendspin/) media player gained an image platform for album and artist artwork
+([#17937](https://github.com/esphome/esphome/pull/17937)): artwork decodes into double-buffered frames a display
+or LVGL can draw, with optional cross-fade transitions.
+
+## New Components
+
+- **[ld6002b](/components/sensor/ld6002b/)** by [@hepter](https://github.com/hepter), built across 5 PRs
+  ([#17819](https://github.com/esphome/esphome/pull/17819) onward): the Hi-Link HLK-LD6002B 60 GHz 3D presence
+  radar, with per-target position tracking, configurable detection zones, interference areas, sensitivity and
+  power management
+- **[hoermann_hcp](/components/cover/hoermann_hcp/)** by [@zweckj](https://github.com/zweckj): controls Hörmann garage
+  door motors over the HCP bus, with cover control
+  ([#17355](https://github.com/esphome/esphome/pull/17355)), garage light
+  ([#18190](https://github.com/esphome/esphome/pull/18190)) and a connectivity sensor
+  ([#18189](https://github.com/esphome/esphome/pull/18189))
+- **[ds248x](/components/one_wire/ds248x/)** by [@tomwellnitz](https://github.com/tomwellnitz): DS2482-100/-101/-800 and
+  DS2484 I²C-to-1-Wire bridges as a `one_wire` platform, so Dallas temperature sensors can hang off up to 8
+  bridged channels ([#12717](https://github.com/esphome/esphome/pull/12717))
+- **[zephyr_pwm](/components/output/zephyr_pwm/)** by [@wiomoc](https://github.com/wiomoc): PWM outputs on nRF52
+  ([#16483](https://github.com/esphome/esphome/pull/16483))
+- **[modbus_client](/components/modbus_client/)** by [@exciton](https://github.com/exciton), covered in the
+  Modbus section above
+
+## New Hardware Support
+
+- **CH390 SPI Ethernet** by [@ptr727](https://github.com/ptr727): the WCH CH390 single-chip 10/100 MAC and PHY
+  joins the [ethernet](/components/ethernet/) component, verified at 100 Mbps full duplex
+  ([#18226](https://github.com/esphome/esphome/pull/18226))
+- **Displays**: the JC8012P4A1-V2 panel revision for [mipi_dsi](/components/display/mipi_dsi/) by
+  [@rayz90](https://github.com/rayz90) ([#17457](https://github.com/esphome/esphome/pull/17457)), the Waveshare
+  ESP32-S3-Touch-LCD-3.5B ([#17513](https://github.com/esphome/esphome/pull/17513)) and the ST77916-based
+  ESP-VoCat round display by [@rggammon](https://github.com/rggammon)
+  ([#17679](https://github.com/esphome/esphome/pull/17679)) for [mipi_spi](/components/display/mipi_spi/), the
+  Guition JC8012P4A1 touchscreen for [gsl3670](/components/touchscreen/gsl3670/) by
+  [@mpoettgen](https://github.com/mpoettgen) ([#17843](https://github.com/esphome/esphome/pull/17843)), and the
+  7-color Soldered Inkplate 6COLOR e-paper by [@franFodor](https://github.com/franFodor)
+  ([#17717](https://github.com/esphome/esphome/pull/17717))
+- **OpenThread diagnostics** by [@Ardumine](https://github.com/Ardumine): 13 new numeric sensors exposing MAC and
+  MLE counters plus parent link quality and RSSI ([#17276](https://github.com/esphome/esphome/pull/17276))
+- **RGBW channel ordering** for [esp32_rmt_led_strip](/components/light/esp32_rmt_led_strip/) by
+  [@peterkeen](https://github.com/peterkeen): the new `rgbw_order` option places the white channel anywhere,
+  matching `neopixelbus` ([#18028](https://github.com/esphome/esphome/pull/18028))
+- **Haier short IR messages** for [remote_transmitter](/components/remote_transmitter/) and
+  [remote_receiver](/components/remote_receiver/) by [@ssieb](https://github.com/ssieb)
+  ([#17826](https://github.com/esphome/esphome/pull/17826)), and configurable I2S PDM microphone downsampling by
+  [@egormanga](https://github.com/egormanga) ([#17751](https://github.com/esphome/esphome/pull/17751))
+
+## Other Notable Features
+
+- **Deep sleep wake automations** by [@jesserockz](https://github.com/jesserockz): the new `on_wake` trigger on
+  [deep_sleep](/components/deep_sleep/) fires when the device wakes with the wake cause, and each
+  `esp32_ext1_wakeup` pin can carry its own `on_wake` so different wake buttons perform different actions
+  ([#17569](https://github.com/esphome/esphome/pull/17569))
+- **Mitsubishi CN105 vane control** by [@crnjan](https://github.com/crnjan): the component gained a top-level
+  hub, a vertical vane direction select, a vane state trigger and a `vane.control` action
+  ([#16987](https://github.com/esphome/esphome/pull/16987),
+  [#16723](https://github.com/esphome/esphome/pull/16723),
+  [#16727](https://github.com/esphome/esphome/pull/16727),
+  [#16737](https://github.com/esphome/esphome/pull/16737))
+- **LVGL** by [@clydebarrow](https://github.com/clydebarrow): runtime theme updates via `lvgl.theme.update`
+  ([#17678](https://github.com/esphome/esphome/pull/17678)), widget stacking control via
+  `lvgl.widget.set_z_index` ([#17993](https://github.com/esphome/esphome/pull/17993)), and a `pause` option for
+  `round_trip` animations ([#17574](https://github.com/esphome/esphome/pull/17574))
+- **AQI over-range handling** by [@jasstrong](https://github.com/jasstrong): hazardous air quality now
+  interpolates correctly across 301-500 instead of pinning at 301, with a new `extended_range` option to
+  extrapolate beyond 500 ([#17570](https://github.com/esphome/esphome/pull/17570))
+- **Zigbee improvements** by [@luar123](https://github.com/luar123) and
+  [@TesseractTimmee](https://github.com/TesseractTimmee): an `on_start` automation, automatic rejoin after
+  network failure, leave-on-factory-reset, sensor resolution attributes and more units
+  ([#18009](https://github.com/esphome/esphome/pull/18009),
+  [#18008](https://github.com/esphome/esphome/pull/18008),
+  [#17973](https://github.com/esphome/esphome/pull/17973))
+- **CC1101 tuning options** by [@hn](https://github.com/hn): frequency offset compensation and bit
+  synchronization registers are now configurable from YAML for narrowband protocols like wM-Bus
+  ([#17577](https://github.com/esphome/esphome/pull/17577))
+- **Modbus garage doors and more** covered in the Modbus section above
+{/* FEATURE_HIGHLIGHTS_END */}
+
+## Thank You, Contributors
+
+{/* CONTRIBUTORS_START */}
+This release includes 348 pull requests from over 40 contributors. A huge thank you to everyone who made
+2026.8.0 possible:
+
+- [@Bl00d-B0b](https://github.com/Bl00d-B0b) - 42 PRs including the platform-neutral `ble_device_base` layer,
+  the new BK72xx and LN882H BLE trackers, and the 13-batch migration of every BLE sensor platform
+- [@jesserockz](https://github.com/jesserockz) - 29 PRs including `deep_sleep` `on_wake` triggers, RP2 platform
+  cleanups and internal temperature fixes, and CI improvements
+- [@swoboda1337](https://github.com/swoboda1337) - 27 PRs including clang-tidy coverage for RP2 and LibreTiny,
+  vendor SDK compatibility fixes, and security hardening
+- [@exciton](https://github.com/exciton) - 25 PRs including the `modbus_controller` refactor and the new
+  `modbus_client` component with typed actions
+- [@kbx81](https://github.com/kbx81) - 10 PRs including multi-key OTA signature verification, network
+  default-route arbitration, and the `veml3235` auto-gain overhaul
+- [@kahrendt](https://github.com/kahrendt) - 7 PRs including runtime wake word model management and the
+  `sendspin` artwork image platform
+- [@zweckj](https://github.com/zweckj) - 6 PRs including the new `hoermann_hcp` garage door component and
+  Modbus server broadcast and 0x17 support
+- [@bharvey88](https://github.com/bharvey88) - 6 PRs including the Sensirion `voc_index`/`nox_index` renames and
+  `cv.rename_key` improvements
+- [@hepter](https://github.com/hepter) - 6 PRs including the new `ld6002b` 60GHz presence radar component
+- [@crnjan](https://github.com/crnjan) - 5 PRs including the `mitsubishi_cn105` hub extraction and vertical vane
+  control
+- [@clydebarrow](https://github.com/clydebarrow) - 5 PRs including new LVGL actions and display models
+- [@tomaszduda23](https://github.com/tomaszduda23) - 4 PRs including nRF52 OTA support for the Adafruit
+  bootloader and Zigbee radio stats
+- [@marpi82](https://github.com/marpi82) - 3 PRs including byte-swapped Modbus word types with tests
+- [@luar123](https://github.com/luar123) - 3 PRs including Zigbee network handling improvements and the
+  `on_start` automation
+- [@p1ngb4ck](https://github.com/p1ngb4ck) - 2 PRs including `mcp4461` persistence and wiper actions
+- [@hn](https://github.com/hn) - 2 PRs including CC1101 frequency offset compensation options
+- [@jeroen85](https://github.com/jeroen85) - 2 PRs including OpenTherm and blocking-warning log fixes
+- [@egormanga](https://github.com/egormanga) - 2 PRs including I2S PDM microphone DSR selection
+- [@ximex](https://github.com/ximex) - 2 PRs including unit capitalization fixes
+- [@ssieb](https://github.com/ssieb) - 2 PRs including Haier short IR message support
+- [@ptr727](https://github.com/ptr727) - 2 PRs including CH390 SPI Ethernet support
+- [@TesseractTimmee](https://github.com/TesseractTimmee) - 2 PRs including Zigbee sensor resolution and units
+- [@tomwellnitz](https://github.com/tomwellnitz) - the new `ds248x` I²C-to-1-Wire bridge component
+- [@rwalker777](https://github.com/rwalker777) - network priority for multi-interface support
+- [@wiomoc](https://github.com/wiomoc) - the new `zephyr_pwm` platform for nRF52
+
+Also thank you to [@bdraco](https://github.com/bdraco), [@ShaTie](https://github.com/ShaTie),
+[@Eelviny](https://github.com/Eelviny), [@stas-sl](https://github.com/stas-sl),
+[@jhenkens](https://github.com/jhenkens), [@Rocco83](https://github.com/Rocco83),
+[@matt123p](https://github.com/matt123p), [@rwrozelle](https://github.com/rwrozelle),
+[@jptrsn](https://github.com/jptrsn), [@Ardumine](https://github.com/Ardumine),
+[@rayz90](https://github.com/rayz90), [@lsellens](https://github.com/lsellens),
+[@ljungqvist](https://github.com/ljungqvist), [@jasstrong](https://github.com/jasstrong),
+[@rggammon](https://github.com/rggammon), [@zerafachris](https://github.com/zerafachris),
+[@franFodor](https://github.com/franFodor), [@mpoettgen](https://github.com/mpoettgen),
+[@kobihikri](https://github.com/kobihikri), [@peterkeen](https://github.com/peterkeen),
+[@youkorr](https://github.com/youkorr) for their contributions, and to everyone who reported issues, tested
+pre-releases, and helped in the community.
+{/* CONTRIBUTORS_END */}
+
+## Breaking Changes
+
+{/* BREAKING_CHANGES_USERS_START */}
+### BLE Sensor Platforms
+
+- **All BLE sensor platforms**: The auto-generated tracker reference key `esp32_ble_id` is renamed to
+  `ble_hub_id` on every advertisement-based BLE platform (`ble_presence`, `ble_rssi`, `ble_scanner`, the
+  mi-thermometer, BTHome, Mopeka, Ruuvi, Airthings, Inkbird, RadonEye, ThermoPro and Xiaomi families, and
+  `b_parasite`, `exposure_notifications`). Most configurations never set this key explicitly; those that do
+  keep validating with a warning until 2027.2.0, when the old key is removed
+  [#17716](https://github.com/esphome/esphome/pull/17716)
+  [#17950](https://github.com/esphome/esphome/pull/17950)
+  [#17951](https://github.com/esphome/esphome/pull/17951)
+  [#18161](https://github.com/esphome/esphome/pull/18161)
+  [#18165](https://github.com/esphome/esphome/pull/18165)
+  [#18168](https://github.com/esphome/esphome/pull/18168)
+  [#18170](https://github.com/esphome/esphome/pull/18170)
+  [#18171](https://github.com/esphome/esphome/pull/18171)
+  [#18172](https://github.com/esphome/esphome/pull/18172)
+  [#18174](https://github.com/esphome/esphome/pull/18174)
+  [#18178](https://github.com/esphome/esphome/pull/18178)
+  [#18180](https://github.com/esphome/esphome/pull/18180)
+  [#18183](https://github.com/esphome/esphome/pull/18183)
+- **iBeacon parsing**: A 23-byte Apple manufacturer payload must now carry the 0x02/0x15 iBeacon sub-type prefix
+  to be treated as an iBeacon. Automations that matched spurious beacons with garbage UUIDs stop firing, which
+  is the fix [#18081](https://github.com/esphome/esphome/pull/18081)
+
+### Component Changes
+
+- **SGP4x / SEN5x / SEN6x**: The `voc` and `nox` sensor keys are renamed to `voc_index` and `nox_index` to
+  reflect that they publish Sensirion's unitless gas index, not a concentration. Old keys warn and auto-migrate
+  until removal in 2027.2.0 [#17723](https://github.com/esphome/esphome/pull/17723)
+  [#17724](https://github.com/esphome/esphome/pull/17724)
+  [#17725](https://github.com/esphome/esphome/pull/17725)
+- **AQI**: Over-range readings are no longer pinned to a flat value. US AQI readings above the top breakpoint now
+  interpolate correctly across 301-500 (and beyond with the new `extended_range` option), and CAQI is unbounded
+  past 100 per the CITEAIR spec, so values reported during heavy pollution will change
+  [#17570](https://github.com/esphome/esphome/pull/17570)
+- **LVGL**: Animation weights greater than 1.0 in `ease_in`/`ease_out` timing are now rejected at validation
+  (they previously produced out-of-range progress values), and the default ease timing changes slightly, which
+  may be visible as a cosmetic difference [#17574](https://github.com/esphome/esphome/pull/17574)
+- **RC522 I²C**: The default I²C address changed from `0x2C` to `0x28` to match the documentation and typical
+  board wiring. If your reader relied on the old default, set `address: 0x2C` explicitly
+  [#17566](https://github.com/esphome/esphome/pull/17566)
+
+### Modbus
+
+- **modbus_controller**: `command_throttle` and `allow_duplicate_commands` no longer have any effect. They are
+  still accepted with a validation warning and will be removed in 2027.2.0; use `turnaround_time` on the
+  `modbus` component instead of `command_throttle`
+  [#11781](https://github.com/esphome/esphome/pull/11781)
+- **modbus_controller**: When several sensors share a range's start address, the polled range is now widened to
+  cover the widest sensor. Devices that reject reads touching unmapped registers may return an exception where a
+  shorter, registration-order-dependent read happened to succeed before
+  [#17677](https://github.com/esphome/esphome/pull/17677)
+- **modbus_controller**: Sensors polled with `custom_command: [0x17, ...]` (read/write multiple registers) no
+  longer receive the leading byte-count byte in the payload; subtract one from the `offset:` of any such sensor
+  [#18215](https://github.com/esphome/esphome/pull/18215)
+- **modbus_server**: Devices can no longer use `address: 0`, which is the Modbus broadcast address. Broadcast
+  writes are now correctly delivered to all server devices with no response; assign each server a unique address
+  from 1-247 [#17387](https://github.com/esphome/esphome/pull/17387)
+
+### Web Server
+
+- **Entity IDs**: The `id` field in the web server JSON now carries the `{domain}/{device?}/{name}` format and
+  the transitional `name_id` field is removed, completing the migration announced in 2026.1. Current frontends
+  handle this automatically; only pinned pre-2026.1.3 bundles or custom frontends keyed off the old id are
+  affected [#17586](https://github.com/esphome/esphome/pull/17586)
+- **Alarm control panel domain**: The JSON `domain` field now reports `alarm_control_panel` (underscores) instead
+  of the previously advertised `alarm-control-panel`, matching the only route the server ever accepted
+  [#17594](https://github.com/esphome/esphome/pull/17594)
+{/* BREAKING_CHANGES_USERS_END */}
+
+### Undocumented API Changes
+
+{/* UNDOCUMENTED_API_CHANGES_START */}
+Advanced users with lambdas and external component maintainers should note the following internal C++ API
+changes. These are not covered by the formal breaking change policy, but lambdas sometimes depend on them.
+
+- **Modbus**: The hub call `send_pdu()` is renamed to `queue_pdu()` to reflect that it queues a request rather
+  than putting a frame on the wire; `send_pdu()` remains as a deprecated alias for the deprecation window, and a
+  `succeeded()` helper replaces ad-hoc exception checks
+  [#18196](https://github.com/esphome/esphome/pull/18196)
+- **Modbus server**: Read lambdas can now decline a read by returning an empty optional, answering the request
+  with `SERVICE_DEVICE_FAILURE`. A register lambda that literally wrote `return {};` previously produced `0` and
+  now declines the read; `ServerRegister::set_read_lambda<T>()` widens its signature to `optional<T>`
+  [#17464](https://github.com/esphome/esphome/pull/17464)
+- **VEML3235**: `gain: AUTO` is removed from the schema (it never compiled; automatic mode remains the separate
+  `auto_gain` option, enabled by default), and the non-functional `set_power_on()`/shutdown code path is removed
+  [#17551](https://github.com/esphome/esphome/pull/17551)
+- **Zigbee**: `is_connected` is renamed to `is_joined()`, and the `joined`, `started` and `factory_new` members
+  are now protected; use `is_joined()` and `is_started()` in lambdas instead
+  [#18007](https://github.com/esphome/esphome/pull/18007)
+  [#18008](https://github.com/esphome/esphome/pull/18008)
+- **Web server base**: The credential setters on `WebServerBase` now take `const char *` instead of
+  `std::string`, and on non-ESP32 basic-auth builds `set_auth_username`/`set_auth_password` are replaced by
+  `set_auth_basic_hash` (part of the fix for basic auth failing with long credentials)
+  [#18237](https://github.com/esphome/esphome/pull/18237)
+{/* UNDOCUMENTED_API_CHANGES_END */}
+
+### Breaking Changes for Developers
+
+{/* BREAKING_CHANGES_DEVELOPERS_START */}
+- **ModbusController API**: Handler signatures for `on_data_func`, `create_read_command()` and
+  `create_custom_command()` now take `std::span<const uint8_t>` instead of `const std::vector<uint8_t>&`;
+  `on_register_data()`, `send_raw()`, `get_command_queue_length()` and the 4-argument `create_read_command()`
+  overload are removed; `ModbusCommandItem` data members are now protected (use the accessors); and
+  `ModbusController` no longer derives from `modbus::ModbusClientDevice`
+  [#11781](https://github.com/esphome/esphome/pull/11781)
+- **ModbusController sensor dispatch**: `SensorItem::parse_and_publish()` takes `std::span<const uint8_t>`;
+  external platforms must set addresses via `set_address()` / `set_offset_from_start_address()` instead of
+  assigning `start_address` / `offset` directly, and `payload_to_float()` gains an explicit `offset` parameter
+  [#17677](https://github.com/esphome/esphome/pull/17677)
+- **ESPBTDevice::address_str() deprecated**: Use the buffer-based `address_str_to()`; the old method is removed
+  in 2027.2.0 [#18092](https://github.com/esphome/esphome/pull/18092)
+
+For detailed migration guides and API documentation, see the
+[ESPHome Developers Documentation](https://developers.esphome.io/).
+{/* BREAKING_CHANGES_DEVELOPERS_END */}
 
 {/* markdownlint-disable MD013 */}
 
