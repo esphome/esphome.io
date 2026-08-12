@@ -11,6 +11,17 @@ const marqueeItems = [
 ---
 
 <section class="hero">
+  <div class="announcement-container">
+    <div class="announcement-banner card card-bgc">
+      <p>
+        Introducing the ESPHome Starter Kit! The easiest path to building your own smart home devices – no soldering,
+        breadboarding, or coding required.
+      </p>
+      <LinkButton href="/starter-kit/" class="card__text-link" icon="right-arrow" iconPlacement="start"
+        >Get your Starter Kit today</LinkButton
+      >
+    </div>
+  </div>
   <div class="container">
     <div class="content">
       <h1>Custom smart home devices, built by you</h1>
@@ -78,6 +89,55 @@ const marqueeItems = [
       opacity: 0.7;
     }
 
+    .announcement-container {
+      width: 100%;
+      max-width: 1200px;
+      padding: 0 20px;
+      margin: 2rem auto 1rem;
+
+      @include bp(large-desktop) {
+        padding: 0;
+      }
+    }
+
+    .announcement-banner {
+      width: 100%;
+      border-radius: 0.5rem;
+      color: #fff;
+      padding: 0.5rem 1rem;
+      font-size: 0.875rem;
+      z-index: 5;
+      margin: 0 auto;
+      background-color: rgba(255, 255, 255, 0.075);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(5px);
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+
+      @include bp(desktop) {
+        font-size: 1rem;
+        padding: 0.75rem 1rem;
+      }
+
+      @media (min-width: 900px) {
+        flex-wrap: nowrap;
+      }
+
+      a {
+        margin: 0;
+        font-size: 0.875rem;
+        flex-shrink: 0;
+        color: #b3c7ff;
+
+        &:hover {
+          color: #fff;
+        }
+      }
+    }
+
     .container {
       align-items: center;
       display: flex;
@@ -90,7 +150,7 @@ const marqueeItems = [
       z-index: 1;
 
       @include bp(desktop) {
-        padding-top: 6rem;
+        padding-top: 3rem;
         padding-bottom: 6rem;
         flex-direction: row;
         justify-content: space-between;
@@ -103,6 +163,7 @@ const marqueeItems = [
       }
 
       h1 {
+        margin-top: 0;
         margin-bottom: 1.5rem;
         color: #fff;
       }
