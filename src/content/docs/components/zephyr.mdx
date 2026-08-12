@@ -68,6 +68,7 @@ zephyr:
 | Family | Variant | Chip family | Default board | Default framework | Supports |
 | --- | --- | --- | --- | --- | --- |
 | Espressif | `esp32` | Original ESP32 (Xtensa, dual-core) | [`esp32_devkitc`](https://docs.zephyrproject.org/latest/boards/espressif/esp32_devkitc/doc/index.html) | mainline Zephyr | Wi-Fi, BLE |
+| Espressif | `esp32c3` | ESP32-C3 (RISC-V, single-core) | [`esp32c3_devkitm`](https://docs.zephyrproject.org/latest/boards/espressif/esp32c3_devkitm/doc/index.html) | mainline Zephyr | Wi-Fi, BLE |
 | Espressif | `esp32c5` | ESP32-C5 (RISC-V, dual-band Wi-Fi 6) | [`esp32c5_devkitc`](https://docs.zephyrproject.org/latest/boards/espressif/esp32c5_devkitc/doc/index.html) | mainline Zephyr | Wi-Fi (2.4GHz + 5GHz), BLE, Thread (via `openthread:`) |
 | Espressif | `esp32c6` | ESP32-C6 (RISC-V) | [`esp32c6_devkitc`](https://docs.zephyrproject.org/latest/boards/espressif/esp32c6_devkitc/doc/index.html) | mainline Zephyr | Wi-Fi, BLE, Thread (via `openthread:`) |
 | Espressif | `esp32h2` | ESP32-H2 (RISC-V) | [`esp32h2_devkitm`](https://docs.zephyrproject.org/latest/boards/espressif/esp32h2_devkitm/doc/index.html) | mainline Zephyr | BLE, Thread (via `openthread:`) |
@@ -79,7 +80,7 @@ zephyr:
 | Raspberry Pi | `rp2350` | Raspberry Pi RP2350 (Cortex-M33, dual-core) | [`rpi_pico2`](https://docs.zephyrproject.org/latest/boards/raspberrypi/rpi_pico2/doc/index.html) | mainline Zephyr | No wireless yet |
 | Silicon Labs | `efr32mg24` | Silicon Labs EFR32MG24 (Cortex-M33) | [`xg24_ek2703a`](https://docs.zephyrproject.org/latest/boards/silabs/dev_kits/xg24_ek2703a/doc/index.html) | mainline Zephyr | BLE, Thread (via `openthread:`) |
 
-All four `esp32*` variants build only the single scheduled core Zephyr's Wi-Fi/BLE drivers require;
+All five `esp32*` variants build only the single scheduled core Zephyr's Wi-Fi/BLE drivers require;
 where the chip has more than one core, only the main application core's image is built. `nrf54l15`
 and `nrf54lm20a` likewise only build for the application core (`cpuapp`) — each chip's separate
 RISC-V co-processor core (`cpuflpr`) is not a build target.
@@ -477,7 +478,7 @@ at a time when troubleshooting, rather than turning everything up simultaneously
 
 ## mDNS status
 
-[`mdns:`](/components/mdns/) works on the `esp32`, `esp32c6`, and `esp32c5` variants when Wi-Fi is
+[`mdns:`](/components/mdns/) works on the `esp32`, `esp32c3`, `esp32c5`, and `esp32c6` variants when Wi-Fi is
 configured without `openthread:` (on `esp32c6`/`esp32c5`/`esp32h2` with `openthread:`, and on
 `nrf52`/`nrf54l15` — which always use `openthread:` — discovery instead goes through OpenThread's
 own SRP client; `nativesim` uses the host's own mDNS backend, not Zephyr's).
@@ -534,6 +535,7 @@ Espressif chip under Zephyr works today, including the single-core-image builds 
     a thread-safety gap specific to this one driver (no other vendor's Wi-Fi driver in the Zephyr tree
     has this restriction). Lifting it for the original ESP32 specifically (task pinning plus a DPORT
     cross-core stall handler) is in-progress, unfinished work, not usable yet.
+- **`esp32c3`** is single-core; SMP/AMP doesn't apply.
 - **`esp32c6`** has an asymmetric HP/LP core pair in silicon, but only the HP core is built or used —
   no platform-zephyr variant targets the LP core.
 - **`esp32h2`** is single-core; SMP/AMP doesn't apply.

@@ -55,7 +55,7 @@ uart:
 - **baud_rate** (**Required**, int): The baud rate of the UART bus.
 - **tx_pin** (*Optional*, [Pin](/guides/configuration-types#pin)): The pin to send data to from the ESP's perspective. Use the full pin
   schema and set `inverted: true` to invert logic levels. Not supported by host platform. On the `zephyr` platform,
-  only the `esp32`/`esp32h2`/`esp32c6` variants support this (see [`zephyr` notes](#zephyr) below); `native_sim` does not.
+  only the `esp32`/`esp32c3`/`esp32c6`/`esp32h2` variants support this (see [`zephyr` notes](#zephyr) below); `native_sim` does not.
 
 - **rx_pin** (*Optional*, [Pin](/guides/configuration-types#pin)): The pin to receive data on from the ESP's perspective. Use the full pin
   schema and set `inverted: true` to invert logic levels. Not supported by host platform. Same `zephyr` variant restriction as **tx_pin**.
@@ -323,7 +323,7 @@ uart:
 ```
 
 - **port** accepts `uart0` or `uart1`. Defaults to `uart0` if not set.
-- **tx_pin**/**rx_pin** may be set together with **port** on the `esp32`/`esp32h2`/`esp32c6` variants, whose UART
+- **tx_pin**/**rx_pin** may be set together with **port** on the `esp32`/`esp32c3`/`esp32c6`/`esp32h2` variants, whose UART
   TX/RX are routed through the chip's GPIO matrix — this overrides which physical pins the chosen `port` uses.
   Only pins in that variant's own valid TX/RX set are accepted; an invalid pin is rejected at config time. The
   `native_sim` and `nrf52` variants do not support pin selection at all — omit **tx_pin**/**rx_pin** there; on
