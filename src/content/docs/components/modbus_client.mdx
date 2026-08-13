@@ -436,7 +436,8 @@ button:
 
 - **Fire-and-continue**: the action queues the frame and the enclosing automation continues immediately; the reply
   handlers run later, when the outcome is known. Exactly one of `on_response`/`on_error`/`on_no_response`/
-  `on_not_sent` fires per transmission attempt; a retried frame runs the timeout branch again on each attempt. The
+  `on_not_sent` fires per transmission attempt (except a broadcast to address `0`, which is never answered and gets
+  only `on_sent`); a retried frame runs the timeout branch again on each attempt. The
   typed read/write actions also have `on_custom_response`, which fires in place of `on_response` for a
   non-conforming reply.
 - The reply handlers run with the action's own context - they do **not** see the enclosing automation's local
@@ -446,11 +447,11 @@ button:
   safe. For a read, the second send is rescheduled for a second transmission at the back of the queue once the
   first completes, and still gets its own reply handler. For a write or custom command, only one may be in flight - a
   second identical send is refused (`on_not_sent`).
-- **Broadcast** (address `0`): no device replies to a broadcast, so use it fire-and-forget (omit `on_response`). The
-  hub doesn't special-case address `0` - it still waits the full `send_wait_time` before considering the send done,
-  so a broadcast blocks the bus for that long even though nothing will ever reply. Since exactly one reply handler
-  always fires, a broadcast always ends in `on_no_response` - a `retry:` lambda attached to it can never be
-  satisfied, so without its own counter cap the frame retransmits forever.
+- **Broadcast** (address `0`): a broadcast is never answered (Modbus 4.1), so the hub treats it as fire-and-forget -
+  `on_sent` fires when the frame goes out and no terminal handler follows. It does **not** occupy the waiting slot
+  or wait the full `send_wait_time`, so it never blocks the bus, and a `retry:` lambda is never invoked. Only writes,
+  read/write-multiple (`0x17`), and custom/vendor codes may be broadcast; a **read** to address `0` can never
+  deliver a result and is refused up front, resolving immediately via `on_not_sent`.
 
 > [!NOTE]
 > None of the reply handlers (`on_sent`, `on_response`, `on_custom_response`, `on_error`, `on_no_response`,

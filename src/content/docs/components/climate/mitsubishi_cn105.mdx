@@ -116,6 +116,11 @@ climate:
 
   Set to `never` to disable telemetry polling.
 
+- **vane** (*Optional*): Vane state automation configuration.
+  - **on_state** (*Optional*, [Automation](/automations/)): An automation to run whenever the hub publishes its current
+    state. The automation receives the current vane state as `x`. See
+    [`vane.on_state` Trigger](#vane-on_state-trigger) for the available values and an example.
+
 ### Climate
 
 - **mitsubishi_cn105_id** (*Optional*, [ID](/guides/configuration-types#id)): The Mitsubishi CN105 hub to use.
@@ -161,6 +166,106 @@ defines the hub options on the `climate:` entry.
       vertical_vane_direction:
         name: "Vertical Vane"
   ```
+
+## `vane.on_state` Trigger
+
+The `vane.on_state` trigger runs whenever the Mitsubishi CN105 hub publishes a vane state. This includes updates
+received from the indoor unit and changes requested through ESPHome. It is a snapshot trigger, not a change-only
+trigger, so it can run repeatedly when the vane direction has not changed.
+
+The trigger passes a `VaneState` value named `x` to lambdas. The current vertical vane direction is available as
+`x.vertical.direction` and can have one of these values:
+
+- `VERTICAL_VANE_MODE_AUTO`
+- `VERTICAL_VANE_MODE_POSITION_1`
+- `VERTICAL_VANE_MODE_POSITION_2`
+- `VERTICAL_VANE_MODE_POSITION_3`
+- `VERTICAL_VANE_MODE_POSITION_4`
+- `VERTICAL_VANE_MODE_POSITION_5`
+- `VERTICAL_VANE_MODE_SWING`
+- `VERTICAL_VANE_MODE_UNKNOWN`
+
+```yaml
+mitsubishi_cn105:
+  id: hp
+  # ...
+  vane:
+    on_state:
+      - lambda: |-
+          switch (x.vertical.direction) {
+            case VERTICAL_VANE_MODE_AUTO:
+              ESP_LOGI("vane", "Vertical vane is automatic");
+              break;
+            case VERTICAL_VANE_MODE_SWING:
+              ESP_LOGI("vane", "Vertical vane is swinging");
+              break;
+            case VERTICAL_VANE_MODE_UNKNOWN:
+              ESP_LOGW("vane", "Vertical vane direction is unknown");
+              break;
+            default:
+              ESP_LOGI("vane", "Vertical vane is in a fixed position");
+              break;
+          }
+```
+
+## `mitsubishi_cn105.vane.control` Action
+
+The `mitsubishi_cn105.vane.control` action changes the vane direction. Its `id` must reference the top-level
+Mitsubishi CN105 hub. The currently supported setting is `vertical.direction`, which accepts `AUTO`, `1`, `2`, `3`,
+`4`, `5`, or `SWING`. It can also be a lambda returning one of the corresponding
+`VERTICAL_VANE_MODE_*` values. A lambda returning `VERTICAL_VANE_MODE_UNKNOWN` is ignored and does not change the
+vane direction.
+
+```yaml
+on_...:
+  - mitsubishi_cn105.vane.control:
+      id: hp
+      vertical:
+        direction: SWING
+```
+
+Configuration variables:
+
+- **id** (**Required**, ID): The ID of the top-level `mitsubishi_cn105` hub.
+- **vertical** (*Optional*): Vertical vane settings.
+  - **direction** (*Optional*, string, templatable): One of `AUTO`, `1`, `2`, `3`, `4`, `5`, or `SWING`.
+
+### Custom Vertical Vane Select
+
+This example maps a template select to the indoor unit's vertical vane positions. Add a `vane.on_state` automation,
+as shown above, if the select should also reflect changes made using the unit's remote control.
+
+```yaml
+mitsubishi_cn105:
+  id: hp
+  # ...
+
+select:
+  - platform: template
+    id: custom_vertical_vane
+    name: "Custom Vertical Vane"
+    optimistic: true
+    options:
+      - "↑↑"
+      - "↑"
+      - "—"
+      - "↓"
+      - "↓↓"
+      - "Swing"
+      - "Auto"
+    set_action:
+      - mitsubishi_cn105.vane.control:
+          id: hp
+          vertical:
+            direction: !lambda |-
+              if (x == "↑↑") return VERTICAL_VANE_MODE_POSITION_1;
+              if (x == "↑") return VERTICAL_VANE_MODE_POSITION_2;
+              if (x == "—") return VERTICAL_VANE_MODE_POSITION_3;
+              if (x == "↓") return VERTICAL_VANE_MODE_POSITION_4;
+              if (x == "↓↓") return VERTICAL_VANE_MODE_POSITION_5;
+              if (x == "Swing") return VERTICAL_VANE_MODE_SWING;
+              return VERTICAL_VANE_MODE_AUTO;
+```
 
 ## Remote temperature actions
 
