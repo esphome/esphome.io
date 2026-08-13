@@ -9,7 +9,9 @@ import { headerNavItems } from "../headerNav";
 
 const shouldRenderSearch = config.pagefind || config.components.Search !== "@astrojs/starlight/components/Search.astro";
 
-const isHomepage = Astro.url.pathname === "/";
+// Pages with a sidebar get Starlight's own mobile menu button; pages without one (splash templates such as
+// the homepage and the Starter Kit page) need this header to provide the mobile navigation toggle.
+const { hasSidebar } = Astro.locals.starlightRoute;
 ---
 
 <div class="header__inner">
@@ -38,7 +40,7 @@ const isHomepage = Astro.url.pathname === "/";
   <LinkButton href="/install/getting-started/" class="header__cta">Get started</LinkButton>
 
   {
-    isHomepage && (
+    !hasSidebar && (
       <>
         <button
           type="button"
