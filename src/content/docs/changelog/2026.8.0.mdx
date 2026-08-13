@@ -286,6 +286,12 @@ or LVGL can draw, with optional cross-fade transitions.
 - **CC1101 tuning options** by [@hn](https://github.com/hn): frequency offset compensation and bit
   synchronization registers are now configurable from YAML for narrowband protocols like wM-Bus
   ([#17577](https://github.com/esphome/esphome/pull/17577))
+- **Non-ASCII entity names no longer collide** by [@bdraco](https://github.com/bdraco): entity keys are now
+  hashed from the raw name instead of the sanitized object ID, so names that differ only in non-ASCII
+  characters (for example two Cyrillic sensor names that both sanitize to underscores) are now accepted and
+  stay distinct in the API and Home Assistant. Stored preferences migrate to the new keys automatically on
+  first boot. MQTT and Prometheus still require distinct sanitized names, as they address entities by
+  `object_id` ([#17949](https://github.com/esphome/esphome/pull/17949))
 - **Modbus garage doors and more** covered in the Modbus section above
 {/* FEATURE_HIGHLIGHTS_END */}
 
@@ -461,6 +467,11 @@ changes. These are not covered by the formal breaking change policy, but lambdas
   [#17677](https://github.com/esphome/esphome/pull/17677)
 - **ESPBTDevice::address_str() deprecated**: Use the buffer-based `address_str_to()`; the old method is removed
   in 2027.2.0 [#18092](https://github.com/esphome/esphome/pull/18092)
+- **EntityBase::get_object_id_hash() deprecated**: Entity keys are now hashed from the raw entity name rather
+  than the sanitized object ID. Use `get_entity_key()` for the key sent to API clients, or
+  `make_entity_preference<T>()` for preference storage, which migrates values stored under the old
+  object-id-hash key automatically; the old method is removed in 2027.1.0
+  [#17949](https://github.com/esphome/esphome/pull/17949)
 
 For detailed migration guides and API documentation, see the
 [ESPHome Developers Documentation](https://developers.esphome.io/).
