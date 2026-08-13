@@ -29,7 +29,8 @@ zephyr:
 - **board** (*Optional*, string): The Zephyr board identifier to build for, e.g. `esp32c6_devkitc`.
   Defaults to a variant-specific development board (see [Variants](#variants)). Accepts either a bare
   board name or a fully-qualified `board/soc/qualifier` string; ESPHome automatically qualifies a
-  bare name using the variant's own SoC/qualifier.
+  bare name using the variant's own SoC/qualifier. A board with hardware revisions also accepts an
+  `@<revision>` suffix, e.g. `beetle_esp32c3@2.0.0`. See [Board revisions](#board-revisions).
 - **board_source** (*Optional*): Fetch board definitions (a `boards/<vendor>/<board>/board.yml` and
   friends) from somewhere other than the selected framework's own upstream tree — for example a
   custom board not yet merged upstream. A git source takes its own **refresh** (*Optional*,
@@ -198,6 +199,32 @@ mainline Zephyr doesn't already support, for example.
 > [`snippets`](#snippets) entry (e.g. `espressif-flash-4M`) is usually simpler than a custom
 > `board_source` board. If it differs by partition table or needs a devicetree node the stock board
 > doesn't declare, [`overlays`](#overlays) is usually simpler still.
+
+## Board revisions
+
+Some Zephyr boards declare hardware revisions in their `board.yml` — a revision-specific devicetree
+overlay layered on top of the board's base devicetree, the same `<board>@<revision>` syntax Zephyr's
+own `west build -DBOARD=` accepts. Append `@<revision>` directly to **board**:
+
+```yaml
+# Example configuration entry
+zephyr:
+  variant: esp32c3
+  board: beetle_esp32c3@2.0.0
+```
+
+A revision suffix comes before any qualifier segments, e.g. `my_board@1.0.0/soc/qualifier`. ESPHome
+validates the requested revision against the resolved board's declared revisions (whether coming from
+the selected framework's own tree or a [`board_source`](#board_source)) and merges the revision's
+devicetree overlay into config-time validation, the same way [`shields`](#shields) and
+[`snippets`](#snippets) are.
+
+Not every declared revision has its own overlay file — some only change Kconfig defaults or nothing at
+all — in which case ESPHome falls back to the board's base devicetree for that revision.
+
+If the requested revision isn't declared, ESPHome resolves it to the closest *lower* declared revision
+instead of failing, mirroring Zephyr's own default (non-exact) revision matching. A board whose
+`board.yml` sets `exact: true` requires an exact match.
 
 ## `shields`
 
