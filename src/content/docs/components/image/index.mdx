@@ -1,0 +1,106 @@
+---
+description: "Instructions to display images on ESPHome"
+title: "Images"
+---
+
+Use the `image` component to define images that can be drawn on compatible [displays](/components/display/) or used
+with [LVGL](/components/lvgl/) widgets.
+
+`image` is a platform component: each entry in the `image:` list selects a platform which determines where the image
+data comes from:
+
+- **[`file`](/components/image/file/)**: Static images embedded into the firmware at compile time, from a local
+  file, a URL or a Material Design Icon.
+- **[`animation`](/components/image/animation/)**: Multi-frame (animated) images embedded into the firmware at
+  compile time.
+- **[`online_image`](/components/image/online_image/)**: Images downloaded, decoded and drawn at runtime.
+- **[`sendspin`](/components/image/sendspin/)**: Album and artist artwork streamed from a
+  [Sendspin](/components/sendspin/) group and decoded at runtime.
+
+```yaml
+# Example configuration entry
+image:
+  - platform: file
+    file: "image.png"
+    type: BINARY
+    id: my_image
+    resize: 100x100
+```
+
+## Displaying Images
+
+Images may be used in LVGL configurations wherever an image is required. See the [LVGL](/components/lvgl/)
+documentation for more information.
+
+To display an image directly on an ESPHome display, you can use the `image` method in the display lambda.
+
+```yaml
+display:
+  - platform: ...
+    # ...
+    lambda: |-
+      // Draw the image my_image at position [x=0,y=0]
+      it.image(0, 0, id(my_image));
+```
+
+By default, ESPHome will *align* the image at the top left. That means if you enter the coordinates
+`[0,10]` for your image, the top left of the image will be at `[0,10]`. If you want to draw some
+image at the right side of the display, it is however sometimes useful to choose a different **image alignment**.
+When you enter `[0,10]` you're really telling ESPHome that it should position the **anchor point** of the image
+at `[0,10]`. When using a different alignment, like `TOP_RIGHT`, the image will be positioned left of the anchor
+pointed, so that, as the name implies, the anchor point is a the *top right* corner of the image.
+
+```yaml
+display:
+  - platform: ...
+    # ...
+    lambda: |-
+      // Aligned on left by default
+      it.image(0, 0, id(my_image));
+
+      // Aligned on right edge
+      it.image(it.get_width(), 0, id(my_image), ImageAlign::TOP_RIGHT);
+```
+
+For binary images the `image` method accepts two additional color parameters which can
+be supplied to modify the color used to represent the on and off bits respectively. e.g.
+
+```yaml
+display:
+  - platform: ...
+    # ...
+    lambda: |-
+      // Draw the image my_image at position [x=0,y=0]
+      // with front color red and back color blue
+      it.image(0, 0, id(my_image), id(red), id(blue));
+
+      // Aligned on right edge
+      it.image(it.get_width(), 0, id(my_image), ImageAlign::TOP_RIGHT, id(red), id(blue));
+```
+
+You can also use this to invert images in two color displays, use `COLOR_OFF` then `COLOR_ON`
+as the additional parameters.
+
+## Transparency Options
+
+By default transparency is not used. If `transparency: chroma_key` is set then a specific colour will be used to
+replace any transparent or partially transparent portions of the image. This will not be drawn when rendering the
+image, allowing the background to be visible.
+
+If `transparency: alpha_channel` is set, then each pixel of the image will be assigned an additional byte with a
+transparency value. This is useful mainly when using [LVGL](/components/lvgl/) as the `alpha_channel` transparency
+will enable smooth blending of transparent images with the background. This choice is not available for binary
+images.
+When using the display lambda image drawing functions these will draw or not draw the pixel, no blending with the
+background will be done.
+The `BINARY` format with `chroma_key` transparency effectively turns the image into an alpha mask with one bit per
+pixel. GRAYSCALE images with transparency store the alpha channel only, and remain 1 byte per pixel.
+
+## See Also
+
+- [File](/components/image/file/)
+- [Animation](/components/image/animation/)
+- [Online Image](/components/image/online_image/)
+- [Sendspin Image](/components/image/sendspin/)
+- [Display](/components/display/)
+- [LVGL](/components/lvgl/)
