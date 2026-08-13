@@ -35,9 +35,7 @@ const isHomepage = Astro.url.pathname === "/";
     <ThemeSelect />
   </div>
 
-  <LinkButton href="/install/getting-started/" class="header__cta" icon="right-arrow" iconPlacement="start">
-    Get started
-  </LinkButton>
+  <LinkButton href="/install/getting-started/" class="header__cta"> Get started </LinkButton>
 
   {
     isHomepage && (
@@ -134,10 +132,12 @@ const isHomepage = Astro.url.pathname === "/";
   }
 
   .header__cta {
+    position: relative;
     display: none;
     flex-shrink: 0;
     align-items: center;
     padding: 0.5rem 1rem;
+    padding-inline-end: 2.75rem;
     border-radius: 999px;
     background-color: var(--sl-color-text-accent);
     color: var(--sl-color-black);
@@ -148,6 +148,22 @@ const isHomepage = Astro.url.pathname === "/";
 
     &:hover {
       opacity: 0.85;
+    }
+
+    &::after {
+      content: "→";
+      position: absolute;
+      inset-block: 0;
+      inset-inline-end: 0;
+      aspect-ratio: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 100%;
+      background-color: color-mix(in srgb, var(--sl-color-text-accent) 80%, #ffffff 100%);
+      color: var(--sl-color-black);
+      font-size: 0.9375rem;
+      line-height: 1;
     }
   }
 
