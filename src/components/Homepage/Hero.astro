@@ -1,0 +1,288 @@
+---
+import { LinkButton } from "@astrojs/starlight/components";
+import LivestreamCard from "@components/Homepage/LivestreamCard.astro";
+
+const marqueeItems = [
+  { title: "No complex coding", text: "Simple configuration files do the work for you" },
+  { title: "Wireless updates", text: "Upgrade devices remotely over WiFi – no cables needed" },
+  { title: "Modular design", text: "Choose from hundreds of components to suit your project" },
+  { title: "Local control", text: "Run your devices on your own network, without the cloud" },
+];
+---
+
+<section class="hero">
+  <div class="announcement-container">
+    <div class="announcement-banner card card-bgc">
+      <p>
+        Introducing the ESPHome Starter Kit! The easiest path to building your own smart home devices – no soldering,
+        breadboarding, or coding required.
+      </p>
+      <LinkButton href="/starter-kit/" class="card__text-link" icon="right-arrow" iconPlacement="start"
+        >Get your Starter Kit today</LinkButton
+      >
+      <LinkButton
+        href="/blog/2026/08/12/the-esphome-starter-kit-is-here/"
+        class="card__text-link"
+        icon="right-arrow"
+        iconPlacement="start">Read blog post</LinkButton
+      >
+    </div>
+  </div>
+  <div class="container">
+    <div class="content">
+      <h1>Custom smart home devices, built by you</h1>
+      <p>
+        When you can’t find the smart home device you need in a store, build it yourself! Turn inexpensive components
+        into sensors, switches, displays, and more – just tell ESPHome what to do and it handles the rest, with no need
+        to code unless you want to.
+      </p>
+      <LinkButton href="#begin-here">Begin here</LinkButton>
+    </div>
+
+    <div class="links">
+      <div class="card card-bgc">
+        <p class="card__title h2">Already using ESPHome?</p>
+
+        <LinkButton href="/components/" class="card__text-link" icon="right-arrow" iconPlacement="start"
+          >Browse components</LinkButton
+        >
+        <LinkButton href="https://devices.esphome.io/" class="card__text-link" icon="right-arrow" iconPlacement="start"
+          >Device list</LinkButton
+        >
+      </div>
+
+      <LivestreamCard slug="esphome" class="hero-livestream" />
+    </div>
+  </div>
+  <div class="marquee">
+    <div class="marquee__track">
+      {
+        marqueeItems.map((item) => (
+          <div class="item">
+            <span>{item.title}</span> {item.text}
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style lang="scss">
+  @use "../../styles/mixins" as *;
+
+  .hero {
+    min-height: 75dvh;
+    display: flex;
+    flex-direction: column;
+    background-image: url("/images/homepage/esphome-hero-bg.webp");
+    background-size: cover;
+    background-position: center;
+    padding-bottom: 1rem;
+    position: relative;
+
+    @include bp(desktop) {
+      padding-bottom: 2rem;
+    }
+
+    &:before {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      content: "";
+      inset: 0;
+      pointer-events: none;
+      background-color: #000;
+      opacity: 0.7;
+    }
+
+    .announcement-container {
+      width: 100%;
+      max-width: 1200px;
+      padding: 0 20px;
+      margin: 2rem auto 1rem;
+
+      @include bp(large-desktop) {
+        padding: 0;
+      }
+    }
+
+    .announcement-banner {
+      width: 100%;
+      border-radius: 0.5rem;
+      color: #fff;
+      padding: 0.5rem 1rem;
+      font-size: 0.875rem;
+      z-index: 5;
+      margin: 0 auto;
+      background-color: rgba(255, 255, 255, 0.075);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(5px);
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+
+      @include bp(desktop) {
+        font-size: 1rem;
+        padding: 0.75rem 1rem;
+      }
+
+      @media (min-width: 900px) {
+        flex-wrap: nowrap;
+      }
+
+      a {
+        margin: 0;
+        font-size: 0.875rem;
+        flex-shrink: 0;
+        color: #b3c7ff;
+
+        &:hover {
+          color: #fff;
+        }
+      }
+    }
+
+    .container {
+      flex: 1;
+      align-items: flex-start;
+      justify-content: center;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+      padding-top: 3rem;
+      padding-bottom: 3rem;
+      color: #fff;
+      position: relative;
+      z-index: 1;
+
+      @include bp(desktop) {
+        padding-top: 3rem;
+        padding-bottom: 6rem;
+        flex-direction: row;
+        justify-content: space-between;
+      }
+    }
+
+    .content {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: center;
+
+      @include bp(desktop) {
+        max-width: 48%;
+      }
+
+      h1 {
+        margin-top: 0;
+        margin-bottom: 1.5rem;
+        color: #fff;
+      }
+
+      a {
+        margin-top: 1.5rem;
+      }
+    }
+
+    .links {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 2rem;
+
+      @include bp(580px) {
+        flex-direction: row;
+        align-items: stretch;
+      }
+
+      @include bp(desktop) {
+        flex-direction: column;
+        align-items: flex-end;
+      }
+
+      :global(.hero-livestream) {
+        width: 100%;
+
+        @include bp(desktop) {
+          width: 360px;
+          max-width: 100%;
+        }
+      }
+
+      .card {
+        width: 100%;
+        padding: 1.25rem 1.5rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        background-color: #23272e;
+        border-color: #2d3748;
+
+        @include bp(desktop) {
+          max-width: 260px;
+        }
+
+        &__title {
+          font-size: 1rem;
+          margin: 0;
+          color: #ffffff;
+        }
+
+        &__text-link {
+          margin: 0;
+          font-size: 0.875rem;
+          color: #b3c7ff;
+        }
+      }
+    }
+
+    .marquee {
+      overflow: hidden;
+      width: 100%;
+      max-width: 1200px;
+      padding: 0 20px;
+      margin-top: auto;
+      position: relative;
+      margin: 0 auto;
+      z-index: 5;
+
+      &__track {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1rem;
+
+        @include bp(tablet) {
+          grid-template-columns: repeat(2, 1fr);
+        }
+
+        @include bp(desktop) {
+          grid-template-columns: repeat(4, 1fr);
+        }
+      }
+    }
+
+    .item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: #c1c3c9;
+      text-wrap: balance;
+      font-size: 0.875rem;
+      text-align: center;
+
+      @include bp(tablet) {
+        align-items: flex-start;
+        text-align: left;
+      }
+
+      span {
+        font-weight: bold;
+        font-size: 1rem;
+        color: #ffffff;
+      }
+    }
+  }
+</style>

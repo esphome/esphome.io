@@ -1,0 +1,260 @@
+---
+import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
+import Hero from "@components/Homepage/Hero.astro";
+import HowEsphomeWorks from "@components/Homepage/HowEsphomeWorks.astro";
+import ExploreCommunityProjects from "@components/Homepage/ExploreCommunityProjects.astro";
+import GetStarted from "@components/Homepage/GetStarted.astro";
+import PickYourFirstProject from "@components/Homepage/PickYourFirstProject.astro";
+import JoinOurCommunity from "@components/Homepage/JoinOurCommunity.astro";
+import SupportedMicrocontrollers from "@components/Homepage/SupportedMicrocontrollers.astro";
+---
+
+<StarlightPage
+  frontmatter={{
+    title: "ESPHome",
+    description:
+      "Smart Home Made Simple. ESPHome turns ESP32, ESP8266, and RP2040 microcontrollers into fully-featured smart home devices.",
+    template: "splash",
+    head: [{ tag: "title", content: "ESPHome - Smart Home Made Simple" }],
+  }}
+  hasSidebar={false}
+>
+  <Hero />
+  <HowEsphomeWorks />
+  <ExploreCommunityProjects />
+  <GetStarted />
+  <PickYourFirstProject />
+  <JoinOurCommunity />
+  <SupportedMicrocontrollers />
+</StarlightPage>
+
+<style lang="scss">
+  @use "../styles/mixins" as *;
+
+  html:not([data-has-sidebar]) {
+    --sl-content-width: 100%;
+  }
+
+  :root {
+    --sl-content-gap-y: 0;
+    --esphome-card-background-color: #23272e;
+
+    --esphome-card-background-color--transparent: color-mix(
+      in srgb,
+      var(--esphome-card-tag-background-color) 10%,
+      transparent
+    );
+    --esphome-card-border-color: #2d3748;
+    --esphome-card-tag-background-color: #b3c7ff;
+
+    --esphome-icon-background-color: #b3c7ff;
+    --esphome-icon-background-color--transparent: color-mix(
+      in srgb,
+      var(--esphome-icon-background-color) 10%,
+      transparent
+    );
+  }
+
+  html[data-theme="dark"]:root {
+    --sl-color-text: #a0aec0;
+  }
+
+  html[data-theme="light"]:root {
+    --esphome-card-background-color: var(--sl-color-gray-6);
+    --esphome-card-background-color--transparent: color-mix(
+      in srgb,
+      var(--esphome-card-tag-background-color) 10%,
+      transparent
+    );
+    --esphome-card-border-color: var(--sl-color-gray-5);
+    --esphome-card-tag-background-color: var(--sl-color-white);
+
+    --esphome-icon-background-color: #b3c7ff;
+    --esphome-icon-background-color--transparent: color-mix(
+      in srgb,
+      var(--esphome-icon-background-color) 30%,
+      transparent
+    );
+  }
+
+  :global(.content-panel) {
+    padding: 0;
+    border: none;
+  }
+
+  :global(footer) {
+    --sl-content-width: 75rem;
+
+    width: 100%;
+    max-width: var(--sl-content-width);
+    margin: 0 auto;
+    padding: 0 var(--sl-content-pad-x);
+  }
+
+  :global(.container) {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1.25rem;
+
+    @include bp(desktop) {
+      padding: 4rem 1.25rem;
+    }
+
+    @include bp(large-desktop) {
+      padding: 4rem 0;
+    }
+  }
+
+  :global(.content-container) {
+    :global(p) {
+      margin-bottom: 1.25rem;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
+
+  :global(h2),
+  :global(.h2),
+  :global(h3),
+  :global(.h3) {
+    margin-bottom: 1.5rem;
+  }
+
+  :global(.card) {
+    border: 1px solid var(--esphome-card-border-color);
+    border-radius: 1rem;
+    padding: 1rem;
+    transition: border-color 0.2s ease;
+
+    @include bp(desktop) {
+      padding: 1.75rem;
+    }
+
+    &.card--ghost {
+      border-color: transparent;
+    }
+
+    :global(p) {
+      font-size: 0.875rem;
+    }
+
+    :global(.card__tag-row) {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+
+      :global(.card__tag) {
+        background-color: transparent;
+        border: 1px solid var(--esphome-card-border-color);
+        color: var(--sl-color-text);
+        font-size: 0.75rem;
+      }
+    }
+
+    :global(.card__tag) {
+      border-radius: px-to-rem(100);
+      padding: 0.55rem 1rem 0.5rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      background-color: var(--esphome-card-background-color--transparent);
+      color: var(--sl-color-text-accent);
+
+      &.beginner {
+        --esphome-card-tag-background-color: #7cb342;
+        --esphome-card-background-color--transparent: color-mix(
+          in srgb,
+          var(--esphome-card-tag-background-color) 10%,
+          transparent
+        );
+        --sl-color-text-accent: #7cb342;
+
+        :global([data-theme="light"]) & {
+          --esphome-card-background-color--transparent: color-mix(
+            in srgb,
+            var(--esphome-card-tag-background-color) 100%,
+            transparent
+          );
+          --sl-color-text-accent: #fff;
+        }
+      }
+
+      &.intermediate {
+        --esphome-card-tag-background-color: #ffcc32;
+        --esphome-card-background-color--transparent: color-mix(
+          in srgb,
+          var(--esphome-card-tag-background-color) 10%,
+          transparent
+        );
+        --sl-color-text-accent: #ffcc32;
+
+        :global([data-theme="light"]) & {
+          --esphome-card-background-color--transparent: color-mix(
+            in srgb,
+            var(--esphome-card-tag-background-color) 100%,
+            transparent
+          );
+          --sl-color-text-accent: #fff;
+        }
+      }
+
+      &.advanced {
+        --esphome-card-tag-background-color: #e74c3c;
+        --esphome-card-background-color--transparent: color-mix(
+          in srgb,
+          var(--esphome-card-tag-background-color) 10%,
+          transparent
+        );
+        --sl-color-text-accent: #e74c3c;
+
+        :global([data-theme="light"]) & {
+          --esphome-card-background-color--transparent: color-mix(
+            in srgb,
+            var(--esphome-card-tag-background-color) 100%,
+            transparent
+          );
+          --sl-color-text-accent: #fff;
+        }
+      }
+
+      &.beginner,
+      &.intermediate,
+      &.advanced {
+        text-transform: none;
+      }
+    }
+
+    :global(.card__title) {
+      font-weight: 600;
+      color: var(--sl-color-white);
+      font-size: 1.125rem;
+    }
+
+    :global(.card__text-link) {
+      color: var(--sl-color-text-accent);
+      background-color: transparent;
+      border: none;
+      padding: 0;
+      margin: 1.25rem 0 0;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: color 0.2s ease;
+
+      &:hover {
+        color: var(--sl-color-accent);
+      }
+    }
+  }
+
+  :global(a.card:hover) {
+    border-color: var(--sl-color-text-accent);
+  }
+
+  :global(.card-bgc) {
+    background-color: var(--esphome-card-background-color);
+  }
+</style>
