@@ -74,13 +74,9 @@ sensor:
   - **window** (*Optional*, [Time](/guides/configuration-types#time)): The time the ESP is actively listening for packets
     on a channel during each scan interval. If this is close to the `interval` value, the ESP will
     spend more time listening to packets (but also consume more power). Must not be larger than
-    `interval`; the same range and step apply. When WiFi is configured and the build uses ESP-IDF
-    5.5.5 or newer, this defaults to the `interval` value, as Espressif recommends for WiFi
-    coexistence: the radio arbiter still shares airtime with WiFi, and Bluetooth uses the airtime
-    WiFi does not claim. Older ESP-IDF versions had a bug that made the scanner listen far longer
-    than the configured window, so a small window appeared to work well; ESP-IDF 5.5.5 fixed this,
-    and a small window now misses most advertisements when WiFi is active. Without WiFi (for
-    example on Ethernet boards), it defaults to `30ms`.
+    `interval`; the same range and step apply. When WiFi is configured, this defaults to the
+    `interval` value: WiFi and Bluetooth share one radio, and this lets Bluetooth listen whenever
+    WiFi is not using it. Without WiFi, it defaults to `30ms`.
 
   - **duration** (*Optional*, [Time](/guides/configuration-types#time)): The duration of each complete scan. This has no real
     impact on the device but can be used to debug the BLE stack. Defaults to `5min`.
