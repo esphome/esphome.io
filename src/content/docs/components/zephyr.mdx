@@ -98,22 +98,25 @@ zephyr:
 
 It is not recommended to use variants that have existing platforms for other than experimental purposes.
 
+**SMP** (symmetric multiprocessing) is one kernel image and one scheduler shared across cores;
+threads run on whichever core is free (also can be pinned). **AMP** (asymmetric multiprocessing) is
+separate compiled images, each with its own Kconfig and memory space — this is how every multi-core
+Espressif chip under Zephyr works today.  Additionally, Platform: Zephyr does not have the ability
+to produce an image for other than the primary core.
+
 ### Esspressif
 
-All five `esp32*` variants build only the single scheduled core Zephyr's Wi-Fi/BLE drivers require;
-where the chip has more than one core, only the main application core's image is built. `nrf54l15`
-and `nrf54lm20a` likewise only build for the application core (`cpuapp`) — each chip's separate
-RISC-V co-processor core (`cpuflpr`) is not a build target.
+Espressif is working on SMP solutions for `esp32s3` and `esp32p4`, they have remained silent on
+`esp32`; a warning is logged at config time as a reminder.
 
 ### Nordic
 
-`nrf52`, `nrf54l15`, and `nrf54lm20a` are the only variants with more than one selectable framework
-today — all three default to Nordic's own nRF Connect SDK (NCS), but `framework: type: zephyr` builds
-against mainline Zephyr instead (the same source the `esp32*` family uses). See
-[`framework`](#framework).
+`nrf52`, `nrf54l15`, and `nrf54lm20a` have more than one selectable framework — all three default
+to Nordic's own nRF Connect SDK (NCS), but `framework: type: zephyr` builds against mainline Zephyr
+instead. See [`framework`](#framework).
 
-`nrf54lm20a`'s alternate framework isn't just an alternate for its default board — it's *required*
-for some boards. NCS carries the `nrf54lm20dk` board (the default), but not Seeed's
+`nrf54lm20a`'s alternate `framework: type: zephyr`,  isn't just an alternate for its default board —
+it's *required* for some boards. NCS carries the `nrf54lm20dk` board (the default), but not Seeed's
 [`xiao_nrf54lm20a`](https://wiki.seeedstudio.com/xiao_nrf54lm20a/), which as of this writing isn't in
 any tagged Zephyr release yet either — `board: xiao_nrf54lm20a` needs an explicit
 `framework: {type: zephyr, source: {type: git, ref: main}}` pointed at mainline's `main` branch, not
@@ -129,7 +132,7 @@ see [`advanced`](#advanced). Uploading over BOOTSEL no longer requires holding t
 see [RP2040/RP2350 BOOTSEL uploads](#rp2040rp2350-bootsel-uploads). Neither variant has wireless
 transport support yet.
 
-`rp2350` is dual-core silicon, but mainline Zephyr has no SMP support for RP2350 yet either (same as
+`rp2350` is dual-core silicon, but mainline Zephyr has no SMP support for RP2350 (same as
 `rp2040`) — only one core is used; a warning is logged at config time as a reminder. `rp2350`'s real
 hardware TRNG hangs the boot sequence under Zephyr's current driver, so it uses the same
 software-PRNG fallback (`TEST_RANDOM_GENERATOR`) as `rp2040` until that's fixed upstream.
@@ -159,13 +162,13 @@ Pins are referenced by a flat number regardless of variant, either as a plain in
 port and a pin-within-port, but this is transparent to configuration; use the number silk-screened on the
 board or listed in the board's pinout.
 
-On variants with lettered GPIO ports (currently only `efr32mg24`), the vendor's own notation is also
-accepted directly — `PA4`, `PB2`, and so on, the same string logs and `dump_config` print back. This
-notation is rejected with an error on variants that use flat numbering instead.
+On variants with lettered GPIO ports, the vendor's own notation is also. For example on SiLabs variants — 
+`PA4`, `PB2`, and so on are accepted, the same string logs and `dump_config` print back.  This is
+rejected on variants that don't use Silicone Lab's notation.
 
 On Nordic variants (`nrf52`, `nrf54l15`, `nrf54lm20a`), Nordic's own `P<port>.<pin>` notation is
-accepted the same way — `P0.02`, `P1.05`, and so on. This too is rejected on variants that don't use
-Nordic's port-banked numbering.
+accepted the same way — `P0.02`, `P1.05`, and so on. This is rejected on variants that don't use
+Nordic's port-banked notation.
 
 ## `board_source`
 
@@ -688,18 +691,6 @@ ESPHome's own `mdns:` component already sets the mainline-safe Kconfig values it
 socket-service dispatcher threads) regardless of which Zephyr source is used. Only
 `MDNS_RESPONDER_ANNOUNCE_DNS_SD` needs setting by hand, since it's specific to the patches that
 are not in 4.4 yet
-
-## SMP and AMP status
-
-**SMP** (symmetric multiprocessing) is one kernel image and one scheduler shared across cores;
-threads run on whichever core is free (also can be pinned). **AMP** (asymmetric multiprocessing) is
-separate compiled images, each with its own Kconfig and memory space — this is how every multi-core
-Espressif chip under Zephyr works today.
-
-Espressif is working on SMP solutions for `esp32s3` and `esp32p4`, they have remained silent on
-`esp32`.
-
-At present, unable to understand if rp_pico or rp_pico2 will support SMP in the future.
 
 ## MCUboot and nRF52/nRF54L15/nRF54LM20A flashing
 
