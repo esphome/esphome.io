@@ -96,10 +96,16 @@ zephyr:
 | Raspberry Pi | `rp2350` | Raspberry Pi RP2350 (Cortex-M33, dual-core) | [`rpi_pico2`](https://docs.zephyrproject.org/latest/boards/raspberrypi/rpi_pico2/doc/index.html) | mainline Zephyr | No wireless yet |
 | Silicon Labs | `efr32mg24` | Silicon Labs EFR32MG24 (Cortex-M33) | [`xg24_ek2703a`](https://docs.zephyrproject.org/latest/boards/silabs/dev_kits/xg24_ek2703a/doc/index.html) | mainline Zephyr | BLE, Thread (via `openthread:`) |
 
+It is not recommended to use variants that have existing platforms for other than experimental purposes.
+
+### Esspressif
+
 All five `esp32*` variants build only the single scheduled core Zephyr's Wi-Fi/BLE drivers require;
 where the chip has more than one core, only the main application core's image is built. `nrf54l15`
 and `nrf54lm20a` likewise only build for the application core (`cpuapp`) — each chip's separate
 RISC-V co-processor core (`cpuflpr`) is not a build target.
+
+### Nordic
 
 `nrf52`, `nrf54l15`, and `nrf54lm20a` are the only variants with more than one selectable framework
 today — all three default to Nordic's own nRF Connect SDK (NCS), but `framework: type: zephyr` builds
@@ -112,6 +118,23 @@ for some boards. NCS carries the `nrf54lm20dk` board (the default), but not Seee
 any tagged Zephyr release yet either — `board: xiao_nrf54lm20a` needs an explicit
 `framework: {type: zephyr, source: {type: git, ref: main}}` pointed at mainline's `main` branch, not
 just `type: zephyr` alone.
+
+### Raspberry Pi
+
+`rp2040` and `rp2350` have no ROM bootloader requirement of their own — the RP2040/RP2350's built-in
+USB (BOOTSEL) bootloader flashes them directly, so MCUboot is optional here, unlike every other
+variant with an MCUboot-capable board. Both default to `advanced: bootloader: none` (direct-flash
+BOOTSEL boot); set it to `mcuboot` for OTA/rollback support, at the cost of a second board target —
+see [`advanced`](#advanced). Uploading over BOOTSEL no longer requires holding the physical button —
+see [RP2040/RP2350 BOOTSEL uploads](#rp2040rp2350-bootsel-uploads). Neither variant has wireless
+transport support yet.
+
+`rp2350` is dual-core silicon, but mainline Zephyr has no SMP support for RP2350 yet either (same as
+`rp2040`) — only one core is used; a warning is logged at config time as a reminder. `rp2350`'s real
+hardware TRNG hangs the boot sequence under Zephyr's current driver, so it uses the same
+software-PRNG fallback (`TEST_RANDOM_GENERATOR`) as `rp2040` until that's fixed upstream.
+
+### Silicon Labs
 
 `efr32mg24` is a Silicon Labs device. Its GPIO ports are lettered (`PA`/`PB`/`PC`/`PD`) rather than
 numbered; see [GPIO Pin Numbering](#gpio-pin-numbering). Two OTA paths are available:
@@ -128,23 +151,6 @@ Series 2 radios yet.
 `efr32mg24` also supports Silicon Labs' own vendor SDK, "Simplicity SDK for Zephyr"
 (`framework: type: silabs`), as an alternate to the default mainline Zephyr build — see
 [`advanced`](#advanced) for its `commander_version` option.
-
-`rp2040` and `rp2350` have no ROM bootloader requirement of their own — the RP2040/RP2350's built-in
-USB (BOOTSEL) bootloader flashes them directly, so MCUboot is optional here, unlike every other
-variant with an MCUboot-capable board. Both default to `advanced: bootloader: none` (direct-flash
-BOOTSEL boot); set it to `mcuboot` for OTA/rollback support, at the cost of a second board target —
-see [`advanced`](#advanced). Uploading over BOOTSEL no longer requires holding the physical button —
-see [RP2040/RP2350 BOOTSEL uploads](#rp2040rp2350-bootsel-uploads). Neither variant has wireless
-transport support yet.
-
-`rp2350` is dual-core silicon, but mainline Zephyr has no SMP support for RP2350 yet either (same as
-`rp2040`) — only one core is used; a warning is logged at config time as a reminder. `rp2350`'s real
-hardware TRNG hangs the boot sequence under Zephyr's current driver, so it uses the same
-software-PRNG fallback (`TEST_RANDOM_GENERATOR`) as `rp2040` until that's fixed upstream.
-
-It is not recommended to use esp variants for other than experimental purposes, the esp32 platform,
-esp-idf framework delivers superior functionality and stability.  These variants are being used to test
-and learn how to implement Zephyr, but again are not recommended for everyday use.
 
 ## GPIO Pin Numbering
 
@@ -688,28 +694,12 @@ are not in 4.4 yet
 **SMP** (symmetric multiprocessing) is one kernel image and one scheduler shared across cores;
 threads run on whichever core is free (also can be pinned). **AMP** (asymmetric multiprocessing) is
 separate compiled images, each with its own Kconfig and memory space — this is how every multi-core
-Espressif chip under Zephyr works today, including the single-core-image builds below.
+Espressif chip under Zephyr works today.
 
-- **`esp32`** (original) is dual-core silicon (PRO_CPU + APP_CPU). By default only PRO_CPU is used —
-  Zephyr logs a warning at config time reminding you of this unless `kconfig_options: CONFIG_SMP: true`
-  is set. With that set, both cores boot and run real application code; this has been fixed and
-  confirmed working on real hardware, but the fix is not yet in mainline Zephyr — it requires
-  `framework: source:` pointed at the `esphome-platform-zephyr` branch of
-  [`esphomeplatformzephyr/zephyr`](https://github.com/esphomeplatformzephyr/zephyr).
-  - **SMP and Wi-Fi together do not work yet.** Zephyr's `WIFI_ESP32` driver has `depends on !SMP` —
-    a thread-safety gap specific to this one driver (no other vendor's Wi-Fi driver in the Zephyr tree
-    has this restriction). Lifting it for the original ESP32 specifically (task pinning plus a DPORT
-    cross-core stall handler) is in-progress, unfinished work, not usable yet.
-- **`esp32c3`** is single-core; SMP/AMP doesn't apply.
-- **`esp32c6`** has an asymmetric HP/LP core pair in silicon, but only the HP core is built or used —
-  no platform-zephyr variant targets the LP core.
-- **`esp32h2`** is single-core; SMP/AMP doesn't apply.
-- **`nativesim`** is a single host process; SMP/AMP doesn't apply.
-- **ESP32-P4** (dual RISC-V cores) is not currently a platform-zephyr variant. Espressif's own stated
-  intent is for the P4 to be their first RISC-V chip with genuine Zephyr SMP support, but that isn't
-  implemented in Zephyr yet.
-  
-We have noted that Espressif is very active in the Zephyr repository and will monitor for any changes.
+Espressif is working on SMP solutions for `esp32s3` and `esp32p4`, they have remained silent on
+`esp32`.
+
+At present, unable to understand if rp_pico or rp_pico2 will support SMP in the future.
 
 ## MCUboot and nRF52/nRF54L15/nRF54LM20A flashing
 
