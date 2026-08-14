@@ -27,8 +27,8 @@ multiple hubs are configured.
 > [!TIP]
 > Three ways to send an ad-hoc command, in order of preference:
 >
-> - **Typed Read/Write Actions** (below) for a standard read or write with a static function code - use this unless
->   one of the next two applies.
+> - **Typed Read/Write Actions** (below) for a standard read, write, or combined read/write with a static function
+>   code - use this unless one of the next two applies.
 > - **`modbus_client.send`** for a non-standard PDU, or a function code chosen at runtime instead of fixed in the
 >   YAML.
 > - **Lambda Hook Component** for a write from inside a lambda that's already doing other C++ work, rather than as
@@ -145,9 +145,10 @@ The enum and the builders live in the `modbus` component's namespaces (`modbus::
 ## Typed Read/Write Actions
 
 Instead of hand-assembling a PDU with `modbus_client.send`, these actions issue a single standard Modbus
-function-code transaction directly: a register or coil read, or a register or coil write. Like `modbus_client.send`,
-each is its own hub device - it resolves the hub (automatically when a single one is configured), sends the request
-to `address`, and routes the reply straight back to that action's own handlers, never another action's.
+function-code transaction directly: a register or coil read, a register or coil write, or a combined read/write in a
+single transaction. Like `modbus_client.send`, each is its own hub device - it resolves the hub (automatically when
+a single one is configured), sends the request to `address`, and routes the reply straight back to that action's own
+handlers, never another action's.
 
 ### Common Configuration Variables
 
@@ -156,7 +157,8 @@ to `address`, and routes the reply straight back to that action's own handlers, 
   [Behavior](#behavior)).
 - **modbus_id** (*Optional*, [ID](/guides/configuration-types#id)): The Modbus hub to send on. Automatically assigned
   when a single hub is configured.
-- **start_address** (**Required**, templatable, int): The starting register or coil address.
+- **start_address** (**Required**, templatable, int): The starting register or coil address. Not used by
+  `read_write_multiple_registers`, which takes separate `read_address` and `write_address` instead.
   `start_address + count` (or `+ values.size()` for a write) must not exceed `0x10000`; a literal value is rejected
   at config time, but a templated one bypasses that check and fails at runtime - an out-of-range address
   produces an empty PDU, and `on_not_sent` fires instead of the send. The same holds for the per-action `count` and
@@ -385,11 +387,57 @@ button:
           values: [true, false, true]
 ```
 
+### `modbus_client.read_write_multiple_registers` Action
+
+Writes one block of holding registers and reads another back in a single transaction (function code `0x17`). Per the
+Modbus specification the write is performed **before** the read, so when the two ranges overlap the read returns the
+values just written. Because the write travels in the same frame, an `on_no_response` retry re-sends it - avoid
+retries on registers whose writes have side effects (command or trigger registers, counters, one-shot commits).
+For queue priority and duplicate suppression the hub classifies `0x17` as a write, so a second identical send while
+one is in flight is refused with `on_not_sent` rather than requeued the way a plain read would be.
+
+This action does **not** use the common `start_address`; it has a separate read range and write range instead.
+The `0x10000` range rule described there applies to each pair independently - `read_address + read_count` and
+`write_address + values.size()`.
+
+#### Configuration Variables
+
+- **write_address** (**Required**, templatable, int): Address of the first holding register to write.
+- **values** (**Required**, templatable, list of int): Registers to **write**, `write_address` first. 1-121
+  registers - the `0x17` write ceiling, lower than the 123 of a plain write. As a lambda it must return a
+  `std::vector<uint16_t>`.
+- **read_address** (**Required**, templatable, int): Address of the first holding register to read back.
+- **read_count** (*Optional*, templatable, int): 1-125 registers to read back. Defaults to `1`.
+
+`on_response` lambda variable: **values** (`std::span<const uint16_t>`, host byte order) - the block that was **read
+back**, the same shape as `read_holding_registers`. Note this is a different `values` from the block being written in
+the configuration above.
+
+```yaml
+button:
+  - platform: template
+    name: "Read/write multiple registers"
+    on_press:
+      - modbus_client.read_write_multiple_registers:
+          address: 0x01
+          write_address: 0x0010
+          values: [0x1234, 0x5678]
+          read_address: 0x0020
+          read_count: 4
+          on_response:
+            then:
+              - lambda: |-
+                  // `values` here is the read-back block, not the block written above
+                  for (auto v : values)
+                    ESP_LOGD("modbus", "read 0x%04X", v);
+```
+
 ## Behavior
 
 - **Fire-and-continue**: the action queues the frame and the enclosing automation continues immediately; the reply
   handlers run later, when the outcome is known. Exactly one of `on_response`/`on_error`/`on_no_response`/
-  `on_not_sent` fires per transmission attempt; a retried frame runs the timeout branch again on each attempt. The
+  `on_not_sent` fires per transmission attempt (except a broadcast to address `0`, which is never answered and gets
+  only `on_sent`); a retried frame runs the timeout branch again on each attempt. The
   typed read/write actions also have `on_custom_response`, which fires in place of `on_response` for a
   non-conforming reply.
 - The reply handlers run with the action's own context - they do **not** see the enclosing automation's local
@@ -399,11 +447,11 @@ button:
   safe. For a read, the second send is rescheduled for a second transmission at the back of the queue once the
   first completes, and still gets its own reply handler. For a write or custom command, only one may be in flight - a
   second identical send is refused (`on_not_sent`).
-- **Broadcast** (address `0`): no device replies to a broadcast, so use it fire-and-forget (omit `on_response`). The
-  hub doesn't special-case address `0` - it still waits the full `send_wait_time` before considering the send done,
-  so a broadcast blocks the bus for that long even though nothing will ever reply. Since exactly one reply handler
-  always fires, a broadcast always ends in `on_no_response` - a `retry:` lambda attached to it can never be
-  satisfied, so without its own counter cap the frame retransmits forever.
+- **Broadcast** (address `0`): a broadcast is never answered (Modbus 4.1), so the hub treats it as fire-and-forget -
+  `on_sent` fires when the frame goes out and no terminal handler follows. It does **not** occupy the waiting slot
+  or wait the full `send_wait_time`, so it never blocks the bus, and a `retry:` lambda is never invoked. Only writes,
+  read/write-multiple (`0x17`), and custom/vendor codes may be broadcast; a **read** to address `0` can never
+  deliver a result and is refused up front, resolving immediately via `on_not_sent`.
 
 > [!NOTE]
 > None of the reply handlers (`on_sent`, `on_response`, `on_custom_response`, `on_error`, `on_no_response`,

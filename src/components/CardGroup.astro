@@ -1,0 +1,38 @@
+---
+const { columns = 2, gap, ...attrs } = Astro.props;
+const cols = typeof columns === "number" ? `repeat(${columns}, 1fr)` : String(columns);
+const gapValue = gap !== undefined ? { "--card-group-gap": typeof gap === "number" ? `${gap}px` : gap } : {};
+---
+
+<div class="container" {...attrs}>
+  <div class="card-group" style={{ "--card-group-cols": cols, ...gapValue }}>
+    <slot />
+  </div>
+</div>
+
+<style lang="scss">
+  @use "../styles/mixins" as *;
+
+  .card-group {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--card-group-gap, 12px);
+
+    @include bp(tablet) {
+      gap: var(--card-group-gap, 20px);
+      grid-template-columns: var(--card-group-cols);
+    }
+
+    :global(.card) {
+      z-index: 1;
+
+      &:nth-of-type(1) {
+        z-index: 3;
+      }
+
+      &:nth-of-type(2) {
+        z-index: 2;
+      }
+    }
+  }
+</style>

@@ -17,7 +17,9 @@ See [Modbus](/components/modbus/#hardware-setup) for RS485 hardware setup instru
 
 - **modbus_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the `modbus` hub.
 
-- **address** (*Optional*, int): The Modbus device address (a hex byte, `0x00`-`0xFF`). Defaults to `0x01`.
+- **address** (*Optional*, int): The Modbus device address (can be decimal or hexadecimal, `0`-`255`; the valid
+  Modbus device range is `1`-`247`). `0` is the broadcast address, which no device ever answers, so it cannot be
+  polled. Defaults to `0x01`.
 
 - **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval that the sensors should be checked.
   Defaults to 60 seconds.
@@ -66,8 +68,9 @@ Automations:
 
 The following code creates a `modbus_controller` hub talking to a Modbus device at address `1` with `115200` bps
 
-Modbus sensors can be directly defined (inline) under the `modbus_controller` hub or as standalone components
-Technically there is no difference between the "inline" and the standard definitions approach.
+Each Modbus entity (sensor, switch, number, and so on) is configured as its own platform component and linked to a
+hub with `modbus_controller_id`. When only one `modbus_controller` is defined, `modbus_controller_id` may be omitted
+and the entity attaches to that hub automatically.
 
 ```yaml
 # Example configuration entry
@@ -166,7 +169,7 @@ sensor:
       - multiply: 0.1
 ```
 
-Check out the various Modbus components available at the bottom of the document in the [See Also](#see-also) section. They can be directly defined *(inline)* under the `modbus_controller` hub or as standalone components. Technically there is no difference between the *inline* and the standard definitions approach.
+Check out the various Modbus components available at the bottom of the document in the [See Also](#see-also) section. Each is configured as its own platform component and linked to a hub with `modbus_controller_id` (which may be omitted when only one `modbus_controller` is defined).
 
 Below you find a few general tips about using Modbus in more advanced scenarios. Applicable component functionalities have links pointing here:
 
@@ -250,7 +253,7 @@ modbus_controller:
   setup_priority: -10
   update_interval: 30s
 
-sensors:
+sensor:
 - platform: modbus_controller
   modbus_controller_id: sdm
   name: "Total active energy"
@@ -289,8 +292,8 @@ sensors:
       raw_to_float.raw =   data[0] << 24 | data[1] << 16 | data[2] << 8 |  data[3];
       ESP_LOGD("Modbus Sensor Lambda", "FP32 = 0x%08X => %f", raw_to_float.raw, raw_to_float.float_value);
       return raw_to_float.float_value;
-    unit_of_measurement: kVArh
-    accuracy_decimals: 1
+  unit_of_measurement: kVArh
+  accuracy_decimals: 1
 ```
 
 <span id="modbus_register_count"></span>
@@ -361,7 +364,7 @@ Because the option `register_count: 6` is used for the first sensor, *one* comma
 ## Protocol decoding example
 
 ```yaml
-sensors:
+sensor:
 - platform: modbus_controller
   modbus_controller_id: epever
   id: array_rated_voltage
@@ -436,7 +439,8 @@ sensors:
     - multiply: 0.01
 
 - platform: modbus_controller
-  modbus_controller_id: epever id: charging_mode
+  modbus_controller_id: epever
+  id: charging_mode
   name: "charging_mode"
   address: 0x3008
   unit_of_measurement: ""
@@ -500,8 +504,10 @@ The response is mapped to the sensor based on `register_count` and offset in byt
 
 ### `on_command_sent`
 
-This automation will be triggered when a command has been transmitted by the `modbus` hub. In [Lambdas](/automations/templates#config-lambda)
-you can get the function code in `function_code` and the register address in `address`.
+This automation will be triggered when a command has been transmitted by the `modbus` hub. It fires once per wire
+transmission, so a command that is retried triggers it again on each attempt.
+In [Lambdas](/automations/templates#config-lambda) you can get the function code in `function_code` and the
+register address in `address`.
 
 ```yaml
 modbus_controller:
