@@ -64,6 +64,7 @@ a minimum only the model name need be configured. Other options can be overridde
 | Model name              | Manufacturer         | Product Description                                                                                                          |
 |-------------------------|----------------------|------------------------------------------------------------------------------------------------------------------------------|
 | inkplate2               | Soldered Electronics | Soldered Inkplate 2: 2.13" 3-color (black/white/red) e-paper, 104x212. [https://soldered.com/products/inkplate-2](https://soldered.com/products/inkplate-2) |
+| inkplate6color          | Soldered Electronics | Soldered Inkplate 6COLOR: 7-color (black/white/green/blue/red/yellow/orange) e-paper, 600x448. [https://soldered.com/products/inkplate-6color-e-paper-display](https://soldered.com/products/inkplate-6color-e-paper-display) |
 | Seeed-ee04-mono-4.26    | Seeed Studio         | Seeed EE04 board with Waveshare 4.26" mono epaper. [https://www.seeedstudio.com/XIAO-ePaper-Display-Board-EE04-p-6560.html](https://www.seeedstudio.com/XIAO-ePaper-Display-Board-EE04-p-6560.html)  |
 | Seeed-reTerminal-E1002  | Seeed Studio         | [https://www.seeedstudio.com/reTerminal-E1002-p-6533.html](https://www.seeedstudio.com/reTerminal-E1002-p-6533.html)         |
 | Seeed-reTerminal-E1004 | Seeed Studio | 13.3" 6-color e-paper (1200x1600, T133A01). Requires PSRAM. [https://www.seeedstudio.com/reTerminal-E1004-p-6692.html](https://www.seeedstudio.com/reTerminal-E1004-p-6692.html) |
@@ -82,7 +83,7 @@ but can be overridden if needed.
 
   > [!NOTE]
   > Some displays use inverted busy pin polarity (LOW = busy, HIGH = idle). For these models, set `inverted: true`
-  > on the busy pin. This applies to: `Waveshare-1.54in-G`, `Waveshare-7.5in-H`.
+  > on the busy pin. This applies to: `Waveshare-1.54in-G`, `Waveshare-7.5in-H`, `inkplate6color`.
 
 - **reset_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The RESET pin, if used.
   Make sure you pull this pin high (by connecting it to 3.3V with a resistor) if not connected to a GPIO pin.
@@ -195,6 +196,37 @@ display:
       it.filled_circle(600, 300, 80, GREEN);
       it.filled_circle(200, 550, 80, BLUE);
       it.filled_circle(400, 550, 80, YELLOW);
+```
+
+### 7-color display example (Inkplate 6COLOR)
+
+The Soldered Inkplate 6COLOR features a 600x448 7-color e-paper display that supports
+black, white, green, blue, red, yellow, and orange. Since it is an integrated board,
+only the model name is needed.
+
+Full refresh times are typically around 40 seconds.
+
+```yaml
+display:
+  - platform: epaper_spi
+    model: inkplate6color
+    update_interval: 5min
+    lambda: |-
+      auto BLACK = Color(0, 0, 0);
+      auto WHITE = Color(255, 255, 255);
+      auto GREEN = Color(0, 255, 0);
+      auto BLUE = Color(0, 0, 255);
+      auto RED = Color(255, 0, 0);
+      auto YELLOW = Color(255, 255, 0);
+      auto ORANGE = Color(255, 165, 0);
+
+      it.fill(WHITE);
+      it.filled_circle(100, 224, 80, BLACK);
+      it.filled_circle(250, 224, 80, GREEN);
+      it.filled_circle(400, 224, 80, BLUE);
+      it.filled_circle(100, 350, 80, RED);
+      it.filled_circle(250, 350, 80, YELLOW);
+      it.filled_circle(400, 350, 80, ORANGE);
 ```
 
 ## See Also

@@ -333,6 +333,10 @@ esphome bundle my-device.yaml
 
 The `esphome logs <CONFIG>` command validates the configuration and shows all logs.
 
+For network logging, ESPHome uses the [native API](/components/api/) if configured, then MQTT, then the
+[`web_server`](/components/web_server/) `/events` stream. The web_server stream is used for devices that have a
+`web_server` but no native API, and reconnects automatically if the connection drops.
+
 #### Options
 
 **`--topic TOPIC`**
