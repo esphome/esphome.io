@@ -322,14 +322,53 @@ uart:
   baud_rate: 115200
 ```
 
-- **port** accepts `uart0` or `uart1`. Defaults to `uart0` if not set.
+- **port** accepts `uart0` through `uart5`, whichever the board's devicetree exposes. Defaults to `uart0` if not set.
 - **tx_pin**/**rx_pin** may be set together with **port** on the `esp32`/`esp32c3`/`esp32c6`/`esp32h2` variants, whose UART
   TX/RX are routed through the chip's GPIO matrix — this overrides which physical pins the chosen `port` uses.
   Only pins in that variant's own valid TX/RX set are accepted; an invalid pin is rejected at config time. The
   `native_sim` and `nrf52` variants do not support pin selection at all — omit **tx_pin**/**rx_pin** there; on
   `nrf52`, each `port`'s pins come entirely from the board's own devicetree.
 - Ports other than `uart0` have no pinctrl configured on stock development boards, so **tx_pin**/**rx_pin** are
-  required together with `port: uart1` on those boards.
+  required together with `port: uart1` (or any other non-default port) on those boards.
+- **emulation** (*Optional*, mapping): Backs this UART bus with Zephyr's `uart-emul` devicetree node instead of a
+  real UART peripheral, useful for testing UART-speaking components without physical hardware. Supported on all
+  `zephyr` variants. Mutually exclusive with **port**/**tx_pin**/**rx_pin** — it supplies the connection itself.
+  Only one emulated peripheral can be attached per `uart:` block; use multiple `uart:` blocks for multiple
+  emulated peripherals.
+
+  - **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the emulator instance. Separate from
+    the bus's own `id:` — actions can target either "write out to the bus" (the bus's `id:`) or "inject directly
+    into the bus's RX path" (this `id:`, see below).
+  - **responses** (**Required**, mapping): Maps a trigger byte pattern — bytes the ESPHome device must write on
+    TX, matched in order — to the byte(s) the emulator writes back on RX once that whole pattern has been seen.
+    Keys/values accept a quoted string (sent as UTF-8 bytes), a single integer, or a list of integers. A list of
+    responses under one trigger cycles through them on successive matches instead of always answering with the
+    same bytes.
+
+  ```yaml
+  # Example configuration entry
+  zephyr:
+    variant: nativesim
+
+  uart:
+    baud_rate: 115200
+    emulation:
+      id: fake_modem
+      responses:
+        "AT\r\n": "OK\r\n"
+        "AT+GMR\r\n": ["v1.0\r\n", "v1.1\r\n"]
+  ```
+
+  To simulate a peripheral speaking unprompted (e.g. an unsolicited modem notification), target the emulator's
+  own `id:` with `uart.write` instead of the bus's — this injects straight into RX without going through trigger
+  matching at all:
+
+  ```yaml
+  on_...:
+    - uart.write:
+        id: fake_modem
+        data: "+CREG: 1\r\n"
+  ```
 
 ## See Also
 
