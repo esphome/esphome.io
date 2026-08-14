@@ -227,6 +227,12 @@ const { slug, class: className, ...rest } = Astro.props;
 
   const cards = document.querySelectorAll<HTMLAnchorElement>(".livestream-card[data-slug]");
   cards.forEach(async (card) => {
+    card.addEventListener("click", () => {
+      if (typeof window.plausible === "function") {
+        window.plausible("Livestream Card: Click");
+      }
+    });
+
     const slug = card.dataset.slug;
     if (!slug) return;
     const info = await fetchLivestream(slug);

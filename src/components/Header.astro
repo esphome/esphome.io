@@ -3,12 +3,13 @@ import config from "virtual:starlight/user-config";
 import SiteTitle from "virtual:starlight/components/SiteTitle";
 import Search from "virtual:starlight/components/Search";
 import ThemeSelect from "virtual:starlight/components/ThemeSelect";
+import { LinkButton } from "@astrojs/starlight/components";
 
 import { headerNavItems } from "../headerNav";
 
 const shouldRenderSearch = config.pagefind || config.components.Search !== "@astrojs/starlight/components/Search.astro";
 
-const isHomepage = Astro.url.pathname === "/";
+const { hasSidebar } = Astro.locals.starlightRoute;
 ---
 
 <div class="header__inner">
@@ -34,10 +35,10 @@ const isHomepage = Astro.url.pathname === "/";
     <ThemeSelect />
   </div>
 
-  <a href="/install/getting-started/" class="header__cta">Get started</a>
+  <LinkButton href="/install/getting-started/" class="header__cta">Get started</LinkButton>
 
   {
-    isHomepage && (
+    !hasSidebar && (
       <>
         <button
           type="button"
@@ -131,10 +132,12 @@ const isHomepage = Astro.url.pathname === "/";
   }
 
   .header__cta {
+    position: relative;
     display: none;
     flex-shrink: 0;
     align-items: center;
     padding: 0.5rem 1rem;
+    padding-inline-end: 2.75rem;
     border-radius: 999px;
     background-color: var(--sl-color-text-accent);
     color: var(--sl-color-black);
@@ -145,6 +148,26 @@ const isHomepage = Astro.url.pathname === "/";
 
     &:hover {
       opacity: 0.85;
+    }
+
+    &::after {
+      content: "";
+      position: absolute;
+      inset-block: 0;
+      inset-inline-end: 0;
+      aspect-ratio: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 100%;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' aria-hidden='true' class='astro-hlbqph7b astro-n5k4ipy7' width='16' height='16' viewBox='0 0 24 24' fill='currentColor' style='--sl-icon-size: 1.5rem;'%3E%3Cpath d='M17.92 11.62a1.001 1.001 0 0 0-.21-.33l-5-5a1.003 1.003 0 1 0-1.42 1.42l3.3 3.29H7a1 1 0 0 0 0 2h7.59l-3.3 3.29a1.002 1.002 0 0 0 .325 1.639 1 1 0 0 0 1.095-.219l5-5a1 1 0 0 0 .21-.33 1 1 0 0 0 0-.76Z'%3E%3C/path%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: 1.25rem;
+      background-color: color-mix(in srgb, var(--sl-color-text-accent) 80%, #ffffff 100%);
+      color: var(--sl-color-black);
+      font-size: 0.9375rem;
+      line-height: 1;
     }
   }
 
