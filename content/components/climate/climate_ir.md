@@ -85,7 +85,7 @@ climate:
 - **bit_high** (*Optional*, [Time](#config-time)): time for the high part of any bit in the LG protocol. Defaults to `600us`
 - **bit_one_low** (*Optional*, [Time](#config-time)): time for the low part of a '1' bit in the LG protocol. Defaults to `1600us`
 - **bit_zero_low** (*Optional*, [Time](#config-time)): time for the low part of a '0' bit in the LG protocol. Defaults to `550us`
-- **advanced_commands_support** (*Optional*, boolean): enables an advanced control mode for newer units, allowing temperature regulation in `Heat/Cool` mode and vertical airflow adjustment (6 fixed positions +  up/down swing) also swing mode is remembered after powering off. Defaults to `false`.
+- **advanced_commands_support** (*Optional*, boolean): enables an advanced control mode for newer units, allowing temperature regulation in `Heat/Cool` mode and vertical airflow adjustment (6 fixed positions +  up/down swing).  Swing mode is remembered after powering off as well. Defaults to `false`.
 
 ```yaml
 # Example configuration entry
