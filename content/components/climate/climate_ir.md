@@ -95,7 +95,7 @@ climate:
     sensor: room_temperature
     header_high: 3265us # AC Units from LG in Brazil, for example use these timings
     header_low: 9856us
-    alternative_mode: false
+    advanced_commands_support: false
 ```
 
 {{< anchor "daikin_brc" >}}
