@@ -116,9 +116,12 @@ climate:
 
   Set to `never` to disable telemetry polling.
 
-- **use_fahrenheit** (*Optional*, boolean): Enable Fahrenheit temperature support. If temperatures shown in Home
-  Assistant deviate from those on the indoor unit, enable this option to apply Mitsubishi-specific mapping. Defaults to
-  `false`.
+- **use_fahrenheit** (*Optional*, boolean): Configure the climate entity to report and accept temperatures in Fahrenheit
+  using Mitsubishi-specific mapping. Defaults to `false`.
+
+  > [!NOTE]
+  > Some indoor units use a temperature encoding that cannot accurately represent Fahrenheit setpoints. If the
+  > component reports an encoding error and fails to initialize, disable `use_fahrenheit`.
 - **vane** (*Optional*): Vane state automation configuration.
   - **on_state** (*Optional*, [Automation](/automations/)): An automation to run whenever the hub publishes its current
     state. The automation receives the current vane state as `x`. See
