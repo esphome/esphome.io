@@ -95,6 +95,7 @@ zephyr:
 | Raspberry Pi | `rp2040` | Raspberry Pi RP2040 (Cortex-M0+) | [`rpi_pico`](https://docs.zephyrproject.org/latest/boards/raspberrypi/rpi_pico/doc/index.html) | mainline Zephyr | No wireless yet |
 | Raspberry Pi | `rp2350` | Raspberry Pi RP2350 (Cortex-M33, dual-core) | [`rpi_pico2`](https://docs.zephyrproject.org/latest/boards/raspberrypi/rpi_pico2/doc/index.html) | mainline Zephyr | No wireless yet |
 | Silicon Labs | `efr32mg24` | Silicon Labs EFR32MG24 (Cortex-M33) | [`xg24_ek2703a`](https://docs.zephyrproject.org/latest/boards/silabs/dev_kits/xg24_ek2703a/doc/index.html) | mainline Zephyr | BLE, Thread (via `openthread:`) |
+| STMicroelectronics | `stm32l4` | STM32L4 (Cortex-M4) | [`nucleo_l476rg`](https://docs.zephyrproject.org/latest/boards/st/nucleo_l476rg/doc/index.html) | mainline Zephyr | No wireless yet |
 
 It is not recommended to use variants that have existing platforms for other than experimental purposes.
 
@@ -155,6 +156,19 @@ Series 2 radios yet.
 (`framework: type: silabs`), as an alternate to the default mainline Zephyr build — see
 [`advanced`](#advanced) for its `commander_version` option.
 
+### STMicroelectronics
+
+`stm32l4` is an STM32 device. Its GPIO ports are lettered (`PA`/`PB`/.../`PH`) rather than numbered;
+see [GPIO Pin Numbering](#gpio-pin-numbering). No wireless transport is available yet.
+
+Unlike `rp2040`/`rp2350`, `stm32l4` always builds with the MCUboot bootloader — there is no
+`advanced: bootloader: none` option for this variant.
+
+**`watchdog_timeout` currently has no effect on `stm32l4`.** The board's `iwdg` devicetree node
+ships `status = "disabled"` by default, and enabling it needs a devicetree overlay that hasn't been
+added yet — `watchdog_timeout` is accepted in configuration without error, but no hardware watchdog
+is actually armed.
+
 ## GPIO Pin Numbering
 
 Pins are referenced by a flat number regardless of variant, either as a plain integer or with a `GPIO` prefix —
@@ -162,9 +176,9 @@ Pins are referenced by a flat number regardless of variant, either as a plain in
 port and a pin-within-port, but this is transparent to configuration; use the number silk-screened on the
 board or listed in the board's pinout.
 
-On variants with lettered GPIO ports, the vendor's own notation is also. For example on SiLabs variants — 
-`PA4`, `PB2`, and so on are accepted, the same string logs and `dump_config` print back.  This is
-rejected on variants that don't use Silicone Lab's notation.
+On variants with lettered GPIO ports, the vendor's own notation is also accepted. For example on
+`efr32mg24` and `stm32l4` — `PA4`, `PB2`, and so on are accepted, the same string logs and
+`dump_config` print back. This is rejected on variants that don't use a lettered-port notation.
 
 On Nordic variants (`nrf52`, `nrf54l15`, `nrf54lm20a`), Nordic's own `P<port>.<pin>` notation is
 accepted the same way — `P0.02`, `P1.05`, and so on. This is rejected on variants that don't use
