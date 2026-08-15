@@ -16,7 +16,8 @@ downloaded, decoded and drawn at runtime.
 >   - 8-bit / indexed
 >   - 24-bit / RGB
 >
-> - JPEG images, currently only baseline images (no progressive support)
+> - JPEG images, baseline and progressive. Progressive JPEG decoding requires the `LIBJPEG_TURBO`
+>   decoder (ESP32 only); see the `decoder` option below.
 >
 > - PNG images
 
@@ -47,6 +48,12 @@ image:
   - `BMP`  : The image on the server is encoded in BMP format.
   - `JPEG`  : The image on the server is encoded in JPEG format.
   - `PNG`  : The image on the server is encoded in PNG format.
+- **decoder** (*Optional*): Selects the JPEG decoder to use. Only valid when `format` is `JPEG`. Defaults to `JPEGDEC`.
+
+  - `JPEGDEC`  : The default decoder. Supports baseline JPEG images only.
+  - `LIBJPEG_TURBO`  : Supports baseline and progressive JPEG images. ESP32 only. Replaces the JPEG decoder for the
+    whole build, so it applies to every JPEG image in the configuration once selected. Progressive images require
+    the coefficients of the whole image to be buffered in memory, so PSRAM is generally required for large images.
 - **resize** (*Optional*, string): If set, this will resize the image to fit inside the given dimensions `WIDTHxHEIGHT`
   and preserve the aspect ratio.
 
