@@ -34,7 +34,8 @@ RP2040 and host, ESP-IDF toolchain installs shrink by roughly half, and ESP32 cr
 faulting address. The release also delivers multi-interface networking with Ethernet and WiFi in one config, a
 major Modbus overhaul with the new `modbus_client` component, multi-key OTA signature verification, and runtime
 wake word management, alongside new components including the LD6002B 60 GHz presence radar and Hörmann garage
-door support.
+door support. The bundled Device Builder brings faster startup, parallel uploads, and one-click config
+migration.
 {/* RELEASE_OVERVIEW_END */}
 
 ## Upgrade Checklist
@@ -97,6 +98,176 @@ BLE devices through a Pico W proxy. BK72xx gained active scanning by packing the
 One config note: on migrated sensor platforms the auto-generated tracker reference key `esp32_ble_id:` is now
 `ble_hub_id:`. Most configs never set it explicitly; those that do keep validating with a warning until
 2027.2.0. See the Breaking Changes section for details.
+
+## ESPHome Device Builder
+
+This section covers everything that changed in the bundled
+[ESPHome Device Builder](https://github.com/esphome/device-builder) since the 2026.7.0 release notes. Device Builder
+updates also ship in ESPHome patch releases for as long as the changes remain safe to include, so some of what
+follows already reached you during the 2026.7.x cycle; the rest is new with this release.
+
+**Faster Startup**
+
+On a small host with a lot of devices, the dashboard used to finish scanning every configuration before it would serve
+its first page. It now serves immediately from a shallow device scan and fills in the details in the background
+([#2514](https://github.com/esphome/device-builder/pull/2514)), and work not needed to serve that first page, from
+preferences loading to MQTT broker discovery, moved off the startup critical path or got cheaper
+([#2500](https://github.com/esphome/device-builder/pull/2500),
+[#2501](https://github.com/esphome/device-builder/pull/2501),
+[#2503](https://github.com/esphome/device-builder/pull/2503)). The validated-config cache is also read in the new JSON
+format ESPHome 2026.8 writes, so upgrading does not throw the cache away
+([#2517](https://github.com/esphome/device-builder/pull/2517)).
+
+**More Updates at Once**
+
+Updates used to upload to one device at a time. Uploads now run in parallel: four at a time, and up to nine when the
+Device Builder is running ESPHome 2026.8 or newer, whose leaner CLI fast paths keep that many upload subprocesses
+cheap ([#2206](https://github.com/esphome/device-builder/pull/2206),
+[#2515](https://github.com/esphome/device-builder/pull/2515),
+[#2518](https://github.com/esphome/device-builder/pull/2518)). Queued offline updates benefit the most: a batch of
+[deep sleep](/components/deep_sleep/) devices waking around the same time collect their queued updates concurrently
+instead of queueing behind one another ([#2192](https://github.com/esphome/device-builder/pull/2192)), a freshly
+flashed deep-sleep device gets its new version read in a quick burst before it goes back to sleep
+([#2146](https://github.com/esphome/device-builder/pull/2146)), and the install dialog follows the flash that happens
+when the device wakes, so you can watch a queued update land
+([frontend#1616](https://github.com/esphome/device-builder-frontend/pull/1616)).
+
+**One-Click Config Migration**
+
+ESPHome renames configuration keys from time to time, and keeping up has been a manual chore. The Device Builder can
+now migrate a configuration for you: when a config contains something with a known migration, the editor offers to
+apply it, and the offer is backed by a backend dry run so it only appears when the migration will actually succeed
+([#2432](https://github.com/esphome/device-builder/pull/2432),
+[frontend#1538](https://github.com/esphome/device-builder-frontend/pull/1538),
+[frontend#1550](https://github.com/esphome/device-builder-frontend/pull/1550)). The rules are discovered from the live
+ESPHome schema rather than hand-maintained, covering renamed keys and component aliases
+([#2444](https://github.com/esphome/device-builder/pull/2444),
+[#2462](https://github.com/esphome/device-builder/pull/2462)), the `rp2040` to `rp2` platform rename
+([#2460](https://github.com/esphome/device-builder/pull/2460),
+[#2463](https://github.com/esphome/device-builder/pull/2463),
+[frontend#1567](https://github.com/esphome/device-builder-frontend/pull/1567)), and the legacy `api` services
+spelling, which is read on load and respelled to the canonical form on write
+([#2420](https://github.com/esphome/device-builder/pull/2420),
+[frontend#1534](https://github.com/esphome/device-builder-frontend/pull/1534)). Newest of all, a device whose config
+has a pending migration shows a dot on its card and table row, and clicking it opens the editor to apply the migration
+([#2563](https://github.com/esphome/device-builder/pull/2563),
+[frontend#1652](https://github.com/esphome/device-builder-frontend/pull/1652),
+[frontend#1653](https://github.com/esphome/device-builder-frontend/pull/1653)).
+
+**The Structured Editor Rounds Out**
+
+The structured editor spent this cycle learning to leave your file alone. Editing through the forms now preserves the
+comments and flow style of the YAML it touches
+([frontend#1377](https://github.com/esphome/device-builder-frontend/pull/1377),
+[frontend#1380](https://github.com/esphome/device-builder-frontend/pull/1380),
+[frontend#1383](https://github.com/esphome/device-builder-frontend/pull/1383),
+[frontend#1386](https://github.com/esphome/device-builder-frontend/pull/1386),
+[frontend#1387](https://github.com/esphome/device-builder-frontend/pull/1387)), and `${substitution}` references
+render and stay editable in pin and numeric fields instead of being clobbered by the widget
+([frontend#1342](https://github.com/esphome/device-builder-frontend/pull/1342),
+[frontend#1344](https://github.com/esphome/device-builder-frontend/pull/1344),
+[frontend#1347](https://github.com/esphome/device-builder-frontend/pull/1347),
+[frontend#1511](https://github.com/esphome/device-builder-frontend/pull/1511)). Lambdas on templatable fields are no
+longer flagged as invalid ([frontend#1529](https://github.com/esphome/device-builder-frontend/pull/1529)), and an
+automation using an action the catalog does not know stays editable, rendering that one action read-only in place
+instead of locking you out of the whole automation
+([#2351](https://github.com/esphome/device-builder/pull/2351),
+[frontend#1513](https://github.com/esphome/device-builder-frontend/pull/1513)).
+
+The pin field gained guided wiring presets that show where to connect the part
+([frontend#1412](https://github.com/esphome/device-builder-frontend/pull/1412)), and boards whose hardware fixes a pin
+lock the GPIO select to it ([frontend#1419](https://github.com/esphome/device-builder-frontend/pull/1419)). The
+add-component dialog handles dependency chains as a stack of detours, so adding a component that needs a bus walks you
+through creating the bus and returns you to where you were
+([frontend#1586](https://github.com/esphome/device-builder-frontend/pull/1586)), detours to a new `uart` when no
+existing bus can host the component ([frontend#1554](https://github.com/esphome/device-builder-frontend/pull/1554)),
+and prefills entity names and unique IDs
+([frontend#1552](https://github.com/esphome/device-builder-frontend/pull/1552),
+[frontend#1553](https://github.com/esphome/device-builder-frontend/pull/1553)). The YAML hints from 2026.7.0 grew new
+one-click fixes: an empty or commented-out block behind `expected a dictionary` is named and fixed for you
+([frontend#1314](https://github.com/esphome/device-builder-frontend/pull/1314),
+[frontend#1316](https://github.com/esphome/device-builder-frontend/pull/1316)), and a stray top-level key that belongs
+to the section above it is offered an indent fix
+([frontend#1319](https://github.com/esphome/device-builder-frontend/pull/1319)).
+
+**Troubleshooting and Crash Reporting**
+
+The status badges on a device now open a connectivity troubleshooting dialog, which runs an on-demand probe from the
+Device Builder to the device and reports what worked and what did not
+([#2485](https://github.com/esphome/device-builder/pull/2485),
+[frontend#1597](https://github.com/esphome/device-builder-frontend/pull/1597)). Reporting problems got easier too: the
+bug report flow gained an optional device picker that attaches the selected device's configuration with credentials
+masked ([frontend#1595](https://github.com/esphome/device-builder-frontend/pull/1595),
+[frontend#1591](https://github.com/esphome/device-builder-frontend/pull/1591)), crash reports are titled by where the
+crash happened ([frontend#1584](https://github.com/esphome/device-builder-frontend/pull/1584)), and the log viewer
+gained a crash report button ([frontend#1250](https://github.com/esphome/device-builder-frontend/pull/1250)). Crashes
+captured over Web Serial have their backtraces decoded
+([#2105](https://github.com/esphome/device-builder/pull/2105)), including firmware compiled by a build server, through
+a hosted decoder ([#2140](https://github.com/esphome/device-builder/pull/2140)), and Web Serial installs surface
+esptool-js connect diagnostics in the install log
+([frontend#1651](https://github.com/esphome/device-builder-frontend/pull/1651)).
+
+**Status You Can Trust**
+
+A run of work went into making Online, Offline, and the deployed version mean what they say. mDNS ownership now
+requires live evidence and honors goodbye packets, so a stale record can no longer keep a dead device Online or attach
+one device's identity to another ([#2376](https://github.com/esphome/device-builder/pull/2376),
+[#2386](https://github.com/esphome/device-builder/pull/2386),
+[#2393](https://github.com/esphome/device-builder/pull/2393),
+[#2395](https://github.com/esphome/device-builder/pull/2395)), stale addresses are dropped when a device is retargeted
+([#2488](https://github.com/esphome/device-builder/pull/2488)), and the device table's Version column only shows a
+version the Device Builder can actually trust
+([frontend#1283](https://github.com/esphome/device-builder-frontend/pull/1283)). Renaming or cloning a device
+retargets its generated fallback-AP SSID ([#2247](https://github.com/esphome/device-builder/pull/2247)), and MQTT
+device discovery now supports TLS brokers ([#2256](https://github.com/esphome/device-builder/pull/2256)).
+
+**Windows**
+
+The Windows Device Builder had a round of hardening: the ESP-IDF toolchain is shared at a short path so deep build
+trees fit inside `MAX_PATH` ([#2281](https://github.com/esphome/device-builder/pull/2281)), the compile subprocess
+tree runs in UTF-8 mode ([#2283](https://github.com/esphome/device-builder/pull/2283)), cancelling a build actually
+stops the running compile ([#2554](https://github.com/esphome/device-builder/pull/2554)), and toolchain subprocesses
+can no longer pop blocking "Bad Image" error dialogs
+([#2569](https://github.com/esphome/device-builder/pull/2569)).
+
+**Remote Builds and Home Assistant**
+
+Build servers now advertise a friendly name, which shows up across the UI and in the pairing handshake
+([frontend#1252](https://github.com/esphome/device-builder-frontend/pull/1252),
+[#2526](https://github.com/esphome/device-builder/pull/2526)), and while remote building is off the dashboard shows a
+neutral **Disabled** badge with a turn-on action instead of hiding the feature
+([frontend#1392](https://github.com/esphome/device-builder-frontend/pull/1392)). Imported bundles upload over HTTP
+instead of the WebSocket, with a much higher size cap and an actionable error when a bundle still does not fit
+([#2340](https://github.com/esphome/device-builder/pull/2340),
+[#2320](https://github.com/esphome/device-builder/pull/2320),
+[#2324](https://github.com/esphome/device-builder/pull/2324)), and a dialog following a job reattaches after a
+connection loss instead of failing ([frontend#1570](https://github.com/esphome/device-builder-frontend/pull/1570)).
+Home Assistant adoption gained an encryption-key handoff with adoption key reuse
+([#2496](https://github.com/esphome/device-builder/pull/2496)), and a device broadcasting its factory name is adopted
+under that name with the rename flow started for you
+([frontend#1533](https://github.com/esphome/device-builder-frontend/pull/1533)).
+
+Beyond the headlines: configuration files are written atomically, so a crash mid-write can no longer leave a partial
+file ([#2188](https://github.com/esphome/device-builder/pull/2188),
+[#2190](https://github.com/esphome/device-builder/pull/2190)), and a `secrets.yaml` with operator-set permissions
+keeps them across rewrites ([#2202](https://github.com/esphome/device-builder/pull/2202)). First-time installs are
+guided to USB instead of a queued OTA that could never arrive
+([frontend#1282](https://github.com/esphome/device-builder-frontend/pull/1282)), and the device card's action buttons
+and indicator icons gained tooltips ([frontend#1280](https://github.com/esphome/device-builder-frontend/pull/1280)).
+[@stvncode](https://github.com/stvncode) moved toasts to the bottom-right corner
+([frontend#1366](https://github.com/esphome/device-builder-frontend/pull/1366)) and refined the quickstart tour and
+desktop setup flow ([frontend#1334](https://github.com/esphome/device-builder-frontend/pull/1334),
+[frontend#1337](https://github.com/esphome/device-builder-frontend/pull/1337)),
+[@rwalker777](https://github.com/rwalker777) labels compile-only jobs for offline devices as **Offline Compile**
+([frontend#1266](https://github.com/esphome/device-builder-frontend/pull/1266)),
+[@jesserockz](https://github.com/jesserockz) made ESPHome Web a standalone build target of the frontend
+([frontend#1139](https://github.com/esphome/device-builder-frontend/pull/1139)),
+[@elcaptain](https://github.com/elcaptain) put the official monochrome ESPHome logomarks in the header and navigation
+([frontend#1141](https://github.com/esphome/device-builder-frontend/pull/1141)), and
+[@breti](https://github.com/breti) kept the UI copy honest across the release
+([frontend#1409](https://github.com/esphome/device-builder-frontend/pull/1409),
+[frontend#1428](https://github.com/esphome/device-builder-frontend/pull/1428),
+[frontend#1521](https://github.com/esphome/device-builder-frontend/pull/1521)).
 
 ## Faster Builds and Smaller Toolchain Installs
 
