@@ -18,11 +18,7 @@ Currently supported devices are listed in the table below:
 | CH340      | 0x1A86 | 0x7523 | 1            | WCH USB to serial adapter, single channel       |
 | CH34X      | 0x1A86 | 0x55D5 | 4            | WCH USB to serial adapter, multi-channel        |
 | CH9344     | 0x1A86 | 0xE018 | 4            | WCH CH934X series, 4-port USB to serial adapter |
-| CH9344L    | 0x1A86 | 0xE018 | 4            | WCH CH934X series, 4-port USB to serial adapter |
-| CH9344Q    | 0x1A86 | 0xE018 | 4            | WCH CH934X series, 4-port USB to serial adapter |
 | CH348      | 0x1A86 | 0x55D9 | 8            | WCH CH934X series, 8-port USB to serial adapter |
-| CH348L     | 0x1A86 | 0x55D9 | 8            | WCH CH934X series, 8-port USB to serial adapter |
-| CH348Q     | 0x1A86 | 0x55D9 | 8            | WCH CH934X series, 8-port USB to serial adapter |
 | CP210X     | 0x10C4 | 0xEA60 | 3            | Silicon Labs USB to UART Bridge                 |
 | ESP_JTAG   | 0x303A | 0x1001 | 1            | ESP32 JTAG interface                            |
 | FT232      | 0x0403 | 0x6001 | 1            | FTDI USB to serial adapter, single port         |
@@ -50,6 +46,8 @@ interrupt IN, so up to **7 standard channels** can be used simultaneously. Mixed
 The **CH934X family** (CH9344, CH9344L, CH9344Q, CH348, CH348L, CH348Q) is **not subject to these limits**.
 These chips multiplex all serial ports over a single shared bulk IN/OUT endpoint pair using an internal framing
 protocol, so all 4 or 8 ports count as just one channel against the endpoint budget, regardless of ESP32 variant.
+The family is configured with just two types: `ch9344` (4 ports) and `ch348` (8 ports). The exact chip, including
+the L/Q sub-variants, is detected automatically at boot, so those do not have their own type.
 :::
 
 ```yaml
@@ -65,8 +63,8 @@ usb_uart:
 ## Configuration variables
 
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): The id to use for this component.
-- **type** (**Required**, string): The type of USB-serial device to connect to. One of `ch9344`, `ch9344l`,
-  `ch9344q`, `ch348`, `ch348l`, `ch348q`, `ch34x`, `ch340`, `cp210x`, `esp_jtag`, `ft23xx`, `pl2303`, `pl2303gc`,
+- **type** (**Required**, string): The type of USB-serial device to connect to. One of `ch340`, `ch34x`,
+  `ch9344`, `ch348`, `cp210x`, `esp_jtag`, `ft23xx`, `pl2303`, `pl2303gc`,
   `pl2303gb`, `pl2303gt`, `pl2303gl`, `pl2303ge`, `pl2303gs`, `stm32_vcp`, `cdc_acm`.
 - **channels** (**Required**, list): A list of channels to configure.
 - **vid** (*Optional*, int): The vendor ID of the device. Use 0 as a wildcard. Each type has a default VID which will be overridden if this is set.
