@@ -59,6 +59,10 @@ sd_storage:
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID for this component.
 - **on_mounted** (*Optional*, [Automation](/automations/actions/)): An automation to run when the
   SD card is successfully mounted. The mount path is available as `mount_path`.
+- **file_system** (*Optional*, string): The filesystem to mount the card with. One of `auto`
+  (default), `fat32` or `exfat`. Only available when exFAT is enabled in the ESP32 framework
+  (see [exFAT support](#exfat-support) below); without it the filesystem is always FAT32 and this
+  option does not exist.
 
 ### SD-MMC configuration
 
@@ -97,6 +101,50 @@ These options apply when `type: sd_spi`.
 > [!NOTE]
 > Only 1-bit SPI mode is supported. The `mode_1bit` option is fixed to `true` for SPI and
 > cannot be changed.
+
+## exFAT support
+
+The card is mounted as FAT32 by default. To use exFAT instead -- for cards larger than 32 GB or
+files larger than 4 GB -- enable it in the ESP32 framework:
+
+```yaml
+esp32:
+  framework:
+    type: esp-idf
+    advanced:
+      enable_exfat: true
+```
+
+With exFAT compiled in, the `file_system` option controls how the card is mounted:
+
+- **auto** (default): the card is mounted with whatever filesystem it already carries; FatFs detects
+  FAT32 or exFAT from the boot sector. Nothing is ever reformatted.
+- **fat32** / **exfat**: the card is checked before mounting, and if it does not already carry the
+  requested filesystem it is reformatted to it.
+
+> [!WARNING]
+> `file_system: fat32` and `file_system: exfat` reformat the card when its current filesystem does
+> not match the requested one, which erases all data on the card. Use `auto` (the default) to mount
+> an existing card without any risk of reformatting.
+
+Without `enable_exfat: true`, the `file_system` option is rejected during validation, because the
+build then supports only FAT32.
+
+```yaml
+esp32:
+  framework:
+    type: esp-idf
+    advanced:
+      enable_exfat: true
+
+sd_storage:
+  type: sd_mmc
+  path: /sdcard
+  file_system: exfat
+  clk_pin: GPIO14
+  cmd_pin: GPIO15
+  data0_pin: GPIO2
+```
 
 ## Automations
 
