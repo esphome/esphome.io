@@ -1,0 +1,77 @@
+---
+description: "Configure the ST77922 touchscreen controller used by the Freenove FNK0104N display."
+title: "ST77922 Touchscreen Controller"
+---
+
+import APIRef from '@components/APIRef.astro';
+
+The `st77922_touch` touchscreen platform supports the touchscreen controller used by the Freenove FNK0104N
+ESP32-S3 display. The [I²C](/components/i2c/) component is required.
+
+## Base Touchscreen Configuration
+
+```yaml
+touchscreen:
+  - platform: st77922_touch
+    display: fnk0104n_display
+    interrupt_pin: GPIO47
+    reset_pin: GPIO48
+```
+
+The controller uses I²C address `0x55`. The FNK0104N wiring is:
+
+| Signal | GPIO |
+| ------ | ---- |
+| SDA | GPIO38 |
+| SCL | GPIO39 |
+| Interrupt | GPIO47 |
+| Reset | GPIO48 |
+
+### Configuration variables
+
+- **display** (**Required**, [ID](/guides/configuration-types#id)): The display associated with the touchscreen.
+- **i2c_id** (*Optional*, [ID](/guides/configuration-types#id)): The I²C bus to use. Defaults to the automatically selected I²C bus.
+- **interrupt_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The touch detection pin.
+- **reset_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The touchscreen reset pin.
+
+All other options are inherited from the [Touchscreen](/components/touchscreen/) component.
+
+## Freenove FNK0104N Example
+
+The display and touchscreen are configured separately. The display uses quad SPI and the touchscreen uses I²C.
+
+```yaml
+esp32:
+  board: freenove-esp32-s3-fnk0104n
+  framework:
+    type: esp-idf
+
+psram:
+  mode: octal
+  speed: 80MHz
+
+spi:
+  type: quad
+  clk_pin: GPIO12
+  data_pins: [GPIO11, GPIO13, GPIO14, GPIO9]
+
+display:
+  - platform: mipi_spi
+    id: fnk0104n_display
+    model: FNK0104N
+
+i2c:
+  sda: GPIO38
+  scl: GPIO39
+
+touchscreen:
+  - platform: st77922_touch
+    id: fnk0104n_touchscreen
+    display: fnk0104n_display
+    interrupt_pin: GPIO47
+    reset_pin: GPIO48
+```
+
+## See Also
+
+- [MIPI SPI Display Driver](/components/display/mipi_spi/)
