@@ -9,7 +9,7 @@ import APIRef from '@components/APIRef.astro';
 The `esp32_ble_tracker` component creates a global hub so that you can track bluetooth low energy devices
 using your ESP32 node.
 
-See [Setting up devices](/components/binary_sensor/ble_presence#esp32_ble_tracker-setting_up_devices) for information on how you can determine
+See [Setting up devices](/components/binary_sensor/ble_presence#setting-up-devices) for information on how you can determine
 the MAC address of a device and track it using ESPHome.
 
 > [!WARNING]
@@ -69,11 +69,15 @@ sensor:
 
   - **interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval between each consecutive scan window.
     This is the time the ESP spends on each of the 3 BLE advertising channels.
-    Defaults to `320ms`.
+    The controller accepts `2.5ms` to `10240ms` in `0.625ms` steps. Defaults to `320ms`.
 
   - **window** (*Optional*, [Time](/guides/configuration-types#time)): The time the ESP is actively listening for packets
     on a channel during each scan interval. If this is close to the `interval` value, the ESP will
-    spend more time listening to packets (but also consume more power). Defaults to `30ms`
+    spend more time listening to packets (but also consume more power). Must not be larger than
+    `interval`; the same range and step apply. When WiFi is configured, this defaults to the
+    `interval` value: WiFi and Bluetooth share one radio, and this lets Bluetooth listen whenever
+    WiFi is not using it. Without WiFi, or with `software_coexistence` disabled, it defaults
+    to `30ms`.
 
   - **duration** (*Optional*, [Time](/guides/configuration-types#time)): The duration of each complete scan. This has no real
     impact on the device but can be used to debug the BLE stack. Defaults to `5min`.
@@ -129,7 +133,8 @@ esp32_ble_tracker:
       then:
         - lambda: |-
             ESP_LOGD("ble_adv", "New BLE device");
-            ESP_LOGD("ble_adv", "  address: %s", x.address_str().c_str());
+            char addr[MAC_ADDRESS_PRETTY_BUFFER_SIZE];
+            ESP_LOGD("ble_adv", "  address: %s", x.address_str_to(addr));
             ESP_LOGD("ble_adv", "  name: %s", x.get_name().c_str());
             ESP_LOGD("ble_adv", "  Advertised service UUIDs:");
             for (auto uuid : x.get_service_uuids()) {
@@ -286,7 +291,15 @@ api:
     - esp32_ble_tracker.start_scan:
        continuous: true
   on_client_disconnected:
-    - esp32_ble_tracker.stop_scan:
+    # fires for EVERY departing client (log viewer, CLI) — state_subscription_only
+    # ignores logger-only clients, so scanning stops only when Home Assistant is gone
+    - if:
+        condition:
+          not:
+            api.connected:
+              state_subscription_only: true
+        then:
+          - esp32_ble_tracker.stop_scan:
 ```
 
 ## See Also
