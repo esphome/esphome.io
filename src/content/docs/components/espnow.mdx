@@ -22,6 +22,10 @@ espnow:
 - **auto_add_peer** (*Optional*, boolean): When set to `true`, the ESP-NOW component will automatically add any new incoming
   device as a peer. See [Peers](#peers) below. Defaults to `false`.
 - **enable_on_boot** (*Optional*, boolean): Enable the ESP-NOW component on boot. Defaults to `true`.
+- **max_payload_size** (*Optional*, int): The largest payload, in bytes, this device can send and receive in one frame.
+  Values above `250` use ESP-NOW v2 frames (up to `1470` bytes), only work with peers that also support them, and
+  reserve proportionally more RAM for packet buffers. This only sizes this device's buffers; the protocol version
+  itself is negotiated with each peer automatically. Defaults to `250`.
 - **peers** (*Optional*, list of MAC Address): The list of MAC addresses of the devices that this device is allowed to
   communicate with. See [Peers](#peers) below.
 
@@ -44,7 +48,7 @@ the received packet:
   - `info.rx_ctrl` — pointer to a Wi-Fi `wifi_pkt_rx_ctrl_t` structure containing low-level reception details such as
     `info.rx_ctrl->rssi` (signal strength in dBm).
 - **data**: A `const uint8_t *` pointer to the received payload.
-- **size**: A `uint8_t` giving the length of the payload in bytes.
+- **size**: A `uint16_t` giving the length of the payload in bytes.
 
 These variables are only valid for the duration of the synchronous part of the automation. If the automation
 includes any asynchronous actions (such as `delay`), the underlying memory may have been recycled by the time the
@@ -167,7 +171,7 @@ on_...:
 - **address** (**Required**, MAC Address, [templatable](/automations/templates)): The MAC address of the receiving
   device to send to. Must already be registered as a peer, or `auto_add_peer` must be set to `true`.
 - **data** (**Required**, string or list of bytes, [templatable](/automations/templates)): The data to be sent. The
-  maximum payload size is 250 bytes.
+  maximum payload size is the configured `max_payload_size` (250 bytes by default).
 - **wait_for_sent** (*Optional*, boolean): If `true`, the automation will wait for the underlying send operation to
   complete (and for any `on_sent` or `on_error` actions to finish) before continuing with the next action. Defaults
   to `true`.
@@ -197,7 +201,7 @@ on_...:
 
 #### Configuration variables
 - **data** (**Required**, string or list of bytes, [templatable](/automations/templates)): The data to be sent. The
-  maximum payload size is 250 bytes.
+  maximum payload size is the configured `max_payload_size` (250 bytes by default).
 - All other options from [`espnow.send`](#espnow-send-action) (`wait_for_sent`, `continue_on_error`, `on_sent`,
   `on_error`) are also accepted.
 
