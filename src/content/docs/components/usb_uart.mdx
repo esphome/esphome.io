@@ -5,35 +5,42 @@ title: "USB Host UART Interface"
 import APIRef from '@components/APIRef.astro';
 
 
-This component allows an ESP32-S3, ESP32-S2 or ESP32-P4 to host USB-serial peripheral devices. It uses the [Usb Host](/components/usb_host/)
+This component allows an ESP32 with USB host support (ESP32-S2, ESP32-S3, ESP32-S31, ESP32-P4 or ESP32-H4) to host USB-serial peripheral devices. It uses the [Usb Host](/components/usb_host/)
 component to interface to the device as a USB-OTG host.
 
 Currently supported devices are listed in the table below:
 
 ### Supported Devices
 
-| Name       | VID    | PID    | Max channels | Description                                                  |
-| ---------- | ------ | ------ | ------------ | ------------------------------------------------------------ |
-| CDC_ACM    | 0x0000 | 0x0000 | 1            | USB CDC ACM (Abstract Control Model)                         |
-| CH340      | 0x1A86 | 0x7523 | 1            | WCH USB to serial adapter, single channel                    |
-| CH34X      | 0x1A86 | 0x55D5 | 4            | WCH USB to serial adapter, multi-channel                     |
-| CH9344     | 0x1A86 | 0xE018 | 4            | WCH CH934X series, 4-port USB to serial adapter              |
-| CH9344L    | 0x1A86 | 0xE018 | 4            | WCH CH934X series, 4-port USB to serial adapter              |
-| CH9344Q    | 0x1A86 | 0xE018 | 4            | WCH CH934X series, 4-port USB to serial adapter              |
-| CH348      | 0x1A86 | 0x55D9 | 8            | WCH CH934X series, 8-port USB to serial adapter              |
-| CH348L     | 0x1A86 | 0x55D9 | 8            | WCH CH934X series, 8-port USB to serial adapter              |
-| CH348Q     | 0x1A86 | 0x55D9 | 8            | WCH CH934X series, 8-port USB to serial adapter              |
-| CP210X     | 0x10C4 | 0xEA60 | 3            | Silicon Labs USB to UART Bridge                              |
-| ESP_JTAG   | 0x303A | 0x1001 | 1            | ESP32 JTAG interface                                         |
-| FT232      | 0x0403 | 0x6001 | 1            | FTDI USB to serial adapter, single port                      |
-| FT2232     | 0x0403 | 0x6010 | 2            | FTDI USB to serial adapter, dual port                        |
-| FT4232     | 0x0403 | 0x6011 | 4            | FTDI USB to serial adapter, quad port                        |
-| STM32_VCP  | 0x0483 | 0x5740 | 1            | STM32 Virtual COM Port                                       |
+| Name       | VID    | PID    | Max channels | Description                                     |
+| ---------- | ------ | ------ | ------------ | ----------------------------------------------- |
+| CDC_ACM    | 0x0000 | 0x0000 | 1            | USB CDC ACM (Abstract Control Model)            |
+| CH340      | 0x1A86 | 0x7523 | 1            | WCH USB to serial adapter, single channel       |
+| CH34X      | 0x1A86 | 0x55D5 | 4            | WCH USB to serial adapter, multi-channel        |
+| CH9344     | 0x1A86 | 0xE018 | 4            | WCH CH934X series, 4-port USB to serial adapter |
+| CH9344L    | 0x1A86 | 0xE018 | 4            | WCH CH934X series, 4-port USB to serial adapter |
+| CH9344Q    | 0x1A86 | 0xE018 | 4            | WCH CH934X series, 4-port USB to serial adapter |
+| CH348      | 0x1A86 | 0x55D9 | 8            | WCH CH934X series, 8-port USB to serial adapter |
+| CH348L     | 0x1A86 | 0x55D9 | 8            | WCH CH934X series, 8-port USB to serial adapter |
+| CH348Q     | 0x1A86 | 0x55D9 | 8            | WCH CH934X series, 8-port USB to serial adapter |
+| CP210X     | 0x10C4 | 0xEA60 | 3            | Silicon Labs USB to UART Bridge                 |
+| ESP_JTAG   | 0x303A | 0x1001 | 1            | ESP32 JTAG interface                            |
+| FT232      | 0x0403 | 0x6001 | 1            | FTDI USB to serial adapter, single port         |
+| FT2232     | 0x0403 | 0x6010 | 2            | FTDI USB to serial adapter, dual port           |
+| FT4232     | 0x0403 | 0x6011 | 4            | FTDI USB to serial adapter, quad port           |
+| PL2303     | 0x067B | 0x2303 | 1            | Prolific USB to serial adapter                  |
+| PL2303GC   | 0x067B | 0x23A3 | 1            | Prolific PL2303 G-series (GC)                    |
+| PL2303GB   | 0x067B | 0x23B3 | 1            | Prolific PL2303 G-series (GB)                    |
+| PL2303GT   | 0x067B | 0x23C3 | 1            | Prolific PL2303 G-series (GT)                    |
+| PL2303GL   | 0x067B | 0x23D3 | 1            | Prolific PL2303 G-series (GL)                    |
+| PL2303GE   | 0x067B | 0x23E3 | 1            | Prolific PL2303 G-series (GE)                    |
+| PL2303GS   | 0x067B | 0x23F3 | 1            | Prolific PL2303 G-series (GS)                    |
+| STM32_VCP  | 0x0483 | 0x5740 | 1            | STM32 Virtual COM Port                          |
 
 :::note
-**ESP32-S3**: standard multi-port adapters (CH34X, CP210X, FT4232, …) are limited to **3 channels** because
+**ESP32-S3**: standard multi-port adapters (CH34X, CP210X, FT4232, ...) are limited to **3 channels** because
 the hardware provides only 8 USB endpoints in total and each standard CDC channel requires a bulk IN, bulk OUT
-and interrupt endpoint — leaving room for exactly 3 channels (6 IN/OUT endpoints and the mandatory control endpoint).
+and interrupt endpoint -- leaving room for exactly 3 channels (6 IN/OUT endpoints and the mandatory control endpoint).
 
 **ESP32-P4**: 16 USB endpoints are available (8 IN, 8 OUT). The mandatory control endpoint uses one IN and one
 OUT, leaving 7 IN and 7 OUT for data. Each standard CDC channel requires one bulk IN, one bulk OUT and one
@@ -60,7 +67,7 @@ usb_uart:
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): The id to use for this component.
 - **type** (**Required**, string): The type of USB-serial device to connect to. One of `ch9344`, `ch9344l`,
   `ch9344q`, `ch348`, `ch348l`, `ch348q`, `ch34x`, `ch340`, `cp210x`, `esp_jtag`, `ft232`, `ft2232`, `ft4232`,
-  `stm32_vcp`, `cdc_acm`.
+  `pl2303`, `pl2303gc`, `pl2303gb`, `pl2303gt`, `pl2303gl`, `pl2303ge`, `pl2303gs`, `stm32_vcp`, `cdc_acm`.
 - **channels** (**Required**, list): A list of channels to configure.
 - **vid** (*Optional*, int): The vendor ID of the device. Use 0 as a wildcard. Each type has a default VID which will be overridden if this is set.
 - **pid** (*Optional*, int): The product ID of the device. Use 0 as a wildcard. Each type has a default PID which will be overridden if this is set.
