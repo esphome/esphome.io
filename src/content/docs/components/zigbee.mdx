@@ -22,8 +22,8 @@ Additional properties must be configured manually in Home Assistant.
 ## Supported Hardware
 
 Zigbee is supported on the [`nrf52` platform](/components/nrf52/), on `platform: zephyr`'s `nrf52`, `nrf54l15`,
-and `nrf54lm20a` [variants](/components/zephyr/#variants) with `framework: type: zigbee` set (see
-[below](#platform-zephyr-setup)), and on `ESP32` with IEEE 802.15.4 connectivity (`ESP32-C5`, `ESP32-C6`, or
+and `nrf54lm20a` [variants](/components/zephyr/#variants) (see [below](#platform-zephyr-setup)),
+and on `ESP32` with IEEE 802.15.4 connectivity (`ESP32-C5`, `ESP32-C6`, or
 `ESP32-H2` and in the future `ESP32-H4` and `ESP32-H21`). The `nRF52` chip family and `ESP32` support different
 features and have different limitations:
 - On the `nRF52` chip family a maximum of 8 endpoints is supported and each ESPHome entity consumes one Zigbee endpoint.
@@ -42,9 +42,9 @@ to the coordinator.
 
 ### `platform: zephyr` Setup
 
-Set `framework: type: zigbee` on the `zephyr` component to build against Nordic's `ncs-zigbee` add-on
-(this is auto-selected when `zigbee:` is present and no `framework: type:` is given explicitly).
-The stock devicetree for these boards has no partitions for Zigbee's non-volatile storage, so an
+Adding `zigbee:` to the configuration automatically fetches and builds against Nordic's `ncs-zigbee`
+add-on — no `framework:` configuration is needed for this. The stock devicetree for these boards has
+no partitions for Zigbee's non-volatile storage, so an
 `overlays: app:` entry is also required, adding `zboss_nvram`/`zboss_product_config` partitions and
 enabling the Zigbee stack's timer:
 
@@ -147,7 +147,7 @@ zigbee:
 - **on_join** (*Optional*, [Automation](/automations#automation)): Automation to run when the device joins the network.
   In [Lambdas](/automations/templates#config-lambda) you can get the join type with `x`. It is `true` for join and `false` for rejoin.
 
-Only on the `nRF52` chip family (`platform: nrf52`, or `platform: zephyr` with `framework: type: zigbee`):
+Only on the `nRF52` chip family (`platform: nrf52`, or `platform: zephyr`):
 
 - **wipe_on_boot** (*Optional*): Erases all non-volatile memory data on boot, including
   Zigbee network pairing and preferences (e.g., last switch state). One of:
@@ -227,7 +227,7 @@ The following components are exposed over Zigbee if they have a name and if they
 - [Sensor](/components/sensor#config-sensor): **state**, **name** and **unit_of_measurement** are exposed
   over Zigbee. If no unit is given or if it is not supported it will fall back to unitless.
 
-Only on the `nRF52` chip family (`platform: nrf52`, or `platform: zephyr` with `framework: type: zigbee`):
+Only on the `nRF52` chip family (`platform: nrf52`, or `platform: zephyr`):
 
 - [Switch](/components/switch#config-switch): only **state** and **name** are exposed over Zigbee.
 
