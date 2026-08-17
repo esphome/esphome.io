@@ -148,6 +148,11 @@ initialization, before any ESPHome component's `setup()` runs -- so the rail is 
 > This can only turn a rail **on**. It cannot be used to turn off a rail that a board leaves on by default. Boards
 > that already have a working pull-up on this pin don't need this option.
 
+To check whether your board needs this before flashing, power the board on (without `power_enable` configured yet)
+and measure the candidate pin against ground with a multimeter: a genuine pull-up holds it close to 3.3V on its
+own, while a floating pin -- the case `power_enable` is for -- settles at an indeterminate voltage instead (around
+1.9V was observed on a "SuperMini nRF52840" clone).
+
 ### Example Configuration
 
 ```yaml
