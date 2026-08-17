@@ -25,7 +25,7 @@ submit a feature request (see FAQ).
 | [Delonghi](#delonghi_ir) | `delonghi`                         | yes |
 | Emmeti | `emmeti`                           | yes |
 | Fujitsu General | `fujitsu_general`                  | yes |
-| [GREE](#gree_ir) | `gree`                             | |
+| [GREE](#gree_ir) | `gree`                             | yes (`yx1ff` only) |
 | Hitachi | `hitachi_ac344`, `hitachi_ac424` | yes |
 | [LG](#climate_ir_lg) | `climate_ir_lg`                    | yes |
 | [Midea](#midea_ir) | `midea_ir`                         | yes |
@@ -144,6 +144,43 @@ climate:
     sensor: room_temperature
     model: yan
 ```
+
+The `yx1ff` model can also receive commands from the original remote and update the climate state. It decodes power,
+operating mode, target temperature from 16 to 30 °C, all fan speeds, vertical swing on/off, and the sleep preset.
+
+A GREE command has an inter-block space of approximately 20 ms. Set `remote_receiver.idle` to a value longer than
+that space so the receiver does not split one command into two captures. Use `25ms` to `30ms`; the default `10ms` is
+too short for this protocol.
+
+```yaml
+remote_receiver:
+  id: ir_receiver
+  pin:
+    number: GPIOXX
+    inverted: true
+    mode:
+      input: true
+      pullup: true
+  filter: 250us
+  idle: 30ms
+  buffer_size: 2kb
+
+remote_transmitter:
+  id: ir_transmitter
+  pin: GPIOXX
+  carrier_duty_percent: 50%
+
+climate:
+  - platform: gree
+    name: "AC"
+    model: yx1ff
+    transmitter_id: ir_transmitter
+    receiver_id: ir_receiver
+    sensor: room_temperature
+```
+
+The receiver updates only the state encoded by the remote. If `sensor` is configured, its current temperature reading
+is kept unchanged.
 
 Models `yan`, `yaa`, `yac` and `yac1fb9` support a couple of additional features which can be controlled with switches:
 
