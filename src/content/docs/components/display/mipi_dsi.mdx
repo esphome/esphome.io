@@ -69,8 +69,10 @@ will set the correct pins and dimensions for the display.
 | JC1060P470             | Guition        | [JC1060P470 product page](https://aliexpress.com/item/1005008328088576.html)                                     |
 | JC4880P443             | Guition        | [JC4880P443 product page](https://aliexpress.com/item/1005009618259341.html)                                     |
 | JC8012P4A1             | Guition        | [JC8012P4A1 product page](https://aliexpress.com/item/1005008789890066.html)                                     |
+| JC8012P4A1-V2          | Guition        | [JC8012P4A1-V2 product page](https://aliexpress.com/item/1005008789890066.html)                                     |
 | M5STACK-TAB5           | M5Stack        | [TAB5 product page](https://shop.m5stack.com/products/m5stack-tab5-iot-development-kit-esp32-p4)                 |
-| M5STACK-TAB5-V2        | M5Stack        | [TAB5-V2 product page](https://shop.m5stack.com/products/m5stack-tab5-iot-development-kit-esp32-p4)              |
+| M5STACK-TAB5-ST7123    | M5Stack        | [TAB5 product page](https://shop.m5stack.com/products/m5stack-tab5-iot-development-kit-esp32-p4)                 |
+| M5STACK-TAB5-ST7121    | M5Stack        | [TAB5 product page](https://shop.m5stack.com/products/m5stack-tab5-iot-development-kit-esp32-p4)                 |
 | SEEED-RETERMINAL-D1001 | Seeed Studio   | [D1001 product page](https://www.seeedstudio.com/reTerminal-D1001-p-6729.html)                                   |
 | WAVESHARE-P4-NANO-10.1 | Waveshare      | [P4-NANO-10.1 product page](https://www.waveshare.com/esp32-p4-nano.htm?sku=29031)                               |
 | WAVESHARE-P4-86-PANEL  | Waveshare      | [P4-86-PANEL product page](https://www.waveshare.com/esp32-p4-wifi6-touch-lcd-4b.htm?sku=31570)                  |
@@ -79,19 +81,35 @@ will set the correct pins and dimensions for the display.
 | WAVESHARE-ESP32-P4-WIFI6-TOUCH-LCD-4C   | Waveshare | [P4-WIFI6-TOUCH-LCD-4C product page](https://www.waveshare.com/wiki/ESP32-P4-WIFI6-Touch-LCD-4C)     |
 
 > [!NOTE]
-The M5Stack Tab5 has two hardware revisions with different display chips requiring different model selections.
+The M5Stack Tab5 ships with different display and touch controllers depending on when it was made, and these require different model selections.
 
-Units manufactured before October 14, 2025 use the ILI9881C display driver with separate GT911 touch driver (use `M5STACK-TAB5`).
-Units manufactured on or after that date use the integrated ST7123 display-touch driver (use `M5STACK-TAB5-V2`).
+Units manufactured before October 14, 2025 use the ILI9881C display driver with a separate GT911 touch driver; use `M5STACK-TAB5`.
 
-If unsure which model you have, check the sticker on the back of the device for the display driver chip name.
-The label is just above the ESPressif icon. See image below for example of V2 hardware.
+Later units use an integrated display-and-touch controller that is either an **ST7123** or an **ST7121**. These require
+different display initialisation sequences and are not interchangeable, so select `M5STACK-TAB5-ST7123` or
+`M5STACK-TAB5-ST7121` to match your unit. `M5STACK-TAB5-V2` is a deprecated alias for `M5STACK-TAB5-ST7123`; it still
+works but new configurations should use the explicit name and will otherwise log a deprecation warning.
 
-Selection of the wrong display driver model will cause the display to simply fail to work with no relevant logging.
-Selection of the wrong touchscreen driver however will display an error message in the log output, so if in doubt,
-verify the correct touchscreen driver first to accurately identify the board before configuring the display driver.
+Selecting the wrong display driver causes the display to simply fail to work with
+no relevant logging, whereas the touchscreen driver logs an error if misconfigured. So if in doubt, verify the correct
+touchscreen driver first to identify the board; and if the display stays blank with no error while the touchscreen works,
+try the other integrated model (`M5STACK-TAB5-ST7121` in place of `M5STACK-TAB5-ST7123`, or vice versa).
+
+You can check the sticker on the back of the device for the display driver chip name.
+The label is just above the Espressif icon. See image below for an example of the newer hardware. However, units
+labelled "ST7123" may have either an ST7123 or ST7121 display driver - there is no simple way to distinguish them
+other than trying both models.
 
 <Image src={tab5VersionLabelImg} alt="Tab5 version label showing model identification" layout="constrained" style="width: 50%; height: auto; margin: 0 auto; display: block;" />
+
+> [!NOTE]
+The Guition JC8012P4A1 (also sold under JC8012P4A1C_I_W_Y) has two hardware revisions with different display panels requiring different model selections.
+
+You can check the correct model by the batch number, which is the number following the SKU on the sticker at the back of the device.
+Units manufactured in batch 2624 or later should use model `JC8012P4A1-V2`
+Units manufactured with a lower batch number should use model `JC8012P4A1`
+
+Selecting the incorrect driver will show horizontal lines on the display.
 
 ## Configuration
 

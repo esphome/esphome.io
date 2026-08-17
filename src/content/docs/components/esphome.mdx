@@ -321,6 +321,13 @@ preferences:
   flushed to the flash. This setting helps to prevent rapid changes to a component from being quickly
   written to the flash and wearing it out. Defaults to `1min`. Set to `never` to disable this feature.
 
+- **rtc_storage** (*Optional*, boolean): Only useful on ESP32. Compile RTC-memory-backed preference storage into the
+  firmware even when no other option selects it (options such as `safe_mode`'s and `fast_connect`'s `storage: rtc`
+  enable it automatically). This is intended for external components that request RTC storage through the C++
+  preferences API; without it, such requests fall back to flash (NVS) with a warning in the log. Not available on
+  ESP32 variants without RTC memory (C2 and C61). On ESP8266, RTC storage is integral and always enabled: `true` is
+  accepted (and does nothing), while `false` is rejected since it cannot be disabled.
+
 As all devices have a limited number of flash write cycles, this setting helps to reduce the number of flash writes
 due to quickly changing components. In the past, when components such as `light`, `switch`, `fan` and `globals`
 were changed, the state was immediately committed to flash. The result of this was that the last state of these
