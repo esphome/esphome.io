@@ -26,11 +26,15 @@ ota:
 
 ## Configuration variables
 
-- **password** (*Optional*, string): The password to use for updates.
+- **encryption** (*Optional*): Encrypt the OTA update with the same Noise protocol the [native API](/components/api) uses. See [Encryption](#encryption) below. Cannot be combined with **password**.
+
+  - **key** (*Optional*, string): The base64 encryption key. When omitted, the [API encryption key](/components/api#configuration-variables) is used, so a single key protects the device. When set, it must match the API encryption key.
+
+- **password** (*Optional*, string): The password to use for updates. Cannot be combined with **encryption**.
 - **allow_partition_access** (*Optional*, boolean): Only on `esp32`. Allow updating more partition types. Used for updating the partition table and the bootloader. Defaults to `false`.
 
 > [!IMPORTANT]
-> Always use strong, unique passwords for OTA updates. See the [Security Best Practices](/guides/security_best_practices#3-ota-password-protection) guide for more information.
+> Prefer **encryption** over **password**; it keeps the firmware image confidential in transit, not just authenticated. If you use a password, always use a strong, unique one. See the [Security Best Practices](/guides/security_best_practices#3-ota-encryption) guide for more information.
 
 - **port** (*Optional*, int): The port to use for OTA updates. Defaults:
 
@@ -91,6 +95,49 @@ If OTA is already enabled without a password, simply add a `password:` line to t
     (see the
     [Web Server OTA CLI usage](/components/ota/web_server/#using-the-command-line)
     section).
+
+## Encryption
+
+By default the OTA update authenticates the uploader with a password, but the firmware image itself travels over the
+network in plaintext. The image contains your wifi credentials and your API encryption key, so anyone who can capture
+the traffic on your network can read them. Encrypting the update keeps the image confidential and, because it uses the
+Noise `NNpsk0` pattern with a pre shared key, also authenticates the uploader; no password is needed.
+
+To enable it, add an `encryption:` block to the OTA platform. With no `key:`, the device reuses the
+[API encryption key](/components/api), so a single key protects the device:
+
+```yaml
+api:
+  encryption:
+    key: !secret device_name_key
+
+ota:
+  - platform: esphome
+    encryption:
+```
+
+You may set an explicit `key:` instead, but it must match the API encryption key; there is one key per device. Generate
+a key with the on demand generator in the [API component documentation](/components/api#configuration-variables).
+
+Encryption cannot be combined with a password; the key already authenticates the uploader, so remove the `password:`
+line when you add `encryption:`. Combining it with the [web server OTA platform](/components/ota/web_server) is allowed
+but warned about: that endpoint accepts the same firmware image over plaintext HTTP (with `captive_portal:` alone it only
+exists while the fallback AP is active).
+
+> [!IMPORTANT]
+> Once a device runs firmware with `encryption:` enabled it refuses plaintext OTA updates, and the CLI refuses to send
+> a plaintext image when a key is configured. This is intentional; a downgrade to plaintext would be an unauthenticated
+> upload. Enabling it is a two step migration: first upload firmware that has the `encryption:` block over your current
+> (plaintext) OTA, then all later uploads are encrypted. If a device that already requires encryption becomes
+> unreachable, recover it with a serial flash.
+
+To troubleshoot a failing encrypted handshake, raise the log level of the shared `noise` component:
+
+```yaml
+logger:
+  logs:
+    noise: VERY_VERBOSE
+```
 
 ## Updating the partition table on ESP32
 
