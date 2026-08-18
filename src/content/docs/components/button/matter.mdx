@@ -1,0 +1,61 @@
+---
+description: "Instructions for setting up buttons that trigger local Matter-management actions on a device joined to a Matter fabric."
+title: "Matter Action Button"
+---
+import APIRef from '@components/APIRef.astro';
+
+
+The `matter` button lets you trigger Matter-specific management actions on
+a node that already runs the [Matter component](/components/matter/) —
+without having to expose those actions to the fabric itself. Each button
+fires one action, chosen at configuration time.
+
+Two actions are supported:
+
+- **`open_commissioning_window`** — opens a fresh
+  Enhanced Commissioning Window on the current fabric so a new controller
+  can pair with the device without wiping the existing fabric. The device
+  generates a random passcode within the Matter specification's reserved
+  ranges (Matter Core §5.1.1.6) and logs the manual pairing code so the
+  operator can type it into the new controller. The window closes
+  automatically after `timeout` (or after the controller commissions).
+- **`factory_reset`** — clears the Matter fabric list, credentials, and
+  ESPHome preferences, then reboots the node. The next boot comes up as a
+  brand-new uncommissioned device advertising its factory setup code.
+
+```yaml
+# Example configuration entry
+button:
+  - platform: matter
+    name: Pair New Controller
+    action: open_commissioning_window
+    timeout: 15min
+
+  - platform: matter
+    name: Matter Factory Reset
+    action: factory_reset
+```
+
+## Configuration variables
+
+- **action** (**Required**, one of `open_commissioning_window`,
+  `factory_reset`): Which Matter action the button fires when pressed.
+- **timeout** (*Optional*, [Time](/guides/configuration-types#time)): Only
+  valid together with `action: open_commissioning_window`. How long the
+  fresh commissioning window stays open. Clamped by the Matter spec to
+  the range 3 min – 15 min. Defaults to the spec-required maximum
+  (15 min) when omitted.
+- All options from [Button](/components/button#config-button).
+
+> [!NOTE]
+> **`factory_reset` cannot be undone.** All fabrics, ACLs, node identities,
+> and ESPHome preferences stored in NVS are erased. If the device is only
+> reachable over the pre-commissioning Wi-Fi credentials pushed by a
+> controller, you may need physical serial access to re-pair it.
+
+## See Also
+
+- [Matter Component](/components/matter/)
+- [Factory Reset Button](/components/button/factory_reset/)
+- [Template Button](/components/button/template/)
+- <APIRef text="matter_action_button.h" path="matter/matter_action_button.h" />

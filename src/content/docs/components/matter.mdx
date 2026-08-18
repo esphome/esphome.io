@@ -1,0 +1,168 @@
+---
+description: "Instructions for setting up the Matter component so an ESPHome node joins a Matter fabric over Wi-Fi or Ethernet."
+title: "Matter Component"
+---
+import APIRef from '@components/APIRef.astro';
+
+
+[Matter](https://csa-iot.org/all-solutions/matter/) is a royalty-free smart-home connectivity standard maintained by the Connectivity Standards Alliance. It defines an IPv6 application-layer protocol that lets certified devices from different vendors join the same *fabric* and interoperate with any compliant controller — Apple Home, Google Home, Amazon Alexa, SmartThings, Home Assistant, and others.
+
+The `matter` component turns any ESP32-family node running the ESP-IDF framework into a Matter accessory. Each supported ESPHome entity (switch, sensor, cover, light, …) is automatically exposed as its own Matter endpoint, so the fabric sees a first-class device (dimmable light, temperature sensor, blind, and so on) rather than a generic bridged blob.
+
+The implementation is built on Espressif's [`esp_matter`](https://github.com/espressif/esp-matter) managed component, which in turn wraps the reference [Matter SDK](https://github.com/project-chip/connectedhomeip). Thread transport is intentionally out of scope for this component — Wi-Fi and Ethernet cover the ESP32 family, and Thread devices already have the [`openthread`](/components/openthread/) component.
+
+> [!NOTE]
+> Matter is currently supported on the **ESP32 family only**, with the **ESP-IDF** framework. Wi-Fi, Ethernet, or both may carry the fabric traffic; IPv6 is mandatory.
+
+## Usage
+
+The component enforces the following at configuration time:
+
+- **Framework:** `esp32.framework.type` must be `esp-idf`. The Arduino
+  framework does not ship the CHIP protocol stack.
+- **Network:** at least one of `wifi:` or `ethernet:` must be present.
+- **IPv6:** `network.enable_ipv6: true` is required. Matter fabric transport is
+  IPv6 only.
+
+```yaml
+# Minimal Matter over Wi-Fi
+esp32:
+  board: esp32-s3-devkitc-1
+  variant: ESP32S3
+  framework:
+    type: esp-idf
+
+network:
+  enable_ipv6: true
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+matter:
+  vendor_id: 0xFFF1
+  product_id: 0x8000
+  setup_code: "20202021"
+  discriminator: 0x0F0F
+  vendor_name: ESPHome
+  product_name: Example Device
+  node_label: Living Room
+```
+
+### Configuration variables
+
+- **vendor_id** (**Required**, 16-bit hex): The Matter Vendor Identifier
+  assigned by the CSA. Values in the `0xFFF1`–`0xFFF4` range are reserved
+  for testing and development; production devices need a real CSA-issued
+  VID.
+- **product_id** (**Required**, 16-bit hex): The Matter Product Identifier,
+  scoped under the vendor.
+- **setup_code** (**Required**, string): Eight-digit passcode that the
+  commissioner types (or scans from a QR / manual pairing code) during
+  commissioning. Must be an eight-digit numeric string outside the reserved
+  set defined in Matter Core §5.1.1.6.
+- **discriminator** (**Required**, 12-bit integer): Value between `0x000`
+  and `0xFFF` used by the commissioner to disambiguate multiple
+  uncommissioned devices on the network. Must be unique per device on the
+  local Wi-Fi / Ethernet segment during pairing.
+- **vendor_name** (*Optional*, string, up to 32 chars): Human-readable
+  vendor name published in the `BasicInformation` cluster. Defaults to the
+  CHIP test string when omitted.
+- **product_name** (*Optional*, string, up to 32 chars): Human-readable
+  product name.
+- **node_label** (*Optional*, string, up to 32 chars): Free-form user label
+  for the device, shown by many controllers next to the device name.
+- **hardware_version_string** (*Optional*, string, up to 64 chars):
+  Free-form hardware revision label.
+- **software_version_string** (*Optional*, string, up to 64 chars):
+  Free-form firmware version label.
+- **ble_commissioning** (*Optional*, bool): When `true`, the device also
+  advertises via Bluetooth Low Energy during commissioning so a controller
+  can push Wi-Fi credentials over Matter's BTP transport. Adds roughly
+  150 KB of flash plus a BLE controller in RAM, so leave off unless
+  needed. Only valid together with a `wifi:` block. Defaults to `false`
+  (on-network commissioning only).
+- **topology** (*Optional*, one of `bridge` or `composed`): How the entity
+  endpoints are arranged on the node.
+  - `bridge` (default): create an `Aggregator` endpoint (device type
+    `0x000E`) and attach a `BridgedDeviceBasicInformation` cluster to each
+    entity endpoint. This is the classic Matter Bridge presentation, where
+    every ESPHome entity shows up as its own accessory in Apple Home,
+    Google Home, SmartThings, etc.
+  - `composed`: skip the aggregator and expose every entity endpoint as a
+    direct part of the root node (Matter Core §9.5). Useful for
+    single-device profiles; some controllers may fall back to generic
+    labels (`Endpoint 2`) because there is no per-endpoint
+    `BridgedDeviceBasicInformation.NodeLabel`.
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually
+  specify the ID used for code generation.
+
+## Supported Entity Types
+
+The following ESPHome platforms are automatically exposed as Matter
+endpoints. Only entities without `internal: true` are considered. The
+Matter device type is chosen from the entity's `unit_of_measurement` and
+`device_class` where possible.
+
+| ESPHome platform | Matter device type |
+|------------------|--------------------|
+| `switch`         | On/Off Light or Plug-in Unit |
+| `binary_sensor`  | Contact / Occupancy / Motion Sensor (from `device_class`) |
+| `sensor`         | Temperature / Humidity / Pressure / Illuminance / Flow Sensor |
+| `light`          | On/Off, Dimmable, Color Temperature, or Extended Color Light |
+| `cover`          | Window Covering |
+| `fan`            | Fan |
+| `lock`           | Door Lock |
+| `valve`          | Water Valve |
+| `select`         | Mode Select |
+| `button`         | Generic Switch |
+| `climate`        | Thermostat |
+
+Entities whose type cannot be inferred (for example a `sensor` with no
+`unit_of_measurement` and no recognised `device_class`) are skipped and a
+warning is logged at boot.
+
+## Commissioning
+
+The device advertises itself via mDNS as soon as the network is up. Any
+Matter-capable controller on the same LAN can then commission it using the
+setup code (as an 11-digit *manual pairing code* — the log prints a QR
+payload as well).
+
+The onboarding payload is written to the ESPHome log at every boot with
+`ESP-IDF` verbosity `INFO`; open the device log to grab the QR-code URL and
+the manual pairing code the first time you pair a controller.
+
+When `ble_commissioning: true` is set, the device additionally advertises
+over Bluetooth for the first 15 minutes after boot (or until commissioning
+completes). Bluetooth-side commissioning lets a controller push Wi-Fi
+credentials over Matter's BTP transport — useful for fresh devices that
+were never given Wi-Fi credentials through YAML or a captive portal.
+
+To open a fresh commissioning window on an already-commissioned device
+(for example, to pair a second controller), expose the
+[Matter Action Button](/components/button/matter/) with
+`action: open_commissioning_window`.
+
+## Requirements and Limitations
+
+- **Flash budget.** A Matter build weighs roughly 1.5 MB more than a
+  non-Matter ESPHome firmware for the same hardware. Provide a partition
+  table with an application slice of at least 3 MB; the default 1.75 MB
+  IDF partitions are not enough.
+- **PSRAM.** Not strictly required but strongly recommended when
+  `ble_commissioning: true` or when the number of entities is large.
+- **IPv6.** Matter fabric routing is IPv6-only. `network.enable_ipv6: true`
+  is enforced by the configuration validator.
+- **Thread not supported here.** The `matter` component does not currently
+  drive an 802.15.4 radio. Use the [`openthread`](/components/openthread/)
+  component on ESP32-H2 / ESP32-C6 boards that need Thread.
+
+## See Also
+
+- [Matter Action Button](/components/button/matter/)
+- [Network Component](/components/network/)
+- [ESP32 Platform](/components/esp32/)
+- [Matter specification (CSA)](https://csa-iot.org/all-solutions/matter/)
+- [Espressif esp-matter](https://github.com/espressif/esp-matter)
+- <APIRef text="matter_component.h" path="matter/matter_component.h" />
