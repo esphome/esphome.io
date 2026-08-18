@@ -74,7 +74,10 @@ sensor:
   - **window** (*Optional*, [Time](/guides/configuration-types#time)): The time the ESP is actively listening for packets
     on a channel during each scan interval. If this is close to the `interval` value, the ESP will
     spend more time listening to packets (but also consume more power). Must not be larger than
-    `interval`; the same range and step apply. Defaults to `30ms`.
+    `interval`; the same range and step apply. When WiFi is configured, this defaults to the
+    `interval` value: WiFi and Bluetooth share one radio, and this lets Bluetooth listen whenever
+    WiFi is not using it. Without WiFi, or with `software_coexistence` disabled, it defaults
+    to `30ms`.
 
   - **duration** (*Optional*, [Time](/guides/configuration-types#time)): The duration of each complete scan. This has no real
     impact on the device but can be used to debug the BLE stack. Defaults to `5min`.

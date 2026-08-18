@@ -15,6 +15,12 @@ export const collections = {
            * "shared from <crosspostSource>" badge. See CrosspostBadges.astro.
            */
           crosspostSource: z.string().optional(),
+          /**
+           * Remote cover image URL for a crosspost card. Rendered as a plain
+           * <img> (not Astro's <Image>) so it is never fetched/cached at build
+           * and can be published before the post. See CrosspostBadges.astro.
+           */
+          crosspostCover: z.string().optional(),
         }),
     }),
   }),

@@ -11,8 +11,12 @@ const isBlogPage = Astro.url.pathname.startsWith("/blog");
 // isAnyBlogPostPage. Injected here rather than via a MarkdownContent override so
 // starlight-blog keeps ownership of MarkdownContent (importing its components
 // directly trips a rolldown exports-field error on starlight-blog/libs/page).
-const { id } = Astro.locals.starlightRoute;
+const { id, entry } = Astro.locals.starlightRoute;
 const isBlogPost = /^blog\/(?!(\d+\/?|tags\/.+|authors\/.+)$).+$/.test(id);
+
+// Crossposts redirect off-site immediately, so never embed Discourse comments
+// for them (this also avoids Discourse auto-creating a topic for the URL).
+const isCrosspost = Boolean(entry.data.crosspostSource);
 
 // Only load the Discourse comments embed on the production deploy. Netlify sets
 // CONTEXT to "production" only for the main production build; branch deploys
@@ -50,7 +54,7 @@ const footerLinks = [
 ---
 
 {isBlogPage && <CrosspostBadges />}
-{isBlogPost && isProduction && <DiscourseComments />}
+{isBlogPost && isProduction && !isCrosspost && <DiscourseComments />}
 
 <footer class="sl-flex">
   <div class="meta sl-flex">
