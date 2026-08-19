@@ -35,7 +35,9 @@ faulting address. The release also delivers multi-interface networking with Ethe
 major Modbus overhaul with the new `modbus_client` component, multi-key OTA signature verification, and runtime
 wake word management, alongside new components including the LD6002B 60 GHz presence radar and Hörmann garage
 door support. The bundled Device Builder brings faster startup, parallel uploads, and one-click config
-migration.
+migration. The beta cycle also fixed ESP32 BLE trackers and proxies missing advertisements alongside WiFi on
+ESP-IDF 5.5.5, and encrypted API connections and OTA uploads on ESP8266 that stalled for seconds now complete in
+well under one.
 {/* RELEASE_OVERVIEW_END */}
 
 ## Upgrade Checklist
@@ -62,6 +64,10 @@ migration.
   `internal_temperature` component
 - If your automations relied on non-iBeacon Apple manufacturer payloads being parsed as iBeacons, note these no
   longer match
+- If you use `rgb_order`, `is_rgbw` or `is_wrgb` on `esp32_rmt_led_strip`, `beken_spi_led_strip` or
+  `rp2040_pio_led_strip`, switch to the single `channel_colors` key (the old keys warn until 2027.3.0)
+- If you set `inverted: true` or `allow_other_uses: true` on an `interrupt_pin` for `pcf8574`, `pca9554`,
+  `tca9555`, `pca6416a`, `pi4ioe5v6408` or `mcp23016`, remove it; both are now rejected at validation
 {/* UPGRADE_CHECKLIST_END */}
 
 {/* FEATURE_HIGHLIGHTS_START */}
@@ -98,6 +104,15 @@ BLE devices through a Pico W proxy. BK72xx gained active scanning by packing the
 One config note: on migrated sensor platforms the auto-generated tracker reference key `esp32_ble_id:` is now
 `ble_hub_id:`. Most configs never set it explicitly; those that do keep validating with a warning until
 2027.2.0. See the Breaking Changes section for details.
+
+**ESP32 scan window with WiFi:** ESP-IDF 5.5.5 fixed a coexistence bug that made BLE scans run far longer than
+the configured window, and the default 30 ms window in a 320 ms interval had been relying on it; with the fix the
+scanner listened only 9.4% of the time and trackers and proxies missed most advertisements alongside WiFi from
+2026.7.1 on. With WiFi coexistence on ESP-IDF 5.5.5 or newer the
+[esp32_ble_tracker](/components/esp32_ble_tracker/) `window` now defaults to the `interval`, as Espressif
+recommends; an explicit `window` is never changed ([#18356](https://github.com/esphome/esphome/pull/18356)).
+`bk72xx_ble` also stops code generation with a clear message on Beken chips without a BLE 5.x stack (BK7231T,
+BK7251, BK7231Q) instead of failing minutes into the build ([#18406](https://github.com/esphome/esphome/pull/18406)).
 
 ## ESPHome Device Builder
 
@@ -278,7 +293,10 @@ Compilation now runs through `ccache` when it is installed on ESP8266, LibreTiny
 [#17728](https://github.com/esphome/esphome/pull/17728)), matching what ESP-IDF builds already did. The cache is
 shared across devices and projects, so a fleet of similar devices compiles almost entirely from cache: in testing,
 six Sonoff S31 devices built in 15 seconds for the first and 4 to 5 seconds for each of the rest. Set
-`ESPHOME_CCACHE_ENABLE=0` to opt out; `esphome clean-all` removes the cache.
+`ESPHOME_CCACHE_ENABLE=0` to opt out; `esphome clean-all` removes the cache. A `ccache` on
+`PATH` that does not run (a stale shim or a `.bat` wrapper on Windows) is now detected and skipped instead of
+failing every compile step ([#18407](https://github.com/esphome/esphome/pull/18407)), and framework downloads
+retry transient network errors with a short backoff ([#18330](https://github.com/esphome/esphome/pull/18330)).
 
 ESP-IDF installs also slimmed down considerably:
 
@@ -308,6 +326,16 @@ helpful tip instead of crashing ([#18280](https://github.com/esphome/esphome/pul
 ([#17110](https://github.com/esphome/esphome/pull/17110)), so a device with `web_server:` but no `api:` can
 finally be followed from the CLI. The native API is still preferred, then MQTT, then the web server.
 
+The beta cycle also removed some stalls. `esphome logs` no longer blocks for up to 25 seconds on MQTT IP
+discovery when it already has a usable address; the lookup runs concurrently and feeds any address it finds
+into the running client ([#18313](https://github.com/esphome/esphome/pull/18313)). `esphome upload` retries
+network-level OTA failures such as a connect timeout or the device closing the connection mid-handshake, while
+device-reported errors still fail immediately ([#18332](https://github.com/esphome/esphome/pull/18332)). The
+component alias map is read from a generated registry instead of scanning all 744 component directories on every
+CLI start, the source of a startup regression on slow hosts like the HA Green
+([#18335](https://github.com/esphome/esphome/pull/18335)), and `PYTHONPATH` no longer leaks into build
+subprocesses ([#18360](https://github.com/esphome/esphome/pull/18360)).
+
 ## Better ESP32 Crash Reports
 
 The `esp32` crash handler now captures the faulting memory address (EXCVADDR on Xtensa, MTVAL on RISC-V) and the
@@ -315,7 +343,8 @@ raw exception cause, so heap corruption and pointer bugs leave a usable trail in
 ([#17769](https://github.com/esphome/esphome/pull/17769)). Crash records are also stamped with the build they
 were captured by ([#17770](https://github.com/esphome/esphome/pull/17770)): a record left over from a previous
 firmware is flagged instead of being decoded against the wrong ELF, which used to produce convincing but
-meaningless backtraces.
+meaningless backtraces. The addr2line hint is now one line per core, so decoders no longer merge two unrelated
+stacks into one impossible call chain ([#18418](https://github.com/esphome/esphome/pull/18418)).
 
 ## Ethernet and WiFi Together: Multi-Interface Networking
 
@@ -326,6 +355,26 @@ arbitrated at runtime from that list ([#17797](https://github.com/esphome/esphom
 connected interface in your priority order carries the traffic, DNS follows the active interface, and failover
 plus failback happen automatically within milliseconds of a link change. Verified on hardware with cable pulls,
 VLAN changes and runtime enable/disable cycles. See [network](/components/network/) for configuration.
+
+## ESP8266 Networking and Stability
+
+Encrypted API connections took 2.5 to 3.3 seconds to establish on ESP8266, against about 63 ms on ESP32. WiFi
+and lwIP run in a cooperative context that only executes when the sketch yields, so a busy main loop let the WiFi
+RX queue overflow and TCP stalled on retransmission. Rate-limited yields in the raw TCP read and write paths
+([#18455](https://github.com/esphome/esphome/pull/18455)) plus yields inside libsodium's curve25519 loops via
+noise-c 0.1.19 ([#18473](https://github.com/esphome/esphome/pull/18473)) took a device that stalled on every
+attempt to 0 stalls in 24, with a 357 ms median. OTA uses the same paths and benefits equally. noise-c 0.1.18 also
+shrinks each cipher state from 416 to 80 bytes, freeing about 672 bytes of heap per encrypted connection
+([#18451](https://github.com/esphome/esphome/pull/18451)).
+
+Three crash classes are gone as well: a `LoadProhibited` in `cnx_node_search` after a WiFi disconnect, seen on
+ratgdo and Athom devices, fixed by taking the STA interface down before lwIP can transmit into the freed driver
+([#18333](https://github.com/esphome/esphome/pull/18333)); watchdog resets from the software serial RX interrupt
+posting a main loop wake for every byte, now only when no wake is pending
+([#18416](https://github.com/esphome/esphome/pull/18416)); and a reboot when the captive portal shut down after
+WiFi connected, because deleting the web server also deleted the captive portal mid-teardown, which broke Improv
+serial provisioning on the esphome-web ESP8266 image and applies to every ESPAsyncWebServer platform (ESP8266,
+RP2040, LibreTiny, LN882x) ([#18324](https://github.com/esphome/esphome/pull/18324)).
 
 ## Performance Optimizations
 
@@ -421,9 +470,14 @@ or LVGL can draw, with optional cross-fade transitions.
   ([#17717](https://github.com/esphome/esphome/pull/17717))
 - **OpenThread diagnostics** by [@Ardumine](https://github.com/Ardumine): 13 new numeric sensors exposing MAC and
   MLE counters plus parent link quality and RSSI ([#17276](https://github.com/esphome/esphome/pull/17276))
-- **RGBW channel ordering** for [esp32_rmt_led_strip](/components/light/esp32_rmt_led_strip/) by
-  [@peterkeen](https://github.com/peterkeen): the new `rgbw_order` option places the white channel anywhere,
-  matching `neopixelbus` ([#18028](https://github.com/esphome/esphome/pull/18028))
+- **Addressable LED channel order** by [@peterkeen](https://github.com/peterkeen) and
+  [@jesserockz](https://github.com/jesserockz): [esp32_rmt_led_strip](/components/light/esp32_rmt_led_strip/),
+  [beken_spi_led_strip](/components/light/beken_spi_led_strip/) and
+  [rp2040_pio_led_strip](/components/light/rp2040_pio_led_strip/) now describe their channel layout with a single
+  `channel_colors` key, any permutation of `R`, `G` and `B` with an optional `W` anywhere (`GRBW`, `WRGB`, `RWGB`),
+  replacing `rgb_order`, `is_rgbw` and `is_wrgb`; the RP2040 strip gains white-channel positioning as a result,
+  and the old keys keep working with a warning naming the replacement until 2027.3.0
+  ([#18028](https://github.com/esphome/esphome/pull/18028), [#18474](https://github.com/esphome/esphome/pull/18474))
 - **Haier short IR messages** for [remote_transmitter](/components/remote_transmitter/) and
   [remote_receiver](/components/remote_receiver/) by [@ssieb](https://github.com/ssieb)
   ([#17826](https://github.com/esphome/esphome/pull/17826)), and configurable I2S PDM microphone downsampling by
@@ -453,11 +507,34 @@ or LVGL can draw, with optional cross-fade transitions.
   network failure, leave-on-factory-reset, sensor resolution attributes and more units
   ([#18009](https://github.com/esphome/esphome/pull/18009),
   [#18008](https://github.com/esphome/esphome/pull/18008),
-  [#17973](https://github.com/esphome/esphome/pull/17973))
+  [#17973](https://github.com/esphome/esphome/pull/17973)); esp-zigbee-sdk is bumped to 2.0.4, which lets the
+  coordinator remove an end device that is not its direct child and has routers send an explicit rejoin request
+  ([#18415](https://github.com/esphome/esphome/pull/18415))
 - **CC1101 tuning options** by [@hn](https://github.com/hn): frequency offset compensation and bit
   synchronization registers are now configurable from YAML for narrowband protocols like wM-Bus
   ([#17577](https://github.com/esphome/esphome/pull/17577))
 - **Modbus garage doors and more** covered in the Modbus section above
+
+## Notable Bug Fixes
+
+- **ld2420**: An unknown command error from the radar indexed past a three-entry message table and caused a boot
+  loop ([#18322](https://github.com/esphome/esphome/pull/18322)), and setup no longer ties with the UART bus
+  priority, which could leave the bus dead on ESP-IDF ([#18428](https://github.com/esphome/esphome/pull/18428))
+- **Sensor delta filter**: NaN passes through again, so a `timeout:` filter followed by `delta:` marks the sensor
+  unavailable instead of holding the last valid reading forever; this had been lost in 2026.2.0
+  ([#18400](https://github.com/esphome/esphome/pull/18400))
+- **Entity keys**: The beta hashed API entity keys from the raw name, which made Home Assistant recreate every
+  entity on first connect and drop helpers tied to them. Keys are back to the sanitized object ID hash for this
+  release; the config-time duplicate check is kept ([#18361](https://github.com/esphome/esphome/pull/18361))
+- **rotary_encoder**: The reset pin now sets `min_value` instead of `0` when the minimum is above zero
+  ([#18197](https://github.com/esphome/esphome/pull/18197))
+- **esp32_ble**: The `LOCAL_IR` and `LOCAL_ER` GAP events the stack raises on first boot after a flash no longer
+  log an "unexpected GAP event" warning ([#18359](https://github.com/esphome/esphome/pull/18359))
+- **cv.parse_esphome_version**: Restored as a deprecated helper after its removal broke external components that
+  call it; it warns and points at `cv.require_esphome_version`, and goes away in 2027.2.0
+  ([#18366](https://github.com/esphome/esphome/pull/18366))
+- **sendspin**: sendspin-cpp 0.7.2 fixes the artwork image's `on_clear` never firing
+  ([#18316](https://github.com/esphome/esphome/pull/18316))
 {/* FEATURE_HIGHLIGHTS_END */}
 
 ## Thank You, Contributors
@@ -561,6 +638,13 @@ pre-releases, and helped in the community.
 - **RC522 I²C**: The default I²C address changed from `0x2C` to `0x28` to match the documentation and typical
   board wiring. If your reader relied on the old default, set `address: 0x2C` explicitly
   [#17566](https://github.com/esphome/esphome/pull/17566)
+- **Addressable LED strips**: `rgb_order`, `is_rgbw` and `is_wrgb` on `esp32_rmt_led_strip`,
+  `beken_spi_led_strip` and `rp2040_pio_led_strip` are deprecated in favour of `channel_colors`; they migrate
+  automatically with a warning until removal in 2027.3.0 [#18474](https://github.com/esphome/esphome/pull/18474)
+- **GPIO expanders**: `inverted: true` and `allow_other_uses: true` on `interrupt_pin` are now validation errors
+  for `pcf8574`, `pca9554`, `tca9555`, `pca6416a`, `pi4ioe5v6408` and `mcp23016`; an inverted pin caused an
+  endless I²C read loop and a shared pin never delivered interrupts
+  [#18472](https://github.com/esphome/esphome/pull/18472)
 
 ### Modbus
 
