@@ -1261,6 +1261,75 @@ The points list may be defined with constants in the form `x, y` or as a list of
     line_rounded: true
 ```
 
+### `menu`
+
+The menu widget provides a settings-style, navigable page/sidebar UI: a header bar with an automatic back button, and a stack of named pages. It is well suited to building preference/settings screens.
+
+**Configuration variables:**
+
+- **pages** (**Required**, list): A list of pages that make up the menu. Each entry may have:
+  - **id** (**Required**): An ID for the page, referenced by `root_page`, `sidebar_page` and the `lvgl.menu.set_page` action.
+  - **title** (*Optional*, string): A title shown in the page's header.
+  - **sections** (*Optional*, list): Groups of rows shown with LVGL's standard bordered "settings list" styling. Each entry may have:
+    - **id** (*Optional*): An ID for the section.
+    - **widgets** (*Optional*, list): A list of [Widgets](/components/lvgl/widgets/) to show inside the section.
+  - **widgets** (*Optional*, list): A list of [Widgets](/components/lvgl/widgets/) shown directly on the page, outside any section.
+- **root_page** (**Required**): The ID of the page shown when the menu is created.
+- **sidebar_page** (*Optional*): The ID of a page to show as a sidebar alongside the main content — typically a page whose widgets navigate between the other pages via `lvgl.menu.set_page`.
+- **header_mode** (*Optional*, enum): One of `TOP_FIXED`, `TOP_UNFIXED`, `BOTTOM_FIXED`. Defaults to `TOP_FIXED`.
+- **root_back_btn** (*Optional*, enum): One of `DISABLED`, `ENABLED`. Controls whether the back button is still shown (though inactive) once the root page is reached. Defaults to `DISABLED`.
+- **header_style** (*Optional*, dict): Style settings for the main header row.
+- **sidebar_style** (*Optional*, dict): Style settings for the sidebar's header row.
+
+**Actions:**
+
+- `lvgl.menu.set_page` [action](/automations/actions#actions-action) shows a page, e.g. from a button's `on_click`:
+  - **id** (**Required**): The ID of the menu which receives this action.
+  - **page** (**Required**): The ID of the page to show.
+  - **sidebar** (*Optional*, boolean): If `true`, sets the sidebar page instead of the main page. Defaults to `false`.
+
+**Triggers:**
+
+- `on_value` [trigger](/automations/actions#actions-trigger) is activated whenever the shown page changes, either by user interaction or via `lvgl.menu.set_page`. The id of the new page is returned in the variable `page`.
+- `on_root_back_button_click` [trigger](/automations/actions#actions-trigger) is activated when the back button is clicked while already showing the root page. This is the one case where LVGL has no default behavior (clicking back normally returns to the previous page) — use it to, for example, hide the menu.
+- [interaction](#triggers) LVGL event triggers.
+
+**Example:**
+
+```yaml
+# Example widget:
+- menu:
+    id: settings_menu
+    root_back_btn: enabled
+    root_page: settings_main_page
+    on_root_back_button_click:
+      - lvgl.widget.hide: settings_menu
+    pages:
+      - id: settings_main_page
+        title: "Settings"
+        sections:
+          - widgets:
+              - label:
+                  text: "Wifi"
+              - switch:
+                  id: wifi_switch
+        widgets:
+          - button:
+              text: "Advanced"
+              on_click:
+                - lvgl.menu.set_page:
+                    id: settings_menu
+                    page: settings_advanced_page
+      - id: settings_advanced_page
+        title: "Advanced"
+        widgets:
+          - label:
+              text: "Debug options"
+```
+
+> [!NOTE]
+> Menu pages and sections are only valid within a `menu`'s own `pages` list (with sections nested under each page) — they are not general-purpose [Widgets](/components/lvgl/widgets/) and cannot be used elsewhere.
+
 ### `meter`
 
 The meter widget can visualize data in very flexible ways. It can use arcs, needles, ticks, lines and/or labels.
