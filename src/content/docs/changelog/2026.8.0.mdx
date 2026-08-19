@@ -361,14 +361,12 @@ VLAN changes and runtime enable/disable cycles. See [network](/components/networ
 Encrypted API connections took 2.5 to 3.3 seconds to establish on ESP8266, against about 63 ms on ESP32. WiFi
 and lwIP run in a cooperative context that only executes when the sketch yields, so a busy main loop let the WiFi
 RX queue overflow and TCP stalled on retransmission. Rate-limited yields in the raw TCP read and write paths
-([#18455](https://github.com/esphome/esphome/pull/18455)) plus yields inside libsodium's curve25519 loops via
-noise-c 0.1.19 ([#18473](https://github.com/esphome/esphome/pull/18473)) took a device that stalled on every
-attempt to 0 stalls in 24 attempts, with a 357 ms median. OTA uses the same paths and benefits equally. noise-c
-0.1.18 also shrinks each cipher state from 416 to 80 bytes, freeing about 672 bytes of heap per encrypted
-connection ([#18451](https://github.com/esphome/esphome/pull/18451)), and 0.1.20 wins back the encrypt and
-decrypt speed that change had cost by wiping only the Poly1305 key instead of the whole scratch buffer
-([#18482](https://github.com/esphome/esphome/pull/18482),
-[#18484](https://github.com/esphome/esphome/pull/18484)).
+([#18455](https://github.com/esphome/esphome/pull/18455)) and inside the handshake crypto
+([#18473](https://github.com/esphome/esphome/pull/18473)) took a device that stalled on every attempt to 0 stalls
+in 24 attempts, with a 357 ms median. OTA uses the same paths and benefits equally. The noise-c library behind
+the encrypted API was also bumped from 0.1.11 to 0.1.21 along the way, freeing about 670 bytes of heap per
+encrypted connection with no change in speed ([#18451](https://github.com/esphome/esphome/pull/18451),
+[#18482](https://github.com/esphome/esphome/pull/18482), [#18484](https://github.com/esphome/esphome/pull/18484)).
 
 Three crash classes are gone as well: a `LoadProhibited` in `cnx_node_search` after a WiFi disconnect, seen on
 ratgdo and Athom devices, fixed by taking the STA interface down before lwIP can transmit into the freed driver
