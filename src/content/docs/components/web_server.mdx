@@ -109,7 +109,8 @@ web_server:
 
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
 - **local** (*Optional*, boolean): Include supporting javascript locally allowing it to work without internet access.
-  Defaults to `false`.
+  Defaults to `false`, except when the [WiFi](/components/wifi/) configuration has only an access point
+  (`ap:` and no `ssid`/`networks`), where it defaults to `true`; see [Access point mode](#access-point-mode).
 
 - **compression** (*Optional*, string): The compression algorithm used for embedded web assets when `local` is enabled.
   Options are `gzip` or `br` (Brotli). Brotli provides smaller embedded web assets (~10% smaller than gzip), but some
@@ -250,6 +251,35 @@ web_server:
 # OTA will only be accessible when captive portal is active
 captive_portal:
 ```
+
+## Access point mode
+
+A device that never joins a WiFi network, such as one in a car, boat or camper, can still be
+used through its own access point without any internet connection. Configure an `ap:` in
+[WiFi](/components/wifi/) without any network to join, and the `web_server`:
+
+```yaml
+# Example configuration entry
+wifi:
+  ap:
+    ssid: "My Boat"
+    password: !secret wifi_ap_password
+
+web_server:
+```
+
+In this mode:
+
+- The web interface is embedded in the firmware (`local` defaults to `true`), since a phone or laptop
+  connected to the access point usually has no internet to download it from.
+- While the access point is up, the web server acts as a captive portal: it answers every DNS name
+  with the device's address and sends unknown URLs to its page, so the interface opens by itself
+  when a device joins the network, the same way a hotel login page does. It is also reachable by
+  opening [http://192.168.4.1/](http://192.168.4.1/) manually.
+
+A configuration with both a network to join and an `ap:` fallback gets the same captive behavior
+when `local: true` is set. When [Captive Portal](/components/captive_portal/) is configured it stays
+in charge of the access point and shows its own WiFi setup page instead.
 
 ## Advanced usage
 
