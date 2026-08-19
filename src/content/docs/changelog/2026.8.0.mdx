@@ -365,8 +365,9 @@ RX queue overflow and TCP stalled on retransmission. Rate-limited yields in the 
 ([#18473](https://github.com/esphome/esphome/pull/18473)) took a device that stalled on every attempt to 0 stalls
 in 24 attempts, with a 357 ms median. OTA uses the same paths and benefits equally. The noise-c library behind
 the encrypted API was also bumped from 0.1.11 to 0.1.21 along the way, freeing about 670 bytes of heap per
-encrypted connection with no change in speed ([#18451](https://github.com/esphome/esphome/pull/18451),
-[#18482](https://github.com/esphome/esphome/pull/18482), [#18484](https://github.com/esphome/esphome/pull/18484)).
+encrypted connection and making message encryption and decryption 13 to 31% faster in benchmarks
+([#18451](https://github.com/esphome/esphome/pull/18451), [#18482](https://github.com/esphome/esphome/pull/18482),
+[#18484](https://github.com/esphome/esphome/pull/18484)).
 
 Three crash classes are gone as well: a `LoadProhibited` in `cnx_node_search` after a WiFi disconnect, seen on
 ratgdo and Athom devices, fixed by taking the STA interface down before lwIP can transmit into the freed driver
