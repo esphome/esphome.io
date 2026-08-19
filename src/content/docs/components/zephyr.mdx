@@ -73,8 +73,8 @@ zephyr:
   Zephyr workspace. Defaults to the version in esphome/components/zephyr/requirements_west.txt.
 - **ninja_version** (*Optional*, string): Override the version of `ninja` used to build. Defaults to the
   version in esphome/components/zephyr/requirements_west.txt.
-- **advanced** (*Optional*, mapping): Variant-specific options that don't apply across every variant.
-  See [`advanced`](#advanced).
+- **advanced** (*Optional*, mapping): Mostly variant-specific options that don't apply across every
+  variant, plus **runner**, which applies to all of them. See [`advanced`](#advanced).
 - **mac_address** (*Optional*, MAC Address): A fixed MAC address to report. Only valid for the
   `nativesim` variant, which has no real network hardware of its own; every other variant uses the
   chip's burned-in MAC address.
@@ -165,12 +165,18 @@ Use of `esphome run/upload` is emerging capability for non esp32 families. If fr
 `west flash` is recommended.  At present, `esphome run/esphome upload --device <port>`
 attempts to use the board's own default runner and this works as long as that runner's external tool is
 installed, For example, jlink needs SEGGER's J-Link software, stm32cubeprogrammer needs ST's CLI tool,
-nrfutil needs Nordic's CLI.  `<port>` is a serial port path (e.g. /dev/ttyACM0, COM3).  Allowing override of 
-the default runner is pending.  Family sections below call out exceptions to this capability.
+nrfutil needs Nordic's CLI.  `<port>` is a serial port path (e.g. /dev/ttyACM0, COM3).  Family sections
+below call out exceptions to this capability.
 
-There is currently a device option, `--device PYOCD` (forced override).  This only works when two independent
-things are both true for that specific board — pyOCD has a built-in target for the chip, and the board's 
-board.cmake actually registers a pyocd runner with that target.
+Set `advanced: runner:` to override the board's default runner persistently, for boards whose default
+runner is broken, unavailable, or otherwise unwanted — see [`advanced`](#advanced). Any string is
+accepted; a name the board doesn't actually support only logs a warning at compile time (the real list
+of runners for that board isn't known until then), it does not fail config validation.
+
+There is also a `--device PYOCD` option (forced override), independent of `advanced: runner:` and always
+taking precedence over it. This only works when two independent things are both true for that specific
+board — pyOCD has a built-in target for the chip, and the board's board.cmake actually registers a pyocd
+runner with that target.
 
 In some scenarios, if your development environment has more than one device available, the wrong device
 may be selected for serial flash, it is the user's responsibility to ensure the correct device was flashed.
@@ -474,9 +480,16 @@ zephyr:
 
 ## `advanced`
 
-Options that only apply to one variant, rather than every variant the way **framework** or
-**watchdog_timeout** do. An option is rejected with an error if used on a variant it doesn't apply to.
+Mostly options that only apply to one variant, rather than every variant the way **framework** or
+**watchdog_timeout** do — an option is rejected with an error if used on a variant it doesn't apply
+to. **runner** is the exception: it applies to every variant.
 
+- **runner** (*Optional*, string, all variants): Force a specific `west flash` runner instead of the
+  board's default (e.g. `pyocd`, `jlink`, `openocd`). Any string is accepted — valid runner names are
+  board/SDK-specific and only knowable after the first compile, so an unrecognized name only logs a
+  warning at compile time, it does not fail config validation. Has no effect on `rp2040`/`rp2350`'s
+  BOOTSEL/picotool flashing, and is overridden by `--device PYOCD` if that's also used. See
+  [Serial Load Process](#serial-load-process).
 - **bootloader** (*Optional*, string, `rp2040`/`rp2350`/`ra4m1`/`stm32l4` only): `none` (the default)
   or `mcuboot`. Every other variant requires MCUboot and has no such option. Choosing `mcuboot` only
   controls the sysbuild/signing config; it does not qualify **board** for you, and none of these four
@@ -487,6 +500,14 @@ Options that only apply to one variant, rather than every variant the way **fram
   Override the version of Silicon Labs' Simplicity Commander CLI used for secure-boot image signing.
   Defaults to a pinned known-good version. Commander is downloaded and cached automatically; no
   extra install step is needed.
+
+```yaml
+# Example configuration entry -- EFR32MG24 forced onto the pyocd runner
+zephyr:
+  variant: efr32mg24
+  advanced:
+    runner: pyocd
+```
 
 ```yaml
 # Example configuration entry -- RP2040 with MCUboot enabled
