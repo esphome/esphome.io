@@ -37,7 +37,7 @@ wake word management, alongside new components including the LD6002B 60 GHz pres
 door support. The bundled Device Builder brings faster startup, parallel uploads, and one-click config
 migration. The beta cycle also fixed ESP32 BLE trackers and proxies missing advertisements alongside WiFi on
 ESP-IDF 5.5.5, and encrypted API connections and OTA uploads on ESP8266 that stalled for seconds now complete in
-well under one.
+well under one second.
 {/* RELEASE_OVERVIEW_END */}
 
 ## Upgrade Checklist
@@ -67,7 +67,7 @@ well under one.
 - If you use `rgb_order`, `is_rgbw` or `is_wrgb` on `esp32_rmt_led_strip`, `beken_spi_led_strip` or
   `rp2040_pio_led_strip`, switch to the single `channel_colors` key (the old keys warn until 2027.3.0)
 - If you set `inverted: true` or `allow_other_uses: true` on an `interrupt_pin` for `pcf8574`, `pca9554`,
-  `tca9555`, `pca6416a`, `pi4ioe5v6408` or `mcp23016`, remove it; both are now rejected at validation
+  `tca9555`, `pca6416a`, `pi4ioe5v6408` or `mcp23016`, remove them; both are now rejected at validation
 {/* UPGRADE_CHECKLIST_END */}
 
 {/* FEATURE_HIGHLIGHTS_START */}
@@ -363,9 +363,9 @@ and lwIP run in a cooperative context that only executes when the sketch yields,
 RX queue overflow and TCP stalled on retransmission. Rate-limited yields in the raw TCP read and write paths
 ([#18455](https://github.com/esphome/esphome/pull/18455)) plus yields inside libsodium's curve25519 loops via
 noise-c 0.1.19 ([#18473](https://github.com/esphome/esphome/pull/18473)) took a device that stalled on every
-attempt to 0 stalls in 24, with a 357 ms median. OTA uses the same paths and benefits equally. noise-c 0.1.18 also
-shrinks each cipher state from 416 to 80 bytes, freeing about 672 bytes of heap per encrypted connection
-([#18451](https://github.com/esphome/esphome/pull/18451)).
+attempt to 0 stalls in 24 attempts, with a 357 ms median. OTA uses the same paths and benefits equally. noise-c
+0.1.18 also shrinks each cipher state from 416 to 80 bytes, freeing about 672 bytes of heap per encrypted
+connection ([#18451](https://github.com/esphome/esphome/pull/18451)).
 
 Three crash classes are gone as well: a `LoadProhibited` in `cnx_node_search` after a WiFi disconnect, seen on
 ratgdo and Athom devices, fixed by taking the STA interface down before lwIP can transmit into the freed driver
@@ -518,8 +518,9 @@ or LVGL can draw, with optional cross-fade transitions.
 ## Notable Bug Fixes
 
 - **ld2420**: An unknown command error from the radar indexed past a three-entry message table and caused a boot
-  loop ([#18322](https://github.com/esphome/esphome/pull/18322)), and setup no longer ties with the UART bus
-  priority, which could leave the bus dead on ESP-IDF ([#18428](https://github.com/esphome/esphome/pull/18428))
+  loop ([#18322](https://github.com/esphome/esphome/pull/18322)), and the component no longer shares the UART
+  bus setup priority, which could run its setup before the bus was ready and leave the bus dead on ESP-IDF
+  ([#18428](https://github.com/esphome/esphome/pull/18428))
 - **Sensor delta filter**: NaN passes through again, so a `timeout:` filter followed by `delta:` marks the sensor
   unavailable instead of holding the last valid reading forever; this had been lost in 2026.2.0
   ([#18400](https://github.com/esphome/esphome/pull/18400))
