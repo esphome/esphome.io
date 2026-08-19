@@ -362,8 +362,8 @@ marks it offline. `tx.idle_command` requires a `command_format:` (see below).
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the hub.
 - **uart_id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the [UART](/components/uart/) bus.
 - **sniffer_only** (*Optional*, boolean): Disable all TX including buttons. Defaults to `false`.
-- **dump_frames** (*Optional*, boolean): Log every validated RX frame payload and every TX
-  frame at DEBUG level. Defaults to `false`.
+- **dump_frames** (*Optional*, boolean): Log every validated RX frame and every TX frame, as
+  the full wire bytes (framing and CRC included), at DEBUG level. Defaults to `false`.
 - **max_frame_length** (*Optional*, integer, 6–1024): Discard frames longer than this many bytes. Defaults to `128`.
 - **frame_timeout** (*Optional*, [Time](/guides/configuration-types#time)): Reset receive
   state if a partial frame sits on the bus longer than this. Prevents a noise burst or
@@ -733,16 +733,18 @@ sensor:
 
 ### Step 4: Catalog frame types from logs
 
-With `dump_frames: true` and logger at DEBUG level, each validated frame is logged:
+With `dump_frames: true` and logger at DEBUG level, each validated frame is logged as the full
+wire bytes — framing (DLE/STX/ETX) and CRC included, same as the TX log lines:
 
 ```
-[D][rs485_frame:xxx]: RX 010101
-[D][rs485_frame:xxx]: RX 0102010200000800000800
-[D][rs485_frame:xxx]: RX 010301035000506f6f6c2054...
+[D][rs485_frame:xxx]: RX 10020101ff1003
+[D][rs485_frame:xxx]: RX 10020102010000080000080000ff1003
+[D][rs485_frame:xxx]: RX 100201030103500050006f6f6c2054...ff1003
 ```
 
-The first four hex chars are the two-byte frame type. Collect these over a few
-minutes and note cadence. Press physical buttons and watch for new frame types.
+With the default `dle`/`stx` bytes, each line starts `1002`; the two-byte frame type follows
+right after. Collect these over a few minutes and note cadence. Press physical buttons and
+watch for new frame types.
 
 ### Step 5: Confirm the CRC
 

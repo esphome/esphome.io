@@ -50,12 +50,14 @@ reflects the result.
 ### Finding command values
 
 Enable `dump_frames: true` and `sniffer_only: true` on the hub, then press a physical
-button on your controller and watch the ESP log. Each validated frame is printed in hex;
-the first two bytes are the frame type. Identify which new frame type appears and capture
-its payload. If the payload follows a preamble / value-bytes / postamble structure that
-repeats across buttons, describe it with `command_format:` on the hub and derive the
-`value:` from the changing portion. If the frame layout does not fit that shape,
-use the raw `frame_type:` + `payload:` form instead.
+button on your controller and watch the ESP log. Each validated frame is printed in hex
+as the full wire bytes (framing and CRC included); the frame type is the two bytes right
+after the DLE/STX header. Identify which new frame type appears and capture its payload
+(the bytes between the frame type and the trailing CRC). If the payload follows a
+preamble / value-bytes / postamble structure that repeats across buttons, describe it
+with `command_format:` on the hub and derive the `value:` from the changing portion. If
+the frame layout does not fit that shape, use the raw `frame_type:` + `payload:` form
+instead.
 
 Known `value:` entries for Hayward AquaLogic and Jandy AquaLink RS are in the
 [rs485_frame-examples](https://github.com/b3nj1/rs485_frame-examples) repository,
