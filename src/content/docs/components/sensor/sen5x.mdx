@@ -37,11 +37,17 @@ sensor:
       name: Temperature
     humidity:
       name: Humidity
-    voc:
-      name: VOC
-    nox:
-      name: NOX
+    voc_index:
+      name: VOC Index
+    nox_index:
+      name: NOx Index
 ```
+
+> [!NOTE]
+> The `voc` and `nox` keys were renamed to `voc_index` and `nox_index`, since
+> these sensors report Sensirion's unitless Gas Index rather than a
+> concentration. The old keys still work but are deprecated and will be removed
+> in ESPHome 2027.2.0.
 
 ## Configuration variables
 
@@ -77,7 +83,7 @@ sensor:
 
   - All options from [Sensor](/components/sensor).
 
-- **voc** (*Optional*): VOC Index. Note only available with Sen54 or Sen55. The sensor will be ignored on
+- **voc_index** (*Optional*): VOC Index. Note only available with Sen54 or Sen55. The sensor will be ignored on
   unsupported models.
 
   - **algorithm_tuning** (*Optional*): The VOC algorithm can be customized by tuning 6 different parameters.
@@ -102,7 +108,7 @@ sensor:
 
   - All other options from [Sensor](/components/sensor).
 
-- **nox** (*Optional*): NOx Index. Note: Only available with Sen55. The sensor will be ignored on unsupported models.
+- **nox_index** (*Optional*): NOx Index. Note: Only available with Sen55. The sensor will be ignored on unsupported models.
 
   - **algorithm_tuning** (*Optional*): The NOx algorithm can be customized by tuning 5 different parameters.
     For more details see [Engineering Guidelines for SEN5x](https://sensirion.com/media/documents/25AB572C/62B463AA/Sensirion_Engineering_Guidelines_SEN5x.pdf)
