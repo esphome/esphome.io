@@ -274,14 +274,15 @@ In this mode:
 - The web interface is embedded in the firmware (`local` defaults to `true`, adding roughly 13 KB of
   flash on version 2 and 78 KB on version 3; set `local: false` to opt out). A phone or laptop
   connected to the access point cannot load the hosted interface: the access point has no internet,
-  and a phone that still has mobile data does not route the page's downloads over both networks, so
-  the page just stalls.
+  and even a phone that still has mobile data typically does not fetch the page's downloads over
+  the other network, so the page stays blank.
 - While the access point is up, the web server acts as a captive portal: it answers every DNS name
   with the device's address and sends unknown URLs to its page, so the interface opens by itself
-  when a device joins the network, the same way a hotel login page does. It is also reachable by
-  opening [http://192.168.4.1/](http://192.168.4.1/) manually. This needs the default `port: 80`,
-  since captive portal detection only works there; on another port, nothing opens automatically and
-  the interface must be opened manually at `http://192.168.4.1:<port>/`.
+  when a device joins the network, the same way a hotel login page does. This needs the default
+  `port: 80`, since captive portal detection only works there; on another port nothing opens
+  automatically. Either way the interface can also be opened manually at
+  [http://192.168.4.1/](http://192.168.4.1/) (or the AP's `manual_ip` address, if set), with
+  `:<port>` appended when a custom port is used.
 
 A configuration with both a network to join and an `ap:` fallback gets the same captive behavior
 when `local: true` is set. When [Captive Portal](/components/captive_portal/) is configured it stays
