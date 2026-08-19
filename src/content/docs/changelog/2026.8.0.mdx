@@ -167,7 +167,13 @@ spelling, which is read on load and respelled to the canonical form on write
 has a pending migration shows a dot on its card and table row, and clicking it opens the editor to apply the migration
 ([#2563](https://github.com/esphome/device-builder/pull/2563),
 [frontend#1652](https://github.com/esphome/device-builder-frontend/pull/1652),
-[frontend#1653](https://github.com/esphome/device-builder-frontend/pull/1653)).
+[frontend#1653](https://github.com/esphome/device-builder-frontend/pull/1653)). The offer now names each change it
+will make and shows a preview ([frontend#1662](https://github.com/esphome/device-builder-frontend/pull/1662)),
+only proposes migrations the installed ESPHome supports
+([#2602](https://github.com/esphome/device-builder/pull/2602)), and covers the LED strip `channel_colors` rename
+introduced in this release ([#2585](https://github.com/esphome/device-builder/pull/2585),
+[#2596](https://github.com/esphome/device-builder/pull/2596),
+[#2600](https://github.com/esphome/device-builder/pull/2600)).
 
 **The Structured Editor Rounds Out**
 
@@ -295,8 +301,10 @@ shared across devices and projects, so a fleet of similar devices compiles almos
 six Sonoff S31 devices built in 15 seconds for the first and 4 to 5 seconds for each of the rest. Set
 `ESPHOME_CCACHE_ENABLE=0` to opt out; `esphome clean-all` removes the cache. A `ccache` on
 `PATH` that does not run (a stale shim or a `.bat` wrapper on Windows) is now detected and skipped instead of
-failing every compile step ([#18407](https://github.com/esphome/esphome/pull/18407)), and framework downloads
-retry transient network errors with a short backoff ([#18330](https://github.com/esphome/esphome/pull/18330)).
+failing every compile step ([#18407](https://github.com/esphome/esphome/pull/18407)), the wrapper path is made
+safe for `cmd.exe` so the ccache bundled with ESPHome Desktop works
+([#18495](https://github.com/esphome/esphome/pull/18495)), and framework downloads retry transient network
+errors with a short backoff ([#18330](https://github.com/esphome/esphome/pull/18330)).
 
 ESP-IDF installs also slimmed down considerably:
 
@@ -519,6 +527,12 @@ or LVGL can draw, with optional cross-fade transitions.
 
 ## Notable Bug Fixes
 
+- **ESP32-P4**: `variant: esp32p4` without a `board:` built the pre-v3 bootloader layout since 2026.7.0 and
+  bootlooped on production (v3.x) silicon; the production layout is now the default, with `engineering_sample`
+  still available for pre-release chips ([#18500](https://github.com/esphome/esphome/pull/18500))
+- **image**: `defaults:` and `files:` work again on `image:` platform entries (`file`, `animation`,
+  `online_image`) to share options across several images, not only through the legacy format migration
+  ([#18032](https://github.com/esphome/esphome/pull/18032))
 - **ld2420**: An unknown command error from the radar indexed past a three-entry message table and caused a boot
   loop ([#18322](https://github.com/esphome/esphome/pull/18322)), and the component no longer shares the UART
   bus setup priority, which could run its setup before the bus was ready and leave the bus dead on ESP-IDF
