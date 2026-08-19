@@ -365,7 +365,10 @@ RX queue overflow and TCP stalled on retransmission. Rate-limited yields in the 
 noise-c 0.1.19 ([#18473](https://github.com/esphome/esphome/pull/18473)) took a device that stalled on every
 attempt to 0 stalls in 24 attempts, with a 357 ms median. OTA uses the same paths and benefits equally. noise-c
 0.1.18 also shrinks each cipher state from 416 to 80 bytes, freeing about 672 bytes of heap per encrypted
-connection ([#18451](https://github.com/esphome/esphome/pull/18451)).
+connection ([#18451](https://github.com/esphome/esphome/pull/18451)), and 0.1.20 wins back the encrypt and
+decrypt speed that change had cost by wiping only the Poly1305 key instead of the whole scratch buffer
+([#18482](https://github.com/esphome/esphome/pull/18482),
+[#18484](https://github.com/esphome/esphome/pull/18484)).
 
 Three crash classes are gone as well: a `LoadProhibited` in `cnx_node_search` after a WiFi disconnect, seen on
 ratgdo and Athom devices, fixed by taking the STA interface down before lwIP can transmit into the freed driver
@@ -521,6 +524,11 @@ or LVGL can draw, with optional cross-fade transitions.
   loop ([#18322](https://github.com/esphome/esphome/pull/18322)), and the component no longer shares the UART
   bus setup priority, which could run its setup before the bus was ready and leave the bus dead on ESP-IDF
   ([#18428](https://github.com/esphome/esphome/pull/18428))
+- **Modbus custom commands**: Responses with a function code outside the user-defined ranges (65-72 and 100-110),
+  such as the `0x49` used by Sofar inverters, were dropped as parse failures since 2026.7 because only user-defined
+  codes fell back to the CRC scan for the frame end. Every function code of unknown length is now CRC-scanned, and
+  a server hub answers such a request with `ILLEGAL_FUNCTION` instead of silence
+  ([#18483](https://github.com/esphome/esphome/pull/18483))
 - **Sensor delta filter**: NaN passes through again, so a `timeout:` filter followed by `delta:` marks the sensor
   unavailable instead of holding the last valid reading forever; this had been lost in 2026.2.0
   ([#18400](https://github.com/esphome/esphome/pull/18400))
