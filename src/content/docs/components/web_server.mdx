@@ -270,8 +270,10 @@ web_server:
 
 In this mode:
 
-- The web interface is embedded in the firmware (`local` defaults to `true`), since a phone or laptop
-  connected to the access point usually has no internet to download it from.
+- The web interface is embedded in the firmware (`local` defaults to `true`). A phone or laptop
+  connected to the access point cannot load the hosted interface: the access point has no internet,
+  and a phone that still has mobile data does not route the page's downloads over both networks, so
+  the page just stalls.
 - While the access point is up, the web server acts as a captive portal: it answers every DNS name
   with the device's address and sends unknown URLs to its page, so the interface opens by itself
   when a device joins the network, the same way a hotel login page does. It is also reachable by
