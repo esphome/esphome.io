@@ -30,6 +30,15 @@ single bit-field LED mask through a multi-field temperature/text frame.
   | `command_drops` | Commands dropped (queue full or sniffer mode). | `total_increasing` | `commands` | |
   | `last_keepalive_ms` | Gate-frame interval in ms. | `measurement` | `ms` | `device_class: duration` |
   | `queue_depth` | Current TX queue depth (including any pending delayed). | `measurement` | `commands` | |
+  | `response_success` | [`response_monitor`](/components/rs485_frame/#response-monitor) entry: confirmed presses. | `total_increasing` | `occurrences` | requires `monitor_id` |
+  | `response_fail` | `response_monitor` entry: addressed field arrived with the wrong content. | `total_increasing` | `occurrences` | requires `monitor_id` |
+  | `response_timeout` | `response_monitor` entry: window elapsed with nothing addressed arriving at all. | `total_increasing` | `occurrences` | requires `monitor_id` |
+  | `response_not_applicable` | `response_monitor` entry: a `changed_gated` occurrence whose gate did not hold at trigger time. | `total_increasing` | `occurrences` | requires `monitor_id` |
+  | `response_orphan` | `response_monitor` entry: signature matched with no trigger pending. | `total_increasing` | `occurrences` | requires `monitor_id` |
+
+- **monitor_id** (**Required** with a `response_*` decode, string): The `name:` of the
+  [`response_monitor`](/components/rs485_frame/#response-monitor) entry this sensor reads
+  from. Not valid with any other `decode:` value.
 
 All other options from [Sensor](/components/sensor/#base-sensor-configuration).
 Every diagnostic also defaults to `entity_category: diagnostic`. You can override
@@ -56,6 +65,18 @@ sensor:
     rs485_frame_id: pool
     name: "Queue Depth"
     decode: queue_depth
+
+  - platform: rs485_frame
+    rs485_frame_id: pool
+    name: "Lights Confirm Success"
+    decode: response_success
+    monitor_id: lights_confirm
+
+  - platform: rs485_frame
+    rs485_frame_id: pool
+    name: "Lights Confirm Fail"
+    decode: response_fail
+    monitor_id: lights_confirm
 ```
 
 ## Interpreting the counters
@@ -69,3 +90,11 @@ sensor:
   detecting button mash. With `queue_policy: fifo`, drops indicate the queue is too small.
 - `last_keepalive_ms` shows the bus poll interval. Sudden changes here often
   indicate bus contention or controller reboots.
+- A rising `response_fail` alongside a healthy `response_success` rate on the same entry
+  usually means the wrong response carrier or field was picked — double-check the
+  `response_fields:` addressing against a real capture.
+- A rising `response_timeout` with zero `response_success`/`response_fail` on an otherwise
+  healthy bus usually means `window:` is too short for that response, or the trigger's
+  `button_id:`/`frame_type:` never actually matches a transmitted frame.
+- `response_orphan` counts a confirmed signature with no trigger pending — commonly someone
+  operating the physical panel directly, not a bug in the monitor.
