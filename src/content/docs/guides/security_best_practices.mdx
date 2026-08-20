@@ -72,6 +72,13 @@ web_server:
 - Control switches, buttons, and other entities via the web interface
 - Potentially interfere with device operation
 
+> [!NOTE]
+> The web server has no cross-site (CSRF) protection by design: it does not check the request `Origin` and uses a
+> permissive CORS policy. A web page you visit while on the same network can therefore send commands to the device
+> through your browser, even though the page's author is never on your network. Enabling `auth:` and keeping devices on
+> a trusted, segmented network are the defenses. This is intentional; see the project
+> [threat model](https://github.com/esphome/esphome/blob/dev/THREAT_MODEL.md).
+
 ### 3. OTA Password Protection
 
 [OTA (Over-The-Air)](/components/ota) updates allow you to update firmware wirelessly. Protect this with a password:
@@ -322,7 +329,7 @@ git log --all --full-history -- secrets.yaml  # Should return nothing
 
 ### Keep ESPHome Updated
 
-Security vulnerabilities are discovered and fixed regularly. Keep your ESPHome installation up to date by following the [installation instructions](/guides/installing_esphome).
+Security vulnerabilities are discovered and fixed regularly. Keep your ESPHome installation up to date by following the [installation instructions](/install/).
 
 **Best practices:**
 

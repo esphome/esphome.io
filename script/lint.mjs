@@ -22,7 +22,7 @@ const colors = {
 };
 
 // Folders to ignore
-const ignoreFolders = ["pagefind/", "node_modules/", "dist/", ".astro/"];
+const ignoreFolders = ["pagefind/", "node_modules/", "dist/", ".astro/", "public/vendor/", ".claude/"];
 
 // Files to ignore (skip all linting)
 const ignoreFiles = ["script/release_notes_template.mdx"];
@@ -32,6 +32,7 @@ const fileTypes = [
   ".cfg",
   ".css",
   ".gif",
+  ".glb",
   ".h",
   ".html",
   ".ico",
@@ -42,6 +43,7 @@ const fileTypes = [
   ".mdx",
   ".png",
   ".py",
+  ".scss",
   ".svg",
   ".toml",
   ".txt",
@@ -56,10 +58,11 @@ const fileTypes = [
   ".sh",
   ".webp",
   ".bin",
+  ".mp4",
   "", // empty string for files without extension (like .gitignore)
 ];
 const imageTypes = [".webp", ".jpg", ".ico", ".png", ".svg", ".gif"];
-const binaryTypes = [".bin"];
+const binaryTypes = [".bin", ".glb", ".mp4"];
 
 // Store errors
 const errors = new Map();
@@ -200,6 +203,25 @@ function checkEsphomeLinks(fname, content) {
   }
 }
 
+// Routes served by standalone src/pages/*.astro files rather than
+// src/content/docs — invisible to buildAnchorCache's content-dir walk, so
+// register them here to avoid false "non-existent page" link errors.
+async function registerAstroPageRoutes(cache) {
+  const pagesDir = join(__dirname, "..", "src/pages");
+
+  try {
+    const entries = await readdir(pagesDir, { withFileTypes: true });
+    for (const entry of entries) {
+      if (!entry.isFile() || !entry.name.endsWith(".astro") || entry.name.includes("[")) continue;
+      const slug = entry.name.replace(/\.astro$/, "");
+      if (slug === "index") continue; // "/" is already treated as always-valid
+      if (!cache.has(slug)) cache.set(slug, new Set());
+    }
+  } catch {
+    // No src/pages directory - nothing to register
+  }
+}
+
 // Build anchor cache for link validation
 async function buildAnchorCache() {
   const cache = new Map();
@@ -208,15 +230,21 @@ async function buildAnchorCache() {
   try {
     await stat(contentDir);
   } catch {
+    await registerAstroPageRoutes(cache);
     return cache;
   }
 
   function generateSlug(text) {
-    return text
-      .toLowerCase()
-      .replace(/[^\w\s-]/g, "")
-      .replace(/[-\s]+/g, "-")
-      .replace(/^-+|-+$/g, "");
+    return (
+      text
+        .toLowerCase()
+        // Mirror src/lib/rehype-heading-slugs.mjs: dots in automation headings
+        // (e.g. `light.turn_on`) map to `-` so the anchor becomes `light-turn_on`.
+        .replace(/\./g, "-")
+        .replace(/[^\w\s-]/g, "")
+        .replace(/[-\s]+/g, "-")
+        .replace(/^-+|-+$/g, "")
+    );
   }
 
   async function processDir(dir, basePath = "") {
@@ -269,6 +297,7 @@ async function buildAnchorCache() {
   }
 
   await processDir(contentDir);
+  await registerAstroPageRoutes(cache);
   return cache;
 }
 
