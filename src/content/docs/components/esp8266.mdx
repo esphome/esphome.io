@@ -40,6 +40,26 @@ esp8266:
 - **enable_serial1** (*Optional*, boolean): Force-enable the Arduino `Serial1` object (UART1) for use in lambdas or external libraries. Most users will never need this option, as the `logger` and `uart` components automatically enable the required Serial objects. Only use this if you directly access `Serial1` in a lambda and get a compilation error. Use the [UART component](/components/uart) instead when possible, as it works across all platforms. Defaults to automatic detection.
 - **enable_full_printf** (*Optional*, boolean): Enable full `FILE*`-based printf support. By default, ESPHome wraps `printf()`, `vprintf()`, and `fprintf()` with lightweight stubs that use `vsnprintf()` + `fwrite()`, saving ~1.6 KB of flash. ESPHome logging writes directly to the UART via Arduino's `Serial`, not libc printf, so these functions are typically unused unless an external component calls them. Set to `true` only if an external component needs full `FILE*`-based printf. Defaults to `false`.
 - **enable_scanf_float** (*Optional*, boolean): Enable float support for `scanf()`/`sscanf()`. By default, ESPHome removes the `-u _scanf_float` linker flag to save ~8 KB of flash. This means `sscanf()` with `%f` will silently fail to parse floating-point numbers. Nothing in ESPHome itself uses scanf; set to `true` only if you use `sscanf()` with `%f` in lambdas. Defaults to `false`.
+- **toolchain** (*Optional*, [Toolchain](#esp8266-toolchain)): Toolchain used to build the firmware. Defaults to `platformio`.
+
+<span id="esp8266-toolchain"></span>
+
+## Toolchain Configuration
+
+ESPHome supports two toolchains for building ESP8266 firmware. The toolchain determines how the firmware is compiled and which build system is used.
+
+- `platformio` (default): builds through PlatformIO.
+- `arduino`: builds the Arduino core directly. ESPHome downloads the framework and the compiler itself and drives the build natively, the same way the ESP32 platform builds ESP-IDF. The resulting firmware is functionally identical to a PlatformIO build.
+
+The `arduino` toolchain requires framework version 3.1.0 or newer, does not support a custom framework `source` or `platform_version`, and only supports the named boards from the board list; use `platformio` for custom boards. Options under `esphome: platformio_options:` are not applied by the `arduino` toolchain.
+
+**Example for using the native Arduino toolchain:**
+
+```yaml
+esp8266:
+  board: nodemcuv2
+  toolchain: arduino
+```
 
 ## GPIO Pin Numbering
 
