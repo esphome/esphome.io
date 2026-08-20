@@ -604,7 +604,7 @@ Several actions are available for the LVGL component itself, these are outlined 
 This [action](/automations/actions#actions-action) allows changing/updating the properties of a style at run time. This can be used to
 implement dynamic themes, e.g. light/dark mode, or to change the appearance of widgets based on user interaction.
 
-The action takes a style ID and a dictionary of properties to update. The properties can be any of the style properties listed above, and can be constants or lambdas.
+The action takes a style ID and a dictionary of properties to update. The properties can be any of the style properties listed above, and can be constants or lambdas. Every widget using the style is automatically refreshed and redrawn, so there's no need to follow up with a separate redraw action.
 
 ```yaml
 # Example configuration entry
@@ -622,6 +622,42 @@ on_...:
       id: my_style
       bg_color: 0xFF0000
       border_color: 0x00FF00
+```
+
+### `lvgl.theme.update` Action
+
+This [action](/automations/actions#actions-action) allows changing/updating, at run time, the styles applied to all widgets of a
+given type by the [`theme:`](#lvgl-theme) configuration. This can be used, for example, to switch the accent color used by every
+`button` widget in response to a user action, without having to update each widget individually.
+
+The action takes a dictionary shaped just like `theme:` — keyed by widget type, optionally nested by
+[part and state](/components/lvgl/widgets#lvgl-widgetproperty-state) — mapping to the style properties to apply.
+
+You don't need to declare a widget type under `theme:` before targeting it with this action: if a widget type (or a specific
+part/state under it) was never mentioned under `theme:` at all, it's created automatically the first time it's referenced,
+either by `theme:` itself or by an `lvgl.theme.update` action anywhere in your configuration, and gets applied to every widget
+of that type. Since the action's own properties are only applied when it runs, a widget type introduced this way has no visual
+effect until the action fires for the first time. Every widget using an updated style is automatically refreshed and redrawn,
+so there's no need to follow up with a separate redraw action.
+
+```yaml
+# Example configuration entry
+lvgl:
+  ...
+  theme:
+    button:
+      border_width: 2
+
+# Action to update the theme
+on_...:
+  - lvgl.theme.update:
+      button:
+        border_width: 4
+        pressed:
+          border_color: 0xFF0000
+      # `label` was never declared under `theme:` above, so this creates it
+      label:
+        text_color: 0x0000FF
 ```
 
 ### `lvgl.pause` Action

@@ -1,0 +1,379 @@
+---
+import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
+
+import BuyDialog from "@components/BuyDialog.astro";
+import Nav from "@components/starter-kit/Nav.astro";
+import Hero from "@components/starter-kit/Hero.astro";
+import HeroLabel from "@components/starter-kit/HeroLabel.astro";
+import YourWay from "@components/starter-kit/YourWay.astro";
+import GallerySection from "@components/starter-kit/GallerySection.astro";
+import Succeed from "@components/starter-kit/Succeed.astro";
+import WhatsPossible from "@components/starter-kit/WhatsPossible.astro";
+import CommunitySection from "@components/starter-kit/CommunitySection.astro";
+import Collaboration from "@components/Collaboration.astro";
+import Buy from "@components/Buy.astro";
+import SpecSection from "@components/starter-kit/SpecSection.astro";
+import FaqSection from "@components/starter-kit/FaqSection.astro";
+---
+
+<StarlightPage
+  frontmatter={{
+    title: "ESPHome Starter Kit",
+    description:
+      "The ESPHome Starter Kit is the easiest path to building your own smart home devices, with no soldering or coding experience needed.",
+    template: "splash",
+    head: [
+      {
+        tag: "meta",
+        attrs: {
+          property: "og:image",
+          content: "https://esphome.io/images/starter-kit/esphome-starter-kit-og.jpg",
+        },
+      },
+      {
+        tag: "meta",
+        attrs: {
+          name: "twitter:image",
+          content: "https://esphome.io/images/starter-kit/esphome-starter-kit-og.jpg",
+        },
+      },
+      {
+        tag: "link",
+        attrs: { rel: "preconnect", href: "https://fonts.googleapis.com" },
+      },
+      {
+        tag: "link",
+        attrs: {
+          rel: "preconnect",
+          href: "https://fonts.gstatic.com",
+          crossorigin: true,
+        },
+      },
+      {
+        tag: "link",
+        attrs: {
+          rel: "stylesheet",
+          href: "https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,300..900;1,300..900&display=swap",
+        },
+      },
+      {
+        tag: "link",
+        attrs: {
+          rel: "preload",
+          href: "/starter-kit/ESK.glb",
+          as: "fetch",
+          crossorigin: "anonymous",
+        },
+      },
+      {
+        tag: "link",
+        attrs: {
+          rel: "preload",
+          href: "/starter-kit/ESK-edges.bin",
+          as: "fetch",
+          crossorigin: "anonymous",
+        },
+      },
+    ],
+  }}
+>
+  <div class="ha-connect">
+    <BuyDialog product="esphome-starter-kit" />
+    <Nav />
+    <Hero>
+      <p class="hero-prompt">Rotate to explore, click any module for details.</p>
+      <HeroLabel slot="labels" text="Button module" target="button">
+        <p>
+          A physical, clickable button that triggers any smart home automation you set up, built for repeated everyday
+          use.
+        </p>
+      </HeroLabel>
+      <HeroLabel slot="labels" text="Temperature & humidity module" target="temp">
+        <p>
+          Keep track of your home’s climate in real time and use that data to trigger automations to make your home more
+          comfortable and energy efficient.
+        </p>
+      </HeroLabel>
+      <HeroLabel slot="labels" text="Motion module" target="pir">
+        <p>
+          A reliable motion sensor that detects the heat given off by moving people and/or animals: one of the most
+          practical and widely used sensors in home automation.
+        </p>
+      </HeroLabel>
+      <HeroLabel slot="labels" text="LED & buzzer module" target="leds">
+        <p>
+          Programmable lights and a small buzzer give you visual and audio control over your automations: from subtle
+          status indicators to attention-grabbing alerts.
+        </p>
+      </HeroLabel>
+      <HeroLabel slot="labels" text="ESP32-C6 Board" target="compute">
+        <p>
+          The ESP32-C6 Board is a small-but-mighty chip that powers the entire kit; capable of handling connectivity,
+          device logic, and communication with your smart home setup.
+        </p>
+      </HeroLabel>
+    </Hero>
+    <YourWay />
+    <GallerySection />
+    <Succeed />
+    <WhatsPossible />
+    <CommunitySection />
+    <Collaboration />
+
+    <Buy strapline="Ready to build, learn, and automate?" dollars="40" euros="41" />
+
+    <SpecSection />
+    <FaqSection />
+  </div>
+</StarlightPage>
+
+<script>
+  import { initLazyVideos } from "../lib/lazy-video";
+
+  if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    const animatedIconObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.remove("playing");
+            void (entry.target as HTMLElement).offsetWidth;
+            entry.target.classList.add("playing");
+          } else {
+            entry.target.classList.remove("playing");
+          }
+        });
+      },
+      { threshold: 0.5 },
+    );
+
+    document.querySelectorAll<SVGElement>(".is-animated").forEach((el) => {
+      animatedIconObserver.observe(el);
+    });
+  }
+
+  document.querySelectorAll<HTMLElement>(".fade-up").forEach((el) => {
+    const delay = el.dataset.delay;
+    if (delay && !el.style.getPropertyValue("--fade-delay")) el.style.setProperty("--fade-delay", `${delay}ms`);
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          el.classList.add("in-view");
+          observer.disconnect();
+        }
+      },
+      { threshold: 0 },
+    );
+    observer.observe(el);
+  });
+
+  initLazyVideos("starter-kit");
+</script>
+
+<style lang="scss">
+  @use "../styles/mixins" as *;
+
+  :global(section[id]) {
+    scroll-margin-top: 64px;
+  }
+
+  :global(.sl-container) {
+    --sl-content-width: 100%;
+
+    max-width: var(--sl-content-width);
+  }
+
+  :root {
+    --esk-body-colour: #8193a2;
+    --esk-title-colour: #ffffff;
+
+    --sl-color-text: var(--esk-body-colour);
+
+    --container-max-width: 1200px;
+    --container-full-max-width: 1200px;
+    --container-gutters: 24px;
+
+    --esk-primary-color: #9abd32;
+    --esk-primary-color--light: #f5f8ea;
+    --esk-secondary-color: #5c8048;
+
+    --esk-heading-font: "Figtree", "Helvetica Neue", Arial, sans-serif;
+    --esk-body-font: "Figtree", "Helvetica Neue", Arial, sans-serif;
+
+    --esk-collaboration-bg: rgba(255, 255, 255, 0.03);
+    --esk-collaboration-border: rgba(255, 255, 255, 0.03);
+    --esk-collaboration-text: #f2f4f9;
+
+    --sl-content-gap-y: 0;
+
+    --esk-card-background: rgba(92, 128, 72, 0.05);
+  }
+
+  :root[data-theme="light"] {
+    --esk-body-colour: #4f606e;
+    --esk-title-colour: #002e3e;
+
+    --esk-collaboration-bg: rgba(0, 0, 0, 0.03);
+    --esk-collaboration-border: rgba(0, 0, 0, 0.05);
+    --esk-collaboration-text: #1d2126;
+  }
+
+  :global([data-theme="light"] .light\:sl-hidden),
+  :global([data-theme="dark"] .dark\:sl-hidden) {
+    display: none !important;
+  }
+
+  body {
+    font-family: var(--esk-body-font);
+  }
+
+  :global(.btn.esk-btn) {
+    border-radius: 2.5rem;
+    background-color: var(--esk-primary-color);
+    text-transform: uppercase;
+    transition: background-color 0.2s ease-in-out;
+    border: none;
+    padding: 0.5rem 1rem 0.3rem;
+    text-decoration: none;
+
+    &:hover {
+      background-color: var(--esk-secondary-color);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--esk-primary-color);
+      outline-offset: 2px;
+    }
+  }
+
+  :global(.play-button) {
+    width: 48px;
+    height: 48px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: 10;
+    transform: translate(-50%, -50%);
+    background-color: var(--esk-primary-color);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 1;
+    transition:
+      background-color 0.2s ease-in-out,
+      opacity 0.2s ease-in-out;
+    border: none;
+    cursor: pointer;
+
+    &:after {
+      width: 90%;
+      height: 90%;
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: calc(50% + 3px);
+      transform: translate(-50%, -50%);
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath fill='%23fff' d='M3 22v-20l18 10-18 10z'/%3E%3C/svg%3E");
+      background-size: 60% 60%;
+      background-repeat: no-repeat;
+      background-position: center;
+    }
+
+    &:hover {
+      background-color: var(--esk-secondary-color);
+    }
+
+    &.lazy-video--playing {
+      opacity: 0;
+      pointer-events: none;
+    }
+  }
+
+  :global(h2),
+  :global(h3) {
+    color: var(--esk-title-colour);
+    letter-spacing: -1px;
+  }
+
+  :global(.container),
+  :global(footer) {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    margin: 0 auto;
+    max-width: calc(var(--container-max-width) + (var(--container-gutters) * 2));
+    padding: 12px calc(var(--container-gutters) / 2);
+
+    @include bp(desktop) {
+      padding: 12px var(--container-gutters);
+    }
+
+    @include bp(1248px) {
+      max-width: calc(var(--container-max-width));
+      padding: 12px 0;
+    }
+  }
+
+  :global(.container-full) {
+    width: 100%;
+    margin: 0 auto;
+    padding: 0 calc(var(--container-gutters) / 2);
+    max-width: calc(var(--container-full-max-width) + (var(--container-gutters) * 2));
+
+    @include bp(desktop) {
+      padding: 0 var(--container-gutters);
+    }
+  }
+
+  :global(.content-panel:has(.no-page-title)) {
+    padding: 0;
+    display: none;
+  }
+
+  :global(.content-panel) {
+    padding: 0;
+  }
+
+  :global(.fade-up) {
+    opacity: 0;
+    translate: 0 24px;
+    transition:
+      opacity 0.5s ease-in-out,
+      translate 0.5s ease-in-out;
+    transition-delay: var(--fade-delay, 0ms);
+
+    &.in-view {
+      opacity: 1;
+      translate: 0 0;
+    }
+  }
+
+  :global(.lazy-video) {
+    opacity: 0;
+    transition: opacity 0.5s ease;
+  }
+
+  :global(.lazy-video--playing) {
+    opacity: 1;
+  }
+
+  :global(section) {
+    &.block-succeed,
+    &.block-whats-possible,
+    &.block-community,
+    &.block-collaboration,
+    &.block-buy,
+    &.block-specs {
+      @include fluid(40, 128, $property: padding-bottom);
+    }
+
+    &.block-hero {
+      @include fluid(32, 64, $property: padding-bottom);
+    }
+
+    &.block-gallery {
+      @include fluid(32, 80, $property: padding-top);
+      @include fluid(32, 80, $property: padding-bottom);
+    }
+  }
+</style>

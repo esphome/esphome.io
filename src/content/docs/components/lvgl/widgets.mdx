@@ -2166,6 +2166,38 @@ on_...:
   - lvgl.widget.focus: previous
 ```
 
+### `lvgl.widget.set_z_index` Action
+
+This [action](/automations/actions#actions-action) changes the stacking order (z-index) of a widget among its siblings, i.e. which
+widgets are drawn on top of which. It does not change any other widget property.
+
+- **id** (**Required**): The ID or a list of IDs of widgets configured in LVGL to reorder.
+- **position** (**Required**): One of `top`, `bottom`, `up`, `down`, or an integer sibling index.
+  - `top`: bring the widget fully to the front, in front of all its siblings.
+  - `bottom`: send the widget fully to the back, behind all its siblings.
+  - `up`: move the widget one step closer to the front.
+  - `down`: move the widget one step closer to the back.
+  - An integer: move the widget to that exact sibling index. `0` is the back-most position;
+    positive numbers count from the back. Negative numbers count from the front, so `-1` is
+    the same as `top`.
+
+```yaml
+on_...:
+  - lvgl.widget.set_z_index:
+      id: popup_box
+      position: top
+
+on_...:
+  - lvgl.widget.set_z_index:
+      id: [icon_1, icon_2]
+      position: down
+
+on_...:
+  - lvgl.widget.set_z_index:
+      id: background_image
+      position: 0
+```
+
 ## Triggers
 
 In addition to specific triggers like `on_value` which are available for certain widgets, here is a complete list of triggers available for them.
