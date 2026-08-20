@@ -133,20 +133,21 @@ esp32_ble_tracker:
       then:
         - lambda: |-
             ESP_LOGD("ble_adv", "New BLE device");
-            char addr[MAC_ADDRESS_PRETTY_BUFFER_SIZE];
-            ESP_LOGD("ble_adv", "  address: %s", x.address_str_to(addr));
+            char addrbuf[MAC_ADDRESS_PRETTY_BUFFER_SIZE];
+            char uuidbuf[esphome::ble_device_base::UUID_STR_LEN];
+            ESP_LOGD("ble_adv", "  address: %s", x.address_str_to(addrbuf));
             ESP_LOGD("ble_adv", "  name: %s", x.get_name().c_str());
             ESP_LOGD("ble_adv", "  Advertised service UUIDs:");
             for (auto uuid : x.get_service_uuids()) {
-                ESP_LOGD("ble_adv", "    - %s", uuid.to_string().c_str());
+                ESP_LOGD("ble_adv", "    - %s", uuid.to_str(uuidbuf));
             }
             ESP_LOGD("ble_adv", "  Advertised service data:");
             for (auto data : x.get_service_datas()) {
-                ESP_LOGD("ble_adv", "    - %s: (length %i)", data.uuid.to_string().c_str(), data.data.size());
+                ESP_LOGD("ble_adv", "    - %s (length %i)", data.uuid.to_str(uuidbuf), data.data.size());
             }
             ESP_LOGD("ble_adv", "  Advertised manufacturer data:");
             for (auto data : x.get_manufacturer_datas()) {
-                ESP_LOGD("ble_adv", "    - %s: (length %i)", data.uuid.to_string().c_str(), data.data.size());
+               ESP_LOGD("ble_adv", "    - %s (length %i)", data.uuid.to_str(uuidbuf), data.data.size());
             }
 ```
 
