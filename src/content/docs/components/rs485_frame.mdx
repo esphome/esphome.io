@@ -566,7 +566,8 @@ marks it offline. `tx.idle_command` requires a `command_format:` (see below).
   (**timeout**), a `changed_gated` entry whose gate did not hold at trigger time (**not
   applicable**), or a signature match with no trigger pending at all (**orphan** — e.g. someone
   pressed the physical panel directly). Exposed as counters via the
-  [sensor platform](/components/sensor/rs485_frame/)'s `response_*` decodes.
+  [sensor platform](/components/sensor/rs485_frame/)'s `response_*` decodes, and as
+  `on_confirmed`/`on_failed` automation triggers for arbitrary user actions.
 
   ```yaml
   response_monitor:
@@ -681,6 +682,32 @@ marks it offline. `tx.idle_command` requires a `command_format:` (see below).
 
       The `gate` block's `mask`/`bit` follow the same rule as above: mutually exclusive, `bit: N`
       shorthand for `mask: 0x<1<<N>`.
+
+  - **on_confirmed** (*Optional*, [Automation](/automations/)): Runs when this entry
+    resolves *success*.
+  - **on_failed** (*Optional*, [Automation](/automations/)): Runs when this entry
+    resolves *fail* or *timeout*. Never runs on *not applicable* or *orphan* — neither is a
+    failure of this entry's own trigger. Carries the same double-actuation-risk caveat as any
+    retry logic built on it: the absence of a confirmation does not prove the original press
+    was lost, only that no matching response was seen in time.
+
+    ```yaml
+    response_monitor:
+      - name: lights_confirm
+        trigger:
+          button_id: light_button
+        window: 200ms
+        signature:
+          - field: led_mask_01_02
+            type: changed
+            bit: 6
+        on_confirmed:
+          - logger.log: "Lights confirmed"
+        on_failed:
+          - logger.log:
+              level: WARN
+              format: "Lights press not confirmed"
+    ```
 
 - **tx** (*Optional*): TX and command-queue configuration.
 
