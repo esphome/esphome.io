@@ -25,7 +25,7 @@ const colors = {
 const ignoreFolders = ["pagefind/", "node_modules/", "dist/", ".astro/", "public/vendor/", ".claude/"];
 
 // Files to ignore (skip all linting)
-const ignoreFiles = ["script/release_notes_template.mdx"];
+const ignoreFiles = ["script/release_notes_template.mdx", "script/blog_post_template.mdx"];
 
 // File types
 const fileTypes = [
