@@ -11,40 +11,15 @@ Set the `role` attribute of the [Modbus](/components/modbus/) upon which this `m
 
 <Image src="/images/modbus.png" width={190} height={200} layout="constrained" alt="" />
 
-## Hardware setup
-
-You need an RS485 transceiver module:
-
-<Image src="/images/rs485.jpg" width={300} height={145} layout="constrained" alt="" />
-
-See [How is this RS485 module working?](https://electronics.stackexchange.com/questions/244425/how-is-this-rs485-module-working) on stackexchange for more details.
-
-The transceiver connects to the UART of the MCU. For ESP32, pin `16` to `TXD` and pin `17` to `RXD` are the default ones but any other pins can be used as well. `3.3V` to `VCC` and naturally `GND` to `GND`.
-
-On the bus side, you need 120 Ohm termination resistors at the ends of the bus cable as per Modbus standard. Some transceivers have this already soldered onboard, while some slave devices may have them available via a jumper or a DIP switch.
-
-> [!NOTE]
-> If you are using an ESP8266, serial logging may cause problems reading from UART. For best results, hardware serial is recommended. Software serial may not be able to read all received data if other components spend a lot of time in the `loop()`.
->
-> For hardware serial only a limited set of pins can be used. Either `tx_pin: GPIO1` and `rx_pin: GPIO3`  or `tx_pin: GPIO15` and `rx_pin: GPIO13`.
->
-> The disadvantage of using the hardware UART is that you can't use serial logging because the serial logs would be sent to the Modbus device(s) instead, causing errors.
->
-> Serial logging can be disabled by setting `baud_rate: 0`.
->
-> See [Logger](/components/logger/) for more details
->
-> ```yaml
-> logger:
->     level: <level>
->     baud_rate: 0
-> ```
+See [Modbus](/components/modbus/#hardware-setup) for RS485 hardware setup instructions.
 
 ## Configuration variables
 
 - **modbus_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the `modbus` hub.
 
-- **address** (**Required**, [ID](/guides/configuration-types#id)): The Modbus address of the slave device.
+- **address** (*Optional*, int): The Modbus device address (can be decimal or hexadecimal, `0`-`255`; the valid
+  Modbus device range is `1`-`247`). `0` is the broadcast address, which no device ever answers, so it cannot be
+  polled. Defaults to `0x01`.
 
 - **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval that the sensors should be checked.
   Defaults to 60 seconds.
@@ -93,8 +68,9 @@ Automations:
 
 The following code creates a `modbus_controller` hub talking to a Modbus device at address `1` with `115200` bps
 
-Modbus sensors can be directly defined (inline) under the `modbus_controller` hub or as standalone components
-Technically there is no difference between the "inline" and the standard definitions approach.
+Each Modbus entity (sensor, switch, number, and so on) is configured as its own platform component and linked to a
+hub with `modbus_controller_id`. When only one `modbus_controller` is defined, `modbus_controller_id` may be omitted
+and the entity attaches to that hub automatically.
 
 ```yaml
 # Example configuration entry
@@ -158,14 +134,14 @@ uart:
 
 modbus:
   - uart_id: uart_modbus_client
-    id: modbus_client
+    id: modbus_client_hub
   - uart_id: uart_modbus_server
     id: modbus_server
     role: server
 
 modbus_controller:
   - id: modbus_evse
-    modbus_id: modbus_client
+    modbus_id: modbus_client_hub
     address: 0x2
     update_interval: 5s
 
@@ -193,7 +169,7 @@ sensor:
       - multiply: 0.1
 ```
 
-Check out the various Modbus components available at the bottom of the document in the [.. _modbus_controller-automations:](#modbusseealso) section. They can be directly defined *(inline)* under the `modbus_controller` hub or as standalone components. Technically there is no difference between the *inline* and the standard definitions approach.
+Check out the various Modbus components available at the bottom of the document in the [See Also](#see-also) section. Each is configured as its own platform component and linked to a hub with `modbus_controller_id` (which may be omitted when only one `modbus_controller` is defined).
 
 Below you find a few general tips about using Modbus in more advanced scenarios. Applicable component functionalities have links pointing here:
 
@@ -229,25 +205,25 @@ binary_sensor:
 - platform: modbus_controller
   modbus_controller_id: modbus1
   name: Alarm bit0
-  register_type: read
+  register_type: input
   address: 15
   bitmask: 0x1
 - platform: modbus_controller
   modbus_controller_id: modbus1
   name: Alarm bit1
-  register_type: read
+  register_type: input
   address: 15
   bitmask: 0x2
 - platform: modbus_controller
   modbus_controller_id: modbus1
   name: Alarm bit10
-  register_type: read
+  register_type: input
   address: 15
   bitmask: 0x400
 - platform: modbus_controller
   modbus_controller_id: modbus1
   name: Alarm bit15
-  register_type: read
+  register_type: input
   address: 15
   bitmask: 0x8000
 ```
@@ -277,7 +253,7 @@ modbus_controller:
   setup_priority: -10
   update_interval: 30s
 
-sensors:
+sensor:
 - platform: modbus_controller
   modbus_controller_id: sdm
   name: "Total active energy"
@@ -316,8 +292,8 @@ sensors:
       raw_to_float.raw =   data[0] << 24 | data[1] << 16 | data[2] << 8 |  data[3];
       ESP_LOGD("Modbus Sensor Lambda", "FP32 = 0x%08X => %f", raw_to_float.raw, raw_to_float.float_value);
       return raw_to_float.float_value;
-    unit_of_measurement: kVArh
-    accuracy_decimals: 1
+  unit_of_measurement: kVArh
+  accuracy_decimals: 1
 ```
 
 <span id="modbus_register_count"></span>
@@ -388,14 +364,14 @@ Because the option `register_count: 6` is used for the first sensor, *one* comma
 ## Protocol decoding example
 
 ```yaml
-sensors:
+sensor:
 - platform: modbus_controller
   modbus_controller_id: epever
   id: array_rated_voltage
   name: "array_rated_voltage"
   address: 0x3000
   unit_of_measurement: "V"
-  register_type: read
+  register_type: input
   value_type: U_WORD
   accuracy_decimals: 1
   skip_updates: 60
@@ -408,7 +384,7 @@ sensors:
   name: "array_rated_current"
   address: 0x3001
   unit_of_measurement: "V"
-  register_type: read
+  register_type: input
   value_type: U_WORD
   accuracy_decimals: 2
   filters:
@@ -420,7 +396,7 @@ sensors:
   name: "array_rated_power"
   address: 0x3002
   unit_of_measurement: "W"
-  register_type: read
+  register_type: input
   value_type: U_DWORD_R
   accuracy_decimals: 1
   filters:
@@ -432,7 +408,7 @@ sensors:
   name: "battery_rated_voltage"
   address: 0x3004
   unit_of_measurement: "V"
-  register_type: read
+  register_type: input
   value_type: U_WORD
   accuracy_decimals: 1
   filters:
@@ -444,7 +420,7 @@ sensors:
   name: "battery_rated_current"
   address: 0x3005
   unit_of_measurement: "A"
-  register_type: read
+  register_type: input
   value_type: U_WORD
   accuracy_decimals: 1
   filters:
@@ -456,18 +432,19 @@ sensors:
   name: "battery_rated_power"
   address: 0x3006
   unit_of_measurement: "W"
-  register_type: read
+  register_type: input
   value_type: U_DWORD_R
   accuracy_decimals: 1
   filters:
     - multiply: 0.01
 
 - platform: modbus_controller
-  modbus_controller_id: epever id: charging_mode
+  modbus_controller_id: epever
+  id: charging_mode
   name: "charging_mode"
   address: 0x3008
   unit_of_measurement: ""
-  register_type: read
+  register_type: input
   value_type: U_WORD
   accuracy_decimals: 0
 ```
@@ -517,144 +494,7 @@ The response is mapped to the sensor based on `register_count` and offset in byt
 | C      | 0x31 (49)  |                    | crc                                        |
 
 > [!NOTE]
-> Write support is only implemented for switches and selects; however, the C++ code provides the required API to write to a Modbus device.
->
-> These methods can be called from a lambda.
->
-> Here is an example how to set config values to for an EPEVER Trace AN controller.
-> The code synchronizes the local time of the MCU to the epever controller.
-> The time is set by writing 12 bytes to register 0x9013.
-> Then battery charge settings are sent.
->
-> This example requires a [time component](/components/time/) to be configured (e.g., `homeassistant`, `sntp`).
->
-> ```yaml
-> esphome:
->   on_boot:
->     ## configure controller settings at setup
->     ## make sure priority is lower than setup_priority of modbus_controller
->     priority: -100
->     then:
->       - lambda: |-
->           // get local time and sync to controller
->           auto time = ESPTime::from_epoch_local(::time(nullptr));
->           int seconds = time.second;
->           int minutes = time.minute;
->           int hour = time.hour;
->           int day = time.day_of_month;
->           int month = time.month;
->           int year = time.year % 100;
->           esphome::modbus_controller::ModbusController *controller = id(epever);
->           // if time is not yet synced, skip RTC update
->           if (time.is_valid()) {
->             // create the payload
->             std::vector<uint16_t> rtc_data = {uint16_t((minutes << 8) | seconds), uint16_t((day << 8) | hour),
->                                               uint16_t((year << 8) | month)};
->             // Create a Modbus command item with the time information as the payload
->             esphome::modbus_controller::ModbusCommandItem set_rtc_command =
->                 esphome::modbus_controller::ModbusCommandItem::create_write_multiple_command(controller, 0x9013, 3, rtc_data);
->             // Submit the command to the send queue
->             epever->queue_command(set_rtc_command);
->             ESP_LOGI("ModbusLambda", "EPSOLAR RTC set to %02d:%02d:%02d %02d.%02d.%04d", hour, minutes, seconds, day, month,
->                     year + 2000);
->           }
->           // Battery settings
->           // Note: these values are examples only and apply my AGM Battery
->           std::vector<uint16_t> battery_settings1 = {
->               0,       // 9000 Battery Type 0 =  User
->               0x0073,  // 9001 Battery Cap 0x55 == 115AH
->               0x012C,  // 9002 Temp compensation -3V /°C/2V
->               0x05DC,  // 9003 0x5DC == 1500 Over Voltage Disconnect Voltage 15,0
->               0x058C,  // 9004 0x58C == 1480 Charging Limit Voltage 14,8
->               0x058C,  // 9005 Over Voltage Reconnect Voltage 14,8
->               0x05BF,  // 9006 Equalize Charging Voltage 14,6
->               0x05BE,  // 9007 Boost Charging Voltage 14,7
->               0x0550,  // 9008 Float Charging Voltage 13,6
->               0x0528,   // 9009 Boost Reconnect Charging Voltage 13,2
->               0x04C4,  // 900A Low Voltage Reconnect Voltage 12,2
->               0x04B0,  // 900B Under Voltage Warning Reconnect Voltage 12,0
->               0x04BA,  // 900c Under Volt. Warning Volt 12,1
->               0x04BA,  // 900d Low Volt. Disconnect Volt. 11.8
->               0x04BA   // 900E Discharging Limit Voltage 11.8
->           };
->
->           // Boost and equalization periods
->           std::vector<uint16_t> battery_settings2 = {
->               0x0000,  // 906B Equalize Duration (min.) 0
->               0x0075   // 906C Boost Duration (aka absorb) 117 mins
->           };
->           esphome::modbus_controller::ModbusCommandItem set_battery1_command =
->               esphome::modbus_controller::ModbusCommandItem::create_write_multiple_command(controller, 0x9000, battery_settings1.size() ,
->                                                                                           battery_settings1);
->
->           esphome::modbus_controller::ModbusCommandItem set_battery2_command =
->               esphome::modbus_controller::ModbusCommandItem::create_write_multiple_command(controller, 0x906B, battery_settings3.size(),
->                                                                                           battery_settings2);
->           delay(200) ;
->           controller->queue_command(set_battery1_command);
->           delay(200) ;
->           controller->queue_command(set_battery2_command);
->           ESP_LOGI("ModbusLambda", "EPSOLAR Battery set");
->
-> uart:
->   id: mod_uart
->   tx_pin: GPIOXX
->   rx_pin: GPIOXX
->   baud_rate: 115200
->   stop_bits: 1
->
-> modbus:
->   #flow_control_pin: GPIOXX
->   send_wait_time: 200ms
->   id: modbus_epever
->
-> modbus_controller:
->   - id: epever
->     ## the Modbus device addr
->     address: 0x1
->     modbus_id: modbus_epever
->     setup_priority: -10
->     update_interval: ${updates}
->
-> sensor:
->   - platform: modbus_controller
->     modbus_controller_id: epever
->     id: array_rated_voltage
->     name: "array_rated_voltage"
->     address: 0x3000
->     unit_of_measurement: "V"
->     register_type: read
->     value_type: U_WORD
->     accuracy_decimals: 1
->     filters:
->       - multiply: 0.01
->
->   - platform: modbus_controller
->     modbus_controller_id: epever
->     id: array_rated_current
->     name: "array_rated_current"
->     address: 0x3001
->     unit_of_measurement: "A"
->     register_type: read
->     value_type: U_WORD
->     accuracy_decimals: 2
->     filters:
->       - multiply: 0.01
->
->   - platform: modbus_controller
->     modbus_controller_id: epever
->     id: array_rated_power
->     name: "array_rated_power"
->     address: 0x3002
->     unit_of_measurement: "W"
->     register_type: read
->     value_type: U_DWORD_R
->     accuracy_decimals: 1
->     filters:
->       - multiply: 0.01
-> ```
-
-<span id="modbusseealso"></span>
+> Write support is only implemented for numbers, outputs, switches and selects. If you want ad-hoc write support see [Modbus Client](/components/modbus_client/).
 
 <span id="modbus_controller-automations"></span>
 
@@ -664,8 +504,10 @@ The response is mapped to the sensor based on `register_count` and offset in byt
 
 ### `on_command_sent`
 
-This automation will be triggered when a command has been sent by the `modbus_controller`. In [Lambdas](/automations/templates#config-lambda)
-you can get the function code in `function_code` and the register address in `address`.
+This automation will be triggered when a command has been transmitted by the `modbus` hub. It fires once per wire
+transmission, so a command that is retried triggers it again on each attempt.
+In [Lambdas](/automations/templates#config-lambda) you can get the function code in `function_code` and the
+register address in `address`.
 
 ```yaml
 modbus_controller:

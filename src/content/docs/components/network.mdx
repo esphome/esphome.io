@@ -71,18 +71,20 @@ component block configured, and every configured interface must appear in the li
 `ethernet:` present, `priority` naming only one of them is rejected during validation. The first entry is the
 most-preferred interface. Support for other interface types is planned.
 
-The priority list controls two things:
+The priority list controls three things:
 
 - **Setup order**: interfaces are brought up at boot in list order, so the preferred interface connects first.
 - **Reported address**: the preferred interface determines the address used to reach the device — its `use_address` (when configured) applies, and its IP addresses are the ones ESPHome reports. If the preferred interface has no valid IP address, for example while it is disabled or still connecting, ESPHome falls back to the other interface's addresses.
-
-> [!NOTE]
-> When both interfaces are connected at the same time, the underlying network stack still chooses which one carries the device's outgoing traffic. Making the priority list control this choice, along with automatic failover between interfaces, is planned for a future release.
+- **Default route**: the first *connected* interface in the list carries the device's outgoing traffic. When
+  that interface loses its connection — cable unplugged, link lost, or disabled at runtime — the route moves to
+  the next connected interface automatically, and moves back when the preferred interface reconnects. The DNS
+  servers of the interface that owns the route are used. Every change is logged as `Default interface: ...`.
 
 Running both network stacks at the same time uses a significant amount of memory. To keep the less-preferred
 interface powered down until it is needed, set `enable_on_boot: false` on that interface and turn it on later with
 the [`wifi.enable`](/components/wifi/#wifi-on_enable) or
-[`ethernet.enable`](/components/ethernet/#ethernet-on_enable) action.
+[`ethernet.enable`](/components/ethernet/#ethernet-on_enable) action. A powered-down interface cannot take over
+the route automatically; it participates in failover only once it has been enabled.
 
 > [!NOTE]
 > WiFi and Ethernet may be used together only on the ESP32 family of devices. If `priority` is omitted, behavior is unchanged from earlier ESPHome releases and only a single interface component may be configured.

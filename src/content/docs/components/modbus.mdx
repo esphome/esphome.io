@@ -2,13 +2,20 @@
 description: "Instructions for setting up Modbus in ESPHome."
 title: "Modbus Component"
 ---
+import { Image } from 'astro:assets';
 import APIRef from '@components/APIRef.astro';
 
 
 <span id="modbus"></span>
 
 The Modbus protocol is used by many consumer and industrial devices for communication.
-This component allows components in ESPHome to communicate to those devices via RTU protocol. You can access the coils, inputs, holding, read registers from your devices as sensors, switches, selects, numbers or various other ESPHome components and present them to your favorite Home Automation system. You can even write them as binary or float ouptputs from ESPHome.
+This component allows components in ESPHome to communicate to those devices via RTU protocol. You can access the coils, discrete inputs, holding registers and input registers from your devices as sensors, switches, selects, numbers or various other ESPHome components and present them to your favorite Home Automation system. You can even write them as binary or float outputs from ESPHome.
+
+> [!NOTE]
+> This page is the starting point for everything Modbus in ESPHome, including hardware setup. See
+> [Modbus Controller](/components/modbus_controller/) for polling registers/coils into sensors,
+> [Modbus Client](/components/modbus_client/) for ad-hoc requests, and [Modbus Server](/components/modbus_server/)
+> for serving registers to another device.
 
 The various sub-components implement some of the Modbus functions below (depending on their required functionality):
 
@@ -24,8 +31,9 @@ The various sub-components implement some of the Modbus functions below (dependi
 | 16 | Write Multiple Registers |
 | 23 | Read/Write Multiple Registers |
 
-Function code 23 (`0x17`) is implemented for the `server` role only; see
-[Read/Write Multiple Registers](/components/modbus_server/#readwrite-multiple-registers-function-code-0x17).
+Function code 23 (`0x17`, Read/Write Multiple Registers) is available in both roles - as a client action
+([`modbus_client.read_write_multiple_registers`](/components/modbus_client/)) and as a server handler
+([Read/Write Multiple Registers](/components/modbus_server/#readwrite-multiple-registers-function-code-0x17)).
 
 Modbus RTU requires a [UART Bus](/components/uart) to communicate.
 
@@ -35,6 +43,12 @@ uart:
   ...
 
 modbus:
+  id: my_client_hub
+
+on_...:
+  then:
+    - lambda: id(my_client_hub).queue_pdu(0x07, modbus::helpers::create_write_single_register_pdu(0x05, 0xBEEF));
+
 ```
 
 ## Configuration variables
@@ -60,21 +74,67 @@ modbus:
 
 - **role** (*Optional*, string): The role of this component, `client` or `server`. Defaults to `client`.
 
-Ad-hoc requests from automations and lambdas are provided by the [Modbus Client](/components/modbus_client/)
-actions; `modbus_client.send` without reply handlers is the fire-and-forget way to put a frame on the bus.
+## Performance vs Stability
+
+The default settings are aimed to provide high stability (low error rate) for a wide variety of devices. If you are
+pushing for high throughput performance (i.e. lots of transmissions per minute) you will need to change the
+defaults.
+
+The most impactful way to increase throughput is to reduce `turnaround_time`. If all your devices are able to
+process messages quickly without missing any, it's safe to reduce this number, potentially all the way to 0. If you
+see devices failing to respond or responding when they shouldn't (talking over each other) then you need to
+increase it.
+
+Reducing `send_wait_time` generally does not impact performance at all, unless you have devices that are physically
+offline. When all devices are responding, `send_wait_time` does nothing.
+
+## Hardware setup
+
+You need an RS485 transceiver module:
+
+<Image src="/images/rs485.jpg" width={300} height={145} layout="constrained" alt="" />
+
+See [How is this RS485 module working?](https://electronics.stackexchange.com/questions/244425/how-is-this-rs485-module-working) on stackexchange for more details.
+
+The transceiver connects to the UART of the MCU. For ESP32, pin `16` to `TXD` and pin `17` to `RXD` are the default ones but any other pins can be used as well. `3.3V` to `VCC` and naturally `GND` to `GND`.
+
+On the bus side, you need 120 Ohm termination resistors at the ends of the bus cable as per Modbus standard. Some transceivers have this already soldered onboard, while some server devices may have them available via a jumper or a DIP switch.
+
+> [!NOTE]
+> If you are using an ESP8266, serial logging may cause problems reading from UART. For best results, hardware serial is recommended. Software serial may not be able to read all received data if other components spend a lot of time in the `loop()`.
+>
+> For hardware serial only a limited set of pins can be used. Either `tx_pin: GPIO1` and `rx_pin: GPIO3`  or `tx_pin: GPIO15` and `rx_pin: GPIO13`.
+>
+> The disadvantage of using the hardware UART is that you can't use serial logging because the serial logs would be sent to the Modbus device(s) instead, causing errors.
+>
+> Serial logging can be disabled by setting `baud_rate: 0`.
+>
+> See [Logger](/components/logger/) for more details
+>
+> ```yaml
+> logger:
+>     level: <level>
+>     baud_rate: 0
+> ```
 
 ## See Also
 
-- [Modbus Client](/components/modbus_client/)
-- [Modbus Controller](/components/modbus_controller/)
-- [Modbus Server](/components/modbus_server/)
-- [Modbus Controller Sensor](/components/sensor/modbus_controller/)
-- [Modbus Controller Binary Sensor](/components/binary_sensor/modbus_controller/)
-- [Modbus Controller Output](/components/output/modbus_controller/)
-- [Modbus Controller Switch](/components/switch/modbus_controller/)
-- [Modbus Controller Number](/components/number/modbus_controller/)
-- [Modbus Controller Select](/components/select/modbus_controller/)
-- [Modbus Controller Text Sensor](/components/text_sensor/modbus_controller/)
+- For polling multiple registers/coils and mapping the response to various kinds of sensors, use
+  [Modbus Controller](/components/modbus_controller/)
+- For YAML actions & lambdas to send ad-hoc requests to individual devices use
+  [Modbus Client](/components/modbus_client/)
+- For serving registers in response to client requests from another device, use
+  [Modbus Server](/components/modbus_server/)
+- There are many components which communicate directly via the modbus hub (no controller needed):
+  [Growatt Solar](/components/sensor/growatt_solar/), [Havells Solar](/components/sensor/havells_solar/),
+  [Kuntze Pool Monitor](/components/sensor/kuntze/), [PZEMAC](/components/sensor/pzemac/),
+  [PZEM DC](/components/sensor/pzemdc/), [SDM Meter](/components/sensor/sdm_meter/),
+  [Selec Meter](/components/sensor/selec_meter/)
+- Modbus Controller platform pages: [Sensor](/components/sensor/modbus_controller/),
+  [Binary Sensor](/components/binary_sensor/modbus_controller/), [Output](/components/output/modbus_controller/),
+  [Switch](/components/switch/modbus_controller/), [Number](/components/number/modbus_controller/),
+  [Select](/components/select/modbus_controller/), [Text Sensor](/components/text_sensor/modbus_controller/)
 - [Modbus RTU Protocol Description](https://www.modbustools.com/modbus.html)
-- [UART Bus](/components/uart)
+- All modbus components require a [UART Bus](/components/uart/)
+- C++ client component authors should subclass `modbus::ModbusClientDevice`
 - <APIRef text="modbus.h" path="modbus/modbus.h" />

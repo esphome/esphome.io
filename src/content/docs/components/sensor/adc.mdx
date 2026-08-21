@@ -202,18 +202,34 @@ Our experiments indicate the diode drop being ~0.1V for Pico and ~0.25V for Pico
 
 ## RP2040 Internal Core Temperature
 
-The RP2040 has an internal temperature sensor that can be used to measure the core temperature. This sensor is not available on the GPIO pins, but is available on the internal ADC.
-The below code is how you can access the temperature and expose as a sensor. The filter values are taken from the RP2040 datasheet to calculate Voltage to Celcius.
+The RP2040 has an internal temperature sensor that can be used to measure the core temperature. This sensor is not
+available on the GPIO pins, but is available on the internal ADC.
+
+Use the [Internal Temperature](/components/sensor/internal_temperature/) sensor platform to read it. It supports the
+RP2 platform and reports degrees Celsius directly, so no conversion filter is required.
 
 ```yaml
 sensor:
-  - platform: adc
-    pin: TEMPERATURE
+  - platform: internal_temperature
     name: "Core Temperature"
-    unit_of_measurement: "°C"
-    filters:
-      - lambda: return 27 - (x - 0.706f) / 0.001721f;
 ```
+
+> [!WARNING]
+> Reading the core temperature by setting `pin: TEMPERATURE` on the `adc` platform is **deprecated** and will be
+> removed in ESPHome **2027.2.0**. Existing configurations should switch to the `internal_temperature` sensor
+> platform shown above; because it reports degrees Celsius directly, the `lambda` filter taken from the RP2040
+> datasheet to convert voltage to Celsius is no longer needed.
+>
+> ```yaml
+> # Deprecated, do not use in new configurations
+> sensor:
+>   - platform: adc
+>     pin: TEMPERATURE
+>     name: "Core Temperature"
+>     unit_of_measurement: "°C"
+>     filters:
+>       - lambda: return 27 - (x - 0.706f) / 0.001721f;
+> ```
 
 ## Multiple ADC Sensors
 
@@ -241,6 +257,7 @@ This works on SKU:DFR0654. For more information see: [manufacturer's website](ht
 ## See Also
 
 - [Sensor Filters](/components/sensor#sensor-filters)
+- [Internal Temperature Sensor](/components/sensor/internal_temperature/)
 - [ADS1115 4-Channel 16-Bit A/D Converter](/components/sensor/ads1115/)
 - [MAX6675 K-Type Thermocouple Temperature Sensor](/components/sensor/max6675/)
 - <APIRef text="adc_sensor.h" path="adc/adc_sensor.h" />
