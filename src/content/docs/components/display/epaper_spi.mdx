@@ -172,10 +172,21 @@ display:
       it.filled_rectangle(0, 0, 100, 100, Color(85, 85, 85));      // dark gray
       it.filled_rectangle(100, 0, 100, 100, Color(170, 170, 170));  // light gray
 
-# e.g. flip pages with a fast monochrome refresh:
-# on_...:
+# Recommended page-flip pattern: instant monochrome flip, then one debounced
+# full refresh to restore the grays once the user settles on a page.
+script:
+  - id: regray_after_flip
+    mode: restart
+    then:
+      - delay: 5s
+      - lambda: id(epaper).force_full_refresh();
+      - component.update: epaper
+
+# on_press:
 #   - lambda: id(epaper).request_fast_flip();
+#   - display.page.show_next: epaper
 #   - component.update: epaper
+#   - script.execute: regray_after_flip
 ```
 
 ### 4-color display example
