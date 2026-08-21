@@ -563,10 +563,10 @@ marks it offline. `tx.idle_command` requires a `command_format:` (see below).
       signature:
         - field: led_mask_01_02
           type: changed
-          mask: 0x40
+          bit: 6
         - field: led_mask_04_0a
           type: changed
-          mask: 0x40
+          bit: 6
   ```
 
   - **name** (**Required**, string): Identifies this entry for the sensor platform's
@@ -578,11 +578,17 @@ marks it offline. `tx.idle_command` requires a `command_format:` (see below).
       bytes (the button's `value:` encoded via `command_format`, or its raw `frame_type:` +
       `payload:`) are resolved automatically at compile time — a single source of truth, so
       the monitor tracks the button's own config instead of a hand-copied byte sequence going
-      stale. Mutually exclusive with `frame_type` below.
+      stale. Mutually exclusive with `button_name` and `frame_type` below.
+    - **button_name** (*Optional*, string): The `name:` of an
+      [rs485_frame button](/components/button/rs485_frame/) on this hub, matched instead of
+      `button_id`. Resolves the same way `button_id` does, without requiring the button to
+      declare an explicit `id:` — useful when the button is defined in a shared package you
+      don't want to edit just to add one. Must match exactly one button on this hub. Mutually
+      exclusive with `button_id` and `frame_type`.
     - **frame_type** (*Optional*, list of hex bytes, up to 8 bytes): A trigger that is not a
       declared button entity — e.g. a bare [`rs485_frame.send_frame`](#raw-frame-transmission)
       call. Matched as a prefix of the outgoing payload, the same way `tx.gate.frame_type`
-      matches.
+      matches. Mutually exclusive with `button_id` and `button_name`.
 
   - **window** (**Required**, [Time](/guides/configuration-types#time)): How long to wait for
     a matching response after the trigger transmits. No default — like `framing.escape` and
@@ -603,6 +609,10 @@ marks it offline. `tx.idle_command` requires a `command_format:` (see below).
         value: 0x32       # or a list, e.g. [0x32, 0x64], to accept any of several results
       ```
 
+      `mask` and `bit` are mutually exclusive; `bit: N` is shorthand for `mask: 0x<1<<N>` — use
+      it when the field is a single-bit flag in a bitmask you already reference by bit position
+      elsewhere (e.g. a `binary_sensor` package templated on the same `bit:` var).
+
     - **text_enum**: Exact match against a small set of known ASCII strings. The field is
       decoded as ASCII — the display's blink/inverse flag (bit 7) is stripped, non-printable
       bytes (including trailing NUL/pad) are dropped, and trailing space padding is trimmed —
@@ -618,12 +628,13 @@ marks it offline. `tx.idle_command` requires a `command_format:` (see below).
       value immediately before the trigger fired. **Use this for toggles**, not `masked_int` —
       a toggle button's response is a bit flipping, not landing on one known absolute value;
       even accepting either of two known values would wrongly count "already set, still set,
-      nothing happened" as a match. `mask` defaults to every bit of the field.
+      nothing happened" as a match. `mask` defaults to every bit of the field; `bit: N` (e.g.
+      `bit: 6` below) is shorthand for `mask: 0x<1<<N>`, mutually exclusive with `mask`.
 
       ```yaml
       - field: led_mask_01_02
         type: changed
-        mask: 0x40
+        bit: 6
       ```
 
     - **changed_gated**: Same as `changed`, but only evaluated when a second, independent
@@ -637,9 +648,12 @@ marks it offline. `tx.idle_command` requires a `command_format:` (see below).
         type: changed_gated
         gate:
           field: display_text_flag
-          mask: 0x80
+          bit: 7
           value: 0x80
       ```
+
+      The `gate` block's `mask`/`bit` follow the same rule as above: mutually exclusive, `bit: N`
+      shorthand for `mask: 0x<1<<N>`.
 
 - **tx** (*Optional*): TX and command-queue configuration.
 
