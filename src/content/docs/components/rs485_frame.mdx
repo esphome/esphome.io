@@ -497,6 +497,20 @@ marks it offline. `tx.idle_command` requires a `command_format:` (see below).
   and referenced by name from `response_monitor:` below, so every button sharing one carrier
   frame (e.g. all LED-mask toggles on the same bus) declares the addressing exactly once.
 
+  > [!WARNING]
+  > If you split a `response_fields:`/`response_monitor:` pair into an [ESPHome
+  > package](https://esphome.io/components/packages/) meant to be included once per button
+  > (the common pattern for confirming several buttons that share one carrier frame), put the
+  > `response_fields:` block in its own package, included exactly once, separate from the
+  > per-button `response_monitor:` package. ESPHome's package merge concatenates list-valued
+  > keys across merges instead of overwriting them, so a `response_fields:` entry repeated
+  > across multiple package includes has its `frame_type`/`frame_type_mask` byte lists
+  > silently duplicated once per extra include — `esphome config` accepts the result without
+  > error (the corrupted list is usually still under the length cap), and the field then never
+  > matches a real frame again, so confirmation quietly stops working with no warning at all.
+  > `offset:`/`length:`/`endian:` are scalars and merge correctly either way; only list-valued
+  > keys are affected.
+
   ```yaml
   response_fields:
     led_mask_01_02:
@@ -624,17 +638,30 @@ marks it offline. `tx.idle_command` requires a `command_format:` (see below).
         values: ["Auto Control", "Manual Off"]
       ```
 
-    - **changed**: No fixed target. Success = the field (optionally masked) differs from its
-      value immediately before the trigger fired. **Use this for toggles**, not `masked_int` —
-      a toggle button's response is a bit flipping, not landing on one known absolute value;
-      even accepting either of two known values would wrongly count "already set, still set,
-      nothing happened" as a match. `mask` defaults to every bit of the field; `bit: N` (e.g.
-      `bit: 6` below) is shorthand for `mask: 0x<1<<N>`, mutually exclusive with `mask`.
+    - **changed**: No fixed target. Success = the field differs from its value immediately
+      before the trigger fired. **Use this for toggles**, not `masked_int` — a toggle button's
+      response is a bit flipping, not landing on one known absolute value; even accepting
+      either of two known values would wrongly count "already set, still set, nothing
+      happened" as a match.
+
+      For a field of 4 bytes or less (a command-sized value, e.g. an LED-mask bitmask),
+      `mask` defaults to every bit of the field; `bit: N` (e.g. `bit: 6` below) is shorthand
+      for `mask: 0x<1<<N>`, mutually exclusive with `mask`.
 
       ```yaml
       - field: led_mask_01_02
         type: changed
         bit: 6
+      ```
+
+      For a field longer than 4 bytes (e.g. a 36-byte display-text field), `changed` compares
+      the field's **entire** byte range instead — `mask`/`bit` don't apply there (a config
+      author must omit them; the field's own `offset:`/`length:` in `response_fields:` already
+      pins down exactly which bytes are being watched, so no in-field masking is needed):
+
+      ```yaml
+      - field: menu_display_text
+        type: changed
       ```
 
     - **changed_gated**: Same as `changed`, but only evaluated when a second, independent
