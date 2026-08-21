@@ -79,6 +79,13 @@ sensor:
     WiFi is not using it. Without WiFi, or with `software_coexistence` disabled, it defaults
     to `30ms`.
 
+  - **connection_scan_window** (*Optional*, [Time](/guides/configuration-types#time)): The scan window used
+    while a BLE connection is active, for example while a Bluetooth proxy is connected to a device.
+    A window close to the `interval` value can starve active connections of radio time and cause
+    them to disconnect. Must not be larger than `interval`; the same range and step as `window` apply.
+    When `window` defaults to the `interval` value as described above, this defaults to `30ms`;
+    otherwise scanning keeps using `window` during connections unless this is set.
+
   - **duration** (*Optional*, [Time](/guides/configuration-types#time)): The duration of each complete scan. This has no real
     impact on the device but can be used to debug the BLE stack. Defaults to `5min`.
 
