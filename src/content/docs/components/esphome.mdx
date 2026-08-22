@@ -307,7 +307,7 @@ this option. If they are used by another library, they should be listed before t
 ## Preferences Component
 
 This component is used to store data in the flash memory which is persisted across device reboots, e.g. the latest
-state of a light or the accumulated energy used by an appliance.  Preference component is of type PollingComponent
+state of a light or the accumulated energy used by an appliance.
 
 ```yaml
 # Example configuration entry
@@ -342,6 +342,24 @@ This behavior can be modified by setting `flash_write_interval` to `0s` to commi
 however, be aware that this may lead to increased flash wearing and a shortened device lifespan!
 
 For [ESP8266](/components/esp8266/), `restore_from_flash` must also be set to `true` for states to be written to flash.
+
+### Suspending and Resuming Sync
+
+The [`component.suspend`](/automations/actions/#component-suspend-action) and
+[`component.resume`](/automations/actions/#component-resume-action) actions suspend and resume the periodic flash
+write at runtime. This enables power-saving use cases where after the initial save of persistently stored data there
+is no need to continue periodic flash writes.
+
+```yaml
+preferences:
+  id: prefs
+
+esphome:
+  on_boot:
+    then:
+      - delay: 70sec  # longer than the default flash_write_interval of 1min
+      - component.suspend: prefs
+```
 
 <span id="esphome-changing_node_name"></span>
 
