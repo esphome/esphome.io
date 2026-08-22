@@ -1,0 +1,943 @@
+---
+title: "ESPHome 2026.7.0: Native toolchains by default"
+description: "ESPHome 2026.7.0 makes native toolchains the default on ESP32 and nRF52, adds EN18031 security groundwork, and overhauls Modbus."
+date: 2026-07-15
+authors:
+  - jesse
+tags:
+  - Releases
+excerpt: "ESPHome 2026.7.0 makes native toolchains the default on ESP32 and nRF52, adds EN18031 security groundwork, and overhauls Modbus."
+cover:
+  alt: "ESPHome 2026.7.0: Native toolchains by default"
+  image: "https://assets.openhomefoundation.org/opengraph?url=https://esphome.io/blog/2026/07/15/esphome-2026-7"
+head:
+  - tag: meta
+    attrs:
+      property: "og:image"
+      content: "https://assets.openhomefoundation.org/opengraph?url=https://esphome.io/blog/2026/07/15/esphome-2026-7"
+  - tag: meta
+    attrs:
+      name: "twitter:image"
+      content: "https://assets.openhomefoundation.org/opengraph?url=https://esphome.io/blog/2026/07/15/esphome-2026-7"
+  - tag: meta
+    attrs:
+      property: "og:image:title1"
+      content: "ESPHome 2026.7.0"
+  - tag: meta
+    attrs:
+      property: "og:image:title2"
+      content: "Native toolchains by default"
+  - tag: meta
+    attrs:
+      property: "og:image:author"
+      content: "Jesse Hills"
+  - tag: meta
+    attrs:
+      property: "og:image:category"
+      content: "Releases"
+---
+
+import ImgTable from "@components/ImgTable.astro";
+
+{/* MANUAL: Add featured components here */}
+<ImgTable items={[
+  ["UFM-01 Flow Meter", "/components/ufm01/", "ufm01.png", "Flow & Temperature"],
+  ["Waveshare CH32V003 IO Expander", "/components/waveshare_io_ch32v003/","waveshare_io_ch32v003.svg"],
+  ["IT8951", "/components/display/it8951/", "it8951.svg"],
+  ["QMI8658", "/components/motion/qmi8658/", "imu.svg", "Accelerometer & Gyroscope", "dark-invert"],
+  ["CST9220", "/components/touchscreen/cst9220/", "touch.svg"],
+  ["Pixoo", "/components/display/pixoo/", "pixoo.svg"],
+  ["ST7123", "/components/touchscreen/st7123/", "touch.svg", "dark-invert"],
+  ["CST328", "/components/touchscreen/cst328/", "touch.svg", "dark-invert"],
+  ["Provisioning", "/components/provisioning/", "timer.svg", "dark-invert"],
+  ["GSL3670", "/components/touchscreen/gsl3670/", "touchscreen.svg", "dark-invert"],
+]} />
+
+## Release Overview
+
+{/* RELEASE_OVERVIEW_START */}
+ESPHome 2026.7.0 flips the default ESP32 and nRF52 toolchains to native builds (ESP-IDF and the nRF Connect
+SDK) and lands the first coordinated wave of security infrastructure targeting EN18031 compliance: NVS
+encryption, OTA downgrade protection, and a new transport-agnostic provisioning component. Broad performance
+and memory work runs through the release, including
+a tree-wide single-precision float sweep across roughly 50 components, focused ESP8266 DRAM savings, ccache on by
+default for ESP-IDF, and shared machine-global toolchain caches.
+
+On the feature side, the release brings a major Modbus overhaul with a rewritten parser and heap-free send path,
+substantial LVGL expansion (animations, dynamic rotation, boot pausing), gigabit Ethernet on the new ESP32-S31,
+ESP-NOW v2 payloads, RTC-backed preferences on ESP32, 11 new components covering touch controllers, e-paper
+panels, IMUs, and the Divoom Pixoo 64, and Zigbee endpoint merging on the new 2.0.2 SDK. The legacy Tornado web
+dashboard is retired in favor of the external Device Builder, and Python 3.11 support is dropped.
+{/* RELEASE_OVERVIEW_END */}
+
+## Upgrade Checklist
+
+{/* UPGRADE_CHECKLIST_START */}
+- If you have an ESP32 config without an explicit `toolchain:` setting, it now compiles with native ESP-IDF; add `toolchain: platformio` to keep the previous behavior
+- If you have an nRF52 config without an explicit `toolchain:` setting, it now builds with the native nRF Connect SDK; add `toolchain: platformio` to keep the previous behavior
+- If you install ESPHome with `pip` on Python 3.11, upgrade to Python 3.12 or newer
+- If you install ESPHome with `pip` and use the built-in `esphome dashboard` command, install and run `esphome-device-builder` instead
+- If you have ESP32 Zigbee devices, you must re-join, re-interview, and re-configure each device after upgrading
+- If you set `enabled` or `coordinator` under Zigbee `reporting:`, remove those keys
+- If you use `web_server: version: 1`, plan to migrate to v2 or v3 before 2027.1.0
+- If you address `web_server` URLs by object ID, switch to the entity name
+- If a browser page hosted elsewhere calls your `web_server` endpoints, add its origin to `web_server: allowed_origins:`
+- If you relied on `web_server` Private Network Access being on by default, set `enable_private_network_access: true` and add the calling origins to `allowed_origins:`
+- If you use `packages: !include mypackage.yaml`, wrap the include in a list: `packages: [!include mypackage.yaml]`
+- If you use `FOUR_SCAN_16PX_HIGH`, `FOUR_SCAN_32PX_HIGH`, or `FOUR_SCAN_64PX_HIGH` for hub75 `scan_wiring`, rename to `SCAN_1_4_16PX_HIGH`, `SCAN_1_8_32PX_HIGH`, or `SCAN_1_8_64PX_HIGH`
+- If you set `disable_crc` under `modbus:`, remove it
+- If you set `send_wait_time` or `turnaround_time` on a `modbus:` server, remove those keys
+- If you rely on modbus client timing, note that defaults changed to `send_wait_time: 2000ms` and `turnaround_time: 600ms`
+- If you use the `generic-ln882hki` board, switch to `generic-ln882h` or `generic-ln882h-tuya` depending on factory firmware
+- If you use the LN882H `wb02a` board with `D1`, `D7`, `D8`, `D9`, or default I2C pin aliases, update your pin numbers to match the new mapping
+- If you have lambdas or automations that set light brightness to `0`, note that the value is now preserved instead of being clamped to `1.0`
+- If two Home Assistant instances share the same `bluetooth_proxy`, the newest subscriber now wins instead of the oldest
+- If you build for nRF52 boards without a DCDC regulator, DCDC settings are no longer forced and generated code changes slightly
+- If your lambdas call `value_accuracy_to_string()` or `MideaData::to_string()`, migrate to the buffer variants (`value_accuracy_to_buf()` and `to_str(buffer)`)
+{/* UPGRADE_CHECKLIST_END */}
+
+{/* FEATURE_HIGHLIGHTS_START */}
+## Native Toolchains Are Now the Default on ESP32 and nRF52
+
+The default toolchain for the `esp32` platform switches from PlatformIO to native ESP-IDF
+([#16910](https://github.com/esphome/esphome/pull/16910)). Configurations that do not set an explicit `toolchain:`
+option will be compiled with ESP-IDF from this release forward. The framework migration notice that had been shown
+since 2026.1.0 has also been removed now that the default has landed
+([#17023](https://github.com/esphome/esphome/pull/17023)).
+
+The toolchain selects the build backend, not the framework: both the Arduino and ESP-IDF frameworks build on
+either toolchain, with the native toolchain pulling in Arduino as an ESP-IDF component. Configurations that
+explicitly set `toolchain: platformio` continue to build exactly as they did before, while new configurations
+generated by the wizard or from packages will pick up the native ESP-IDF toolchain automatically. ESP-IDF is
+now the recommended choice for both the toolchain and the framework.
+
+The `nrf52` platform makes the same move: native nRF Connect SDK builds, added earlier this cycle by
+[@tomaszduda23](https://github.com/tomaszduda23) ([#16898](https://github.com/esphome/esphome/pull/16898)), are
+now the default toolchain ([#17319](https://github.com/esphome/esphome/pull/17319)). Configurations without an
+explicit `toolchain:` option build against nRF Connect SDK 2.9.2, installed into the new shared toolchain cache
+described below, and `toolchain: platformio` remains available as an opt-out here as well.
+
+## ESPHome Device Builder
+
+The bundled [ESPHome Device Builder](https://github.com/esphome/device-builder) has been updated, and most of the work
+this cycle went into the remote build server.
+
+Compiling firmware is the slowest thing the Device Builder does, and on a small host such as a Home Assistant Green or a
+Raspberry Pi a single build can take several minutes. A remote build server lets that dashboard hand the compile to a
+faster machine on your network, such as a desktop or laptop running [ESPHome Desktop](https://desktop.esphome.io), which
+builds the firmware and sends it back to be installed as usual. Your devices, configurations, and dashboard all stay
+where they are; only the build moves.
+
+**Pairing With a Build Server Is Much Easier**
+
+A machine that builds for other dashboards now says so on its own dashboard
+([frontend#1240](https://github.com/esphome/device-builder-frontend/pull/1240)). A **Build server** section appears
+above the device list once another dashboard is paired with it, or once remote building is turned on, and it walks you
+through pairing in three steps instead of leaving you to find the pieces in Settings.
+
+![Pairing a build server in the ESPHome Device Builder](/images/device-builder-build-server.png)
+
+From there you can open the pairing window and watch its countdown, copy the address to enter on the sending dashboard
+([#2075](https://github.com/esphome/device-builder/pull/2075)), and compare the identity fingerprint against the one the
+sender shows. Once peers are paired the section lists them with their connection state and the build queue, and any
+pairing request waiting on you appears at the top. Settings gained a matching explainer, and the old **Only use this for
+remote compute** switch is now **Remote compute dashboard**, which decides which section opens first rather than hiding
+anything.
+
+Remote builds are steadier once they are running, too. If a receiver restarts, the sender now reconnects as soon as it
+reappears on mDNS instead of waiting out its backoff ([#2084](https://github.com/esphome/device-builder/pull/2084)).
+Receivers can now also provision beta versions of ESPHome, so a build server running a different version to a sender on
+the beta channel no longer quietly falls back to building locally
+([#2082](https://github.com/esphome/device-builder/pull/2082)). The first build for a version installs ESPHome from PyPI
+and can take a few minutes, which the job log now says out loud instead of sitting silent
+([#2083](https://github.com/esphome/device-builder/pull/2083)).
+
+If you have never tried this, the terminal now shows a build timer, and a local compile that runs longer than five
+minutes on a dashboard with no build server paired suggests sending your builds to a faster machine
+([frontend#1183](https://github.com/esphome/device-builder-frontend/pull/1183)).
+
+**Offline and Deep Sleep Updates**
+
+Updating a device that is not awake has always been a matter of timing. An OTA aimed at a device that is asleep or
+otherwise unreachable simply fails, which is a familiar problem if you run anything on [deep
+sleep](/components/deep_sleep/).
+
+Queued offline updates, contributed by [@rwalker777](https://github.com/rwalker777), fix that
+([#1430](https://github.com/esphome/device-builder/pull/1430),
+[frontend#911](https://github.com/esphome/device-builder-frontend/pull/911)). If a device is offline when you install to
+it, the Device Builder compiles the firmware, queues the update, and flashes it when the device next appears on the
+network, with no need for you to be watching at the time.
+
+The groundwork for this landed in 2026.6.0, and it is ready for production use now. It works across a whole fleet:
+select any number of devices and hit update, and the ones that are unreachable are compiled once and queued for their
+next appearance rather than failing ([#1929](https://github.com/esphome/device-builder/pull/1929)). A device that drops
+offline between hitting install and the build finishing is queued as well, instead of failing at the last step
+([#1964](https://github.com/esphome/device-builder/pull/1964)), and a queued update reopens as an install, carrying its
+queued message, when you come back to it
+([frontend#1181](https://github.com/esphome/device-builder-frontend/pull/1181)).
+
+**Quickstart Tour**
+
+Getting from a fresh install to a working device has always been the hardest part of ESPHome, and this release takes a
+real run at it. Setup now ends by offering you a guided tour, and the tour teaches the Device Builder by using it rather
+than by describing it.
+
+It spotlights one real control at a time, explains what it is for, and on the steps that matter it waits for you to
+click it rather than moving on without you. Over eleven steps it walks you through creating your first device, picking a
+board, naming it, entering your WiFi details, finding your way around the device navigator and the editor, watching the
+YAML pane stay in sync as you go, and how installing to your board works, finishing on your new device sitting on the
+dashboard. It takes about five minutes, it leaves you with a real device rather than a throwaway, you can close it and
+pick it up where you left off, and it is always available afterwards from the menu in the top right.
+
+The tour was a team effort from [@Erioldoesdesign](https://github.com/Erioldoesdesign),
+[@stvncode](https://github.com/stvncode), and [@marcelveldt](https://github.com/marcelveldt), across design, wireframes,
+and build ([frontend#1045](https://github.com/esphome/device-builder-frontend/pull/1045),
+[frontend#1232](https://github.com/esphome/device-builder-frontend/pull/1232)). The setup flow around it was rebuilt at
+the same time: a new welcome screen, an experience question that lets beginners take the recommended path with a single
+click, and a closing screen that hands you to the tour. If you set up the desktop app while another Device Builder is
+already running on your network, setup now points that out and explains how to pair the two, so you can put the new
+machine to work building for the dashboard you already have
+([frontend#1235](https://github.com/esphome/device-builder-frontend/pull/1235)).
+
+**YAML Errors Explained and Auto-Fixed**
+
+A number of issues reported against ESPHome turn out not to be bugs at all, but a small mistake made while editing YAML.
+This release goes after that whole class of problem.
+
+Getting a space wrong used to earn you the raw parser output, `mapping values are not allowed here` or `could not find
+expected ':'`, and only if you thought to hover over the squiggle. The line it pointed at was usually where the parser
+gave up rather than where you made the mistake, which is little help if you are not already fluent in YAML.
+
+The editor now reads the error and tells you what is actually wrong, in a banner that stays put, naming the line you
+need to change and what to do to it: *"Indentation mismatch: line 12 `- platform` is indented less than its properties.
+Indent line 12 by 2 spaces so `- platform` lines up with them."* Next to it is a **Try auto-fix** button that makes
+exactly that change for you. It is a best-effort guess rather than magic, so it is validated against your config before
+it is applied, it tells you if other errors remain, and it lands as a normal edit you can undo
+([frontend#1121](https://github.com/esphome/device-builder-frontend/pull/1121),
+[frontend#1147](https://github.com/esphome/device-builder-frontend/pull/1147),
+[frontend#1148](https://github.com/esphome/device-builder-frontend/pull/1148)).
+
+Indentation is not the only thing it explains. Tabs used where YAML wants spaces, a value starting with `@`, `%`, or `*`
+that needs quotes, an unterminated quote, a duplicate key, and an unclosed bracket or brace all get the same
+plain-language treatment. A list marker missing its space, `-platform: gpio`, is offered a one-click repair to `-
+platform: gpio` ([frontend#1149](https://github.com/esphome/device-builder-frontend/pull/1149)). So is a key that has
+drifted out of the block it belongs to, such as an `encryption` key left sitting directly under `api:`, in either
+direction; the Device Builder checks its component catalog first to confirm where the key really belongs, and offers
+nothing rather than a wrong guess if it cannot tell
+([frontend#1164](https://github.com/esphome/device-builder-frontend/pull/1164)).
+
+Device log lines now link to the documentation that explains them
+([frontend#1116](https://github.com/esphome/device-builder-frontend/pull/1116),
+[frontend#1118](https://github.com/esphome/device-builder-frontend/pull/1118)). Ten common warnings and errors get a
+curated explanation, including `took a long time for an operation`, WiFi reconnect loops, repeated resets, OTA
+rollbacks, and running out of Bluetooth proxy connection slots, and any other line tagged with a component links
+straight to that component's page.
+
+**Headless Build Servers**
+
+[@jesserockz](https://github.com/jesserockz) added `--remote-build-only`, which runs Device Builder as a dedicated build
+box with no web interface at all ([#1861](https://github.com/esphome/device-builder/pull/1861)):
+
+```bash
+esphome-device-builder --remote-build-only /var/lib/esphome-builder
+```
+
+It serves only the peer link, so there is no interface for anyone to click Accept in. Instead it opens a pairing window
+on first start and prints its identity fingerprint and a one-time key to the console. You pair from the sending
+dashboard, check that the fingerprint matches the console, and type in the key, which the pair dialog knows to ask for
+up front ([#1881](https://github.com/esphome/device-builder/pull/1881),
+[frontend#1120](https://github.com/esphome/device-builder-frontend/pull/1120)). That window pairs exactly one dashboard
+and then closes.
+
+If you would rather keep the web interface but still dedicate the machine to building, turn on **Remote compute
+dashboard** in Settings and a **Hide the Device builder** option appears beneath it, leaving only the **Build server**
+view ([#2077](https://github.com/esphome/device-builder/pull/2077),
+[frontend#1244](https://github.com/esphome/device-builder-frontend/pull/1244)). Device Builder can also listen on a UNIX
+socket with `--socket` for reverse-proxy setups, contributed by [@vexofp](https://github.com/vexofp)
+([#1862](https://github.com/esphome/device-builder/pull/1862)).
+
+**Builds**
+
+Starting a build no longer greys out the buttons that would take you back to it. Update and Install now open the running
+job, and Edit stays clickable so you can read your YAML while it compiles
+([frontend#1191](https://github.com/esphome/device-builder-frontend/pull/1191),
+[frontend#1193](https://github.com/esphome/device-builder-frontend/pull/1193),
+[frontend#1197](https://github.com/esphome/device-builder-frontend/pull/1197)). Download and Retry now wait for a
+running build to finish instead of cancelling and restarting it, which also means Download can no longer hand you a
+half-written binary ([frontend#1199](https://github.com/esphome/device-builder-frontend/pull/1199),
+[frontend#1201](https://github.com/esphome/device-builder-frontend/pull/1201),
+[frontend#1204](https://github.com/esphome/device-builder-frontend/pull/1204)).
+
+A bulk **Compile only** action lets you check a change across many devices before deploying any of it
+([frontend#1176](https://github.com/esphome/device-builder-frontend/pull/1176)). ESP-IDF builds now show compile
+progress, which is read from the ninja build counters rather than the percentage that ESP-IDF never prints
+([#1880](https://github.com/esphome/device-builder/pull/1880)).
+
+Special thanks to [@breti](https://github.com/breti), whose QA testing and detailed issue reports ran through this whole
+release and do not show up in any pull request count.
+
+## Security and Provisioning Groundwork for EN18031
+
+This release lands three coordinated pieces of security infrastructure, led by
+[@kbx81](https://github.com/kbx81), that together move ESPHome toward EN18031 compliance for network-connected
+consumer devices.
+
+**NVS Encryption on ESP32 ([#17004](https://github.com/esphome/esphome/pull/17004))**
+
+Opt-in encryption for Non-Volatile Storage using the HMAC peripheral. Keys are derived at runtime from an HMAC key
+in a user-selected eFuse block, so flash encryption is not required. Supported on the ESP32 variants that ship the
+HMAC peripheral: S2, S3, C3, C5, C6, H2, and P4. Burning the HMAC key to an eFuse block is a permanent,
+irreversible operation, so users should read the [esp32](/components/esp32/) documentation carefully before
+enabling this.
+
+**OTA Downgrade Protection ([#17315](https://github.com/esphome/esphome/pull/17315))**
+
+Software anti-rollback for signed ESP-IDF OTAs. The version baked into the staged image (from
+`project: version:`) is compared against the running version before the boot partition is switched. Covers all OTA
+sources: native, `http_request.ota`, and `web_server`. Requires a signed OTA to be effective.
+
+**Provisioning Component ([#17152](https://github.com/esphome/esphome/pull/17152))**
+
+A new transport-agnostic [provisioning](/components/provisioning/) component that manages a provisioning window for
+devices shipping unprovisioned. Sources such as `api` and `esp32_improv` register with the component, and the
+window is closed on timeout, at which point any provisioning-related API clients are disconnected with
+`DISCONNECT_REASON_PROVISIONING_CLOSED`.
+
+## Performance: Single-Precision Float Math
+
+Led by [@swoboda1337](https://github.com/swoboda1337), a tree-wide sweep replaces silent
+`double`-promotion patterns with single-precision equivalents across roughly 50 components
+([#17252](https://github.com/esphome/esphome/pull/17252),
+[#17253](https://github.com/esphome/esphome/pull/17253),
+[#17254](https://github.com/esphome/esphome/pull/17254),
+[#17255](https://github.com/esphome/esphome/pull/17255),
+[#17256](https://github.com/esphome/esphome/pull/17256),
+[#17260](https://github.com/esphome/esphome/pull/17260)).
+
+The issue was invisible on ESP32 because ESP-IDF does not enable `-Wdouble-promotion`: literals like `2.0` and
+functions like `fmod`, `round`, and `fabs` were quietly promoting single-precision values to double, running the
+result through the soft-double library on chips without hardware doubles, then narrowing back to `float`.
+
+**Measured Impact:**
+
+- **`hsv_to_rgb` code size**: 108 bytes → 69 bytes (`-36%`) on ESP32
+- **Soft-double helper calls eliminated**: roughly 8 per call site
+- **Components touched**: displays, lights, climate, most sensor drivers, `openthread`, `mqtt`,
+  `speaker`, `graph`, and many more
+
+The final straggler pass ([#17260](https://github.com/esphome/esphome/pull/17260)) also rewrites hot expressions
+such as `std::pow(2, sf)` in [sx126x](/components/sx126x/) to a constexpr bit shift, and switches a few call sites
+to `std::numbers::pi_v<float>`.
+
+## Memory: ESP8266 DRAM Savings
+
+Every byte of RAM matters on ESP8266, and three focused changes by [@bdraco](https://github.com/bdraco) reclaim a
+useful chunk of DRAM without changing runtime behavior.
+
+- **libstdc++ throw message strings** ([#17341](https://github.com/esphome/esphome/pull/17341)) — Overrides
+  `std::__throw_*` helpers so the never-read message arguments are dropped. Saves roughly 96 bytes of RAM on a
+  ratgdo build. Crash behavior is unchanged.
+- **lwIP glue DHCP stub strings** ([#17395](https://github.com/esphome/esphome/pull/17395)) — Silent equivalents
+  for `dhcp_cleanup()` and `dhcp_release()` stubs. Frees `48` bytes of RAM and `88` bytes of flash, and removes the
+  noisy `STUB: dhcp_cleanup` log on every WiFi disconnect.
+- **dashboard_import package URL** ([#17127](https://github.com/esphome/esphome/pull/17127)) — Moves the mDNS TXT
+  `package_import_url` string from `.rodata` (DRAM) to flash. It was the last mDNS TXT value pinned in RAM.
+
+## Build System: ccache and Shared Toolchain Caches
+
+Led by [@swoboda1337](https://github.com/swoboda1337), the ESP-IDF and nRF SDK toolchains gain both compiler-level
+caching and installation-level sharing.
+
+**ccache is now on by default for ESP-IDF builds** ([#17163](https://github.com/esphome/esphome/pull/17163),
+[#17136](https://github.com/esphome/esphome/pull/17136)) when the `ccache` binary is present, using depend mode
+(depfile hashing instead of preprocessing) and a cache directory under the IDF tools path. Opt out with
+`IDF_CCACHE_ENABLE=0`. On the 23-batch CI matrix, summed runner time dropped from `543` to `504` minutes (~7%) and
+wall time from `154` to `139` minutes.
+
+**Toolchains now install into a machine-global cache directory**
+([#17306](https://github.com/esphome/esphome/pull/17306),
+[#17353](https://github.com/esphome/esphome/pull/17353)). ESP-IDF installs to
+`~/.cache/esphome/idf` and the nRF Connect SDK installs to `~/.cache/esphome/sdk-nrf`, so multi-gigabyte toolchain
+installs are shared across every project on the machine instead of being duplicated per config. Docker and Home
+Assistant add-on users pin these to persistent volumes, and existing installs re-download once after upgrade.
+
+**Config validation got faster too**, thanks to import deferral by [@frenck](https://github.com/frenck):
+`aioesphomeapi.posix_tz` deferral cuts `esphome config` median wall time by roughly 33% on a host config from
+`445` ms to `297` ms ([#17214](https://github.com/esphome/esphome/pull/17214)), and deferring `requests` imports
+shaves another ~70 ms (~16%) ([#17215](https://github.com/esphome/esphome/pull/17215)).
+
+## Component Alias Infrastructure
+
+A new core mechanism ([#16826](https://github.com/esphome/esphome/pull/16826)) lets components be renamed without
+breaking existing YAML configurations. Components declare `ALIASES = [...]` (and an optional
+`ALIAS_REMOVAL_VERSION`), and a pre-pass in config validation rewrites legacy keys while a `sys.meta_path` finder
+resolves Python imports for `esphome.components.<oldname>`. Aliases are discovered by an AST scan so components do
+not need to be imported to enumerate them.
+
+The first user of the new infrastructure is the [rp2](/components/rp2/) rename
+([#17145](https://github.com/esphome/esphome/pull/17145)) by [@jesserockz](https://github.com/jesserockz), which
+renames the `rp2040` platform to `rp2` to reflect its coverage of both RP2040 and RP2350. The legacy `rp2040:`
+YAML key and `esphome.components.rp2040` imports continue to work as deprecated aliases and will be removed in
+2027.7.0. New `rp2_2040` and `rp2_2350` variant kwargs are added to `SplitDefault` and
+`require_framework_version`, mirroring the ESP32 pattern.
+
+## Modbus Overhaul
+
+[@exciton](https://github.com/exciton) landed a major rework of the [modbus](/components/modbus/) component across
+multiple PRs.
+
+**Client and server split** ([#11969](https://github.com/esphome/esphome/pull/11969)) — `Modbus` is split into
+`ModbusClientHub` and `ModbusServerHub`, retiring the role enum entirely. Client components move to
+`ModbusClientDevice` ([#11987](https://github.com/esphome/esphome/pull/11987)), and the core API surface was
+renamed and settled before the release ([#17434](https://github.com/esphome/esphome/pull/17434),
+[#17378](https://github.com/esphome/esphome/pull/17378)). External components need to update against the new
+API now, and further client-mode API cleanup is planned for the next release.
+
+**Rewritten parser** — Byte-by-byte parsing is replaced with a buffer-based, frame-length-aware parser that
+handles peer server responses, unsupported function codes, and custom function codes correctly. Response tracking
+uses `std::optional<ModbusDeviceCommand>`, enabling address+function-code matching, multiple devices per address,
+and two new callbacks: `on_modbus_no_response()` and `on_modbus_not_sent()`.
+
+**Heap-free send path** — A new `SmallInlineBuffer<8>` and `StaticVector<uint8_t, MAX_PDU_SIZE>` mean that 8-byte
+Modbus frames (the common case for reads and single-register writes) live inline in the deque node with zero
+per-frame heap activity ([#17282](https://github.com/esphome/esphome/pull/17282)).
+
+**Server improvements** ([#17205](https://github.com/esphome/esphome/pull/17205)) — Multi-register values now
+match by full span, a new `allow_partial_read` option is available, overlapping registers are rejected, and the
+obsolete `RAW` value type has been removed from server mode.
+
+Default `send_wait_time` moves from `250ms` to `2000ms` and `turnaround_time` from `100ms` to `600ms`. If you were
+overriding these to compensate for the old parser, review whether the overrides are still needed.
+
+## LVGL: Animations, Rotation, and Runtime Updates
+
+[@clydebarrow](https://github.com/clydebarrow) drove a substantial expansion of the [lvgl](/components/lvgl/)
+component this release.
+
+- **Animations** ([#16796](https://github.com/esphome/esphome/pull/16796)) — Full LVGL animation support with
+  from/to interpolation, timing functions (gravity and friends), duration, looping, and `auto_start`.
+- **Dynamic rotation** ([#16773](https://github.com/esphome/esphome/pull/16773)) — Templated
+  `lvgl.display.set_rotation` in degrees, new `on_landscape` and `on_portrait` triggers, and layout option updates
+  in `lvgl.update`.
+- **Direct `mapping` syntax** ([#15863](https://github.com/esphome/esphome/pull/15863)) — Cleaner LVGL text and
+  image `src` updates using a mapping directly.
+- **Boot pausing** ([#16973](https://github.com/esphome/esphome/pull/16973)) — A new `paused` config option
+  suppresses LVGL updates on boot. Especially useful for e-paper displays that should not render invalid state
+  before the API connects.
+- **Continued activity while display busy** ([#17374](https://github.com/esphome/esphome/pull/17374)) — When
+  `update_when_display_idle` is used (typical for e-paper), LVGL now still processes user input and runs timers
+  while the display refresh is in progress. The LVGL refresh interval, previously fixed at 16 ms, is now
+  configurable.
+
+## Networking and Connectivity
+
+**Gigabit Ethernet on ESP32-S31** ([#17277](https://github.com/esphome/esphome/pull/17277)) — Adds
+`type: GENERIC` and `type: YT8531` PHYs for the new RGMII-capable ESP32-S31 variant, which requires ESP-IDF 6.1.
+The YT8531 handler covers auto-negotiation re-enable and RGMII Tx/Rx delays. New `power_pin` and `phy_registers`
+options are available on the [ethernet](/components/ethernet/) component.
+
+**ESP-NOW v2 payloads** ([#17360](https://github.com/esphome/esphome/pull/17360)) — The
+[espnow](/components/espnow/) component gains a `max_payload_size` option that accepts frames up to 1470 bytes
+(previously capped at 250). The default stays at 250; going to 1470 costs roughly 44 KB of RAM versus about 8 KB
+at the default. Requires ESP-IDF ≥ 5.4 or Arduino ≥ 3.2.
+
+**LN882X MQTT support** ([#17297](https://github.com/esphome/esphome/pull/17297)) — LN882H boards can finally use
+the [mqtt](/components/mqtt/) component. LN882X was previously blocked despite sharing the LibreTiny backend.
+
+**Data whitening for SX126x** ([#17102](https://github.com/esphome/esphome/pull/17102)) — Configurable FSK data
+whitening (CCITT algorithm) via new `whitening_enable` and `whitening_initial` options.
+
+**Bluetooth proxy subscriber semantics** ([#17423](https://github.com/esphome/esphome/pull/17423)) — A later
+subscriber now takes over the single subscriber slot from a stale one instead of being silently rejected. This
+fixes the "connected but no advertisements" state that could occur after a Home Assistant restart within the
+~150 second keepalive window. Users don't need to change configs, but the observed behavior does change.
+
+## OpenThread on Zephyr/nRF52 and MTD Polling Control
+
+**Basic Zephyr/nRF52 support** ([#16854](https://github.com/esphome/esphome/pull/16854)) — First-cut
+[openthread](/components/openthread/) support on the nRF52 Zephyr platform, by
+[@Ardumine](https://github.com/Ardumine). Handles the "join network" flow.
+
+**Runtime poll period control** ([#11766](https://github.com/esphome/esphome/pull/11766)) — A new
+`set_poll_period` action lets a Minimal Thread Device (Sleepy End Device) temporarily switch to radio-always-on
+for OTA. `http_request.ota` becomes roughly `10x` faster on MTDs, and `esphome.ota` starts working at all.
+
+## RTC-Backed Preferences on ESP32
+
+[@bootc](https://github.com/bootc) taught the ESP32 preferences backend to honor the `in_flash=false` flag of
+`make_preference()` ([#17073](https://github.com/esphome/esphome/pull/17073)), adding RTC-memory-backed preferences
+in the same way ESP8266 already had them. The shared word-buffer plus checksum format is extracted into
+`preferences_rtc.h`.
+
+New configuration surface:
+
+- `safe_mode: storage: rtc` or `flash`
+- `wifi: fast_connect:` dict form with `enabled` and `storage` sub-options
+- `preferences: rtc_storage: true`
+
+The ESP32-C2 and ESP32-C61 have no RTC RAM and fall back gracefully. This is groundwork for a planned DHCP-lease
+cache and was validated across ESP32 PICO, S3, C3, and C6 hardware.
+
+## New Displays, Touch Controllers, and Peripherals
+
+The release adds broad support for new display and touch hardware, largely on M5Stack, Waveshare, and Seeed
+reTerminal families.
+
+**Touch controllers** — [cst328](/components/touchscreen/cst328/) by
+[@latonita](https://github.com/latonita) ([#8011](https://github.com/esphome/esphome/pull/8011)),
+[st7123](/components/touchscreen/st7123/) integrated display-touch driver for the M5Stack Tab5 by
+[@miniskipper](https://github.com/miniskipper) ([#12075](https://github.com/esphome/esphome/pull/12075)),
+[gsl3670](/components/touchscreen/gsl3670/) for Seeed reTerminal D1001 by
+[@clydebarrow](https://github.com/clydebarrow) ([#16285](https://github.com/esphome/esphome/pull/16285)), and
+[cst9220](/components/touchscreen/cst9220/) covering CST9220 and CST9217 by
+[@clydebarrow](https://github.com/clydebarrow) ([#16888](https://github.com/esphome/esphome/pull/16888)).
+
+**E-paper displays** — The [epaper_spi](/components/display/epaper_spi/) component picks up several new panels:
+Waveshare 7.5" V2 BWR 800×480 by [@twisterss](https://github.com/twisterss)
+([#15719](https://github.com/esphome/esphome/pull/15719)),
+Seeed reTerminal E1004 13.3" 6-color (T133A01, dual-CS SPI) by [@limengdu](https://github.com/limengdu)
+([#16706](https://github.com/esphome/esphome/pull/16706)),
+Waveshare 2.13" V4 BWR (SSD1683) by [@profplump](https://github.com/profplump)
+([#16828](https://github.com/esphome/esphome/pull/16828)),
+Soldered Inkplate 2 by [@arunderwood](https://github.com/arunderwood)
+([#16856](https://github.com/esphome/esphome/pull/16856)),
+and Seeed reTerminal-sticky by [@clydebarrow](https://github.com/clydebarrow)
+([#16950](https://github.com/esphome/esphome/pull/16950)). The [it8951](/components/display/it8951/) e-paper
+controller for M5Paper and Seeed reTerminal E1003/EE03 (up to 1872×1404, 16-level grayscale) arrives as a new
+component by [@Passific](https://github.com/Passific)
+([#15346](https://github.com/esphome/esphome/pull/15346)).
+
+**MIPI-SPI displays** — M5STACK ATOM3SR by [@clydebarrow](https://github.com/clydebarrow)
+([#17344](https://github.com/esphome/esphome/pull/17344)) and the Waveshare ESP32-S3-Touch-AMOLED-1.64 (SH8601)
+by [@crimike](https://github.com/crimike) ([#17386](https://github.com/esphome/esphome/pull/17386)).
+
+**Divoom Pixoo 64** — A new [pixoo](/components/display/pixoo/) component by
+[@jesserockz](https://github.com/jesserockz) ([#16974](https://github.com/esphome/esphome/pull/16974)) drives the
+64×64 RGB LED matrix over SPI and exposes a light platform for panel brightness alongside the image API.
+
+**Sensors and peripherals** — A [ufm01](/components/ufm01/) ScioSense UFM-01 ultrasonic flow meter by
+[@ljungqvist](https://github.com/ljungqvist) ([#16582](https://github.com/esphome/esphome/pull/16582)) reports
+accumulated flow, flow rate, water temperature, and four diagnostic binary sensors over UART. A
+[qmi8658](/components/sensor/qmi8658/) 6-axis IMU by [@clydebarrow](https://github.com/clydebarrow)
+([#16889](https://github.com/esphome/esphome/pull/16889)) adds accelerometer, gyroscope, and on-chip temperature
+sensing with a motion platform. The [waveshare_io_ch32v003](/components/waveshare_io_ch32v003/) I/O expander by
+[@latonita](https://github.com/latonita) ([#10071](https://github.com/esphome/esphome/pull/10071)) covers the
+CH32V003-based expander shipped on Waveshare's newer S3 boards, providing EXIO GPIO, PWM backlight control, an
+ADC battery voltage sensor, and RTC interrupt status.
+
+**Audio** — The [pcm5122](/components/audio_dac/pcm5122/) component grows analog gain (0/-6 dB), channel mixing
+(stereo/left/right/swapped), configurable volume range, a standby/powerdown switch, and an XSMT enable pin, along
+with a fix for a clock register page bug that had been silently corrupting clock setup
+([#17313](https://github.com/esphome/esphome/pull/17313)) by [@remcom](https://github.com/remcom). The
+[i2s_audio](/components/i2s_audio/) speaker now accepts wider streams (e.g. 24-bit into a 16-bit device) and
+narrows them in place using esp-audio-libs' `pcm_convert::copy_frames`
+([#16821](https://github.com/esphome/esphome/pull/16821)).
+
+## Image Component Becomes a Platform
+
+[@jesserockz](https://github.com/jesserockz) restructured `image:` into a platform component
+([#17416](https://github.com/esphome/esphome/pull/17416)). The new form uses `platform: file`,
+`platform: animation`, and `platform: online_image`, with `animation` becoming a proper sub-component of the
+new file platform. The legacy top-level `image:`, `animation:`, and `online_image:` keys continue to work through
+2027.1.0 with copy-paste migration warnings shown at validation time.
+
+## Zigbee: SDK 2.0.2 and Endpoint Merging
+
+[@luar123](https://github.com/luar123) bumped the [zigbee](/components/zigbee/) component on ESP32 to the new esp-zigbee-sdk
+2.0.2 for better ESP-IDF compatibility and picked up ESP32-H4, H21, and S31 variants
+([#16869](https://github.com/esphome/esphome/pull/16869)). The dedicated Zigbee storage partition has been retired
+in favor of the default NVS, and reporting configuration is simplified: the enabled/coordinator distinction is
+gone.
+
+A follow-up ([#17402](https://github.com/esphome/esphome/pull/17402)) merges endpoints of components on ESP32 and
+lets users manually combine them. This enables single-endpoint devices with multiple sensors, matching Zigbee
+standard expectations. Both PRs require existing Zigbee devices to be re-joined, re-interviewed, and reconfigured
+after upgrading.
+
+## YAML Merge Warnings
+
+[@clydebarrow](https://github.com/clydebarrow) added a warning when a YAML merge (`<<:`) silently drops a key
+([#17246](https://github.com/esphome/esphome/pull/17246)). Two top-level `api:` blocks combined via `<<:` would
+previously drop one without any indication; ESPHome now prints the source location, explains that a merge is
+happening, and suggests `packages:` for a deep merge instead. Toggle with `esphome: merge_warnings: false`.
+
+## Other Notable Features
+
+- **Legacy web dashboard removed** ([#17124](https://github.com/esphome/esphome/pull/17124)) — The built-in
+  Tornado-based dashboard is gone in favor of the external ESPHome Device Builder. The `dashboard` CLI command
+  remains but is hidden and prints a migration hint. Docker and Home Assistant add-on users are unaffected: they
+  already route to Device Builder.
+- **Python 3.11 support dropped** ([#17280](https://github.com/esphome/esphome/pull/17280)) — Minimum Python
+  version is now 3.12. Home Assistant add-on and Docker images are already on 3.12.
+- **BK7238 and Tuya T1 board support** ([#17288](https://github.com/esphome/esphome/pull/17288)) — The
+  [LibreTiny](/components/libretiny/) 1.13.0 update adds BK7238 boards to the `bk72xx` platform:
+  `generic-bk7238`, `generic-bk7238-tuya`, and the Tuya T1 module family (`t1-2s`, `t1-3s`, `t1-m`, `t1-u`),
+  which is becoming common in devices on the market.
+- **PSRAM for ESP32-S31 and H4** ([#17192](https://github.com/esphome/esphome/pull/17192)) — Both new variants
+  gain PSRAM wiring: S31 octal at 40/100/200/250 MHz and H4 quad at 32/64 MHz. Values come from the `esp_psram`
+  Kconfig on ESP-IDF release/v6.1, and octal-mode validation is now data-driven rather than hardcoded to S3.
+- **Host platform preferences directory** ([#11160](https://github.com/esphome/esphome/pull/11160)) — A new
+  `ESPHOME_PREFDIR` environment variable overrides where the [host](/components/host/) platform stores
+  preferences, useful when running ESPHome as a system service where `HOME` may not be set.
+- **Web server SSE optimization** ([#17400](https://github.com/esphome/esphome/pull/17400)) — Logger's known
+  message length is now threaded through the SSE send path, avoiding `strlen` and `strchr` rescans on every log
+  event. No wire changes.
+- **Web server HTTP digest authentication** ([#17541](https://github.com/esphome/esphome/pull/17541)) —
+  [`web_server`](/components/web_server/) `auth:` gains a new `type:` option to select `basic` or `digest`.
+  Digest keeps the password off the network (only hashes are sent) instead of the trivially reversible Base64
+  that Basic uses; both look identical in the browser. The scheme is fixed at build time so the unused code
+  path is compiled out. The default stays `basic` for now to avoid breaking non-browser REST clients and will
+  change to `digest` in 2027.1.0; set `type: basic` explicitly to keep the current behavior after that release.
+- **WiFi roaming scan suppression** ([#17012](https://github.com/esphome/esphome/pull/17012)) — A new internal API
+  lets components request that post-connect roaming scans be paused. First user is
+  [sendspin](/components/sendspin/), which now suppresses roaming scans while playing to prevent audible hiccups
+  ([#17133](https://github.com/esphome/esphome/pull/17133)).
+- **Runtime UART reconfiguration** ([#16990](https://github.com/esphome/esphome/pull/16990)) — Baud rate, parity,
+  and other UART settings can now be changed at runtime on open channels without reconnecting. Landed for both
+  the standard [uart](/components/uart/) and [usb_uart](/components/usb_uart/) components.
+- **Light brightness on turn-off preservation** ([#17103](https://github.com/esphome/esphome/pull/17103)) —
+  Setting brightness to 0 no longer silently clamps to 1.0. If a subsequent turn-on has no explicit brightness
+  and the current brightness is 0, brightness is set to 1.0 at turn-on time instead.
+- **coex/sdkconfig reconciler** ([#17008](https://github.com/esphome/esphome/pull/17008)) — A single reconciler
+  now handles WiFi/Ethernet/BLE coexistence sdkconfig flags on ESP32, killing conflicting values (for example
+  `ethernet` versus `esp32_ble_tracker` on `CONFIG_SW_COEXIST_ENABLE`). Behavior is preserved and internal
+  helpers gain semantic names such as `request_wifi`, `request_ethernet`, and `request_software_coexistence`.
+- **Visual editor visibility hints** ([#17449](https://github.com/esphome/esphome/pull/17449)) — Build-system and
+  framework internals are now marked with `cv.Visibility` so the Device Builder visual editor can hide them from
+  users who edit YAML from the browser.
+{/* FEATURE_HIGHLIGHTS_END */}
+
+## Thank You, Contributors
+
+{/* CONTRIBUTORS_START */}
+This release includes 217 pull requests from over 30 contributors. A huge thank you to everyone who made
+2026.7.0 possible:
+
+- [@swoboda1337](https://github.com/swoboda1337) - 45 PRs including making ESP-IDF the default esp32
+  toolchain, the tree-wide single-precision float math sweep, wiring up ESP32-S31/H4/H21 support, ccache and
+  shared toolchain caches, gigabit ethernet, ESP-NOW v2 payloads, and dropping Python 3.11
+- [@jesserockz](https://github.com/jesserockz) - 45 PRs including the generic component alias infrastructure,
+  the `final` class sweep across 21 batches, the [pixoo] Divoom Pixoo display component, the [rp2] platform
+  rename, the [image] platform restructure, and removing the legacy web dashboard
+- [@clydebarrow](https://github.com/clydebarrow) - 17 PRs including LVGL animations, dynamic rotation, boot
+  pausing and continued-activity-while-display-busy, the new [gsl3670] and [cst9220] touchscreens, the
+  [qmi8658] IMU motion platform, the [mipi_spi] M5STACK ATOM3SR, YAML merge-drop warnings, and preserving
+  light brightness on turn-off
+- [@exciton](https://github.com/exciton) - 9 PRs including the major [modbus] parser rewrite and
+  client/server hub split, heap-free send path, register-range fixes with partial reads, and the finalized
+  API surface
+- [@tomaszduda23](https://github.com/tomaszduda23) - 8 PRs building out native nRF52 builds: native SDK
+  support, upload flow, config-input rebuild triggers, non-nRF52840 board support, libc selection, and OTA
+  error reporting
+- [@kahrendt](https://github.com/kahrendt) - 6 PRs including WiFi roaming-scan suppression, the [sendspin]
+  playback integration, [i2s_audio] stream narrowing, and microMP3 bumps
+- [@Ardumine](https://github.com/Ardumine) - 5 PRs extending nRF52/Zephyr networking: BSD socket support,
+  basic OpenThread, mDNS, [api] support, and enlarged Zephyr net buffers
+- [@kbx81](https://github.com/kbx81) - 4 PRs including ESP32 NVS encryption, OTA downgrade protection, the
+  new [provisioning] component, and the ESP32 network/coexistence sdkconfig reconciler
+- [@p1ngb4ck](https://github.com/p1ngb4ck) - 4 PRs including [usb_uart] per-device baud caps, FTDI RX
+  stability fixes, and a vector `pop_back` helper
+- [@luar123](https://github.com/luar123) - 3 PRs including the [zigbee] SDK 2.0.2 bump and endpoint merging
+  on esp32
+- [@frenck](https://github.com/frenck) - 3 PRs deferring `aioesphomeapi` and `requests` imports to speed up
+  config validation, and refining ESP32-S3 PSRAM pin warnings
+- [@latonita](https://github.com/latonita) - 2 PRs including the new [cst328] touchscreen and the
+  [waveshare_io_ch32v003] I/O expander
+- [@rwrozelle](https://github.com/rwrozelle) - 2 PRs including the [openthread] `set_poll_period` action for
+  MTDs and a [socket] wake-request gate fix
+- [@anunayk](https://github.com/anunayk) - 2 PRs including Zephyr GPIO interrupts and [ble_nus] atomic log
+  framing
+- [@remcom](https://github.com/remcom) - 2 PRs including the [pcm5122] analog gain, channel mixing, and
+  standby/powerdown work, plus [audio_file] MP3 detection fixes
+- [@miniskipper](https://github.com/miniskipper) - the new [st7123] touch controller component for the M5Stack
+  Tab5
+- [@Passific](https://github.com/Passific) - the new [it8951] e-paper controller component
+- [@ljungqvist](https://github.com/ljungqvist) - the new [ufm01] ultrasonic flow meter component
+- [@bootc](https://github.com/bootc) - RTC-backed preferences on ESP32, honoring the `in_flash` flag
+
+Also thank you to [@bdraco](https://github.com/bdraco), [@haku](https://github.com/haku),
+[@Eelviny](https://github.com/Eelviny), [@twisterss](https://github.com/twisterss),
+[@ddrown](https://github.com/ddrown), [@limengdu](https://github.com/limengdu),
+[@profplump](https://github.com/profplump), [@arunderwood](https://github.com/arunderwood),
+[@kyvaith](https://github.com/kyvaith), [@jspiros](https://github.com/jspiros),
+[@guillempages](https://github.com/guillempages), [@zeroflow](https://github.com/zeroflow),
+[@mikelawrence](https://github.com/mikelawrence), [@jclehner](https://github.com/jclehner),
+[@berikv](https://github.com/berikv), [@Bl00d-B0b](https://github.com/Bl00d-B0b),
+and [@crimike](https://github.com/crimike) for their contributions, and to everyone who reported issues,
+tested pre-releases, and helped in the community.
+{/* CONTRIBUTORS_END */}
+
+## Breaking Changes
+
+{/* BREAKING_CHANGES_USERS_START */}
+### Platform Changes
+
+- **ESP32**: ESP-IDF is now the default toolchain when no explicit `toolchain:` is set. Add
+  `toolchain: platformio` to your `esp32:` block to keep building with PlatformIO
+  [#16910](https://github.com/esphome/esphome/pull/16910)
+- **Python**: Minimum supported Python bumped to 3.12. Home Assistant add-on and Docker are unaffected; only
+  direct `pip` installs on 3.11 need to upgrade [#17280](https://github.com/esphome/esphome/pull/17280)
+- **nRF52**: The native nRF Connect SDK toolchain is now the default when no explicit `toolchain:` is set. Add
+  `toolchain: platformio` to your `nrf52:` block to keep building with PlatformIO
+  [#17319](https://github.com/esphome/esphome/pull/17319)
+- **nRF52**: The Zephyr DCDC settings are no longer forced by ESPHome, which slightly changes generated code
+  depending on board settings and allows building for boards without DCDC
+  [#17373](https://github.com/esphome/esphome/pull/17373)
+
+### Dashboard
+
+- **Legacy Dashboard**: The built-in Tornado web dashboard has been removed. Users installing via `pip` should
+  install and run [esphome-device-builder](https://github.com/esphome/device-builder) instead. Docker and Home
+  Assistant add-on users are unaffected [#17124](https://github.com/esphome/esphome/pull/17124)
+
+### Component Changes
+
+- **Bluetooth Proxy**: The newest advertisement subscriber now takes over the single subscriber slot from a stale
+  one instead of being rejected. Fixes "connected but no advertisements" after a Home Assistant restart within
+  the ~150 second keepalive window [#17423](https://github.com/esphome/esphome/pull/17423)
+- **Hub75**: The deprecated `scan_wiring` names `FOUR_SCAN_16PX_HIGH`, `FOUR_SCAN_32PX_HIGH`, and
+  `FOUR_SCAN_64PX_HIGH` have been removed. Use `SCAN_1_4_16PX_HIGH`, `SCAN_1_8_32PX_HIGH`, and
+  `SCAN_1_8_64PX_HIGH` instead [#17118](https://github.com/esphome/esphome/pull/17118)
+- **Light**: Setting brightness to `0` no longer silently clamps to `1.0`. If a subsequent turn-on has no
+  explicit brightness and the current brightness is `0`, brightness is restored to `1.0` at turn-on time instead
+  [#17103](https://github.com/esphome/esphome/pull/17103)
+- **LibreTiny (LN882H)**: `generic-ln882hki` board removed; use `generic-ln882h` or `generic-ln882h-tuya`
+  depending on factory firmware. Default LN882H log UART is now `UART1`. LN882H partition layouts changed
+  (on-device OTA migration handled by LibreTiny). On the `wb02a` board, pin aliases shifted (`D1` → GPIO6,
+  `D7` → GPIO5, `D8` → GPIO9, `D9` → GPIO24, new `D10` → GPIO25) and default I2C pin order changed
+  [#17288](https://github.com/esphome/esphome/pull/17288)
+- **Modbus**: The `disable_crc` option has been removed, along with `send_wait_time` and `turnaround_time` from
+  server mode. Client-mode defaults were raised: `send_wait_time` 250ms → 2000ms, `turnaround_time` 100ms →
+  600ms [#11969](https://github.com/esphome/esphome/pull/11969)
+- **Packages**: The single-package `!include` form is removed. Wrap the include in a list:
+  `packages: [!include mypackage.yaml]` [#17119](https://github.com/esphome/esphome/pull/17119)
+- **Web Server**: The deprecated object ID URL matching fallback has been removed. URLs are matched by entity
+  name only [#17113](https://github.com/esphome/esphome/pull/17113)
+- **Web Server**: Version 1 is deprecated. A configuration warning is emitted when `version: 1` is set;
+  removal is targeted for 2027.1.0. Migrate to v2 (the default) or v3
+  [#17109](https://github.com/esphome/esphome/pull/17109)
+- **Web Server**: Cross-origin browser requests carrying an `Origin` header are now rejected unless the origin
+  matches the request `Host` (same-origin) or is listed in the new `allowed_origins:` option. Requests with
+  no `Origin` header (curl, native API, other non-browser clients) are always allowed, so this
+  is defense-in-depth against the browser confused-deputy/CSRF case, not an authentication boundary. Private
+  Network Access is now off by default (previously on) and, when enabled, reuses `allowed_origins:` to
+  authorize preflights; enabling PNA without any allowed origins is rejected at config validation
+  [#17530](https://github.com/esphome/esphome/pull/17530)
+- **Zigbee**: The Zigbee SDK bump to 2.0.2 changes the storage layout, so ESP32 devices must be re-joined and
+  reconfigured after upgrading. The `reporting:` config values `enabled` and `coordinator` are no longer valid
+  [#16869](https://github.com/esphome/esphome/pull/16869)
+- **Zigbee**: on ESP32 endpoint merging now combines endpoints of components by default and lets users manually
+  combine them. Existing configurations require re-joining, re-interviewing, and re-configuring
+  [#17402](https://github.com/esphome/esphome/pull/17402)
+- **Display Components**: The MIPI family of display drivers (`mipi_spi`, `mipi_dsi` and `mipi_rgb`) now enforce
+  configuration of mandatory components such as PSRAM and I/O expanders where required. This applies only to those
+  display models that identify integrated boards with known hardware assignments.
+  [#17405](https://github.com/esphome/esphome/pull/17405)
+{/* BREAKING_CHANGES_USERS_END */}
+
+### Undocumented API Changes
+
+{/* UNDOCUMENTED_API_CHANGES_START */}
+Users with lambdas that call internal string-formatting helpers should note the following removals. Both
+methods were deprecated 6 months ago in favor of buffer-based variants that avoid `std::string` allocation.
+
+- **Core**: `value_accuracy_to_string()` has been removed. Use `value_accuracy_to_buf()`, which writes into a
+  caller-provided buffer of `VALUE_ACCURACY_MAX_LEN` bytes.
+  [#17116](https://github.com/esphome/esphome/pull/17116)
+
+  Before:
+
+  ```cpp
+  std::string s = value_accuracy_to_string(value, accuracy);
+  ```
+
+  After:
+
+  ```cpp
+  char buf[VALUE_ACCURACY_MAX_LEN];
+  value_accuracy_to_buf(buf, value, accuracy);
+  ```
+
+- **Remote Base (Midea)**: `MideaData::to_string()` has been removed. Use `to_str(buffer)` instead, which
+  formats into a caller-provided buffer. [#17117](https://github.com/esphome/esphome/pull/17117)
+
+  Before:
+
+  ```cpp
+  std::string s = data.to_string();
+  ```
+
+  After:
+
+  ```cpp
+  char buf[32];
+  data.to_str(buf);
+  ```
+
+- **Dashboard Import (ESP8266)**: `package_import_url` is now stored as a PROGMEM flash literal
+  (`ProgmemStr`) rather than a plain `const char *` in DRAM. Existing consumers already read it as a flash
+  pointer (mDNS via `MDNS_STR_ARG`, MQTT via ArduinoJson's `__FlashStringHelper` overload), so this is a
+  transparent change on ESP8266 and a no-op on other platforms. Lambdas that read `package_import_url` on
+  ESP8266 should not dereference it as a plain `const char *`.
+  [#17127](https://github.com/esphome/esphome/pull/17127)
+{/* UNDOCUMENTED_API_CHANGES_END */}
+
+### Breaking Changes for Developers
+
+{/* BREAKING_CHANGES_DEVELOPERS_START */}
+- **Modbus API split**: `Modbus` is split into `ModbusClientHub` and `ModbusServerHub`;
+  `ModbusDevice::set_parent()` now takes `ModbusClientHub *`; `Modbus::register_device()` removed
+  ([#11969](https://github.com/esphome/esphome/pull/11969),
+  [#11987](https://github.com/esphome/esphome/pull/11987),
+  [#12376](https://github.com/esphome/esphome/pull/12376))
+- **Modbus API naming**: Core public API surface renamed and settled before release; further client-mode API
+  cleanup is planned for the next release
+  ([#17378](https://github.com/esphome/esphome/pull/17378),
+  [#17434](https://github.com/esphome/esphome/pull/17434))
+- **Modbus function code comparisons**: Ordering operators (`<`, `<=`, `>`, `>=`) between `ModbusFunctionCode`
+  and `uint8_t` removed. Cast explicitly or use `helpers::is_function_code_*()`
+  [#11969](https://github.com/esphome/esphome/pull/11969)
+- **Select `state` member removed**: Use `current_option()` or `active_index()` instead
+  [#17027](https://github.com/esphome/esphome/pull/17027)
+- **Scheduler `std::string` overloads removed**: `App.scheduler.set_timeout(std::string, ...)` and related
+  `std::string`-name overloads are gone; pass `const char *` names
+  [#17111](https://github.com/esphome/esphome/pull/17111)
+- **`get_object_id()` and `get_compilation_time()` removed**: Previously deprecated core helpers deleted
+  [#17112](https://github.com/esphome/esphome/pull/17112)
+- **`GPIOPin::dump_summary()` returning `std::string` removed**: Overrides must return via the buffer form
+  [#17115](https://github.com/esphome/esphome/pull/17115)
+- **UART `load_settings(bool)` is now pure virtual**: All `UARTComponent` subclasses must implement runtime
+  settings updates [#16990](https://github.com/esphome/esphome/pull/16990)
+- **API pre-1.14 object_id backward-compat removed**: Old client fallback path deleted
+  [#17108](https://github.com/esphome/esphome/pull/17108)
+- **Preferences RTC helpers moved**: Word-buffer + checksum format extracted to `preferences_rtc.h` and shared
+  between ESP32/ESP8266 [#17073](https://github.com/esphome/esphome/pull/17073)
+- **Network `use_address` logging changes**: Runtime MAC-suffix expansion moved into the network component
+  [#17432](https://github.com/esphome/esphome/pull/17432)
+- **Configurable classes marked `final`**: Roughly 20 batches of components add `final` to their
+  runtime-instantiated concrete classes to allow devirtualization
+  ([#16952](https://github.com/esphome/esphome/pull/16952)-[#16972](https://github.com/esphome/esphome/pull/16972),
+  [#17129](https://github.com/esphome/esphome/pull/17129),
+  [#17130](https://github.com/esphome/esphome/pull/17130),
+  [#17147](https://github.com/esphome/esphome/pull/17147))
+- **`rp2040` component renamed to `rp2`**: Python imports `esphome.components.rp2040` and the `rp2040:` YAML key
+  continue to work as deprecated aliases through 2027.7.0 via the new alias infrastructure
+  ([#17145](https://github.com/esphome/esphome/pull/17145),
+  [#16826](https://github.com/esphome/esphome/pull/16826))
+- **`mipi_` display driver model config changes**: Use of `swap_xy=cv.UNDEFINED` in a model definition is deprecated.
+  [#17405](https://github.com/esphome/esphome/pull/17405)
+
+For detailed migration guides and API documentation, see the
+[ESPHome Developers Documentation](https://developers.esphome.io/).
+{/* BREAKING_CHANGES_DEVELOPERS_END */}
+
+{/* markdownlint-disable MD013 */}
+
+## Release 2026.7.1 - July 21
+
+<details>
+<summary></summary>
+
+- [emc2101] Fix negative external temperatures reported as large positives [esphome#17494](https://github.com/esphome/esphome/pull/17494) by [@swoboda1337](https://github.com/swoboda1337)
+- [haier] Fix outdoor defrost temperature reporting the coil temperature [esphome#17492](https://github.com/esphome/esphome/pull/17492) by [@swoboda1337](https://github.com/swoboda1337)
+- [zephyr] implement ISRInternalGPIOPin::digital_write [esphome#17601](https://github.com/esphome/esphome/pull/17601) by [@quantum5](https://github.com/quantum5)
+- [as3935_i2c] Use repeated start when reading registers [esphome#17584](https://github.com/esphome/esphome/pull/17584) by [@swoboda1337](https://github.com/swoboda1337)
+- [micro_wake_word] Include the local model file in bundles [esphome#17604](https://github.com/esphome/esphome/pull/17604) by [@bdraco](https://github.com/bdraco)
+- [core] Improve framework mirror selection, download errors, and version parsing [esphome#17615](https://github.com/esphome/esphome/pull/17615) by [@swoboda1337](https://github.com/swoboda1337)
+- [http_request] Fix use-after-return of header collection state in IDF backend [esphome#17627](https://github.com/esphome/esphome/pull/17627) by [@swoboda1337](https://github.com/swoboda1337)
+- [web_server_idf] Use core format_hex_to helper for digest auth (fixes Arduino build) [esphome#17608](https://github.com/esphome/esphome/pull/17608) by [@swoboda1337](https://github.com/swoboda1337)
+- [nrf52] Set ZEPHYR_SDK_INSTALL_DIR for Zephyr SDK discovery [esphome#17633](https://github.com/esphome/esphome/pull/17633) by [@jesserockz](https://github.com/jesserockz)
+- Bump bundled esphome-device-builder to 1.6.2 [esphome#17640](https://github.com/esphome/esphome/pull/17640) by [@esphome[bot]](https://github.com/apps/esphome)
+- Bump aioesphomeapi from 45.6.0 to 45.6.1 [esphome#17653](https://github.com/esphome/esphome/pull/17653) by [@dependabot[bot]](https://github.com/apps/dependabot)
+- Bump aioesphomeapi from 45.6.1 to 45.6.2 [esphome#17654](https://github.com/esphome/esphome/pull/17654) by [@dependabot[bot]](https://github.com/apps/dependabot)
+- Bump bundled esphome-device-builder to 1.6.3 [esphome#17651](https://github.com/esphome/esphome/pull/17651) by [@esphome[bot]](https://github.com/apps/esphome)
+- [espidf] Suggest installing missing system libraries when the tools install fails [esphome#17619](https://github.com/esphome/esphome/pull/17619) by [@swoboda1337](https://github.com/swoboda1337)
+- [core] Fix srcFilter exclusions being silently ignored on Windows [esphome#17648](https://github.com/esphome/esphome/pull/17648) by [@bharvey88](https://github.com/bharvey88)
+- Pin cryptography to 48.0.1 on Intel macOS [esphome#17658](https://github.com/esphome/esphome/pull/17658) by [@bdraco](https://github.com/bdraco)
+- Ship component requirements.txt files in the sdist and wheel [esphome#17660](https://github.com/esphome/esphome/pull/17660) by [@bdraco](https://github.com/bdraco)
+- [logs] Cap the logs reconnect backoff for deep-sleep devices [esphome#17656](https://github.com/esphome/esphome/pull/17656) by [@bdraco](https://github.com/bdraco)
+- [nrf52] Install PlatformIO toolchain Python packages into a dedicated venv [esphome#17635](https://github.com/esphome/esphome/pull/17635) by [@jesserockz](https://github.com/jesserockz)
+- Bump bundled esphome-device-builder to 1.6.4 [esphome#17662](https://github.com/esphome/esphome/pull/17662) by [@esphome[bot]](https://github.com/apps/esphome)
+- [esp32] Bump recommended ESP-IDF to 5.5.5 and Arduino to 3.3.10 [esphome#17669](https://github.com/esphome/esphome/pull/17669) by [@swoboda1337](https://github.com/swoboda1337)
+- Bump bundled esphome-device-builder to 1.6.5 [esphome#17675](https://github.com/esphome/esphome/pull/17675) by [@esphome[bot]](https://github.com/apps/esphome)
+- Bump bundled esphome-device-builder to 1.6.6 [esphome#17681](https://github.com/esphome/esphome/pull/17681) by [@esphome[bot]](https://github.com/apps/esphome)
+- Bump bundled esphome-device-builder to 1.6.7 [esphome#17696](https://github.com/esphome/esphome/pull/17696) by [@esphome[bot]](https://github.com/apps/esphome)
+- Split multi-token build.flags entries when generating ESP-IDF component CMakeLists [esphome#17649](https://github.com/esphome/esphome/pull/17649) by [@bharvey88](https://github.com/bharvey88)
+- [ssd1306] Fix offset_x being ignored on SH1106/SH1107 displays [esphome#17700](https://github.com/esphome/esphome/pull/17700) by [@jesserockz](https://github.com/jesserockz)
+- [micro_wake_word] Download models in parallel [esphome#17701](https://github.com/esphome/esphome/pull/17701) by [@bdraco](https://github.com/bdraco)
+- [platformio] Accept git URLs passed as the library name [esphome#17697](https://github.com/esphome/esphome/pull/17697) by [@bdraco](https://github.com/bdraco)
+- [git] Detect interrupted clones and re-clone automatically [esphome#17690](https://github.com/esphome/esphome/pull/17690) by [@bdraco](https://github.com/bdraco)
+- [espidf] Make openocd-esp32 optional so its libusb check cannot break installs [esphome#17686](https://github.com/esphome/esphome/pull/17686) by [@bdraco](https://github.com/bdraco)
+- [light] Fix pulse and other effects [esphome#17645](https://github.com/esphome/esphome/pull/17645) by [@clydebarrow](https://github.com/clydebarrow)
+- Bump bundled esphome-device-builder to 1.6.8 [esphome#17708](https://github.com/esphome/esphome/pull/17708) by [@esphome[bot]](https://github.com/apps/esphome)
+- [core] Auto-clean the PlatformIO build environment when the Python version changes [esphome#17671](https://github.com/esphome/esphome/pull/17671) by [@bdraco](https://github.com/bdraco)
+- [platformio] Re-download library when cached copy is missing its manifest [esphome#17691](https://github.com/esphome/esphome/pull/17691) by [@bdraco](https://github.com/bdraco)
+- [http_request] Fix usage of http response body [esphome#17713](https://github.com/esphome/esphome/pull/17713) by [@kamaradclimber](https://github.com/kamaradclimber)
+- [platformio] Include cache path in invalid library error [esphome#17692](https://github.com/esphome/esphome/pull/17692) by [@bdraco](https://github.com/bdraco)
+- [espidf] Resume interrupted toolchain downloads instead of restarting [esphome#17706](https://github.com/esphome/esphome/pull/17706) by [@bdraco](https://github.com/bdraco)
+- [wireguard] Mark private keys sensitive, stop redacting public keys [esphome#17736](https://github.com/esphome/esphome/pull/17736) by [@bdraco](https://github.com/bdraco)
+- [esp8266] Fail fast when Rosetta 2 is missing on Apple Silicon Macs [esphome#17737](https://github.com/esphome/esphome/pull/17737) by [@bdraco](https://github.com/bdraco)
+
+</details>
+
+## Release 2026.7.2 - July 23
+
+<details>
+<summary></summary>
+
+- Bump aioesphomeapi from 45.6.2 to 45.7.0 [esphome#17768](https://github.com/esphome/esphome/pull/17768) by [@dependabot[bot]](https://github.com/apps/dependabot)
+- [sen5x] Add model option to override autodetection [esphome#17764](https://github.com/esphome/esphome/pull/17764) by [@bharvey88](https://github.com/bharvey88)
+- [sendspin] Bump sendspin-cpp to v0.7.0 [esphome#17781](https://github.com/esphome/esphome/pull/17781) by [@kahrendt](https://github.com/kahrendt)
+- [mipi_spi] fix partial update bug [esphome#17747](https://github.com/esphome/esphome/pull/17747) by [@Flautz](https://github.com/Flautz)
+- [bundle] Remap absolute file paths when compiling an extracted bundle [esphome#17765](https://github.com/esphome/esphome/pull/17765) by [@bdraco](https://github.com/bdraco)
+- Bump bundled esphome-device-builder to 1.6.9 [esphome#17793](https://github.com/esphome/esphome/pull/17793) by [@esphome[bot]](https://github.com/apps/esphome)
+
+</details>
+
+## Release 2026.7.3 - July 28
+
+<details>
+<summary></summary>
+
+- Bump bundled esphome-device-builder to 1.6.10 [esphome#17801](https://github.com/esphome/esphome/pull/17801) by [@esphome[bot]](https://github.com/apps/esphome)
+- [esp32_ble] Forward ESP_GAP_BLE_SCAN_RSP_DATA_RAW_SET_COMPLETE_EVT to GAP handlers [esphome#17833](https://github.com/esphome/esphome/pull/17833) by [@mvoss96](https://github.com/mvoss96)
+- [espidf] Honor compile_process_limit in native ESP-IDF builds [esphome#17857](https://github.com/esphome/esphome/pull/17857) by [@swoboda1337](https://github.com/swoboda1337)
+- [espidf] Include .cc, .cxx and .c++ sources in the app source glob [esphome#17754](https://github.com/esphome/esphome/pull/17754) by [@ruimarinho](https://github.com/ruimarinho)
+- Bump bundled esphome-device-builder to 1.7.0 [esphome#17871](https://github.com/esphome/esphome/pull/17871) by [@esphome[bot]](https://github.com/apps/esphome)
+- [wifi] Lock scan results shared with the captive portal web task [esphome#17850](https://github.com/esphome/esphome/pull/17850) by [@bdraco](https://github.com/bdraco)
+- [git] Fix submodule update failure when cloning libraries on the esp-idf toolchain [esphome#17862](https://github.com/esphome/esphome/pull/17862) by [@bdraco](https://github.com/bdraco)
+- [captive_portal] Escape SSID when building config JSON [esphome#17872](https://github.com/esphome/esphome/pull/17872) by [@jesserockz](https://github.com/jesserockz)
+- [ethernet] Set SPI CS hold time for ENC28J60 [esphome#17885](https://github.com/esphome/esphome/pull/17885) by [@swoboda1337](https://github.com/swoboda1337) (breaking-change)
+- [light] Ensure binary light is off with brightness 0 [esphome#17893](https://github.com/esphome/esphome/pull/17893) by [@clydebarrow](https://github.com/clydebarrow)
+- Update webserver local assets to 20260728-053845 [esphome#17899](https://github.com/esphome/esphome/pull/17899) by [@esphome[bot]](https://github.com/apps/esphome)
+
+</details>
+
+## Release 2026.7.4 - August 5
+
+<details>
+<summary></summary>
+
+- Bump filelock from 3.29.0 to 3.32.0 [esphome#17759](https://github.com/esphome/esphome/pull/17759) by [@dependabot[bot]](https://github.com/apps/dependabot)
+- Bump platformdirs from 4.10.0 to 4.11.0 [esphome#17756](https://github.com/esphome/esphome/pull/17756) by [@dependabot[bot]](https://github.com/apps/dependabot)
+- Bump bundled esphome-device-builder to 1.8.0 [esphome#17953](https://github.com/esphome/esphome/pull/17953) by [@esphome[bot]](https://github.com/apps/esphome)
+- Bump bundled esphome-device-builder to 1.8.1 [esphome#17964](https://github.com/esphome/esphome/pull/17964) by [@esphome[bot]](https://github.com/apps/esphome)
+- [epaper_spi] Default init sequence to empty not None [esphome#17966](https://github.com/esphome/esphome/pull/17966) by [@clydebarrow](https://github.com/clydebarrow)
+- [git] Fix device adoption failing on first attempt: lock the clone cache against concurrent resolutions [esphome#17923](https://github.com/esphome/esphome/pull/17923) by [@bdraco](https://github.com/bdraco)
+- [espidf] Use forward slashes in generated component CMakeLists [esphome#17965](https://github.com/esphome/esphome/pull/17965) by [@swoboda1337](https://github.com/swoboda1337)
+- [esp32] Restrict toolchain validation to supported values [esphome#17972](https://github.com/esphome/esphome/pull/17972) by [@jesserockz](https://github.com/jesserockz)
+- [api] Fix double free when overflow buffer drain is re-entered [esphome#17969](https://github.com/esphome/esphome/pull/17969) by [@bdraco](https://github.com/bdraco)
+- Bump bundled esphome-device-builder to 1.8.2 [esphome#17995](https://github.com/esphome/esphome/pull/17995) by [@esphome[bot]](https://github.com/apps/esphome)
+- Bump bundled esphome-device-builder to 1.9.0 [esphome#18017](https://github.com/esphome/esphome/pull/18017) by [@esphome[bot]](https://github.com/apps/esphome)
+- Bump bundled esphome-device-builder to 1.9.1 [esphome#18025](https://github.com/esphome/esphome/pull/18025) by [@esphome[bot]](https://github.com/apps/esphome)
+- Bump bundled esphome-device-builder to 1.9.2 [esphome#18051](https://github.com/esphome/esphome/pull/18051) by [@esphome[bot]](https://github.com/apps/esphome)
+- [esp32] explicitly disable BLE 5.0 [esphome#18047](https://github.com/esphome/esphome/pull/18047) by [@ssieb](https://github.com/ssieb)
+
+</details>
+
+{/* markdownlint-enable MD013 */}
+
+## Full List of Changes
+
+For the complete list of every merged pull request in this release, see the
+[full 2026.7.0 changelog](/changelog/2026.7.0/).
