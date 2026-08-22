@@ -567,7 +567,8 @@ marks it offline. `tx.idle_command` requires a `command_format:` (see below).
   applicable**), or a signature match with no trigger pending at all (**orphan** — e.g. someone
   pressed the physical panel directly). Exposed as counters via the
   [sensor platform](/components/sensor/rs485_frame/)'s `response_*` decodes, and as
-  `on_confirmed`/`on_failed` automation triggers for arbitrary user actions.
+  `on_confirmed`/`on_failed` automation triggers for arbitrary user actions. Pair with
+  [`frame_trace:`](#frame-trace) to log the raw bytes around a failed confirmation.
 
   ```yaml
   response_monitor:
@@ -743,7 +744,8 @@ marks it offline. `tx.idle_command` requires a `command_format:` (see below).
   the escape scheme, and any CRC scheme that matches consistently (see
   [Auto-discover framing and CRC](#step-2-auto-discover-framing-and-crc-optional)). With
   `discovery:` set, `framing.escape` and `crc:` are not required (they are what it discovers),
-  and it cannot be combined with `sniffer_stats:`.
+  and it cannot be combined with `sniffer_stats:`, `response_fields:`/`response_monitor:`, or
+  [`frame_trace:`](#frame-trace).
 
   - **interval** (*Optional*, [Time](/guides/configuration-types#time)): How often the
     discovery report is logged. Defaults to `30s`.
@@ -1113,6 +1115,84 @@ text_sensor:
 A rising `crc_failures` with zero `frames_received` usually means the wrong baud
 rate or UART settings. A small steady `crc_failures` alongside healthy
 `frames_received` suggests `crc.type` or `crc.rx_accept` needs adjustment.
+
+## Frame trace
+
+`response_monitor:` (above) tells you a trigger's confirmation `FAIL`ed or `TIMEOUT`ed, but not
+what was actually on the wire around that event — and `sniffer_stats:` only ever sees frames
+that already passed validation. Add a `frame_trace:` block to the hub for a fixed-size ring
+buffer of recent RX and TX frames — including any frames that failed CRC or framing — and dump
+it to the log on demand with the `rs485_frame.dump_frame_trace` action. The most common use is
+wiring the dump into a `response_monitor:` entry's `on_failed:`, so a failed confirmation
+immediately logs the raw bytes around it:
+
+```yaml
+rs485_frame:
+  id: pool
+  uart_id: pool_uart
+  # ...
+  frame_trace:
+    size: 32              # ring buffer capacity, in frames (RX and TX share one buffer)
+    capture_bytes: 24     # bytes captured per frame, truncated beyond this
+    include_invalid: true # also capture frames that fail CRC/framing (tagged invalid)
+  response_monitor:
+    - name: spa_on_confirm
+      trigger:
+        button_id: spa_on_button
+      window: 500ms
+      signature:
+        - field: spa_state
+          type: changed
+          bit: 1
+      on_failed:
+        - rs485_frame.dump_frame_trace: pool
+```
+
+Captured bytes are the raw on-wire frame exactly as sent or received — `DLE`+`STX` through
+`DLE`+`ETX`, still escape-stuffed — not a de-stuffed reconstruction. For a frame that fails
+because its escape sequence is broken, de-stuffing is not well-defined; the raw wire bytes are
+always complete regardless of why validation failed, and match this feature's purpose most
+literally: what was actually on the wire.
+
+Example output:
+
+```
+[I][rs485_frame.trace]: Frame trace (5 of 32 frames, oldest to newest):
+[I][rs485_frame.trace]:   [10230ms] RX valid   len=9: 100200010203010003
+[I][rs485_frame.trace]:   [10231ms] TX valid   len=8: 1002000102030003
+[I][rs485_frame.trace]:   [10245ms] RX INVALID len=7: 10020001020003
+[I][rs485_frame.trace]:   [10260ms] RX valid   len=9: 100200010203010003
+[I][rs485_frame.trace]:   [10310ms] TX valid   len=8: 1002000102030003
+```
+
+### Frame-trace configuration variables
+
+- **size** (*Optional*, integer, 1–128): Ring buffer capacity, in frames. RX and TX frames share
+  one buffer. Defaults to `32`.
+- **capture_bytes** (*Optional*, integer, 1–255): Bytes captured per frame; longer frames are
+  truncated at this length (the logged `len=` is always the actual on-wire length, not the
+  truncated capture length). Defaults to `24`.
+- **include_invalid** (*Optional*, boolean): Also capture frames that fail CRC or framing
+  validation, tagged `INVALID` in the dump. Defaults to `true`.
+
+The whole feature is compiled out of the firmware unless `frame_trace:` appears in the YAML —
+production builds pay no flash or RAM cost. It cannot be combined with `discovery:`, which
+bypasses the framing/validation and TX path `frame_trace:` records from.
+
+### `rs485_frame.dump_frame_trace` Action
+
+Logs the hub's frame-trace ring buffer to the console. Usable from anywhere with the hub's ID —
+`response_monitor:`'s `on_failed:`/`on_confirmed:`, a script, `on_boot:` — not just the
+`response_monitor:` use case shown above.
+
+```yaml
+script:
+  - id: dump_pool_trace
+    then:
+      - rs485_frame.dump_frame_trace: pool
+```
+
+Rejected at config validation time if the referenced hub has no `frame_trace:` block.
 
 ## Why buttons, not switches
 
