@@ -1,0 +1,115 @@
+---
+title: "Running ESPHome in Docker"
+description: "Run ESPHome and the Device Builder from the official container image: tags, Compose, and USB passthrough."
+---
+
+ESPHome publishes an official container image supporting AMD64, ARM and ARM64 (AARCH64). Running it avoids installing
+Python or any build tooling on your host.
+
+```bash
+docker pull ghcr.io/esphome/esphome
+```
+
+Any [command-line](/guides/cli/) subcommand works by appending it to the `docker run` invocation, with your
+configuration directory mounted at `/config`:
+
+```bash
+docker run --rm -v "${PWD}":/config -it ghcr.io/esphome/esphome run livingroom.yaml
+```
+
+## Running the Device Builder
+
+Started with no subcommand, the image runs the [ESPHome Device Builder](/install/) dashboard:
+
+```bash
+docker run --rm --net=host -v "${PWD}":/config -it ghcr.io/esphome/esphome
+```
+
+The dashboard is then available at `localhost:6052` - see
+[Getting Started with ESPHome](/install/getting-started/) for a tour of it.
+
+`--net=host` lets the dashboard use mDNS, which is how it discovers devices, resolves their `.local` names, and tracks
+whether they are online. The [host networking driver](https://docs.docker.com/engine/network/drivers/host/) only works
+on Linux hosts. On Docker Desktop version 4.34 and later it is available, but must first be enabled under
+**Settings** → **Resources** → **Network**.
+
+Without host networking, publish the port instead:
+
+```bash
+docker run --rm -p 6052:6052 -v "${PWD}":/config -it ghcr.io/esphome/esphome
+```
+
+The Device Builder still runs this way, and still checks devices with a periodic ICMP ping sweep. Without multicast,
+though, `.local` names cannot be resolved, so the sweep only has an address to ping for devices that have a fixed one -
+set with `use_address` or [`manual_ip`](/components/wifi/#wifi-manual_ip) in the device's own configuration. Other
+devices will show no status.
+
+The image's default command runs `esphome-device-builder` against `/config`. To pass it flags - `--log-level debug`,
+for example - append them to the `docker run` invocation.
+
+## Flashing Over USB
+
+On Linux, pass the serial device through to the container:
+
+```bash
+docker run --rm --privileged -v "${PWD}":/config --device=/dev/ttyUSB0 -it ghcr.io/esphome/esphome run livingroom.yaml
+```
+
+> [!WARNING]
+> Docker on macOS [cannot pass USB devices through](https://github.com/moby/hyperkit/issues/149), so you can't flash a
+> device over USB from a container there. Every other feature works, and you can still flash from the dashboard's web
+> installer. See [Physical Device Connection](/guides/physical_device_connection/) for the alternatives.
+
+## Docker Compose
+
+```yaml
+services:
+  esphome:
+    container_name: esphome
+    image: ghcr.io/esphome/esphome
+    volumes:
+      - /path/to/esphome/config:/config
+      - /etc/localtime:/etc/localtime:ro
+    restart: always
+    privileged: true
+    network_mode: host
+    environment:
+      - ESPHOME_USERNAME=admin
+      - ESPHOME_PASSWORD=ChangeMe
+```
+
+> [!NOTE]
+> The credential variables are `ESPHOME_USERNAME` and `ESPHOME_PASSWORD`, not the legacy dashboard's bare `USERNAME`
+> and `PASSWORD` - those collided with the `$USERNAME` most login shells already set. Prefer an environment file with
+> restricted read permissions over a password on the command line, since command-line arguments are visible to other
+> users in process listings.
+
+## Image Tags
+
+The project publishes several tags; pick the one that suits you:
+
+- `latest` and `stable` point to the latest stable release. Automatically updating a container on these tags is not
+  recommended, because of the possible breaking changes between releases.
+- `YEAR.MONTH` (for example `2022.8`) tracks the latest stable patch release within that release. Upgrading a container
+  within one of these tags should never introduce a breaking change.
+- `beta` points to the latest beta release, falling back to the latest stable release when there is no fresh beta.
+- `dev` is the bleeding edge, built daily from the `dev` branch.
+
+## Known Issues
+
+> [!NOTE]
+> If you back your config volume with an NFS share, you may need to mount it with the `nolock` option. Without it,
+> PlatformIO can freeze on container startup - see
+> [platformio/platformio-core#3089](https://github.com/platformio/platformio-core/issues/3089).
+
+> [!WARNING]
+> Running ESPHome in Docker on WSL2 can be significantly slower (10x or more) than native Linux or a traditional VM,
+> because of filesystem performance when reaching files on Windows drives. Store your ESPHome files inside the WSL2
+> filesystem (for example `~/esphome/...`) rather than on a Windows mount (`/mnt/c/...`). See
+> [esphome#12568](https://github.com/esphome/esphome/issues/12568) for details.
+
+## See Also
+
+- [Install ESPHome](/install/)
+- [Getting Started with ESPHome](/install/getting-started/)
+- [Command Line Interface](/guides/cli/)
