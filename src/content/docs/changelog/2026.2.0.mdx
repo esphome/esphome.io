@@ -92,7 +92,7 @@ Memory allocations were also removed from discovery messages ([#13216](https://g
 
 ## Security Hardening
 
-Our first internal security audit in [2025.10.0](/changelog/2025.10.0/#security-enhancements) led to several deprecations, most of which were completed in [2026.1.0](/changelog/2026.1.0/). This release started a new review cycle. No issues requiring deprecation were found, but we identified several additional hardening opportunities.
+Our first internal security audit in [2025.10.0](/blog/2025/10/15/esphome-2025-10/#security-enhancements) led to several deprecations, most of which were completed in [2026.1.0](/changelog/2026.1.0/). This release started a new review cycle. No issues requiring deprecation were found, but we identified several additional hardening opportunities.
 
 - **Constant-time authentication** - The dashboard ([#13865](https://github.com/esphome/esphome/pull/13865)) and web server ([#13868](https://github.com/esphome/esphome/pull/13868)) now use constant-time string comparisons for Basic Auth credential checks, preventing timing-based side-channel attacks
 - **Cryptographic random generation** - The OTA component ([#13863](https://github.com/esphome/esphome/pull/13863)) and setup wizard ([#13864](https://github.com/esphome/esphome/pull/13864)) now use Python's `secrets` module for generating authentication nonces and fallback AP passwords, replacing less secure random sources
