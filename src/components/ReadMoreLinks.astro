@@ -12,11 +12,12 @@
 
   const decorate = (article) => {
     const link = article.querySelector(":scope > header > a.preview-link");
-    if (!link || article.querySelector("a.read-more")) return;
+    const href = link?.getAttribute("href");
+    if (!href || article.querySelector(":scope > a.read-more")) return;
 
     const readMore = document.createElement("a");
     readMore.className = "read-more";
-    readMore.href = link.getAttribute("href");
+    readMore.href = href;
     readMore.append(document.createTextNode("Read more"));
     readMore.insertAdjacentHTML("beforeend", arrowIconSvg);
 
