@@ -1,0 +1,69 @@
+---
+// Adds a "Read more" link to every post card on the blog listing pages. The card
+// title and cover image are the only links starlight-blog renders, so the excerpt
+// itself gives the reader nothing to click. Preview.astro (starlight-blog) has no
+// override hook, so this patches the DOM client-side (same approach as
+// CrosspostBadges.astro).
+---
+
+<script is:inline>
+  const arrowIconSvg =
+    '<svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="M13.29 5.29a1 1 0 0 1 1.42 0l6 6a1 1 0 0 1 0 1.42l-6 6a1 1 0 0 1-1.42-1.42l4.3-4.29H4a1 1 0 1 1 0-2h13.59l-4.3-4.29a1 1 0 0 1 0-1.42Z"/></svg>';
+
+  const decorate = (article) => {
+    const link = article.querySelector(":scope > header > a.preview-link");
+    if (!link || article.querySelector("a.read-more")) return;
+
+    const readMore = document.createElement("a");
+    readMore.className = "read-more";
+    readMore.href = link.getAttribute("href");
+    readMore.append(document.createTextNode("Read more"));
+    readMore.insertAdjacentHTML("beforeend", arrowIconSvg);
+
+    // The link text repeats on every card, so name the post for screen readers.
+    const title = link.querySelector("h2")?.textContent?.trim();
+    if (title) readMore.setAttribute("aria-label", `Read more: ${title}`);
+
+    // After the excerpt where one exists, otherwise straight after the header.
+    const excerpt = article.querySelector(":scope > .sl-markdown-content");
+    (excerpt ?? link.parentElement).insertAdjacentElement("afterend", readMore);
+  };
+
+  const init = () => {
+    for (const article of document.querySelectorAll("article.preview")) {
+      decorate(article);
+    }
+  };
+
+  init();
+  document.addEventListener("astro:page-load", init);
+</script>
+
+<style is:global>
+  article.preview a.read-more {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    width: fit-content;
+    color: var(--sl-color-text-accent);
+    font-size: var(--sl-text-sm);
+    font-weight: 600;
+    text-decoration: none;
+  }
+  article.preview a.read-more:hover {
+    color: var(--sl-color-white);
+  }
+  article.preview a.read-more svg {
+    flex-shrink: 0;
+    fill: currentColor;
+    transition: transform 0.15s ease;
+  }
+  article.preview a.read-more:hover svg {
+    transform: translateX(0.15rem);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    article.preview a.read-more svg {
+      transition: none;
+    }
+  }
+</style>
