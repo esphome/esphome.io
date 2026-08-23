@@ -361,6 +361,21 @@ esphome:
       - component.suspend: prefs
 ```
 
+The [`component.update`](/automations/actions/#component-update-action) action can be used to force an immediate
+flash write outside of the normal `flash_write_interval` schedule, for example right before a suspend:
+
+```yaml
+preferences:
+  id: prefs
+
+esphome:
+  on_boot:
+    then:
+      - delay: 70sec  # longer than the default flash_write_interval of 1min
+      - component.update: prefs
+      - component.suspend: prefs
+```
+
 <span id="esphome-changing_node_name"></span>
 
 ## Changing ESPHome Node Name
