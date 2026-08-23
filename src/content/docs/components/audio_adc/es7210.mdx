@@ -29,6 +29,10 @@ audio_adc:
   Defaults to `24DB`.
 
 - **sample_rate** (*Optional*, positive integer): I2S sample rate. Defaults to `16000`.
+- **tdm** (*Optional*, boolean): Enable four-channel time-division multiplexed (TDM) output. Enabling this option
+  changes `SDOUT1` from a two-channel I2S output into a four-slot TDM stream containing microphones 1 through 4;
+  `SDOUT2` is therefore not needed to receive all four microphones. When disabled, microphones 1 and 2 are output
+  on `SDOUT1`, and microphones 3 and 4 are output on `SDOUT2`. Defaults to `false`.
 - **address** (*Optional*, int): The I²C address of the driver. Defaults to `0x40`.
 - **i2c_id** (*Optional*): The ID of the [I²C bus](/components/i2c) the ES7210 is connected to.
 - All other options from [Audio ADC](/components/audio_adc#config-audio_adc).
@@ -62,6 +66,47 @@ microphone:
     bits_per_sample: 16bit
     adc_type: external
 ```
+
+**Four-channel TDM output**:
+
+The following configuration places all four microphone channels into four consecutive TDM slots on `SDOUT1`:
+
+```yaml
+i2c:
+  - id: i2c_bus
+    sda: GPIO8
+    scl: GPIO9
+
+audio_adc:
+  - platform: es7210
+    id: es7210_adc
+    i2c_id: i2c_bus
+    bits_per_sample: 16bit
+    sample_rate: 16000
+    tdm: true
+
+i2s_audio:
+  - id: tdm_audio_bus
+    i2s_lrclk_pin: GPIO10
+    i2s_bclk_pin: GPIO12
+    i2s_mclk_pin: GPIO13
+
+microphone:
+  - platform: i2s_audio
+    id: tdm_microphone
+    i2s_audio_id: tdm_audio_bus
+    i2s_din_pin: GPIO11
+    adc_type: external
+    sample_rate: 16000
+    bits_per_sample: 16bit
+    channel: stereo
+```
+
+The audio receiver connected to the ES7210 must use the same sample rate and sample width and must be configured
+for four TDM slots. The `tdm` option configures the ADC's serial output only; it does not configure the ESP32 I2S
+peripheral. The [`i2s_audio` microphone](/components/microphone/i2s_audio/) configuration above shows the clock and
+data connections, but that platform exposes at most stereo audio. A TDM-capable receiver component is required to
+expose all four microphone slots independently.
 
 ## See Also
 
