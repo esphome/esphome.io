@@ -59,6 +59,10 @@ sd_storage:
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID for this component.
 - **on_mounted** (*Optional*, [Automation](/automations/actions/)): An automation to run when the
   SD card is successfully mounted. The mount path is available as `mount_path`.
+- **format_on_mismatch** (*Optional*, boolean): Allow the component to create a filesystem on the
+  card when it cannot be mounted as configured. Defaults to `false`, in which case the card is
+  never written to during mounting and an unusable card simply fails to mount. See
+  [Formatting](#formatting) below.
 - **file_system** (*Optional*, string): The filesystem to mount the card with. One of `auto`
   (default), `fat32` or `exfat`. Only available when exFAT is enabled in the ESP32 framework
   (see [exFAT support](#exfat-support) below); without it the filesystem is always FAT32 and this
@@ -118,14 +122,10 @@ esp32:
 With exFAT compiled in, the `file_system` option controls how the card is mounted:
 
 - **auto** (default): the card is mounted with whatever filesystem it already carries; FatFs detects
-  FAT32 or exFAT from the boot sector. Nothing is ever reformatted.
-- **fat32** / **exfat**: the card is checked before mounting, and if it does not already carry the
-  requested filesystem it is reformatted to it.
-
-> [!WARNING]
-> `file_system: fat32` and `file_system: exfat` reformat the card when its current filesystem does
-> not match the requested one, which erases all data on the card. Use `auto` (the default) to mount
-> an existing card without any risk of reformatting.
+  FAT32 or exFAT from the boot sector. The card is not inspected beforehand.
+- **fat32** / **exfat**: the card's existing filesystem is detected before mounting and must match
+  the requested one. If it does not match, the card is only mounted after being reformatted, which
+  requires `format_on_mismatch: true`; otherwise the mount is refused and the reason is logged.
 
 Without `enable_exfat: true`, the `file_system` option is rejected during validation, because the
 build then supports only FAT32.
@@ -141,6 +141,41 @@ sd_storage:
   type: sd_mmc
   path: /sdcard
   file_system: exfat
+  clk_pin: GPIO14
+  cmd_pin: GPIO15
+  data0_pin: GPIO2
+```
+
+## Formatting
+
+`format_on_mismatch` is the single switch that decides whether mounting a card is allowed to write
+to it. It defaults to `false`, and while it is off no card is ever written to during mounting: a
+blank, damaged or wrongly formatted card fails to mount and the reason is logged.
+
+Turning it on has a different effect depending on how the card is being mounted:
+
+- With `file_system` left at `auto`, or in a build without `enable_exfat: true`, a card that cannot
+  be mounted is given a fresh FAT32 filesystem.
+- With `file_system: fat32` or `file_system: exfat`, the card is created with the filesystem you
+  asked for whenever the one it currently carries is not that filesystem -- including a card that
+  carries no filesystem at all.
+
+> [!WARNING]
+> `format_on_mismatch: true` erases every file on the card as soon as its current filesystem does
+> not match what the configuration asks for. There is no confirmation and no way to recover the
+> data afterwards. Leave it at the default `false` unless the card is genuinely disposable, such as
+> one written only with logs the node itself produces.
+
+A card that cannot be read at all is treated separately: the mount is refused and nothing is
+written, even with `format_on_mismatch: true`, so a transient read error on a card that still
+holds good data cannot trigger an erase.
+
+```yaml
+sd_storage:
+  type: sd_mmc
+  path: /sdcard
+  file_system: exfat
+  format_on_mismatch: true
   clk_pin: GPIO14
   cmd_pin: GPIO15
   data0_pin: GPIO2
@@ -167,7 +202,8 @@ The variable `mount_path` (type `const char *`) contains the VFS mount point (th
 
 ### `sd_storage.mount` Action
 
-Manually mount the SD card.
+Manually mount the SD card. Calling this on a card that is already mounted does nothing and
+reports success, so it is safe to trigger from an automation that may run more than once.
 
 ```yaml
 on_...:
