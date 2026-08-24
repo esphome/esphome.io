@@ -17,10 +17,11 @@ See [Modbus](/components/modbus/#hardware-setup) for RS485 hardware setup instru
 
 - **modbus_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the `modbus` hub.
 
-- **address** (*Optional*, int): The Modbus device address (can be decimal or hexadecimal). The valid Modbus device
-  range is `1`-`247`. `0` is the broadcast address; broadcasts are not supported by `modbus_controller` because no
-  response is ever returned. To send broadcast (or other ad-hoc) frames, use the
-  [Modbus Client](/components/modbus_client/) component instead. Defaults to `0x01`.
+- **address** (*Optional*, int): The Modbus device address (can be decimal or hexadecimal). `1`-`247` is the standard
+  device range. `0` is the broadcast address and is now **rejected at validation** - an existing config using
+  `address: 0` will fail to compile; a broadcast never returns a response, so use the
+  [Modbus Client](/components/modbus_client/) component for broadcast or other ad-hoc frames. Values above `247` are
+  still accepted but fall outside the standard range. Defaults to `0x01`.
 
 - **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval that the sensors should be checked.
   Defaults to 60 seconds.
@@ -64,6 +65,11 @@ Automations:
 >
 > - **server_registers** and **server_courtesy_response**: Use the [Modbus Server](/components/modbus_server/) component
 >   instead.
+
+> [!NOTE]
+> The per-platform `skip_updates` option (set on individual sensors, not the controller) also no longer has any
+> effect and will be removed in 2027.3.0. To poll some registers less often, give them their own `modbus_controller`
+> sharing the same `address` with a slower `update_interval` (see above). The individual platform pages document this.
 
 ## Example Client
 
