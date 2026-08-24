@@ -119,7 +119,8 @@ The variable `mount_path` (type `const char *`) contains the VFS mount point (th
 
 ### `sd_storage.mount` Action
 
-Manually mount the SD card.
+Manually mount the SD card. Calling this on a card that is already mounted does nothing and
+reports success, so it is safe to trigger from an automation that may run more than once.
 
 ```yaml
 on_...:
