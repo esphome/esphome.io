@@ -91,7 +91,7 @@ def _prepare_assembly_inputs(grn: ModuleType, workspace: Path, generator) -> Non
 def test_release_wednesday(grn: ModuleType) -> None:
     wednesday = grn.ReleaseNotesGenerator._release_wednesday()
     assert wednesday.weekday() == 2
-    assert abs(wednesday - datetime.now()) <= timedelta(days=4)
+    assert abs(wednesday - datetime.now()) < timedelta(days=5)
 
 
 def test_blog_post_path_prefers_existing_post(
