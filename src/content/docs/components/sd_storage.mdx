@@ -181,6 +181,10 @@ sd_storage:
   data0_pin: GPIO2
 ```
 
+`format_on_mismatch` only ever acts while mounting. To format a card deliberately, from a button
+press or any other automation, use the [`storage.format`](#storageformat-action) action below; it
+does not depend on this option.
+
 ## Automations
 
 ### `on_mounted` trigger
@@ -234,6 +238,45 @@ on_...:
 
 - **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the `sd_storage` component.
 - **path** (*Optional*, string): Directory to list. Defaults to the root of the mount point.
+
+### `storage.format` Action
+
+Create a fresh, empty filesystem on the card. This is the generic
+[`storage.format`](/components/storage/) action, and an `sd_storage` component is a valid target
+for it.
+
+```yaml
+on_...:
+  - storage.format:
+      id: my_sd
+      on_complete:
+        - logger.log:
+            format: "Format finished: %s"
+            args: ['x.empty() ? "ok" : x.c_str()']
+```
+
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the `sd_storage` component.
+- **on_complete** (*Optional*, [Automation](/automations/actions/)): Runs when the format has
+  finished. The variable `x` (type `std::string`) holds the error text, and is empty on success.
+
+The filesystem that gets created follows the component's `file_system` option: `exfat` creates an
+exFAT volume, `fat32` and `auto` create a FAT one, with FatFs picking between FAT16 and FAT32
+according to the card's size. This matters because the card is mounted again straight afterwards --
+formatting to FAT under `file_system: exfat` would produce a card that the following mount has to
+reject or reformat.
+
+The card must be mounted when the action runs -- there is no drive to format otherwise, and the
+action fails without touching the card. Open file handles are flushed and closed first, then the
+volume is detached, recreated and mounted again, so the mount path is briefly unavailable and any
+handle held in a lambda becomes invalid.
+
+The action only reports success once the fresh filesystem is mounted again. If the card cannot be
+remounted afterwards, `on_complete` reports that as an error rather than reporting success on a
+card that is no longer usable.
+
+> [!WARNING]
+> This erases every file on the card. There is no confirmation step and no way to recover the data
+> afterwards.
 
 ### `sd_storage.is_mounted` Condition
 
