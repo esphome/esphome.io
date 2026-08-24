@@ -87,10 +87,16 @@ web_server:
 - **include_internal** (*Optional*, boolean): Whether `internal` entities should be displayed on the
   web interface. Defaults to `false`.
 
+- **allowed_origins** (*Optional*, list of strings): A list of origins that browsers are allowed to make
+  cross-origin requests from. See [Cross-Origin Requests](#cross-origin-requests) for details. Each entry
+  must exactly match the requesting page's `Origin` header (e.g. `https://app.esphome.io`). A single `"*"`
+  entry (quoted, since an unquoted `*` is invalid YAML) allows any origin, but this is not recommended.
+
 - **enable_private_network_access** (*Optional*, boolean): Enables support for
   [Private Network Access](https://wicg.github.io/private-network-access) and the
   [Private Network Access Permission Prompt](https://wicg.github.io/private-network-access/#permission-prompt).
-  Defaults to `true`.
+  When enabled, preflight requests are authorized against `allowed_origins`, so `allowed_origins` must also
+  be set. Defaults to `false`.
 
 - **log** (*Optional*, boolean): Turn on or off the log feature inside webserver. Defaults to `true`.
 - **ota** (*Optional*, boolean): Explicitly disable OTA updates through the web server interface. Only accepts `false`.
@@ -157,12 +163,6 @@ interface are externally hosted at oi.esphome.io. If you want to use your own se
 The web server exposes an HTTP API for viewing and controlling your device's entities. When the
 [`web_server` OTA platform](/components/ota/web_server/) is enabled, it can also update firmware.
 
-> [!WARNING]
-> The web server has no cross-site protections, by design. It performs no CSRF, `Origin`, or `Referer` checks and uses
-> a permissive CORS policy, so it can be called from other origins, including a web page you open while on the same
-> network as the device. Its only access controls are the `auth:` option and the network the device is on. Treat it as
-> an open control surface unless you enable `auth:`.
-
 Recommendations:
 
 - Enable `auth:` if the device is on a network you do not fully trust.
@@ -172,9 +172,33 @@ Recommendations:
   can upload firmware. Protect it with web `auth:`, disable web OTA when it is not needed (`ota: false`), or use
   password-protected [native OTA](/components/ota/) instead.
 
-Whether this cross-origin behavior is a bug is answered by the project
-[threat model](https://github.com/esphome/esphome/blob/dev/THREAT_MODEL.md): it is intentional and not a defended
-boundary.
+### Cross-Origin Requests
+
+By default the web server rejects cross-origin browser requests to its entity control and state endpoints.
+When a request carries an `Origin` header, it is allowed only if it is *same-origin* — that is, the `Origin`
+matches the address the device is served on (its IP address, mDNS `<node_name>.local` name, or DNS name) — or
+if the origin is listed in `allowed_origins`. This is defense-in-depth against the browser "confused deputy"
+(CSRF) case, where a page the operator visits is used to drive the device through their browser.
+
+Requests that do not carry an `Origin` header — `curl`, scripts, the native API, and other non-browser
+clients — are always allowed. The `Origin` check only constrains browsers; it is **not** an authentication
+boundary, and it does not cover the web OTA `/update` endpoint. To restrict access itself, use `auth:` and keep
+devices on a trusted, segmented network. See the project
+[threat model](https://github.com/esphome/esphome/blob/dev/THREAT_MODEL.md) for the full scope.
+
+To allow a specific external site to make cross-origin requests, list its origin:
+
+```yaml
+web_server:
+  port: 80
+  allowed_origins:
+    - https://app.esphome.io
+```
+
+> [!WARNING]
+> This is a breaking change introduced in 2026.7.0. Configurations that relied on cross-origin browser
+> access must now add those origins to `allowed_origins`. Additionally, `enable_private_network_access`
+> now defaults to `false` (previously `true`), and when enabled it requires `allowed_origins` to be set.
 
 ## Example configurations
 
