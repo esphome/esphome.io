@@ -31,7 +31,7 @@ and requires [Modbus Controller](/components/modbus_controller/) to be configure
   - **x** (bool): The boolean state requested for the switch
   - **item** (pointer to the switch object): The switch itself.
     The switch is its own modbus device, so the lambda can send any write directly through it - for example `item->write_single_register(address, value)` or `item->queue_pdu(...)` - regardless of the switch's own register type.
-  - **payload** (`ModbusWriteBytes &payload`): *Deprecated, removed in 2027.3.0 - use `item` instead.*
+  - **payload** (`PduBuffer &payload`): *Deprecated, removed in 2027.3.0 - use `item` instead.*
     An empty buffer; if the lambda fills it (`push_back`), it is sent as a raw modbus frame and must include all required bytes, including the device address.
 
   Possible return values for the lambda:

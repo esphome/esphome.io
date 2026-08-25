@@ -49,8 +49,8 @@ The `modbus_controller` platform creates an output from a modbus_controller. The
   - **payload**: *Deprecated, removed in 2027.3.0 - use `item` instead.*
     An empty buffer to fill (`push_back`); if filled, the return value is ignored and the payload is sent instead. Its element type, and what the bytes mean, depend on `register_type`:
 
-    - for `register_type: holding`  : `ModbusWriteRegisters &payload` - add 16-bit raw modbus register words. The write covers exactly the registers you add, so the payload must not be wider than the register count implied by `value_type` (1 for the word types, 2 for the dword/float types, 4 for the qword types) or the write is dropped with an error.
-    - for `register_type: coil`  : `ModbusWriteBytes &payload` - add the bytes of a raw modbus frame, which must include all required bytes, including the device address.
+    - for `register_type: holding`  : `RegisterValues &payload` - add 16-bit raw modbus register words. The write covers exactly the registers you add, so the payload must not be wider than the register count implied by `value_type` (1 for the word types, 2 for the dword/float types, 4 for the qword types) or the write is dropped with an error.
+    - for `register_type: coil`  : `PduBuffer &payload` - add the bytes of a raw modbus frame, which must include all required bytes, including the device address.
 
   Possible return values for the lambda:
 
