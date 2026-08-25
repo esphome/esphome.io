@@ -239,9 +239,12 @@ Silicon Labs chips do not have a ROM bootloader, installation via SWD is expecte
 
 ### STMicroelectronics Serial Load Process
 
-STM32 boards typically have a ROM-resident "system memory" bootloader, but that has not been
-investigated, installation via SWD is expected for serial flash. MCUboot is optional
-(`advanced: bootloader:`, defaulted to `none`)
+STM32 boards typically have a ROM-resident "system memory" bootloader, this has been tested
+using the stm32f4 WEACT Black Pill and allowed use of the default dfu-utils using 
+`esphome run <config-file> --device /dev/ttyACM<n>`.  The device had to be in boot mode and
+only oddity was having to put the device back into boot mode after the MCUBoot was loaded.
+Installation via SWD is also typically available for serial flash. MCUboot is optional
+(`advanced: bootloader:`, defaulted to `none` on `stm32l4` and 'mcuboot` for `stm32f4`.
 
 ## GPIO Pin Numbering
 
