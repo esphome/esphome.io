@@ -112,6 +112,23 @@ but can be overridden if needed.
   use `never` to only manually update the screen via `component.update`.
 - **full_update_every** (*Optional*, int): On screens that support partial updates, this sets the number of updates
   before a full update is forced. Defaults to `1` which will make every update a full update.
+- **full_refresh_after_deep_sleep** (*Optional*, boolean): Whether to force a full update on the first refresh after
+  waking from [deep sleep](/components/deep_sleep). Defaults to `true`. Only has an effect when `full_update_every`
+  is greater than `1`.
+
+  The count of updates since the last full update is kept in RAM, so it is normally lost during deep sleep and the
+  first refresh after each wake is a full one. Set this to `false` to save the count and carry on with the partial
+  update cycle after waking, which avoids the flicker and the extra power of a full refresh on every wake.
+
+  > [!WARNING]
+  > Only set this to `false` if your board keeps the display powered while the ESP32 sleeps. A partial update draws
+  > only the pixels that changed, so it needs the previous image still held in the display's own memory. If the
+  > display loses power during sleep that image is gone, and partial updates will leave artefacts on screen until
+  > the next full update.
+
+  Only a wake from deep sleep continues the cycle. After any other reset, such as a power cycle or a reboot, the
+  first refresh is a full update. Carrying the cycle across deep sleep is supported on the ESP32 only; on other
+  platforms setting this to `false` has no effect and every wake still starts with a full update.
 - **spi_id** (*Optional*, [ID](/guides/configuration-types#id)): Required to specify the ID of the [SPI Component](/components/spi) if your
   configuration defines multiple SPI buses. If only a single SPI bus is configured, this is optional.
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
