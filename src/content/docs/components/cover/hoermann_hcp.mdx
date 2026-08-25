@@ -23,6 +23,18 @@ The following Series 4 motors communicate over the HCP bus (Modbus RTU) and shou
 > This component implements the same protocol as the [HCPBridge](https://github.com/hkiam/HCPBridge)
 > project.
 
+> [!CAUTION]
+> HCP2 accessories are not hot-pluggable!
+>
+> Disrupting Modbus connectivity for any reason will render the motor **temporarily inoperable**.
+>
+> All controls will be unresponsive in this error state, including BiSecur hand remotes.
+> Ensure you have emergency access to your garage at all times,
+> as this type of error can only be cleared by power-cycling the motor.
+
+> [!IMPORTANT]
+> Updating ESPHome via OTA **will** trigger the aforementioned motor error.
+
 Communication with the motor happens over [Modbus](/components/modbus/) with the `role` set to
 `server`, which in turn requires a [UART bus](/components/uart/). The UART **must** be configured with
 a baud rate of `57600`, even parity and one stop bit.
