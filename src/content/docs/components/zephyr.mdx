@@ -96,6 +96,7 @@ zephyr:
 | Raspberry Pi | `rp2350` | Raspberry Pi RP2350 (Cortex-M33, dual-core) | [`rpi_pico2`](https://docs.zephyrproject.org/latest/boards/raspberrypi/rpi_pico2/doc/index.html) | mainline Zephyr | No wireless yet |
 | Renesas | `ra4m1` | Renesas RA4M1 (Cortex-M4) | [`ek_ra4m1`](https://docs.zephyrproject.org/latest/boards/renesas/ek_ra4m1/doc/index.html) | mainline Zephyr | No wireless yet |
 | Silicon Labs | `efr32mg24` | Silicon Labs EFR32MG24 (Cortex-M33) | [`xg24_ek2703a`](https://docs.zephyrproject.org/latest/boards/silabs/dev_kits/xg24_ek2703a/doc/index.html) | mainline Zephyr | BLE, Thread (via `openthread:`) |
+| STMicroelectronics | `stm32f4` | STM32F4 (Cortex-M4) | [`nucleo_f401re`](https://docs.zephyrproject.org/latest/boards/st/nucleo_f401re/doc/index.html) | mainline Zephyr | No wireless yet |
 | STMicroelectronics | `stm32l4` | STM32L4 (Cortex-M4) | [`nucleo_l476rg`](https://docs.zephyrproject.org/latest/boards/st/nucleo_l476rg/doc/index.html) | mainline Zephyr | No wireless yet |
 
 It is not recommended to use variants that have existing platforms for other than experimental purposes.
@@ -139,7 +140,7 @@ Silicon Labs' provides its own vendor SDK, "Simplicity SDK for Zephyr"
 
 ### STMicroelectronics
 
-`watchdog_timeout` on `stm32l4` is `0` or `5s`–`32s`.
+`watchdog_timeout` on `stm32l4` and `stm32f4` is `0` or `5s`–`32s`.
 
 ## Serial Load Process
 
@@ -250,7 +251,7 @@ port and a pin-within-port, but this is transparent to configuration; use the nu
 board or listed in the board's pinout.
 
 On variants with lettered GPIO ports, the vendor's own notation is also accepted. For example on
-`efr32mg24` and `stm32l4` — `PA4`, `PB2`, and so on are accepted, the same string logs and
+`efr32mg24`, `stm32l4`, and `stm32f4` — `PA4`, `PB2`, and so on are accepted, the same string logs and
 `dump_config` print back. This is rejected on variants that don't use a lettered-port notation.
 
 On Nordic variants (`nrf52`, `nrf54l15`, `nrf54lm20a`), Nordic's own `P<port>.<pin>` notation is
@@ -490,12 +491,13 @@ to. **runner** is the exception: it applies to every variant.
   warning at compile time, it does not fail config validation. Has no effect on `rp2040`/`rp2350`'s
   BOOTSEL/picotool flashing, and is overridden by `--device PYOCD` if that's also used. See
   [Serial Load Process](#serial-load-process).
-- **bootloader** (*Optional*, string, `rp2040`/`rp2350`/`ra4m1`/`stm32l4` only): `none` (the default)
-  or `mcuboot`. Every other variant requires MCUboot and has no such option. Choosing `mcuboot` only
-  controls the sysbuild/signing config; it does not qualify **board** for you, and none of these four
-  variants' default boards ship `slot0`/`slot1` partitions — supply a fully qualified board and your
-  own MCUboot-shaped partition overlay via `overlays` (for example
-  `board: rpi_pico/rp2040/mcuboot`).
+- **bootloader** (*Optional*, string, `rp2040`/`rp2350`/`ra4m1`/`stm32l4`/`stm32f4` only): `none` or
+  `mcuboot`. Every other variant requires MCUboot and has no such option. Defaults to `none` on
+  `rp2040`/`rp2350`/`ra4m1`/`stm32l4` — their default boards ship no `slot0`/`slot1` partitions, so
+  choosing `mcuboot` there means supplying a fully qualified board and your own MCUboot-shaped
+  partition overlay via `overlays` (for example `board: rpi_pico/rp2040/mcuboot`). `stm32f4` is the
+  exception: it defaults to `mcuboot`, since its default board's stock partition table already ships
+  `slot0`/`slot1` and real MCUboot fits its `boot_partition` unmodified.
 - **commander_version** (*Optional*, string, `efr32mg24` with `framework: type: silabs` only):
   Override the version of Silicon Labs' Simplicity Commander CLI used for secure-boot image signing.
   Defaults to a pinned known-good version. Commander is downloaded and cached automatically; no
@@ -735,8 +737,8 @@ serial/wired flashing only.
 
 `single_slot: true` requires the MCUboot bootloader. `rp2040`, `rp2350`, `ra4m1`, and `stm32l4`
 default to no bootloader at all and need `advanced: bootloader: mcuboot` set explicitly first —
-every other variant uses MCUboot by default already. See
-[Nordic Serial Load Process](#nordic-serial-load-process).
+every other variant (including `stm32f4`, whose default is already `mcuboot`) uses MCUboot by
+default already. See [Nordic Serial Load Process](#nordic-serial-load-process).
 
 There's no per-variant allowlist for `single_slot: true` — whether it actually works depends entirely
 on the board's flash layout having no `slot1_partition` left in it, which is checked at compile time:
