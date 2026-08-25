@@ -69,14 +69,16 @@ When the Number is updated a modbus write command is created sent to the device.
   Parameters passed into the lambda
 
   - **x** (float): The float value to be sent to the modbus device
-  - **payload** (`std::vector<uint16_t> &payload`): empty vector for the payload. The lambda can add 16 bit raw modbus register words.
-  - **item** (pointer to a SensorItem derived object): The number object itself.
+  - **item** (pointer to the number object): The number itself.
+    The number is its own modbus device, so the lambda can send any write directly through it - for example `item->write_single_register(address, value)` or `item->queue_pdu(...)` - regardless of the number's own register type.
+  - **payload** (`ModbusWriteRegisters &payload`): *Deprecated, removed in 2027.3.0 - use `item` instead.*
+    An empty buffer; if the lambda fills it (`push_back`), it is sent as a raw modbus frame packed from the 16 bit words, and must include all required bytes, including the device address.
 
   Possible return values for the lambda:
 
-  - `return <FLOATING_POINT_NUMBER>;` the new value for the number.
-  - `return <anything>; and fill payload with data` if the payload is added from the lambda then these 16 bit words will be sent
-  - `return {};` if you don't want write the command to the device (or do it from the lambda).
+  - `return <FLOATING_POINT_NUMBER>;` the value written to the device.
+    The number still reports the requested value `x`; use this to translate between the ESPHome value and the wire value.
+  - `return {};` if the lambda handled (or deliberately skipped) the write itself, for example via `item->write_*()`.
 
 - All other options from [Number](/components/number#config-number).
 
@@ -101,9 +103,9 @@ number:
     lambda: "return  x * 1.0; "
     write_lambda: |-
       ESP_LOGD("main","Modbus Number incoming value = %f",x);
-      uint16_t b_capacity = x ;
-      payload.push_back(b_capacity);
-      return x * 1.0 ;
+      // drive the write directly through the entity; the number still reports x
+      item->write_single_register(0x9001, (uint16_t) x);
+      return {};
 ```
 
 ## See Also

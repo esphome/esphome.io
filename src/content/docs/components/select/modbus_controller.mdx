@@ -92,15 +92,15 @@ lambda: |-
 
 - **x** (`const std::string&`  ): The option value to set for this Select.
 - **value** (`int64_t`  ): The mapping value of `x` using `optionsmap`.
-- **payload** (`std::vector<uint16_t> &payload`): Empty vector for the payload. The lambda can add
-  16 bit raw modbus register words which are send to the modbus device.
-
-- **item** (`ModbusSelect*const`  ): The select object itself.
+- **item** (`ModbusSelect*`  ): The select object itself.
+  The select is its own modbus device, so the lambda can send any write directly through it - for example `item->write_single_register(address, value)` or `item->queue_pdu(...)` - regardless of the select's own register type.
+- **payload** (`ModbusWriteRegisters &payload`): *Deprecated, removed in 2027.3.0 - use `item` instead.*
+  An empty buffer; the lambda can add (`push_back`) the 16 bit register words to write in place of the mapping value.
 
 Possible return values for the lambda:
 
 - `return <int64_t>;` the value which should be written to the configured modbus registers. If there were data written to `payload` this value is ignored.
-- `return {};` Skip updating the register.
+- `return {};` if the lambda handled (or deliberately skipped) the write itself, for example via `item->write_*()`.
 
 ```yaml
 # example

@@ -39,24 +39,23 @@ The `modbus_controller` platform creates an output from a modbus_controller. The
 - **multiply** (*Optional*, float): multiply the incoming value with this factor before writing it to the device. Ignored if `write_lambda` is defined. Only valid for `register_type: holding`.
 - **use_write_multiple** (*Optional*, boolean): By default the modbus command *Function Code 6 (Preset Single Registers)* is used for setting the holding register if only one register is set. If your device only supports *Function Code 16 (Preset Multiple Registers)* set this option to `true`.
 - **write_lambda** (*Optional*, [lambda](/automations/templates#config-lambda)):
-  Lambda is evaluated before the modbus write command is created. The value is passed in as `float x` (or `bool x` for `register_type: coil`) and an empty payload vector whose element type depends on `register_type` (see below).
-  You can directly define the payload by adding data to payload then the return value is ignored and the content of payload is used.
+  Lambda is evaluated before the modbus write command is created. The value is passed in as `float x` (or `bool x` for `register_type: coil`).
 
   Parameters passed into the lambda
 
   - **x** (float or bool): the value to be sent — a `float` for `register_type: holding`, or a `bool` for `register_type: coil`
-  - **payload**: an empty vector to fill; if filled, the return value is ignored and the payload is sent instead. Its element type, and what the bytes mean, depend on `register_type`:
+  - **item** (pointer to the output object): The output itself.
+    The output is its own modbus device, so the lambda can send any write directly through it - for example `item->write_single_register(address, value)` or `item->queue_pdu(...)` - regardless of the output's own register type.
+  - **payload**: *Deprecated, removed in 2027.3.0 - use `item` instead.*
+    An empty buffer to fill (`push_back`); if filled, the return value is ignored and the payload is sent instead. Its element type, and what the bytes mean, depend on `register_type`:
 
-    - for `register_type: holding`  : `std::vector<uint16_t> &payload` - add 16-bit raw modbus register words. The write covers exactly the registers you add, so the payload must not be wider than the register count implied by `value_type` (1 for the word types, 2 for the dword/float types, 4 for the qword types) or the write is dropped with an error.
-    - for `register_type: coil`  : `std::vector<uint8_t> &payload` - add the raw PDU bytes. This is sent as a custom command, so it must include all required bytes for a modbus request.
-
-  - **item** (pointer to a SensorItem derived object): The sensor object itself.
+    - for `register_type: holding`  : `ModbusWriteRegisters &payload` - add 16-bit raw modbus register words. The write covers exactly the registers you add, so the payload must not be wider than the register count implied by `value_type` (1 for the word types, 2 for the dword/float types, 4 for the qword types) or the write is dropped with an error.
+    - for `register_type: coil`  : `ModbusWriteBytes &payload` - add the bytes of a raw modbus frame, which must include all required bytes, including the device address.
 
   Possible return values for the lambda:
 
-  - `return <FLOATING_POINT_NUMBER / BOOL>;` the new value for the sensor.
-  - `return <anything>; and fill payload with data` if the payload is added from the lambda then these 16 bit words will be sent
-  - `return {};` if you don't want write the command to the device (or do it from the lambda).
+  - `return <FLOATING_POINT_NUMBER / BOOL>;` the value written to the device.
+  - `return {};` if the lambda handled (or deliberately skipped) the write itself, for example via `item->write_*()`.
 
 - **offset** (*Optional*, int): Offset from start address in bytes (only required for uncommon response encodings). If more than one register is written in a command this value is used to find the start of this datapoint relative to start address. The component calculates the size of the range based on offset and size of the value type.
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
@@ -85,8 +84,6 @@ output:
     value_type: U_WORD
     write_lambda: |-
       ESP_LOGD("main","Modbus Output incoming value = %f",x);
-      uint16_t value = x ;
-      payload.push_back(value);
       return x * 1000 ;
 ```
 
