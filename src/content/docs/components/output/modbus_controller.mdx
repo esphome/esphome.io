@@ -43,9 +43,8 @@ The `modbus_controller` platform creates an output from a modbus_controller. The
 
   Parameters passed into the lambda
 
-  - **x** (float or bool): the value to be sent — a `float` for `register_type: holding`, or a `bool` for `register_type: coil`
-  - **item** (pointer to the output object): The output itself.
-    The output is its own modbus device, so the lambda can send any write directly through it - for example `item->write_single_register(address, value)` or `item->queue_pdu(...)` - regardless of the output's own register type.
+  - **x** (float or bool): the new value being set — a `float` for `register_type: holding`, or a `bool` for `register_type: coil`
+  - **item** (`ModbusFloatOutput *` / `ModbusBinaryOutput *`): The entity as its own modbus device: a [`ModbusClientDevice`](https://api-docs.esphome.io/classesphome_1_1modbus_1_1_modbus_client_device) subclass, so every client request helper is available - for example `item->write_single_register(address, value)` or `item->queue_pdu(...)` - regardless of the output's own register type. Also a [`SensorItem`](https://api-docs.esphome.io/classesphome_1_1modbus__controller_1_1_sensor_item) subclass, so the configured address, `offset`, `bitmask`, etc. are accessible.
   - **payload**: *Deprecated, removed in 2027.3.0 - use `item` instead.*
     An empty buffer to fill (`push_back`); if filled, the return value is ignored and the payload is sent instead. Its element type, and what the bytes mean, depend on `register_type`:
 
@@ -54,7 +53,7 @@ The `modbus_controller` platform creates an output from a modbus_controller. The
 
   Possible return values for the lambda:
 
-  - `return <FLOATING_POINT_NUMBER / BOOL>;` the value written to the device.
+  - `return <FLOATING_POINT_NUMBER / BOOL>;` the value to be written to the device.
   - `return {};` if the lambda handled (or deliberately skipped) the write itself, for example via `item->write_*()`.
 
 - **offset** (*Optional*, int): Offset from start address in bytes (only required for uncommon response encodings). If more than one register is written in a command this value is used to find the start of this datapoint relative to start address. The component calculates the size of the range based on offset and size of the value type.

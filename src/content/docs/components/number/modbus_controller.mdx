@@ -68,16 +68,15 @@ When the Number is updated a modbus write command is created sent to the device.
 
   Parameters passed into the lambda
 
-  - **x** (float): The float value to be sent to the modbus device
-  - **item** (pointer to the number object): The number itself.
-    The number is its own modbus device, so the lambda can send any write directly through it - for example `item->write_single_register(address, value)` or `item->queue_pdu(...)` - regardless of the number's own register type.
+  - **x** (float): The new float value being set
+  - **item** (`ModbusNumber *`): The entity as its own modbus device: a [`ModbusClientDevice`](https://api-docs.esphome.io/classesphome_1_1modbus_1_1_modbus_client_device) subclass, so every client request helper is available - for example `item->write_single_register(address, value)` or `item->queue_pdu(...)` - regardless of the number's own register type. Also a [`SensorItem`](https://api-docs.esphome.io/classesphome_1_1modbus__controller_1_1_sensor_item) subclass, so the configured address, `offset`, `bitmask`, etc. are accessible.
   - **payload** (`RegisterValues &payload`): *Deprecated, removed in 2027.3.0 - use `item` instead.*
     An empty buffer; if the lambda fills it (`push_back`), it is sent as a raw modbus frame packed from the 16 bit words, and must include all required bytes, including the device address.
 
   Possible return values for the lambda:
 
-  - `return <FLOATING_POINT_NUMBER>;` the value written to the device.
-    The number still reports the requested value `x`; use this to translate between the ESPHome value and the wire value.
+  - `return <FLOATING_POINT_NUMBER>;` the value to be written to the device.
+    The number still reports the requested value `x`; use this to translate between the ESPHome value and the modbus transmitted value.
   - `return {};` if the lambda handled (or deliberately skipped) the write itself, for example via `item->write_*()`.
 
 - All other options from [Number](/components/number#config-number).

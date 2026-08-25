@@ -28,16 +28,15 @@ and requires [Modbus Controller](/components/modbus_controller/) to be configure
 
   Parameters passed into the lambda
 
-  - **x** (bool): The boolean state requested for the switch
-  - **item** (pointer to the switch object): The switch itself.
-    The switch is its own modbus device, so the lambda can send any write directly through it - for example `item->write_single_register(address, value)` or `item->queue_pdu(...)` - regardless of the switch's own register type.
+  - **x** (bool): The new boolean state being set
+  - **item** (`ModbusSwitch *`): The entity as its own modbus device: a [`ModbusClientDevice`](https://api-docs.esphome.io/classesphome_1_1modbus_1_1_modbus_client_device) subclass, so every client request helper is available - for example `item->write_single_register(address, value)` or `item->queue_pdu(...)` - regardless of the switch's own register type. Also a [`SensorItem`](https://api-docs.esphome.io/classesphome_1_1modbus__controller_1_1_sensor_item) subclass, so the configured address, `offset`, `bitmask`, etc. are accessible.
   - **payload** (`PduBuffer &payload`): *Deprecated, removed in 2027.3.0 - use `item` instead.*
     An empty buffer; if the lambda fills it (`push_back`), it is sent as a raw modbus frame and must include all required bytes, including the device address.
 
   Possible return values for the lambda:
 
-  - `return true;` or `return false;` the value written to the device.
-    The switch still reports the requested state `x`; return a different value to translate between the ESPHome state and an inverted wire value.
+  - `return true;` or `return false;` the value to be written to the device.
+    The switch still reports the requested state `x`; return a different value to translate between the ESPHome state and an inverted modbus transmitted value.
   - `return {};` if the lambda handled (or deliberately skipped) the write itself, for example via `item->write_*()`.
 
 - **custom_command** (*Optional*, list of bytes): raw bytes for modbus command. This allows using non-standard commands. If `custom_command` is used `address` and `register_type` can't be used.
