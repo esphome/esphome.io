@@ -56,7 +56,7 @@ When the Number is updated a modbus write command is created sent to the device.
   - **data** (`std::span<const uint8_t>`): span containing the complete raw modbus response bytes for this number
     *note:* because the response contains data for all registers in the same range you have to use `data[item->offset]` to get the first response byte for your number.
 
-  - **item** (pointer to a SensorItem derived object): The number object itself.
+  - **item** (`ModbusNumber *`): The number entity, a [`SensorItem`](https://api-docs.esphome.io/classesphome_1_1modbus__controller_1_1_sensor_item) subclass, so the configured address, `offset`, `bitmask`, etc. are accessible.
 
   Possible return values for the lambda:
 
