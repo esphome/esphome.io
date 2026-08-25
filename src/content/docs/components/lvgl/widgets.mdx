@@ -1261,6 +1261,100 @@ The points list may be defined with constants in the form `x, y` or as a list of
     line_rounded: true
 ```
 
+### `list`
+
+The list widget is a plain, scrollable container meant to be populated at runtime -- via the `lvgl.list.add_text`, `lvgl.list.add`, `lvgl.list.remove` and `lvgl.list.clear` actions -- rather than with a fixed set of children declared in configuration. It's suited to content that isn't known until the device is running, such as sensor readings or Wi-Fi scan results.
+
+**Configuration variables:**
+
+- **pad_row** (*Optional*, [padding](/components/lvgl#lvgl-styling)): Vertical spacing between entries.
+- Style options from [Style properties](/components/lvgl#lvgl-styling) for the background of the list (*main* part) and its *scrollbar* part.
+
+**Actions:**
+
+- `lvgl.list.add_text` adds a plain text entry, typically used as a section header to visually group the entries below it:
+  - **id** (**Required**): The ID of the list widget.
+  - **text** (**Required**, [Text property](#text-property)): Text to display.
+  - **index** (*Optional*, templatable int): Position to insert the entry at. Defaults to the end of the list.
+
+- `lvgl.list.add` adds an entry built from any other widget type, complete with its children and triggers if any are configured -- for example a `button` with `checkable: true`, or a `button` containing a `label` and a `dropdown`, with its own `on_click`. Exactly one widget key (e.g. `label:`, `button:`, `dropdown:`) must be given alongside `id`, configured exactly as it would be under `widgets:`:
+  - **id** (**Required**): The ID of the list widget.
+  - **index** (*Optional*, templatable int): Position to insert the entry at. Defaults to the end of the list.
+  - One of the [widget](#widgets) types, configured as normal.
+
+  > [!NOTE]
+  > Unlike widgets declared in configuration, entries added with `lvgl.list.add` are built fresh each time the action runs, and are freed automatically, along with any children, when removed via `lvgl.list.remove` or `lvgl.list.clear`.
+
+- `lvgl.list.remove` removes the entry at a given position, along with any children it has:
+  - **id** (**Required**): The ID of the list widget.
+  - **index** (**Required**, templatable int): The zero-based index of the entry to remove.
+
+- `lvgl.list.clear` removes every entry from the list.
+  - **id** (**Required**): The ID of the list widget.
+
+**Triggers:**
+
+- `on_add` [trigger](/automations/actions#actions-trigger) is activated whenever an entry is added, by either `lvgl.list.add_text` or `lvgl.list.add`. The new entry's (final) index is returned in the variable `list_index`.
+- `on_remove` [trigger](/automations/actions#actions-trigger) is activated whenever an entry is removed, by either `lvgl.list.remove` or `lvgl.list.clear`. `lvgl.list.clear` fires it once per entry, from the last index down to `0`, just before wiping the list. The removed entry's (former) index is returned in the variable `list_index`.
+
+**Getting a widget's row index:**
+
+A trigger on a widget added via `lvgl.list.add` (or on one of its children) doesn't automatically receive the index of the list row it belongs to, since the same widget configuration is shared with every other place that widget type is used in the YAML file. Instead, call `lvgl::lv_list_get_row_index()` from a `lambda`, passing the list and the widget that received the event -- available in every trigger as the `event` variable (see [Other events](#other-events)):
+
+```cpp
+int lv_list_get_row_index(lv_obj_t *list, lv_obj_t *widget);
+```
+
+It returns the index of the entry that contains `widget` -- `widget` itself if it's added directly (e.g. via `lvgl.list.add_text`), or the entry that owns it if `widget` is nested somewhere inside a hierarchy added with `lvgl.list.add` -- or `-1` if `widget` isn't inside `list` at all.
+
+**Example:**
+
+```yaml
+# Example widget:
+- list:
+    id: my_list
+    width: 200
+    height: 150
+    pad_row: 4
+    on_add:
+      - logger.log:
+          format: "Entry added at %d"
+          args: [ list_index ]
+    on_remove:
+      - logger.log:
+          format: "Entry removed at %d"
+          args: [ list_index ]
+
+# Example actions:
+on_...:
+  - lvgl.list.add_text:
+      id: my_list
+      text: "Section"
+  - lvgl.list.add:
+      id: my_list
+      button:
+        text: "Entry"
+        checkable: true
+  - lvgl.list.add:
+      id: my_list
+      index: 0 # pin this entry to the top of the list
+      button:
+        widgets:
+          - label:
+              text:
+                format: "Row %d"
+                args: [ millis() ]
+        on_click:
+          - lambda: |-
+              int row = lvgl::lv_list_get_row_index(id(my_list), static_cast<lv_obj_t *>(lv_event_get_target(event)));
+              ESP_LOGD("main", "Row %d clicked", row);
+  - lvgl.list.remove:
+      id: my_list
+      index: 0
+  - lvgl.list.clear:
+      id: my_list
+```
+
 ### `meter`
 
 The meter widget can visualize data in very flexible ways. It can use arcs, needles, ticks, lines and/or labels.
