@@ -93,6 +93,31 @@ sensor:
 
   - All options from [Sensor](/components/sensor).
 
+- **pmc_0_5** (*Optional*): The information for the **Number Concentration** sensor for ultrafine particles up to
+  0.5μm. Readings in particles/cm³.
+
+  - All options from [Sensor](/components/sensor).
+
+- **pmc_1_0** (*Optional*): The information for the **Number Concentration** sensor for fine particles up to 1μm.
+  Readings in particles/cm³.
+
+  - All options from [Sensor](/components/sensor).
+
+- **pmc_2_5** (*Optional*): The information for the **Number Concentration** sensor for fine particles up to 2.5μm.
+  Readings in particles/cm³.
+
+  - All options from [Sensor](/components/sensor).
+
+- **pmc_4_0** (*Optional*): The information for the **Number Concentration** sensor for coarse particles up to 4μm.
+  Readings in particles/cm³.
+
+  - All options from [Sensor](/components/sensor).
+
+- **pmc_10_0** (*Optional*): The information for the **Number Concentration** sensor for coarse particles up to
+  10μm. Readings in particles/cm³.
+
+  - All options from [Sensor](/components/sensor).
+
 - **temperature** (*Optional*): Temperature.
 
   - All options from [Sensor](/components/sensor).
@@ -104,22 +129,87 @@ sensor:
 - **voc_index** (*Optional*): VOC Index. Note: only available with SEN65, SEN66, SEN68 or SEN69C. The sensor will be
   ignored on unsupported models.
 
-  - All options from [Sensor](/components/sensor).
+  - **algorithm_tuning** (*Optional*): The VOC algorithm can be customized by tuning 6 different parameters.
+    For more details see the SEN6x datasheet.
+
+    - **index_offset** (*Optional*): VOC index representing typical (average) conditions.
+      Allowed values are in range 1..250. The default value is 100.
+    - **learning_time_offset_hours** (*Optional*): Time constant to estimate the VOC algorithm offset from the
+      history in hours. Past events will be forgotten after about twice the learning time.
+      Allowed values are in range 1..1000. The default value is 12 hours.
+    - **learning_time_gain_hours** (*Optional*): Time constant to estimate the VOC algorithm gain from the history
+      in hours. Past events will be forgotten after about twice the learning time.
+      Allowed values are in range 1..1000. The default value is 12 hours.
+    - **gating_max_duration_minutes** (*Optional*): Maximum duration of gating in minutes (freeze of estimator
+      during high VOC index signal). Zero disables the gating. Allowed values are in range 0..3000.
+      The default value is 180 minutes.
+    - **std_initial** (*Optional*): Initial estimate for standard deviation. Lower value boosts events during
+      initial learning period, but may result in larger device-to-device variations.
+      Allowed values are in range 10..5000. The default value is 50.
+    - **gain_factor** (*Optional*): Gain factor to amplify or to attenuate the VOC index output.
+      Allowed values are in range 1..1000. The default value is 230.
+
+  - All other options from [Sensor](/components/sensor).
 
 - **nox_index** (*Optional*): NOx Index. Note: only available with SEN65, SEN66, SEN68 or SEN69C. The sensor will be
   ignored on unsupported models.
 
-  - All options from [Sensor](/components/sensor).
+  - **algorithm_tuning** (*Optional*): The NOx algorithm can be customized by tuning 5 different parameters.
+    For more details see the SEN6x datasheet. Unlike VOC, the NOx algorithm has no configurable `std_initial`;
+    the device requires it to be 50 and ESPHome always sends that value.
+
+    - **index_offset** (*Optional*): NOx index representing typical (average) conditions.
+      Allowed values are in range 1..250. The default value is 1.
+    - **learning_time_offset_hours** (*Optional*): Time constant to estimate the NOx algorithm offset from the
+      history in hours. Past events will be forgotten after about twice the learning time.
+      Allowed values are in range 1..1000. The default value is 12 hours.
+    - **learning_time_gain_hours** (*Optional*): Time constant to estimate the NOx algorithm gain from the history
+      in hours. Past events will be forgotten after about twice the learning time.
+      Allowed values are in range 1..1000. The default value is 12 hours.
+    - **gating_max_duration_minutes** (*Optional*): Maximum duration of gating in minutes (freeze of estimator
+      during high NOx index signal). Zero disables the gating. Allowed values are in range 0..3000.
+      The default value is 720 minutes.
+    - **gain_factor** (*Optional*): Gain factor to amplify or to attenuate the NOx index output.
+      Allowed values are in range 1..1000. The default value is 230.
+
+  - All other options from [Sensor](/components/sensor).
 
 - **co2** (*Optional*): The **carbon dioxide** concentration in ppm. Note: only available with SEN63C, SEN66 or
   SEN69C. The sensor will be ignored on unsupported models.
 
-  - All options from [Sensor](/components/sensor).
+  - **automatic_self_calibration** (*Optional*, boolean): Enable or disable the CO₂ sensor's automatic
+    self-calibration (ASC).
+  - **altitude_compensation** (*Optional*, int): Altitude of the sensor location in meters above sea level,
+    used to compensate the CO₂ reading. Allowed values are in range 0..3000.
+  - **ambient_pressure_compensation** (*Optional*, int): Static ambient pressure in hPa used to compensate the
+    CO₂ reading. Allowed values are in range 700..1200.
+  - **ambient_pressure_compensation_source** (*Optional*, [ID](/guides/configuration-types#id)): A pressure sensor
+    (in hPa) whose value updates the ambient pressure compensation on every update cycle. Values outside
+    700..1200 hPa are ignored with a warning.
+  - All other options from [Sensor](/components/sensor).
 
 - **formaldehyde** (*Optional*): The Formaldehyde (HCHO) concentration in ppb. Note: only available with SEN68 or
   SEN69C. The sensor will be ignored on unsupported models.
 
   - All options from [Sensor](/components/sensor).
+
+- **temperature_compensation** (*Optional*): Compensate temperature effects of the design-in at customer side by
+  applying a custom temperature offset to the ambient temperature. Compensation slot 0 is used.
+
+  - **offset** (*Optional*, float): Temperature offset in °C. Defaults to `0`.
+  - **normalized_offset_slope** (*Optional*, float): Normalized temperature offset slope. Defaults to `0`.
+  - **time_constant** (*Optional*, int): Time constant in seconds. Defaults to `0`.
+
+- **temperature_acceleration** (*Optional*): Parameters for the RH/T engine's temperature acceleration mode, from
+  Sensirion's "SEN6x Temperature Acceleration and Compensation Instructions" document.
+
+  - **k** (*Optional*, float): Filter constant K. Defaults to `20.0`.
+  - **p** (*Optional*, float): Filter constant P. Defaults to `20.0`.
+  - **t1** (*Optional*, float): Time constant T1 in seconds. Defaults to `100.0`.
+  - **t2** (*Optional*, float): Time constant T2 in seconds. Defaults to `300.0`.
+
+- **startup_delay** (*Optional*, [Time](/guides/configuration-types#time)): Warm-up period after starting a
+  measurement during which values are discarded. Maximum 1 hour. Defaults to `60s`.
 
 - **address** (*Optional*, int): Manually specify the I²C address of the sensor.
   Defaults to `0x6B`.
@@ -129,7 +219,84 @@ sensor:
 
 > [!NOTE]
 > The sensor needs about a minute "warm-up". The VOC and NOx gas index algorithm needs a
-> number of samples before the values stabilize.
+> number of samples before the values stabilize. The warm-up period can be changed with `startup_delay`.
+
+## Binary sensor
+
+The `sen6x` binary sensor platform exposes the device status register as diagnostic entities. The register is
+read and cleared once per update cycle, so each entity reports whether a problem occurred since the last update.
+
+```yaml
+binary_sensor:
+  - platform: sen6x
+    fan_error:
+      name: Fan Error
+    fan_speed_warning:
+      name: Fan Speed Warning
+    rht_error:
+      name: RH/T Error
+    gas_error:
+      name: Gas Error
+    co2_error:
+      name: CO2 Error
+    hcho_error:
+      name: HCHO Error
+    pm_error:
+      name: PM Error
+```
+
+### Configuration variables
+
+- **sen6x_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the sen6x sensor component.
+- **fan_error** (*Optional*): The fan is switched on but not spinning.
+- **fan_speed_warning** (*Optional*): The fan speed is more than 10% off target. Not latched; clears by itself.
+- **rht_error** (*Optional*): Error in the relative humidity and temperature sensor.
+- **gas_error** (*Optional*): Error in the VOC/NOx gas sensor. Only available with SEN65, SEN66, SEN68 or SEN69C.
+- **co2_error** (*Optional*): Error in the CO₂ sensor. Only available with SEN63C, SEN66 or SEN69C.
+- **hcho_error** (*Optional*): Error in the formaldehyde sensor. Only available with SEN68 or SEN69C.
+- **pm_error** (*Optional*): Error in the particulate matter sensor.
+
+All entities support all options from [Binary Sensor](/components/binary_sensor). Entities not supported by the
+detected model are ignored with an error in the log.
+
+## Actions
+
+The measurement can be controlled and maintenance functions triggered from automations. On the SEN6x family,
+fan cleaning and the SHT heater only work while the measurement is stopped, and the device needs wait time
+after each command (1400 ms after stop, 10 s after fan cleaning, 20 s after the heater). Commands sent too
+early are ignored with a "Device busy" warning.
+
+### `sen6x.start_measurement` Action
+
+Starts a continuous measurement. The warm-up period applies again before values are published.
+On SEN63C and SEN69C the measurement must not be restarted within 24 s of a start while the CO₂ sensor
+is conditioning; ESPHome enforces this.
+
+### `sen6x.stop_measurement` Action
+
+Stops the measurement and puts the device in idle mode. No values are published while stopped.
+
+### `sen6x.start_fan_cleaning` Action
+
+Runs the fan at maximum speed for 10 seconds to blow out accumulated dust. Only accepted in idle mode.
+
+### `sen6x.activate_sht_heater` Action
+
+Activates the built-in heater of the RH/T sensor for 1 second with 200 mW to reverse creep at high humidity.
+Only accepted in idle mode.
+
+```yaml
+# Example: fan cleaning via a button
+button:
+  - platform: template
+    name: Fan Cleaning
+    on_press:
+      - sen6x.stop_measurement: my_sen6x
+      - delay: 2s
+      - sen6x.start_fan_cleaning: my_sen6x
+      - delay: 11s
+      - sen6x.start_measurement: my_sen6x
+```
 
 ## Wiring
 
