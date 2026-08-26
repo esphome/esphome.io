@@ -1,0 +1,579 @@
+---
+import { Code, Tabs, TabItem, LinkButton } from "@astrojs/starlight/components";
+
+// Every esphome-desktop release publishes a version-independent `latest.json`,
+// so the download links resolve at build time and never go stale. The constant
+// is only a fallback for when the fetch fails (offline build, GitHub outage).
+const FALLBACK_VERSION = "1.1.3";
+const LATEST_JSON = "https://github.com/esphome/esphome-desktop/releases/latest/download/latest.json";
+
+// Every download this page offers, as `${platform}-${kind}` keys into the
+// `downloads` map that `latest.json` publishes. AUR is deliberately absent: it
+// is a package page, not a release asset, so it never comes from the JSON.
+const REQUIRED = {
+  windows: ["windows-x86_64", "nsis"],
+  "mac-arm64": ["darwin-aarch64", "dmg"],
+  "mac-x64": ["darwin-x86_64", "dmg"],
+  "deb-x64": ["linux-x86_64", "deb"],
+  "deb-arm64": ["linux-aarch64", "deb"],
+  "rpm-x64": ["linux-x86_64", "rpm"],
+  "rpm-arm64": ["linux-aarch64", "rpm"],
+  "appimage-x64": ["linux-x86_64", "appimage"],
+  "appimage-arm64": ["linux-aarch64", "appimage"],
+};
+
+// A value carrying a `v` prefix would build `vv1.0.0` paths, so strip it and
+// require a numeric version; anything else is treated as unusable.
+const normalizeVersion = (value) => {
+  if (typeof value !== "string") return null;
+  const trimmed = value.trim().replace(/^v/i, "");
+  return /^\d+\.\d+\.\d+(?:[-+][0-9A-Za-z.-]+)?$/.test(trimmed) ? trimmed : null;
+};
+
+// Pull each required asset URL out of the published `downloads` map. Returns
+// null if anything is missing, so a partial map falls back wholesale rather
+// than rendering a page with some links dead.
+const urlsFromDownloads = (downloads) => {
+  if (!downloads || typeof downloads !== "object") return null;
+  const urls = {};
+  for (const [key, [platform, kind]] of Object.entries(REQUIRED)) {
+    const url = downloads[platform]?.find?.((entry) => entry?.kind === kind)?.url;
+    if (typeof url !== "string" || !url.startsWith("https://github.com/esphome/esphome-desktop/")) return null;
+    urls[key] = url;
+  }
+  return urls;
+};
+
+// The same shape, rebuilt from the release's filename patterns. Used when the
+// fetch fails or the JSON has no usable `downloads`.
+const urlsFromVersion = (v) => {
+  const base = `https://github.com/esphome/esphome-desktop/releases/download/v${v}/`;
+  return {
+    windows: `${base}ESPHome.Device.Builder_${v}_x64-setup.exe`,
+    "mac-arm64": `${base}ESPHome.Device.Builder_${v}_aarch64.dmg`,
+    "mac-x64": `${base}ESPHome.Device.Builder_${v}_x64.dmg`,
+    "deb-x64": `${base}ESPHome.Device.Builder_${v}_amd64.deb`,
+    "deb-arm64": `${base}ESPHome.Device.Builder_${v}_arm64.deb`,
+    "rpm-x64": `${base}ESPHome.Device.Builder-${v}-1.x86_64.rpm`,
+    "rpm-arm64": `${base}ESPHome.Device.Builder-${v}-1.aarch64.rpm`,
+    "appimage-x64": `${base}ESPHome.Device.Builder_${v}_amd64.AppImage`,
+    "appimage-arm64": `${base}ESPHome.Device.Builder_${v}_aarch64.AppImage`,
+  };
+};
+
+let version = FALLBACK_VERSION;
+let urls = null;
+try {
+  // Bounded so an unresponsive GitHub cannot stall the build.
+  const response = await fetch(LATEST_JSON, { signal: AbortSignal.timeout(10_000) });
+  if (!response.ok) {
+    console.warn(`InstallSelector: ${LATEST_JSON} returned ${response.status}`);
+  } else {
+    const latest = await response.json();
+    const normalized = normalizeVersion(latest?.version);
+    if (normalized) {
+      version = normalized;
+    } else {
+      console.warn(`InstallSelector: unusable "version" (${JSON.stringify(latest?.version)}) in ${LATEST_JSON}`);
+    }
+    // Prefer the published URLs over rebuilding filenames, so a change to the
+    // release's naming scheme does not silently break every link here.
+    urls = urlsFromDownloads(latest?.downloads);
+    if (!urls) console.warn(`InstallSelector: no usable "downloads" in ${LATEST_JSON}`);
+  }
+} catch (error) {
+  console.warn(`InstallSelector: could not fetch ${LATEST_JSON}`, error);
+}
+
+// Falls back to the version resolved above, which is the fetched one whenever
+// that was usable, so a missing `downloads` map does not also cost us the bump.
+if (!urls) {
+  urls = urlsFromVersion(version);
+  console.warn(`InstallSelector: reconstructed download URLs for ${version}`);
+}
+---
+
+<div class="install-selector not-content">
+  <Tabs>
+    <TabItem label="Home Assistant">
+      <p class="install-selector__sub">Run ESPHome Device Builder alongside your Home Assistant instance.</p>
+      <div class="install-selector__row">
+        <div
+          class="install-selector__segmented"
+          role="group"
+          aria-label="Home Assistant flavor"
+          data-segmented="ha-flavor"
+        >
+          <button type="button" data-flavor="os" aria-pressed="true"> Home Assistant OS </button>
+          <button type="button" data-flavor="container" aria-pressed="false"> Home Assistant Container </button>
+        </div>
+      </div>
+
+      <div data-ha-install="os">
+        <p>Install the official ESPHome Device Builder app:</p>
+        <div class="install-selector__row">
+          <a
+            class="install-selector__my"
+            href="https://my.home-assistant.io/redirect/supervisor_addon/?addon=5c53de3b_esphome&repository_url=https%3A%2F%2Fgithub.com%2Fesphome%2Fhome-assistant-addon"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <img
+              src="https://my.home-assistant.io/badges/supervisor_addon.svg"
+              alt="Open your Home Assistant instance and show the ESPHome Device Builder app."
+              loading="lazy"
+            />
+          </a>
+        </div>
+        <p>
+          Clicking the button above opens the ESPHome Device Builder app inside your Home Assistant instance — click <strong
+            >Install</strong
+          >, then{" "}
+          <strong>Start</strong>, then <strong>Open Web UI</strong>.
+        </p>
+
+        <h3>Install Manually</h3>
+        <p>If the button doesn't work, you can install the app by hand:</p>
+        <ol class="install-selector__steps">
+          <li>
+            In Home Assistant, go to <strong>Settings</strong> → <strong>Apps</strong>
+            → <strong>Install App</strong>.
+          </li>
+          <li>
+            Find <strong>ESPHome Device Builder</strong> in the list and click it.
+          </li>
+          <li>
+            Click <strong>Install</strong>, then <strong>Start</strong>, then{" "}
+            <strong>Open Web UI</strong>.
+          </li>
+        </ol>
+        <p class="install-selector__hint">
+          If the app isn't listed, the ESPHome repository hasn't been registered. Click the <strong>⋮</strong> menu (top-right)
+          → <strong>Repositories</strong>, paste{" "}
+          <code>https://github.com/esphome/home-assistant-addon</code>, click{" "}
+          <strong>Add</strong>, then close the dialog and look again.
+        </p>
+      </div>
+
+      <div data-ha-install="container" hidden>
+        <p>
+          Run the ESPHome Device Builder dashboard as a Docker container alongside your Home Assistant Container
+          install:
+        </p>
+        <Code code={'docker run --rm --net=host -v "${PWD}":/config -it ghcr.io/esphome/esphome'} lang="bash" />
+        <p>
+          Once it's running, open <a href="http://localhost:6052"><code>http://localhost:6052</code></a> in your browser.{
+            " "
+          }
+          <code>--net=host</code> lets the dashboard use mDNS, which it needs to discover devices and to resolve their{
+            " "
+          }
+          <code>.local</code> names. On Docker Desktop (where host networking is unavailable) substitute{" "}
+          <code>-p 6052:6052</code>; the dashboard still runs, but without mDNS it can only reach devices you give a
+          fixed address.
+        </p>
+        <p>
+          See <a href="/install/docker/">Running ESPHome in Docker</a> for image tags, a Compose file, and other options.
+        </p>
+      </div>
+    </TabItem>
+
+    <TabItem label="Windows">
+      <p class="install-selector__sub">Works on Windows 10 and Windows 11.</p>
+      <LinkButton data-download="windows" href={urls.windows}> Download installer (.exe) </LinkButton>
+      <ol class="install-selector__steps">
+        <li>Open the downloaded <code>.exe</code> file.</li>
+        <li>
+          If Windows asks <em>"Do you want to allow this app to make changes?"</em>, choose <strong>Yes</strong>.
+        </li>
+        <li>Follow the installer prompts.</li>
+        <li>
+          Launch <strong>ESPHome Device Builder</strong> from the Start menu.
+        </li>
+      </ol>
+      <p class="install-selector__hint">
+        If you see <em>"Windows protected your PC"</em>, click{" "}
+        <strong>More info</strong> → <strong>Run anyway</strong>.
+      </p>
+    </TabItem>
+
+    <TabItem label="macOS">
+      <p class="install-selector__sub">macOS 10.15 Catalina or newer.</p>
+      <div class="install-selector__row">
+        <div class="install-selector__segmented" role="group" aria-label="Mac architecture" data-segmented="mac-arch">
+          <button type="button" data-arch="arm64" aria-pressed="true"> Apple Silicon </button>
+          <button type="button" data-arch="x64" aria-pressed="false"> Intel </button>
+        </div>
+      </div>
+      <p class="install-selector__warning" data-mac-intel-warning role="status" hidden>
+        Support for Intel Macs will be removed soon. The Python ecosystem is dropping Intel macOS; the{" "}
+        <code>cryptography</code> package no longer publishes Intel builds as of version 49.
+      </p>
+      <LinkButton data-download="mac" href={urls["mac-arm64"]}> Download disk image (.dmg) </LinkButton>
+      <ol class="install-selector__steps">
+        <li>Open the downloaded <code>.dmg</code> file.</li>
+        <li>
+          Drag <strong>ESPHome Device Builder</strong> into the <strong>Applications</strong> folder.
+        </li>
+        <li>
+          Open the Applications folder and double-click{" "}
+          <strong>ESPHome Device Builder</strong>.
+        </li>
+        <li>
+          The first time you run it, macOS may ask you to confirm — click{" "}
+          <strong>Open</strong>.
+        </li>
+      </ol>
+      <p class="install-selector__hint">
+        Not sure which Mac you have? Click the Apple menu → <strong>About This Mac</strong>. If you see <em
+          >Apple M1/M2/M3/M4</em
+        >, pick Apple Silicon. If you see <em>Intel</em>, pick Intel.
+      </p>
+    </TabItem>
+
+    <TabItem label="Linux">
+      <p class="install-selector__sub">Choose the package format that matches your distribution.</p>
+      <div class="install-selector__row">
+        <div
+          class="install-selector__segmented"
+          role="group"
+          aria-label="Linux package format"
+          data-segmented="linux-format"
+        >
+          <button type="button" data-format="deb" aria-pressed="true"> Debian / Ubuntu </button>
+          <button type="button" data-format="rpm" aria-pressed="false"> Fedora / openSUSE </button>
+          <button type="button" data-format="aur" aria-pressed="false"> Arch (AUR) </button>
+          <button type="button" data-format="appimage" aria-pressed="false"> AppImage </button>
+        </div>
+        <div
+          class="install-selector__segmented"
+          role="group"
+          aria-label="Linux architecture"
+          data-segmented="linux-arch"
+          data-linux-arch-row
+        >
+          <button type="button" data-arch="x64" aria-pressed="true"> x86_64 </button>
+          <button type="button" data-arch="arm64" aria-pressed="false"> arm64 </button>
+        </div>
+      </div>
+      <LinkButton data-download="linux" href={urls["deb-x64"]}>
+        <span data-linux-label>Download .deb</span>
+      </LinkButton>
+
+      <div data-linux-install="deb">
+        <p>Double-click the file in your file manager, or run:</p>
+        <Code code="sudo apt install ./ESPHome.Device.Builder_*.deb" lang="bash" />
+      </div>
+      <div data-linux-install="rpm" hidden>
+        <p>Double-click the file in your file manager, or run:</p>
+        <Code code="sudo dnf install ./ESPHome.Device.Builder-*.rpm" lang="bash" />
+      </div>
+      <div data-linux-install="aur" hidden>
+        <p>
+          Install the <code>esphome-desktop-bin</code> package with your favorite AUR helper:
+        </p>
+        <Code code={"yay -S esphome-desktop-bin\n# or\nparu -S esphome-desktop-bin"} lang="bash" />
+      </div>
+      <div data-linux-install="appimage" hidden>
+        <p>Make it executable and run it:</p>
+        <Code code={"chmod +x ESPHome.Device.Builder_*.AppImage\n./ESPHome.Device.Builder_*.AppImage"} lang="bash" />
+      </div>
+
+      <p class="install-selector__hint">
+        If serial devices don't show up, add your user to the{" "}
+        <code><span data-linux-group>dialout</span></code> group and log out and back in: <code
+          >sudo usermod -a -G <span data-linux-group>dialout</span> $USER</code
+        >.
+      </p>
+    </TabItem>
+
+    <TabItem label="pip">
+      <p class="install-selector__sub">Any operating system with Python 3.12 or newer.</p>
+      <p>
+        Installing with <code>pip</code> gives you the same tools without the desktop app wrapping them. The web UI and the
+        command-line tool are separate packages, so pick whichever suits you.
+      </p>
+
+      <h3>Device Builder (Web UI)</h3>
+      <p>
+        The Device Builder needs the ESPHome command-line tool to compile firmware, so install it with the{" "}
+        <code>esphome</code> extra to pull in both:
+      </p>
+      <Code code={'pip install "esphome-device-builder[esphome]"\nesphome-device-builder config'} lang="bash" />
+      <p>
+        Here <code>config</code> is not a subcommand: it is the directory your configurations are stored in, so replace it
+        with whichever path you want to use. The dashboard is then available at{" "}
+        <a href="http://localhost:6052"><code>http://localhost:6052</code></a>.
+      </p>
+
+      <h3>Command Line Only</h3>
+      <p>
+        If you want the command-line tool without the web UI, install <code>esphome</code> on its own:
+      </p>
+      <Code code={"pip install esphome\nesphome run livingroom.yaml"} lang="bash" />
+      <p>
+        See the <a href="/install/getting-started/">getting started guide</a> for a full walkthrough.
+      </p>
+
+      <p class="install-selector__hint">
+        Install into a <a href="https://docs.python.org/3/library/venv.html">virtual environment</a> if you can. Many Linux
+        distributions now refuse to <code>pip install</code> into the system Python and will fail with{" "}
+        <code>externally-managed-environment</code>.
+      </p>
+    </TabItem>
+  </Tabs>
+</div>
+
+<style>
+  .install-selector__sub {
+    color: var(--sl-color-gray-3);
+    margin-block: 0 1rem;
+  }
+
+  .install-selector__row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    align-items: center;
+    margin-block: 0.5rem 1.25rem;
+  }
+
+  .install-selector__segmented {
+    display: inline-flex;
+    flex-wrap: wrap;
+    padding: 3px;
+    background: var(--sl-color-gray-6);
+    border: 1px solid var(--sl-color-gray-5);
+    border-radius: 6px;
+    gap: 2px;
+  }
+  /* `display` here is an author rule, so it beats the UA `[hidden]` rule and
+     the arch row would stay visible when the script hides it. */
+  .install-selector__segmented[hidden] {
+    display: none;
+  }
+  .install-selector__segmented button {
+    appearance: none;
+    background: none;
+    border: none;
+    padding: 0.35rem 0.75rem;
+    font: inherit;
+    font-size: 0.85rem;
+    color: var(--sl-color-gray-3);
+    cursor: pointer;
+    border-radius: 4px;
+    transition:
+      color 0.15s ease,
+      background-color 0.15s ease;
+  }
+  .install-selector__segmented button:hover {
+    color: var(--sl-color-white);
+  }
+  .install-selector__segmented button[aria-pressed="true"] {
+    background: var(--sl-color-bg);
+    color: var(--sl-color-white);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+  }
+
+  .install-selector__steps {
+    margin-block: 0 1rem;
+    padding-left: 1.4em;
+  }
+  .install-selector__steps li {
+    margin-bottom: 0.25rem;
+  }
+
+  .install-selector__hint {
+    font-size: 0.9em;
+    color: var(--sl-color-gray-3);
+    margin-block: 0.75rem 0;
+  }
+
+  .install-selector__warning {
+    font-size: 0.9em;
+    background: var(--sl-color-orange-low);
+    border-left: 3px solid var(--sl-color-orange);
+    border-radius: 0 4px 4px 0;
+    padding: 0.6rem 0.8rem;
+    margin-block: 0 1.25rem;
+  }
+
+  .install-selector__my {
+    display: inline-block;
+    line-height: 0;
+  }
+  .install-selector__my img {
+    height: 36px;
+    width: auto;
+    display: block;
+  }
+
+  .install-selector h3 {
+    margin-block: 1.25rem 0.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+  }
+
+  .install-selector :global(.expressive-code) {
+    margin-block: 0.5rem 1rem;
+  }
+</style>
+
+<script define:vars={{ urls }}>
+  (() => {
+    const root = document.querySelector(".install-selector");
+    if (!root) return;
+
+    // ---- Helpers --------------------------------------------------------
+
+    const detectOs = () => {
+      const ua = navigator.userAgent;
+      const platform = navigator.userAgentData?.platform || navigator.platform || "";
+      // iOS first — iPad/iPhone UAs contain "like Mac OS X" and modern iPad
+      // in desktop-mode reports as MacIntel but advertises touch points.
+      if (/iPhone|iPad|iPod/i.test(ua)) return null;
+      if ((/Mac/i.test(platform) || /Mac OS X/i.test(ua)) && (navigator.maxTouchPoints ?? 0) > 1) return null;
+      if (/Mac/i.test(platform) || /Mac OS X/i.test(ua)) return "macOS";
+      if (/Linux|X11|CrOS/i.test(platform + " " + ua) && !/Android/i.test(ua)) return "Linux";
+      if (/Win/i.test(platform) || /Windows/i.test(ua)) return "Windows";
+      return null;
+    };
+
+    // Wire up a segmented-control button group and return a `select(value)`
+    // function for triggering a choice programmatically. `onChange` receives
+    // the value of `data-${attr}` for the active button.
+    const wireSegmented = (group, attr, onChange) => {
+      const buttons = root.querySelectorAll(`[data-segmented="${group}"] button`);
+      const select = (value) => {
+        let matched = false;
+        buttons.forEach((b) => {
+          const isMatch = b.dataset[attr] === value;
+          if (isMatch) matched = true;
+          b.setAttribute("aria-pressed", isMatch ? "true" : "false");
+        });
+        if (matched) onChange(value);
+      };
+      buttons.forEach((b) => b.addEventListener("click", () => select(b.dataset[attr])));
+      return select;
+    };
+
+    // ---- Home Assistant -----------------------------------------------
+    (() => {
+      const blocks = root.querySelectorAll("[data-ha-install]");
+      if (!blocks.length) return;
+      wireSegmented("ha-flavor", "flavor", (flavor) => {
+        blocks.forEach((block) => {
+          block.hidden = block.dataset.haInstall !== flavor;
+        });
+      });
+    })();
+
+    // ---- Tab auto-selection --------------------------------------------
+    // Wait for <starlight-tabs> to upgrade — before upgrade the tab anchor
+    // has no click handler attached, and `.click()` just hash-navigates.
+    customElements.whenDefined("starlight-tabs").then(() => {
+      const detected = detectOs();
+      if (!detected) return;
+      const match = [...root.querySelectorAll('starlight-tabs [role="tab"]')].find(
+        (t) => t.textContent?.trim() === detected,
+      );
+      if (match && match.getAttribute("aria-selected") !== "true") {
+        match.click();
+      }
+    });
+
+    // ---- macOS ---------------------------------------------------------
+    (() => {
+      const btn = root.querySelector('[data-download="mac"]');
+      if (!btn) return;
+      const intelWarning = root.querySelector("[data-mac-intel-warning]");
+      const selectArch = wireSegmented("mac-arch", "arch", (arch) => {
+        btn.href = urls[`mac-${arch}`];
+        if (intelWarning) intelWarning.hidden = arch !== "x64";
+      });
+
+      // Auto-pick Intel when the UA-CH API reports an x86 architecture.
+      navigator.userAgentData
+        ?.getHighEntropyValues?.(["architecture"])
+        ?.then((info) => {
+          if (info.architecture === "x86") selectArch("x64");
+        })
+        .catch(() => {});
+    })();
+
+    // ---- Linux ---------------------------------------------------------
+    (() => {
+      const btn = root.querySelector('[data-download="linux"]');
+      const label = root.querySelector("[data-linux-label]");
+      const archRow = root.querySelector("[data-linux-arch-row]");
+      if (!btn || !label) return;
+      const installBlocks = root.querySelectorAll("[data-linux-install]");
+      const groupSpans = root.querySelectorAll("[data-linux-group]");
+
+      // Per-format: how to resolve the download URL for the selected arch, the
+      // button label, and the serial-port group on this kind of distro. A
+      // `url` taking no arch means the format has no architecture choice.
+      const formats = {
+        deb: {
+          url: (arch) => urls[`deb-${arch}`],
+          label: "Download .deb",
+          serialGroup: "dialout",
+          perArch: true,
+        },
+        rpm: {
+          url: (arch) => urls[`rpm-${arch}`],
+          label: "Download .rpm",
+          serialGroup: "dialout",
+          perArch: true,
+        },
+        aur: {
+          url: () => "https://aur.archlinux.org/packages/esphome-desktop-bin",
+          label: "View on AUR",
+          serialGroup: "uucp",
+          perArch: false,
+        },
+        appimage: {
+          url: (arch) => urls[`appimage-${arch}`],
+          label: "Download AppImage",
+          serialGroup: "dialout",
+          perArch: true,
+        },
+      };
+
+      // Derived from the markup so the pressed buttons stay the single source
+      // of truth for what the download button points at.
+      const pressed = (group, attr, fallback) =>
+        root.querySelector(`[data-segmented="${group}"] button[aria-pressed="true"]`)?.dataset[attr] ?? fallback;
+
+      let currentFormat = pressed("linux-format", "format", "deb");
+      let currentArch = pressed("linux-arch", "arch", "x64");
+
+      const refreshDownload = () => {
+        const f = formats[currentFormat];
+        btn.href = f.perArch ? f.url(currentArch) : f.url();
+        label.textContent = f.label;
+      };
+
+      wireSegmented("linux-format", "format", (format) => {
+        currentFormat = format;
+        const f = formats[format];
+        if (archRow) archRow.hidden = !f.perArch;
+        installBlocks.forEach((block) => {
+          block.hidden = block.dataset.linuxInstall !== format;
+        });
+        groupSpans.forEach((span) => {
+          span.textContent = f.serialGroup;
+        });
+        refreshDownload();
+      });
+
+      wireSegmented("linux-arch", "arch", (arch) => {
+        currentArch = arch;
+        refreshDownload();
+      });
+
+      // Reconcile the server-rendered href/label with the pressed buttons.
+      refreshDownload();
+    })();
+  })();
+</script>
