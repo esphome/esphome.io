@@ -8,7 +8,9 @@ import APIRef from '@components/APIRef.astro';
 The `improv_serial` component in ESPHome implements the open [Improv standard](https://www.improv-wifi.com/)
 for configuring Wi-Fi on an ESPHome device by using a serial connection to the device, eg. USB.
 
-The `improv_serial` component requires the serial `logger` to be configured.
+By default the `improv_serial` component shares the serial port used by the `logger`, which must be
+configured. With `uart_id` it uses a dedicated [UART bus](/components/uart) instead, leaving the
+logger's serial settings untouched.
 
 The `improv_serial` component will use the project name and version instead of ESPHomes version whenever it's available.
 
@@ -23,6 +25,7 @@ improv_serial:
 ## Configuration variables
 
 - **next_url** (*Optional*, url): A URL that can be used to forward the user to after setting credentials with improv.
+- **uart_id** (*Optional*, [ID](/guides/configuration-types#id)): Run Improv on this [UART bus](/components/uart) instead of the logger's serial port.
 
 ## Next URL
 
