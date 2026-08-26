@@ -29,9 +29,9 @@ and requires [Modbus Controller](/components/modbus_controller/) to be configure
   Parameters passed into the lambda
 
   - **x** (bool): The new boolean state being set
-  - **item** (`ModbusSwitch *`): The entity as its own modbus device: a [`ModbusClientDevice`](https://api-docs.esphome.io/classesphome_1_1modbus_1_1_modbus_client_device) subclass, so every client request helper is available - for example `item->write_single_register(address, value)` or `item->queue_pdu(...)` - regardless of the switch's own register type. Also a [`SensorItem`](https://api-docs.esphome.io/classesphome_1_1modbus__controller_1_1_sensor_item) subclass, so the configured address, `offset`, `bitmask`, etc. are accessible.
+  - **item** (`ModbusSwitch *`): The entity as its own modbus device: the write helpers and `queue_pdu()` are available - for example `item->write_single_register(address, value)` or `item->queue_pdu(...)` - regardless of the switch's own register type. Also a [`SensorItem`](https://api-docs.esphome.io/classesphome_1_1modbus__controller_1_1_sensor_item) subclass, so the configured address, `offset`, `bitmask`, etc. are accessible.
   - **payload** (`PduBuffer &payload`): *Deprecated, removed in 2027.3.0 - use `item` instead.*
-    An empty buffer; if the lambda fills it (`push_back`), it is sent as a raw modbus frame and must include all required bytes, including the device address.
+    An empty buffer; if the lambda fills it (`push_back`/`clear`/`assign` - not the full `std::vector` API), it is sent as a raw modbus frame and must include all required bytes, including the device address.
 
   Possible return values for the lambda:
 

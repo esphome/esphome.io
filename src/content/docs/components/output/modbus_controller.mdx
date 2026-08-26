@@ -44,9 +44,9 @@ The `modbus_controller` platform creates an output from a modbus_controller. The
   Parameters passed into the lambda
 
   - **x** (float or bool): the new value being set — a `float` for `register_type: holding`, or a `bool` for `register_type: coil`
-  - **item** (`ModbusFloatOutput *` / `ModbusBinaryOutput *`): The entity as its own modbus device: a [`ModbusClientDevice`](https://api-docs.esphome.io/classesphome_1_1modbus_1_1_modbus_client_device) subclass, so every client request helper is available - for example `item->write_single_register(address, value)` or `item->queue_pdu(...)` - regardless of the output's own register type. Also a [`SensorItem`](https://api-docs.esphome.io/classesphome_1_1modbus__controller_1_1_sensor_item) subclass, so the configured address, `offset`, `bitmask`, etc. are accessible.
+  - **item** (`ModbusFloatOutput *` / `ModbusBinaryOutput *`): The entity as its own modbus device: the write helpers and `queue_pdu()` are available - for example `item->write_single_register(address, value)` or `item->queue_pdu(...)` - regardless of the output's own register type. Also a [`SensorItem`](https://api-docs.esphome.io/classesphome_1_1modbus__controller_1_1_sensor_item) subclass, so the configured address, `offset`, `bitmask`, etc. are accessible.
   - **payload**: *Deprecated, removed in 2027.3.0 - use `item` instead.*
-    An empty buffer to fill (`push_back`); if filled, the return value is ignored and the payload is sent instead. Its element type, and what the bytes mean, depend on `register_type`:
+    An empty buffer to fill (`push_back`/`clear`/`assign` - not the full `std::vector` API); if filled, the return value is ignored and the payload is sent instead. Its element type, and what the bytes mean, depend on `register_type`:
 
     - for `register_type: holding`  : `RegisterValues &payload` - add 16-bit raw modbus register words. The write covers exactly the registers you add, so the payload must not be wider than the register count implied by `value_type` (1 for the word types, 2 for the dword/float types, 4 for the qword types) or the write is dropped with an error.
     - for `register_type: coil`  : `PduBuffer &payload` - add the bytes of a raw modbus frame, which must include all required bytes, including the device address.
