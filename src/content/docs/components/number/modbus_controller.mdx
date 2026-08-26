@@ -56,7 +56,9 @@ When the Number is updated a modbus write command is created sent to the device.
   - **data** (`std::span<const uint8_t>`): span containing the complete raw modbus response bytes for this number
     *note:* because the response contains data for all registers in the same range you have to use `data[item->offset]` to get the first response byte for your number.
 
-  - **item** (`ModbusNumber *`): The number entity, a [`SensorItem`](https://api-docs.esphome.io/classesphome_1_1modbus__controller_1_1_sensor_item) subclass, so the configured address, `offset`, `bitmask`, etc. are accessible.
+  - **item** (`ModbusNumber *`): The number entity, a
+    [`SensorItem`](https://api-docs.esphome.io/classesphome_1_1modbus__controller_1_1_sensor_item) subclass, so the
+    configured address, `offset`, `bitmask`, etc. are accessible.
 
   Possible return values for the lambda:
 
@@ -69,14 +71,22 @@ When the Number is updated a modbus write command is created sent to the device.
   Parameters passed into the lambda
 
   - **x** (float): The new float value being set
-  - **item** (`ModbusNumber *`): The entity as its own modbus device: the write helpers and `queue_pdu()` are available - for example `item->write_single_register(address, value)` or `item->queue_pdu(...)` - regardless of the number's own register type. Also a [`SensorItem`](https://api-docs.esphome.io/classesphome_1_1modbus__controller_1_1_sensor_item) subclass, so the configured address, `offset`, `bitmask`, etc. are accessible.
+  - **item** (`ModbusNumber *`): The entity as its own modbus device: the
+    [write helpers](/components/modbus_client/#lambda-hook-component) and `queue_pdu()` are available - for example
+    `item->write_single_register(0x1234, 42)` or `item->queue_pdu(...)` - regardless of the number's own register
+    type. Also a [`SensorItem`](https://api-docs.esphome.io/classesphome_1_1modbus__controller_1_1_sensor_item)
+    subclass, so the configured address, `offset`, `bitmask`, etc. are accessible.
   - **payload** (`RegisterValues &payload`): *Deprecated, removed in 2027.3.0 - use `item` instead.*
-    An empty buffer; if the lambda fills it (`push_back`/`clear`/`assign` - not the full `std::vector` API), it is sent as a raw modbus frame packed from the 16 bit words, and must include all required bytes, including the device address.
+    An empty buffer; if the lambda fills it (`push_back`/`clear`/`assign` - not the full `std::vector` API), it is
+    sent as a raw modbus frame packed from the 16 bit words, and must include all required bytes, including the
+    device address. This is the number platform's historical buffer meaning; it differs from select and output,
+    whose buffers take plain register words.
 
   Possible return values for the lambda:
 
   - `return <FLOATING_POINT_NUMBER>;` the value to be written to the device.
-    The number still reports the requested value `x`; use this to translate between the ESPHome value and the modbus transmitted value.
+    The number still reports the requested value `x`; use this to translate between the ESPHome value and the
+    modbus transmitted value.
   - `return {};` if the lambda handled (or deliberately skipped) the write itself, for example via `item->write_*()`.
 
 - All other options from [Number](/components/number#config-number).
@@ -95,7 +105,7 @@ number:
 
   - platform: modbus_controller
     modbus_controller_id: modbus1
-    id: battery_capacity_number
+    id: battery_capacity_number_lambda
     name: "Battery Cap Number"
     address: 0x9001
     value_type: U_WORD

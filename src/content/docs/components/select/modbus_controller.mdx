@@ -59,7 +59,9 @@ registers.
     select. Note: because the response contains data for all registers in the same range you have to
     use `data[item->offset]` to get the first response byte for your select.
 
-  - **item** (`ModbusSelect *`): The select entity, a [`SensorItem`](https://api-docs.esphome.io/classesphome_1_1modbus__controller_1_1_sensor_item) subclass, so the configured address, `offset`, `bitmask`, etc. are accessible.
+  - **item** (`ModbusSelect *`): The select entity, a
+  [`SensorItem`](https://api-docs.esphome.io/classesphome_1_1modbus__controller_1_1_sensor_item) subclass, so the
+  configured address, `offset`, `bitmask`, etc. are accessible.
 
   Possible return values for the lambda:
 
@@ -92,9 +94,15 @@ lambda: |-
 
 - **x** (`const std::string&`  ): The option value to set for this Select.
 - **value** (`int64_t`  ): The mapping value of `x` using `optionsmap`.
-- **item** (`ModbusSelect *`): The entity as its own modbus device: the write helpers and `queue_pdu()` are available - for example `item->write_single_register(address, value)` or `item->queue_pdu(...)` - regardless of the select's own register type. Also a [`SensorItem`](https://api-docs.esphome.io/classesphome_1_1modbus__controller_1_1_sensor_item) subclass, so the configured address, `offset`, `bitmask`, etc. are accessible.
+- **item** (`ModbusSelect *`): The entity as its own modbus device: the
+  [write helpers](/components/modbus_client/#lambda-hook-component) and `queue_pdu()` are available - for example
+  `item->write_single_register(0x1234, 42)` or `item->queue_pdu(...)` - regardless of the select's own register
+  type. Also a [`SensorItem`](https://api-docs.esphome.io/classesphome_1_1modbus__controller_1_1_sensor_item)
+  subclass, so the configured address, `offset`, `bitmask`, etc. are accessible.
 - **payload** (`RegisterValues &payload`): *Deprecated, removed in 2027.3.0 - use `item` instead.*
-  An empty buffer; the lambda can add (`push_back`/`clear`/`assign` - not the full `std::vector` API) the 16 bit register words to write in place of the mapping value.
+  An empty buffer; the lambda can add (`push_back`/`clear`/`assign` - not the full `std::vector` API) the 16 bit
+  register words to write in place of the mapping value. Unlike the number platform's buffer, this is data words
+  only - no device address or function code.
 
 Possible return values for the lambda:
 
@@ -116,10 +124,10 @@ write_lambda: |-
     return 2;
   }
 
-  // write payload
+  // drive the write directly through the entity
   if (x == "Two") {
-    payload.push_back(0x0001);
-    return 0; // any value will do
+    item->write_single_register(1000, 0x0001);
+    return {};
   }
 
   // ignore update
