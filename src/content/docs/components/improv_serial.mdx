@@ -15,7 +15,10 @@ a `web_server` configured, offer a link to open its web interface. When the devi
 `wifi`, Wi-Fi provisioning is reported to the client as unavailable, so it will not present a Wi-Fi setup form which
 cannot work.
 
-The `improv_serial` component requires the serial `logger` to be configured.
+The `improv_serial` component requires the [`logger`](/components/logger/) component. By default Improv
+shares the logger's serial port. When `uart_id` is set, Improv runs on a dedicated
+[UART bus](/components/uart/) instead and the logger's serial settings are unused, so serial logging can
+be disabled with `baud_rate: 0`.
 
 The `improv_serial` component will use the project name and version instead of ESPHomes version whenever it's available.
 
@@ -30,6 +33,8 @@ improv_serial:
 ## Configuration variables
 
 - **next_url** (*Optional*, url): A URL that can be used to forward the user to after setting credentials with improv.
+- **uart_id** (*Optional*, [ID](/guides/configuration-types#id)): Run Improv on this [UART bus](/components/uart/)
+  instead of the logger's serial port. The bus needs both `tx_pin` and `rx_pin`.
 
 ## Next URL
 
@@ -44,6 +49,22 @@ that can be performed by ESPHome when wrapped in double braces `{{ }}`  :
 # Example next_url
 improv_serial:
   next_url: http://example.com/?device_name={{device_name}}&ip_address={{ip_address}}&esphome_version={{esphome_version}}
+```
+
+## Dedicated UART
+
+Improv normally shares the serial port used for logging. To run it on its own port instead, point
+`uart_id` at a UART bus with both pins configured:
+
+```yaml
+uart:
+  - id: improv_uart
+    tx_pin: GPIOXX
+    rx_pin: GPIOXX
+    baud_rate: 115200
+
+improv_serial:
+  uart_id: improv_uart
 ```
 
 ## See Also
