@@ -17,9 +17,12 @@ See [Modbus](/components/modbus/#hardware-setup) for RS485 hardware setup instru
 
 - **modbus_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the `modbus` hub.
 
-- **address** (*Optional*, int): The Modbus device address (can be decimal or hexadecimal, `0`-`255`; the valid
-  Modbus device range is `1`-`247`). `0` is the broadcast address, which no device ever answers, so it cannot be
-  polled. Defaults to `0x01`.
+- **address** (*Optional*, int): The Modbus device address (can be decimal or hexadecimal). `1`-`247` is the standard
+  device range. `0` is the broadcast address and is now **rejected at validation** - an existing config using
+  `address: 0` will fail to compile; a broadcast never returns a response, so use the
+  [Modbus Client](/components/modbus_client/) component for broadcast or other ad-hoc frames. Values from `248` to
+  `255` are still accepted but fall outside the standard range; the field is a single byte, so `255` is the maximum. Defaults
+  to `0x01`.
 
 - **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval that the sensors should be checked.
   Defaults to 60 seconds.
@@ -67,6 +70,11 @@ Automations:
 > - **server_registers** and **server_courtesy_response**: Use the [Modbus Server](/components/modbus_server/) component
 >   instead.
 
+> [!NOTE]
+> The per-platform `skip_updates` option (set on individual sensors, not the controller) also no longer has any
+> effect and will be removed in 2027.3.0. To poll some registers less often, give them their own `modbus_controller`
+> sharing the same `address` with a slower `update_interval` (see above). The individual platform pages document this.
+
 <span id="modbus_controller-continuous-polling"></span>
 
 ### Continuous Polling
@@ -100,6 +108,7 @@ modbus_controller:
     continuous: true
     update_interval: 30s
 ```
+
 
 ## Example Client
 
@@ -266,12 +275,21 @@ binary_sensor:
 ```
 
 <span id="modbus_custom_command"></span>
+<span id="modbus_custom_pdu"></span>
 
-## Using `custom_command`
+## Using `custom_pdu`
 
-`custom_command` can be used to create an arbitrary modbus command. Combined with a lambda any response can be handled.
+`custom_pdu` can be used to create an arbitrary modbus command. Combined with a lambda any response can be handled.
+The value is the modbus **PDU** — the function code followed by its data. The device address (taken from the
+controller's `address:`) and the CRC are added automatically, so do not include a leading device-address byte.
 This example re-implements the command to read the registers 0x156 (Total active energy) and 0x158 Total (reactive energy) from a SDM-120.
 SDM-120 returns the values as floats using 32 bits in 2 registers.
+
+> [!IMPORTANT]
+> `custom_pdu` replaces the former `custom_command` option. `custom_command` took a **raw frame** that began with the
+> modbus device-address byte; `custom_pdu` takes the **PDU only** (function code + data). To migrate, drop the leading
+> device-address byte — it now comes from the controller's `address:`. The old `custom_command:` key is removed and
+> raises a config-validation error pointing at `custom_pdu`.
 
 ```yaml
 uart:
@@ -297,14 +315,14 @@ sensor:
   id: total_energy
   #    address: 0x156
   #    register_type: "read"
-  ## reimplement using custom_command
-  # 0x2 : modbus device address
+  ## reimplement using custom_pdu
   # 0x4 : modbus function code
   # 0x1 : high byte of modbus register address
   # 0x56: low byte of modbus register address
   # 0x00: high byte of total number of registers requested
   # 0x02: low byte of total number of registers requested
-  custom_command: [ 0x2, 0x4, 0x1, 0x56,0x00, 0x02]
+  # the device address (0x2) comes from the controller's address: and the CRC is appended automatically
+  custom_pdu: [0x4, 0x1, 0x56, 0x00, 0x02]
   value_type: FP32
   unit_of_measurement: kWh
   accuracy_decimals: 1
@@ -314,7 +332,8 @@ sensor:
   name: "Total reactive energy"
   #   address: 0x158
   #   register_type: "read"
-  custom_command: [0x2, 0x4, 0x1, 0x58, 0x00, 0x02]
+  # the device address comes from the controller's address:; supply the PDU only
+  custom_pdu: [0x4, 0x1, 0x58, 0x00, 0x02]
   ## the command returns an float value using 4 bytes
   lambda: |-
       ESP_LOGD("Modbus Sensor Lambda","Got new data" );
@@ -411,7 +430,6 @@ sensor:
   register_type: input
   value_type: U_WORD
   accuracy_decimals: 1
-  skip_updates: 60
   filters:
     - multiply: 0.01
 
