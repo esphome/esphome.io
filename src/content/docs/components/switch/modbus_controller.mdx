@@ -35,7 +35,8 @@ and requires [Modbus Controller](/components/modbus_controller/) to be configure
   - **payload** (`std::vector<uint8_t> &payload`): empty vector for the payload. If set in the lambda it is sent as a
     custom command and must be a full Modbus request frame - the leading device-address byte followed by the PDU
     (function code + data); the CRC is added automatically. Unlike `custom_pdu` below (which is PDU-only), the
-    device-address byte **is** part of this payload.
+    device-address byte **is** part of this payload. The leading byte is the wire target address and is sent as
+    given - normally this controller's `address:`, but it is not validated against it.
 
   - **item** (pointer to a Switch derived object): The sensor object itself.
 

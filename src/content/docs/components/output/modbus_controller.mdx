@@ -50,8 +50,9 @@ The `modbus_controller` platform creates an output from a modbus_controller. The
     - for `register_type: holding`  : `std::vector<uint16_t> &payload` - add 16-bit raw modbus register words. The write covers exactly the registers you add, so the payload must not be wider than the register count implied by `value_type` (1 for the word types, 2 for the dword/float types, 4 for the qword types) or the write is dropped with an error.
     - for `register_type: coil`  : `std::vector<uint8_t> &payload` - add the raw frame bytes. This is sent as a
       custom command, so it must be a full Modbus request frame - the leading device-address byte followed by the PDU
-      (function code + data); the CRC is added automatically. Unlike `custom_pdu`, the device-address byte is part of
-      this payload.
+      (function code + data); the CRC is added automatically. Unlike
+      [`custom_pdu`](/components/modbus_controller/#modbus_custom_pdu), the device-address byte is part of this
+      payload.
 
   - **item** (pointer to a SensorItem derived object): The sensor object itself.
 

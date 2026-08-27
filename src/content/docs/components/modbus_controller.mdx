@@ -20,8 +20,9 @@ See [Modbus](/components/modbus/#hardware-setup) for RS485 hardware setup instru
 - **address** (*Optional*, int): The Modbus device address (can be decimal or hexadecimal). `1`-`247` is the standard
   device range. `0` is the broadcast address and is now **rejected at validation** - an existing config using
   `address: 0` will fail to compile; a broadcast never returns a response, so use the
-  [Modbus Client](/components/modbus_client/) component for broadcast or other ad-hoc frames. Values above `247` are
-  still accepted but fall outside the standard range. Defaults to `0x01`.
+  [Modbus Client](/components/modbus_client/) component for broadcast or other ad-hoc frames. Values from `248` to `255` are
+  still accepted but fall outside the standard range; the field is a single byte, so `255` is the maximum. Defaults
+  to `0x01`.
 
 - **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval that the sensors should be checked.
   Defaults to 60 seconds.
