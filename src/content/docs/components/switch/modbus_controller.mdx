@@ -42,7 +42,7 @@ and requires [Modbus Controller](/components/modbus_controller/) to be configure
     sent as a full modbus request frame - the leading device-address byte followed by the PDU (function code +
     data); the CRC is added automatically. Unlike `custom_pdu` below (which is PDU-only), the device-address byte
     **is** part of this payload - it is the wire target address and is sent as given, normally this controller's
-    `address:`.
+    `address:`. If the buffer is filled, the return value is ignored.
 
   Possible return values for the lambda:
 
@@ -89,6 +89,8 @@ switch:
       // return !x; // use this to write an inverted value (the switch still reports x)
       // deliberately targets a different coil (0x0006) than the entity's own address
       item->write_single_coil(0x0006, x);
+      // {} = no value to write: the item-> call above already sent the frame,
+      // so returning a bool here would queue a second, default write
       return {};
 ```
 

@@ -127,13 +127,15 @@ write_lambda: |-
     return 2;
   }
 
-  // drive the write directly through the entity
+  // "Two" needs a vendor trigger register instead of the mapped write:
+  // drive it directly through the entity
   if (x == "Two") {
-    item->write_single_register(1000, 0x0001);
+    item->write_single_register(0x2000, 1);
+    // {} = no value to write: the item-> call already sent the frame
     return {};
   }
 
-  // ignore update
+  // {} without an item-> write = skip this update entirely; nothing is sent
   return {};
 ```
 

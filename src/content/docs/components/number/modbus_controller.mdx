@@ -85,8 +85,8 @@ When the Number is updated a modbus write command is created sent to the device.
   - **payload** (`RegisterValues &payload`): *Deprecated, removed in 2027.3.0 - use `item` instead.*
     An empty buffer; if the lambda fills it (`push_back`/`clear`/`assign` - not the full `std::vector` API), it is
     sent as a raw modbus frame packed from the 16 bit words, and must include all required bytes, including the
-    device address. This is the number platform's historical buffer meaning; it differs from select and output,
-    whose buffers take plain register words.
+    device address; the CRC is added automatically, and the return value is ignored. This is the number platform's
+    historical buffer meaning; it differs from select and output, whose buffers take plain register words.
 
   Possible return values for the lambda:
 
@@ -111,15 +111,18 @@ number:
 
   - platform: modbus_controller
     modbus_controller_id: modbus1
-    id: battery_capacity_number_lambda
-    name: "Battery Cap Number"
-    address: 0x9001
+    id: battery_capacity_number_tenths
+    name: "Battery Cap Number (device stores tenths)"
+    address: 0x9002
     value_type: U_WORD
-    lambda: "return  x * 1.0; "
+    lambda: "return x / 10.0;"
     write_lambda: |-
       ESP_LOGD("main","Modbus Number incoming value = %f",x);
-      // drive the write directly through the entity; the number still reports x
-      item->write_single_register(0x9001, (uint16_t) x);
+      // the device stores tenths: write the scaled value through the entity;
+      // the number still reports x
+      item->write_single_register(0x9002, (uint16_t) (x * 10));
+      // {} = no value to write: the item-> call above already sent the frame,
+      // so returning a value here would queue a second, default write
       return {};
 ```
 
