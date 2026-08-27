@@ -75,7 +75,8 @@ esp32:
   windows. Defaults to `5s`, valid range is `5s` to `60s`. Note: OTA updates temporarily raise the
   watchdog to `15s` when the configured timeout is below that threshold.
 
-- **toolchain** (*Optional*, [Toolchain](#esp32-toolchain)): Toolchain used to build the firmware.
+- **toolchain** (*Optional*, [Toolchain](#esp32-toolchain)): Toolchain used to build the firmware. The
+  `platformio` toolchain is deprecated and will be removed in 2027.2.0.
 
 ## Variants
 
@@ -280,9 +281,9 @@ for Thread and Zigbee. It requires ESP-IDF 6.1 or later.
 
 - **CPU:** RISC-V HP core, up to 320 MHz + LP core
 - **Wi-Fi:** 802.11 b/g/n 2.4 GHz
-- **Bluetooth:** BLE
+- **Bluetooth:** Classic Bluetooth + BLE 5.4
 - **802.15.4:** Thread and Zigbee
-- **USB:** Native USB OTG; USB Serial/JTAG peripheral mode
+- **USB:** Native USB 2.0 OTG; USB Serial/JTAG peripheral mode
 - **Ethernet:** Built-in MAC (requires external PHY)
 - **GPIO:** 62 pins (0–61)
 - **UART:** 4 full-featured + 1 lite
@@ -301,7 +302,7 @@ Zigbee. It has no Wi-Fi. It requires ESP-IDF 6.1 or later.
 
 - **CPU:** RISC-V single-core, up to 96 MHz
 - **Wi-Fi:** None
-- **Bluetooth:** BLE
+- **Bluetooth:** BLE 5.4
 - **802.15.4:** Thread and Zigbee
 - **USB:** Native USB OTG; USB Serial/JTAG peripheral mode
 - **Ethernet:** None built-in (SPI-based controllers supported)
@@ -343,9 +344,14 @@ ESPHome supports multiple toolchains for building firmware. The toolchain determ
 Currently supported toolchains include:
 
 - `esp-idf` (default)
-- `platformio`
+- `platformio` (deprecated)
 
 By default, ESPHome uses its native ESP-IDF integration, including automatic framework installation and environment management as described in this [documentation](/guides/esp_idf/).
+
+> [!WARNING]
+> The `platformio` toolchain is deprecated and will be removed in 2027.2.0. Both the ESP-IDF and Arduino
+> frameworks build on the default `esp-idf` toolchain; remove `toolchain: platformio` from your configuration
+> to migrate.
 
 **Example for using the PlatformIO toolchain:**
 
@@ -437,10 +443,15 @@ esp32:
 - **log_level** (*Optional*, string): Log level of the framework, one of `ERROR` (default), `NONE`, `WARN`, `INFO`,
   `DEBUG` or `VERBOSE`.
 
-- **advanced** (*Optional*, mapping): See [Advanced Configuration](#advanced-configuration) below.
+- **advanced** (*Optional*, mapping): See [Advanced Configuration](#advanced-configuration) and [Security](#security)
+  below.
 - **components** (*Optional*, list of components): See [IDF Components](#idf-components) below.
 
 ## Advanced Configuration
+
+> [!NOTE]
+> Signed OTA verification, OTA downgrade protection and NVS encryption are also configured under `advanced:` but are
+> documented under [Security](#security) below.
 
 - **assertion_level** (*Optional*, enum): One of `ENABLE` (default), `SILENT` or `DISABLE`. Changing away from
   the default will reduce the size of the compiled binary, albeit at the expense of ease of troubleshooting. See
@@ -462,8 +473,11 @@ esp32:
   With octal or hex PSRAM this can be faster than executing from FLASH memory, and enables code such as display drawing
   to execute normally when writing to FLASH, e.g. during an OTA update. The default is `false`.
 
-- **ignore_efuse_custom_mac** (*Optional*, boolean): Can be set to `true` for devices on which the burned-in custom
-  MAC address is not valid.
+- **ignore_efuse_custom_mac** (*Optional*, boolean): When a custom MAC address is burned into the eFuses, ESPHome
+  uses it as the device's base MAC address in place of the factory-assigned one. Since ESPHome 2026.9.0, all network
+  interfaces (Wi-Fi, Ethernet, Bluetooth and 802.15.4) derive their addresses from it; in earlier versions, only
+  Wi-Fi did. Can be set to `true` for devices on which the burned-in custom MAC address is not usable, restoring the
+  factory-assigned MAC address. Defaults to `false`.
 
 - **ignore_efuse_mac_crc** (*Optional*, boolean): Can be set to `true` for devices on which the burned-in MAC
   address is not consistent with the burned-in CRC for that MAC address, resulting in an error like
@@ -507,81 +521,14 @@ esp32:
 - **enable_ota_rollback** (*Optional*, boolean): Enable OTA rollback support. When enabled, the bootloader will
   automatically roll back to the previous firmware if the device crashes or resets before the boot is marked as
   successful. This works in conjunction with the [safe_mode](/components/safe_mode) component - after the
-  `boot_is_good_after` time (default 60s), the firmware is marked as valid. If the device crashes before that,
-  it will roll back to the previous working firmware. Defaults to `true`.
+  `boot_is_good_after` time (default 60s), the firmware is marked as valid. Since ESPHome 2026.8.0, an orderly
+  shutdown — entering [deep sleep](/components/deep_sleep#deep-sleep-and-ota-rollback), a restart or a shutdown —
+  also counts as a successful boot and marks the firmware as valid. If the device crashes before the firmware is
+  marked as valid, it will roll back to the previous working firmware. Defaults to `true`.
 
   > [!NOTE]
   > OTA rollback requires the bootloader to be compiled with rollback support. Existing devices may need to be
   > reflashed via serial to update the bootloader - OTA updates do not update the bootloader.
-
-- **signed_ota_verification** (*Optional*, mapping): Enable
-  [Signed App Verification Without Hardware Secure Boot](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/security/secure-boot-v2.html#signed-app-verification-without-hardware-secure-boot).
-  When configured, OTA firmware updates are verified using a cryptographic signature. This protects
-  against tampered firmware from network-based attacks without requiring hardware Secure Boot (eFuse).
-  Both Secure Boot V2 (RSA-3072 or ECDSA-V2) and Secure Boot V1 (ECDSA) signing schemes are supported.
-  Contains the following options:
-
-  - **signing_key** (*Optional*, filename): Path to a PEM-encoded private signing key. When provided, the firmware
-    is **automatically signed during build** using `espsecure`. This is the simplest workflow — the public key is
-    derived automatically and embedded in the signature block. **Mutually exclusive with `verification_key`.**
-  - **verification_key** (*Optional*, filename): Path to a public verification key. When provided, the
-    public key is embedded for verification but the binary is **not signed during build**. You must sign the firmware
-    externally before flashing. This is useful for CI/CD pipelines where the private key is stored in a secure vault.
-    **Mutually exclusive with `signing_key`.**
-
-    > [!NOTE]
-    > The verification key format depends on the signing scheme:
-    > - For `rsa3072` and `ecdsa256` (Secure Boot V2): PEM-encoded public key.
-    > - For `ecdsa_v1` (Secure Boot V1): Raw binary format (`.bin`). Extract from a PEM private key using:
-    >   `espsecure.py extract_public_key --keyfile private.pem public_key.bin`
-
-  - **signing_scheme** (*Optional*, string): The signing algorithm. One of `rsa3072`, `ecdsa256`, or `ecdsa_v1`.
-    Defaults to `rsa3072`. **Not all schemes are supported on all variants** — see the table below.
-
-    - `rsa3072`: RSA-3072 (Secure Boot V2). Recommended for most variants.
-    - `ecdsa256`: ECDSA with NIST P-256 (Secure Boot V2). For variants without RSA support.
-    - `ecdsa_v1`: ECDSA with NIST P-256 (Secure Boot V1). **Only for the original ESP32** — use this for
-      chips prior to revision 3.0 that do not support Secure Boot V2.
-
-    | Variant | `rsa3072` | `ecdsa256` | `ecdsa_v1` |
-    |---------|-----------|------------|------------|
-    | ESP32 (rev 3.0+) | yes | no | yes |
-    | ESP32 (rev < 3.0) | no | no | yes |
-    | ESP32-S2 | yes | no | no |
-    | ESP32-S3 | yes | no | no |
-    | ESP32-C2 | no | yes | no |
-    | ESP32-C3 | yes | no | no |
-    | ESP32-C5 | yes | yes | no |
-    | ESP32-C6 | yes | yes | no |
-    | ESP32-C61 | no | yes | no |
-    | ESP32-H2 | yes | yes | no |
-    | ESP32-P4 | yes | yes | no |
-
-    > [!NOTE]
-    > Using `rsa3072` on the original ESP32 requires setting `minimum_chip_revision: "3.0"` or higher
-    > (Secure Boot V2 RSA is only available on ESP32 chip revision 3.0+). For older chip revisions, use `ecdsa_v1`.
-
-  > [!WARNING]
-  > **Keep your signing key safe!** If you lose the private signing key, you will **not be able to OTA update** any
-  > devices running firmware signed with that key. Without the signing key, you must reflash the device via serial.
-
-  > [!NOTE]
-  > The **first firmware** flashed to a device must also be signed. When using `signing_key`, this happens
-  > automatically. Flash the initial firmware via serial — serial flashing does not perform signature verification.
-  > All subsequent OTA updates will be verified against the public key in the running firmware.
-
-  To generate a signing key, use the `espsecure.py` tool from ESP-IDF:
-
-  ```bash
-  # Generate an RSA-3072 signing key (Secure Boot V2 — most variants)
-  espsecure.py generate-signing-key --version 2 --scheme rsa3072 secure_boot_signing_key.pem
-
-  # Generate an ECDSA signing key (Secure Boot V1 — original ESP32 pre-rev 3.0)
-  espsecure.py generate-signing-key --version 1 secure_boot_signing_key.pem
-
-  # Extract the public verification key (for the verification_key workflow)
-  espsecure.py extract_public_key --keyfile secure_boot_signing_key.pem secure_boot_verification_key.pem
-  ```
 
 **LWIP Optimization Options (ESP-IDF only):**
 
@@ -821,6 +768,160 @@ esp32:
 
 > [!NOTE]
 > If you were already adding libraries via `libraries` config or calling `cg.add_library()`, no action is needed. If you were previously using Arduino library APIs directly in lambdas (e.g. `Preferences`, `Wire`, `SPI`) without adding them to the `libraries` config, you will need to explicitly add them.
+
+## Security
+
+ESPHome can protect an ESP32 device on several fronts. These options are all configured under `esp32:` →
+`framework:` → `advanced:`, and can be combined for defense in depth.
+
+### Signed OTA Verification
+
+- **signed_ota_verification** (*Optional*, mapping): Enable
+  [Signed App Verification Without Hardware Secure Boot](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/security/secure-boot-v2.html#signed-app-verification-without-hardware-secure-boot).
+  When configured, OTA firmware updates are verified using a cryptographic signature. This protects
+  against tampered firmware from network-based attacks without requiring hardware Secure Boot (eFuse).
+  Both Secure Boot V2 (RSA-3072 or ECDSA-V2) and Secure Boot V1 (ECDSA) signing schemes are supported.
+
+  Adding this block — even with no options inside — compiles signature verification into the firmware: the
+  device will reject any OTA update that is not signed with a trusted key. The options below only control how
+  the firmware gets signed.
+
+  - **signing_key** (*Optional*, filename): Path to a PEM-encoded private signing key. When provided, the firmware
+    is **automatically signed during build** using `espsecure`. This is the simplest workflow — the public key is
+    derived automatically and embedded in the signature block. When omitted, the firmware is **not signed during
+    build**; you must sign it externally before flashing, which is useful for CI/CD pipelines where the private
+    key is stored in a secure vault. **Mutually exclusive with `verification_key`.**
+  - **verification_key** (*Optional*, filename): Path to a public verification key, **only for the `ecdsa_v1`
+    scheme**. Secure Boot V1 signatures do not carry the public key, so when the firmware is signed externally
+    the public key must be embedded in the build to verify updates. The key is in raw binary format (`.bin`);
+    extract it from the PEM private key using
+    `espsecure.py extract_public_key --keyfile private.pem public_key.bin`.
+    **Mutually exclusive with `signing_key`.**
+
+    > [!NOTE]
+    > The Secure Boot V2 schemes (`rsa3072` and `ecdsa256`) do not use a verification key — updates are verified
+    > against the public key carried in the running firmware's own signature block. To sign externally with a V2
+    > scheme, omit both keys; a bare block is a complete configuration:
+    >
+    > ```yaml
+    > esp32:
+    >   framework:
+    >     advanced:
+    >       # Verify OTA updates against externally-applied rsa3072 signatures
+    >       signed_ota_verification:
+    > ```
+    >
+    > For `rsa3072` you can instead list the trusted keys explicitly with `verification_keys` (below) to enable
+    > key rotation and backup keys.
+
+  - **verification_keys** (*Optional*, list): For externally-signed `rsa3072`, the public keys your device trusts
+    when checking OTA updates. Listing more than one lets you rotate signing keys or keep a backup key — an update
+    signed by any listed key is accepted. Each entry is a public key file, or the key's digest (handy for CI,
+    where you may not want a key file in your configuration). Up to three keys.
+    **Requires `signing_scheme: rsa3072` and no `signing_key`.**
+
+    > [!NOTE]
+    > Both app and bootloader OTA updates are verified. If you update the bootloader over the air (with
+    > `allow_partition_access`), sign it with one of your trusted keys first — the normal build signs only the
+    > app, so an unsigned bootloader update is rejected.
+
+  - **signing_scheme** (*Optional*, string): The signing algorithm. One of `rsa3072`, `ecdsa256`, or `ecdsa_v1`.
+    Defaults to `rsa3072`. **Not all schemes are supported on all variants** — see the table below.
+
+    - `rsa3072`: RSA-3072 (Secure Boot V2). Recommended for most variants.
+    - `ecdsa256`: ECDSA with NIST P-256 (Secure Boot V2). For variants without RSA support.
+    - `ecdsa_v1`: ECDSA with NIST P-256 (Secure Boot V1). **Only for the original ESP32** — use this for
+      chips prior to revision 3.0 that do not support Secure Boot V2.
+
+    | Variant | `rsa3072` | `ecdsa256` | `ecdsa_v1` |
+    |---------|-----------|------------|------------|
+    | ESP32 (rev 3.0+) | yes | no | yes |
+    | ESP32 (rev < 3.0) | no | no | yes |
+    | ESP32-S2 | yes | no | no |
+    | ESP32-S3 | yes | no | no |
+    | ESP32-C2 | no | yes | no |
+    | ESP32-C3 | yes | no | no |
+    | ESP32-C5 | yes | yes | no |
+    | ESP32-C6 | yes | yes | no |
+    | ESP32-C61 | no | yes | no |
+    | ESP32-H2 | yes | yes | no |
+    | ESP32-P4 | yes | yes | no |
+
+    > [!NOTE]
+    > Using `rsa3072` on the original ESP32 requires setting `minimum_chip_revision: "3.0"` or higher
+    > (Secure Boot V2 RSA is only available on ESP32 chip revision 3.0+). For older chip revisions, use `ecdsa_v1`.
+
+  > [!WARNING]
+  > **Keep your signing key safe!** If you lose the private signing key, you will **not be able to OTA update** any
+  > devices running firmware signed with that key. Without the signing key, you must reflash the device via serial.
+
+  > [!NOTE]
+  > The **first firmware** flashed to a device must also be signed. When using `signing_key`, this happens
+  > automatically; when signing externally, sign the image before flashing it via serial — a device running
+  > unsigned firmware has no trusted key and cannot verify (or accept) any OTA update.
+  > All subsequent OTA updates will be verified against the public key in the running firmware.
+
+  To generate a signing key, use the `espsecure.py` tool from ESP-IDF:
+
+  ```bash
+  # Generate an RSA-3072 signing key (Secure Boot V2 — most variants)
+  espsecure.py generate-signing-key --version 2 --scheme rsa3072 secure_boot_signing_key.pem
+
+  # Generate an ECDSA signing key (Secure Boot V1 — original ESP32 pre-rev 3.0)
+  espsecure.py generate-signing-key --version 1 secure_boot_signing_key.pem
+
+  # Extract the public verification key (only needed for ecdsa_v1 external signing)
+  espsecure.py extract_public_key --keyfile secure_boot_signing_key.pem secure_boot_verification_key.bin
+  ```
+
+### OTA Downgrade Protection
+
+- **enable_ota_downgrade_protection** (*Optional*, boolean): Reject OTA updates whose firmware version is older
+  than the version the device is currently running. The version is taken from the `version` under the
+  [`project`](/components/esphome#esphome-creators_project) key, which is embedded into the firmware image and
+  compared on the device before the new image is allowed to boot. Defaults to `false`.
+
+  This option requires:
+
+  - A `project` with a `version` that is dotted-numeric (such as `1.2.3` or `2024.1.0`). The version is compared
+    one number at a time, so `1.10.0` is newer than `1.9.0`. Flashing the same version is always allowed.
+  - `signed_ota_verification` to be enabled. The version is read from inside the signed image, so signature
+    verification is what prevents a tampered update from claiming a higher version than it actually contains.
+
+  > [!NOTE]
+  > This protects the over-the-air update path on the device. A direct serial flash is not version-checked, so you
+  > can always recover a device by flashing over serial.
+
+### NVS Encryption
+
+- **nvs_encryption** (*Optional*, mapping): Encrypts the device's non-volatile storage (NVS), where ESPHome
+  may save sensitive data such as Wi-Fi credentials and the API encryption key. This keeps that data
+  unreadable to anyone who reads the device's flash memory. The encryption key is created on the device itself
+  the first time it boots, so no key material is stored in your configuration. For background, see the ESP-IDF
+  [NVS encryption documentation](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/storage/nvs_encryption.html).
+  Contains the following option:
+
+  - **key_id** (*Required*, integer): Which hardware key slot (`0`–`5`) the device uses to store its encryption
+    key. Pick a slot that isn't used by anything else.
+
+  This feature is available only on the following variants, which have the required hardware support:
+
+  - ESP32-S2
+  - ESP32-S3
+  - ESP32-C3
+  - ESP32-C5
+  - ESP32-C6
+  - ESP32-H2
+  - ESP32-P4
+
+  It is not available on the original ESP32 or the ESP32-C2.
+
+  > [!WARNING]
+  > - The encryption key is written to the chip **permanently** (yes, **we mean permanently**) the first time the device
+  >   boots and **cannot be changed or removed afterwards** — even if you erase and/or re-flash your ESP — so choose
+  >   the `key_id` carefully. In most cases, this shouldn't be a problem — just pick a key slot and stick to it.
+  > - Turning encryption on (or off later) clears any previously saved preferences once, because the older data can no
+  >   longer be read.
 
 ## IDF Components
 
