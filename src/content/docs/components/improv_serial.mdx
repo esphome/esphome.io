@@ -8,9 +8,10 @@ import APIRef from '@components/APIRef.astro';
 The `improv_serial` component in ESPHome implements the open [Improv standard](https://www.improv-wifi.com/)
 for configuring Wi-Fi on an ESPHome device by using a serial connection to the device, eg. USB.
 
-The `improv_serial` component requires the `logger`. By default Improv shares the logger's serial
-port; with `uart_id` it runs on a dedicated [UART bus](/components/uart) instead, and the logger's
-serial settings are not used (serial logging may even be disabled with `baud_rate: 0`).
+The `improv_serial` component requires the [`logger`](/components/logger/) component. By default Improv
+shares the logger's serial port. When `uart_id` is set, Improv runs on a dedicated
+[UART bus](/components/uart/) instead and the logger's serial settings are unused, so serial logging can
+be disabled with `baud_rate: 0`.
 
 The `improv_serial` component will use the project name and version instead of ESPHomes version whenever it's available.
 
@@ -25,7 +26,8 @@ improv_serial:
 ## Configuration variables
 
 - **next_url** (*Optional*, url): A URL that can be used to forward the user to after setting credentials with improv.
-- **uart_id** (*Optional*, [ID](/guides/configuration-types#id)): Run Improv on this [UART bus](/components/uart) instead of the logger's serial port. The bus needs both `tx_pin` and `rx_pin`.
+- **uart_id** (*Optional*, [ID](/guides/configuration-types#id)): Run Improv on this [UART bus](/components/uart/)
+  instead of the logger's serial port. The bus needs both `tx_pin` and `rx_pin`.
 
 ## Next URL
 
@@ -40,6 +42,22 @@ that can be performed by ESPHome when wrapped in double braces `{{ }}`  :
 # Example next_url
 improv_serial:
   next_url: http://example.com/?device_name={{device_name}}&ip_address={{ip_address}}&esphome_version={{esphome_version}}
+```
+
+## Dedicated UART
+
+Improv normally shares the serial port used for logging. To run it on its own port instead, point
+`uart_id` at a UART bus with both pins configured:
+
+```yaml
+uart:
+  - id: improv_uart
+    tx_pin: GPIOXX
+    rx_pin: GPIOXX
+    baud_rate: 115200
+
+improv_serial:
+  uart_id: improv_uart
 ```
 
 ## See Also
