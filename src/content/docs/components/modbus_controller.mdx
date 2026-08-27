@@ -366,9 +366,9 @@ text sensors), and the `reuse_previous_range` option controls how an item relate
   join starts a new range with a warning instead of sending an out-of-spec request.
 - `false`: always start a new range at this item; later items may still extend it.
 
-The removed `force_new_range` and `register_count` options migrate automatically: `force_new_range: true` becomes
+The deprecated `force_new_range` and `register_count` options migrate automatically: `force_new_range: true` becomes
 `reuse_previous_range: false` with a deprecation warning, and a `register_count` equal to the derived width warns
-that it is redundant (a different value fails validation with instructions). Both are removed in 2027.3.0.
+that it is redundant (a different value fails validation with instructions). Both will be removed in 2027.3.0.
 
 An example is an SDM meter, with interesting data in register addresses 0, 2, 4 and 6:
 
@@ -402,7 +402,7 @@ An example is an SDM meter, with interesting data in register addresses 0, 2, 4 
 The configuration above will generate *one* modbus command *read multiple registers from 0 to 6*.
 
 Maybe you don't care about the data in register addresses 2 and 4, which are voltage values for Phase 2 and Phase 3 (or you have a SDM-120).
-Of course, you can delete the sensors your don't care about, but then you'd have a gap in the addresses. If you
+Of course, you can delete the sensors you don't care about, but then you'd have a gap in the addresses. If you
 remove the registers at address 2 and 4, *two* commands will be generated -- *read register 0* and *read register 6*.
 To avoid generating multiple commands and thus reduce activity on the bus, `reuse_previous_range: true` joins across
 the gap:
