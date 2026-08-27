@@ -473,8 +473,11 @@ esp32:
   With octal or hex PSRAM this can be faster than executing from FLASH memory, and enables code such as display drawing
   to execute normally when writing to FLASH, e.g. during an OTA update. The default is `false`.
 
-- **ignore_efuse_custom_mac** (*Optional*, boolean): Can be set to `true` for devices on which the burned-in custom
-  MAC address is not valid.
+- **ignore_efuse_custom_mac** (*Optional*, boolean): When a custom MAC address is burned into the eFuses, ESPHome
+  uses it as the device's base MAC address in place of the factory-assigned one. Since ESPHome 2026.9.0, all network
+  interfaces (Wi-Fi, Ethernet, Bluetooth and 802.15.4) derive their addresses from it; in earlier versions, only
+  Wi-Fi did. Can be set to `true` for devices on which the burned-in custom MAC address is not usable, restoring the
+  factory-assigned MAC address. Defaults to `false`.
 
 - **ignore_efuse_mac_crc** (*Optional*, boolean): Can be set to `true` for devices on which the burned-in MAC
   address is not consistent with the burned-in CRC for that MAC address, resulting in an error like
