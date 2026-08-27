@@ -158,7 +158,6 @@ text_sensor:
   internal: true
   register_type: holding
   address: 0x9013
-  register_count: 3
   raw_encode: HEXBYTES
   response_size: 6
 ```
@@ -354,13 +353,22 @@ sensor:
 
 <span id="modbus_register_count"></span>
 
-## Optimizing modbus communications
+## Register ranges
 
-`register_count` is an option only required for uncommon response encodings or to optimizie modbus communications.
+Sensors of the same register type are grouped into register ranges, and each range is read with one modbus command.
+The number of registers an item spans is derived from its `value_type` (or from `response_size` for RAW values and
+text sensors), and the `reuse_previous_range` option controls how an item relates to the range built just before it:
 
-It describes the number of registers this data point spans, overriding the defaults determined by `value_type`. If no value for `register_count` is provided, it is calculated based on the register type. The default size for one register is 16 bits (one word). Some devices are not adhering to this convention and have registers larger than 16 bits. In this case, `register_count` and `response_size` must be set. For example, if your Modbus device uses one register for a FP32 value (instead of the default of two), set `register_count: 1` and `response_size: 4`.
+- `auto` (default): join when the addresses are adjacent and the item's position in the reply is exact - never past a
+  register with a non-standard `response_size`, where the position depends on the device honoring it.
+- `true`: join unconditionally, reading across address gaps (the gap registers are read and ignored) and past
+  registers with a non-standard `response_size`. Joined ranges are capped at the protocol read limits; an over-long
+  join starts a new range with a warning instead of sending an out-of-spec request.
+- `false`: always start a new range at this item; later items may still extend it.
 
-`register_count` can also be used to skip a number of registers in consecutive range.
+The removed `force_new_range` and `register_count` options migrate automatically: `force_new_range: true` becomes
+`reuse_previous_range: false` with a deprecation warning, and a `register_count` equal to the derived width warns
+that it is redundant (a different value fails validation with instructions). Both are removed in 2027.3.0.
 
 An example is an SDM meter, with interesting data in register addresses 0, 2, 4 and 6:
 
@@ -394,7 +402,10 @@ An example is an SDM meter, with interesting data in register addresses 0, 2, 4 
 The configuration above will generate *one* modbus command *read multiple registers from 0 to 6*.
 
 Maybe you don't care about the data in register addresses 2 and 4, which are voltage values for Phase 2 and Phase 3 (or you have a SDM-120).
-Of course, you can delete the sensors your don't care about, but then you'd have a gap in the addresses. If you remove the registers at address 2 and 4, *two* commands will be generated -- *read register 0* and *read register 6*. To avoid generating multiple commands and thus reduce activity on the bus, `register_count` can be used to fill the gaps:
+Of course, you can delete the sensors your don't care about, but then you'd have a gap in the addresses. If you
+remove the registers at address 2 and 4, *two* commands will be generated -- *read register 0* and *read register 6*.
+To avoid generating multiple commands and thus reduce activity on the bus, `reuse_previous_range: true` joins across
+the gap:
 
 ```yaml
 - platform: modbus_controller
@@ -403,19 +414,17 @@ Of course, you can delete the sensors your don't care about, but then you'd have
   unit_of_measurement: "V"
   register_type: "read"
   value_type: FP32
-  register_count: 6
 
 - platform: modbus_controller
   name: "Current Phase 1"
   address: 6
   register_type: "read"
   value_type: FP32
+  reuse_previous_range: true
 ```
 
-Because the option `register_count: 6` is used for the first sensor, *one* command *read multiple registers from 0 to 6* will be used but the values in between will be ignored.
-
-> [!NOTE]
-> *Calculation:* FP32 is a 32 bit value and uses 2 registers. Therefore, to skip the 2 FP32 registers the size of these 2 registers must be added to the default size for the first register. So we have 2 for address 0, 2 for address 2 and 2 for address 4 thus `register_count` must be 6.
+Because `reuse_previous_range: true` is set on the sensor at address 6, *one* command *read multiple registers from
+0 to 6* will be used and the gap registers in between are read and ignored - no size arithmetic required.
 
 ## Protocol decoding example
 
@@ -505,7 +514,7 @@ sensor:
 ```
 
 To minimize the required transactions all registers with the same base address are read in one request.
-The response is mapped to the sensor based on `register_count` and offset in bytes. For example:
+The response is mapped to the sensor based on each sensor's register width and offset in bytes. For example:
 
 **Request:**
 
