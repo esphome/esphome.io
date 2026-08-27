@@ -17,7 +17,10 @@ and requires [Modbus Controller](/components/modbus_controller/) to be configure
 
 - **address** (**Required**, int): start address of the first register in a range (can be decimal or hexadecimal).
 - **assumed_state** (*Optional* boolean): Disables updates (periodic read commands) for this register. Default is `false`.
-- **skip_updates** (*Optional*, int): By default, all sensors of a modbus_controller are updated together. For data points that don't change very frequently, updates can be skipped. A value of 5 would skip five update cycles and refresh this sensor range on every 6th cycle. Note: The modbus_controller groups components by address ranges to reduce number of transactions. All components with the same starting address will be updated in one request. `skip_updates` applies for *all* components in the same range.
+- **skip_updates** (*Optional*, int): **Deprecated and no longer has any effect** — every register range is polled on
+  each `update_interval`. The key is still accepted (logging a config-time warning) and will be removed in 2027.3.0.
+  To poll some registers less often, place those sensors on a second `modbus_controller` with the same `address:` and a
+  slower `update_interval:`.
 - **use_write_multiple** (*Optional*, boolean): By default the modbus command *Function Code 6 (Preset Single Registers)* is used for setting the holding register if only one register is set. If your device only supports *Function Code 16 (Preset Multiple Registers)* set this option to `true`.
 - **bitmask** (*Optional*, int): Some values are packed in a response. The bitmask is used to determined if the result is true or false. See [Bitmasks](/components/modbus_controller#bitmasks).
 - **lambda** (*Optional*, [lambda](/automations/templates#config-lambda)):
@@ -36,7 +39,10 @@ and requires [Modbus Controller](/components/modbus_controller/) to be configure
     subclass, so the configured address, `offset`, `bitmask`, etc. are accessible.
   - **payload** (`PduBuffer &payload`): *Deprecated, removed in 2027.3.0 - use `item` instead.*
     An empty buffer; if the lambda fills it (`push_back`/`clear`/`assign` - not the full `std::vector` API), it is
-    sent as a raw modbus frame and must include all required bytes, including the device address.
+    sent as a full modbus request frame - the leading device-address byte followed by the PDU (function code +
+    data); the CRC is added automatically. Unlike `custom_pdu` below (which is PDU-only), the device-address byte
+    **is** part of this payload - it is the wire target address and is sent as given, normally this controller's
+    `address:`.
 
   Possible return values for the lambda:
 
@@ -45,9 +51,12 @@ and requires [Modbus Controller](/components/modbus_controller/) to be configure
     state and an inverted modbus transmitted value.
   - `return {};` if the lambda handled (or deliberately skipped) the write itself, for example via `item->write_*()`.
 
-- **custom_command** (*Optional*, list of bytes): raw bytes for modbus command. This allows using non-standard commands. If `custom_command` is used `address` and `register_type` can't be used.
-  Custom data must contain all required bytes including the modbus device address. The CRC is automatically calculated and appended to the command.
-  See [Using `custom_command`](/components/modbus_controller#modbus_custom_command) how to use `custom_command`
+- **custom_pdu** (*Optional*, list of bytes): The modbus PDU (function code + data) for a custom command. This allows
+  using non-standard commands. The device address (taken from the controller's `address:`) and the CRC are added
+  automatically, so do not include a leading device-address byte. If `custom_pdu` is used, `address` and
+  `register_type` can't be used. Renamed from `custom_command`, which is now removed and raises a config-validation
+  error.
+  See [Using `custom_pdu`](/components/modbus_controller/#modbus_custom_pdu) for how to use `custom_pdu`
 
 - **offset** (*Optional*, int): Offset from start address in bytes (only required for uncommon response encodings). If more than one register is written in a command, this value is used to find the start of this datapoint relative to the start address. The component calculates the size of the range based on offset and size of the value type. The value for offset depends on the register type. For holding input registers, the offset is in bytes. For coil and discrete input resisters, the LSB of the first data byte contains the coil addressed in the request. The other coils follow toward the high-order end of this byte and from low order to high order in subsequent bytes. For registers, the offset is the position of the relevant bit. To get the value of the coil register, 2 can be retrieved using `address: 2` / `offset: 0` or `address: 0` / `offset 2`.
 - **restore_mode** (*Optional*): See [Switch](/components/switch#config-switch), since this configuration variable is inherited. The default value for this setting is `DISABLED` (recommended).
