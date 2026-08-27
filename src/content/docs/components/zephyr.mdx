@@ -92,12 +92,13 @@ zephyr:
 | Nordic | `nrf52` | nRF52840 (Cortex-M4) | [`adafruit_feather_nrf52840`](https://docs.zephyrproject.org/latest/boards/adafruit/feather_nrf52840/doc/index.html) | nRF Connect SDK (NCS) | BLE, Thread (via `openthread:`), Zigbee (via `zigbee:`) |
 | Nordic | `nrf54l15` | nRF54L15 (Cortex-M33) | [`nrf54l15dk`](https://docs.zephyrproject.org/latest/boards/nordic/nrf54l15dk/doc/index.html) | nRF Connect SDK (NCS) | BLE, Thread (via `openthread:`), Zigbee (via `zigbee:`) |
 | Nordic | `nrf54lm20a` | nRF54LM20A (Cortex-M33) | [`nrf54lm20dk`](https://docs.zephyrproject.org/latest/boards/nordic/nrf54lm20dk/doc/index.html) | nRF Connect SDK (NCS) | BLE, Thread (via `openthread:`), Zigbee (via `zigbee:`) |
-| Raspberry Pi | `rp2040` | Raspberry Pi RP2040 (Cortex-M0+) | [`rpi_pico`](https://docs.zephyrproject.org/latest/boards/raspberrypi/rpi_pico/doc/index.html) | mainline Zephyr | No wireless yet |
-| Raspberry Pi | `rp2350` | Raspberry Pi RP2350 (Cortex-M33, dual-core) | [`rpi_pico2`](https://docs.zephyrproject.org/latest/boards/raspberrypi/rpi_pico2/doc/index.html) | mainline Zephyr | No wireless yet |
-| Renesas | `ra4m1` | Renesas RA4M1 (Cortex-M4) | [`ek_ra4m1`](https://docs.zephyrproject.org/latest/boards/renesas/ek_ra4m1/doc/index.html) | mainline Zephyr | No wireless yet |
+| Raspberry Pi | `rp2040` | Raspberry Pi RP2040 (Cortex-M0+) | [`rpi_pico`](https://docs.zephyrproject.org/latest/boards/raspberrypi/rpi_pico/doc/index.html) | mainline Zephyr | No wireless |
+| Raspberry Pi | `rp2350` | Raspberry Pi RP2350 (Cortex-M33, dual-core) | [`rpi_pico2`](https://docs.zephyrproject.org/latest/boards/raspberrypi/rpi_pico2/doc/index.html) | mainline Zephyr | No wireless |
+| Renesas | `ra4m1` | Renesas RA4M1 (Cortex-M4) | [`ek_ra4m1`](https://docs.zephyrproject.org/latest/boards/renesas/ek_ra4m1/doc/index.html) | mainline Zephyr | No wireless |
 | Silicon Labs | `efr32mg24` | Silicon Labs EFR32MG24 (Cortex-M33) | [`xg24_ek2703a`](https://docs.zephyrproject.org/latest/boards/silabs/dev_kits/xg24_ek2703a/doc/index.html) | mainline Zephyr | BLE, Thread (via `openthread:`) |
-| STMicroelectronics | `stm32f4` | STM32F4 (Cortex-M4) | [`nucleo_f401re`](https://docs.zephyrproject.org/latest/boards/st/nucleo_f401re/doc/index.html) | mainline Zephyr | No wireless yet |
-| STMicroelectronics | `stm32l4` | STM32L4 (Cortex-M4) | [`nucleo_l476rg`](https://docs.zephyrproject.org/latest/boards/st/nucleo_l476rg/doc/index.html) | mainline Zephyr | No wireless yet |
+| STMicroelectronics | `stm32f1` | STM32F1 (Cortex-M3) | [`nucleo_f103rb`](https://docs.zephyrproject.org/latest/boards/st/nucleo_f103rb/doc/index.html) | mainline Zephyr | No wireless |
+| STMicroelectronics | `stm32f4` | STM32F4 (Cortex-M4) | [`nucleo_f401re`](https://docs.zephyrproject.org/latest/boards/st/nucleo_f401re/doc/index.html) | mainline Zephyr | No wireless |
+| STMicroelectronics | `stm32l4` | STM32L4 (Cortex-M4) | [`nucleo_l476rg`](https://docs.zephyrproject.org/latest/boards/st/nucleo_l476rg/doc/index.html) | mainline Zephyr | No wireless |
 
 It is not recommended to use variants that have existing platforms for other than experimental purposes.
 
@@ -140,7 +141,7 @@ Silicon Labs' provides its own vendor SDK, "Simplicity SDK for Zephyr"
 
 ### STMicroelectronics
 
-`watchdog_timeout` on `stm32l4` and `stm32f4` is `0` or `5s`–`32s`.
+`watchdog_timeout` on `stm32l4` and `stm32f4` is `0` or `5s`–`32s`; on `stm32f1` is `0` and `5s`-`26s`.
 
 ## Serial Load Process
 
@@ -162,6 +163,10 @@ debug pins (SWD) via a probe (e.g. an ST-Link, J-Link) which may be already wire
 typical in evaluation kits, or require a separate external hook up. Boards that have an on-board probe
 typically are easier to use since the probe is available through a USB port.
 
+The actual flash is accomplished via a
+[`runner`](https://github.com/zephyrproject-rtos/zephyr/tree/main/scripts/west_commands/runners)
+which is a Python wrapper around opensource and vendor supplied Flash & Debug Host Tools.
+
 Use of `esphome run/upload` is emerging capability for non esp32 families. If frustrated, direct use of
 `west flash` is recommended.  At present, `esphome run/esphome upload --device <port>`
 attempts to use the board's own default runner and this works as long as that runner's external tool is
@@ -178,6 +183,7 @@ There is also a `--device PYOCD` option (forced override), independent of `advan
 taking precedence over it. This only works when two independent things are both true for that specific
 board — pyOCD has a built-in target for the chip, and the board's board.cmake actually registers a pyocd
 runner with that target.
+
 
 In some scenarios, if your development environment has more than one device available, the wrong device
 may be selected for serial flash, it is the user's responsibility to ensure the correct device was flashed.
@@ -244,7 +250,7 @@ using the stm32f4 WEACT Black Pill and allowed use of the default dfu-utils usin
 `esphome run <config-file> --device /dev/ttyACM<n>`.  The device had to be in boot mode and
 only oddity was having to put the device back into boot mode after the MCUBoot was loaded.
 Installation via SWD is also typically available for serial flash. MCUboot is optional
-(`advanced: bootloader:`, defaulted to `none` on `stm32l4` and 'mcuboot` for `stm32f4`.
+(`advanced: bootloader:`, defaulted to `none` on `stm32l4`; and 'mcuboot` for `stm32f1` and  `stm32f4`.
 
 ## GPIO Pin Numbering
 
