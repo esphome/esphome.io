@@ -33,7 +33,8 @@ See [Modbus](/components/modbus/#hardware-setup) for RS485 hardware setup instru
 
 - **max_cmd_retries** (*Optional*, integer): How many times a command will be retried if no response is received. It doesn't include the initial transmission. Defaults to 4.
 
-- **continuous** (*Optional*, boolean): Poll as fast as the bus allows instead of once per update interval. Defaults to `false`. See [Continuous polling](#modbus_controller-continuous-polling) below.
+- **continuous** (*Optional*, boolean): Poll as fast as the bus allows instead of once per update interval. Defaults
+  to `false`. See [Continuous polling](#modbus_controller-continuous-polling) below.
 
 Multiple `modbus_controller` instances can share the same `address` — for example, to poll different registers on
 the same device at different `update_interval`s.
@@ -46,37 +47,6 @@ retries have timed out - `max_cmd_retries + 1` consecutive timeouts in total - t
 are skipped. Every `offline_skip_updates + 1` update intervals the controller probes again by polling all of its
 ranges (each following the normal retry ladder). Any response, including a Modbus exception response, brings the
 device back online (triggering [`on_online`](#modbus_controller-on_online)) and normal polling resumes.
-
-<span id="modbus_controller-continuous-polling"></span>
-
-### Continuous Polling
-
-With `continuous: true` every read this controller makes is handed to the [Modbus](/components/modbus/) hub as a
-continuous poll: the read is re-queued as soon as its reply has been handled, so polls stream back to back and run
-about as fast as the bus allows, paced by the hub's [`turnaround_time`](/components/modbus/#performance-vs-stability).
-This fills time the bus would otherwise spend idle.
-
-A continuous poll ranks below every one-shot request in the queue, so it never starves ordinary traffic: a write (or
-one-shot read) queued while a poll is running goes out as soon as the poll's current frame completes, and the poll
-resumes after it. `continuous` applies to reads only - the hub strips it from any function code that changes
-something on the device.
-
-`update_interval` keeps its meaning as the recovery path: a continuous poll ends when its read fails or is cancelled,
-and the next update re-submits it, so a device that stops answering is retried on the normal polling cadence. Set
-`update_interval` to a sensible value even when polling continuously.
-
-Continuous polling suits a device that should be read with as little delay as possible, typically one with a small
-set of registers. The trade-off is that the bus is kept busy, which matters when several devices share it.
-
-```yaml
-modbus_controller:
-  - id: controller1
-    address: 0x1
-    # Reads stream continuously to fill idle bus time; update_interval
-    # becomes the retry cadence if the device stops responding.
-    continuous: true
-    update_interval: 30s
-```
 
 Automations:
 
@@ -96,6 +66,40 @@ Automations:
 >
 > - **server_registers** and **server_courtesy_response**: Use the [Modbus Server](/components/modbus_server/) component
 >   instead.
+
+<span id="modbus_controller-continuous-polling"></span>
+
+### Continuous Polling
+
+With `continuous: true` every read this controller makes is handed to the [Modbus](/components/modbus/) hub as a
+continuous poll: the read is re-queued as soon as its reply has been handled, so polls stream back to back and run
+about as fast as the bus allows, paced by the hub's [`turnaround_time`](/components/modbus/#performance-vs-stability).
+This fills time the bus would otherwise spend idle.
+
+A continuous poll ranks below every one-shot request in the queue, so it never starves ordinary traffic: a write (or
+one-shot read) queued while a poll is running goes out as soon as the poll's current frame completes, and the poll
+resumes after it. Several outstanding continuous polls - a controller's multiple register ranges, or polls from
+different controllers - take turns: the hub always serves the least-recently-polled one next, so none is
+starved. `continuous` applies to reads only - the hub strips it from any function code that changes
+something on the device.
+
+`update_interval` keeps its meaning as the recovery path: a continuous poll ends when its read fails or is cancelled,
+and the next update re-submits it, so a device that stops answering is retried on the normal polling cadence - or,
+once the device has been marked offline, on the [`offline_skip_updates`](#modbus_controller-offline_skip_updates)
+cadence. Set `update_interval` to a sensible value even when polling continuously.
+
+Continuous polling suits a device that should be read with as little delay as possible, typically one with a small
+set of registers. The trade-off is that the bus is kept busy, which matters when several devices share it.
+
+```yaml
+modbus_controller:
+  - id: controller1
+    address: 0x1
+    # Reads stream continuously to fill idle bus time; update_interval
+    # becomes the retry cadence if the device stops responding.
+    continuous: true
+    update_interval: 30s
+```
 
 ## Example Client
 
