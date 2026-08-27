@@ -121,8 +121,7 @@ number:
       // the device stores tenths: write the scaled value through the entity;
       // the number still reports x
       item->write_single_register(0x9002, (uint16_t) (x * 10));
-      // {} = no value to write: the item-> call above already sent the frame,
-      // so returning a value here would queue a second, default write
+      // the lambda must return something - return empty, the write is already done
       return {};
 ```
 

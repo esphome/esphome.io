@@ -89,8 +89,7 @@ switch:
       // return !x; // use this to write an inverted value (the switch still reports x)
       // deliberately targets a different coil (0x0006) than the entity's own address
       item->write_single_coil(0x0006, x);
-      // {} = no value to write: the item-> call above already sent the frame,
-      // so returning a bool here would queue a second, default write
+      // the lambda must return something - return empty, the write is already done
       return {};
 ```
 
