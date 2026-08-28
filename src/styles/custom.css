@@ -12,6 +12,25 @@
   width: auto;
 }
 
+/* Subtle hover feedback for Starlight buttons, works in light and dark mode */
+.sl-link-button {
+  transition: opacity 0.2s ease;
+}
+
+.sl-link-button:hover {
+  opacity: 0.85;
+}
+
+.starter-kit-mobile-link {
+  display: none;
+}
+
+@media (max-width: 49.9375rem) {
+  .starter-kit-mobile-link {
+    display: block;
+  }
+}
+
 /* Remove search blur overlay */
 dialog::backdrop {
   -webkit-backdrop-filter: none;
@@ -82,72 +101,6 @@ dialog::backdrop {
   filter: invert(1) hue-rotate(180deg);
 }
 
-/* Feature grid styles */
-.feature-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 1.5rem;
-  margin: 2rem 0;
-}
-
-.feature-card {
-  padding: 1.5rem;
-  border-radius: 8px;
-  background-color: var(--sl-color-gray-6);
-}
-
-.feature-icon {
-  width: 48px;
-  height: 48px;
-  margin-bottom: 1rem;
-}
-
-.feature-icon svg {
-  width: 100%;
-  height: 100%;
-  fill: currentColor;
-}
-
-.feature-text {
-  font-weight: 600;
-  font-size: 1.1rem;
-  margin-bottom: 0.5rem;
-}
-
-/* Getting started grid */
-.getting-started-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 1.5rem;
-  margin: 2rem 0;
-}
-
-.getting-started-heading {
-  font-weight: 600;
-  font-size: 1.2rem;
-  margin-bottom: 0.75rem;
-}
-
-/* Button styles */
-.btn {
-  display: inline-block;
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
-  text-decoration: none;
-  font-weight: 500;
-  margin-top: 1rem;
-}
-
-.btn-primary {
-  background-color: var(--sl-color-accent);
-  color: #fff;
-}
-
-.btn-primary:hover {
-  background-color: var(--sl-color-accent-high);
-  color: #fff;
-}
-
 /* Sidebar nav item spacing */
 .sidebar-content ul li summary {
   padding-block: 0.5em;
@@ -155,39 +108,6 @@ dialog::backdrop {
 
 .sidebar-content ul li > a {
   padding-block: 0.5em;
-}
-
-/* Hide the blog "Tags" group in the sidebar (added by starlight-blog). The group
-   is the only sidebar entry that links to /blog/tags/, so target it via :has(). */
-.sidebar-content li:has(> details a[href*="/blog/tags/"]) {
-  display: none;
-}
-
-/* Header nav items (rendered by the SocialIcons override, to the left of the
-   social icons). Defined here rather than as scoped component styles so they are
-   reliably present on every page load. */
-.header-nav {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-/* Vertical rule separating the nav items from the social icons, matching the
-   divider Starlight renders between the social icons and the theme picker. */
-.header-nav::after {
-  content: "";
-  height: 2rem;
-  border-inline-end: 1px solid var(--sl-color-gray-5);
-}
-.header-nav-link {
-  display: flex;
-  align-items: center;
-  color: var(--sl-color-text-accent);
-  font-weight: 600;
-  text-decoration: none;
-  white-space: nowrap;
-}
-.header-nav-link:hover {
-  color: var(--sl-color-white);
 }
 
 /* Blog list post previews (starlight-blog): tighten the default 1.5rem gap
@@ -325,18 +245,6 @@ article.preview {
 /* Transparent background pattern for badges */
 .transparent-background img {
   background: repeating-conic-gradient(#999 0% 25%, transparent 10% 50%) 50% / 10px 10px;
-}
-
-/* Better hero image */
-html[data-has-hero] .hero img {
-  width: auto;
-  max-width: 100%;
-}
-
-@media (min-width: 800px) {
-  html[data-has-hero] .hero {
-    grid-template-columns: 5fr 4fr;
-  }
 }
 
 /* ---------- 404 page ---------- */
@@ -741,4 +649,9 @@ html[data-has-hero] .hero img {
 
 .metadata.not-content .authors img {
   border: none;
+}
+
+.product-buy-now {
+  text-transform: uppercase;
+  font-weight: 600;
 }

@@ -1,0 +1,97 @@
+---
+/**
+ * ThemedImage Component
+ * Renders a light/dark screenshot pair as a single <picture>, with AVIF and
+ * WebP sources for each theme and a responsive srcset on every source. The
+ * browser downloads exactly one image.
+ *
+ * The dark sources carry `media="(prefers-color-scheme: dark)"`, which is the
+ * correct no-JS default. That alone is not enough here: Starlight's theme
+ * toggle stores an explicit choice and resolves it onto `data-theme`, so a
+ * reader on a light OS who picks dark would otherwise get the light shot. The
+ * script below re-points those sources at `data-theme` and follows later
+ * toggles. Astro bundles it once per page no matter how many instances render.
+ *
+ * Usage in MDX:
+ * import ThemedImage from '@components/ThemedImage.astro';
+ * import lightImg from './images/thing-light.png';
+ * import darkImg from './images/thing-dark.png';
+ *
+ * <ThemedImage light={lightImg} dark={darkImg} alt="Description" />
+ */
+import type { ImageMetadata } from "astro";
+import { getImage } from "astro:assets";
+
+interface Props {
+  light: ImageMetadata;
+  dark: ImageMetadata;
+  alt: string;
+}
+
+const { light, dark, alt } = Astro.props;
+
+const widths = [480, 768, light.width];
+const sizes = `(min-width: ${light.width}px) ${light.width}px, 100vw`;
+
+// AVIF first, then WebP: the browser takes the first <source> it understands,
+// so ordering is the priority. Dark precedes light so its media query gets the
+// chance to match before the unconditional light sources.
+const sources = await Promise.all(
+  (["dark", "light"] as const).flatMap((scheme) =>
+    (["avif", "webp"] as const).map(async (format) => ({
+      scheme,
+      type: `image/${format}`,
+      srcset: (await getImage({ src: scheme === "dark" ? dark : light, widths, format })).srcSet.attribute,
+    })),
+  ),
+);
+
+// <picture> requires an <img>, and the preload scanner fetches its src before
+// the script below can correct the media queries. That fetch is discarded for
+// anyone whose chosen theme differs from their OS, so the baseline is WebP
+// rather than the original PNG: same role, roughly a quarter of the bytes.
+// The cost is browsers that support neither AVIF nor WebP, which means Safari
+// below 14 and IE.
+const fallback = await getImage({ src: light, widths, format: "webp" });
+---
+
+<picture>
+  {
+    sources.map((source) => (
+      <source
+        type={source.type}
+        srcset={source.srcset}
+        sizes={sizes}
+        media={source.scheme === "dark" ? "(prefers-color-scheme: dark)" : undefined}
+        data-theme-source={source.scheme}
+      />
+    ))
+  }
+  <img
+    src={fallback.src}
+    srcset={fallback.srcSet.attribute}
+    sizes={sizes}
+    alt={alt}
+    width={light.width}
+    height={light.height}
+    loading="lazy"
+    decoding="async"
+  />
+</picture>
+
+<script>
+  // Point the dark <source>s at Starlight's resolved theme instead of the OS
+  // preference. `not all` never matches, so the light sources take over.
+  const syncThemedImages = () => {
+    const isDark = document.documentElement.dataset.theme === "dark";
+    document.querySelectorAll<HTMLSourceElement>('source[data-theme-source="dark"]').forEach((source) => {
+      source.media = isDark ? "all" : "not all";
+    });
+  };
+
+  syncThemedImages();
+  new MutationObserver(syncThemedImages).observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ["data-theme"],
+  });
+</script>
