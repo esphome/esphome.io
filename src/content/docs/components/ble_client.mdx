@@ -1,5 +1,5 @@
 ---
-description: "Configuration of the BLE client on ESP32."
+description: "Configuration of the BLE client on the ESP32 and Raspberry Pi Pico W / Pico 2 W."
 title: "BLE Client"
 ---
 import APIRef from '@components/APIRef.astro';
@@ -8,6 +8,12 @@ import APIRef from '@components/APIRef.astro';
 The `ble_client` component enables connections to Bluetooth Low Energy devices in order to query and
 control them. This component does not expose any sensors or output components itself, but merely manages
 connections to them for use by other components.
+
+It is supported on the ESP32 and on the Raspberry Pi Pico W / Pico 2 W. On the Pico the component
+provides connections, the `on_connect`/`on_disconnect` automations and the `ble_client.connect`,
+`ble_client.disconnect` and `ble_client.ble_write` actions; the pairing automations and actions, and
+the components that build on `ble_client` (such as the sensor, text sensor, switch and output
+platforms), are currently available on the ESP32 only.
 
 > [!WARNING]
 > The BLE software stack on the ESP32 consumes a significant amount of RAM on the device.
@@ -26,10 +32,12 @@ connections to them for use by other components.
 > [Esp32 Ble Tracker](/components/esp32_ble_tracker/) as they listen to advertisements which are only sent by devices
 > without an active connection.
 
-Despite the last point above, the `ble_client` component requires the `esp32_ble_tracker` component in order
-to discover available client devices.
+Despite the last point above, the `ble_client` component requires a BLE tracker component in order
+to discover available client devices: [Esp32 Ble Tracker](/components/esp32_ble_tracker/) on the ESP32,
+[RP2 BLE Tracker](/components/rp2_ble_tracker/) on the Pico.
 
 ```yaml
+# ESP32
 esp32_ble_tracker:
 
 ble_client:
@@ -38,10 +46,24 @@ ble_client:
     auto_connect: true
 ```
 
+```yaml
+# Raspberry Pi Pico W
+rp2_ble_tracker:
+
+ble_client:
+  - mac_address: XX:XX:XX:XX:XX:XX
+    id: itag_black
+```
+
+> [!NOTE]
+> The Pico's BLE stack supports a single GATT client connection. This means at most one
+> `ble_client` entry, and the slot is shared with an active
+> [Bluetooth Proxy](/components/bluetooth_proxy/) — configure one or the other, not both.
+
 ## Configuration variables
 
 - **mac_address** (**Required**, MAC Address): The MAC address of the BLE device to connect to.
-- **auto_connect** (*Optional*, boolean): If true the device will be automatically connected when found by the [Esp32 Ble Tracker](/components/esp32_ble_tracker/). Defaults to true.
+- **auto_connect** (*Optional*, boolean): If true the device will be automatically connected when found by the BLE tracker (available on all supported platforms). Defaults to true.
 - **id** (**Required**, [ID](/guides/configuration-types#id)): The ID to use for code generation, and for reference by dependent components.
 
 Automations:
@@ -52,13 +74,13 @@ Automations:
 - **on_disconnect** (*Optional*, [Automation](/automations)): An automation to perform
   when the client disconnects from a device. See [`on_disconnect`](#ble_client-on_disconnect).
 
-- **on_passkey_request** (*Optional*, [Automation](/automations)): An automation to enter
+- **on_passkey_request** (*Optional*, [Automation](/automations), ESP32 only): An automation to enter
   the passkey required by the other BLE device. See [`on_passkey_request`](#ble_client-on_passkey_request).
 
-- **on_passkey_notification** (*Optional*, [Automation](/automations)): An automation to
+- **on_passkey_notification** (*Optional*, [Automation](/automations), ESP32 only): An automation to
   display the passkey to the user. See [`on_passkey_notification`](#ble_client-on_passkey_notification).
 
-- **on_numeric_comparison_request** (*Optional*, [Automation](/automations)): An automation to
+- **on_numeric_comparison_request** (*Optional*, [Automation](/automations), ESP32 only): An automation to
   compare the passkeys shown on the two BLE devices. See [`on_numeric_comparison_request`](#ble_client-on_numeric_comparison_request).
 
 ## BLE Client Automation
@@ -99,6 +121,9 @@ ble_client:
 
 ### `on_passkey_request`
 
+> [!NOTE]
+> This is available on the ESP32 only.
+
 This automation is triggered when the BLE device requests a passkey for authentication.
 
 ```yaml
@@ -116,6 +141,9 @@ ble_client:
 
 ### `on_passkey_notification`
 
+> [!NOTE]
+> This is available on the ESP32 only.
+
 This automation is triggered when a passkey is received from the BLE device.
 
 ```yaml
@@ -132,6 +160,9 @@ ble_client:
 <span id="ble_client-on_numeric_comparison_request"></span>
 
 ### `on_numeric_comparison_request`
+
+> [!NOTE]
+> This is available on the ESP32 only.
 
 This automation is triggered when a numeric comparison is requested by the BLE device.
 
@@ -156,7 +187,9 @@ within an automation. Once connected other actions like `ble_write` can be used.
 a BLE server needs only to be interacted with occasionally, and thus does not need a constant
 connection held.
 
-The following example updates the time of a Xiaomi MHO-C303 clock once per hour. Note that the BLE tracker must
+The following example updates the time of a Xiaomi MHO-C303 clock once per hour (an ESP32 example —
+the `esp32_ble_tracker.stop_scan`/`start_scan` actions it uses are ESP32-specific; the
+`ble_client.connect` action itself works on both platforms). Note that the BLE tracker must
 be stopped during the connect attempt, and restarted afterwards. This would not be necessary if the tracker had
 `continuous: false` set. In this example scenario there is another BLE device that does require the scanner to be
 on, hence the stop and start of the scan during connect.
@@ -237,6 +270,9 @@ switch:
 
 ## `ble_client.passkey_reply` Action
 
+> [!NOTE]
+> This is available on the ESP32 only.
+
 This action triggers an authentication attempt using the specified `passkey`.
 
 Example usage:
@@ -255,6 +291,9 @@ on_...:
 - **passkey** (**Required**, int, [templatable](/automations/templates)): The 6-digit passkey.
 
 ## `ble_client.numeric_comparison_reply` Action
+
+> [!NOTE]
+> This is available on the ESP32 only.
 
 This action triggers an authentication attempt after a numeric comparison.
 
@@ -275,6 +314,9 @@ on_...:
   displayed on both BLE devices are matching.
 
 ## `ble_client.remove_bond` Action
+
+> [!NOTE]
+> This is available on the ESP32 only.
 
 This action removes a device from the security database and manages
 unpairing.
@@ -352,14 +394,14 @@ is only obtained through dependent components, such as [Ble Client](/components/
 See the documentation for these components for details on setting up
 specific devices.
 
-In order to use the `ble_client` component, you need to enable the
-[Esp32 Ble Tracker](/components/esp32_ble_tracker/) component. This will also allow you to discover
-the MAC address of the device.
+In order to use the `ble_client` component, you need to enable the BLE tracker for your platform —
+[Esp32 Ble Tracker](/components/esp32_ble_tracker/) or [RP2 BLE Tracker](/components/rp2_ble_tracker/).
+This will also allow you to discover the MAC address of the device.
 
 When you have discovered the MAC address of the device, you can add it
 to the `ble_client` stanza.
 
-If you then build and upload this configuration, the ESP will listen for
+If you then build and upload this configuration, the device will listen for
 the device and attempt to connect to it when it is discovered. The component
 will then query the device for all available services and characteristics and
 display them in the log:
