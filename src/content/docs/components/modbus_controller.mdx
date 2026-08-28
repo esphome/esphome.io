@@ -369,6 +369,8 @@ and the `reuse_previous_range` option controls how an item relates to the range 
 The deprecated `force_new_range` and `register_count` options migrate automatically: `force_new_range: true` becomes
 `reuse_previous_range: false` with a deprecation warning, and a `register_count` equal to the derived width warns
 that it is redundant (a different value fails validation with instructions). Both will be removed in 2027.3.0.
+The old recipe for a device that packs a wider value into a single register - `register_count: 1` with
+`response_size: 4` for an FP32 - has no replacement: a typed value's width now always comes from its `value_type`.
 
 An example is an SDM meter, with interesting data in register addresses 0, 2, 4 and 6:
 
