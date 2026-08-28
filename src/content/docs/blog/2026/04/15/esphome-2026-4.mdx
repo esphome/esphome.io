@@ -266,7 +266,7 @@ This release introduces comprehensive C++ benchmarking infrastructure using [Cod
 - **Float zero checks**: Integer comparison instead of floating-point ([#15490](https://github.com/esphome/esphome/pull/15490))
 - **Code size reduction**: Buffer and nodelay optimizations ([#14797](https://github.com/esphome/esphome/pull/14797))
 - **Overflow buffer extracted**: Frame helper buffer management simplified ([#14871](https://github.com/esphome/esphome/pull/14871))
-- **Noise encryption speedup**: Continuing from the [ChaCha20-Poly1305 optimization in 2026.3.0](/changelog/2026.3.0) (which achieved 8-32% faster encryption), this release enables `HAVE_WEAK_SYMBOLS` and `HAVE_INLINE_ASM` for libsodium, replacing a volatile byte-by-byte `sodium_memzero()` fallback with word-sized `memset()`. Small messages (the common case for sensor updates and service calls) see the biggest gains: **24% faster on ESP32, 11% on ESP8266, 10% on RP2040** ([#15038](https://github.com/esphome/esphome/pull/15038))
+- **Noise encryption speedup**: Continuing from the [ChaCha20-Poly1305 optimization in 2026.3.0](/blog/2026/03/18/esphome-2026-3/#api-and-protobuf-performance) (which achieved 8-32% faster encryption), this release enables `HAVE_WEAK_SYMBOLS` and `HAVE_INLINE_ASM` for libsodium, replacing a volatile byte-by-byte `sodium_memzero()` fallback with word-sized `memset()`. Small messages (the common case for sensor updates and service calls) see the biggest gains: **24% faster on ESP32, 11% on ESP8266, 10% on RP2040** ([#15038](https://github.com/esphome/esphome/pull/15038))
 - **Noise handshake**: Split state_action_ to reduce stack pressure ([#15464](https://github.com/esphome/esphome/pull/15464))
 - **PSK update**: Avoided heap allocation in timeout lambda ([#14921](https://github.com/esphome/esphome/pull/14921))
 - **Batch encoding**: Simplified encode_to_buffer to single resize call, inlined DeferredBatch::add_item ([#15355](https://github.com/esphome/esphome/pull/15355), [#15353](https://github.com/esphome/esphome/pull/15353))
@@ -419,7 +419,7 @@ climate:
 
 ### Codebase Correctness Sweep
 
-Continuing the [correctness sweep started in 2026.3.0](/changelog/2026.3.0), [@swoboda1337](https://github.com/swoboda1337) contributed another **99 bug fix and validation PRs** in this release, addressing missing `state_class` and `device_class` on sensor schemas, incorrect config validation (wrong types, missing range checks, broken `ensure_list` usage), dead code removal, format specifier warnings, and codegen type mismatches across 100+ components. This sustained effort has significantly improved the reliability and correctness of the ESPHome codebase.
+Continuing the [correctness sweep started in 2026.3.0](/blog/2026/03/18/esphome-2026-3/#codebase-correctness-sweep), [@swoboda1337](https://github.com/swoboda1337) contributed another **99 bug fix and validation PRs** in this release, addressing missing `state_class` and `device_class` on sensor schemas, incorrect config validation (wrong types, missing range checks, broken `ensure_list` usage), dead code removal, format specifier warnings, and codegen type mismatches across 100+ components. This sustained effort has significantly improved the reliability and correctness of the ESPHome codebase.
 
 ## Thank You, Contributors
 
