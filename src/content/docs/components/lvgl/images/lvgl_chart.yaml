@@ -1,0 +1,102 @@
+esphome:
+  name: chart-types-shot
+
+host:
+logger:
+
+# s1/s2 are published manually (see lvgl.on_boot below) instead of on a real update_interval, so
+# lvgl_chart.sh's screenshot doesn't depend on wall-clock timing at all: every run pushes exactly
+# the same samples, back to back, as soon as the UI exists. If you raise any chart's point_count,
+# raise the sample count in that loop to match.
+sensor:
+  - platform: template
+    id: s1
+  - platform: template
+    id: s2
+
+display:
+  - platform: sdl
+    id: disp
+    dimensions:
+      width: 480
+      height: 700
+
+lvgl:
+  displays:
+    - disp
+  on_boot:
+    # Push all 30 samples in one burst as soon as the widgets exist, instead of trickling them in
+    # over real time -- that's what makes the screenshot reproducible (see the sensor note above).
+    - lambda: |-
+        for (uint32_t n = 0; n < 30; n++) {
+          float t = n * 300.0f;
+          id(s1).publish_state(20.0f + 5.0f * sinf(t / 1500.0f));
+          id(s2).publish_state(15.0f + 4.0f * cosf(t / 1800.0f));
+          id(chart_scatter)->add_point(0, t / 60.0f, 15.0f + 8.0f * sinf(t / 900.0f));
+          id(chart_scatter)->add_point(1, t / 60.0f, 10.0f + 6.0f * cosf(t / 700.0f));
+        }
+  style_definitions:
+    - id: title_style
+      text_font: montserrat_16
+      pad_bottom: 2px
+  pages:
+    - id: p1
+      layout:
+        type: flex
+        flex_flow: column
+      pad_all: 8px
+      widgets:
+        - label:
+            text: "LINE"
+            styles: title_style
+        - chart:
+            id: chart_line
+            type: LINE
+            height: 130px
+            point_count: 30
+            series:
+              - sensor: s1
+                color: 0x4269d0
+                format: "s1 %.1f"
+              - sensor: s2
+                color: 0xf4bd4a
+                format: "s2 %.1f"
+        - label:
+            text: "BAR"
+            styles: title_style
+        - chart:
+            id: chart_bar
+            type: BAR
+            height: 130px
+            point_count: 20
+            series:
+              - sensor: s1
+                color: 0x4269d0
+              - sensor: s2
+                color: 0xf4bd4a
+        - label:
+            text: "STACKED"
+            styles: title_style
+        - chart:
+            id: chart_stacked
+            type: STACKED
+            height: 130px
+            point_count: 20
+            min_value: 0
+            max_value: 40
+            series:
+              - sensor: s1
+                color: 0x4269d0
+              - sensor: s2
+                color: 0xf4bd4a
+        - label:
+            text: "SCATTER"
+            styles: title_style
+        - chart:
+            id: chart_scatter
+            type: SCATTER
+            height: 130px
+            point_count: 30
+            series:
+              - color: 0x4269d0
+              - color: 0xf4bd4a
