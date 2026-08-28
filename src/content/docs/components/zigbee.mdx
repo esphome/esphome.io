@@ -142,7 +142,8 @@ Only on `ESP32`:
 - **endpoint** (*Optional*, int): Endpoint number in the range from 1 to 239. This defines which entity goes on which
   endpoint, giving a more stable configuration and letting you manually combine entities that logically belong together.
   Only entities that map to different Zigbee clusters can be combined (for example a `binary_sensor` and a `sensor`);
-  two entities of the same type, such as two sensors, cannot share an endpoint. If more than one entity on an endpoint
+  two entities of the same type, such as two sensors, cannot share an endpoint unless `cluster: default` maps them to
+  different clusters (for example a temperature and a humidity sensor).If more than one entity on an endpoint
   has a Zigbee device type, set `use_device_type: true` on one of them.
 - **use_device_type** (*Optional*, boolean): Use the Zigbee Home Automation device type of this entity for the endpoint.
   Some entities have a
@@ -181,8 +182,7 @@ If `cluster` is set to `default` the occupancy cluster is used if device class i
 
 [Sensors](/components/sensor#config-sensor) are implemented by default as analog input clusters with description, engineering_units,
 and present_value attributes. On `ESP32` additionally the application type and resolution attributes are set if applicable.
-`cluster = default` is supported for temperature, humidity, atmospheric pressure, pressure, volume flow rate, illuminance,
-pm25, and co2 device classes.
+`cluster = default` is supported for `temperature`, `humidity`, `atmospheric_pressure`, `pressure`, `volume_flow_rate`, `illuminance`, `pm25`, `carbon_dioxide` device classes.
 
 #### Additional configuration variables
 
