@@ -12,6 +12,25 @@
   width: auto;
 }
 
+/* Subtle hover feedback for Starlight buttons, works in light and dark mode */
+.sl-link-button {
+  transition: opacity 0.2s ease;
+}
+
+.sl-link-button:hover {
+  opacity: 0.85;
+}
+
+.starter-kit-mobile-link {
+  display: none;
+}
+
+@media (max-width: 49.9375rem) {
+  .starter-kit-mobile-link {
+    display: block;
+  }
+}
+
 /* Remove search blur overlay */
 dialog::backdrop {
   -webkit-backdrop-filter: none;
@@ -82,72 +101,6 @@ dialog::backdrop {
   filter: invert(1) hue-rotate(180deg);
 }
 
-/* Feature grid styles */
-.feature-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 1.5rem;
-  margin: 2rem 0;
-}
-
-.feature-card {
-  padding: 1.5rem;
-  border-radius: 8px;
-  background-color: var(--sl-color-gray-6);
-}
-
-.feature-icon {
-  width: 48px;
-  height: 48px;
-  margin-bottom: 1rem;
-}
-
-.feature-icon svg {
-  width: 100%;
-  height: 100%;
-  fill: currentColor;
-}
-
-.feature-text {
-  font-weight: 600;
-  font-size: 1.1rem;
-  margin-bottom: 0.5rem;
-}
-
-/* Getting started grid */
-.getting-started-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 1.5rem;
-  margin: 2rem 0;
-}
-
-.getting-started-heading {
-  font-weight: 600;
-  font-size: 1.2rem;
-  margin-bottom: 0.75rem;
-}
-
-/* Button styles */
-.btn {
-  display: inline-block;
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
-  text-decoration: none;
-  font-weight: 500;
-  margin-top: 1rem;
-}
-
-.btn-primary {
-  background-color: var(--sl-color-accent);
-  color: #fff;
-}
-
-.btn-primary:hover {
-  background-color: var(--sl-color-accent-high);
-  color: #fff;
-}
-
 /* Sidebar nav item spacing */
 .sidebar-content ul li summary {
   padding-block: 0.5em;
@@ -155,6 +108,12 @@ dialog::backdrop {
 
 .sidebar-content ul li > a {
   padding-block: 0.5em;
+}
+
+/* Blog list post previews (starlight-blog): tighten the default 1.5rem gap
+   between the title/metadata, excerpt paragraph and tags. */
+article.preview {
+  gap: 1rem;
 }
 
 /* Anchor styling */
@@ -173,9 +132,11 @@ dialog::backdrop {
 .sl-markdown-content.sl-markdown-content li > p:first-child {
   margin-block-start: 0;
 }
+
 .sl-markdown-content.sl-markdown-content li > p:last-child {
   margin-block-end: 0;
 }
+
 .sl-markdown-content.sl-markdown-content li > ul,
 .sl-markdown-content.sl-markdown-content li > ol {
   margin-block-start: 0;
@@ -286,18 +247,6 @@ dialog::backdrop {
   background: repeating-conic-gradient(#999 0% 25%, transparent 10% 50%) 50% / 10px 10px;
 }
 
-/* Better hero image */
-html[data-has-hero] .hero img {
-  width: auto;
-  max-width: 100%;
-}
-
-@media (min-width: 800px) {
-  html[data-has-hero] .hero {
-    grid-template-columns: 5fr 4fr;
-  }
-}
-
 /* ---------- 404 page ---------- */
 
 .error-404 {
@@ -360,6 +309,7 @@ html[data-has-hero] .hero img {
       0 0 10px 2px rgba(255, 70, 70, 0.4),
       inset 0 0 14px rgba(0, 0, 0, 0.5);
   }
+
   50% {
     filter: brightness(1.15);
     box-shadow:
@@ -431,6 +381,7 @@ html[data-has-hero] .hero img {
   100% {
     opacity: 1;
   }
+
   50% {
     opacity: 0.4;
   }
@@ -464,33 +415,41 @@ html[data-has-hero] .hero img {
   color: #7cb342;
   font-weight: 600;
 }
+
 .error-404__log-warn {
   color: #ffcc32;
   font-weight: 600;
 }
+
 .error-404__log-err {
   color: #ff5f57;
   font-weight: 600;
 }
+
 .error-404__log-tag {
   color: #7a828c;
 }
+
 .error-404__log-text {
   color: #d5dae1;
 }
+
 .error-404__log-path {
   color: #5dade2;
   font-weight: 600;
 }
+
 .error-404__log-suggest {
   color: #5dade2;
 }
+
 .error-404__log-link {
   color: #5dade2;
   text-decoration: underline;
   text-decoration-color: rgba(93, 173, 226, 0.35);
   text-underline-offset: 2px;
 }
+
 .error-404__log-link:hover {
   color: #8cc8ef;
 }
@@ -651,4 +610,48 @@ html[data-has-hero] .hero img {
 
 :root[data-theme="light"] .error-404__card:hover {
   background: var(--sl-color-gray-6);
+}
+
+/**
+ * Blog Styles
+ */
+.main-pane:has(.sl-markdown-content .posts),
+.main-pane:has(.post-footer) {
+  --sl-content-width: 50rem;
+}
+
+.main-pane:has(.post-footer) figure img,
+.sl-markdown-content .posts figure img {
+  max-height: 100%;
+  margin-left: 0;
+}
+
+.metadata.not-content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 2rem;
+}
+
+.posts .metadata.not-content {
+  margin-bottom: 0;
+}
+
+.metadata.not-content .dates:before {
+  display: none;
+}
+
+.metadata.not-content .authors {
+  order: 1;
+}
+
+.metadata.not-content .authors img {
+  border: none;
+}
+
+.product-buy-now {
+  text-transform: uppercase;
+  font-weight: 600;
 }
