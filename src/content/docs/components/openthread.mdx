@@ -142,6 +142,17 @@ openthread:
   - mDNS is used for DNS-SD/SRP proxying
   - Must be used with `enable_ipv6: true` in network component
 
+### Border Router Limitations
+
+Border Router mode has the following constraints:
+
+- **ESP-IDF version**: Requires ESP-IDF 5.5 or later
+- **Device type**: Only supported with FTD (Full Thread Device); MTD (Minimal Thread Device) is not supported
+- **Wi-Fi mode**: Wi-Fi must be in STA (Station) mode; Wi-Fi AP mode is not compatible
+- **Wi-Fi startup**: Wi-Fi must be enabled at startup; disabling Wi-Fi breaks border routing
+- **Supported platforms**: Only ESP32 variants; not supported on ESP8266 or other platforms
+- **OTA updates**: Standard `esphome.ota` does not work when a poll period is set; use `http_request.ota` instead
+
 ### External Radio Co-Processor (RCP)
 
 If your ESP32 doesn't have a native 802.15.4 radio (e.g., ESP32, ESP32-S3), you can use an external RCP connected via UART. The RCP should be flashed with the OpenThread RCP firmware (e.g., another ESP32-C6/H2 running `ot_rcp`).
