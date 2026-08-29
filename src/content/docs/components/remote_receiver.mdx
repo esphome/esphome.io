@@ -441,9 +441,14 @@ Remote code selection (exactly one of these has to be included):
 
 - **drayton**: Trigger on a decoded Drayton Digistat RF remote code with the given data.
 
-  - **address** (**Required**, int): The 16-bit ID code to trigger on, see dumper output for more info.
-  - **channel** (**Required**, int): The 7-bit switch/channel to listen for.
-  - **command** (**Required**, int): The 5-bit command to listen for.
+  - **address** (**Required**, int): The 16-bit ID code to trigger on. Bits 0-3 are normally zero. Bit 0 is only set when a Digistat powers on to allow a Drayton
+    receiver in 'learn' mode to receive this address. See dumper output for more info.
+  - **data** (*Optional*, int): The 4-bit data value to listen for. Defaults to '0'. Bit '3' represents thermostat on/off. Bit '1'
+    represents 'Low Batt'. e.g. 0x8=Thermostat ON, Battery OK. Should be used in preference to channel and command.
+  - **channel** (*Optional*, int): The 7-bit switch/channel to listen for. May be used, in conjunction with command, to maintain compatibility with first
+    implematation of the Drayton receiver. Use of data is preferred.
+  - **command** (*Optional*, int): The 5-bit command to listen for. May be used, in conjunction with channel, to maintain compatibility with first implematation of
+    the Drayton receiver. Use of data is preferred.
 
 - **dyson**: Trigger on a decoded dyson cool AM07 infrared remote code with the given data.
 
