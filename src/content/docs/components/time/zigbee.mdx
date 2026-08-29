@@ -5,8 +5,7 @@ title: "Zigbee Time Source"
 
 The `zigbee` time platform synchronizes time from the Zigbee coordinator.
 When the device joins the network, it requests the current time from the coordinator.
-
-This component is only available on **nRF52** platforms.
+On `ESP32` the device additionally re-requests the time from the coordinator every `update_interval`.
 
 You first need to set up the [Zigbee](/components/zigbee/) component.
 
@@ -19,7 +18,9 @@ time:
 ## Configuration variables
 
 - **update_interval** (*Optional*, [Time](/guides/configuration-types/)):
-  How often to update the time attribute. Defaults to `1s`.
+  On `nRF52`, how often the time attribute is updated. Defaults to `1s`.
+  On `ESP32`, how often the time is re-requested from the coordinator; this is the option from
+  [Base Time Configuration](/components/time#base_time_config) and defaults to `15min`.
 - All other options from [Base Time Configuration](/components/time#base_time_config).
 
 ## See Also

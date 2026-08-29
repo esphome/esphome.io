@@ -1903,6 +1903,89 @@ The `switch` can be also integrated as a [Switch](/components/switch/lvgl/) comp
 
 See [Local light switch](/cookbook/lvgl#lvgl-cookbook-relay) for an example which demonstrates how to use a switch to act on a local component.
 
+### `table`
+
+The table widget displays data arranged in rows and columns of text cells.
+
+**Configuration variables:**
+
+- **row_count** (*Optional*, int): The number of rows in the table. Defaults to the number of entries in `rows`, or `0` if not given.
+- **column_count** (*Optional*, int): The number of columns in the table. Defaults to the largest number of cells in any row in `rows`, or `0` if not given.
+- **columns** (*Optional*, list): Settings for each column, in column order:
+  - **width** (*Optional*, int or percentage): The width of the column. A percentage is relative to the table's own content width, and is recalculated automatically if the table is resized.
+- **rows** (*Optional*, list): The rows of the table, in order. Each row may be given as a bare list of cells, or as a dict:
+  - **cells** (**Required**, list): The cells of the row, in column order. Each cell may be given as a bare [Text property](#text-property), or as a dict:
+    - **text** (*Optional*, [Text property](#text-property)): The text to display in the cell. Defaults to an empty string.
+    - **merge_right** (*Optional*, boolean): Merge this cell with the one to its right so they are drawn as a single wide cell. Defaults to `false`.
+    - **text_crop** (*Optional*, boolean): Crop the text instead of wrapping it if it does not fit the cell. Defaults to `false`.
+- **selected_row**, **selected_column** (*Optional*, int): The initially selected cell. If only one of the two is given, the whole row or column is selected instead of a single cell.
+- Style options from [Style properties](/components/lvgl#lvgl-styling) for the background of the table (`main` part). The `items` part styles the individual cells; its `focused` and `pressed` states style the currently selected cell while the table has focus or is being pressed.
+
+**Actions:**
+
+- `lvgl.table.update` [action](/automations/actions#actions-action) updates the widget styles and properties from the specific options above, just like the [lvgl.widget.update](#lvgl-automation-actions) action is used for the common styles, states or flags.
+  - **id** (**Required**): The ID or a list of IDs of table widgets to be updated.
+  - Any of the table options as listed above.
+
+- `lvgl.table.cell.update` [action](/automations/actions#actions-action) updates a single cell of the table.
+  - **id** (**Required**): The ID or a list of IDs of table widgets to be updated.
+  - **row** (**Required**, int): The (zero-based) row of the cell to update.
+  - **column** (**Required**, int): The (zero-based) column of the cell to update.
+  - **text** (*Optional*, [Text property](#text-property)): The new text for the cell.
+  - **merge_right** (*Optional*, boolean): Merge this cell with the one to its right.
+  - **text_crop** (*Optional*, boolean): Crop the text instead of wrapping it.
+
+  At least one of `text`, `merge_right` or `text_crop` must be given.
+
+**Triggers:**
+
+- `on_value` [trigger](/automations/actions#actions-trigger) is activated when the selected cell changes, either by user interaction or programmatically (e.g. via `lvgl.table.update`). The new selection is returned in the variables `row` and `column`.
+- [interaction](#triggers) LVGL event triggers, which also return the selected cell in the variables `row` and `column`.
+
+**Example:**
+
+```yaml
+# Example widget:
+- table:
+    id: table_id
+    width: 100%
+    columns:
+      - width: 40%
+      - width: 60%
+    rows:
+      - ["Name", "Value"]
+      - ["Temperature", "22.5°"]
+    selected_row: 0
+    selected_column: 0
+
+# Example widget - a pre-sized table filled with live data:
+- table:
+    id: readings_table
+    row_count: 3
+    column_count: 2
+    columns:
+      - width: 50%
+      - width: 50%
+
+# Example action:
+interval:
+  - interval: 5s
+    then:
+      - lvgl.table.cell.update:
+          id: readings_table
+          row: 0
+          column: 1
+          text: !lambda return to_string(id(my_sensor).state);
+
+# Example trigger:
+- table:
+    ...
+    on_value:
+      - logger.log:
+          format: "Selected cell: %u, %u"
+          args: [ row, column ]
+```
+
 ### `tabview`
 
 The tab view object can be used to organize content in tabs.

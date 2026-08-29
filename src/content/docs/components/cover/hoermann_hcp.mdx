@@ -150,6 +150,28 @@ cover:
   `hoermann_hcp` hub. Only required if you have more than one hub.
 - All other options from [Cover](/components/cover#config-cover).
 
+## Button
+
+The `hoermann_hcp` button platform exposes the motor's built-in vent and half-open commands.
+
+```yaml
+button:
+  - platform: hoermann_hcp
+    vent:
+      name: Garage Vent
+    half_open:
+      name: Garage Half Open
+```
+
+### Configuration variables
+
+- **hoermann_hcp_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the
+  `hoermann_hcp` hub. Only required if you have more than one hub.
+- **vent** (*Optional*): Configuration for the vent button. When pressed, moves the door to its built-in vent position.
+- **half_open** (*Optional*): Configuration for the half-open button. When pressed, moves the door to its built-in half-open position.
+
+Both buttons support all options from [Button](/components/button#config-button).
+
 ## Light
 
 The `hoermann_hcp` light platform controls the courtesy light built into the motor. It is an on/off
@@ -200,11 +222,13 @@ binary_sensor:
 ## See Also
 
 - [Cover Component](/components/cover/)
+- [Button Component](/components/button/)
 - [Binary Sensor Component](/components/binary_sensor/)
 - [Light Component](/components/light/)
 - [Modbus](/components/modbus/)
 - [HCPBridge project](https://github.com/hkiam/HCPBridge)
 - [Automation](/automations)
 - <APIRef text="hoermann_hcp_cover.h" path="hoermann_hcp/cover/hoermann_hcp_cover.h" />
+- <APIRef text="hoermann_hcp_button.h" path="hoermann_hcp/button/hoermann_hcp_button.h" />
 - <APIRef text="hoermann_hcp_light.h" path="hoermann_hcp/light/hoermann_hcp_light.h" />
 - <APIRef text="hoermann_hcp_binary_sensor.h" path="hoermann_hcp/binary_sensor/hoermann_hcp_binary_sensor.h" />
