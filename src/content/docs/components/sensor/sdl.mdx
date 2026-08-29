@@ -1,0 +1,46 @@
+---
+description: "Instructions for setting up an SDL mouse wheel encoder sensor."
+title: "SDL Mouse Wheel Sensor"
+---
+import APIRef from '@components/APIRef.astro';
+
+
+The `sdl` sensor platform emulates a [rotary encoder](/components/sensor/rotary_encoder/) using the
+mouse wheel on the host platform. It is intended for use with the [`sdl` display](/components/display/sdl#sdl)
+when designing and testing user interfaces (for example with [LVGL](/components/lvgl/)) without a physical encoder.
+
+Scrolling the mouse wheel up increments the sensor value; scrolling down decrements it. An
+[`sdl` display](/components/display/sdl#sdl) must be present in the configuration; the sensor attaches to it
+via the `sdl_id` option.
+
+```yaml
+# Example configuration entry
+sensor:
+  - platform: sdl
+    id: mouse_encoder
+    name: "Mouse Wheel Encoder"
+    min_value: 0
+    max_value: 100
+    wrap: true
+```
+
+## Configuration variables
+
+- **sdl_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the [`sdl` display](/components/display/sdl#sdl)
+  to attach this encoder to. Only required if more than one `sdl` display is configured.
+- **min_value** (*Optional*, int): The minimum value the encoder will report. Defaults to no lower limit.
+- **max_value** (*Optional*, int): The maximum value the encoder will report. Must be greater than `min_value`.
+  Defaults to no upper limit.
+- **wrap** (*Optional*, boolean): When `true`, the value wraps around from `max_value` to `min_value` (and vice
+  versa) instead of stopping at the limit. Requires both `min_value` and `max_value` to be set to have any effect.
+  Defaults to `true`.
+- All other options from [Sensor](/components/sensor#config-sensor) and the
+  [Rotary Encoder Sensor](/components/sensor/rotary_encoder/).
+
+## See Also
+
+- [Host Platform](/components/host/)
+- [SDL display](/components/display/sdl#sdl)
+- [Rotary Encoder Sensor](/components/sensor/rotary_encoder/)
+- [SDL binary sensor](/components/binary_sensor/sdl/)
+- <APIRef text="sdl_encoder.h" path="sdl/sdl_encoder.h" />

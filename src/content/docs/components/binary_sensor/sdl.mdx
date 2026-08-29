@@ -1,14 +1,17 @@
 ---
-description: "Instructions for setting up an SDL keyboard binary sensor."
+description: "Instructions for setting up an SDL keyboard or mouse button binary sensor."
 title: "SDL Binary Sensor"
 ---
 
-The `sdl` binary sensor platform creates a binary sensor from keyboard presses on the host platform.
-The sensor will be true when the key is pressed.
+The `sdl` binary sensor platform creates a binary sensor from keyboard presses or mouse button clicks
+on the host platform. The sensor will be true while the key or mouse button is pressed.
+
+Exactly one of `key` or `mouse_button` must be specified.
 
 ## Configuration variables
 
-- **key** (**Required**): The ID of an [SDL key](https://www.libsdl.org/release/SDL-1.2.15/docs/html/sdlkey.html).
+- **key** (*Optional*): The ID of an [SDL key](https://www.libsdl.org/release/SDL-1.2.15/docs/html/sdlkey.html).
+- **mouse_button** (*Optional*, int): The mouse button to monitor: `1` (left), `2` (middle) or `3` (right).
 - All other variables from [Binary Sensor](/components/binary_sensor#config-binary_sensor).
 
 Example:
@@ -18,9 +21,13 @@ binary_sensor:
   - platform: sdl
     id: key_id
     key: SDLK_a
+  - platform: sdl
+    id: left_click
+    mouse_button: 1
 ```
 
 ## See Also
 
 - [Host Platform](/components/host/)
 - [SDL display](/components/display/sdl#sdl)
+- [SDL mouse wheel sensor](/components/sensor/sdl/)
