@@ -229,12 +229,13 @@ climate:
 
 ### `toshiba`
 
-- **model** (*Optional*, string): There are four valid models:
+- **model** (*Optional*, string): There are five valid models:
 
   - `GENERIC`  : Temperature range is from 17 to 30 (default)
   - `RAC-PT1411HWRU-C`  : Temperature range is from 16 to 30; unit displays temperature in degrees Celsius
   - `RAC-PT1411HWRU-F`  : Temperature range is from 16 to 30; unit displays temperature in degrees Fahrenheit
   - `RAS-2819T`  : Temperature range is from 18 to 30; supports two-packet IR protocol
+  - `RAS-B10N3KV2`  : Temperature range is from 17 to 30; for the RAS-B10N3KV2/RAS-B13N3KV2 family (e.g. RAS-B10N3KV2-E1)
 
 > [!NOTE]
 > - While they are identified as separate models here, the `RAC-PT1411HWRU-C` and `RAC-PT1411HWRU-F` are
@@ -253,6 +254,9 @@ climate:
 > - The `RAS-2819T` model uses a two-packet IR protocol where most commands send a primary packet (containing
 >   temperature, mode, and fan speed) followed by a secondary packet (containing fan speed confirmation and
 >   mode-specific data). Single-packet commands are used for power-off and swing toggle operations.
+>
+> - The `RAS-B10N3KV2` model sends the same commands as `GENERIC` but with different IR pulse timings. Use it
+>   if your unit does not respond to the `GENERIC` model.
 >
 > - This climate IR component is also known to work with Midea model MAP14HS1TBL and may work with other similar
 >   models, as well. (Midea acquired Toshiba's product line and re-branded it.)
