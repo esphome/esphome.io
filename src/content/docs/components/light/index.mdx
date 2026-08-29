@@ -82,6 +82,27 @@ light:
 - **power_supply** (*Optional*, [ID](/guides/configuration-types#id)): The [Power Supply](/components/power_supply/) to connect to this light. When
   the light is turned on, the power supply will automatically be switched on too.
 
+- **power_estimation** (*Optional*): Configure power estimation and optional automatic current limiting for
+  the LED strip. Only supported by addressable lights (e.g. ``esp32_rmt_led_strip``, ``neopixelbus``,
+  ``fastled``, ``partition``). When configured, ESPHome
+  estimates the total current draw from the per-channel mA constants and the current pixel buffer values.
+  See [Power Estimation](#addressable-power-estimation) for details.
+
+  - **ma_per_led_red** (*Optional*, float): Current drawn by a single LED at full red brightness, in mA.
+    Defaults to ``20.0``.
+  - **ma_per_led_green** (*Optional*, float): Current drawn by a single LED at full green brightness, in mA.
+    Defaults to ``20.0``.
+  - **ma_per_led_blue** (*Optional*, float): Current drawn by a single LED at full blue brightness, in mA.
+    Defaults to ``20.0``.
+  - **ma_per_led_white** (*Optional*, float): Current drawn by a single LED at full white brightness, in mA
+    (only relevant for RGBW strips). Defaults to ``20.0``.
+  - **idle_ma_per_led** (*Optional*, float): Quiescent current drawn by a single LED when all channels are
+    off, in mA. Defaults to ``1.0``.
+  - **max_current_ma** (*Optional*, float): Maximum total current draw for the whole strip, in mA. When the
+    estimated draw exceeds this value, all pixel values are scaled down uniformly so the strip stays within
+    the budget. The scaling is applied every frame and covers solid colours, transitions and effects. Omit or
+    leave unset to disable automatic limiting.
+
 **Advanced options:**
 
 - **internal** (*Optional*, boolean): Mark this component as internal. Internal components will not be exposed to the
@@ -431,6 +452,74 @@ on_...:
 - **blue** (*Optional*, [templatable](/automations/templates), percentage): The value to set the blue channel to.
 - **white** (*Optional*, [templatable](/automations/templates), percentage): The brightness to set the white channel
   to.
+
+<span id="addressable-power-estimation"></span>
+
+## Addressable Light Power Estimation
+
+ESPHome can estimate the current draw of an addressable LED strip and optionally cap it to a
+configured maximum. This is useful for protecting power supplies and avoiding over-current
+situations when many LEDs are lit at high brightness.
+
+### How it works
+
+Every time the LED buffer is written to the hardware (including during effects and transitions),
+ESPHome sums the raw per-channel values for all LEDs and converts them to milliamps using the
+per-channel constants you supply:
+
+```
+estimated_mA = Σ (R[i] * ma_per_led_red + G[i] * ma_per_led_green + B[i] * ma_per_led_blue + W[i] * ma_per_led_white) / 255
+             + num_leds * idle_ma_per_led
+```
+
+If `max_current_ma` is set and the estimate exceeds it, all channel values are scaled down by the
+ratio `max_current_ma / estimated_mA` before being sent to the hardware. The user-visible
+brightness and color are not changed; only the physical output is reduced.
+
+### Example configuration
+
+```yaml
+light:
+  - platform: esp32_rmt_led_strip
+    id: my_leds
+    pin: GPIO16
+    num_leds: 60
+    chipset: WS2812
+    rgb_order: GRB
+    name: "My LED Strip"
+    power_estimation:
+      ma_per_led_red: 16.0
+      ma_per_led_green: 11.0
+      ma_per_led_blue: 15.0
+      idle_ma_per_led: 0.5
+      max_current_ma: 1000.0   # limit strip to 1 A
+```
+
+### Reading the estimated current in a lambda
+
+The estimated current can be read at runtime via a lambda:
+
+```yaml
+on_boot:
+  then:
+    - lambda: |-
+        float current_ma = id(my_leds).get_estimated_current_ma();
+        ESP_LOGI("power", "Estimated draw: %.1f mA", current_ma);
+```
+
+### Choosing per-channel constants
+
+Datasheets rarely list per-channel values; a practical approach is to measure the actual strip
+with a multimeter and divide by the number of LEDs. Typical values for common chipsets:
+
+| Chipset  | Red (mA) | Green (mA) | Blue (mA) |
+|----------|----------|------------|-----------|
+| WS2812B  | 16       | 11         | 15        |
+| SK6812   | 12       | 12         | 12        |
+| APA106   | 16       | 14         | 12        |
+
+> [!NOTE]
+> These are rough guideline values. For accurate power budgeting, measure your specific strip.
 
 ## Light Conditions
 
