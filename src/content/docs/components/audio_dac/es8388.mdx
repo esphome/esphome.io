@@ -39,28 +39,49 @@ select:
     es8388_id: es8388_parent
     dac_output:
       name: "DAC Output"
+      initial_option: BOTH
     adc_input_mic:
       name: "ADC Input MIC"
+      initial_option: DIFFERENCE
 ```
 
 ### Configuration variables
 
-- **es8388_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID for the [Es8388](/components/audio_dac/es8388/) component.
-- **dac_output** (*Optional*): Control the DAC Audio output.
+- **es8388_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the
+  [ES8388](/components/audio_dac/es8388/) `audio_dac` component. Use when you have more than one ES8388 or when the
+  select entry does not use the default `audio_dac` id.
 
-  - `LINE1` (default)
+- **dac_output** (*Optional*): Control the DAC output routing. Options:
+
+  - `LINE1`
   - `LINE2`
   - `BOTH`
 
-  All options from [Select](/components/select#config-select).
+  - **initial_option** (*Optional*, string): If set, must be `LINE1`, `LINE2`, or `BOTH` (case-insensitive). On
+    startup, this routing is written to the codec over I²C and then published to the select. If omitted, the
+    reported select state is inferred from the codec registers after initialization (the hardware may not match
+    `LINE1` until you change the select in the UI).
 
-- **adc_input_mic** (*Optional*): Control the ADC Mic Input.
+  All other options from [Select](/components/select#config-select), including **id**, **name**, and entity
+  settings.
 
-  - `LINE1` (default)
+- **adc_input_mic** (*Optional*): Control the ADC input routing. Options:
+
+  - `LINE1`
   - `LINE2`
   - `DIFFERENCE`
 
-  All options from [Select](/components/select#config-select).
+  - **initial_option** (*Optional*, string): If set, must be `LINE1`, `LINE2`, or `DIFFERENCE` (case-insensitive).
+    On startup, this routing is written to the codec over I²C and then published to the select. If omitted, the
+    reported select state is inferred from the codec registers after initialization.
+
+  All other options from [Select](/components/select#config-select), including **id**, **name**, and entity
+  settings.
+
+> [!NOTE]
+> When **initial_option** is used, the codec must accept the I²C writes during setup. If applying the option
+> fails, the ES8388 component is marked failed so the reported select state is not left out of sync with the
+> hardware.
 
 ## Automations
 
@@ -124,8 +145,24 @@ switch:
     restore_mode: ALWAYS_ON
 ```
 
+**Select: startup routing and IDs** (optional `initial_option` and nested `id` for automations):
+
+```yaml
+select:
+  - platform: es8388
+    es8388_id: es8388_dac
+    dac_output:
+      name: "DAC Output"
+      id: dac_output_select
+      initial_option: BOTH
+    adc_input_mic:
+      name: "ADC Input MIC"
+      id: adc_input_select
+      initial_option: LINE2
+```
+
 ## See Also
 
-- [Audio Dac Component](/components/audio_dac/)
+- [Audio DAC Component](/components/audio_dac/)
 - <APIRef text="es8388.h" path="es8388/es8388.h" />
 - <APIRef text="audio_dac.h" path="audio_dac/audio_dac.h" />
