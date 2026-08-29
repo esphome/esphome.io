@@ -229,12 +229,13 @@ climate:
 
 ### `toshiba`
 
-- **model** (*Optional*, string): There are four valid models:
+- **model** (*Optional*, string): There are five valid models:
 
   - `GENERIC`  : Temperature range is from 17 to 30 (default)
   - `RAC-PT1411HWRU-C`  : Temperature range is from 16 to 30; unit displays temperature in degrees Celsius
   - `RAC-PT1411HWRU-F`  : Temperature range is from 16 to 30; unit displays temperature in degrees Fahrenheit
   - `RAS-2819T`  : Temperature range is from 18 to 30; supports two-packet IR protocol
+  - `SEIYA`  : Temperature range is from 17 to 30; for Toshiba Seiya units (e.g. RAS-B13E2KVG-E). Supports AUTO/COOL/HEAT/DRY/FAN_ONLY modes, AUTO/QUIET/LOW/MEDIUM/HIGH fan speeds and OFF/VERTICAL/HORIZONTAL/BOTH swing modes
 
 > [!NOTE]
 > - While they are identified as separate models here, the `RAC-PT1411HWRU-C` and `RAC-PT1411HWRU-F` are
@@ -256,6 +257,11 @@ climate:
 >
 > - This climate IR component is also known to work with Midea model MAP14HS1TBL and may work with other similar
 >   models, as well. (Midea acquired Toshiba's product line and re-branded it.)
+>
+> - The `SEIYA` model uses a distinct IR timing and an 11-byte full-state frame (sent twice) plus a 9-byte short
+>   frame. Swing/direction is a momentary command: the swing code is only emitted when the swing mode changes,
+>   matching the physical remote; otherwise a neutral value is sent. The Omni direction code is mapped to
+>   `BOTH` on receive. OFF-timer frames are not handled.
 
 ```yaml
 # Example configuration entry for RAS-2819T
@@ -264,6 +270,16 @@ climate:
     name: "Toshiba AC"
     model: RAS-2819T
     sensor: room_temperature
+```
+
+```yaml
+# Example configuration entry for Seiya
+climate:
+  - platform: toshiba
+    name: "Toshiba Seiya AC"
+    model: SEIYA
+    transmitter_id: ir_transmitter
+    receiver_id: ir_receiver
 ```
 
 ### `whirlpool`
