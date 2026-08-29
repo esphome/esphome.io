@@ -514,6 +514,34 @@ Each of these also exist in array form:
 - bool[]: An array of boolean values. C++ type: `std::vector<bool>`
 - ... - Same for other types.
 
+### Action Metadata
+
+Variables can also be declared in a mapping form to attach metadata. Clients
+such as Home Assistant use it to describe the action and its fields in the UI:
+
+```yaml
+# Example configuration entry
+api:
+  actions:
+    - action: play_buzzer
+      description: Play a melody on the buzzer
+      variables:
+        song_str:
+          type: string
+          description: Melody in RTTTL format
+          example: "two_short:d=4,o=5,b=100:16e6,16e6"
+      then:
+        - rtttl.play:
+            rtttl: !lambda "return song_str;"
+```
+
+- **type** (**Required**, string): The variable type, one of the types listed above.
+- **description** (*Optional*, string): Description of the variable.
+- **example** (*Optional*, string): Example value for the variable.
+
+An action itself also accepts **description** (*Optional*, string), as shown above.
+Both forms can be mixed freely; the `name: type` shorthand remains valid.
+
 ### Action Responses
 
 User-defined actions can send responses back to the calling client (such as Home Assistant). This enables
