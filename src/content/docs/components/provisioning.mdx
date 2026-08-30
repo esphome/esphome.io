@@ -1,0 +1,69 @@
+---
+description: "Instructions for setting up a provisioning window that closes after a timeout for devices that ship unprovisioned."
+title: "Provisioning"
+---
+import APIRef from '@components/APIRef.astro';
+
+
+The `provisioning` component sets up a **provisioning window** for devices that
+ship without their credentials configured — for example, a boxed product whose API
+encryption key is set by Home Assistant the first time it connects. This helps
+meet the secure-communication requirements of standards such as EN18031.
+
+The device opens the provisioning window when it boots and closes it once the
+device is provisioned. A device is considered provisioned once it has connected to
+a network (over [WiFi](/components/wifi/), [Ethernet](/components/ethernet/), or
+another interface) and, when the [API](/components/api/) is set up with encryption,
+its key has been set. If `timeout` elapses while the device is still unprovisioned,
+the window closes anyway and the device stops accepting provisioning:
+
+- New [API](/components/api/) clients are turned away with a "provisioning closed"
+  reason.
+- BLE Improv ([`esp32_improv`](/components/esp32_improv/)) stops accepting WiFi
+  credentials. Serial Improv ([`improv_serial`](/components/improv_serial/)) is
+  left enabled, since it requires a physical connection to the device.
+- The [WiFi](/components/wifi/) access point shuts down, along with the
+  [captive portal](/components/captive_portal/) running on it, and neither comes
+  back until the device restarts.
+- The `on_timeout` automation runs.
+
+While the device is unprovisioned, the [API](/components/api/) and
+[WiFi](/components/wifi/) `reboot_timeout`s are paused so it does not reboot itself
+while waiting to be set up. Power-cycling (or pressing a physical reset button)
+reopens the window.
+
+> [!NOTE]
+> If the access point is the device's only network connection — WiFi is configured
+> with `ap:` and no station credentials — the device becomes unreachable over the
+> network once the window closes, until it is power-cycled. ESPHome prints a
+> warning when validating such a configuration.
+
+```yaml
+provisioning:
+  timeout: 60s
+  on_timeout:
+    then:
+      - logger.log: "Provisioning window closed; reset the device to reopen it"
+```
+
+At least one provisioning-capable component must be present. A configured network
+interface such as [WiFi](/components/wifi/) or [Ethernet](/components/ethernet/)
+satisfies this, as does the [API](/components/api/) with `encryption:` and no
+`key:`.
+
+## Configuration variables
+
+- **timeout** (**Required**, [Time](/guides/configuration-types#time)): How long
+  after boot the provisioning window stays open before closing if the device is
+  still unprovisioned.
+- **on_timeout** (*Optional*, [Automation](/automations)): An automation to perform
+  when the provisioning window closes.
+
+## See Also
+
+- [Native API Component](/components/api/)
+- [WiFi Component](/components/wifi/)
+- [Captive Portal](/components/captive_portal/)
+- [Improv via BLE](/components/esp32_improv/)
+- [Improv via Serial](/components/improv_serial/)
+- <APIRef text="provisioning.h" path="provisioning/provisioning.h" />

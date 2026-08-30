@@ -54,6 +54,21 @@ Can also be enabled via environment variable `ESPHOME_VERBOSE=true`.
 
 Please see [command line substitutions](/components/substitutions#command-line-substitutions) for details.
 
+<span id="cli-toolchain"></span>
+### `--toolchain` Option
+
+**`--toolchain TOOLCHAIN`**
+: Selects which toolchain to use for compiling the project. Supported values are:
+
+* `esp-idf` (ESP32 only)
+* `platformio`
+
+The toolchain can be configured using `esp32.toolchain` (see the [ESP32 toolchain configuration](/components/esp32#esp32-toolchain)).
+If not specified, ESP32 devices default to `esp-idf`; all other platforms use `platformio`.
+If both `esp32.toolchain` and the `--toolchain` CLI option are set, the CLI option takes precedence.
+
+Please see [ESP-IDF toolchain documentation](/guides/esp_idf/) for details on using the ESP-IDF integration.
+
 ## Commands
 
 ### `run` Command
@@ -67,9 +82,10 @@ The `esphome run <CONFIG>` command is the most common command for ESPHome. It
 
 #### Options
 
-**`--device UPLOAD_PORT`**
-: Manually specify the upload port/IP to use. For example `/dev/cu.SLAB_USBtoUART`, or `192.168.1.176`
-to perform an OTA.
+**`--device DEVICE`**
+: Manually specify the port/IP to use for upload and logging. For example `/dev/cu.SLAB_USBtoUART`, or `192.168.1.176`
+to perform an OTA. You can also specify `OTA` to resolve the address from MQTT, DNS or mDNS.
+This prevents the interactive prompt when multiple options exist.
 
 Multiple `--device` options can be specified to provide fallback addresses. ESPHome will
 try each address in order until one succeeds. This is particularly useful for devices with
@@ -117,13 +133,37 @@ basis, or set with this option at the time of uploading.
 `ESPHOME_SERIAL_LOGGING_RESET=true`.
 
 
+**`--no-states`** / **`--states`**
+: Control whether entity state changes are shown in log output. See the [`logs` command](#logs-command)
+for details. The default can be set with the environment variable `ESPHOME_LOG_STATES`.
+
+
 ### `config` Command
 
 The `esphome config <CONFIG>` validates the configuration and displays the validation result.
 
+#### Options
+
+**`--show-secrets`**
+: Show secret values in the output instead of redacting them.
+
+
+**`--no-defaults`**
+: Only output the configuration the user wrote, without the values that schema validation fills in from defaults.
+Useful for sharing a minimal reproduction or diffing two configurations without hundreds of defaulted keys in the way.
+Substitutions, packages, and `!extend` / `!remove` are resolved in the output.
+
+
+### `config-hash` Command
+
+The `esphome config-hash <CONFIG>` loads the configuration and calculates the hash that you can compare
+against the hash from the [Version Text Sensor](/components/text_sensor/version/) on a running device.
+
 ### `compile` Command
 
 The `esphome compile <CONFIG>` validates the configuration and compiles the firmware.
+
+Any command that accepts `<CONFIG>` can also accept a `.esphomebundle.tar.gz` bundle file in place of a YAML configuration. The bundle is automatically extracted before the command runs. See the [`bundle` command](#bundle-command) for details.
 
 #### Options
 
@@ -137,9 +177,10 @@ The `esphome upload <CONFIG>` validates the configuration and uploads the most r
 
 #### Options
 
-**`--device UPLOAD_PORT`**
+**`--device DEVICE`**
 : Manually specify the upload port/IP address to use. For example `/dev/cu.SLAB_USBtoUART`, or `192.168.1.176`
-to perform an OTA.
+to perform an OTA. You can also specify `OTA` to resolve the address from MQTT, DNS or mDNS.
+This prevents the interactive prompt when multiple options exist.
 
 Multiple `--device` options can be specified to provide fallback addresses. ESPHome will
 try each address in order until one succeeds.
@@ -159,6 +200,34 @@ basis, or set with this option at the time of uploading.
 
 **`--host-port HOST_PORT`**
 : Specify the host port to use for legacy Over the Air uploads.
+
+
+**`--ota-platform {esphome,web_server}`**
+: Also accepted by [`run`](#run-command). Force a specific OTA platform when uploading firmware.
+By default, ESPHome uses the OTA platform configured in the device's YAML; if both `platform: esphome`
+and `platform: web_server` are configured, the native `esphome` protocol is preferred. Use
+`--ota-platform web_server` to upload via the
+[Web Server OTA platform](/components/ota/web_server/#using-the-command-line) instead — for example,
+when the OTA password has been lost but the `web_server` `auth` credentials are still known.
+
+
+**`--file FILE`**
+: Manually specify the binary file to upload instead of the most recent build. Can be combined with
+`--partition-table` or `--bootloader` to upload a custom partition table or bootloader image.
+
+
+**`--partition-table`**
+: Only on ESP32, over OTA with the `esphome` platform. Upload the partition table instead of the firmware.
+The device must be running a firmware with `allow_partition_access: true` configured on the
+[ESPHome OTA platform](/components/ota/esphome/#updating-the-partition-table-on-esp32).
+Can't be combined with `--bootloader`.
+
+
+**`--bootloader`**
+: Only on ESP32, over OTA with the `esphome` platform. Upload the bootloader instead of the firmware.
+The device must be running a firmware with `allow_partition_access: true` configured on the
+[ESPHome OTA platform](/components/ota/esphome/#updating-the-bootloader-on-esp32).
+Can't be combined with `--partition-table`.
 
 
 ### `clean-mqtt` Command
@@ -197,39 +266,22 @@ The `esphome version` command shows the current ESPHome version and exits.
 
 The `esphome clean <CONFIG>` command cleans all build files and can help with some build issues.
 
+### `clean-all` Command
+
+The `esphome clean-all [<CONFIG>...]` command cleans all build files, PlatformIO platform and package
+files, and the PlatformIO core directory. Unlike `clean`, this command does not require a
+configuration file — if none is provided, it will clean the `.esphome` directory in the current
+working directory. Arguments can be YAML configuration files or directories containing them.
+
+Storage files (`.json` files and the `storage` directory inside `.esphome`) are preserved so that
+the ESPHome Device Builder continues to function correctly.
+
 ### `dashboard` Command
 
-The `esphome dashboard <CONFIG>` command starts the ESPHome dashboard server for using ESPHome
-through a graphical user interface. This command accepts a configuration directory instead of a
-single configuration file.
-
-#### Options
-
-**`--address ADDRESS`**
-: Manually set the address to bind to (defaults to 0.0.0.0)
-
-
-**`--port PORT`**
-: Manually set the HTTP port to open connections on (defaults to 6052)
-
-
-**`--socket SOCKET`**
-: Manually set the unix socket to bind to. If specified along with `--address` or `--port` the values
-for those parameters will be ignored. Cannot be used along with `--systemd-socket`.
-
-
-**`--username USERNAME`**
-: The optional username to require for authentication.
-
-
-**`--password PASSWORD`**
-: The optional password to require for authentication.
-
-
-**`--open-ui`**
-: If set, opens the dashboard UI in a browser once the server is up and running. Does not work when using
-`--socket`.
-
+> [!NOTE]
+> The built-in `dashboard` command has been removed. To use ESPHome through a graphical user interface, run the
+> [ESPHome Device Builder](/install/) instead. Home
+> Assistant app and Docker users are unaffected. Both already run the Device Builder.
 
 ### `analyze-memory` Command
 
@@ -248,9 +300,42 @@ This command is useful for:
 
 The command automatically compiles the configuration if needed (or quickly relinks if sources haven't changed), then analyzes the resulting firmware to show a detailed breakdown of memory usage by component, including flash memory (code and data) and RAM usage (data and BSS).
 
+### `bundle` Command
+
+The `esphome bundle <CONFIG>` command packages a YAML configuration and all its local dependencies into a self-contained `.esphomebundle.tar.gz` archive. This is useful for remote compilation — the bundle can be transferred to another machine and compiled with `esphome compile device.esphomebundle.tar.gz`.
+
+The bundle includes:
+
+* The main YAML configuration file
+* All `!include`d YAML files and `secrets.yaml` (filtered to only referenced keys)
+* Font, image, and animation files
+* Certificate and key files (e.g. for WPA2 EAP)
+* C/C++ includes from `esphome: includes:`
+* Web server CSS/JS includes
+* Local `external_components` directories
+
+Remote resources (git-based external components, online fonts, etc.) are **not** bundled — they will be fetched during compilation on the target machine.
+
+```shell
+esphome bundle my-device.yaml
+```
+
+#### Options
+
+**`-o`/`--output PATH`**
+: Specify a custom output path for the bundle archive. If not specified, the bundle is created next to the configuration file with the `.esphomebundle.tar.gz` extension.
+
+
+**`--list-only`**
+: List all discovered files that would be included in the bundle without creating the archive. Useful for verifying which files will be packaged.
+
 ### `logs` Command
 
 The `esphome logs <CONFIG>` command validates the configuration and shows all logs.
+
+For network logging, ESPHome uses the [native API](/components/api/) if configured, then MQTT, then the
+[`web_server`](/components/web_server/) `/events` stream. The web_server stream is used for devices that have a
+`web_server` but no native API, and reconnects automatically if the connection drops.
 
 #### Options
 
@@ -270,8 +355,10 @@ The `esphome logs <CONFIG>` command validates the configuration and shows all lo
 : Manually set the client id.
 
 
-**`--device SERIAL_PORT`**
+**`--device DEVICE`**
 : Manually specify a serial port/IP to use. For example `/dev/cu.SLAB_USBtoUART`.
+You can also specify `OTA` to resolve the address from MQTT, DNS or mDNS.
+This prevents the interactive prompt when multiple options exist.
 
 Multiple `--device` options can be specified to provide fallback addresses. When using the
 native API for logs, all addresses are passed to the API client which uses the Happy Eyeballs
@@ -288,6 +375,22 @@ esphome logs my-device.yaml --device 192.168.1.100 --device 2001:db8::1
 : If set, reset the device before starting the logs. May also be configured with the environment variable
 `ESPHOME_SERIAL_LOGGING_RESET=true`.
 
+**`--no-states`** / **`--states`**
+: Control whether entity state changes are shown in log output. By default, when using the native API
+for logging, state changes are shown as `[S]` lines (e.g., `[S][sensor]: 'Temperature' >> 22.5 °C`).
+Pass `--no-states` to suppress them and only see firmware log messages, or `--states` to show them.
+
+The default can be set with the environment variable `ESPHOME_LOG_STATES`: set it to `false` to suppress
+state changes by default, or `true` to show them. The `--states` and `--no-states` flags always take
+precedence over the environment variable.
+
+
+### `update-all` Command
+
+The `esphome update-all <CONFIG>...` command compiles and uploads firmware to all devices via OTA.
+Arguments can be YAML configuration files or directories containing them. For each configuration
+found, it runs `esphome run <CONFIG> --no-logs --device OTA` and prints a summary of successes and
+failures at the end.
 
 ## Using Bash or ZSH auto-completion
 

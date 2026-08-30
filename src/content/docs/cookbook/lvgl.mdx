@@ -44,7 +44,7 @@ Here are a couple recipes for various interesting things you can do with [Lvgl](
 
 <Image src="/images/lvgl_switch.png" width={61} height={39} layout="constrained" alt="" />
 
-The easiest way to integrate an LVGL [`switch`](/components/lvgl/widgets#lvgl-widget-switch) widget and a switch or light is with
+The easiest way to integrate an LVGL [`switch`](/components/lvgl/widgets#switch) widget and a switch or light is with
 [automations](/automations):
 
 ```yaml
@@ -77,7 +77,7 @@ lvgl:
 <Image src={lvglCookRemligbutImg} layout="constrained" alt="" />
 
 If you'd like to control a remote light which appears as an entity in Home Assistant from a checkable (toggle)
-[`button`](/components/lvgl/widgets#lvgl-widget-button), first you need to import the light state into ESPHome, and then control it using a
+[`button`](/components/lvgl/widgets#button), first you need to import the light state into ESPHome, and then control it using a
 action call:
 
 ```yaml
@@ -121,7 +121,7 @@ lvgl:
 
 <Image src="/images/lvgl_cook_volume.png" width={72} height={207} layout="constrained" alt="" />
 
-You can use a [slider](/components/lvgl/widgets#lvgl-widget-slider) or an [arc](/components/lvgl/widgets#lvgl-widget-arc) to control the brightness of a dimmable light.
+You can use a [slider](/components/lvgl/widgets#slider) or an [arc](/components/lvgl/widgets#arc) to control the brightness of a dimmable light.
 
 We can use a sensor to retrieve the current brightness of a light, which is stored in Home Assistant as an attribute
 of the entity, as an integer value between `0` (min) and `255` (max). It's convenient to set the slider's `min_value`
@@ -147,11 +147,12 @@ lvgl:
               id: dimmer_slider
               x: 20
               y: 50
-              width: 30
+              width: 20
               height: 220
               pad_all: 8
               min_value: 0
               max_value: 255
+              ext_click_area: 20
               on_release:
                 - homeassistant.action:
                     action: light.turn_on
@@ -160,11 +161,12 @@ lvgl:
                       brightness: !lambda return int(x);
 ```
 
-Note that Home Assistant expects an integer at the `brightness` parameter of the `light.turn_on` action call, and since
-ESPHome uses floats, `x` needs to be converted.
+The `ext_click_area` option is used to enlarge the touchable area around the widget by `20` pixels.
 
-This is applicable to action calls like `fan.set_percentage` or `valve.set_valve_position`, too; the only difference
-is that `max_value` has to be `100`.
+> [!NOTE]
+> Home Assistant expects an integer at the `brightness` parameter of the `light.turn_on` action call, and since ESPHome uses floats, `x` needs to be converted.
+> 
+> This is applicable to action calls like `fan.set_percentage` or `valve.set_valve_position` too; the only difference is that `max_value` has to be `100`.
 
 <span id="lvgl-cookbook-volume"></span>
 
@@ -172,7 +174,7 @@ is that `max_value` has to be `100`.
 
 <Image src="/images/lvgl_cook_volume.png" width={72} height={207} layout="constrained" alt="" />
 
-Similarly, you can use a [slider](/components/lvgl/widgets#lvgl-widget-slider) or an [arc](/components/lvgl/widgets#lvgl-widget-arc) to control the volume level of a
+Similarly, you can use a [slider](/components/lvgl/widgets#slider) or an [arc](/components/lvgl/widgets#arc) to control the volume level of a
 media player, which uses float values.
 
 With a sensor we retrieve the current volume level of the media player, which is stored in Home Assistant as an
@@ -216,7 +218,7 @@ lvgl:
 ```
 
 The `adv_hittest` option ensures that accidental touches to the screen won't cause sudden volume changes (more details
-in the [slider doc](/components/lvgl/widgets#lvgl-widget-slider)).
+in the [slider doc](/components/lvgl/widgets#slider)).
 
 > [!NOTE]
 > Keep in mind that `on_value` is triggered *continuously* by the slider while it's being dragged. This generally has
@@ -229,15 +231,15 @@ in the [slider doc](/components/lvgl/widgets#lvgl-widget-slider)).
 
 ## Semicircle gauge
 
-A gauge similar to what Home Assistant shows in the Energy Dashboard can accomplished with [`meter`](/components/lvgl/widgets#lvgl-widget-meter)
-and [`label`](/components/lvgl/widgets#lvgl-widget-label) widgets:
+A gauge similar to what Home Assistant shows in the Energy Dashboard can accomplished with [`meter`](/components/lvgl/widgets#meter)
+and [`label`](/components/lvgl/widgets#label) widgets:
 
 <Image src={lvglCookGaugeImg} layout="constrained" alt="" />
 
-The trick here is to have a parent [`obj`](/components/lvgl/widgets#lvgl-widget-obj) which contains the other widgets as children. We place a
-[`meter`](/components/lvgl/widgets#lvgl-widget-meter) in the middle, which is made from an indicator `line` and two `arc` widgets. We use
-another, smaller [`obj`](/components/lvgl/widgets#lvgl-widget-obj) on top of it to hide the indicator's central parts and place some
-[`label`](/components/lvgl/widgets#lvgl-widget-label) widgets to display numeric information:
+The trick here is to have a parent [`obj`](/components/lvgl/widgets#obj) which contains the other widgets as children. We place a
+[`meter`](/components/lvgl/widgets#meter) in the middle, which is made from an indicator `line` and two `arc` widgets. We use
+another, smaller [`obj`](/components/lvgl/widgets#obj) on top of it to hide the indicator's central parts and place some
+[`label`](/components/lvgl/widgets#label) widgets to display numeric information:
 
 ```yaml
 sensor:
@@ -270,45 +272,37 @@ lvgl:
                     width: 100%
                     border_width: 0
                     bg_opa: TRANSP
+                    indicator:
+                      bg_opa: TRANSP
                     align: CENTER
                     scales:
                       - range_from: -10
                         range_to: 10
                         angle_range: 180 # sets the total angle to 180 = starts mid left and ends mid right
-                        ticks:
-                          count: 0
                         indicators:
-                          - line:
-                              id: val_needle
-                              width: 8
-                              length: 112% # needle length relative to the scale default radius
-                              value: -2
                           - arc: # first half of the scale background
                               color: 0xFF3000
-                              padding: 10 # offset from the scale default radius
                               width: 31
                               start_value: -10
                               end_value: 0
                           - arc: # second half of the scale background
                               color: 0x00FF00
-                              padding: 10
                               width: 31
                               start_value: 0
                               end_value: 10
-                - obj: # to cover the middle part of meter indicator line
-                    height: 146
-                    width: 146
-                    radius: 73
-                    align: CENTER
-                    border_width: 0
-                    bg_color: 0xFFFFFF
-                    pad_all: 0
+                          - line: # needle
+                              id: val_needle
+                              width: 8
+                              value: -3
+                              rounded: false
+                              length: 33
+                              radial_offset: 73
                 - label: # gauge numeric indicator
                     id: val_text
                     text_font: montserrat_48
                     align: CENTER
                     y: -5
-                    text: "0"
+                    text: "-3"
                 - label: # lower range indicator
                     text_font: montserrat_18
                     align: CENTER
@@ -323,25 +317,21 @@ lvgl:
                     text: "+10"
 ```
 
-> [!TIP]
-> The `obj` used to hide the middle part of the meter indicator line has `radius` equal to half of the `width` and
-> `height`. This results in a circle - which is actually a square with extra large rounded corners.
-
 <span id="lvgl-cookbook-thermometer"></span>
 
-## Thermometer
+## Thermometer classic
 
-A thermometer with a precise gauge also made from a [`meter`](/components/lvgl/widgets#lvgl-widget-meter) widget and a numeric display using
-[`label`](/components/lvgl/widgets#lvgl-widget-label):
+A thermometer with a precise gauge also made from a [`meter`](/components/lvgl/widgets#meter) widget and a numeric display using
+[`label`](/components/lvgl/widgets#label):
 
 <Image src={lvglCookThermometerImg} layout="constrained" alt="" />
 
 Whenever a new value comes from the sensor, we update the needle indicator as well as the text in the
-[`label`](/components/lvgl/widgets#lvgl-widget-label). Since LVGL only handles integer values on the [`meter`](/components/lvgl/widgets#lvgl-widget-meter) scale,
+[`label`](/components/lvgl/widgets#label). Since LVGL only handles integer values on the [`meter`](/components/lvgl/widgets#meter) scale,
 but the sensor's value is a `float`, we use the same approach as in the examples above; we multiply the sensor's
-values by `10` and feed this value to the [`meter`](/components/lvgl/widgets#lvgl-widget-meter). It's essentially two scales on top of each
+values by `10` and feed this value to the [`meter`](/components/lvgl/widgets#meter). It's essentially two scales on top of each
 other: one to set the needle based on the multiplied value and the other to show sensor's original value in the
-[`label`](/components/lvgl/widgets#lvgl-widget-label).
+[`label`](/components/lvgl/widgets#label).
 
 ```yaml
 sensor:
@@ -366,22 +356,6 @@ lvgl:
               height: 180
               width: 180
               scales:
-                - range_from: -100 # scale for the needle value
-                  range_to: 400
-                  angle_range: 240
-                  rotation: 150
-                  indicators:
-                    - line:
-                        id: temperature_needle
-                        width: 2
-                        color: 0xFF0000
-                        length: 96%
-                    - tick_style:
-                        start_value: -10
-                        end_value: 40
-                        color_start: 0x0000bd
-                        color_end: 0xbd0000
-                        width: 1
                 - range_from: -10 # scale for the value labels
                   range_to: 40
                   angle_range: 240
@@ -397,6 +371,23 @@ lvgl:
                       length: 10
                       color: 0x404040
                       label_gap: 10
+                  indicators:
+                    - tick_style:
+                        start_value: -10
+                        end_value: 40
+                        color_start: 0x0000bd
+                        color_end: 0xbd0000
+                        width: 1
+                - range_from: -100 # scale for the needle value
+                  range_to: 400
+                  angle_range: 240
+                  rotation: 150
+                  indicators:
+                    - line:
+                        id: temperature_needle
+                        width: 2
+                        color: 0xFF0000
+                        length: 96%
               widgets:
                 - label:
                     id: temperature_text
@@ -408,6 +399,8 @@ lvgl:
                     align: CENTER
                     y: 65
 ```
+
+## Thermometer semicircle
 
 And here's the same sensor configuration, but instead with a semicircle gauge with a gradient background drawn by a
 multitude of ticks:
@@ -438,14 +431,17 @@ lvgl:
                     border_width: 0
                     align: CENTER
                     bg_opa: TRANSP
+                    indicator:
+                      bg_opa: TRANSP
                     scales:
                       - range_from: -15
                         range_to: 35
                         angle_range: 180
                         ticks:
-                          count: 70
-                          width: 1
-                          length: 31
+                          count: 100
+                          width: 10
+                          length: 30
+                          radial_offset: 2
                         indicators:
                           - tick_style:
                               start_value: -15
@@ -455,22 +451,14 @@ lvgl:
                       - range_from: -150
                         range_to: 350
                         angle_range: 180
-                        ticks:
-                          count: 0
                         indicators:
                           - line:
-                              id: temperature_needle
+                              id: temperature_needle2
                               width: 8
-                              length: 102%
                               value: -150
-                - obj: # to cover the middle part of meter indicator line
-                    height: 123
-                    width: 123
-                    radius: 73
-                    align: CENTER
-                    border_width: 0
-                    pad_all: 0
-                    bg_color: 0xFFFFFF
+                              rounded: false
+                              length: 32
+                              radial_offset: 61
                 - label:
                     id: temperature_text
                     text: "--.-°C"
@@ -482,15 +470,11 @@ lvgl:
                     y: -6
 ```
 
-> [!TIP]
-> You can omit the `obj` used to hide the middle part of meter indicator line by using a bitmap `image` indicator as
-> needle, were only the part hanging above the ticks scale is visible, the rest is transparent.
-
 <span id="lvgl-cookbook-climate"></span>
 
 ## Climate control
 
-[`spinbox`](/components/lvgl/widgets#lvgl-widget-spinbox) is the ideal widget to control a thermostat:
+[`spinbox`](/components/lvgl/widgets#spinbox) is the ideal widget to control a thermostat:
 
 <Image src={lvglCookClimateImg} layout="constrained" alt="" />
 
@@ -614,7 +598,7 @@ text_sensor:
       - if:
           condition:
             lambda: |-
-              return ((0 == x.compare(std::string{"opening"})) or (0 == x.compare(std::string{"closing"})));
+              return (x == "opening" or x == "closing");
           then:
             - lvgl.label.update:
                 id: cov_stop_myroom
@@ -806,7 +790,7 @@ If using multiple pages, a navigation bar can be useful at the bottom of the scr
 To save from repeating the same widgets on each page, there's the *top_layer* which is the *Always on Top* transparent
 page above all the pages. Everything you put on this page will be on top of all the others.
 
-For the navigation bar we can use a [`buttonmatrix`](/components/lvgl/widgets#lvgl-widget-buttonmatrix). Note how the *header_footer* style
+For the navigation bar we can use a [`buttonmatrix`](/components/lvgl/widgets#buttonmatrix). Note how the *header_footer* style
 definition is being applied to the widget and its children objects, and how a few more styles are configured manually
 at the main widget:
 
@@ -843,7 +827,7 @@ lvgl:
 ```
 
 For this example to appear correctly, use the theme and style options from [above](#lvgl-cookbook-theme) and LVGL's own
-library [fonts](/components/lvgl#lvgl-fonts).
+library [fonts](/components/lvgl#fonts).
 
 <span id="lvgl-cookbook-statico"></span>
 
@@ -858,11 +842,11 @@ In the example below, we only show the icon when the connection with Home Assist
 ```yaml
 api:
   on_client_connected:
-    - if:
+    - wait_until:
         condition:
-          lambda: 'return (0 == client_info.find("Home Assistant "));'
-        then:
-          - lvgl.widget.show: lbl_hastatus
+          api.connected:
+            state_subscription_only: true
+    - lvgl.widget.show: lbl_hastatus
   on_client_disconnected:
     - if:
         condition:
@@ -885,11 +869,9 @@ lvgl:
           text_color: 0xFFFFFF
 ```
 
-Of note:
-
-- The widget starts *hidden* at boot and it's only shown when triggered by connection with the API.
-- Alignment of the widget: since the *align* option is given, the *x* and *y* options are used to position the widget
-- relative to the calculated position.
+> [!NOTE]
+> - The widget starts *hidden* at boot and it's only shown when triggered by connection with the API.
+> - Alignment of the widget: since the *align* option is given, the *x* and *y* options are used to position the widget relative to the calculated position.
 
 <span id="lvgl-cookbook-titlebar"></span>
 
@@ -981,7 +963,8 @@ lvgl:
                       - label:
                           id: cov_up_east
                           align: CENTER
-                          text: "\U000F005D" # mdi:arrow-up
+                          text: "\uF077"
+                          text_font: montserrat_48
                 - button:
                     id: but_cov_stop_east
                     width: 70
@@ -990,7 +973,8 @@ lvgl:
                       - label:
                           id: cov_stop_east
                           align: CENTER
-                          text: "\U000F04DB" # mdi:stop
+                          text: "\uF04D"
+                          text_font: montserrat_30
                 - button:
                     id: but_cov_down_east
                     width: 70
@@ -999,7 +983,8 @@ lvgl:
                       - label:
                           id: cov_down_east
                           align: CENTER
-                          text: "\U000F0045" # mdi:arrow-down
+                          text: "\uF078"
+                          text_font: montserrat_48
 
                 - label:
                     text: "South"
@@ -1011,7 +996,8 @@ lvgl:
                       - label:
                           id: cov_up_south
                           align: CENTER
-                          text: "\U000F005D"
+                          text: "\uF077"
+                          text_font: montserrat_48
                 - button:
                     id: but_cov_stop_south
                     width: 70
@@ -1020,7 +1006,8 @@ lvgl:
                       - label:
                           id: cov_stop_south
                           align: CENTER
-                          text: "\U000F04DB"
+                          text: "\uF04D"
+                          text_font: montserrat_30
                 - button:
                     id: but_cov_down_south
                     width: 70
@@ -1029,7 +1016,8 @@ lvgl:
                       - label:
                           id: cov_down_south
                           align: CENTER
-                          text: "\U000F0045"
+                          text: "\uF078"
+                          text_font: montserrat_48
 
                 - label:
                     text: "West"
@@ -1041,7 +1029,8 @@ lvgl:
                       - label:
                           id: cov_up_west
                           align: CENTER
-                          text: "\U000F005D"
+                          text: "\uF077"
+                          text_font: montserrat_48
                 - button:
                     id: but_cov_stop_west
                     width: 70
@@ -1050,7 +1039,8 @@ lvgl:
                       - label:
                           id: cov_stop_west
                           align: CENTER
-                          text: "\U000F04DB"
+                          text: "\uF04D"
+                          text_font: montserrat_30
                 - button:
                     id: but_cov_down_west
                     width: 70
@@ -1059,7 +1049,8 @@ lvgl:
                       - label:
                           id: cov_down_west
                           align: CENTER
-                          text: "\U000F0045"
+                          text: "\uF078"
+                          text_font: montserrat_48
 ```
 
 This saved you from a considerable amount of manual calculation of widget positioning which would otherwise be required
@@ -1099,7 +1090,7 @@ lvgl:
                     text: "East"
                     grid_cell_column_pos: 0 # place the widget in
                     grid_cell_row_pos: 0 # the corresponding cell
-                    grid_cell_x_align: STRETCH
+                    grid_cell_x_align: CENTER
                     grid_cell_y_align: STRETCH
                 - button:
                     id: but_cov_up_east
@@ -1111,7 +1102,8 @@ lvgl:
                       - label:
                           id: cov_up_east
                           align: CENTER
-                          text: "\U000F005D"
+                          text: "\uF077"
+                          text_font: montserrat_48
                 - button:
                     id: but_cov_stop_east
                     grid_cell_column_pos: 0
@@ -1122,7 +1114,8 @@ lvgl:
                       - label:
                           id: cov_stop_east
                           align: CENTER
-                          text: "\U000F04DB"
+                          text: "\uF04D"
+                          text_font: montserrat_30
                 - button:
                     id: but_cov_down_east
                     grid_cell_column_pos: 0
@@ -1133,13 +1126,14 @@ lvgl:
                       - label:
                           id: cov_down_east
                           align: CENTER
-                          text: "\U000F0045"
+                          text: "\uF078"
+                          text_font: montserrat_48
 
                 - label:
                     text: "South"
                     grid_cell_column_pos: 1
                     grid_cell_row_pos: 0
-                    grid_cell_x_align: STRETCH
+                    grid_cell_x_align: CENTER
                     grid_cell_y_align: STRETCH
                 - button:
                     id: but_cov_up_south
@@ -1151,7 +1145,8 @@ lvgl:
                       - label:
                           id: cov_up_south
                           align: CENTER
-                          text: "\U000F005D"
+                          text: "\uF077"
+                          text_font: montserrat_48
                 - button:
                     id: but_cov_stop_south
                     grid_cell_column_pos: 1
@@ -1162,7 +1157,8 @@ lvgl:
                       - label:
                           id: cov_stop_south
                           align: CENTER
-                          text: "\U000F04DB"
+                          text: "\uF04D"
+                          text_font: montserrat_30
                 - button:
                     id: but_cov_down_south
                     grid_cell_column_pos: 1
@@ -1173,13 +1169,14 @@ lvgl:
                       - label:
                           id: cov_down_south
                           align: CENTER
-                          text: "\U000F0045"
+                          text: "\uF078"
+                          text_font: montserrat_48
 
                 - label:
                     text: "West"
                     grid_cell_column_pos: 2
                     grid_cell_row_pos: 0
-                    grid_cell_x_align: STRETCH
+                    grid_cell_x_align: CENTER
                     grid_cell_y_align: STRETCH
                 - button:
                     id: but_cov_up_west
@@ -1191,7 +1188,8 @@ lvgl:
                       - label:
                           id: cov_up_west
                           align: CENTER
-                          text: "\U000F005D"
+                          text: "\uF077"
+                          text_font: montserrat_48
                 - button:
                     id: but_cov_stop_west
                     grid_cell_column_pos: 2
@@ -1202,7 +1200,8 @@ lvgl:
                       - label:
                           id: cov_stop_west
                           align: CENTER
-                          text: "\U000F04DB"
+                          text: "\uF04D"
+                          text_font: montserrat_30
                 - button:
                     id: but_cov_down_west
                     grid_cell_column_pos: 2
@@ -1213,7 +1212,8 @@ lvgl:
                       - label:
                           id: cov_down_west
                           align: CENTER
-                          text: "\U000F0045"
+                          text: "\uF078"
+                          text_font: montserrat_48
 ```
 
 The big advantage here is that whenever you need to add, for example, an extra column of buttons for a new cover, you
@@ -1227,8 +1227,8 @@ this page for another example relying on **Grid**.
 ## ESPHome boot screen
 
 To display a boot image with a spinner animation which disappears automatically after a few moments or on touch of the
-screen you can use the *top layer*. The trick is to put a base [`obj`](/components/lvgl/widgets#lvgl-widget-obj) full screen and child
-[`image`](/components/lvgl/widgets#lvgl-widget-image) widget in its middle as the last item of the widgets list, so they draw on top of all the
+screen you can use the *top layer*. The trick is to put a base [`obj`](/components/lvgl/widgets#obj) full screen and child
+[`image`](/components/lvgl/widgets#image) widget in its middle as the last item of the widgets list, so they draw on top of all the
 others. To make it automatically disappear afer boot, you use ESPHome's `on_boot` trigger:
 
 ```yaml
@@ -1239,7 +1239,8 @@ esphome:
     - lvgl.widget.hide: boot_screen
 
 image:
-  - file: https://media.esphome.io/logo/logo.png
+  - platform: file
+    file: https://media.esphome.io/logo/logo.png
     id: boot_logo
     resize: 200x200
     type: RGB565
@@ -1265,10 +1266,10 @@ lvgl:
             - image:
                 align: CENTER
                 src: boot_logo
-                y: -40
+                y: -50
             - spinner:
                 align: CENTER
-                y: 95
+                y: 50
                 height: 50
                 width: 50
                 spin_time: 1s
@@ -1384,8 +1385,8 @@ binary size - it would uselessly include the entire set of glyphs in the flash.
 <Image src={lvglCookFontBinstatImg} layout="constrained" alt="" />
 
 A common use case for icons is a status display. For example, a checkable (toggle) button will display different
-icons based on the status of a light or switch. To put an icon on a button you use a [`label`](/components/lvgl/widgets#lvgl-widget-label)
-widget as the child of the [`button`](/components/lvgl/widgets#lvgl-widget-button). The coloring can already be different thanks to the
+icons based on the status of a light or switch. To put an icon on a button you use a [`label`](/components/lvgl/widgets#label)
+widget as the child of the [`button`](/components/lvgl/widgets#button). The coloring can already be different thanks to the
 [Theme and style definitions](#lvgl-cookbook-theme) where you can set a different color for the `checked` state.
 Additionally, by using a `text_sensor` to import the state from Home Assistant, we can not only track the `on` state,
 but also the `unavailable` or `unknown` states to apply *disabled styles* for these cases.
@@ -1394,7 +1395,7 @@ If we take our previous [Remote light button](#lvgl-cookbook-binent) example, we
 
 ```yaml
 font:
-  - file: "custom/materialdesignicons-webfont.ttf"
+  - file: "fonts/materialdesignicons-webfont.ttf"
     id: mdi_42
     size: 42
     bpp: 4
@@ -1412,20 +1413,19 @@ text_sensor:
         - lvgl.widget.update:
             id: btn_lightbulb
             state:
-              checked: !lambda return (0 == x.compare(std::string{"on"}));
-              disabled: !lambda return ((0 == x.compare(std::string{"unavailable"})) or (0 == x.compare(std::string{"unknown"})));
-        - lvgl.label.update:
-            id: lbl_lightbulb
-            text: !lambda |-
-              static char buf[10];
-              std::string icon;
-              if (0 == x.compare(std::string{"on"})) {
-                  icon = "\U000F0335";
-              } else {
-                  icon = "\U000F0336";
-              }
-              snprintf(buf, sizeof(buf), "%s", icon.c_str());
-              return buf;
+              checked: !lambda return (x == "on");
+              disabled: !lambda return ((x == "unavailable") or (x == "unknown"));
+        - if:
+            condition:
+              lambda: return (x == "on");
+            then:
+              - lvgl.label.update:
+                  id: lbl_lightbulb
+                  text: "\U000F0335"
+            else:
+              - lvgl.label.update:
+                  id: lbl_lightbulb
+                  text: "\U000F0336"
 
 lvgl:
     ...
@@ -1433,8 +1433,7 @@ lvgl:
       - id: room_page
         widgets:
           - button:
-              x: 110
-              y: 40
+              align: CENTER
               width: 90
               height: 50
               checkable: true
@@ -1517,7 +1516,7 @@ sensor:
             } else if (x > 0) {
                 icon = "\U000F008E"; // mdi-battery-outline
             } else {
-                icon = "\U000F0091"; // mdi-battery-unknown
+                icon = "\U000F0091"; // mdi-battery-unknown (questionmark)
             }
             snprintf(buf, sizeof(buf), "%s", icon.c_str());
             return buf;
@@ -1530,8 +1529,8 @@ lvgl:
           - label:
               id: lbl_battery_status
               align: TOP_RIGHT
-              y: 40
-              x: -10
+              y: 5
+              x: -15
               text_font: battery_icons_20
               text: "\U000F0091" # start with mdi-battery-unknown
 ```
@@ -1542,42 +1541,64 @@ lvgl:
 
 <Image src={lvglCookAnimimgBattImg} layout="constrained" alt="" />
 
-To have an animation illustrating a battery charging, you can use [`animimg`](/components/lvgl/widgets#lvgl-widget-animimg) with a set of
-[images rendered from MDI](/components/image#display-image) showing battery levels:
+To have an animation illustrating a battery charging, you can use [`animimg`](/components/lvgl/widgets#animimg) with a set of
+[images rendered from MDI](/components/image/) showing battery levels:
 
 ```yaml
 image:
-  - file: mdi:battery-10
+  - platform: file
+    file: mdi:battery-10
+    type: BINARY
     id: batt_10
     resize: 20x20
-  - file: mdi:battery-20
+  - platform: file
+    file: mdi:battery-20
+    type: BINARY
     id: batt_20
     resize: 20x20
-  - file: mdi:battery-30
+  - platform: file
+    file: mdi:battery-30
+    type: BINARY
     id: batt_30
     resize: 20x20
-  - file: mdi:battery-40
+  - platform: file
+    file: mdi:battery-40
+    type: BINARY
     id: batt_40
     resize: 20x20
-  - file: mdi:battery-50
+  - platform: file
+    file: mdi:battery-50
+    type: BINARY
     id: batt_50
     resize: 20x20
-  - file: mdi:battery-60
+  - platform: file
+    file: mdi:battery-60
+    type: BINARY
     id: batt_60
     resize: 20x20
-  - file: mdi:battery-70
+  - platform: file
+    file: mdi:battery-70
+    type: BINARY
     id: batt_70
     resize: 20x20
-  - file: mdi:battery-80
+  - platform: file
+    file: mdi:battery-80
+    type: BINARY
     id: batt_80
     resize: 20x20
-  - file: mdi:battery-90
+  - platform: file
+    file: mdi:battery-90
+    type: BINARY
     id: batt_90
     resize: 20x20
-  - file: mdi:battery
+  - platform: file
+    file: mdi:battery
+    type: BINARY
     id: batt_full
     resize: 20x20
-  - file: mdi:battery-outline
+  - platform: file
+    file: mdi:battery-outline
+    type: BINARY
     id: batt_empty
     resize: 20x20
 
@@ -1588,8 +1609,8 @@ lvgl:
         widgets:
           - animimg:
               align: TOP_RIGHT
-              y: 41
-              x: -10
+              y: 5
+              x: -15
               id: ani_battery_charging
               src: [
                 batt_empty,
@@ -1631,12 +1652,12 @@ lvgl:
 
 ## An analog clock
 
-Using the [`meter`](/components/lvgl/widgets#lvgl-widget-meter) and [`label`](/components/lvgl/widgets#lvgl-widget-label) widgets, we can create an analog clock which
+Using the [`meter`](/components/lvgl/widgets#meter) and [`label`](/components/lvgl/widgets#label) widgets, we can create an analog clock which
 shows the date too.
 
 <Image src={lvglCookClockImg} layout="constrained" alt="" />
 
-The [`meter`](/components/lvgl/widgets#lvgl-widget-meter) has three scales: one for minutes ticks and hand, ranged between `0` and `60`; one
+The [`meter`](/components/lvgl/widgets#meter) has three scales: one for minutes ticks and hand, ranged between `0` and `60`; one
 for the hour ticks and the labels as majors, ranged between `1` and `12`; and a higher resolution scale for the hour
 hand, ranged between `0` and `720`, to be able to naturally position the hand in between the hours. The second scale
 doesn't have an indicator, while the third scale doesn't have ticks nor labels.
@@ -1647,6 +1668,14 @@ text.
 ```yaml
 lvgl:
   ...
+  style_definitions:
+    - id: date_style
+      text_font: unscii_8
+      align: center
+      text_color: 0x000000
+      bg_opa: 60%
+      radius: 4
+      pad_all: 2
   pages:
     - id: clock_page
       widgets:
@@ -1700,8 +1729,6 @@ lvgl:
                       range_to: 720
                       angle_range: 360
                       rotation: 270
-                      ticks:
-                        count: 0
                       indicators:
                         - line:
                             id: hour_hand
@@ -1761,13 +1788,13 @@ script:
 
 ## A numeric input keypad
 
-The [`buttonmatrix`](/components/lvgl/widgets#lvgl-widget-buttonmatrix) widget can work together with the
+The [`buttonmatrix`](/components/lvgl/widgets#buttonmatrix) widget can work together with the
 [Key collector component](/components/key_collector#key_collector) to collect the button presses as key press sequences. It sends the `text` of
 the buttons (or `key_code` where configured) to the key collector.
 
 <Image src={lvglCookKeypadImg} layout="constrained" alt="" />
 
-If you key in the correct sequence, the [`led`](/components/lvgl/widgets#lvgl-widget-led) widget will change color accordingly:
+If you key in the correct sequence, the [`led`](/components/lvgl/widgets#led) widget will change color accordingly:
 
 ```yaml
 lvgl:
@@ -1870,7 +1897,7 @@ key_collector:
     on_progress:
       - if:
           condition:
-            lambda: return (0 != x.compare(std::string{""}));
+            lambda: return (x != "");
           then:
             - lvgl.label.update:
                 id: lvgl_label
@@ -1882,7 +1909,7 @@ key_collector:
     on_result:
       - if:
           condition:
-            lambda: return (0 == x.compare(std::string{"1234"}));
+            lambda: return (x == "1234");
           then:
             - lvgl.led.update:
                 id: lvgl_led
@@ -1893,13 +1920,11 @@ key_collector:
                 color: 0xFF0000
 ```
 
-Of note:
-
-- A base object `obj` is used as a parent for the label; this allows proper centering of the label as well as
-- emphasizing it with shadows independently of the label's dimensions.
-- `align_to` is used to align the label to the `led` vertically.
-- Changing the background color of the buttons in `pressed` state.
-- Use of the `key_code` configuration to send a different character to `key_collector` instead of the displayed symbol.
+> [!NOTE]
+> - A base object `obj` is used as a parent for the label; this allows proper centering of the label as well as emphasizing it with shadows independently of the label's dimensions.
+> - `align_to` is used to align the label to the `led` vertically.
+> - Changing the background color of the buttons in `pressed` state.
+> - Use of the `key_code` configuration to send a different character to `key_collector` instead of the displayed symbol.
 
 <span id="lvgl-cookbook-weather"></span>
 
@@ -1915,7 +1940,7 @@ examples in this Cookbook, however, this time we take a different approach. Inst
 we'll be pushing it from Home Assistant, to native [Lvgl](/components/text/lvgl/) components.
 
 The weather condition icons we use are from MDI. We import just the ones corresponding to the weather conditions
-supported by the Weather integration in Home Assistant. For all the other labels you can use any [font](/components/lvgl#lvgl-fonts)
+supported by the Weather integration in Home Assistant. For all the other labels you can use any [font](/components/lvgl#fonts)
 of your choice.
 
 ```yaml
@@ -2204,7 +2229,7 @@ with the `text.set_value` action. For this purpose, we add the following
 The automations will be triggered to update the labels every time the corresponding entities change, and when the
 ESPHome comes alive - the reason you also need the [Status](/components/binary_sensor/status/). Note that you'll
 need to adjust the entity IDs corresponding to your ESPHome node depedning on how you
-[configured it to use its name](/components/esphome#esphome-configuration_variables).
+[configured it to use its name](/components/esphome#configuration-variables).
 
 <span id="lvgl-cookbook-idlescreen"></span>
 

@@ -49,11 +49,20 @@ api:
 - **listen_backlog** (*Optional*, int): The maximum number of pending connections in the listen queue. Must be between 1 and 10.
   Defaults to `1` for ESP8266/RP2040, `4` for ESP32 and other platforms. Lower values use less memory but may reject connections during bursts.
 - **max_connections** (*Optional*, int): The maximum number of simultaneous API connections allowed. Must be between 1 and 20.
-  Defaults to `4` for ESP8266/RP2040, `8` for ESP32 and other platforms. Each connection uses approximately 500-1000 bytes of RAM.
+  Defaults to:
+  - `4` for ESP8266/RP2040,
+  - `5` for ESP32/BK72xx/RTL87xx/LN882x,
+  - `8` for the host platform.
 
   > [!NOTE]
-  > Each API connection consumes approximately 500–1000 bytes of RAM while connected. ESP8266 and RP2040 devices have limited
-  > RAM available (ESP8266 typically has around 40KB of free RAM after boot, but this can drop to under 20KB once sensors and other components are configured; RP2040 uses LWIP raw sockets with similar constraints), so be careful not to set this value too high or it may cause out-of-memory crashes.
+  > `max_connections` is baked into the compiled firmware as a compile-time constant — the
+  > connection slots are statically allocated, so every slot costs a small amount of static RAM
+  > whether it is used or not, and the firmware must be re-flashed to change the value.
+  > In addition, each active API connection consumes approximately 500–1000 bytes of RAM while
+  > connected. ESP8266 and RP2040 devices have limited RAM available (ESP8266 typically has around
+  > 40KB of free RAM after boot, but this can drop to under 20KB once sensors and other components
+  > are configured; RP2040 uses LWIP raw sockets with similar constraints), so be careful not to
+  > set this value too high or it may cause out-of-memory crashes.
   > The defaults are set to balance memory usage with allowing multiple simultaneous connections.
 
 - **max_send_queue** (*Optional*, int): The maximum number of messages that can be queued for sending per connection before the connection is dropped. Must be between 1 and 64.
@@ -114,8 +123,6 @@ api:
 - **on_client_disconnected** (*Optional*, [Action](/automations/actions#all-actions)): An automation to perform when a client
   disconnects from the API. See [`on_client_disconnected` Trigger](#api-on_client_disconnected_trigger).
 
-<span id="api-actions"></span>
-
 ## Actions
 
 Before using any of the actions below, you'll need to tell Home Assistant to allow your device to
@@ -139,12 +146,10 @@ Then:
 
 1. Then click "submit"
 
-<span id="api-homeassistant_event_action"></span>
-
 ### `homeassistant.event` Action
 
 > [!NOTE]
-> Be sure to [follow the instructions above](#api-actions) to tell Home Assistant to allow
+> Be sure to [follow the instructions above](#actions) to tell Home Assistant to allow
 > your device to perform actions.
 
 When using the native API with Home Assistant, you can create events in the Home Assistant event bus
@@ -168,14 +173,13 @@ on_...:
   This is evaluated on the Home Assistant side with Home Assistant's templating engine.
 
 - **variables** (*Optional*, mapping): Optional variables that can be used in the `data_template`.
-  Values are [lambdas](/automations/templates#config-lambda) and will be evaluated before sending the request.
-
-<span id="api-homeassistant_action-action"></span>
+  A value tagged with `!lambda` is a [lambda](/automations/templates#config-lambda) evaluated on the device
+  before sending the request; any other value is sent as a static string.
 
 ### `homeassistant.action` Action
 
 > [!NOTE]
-> Be sure to [follow the instructions above](#api-actions) to tell Home Assistant to allow
+> Be sure to [follow the instructions above](#actions) to tell Home Assistant to allow
 > your device to perform actions.
 
 When using the native API with Home Assistant, you can perform Home Assistant actions straight from ESPHome [Automations](/automations).
@@ -196,7 +200,7 @@ on_...:
       data_template:
         message: The humidity is {{ my_variable }}%.
       variables:
-        my_variable: |-
+        my_variable: !lambda |-
           return id(my_sensor).state;
 ```
 
@@ -210,7 +214,8 @@ on_...:
   This is evaluated on the Home Assistant side with Home Assistant's templating engine.
 
 - **variables** (*Optional*, mapping): Optional variables that can be used in the `data_template`.
-  Values are [lambdas](/automations/templates#config-lambda) and will be evaluated before sending the request.
+  A value tagged with `!lambda` is a [lambda](/automations/templates#config-lambda) evaluated on the device
+  before sending the request; any other value is sent as a static string.
 
 - **capture_response** (*Optional*, boolean): Enable capturing the response from the Home Assistant action call.
   When enabled, `on_success` must be configured. Defaults to `false`.
@@ -225,6 +230,14 @@ on_...:
 
 - **on_error** (*Optional*, [Automation](/automations)): Optional automation to execute when the Home Assistant action
   call fails. See [Action Response Handling](#action-response-handling).
+
+> [!NOTE]
+> Home Assistant starts listening for device actions shortly *after* the API connection is established, so actions
+> triggered right at connection time (for example from `on_client_connected` or `on_time_sync`) can fire before
+> Home Assistant is ready for them. Such actions are not delivered and ESPHome logs a warning
+> (versions before 2026.8.0 dropped them silently). The same applies to `homeassistant.event`. If you need to
+> perform an action as soon as a connection is made, add a short `delay` before it so Home Assistant has time to
+> start listening.
 
 Data structures are not possible, but you can create a script in Home Assistant and call with all
 the parameters in plain format.
@@ -332,7 +345,7 @@ When `response_template` is used, the processed result is available in `response
 ### `homeassistant.tag_scanned` Action
 
 > [!NOTE]
-> Be sure to [follow the instructions above](#api-actions) to tell Home Assistant to allow
+> Be sure to [follow the instructions above](#actions) to tell Home Assistant to allow
 > your device to make action calls.
 
 When using the native API with Home Assistant, you can push tag_scanned to Home Assistant
@@ -388,8 +401,6 @@ api:
 ```
 
 ## Conditions
-
-<span id="api-connected_condition"></span>
 
 ### `api.connected` Condition
 
