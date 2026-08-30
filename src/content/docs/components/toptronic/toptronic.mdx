@@ -1,13 +1,13 @@
 ---
-description: "Instructions for integrating Hoval TopTronic heating and ventilation devices into ESPHome."
+description: "Instructions for integrating Hoval TopTronic devices into ESPHome."
 title: "TopTronic"
 ---
 
 import { Image } from 'astro:assets';
 import APIRef from '@components/APIRef.astro';
 
-The `toptronic` component allows you to integrate Hoval TopTronic heating and ventilation
-devices into ESPHome. It communicates with the devices over a CAN bus and auto-generates all
+The `toptronic` component allows you to integrate Hoval TopTronic devices into ESPHome. It
+communicates with the devices over a CAN bus and auto-generates all
 entities from the presets bundled with the component.
 
 
@@ -15,11 +15,18 @@ entities from the presets bundled with the component.
 
 Supported device types:
 
-| Device type | Description |
-| --- | --- |
-| `HV` | HomeVent ventilation unit |
-| `BM` | Control module (display) |
-| `WEZ` | Heat generator |
+| Device type | Description | Default address |
+| --- | --- | --- |
+| `WEZ` | Heat generator | 1 |
+| `SOL` | Solar module | 16 |
+| `PS` | Buffer storage tank | 15 |
+| `FW` | District heating | 1 |
+| `HK` | Heating circuit | 9 |
+| `MWA` | Energy meter module | 13 |
+| `GLT` | Building management system (BMS) | 12 |
+| `HV` | HomeVent ventilation unit | 8 |
+| `BM` | Control module (display) | 8 |
+| `GW` | Gateway (Modbus/KNX) | — |
 
 ## Component/Hub
 
@@ -46,10 +53,10 @@ toptronic:
   is referenced by the auto-generated "Refresh all" button.
 - **canbus_id** (**Required**, [ID](/guides/configuration-types#id)): The id of the CAN bus the
   devices are connected to. The bus must run at **50 kbps**.
-- **device_type** (**Required**, string): One of `HV`, `BM` or `WEZ` - see the table above.
+- **device_type** (**Required**, string): One of the device types listed in the table above.
   `BD` is an alias for `BM`; use `BM`.
 - **device_addr** (**Required**, int): The bus address of the device. Typical defaults are
-  `HV=8`, `BM=8` and `WEZ=1`; the address is shown on the room control unit.
+  shown in the table above; the address is shown on the room control unit.
 - **language** (*Optional*, string): The preset language, one of `de`, `en`, `fr` or `it`.
   Defaults to `en`.
 - **boot_refresh_delay** (*Optional*, [Time](/guides/configuration-types#time)): One-shot full
@@ -99,13 +106,7 @@ toptronic:
 ## Presets
 
 Entities are generated automatically from the presets bundled with the component, so you do
-not need to declare any entity yourself. The platforms provided depend on the device type:
-
-| Device type | Platforms |
-| --- | --- |
-| `HV` | sensor, text_sensor, number, select, button |
-| `BM` | sensor, text_sensor |
-| `WEZ` | sensor, text_sensor, number, select |
+not need to declare any entity yourself.
 
 Every preset exists in the four languages `de`, `en`, `fr` and `it`, selected with the hub's
 `language` key.
