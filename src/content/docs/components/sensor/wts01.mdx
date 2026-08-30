@@ -53,8 +53,8 @@ RJ9 pins, when the connector is viewed from the contacts side, cables exiting at
 | 4   | Sensor Ground          |
 
 The following example assumes that you connect the following:
-- `Pin 1` of RJ9 connector (power) to `GPIO25`
-- `Pin 2` of RJ9 connector (data) to `GPIO27`
+- `Pin 1` of RJ9 connector (power) to `GPIO27`
+- `Pin 2` of RJ9 connector (data) to `GPIO25`
 - `Pin 4` of RJ9 connector (ground) to `GND`
 
 ### Example configuration
@@ -72,14 +72,14 @@ esphome:
 
 uart:
   - id: uart_bus
-    rx_pin: GPIO27  # for data of WTS01 (pin 2)
+    rx_pin: GPIO25  # for data of WTS01 (pin 2)
     baud_rate: 9600
 
 switch:
   # This is needed to power the external sensor.
   # It receives 3v3 from this pin, which is pulled up on boot.
   - platform: gpio
-    pin: GPIO25  # for power to WTS01 (pin 1)
+    pin: GPIO27  # for power to WTS01 (pin 1)
     id: WTS01_sensor_power
     restore_mode: ALWAYS_ON
 
