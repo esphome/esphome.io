@@ -21,7 +21,7 @@ platforms:
 | [`time`](/components/time/ds3231/) | use the RTC as a time source |
 | [`sensor`](/components/sensor/ds3231/) | read the on-die temperature |
 | [`binary_sensor`](/components/binary_sensor/ds3231/) | alarm-fired and oscillator-stopped flags |
-| [`switch`](/components/switch/ds3231/) | arm the alarms, enable the 32 kHz output |
+| [`switch`](/components/switch/ds3231/) | enable the alarms, enable the 32 kHz output |
 | [`select`](/components/select/ds3231/) | set the `INT/SQW` pin mode and square-wave frequency |
 | [`number`](/components/number/ds3231/) | adjust the aging offset |
 
@@ -50,7 +50,10 @@ ds3231:
   [Alarms](#alarms).
 - **on_alarm_2** (*Optional*, [Automation](/automations)): Automation to run when alarm 2 fires.
 - **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): How often to poll the alarm
-  flags and the oscillator-stopped flag. Defaults to `30s`.
+  flags and the oscillator-stopped flag (and republish the switch/select state). Defaults to `30s`. This is
+  the initial value; it can be changed at runtime with
+  [`ds3231.set_refresh_interval`](#ds3231-set_refresh_interval-action) or the
+  [`refresh_interval` number](/components/number/ds3231/).
 - **i2c_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the [I²C](/components/i2c/) bus
   when using multiple buses.
 
@@ -85,8 +88,8 @@ id(ds3231_hub)->set_square_wave_frequency(DS3231SquareWaveFrequency::DS3231_SQUA
 id(ds3231_hub)->set_square_wave_output_enabled(true);
 ```
 
-The frequency values are `DS3231_SQUARE_WAVE_FREQUENCY_1_HZ`, `_1024_HZ`, `_4096_HZ` and `_8192_HZ`. Arming an
-alarm still forces the pin back to interrupt mode.
+The frequency values are `DS3231_SQUARE_WAVE_FREQUENCY_1_HZ`, `_1024_HZ`, `_4096_HZ` and `_8192_HZ`.
+Enabling an alarm still forces the pin back to interrupt mode.
 
 The [`select`](/components/select/ds3231/) platform exposes both of these (pin mode and frequency) as entities
 without writing a lambda.
@@ -104,14 +107,15 @@ Each alarm sets a "fired" flag in the chip when it matches. This component polls
 [alarm binary sensors](/components/binary_sensor/ds3231/) and then clears the flag so the next match can be
 detected.
 
-An alarm stays armed after it fires. [`ds3231.clear_alarm`](#ds3231-clear_alarm-action) only clears the fired
-flag, it does not disarm the alarm. To disarm an alarm (while keeping its programmed time so it can be
-re-armed later), turn off its [`switch`](/components/switch/ds3231/).
+An alarm stays enabled after it fires. [`ds3231.clear_alarm`](#ds3231-clear_alarm-action) only clears the
+fired flag, it does not disable the alarm. To disable an alarm while keeping its programmed time (so it can be
+re-enabled later), use [`ds3231.disable_alarm`](#ds3231-disable_alarm-action) or turn off its
+[`switch`](/components/switch/ds3231/).
 
 The `on_alarm_1` / `on_alarm_2` triggers and the `alarm_1` / `alarm_2`
-[binary sensors](/components/binary_sensor/ds3231/) only react while that alarm is enabled. Disarming an alarm
-suppresses them without clearing its programmed time; a match that occurs while the alarm is disarmed is
-ignored, and re-arming does not replay it.
+[binary sensors](/components/binary_sensor/ds3231/) only react while that alarm is enabled. Disabling an alarm
+suppresses them without clearing its programmed time; a match that occurs while the alarm is disabled is
+ignored, and re-enabling does not replay it.
 
 > [!NOTE]
 > Because the flags are polled, the automation runs up to `update_interval` after the alarm actually
@@ -128,7 +132,7 @@ ignored, and re-arming does not replay it.
 
 ## `ds3231.set_alarm_1` Action
 
-Program and arm alarm 1.
+Program and enable alarm 1.
 
 ```yaml
 on_...:
@@ -172,7 +176,7 @@ Configuration variables:
 
 ## `ds3231.set_alarm_2` Action
 
-Program and arm alarm 2. Identical to `ds3231.set_alarm_1` except that there is no `second` field and the
+Program and enable alarm 2. Identical to `ds3231.set_alarm_1` except that there is no `second` field and the
 available modes are `EVERY_MINUTE`, `MATCH_MINUTE`, `MATCH_HOUR_MINUTE`, `MATCH_DAY_OF_MONTH` and
 `MATCH_DAY_OF_WEEK`.
 
@@ -186,12 +190,21 @@ on_...:
       minute: 0
 ```
 
+The alarm actions do different things:
+
+| Action | Effect |
+| ------ | ------ |
+| `ds3231.set_alarm_1` / `_2` | Programs the match time **and** enables the alarm |
+| `ds3231.enable_alarm` | Enables the alarm, keeping its programmed time |
+| `ds3231.disable_alarm` | Disables the alarm, keeping its programmed time |
+| `ds3231.clear_alarm` | Clears only the "fired" flag; the alarm stays enabled |
+
 <span id="ds3231-clear_alarm-action"></span>
 
 ## `ds3231.clear_alarm` Action
 
-Clear a pending alarm's "fired" flag. This re-arms the flag for the next match; it does **not** disable the
-alarm, turn off the alarm's [`switch`](/components/switch/ds3231/) for that.
+Clear a pending alarm's "fired" flag, so it can be detected again on the next match. This does **not** disable
+the alarm.
 
 ```yaml
 on_...:
@@ -203,7 +216,52 @@ on_...:
 Configuration variables:
 
 - **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the DS3231 hub.
-- **alarm** (**Required**, int): Which alarm to clear, `1` or `2`.
+- **alarm** (**Required**, int): Which alarm, `1` or `2`.
+
+<span id="ds3231-enable_alarm-action"></span>
+
+## `ds3231.enable_alarm` Action
+
+Enable an alarm without reprogramming its match time. This is the action form of turning the alarm's
+[`switch`](/components/switch/ds3231/) on.
+
+```yaml
+on_...:
+  - ds3231.enable_alarm:
+      id: ds3231_hub
+      alarm: 1
+```
+
+Configuration variables:
+
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the DS3231 hub.
+- **alarm** (**Required**, int): Which alarm, `1` or `2`.
+
+> [!NOTE]
+> Enabling an alarm whose registers were never programmed (with
+> [`ds3231.set_alarm_1`](#ds3231-set_alarm_1-action) / [`ds3231.set_alarm_2`](#ds3231-set_alarm_2-action))
+> enables whatever the registers happen to hold.
+
+<span id="ds3231-disable_alarm-action"></span>
+
+## `ds3231.disable_alarm` Action
+
+**Disable an alarm**": the `on_alarm_` trigger and the alarm binary sensor stop reacting while
+keeping its programmed match time. Re-enable it with [`ds3231.enable_alarm`](#ds3231-enable_alarm-action),
+[`ds3231.set_alarm_1`](#ds3231-set_alarm_1-action) / [`ds3231.set_alarm_2`](#ds3231-set_alarm_2-action), or by
+turning its [`switch`](/components/switch/ds3231/) on. This is the action form of turning the alarm switch off.
+
+```yaml
+on_...:
+  - ds3231.disable_alarm:
+      id: ds3231_hub
+      alarm: 1
+```
+
+Configuration variables:
+
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the DS3231 hub.
+- **alarm** (**Required**, int): Which alarm, `1` or `2`.
 
 <span id="ds3231-force_temperature_conversion-action"></span>
 
@@ -216,6 +274,27 @@ result is also used to re-tune the oscillator.
 on_...:
   - ds3231.force_temperature_conversion: ds3231_hub
 ```
+
+<span id="ds3231-set_refresh_interval-action"></span>
+
+## `ds3231.set_refresh_interval` Action
+
+Change how often the hub polls the chip at runtime (see
+[`update_interval`](#configuration-variables)). The [`refresh_interval` number](/components/number/ds3231/)
+does the same thing as an entity.
+
+```yaml
+on_...:
+  - ds3231.set_refresh_interval:
+      id: ds3231_hub
+      refresh_interval: 30s
+```
+
+Configuration variables:
+
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the DS3231 hub.
+- **refresh_interval** (**Required**, [Time](/guides/configuration-types#time),
+  [templatable](/automations/templates)): The new poll interval.
 
 ## Reading the Programmed Alarm
 
@@ -258,22 +337,49 @@ a bus error or an unrecognized register pattern.
   trusted: the [`time`](/components/time/ds3231/) platform refuses to sync from it until a valid time is
   written back with [`ds3231.write_time`](/components/time/ds3231/#ds3231-write_time-action).
 
+## Minimal Example
+
+The core of a DS3231 setup: the hub, the RTC as a [time source](/components/time/ds3231/), and the on-die
+[temperature sensor](/components/sensor/ds3231/). The RTC is written from a network time source whenever that
+source synchronizes; see [`ds3231.write_time`](/components/time/ds3231/#ds3231-write_time-action).
+
+```yaml
+i2c:
+  sda: GPIOXX
+  scl: GPIOXX
+
+ds3231:
+  id: ds3231_hub
+
+time:
+  - platform: ds3231
+    ds3231_id: ds3231_hub
+    id: ds3231_time
+  - platform: sntp
+    on_time_sync:
+      then:
+        - ds3231.write_time: ds3231_time
+
+sensor:
+  - platform: ds3231
+    ds3231_id: ds3231_hub
+    name: "RTC Temperature"
+```
+
 <span id="ds3231-config_example"></span>
 
 ## Full Configuration Example
 
-This example exercises every platform: the RTC is disciplined from [SNTP](/components/time/sntp/), and the
-temperature, alarm state, `INT/SQW` pin mode, 32 kHz output and aging offset are all exposed. `INT/SQW` is
-left as the alarm-interrupt line (no `square_wave_output`); the `select` can switch it to a square wave at
-runtime. The [web server](/components/web_server/) `sorting_groups` keep the DS3231 entities together on the
-dashboard.
+This example exercises every platform and action. `INT/SQW` is left as the alarm-interrupt line (no
+`square_wave_output`), with a [GPIO binary sensor](/components/binary_sensor/gpio/) on it as the immediate
+hardware path and the [`select`](/components/select/ds3231/) able to switch it to a square wave at runtime.
+The [web server](/components/web_server/) `sorting_groups` keep the DS3231 entities together on the dashboard.
 
-The alarms are driven two ways. The *Set Alarm* buttons use the declarative
+The alarms are set two ways, side by side. The *Apply (via action)* buttons use the declarative
 [`ds3231.set_alarm_1`](#ds3231-set_alarm_1-action) / [`ds3231.set_alarm_2`](#ds3231-set_alarm_2-action)
-actions with fixed values. The *alarm builder* &mdash; template [numbers](/components/number/template/) and
-[selects](/components/select/template/) for the mode and time fields plus an *Apply*
-[button](/components/button/template/) &mdash; instead calls `id(ds3231_hub)->set_alarm_1(mode, spec)` from a
-lambda, because the action's `mode` is not templatable and so cannot be driven from a runtime select.
+actions; their `mode` must be a fixed literal, so the templated time fields come from the builder numbers but
+the mode is fixed. The *Apply (via lambda)* buttons call `id(ds3231_hub)->set_alarm_1(mode, spec)` directly,
+mapping the *Mode* [select](/components/select/template/) at runtime so every mode is reachable.
 
 ```yaml
 # Version 3 is required for sorting_groups.
@@ -295,22 +401,27 @@ web_server:
     - id: ds3231_alarm2_builder_group
       name: DS3231 Alarm 2 Builder
       sorting_weight: 40
+    - id: ds3231_actions_group
+      name: DS3231 Actions
+      sorting_weight: 50
 
-# DS3231 breakouts (ZS-042 etc.) are typically at 0x68. GPIO8/GPIO9 are the
-# ESP32-S3 default I2C pins and have no secondary function on the DevKitC-1.
 i2c:
   - id: i2c_bus
-    sda: GPIO8
-    scl: GPIO9
+    sda: GPIOXX
+    scl: GPIOXX
     scan: true
     frequency: 400kHz
 
+# No square_wave_output is set, so INT/SQW stays the alarm-interrupt line: it sits
+# high and is pulled low by the chip whenever a programmed alarm matches.
 ds3231:
   - id: ds3231_hub
     i2c_id: i2c_bus
     address: 0x68
     # How often the alarm flags / oscillator-stop flag are polled.
     update_interval: 10s
+    # Software path: fires from the polled alarm flags (the INT/SQW binary_sensor
+    # below is the hardware path and reacts immediately).
     on_alarm_1:
       then:
         - logger.log: "DS3231 alarm 1 fired"
@@ -352,7 +463,7 @@ text_sensor:
       auto t = id(ds3231_time).now();
       if (!t.is_valid()) return {"unknown"};
       return t.strftime("%Y-%m-%d %H:%M:%S");
-  # The alarm actually programmed into the chip's registers.
+  # The alarms actually programmed into the chip's registers.
   - platform: template
     name: DS3231 Alarm 1 Setting
     update_interval: 10s
@@ -362,10 +473,20 @@ text_sensor:
       char buf[40];
       if (!id(ds3231_hub)->describe_alarm_1(buf, sizeof(buf))) return {"not set"};
       return {buf};
+  - platform: template
+    name: DS3231 Alarm 2 Setting
+    update_interval: 10s
+    web_server:
+      sorting_group_id: ds3231_alarm_group
+    lambda: |-
+      char buf[40];
+      if (!id(ds3231_hub)->describe_alarm_2(buf, sizeof(buf))) return {"not set"};
+      return {buf};
 
 binary_sensor:
   - platform: ds3231
     ds3231_id: ds3231_hub
+    # "Fired" flags (A1F/A2F): on when the alarm has matched, cleared on the next poll.
     alarm_1:
       name: DS3231 Alarm 1 Fired
       web_server:
@@ -379,6 +500,20 @@ binary_sensor:
       web_server:
         sorting_group_id: ds3231_group
 
+  # Hardware path: the DS3231 pulls INT/SQW low the instant an alarm matches, so
+  # this reacts without waiting for the next poll. The line is open-drain, so use
+  # the internal pull-up and invert (low = active).
+  - platform: gpio
+    name: DS3231 Alarm Line (INT/SQW)
+    pin:
+      number: GPIOXX
+      mode:
+        input: true
+        pullup: true
+      inverted: true
+    web_server:
+      sorting_group_id: ds3231_alarm_group
+
 switch:
   - platform: ds3231
     ds3231_id: ds3231_hub
@@ -386,7 +521,7 @@ switch:
       name: DS3231 32 kHz Output
       web_server:
         sorting_group_id: ds3231_group
-    # Arm/disarm an alarm without reprogramming its time.
+    # Enable/disable an alarm without reprogramming its time.
     alarm_1:
       name: DS3231 Alarm 1 Enabled
       web_server:
@@ -396,50 +531,6 @@ switch:
       web_server:
         sorting_group_id: ds3231_alarm_group
 
-select:
-  - platform: ds3231
-    ds3231_id: ds3231_hub
-    output_mode:
-      name: DS3231 INT/SQW Mode
-      web_server:
-        sorting_group_id: ds3231_group
-    square_wave_frequency:
-      name: DS3231 Square Wave Frequency
-      web_server:
-        sorting_group_id: ds3231_group
-
-  # Alarm builder: match mode (input-only, applied by the buttons below).
-  - platform: template
-    id: alarm1_mode
-    name: Alarm 1 Mode
-    optimistic: true
-    restore_value: true
-    initial_option: Daily at H:M:S
-    options:
-      - Every second
-      - Match seconds
-      - Match minutes + seconds
-      - Daily at H:M:S
-      - Day-of-month at H:M:S
-      - Weekday at H:M:S
-    web_server:
-      sorting_group_id: ds3231_alarm1_builder_group
-  # Alarm 2 has no per-second modes.
-  - platform: template
-    id: alarm2_mode
-    name: Alarm 2 Mode
-    optimistic: true
-    restore_value: true
-    initial_option: Daily at H:M
-    options:
-      - Every minute
-      - Match minutes
-      - Daily at H:M
-      - Day-of-month at H:M
-      - Weekday at H:M
-    web_server:
-      sorting_group_id: ds3231_alarm2_builder_group
-
 number:
   - platform: ds3231
     ds3231_id: ds3231_hub
@@ -447,9 +538,14 @@ number:
       name: DS3231 Aging Offset
       web_server:
         sorting_group_id: ds3231_group
+    # Hub poll interval, settable at runtime (same knob as ds3231.set_refresh_interval).
+    refresh_interval:
+      name: DS3231 Refresh Interval
+      web_server:
+        sorting_group_id: ds3231_group
 
-  # Alarm 1 builder: input-only fields. Day is day-of-month (1-31) or weekday
-  # (1-7, 1 = Sunday) depending on the mode; ignored by the other modes.
+  # Alarm builder: input-only template fields. Day is day-of-month (1-31) or
+  # weekday (1-7, 1 = Sunday) depending on the mode; ignored by the other modes.
   - platform: template
     id: alarm1_hour
     name: Alarm 1 Hour
@@ -498,8 +594,7 @@ number:
     mode: box
     web_server:
       sorting_group_id: ds3231_alarm1_builder_group
-
-  # Alarm 2 builder: no seconds field (alarm 2 always matches at :00).
+  # Alarm 2 has no seconds field (it always matches at :00).
   - platform: template
     id: alarm2_hour
     name: Alarm 2 Hour
@@ -537,57 +632,85 @@ number:
     web_server:
       sorting_group_id: ds3231_alarm2_builder_group
 
+select:
+  - platform: ds3231
+    ds3231_id: ds3231_hub
+    output_mode:
+      name: DS3231 INT/SQW Mode
+      web_server:
+        sorting_group_id: ds3231_group
+    square_wave_frequency:
+      name: DS3231 Square Wave Frequency
+      web_server:
+        sorting_group_id: ds3231_group
+
+  # Alarm match mode (input-only, see the builder groups above).
+  - platform: template
+    id: alarm1_mode
+    name: Alarm 1 Mode
+    optimistic: true
+    restore_value: true
+    initial_option: Daily at H:M:S
+    options:
+      - Every second
+      - Match seconds
+      - Match minutes + seconds
+      - Daily at H:M:S
+      - Day-of-month at H:M:S
+      - Weekday at H:M:S
+    web_server:
+      sorting_group_id: ds3231_alarm1_builder_group
+  # Alarm 2 has no per-second modes.
+  - platform: template
+    id: alarm2_mode
+    name: Alarm 2 Mode
+    optimistic: true
+    restore_value: true
+    initial_option: Daily at H:M
+    options:
+      - Every minute
+      - Match minutes
+      - Daily at H:M
+      - Day-of-month at H:M
+      - Weekday at H:M
+    web_server:
+      sorting_group_id: ds3231_alarm2_builder_group
+
 button:
   - platform: template
     name: DS3231 Sync System Time To RTC
     web_server:
-      sorting_group_id: ds3231_group
+      sorting_group_id: ds3231_actions_group
     on_press:
       - ds3231.write_time: ds3231_time
 
   - platform: template
     name: DS3231 Read RTC To System Time
     web_server:
-      sorting_group_id: ds3231_group
+      sorting_group_id: ds3231_actions_group
     on_press:
       - ds3231.read_time: ds3231_time
 
   - platform: template
     name: DS3231 Force Temperature Conversion
     web_server:
-      sorting_group_id: ds3231_group
+      sorting_group_id: ds3231_actions_group
     on_press:
       - ds3231.force_temperature_conversion: ds3231_hub
 
-  # Fixed-value alarms via the declarative ds3231.set_alarm_* actions.
   - platform: template
-    name: DS3231 Set Alarm 1 (daily 07:30:00)
+    name: DS3231 Set Refresh Interval To 5s
     web_server:
-      sorting_group_id: ds3231_alarm_group
+      sorting_group_id: ds3231_actions_group
     on_press:
-      - ds3231.set_alarm_1:
+      - ds3231.set_refresh_interval:
           id: ds3231_hub
-          mode: MATCH_HOUR_MINUTE_SECOND
-          hour: 7
-          minute: 30
-          second: 0
+          refresh_interval: 5s
 
+  # (1) Via a lambda calling the hub directly - handles every mode because it maps
+  #     the "Alarm 1 Mode" select at runtime (set_alarm_1's mode is not templatable).
   - platform: template
-    name: DS3231 Set Alarm 2 (08:00 on Mondays)
-    web_server:
-      sorting_group_id: ds3231_alarm_group
-    on_press:
-      - ds3231.set_alarm_2:
-          id: ds3231_hub
-          mode: MATCH_DAY_OF_WEEK
-          day_of_week: 2
-          hour: 8
-          minute: 0
-
-  # Applies the alarm 1 builder inputs (mode select + hour/minute/second/day
-  # numbers) to the chip. The "DS3231 Alarm 1 Setting" text sensor shows the result.
-  - platform: template
-    name: DS3231 Alarm 1 Apply
+    name: DS3231 Alarm 1 Apply (via lambda)
     web_server:
       sorting_group_id: ds3231_alarm1_builder_group
     on_press:
@@ -613,9 +736,24 @@ button:
           }
           id(ds3231_hub)->set_alarm_1(mode, spec);
 
-  # Alarm 2 has no seconds - spec.second stays 0 and the chip matches at :00.
+  # (2) Via the ds3231.set_alarm_1 action. `mode` must be a fixed literal, so this
+  #     button always programs "daily at H:M:S"; the time fields are templated from
+  #     the same builder inputs.
   - platform: template
-    name: DS3231 Alarm 2 Apply
+    name: DS3231 Alarm 1 Apply (via action)
+    web_server:
+      sorting_group_id: ds3231_alarm1_builder_group
+    on_press:
+      - ds3231.set_alarm_1:
+          id: ds3231_hub
+          mode: MATCH_HOUR_MINUTE_SECOND
+          hour: !lambda "return (uint8_t) id(alarm1_hour).state;"
+          minute: !lambda "return (uint8_t) id(alarm1_minute).state;"
+          second: !lambda "return (uint8_t) id(alarm1_second).state;"
+
+  # Same two-way comparison for alarm 2 (no seconds - the chip matches at :00).
+  - platform: template
+    name: DS3231 Alarm 2 Apply (via lambda)
     web_server:
       sorting_group_id: ds3231_alarm2_builder_group
     on_press:
@@ -638,10 +776,22 @@ button:
           }
           id(ds3231_hub)->set_alarm_2(mode, spec);
 
+  # (2) Via the ds3231.set_alarm_2 action - fixed "daily at H:M" mode, templated time.
+  - platform: template
+    name: DS3231 Alarm 2 Apply (via action)
+    web_server:
+      sorting_group_id: ds3231_alarm2_builder_group
+    on_press:
+      - ds3231.set_alarm_2:
+          id: ds3231_hub
+          mode: MATCH_HOUR_MINUTE
+          hour: !lambda "return (uint8_t) id(alarm2_hour).state;"
+          minute: !lambda "return (uint8_t) id(alarm2_minute).state;"
+
   - platform: template
     name: DS3231 Clear Alarm 1
     web_server:
-      sorting_group_id: ds3231_alarm_group
+      sorting_group_id: ds3231_actions_group
     on_press:
       - ds3231.clear_alarm:
           id: ds3231_hub
@@ -650,9 +800,47 @@ button:
   - platform: template
     name: DS3231 Clear Alarm 2
     web_server:
-      sorting_group_id: ds3231_alarm_group
+      sorting_group_id: ds3231_actions_group
     on_press:
       - ds3231.clear_alarm:
+          id: ds3231_hub
+          alarm: 2
+
+  # enable/disable set/clear A1IE/A2IE, keeping the programmed time - the action
+  # form of the "Alarm N Enabled" switch.
+  - platform: template
+    name: DS3231 Enable Alarm 1
+    web_server:
+      sorting_group_id: ds3231_actions_group
+    on_press:
+      - ds3231.enable_alarm:
+          id: ds3231_hub
+          alarm: 1
+
+  - platform: template
+    name: DS3231 Disable Alarm 1
+    web_server:
+      sorting_group_id: ds3231_actions_group
+    on_press:
+      - ds3231.disable_alarm:
+          id: ds3231_hub
+          alarm: 1
+
+  - platform: template
+    name: DS3231 Enable Alarm 2
+    web_server:
+      sorting_group_id: ds3231_actions_group
+    on_press:
+      - ds3231.enable_alarm:
+          id: ds3231_hub
+          alarm: 2
+
+  - platform: template
+    name: DS3231 Disable Alarm 2
+    web_server:
+      sorting_group_id: ds3231_actions_group
+    on_press:
+      - ds3231.disable_alarm:
           id: ds3231_hub
           alarm: 2
 ```

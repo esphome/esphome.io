@@ -1,6 +1,6 @@
 ---
 title: "DS3231 Switch"
-description: "Instructions for arming the DS3231 real-time clock's alarms and 32 kHz output in ESPHome."
+description: "Enabling the DS3231 real-time clock's alarms and 32 kHz output in ESPHome."
 ---
 
 import APIRef from '@components/APIRef.astro';
@@ -18,7 +18,7 @@ ds3231:
 switch:
   - platform: ds3231
     alarm_1:
-      name: "RTC Alarm 1 Armed"
+      name: "RTC Alarm 1 Enabled"
     enable_32khz_output:
       name: "RTC 32 kHz Output"
 ```
@@ -27,7 +27,7 @@ switch:
 
 - **ds3231_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the [`ds3231`](/components/ds3231/)
   hub to use when more than one is configured.
-- **alarm_1** (*Optional*): Arms or disarms alarm 1 by controlling its interrupt-enable bit. Icon `mdi:alarm`,
+- **alarm_1** (*Optional*): Enables or disables alarm 1 via its interrupt-enable bit. Icon `mdi:alarm`,
   config entity category, restore mode disabled (the real state lives in the chip). See
   [Behavior](#behavior) below. All options from [Switch](/components/switch/#config-switch).
 - **alarm_2** (*Optional*): As `alarm_1`, for alarm 2.
@@ -41,10 +41,13 @@ At least one of `alarm_1`, `alarm_2` or `enable_32khz_output` must be provided.
 
 The `alarm_1` / `alarm_2` switches read and control the chip's alarm interrupt-enable bits:
 
-- `ON` : The alarm is armed. [`ds3231.set_alarm_1`](/components/ds3231/#ds3231-set_alarm_1-action) /
+- `ON` : The alarm is enabled. [`ds3231.set_alarm_1`](/components/ds3231/#ds3231-set_alarm_1-action) /
   [`ds3231.set_alarm_2`](/components/ds3231/#ds3231-set_alarm_2-action) turn the switch `ON` as a side effect.
-- `OFF` : The alarm is disarmed, but its programmed match time is kept. Turn the switch back `ON` to
-  re-arm it without calling `ds3231.set_alarm_*` again.
+- `OFF` : The alarm is disabled, but its programmed match time is kept. Turn the switch back `ON` to
+  re-enable it without calling `ds3231.set_alarm_*` again.
+- The [`ds3231.enable_alarm`](/components/ds3231/#ds3231-enable_alarm-action) and
+  [`ds3231.disable_alarm`](/components/ds3231/#ds3231-disable_alarm-action) actions are the action forms of
+  turning the switch on and off.
 - [`ds3231.clear_alarm`](/components/ds3231/#ds3231-clear_alarm-action) only clears the "fired" flag; it does
   not change these switches.
 

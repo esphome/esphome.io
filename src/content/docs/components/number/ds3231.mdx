@@ -1,14 +1,12 @@
 ---
 title: "DS3231 Number"
-description: "Instructions for adjusting the DS3231 real-time clock's aging offset in ESPHome."
+description: "Instructions for the DS3231 real-time clock's aging offset and refresh interval numbers in ESPHome."
 ---
 
 import APIRef from '@components/APIRef.astro';
 
-The `ds3231` number platform exposes the aging offset (trim) register of the
-[DS3231 real-time clock](/components/ds3231/). This signed value fine-tunes the oscillator frequency; each
-step is roughly 0.1 ppm. Positive values slow the clock down, negative values speed it up. A new value takes
-effect on the next temperature conversion.
+The `ds3231` number platform exposes two [DS3231 real-time clock](/components/ds3231/) settings as adjustable
+numbers: the aging offset (trim) register and the hub's poll interval.
 
 Set up the [`ds3231`](/components/ds3231/) hub (and the [I²C](/components/i2c/) bus it needs) first.
 
@@ -27,11 +25,23 @@ number:
 
 - **ds3231_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the [`ds3231`](/components/ds3231/)
   hub to use when more than one is configured.
-- **aging_offset** (**Required**): The aging offset number entity.
+- **aging_offset** (*Optional*): The aging offset trim register. This signed value fine-tunes the oscillator
+  frequency; each step is roughly 0.1 ppm (positive slows the clock down, negative speeds it up). A new value
+  takes effect on the next temperature conversion.
   - **min_value** (*Optional*, int): Minimum value. Defaults to `-128`.
   - **max_value** (*Optional*, int): Maximum value. Defaults to `127`.
   - **step** (*Optional*, int): Step size. Defaults to `1`.
   - Config entity category by default. All options from [Number](/components/number/#config-number).
+- **refresh_interval** (*Optional*): The hub's poll interval in seconds. This is how often the alarm flags and
+  oscillator-stopped flag are read and the switch/select state is republished. Publishes the live interval and
+  tracks changes made by [`ds3231.set_refresh_interval`](/components/ds3231/#ds3231-set_refresh_interval-action).
+  The hub's `update_interval` is the initial value. Unit `s`, icon `mdi:timer-outline`, config entity category.
+  - **min_value** (*Optional*, int): Minimum value. Defaults to `1`.
+  - **max_value** (*Optional*, int): Maximum value. Defaults to `3600`.
+  - **step** (*Optional*, int): Step size. Defaults to `1`.
+  - All options from [Number](/components/number/#config-number).
+
+At least one of `aging_offset` or `refresh_interval` must be provided.
 
 ## See Also
 
