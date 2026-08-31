@@ -60,6 +60,14 @@ ds3231:
 Multiple DS3231 chips (on different addresses or buses) can be configured by giving each one its own entry
 with a distinct `id`.
 
+## Day of Week
+
+This component uses ESPHome's day-of-week convention everywhere, matching the
+[time](/components/time/) component: `1` = Sunday, `2` = Monday, through `7` = Saturday. That covers the
+[`time`](/components/time/ds3231/) platform, the `day_of_week` field of the
+[`ds3231.set_alarm_1`](#ds3231-set_alarm_1-action) / [`ds3231.set_alarm_2`](#ds3231-set_alarm_2-action)
+actions, and the `weekday N` shown in the [alarm summary](#reading-the-programmed-alarm).
+
 ## Square-Wave Output
 
 The `INT/SQW` pin can act either as an alarm interrupt or as a square-wave generator, but not both at once.
@@ -168,9 +176,9 @@ Configuration variables:
 `day_of_week` and `day_of_month` are mutually exclusive.
 
 > [!NOTE]
-> `day_of_week` follows ESPHome's convention (`1` = Sunday). This only lines up with the RTC's own
-> day-of-week counter if the clock was set through the [`time`](/components/time/ds3231/) platform or the
-> [`ds3231.write_time`](/components/time/ds3231/#ds3231-write_time-action) action, which is the normal path.
+> `day_of_week` follows ESPHome's convention (`1` = Sunday, see [Day of Week](#day-of-week)). A day-of-week
+> alarm matches the RTC as long as the clock was set through the [`time`](/components/time/ds3231/) platform or
+> the [`ds3231.write_time`](/components/time/ds3231/#ds3231-write_time-action) action.
 
 <span id="ds3231-set_alarm_2-action"></span>
 
@@ -317,11 +325,11 @@ untouched) when the alarm registers can't be decoded, for example on a fresh chi
 were never written. The summaries read like:
 
 - Alarm 1: `every second`, `every minute at :SS`, `every hour at MM:SS`, `daily at HH:MM:SS`,
-  `day D at HH:MM:SS`, `weekday D at HH:MM:SS`
-- Alarm 2: `every minute`, `every hour at MM:00`, `daily at HH:MM`, `day D at HH:MM`, `weekday D at HH:MM`
+  `day D at HH:MM:SS`, `weekday N at HH:MM:SS`
+- Alarm 2: `every minute`, `every hour at MM:00`, `daily at HH:MM`, `day D at HH:MM`, `weekday N at HH:MM`
 
-`weekday D` uses the same `1` = Sunday convention as the alarm actions. The programmed alarms are also printed
-at startup in the component's `dump_config` output.
+`weekday N` uses the `1` = Sunday numbering (see [Day of Week](#day-of-week)); `day D` is a calendar day of
+the month. The programmed alarms are also printed at startup in the component's `dump_config` output.
 
 For structured access, `get_alarm_1(mode, spec)` / `get_alarm_2(mode, spec)` read the mode and the field
 values (`DS3231AlarmSpec` has `second`, `minute`, `hour` and `day`) back from the chip. They return `false` on
