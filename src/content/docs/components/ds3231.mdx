@@ -41,11 +41,21 @@ ds3231:
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): The ID to use for referencing this hub from
   the platforms and actions listed below.
 - **address** (*Optional*, int): The I²C address of the chip. Defaults to `0x68`.
-- **square_wave_output** (*Optional*, enum): Drive a fixed-frequency square wave on the `INT/SQW` pin. One of
-  `1Hz`, `1.024kHz`, `4.096kHz` or `8.192kHz`. When omitted, the pin is left available for the alarm interrupt.
-  See [Square-Wave Output](#square-wave-output).
+- **square_wave_output** (*Optional*, enum): The square-wave frequency for the `INT/SQW` pin. One of `1Hz`,
+  `1.024kHz`, `4.096kHz` or `8.192kHz`. Used when the pin starts in square-wave mode and by the runtime
+  [frequency select](/components/select/ds3231/). It does not by itself route the pin, that is
+  `int_sqw_startup_mode`, which defaults to `square_wave` when this is set. See
+  [Square-Wave Output](#square-wave-output).
+- **int_sqw_startup_mode** (*Optional*, enum): How the `INT/SQW` pin comes up: `alarm_interrupt` (the
+  alarm-interrupt line) or `square_wave` (emits `square_wave_output`). Defaults to `square_wave` when
+  `square_wave_output` is set, otherwise `alarm_interrupt`. Change it at runtime with the
+  [`select`](/components/select/ds3231/) platform.
 - **battery_backed_square_wave** (*Optional*, boolean): Keep the square wave running while the chip is on
   battery power. Requires `square_wave_output`. Defaults to `false`.
+- **enable_32khz_output** (*Optional*, boolean): Set to `false` to turn the chip's dedicated `32K` output off
+  at boot. Defaults to `true`, which leaves the chip's own power-on state alone (a cold power-on has the
+  32 kHz output enabled). Independent of the [`switch`](/components/switch/ds3231/) platform's
+  `enable_32khz_output` entity, which controls it at runtime; the two can be used together.
 - **on_alarm_1** (*Optional*, [Automation](/automations)): Automation to run when alarm 1 fires. See
   [Alarms](#alarms).
 - **on_alarm_2** (*Optional*, [Automation](/automations)): Automation to run when alarm 2 fires.
@@ -72,18 +82,20 @@ actions, and the `weekday N` shown in the [alarm summary](#reading-the-programme
 
 The `INT/SQW` pin can act either as an alarm interrupt or as a square-wave generator, but not both at once.
 
-- If `square_wave_output` is set, the pin emits the selected frequency. This is useful for clocking external
-  hardware or for confirming the chip is alive with a scope or LED.
-- If `square_wave_output` is not set, the component puts the pin in alarm-interrupt mode at startup: it idles
-  high and is pulled low by the chip while a programmed alarm's flag is set, then released when the flag is
-  cleared.
+- In **alarm-interrupt** mode the pin idles high and is pulled low by the chip while a programmed alarm's
+  flag is set, then released when the flag is cleared.
+- In **square-wave** mode the pin emits `square_wave_output` (`1Hz` by default). This is useful for clocking
+  external hardware or for confirming the chip is alive with a scope or LED.
+
+`int_sqw_startup_mode` picks which mode the pin boots in. It defaults to `square_wave` when
+`square_wave_output` is set and `alarm_interrupt` otherwise, so a config that only sets `square_wave_output`
+behaves as you would expect. Set `square_wave_output` together with `int_sqw_startup_mode: alarm_interrupt`
+to boot as the alarm line but be ready to switch to that frequency later.
 
 Programming an alarm with the [`ds3231.set_alarm_1`](#ds3231-set_alarm_1-action) or
-[`ds3231.set_alarm_2`](#ds3231-set_alarm_2-action) action switches the pin from square-wave mode to alarm
-interrupt mode.
+[`ds3231.set_alarm_2`](#ds3231-set_alarm_2-action) action forces the pin back to alarm-interrupt mode.
 
-The pin can also be controlled at runtime from a [lambda](/automations/templates#config-lambda), with
-`square_wave_output` acting as the startup default:
+The pin can also be controlled at runtime from a [lambda](/automations/templates#config-lambda):
 
 - `set_square_wave_output_enabled(true)` drives the square wave (at the current frequency, defaulting to the
   `square_wave_output` value or 1 Hz); `false` returns the pin to alarm-interrupt mode.
@@ -420,8 +432,8 @@ i2c:
     scan: true
     frequency: 400kHz
 
-# No square_wave_output is set, so INT/SQW stays the alarm-interrupt line: it sits
-# high and is pulled low by the chip whenever a programmed alarm matches.
+# No square_wave_output is set, so int_sqw_startup_mode defaults to alarm_interrupt:
+# INT/SQW sits high and is pulled low by the chip whenever a programmed alarm matches.
 ds3231:
   - id: ds3231_hub
     i2c_id: i2c_bus
