@@ -76,10 +76,10 @@ with a distinct `id`.
 ## Day of Week
 
 This component uses ESPHome's day-of-week convention everywhere, matching the
-[time](/components/time/) component: `1` = Sunday, `2` = Monday, through `7` = Saturday. That covers the
-[`time`](/components/time/ds3231/) platform, the `day_of_week` field of the
+[time](/components/time/) component: `1` = Sunday, `2` = Monday, through `7` = Saturday. That is what the
+[`time`](/components/time/ds3231/) platform reports and what the `day_of_week` field of the
 [`ds3231.set_alarm_1`](#ds3231-set_alarm_1-action) / [`ds3231.set_alarm_2`](#ds3231-set_alarm_2-action)
-actions, and the `weekday N` shown in the [alarm summary](#reading-the-programmed-alarm).
+actions expects.
 
 ## Square-Wave Output
 
@@ -376,11 +376,12 @@ untouched) when the alarm registers can't be decoded, for example on a fresh chi
 were never written. The summaries read like:
 
 - Alarm 1: `every second`, `every minute at :SS`, `every hour at MM:SS`, `daily at HH:MM:SS`,
-  `day D at HH:MM:SS`, `weekday N at HH:MM:SS`
-- Alarm 2: `every minute`, `every hour at MM:00`, `daily at HH:MM`, `day D at HH:MM`, `weekday N at HH:MM`
+  `day D at HH:MM:SS`, `every Wed at HH:MM:SS`
+- Alarm 2: `every minute`, `every hour at MM:00`, `daily at HH:MM`, `day D at HH:MM`, `every Wed at HH:MM`
 
-`weekday N` uses the `1` = Sunday numbering (see [Day of Week](#day-of-week)); `day D` is a calendar day of
-the month. The programmed alarms are also printed at startup in the component's `dump_config` output.
+Day-of-week alarms use the abbreviated weekday name (`Sun`&ndash;`Sat`, from `strftime`), or `day N` if the
+register holds an out-of-range value. `day D` is a calendar day of the month. The programmed alarms are also
+printed at startup in the component's `dump_config` output.
 
 For structured access, `get_alarm_1(mode, spec)` / `get_alarm_2(mode, spec)` read the mode and the field
 values (`DS3231AlarmSpec` has `second`, `minute`, `hour` and `day`) back from the chip. They return `false` on
