@@ -7,7 +7,7 @@ Mitsubishi heatpumps equipped with the `CN105` internal connector support readin
 The advantage of this feature is that a remote sensor can be placed more optimally in the room to get information about the
 real temperature.
 
-The [Mitsubishi CN105 Climate](/components/climate/mitsubishi_cn105/) component supports this feature by providing [actions and lambdas](/automations/) to update the hardware
+The [Mitsubishi CN105](/components/climate/mitsubishi_cn105/) component supports this feature by providing [actions and lambdas](/automations/) to update the hardware
 with values from any temperature sensor available in ESPHome.
 
 The following is a possible configuration to implement this. Some heatpumps require frequent temperature updates to prevent from
@@ -16,10 +16,9 @@ failing sensors - that's when one would still want to continue operation, based 
 possibility to choose at run time between which temperature source to use with the heatpump.
 
 ```yaml
-climate:
-  - platform: mitsubishi_cn105
-    id: ac
-    ...
+mitsubishi_cn105:
+  id: hp
+  ...
 
 sensor:
   - platform: ...
@@ -39,12 +38,12 @@ sensor:
                 options: "External"
             - lambda: return (!isnan(x));
           then:
-            - climate.mitsubishi_cn105.set_remote_temperature:
-                id: ac
+            - mitsubishi_cn105.set_remote_temperature:
+                id: hp
                 temperature: !lambda 'return x;'
           else:
-            - climate.mitsubishi_cn105.clear_remote_temperature:
-                id: ac
+            - mitsubishi_cn105.clear_remote_temperature:
+                id: hp
 
 select:
   - platform: template
@@ -63,16 +62,16 @@ select:
               id: sel_temp
               options: "Internal"
           then:
-            - climate.mitsubishi_cn105.clear_remote_temperature:
-                id: ac
+            - mitsubishi_cn105.clear_remote_temperature:
+                id: hp
       - if:
           condition:
             select.is:
               id: sel_temp
               options: "External"
           then:
-            - climate.mitsubishi_cn105.set_remote_temperature:
-                id: ac
+            - mitsubishi_cn105.set_remote_temperature:
+                id: hp
                 temperature: !lambda 'return id(my_temp).state;'
 ```
 
