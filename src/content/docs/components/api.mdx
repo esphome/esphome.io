@@ -139,10 +139,11 @@ api:
 ## Outgoing connections
 
 > [!IMPORTANT]
-> Outgoing connections require [API encryption](#configuration-variables). Because the device opens the connection,
-> the traffic can leave the local network entirely, so the shared encryption key is the only trustworthy way the
-> device and the client can verify each other. The option refuses to configure without `encryption`, and only
-> key-verified clients can become dial-back targets.
+> Outgoing connections require [API encryption](#configuration-variables); this is a hard requirement by design and
+> plaintext support is not planned. Because the device opens the connection, the traffic can leave the local network
+> entirely, so the shared encryption key is the only trustworthy way the device and the client can verify each
+> other. The option refuses to configure without `encryption`, and only key-verified clients can become dial-back
+> targets.
 
 Normally the client, such as Home Assistant, opens the TCP connection to the device. With `outgoing_connection`
 configured, the device notices when no dial-back client is connected and, after `delay`, opens the connection itself;
