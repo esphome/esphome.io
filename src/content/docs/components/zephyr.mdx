@@ -99,6 +99,7 @@ zephyr:
 | STMicroelectronics | `stm32f1` | STM32F1 (Cortex-M3) | [`nucleo_f103rb`](https://docs.zephyrproject.org/latest/boards/st/nucleo_f103rb/doc/index.html) | mainline Zephyr | No wireless |
 | STMicroelectronics | `stm32f4` | STM32F4 (Cortex-M4) | [`nucleo_f401re`](https://docs.zephyrproject.org/latest/boards/st/nucleo_f401re/doc/index.html) | mainline Zephyr | No wireless |
 | STMicroelectronics | `stm32l4` | STM32L4 (Cortex-M4) | [`nucleo_l476rg`](https://docs.zephyrproject.org/latest/boards/st/nucleo_l476rg/doc/index.html) | mainline Zephyr | No wireless |
+| STMicroelectronics | `stm32u5` | STM32U5 (Cortex-M33) | [`stm32u5g9j_dk1`](https://docs.zephyrproject.org/latest/boards/st/stm32u5g9j_dk1/doc/index.html) | mainline Zephyr | No wireless |
 
 It is not recommended to use variants that have existing platforms for other than experimental purposes.
 
@@ -141,7 +142,8 @@ Silicon Labs' provides its own vendor SDK, "Simplicity SDK for Zephyr"
 
 ### STMicroelectronics
 
-`watchdog_timeout` on `stm32l4` and `stm32f4` is `0` or `5s`–`32s`; on `stm32f1` is `0` and `5s`-`26s`.
+`watchdog_timeout` on `stm32l4` and `stm32f4` is `0` or `5s`–`32s`; on `stm32f1` is `0` and `5s`-`26s`;
+`stm32u5` is `0` and `5s`-`60s`.
 
 ## Serial Load Process
 
@@ -250,7 +252,8 @@ using the stm32f4 WEACT Black Pill and allowed use of the default dfu-utils usin
 `esphome run <config-file> --device /dev/ttyACM<n>`.  The device had to be in boot mode and
 only oddity was having to put the device back into boot mode after the MCUBoot was loaded.
 Installation via SWD is also typically available for serial flash. MCUboot is optional
-(`advanced: bootloader:`, defaulted to `none` on `stm32l4`; and 'mcuboot` for `stm32f1` and  `stm32f4`.
+(`advanced: bootloader:`, defaulted to `none` on `stm32l4`; and 'mcuboot` for `stm32f1`,`stm32f4`
+, and `stm32u5`.
 
 ## GPIO Pin Numbering
 
@@ -500,13 +503,13 @@ to. **runner** is the exception: it applies to every variant.
   warning at compile time, it does not fail config validation. Has no effect on `rp2040`/`rp2350`'s
   BOOTSEL/picotool flashing, and is overridden by `--device PYOCD` if that's also used. See
   [Serial Load Process](#serial-load-process).
-- **bootloader** (*Optional*, string, `rp2040`/`rp2350`/`ra4m1`/`stm32l4`/`stm32f4` only): `none` or
-  `mcuboot`. Every other variant requires MCUboot and has no such option. Defaults to `none` on
-  `rp2040`/`rp2350`/`ra4m1`/`stm32l4` — their default boards ship no `slot0`/`slot1` partitions, so
-  choosing `mcuboot` there means supplying a fully qualified board and your own MCUboot-shaped
-  partition overlay via `overlays` (for example `board: rpi_pico/rp2040/mcuboot`). `stm32f4` is the
-  exception: it defaults to `mcuboot`, since its default board's stock partition table already ships
-  `slot0`/`slot1` and real MCUboot fits its `boot_partition` unmodified.
+- **bootloader** (*Optional*, string, `rp2040`/`rp2350`/`ra4m1`/`stm32l4`/`stm32f4`/`stm32u5` only)
+  : `none` or `mcuboot`. Every other variant requires MCUboot and has no such option. Defaults to
+  `none` on `rp2040`/`rp2350`/`ra4m1`/`stm32l4` — their default boards ship no `slot0`/`slot1`
+  partitions, so choosing `mcuboot` there means supplying a fully qualified board and your own
+  MCUboot-shaped partition overlay via `overlays` (for example `board: rpi_pico/rp2040/mcuboot`).
+  `stm32f4` is the exception: it defaults to `mcuboot`, since its default board's stock partition
+  table already ships `slot0`/`slot1` and real MCUboot fits its `boot_partition` unmodified.
 - **commander_version** (*Optional*, string, `efr32mg24` with `framework: type: silabs` only):
   Override the version of Silicon Labs' Simplicity Commander CLI used for secure-boot image signing.
   Defaults to a pinned known-good version. Commander is downloaded and cached automatically; no
