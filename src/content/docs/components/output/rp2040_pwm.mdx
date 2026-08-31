@@ -1,0 +1,136 @@
+---
+description: "Instructions for setting up hardware pulse width modulation on RP2040/RP2350 devices in ESPHome."
+title: "RP2040/RP2350 PWM Output"
+---
+import APIRef from '@components/APIRef.astro';
+
+The `rp2040_pwm` component in ESPHome exposes the RP2040 or RP2350 hardware 
+Pulse Width Modulation (PWM) slices as an output component, allowing high
+frequency PWM control of peripherals like motors and lights with little to no
+CPU overhead.
+ 
+At default clock speeds, output PWM frequencies between 7.5Hz and 62.5MHz are
+possible, however higher frequencies require a smaller bit depth, which reduces
+accuracy significantly at frequencies above 450kHz. For slower PWM output, consider using [Slow PWM](/components/output/slow_pwm/) or
+[Sigma-Delta](/components/output/sigma_delta_output/).
+
+On ESP32-based platforms, the [`ledc`](/components/output/ledc/) component provides similar functionality.
+
+## Configuration variables
+
+- **pin** (**Required**, [Pin](/guides/configuration-types#pin)): The pin to configure with hardware PWM. [More information on output pins below](#output-rp2040-gpio_outputs).
+- **id** (**Required**,  [ID](/guides/configuration-types#id)): The id to use for this output component.
+- **frequency** (*Optional*, frequency): The frequency to run the PWM slice at. Defaults to `1kHz`.
+
+- All other options from [Output](/components/output#config-output).
+
+```yaml
+## Example configuration
+
+output:
+  - platform: rp2040_pwm
+      pin: GPIO28
+      frequency: 5000Hz
+```
+
+## PWM Frequency
+
+The output frequency of each PWM slice is a function of the microcontroller
+clock speed, a clock divider, and a counter with configurable wrap and
+threshold values. Note that there is a trade-off between frequency and resolution:
+configuring very high frequencies effectively reduces the duty cycle resolution.
+For example, at 62.5 MHz the only possible duty cycles are 0%,
+50%, and 100%.
+
+The `rp2040_pwm` component calculates the optimal clock divider
+$\text{DIV}$ and counter maximum $\text{TOP}$ parameters for you when setting up the component to maximize the duty cycle resolution:
+
+$$ \text{DIV} = \max(1, \text{ceil}( {f_c / (4096 \times f_{\text{PWM}})} / 16})) $$
+
+$$ \text{TOP} = {f_c / ({\text{DIV} \times f_\text{PWM}}}) - 1 $$
+
+The effective output frequency $f_\text{PWM}$ is equal to:
+
+$$ f_\text{PWM} = {f_{c} / ({(\text{TOP}+1) \times \text{DIV}}) } $$
+
+> [!NOTE]
+> The RP2040 and 2350 have a "phase correct mode" that causes the counter to
+> count backwards instead of resetting to 0 once the counter reaches the TOP 
+> value. The `rp2040_pwm` component does not currently expose this option.
+
+> [!WARNING]
+> If you change the RP2040's clock speed from the default 125MHz, the minimum
+> output frequency will also change. The minimum PWM frequency for a clock
+> frequency $ f_{c} $ is:
+> $$ f_\text{PWM} = {f_{c} / ({65536 \times {(255 + {15 \over 16})}})} $$
+
+<span id="output-rp2040-gpio_outputs"></span>
+
+## RP2040/RP2350 PWM GPIO Outputs
+
+Each channel on every PWM slice on a RP2040 and RP2350 are attached to specific
+GPIOs, which cannot be changed. Each PWM slice shares a clock divider, and each
+output channel is typically connected to 2 GPIOs. Here is a table of GPIOs
+that share PWM slices and channels:
+
+
+| Slice| Channel A   | Channel B   |
+|------|-------------|-------------|
+| 0    | 0, 16       | 1, 17       |
+| 1    | 2, 18       | 3, 19       |
+| 2    | 4, 20       | 5, 21       |
+| 3    | 6, 22       | 7, 23       |
+| 4    | 8, 24       | 9, 25       |
+| 5    | 10, 26      | 11, 27      |
+| 6    | 12, 28      | 13, 29      |
+| 7    | 14, 30\*    | 15, 31\*    |
+| 8\*  | 32\*, 40\*  | 33\*, 41\*  |
+| 9\*  | 34\* , 42\* | 35\* , 43\* |
+| 10\* | 36\* , 44\* | 37\* , 45\* |
+| 11\* | 38\* , 46\* | 39\* , 47\* |
+
+\* Only on RP2350
+
+> [!CAUTION]
+> If you configure two pins that share a slice and a channel with `rp2040_pwm`,
+> **the output signal will be the same on each one, even if they are configured
+> as separate pins or devices!** Similarly, pins that share a PWM slice will use
+> the same clock divider, which may cause conflicts if you select frequencies that
+> use a different clock divider.
+
+<span id="output-rp2040-set_frequency_action"></span>
+
+## `output.rp2040_pwm.set_frequency` Action
+
+This [Action](/automations/actions#all-actions) allows you to manually change the frequency of an RP2040 or RP2350 PWM output at runtime. Use cases include controlling a passive buzzer (for pitch control).
+
+```yaml
+on_...:
+  - output.rp2040_pwm.set_frequency:
+      id: ledc_output
+      frequency: 100Hz
+```
+
+Configuration variables:
+
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the
+  RP2040 or RP2350 output to change.
+- **frequency** (**Required**, [templatable](/automations/templates), frequency): The frequency to set in Hz.
+
+> [!WARNING]
+> When this action is called, the PWM output is effectively reinitialized. If
+> the other channel of the PWM slice is also being used as a PWM output, calling
+> this action could disrupt that other output channel.
+
+## See Also                                                                     
+                                                                                
+- [Output Component](/components/output/)
+- [ESP8266 Software PWM Output](/components/output/esp8266_pwm/)
+- [ESP32 LEDC Output](/components/output/ledc/)
+- [Monochromatic Light](/components/light/monochromatic/)
+- [Speed Fan](/components/fan/speed/)
+- [Power Supply Component](/components/power_supply/)
+- [RP2040 Datasheet (PWM documentation starts on page 521)](https://pip-assets.raspberrypi.com/categories/814-rp2040/documents/RP-008371-DS-1-rp2040-datasheet.pdf?disposition=inline)
+- [RP2350 Datasheet (PWM documentation starts on page 936)](https://pip-assets.raspberrypi.com/categories/1214-rp2350/documents/RP-008373-DS-2-rp2350-datasheet.pdf?disposition=inline)
+- <APIRef text="rp2040_pwm.h" path="rp2040_pwm/rp2040_pwm.h" />
+
