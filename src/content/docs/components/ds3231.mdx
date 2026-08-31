@@ -56,6 +56,9 @@ ds3231:
   at boot. Defaults to `true`, which leaves the chip's own power-on state alone (a cold power-on has the
   32 kHz output enabled). Independent of the [`switch`](/components/switch/ds3231/) platform's
   `enable_32khz_output` entity, which controls it at runtime; the two can be used together.
+- **alarm_1** (*Optional*): Program a default alarm 1 into the chip at boot. See
+  [Programming an Alarm at Boot](#programming-an-alarm-at-boot).
+- **alarm_2** (*Optional*): As `alarm_1`, for alarm 2.
 - **on_alarm_1** (*Optional*, [Automation](/automations)): Automation to run when alarm 1 fires. See
   [Alarms](#alarms).
 - **on_alarm_2** (*Optional*, [Automation](/automations)): Automation to run when alarm 2 fires.
@@ -121,9 +124,10 @@ The DS3231 has two independent alarms:
 - **Alarm 1** has one-second resolution.
 - **Alarm 2** has one-minute resolution and always fires at second `0`.
 
-Alarms are programmed at runtime with the actions below; there is no alarm configuration on the hub itself.
-Each alarm sets a "fired" flag in the chip when it matches. This component polls those flags every
-`update_interval`, runs the matching `on_alarm_1` / `on_alarm_2` automation, updates the
+Alarms are usually programmed at runtime with the actions below, or a default can be written into the chip at
+boot with the [`alarm_1` / `alarm_2` hub options](#programming-an-alarm-at-boot). Each alarm sets a "fired"
+flag in the chip when it matches. This component polls those flags every `update_interval`, runs the matching
+`on_alarm_1` / `on_alarm_2` automation, updates the
 [alarm binary sensors](/components/binary_sensor/ds3231/) and then clears the flag so the next match can be
 detected.
 
@@ -147,6 +151,41 @@ ignored, and re-enabling does not replay it.
 > poll (up to `update_interval`). That is enough to wake a sleeping ESP through that pin. If you need the
 > hardware pulse held longer while the device is running, raise `update_interval`. The `on_alarm_1` /
 > `on_alarm_2` automations fire either way.
+
+### Programming an Alarm at Boot
+
+The `alarm_1` and `alarm_2` blocks on the `ds3231:` hub write a default alarm into the chip during setup. The
+runtime actions, the [`switch`](/components/switch/ds3231/) and any alarm builder can change it afterwards.
+
+```yaml
+ds3231:
+  id: ds3231_hub
+  alarm_1:
+    mode: MATCH_HOUR_MINUTE_SECOND
+    hour: 7
+    minute: 30
+  alarm_2:
+    mode: MATCH_MINUTE
+    minute: 0
+    enabled: false
+```
+
+The keys are the same as the [`ds3231.set_alarm_1`](#ds3231-set_alarm_1-action) /
+[`ds3231.set_alarm_2`](#ds3231-set_alarm_2-action) actions but are not templatable:
+
+- **mode** (**Required**, enum): The match condition. See the action for the value list (`alarm_1` and
+  `alarm_2` have different sets).
+- **second** (*Optional*, int): `alarm_1` only. Second to match, `0`&ndash;`59`. Defaults to `0`.
+- **minute** (*Optional*, int): Minute to match, `0`&ndash;`59`. Defaults to `0`.
+- **hour** (*Optional*, int): Hour to match (24-hour), `0`&ndash;`23`. Defaults to `0`.
+- **day_of_week** (*Optional*, int): Day of week, `1` (Sunday) to `7` (Saturday). Required for
+  `mode: MATCH_DAY_OF_WEEK`.
+- **day_of_month** (*Optional*, int): Day of month, `1`&ndash;`31`. Required for `mode: MATCH_DAY_OF_MONTH`.
+- **enabled** (*Optional*, boolean): `true` arms the alarm and routes `INT/SQW` to the interrupt line (even
+  when `int_sqw_startup_mode` is `square_wave`, consistent with arming an alarm at runtime). `false` programs
+  the match time but leaves the alarm disarmed and the pin routing untouched. Defaults to `true`.
+
+`day_of_week` and `day_of_month` are mutually exclusive.
 
 <span id="ds3231-set_alarm_1-action"></span>
 
@@ -440,6 +479,13 @@ ds3231:
     address: 0x68
     # How often the alarm flags / oscillator-stop flag are polled.
     update_interval: 10s
+    # Program a default alarm 1 at boot, left disarmed. The runtime buttons /
+    # switch / builder below can change or enable it.
+    alarm_1:
+      mode: MATCH_HOUR_MINUTE_SECOND
+      hour: 7
+      minute: 30
+      enabled: false
     # Software path: fires from the polled alarm flags (the INT/SQW binary_sensor
     # below is the hardware path and reacts immediately).
     on_alarm_1:
