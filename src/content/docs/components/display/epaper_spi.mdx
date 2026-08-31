@@ -52,6 +52,7 @@ the pins used to interface to the display to be specified.
 | Waveshare-4.26in          | Waveshare           | [https://www.waveshare.com/4.26inch-e-paper.htm](https://www.waveshare.com/4.26inch-e-paper.htm)   |
 | Waveshare-7.5in-H         | Waveshare           | [https://www.waveshare.com/7.5inch-e-paper-hat-h.htm](https://www.waveshare.com/7.5inch-e-paper-hat-h.htm) |
 | Waveshare-7.5in-bV2-BWR   | Waveshare           | [https://www.waveshare.com/7.5inch-e-paper-hat-b.htm](https://www.waveshare.com/7.5inch-e-paper-hat-b.htm) — 7.5" V2 3-color (800x480, UC8179) |
+| Waveshare-7.5in-v2-4gray  | Waveshare           | [https://www.waveshare.com/7.5inch-e-paper-hat.htm](https://www.waveshare.com/7.5inch-e-paper-hat.htm) — 7.5" V2 (800x480, UC8179) in 4-level grayscale with hybrid partial refresh |
 | WeAct-2.13in-3c           | WeAct               | 2.13" 3-color e-paper (250x122, SSD1683)           |
 | WeAct-2.9in-3c            | WeAct               | 2.9" 3-color e-paper (128x296, SSD1683)            |
 | WeAct-4.2in-3c            | WeAct               | 4.2" 3-color e-paper (400x300, SSD1683)            |
@@ -135,6 +136,57 @@ display:
     dc_pin: GPIOXX
     reset_pin: GPIOXX
     busy_pin: { number: GPIOXX, inverted: False, mode: { input: True, pulldown: True } }
+```
+
+### 4-gray hybrid-partial example (Waveshare 7.5in V2)
+
+The `Waveshare-7.5in-v2-4gray` model drives the common 7.5" V2 panel in 4-level
+grayscale (white, light gray, dark gray, black — mapped from RGB luminance)
+instead of the panel's usual monochrome mode. It combines three refresh types:
+
+- A **full refresh** repaints all four gray levels using the controller's 4-gray
+  waveform (about 2 seconds, with the usual e-paper flash).
+- With `full_update_every` set above 1, the updates in between are **differential
+  partial refreshes** (about half a second, no flash): only pixels that changed
+  are driven, and unchanged pixels — including grays — physically hold their level.
+- Calling `request_fast_flip()` from a lambda makes the next update a **fast
+  1-bit refresh** (about 300 ms): ghost-free but monochrome until the next full
+  refresh. Useful for page changes, where latency matters more than grayscale.
+  Similarly `force_full_refresh()` makes the next update a full 4-gray refresh
+  regardless of the `full_update_every` cadence.
+
+```yaml
+display:
+  - platform: epaper_spi
+    id: epaper
+    model: Waveshare-7.5in-v2-4gray
+    full_update_every: 30  # quiet partials, full 4-gray refresh every 30th
+    update_interval: 60s
+    cs_pin: GPIOXX
+    dc_pin: GPIOXX
+    reset_pin: GPIOXX
+    busy_pin:
+      number: GPIOXX
+      inverted: true
+    lambda: |-
+      it.filled_rectangle(0, 0, 100, 100, Color(85, 85, 85));      // dark gray
+      it.filled_rectangle(100, 0, 100, 100, Color(170, 170, 170));  // light gray
+
+# Recommended page-flip pattern: instant monochrome flip, then one debounced
+# full refresh to restore the grays once the user settles on a page.
+script:
+  - id: regray_after_flip
+    mode: restart
+    then:
+      - delay: 3s
+      - lambda: id(epaper).force_full_refresh();
+      - component.update: epaper
+
+# on_press:
+#   - lambda: id(epaper).request_fast_flip();
+#   - display.page.show_next: epaper
+#   - component.update: epaper
+#   - script.execute: regray_after_flip
 ```
 
 ### 4-color display example
