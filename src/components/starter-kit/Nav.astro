@@ -31,9 +31,9 @@
             rel="noopener">Docs</a
           >
         </div>
-        <div class="nav-links-ctas">
-          <a href="#buy" class="btn esk-btn" data-context="navbar">Buy now</a>
-        </div>
+      </div>
+      <div class="nav-links-ctas">
+        <a href="#buy" class="btn esk-btn" data-context="navbar">Buy now</a>
       </div>
       <div class="burger">
         <input type="checkbox" id="burger-toggle" aria-label="Toggle navigation menu" />
@@ -52,7 +52,6 @@
             target="_blank"
             rel="noopener">Docs</a
           >
-          <a href="#buy" class="btn esk-btn" data-context="navbar">Buy now</a>
         </div>
       </div>
     </div>
@@ -174,9 +173,15 @@
         width: 100%;
         height: 100%;
         display: flex;
+        flex-wrap: nowrap;
         align-items: center;
         gap: 16px;
         justify-content: space-between;
+
+        .logo-wrapper {
+          min-width: 0;
+          flex-shrink: 1;
+        }
 
         .nav-links {
           align-items: center;
@@ -207,31 +212,34 @@
             }
           }
 
-          &-ctas {
-            display: flex;
-            gap: 24px;
-            align-items: center;
-            margin: 0;
-          }
-
           a:not(.btn) {
             text-decoration: none;
             font-size: 0.875rem;
             font-weight: 500;
             color: var(--nav-links-color);
           }
+        }
+
+        .nav-links-ctas {
+          display: flex;
+          flex-shrink: 0;
+          gap: 24px;
+          align-items: center;
+          margin: 0;
 
           a.btn {
             margin: 0;
             font-size: 0.875rem;
             font-weight: 600;
             color: #fff;
+            white-space: nowrap;
           }
         }
       }
 
       .logo {
         display: grid;
+        min-width: 0;
         opacity: 0;
         transition: opacity 0.3s ease-out;
 
@@ -240,9 +248,10 @@
         }
 
         img {
-          height: 34px;
+          @include fluid(22px, 34px, 320px, 500px, $property: height);
           grid-area: 1/1;
           width: auto;
+          max-width: 100%;
           transition: opacity 0.2s;
           margin: 0;
 
