@@ -16,10 +16,12 @@ registers.
   this Select to values (int) of the modbus register and vice versa. All options and
   all values have to be unique.
 
-- **value_type** (*Optional*): The datatype of the modbus data. Defaults to `U_WORD`.
+- **value_type** (*Optional*): The data type of the modbus data. Defaults to `U_WORD`.
 
   - `U_WORD` (unsigned 16 bit integer from 1 register = 16bit)
   - `S_WORD` (signed 16 bit integer from 1 register = 16bit)
+  - `U_WORD_S` (unsigned 16 bit integer from 1 register with bytes swapped within the register = 16bit)
+  - `S_WORD_S` (signed 16 bit integer from 1 register with bytes swapped within the register = 16bit)
   - `U_DWORD` (unsigned 32 bit integer from 2 registers = 32bit)
   - `S_DWORD` (signed 32 bit integer from 2 registers = 32bit)
   - `U_DWORD_R` (unsigned 32 bit integer from 2 registers low word first)
@@ -27,18 +29,26 @@ registers.
   - `U_QWORD` (unsigned 64 bit integer from 4 registers = 64bit)
   - `S_QWORD` (signed 64 bit integer from 4 registers = 64bit)
   - `U_QWORD_R` (unsigned 64 bit integer from 4 registers low word first)
-  - `U_QWORD_R` (signed 64 bit integer from 4 registers low word first)
+  - `S_QWORD_R` (signed 64 bit integer from 4 registers low word first)
 
-- **register_count** (*Optional*): The number of registers which are used for this Select. Only
-  required for uncommon response encodings or to
-  [optimize modbus communications](/components/modbus_controller#modbus_register_count). Overrides the defaults determined
-  by `value_type`.
+> [!WARNING]
+> `U_WORD_S` and `S_WORD_S` are a **rare, non-standard** configuration: the two bytes
+> **within** one 16-bit register are reversed (LSB first on the wire within that register).
+> Modbus registers are big-endian (MSB first) per the specification. The `_S` suffix is not
+> the same as `_R` (word order reversed / **low word first** across multiple registers).
 
-- **skip_updates** (*Optional*, int): By default, all sensors of a modbus_controller are updated together. For data points that don't change very frequently, updates can be skipped. A value of 5 would only update this sensor range in every 6th update cycle. Note: The modbus_controller groups components by address ranges to reduce number of transactions. All components with the same starting address will be updated in one request. `skip_updates` applies for *all* components in the same range.
 
-- **force_new_range** (*Optional*, boolean): If possible sensors with sequential addresses are
-  grouped together and requested in one range. Setting this to `true` enforces the start of a new
-  range at that address.
+- **skip_updates** (*Optional*, int): **Deprecated and no longer has any effect** — every register range is polled on
+  each `update_interval`. The key is still accepted (logging a config-time warning) and will be removed in 2027.3.0.
+  To poll some registers less often, place those sensors on a second `modbus_controller` with the same `address:` and a
+  slower `update_interval:`.
+
+- **reuse_previous_range** (*Optional*, boolean or `auto`): How this item relates to the register range built just
+  before it (same register type, ascending address order). `auto` (default) joins when the addresses are adjacent and
+  the item's position in the reply is exact; `true` joins unconditionally, reading across address gaps; `false` always
+  starts a new range here (later items may still extend it). See
+  [Register ranges](/components/modbus_controller/#modbus_register_count). Replaces the deprecated `force_new_range`
+  and `register_count` options, which will be removed in 2027.3.0 — the linked section covers migration.
 
 - **lambda** (*Optional*, [lambda](/automations/templates#config-lambda)): Lambda to be evaluated every update interval
   to get the current option of the select.
@@ -46,11 +56,13 @@ registers.
   Parameters passed into lambda
 
   - **x** (`int64_t`  ): The parsed integer value of the modbus data.
-  - **data** (`const std::vector<uint8_t> &`): vector containing the complete raw modbus response bytes for this
-    sensor. Note: because the response contains data for all registers in the same range you have to
-    use `data[item->offset]` to get the first response byte for your sensor.
+  - **data** (`std::span<const uint8_t>`): span containing the complete raw modbus response bytes for this
+    select. Note: because the response contains data for all registers in the same range you have to
+    use `data[item->offset]` to get the first response byte for your select.
 
-  - **item** (`ModbusSelect*const`  ): The sensor object itself.
+  - **item** (`ModbusSelect *`): The select entity, a
+  [`SensorItem`](https://api-docs.esphome.io/classesphome_1_1modbus__controller_1_1_sensor_item) subclass, so the
+  configured address, `offset`, `bitmask`, etc. are accessible.
 
   Possible return values for the lambda:
 
@@ -58,7 +70,7 @@ registers.
   - `return {};` Use default mapping (see `optionsmap`  ).
 
 - **write_lambda** (*Optional*, [lambda](/automations/templates#config-lambda)): Lambda to be evaluated on every update
-  of the Sensor, before the new value is written to the modbus registers.
+  of the Select, before the new value is written to the modbus registers.
 
 - **use_write_multiple** (*Optional*, boolean): By default the modbus command *Function Code 6 (Preset Single Registers)*
   is used for setting the holding register if only one register is set. If your device only supports *Function Code 16 (Preset Multiple Registers)* set this option to `true`.
@@ -83,15 +95,20 @@ lambda: |-
 
 - **x** (`const std::string&`  ): The option value to set for this Select.
 - **value** (`int64_t`  ): The mapping value of `x` using `optionsmap`.
-- **payload** (`std::vector<uint16_t> &payload`): Empty vector for the payload. The lambda can add
-  16 bit raw modbus register words which are send to the modbus device.
-
-- **item** (`ModbusSelect*const`  ): The sensor object itself.
+- **item** (`ModbusSelect *`): The entity as its own modbus device: the
+  [write helpers](/components/modbus_client/#lambda-hook-component) and `queue_pdu()` are available - for example
+  `item->write_single_register(0x1234, 42)` or `item->queue_pdu(...)` - regardless of the select's own register
+  type. Also a [`SensorItem`](https://api-docs.esphome.io/classesphome_1_1modbus__controller_1_1_sensor_item)
+  subclass, so the configured address, `offset`, `bitmask`, etc. are accessible.
+- **payload** (`RegisterValues &payload`): *Deprecated, removed in 2027.3.0 - use `item` instead.*
+  An empty buffer; the lambda can add (`push_back`/`clear`/`assign` - not the full `std::vector` API) the 16 bit
+  register words to write in place of the mapping value. Unlike the number platform's buffer, this is data words
+  only - no device address or function code.
 
 Possible return values for the lambda:
 
 - `return <int64_t>;` the value which should be written to the configured modbus registers. If there were data written to `payload` this value is ignored.
-- `return {};` Skip updating the register.
+- `return {};` if the lambda handled (or deliberately skipped) the write itself, for example via `item->write_*()`.
 
 ```yaml
 # example
@@ -108,13 +125,15 @@ write_lambda: |-
     return 2;
   }
 
-  // write payload
+  // "Two" needs a vendor trigger register instead of the mapped write:
+  // drive it directly through the entity
   if (x == "Two") {
-    payload.push_back(0x0001);
-    return 0; // any value will do
+    item->write_single_register(0x2000, 1);
+    // the lambda must return something - return empty, the write is already done
+    return {};
   }
 
-  // ignore update
+  // {} without an item-> write = skip this update entirely; nothing is sent
   return {};
 ```
 

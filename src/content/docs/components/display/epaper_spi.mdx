@@ -36,6 +36,7 @@ pins and dimensions specified.
 | SSD1677                | Solomon      | [https://www.solomon-systech.com/product/ssd1677/](https://www.solomon-systech.com/product/ssd1677/) |
 | SSD1683                | Solomon      | [https://www.solomon-systech.com/product/ssd1683/](https://www.solomon-systech.com/product/ssd1683/) |
 | T133A01                | TianMa       | 13.3" 6-color e-paper controller IC with dual-CS SPI architecture          |
+| UC8179                 | UltraChip    | E-paper controller used by 800x480 7.5" panels (mono and 3-color variants) |
 
 ## Supported display panels
 
@@ -51,6 +52,7 @@ the pins used to interface to the display to be specified.
 | Waveshare-3.97in          | Waveshare           | [https://www.waveshare.com/3.97inch-e-paper-hat-plus.htm](https://www.waveshare.com/3.97inch-e-paper-hat-plus.htm) |
 | Waveshare-4.26in          | Waveshare           | [https://www.waveshare.com/4.26inch-e-paper.htm](https://www.waveshare.com/4.26inch-e-paper.htm)   |
 | Waveshare-7.5in-H         | Waveshare           | [https://www.waveshare.com/7.5inch-e-paper-hat-h.htm](https://www.waveshare.com/7.5inch-e-paper-hat-h.htm) |
+| Waveshare-7.5in-V2        | Waveshare           | [https://www.waveshare.com/7.5inch-e-paper-hat.htm](https://www.waveshare.com/7.5inch-e-paper-hat.htm) — 7.5" V2 mono (800x480, UC8179), supports fast and partial refresh via `full_update_every` |
 | Waveshare-7.5in-bV2-BWR   | Waveshare           | [https://www.waveshare.com/7.5inch-e-paper-hat-b.htm](https://www.waveshare.com/7.5inch-e-paper-hat-b.htm) — 7.5" V2 3-color (800x480, UC8179) |
 | WeAct-2.13in-3c           | WeAct               | 2.13" 3-color e-paper (250x122, SSD1683)           |
 | WeAct-2.9in-3c            | WeAct               | 2.9" 3-color e-paper (128x296, SSD1683)            |
@@ -64,7 +66,9 @@ a minimum only the model name need be configured. Other options can be overridde
 | Model name              | Manufacturer         | Product Description                                                                                                          |
 |-------------------------|----------------------|------------------------------------------------------------------------------------------------------------------------------|
 | inkplate2               | Soldered Electronics | Soldered Inkplate 2: 2.13" 3-color (black/white/red) e-paper, 104x212. [https://soldered.com/products/inkplate-2](https://soldered.com/products/inkplate-2) |
+| inkplate6color          | Soldered Electronics | Soldered Inkplate 6COLOR: 7-color (black/white/green/blue/red/yellow/orange) e-paper, 600x448. [https://soldered.com/products/inkplate-6color-e-paper-display](https://soldered.com/products/inkplate-6color-e-paper-display) |
 | Seeed-ee04-mono-4.26    | Seeed Studio         | Seeed EE04 board with Waveshare 4.26" mono epaper. [https://www.seeedstudio.com/XIAO-ePaper-Display-Board-EE04-p-6560.html](https://www.seeedstudio.com/XIAO-ePaper-Display-Board-EE04-p-6560.html)  |
+| Seeed-reTerminal-E1001  | Seeed Studio         | 7.5" mono e-paper (800x480, UC8179), supports fast and partial refresh via `full_update_every`. [https://www.seeedstudio.com/reTerminal-E1001-p-6534.html](https://www.seeedstudio.com/reTerminal-E1001-p-6534.html) |
 | Seeed-reTerminal-E1002  | Seeed Studio         | [https://www.seeedstudio.com/reTerminal-E1002-p-6533.html](https://www.seeedstudio.com/reTerminal-E1002-p-6533.html)         |
 | Seeed-reTerminal-E1004 | Seeed Studio | 13.3" 6-color e-paper (1200x1600, T133A01). Requires PSRAM. [https://www.seeedstudio.com/reTerminal-E1004-p-6692.html](https://www.seeedstudio.com/reTerminal-E1004-p-6692.html) |
 | Seeed-reTerminal-Sticky | Seeed Studio         | [https://www.seeedstudio.com/sticky/](https://www.seeedstudio.com/sticky/)                                                                 |
@@ -82,7 +86,8 @@ but can be overridden if needed.
 
   > [!NOTE]
   > Some displays use inverted busy pin polarity (LOW = busy, HIGH = idle). For these models, set `inverted: true`
-  > on the busy pin. This applies to: `Waveshare-1.54in-G`, `Waveshare-7.5in-H`.
+  > on the busy pin. This applies to: `Waveshare-1.54in-G`, `Waveshare-7.5in-H`, `Waveshare-7.5in-V2`,
+  > `inkplate6color`.
 
 - **reset_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The RESET pin, if used.
   Make sure you pull this pin high (by connecting it to 3.3V with a resistor) if not connected to a GPIO pin.
@@ -134,6 +139,23 @@ display:
     dc_pin: GPIOXX
     reset_pin: GPIOXX
     busy_pin: { number: GPIOXX, inverted: False, mode: { input: True, pulldown: True } }
+```
+
+### Fast and partial refresh example (reTerminal E1001)
+
+Displays based on the UC8179 controller (`Waveshare-7.5in-V2`, `Seeed-reTerminal-E1001`) support fast full and
+partial refresh. Set `full_update_every` greater than `1` to enable it: a fast full refresh is performed every
+`full_update_every` updates, with partial refreshes in between. With the default of `1`, every update is a normal
+full refresh.
+
+```yaml
+display:
+  - platform: epaper_spi
+    model: Seeed-reTerminal-E1001
+    update_interval: 30s
+    full_update_every: 30
+    lambda: |-
+      it.filled_circle(it.get_width() / 2, it.get_height() / 2, 50, Color::BLACK);
 ```
 
 ### 4-color display example
@@ -195,6 +217,37 @@ display:
       it.filled_circle(600, 300, 80, GREEN);
       it.filled_circle(200, 550, 80, BLUE);
       it.filled_circle(400, 550, 80, YELLOW);
+```
+
+### 7-color display example (Inkplate 6COLOR)
+
+The Soldered Inkplate 6COLOR features a 600x448 7-color e-paper display that supports
+black, white, green, blue, red, yellow, and orange. Since it is an integrated board,
+only the model name is needed.
+
+Full refresh times are typically around 40 seconds.
+
+```yaml
+display:
+  - platform: epaper_spi
+    model: inkplate6color
+    update_interval: 5min
+    lambda: |-
+      auto BLACK = Color(0, 0, 0);
+      auto WHITE = Color(255, 255, 255);
+      auto GREEN = Color(0, 255, 0);
+      auto BLUE = Color(0, 0, 255);
+      auto RED = Color(255, 0, 0);
+      auto YELLOW = Color(255, 255, 0);
+      auto ORANGE = Color(255, 165, 0);
+
+      it.fill(WHITE);
+      it.filled_circle(100, 224, 80, BLACK);
+      it.filled_circle(250, 224, 80, GREEN);
+      it.filled_circle(400, 224, 80, BLUE);
+      it.filled_circle(100, 350, 80, RED);
+      it.filled_circle(250, 350, 80, YELLOW);
+      it.filled_circle(400, 350, 80, ORANGE);
 ```
 
 ## See Also

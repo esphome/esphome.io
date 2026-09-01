@@ -123,6 +123,35 @@ See the [CC1101 Datasheet](https://www.ti.com/lit/ds/symlink/cc1101.pdf) for det
 - **hyst_level** (*Optional*, enum): Hysteresis level to prevent gain oscillation on borderline signals.
   Options: `None`, `Low`, `Medium`, `High`.
 
+### Frequency Offset and Bit Synchronization Settings
+
+Advanced users can tune how the receiver tracks frequency error and symbol timing error while demodulating
+FSK/MSK signals. These settings affect how quickly the demodulator adapts before and after sync word
+detection, and how much frequency or data rate offset it is allowed to compensate. When omitted, the
+datasheet power-on-reset defaults are used. Leave them unset unless you need protocol-specific receiver
+tuning.
+
+- **foc_bs_cs_gate** (*Optional*, boolean): Freeze frequency offset compensation and clock recovery until
+  carrier sense is asserted.
+- **foc_limit** (*Optional*, enum): Saturation point for frequency offset compensation.
+  Options: `Disabled`, `BW/8`, `BW/4`, `BW/2`.
+- **foc_pre_k** (*Optional*, enum): Frequency compensation loop gain before sync word detection.
+  Options: `K`, `2K`, `3K`, `4K`.
+- **foc_post_k** (*Optional*, enum): Frequency compensation loop gain after sync word detection.
+  Options: `Same`, `K/2`.
+- **bs_limit** (*Optional*, enum): Saturation point for data rate offset compensation.
+  Options: `Disabled`, `3.125%`, `6.25%`, `12.5%`.
+- **bs_pre_ki** (*Optional*, enum): Clock recovery integral gain before sync word detection.
+  Options: `KI`, `2KI`, `3KI`, `4KI`.
+- **bs_pre_kp** (*Optional*, enum): Clock recovery proportional gain before sync word detection.
+  Options: `KP`, `2KP`, `3KP`, `4KP`.
+- **bs_post_ki** (*Optional*, enum): Clock recovery integral gain after sync word detection.
+  Options: `Same`, `KI/2`.
+- **bs_post_kp** (*Optional*, enum): Clock recovery proportional gain after sync word detection.
+  Options: `Same`, `KP`.
+
+Frequency offset compensation is ignored for ASK/OOK modulation.
+
 ## Triggers
 
 ### `on_packet` Trigger

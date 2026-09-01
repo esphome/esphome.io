@@ -1,0 +1,84 @@
+---
+description: "Instructions for setting up remote temperature sensors with Mitsubishi CN105-compatible heatpumps."
+title: "Remote sensor with Mitsubishi CN105 heatpump"
+---
+
+Mitsubishi heatpumps equipped with the `CN105` internal connector support reading temperature values from remote sensors.
+The advantage of this feature is that a remote sensor can be placed more optimally in the room to get information about the
+real temperature.
+
+The [Mitsubishi CN105 Climate](/components/climate/mitsubishi_cn105/) component supports this feature by providing [actions and lambdas](/automations/) to update the hardware
+with values from any temperature sensor available in ESPHome.
+
+The following is a possible configuration to implement this. Some heatpumps require frequent temperature updates to prevent from
+falling back to their internal sensor, `update_interval` and `force_update` take care of this. The filters are to guard from
+failing sensors - that's when one would still want to continue operation, based on the internal sensor. The `select` offers the
+possibility to choose at run time between which temperature source to use with the heatpump.
+
+```yaml
+climate:
+  - platform: mitsubishi_cn105
+    id: ac
+    ...
+
+sensor:
+  - platform: ...
+    id: my_temp
+    ...
+    accuracy_decimals: 1
+    update_interval: 10s
+    force_update: true
+    filters:
+      - filter_out: nan  # occasional NaNs are OK
+      - timeout: 1800s  # sent value will be NaN after this amount of time to guard from sensor failures
+    on_value:
+      - if:
+          all:
+            - select.is:
+                id: sel_temp
+                options: "External"
+            - lambda: return (!isnan(x));
+          then:
+            - climate.mitsubishi_cn105.set_remote_temperature:
+                id: ac
+                temperature: !lambda 'return x;'
+          else:
+            - climate.mitsubishi_cn105.clear_remote_temperature:
+                id: ac
+
+select:
+  - platform: template
+    id: sel_temp
+    name: "Temperature Source"
+    optimistic: true
+    restore_value: true
+    options:
+      - Internal
+      - External
+    initial_option: "Internal"
+    on_value:
+      - if:
+          condition:
+            select.is:
+              id: sel_temp
+              options: "Internal"
+          then:
+            - climate.mitsubishi_cn105.clear_remote_temperature:
+                id: ac
+      - if:
+          condition:
+            select.is:
+              id: sel_temp
+              options: "External"
+          then:
+            - climate.mitsubishi_cn105.set_remote_temperature:
+                id: ac
+                temperature: !lambda 'return id(my_temp).state;'
+```
+
+## See Also
+
+- [Mitsubishi CN105 Climate](/components/climate/mitsubishi_cn105/)
+- [Sensor](/components/sensor/)
+- [Template Select](/components/select/template/)
+- [Automation](/automations/)
