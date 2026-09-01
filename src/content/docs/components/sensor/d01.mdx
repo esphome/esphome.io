@@ -28,26 +28,18 @@ uart:
 
 sensor:
   - platform: d01
-    pm_2_5:
-      name: "D01 PM2.5 Concentration"
-      filter:
-        - lambda: return (x - 5.0) * 0.4;
-    update_interval: 2s
+    name: "D01 PM2.5 Concentration"
+    filters:
+      - lambda: return (x - 5.0) * 0.4;
 ```
 
-This implementation will passively pick up whatever the sensor reports. It automatically sends out its packets every 1.4 seconds upon receiving 5v. An update inverval 
+This implementation will passively pick up whatever the sensor reports. It automatically sends out its packets every 1.4 seconds upon receiving 5v.
 
 ## Configuration variables
 
-- **pm_2_5**: Use the concentration of particulates of size less than 2.5µm in µg per cubic meter.
-  All options from [Sensor](/components/sensor).
-
-- **filter**: The correction filter applied to the inbound reported PM2.5 value. The hardware reports values 2.5 times higher than the actual concentration of PM2.5, and a K-factor needs to be applied per their documentation. The recommended starting value is 0.4. Additionally, the minimum reportable value is 5µg/m³, so subtraction of 5.0 from the raw value is also needed.
-
 - **uart_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the [UART Component](/components/uart) if you want
   to use multiple UART buses.
-
-- **update_interval** ([Time](/guides/configuration-types#time)): Update the sensor at the time interval specified. The sensor sends packets every 1.4 seconds, so a window 2 seconds or larger should be sensible. Defaults to never, so some value is required.
+- All other options from [Sensor](/components/sensor).
 
 ## See Also
 
