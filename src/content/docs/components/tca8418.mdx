@@ -49,9 +49,12 @@ tca8418:
 - **gpi_events** (*Optional*, boolean): Report the pins that are not part of the key matrix as
   individual inputs. Defaults to `true`.
 - **interrupt_pin** (*Optional*, [Pin](/guides/configuration-types#pin-schema)): The pin the
-  device's interrupt output is connected to. When set, the component reacts as soon as a key is
-  pressed instead of checking the device on a timer. The output is open drain and active low, so
-  it needs a pull-up; set `mode: INPUT_PULLUP` unless the board already has one of its own.
+  device's interrupt output is connected to. When set, the component leaves the device alone until
+  the interrupt says there is something to read, instead of asking it regularly. That saves I²C
+  traffic and processing time while the keypad is idle; it does not make a key press arrive
+  noticeably sooner, since either way one is picked up within a few milliseconds. The output is
+  open drain and active low, so it needs a pull-up; set `mode: INPUT_PULLUP` unless the board
+  already has one of its own.
 - All other options from [I²C Device](/components/i2c).
 
 ### Key numbers
