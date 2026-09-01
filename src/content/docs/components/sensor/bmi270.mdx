@@ -1,10 +1,13 @@
 ---
-description: "Instructions for setting up BMI270 temperature sensor."
-title: "BMI270 Temperature Sensor"
+description: "Instructions for setting up BMI270 temperature and BMM150 magnetic field sensors."
+title: "BMI270 Temperature and Magnetic Field Sensor"
 ---
 
-The `bmi270` sensor platform provides access to the temperature sensor in a BMI270 Accelerometer/Gyroscope
-([datasheet](https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bmi270-ds000.pdf)) with ESPHome.
+The `bmi270` sensor platform provides access to the on-chip temperature sensor in a BMI270 Accelerometer/Gyroscope
+([datasheet](https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bmi270-ds000.pdf)), and,
+when a
+[Bosch BMM150](https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bmm150-ds001.pdf)
+magnetometer is wired to the BMI270's auxiliary interface, its magnetic field readings as well, with ESPHome.
 It requires a [`motion`](/components/motion) component to be configured with the `bmi270` platform,
 which handles the accelerometer and gyroscope data processing and configures the device. See that component for more information.
 
@@ -15,13 +18,36 @@ motion:
 
 sensor:
   - platform: bmi270
-    type: temperature # Optional, temperature is the only supported type for this platform
+    type: temperature # Optional, temperature is the default type for this platform
     name: "BMI270 Temperature"
+```
+
+To read the magnetic field, first set `aux_device: BMM150` on the parent [`motion`](/components/motion/bmi270/)
+platform, then add one entry per axis:
+
+```yaml
+# Example configuration entry
+motion:
+  - platform: bmi270
+    aux_device: BMM150
+
+sensor:
+  - platform: bmi270
+    type: magnetic_field_x
+    name: "BMM150 Magnetic Field X"
+  - platform: bmi270
+    type: magnetic_field_y
+    name: "BMM150 Magnetic Field Y"
+  - platform: bmi270
+    type: magnetic_field_z
+    name: "BMM150 Magnetic Field Z"
 ```
 
 ## Configuration variables
 
-- **type** (*Optional*, string): Must be set to `temperature`, or simply omitted.
+- **type** (*Optional*, string): One of `temperature`, `magnetic_field_x`, `magnetic_field_y`, `magnetic_field_z`.
+  Defaults to `temperature`. The `magnetic_field_*` types report the field strength in microtesla (µT) and
+  require the parent `bmi270` platform's `aux_device` to be set to `BMM150`.
 - All other options from [Sensor](/components/sensor).
 
 ## See Also
