@@ -17,7 +17,7 @@ possibility to choose at run time between which temperature source to use with t
 
 ```yaml
 mitsubishi_cn105:
-  id: hp
+  id: ac
   ...
 
 sensor:
@@ -39,11 +39,11 @@ sensor:
             - lambda: return (!isnan(x));
           then:
             - mitsubishi_cn105.set_remote_temperature:
-                id: hp
+                id: ac
                 temperature: !lambda 'return x;'
           else:
             - mitsubishi_cn105.clear_remote_temperature:
-                id: hp
+                id: ac
 
 select:
   - platform: template
@@ -63,7 +63,7 @@ select:
               options: "Internal"
           then:
             - mitsubishi_cn105.clear_remote_temperature:
-                id: hp
+                id: ac
       - if:
           condition:
             select.is:
@@ -71,7 +71,7 @@ select:
               options: "External"
           then:
             - mitsubishi_cn105.set_remote_temperature:
-                id: hp
+                id: ac
                 temperature: !lambda 'return id(my_temp).state;'
 ```
 
