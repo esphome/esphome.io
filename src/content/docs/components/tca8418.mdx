@@ -28,7 +28,9 @@ tca8418:
   rows: 4
   columns: 4
   keys: "123A456B789C*0#D"
-  interrupt_pin: GPIOXX
+  interrupt_pin:
+    number: GPIOXX
+    mode: INPUT_PULLUP
   on_key:
     - lambda: ESP_LOGI("KEY", "key %c pressed", x);
 ```
@@ -48,7 +50,8 @@ tca8418:
   individual inputs. Defaults to `true`.
 - **interrupt_pin** (*Optional*, [Pin](/guides/configuration-types#pin-schema)): The pin the
   device's interrupt output is connected to. When set, the component reacts as soon as a key is
-  pressed instead of checking the device on a timer.
+  pressed instead of checking the device on a timer. The output is open drain and active low, so
+  it needs a pull-up; set `mode: INPUT_PULLUP` unless the board already has one of its own.
 - All other options from [I²C Device](/components/i2c).
 
 ### Key numbers
