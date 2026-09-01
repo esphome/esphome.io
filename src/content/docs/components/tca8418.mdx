@@ -60,6 +60,14 @@ key 11. In other words, a key is `row × 10 + column + 1`.
 Pins that are not part of the matrix report as individual inputs numbered from 97: `ROW0` to
 `ROW7` are 97 to 104, and `COL0` to `COL9` are 105 to 114.
 
+> [!NOTE]
+> Those numbers are also the character codes for the letters `a` to `r`. On the `on_key` and
+> [Key Collector](/components/key_collector#key_collector) paths a key is reported as a single
+> number, so a `keys` map using any of those letters cannot be told apart from an individual
+> input. Binary sensors are not affected, because the key each one watches is worked out when the
+> firmware is built. ESPHome warns when it sees this combination; use other characters, or set
+> `gpi_events: false`, if it matters.
+
 ## Binary Sensor
 
 Individual keys can be added to ESPHome as `binary_sensor`:
