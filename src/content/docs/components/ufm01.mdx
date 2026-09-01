@@ -10,7 +10,7 @@ The `ufm01` component allows you to integrate the UFM-01 flow meter
 ([datasheet](https://www.sciosense.com/wp-content/uploads/2025/06/UFM-01-Datasheet-1.pdf),
 [manufacturer page](https://www.sciosense.com/ufm-01-ultrasonic-flow-sensing-module/))
 into your ESPHome device. This component reads accumulated flow (volume), current flow rate, and water temperature
-from the UFM-01 device via UART. It also provides diagnostic binary sensors, optional device ID and software version
+from the UFM-01 device via UART. It also provides diagnostic binary sensors, optional meter ID and software version
 text sensors, and an action to clear the accumulated flow stored on the meter.
 
 The UFM-01 flow meter communicates using a specific UART protocol at 2400 baud with even parity and 1 stop bit.
@@ -143,8 +143,8 @@ The `ufm01` text sensors report the meter identity and firmware version.
 text_sensor:
   - platform: ufm01
     ufm01_id: ufm01_component
-    device_id:
-      name: "UFM01 Device ID"
+    meter_id:
+      name: "UFM01 Meter ID"
     software_version:
       name: "UFM01 Software Version"
 ```
@@ -154,7 +154,7 @@ text_sensor:
 - **platform**: `ufm01`
 - **ufm01_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the `ufm01` component this text sensor
   belongs to.
-- **device_id** (*Optional*): The 10-digit device ID from the meter.
+- **meter_id** (*Optional*): The 10-digit meter ID from the device.
 
   - All options from [Text Sensor](/components/text_sensor#config-text_sensor).
 
@@ -167,7 +167,8 @@ text_sensor:
 ### `ufm01.clear_accumulated_flow` Action
 
 Clears the accumulated flow stored on the UFM-01. The action waits for the UART to be idle, sends the command, and
-continues the automation after the meter acknowledges it (or after a timeout).
+continues the automation after the meter acknowledges it (or after a timeout). If a clear is already in progress,
+additional triggers are ignored and do not advance the automation chain.
 
 ```yaml
 on_...:
@@ -222,8 +223,8 @@ binary_sensor:
 text_sensor:
   - platform: ufm01
     ufm01_id: ufm01_component
-    device_id:
-      name: "UFM01 Device ID"
+    meter_id:
+      name: "UFM01 Meter ID"
     software_version:
       name: "UFM01 Software Version"
 
