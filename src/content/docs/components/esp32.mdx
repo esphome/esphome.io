@@ -14,7 +14,8 @@ esp32:
 ## Configuration variables
 
 - **variant** (*Optional*, string): The ESP32 mcu/chip to use for this device configuration. One of `esp32`,
-  `esp32s2`, `esp32s3`, `esp32c2`, `esp32c3`, `esp32c5`, `esp32c6`, `esp32c61`, `esp32h2` or `esp32p4`.
+  `esp32s2`, `esp32s3`, `esp32s31`, `esp32c2`, `esp32c3`, `esp32c5`, `esp32c6`, `esp32c61`, `esp32h2`,
+  `esp32h4`, `esp32h21` or `esp32p4`.
   This must match the hardware in use, or it will fail to flash.
 
 - **board** (*Optional*, string): The PlatformIO board ID that should be used. Choose the appropriate board from
@@ -35,13 +36,47 @@ esp32:
   `4MB`, `8MB`, `16MB` or `32MB`. Defaults to `4MB`. **Warning: specifying a size larger than that available
   on your board will cause the ESP32 to fail to boot.**
 
-- **cpu_frequency** (*Optional*, string): The CPU frequency to use. One of `40MHz`, `80MHz`, `160MHz`, `240MHz`,
-  `360MHz` or `400MHz`. Defaults to `160MHz`. Not all values are available for all chips.
+- **flash_mode** (*Optional*, string): The SPI mode used to access the flash chip. One of `qio`, `qout`, `dio`,
+  `dout` or `opi` (octal flash chips only). When not set, the board definition (PlatformIO) or the ESP-IDF
+  default decides. **Warning: specifying a mode your flash chip does not support will cause the ESP32 to fail
+  to boot.**
 
-- **partitions** (*Optional*, filename): The name of (optionally including the path to) the file containing the
-  partitioning scheme to be used. When not specified, partitions are automatically generated based on `flash_size`.
+- **flash_frequency** (*Optional*, string): The SPI frequency used to access the flash chip, for example `80MHz`
+  or `40MHz`. The supported values depend on the variant and are checked at build time. When not set, the board
+  definition (PlatformIO) or the ESP-IDF default decides. **Warning: specifying a frequency your flash chip does
+  not support will cause the ESP32 to fail to boot.**
 
-- **framework** (*Optional*): Options for the underlying framework used by ESPHome. See [Framework](#esp32-framework).
+- **cpu_frequency** (*Optional*, string): The CPU frequency to use. Defaults to the maximum supported
+  frequency for the variant. The allowed values depend on the variant:
+
+  - ESP32, ESP32-S2, ESP32-S3, ESP32-C5: `80MHz`, `160MHz`, `240MHz`
+  - ESP32-C2: `80MHz`, `120MHz`
+  - ESP32-C3: `80MHz`, `160MHz`
+  - ESP32-C6, ESP32-C61: `80MHz`, `120MHz`, `160MHz`
+  - ESP32-H2: `16MHz`, `32MHz`, `48MHz`, `64MHz`, `96MHz`
+  - ESP32-H4, ESP32-H21: `48MHz`, `64MHz`, `96MHz`
+  - ESP32-S31: `240MHz`, `320MHz`
+  - ESP32-P4: `40MHz`, `360MHz`, `400MHz` (engineering samples are limited to `360MHz`)
+
+  Some ESP32 modules -- typically OEM/single-core variants found in commercial
+  devices (e.g. certain Xiaomi lamps) -- are rated only up to `160MHz` even though
+  they identify as ESP32. If your device hangs, resets, or fails to boot after
+  flashing at the default (maximum) frequency, set `cpu_frequency: 160MHz` (or
+  lower) to work around this.
+
+- **partitions** (*Optional*, filename or list): A partition table CSV file or a list of custom partitions to add.
+  See [Partitions](#partitions).
+
+- **framework** (*Optional*): Options for the underlying framework used by ESPHome. See [Framework](#framework).
+
+- **watchdog_timeout** (*Optional*, [Time](/guides/configuration-types#time)): The timeout applied to the
+  ESP-IDF task watchdog. If a subscribed task fails to feed the watchdog within this period, the device
+  will reboot. Useful for power-managed devices or long blocking operations that need extended watchdog
+  windows. Defaults to `5s`, valid range is `5s` to `60s`. Note: OTA updates temporarily raise the
+  watchdog to `15s` when the configured timeout is below that threshold.
+
+- **toolchain** (*Optional*, [Toolchain](#esp32-toolchain)): Toolchain used to build the firmware. The
+  `platformio` toolchain is deprecated and will be removed in 2027.2.0.
 
 ## Variants
 
@@ -231,7 +266,7 @@ chip is required for wireless connectivity via [ESP-Hosted](/components/esp32_ho
 - **USB:** Native USB OTG host mode (Full Speed + High Speed); USB Serial/JTAG peripheral mode
 - **Ethernet:** Built-in MAC (requires external PHY)
 - **GPIO:** 54 usable pins
-- **UART:** 3
+- **UART:** 5 full-featured + 1 lite
 - **I2C:** 3
 - **SPI:** 4
 - **I2S:** 3
@@ -239,7 +274,100 @@ chip is required for wireless connectivity via [ESP-Hosted](/components/esp32_ho
 - **DAC:** None
 - **MIPI DSI/CSI:** Yes (display and camera interfaces)
 
-<span id="esp32-framework"></span>
+### ESP32-S31
+
+The ESP32-S31 is a high-performance RISC-V chip with Wi-Fi, Bluetooth LE, and a built-in 802.15.4 radio
+for Thread and Zigbee. It requires ESP-IDF 6.1 or later.
+
+- **CPU:** RISC-V HP core, up to 320 MHz + LP core
+- **Wi-Fi:** 802.11 b/g/n 2.4 GHz
+- **Bluetooth:** Classic Bluetooth + BLE 5.4
+- **802.15.4:** Thread and Zigbee
+- **USB:** Native USB 2.0 OTG; USB Serial/JTAG peripheral mode
+- **Ethernet:** Built-in MAC (requires external PHY)
+- **GPIO:** 62 pins (0–61)
+- **UART:** 4 full-featured + 1 lite
+- **I2C:** 2 (plus 1 low-power)
+- **SPI:** 3
+- **I2S:** Yes
+- **ADC:** 2 units, 8 channels
+- **DAC:** None
+- **Touch:** Yes (v3)
+- **LCD:** Parallel RGB / LCD_CAM
+
+### ESP32-H4
+
+The ESP32-H4 is a low-power RISC-V chip with Bluetooth LE and a built-in 802.15.4 radio for Thread and
+Zigbee. It has no Wi-Fi. It requires ESP-IDF 6.1 or later.
+
+- **CPU:** RISC-V single-core, up to 96 MHz
+- **Wi-Fi:** None
+- **Bluetooth:** BLE 5.4
+- **802.15.4:** Thread and Zigbee
+- **USB:** Native USB OTG; USB Serial/JTAG peripheral mode
+- **Ethernet:** None built-in (SPI-based controllers supported)
+- **GPIO:** 40 pins (0–39)
+- **UART:** 2
+- **I2C:** 2
+- **SPI:** 3
+- **I2S:** Yes
+- **ADC:** 1 unit, 5 channels
+- **DAC:** None
+- **Touch:** Yes (v3)
+
+### ESP32-H21
+
+The ESP32-H21 is a low-power RISC-V chip with Bluetooth LE and a built-in 802.15.4 radio for Thread and
+Zigbee. It has no Wi-Fi. It requires ESP-IDF 6.1 or later.
+
+- **CPU:** RISC-V single-core, up to 96 MHz
+- **Wi-Fi:** None
+- **Bluetooth:** BLE
+- **802.15.4:** Thread and Zigbee
+- **USB:** USB Serial/JTAG peripheral mode (no USB OTG)
+- **Ethernet:** None built-in (SPI-based controllers supported)
+- **GPIO:** 26 pins (0–25)
+- **UART:** 2
+- **I2C:** 2
+- **SPI:** 2
+- **I2S:** Yes
+- **ADC:** 1 unit, 5 channels
+- **DAC:** None
+- **Touch:** None
+
+<span id="esp32-toolchain"></span>
+
+## Toolchain Configuration
+
+ESPHome supports multiple toolchains for building firmware. The toolchain determines how the firmware is compiled and which build system is used.
+
+Currently supported toolchains include:
+
+- `esp-idf` (default)
+- `platformio` (deprecated)
+
+By default, ESPHome uses its native ESP-IDF integration, including automatic framework installation and environment management as described in this [documentation](/guides/esp_idf/).
+
+> [!WARNING]
+> The `platformio` toolchain is deprecated and will be removed in 2027.2.0. Both the ESP-IDF and Arduino
+> frameworks build on the default `esp-idf` toolchain; remove `toolchain: platformio` from your configuration
+> to migrate.
+
+**Example for using the PlatformIO toolchain:**
+
+```yaml
+esp32:
+  toolchain: platformio
+```
+
+You can also select the toolchain via the [CLI](/guides/cli#cli-toolchain):
+
+```bash
+esphome --toolchain platformio compile my_device.yaml
+```
+
+If not specified, `esp-idf` is used by default.
+If both `esp32.toolchain` and the `--toolchain` CLI option are set, the CLI option takes precedence.
 
 ## Framework
 
@@ -285,16 +413,24 @@ esp32:
   - `latest`  : Use the latest *release*, even if it hasn't been recommended yet.
   - `recommended`  : Use the recommended framework version.
 
-- **source** (*Optional*, string): The PlatformIO package to use for the framework. This variable provides
-  the URL of the git repository or file archive of a custom or patched version of the
+- **source** (*Optional*, string): Override the framework source. The accepted forms depend on the active toolchain.
+
+  When the PlatformIO toolchain is selected, this is a PlatformIO package spec for a custom or patched version of the
   [pioarduino/framework-arduinoespressif32](https://github.com/espressif/arduino-esp32) or
-  [pioarduino/framework-espidf](https://github.com/pioarduino/esp-idf) package for the framework type. Refer to
+  [pioarduino/framework-espidf](https://github.com/pioarduino/esp-idf) package. Refer to
   [PlatformIO package specifications](https://docs.platformio.org/en/latest/core/userguide/pkg/cmd_install.html#package-specifications)
   for the supported URL schemes. Examples:
 
   - `https://github.com/user/arduino-esp32/releases/download/archive.zip`
   - `https://github.com/user/esp-idf.git#branch`
   - `symlink:///path/to/esp-idf`
+
+  When the [native ESP-IDF toolchain](/guides/esp_idf/) is selected, the value may be either:
+  - A pre-bundled framework archive URL (`.tar.xz`, `.tar.gz`, or `.zip`), for example
+    `https://github.com/esphome-libs/esp-idf/releases/download/v5.2.7/esp-idf-v5.2.7.tar.gz`
+  - A GitHub repository, cloned with submodules at the optional branch or tag:
+    - `github://owner/repo[@branch-or-tag]`
+    - `https://github.com/owner/repo.git[@branch-or-tag]`
 
 - **platform_version** (*Optional*, string): The version of the
   [pioarduino/espressif32](https://github.com/pioarduino/platform-espressif32/releases/) package to use. For known framework versions
@@ -307,12 +443,15 @@ esp32:
 - **log_level** (*Optional*, string): Log level of the framework, one of `ERROR` (default), `NONE`, `WARN`, `INFO`,
   `DEBUG` or `VERBOSE`.
 
-- **advanced** (*Optional*, mapping): See [Advanced Configuration](#esp32-advanced_configuration) below.
-- **components** (*Optional*, list of components): See [IDF Components](#esp32-idf_components) below.
-
-<span id="esp32-advanced_configuration"></span>
+- **advanced** (*Optional*, mapping): See [Advanced Configuration](#advanced-configuration) and [Security](#security)
+  below.
+- **components** (*Optional*, list of components): See [IDF Components](#idf-components) below.
 
 ## Advanced Configuration
+
+> [!NOTE]
+> Signed OTA verification, OTA downgrade protection and NVS encryption are also configured under `advanced:` but are
+> documented under [Security](#security) below.
 
 - **assertion_level** (*Optional*, enum): One of `ENABLE` (default), `SILENT` or `DISABLE`. Changing away from
   the default will reduce the size of the compiled binary, albeit at the expense of ease of troubleshooting. See
@@ -330,12 +469,15 @@ esp32:
   [Espressif's documentation](https://docs.espressif.com/projects/esp-idf/en/v5.3.3/esp32/api-reference/kconfig.html#config-lwip-esp-lwip-assert)
   for more information.
 
-- **execute_from_psram** (*Optional*, boolean): On ESP32S3 and ESP32P4 only may be set to `true` to enable executing code from PSRAM.
+- **execute_from_psram** (*Optional*, boolean): Can be set to `true` on ESP32-S3, ESP32-S31, and ESP32-P4 to enable executing code from PSRAM.
   With octal or hex PSRAM this can be faster than executing from FLASH memory, and enables code such as display drawing
   to execute normally when writing to FLASH, e.g. during an OTA update. The default is `false`.
 
-- **ignore_efuse_custom_mac** (*Optional*, boolean): Can be set to `true` for devices on which the burned-in custom
-  MAC address is not valid.
+- **ignore_efuse_custom_mac** (*Optional*, boolean): When a custom MAC address is burned into the eFuses, ESPHome
+  uses it as the device's base MAC address in place of the factory-assigned one. Since ESPHome 2026.9.0, all network
+  interfaces (Wi-Fi, Ethernet, Bluetooth and 802.15.4) derive their addresses from it; in earlier versions, only
+  Wi-Fi did. Can be set to `true` for devices on which the burned-in custom MAC address is not usable, restoring the
+  factory-assigned MAC address. Defaults to `false`.
 
 - **ignore_efuse_mac_crc** (*Optional*, boolean): Can be set to `true` for devices on which the burned-in MAC
   address is not consistent with the burned-in CRC for that MAC address, resulting in an error like
@@ -355,6 +497,20 @@ esp32:
   To find your chip's revision, check the ESPHome boot logs for a line like `ESP32 Chip: ESP32 r3.0, 2 core(s)`
   or use `esptool.py chip_id`.
 
+- **sram1_as_iram** (*Optional*, boolean): Use the SRAM1 memory region as additional IRAM, providing an extra **40 KB of IRAM**.
+  This reclaims memory that was previously reserved for the bootloader's DRAM and not available to the application.
+  The extra IRAM expands the flash cache window for XIP (execute in place), reducing cache misses and improving
+  performance for all code running from flash (WiFi, BLE, API server, etc.). It also helps avoid IRAM overflow
+  compile errors (`section '.iram0.text' will not fit in region 'iram0_0_seg'`). Since this memory was never part
+  of the heap, there is **no cost to free heap/DRAM**.
+  **Valid only on original ESP32 with** `esp-idf` **framework.** Defaults to `false`.
+
+  **Important:** This requires a bootloader from ESP-IDF v5.1 or later. Flashing via USB automatically updates the
+  bootloader, but OTA updates do not. If the device has an older bootloader, enabling this option will cause the
+  device to **fail to boot**. If you have previously flashed your device via USB with a recent version of ESPHome,
+  the bootloader is already compatible. ESPHome will log a suggestion at boot if it detects a compatible bootloader
+  and this option is not yet enabled.
+
 - **enable_idf_experimental_features** (*Optional*, boolean): Can be set to `true` to enable experimental features. Use of
   experimental features may cause instability or other issues.
 
@@ -365,12 +521,14 @@ esp32:
 - **enable_ota_rollback** (*Optional*, boolean): Enable OTA rollback support. When enabled, the bootloader will
   automatically roll back to the previous firmware if the device crashes or resets before the boot is marked as
   successful. This works in conjunction with the [safe_mode](/components/safe_mode) component - after the
-  `boot_is_good_after` time (default 60s), the firmware is marked as valid. If the device crashes before that,
-  it will roll back to the previous working firmware. Defaults to `true`.
+  `boot_is_good_after` time (default 60s), the firmware is marked as valid. Since ESPHome 2026.8.0, an orderly
+  shutdown — entering [deep sleep](/components/deep_sleep#deep-sleep-and-ota-rollback), a restart or a shutdown —
+  also counts as a successful boot and marks the firmware as valid. If the device crashes before the firmware is
+  marked as valid, it will roll back to the previous working firmware. Defaults to `true`.
 
-> [!NOTE]
-> OTA rollback requires the bootloader to be compiled with rollback support. Existing devices may need to be
-> reflashed via serial to update the bootloader - OTA updates do not update the bootloader.
+  > [!NOTE]
+  > OTA rollback requires the bootloader to be compiled with rollback support. Existing devices may need to be
+  > reflashed via serial to update the bootloader - OTA updates do not update the bootloader.
 
 **LWIP Optimization Options (ESP-IDF only):**
 
@@ -521,6 +679,10 @@ The following options disable debug features that are rarely needed in productio
   These functions are used internally by ESP-IDF for analog peripherals (ADC, DAC, temperature sensor calibration). Moving
   them to flash saves IRAM. This is safe for ESPHome because no ESPHome IRAM interrupt service routines call ADC or other
   analog functions. Defaults to `true` (regi2c functions in flash to save IRAM).
+- **adc_oneshot_in_iram** (*Optional*, boolean): Place ADC oneshot control functions in IRAM. When flash cache is
+  disabled during background flash operations (NVS writes by WiFi, BLE, Zigbee, Thread, power management, etc.),
+  ADC reads will crash if these functions are in flash. The ADC component automatically enables this when used.
+  Defaults to `false` (automatically enabled by the ADC component).
 
 These defaults are chosen to reduce flash and IRAM usage for typical ESPHome devices. Adjust them only if you have specific
 debugging or performance requirements that justify changing them.
@@ -564,6 +726,10 @@ esp32:
       # Filesystem and peripheral options
       disable_fatfs: true  # Saves code size (auto-enabled by SD card components)
       disable_regi2c_in_iram: true  # Saves IRAM
+      adc_oneshot_in_iram: false  # Auto-enabled by ADC component
+
+      # ESP32 (original) only options
+      # sram1_as_iram: true  # +40 KB IRAM (requires bootloader from ESP-IDF >= 5.1)
 ```
 
 **Example for development/debugging with JTAG:**
@@ -603,7 +769,159 @@ esp32:
 > [!NOTE]
 > If you were already adding libraries via `libraries` config or calling `cg.add_library()`, no action is needed. If you were previously using Arduino library APIs directly in lambdas (e.g. `Preferences`, `Wire`, `SPI`) without adding them to the `libraries` config, you will need to explicitly add them.
 
-<span id="esp32-idf_components"></span>
+## Security
+
+ESPHome can protect an ESP32 device on several fronts. These options are all configured under `esp32:` →
+`framework:` → `advanced:`, and can be combined for defense in depth.
+
+### Signed OTA Verification
+
+- **signed_ota_verification** (*Optional*, mapping): Enable
+  [Signed App Verification Without Hardware Secure Boot](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/security/secure-boot-v2.html#signed-app-verification-without-hardware-secure-boot).
+  When configured, OTA firmware updates are verified using a cryptographic signature. This protects
+  against tampered firmware from network-based attacks without requiring hardware Secure Boot (eFuse).
+  Both Secure Boot V2 (RSA-3072 or ECDSA-V2) and Secure Boot V1 (ECDSA) signing schemes are supported.
+
+  Adding this block — even with no options inside — compiles signature verification into the firmware: the
+  device will reject any OTA update that is not signed with a trusted key. The options below only control how
+  the firmware gets signed.
+
+  - **signing_key** (*Optional*, filename): Path to a PEM-encoded private signing key. When provided, the firmware
+    is **automatically signed during build** using `espsecure`. This is the simplest workflow — the public key is
+    derived automatically and embedded in the signature block. When omitted, the firmware is **not signed during
+    build**; you must sign it externally before flashing, which is useful for CI/CD pipelines where the private
+    key is stored in a secure vault. **Mutually exclusive with `verification_key`.**
+  - **verification_key** (*Optional*, filename): Path to a public verification key, **only for the `ecdsa_v1`
+    scheme**. Secure Boot V1 signatures do not carry the public key, so when the firmware is signed externally
+    the public key must be embedded in the build to verify updates. The key is in raw binary format (`.bin`);
+    extract it from the PEM private key using
+    `espsecure.py extract_public_key --keyfile private.pem public_key.bin`.
+    **Mutually exclusive with `signing_key`.**
+
+    > [!NOTE]
+    > The Secure Boot V2 schemes (`rsa3072` and `ecdsa256`) do not use a verification key — updates are verified
+    > against the public key carried in the running firmware's own signature block. To sign externally with a V2
+    > scheme, omit both keys; a bare block is a complete configuration:
+    >
+    > ```yaml
+    > esp32:
+    >   framework:
+    >     advanced:
+    >       # Verify OTA updates against externally-applied rsa3072 signatures
+    >       signed_ota_verification:
+    > ```
+    >
+    > For `rsa3072` you can instead list the trusted keys explicitly with `verification_keys` (below) to enable
+    > key rotation and backup keys.
+
+  - **verification_keys** (*Optional*, list): For externally-signed `rsa3072`, the public keys your device trusts
+    when checking OTA updates. Listing more than one lets you rotate signing keys or keep a backup key — an update
+    signed by any listed key is accepted. Each entry is a public key file, or the key's digest (handy for CI,
+    where you may not want a key file in your configuration). Up to three keys.
+    **Requires `signing_scheme: rsa3072` and no `signing_key`.**
+
+    > [!NOTE]
+    > Both app and bootloader OTA updates are verified. If you update the bootloader over the air (with
+    > `allow_partition_access`), sign it with one of your trusted keys first — the normal build signs only the
+    > app, so an unsigned bootloader update is rejected.
+
+  - **signing_scheme** (*Optional*, string): The signing algorithm. One of `rsa3072`, `ecdsa256`, or `ecdsa_v1`.
+    Defaults to `rsa3072`. **Not all schemes are supported on all variants** — see the table below.
+
+    - `rsa3072`: RSA-3072 (Secure Boot V2). Recommended for most variants.
+    - `ecdsa256`: ECDSA with NIST P-256 (Secure Boot V2). For variants without RSA support.
+    - `ecdsa_v1`: ECDSA with NIST P-256 (Secure Boot V1). **Only for the original ESP32** — use this for
+      chips prior to revision 3.0 that do not support Secure Boot V2.
+
+    | Variant | `rsa3072` | `ecdsa256` | `ecdsa_v1` |
+    |---------|-----------|------------|------------|
+    | ESP32 (rev 3.0+) | yes | no | yes |
+    | ESP32 (rev < 3.0) | no | no | yes |
+    | ESP32-S2 | yes | no | no |
+    | ESP32-S3 | yes | no | no |
+    | ESP32-C2 | no | yes | no |
+    | ESP32-C3 | yes | no | no |
+    | ESP32-C5 | yes | yes | no |
+    | ESP32-C6 | yes | yes | no |
+    | ESP32-C61 | no | yes | no |
+    | ESP32-H2 | yes | yes | no |
+    | ESP32-P4 | yes | yes | no |
+
+    > [!NOTE]
+    > Using `rsa3072` on the original ESP32 requires setting `minimum_chip_revision: "3.0"` or higher
+    > (Secure Boot V2 RSA is only available on ESP32 chip revision 3.0+). For older chip revisions, use `ecdsa_v1`.
+
+  > [!WARNING]
+  > **Keep your signing key safe!** If you lose the private signing key, you will **not be able to OTA update** any
+  > devices running firmware signed with that key. Without the signing key, you must reflash the device via serial.
+
+  > [!NOTE]
+  > The **first firmware** flashed to a device must also be signed. When using `signing_key`, this happens
+  > automatically; when signing externally, sign the image before flashing it via serial — a device running
+  > unsigned firmware has no trusted key and cannot verify (or accept) any OTA update.
+  > All subsequent OTA updates will be verified against the public key in the running firmware.
+
+  To generate a signing key, use the `espsecure.py` tool from ESP-IDF:
+
+  ```bash
+  # Generate an RSA-3072 signing key (Secure Boot V2 — most variants)
+  espsecure.py generate-signing-key --version 2 --scheme rsa3072 secure_boot_signing_key.pem
+
+  # Generate an ECDSA signing key (Secure Boot V1 — original ESP32 pre-rev 3.0)
+  espsecure.py generate-signing-key --version 1 secure_boot_signing_key.pem
+
+  # Extract the public verification key (only needed for ecdsa_v1 external signing)
+  espsecure.py extract_public_key --keyfile secure_boot_signing_key.pem secure_boot_verification_key.bin
+  ```
+
+### OTA Downgrade Protection
+
+- **enable_ota_downgrade_protection** (*Optional*, boolean): Reject OTA updates whose firmware version is older
+  than the version the device is currently running. The version is taken from the `version` under the
+  [`project`](/components/esphome#esphome-creators_project) key, which is embedded into the firmware image and
+  compared on the device before the new image is allowed to boot. Defaults to `false`.
+
+  This option requires:
+
+  - A `project` with a `version` that is dotted-numeric (such as `1.2.3` or `2024.1.0`). The version is compared
+    one number at a time, so `1.10.0` is newer than `1.9.0`. Flashing the same version is always allowed.
+  - `signed_ota_verification` to be enabled. The version is read from inside the signed image, so signature
+    verification is what prevents a tampered update from claiming a higher version than it actually contains.
+
+  > [!NOTE]
+  > This protects the over-the-air update path on the device. A direct serial flash is not version-checked, so you
+  > can always recover a device by flashing over serial.
+
+### NVS Encryption
+
+- **nvs_encryption** (*Optional*, mapping): Encrypts the device's non-volatile storage (NVS), where ESPHome
+  may save sensitive data such as Wi-Fi credentials and the API encryption key. This keeps that data
+  unreadable to anyone who reads the device's flash memory. The encryption key is created on the device itself
+  the first time it boots, so no key material is stored in your configuration. For background, see the ESP-IDF
+  [NVS encryption documentation](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/storage/nvs_encryption.html).
+  Contains the following option:
+
+  - **key_id** (*Required*, integer): Which hardware key slot (`0`–`5`) the device uses to store its encryption
+    key. Pick a slot that isn't used by anything else.
+
+  This feature is available only on the following variants, which have the required hardware support:
+
+  - ESP32-S2
+  - ESP32-S3
+  - ESP32-C3
+  - ESP32-C5
+  - ESP32-C6
+  - ESP32-H2
+  - ESP32-P4
+
+  It is not available on the original ESP32 or the ESP32-C2.
+
+  > [!WARNING]
+  > - The encryption key is written to the chip **permanently** (yes, **we mean permanently**) the first time the device
+  >   boots and **cannot be changed or removed afterwards** — even if you erase and/or re-flash your ESP — so choose
+  >   the `key_id` carefully. In most cases, this shouldn't be a problem — just pick a key slot and stick to it.
+  > - Turning encryption on (or off later) clears any previously saved preferences once, because the older data can no
+  >   longer be read.
 
 ## IDF Components
 
@@ -646,6 +964,36 @@ esp32:
   custom or patched version of the component.
 - **path** (*Optional*, string): The path of the component in the git repository or a local path to the
   component if `source` is not set.
+
+## Partitions
+
+By default, ESPHome automatically generates a partition table based on `flash_size`. The `partitions` option allows you to either
+provide a custom partition table CSV file for full control over the layout, or add extra partitions to the auto-generated table.
+
+```yaml
+esp32:
+  partitions: my_partitions.csv
+```
+
+Alternatively, you can provide a list of custom partitions to append to the auto-generated table. The app partition size is
+automatically reduced to make room. Valid partition types and subtypes are documented in the
+[ESP-IDF partition tables documentation](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-guides/partition-tables.html).
+
+```yaml
+esp32:
+  partitions:
+    - name: my_data
+      type: data
+      subtype: spiffs
+      size: 0x10000
+```
+
+### Configuration Variables
+
+- **name** (*Required*, string): Name of the partition. Cannot be any of the reserved names: `nvs`, `app0`, `app1`, `otadata`, `eeprom`, `spiffs`, `phy_init`.
+- **type** (*Required*, string or integer): Partition type. One of `app` or `data`, or a custom type as an integer between 0x40 and 0xFE.
+- **subtype** (*Required*, string or integer): Partition subtype. For `app` type: `factory` or `test`. For `data` type: `nvs`, `nvs_keys`, `spiffs`, `coredump`, `efuse`, `fat`, `undefined`, or `littlefs`. Can also be an integer between 0x0 and 0xFE.
+- **size** (*Required*, integer): Partition size in bytes. Must be 4KB (0x1000) aligned.
 
 ## GPIO Pin Numbering
 

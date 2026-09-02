@@ -18,7 +18,7 @@ nrf52:
 
 - **board** (*Required*, string): The board type. Valid options are `adafruit_feather_nrf52840`, `adafruit_itsybitsy_nrf52840`, `xiao_ble`. Other boards should work with those configuration as well.
 - **bootloader** (*Optional*, string): Bootloader type. Valid options are `mcuboot`, `adafruit`, `adafruit_nrf52_sd132`, `adafruit_nrf52_sd140_v6`, `adafruit_nrf52_sd140_v7`. Default value depends on board type.
-- **dcdc** (*Optional*, boolean): Enable DC/DC converter for REG1 stage. Defaults to `true`.
+- **dcdc** (*Optional*, boolean): Enable DC/DC converter for REG1 stage. Defaults follow board settings from Zephyr.
 External LC filters must be connected to the DC/DC regulator pins if it is being used.
 The advantage of using a DC/DC regulator is that the overall power consumption is normally reduced
 as the efficiency of such a regulator is higher than that of a LDO.
@@ -74,7 +74,7 @@ There are two ways to reference GPIO pins:
 
 The `dfu` component enables automatic entry into **DFU (Device Firmware Update)** mode by monitoring
 the USB CDC serial connection. When a host opens the port at **1200 baud**, the component triggers
-a reset via a GPIO pin to put the device into DFU mode.
+a reset to put the device into DFU mode.
 
 ESPHome uses this component internally when uploading firmware via:
 
@@ -83,6 +83,20 @@ esphome upload d.yaml
 ```
 
 ### Example Configuration
+
+Without a reset pin (uses software reset):
+
+```yaml
+nrf52:
+  dfu: true
+```
+
+> [!NOTE]
+> The pinless path issues a software reset and triggers the bootloader via the
+> retained `GPREGRET` register. It is less reliable than the dedicated reset
+> pin and the upload may need to be retried.
+
+With a dedicated reset pin:
 
 ```yaml
 nrf52:
@@ -94,7 +108,9 @@ nrf52:
 
 ### Configuration variables
 
-- **reset_pin** (*Required*, [Pin](/guides/configuration-types#pin)): The pin to use for trigger a hardware reset. This pin should be connected to the MCU's reset line or to a circuit that causes the bootloader to enter DFU mode after reset.
+- **reset_pin** (*Optional*, [Pin](/guides/configuration-types#pin)): The pin to use to trigger a hardware reset.
+  This pin should be connected to the MCU's reset line or to a circuit that causes the bootloader to enter DFU mode after reset.
+  When omitted, a software reset is used instead.
 
 ## REGOUT0
 
@@ -195,30 +211,41 @@ nrf52:
 # Example configuration entry
 nrf52:
   framework:
-    version: 2.6.1-7
+    version: 2.9.2
 ```
 
 ### Configuration variables
 
 - **version** (*Optional*, string): The nrf-sdk version. One of:
-  - `2.6.1-7`  : Stable (default)
-  - `2.9.2-0`  : Experimental
-  - `3.2.0-0`  : Experimental (no Zigbee support)
+  - `2.6.1`  : Legacy
+  - `2.9.2`  : Stable (default)
+  - `3.2.0`  : Experimental (no Zigbee support)
 
-- **advanced** (*Optional*, mapping): See [Advanced Configuration](#nrf52-advanced_configuration) below.
+- **libc_nano** (*Optional*, boolean): Use the newlib-nano C library variant,
+  newlib-nano produces a smaller binary but does not support all printf format specifiers.
+  Notably, the `%zu` specifier is not handled correctly, which can
+  cause incorrect log output when the [logger](/components/logger) component is used.
+  Set to `false` to use the full newlib, which supports all standard printf format specifiers
+  including `%zu` and 64-bit integers at the cost of a larger binary. Defaults to `true`.
 
-<span id="nrf52-advanced_configuration"></span>
+- **advanced** (*Optional*, mapping): See [Advanced Configuration](#advanced-configuration) below.
 
 ## Advanced Configuration
 
 - **enable_ota_rollback** (*Optional*, boolean): Enable OTA rollback support. When enabled, the bootloader will
   automatically roll back to the previous firmware if the device crashes or resets before the boot is marked as
   successful. This works in conjunction with the [safe_mode](/components/safe_mode) component - after the
-  `boot_is_good_after` time (default 60s), the firmware is marked as valid. If the device crashes before that,
-  it will roll back to the previous working firmware. Defaults to `true`.
+  `boot_is_good_after` time (default 60s), the firmware is marked as valid. Since ESPHome 2026.8.0, an orderly
+  shutdown — entering [deep sleep](/components/deep_sleep#deep-sleep-and-ota-rollback), a restart or a shutdown —
+  also counts as a successful boot and marks the firmware as valid. If the device crashes before the firmware is
+  marked as valid, it will roll back to the previous working firmware. Defaults to `true`.
 
 ## See Also
 
 - [ESPHome Core Configuration](/components/esphome/)
+- [OpenThread Component](/components/openthread/)
+- [Network Component](/components/network/)
+- [Zephyr BLE Server](/components/zephyr_ble_server/)
+- [Zephyr PWM](/components/output/zephyr_pwm/)
 
 - [Guidelines for Adafruit Bootloader Memory Map](https://learn.adafruit.com/introducing-the-adafruit-nrf52840-feather?view=all#hathach-memory-map)

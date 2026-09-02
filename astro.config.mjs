@@ -1,7 +1,8 @@
 import { defineConfig } from "astro/config";
+import { unified } from "@astrojs/markdown-remark";
 import starlight from "@astrojs/starlight";
-import sitemap from "@astrojs/sitemap";
 import starlightBlog from "starlight-blog";
+import sitemap from "@astrojs/sitemap";
 import { fileURLToPath } from "url";
 import path from "path";
 import fs from "fs";
@@ -9,7 +10,11 @@ import { imageBreakpoints } from "./src/lib/breakpoints.ts";
 import { remarkAlert } from "remark-github-blockquote-alert";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
+import { rehypeHeadingSlugs } from "./src/lib/rehype-heading-slugs.mjs";
+import { rehypeExternalLinksBlog } from "./src/lib/rehype-external-links-blog.mjs";
 import componentsJson from "./src/integrations/components-json.ts";
+import routeIndex from "./src/integrations/route-index.ts";
+import { authors } from "./src/authors.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -29,8 +34,7 @@ function getChangelogItems() {
       const match = f.match(/^v(\d+)\.(\d+)\.(\d+)\.mdx$/);
       if (match) {
         const [, major, minor, patch] = match;
-        const sortValue =
-          parseInt(major) * 10000 + parseInt(minor) * 100 + parseInt(patch);
+        const sortValue = parseInt(major) * 10000 + parseInt(minor) * 100 + parseInt(patch);
         const slug = `v${major}.${minor}.${patch}`;
         return { label, slug, sortValue };
       }
@@ -38,8 +42,7 @@ function getChangelogItems() {
       const match2 = f.match(/^(\d{4})\.(\d+)\.(\d+)\.mdx$/);
       if (match2) {
         const [, year, month, patch] = match2;
-        const sortValue =
-          parseInt(year) * 10000 + parseInt(month) * 100 + parseInt(patch);
+        const sortValue = parseInt(year) * 10000 + parseInt(month) * 100 + parseInt(patch);
         const slug = `${year}.${month}.${patch}`;
         return { label, slug, sortValue };
       }
@@ -80,18 +83,14 @@ function getComponentItems() {
       const dirPath = path.join(componentsDir, entry.name);
       const indexPath = path.join(dirPath, "index.mdx");
 
-      let groupLabel = entry.name
-        .replace(/_/g, " ")
-        .replace(/\b\w/g, (c) => c.toUpperCase());
+      let groupLabel = entry.name.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
       if (fs.existsSync(indexPath)) {
         const content = fs.readFileSync(indexPath, "utf-8");
         const titleMatch = content.match(/^title:\s*["']?([^"'\n]+)["']?/m);
         if (titleMatch) groupLabel = titleMatch[1];
       }
 
-      const subFiles = fs
-        .readdirSync(dirPath)
-        .filter((f) => f.endsWith(".mdx"));
+      const subFiles = fs.readdirSync(dirPath).filter((f) => f.endsWith(".mdx"));
       const subItems = [];
       for (const f of subFiles) {
         const subPath = path.join(dirPath, f);
@@ -126,16 +125,36 @@ export default defineConfig({
     resolve: {
       alias: {
         "@components": path.resolve(__dirname, "./src/components"),
+        "@assets": path.resolve(__dirname, "./src/assets"),
+      },
+    },
+    // Same-origin proxy for the Open Home Foundation livestream API so the
+    // browser isn't blocked by CORS during local dev. Production uses the
+    // matching Netlify rewrite in netlify.toml.
+    server: {
+      proxy: {
+        "/livestream-api": {
+          target: "https://web-api.openhomefoundation.org/livestream",
+          changeOrigin: true,
+          rewrite: (p) => p.replace(/^\/livestream-api/, ""),
+        },
       },
     },
   },
   image: {
     breakpoints: imageBreakpoints,
     responsiveStyles: true,
+    domains: ["assets.openhomefoundation.org", "www.openhomefoundation.org"],
   },
   markdown: {
-    remarkPlugins: [remarkAlert, remarkMath],
-    rehypePlugins: [rehypeKatex],
+    // Astro 7 defaults `markdown.processor` to Sätteri, which does not run remark/rehype plugins.
+    // The alert, math and heading-slug plugins below are unified plugins, so opt back into the
+    // unified processor. @astrojs/mdx inherits these settings for .mdx files.
+    processor: unified({
+      gfm: true,
+      remarkPlugins: [remarkAlert, remarkMath],
+      rehypePlugins: [rehypeHeadingSlugs, rehypeKatex, rehypeExternalLinksBlog],
+    }),
   },
   integrations: [
     starlight({
@@ -144,9 +163,10 @@ export default defineConfig({
       favicon: "/favicon.ico",
       pagination: false,
       plugins: [
-        //starlightBlog({
-        //  title: 'Blog',
-        //}),
+        starlightBlog({
+          navigation: "none",
+          authors,
+        }),
       ],
       logo: {
         light: "./src/assets/logo-dark.svg",
@@ -162,30 +182,30 @@ export default defineConfig({
         {
           icon: "discord",
           label: "Discord",
-          href: "https://discord.gg/KhAMKrd",
+          href: "https://esphome.io/chat",
         },
       ],
       editLink: {
-        baseUrl: "https://github.com/esphome/esphome-docs/edit/current/",
+        baseUrl: `https://github.com/esphome/esphome.io/edit/${
+          ["next", "beta"].includes(process.env.BRANCH) ? "next" : "current"
+        }/`,
       },
       routeMiddleware: ["./src/routeData.ts"],
       components: {
         Footer: "./src/components/Footer.astro",
         Head: "./src/components/Head.astro",
+        Header: "./src/components/Header.astro",
+        PageTitle: "./src/components/PageTitle.astro",
+        SiteTitle: "./src/components/SiteTitle.astro",
       },
       customCss: ["./src/styles/custom.css", "katex/dist/katex.min.css"],
       sidebar: [
         {
           label: "Getting Started",
           items: [
-            {
-              label: "From Home Assistant",
-              link: "/guides/getting_started_hassio/",
-            },
-            {
-              label: "Using Command Line",
-              link: "/guides/getting_started_command_line/",
-            },
+            { label: "Install ESPHome", link: "/install/" },
+            { label: "Getting Started", link: "/install/getting-started/" },
+            { label: "Running in Docker", link: "/install/docker/" },
             { label: "Ready-Made Projects", link: "/projects/" },
             {
               label: "Migrate from Tasmota",
@@ -193,6 +213,11 @@ export default defineConfig({
             },
             { label: "FAQ and Tips", link: "/guides/faq/" },
           ],
+        },
+        {
+          label: "ESPHome Starter Kit",
+          link: "/starter-kit/",
+          attrs: { class: "starter-kit-mobile-link" },
         },
         { label: "Components", link: "/components/" },
         {
@@ -203,24 +228,24 @@ export default defineConfig({
         {
           label: "Automations",
           collapsed: true,
-          autogenerate: { directory: "automations" },
+          items: [{ autogenerate: { directory: "automations", collapsed: true } }],
         },
         {
           label: "Guides",
           collapsed: true,
-          autogenerate: { directory: "guides" },
+          items: [{ autogenerate: { directory: "guides", collapsed: true } }],
         },
         {
           label: "Cookbook",
           collapsed: true,
-          autogenerate: { directory: "cookbook" },
+          items: [{ autogenerate: { directory: "cookbook", collapsed: true } }],
         },
         {
           label: "Keeping Up",
           items: [
-            //{ label: "Blog", link: "/blog/" },
+            { label: "Blog", link: "/blog/" },
             { label: "Changelog", link: "/changelog/" },
-            { label: "Discord", link: "https://discord.gg/KhAMKrd" },
+            { label: "Discord", link: "https://esphome.io/chat" },
             {
               label: "Forums",
               link: "https://community.home-assistant.io/c/esphome/",
@@ -246,11 +271,130 @@ export default defineConfig({
         {
           tag: "script",
           content: `document.addEventListener('keydown', function(e) {
+            // 1. Existing '/' shortcut to open search
             if (e.key === '/' && !['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement?.tagName)) {
               e.preventDefault();
               document.querySelector('button[data-open-modal]')?.click();
+              return;
             }
-          });`,
+
+            // 2. New 'Enter' shortcut for first search result
+            if (e.key === 'Enter' && e.target.classList.contains('pagefind-ui__search-input')) {
+              const firstResult = document.querySelector('.pagefind-ui__result-link');
+
+              if (firstResult) {
+                // Prevent the default form submission or modal close behavior
+                e.preventDefault();
+                e.stopImmediatePropagation();
+                firstResult.click();
+              }
+            }
+          });
+
+          function fallbackCopyText(text) {
+            return new Promise(function(resolve, reject) {
+              try {
+                const textarea = document.createElement('textarea');
+                textarea.value = text;
+                textarea.setAttribute('readonly', '');
+                textarea.style.position = 'fixed';
+                textarea.style.top = '-9999px';
+                textarea.style.left = '-9999px';
+                document.body.appendChild(textarea);
+                textarea.focus();
+                textarea.select();
+
+                const copied = document.execCommand('copy');
+                textarea.remove();
+
+                if (copied) {
+                  resolve();
+                } else {
+                  reject(new Error('Fallback copy failed'));
+                }
+              } catch (err) {
+                reject(err);
+              }
+            });
+          }
+
+          function copyText(text) {
+            if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+              return navigator.clipboard.writeText(text).catch(function() {
+                return fallbackCopyText(text);
+              });
+            }
+
+            return fallbackCopyText(text);
+          }
+
+          document.addEventListener('click', function(e) {
+            if (!(e.target instanceof Element)) return;
+            const anchor = e.target.closest('a.sl-anchor-link');
+            if (!anchor) return;
+            if (
+              e.button !== 0 ||
+              e.metaKey ||
+              e.ctrlKey ||
+              e.shiftKey ||
+              e.altKey
+            ) {
+              return;
+            }
+            e.preventDefault();
+            const url = anchor.href;
+            copyText(url).then(function() {
+              showLinkCopiedToast(anchor);
+            }).catch(function() {
+              const targetUrl = new URL(anchor.href, window.location.href);
+              if (targetUrl.hash) {
+                window.location.hash = targetUrl.hash;
+              } else {
+                window.location.assign(anchor.href);
+              }
+            });
+          });
+
+          function showLinkCopiedToast(anchor) {
+            const existing = document.getElementById('sl-link-toast');
+            if (existing) existing.remove();
+            const rect = anchor.getBoundingClientRect();
+
+            const toast = document.createElement('div');
+            toast.id = 'sl-link-toast';
+            toast.setAttribute('role', 'status');
+            toast.setAttribute('aria-live', 'polite');
+            toast.setAttribute('aria-atomic', 'true');
+            toast.textContent = 'Link copied to clipboard';
+            toast.style.cssText = [
+              'position:fixed',
+              'top:' + (rect.top + rect.height / 2 - 14) + 'px',
+              'left:' + (rect.right + 8) + 'px',
+              'background:var(--sl-color-gray-1)',
+              'color:var(--sl-color-gray-6)',
+              'padding:0.25rem 0.75rem',
+              'border-radius:999px',
+              'font-size:0.8rem',
+              'white-space:nowrap',
+              'box-shadow:0 2px 8px rgba(0,0,0,0.2)',
+              'z-index:9999',
+              'opacity:1',
+              'transition:opacity 0.4s ease',
+              'pointer-events:none',
+            ].join(';');
+            document.body.appendChild(toast);
+
+            // If it overflows the right edge, flip it to the left of the icon
+            const toastRect = toast.getBoundingClientRect();
+            if (toastRect.right > window.innerWidth - 8) {
+              toast.style.left = (rect.left - toastRect.width - 8) + 'px';
+            }
+
+            setTimeout(function() {
+              toast.style.opacity = '0';
+              setTimeout(function() { toast.remove(); }, 400);
+            }, 2000);
+          }`,
         },
         {
           tag: "meta",
@@ -277,5 +421,6 @@ export default defineConfig({
     }),
     sitemap(),
     componentsJson(),
+    routeIndex(),
   ],
 });

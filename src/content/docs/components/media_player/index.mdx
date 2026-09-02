@@ -27,7 +27,7 @@ Configuration variables:
 - **name** (*Optional*, string): The name of the media player. At least one of **id** and **name** must be specified.
 
 > [!NOTE]
-> If you have a [friendly_name](/components/esphome#esphome-configuration_variables) set for your device and
+> If you have a [friendly_name](/components/esphome#configuration-variables) set for your device and
 > you want the media player to use that name, you can set `name: None`.
 
 - **icon** (*Optional*, icon): Manually set the icon to use for the
@@ -44,8 +44,6 @@ Configuration variables:
 - **entity_category** (*Optional*, string): The category of the entity.
   See [https://developers.home-assistant.io/docs/core/entity/#generic-properties](https://developers.home-assistant.io/docs/core/entity/#generic-properties)
   for a list of available options. Set to `""` to remove the default entity category.
-
-<span id="media_player-actions"></span>
 
 ## Media Player Actions
 
@@ -88,7 +86,31 @@ on_...:
 
 Configuration variables:
 
-**media_url** (**Required**, string): The media url to play.
+**media_url** (**Required**, string, [templatable](/automations/templates)): The media URL to play.
+
+<span id="media_player-enqueue"></span>
+
+### `media_player.enqueue` Action
+
+This action will add the specified media to the media player's queue.
+
+```yaml
+on_...:
+  # Simple
+  - media_player.enqueue: 'http://media-url/media.mp3'
+
+  # Full
+  - media_player.enqueue:
+      id: media_player_id
+      media_url: 'http://media-url/media.mp3'
+
+  # Simple with lambda
+  - media_player.enqueue: !lambda 'return "http://media-url/media.mp3";'
+```
+
+Configuration variables:
+
+**media_url** (**Required**, string, [templatable](/automations/templates)): The media URL to enqueue.
 
 <span id="media_player-pause"></span>
 
@@ -222,8 +244,6 @@ Configuration variables:
 
 **volume** (**Required**, percentage): The volume to set the media player to.
 
-<span id="media_player-on_state_trigger"></span>
-
 ### `media_player.on_state` Trigger
 
 This trigger is activated each time the state of the media player is updated
@@ -231,13 +251,11 @@ This trigger is activated each time the state of the media player is updated
 
 ```yaml
 media_player:
-  - platform: i2s_audio  # or any other platform
+  - platform: speaker  # or any other platform
     # ...
     on_state:
       - logger.log: "State updated!"
 ```
-
-<span id="media_player-on_play_trigger"></span>
 
 ### `media_player.on_play` Trigger
 
@@ -245,13 +263,11 @@ This trigger is activated each time then the media player is started playing.
 
 ```yaml
 media_player:
-  - platform: i2s_audio  # or any other platform
+  - platform: speaker  # or any other platform
     # ...
     on_play:
       - logger.log: "Playback started!"
 ```
-
-<span id="media_player-on_pause_trigger"></span>
 
 ### `media_player.on_pause` Trigger
 
@@ -259,13 +275,11 @@ This trigger is activated every time the media player pauses playback.
 
 ```yaml
 media_player:
-  - platform: i2s_audio  # or any other platform
+  - platform: speaker  # or any other platform
     # ...
     on_pause:
       - logger.log: "Playback paused!"
 ```
-
-<span id="media_player-on_idle_trigger"></span>
 
 ### `media_player.on_idle` Trigger
 
@@ -273,13 +287,11 @@ This trigger is activated every time the media player finishes playing.
 
 ```yaml
 media_player:
-  - platform: i2s_audio  # or any other platform
+  - platform: speaker  # or any other platform
     # ...
     on_idle:
       - logger.log: "Playback finished!"
 ```
-
-<span id="media_player-on_announcement_trigger"></span>
 
 ### `media_player.on_announcement` Trigger
 
@@ -287,13 +299,11 @@ This trigger is activated every time the media player plays an announcement.
 
 ```yaml
 media_player:
-  - platform: i2s_audio  # or any other platform
+  - platform: speaker  # or any other platform
     # ...
     on_announcement:
       - logger.log: "Announcing!"
 ```
-
-<span id="media_player-on_turn_off_trigger"></span>
 
 ### `media_player.on_turn_off` Trigger
 
@@ -307,8 +317,6 @@ media_player:
       - logger.log: "Media Player is Turned Off"
 ```
 
-<span id="media_player-on_turn_on_trigger"></span>
-
 ### `media_player.on_turn_on` Trigger
 
 This trigger is activated every time the media player is turned on.
@@ -320,8 +328,6 @@ media_player:
     on_turn_on:
       - logger.log: "Media Player is Turned On"
 ```
-
-<span id="media_player-is_idle_condition"></span>
 
 ### `media_player.is_idle` Condition
 
@@ -335,8 +341,6 @@ on_...:
       media_player.is_idle:
 ```
 
-<span id="media_player-is_playing_condition"></span>
-
 ### `media_player.is_playing` Condition
 
 This condition checks if the media player is playing media.
@@ -348,8 +352,6 @@ on_...:
     condition:
       media_player.is_playing:
 ```
-
-<span id="media_player-is_paused_condition"></span>
 
 ### `media_player.is_paused` Condition
 
@@ -363,8 +365,6 @@ on_...:
       media_player.is_paused:
 ```
 
-<span id="media_player-is_announcing_condition"></span>
-
 ### `media_player.is_announcing` Condition
 
 This condition checks if the media player is playing an announcement.
@@ -376,8 +376,6 @@ on_...:
     condition:
       media_player.is_announcing:
 ```
-
-<span id="media_player-is_off_condition"></span>
 
 ### `media_player.is_off` Condition
 
@@ -391,8 +389,6 @@ on_...:
       media_player.is_off:
 ```
 
-<span id="media_player-is_on_condition"></span>
-
 ### `media_player.is_on` Condition
 
 This condition checks if the media player is turned on.
@@ -404,8 +400,6 @@ on_...:
     condition:
       media_player.is_on:
 ```
-
-<span id="media_player-is_muted_condition"></span>
 
 ### `media_player.is_muted` Condition
 

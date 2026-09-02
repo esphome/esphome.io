@@ -1,15 +1,19 @@
 ---
-description: "Instructions for setting up the Ethernet configuration for your ESP32 node in ESPHome."
+description: "Instructions for setting up the Ethernet configuration for your ESP32 or RP2040 node in ESPHome."
 title: "Ethernet Component"
 ---
 import APIRef from '@components/APIRef.astro';
 
 
-This ESPHome component enables *wired* Ethernet connections for ESP32s.
+This ESPHome component enables *wired* Ethernet connections for ESP32 and RP2040 boards.
 
-Ethernet for ESP8266 is not supported.
+- **ESP32**: Supports RMII PHY chips (LAN8720, RTL8201, etc.) and SPI Ethernet chips (W5500, DM9051, CH390, ENC28J60).
+- **RP2040/RP2350**: Supports SPI/PIO Ethernet chips (W5100, W5500, W6100, W6300, ENC28J60).
 
-This component and the Wi-Fi component may **not** be used simultaneously, even if both are physically available.
+On ESP32 family devices, Ethernet may be configured alongside [WiFi](/components/wifi/) in the same configuration;
+this requires a `network:` `priority:` list naming both interfaces — see
+[Multi-Interface Support](/components/network/#multi-interface-support) on the [Network](/components/network/)
+component. Using more than one network interface is not supported on other platforms.
 
 ```yaml
 # Example configuration entry for RMII chips
@@ -30,7 +34,16 @@ ethernet:
 ```
 
 ```yaml
-# Example configuration entry for SPI chips
+# Example configuration entry for the GENERIC RGMII PHY (ESP32-S31)
+ethernet:
+  type: GENERIC
+  mdc_pin: GPIO5
+  mdio_pin: GPIO6
+  power_pin: GPIO7   # the PHY reset pin
+```
+
+```yaml
+# Example configuration entry for SPI chips (ESP32)
 ethernet:
   type: W5500
   clk_pin: GPIOXX
@@ -41,23 +54,59 @@ ethernet:
   reset_pin: GPIOXX
 ```
 
+```yaml
+# Example configuration entry for SPI chips sharing an existing SPI bus (ESP32)
+spi:
+  - id: spi_bus
+    interface: spi2
+    clk_pin: GPIOXX
+    mosi_pin: GPIOXX
+    miso_pin: GPIOXX
+
+ethernet:
+  type: W5500
+  spi_id: spi_bus
+  cs_pin: GPIOXX
+  interrupt_pin: GPIOXX
+  reset_pin: GPIOXX
+```
+
+```yaml
+# Example configuration entry for SPI chips (RP2040 Pico)
+ethernet:
+  type: W5500
+  clk_pin: 18
+  mosi_pin: 19
+  miso_pin: 16
+  cs_pin: 17
+  interrupt_pin: 21
+  reset_pin: 20
+```
+
 ## Configuration variables
 
 - **type** (**Required**, string): The type of LAN chipset/phy.
 
   Supported chipsets are:
 
-  - `LAN8720` (RMII)
-  - `RTL8201` (RMII)
-  - `DP83848` (RMII)
-  - `IP101` (RMII)
-  - `JL1101` (RMII)
-  - `KSZ8081` (RMII)
-  - `KSZ8081RNA` (RMII)
-  - `W5500` (SPI)
-  - `OPENETH` (QEMU, ESP-IDF only)
-  - `DM9051` (SPI, ESP-IDF only)
-  - `LAN8670` (RMII)
+  - `LAN8720` (RMII, ESP32 only)
+  - `RTL8201` (RMII, ESP32 only)
+  - `DP83848` (RMII, ESP32 only)
+  - `IP101` (RMII, ESP32 only)
+  - `JL1101` (RMII, ESP32 only)
+  - `KSZ8081` (RMII, ESP32 only)
+  - `KSZ8081RNA` (RMII, ESP32 only)
+  - `W5100` (SPI, RP2040 only)
+  - `W5500` (SPI, ESP32 and RP2040)
+  - `OPENETH` (QEMU, ESP32 only)
+  - `DM9051` (SPI, ESP32 only)
+  - `CH390` (SPI, ESP32 only)
+  - `ENC28J60` (SPI, 10Mbps, ESP32 and RP2040)
+  - `W6100` (SPI, RP2040/RP2350 only)
+  - `W6300` (PIO QSPI, RP2040/RP2350 only)
+  - `LAN8670` (RMII, ESP32 only)
+  - `GENERIC` (RGMII, ESP32-S31 only)
+  - `YT8531` (RGMII, ESP32-S31 only)
 
 ### RMII configuration variables
 
@@ -86,38 +135,71 @@ ethernet:
 - **power_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The pin controlling the
   power/reset status of the Ethernet controller. Leave unspecified for no power pin (default).
 
+### GENERIC (RGMII) configuration variables
+
+The `GENERIC` type drives a standard IEEE 802.3 PHY over the internal EMAC's RGMII (Reduced Gigabit
+Media-Independent Interface, gigabit) interface, using ESP-IDF's built-in generic PHY driver. It is only
+supported on gigabit-capable variants (currently the ESP32-S31). The RGMII data, control and clock GPIOs are
+taken from the ESP-IDF per-target default configuration, so only the management pins need to be set:
+
+- **mdc_pin** (**Required**, [Pin](/guides/configuration-types#pin)): The MDC pin. On the ESP32-S31 this is `GPIO5`.
+- **mdio_pin** (**Required**, [Pin](/guides/configuration-types#pin)): The MDIO pin. On the ESP32-S31 this is `GPIO6`.
+- **phy_addr** (*Optional*, int): The PHY address of the Ethernet controller. Defaults to `0`.
+- **power_pin** (*Optional*, [Pin](/guides/configuration-types#pin)): The PHY reset/power pin. On the ESP32-S31
+  this is `GPIO7`. Recommended so the PHY is reset cleanly at startup.
+- **phy_registers** (*Optional*, mapping): Arbitrary PHY register values to set after Ethernet
+  initialization, with the same `address`/`value`/`page_id` sub-options as the
+  [RMII configuration variables](#rmii-configuration-variables) above.
+
+### YT8531 (RGMII) configuration variables
+
+The `YT8531` type is the `GENERIC` RGMII PHY plus the chip-specific initialization the Motorcomm YT8531
+requires (it is the PHY on the ESP32-S31 Functional-Core Board). On a hardware reset the YT8531 comes up with
+auto-negotiation disabled and without RGMII clock delays, so ESPHome automatically re-enables
+auto-negotiation and configures the ~2 ns Tx/Rx clock delays needed for reliable gigabit operation. Use this
+type instead of `GENERIC` for YT8531-based boards; no extra options are needed.
+
+It takes the same configuration variables as the [GENERIC type](#generic-rgmii-configuration-variables)
+(`mdc_pin`, `mdio_pin`, `phy_addr`, `power_pin`, `phy_registers`). On the ESP32-S31 the management pins are
+`mdc_pin: GPIO5`, `mdio_pin: GPIO6` and `power_pin: GPIO7`.
+
 ### SPI configuration variables
 
-- **clk_pin** (**Required**, [Pin](/guides/configuration-types#pin)): The SPI clock pin.
-- **mosi_pin** (**Required**, [Pin](/guides/configuration-types#pin)): The SPI MOSI pin.
-- **miso_pin** (**Required**, [Pin](/guides/configuration-types#pin)): The SPI MISO pin.
+- **clk_pin** (**Required** unless `spi_id` is set, [Pin](/guides/configuration-types#pin)): The SPI clock pin.
+- **mosi_pin** (**Required** unless `spi_id` is set, [Pin](/guides/configuration-types#pin)): The SPI MOSI pin.
+- **miso_pin** (**Required** unless `spi_id` is set, [Pin](/guides/configuration-types#pin)): The SPI MISO pin.
 - **cs_pin** (**Required**, [Pin](/guides/configuration-types#pin)): The SPI chip select pin.
+- **spi_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of an [SPI Component](/components/spi/) bus
+  to attach the Ethernet chip to instead of initializing a dedicated SPI host. ESP32 only. This allows the chip to
+  share the SPI bus with other peripherals, each using its own CS pin. The referenced bus must use a hardware SPI
+  interface (for example `interface: spi2`, not `software`) and must have a `miso_pin`. When `spi_id` is set,
+  `clk_pin`, `mosi_pin`, `miso_pin` and `interface` must not be set - they come from the referenced bus.
 - **interrupt_pin** (*Optional*, [Pin](/guides/configuration-types#pin)): The interrupt pin.
   This variable is **required** for older frameworks. See below.
 
 - **reset_pin** (*Optional*, [Pin](/guides/configuration-types#pin)): The reset pin.
-- **clock_speed** (*Optional*, float): The SPI clock speed.
+- **clock_speed** (*Optional*, float): The SPI clock speed. ESP32 only.
   Any frequency between `8MHz` and `80MHz` is allowed, but the nearest integer division
   of `80MHz` is used, i.e. `16MHz` (`80MHz` / 5) is used when `15MHz` is configured.
   Default: `26.67MHz`.
 
 - **polling_interval** (*Optional*, [Time](/guides/configuration-types#time)): If `interrupt_pin` is not set,
-  set the time interval for periodic polling. Minimum is 1ms, Defaults to 10ms.
+  set the time interval for periodic polling. Minimum is 1ms; defaults to 10ms. ESP32 only.
   Older frameworks may not support this variable. See below for details.
+- **interface** (*Optional*, string): Controls which ESP-IDF SPI implementation should be used.
+  Value may be either `spi2` or `spi3`. Must not be set when `spi_id` is used.
 
-If you are using a framework with the latest version, ESPHome provides
-an SPI-based Ethernet module without interrupt pin.
-Support for SPI polling mode (no interrupt pin) is provided by the following frameworks:
+On ESP32, the `interrupt_pin` and `polling_interval` options control how the SPI Ethernet
+chip is polled. On RP2040, the arduino-pico framework handles packet processing automatically.
 
-- ESP-IDF 5.3 or later
-- ESP-IDF 5.2.1 and later 5.2.x versions
-- ESP-IDF 5.1.4
-- Arduino-ESP32 3.0.0 or later (**Caution**: PlatformIO does not support these Arduino-ESP32 versions)
+**ESP32 SPI polling mode details:**
+
+Support for SPI polling mode (no interrupt pin) is provided by ESP-IDF 5.1.4+.
 
 When building with frameworks that support SPI polling mode, either `interrupt_pin`
 or `polling_interval` can be set. If you set both, ESPHome will throw an error.
 
-If you are using a framework that does not support SPI-based ethernet modules without interrupt pin,
+If you are using a framework that does not support SPI polling mode,
 `interrupt_pin` is **required** and you cannot set `polling_interval`.
 
 ### Advanced common configuration variables
@@ -140,20 +222,23 @@ If you are using a framework that does not support SPI-based ethernet modules wi
 
 - **mac_address** (*Optional*, MAC Address): Set the MAC address of the ethernet interface.
 
+- **enable_on_boot** (*Optional*, boolean): If enabled, the Ethernet interface will be enabled on boot. Defaults to `true`.
+
 - **on_connect** (*Optional*, [Automation](/automations)): An action to be performed when a connection is established.
 - **on_disconnect** (*Optional*, [Automation](/automations)): An action to be performed when the connection is dropped.
 
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
 
 > [!NOTE]
-> If your Ethernet board is not designed with an ESP32 built in, it's common to attempt
-> to use flying leads, dupont wires, etc. to connect the Ethernet controller to the ESP32.
-> This approach is likely to fail, however, as the Ethernet interface uses a high frequency
-> clock signal that will not travel reliably over these types of connections. For more
-> information and wiring details refer to the link in the *See also* section.
+> If your Ethernet board is not designed with the microcontroller built in, it's common to attempt
+> to use flying leads, dupont wires, etc. to connect the Ethernet controller. This approach is
+> likely to fail, however, as the Ethernet interface uses a high frequency clock signal that will
+> not travel reliably over these types of connections.
 
 > [!NOTE]
-> SPI based chips do *not* use [Spi](/components/spi/). This means that SPI pins can't be shared with other devices.
+> By default, SPI based chips do *not* use the [SPI Component](/components/spi/) and their SPI pins can't be shared
+> with other devices. On ESP32, set `spi_id` to attach the chip to an existing hardware `spi:` bus instead, sharing
+> its pins with other SPI peripherals.
 
 ## Configuration examples
 
@@ -387,6 +472,25 @@ ethernet:
   reset_pin: GPIO9
 ```
 
+**M5Stack CoreS3 with Base LAN PoE** (W5500 sharing the SPI bus with the LCD and microSD):
+
+```yaml
+spi:
+  - id: spi_bus
+    interface: spi2
+    clk_pin: GPIO36
+    mosi_pin: GPIO37
+    miso_pin: GPIO35
+
+ethernet:
+  type: W5500
+  spi_id: spi_bus
+  cs_pin: GPIO9
+  reset_pin: GPIO7
+  interrupt_pin: GPIO14
+  clock_speed: 20MHz
+```
+
 **ETH01-Evo**:
 
 ```yaml
@@ -404,6 +508,124 @@ ethernet:
 > [!NOTE]
 > Using a higher clock_speed, including default, might cause rx errors and dropped packets.
 
+**CH390** (ESP32, SPI):
+
+```yaml
+ethernet:
+  type: CH390
+  clk_pin: GPIOXX
+  mosi_pin: GPIOXX
+  miso_pin: GPIOXX
+  cs_pin: GPIOXX
+  interrupt_pin: GPIOXX
+```
+
+> [!NOTE]
+> The WCH CH390 shares the Davicom DM9051 register map but reports its own vendor and product IDs, so the
+> `DM9051` type rejects it during initialization with a `wrong Vendor ID` error. Use `CH390`.
+
+**ENC28J60** (ESP32, SPI):
+
+```yaml
+ethernet:
+  type: ENC28J60
+  clk_pin: GPIOXX
+  mosi_pin: GPIOXX
+  miso_pin: GPIOXX
+  cs_pin: GPIOXX
+  interrupt_pin: GPIOXX
+  reset_pin: GPIOXX
+  clock_speed: 10MHz
+```
+
+> [!NOTE]
+> The ENC28J60 is a 10Mbps Ethernet controller. For higher throughput, consider using a W5500 (100Mbps) instead.
+
+**ENC28J60** (RP2040 Pico, SPI):
+
+```yaml
+ethernet:
+  type: ENC28J60
+  clk_pin: 18
+  mosi_pin: 19
+  miso_pin: 16
+  cs_pin: 17
+  interrupt_pin: 21
+  reset_pin: 20
+```
+
+**WIZnet W5500-EVB-Pico** (RP2040):
+
+```yaml
+rp2040:
+  board: wiznet_5500_evb_pico
+
+ethernet:
+  type: W5500
+  clk_pin: 18
+  mosi_pin: 19
+  miso_pin: 16
+  cs_pin: 17
+  interrupt_pin: 21
+  reset_pin: 20
+```
+
+**WIZnet W5100S-EVB-Pico** (RP2040):
+
+```yaml
+rp2040:
+  board: wiznet_5100s_evb_pico
+
+ethernet:
+  type: W5100
+  clk_pin: 18
+  mosi_pin: 19
+  miso_pin: 16
+  cs_pin: 17
+  interrupt_pin: 21
+  reset_pin: 20
+```
+
+**WIZnet W6300-EVB-Pico2** (RP2350):
+
+```yaml
+rp2040:
+  board: wiznet_6300_evb_pico2
+
+ethernet:
+  type: W6300
+  clk_pin: 17
+  mosi_pin: 18
+  miso_pin: 19
+  cs_pin: 16
+  interrupt_pin: 15
+  reset_pin: 22
+```
+
+> [!NOTE]
+> The W6300 uses PIO QSPI with hardcoded pins — it does not use Arduino SPI. The `clk_pin`,
+> `mosi_pin`, `miso_pin`, and `cs_pin` fields are still required by the YAML schema for this board,
+> but they are **not** user-configurable for pin remapping; they must be set to the board's fixed
+> QSPI pinout as shown above. An upstream arduino-pico driver issue causes GPIO 0 (UART TX) to be
+> reset during initialization, which disrupts UART serial logging. Device operation and OTA are
+> unaffected.
+
+**WIZnet W6100-EVB-Pico** (RP2040):
+
+```yaml
+rp2040:
+  board: wiznet_6100_evb_pico
+
+ethernet:
+  type: W6100
+  clk_pin: 18
+  mosi_pin: 19
+  miso_pin: 16
+  cs_pin: 17
+  interrupt_pin: 21
+  reset_pin: 20
+```
+
 ## `on_connect` / `on_disconnect` Trigger
 
 This trigger is activated when an Ethernet connection is established or dropped.
@@ -416,6 +638,70 @@ ethernet:
   on_disconnect:
     - switch.turn_off: switch1
 ```
+
+## Actions
+
+<span id="ethernet-on_disable"></span>
+
+### `ethernet.disable` Action
+
+This action turns off the Ethernet interface on demand.
+
+```yaml
+on_...:
+  then:
+    - ethernet.disable:
+```
+
+> [!NOTE]
+> Be mindful of the reboot timeout set for the [API component](/components/api/) if you disable Ethernet on a device that has no other network interface configured. If Ethernet remains off for longer than that timeout, the device will reboot!
+
+<span id="ethernet-on_enable"></span>
+
+### `ethernet.enable` Action
+
+This action turns on the Ethernet interface on demand.
+
+```yaml
+on_...:
+  then:
+    - ethernet.enable:
+```
+
+> [!NOTE]
+> The configuration option `enable_on_boot` can be set to `false` if you do not want Ethernet to be enabled on boot.
+
+## Conditions
+
+### `ethernet.connected` Condition
+
+This [Condition](/automations/actions#all-conditions) checks if the device currently has an Ethernet connection.
+
+```yaml
+on_...:
+  if:
+    condition:
+      ethernet.connected:
+    then:
+      - logger.log: Ethernet is connected!
+```
+
+The lambda equivalent for this is `id(ethernet_id).is_connected()`.
+
+### `ethernet.enabled` Condition
+
+This [Condition](/automations/actions#all-conditions) checks if the Ethernet interface is currently enabled.
+
+```yaml
+on_...:
+  if:
+    condition:
+      ethernet.enabled:
+    then:
+      - logger.log: Ethernet is enabled!
+```
+
+The lambda equivalent for this is `id(ethernet_id).is_enabled()`.
 
 ## See Also
 

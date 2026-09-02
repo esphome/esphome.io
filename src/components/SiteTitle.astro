@@ -1,0 +1,43 @@
+---
+import Default from "@astrojs/starlight/components/SiteTitle.astro";
+import versionData from "../../data/version.json";
+
+// data/version.json is maintained by script/bump-version.py and the release
+// scripts, which keep blog_url pointing at the latest release notes blog post.
+// Shows the latest patch version (e.g., 2026.3.3) but links to the base
+// version's release notes, matching how Home Assistant does it.
+const displayVersion = versionData.release ?? "";
+const versionUrl = versionData.blog_url ?? "";
+---
+
+<Default {...Astro.props}><slot /></Default>
+{
+  displayVersion && versionUrl && (
+    <a href={versionUrl} class="version-badge" title={`ESPHome ${displayVersion}`} translate="no">
+      {displayVersion}
+    </a>
+  )
+}
+
+<style>
+  .version-badge {
+    align-self: flex-end;
+    margin-left: 8px;
+    padding: 0 4px;
+    font-size: 10px;
+    font-weight: 500;
+    line-height: 15px;
+    height: 15px;
+    letter-spacing: 0.4px;
+    color: var(--sl-color-black);
+    background-color: var(--sl-color-bg-accent);
+    border-radius: 4px;
+    text-decoration: none;
+    white-space: nowrap;
+    transform: translateY(-4px);
+  }
+  .version-badge:hover {
+    background-color: var(--sl-color-accent-low);
+    color: var(--sl-color-text);
+  }
+</style>

@@ -15,6 +15,9 @@
 [context.production]
   environment = { SITE_URL = "https://esphome.io", API_DOCS_URL = "https://api-docs.esphome.io" }
 
+# Purge Cloudflare CDN cache after successful deploy.
+[[plugins]]
+  package = "./plugins/cloudflare-cache-purge"
 
 # Default caching for all pages (HTML and everything else)
 # Browser: 1 hour, Cloudflare CDN: 1 week, serve stale while revalidating
@@ -24,6 +27,7 @@
   [headers.values]
     Cache-Control = "public, max-age=3600, stale-while-revalidate=86400"
     Cloudflare-CDN-Cache-Control = "public, max-age=604800, stale-while-revalidate=86400"
+    Link = '</sitemap-index.xml>; rel="index"; type="application/xml", </components.json>; rel="describedby"; type="application/json"'
 
 # Fingerprinted assets (Astro build output in /_astro/) - 1 year, immutable
 [[headers]]
@@ -99,6 +103,12 @@ status = 301
   to = "{{API_DOCS_URL}}/:splat"
   status = 301
 
+# Same-origin proxy for the Open Home Foundation livestream API (avoids CORS)
+[[redirects]]
+  from = "/livestream-api/*"
+  to = "https://web-api.openhomefoundation.org/livestream/:splat"
+  status = 200
+
 # Webserver files
 [[redirects]]
   from = "/_static/webserver-v1.*"
@@ -106,6 +116,31 @@ status = 301
   status = 301
 
 # Moved components
+
+[[redirects]]
+  from = "/components/animation*"
+  to = "/components/image/animation/"
+  status = 301
+
+[[redirects]]
+  from = "/components/online_image*"
+  to = "/components/image/online_image/"
+  status = 301
+
+[[redirects]]
+  from = "/components/rp2040.html"
+  to = "/components/rp2/"
+  status = 301
+
+[[redirects]]
+  from = "/components/rp2040/"
+  to = "/components/rp2/"
+  status = 301
+
+[[redirects]]
+  from = "/components/rp2040"
+  to = "/components/rp2/"
+  status = 301
 
 [[redirects]]
   from = "/components/sensor/sgp40.html"
@@ -378,6 +413,65 @@ status = 301
 [[redirects]]
   from = "/components/display/qspi_amoled.html"
   to = "/components/display/mipi_spi.html"
+  status = 301
+
+# Moved blog posts
+[[redirects]]
+  from = "/blog/2026/07/02/unbox-your-creativity-with-esphome-2026-6-0*"
+  to = "/blog/2026/07/02/unbox-your-creativity-with-the-esphome-device-builder/"
+  status = 301
+
+# Consolidated getting started guides -> /install/
+# Each form is listed explicitly so legacy .html URLs land on the final
+# destination in one hop instead of chaining through the /*.html catch-all.
+[[redirects]]
+  from = "/guides/getting_started_hassio.html"
+  to = "/install/getting-started/"
+  status = 301
+
+[[redirects]]
+  from = "/guides/getting_started_hassio/"
+  to = "/install/getting-started/"
+  status = 301
+
+[[redirects]]
+  from = "/guides/getting_started_hassio"
+  to = "/install/getting-started/"
+  status = 301
+
+[[redirects]]
+  from = "/guides/getting_started_command_line.html"
+  to = "/install/getting-started/"
+  status = 301
+
+[[redirects]]
+  from = "/guides/getting_started_command_line/"
+  to = "/install/getting-started/"
+  status = 301
+
+[[redirects]]
+  from = "/guides/getting_started_command_line"
+  to = "/install/getting-started/"
+  status = 301
+
+[[redirects]]
+  from = "/guides/installing_esphome.html"
+  to = "/install/"
+  status = 301
+
+[[redirects]]
+  from = "/guides/installing_esphome/"
+  to = "/install/"
+  status = 301
+
+[[redirects]]
+  from = "/guides/installing_esphome"
+  to = "/install/"
+  status = 301
+
+[[redirects]]
+  from = "/components/media_player/i2s_audio*"
+  to = "/components/media_player/speaker/"
   status = 301
 
 # Starlight URL compatibility - trailing slash redirects

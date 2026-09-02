@@ -36,6 +36,10 @@ remote_transmitter:
 
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation. Useful when multiple
   transmitters are connected to a single device.
+- **non_blocking** (*Optional*, boolean): If enabled, transmissions return immediately and complete in the
+  background; the `on_complete` automation triggers once the transmission finishes. Only available on ESP32
+  variants with RMT hardware, where it defaults to `true`, and on RTL8720C, BK7231N and BK7238, where it
+  defaults to `false`.
 
 ### ESP32 RMT configuration variables
 
@@ -60,8 +64,6 @@ remote_transmitter:
 | ESP32-S3      | 192 symbols      | 48 symbols |
 
 - **clock_resolution** (*Optional*, int): The clock resolution used by the RMT peripheral in Hz. Defaults to `1000000`.
-- **non_blocking** (*Optional*, boolean): If enabled, any transmit will return immediately and the RMT will run in the
-  background. The `on_complete` automation will trigger after the transmit completes. Defaults to `true`.
 - **use_dma** (*Optional*, boolean): Enable DMA on variants that support it. If enabled `rmt_symbols` controls
   the DMA buffer size and can be set to a large value.
 
@@ -216,6 +218,28 @@ on_...:
 - **source** (**Required**, int, [templatable](/automations/templates)): The 8-bit source to send, e.g. 0x00=video,0x01=audio,..., see dumper output for more info.
 - **command** (**Required**, int, [templatable](/automations/templates)): The command to send, e.g. 0x01=num1, 0x0d=mute,..., see dumper output for more info.
 - All other options from [Remote Transmitter Actions](#remote_transmitter-transmit_action).
+
+<span id="remote_transmitter-transmit_brennenstuhl"></span>
+
+### `remote_transmitter.transmit_brennenstuhl` Action
+
+This [action](/automations/actions#all-actions) sends a brennenstuhl protocol code to a remote transmitter.
+
+```yaml
+on_...:
+  - remote_transmitter.transmit_brennenstuhl:
+      code: 0xBD2E2C
+```
+
+#### Configuration variables
+
+- **code** (**Required**, int, [templatable](/automations/templates)): The 24-bit code to send.
+- All other options from [Remote Transmitter Actions](#remote_transmitter-transmit_action).
+
+> [!NOTE]
+> The brennenstuhl devices use rolling codes, i.e. each button of the remote generates 4 different codes in
+> a pseudo random manner. See [Rolling Codes](/guides/setting_up_rmt_devices#remote-setting-up-rolling-codes)
+> for details and a complete YAML example.
 
 <span id="remote_transmitter-transmit_byronsx"></span>
 
@@ -487,7 +511,7 @@ on_...:
 
 ### `remote_transmitter.transmit_haier` Action
 
-This [action](/automations/actions#all-actions) sends a 104-bit Haier code to a remote transmitter. The 8-bit checksum is added
+This [action](/automations/actions#all-actions) sends a Haier code to a remote transmitter. The 8-bit checksum is added
 automatically.
 
 ```yaml
@@ -498,7 +522,7 @@ on_...:
 
 #### Configuration variables
 
-- **code** (**Required**, list, [templatable](/automations/templates)): The 13 byte Haier code to send.
+- **code** (**Required**, list, [templatable](/automations/templates)): The 8 or 13 byte Haier code to send.
 - All other options from [Remote Transmitter Actions](#remote_transmitter-transmit_action).
 
 <span id="remote_transmitter-transmit_lg"></span>
@@ -774,7 +798,7 @@ on_...:
 #### Configuration variables
 
 - **code** (**Required**, string, [templatable](/automations/templates)): The raw code to send, copy this from the dump output.
-- **protocol** (*Optional*, [templatable](/automations/templates)): The RC Switch protocol to use, see [RC Switch Protocol](#remote_transmitter-rc_switch-protocol)
+- **protocol** (*Optional*, [templatable](/automations/templates)): The RC Switch protocol to use, see [RC Switch Protocol](#rc-switch-protocol)
   for more information.
 
 - All other options from [Remote Transmitter Actions](#remote_transmitter-transmit_action).
@@ -800,7 +824,7 @@ on_...:
 - **group** (**Required**, string, [templatable](/automations/templates)): The group to send the command to.
 - **device** (**Required**, string, [templatable](/automations/templates)): The device in the group to send the command to.
 - **state** (**Required**, boolean, [templatable](/automations/templates)): The on/off state to send.
-- **protocol** (*Optional*, [templatable](/automations/templates)): The RC Switch protocol to use, see [RC Switch Protocol](#remote_transmitter-rc_switch-protocol)
+- **protocol** (*Optional*, [templatable](/automations/templates)): The RC Switch protocol to use, see [RC Switch Protocol](#rc-switch-protocol)
   for more information.
 
 - All other options from [Remote Transmitter Actions](#remote_transmitter-transmit_action).
@@ -826,7 +850,7 @@ on_...:
 - **address** (**Required**, int, [templatable](/automations/templates)): The address to send the command to.
 - **channel** (**Required**, int, [templatable](/automations/templates)): The channel to send the command to.
 - **state** (**Required**, boolean, [templatable](/automations/templates)): The on/off state to send.
-- **protocol** (*Optional*, [templatable](/automations/templates)): The RC Switch protocol to use, see [RC Switch Protocol](#remote_transmitter-rc_switch-protocol)
+- **protocol** (*Optional*, [templatable](/automations/templates)): The RC Switch protocol to use, see [RC Switch Protocol](#rc-switch-protocol)
   for more information.
 
 - All other options from [Remote Transmitter Actions](#remote_transmitter-transmit_action).
@@ -854,7 +878,7 @@ on_...:
 - **group** (**Required**, int, [templatable](/automations/templates)): The group to send the command to. Range is 1 to 4.
 - **device** (**Required**, int, [templatable](/automations/templates)): The device to send the command to. Range is 1 to 4.
 - **state** (**Required**, boolean, [templatable](/automations/templates)): The on/off state to send.
-- **protocol** (*Optional*, [templatable](/automations/templates)): The RC Switch protocol to use, see [RC Switch Protocol](#remote_transmitter-rc_switch-protocol)
+- **protocol** (*Optional*, [templatable](/automations/templates)): The RC Switch protocol to use, see [RC Switch Protocol](#rc-switch-protocol)
   for more information.
 
 - All other options from [Remote Transmitter Actions](#remote_transmitter-transmit_action).
@@ -880,7 +904,7 @@ on_...:
 - **group** (**Required**, string, [templatable](/automations/templates)): The group to send the command to. Range is `a` to `d`.
 - **device** (**Required**, int, [templatable](/automations/templates)): The device to send the command to. Range is 1 to 3.
 - **state** (**Required**, boolean, [templatable](/automations/templates)): The on/off state to send.
-- **protocol** (*Optional*, [templatable](/automations/templates)): The RC Switch protocol to use, see [RC Switch Protocol](#remote_transmitter-rc_switch-protocol)
+- **protocol** (*Optional*, [templatable](/automations/templates)): The RC Switch protocol to use, see [RC Switch Protocol](#rc-switch-protocol)
   for more information.
 
 - All other options from [Remote Transmitter Actions](#remote_transmitter-transmit_action).
@@ -1086,8 +1110,6 @@ on_...:
   the first one defined in the configuration.
 
 - **value** (**Required**, bool, [templatable](/automations/templates)): The output value of the pin.
-
-<span id="remote_transmitter-rc_switch-protocol"></span>
 
 ### RC Switch Protocol
 

@@ -1,0 +1,215 @@
+---
+description: "LVGL Animations"
+title: "LVGL Animations"
+---
+
+## LVGL Animations
+
+An animation smoothly changes one or more [style properties](/components/lvgl#lvgl-styling) of
+one or more widgets over a period of time. Each animation interpolates every configured property
+from a `from` value to a `to` value across its `duration`, optionally applying a [timing
+function](#timing-functions) to shape the progression.
+
+Animations are defined under the top-level `animations:` key of an `lvgl:` configuration and are
+referenced by `id`. They can be started automatically at boot, looped, or started on demand with the
+[`lvgl.animation.start`](#lvgl-animation-start-action) action.
+
+```yaml
+# Example configuration entry
+lvgl:
+  widgets:
+    - obj:
+        id: box
+        x: 0
+        y: 0
+        width: 50
+        height: 50
+        bg_color: 0xFF0000
+  animations:
+    - id: slide
+      duration: 1s
+      auto_start: true
+      loop: true
+      timing: ease_in_out
+      widgets:
+        - id: box
+          x:
+            from: 0
+            to: 200
+          y:
+            from: 0
+            to: 100
+```
+
+## Configuration variables
+
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the animation, used to
+  reference it from the [`lvgl.animation.start`](#lvgl-animation-start-action) action.
+- **duration** (*Optional*, [Time](/guides/configuration-types#time)): How long one run of the
+  animation takes. Defaults to `5s`.
+- **start_delay** (*Optional*, [Time](/guides/configuration-types#time)): A delay between the
+  animation being started and the first value change. Defaults to `0s`.
+- **auto_start** (*Optional*, boolean): Start the animation automatically when the device boots.
+  Defaults to `false`.
+- **loop** (*Optional*, boolean): Restart the animation automatically each time it completes.
+  Defaults to `false`.
+- **timing** (*Optional*): A [timing function](#timing-functions), or a list of them applied in
+  order. Defaults to none (linear interpolation).
+- **widgets** (**Required**, list): The widgets to animate, and the properties to animate on each.
+  Each entry has:
+  - **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the widget to animate.
+  - One or more [animatable properties](#animatable-properties), each given as a `from`/`to` pair:
+    - **from** (**Required**): The starting value of the property.
+    - **to** (**Required**): The ending value of the property.
+- **on_start** (*Optional*, [Automation](/automations/actions)): An automation to run each time the
+  animation starts (after `start_delay`).
+- **on_stop** (*Optional*, [Automation](/automations/actions)): An automation to run each time the
+  animation stops, whether it completed, was restarted, or was stopped with
+  [`lvgl.animation.stop`](#lvgl-animation-stop-action).
+
+When several properties or widgets are listed, they are all animated together over the same
+`duration` and `timing`.
+
+## Animatable properties
+
+The following [style properties](/components/lvgl#lvgl-styling) can be animated:
+
+- **Position and size**: `x`, `y`, `translate_x`, `translate_y`, `translate_radial`, `min_width`,
+  `max_width`, `min_height`, `max_height`, `length`.
+- **Transforms**: `transform_width`, `transform_height`, `transform_rotation`, `transform_skew_x`,
+  `transform_skew_y`, `transform_pivot_x`, `transform_pivot_y`.
+- **Colors**: `bg_color`, `bg_grad_color`, `border_color`, `outline_color`, `line_color`,
+  `text_color`, `text_outline_stroke_color`, `arc_color`, `shadow_color`, `drop_shadow_color`,
+  `image_recolor`, `bg_image_recolor`, `recolor`.
+- **Opacity**: `opa`, `opa_layered`, `bg_opa`, `bg_main_opa`, `bg_grad_opa`, `bg_image_opa`,
+  `bg_image_recolor_opa`, `border_opa`, `outline_opa`, `image_opa`, `image_recolor_opa`, `line_opa`,
+  `text_opa`, `text_outline_stroke_opa`, `arc_opa`, `shadow_opa`, `drop_shadow_opa`,
+  `color_filter_opa`, `recolor_opa`.
+- **Borders, lines, shadows and text**: `border_width`, `line_width`, `line_dash_gap`,
+  `line_dash_width`, `shadow_width`, `shadow_spread`, `shadow_offset_x`, `shadow_offset_y`,
+  `drop_shadow_radius`, `drop_shadow_offset_x`, `drop_shadow_offset_y`, `blur_radius`,
+  `text_letter_space`, `text_line_space`, `text_outline_stroke_width`.
+
+> [!NOTE]
+> Color properties can only be animated between constant values; a `from` or `to` for a color may
+> not be a lambda. Numeric properties may use lambdas (see below).
+
+### Using lambdas for values
+
+A `from` or `to` value may be a lambda. The lambda is evaluated once, with no arguments, each time
+the animation starts — so it can be used to randomise or compute the endpoints of each run:
+
+```yaml
+animations:
+  - id: random_slide
+    duration: 1s
+    auto_start: true
+    loop: true
+    widgets:
+      - id: box
+        x:
+          from: !lambda "return random_uint32() % 200;"
+          to: 200
+```
+
+## Timing functions
+
+By default the property changes linearly over the animation's `duration`. A `timing` function
+reshapes the progression. A single timing may be given, or a list of them which are applied in
+order. Each timing is one of:
+
+- **round_trip**: Plays the animation forwards over the first half of the `duration` and back to the
+  start over the second half.
+  - **pause** (*Optional*, percentage): Allows inserting a pause between the first and second halves of
+    the animation. A value of 50% will mean 50% of the total duration is the pause. Defaults to 0 (no pause.)
+- **ease_in_out**: Eases the value in at the start and out at the end.
+  - **weight** (*Optional*, percentage): How strongly the easing is applied - range 0 to 100%. Defaults to `100%`.
+- **gravity**: Accelerates the value as though under gravity, bouncing when it reaches the end.
+  - **acceleration** (*Optional*, float): The acceleration applied. Defaults to `0.5`.
+  - **bounce** (*Optional*, float, `0`–`1`): The fraction of speed retained on each bounce.
+    Defaults to `0.5`.
+
+A timing with no parameters may be written as a simple string. With parameters, use a mapping with a
+`type:` key:
+
+```yaml
+animations:
+  - id: bounce_in
+    duration: 2s
+    timing:
+      - type: gravity
+        bounce: 0.3
+        acceleration: 0.8
+    widgets:
+      - id: box
+        y:
+          from: 0
+          to: 200
+```
+
+## Actions
+
+<span id="lvgl-animation-start-action"></span>
+
+### `lvgl.animation.start` Action
+
+Starts one or more animations. If an animation is already running it is restarted from the
+beginning. The `duration`, `start_delay` and `loop` options, if given, override the values
+configured on the animation for this and subsequent runs.
+
+```yaml
+on_...:
+  then:
+    # Start a single animation by ID
+    - lvgl.animation.start: slide
+
+    # Start several, overriding some options
+    - lvgl.animation.start:
+        id:
+          - slide
+          - fade
+        duration: 2s
+        loop: false
+```
+
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the animation to start, or
+  a list of IDs.
+- **duration** (*Optional*, [Time](/guides/configuration-types#time)): Override the animation's
+  `duration`.
+- **start_delay** (*Optional*, [Time](/guides/configuration-types#time)): Override the animation's
+  `start_delay`.
+- **loop** (*Optional*, boolean): Override the animation's `loop` setting.
+- **lvgl_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the LVGL instance the
+  animations belong to. Only required when more than one LVGL instance is configured.
+
+<span id="lvgl-animation-stop-action"></span>
+
+### `lvgl.animation.stop` Action
+
+Stops one or more running animations, leaving the animated properties at their current values. The
+`on_stop` automation runs for each animation that was running. Stopping an animation that is not
+running has no effect.
+
+```yaml
+on_...:
+  then:
+    # Stop a single animation by ID
+    - lvgl.animation.stop: slide
+
+    # Stop several at once
+    - lvgl.animation.stop:
+        - slide
+        - fade
+```
+
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the animation to stop, or a
+  list of IDs.
+- **lvgl_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the LVGL instance the
+  animations belong to. Only required when more than one LVGL instance is configured.
+
+## See Also
+
+- [LVGL Graphics](/components/lvgl/)
+- [LVGL Widgets](/components/lvgl/widgets/)
+- [LVGL Style properties](/components/lvgl#lvgl-styling)
+- [LVGL external docs](https://docs.lvgl.io/)

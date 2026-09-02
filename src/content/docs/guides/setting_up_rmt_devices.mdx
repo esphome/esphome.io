@@ -97,11 +97,16 @@ remote_receiver:
   pin: GPIOXX
   dump: all
   # Settings to optimize recognition of RF devices
-  tolerance: 50%
+  tolerance: 25%
   filter: 250us
   idle: 4ms
   buffer_size: 2kb # only for ESP8266
 ```
+
+The `tolerance` setting defaults to `25%`. If a known protocol fails to decode, raise
+it in small steps. Avoid values close to `50%` — wide windows for adjacent timing slots
+within a protocol start to overlap, and the decoder can match the wrong symbol and emit
+garbage data.
 
 Compile and upload the code. While viewing the log output from the ESP,
 press a button on an RF remote you want to capture (one at a time).
@@ -180,6 +185,64 @@ in the frontend. Click on it and you should see the remote signal being transmit
 > as valid. Also the interval between repetitions can be important. Check that the pace of
 > repetition logs are consistent between the remote controller and the transmitter node.
 > You can adjust the `repeat:` settings accordingly.
+
+## Rolling Codes
+
+<span id="remote-setting-up-rolling-codes"></span>
+
+Some devices are using rolling codes, i.e. instead of **one unique** code, the buttons
+generate **n different** codes in a random manner. Good-natured receivers have a simple
+logic: the current code must differ from the previous one. In such a case, the n codes
+can be recorded by pressing each button several times and stored in a vector. The
+brennenstuhl remote for example uses four rolling codes for each button. The YAML below
+shows the transmitter for the three buttons **A_ON**, **A_OFF** and **B_ON**. Additional
+buttons are simply added in the same way:
+
+```yaml
+
+globals:
+  # the code vectors of three buttons A_ON, A_OFF and B_ON
+- id: a_on
+  type: std::vector<uint32_t>
+  initial_value: '{ 0xbfcf6c, 0xbe821c, 0xb1d75c, 0xb593ac }'
+- id: a_off
+  type: std::vector<uint32_t>
+  initial_value: '{ 0xbd2e2c, 0xb4ed8c, 0xb2b6bc, 0xb3017c }'
+- id: b_on
+  type: std::vector<uint32_t>
+  initial_value: '{ 0xbb3535, 0xb87af5, 0xbca0e5, 0xba5c05 }'
+
+script:
+    # - select vector with bs_button
+    # - lookup code from vector with idx
+    # - call remote_transmitter
+    # - update idx
+  - id: bs_transmitter
+    mode: single
+    parameters: 
+      bs_button: int
+    then:
+      - remote_transmitter.transmit_brennenstuhl:
+          code: !lambda |-
+            uint32_t code = 0;
+            static int32_t idx = 0; // rolling index
+            switch(bs_button) {
+              case 10: { // A_ON
+                code=id(a_on)[idx];
+                break;
+              }
+              case 11: { // A_OFF
+                code=id(a_off)[idx];
+                break;
+              }
+              case 20: {  // B_ON
+                code=id(b_on)[idx];
+                break;
+              }
+            }
+            idx = (idx + 1) & 3;
+            return code;
+```
 
 ## See Also
 
