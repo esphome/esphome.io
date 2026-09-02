@@ -11,6 +11,12 @@ It enables the option to interact with other ESP32 devices over Espressif's ESP-
 It can be used with the [Packet Transport Component](/components/packet_transport) to share
 sensor data; see [ESP-NOW Packet Transport Platform](/components/packet_transport/espnow).
 
+> [!NOTE]
+> ESP-NOW is native to ESP32 variants that have their own radio. On the radio-less ESP32-P4 it instead requires the
+> [ESP32 Hosted](/components/esp32_hosted/) component with a co-processor running ESP-NOW-capable firmware; adding
+> `esp32_hosted:` enables the ESP-NOW path automatically. On radio-less variants without such a path (for example the
+> ESP32-H2), ESP-NOW is not available and the configuration will fail validation.
+
 ```yaml
 # Example configuration entry
 espnow:
@@ -297,4 +303,5 @@ over unicast and broadcast.
 
 ## See Also
 - [ESP-NOW Packet Transport Platform](/components/packet_transport/espnow/)
+- [ESP32 Hosted](/components/esp32_hosted/)
 - <APIRef text="espnow.h" path="espnow/espnow.h" />

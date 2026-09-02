@@ -124,6 +124,54 @@ wifi:
 You can update the firmware on your ESP32 co-processor using the [Esp32 Hosted](/components/update/esp32_hosted/)
 platform. This allows you to deploy firmware updates to the co-processor without manually reflashing it.
 
+## ESP-NOW on ESP32-P4
+
+The ESP32-P4 has no radio of its own. When `esp32_hosted` is configured on an ESP32-P4 host, it also provides an
+ESP-NOW path by forwarding the ESP-NOW calls to the co-processor, so the [ESP-NOW](/components/espnow/) component
+works unchanged. Nothing extra is required beyond adding `espnow:` to your configuration; there is no separate
+component to add. On other ESP32 variants this behaviour is not needed and nothing changes.
+
+Your co-processor firmware must support ESP-NOW. The prebuilt esp-hosted firmware provided by ESPHome includes ESP-NOW
+support, and you can flash it to the co-processor with the [Esp32 Hosted](/components/update/esp32_hosted/) update
+platform.
+
+ESP-NOW works with or without Wi-Fi on the ESP32-P4: you can use ESP-NOW on its own, or run Wi-Fi in station mode and
+ESP-NOW at the same time.
+
+> [!NOTE]
+> The ESP-NOW source MAC address is the co-processor's radio MAC (for example, starting with `E4:B3:23`), not the
+> ESP32-P4's own MAC. Use the co-processor's MAC when adding this device to a remote peer list.
+
+> [!WARNING]
+> On the ESP32-P4, do not run `espnow` while [Wi-Fi](/components/wifi/) is in access point mode. ESP-NOW requires the
+> station interface to be up.
+
+```yaml
+# ESP32-P4 host with an ESP32-C6 co-processor
+esp32_hosted:
+  type: sdio
+  variant: ESP32C6
+  reset_pin: GPIOXX
+  cmd_pin: GPIOXX
+  clk_pin: GPIOXX
+  d0_pin: GPIOXX
+  d1_pin: GPIOXX
+  d2_pin: GPIOXX
+  d3_pin: GPIOXX
+  active_high: true
+
+espnow:
+  on_broadcast:
+    - lambda: |-
+        ESP_LOGD("espnow", "Broadcast of %u bytes received, RSSI %ddBm", size, info.rx_ctrl->rssi);
+
+interval:
+  - interval: 10s
+    then:
+      - espnow.broadcast:
+          data: "Hello from the ESP32-P4"
+```
+
 ## See Also
 
 - [WiFi Component](/components/wifi/)
