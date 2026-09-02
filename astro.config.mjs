@@ -128,6 +128,18 @@ export default defineConfig({
         "@assets": path.resolve(__dirname, "./src/assets"),
       },
     },
+    // Same-origin proxy for the Open Home Foundation livestream API so the
+    // browser isn't blocked by CORS during local dev. Production uses the
+    // matching Netlify rewrite in netlify.toml.
+    server: {
+      proxy: {
+        "/livestream-api": {
+          target: "https://web-api.openhomefoundation.org/livestream",
+          changeOrigin: true,
+          rewrite: (p) => p.replace(/^\/livestream-api/, ""),
+        },
+      },
+    },
   },
   image: {
     breakpoints: imageBreakpoints,
@@ -170,7 +182,7 @@ export default defineConfig({
         {
           icon: "discord",
           label: "Discord",
-          href: "https://discord.gg/KhAMKrd",
+          href: "https://esphome.io/chat",
         },
       ],
       editLink: {
@@ -182,8 +194,9 @@ export default defineConfig({
       components: {
         Footer: "./src/components/Footer.astro",
         Head: "./src/components/Head.astro",
+        Header: "./src/components/Header.astro",
+        PageTitle: "./src/components/PageTitle.astro",
         SiteTitle: "./src/components/SiteTitle.astro",
-        SocialIcons: "./src/components/SocialIcons.astro",
       },
       customCss: ["./src/styles/custom.css", "katex/dist/katex.min.css"],
       sidebar: [
@@ -200,6 +213,11 @@ export default defineConfig({
             },
             { label: "FAQ and Tips", link: "/guides/faq/" },
           ],
+        },
+        {
+          label: "ESPHome Starter Kit",
+          link: "/starter-kit/",
+          attrs: { class: "starter-kit-mobile-link" },
         },
         { label: "Components", link: "/components/" },
         {
@@ -227,7 +245,7 @@ export default defineConfig({
           items: [
             { label: "Blog", link: "/blog/" },
             { label: "Changelog", link: "/changelog/" },
-            { label: "Discord", link: "https://discord.gg/KhAMKrd" },
+            { label: "Discord", link: "https://esphome.io/chat" },
             {
               label: "Forums",
               link: "https://community.home-assistant.io/c/esphome/",

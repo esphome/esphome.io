@@ -1,0 +1,54 @@
+---
+description: "Instructions for setting up SFA40 formaldehyde sensors with ESPHome"
+title: "SFA40 Formaldehyde Sensor"
+---
+
+import { Image } from 'astro:assets';
+import APIRef from '@components/APIRef.astro';
+
+The `sfa40` sensor platform allows you to use your Sensirion SFA40 formaldehyde
+([datasheet](https://sensirion.com/media/documents/5B06EDD9/69F84BD8/Sensirion_Datasheet_SFA40.pdf)) sensor
+with ESPHome. The sensor also reports temperature and relative humidity. The [I²C Bus](/components/i2c/) is required
+to be set up in your configuration for this sensor to work.
+
+<Image src="/images/sfa40.webp" width={300} height={173} layout="constrained" alt="SFA40 formaldehyde sensor" />
+
+```yaml
+# Example configuration entry
+sensor:
+  - platform: sfa40
+    formaldehyde:
+      name: "Formaldehyde"
+    temperature:
+      name: "Temperature"
+    humidity:
+      name: "Humidity"
+```
+
+## Configuration Variables
+
+- **formaldehyde** (*Optional*): The information for the formaldehyde concentration sensor.
+  All options from [Sensor](/components/sensor/).
+
+- **temperature** (*Optional*): The information for the temperature sensor.
+  All options from [Sensor](/components/sensor/).
+
+- **humidity** (*Optional*): The information for the relative humidity sensor.
+  All options from [Sensor](/components/sensor/).
+
+- **address** (*Optional*, int): Manually specify the I²C address of the sensor.
+  Defaults to `0x5D`.
+
+- **wait_for_ready** (*Optional*, boolean): If enabled, formaldehyde readings are not published while the sensor
+  is warming up. Readings are also not published when the sensor reports an out-of-spec condition, regardless of
+  this setting. Defaults to `true`.
+
+- **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): The interval to check the sensor.
+  Defaults to `60s`.
+
+## See Also
+
+- [Sensor Filters](/components/sensor/#sensor-filters)
+- [Absolute Humidity](/components/sensor/absolute_humidity/)
+- [SFA30 Formaldehyde Sensor](/components/sensor/sfa30/)
+- <APIRef text="sfa40.h" path="sfa40/sfa40.h" />

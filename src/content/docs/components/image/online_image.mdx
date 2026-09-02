@@ -19,6 +19,8 @@ downloaded, decoded and drawn at runtime.
 > - JPEG images, currently only baseline images (no progressive support)
 >
 > - PNG images
+>
+> - QOI images
 
 > [!WARNING]
 > This component requires a fair amount of RAM; both for downloading the image, and for storing the decoded image. It might work on devices without PSRAM, but there is no guarantee.
@@ -43,10 +45,15 @@ image:
 
 - **format** (**Required**): The format that the image is encoded with.
 
-  - `AUTO`  : The format is detected automatically from the downloaded image content.
+  - `AUTO` : The image will be decoded according to the MIME type specified by the server. If the server does not send the content-type header, or the returned MIME-type is not one of the supported types, the decoding will fail (even if the format would be supported otherwise). If you get an error while using `AUTO`, set the image format explicitly.
   - `BMP`  : The image on the server is encoded in BMP format.
-  - `JPEG`  : The image on the server is encoded in JPEG format.
+  - `JPEG` (or `JPG`) : The image on the server is encoded in JPEG format.
   - `PNG`  : The image on the server is encoded in PNG format.
+  - `QOI`  : The image on the server is encoded in QOI format.
+
+  > [!NOTE]
+  > Using `AUTO` format will add the libraries and functionality required to decode all supported formats; which will increase the binary size. If you know beforehand which format the downloaded images will have, it is better to specify the format explicitly.
+
 - **resize** (*Optional*, string): If set, this will resize the image to fit inside the given dimensions `WIDTHxHEIGHT`
   and preserve the aspect ratio.
 
@@ -191,6 +198,12 @@ wifi:
   on_connect:
     - component.update: my_online_image
 ```
+
+## Sharing Options Across Files
+
+If you have several `online_image` images that share most of their options,
+see [Setting Defaults](/components/image#setting-defaults)
+on the [image](/components/image/) component page.
 
 ## See Also
 
