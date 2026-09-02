@@ -24,7 +24,13 @@ and requires [Modbus Controller](/components/modbus_controller/) to be configure
   To poll some registers less often, place those sensors on a second `modbus_controller` with the same `address:` and a
   slower `update_interval:`.
 - **response_size** (*Optional*, int): Number of bytes the poll reads to cover this binary sensor. For the register types (`holding`/`read`) it defaults to `2` (one register); raise it only when the bit you are reading sits in a wider response, such as a `custom_pdu` reply spanning several registers. It sets the size of the read, not which bit is published — the bit is always selected by `offset` and `bitmask`. It has no effect on the `coil` and `discrete_input` types, which are always read as a single bit.
-- **force_new_range** (*Optional*, boolean): If possible sensors with sequential addresses are grouped together and requested in one range. Setting `force_new_range: true` enforces the start of a new range at that address.
+- **reuse_previous_range** (*Optional*, boolean or `auto`): How this item relates to the register range built just
+  before it (same register type, ascending address order). `auto` (default) joins when the addresses are adjacent and
+  the item's position in the reply is exact; `true` joins unconditionally, reading across address gaps and past
+  registers with a non-standard `response_size`; `false` always starts a new range here (later items may still extend
+  it). See [Register ranges](/components/modbus_controller/#modbus_register_count). Replaces the deprecated
+  `force_new_range` and `register_count` options, which will be removed in 2027.3.0 — the linked section covers
+  migration.
 - **custom_pdu** (*Optional*, list of bytes): The modbus PDU (function code + data) for a custom command. This allows
   using non-standard commands. The device address (taken from the controller's `address:`) and the CRC are added
   automatically, so do not include a leading device-address byte. If `custom_pdu` is used, `address` and
