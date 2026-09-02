@@ -36,9 +36,10 @@ power_management:
 ## Configuration variables
 
 - **max_frequency** (*Optional*, frequency) Frequency used when the CPU lock is acquired. Default is the
-  CPU Frequency defined for the device. If setting, minimum is 40MHz. Recommendation is to use the
-  default. If setting for esp32, use: 80 MHz, 160 MHz, or 240 MHz, and use the profiling: True option and
-  see below for how to dump the lock information.
+  CPU Frequency defined for the device. If setting, the value must be one of the CPU frequencies
+  supported by the variant (e.g. esp32: 80 MHz, 160 MHz, or 240 MHz; esp32-h2: 16 MHz, 32 MHz, 48 MHz,
+  64 MHz, or 96 MHz) - an unsupported value fails validation. Recommendation is to use the default. If
+  setting, use the profiling: True option and see below for how to dump the lock information.
 - **min_frequency** (*Optional*, frequency) Frequency used when not holding a CPU lock. Defaults to the
   external clock frequency, which is typically 40MHz. If setting, minimum is 10MHz, which is the minimum
   frequency required for generating a 1 MHz REF_TICK default clock. Recommendation is to use the default.
@@ -52,7 +53,8 @@ power_management:
   PSRAM. Defaults to False. See discussion below.
 - **power_down_peripherals** (*Optional*, boolean): For disabled peripherals, automatically save and
   restore peripheral states, which allows the peripherals to be powered down. Defaults to True for
-  esp32-c5, esp32-c6, esp32-c61, esp32-h2, esp32-p4, otherwise False. See discussion below.
+  esp32-c5, esp32-c6, esp32-c61, esp32-h2, esp32-h4, esp32-h21, esp32-p4, esp32-s31, otherwise False.
+  See discussion below.
 - **profiling** (*Optional*, boolean): If set to True, will keep track of the amount of time each of the
   power management locks has been held, use this to analyze which locks are preventing the device from
   going into a lower power state, and see what time the device spends in each power saving mode. Setting
