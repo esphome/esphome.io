@@ -1,0 +1,241 @@
+---
+description: "Instructions for setting up SD card storage in ESPHome using SD-MMC or SPI interface"
+title: "SD Card Storage"
+---
+import APIRef from '@components/APIRef.astro';
+
+This component allows an ESP32 to access an SD card as a storage device. The card is mounted into
+the ESP-IDF virtual filesystem (VFS) and made available to other components through the
+[Storage](/components/storage/) abstraction.
+
+Two hardware interfaces are supported:
+
+- **SD-MMC** — native SD bus (1-bit or 4-bit), faster throughput, requires dedicated GPIO pins
+- **SPI** — standard SPI bus, compatible with any hardware SPI interface, slower
+
+> [!NOTE]
+> This component requires ESP32 with the ESP-IDF framework. It is not compatible with Arduino or
+> any other platform, because it depends on ESP-IDF VFS and FATFS.
+> The ESP32-C6 does not have a native SD-MMC host — use `type: sd_spi` on that variant.
+
+## SD-MMC example
+
+```yaml
+sd_storage:
+  type: sd_mmc
+  path: /sdcard
+  clk_pin: GPIO14
+  cmd_pin: GPIO15
+  data0_pin: GPIO2
+  data1_pin: GPIO4
+  data2_pin: GPIO12
+  data3_pin: GPIO13
+  on_mounted:
+    - logger.log: "SD card mounted"
+```
+
+## SPI example
+
+```yaml
+spi:
+  clk_pin: GPIO18
+  mosi_pin: GPIO23
+  miso_pin: GPIO19
+  interface: hardware
+
+sd_storage:
+  type: sd_spi
+  path: /sdcard
+  cs_pin: GPIO5
+  on_mounted:
+    - logger.log: "SD card mounted"
+```
+
+## Configuration variables
+
+- **type** (*Optional*, string): The interface to use. One of `sd_mmc` (default) or `sd_spi`.
+- **path** (*Optional*, string): The VFS mount point for the card. Defaults to `/sdcard`.
+  Other components that access files on the card must use this prefix in their paths.
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID for this component.
+- **on_mounted** (*Optional*, [Automation](/automations/actions/)): An automation to run when the
+  SD card is successfully mounted. The mount path is available as `mount_path`.
+
+### SD-MMC configuration
+
+These options apply when `type: sd_mmc`.
+
+- **clk_pin** (**Required**, integer): GPIO pin number for the SD clock line.
+- **cmd_pin** (**Required**, integer): GPIO pin number for the SD command line.
+- **data0_pin** (**Required**, integer): GPIO pin number for data line 0.
+- **data1_pin** (*Optional*, integer): GPIO pin number for data line 1. Required for 4-bit mode.
+- **data2_pin** (*Optional*, integer): GPIO pin number for data line 2. Required for 4-bit mode.
+- **data3_pin** (*Optional*, integer): GPIO pin number for data line 3. Required for 4-bit mode.
+- **mode_1bit** (*Optional*, boolean): Use 1-bit bus width instead of 4-bit. Defaults to `false`.
+  Use this when only `data0_pin` is connected, for example on boards with limited GPIO.
+- **slot** (*Optional*, integer): SD-MMC slot number, `0` or `1`. Defaults to `0`.
+
+> [!NOTE]
+> SD-MMC pins are fixed by the ESP32 hardware. Refer to your chip's datasheet for the allowed
+> GPIO numbers for each slot. Not all GPIOs can be used for SD-MMC.
+
+### SPI configuration
+
+These options apply when `type: sd_spi`.
+
+- **cs_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The chip select
+  pin. Either `cs_pin` or `data3_pin` must be specified, but not both.
+- **data3_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): Alternative
+  way to specify the CS pin (maps to the SD card's DAT3/CS line). Either `cs_pin` or `data3_pin`
+  must be specified.
+- **spi_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the SPI bus to use.
+  Required when multiple SPI buses are configured.
+
+> [!NOTE]
+> SPI mode requires a hardware SPI interface. Set `interface: hardware` (or a specific interface
+> such as `spi2`) in your `spi:` configuration. Software SPI is not supported.
+
+> [!NOTE]
+> Only 1-bit SPI mode is supported. The `mode_1bit` option is fixed to `true` for SPI and
+> cannot be changed.
+
+## Automations
+
+### `on_mounted` trigger
+
+This trigger fires each time the SD card is successfully mounted, including after a remount
+following card removal and reinsert (if supported by the hardware).
+
+```yaml
+sd_storage:
+  type: sd_mmc
+  # ...
+  on_mounted:
+    - logger.log:
+        format: "SD card mounted at %s"
+        args: [mount_path]
+```
+
+The variable `mount_path` (type `const char *`) contains the VFS mount point (the value of `path:`).
+
+### `sd_storage.mount` Action
+
+Manually mount the SD card. Calling this on a card that is already mounted does nothing and
+reports success, so it is safe to trigger from an automation that may run more than once.
+
+```yaml
+on_...:
+  - sd_storage.mount:
+      id: my_sd
+```
+
+### `sd_storage.unmount` Action
+
+Unmount the SD card. All open file handles should be closed before unmounting.
+
+```yaml
+on_...:
+  - sd_storage.unmount:
+      id: my_sd
+```
+
+### `sd_storage.list_files` Action
+
+Log all files in a directory on the SD card to the console.
+
+```yaml
+on_...:
+  - sd_storage.list_files:
+      id: my_sd
+      path: /sdcard/logs
+```
+
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the `sd_storage` component.
+- **path** (*Optional*, string): Directory to list. Defaults to the root of the mount point.
+
+### `storage.format` Action
+
+Create a fresh, empty filesystem on the card. This is the generic
+[`storage.format`](/components/storage/) action, and an `sd_storage` component is a valid target
+for it.
+
+```yaml
+on_...:
+  - storage.format:
+      id: my_sd
+      on_complete:
+        - logger.log:
+            format: "Format finished: %s"
+            args: ['x.empty() ? "ok" : x.c_str()']
+```
+
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the `sd_storage` component.
+- **on_complete** (*Optional*, [Automation](/automations/actions/)): Runs when the format has
+  finished. The variable `x` (type `std::string`) holds the error text, and is empty on success.
+
+The card is always formatted as FAT; FatFs picks between FAT16 and FAT32 according to the card's
+size. The card must be mounted when the action runs -- there is no drive to format otherwise, and
+the action fails without touching the card. Open file handles are flushed and closed first, then
+the volume is detached, recreated and mounted again, so the mount path is briefly unavailable and
+any handle held in a lambda becomes invalid.
+
+The action only reports success once the fresh filesystem is mounted again. If the card cannot be
+remounted afterwards, `on_complete` reports that as an error rather than reporting success on a
+card that is no longer usable.
+
+> [!WARNING]
+> This erases every file on the card. There is no confirmation step and no way to recover the data
+> afterwards.
+
+### `sd_storage.is_mounted` Condition
+
+Returns `true` if the SD card is currently mounted.
+
+```yaml
+on_...:
+  - if:
+      condition:
+        sd_storage.is_mounted:
+          id: my_sd
+      then:
+        - logger.log: "Card is ready"
+```
+
+## Wiring
+
+### SD-MMC (4-bit)
+
+| SD pin | Function | Notes |
+|--------|----------|-------|
+| CLK    | Clock    | `clk_pin` |
+| CMD    | Command  | `cmd_pin` |
+| DAT0   | Data 0   | `data0_pin` |
+| DAT1   | Data 1   | `data1_pin` |
+| DAT2   | Data 2   | `data2_pin` |
+| DAT3   | Data 3 / CS | `data3_pin` |
+| VDD    | 3.3 V    | |
+| GND    | Ground   | |
+
+Pull DAT0–DAT3 and CMD up to 3.3 V with 10 kΩ resistors. SD cards require stable power — use a
+dedicated 3.3 V LDO if possible.
+
+### SD-MMC (1-bit)
+
+Only CLK, CMD, DAT0, VDD and GND are needed. DAT1–DAT3 can be left unconnected (or pulled high).
+
+### SPI
+
+| SD pin | Function | SPI signal |
+|--------|----------|------------|
+| CLK    | Clock    | SCK / CLK |
+| CMD    | MOSI     | MOSI |
+| DAT0   | MISO     | MISO |
+| DAT3   | Chip select | CS |
+| VDD    | 3.3 V    | |
+| GND    | Ground   | |
+
+Pull MISO (DAT0) up to 3.3 V with a 10 kΩ resistor.
+
+## See also
+
+- [Storage](/components/storage/)
+- <APIRef text="sd_storage.h" path="sd_storage/sd_storage.h"/>
