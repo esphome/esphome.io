@@ -532,6 +532,66 @@ sensor:
 You can customize the MQTT topic prefix by setting `topic_prefix` in the `mqtt` configuration.
 See the [MQTT documentation](/components/mqtt) for more details on how to configure MQTT topics.
 
+## Calculating Instant Rate from Pulse Sensor
+
+The EmonTx `pulse` value is a cumulative counter. To derive an instantaneous rate from it
+(e.g. power in W, flow in L/min or m³/h), use a stateful `lambda` filter that computes the
+derivative against elapsed time, followed by a `multiply` filter to convert to the desired unit.
+
+```yaml
+sensor:
+  - platform: emontx
+    tag_name: "pulse"
+    name: "Instant Power (Pulse)"
+    unit_of_measurement: W
+    device_class: power
+    state_class: measurement
+    accuracy_decimals: 0
+    filters:
+      - lambda: |-
+          static float last_value = NAN;
+          static uint32_t last_ms = 0;
+          uint32_t now = millis();
+          if (isnan(last_value)) {
+            last_value = x;
+            last_ms = now;
+            return {};  // skip first reading — no previous value to diff against
+          }
+          float delta = x - last_value;
+          float dt_s = (now - last_ms) / 1000.0f;
+          last_value = x;
+          last_ms = now;
+          if (dt_s <= 0.0f) return {};
+          return delta / dt_s;  // pulses/s
+      - multiply: 3600  # adjust to your meter — see table below
+```
+
+The lambda outputs **pulses/s**. Adjust `multiply`, `unit_of_measurement`, `device_class`
+and `accuracy_decimals` to match your meter type:
+
+| Meter type | Impulse constant | `multiply` | `unit_of_measurement` |
+|---|---|---|---|
+| Electricity | 1000 imp/kWh | `3600` | `W` |
+| Electricity | 2000 imp/kWh | `1800` | `W` |
+| Electricity | 10000 imp/kWh | `360` | `W` |
+| Water | 1 pulse = 1 L | `60` | `L/min` |
+| Water | 1 pulse = 10 L | `600` | `L/min` |
+| Gas | 1 pulse = 0.01 m³ | `36` | `m³/h` |
+| Gas | 1 pulse = 0.1 m³ | `360` | `m³/h` |
+
+General formulas:
+- **Electricity (W)**: `multiply = 3600000 / impulse_constant`
+- **Water (L/min)**: `multiply = 60 × liters_per_pulse`
+- **Gas (m³/h)**: `multiply = m3_per_pulse × 3600`
+
+> [!NOTE]
+> The impulse constant (imp/kWh for electricity, m³/pulse for gas) is printed on your meter face.
+
+> [!NOTE]
+> The raw EmonTx pulse counter is monotonically increasing and does not reset on reboot.
+> Use `state_class: total_increasing` when exposing it as a cumulative counter.
+> The derived instantaneous rate sensor shown above uses `state_class: measurement`.
+
 ## See Also
 
 - [Sensor Filters](/components/sensor#sensor-filters)
