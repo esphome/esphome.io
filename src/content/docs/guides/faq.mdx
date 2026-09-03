@@ -543,8 +543,12 @@ If you disable mDNS, expect the following repercussions:
 
 ## Can configuration files be recovered from the device?
 
-ESPHome YAML configuration files are not stored on ESPHome devices. If you lost your configuration(s), there's no way
-to recover them from the device; you'll have to recreate them from scratch if you don't have a backup elsewhere.
+By default, ESPHome YAML configuration files are not stored on ESPHome devices, and there is no way to recover them
+once the originals are lost.
+
+If you anticipate this risk, opt in to the [`store_yaml`](/components/store_yaml/) component: it compresses the YAML
+files used to build the firmware and embeds them in the device's flash. The bytes can then be streamed back through
+the [native API](/components/api/) and unpacked on your computer.
 
 Always back up your files!
 
