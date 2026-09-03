@@ -66,7 +66,9 @@ Improv provisioning to Ethernet-only boards, teaches WiFi provisioning to shut d
 when the window closes, and rewrites IR transmission on Beken and Realtek chips to run from a hardware timer
 interrupt instead of a busy-wait. The multi-release modbus overhaul continues with a heap-free write path, a
 consolidated range-join option, and continuous polling. Six new components (ds1603l, d01, sfa40, mk2pvrouter,
-snapshot, noise) and roughly a dozen feature additions to existing components round out the release.
+snapshot, noise) and roughly a dozen feature additions to existing components round out the release. The bundled
+Device Builder masks credentials in the YAML diff view, boots ESP32-C6 boards after a browser flash, and lets paired
+build servers recover from an address change on their own.
 {/* RELEASE_OVERVIEW_END */}
 
 ## Upgrade Checklist
@@ -172,6 +174,96 @@ is 104 bytes smaller per open encrypted connection ([#18420](https://github.com/
 the camera image reader is created lazily instead of per connection
 ([#18421](https://github.com/esphome/esphome/pull/18421)), and API message-type storage widened to `uint16_t`
 without adding per-connection RAM ([#18526](https://github.com/esphome/esphome/pull/18526)).
+
+## ESPHome Device Builder
+
+This section covers everything that changed in the bundled
+[ESPHome Device Builder](https://github.com/esphome/device-builder) since the 2026.8.0 release notes. Device Builder
+updates also ship in ESPHome patch releases for as long as the changes remain safe to include, so some of what
+follows already reached you during the 2026.8.x cycle; the rest is new with this release.
+
+**Secrets Stay Hidden**
+
+The YAML diff view used to render credentials in plain text, so a password the editor masks as bullets became visible
+the moment you flipped the diff toggle. The diff now masks the same sensitive values the editor does, and both the
+editor diff and the config migration preview gained a reveal toggle
+([frontend#1664](https://github.com/esphome/device-builder-frontend/pull/1664),
+[frontend#1665](https://github.com/esphome/device-builder-frontend/pull/1665)). The Device Builder also stopped
+corrupting `secrets.yaml` itself: a Wi-Fi password containing `#` made every Wi-Fi write append a second
+`wifi_password:` line, and the resulting parse failure came back as an internal error asking you to file a bug. The
+writer now understands quoted values, heals an already duplicated file on the next write, and reports a broken
+`secrets.yaml` as your file to fix ([#2624](https://github.com/esphome/device-builder/pull/2624)). The create-device
+error offers an **Open secrets** action that takes you to the Secrets page, where duplicate keys are flagged in place
+([frontend#1673](https://github.com/esphome/device-builder-frontend/pull/1673)), and the structured secrets editor
+recognises quoted keys ([frontend#1674](https://github.com/esphome/device-builder-frontend/pull/1674)).
+
+**ESPHome Web and First Use**
+
+Flashing an ESP32-C6, H2 or P4 from the browser left the chip sitting in the ROM bootloader instead of booting the new
+firmware, so Improv never answered and the Wi-Fi dialog waited forever. The USB-Serial/JTAG reset after flashing now
+boots the firmware, and the Improv dialog reopens the port that appears once the chip has actually started
+([frontend#1679](https://github.com/esphome/device-builder-frontend/pull/1679)). The **Prepare for first use** dialog
+gained an **Erase the device first** option, so a board that previously ran other firmware does not come up already
+provisioned with stale Wi-Fi credentials
+([frontend#1680](https://github.com/esphome/device-builder-frontend/pull/1680)).
+
+**Remote Builds**
+
+When a paired build server moves to a new IP on another subnet with no mDNS in between, the Device Builder used to dial
+the stale endpoint forever and the only way out was editing the endpoint by hand. The build server now remembers
+where the last session came from and, after five minutes of silence, dials back to announce its new address, so the
+pairing heals itself ([#2650](https://github.com/esphome/device-builder/pull/2650)). The install dialog's "Building
+on" line only shows the receiver's ESPHome version when the receiver really builds with it, rather than the version it
+had installed before provisioning ours ([#2628](https://github.com/esphome/device-builder/pull/2628),
+[frontend#1676](https://github.com/esphome/device-builder-frontend/pull/1676)), and
+[@bharvey88](https://github.com/bharvey88) rewrote the pairing walkthrough to match the current Settings screens,
+with recordings of each step ([#2623](https://github.com/esphome/device-builder/pull/2623)).
+
+**Device Cards and Table**
+
+[@Daniel085](https://github.com/Daniel085) brought the device comment back to the tile card, where the legacy
+dashboard used to show it ([frontend#1671](https://github.com/esphome/device-builder-frontend/pull/1671)); it is now
+set as a metadata row with a leading icon so it does not read as a second filename
+([frontend#1682](https://github.com/esphome/device-builder-frontend/pull/1682)). The card layout had a pass of its
+own: the divider hugs the action row instead of floating mid card on short cards, label chips line up across a row,
+and the `+N` overflow chip no longer wraps
+([frontend#1683](https://github.com/esphome/device-builder-frontend/pull/1683)). In the table view the device count
+now reflects the search box as well as the facet filters
+([frontend#1677](https://github.com/esphome/device-builder-frontend/pull/1677)), and toasts lift above the Install and
+Save buttons on the editor and Secrets pages instead of covering them
+([frontend#1681](https://github.com/esphome/device-builder-frontend/pull/1681)).
+
+**Editor Fixes**
+
+ESPHome ignores top-level keys that start with a dot, the documented way to park YAML anchors, but the editor's
+section parser did not, so the anchor list rendered as bogus unnamed cards and editing the section above it through
+the structured form silently deleted the anchor key. Dot-prefixed keys are now block boundaries everywhere the file is
+scanned, on both the frontend and backend side
+([frontend#1689](https://github.com/esphome/device-builder-frontend/pull/1689),
+[#2652](https://github.com/esphome/device-builder/pull/2652)). The add-component form no longer demands `cs_pin`,
+`dc_pin` and `dimensions` for a display model that predefines them, since required fields for model-driven displays
+such as `epaper_spi` are now resolved per model ([#2648](https://github.com/esphome/device-builder/pull/2648)), and
+the `variables`, `data` and `data_template` maps on the Home Assistant actions keep their map editor with the 2026.9
+schema ([#2655](https://github.com/esphome/device-builder/pull/2655)). The log viewer explains ESP32 "TCP buffer
+full" warnings with a popover linking to the new
+[`tcp_send_buffer`](/components/network/#configuration-variables) option
+([frontend#1672](https://github.com/esphome/device-builder-frontend/pull/1672)), and a component whose config example
+appears on more than one docs page, like `xiaomi_lywsd03mmc`, gets its docs link back
+([#2609](https://github.com/esphome/device-builder/pull/2609)).
+
+**Under the Hood**
+
+Out-of-band edit detection moved from a hand-maintained list of keys to a versioned fingerprint of the whole file, so
+a future change to the algorithm can never again trigger a fleet-wide regeneration and build-directory wipe on the
+first scan after an upgrade ([#2617](https://github.com/esphome/device-builder/pull/2617)). A third-party device
+advertising an mDNS service name with control characters no longer floods the log with tracebacks
+([#2621](https://github.com/esphome/device-builder/pull/2621)), the plain Docker container reaps orphaned `git` and
+compile processes instead of leaving them defunct when running as PID 1
+([#2636](https://github.com/esphome/device-builder/pull/2636)), and version history ignores the fake executable bit
+Samba puts on files edited from Windows, so every diff no longer carries a mode change
+([#2646](https://github.com/esphome/device-builder/pull/2646)).
+[@rwrozelle](https://github.com/rwrozelle) kept nRF52 boards resolving in the catalog ahead of the move to Hardware
+Model v2 board names ([#2618](https://github.com/esphome/device-builder/pull/2618)).
 
 ## Encrypted OTA Updates
 
