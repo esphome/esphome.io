@@ -123,6 +123,53 @@ api:
 - **on_client_disconnected** (*Optional*, [Action](/automations/actions#all-actions)): An automation to perform when a client
   disconnects from the API. See [`on_client_disconnected` Trigger](#api-on_client_disconnected_trigger).
 
+- **outgoing_connection** (*Optional*): Have the device open the API connection itself when no dial-back client is
+  connected. Requires `encryption` and is not available on ESP8266 or RP2040. See
+  [Outgoing connections](#api-outgoing-connections).
+
+  - **host** (*Optional*, IP address): The address to dial. When not set, the device remembers the address of the last
+    client that declared itself a dial-back target (such as Home Assistant) and dials that.
+  - **port** (*Optional*, integer): The TCP port the dial-back target listens on. Defaults to `6054`.
+  - **delay** (*Optional*, [Time](/guides/configuration-types#time)): How long to give a dial-back client to connect
+    in on its own, both after boot and after one disconnects, before the device dials out. Devices with
+    [deep sleep](/components/deep_sleep) skip the wait and dial as soon as the network is up on every wake, since
+    the awake window is short. Defaults to `60s`.
+
+<span id="api-outgoing-connections"></span>
+
+## Outgoing connections
+
+> [!IMPORTANT]
+> Outgoing connections require [API encryption](#configuration-variables); this is a hard requirement by design and
+> plaintext support is not planned. Because the device opens the connection, the traffic can leave the local network
+> entirely, so the shared encryption key is the only trustworthy way the device and the client can verify each
+> other. The option refuses to configure without `encryption`, and only key-verified clients can become dial-back
+> targets.
+
+Normally the client, such as Home Assistant, opens the TCP connection to the device. With `outgoing_connection`
+configured, the device notices when no dial-back client is connected and, after `delay`, opens the connection itself;
+the protocol then runs over that connection unchanged and both sides still verify each other with the encryption key.
+This lets a device stay connected when the client can no longer reach it, for example after network or firewall
+changes, as long as the device can still reach the client.
+
+A client declares itself a dial-back target when it connects; the device remembers the address of the last such client
+across reboots, or always dials `host` when one is set. Home Assistant accepts these connections automatically for
+every device with an encryption key; there is nothing to configure on its side.
+
+> [!NOTE]
+> The device must be added to the client once while it is reachable: dial-ins are only accepted for devices the
+> client already knows, since an unknown caller cannot be verified. After that first setup the device can stay
+> permanently unreachable from the client.
+
+```yaml
+# Example configuration entry
+api:
+  encryption:
+    key: !secret api_encryption_key
+  outgoing_connection:
+    delay: 60s
+```
+
 ## Actions
 
 Before using any of the actions below, you'll need to tell Home Assistant to allow your device to
