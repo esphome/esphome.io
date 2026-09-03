@@ -1,0 +1,50 @@
+---
+title: "DS3231 Select"
+description: "Instructions for controlling the DS3231 real-time clock's INT/SQW pin from selects in ESPHome."
+---
+
+import APIRef from '@components/APIRef.astro';
+
+The `ds3231` select platform controls what the [DS3231 real-time clock](/components/ds3231/)'s `INT/SQW` pin
+does: whether it acts as the alarm-interrupt line or a square-wave generator, and at which frequency. It is
+the runtime equivalent of the hub's
+[`int_sqw_startup_mode`](/components/ds3231/#square-wave-output) and
+[`square_wave_output`](/components/ds3231/#square-wave-output) options.
+
+Set up the [`ds3231`](/components/ds3231/) hub (and the [I²C](/components/i2c/) bus it needs) first.
+
+```yaml
+# Example configuration entry
+ds3231:
+  id: ds3231_hub
+
+select:
+  - platform: ds3231
+    output_mode:
+      name: "RTC INT/SQW Mode"
+    square_wave_frequency:
+      name: "RTC Square Wave Frequency"
+```
+
+## Configuration Variables
+
+- **ds3231_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the [`ds3231`](/components/ds3231/)
+  hub to use when more than one is configured.
+- **output_mode** (*Optional*): Selects the `INT/SQW` pin function, either `alarm interrupt` or `square wave`
+  (the two are mutually exclusive). The boot value comes from the hub's `int_sqw_startup_mode`. Enabling an
+  alarm forces `alarm interrupt`, and the select follows on the next poll. Config entity category. All options
+  from [Select](/components/select#config-select).
+- **square_wave_frequency** (*Optional*): The square-wave frequency, one of `1 Hz`, `1.024 kHz`, `4.096 kHz`
+  or `8.192 kHz` (fixed by the hardware). Only reaches the pin while `output_mode` is `square wave`. Config
+  entity category. All options from [Select](/components/select#config-select).
+
+At least one of `output_mode` or `square_wave_frequency` must be provided.
+
+Both selects read their state back from the chip's control register, and the hub republishes it on every
+`update_interval`.
+
+## See Also
+
+- [DS3231 Real-Time Clock](/components/ds3231/)
+- [Select Component](/components/select/)
+- <APIRef text="ds3231/select/ds3231_select.h" path="ds3231/select/ds3231_select.h" />

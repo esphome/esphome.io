@@ -1,0 +1,53 @@
+---
+title: "DS3231 Binary Sensor"
+description: "Exposing the DS3231 real-time clock's alarm and oscillator flags as binary sensors in ESPHome."
+---
+
+import APIRef from '@components/APIRef.astro';
+
+The `ds3231` binary sensor platform exposes the status flags of the [DS3231 real-time clock](/components/ds3231/):
+the two alarm "fired" flags and the oscillator-stopped flag. The flags are refreshed every `update_interval`
+of the [`ds3231`](/components/ds3231/) hub.
+
+Set up the [`ds3231`](/components/ds3231/) hub (and the [I²C](/components/i2c/) bus it needs) first.
+
+```yaml
+# Example configuration entry
+ds3231:
+  id: ds3231_hub
+
+binary_sensor:
+  - platform: ds3231
+    alarm_1:
+      name: "RTC Alarm 1"
+    oscillator_stopped:
+      name: "RTC Lost Power"
+```
+
+## Configuration Variables
+
+- **ds3231_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the [`ds3231`](/components/ds3231/)
+  hub to use when more than one is configured.
+- **alarm_1** (*Optional*): Reports `ON` while alarm 1's "fired" flag is set. This is momentary as the hub
+  clears the flag on its next poll. Only reacts while alarm 1 is enabled (see the
+  [alarm switch](/components/switch/ds3231/)); a match that occurs while it is disabled is ignored. Device
+  class `problem`. See [Alarms](/components/ds3231/#alarms).
+  All options from [Binary Sensor](/components/binary_sensor/#config-binary_sensor).
+- **alarm_2** (*Optional*): As `alarm_1`, for alarm 2.
+- **oscillator_stopped** (*Optional*): Reports `ON` when the chip lost both `VCC` and battery power and the
+  stored time is no longer trusted. Device class `problem`, diagnostic entity category. Cleared when a valid
+  time is written with [`ds3231.write_time`](/components/time/ds3231/#ds3231-write_time-action).
+  All options from [Binary Sensor](/components/binary_sensor/#config-binary_sensor).
+
+At least one of `alarm_1`, `alarm_2` or `oscillator_stopped` must be provided.
+
+> [!NOTE]
+> To enable, disable or monitor whether an alarm is enabled, use the
+> [`ds3231` switch platform](/components/switch/ds3231/) instead. These binary sensors only report the
+> momentary "fired" event.
+
+## See Also
+
+- [DS3231 Real-Time Clock](/components/ds3231/)
+- [Binary Sensor Component](/components/binary_sensor/)
+- <APIRef text="ds3231/binary_sensor/ds3231_binary_sensor.h" path="ds3231/binary_sensor/ds3231_binary_sensor.h" />
