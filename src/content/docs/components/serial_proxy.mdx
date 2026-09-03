@@ -38,11 +38,6 @@ serial_proxy:
   - `TTL`: Standard TTL logic-level UART (3.3V or 5V). Typically used for direct connections to most microcontrollers.
   - `RS232`: RS-232 standard serial port (typically ±12V levels via an appropriate line-driver IC). Typically used for PC-style serial connections, often with a DB9-type connector.
   - `RS485`: RS-485 differential serial bus. Typically used for industrial/multi-drop serial networks.
-- **mode** (*Optional*, string): The mode the port starts in. In `RAW` mode, the port is a plain byte pipe and
-  data passes through unchanged. In `PROTOCOL` mode, a protocol-aware companion component (when one is configured)
-  may observe the traffic and send protocol messages such as acknowledgements on behalf of the client. The
-  subscribed API client may change the mode at runtime; the port returns to `RAW` whenever that client disconnects.
-  Defaults to `RAW`.
 - **rts_pin** (*Optional*, [Pin](/guides/configuration-types#pin)): GPIO pin to use as the RTS (Request to Send)
   modem control output. The state of this pin may be controlled by the API client at runtime.
 - **dtr_pin** (*Optional*, [Pin](/guides/configuration-types#pin)): GPIO pin to use as the DTR (Data Terminal Ready)
@@ -56,9 +51,12 @@ When an API client connects, it can:
 - **Receive data** from the serial device — data arriving on the UART is forwarded to connected API clients automatically each loop iteration (up to 256 bytes at a time).
 - **Reconfigure the UART** at runtime — the API client may change the baud rate, data bits, stop bits, and parity without reflashing firmware.
 - **Control modem pins** — if `rts_pin` or `dtr_pin` are configured, the API client can set their states at runtime.
-- **Switch the port mode** — the subscribed client can turn protocol handling on (`PROTOCOL`) or off (`RAW`) at
-  runtime. `RAW` guarantees a plain byte pipe, which matters when the client is doing something sensitive with the
-  attached device, like uploading firmware to it.
+- **Switch the port mode** — every port starts in `RAW` mode, a plain byte pipe. When the device configuration
+  includes a protocol-aware companion component, the subscribed client can switch the port to `PROTOCOL` mode,
+  letting that component observe the traffic and send protocol messages such as acknowledgements on the client's
+  behalf. The port returns to `RAW` whenever the client disconnects, and `RAW` guarantees a plain byte pipe —
+  which matters when the client is doing something sensitive with the attached device, like uploading firmware
+  to it.
 
 ## Full Example
 
