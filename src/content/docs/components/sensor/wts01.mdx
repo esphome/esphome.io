@@ -35,12 +35,68 @@ sensor:
 
 - All options from [Sensor](/components/sensor).
 
+## Complete example setup
+
 > [!NOTE]
 > The WTS01 sensor is used in Sonoff TH Origin (THR316, THR320) and TH Elite (THR316D, THR320D) devices and connects to the main device using a RJ9 4C4P connector.
 > This sensor provides temperature readings with 0.1°C resolution.
+
+### WTS01 sensor RJ9 pinout
+
+RJ9 pins, when the connector is viewed from the contacts side, cables exiting at the bottom, and pin 1 is farthest left.
+
+| Pin | Function               |
+| --- | ---------------------- |
+| 1   | Sensor 3.3V Power      |
+| 2   | Sensor Bus Data Out    |
+| 3   | Not Connected          |
+| 4   | Sensor Ground          |
+
+The following example assumes that you connect the following:
+- `Pin 1` of RJ9 connector (power) to `GPIO27`
+- `Pin 2` of RJ9 connector (data) to `GPIO25`
+- `Pin 4` of RJ9 connector (ground) to `GND`
+
+### Example configuration
+
+The ``throttle`` filter is completely optional, but recommended to not spam
+the receiving home assistant instance with updates.
+
+```yaml
+esphome:  
+  on_boot:
+    - priority: 90
+      then:
+      # Make sure the sensor power is on at startup
+      - switch.turn_on: WTS01_sensor_power
+
+uart:
+  - id: uart_bus
+    rx_pin: GPIO25  # for data of WTS01 (pin 2)
+    baud_rate: 9600
+
+switch:
+  # This is needed to power the external sensor.
+  # It receives 3v3 from this pin, which is pulled up on boot.
+  - platform: gpio
+    pin: GPIO27  # for power to WTS01 (pin 1)
+    id: WTS01_sensor_power
+    restore_mode: ALWAYS_ON
+
+sensor:
+  - platform: wts01
+    name: WTS01 Temperature Sensor
+    id: sensor_wts01
+    uart_id: uart_bus
+    device_class: temperature
+    unit_of_measurement: °C
+    filters:
+      - throttle_average: 15s
+```
 
 ## See Also
 
 - [Sensor Filters](/components/sensor/#sensor-filters)
 - [UART Bus](/components/uart/)
+- [Sonoff THR316](https://devices.esphome.io/devices/sonoff-thr316/)
 - <APIRef text="wts01.h" path="wts01/wts01.h" />
