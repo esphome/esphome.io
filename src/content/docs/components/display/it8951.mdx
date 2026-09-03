@@ -187,6 +187,75 @@ on_...:
   uses the configured `update_mode` or defaults to `GC16`. Supports
   [templating](/automations/templates).
 
+### `it8951.load` Action
+
+Transfer the framebuffer's changed region into the controller's image memory
+**without refreshing the panel**. The panel keeps showing its current content;
+the loaded image is displayed later with `it8951.refresh`.
+
+```yaml
+on_...:
+  then:
+    - it8951.load: my_display
+```
+
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The display to load.
+
+The load waits for any in-progress waveform to complete before writing, so it
+never tears an image the panel is still drawing.
+
+### `it8951.refresh` Action
+
+Refresh the full panel from the controller's image memory **without
+transferring any data**: the panel displays whatever was last loaded (by
+`it8951.load` or a previous update).
+
+```yaml
+on_...:
+  then:
+    - it8951.refresh:
+        id: my_display
+        mode: GC16
+```
+
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The display to refresh.
+- **mode** (_Optional_, string): The waveform mode. Defaults to `GC16`. Supports
+  [templating](/automations/templates).
+
+### Double buffering (preloading pages)
+
+A full page swap normally pays three sequential costs: rendering, transferring
+the framebuffer over SPI (~1.3 MB for a 1872×1404 grayscale panel) and the
+e-paper waveform itself. Since the IT8951 holds the image in its own memory,
+the first two can be paid in advance while the previous page is still
+displayed: render the next page, stage it with `it8951.load`, then swap with a
+single `it8951.refresh` waveform — on a 1872×1404 panel this reduces the swap
+from several seconds to roughly the waveform time (~1 s).
+
+```yaml
+script:
+  - id: preload_page_b
+    then:
+      - lvgl.page.show: page_b   # render the next page into the framebuffer
+      - lambda: lv_refr_now(nullptr);
+      - it8951.load: my_display  # stage it in controller memory
+  - id: show_page_b
+    then:
+      - it8951.refresh: my_display  # single waveform, no render or transfer
+```
+
+> [!IMPORTANT]
+> The driver streams the framebuffer asynchronously. Do not re-render the
+> framebuffer while a load or update is in flight — wait for the C++ method
+> `is_idle()` to return `true` first, e.g.:
+>
+> ```yaml
+> - wait_until:
+>     condition:
+>       lambda: 'return id(my_display).is_idle();'
+>     timeout: 15s
+> ```
+
 ## Full configuration examples
 
 ### M5Paper (integrated board)
