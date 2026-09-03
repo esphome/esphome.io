@@ -51,6 +51,12 @@ When an API client connects, it can:
 - **Receive data** from the serial device — data arriving on the UART is forwarded to connected API clients automatically each loop iteration (up to 256 bytes at a time).
 - **Reconfigure the UART** at runtime — the API client may change the baud rate, data bits, stop bits, and parity without reflashing firmware.
 - **Control modem pins** — if `rts_pin` or `dtr_pin` are configured, the API client can set their states at runtime.
+- **Switch the port mode** — every port starts in `RAW` mode, a plain byte pipe. When the device configuration
+  includes a protocol-aware companion component, the subscribed client can switch the port to `PROTOCOL` mode,
+  letting that component observe the traffic and send protocol messages such as acknowledgements on the client's
+  behalf. The port returns to `RAW` whenever the client disconnects, and `RAW` guarantees a plain byte pipe —
+  which matters when the client is doing something sensitive with the attached device, like uploading firmware
+  to it.
 
 ## Full Example
 
