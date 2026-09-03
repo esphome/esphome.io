@@ -1,0 +1,48 @@
+---
+description: "Instructions for setting up ICNT86 touch screen controller with ESPHome"
+title: "ICNT86 Touch Screen Controller"
+---
+
+import APIRef from '@components/APIRef.astro';
+
+The `icnt86` touchscreen platform allows using the touch screen controllers based on the ICNT86 chip with ESPHome.
+An [I²C](/components/i2c) bus is required to be set up in your configuration for this touchscreen to work.
+
+This controller is used in the Waveshare Touch HAT for E-Paper 2.90in v2.
+
+## Base Touchscreen Configuration
+
+```yaml
+touchscreen:
+  - platform: icnt86
+    id: my_touch
+    i2c_id: bus_a
+    interrupt_pin: GPIO21
+    reset_pin: GPIO22
+    calibration: 
+      x_min: 0
+      x_max: 296
+      y_min: 0
+      y_max: 128
+    transform:
+      mirror_x: true
+      mirror_y: true
+    on_touch:
+      then:
+        - lambda: |-
+            ESP_LOGD("touch", "Touch event: x=%d y=%d", touch.x, touch.y);
+display: <your_display_id>
+```
+
+### Configuration variables
+
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually set the ID of this touchscreen.
+- **interrupt_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The touch detection pin.
+- **reset_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The chip reset pin.
+- **address** (*Optional*, int): The I²C address of the touchscreen controller. Defaults to `0x48`.
+- All other options from [Touchscreen](/components/touchscreen#config-touchscreen).
+
+## See Also
+
+- [Touchscreen Components](/components/touchscreen/)
+- <APIRef text="icnt86_touchscreen.h" path="icnt86/icnt86_touchscreen.h" />
