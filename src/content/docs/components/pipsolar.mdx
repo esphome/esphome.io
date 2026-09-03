@@ -41,6 +41,35 @@ pipsolar:
 
 - **id** (**Required**, [ID](/guides/configuration-types#id)): The id to use for this pipsolar component.
 - **uart_id** (*Optional*): The uart Bus ID
+- **time_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of a [time](/components/time/) source. When set, the
+  inverter's internal clock is kept in sync automatically (see [Automatic clock correction](#automatic-clock-correction) below).
+- **clock_correction_threshold** (*Optional*, [Time](/guides/configuration-types#time)): Only used together with `time_id`.
+  The inverter clock is corrected when it differs from the time source by more than this amount. Defaults to `60s`.
+
+### Automatic clock correction
+
+The real-time clock inside these inverters drifts by a few minutes per year. If you provide a `time_id`, the component
+compares the inverter clock against that time source and, when the difference exceeds `clock_correction_threshold`, sends
+a single command to set the inverter clock. This happens quietly in the background — nothing is exposed to Home Assistant,
+the correction is only written to the logs.
+
+The inverter has no notion of time zones: it simply stores the wall-clock time you give it. The component therefore keeps
+the inverter on the **local** time of your time source, so make sure that source has the correct
+[time zone](/components/time/) configured. As a result the inverter follows local civil time, which means it is
+adjusted once whenever daylight saving time starts or ends.
+
+```yaml
+# Example: keep the inverter clock in sync
+time:
+  - platform: sntp
+    id: sntp_time
+    timezone: "Europe/Berlin"
+
+pipsolar:
+  - id: inverter0
+    time_id: sntp_time
+    clock_correction_threshold: 60s
+```
 
 ## Sensor
 
