@@ -1,0 +1,118 @@
+---
+title: "HTTP OTA Updates via MQTT"
+description: "Trigger OTA updates from the ESPHome CLI using an HTTP server and MQTT."
+---
+
+This guide shows how to set up a workflow where the compiled firmware is uploaded to a webserver
+and an OTA update from this file is triggered using MQTT.
+
+## HTTP Server Setup
+
+We need a webserver that we can upload the firmware to and that can serve it to the ESPHome devices.
+
+Here's an example configuration for [Caddy](https://caddyserver.com/) using the
+[WebDAV module](https://github.com/mholt/caddy-webdav):
+
+```caddy
+firmware.example.com {
+    root * /var/www/firmware
+
+    @put method PUT
+    handle @put {
+        basicauth {
+            uploader <hashed-upload-password>
+        }
+        webdav
+    }
+
+    handle {
+        basicauth {
+            device <hashed-device-password>
+        }
+        file_server
+    }
+}
+```
+
+Replace `<hashed-upload-password>` and `<hashed-device-password>` with the output of `caddy hash-password`.
+
+## Publish Script
+
+We also need a script that uploads the compiled firmware. Since ESPHome installations have Python
+available, we use a Python script. Create `publish.py` in the config directory:
+
+```python
+import hashlib
+import os
+import paho.mqtt.publish as mqtt
+import requests
+
+firmware_url = f"https://firmware.example.com/{os.environ['ESPHOME_DEVICE_NAME']}.bin"
+
+firmware_data = open(os.environ["ESPHOME_FIRMWARE_BIN"], "rb").read()
+
+upload_auth = ("uploader", "upload-password")
+requests.put(firmware_url, data=firmware_data, auth=upload_auth).raise_for_status()
+requests.put(firmware_url + ".md5", data=hashlib.md5(firmware_data).hexdigest(), auth=upload_auth).raise_for_status()
+
+mqtt.single(
+    topic=f"{os.environ['ESPHOME_MQTT_TOPIC_PREFIX']}/ota/url",
+    payload=firmware_url,
+    hostname=os.environ["ESPHOME_MQTT_BROKER"],
+    port=int(os.environ["ESPHOME_MQTT_PORT"]),
+    auth={
+        "username": os.environ["ESPHOME_MQTT_USERNAME"],
+        "password": os.environ["ESPHOME_MQTT_PASSWORD"],
+    },
+)
+```
+
+## ESPHome Configuration
+
+Now that we can publish the firmware file and the MQTT message, we just need to register the script
+and start the OTA process when the MQTT message arrives:
+
+```yaml
+substitutions:
+  node_name: mydevice
+
+esphome:
+  name: ${node_name}
+  publish_shell_command: python3 publish.py
+
+http_request:
+  username: device
+  password: !secret firmware_password
+
+ota:
+  - platform: http_request
+
+mqtt:
+  broker: 192.168.1.2
+  username: esphome
+  password: !secret mqtt_password
+  topic_prefix: esphome/${node_name}
+  on_message:
+    - topic: esphome/${node_name}/ota/url
+      then:
+        - ota.http_request.flash:
+            url: !lambda 'return x;'
+            md5_url: !lambda 'return x + ".md5";'
+```
+
+## Usage
+
+Once configured, compile and publish the firmware from the command line by using `PUBLISH` as the
+upload device:
+
+```bash
+esphome run mydevice.yaml --device PUBLISH
+```
+
+This compiles the firmware and then runs the configured `publish_shell_command`.
+
+## See Also
+
+- [`esphome:` Core Configuration](/components/esphome/)
+- [HTTP Request OTA](/components/ota/http_request/)
+- [MQTT Component](/components/mqtt/)

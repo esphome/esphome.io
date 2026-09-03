@@ -82,6 +82,16 @@ Advanced options:
 - **compile_process_limit** (*Optional*, int): The maximum number of simultaneous compile processes to run.
   Defaults to the number of cores of the CPU which is also the maximum you can set.
 
+- **publish_shell_command** (*Optional*, string): A shell command to run when `PUBLISH` is used as the
+  upload device, for example with `esphome run <config> --device PUBLISH`. The command runs with the
+  config file's directory as the working directory. A number of environment variables are set automatically.
+
+  - ``ESPHOME_DEVICE_NAME`` — the device name from the configuration
+  - ``ESPHOME_FIRMWARE_BIN`` — absolute path to the compiled firmware binary
+  - ``ESPHOME_MQTT_BROKER``, ``ESPHOME_MQTT_PORT``, ``ESPHOME_MQTT_USERNAME``, ``ESPHOME_MQTT_PASSWORD``, ``ESPHOME_MQTT_TOPIC_PREFIX`` — MQTT connection details (only set when an ``mqtt:`` section is present in the config)
+
+  See the [HTTP OTA via MQTT cookbook](/cookbook/http-ota-mqtt/) for an example of how this can be used.
+
 - **debug_scheduler** (*Optional*, boolean): If set, the scheduler will print debug information about scheduled tasks at log level DEBUG.
 - **merge_warnings** (*Optional*, boolean): Whether to warn when a YAML merge key (`<<:`)
   silently drops a key. Defaults to `true`. See [Merge key warnings](#esphome-merge_warnings).
