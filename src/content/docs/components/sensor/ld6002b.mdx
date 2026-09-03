@@ -60,7 +60,7 @@ ld6002b:
 
 - GPIO IO voltage is 3.3 V.
 - The TX2 pin can output a simple presence signal (high when presence is detected).
-- Boot requires BOOT1 held low before startup (BOOT pins are pulled up internally).
+- Boot requires BOOT1 held low before startup (BOOT pins are pulled up internally). You need a resistor (like 10k Ohm) between GND on ESP and P19 on the sensor!
 
 ## Specifications
 
@@ -482,6 +482,9 @@ uart:
   tx_pin: GPIOXX
   rx_pin: GPIOXX
   baud_rate: 115200
+  data_bits: 8
+  parity: NONE
+  stop_bits: 1
 
 ld6002b:
   id: ld6002b_radar
@@ -538,6 +541,9 @@ uart:
   tx_pin: GPIOXX
   rx_pin: GPIOXX
   baud_rate: 115200
+  data_bits: 8
+  parity: NONE
+  stop_bits: 1
 
 ld6002b:
   id: ld6002b_radar
