@@ -43,6 +43,12 @@ ota:
   - `2040` for the RP2040
   - `8892` for Beken chips
   - `8082` for the [host platform](/components/host/)
+  - `4232` for the `zephyr` platform
+
+- **swap_method** (*Optional*, string): `zephyr` platform only. The MCUboot image-swap algorithm to use for
+  applying an update. One of `scratch`, `move`, `offset`. Not applicable to the `native_sim` variant,
+  which has no real bootloader. See [Swap methods](#swap-methods) below for what each one does and
+  the per-variant defaults/availability.
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
 - **version** (*Optional*, int): Version of OTA protocol to use. Version 2 is more stable. To downgrade to legacy
    ESPHome, the device should be updated with OTA version 1 first. Defaults to `2`.
@@ -50,9 +56,47 @@ ota:
 - All [automations](/automations) supported by [Ota](/components/ota/).
 
 > [!NOTE]
+> On the `zephyr` platform, the OTA file checksum uses SHA256 instead of MD5 (NCS's crypto drivers don't implement
+> MD5). The device requires this from the uploading client, rather than falling back to MD5 -- an `esphome` version
+> that doesn't support it yet cannot OTA a `zephyr` device at all. Once a device is running `zephyr` platform
+> firmware, going back to an older `esphome` requires a wired reflash; it cannot be done over the air.
+
+> [!NOTE]
 > After a serial upload, ESP8266 modules must be reset before OTA updates will work. If you attempt to perform an OTA
 > update and receive the error message `Bad Answer: ERR: ERROR[11]: Invalid bootstrapping`, the ESP module/board
 > must be power-cycled.
+
+## Swap methods
+
+`swap_method` (`zephyr` platform only) picks which of [MCUboot](https://docs.mcuboot.com/)'s image-swap
+algorithms applies an update. All three write the new image into the secondary (update) slot first,
+then swap it into the primary (boot) slot in place, sector by sector -- they differ in what extra flash
+space that swap needs and how the work is split between the two slots:
+
+| Method | Extra flash needed | How it swaps | Erase cycles per update |
+| --- | --- | --- | --- |
+| `scratch` | A separate scratch partition (at least as large as the biggest sector being swapped) | Each sector is copied out to scratch, the primary slot's copy erased, the secondary slot's copy moved into its place, then scratch's copy moved into the secondary slot | Highest -- scratch is erased on every sector swapped, on top of one erase per slot |
+| `move` | One extra sector at the *end* of the primary slot | Primary slot's sectors shift up by one to free room at the start, then secondary and primary alternate copying into place | Two erases on the primary slot, one on the secondary slot |
+| `offset` | One extra sector at the *end* of the secondary slot (equal-sized slots are also accepted) | Primary and secondary swap sector-by-sector using the secondary slot's extra sector as a staging area, rather than shifting the whole primary slot | One erase on each slot -- the most balanced of the three |
+
+`scratch` needs a dedicated scratch partition and wears it out fastest of the three, but it's the
+original/most conservative algorithm and needs no extra sector in either slot. `move` avoids the
+scratch partition at the cost of an extra sector in the primary slot and uneven wear between the two
+slots. `offset` is a newer algorithm that also avoids the scratch partition, needs an extra sector in
+the secondary slot instead, and spreads wear evenly across both slots -- generally the preferred choice
+where a variant's port supports it.
+
+Which methods a given variant/board's flash layout supports (and which one it defaults to) varies:
+
+| Variant | Supported methods | Default |
+| --- | --- | --- |
+| `esp32`, `esp32c3`, `esp32c6`, `esp32h2` | `scratch`, `move` | `scratch` |
+| `nrf52`, `rp2040`, `rp2350` | `move`, `offset` | `offset` |
+| `nrf54l15`, `nrf54lm20a`, `efr32mg24` | `move`, `offset` | `move` (pending `offset` testing; may switch to match `nrf52` once done) |
+
+`nrf52`, `nrf54l15`, `nrf54lm20a`, `efr32mg24`, `rp2040`, and `rp2350` never define a `scratch`
+partition, so `scratch` isn't available there; `esp32`/`esp32c3`/`esp32c6`/`esp32h2` are the reverse -- `offset`
+isn't available on any Zephyr esp32-family variant.
 
 ## Updating the Password
 

@@ -54,15 +54,17 @@ uart:
 
 - **baud_rate** (**Required**, int): The baud rate of the UART bus.
 - **tx_pin** (*Optional*, [Pin](/guides/configuration-types#pin)): The pin to send data to from the ESP's perspective. Use the full pin
-  schema and set `inverted: true` to invert logic levels. Not supported by host platform.
+  schema and set `inverted: true` to invert logic levels. Not supported by host platform. On the `zephyr` platform,
+  only the `esp32`/`esp32c3`/`esp32c6`/`esp32h2` variants support this (see [`zephyr` notes](#zephyr) below); `native_sim` does not.
 
 - **rx_pin** (*Optional*, [Pin](/guides/configuration-types#pin)): The pin to receive data on from the ESP's perspective. Use the full pin
-  schema and set `inverted: true` to invert logic levels. Not supported by host platform.
+  schema and set `inverted: true` to invert logic levels. Not supported by host platform. Same `zephyr` variant restriction as **tx_pin**.
 
 - **flow_control_pin** (*Optional*, [Pin](/guides/configuration-types#pin)): ESP32 only. The pin used to for hardware RS485 flow control.
   Use of this setting enables half-duplex mode. Use the full pin schema and set `inverted: true` to invert logic levels.
 
-- **port** (*Optional*, string): Host platform only. Unix style name of the port to use.
+- **port** (*Optional*, string): Host and `zephyr` platforms only. On host, a Unix-style device path. On `zephyr`,
+  the UART peripheral to use — see [`zephyr` notes](#zephyr) below.
 - **rx_buffer_size** (*Optional*, int): The size of the buffer used for receiving UART messages. Increase if you use an
   integration that needs to read big payloads from UART. Defaults to `256`.
 
@@ -307,6 +309,66 @@ uart:
   baud_rate: 9600
   port: "/dev/ttyUSB0"
 ```
+
+## `zephyr`
+
+On the `zephyr` platform, UART peripherals are identified by `port:` (Zephyr's own devicetree-driven UART
+numbering) rather than by pins alone:
+
+```yaml
+# Example configuration entry for the zephyr platform
+uart:
+  port: uart1
+  baud_rate: 115200
+```
+
+- **port** accepts `uart0` through `uart5`, whichever the board's devicetree exposes. Defaults to `uart0` if not set.
+- **tx_pin**/**rx_pin** may be set together with **port** on the `esp32`/`esp32c3`/`esp32c6`/`esp32h2` variants, whose UART
+  TX/RX are routed through the chip's GPIO matrix — this overrides which physical pins the chosen `port` uses.
+  Only pins in that variant's own valid TX/RX set are accepted; an invalid pin is rejected at config time. The
+  `native_sim` and `nrf52` variants do not support pin selection at all — omit **tx_pin**/**rx_pin** there; on
+  `nrf52`, each `port`'s pins come entirely from the board's own devicetree.
+- Ports other than `uart0` have no pinctrl configured on stock development boards, so **tx_pin**/**rx_pin** are
+  required together with `port: uart1` (or any other non-default port) on those boards.
+- **emulation** (*Optional*, mapping): Backs this UART bus with Zephyr's `uart-emul` devicetree node instead of a
+  real UART peripheral, useful for testing UART-speaking components without physical hardware. Supported on all
+  `zephyr` variants. Mutually exclusive with **port**/**tx_pin**/**rx_pin** — it supplies the connection itself.
+  Only one emulated peripheral can be attached per `uart:` block; use multiple `uart:` blocks for multiple
+  emulated peripherals.
+
+  - **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the emulator instance. Separate from
+    the bus's own `id:` — actions can target either "write out to the bus" (the bus's `id:`) or "inject directly
+    into the bus's RX path" (this `id:`, see below).
+  - **responses** (**Required**, mapping): Maps a trigger byte pattern — bytes the ESPHome device must write on
+    TX, matched in order — to the byte(s) the emulator writes back on RX once that whole pattern has been seen.
+    Keys/values accept a quoted string (sent as UTF-8 bytes), a single integer, or a list of integers. A list of
+    responses under one trigger cycles through them on successive matches instead of always answering with the
+    same bytes.
+
+  ```yaml
+  # Example configuration entry
+  zephyr:
+    variant: nativesim
+
+  uart:
+    baud_rate: 115200
+    emulation:
+      id: fake_modem
+      responses:
+        "AT\r\n": "OK\r\n"
+        "AT+GMR\r\n": ["v1.0\r\n", "v1.1\r\n"]
+  ```
+
+  To simulate a peripheral speaking unprompted (e.g. an unsolicited modem notification), target the emulator's
+  own `id:` with `uart.write` instead of the bus's — this injects straight into RX without going through trigger
+  matching at all:
+
+  ```yaml
+  on_...:
+    - uart.write:
+        id: fake_modem
+        data: "+CREG: 1\r\n"
+  ```
 
 ## See Also
 

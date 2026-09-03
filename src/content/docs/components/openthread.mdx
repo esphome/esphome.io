@@ -20,15 +20,23 @@ This component is supported on the following platforms:
 
 - **ESP32** with an 802.15.4 radio (ESP32-C5, ESP32-C6, ESP32-H2, ESP32-H4, ESP32-H21, or ESP32-S31) with the
   ESP-IDF framework.
-- **nRF52840** with the Zephyr framework.
+- **nRF52840** with the [`nrf52` platform](/components/nrf52/) — uses Nordic's prebuilt OpenThread
+  libraries (Thread 1.3.1).
+- The `zephyr` platform's `esp32h2`, `esp32c6`, `nrf52`, `nrf54l15`, `nrf54lm20a`, and `efr32mg24`
+  variants — see the [Zephyr platform's variant table](/components/zephyr/#variants). Not available on
+  `esp32` (original) or `native_sim`. These build OpenThread from mainline Zephyr source (Thread 1.4)
+  rather than Nordic's prebuilt libraries, regardless of variant. `efr32mg24` additionally needs an
+  explicit `framework: {source: {type: git, ref: main}}` — see that variant's notes on
+  the [Zephyr platform page](/components/zephyr/#variants).
 
 <span id="config-openthread"></span>
 
 ## Full Configuration
 
-The configuration depends on the platform. On ESP32, the Thread dataset can be specified using the individual fields
-shown below or a `tlv` string. On nRF52840, the dataset must be provided as a hex-encoded `tlv` string from Home
-Assistant's Thread integration.
+The configuration depends on the platform. On ESP32 (ESP-IDF framework), the Thread dataset can be specified using
+the individual fields shown below or a `tlv` string. On the `nrf52` platform and every `zephyr` platform variant
+(`esp32h2`, `esp32c6`, `nrf52`, `nrf54l15`, `nrf54lm20a`, `efr32mg24`), the dataset must be provided as a
+hex-encoded `tlv` string from Home Assistant's Thread integration — individual fields are not yet supported there.
 
 ```yaml
 # Example OpenThread configuration (ESP32)
@@ -59,10 +67,11 @@ openthread:
 
 ### Configuration Variables
 
-- **device_type** (*Optional*, enum): OpenThread Device Type, either `FTD` or `MTD`. Defaults to `FTD`. On nRF52840
-  this selects the matching Nordic prebuilt OpenThread library.
+- **device_type** (*Optional*, enum): OpenThread Device Type, either `FTD` or `MTD`. Defaults to `FTD`. On the
+  `nrf52` platform this selects the matching Nordic prebuilt OpenThread library; on every `zephyr` platform
+  variant it sets the equivalent mainline Zephyr Kconfig option instead.
 - **tlv** (*Optional*, string): The Thread dataset as a hex-encoded TLV string, taken from the Thread information in
-  Home Assistant. **Required** on nRF52840.
+  Home Assistant. **Required** on the `nrf52` platform and on every `zephyr` platform variant.
 - **force_dataset** (*Optional*, bool): Forces ESPHome to override any OpenThread network dataset previously stored on
   the device, ensuring the configured dataset is applied at startup. Defaults to `false`.
 - **use_address** (*Optional*, string): Manually override the address used to connect to the device.
@@ -91,8 +100,9 @@ openthread:
 
 ## Dataset TLV Configuration
 
-On nRF52840, the TLV approach is **required** for configuring the Thread dataset. On ESP32, it is an alternative
-to the individual field-based configuration shown above.
+On the `nrf52` platform and on every `zephyr` platform variant, the TLV approach is **required** for configuring
+the Thread dataset. On ESP32 (ESP-IDF framework), it is an alternative to the individual field-based configuration
+shown above.
 
 It is also possible to supply the entire dataset TLVs from the Thread information in Home Assistant and the individual values will be automatically extracted from it.
 

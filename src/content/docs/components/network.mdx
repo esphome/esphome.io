@@ -17,7 +17,9 @@ network:
 ## Configuration variables
 
 - **enable_ipv6** (*Optional*, boolean): Enables IPv6 support. Defaults to `false`.
-Always `true` on nRF52 because IPv4 is not supported.
+Always `true` on the `nrf52` platform because IPv4 is not supported. On the `zephyr` platform the default varies
+by variant (`true` on `esp32h2` and `nrf52`, since both default to using `openthread:`, which requires IPv6;
+`false` otherwise).
 - **min_ipv6_addr_count** (*Optional*, integer): ESPHome considers the network to be connected when it has one IPv4 address and this number of IPv6 addresses. Defaults to `0` so as to not hang on boot with networks where IPv6 is not enabled. `2` is typically a reasonable value for configurations requiring IPv6.
 - **enable_high_performance** (*Optional*, boolean): Explicitly enables or disables high-performance networking optimizations. Only supported on ESP32 devices. When not specified, this is automatically enabled by components that benefit from optimized network settings. Set to `false` to disable these optimizations if they cause memory issues on your device. Defaults to component-driven behavior.
 - **tcp_send_buffer** (*Optional*, int): The amount of outgoing data lwIP queues per TCP connection before

@@ -17,6 +17,11 @@ component. Using more than one network interface is not supported on other platf
 It's recommended to provide a static IP for your node, as it can
 dramatically improve connection times.
 
+> [!NOTE]
+> On the `zephyr` platform, WiFi is only supported on the `esp32` and `esp32c6` variants — see the
+> [Zephyr platform's variant table](/components/zephyr/#variants). It is not available on `esp32h2` or
+> `native_sim`.
+
 ```yaml
 # Example configuration entry
 wifi:
@@ -148,6 +153,11 @@ wifi:
 
 - **passive_scan** (*Optional*, boolean): If enabled, then the device will perform WiFi scans in a passive fashion.
   Defaults to `false`.
+
+- **min_rssi** (*Optional*, string): Only on `zephyr`. The minimum signal strength a scanned network must have to be
+  considered as a connection candidate at all, e.g. `-85dB`. Accepts values from `-100dB` to `-20dB`. Weaker scan
+  results are discarded before any connection attempt is made. If not specified, no filtering is applied (all scan
+  results are considered, down to the lowest signal strength the radio reports).
 
 - **enable_btm** (*Optional*, bool): Only on `esp32`. Enable 802.11v BSS Transition Management support.
 - **enable_rrm** (*Optional*, bool): Only on `esp32`. Enable 802.11k Radio Resource Management support.
