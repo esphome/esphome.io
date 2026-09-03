@@ -645,6 +645,42 @@ on_...:
 - **level** (**Required**, int, [templatable](/automations/templates)): The Nexa level code to send, see dumper output for more info.
 - All other options from [Remote Transmitter Actions](#remote_transmitter-transmit_action).
 
+<span id="remote_transmitter-transmit_onkyori"></span>
+
+### `remote_transmitter.transmit_onkyori` Action
+
+This [action](/automations/actions#all-actions) sends an Onkyo RI remote code to a remote transmitter.
+
+```yaml
+on_...:
+  - remote_transmitter.transmit_onkyori:
+      data: 0xD9 # A-9050 power on; codes differ between models
+```
+
+#### Configuration variables
+
+- **data** (**Required**, int, [templatable](/automations/templates)): The Onkyo RI code to send. Codes are 12 bits
+  wide, so the range is `0x000` to `0xFFF`. A lambda that returns a wider value is not transmitted and an error
+  is logged. Codes differ between models, see the links below.
+- All other options from [Remote Transmitter Actions](#remote_transmitter-transmit_action).
+
+#### Onkyo RI
+
+Onkyo RI ("Remote Interactive") is a wired protocol, not an infrared one. Onkyo used it to link its
+own components together over a 3.5 mm mono cable.
+
+RI has no carrier. `carrier_duty_percent` is still required by `remote_transmitter`, but it has
+no effect on RI.
+
+> [!WARNING]
+> The RI signal swings between 0 V and 5 V. Most ESP32 GPIOs are not 5 V tolerant. Put a level shifter between the
+> GPIO and the RI jack.
+
+Code lists and protocol descriptions are published by the
+[LIRC project](https://lirc.sourceforge.net/remotes/onkyo/Remote_Interactive),
+[fredboboss](http://fredboboss.free.fr/articles/onkyo_ri.php) and
+[docbender/Onkyo-RI](https://github.com/docbender/Onkyo-RI).
+
 <span id="remote_transmitter-transmit_panasonic"></span>
 
 ### `remote_transmitter.transmit_panasonic` Action
