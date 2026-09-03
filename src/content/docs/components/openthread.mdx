@@ -16,22 +16,25 @@ This component allows ESPHome nodes to communicate with Home Assistant over a Th
 
 ## Usage
 
-This component is supported on the following platforms:
+This component requires an ESP32 (ESP32-C5, ESP32-C6, or ESP32-H2 because they have Thread radio chip) and the use of
+ESP-IDF.
 
-- **ESP32** with an 802.15.4 radio (ESP32-C5, ESP32-C6, ESP32-H2, ESP32-H4, ESP32-H21, or ESP32-S31) with the
-  ESP-IDF framework.
-- **nRF52840** with the Zephyr framework.
+```yaml
+# Example ESP-IDF configuration for ESP32-C6-DevKitM-1 board
+esp32:
+  board: esp32-c6-devkitm-1
+  framework:
+    type: esp-idf
+```
 
 <span id="config-openthread"></span>
 
 ## Full Configuration
 
-The configuration depends on the platform. On ESP32, the Thread dataset can be specified using the individual fields
-shown below or a `tlv` string. On nRF52840, the dataset must be provided as a hex-encoded `tlv` string from Home
-Assistant's Thread integration.
+This example show how to configure Thread Dataset for a node.
 
 ```yaml
-# Example OpenThread configuration (ESP32)
+# Example OpenThread component configuration
 network:
   enable_ipv6: true
 
@@ -47,52 +50,30 @@ openthread:
   force_dataset: true
 ```
 
-```yaml
-# Example OpenThread configuration (nRF52840)
-network:
-  enable_ipv6: true
+### Configuration variables
 
-openthread:
-  tlv: 0e080000000000010000000300001035060004001fffe00208e227ac6a7f24052f0708fdb753eb517cb4d3051062b2442a928d9ea3b947a1618fc4085a030f4f70656e5468726561642d393837330102987304105330d857354330133c05e1fd7ae81a910c0402a0f7f8
-  force_dataset: true
-```
-
-### Configuration Variables
-
-- **device_type** (*Optional*, enum): OpenThread Device Type, either `FTD` or `MTD`. Defaults to `FTD`. On nRF52840
-  this selects the matching Nordic prebuilt OpenThread library.
-- **tlv** (*Optional*, string): The Thread dataset as a hex-encoded TLV string, taken from the Thread information in
-  Home Assistant. **Required** on nRF52840.
-- **force_dataset** (*Optional*, bool): Forces ESPHome to override any OpenThread network dataset previously stored on
-  the device, ensuring the configured dataset is applied at startup. Defaults to `false`.
-- **use_address** (*Optional*, string): Manually override the address used to connect to the device.
-  Defaults to an auto-generated value.
-
-### ESP32 Configuration Variables
-
-- **channel** (*Optional*, int): Channel number from 11 to 26.
-- **network_name** (*Optional*, string): A human-readable Network Name.
-- **network_key** (*Optional*, string): OpenThread network key.
-- **pan_id** (*Optional*, string): 2-byte Personal Area Network ID (PAN ID).
-- **ext_pan_id** (*Optional*, string): 8-byte Extended Personal Area Network ID (XPAN ID).
-- **pskc** (*Optional*, string): PSKc is used to authenticate an external Thread Commissioner to a Thread network.
-- **mesh_local_prefix** (*Optional*, ipv6network): Used to build Mesh-Local IPv6 addresses (ML-EIDs), which are unique
-  to each Thread device within the network partition.
-- **output_power** (*Optional*, integer): The amount of TX power for the Thread 802.15.4 radio in dBm.
-  Range depends on the chip variant: ESP32-C5/C6 from `-15dBm` to `20dBm`, ESP32-H2 from `-24dBm` to `20dBm`.
-  Defaults to the platform default (typically `0dBm`). Ensure the configured value complies with local regulatory
-  limits.
-- **poll_period** (*Optional*, [Time](/guides/configuration-types#time)): When set on an MTD device, the parent
-  router enqueues any messages and waits for the child to submit a poll data request.
+- **device_type** (*Optional*, enum): OpenThread Device Type, either `FTD` or `MTD`. Defaults to `FTD`.
+- **channel** (*Optional*, int): Channel number from 11 to 26
+- **network_name** (*Optional*, string): A human-readable Network Name
+- **network_key** (*Optional*, string): OpenThread network key
+- **pan_id** (*Optional*, string): 2-byte Personal Area Network ID (PAN ID)
+- **ext_pan_id** (*Optional*, string): 8-byte Extended Personal Area Network ID (XPAN ID)
+- **pskc** (*Optional*, string): PSKc is used to authenticate an external Thread Commissioner to a Thread network
+- **mesh_local_prefix** (*Optional*, ipv6network): Used to build Mesh-Local IPv6 addresses (ML-EIDs), which are unique to each Thread device within the network partition
+- **force_dataset** (*Optional*, bool): Forces ESPHome configuration to override any previously stored OpenThread
+  network dataset on the device, ensuring configured parameters are always applied at startup. Defaults to `false`
+- **use_address** (*Optional*, string): Manually override what address to use to connect
+  to the ESP. Defaults to auto-generated value.
+- **poll_period** (*Optional*, [Time](/guides/configuration-types#time)): When Poll_Period is set on an MTD device, the parent router will enqueue any messages and wait for the child to submit a poll data request
 
 > [!NOTE]
-> `esphome.ota` does not work when `poll_period` > 0. Use the `openthread.set_poll_period` action to set the poll
-> period to 0 before attempting OTA, then set it back afterwards to restore sleepy (SED) behavior.
+> esphome.ota does not work when poll_period > 0, instead use http_request.ota, timeout and watchdog_timeout need to be tested to find the correct values.  Values greater than 100sec may be required.
+
+- **output_power** (*Optional*, integer): The amount of TX power for the Thread 802.15.4 radio in dBm.
+  Range depends on the chip variant: ESP32-C5/C6 from ``-15dBm`` to ``20dBm``, ESP32-H2 from ``-24dBm`` to ``20dBm``.
+  Defaults to the platform default (typically ``0dBm``). Ensure the configured value complies with local regulatory limits.
 
 ## Dataset TLV Configuration
-
-On nRF52840, the TLV approach is **required** for configuring the Thread dataset. On ESP32, it is an alternative
-to the individual field-based configuration shown above.
 
 It is also possible to supply the entire dataset TLVs from the Thread information in Home Assistant and the individual values will be automatically extracted from it.
 
@@ -102,57 +83,124 @@ openthread:
   tlv: 0e080000000000010000000300001035060004001fffe00208e227ac6a7f24052f0708fdb753eb517cb4d3051062b2442a928d9ea3b947a1618fc4085a030f4f70656e5468726561642d393837330102987304105330d857354330133c05e1fd7ae81a910c0402a0f7f8
 ```
 
-## `openthread.set_poll_period` Action
+### Configuration variables
 
-Sets the poll period at runtime on an MTD device. When `poll_period` > 0 the radio is off while idle (sleepy end
-device); when 0 the radio is always on. This action is a no-op on FTD devices.
-
-```yaml
-on_...:
-  then:
-    # Long form turns radio on all the time
-    - openthread.set_poll_period:
-        poll_period: 0s
-    # Short form turns radio on all the time
-    - openthread.set_poll_period: 0s
-    # Short form turns radio off when idle
-    - openthread.set_poll_period: 5s
-```
-
-### Configuration Variables
-
-- **poll_period** (**Required**, [Time](/guides/configuration-types#time)): The poll period to apply, e.g. the
-  short form `openthread.set_poll_period: 5s`.
+- **tlv** (*Optional*, string): dataset TLVs from the Thread information in Home Assistant
 
 ## OpenThread Device Type
 
 See [https://openthread.io/guides/thread-primer/node-roles-and-types](https://openthread.io/guides/thread-primer/node-roles-and-types)
 
-- **FTD** — Full Thread Device. Acts as a Router Eligible End Device (REED) and can be promoted to a Router.
-- **MTD** — Minimal Thread Device. Cannot be promoted to a Router. Switching back from MTD to FTD will not result in a
-  REED unless Non-Volatile Storage (NVS) is cleared.
+- **FTD** - Full Thread Device, sets CONFIG_OPENTHREAD_FTD, observed behavior is that this enables a REED (Router Eligible End Device) and can be promoted to a Router.
+- **MTD** - Minimal Thread Device, sets CONFIG_OPENTHREAD_MTD, cannot be promoted to Router. Switching back from MTD to FTD will not result in a REED unless Non Volatile Storage (NVS) is cleared.
 
 ## Sleepy End Device (SED)
 
-The Poll Period makes the device behave as a SED. Follow on work is needed utilizing Power Management and/or Light Sleep capability in esp-idf.
+The Poll Period makes the device behave as a SED.  Follow on work is needed utilizing Power Management and/or Light Sleep capability in esp-idf.
 If the device is always awake, the API timeout is 60 seconds, so a ping request will force interaction with the parent when the poll period is greater than 60 seconds.
 
-### Public API
+## OpenThread Border Router
 
-The `OpenThreadComponent` exposes the following method for use in lambdas and custom components:
+The OpenThread Border Router mode enables an ESP32 to act as a bridge between a Wi-Fi network and a Thread network. This allows Thread devices to communicate with your home network and integrate with home automation systems like Home Assistant.
 
-- **`get_poll_period()`** (*MTD only*): returns the current poll period in milliseconds.
+Border Router mode is supported on:
+- **ESP32-C6 or ESP32-H2** with native IEEE 802.15.4 radio
+- **Any Wi-Fi-capable ESP32** with an external Radio Co-Processor (RCP) connected via UART
 
-The method only exists on MTD builds, so the following lambda will not compile on an FTD device:
+### Basic Border Router Configuration
 
 ```yaml
-on_...:
-  then:
-    - lambda: |-
-        if (id(openthread_id).get_poll_period() > 0) {
-          // device is sleeping between polls
-        }
+esp32:
+  board: esp32-c6-devkitc-1
+  framework:
+    type: esp-idf
+
+network:
+  enable_ipv6: true
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+openthread:
+  border_router: {}
+  network_name: ESPHome-OTBR
+  channel: 15
+  network_key: 0x00112233445566778899AABBCCDDEEFF
+  pan_id: 0x1234
+  ext_pan_id: 0x00AD00BE00C0CAFE
+  pskc: 0x004810E2315100AFD6BC9215A6BFAC53
+  mesh_local_prefix: fd00:db8:a0:0::/64
 ```
+
+### Border Router Configuration Variables
+
+- **border_router** (*Optional*, map): Enables Border Router mode. When enabled:
+  - Wi-Fi remains the default network interface
+  - Thread network is automatically started after Wi-Fi connects
+  - Border routing is enabled to bridge Wi-Fi and Thread networks
+  - mDNS is used for DNS-SD/SRP proxying
+  - Must be used with `enable_ipv6: true` in network component
+
+### Border Router Limitations
+
+Border Router mode has the following constraints:
+
+- **ESP-IDF version**: Requires ESP-IDF 5.5 or later
+- **Device type**: Only supported with FTD (Full Thread Device); MTD (Minimal Thread Device) is not supported
+- **Wi-Fi mode**: Wi-Fi must be in STA (Station) mode; Wi-Fi AP mode is not compatible
+- **Wi-Fi startup**: Wi-Fi must be enabled at startup; disabling Wi-Fi breaks border routing
+- **Supported platforms**: Only ESP32 variants; not supported on ESP8266 or other platforms
+
+### External Radio Co-Processor (RCP)
+
+If your ESP32 doesn't have a native 802.15.4 radio (e.g., ESP32, ESP32-S3), you can use an external RCP connected via UART. The RCP should be flashed with the OpenThread RCP firmware (e.g., another ESP32-C6/H2 running `ot_rcp`).
+
+```yaml
+openthread:
+  border_router:
+    rcp:
+      rx_pin: GPIO18
+      tx_pin: GPIO17
+      baud_rate: 460800
+      reset_pin: GPIO16  # Optional
+  network_name: ESPHome-OTBR
+  channel: 15
+  # ... other openthread config
+```
+
+#### RCP Configuration Variables
+
+- **rcp** (*Optional*, map): External Radio Co-Processor configuration. Cannot be combined with the ESPHome `uart:` component.
+  - **rx_pin** (*Required*, pin): RX pin connected to RCP UART TX
+  - **tx_pin** (*Required*, pin): TX pin connected to RCP UART RX
+  - **baud_rate** (*Optional*, int): UART baud rate. Defaults to `460800`
+  - **reset_pin** (*Optional*, pin): GPIO pin for RCP reset signal
+
+> [!WARNING]
+> RCP mode cannot be used with the standard ESPHome `uart:` component as it directly manages the UART hardware peripheral.
+
+### GPIO-based Antenna Switch
+
+For boards with selectable RF paths (e.g., Seeed Studio XIAO ESP32-C6), you can configure a GPIO-based antenna switch to select between onboard and external antennas.
+
+```yaml
+openthread:
+  antenna_switch:
+    enable_pin: GPIO3
+    select_pin: GPIO14
+    external_antenna: false
+  # ... rest of openthread config
+```
+
+#### Antenna Switch Configuration Variables
+
+- **antenna_switch** (*Optional*, map): GPIO-based antenna switch configuration. Applies to both Wi-Fi and Thread.
+  - **enable_pin** (*Required*, pin): GPIO pin to enable the antenna switch
+  - **select_pin** (*Required*, pin): GPIO pin to select antenna (external/internal)
+  - **external_antenna** (*Optional*, bool): Initial antenna selection. `true` = external antenna, `false` = internal antenna. Defaults to `false`
+
+Pins support standard GPIO options like `inverted`, `drive_strength`, etc.
 
 ## OpenThread ESP-IDF Logging
 
@@ -176,12 +224,22 @@ esp32:
     log_level: INFO
 ```
 
+## Dataset Validation
+
+The component validates Thread dataset parameters:
+
+- **channel**: 11-26
+- **network_name**: 1-16 bytes
+- **pan_id**: 16-bit value
+- **ext_pan_id**: 64-bit hex value
+- **network_key**: 128-bit value (16 bytes)
+- **pskc**: 128-bit value (16 bytes)
+- **mesh_local_prefix**: Must be a /64 prefix
+
 ## See Also
 
-- [OpenThread Info Sensor](/components/sensor/openthread_info/)
 - [OpenThread Info Text Sensor](/components/text_sensor/openthread_info/)
-- [Network Component](/components/network/)
+- [Network component](/components/network/)
 - [ESP32 Platform](/components/esp32/)
-- [nRF52 Platform](/components/nrf52/)
 - [https://openthread.io/](https://openthread.io/)
 - <APIRef text="openthread.h" path="openthread/openthread.h" />
