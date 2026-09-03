@@ -1,0 +1,449 @@
+---
+import type { CommunityCard } from "src/data/communityCards";
+
+interface Props {
+  title: string;
+  description: string;
+  cards: CommunityCard[];
+  columns?: number;
+}
+
+const { title, description, cards, columns = 4 } = Astro.props;
+
+const columnedCards: { card: CommunityCard; order: number }[][] = Array.from({ length: columns }, () => []);
+cards.forEach((card, index) => {
+  columnedCards[index % columns].push({ card, order: index });
+});
+---
+
+<section class="community-cards">
+  <div class="container">
+    <header class="community-cards__header fade-up">
+      <h2>{title}</h2>
+      <p>{description}</p>
+    </header>
+
+    <div class="masonry" style={{ "--cc-columns": columns }}>
+      {
+        columnedCards.map((column) => (
+          <div class="masonry__col">
+            {column.map(({ card, order }) => {
+              const isYoutube = card.href.includes("youtube.com") || card.href.includes("youtu.be");
+              const media = card.backgroundImage ?? card.videoPoster;
+              const classes = ["community-card"];
+              if (card.quote) classes.push("community-card--quote");
+              if (card.video || media) classes.push("community-card--media");
+              if (card.video) classes.push("community-card--video");
+
+              const linkIcon = card.linkIcon ?? (isYoutube ? "/images/community-cards/play-icon.png" : undefined);
+
+              return (
+                <a
+                  href={card.href}
+                  class="community-card__link"
+                  style={{ "--source-order": order }}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <div class={classes.join(" ")}>
+                    {media && !card.video && (
+                      <img
+                        class="community-card__image"
+                        src={media}
+                        alt={card.backgroundImageAlt ?? ""}
+                        loading="lazy"
+                      />
+                    )}
+                    {card.video && (
+                      <video class="community-card__video" loop muted playsinline poster={card.videoPoster}>
+                        <source src={card.video} type="video/webm" />
+                      </video>
+                    )}
+                    <div class="community-card__content">
+                      <p class="community-card__text">{card.text}</p>
+                      <p class="community-card__meta">
+                        {card.authorImage && (
+                          <img class="author" src={card.authorImage} alt={card.authorImageAlt ?? ""} loading="lazy" />
+                        )}
+                        <span>{card.author}</span>
+                        {linkIcon && <img class="meta-link" src={linkIcon} alt="" aria-hidden="true" />}
+                      </p>
+                    </div>
+                  </div>
+                </a>
+              );
+            })}
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<script>
+  const cards = document.querySelectorAll<HTMLElement>(".community-card--video");
+
+  if (cards.length) {
+    const supportsHover = window.matchMedia("(hover: hover)").matches;
+
+    if (supportsHover) {
+      cards.forEach((card) => {
+        const video = card.querySelector<HTMLVideoElement>(".community-card__video");
+        if (!video) return;
+        card.addEventListener("mouseenter", () => {
+          video.play().catch(() => {});
+        });
+        card.addEventListener("mouseleave", () => {
+          video.pause();
+          video.currentTime = 0;
+        });
+      });
+    } else if ("IntersectionObserver" in window) {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            const video = entry.target.querySelector<HTMLVideoElement>(".community-card__video");
+            if (!video) return;
+            if (entry.isIntersecting && entry.intersectionRatio >= 0.6) {
+              video.play().catch(() => {});
+            } else {
+              video.pause();
+            }
+          });
+        },
+        { threshold: [0, 0.6, 1] },
+      );
+
+      cards.forEach((card) => observer.observe(card));
+    }
+  }
+</script>
+
+<style lang="scss">
+  @use "../styles/mixins" as *;
+
+  .community-cards {
+    --cc-accent-color: var(--esk-primary-color, #1abcf2);
+    --cc-heading-font: var(--esk-heading-font, "Figtree", "Helvetica Neue", Arial, sans-serif);
+    --cc-body-font: var(--esk-body-font, "Instrument Sans", "Helvetica Neue", Helvetica, Arial, sans-serif);
+    --cc-card-bg: rgba(255, 255, 255, 0.05);
+    --cc-card-border: rgba(255, 255, 255, 0.1);
+    --cc-text: var(--esk-title-colour, #fff);
+    --cc-muted: var(--esk-body-colour, #8193a2);
+    --cc-gap: 1rem;
+  }
+
+  :global([data-theme="light"]) .community-cards {
+    --cc-card-bg: rgba(0, 0, 0, 0.03);
+    --cc-card-border: rgba(0, 0, 0, 0.1);
+  }
+
+  .community-cards .container {
+    display: block;
+    height: auto;
+  }
+
+  .community-cards__header {
+    text-align: center;
+    margin: 0 auto;
+    max-width: 46rem;
+    padding-bottom: 2rem;
+
+    h2 {
+      @include fluid(28, 48);
+
+      margin: 0 0 0.5rem;
+      line-height: 1.1;
+      font-family: var(--cc-heading-font);
+      color: var(--cc-text);
+    }
+
+    p {
+      @include fluid(16, 20);
+
+      margin: 0;
+      line-height: 1.35;
+      font-family: var(--cc-body-font);
+      color: var(--cc-muted);
+    }
+  }
+
+  .community-cards .masonry {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    align-items: flex-start;
+    height: 416px;
+    gap: var(--cc-gap);
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 1rem;
+    margin-inline: calc(var(--container-gutters, 24px) / -2);
+    padding-inline: calc(var(--container-gutters, 24px) / 2);
+  }
+
+  @media only screen and (min-width: 640px) and (max-width: 1139px) {
+    .community-cards .masonry {
+      display: block;
+      column-count: 2;
+      column-gap: var(--cc-gap);
+      height: auto;
+      overflow: visible;
+      scroll-snap-type: none;
+      padding: 0;
+      margin-inline: 0;
+    }
+  }
+
+  @media only screen and (min-width: 1140px) {
+    .community-cards .masonry {
+      flex-direction: row;
+      align-content: stretch;
+      align-items: stretch;
+      height: auto;
+      overflow: visible;
+      scroll-snap-type: none;
+      padding: 0;
+      margin-inline: 0;
+    }
+  }
+
+  .community-cards .masonry__col {
+    display: contents;
+  }
+
+  @media only screen and (min-width: 1140px) {
+    .community-cards .masonry__col {
+      display: flex;
+      flex-direction: column;
+      gap: var(--cc-gap);
+      flex-basis: calc((100% - (var(--cc-columns) - 1) * var(--cc-gap)) / var(--cc-columns));
+      min-width: 0;
+    }
+  }
+
+  .community-cards .community-card__link {
+    display: block;
+    min-width: 0;
+    text-decoration: none;
+    color: inherit;
+    border: none;
+
+    &:hover,
+    &:focus-visible {
+      text-decoration: none;
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--cc-accent-color);
+      outline-offset: 3px;
+      border-radius: 12px;
+    }
+  }
+
+  @media only screen and (max-width: 639.98px) {
+    .community-cards .community-card__link {
+      width: clamp(220px, 75vw, 280px);
+      order: var(--source-order, 0);
+      scroll-snap-align: center;
+      scroll-snap-stop: always;
+    }
+  }
+
+  @media only screen and (min-width: 640px) and (max-width: 1139px) {
+    .community-cards .community-card__link {
+      break-inside: avoid;
+      margin-bottom: var(--cc-gap);
+      width: 100%;
+    }
+  }
+
+  .community-cards .community-card {
+    position: relative;
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    justify-content: flex-end;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 20px;
+    overflow: hidden;
+    border-radius: 12px;
+    border: 1px solid var(--cc-card-border);
+    background-color: var(--cc-card-bg);
+    color: var(--cc-text);
+    transition:
+      0.3s border-color ease-in-out,
+      0.3s box-shadow ease-in-out;
+
+    &:hover {
+      border-color: var(--cc-accent-color);
+      box-shadow:
+        0 0 1px rgba(0, 0, 0, 0.5),
+        0 12px 24px rgba(0, 28, 51, 0.2);
+    }
+  }
+
+  .community-cards .community-card--media {
+    aspect-ratio: 4 / 3;
+    height: auto;
+    max-height: 340px;
+    border-color: transparent;
+    background-color: #000;
+    color: #fff;
+
+    &::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      opacity: 1;
+      background: linear-gradient(to top, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.35) 45%, rgba(0, 0, 0, 0) 75%);
+    }
+  }
+
+  .community-cards .community-card--media .community-card__text,
+  .community-cards .community-card--media .community-card__meta span,
+  .community-cards .community-card--media .community-card__meta img.author,
+  .community-cards .community-card--media::after {
+    transition: opacity 0.3s ease-in-out;
+  }
+
+  @media (hover: hover) {
+    .community-cards .community-card__link:hover .community-card--media .community-card__text,
+    .community-cards .community-card__link:hover .community-card--media .community-card__meta span,
+    .community-cards .community-card__link:hover .community-card--media .community-card__meta img.author {
+      opacity: 0;
+    }
+
+    .community-cards .community-card__link:hover .community-card--media::after {
+      opacity: 0.25;
+    }
+  }
+
+  .community-cards .community-card__link:focus-visible .community-card--media .community-card__text,
+  .community-cards .community-card__link:focus-visible .community-card--media .community-card__meta span,
+  .community-cards .community-card__link:focus-visible .community-card--media .community-card__meta img.author {
+    opacity: 0;
+  }
+
+  .community-cards .community-card__link:focus-visible .community-card--media::after {
+    opacity: 0.25;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .community-cards .community-card--media .community-card__text,
+    .community-cards .community-card--media .community-card__meta span,
+    .community-cards .community-card--media .community-card__meta img.author,
+    .community-cards .community-card--media::after {
+      transition: none;
+    }
+  }
+
+  .community-cards .community-card--quote .community-card__content::before {
+    content: "";
+    display: block;
+    width: 40px;
+    height: 28px;
+    margin-bottom: 0.75rem;
+    opacity: 0.3;
+    background-color: currentcolor;
+    mask: var(--cc-quote-icon) no-repeat center / contain;
+    -webkit-mask: var(--cc-quote-icon) no-repeat center / contain;
+    --cc-quote-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='34' viewBox='0 0 48 34' fill='none'%3E%3Cpath d='M21.8483 23.7343C21.8483 26.8003 20.8828 29.2915 18.9517 31.2077C17.0759 33.0692 14.5931 34 11.5034 34C8.08276 34 5.29655 32.7955 3.14483 30.3865C1.04828 27.9775 0 24.5829 0 20.2029C0 14.6184 1.93103 9.85507 5.7931 5.91304C9.71034 1.97101 13.9862 0 18.6207 0V5.58454C16.2483 5.69404 14.0966 6.67955 12.1655 8.54106C10.2897 10.4026 9.35172 12.4831 9.35172 14.7826C10.069 14.3446 11.2 14.1256 12.7448 14.1256C15.3931 14.1256 17.5724 15.0016 19.2828 16.7536C20.9931 18.4509 21.8483 20.7778 21.8483 23.7343ZM48 23.7343C48 26.7456 47.0069 29.2093 45.0207 31.1256C43.0897 33.0419 40.5793 34 37.4897 34C34.069 34 31.3103 32.8229 29.2138 30.4686C27.1172 28.1143 26.069 24.6924 26.069 20.2029C26.069 14.6184 28 9.85507 31.8621 5.91304C35.7241 1.91626 39.9724 0 44.6069 0.164251V5.74879C42.2897 5.74879 40.1655 6.67955 38.2345 8.54106C36.3034 10.4026 35.3103 12.4831 35.2552 14.7826C36.3034 14.3446 37.4345 14.1256 38.6483 14.1256C41.4069 14.1256 43.6414 15.0016 45.3517 16.7536C47.1172 18.4509 48 20.7778 48 23.7343Z' fill='%23fff'/%3E%3C/svg%3E");
+  }
+
+  .community-cards .community-card__content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .community-cards .community-card__text {
+    @include fluid(15, 17);
+
+    margin: 0;
+    font-family: var(--cc-heading-font);
+    font-weight: 600;
+    line-height: 1.35;
+    color: inherit;
+    text-wrap: pretty;
+  }
+
+  .community-cards .community-card--media .community-card__text {
+    max-width: 85%;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .community-cards .community-card__meta {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0;
+    font-family: var(--cc-body-font);
+    font-size: 0.8125rem;
+    font-weight: 400;
+    line-height: 1.2;
+    color: inherit;
+    opacity: 0.85;
+    min-width: 0;
+  }
+
+  .community-cards .community-card__meta span {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .community-cards .community-card__meta img {
+    display: block;
+    flex: none;
+    margin: 0;
+    border: none;
+    box-shadow: none;
+    background: transparent;
+  }
+
+  .community-cards .community-card__meta img.author {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  .community-cards .community-card__meta img.meta-link {
+    width: 32px;
+    height: 32px;
+    margin-left: auto;
+    border-radius: 50%;
+
+    position: absolute;
+    right: 0;
+    bottom: 0;
+  }
+
+  .community-cards .community-card__image,
+  .community-cards .community-card__video {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    object-fit: cover;
+  }
+</style>
