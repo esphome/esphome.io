@@ -5,72 +5,10 @@ pagefind: false
 slug: "changelog/2024.5.0"
 ---
 
-import ImgTable from "@components/ImgTable.astro";
-
-<ImgTable items={[
-  ["Valve Core","/components/valve/index","folder-open.svg","dark-invert"],
-  ["Template Valve","/components/valve/template","description.svg","dark-invert"],
-  ["Event Core","/components/event/index","folder-open.svg","dark-invert"],
-  ["Template Event","/components/event/template","description.svg","dark-invert"],
-  ["Template Time","/components/datetime/template","description.svg","dark-invert"],
-  ["Template Datetime","/components/datetime/template","description.svg","dark-invert"],
-  ["WeiKai SPI/I²C UART/IO Expander","/components/weikai","wk2168.jpg"]
-]} />
-
-## Valves, Events, and More
-
-This release brings a new `Valve` component, which can be used to control valves.
-A `Valve` can be opened, closed, or a specific position set if supported.
-
-`Event` entities were added to Home Assistant in [2023.8](https://www.home-assistant.io/blog/2023/08/02/release-20238/#introducing-the-event-entity).
-They allow better structure and also history and logging of the events sent from ESPHome to Home Assistant compared
-to just using publishing events onto the Home Assistant event bus with the `homeassistant.event` action.
-
-The `datetime` component has also been extended with `DateTime` and `Time` entity types this release.
-
-## ESP32 ADC Attenuation
-
-The attenuation configuration option for ESP32 `adc` sensors has had a deprecation in the underlying ESP-IDF
-framework with the `11dB` option. The value to replace `11dB` with is `12dB`. There are no functionality changes
-otherwise. There will be a warning in the logs when installing if you are using `11dB` and it will be
-removed in **2024.8.0**.
-
-## Remote Receiver tolerance
-
-The `tolerance` option in the `remote_receiver` component has been extended to allow time values, but at the
-same time the validation is now more strict.
-If you were using a raw value with no unit before 2024.5.0, for example `25`, you will need to change it to `25%`.
+Read the [ESPHome 2024.5.0 release notes](/blog/2024/05/15/esphome-2024-5/) on the blog for the release
+overview, feature highlights, upgrade checklist, and breaking changes.
 
 {/* markdownlint-disable MD013 */}
-
-## Release 2024.5.1 - May 20
-
-- Add device_class to valve core config [esphome#6765](https://github.com/esphome/esphome/pull/6765) by [@acshef](https://github.com/acshef)
-- Synchronise Device Classes from Home Assistant [esphome#6768](https://github.com/esphome/esphome/pull/6768) by [@esphomebot](https://github.com/esphomebot)
-- Fix Upload from Dashboard with MQTT discovery. [esphome#6774](https://github.com/esphome/esphome/pull/6774) by [@Links2004](https://github.com/Links2004)
-- Fix MQTT dashboard discovery (Exception in MqttStatusThread). [esphome#6775](https://github.com/esphome/esphome/pull/6775) by [@Links2004](https://github.com/Links2004)
-
-## Release 2024.5.2 - May 21
-
-- Revert "Fix MQTT dashboard discovery (Exception in MqttStatusThread)." [esphome#6782](https://github.com/esphome/esphome/pull/6782) by [@bdraco](https://github.com/bdraco)
-- Fix DashboardEntries.all() call [esphome#6783](https://github.com/esphome/esphome/pull/6783) by [@bdraco](https://github.com/bdraco)
-- [remote_receiver] Add better error message for tolerance breaking change [esphome#6784](https://github.com/esphome/esphome/pull/6784) by [@jesserockz](https://github.com/jesserockz)
-- Update webserver local assets to 20240519-215627 [esphome#6779](https://github.com/esphome/esphome/pull/6779) by [@esphomebot](https://github.com/esphomebot)
-
-## Release 2024.5.3 - May 25
-
-- [voice_assistant] Don't allocate buffers until starting the microphone for the first time [esphome#6800](https://github.com/esphome/esphome/pull/6800) by [@jesserockz](https://github.com/jesserockz)
-
-## Release 2024.5.4 - May 28
-
-- [web_server_base] Bump ESPAsyncWebServer-esphome to 3.2.2 [esphome#6797](https://github.com/esphome/esphome/pull/6797) by [@jesserockz](https://github.com/jesserockz)
-- [helpers] Move Base64 string to cpp [esphome#6819](https://github.com/esphome/esphome/pull/6819) by [@gabest11](https://github.com/gabest11)
-
-## Release 2024.5.5 - June 5
-
-- [voice_assistant] Half the microphone ringbuffer size [esphome#6830](https://github.com/esphome/esphome/pull/6830) by [@jesserockz](https://github.com/jesserockz)
-- [i2s_speaker] Add buffer allocation failure checks [esphome#6829](https://github.com/esphome/esphome/pull/6829) by [@jesserockz](https://github.com/jesserockz)
-- [improv_serial] Fix for IDF 4.4.7 [esphome#6855](https://github.com/esphome/esphome/pull/6855) by [@kbx81](https://github.com/kbx81)
 
 ## Full list of changes
 
