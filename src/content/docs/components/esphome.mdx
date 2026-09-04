@@ -83,6 +83,11 @@ Advanced options:
   Defaults to the number of cores of the CPU which is also the maximum you can set.
 
 - **debug_scheduler** (*Optional*, boolean): If set, the scheduler will print debug information about scheduled tasks at log level DEBUG.
+- **loop_interval** (*Optional*, [Time](/guides/configuration-types#time)): Set the loop interval of the main loop. Increasing from the default `16 ms`
+  value can be useful for low power applications but increases latency. **Attention:** Some components might not work properly with increased intervals.
+  Setting a smaller interval is usually not needed as components will request it them selfs. 
+- **suspend_loop** (*Optional*, boolean): If set, suspends the main loop if no component needs it in order to allow longer sleep times and reduced power consumption. If
+  at least one component does not disable its loop this has no effect (examples are `api` or `wifi`). **Attention:** Some components might not work properly or fail to update.
 - **merge_warnings** (*Optional*, boolean): Whether to warn when a YAML merge key (`<<:`)
   silently drops a key. Defaults to `true`. See [Merge key warnings](#esphome-merge_warnings).
 - **areas** (*Optional*, list of [Area Configuration](#esphome-area)): Additional areas that can be referenced by devices.
