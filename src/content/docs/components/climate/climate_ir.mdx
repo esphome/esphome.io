@@ -25,7 +25,7 @@ submit a feature request (see FAQ).
 | [Delonghi](#delonghi_ir) | `delonghi`                         | yes |
 | Emmeti | `emmeti`                           | yes |
 | Fujitsu General | `fujitsu_general`                  | yes |
-| [GREE](#gree_ir) | `gree`                             | yes (`yx1ff` only) |
+| [GREE](#gree_ir) | `gree`                             | yes (`yb1fa` and `yx1ff`) |
 | Hitachi | `hitachi_ac344`, `hitachi_ac424` | yes |
 | [LG](#climate_ir_lg) | `climate_ir_lg`                    | yes |
 | [Midea](#midea_ir) | `midea_ir`                         | yes |
@@ -132,6 +132,7 @@ The Daikin ARC remotes (`daikin_arc` climate, `daikin_arc417`, `daikin_arc480` p
   - `yaa`
   - `yac`
   - `yac1fb9`
+  - `yb1fa`
   - `yx1ff`
   - `yag`
 
@@ -145,9 +146,14 @@ climate:
     model: yan
 ```
 
-The `yx1ff` model can also receive commands from the original remote and update the climate state. It decodes power,
-operating mode, target temperature from 16 to 30 °C, all fan speeds, vertical swing on/off, and the sleep preset.
-YX1FF only exposes vertical swing control, so horizontal and combined swing modes are not offered for this model.
+The `yb1fa` and `yx1ff` models can also receive commands from the original remote and update the climate state. They
+decode power, operating mode, target temperature from 16 to 30 °C, fan speed, and vertical swing on/off. The `yx1ff`
+model also decodes the sleep preset. Both models only expose vertical swing control, so horizontal and combined swing
+modes are not offered.
+
+The `yb1fa` model maps the three numbered fan speeds to low, medium, and high. The `yx1ff` model maps them to quiet,
+low, and medium, and uses the Turbo bit for high. Independent feature fields such as timer, Light, X-Fan, display
+temperature, I-Feel, and WiFi do not change the climate state.
 
 A GREE command has an inter-block space of approximately 20 ms. Set `remote_receiver.idle` to a value longer than
 that space so the receiver does not split one command into two captures. Use `25ms` to `30ms`; the default `10ms` is
