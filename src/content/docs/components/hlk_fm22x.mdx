@@ -303,11 +303,13 @@ on_enrollment_failed:
 
 Starts enrolling a face. There are two ways to enroll:
 
-- **Single frame**: leave out `direction`. The person looks straight at the camera and the face is stored as soon
-  as the module has one good frame. This is the quickest way and works well for most setups.
+- **Single frame**: leave out `direction`. The person looks straight at the camera and the face is stored from
+  one good frontal frame. It is the quickest way to enroll and is what Hi-Link's own tool uses by default.
 - **Five directions**: give a `direction`. The module captures one direction per call, so you call the action five
-  times (middle, right, left, down and up, in any order) while the person turns their head a little each time.
-  A failure in one direction requires enrolling the face again from the start. Use
+  times (middle, right, left, down and up, in any order) while the person turns their head a little each time,
+  roughly 5 to 55 degrees up and down and 8 to 60 degrees left and right. This gives the module reference views
+  for someone not facing the camera squarely, so prefer it when the camera sits above or below face height or
+  people approach from the side. A failure in one direction requires enrolling the face again from the start. Use
   [`hlk_fm22x.cancel`](#hlk_fm22x-cancel-action) to throw away a half finished enrollment.
 
 ```yaml
@@ -331,13 +333,17 @@ on_...:
 **Configuration options:**
 
 - **name** (**Required**, string, [templatable](/automations/templates)): The name associated with the face. Up to 31 ASCII characters.
+  Names are labels, not keys: two enrollments may share a name, and each keeps its own `face_id` and admin flag.
+  Use unique names if you want to tell people apart by name.
 - **direction** (*Optional*, [templatable](/automations/templates)): The direction to capture the face from: `middle`, `right`, `left`, `down` or `up`.
   The module's numeric codes are accepted as well. Leave this out, or pass `0`, for a single frame enrollment.
 - **admin** (*Optional*, boolean, [templatable](/automations/templates)): Mark the face as an administrator. The flag is reported back in
   [`on_face_scan_matched`](#on_face_scan_matched-trigger) so you can give some people extra rights. Defaults to `false`.
 - **timeout** (*Optional*, [Time](/guides/configuration-types#time)): How long the module waits for a usable face before it gives up, between 1 and 255 seconds. Defaults to `10s`.
-- **allow_duplicate** (*Optional*, boolean, [templatable](/automations/templates)): Whether the same person may be enrolled more than once.
-  With `false` the module refuses a face it already knows and [`on_enrollment_failed`](#on_enrollment_failed-trigger) fires with error `10`. Defaults to `true`.
+- **allow_duplicate** (*Optional*, boolean, [templatable](/automations/templates)): Whether the module should accept a face that matches one it already holds.
+  With `false` it compares each new capture against every stored template and, if there is a match, refuses and
+  [`on_enrollment_failed`](#on_enrollment_failed-trigger) fires with error `10`. The name plays no part in that check.
+  Defaults to `true`, which matches how the module enrolls without this option.
 
 ## `hlk_fm22x.scan` Action
 
