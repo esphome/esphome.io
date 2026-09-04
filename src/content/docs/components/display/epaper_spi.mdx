@@ -71,7 +71,7 @@ a minimum only the model name need be configured. Other options can be overridde
 | Seeed-reTerminal-E1001  | Seeed Studio         | 7.5" mono e-paper (800x480, UC8179), supports fast and partial refresh via `full_update_every`. [https://www.seeedstudio.com/reTerminal-E1001-p-6534.html](https://www.seeedstudio.com/reTerminal-E1001-p-6534.html) |
 | Seeed-reTerminal-E1002  | Seeed Studio         | [https://www.seeedstudio.com/reTerminal-E1002-p-6533.html](https://www.seeedstudio.com/reTerminal-E1002-p-6533.html)         |
 | Seeed-reTerminal-E1004 | Seeed Studio | 13.3" 6-color e-paper (1200x1600, T133A01). Requires PSRAM. [https://www.seeedstudio.com/reTerminal-E1004-p-6692.html](https://www.seeedstudio.com/reTerminal-E1004-p-6692.html) |
-| Seeed-reTerminal-Sticky | Seeed Studio         | [https://www.seeedstudio.com/sticky/](https://www.seeedstudio.com/sticky/)                                                                 |
+| Seeed-reTerminal-Sticky | Seeed Studio         | 3.97" mono e-paper (800x480, SSD1677), supports four-level grayscale via `grayscale`. [https://www.seeedstudio.com/sticky/](https://www.seeedstudio.com/sticky/) |
 
 ## Configuration variables
 
@@ -116,6 +116,9 @@ but can be overridden if needed.
   use `never` to only manually update the screen via `component.update`.
 - **full_update_every** (*Optional*, int): On screens that support partial updates, this sets the number of updates
   before a full update is forced. Defaults to `1` which will make every update a full update.
+- **grayscale** (*Optional*, boolean): `Seeed-reTerminal-Sticky` only. When `true`, uses the SSD1677 controller's
+  built-in four-level grayscale, driven by the panel's factory waveform. Grayscale updates always redraw the full
+  frame; `full_update_every` has no effect in this mode. Defaults to `false` (1-bit black/white).
 - **spi_id** (*Optional*, [ID](/guides/configuration-types#id)): Required to specify the ID of the [SPI Component](/components/spi) if your
   configuration defines multiple SPI buses. If only a single SPI bus is configured, this is optional.
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
@@ -156,6 +159,22 @@ display:
     full_update_every: 30
     lambda: |-
       it.filled_circle(it.get_width() / 2, it.get_height() / 2, 50, Color::BLACK);
+```
+
+### Grayscale example (reTerminal Sticky)
+
+The `Seeed-reTerminal-Sticky` model supports four-level (2-bit) grayscale using the SSD1677 controller's built-in
+waveform; colors are mapped to the nearest of the four levels automatically. Set `grayscale: true` to enable it.
+
+```yaml
+display:
+  - platform: epaper_spi
+    model: Seeed-reTerminal-Sticky
+    grayscale: true
+    lambda: |-
+      it.fill(Color::WHITE);
+      it.filled_rectangle(50, 50, 100, 100, Color(85, 85, 85));
+      it.filled_rectangle(200, 50, 100, 100, Color(170, 170, 170));
 ```
 
 ### 4-color display example
