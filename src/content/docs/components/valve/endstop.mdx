@@ -1,0 +1,78 @@
+---
+description: "Instructions for setting up endstop valves in ESPHome."
+title: "Endstop Valve"
+---
+
+import { Image } from 'astro:assets';
+import valveUiImg from './images/valve-ui.png';
+import APIRef from '@components/APIRef.astro';
+
+The `endstop` valve platform allows you to create valves with position control that have
+endstops at both ends of the valve to detect the fully-open and fully-closed states.
+When any of these endstops are reached, the valve is stopped (via `stop_action`)
+and the corresponding state is sent out.
+
+This valve platform is mainly intended for DIY valve setups: Two endstops at either end and a motor
+controlling the valve. The user just needs to enter what to do when the platform wants to move the
+valve in either direction, or stop it, as well as information about open and close information so that
+the current position can be approximated.
+
+Additionally, open and close durations must be specified to allow ESPHome to approximate the
+current position of the valve.
+
+<Image src={valveUiImg} layout="constrained" alt="" />
+
+```yaml
+# Example configuration entry
+valve:
+  - platform: endstop
+    name: "Endstop Valve"
+
+    open_action:
+      - switch.turn_on: open_valve_switch
+    open_duration: 2.1min
+    open_endstop: open_endstop_binary_sensor
+
+    close_action:
+      - switch.turn_on: close_valve_switch
+    close_duration: 2min
+    close_endstop: close_endstop_binary_sensor
+
+    stop_action:
+      - switch.turn_off: open_valve_switch
+      - switch.turn_off: close_valve_switch
+```
+
+## Configuration variables
+
+- **open_action** (**Required**, [Action](/automations/actions#all-actions)): The action that should
+  be performed when the remote requests the valve to be opened.
+
+- **open_duration** (**Required**, [Time](/guides/configuration-types#time)): The amount of time it takes the valve
+  to open up from the fully-closed state.
+
+- **open_endstop** (**Required**, [ID](/guides/configuration-types#id)): The ID of the
+  [Binary Sensor](/components/binary_sensor#config-binary_sensor) that turns on when the open position is reached.
+
+- **close_action** (**Required**, [Action](/automations/actions#all-actions)): The action that should
+  be performed when the remote requests the valve to be closed.
+
+- **close_duration** (**Required**, [Time](/guides/configuration-types#time)): The amount of time it takes the valve
+  to close from the fully-open state.
+
+- **close_endstop** (**Required**, [ID](/guides/configuration-types#id)): The ID of the
+  [Binary Sensor](/components/binary_sensor#config-binary_sensor) that turns on when the closed position is reached.
+
+- **stop_action** (**Required**, [Action](/automations/actions#all-actions)): The action that should
+  be performed when the remote requests the valve to stop or an endstop is reached.
+
+- **max_duration** (*Optional*, [Time](/guides/configuration-types#time)): The maximum duration the valve should be opening
+  or closing. Useful for protecting from dysfunctional endstops.
+
+- All other options from [Valve](/components/valve#config-valve).
+
+## See Also
+
+- [Valve Component](/components/valve/)
+- [Automation](/automations)
+- <APIRef text="endstop_valve.h" path="endstop/endstop_valve.h" />
