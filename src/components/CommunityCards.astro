@@ -83,9 +83,8 @@ cards.forEach((card, index) => {
 <script>
   const cards = document.querySelectorAll<HTMLElement>(".community-card--video");
 
-  if (cards.length) {
+  if (cards.length && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
     const supportsHover = window.matchMedia("(hover: hover)").matches;
-
     if (supportsHover) {
       cards.forEach((card) => {
         const video = card.querySelector<HTMLVideoElement>(".community-card__video");
