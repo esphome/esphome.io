@@ -10,6 +10,7 @@ import lvglHelloWorld from './images/lvgl_hello.png';
 import lvglMainScreenshotImg from './images/lvgl_main_screenshot.png';
 import lvglSymbolsImg from './images/lvgl_symbols.png';
 import lvglBoxmodelImg from './images/lvgl_boxmodel.png';
+import lvglGradientConicalImg from './images/lvgl_gradient_conical.png';
 
 [LVGL](https://lvgl.io/) (Light and Versatile Graphics Library) is a free and open-source
 embedded graphics library to create beautiful UIs for any MCU, MPU and display type. ESPHome supports [LVGL version 9](https://docs.lvgl.io/9.5/).
@@ -390,7 +391,10 @@ A gradient is a sequence of colors which can be applied to an object using the `
  Each entry has the following options:
 
 - **id** (**Required**, [ID](/guides/configuration-types#id)): The ID with which you will be able to reference the gradient later.
-- **direction** (**Required**, string): The direction of the gradient: `hor` (or `horizontal`) or `ver` (or `vertical`).
+- **direction** (**Required**, string): The direction of the gradient: `hor` (or `horizontal`), `ver` (or `vertical`), `linear`, `radial` or `conical`.
+- **linear** (*Optional*): Configures the gradient when `direction` is `linear`. See [below](#linear-gradients) for details. Required when `direction` is `linear`.
+- **radial** (*Optional*): Configures the gradient when `direction` is `radial`. See [below](#radial-gradients) for details. Required when `direction` is `radial`.
+- **conical** (*Optional*): Configures the gradient when `direction` is `conical`. See [below](#conical-gradients) for details. Required when `direction` is `conical`.
 - **stops** (**Required**, list): A list of at least 2 color stop points. Each stop point has the following options:
   - **color** (**Required**, [Color](#lvgl-color)): The color of the stop point.
   - **opa** (*Optional*, [opacity](#opacity)): The opacity at this stop point. Defaults to `COVER` (fully opaque).
@@ -419,6 +423,201 @@ lvgl:
         - color: 0xFF0000
           position: 255
 ```
+
+The `hor` and `ver` directions are a simple shorthand for a gradient that spans the whole width or height of the
+object it is applied to. The `linear`, `radial` and `conical` directions give more control over where the gradient
+is drawn, and support an `extend` option that controls what is drawn once the pixel being painted falls outside
+the range covered by the stops:
+
+- **PAD** (the default): The color of the nearest stop is used, so the first and last colors spread out to fill
+  the remaining space.
+- **REPEAT**: The sequence of stops starts over from the beginning, so the gradient tiles.
+- **REFLECT**: The sequence of stops plays backward before starting over, so each tile is a mirror image of the
+  one before it, avoiding a visible seam at the point where it repeats.
+
+What counts as "outside the range" depends on the gradient type:
+
+- For a **linear** gradient, it's the area beyond the `from` and `to` points, on either side of the line.
+- For a **radial** gradient, it's the area further from the center than the `to` point - beyond the outer edge
+  of the circle the stops are painted on.
+- For a **conical** gradient, it only matters when `start_angle` and `end_angle` are less than a full circle
+  apart; it's the remainder of the circle that the sweep doesn't cover.
+
+Every coordinate in the `linear`, `radial` and `conical` sections accepts either a number of pixels or a
+percentage of the object's size, and can be negative or greater than 100% to place a point outside the object.
+
+#### Linear gradients
+
+A `linear` gradient runs in a straight line between two points, `from` and `to`. Unlike the `hor`/`ver` shorthand,
+the line does not need to be horizontal, vertical, or confined to the object's bounds.
+
+- **from_x**, **from_y** (**Required**, pixels or percentage): The starting point of the gradient line.
+- **to_x**, **to_y** (**Required**, pixels or percentage): The ending point of the gradient line.
+- **extend** (*Optional*, string): One of `PAD`, `REPEAT` or `REFLECT`. Defaults to `PAD`.
+
+```yaml
+lvgl:
+  ...
+  gradients:
+    - id: linear_grad
+      direction: linear
+      linear:
+        from_x: 0%
+        from_y: 0%
+        to_x: 100%
+        to_y: 0%
+        extend: PAD
+      stops:
+        - color: 0xFF0000
+          position: 0
+        - color: 0x0000FF
+          position: 255
+```
+
+#### Radial gradients
+
+A `radial` gradient radiates outward from a center point. The distance from `center` to `to` sets the radius at
+which the gradient reaches its final stop. An optional focal point can be set to offset the center of the color
+rings from the center of the circle, producing an off-center "spotlight" effect.
+
+- **center_x**, **center_y** (**Required**, pixels or percentage): The center point of the gradient.
+- **to_x**, **to_y** (**Required**, pixels or percentage): A point on the outer edge of the gradient; its distance from the center sets the gradient's radius.
+- **focal_x**, **focal_y** (*Optional*, pixels or percentage): The center point of the color stops, if different from `center_x`/`center_y`. Both must be specified together.
+- **focal_radius** (*Optional*, int): The radius of the focal point. Defaults to `0`.
+- **extend** (*Optional*, string): One of `PAD`, `REPEAT` or `REFLECT`. Defaults to `PAD`.
+
+```yaml
+lvgl:
+  ...
+  gradients:
+    - id: radial_grad
+      direction: radial
+      radial:
+        center_x: 50%
+        center_y: 50%
+        to_x: 100%
+        to_y: 50%
+        extend: PAD
+      stops:
+        - color: 0xFFFFFF
+          position: 0
+        - color: 0x000000
+          position: 255
+    - id: radial_focal_grad
+      direction: radial
+      radial:
+        center_x: 50%
+        center_y: 50%
+        to_x: 100%
+        to_y: 50%
+        focal_x: 40%
+        focal_y: 40%
+        focal_radius: 10
+        extend: REPEAT
+      stops:
+        - color: 0xFF0000
+          position: 0
+        - color: 0x0000FF
+          position: 255
+```
+
+#### Conical gradients
+
+A `conical` gradient sweeps around a center point, like the hands of a clock, between a start and end angle.
+
+- **center_x**, **center_y** (**Required**, pixels or percentage): The center point the gradient sweeps around.
+- **start_angle** (*Optional*, 0-360): The angle, in degrees, at which the gradient starts. Defaults to `0`.
+- **end_angle** (*Optional*, 0-360): The angle, in degrees, at which the gradient ends. Defaults to `360`.
+- **extend** (*Optional*, string): One of `PAD`, `REPEAT` or `REFLECT`. Defaults to `PAD`.
+
+```yaml
+lvgl:
+  ...
+  gradients:
+    - id: conical_grad
+      direction: conical
+      conical:
+        center_x: 50%
+        center_y: 50%
+        start_angle: 0
+        end_angle: 360
+        extend: PAD
+      stops:
+        - color: 0xFF0000
+          position: 0
+        - color: 0x00FF00
+          position: 127
+        - color: 0xFF0000
+          position: 255
+```
+
+Sweeping the full 0-360° range with the same rainbow stops used in the `hor` example above produces a wheel
+showing the complete hue gamut. A `radial` gradient only ever varies one property - color - along its radius, so
+it cannot add "white at the center, fading to full color at the edge" to the same widget: that takes a second,
+white-to-transparent `radial` gradient layered in a widget of its own on top of the hue wheel, letting the hue
+show through more and more towards the edge. Setting `radius: circle` on both widgets - which only has a visible
+effect because their width and height are equal - clips the square widgets to a circle, so the result looks like a
+traditional color wheel rather than a hue gradient with square corners:
+
+```yaml
+lvgl:
+  ...
+  gradients:
+    - id: rainbow_wheel
+      direction: conical
+      conical:
+        center_x: 50%
+        center_y: 50%
+        start_angle: 0
+        end_angle: 360
+      stops:
+        - color: 0xFF0000
+          position: 0
+        - color: 0xFFFF00
+          position: 42
+        - color: 0x00FF00
+          position: 84
+        - color: 0x00FFFF
+          position: 127
+        - color: 0x0000FF
+          position: 169
+        - color: 0xFF00FF
+          position: 212
+        - color: 0xFF0000
+          position: 255
+    - id: white_center
+      direction: radial
+      radial:
+        center_x: 50%
+        center_y: 50%
+        to_x: 100%
+        to_y: 50%
+      stops:
+        - color: 0xFFFFFF
+          opa: 100%
+          position: 0
+        - color: 0xFFFFFF
+          opa: 0%
+          position: 255
+  widgets:
+    - obj:
+        width: 100%
+        height: 100%
+        radius: circle
+        border_width: 0
+        pad_all: 0
+        bg_grad: rainbow_wheel
+        widgets:
+          - obj:
+              width: 100%
+              height: 100%
+              radius: circle
+              border_width: 0
+              pad_all: 0
+              bg_grad: white_center
+```
+
+<Image src={lvglGradientConicalImg} layout="constrained" alt="A color wheel made from a conical hue gradient and a radial white-to-transparent overlay" />
 
 ### Fonts
 

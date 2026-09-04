@@ -79,29 +79,46 @@ web_server:
 > a trusted, segmented network are the defenses. This is intentional; see the project
 > [threat model](https://github.com/esphome/esphome/blob/dev/THREAT_MODEL.md).
 
-### 3. OTA Password Protection
+### 3. OTA Encryption
 
-[OTA (Over-The-Air)](/components/ota) updates allow you to update firmware wirelessly. Protect this with a password:
+[OTA (Over-The-Air)](/components/ota) updates allow you to update firmware wirelessly. Encrypt them so the firmware
+image stays confidential in transit; the image contains your Wi-Fi credentials and your API encryption key. Encryption
+reuses the API key, so no extra secret is needed:
+
+```yaml
+api:
+  encryption:
+    key: !secret device_name_key
+
+ota:
+  - platform: esphome
+    encryption:
+```
+
+**Best practices:**
+
+- Prefer encryption over a password; a password only authenticates the uploader, it does not keep the image confidential
+- Reuse the API encryption key so there is a single unique key per device
+- Never reuse keys across devices
+- Enable encryption before the device leaves a trusted network; the first upload that adds it still goes over plaintext OTA
+
+**Without OTA encryption:** Anyone on your local network can:
+
+- Read your wifi credentials and API encryption key out of the transferred image
+- Upload malicious firmware to your devices
+- Completely compromise device functionality
+- Use your devices as a pivot point to attack other network resources
+
+If you cannot use encryption, at least set an OTA password:
 
 ```yaml
 ota:
   - platform: esphome
     password: !secret device_name_ota_password
-
 ```
 
-**Best practices:**
-
-- Use strong, unique passwords
-- Store passwords in `secrets.yaml`
-- Never use the same OTA password across multiple devices
-- Rotate passwords periodically or after suspected compromise
-
-**Without OTA password:** Anyone on your local network can:
-
-- Upload malicious firmware to your devices
-- Completely compromise device functionality
-- Use your devices as a pivot point to attack other network resources
+Use a strong, unique password, store it in `secrets.yaml`, never share it across devices, and rotate it after a
+suspected compromise. A password and encryption cannot be combined; the key already authenticates the uploader.
 
 ## Network Security
 
@@ -349,7 +366,7 @@ Security vulnerabilities are discovered and fixed regularly. Keep your ESPHome i
 **OTA security:**
 
 - OTA updates are performed over your local network
-- Enable OTA password protection (see above)
+- Enable OTA encryption (see above)
 - Monitor device logs during updates for unexpected behavior
 
 ## Logging and Monitoring

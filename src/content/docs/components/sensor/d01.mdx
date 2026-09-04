@@ -1,0 +1,47 @@
+---
+description: "Instructions for setting up D01 Particulate matter sensors"
+title: "D01 Particulate Matter Sensor"
+---
+
+import { Image } from 'astro:assets';
+import Figure from '@components/Figure.astro';
+import d01Image from './images/d01.jpg';
+import APIRef from '@components/APIRef.astro';
+
+The `d01` sensor platform allows you to use YYS D01 particulate matter sensors ([datasheet](https://manuals.plus/ae/1005006417362019))
+with ESPHome. This is a similar form factor to the [PM1006](/components/sensor/pm1006) sensor, though not a direct replacement. The sensor itself is based on the GD32 MCU and outputs UART. It reports a range of 5\~2500µg/m³ particle concentration, though these are the uncalibrated limits. See the **filter** section below for proper calculation. The effective range is 0\~1000µg/m³.
+
+<Figure
+  src={d01Image}
+  alt=""
+  caption="Packaged D01 sensor"
+  layout="constrained"
+/>
+
+Communication is done using UART, so for setup, you need to have an [UART bus](/components/uart) in your configuration with the `rx_pin` connected to the TX pin of the D01. The baud rate needs to be set to 9600.
+
+```yaml
+# Example configuration entry
+uart:
+  rx_pin: GPIO4 #D2
+  baud_rate: 9600
+
+sensor:
+  - platform: d01
+    name: "D01 PM2.5 Concentration"
+    filters:
+      - lambda: return (x - 5.0) * 0.4;
+```
+
+This implementation will passively pick up whatever the sensor reports. It automatically sends out its packets every 1.4 seconds upon receiving 5v.
+
+## Configuration variables
+
+- **uart_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the [UART Component](/components/uart) if you want
+  to use multiple UART buses.
+- All other options from [Sensor](/components/sensor).
+
+## See Also
+
+- [Sensor Filters](/components/sensor#sensor-filters)
+- <APIRef text="d01.h" path="d01/d01.h" />
