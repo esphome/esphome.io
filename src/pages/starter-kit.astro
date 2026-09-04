@@ -14,6 +14,8 @@ import Collaboration from "@components/Collaboration.astro";
 import Buy from "@components/Buy.astro";
 import SpecSection from "@components/starter-kit/SpecSection.astro";
 import FaqSection from "@components/starter-kit/FaqSection.astro";
+import CommunityCards from "@components/CommunityCards.astro";
+import { starterKitCommunityCards } from "src/data/communityCards";
 ---
 
 <StarlightPage
@@ -121,6 +123,12 @@ import FaqSection from "@components/starter-kit/FaqSection.astro";
     <Collaboration />
 
     <Buy strapline="Ready to build, learn, and automate?" dollars="40" euros="41" />
+
+    <CommunityCards
+      title="A kit that has everyone talking"
+      description="Discover what reviewers and community members are saying about the ESPHome Starter Kit."
+      cards={starterKitCommunityCards}
+    />
 
     <SpecSection />
     <FaqSection />
@@ -363,6 +371,7 @@ import FaqSection from "@components/starter-kit/FaqSection.astro";
     &.block-community,
     &.block-collaboration,
     &.block-buy,
+    &.community-cards,
     &.block-specs {
       @include fluid(40, 128, $property: padding-bottom);
     }

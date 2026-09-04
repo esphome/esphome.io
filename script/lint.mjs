@@ -59,10 +59,11 @@ const fileTypes = [
   ".webp",
   ".bin",
   ".mp4",
+  ".webm",
   "", // empty string for files without extension (like .gitignore)
 ];
 const imageTypes = [".webp", ".jpg", ".ico", ".png", ".svg", ".gif"];
-const binaryTypes = [".bin", ".glb", ".mp4"];
+const binaryTypes = [".bin", ".glb", ".mp4", ".webm"];
 
 // Store errors
 const errors = new Map();
