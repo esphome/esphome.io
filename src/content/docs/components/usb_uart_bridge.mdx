@@ -1,0 +1,167 @@
+---
+description: "Instructions for setting up a USB UART Bridge on ESP32 variants in ESPHome"
+title: "USB UART Bridge"
+---
+import APIRef from '@components/APIRef.astro';
+
+
+The USB UART Bridge (the `usb_uart` platform of the `bridge` component) enables supported ESP32 microcontrollers to act
+as a USB-to-serial adapter, creating a bidirectional bridge between a UART interface and a USB CDC-ACM (Communications
+Device Class - Abstract Control Model) interface. This allows the microcontroller to appear as a virtual serial/COM
+port on a host computer while keeping the UART parameters in sync with the host.
+
+The following ESP32 microcontroller variants are currently supported:
+
+- ESP32-P4
+- ESP32-S2
+- ESP32-S3
+
+This component bridges an existing UART to an existing USB CDC-ACM interface, so your configuration must also include:
+
+- [TinyUSB](/components/tinyusb/) - provides the underlying USB device functionality
+- [USB CDC-ACM](/components/usb_cdc_acm/) - provides the USB virtual serial port to bridge
+- [UART](/components/uart/) - the hardware UART bus to bridge
+
+```yaml
+# Example minimal configuration entry
+bridge:
+  - platform: usb_uart
+    uart_id: uart_bus
+    usb_cdc_acm_id: cdc_interface
+```
+
+## Configuration variables
+
+- **uart_id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the UART bus to bridge to the USB
+  CDC-ACM interface.
+- **usb_cdc_acm_id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the USB CDC-ACM interface
+  to use for the USB side of the bridge.
+- **dtr_pin** (*Optional*, [Pin](/guides/configuration-types#pin)): GPIO pin that mirrors the host's DTR (Data Terminal
+  Ready) line state. This is typically asserted when the host opens the serial port and is commonly used to drive the
+  reset line of an attached device. The pin carries the logical line state (asserted/deasserted); for a conventional
+  active-low interface (`DTR#`), set `inverted: true` on the pin (see [Control Signals](#control-signals)).
+- **rts_pin** (*Optional*, [Pin](/guides/configuration-types#pin)): GPIO pin that mirrors the host's RTS (Request to
+  Send) line state. Combined with `dtr_pin`, this is commonly used to drive the bootloader/reset sequence of an
+  attached device. As with `dtr_pin`, set `inverted: true` for a conventional active-low interface (`RTS#`).
+- **uart_rx_buffer_size** (*Optional*, int): Size of the internal buffer for data received from UART (going to USB).
+  Range: 64-65535. Defaults to `256`.
+- **uart_tx_buffer_size** (*Optional*, int): Size of the internal buffer for data received from USB (going to UART).
+  Range: 64-65535. Defaults to `256`.
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID for this component.
+
+> [!NOTE]
+> A bridge requires exclusive use of both its UART and its USB CDC-ACM interface. Configurations where another
+> component (or another bridge) also uses either of them are rejected during validation, since two readers on the same
+> interface would each receive only fragments of the data.
+
+## How It Works
+
+The USB UART Bridge creates a transparent data bridge between the UART and USB interfaces.
+
+### Data Flow
+
+- **UART to USB**: Data received on the UART RX pin is automatically forwarded to the USB CDC-ACM interface, making it
+  available to the host computer.
+- **USB to UART**: Data sent from the host computer through the USB CDC-ACM interface is automatically forwarded to the
+  UART TX pin.
+
+### Parameter Synchronization
+
+When the host computer changes serial port parameters (baud rate, data bits, stop bits, parity), those changes are
+automatically applied to the UART interface. This lets the bridge adapt to different device requirements without
+reconfiguration. Mark and space parity, and any data-bit count outside 5-8, are not supported by the UART and are
+ignored. Baud rate requests of zero or above 5 Mbit/s (the fastest these microcontrollers support) are ignored as
+well, with a warning in the log; anything in between is passed to the UART driver, which keeps the previous rate if
+the requested one is too low for its clock divider to reach.
+
+> [!NOTE]
+> UART parameter changes are debounced with a 20ms minimum interval to coalesce the rapid updates a host often sends
+> when opening a port. The new settings are applied to the running UART driver in place (without tearing it down), so
+> the bridge keeps forwarding data across the change. The new framing takes effect immediately, so a byte that is
+> mid-transmission when the host re-codes the line may be corrupted; this is expected and normally harmless, since
+> hosts set the line coding when opening the port, before data flows.
+
+### Control Signals
+
+If `dtr_pin` and `rts_pin` are configured, they output the state of these signals as reported by the host computer:
+
+- **DTR**: Typically asserted when the host opens the serial port and de-asserted when it closes.
+- **RTS**: State depends on the host application. Together with DTR, this is most commonly used to trigger
+  auto-reset/bootloader entry on an attached microcontroller.
+
+The pins carry the **logical** line state — driven active (high) when the host asserts the signal and inactive (low)
+when it de-asserts it — and they start **de-asserted** at boot, before any host has connected. A real serial interface
+drives DTR/RTS **active-low** (the `DTR#`/`RTS#` pins idle high and go low when asserted), so to match conventional
+wiring — and most auto-reset/bootloader circuits — set `inverted: true` on the pins:
+
+```yaml
+bridge:
+  - platform: usb_uart
+    uart_id: uart_bus
+    usb_cdc_acm_id: cdc_interface
+    dtr_pin:
+      number: GPIOXX
+      inverted: true
+    rts_pin:
+      number: GPIOXX
+      inverted: true
+```
+
+With `inverted: true`, the pin idles high at boot (de-asserted) and is driven low while the host asserts the signal.
+
+## Buffer Sizing
+
+The `uart_rx_buffer_size` and `uart_tx_buffer_size` parameters control the size of the internal buffers used for data
+transfer:
+
+- **Larger buffers**: Better for high-speed or bursty data transfers, but use more memory.
+- **Smaller buffers**: More memory-efficient, but may drop data if the bridge cannot keep up with the data rate.
+
+The default size of 256 bytes is suitable for most applications up to 115200 baud. For higher baud rates or
+applications with bursty data patterns, you may need to increase the buffer sizes.
+
+## Pausing the bridge
+
+The bridge can be paused and resumed at runtime through lambda calls. While paused, it stops forwarding in both
+directions: data arriving on the UART stays in the UART's buffer for other code on the device to read, and data sent by
+the host is discarded. Pausing also restores the UART parameters from your configuration (baud rate, data bits, stop
+bits and parity), and resuming re-applies the parameters last requested by the host. The `dtr_pin` and `rts_pin`
+outputs hold their state while paused and follow the host again on resume, so a computer opening the port cannot reset
+the attached device while other code is using it. This makes it possible to use the same UART from firmware running on
+the device while no computer is connected, and as a USB serial port when one is.
+
+- `pause()`: Stop forwarding and restore the configured UART parameters.
+- `resume()`: Re-apply the host's parameters and start forwarding again. If a write from the host is still draining,
+  this happens once it has finished.
+- `is_paused()`: Returns `true` once the bridge has stopped forwarding and the UART is free to use.
+
+```yaml
+bridge:
+  - platform: usb_uart
+    id: my_bridge
+    uart_id: uart_bus
+    usb_cdc_acm_id: cdc_interface
+
+switch:
+  - platform: template
+    name: "Bridge paused"
+    optimistic: true
+    turn_on_action:
+      - lambda: id(my_bridge).pause();
+    turn_off_action:
+      - lambda: id(my_bridge).resume();
+```
+
+> [!NOTE]
+> The bridge normally stops within about 250 ms of `pause()`, but a write from the host that is already in progress
+> is allowed to finish first, which can take longer at low baud rates; any further host data not yet written to the
+> UART is discarded. Check `is_paused()` before using the UART rather than waiting a fixed time. Bytes that arrive on
+> the UART while the bridge is stopping are discarded too, so pause the bridge while both sides are idle. The exclusive-use rule above still applies: another component cannot be
+> configured on the same UART. While the bridge is paused, use the UART directly from lambdas through its `id()`.
+
+## See Also
+
+- [UART](/components/uart/)
+- [TinyUSB](/components/tinyusb/)
+- [USB CDC-ACM](/components/usb_cdc_acm/)
+- <APIRef text="usb_uart_bridge.h" path="usb_uart/bridge/usb_uart_bridge.h" />
