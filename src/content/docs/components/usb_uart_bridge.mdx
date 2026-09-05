@@ -125,11 +125,14 @@ applications with bursty data patterns, you may need to increase the buffer size
 The bridge can be paused and resumed at runtime through lambda calls. While paused, it stops forwarding in both
 directions: data arriving on the UART stays in the UART's buffer for other code on the device to read, and data sent by
 the host is discarded. Pausing also restores the UART parameters from your configuration (baud rate, data bits, stop
-bits and parity), and resuming re-applies the parameters last requested by the host. This makes it possible to use the
-same UART from firmware running on the device while no computer is connected, and as a USB serial port when one is.
+bits and parity), and resuming re-applies the parameters last requested by the host. The `dtr_pin` and `rts_pin`
+outputs hold their state while paused and follow the host again on resume, so a computer opening the port cannot reset
+the attached device while other code is using it. This makes it possible to use the same UART from firmware running on
+the device while no computer is connected, and as a USB serial port when one is.
 
 - `pause()`: Stop forwarding and restore the configured UART parameters.
-- `resume()`: Start forwarding again and re-apply the host's parameters.
+- `resume()`: Re-apply the host's parameters and start forwarding again. If a write from the host is still draining,
+  this happens once it has finished.
 - `is_paused()`: Returns `true` once the bridge has stopped forwarding and the UART is free to use.
 
 ```yaml
