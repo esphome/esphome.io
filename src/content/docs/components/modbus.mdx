@@ -9,7 +9,7 @@ import APIRef from '@components/APIRef.astro';
 <span id="modbus"></span>
 
 The Modbus protocol is used by many consumer and industrial devices for communication.
-This component allows components in ESPHome to communicate to those devices via RTU protocol. You can access the coils, inputs, holding, read registers from your devices as sensors, switches, selects, numbers or various other ESPHome components and present them to your favorite Home Automation system. You can even write them as binary or float outputs from ESPHome.
+This component allows components in ESPHome to communicate to those devices via RTU protocol. You can access the coils, discrete inputs, holding registers and input registers from your devices as sensors, switches, selects, numbers or various other ESPHome components and present them to your favorite Home Automation system. You can even write them as binary or float outputs from ESPHome.
 
 > [!NOTE]
 > This page is the starting point for everything Modbus in ESPHome, including hardware setup. See
@@ -31,8 +31,9 @@ The various sub-components implement some of the Modbus functions below (dependi
 | 16 | Write Multiple Registers |
 | 23 | Read/Write Multiple Registers |
 
-Function code 23 (`0x17`) is implemented for the `server` role only; see
-[Read/Write Multiple Registers](/components/modbus_server/#readwrite-multiple-registers-function-code-0x17).
+Function code 23 (`0x17`, Read/Write Multiple Registers) is available in both roles - as a client action
+([`modbus_client.read_write_multiple_registers`](/components/modbus_client/)) and as a server handler
+([Read/Write Multiple Registers](/components/modbus_server/#readwrite-multiple-registers-function-code-0x17)).
 
 Modbus RTU requires a [UART Bus](/components/uart) to communicate.
 

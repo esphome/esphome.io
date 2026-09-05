@@ -211,6 +211,25 @@ and `platform: web_server` are configured, the native `esphome` protocol is pref
 when the OTA password has been lost but the `web_server` `auth` credentials are still known.
 
 
+**`--file FILE`**
+: Manually specify the binary file to upload instead of the most recent build. Can be combined with
+`--partition-table` or `--bootloader` to upload a custom partition table or bootloader image.
+
+
+**`--partition-table`**
+: Only on ESP32, over OTA with the `esphome` platform. Upload the partition table instead of the firmware.
+The device must be running a firmware with `allow_partition_access: true` configured on the
+[ESPHome OTA platform](/components/ota/esphome/#updating-the-partition-table-on-esp32).
+Can't be combined with `--bootloader`.
+
+
+**`--bootloader`**
+: Only on ESP32, over OTA with the `esphome` platform. Upload the bootloader instead of the firmware.
+The device must be running a firmware with `allow_partition_access: true` configured on the
+[ESPHome OTA platform](/components/ota/esphome/#updating-the-bootloader-on-esp32).
+Can't be combined with `--partition-table`.
+
+
 ### `clean-mqtt` Command
 
 The `esphome clean-mqtt <CONFIG>` cleans retained MQTT discovery messages from the MQTT broker.
@@ -313,6 +332,10 @@ esphome bundle my-device.yaml
 ### `logs` Command
 
 The `esphome logs <CONFIG>` command validates the configuration and shows all logs.
+
+For network logging, ESPHome uses the [native API](/components/api/) if configured, then MQTT, then the
+[`web_server`](/components/web_server/) `/events` stream. The web_server stream is used for devices that have a
+`web_server` but no native API, and reconnects automatically if the connection drops.
 
 #### Options
 

@@ -1,0 +1,635 @@
+---
+title: "ESPHome 2026.9.0: Faster builds and encrypted OTA"
+description: "ESPHome 2026.9.0 parallelizes PlatformIO installs, lays the groundwork for a native ESP8266 toolchain, adds Noise-encrypted OTA updates, and frees ESP8266 RAM."
+date: 2026-09-16
+authors:
+  - jesse
+tags:
+  - Releases
+excerpt: "ESPHome 2026.9.0 parallelizes PlatformIO installs, lays the groundwork for a native ESP8266 toolchain, adds Noise-encrypted OTA updates, and frees ESP8266 RAM."
+cover:
+  alt: "ESPHome 2026.9.0: Faster builds and encrypted OTA"
+  image: "https://assets.openhomefoundation.org/opengraph?url=https://esphome.io/blog/2026/09/16/esphome-2026-9"
+head:
+  - tag: meta
+    attrs:
+      property: "og:image"
+      content: "https://assets.openhomefoundation.org/opengraph?url=https://esphome.io/blog/2026/09/16/esphome-2026-9"
+  - tag: meta
+    attrs:
+      name: "twitter:image"
+      content: "https://assets.openhomefoundation.org/opengraph?url=https://esphome.io/blog/2026/09/16/esphome-2026-9"
+  - tag: meta
+    attrs:
+      property: "og:image:title1"
+      content: "ESPHome 2026.9.0"
+  - tag: meta
+    attrs:
+      property: "og:image:title2"
+      content: "Faster builds and encrypted OTA"
+  - tag: meta
+    attrs:
+      property: "og:image:author"
+      content: "Jesse Hills"
+  - tag: meta
+    attrs:
+      property: "og:image:category"
+      content: "Releases"
+---
+
+> [!NOTE]
+> This is a beta release. Details on this page may change before the stable release is published.
+
+import ImgTable from "@components/ImgTable.astro";
+
+{/* MANUAL: Add featured components here */}
+<ImgTable items={[
+  ["D01", "/components/sensor/d01/", "d01.jpg", "Particulate"],
+  ["SFA40", "/components/sensor/sfa40/", "sfa40.webp", "Formaldehyde & Temperature & Humidity"],
+  ["DS1603L", "/components/sensor/ds1603l/", "ds1603l.jpg", "Acoustic distance"],
+  ["Mk2PVRouter", "/components/sensor/mk2pvrouter/", "mk2pvrouter.jpg", "Surplus Energy Diverter"],
+  ["Snapshot", "/components/display/snapshot/", "file-image-outline.svg", "dark-invert"],
+  // ["Component Name", "/components/path/", "image.png"],
+]} />
+
+## Release Overview
+
+{/* RELEASE_OVERVIEW_START */}
+ESPHome 2026.9.0 focuses on foundational build system and platform work: the scaffolding for an ESP8266
+native toolchain lands across five infrastructure PRs, PlatformIO installs are parallelized end to end (the
+package phase drops from 36% of build time to 25% on CI benchmarks, and the docker image preinstall from
+~100s to ~46s), and a sweep across 60 files pushes 211 conditional log string literals off ESP8266 RAM into
+flash.
+
+Beyond the platform work, this release adds Noise (ChaCha20-Poly1305) encryption for OTA updates, brings
+Improv provisioning to Ethernet-only boards, teaches WiFi provisioning to shut down the AP and captive portal
+when the window closes, and rewrites IR transmission on Beken and Realtek chips to run from a hardware timer
+interrupt instead of a busy-wait. The multi-release modbus overhaul continues with a heap-free write path, a
+consolidated range-join option, and continuous polling. Six new components (ds1603l, d01, sfa40, mk2pvrouter,
+snapshot, noise) and roughly a dozen feature additions to existing components round out the release.
+{/* RELEASE_OVERVIEW_END */}
+
+## Upgrade Checklist
+
+{/* UPGRADE_CHECKLIST_START */}
+- If you have a device with a custom MAC burned into the ESP32 eFuses and use Ethernet, Bluetooth, or 802.15.4,
+  expect a new MAC on those interfaces after upgrading; update DHCP reservations, ACLs and Bluetooth pairings
+- If you use `modbus_controller` with `custom_command:`, rename it to `custom_pdu:` and drop the leading device
+  address byte from the payload
+- If you use `modbus_controller` with `register_count:` or `force_new_range:`, migrate to `reuse_previous_range:` and
+  re-verify any FP32 packed as `register_count: 1` + `response_size: 4`
+- If you use `modbus_controller` `skip_updates:` on a sensor, split the slow registers onto a second
+  `modbus_controller` with the same `address:` and a slower `update_interval:`
+- If you use `modbus_controller` `switch` or `output` with a non-zero `offset:` on holding registers, re-verify the
+  target register (writes now land at `address + offset/2` instead of `address + offset`)
+- If you have a `modbus_controller` `switch` `write_lambda` that inverts the returned bool to flip the displayed
+  state, publish the state explicitly or invert in the read `lambda` instead
+- If you use `homeassistant.event` `variables:` with lambda source, tag the value with `!lambda` to silence the new
+  deprecation warning
+- If you use `esp32_hosted`, remove any pinned ESP-IDF version below 5.3 or bump the pin to 5.3 or newer
+- If you use one of the affected UART components (`cm1106`, `daly_bms`, `hrxl_maxsonar_wr`, `hydreon_rgxx`,
+  `mhz19`, `pylontech`, `teleinfo`, `vbus`, `wl_134`, `cse7761`) with non-default UART settings, expect a
+  configuration error and adjust the UART bus to the component's required baud rate and parity
+- If you use API user-defined actions with long variable names or descriptions on ESP8266, keep each action's total
+  name and metadata text under 384 bytes or split into smaller actions
+- If you have lambdas calling `modbus_controller` `ModbusCommandItem` factories or `queue_command()`, migrate to the
+  entity write helpers or `modbus_client` actions before the 2027.3.0 removal
+{/* UPGRADE_CHECKLIST_END */}
+
+{/* FEATURE_HIGHLIGHTS_START */}
+## ESP8266 Native Toolchain Foundation
+
+Led by [@bdraco](https://github.com/bdraco), this release lays the entire scaffolding for building ESP8266
+firmware without PlatformIO. ESPHome now has a shared registry and download layer
+([#18570](https://github.com/esphome/esphome/pull/18570)), a linker-script surgery module and per-board build
+metadata ported from `platform-espressif8266` 4.2.1
+([#18555](https://github.com/esphome/esphome/pull/18555)), a toolchain seam that validates a `--toolchain`
+choice on every platform ([#18556](https://github.com/esphome/esphome/pull/18556)), a resumable, sha256-verified
+installer for the Arduino ESP8266 core 3.1.2 and xtensa gcc 10.3
+([#18557](https://github.com/esphome/esphome/pull/18557)), and a native library backend that resolves
+`cg.add_library()` entries against the framework tree
+([#18558](https://github.com/esphome/esphome/pull/18558)). The infrastructure is standalone in this release
+(nothing user reachable calls it yet), but it is the plumbing an ESP8266 build without PlatformIO needs.
+About 40% of ESPHome installs still run on ESP8266, so this is the setup work for a substantially faster
+build path for those users.
+
+## Build System Parallelization
+
+The install phase of a PlatformIO build was serial from top to bottom, which showed up most sharply on
+Raspberry Pi class hardware and inside the Home Assistant App. This release parallelizes it end to end.
+[@bdraco](https://github.com/bdraco) added a shared batch download runner with one combined progress bar
+([#18662](https://github.com/esphome/esphome/pull/18662)), a prefetch subprocess that resolves and downloads
+PlatformIO packages in parallel into PlatformIO's own cache
+([#18769](https://github.com/esphome/esphome/pull/18769)), and a parallel-extraction install pass that drives
+PlatformIO's own `_install` with one worker per usable core
+([#18775](https://github.com/esphome/esphome/pull/18775)). CI benchmarks on the esp8266-arduino leg show the
+package phase drop from 17.1s to 10.3s (36% of the build to 25% of the build) and 296 serial progress frames
+collapse to a single combined bar. The docker image build's own PlatformIO library preinstall got the same
+treatment ([#18777](https://github.com/esphome/esphome/pull/18777)), cutting a ~100s step to ~46s on every arch
+leg, and the CI compile-test image now compresses with multithreaded zstd instead of gzip
+([#18812](https://github.com/esphome/esphome/pull/18812)), taking another 40s off the pipeline. ESP-IDF native
+builds also now cache the discovered component list inside the extracted framework directory
+([#18752](https://github.com/esphome/esphome/pull/18752)), skipping a full CMake configure pass on every rebuild
+after an sdkconfig change (~2.2s on desktop, several times more on SBCs).
+
+## ESP8266 RAM Savings
+
+A concerted sweep across the codebase pushes conditional log string literals off ESP8266 RAM and into flash,
+where the rest of the log format string already lives. [@bdraco](https://github.com/bdraco) scanned every
+`ESP_LOG*` call site and converted 211 bare literals across 113 lines in 60 files, wrapping each in
+`LOG_STR_LITERAL` so ESP8266 keeps them in flash while other platforms see a no-op
+([#18907](https://github.com/esphome/esphome/pull/18907),
+[#18906](https://github.com/esphome/esphome/pull/18906)). A d1_mini with `dht`, `adc`, `resistance`, `wifi` and
+`wireguard` drops 80 bytes of RAM from this alone. In the same vein, `str_contains_ignore_case` now keeps its
+needle in flash on ESP8266 via a `PSTR` wrapper and an `_P`-family implementation
+([#18574](https://github.com/esphome/esphome/pull/18574)), and the 65-byte base64 alphabet table is gone
+entirely, replaced by arithmetic range mapping that saves 64 bytes of RAM and doubles decode speed on host
+([#18454](https://github.com/esphome/esphome/pull/18454)). Every ESP8266 device with API encryption benefits
+from the base64 change automatically.
+
+## Framework Memory And Build Efficiency
+
+Two coordinated efforts trim per-instance overhead and unused sources across the tree.
+[@bharvey88](https://github.com/bharvey88) and [@bdraco](https://github.com/bdraco) drove a series of over 30
+PRs moving trivial one-line accessors from `.cpp` files into headers so the compiler can inline them, covering
+WiFi, Ethernet, logger, light, select, sensor, text sensor, climate, cover, fan, switch, valve, text,
+datetime, thermostat, sprinkler, MQTT, WireGuard, display, safe_mode and more (representative measurements:
+32 bytes saved on ESP8266 for wifi scan result accessors, 48 bytes for the remaining wifi accessors, similar
+per-component savings across the tree). Separately, [@bdraco](https://github.com/bdraco) extended the
+`FILTER_SOURCE_FILES` pattern so binary_sensor click/multi-click sources, all three sensor filter files, and
+`esp32/gpio.cpp` are only copied and compiled when the config actually uses them
+([#18602](https://github.com/esphome/esphome/pull/18602)), and picked up other unused sources across
+light/JSON schemas, i2s_audio SPDIF, MQTT entity types, uart debug, esp32_ble advertising, time posix TZ and
+uptime timestamps ([#18675](https://github.com/esphome/esphome/pull/18675),
+[#18676](https://github.com/esphome/esphome/pull/18676),
+[#18677](https://github.com/esphome/esphome/pull/18677),
+[#18678](https://github.com/esphome/esphome/pull/18678),
+[#18679](https://github.com/esphome/esphome/pull/18679),
+[#18680](https://github.com/esphome/esphome/pull/18680),
+[#18746](https://github.com/esphome/esphome/pull/18746),
+[#18750](https://github.com/esphome/esphome/pull/18750)). A few one-off wins round it out: `APINoiseFrameHelper`
+is 104 bytes smaller per open encrypted connection ([#18420](https://github.com/esphome/esphome/pull/18420)),
+the camera image reader is created lazily instead of per connection
+([#18421](https://github.com/esphome/esphome/pull/18421)), and API message-type storage widened to `uint16_t`
+without adding per-connection RAM ([#18526](https://github.com/esphome/esphome/pull/18526)).
+
+## Encrypted OTA Updates
+
+[@bdraco](https://github.com/bdraco) adds Noise (ChaCha20-Poly1305) encryption to the `esphome` OTA platform
+([#18489](https://github.com/esphome/esphome/pull/18489)), using the same protocol the native API already
+uses. Until now the firmware image travelled over the network in plaintext, so a passive listener on the LAN
+could capture the WiFi credentials and API encryption key embedded in the image; the SHA256 password only
+authenticated the client, it did not make the transfer confidential. With an `encryption:` block on the OTA
+platform the whole session is encrypted, and both the device and the CLI fail closed so an attacker cannot
+strip encryption and force a plaintext upload. A bare `encryption:` inherits the `api` encryption key, and a
+password and encryption are mutually exclusive because the key already authenticates the uploader. This work
+sits on top of a new shared `noise` component ([#18490](https://github.com/esphome/esphome/pull/18490)) that
+lifts the noise-c dependency, HWRNG binding, error strings, PSK context, encryption key validation and the
+handshake responder out of the api component so both api and ota can share them; there is no user
+configuration for `noise` itself.
+
+## Improv Serial Beyond WiFi
+
+[@kbx81](https://github.com/kbx81) makes `improv_serial` aware of the whole network stack instead of only
+WiFi, so it now works on Ethernet-only boards and other WiFi-less devices
+([#17598](https://github.com/esphome/esphome/pull/17598)). The component depends on `network` instead of
+`wifi`, gates every WiFi call behind `#ifdef USE_WIFI`, and implements the new Improv `Get Network State`
+RPC (0x07) that reports which interfaces are up and the web server URL for each one. The Improv state machine
+still uses WiFi provisioning where WiFi exists; on WiFi-less builds it reports `STOPPED` so clients do not
+offer a WiFi form that cannot succeed. [@bdraco](https://github.com/bdraco) additionally adds an optional
+`uart_id:` so Improv can run on a dedicated UART bus separate from the logger's serial port
+([#18794](https://github.com/esphome/esphome/pull/18794)), which also makes the protocol end-to-end testable
+via the new host integration test.
+
+## Provisioning Shuts Down When The Window Closes
+
+Also from [@kbx81](https://github.com/kbx81): the WiFi access point and captive portal are now torn down when
+the provisioning window closes, matching the treatment BLE Improv already had
+([#17466](https://github.com/esphome/esphome/pull/17466)). An unprovisioned device that times out is now fully
+unprovisionable until it is power-cycled - BLE Improv stops, the captive portal stops, the access point
+disappears, and new API clients are turned away. Because a device whose access point is its only network
+connection becomes unreachable when the window closes, `provisioning:` now warns at config time when WiFi is
+configured with an access point and no station credentials.
+
+## ISR-Driven IR Transmission On LibreTiny
+
+[@kbx81](https://github.com/kbx81) rewrites `remote_transmitter` on Beken BK7231N/BK7238 and Realtek RTL8720C
+to pace the IR envelope with a hardware timer interrupt chain instead of a priority-boosted busy-wait
+([#18648](https://github.com/esphome/esphome/pull/18648),
+[#18660](https://github.com/esphome/esphome/pull/18660)). Interrupts stay enabled throughout, so WiFi and
+lwIP tasks run normally during long transmissions and `remote_receiver` decodes the device's own frames off
+the air during a send. `non_blocking:` is now supported on both families (previously ESP32-RMT only): the
+send returns immediately after arming the chain and `on_complete` fires from `loop()`. Bench measurements on
+an RM4 Pro (RTL8720CF) show 25.01-25.09ms repeat gaps for a configured 25ms (tighter than the busy-wait's
+25.02-25.05ms) and 27 captured transmissions all bit-perfect; an FK UFO-R4 (BK7238) measured 16-30us
+duty-apply latency and 39/39 bit-perfect NEC envelopes.
+
+## Modbus Controller Overhaul
+
+The long-running modbus refactor from [@exciton](https://github.com/exciton) continues with a large batch of
+improvements. Writer entities (switch, number, output, select) become their own persistent hub devices with a
+heap-free write path that allocates nothing after `setup()`, and `write_lambda` gets full access to the
+underlying device so a coil switch can drive a holding-register write
+([#18082](https://github.com/esphome/esphome/pull/18082)). Range polling moves onto the same
+`PollingDevice` architecture ([#18071](https://github.com/esphome/esphome/pull/18071)), saving 1,756 bytes of
+flash on the ESP8266 test config with byte-identical RAM. The `register_count` and `force_new_range` keys are
+consolidated into a single tri-state `reuse_previous_range` option
+([#18085](https://github.com/esphome/esphome/pull/18085)) that says how a sensor relates to the range built
+just before it (auto/true/false), and `custom_command` is renamed to `custom_pdu` with auto-migration when
+the leading byte matches the controller address
+([#18652](https://github.com/esphome/esphome/pull/18652)). A new `continuous:` option on both the client
+actions ([#18542](https://github.com/esphome/esphome/pull/18542)) and the controller
+([#18080](https://github.com/esphome/esphome/pull/18080)) makes reads stream back-to-back to fill idle bus
+time. Two write-path bug fixes ship as breaking changes: the switch/output write offset is now byte-accurate
+(previously doubled) ([#18787](https://github.com/esphome/esphome/pull/18787)) and a switch `write_lambda`
+return value now only changes the value written to the device rather than the displayed state
+([#18788](https://github.com/esphome/esphome/pull/18788)), so an active-low relay finally displays the
+requested state instead of the inverted one. Users of `custom_command`, `register_count`,
+`force_new_range` or `skip_updates` should review their configs.
+
+## New Components And Hardware Support
+
+Six new components join the tree:
+
+- **[ds1603l](/components/sensor/ds1603l/)** by [@JakeLC15](https://github.com/JakeLC15) - a UART ultrasonic
+  liquid-level sensor with configurable min/max level and volume mapping
+  ([#13133](https://github.com/esphome/esphome/pull/13133))
+- **[d01](/components/sensor/d01/)** by [@ch604](https://github.com/ch604) - a PM2.5 particulate sensor that
+  broadcasts its own packets every 1.4 seconds ([#17788](https://github.com/esphome/esphome/pull/17788))
+- **[sfa40](/components/sensor/sfa40/)** by [@NoQuarrel](https://github.com/NoQuarrel) - the Sensirion SFA40
+  formaldehyde sensor with temperature and humidity readings
+  ([#17815](https://github.com/esphome/esphome/pull/17815))
+- **[mk2pvrouter](/components/sensor/mk2pvrouter/)** by [@FredM67](https://github.com/FredM67) - Mk2PVRouter
+  telemetry over UART, modelled on the TeleInfo component
+  ([#8487](https://github.com/esphome/esphome/pull/8487))
+- **[snapshot](/components/display/snapshot/)** by [@clydebarrow](https://github.com/clydebarrow) - a display
+  platform that draws into memory and writes BMP files, works anywhere the `host` platform runs, and pairs
+  with a new `headless:` option on the SDL display for documentation captures and CI golden-image tests
+  ([#17917](https://github.com/esphome/esphome/pull/17917))
+- **noise** by [@bdraco](https://github.com/bdraco) - a shared internal Noise
+  primitives component that api and the new encrypted OTA both consume; no user configuration
+  ([#18490](https://github.com/esphome/esphome/pull/18490))
+
+## New Features In Existing Components
+
+- **[zigbee time platform](/components/time/zigbee/)** by [@luar123](https://github.com/luar123) adds a
+  Zigbee-sourced time provider on ESP32 ([#18656](https://github.com/esphome/esphome/pull/18656))
+- **[tuya water_heater](/components/water_heater/tuya/)** by
+  [@iago-veiga](https://github.com/iago-veiga) exposes a Tuya-MCU electric water heater as a single
+  `water_heater` entity, collapsing the previous template-plus-lambda pattern into one block
+  ([#17323](https://github.com/esphome/esphome/pull/17323))
+- **[lvgl list widget](/components/lvgl/widgets/#list)** by [@clydebarrow](https://github.com/clydebarrow)
+  adds a scrollable container designed to be filled at runtime, with `add_text`, `add`, `remove` and `clear`
+  actions plus `on_add`/`on_remove` triggers ([#18018](https://github.com/esphome/esphome/pull/18018))
+- **[lvgl table widget](/components/lvgl/widgets/#table)** also by
+  [@clydebarrow](https://github.com/clydebarrow) adds a lightweight grid of text elements
+  ([#18422](https://github.com/esphome/esphome/pull/18422)) and support for LVGL 9.5's radial and conical
+  gradients ([#18818](https://github.com/esphome/esphome/pull/18818))
+- **[online_image auto-detection](/components/image/online_image/)** by
+  [@guillempages](https://github.com/guillempages) picks up the image format from the server's `Content-Type`
+  header ([#16337](https://github.com/esphome/esphome/pull/16337)), plus QOI format support in `runtime_image`
+  ([#16945](https://github.com/esphome/esphome/pull/16945)) and a decoder that stays allocated between images
+  of the same format ([#18488](https://github.com/esphome/esphome/pull/18488))
+- **[ethernet spi_id](/components/ethernet/)** by [@jesserockz](https://github.com/jesserockz) lets a SPI
+  ethernet chip (W5500, DM9051, ENC28J60, CH390) attach to an existing `spi:` bus so it can share pins with
+  other SPI peripherals like a display on boards such as the M5Stack CoreS3
+  ([#18530](https://github.com/esphome/esphome/pull/18530))
+- **[network tcp_send_buffer](/components/network/)** by [@bdraco](https://github.com/bdraco) exposes lwIP's
+  per-socket send buffer size on ESP-IDF, giving Bluetooth proxies a way to raise the TCP buffer without
+  paying the RAM cost of `enable_high_performance`
+  ([#18610](https://github.com/esphome/esphome/pull/18610))
+- **[epaper_spi UC8179](/components/display/waveshare_epaper/)** by
+  [@jesserockz](https://github.com/jesserockz) adds a monochrome UC8179 driver with three refresh modes and
+  registers models for the Waveshare 7.5in v2 panel and the Seeed reTerminal E1001
+  ([#17568](https://github.com/esphome/esphome/pull/17568))
+- **[api user-defined action metadata](/components/api/)** by
+  [@bharvey88](https://github.com/bharvey88) adds optional `description` and `example` fields on API actions
+  and variables so Home Assistant renders a proper form; ESP8266 configs with unusually long action metadata
+  may need trimming to fit the 384-byte-per-action limit
+  ([#18881](https://github.com/esphome/esphome/pull/18881))
+- **[sen6x algorithm tuning](/components/sensor/sen6x/)** by
+  [@bharvey88](https://github.com/bharvey88) exposes Sensirion's VOC/NOx tuning parameters
+  ([#18779](https://github.com/esphome/esphome/pull/18779))
+- **[emontx AP and F tags](/components/sensor/emontx/)** by [@FredM67](https://github.com/FredM67) adds
+  apparent power and frequency sensor tags with correct defaults
+  ([#18586](https://github.com/esphome/esphome/pull/18586))
+- **[climate_ir_lg advanced commands](/components/climate/climate_ir/#climate_ir_lg)** by
+  [@ireun](https://github.com/ireun) adds an `advanced_commands_support` flag that fixes heat/cool temperature
+  setting, decodes JET mode, adds swing settings and rejects previously misdecoded frames
+  ([#10875](https://github.com/esphome/esphome/pull/10875))
+- **[mitsubishi_cn105 Fahrenheit](/components/climate/mitsubishi_cn105/)** by
+  [@crnjan](https://github.com/crnjan) implements the non-linear Fahrenheit mapping the Mitsubishi A/C
+  hardware actually uses ([#15488](https://github.com/esphome/esphome/pull/15488))
+- **[hoermann_hcp buttons](/components/cover/hoermann_hcp/)** by [@zweckj](https://github.com/zweckj) adds venting
+  and half-open buttons ([#18544](https://github.com/esphome/esphome/pull/18544))
+- **[audio_http persistent buffer](/components/media_player/)** by
+  [@n-IA-hane](https://github.com/n-IA-hane) keeps the HTTP decoder ring buffer allocated between playback
+  sessions to avoid heap fragmentation on memory-tight devices
+  ([#18708](https://github.com/esphome/esphome/pull/18708))
+- **[rp2_ble_tracker automation](/components/bluetooth_proxy/)** by
+  [@Bl00d-B0b](https://github.com/Bl00d-B0b) wires the shared BLE automation surface onto the RP2 tracker
+  ([#18717](https://github.com/esphome/esphome/pull/18717))
+
+## Networking And Diagnostics
+
+Several targeted changes for network-heavy devices. Bluetooth proxy congestion warnings now fire once per
+transaction and once per connection instead of on every drop cycle, ending the log flood a bulk transfer to
+opendisplay-style screens produced ([#18605](https://github.com/esphome/esphome/pull/18605)).
+`esp32_ble_tracker` now warns at config time when the scan window exceeds 600ms while WiFi is configured,
+because holding the shared radio for over a second at a time starves WiFi and causes disconnects
+([#18725](https://github.com/esphome/esphome/pull/18725)). `espota2` now logs the erase-prepare window
+separately from the upload window and reports total OTA time
+([#18582](https://github.com/esphome/esphome/pull/18582)), so users see why there is a silent pause after the
+handshake instead of interpreting it as a stall.
+
+## ESP32 Custom eFuse MAC Applied Consistently
+
+[@kbx81](https://github.com/kbx81) fixes an inconsistency where a custom MAC burned into the ESP32's eFuses
+was only applied to WiFi ([#18452](https://github.com/esphome/esphome/pull/18452)). The apply now runs in
+`app_main()` before any component sets up, so Ethernet, Bluetooth and 802.15.4 all derive their addresses
+from the custom base MAC. Only devices with a burned custom eFuse MAC AND Ethernet/Bluetooth/802.15.4 are
+affected; on those devices Ethernet, Bluetooth and Thread/Zigbee will change on-wire MAC addresses on
+upgrade, so DHCP reservations, MAC filters and BLE pairings may need updating (set
+`ignore_efuse_custom_mac: true` under `esp32.advanced` to keep the old behaviour).
+
+## Codebase Type Annotations
+
+Led by [@jesserockz](https://github.com/jesserockz), a repo-wide sweep in eleven parts added parameter and
+return type annotations to every mid-sized component's Python code (over 130 components in this batch,
+plus a smaller follow-up in [#18697](https://github.com/esphome/esphome/pull/18697)), landing across
+PRs [#18338](https://github.com/esphome/esphome/pull/18338) through
+[#18348](https://github.com/esphome/esphome/pull/18348). Because component modules do not use
+`from __future__ import annotations`, every annotation is evaluated at import time, so the sweep also had to
+add every missing import for the names it introduced; an all-modules import check pins that. No behaviour
+changes.
+{/* FEATURE_HIGHLIGHTS_END */}
+
+## Thank You, Contributors
+
+{/* CONTRIBUTORS_START */}
+This release includes 275 pull requests from over 30 contributors. A huge thank you to everyone who made 2026.9.0
+possible:
+
+- [@exciton](https://github.com/exciton) - 25 PRs including the multi-release Modbus overhaul: PollingDevice-based
+  controller polling, continuous polling, heap-free writer entities, a compile-time register decoder, and the switch to
+  typed address-based read callbacks across sdm_meter, growatt_solar, havells_solar, kuntze, pzemac, pzemdc, and
+  selec_meter
+- [@jesserockz](https://github.com/jesserockz) - 20 PRs including the 12-part sweep adding Python type annotations
+  across the component tree, the `FINAL_VALIDATE_SCHEMA` return-type migration, the `uart` `check_uart_settings` move to
+  final validation, the new UC8179 e-paper driver, and the `ethernet` `spi_id` option
+- [@clydebarrow](https://github.com/clydebarrow) - 15 PRs including the new SDL snapshot and headless display mode,
+  LVGL list and table widgets, LVGL radial and conical gradients, ESP32-S31 support in `mipi_rgb`, and CodSpeed
+  benchmark reliability fixes
+- [@kbx81](https://github.com/kbx81) - 9 PRs including the provisioning window shutdown behavior, `improv_serial`
+  support for Ethernet and non-WiFi interfaces, the ESP32 custom eFuse base-MAC fix, and ISR-driven `remote_transmitter`
+  on RTL8720C and BK7231N/BK7238
+- [@guillempages](https://github.com/guillempages) - 8 PRs including `runtime_image` format auto-detection, QOI
+  decoding, MIME types, decoder retention, and BMP dimension validation, plus the portable `str_contains_ignore_case`
+  helper
+- [@bharvey88](https://github.com/bharvey88) - 6 PRs including the WiFi scan list dedupe helper shared with
+  `improv_serial`, `sen6x` VOC/NOx algorithm tuning, description and example metadata on user-defined API actions, and
+  BK72xx `deep_sleep` wakeup validation
+- [@swoboda1337](https://github.com/swoboda1337) - 6 PRs including CI diff-size fallback and max-parallel removal,
+  `external_components` override logging, and ESP32-S31 ADC and GPIO support
+- [@FredM67](https://github.com/FredM67) - 4 PRs including the new `mk2pvrouter` component and `emontx` apparent power
+  and frequency sensor support
+- [@p1ngb4ck](https://github.com/p1ngb4ck) - 4 PRs including the `USBUartChannelBase` extraction, moving `CONF_SLOT`
+  and `CONF_LABEL` into the shared `const` module, and uncovering a silent `safe_mode` error
+- [@crnjan](https://github.com/crnjan) - 3 PRs including `mitsubishi_cn105` Fahrenheit support, deferred status
+  requests, and marking configurable classes as final
+- [@rwrozelle](https://github.com/rwrozelle) - 2 PRs including the `IntervalSyncer` `PollingComponent` refactor and an
+  `openthread` shutdown fix
+- [@n-IA-hane](https://github.com/n-IA-hane) - 2 PRs including SPI PSRAM DMA for external buffers and an `audio_http`
+  persistent ring buffer option
+- [@Bl00d-B0b](https://github.com/Bl00d-B0b) - 2 PRs including `rp2_ble_tracker` automation triggers and scan actions
+  plus a LibreTiny WiFi STA state reset on synchronous connect failure
+- [@JakeLC15](https://github.com/JakeLC15) - the new DS1603L ultrasonic liquid-level sensor component
+- [@ch604](https://github.com/ch604) - the new D01 PM2.5 sensor component
+- [@NoQuarrel](https://github.com/NoQuarrel) - the new SFA40 formaldehyde sensor component
+
+Also thank you to [@bdraco](https://github.com/bdraco), [@ireun](https://github.com/ireun),
+[@iago-veiga](https://github.com/iago-veiga), [@leodrivera](https://github.com/leodrivera),
+[@JoppyFurr](https://github.com/JoppyFurr), [@DavidvtWout](https://github.com/DavidvtWout),
+[@alaraun](https://github.com/alaraun), [@zweckj](https://github.com/zweckj),
+[@kahrendt](https://github.com/kahrendt), [@luar123](https://github.com/luar123),
+[@Gafielt](https://github.com/Gafielt), [@MakerYuichi](https://github.com/MakerYuichi),
+[@mfishma](https://github.com/mfishma), and [@Zebble](https://github.com/Zebble) for their contributions, and to
+everyone who reported issues, tested pre-releases, and helped in the community.
+{/* CONTRIBUTORS_END */}
+
+## Breaking Changes
+
+{/* BREAKING_CHANGES_USERS_START */}
+### Component Changes
+
+- **Modbus Controller**: `custom_command` renamed to `custom_pdu` and now takes the PDU only (function code + data), not
+  a full frame. The controller's `address:` and CRC are appended automatically. Configs whose first byte matched the
+  controller's `address:` are auto-migrated with a deprecation warning until 2027.3.0; frames targeting a different unit
+  address must be moved to a sensor on the correct controller. [#18652](https://github.com/esphome/esphome/pull/18652)
+- **Modbus Controller**: `address: 0` (Modbus broadcast) is now rejected with a validation error. A broadcast is never
+  answered, so it could never be polled. [#18652](https://github.com/esphome/esphome/pull/18652)
+- **Modbus Controller**: The per-sensor `skip_updates` option is retired and has no effect. It logs a deprecation
+  warning at configuration time (removed in 2027.3.0). To poll some registers less often, add a second
+  `modbus_controller` with the same `address:` and a slower `update_interval:`, and attach the slow sensors to it.
+  `offline_skip_updates` (controller-level) is unaffected. [#18652](https://github.com/esphome/esphome/pull/18652)
+- **Modbus Controller**: `register_count` and `force_new_range` are replaced by a new tri-state
+  `reuse_previous_range` option (`auto`/`true`/`false`). `force_new_range: true` migrates automatically to
+  `reuse_previous_range: false` with a deprecation warning (removed in 2027.3.0). A `register_count` matching the
+  derived width warns as redundant; a divergent one now fails validation with migration instructions. The old vendor
+  pattern of `register_count: 1` + `response_size: 4` for an FP32 no longer validates. Range splitting is now strictly
+  address-ordered, so where isolated items were previously sorted first the range may now split at their position.
+  A `RAW` value or text sensor with a `response_size` now spans `ceil(response_size / 2)` registers, one more than
+  before for odd values. [#18085](https://github.com/esphome/esphome/pull/18085)
+- **Modbus Controller**: Holding-register `switch` and `output` platforms now apply a non-zero `offset`/`byte_offset`
+  byte-accurately (`address + offset/2`) instead of doubling it. Configs with a non-zero write offset on these
+  platforms must re-verify the target register. Odd offsets on these two platforms are now rejected at validation, as
+  a 16-bit register write cannot target half a register. The `number` platform's odd offsets are unchanged.
+  [#18787](https://github.com/esphome/esphome/pull/18787)
+- **Modbus Controller**: A `switch` `write_lambda` returning a bool different from `x` now only changes the value
+  written to the device; the switch reports the requested state. Lambdas that relied on the return value flipping the
+  displayed state should publish explicitly or invert in the read `lambda` instead. The lambda's `payload` parameter
+  changes type from `std::vector` to a fixed-capacity `RegisterValues` / `PduBuffer`; `push_back`, `clear`, `assign`
+  and indexing still work, but `resize`, `reserve`, `insert` and passing to `std::vector&` helpers no longer compile.
+  A lambda that fills `payload` and returns `{}` now sends the buffer (as documented); previously that combination
+  sent nothing. [#18788](https://github.com/esphome/esphome/pull/18788),
+  [#18082](https://github.com/esphome/esphome/pull/18082)
+- **Modbus Controller**: For a `custom_pdu` poll, the `address` argument delivered to `on_command_sent`, `on_online`
+  and `on_offline` triggers is now `-1` (no decodable address) instead of the sensor's synthesized address. Automations
+  filtering on a custom sensor's synthetic address must test for `-1` instead. The `function_code` argument for a
+  `custom_pdu` whose first byte has the 0x80 bit set is now reported with that bit masked (0x83 reports as 0x03).
+  [#18071](https://github.com/esphome/esphome/pull/18071)
+- **Runtime Image**: The image decoder is now kept allocated between decodes to avoid memory churn when decoding
+  multiple images of the same format. This adds a small persistent memory overhead for the decoder object; on
+  memory-constrained devices, reducing runtime image usage or restarting less frequently may be needed.
+  [#18488](https://github.com/esphome/esphome/pull/18488)
+- **API**: `homeassistant.event` variables are now compiled as lambdas when they use `!lambda` or look like lambda
+  source; a plain string that looks like lambda source now logs a deprecation warning and will be treated as static
+  text in 2027.3.0. Tag lambda values with `!lambda` explicitly. `homeassistant.action` now accepts plain static
+  strings (previously rejected) and sends them as text. A `cv.returning_lambda` value whose only `return` sits inside
+  a comment, or only matches as a substring like `the_return_value`, now fails validation instead of failing at C++
+  compile. [#18759](https://github.com/esphome/esphome/pull/18759)
+- **API**: User-defined actions now accept optional `description` and per-variable `description` and `example`
+  metadata using a new mapping form for `variables:`. On ESP8266 only, each action's action name, variable names,
+  description and example text must total at most 384 bytes; configs that exceed this fail validation with a message
+  identifying the action and its size. Other platforms have no limit. [#18881](https://github.com/esphome/esphome/pull/18881)
+- **API**: The legacy media player `supports_pause` field is no longer sent. Clients on API 1.11 or newer already use
+  `feature_flags`, so current Home Assistant is unaffected; only very old clients that never learned `feature_flags`
+  would lose pause capability. [#18801](https://github.com/esphome/esphome/pull/18801)
+- **Preferences**: `IntervalSyncer` is now a `PollingComponent`, so its interval can be suspended and resumed with
+  `component.suspend` and `component.resume`. No YAML changes are required; the previous `flash_write_interval: 0`
+  loop-every-iteration special case was already dead code (coerced to `1ms` by the validator). Lambdas that called
+  the old `set_write_interval()` still compile via a deprecated shim that forwards to `set_update_interval()`,
+  removed in 2027.3.0. [#14370](https://github.com/esphome/esphome/pull/14370)
+
+### Platform Changes
+
+- **ESP32**: When a custom MAC address is burned into the eFuses, ESPHome now applies it as the system base MAC
+  before any component runs, so every interface (Wi-Fi, Ethernet, Bluetooth, 802.15.4) derives its address from it.
+  Previously only Wi-Fi did. Devices with a custom eFuse MAC and Ethernet, Bluetooth, or 802.15.4 will appear on the
+  network with a new MAC after upgrading: DHCP reservations, ACLs and Bluetooth bonds keyed to the old MAC need to be
+  updated, and 802.15.4 (Thread/Zigbee) nodes may need to be re-commissioned. Devices without a custom eFuse MAC (the
+  vast majority) are unaffected; setting `ignore_efuse_custom_mac: true` under `esp32: advanced:` disables the
+  behavior. [#18452](https://github.com/esphome/esphome/pull/18452)
+- **ESP32 Hosted**: Now requires ESP-IDF 5.3 or newer. The legacy fallback to esp_hosted 2.0.11 (which had a known
+  double-free crash on ESP32-P4 + C6) has been removed and older ESP-IDF versions now fail validation with a clear
+  error. Configs that pin an ESP-IDF version below 5.3 alongside `esp32_hosted` must remove the pin or bump it to
+  5.3 or newer. [#18417](https://github.com/esphome/esphome/pull/18417)
+- **UART**: UART settings validation (`baud_rate`, `parity`, `data_bits`, `stop_bits`) for components that require
+  specific values now happens at configuration time instead of only being logged at runtime. Nine previously
+  unchecked components (`cm1106`, `daly_bms`, `hrxl_maxsonar_wr`, `hydreon_rgxx`, `mhz19`, `pylontech`, `teleinfo`,
+  `vbus`, `wl_134`) and twelve components with incomplete checks now enforce their required UART parameters. Users
+  with non-default UART settings that a component never supported will now get a configuration error instead of a
+  runtime log error. [#18940](https://github.com/esphome/esphome/pull/18940)
+{/* BREAKING_CHANGES_USERS_END */}
+
+### Undocumented API Changes
+
+{/* UNDOCUMENTED_API_CHANGES_START */}
+Advanced users with lambdas that touch component internals should note the following C++ changes. These APIs are
+not covered by the formal breaking-change policy (they are undocumented public methods), but lambdas often depend on
+them:
+
+- **Preferences**: `IntervalSyncer::set_write_interval()` is deprecated in favour of `set_update_interval()` (the
+  new `PollingComponent` base's method) and will be removed in 2027.3.0. Existing lambdas calling
+  `set_write_interval()` continue to compile via a forwarding shim.
+  [#14370](https://github.com/esphome/esphome/pull/14370)
+
+- **Modbus**: New compile-time helpers `registers_to_value<VALUE_TYPE>()` and `registers_to_uint32()` are available
+  in `modbus_helpers.h` for lambdas that know the value type at compile time. The runtime `registers_to_number()`
+  is unchanged. Prefer the templated form when the type is known, as it inlines to a handful of instructions and
+  returns the value's natural type instead of `int64_t`.
+  [#18863](https://github.com/esphome/esphome/pull/18863)
+
+- **Modbus Controller**: `ModbusCommandItem`, its factories (`create_read_command`, `create_write_single_command`,
+  `create_custom_command` and friends), `queue_command()`, `unqueue_command()`, `on_write_register_response()` and
+  the `FunctionCode::CUSTOM` alias are deprecated and removed in 2027.3.0. Migrate one-shot writes to the entity
+  write helpers exposed through `WriterDevice` (available as `item->` inside a `write_lambda`), or to the
+  `modbus_client` write actions. Use `FunctionCode::INVALID` for the sentinel value formerly named
+  `FunctionCode::CUSTOM`. [#18071](https://github.com/esphome/esphome/pull/18071)
+
+- **Modbus Controller**: `write_lambda` has a stronger `item` pointer now. `item` is the entity's own persistent
+  modbus device (not a throwaway command object), and the write helpers plus `item->queue_pdu()` are the entire
+  API. A lambda can drive any register, coil, or custom-PDU write through it, regardless of the entity's own
+  register type. Before/after for a coil switch writing a holding register:
+
+  ```cpp
+  // Before: throwaway ModbusCommandItem
+  auto cmd = ModbusCommandItem::create_write_single_command(parent_, 0x30, x ? 1 : 0);
+  parent_->queue_command(cmd);
+  return {};
+
+  // After: entity's own device
+  item->write_single_register(0x30, x ? 0x0001 : 0x0000);
+  return {};
+  ```
+
+  The `payload` parameter's type also changes from `std::vector<uint16_t>` to a fixed-capacity `RegisterValues`
+  (writes) or `PduBuffer` (custom PDUs). `push_back`, `clear`, `assign` and indexing keep working; `resize`,
+  `reserve`, `insert` and passing to `std::vector&` helpers no longer compile. Filling `payload` and returning
+  `{}` now sends the buffer (as the docs have always described); previously that combination sent nothing.
+  [#18082](https://github.com/esphome/esphome/pull/18082)
+
+- **Modbus Controller**: `SensorItem::register_count` and `SensorItem::force_new_range` are removed. Lambdas that
+  read a sensor item's register span should call `entity_count()` instead; the join behaviour previously encoded in
+  `force_new_range` is now expressed by the tri-state `reuse_previous_range` option on the following sensor.
+  [#18085](https://github.com/esphome/esphome/pull/18085)
+
+- **Time**: `RealTimeClock::set_timezone()` (the C++ string-argument overload) and the on-device POSIX TZ string
+  parser (`parse_posix_tz()` and helpers) are removed. There is no string-based C++ replacement: set `timezone:`
+  in YAML, or let Home Assistant push a pre-parsed timezone over the API. Home Assistant 2026.3.0 and newer send
+  the pre-parsed struct; older clients keep the codegen timezone.
+  [#18383](https://github.com/esphome/esphome/pull/18383)
+{/* UNDOCUMENTED_API_CHANGES_END */}
+
+### Breaking Changes for Developers
+
+{/* BREAKING_CHANGES_DEVELOPERS_START */}
+- **Core**: Deprecated `EntityBase::get_device_class_ref()`, `get_device_class()`, `get_unit_of_measurement()`,
+  `get_icon_ref()` and `get_icon()` removed. Use `get_device_class_to()`, `get_unit_of_measurement_ref()` and
+  `get_icon_to()`. [#18375](https://github.com/esphome/esphome/pull/18375)
+- **Core**: Deprecated free functions `gamma_correct()` and `gamma_uncorrect()` removed. Use
+  `LightState::gamma_correct_lut()` and `LightState::gamma_uncorrect_lut()`.
+  [#18376](https://github.com/esphome/esphome/pull/18376)
+- **Core**: Deprecated `esp_log_vprintf_()` `__FlashStringHelper` overload removed; the `const char*` overload is
+  unchanged. [#18377](https://github.com/esphome/esphome/pull/18377)
+- **Core**: `make_name_with_suffix()` `std::string` overloads removed (hard removal, no deprecation cycle). Use
+  `make_name_with_suffix_to()` with a stack buffer sized via `MAX_NAME_WITH_SUFFIX_SIZE` from `helpers.h`.
+  [#18828](https://github.com/esphome/esphome/pull/18828)
+- **WiFi**: Deprecated `WiFiComponent::wifi_ssid()` removed. Use the heap-free `wifi_ssid_to()`.
+  [#18378](https://github.com/esphome/esphome/pull/18378)
+- **Ethernet**: Deprecated `EthernetComponent::get_eth_mac_address_pretty()` removed. Use
+  `get_eth_mac_address_pretty_into_buffer()`. [#18379](https://github.com/esphome/esphome/pull/18379)
+- **Modbus**: Deprecated `ModbusDevice::waiting_for_response()` removed. Use `ready_for_immediate_send()`.
+  [#18381](https://github.com/esphome/esphome/pull/18381)
+- **Modbus**: `queue_pdu()` refuses PDUs with the exception bit (0x80) set; receive parsers treat every 0x80-set
+  response as the 2-byte spec exception shape; the "no device accepted broadcast" warning is removed; management
+  codes 0x07/0x0B/0x0C/0x11 may now be broadcast. [#18847](https://github.com/esphome/esphome/pull/18847)
+- **Modbus**: New compile-time register decoder `registers_to_value<VALUE_TYPE>()` and `registers_to_uint32()` in
+  `modbus_helpers.h`; `registers_to_number()` unchanged. [#18863](https://github.com/esphome/esphome/pull/18863)
+- **Modbus Controller**: `ModbusCommandItem`, its factories, `queue_command()`, `unqueue_command()`,
+  `on_write_register_response()` and `FunctionCode::CUSTOM` are deprecated (removed in 2027.3.0). Migrate one-shot
+  writes to the entity write helpers (`WriterDevice`) or the `modbus_client` actions.
+  [#18071](https://github.com/esphome/esphome/pull/18071)
+- **Modbus Controller**: `SensorItem::register_count` and `SensorItem::force_new_range` are removed; every platform
+  constructor loses its `register_count` / `force_new_range` parameters (replaced by `entity_count()` and
+  `reuse_previous_range`). [#18085](https://github.com/esphome/esphome/pull/18085)
+- **Web Server IDF**: Deprecated `AsyncWebServerRequest::url()` removed. Use `url_to()`.
+  [#18382](https://github.com/esphome/esphome/pull/18382)
+- **Time**: On-device POSIX TZ string parser removed; `set_timezone()` overloads and `RealTimeClock::apply_timezone_()`
+  are gone. The `GetTimeResponse.timezone` proto field is marked deprecated and is no longer decoded. Set `timezone:`
+  in YAML or let Home Assistant push the pre-parsed timezone.
+  [#18383](https://github.com/esphome/esphome/pull/18383)
+- **UART**: `UARTDevice::check_uart_settings()` is deprecated (removed in 2027.3.0). Use
+  `uart.final_validate_device_schema()` in your component's Python `FINAL_VALIDATE_SCHEMA` instead.
+  [#18940](https://github.com/esphome/esphome/pull/18940)
+- **USB UART**: `USBUartChannel` is now a `final` concrete type deriving from a new `USBUartChannelBase`; subclass
+  the base if you need to extend channel behaviour. [#17472](https://github.com/esphome/esphome/pull/17472)
+- **Mitsubishi CN105**: All leaf configurable classes and actions (`MitsubishiCN105Component`,
+  `MitsubishiCN105Climate`, `MitsubishiCN105VerticalVaneDirectionSelect`, `SetRemoteTemperatureAction`,
+  `ClearRemoteTemperatureAction`, `VaneControlAction`, `LegacySetRemoteTemperatureAction`,
+  `LegacyClearRemoteTemperatureAction`) are marked `final` and can no longer be subclassed.
+  [#18272](https://github.com/esphome/esphome/pull/18272)
+- **ESP32 IDF**: The default IDF component exclusion list grew significantly. External components that include
+  headers from `app_trace`, `console`, `esp-tls`, `esp_driver_cam`, `esp_driver_gptimer`, `esp_driver_i2c`,
+  `esp_driver_ledc`, `esp_driver_sdio`, `esp_driver_sdm`, `esp_driver_sdmmc`, `esp_driver_sdspi`, `json`,
+  `protobuf-c`, `rt`, `sdmmc`, `tcp_transport`, `bt`, `esp_coex`, `esp_hal_ieee802154`, `esp_phy`, `esp_wifi`,
+  `ieee802154`, `wpa_supplicant`, `esp_gdbstub`, `esp_http_server` or `nvs_sec_provider` must call
+  `esp32.include_builtin_idf_component("<name>")` in `to_code` (or users can add them under
+  `esp32: framework: advanced: include_builtin_idf_components:`).
+  [#18536](https://github.com/esphome/esphome/pull/18536),
+  [#18599](https://github.com/esphome/esphome/pull/18599),
+  [#18604](https://github.com/esphome/esphome/pull/18604),
+  [#18748](https://github.com/esphome/esphome/pull/18748)
+- **ESP32 IDF**: The mbedTLS root certificate bundle is no longer built unless a component asks for it. External
+  components that call `esp_crt_bundle_attach()` must call `esp32.require_certificate_bundle()` in `to_code` (or
+  guard the call with `#if CONFIG_MBEDTLS_CERTIFICATE_BUNDLE`).
+  [#18747](https://github.com/esphome/esphome/pull/18747)
+
+For detailed migration guides and API documentation, see the
+[ESPHome Developers Documentation](https://developers.esphome.io/).
+{/* BREAKING_CHANGES_DEVELOPERS_END */}
+
+## Full List of Changes
+
+For the complete list of every merged pull request in this release, see the
+[full 2026.9.0 changelog](/changelog/2026.9.0/).
