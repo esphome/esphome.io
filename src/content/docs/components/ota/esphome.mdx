@@ -134,19 +134,19 @@ endpoint only exists while the fallback AP is active and is the intended recover
 
 A device built on ESPHome 2026.9.0 or newer with an [API encryption key](/components/api) already offers OTA
 encryption without an `encryption:` block under `ota:`: it accepts plaintext uploads (guarded by the OTA password, if
-set) and encrypted uploads authenticated by the key. The block is what makes it require encryption.
+set) and encrypted uploads authenticated by the key. With a key in the YAML, `esphome run` uses it whenever the device
+offers, so those uploads are already encrypted. The block is what makes the device require encryption.
 
-1. If the device runs older firmware or has no API key, install once without the block; that install goes over
-   plaintext OTA (or USB).
-2. Add `encryption:` to the `ota:` block, remove any `password:`, and install again. This install and every later one
-   are encrypted.
-
-Adding the block while the device still runs older firmware stops with `the device did not offer encryption;
-refusing to send the image in plaintext`: remove the block, install once, then restore it.
+Add `encryption:` to the `ota:` block, remove any `password:`, and install. If the device still runs firmware that
+cannot encrypt, install once without the block first: until ESPHome 2027.3.0 that install falls back to plaintext
+with a warning, and after that release it stops with `the device did not offer encryption; refusing to send the image
+in plaintext`, so install once without the block and then restore it.
 
 An OTA `password:` next to an API key only serves older clients without encryption support and costs about 3.5 KB of
 flash and 60 bytes of RAM on an ESP8266, so validation warns and suggests the `encryption:` block instead. An API
-`encryption:` block without a `key:` is provisioned at runtime and does not offer OTA encryption; set an explicit key.
+`encryption:` block without a `key:` is provisioned at runtime by Home Assistant; the device offers OTA encryption
+with that key once provisioned, but the CLI does not know it, so `esphome run` stays plaintext and the block cannot
+be used without an explicit key.
 
 To troubleshoot a failing encrypted handshake, raise the log level of the shared `noise` component:
 
