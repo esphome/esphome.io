@@ -46,6 +46,13 @@ seeed_mr24hpc1:
 
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID for this [Seeed Mr24Hpc1](/components/seeed_mr24hpc1/) component if you need multiple components.
 
+- **startup_delay** (*Optional*, [Time](/guides/configuration-types#time)): Delay all outgoing UART queries by
+  this long after boot. Some MR24HPC1 units can lock up and stop responding to any UART traffic until physically
+  power-cycled if they receive queries before finishing their own internal boot — this only happens on power-up; a
+  reset of the ESP alone (without removing power from the module) does not retrigger it, and the module simply stays
+  in whatever state, working or locked, it was already in. Defaults to `0s` (no delay, matching prior behavior). If
+  you experience this lockup, a delay of `1s` has resolved it in testing; if problems persist, try a longer delay.
+
 ## Binary Sensor
 
 The `seeed_mr24hpc1` binary sensor allows you to perform different measurements.
