@@ -51,6 +51,12 @@ light:
   when the state is **not** restored based on `restore_mode` (below).
 
   - **state** (*Optional*, boolean, [templatable](/automations/templates)): The ON/OFF state for the light.
+  - **effect** (*Optional*, string): The name of the [effect](#light-effects) to start with, so the light can come up
+    already running an effect without an `on_boot` automation. Must match the name of one of the effects defined on
+    the same light, or `none` for no effect. This only has an effect when the light starts up ON: an effect is not
+    started for a light that boots OFF. Note that turning the light off stops the running effect, so an effect does
+    not resume by itself the next time the light is turned on — select it again, or set it in `initial_state` and
+    let the light boot into it.
   - All other options from [light state](#light-state).
 
 - **restore_mode** (*Optional*): Control how the light attempts to restore state on bootup.
