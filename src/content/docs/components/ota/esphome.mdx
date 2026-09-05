@@ -28,7 +28,7 @@ ota:
 
 - **encryption** (*Optional*): Encrypt the OTA update with the same Noise protocol the [native API](/components/api) uses. See [Encryption](#encryption) below. Cannot be combined with **password**.
 
-  - **key** (*Optional*, string): The base64 encryption key. When omitted, the [API encryption key](/components/api#configuration-variables) is used, so a single key protects the device. When set, it must match the API encryption key.
+  - **key** (*Optional*, string): The base64 encryption key. When omitted, the [API encryption key](/components/api#configuration-variables) is used, so a single key protects the device. When set, it must match a static API encryption key.
 
 - **password** (*Optional*, string): The password to use for updates. Cannot be combined with **encryption**.
 - **allow_partition_access** (*Optional*, boolean): Only on `esp32`. Allow updating more partition types. Used for updating the partition table and the bootloader. Defaults to `false`.
@@ -120,28 +120,16 @@ You may set an explicit `key:` instead, but it must match the API encryption key
 a key with the on demand generator in the [API component documentation](/components/api#configuration-variables).
 
 Encryption cannot be combined with a password; the key already authenticates the uploader, so remove the `password:`
-line when you add `encryption:`. Combining it with the [web server OTA platform](/components/ota/web_server) is allowed
-but warned about, since that endpoint accepts the same firmware image over plaintext HTTP; the copy `captive_portal:`
-loads on its own is the recovery path and does not warn.
+line when you add `encryption:`. Adding the [web server OTA platform](/components/ota/web_server) next to it is allowed
+but warns during validation, since that endpoint accepts the same firmware image over plaintext HTTP. The captive
+portal's update page (`captive_portal:` without that platform) exists only while the fallback AP is active and is the
+intended recovery path, so it does not warn.
 
 > [!IMPORTANT]
 > Once a device runs firmware with `encryption:` enabled it refuses plaintext OTA updates, and the CLI refuses to send
-> a plaintext image when `encryption:` is configured. This is intentional; a downgrade to plaintext would be an unauthenticated
-> upload. If a device that requires encryption becomes unreachable, recover it with the
-> [web server OTA platform](/components/ota/web_server) or a serial flash.
-
-### Enabling encryption on an existing device
-
-A device on ESPHome 2026.9.0 or newer with an [API encryption key](/components/api) already offers OTA encryption, and
-`esphome run` uses that key whenever the device offers; the `encryption:` block is what makes the device require it.
-Add the block, remove any `password:`, and install. If the device still runs firmware that cannot encrypt, the install
-stops with `the device did not offer encryption; refusing to send the image in plaintext`: install once without the
-block first (until ESPHome 2027.3.0 that upload falls back to plaintext with a warning), then restore it.
-
-An OTA `password:` next to an API key only serves older clients and costs about 3.5 KB of flash on an ESP8266, so
-validation warns. A key provisioned at runtime by Home Assistant (an API `encryption:` block without a `key:`) makes
-the device offer too, but the CLI cannot use a key it does not have, so those uploads stay plaintext and the block
-needs an explicit key.
+> a plaintext image when `encryption:` is configured. This is intentional; a downgrade to plaintext would be an
+> unauthenticated upload. If the key is lost, recover the device with a serial flash, or through the
+> [web server OTA platform](/components/ota/web_server) if the config has it.
 
 To troubleshoot a failing encrypted handshake, raise the log level of the shared `noise` component:
 
@@ -150,6 +138,22 @@ logger:
   logs:
     noise: VERY_VERBOSE
 ```
+
+### Enabling encryption on an existing device
+
+A device on ESPHome 2026.9.0 or newer with an [API encryption key](/components/api) already offers OTA encryption, and
+`esphome run` uses that key whenever the device offers; the `encryption:` block is what makes the device require it.
+Add the block, remove any `password:`, and install. If the device still runs firmware that cannot encrypt, the install
+stops with `the device did not offer encryption; refusing to send the image in plaintext`: install once without the
+block first (until ESPHome 2027.3.0 that upload falls back to plaintext with a warning), then restore it. From
+2027.3.0 the CLI no longer falls back, so update firmware older than 2026.9.0 before then, or by serial flash or the
+web server OTA platform.
+
+An OTA `password:` next to an API key only serves older clients and costs about 3.5 KB of flash on an ESP8266, so
+validation warns. A key provisioned at runtime by Home Assistant (an API `encryption:` block without a `key:`) makes
+the device offer too, but the CLI cannot use a key it does not have, so those uploads stay plaintext. To require
+encryption on such a device give the OTA `encryption:` block its own `key:`; that is the one case where the OTA key
+is separate from the API key.
 
 ## Updating the partition table on ESP32
 
