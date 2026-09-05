@@ -66,7 +66,9 @@ Improv provisioning to Ethernet-only boards, teaches WiFi provisioning to shut d
 when the window closes, and rewrites IR transmission on Beken and Realtek chips to run from a hardware timer
 interrupt instead of a busy-wait. The multi-release modbus overhaul continues with a heap-free write path, a
 consolidated range-join option, and continuous polling. Six new components (ds1603l, d01, sfa40, mk2pvrouter,
-snapshot, noise) and roughly a dozen feature additions to existing components round out the release.
+snapshot, noise) and roughly a dozen feature additions to existing components round out the release. The bundled
+Device Builder masks credentials in the YAML diff view, boots ESP32-C6 boards after a browser flash, and lets paired
+build servers recover from an address change on their own.
 {/* RELEASE_OVERVIEW_END */}
 
 ## Upgrade Checklist
@@ -172,6 +174,45 @@ is 104 bytes smaller per open encrypted connection ([#18420](https://github.com/
 the camera image reader is created lazily instead of per connection
 ([#18421](https://github.com/esphome/esphome/pull/18421)), and API message-type storage widened to `uint16_t`
 without adding per-connection RAM ([#18526](https://github.com/esphome/esphome/pull/18526)).
+
+## ESPHome Device Builder
+
+This is a smaller cycle for the bundled [ESPHome Device Builder](https://github.com/esphome/device-builder), and
+most of it already reached you through the 2026.8.x patch releases; this section covers everything since the 2026.8.0
+release notes.
+
+The YAML diff view used to render credentials in plain text the moment you flipped the diff toggle. It now masks the
+same sensitive values the editor does, with a reveal toggle
+([frontend#1664](https://github.com/esphome/device-builder-frontend/pull/1664)). A WiFi password containing `#`
+made every WiFi write append a second `wifi_password:` line to `secrets.yaml`; the writer now handles quoted values,
+heals an already duplicated file, and reports a broken `secrets.yaml` as your file to fix rather than an internal
+error ([#2624](https://github.com/esphome/device-builder/pull/2624),
+[frontend#1673](https://github.com/esphome/device-builder-frontend/pull/1673)).
+
+On ESPHome Web, flashing an ESP32-C6, H2 or P4 left the chip in the ROM bootloader instead of booting the new
+firmware, so Improv never answered. The reset after flashing now boots the firmware
+([frontend#1679](https://github.com/esphome/device-builder-frontend/pull/1679)), and **Prepare for first use** gained
+an **Erase the device first** option so a board that ran other firmware does not come up with stale WiFi credentials
+([frontend#1680](https://github.com/esphome/device-builder-frontend/pull/1680)).
+
+A paired build server that moves to a new IP on another subnet used to be reachable again only by editing the
+endpoint by hand. After five minutes of silence it now dials back to announce its new address, so the pairing heals
+itself ([#2650](https://github.com/esphome/device-builder/pull/2650)).
+
+In the editor, dot-prefixed top-level keys, the documented way to park YAML anchors, no longer render as bogus cards
+or get deleted when you edit the section above them through the structured form
+([frontend#1689](https://github.com/esphome/device-builder-frontend/pull/1689),
+[#2652](https://github.com/esphome/device-builder/pull/2652)), and the add-component form stops demanding pins and
+dimensions that the selected display model already predefines
+([#2648](https://github.com/esphome/device-builder/pull/2648)). [@Daniel085](https://github.com/Daniel085) brought
+the device comment back to the tile card
+([frontend#1671](https://github.com/esphome/device-builder-frontend/pull/1671)).
+
+Under the hood, out-of-band edit detection uses a versioned whole-file fingerprint, so a future algorithm change can
+never again trigger a fleet-wide regeneration on upgrade ([#2617](https://github.com/esphome/device-builder/pull/2617)),
+the Docker container reaps orphaned processes when running as PID 1
+([#2636](https://github.com/esphome/device-builder/pull/2636)), and version history ignores the fake executable bit
+Samba puts on files edited from Windows ([#2646](https://github.com/esphome/device-builder/pull/2646)).
 
 ## Encrypted OTA Updates
 
