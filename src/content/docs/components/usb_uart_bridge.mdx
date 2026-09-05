@@ -130,7 +130,7 @@ same UART from firmware running on the device while no computer is connected, an
 
 - `pause()`: Stop forwarding and restore the configured UART parameters.
 - `resume()`: Start forwarding again and re-apply the host's parameters.
-- `is_paused()`: Returns `true` while the bridge is paused.
+- `is_paused()`: Returns `true` once the bridge has stopped forwarding and the UART is free to use.
 
 ```yaml
 bridge:
@@ -150,9 +150,10 @@ switch:
 ```
 
 > [!NOTE]
-> Pausing takes effect within about 250 ms, and bytes that arrive on the UART in that window are discarded, so pause
-> the bridge while the attached device is idle. The exclusive-use rule above still applies: another component cannot
-> be configured on the same UART. While the bridge is paused, use the UART directly from lambdas through its `id()`.
+> The bridge stops within about 250 ms of `pause()`; check `is_paused()` before using the UART. Bytes that arrive on
+> the UART in that window are discarded, so pause the bridge while the attached device is idle. The exclusive-use rule
+> above still applies: another component cannot be configured on the same UART. While the bridge is paused, use the
+> UART directly from lambdas through its `id()`.
 
 ## See Also
 
