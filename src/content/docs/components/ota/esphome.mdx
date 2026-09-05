@@ -126,7 +126,7 @@ endpoint only exists while the fallback AP is active and is the intended recover
 
 > [!IMPORTANT]
 > Once a device runs firmware with `encryption:` enabled it refuses plaintext OTA updates, and the CLI refuses to send
-> a plaintext image when a key is configured. This is intentional; a downgrade to plaintext would be an unauthenticated
+> a plaintext image when `encryption:` is configured. This is intentional; a downgrade to plaintext would be an unauthenticated
 > upload. If a device that requires encryption becomes unreachable, recover it with the
 > [web server OTA platform](/components/ota/web_server) or a serial flash.
 
@@ -137,10 +137,11 @@ encryption without an `encryption:` block under `ota:`: it accepts plaintext upl
 set) and encrypted uploads authenticated by the key. With a key in the YAML, `esphome run` uses it whenever the device
 offers, so those uploads are already encrypted. The block is what makes the device require encryption.
 
-Add `encryption:` to the `ota:` block, remove any `password:`, and install. If the device still runs firmware that
-cannot encrypt, install once without the block first: until ESPHome 2027.3.0 that install falls back to plaintext
-with a warning, and after that release it stops with `the device did not offer encryption; refusing to send the image
-in plaintext`, so install once without the block and then restore it.
+Add `encryption:` to the `ota:` block, remove any `password:`, and install. With the block the CLI never sends
+plaintext, so a device still running firmware that cannot encrypt stops the install with `the device did not offer
+encryption; refusing to send the image in plaintext`. For such a device install once without the block first: until
+ESPHome 2027.3.0 that install falls back to plaintext with a warning and lands a firmware that offers encryption; then
+restore the block and install again.
 
 An OTA `password:` next to an API key only serves older clients without encryption support and costs about 3.5 KB of
 flash and 60 bytes of RAM on an ESP8266, so validation warns and suggests the `encryption:` block instead. An API
