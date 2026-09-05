@@ -50,13 +50,14 @@ light:
 - **initial_state** (*Optional*): The initial state the light should be set to on bootup. This state will be applied
   when the state is **not** restored based on `restore_mode` (below).
 
-  - **state** (*Optional*, boolean, [templatable](/automations/templates)): The ON/OFF state for the light.
+  - **state** (*Optional*, [boolean](/guides/configuration-types#boolean), [templatable](/automations/templates)): The ON/OFF state for the light.
   - All other options from [light state](#light-state).
 
 - **restore_mode** (*Optional*): Control how the light attempts to restore state on bootup.
 
   - `RESTORE_DEFAULT_OFF` - Attempt to restore state and default to OFF if not possible to restore.
   - `RESTORE_DEFAULT_ON` - Attempt to restore state and default to ON.
+  - `RESTORE_DEFAULT_INITIAL_STATE` - Attempt to restore state and default to the configured initial state.
   - `RESTORE_INVERTED_DEFAULT_OFF` - Attempt to restore state inverted from the previous state and default to OFF.
   - `RESTORE_INVERTED_DEFAULT_ON` - Attempt to restore state inverted from the previous state and default to ON.
   - `RESTORE_AND_OFF` - Attempt to restore state but initialize the light as OFF.
@@ -307,7 +308,7 @@ on_...:
 **Configuration variables:**
 
 - **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the light.
-- **state** (*Optional*, [templatable](/automations/templates), boolean): Change the ON/OFF state of the light.
+- **state** (*Optional*, [boolean](/guides/configuration-types#boolean), [templatable](/automations/templates)): Change the ON/OFF state for the light.
 - All other options from [light state](#light-state).
 
 ### `light.dim_relative` Action
@@ -656,7 +657,7 @@ light:
 - **name** (*Optional*, string): The name of the effect. Defaults to `Strobe`.
 - **colors** (*Optional*, list): A list of colors to cycle through. Defaults to a quick cycle between ON and OFF.
 
-  - **state** (*Optional*, boolean): The on/off state to show. Defaults to `true`.
+  - **state** (*Optional*, boolean): The on/off state to show. Defaults to `on`.
   - **color_mode** (*Optional*, string): The color mode of the light. Defaults to the current color mode.
   - **brightness** (*Optional*, percentage): The brightness of the light. Defaults to `100%`.
   - **color_brightness** (*Optional*, percentage): The brightness of the RGB lights, if applicable. Defaults to `100%`.
