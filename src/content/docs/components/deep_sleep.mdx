@@ -57,6 +57,8 @@ deep_sleep:
 - **wakeup_pin_mode** (*Optional*): Only on ESP32/BK72xx. Specify how to handle waking up from a `wakeup_pin` if
   the wakeup pin is already in the state with which it would wake up when attempting to enter deep sleep.
   See [Wakeup Pin Mode](#deep_sleep-esp32_wakeup_pin_mode). Defaults to `IGNORE`
+- **on_wake** (*Optional*, [Automation](/automations)): An automation to run when the device boots after waking
+  from deep sleep. Only on ESP32, ESP8266 and BK72xx. See [`on_wake` Trigger](#on_wake-trigger).
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
 
 Advanced features:
@@ -64,7 +66,11 @@ Advanced features:
 - **esp32_ext1_wakeup** (*Optional*): Use the EXT1 wakeup source of the ESP32 to wake from deep sleep to
   wake up on multiple pins. This cannot be used together with wakeup pin.
 
-  - **pins** (**Required**, list of pin numbers): The pins to wake up on.
+  - **pins** (**Required**, list): The pins to wake up on. Each entry is either a
+    [Pin Schema](/guides/configuration-types#pin-schema) directly, or a mapping of:
+    - **pin** (**Required**, [Pin Schema](/guides/configuration-types#pin-schema)): The pin to wake up on.
+    - **on_wake** (*Optional*, [Automation](/automations)): An automation to run when this specific pin
+      woke the device from deep sleep. See [`on_wake` Trigger](#on_wake-trigger).
   - **mode** (**Required**): The mode to use for the wakeup source. Must be one of:
     - `ANY_LOW`: wake up when any selected pin is LOW (ESP32‑C5/C6/C61/H2/P4/S2/S3 only)
     - `ALL_LOW`: wake up when all selected pins are LOW (ESP32 only)
@@ -109,6 +115,67 @@ deep_sleep:
     - pin: P24 # will wake up when P24 goes high
       wakeup_pin_mode: INVERT_WAKEUP # flips the trigger level after each wake
 ```
+
+## `on_wake` Trigger
+
+This automation runs once at boot when the device wakes from deep sleep. It does not run after a cold boot,
+a reset or a restart (for example after an OTA update). It is available on ESP32, ESP8266 and BK72xx.
+
+The variable `cause` of type `deep_sleep::WakeupCause` tells you what woke the device:
+
+- `deep_sleep::WAKEUP_CAUSE_TIMER`: The sleep timer.
+- `deep_sleep::WAKEUP_CAUSE_GPIO`: A pin (`wakeup_pin` or `esp32_ext1_wakeup`).
+- `deep_sleep::WAKEUP_CAUSE_TOUCH`: A touch pad.
+- `deep_sleep::WAKEUP_CAUSE_UNKNOWN`: The device woke from deep sleep, but the source could not be identified.
+
+On the ESP8266, the cause is always `deep_sleep::WAKEUP_CAUSE_TIMER`, as it can only wake up through the RTC timer.
+
+```yaml
+deep_sleep:
+  # ...
+  on_wake:
+    - if:
+        condition:
+          lambda: 'return cause == deep_sleep::WAKEUP_CAUSE_TIMER;'
+        then:
+          - logger.log: Woken by the timer
+```
+
+When waking up on multiple pins with `esp32_ext1_wakeup`, an `on_wake` automation can also be attached to
+each pin. It only runs when that pin caused the wakeup. This is useful for devices with multiple buttons
+that should each do something different when they wake the device:
+
+```yaml
+globals:
+  - id: page_index
+    type: int
+    restore_value: true
+    initial_value: '0'
+
+deep_sleep:
+  run_duration: 30s
+  sleep_duration: 12h
+  esp32_ext1_wakeup:
+    mode: ANY_LOW  # ESP32‑C5/C6/C61/H2/P4/S2/S3 only
+    pins:
+      - pin: GPIO3
+        on_wake:  # left button: previous page
+          - lambda: 'id(page_index) -= 1;'
+      - pin: GPIO4
+        on_wake:  # right button: next page
+          - lambda: 'id(page_index) += 1;'
+      - pin: GPIO5
+        on_wake:  # green button: cycle view
+          - script.execute: cycle_view
+```
+
+`on_wake` automations run after restored [global variables](/components/globals) have been loaded and
+before `on_boot` automations with a priority below 700 (which includes the default priority of 600).
+This means an `on_wake` automation can update a global variable that an `on_boot` automation then uses.
+
+> [!NOTE]
+> With the `ALL_LOW` mode, all configured pins must be LOW to wake the device, so every pin's `on_wake`
+> automation will run.
 
 ## ESP32 Wakeup Cause
 
@@ -228,6 +295,38 @@ on_...:
   then:
     - deep_sleep.allow: deep_sleep_1
 ```
+
+## Deep Sleep and OTA Rollback
+
+On platforms with bootloader OTA rollback support enabled — the default on ESP32 with the `esp-idf` framework and on
+nRF52, see `enable_ota_rollback` for [ESP32](/components/esp32#advanced-configuration) and
+[nRF52](/components/nrf52#advanced-configuration) — firmware installed by an OTA update must be confirmed as working,
+otherwise the bootloader reverts to the previous version on the next reset. The [safe_mode](/components/safe_mode)
+component confirms the new firmware once it considers the boot successful.
+
+Since ESPHome 2026.8.0, entering deep sleep counts as a successful boot: the firmware is confirmed automatically just
+before the device goes to sleep. No configuration is needed, and a device that crashes before the firmware is
+confirmed still rolls back, as intended.
+
+If you want stricter rollback semantics, set `boot_is_good_on_shutdown: false` in the
+[safe_mode](/components/safe_mode) configuration. Then only `boot_is_good_after` elapsing or the
+`safe_mode.mark_successful` action confirms the firmware — an update that goes back to sleep before proving itself
+healthy is rolled back on the next wake. For example, new firmware with a bug that enters deep sleep before Wi-Fi or
+OTA ever comes up would be confirmed by that first sleep with the default behavior; with the option disabled and
+`safe_mode.mark_successful` placed after the device's real work (e.g. after a successful sensor publish), the
+bootloader reverts it instead.
+
+> [!WARNING]
+> On versions before 2026.8.0, a device that enters deep sleep before `boot_is_good_after` (default 1 minute) elapses
+> never confirms the new firmware, so the bootloader rolls back **every** OTA update on the next wake — the update
+> silently uninstalls itself. On these versions, use one of the following workarounds:
+>
+> - Set `boot_is_good_after` in the [safe_mode](/components/safe_mode) configuration to a value shorter than the
+>   device's awake time, e.g. `boot_is_good_after: 10s`.
+> - Run the [`safe_mode.mark_successful`](/components/safe_mode#safe_mode-mark_successful-action) action (available
+>   since ESPHome 2026.3.0) before entering deep sleep, for example in `on_boot`.
+> - Disable rollback entirely with `enable_ota_rollback: false` under `esp32: framework: advanced:`
+>   (or `nrf52: framework: advanced:`).
 
 ## See Also
 

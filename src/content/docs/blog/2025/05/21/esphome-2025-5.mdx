@@ -1,0 +1,141 @@
+---
+title: "ESPHome 2025.5.0: Voice assistant updates and packet transport"
+description: "ESPHome 2025.5.0 brings the Home Assistant Voice Preview Edition feature set to the voice assistant component, easier microphone configuration, and the new Packet Transport component for device-to-device communication."
+date: 2025-05-21
+authors:
+  - jesse
+tags:
+  - Releases
+excerpt: "ESPHome 2025.5.0 brings the Home Assistant Voice Preview Edition feature set to the voice assistant component, easier microphone configuration, and the new Packet Transport component for device-to-device communication."
+cover:
+  alt: "ESPHome 2025.5.0: Voice assistant updates and packet transport"
+  image: "https://assets.openhomefoundation.org/opengraph?url=https://esphome.io/blog/2025/05/21/esphome-2025-5"
+head:
+  - tag: meta
+    attrs:
+      property: "og:image"
+      content: "https://assets.openhomefoundation.org/opengraph?url=https://esphome.io/blog/2025/05/21/esphome-2025-5"
+  - tag: meta
+    attrs:
+      name: "twitter:image"
+      content: "https://assets.openhomefoundation.org/opengraph?url=https://esphome.io/blog/2025/05/21/esphome-2025-5"
+  - tag: meta
+    attrs:
+      property: "og:image:title1"
+      content: "ESPHome 2025.5.0"
+  - tag: meta
+    attrs:
+      property: "og:image:title2"
+      content: "Voice assistant updates and packet transport"
+  - tag: meta
+    attrs:
+      property: "og:image:author"
+      content: "Jesse Hills"
+  - tag: meta
+    attrs:
+      property: "og:image:category"
+      content: "Releases"
+---
+
+import ImgTable from "@components/ImgTable.astro";
+
+<ImgTable items={[
+  ["PM2005 Sensor","/components/sensor/pm2005","pm2005.png"],
+  ["Mapping","/components/mapping","mapping.svg","dark-invert"],
+  ["Packet Transport","/components/packet_transport/index","packet_transport.svg","dark-invert"],
+  ["Syslog","/components/syslog","file-document-box.svg","dark-invert"],
+  ["Sound Level","/components/sensor/sound_level","waveform.svg","dark-invert"],
+  ["MIPI SPI Displays","/components/display/mipi_spi","t4-s3.jpg"]
+]} />
+
+## Voice Assistant
+
+[Home Assistant Voice Preview Edition](https://www.home-assistant.io/voice-pe/) is
+Home Assistant's first official voice assistant hardware.
+It was designed from the ground up to give the best experience possible with Assist,
+Home Assistant's built-in voice assistant software. With advanced mics and audio processing,
+it can run fully locally in the home. Voice Preview Edition was built to run ESPHome,
+and like any ESPHome device, can be fully customized.
+
+We have implemented all of the new features developed for the Voice Preview Edition!
+The voice assistant component supports starting conversations from Home Assistant and
+continuing conversations without needing to reactivate the wake word.
+Additionally, microWakeWord supports enabling and disabling models via yaml actions.
+The voice assistant component, through Home Assistant, can also change the active
+on-device wake word. If you use our prebuilt voice assistant firmwares, then you
+will receive an update notification automatically in Home Assistant adding support
+for these new features!
+
+If you have taken control or created your own voice assistant configuration, you may
+need to adjust them to support these new features. Please see the newly updated
+examples in our wake word voice assistant firmware repository to get started.
+
+If you have taken control of your Home Assistant Voice PE and want to get all of the
+new changes and don't want to continue managing your own YAML file, you can re-install
+the latest firmware from the
+[web installer](https://esphome.github.io/home-assistant-voice-pe/). We also provide
+OTA updates for the device that you can directly install from within Home Assistant.
+
+It is now easier to configure and use microphones. Multiple components can
+simultaneously read from one microphone. Each individual component using a microphone
+can also set their own specific gain level or specify which microphone channel to use.
+Microphone settings are validated at compilation, and most settings are converted,
+if necessary, without any extra configuration. Your existing YAML files should still
+build without any adjustments. However, if your microphone was previously configured
+to use 32 bits per sample, then you should add a gain factor of 4 to match
+ESPHome's previous behavior. For example:
+
+```yaml
+voice_assistant:
+  microphone:
+    microphone: echo_microphone
+    gain_factor: 4
+```
+
+## Packet Transport
+
+The [Packet Transport](/components/packet_transport/) has been added to allow ESPHome devices to directly communicate
+with each other. There are two platforms available in this release: [Uart](/components/packet_transport/uart/)
+and [Udp](/components/packet_transport/udp/).
+
+## HTTP Request
+
+The [Http Request](/components/http_request/) actions have had the `headers` config variable renamed to
+`request_headers` in order to differentiate it from the new `collect_headers` config variable allowing you to collect
+and access the response headers in automations.
+
+## ATM90E32
+
+For energy meters that use the [atm90e32](/components/sensor/atm90e32/) energy metering chip, like
+from CircuitSetup, and Gelidus Research, support was added for semi-automatic gain & offset calibration, and status
+messages for each phase & frequency. An apparent power sensor was also added.
+
+{/* markdownlint-disable MD013 */}
+
+## Release 2025.5.1 - May 27
+
+- [core] Add some missing includes [esphome#8864](https://github.com/esphome/esphome/pull/8864) by [@jesserockz](https://github.com/jesserockz)
+- [tuya_select] - Fix datapoint config error. [esphome#8871](https://github.com/esphome/esphome/pull/8871) by [@Cossid](https://github.com/Cossid)
+- [online_image] Allocate pngle manually to potentially use psram [esphome#8354](https://github.com/esphome/esphome/pull/8354) by [@jesserockz](https://github.com/jesserockz)
+- [lvgl] Improve error messages from text validation [esphome#8872](https://github.com/esphome/esphome/pull/8872) by [@clydebarrow](https://github.com/clydebarrow)
+- [micro_wake_word] avoid duplicated detections from same event [esphome#8877](https://github.com/esphome/esphome/pull/8877) by [@kahrendt](https://github.com/kahrendt)
+- [speaker] ensure the pipeline returns an error state before returning its stopped [esphome#8878](https://github.com/esphome/esphome/pull/8878) by [@kahrendt](https://github.com/kahrendt)
+- [logger] Fix options in select [esphome#8875](https://github.com/esphome/esphome/pull/8875) by [@jesserockz](https://github.com/jesserockz)
+- [esp32] Fix building on IDF 4 [esphome#8892](https://github.com/esphome/esphome/pull/8892) by [@kbx81](https://github.com/kbx81)
+- [api] Fix crash with gcc compiler on host [esphome#8902](https://github.com/esphome/esphome/pull/8902) by [@jesserockz](https://github.com/jesserockz)
+- [web_server] Fix download list where external_components has a substitution value [esphome#8911](https://github.com/esphome/esphome/pull/8911) by [@jesserockz](https://github.com/jesserockz)
+
+## Release 2025.5.2 - June 3
+
+- [i2s-audio] ensure mic task isn't pinned to a core [esphome#8879](https://github.com/esphome/esphome/pull/8879) by [@kahrendt](https://github.com/kahrendt)
+- [rp2040] use low-level control for ISR gpio and add IRAM_ATTR [esphome#8950](https://github.com/esphome/esphome/pull/8950) by [@ssieb](https://github.com/ssieb)
+- [esp8266] fix isr pin [esphome#8981](https://github.com/esphome/esphome/pull/8981) by [@ssieb](https://github.com/ssieb)
+- [debug] Make sensors work without logger debug level [esphome#8980](https://github.com/esphome/esphome/pull/8980) by [@clydebarrow](https://github.com/clydebarrow)
+- Fix logger stack overflow [esphome#8988](https://github.com/esphome/esphome/pull/8988) by [@bdraco](https://github.com/bdraco)
+
+{/* markdownlint-enable MD013 */}
+
+## Full List of Changes
+
+For the complete list of every merged pull request in this release, see the
+[full 2025.5.0 changelog](/changelog/2025.5.0/).
