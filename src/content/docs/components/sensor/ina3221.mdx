@@ -30,8 +30,19 @@ required to be set up in your configuration for this sensor to work.
 sensor:
   - platform: ina3221
     address: 0x40
+    mode: CONTINUOUS
+    power_down_on_shutdown: false
+    averaging: 16
+    bus_conversion_time: 1100us
+    shunt_conversion_time: 1100us
+    sum_current:
+      name: "INA3221 Total Current"
+    sum_power:
+      name: "INA3221 Total Power"
     channel_1:
       shunt_resistance: 0.1 ohm
+      warning_current_limit: 1.5A
+      critical_current_limit: 2.0A
       current:
         name: "INA3221 Channel 1 Current"
       power:
@@ -50,10 +61,22 @@ sensor:
 ## Configuration variables
 
 - **address** (*Optional*, int): Manually specify the I²C address of the sensor. Defaults to `0x40`.
+- **mode** (*Optional*, string): The operating mode. Set to `SINGLE_SHOT` to put the sensor to sleep between readings, or `CONTINUOUS` to have the sensor constantly calculate background data. Defaults to `CONTINUOUS`.
+- **power_down_on_shutdown** (*Optional*): Put the INA3221 into low-power mode on shutdown or deep sleep. Defaults to `false`.
+- **averaging** (Optional, int): The number of internal samples to average before updating the data registers. This is useful for smoothing out noisy loads. Options are 1, 4, 16, 64, 128, 256, 512, or 1024. Defaults to 1.
+- **bus_conversion_time** (Optional, string): The integration time for the bus voltage measurement. Longer conversion times yield higher resolution and less noise. Options are 140us, 204us, 332us, 588us, 1100us, 2116us, 4156us, and 8244us. Defaults to 1100us.
+- **shunt_conversion_time** (Optional, string): The integration time for the shunt voltage measurement. Options are the same as bus_conversion_time. Defaults to 1100us.
+- **sum_current** (Optional): A sensor that reports the total combined current across all configured channels in amperes. All options from Sensor.
+- **sum_power** (Optional): A sensor that reports the total combined power consumption across all configured channels in watts. All options from Sensor.
+- **sum_shunt_voltage** (Optional): Use the hardware-calculated sum of the shunt voltage across all active channels in V. All options from Sensor.
 - **channel_1** (*Optional*): The configuration options for the 1st channel.
 
   - **shunt_resistance** (*Optional*, float): The value of the shunt resistor on this channel for current calculation.
     Defaults to `0.1 ohm`.
+
+  - **warning_current_limit** (Optional, current): The current threshold used to trigger the physical Warning (WR) pin on the sensor hardware (e.g., 1.5A).
+
+  - **critical_current_limit** (Optional, current): The current threshold used to trigger the physical Critical (CRIT) pin on the sensor hardware (e.g., 2.0A).
 
   - **current** (*Optional*): Use the current value on this channel in amperes. All options from
     [Sensor](/components/sensor).
