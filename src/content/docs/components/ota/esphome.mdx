@@ -136,9 +136,9 @@ A device built with an [API encryption key](/components/api) on ESPHome 2026.9.0
 encryption, even without an `encryption:` block under `ota:`. Such a device accepts both plaintext and encrypted
 uploads; a plaintext upload still has to pass the OTA password if one is set, while an encrypted upload is
 authenticated by the key. Because the key already authenticates uploads, an OTA `password:` next to an API key only
-serves older clients without encryption support and wastes flash and RAM; such a config validates with a warning
-suggesting you replace the password with the `encryption:` block. Adding the block is what makes the device require
-encryption. To turn it on:
+serves older clients without encryption support and wastes significant flash and RAM (about 3.5 KB and 60 bytes on an
+ESP8266, plus the password on the heap); such a config validates with a warning suggesting you replace the password with
+the `encryption:` block. Adding the block is what makes the device require encryption. To turn it on:
 
 1. Make sure the device runs ESPHome 2026.9.0 or newer with an API encryption key. If it does not, install that first
    without the `encryption:` block under `ota:`. This one install goes over plaintext OTA (or USB).
