@@ -32,7 +32,9 @@ speaker:
   with each right sample followed by a left sample. `left` and `right` mute the unused channel, while `mono` plays the same samples on both. Defaults to `mono`.
 
 - **sample_rate** (*Optional*, positive integer): I2S sample rate. If in `primary` I²S mode the sample rate of the audio stream is used. Defaults to `16000`.
-- **bits_per_sample** (*Optional*, enum): The bit depth of the audio samples sent to the DAC. One of `8bit`, `16bit`, `24bit`, or `32bit`. Defaults to `16bit`.
+- **bits_per_sample** (*Optional*, enum): The physical I²S slot width. One of `8bit`, `16bit`, `24bit`, or `32bit`. Streams wider than the configured slot are reduced to this width. Streams narrower than the slot retain their original width unless `expand_to_slot_width` is enabled. Defaults to `16bit`.
+
+- **expand_to_slot_width** (*Optional*, boolean): Expand PCM streams narrower than `bits_per_sample` to the configured slot width before writing them to I²S. The significant sample bits are left-aligned in the expanded value. This option cannot be used with `spdif_mode`. On the original ESP32, expansion is supported only for 16- and 32-bit slots. Defaults to `false`.
 
 - **mclk_multiple** (*Optional*, enum): The multiple of the MCLK frequency to the sample rate. Must be divisible by 3 if using 24 bits per sample. One of `128`, `256`, `384`, `512`. Defaults to `256`.
 - **use_apll** (*Optional*, boolean): I2S using APLL as main I2S clock, enable it to get accurate clock. Defaults to `false`.
@@ -54,6 +56,26 @@ speaker:
 - **timeout** (*Optional*, [Time](/guides/configuration-types#time)): How long to wait after finishing playback before releasing the bus. Set to `never` to never stop the speaker due to a timeout. Defaults to `500ms`. **Note:** With `spdif_mode: true` (see below), buffer underflows are filled with silence frames until the specified interval elapses; this maintains the SPDIF signal to prevent the receiver from detecting a loss of signal/source change, which may otherwise lengthen gaps of silence.
 - **spdif_mode** (*Optional*, boolean): Enable S/PDIF (Sony/Philips Digital Interface) mode for digital audio output. When enabled, the speaker outputs a SPDIF-encoded bitstream format suitable for optical (TOSLINK optical fiber connector) or coaxial digital audio transmission. Defaults to `false`.
 - All other options from [Speaker Component](/components/speaker#config-speaker).
+
+## Expanding samples to the slot width
+
+Some I²S receivers require each PCM sample to occupy the full data word associated with its physical slot. For
+example, a 16-bit stream sent through a 32-bit slot may need each sample expanded and left-aligned so that `0x1234`
+is transmitted as `0x12340000`.
+
+Set `bits_per_sample` to the required slot width and enable `expand_to_slot_width`:
+
+```yaml
+speaker:
+  - platform: i2s_audio
+    dac_type: external
+    i2s_dout_pin: GPIOXX
+    bits_per_sample: 32bit
+    expand_to_slot_width: true
+```
+
+This setting only expands streams narrower than the slot. Streams already matching the slot pass through unchanged,
+while wider streams continue to be reduced to the configured slot width.
 
 ## SPDIF Mode
 
