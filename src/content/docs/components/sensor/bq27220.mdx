@@ -1,0 +1,79 @@
+---
+description: "Instructions for setting up Texas Instruments BQ27220 battery fuel gauge in ESPHome."
+title: "Texas Instruments BQ27220 battery fuel gauge"
+---
+
+import { Image } from 'astro:assets';
+import Figure from '@components/Figure.astro';
+
+The `bq27220` platform allows you to use a BQ27220 single-cell Li-Ion battery fuel gauge
+([datasheet](https://www.ti.com/lit/ds/symlink/bq27220.pdf),
+[Technical Reference Manual](https://www.ti.com/lit/ug/sluubd4a/sluubd4a.pdf))
+in ESPHome. It uses the [I²C Bus](/components/i2c) for communication. The default I²C address is `0x55`.
+
+The BQ27220 continuously tracks battery state-of-charge, voltage, current, temperature, and health
+without requiring an external current-sense resistor. It uses Texas Instruments' Impedance Track™
+algorithm to provide accurate state-of-charge estimation across varying charge and discharge profiles.
+
+<Figure
+  src="/images/bq27220.jpg"
+  alt="Texas Instruments BQ27220 battery fuel gauge module."
+  caption="Texas Instruments BQ27220 battery fuel gauge module."
+  layout="constrained"
+  width={300}
+  height={300}
+/>
+
+## Configuration
+
+```yaml
+# Example configuration entry
+sensor:
+  - platform: bq27220
+    address: 0x55
+    update_interval: 60s
+    battery_level:
+      name: "Battery"
+    voltage:
+      name: "Battery Voltage"
+    current:
+      name: "Battery Current"
+    temperature:
+      name: "Battery Temperature"
+    remaining_capacity:
+      name: "Battery Remaining"
+    full_charge_capacity:
+      name: "Battery Full Capacity"
+    time_to_empty:
+      name: "Time to Empty"
+    state_of_health:
+      name: "Battery Health"
+```
+
+## Configuration Variables
+
+- **address** (*Optional*, int): The I²C address of the device. Defaults to `0x55`.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): How often to poll the sensor. Defaults to `60s`.
+- **battery_level** (*Optional*): State of charge in percent (%).
+  - All other options from [Sensor](/components/sensor).
+- **voltage** (*Optional*): Battery voltage in volts (V).
+  - All other options from [Sensor](/components/sensor).
+- **current** (*Optional*): Instantaneous current in amperes (A). Positive when charging, negative when discharging.
+  - All other options from [Sensor](/components/sensor).
+- **temperature** (*Optional*): Battery temperature in degrees Celsius (°C).
+  - All other options from [Sensor](/components/sensor).
+- **remaining_capacity** (*Optional*): Remaining capacity in milliampere-hours (mAh).
+  - All other options from [Sensor](/components/sensor).
+- **full_charge_capacity** (*Optional*): Full charge capacity in milliampere-hours (mAh).
+  - All other options from [Sensor](/components/sensor).
+- **time_to_empty** (*Optional*): Estimated time until the battery is empty, in minutes. Reports `unknown` when the battery is not discharging.
+  - All other options from [Sensor](/components/sensor).
+- **state_of_health** (*Optional*): Battery health as a percentage of original capacity (%).
+  - All other options from [Sensor](/components/sensor).
+
+## See Also
+
+- [I²C Bus](/components/i2c)
+- [Sensor Component](/components/sensor)
+- [MAX17043 battery fuel gauge](/components/sensor/max17043)
+- [LC709203F Battery Monitor](/components/sensor/lc709203f)
