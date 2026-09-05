@@ -150,10 +150,11 @@ switch:
 ```
 
 > [!NOTE]
-> The bridge stops within about 250 ms of `pause()`; check `is_paused()` before using the UART. Bytes that arrive on
-> the UART in that window are discarded, so pause the bridge while the attached device is idle. The exclusive-use rule
-> above still applies: another component cannot be configured on the same UART. While the bridge is paused, use the
-> UART directly from lambdas through its `id()`.
+> The bridge normally stops within about 250 ms of `pause()`, but a write from the host that is already in progress
+> is allowed to finish first, which can take longer at low baud rates; any further host data not yet written to the
+> UART is discarded. Check `is_paused()` before using the UART rather than waiting a fixed time. Bytes that arrive on
+> the UART while the bridge is stopping are discarded too, so pause the bridge while both sides are idle. The exclusive-use rule above still applies: another component cannot be
+> configured on the same UART. While the bridge is paused, use the UART directly from lambdas through its `id()`.
 
 ## See Also
 
