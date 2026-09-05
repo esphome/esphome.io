@@ -132,25 +132,21 @@ exists while the fallback AP is active).
 
 ### Enabling encryption on an existing device
 
-A device built with an [API encryption key](/components/api) on ESPHome 2026.9.0 or newer already offers OTA
-encryption, even without an `encryption:` block under `ota:`. Such a device accepts both plaintext and encrypted
-uploads; a plaintext upload still has to pass the OTA password if one is set, while an encrypted upload is
-authenticated by the key. Because the key already authenticates uploads, an OTA `password:` next to an API key only
-serves older clients without encryption support and wastes significant flash and RAM (about 3.5 KB and 60 bytes on an
-ESP8266, plus the password on the heap); such a config validates with a warning suggesting you replace the password with
-the `encryption:` block. Adding the block is what makes the device require encryption. To turn it on:
+A device built on ESPHome 2026.9.0 or newer with an [API encryption key](/components/api) already offers OTA
+encryption without an `encryption:` block under `ota:`: it accepts plaintext uploads (guarded by the OTA password, if
+set) and encrypted uploads authenticated by the key. The block is what makes it require encryption.
 
-1. Make sure the device runs ESPHome 2026.9.0 or newer with an API encryption key. If it does not, install that first
-   without the `encryption:` block under `ota:`. This one install goes over plaintext OTA (or USB).
-2. Add `encryption:` to the `ota:` block, remove any `password:` line, and install again. This install is already
-   encrypted, and so is every install after it.
+1. If the device runs older firmware or has no API key, install once without the block; that install goes over
+   plaintext OTA (or USB).
+2. Add `encryption:` to the `ota:` block, remove any `password:`, and install again. This install and every later one
+   are encrypted.
 
-If you add the block while the device still runs older firmware, the upload stops with
-`the device did not offer encryption; refusing to send the image in plaintext`. Remove the block, keep the API key,
-install once, then restore the block and install again.
+Adding the block while the device still runs older firmware stops with `the device did not offer encryption;
+refusing to send the image in plaintext`: remove the block, install once, then restore it.
 
-An API `encryption:` block without a `key:` provisions the key at runtime, so it is not known when the firmware is
-built and such a device does not offer OTA encryption. Set an explicit key to use OTA encryption.
+An OTA `password:` next to an API key only serves older clients without encryption support and costs about 3.5 KB of
+flash and 60 bytes of RAM on an ESP8266, so validation warns and suggests the `encryption:` block instead. An API
+`encryption:` block without a `key:` is provisioned at runtime and does not offer OTA encryption; set an explicit key.
 
 To troubleshoot a failing encrypted handshake, raise the log level of the shared `noise` component:
 
