@@ -107,6 +107,11 @@ Advanced options:
   i.e. the maximum amount of current can additionally be set. Defaults to `20mA`.
   Options are `5mA`, `10mA`, `20mA`, `40mA`.
 
+- **hold_during_sleep** (*Optional*, boolean): Hold pin during deepsleep on ESP32. Set this to `true` to hold
+  the output level or pullup/pulldown mode during deepsleep. Hold should be used only for GPIO pins and not
+  for pins that are used for peripherals like `i2c`, `uart` or `rmt`. If the pin is also used elsewhere and `allow_other_uses`
+  is set, make sure to use hold on all or none. Defaults to `false`.
+
 - **ignore_strapping_warning** (*Optional*, boolean): Certain pins on ESP32s are designated *strapping pins* and are read
   by the chip on reset to configure initial operation, e.g. to enable bootstrap mode.
   Using such pins for I/O should be avoided and ESPHome will warn if I/O is configured on a strapping pin.
