@@ -127,9 +127,27 @@ exists while the fallback AP is active).
 > [!IMPORTANT]
 > Once a device runs firmware with `encryption:` enabled it refuses plaintext OTA updates, and the CLI refuses to send
 > a plaintext image when a key is configured. This is intentional; a downgrade to plaintext would be an unauthenticated
-> upload. Enabling it is a two-step migration: first upload firmware that has the `encryption:` block over your current
-> (plaintext) OTA, then all later uploads are encrypted. If a device that already requires encryption becomes
-> unreachable, recover it with a serial flash.
+> upload. If a device that requires encryption becomes unreachable, recover it with the
+> [web server OTA platform](/components/ota/web_server) or a serial flash.
+
+### Enabling encryption on an existing device
+
+A device built with an [API encryption key](/components/api) on ESPHome 2026.9.0 or newer already offers OTA
+encryption, even without an `encryption:` block under `ota:`. Such a device accepts both plaintext and encrypted
+uploads; a plaintext upload still has to pass the OTA password if one is set, while an encrypted upload is
+authenticated by the key. Adding the block is what makes the device require encryption. To turn it on:
+
+1. Make sure the device runs ESPHome 2026.9.0 or newer with an API encryption key. If it does not, install that first
+   without the `encryption:` block under `ota:`. This one install goes over plaintext OTA (or USB).
+2. Add `encryption:` to the `ota:` block, remove any `password:` line, and install again. This install is already
+   encrypted, and so is every install after it.
+
+If you add the block while the device still runs older firmware, the upload stops with
+`the device did not offer encryption; refusing to send the image in plaintext`. Remove the block, keep the API key,
+install once, then restore the block and install again.
+
+An API `encryption:` block without a `key:` provisions the key at runtime, so it is not known when the firmware is
+built and such a device does not offer OTA encryption. Set an explicit key to use OTA encryption.
 
 To troubleshoot a failing encrypted handshake, raise the log level of the shared `noise` component:
 
