@@ -278,9 +278,10 @@ Without `api:` the running firmware cannot offer encryption, so an `api:` block 
 
 ## Compression
 
-Uploads are compressed automatically when both the device firmware and the `esphome` command line are ESPHome
-2026.10.0 or newer; there is nothing to configure, and an older device or an older command line simply falls back
-to an uncompressed upload.
+Uploads are compressed automatically; there is nothing to configure. ESP8266 uploads have always been compressed.
+On ESP32, RP2040, LibreTiny and host they are compressed when both the device firmware and the `esphome` command
+line are ESPHome 2026.10.0 or newer; an older device or an older command line simply falls back to an uncompressed
+upload.
 
 - **ESP8266 and RP2040**: the upload is a gzip file. The ESP8266 bootloader and the RP2040 OTA stub inflate it into
   the application area at reboot, so the reboot after an update takes a little longer (about 1.5 s more on an RP2040
