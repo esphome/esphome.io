@@ -25,7 +25,7 @@ const colors = {
 const ignoreFolders = ["pagefind/", "node_modules/", "dist/", ".astro/", "public/vendor/", ".claude/"];
 
 // Files to ignore (skip all linting)
-const ignoreFiles = ["script/release_notes_template.mdx"];
+const ignoreFiles = ["script/release_notes_template.mdx", "script/blog_post_template.mdx"];
 
 // File types
 const fileTypes = [
@@ -59,10 +59,11 @@ const fileTypes = [
   ".webp",
   ".bin",
   ".mp4",
+  ".webm",
   "", // empty string for files without extension (like .gitignore)
 ];
 const imageTypes = [".webp", ".jpg", ".ico", ".png", ".svg", ".gif"];
-const binaryTypes = [".bin", ".glb", ".mp4"];
+const binaryTypes = [".bin", ".glb", ".mp4", ".webm"];
 
 // Store errors
 const errors = new Map();

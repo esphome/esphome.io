@@ -153,6 +153,15 @@ spi_device:
 - **release_device** (*Optional*, boolean): For ESP32, release the bus device between transactions. The default is
   `False`. Setting this to `True` will enable more than 6 devices to be connected to hardware SPI buses.
 
+- **psram_dma** (*Optional*, boolean): Use direct DMA for transmit buffers located in PSRAM instead of copying them
+  through an internal DMA buffer. This can reduce internal memory use for large transfers. The default is `False`.
+  This option requires ESP-IDF 5.5.3 or later and is available on ESP32-S3, ESP32-S31, ESP32-P4, ESP32-C5 and
+  ESP32-C61.
+
+  Direct PSRAM DMA shares memory bandwidth with the MSPI bus. Keep the SPI transfer bandwidth below the available
+  PSRAM bandwidth to avoid data loss. ESPHome logs an error if ESP-IDF reports a transmit underflow. See the
+  [ESP-IDF SPI Master documentation][idf-spi] for details.
+
 - **interface** (*Optional*): Controls which hardware or software SPI implementation should be used.
 
 ## Data rates
@@ -193,3 +202,5 @@ transactions.
 ## See Also
 
 - <APIRef text="spi.h" path="spi/spi.h" />
+
+[idf-spi]: https://docs.espressif.com/projects/esp-idf/en/latest/esp32s3/api-reference/peripherals/spi_master.html

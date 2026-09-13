@@ -1,0 +1,89 @@
+---
+title: "ESPHome 2024.7.0: microWakeWord version 2"
+description: "ESPHome 2024.7.0 updates the micro_wake_word component to version 2, adding support for multiple models per device and a voice activity detection model."
+date: 2024-07-17
+authors:
+  - jesse
+tags:
+  - Releases
+excerpt: "ESPHome 2024.7.0 updates the micro_wake_word component to version 2, adding support for multiple models per device and a voice activity detection model."
+cover:
+  alt: "ESPHome 2024.7.0: microWakeWord version 2"
+  image: "https://assets.openhomefoundation.org/opengraph?url=https://esphome.io/blog/2024/07/17/esphome-2024-7"
+head:
+  - tag: meta
+    attrs:
+      property: "og:image"
+      content: "https://assets.openhomefoundation.org/opengraph?url=https://esphome.io/blog/2024/07/17/esphome-2024-7"
+  - tag: meta
+    attrs:
+      name: "twitter:image"
+      content: "https://assets.openhomefoundation.org/opengraph?url=https://esphome.io/blog/2024/07/17/esphome-2024-7"
+  - tag: meta
+    attrs:
+      property: "og:image:title1"
+      content: "ESPHome 2024.7.0"
+  - tag: meta
+    attrs:
+      property: "og:image:title2"
+      content: "microWakeWord version 2"
+  - tag: meta
+    attrs:
+      property: "og:image:author"
+      content: "Jesse Hills"
+  - tag: meta
+    attrs:
+      property: "og:image:category"
+      content: "Releases"
+---
+
+## microWakeWord
+
+The `micro_wake_word` component has been updated to "version 2".
+This brings the capability to configure multiple models per device and has a `vad` model for
+voice activity detection.
+
+The configuration has a breaking change to support these new features.
+
+```yaml
+micro_wake_word:
+  model: okay_nabu
+```
+
+needs to be changed to the following:
+
+```yaml
+micro_wake_word:
+  models:
+    - okay_nabu
+```
+
+Please see the [Documentation](/components/micro_wake_word/) for the full configuration.
+
+{/* markdownlint-disable MD013 */}
+
+## Release 2024.7.1 - July 22
+
+- Prevent rename from deleting new config [esphome#7104](https://github.com/esphome/esphome/pull/7104) by [@acortelyou](https://github.com/acortelyou)
+- [i2s_microphone] Partially revert #7092 so microphone volume doesn't change [esphome#7109](https://github.com/esphome/esphome/pull/7109) by [@kahrendt](https://github.com/kahrendt)
+- [heatpumpir] Fix BK72XX Compile error with IRremoteESP8266 [esphome#6955](https://github.com/esphome/esphome/pull/6955) by [@dianlight](https://github.com/dianlight)
+- [http_request] allow basic auth for idf [esphome#7086](https://github.com/esphome/esphome/pull/7086) by [@oarcher](https://github.com/oarcher)
+- Fixes sml parser to process extended length lists with a number of items that is dividable by 16 [esphome#6148](https://github.com/esphome/esphome/pull/6148) by [@irgendwienet](https://github.com/irgendwienet)
+
+## Release 2024.7.2 - July 25
+
+- [http_request] Change default timeout to 4.5s [esphome#7123](https://github.com/esphome/esphome/pull/7123) by [@jesserockz](https://github.com/jesserockz)
+- [http_request] Fix ESP-IDF follow redirect [esphome#7101](https://github.com/esphome/esphome/pull/7101) by [@dentra](https://github.com/dentra)
+
+## Release 2024.7.3 - August 1
+
+- [pmwcs3] Add delay after sending REG_READ_START [esphome#7130](https://github.com/esphome/esphome/pull/7130) by [@thevogoncoder](https://github.com/thevogoncoder)
+- Fix for Mitsubishi units that only support cooling [esphome#7143](https://github.com/esphome/esphome/pull/7143) by [@RubyBailey](https://github.com/RubyBailey)
+- [micro_wake_word] Fix VAD detection and modify detection computation [esphome#7164](https://github.com/esphome/esphome/pull/7164) by [@kahrendt](https://github.com/kahrendt)
+
+{/* markdownlint-enable MD013 */}
+
+## Full List of Changes
+
+For the complete list of every merged pull request in this release, see the
+[full 2024.7.0 changelog](/changelog/2024.7.0/).
