@@ -23,6 +23,10 @@ text_sensor:
 
 - **hide_timestamp** (*Optional*, boolean): Allows you to hide the compilation timestamp from the version string. Defaults to `false`.
 - **hide_hash** (*Optional*, boolean): Allows you to hide the config hash from the version string. Defaults to `false`.
+- **component** (*Optional*, string): Report the version of this component instead of the ESPHome
+  version. Mainly useful for [external components](/components/external_components/). See
+  [Reporting a component's version](#reporting-a-components-version). `hide_timestamp` and
+  `hide_hash` do not apply when this is set.
 - All other options from [Text Sensor](/components/text_sensor#config-text_sensor).
 
 ## Disabling timestamp and hash
@@ -37,6 +41,40 @@ text_sensor:
 ```
 
 This will shorten the version string to be just like: `2026.1.0`
+
+## Reporting a component's version
+
+Bundled components ship with ESPHome, so the ESPHome version above already describes them.
+External components do not: their version appears nowhere in the configuration, so there is no way
+to tell from Home Assistant which revision of one a device is actually running. That matters most
+when updating several devices — without it, a rollout that only partly succeeded looks identical
+to one that worked.
+
+A component reports a version by declaring a `COMPONENT_VERSION` constant in its `__init__.py`:
+
+```python
+COMPONENT_VERSION = "1.4.0"
+```
+
+It can then be exposed as a sensor:
+
+```yaml
+# Example configuration entry
+text_sensor:
+  - platform: version
+    component: my_component
+    name: "My Component Version"
+```
+
+:::note
+Declaring `COMPONENT_VERSION` is entirely optional, and most components do not. Asking for the
+version of a component that does not report one is **not an error** — the configuration compiles
+as normal and the sensor simply reads as unknown, with a warning during compilation explaining
+why. Nothing else about that component changes.
+
+If you maintain an external component, adding the constant costs one line and has no effect on
+users who never add this sensor.
+:::
 
 ## See Also
 

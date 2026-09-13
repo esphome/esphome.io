@@ -99,7 +99,7 @@ fetches the manifest and the binary, so a dead link or a chip family mismatch wi
 
 ## Example Configuration
 
-The pieces every Made for ESPHome configuration needs, with a single entity to show the `id` requirement:
+The pieces every Made for ESPHome configuration needs:
 
 ```yaml
 esphome:
@@ -119,13 +119,16 @@ api:
 
 ota:
   - platform: esphome
+    id: ota_esphome
   - platform: http_request
+    id: ota_http_request
 
 http_request:
+  id: http_request_id
 
 update:
   - platform: http_request
-    id: esphome_update
+    id: update_http_request
     name: "ESPHome update"
     source: https://acme.example.com/widget/manifest.json
 
@@ -134,6 +137,8 @@ wifi:
 
 esp32_improv:
   authorizer: none
+
+logger:
 
 improv_serial:
 
