@@ -246,8 +246,9 @@ script:
 
 > [!IMPORTANT]
 > The driver streams the framebuffer asynchronously. Do not re-render the
-> framebuffer while a load or update is in flight — wait for the C++ method
-> `is_idle()` to return `true` first, e.g.:
+> framebuffer while a load or update is in flight. Wait first for `is_idle()`,
+> the standard method available on every ESPHome component, which returns
+> `true` once the driver has finished streaming and is parked:
 >
 > ```yaml
 > - wait_until:
