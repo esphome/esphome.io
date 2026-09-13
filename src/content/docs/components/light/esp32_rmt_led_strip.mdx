@@ -13,7 +13,7 @@ This is a component using the ESP32 RMT peripheral to drive most addressable LED
 ```yaml
 light:
   - platform: esp32_rmt_led_strip
-    rgb_order: GRB
+    channel_colors: GRB
     pin: GPIOXX
     num_leds: 30
     chipset: ws2812
@@ -33,18 +33,10 @@ light:
   - `APA106`
   - `SM16703`
 
-- **rgb_order** (**Optional**, string): The RGB order of the strip.
+- **channel_colors** (**Required**, string): The order in which the strip expects its color channels. List each of
+  `R`, `G` and `B` exactly once, optionally with a single `W` in any position; for example `GRB`, `BGR`, `GRBW`,
+  `WRGB` or `RWGB`. The value is case-insensitive. Including a `W` makes this a four channel RGBW strip.
 
-  - `RGB`
-  - `RBG`
-  - `GRB`
-  - `GBR`
-  - `BGR`
-  - `BRG`
-
-- **is_rgbw** (*Optional*, boolean): Set to `true` if the strip is RGBW. Defaults to `false`.
-- **is_wrgb** (*Optional*, boolean): Set to `true` if the strip is WRGB. Defaults to `false`.
-- **rgbw_order** (**Optional**, string): The RGBW order of the strip. Options are the same as `rgb_order` but with the `W` channel placed at an arbitrary location in the order. Note that this is mutually exclusive with `rgb_order`, `is_rgbw`, and `is_wrgb`.
 - **max_refresh_rate** (*Optional*, [Time](/guides/configuration-types#time)): A time interval used to limit the number of commands a light
   can handle per second. For example, `16ms` will limit the light to a refresh rate of about 60Hz. Defaults to
   sending commands as quickly as changes are made to the lights.

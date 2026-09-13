@@ -4,7 +4,7 @@ import { Code, Tabs, TabItem, LinkButton } from "@astrojs/starlight/components";
 // Every esphome-desktop release publishes a version-independent `latest.json`,
 // so the download links resolve at build time and never go stale. The constant
 // is only a fallback for when the fetch fails (offline build, GitHub outage).
-const FALLBACK_VERSION = "1.0.2";
+const FALLBACK_VERSION = "1.1.3";
 const LATEST_JSON = "https://github.com/esphome/esphome-desktop/releases/latest/download/latest.json";
 
 // Every download this page offers, as `${platform}-${kind}` keys into the
@@ -128,7 +128,7 @@ if (!urls) {
         <p>
           Clicking the button above opens the ESPHome Device Builder app inside your Home Assistant instance — click <strong
             >Install</strong
-          >, then{" "}
+          >, then&nbsp;
           <strong>Start</strong>, then <strong>Open Web UI</strong>.
         </p>
 
@@ -143,14 +143,14 @@ if (!urls) {
             Find <strong>ESPHome Device Builder</strong> in the list and click it.
           </li>
           <li>
-            Click <strong>Install</strong>, then <strong>Start</strong>, then{" "}
+            Click <strong>Install</strong>, then <strong>Start</strong>, then&nbsp;
             <strong>Open Web UI</strong>.
           </li>
         </ol>
         <p class="install-selector__hint">
           If the app isn't listed, the ESPHome repository hasn't been registered. Click the <strong>⋮</strong> menu (top-right)
-          → <strong>Repositories</strong>, paste{" "}
-          <code>https://github.com/esphome/home-assistant-addon</code>, click{" "}
+          → <strong>Repositories</strong>, paste&nbsp;
+          <code>https://github.com/esphome/home-assistant-addon</code>, click&nbsp;
           <strong>Add</strong>, then close the dialog and look again.
         </p>
       </div>
@@ -162,13 +162,9 @@ if (!urls) {
         </p>
         <Code code={'docker run --rm --net=host -v "${PWD}":/config -it ghcr.io/esphome/esphome'} lang="bash" />
         <p>
-          Once it's running, open <a href="http://localhost:6052"><code>http://localhost:6052</code></a> in your browser.{
-            " "
-          }
-          <code>--net=host</code> lets the dashboard use mDNS, which it needs to discover devices and to resolve their{
-            " "
-          }
-          <code>.local</code> names. On Docker Desktop (where host networking is unavailable) substitute{" "}
+          Once it's running, open <a href="http://localhost:6052"><code>http://localhost:6052</code></a> in your browser.&nbsp;
+          <code>--net=host</code> lets the dashboard use mDNS, which it needs to discover devices and to resolve their&nbsp;
+          <code>.local</code> names. On Docker Desktop (where host networking is unavailable) substitute&nbsp;
           <code>-p 6052:6052</code>; the dashboard still runs, but without mDNS it can only reach devices you give a
           fixed address.
         </p>
@@ -192,7 +188,7 @@ if (!urls) {
         </li>
       </ol>
       <p class="install-selector__hint">
-        If you see <em>"Windows protected your PC"</em>, click{" "}
+        If you see <em>"Windows protected your PC"</em>, click&nbsp;
         <strong>More info</strong> → <strong>Run anyway</strong>.
       </p>
     </TabItem>
@@ -206,7 +202,7 @@ if (!urls) {
         </div>
       </div>
       <p class="install-selector__warning" data-mac-intel-warning role="status" hidden>
-        Support for Intel Macs will be removed soon. The Python ecosystem is dropping Intel macOS; the{" "}
+        Support for Intel Macs will be removed soon. The Python ecosystem is dropping Intel macOS; the&nbsp;
         <code>cryptography</code> package no longer publishes Intel builds as of version 49.
       </p>
       <LinkButton data-download="mac" href={urls["mac-arm64"]}> Download disk image (.dmg) </LinkButton>
@@ -216,11 +212,11 @@ if (!urls) {
           Drag <strong>ESPHome Device Builder</strong> into the <strong>Applications</strong> folder.
         </li>
         <li>
-          Open the Applications folder and double-click{" "}
+          Open the Applications folder and double-click&nbsp;
           <strong>ESPHome Device Builder</strong>.
         </li>
         <li>
-          The first time you run it, macOS may ask you to confirm — click{" "}
+          The first time you run it, macOS may ask you to confirm — click&nbsp;
           <strong>Open</strong>.
         </li>
       </ol>
@@ -280,7 +276,7 @@ if (!urls) {
       </div>
 
       <p class="install-selector__hint">
-        If serial devices don't show up, add your user to the{" "}
+        If serial devices don't show up, add your user to the&nbsp;
         <code><span data-linux-group>dialout</span></code> group and log out and back in: <code
           >sudo usermod -a -G <span data-linux-group>dialout</span> $USER</code
         >.
@@ -296,13 +292,13 @@ if (!urls) {
 
       <h3>Device Builder (Web UI)</h3>
       <p>
-        The Device Builder needs the ESPHome command-line tool to compile firmware, so install it with the{" "}
+        The Device Builder needs the ESPHome command-line tool to compile firmware, so install it with the&nbsp;
         <code>esphome</code> extra to pull in both:
       </p>
       <Code code={'pip install "esphome-device-builder[esphome]"\nesphome-device-builder config'} lang="bash" />
       <p>
         Here <code>config</code> is not a subcommand: it is the directory your configurations are stored in, so replace it
-        with whichever path you want to use. The dashboard is then available at{" "}
+        with whichever path you want to use. The dashboard is then available at&nbsp;
         <a href="http://localhost:6052"><code>http://localhost:6052</code></a>.
       </p>
 
@@ -317,7 +313,7 @@ if (!urls) {
 
       <p class="install-selector__hint">
         Install into a <a href="https://docs.python.org/3/library/venv.html">virtual environment</a> if you can. Many Linux
-        distributions now refuse to <code>pip install</code> into the system Python and will fail with{" "}
+        distributions now refuse to <code>pip install</code> into the system Python and will fail with&nbsp;
         <code>externally-managed-environment</code>.
       </p>
     </TabItem>

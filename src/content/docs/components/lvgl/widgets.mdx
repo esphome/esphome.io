@@ -1261,6 +1261,100 @@ The points list may be defined with constants in the form `x, y` or as a list of
     line_rounded: true
 ```
 
+### `list`
+
+The list widget is a plain, scrollable container meant to be populated at runtime -- via the `lvgl.list.add_text`, `lvgl.list.add`, `lvgl.list.remove` and `lvgl.list.clear` actions -- rather than with a fixed set of children declared in configuration. It's suited to content that isn't known until the device is running, such as sensor readings or Wi-Fi scan results.
+
+**Configuration variables:**
+
+- **pad_row** (*Optional*, [padding](/components/lvgl#lvgl-styling)): Vertical spacing between entries.
+- Style options from [Style properties](/components/lvgl#lvgl-styling) for the background of the list (*main* part) and its *scrollbar* part.
+
+**Actions:**
+
+- `lvgl.list.add_text` adds a plain text entry, typically used as a section header to visually group the entries below it:
+  - **id** (**Required**): The ID of the list widget.
+  - **text** (**Required**, [Text property](#text-property)): Text to display.
+  - **index** (*Optional*, templatable int): Position to insert the entry at. Defaults to the end of the list.
+
+- `lvgl.list.add` adds an entry built from any other widget type, complete with its children and triggers if any are configured -- for example a `button` with `checkable: true`, or a `button` containing a `label` and a `dropdown`, with its own `on_click`. Exactly one widget key (e.g. `label:`, `button:`, `dropdown:`) must be given alongside `id`, configured exactly as it would be under `widgets:`:
+  - **id** (**Required**): The ID of the list widget.
+  - **index** (*Optional*, templatable int): Position to insert the entry at. Defaults to the end of the list.
+  - One of the [widget](#widgets) types, configured as normal.
+
+  > [!NOTE]
+  > Unlike widgets declared in configuration, entries added with `lvgl.list.add` are built fresh each time the action runs, and are freed automatically, along with any children, when removed via `lvgl.list.remove` or `lvgl.list.clear`.
+
+- `lvgl.list.remove` removes the entry at a given position, along with any children it has:
+  - **id** (**Required**): The ID of the list widget.
+  - **index** (**Required**, templatable int): The zero-based index of the entry to remove.
+
+- `lvgl.list.clear` removes every entry from the list.
+  - **id** (**Required**): The ID of the list widget.
+
+**Triggers:**
+
+- `on_add` [trigger](/automations/actions#actions-trigger) is activated whenever an entry is added, by either `lvgl.list.add_text` or `lvgl.list.add`. The new entry's (final) index is returned in the variable `list_index`.
+- `on_remove` [trigger](/automations/actions#actions-trigger) is activated whenever an entry is removed, by either `lvgl.list.remove` or `lvgl.list.clear`. `lvgl.list.clear` fires it once per entry, from the last index down to `0`, just before wiping the list. The removed entry's (former) index is returned in the variable `list_index`.
+
+**Getting a widget's row index:**
+
+A trigger on a widget added via `lvgl.list.add` (or on one of its children) doesn't automatically receive the index of the list row it belongs to, since the same widget configuration is shared with every other place that widget type is used in the YAML file. Instead, call `lvgl::lv_list_get_row_index()` from a `lambda`, passing the list and the widget that received the event -- available in every trigger as the `event` variable (see [Other events](#other-events)):
+
+```cpp
+int lv_list_get_row_index(lv_obj_t *list, lv_obj_t *widget);
+```
+
+It returns the index of the entry that contains `widget` -- `widget` itself if it's added directly (e.g. via `lvgl.list.add_text`), or the entry that owns it if `widget` is nested somewhere inside a hierarchy added with `lvgl.list.add` -- or `-1` if `widget` isn't inside `list` at all.
+
+**Example:**
+
+```yaml
+# Example widget:
+- list:
+    id: my_list
+    width: 200
+    height: 150
+    pad_row: 4
+    on_add:
+      - logger.log:
+          format: "Entry added at %d"
+          args: [ list_index ]
+    on_remove:
+      - logger.log:
+          format: "Entry removed at %d"
+          args: [ list_index ]
+
+# Example actions:
+on_...:
+  - lvgl.list.add_text:
+      id: my_list
+      text: "Section"
+  - lvgl.list.add:
+      id: my_list
+      button:
+        text: "Entry"
+        checkable: true
+  - lvgl.list.add:
+      id: my_list
+      index: 0 # pin this entry to the top of the list
+      button:
+        widgets:
+          - label:
+              text:
+                format: "Row %d"
+                args: [ millis() ]
+        on_click:
+          - lambda: |-
+              int row = lvgl::lv_list_get_row_index(id(my_list), static_cast<lv_obj_t *>(lv_event_get_target(event)));
+              ESP_LOGD("main", "Row %d clicked", row);
+  - lvgl.list.remove:
+      id: my_list
+      index: 0
+  - lvgl.list.clear:
+      id: my_list
+```
+
 ### `meter`
 
 The meter widget can visualize data in very flexible ways. It can use arcs, needles, ticks, lines and/or labels.
@@ -1808,6 +1902,89 @@ The switch looks like a little slider and can be used to turn something on and o
 The `switch` can be also integrated as a [Switch](/components/switch/lvgl/) component.
 
 See [Local light switch](/cookbook/lvgl#lvgl-cookbook-relay) for an example which demonstrates how to use a switch to act on a local component.
+
+### `table`
+
+The table widget displays data arranged in rows and columns of text cells.
+
+**Configuration variables:**
+
+- **row_count** (*Optional*, int): The number of rows in the table. Defaults to the number of entries in `rows`, or `0` if not given.
+- **column_count** (*Optional*, int): The number of columns in the table. Defaults to the largest number of cells in any row in `rows`, or `0` if not given.
+- **columns** (*Optional*, list): Settings for each column, in column order:
+  - **width** (*Optional*, int or percentage): The width of the column. A percentage is relative to the table's own content width, and is recalculated automatically if the table is resized.
+- **rows** (*Optional*, list): The rows of the table, in order. Each row may be given as a bare list of cells, or as a dict:
+  - **cells** (**Required**, list): The cells of the row, in column order. Each cell may be given as a bare [Text property](#text-property), or as a dict:
+    - **text** (*Optional*, [Text property](#text-property)): The text to display in the cell. Defaults to an empty string.
+    - **merge_right** (*Optional*, boolean): Merge this cell with the one to its right so they are drawn as a single wide cell. Defaults to `false`.
+    - **text_crop** (*Optional*, boolean): Crop the text instead of wrapping it if it does not fit the cell. Defaults to `false`.
+- **selected_row**, **selected_column** (*Optional*, int): The initially selected cell. If only one of the two is given, the whole row or column is selected instead of a single cell.
+- Style options from [Style properties](/components/lvgl#lvgl-styling) for the background of the table (`main` part). The `items` part styles the individual cells; its `focused` and `pressed` states style the currently selected cell while the table has focus or is being pressed.
+
+**Actions:**
+
+- `lvgl.table.update` [action](/automations/actions#actions-action) updates the widget styles and properties from the specific options above, just like the [lvgl.widget.update](#lvgl-automation-actions) action is used for the common styles, states or flags.
+  - **id** (**Required**): The ID or a list of IDs of table widgets to be updated.
+  - Any of the table options as listed above.
+
+- `lvgl.table.cell.update` [action](/automations/actions#actions-action) updates a single cell of the table.
+  - **id** (**Required**): The ID or a list of IDs of table widgets to be updated.
+  - **row** (**Required**, int): The (zero-based) row of the cell to update.
+  - **column** (**Required**, int): The (zero-based) column of the cell to update.
+  - **text** (*Optional*, [Text property](#text-property)): The new text for the cell.
+  - **merge_right** (*Optional*, boolean): Merge this cell with the one to its right.
+  - **text_crop** (*Optional*, boolean): Crop the text instead of wrapping it.
+
+  At least one of `text`, `merge_right` or `text_crop` must be given.
+
+**Triggers:**
+
+- `on_value` [trigger](/automations/actions#actions-trigger) is activated when the selected cell changes, either by user interaction or programmatically (e.g. via `lvgl.table.update`). The new selection is returned in the variables `row` and `column`.
+- [interaction](#triggers) LVGL event triggers, which also return the selected cell in the variables `row` and `column`.
+
+**Example:**
+
+```yaml
+# Example widget:
+- table:
+    id: table_id
+    width: 100%
+    columns:
+      - width: 40%
+      - width: 60%
+    rows:
+      - ["Name", "Value"]
+      - ["Temperature", "22.5°"]
+    selected_row: 0
+    selected_column: 0
+
+# Example widget - a pre-sized table filled with live data:
+- table:
+    id: readings_table
+    row_count: 3
+    column_count: 2
+    columns:
+      - width: 50%
+      - width: 50%
+
+# Example action:
+interval:
+  - interval: 5s
+    then:
+      - lvgl.table.cell.update:
+          id: readings_table
+          row: 0
+          column: 1
+          text: !lambda return to_string(id(my_sensor).state);
+
+# Example trigger:
+- table:
+    ...
+    on_value:
+      - logger.log:
+          format: "Selected cell: %u, %u"
+          args: [ row, column ]
+```
 
 ### `tabview`
 

@@ -22,12 +22,21 @@ the window closes anyway and the device stops accepting provisioning:
 - BLE Improv ([`esp32_improv`](/components/esp32_improv/)) stops accepting WiFi
   credentials. Serial Improv ([`improv_serial`](/components/improv_serial/)) is
   left enabled, since it requires a physical connection to the device.
+- The [WiFi](/components/wifi/) access point shuts down, along with the
+  [captive portal](/components/captive_portal/) running on it, and neither comes
+  back until the device restarts.
 - The `on_timeout` automation runs.
 
 While the device is unprovisioned, the [API](/components/api/) and
 [WiFi](/components/wifi/) `reboot_timeout`s are paused so it does not reboot itself
 while waiting to be set up. Power-cycling (or pressing a physical reset button)
 reopens the window.
+
+> [!NOTE]
+> If the access point is the device's only network connection — WiFi is configured
+> with `ap:` and no station credentials — the device becomes unreachable over the
+> network once the window closes, until it is power-cycled. ESPHome prints a
+> warning when validating such a configuration.
 
 ```yaml
 provisioning:
@@ -53,6 +62,8 @@ satisfies this, as does the [API](/components/api/) with `encryption:` and no
 ## See Also
 
 - [Native API Component](/components/api/)
+- [WiFi Component](/components/wifi/)
+- [Captive Portal](/components/captive_portal/)
 - [Improv via BLE](/components/esp32_improv/)
 - [Improv via Serial](/components/improv_serial/)
 - <APIRef text="provisioning.h" path="provisioning/provisioning.h" />

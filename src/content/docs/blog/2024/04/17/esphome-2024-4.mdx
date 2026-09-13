@@ -1,0 +1,92 @@
+---
+title: "ESPHome 2024.4.0: Time entities and voice assistant audio over the API"
+description: "ESPHome 2024.4.0 adds time entities that can be set from the frontend, and support for sending voice assistant audio over the ESPHome API instead of a UDP socket."
+date: 2024-04-17
+authors:
+  - jesse
+tags:
+  - Releases
+excerpt: "ESPHome 2024.4.0 adds time entities that can be set from the frontend, and support for sending voice assistant audio over the ESPHome API instead of a UDP socket."
+cover:
+  alt: "ESPHome 2024.4.0: Time entities and voice assistant audio over the API"
+  image: "https://assets.openhomefoundation.org/opengraph?url=https://esphome.io/blog/2024/04/17/esphome-2024-4"
+head:
+  - tag: meta
+    attrs:
+      property: "og:image"
+      content: "https://assets.openhomefoundation.org/opengraph?url=https://esphome.io/blog/2024/04/17/esphome-2024-4"
+  - tag: meta
+    attrs:
+      name: "twitter:image"
+      content: "https://assets.openhomefoundation.org/opengraph?url=https://esphome.io/blog/2024/04/17/esphome-2024-4"
+  - tag: meta
+    attrs:
+      property: "og:image:title1"
+      content: "ESPHome 2024.4.0"
+  - tag: meta
+    attrs:
+      property: "og:image:title2"
+      content: "Time entities and voice assistant audio over the API"
+  - tag: meta
+    attrs:
+      property: "og:image:author"
+      content: "Jesse Hills"
+  - tag: meta
+    attrs:
+      property: "og:image:category"
+      content: "Releases"
+---
+
+import ImgTable from "@components/ImgTable.astro";
+
+<ImgTable items={[
+  ["Template Datetime Time","/components/datetime/template","description.svg","dark-invert"],
+  ["SUN-GTIL2 inverter","/components/sun_gtil2","sun_1000g2.png"],
+  ["AT581X","/components/at581x","at581x.png"],
+  ["JSN-SR04T","/components/sensor/jsn_sr04t","jsn-sr04t-v3.jpg"],
+  ["Daikin ARC","/components/climate/climate_ir","air-conditioner-ir.svg","dark-invert"],
+  ["HHCCJCY10 (MiFlora Pink)","/components/sensor/xiaomi_hhccjcy10","xiaomi_hhccjcy10.jpg"],
+  ["TLC5971","/components/output/tlc5971","tlc5971.jpg"],
+  ["Dooya","/components/remote_transmitter","remote.svg"]
+]} />
+
+## Time Entities
+
+ESPHome now has support for `time` entities that can be set from the frontend (like Home Assistant).
+This allows you to set a timer to execute future automations on device.
+
+ESPHome Dates require Home Assistant 2024.4 or later.
+
+## Voice Assistant Audio
+
+This release adds support for sending and receiving audio to/from voice assistants via the API. Currently ESPHome
+sends and receives the Voice Assistant audio bytes via a UDP socket which can be unreliable and insecure.
+Beginning with Home Assistant 2024.5, both sides will automatically recognise that they both support API Audio and will
+use that route instead. This is more reliable because the ESPHome API uses a TCP socket, so packet order and
+delivery is guaranteed, and if you use API Encryption, your audio will also be encrypted in transit.
+
+{/* markdownlint-disable MD013 */}
+
+## Release 2024.4.1 - April 23
+
+- [Tuya Climate] Fix compilation error caused by codegen [esphome#6568](https://github.com/esphome/esphome/pull/6568) by [@zry98](https://github.com/zry98)
+- wifi: fix reconnect issue due to enablement of fast connect [esphome#6598](https://github.com/esphome/esphome/pull/6598) by [@jpeletier](https://github.com/jpeletier)
+- Calibrate Beken internal temperature [esphome#6599](https://github.com/esphome/esphome/pull/6599) by [@Mat931](https://github.com/Mat931)
+- fix streaming logs from MQTT for ESP32 devices using TLS [esphome#6605](https://github.com/esphome/esphome/pull/6605) by [@ccutrer](https://github.com/ccutrer)
+- Disallow variant/family override for known boards [esphome#6512](https://github.com/esphome/esphome/pull/6512) by [@clydebarrow](https://github.com/clydebarrow)
+- esp32_ble: Consider ESP_BT_STATUS_DONE a successful state [esphome#6493](https://github.com/esphome/esphome/pull/6493) by [@polyfloyd](https://github.com/polyfloyd)
+- Fix or filter [esphome#6574](https://github.com/esphome/esphome/pull/6574) by [@swoboda1337](https://github.com/swoboda1337)
+
+## Release 2024.4.2 - April 30
+
+- Fix SHT3xd fails sometimes in 2024.4.0 [esphome#6592](https://github.com/esphome/esphome/pull/6592) by [@mrtoy-me](https://github.com/mrtoy-me)
+- allow defaults with no include vars [esphome#6613](https://github.com/esphome/esphome/pull/6613) by [@ssieb](https://github.com/ssieb)
+- Revert #6458 [esphome#6650](https://github.com/esphome/esphome/pull/6650) by [@tronikos](https://github.com/tronikos)
+- [i2s_audio.microphone] Fixing adc bug [esphome#6654](https://github.com/esphome/esphome/pull/6654) by [@jesserockz](https://github.com/jesserockz)
+
+{/* markdownlint-enable MD013 */}
+
+## Full List of Changes
+
+For the complete list of every merged pull request in this release, see the
+[full 2024.4.0 changelog](/changelog/2024.4.0/).

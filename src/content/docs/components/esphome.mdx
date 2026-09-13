@@ -1,6 +1,9 @@
 ---
 description: "Instructions for setting up the core ESPHome configuration."
 title: "ESPHome Core Configuration"
+anchorRedirects:
+  preferences-component: /components/preferences/
+  preferences-flash_write_interval: /components/preferences/
 ---
 
 Here you specify some core information that ESPHome needs to create
@@ -301,47 +304,6 @@ by one of ESPHome's components. This can be useful during development to make ES
 By default, ESPHome does not include any libraries into the project. This means that libraries that are bundled with
 Arduino, such as `Wire` or `EEPROM`, aren't available. If you need to use them, you should list them manually under
 this option. If they are used by another library, they should be listed before the library that uses them.
-
-<span id="preferences-flash_write_interval"></span>
-
-## Preferences Component
-
-This component is used to store data in the flash memory which is persisted across device reboots, e.g. the latest
-state of a light or the accumulated energy used by an appliance.
-
-```yaml
-# Example configuration entry
-preferences:
-  flash_write_interval: 1min
-```
-
-### Configuration variables
-
-- **flash_write_interval** (*Optional*, [Time](/guides/configuration-types#time)): Customize the frequency in which data is
-  flushed to the flash. This setting helps to prevent rapid changes to a component from being quickly
-  written to the flash and wearing it out. Defaults to `1min`. Set to `never` to disable this feature.
-
-- **rtc_storage** (*Optional*, boolean): Only useful on ESP32. Compile RTC-memory-backed preference storage into the
-  firmware even when no other option selects it (options such as `safe_mode`'s and `fast_connect`'s `storage: rtc`
-  enable it automatically). This is intended for external components that request RTC storage through the C++
-  preferences API; without it, such requests fall back to flash (NVS) with a warning in the log. Not available on
-  ESP32 variants without RTC memory (C2 and C61). On ESP8266, RTC storage is integral and always enabled: `true` is
-  accepted (and does nothing), while `false` is rejected since it cannot be disabled.
-
-As all devices have a limited number of flash write cycles, this setting helps to reduce the number of flash writes
-due to quickly changing components. In the past, when components such as `light`, `switch`, `fan` and `globals`
-were changed, the state was immediately committed to flash. The result of this was that the last state of these
-components would always restore to its last state on power loss, however, this has the cost of potentially quickly
-damaging the flash if these components are quickly changed.
-
-A safety feature has thus been implemented to mitigate issues resulting from the limited number of flash write cycles,
-the state is first stored in memory before being flushed to flash after the `flash_write_interval` has passed. This
-results in fewer flash writes, preserving the flash health.
-
-This behavior can be modified by setting `flash_write_interval` to `0s` to commit the changes to flash as soon as possible,
-however, be aware that this may lead to increased flash wearing and a shortened device lifespan!
-
-For [ESP8266](/components/esp8266/), `restore_from_flash` must also be set to `true` for states to be written to flash.
 
 <span id="esphome-changing_node_name"></span>
 
