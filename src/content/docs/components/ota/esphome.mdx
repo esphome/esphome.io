@@ -276,6 +276,22 @@ Without `api:` the running firmware cannot offer encryption, so an `api:` block 
 - Home Assistant asks for the key after step 1 if one was added, and discovers the temporary `api:` device on the
   second path; ignore that, it disappears after step 2.
 
+## Compression
+
+Uploads are compressed automatically; there is nothing to configure. ESP8266 uploads have always been compressed.
+On ESP32, RP2040, LibreTiny and host they are compressed when both the device firmware and the `esphome` command
+line are ESPHome 2026.10.0 or newer; an older device or an older command line simply falls back to an uncompressed
+upload.
+
+- **ESP8266 and RP2040**: a compressed upload is a gzip file. The ESP8266 bootloader and the RP2040 OTA stub
+  inflate it into the application area at reboot, so the reboot after an update takes a little longer (about 1.5 s
+  more on an RP2040 for a 500 KB image) while the upload itself is a third shorter. On the RP2040 the file is staged
+  in the LittleFS region, so a firmware that did not fit there uncompressed may fit now.
+- **ESP32, [LibreTiny](/components/libretiny/) and [host](/components/host/)**: these cannot inflate at boot, so the
+  device inflates the stream while it receives it. On a microcontroller this needs about 5 KB of free heap for the
+  duration of the update; when that is not available the device asks for an uncompressed upload instead. The
+  transfer is about a third smaller, which helps most on a slow link.
+
 ## Updating the partition table on ESP32
 
 On the ESP32 it is possible to modify the partition table with an OTA update. This feature can be used to update devices that can't be flashed via serial and have an old partition table with a small NVS partition. It can also be used to [convert devices running Tasmota to ESPHome](/guides/migrate_sonoff_tasmota). Before you can update the partition table you need to add the option `allow_partition_access: true` to the config and install it to your device.
