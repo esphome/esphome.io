@@ -1,0 +1,191 @@
+---
+title: "DS248x 1-Wire Bus Master"
+description: "Instructions for setting up DS2482-100, DS2482-101, DS2482-800, and DS2484 1-Wire bridge chips in ESPHome."
+---
+import APIRef from '@components/APIRef.astro';
+
+
+The `ds248x` component supports DS2482-100, DS2482-101, DS2482-800, and DS2484 I2C-to-1-Wire bridge chips.
+Configure the bridge itself under `ds248x`, then create one or more [1-Wire bus](/components/one_wire/) entries
+using the `ds248x` platform.
+
+> [!NOTE]
+> Every `ds248x` entry requires a `type:`. The number of available channels is derived from the selected chip type,
+> so `channel_count` is not used.
+
+> [!TIP]
+> If you are using a DS2484 chip with the new unified component, configure it here with `type: ds2484`.
+> The legacy [1-Wire Bus via DS2484](/components/one_wire/ds2484/) page documents the older `one_wire` platform.
+
+## Supported Hardware
+
+- **DS2482-100**: Single-channel 1-Wire master.
+- **DS2482-101**: Single-channel 1-Wire master with sleep pin support.
+- **DS2482-800**: 8-channel 1-Wire master.
+- **DS2484**: Single-channel 1-Wire master with adjustable timing and active pullup resistance settings.
+
+## Component/Hub
+
+The `ds248x` component is an I²C-to-1-Wire bridge. An [I²C Bus](/components/i2c/) must be defined in your
+configuration to use it. The bridge itself is configured under `ds248x`; each entry then exposes one or more
+1-Wire buses via the [`ds248x` platform](#one-wire-bus).
+
+```yaml
+# Example for a single-channel DS2482-100
+ds248x:
+  - id: hub_1wire
+    type: ds2482-100
+
+one_wire:
+  - platform: ds248x
+    ds248x_id: hub_1wire
+    id: hub_1wire_bus
+
+sensor:
+  - platform: dallas_temp
+    one_wire_id: hub_1wire_bus
+    address: 0x1C0000031EDD2A28
+    name: Temperature
+```
+
+### Configuration variables
+
+- **type** (**Required**, string): The DS248x chip variant. One of `ds2482-100`, `ds2482-101`, `ds2482-800`, or
+  `ds2484`.
+- **address** (*Optional*, int): The I²C address of the device. Defaults to `0x18`.
+- **active_pullup** (*Optional*, boolean): Enable the active pullup feature. Useful for long lines or heavier bus
+  loads. Defaults to `false`.
+- **sleep_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): A GPIO pin connected to the `SLPZ`
+  pin. Only available for `ds2482-101` and `ds2484`.
+- **bus_sleep** (*Optional*, boolean): Put the 1-Wire bus to sleep when not in use. Only available for `ds2482-101`
+  and `ds2484`. Defaults to `false`.
+- **hub_sleep** (*Optional*, boolean): Put the bridge chip to sleep when not in use. Requires `sleep_pin` and is only
+  available for `ds2482-101` and `ds2484`. Defaults to `false`.
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID for this DS248x bridge if you
+  need more than one.
+- **i2c_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the [I²C bus](/components/i2c/) to use.
+  Required if you have configured multiple I²C buses.
+
+### DS2484-Specific Options
+
+These options are only available when `type: ds2484` is selected. See the datasheet for the exact timing and
+resistance mappings.
+
+- **reset_low_time** (*Optional*, int): Adjust the reset low time (`tRSTL`). Value from `0` to `15`.
+- **master_sample_time** (*Optional*, int): Adjust the master sample time (`tMSP`). Value from `0` to `15`.
+- **write_0_low_time** (*Optional*, int): Adjust the write-0 low time (`tW0L`). Value from `0` to `15`.
+- **recovery_time** (*Optional*, int): Adjust the recovery time (`tREC0`). Value from `0` to `15`.
+- **active_pullup_resistance** (*Optional*, string): The active pullup resistance. One of `500ohm` or
+  `1000ohm`.
+
+<span id="one-wire-bus"></span>
+
+## 1-Wire Bus
+
+The `one_wire` platform named `ds248x` creates the actual 1-Wire bus instances used by devices such as
+[`dallas_temp`](/components/sensor/dallas_temp/). Create one entry per channel you want to use.
+
+```yaml
+# Example for an 8-channel DS2482-800
+ds248x:
+  - id: ds2482_hub
+    type: ds2482-800
+
+one_wire:
+  - platform: ds248x
+    ds248x_id: ds2482_hub
+    channel: 0
+    id: ow_ch0
+  - platform: ds248x
+    ds248x_id: ds2482_hub
+    channel: 7
+    id: ow_ch7
+
+sensor:
+  - platform: dallas_temp
+    one_wire_id: ow_ch0
+    address: 0x1C0000031EDD2A28
+    name: Temperature CH0
+  - platform: dallas_temp
+    one_wire_id: ow_ch7
+    address: 0x2800000123456789
+    name: Temperature CH7
+```
+
+```yaml
+# Example for a DS2482-101 with sleep support
+ds248x:
+  - id: ds2482_101_hub
+    type: ds2482-101
+    sleep_pin: GPIOXX
+    bus_sleep: true
+    hub_sleep: true
+
+one_wire:
+  - platform: ds248x
+    ds248x_id: ds2482_101_hub
+    id: ds2482_101_bus
+
+sensor:
+  - platform: dallas_temp
+    one_wire_id: ds2482_101_bus
+    address: 0x1C0000031EDD2A28
+    name: Temperature
+```
+
+```yaml
+# Example for a DS2484 with advanced timing options
+ds248x:
+  - id: ds2484_hub
+    type: ds2484
+    active_pullup: true
+    active_pullup_resistance: 500ohm
+    reset_low_time: 8
+    master_sample_time: 8
+    write_0_low_time: 8
+    recovery_time: 8
+
+one_wire:
+  - platform: ds248x
+    ds248x_id: ds2484_hub
+    id: ds2484_bus
+```
+
+### Configuration variables
+
+- **ds248x_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the parent `ds248x` component.  Required if there is more than one `ds248x` component.
+- **channel** (*Optional*, int): The channel index to use. Defaults to `0`. For `ds2482-800`, valid values are
+  `0` to `7`. For `ds2482-100`, `ds2482-101`, and `ds2484`, leave this omitted or set it to `0`.
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the 1-Wire bus. Required if
+  you have configured multiple 1-Wire buses.
+
+## Finding Sensor Addresses
+
+To find the addresses of your 1-Wire devices, upload a configuration with the `ds248x` and `one_wire` components set
+up and check the logs during boot. Scanning also works before you define any `sensor` entries.
+
+```text
+[I][one_wire:161]:   Found device 0x1C0000031EDD2A28
+```
+
+Copy the discovered 64-bit address into the matching device configuration, for example in
+[`dallas_temp`](/components/sensor/dallas_temp/).
+
+## I2C Address Reference
+
+The I2C address depends on the chip variant and the state of its address pins.
+
+| Chip | Address Pins | Default Address | Address Range |
+| --- | --- | --- | --- |
+| DS2482-100 | AD0, AD1 | `0x18` | `0x18` to `0x1B` |
+| DS2482-101 | AD0 | `0x18` | `0x18` to `0x19` |
+| DS2482-800 | AD0, AD1, AD2 | `0x18` | `0x18` to `0x1F` |
+| DS2484 | AD0, AD1 | `0x18` | `0x18` to `0x1B` |
+
+## See Also
+
+- [1-Wire Bus](/components/one_wire/)
+- [I²C Bus](/components/i2c/)
+- [Dallas Temperature Sensor](/components/sensor/dallas_temp/)
+- [Guidelines for Reliable Long Line 1-Wire Networks](https://www.analog.com/en/technical-articles/guidelines-for-reliable-long-line-1wire-networks.html)
+- <APIRef text="one_wire_bus.h" path="one_wire/one_wire_bus.h" />

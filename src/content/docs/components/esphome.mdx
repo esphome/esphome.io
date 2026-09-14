@@ -1,6 +1,9 @@
 ---
 description: "Instructions for setting up the core ESPHome configuration."
 title: "ESPHome Core Configuration"
+anchorRedirects:
+  preferences-component: /components/preferences/
+  preferences-flash_write_interval: /components/preferences/
 ---
 
 Here you specify some core information that ESPHome needs to create
@@ -14,8 +17,6 @@ esphome:
     comment: Living room ESP32 controller
     area: Living Room
 ```
-
-<span id="esphome-configuration_variables"></span>
 
 ## Configuration variables
 
@@ -48,18 +49,21 @@ Advanced options:
 - **platformio_options** (*Optional*, mapping): Additional options to pass over to PlatformIO in the
   platformio.ini file. See [`platformio_options`](#esphome-platformio_options).
 
+- **build_flags** (*Optional*, list of strings): Extra compiler flags to add to the build. Works on
+  both the PlatformIO and native ESP-IDF backends. See [`build_flags`](#build_flags).
+
 - **environment_variables** (*Optional*, mapping): Environment variables to set during the build process.
   See [`environment_variables`](#esphome-environment_variables).
 
 - **includes** (*Optional*, list of files): A list of C/C++ files to include in the (auto-generated) `main` file.
   The paths in this list are relative to the directory where the YAML configuration file is located or `<...>` includes.
-  See [`includes`](#esphome-includes).
+  See [`includes`](#includes).
 
 - **includes_c** (*Optional*, list of files): The same as `includes` but for files that require C linkage. All includes
-  will be wrapped in `extern "C" {}`. See [`includes`](#esphome-includes).
+  will be wrapped in `extern "C" {}`. See [`includes`](#includes).
 
 - **libraries** (*Optional*, list of libraries): A list of libraries to include in the project. See
-  [`libraries`](#esphome-libraries).
+  [`libraries`](#libraries).
 
 - **comment** (*Optional*, string): Additional text information about this node. Only for display in UI.
 - **name_add_mac_suffix** (*Optional*, boolean): Appends the last 3 bytes of the mac address of the device to
@@ -82,6 +86,8 @@ Advanced options:
   Defaults to the number of cores of the CPU which is also the maximum you can set.
 
 - **debug_scheduler** (*Optional*, boolean): If set, the scheduler will print debug information about scheduled tasks at log level DEBUG.
+- **merge_warnings** (*Optional*, boolean): Whether to warn when a YAML merge key (`<<:`)
+  silently drops a key. Defaults to `true`. See [Merge key warnings](#esphome-merge_warnings).
 - **areas** (*Optional*, list of [Area Configuration](#esphome-area)): Additional areas that can be referenced by devices.
 - **devices** (*Optional*, list of [Sub-Devices](#esphome-devices)): Sub-devices to group entities under.
 
@@ -191,6 +197,29 @@ esphome:
     board_build.f_flash: 80000000L
 ```
 
+## `build_flags`
+
+The `build_flags` option lets you add extra compiler flags to the build. Unlike
+`platformio_options.build_flags`, this option also works on the native ESP-IDF build (for variants
+that use it, such as ESP32-P4 and ESP32-H2), and is the recommended way to pass extra flags when
+you want a configuration that works on both backends.
+
+```yaml
+# Example configuration entry
+esphome:
+  # ...
+  build_flags:
+    - "-DMY_CUSTOM_DEFINE"
+    - "-Wno-error=maybe-uninitialized"
+```
+
+Flags are processed as follows:
+
+- `-D...` and `-W...` (non-linker warning) flags are applied project-wide on the IDF backend so
+  they reach every component, including managed ones.
+- `-Wl,...` linker flags are applied to the link step.
+- On the PlatformIO backend, flags are written to `build_flags` in `platformio.ini`.
+
 <span id="esphome-environment_variables"></span>
 
 ## `environment_variables`
@@ -211,8 +240,6 @@ esphome:
 > [!NOTE]
 > Environment variables set here are only available during the build process. They do not affect
 > the runtime behavior of your device.
-
-<span id="esphome-includes"></span>
 
 ## `includes`
 
@@ -247,8 +274,6 @@ This option behaves differently depending on what the included file is pointing 
    AND compiled into the binary. This way implementation of classes and functions in header files can
    be provided.
 
-<span id="esphome-libraries"></span>
-
 ## `libraries`
 
 The `libraries` option allows you to include libraries in the PlatformIO project. These libraries will then be
@@ -279,40 +304,6 @@ by one of ESPHome's components. This can be useful during development to make ES
 By default, ESPHome does not include any libraries into the project. This means that libraries that are bundled with
 Arduino, such as `Wire` or `EEPROM`, aren't available. If you need to use them, you should list them manually under
 this option. If they are used by another library, they should be listed before the library that uses them.
-
-<span id="preferences-flash_write_interval"></span>
-
-## Preferences Component
-
-This component is used to store data in the flash memory which is persisted across device reboots, e.g. the latest
-state of a light or the accumulated energy used by an appliance.
-
-```yaml
-# Example configuration entry
-preferences:
-  flash_write_interval: 1min
-```
-
-### Configuration variables
-
-- **flash_write_interval** (*Optional*, [Time](/guides/configuration-types#time)): Customize the frequency in which data is
-  flushed to the flash. This setting helps to prevent rapid changes to a component from being quickly
-  written to the flash and wearing it out. Defaults to `1min`. Set to `never` to disable this feature.
-
-As all devices have a limited number of flash write cycles, this setting helps to reduce the number of flash writes
-due to quickly changing components. In the past, when components such as `light`, `switch`, `fan` and `globals`
-were changed, the state was immediately committed to flash. The result of this was that the last state of these
-components would always restore to its last state on power loss, however, this has the cost of potentially quickly
-damaging the flash if these components are quickly changed.
-
-A safety feature has thus been implemented to mitigate issues resulting from the limited number of flash write cycles,
-the state is first stored in memory before being flushed to flash after the `flash_write_interval` has passed. This
-results in fewer flash writes, preserving the flash health.
-
-This behavior can be modified by setting `flash_write_interval` to `0s` to commit the changes to flash as soon as possible,
-however, be aware that this may lead to increased flash wearing and a shortened device lifespan!
-
-For [ESP8266](/components/esp8266/), `restore_from_flash` must also be set to `true` for states to be written to flash.
 
 <span id="esphome-changing_node_name"></span>
 
@@ -396,6 +387,38 @@ available in a newer version of ESPHome. This allows for a more friendly error m
 # Example configuration
 esphome:
   min_version: 2025.11.0
+```
+
+<span id="esphome-merge_warnings"></span>
+
+## Merge key warnings
+
+YAML merge keys (`<<:`), often combined with `!include`, merge mappings *shallowly*
+following the [YAML merge spec](https://yaml.org/type/merge.html): each key is inserted
+only if it does not already exist, and the first definition wins. This means that if two
+merged-in files both define the same top-level key, the second one is **dropped entirely**
+rather than combined:
+
+```yaml
+# main.yaml
+<<: !include a.yaml   # defines api: { reboot_timeout: 5min }
+<<: !include b.yaml   # also defines api: { encryption: ... }  -> silently dropped
+```
+
+In the example above only the `api:` block from `a.yaml` survives; the one from `b.yaml`
+is discarded. By default ESPHome prints a warning whenever this happens so the data loss
+is not silent.
+
+If you want to *combine* sections instead of having one win, use [`packages:`](/components/packages/),
+which performs a recursive deep merge.
+
+To silence the warning (for example when the drop is intentional), set `merge_warnings` to
+`false`:
+
+```yaml
+esphome:
+  name: my_device
+  merge_warnings: false
 ```
 
 <span id="esphome-area"></span>

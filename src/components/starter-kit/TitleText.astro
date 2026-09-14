@@ -1,0 +1,71 @@
+---
+const { ...attrs } = Astro.props;
+const hasText = Astro.slots.has("text");
+---
+
+<div class="container block-title-text">
+  <div class="title-container fade-up">
+    <slot name="title" class="title" {...attrs} />
+  </div>
+  {
+    hasText && (
+      <div class="content-container fade-up" data-delay="150">
+        <slot name="text" {...attrs} />
+      </div>
+    )
+  }
+</div>
+
+<style lang="scss">
+  @use "../../styles/mixins" as *;
+
+  .container {
+    flex-direction: column;
+    gap: 1.25rem;
+    padding-bottom: 0.75rem;
+
+    @include bp(tablet) {
+      flex-direction: row;
+      gap: 1.5rem;
+      align-items: flex-end;
+      padding-bottom: 2.5rem;
+    }
+
+    &.block-title-text {
+      padding-bottom: 0.75rem;
+
+      @include bp(tablet) {
+        padding-bottom: 2.5rem;
+      }
+    }
+  }
+
+  .title-container,
+  .content-container {
+    width: 100%;
+
+    @include bp(tablet) {
+      width: 50%;
+    }
+  }
+
+  .title-container {
+    :global(h2),
+    :global(h3) {
+      @include fluid(28, 48);
+    }
+  }
+
+  .content-container {
+    :global(p) {
+      margin: 0;
+      @include fluid(16, 24);
+      margin-bottom: 1.25rem;
+      line-height: 1.2;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
+</style>

@@ -21,10 +21,11 @@ Communication with the device is over [I²C](/components/i2c), which must be pre
 
 This sensor provides a 16-bit dynamic range for ambient light detection ranging from 0 lx to nearly 18 klx, with a
 resolution as small as 0.0021 lx/counts. It achieves that range by having two configurable `gain` values and a range
-of integration times. For many applications, you can enable auto gain to have ESPHome select a suitable gain setting
-based on the previous measurement. If light levels change dramatically, the next reading may saturate, after which the
-gain will be adjusted to bring subsequent readings back in range. In general, use higher gain values and/or longer
-integration times when measuring less intense light sources.
+of integration times. For many applications, you can enable auto gain to have ESPHome select suitable gain and
+integration time settings based on the measured light level. When a reading falls outside the configured thresholds,
+ESPHome recalculates the settings and takes a fresh measurement before publishing a value, so even dramatic changes
+in light level are handled within a single update. In general, use higher gain values and/or longer integration
+times when measuring less intense light sources.
 
 This Wikipedia [article](https://en.wikipedia.org/wiki/Lux) has a table of some lux values for comparison.
 
@@ -79,13 +80,13 @@ sensor:
 
 - **auto_gain_threshold_high** (*Optional*, percentage): A percentage of the maximum possible lux measurement given the
   current gains and integration time; when the lux measurement climbs above this value, the `gain`, `digital_gain`
-  and `integration_time` values will be reset and recalculated to avoid saturation and maximize resolution. The
-  default value is `90%`.
+  and `integration_time` values will be recalculated to avoid saturation and maximize resolution. Must be greater
+  than `auto_gain_threshold_low`. The default value is `90%`.
 
 - **auto_gain_threshold_low** (*Optional*, percentage): A percentage of the maximum possible lux measurement given the
   current gains and integration time; when the lux measurement falls below this value, the `gain`, `digital_gain`
-  and `integration_time` values will be reset and recalculated to avoid saturation and maximize resolution. The
-  default value is `20%`.
+  and `integration_time` values will be recalculated to maximize resolution. Must be less than
+  `auto_gain_threshold_high`. The default value is `20%`.
 
 - All other options from [Sensor](/components/sensor).
 

@@ -5,65 +5,10 @@ pagefind: false
 slug: "changelog/2024.10.0"
 ---
 
-import ImgTable from "@components/ImgTable.astro";
-
-<ImgTable items={[
-  ["Audio DAC Core","/components/audio_dac/index","audio_dac.svg"],
-  ["AIC3204","/components/audio_dac/aic3204","aic3204.svg"],
-  ["GP2Y1010AU0F","/components/sensor/gp2y1010au0f","gp2y1010au0f.png"],
-  ["Grove Gas V2","/components/sensor/grove_gas_mc_v2","grove-gas-mc-v2.png"],
-  ["NAU7802","/components/sensor/nau7802","nau7802.jpg"],
-  ["NPI-19","/components/sensor/npi19","npi19.jpg"],
-  ["TCA9555","/components/tca9555","tca9555.svg"],
-  ["TE-M3200","/components/sensor/tem3200","tem3200.jpg"]
-]} />
-
-## Web Server Grouping
-
-For those that use the [Web Server](/components/web_server/) with version 3, there is a new
-grouping feature that allows for custom/user defined groups of entities.
-
-This is also a breaking change as the previous `web_server_sorting_weight` has been moved into a new
-`web_server` -> `sorting_weight` configuration entry for the entity.
-
-Please see [Entity sorting](/components/web_server#config-webserver-sorting) for the latest documentation on these features.
-
-## ESP32 Advanced MAC Address Configuration
-
-ESPHome now supports reading a custom MAC address from the ESP32 eFuse blocks and will read and use it by default if
-there is data burned into the eFuses. If you would like to disable this, or the eFuse has data burned that is not a
-MAC address into those eFuses, then you can add `ignore_efuse_custom_mac: true` to your ESP32 `advanced`
-configuration. See [ESP32 Advanced Configuration](/components/esp32#esp32-advanced_configuration) for more details.
-
-## CSE7766 Breaking Changes
-
-The [Cse7766](/components/sensor/cse7766/) now requires even parity in configuration. There are some chips that
-work without `EVEN`, but the majority of newer chips seem to require it and the older ones work fine with it set as
-well so to make it consistent across all devices the component now requires it.
+Read the [ESPHome 2024.10.0 release notes](/blog/2024/10/16/esphome-2024-10/) on the blog for the release
+overview, feature highlights, upgrade checklist, and breaking changes.
 
 {/* markdownlint-disable MD013 */}
-
-## Release 2024.10.1 - October 22
-
-- [config] Fix crash with empty substitutions block [esphome#7612](https://github.com/esphome/esphome/pull/7612) by [@clydebarrow](https://github.com/clydebarrow)
-- Fix broken ibeacon_uuid config in ble_rssi [esphome#7640](https://github.com/esphome/esphome/pull/7640) by [@lennart-k](https://github.com/lennart-k)
-- auto-load preferences [esphome#7642](https://github.com/esphome/esphome/pull/7642) by [@ssieb](https://github.com/ssieb)
-- [wifi] Support custom MAC on Arduino, too [esphome#7644](https://github.com/esphome/esphome/pull/7644) by [@kbx81](https://github.com/kbx81)
-- [config] Ensure user-supplied build flags don't get silently overwritten [esphome#7622](https://github.com/esphome/esphome/pull/7622) by [@clydebarrow](https://github.com/clydebarrow)
-- [lvgl] Remove states from style definitions (Bugfix) [esphome#7645](https://github.com/esphome/esphome/pull/7645) by [@clydebarrow](https://github.com/clydebarrow)
-- Move setting global voice assistant to constructor [esphome#7630](https://github.com/esphome/esphome/pull/7630) by [@synesthesiam](https://github.com/synesthesiam)
-
-## Release 2024.10.2 - October 24
-
-- Humanized the missing MQTT log topic error message [esphome#7634](https://github.com/esphome/esphome/pull/7634) by [@solarkennedy](https://github.com/solarkennedy)
-- [lvgl] Some properties were not templatable (Bugfix) [esphome#7655](https://github.com/esphome/esphome/pull/7655) by [@clydebarrow](https://github.com/clydebarrow)
-- [voice_assistant] Bugfix: Fix crash on start [esphome#7662](https://github.com/esphome/esphome/pull/7662) by [@kahrendt](https://github.com/kahrendt)
-
-## Release 2024.10.3 - November 8
-
-- [rpi_dpi_rgb] Fix get_width and height (Bugfix) [esphome#7675](https://github.com/esphome/esphome/pull/7675) by [@clydebarrow](https://github.com/clydebarrow)
-- Fixes modbus timing error [esphome#7674](https://github.com/esphome/esphome/pull/7674) by [@exciton](https://github.com/exciton)
-- [lvgl] Ensure images are configured before using them. (Bugfix) [esphome#7721](https://github.com/esphome/esphome/pull/7721) by [@clydebarrow](https://github.com/clydebarrow)
 
 ## Full list of changes
 

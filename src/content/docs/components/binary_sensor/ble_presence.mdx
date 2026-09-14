@@ -1,6 +1,6 @@
 ---
-description: "Instructions for setting up BLE binary sensors for the ESP32."
-title: "ESP32 Bluetooth Low Energy Device"
+description: "Instructions for setting up BLE presence binary sensors in ESPHome."
+title: "Bluetooth Low Energy Device"
 ---
 
 import { Image } from 'astro:assets';
@@ -76,15 +76,17 @@ binary_sensor:
 - **timeout** (*Optional*, [Time](/guides/configuration-types#time)): The delay after last detecting the device before publishing not present state.
    The default is 5 minutes.
 
+- **ble_hub_id** (*Optional*, [ID](/guides/configuration-types#id)): The BLE tracker
+  hub to receive advertisements from. Auto-generated when only one tracker is configured;
+  set it explicitly to disambiguate multiple trackers. Replaces the former `esp32_ble_id`
+  key, which still works as a deprecated alias until ESPHome 2027.2.0.
 - All other options from [Binary Sensor](/components/binary_sensor#config-binary_sensor).
-
-<span id="esp32_ble_tracker-setting_up_devices"></span>
 
 ## Setting Up Devices
 
 To set up binary sensors for specific BLE beacons you first have to know which MAC address
 to track. Most devices show this screen in some settings menu. If you don't know the MAC address,
-however, you can use the `esp32_ble_tracker` hub without any binary sensors attached and read through
+however, you can use the BLE tracker hub without any binary sensors attached and read through
 the logs to see discovered Bluetooth Low Energy devices.
 
 ```yaml
