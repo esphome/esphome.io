@@ -102,6 +102,7 @@ the pins used to interface to the display to be specified.
 | WAVESHARE-ESP32-S3-TOUCH-AMOLED-1.64 | Waveshare    | [https://www.waveshare.com/ESP32-S3-Touch-AMOLED-1.64.htm](https://www.waveshare.com/ESP32-S3-Touch-AMOLED-1.64.htm)               |
 | WAVESHARE-ESP32-S3-TOUCH-AMOLED-1.75 | Waveshare    | [https://www.waveshare.com/esp32-s3-touch-amoled-1.75.htm](https://www.waveshare.com/esp32-s3-touch-amoled-1.75.htm)               |
 | WAVESHARE-ESP32-S3-TOUCH-AMOLED-2.16 | Waveshare    | [https://www.waveshare.com/esp32-s3-touch-amoled-2.16.htm](https://www.waveshare.com/esp32-s3-touch-amoled-2.16.htm)               |
+| WAVESHARE-ESP32-S3-TOUCH-LCD-1.46 | Waveshare | [ESP32-S3-Touch-LCD-1.46](https://www.waveshare.com/wiki/ESP32-S3-Touch-LCD-1.46B) |
 | WAVESHARE-ESP32-S3-TOUCH-LCD-3.49    | Waveshare    | [https://www.waveshare.com/esp32-s3-touch-lcd-3.49.htm](https://www.waveshare.com/esp32-s3-touch-lcd-3.49.htm)                     |
 | WAVESHARE-ESP32-S3-TOUCH-LCD-3.5B    | Waveshare    | [https://www.waveshare.com/esp32-s3-touch-lcd-3.5b.htm](https://www.waveshare.com/esp32-s3-touch-lcd-3.5b.htm)                     |
 | WT32-SC01-PLUS                       | Wireless-Tag | [https://www.wireless-tag.com/portfolio/wt32-sc01-plus/](https://www.wireless-tag.com/portfolio/wt32-sc01-plus/)                   |
@@ -254,3 +255,37 @@ A touchscreen, if present, must be configured separately. See the [Touchscreen](
 - [Display Component](/components/display/)
 - [LVGL Graphics](/components/lvgl/)
 - <APIRef text="mipi_spi.h" path="mipi_spi/mipi_spi.h" />
+
+## Waveshare ESP32-S3-Touch-LCD-1.46
+
+This board uses a 412×412 SPD2010 panel over quad SPI. The model defaults to RGB565, SPI mode 0, 40MHz,
+and four-pixel draw rounding. Keep `draw_rounding: 4` when using LVGL. Hardware mirroring is supported;
+axis swapping requires software rotation.
+
+The LCD reset signal is on pin 1 of the board's [PCA9554 GPIO expander](/components/pca9554/).
+The display model selects that pin automatically when a single PCA9554 is configured. Declare the
+expander on the board's I²C bus and configure the display as follows:
+
+```yaml
+i2c:
+  sda: GPIO11
+  scl: GPIO10
+
+pca9554:
+  - id: board_expander
+
+spi:
+  type: quad
+  clk_pin: GPIO40
+  data_pins: [GPIO46, GPIO45, GPIO42, GPIO41]
+
+display:
+  - platform: mipi_spi
+    model: WAVESHARE-ESP32-S3-TOUCH-LCD-1.46
+    id: main_display
+```
+
+The PCA9554 defaults to address `0x20`. The display model uses GPIO21 for chip select and PCA9554 pin 1
+for hardware reset; the driver manages the required reset and sleep-out sequencing.
+The backlight is controlled separately on GPIO5. For touch input, use the
+[SPD2010 touchscreen](/components/touchscreen/spd2010/).

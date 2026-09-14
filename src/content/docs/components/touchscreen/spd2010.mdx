@@ -1,0 +1,52 @@
+---
+title: "SPD2010 Touchscreen"
+description: "Configure the SPD2010 I²C capacitive touchscreen controller in ESPHome."
+---
+
+import APIRef from '@components/APIRef.astro';
+
+The `spd2010` touchscreen platform supports the capacitive touch controller used on the Waveshare
+ESP32-S3-Touch-LCD-1.46. It requires an [I²C bus](/components/i2c/) and a
+[display](/components/display/). The default calibration covers the board's 412×412 display.
+
+```yaml
+touchscreen:
+  - platform: spd2010
+    display: main_display
+```
+
+## Configuration Variables
+
+- **interrupt_pin** (*Optional*, [Pin Schema](/guides/configuration-types/#pin-schema)):
+  The controller's interrupt pin. Must be an internal GPIO. When omitted, the controller is polled.
+- **reset_pin** (*Optional*, [Pin Schema](/guides/configuration-types/#pin-schema)):
+  The controller's active-low reset pin. GPIO expanders are supported. Omit this if the board handles touch reset.
+- **address** (*Optional*, int): I²C address. Defaults to `0x53`.
+- **update_interval** (*Optional*, Time): Polling interval when no interrupt pin is configured. Defaults to `50ms`.
+- **calibration** (*Optional*): Defaults to `x_min: 0`, `x_max: 411`, `y_min: 0`, and `y_max: 411`.
+  Override these values for other panel dimensions.
+- All other options from [Touchscreen](/components/touchscreen/#config-touchscreen).
+
+## Waveshare ESP32-S3-Touch-LCD-1.46
+
+Use the board's I²C bus on SDA GPIO11 and SCL GPIO10. The interrupt signal is GPIO4.
+With the [MIPI SPI display](/components/display/mipi_spi/)
+configured as `main_display`, use:
+
+```yaml
+touchscreen:
+  - platform: spd2010
+    display: main_display
+    interrupt_pin:
+      number: GPIO4
+      mode: INPUT_PULLUP
+```
+
+The driver reports each contact using its controller ID and releases contacts when their strength becomes zero.
+Use ESPHome's touchscreen automations or LVGL for gestures.
+
+## See Also
+
+- [Touchscreen](/components/touchscreen/)
+- [MIPI SPI Display](/components/display/mipi_spi/)
+- <APIRef text="spd2010_touchscreen.h" path="spd2010/spd2010_touchscreen.h" />
