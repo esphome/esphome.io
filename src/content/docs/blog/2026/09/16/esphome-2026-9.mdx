@@ -62,14 +62,15 @@ package phase drops from 36% of build time to 25% on CI benchmarks, and the dock
 ~100s to ~46s), and a sweep across 60 files pushes 211 conditional log string literals off ESP8266 RAM into
 flash.
 
-Beyond the platform work, this release adds Noise (ChaCha20-Poly1305) encryption for OTA updates, brings
-Improv provisioning to Ethernet-only boards, teaches WiFi provisioning to shut down the AP and captive portal
-when the window closes, and rewrites IR transmission on Beken and Realtek chips to run from a hardware timer
-interrupt instead of a busy-wait. The multi-release modbus overhaul continues with a heap-free write path, a
-consolidated range-join option, and continuous polling. Six new components (ds1603l, d01, sfa40, mk2pvrouter,
-snapshot, noise) and roughly a dozen feature additions to existing components round out the release. The bundled
-Device Builder masks credentials in the YAML diff view, boots ESP32-C6 boards after a browser flash, and lets paired
-build servers recover from an address change on their own.
+Beyond the platform work, this release adds Noise (ChaCha20-Poly1305) encryption for OTA updates, cuts what
+encryption costs in flash by close to half on every platform, brings Improv provisioning to Ethernet-only
+boards, teaches WiFi provisioning to shut down the AP and captive portal when the window closes, and rewrites
+IR transmission on the BK7238 and RTL8720C to run from a hardware timer interrupt instead of a busy-wait. The
+multi-release modbus overhaul continues with a heap-free write path, a consolidated range-join option, and
+continuous polling. Six new components (ds1603l, d01, sfa40, mk2pvrouter, snapshot, noise) and
+around twenty feature additions to existing components round out the release. The bundled Device Builder
+masks credentials in the YAML diff view, boots ESP32-C6 boards after a browser flash, and lets paired build
+servers recover from an address change on their own.
 {/* RELEASE_OVERVIEW_END */}
 
 ## Upgrade Checklist
@@ -133,7 +134,13 @@ leg, and the CI compile-test image now compresses with multithreaded zstd instea
 ([#18812](https://github.com/esphome/esphome/pull/18812)), taking another 40s off the pipeline. ESP-IDF native
 builds also now cache the discovered component list inside the extracted framework directory
 ([#18752](https://github.com/esphome/esphome/pull/18752)), skipping a full CMake configure pass on every rebuild
-after an sdkconfig change (~2.2s on desktop, several times more on SBCs).
+after an sdkconfig change (~2.2s on desktop, several times more on SBCs). PlatformIO also checks whether each
+registry library is a private package before it looks at its own cache; on any machine without a PlatformIO
+login that check sleeps half a second under the account client's rate limit and then fails. ESPHome never uses
+private packages, so it now answers the check itself, cutting a no-op rebuild of a six-library config from
+2.9s to 0.4s ([#18823](https://github.com/esphome/esphome/pull/18823)). When two
+builds want the same archive at once, the waiting one shows the other's download progress instead of
+sitting at 0% ([#18983](https://github.com/esphome/esphome/pull/18983)).
 
 ## ESP8266 RAM Savings
 
@@ -215,6 +222,19 @@ the Docker container reaps orphaned processes when running as PID 1
 ([#2636](https://github.com/esphome/device-builder/pull/2636)), and version history ignores the fake executable bit
 Samba puts on files edited from Windows ([#2646](https://github.com/esphome/device-builder/pull/2646)).
 
+Later builds keep OTA encryption in step with the API key: rewriting a static API key replaces a duplicated
+`ota: encryption: key:` with the bare block that inherits it
+([#2665](https://github.com/esphome/device-builder/pull/2665)), and devices that already offer OTA encryption are
+nudged toward `ota: encryption:` ([frontend#1714](https://github.com/esphome/device-builder-frontend/pull/1714)).
+The catalog picker renders only while its dialog is open, with one picker per automation editor and one
+navigator per page
+([frontend#1698](https://github.com/esphome/device-builder-frontend/pull/1698),
+[frontend#1710](https://github.com/esphome/device-builder-frontend/pull/1710),
+[frontend#1715](https://github.com/esphome/device-builder-frontend/pull/1715)), platform-scoped component
+triggers resolve by the instance's platform ([#2671](https://github.com/esphome/device-builder/pull/2671),
+[frontend#1720](https://github.com/esphome/device-builder-frontend/pull/1720)), and the JSON config endpoint
+serialises non-string keys ([#2660](https://github.com/esphome/device-builder/pull/2660)).
+
 ## Encrypted OTA Updates
 
 [@bdraco](https://github.com/bdraco) adds Noise (ChaCha20-Poly1305) encryption to the `esphome` OTA platform
@@ -233,6 +253,29 @@ sits on top of a new shared `noise` component ([#18490](https://github.com/espho
 lifts the noise-c dependency, HWRNG binding, error strings, PSK context, encryption key validation and the
 handshake responder out of the api component so both api and ota can share them; there is no user
 configuration for `noise` itself.
+
+## Smaller And Faster Encryption
+
+The noise-c and libsodium forks behind API and OTA encryption had only been lightly adapted for embedded
+targets. [@bdraco](https://github.com/bdraco) went through them in full, cut them by nearly half in size and
+made them faster in most cases ([#18989](https://github.com/esphome/esphome/pull/18989),
+[#19030](https://github.com/esphome/esphome/pull/19030), [#19062](https://github.com/esphome/esphome/pull/19062)).
+The ESP8266 and RP2040 now run X25519 on 13-bit limb arithmetic that needs no 64-bit products, the Ed25519
+base point table shrank from 30 KB to 12 KB on every platform, the SHA256 transform is compact on every
+platform and, on the ESP32 and RP2040, two to three times faster when cold, and on the ESP8266 the
+ChaCha20-Poly1305 transport is a quarter cheaper per packet with its constants out of DRAM. What turning on
+API encryption costs in 2026.8.0 and in this release, static RAM being the image's own data, not
+per-connection heap:
+
+| Board | Flash 2026.8.0 | Flash 2026.9.0 | Static RAM 2026.8.0 | Static RAM 2026.9.0 |
+| --- | --- | --- | --- | --- |
+| ESP8266 d1 mini | 80.9 KB | 41.9 KB | 1376 B | 48 B |
+| ESP32 AtomU (IDF) | 65.9 KB | 37.7 KB | 56 B | 32 B |
+| Pico W (RP2040) | 65.5 KB | 34.7 KB | 48 B | 24 B |
+
+A Noise handshake drops from about 580ms to about 300ms on the ESP8266 and from 63ms to 46ms on the ESP32, and
+20 encrypted API connects to a d1 mini by IP with WiFi power save off go from a 496-584ms median and 359ms
+best on 2026.8.0 to a 309-382ms median and 212ms best. Nothing to configure.
 
 ## Improv Serial Beyond WiFi
 
@@ -259,16 +302,18 @@ configured with an access point and no station credentials.
 
 ## ISR-Driven IR Transmission On LibreTiny
 
-[@kbx81](https://github.com/kbx81) rewrites `remote_transmitter` on Beken BK7231N/BK7238 and Realtek RTL8720C
+[@kbx81](https://github.com/kbx81) rewrites `remote_transmitter` on the Beken BK7238 and Realtek RTL8720C
 to pace the IR envelope with a hardware timer interrupt chain instead of a priority-boosted busy-wait
 ([#18648](https://github.com/esphome/esphome/pull/18648),
 [#18660](https://github.com/esphome/esphome/pull/18660)). Interrupts stay enabled throughout, so WiFi and
 lwIP tasks run normally during long transmissions and `remote_receiver` decodes the device's own frames off
-the air during a send. `non_blocking:` is now supported on both families (previously ESP32-RMT only): the
+the air during a send. `non_blocking:` is now supported on those two chips (previously ESP32-RMT only): the
 send returns immediately after arming the chain and `on_complete` fires from `loop()`. Bench measurements on
 an RM4 Pro (RTL8720CF) show 25.01-25.09ms repeat gaps for a configured 25ms (tighter than the busy-wait's
 25.02-25.05ms) and 27 captured transmissions all bit-perfect; an FK UFO-R4 (BK7238) measured 16-30us
-duty-apply latency and 39/39 bit-perfect NEC envelopes.
+duty-apply latency and 39/39 bit-perfect NEC envelopes. The BK7231N keeps the bit-bang implementation it had
+before, since its SDK snapshot lacks the PWM driver interface the interrupt chain needs
+([#18958](https://github.com/esphome/esphome/pull/18958)).
 
 ## Modbus Controller Overhaul
 
@@ -379,6 +424,16 @@ Six new components join the tree:
 - **[rp2_ble_tracker automation](/components/bluetooth_proxy/)** by
   [@Bl00d-B0b](https://github.com/Bl00d-B0b) wires the shared BLE automation surface onto the RP2 tracker
   ([#18717](https://github.com/esphome/esphome/pull/18717))
+- **[esp32_hosted](/components/esp32_hosted/)** by [@jesserockz](https://github.com/jesserockz) gains ESP-NOW on
+  the ESP32-P4: the host forwards every `esp_now_*` call to the co-processor over esp-hosted, so `espnow:` works
+  unchanged on boards like the M5Stack Tab5 once the co-processor runs the matching esp-hosted firmware
+  ([#17712](https://github.com/esphome/esphome/pull/17712))
+- **[esp32_ble](/components/esp32_ble/)** by [@jesserockz](https://github.com/jesserockz) reference counts
+  advertising, so a device that only uses `esp32_improv` stops advertising once provisioning ends instead of
+  showing up in every phone's Bluetooth list forever ([#18943](https://github.com/esphome/esphome/pull/18943))
+- **[sendspin media source](/components/media_source/sendspin/)** by [@kahrendt](https://github.com/kahrendt)
+  adds a `codecs` option that sets which audio codecs the media source advertises, in order of preference
+  ([#19047](https://github.com/esphome/esphome/pull/19047))
 
 ## Networking And Diagnostics
 
@@ -390,7 +445,18 @@ because holding the shared radio for over a second at a time starves WiFi and ca
 ([#18725](https://github.com/esphome/esphome/pull/18725)). `espota2` now logs the erase-prepare window
 separately from the upload window and reports total OTA time
 ([#18582](https://github.com/esphome/esphome/pull/18582)), so users see why there is a silent pause after the
-handshake instead of interpreting it as a stall.
+handshake instead of interpreting it as a stall. On a lossy link an OTA upload could give up moments before a
+lost chunk acknowledgement was retransmitted; the device now waits 105s for data and the CLI 160s for an
+acknowledgement, so a retry always finds the device free
+([#19041](https://github.com/esphome/esphome/pull/19041)).
+
+On the ESP8266, LEAmDNS could free the same packet buffer twice when an mDNS packet arrived while a send was
+failing, corrupting the heap right as Home Assistant connected; its main loop calls are now guarded against
+that re-entrancy ([#18990](https://github.com/esphome/esphome/pull/18990)). The logger's UART on the ESP32-S3
+now runs from the XTAL clock, which stops the garbled stack traces the APB clock produced
+([#17939](https://github.com/esphome/esphome/pull/17939)), and the `debug` component reports the reboot source
+after a watchdog-flavoured `esp_restart()` and no longer prints an empty source
+([#17537](https://github.com/esphome/esphome/pull/17537)).
 
 ## ESP32 Custom eFuse MAC Applied Consistently
 
@@ -412,12 +478,40 @@ PRs [#18338](https://github.com/esphome/esphome/pull/18338) through
 `from __future__ import annotations`, every annotation is evaluated at import time, so the sweep also had to
 add every missing import for the names it introduced; an all-modules import check pins that. No behaviour
 changes.
+
+## Other Fixes
+
+Audio on ESP32 got a round of fixes: a speaker start request that arrived while the previous task was still
+stopping is kept instead of dropped ([#19027](https://github.com/esphome/esphome/pull/19027)), the I2S driver is
+no longer started a second time while the bus lock is still held, which cost a one second delay before playback
+([#19045](https://github.com/esphome/esphome/pull/19045)), the MP3 decoder treats a mid-stream format notice as
+the recoverable status it is instead of ending playback
+([#19028](https://github.com/esphome/esphome/pull/19028)), the audio components check their buffers through a
+locked pointer or a null test instead of `use_count()`
+([#19046](https://github.com/esphome/esphome/pull/19046)), and a running `StaticTask` is suspended before its
+stack is freed, closing a use-after-free ([#19048](https://github.com/esphome/esphome/pull/19048)).
+
+Elsewhere, MQTT light discovery publishes `brightness: true` again so Home Assistant sends brightness and colour
+as separate fields instead of folding one into the other
+([#18950](https://github.com/esphome/esphome/pull/18950)), `dallas_temp` filters the 85 °C reading a
+DS18B20 returns after a reset ([#17877](https://github.com/esphome/esphome/pull/17877)), `ble_client` nodes that
+never read services now report established so the client releases its discovered services
+([#17920](https://github.com/esphome/esphome/pull/17920)), `tuya` builds without a network component
+([#18948](https://github.com/esphome/esphome/pull/18948)), the LVGL `qrcode`, `keyboard` and `tabview` widgets
+declare their label dependency ([#18387](https://github.com/esphome/esphome/pull/18387)), `rf_bridge` bucket
+sniffing works with the Portisch firmware ([#17683](https://github.com/esphome/esphome/pull/17683)), `anova`
+re-asserts the temperature unit on every poll ([#17141](https://github.com/esphome/esphome/pull/17141)),
+`atm90e32` verifies its offset calibration writes ([#18701](https://github.com/esphome/esphome/pull/18701)),
+`usb_uart` keeps working when the comm interface claim fails
+([#18968](https://github.com/esphome/esphome/pull/18968)), and the removed `udp` options moved to
+`packet_transport` no longer appear in the generated schema ([#19032](https://github.com/esphome/esphome/pull/19032)).
+
 {/* FEATURE_HIGHLIGHTS_END */}
 
 ## Thank You, Contributors
 
 {/* CONTRIBUTORS_START */}
-This release includes 275 pull requests from over 30 contributors. A huge thank you to everyone who made 2026.9.0
+This release includes 275 pull requests from over 40 contributors. A huge thank you to everyone who made 2026.9.0
 possible:
 
 - [@exciton](https://github.com/exciton) - 25 PRs including the multi-release Modbus overhaul: PollingDevice-based
@@ -432,7 +526,7 @@ possible:
   benchmark reliability fixes
 - [@kbx81](https://github.com/kbx81) - 9 PRs including the provisioning window shutdown behavior, `improv_serial`
   support for Ethernet and non-WiFi interfaces, the ESP32 custom eFuse base-MAC fix, and ISR-driven `remote_transmitter`
-  on RTL8720C and BK7231N/BK7238
+  on RTL8720C and BK7238
 - [@guillempages](https://github.com/guillempages) - 8 PRs including `runtime_image` format auto-detection, QOI
   decoding, MIME types, decoder retention, and BMP dimension validation, plus the portable `str_contains_ignore_case`
   helper
@@ -463,8 +557,12 @@ Also thank you to [@bdraco](https://github.com/bdraco), [@ireun](https://github.
 [@alaraun](https://github.com/alaraun), [@zweckj](https://github.com/zweckj),
 [@kahrendt](https://github.com/kahrendt), [@luar123](https://github.com/luar123),
 [@Gafielt](https://github.com/Gafielt), [@MakerYuichi](https://github.com/MakerYuichi),
-[@mfishma](https://github.com/mfishma), and [@Zebble](https://github.com/Zebble) for their contributions, and to
-everyone who reported issues, tested pre-releases, and helped in the community.
+[@mfishma](https://github.com/mfishma), [@Zebble](https://github.com/Zebble), [@rsre](https://github.com/rsre),
+[@mipa87](https://github.com/mipa87), [@ryan-ronnander](https://github.com/ryan-ronnander),
+[@AndreKR](https://github.com/AndreKR), [@ssieb](https://github.com/ssieb), [@ptr727](https://github.com/ptr727),
+[@dmd79](https://github.com/dmd79), [@Gytisla](https://github.com/Gytisla), [@btli](https://github.com/btli),
+[@raykholo](https://github.com/raykholo), and [@CircuitSetup](https://github.com/CircuitSetup) for their
+contributions, and to everyone who reported issues, tested pre-releases, and helped in the community.
 {/* CONTRIBUTORS_END */}
 
 ## Breaking Changes
@@ -540,6 +638,10 @@ everyone who reported issues, tested pre-releases, and helped in the community.
   updated, and 802.15.4 (Thread/Zigbee) nodes may need to be re-commissioned. Devices without a custom eFuse MAC (the
   vast majority) are unaffected; setting `ignore_efuse_custom_mac: true` under `esp32: advanced:` disables the
   behavior. [#18452](https://github.com/esphome/esphome/pull/18452)
+- **ESP8266**: Arduino framework versions before 3.0.0 are rejected at validation. Those builds have failed since
+  ESPHome moved to C++20 in 2025.7, so nothing that compiled changes, but the check also covers `config`, `logs` and
+  `upload`, so a YAML still pinned below 3.0.0 needs the `framework: version:` pin removed or moved to 3.1.2 before
+  those commands work again. [#18917](https://github.com/esphome/esphome/pull/18917)
 - **ESP32 Hosted**: Now requires ESP-IDF 5.3 or newer. The legacy fallback to esp_hosted 2.0.11 (which had a known
   double-free crash on ESP32-P4 + C6) has been removed and older ESP-IDF versions now fail validation with a clear
   error. Configs that pin an ESP-IDF version below 5.3 alongside `esp32_hosted` must remove the pin or bump it to
