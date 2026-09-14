@@ -34,6 +34,18 @@ The following Series 4 motors communicate over the HCP bus (Modbus RTU) and shou
 > [!IMPORTANT]
 > Restarting the ESPHome device (including OTA updates) **will** trigger the motor error described above.
 
+> [!CAUTION]
+> HCP2 accessories are not hot-pluggable!
+>
+> Disrupting Modbus connectivity for any reason may render the motor **temporarily inoperable**.
+>
+> If this happens, the motor will be unresponsive to all controls in this error state, including BiSecur hand remotes.
+> Ensure you have emergency access to your garage at all times,
+> as this type of error can only be cleared by power-cycling the motor.
+
+> [!IMPORTANT]
+> Restarting the ESPHome device (including OTA updates) **will** trigger the motor error described above.
+
 Communication with the motor happens over [Modbus](/components/modbus/) with the `role` set to
 `server`, which in turn requires a [UART bus](/components/uart/). The UART **must** be configured with
 a baud rate of `57600`, even parity and one stop bit.
