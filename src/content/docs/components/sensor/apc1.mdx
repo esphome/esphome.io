@@ -1,0 +1,138 @@
+---
+title: "APC1 Air Quality Combo Sensor"
+description: "Instructions for setting up the APC1 air quality sensor"
+---
+import APIRef from '@components/APIRef.astro';
+import { Image } from 'astro:assets';
+import apc1Img from './images/apc1.png';
+
+The `apc1` sensor platform allows you to use the
+[ScioSense APC1 air quality sensor](https://www.sciosense.com/apc1-air-quality-combo-sensor/) with ESPHome.
+This sensor reports particulates, total volatile organic compounds (TVOC), estimated carbon dioxide (eCO2),
+air quality index (AQI), temperature, and relative humidity.
+
+As the communication with the APC1 is done using UART, you need to have a [UART bus](/components/uart/) in your
+configuration with the RX and TX pins connected, and with the baud rate set to 9600.
+
+The sensor reports two types of mass concentrations: the value as calibrated for normal ambient/atmospheric air
+(e.g. `pm_1_0`), and the value as calibrated for "standard particle conditions" (e.g. `pm_1_0_std`). For home use,
+it's recommended to use the ambient air (e.g. `pm_1_0`) values.
+
+<Image src={apc1Img} alt="Image of the APC1 air quality sensor: a small metal box with a vent cutout"
+  layout="constrained" />
+
+## Configuration
+
+```yaml
+# Example configuration entry
+sensor:
+  - platform: apc1
+    pm_2_5:
+      name: "APC1 PM2.5"
+    temperature:
+      name: "APC1 Temperature"
+    humidity:
+      name: "APC1 Humidity"
+    aqi:
+      name: "APC1 AQI"
+```
+
+## Configuration Variables
+
+- **set_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): Pin connected to the SET pin of the
+  sensor. Pulling HIGH enables normal operating mode; pulling LOW puts the sensor into low-power sleep mode.
+
+- **reset_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): Pin connected to the RESET pin of
+  the sensor. Pulling LOW resets the sensor.
+
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The minimum amount of time between
+  generating/publishing measurements. Defaults to `0s` (forwards data as soon as valid frames arrive from the sensor,
+  typically ~1s).
+
+- **uart_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the
+  [UART Component](/components/uart/) if multiple UART buses are configured.
+
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID for this APC1 component instance
+  (useful when targeting the sensor with actions).
+
+- **pm_1_0** (*Optional*): The concentration of particulates of size less than 1.0µm in µg per cubic meter calibrated
+  for atmospheric air.
+  All options from [Sensor](/components/sensor/).
+
+- **pm_2_5** (*Optional*): The concentration of particulates of size less than 2.5µm in µg per cubic meter calibrated
+  for atmospheric air.
+  All options from [Sensor](/components/sensor/).
+
+- **pm_10_0** (*Optional*): The concentration of particulates of size less than 10.0µm in µg per cubic meter calibrated
+  for atmospheric air.
+  All options from [Sensor](/components/sensor/).
+
+- **pm_1_0_std** (*Optional*): The concentration of particulates of size less than 1.0µm in µg per cubic meter
+  calibrated for standard particle conditions.
+  All options from [Sensor](/components/sensor/).
+
+- **pm_2_5_std** (*Optional*): The concentration of particulates of size less than 2.5µm in µg per cubic meter
+  calibrated for standard particle conditions.
+  All options from [Sensor](/components/sensor/).
+
+- **pm_10_0_std** (*Optional*): The concentration of particulates of size less than 10.0µm in µg per cubic meter
+  calibrated for standard particle conditions.
+  All options from [Sensor](/components/sensor/).
+
+- **pm_0_3um** (*Optional*): The number of particles with diameter >= 0.3 µm in 0.1L of air.
+  All options from [Sensor](/components/sensor/).
+
+- **pm_0_5um** (*Optional*): The number of particles with diameter >= 0.5 µm in 0.1L of air.
+  All options from [Sensor](/components/sensor/).
+
+- **pm_1_0um** (*Optional*): The number of particles with diameter >= 1.0 µm in 0.1L of air.
+  All options from [Sensor](/components/sensor/).
+
+- **pm_2_5um** (*Optional*): The number of particles with diameter >= 2.5 µm in 0.1L of air.
+  All options from [Sensor](/components/sensor/).
+
+- **pm_5_0um** (*Optional*): The number of particles with diameter >= 5.0 µm in 0.1L of air.
+  All options from [Sensor](/components/sensor/).
+
+- **pm_10_0um** (*Optional*): The number of particles with diameter >= 10.0 µm in 0.1L of air.
+  All options from [Sensor](/components/sensor/).
+
+- **tvoc** (*Optional*): Total Volatile Organic Compounds (TVOC) concentration in ppb.
+  All options from [Sensor](/components/sensor/).
+
+- **eco2** (*Optional*): Equivalent Carbon Dioxide (eCO2) concentration in ppm calculated by the sensor.
+  All options from [Sensor](/components/sensor/).
+
+- **aqi** (*Optional*): Air Quality Index (AQI 1–5). Reports `NAN` while the gas sensor is warming up.
+  All options from [Sensor](/components/sensor/).
+
+- **temperature** (*Optional*): Compensated temperature value in °C.
+  All options from [Sensor](/components/sensor/).
+
+- **humidity** (*Optional*): Compensated relative humidity value in %.
+  All options from [Sensor](/components/sensor/).
+
+- **raw_temperature** (*Optional*): Raw uncompensated temperature value in °C.
+  All options from [Sensor](/components/sensor/).
+
+- **raw_humidity** (*Optional*): Raw uncompensated relative humidity value in %.
+  All options from [Sensor](/components/sensor/).
+
+- **rs0** (*Optional*): Raw resistance of the MOX gas sensor RS0 element in Ω.
+  All options from [Sensor](/components/sensor/).
+
+- **rs2** (*Optional*): Raw resistance of the MOX gas sensor RS2 element in Ω.
+  All options from [Sensor](/components/sensor/).
+
+- **rs3** (*Optional*): Raw resistance of the MOX gas sensor RS3 element in Ω.
+  All options from [Sensor](/components/sensor/).
+
+- **error_code** (*Optional*): Hardware diagnostic error code bitmask reported by the sensor.
+  All options from [Sensor](/components/sensor/).
+
+## See Also
+
+- [Air Quality Index (AQI)](/components/sensor/aqi/)
+- [PMSX003 Particulate Matter Sensor](/components/sensor/pmsx003/)
+- [Sensor Filters](/components/sensor#sensor-filters)
+- <APIRef text="apc1.h" path="apc1/apc1.h" />
