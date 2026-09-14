@@ -10,6 +10,12 @@ The `radon_eye_rd200` sensor platforms lets you track the output of Radon Eye RD
 
 This component will track radon concentration.
 
+It connects through the [BLE Client](/components/ble_client/) component and runs on every platform
+with a BLE client engine: the ESP32 family with the
+[ESP32 BLE Tracker](/components/esp32_ble_tracker/), and the Raspberry Pi Pico W family
+(RP2040/RP2350) with the [RP2 BLE Tracker](/components/rp2_ble_tracker/). The examples below use
+the ESP32 tracker; on a Pico W replace `esp32_ble_tracker:` with `rp2_ble_tracker:`.
+
 ## Device Discovery
 
 RadonEye devices can be found using the `radon_eye_ble` ble scanner.
@@ -20,7 +26,7 @@ To find out your device's MAC address, add the following to your ESPHome configu
 logger:
   level: DEBUG # Required for the tracker to show the device
 
-esp32_ble_tracker:
+esp32_ble_tracker: # rp2_ble_tracker on a Pico W
 radon_eye_ble:
 ```
 
