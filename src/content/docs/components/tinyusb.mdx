@@ -39,6 +39,13 @@ tinyusb:
 - **usb_product_str** (*Optional*, string): Product name string descriptor. Defaults to `"ESPHome"`.
 - **usb_serial_str** (*Optional*, string): Serial number string descriptor. If not specified, the device's MAC address
   will be used.
+- **vbus_monitor_pin** (*Optional*, [Pin](/guides/configuration-types#pin)): For a device that has its own power
+  supply, the GPIO that senses the USB VBUS (5 V) line. Required for `on_unmount` to fire when the cable is
+  unplugged; see [Reacting to a USB host](#reacting-to-a-usb-host). Not available on the ESP32-S31.
+- **on_mount** (*Optional*, [Automation](/automations)): An automation to perform when a USB host has connected to the
+  device and finished setting it up. See [Reacting to a USB host](#reacting-to-a-usb-host).
+- **on_unmount** (*Optional*, [Automation](/automations)): An automation to perform when the USB host disconnects.
+  See [Reacting to a USB host](#reacting-to-a-usb-host).
 
 ## Notes
 
@@ -61,6 +68,67 @@ The `usb_lang_id` field uses USB Language IDs as defined by the USB specificatio
 - `0x040C` - French (France)
 
 A more complete list can be found [here](https://github.com/brookebasile/USB-langids/blob/master/USB_LANGIDs.pdf).
+
+## Reacting to a USB host
+
+The `on_mount` and `on_unmount` automations run when a computer (or any other USB host) connects to the device and
+finishes setting it up, and when it disconnects again. A connection to a charger or a power-only cable does not count
+as a host, so these automations tell you whether something is actually able to talk to the device over USB. Both run
+on the main loop, so any action can be used.
+
+```yaml
+tinyusb:
+  on_mount:
+    - logger.log: USB host connected
+  on_unmount:
+    - logger.log: USB host disconnected
+```
+
+### When the automations run
+
+`on_mount` runs when a host has finished setting the device up, which is the moment it can start talking to it:
+
+- A few hundred milliseconds after power-on when a computer is already attached. Use `on_mount` for this rather than
+  checking `tinyusb.is_mounted` in `on_boot`, which runs too early.
+- When the cable is plugged into a running computer.
+
+`on_unmount` runs when the USB controller learns that the host has gone. That happens in only two cases:
+
+- The host deliberately shuts the device down over USB. Computers rarely do this.
+- The controller sees the USB VBUS (5 V) line drop. This requires `vbus_monitor_pin`.
+
+Nothing runs when:
+
+- The computer goes to sleep. As far as USB is concerned the host is still there, so this is correct.
+- The cable is unplugged from a device that has its own power supply and no `vbus_monitor_pin`. The controller only
+  sees the bus go quiet, which looks the same as a sleeping computer, so it keeps reporting a connected host. Plugging
+  the cable back in does not run `on_mount` either, because the controller never noticed the host leaving.
+  `tinyusb.is_mounted` keeps returning `true` in this state as well.
+
+> [!IMPORTANT]
+> If the device has its own power supply and needs to notice the cable being unplugged, connect VBUS to a GPIO through
+> a suitable voltage divider and set `vbus_monitor_pin`.
+
+A device powered only from its USB port does not have this problem. Unplugging the cable powers it off, and every
+power-on starts from a clean state: a computer runs `on_mount` shortly after boot, a charger never does. Such a device
+can tell the two apart with `on_mount` alone, without `on_unmount` or extra wiring.
+
+### `tinyusb.is_mounted` Condition
+
+This condition passes while a USB host has the device connected and set up. It reflects what the USB controller
+knows, so on a device with its own power supply and no `vbus_monitor_pin` it stays true after the cable is unplugged.
+
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the `tinyusb` component. Only needed if you
+  have given it an ID yourself.
+
+```yaml
+on_...:
+  - if:
+      condition:
+        tinyusb.is_mounted:
+      then:
+        - logger.log: A USB host is connected
+```
 
 ## See Also
 
