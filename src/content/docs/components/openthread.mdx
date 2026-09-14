@@ -88,6 +88,13 @@ openthread:
 > [!NOTE]
 > `esphome.ota` does not work when `poll_period` > 0. Use the `openthread.set_poll_period` action to set the poll
 > period to 0 before attempting OTA, then set it back afterwards to restore sleepy (SED) behavior.
+- **on_state** (*Optional*, [Automation](/automations)): An automation to perform when a state (Role) change is published. See [`on_state`](#openthread-on_state).
+- **on_state_change** (*Optional*, [Automation](/automations)): An automation to perform when a state (Role) change is published. See [`on_state_change`](#openthread-on_state_change).
+- **on_disabled** (*Optional*, [Automation](/automations)): An action to be performed when OpenThread connection to mesh is disabled. See [`on_disabled`](#openthread-on_disabled).
+- **on_detached** (*Optional*, [Automation](/automations)): An action to be performed when OpenThread connection to mesh is detached. See [`on_detached`](#openthread-on_detached).
+- **on_child** (*Optional*, [Automation](/automations)): An action to be performed when device is attached to mesh as a Child. See [`on_child`](#openthread-on_child).
+- **on_router** (*Optional*, [Automation](/automations)): An action to be performed when device is attached to mesh as a Router. See [`on_router`](#openthread-on_router).
+- **on_leader** (*Optional*, [Automation](/automations)): An action to be performed when device is attached to mesh as a Leader. See [`on_leader`](#openthread-on_leader).
 
 ## Dataset TLV Configuration
 
@@ -137,6 +144,15 @@ See [https://openthread.io/guides/thread-primer/node-roles-and-types](https://op
 The Poll Period makes the device behave as a SED. Follow on work is needed utilizing Power Management and/or Light Sleep capability in esp-idf.
 If the device is always awake, the API timeout is 60 seconds, so a ping request will force interaction with the parent when the poll period is greater than 60 seconds.
 
+The following values are set to define the parent-child relationship:
+
+- **Child Timeout** - The maximum time (in seconds) a parent will wait without hearing from a SED before assuming the child has detached.
+Set to the maximum of 240 seconds or 4 * poll_period in seconds.
+- **Child Supervision Check Timeout** - The duration a SED waits to receive a message from its parent.
+Set to the maximum of 190 seconds or 2 * poll_period in seconds.
+- **Child Supervision Interval** - A configured interval that the parent uses to ensure at least one message is sent to SED.
+Set to the maximum of 129 seconds or 1.5 * poll_period in seconds.
+
 ### Public API
 
 The `OpenThreadComponent` exposes the following method for use in lambdas and custom components:
@@ -175,6 +191,113 @@ esp32:
     type: esp-idf
     log_level: INFO
 ```
+## OpenThread Automation
+
+<span id="openthread-on_state"></span>
+
+### `on_state`
+
+This automation will be triggered when a new state (Role) occurs. The new state will be given as the variable `x` as a `uint8_t`
+and can be used in [lambdas](/automations/templates#config-lambda).
+
+Here are the states (Roles)
+
+- 0: Disabled
+- 1: Detached
+- 2: Child
+- 3: Router
+- 4: Leader
+
+```yaml
+openthread:
+  on_state:
+    then:
+      - logger.log:
+          format: "on_state: state is %d"
+          args: [x]
+```
+
+<span id="openthread-on_state_change"></span>
+
+### `on_state_change`
+
+An alternative to `on_state` that is also triggered when a new state occurs. It is passed two parameters, `x` 
+will be the new value, and `x_previous` is the value immediately prior to the change. Both these parameters are of type `uint8_t`
+
+```yaml
+openthread:
+  on_state_change:
+    then:
+      - logger.log:
+          format: "on_state_change: new state is %d, old state is %d"
+          args: [x, x_previous]
+```
+
+<span id="openthread-on_disabled"></span>
+
+### `on_disabled`
+
+Triggered when device state (Role) changes to disabled, not fired initially (since on reboot the initial state is disabled).
+
+```yaml
+openthread:
+  on_disabled:
+    then:
+      - logger.log: "on_disabled"
+```
+
+<span id="openthread-on_detached"></span>
+
+### `on_detached`
+
+Triggered when device state (Role) changes to detached.
+
+```yaml
+openthread:
+  on_detached:
+    then:
+      - logger.log: "on_detached"
+```
+
+<span id="openthread-on_child"></span>
+
+### `on_child`
+
+Triggered when device state (Role) changes to child.
+
+```yaml
+openthread:
+  on_child:
+    then:
+      - logger.log: "on_child"
+```
+
+<span id="openthread-on_router"></span>
+
+### `on_router`
+
+Triggered when device state (Role) changes to router.
+
+```yaml
+openthread:
+  on_router:
+    then:
+      - logger.log: "on_router"
+```
+
+<span id="openthread-on_leader"></span>
+
+### `on_leader`
+
+Triggered when device state (Role) changes to leader.
+
+```yaml
+openthread:
+  on_leader:
+    then:
+      - logger.log: "on_leader"
+```
+
 
 ## See Also
 
