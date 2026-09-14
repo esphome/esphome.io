@@ -81,8 +81,10 @@ mk2pvrouter:
 
 ## Configuration Variables
 
+Only one `mk2pvrouter` hub is supported per device.
+
 - **id** (*Optional*, [ID](/guides/configuration-types#id)):
-  Manually specify the ID used for code generation or multiple hubs.
+  Manually specify the ID used for code generation.
 - **uart_id** (*Optional*, [ID](/guides/configuration-types#id)):
   Manually specify the ID of the UART Component if you want to use
   multiple UART buses.
@@ -96,10 +98,11 @@ Common tags include:
 |-----|-------------|------|-------|
 | `P` | Total power at grid | W | Positive = importing, Negative = exporting |
 | `P1`, `P2`, `P3` | Power per phase | W | Three-phase systems only |
+| `R` | Mean power for relay diversion | W | Single- and three-phase systems |
 | `V` | Voltage (single-phase) | V | Sent in centivolts; converted automatically |
 | `V1`, `V2`, `V3` | Voltage per phase | V | Three-phase systems only; converted automatically |
 | `D` | Diverted power | W | Single-phase systems |
-| `D1`, `D2`, `D3` | Diversion rate per load | % | Three-phase systems |
+| `D1`, `D2`, ... | Diversion rate per load | % | Three-phase systems |
 | `E` | Diverted energy | Wh | Single-phase systems |
 | `T1`, `T2`, ... | Temperature sensors | °C | Sent in centi-degrees; converted automatically |
 | `R1`, `R2`, ... | Relay states | 0/1 | 0 = OFF, 1 = ON |
@@ -108,19 +111,9 @@ Common tags include:
 > [!NOTE]
 > Voltage and temperature values are sent multiplied by 100
 > (centivolts/centi-degrees). For `V`/`V1`/`V2`/`V3` and `T1`, `T2`,
-> ... tags, the component automatically applies a built-in
-> `multiply: 0.01` filter so the published value is already in volts
-> or °C.
->
-> This built-in filter **stacks** on top of any `filters:` you add to
-> the sensor — it does not replace them. If you add your own filters
-> to one of these tags, they run *after* the built-in `multiply: 0.01`
-> conversion. For example, adding `multiply: 0.001` on a `V` tag
-> results in an effective conversion of `0.01 * 0.001`, i.e. the
-> value ends up in kilovolts, not volts. Take this into account when
-> writing filters for these tags — do not add your own `multiply:
-> 0.01` expecting to perform the base conversion, or the value will
-> be scaled twice.
+> ... tags, the component automatically converts this to volts/°C
+> before publishing the sensor state, so any `filters:` you add run
+> on the already-converted value, just like on any other sensor.
 
 ## Sensors
 
@@ -140,12 +133,53 @@ sensor:
 - **tag** (**Required**, string): The tag to retrieve from the
   Telemetry.
 - **mk2pvrouter_id** (*Optional*, [ID](/guides/configuration-types#id)):
-  The ID of the `mk2pvrouter` hub to use, if you have multiple.
+  The ID of the `mk2pvrouter` hub to use. Not normally needed, since
+  there is only one hub.
 - All other options from [Sensor](/components/sensor/).
 
+Sensor defaults (unit, device class, state class, accuracy) are
+automatically set based on the tag name. You can override any of
+them by specifying the corresponding option explicitly.
+
+**Common tags** (same defaults regardless of single- or three-phase setup):
+
+| Tag | Unit | Device Class | State Class | Accuracy | Notes |
+|-----|------|--------------|--------------|----------|-------|
+| `P` | W | power | measurement | 0 | Total power at grid (on three-phase, `P` = `P1` + `P2` + `P3`) |
+| `R` | W | power | measurement | 0 | Mean power for relay diversion (single- and three-phase) |
+| `T1`, `T2`, ... | °C | temperature | measurement | 2 | Automatically converted from centi-degrees |
+| `R1`, `R2`, ... | — | — | none | 0 | Relay state, 0/1 |
+| Any other tag (e.g. `N`) | — | — | measurement | 0 | Fallback defaults |
+
+**Single-phase tags** (exact match):
+
+| Tag | Unit | Device Class | State Class | Accuracy | Notes |
+|-----|------|--------------|--------------|----------|-------|
+| `V` | V | voltage | measurement | 2 | Automatically converted from centivolts |
+| `D` | W | power | measurement | 0 | Diverted power |
+| `E` | Wh | energy | total_increasing | 0 | Diverted energy (daily reset counter) |
+
+**Three-phase tags** (letter + phase/load number):
+
+| Tag | Unit | Device Class | State Class | Accuracy | Notes |
+|-----|------|--------------|--------------|----------|-------|
+| `P1`, `P2`, `P3` | W | power | measurement | 0 | Power per phase |
+| `V1`, `V2`, `V3` | V | voltage | measurement | 2 | Automatically converted from centivolts |
+| `D1`, `D2`, ... | % | — | measurement | 0 | Diversion rate per load |
+
 > [!NOTE]
-> Sensor defaults (unit, device class, accuracy) are automatically
-> set based on the tag name. You can override them if needed.
+> In the tables above, a `—` cell means the component sets no
+> default for that option, so ESPHome's normal sensor defaults apply
+> instead; `none` means the component explicitly clears the state
+> class for that tag (relay states), which is what `""` does when
+> set from YAML.
+
+> [!NOTE]
+> Tags are resolved by exact match first, then by their leading
+> letter. So `D` and `R` keep their own defaults rather than picking
+> up the ones used for `D1`/`D2`/... and `R1`/`R2`/... — for example,
+> a bare `D` reports diverted power in watts, while `D1`/`D2`/...
+> report a diversion rate percentage with no device class.
 
 ## Complete Example
 
