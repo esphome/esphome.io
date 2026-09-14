@@ -641,6 +641,19 @@ The following options disable unused VFS features to save flash memory:
   (saving ~20 KB flash) because ESPHome supplies a `vasprintf` built on the ROM `vsnprintf`. This is automatic and is
   disabled together with `enable_full_printf: true`.
 
+- **enable_full_scanf** (*Optional*, boolean): Link the C library `sscanf()` instead of ESPHome's lightweight
+  replacement. Nothing in ESPHome calls `sscanf()`, but the Bluetooth stack does in two places, and those two calls
+  link newlib's whole scanf engine (about 13 KB of flash) into every Bluetooth build. ESPHome therefore supplies a
+  small `sscanf()` that handles integer, character, string and scanset conversions but not floating point ones.
+  At build time ESPHome scans lambda, `includes:` and external component source for any float conversion (`%f`,
+  `%e`, `%g`, `%a` and their variants) and keeps the C library version when it finds one. It cannot see a format
+  string that is built at runtime. Set to `true` if such code needs float parsing with `sscanf()`; otherwise the
+  call stops the device with a message naming the format and this option. Set to `false` to keep the replacement
+  even when the scan finds a float conversion. The replacement only exists in Bluetooth builds on ESP-IDF 5.x
+  (newlib); other builds and the Arduino framework use the C library version and ignore this option. The ESP32-C2
+  and ESP32-C6 ignore it too, because their ROM already provides `sscanf()` at no flash cost. Defaults to
+  automatic: the replacement, or the C library version when the scan finds a float conversion.
+
 Some options can be disabled to save flash memory without affecting typical ESPHome functionality. The performance
 options (defaulting to `true`) improve socket operation performance but can be disabled if you need better
 multi-threaded scalability (which is uncommon since ESPHome uses an event loop).
@@ -734,6 +747,7 @@ esp32:
 
       # C library options
       enable_full_printf: false  # Saves ~11 KB flash
+      # enable_full_scanf left unset, the replacement saves ~13 KB flash on Bluetooth builds
 
       # Debug options (disabled by default for production)
       disable_debug_stubs: true  # Saves code size
