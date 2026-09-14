@@ -31,6 +31,7 @@ submit a feature request (see FAQ).
 | [Midea](#midea_ir) | `midea_ir`                         | yes |
 | [Mitsubishi](#mitsubishi) | `mitsubishi`                       | yes |
 | Noblex | `noblex`                           | yes |
+| [Remko, Fischer ClimaButler, TROTEC, Novamatic, Rexair, FREECOM](#remko_ar715) | `remko_ar715` | |
 | Electrolux, TCL, Fuego | `tcl112`                           | yes |
 | [Toshiba](#toshiba) | `toshiba`                          | yes |
 | [Whirlpool](#whirlpool) | `whirlpool`                        | yes |
@@ -227,6 +228,46 @@ climate:
     vertical_default: "down"
 ```
 
+<span id="remko_ar715"></span>
+
+### `remko_ar715`
+
+Supports air conditioners using the **Remko AR-715** IR remote (model 1613138).
+
+| Brand | Model |
+|---|---|
+| Remko | RKL 490, RKL 491, RKL 494, RKL 495 |
+| Fischer | ClimaButler RCS-SD43UAI, RCS-SD43UWI |
+| TROTEC | PAC 4600 |
+| Novamatic | CL 990, CL 1590 |
+| Rexair | C15000N |
+| FREECOM | RCS-SD43UAI, RCS-SD43UWI |
+
+The fan speed **Auto** corresponds to the remote's *Fuzzy Logic* mode, where the
+unit selects the fan speed automatically based on room temperature.
+
+> [!NOTE]
+> The IRremoteESP8266 library refers to this protocol as *ClimaButler* after one
+> of the rebranded models. The OEM and original manufacturer is Remko.
+>
+> Fan speed selection is only available in Cool mode.
+> In Dry and Fan Only mode the unit controls the fan speed automatically.
+>
+> The hardware timer function (1–24h) of the AR-715 remote is not implemented.
+> Use Home Assistant automations for equivalent functionality.
+>
+> Heat and Heat/Cool modes are not supported by the AR-715 remote and are
+> not available in this component.
+
+```yaml
+# Example configuration entry
+climate:
+  - platform: remko_ar715
+    name: "Air Conditioner"
+```
+
+<span id="toshiba"></span>
+
 ### `toshiba`
 
 - **model** (*Optional*, string): There are four valid models:
@@ -377,6 +418,7 @@ Additional configuration must be specified for this platform:
 - <APIRef text="hitachi_ac344.h" path="hitachi_ac344/hitachi_ac344.h" />
 - <APIRef text="midea_ir.h" path="midea_ir/midea_ir.h" />
 - <APIRef text="mitsubishi.h" path="mitsubishi/mitsubishi.h" />
+- <APIRef text="remko_ar715.h" path="remko_ar715/remko_ar715.h" />
 - <APIRef text="tcl112.h" path="tcl112/tcl112.h" />
 - <APIRef text="toshiba.h" path="toshiba/toshiba.h" />
 - <APIRef text="whirlpool.h" path="whirlpool/whirlpool.h" />
