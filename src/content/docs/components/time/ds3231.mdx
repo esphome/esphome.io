@@ -1,0 +1,106 @@
+---
+title: "DS3231 Time Source"
+description: "Instructions for using the DS3231 real-time clock as a time source in ESPHome."
+---
+
+import APIRef from '@components/APIRef.astro';
+
+The `ds3231` time platform uses a [DS3231 real-time clock](/components/ds3231/) as a time source. Set up the
+[`ds3231`](/components/ds3231/) hub (and the [I²C](/components/i2c/) bus it needs) first.
+
+```yaml
+# Example configuration entry
+ds3231:
+  id: ds3231_hub
+
+time:
+  - platform: ds3231
+    id: ds3231_time
+```
+
+## Configuration Variables
+
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Specify the ID for use in lambdas and actions.
+- **ds3231_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the [`ds3231`](/components/ds3231/)
+  hub to use when more than one is configured.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): How often to read the RTC and
+  synchronize the system clock. Defaults to `15min`. Set to `never` to only read on request.
+- All other options from [Base Time Configuration](/components/time#base_time_config).
+
+> [!NOTE]
+> If the DS3231 reports that its oscillator stopped (it lost both power and battery backup), the stored time
+> is treated as unreliable and is **not** synced to the system clock. Writing a valid time with
+> [`ds3231.write_time`](#ds3231-write_time-action) clears this condition.
+
+<span id="ds3231-write_time-action"></span>
+
+## `ds3231.write_time` Action
+
+This [Action](/automations/actions#config-action) writes the current system time to the RTC.
+
+> [!NOTE]
+> The DS3231 is *not* written automatically. It is only updated when this action is triggered explicitly.
+
+```yaml
+on_...:
+  - ds3231.write_time
+
+  # in case you need to specify the DS3231 time id
+  - ds3231.write_time:
+      id: ds3231_time
+```
+
+<span id="ds3231-read_time-action"></span>
+
+## `ds3231.read_time` Action
+
+This [Action](/automations/actions#config-action) reads the time from the RTC and synchronizes the system
+clock. This happens automatically every `update_interval`; use the action to trigger *additional* reads.
+
+```yaml
+on_...:
+  - ds3231.read_time
+
+  # in case you need to specify the DS3231 time id
+  - ds3231.read_time:
+      id: ds3231_time
+```
+
+<span id="ds3231-config_example"></span>
+
+## Full Configuration Example
+
+A typical setup reads the RTC once at boot for an immediate valid time, then keeps the RTC updated from a
+more authoritative source (for example [Home Assistant](/components/time/homeassistant/) or
+[SNTP](/components/time/sntp/)) whenever that source synchronizes.
+
+```yaml
+esphome:
+  on_boot:
+    then:
+      - ds3231.read_time:
+
+i2c:
+  sda: GPIOXX
+  scl: GPIOXX
+
+ds3231:
+  id: ds3231_hub
+
+time:
+  - platform: ds3231
+    id: ds3231_time
+    # the RTC is accurate enough that repeated reads are unnecessary
+    update_interval: never
+  - platform: sntp
+    on_time_sync:
+      then:
+        # push the freshly synchronized time into the RTC
+        - ds3231.write_time: ds3231_time
+```
+
+## See Also
+
+- [DS3231 Real-Time Clock](/components/ds3231/)
+- [Time Component](/components/time/)
+- <APIRef text="ds3231/time/ds3231_time.h" path="ds3231/time/ds3231_time.h" />
