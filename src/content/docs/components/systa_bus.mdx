@@ -1,0 +1,104 @@
+---
+description: "Instructions for integrating a PARADIGMA SystaSolar energy collector controller in ESPHome."
+title: "Systa Bus Component"
+---
+
+import { Image } from 'astro:assets';
+import systaBusCircuitImg from './images/systa_bus_circuit.png';
+import Figure from '@components/Figure.astro';
+
+The `systa_bus` Component provides status reading connectivity to solar heat energy collector controllers using the Systa Bus
+protocol.
+
+## Supported Models
+
+The following table shows the currently supported models of SystaSolar devices.
+
+### Supported Models
+
+| Name                      | Config Value    |
+| ------------------------- | --------------- |
+| PARADIGMA SystaSolar Aqua | systasolar_aqua |
+
+The `Config Value` should be used for the `model` parameter in your `sensor` entries.
+
+## Hardware Connection
+
+The device must be connected via a [UART bus](/components/uart/) supporting the receiving line only.
+The UART bus must be configured at 9600bps. The controller outputs data depending on the packet type up to multiple times per second.
+
+To convert the signal on the bus to UART that can be received by the ESPHome device, a converter circuit is needed.
+This circuit must apply a lowpass filter to the signal and convert the voltage to a safe level for the ESPHome device.
+
+The following circuit uses simple components and provides electrical isolation between the bus and the ESP.
+<Figure
+  src={systaBusCircuitImg}
+  caption="Systa Bus converter circuit"
+  layout="constrained"
+  alt=""
+/>
+
+[Simulation of this circuit](https://www.falstad.com/circuit/circuitjs.html?ctz=DwYwlgTgBAZgvAIgAwKgFwM6IEwDokCMAbAdgJxIDM22ArABxJEAstApgLQDsqYIizXHWwEk9bEklNsXMqhAAjRLRRQADkoTNKqAG4RlqALaZlnAgQQA+AFBQowXVAAeiDhPpQyRKO7G-iVHhkVAB3YOwggwQCFSljAENnXUMAelt7Rxc3DyhsZiRfXO8gxFVwssTknEj0uwdQ7IQ-Tw5iX28AolKQusyAcyaWvIKi-zpu2Eq+hxAm-MLOylpsL0ng1X4EIlx6TnpeFOR8QlQMaNVdABMcAiFKQi4C+hVmLh4Z4GhXBGXVzuYLDWPVU0TekgQnyuTUBzDy+SgsOBUxCUCMAHtEAQAHIFJDMSEZBowoGdFaeEoolCfOY-Ii0HyMKD0nw0AlU+SIHZ7DgHKBgI5IE6WKDnMq4EXXcVIWisB60ahEIiUMi0LikWiE+rARo-NU+CyrfXw9kbLWZXXKLishEsk0g83EukMk1QLgre0cz6WhALNYjQocagOz7fLkuoOrP2Rh1QMFcCGfNBNcn+42Us3qAB2WNQCjYtzkaMxCCubBgCQArgAbNB6fPi2hkOhMF6xJgEQGRKC6BRbIUsBMq+iMCREeiUZhyb0p61QJl2xghonABIYVY-NqMwOdJco7sQdE532g9EwYKiKRXiHoAAWOFwms+Tk37Wj7U7psqUAqvqiAkYVQjCSI4nxXH0tygT9fFJdZpnAoZOkgjhOhYZdtWhH5SApVlRgzb8MSxXFJAJT4AHk1DQdEQHRSs1GrNgwwQd1Vmw+dqCg7A+Qvax6kyZNewLZpKHwZgCBVSdqDISgVW7Xt+yEBgmyICQGCIdUiCYdkwB+WoV1SCiqJouiGIgFcXyxJAET+KCrLhNCUUCH9M2A6pflwHRQyaehmE8Ahm3nXyoD+WN40TFdBiwuzgo9URrPHdCLSaFioM0t0PTZRKnUQHzPBsuK4RCr0EJ+FKFxdPczRnKLbThXLmS-XoSpyoL-NWehOjarKdW81quMCzwHKq5qEHqtqBtS1Rhu1H0UrYsqpvg7VnCaChaDySQvA4iQdA5UUwBwVQ0CEgAlAANR0ep+JE2SgY1MuKmaYU8W6bvybqILfUZhgWD7EJ8JDijgpqntfXDCiC37HqSsH5whzxKqWmHwx8SNmQqxaQeRrQEfh5FpuxyGEUhgpupW508g-fzKaLTMMAOk9UGOxAACEAFUAGVfEu8muQNAg-IeTiRTphmJCZoT2a5gBqS6FCGagCF8F1KCVrieGhhxeeE0hfCFto1SKDXRcOiXEA59FqwSaAAGEjzQQ9q1MnmUzIZX1poN2OBWWN6dN9AhLtrNdEY47bcgEBKzAOtPm1jrKGC5h-koPLWF9sWjqEgBxbEABEXZ+DqAaV6T1rIRrVD9xmA8QSgADVPJXbW3j85U7roVLgcrhnSDNmJiKQD4m5TFVmS4O76B8BN06xbtmd9bEaBoAvEC4egldEN317dw0Z5iOehIABRt9eh9BgD-TY-CsYceW9VWbgKUNlUK5XmIVPnKMkC3zU9qr3ua79zxGfTI6IoBsGPHyDAagco9GcBIKyqAYEhCJJkNQPZvwYAUisBUa9B75AkOQSgICHCpHRLYYAqRwBmRsEAA)
+
+An alternative circuit design [can be found here](https://ringwelt.de/homeautomation/heizungsanlage/einfuehrung.html).
+
+## Component
+
+```yaml
+# Example configuration entry
+systa_bus:
+  uart_id: systa_uart
+```
+
+> [!WARNING]
+> If you are using the [Logger](/components/logger/) make sure you are not using the same pins for it or otherwise disable the UART
+> logging with the `baud_rate: 0` option.
+
+### Configuration variables
+
+- **uart_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the UART hub used to connect to the device.
+
+> [!NOTE]
+> Functionality of the sensors depends on the type of the device and the scheme arrangement of the hydraulic
+> system it controls. The actual arrangement number set up can be determined from the settings of the device. Please
+> check the user manual and assess your arrangement to determine the functionality of each sensor and name them
+> accordingly.
+
+## Sensor
+
+```yaml
+# Example configuration entry
+sensor:
+  - platform: systa_bus
+    model: systasolar_aqua
+    temperature_tsa:
+      name: Temperature TSA
+    temperature_tse:
+      name: Temperature TSE
+    temperature_twu:
+      name: Temperature TWU
+    temperature_tw2:
+      name: Temperature TW2
+    pump_speed:
+      name: Pump Speed
+```
+
+### Configuration variables
+
+- **model** (**Required**): Specify the model of the connected controller. Choose one of the config values listed in the table of supported models above.
+
+Supported sensors:
+
+- for **systasolar_aqua**: `temperature_tsa`, `temperature_tse`, `temperature_twu`, `temperature_tw2`, `pump_speed`.
+
+All sensors are *Optional* and support all other options from [Sensor](/components/sensor).
+
+> [!NOTE]
+> Sensors are updated every time a data packet is sent by the device. Some models send data very often, possibly every second. If you are
+> concerned about the load on the receiving database, you can add a `throttle` filter to the sensors.
+
+## See Also
+
+- [UART Bus](/components/uart/)
+- [Sensor Component](/components/sensor/)
+- [Aqua II data format (German)](https://ringwelt.de/homeautomation/heizungsanlage/datenformat.html)
