@@ -1,0 +1,71 @@
+---
+title: "ES9038Q2M Katana"
+description: "Use Allo Katana-compatible ES9038Q2M DAC boards with ESPHome over the I²C control interface at address 0x30."
+---
+
+The `es9038q2m_katana` platform allows ESPHome devices to control DAC boards that expose an
+ES9038Q2M through an Allo Katana-compatible control interface.
+
+This platform integrates with the [Audio DAC](/components/audio_dac/) core and is intended for
+boards where the I²C bus does not access the DAC's native register map directly. Instead, ESPHome
+talks to the board control interface at address `0x30`, which then applies the corresponding
+configuration to the DAC.
+
+The [I²C Bus](/components/i2c/) is required in your configuration. This platform is typically used
+together with an [I²S Audio Speaker](/components/speaker/i2s_audio/) or another audio output
+component that supports [Audio DAC](/components/audio_dac/).
+
+The implementation is based on the Linux ASoC driver for the Allo Katana codec in the Raspberry Pi
+Linux kernel tree at `sound/soc/bcm/allo-katana-codec.c`.
+
+> [!NOTE]
+> This platform has been tested with the InnoMaker RPI HIFI DAC PRO. Other boards exposing the same
+> Allo Katana-compatible control interface at address `0x30` may also work.
+
+```yaml
+# Example configuration entry
+audio_dac:
+  - platform: es9038q2m_katana
+```
+
+## Configuration Variables
+
+- **filter_shape** (*Optional*, enum): Selects the DAC digital filter. One of
+  `linear_phase_fast`, `linear_phase_slow`, `minimum_phase_fast`,
+  `minimum_phase_slow`, `apodizing`, `hybrid`, or `brick_wall`. Defaults to `apodizing`.
+- **bits_per_sample** (*Optional*, enum): The audio sample bit depth written to the format
+  register during startup. One of `16bit`, `24bit`, or `32bit`. Defaults to `16bit`.
+- **sample_rate** (*Optional*, positive integer): The sample rate written to the format register
+  during startup. One of `44100`, `48000`, `88200`, `96000`, `176400`, `192000`, `352800`, or
+  `384000`. Defaults to `48000`.
+- **deemphasis** (*Optional*, enum): Selects the de-emphasis curve. One of `bypass`, `32khz`,
+  `44_1khz`, or `48khz`. Defaults to `bypass`.
+- **dop** (*Optional*, boolean): Enables DoP mode on the control interface. Defaults to `false`.
+- **dump_registers** (*Optional*, boolean): Dumps the live register values to the log during
+  configuration output. Intended for bring-up and debugging. Defaults to `false`.
+- **address** (*Optional*, int): The I²C address of the control interface. Defaults to `0x30`.
+- **i2c_id** (*Optional*, ID): The ID of the I²C bus the device is connected to.
+- All other options from [Audio DAC](/components/audio_dac/).
+
+> [!NOTE]
+> `bits_per_sample` and `sample_rate` configure the control interface during startup. They should
+> match the format used by the attached audio path.
+
+> [!NOTE]
+> This platform configures stereo playback only and does not expose the raw ES9038Q2M register map.
+
+> [!NOTE]
+> Enabling `dop` does not convert PCM audio into DoP. The upstream source must already send valid
+> DoP frames.
+
+## Automations
+
+All [Audio DAC automations](/components/audio_dac/) are supported by this platform.
+
+## See Also
+
+- [Audio DAC](/components/audio_dac/)
+- [I²C Bus](/components/i2c/)
+- [I²S Audio Component](/components/i2s_audio/)
+- [I²S Audio Speaker](/components/speaker/i2s_audio/)
+- [I²S Audio Media Player](/components/media_player/i2s_audio/)
