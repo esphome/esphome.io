@@ -47,6 +47,7 @@ Multiple remote receivers can be configured as a list of dict definitions within
   - **dooya**: Decode and dump Dooya RF codes.
   - **drayton**: Decode and dump Drayton Digistat RF codes.
   - **dyson**: Decode and dump Dyson Cool AM7 tower fan codes.
+  - **hob2hood**: Decode and dump AEG Hob2Hood infrared codes.
   - **jvc**: Decode and dump JVC infrared codes.
   - **gobox**: Decode and dump Go-Box infrared codes.
   - **keeloq**: Decode and dump KeeLoq RF codes.
@@ -196,6 +197,10 @@ To enable signal demodulation, configure the signal carrier frequency and duty c
 
 - **on_drayton** (*Optional*, [Automation](/automations)): An automation to perform when a
   Drayton Digistat RF code has been decoded. A variable `x` of type <APIStruct text="remote_base::DraytonData" path="remote_base::DraytonData" />
+  is passed to the automation for use in lambdas.
+
+- **on_hob2hood** (*Optional*, [Automation](/automations)): An automation to perform when a
+  Hob2Hood remote code code has been decoded. A variable `x` of type <APIStruct text="remote_base::Hob2HoodData" path="remote_base::Hob2HoodData" />
   is passed to the automation for use in lambdas.
 
 - **on_dyson** (*Optional*, [Automation](/automations)): An automation to perform when a
@@ -453,6 +458,17 @@ Remote code selection (exactly one of these has to be included):
 - **gobox**: Trigger on a decoded Go-Box remote code with the given data.
 
   - **code** (**Required**, int): The Go-Box code to trigger on, see dumper output for more info.
+
+- **hob2hood**: Trigger on a decoded Hob2Hood remote code with the given data.
+
+  - **command** (**Required**, enum): The Hob2Hood command to trigger on, see dumper output for more info.
+    - ``light_off``
+    - ``light_on``
+    - ``fan_off``
+    - ``fan_low``
+    - ``fan_medium``
+    - ``fan_high``
+    - ``fan_max``
 
 - **jvc**: Trigger on a decoded JVC remote code with the given data.
 
