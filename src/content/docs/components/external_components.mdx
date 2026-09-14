@@ -62,7 +62,11 @@ external_components:
   By default, all available components are used.
 
 - **refresh** (*Optional*, [Time](/guides/configuration-types#time)): The interval the source will be checked. Has no
-  effect on `local`. See [Refresh](#refresh). for more info. Defaults to `1day`.
+  effect on `local`. See [Refresh](#refresh) for more info. Defaults to `1day`.
+
+- **doc_url** (*Optional*, url): The base URL of this source's own documentation. When set, ESPHome will link to it
+  wherever it mentions a component from this source (for example, in configuration error messages). See
+  [Documentation links](#documentation-links) for more info.
 
 ## Local
 
@@ -205,3 +209,24 @@ excessive repository checks.
 
 Likewise, you can set this setting to `never` and ESPHome will never
 **update** the repository, useful e.g. when `ref` points to a **tag**.
+
+## Documentation links
+
+Components loaded through `external_components:` aren't on esphome.io, so ESPHome has no way to link to their
+documentation unless you tell it where to look. Setting `doc_url` on a source fixes this: ESPHome combines it with
+each component's name, following the same layout esphome.io itself uses, to build a link shown in configuration
+error messages (in the ESPHome CLI, the VS Code extension, and the device builder).
+
+```yaml
+external_components:
+  - source: github://my-org/my-esphome-components
+    components: [my_component]
+    doc_url: https://my-org.github.io/my-esphome-components
+```
+
+Given the example above, a validation error in `my_component` would link to
+`https://my-org.github.io/my-esphome-components/components/my_component/`.
+
+`doc_url` applies to every component pulled in from that source. If you maintain the components yourself and want
+a specific one to link somewhere else, see [`DOC_URL`](https://developers.esphome.io/architecture/components/#further-information)
+in the developer documentation.
