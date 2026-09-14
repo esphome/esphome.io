@@ -17,6 +17,7 @@ The `sun` component allows you to track the sun's position in the sky. Calculati
 sun:
   latitude: 48.8584°
   longitude: 2.2945°
+  offset: 1d
 
 # At least one time source is required
 time:
@@ -27,6 +28,7 @@ time:
 
 - **latitude** (**Required**, float): The latitude for performing the calculation.
 - **longitude** (**Required**, float): The longitude for performing the calculation.
+- **offset** (*optional*, time period): A time duration to offset the current time for sunrise/sunset calculations. Must be 1 second or more, and may be negative.
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
 
 ## Triggers
@@ -99,14 +101,18 @@ text_sensor:
   - platform: sun
     name: Sun Next Sunset
     type: sunset
+- platform: sun
+    name: Sun Time
+    type: time
+    format: "%c"
 ```
 
 <Image src={sunTextSensorUiImg} layout="constrained" alt="" />
 
 ### Configuration variables
 
-- **type** (**Required**, string): The type of value to track. One of `sunrise` and
-  `sunset`.
+- **type** (**Required**, string): The type of value to track. One of `sunrise`, `sunset`,
+  or `time`.
 
 - **elevation** (*Optional*, float): The elevation to calculate the next sunrise/sunset event
   for. Defaults to -0.833° (the horizon, slightly less than 0° to compensate for atmospheric refraction).
