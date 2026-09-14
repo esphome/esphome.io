@@ -1,0 +1,132 @@
+---
+description: "Instructions for setting up the M5Stack Unit LCD, a 135x240 ST7789V2 display driven over I²C."
+title: "M5Stack Unit LCD"
+---
+
+import Figure from '@components/Figure.astro';
+import m5stackUnitLcdFullImg from './images/m5stack_unit_lcd-full.jpg';
+import APIRef from '@components/APIRef.astro';
+
+The `m5stack_unit_lcd` display platform allows you to use the
+[M5Stack Unit LCD](https://docs.m5stack.com/en/unit/lcd) (SKU U120) with ESPHome. The unit is a 1.14" 135x240
+ST7789V2 TFT panel with its own ESP32-PICO microcontroller behind a Grove connector. ESPHome does not talk to
+the ST7789V2 directly; it sends a drawing command set to the unit's firmware over the [I²C bus](/components/i2c/),
+which must be set up separately. The default I²C address is `0x3E`.
+
+Rendering happens in a local RGB565 frame buffer, so all of ESPHome's normal display features are available:
+[fonts](/components/font#display-fonts), [images](/components/image/), pages, graphs and colors. On each update only
+the rows that changed since the previous update are sent to the unit.
+
+The backlight can be exposed as a dimmable light through the
+[`m5stack_unit_lcd` light platform](/components/light/m5stack_unit_lcd/).
+
+> [!NOTE]
+> This platform is only for the M5Stack Unit LCD and its I²C command interface. A bare ST7789/ST7789V2 panel wired
+> to SPI pins is driven by the [MIPI SPI Display Driver](/components/display/mipi_spi/) instead.
+
+<Figure
+  src={m5stackUnitLcdFullImg}
+  alt=""
+  caption="M5Stack Unit LCD driven by ESPHome"
+  layout="constrained"
+/>
+
+Connect the unit's Grove (HY2.0-4P) cable to your board: black to GND, red to 5V, yellow to SDA and white to SCL.
+M5Stack boards with a Grove port expose these on a fixed connector; on other boards, wire SDA and SCL to the pins
+chosen for the [I²C bus](/components/i2c/).
+
+```yaml
+# Example configuration entry
+i2c:
+  sda: GPIOXX
+  scl: GPIOXX
+  frequency: 400kHz
+
+display:
+  - platform: m5stack_unit_lcd
+    rotation: 90
+    lambda: |-
+      it.print(0, 0, id(my_font), "Hello World!");
+
+font:
+  - file: "gfonts://Roboto"
+    id: my_font
+    size: 24
+```
+
+> [!TIP]
+> The unit supports I²C speeds up to 400 kHz, and the configuration is rejected if the bus is set faster than that.
+> The I²C bus defaults to 50 kHz, which makes screen updates roughly eight times slower, so set
+> `frequency: 400kHz` on the bus.
+
+## Configuration Variables
+
+- **address** (*Optional*, int): Manually specify the [I²C](/components/i2c/) address of the display.
+  Defaults to `0x3E`.
+- **i2c_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the
+  [I²C Component](/components/i2c/) if you want to use multiple I²C buses.
+- **brightness** (*Optional*, percentage): The initial backlight brightness. Defaults to `100%`. Overridden by the
+  [`m5stack_unit_lcd` light](/components/light/m5stack_unit_lcd/) if one is configured.
+- **invert_colors** (*Optional*, boolean): Invert the panel colors. Defaults to `false`.
+- **rotation** (*Optional*): Set the rotation of the display. Everything you draw in `lambda:` will be rotated
+  by this option. One of `0°` (default), `90°`, `180°`, `270°`. The panel is 135 pixels wide and 240 pixels
+  high; use `90°` or `270°` for a 240x135 landscape canvas.
+- **lambda** (*Optional*, [lambda](/automations/templates#config-lambda)): The lambda to use for rendering the
+  content on the display. See [Display Rendering Engine](/components/display#display-engine) for more information.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to re-draw the screen.
+  Defaults to `1s`.
+- **pages** (*Optional*, list): Show pages instead of a single lambda.
+  See [Display Pages](/components/display#display-pages).
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
+- All other options from [Display Component](/components/display#display-configuration).
+
+## Brightness and Sleep
+
+For a backlight entity in Home Assistant use the [`m5stack_unit_lcd` light](/components/light/m5stack_unit_lcd/).
+The backlight and the panel's sleep state can also be changed from a
+[lambda](/automations/templates#config-lambda): `set_brightness()` takes a value from `0.0` (off) to `1.0`
+(full) and `set_sleep()` takes `true` to put the panel to sleep or `false` to wake it. The panel is also put to
+sleep automatically when the device shuts down or enters deep sleep.
+
+```yaml
+display:
+  - platform: m5stack_unit_lcd
+    id: unit_lcd
+    # ...
+
+switch:
+  - platform: template
+    name: "Unit LCD Sleep"
+    optimistic: true
+    turn_on_action:
+      - lambda: id(unit_lcd).set_sleep(true);
+    turn_off_action:
+      - lambda: id(unit_lcd).set_sleep(false);
+
+```
+
+## Update Speed and Memory
+
+Only rows that changed since the last update are sent, clipped to the changed columns, and the transfer is spread
+over several main-loop iterations so the rest of ESPHome keeps running while pixels stream out. Small text updates
+finish within a few loop iterations, but a full-screen redraw is about 65 KB of pixel data, which takes roughly
+three and a half seconds at 400 kHz. Avoid redrawing the whole screen every update, and choose an
+`update_interval` that suits your content.
+
+> [!WARNING]
+> Do not call `it.test_card()` from a page lambda: ESPHome stops the display's update interval after drawing the
+> test card, so the display would only refresh again on an explicit `component.update`. Use the
+> `show_test_card` option to check the panel instead.
+
+The driver keeps two 135x240 RGB565 buffers (about 130 KB in total): the frame being drawn and a copy of what the
+panel currently shows. This rules out the ESP8266; an ESP32 or RP2040 has enough RAM, and PSRAM is used when
+available.
+
+## See Also
+
+- [Display Component](/components/display/)
+- [M5Stack Unit LCD Backlight](/components/light/m5stack_unit_lcd/)
+- [I²C Bus](/components/i2c/)
+- [Font Renderer](/components/font#display-fonts)
+- [M5Stack Unit LCD documentation](https://docs.m5stack.com/en/unit/lcd)
+- <APIRef text="m5stack_unit_lcd.h" path="m5stack_unit_lcd/m5stack_unit_lcd.h" />
