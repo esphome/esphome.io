@@ -1,0 +1,67 @@
+---
+description: "Instructions for setting up the RTSP Server in ESPHome to stream camera video to VLC, ffplay or NVR software"
+title: "RTSP Server Component"
+---
+import APIRef from '@components/APIRef.astro';
+
+
+The `rtsp_server` component streams video from a [camera](/components/camera/) (such as the
+[ESP32 Camera](/components/esp32_camera/)) over RTSP, the standard protocol used by video
+players and surveillance software. This allows tools like VLC, ffplay, go2rtc or Frigate to
+consume the camera feed directly, without any ESPHome-specific integration.
+
+Video is delivered as Motion JPEG (the format produced by the camera hardware) carried over
+the RTSP connection itself (TCP-interleaved transport). Clients requesting UDP transport are
+asked to fall back to TCP, which every common player does automatically.
+
+```yaml
+# Example configuration entry
+esp32_camera:
+  # ... camera pin configuration ...
+
+rtsp_server:
+  port: 554
+```
+
+## Configuration variables
+
+- **port** (*Optional*, int): The port the RTSP server listens on. Defaults to `554`,
+  the standard RTSP port.
+- **max_sessions** (*Optional*, int): The maximum number of clients that can stream at
+  the same time, from `1` to `4`. Each session reserves memory and a socket, so keep this
+  low on memory-constrained boards. Defaults to `2`.
+
+This component only works on ESP32-based devices with a camera configured.
+
+## Watching the stream
+
+The stream is available at `rtsp://<device-ip>:<port>/`. For example:
+
+```bash
+ffplay -rtsp_transport tcp rtsp://192.168.1.100:554/
+```
+
+or open the same URL as a network stream in VLC. For the lowest latency with ffplay, disable
+its internal buffering:
+
+```bash
+ffplay -fflags nobuffer -flags low_delay -probesize 32 -analyzeduration 0 -rtsp_transport tcp rtsp://192.168.1.100:554/
+```
+
+## Integrating into an NVR
+
+The RTSP URL can be used directly as a camera source in surveillance software such as
+Frigate, go2rtc, Zoneminder or Blue Iris. Configure the source as an RTSP camera with
+TCP transport and the URL `rtsp://<device-ip>:554/`.
+
+> [!NOTE]
+> The stream is not authenticated or encrypted, matching the behavior of the
+> [ESP32 Camera Web Server](/components/esp32_camera_web_server/) component. Only use it on
+> networks you trust.
+
+## See Also
+
+- [Camera Component](/components/camera/)
+- [ESP32 Camera Component](/components/esp32_camera/)
+- [ESP32 Camera Web Server Component](/components/esp32_camera_web_server/)
+- <APIRef text="rtsp_server.h" path="rtsp_server/rtsp_server.h" />
