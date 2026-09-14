@@ -48,6 +48,11 @@ wifi:
 - **password** (*Optional*, string): The password (or PSK) for your
   WiFi network. Leave empty for no password.
 
+- **hidden** (*Optional*, boolean): Set to `true` if the network does not broadcast its SSID.
+  Only for the single-network shorthand and requires `ssid` to be set; with `networks`,
+  set `hidden` on the network entry instead. Defaults to `false`.
+  See [Connecting to a Hidden Network](#connecting-to-a-hidden-network).
+
 - **networks** (*Optional*): Configure multiple WiFi networks to connect to, the best one
   that is reachable will be connected to. See [Connecting to Multiple Networks](#wifi-networks).
 
@@ -127,8 +132,8 @@ wifi:
 
   > [!NOTE]
   > While `fast_connect` skips the initial scan, if the connection attempt fails, ESPHome will still perform a scan
-  > to find available networks. For hidden networks, use `hidden: true` on the network configuration (see
-  > [Connecting to Multiple Networks](#wifi-networks)) to ensure the device always connects without scanning.
+  > to find available networks. For hidden networks, set `hidden: true` (see
+  > [Connecting to a Hidden Network](#connecting-to-a-hidden-network)) to ensure the device always connects without scanning.
   > Be aware that marking networks as hidden prevents ESPHome from finding the best access point to connect to,
   > so the device may not connect to the AP with the best signal strength.
 
@@ -434,7 +439,16 @@ wifi:
   If all tracked BSSIDs have identical priorities, they are automatically reset to 0 to start fresh.
   Defaults to `0`.
 
-### Example: Connecting to a Hidden Network
+## Connecting to a Hidden Network
+
+```yaml
+wifi:
+  ssid: MyHiddenNetwork
+  password: VerySafePassword
+  hidden: true
+```
+
+With multiple networks, set `hidden` on the network entry instead:
 
 ```yaml
 wifi:
