@@ -1,0 +1,107 @@
+---
+title: "Mill Panel Heater Gen2"
+description: "Instructions for connecting supported Mill Generation 2 panel heaters to ESPHome over UART."
+---
+
+The `mill_panelheater_gen2` component integrates supported Mill Generation 2 panel heaters through the heater's
+internal UART connection. It has been tested with Mill Generation 2 Wi-Fi panel heaters that use this UART protocol;
+support for other Mill models is not implied.
+
+The component provides a climate entity that can:
+
+- Turn the heater on and off.
+- Set the target temperature.
+- Report the current room temperature.
+- Report whether the heater is heating or idle.
+- Optionally publish estimated instantaneous power.
+
+## Configuration
+
+The component requires a [UART bus](/components/uart/) with both transmit and receive pins.
+
+```yaml
+uart:
+  tx_pin: GPIOXX
+  rx_pin: GPIOXX
+  baud_rate: 9600
+
+climate:
+  - platform: mill_panelheater_gen2
+    name: Mill Panel Heater
+```
+
+> [!NOTE]
+> If the [Logger Component](/components/logger/) uses the same hardware UART, disable serial logging to prevent a
+> conflict:
+>
+> ```yaml
+> logger:
+>   baud_rate: 0
+> ```
+
+## UART Requirements
+
+Configure the UART connection with the following parameters:
+
+- Baud rate: `9600`
+- Data bits: `8`
+- Parity: `NONE`
+- Stop bits: `1`
+- Both RX and TX are required.
+
+Connect the ESP to the heater's internal low-voltage UART. The correct pinout and signal voltage depend on the heater
+model and installation. Verify both before making any connection.
+
+## Configuration Variables
+
+- **uart_id** (*Optional*, [ID](/guides/configuration-types/#id)): The UART bus to use when more than one bus is
+  configured.
+- **rated_power** (*Optional*, float): The heater's nominal power in watts. The value must be positive and must be
+  configured together with **power**. It is used to calculate estimated instantaneous power.
+- **power** (*Optional*, [Sensor](/components/sensor/)): Configuration for the estimated power sensor. It must be
+  configured together with **rated_power**. The sensor publishes the configured rated power while the climate action
+  is heating and `0 W` when the heater is not heating. It becomes unknown after a communication timeout. This value is
+  an estimate, not a power or energy measurement reported by the heater.
+
+  - All other options from [Sensor](/components/sensor/).
+
+- All other options from [Climate](/components/climate/#config-climate).
+
+## Status Updates and Timeouts
+
+Status frames received from the heater are the authoritative state. The component does not publish command changes
+optimistically; it waits for the heater to report its updated state.
+
+Supported heaters normally send a status frame approximately once per minute, although the interval can vary with
+heater firmware. If no valid status frame is received before the communication timeout, the current room temperature
+and the optional estimated power sensor are marked unknown.
+
+## Estimated Power Example
+
+To publish estimated instantaneous power, configure both **rated_power** and **power**:
+
+```yaml
+climate:
+  - platform: mill_panelheater_gen2
+    name: Mill Panel Heater
+    rated_power: 900
+    power:
+      name: Mill Estimated Power
+```
+
+The sensor reports `900 W` while the climate action is heating and `0 W` otherwise. It does not measure actual power
+consumption and does not provide energy metering.
+
+## Safety
+
+> [!WARNING]
+> Installation requires opening or modifying a mains-powered heating appliance. Disconnect the appliance from mains
+> power before starting work. Do not confuse internal low-voltage signals with mains voltage. You are responsible for
+> electrical safety and compliance with local regulations. This documentation does not provide disassembly or mains
+> wiring instructions.
+
+## See Also
+
+- [UART Component](/components/uart/)
+- [Climate Component](/components/climate/)
+- [Sensor Component](/components/sensor/)
