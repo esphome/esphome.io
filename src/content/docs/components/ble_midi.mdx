@@ -1,0 +1,375 @@
+---
+description: "Connect to a BLE MIDI keyboard, pad controller or foot switch and use it in automations."
+title: "BLE MIDI"
+---
+import APIRef from '@components/APIRef.astro';
+
+
+The `ble_midi` component connects to a device that speaks MIDI over Bluetooth Low Energy — a wireless
+keyboard, a pad controller, a foot switch — and turns the notes, knobs and buttons it sends into
+automations. It can also send MIDI back to the device.
+
+It does not create any entities of its own. What you do with a note or a knob is up to your automations.
+
+The component needs a [BLE Client](/components/ble_client/) to hold the connection, which in turn needs the
+[ESP32 BLE Tracker](/components/esp32_ble_tracker/) to find the device.
+
+> [!WARNING]
+> The BLE software stack on the ESP32 consumes a significant amount of RAM on the device.
+>
+> **Crashes are likely to occur** if you include too many additional components in your device's
+> configuration. Memory-intensive components such as [Voice Assistant](/components/voice_assistant/) and other
+> audio components are most likely to cause issues.
+
+```yaml
+esp32_ble_tracker:
+
+ble_client:
+  - mac_address: XX:XX:XX:XX:XX:XX
+    id: midi_keyboard
+
+ble_midi:
+  ble_client_id: midi_keyboard
+  on_note_on:
+    - logger.log:
+        format: "Note %u pressed with velocity %u"
+        args: [note, velocity]
+```
+
+## Configuration variables
+
+- **ble_client_id** (**Required**, [ID](/guides/configuration-types#id)): ID of the associated BLE client.
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): The ID to use for code generation, and for
+  reference by the `ble_midi.*` actions.
+- **pair** (*Optional*, boolean): Pair with the device after connecting. Some devices refuse to send
+  anything until they are paired. Defaults to `false`.
+- **max_sysex_size** (*Optional*, int): The size of the buffer used to reassemble System Exclusive messages,
+  in bytes. Longer messages are truncated. Range: 8-2048. Defaults to `256`.
+
+Automations:
+
+- **on_connect** (*Optional*, [Automation](/automations)): An automation to perform when the MIDI device is
+  connected and ready. See [`on_connect`](#on_connect).
+- **on_disconnect** (*Optional*, [Automation](/automations)): An automation to perform when the MIDI device
+  disconnects. See [`on_disconnect`](#on_disconnect).
+- **on_note_on** (*Optional*, [Automation](/automations)): An automation to perform when a key or pad is
+  pressed. See [`on_note_on`](#on_note_on).
+- **on_note_off** (*Optional*, [Automation](/automations)): An automation to perform when a key or pad is
+  released. See [`on_note_off`](#on_note_off).
+- **on_control_change** (*Optional*, [Automation](/automations)): An automation to perform when a knob,
+  fader or switch is moved. See [`on_control_change`](#on_control_change).
+- **on_program_change** (*Optional*, [Automation](/automations)): An automation to perform when the device
+  selects a program. See [`on_program_change`](#on_program_change).
+- **on_pitch_bend** (*Optional*, [Automation](/automations)): An automation to perform when the pitch bend
+  wheel moves. See [`on_pitch_bend`](#on_pitch_bend).
+- **on_sysex** (*Optional*, [Automation](/automations)): An automation to perform when a System Exclusive
+  message arrives. See [`on_sysex`](#on_sysex).
+- **on_message** (*Optional*, [Automation](/automations)): An automation to perform for every MIDI message,
+  as raw bytes. See [`on_message`](#on_message).
+
+## Channel and Value Ranges
+
+Channels are `0` to `15`, as they are on the wire. What a keyboard labels "channel 1" is channel `0` here.
+
+Notes, velocities, controller numbers, controller values and programs are `0` to `127`. Pitch bend is
+`-8192` to `8191`, with `0` at rest.
+
+## BLE MIDI Automation
+
+### `on_connect`
+
+Triggered when the MIDI device is connected and ready to send. This is later than the `on_connect` of the
+[BLE Client](/components/ble_client/) itself: it fires once the MIDI service has been found and the device
+has been told to start sending.
+
+```yaml
+ble_midi:
+  ble_client_id: midi_keyboard
+  on_connect:
+    - logger.log: "MIDI device ready"
+```
+
+### `on_disconnect`
+
+Triggered when the MIDI device disconnects.
+
+```yaml
+ble_midi:
+  ble_client_id: midi_keyboard
+  on_disconnect:
+    - logger.log: "MIDI device gone"
+```
+
+### `on_note_on`
+
+Triggered when a key or a pad is pressed. The variables `note`, `velocity` and `channel` are available.
+
+```yaml
+ble_midi:
+  ble_client_id: midi_keyboard
+  on_note_on:
+    - logger.log:
+        format: "Note %u on channel %u, velocity %u"
+        args: [note, channel, velocity]
+```
+
+A note is often used as a button. Pick the one you want and act on it:
+
+```yaml
+ble_midi:
+  ble_client_id: midi_keyboard
+  on_note_on:
+    - if:
+        condition:
+          lambda: "return note == 60;"
+        then:
+          - light.toggle: desk_light
+```
+
+> [!NOTE]
+> Many devices signal a release by sending a note on with velocity `0` instead of a note off. The component
+> reports those as `on_note_off` with velocity `0`, so you do not have to handle both cases.
+
+### `on_note_off`
+
+Triggered when a key or a pad is released. The variables `note`, `velocity` and `channel` are available.
+
+```yaml
+ble_midi:
+  ble_client_id: midi_keyboard
+  on_note_off:
+    - logger.log:
+        format: "Note %u released"
+        args: [note]
+```
+
+### `on_control_change`
+
+Triggered when a knob, fader or switch is moved. The variables `control_number`, `value` and `channel` are
+available.
+
+```yaml
+ble_midi:
+  ble_client_id: midi_keyboard
+  on_control_change:
+    - if:
+        condition:
+          lambda: "return control_number == 7;"
+        then:
+          - light.turn_on:
+              id: desk_light
+              brightness: !lambda "return value / 127.0f;"
+```
+
+### `on_program_change`
+
+Triggered when the device selects a program. The variables `program` and `channel` are available.
+
+```yaml
+ble_midi:
+  ble_client_id: midi_keyboard
+  on_program_change:
+    - logger.log:
+        format: "Program %u selected"
+        args: [program]
+```
+
+### `on_pitch_bend`
+
+Triggered when the pitch bend wheel moves. The variables `value` and `channel` are available.
+
+```yaml
+ble_midi:
+  ble_client_id: midi_keyboard
+  on_pitch_bend:
+    - logger.log:
+        format: "Pitch bend %d"
+        args: [value]
+```
+
+### `on_sysex`
+
+Triggered when a System Exclusive message arrives. The variable `data` is available, an
+`std::vector<uint8_t>` holding the payload without the surrounding `0xF0` and `0xF7` bytes.
+
+```yaml
+ble_midi:
+  ble_client_id: midi_keyboard
+  on_sysex:
+    - logger.log:
+        format: "SysEx of %u bytes"
+        args: ["data.size()"]
+```
+
+### `on_message`
+
+Triggered for every message the device sends, including the ones the triggers above already cover and the
+ones they do not, such as aftertouch and clock. The variable `data` is available, an `std::vector<uint8_t>`
+holding the status byte followed by its data bytes.
+
+```yaml
+ble_midi:
+  ble_client_id: midi_keyboard
+  on_message:
+    - logger.log:
+        format: "MIDI status 0x%02X"
+        args: ["data[0]"]
+```
+
+## `ble_midi.send_note_on` Action
+
+Sends a note on message.
+
+```yaml
+- ble_midi.send_note_on:
+    id: my_midi
+    note: 60
+```
+
+### Configuration variables
+
+- **id** (**Required**, [ID](/guides/configuration-types#id)): ID of the `ble_midi` component.
+- **note** (**Required**, int, [templatable](/automations/templates)): The note, `0` to `127`.
+- **velocity** (*Optional*, int, [templatable](/automations/templates)): The velocity, `0` to `127`.
+  Defaults to `64`.
+- **channel** (*Optional*, int, [templatable](/automations/templates)): The channel, `0` to `15`.
+  Defaults to `0`.
+
+## `ble_midi.send_note_off` Action
+
+Sends a note off message. Takes the same options as
+[`ble_midi.send_note_on`](#ble_midi-send_note_on-action).
+
+```yaml
+- ble_midi.send_note_off:
+    id: my_midi
+    note: 60
+```
+
+## `ble_midi.send_control_change` Action
+
+Sends a control change message. This is what most devices use to set an LED, a motorized fader or a mode.
+
+```yaml
+- ble_midi.send_control_change:
+    id: my_midi
+    control_number: 7
+    value: 100
+```
+
+### Configuration variables
+
+- **id** (**Required**, [ID](/guides/configuration-types#id)): ID of the `ble_midi` component.
+- **control_number** (**Required**, int, [templatable](/automations/templates)): The controller number,
+  `0` to `127`.
+- **value** (**Required**, int, [templatable](/automations/templates)): The value, `0` to `127`.
+- **channel** (*Optional*, int, [templatable](/automations/templates)): The channel, `0` to `15`.
+  Defaults to `0`.
+
+## `ble_midi.send_program_change` Action
+
+Sends a program change message.
+
+```yaml
+- ble_midi.send_program_change:
+    id: my_midi
+    program: 3
+```
+
+### Configuration variables
+
+- **id** (**Required**, [ID](/guides/configuration-types#id)): ID of the `ble_midi` component.
+- **program** (**Required**, int, [templatable](/automations/templates)): The program, `0` to `127`.
+- **channel** (*Optional*, int, [templatable](/automations/templates)): The channel, `0` to `15`.
+  Defaults to `0`.
+
+## `ble_midi.send_pitch_bend` Action
+
+Sends a pitch bend message.
+
+```yaml
+- ble_midi.send_pitch_bend:
+    id: my_midi
+    value: 2048
+```
+
+### Configuration variables
+
+- **id** (**Required**, [ID](/guides/configuration-types#id)): ID of the `ble_midi` component.
+- **value** (**Required**, int, [templatable](/automations/templates)): The amount of bend, `-8192` to
+  `8191`.
+- **channel** (*Optional*, int, [templatable](/automations/templates)): The channel, `0` to `15`.
+  Defaults to `0`.
+
+## `ble_midi.send_sysex` Action
+
+Sends a System Exclusive message. The `0xF0` and `0xF7` bytes are added for you if the payload does not
+already carry them.
+
+```yaml
+- ble_midi.send_sysex:
+    id: my_midi
+    payload: [0x7E, 0x7F, 0x06, 0x01]
+```
+
+### Configuration variables
+
+- **id** (**Required**, [ID](/guides/configuration-types#id)): ID of the `ble_midi` component.
+- **payload** (**Required**, list of bytes, [templatable](/automations/templates)): The message body.
+
+## `ble_midi.send_raw` Action
+
+Sends MIDI bytes as they are: a status byte followed by its data bytes. Use this for messages the other
+actions do not cover.
+
+```yaml
+- ble_midi.send_raw:
+    id: my_midi
+    data: [0xFA]
+```
+
+### Configuration variables
+
+- **id** (**Required**, [ID](/guides/configuration-types#id)): ID of the `ble_midi` component.
+- **data** (**Required**, list of bytes, [templatable](/automations/templates)): The bytes to send.
+
+## `ble_midi.connected` Condition
+
+Checks whether the MIDI device is connected and ready.
+
+```yaml
+- if:
+    condition:
+      ble_midi.connected:
+        id: my_midi
+    then:
+      - ble_midi.send_note_on:
+          id: my_midi
+          note: 60
+```
+
+> [!NOTE]
+> Sending while the device is disconnected does nothing; the message is dropped and a warning is logged.
+> Use this condition when you want to take a different action instead.
+
+## Finding Out What Your Device Sends
+
+Log everything, press every key and turn every knob:
+
+```yaml
+ble_midi:
+  ble_client_id: midi_keyboard
+  on_message:
+    - logger.log:
+        format: "MIDI %u bytes, status 0x%02X"
+        args: ["data.size()", "data[0]"]
+```
+
+The note and controller numbers you see in the log are the ones to use in your automations.
+
+## See Also
+
+- [BLE Client](/components/ble_client/)
+- [ESP32 BLE Tracker](/components/esp32_ble_tracker/)
+- [Automation](/automations)
+- <APIRef text="ble_midi.h" path="ble_midi/ble_midi.h" />
