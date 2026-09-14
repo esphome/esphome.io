@@ -1,0 +1,160 @@
+---
+description: "Instructions for setting up the M5Stack M5Unit-BLDC brushless DC motor driver in ESPHome."
+title: "M5Unit-BLDC"
+---
+
+import APIRef from '@components/APIRef.astro';
+
+## Component/Hub
+
+<span id="m5-unit-bldc-component"></span>
+
+The `m5_unit_bldc` component lets you drive an [M5Stack M5Unit-BLDC](https://docs.m5stack.com/en/unit/Unit-BLDC)
+brushless DC motor driver over [I²C](/components/i2c). The unit is built around an STM32 microcontroller that
+handles the actual motor commutation, so ESPHome only needs to talk to it over its documented
+[I²C register protocol](https://m5stack-doc.oss-cn-shenzhen.aliyuncs.com/772/Unit_BLDC_I2C_Protocol.pdf) --
+setting the control mode, direction and motor characteristics, driving it via PWM duty cycle or a target RPM, and
+reading back the measured RPM, frequency and motor status.
+
+The driver supports two control modes:
+
+- **Open loop**: you set a raw PWM duty cycle (0-2047) directly.
+- **Closed loop**: you set a target RPM, and the M5Unit-BLDC's own PID loop drives the motor to reach it.
+
+```yaml
+# Example configuration entry
+i2c:
+  sda: GPIO2
+  scl: GPIO1
+
+m5_unit_bldc:
+  id: bldc1
+  mode: open_loop
+  direction: forward
+  model: low_speed
+  pole_pairs: 7
+```
+
+### Configuration variables
+
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID for this `m5_unit_bldc`
+  component if you need multiple components, or want to reference it from a `number`, `select`, `sensor` or
+  `text_sensor` platform entry.
+- **address** (*Optional*, int): The I²C address of the driver. Defaults to `0x65`.
+- **mode** (*Optional*, string): The control mode to start the driver in. One of `open_loop` or `closed_loop`.
+  Defaults to `open_loop`.
+- **direction** (*Optional*, string): The initial rotation direction. One of `forward` or `backward`. Defaults to
+  `forward`.
+- **model** (*Optional*, string): The motor model, matching whatever is wired to the driver. One of `low_speed` or
+  `high_speed`. Defaults to `low_speed`.
+- **pole_pairs** (**Required**, int): The number of pole pairs of the motor wired to the driver, from `1` to `255`.
+  The device uses this to convert its raw pulse frequency measurement into RPM, so an incorrect value here throws
+  off the `rpm` sensor and closed-loop control.
+- **pid** (*Optional*): PID parameters for closed-loop control, persisted on the device.
+  - **p** (**Required**, float): Proportional gain.
+  - **i** (**Required**, float): Integral gain.
+  - **d** (**Required**, float): Derivative gain.
+- **save_to_flash** (*Optional*, boolean): Whether to persist the motor model, pole pairs and PID parameters to the
+  driver's internal flash at startup, so they survive a power cycle even before ESPHome has a chance to reconfigure
+  the device. Defaults to `false`.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to poll the `rpm`,
+  `frequency` and `status` readings below. Defaults to `1s`.
+- **i2c_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the
+  [I²C Component](/components/i2c) if you need to use multiple I²C buses.
+
+## Number
+
+The `m5_unit_bldc` number platform exposes the driver's two control registers as `number` entities -- configure
+whichever one matches the hub's `mode`.
+
+```yaml
+number:
+  - platform: m5_unit_bldc
+    m5_unit_bldc_id: bldc1
+    pwm:
+      name: "BLDC PWM"
+    target_rpm:
+      name: "BLDC Target RPM"
+```
+
+### Configuration variables
+
+- **pwm** (*Optional*): The open-loop PWM duty cycle, `0` to `2047`. Only takes effect while `mode` is `open_loop`.
+  All options from [Number](/components/number#config-number).
+- **target_rpm** (*Optional*): The closed-loop target RPM. Only takes effect while `mode` is `closed_loop`.
+  All options from [Number](/components/number#config-number).
+- **m5_unit_bldc_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the
+  `m5_unit_bldc` hub if you have multiple components.
+
+## Select
+
+The `m5_unit_bldc` select platform exposes the motor's rotation direction.
+
+```yaml
+select:
+  - platform: m5_unit_bldc
+    m5_unit_bldc_id: bldc1
+    direction:
+      name: "BLDC Direction"
+```
+
+> [!NOTE]
+> Per the device's own protocol notes, a new direction only takes effect once the motor has actually spun down to
+> a stop -- writing the direction register alone has no effect on a spinning motor. Setting this `select` while the
+> motor is running automatically zeroes the active PWM/RPM register and restores it a moment later, giving the
+> motor time to decelerate before the new direction takes effect.
+
+### Configuration variables
+
+- **direction** (*Optional*): A select with two options, `Forward` and `Backward`.
+  All options from [Select](/components/select#config-select).
+- **m5_unit_bldc_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the
+  `m5_unit_bldc` hub if you have multiple components.
+
+## Sensor
+
+The `m5_unit_bldc` sensor platform reports the motor's measured RPM and pulse frequency.
+
+```yaml
+sensor:
+  - platform: m5_unit_bldc
+    m5_unit_bldc_id: bldc1
+    rpm:
+      name: "BLDC RPM"
+    frequency:
+      name: "BLDC Frequency"
+```
+
+### Configuration variables
+
+- **rpm** (*Optional*): The measured motor RPM. All options from [Sensor](/components/sensor#config-sensor).
+- **frequency** (*Optional*): The measured pulse frequency, in Hz. `rpm` is derived from this and `pole_pairs` on
+  the device itself. All options from [Sensor](/components/sensor#config-sensor).
+- **m5_unit_bldc_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the
+  `m5_unit_bldc` hub if you have multiple components.
+
+## Text Sensor
+
+The `m5_unit_bldc` text sensor platform reports the driver's motor status.
+
+```yaml
+text_sensor:
+  - platform: m5_unit_bldc
+    m5_unit_bldc_id: bldc1
+    status:
+      name: "BLDC Status"
+```
+
+### Configuration variables
+
+- **status** (*Optional*): The motor status, one of `Standby`, `Running` or `Error`.
+  All options from [Text Sensor](/components/text_sensor#config-text_sensor).
+- **m5_unit_bldc_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the
+  `m5_unit_bldc` hub if you have multiple components.
+
+## See Also
+
+- [I²C Bus](/components/i2c)
+- [M5Stack M5Unit-BLDC product page](https://docs.m5stack.com/en/unit/Unit-BLDC)
+- [M5UnitBLDC Arduino library (source of the register protocol)](https://github.com/m5stack/M5Unit-BLDC)
+- <APIRef text="m5_unit_bldc.h" path="m5_unit_bldc/m5_unit_bldc.h" />
