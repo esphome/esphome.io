@@ -12,10 +12,12 @@ The device uses mDNS to discover Sendspin servers on the network, so mDNS
 traffic must not be blocked on your network. TCP port **8928** must also be
 reachable between the device and the server.
 
-On its own, the hub does not expose any user-facing entities. Once a Sendspin
-server is present on the network, it will connect to the device and begin
-sending group state updates, but audio playback, control, and metadata require
-the corresponding child components to be configured as well.
+On its own, the hub does not expose any user-facing entities beyond the
+[`on_connect`/`on_disconnect` trigger](#sendspin-on_connect_disconnect)
+below. Once a Sendspin server is present on the network, it will connect to
+the device and begin sending group state updates, but audio playback,
+control, and metadata require the corresponding child components to be
+configured as well.
 
 This platform only works on ESP32-based chips.
 
@@ -35,6 +37,24 @@ sendspin:
 - **task_stack_in_psram** (*Optional*, boolean): Place the internal HTTP server task
   stack in PSRAM to reduce internal RAM usage. Requires the
   [Psram](/components/psram/) component to be configured. Defaults to `false`.
+- **on_connect** (*Optional*, [Automation](/automations)): An action to be performed when the hub establishes a connection to a Sendspin server.
+- **on_disconnect** (*Optional*, [Automation](/automations)): An action to be performed when the hub loses its connection to a Sendspin server.
+
+<span id="sendspin-on_connect_disconnect"></span>
+
+## `on_connect` / `on_disconnect` Trigger
+
+This trigger is activated when the hub establishes or loses its connection to
+a Sendspin server.
+
+```yaml
+sendspin:
+  # ...
+  on_connect:
+    - logger.log: "Connected to Sendspin server"
+  on_disconnect:
+    - logger.log: "Lost connection to Sendspin server"
+```
 
 ## Actions
 
