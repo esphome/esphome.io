@@ -76,7 +76,7 @@ import argparse
 from collections import Counter
 from collections.abc import Callable
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import datetime, timedelta
 import json
 from pathlib import Path
 import re
@@ -810,8 +810,8 @@ class ReleaseNotesGenerator:
         return "\n".join(lines)
 
     def assemble_changelog(self) -> bool:
-        """Assemble final changelog from template and AI responses"""
-        print("\n=== Assembling Changelog ===\n")
+        """Assemble the release notes blog post and changelog from AI responses"""
+        print("\n=== Assembling Release Notes ===\n")
 
         # Check that AI responses exist
         overview_file = self.responses_dir / "release_overview.md"
@@ -819,76 +819,6 @@ class ReleaseNotesGenerator:
             print(f"Error: Missing AI response: {overview_file}")
             print("Please run the prompts through Claude first")
             return False
-
-        # Load template
-        template_file = Path("script/release_notes_template.mdx")
-        if not template_file.exists():
-            print(f"Error: Template not found: {template_file}")
-            return False
-
-        template = template_file.read_text()
-
-        # Check if destination file exists and has content to preserve
-        output_file = Path("src/content/docs/changelog") / f"{self.version}.mdx"
-        existing_imgtable = None
-        existing_full_list = None
-        if output_file.exists():
-            existing_content = output_file.read_text()
-
-            # Extract existing ImgTable content
-            imgtable_match = re.search(
-                r"<ImgTable items=\{\[.*?\]\} />", existing_content, re.DOTALL
-            )
-            if imgtable_match:
-                items_content = imgtable_match.group(0)
-                # Only preserve if it has actual entries (not just comments/empty)
-                if re.search(r'\[".+?"', items_content):
-                    existing_imgtable = items_content
-                    print("✓ Preserving existing ImgTable")
-
-            # Extract existing "Full list of changes" section
-            # This regex matches from "## Full list of changes" to end of file
-            full_list_match = re.search(
-                r"## Full list of changes.*?(?=^## |\Z)",
-                existing_content,
-                re.DOTALL | re.MULTILINE,
-            )
-            if full_list_match:
-                existing_full_list = full_list_match.group(0)
-                print("✓ Preserving existing 'Full list of changes' section")
-
-        # Load AI responses
-        overview = overview_file.read_text().strip()
-
-        breaking_users_file = self.responses_dir / "breaking_changes_users.md"
-        breaking_users = ""
-        if breaking_users_file.exists():
-            breaking_users = breaking_users_file.read_text().strip()
-
-        breaking_devs_file = self.responses_dir / "breaking_changes_developers.md"
-        breaking_devs = ""
-        if breaking_devs_file.exists():
-            breaking_devs = breaking_devs_file.read_text().strip()
-
-        highlights_file = self.responses_dir / "feature_highlights.md"
-        highlights = ""
-        if highlights_file.exists():
-            highlights = highlights_file.read_text().strip()
-
-        upgrade_checklist_file = self.responses_dir / "upgrade_checklist.md"
-        upgrade_checklist = ""
-        if upgrade_checklist_file.exists():
-            upgrade_checklist = upgrade_checklist_file.read_text().strip()
-
-        undocumented_api_file = self.responses_dir / "undocumented_api_changes.md"
-        undocumented_api = ""
-        if undocumented_api_file.exists():
-            undocumented_api = undocumented_api_file.read_text().strip()
-
-        contributors_file = self.responses_dir / "contributors.md"
-        contributors = ""
-        if contributors_file.exists():
-            contributors = contributors_file.read_text().strip()
 
         # Load the PR numbers for this version from a manifest file
         manifest_file = self.version_dir / "pr_numbers.txt"
@@ -910,59 +840,157 @@ class ReleaseNotesGenerator:
 
         print(f"Loaded {len(prs)} PRs from cache")
 
+        responses = self._load_ai_responses()
+
+        if not self._assemble_blog_post(responses, prs):
+            return False
+        return self._assemble_changelog_file(prs)
+
+    def _load_ai_responses(self) -> dict[str, str]:
+        """Load AI response files; missing optional files load as empty strings"""
+        responses: dict[str, str] = {}
+        for key, filename in (
+            ("overview", "release_overview.md"),
+            ("upgrade_checklist", "upgrade_checklist.md"),
+            ("highlights", "feature_highlights.md"),
+            ("breaking_users", "breaking_changes_users.md"),
+            ("undocumented_api", "undocumented_api_changes.md"),
+            ("breaking_devs", "breaking_changes_developers.md"),
+            ("contributors", "contributors.md"),
+        ):
+            file = self.responses_dir / filename
+            responses[key] = file.read_text().strip() if file.exists() else ""
+        return responses
+
+    @staticmethod
+    def _release_wednesday() -> datetime:
+        """The Wednesday of the current week; releases are dated to it"""
+        now = datetime.now()
+        return now + timedelta(days=2 - now.weekday())
+
+    def _blog_post_path(self) -> Path:
+        """Path of this version's release notes blog post.
+
+        Returns the existing post when the release tooling already created it,
+        otherwise a new dated path for the release Wednesday.
+        """
+        blog_dir = Path("src/content/docs/blog")
+        slug = f"esphome-{self.version.year}-{self.version.month}"
+        existing = sorted(blog_dir.glob(f"*/*/*/{slug}.mdx"))
+        if existing:
+            return existing[-1]
+        return blog_dir / self._release_wednesday().strftime("%Y/%m/%d") / f"{slug}.mdx"
+
+    @staticmethod
+    def _blog_site_path(post_path: Path) -> str:
+        """Site path for a blog post file, e.g. blog/2026/08/19/esphome-2026-8"""
+        return post_path.relative_to("src/content/docs").with_suffix("").as_posix()
+
+    def _assemble_blog_post(
+        self, responses: dict[str, str], prs: list[PullRequest]
+    ) -> bool:
+        """Fill the narrative sections of the release notes blog post"""
+        post_path = self._blog_post_path()
+        if post_path.exists():
+            content = post_path.read_text()
+            print(f"✓ Updating existing blog post: {post_path}")
+        else:
+            template_file = Path("script/blog_post_template.mdx")
+            if not template_file.exists():
+                print(f"Error: Template not found: {template_file}")
+                return False
+            content = template_file.read_text()
+            content = content.replace("{VERSION}", str(self.version))
+            content = content.replace("{DATE}", "-".join(post_path.parts[-4:-1]))
+            content = content.replace("{BLOG_PATH}", self._blog_site_path(post_path))
+            print(f"✓ Creating blog post from template: {post_path}")
+            print("  Note: fill in the {TAGLINE} and {DESCRIPTION} placeholders manually")
+
         # Replace AI-generated sections
-        template = self._replace_marker_content(template, "RELEASE_OVERVIEW", overview)
+        content = self._replace_marker_content(
+            content, "RELEASE_OVERVIEW", responses["overview"]
+        )
 
-        if upgrade_checklist:
-            template = self._replace_marker_content(
-                template, "UPGRADE_CHECKLIST", upgrade_checklist
+        if responses["upgrade_checklist"]:
+            content = self._replace_marker_content(
+                content, "UPGRADE_CHECKLIST", responses["upgrade_checklist"]
             )
 
-        if highlights:
-            template = self._replace_marker_content(
-                template, "FEATURE_HIGHLIGHTS", highlights
+        if responses["highlights"]:
+            content = self._replace_marker_content(
+                content, "FEATURE_HIGHLIGHTS", responses["highlights"]
             )
 
-        if breaking_users:
-            template = self._replace_marker_content(
-                template, "BREAKING_CHANGES_USERS", breaking_users
+        if responses["breaking_users"]:
+            content = self._replace_marker_content(
+                content, "BREAKING_CHANGES_USERS", responses["breaking_users"]
             )
 
-        if undocumented_api:
-            template = self._replace_marker_content(
-                template, "UNDOCUMENTED_API_CHANGES", undocumented_api
+        if responses["undocumented_api"]:
+            content = self._replace_marker_content(
+                content, "UNDOCUMENTED_API_CHANGES", responses["undocumented_api"]
             )
 
-        if breaking_devs:
-            template = self._replace_marker_content(
-                template, "BREAKING_CHANGES_DEVELOPERS", breaking_devs
+        if responses["breaking_devs"]:
+            content = self._replace_marker_content(
+                content, "BREAKING_CHANGES_DEVELOPERS", responses["breaking_devs"]
             )
 
         # Contributors section: use AI response if available, otherwise fallback
-        if contributors:
-            template = self._replace_marker_content(
-                template, "CONTRIBUTORS", contributors
+        if responses["contributors"]:
+            content = self._replace_marker_content(
+                content, "CONTRIBUTORS", responses["contributors"]
             )
         else:
             fallback_contributors = self._generate_fallback_contributors(prs)
-            template = self._replace_marker_content(
-                template, "CONTRIBUTORS", fallback_contributors
+            content = self._replace_marker_content(
+                content, "CONTRIBUTORS", fallback_contributors
             )
+
+        if self.dry_run:
+            print("\n" + "=" * 80)
+            print("DRY RUN - Would write to:", post_path)
+            print("=" * 80)
+            print(content[:1000])  # Show first 1000 chars
+            print("...")
+        else:
+            post_path.parent.mkdir(parents=True, exist_ok=True)
+            post_path.write_text(content)
+            print(f"\n✓ Blog post written to: {post_path}")
+
+        return True
+
+    def _assemble_changelog_file(self, prs: list[PullRequest]) -> bool:
+        """Assemble the changelog page (full list of changes) from its template"""
+        template_file = Path("script/release_notes_template.mdx")
+        if not template_file.exists():
+            print(f"Error: Template not found: {template_file}")
+            return False
+
+        template = template_file.read_text()
+
+        # Check if destination file exists and has content to preserve
+        output_file = Path("src/content/docs/changelog") / f"{self.version}.mdx"
+        existing_full_list = None
+        if output_file.exists():
+            existing_content = output_file.read_text()
+
+            # Extract existing "Full list of changes" section
+            # This regex matches from "## Full list of changes" to end of file
+            full_list_match = re.search(
+                r"## Full list of changes.*?(?=^## |\Z)",
+                existing_content,
+                re.DOTALL | re.MULTILINE,
+            )
+            if full_list_match:
+                existing_full_list = full_list_match.group(0)
+                print("✓ Preserving existing 'Full list of changes' section")
 
         # Generate auto sections
         template = self._generate_auto_sections(template, prs)
 
         # Replace version placeholders
         template = self._replace_placeholders(template)
-
-        # Replace imgtable if we have one preserved
-        if existing_imgtable:
-            template = re.sub(
-                r"<ImgTable items=\{\[.*?\]\} />",
-                existing_imgtable,
-                template,
-                flags=re.DOTALL,
-            )
 
         # Replace "Full list of changes" section if we have one preserved
         if existing_full_list:
@@ -972,8 +1000,6 @@ class ReleaseNotesGenerator:
                 template,
                 flags=re.DOTALL | re.MULTILINE,
             )
-
-        # Write output
 
         if self.dry_run:
             print("\n" + "=" * 80)
@@ -1002,6 +1028,11 @@ class ReleaseNotesGenerator:
 
         return result
 
+    @staticmethod
+    def _is_dependency_pr(pr: PullRequest) -> bool:
+        """Whether a PR is a dependency update (listed under Dependency Changes)"""
+        return "dependencies" in pr.labels or pr.author == "app/dependabot"
+
     def _generate_auto_sections(self, template: str, prs: list[PullRequest]) -> str:
         """Generate auto-populated sections from PR data"""
         # Group PRs by label
@@ -1011,13 +1042,17 @@ class ReleaseNotesGenerator:
         undocumented_api_changes = [
             pr for pr in prs if "undocumented-api-change" in pr.labels
         ]
+        # Dependency updates get their own section, out of the all-changes list
+        dependency_changes = [pr for pr in prs if self._is_dependency_pr(pr)]
+        other_changes = [pr for pr in prs if not self._is_dependency_pr(pr)]
 
         # Generate lists
         features_list = self._format_pr_list(new_features)
         components_list = self._format_pr_list(new_components)
         breaking_list = self._format_pr_list(breaking_changes)
         undocumented_list = self._format_pr_list(undocumented_api_changes)
-        all_list = self._format_pr_list(prs)
+        all_list = self._format_pr_list(other_changes)
+        dependency_list = self._format_pr_list(dependency_changes)
 
         # Replace sections
         template = self._replace_marker_content(
@@ -1034,8 +1069,11 @@ class ReleaseNotesGenerator:
             "AUTO_GENERATED_UNDOCUMENTED_API_CHANGES_LIST",
             undocumented_list,
         )
-        return self._replace_marker_content(
+        template = self._replace_marker_content(
             template, "AUTO_GENERATED_ALL_CHANGES", all_list
+        )
+        return self._replace_marker_content(
+            template, "AUTO_GENERATED_DEPENDENCY_CHANGES", dependency_list
         )
 
     def _format_pr_list(self, prs: list[PullRequest]) -> str:
@@ -1072,11 +1110,13 @@ class ReleaseNotesGenerator:
         # Format date
         now = datetime.now()
         date_str = now.strftime("%B %Y")
+        blog_path = self._blog_site_path(self._blog_post_path())
 
         template = template.replace("{VERSION}", str(self.version))
         template = template.replace("{DATE}", date_str)
+        template = template.replace("{BLOG_PATH}", blog_path)
 
-        print(f"✓ Replaced placeholders: {self.version}, {date_str}")
+        print(f"✓ Replaced placeholders: {self.version}, {date_str}, {blog_path}")
 
         return template
 
@@ -1130,7 +1170,7 @@ Examples:
   # Force re-fetch all PRs from GitHub
   python script/generate_release_notes.py 2025.11.0 --update
 
-  # Assemble changelog from AI responses (skip PR discovery)
+  # Assemble blog post and changelog from AI responses (skip PR discovery)
   python script/generate_release_notes.py 2025.11.0 --assemble
 
   # Dry run (show what would be generated)
@@ -1148,7 +1188,7 @@ Examples:
     parser.add_argument(
         "--assemble",
         action="store_true",
-        help="Skip PR discovery, assemble changelog from cached AI responses",
+        help="Skip PR discovery, assemble blog post and changelog from cached AI responses",
     )
     parser.add_argument(
         "--dry-run",
