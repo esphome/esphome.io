@@ -21,9 +21,12 @@ Additional properties must be configured manually in Home Assistant.
 
 ## Supported Hardware
 
-Zigbee is only supported on `nRF52` platforms and on `ESP32` with IEEE 802.15.4 connectivity (`ESP32-C5`, `ESP32-C6`, or `ESP32-H2` 
-and in the future `ESP32-H4` and `ESP32-H21`). Both platforms support different features and have different limitations:
-- On `nRF52` a maximum of 8 endpoints is supported and each ESPHome entity consumes one Zigbee endpoint.
+Zigbee is supported on the [`nrf52` platform](/components/nrf52/), on `platform: zephyr`'s `nrf52`, `nrf54l15`,
+and `nrf54lm20a` [variants](/components/zephyr/#variants) (see [below](#platform-zephyr-setup)),
+and on `ESP32` with IEEE 802.15.4 connectivity (`ESP32-C5`, `ESP32-C6`, or
+`ESP32-H2` and in the future `ESP32-H4` and `ESP32-H21`). The `nRF52` chip family and `ESP32` support different
+features and have different limitations:
+- On the `nRF52` chip family a maximum of 8 endpoints is supported and each ESPHome entity consumes one Zigbee endpoint.
 - On `ESP32` a maximum of 239 endpoints is supported and ESPHome entities are combined on Zigbee endpoints.
 - `ESP32-H2` seems to work more reliably than `ESP32-C6`. There are reports of `ESP32-C6` boards that work only if placed next 
 to the coordinator.
@@ -36,6 +39,70 @@ to the coordinator.
 > Whenever the configuration is changed, the device should be removed and re-added to the Zigbee network.
 > For Zigbee2MQTT, the device must also be re-interviewed. This is especially important if components are added or removed or if names change.
 > Sometimes a changed configuration can lead to boot loops. In this case use `wipe_on_boot` or erase the flash manually.
+
+### `platform: zephyr` Setup
+
+Adding `zigbee:` to the configuration automatically fetches and builds against Nordic's `ncs-zigbee`
+add-on — no `framework:` configuration is needed for this. The stock devicetree for these boards has
+no partitions for Zigbee's non-volatile storage, so an
+`overlays: app:` entry is also required, adding `zboss_nvram`/`zboss_product_config` partitions and
+enabling the Zigbee stack's timer:
+
+```yaml
+zephyr:
+  variant: nrf52
+  overlays:
+    app: |
+      /delete-node/ &slot0_partition;
+      /delete-node/ &slot1_partition;
+      /delete-node/ &storage_partition;
+
+      &flash0 {
+        partitions {
+          slot0_partition: partition@0 {
+            compatible = "zephyr,mapped-partition";
+            label = "image-0";
+            reg = <0x0 DT_SIZE_K(980)>;
+          };
+
+          storage_partition: partition@f5000 {
+            compatible = "zephyr,mapped-partition";
+            label = "storage";
+            reg = <0xf5000 DT_SIZE_K(8)>;
+          };
+
+          zboss_nvram: partition@f7000 {
+            compatible = "zephyr,mapped-partition";
+            label = "zboss-nvram";
+            reg = <0xf7000 DT_SIZE_K(32)>;
+          };
+
+          zboss_product_config: partition@ff000 {
+            compatible = "zephyr,mapped-partition";
+            label = "zboss-product-config";
+            reg = <0xff000 DT_SIZE_K(4)>;
+          };
+        };
+      };
+
+      / {
+        chosen {
+          ncs,zigbee-timer = &timer2;
+        };
+      };
+
+      &timer2 {
+        status = "okay";
+      };
+
+zigbee:
+  wipe_on_boot: true
+```
+
+This partition layout replaces `slot0`/`storage` outright, which drops MCUboot support unless you also
+repartition for it — see the `_mcuboot` variant of this example in
+[`zephyr-examples`](https://github.com/esphomeplatformzephyr/zephyr-examples) for a layout that keeps
+`slot0`/`slot1` for OTA alongside the ZBOSS partitions.
 
 <span id="config-zigbee"></span>
 
@@ -80,7 +147,7 @@ zigbee:
 - **on_join** (*Optional*, [Automation](/automations#automation)): Automation to run when the device joins the network.
   In [Lambdas](/automations/templates#config-lambda) you can get the join type with `x`. It is `true` for join and `false` for rejoin.
 
-Only on `nRF52`:
+Only on the `nRF52` chip family (`platform: nrf52`, or `platform: zephyr`):
 
 - **wipe_on_boot** (*Optional*): Erases all non-volatile memory data on boot, including
   Zigbee network pairing and preferences (e.g., last switch state). One of:
@@ -160,7 +227,7 @@ The following components are exposed over Zigbee if they have a name and if they
 - [Sensor](/components/sensor#config-sensor): **state**, **name** and **unit_of_measurement** are exposed
   over Zigbee. If no unit is given or if it is not supported it will fall back to unitless.
 
-Only on `nRF52`:
+Only on the `nRF52` chip family (`platform: nrf52`, or `platform: zephyr`):
 
 - [Switch](/components/switch#config-switch): only **state** and **name** are exposed over Zigbee.
 
@@ -190,13 +257,13 @@ and present_value attributes. On `ESP32` additionally the application type and r
 ### Switch
 
 [Switches](/components/switch#config-switch) are implemented as binary output clusters with description and present_value attributes.
-Available only on `nRF52` platforms.
+Available only on the `nRF52` chip family (see [Supported Hardware](#supported-hardware)).
 
 
 ### Number
 
 [Numbers](/components/number#config-number) are implemented as analog output clusters with description, engineering_units,
-and present_value attributes. Available only on `nRF52` platforms.
+and present_value attributes. Available only on the `nRF52` chip family (see [Supported Hardware](#supported-hardware)).
 
 #### Additional configuration variables
 
