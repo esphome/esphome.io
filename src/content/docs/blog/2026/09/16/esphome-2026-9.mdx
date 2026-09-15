@@ -40,25 +40,23 @@ head:
 import ImgTable from "@components/ImgTable.astro";
 
 {/* COMPANION_SUMMARY_START */}
-Every month ESPHome ships a release like this one, so you can catch up on what's new, what's fixed, and anything worth knowing before you update.
+Every month ESPHome ships a release like this, so you can catch up on what's new, what's fixed, and anything worth knowing about before you update.
 
 ## Short on time? Here's the quick version
 
-Below is the plain-language version for anyone short on time or newer to ESPHome – the full technical writeup continues underneath for anyone who wants the detail.
+Here's the plain-language version for anyone short on time or newer to ESPHome – the full technical writeup continues below. Most setups won't need any changes, but a few will.
 
-**Action needed:**
+- **Modbus Controller users:** If your config uses `modbus_controller` with `custom_command`, `register_count`, `force_new_range`, or `skip_updates`, those options have been renamed or replaced and your config needs updating.
+- **ESP32 devices with a custom MAC:** If you've burned a custom MAC into an ESP32 and use Ethernet, Bluetooth, or Thread/Zigbee, those interfaces will get new addresses after updating – so DHCP reservations, Bluetooth pairings, and network filters keyed to the old MAC need updating too.
+- **Certain UART sensors:** A handful of components (including `mhz19`, `daly_bms`, and `teleinfo`) now reject unsupported UART settings at config time – if any of yours were on the wrong baud rate or parity, they'll flag a clear error you can fix on the UART bus.
 
-- **Modbus users:** if your config uses `modbus_controller` with `custom_command`, `register_count`, `force_new_range`, `skip_updates`, or a non-zero write `offset`, review it against the upgrade notes below – several of these options changed or moved.
-- **ESP32 with a custom MAC burned into eFuses:** if you also use Ethernet, Bluetooth, or Zigbee/Thread on that device, those interfaces will now come up with a different MAC address than before, so any DHCP reservations, network filters, or Bluetooth pairings tied to the old address will need updating.
-- **A handful of UART-based sensors** (such as `mhz19`, `daly_bms`, `teleinfo`, `pylontech`) now enforce their required UART baud rate and parity at config time, so a device that had them running on unsupported settings will fail validation until the UART bus is set correctly.
+**New features:** Updates are quicker – ESPHome now downloads and sets up its build tools in parallel – and can be encrypted using the same key that already secures the link to Home Assistant.
 
-**New features:** Compiling and installing updates is noticeably faster this release – especially if you manage more than one device – and wireless (OTA) updates can now be encrypted end to end, keeping them private from anyone else on your network.
+**Also in this release:** Six new components, around twenty additions to existing ones, and a broad sweep of fixes covering audio, Bluetooth, WiFi provisioning, and memory safety.
 
-**Also in this release:** Six new components, additions to a range of existing ones, and the usual round of bug fixes across audio, networking, and hardware support.
+If you're running a typical config, aside from the items above there's nothing else you need to check before updating.
 
-If you're running a typical config, there's nothing else you need to check before updating – aside from the items above, this is a safe upgrade for most setups.
-
-Keep reading below for the full release overview and technical detail, especially if you have custom lambdas, external components, or a non-standard config.
+Keep reading below for the full release overview and technical detail – especially if you write custom lambdas, use external components, or run a non-standard setup.
 
 :::note[New to ESPHome?]
 The [ESPHome Starter Kit](/starter-kit/) is the easiest way to start building your own smart home devices – no soldering, breadboarding, or coding required.
@@ -214,7 +212,7 @@ the camera image reader is created lazily instead of per connection
 ([#18421](https://github.com/esphome/esphome/pull/18421)), and API message-type storage widened to `uint16_t`
 without adding per-connection RAM ([#18526](https://github.com/esphome/esphome/pull/18526)).
 
-## Out-Of-Memory Hardening
+## Out-of-memory hardening
 
 On ESP-IDF, C++ exceptions are disabled, so an allocation that fails when the heap is exhausted aborts and reboots the
 device instead of returning null. A sweep across the tree removes that abort from the paths a busy device actually
@@ -593,7 +591,6 @@ And elsewhere:
   ([#18968](https://github.com/esphome/esphome/pull/18968))
 - The removed **udp** options moved to `packet_transport` no longer appear in the generated schema
   ([#19032](https://github.com/esphome/esphome/pull/19032))
-
 {/* FEATURE_HIGHLIGHTS_END */}
 
 ## Thank you, contributors
