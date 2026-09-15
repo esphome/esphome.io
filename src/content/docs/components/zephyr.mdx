@@ -79,7 +79,7 @@ zephyr:
 
 ## Variants
 
-| Family | Variant | Chip family | Default board | Default framework | Supports |
+| Vendor | Variant | Chip family | Default board | Default framework | Supports |
 | --- | --- | --- | --- | --- | --- |
 | Espressif | `esp32` | Original ESP32 (Xtensa, dual-core) | [`esp32_devkitc`](https://docs.zephyrproject.org/latest/boards/espressif/esp32_devkitc/doc/index.html) | mainline Zephyr | Wi-Fi, BLE |
 | Espressif | `esp32c3` | ESP32-C3 (RISC-V, single-core) | [`esp32c3_devkitm`](https://docs.zephyrproject.org/latest/boards/espressif/esp32c3_devkitm/doc/index.html) | mainline Zephyr | Wi-Fi, BLE |
@@ -94,10 +94,16 @@ zephyr:
 | Raspberry Pi | `rp2350` | Raspberry Pi RP2350 (Cortex-M33, dual-core) | [`rpi_pico2`](https://docs.zephyrproject.org/latest/boards/raspberrypi/rpi_pico2/doc/index.html) | mainline Zephyr | No wireless |
 | Renesas | `ra4m1` | Renesas RA4M1 (Cortex-M4) | [`ek_ra4m1`](https://docs.zephyrproject.org/latest/boards/renesas/ek_ra4m1/doc/index.html) | mainline Zephyr | No wireless |
 | Silicon Labs | `efr32mg24` | Silicon Labs EFR32MG24 (Cortex-M33) | [`xg24_ek2703a`](https://docs.zephyrproject.org/latest/boards/silabs/dev_kits/xg24_ek2703a/doc/index.html) | mainline Zephyr | BLE, Thread (via `openthread:`) |
+| Silicon Labs | `siwx917` | Silicon Labs SiWx917 (Cortex-M4F, Wi-Fi 6) | [`siwx917_dk2605a`](https://docs.zephyrproject.org/latest/boards/silabs/dev_kits/siwx917_dk2605a/doc/index.html) | mainline Zephyr | Wi-Fi, BLE |
 | STMicroelectronics | `stm32f1` | STM32F1 (Cortex-M3) | [`nucleo_f103rb`](https://docs.zephyrproject.org/latest/boards/st/nucleo_f103rb/doc/index.html) | mainline Zephyr | No wireless |
 | STMicroelectronics | `stm32f4` | STM32F4 (Cortex-M4) | [`nucleo_f401re`](https://docs.zephyrproject.org/latest/boards/st/nucleo_f401re/doc/index.html) | mainline Zephyr | No wireless |
 | STMicroelectronics | `stm32l4` | STM32L4 (Cortex-M4) | [`nucleo_l476rg`](https://docs.zephyrproject.org/latest/boards/st/nucleo_l476rg/doc/index.html) | mainline Zephyr | No wireless |
 | STMicroelectronics | `stm32u5` | STM32U5 (Cortex-M33) | [`stm32u5g9j_dk1`](https://docs.zephyrproject.org/latest/boards/st/stm32u5g9j_dk1/doc/index.html) | mainline Zephyr | No wireless |
+
+**Vendor** groups variants by silicon manufacturer. Internally, some vendors are split into more
+than one family — a finer grouping used for shared code generation where the hardware differs too
+much to share it, even from the same vendor. Silicon Labs is one such case: `efr32mg24` and
+`siwx917` are unrelated silicon under one vendor, with separate ADC, pinctrl, and flashing code.
 
 It is not recommended to use variants that have existing platforms for other than experimental purposes.
 
@@ -138,6 +144,16 @@ Silicon Labs' provides its own vendor SDK, "Simplicity SDK for Zephyr"
 (`framework: type: silabs`), it is currently the alternate to the default mainline Zephyr build
 — See [`framework`](#framework) and see [`advanced`](#advanced) for its `commander_version` option.
 
+`siwx917` has no MCUboot/OTA support: its default board's flash is a single fixed partition, and
+this chip's real firmware-upgrade path is Silicon Labs' own RPS mechanism, not MCUboot-compatible.
+There is no `advanced: bootloader:` option for this variant. UART and I2C pin remapping are not
+supported yet — only the board's default pins work; SPI pin remapping is supported. The MAC address
+reads as all-zero, since mainline Zephyr has no HWINFO backend for this chip yet. A factory-fresh
+board also needs a one-time network-coprocessor firmware update before Wi-Fi works — see
+[Silicon Labs Serial Load Process](#silicon-labs-serial-load-process). Wi-Fi scanning and AP
+association work, but a full STA connection is not yet reliable, due to an issue in the
+upstream Zephyr/WiseConnect Wi-Fi driver rather than this platform.
+
 ### STMicroelectronics
 
 `watchdog_timeout` on `stm32l4` and `stm32f4` is `0` or `5s`–`32s`; on `stm32f1` is `0` and `5s`-`26s`;
@@ -145,9 +161,9 @@ Silicon Labs' provides its own vendor SDK, "Simplicity SDK for Zephyr"
 
 ## Serial Load Process
 
-How a variant is serially flashed differs by family — whether it has a ROM bootloader that can take
-a plain `esphome run` with no extra flags, whether MCUboot is required or optional, and whether
-ESPHome's own tooling can install MCUboot itself as part of a first flash or needs a separate,
+How a variant is serially flashed differs by vendor/chip family — whether it has a ROM bootloader that
+can take a plain `esphome run` with no extra flags, whether MCUboot is required or optional, and
+whether ESPHome's own tooling can install MCUboot itself as part of a first flash or needs a separate,
 explicit step.
 
 A loose rule of thumb that is being used is if the variant does not typically include a radio,
@@ -171,7 +187,7 @@ Use of `esphome run/upload` is emerging capability for non esp32 families. If fr
 `west flash` is recommended.  At present, `esphome run/esphome upload --device <port>`
 attempts to use the board's own default runner and this works as long as that runner's external tool is
 installed, For example, jlink needs SEGGER's J-Link software, stm32cubeprogrammer needs ST's CLI tool,
-nrfutil needs Nordic's CLI.  `<port>` is a serial port path (e.g. /dev/ttyACM0, COM3).  Family sections
+nrfutil needs Nordic's CLI.  `<port>` is a serial port path (e.g. /dev/ttyACM0, COM3).  Vendor sections
 below call out exceptions to this capability.
 
 Set `advanced: runner:` to override the board's default runner persistently, for boards whose default
@@ -242,6 +258,11 @@ Silicon Labs chips do not have a ROM bootloader, installation via SWD is expecte
 
 `framework: type: silabs` flashes via Silicon Labs' own Commander tool instead — see
 [`advanced`](#advanced) for its `commander_version` option.
+
+A factory-fresh `siwx917` board needs a one-time network-coprocessor (NWP) firmware update before
+Wi-Fi works at all — a mismatched NWP firmware version logs `Unexpected NWP firmware version` or
+`NWP device not ready` at boot. Flash the matching image once via Commander:
+`commander rps load <path-to>/SiWG917-B.2.15.5.0.0.12.rps --device SiWG917M111MGTBA`.
 
 ### STMicroelectronics Serial Load Process
 
@@ -502,16 +523,18 @@ to. **runner** is the exception: it applies to every variant.
   BOOTSEL/picotool flashing, and is overridden by `--device PYOCD` if that's also used. See
   [Serial Load Process](#serial-load-process).
 - **bootloader** (*Optional*, string, `rp2040`/`rp2350`/`ra4m1`/`stm32l4`/`stm32f4`/`stm32u5` only)
-  : `none` or `mcuboot`. Every other variant requires MCUboot and has no such option. Defaults to
-  `none` on `rp2040`/`rp2350`/`ra4m1`/`stm32l4` — their default boards ship no `slot0`/`slot1`
-  partitions, so choosing `mcuboot` there means supplying a fully qualified board and your own
-  MCUboot-shaped partition overlay via `overlays` (for example `board: rpi_pico/rp2040/mcuboot`).
-  `stm32f4` is the exception: it defaults to `mcuboot`, since its default board's stock partition
-  table already ships `slot0`/`slot1` and real MCUboot fits its `boot_partition` unmodified.
-- **commander_version** (*Optional*, string, `efr32mg24` with `framework: type: silabs` only):
-  Override the version of Silicon Labs' Simplicity Commander CLI used for secure-boot image signing.
-  Defaults to a pinned known-good version. Commander is downloaded and cached automatically; no
-  extra install step is needed.
+  : `none` or `mcuboot`. Defaults to `none` on `rp2040`/`rp2350`/`ra4m1`/`stm32l4` — their default
+  boards ship no `slot0`/`slot1` partitions, so choosing `mcuboot` there means supplying a fully
+  qualified board and your own MCUboot-shaped partition overlay via `overlays` (for example
+  `board: rpi_pico/rp2040/mcuboot`). `stm32f4` is the exception: it defaults to `mcuboot`, since its
+  default board's stock partition table already ships `slot0`/`slot1` and real MCUboot fits its
+  `boot_partition` unmodified. Every other variant requires MCUboot and has no such option, except
+  `siwx917`, which has no MCUboot/OTA support at all and also has no such option — see
+  [Silicon Labs](#silicon-labs).
+- **commander_version** (*Optional*, string, `efr32mg24`/`siwx917` with `framework: type: silabs`
+  only): Override the version of Silicon Labs' Simplicity Commander CLI used for secure-boot image
+  signing. Defaults to a pinned known-good version. Commander is downloaded and cached automatically;
+  no extra install step is needed.
 - **mac_address** (*Optional*, MAC Address, `nativesim` only): A fixed MAC address to report.
   Only valid for the `nativesim` variant, which has no real network hardware of its own; every
   other variant uses the chip's burned-in MAC address.
