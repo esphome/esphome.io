@@ -1,5 +1,5 @@
 ---
-title: "ESPHome 2026.9.0: Faster builds and encrypted OTA"
+title: "ESPHome 2026.9.0: Faster builds and encrypted updates"
 description: "ESPHome 2026.9.0 parallelizes PlatformIO installs, lays the groundwork for a native ESP8266 toolchain, adds Noise-encrypted OTA updates, and frees ESP8266 RAM."
 date: 2026-09-16
 authors:
@@ -7,9 +7,6 @@ authors:
 tags:
   - Releases
 excerpt: "ESPHome 2026.9.0 parallelizes PlatformIO installs, lays the groundwork for a native ESP8266 toolchain, adds Noise-encrypted OTA updates, and frees ESP8266 RAM."
-cover:
-  alt: "ESPHome 2026.9.0: Faster builds and encrypted OTA"
-  image: "https://assets.openhomefoundation.org/opengraph?url=https://esphome.io/blog/2026/09/16/esphome-2026-9"
 head:
   - tag: meta
     attrs:
@@ -26,7 +23,7 @@ head:
   - tag: meta
     attrs:
       property: "og:image:title2"
-      content: "Faster builds and encrypted OTA"
+      content: "Faster builds and encrypted updates"
   - tag: meta
     attrs:
       property: "og:image:author"
@@ -42,6 +39,32 @@ head:
 
 import ImgTable from "@components/ImgTable.astro";
 
+{/* COMPANION_SUMMARY_START */}
+Every month ESPHome ships a release like this, so you can catch up on what's new, what's fixed, and anything worth knowing about before you update.
+
+## Short on time? Here's the quick version
+
+Here's the plain-language version for anyone short on time or newer to ESPHome – the full technical writeup continues below. Most setups won't need any changes, but a few will.
+
+- **Modbus Controller users:** If your config uses `modbus_controller` with `custom_command`, `register_count`, `force_new_range`, or `skip_updates`, those options have been renamed or replaced and your config needs updating.
+- **ESP32 devices with a custom MAC:** If you've burned a custom MAC into an ESP32 and use Ethernet, Bluetooth, or Thread/Zigbee, those interfaces will get new addresses after updating – so DHCP reservations, Bluetooth pairings, and network filters keyed to the old MAC need updating too.
+- **Certain UART sensors:** A handful of components (including `mhz19`, `daly_bms`, and `teleinfo`) now reject unsupported UART settings at config time – if any of yours were on the wrong baud rate or parity, they'll flag a clear error you can fix on the UART bus.
+
+**New features:** Updates are quicker – ESPHome now downloads and sets up its build tools in parallel – and can be encrypted using the same key that already secures the link to Home Assistant.
+
+**Also in this release:** Six new components, around twenty additions to existing ones, and a broad sweep of fixes covering audio, Bluetooth, WiFi provisioning, and memory safety.
+
+If you're running a typical config, aside from the items above there's nothing else you need to check before updating.
+
+Keep reading below for the full release overview and technical detail – especially if you write custom lambdas, use external components, or run a non-standard setup.
+
+:::note[New to ESPHome?]
+The [ESPHome Starter Kit](/starter-kit/) is the easiest way to start building your own smart home devices – no soldering, breadboarding, or coding required.
+:::
+{/* COMPANION_SUMMARY_END */}
+
+## Components added in this release
+
 {/* MANUAL: Add featured components here */}
 <ImgTable items={[
   ["D01", "/components/sensor/d01/", "d01.jpg", "Particulate"],
@@ -53,7 +76,7 @@ import ImgTable from "@components/ImgTable.astro";
   // ["Component Name", "/components/path/", "image.png"],
 ]} />
 
-## Release Overview
+## Release overview
 
 {/* RELEASE_OVERVIEW_START */}
 ESPHome 2026.9.0 focuses on foundational build system and platform work: the scaffolding for an ESP8266
@@ -74,7 +97,7 @@ bundled Device Builder masks credentials in the YAML diff view, boots ESP32-C6 b
 and lets paired build servers recover from an address change on their own.
 {/* RELEASE_OVERVIEW_END */}
 
-## Upgrade Checklist
+## Upgrade checklist
 
 {/* UPGRADE_CHECKLIST_START */}
 - If you have a device with a custom MAC burned into the ESP32 eFuses and use Ethernet, Bluetooth, or 802.15.4,
@@ -102,7 +125,7 @@ and lets paired build servers recover from an address change on their own.
 {/* UPGRADE_CHECKLIST_END */}
 
 {/* FEATURE_HIGHLIGHTS_START */}
-## ESP8266 Native Toolchain Foundation
+## ESP8266 native toolchain foundation
 
 Led by [@bdraco](https://github.com/bdraco), this release lays the entire scaffolding for building ESP8266 firmware
 without PlatformIO. ESPHome now has a shared registry and download layer
@@ -122,7 +145,7 @@ ahead so the native toolchain itself can land in 2026.10.0. A significant number
 ESP8266, and a native build path gives ESPHome direct control over downloads, caching and incremental
 builds, the same route the ESP32 took with native ESP-IDF in 2026.7.0.
 
-## Build System Parallelization
+## Build system parallelization
 
 The install phase of a PlatformIO build was serial from top to bottom, which showed up most sharply on
 Raspberry Pi class hardware and inside the Home Assistant App. This release parallelizes it end to end:
@@ -148,7 +171,7 @@ Raspberry Pi class hardware and inside the Home Assistant App. This release para
   private packages, so it now answers the check itself, cutting a no-op rebuild of a six-library config from
   2.9s to 0.4s ([#18823](https://github.com/esphome/esphome/pull/18823))
 
-## ESP8266 RAM Savings
+## ESP8266 RAM savings
 
 A concerted sweep across the codebase pushes conditional log string literals off ESP8266 RAM and into flash,
 where the rest of the log format string already lives. [@bdraco](https://github.com/bdraco) scanned every
@@ -163,7 +186,7 @@ entirely, replaced by arithmetic range mapping that saves 64 bytes of RAM and do
 ([#18454](https://github.com/esphome/esphome/pull/18454)). Every ESP8266 device with API encryption benefits
 from the base64 change automatically.
 
-## Framework Memory And Build Efficiency
+## Framework memory and build efficiency
 
 Two coordinated efforts trim per-instance overhead and unused sources across the tree.
 [@bharvey88](https://github.com/bharvey88) and [@bdraco](https://github.com/bdraco) drove a series of over 30
@@ -189,7 +212,7 @@ the camera image reader is created lazily instead of per connection
 ([#18421](https://github.com/esphome/esphome/pull/18421)), and API message-type storage widened to `uint16_t`
 without adding per-connection RAM ([#18526](https://github.com/esphome/esphome/pull/18526)).
 
-## Out-Of-Memory Hardening
+## Out-of-memory hardening
 
 On ESP-IDF, C++ exceptions are disabled, so an allocation that fails when the heap is exhausted aborts and reboots the
 device instead of returning null. A sweep across the tree removes that abort from the paths a busy device actually
@@ -271,7 +294,7 @@ executable bit Samba puts on files edited from Windows ([#2646](https://github.c
 and the JSON config endpoint serialises non-string keys
 ([#2660](https://github.com/esphome/device-builder/pull/2660)).
 
-## Encrypted OTA Updates
+## Encrypted OTA updates
 
 [@bdraco](https://github.com/bdraco) adds Noise (ChaCha20-Poly1305) encryption to the `esphome` OTA platform
 ([#18489](https://github.com/esphome/esphome/pull/18489)), using the same protocol the native API already
@@ -290,7 +313,7 @@ lifts the Noise plumbing out of the api component so both api and ota share it, 
 and the hardware RNG that seeds the handshake to key validation and the responder role; there is no user
 configuration for `noise` itself.
 
-## Smaller And Faster Encryption
+## Smaller and faster encryption
 
 The noise-c and libsodium forks behind API and OTA encryption had only been lightly adapted for embedded
 targets. [@bdraco](https://github.com/bdraco) went through them in full, cut them by nearly half in size and
@@ -314,7 +337,7 @@ A Noise handshake drops from about 580ms to about 300ms on the ESP8266, from 63m
 ESP32 and from about 260ms to about 200ms on the Pico W; on the ESP8266 and the Pico W an encrypted API
 connect is almost entirely the handshake, so connects speed up by about the same amount.
 
-## Improv Serial Beyond WiFi
+## Improv Serial beyond WiFi
 
 [@kbx81](https://github.com/kbx81) makes `improv_serial` aware of the whole network stack instead of only
 WiFi, so it now works on Ethernet-only boards and other WiFi-less devices
@@ -327,7 +350,7 @@ offer a WiFi form that cannot succeed. [@bdraco](https://github.com/bdraco) addi
 ([#18794](https://github.com/esphome/esphome/pull/18794)), which also makes the protocol end-to-end testable
 via the new host integration test.
 
-## Provisioning Shuts Down When The Window Closes
+## Provisioning shuts down when the window closes
 
 Also from [@kbx81](https://github.com/kbx81): the WiFi access point and captive portal are now torn down when
 the provisioning window closes, matching the treatment BLE Improv already had
@@ -337,7 +360,7 @@ disappears, and new API clients are turned away. Because a device whose access p
 connection becomes unreachable when the window closes, `provisioning:` now warns at config time when WiFi is
 configured with an access point and no station credentials.
 
-## ISR-Driven IR Transmission On LibreTiny
+## ISR-driven IR transmission on LibreTiny
 
 [@kbx81](https://github.com/kbx81) rewrites `remote_transmitter` on the Beken BK7238 and Realtek RTL8720C
 to pace the IR envelope with a hardware timer interrupt chain instead of a priority-boosted busy-wait
@@ -352,7 +375,7 @@ duty-apply latency and 39/39 bit-perfect NEC envelopes. The BK7231N keeps the bi
 before, since its SDK snapshot lacks the PWM driver interface the interrupt chain needs
 ([#18958](https://github.com/esphome/esphome/pull/18958)).
 
-## Modbus Controller Overhaul
+## Modbus controller overhaul
 
 The long-running modbus refactor from [@exciton](https://github.com/exciton) continues with a large batch of
 improvements:
@@ -377,7 +400,7 @@ improvements:
 
 Users of `custom_command`, `register_count`, `force_new_range` or `skip_updates` should review their configs.
 
-## New Components And Hardware Support
+## New components and hardware support
 
 Six new components join the tree:
 
@@ -400,7 +423,7 @@ Six new components join the tree:
   primitives component that api and the new encrypted OTA both consume; no user configuration
   ([#18490](https://github.com/esphome/esphome/pull/18490))
 
-## New Features In Existing Components
+## New features in existing components
 
 - **[zigbee time platform](/components/time/zigbee/)** by [@luar123](https://github.com/luar123) adds a
   Zigbee-sourced time provider on ESP32 ([#18656](https://github.com/esphome/esphome/pull/18656))
@@ -477,7 +500,7 @@ Six new components join the tree:
   adds a `codecs` option that sets which audio codecs the media source advertises, in order of preference
   ([#19047](https://github.com/esphome/esphome/pull/19047))
 
-## Networking And Diagnostics
+## Networking and diagnostics
 
 Several targeted changes for network-heavy devices. Bluetooth proxy congestion warnings now fire once per
 transaction and once per connection instead of on every drop cycle, ending the log flood a bulk transfer to
@@ -507,7 +530,7 @@ cancels it instead of being ignored ([#19068](https://github.com/esphome/esphome
 proxy connection was active left the shared radio biased toward Bluetooth for the whole transfer; the preference now
 reverts to balanced when the OTA starts ([#19082](https://github.com/esphome/esphome/pull/19082)).
 
-## ESP32 Custom eFuse MAC Applied Consistently
+## ESP32 custom eFuse MAC applied consistently
 
 [@kbx81](https://github.com/kbx81) fixes an inconsistency where a custom MAC burned into the ESP32's eFuses
 was only applied to WiFi ([#18452](https://github.com/esphome/esphome/pull/18452)). The apply now runs in
@@ -517,7 +540,7 @@ affected; on those devices Ethernet, Bluetooth and Thread/Zigbee will change on-
 upgrade, so DHCP reservations, MAC filters and BLE pairings may need updating (set
 `ignore_efuse_custom_mac: true` under `esp32.advanced` to keep the old behaviour).
 
-## Codebase Type Annotations
+## Codebase type annotations
 
 Led by [@jesserockz](https://github.com/jesserockz), a repo-wide sweep in eleven parts added parameter and
 return type annotations to every mid-sized component's Python code (over 130 components in this batch,
@@ -528,7 +551,7 @@ PRs [#18338](https://github.com/esphome/esphome/pull/18338) through
 add every missing import for the names it introduced; an all-modules import check pins that. No behaviour
 changes.
 
-## Other Fixes
+## Other fixes
 
 Audio on ESP32 got a round of fixes:
 
@@ -568,10 +591,9 @@ And elsewhere:
   ([#18968](https://github.com/esphome/esphome/pull/18968))
 - The removed **udp** options moved to `packet_transport` no longer appear in the generated schema
   ([#19032](https://github.com/esphome/esphome/pull/19032))
-
 {/* FEATURE_HIGHLIGHTS_END */}
 
-## Thank You, Contributors
+## Thank you, contributors
 
 {/* CONTRIBUTORS_START */}
 This release includes 275 pull requests from over 40 contributors. A huge thank you to everyone who made 2026.9.0
@@ -628,10 +650,10 @@ Also thank you to [@bdraco](https://github.com/bdraco), [@ireun](https://github.
 contributions, and to everyone who reported issues, tested pre-releases, and helped in the community.
 {/* CONTRIBUTORS_END */}
 
-## Breaking Changes
+## Breaking changes
 
 {/* BREAKING_CHANGES_USERS_START */}
-### Component Changes
+### Component changes
 
 - **Modbus Controller**: `custom_command` renamed to `custom_pdu` and now takes the PDU only (function code + data), not
   a full frame. The controller's `address:` and CRC are appended automatically. Configs whose first byte matched the
@@ -692,7 +714,7 @@ contributions, and to everyone who reported issues, tested pre-releases, and hel
   the old `set_write_interval()` still compile via a deprecated shim that forwards to `set_update_interval()`,
   removed in 2027.3.0. [#14370](https://github.com/esphome/esphome/pull/14370)
 
-### Platform Changes
+### Platform changes
 
 - **ESP32**: When a custom MAC address is burned into the eFuses, ESPHome now applies it as the system base MAC
   before any component runs, so every interface (Wi-Fi, Ethernet, Bluetooth, 802.15.4) derives its address from it.
@@ -717,7 +739,7 @@ contributions, and to everyone who reported issues, tested pre-releases, and hel
   runtime log error. [#18940](https://github.com/esphome/esphome/pull/18940)
 {/* BREAKING_CHANGES_USERS_END */}
 
-### Undocumented API Changes
+### Undocumented API changes
 
 {/* UNDOCUMENTED_API_CHANGES_START */}
 Advanced users with lambdas that touch component internals should note the following C++ changes. These APIs are
@@ -776,7 +798,7 @@ them:
   [#18383](https://github.com/esphome/esphome/pull/18383)
 {/* UNDOCUMENTED_API_CHANGES_END */}
 
-### Breaking Changes for Developers
+### Breaking changes for developers
 
 {/* BREAKING_CHANGES_DEVELOPERS_START */}
 - **Core**: Deprecated `EntityBase::get_device_class_ref()`, `get_device_class()`, `get_unit_of_measurement()`,
@@ -844,7 +866,7 @@ For detailed migration guides and API documentation, see the
 [ESPHome Developers Documentation](https://developers.esphome.io/).
 {/* BREAKING_CHANGES_DEVELOPERS_END */}
 
-## Full List of Changes
+## Full list of changes
 
 For the complete list of every merged pull request in this release, see the
 [full 2026.9.0 changelog](/changelog/2026.9.0/).
