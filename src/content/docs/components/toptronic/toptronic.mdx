@@ -1,0 +1,124 @@
+---
+description: "Instructions for integrating Hoval TopTronic devices into ESPHome."
+title: "TopTronic"
+---
+
+import { Image } from 'astro:assets';
+import APIRef from '@components/APIRef.astro';
+
+The `toptronic` component allows you to integrate Hoval TopTronic devices into ESPHome. It
+communicates with the devices over a CAN bus and auto-generates all
+entities from the presets bundled with the component.
+
+
+<Image src="/images/toptronic.jpg" width={374} height={217} layout="constrained" alt="" />
+
+Supported device types:
+
+| Device type | Description | Default address |
+| --- | --- | --- |
+| `WEZ` | Heat generator | 1 |
+| `SOL` | Solar module | 16 |
+| `PS` | Buffer storage tank | 15 |
+| `FW` | District heating | 1 |
+| `HK` | Heating circuit | 9 |
+| `MWA` | Energy meter module | 13 |
+| `GLT` | Building management system (BMS) | 12 |
+| `HV` | HomeVent ventilation unit | 8 |
+| `BM` | Control module (display) | 8 |
+| `GW` | Gateway (Modbus/KNX) | — |
+
+## Component/Hub
+
+The `toptronic` hub is configured once per device (device type and bus address). You can
+declare multiple hubs to talk to several devices (e.g. `HV`, `BM` and `WEZ`) on the same bus.
+
+> [!IMPORTANT]
+> A working [CAN bus](/components/canbus/) component is mandatory. The bus must run at
+> **50 kbps**.
+
+```yaml
+# Example configuration entry
+toptronic:
+  - id: toptronic_HV
+    canbus_id: cbus
+    device_type: HV
+    device_addr: 8
+    language: en
+```
+
+### Configuration variables
+
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The id to use for this hub. It
+  is referenced by the auto-generated "Refresh all" button.
+- **canbus_id** (**Required**, [ID](/guides/configuration-types#id)): The id of the CAN bus the
+  devices are connected to. The bus must run at **50 kbps**.
+- **device_type** (**Required**, string): One of the device types listed in the table above.
+  `BD` is an alias for `BM`; use `BM`.
+- **device_addr** (**Required**, int): The bus address of the device. Typical defaults are
+  shown in the table above; the address is shown on the room control unit.
+- **language** (*Optional*, string): The preset language, one of `de`, `en`, `fr` or `it`.
+  Defaults to `en`.
+- **boot_refresh_delay** (*Optional*, [Time](/guides/configuration-types#time)): One-shot full
+  refresh of all entities after boot to catch values that changed while the gateway was
+  settling. Defaults to `30s`. Set to `0` to disable.
+- **max_pending_messages** (*Optional*, int): Maximum number of concurrently reassembled
+  multi-frame messages per hub. Defaults to `32`. Increase on large multi-hub buses.
+- **max_pending_age** (*Optional*, [Time](/guides/configuration-types#time)): A pending message
+  without a continuation frame for this long is considered lost. Defaults to `5000ms`.
+- **cleanup_interval** (*Optional*, [Time](/guides/configuration-types#time)): Interval between
+  stale-fragment sweeps. Defaults to `5000ms`.
+- **max_refresh_per_loop** (*Optional*, int): GET burst budget per refresh window. Defaults to
+  `8`.
+- **max_frames_per_message** (*Optional*, int): Maximum total frames a start frame may claim;
+  larger counts are rejected as corrupted headers. Defaults to `8`.
+- **refresh_gap_ms** (*Optional*, [Time](/guides/configuration-types#time)): Refresh window
+  length. The GET burst budget is spread across this window, so the effective per-GET spacing
+  is `refresh_gap_ms / max_refresh_per_loop` (default `6.25ms`). Defaults to `50ms`.
+- **max_refresh_retries** (*Optional*, int): Re-sends of an unanswered GET during a refresh
+  burst; `0` disables retries. Defaults to `1`.
+- **refresh_retry_interval_ms** (*Optional*, [Time](/guides/configuration-types#time)): Delay
+  before an unanswered GET in a burst is re-sent. Defaults to `200ms`.
+
+### Multiple devices
+
+```yaml
+toptronic:
+  - id: toptronic_HV
+    canbus_id: cbus
+    device_type: HV
+    device_addr: 8
+    language: en
+
+  - id: toptronic_BM
+    canbus_id: cbus
+    device_type: BM
+    device_addr: 8
+    language: en
+
+  - id: toptronic_WEZ
+    canbus_id: cbus
+    device_type: WEZ
+    device_addr: 1
+    language: en
+```
+
+## Presets
+
+Entities are generated automatically from the presets bundled with the component, so you do
+not need to declare any entity yourself.
+
+Every preset exists in the four languages `de`, `en`, `fr` and `it`, selected with the hub's
+`language` key.
+
+> [!NOTE]
+> For HomeVent units, ventilation modulation over the CAN bus only works in the matching
+> operation mode: normal modulation in "Constant operation mode" and eco modulation in
+> "Eco operation mode". The "Week 1" and "Week 2" schedules must be set up on the unit itself.
+
+## See Also
+
+- [esp_canbus](https://github.com/nliaudat/esp_canbus)
+- [CAN Bus](/components/canbus/)
+- [ESP32 CAN](/components/canbus/esp32_can/)
+- <APIRef text="toptronic.h" path="toptronic/toptronic.h" />
