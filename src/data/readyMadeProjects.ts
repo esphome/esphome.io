@@ -348,6 +348,7 @@ export const PROJECT_TYPES: ProjectType[] = [
         title: "M5Stack AtomS3 Lite with ATOMIC RS485 Base",
         body: [
           "Turn an M5Stack AtomS3 Lite into an RS-485 proxy for Home Assistant. This lets Home Assistant talk to Modbus and other RS-485 devices over the network. Mount the AtomS3 Lite on the ATOMIC RS485 Base to connect the two.",
+          'Home Assistant finds the serial port on its own. Other software must address the port with a URL like <code>esphome://atoms3-lite-rs485-a1b2c3.local/?port_name=RS-485</code>. Replace the hostname portion ("atoms3-lite-rs485-a1b2c3.local") with the actual hostname or IP address of your device. The serial port is named <code>RS-485</code> by the <a href="https://github.com/esphome/serial-proxies">project configuration</a>. Add <code>&amp;noise_psk=&lt;key&gt;</code> if the device uses API encryption. Percent-encode the key first. A base64 key can contain <code>+</code>, and a URL reads <code>+</code> as a space, so write it as <code>%2B</code>.',
         ],
         linksLabel: "This project requires two devices from M5Stack:",
         links: [
