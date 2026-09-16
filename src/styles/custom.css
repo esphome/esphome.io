@@ -110,12 +110,6 @@ dialog::backdrop {
   padding-block: 0.5em;
 }
 
-/* Hide the blog "Tags" group in the sidebar (added by starlight-blog). The group
-   is the only sidebar entry that links to /blog/tags/, so target it via :has(). */
-.sidebar-content li:has(> details a[href*="/blog/tags/"]) {
-  display: none;
-}
-
 /* Blog list post previews (starlight-blog): tighten the default 1.5rem gap
    between the title/metadata, excerpt paragraph and tags. */
 article.preview {
@@ -643,6 +637,13 @@ article.preview {
 
 .posts .metadata.not-content {
   margin-bottom: 0;
+}
+
+/* starlight-blog renders previous/next post link cards at the end of every blog
+   post. They add no value here, and the plugin offers no option to disable them,
+   so hide them. The surrounding post footer still shows the post tags. */
+.post-footer .pagination {
+  display: none;
 }
 
 .metadata.not-content .dates:before {
