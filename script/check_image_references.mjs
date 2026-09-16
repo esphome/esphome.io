@@ -36,10 +36,11 @@ const REPO_ROOT = join(__dirname, "..");
 const CONTENT_DIR = join(REPO_ROOT, "src/content/docs");
 
 // Matches an <ImgTable items={[ ... ]} /> block, tolerating whitespace and
-// newline variations in the opening tag and before the self-closing `/>`.
-// Group 1 is the opening tag (used to locate where the items text begins);
-// group 2 is the items text itself.
-const TABLE_RE = /(<ImgTable\s+items\s*=\s*\{\[)([\s\S]*?)\]\}\s*\/>/g;
+// newline variations in the opening tag, inside the JSX expression braces
+// (e.g. `items={ [ ... ] }`), and before the self-closing `/>`. Group 1 is the
+// opening tag (used to locate where the items text begins); group 2 is the
+// items text itself.
+const TABLE_RE = /(<ImgTable\s+items\s*=\s*\{\s*\[)([\s\S]*?)\]\s*\}\s*\/>/g;
 
 /** Recursively collect every `.mdx` file under `dir`. */
 function collectMdxFiles(dir) {
