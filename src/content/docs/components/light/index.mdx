@@ -47,13 +47,82 @@ light:
 - **flash_transition_length** (*Optional*, [Time](/guides/configuration-types#time)): The transition length to use when flash is called.
   Defaults to `0s`.
 
-- **initial_state** (*Optional*): The initial state the light should be set to on bootup. This state will be applied
-  when the state is **not** restored based on `restore_mode` (below).
+- **initial_state** (*Optional*): The initial state the light should be set to on bootup, applied before any state
+  is restored via `restore_mode` or `restore_state` (below). If restoring is configured and a previous state is
+  successfully loaded, the loaded (and, for `restore_state`, possibly overridden) values take precedence over
+  **initial_state** for the fields they touch.
+
+  If neither `restore_mode` nor `restore_state` is set, **initial_state**'s `state` is honored as-is on every
+  boot. If `restore_mode` **is** set, its own cold-boot direction (`OFF` for `RESTORE_DEFAULT_OFF`,
+  `RESTORE_INVERTED_DEFAULT_OFF`, `RESTORE_AND_OFF` and `ALWAYS_OFF`; `ON` for the other four values) always
+  overrides **initial_state**'s `state`.
+
+  > [!WARNING]
+  > Before 2026.10.0, a light with `initial_state: {state: ON}` and neither `restore_mode` nor `restore_state`
+  > set would still boot OFF, because omitting both keys implicitly behaved like `restore_mode: ALWAYS_OFF`.
+  > This was counter-intuitive and has been fixed: such a light now boots ON, as `initial_state` says.
 
   - **state** (*Optional*, boolean, [templatable](/automations/templates)): The ON/OFF state for the light.
   - All other options from [light state](#light-state).
 
-- **restore_mode** (*Optional*): Control how the light attempts to restore state on bootup.
+- **restore_state** (*Optional*): Persist the light's state to flash and restore it on bootup, with optional
+  per-field overrides applied on top of whatever was loaded. Mutually exclusive with `restore_mode`. Accepts
+  a mapping of per-field overrides, or one of two case-insensitive shorthands: `all` or `none`.
+
+  If nothing has been saved yet (e.g. on the very first boot), restoring has nothing to do, so the light falls
+  back to **initial_state** (or its hardware defaults) instead — none of the fields below take effect until a
+  state has actually been persisted at least once.
+
+  - **state** (*Optional*, string or boolean): `KEEP` (default, case-insensitive) to restore the saved ON/OFF
+    state as-is, `INVERT` to restore it inverted, `INITIAL` to use **initial_state**'s state instead (see
+    below), or an explicit `ON`/`OFF` (or boolean) to always force this value regardless of what was saved.
+  - All other options from [light state](#light-state), each defaulting to `KEEP` (case-insensitive): restore
+    the saved value for that field as-is. Set any of them to `INITIAL` to use **initial_state**'s value for
+    that field instead (or its hardware default, if **initial_state** doesn't set it either), or to an
+    explicit value to always force that value — either way, regardless of what was saved.
+
+  ```yaml
+  # Restore everything exactly as it was last saved -- "all" is shorthand for {}
+  light:
+    - platform: ...
+      restore_state: all
+  ```
+
+  ```yaml
+  # Explicitly disable restoring -- equivalent to omitting restore_state: entirely.
+  # Useful when the value comes from a substitution or package that might resolve to
+  # "all", "none", or a mapping.
+  light:
+    - platform: ...
+      restore_state: none
+  ```
+
+  ```yaml
+  # Restore color/brightness as saved, but always come back on
+  light:
+    - platform: ...
+      restore_state:
+        state: ON
+  ```
+
+  ```yaml
+  # Restore color as saved, but always come back at the brightness configured in
+  # initial_state: (here, 50%) rather than whatever brightness was last saved
+  light:
+    - platform: ...
+      initial_state:
+        brightness: 50%
+      restore_state:
+        brightness: INITIAL
+  ```
+
+- **restore_mode** (*Optional*): Control how the light attempts to restore state on bootup. Mutually exclusive
+  with `restore_state`.
+
+  > [!WARNING]
+  > `restore_mode` is deprecated in favor of `restore_state` (above), which offers the same behavior plus
+  > per-field control. `restore_mode` is not currently scheduled for removal and all 8 values below continue
+  > to work exactly as described.
 
   - `RESTORE_DEFAULT_OFF` - Attempt to restore state and default to OFF if not possible to restore.
   - `RESTORE_DEFAULT_ON` - Attempt to restore state and default to ON.
@@ -63,6 +132,20 @@ light:
   - `RESTORE_AND_ON` - Attempt to restore state but initialize the light as ON.
   - `ALWAYS_OFF` (Default) - Always initialize the light as OFF on bootup.
   - `ALWAYS_ON` - Always initialize the light as ON on bootup.
+
+  Equivalent configurations, for reference (`initial_state` only matters for the very first boot, before
+  anything has been saved):
+
+  | `restore_mode` | Equivalent config | Also needs |
+  | --- | --- | --- |
+  | `RESTORE_DEFAULT_OFF` | `restore_state: all` | — |
+  | `RESTORE_DEFAULT_ON` | `restore_state: all` | `initial_state: {state: ON}` |
+  | `RESTORE_INVERTED_DEFAULT_OFF` | `restore_state: {state: INVERT}` | — |
+  | `RESTORE_INVERTED_DEFAULT_ON` | `restore_state: {state: INVERT}` | `initial_state: {state: ON}` |
+  | `RESTORE_AND_OFF` | `restore_state: {state: OFF}` | — |
+  | `RESTORE_AND_ON` | `restore_state: {state: ON}` | `initial_state: {state: ON}` |
+  | `ALWAYS_OFF` | *(neither `restore_mode` nor `restore_state` set — this is the default)* | — |
+  | `ALWAYS_ON` | *(neither `restore_mode` nor `restore_state` set)* | `initial_state: {state: ON}` |
 
 - **on_turn_on** (*Optional*, [Action](/automations/actions#all-actions)): An automation to perform when the light is turned on. See
   [`light.on_turn_on` / `light.on_turn_off` Trigger](#light-on_turn_on_off_trigger).
@@ -301,7 +384,7 @@ on_...:
   then:
     - light.control:
         id: light_1
-        state: on
+        state: ON
 ```
 
 **Configuration variables:**
@@ -635,15 +718,15 @@ light:
       - strobe:
           name: Strobe Effect With Custom Values
           colors:
-            - state: true
+            - state: ON
               brightness: 100%
               red: 100%
               green: 90%
               blue: 0%
               duration: 500ms
-            - state: false
+            - state: OFF
               duration: 250ms
-            - state: true
+            - state: ON
               brightness: 100%
               red: 0%
               green: 100%
@@ -656,7 +739,7 @@ light:
 - **name** (*Optional*, string): The name of the effect. Defaults to `Strobe`.
 - **colors** (*Optional*, list): A list of colors to cycle through. Defaults to a quick cycle between ON and OFF.
 
-  - **state** (*Optional*, boolean): The on/off state to show. Defaults to `true`.
+  - **state** (*Optional*, boolean): The ON/OFF state to show. Defaults to `ON`.
   - **color_mode** (*Optional*, string): The color mode of the light. Defaults to the current color mode.
   - **brightness** (*Optional*, percentage): The brightness of the light. Defaults to `100%`.
   - **color_brightness** (*Optional*, percentage): The brightness of the RGB lights, if applicable. Defaults to `100%`.
