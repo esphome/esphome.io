@@ -10,6 +10,8 @@ import hlkFm225Img from './images/hlk-fm225.jpg';
 import hlkFm223Img from './images/hlk-fm223.jpg';
 
 The `hlk_fm22x` component allows you to use your HLK-FM225 and HLK-FM223 face recognition modules with ESPHome.
+The module does all of the work itself: it finds the face, checks that it belongs to a live person and compares it
+against the faces stored in its own memory. ESPHome only tells it when to look and reports back what it found.
 
 <Figure
   src={hlkFm225Img}
@@ -27,10 +29,18 @@ The `hlk_fm22x` component allows you to use your HLK-FM225 and HLK-FM223 face re
 
 ## Component/Hub
 
-The module can be powered by the 5V output. As the communication with the reader is done using UART (default baud rate is 115200), you need to have an [UART bus](/components/uart/) in your configuration with the `rx_pin` connected to the reader's `TX` and the `tx_pin` connected to the reader's `RX`.
+The module can be powered by the 5V output. Communication is done using UART at 115200 baud (the only speed the
+module supports in normal operation), so you need an [UART bus](/components/uart/) in your configuration with the
+`rx_pin` connected to the module's `TX` and the `tx_pin` connected to the module's `RX`. The module's UART pins
+work at 3.3V.
 
 ```yaml
 # Example configuration entry
+uart:
+  tx_pin: GPIOXX
+  rx_pin: GPIOXX
+  baud_rate: 115200
+
 hlk_fm22x:
   on_face_scan_matched:
     ...
@@ -40,6 +50,8 @@ hlk_fm22x:
     ...
   on_face_info:
     ...
+  on_face_details:
+    ...
   on_enrollment_done:
     ...
   on_enrollment_failed:
@@ -48,7 +60,8 @@ hlk_fm22x:
 
 ### Configuration variables
 
-The configuration is made up of three parts: The central component, optional individual sensors, the optional enrolling binary sensor, and the optional version text sensor.
+The configuration is made up of the central component, optional sensors, optional binary sensors and optional
+text sensors.
 
 **Base Configuration:**
 
@@ -58,38 +71,88 @@ The configuration is made up of three parts: The central component, optional ind
 - **on_face_scan_unmatched** (*Optional*, [Automation](/automations/)): An action to be performed when an unknown face is scanned. See [`on_face_scan_unmatched`](#on_face_scan_unmatched-trigger).
 - **on_face_scan_invalid** (*Optional*, [Automation](/automations/)): An action to be performed when the face scan failed. See [`on_face_scan_invalid`](#on_face_scan_invalid-trigger).
 - **on_face_info** (*Optional*, [Automation](/automations/)): An action to be performed when face information is available. See [`on_face_info`](#on_face_info-trigger).
+- **on_face_details** (*Optional*, [Automation](/automations/)): An action to be performed when the module answers a [`hlk_fm22x.get_face_details`](#hlk_fm22x-get_face_details-action) request. See [`on_face_details`](#on_face_details-trigger).
 - **on_enrollment_done** (*Optional*, [Automation](/automations/)): An action to be performed when a face enrollment step is successful. See [`on_enrollment_done`](#on_enrollment_done-trigger).
 - **on_enrollment_failed** (*Optional*, [Automation](/automations/)): An action to be performed when a face enrollment step failed. See [`on_enrollment_failed`](#on_enrollment_failed-trigger).
 
 ## Binary Sensor
 
+```yaml
+binary_sensor:
+  - platform: hlk_fm22x
+    enrolling:
+      name: "Face Enrolling"
+    scanning:
+      name: "Face Scanning"
+```
+
 **Configuration variables:**
 
-- All options from [Binary Sensor](/components/binary_sensor/).
+- **enrolling** (*Optional*): Turns on while the module is capturing a face for enrollment.
+  All options from [Binary Sensor](/components/binary_sensor/).
+- **scanning** (*Optional*): Turns on while the module is looking for a face to match.
+  All options from [Binary Sensor](/components/binary_sensor/).
+
+Older configurations that place the binary sensor options directly under the platform entry (without the
+`enrolling` key) keep working for now, but they log a warning and this form will be removed in 2027.3.0.
 
 ## Sensor
 
-- **face_count**: The number of enrolled faces stored on the module.
-- All options from [Sensor](/components/sensor/).
+```yaml
+sensor:
+  - platform: hlk_fm22x
+    face_count:
+      name: "Face Count"
+    last_face_id:
+      name: "Last Face ID"
+    status:
+      name: "Face Module Status"
+```
 
-- **last_face_id**: The last matched enrolled face as set by [`on_face_scan_matched`](#on_face_scan_matched-trigger).
-- All options from [Sensor](/components/sensor/).
+**Configuration variables:**
 
-- **status**: The integer representation of the internal status register of the module.
-- All options from [Sensor](/components/sensor/).
+- **face_count** (*Optional*): The number of enrolled faces stored on the module. It is read at startup and
+  refreshed after every enrollment and deletion.
+  All options from [Sensor](/components/sensor/).
+- **last_face_id** (*Optional*): The ID of the last matched face, as set by [`on_face_scan_matched`](#on_face_scan_matched-trigger).
+  All options from [Sensor](/components/sensor/).
+- **status** (*Optional*): The module's status register: `0` standby, `1` busy, `2` error, `3` not initialized.
+  All options from [Sensor](/components/sensor/).
 
 ## Text Sensor
 
-- **version**: The module's firmware version.
-- All options from [Text Sensor](/components/text_sensor/).
+```yaml
+text_sensor:
+  - platform: hlk_fm22x
+    version:
+      name: "Face Module Version"
+    serial_number:
+      name: "Face Module Serial Number"
+    last_face_name:
+      name: "Last Face Name"
+    face_state:
+      name: "Face State"
+```
 
-- **last_face_name**: The last matched enrolled face as set by [`on_face_scan_matched`](#on_face_scan_matched-trigger).
-- All options from [Text Sensor](/components/text_sensor/).
+**Configuration variables:**
+
+- **version** (*Optional*): The module's firmware version.
+  All options from [Text Sensor](/components/text_sensor/).
+- **serial_number** (*Optional*): The module's serial number.
+  All options from [Text Sensor](/components/text_sensor/).
+- **last_face_name** (*Optional*): The name of the last matched face, as set by [`on_face_scan_matched`](#on_face_scan_matched-trigger).
+  All options from [Text Sensor](/components/text_sensor/).
+- **face_state** (*Optional*): What the module currently sees while a scan or enrollment is running, for example
+  `No face`, `Too far away` or `Face detected`. It reads `Idle` when nothing is running. This is handy for
+  giving people feedback on a display while they enroll.
+  All options from [Text Sensor](/components/text_sensor/).
 
 ## `on_face_scan_matched` Trigger
 
 With this configuration option you can write complex automations whenever a face scan is matched to an enrolled face.
-To use the variables, use a [lambda](/automations/templates) template, the matched face id is available inside that lambda under the variable named `face_id` and the face name under the variable named `name`.
+To use the variables, use a [lambda](/automations/templates) template. The matched face ID is available inside that
+lambda under the variable named `face_id`, the face name under `name` and whether the face was enrolled as an
+administrator under `admin`.
 
 ```yaml
 on_face_scan_matched:
@@ -111,7 +174,8 @@ on_face_scan_matched:
 
 ## `on_face_scan_unmatched` Trigger
 
-With this configuration option you can write complex automations whenever an unknown face is scanned.
+With this configuration option you can write complex automations whenever a face was seen but did not match any
+enrolled face.
 
 ```yaml
 on_face_scan_unmatched:
@@ -122,8 +186,11 @@ on_face_scan_unmatched:
 
 ## `on_face_scan_invalid` Trigger
 
-With this configuration option you can write complex automations whenever a scan fails, e.g. when no face is visible. This is different from `on_face_scan_unmatched` which is triggered when an unknown face is scanned.
-To use the variable, use a [lambda](/automations/templates) template, the error number is available inside that lambda under the variable named `error`.
+With this configuration option you can write complex automations whenever a scan fails, e.g. when no face is visible
+before the timeout runs out or the liveness check fails. This is different from `on_face_scan_unmatched` which is
+triggered when an unknown face is scanned.
+To use the variable, use a [lambda](/automations/templates) template, the error number is available inside that
+lambda under the variable named `error`. See [Error codes](#error-codes) for the meaning of the numbers.
 
 ```yaml
 on_face_scan_invalid:
@@ -135,10 +202,36 @@ on_face_scan_invalid:
 ## `on_face_info` Trigger
 
 With this configuration option you can write complex automations whenever face information is available.
-The module sends face info during enrollment and scanning, and it's mostly useful for debugging.
-To use the variables, use a [lambda](/automations/templates) template, the status is available inside that lambda under the variable named `status`.
-A zero value means normal, and the datasheet contains various error status codes (e.g. 6 for the face being too far).
-There are additional values to determine the position (`left`, `top`, `right`, `bottom`) of the face in the frame as well as its rotation (`yaw`, `pitch`, `roll`).
+The module sends face info several times per second during enrollment and scanning. The `face_state` text sensor
+already turns the status into readable text, so this trigger is mostly useful for debugging or for custom feedback.
+To use the variables, use a [lambda](/automations/templates) template, the status is available inside that lambda
+under the variable named `status`.
+
+| `status` | Meaning                         |
+| -------- | ------------------------------- |
+| 0        | Face detected                   |
+| 1        | No face (see the note below)    |
+| 2        | Face too close to the top edge  |
+| 3        | Face too close to the bottom    |
+| 4        | Face too close to the left edge |
+| 5        | Face too close to the right     |
+| 6        | Face too far away               |
+| 7        | Face too close                  |
+| 8        | Eyebrows covered                |
+| 9        | Eyes covered                    |
+| 10       | Face covered                    |
+| 11       | Wrong direction during enrollment |
+| 12       | Eyes open (eye check mode)      |
+| 13       | Eyes closed                     |
+| 14       | Eye state unknown               |
+
+A status of `1` does not always mean nobody is there. The module reports `7` (too close) at moderate distances,
+but once a face fills the frame it stops detecting it and reports `1` instead. So a persistent `1` while someone
+is standing in front of the camera usually means they are too close rather than absent. The module works best at
+roughly arm's length.
+
+There are additional values to determine the position (`left`, `top`, `right`, `bottom`) of the face in the frame
+as well as its rotation (`yaw`, `pitch`, `roll`).
 
 ```yaml
 on_face_info:
@@ -160,12 +253,31 @@ on_face_info:
         }
 ```
 
+## `on_face_details` Trigger
+
+This trigger fires when the module answers a [`hlk_fm22x.get_face_details`](#hlk_fm22x-get_face_details-action)
+request. The variables `face_id`, `name` and `admin` are available inside a [lambda](/automations/templates).
+
+```yaml
+on_face_details:
+  - homeassistant.event:
+      event: esphome.face_details
+      data:
+        face_id: !lambda 'return face_id;'
+        name: !lambda 'return name;'
+        admin: !lambda 'return admin;'
+```
+
 ## `on_enrollment_done` Trigger
 
 With this configuration option you can write complex automations whenever an enrollment step for a face is successful.
-To use the variables, use a [lambda](/automations/templates) template, the slot number enrolled into is available inside that lambda under the variable named `face_id`.
-Note that the value is only valid after the face has been enrolled in all directions (otherwise it will be -1).
-The direction value is a bitmask representing the directions that have been captured so far. A value of `0x1f` means all directions have been captured and the face id should be valid.
+To use the variables, use a [lambda](/automations/templates) template, the slot number enrolled into is available
+inside that lambda under the variable named `face_id`.
+
+During a five direction enrollment the value is `-1` until the face has been captured from all directions. The
+`direction` value is a bitmask representing the directions that have been captured so far. A value of `0x1f` means
+the face is stored and `face_id` is valid. Single frame enrollments finish in one step, so `face_id` is valid and
+`direction` is `0x1f` the first time the trigger fires.
 
 ```yaml
 on_enrollment_done:
@@ -177,7 +289,8 @@ on_enrollment_done:
 ## `on_enrollment_failed` Trigger
 
 With this configuration option you can write complex automations whenever a face failed to be enrolled.
-To use the variable, use a [lambda](/automations/templates) template, the error number is available inside that lambda under the variable named `error`.
+To use the variable, use a [lambda](/automations/templates) template, the error number is available inside that
+lambda under the variable named `error`. See [Error codes](#error-codes) for the meaning of the numbers.
 
 ```yaml
 on_enrollment_failed:
@@ -188,16 +301,29 @@ on_enrollment_failed:
 
 ## `hlk_fm22x.enroll` Action
 
-Starts the face enrollment process with a name and direction.
-To successfully enroll a face, you need to successfully and consecutively scan the face from all directions.
-A failure in one direction will require enrolling the face again from the start.
+Starts enrolling a face. There are two ways to enroll:
+
+- **Single frame**: leave out `direction`. The person looks straight at the camera and the face is stored from
+  one good frontal frame. It is the quickest way to enroll and is what Hi-Link's own tool uses by default.
+- **Five directions**: give a `direction`. The module captures one direction per call, so you call the action five
+  times (middle, right, left, down and up, in any order) while the person turns their head a little each time,
+  roughly 5 to 55 degrees up and down and 8 to 60 degrees left and right. This gives the module reference views
+  for someone not facing the camera squarely, so prefer it when the camera sits above or below face height or
+  people approach from the side. A failure in one direction requires enrolling the face again from the start. Use
+  [`hlk_fm22x.cancel`](#hlk_fm22x-cancel-action) to throw away a half finished enrollment.
 
 ```yaml
 on_...:
   then:
+    # Single frame enrollment
     - hlk_fm22x.enroll:
         name: "My name"
-        direction: 1
+    # Shorthand for the same thing
+    - hlk_fm22x.enroll: "My name"
+    # One step of a five direction enrollment
+    - hlk_fm22x.enroll:
+        name: "My name"
+        direction: middle
     # Update the template text sensor for visual feedback
     - text_sensor.template.publish:
         id: face_state
@@ -206,17 +332,44 @@ on_...:
 
 **Configuration options:**
 
-- **name** (**Required**, string, templatable): The name associated with the face. Up to 32 ASCII characters.
-- **direction** (**Required**, int, templatable): The direction to scan the face for. `1` for center, `2` for right, `4` for left, `8` for down, and `16` for up.
+- **name** (**Required**, string, [templatable](/automations/templates)): The name associated with the face. Up to 31 ASCII characters.
+  Names are labels, not keys: two enrollments may share a name, and each keeps its own `face_id` and admin flag.
+  Use unique names if you want to tell people apart by name.
+- **direction** (*Optional*, [templatable](/automations/templates)): The direction to capture the face from: `middle`, `right`, `left`, `down` or `up`.
+  The module's numeric codes are accepted as well. Leave this out, or pass `0`, for a single frame enrollment.
+- **admin** (*Optional*, boolean, [templatable](/automations/templates)): Mark the face as an administrator. The flag is reported back in
+  [`on_face_scan_matched`](#on_face_scan_matched-trigger) so you can give some people extra rights. Defaults to `false`.
+- **timeout** (*Optional*, [Time](/guides/configuration-types#time)): How long the module waits for a usable face before it gives up, between 1 and 255 seconds. Defaults to `10s`.
+- **allow_duplicate** (*Optional*, boolean, [templatable](/automations/templates)): Whether the module should accept a face that matches one it already holds.
+  With `false` it compares each new capture against every stored template and, if there is a match, refuses and
+  [`on_enrollment_failed`](#on_enrollment_failed-trigger) fires with error `10`. The name plays no part in that check.
+  Defaults to `true`, which matches how the module enrolls without this option.
 
 ## `hlk_fm22x.scan` Action
 
-Scans and tries to match to an enrolled face. Triggers one of the on_face_scan triggers.
+Scans and tries to match to an enrolled face. Triggers one of the `on_face_scan` triggers.
 
 ```yaml
 on_...:
   then:
     - hlk_fm22x.scan:
+    - hlk_fm22x.scan:
+        timeout: 5s
+```
+
+**Configuration options:**
+
+- **timeout** (*Optional*, [Time](/guides/configuration-types#time)): How long the module keeps looking for a face, between 1 and 255 seconds. Defaults to `10s`.
+
+## `hlk_fm22x.cancel` Action
+
+Stops the scan or enrollment that is currently running and clears any directions that were captured for a five
+direction enrollment. The interrupted scan or enrollment reports error `2` (aborted) through its failed trigger.
+
+```yaml
+on_...:
+  then:
+    - hlk_fm22x.cancel:
 ```
 
 ## `hlk_fm22x.delete` Action
@@ -234,7 +387,7 @@ on_...:
 
 **Configuration options:**
 
-- **face_id** (**Required**, int, templatable): The slot number of the enrolled face to delete.
+- **face_id** (**Required**, int, [templatable](/automations/templates)): The slot number of the enrolled face to delete.
 
 ## `hlk_fm22x.delete_all` Action
 
@@ -246,10 +399,29 @@ on_...:
     - hlk_fm22x.delete_all:
 ```
 
+## `hlk_fm22x.get_face_details` Action
+
+Asks the module for the name and administrator flag stored for a face. The answer arrives through the
+[`on_face_details`](#on_face_details-trigger) trigger.
+
+```yaml
+on_...:
+  then:
+    - hlk_fm22x.get_face_details:
+        face_id: 3
+    # Shorthand
+    - hlk_fm22x.get_face_details: 3
+```
+
+**Configuration options:**
+
+- **face_id** (**Required**, int, [templatable](/automations/templates)): The slot number of the enrolled face.
+
 ## `hlk_fm22x.reset` Action
 
-Resets the module. Can be useful after a failed enrollment or scan if the module isn't responding correctly.
-If this command fails it will mark the module as failed.
+Puts the module back into standby. This stops whatever it was doing and can be useful after a failed enrollment
+or scan if the module isn't responding correctly. Actions that are still queued run afterwards and the module's
+status is read again.
 
 ```yaml
 on_...:
@@ -261,6 +433,35 @@ on_...:
 
 - **id** (*Optional*, ID): Manually specify the ID of the HLK-FM22x reader if you have multiple components.
 
+Commands are queued, so it is fine to call several actions in a row. The module handles one at a time and the
+component sends the next one as soon as the previous one has been answered. If the module stops answering, the
+component reports a warning after the first unanswered command and an error after three, and keeps retrying every
+few seconds until the module is back.
+
+## Error codes
+
+The `error` variable of [`on_face_scan_invalid`](#on_face_scan_invalid-trigger) and
+[`on_enrollment_failed`](#on_enrollment_failed-trigger) uses the module's own result codes:
+
+| Code | Meaning                                              |
+| ---- | ---------------------------------------------------- |
+| 1    | The module rejected the command                      |
+| 2    | The scan or enrollment was aborted                   |
+| 4    | The camera could not be opened                       |
+| 5    | Unknown error                                        |
+| 6    | Invalid parameter                                    |
+| 7    | The module is out of memory                          |
+| 8    | Unknown face, or no faces are enrolled               |
+| 9    | The face storage is full                             |
+| 10   | The face is already enrolled                         |
+| 12   | The liveness check failed (for example a photo)      |
+| 13   | Timeout, no usable face was seen                     |
+| 14   | Authorization of the module's encryption chip failed |
+| 19   | Reading a file on the module failed                  |
+| 20   | Writing a file on the module failed                  |
+| 21   | The module expects encrypted communication           |
+| 23   | The camera image was not ready                       |
+
 ## Test setup
 
 With the following code you can quickly setup a node and use Home Assistant's action in the developer tools.
@@ -268,6 +469,12 @@ E.g. for calling `hlk_fm22x.enroll` select the action `esphome.test_node_enroll`
 
 ```json
 { "name": "My name", "direction": 1 }
+```
+
+or, for a single frame enrollment,
+
+```json
+{ "name": "My name", "direction": 0 }
 ```
 
 ### Sample code
@@ -290,6 +497,7 @@ hlk_fm22x:
         data:
           face_id: !lambda 'return face_id;'
           name: !lambda 'return name;'
+          admin: !lambda 'return admin;'
   on_face_scan_unmatched:
     - homeassistant.event:
         event: esphome.test_node_face_scan_unmatched
@@ -305,6 +513,13 @@ hlk_fm22x:
           yaw: !lambda 'return yaw;'
           pitch: !lambda 'return pitch;'
           roll: !lambda 'return roll;'
+  on_face_details:
+    - homeassistant.event:
+        event: esphome.test_node_face_details
+        data:
+          face_id: !lambda 'return face_id;'
+          name: !lambda 'return name;'
+          admin: !lambda 'return admin;'
   on_enrollment_done:
     - homeassistant.event:
         event: esphome.test_node_enrollment_done
@@ -316,6 +531,31 @@ hlk_fm22x:
         event: esphome.test_node_enrollment_failed
         data:
           error: !lambda 'return error;'
+
+binary_sensor:
+  - platform: hlk_fm22x
+    enrolling:
+      name: "Face Enrolling"
+    scanning:
+      name: "Face Scanning"
+
+sensor:
+  - platform: hlk_fm22x
+    face_count:
+      name: "Face Count"
+    last_face_id:
+      name: "Last Face ID"
+
+text_sensor:
+  - platform: hlk_fm22x
+    version:
+      name: "Face Module Version"
+    serial_number:
+      name: "Face Module Serial Number"
+    last_face_name:
+      name: "Last Face Name"
+    face_state:
+      name: "Face State"
 
 api:
   actions:
@@ -330,6 +570,15 @@ api:
   - action: scan
     then:
       - hlk_fm22x.scan:
+  - action: cancel
+    then:
+      - hlk_fm22x.cancel:
+  - action: get_face_details
+    variables:
+      face_id: int
+    then:
+      - hlk_fm22x.get_face_details:
+          face_id: !lambda 'return face_id;'
   - action: delete
     variables:
       face_id: int
