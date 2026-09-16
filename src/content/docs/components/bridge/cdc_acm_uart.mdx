@@ -122,6 +122,8 @@ bits and parity), and resuming re-applies the parameters last requested by the h
 outputs hold their state while paused and follow the host again on resume, so a computer opening the port cannot reset
 the attached device while other code is using it. This makes it possible to use the same UART from firmware running on
 the device while no computer is connected, and as a USB serial port when one is.
+The [UART Mux](/components/uart_mux/) component builds on this to switch a UART between the bridge and other
+components with ordinary automations.
 
 - `pause()`: Stop forwarding and restore the configured UART parameters.
 - `resume()`: Re-apply the host's parameters (or the configured ones, if no computer has set any yet) and start
