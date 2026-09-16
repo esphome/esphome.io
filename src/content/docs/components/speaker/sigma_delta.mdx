@@ -1,0 +1,165 @@
+---
+description: "Instructions for setting up the sigma delta speaker platform in ESPHome."
+title: "Sigma Delta Speaker"
+---
+
+The `sigma_delta` speaker platform uses the ESP32 sigma-delta modulation (SDM) peripheral to generate a 1-bit PDM bitstream on a GPIO pin. An RC low-pass filter reconstructs the analog audio signal. No external DAC or I2S codec is required.
+
+Suitable for low-cost boards such as ESP32-C3 SuperMini / Zero and ESP32-S3. This platform only works on ESP32 chips that include the SDM peripheral (ESP32, ESP32-S2, ESP32-S3, ESP32-C3).
+
+> [!WARNING]
+> Audio and voice components consume a significant amount of resources (RAM, CPU) on the device.
+>
+> **Crashes are likely to occur** if you include too many additional components in your device's
+> configuration. On ESP32-C3 keep `sendspin` `buffer_size` small (for example `40000`) to avoid out-of-memory.
+
+```yaml
+# Example configuration entry
+speaker:
+  - platform: sigma_delta
+    id: sdm_speaker
+    pin: GPIO1
+    sample_rate: 44100
+
+media_player:
+  - platform: speaker_source
+    id: main_player
+    media_pipeline:
+      speaker: sdm_speaker
+      sources:
+        - sendspin_source
+```
+
+## Wiring — RC Low-Pass Filter
+
+The GPIO outputs a 1 MHz PDM bitstream. Filter it before driving a speaker or amplifier.
+
+```
+GPIO --[1 kΩ]--+--> amplifier / speaker
+               |
+              [10 nF] -> GND   (cutoff ~16 kHz)
+```
+
+- `R = 1 kΩ`, `C = 10 nF` gives `fc = 1/(2πRC) ≈ 15.9 kHz`.
+- Increase C to 22 nF for a lower cutoff (~7 kHz, more mellow) or use 4.7 nF for ~34 kHz (brighter, more noise).
+- For headphones, add a 100 Ω series resistor and 10 µF DC-blocking capacitor.
+- For a powered speaker, drive the amplifier input directly from the filter node.
+
+## Example Configuration
+
+Minimal (tone playback):
+
+```yaml
+esphome:
+  name: pwm-audio-zero
+
+esp32:
+  board: esp32-c3-devkitm-1
+  framework:
+    type: esp-idf
+
+speaker:
+  - platform: sigma_delta
+    id: sdm_speaker
+    pin: GPIO1
+    sample_rate: 44100
+    bits_per_sample: 16
+    num_channels: 2
+```
+
+Full pipeline with Sendspin (Music Assistant):
+
+```yaml
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  ap:
+
+sendspin:
+  id: sendspin_hub
+
+speaker:
+  - platform: sigma_delta
+    id: sdm_speaker
+    pin: GPIO1
+  - platform: mixer
+    id: mixer_id
+    output_speaker: sdm_speaker
+    source_speakers:
+      - id: announcement_speaker
+      - id: media_speaker
+
+audio_file:
+  - id: test_audio
+    file:
+      type: local
+      path: test.wav
+
+media_source:
+  - platform: audio_file
+    id: file_source
+  - platform: sendspin
+    id: sendspin_source
+    buffer_size: 40000   # C3 RAM: keep small (not 1 000 000)
+
+media_player:
+  - platform: speaker_source
+    id: main_player
+    announcement_pipeline:
+      speaker: announcement_speaker
+      format: FLAC
+      num_channels: 1
+      sources: [file_source]
+    media_pipeline:
+      speaker: media_speaker
+      format: FLAC
+      num_channels: 1
+      sources: [file_source, sendspin_source]
+```
+
+## Configuration variables
+
+- **pin** (**Required**, [Pin](/guides/configuration-types#pin)): GPIO pin to output the PDM bitstream. Must be an output-capable pin.
+- **sample_rate** (*Optional*, positive integer): Audio sample rate in Hz. Defaults to `44100`. Range `8000`–`48000`.
+- **bits_per_sample** (*Optional*, positive integer): Bits per sample. Defaults to `16`. Range `8`–`32`.
+- **num_channels** (*Optional*, positive integer): Number of channels. `1` (mono) or `2` (stereo, mixed to mono internally). Defaults to `2`.
+- **oversample_rate** (*Optional*, positive integer): Sigma-delta oversampling clock in Hz. Defaults to `1000000` (1 MHz). Higher values reduce quantization noise but increase CPU/ISR load.
+- All other options from [Speaker Component](/components/speaker#config-speaker).
+
+## Pin Table
+
+Tested boards:
+
+| Board | Recommended Pin | Notes |
+|-------|----------------|-------|
+| ESP32-C3 SuperMini / Zero | `GPIO1` | Safe; `GPIO2` also usable. Avoid strapping pins 8/9. |
+| ESP32-S3-Box3 | `GPIO1` or `GPIO14` | Avoid pins used by display/touch (GPIO4/5/6/8). |
+| ESP32 (original) | Any output GPIO | SDM channels 0–7 available. |
+
+> [!NOTE]
+> Any output-capable GPIO can be used; the IDs above are verified examples. Check your board's pinout for strapping or reserved pins.
+
+## Performance Notes
+
+- **CPU:** ISR runs at the oversample rate (1 MHz default) via GPTimer; ~1–2% CPU at 44.1 kHz stereo.
+- **RAM:** Ring buffer 8 KiB (configurable). Plus `sendspin` `buffer_size` — use `40000` on C3 to avoid OOM (C3 has ~320 KiB RAM, no PSRAM). S3 with PSRAM can use larger values.
+- **Flash:** Component adds ~10–15 KiB.
+- **Quality:** 1-bit PDM through single-pole RC is ~30–40 dB SNR — adequate for voice/prompts and casual music. For hi-fi, use an I2S DAC (for example MAX98357A).
+- **C3 mono mix:** Stereo input is averaged to mono before modulation (single output pin).
+
+## Limitations
+
+- No hardware volume control — volume is applied in software before SDM.
+- Single output pin — stereo is downmixed to mono.
+- Only `8`–`32` bits, `1`–`2` channels, `8 kHz`–`48 kHz` supported.
+- Not supported on ESP32-C2/C6/H2 (no SDM peripheral or different silicon).
+- RC filter cutoff is fixed by component values; not adjustable in software.
+- Quantization noise is audible at low sample rates — prefer `44100` or `48000` with the default 1 MHz oversample.
+
+## See Also
+
+- [Speaker Component](/components/speaker/)
+- [Speaker Source Media Player](/components/media_player/speaker_source/)
+- [Sendspin Media Source](/components/media_source/sendspin/)
+- [ESP-IDF SDM DAC example](https://github.com/espressif/esp-idf/tree/master/examples/peripherals/sigma_delta/sdm_dac)
+- [ESP32 PDM Audio (atomic14)](https://github.com/atomic14/esp32-pdm-audio)
