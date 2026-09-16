@@ -1,0 +1,74 @@
+---
+description: "Instructions for setting up DS1603L ultrasonic sensor with ESPHome"
+title: "DS1603L Ultrasonic Distance Sensor"
+---
+
+import Figure from '@components/Figure.astro';
+import ds1603lImg from './images/ds1603l.jpg';
+import APIRef from '@components/APIRef.astro';
+
+
+DS1603L V1.0 Ultrasonic Sensor ([datasheet](https://www.dypcn.com/uploads/DS1603-V1.0-Datasheet.pdf)) over UART without modification.
+
+This sensor can measure ranges between 5 centimeters and 200 centimeters with a resolution of 1 millimeter.
+
+Since this sensor reads every few seconds, [Sensor Filters](/components/sensor#sensor-filters) are highly recommended.
+
+To use the sensor, first set up an [UART Bus](/components/uart) with a baud rate of 9600 and connect the sensor to the specified pin.
+
+> [!NOTE]
+> These sensors read from the bottom of a tank and need to have some kind of couplant for them to work.
+> There can be no air gap between sensor and bottom of container.
+> Silicone grease is recommended and easily found at most automotive or hardware stores.
+
+<Figure
+  src={ds1603lImg}
+  alt=""
+  caption="DS1603L Ultrasonic Distance Sensor."
+  layout="constrained"
+/>
+
+```yaml
+# Example configuration entry
+sensor:
+  - platform: ds1603l
+    name: Distance
+```
+
+### Configuration variables
+
+- All options from [Sensor](/components/sensor).
+
+### Full Example
+
+```yaml
+
+uart:              #required for sensor
+  - id: uart_1
+    tx_pin: GPIOXX
+    rx_pin: GPIOXX
+    baud_rate: 9600
+
+##############
+### Sensor ###
+##############
+
+sensor:
+  - platform: ds1603l
+    uart_id: uart_1                    # must match uart config
+    state_class: measurement           # default
+    device_class: distance             # default
+    name: "DS1603L Distance"           # name for HA
+    unit_of_measurement: "mm"          # sensor outputs mm, can be set to anything but will need filtering to convert
+    icon: mdi:arrow-expand-vertical    # icon for HA
+    filters:                           # some filters I found useful
+      - filter_out: nan
+      - delta: 1.0
+
+```
+
+## See Also
+
+- [Sensor Filters](/components/sensor#sensor-filters)
+- [UART Bus](/components/uart)
+- <APIRef text="ds1603l.h" path="ds1603l/ds1603l.h" />

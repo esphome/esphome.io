@@ -469,12 +469,15 @@ esp32:
   [Espressif's documentation](https://docs.espressif.com/projects/esp-idf/en/v5.3.3/esp32/api-reference/kconfig.html#config-lwip-esp-lwip-assert)
   for more information.
 
-- **execute_from_psram** (*Optional*, boolean): On ESP32S3 and ESP32P4 only may be set to `true` to enable executing code from PSRAM.
+- **execute_from_psram** (*Optional*, boolean): Can be set to `true` on ESP32-S3, ESP32-S31, and ESP32-P4 to enable executing code from PSRAM.
   With octal or hex PSRAM this can be faster than executing from FLASH memory, and enables code such as display drawing
   to execute normally when writing to FLASH, e.g. during an OTA update. The default is `false`.
 
-- **ignore_efuse_custom_mac** (*Optional*, boolean): Can be set to `true` for devices on which the burned-in custom
-  MAC address is not valid.
+- **ignore_efuse_custom_mac** (*Optional*, boolean): When a custom MAC address is burned into the eFuses, ESPHome
+  uses it as the device's base MAC address in place of the factory-assigned one. Since ESPHome 2026.9.0, all network
+  interfaces (Wi-Fi, Ethernet, Bluetooth and 802.15.4) derive their addresses from it; in earlier versions, only
+  Wi-Fi did. Can be set to `true` for devices on which the burned-in custom MAC address is not usable, restoring the
+  factory-assigned MAC address. Defaults to `false`.
 
 - **ignore_efuse_mac_crc** (*Optional*, boolean): Can be set to `true` for devices on which the burned-in MAC
   address is not consistent with the burned-in CRC for that MAC address, resulting in an error like
@@ -634,6 +637,10 @@ The following options disable unused VFS features to save flash memory:
   `true` only if an external component needs full FILE\*-based `fprintf()` with output longer than 512 bytes.
   Defaults to `false` (lightweight stubs to save flash).
 
+  On the ESP32-C6, builds using [HTTP Request](/components/http_request/) also no longer link newlib's printf engine
+  (saving ~20 KB flash) because ESPHome supplies a `vasprintf` built on the ROM `vsnprintf`. This is automatic and is
+  disabled together with `enable_full_printf: true`.
+
 Some options can be disabled to save flash memory without affecting typical ESPHome functionality. The performance
 options (defaulting to `true`) improve socket operation performance but can be disabled if you need better
 multi-threaded scalability (which is uncommon since ESPHome uses an event loop).
@@ -641,6 +648,18 @@ multi-threaded scalability (which is uncommon since ESPHome uses an event loop).
 - **disable_mbedtls_pkcs7** (*Optional*, boolean): Disable PKCS#7 support in mbedTLS. PKCS#7 is used for specific certificate
   validation scenarios that ESPHome doesn't typically use. Components that require PKCS#7 automatically enable it regardless
   of this setting. Disabling this saves code size. Defaults to `true` (PKCS#7 disabled to save flash).
+
+- **disable_mbedtls_tls_server** (*Optional*, boolean): Build mbedTLS as a TLS client only, dropping the server-side
+  handshake code. Nothing in ESPHome accepts TLS connections; components that do (OpenThread's DTLS commissioner)
+  automatically re-enable it. Set to `false` if an external component runs an HTTPS server. Defaults to `true` (server
+  code removed, saving ~7 KB flash).
+
+- **disable_mbedtls_tls_extras** (*Optional*, boolean): Remove TLS features that an HTTPS or MQTT client talking to a
+  modern server never negotiates: static RSA and static ECDH key exchange, TLS renegotiation, session tickets, AES-CCM
+  ciphersuites and deterministic ECDSA. If a server only offers one of these legacy ciphersuites, the TLS handshake fails
+  and the error is logged; set this to `false` to restore them. Components that need any of these (OpenThread)
+  automatically re-enable them. A value set explicitly under `sdkconfig_options` always takes precedence. Defaults to
+  `true` (legacy TLS features removed, saving ~10 KB flash).
 
 **Debug and Development Options:**
 
@@ -710,6 +729,8 @@ esp32:
       use_full_certificate_bundle: false  # Saves ~51 KB flash
       disable_mbedtls_peer_cert: true  # Saves ~4 KB heap per connection
       disable_mbedtls_pkcs7: true  # Saves code size
+      disable_mbedtls_tls_server: true  # Saves ~7 KB flash
+      disable_mbedtls_tls_extras: true  # Saves ~10 KB flash
 
       # C library options
       enable_full_printf: false  # Saves ~11 KB flash
