@@ -154,6 +154,54 @@ on_...:
         }
 ```
 
+## OpenThread Border Router
+
+Border Router mode bridges a Thread network to a Wi-Fi network. It requires an ESP32 using ESP-IDF 5.5 or newer,
+IPv6 enabled in the [Network Component](/components/network/), and `device_type: FTD`.
+
+The native radio is supported only on ESP32-C6:
+
+```yaml
+network:
+  enable_ipv6: true
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+openthread:
+  device_type: FTD
+  border_router: {}
+```
+
+Any Wi-Fi-capable ESP32 can instead use an external OpenThread Radio Co-Processor (RCP) over UART:
+
+```yaml
+openthread:
+  device_type: FTD
+  border_router:
+    rcp:
+      rx_pin: GPIOXX
+      tx_pin: GPIOXX
+      reset_pin: GPIOXX
+```
+
+### Configuration Variables
+
+- **border_router** (*Optional*, map): Enables Border Router mode.
+  - **rcp** (*Optional*, map): Configures an external OpenThread RCP.
+    - **rx_pin** (**Required**, Pin): ESP32 receive pin connected to the RCP transmit pin.
+    - **tx_pin** (**Required**, Pin): ESP32 transmit pin connected to the RCP receive pin.
+    - **baud_rate** (*Optional*, integer): UART baud rate. Defaults to `460800`.
+    - **reset_pin** (*Optional*, Pin): Active-low RCP reset pin. Configure this pin to allow recovery after an RCP
+      failure.
+
+Wi-Fi must have at least one STA network, must not use AP or fallback AP mode, and must keep `enable_on_boot: true`.
+
+> [!WARNING]
+> An external RCP uses UART1 directly and cannot be combined with the ESPHome [UART Component](/components/uart/).
+> The [Logger Component](/components/logger/) must also use USB or a UART other than UART1.
+
 ## OpenThread ESP-IDF Logging
 
 The OpenThread log level is controlled by the ``log_level`` setting in the ESP-IDF framework configuration.
