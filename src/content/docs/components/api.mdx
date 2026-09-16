@@ -19,6 +19,19 @@ The ESPHome native API is based on a custom TCP protocol using protocol buffers.
 the protocol data structure definitions here: [api.proto](https://github.com/esphome/esphome/blob/dev/esphome/components/api/api.proto)
 A Python library that implements this protocol is [aioesphomeapi](https://github.com/esphome/aioesphomeapi).
 
+Besides entity states, the device also reports basic status information to connected clients
+through the `network_type` field of `DeviceInfoResponse`, which tells clients which network
+interface the device is currently reachable through:
+
+- `NETWORK_TYPE_WIFI`
+- `NETWORK_TYPE_ETHERNET`
+- `NETWORK_TYPE_THREAD`
+- `NETWORK_TYPE_UNKNOWN` if none is connected yet
+
+No configuration is needed for this: the value is derived automatically from whichever network
+component (`wifi`, `ethernet`, or `openthread`) is set up and currently connected. If more than one
+is compiled in and connected at the same time, Wi-Fi is reported first, then Ethernet, then Thread.
+
 > [!NOTE]
 > **Actions** were previously called **Services**. ESPHome changed the name in line with
 > [Home Assistant](https://developers.home-assistant.io/blog/2024/07/16/service-actions/)
