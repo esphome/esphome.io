@@ -122,6 +122,8 @@ The EmonTx component provides several sensors that can be used to monitor variou
 - **Voltage**: Measures the voltage of the mains supply.
 - **Current**: Measures the current flowing through the connected CT clamps.
 - **Power Factor**: Calculates the power factor based on the voltage and current readings.
+- **Apparent Power**: Calculates the apparent power based on the voltage and current readings.
+- **Frequency**: Measures the frequency of the mains supply.
 - **Pulse**: Measures the number of pulses from the connected pulse sensor (interface S0 for example).
 - **Temperature**: Reports temperatures of connected Dallas DS18B20 sensors.
 
@@ -177,6 +179,24 @@ Power factor sensors have the following default configuration:
 
 - Unit of Measurement: (dimensionless)
 - Device Class: power_factor
+- State Class: measurement
+- Accuracy: 2 decimal places
+
+#### Apparent Power (AP)
+
+Apparent power sensors have the following default configuration:
+
+- Unit of Measurement: VA (Volt-Amps)
+- Device Class: apparent_power
+- State Class: measurement
+- Accuracy: 2 decimal places
+
+#### Frequency (F)
+
+Frequency sensors have the following default configuration:
+
+- Unit of Measurement: Hz (Hertz)
+- Device Class: frequency
 - State Class: measurement
 - Accuracy: 2 decimal places
 
@@ -239,6 +259,17 @@ Power factor sensors follow the same indexing as the CT inputs:
 - **PF1-PF6**: Power factor for CT1-CT6 on the standard EmonTx
 - **PF7-PF12**: Power factor for CT7-CT12 when an expansion board is present
 
+#### Apparent Power (AP1-AP12)
+
+Apparent power sensors follow the same indexing as the CT inputs:
+
+- **AP1-AP6**: Apparent power for CT1-CT6 on the standard EmonTx
+- **AP7-AP12**: Apparent power for CT7-CT12 when an expansion board is present
+
+#### Frequency (No Indexing)
+
+The `F` sensor reports the mains frequency as a single, un-numbered tag — there is no `F1`/`F2` variant.
+
 #### Temperature (T1-T3)
 
 Temperature sensors are indexed according to the connected temperature probes:
@@ -291,6 +322,12 @@ sensor:
   - platform: emontx
     tag_name: "PF1"
     name: "Power factor CT1"
+  - platform: emontx
+    tag_name: "AP1"
+    name: "Apparent power CT1"
+  - platform: emontx
+    tag_name: "F"
+    name: "Frequency"
   - platform: emontx
     tag_name: "T1"
     name: "Temp 1"

@@ -78,7 +78,7 @@ climate:
 
 ## Supported features
 
-- Target temperature range: `16 °C` to `31 °C`
+- Target temperature range: `16 °C` to `31 °C`, or `61 °F` to `88 °F` with `use_fahrenheit` enabled
 - Current temperature reporting
 - Modes: `OFF`, `HEAT`, `COOL`, `DRY`, `FAN_ONLY`, `HEAT_COOL` (called `AUTO` by Mitsubishi)
 - Fan modes: `AUTO`, `QUIET`, `LOW`, `MEDIUM`, `MIDDLE`, `HIGH`
@@ -116,6 +116,12 @@ climate:
 
   Set to `never` to disable telemetry polling.
 
+- **use_fahrenheit** (*Optional*, boolean): Configure the climate entity to report and accept temperatures in Fahrenheit
+  using Mitsubishi-specific mapping. Defaults to `false`.
+
+  > [!NOTE]
+  > Some indoor units use a temperature encoding that cannot accurately represent Fahrenheit setpoints. If the
+  > component reports an encoding error and fails to initialize, disable `use_fahrenheit`.
 - **vane** (*Optional*): Vane state automation configuration.
   - **on_state** (*Optional*, [Automation](/automations/)): An automation to run whenever the hub publishes its current
     state. The automation receives the current vane state as `x`. See
@@ -272,6 +278,7 @@ select:
 - **mitsubishi_cn105.set_remote_temperature**
   - Sends an external (remote) room temperature to the indoor unit.
   - Overrides the unit’s internal temperature sensor.
+  - The temperature is always interpreted as Celsius, regardless of `use_fahrenheit`.
   - Supported temperature range: `8.0–39.5 °C`.
 
 - **mitsubishi_cn105.clear_remote_temperature**
@@ -311,6 +318,9 @@ sensor:
 > This is an advanced feature; users are expected to understand the implications of overriding the internal sensor. Depending 
 > on the unit, it may be necessary to explicitly call `mitsubishi_cn105.clear_remote_temperature` to restore normal
 > operation. Improper use may lead to unexpected behavior.
+>
+> Check out the [remote temperature example in the Cookbook](/cookbook/mitsubishi_cn105_remote_temp/) to see a possible way to
+> implement this functionality.
 
 ## Migration From Climate-Owned Configuration
 
@@ -330,3 +340,4 @@ Legacy climate-owned configuration compatibility will be removed in ESPHome `202
 ## See Also
 
 - [Climate Component](/components/climate/)
+- [Remote temperature example in the Cookbook](/cookbook/mitsubishi_cn105_remote_temp/)
