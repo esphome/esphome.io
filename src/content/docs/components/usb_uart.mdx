@@ -52,8 +52,13 @@ usb_uart:
 - **channels** (**Required**, list): A list of channels to configure.
 - **vid** (*Optional*, int): The vendor ID of the device. Use 0 as a wildcard. Each type has a default VID which will be overridden if this is set.
 - **pid** (*Optional*, int): The product ID of the device. Use 0 as a wildcard. Each type has a default PID which will be overridden if this is set.
+- **manufacturer** (*Optional*, string): Only match a device whose USB manufacturer string is exactly this.
+- **product** (*Optional*, string): Only match a device whose USB product string is exactly this.
 
-Setting both `vid` and `pid` to 0 will match any device.
+Setting both `vid` and `pid` to 0 will match any device. Two configured devices must not be able to
+match the same USB device; the configuration is rejected if they could. See the
+[USB Host](/components/usb_host#device-configuration-options) component for an example of telling apart
+devices that share a vendor and product ID.
 
 ## Channel configuration options
 

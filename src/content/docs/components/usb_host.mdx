@@ -42,8 +42,26 @@ usb_host:
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): An id to assign to the device.
 - **vid** (**Required**, int): The vendor ID of the device. Use 0 as a wildcard.
 - **pid** (**Required**, int): The product ID of the device. Use 0 as a wildcard.
+- **manufacturer** (*Optional*, string): Only match a device whose USB manufacturer string is exactly this.
+- **product** (*Optional*, string): Only match a device whose USB product string is exactly this.
 
-Setting both `vid` and `pid` to 0 will match any device.
+Setting `vid` and/or `pid` to 0 will disable filtering for that field. Two configured devices must not be able to
+match the same USB device; the configuration is rejected if they could.
+
+The `manufacturer` and `product` filters tell apart devices that share a vendor and product ID:
+
+```yaml
+usb_host:
+  devices:
+    - id: device_a
+      vid: 0x303A
+      pid: 0x4001
+      product: ZBT-2
+    - id: device_b
+      vid: 0x303A
+      pid: 0x4001
+      product: ZWA-2
+```
 
 If a device is configured and a device is connected that matches the configuration, the device will be
 connected to the ESP32 and log entries will appear at the DEBUG level. If the log level is set to VERBOSE,
