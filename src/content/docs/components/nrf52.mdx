@@ -135,6 +135,41 @@ nrf52:
 will be erased before writing the new voltage setting.
 ⚠️ Warning: Enabling this may cause the board to fail to boot if misconfigured. Default is false.
 
+## Power Enable
+
+Some nRF52 boards -- mostly cheap hobby clones such as the "SuperMini nRF52840" (nRFMicro-style boards) -- have no
+pull-up resistor on the GPIO pin that gates their external peripheral header. Without one, that pin floats at an
+indeterminate voltage instead of the rail reliably being on, so anything wired to that header (sensors, displays,
+etc.) may not receive stable power. `power_enable` drives the pin to a known state during Zephyr's own device
+initialization, before any ESPHome component's `setup()` runs -- so the rail is stable before other components
+(such as [SPI](/components/spi/) or [I²C](/components/i2c/)) try to use it.
+
+> [!NOTE]
+> This can only turn a rail **on**. It cannot be used to turn off a rail that a board leaves on by default. Boards
+> that already have a working pull-up on this pin don't need this option.
+
+To check whether your board needs this before flashing, power the board on (without `power_enable` configured yet)
+and measure the candidate pin against ground with a multimeter: a genuine pull-up holds it close to 3.3V on its
+own, while a floating pin -- the case `power_enable` is for -- settles at an indeterminate voltage instead (around
+1.9V was observed on a "SuperMini nRF52840" clone).
+
+### Example Configuration
+
+```yaml
+nrf52:
+  power_enable:
+    pin: P0.13
+    startup_delay: 500ms
+```
+
+### Configuration variables
+
+- **pin** (**Required**, [Pin](/guides/configuration-types#pin)): The GPIO pin that gates the external peripheral
+  power rail.
+- **startup_delay** (*Optional*, [Time](/guides/configuration-types#time)): How long to wait after enabling the
+  rail before continuing device initialization. Gives the rail's voltage time to stabilize before other components
+  start using it. Defaults to `0us`.
+
 ## Troubleshooting
 
 ### Flashing is unstable
