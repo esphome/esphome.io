@@ -17,7 +17,7 @@
  * lines, and commented-out example items are all handled correctly.
  *
  * Resolution rules (matching resolveImagePath):
- *   - "http://" or "https://" prefix: external, skipped.
+ *   - "http://", "https://" or "//" (protocol-relative) prefix: external, skipped.
  *   - "/" prefix: maps to `public<string>` (e.g. /images/foo.svg -> public/images/foo.svg).
  *   - anything else: maps to `public/images/<string>`.
  *
@@ -35,9 +35,11 @@ const __dirname = dirname(__filename);
 const REPO_ROOT = join(__dirname, "..");
 const CONTENT_DIR = join(REPO_ROOT, "src/content/docs");
 
-// Matches an <ImgTable items={[ ... ]} /> block. The captured group 1 is the
-// items text; the match position is used to know where the block starts.
-const TABLE_RE = /<ImgTable items=\{\[\n([\s\S]*?)\]\} \/>/g;
+// Matches an <ImgTable items={[ ... ]} /> block, tolerating whitespace and
+// newline variations in the opening tag and before the self-closing `/>`.
+// Group 1 is the opening tag (used to locate where the items text begins);
+// group 2 is the items text itself.
+const TABLE_RE = /(<ImgTable\s+items\s*=\s*\{\[)([\s\S]*?)\]\}\s*\/>/g;
 
 /** Recursively collect every `.mdx` file under `dir`. */
 function collectMdxFiles(dir) {
@@ -126,7 +128,9 @@ function* parseTuples(itemsText, startLine) {
  * @returns {string|null} Repo-relative path to the expected file, or null
  */
 function resolveImageFile(image) {
-  if (image.startsWith("http://") || image.startsWith("https://")) {
+  // Protocol-relative ("//cdn.example/x.svg") and absolute http(s) URLs are
+  // external; ImgTable serves them as-is, so there is nothing on disk to check.
+  if (image.startsWith("//") || image.startsWith("http://") || image.startsWith("https://")) {
     return null;
   }
   if (image.startsWith("/")) {
@@ -155,11 +159,12 @@ function findMissingRefs(content) {
   let match;
   TABLE_RE.lastIndex = 0;
   while ((match = TABLE_RE.exec(content)) !== null) {
-    // The opener line (`<ImgTable items={[`) is consumed by the regex, so the
-    // captured items text begins on the following line.
-    const itemsStartLine = content.slice(0, match.index).split("\n").length + 1;
+    // Absolute 1-indexed line where the captured items text begins, derived from
+    // the opening tag's length so it stays correct regardless of tag formatting.
+    const itemsOffset = match.index + match[1].length;
+    const itemsStartLine = content.slice(0, itemsOffset).split("\n").length;
 
-    for (const { strings } of parseTuples(match[1], itemsStartLine)) {
+    for (const { strings } of parseTuples(match[2], itemsStartLine)) {
       // A valid item has at least title, link and image.
       if (strings.length < 3) continue;
 
