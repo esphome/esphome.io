@@ -1,0 +1,49 @@
+---
+title: "RH Correction Filter"
+description: "Correct the the Relative Humidity reading when a temperature 
+offset affects the humidity sensor"
+---
+### RH Correction Filter
+
+
+In some DIY projects, temperature and humidity sensors are installed in enclosures/boxes
+that affect the readings. Although the temperature can in most cases be corrected with a
+simple offset filter, humidity has a non-linear behavior with respect to temperature.
+
+This Filter uses the [Magnus](https://en.wikipedia.org/wiki/Dew_point) formula 
+to recompute the RH at the correct temperature.
+
+Configuration variables:
+
+- **sensor_id** (**Required**, sensor_id): the temperature sensor that provides the correct temperature.
+- **temperature_offset** (**Required**, float): the offset used to correct the temperature.
+- **use_fahrenheit** (*Optional*, boolean): Temperatures are in °F. Defaults to False.
+
+In this example a DHT sensor is installed in an enclosure with other electronics 
+and this gives a +6 °C error. The temperature error is due to power dissipation inside
+the enclosure and can be considered constant.
+
+```yaml
+# Example configuration entry
+sensor:
+  - platform: dht
+    humidity:
+      id: h_sensor
+      name: Humidity
+      filters:
+        - rh_correction:
+            temperature_offset: -6 # or !lambda ....
+            sensor_id: t_sensor
+    temperature:
+      id: t_sensor
+      name: Temperature
+      accuracy_decimals: "1"
+      filters:
+        - offset: -6
+```
+The absolute vapor pressure is assumed to be the same inside and outside the enclosure (reasonable when vented).
+
+
+Without correction: T=36.7 °C RH=39.2 %
+
+With correction: T=30.6 °C RH=54.9 %
