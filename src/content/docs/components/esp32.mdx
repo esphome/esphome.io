@@ -616,6 +616,30 @@ The following options disable unused VFS features to save flash memory:
   handshake. Most ESPHome use cases don't need post-handshake certificate access. Components that require peer certificate
   access automatically enable it regardless of this setting. Defaults to `true` (peer certificate not kept to save heap).
 
+- **disable_mbedtls_pkcs7** (*Optional*, boolean): Disable PKCS#7 support in mbedTLS. PKCS#7 is used for specific certificate
+  validation scenarios that ESPHome doesn't typically use. Components that require PKCS#7 automatically enable it regardless
+  of this setting. Disabling this saves code size. Defaults to `true` (PKCS#7 disabled to save flash).
+
+- **disable_mbedtls_tls** (*Optional*, boolean): Compile the TLS protocol out of mbedTLS entirely when no component in
+  the configuration uses it. Components that open TLS connections (such as `http_request`, `mqtt`, `audio`, Nextion TFT
+  upload or WiFi with `eap`) keep it automatically, as does any `CONFIG_ESP_TLS_*`, `CONFIG_MBEDTLS_SSL_*`,
+  `CONFIG_ESP_HTTPS_*` or TLS role entry under `sdkconfig_options`. Hashes, AES and RSA signature verification stay
+  available either way. Set to `false` to always keep the TLS stack, for example for an
+  external component that uses mbedTLS directly. Defaults to `true` (TLS removed when unused, saving compile time and a
+  small amount of flash).
+
+- **disable_mbedtls_tls_server** (*Optional*, boolean): Build mbedTLS as a TLS client only, dropping the server-side
+  handshake code. Nothing in ESPHome accepts TLS connections; components that do (OpenThread's DTLS commissioner)
+  automatically re-enable it. Set to `false` if an external component runs an HTTPS server. Defaults to `true` (server
+  code removed, saving ~7 KB flash).
+
+- **disable_mbedtls_tls_extras** (*Optional*, boolean): Remove TLS features that an HTTPS or MQTT client talking to a
+  modern server never negotiates: static RSA and static ECDH key exchange, TLS renegotiation, session tickets, AES-CCM
+  ciphersuites and deterministic ECDSA. If a server only offers one of these legacy ciphersuites, the TLS handshake fails
+  and the error is logged; set this to `false` to restore them. Components that need any of these (OpenThread)
+  automatically re-enable them. A value set explicitly under `sdkconfig_options` always takes precedence. Defaults to
+  `true` (legacy TLS features removed, saving ~10 KB flash).
+
 **Built-in IDF Component Inclusion:**
 
 - **include_builtin_idf_components** (*Optional*, list of strings): A list of built-in ESP-IDF component names to
@@ -644,22 +668,6 @@ The following options disable unused VFS features to save flash memory:
 Some options can be disabled to save flash memory without affecting typical ESPHome functionality. The performance
 options (defaulting to `true`) improve socket operation performance but can be disabled if you need better
 multi-threaded scalability (which is uncommon since ESPHome uses an event loop).
-
-- **disable_mbedtls_pkcs7** (*Optional*, boolean): Disable PKCS#7 support in mbedTLS. PKCS#7 is used for specific certificate
-  validation scenarios that ESPHome doesn't typically use. Components that require PKCS#7 automatically enable it regardless
-  of this setting. Disabling this saves code size. Defaults to `true` (PKCS#7 disabled to save flash).
-
-- **disable_mbedtls_tls_server** (*Optional*, boolean): Build mbedTLS as a TLS client only, dropping the server-side
-  handshake code. Nothing in ESPHome accepts TLS connections; components that do (OpenThread's DTLS commissioner)
-  automatically re-enable it. Set to `false` if an external component runs an HTTPS server. Defaults to `true` (server
-  code removed, saving ~7 KB flash).
-
-- **disable_mbedtls_tls_extras** (*Optional*, boolean): Remove TLS features that an HTTPS or MQTT client talking to a
-  modern server never negotiates: static RSA and static ECDH key exchange, TLS renegotiation, session tickets, AES-CCM
-  ciphersuites and deterministic ECDSA. If a server only offers one of these legacy ciphersuites, the TLS handshake fails
-  and the error is logged; set this to `false` to restore them. Components that need any of these (OpenThread)
-  automatically re-enable them. A value set explicitly under `sdkconfig_options` always takes precedence. Defaults to
-  `true` (legacy TLS features removed, saving ~10 KB flash).
 
 **Debug and Development Options:**
 
@@ -729,6 +737,7 @@ esp32:
       use_full_certificate_bundle: false  # Saves ~51 KB flash
       disable_mbedtls_peer_cert: true  # Saves ~4 KB heap per connection
       disable_mbedtls_pkcs7: true  # Saves code size
+      disable_mbedtls_tls: true  # Removes TLS entirely when nothing uses it
       disable_mbedtls_tls_server: true  # Saves ~7 KB flash
       disable_mbedtls_tls_extras: true  # Saves ~10 KB flash
 
