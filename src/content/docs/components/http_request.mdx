@@ -18,6 +18,8 @@ http_request:
 - **follow_redirects** (*Optional*, boolean): Enable following HTTP redirects. Defaults to `true`.
 - **redirect_limit** (*Optional*, integer): Maximum amount of redirects to follow when enabled. Defaults to `3`.
 - **timeout** (*Optional*, [Time](/guides/configuration-types#time)): Timeout for request. Defaults to `4.5s`.
+  On ESP32 this applies to each network operation (DNS lookup, connect, TLS handshake, every read and write)
+  rather than to the request as a whole.
 - **useragent** (*Optional*, string): User-Agent header for requests. Defaults to
   `ESPHome/<version> (https://esphome.io)` where `<version>` is the version of ESPHome the device is running.
   For example: `ESPHome/2024.6.0 (https://esphome.io)`
@@ -28,7 +30,10 @@ http_request:
   Mozilla's NSS root certificate store. **Supported on ESP32 only; must be explicitly set to false on other platforms.**
 
 - **watchdog_timeout** (*Optional*, [Time](/guides/configuration-types#time)): Change the watchdog timeout during connection/data transfer.
-  May be useful on slow connections or connections with high latency. **Do not change this value unless you are
+  May be useful on slow connections or connections with high latency. On ESP32 this defaults to three times
+  `timeout` plus one second, and never less than the `watchdog_timeout` set in the [ESP32 platform](/components/esp32)
+  configuration; requests run on the main loop, so without this the task watchdog could reboot the device while a
+  request waits on a slow server. On RP2040 there is no default. **Do not raise this value unless you are
   experiencing device reboots due to watchdog timeouts;** doing so may prevent the device from rebooting due to a
   legitimate problem. **Only available on ESP32 and RP2040**.
 
