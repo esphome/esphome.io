@@ -30,6 +30,7 @@ submit a feature request (see FAQ).
 | [LG](#climate_ir_lg) | `climate_ir_lg`                    | yes |
 | [Midea](#midea_ir) | `midea_ir`                         | yes |
 | [Mitsubishi](#mitsubishi) | `mitsubishi`                       | yes |
+| [Pioneer mini-split (Parker Davis)](#pd_pioneer_ir) | `pd_pioneer_ir`                    | yes |
 | Noblex | `noblex`                           | yes |
 | Electrolux, TCL, Fuego | `tcl112`                           | yes |
 | [Toshiba](#toshiba) | `toshiba`                          | yes |
@@ -188,6 +189,44 @@ climate:
 > [!NOTE]
 > - See [Transmit Midea](/components/remote_transmitter#remote_transmitter-transmit_midea) to send custom commands, including Follow Me mode.
 > - See [Toshiba](#toshiba) below if you are looking for compatibility with Midea model MAP14HS1TBL or similar.
+
+### `pd_pioneer_ir`
+
+This platform controls Pioneer mini-split air conditioners that use the PD Pioneer infrared protocol.
+These units are manufactured by Parker Davis (the "PD" in the protocol name). It has been tested with
+the ESPIR1 IR adapter module. Other Pioneer mini-split models that use the same protocol may also work.
+
+Supported modes are Off, Cool, Heat, Dry, and Fan Only. Fan speeds Auto, Low, Medium, and High are supported.
+Swing modes Off, Vertical, and Horizontal are supported. The ECO preset is supported.
+
+- **use_fahrenheit** (*Optional*, boolean): When enabled, the target temperature is sent in half-degree
+  Fahrenheit steps and the unit display shows Fahrenheit. When disabled, whole-degree Celsius is used.
+  Defaults to `false`.
+
+```yaml
+# Example configuration entry
+remote_transmitter:
+  pin: GPIO4
+  carrier_duty_percent: 50%
+  id: ir_tx
+
+remote_receiver:
+  pin:
+    number: GPIO14
+    inverted: true
+  id: ir_rx
+
+climate:
+  - platform: pd_pioneer_ir
+    name: "Pioneer AC"
+    transmitter_id: ir_tx
+    receiver_id: ir_rx
+    use_fahrenheit: true
+```
+
+> [!NOTE]
+> See [Transmit PD Pioneer](/components/remote_transmitter#remote_transmitter-transmit_pd_pioneer) to send
+> custom raw frames for debugging or advanced use.
 
 ### `mitsubishi`
 
@@ -377,6 +416,7 @@ Additional configuration must be specified for this platform:
 - <APIRef text="hitachi_ac344.h" path="hitachi_ac344/hitachi_ac344.h" />
 - <APIRef text="midea_ir.h" path="midea_ir/midea_ir.h" />
 - <APIRef text="mitsubishi.h" path="mitsubishi/mitsubishi.h" />
+- <APIRef text="pd_pioneer_ir.h" path="pd_pioneer_ir/pd_pioneer_ir.h" />
 - <APIRef text="tcl112.h" path="tcl112/tcl112.h" />
 - <APIRef text="toshiba.h" path="toshiba/toshiba.h" />
 - <APIRef text="whirlpool.h" path="whirlpool/whirlpool.h" />
