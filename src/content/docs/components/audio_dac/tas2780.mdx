@@ -1,0 +1,179 @@
+---
+description: "Instructions for using ESPHome's TAS2780 audio amplifier platform."
+title: "TAS2780"
+---
+import APIRef from '@components/APIRef.astro';
+
+The `tas2780` platform allows your ESPHome devices to use the Texas Instruments TAS2780 mono
+Class-D audio amplifier with digital (TDM/I2S) input. This allows the playback of audio via the
+microcontroller from a range of sources via [Speaker](/components/speaker/) or
+[Media Player](/components/media_player/).
+
+The [I²C bus](/components/i2c) is required in your configuration as this is used to communicate
+with the TAS2780 for configuration and status monitoring. Audio data is delivered via I2S/TDM.
+
+```yaml
+# Example configuration entry
+audio_dac:
+  - platform: tas2780
+    id: tas2780_amp
+    amp_level: 8
+    power_mode: 2
+    channel: mono
+```
+
+<span id="config-tas2780"></span>
+
+## Configuration variables
+
+- **amp_level** (*Optional*, int): Amplifier output level index. Controls the Class-D output
+  voltage level. Valid range: ``0`` to ``20``, corresponding to approximately 11 dBV to 21 dBV
+  at 48 kSPS (roughly 0.5 dBV per step). Defaults to ``8``.
+- **power_mode** (*Optional*, int): Selects the power supply operating mode. Defaults to ``2``.
+  - ``0`` — PVDD is the only supply. VBAT1S is supplied externally.
+  - ``1`` — VBAT1S delivers output power at low signal levels; Class-D switches to PVDD when
+    the audio signal exceeds a configured threshold.
+  - ``2`` — PVDD is the only supply. An internal LDO generates VBAT1S for near-idle signal
+    levels. Class-D switches back to PVDD when the signal exceeds approximately −100 dBFS.
+    **(default)**
+  - ``3`` — Forced low-power rail mode.
+- **vol_range_min** (*Optional*, float): Maps the audio_dac 0 % volume level to this fraction
+  of the digital volume scale. Valid range: ``0.0`` to ``1.0``. Defaults to ``0.3``. Use this to
+  raise the minimum audible volume and avoid near-silent output at the bottom of the range.
+- **vol_range_max** (*Optional*, float): Maps the audio_dac 100 % volume level to this fraction
+  of the digital volume scale. Valid range: ``0.0`` to ``1.0``. Defaults to ``1.0``.
+- **channel** (*Optional*, string): Selects which TDM input channel is played back.
+  Defaults to ``mono``.
+  - ``mono`` — Mono downmix (stereo left + right mixed to mono).
+  - ``left`` — Left channel only.
+  - ``right`` — Right channel only.
+- **address** (*Optional*, int): The I²C address of the TAS2780. The address is set by the
+  ``SD0`` pin on the device (see the datasheet). Defaults to ``0x38``.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): How often
+  internal error states are logged. Defaults to ``5s``.
+- **i2c_id** (*Optional*): The ID of the [I²C bus](/components/i2c) the TAS2780 is connected to.
+- All other options from [Audio DAC](/components/audio_dac#config-audio_dac).
+
+## Automations
+
+### `tas2780.activate` Action
+
+Activates the amplifier (transitions from software shutdown to active mode). An optional
+``power_mode`` parameter allows changing the power mode at activation time; if omitted the
+currently configured power mode is used.
+
+Configuration variables:
+
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the `tas2780` platform.
+- **power_mode** (*Optional*, int, [templatable](/automations/templates)): Power mode to activate
+  with (``0``–``3``). Defaults to the value set in the component configuration.
+
+### `tas2780.deactivate` Action
+
+Puts the amplifier into software shutdown, cutting audio output while keeping the device
+powered and accessible over I²C.
+
+Configuration variables:
+
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the `tas2780` platform.
+
+### `tas2780.reset` Action
+
+Performs a full software reset and reinitializes the device. Useful for recovering from fault
+conditions such as over-temperature or over-current errors logged during polling.
+
+Configuration variables:
+
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the `tas2780` platform.
+
+### `tas2780.update_config` Action
+
+Updates one or more runtime-configurable parameters and immediately applies them to the
+device without a full reset. ``amp_level`` and ``channel`` changes are written to hardware;
+``vol_range_min`` / ``vol_range_max`` changes take effect on the next volume write.
+
+Configuration variables:
+
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the `tas2780` platform.
+- **amp_level** (*Optional*, int, [templatable](/automations/templates)): New amplifier level
+  index (``0``–``20``).
+- **channel** (*Optional*, string, [templatable](/automations/templates)): New channel selection
+  (``mono``, ``left``, or ``right``).
+- **vol_range_min** (*Optional*, float, [templatable](/automations/templates)): New minimum
+  volume fraction (``0.0``–``1.0``).
+- **vol_range_max** (*Optional*, float, [templatable](/automations/templates)): New maximum
+  volume fraction (``0.0``–``1.0``).
+
+All [Audio DAC Automations](/components/audio_dac#automations-audio_dac) are supported by this
+platform as well.
+
+## Configuration Examples
+
+**Basic stereo speaker with media player:**
+
+```yaml
+i2c:
+  sda: GPIO8
+  scl: GPIO9
+
+i2s_audio:
+  - id: i2s_output
+    i2s_lrclk_pin: GPIO5
+    i2s_bclk_pin: GPIO6
+
+audio_dac:
+  - platform: tas2780
+    id: tas2780_amp
+    address: 0x38
+    amp_level: 10
+    power_mode: 2
+
+speaker:
+  - platform: i2s_audio
+    id: amp_speaker
+    i2s_audio_id: i2s_output
+    i2s_dout_pin: GPIO7
+    dac_type: external
+    audio_dac: tas2780_amp
+```
+
+**Stereo setup with two TAS2780 devices (left + right):**
+
+```yaml
+audio_dac:
+  - platform: tas2780
+    id: tas2780_left
+    address: 0x38
+    channel: left
+    amp_level: 8
+
+  - platform: tas2780
+    id: tas2780_right
+    address: 0x39
+    channel: right
+    amp_level: 8
+```
+
+**Deactivate the amplifier when idle and reactivate on demand:**
+
+```yaml
+button:
+  - platform: template
+    name: "Amplifier On"
+    on_press:
+      - tas2780.activate:
+          id: tas2780_amp
+
+  - platform: template
+    name: "Amplifier Off"
+    on_press:
+      - tas2780.deactivate:
+          id: tas2780_amp
+```
+
+## See Also
+
+- [Audio Dac Component](/components/audio_dac/)
+- <APIRef text="tas2780.h" path="tas2780/tas2780.h" />
+- <APIRef text="audio_dac.h" path="audio_dac/audio_dac.h" />
+- [TAS2780 datasheet (Texas Instruments)](https://www.ti.com/product/TAS2780)
