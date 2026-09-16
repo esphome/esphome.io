@@ -12,7 +12,9 @@
  * Scans every `.mdx` file under src/content/docs/ for `ImgTable` usages and, for
  * each item `[title, link, image, ...]`, keys off the image at position 2 (items
  * may carry optional caption / "dark-invert" params after it, so the last element
- * is not reliable).
+ * is not reliable). The items expression is tokenized rather than matched line by
+ * line, so single- or double-quoted values, tuples split across several physical
+ * lines, and commented-out example items are all handled correctly.
  *
  * Resolution rules (matching resolveImagePath):
  *   - "http://" or "https://" prefix: external, skipped.
@@ -23,7 +25,7 @@
  *   node script/check_image_references.mjs   # exit 0 if all resolve, 1 if any are missing
  */
 
-import { readFileSync, existsSync, readdirSync } from "fs";
+import { readFileSync, statSync, readdirSync } from "fs";
 import { join, dirname, relative } from "path";
 import { fileURLToPath } from "url";
 
@@ -34,11 +36,8 @@ const REPO_ROOT = join(__dirname, "..");
 const CONTENT_DIR = join(REPO_ROOT, "src/content/docs");
 
 // Matches an <ImgTable items={[ ... ]} /> block. The captured group 1 is the
-// items text; group 2 is used only to know where the block starts.
+// items text; the match position is used to know where the block starts.
 const TABLE_RE = /<ImgTable items=\{\[\n([\s\S]*?)\]\} \/>/g;
-
-// Matches a double-quoted string literal (no escaped quotes appear in item data).
-const STRING_RE = /"([^"]*)"/g;
 
 /** Recursively collect every `.mdx` file under `dir`. */
 function collectMdxFiles(dir) {
@@ -52,6 +51,71 @@ function collectMdxFiles(dir) {
     }
   }
   return found;
+}
+
+/**
+ * Tokenize the text inside `items={[ ... ]}` into item tuples.
+ *
+ * Walks the expression character by character so it is not fooled by values that
+ * span several physical lines, single- vs double-quoted strings, `//` sequences
+ * inside a string (e.g. `https://`), or commented-out example items. Each yielded
+ * tuple lists the string literals it contains together with the 1-indexed line on
+ * which each literal opened.
+ *
+ * @param {string} itemsText Text between the outer `[` and `]` of the items array
+ * @param {number} startLine 1-indexed line in the file where `itemsText` begins
+ * @returns {Generator<{strings: Array<{value: string, line: number}>}>}
+ */
+function* parseTuples(itemsText, startLine) {
+  let depth = 0;
+  let line = startLine;
+  let quote = null; // active string delimiter, or null when outside a string
+  let value = "";
+  let valueLine = 0;
+  let strings = [];
+  const n = itemsText.length;
+
+  for (let i = 0; i < n; i++) {
+    const c = itemsText[i];
+
+    if (quote !== null) {
+      if (c === "\\") {
+        value += itemsText[i + 1] ?? "";
+        i++;
+      } else if (c === quote) {
+        strings.push({ value, line: valueLine });
+        quote = null;
+      } else {
+        if (c === "\n") line++;
+        value += c;
+      }
+      continue;
+    }
+
+    if (c === "\n") {
+      line++;
+    } else if (c === "/" && itemsText[i + 1] === "/") {
+      // Line comment: skip to end of line (the newline is counted next pass).
+      while (i + 1 < n && itemsText[i + 1] !== "\n") i++;
+    } else if (c === "/" && itemsText[i + 1] === "*") {
+      i += 2;
+      while (i < n && !(itemsText[i] === "*" && itemsText[i + 1] === "/")) {
+        if (itemsText[i] === "\n") line++;
+        i++;
+      }
+      i++; // consume the "/" of the closing "*/"
+    } else if (c === '"' || c === "'" || c === "`") {
+      quote = c;
+      value = "";
+      valueLine = line;
+    } else if (c === "[") {
+      if (depth === 0) strings = [];
+      depth++;
+    } else if (c === "]") {
+      depth--;
+      if (depth === 0) yield { strings };
+    }
+  }
 }
 
 /**
@@ -71,6 +135,15 @@ function resolveImageFile(image) {
   return join("public", "images", image);
 }
 
+/** True only when `path` exists and is a regular file (not a directory). */
+function isRegularFile(path) {
+  try {
+    return statSync(path).isFile();
+  } catch {
+    return false;
+  }
+}
+
 /**
  * Extract missing image references from a single file's content.
  *
@@ -82,32 +155,20 @@ function findMissingRefs(content) {
   let match;
   TABLE_RE.lastIndex = 0;
   while ((match = TABLE_RE.exec(content)) !== null) {
-    const itemsText = match[1];
-    // Line number (1-indexed) where the items text begins. The opener line is
-    // consumed by the regex, so the first item line is one after it.
-    const blockStartLine = content.slice(0, match.index).split("\n").length + 1;
+    // The opener line (`<ImgTable items={[`) is consumed by the regex, so the
+    // captured items text begins on the following line.
+    const itemsStartLine = content.slice(0, match.index).split("\n").length + 1;
 
-    const itemLines = itemsText.split("\n");
-    for (let i = 0; i < itemLines.length; i++) {
-      const line = itemLines[i];
-      const trimmed = line.trim();
-      if (trimmed.length === 0) continue;
-      // Skip commented-out lines. The release-post template ships a commented
-      // example item (`// ["Component Name", ..., "image.png"]`) that must not
-      // be treated as a live reference.
-      if (trimmed.startsWith("//")) continue;
-
-      const strings = [...line.matchAll(STRING_RE)].map((m) => m[1]);
-      // A valid item has at least title, link and image. Skip anything shorter
-      // (blank continuations or non-item lines).
+    for (const { strings } of parseTuples(match[1], itemsStartLine)) {
+      // A valid item has at least title, link and image.
       if (strings.length < 3) continue;
 
-      const image = strings[2];
+      const { value: image, line } = strings[2];
       const resolved = resolveImageFile(image);
       if (resolved === null) continue;
 
-      if (!existsSync(join(REPO_ROOT, resolved))) {
-        missing.push({ line: blockStartLine + i, image, resolved });
+      if (!isRegularFile(join(REPO_ROOT, resolved))) {
+        missing.push({ line, image, resolved });
       }
     }
   }
