@@ -1,0 +1,84 @@
+---
+description: "Instructions for setting up the Grove Ultrasonic Ranger distance sensor in ESPHome."
+title: "Grove Ultrasonic Ranger"
+---
+
+import APIRef from '@components/APIRef.astro';
+import { Image } from 'astro:assets';
+import groveUltrasonicImg from './images/grove-ultrasonic.jpg';
+
+The Grove Ultrasonic Ranger
+([Seeed Studio](https://wiki.seeedstudio.com/Grove-Ultrasonic_Ranger/))
+is a non-contact distance measurement module operating at 40 kHz.
+Unlike standard ultrasonic sensors that require separate trigger and
+echo pins, the Grove module uses a **single SIG pin** for both functions
+via an internal MCU, making it ideal for GPIO-constrained projects.
+
+This sensor measures distances from **2 cm to 350 cm** with 1 cm
+resolution and a 15° measurement angle.  It operates at 3.2–5.2 V
+and draws approximately 8 mA.  The sensor outputs a PWM echo whose
+pulse width is proportional to distance:
+
+$$
+\text{Distance} = \frac{\text{echo duration} \times 340\ \text{m/s}}{2}
+$$
+
+The SIG pin alternates between OUTPUT (trigger pulse) and
+INPUT (echo listening). Once the trigger has been sent, the component
+switches the pin to an input to receive the echo signal.
+
+<Image src={groveUltrasonicImg} alt="Grove Ultrasonic Ranger module with Grove cable" layout="constrained" />
+
+## Configuration
+
+```yaml
+# Example configuration entry
+sensor:
+  - platform: grove_ultrasonic
+    sig_pin: GPIOXX
+    name: "Distance"
+```
+
+## Configuration Variables
+
+- **sig_pin** (**Required**, [Pin Schema](/guides/configuration-types#pin-schema)):
+  The pin connected to the yellow (SIG) wire of the Grove cable.
+  Must support both input and output modes.
+
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to check the
+  sensor. Defaults to `60s`.
+
+- All other options from [Sensor](/components/sensor).
+
+Advanced options:
+
+- **timeout** (*Optional*, float): The number of meters before the
+  measurement times out. The default is 3.5 meters, the maximum range
+  of the sensor.
+
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code
+  generation.
+
+## Wiring
+
+The Grove Ultrasonic Ranger uses a standard 4-pin Grove cable, but only three
+connections are needed:
+
+| Wire colour | Function | ESP pin  |
+| :---------- | :------- | :------- |
+| Yellow      | SIG      | GPIOXX   |
+| Red         | VCC      | 3.3V/5V  |
+| Black       | GND      | GND      |
+| White       | NC       | Not connected |
+
+> [!WARNING]
+> Do **not** hot-plug the sensor. Always connect or disconnect the
+> Grove cable while the device is powered off. Hot-plugging may damage
+> the sensor.
+
+## See Also
+
+- [Grove Ultrasonic Ranger Wiki](https://wiki.seeedstudio.com/Grove-Ultrasonic_Ranger/)
+- [Sensor Filters](/components/sensor#sensor-filters)
+- [Template Sensor](/components/sensor/template/)
+- <APIRef text="grove_ultrasonic.h" path="grove_ultrasonic/grove_ultrasonic.h" />
