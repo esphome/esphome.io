@@ -23,11 +23,10 @@ grove_tb6612fng:
 - **address** (*Optional*, int): The I²C address of the driver.
   Defaults to `0x14`.
 
-.. grove_tb6612fng.run:
 
 ### `grove_tb6612fng.run` Action
 
-Set the motor to spin by defining the direction and speed of the rotation, speed is a range from 0 to 255
+Set the motor to spin by defining the direction and speed of the rotation.
 
 ```yaml
 on_...:
@@ -39,11 +38,18 @@ on_...:
         id: test_motor
 ```
 
-.. grove_tb6612fng.stop:
+### Action Parameters
+
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The id to use for this TB6612FNG component.
+- **channel** (*Required*, int): 1 for channel A, 2 for Channel B.
+- **direction** (*Optional*, string):   "FORWARD" or "BACKWARD". Defaults to FORWARD.
+- **speed** (**Required**, int): in range from 0 to 255
+
+
 
 ### `grove_tb6612fng.stop` Action
 
-Set the motor to stop motion but wont stop to spin in case there is a force pulling down, you would want to use break action if this is your case
+Stop providing power to the motor. This does not stop the motor from spinning, but allows the motor to spin freely. If you want to stop the motor from spinning, use the `grove_tb6612fng.break` action.
 
 ```yaml
 on_...:
@@ -52,7 +58,7 @@ on_...:
         channel: 1
 ```
 
-.. grove_tb6612fng.break:
+
 
 ### `grove_tb6612fng.break` Action
 
@@ -66,7 +72,7 @@ on_...:
         id: test_motor
 ```
 
-.. grove_tb6612fng.standby:
+
 
 ### `grove_tb6612fng.standby` Action
 
@@ -79,7 +85,7 @@ on_...:
         id: test_motor
 ```
 
-.. grove_tb6612fng.no_standby:
+
 
 ### `grove_tb6612fng.no_standby` Action
 
@@ -92,7 +98,7 @@ on_...:
         id: test_motor
 ```
 
-.. grove_tb6612fng.change_address:
+
 
 ### `grove_tb6612fng.change_address` Action
 
