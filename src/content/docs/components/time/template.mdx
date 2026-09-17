@@ -29,10 +29,11 @@ time:
   on it in a lambda. Return `{}` if a value isn't currently available.
 
 - **sync** (*Optional*, boolean): When `true`, the computed time is periodically (every
-  `update_interval`) written to the device's system clock, so that code reading the time via `::time()`
-  rather than through this time source also sees it, and the `on_time_sync` automation is triggered.
-  Defaults to `false`, in which case the lambda is still evaluated on demand whenever this time
-  source's current time is requested, but the system clock is left untouched.
+  `update_interval`) written to the device's system clock, propagating to all uses of system time.
+  If the computed time is invalid (prior to 2019) the sync will be skipped. Defaults to `false`.
+
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): How often to synchronize the device time from the source. Defaults
+  to `never`.
 
 - All other options from [Base Time Configuration](/components/time#base_time_config).
 
