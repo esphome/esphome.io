@@ -71,7 +71,8 @@ a minimum only the model name need be configured. Other options can be overridde
 | Seeed-reTerminal-E1001  | Seeed Studio         | 7.5" mono e-paper (800x480, UC8179), supports fast and partial refresh via `full_update_every`. [https://www.seeedstudio.com/reTerminal-E1001-p-6534.html](https://www.seeedstudio.com/reTerminal-E1001-p-6534.html) |
 | Seeed-reTerminal-E1002  | Seeed Studio         | [https://www.seeedstudio.com/reTerminal-E1002-p-6533.html](https://www.seeedstudio.com/reTerminal-E1002-p-6533.html)         |
 | Seeed-reTerminal-E1004 | Seeed Studio | 13.3" 6-color e-paper (1200x1600, T133A01). Requires PSRAM. [https://www.seeedstudio.com/reTerminal-E1004-p-6692.html](https://www.seeedstudio.com/reTerminal-E1004-p-6692.html) |
-| Seeed-reTerminal-Sticky | Seeed Studio         | [https://www.seeedstudio.com/sticky/](https://www.seeedstudio.com/sticky/)                                                                 |
+| Seeed-reTerminal-Sticky | Seeed Studio | 800x480 e-paper (SSD1677), mono mode, supports partial refresh. [https://www.seeedstudio.com/sticky/](https://www.seeedstudio.com/sticky/) |
+| Seeed-reTerminal-Sticky-Gray4 | Seeed Studio | 800x480 e-paper (SSD1677), 4 level grayscale mode, full refresh only. [https://www.seeedstudio.com/sticky/](https://www.seeedstudio.com/sticky/) |
 
 ## Configuration variables
 
@@ -115,10 +116,32 @@ but can be overridden if needed.
 - **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to re-draw the screen. Defaults to `60s`,
   use `never` to only manually update the screen via `component.update`.
 - **full_update_every** (*Optional*, int): On screens that support partial updates, this sets the number of updates
-  before a full update is forced. Defaults to `1` which will make every update a full update.
+  before a full update is forced. Defaults to `1` which will make every update a full update. Models that don't
+  support partial update (e.g. `Seeed-reTerminal-Sticky-Gray4`) reject any value other than `1`.
+- **border_waveform** (*Optional*, int): SSD1677-based models only (`SSD1677`, `Waveshare-4.26in`, `Waveshare-3.97in`,
+  `Seeed-ee04-mono-4.26`, `Seeed-reTerminal-Sticky`, `Seeed-reTerminal-Sticky-Gray4`). Sets the panel's border
+  waveform register value, e.g. `0x01`. Defaults to `0x01` (`0x00` for `Seeed-reTerminal-Sticky-Gray4`).
 - **spi_id** (*Optional*, [ID](/guides/configuration-types#id)): Required to specify the ID of the [SPI Component](/components/spi) if your
   configuration defines multiple SPI buses. If only a single SPI bus is configured, this is optional.
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
+
+## Actions
+
+### `epaper_spi.full_update_next` Action
+
+Forces the next display update to be a full refresh instead of a partial one. Useful with
+`full_update_every` when a full refresh is needed sooner than the configured interval, for
+example right after a large content change.
+
+```yaml
+on_...:
+  then:
+    - epaper_spi.full_update_next: my_display
+```
+
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The display to update.
+
+## Configuration Examples
 
 ### Full configuration example
 
