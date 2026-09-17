@@ -1,0 +1,44 @@
+---
+description: "Instructions for setting up a template time source with ESPHome."
+title: "Template Time"
+---
+import APIRef from '@components/APIRef.astro';
+
+
+The `template` time platform allows you to create a real time clock whose value is computed by a
+[lambda](/automations/templates#config-lambda). A common use is deriving a new time source by
+applying an offset to an already-synchronized time source.
+
+```yaml
+# Example configuration entry
+time:
+  - platform: sntp
+    id: sntp_time
+
+  - platform: template
+    id: offset_time
+    sync: true
+    lambda: |-
+      return id(sntp_time).timestamp_now() + 3600;
+```
+
+## Configuration variables
+
+- **lambda** (**Required**, [lambda](/automations/templates#config-lambda)): Lambda that returns
+  the current time as a UNIX timestamp (an integer number of seconds since 1970-01-01 00:00:00 UTC).
+  It is evaluated every time this time source's current time is read, for example by calling `.now()`
+  on it in a lambda. Return `{}` if a value isn't currently available.
+
+- **sync** (*Optional*, boolean): When `true`, the computed time is periodically (every
+  `update_interval`) written to the device's system clock, so that code reading the time via `::time()`
+  rather than through this time source also sees it, and the `on_time_sync` automation is triggered.
+  Defaults to `false`, in which case the lambda is still evaluated on demand whenever this time
+  source's current time is requested, but the system clock is left untouched.
+
+- All other options from [Base Time Configuration](/components/time#base_time_config).
+
+## See Also
+
+- [Time Component](/components/time)
+- [Automation](/automations)
+- <APIRef text="template_real_time_clock.h" path="template/time/template_real_time_clock.h" />
