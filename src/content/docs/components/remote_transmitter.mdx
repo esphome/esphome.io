@@ -697,13 +697,13 @@ are largely shared among devices within a given class.
 
 ### `remote_transmitter.transmit_pioneer_wyt` Action
 
-This [action](/automations/actions#all-actions) sends a Pioneer Wyt infrared remote command to a remote transmitter. It supports sending a raw code list or specifying individual friendly fields.
+This [action](/automations/actions#all-actions) sends an infrared remote command for Pioneer Diamante Pro mini split heat pumps, the WYT model family, to a remote transmitter. It supports sending a raw code list or specifying individual friendly fields.
 
 ```yaml
 on_...:
   # Sending via raw code list:
   - remote_transmitter.transmit_pioneer_wyt:
-      code: [0xD3, 0x26, 0x00, 0x01, 0x00, 0x20, 0x00, 0x00, 0x30, 0x00, 0x00, 0x00, 0x00]
+      code: [0x23, 0xCB, 0x26, 0x01, 0x00, 0x24, 0x03, 0x05, 0x00, 0x00, 0x00, 0x00, 0x80]
 
   # Sending via friendly fields (default sends both `FAN` and `GENERAL` commands sequentially):
   - remote_transmitter.transmit_pioneer_wyt:
@@ -716,18 +716,18 @@ on_...:
 
 #### Configuration variables
 
-- **code** (*Optional*, list of 13 or 14 bytes, [templatable](/automations/templates)): The 13 or 14 bytes representing the raw payload.
+- **code** (*Optional*, list of 13 or 14 bytes, [templatable](/automations/templates)): The raw payload. The 14th byte is the checksum and is calculated and appended automatically if omitted. Cannot be combined with any of the friendly fields below.
 - **type** (*Optional*, string, [templatable](/automations/templates)): The command type to send. One of `GENERAL`, `FAN`, or `BOTH` (default: `BOTH`).
 - **power** (*Optional*, boolean, [templatable](/automations/templates)): Power state of the AC. Defaults to `true`.
 - **mode** (*Optional*, string, [templatable](/automations/templates)): Operation mode. One of `HEAT`, `DRY`, `COOL`, `FAN`, `AUTO`. Defaults to `COOL`.
-- **target_temperature** (*Optional*, float, [templatable](/automations/templates)): The target temperature in °C. Defaults to `24.0`.
+- **target_temperature** (*Optional*, float, [templatable](/automations/templates)): The target temperature in °C, from `16.0` to `31.0` in steps of `0.5`. Defaults to `24.0`.
 - **beeper** (*Optional*, boolean, [templatable](/automations/templates)): Enable/disable beeper feedback. Defaults to `true`.
 - **display** (*Optional*, boolean, [templatable](/automations/templates)): Enable/disable the display on the unit. Defaults to `true`.
 - **eco** (*Optional*, boolean, [templatable](/automations/templates)): Enable/disable Eco mode. Defaults to `false`.
 - **turbo** (*Optional*, boolean, [templatable](/automations/templates)): Enable/disable Turbo mode. Defaults to `false`.
 - **sleep** (*Optional*, boolean, [templatable](/automations/templates)): Enable/disable Sleep mode. Defaults to `false`.
 - **follow_me** (*Optional*, boolean, [templatable](/automations/templates)): Enable/disable Follow Me (I-Feel) mode. Defaults to `false`.
-- **remote_temp** (*Optional*, int, [templatable](/automations/templates)): Current room temperature feedback for Follow Me mode. Defaults to `0`.
+- **remote_temp** (*Optional*, int, [templatable](/automations/templates)): Current room temperature feedback for Follow Me mode, from `0` to `255`. Defaults to `0`.
 - **fan_speed** (*Optional*, string, [templatable](/automations/templates)): The fan speed. One of `AUTO`, `LOW`, `MEDIUM_LOW`, `MEDIUM`, `MEDIUM_HIGH`, `HIGH`. Defaults to `AUTO`.
 - **mute** (*Optional*, boolean, [templatable](/automations/templates)): Enable/disable Silent mode. Defaults to `false`.
 - **vertical_swing** (*Optional*, boolean, [templatable](/automations/templates)): Enable/disable vertical swing. Defaults to `false`.
