@@ -135,11 +135,13 @@ Only on `ESP32`:
 > [!NOTE]
 > ZHA sets the minimum reporting interval to 30 seconds for some sensor devices. If a faster response is needed set `report` to `force`.
 
-- **cluster** (*Optional*, enum): Zigbee cluster to be used. One of `generic` or `device_class`. `generic`
-  uses basic analog/binary Zigbee clusters and works for all device classes. `device_class` can only be
-  used for supported device classes and uses a Zigbee cluster fitting to the device class. Benefits are
-  better support by Z2M/ZHA and compatibility with 3rd party Zigbee devices. Component names are not exposed
-  when using `device_class`. On `nRF52` only the basic clusters are supported. Defaults to `generic`.
+- **cluster** (*Optional*, enum): Zigbee cluster to be used. One of `generic` or `device_class` or specific cluster
+  names. Valid options depend on the component. `generic` uses basic analog/binary Zigbee clusters and works for
+  all device classes. `device_class` can only be used for supported device classes and uses a Zigbee cluster fitting
+  to the device class. Likewise, some components support setting specific cluster names, for example `on_off` for
+  switches. Benefits are better support by Z2M/ZHA and compatibility with 3rd party Zigbee devices. Component names
+  are not exposed when using `device_class` or cluster names. On `nRF52` only the basic clusters are supported.
+  Defaults to `generic`.
 - **endpoint** (*Optional*, int): Endpoint number in the range from 1 to 239. This defines which entity goes
   on which endpoint, giving a more stable configuration and letting you manually combine entities that logically
   belong together. Only entities that map to different Zigbee clusters can be combined (for example
@@ -198,7 +200,7 @@ attributes are set if applicable. `cluster: device_class` is supported for `temp
 ### Switch
 
 [Switches](/components/switch#config-switch) are implemented as binary output clusters with description and present_value attributes.
-If `cluster` is set to `default` the on_off cluster is used.
+With `cluster: on_off`, the on_off cluster is used instead.
 
 
 ### Number
