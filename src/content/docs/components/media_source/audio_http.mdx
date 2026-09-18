@@ -38,13 +38,30 @@ HTTPS URLs are validated against ESP-IDF's bundled X.509 certificate store (the 
 Mozilla root CA list used by other ESPHome components). By default, ESPHome includes only
 the common-CA subset, which covers the vast majority of public servers; set
 `use_full_certificate_bundle: true` under the [`esp32`](/components/esp32/) component's
-advanced options for the full bundle. Servers using self-signed certificates or private
-CAs will fail to connect.
+advanced options for the full bundle. Servers using self-signed certificates or private CAs will fail to connect with the built-in bundle. To trust a private CA without disabling verification, point ca_certificate_path at the CA certificate file:
 
-To allow connections to such servers, add the [`http_request`](/components/http_request/)
-component with `verify_ssl: false`. This disables server certificate verification globally
-for all TLS connections in the build, including the ones made by `audio_http`. Use it
-only on trusted networks.
+```yaml
+# Example configuration entry
+media_source:
+  - platform: audio_http
+    ca_certificate_path: ca_cert.pem
+```
+
+The PEM file is baked into the firmware, so re-flash (e.g. OTA update) after rotating the
+CA certificate. When `http_request` is configured with its own `ca_certificate_path`, media
+sources inherit it automatically, so a single declaration covers both components:
+
+```yaml
+http_request:
+  ca_certificate_path: ca_cert.pem
+
+media_source:
+  - platform: audio_http   # inherits the CA above
+```
+
+`verify_ssl: false` under `http_request` remains available for trusted networks, but it
+disables certificate verification globally for all TLS connections in the build; preferring
+`ca_certificate_path` keeps verification on with your own trust anchor.
 
 <span id="config-audio_http_media_source"></span>
 
@@ -60,6 +77,13 @@ only on trusted networks.
   that run several memory-intensive components concurrently. The buffer consumes `buffer_size` bytes
   while playback is stopped. If pre-allocation fails, allocation is retried when playback starts.
   Defaults to `false`.
+- **ca_certificate_path** (*Optional*, path): Path to a PEM file containing the CA
+  certificate(s) used to verify the server for `https://` playback URLs. The file is read at
+  build time and embedded in the firmware, and it replaces — not extends — ESP-IDF's bundled
+  certificate store for this media source. Relative paths are resolved against the
+  configuration directory. If omitted, the value from the
+  [`http_request`](/components/http_request/) component's `ca_certificate_path` is used when
+  that component is configured.
 - **task_stack_in_psram** (*Optional*, boolean): If `true`, the FreeRTOS decode task stack is
   allocated in PSRAM instead of internal RAM. Requires the [psram](/components/psram/) component. Defaults to `false`.
 - All other options from [Media Source](/components/media_source/).
