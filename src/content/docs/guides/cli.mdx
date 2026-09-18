@@ -265,8 +265,9 @@ of a running device. The device only accepts the key it runs, so the command wri
 configuration, builds with it, uploads with the current key, and then confirms the device answers with the new
 key. The key is rewritten where it lives: the `key:` line in the yaml, or the line in `secrets.yaml` that a
 `!secret` on it points to, and the key being replaced stays in the configuration as `old_key:`; for a `!secret` key
-it stays in `secrets.yaml` under the same name with `_old` appended, so no key lands in the device yaml. A key that
-comes from a substitution or a package is refused. A failure before the upload puts the previous key back; after the
+it stays in `secrets.yaml` under the same name with `_old` appended (`device_name__encryption_key` keeps its previous
+value as `device_name__encryption_key_old`), so no key lands in the device yaml. A key that comes from a substitution
+or a package is refused. A failure before the upload puts the previous key back; after the
 upload the configuration keeps the new key, since with `old_key:` the next install connects whether the device took
 the new firmware or not. The upload is protected by the current key, so this is for a planned change: replace a
 key you believe leaked by serial flash.
