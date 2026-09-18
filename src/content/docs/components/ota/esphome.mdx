@@ -320,14 +320,15 @@ ota:
 ### Changing the Key
 
 The device only accepts the key it is running, so a new key has to be built into the firmware and uploaded with the
-old one. Put the new key in `key:` and move the previous one to `old_key:`, then install. The CLI presents the new key
-first, and when the device rejects it reconnects once with `old_key:`. The firmware it sends carries the new key only;
-`old_key:` never reaches the device.
+old one. Put the new key where the current one is (`api: encryption: key:` in the recommended setup, or the OTA
+block's own `key:` on a device without `api:`) and move the previous one to `old_key:` under the OTA block, then
+install. The CLI presents the new key first, and when the device rejects it reconnects once with `old_key:`. The
+firmware it sends carries the new key only; `old_key:` never reaches the device.
 
 ```yaml
 api:
   encryption:
-    key: !secret device_name__encryption_key
+    key: !secret device_name__encryption_key  # the new key
 
 ota:
   - platform: esphome
@@ -341,11 +342,12 @@ for example when Home Assistant hands over a new API key, so the next install st
 
 `old_key:` is for a planned change of key. Presenting a previous key means whoever holds that key and can answer at
 the device's address receives the image, and with it the new key, so a key you believe leaked is replaced by serial
-flash or with the device on a trusted network, never through `old_key:`. With the recommended shape the API key changes too, so Home Assistant needs
+flash or with the device on a trusted network, never through `old_key:`. With the recommended shape the API key
+changes too, so Home Assistant needs
 the new key; a device whose key Home Assistant provisions is rotated from Home Assistant instead.
 
 For a single install with a key that is not in the yaml, for example from a script, use
-[`--prompt-ota-key`](/guides/cli/#upload-command) instead of editing the configuration.
+[`--prompt-ota-key`](/guides/cli/#upload-command) on `upload` or `run` instead of editing the configuration.
 
 ## Updating the partition table on ESP32
 
