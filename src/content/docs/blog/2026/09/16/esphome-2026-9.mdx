@@ -98,9 +98,9 @@ and lets paired build servers recover from an address change on their own.
 ## Upgrade checklist
 
 {/* UPGRADE_CHECKLIST_START */}
-- If your `ota:` block has a `password:`, keep it for the update to 2026.9.0, then replace it with `encryption:`
-  and update again; unencrypted updates from older firmware stop working in 2027.3.0, so do the first update
-  before then
+- If your `ota:` block has a `password:`, keep it for the update to 2026.9.0 and make sure `api:` has an
+  `encryption:` key, then replace the password with `encryption:` and update again; unencrypted updates from older
+  firmware stop working in 2027.3.0, so do the first update before then
 - If you have a device with a custom MAC burned into the ESP32 eFuses and use Ethernet, Bluetooth, or 802.15.4,
   expect a new MAC on those interfaces after upgrading; update DHCP reservations, ACLs and Bluetooth pairings
 - If you use `modbus_controller` with `custom_command:`, rename it to `custom_pdu:` and drop the leading device
@@ -305,16 +305,18 @@ uploading. It did not protect the image.
 
 A device with an `api:` encryption key now offers encrypted OTA with that key, and the CLI uses it when the device
 offers it ([#18979](https://github.com/esphome/esphome/pull/18979)). Firmware older than 2026.9.0 cannot offer it.
-This means the update to 2026.9.0 is still unencrypted, and every update after that is encrypted.
+This means the update to 2026.9.0 is still unencrypted. After that, updates to a device with a key are encrypted.
 
 To require encryption, add `encryption:` under the OTA platform. The device then rejects unencrypted updates, and
-the CLI refuses to send them. A bare `encryption:` uses the `api:` key, so you do not need a second key. You cannot
-use `password:` and `encryption:` together.
+the CLI refuses to send them. Both sides refuse, so an attacker cannot force an unencrypted upload. A bare
+`encryption:` uses the `api:` key, so you do not need a second key. You cannot use `password:` and `encryption:`
+together.
 
 If your device uses `password:` today, do this in two steps:
 
-1. Update the device to 2026.9.0. Do not change the config yet, keep `password:`. The old firmware still checks
-   the password. If you remove it first, the update fails with `ESP requests password, but no password given!`.
+1. Update the device to 2026.9.0. Keep `password:`. If `api:` has no `encryption:` yet, add one with a key. The
+   old firmware still checks the password. If you remove it first, the update fails with
+   `ESP requests password, but no password given!`.
 2. Replace `password:` with `encryption:` and update again.
 
 A device without `api:`, for example one that uses MQTT, needs a temporary key for the first step. See
@@ -721,10 +723,11 @@ contributions, and to everyone who reported issues, tested pre-releases, and hel
 - **OTA**: A device with an `api:` encryption key now offers encrypted OTA, and the CLI uses it when the device
   offers it. Firmware older than 2026.9.0 cannot offer it, so the update to 2026.9.0 is still unencrypted. That
   unencrypted path is removed in 2027.3.0; after that, a device on older firmware needs a serial flash or the web
-  server OTA platform. If your config has `password:`, keep it for the update to 2026.9.0, then replace it with
-  `encryption:` and update again. The old firmware still checks the password, so removing it before the first
-  update fails with `ESP requests password, but no password given!`. Validation warns while `password:` and an
-  `api:` key are both set; this is expected until you replace the password.
+  server OTA platform. If your config has `password:`, keep it for the update to 2026.9.0 and make sure `api:` has
+  an `encryption:` key, then replace the password with `encryption:` and update again. The old firmware still
+  checks the password, so removing it before the first update fails with
+  `ESP requests password, but no password given!`. Validation warns while `password:` and an `api:` key are both
+  set; this is expected until you replace the password.
   [#18489](https://github.com/esphome/esphome/pull/18489),
   [#18979](https://github.com/esphome/esphome/pull/18979)
 - **Preferences**: `IntervalSyncer` is now a `PollingComponent`, so its interval can be suspended and resumed with
