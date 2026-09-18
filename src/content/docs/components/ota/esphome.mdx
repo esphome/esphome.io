@@ -48,7 +48,7 @@ ota:
 
   - **key** (*Optional*, string): The base64 encryption key. Omit it so the [API encryption key](/components/api#configuration-variables) is used and one key protects the device; only set it when there is no `api:` block at all, for example a device that uses MQTT. Next to a static API key it must be the same key, a different one is rejected at validation.
 
-- **password** (*Optional*, string): The password to use for updates. Not recommended for new devices, use **encryption** instead. Cannot be combined with **encryption**.
+- **password** (*Optional*, string): The password to use for updates. Not recommended for new devices, use **encryption** instead. Cannot be combined with **encryption**. To move an installed device from a password to encryption, see [Enabling Encryption on an Existing Device](#enabling-encryption-on-an-existing-device).
 - **allow_partition_access** (*Optional*, boolean): Only on `esp32`. Allow updating more partition types. Used for updating the partition table and the bootloader. Defaults to `false`.
 
 > [!IMPORTANT]
@@ -102,6 +102,9 @@ the device has an API encryption key, use [Encryption](#encryption) instead; a p
 older uploaders and warns at validation.
 
 ### Removing a Password
+
+To replace the password with encryption, see
+[Enabling Encryption on an Existing Device](#enabling-encryption-on-an-existing-device) instead.
 
 - If you know your password but want to remove it, enter an empty string: `id(my_ota).set_auth_password("");` instead of changing.
 - If you no longer know your password and the web server has been activated:
@@ -196,14 +199,20 @@ Add `encryption:` under the OTA platform only once the device runs firmware that
 the config the CLI never sends plaintext, so an over the air install against older firmware is refused. Which steps
 apply depends on whether the device uses the native API.
 
+> [!IMPORTANT]
+> Keep `password:` in the config until step 2. The firmware on the device still checks the password until it is
+> replaced. If you remove `password:` before step 1, the install fails with
+> `ESP requests password, but no password given!`. If you add `encryption:` before step 1, the install fails with
+> `refusing to send the image in plaintext`.
+
 #### Devices With the Native API
 
 A key provisioned by Home Assistant must be in the yaml before step 1: the Device Builder writes it there, otherwise
 copy the key Home Assistant provisioned into `api: encryption: key:`. Never generate a fresh key for such a device,
 that locks Home Assistant out.
 
-1. **Install a firmware that offers encryption.** Keep the config as it is; if `api:` has no `encryption:` yet, add
-   one with a key. Install with ESPHome 2026.9.0 or newer, then check the device log for
+1. **Install a firmware that offers encryption.** Keep the config as it is, including any `password:`; if `api:`
+   has no `encryption:` yet, add one with a key. Install with ESPHome 2026.9.0 or newer, then check the device log for
    `Encryption: offered, plaintext accepted`. A device that already shows this starts at step 2.
 
    ```yaml
@@ -233,8 +242,8 @@ that locks Home Assistant out.
 
 Without `api:` the running firmware cannot offer encryption, so an `api:` block is used once as a stepping stone.
 
-1. **Install a firmware that offers encryption.** Add a temporary `api:` block with a generated key and
-   `reboot_timeout: 0s`. Install with ESPHome 2026.9.0 or newer, then check the device log for
+1. **Install a firmware that offers encryption.** Keep any `password:`. Add a temporary `api:` block with a
+   generated key and `reboot_timeout: 0s`. Install with ESPHome 2026.9.0 or newer, then check the device log for
    `Encryption: offered, plaintext accepted`.
 
    ```yaml
