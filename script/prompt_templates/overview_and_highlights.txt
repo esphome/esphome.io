@@ -11,7 +11,7 @@ IMPORTANT: Both files will be COMBINED into the same final changelog document:
 
 Think of it like an executive summary:
   - Overview = "Here are the 3-10 big themes of this release" (concise, high-level)
-  - Highlights = "Here's what each theme actually means and why it matters" (detailed, technical)
+  - Highlights = "Here's what each theme actually means for the user" (detailed, technical)
 
 ════════════════════════════════════════════════════════════════════════════════
 
@@ -19,6 +19,8 @@ TASK: Write BOTH the Release Overview AND Feature Highlights for ESPHome {{ vers
 
 WHY COMBINED: These sections appear in the same document, so they must work together.
 The overview is a concise summary of the highlights, not a separate narrative.
+
+{% include "_writing_style.txt" %}
 
 ════════════════════════════════════════════════════════════════════════════════
 STEP 1: FEATURE HIGHLIGHTS (write first - save to {{ highlights_file }})
@@ -172,15 +174,15 @@ INSTRUCTIONS:
    - Write all ## and ### headings in sentence case: only the first word and
      proper nouns/acronyms are capitalized (e.g. "ESP8266 native toolchain
      foundation", "Arduino as an ESP-IDF component")
-   - Opening paragraph: what it is and why it matters
-   - **Key Features/Benefits** bulleted list with bold labels
+   - Opening paragraph in plain prose: what it is and what changes for the user
+   - A bulleted list with a short bold lead only for several parallel items (features, measurements)
    - Subsections (###) for migration guidance or recommendations
    - Use `[component_name](/components/component_name)` for component links
    - Use `code formatting` for config keys
    - Use **bold** for emphasis
 
 6. **What makes good sections**:
-   ✓ Explains WHY the feature matters, not just what it does
+   ✓ Gives the context a user needs (what changes for them), not just what the code does
    ✓ Includes specific numbers (RAM savings, performance gains, benchmark results)
    ✓ Groups related PRs into one cohesive narrative
    ✓ Credits the lead contributor with [@username](https://github.com/username) when one person drove the work
@@ -198,7 +200,7 @@ INSTRUCTIONS:
    ✗ Don't include sections about "Deprecation Removals" or "Migration Considerations"
    ✗ Don't claim breaking changes are "backward compatible" - be honest about compatibility
    ✗ Don't use em dashes (—) or double dashes (--) to separate clauses; use commas or semicolons
-   ✗ Don't use "The problem:" / "The fix:" as bold headers - write flowing prose instead
+   ✗ Don't use "The problem:" / "The fix:" / "Why it matters:" / "Under the hood:" as bold labels - write prose instead
    ✗ Don't include config examples for dangerous options (e.g., options that can brick devices) - link to docs instead
    ✗ Don't include config examples for niche features - link to docs instead
    ✗ Don't put non-sensor items in the "New Sensors" section - use "Other Notable Features" instead
