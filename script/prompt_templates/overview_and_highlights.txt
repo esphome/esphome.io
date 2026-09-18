@@ -10,7 +10,7 @@ IMPORTANT: Both files will be COMBINED into the same final changelog document:
   - Release Overview ({{ overview_file }}): Short summary, one sentence per theme, placed BEFORE the highlights
 
 Think of it like an executive summary:
-  - Overview = "Here are the 3-10 big themes of this release" (concise, high-level)
+  - Overview = "Here are the big themes of this release" (concise, high-level)
   - Highlights = "Here's what each theme actually means for the user" (detailed, technical)
 
 ════════════════════════════════════════════════════════════════════════════════
@@ -29,7 +29,7 @@ STEP 1: FEATURE HIGHLIGHTS (write first - save to {{ highlights_file }})
 ════════════════════════════════════════════════════════════════════════════════
 
 Write the detailed feature highlight sections FIRST (see PART 2 below for full instructions).
-This is the main content - 3-10 detailed ## sections with measurements, examples, and context.
+This is the main content - 5-15 detailed ## sections with measurements, examples, and context.
 
 ════════════════════════════════════════════════════════════════════════════════
 STEP 2: RELEASE OVERVIEW (write second - save to {{ overview_file }})
@@ -37,7 +37,7 @@ STEP 2: RELEASE OVERVIEW (write second - save to {{ overview_file }})
 
 CONTEXT:
 This is a SHORT executive summary that appears BEFORE the feature highlights in the final document.
-It simply introduces the 3-10 major themes that you detailed in the feature highlights.
+It simply introduces the major themes that you detailed in the feature highlights.
 
 CRITICAL: This is NOT a separate article - it's an introduction to the highlights you just wrote.
 Think: "This release focuses on X, Y, and Z" then the highlights explain X, Y, and Z in detail.
@@ -47,14 +47,14 @@ AUDIENCE: ESPHome users (makers, DIY enthusiasts, home automation enthusiasts)
 STYLE EXAMPLE from ESPHome 2026.9.0:
 
   ESPHome 2026.9.0 focuses on the build system and platform work. The scaffolding for an ESP8266 native
-  toolchain lands across eight infrastructure PRs. PlatformIO installs run in parallel from start to end, and
-  the package phase drops from 36% of build time to 25% on CI benchmarks. A sweep across 60 files moves 211
+  toolchain lands across eight infrastructure PRs. PlatformIO installs run in parallel from start to end. The
+  package phase drops from 36% of build time to 25% on CI benchmarks. A sweep across 60 files moves 211
   log strings off ESP8266 RAM into flash.
 
-  Beyond the platform work, this release adds Noise encryption for OTA updates and cuts the flash cost of
-  encryption by close to half on every platform. Improv serial now works on Ethernet-only boards. The modbus
-  overhaul continues with a heap-free write path and continuous polling. Six new components and around twenty
-  feature additions to existing components round out the release.
+  This release also adds Noise encryption for OTA updates. The flash cost of encryption drops by close to half
+  on every platform. Improv serial now works on Ethernet-only boards. The modbus overhaul continues with a
+  heap-free write path and continuous polling. Six new components and around twenty feature additions to
+  existing components are also included.
 
 INSTRUCTIONS:
 
@@ -67,9 +67,10 @@ INSTRUCTIONS:
 5. Open with one sentence that says what the release is mostly about
 6. Lead with themes that affect the most users; a fix for one component never opens the overview
 7. Plain descriptive words only. No "delivers", "groundbreaking", "major", "extensive", "powerful"
+8. The overview only names themes, so it does not define acronyms or jargon; the highlights do that
 
 OUTPUT FORMAT FOR OVERVIEW:
-- 2-3 paragraphs, 6-12 sentences total, each sentence under 25 words
+- One opening sentence plus one sentence per theme, each under 25 words, in 2-3 paragraphs
 - No headings, no bullet points, no PR links
 - Just a prose introduction to the themes you detailed in the highlights
 - Should be roughly 1/10th the length of the feature highlights
@@ -148,7 +149,6 @@ system was meant to cycle through APs on failure, but a bug always sorted by sig
 - **False positive filtering** - Two connection attempts per BSSID before marking as failed (eliminates transient auth failures)
 - **Hidden network handling fixed** - Networks marked `hidden: true` are tried before scanning, with smart skip logic to avoid wasting time on visible networks
 
-Devices now automatically fail over to the next strongest AP when connection fails, making mesh networks reliable again.
 
 INSTRUCTIONS:
 
@@ -300,12 +300,12 @@ BREAKING CHANGE PR FILES ({{ breaking_changes|length }} total) - READ ALL {{ bre
 
 STEP 1 - Write Feature Highlights FIRST:
    File: {{ highlights_file }}
-   Content: 3-10 detailed ## sections with measurements, examples, context
+   Content: 5-15 detailed ## sections with measurements, examples, context
    Length: ~10-15KB of detailed technical content
 
 STEP 2 - Write Release Overview SECOND (based on the highlights you just wrote):
    File: {{ overview_file }}
-   Content: 6-12 short sentences, one theme each, in the order of your highlights
+   Content: one opening sentence plus one short sentence per theme, in the order of your highlights
    Length: ~1-1.5KB - roughly 1/10th the length of highlights
    Purpose: Concise executive summary that introduces the detailed sections
 
