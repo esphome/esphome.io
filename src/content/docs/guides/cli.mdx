@@ -258,6 +258,41 @@ node).
 
 The `esphome wizard <CONFIG>` command starts the ESPHome configuration creation wizard.
 
+### `rotate-key` Command
+
+The `esphome rotate-key <CONFIG>` command changes the [OTA encryption key](/components/ota/esphome/#encryption)
+of a running device. The device only accepts the key it runs, so the command writes a new key to the
+configuration, builds with it, uploads with the current key, and then confirms the device answers with the new
+key. The key is rewritten where it lives: the `key:` line in the yaml, or the line in `secrets.yaml` that a
+`!secret` on it points to, and the key being replaced stays in the configuration as `old_key:`. A key that comes
+from a substitution or a package is refused. A failure before the upload puts the previous key back; after the
+upload the configuration keeps the new key, since `old_key:` still reaches the device either way. The upload is
+protected by the current key, so this is for a planned change: replace a key you believe leaked by serial flash.
+
+```shell
+esphome rotate-key living-room.yaml
+```
+
+When the OTA block uses the API key (the [recommended setup](/components/ota/esphome/#encryption), a bare
+`encryption:`), the API key changes too; the command asks for confirmation and prints the new key at the end for
+Home Assistant. A device whose key Home Assistant provisions is rotated from Home Assistant instead.
+
+#### Options
+
+**`--device DEVICE`**
+: The address to upload to, as for [`upload`](#upload-command). Network addresses only; a serial port is refused,
+since over serial you change the key in the configuration and use [`run`](#run-command).
+
+
+**`--prompt-new-key`**
+: Ask for the new key instead of generating one. It is read without echo, or as one line from stdin when that is
+not a terminal; it is never taken from the command line.
+
+
+**`-y`** / **`--yes`**
+: Do not ask for confirmation when the API key changes too.
+
+
 ### `version` Command
 
 The `esphome version` command shows the current ESPHome version and exits.
