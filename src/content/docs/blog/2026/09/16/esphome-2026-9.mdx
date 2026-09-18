@@ -298,33 +298,34 @@ and the JSON config endpoint serialises non-string keys
 ## Encrypted OTA updates
 
 [@bdraco](https://github.com/bdraco) adds Noise (ChaCha20-Poly1305) encryption to the `esphome` OTA platform
-([#18489](https://github.com/esphome/esphome/pull/18489)). It is the same encryption the native API uses. Before
-this release, the firmware image was sent over the network unencrypted. The image contains your WiFi password and
-your API encryption key, so anyone on your network could read them. The OTA password only checked who was
-uploading. It did not protect the image.
+([#18489](https://github.com/esphome/esphome/pull/18489)), using the same encryption the native API already uses.
+Until now the firmware image was sent over the network unencrypted, which mattered because the image contains your
+WiFi password and your API encryption key. Anyone on your network could read them from the upload, and the OTA
+password did not help here because it only checked who was uploading.
 
-A device with an `api:` encryption key now offers encrypted OTA with that key, and the CLI uses it when the device
-offers it ([#18979](https://github.com/esphome/esphome/pull/18979)). Firmware older than 2026.9.0 cannot offer it.
-This means the update to 2026.9.0 is still unencrypted. After that, updates to a device with a key are encrypted.
+A device with an `api:` encryption key now offers encrypted OTA with that key, and the CLI uses it whenever the
+device offers it ([#18979](https://github.com/esphome/esphome/pull/18979)). Firmware older than 2026.9.0 cannot
+offer it, so the update to 2026.9.0 is still unencrypted, but every update after that to a device with a key is
+encrypted.
 
-To require encryption, add `encryption:` under the OTA platform. The device then rejects unencrypted updates, and
-the CLI refuses to send them. Both sides refuse, so an attacker cannot force an unencrypted upload. A bare
-`encryption:` uses the `api:` key, so you do not need a second key. You cannot use `password:` and `encryption:`
-together.
+To make encryption mandatory, add `encryption:` under the OTA platform. The device then rejects unencrypted
+updates and the CLI refuses to send them, so an attacker cannot force an unencrypted upload. A bare `encryption:`
+uses the `api:` key, which means you do not need a second key, and because the key already identifies the
+uploader it cannot be combined with `password:`.
 
-If your device uses `password:` today, do this in two steps:
+If your device uses `password:` today, moving it over takes two updates:
 
-1. Update the device to 2026.9.0. Keep `password:`. If `api:` has no `encryption:` yet, add one with a key; if
-   Home Assistant provisioned the key, copy that key and do not generate a new one. The old firmware still
-   checks the password. If you remove it first, the update fails with
-   `ESP requests password, but no password given!`.
+1. Update the device to 2026.9.0 with `password:` still in the config, because the old firmware checks it until it
+   is replaced. Removing it first makes the update fail with `ESP requests password, but no password given!`. If
+   `api:` has no `encryption:` yet, add one with a key now; if Home Assistant provisioned the key, copy that key
+   instead of generating a new one.
 2. Replace `password:` with `encryption:` and update again.
 
 The full procedure, including devices without `api:` and devices whose key Home Assistant provisioned, is in
 [Enabling Encryption on an Existing Device](/components/ota/esphome/#enabling-encryption-on-an-existing-device).
 
-This is built on a new shared `noise` component ([#18490](https://github.com/esphome/esphome/pull/18490)). It holds
-the Noise code that the api and ota components both use. There is no user configuration for `noise`.
+All of this is built on a new shared `noise` component ([#18490](https://github.com/esphome/esphome/pull/18490)),
+which holds the Noise code that the api and ota components both use and has no user configuration of its own.
 
 ## Smaller and faster encryption
 
