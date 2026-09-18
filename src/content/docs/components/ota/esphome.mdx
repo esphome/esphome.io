@@ -53,6 +53,9 @@ ota:
     in plaintext when the running firmware does not offer encryption. Only affects the upload; the firmware built
     with it still requires encryption. Remove it once the device encrypts, the CLI says when. See
     [Enabling Encryption on an Existing Device](#enabling-encryption-on-an-existing-device).
+  - **old_key** (*Optional*, string): The key the device ran before **key** was changed. Only used by the CLI: when
+    the device rejects the current key the upload reconnects once with this one. Never built into the firmware.
+    Remove it once the device runs the new key, the CLI says when. See [Changing the Key](#changing-the-key).
 
 - **password** (*Optional*, string): The password to use for updates. Not recommended for new devices, use
   **encryption** instead. Cannot be combined with **encryption**, except next to **allow_plaintext_upload** for the
@@ -187,10 +190,8 @@ intended recovery path for a device that cannot join Wi-Fi, so it does not warn.
 > Once a device runs firmware with `encryption:` enabled it refuses plaintext OTA updates, and the CLI refuses to send
 > a plaintext image when `encryption:` is configured. This is intentional; a downgrade to plaintext would be an
 > unauthenticated upload. If the key is lost, recover the device with a serial flash, or through the
-> [web server OTA platform](/components/ota/web_server/) if the config has it. Changing the key is not an OTA
-> operation yet either: the device only accepts the key it is running and the CLI presents the key in the config,
-> so a new key goes in the same two ways. A
-> [key rotation system is planned for the future](https://github.com/esphome/backlog/issues/161).
+> [web server OTA platform](/components/ota/web_server/) if the config has it. The device only accepts the key it
+> is running, so a new key is installed with the old one; see [Changing the Key](#changing-the-key).
 
 To troubleshoot a failing encrypted handshake, build with the logger at `VERY_VERBOSE` so the shared `noise`
 component's messages are compiled in; a `logs:` entry alone cannot raise a level above `level:`. `initial_level`
@@ -315,6 +316,31 @@ ota:
   out components you do not need for that one build.
 - Home Assistant asks for the key after step 1 if one was added, and discovers the temporary `api:` device on the
   second path; ignore that, it disappears after step 2.
+
+### Changing the Key
+
+The device only accepts the key it is running, so a new key has to be built into the firmware and uploaded with the
+old one. Put the new key in `key:` and move the previous one to `old_key:`, then install. The CLI presents the new key
+first, and when the device rejects it reconnects once with `old_key:`. The firmware it sends carries the new key only;
+`old_key:` never reaches the device.
+
+```yaml
+api:
+  encryption:
+    key: !secret device_name__encryption_key
+
+ota:
+  - platform: esphome
+    encryption:
+      old_key: !secret device_name__previous_encryption_key
+```
+
+After a successful install the device runs the new key and the CLI says so; remove `old_key:` then, an `old_key:`
+equal to `key:` is rejected at validation. With the recommended shape the API key changes too, so Home Assistant needs
+the new key; a device whose key Home Assistant provisions is rotated from Home Assistant instead.
+
+For a single install with a key that is not in the yaml, for example from a script, use
+[`--prompt-ota-key`](/guides/cli/#upload-command) instead of editing the configuration.
 
 ## Updating the partition table on ESP32
 
