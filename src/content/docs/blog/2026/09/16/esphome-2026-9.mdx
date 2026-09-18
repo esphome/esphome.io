@@ -46,7 +46,7 @@ Here's the plain-language version for anyone short on time or newer to ESPHome �
 - **Modbus Controller users:** If your config uses `modbus_controller` with `custom_command`, `register_count`, `force_new_range`, or `skip_updates`, those options have been renamed or replaced and your config needs updating.
 - **ESP32 devices with a custom MAC:** If you've burned a custom MAC into an ESP32 and use Ethernet, Bluetooth, or Thread/Zigbee, those interfaces will get new addresses after updating – so DHCP reservations, Bluetooth pairings, and network filters keyed to the old MAC need updating too.
 - **Certain UART sensors:** A handful of components (including `mhz19`, `daly_bms`, and `teleinfo`) now reject unsupported UART settings at config time – if any of yours were on the wrong baud rate or parity, they'll flag a clear error you can fix on the UART bus.
-- **OTA password users:** If your `ota:` block has a `password:`, keep it for the update to 2026.9.0. After that update, replace `password:` with `encryption:`. Updates then use the same key that already protects the connection to Home Assistant. If you remove the password before the first update, it fails with `ESP requests password, but no password given!`.
+- **OTA password users:** If your `ota:` block has a `password:`, keep it for the update to 2026.9.0 and make sure `api:` has an `encryption:` key. After that update, replace `password:` with `encryption:`. Updates then use the same key that already protects the connection to Home Assistant. If you remove the password before the first update, it fails with `ESP requests password, but no password given!`.
 
 **New features:** Updates are quicker – ESPHome now downloads and sets up its build tools in parallel – and can be encrypted using the same key that already secures the link to Home Assistant.
 
@@ -314,12 +314,13 @@ together.
 
 If your device uses `password:` today, do this in two steps:
 
-1. Update the device to 2026.9.0. Keep `password:`. If `api:` has no `encryption:` yet, add one with a key. The
-   old firmware still checks the password. If you remove it first, the update fails with
+1. Update the device to 2026.9.0. Keep `password:`. If `api:` has no `encryption:` yet, add one with a key; if
+   Home Assistant provisioned the key, copy that key and do not generate a new one. The old firmware still
+   checks the password. If you remove it first, the update fails with
    `ESP requests password, but no password given!`.
 2. Replace `password:` with `encryption:` and update again.
 
-A device without `api:`, for example one that uses MQTT, needs a temporary key for the first step. See
+The full procedure, including devices without `api:` and devices whose key Home Assistant provisioned, is in
 [Enabling Encryption on an Existing Device](/components/ota/esphome/#enabling-encryption-on-an-existing-device).
 
 This is built on a new shared `noise` component ([#18490](https://github.com/esphome/esphome/pull/18490)). It holds
