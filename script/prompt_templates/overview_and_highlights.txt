@@ -20,6 +20,8 @@ TASK: Write BOTH the Release Overview AND Feature Highlights for ESPHome {{ vers
 WHY COMBINED: These sections appear in the same document, so they must work together.
 The overview is a concise summary of the highlights, not a separate narrative.
 
+WRITING FOR NON-NATIVE ENGLISH READERS (applies to everything you write):
+
 {% include "_writing_style.txt" %}
 
 ════════════════════════════════════════════════════════════════════════════════
@@ -128,10 +130,10 @@ This release includes a fundamental change - **Arduino is now integrated as an E
 
 This release fixes critical WiFi mesh network failover issues that left devices stuck attempting to connect to failed access points ([#11805](https://github.com/esphome/esphome/pull/11805)).
 
-**The Problem:**
-Devices running ESPHome 2025.8.2+ would get stuck connecting to the strongest AP in a mesh network, even when that AP rejected the connection due to auth failures or capacity limits. The priority degradation system (designed to cycle through APs on failure) was rendered useless by a bug that always sorted by signal strength first.
+Devices running ESPHome 2025.8.2+ would get stuck connecting to the strongest AP in a mesh network. This happened
+even when that AP rejected the connection because of auth failures or capacity limits. The priority degradation
+system was meant to cycle through APs on failure, but a bug always sorted by signal strength first, so it never ran.
 
-**The Fix:**
 - **Priority-based failover restored** - Failed APs are now correctly sorted lower, enabling automatic failover to working APs
 - **False positive filtering** - Two connection attempts per BSSID before marking as failed (eliminates transient auth failures)
 - **Hidden network handling fixed** - Networks marked `hidden: true` are tried before scanning, with smart skip logic to avoid wasting time on visible networks
@@ -175,7 +177,7 @@ INSTRUCTIONS:
      proper nouns/acronyms are capitalized (e.g. "ESP8266 native toolchain
      foundation", "Arduino as an ESP-IDF component")
    - Opening paragraph in plain prose: what it is and what changes for the user
-   - A bulleted list with a short bold lead only for several parallel items (features, measurements)
+   - **Key Features/Benefits** bulleted list with bold labels when there are several parallel items
    - Subsections (###) for migration guidance or recommendations
    - Use `[component_name](/components/component_name)` for component links
    - Use `code formatting` for config keys
@@ -200,7 +202,7 @@ INSTRUCTIONS:
    ✗ Don't include sections about "Deprecation Removals" or "Migration Considerations"
    ✗ Don't claim breaking changes are "backward compatible" - be honest about compatibility
    ✗ Don't use em dashes (—) or double dashes (--) to separate clauses; use commas or semicolons
-   ✗ Don't use "The problem:" / "The fix:" / "Why it matters:" / "Under the hood:" as bold labels - write prose instead
+   ✗ Don't use "The problem:" / "The fix:" / "Why it matters:" as bold labels for an explanation - write prose instead
    ✗ Don't include config examples for dangerous options (e.g., options that can brick devices) - link to docs instead
    ✗ Don't include config examples for niche features - link to docs instead
    ✗ Don't put non-sensor items in the "New Sensors" section - use "Other Notable Features" instead
