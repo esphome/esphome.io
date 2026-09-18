@@ -337,7 +337,11 @@ ota:
 
 After a successful install the device runs the new key and the CLI says so; remove `old_key:` then, an `old_key:`
 equal to `key:` is rejected at validation. The Device Builder writes `old_key:` itself when a key is rotated there,
-for example when Home Assistant hands over a new API key, so the next install still reaches the device. With the recommended shape the API key changes too, so Home Assistant needs
+for example when Home Assistant hands over a new API key, so the next install still reaches the device.
+
+`old_key:` is for a planned change of key. Presenting a previous key means whoever holds that key and can answer at
+the device's address receives the image, and with it the new key, so a key you believe leaked is replaced by serial
+flash or with the device on a trusted network, never through `old_key:`. With the recommended shape the API key changes too, so Home Assistant needs
 the new key; a device whose key Home Assistant provisions is rotated from Home Assistant instead.
 
 For a single install with a key that is not in the yaml, for example from a script, use
