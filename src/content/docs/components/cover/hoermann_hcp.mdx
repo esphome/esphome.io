@@ -32,7 +32,13 @@ The following Series 4 motors communicate over the HCP bus (Modbus RTU) and shou
 > as this type of error can only be cleared by power-cycling the motor.
 
 > [!IMPORTANT]
-> Restarting the ESPHome device (including OTA updates) **will** trigger the motor error described above.
+> Restarting the ESPHome device, **including an OTA update**, interrupts the bus and will trigger the
+> motor error described above unless the motor is told first.
+>
+> An ordinary restart is announced by the component itself. An update has to be announced with the
+> [`hoermann_hcp.announce_pause`](#hoermann_hcp-announce_pause-action) action, and a restart the
+> component never sees, such as a power cut or the reset button, cannot be announced at all. Whether
+> the motor honours an announcement depends on its software revision.
 
 Communication with the motor happens over [Modbus](/components/modbus/) with the `role` set to
 `server`, which in turn requires a [UART bus](/components/uart/). The UART **must** be configured with
@@ -229,6 +235,52 @@ binary_sensor:
   the entity appears under the device's diagnostics rather than on its main card.
 
 - All options from [Binary Sensor](/components/binary_sensor#config-binary_sensor).
+
+## Actions
+
+### `hoermann_hcp.announce_pause` Action
+
+This [action](/automations/actions#all-actions) tells the motor's bus controller that the ESPHome
+device is about to stop answering, and waits for the motor to acknowledge. The motor then treats the
+silence that follows as a pause, instead of reporting a faulty accessory.
+
+An ordinary restart does this on its own. An OTA update cannot, because the device stops answering
+while the new firmware is written. Announce it yourself from the OTA
+[`on_begin`](/components/ota#ota-on_begin) trigger, on every OTA platform you use, and once per
+`hoermann_hcp` hub if you have more than one.
+
+```yaml
+ota:
+  - platform: esphome
+    on_begin:
+      then:
+        - hoermann_hcp.announce_pause
+```
+
+The action takes up to 1.5 seconds and lets the update go ahead whether or not the motor answers. That
+is longer than an `on_begin` action should normally run, but the transfer has not started at that
+point, so the update is not affected. The same wait happens before every ordinary restart, and each
+hub waits separately.
+
+While it runs, a door command is rejected and logged rather than queued, and a command that was
+accepted but not yet passed to the motor is dropped.
+
+The log says whether the motor answered:
+
+```txt
+[I][hoermann_hcp]: Bus controller confirmed the pause
+[W][hoermann_hcp]: Bus controller did not confirm the pause, going quiet anyway
+```
+
+If an update fails after the announcement, the device keeps running and answers normally again, but it
+was silent for as long as the transfer lasted. If the motor stops accepting it after that, trigger a
+bus scan from the motor's menu.
+
+#### Configuration variables
+
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the `hoermann_hcp` hub, only
+  required if you have more than one. It can also be given directly, as
+  `- hoermann_hcp.announce_pause: my_hub_id`.
 
 ## See Also
 
