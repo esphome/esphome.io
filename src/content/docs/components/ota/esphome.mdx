@@ -336,8 +336,9 @@ ota:
       old_key: !secret device_name__previous_encryption_key
 ```
 
-After a successful install the device runs the new key and the CLI says so; remove `old_key:` then, an `old_key:`
-equal to `key:` is rejected at validation. The Device Builder writes `old_key:` itself when a key is rotated there,
+Once the device has booted the new firmware it runs the new key; the CLI says so after the install, and warns when
+the device was reached with `old_key:`. Remove `old_key:` then, an `old_key:` equal to `key:` is rejected at
+validation. The Device Builder writes `old_key:` itself when a key is rotated there,
 for example when Home Assistant hands over a new API key, so the next install still reaches the device.
 
 `old_key:` is for a planned change of key. Presenting a previous key means whoever holds that key and can answer at
