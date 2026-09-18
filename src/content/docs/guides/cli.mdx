@@ -242,7 +242,8 @@ the one in the configuration. A device that requires [OTA encryption](/component
 accepts the key it runs, so after a key change the new firmware is built with the new key from the yaml and uploaded
 with the old one. The key is read without echo on a terminal, or as one line from stdin when piped; it is never taken
 from the command line, since command lines are visible to every process on the machine. A key given this way never
-falls back to plaintext, and the flag only applies to the `esphome` OTA platform.
+falls back to plaintext, and the flag only applies to the `esphome` OTA platform: a configuration with only the
+`web_server` platform is refused unless a serial port is named with `--device`, in which case the key is ignored.
 
 ```shell
 esphome run --prompt-ota-key my-device.yaml
