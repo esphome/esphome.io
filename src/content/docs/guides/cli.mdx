@@ -276,7 +276,9 @@ esphome rotate-key living-room.yaml
 
 When the OTA block uses the API key (the [recommended setup](/components/ota/esphome/#encryption), a bare
 `encryption:`), the API key changes too; the command asks for confirmation and prints the new key at the end for
-Home Assistant. A device whose key Home Assistant provisions is rotated from Home Assistant instead.
+Home Assistant. A device whose key Home Assistant provisions is rotated from Home Assistant instead. When the
+`!secret` is shared with other device configurations, they are listed and confirmation is asked as well: their
+devices keep the previous key and get no `old_key:`, so add it there before their next install.
 
 #### Options
 
@@ -291,7 +293,7 @@ not a terminal; it is never taken from the command line.
 
 
 **`-y`** / **`--yes`**
-: Do not ask for confirmation when the API key changes too.
+: Do not ask for confirmation when the API key changes too or the secret is shared with other configurations.
 
 
 ### `version` Command
