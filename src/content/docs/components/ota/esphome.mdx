@@ -320,7 +320,15 @@ ota:
 ### Changing the Key
 
 The device only accepts the key it is running, so a new key has to be built into the firmware and uploaded with the
-old one. Put the new key where the current one is (`api: encryption: key:` in the recommended setup, or the OTA
+old one. [`esphome rotate-key`](/guides/cli/#rotate-key-command) does all of it in one command: it writes a new key
+to the yaml or `secrets.yaml`, keeps the previous one as `old_key:`, builds, uploads with the current key and
+confirms the device runs the new one.
+
+```shell
+esphome rotate-key living-room.yaml
+```
+
+By hand, put the new key where the current one is (`api: encryption: key:` in the recommended setup, or the OTA
 block's own `key:` on a device without `api:`) and move the previous one to `old_key:` under the OTA block, then
 install. The CLI presents the new key first, and when the device rejects it reconnects once with `old_key:`. The
 firmware it sends carries the new key only; `old_key:` never reaches the device.
