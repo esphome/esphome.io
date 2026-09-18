@@ -47,9 +47,14 @@ ota:
 - **encryption** (*Optional*): Encrypt the OTA update with the same Noise protocol the [native API](/components/api) uses. See [Encryption](#encryption) below. Cannot be combined with **password**.
 
   - **key** (*Optional*, string): The base64 encryption key. Omit it so the [API encryption key](/components/api#configuration-variables) is used and one key protects the device; only set it when there is no `api:` block at all, for example a device that uses MQTT. Next to a static API key it must be the same key, a different one is rejected at validation.
+  - **allow_plaintext_upload** (*Optional*, boolean): Let the one install that brings encryption to a device travel
+    in plaintext when the running firmware does not offer encryption. Only affects the upload; the firmware built
+    with it still requires encryption. Remove it once the device encrypts, the CLI says when. See
+    [Enabling Encryption on an Existing Device](#enabling-encryption-on-an-existing-device).
 
 - **password** (*Optional*, string): The password to use for updates. Not recommended for new devices, use
-  **encryption** instead. Cannot be combined with **encryption**. To move an installed device from a password to
+  **encryption** instead. Cannot be combined with **encryption**, except next to **allow_plaintext_upload** for the
+  one install that migrates a device still asking for it. To move an installed device from a password to
   encryption, see [Enabling Encryption on an Existing Device](#enabling-encryption-on-an-existing-device).
 - **allow_partition_access** (*Optional*, boolean): Only on `esp32`. Allow updating more partition types. Used for updating the partition table and the bootloader. Defaults to `false`.
 
@@ -166,7 +171,8 @@ into the yaml and the OTA block inherits it, see
 > such a key cannot offer encryption, and with the block in the config the CLI refuses to send plaintext, so an
 > install against it stops with
 > `the device did not offer encryption; refusing to send the image in plaintext`. See
-> [Enabling Encryption on an Existing Device](#enabling-encryption-on-an-existing-device) for the way around it.
+> [Enabling Encryption on an Existing Device](#enabling-encryption-on-an-existing-device) for the way around it,
+> including `allow_plaintext_upload: true` for that one install.
 
 Encryption cannot be combined with a password; the key already authenticates the uploader, so remove the `password:`
 line when you add `encryption:`. Adding the [web server OTA platform](/components/ota/web_server/) next to it is allowed
@@ -200,6 +206,21 @@ logger:
 Add `encryption:` under the OTA platform only once the device runs firmware that offers encryption. With that line in
 the config the CLI never sends plaintext, so an over the air install against older firmware is refused. Which steps
 apply depends on whether the device uses the native API.
+
+Both paths below can be done in one install instead: add `encryption:` together with `allow_plaintext_upload: true`,
+keep any `password:`, and install. The CLI sends that one install in plaintext because the device cannot encrypt yet,
+which is no less secure than every update before it, and the firmware it sends requires encryption from then on. A
+device without `api:` gets its own `key:` in the same block and needs no temporary `api:`. Then remove
+`allow_plaintext_upload` and the `password:`; the CLI warns as soon as it sees the device encrypting with the option
+still set, since leaving it in place would let an attacker on the network downgrade a future upload.
+
+```yaml
+ota:
+  - platform: esphome
+    password: !secret device_name__ota_password
+    encryption:
+      allow_plaintext_upload: true
+```
 
 > [!IMPORTANT]
 > Keep `password:` in the config until step 2. The firmware on the device still checks the password until it is
@@ -280,8 +301,7 @@ Without `api:` the running firmware cannot offer encryption, so an `api:` block 
 
 - The step 1 upload is plaintext, the running firmware does not offer encryption yet, and validation warns about the
   password next to the key; both are expected and end with step 2. That plaintext fallback is removed in ESPHome
-  2027.3.0, so do step 1 before then; after that the block arrives by serial flash or through the
-  [web server OTA platform](/components/ota/web_server/).
+  2027.3.0, so do step 1 before then; after that use `allow_plaintext_upload: true` as described above.
 - The step 1 build is larger, it includes the API server and the noise library. On a device with 1 MB of flash, leave
   out components you do not need for that one build.
 - Home Assistant asks for the key after step 1 if one was added, and discovers the temporary `api:` device on the
