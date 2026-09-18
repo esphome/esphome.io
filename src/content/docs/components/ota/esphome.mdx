@@ -44,7 +44,9 @@ ota:
 
 ## Configuration variables
 
-- **encryption** (*Optional*): Encrypt the OTA update with the same Noise protocol the [native API](/components/api) uses. See [Encryption](#encryption) below. Cannot be combined with **password**, except with **allow_plaintext_upload** for the migration install.
+- **encryption** (*Optional*): Encrypt the OTA update with the same Noise protocol the
+  [native API](/components/api) uses. See [Encryption](#encryption) below. Cannot be combined with **password**,
+  except with **allow_plaintext_upload** for the migration install.
 
   - **key** (*Optional*, string): The base64 encryption key. Omit it so the [API encryption key](/components/api#configuration-variables) is used and one key protects the device; only set it when there is no `api:` block at all, for example a device that uses MQTT. Next to a static API key it must be the same key, a different one is rejected at validation.
   - **allow_plaintext_upload** (*Optional*, boolean): Let the one install that brings encryption to a device travel
@@ -286,7 +288,8 @@ Without `api:` the running firmware cannot offer encryption, so an `api:` block 
 #### Single Install With allow_plaintext_upload
 
 Both paths above can be done in one install instead: add `encryption:` together with `allow_plaintext_upload: true`,
-keep any `password:`, and install. The CLI sends that one install in plaintext because the device cannot encrypt yet,
+keep any `password:`, and install. A key provisioned by Home Assistant must be in the yaml first, as for the two step
+paths. The CLI sends that one install in plaintext because the device cannot encrypt yet,
 which is no less secure than every update before it, and the firmware it sends requires encryption from then on. A
 device without `api:` gets its own `key:` in the same block and needs no temporary `api:`. Then remove
 `allow_plaintext_upload` and the `password:`; the CLI warns as soon as it sees the device encrypting with the option
