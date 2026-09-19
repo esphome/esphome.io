@@ -578,7 +578,7 @@ zephyr:
 
 Every ESPHome component that needs a Zephyr Kconfig option sets a sensible default itself.
 `kconfig_options` is an escape hatch for anything not already exposed as its own YAML option, and
-always wins over a value set by a component:
+always wins over a value set by a component, use true/false for y/n:
 
 ```yaml
 # Example configuration entry
@@ -586,6 +586,7 @@ zephyr:
   variant: esp32c6
   kconfig_options:
     NET_TCP_TIME_WAIT_DELAY: 1000
+    CONFIG_PM: true
     # a mapping value targets that sysbuild child image's own config instead of the
     # main application image
     mcuboot:
