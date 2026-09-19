@@ -1,0 +1,60 @@
+---
+description: "Instructions for setting up Seeed Multi Channel Relay switches in ESPHome."
+title: "Seeed Multi Channel Relay Switch"
+---
+
+import { Image } from 'astro:assets';
+import seeed4chImg from './images/Seeed-4-Channel-SPDT-Relay.png';
+import seeed8chImg from './images/Seeed-8-Channel-Solid-State-Relay.png';
+import APIRef from '@components/APIRef.astro';
+
+The `seeedmultichannelrelay` switch platform supports the Seeed Studio Grove multi-channel relay modules.
+These I2C relay boards support up to 8 channels and can switch up to AC 250V or DC 110V.
+
+Supported devices:
+
+- [Grove 4-Channel SPDT Relay](https://wiki.seeedstudio.com/Grove-4-Channel_SPDT_Relay/)
+- [Grove 8-Channel Solid State Relay](https://wiki.seeedstudio.com/Grove-8-Channel_Solid_State_Relay/)
+
+<Image src={seeed4chImg} layout="constrained" width={400} alt="Seeed 4-Channel SPDT Relay" />
+
+<Image src={seeed8chImg} layout="constrained" width={400} alt="Seeed 8-Channel Solid State Relay" />
+
+## Hub configuration
+
+```yaml
+# Example configuration entry
+seeedmultichannelrelay:
+  id: relay_hub
+```
+
+### Hub configuration variables
+
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID for the relay hub.
+- **change_address_to** (*Optional*, int): Change the I2C address stored in the relay's EEPROM.
+  This only needs to run once; after the address is changed, update `i2c_address` to match
+  and remove this option.
+- All other options from [I2C Device](/components/i2c#i2c-devices).
+
+## Switch configuration
+
+```yaml
+# Example configuration entry
+switch:
+  - platform: seeedmultichannelrelay
+    id: relay_1
+    name: "Relay 1"
+    channel: 1
+    seeedmultichannelrelay_id: relay_hub
+```
+
+### Switch configuration variables
+
+- **channel** (**Required**, int): The relay channel number, 1 to 8.
+- **seeedmultichannelrelay_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the relay hub. Can be omitted if only one hub is configured.
+- All other options from [Switch](/components/switch#config-switch).
+
+## See Also
+
+- [Switch Component](/components/switch/)
+- <APIRef text="seeedmultichannelrelay_switch.h" path="seeedmultichannelrelay/switch/seeedmultichannelrelay_switch.h" />
