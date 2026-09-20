@@ -17,7 +17,7 @@ downloaded, decoded and drawn at runtime.
 >   - 24-bit / RGB
 >
 > - JPEG images, baseline and progressive. Progressive JPEG decoding requires the `LIBJPEG_TURBO`
->   decoder (ESP32 only); see the `decoder` option below.
+>   decoder (ESP32 only); see [JPEG Decoder](#jpeg-decoder).
 >
 > - PNG images
 
@@ -48,12 +48,6 @@ image:
   - `BMP`  : The image on the server is encoded in BMP format.
   - `JPEG`  : The image on the server is encoded in JPEG format.
   - `PNG`  : The image on the server is encoded in PNG format.
-- **decoder** (*Optional*): Selects the JPEG decoder to use. Only valid when `format` is `JPEG`. Defaults to `JPEGDEC`.
-
-  - `JPEGDEC`  : The default decoder. Supports baseline JPEG images only.
-  - `LIBJPEG_TURBO`  : Supports baseline and progressive JPEG images. ESP32 only. Replaces the JPEG decoder for the
-    whole build, so it applies to every JPEG image in the configuration once selected. Progressive images require
-    the coefficients of the whole image to be buffered in memory, so PSRAM is generally required for large images.
 - **resize** (*Optional*, string): If set, this will resize the image to fit inside the given dimensions `WIDTHxHEIGHT`
   and preserve the aspect ratio.
 
@@ -78,6 +72,27 @@ image:
 Advanced options:
 
 - **buffer_size** (*Optional*, int): Explicitly specify the size of the buffer where the image chunks are being downloaded while decoding. The default value (65536) should be OK for most use cases, but you can try to reduce the size for slow connections, to avoid watchdog timeouts.
+
+## JPEG Decoder
+
+The JPEG decoder is selected for the whole build with the `jpeg_decoder` option of the `runtime_image` component; it
+applies to every JPEG image in the configuration.
+
+```yaml
+runtime_image:
+  jpeg_decoder: LIBJPEG_TURBO
+```
+
+### Configuration Variables
+
+- **jpeg_decoder** (*Optional*): The JPEG decoder to use. Defaults to `JPEGDEC`.
+
+  - `JPEGDEC`  : Supports baseline JPEG images only.
+  - `LIBJPEG_TURBO`  : Supports baseline and progressive JPEG images. ESP32 only.
+
+> [!NOTE]
+> `LIBJPEG_TURBO` uses roughly 120 kB more flash than `JPEGDEC`. Progressive images require the coefficients of the
+> whole image to be buffered in memory, so PSRAM is generally required for large images.
 
 ## Automations
 
