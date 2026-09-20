@@ -1,0 +1,131 @@
+---
+description: "Instructions for setting up the Modbus Sniffer component."
+title: "Modbus Sniffer"
+params:
+  seo:
+    description: Instructions for setting up the Modbus Sniffer component.
+    image: modbus.png
+---
+
+import { Image } from 'astro:assets';
+
+The `modbus_sniffer` component listens to a Modbus RTU bus that two *other* devices are talking on,
+pairs each request with its reply, and hands the result to a lambda. It never transmits.
+
+This is for buses you do not control. If your ESPHome node is the one doing the polling, use
+[Modbus Controller](/components/modbus_controller/) instead - you will get decoded sensors and none
+of the work below. A sniffer is what you reach for when some other device is the master: an inverter
+polling a battery, a controller polling a meter, and you want that data without interrupting it.
+
+You must set the `role` attribute of the [Modbus](/components/modbus/) hub to `sniffer`.
+
+<Image src="/images/modbus.png" width={190} height={200} layout="constrained" alt="" />
+
+See [Modbus](/components/modbus/#hardware-setup) for RS485 hardware setup instructions. Wire only the
+receive side: the hub in this role declares no `flow_control_pin` and never sends, so a node running
+it cannot disturb the bus it is watching.
+
+```yaml
+uart:
+  - id: bus
+    rx_pin: GPIO17
+    baud_rate: 9600
+    rx_timeout: 10
+    rx_full_threshold: 120   # optional; see UART settings below
+
+modbus:
+  - id: sniffer_hub
+    uart_id: bus
+    role: sniffer
+
+modbus_sniffer:
+  - modbus_id: sniffer_hub
+    on_response:
+      - lambda: |-
+          ESP_LOGD("sniff", "address %u register %u, %u values",
+                   address, start_address, (unsigned) (payload.size() / 2));
+```
+
+## Configuration variables
+
+- **modbus_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the [Modbus](/components/modbus/)
+  hub the sniffer is attached to. The hub must have `role: sniffer`.
+- **on_response** (*Optional*, [Automation](/automations)): An automation to run for each
+  request/reply pair observed on the bus. See [`on_response`](#on_response).
+
+## `on_response`
+
+This automation fires once per matched exchange, with four variables in scope:
+
+- `address` (`uint8_t`): the server the request was addressed to.
+- `function_code` (`uint8_t`): `0x03`, `0x04`, `0x06` or `0x17`.
+- `start_address` (`uint16_t`): the first register the reply covers, taken from the **request**.
+- `payload` (`std::span<const uint8_t>`): the raw register bytes, big-endian, two per register.
+
+A Modbus reply does not carry a register address - only the request does - so the component retains
+each request until its reply arrives. `start_address` is what that pairing recovers, and it is the
+reason a sniffer needs to see both halves of the conversation.
+
+Reading one register out of the payload:
+
+```yaml
+modbus_sniffer:
+  - modbus_id: sniffer_hub
+    on_response:
+      - lambda: |-
+          // Registers are two bytes each, starting at start_address.
+          auto reg = [&](uint16_t want) -> int {
+            if (want < start_address) return -1;
+            const size_t idx = (want - start_address) * 2;
+            if (idx + 1 >= payload.size()) return -1;
+            return (payload[idx] << 8) | payload[idx + 1];
+          };
+          if (address == 0x0F) {
+            const int soc = reg(206);
+            if (soc >= 0) id(battery_soc).publish_state(soc);
+          }
+```
+
+> [!NOTE]
+> Register access is paired: `0x03` and `0x04` (read holding/input registers), `0x06` (write single
+> register) and `0x17` (read/write multiple, whose response carries only the read half). Coil access
+> and multi-register write echoes are observed but not paired - packed bits and a count-only echo do
+> not fit a payload of registers. Anything unpaired is still consumed, which keeps the parser in step.
+>
+> For `0x06` the register address is stripped from the echo, so `payload` holds the written value
+> alone and starts at `start_address` exactly as a read's does. The same indexing works for every
+> paired function code.
+
+## UART settings
+
+Modbus RTU has no length prefix and no terminator - message boundaries are silence on the line, and
+`rx_timeout` is what detects that silence. Set it shorter than the gap between one exchange and the
+next, or two exchanges arrive as one batch.
+
+`rx_full_threshold` raises a second interrupt once that many bytes have arrived, which can deliver a
+frame in pieces. The component accumulates across reads, so a low threshold is not automatically a
+problem: on a 9600-baud bus carrying frames of 7 to 31 bytes, values of 8 and 120 gave the same
+throughput and no parse failures either way. If you do see `parse failed` warnings at `VERBOSE`,
+raising it above the longest burst on your bus is the thing to try. ESPHome caps it at 120, and the
+ESP32 FIFO is 128 bytes.
+
+## Limitations
+
+- **Register access only.** `0x03`, `0x04`, `0x06` and `0x17` are paired; coil access and
+  multi-register write echoes are observed but not.
+- **Devices using address 0 as a unit ID are not paired.** Some non-compliant devices (certain BMS
+  clones) ship set to address `0`, which is the Modbus broadcast address and is never answered, so
+  the hub cannot expect a reply. If the device's address is configurable, setting it to 1-247 is the
+  better fix.
+- **A reply with no retained request is dropped.** This happens on the first exchange after a reset,
+  or when a request is lost to a CRC error. The register address is unknowable in that case, so the
+  component counts it rather than guessing.
+- **One sniffer per bus.** Watching two buses needs two UARTs and two hubs; two hubs on one UART
+  would compete for the received bytes.
+
+## See Also
+
+- [Modbus](/components/modbus/)
+- [Modbus Controller](/components/modbus_controller/)
+- [Modbus Server](/components/modbus_server/)
+- [UART Bus](/components/uart/)
