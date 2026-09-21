@@ -38,6 +38,8 @@ serial_proxy:
   - `TTL`: Standard TTL logic-level UART (3.3V or 5V). Typically used for direct connections to most microcontrollers.
   - `RS232`: RS-232 standard serial port (typically ±12V levels via an appropriate line-driver IC). Typically used for PC-style serial connections, often with a DB9-type connector.
   - `RS485`: RS-485 differential serial bus. Typically used for industrial/multi-drop serial networks.
+  - `USB_SERIAL`: A serial device attached through a USB bridge. Requires `uart_id` to refer to a
+    [USB UART](/components/usb_uart/) channel.
 - **rts_pin** (*Optional*, [Pin](/guides/configuration-types#pin)): GPIO pin to use as the RTS (Request to Send)
   modem control output. The state of this pin may be controlled by the API client at runtime.
 - **dtr_pin** (*Optional*, [Pin](/guides/configuration-types#pin)): GPIO pin to use as the DTR (Data Terminal Ready)
@@ -51,6 +53,8 @@ When an API client connects, it can:
 - **Receive data** from the serial device — data arriving on the UART is forwarded to connected API clients automatically each loop iteration (up to 256 bytes at a time).
 - **Reconfigure the UART** at runtime — the API client may change the baud rate, data bits, stop bits, and parity without reflashing firmware.
 - **Control modem pins** — if `rts_pin` or `dtr_pin` are configured, the API client can set their states at runtime.
+- **Identify USB devices** — if `uart_id` refers to a [USB UART](/components/usb_uart/) channel, the API client can
+  read the identity of the attached USB device and is notified when a device is attached or removed.
 
 ## Full Example
 
@@ -85,6 +89,7 @@ serial_proxy:
 ## See Also
 
 - [UART Bus](/components/uart/)
+- [USB UART](/components/usb_uart/)
 - [Native API Component](/components/api/)
 - [aioesphomeapi](https://github.com/esphome/aioesphomeapi) — Python library implementing the ESPHome native API
 - <APIRef text="serial_proxy.h" path="serial_proxy/serial_proxy.h" />
