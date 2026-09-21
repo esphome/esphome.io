@@ -20,7 +20,7 @@ polling a battery, a controller polling a meter, and you want that data without 
 You must set the `role` attribute of the [Modbus](/components/modbus/) hub to `sniffer`.
 
 > [!NOTE]
-> Observed exchanges currently reach you through a lambda, so decoding the payload is your job. A
+> Observed exchanges currently reach you through a lambda, so decoding the PDUs is your job. A
 > sensor platform is intended to follow, giving the sniffer role the kind of declarative sensors
 > [Modbus Controller](/components/modbus_controller/) already provides for the client role.
 
@@ -47,59 +47,92 @@ modbus_sniffer:
   - modbus_id: sniffer_hub
     on_response:
       - lambda: |-
-          ESP_LOGD("sniff", "address %u register %u, %u values",
-                   address, start_address, (unsigned) (payload.size() / 2));
+          ESP_LOGD("sniff", "address %u function %02X, %u response bytes",
+                   address, request_pdu[0], (unsigned) response_pdu.size());
 ```
 
 ## Configuration variables
 
 - **modbus_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the [Modbus](/components/modbus/)
   hub the sniffer is attached to. The hub must have `role: sniffer`.
+- **on_request** (*Optional*, [Automation](/automations)): An automation to run for each request
+  observed on the bus, whether or not it is answered. See [`on_request`](#on_request).
 - **on_response** (*Optional*, [Automation](/automations)): An automation to run for each
   request/reply pair observed on the bus. See [`on_response`](#on_response).
 
 ## `on_response`
 
-This automation fires once per matched exchange, with four variables in scope:
+This automation fires once per matched exchange, with three variables in scope:
 
 - `address` (`uint8_t`): the server the request was addressed to.
-- `function_code` (`uint8_t`): `0x03`, `0x04`, `0x06` or `0x17`.
-- `start_address` (`uint16_t`): the first register the reply covers, taken from the **request**.
-- `payload` (`std::span<const uint8_t>`): the raw register bytes, big-endian, two per register.
+- `request_pdu` (`std::span<const uint8_t>`): the request, function code first, as it appeared on
+  the wire.
+- `response_pdu` (`std::span<const uint8_t>`): the reply, in the same form.
 
 A Modbus reply does not carry a register address - only the request does - so the component retains
-each request until its reply arrives. `start_address` is what that pairing recovers, and it is the
-reason a sniffer needs to see both halves of the conversation.
+each request until its reply arrives and hands you both. That pairing is the reason a sniffer needs
+to see both halves of the conversation.
 
-Reading one register out of the payload:
+Nothing is decoded for you. Both PDUs arrive raw, which means the helper functions the rest of the
+Modbus component uses work here too, and every function code is available rather than a chosen few.
+
+Reading one register out of a read response:
 
 ```yaml
 modbus_sniffer:
   - modbus_id: sniffer_hub
     on_response:
       - lambda: |-
-          // Registers are two bytes each, starting at start_address.
+          // A read request is: function code, start address, register count.
+          const uint16_t start = modbus::helpers::get_data<uint16_t>(request_pdu.data(), 1);
+          // server_pdu_payload() skips the function code, and the byte count on a read.
+          const auto payload = modbus::helpers::server_pdu_payload(response_pdu);
+
           auto reg = [&](uint16_t want) -> int {
-            if (want < start_address) return -1;
-            const size_t idx = (want - start_address) * 2;
+            if (want < start) return -1;
+            const size_t idx = (want - start) * 2;
             if (idx + 1 >= payload.size()) return -1;
             return (payload[idx] << 8) | payload[idx + 1];
           };
-          if (address == 0x0F) {
+
+          if (address == 0x0F && request_pdu[0] == 0x03) {
             const int soc = reg(206);
             if (soc >= 0) id(battery_soc).publish_state(soc);
           }
 ```
 
-> [!NOTE]
-> Register access is paired: `0x03` and `0x04` (read holding/input registers), `0x06` (write single
-> register) and `0x17` (read/write multiple, whose response carries only the read half). Coil access
-> and multi-register write echoes are observed but not paired - packed bits and a count-only echo do
-> not fit a payload of registers. Anything unpaired is still consumed, which keeps the parser in step.
->
-> For `0x06` the register address is stripped from the echo, so `payload` holds the written value
-> alone and starts at `start_address` exactly as a read's does. The same indexing works for every
-> paired function code.
+Watching a device being configured, which a register read would never show:
+
+```yaml
+modbus_sniffer:
+  - modbus_id: sniffer_hub
+    on_response:
+      - lambda: |-
+          // 0x06 writes one register; its reply echoes the register and the value it accepted.
+          if (request_pdu[0] == 0x06) {
+            ESP_LOGI("sniff", "device %u set register %u to %u", address,
+                     modbus::helpers::get_data<uint16_t>(response_pdu.data(), 1),
+                     modbus::helpers::get_data<uint16_t>(response_pdu.data(), 3));
+          }
+```
+
+## `on_request`
+
+Fires for every request seen on the bus, before any reply, with two variables in scope:
+
+- `address` (`uint8_t`): the server the request was addressed to.
+- `request_pdu` (`std::span<const uint8_t>`): the request, function code first.
+
+Because it does not wait for a reply, this is where you notice a device that has stopped answering:
+count the requests here and the exchanges in `on_response`, and the difference is the silence.
+
+```yaml
+modbus_sniffer:
+  - modbus_id: sniffer_hub
+    on_request:
+      - lambda: |-
+          ESP_LOGD("sniff", "-> %u fn %02X", address, request_pdu[0]);
+```
 
 ## UART settings
 
@@ -116,8 +149,8 @@ ESP32 FIFO is 128 bytes.
 
 ## Limitations
 
-- **Register access only.** `0x03`, `0x04`, `0x06` and `0x17` are paired; coil access and
-  multi-register write echoes are observed but not paired at this time.
+- **Exchanges are paired, not interpreted.** Every function code is delivered, including writes,
+  coils and exception responses; what the bytes mean is for your lambda to decide.
 - **Devices using address 0 as a unit ID are not paired.** Some non-compliant devices (certain BMS
   clones) ship set to address `0`, which is the Modbus broadcast address and is never answered, so
   the hub cannot expect a reply. If the device's address is configurable, setting it to 1-247 is the
