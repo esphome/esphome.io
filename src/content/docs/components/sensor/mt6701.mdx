@@ -6,7 +6,7 @@ description: "Instructions for setting up the MT6701 magnetic angle sensor / rot
 import APIRef from '@components/APIRef.astro';
 
 The `mt6701` sensor platform lets you use your MT6701
-([datasheet](https://www.magntek.com.cn/)) 14-bit absolute magnetic angle
+([datasheet](https://www.magntek.com.cn/upload/pdf/202407/MT6701_Rev.1.8.pdf)) 14-bit absolute magnetic angle
 sensor / rotary encoder with ESPHome. The chip reports the shaft angle of a
 diametrically magnetized magnet placed over it and can be read over either the
 **I²C** or the **SSI** (SPI-compatible) interface.
@@ -27,11 +27,14 @@ the [MT6701 Sensor Platform](#sensor).
 | Write chip configuration | yes | no |
 | Save configuration to EEPROM | yes | no |
 
+If five reads in a row fail (a bus error, or over SSI a CRC mismatch), the hub
+raises a warning status. It clears on the next good read.
+
 <span id="mt6701-i2c-component"></span>
 
 ## I²C Component/Hub
 
-To use the encoder over I²C, first set up the [I²C Bus](/components/i2c) and
+To use the encoder over I²C, first set up the [I²C Bus](/components/i2c/) and
 connect the sensor to the pins specified there.
 
 ```yaml
@@ -85,20 +88,26 @@ mt6701_i2c:
   - **pwm_frequency** (*Optional*, string): `994.4hz` or `497.2hz`.
   - **pwm_polarity** (*Optional*, string): `high` or `low`.
   - **analog_start** / **analog_stop** (*Optional*): Start/stop angles of the
-    analog output ramp (12-bit, same units as **zero_offset**).
+    analog or PWM output range (12-bit, same units as **zero_offset**).
 
-- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The
+- **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): The
   interval at which the hub reads the encoder. Defaults to `60s`.
 
-- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the
   ID for this MT6701 hub.
 
-- All other options from [I²C Bus](/components/i2c).
+- All other options from [I²C Bus](/components/i2c/).
 
 > [!NOTE]
 > Configuration options are applied on every boot and take effect immediately in
 > RAM. They are **not** written to EEPROM unless you explicitly call the
-> [`mt6701_i2c.save_eeprom`](#mt6701_i2csave_eeprom-action) action.
+> [`mt6701_i2c.save_eeprom`](#mt6701_i2c-save_eeprom-action) action.
+
+> [!NOTE]
+> The I²C pins double as the ABZ outputs, and on the SOP-8 package also as the
+> UVW outputs; the chip's `MODE` pin selects which of the two they carry. To use
+> ABZ or UVW output that you configure here, save it to EEPROM first and then
+> switch the `MODE` pin. The analog / PWM output has a pin of its own.
 
 <span id="mt6701-spi-component"></span>
 
@@ -107,7 +116,7 @@ mt6701_i2c:
 The SSI interface is SPI-compatible and read-only, but it also reports the
 magnetic-field status, push button and track-loss flags that are not available
 over I²C. Each 24-bit frame is CRC-checked. First set up the
-[SPI Bus](/components/spi).
+[SPI Bus](/components/spi/).
 
 ```yaml
 mt6701_spi:
@@ -117,19 +126,25 @@ mt6701_spi:
 
 ### Configuration Variables
 
-- **cs_pin** (**Required**, [Pin](/guides/configuration-types#pin)): The
+- **cs_pin** (**Required**, [Pin](/guides/configuration-types/#pin)): The
   chip-select (CSN) pin.
 
-- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The
-  interval at which the hub reads the encoder, which also refreshes the status
-  entities below. Defaults to `60s`.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): The
+  interval at which the hub reads the encoder. Defaults to `60s`. The status
+  entities below are refreshed on every read, including the reads triggered by
+  the [sensor](#sensor).
 
-- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the
   ID for this MT6701 hub.
 
-- All other options from [SPI Bus](/components/spi). The component defaults to
+- All other options from [SPI Bus](/components/spi/). The component defaults to
   SPI mode 1 at 1 MHz; you normally do not need to change `data_rate` or
   `spi_mode`.
+
+> [!NOTE]
+> A disconnected or stuck-low data line reads as all-zero frames, which pass the
+> CRC. At boot the hub therefore needs at least one frame with a non-zero angle,
+> so an encoder that sits at exactly `0` during setup is reported as not found.
 
 ## Sensor
 
@@ -142,8 +157,6 @@ sensor:
   - platform: mt6701
     mt6701_id: my_encoder
     name: Encoder Angle
-    raw_count:
-      name: Encoder Raw Count
 ```
 
 ### Configuration Variables
@@ -151,18 +164,18 @@ sensor:
 - **name** (**Required**, string): The name of the angle sensor, in degrees
   (`0`-`360`).
 
-- **mt6701_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the
+- **mt6701_id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the
   hub to read from.
 
 - **raw_count** (*Optional*): The raw 14-bit count, `0`-`16383`.
 
-  - All other options from [Sensor](/components/sensor).
+  - All other options from [Sensor](/components/sensor/).
 
-- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The
+- **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): The
   publish interval. Each poll also triggers a fresh read of the encoder.
   Defaults to `60s`.
 
-- All other options from [Sensor](/components/sensor).
+- All other options from [Sensor](/components/sensor/).
 
 ## Binary Sensor
 
@@ -184,14 +197,14 @@ binary_sensor:
 - **push_button** (*Optional*): On when the magnetic push-button gesture is
   detected.
 
-  - All other options from [Binary Sensor](/components/binary_sensor).
+  - All other options from [Binary Sensor](/components/binary_sensor/).
 
 - **track_loss** (*Optional*): On when the encoder reports a tracking loss /
   overspeed condition.
 
-  - All other options from [Binary Sensor](/components/binary_sensor).
+  - All other options from [Binary Sensor](/components/binary_sensor/).
 
-- **mt6701_spi_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of
+- **mt6701_spi_id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of
   the SSI/SPI hub.
 
 ## Text Sensor
@@ -215,16 +228,20 @@ The reported value is one of:
 
 ### Configuration Variables
 
-- **mt6701_spi_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of
+- **mt6701_spi_id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of
   the SSI/SPI hub.
-- All other options from [Text Sensor](/components/text_sensor).
-
-<span id="mt6701_i2csave_eeprom-action"></span>
+- All other options from [Text Sensor](/components/text_sensor/).
 
 ## `mt6701_i2c.save_eeprom` Action
 
 Writes the current configuration registers into the chip's EEPROM so they
-survive a power cycle. Only available on the `mt6701_i2c` hub.
+survive a power cycle. Only available on the `mt6701_i2c` hub. The hub stops
+reading the encoder while the chip programs its EEPROM.
+
+The chip loads its EEPROM at power-up, so the datasheet verifies the
+programming by power-cycling the chip and reading the registers back. To check
+it, remove the options from your configuration (so they are not written again
+at boot), power-cycle the device and confirm the outputs behave as programmed.
 
 ```yaml
 button:
@@ -234,14 +251,14 @@ button:
       - mt6701_i2c.save_eeprom: my_encoder
 ```
 
-- **id** (**Required**, [ID](/guides/configuration-types#id)): The `mt6701_i2c`
+- **id** (**Required**, [ID](/guides/configuration-types/#id)): The `mt6701_i2c`
   hub to program.
 
 > [!CAUTION]
 > The MT6701 EEPROM has a **limited number of write cycles**. Never call this
 > action from a periodic automation; trigger it only manually. The datasheet
-> also requires the supply voltage to be **4.5-5.5 V** during the ~600 ms
-> programming window, so a 3.3 V-powered sensor should not be programmed.
+> also requires the supply voltage to be **4.5-5.5 V** during the programming
+> window of more than 600 ms, so a 3.3 V-powered sensor should not be programmed.
 
 ## Deriving Position and Speed
 
@@ -317,7 +334,7 @@ sensor:
 
 ## See Also
 
-- [I²C Bus](/components/i2c)
-- [SPI Bus](/components/spi)
-- [Sensor Filters](/components/sensor#sensor-filters)
+- [I²C Bus](/components/i2c/)
+- [SPI Bus](/components/spi/)
+- [Sensor Filters](/components/sensor/#sensor-filters)
 - <APIRef text="mt6701.h" path="mt6701/mt6701.h" />
