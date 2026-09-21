@@ -111,7 +111,7 @@ description: "Page description for SEO"
 import { Image } from 'astro:assets';
 import myImageImg from './images/my-image.jpg';
 
-# Heading
+## Section Heading
 
 Regular Markdown content here.
 
@@ -182,7 +182,7 @@ $$
 
 To run the site locally:
 
-1. Install Node.js (v18 or later recommended)
+1. Install Node.js (`v22.22.1` or later in the Node 22 release line, or any Node 24 release)
 1. Clone this repository
 1. Install dependencies: `npm install`
 1. Run development server: `npm run dev`
@@ -194,7 +194,7 @@ To run the site locally:
 npm run dev          # Start development server
 npm run build        # Build for production
 npm run preview      # Preview production build locally
-npm run astro        # Run Astro CLI commands
+npm run lint         # Run repository lint checks
 ```
 
 ## Building for Production
