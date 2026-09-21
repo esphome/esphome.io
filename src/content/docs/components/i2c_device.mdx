@@ -21,13 +21,14 @@ i2c_device:
  id: i2cdev
  address: 0x2C
 
-on_...:
- then:
-   - lambda: !lambda |-
-       id(i2cdev).write_byte(0x00, 0x12);
-       if (auto value = id(i2cdev).read_byte(0x01)) {
-         id(i2cdev).write_byte(0x02, *value);
-       }
+interval:
+ - interval: 60s
+   then:
+     - lambda: |-
+         id(i2cdev).write_byte(0x00, 0x12);
+         if (auto value = id(i2cdev).read_byte(0x01)) {
+           id(i2cdev).write_byte(0x02, *value);
+         }
 ```
 
 ## Configuration Variables
