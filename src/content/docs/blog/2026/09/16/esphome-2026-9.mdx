@@ -102,10 +102,7 @@ and lets paired build servers recover from an address change on their own.
 ## Upgrade checklist
 
 {/* UPGRADE_CHECKLIST_START */}
-- If your `ota:` block has a `password:`, keep it for the update to 2026.9.0 and, if the device has `api:`, make
-  sure it has an `encryption:` key (a device without `api:` needs a temporary key, see the `ota` docs), then replace
-  the password with `encryption:` and update again; unencrypted updates from older firmware stop working in
-  2027.3.0, so do the first update before then
+- If your `ota:` block has a `password:`, a two-step update process is required to migrate to OTA encryption. See [the `ota` docs](/components/ota/esphome/#enabling-encryption-on-an-existing-device) for the required procedure; unencrypted updates on older firmware will stop working from release 2027.3.0, so at least the first step should be done before then
 - If you have a device with a custom MAC burned into the ESP32 eFuses and use Ethernet, Bluetooth, or 802.15.4,
   expect a new MAC on those interfaces after upgrading; update DHCP reservations, ACLs and Bluetooth pairings
 - If you use `modbus_controller` with `custom_command:`, rename it to `custom_pdu:` and drop the leading device
@@ -730,7 +727,7 @@ contributions, and to everyone who reported issues, tested pre-releases, and hel
   would lose pause capability. [#18801](https://github.com/esphome/esphome/pull/18801)
 - **OTA**: A device with an `api:` encryption key now offers encrypted OTA, and the CLI uses it when the device
   offers it. Firmware older than 2026.9.0 cannot offer it, so the update to 2026.9.0 is still unencrypted. That
-  unencrypted path is removed in 2027.3.0; after that, a device on older firmware needs a serial flash or the web
+  unencrypted path will be removed in 2027.3.0; after that, a device on older firmware will need a serial flash or the web
   server OTA platform. If your config has `password:`, keep it for the update to 2026.9.0 and, if the device has
   `api:`, make sure it has an `encryption:` key; a device without `api:` needs a temporary key first, see
   [Enabling Encryption on an Existing Device](/components/ota/esphome/#enabling-encryption-on-an-existing-device).
