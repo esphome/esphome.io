@@ -19,6 +19,11 @@ polling a battery, a controller polling a meter, and you want that data without 
 
 You must set the `role` attribute of the [Modbus](/components/modbus/) hub to `sniffer`.
 
+> [!NOTE]
+> Observed exchanges currently reach you through a lambda, so decoding the payload is your job. A
+> sensor platform is intended to follow, giving the sniffer role the kind of declarative sensors
+> [Modbus Controller](/components/modbus_controller/) already provides for the client role.
+
 <Image src="/images/modbus.png" width={190} height={200} layout="constrained" alt="" />
 
 See [Modbus](/components/modbus/#hardware-setup) for RS485 hardware setup instructions. Wire only the
@@ -112,7 +117,7 @@ ESP32 FIFO is 128 bytes.
 ## Limitations
 
 - **Register access only.** `0x03`, `0x04`, `0x06` and `0x17` are paired; coil access and
-  multi-register write echoes are observed but not.
+  multi-register write echoes are observed but not paired at this time.
 - **Devices using address 0 as a unit ID are not paired.** Some non-compliant devices (certain BMS
   clones) ship set to address `0`, which is the Modbus broadcast address and is never answered, so
   the hub cannot expect a reply. If the device's address is configurable, setting it to 1-247 is the
