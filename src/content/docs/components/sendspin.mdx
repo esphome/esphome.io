@@ -15,7 +15,9 @@ reachable between the device and the server.
 On its own, the hub does not expose any user-facing entities. Once a Sendspin
 server is present on the network, it will connect to the device and begin
 sending group state updates, but audio playback, control, and metadata require
-the corresponding child components to be configured as well.
+the corresponding child components to be configured as well. The
+[Sendspin Switch](/components/switch/sendspin/) can stop the client so no server
+connects.
 
 This platform only works on ESP32-based chips.
 
@@ -50,12 +52,16 @@ on_...:
 
 ## Child components
 
+- [Sendspin Image](/components/image/sendspin/): Displays album and artist artwork
+  streamed from the group on a connected display.
 - [Sendspin Group Media Player](/components/media_player/sendspin/): Exposes
   group-wide playback and volume controls as a Home Assistant media player entity.
 - [Sendspin Media Source](/components/media_source/sendspin/): Plays synchronized
   audio from a Sendspin group through a Speaker Source media player.
 - [Sendspin Sensor](/components/sensor/sendspin/): Exposes numeric metadata
   about the currently playing audio (track progress, track duration, etc.).
+- [Sendspin Switch](/components/switch/sendspin/): Enables and disables the
+  Sendspin client.
 - [Sendspin Text Sensor](/components/text_sensor/sendspin/): Exposes metadata
   about the currently playing audio (title, artist, album, etc.).
 

@@ -81,11 +81,26 @@ output:
 - **channel** (**Required**, string): Choose the channel of this MCP4461 output component.
   One of `A`, `B`, `C`, `D`, `E`, `F`, `G` or `H`.
 
-- **initial_value** (*Optional*, float): Set initial wiper value, valid range is `0 - 1.0`
+- **initial_value** (*Optional*, float): Set initial wiper value. Valid range is `0 - 1.0`.
+  For the nonvolatile channels `E`-`H`, this value is only written when it differs from the value
+  already stored on the chip, to protect the EEPROM's limited write endurance.
+- **nonvolatile** (*Optional*, bool): Only for the volatile channels `A`-`D`. When enabled, every
+  level change is automatically mirrored into the chip's matching nonvolatile wiper register once
+  the level has been stable for `nonvolatile_write_delay` — the chip then restores that level by
+  itself on the next power-on. Defaults to `true`.
+- **nonvolatile_write_delay** (*Optional*, [Time](/guides/configuration-types#time)): How long
+  a level must remain unchanged before it is persisted. This debounces fast level bursts (for
+  example light transitions) and protects the EEPROM endurance (roughly one million write cycles,
+  and each write occupies the chip for up to 10 ms). Defaults to `1s`.
 - **terminal_a** (*Optional*, bool): Set to `false` if terminal "A" shall be disabled on boot. Defaults to `true`
 - **terminal_b** (*Optional*, bool): Set to `false` if terminal "B" shall be disabled on boot. Defaults to `true`
 - **terminal_w** (*Optional*, bool): Set to `false` if terminal "W" shall be disabled on boot. Defaults to `true`
 - All other configuration variables from [Output](/components/output#config-output).
+
+> [!NOTE]
+> The terminal switches (TCON) are **volatile** on this chip: at power-on only the wiper levels are
+> restored from the nonvolatile registers, while all terminals reset to *connected*. The component
+> therefore re-applies your `terminal_a`/`terminal_b`/`terminal_w` configuration on every boot.
 
 The tap count for 7 and 8-bit digipot/rheostat devices is usually 100/257.
 
@@ -111,6 +126,60 @@ esphome:
       - lambda: |-
           id(digipot_wiper_0).update_state();
 ```
+
+## Actions
+
+### `mcp4461.wiper.increase` / `mcp4461.wiper.decrease` Action
+
+Moves the wiper of the given output channel by a single tap. Only valid for the volatile
+channels `A`-`D` — the chip does not accept increment/decrement commands on the nonvolatile
+registers.
+
+```yaml
+on_...:
+  then:
+    - mcp4461.wiper.increase: digipot_channel_0
+    - mcp4461.wiper.decrease: digipot_channel_0
+```
+
+### `mcp4461.wiper.store_nonvolatile` Action
+
+Immediately persists the current wiper level into the chip's nonvolatile register, bypassing the
+`nonvolatile_write_delay`. Most useful together with `nonvolatile: false` to persist only at
+deliberate moments, for example on a button press:
+
+```yaml
+output:
+  - platform: mcp4461
+    id: digipot_channel_0
+    channel: A
+    nonvolatile: false
+
+button:
+  - platform: template
+    name: "Save digipot level"
+    on_press:
+      - mcp4461.wiper.store_nonvolatile: digipot_channel_0
+```
+
+### `mcp4461.wiper.set_terminal` Action
+
+Connects or disconnects a single resistor-network terminal of the given channel at runtime.
+`terminal` is one of `a`, `b`, `w` or `h` (hardware shutdown state).
+
+```yaml
+on_...:
+  then:
+    - mcp4461.wiper.set_terminal:
+        id: digipot_channel_0
+        terminal: a
+        enable: false
+```
+
+ #### Configuration variables
+ - **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the MCP4461 output channel.
+ - **terminal** (**Required**, string, [templatable](/automations/templates)): One of `a`, `b`, `w` or `h` (hardware shutdown state).
+ - **enable** (**Required**, bool, [templatable](/automations/templates)): Whether to connect (`true`) or disconnect (`false`) the terminal.
 
 ## See Also
 

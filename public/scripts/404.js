@@ -1,6 +1,10 @@
 (function () {
   "use strict";
 
+  if (typeof window.plausible === "function") {
+    window.plausible("404");
+  }
+
   var root = document.querySelector(".error-404");
   if (!root) return;
 

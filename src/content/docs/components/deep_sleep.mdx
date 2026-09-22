@@ -296,6 +296,38 @@ on_...:
     - deep_sleep.allow: deep_sleep_1
 ```
 
+## Deep Sleep and OTA Rollback
+
+On platforms with bootloader OTA rollback support enabled — the default on ESP32 with the `esp-idf` framework and on
+nRF52, see `enable_ota_rollback` for [ESP32](/components/esp32#advanced-configuration) and
+[nRF52](/components/nrf52#advanced-configuration) — firmware installed by an OTA update must be confirmed as working,
+otherwise the bootloader reverts to the previous version on the next reset. The [safe_mode](/components/safe_mode)
+component confirms the new firmware once it considers the boot successful.
+
+Since ESPHome 2026.8.0, entering deep sleep counts as a successful boot: the firmware is confirmed automatically just
+before the device goes to sleep. No configuration is needed, and a device that crashes before the firmware is
+confirmed still rolls back, as intended.
+
+If you want stricter rollback semantics, set `boot_is_good_on_shutdown: false` in the
+[safe_mode](/components/safe_mode) configuration. Then only `boot_is_good_after` elapsing or the
+`safe_mode.mark_successful` action confirms the firmware — an update that goes back to sleep before proving itself
+healthy is rolled back on the next wake. For example, new firmware with a bug that enters deep sleep before Wi-Fi or
+OTA ever comes up would be confirmed by that first sleep with the default behavior; with the option disabled and
+`safe_mode.mark_successful` placed after the device's real work (e.g. after a successful sensor publish), the
+bootloader reverts it instead.
+
+> [!WARNING]
+> On versions before 2026.8.0, a device that enters deep sleep before `boot_is_good_after` (default 1 minute) elapses
+> never confirms the new firmware, so the bootloader rolls back **every** OTA update on the next wake — the update
+> silently uninstalls itself. On these versions, use one of the following workarounds:
+>
+> - Set `boot_is_good_after` in the [safe_mode](/components/safe_mode) configuration to a value shorter than the
+>   device's awake time, e.g. `boot_is_good_after: 10s`.
+> - Run the [`safe_mode.mark_successful`](/components/safe_mode#safe_mode-mark_successful-action) action (available
+>   since ESPHome 2026.3.0) before entering deep sleep, for example in `on_boot`.
+> - Disable rollback entirely with `enable_ota_rollback: false` under `esp32: framework: advanced:`
+>   (or `nrf52: framework: advanced:`).
+
 ## See Also
 
 - [Shutdown Switch](/components/switch/shutdown/)

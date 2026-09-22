@@ -1,13 +1,13 @@
 ---
-description: "Instructions for setting up BLE text sensors for the ESP32."
-title: "ESP32 Bluetooth Low Energy Scanner"
+description: "Instructions for setting up BLE scanner text sensors in ESPHome."
+title: "Bluetooth Low Energy Scanner"
 ---
 import APIRef from '@components/APIRef.astro';
 
 
 The `ble_scanner` text sensor platform lets you track reachable BLE devices.
 
-See the [BLE Tracker Configuration variables](/components/esp32_ble_tracker#config-esp32_ble_tracker) for instructions for setting up scan parameters.
+See your BLE tracker's configuration variables (for example [ESP32 BLE Tracker](/components/esp32_ble_tracker#config-esp32_ble_tracker)) for instructions for setting up scan parameters.
 
 The sensor platform is similar to [Ble Rssi](/components/sensor/ble_rssi/) but in contrast to that platform, this text
 sensor sends out all raw BLE scan information and does not filter devices.
@@ -44,6 +44,10 @@ Example json log:
 
 ## Configuration variables
 
+- **ble_hub_id** (*Optional*, [ID](/guides/configuration-types#id)): The BLE tracker
+  hub to receive advertisements from. Auto-generated when only one tracker is configured;
+  set it explicitly to disambiguate multiple trackers. Replaces the former `esp32_ble_id`
+  key, which still works as a deprecated alias until ESPHome 2027.2.0.
 - All options from [Text Sensor](/components/text_sensor#config-text_sensor).
 
 ## See Also

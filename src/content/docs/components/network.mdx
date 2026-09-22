@@ -20,6 +20,17 @@ network:
 Always `true` on nRF52 because IPv4 is not supported.
 - **min_ipv6_addr_count** (*Optional*, integer): ESPHome considers the network to be connected when it has one IPv4 address and this number of IPv6 addresses. Defaults to `0` so as to not hang on boot with networks where IPv6 is not enabled. `2` is typically a reasonable value for configurations requiring IPv6.
 - **enable_high_performance** (*Optional*, boolean): Explicitly enables or disables high-performance networking optimizations. Only supported on ESP32 devices. When not specified, this is automatically enabled by components that benefit from optimized network settings. Set to `false` to disable these optimizations if they cause memory issues on your device. Defaults to component-driven behavior.
+- **tcp_send_buffer** (*Optional*, int): The amount of outgoing data lwIP queues per TCP connection before
+  writes stall, in bytes. Only supported on ESP32 devices. The framework default of 5744 bytes can stall
+  senders that produce data in bursts, for example a Bluetooth proxy streaming notifications; raise this if
+  you see "TCP buffer full" warnings in the logs. Accepts `2880` to `65535` bytes; suffixed values such as
+  `16kB` are also accepted. Heap cost scales with the value whenever a connection has data in flight, so
+  prefer the smallest value that clears the warnings. An explicit value here overrides the size chosen by
+  `enable_high_performance`.
+- **priority** (*Optional*, list): Order of preference for network interfaces when more than one is configured. Only supported on the ESP32 family of devices.
+  Each list entry names one of the supported interface types (`ethernet` or `wifi`); the first entry is the most
+  preferred. Required when both `ethernet:` and `wifi:` are configured, and must then list every configured
+  interface. See [Multi-Interface Support](#multi-interface-support).
 
 ## High-performance networking
 
@@ -43,10 +54,47 @@ The optimization level depends on whether PSRAM is guaranteed to be available (c
 - WiFi TX buffers: 64 dynamic buffers
 - AMPDU aggregation: Standard block acknowledgment windows
 
+An explicit `tcp_send_buffer` overrides the send buffer size chosen here.
+
 > [!NOTE]
 > The [lwIP](https://savannah.nongnu.org/projects/lwip/) library used for the network component currently only implements IPv6 SLAAC according to [RFC4862](https://datatracker.ietf.org/doc/rfc4862/). The interface identifier (IID) is directly generated from the device MAC address.
-> This has various security and privacy implications decribed in [RFC7721](https://datatracker.ietf.org/doc/rfc7721/), as this might leak outside of the smart home network and makes the device uniquely identifiable.
+> This has various security and privacy implications described in [RFC7721](https://datatracker.ietf.org/doc/rfc7721/), as this might leak outside of the smart home network and makes the device uniquely identifiable.
 > Therefore, the address generation does not comply to [RFC7217](https://datatracker.ietf.org/doc/rfc7217/).
+
+## Multi-Interface Support
+
+Devices with more than one network interface — for example an ESP32 with both [WiFi](/components/wifi/) and [Ethernet](/components/ethernet/) — can declare a `priority` list stating which interface ESPHome should prefer. This list is required to use `wifi:` and `ethernet:` together; without it, configuring both is rejected during validation, matching the single-interface behavior of earlier releases.
+
+```yaml
+network:
+  priority:
+    - ethernet
+    - wifi
+```
+
+Each entry is a plain interface name, either `ethernet` or `wifi`. Each interface may appear at most once, and the
+list and the configuration must match in both directions: every interface named in the list must have its own
+component block configured, and every configured interface must appear in the list — with both `wifi:` and
+`ethernet:` present, `priority` naming only one of them is rejected during validation. The first entry is the
+most-preferred interface. Support for other interface types is planned.
+
+The priority list controls three things:
+
+- **Setup order**: interfaces are brought up at boot in list order, so the preferred interface connects first.
+- **Reported address**: the preferred interface determines the address used to reach the device — its `use_address` (when configured) applies, and its IP addresses are the ones ESPHome reports. If the preferred interface has no valid IP address, for example while it is disabled or still connecting, ESPHome falls back to the other interface's addresses.
+- **Default route**: the first *connected* interface in the list carries the device's outgoing traffic. When
+  that interface loses its connection — cable unplugged, link lost, or disabled at runtime — the route moves to
+  the next connected interface automatically, and moves back when the preferred interface reconnects. The DNS
+  servers of the interface that owns the route are used. Every change is logged as `Default interface: ...`.
+
+Running both network stacks at the same time uses a significant amount of memory. To keep the less-preferred
+interface powered down until it is needed, set `enable_on_boot: false` on that interface and turn it on later with
+the [`wifi.enable`](/components/wifi/#wifi-on_enable) or
+[`ethernet.enable`](/components/ethernet/#ethernet-on_enable) action. A powered-down interface cannot take over
+the route automatically; it participates in failover only once it has been enabled.
+
+> [!NOTE]
+> WiFi and Ethernet may be used together only on the ESP32 family of devices. If `priority` is omitted, behavior is unchanged from earlier ESPHome releases and only a single interface component may be configured.
 
 ## See Also
 
