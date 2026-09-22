@@ -424,17 +424,19 @@ on_...:
   - climate.pid.set_deadband_threshold_parameters:
       id: pid_climate
       threshold_high: 0.5°C
-      threshold_low: -1.0°C
+      # Units are optional.
+      threshold_low: -1.0
 ```
 
 Configuration variables:
 
 - **id** (**Required**, [ID](/guides/configuration-types#id)): ID of the PID Climate to update.
-- **threshold_high** (**Required**, float, [templatable](/automations/templates)): Upper deadband threshold relative to the target temperature.
-- **threshold_low** (**Required**, float, [templatable](/automations/templates)): Lower deadband threshold relative to the target temperature.
+- **threshold_high** (**Required**, temperature delta, [templatable](/automations/templates)): Upper deadband threshold relative to the target temperature.
+- **threshold_low** (**Required**, temperature delta, [templatable](/automations/templates)): Lower deadband threshold relative to the target temperature. It must be less than `threshold_high`.
 
 This action updates the active runtime PID controller. The new values are used on the
-next PID computation cycle.
+next PID computation cycle. If `threshold_low` is greater than or equal to `threshold_high`,
+the action logs a warning and keeps the existing thresholds.
 
 ## `climate.pid.reset_integral_term` Action
 
@@ -477,11 +479,14 @@ Configuration variables:
   - `KP` - The current factor for the proportional term of the PID controller.
   - `KI` - The current factor for the integral term of the PID controller.
   - `KD` - The current factor for the derivative term of the PID controller.
-  - `DEADBAND_THRESHOLD_HIGH` - The current upper deadband threshold.
-  - `DEADBAND_THRESHOLD_LOW` - The current lower deadband threshold.
-  - `KP_DEADBAND_MULTIPLIER` - The current deadband multiplier for the proportional term.
-  - `KI_DEADBAND_MULTIPLIER` - The current deadband multiplier for the integral term.
-  - `KD_DEADBAND_MULTIPLIER` - The current deadband multiplier for the derivative term.
+  - `DEADBAND_THRESHOLD_HIGH` - The current upper deadband threshold in °C.
+  - `DEADBAND_THRESHOLD_LOW` - The current lower deadband threshold in °C.
+  - `KP_DEADBAND_MULTIPLIER` - The current unitless deadband multiplier for the proportional term.
+  - `KI_DEADBAND_MULTIPLIER` - The current unitless deadband multiplier for the integral term.
+  - `KD_DEADBAND_MULTIPLIER` - The current unitless deadband multiplier for the derivative term.
+
+  Deadband multipliers are published as raw factors: for example, `0.05` means 5% of the
+  corresponding PID term within the deadband.
 
 - All other options from [Sensor](/components/sensor).
 
