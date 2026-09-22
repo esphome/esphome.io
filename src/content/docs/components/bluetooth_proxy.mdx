@@ -21,32 +21,41 @@ If you'd like to buy a ready-made Bluetooth proxy or flash your own device, see
 
 ```yaml
 bluetooth_proxy:
-  # Active connections are now enabled by default
-  # To disable active connections (previous default behavior), use:
+  # Active connections are enabled by default on ESP32 and RP2040/RP2350.
+  # For an advertisement-only proxy, use:
   # active: false
 ```
 
 - **active** (*Optional*, boolean): Enables proxying active GATT connections to BLE devices.
-  This is separate from active *scanning* (configured in [ESP32 BLE Tracker](/components/esp32_ble_tracker)).
-  Defaults to `true`.
-- **cache_services** (*Optional*, boolean): Enables caching GATT services in NVS flash storage which
-  significantly speeds up active connections. Defaults to `true`.
-- **connection_slots** (*Optional*, int): The maximum number of BLE connection slots to use.
-  Each configured slot consumes ~1KB of RAM, with a maximum of `9`. It is recommended not to exceed `5`
-  connection slots to avoid stability and memory issues. Defaults to `3`.
-  Ethernet-based proxies can generally handle `4` connection slots reliably.
-  The value must not exceed the total configured `max_connections`
-  for [ESP32 BLE](/components/esp32_ble).
+  This is separate from active *scanning* (configured in your platform's BLE tracker).
+  Defaults to `true` on ESP32 and RP2040/RP2350. On advertisement-only platforms it defaults to
+  `false` and enabling it fails validation — see [Platform Support](#platform-support).
+  RP2040/RP2350 proxies were advertisement only before active connection support landed, so
+  existing Pico W configurations that omit this option will gain connection slots on their next
+  update; set `active: false` to keep an advertisement-only proxy.
+- **cache_services** (*Optional*, boolean): ESP32 only; setting it on any other platform is a
+  configuration error. Enables caching GATT services in NVS flash storage which significantly
+  speeds up active connections. Defaults to `true`.
+- **connection_slots** (*Optional*, int): ESP32 and RP2040/RP2350. The maximum number of BLE
+  connection slots to use. On RP2040/RP2350 the maximum and default are both `3`; three slots use
+  about 17KB more static RAM than a single-slot build. On ESP32, each
+  configured slot consumes ~1KB of RAM, with a maximum of `9`; it is recommended not to exceed `5`
+  connection slots to avoid stability and memory issues. The ESP32 default is `3`. Ethernet-based
+  proxies can generally handle `4` slots reliably. The value must not exceed the total configured
+  `max_connections` for [ESP32 BLE](/components/esp32_ble/).
 
-The Bluetooth proxy depends on [ESP32 BLE Tracker](/components/esp32_ble_tracker) so make sure to add that
-to your configuration.
+The Bluetooth proxy depends on the platform's BLE tracker component, so make sure to add that to your
+configuration: [ESP32 BLE Tracker](/components/esp32_ble_tracker/) on ESP32, the
+[RP2 BLE Tracker](/components/rp2_ble_tracker/) on RP2040/RP2350, or the
+[LN882H BLE Tracker](/components/ln882h_ble_tracker/) on LN882x.
 
 ### How Active Connections Work
 
 The Bluetooth proxy provides Home Assistant with a limited number of simultaneous active GATT connections
-(configured via `connection_slots`). The default is 3 slots. Ethernet-based proxies can generally handle
-4 slots reliably since they don't share the radio with WiFi traffic. Set `connection_slots: 4` if you need
-more connections (each slot uses additional RAM).
+(configured via `connection_slots`). On ESP32 the default is 3 slots; Ethernet-based proxies can generally
+handle 4 slots reliably since they don't share the radio with WiFi traffic, so set `connection_slots: 4`
+there if you need more connections (each slot uses additional RAM). RP2040/RP2350 proxies also default
+to 3 slots, which is the platform maximum; lower `connection_slots` (`1` or `2`) to reclaim static RAM.
 
 Devices that stay connected continuously (like some locks or thermostats) use one slot the entire time.
 Devices that connect briefly to exchange data and then disconnect (like many sensors) free up the slot
@@ -54,6 +63,48 @@ for other devices, so you can use more devices than you have slots.
 
 Passively broadcasted sensor data (advertised by devices without requiring active connections, such as
 many BTHome sensors) is received separately and is not limited by the number of connection slots.
+
+Active connections are handled by the internal `bluetooth_connection` component, which is loaded
+automatically and has no configuration of its own. Its log lines use the `bluetooth_connection` tag,
+which is useful when filtering logs with the [Logger](/components/logger) component.
+
+## Platform Support
+
+The proxy runs on platforms whose BLE hub can scan actively, and the feature set depends on what
+the controller can do beyond scanning:
+
+- **ESP32** — the full proxy: advertisements plus **active connections**, so Home Assistant can read
+  and write GATT characteristics through the device (`active: true`, `connection_slots`); requires
+  the [ESP32 BLE Tracker](/components/esp32_ble_tracker/) component.
+- **RP2040/RP2350 (Raspberry Pi Pico W family)** — the full proxy, with active connections through
+  the framework's BTstack GATT client; requires the [RP2 BLE Tracker](/components/rp2_ble_tracker/)
+  component. Up to `3` concurrent GATT connections are supported, matching the ESP32 default.
+- **BK72xx and LN882x** — **advertisement-only**. These controllers do not expose the GATT client
+  the proxy needs for connections, so Home Assistant uses the device for advertisements only and
+  will not route connections through it; requires the
+  [BK72xx BLE Tracker](/components/bk72xx_ble_tracker/) or
+  [LN882H BLE Tracker](/components/ln882h_ble_tracker/) component. This is independent of the
+  [scan mode](#passive-vs-active-scanning), which the platform's tracker controls. Advertisement
+  forwarding — which is what integrations such as BTHome, Xiaomi and most sensors rely on — works
+  exactly as it does on ESP32.
+
+On the advertisement-only platforms the proxy cannot be switched to active connections: `active`
+defaults to `false` there and setting `active: true` fails validation, as do the
+connection-oriented options (`connection_slots`, `cache_services`). The platform's tracker hub
+must be part of the configuration — [BK72xx BLE Tracker](/components/bk72xx_ble_tracker/) or
+[LN882H BLE Tracker](/components/ln882h_ble_tracker/):
+
+```yaml
+# Advertisement-only proxy on an LN882x board
+ln882h_ble_tracker:
+
+bluetooth_proxy:
+```
+
+> [!NOTE]
+> A scanner-mode request from Home Assistant (active or passive scanning) is honored on these
+> platforms: the platform's BLE tracker hub applies the requested mode, and a running scan
+> restarts with the new mode.
 
 ## Improving reception performance
 
@@ -202,6 +253,9 @@ is supported, please search for it in the
 
 ## See Also
 
-- [ESP32 Bluetooth Low Energy Tracker Hub](/components/esp32_ble_tracker)
+- [ESP32 Bluetooth Low Energy Tracker Hub](/components/esp32_ble_tracker/)
+- [RP2 BLE Tracker](/components/rp2_ble_tracker/)
+- [LN882H Bluetooth Low Energy Tracker Hub](/components/ln882h_ble_tracker/)
 - BTHome [https://bthome.io/](https://bthome.io/)
 - <APIRef text="bluetooth_proxy.h" path="bluetooth_proxy/bluetooth_proxy.h" />
+- <APIRef text="bluetooth_connection.h" path="bluetooth_connection/bluetooth_connection.h" />

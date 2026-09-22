@@ -1,0 +1,136 @@
+---
+import { Icon, LinkButton } from "@astrojs/starlight/components";
+
+import HomeAssistantIcon from "./HomeAssistantIcon.astro";
+---
+
+<section class="join-our-community">
+  <div class="container">
+    <div class="content-container">
+      <h2>Join our community</h2>
+      <p>
+        Tap into the knowledge and experience of the thousands of makers already using ESPHome. Get advice, troubleshoot
+        tricky setups, and learn directly from people who’ve been there.
+      </p>
+    </div>
+
+    <div class="cards">
+      <div class="card card--ghost">
+        <div class="card__body">
+          <Icon name="discord" size="3rem" />
+          <h3 class="card__title">Discord</h3>
+          <p>Chat with the community in real time.</p>
+        </div>
+        <LinkButton
+          target="_blank"
+          rel="noopener noreferrer"
+          href="https://esphome.io/chat"
+          class="card__text-link"
+          icon="right-arrow"
+          iconPlacement="start">Join Discord</LinkButton
+        >
+      </div>
+      <div class="card card--ghost">
+        <div class="card__body">
+          <HomeAssistantIcon size="3rem" />
+          <h3 class="card__title">Home Assistant Forum</h3>
+          <p>Ask questions and share projects.</p>
+        </div>
+        <LinkButton
+          target="_blank"
+          rel="noopener noreferrer"
+          href="https://community.home-assistant.io/c/esphome/"
+          class="card__text-link"
+          icon="right-arrow"
+          iconPlacement="start">Visit Forum</LinkButton
+        >
+      </div>
+      <div class="card card--ghost">
+        <div class="card__body">
+          <Icon name="github" size="3rem" />
+          <h3 class="card__title">GitHub</h3>
+          <p>Follow development or contribute.</p>
+        </div>
+        <LinkButton
+          target="_blank"
+          rel="noopener noreferrer"
+          href="https://github.com/esphome/esphome"
+          class="card__text-link"
+          icon="right-arrow"
+          iconPlacement="start">Go to GitHub</LinkButton
+        >
+      </div>
+    </div>
+  </div>
+</section>
+
+<style lang="scss">
+  @use "../../styles/mixins" as *;
+
+  .join-our-community {
+    .content-container {
+      max-width: px-to-rem(560);
+      text-align: center;
+      margin: 0 auto;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1rem;
+      margin-top: 2rem;
+
+      @include bp(tablet) {
+        margin-top: 3rem;
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+      @include bp(desktop) {
+        grid-template-columns: repeat(6, 1fr);
+        gap: 1.5rem;
+      }
+
+      .card {
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+
+        @include bp(desktop) {
+          grid-column: span 2;
+
+          &:nth-last-child(1):nth-child(3n + 1) {
+            grid-column: span 6;
+          }
+
+          &:nth-last-child(2):nth-child(3n + 1),
+          &:nth-last-child(1):nth-child(3n + 2) {
+            grid-column: span 3;
+          }
+        }
+
+        .card__body {
+          --sl-icon-color: var(--sl-color-white);
+          --ha-icon-color: var(--sl-color-white);
+
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 0.75rem;
+        }
+
+        .card__title {
+          margin: 0;
+        }
+
+        .card__text-link {
+          margin: 1rem auto 0;
+
+          @include bp(desktop) {
+            margin: 3rem auto 0;
+          }
+        }
+      }
+    }
+  }
+</style>
