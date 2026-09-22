@@ -13,7 +13,7 @@ configuration). By default, all logs with a severity `DEBUG` or higher will be s
 Increasing the log level severity (to e.g `INFO` or `WARN`  ) can help with the performance of the application and memory size.
 
 > [!NOTE]
-> The "severity" of a log message represents the importance of the message, i.e. how critical it is. The severity levels are defined in the [log levels](#logger-log_levels) section.
+> The "severity" of a log message represents the importance of the message, i.e. how critical it is. The severity levels are defined in the [log levels](#log-levels) section.
 
 ```yaml
 # Example configuration entry
@@ -50,10 +50,14 @@ Advanced settings:
    Set to `0` to disable the log buffer. Defaults to `768B`.
 
 - **hardware_uart** (*Optional*, string): The Hardware UART to use for logging. The default varies depending on
-   the specific processor/chip and framework you are using. See the [table below](#logger-default_hardware_interfaces).
+   the specific processor/chip and framework you are using. See the [table below](#default-hardware-interfaces).
 
-- **esp8266_store_log_strings_in_flash** (*Optional*, boolean): If set to false, disables storing
-   log strings in the flash section of the device (uses more memory). Defaults to true.
+- **esp8266_store_log_strings_in_flash** (*Optional*, boolean): **ESP8266 only.** Compile-time
+   setting for where log format strings live. When `true` (default), they stay in flash via
+   `PROGMEM`; when `false`, they are copied into RAM, which uses significantly more of the
+   ESP8266's limited RAM. Does not affect runtime log output or levels, and there is no
+   flash-wear concern (program flash is only written during OTA). Leave at the default unless
+   you have a specific reason not to.
 
 - **on_message** (*Optional*, [Automation](/automations)): An action to be
    performed when a message is to be logged. The variables `int level`, `const char* tag` and
@@ -73,8 +77,6 @@ Advanced settings:
 
 - **early_message** (*Optional*, boolean): Displays early debug information, such as the boot reason.
    Only on nRF52.
-
-<span id="logger-hardware_uarts"></span>
 
 ## Hardware UARTs
 
@@ -103,8 +105,6 @@ so if you use any other configuration you will not get log messages over the on-
 
 *Undefined* means that the logger component cannot use this hardware UART at this time.
 
-<span id="logger-default_hardware_interfaces"></span>
-
 ## Default Hardware Interfaces
 
 Because of the wide variety of boards and processors/chips available, we've selected varying default
@@ -126,8 +126,6 @@ the original ESP32 or ESP8266) continue to use USB-to-serial bridge ICs for comm
 | RP2040    | `USB_CDC`         |
 | NRF52     | `USB_CDC`         |
 
-<span id="logger-log_levels"></span>
-
 ## Log Levels
 
 Possible log levels are (sorted by severity):
@@ -138,12 +136,33 @@ Possible log levels are (sorted by severity):
 | `ERROR`            | Red    | Only errors are logged. Errors prevent the ESP from working correctly. |
 | `WARN`             | Yellow | Warnings and errors. Warnings are recoverable issues like invalid sensor readings. |
 | `INFO`             | Green  | Errors, warnings and info messages are logged. |
-| `DEBUG` (default)  | Cyan   | Everything up to debug. Includes sensor readings and status messages. |
-| `VERBOSE`          | Gray   | Like debug, but includes additional messages usually deemed to be spam. |
+| `DEBUG` (default)  | Cyan   | Everything up to debug. Includes initialization details and general status messages. |
+| `VERBOSE`          | Gray   | Like debug, but also includes sensor state changes and other frequent messages. |
 | `VERY_VERBOSE`     | White  | All internal messages including data flowing through I²C, SPI and UART buses. |
 
+### Performance Impact
+
+The log level you choose has a direct impact on device performance. Every log message that is printed requires
+CPU time to format and transmit over the serial port and/or network, which takes time away from other tasks
+like reading sensors, handling network communication, and running automations.
+
+- **`DEBUG` (default):** Suitable for production use. As of ESPHome 2026.4.0, state change messages
+  (sensor readings, binary sensor updates, etc.) were moved from `DEBUG` to `VERBOSE`, significantly reducing
+  the logging overhead at the default level. Prior to 2026.4.0, `DEBUG` produced substantially more output
+  and had a measurable performance impact, so older guides may recommend `INFO` — this is generally no longer
+  necessary with current versions.
+- **`INFO` / `WARN`:** Recommended for performance-sensitive or timing-sensitive devices (e.g., devices using
+  precise PWM dimming, infrared communication, or high-frequency sensor polling). Reducing log output frees
+  CPU cycles for time-critical operations.
+- **`VERBOSE` / `VERY_VERBOSE`:** Intended **only for short-term debugging sessions**. These levels produce
+  a large volume of output that will slow down the device, cause network timeouts, and lead to connection
+  instability. Do not leave devices running at these levels long-term. ESPHome will log a warning at boot
+  when these levels are active as a reminder.
+
 > [!WARNING]
-> Using `VERY_VERBOSE` can significantly impact device performance and may cause connection instability.
+> `VERBOSE` and `VERY_VERBOSE` are **not suitable for long-term use**. They are designed for diagnosing
+> specific issues during active debugging sessions. Running a device at these levels continuously will degrade
+> performance and may cause instability. Switch back to `DEBUG` or lower once the issue is resolved.
 
 <span id="logger-manual_tag_specific_levels"></span>
 
@@ -182,8 +201,6 @@ logger:
 Here, `VERBOSE` logs are compiled, but not shown (because of `initial_level: ERROR`)
 However, the `wifi` tag has `VERBOSE` level enabled, and shown.
 
-<span id="logger-log_action"></span>
-
 ## `logger.log` Action
 
 Print a formatted message to the logs.
@@ -207,7 +224,7 @@ Configuration options:
 - **args** (*Optional*, list of [lambda](/automations/templates#config-lambda)): The optional arguments for the
    format message.
 
-- **level** (*Optional*, string): The [log level](#logger-log_levels) to print the message
+- **level** (*Optional*, string): The [log level](#log-levels) to print the message
    with. Defaults to `DEBUG`.
 
 - **tag** (*Optional*, string): The tag (seen in front of the message in the logs) to print the message
@@ -258,7 +275,7 @@ logger:
 ```
 
 > [!NOTE]
-> Logging will not work in the `on_message` trigger. You can't use the [logger.log](#logger-log_action) action
+> Logging will not work in the `on_message` trigger. You can't use the [logger.log](#logger-log-action) action
 > and the `ESP_LOGx` logging macros in this automation.
 
 ## See Also

@@ -17,7 +17,7 @@ override substitutions with the same name in a package.
 Dictionaries are merged key-by-key. Lists of components are merged by component ID (if specified). Other lists are
 merged by concatenation. All other configuration values are replaced with the later value.
 
-ESPHome uses `!include` to "bring in" packages from other files; this feature is described in [!include](/guides/yaml#yaml-include).
+ESPHome uses `!include` to "bring in" packages from other files; this feature is described in [!include](/guides/yaml#include).
 
 The `packages:` key may have a value that is:
 
@@ -111,6 +111,12 @@ packages:
     refresh: 1d  # optional
 ```
 
+These public code hosting sites are supported when using shorthand form URLs:
+
+- `codeberg://` [Codeberg](https://codeberg.org/)
+- `github://` [Github](https://github.com)
+- `gitlab://` [Gitlab](https://gitlab.com)
+
 ## Configuration variables
 
 For each package:
@@ -187,7 +193,39 @@ The above utilizes a [Jinja expression](/components/substitutions#jinja-expressi
 `left_garage_door` package is actually included. `enable_extra_door` can be set from the
 [command line](/components/substitutions#command-line-substitutions) as well.
 
-<span id="config-packages_extend"></span>
+## Including packages with dynamic filenames
+
+Substitutions can be used directly in the filename of a `!include`, allowing you to dynamically select which file
+is loaded based on a substitution value:
+
+```yaml
+# config.yaml
+substitutions:
+  platform: esp32
+
+packages:
+  hardware: !include device-${platform}.yaml
+
+light:
+  - platform: status_led
+    name: "Board Status"
+    pin: $LED_GPIO
+```
+
+```yaml
+# device-esp32.yaml
+substitutions:
+  LED_GPIO: GPIO2
+esp32:
+  board: esp32dev
+```
+
+ESPHome will expand `${platform}` before loading the file, so `device-${platform}.yaml` resolves to
+`device-esp32.yaml` in the example above. Any substitution expression valid in ESPHome — including
+[Jinja expressions](/components/substitutions#jinja-expressions) — can be used in the filename.
+
+> [!NOTE]
+> Filename substitutions are not supported when using the YAML merge key (`<<: !include filename.yaml`).
 
 ## Extend
 
@@ -266,8 +304,6 @@ switch:
     name: "Mains switch"
 ```
 
-<span id="config-packages_remove"></span>
-
 ## Remove
 
 To remove existing entries from included configurations, `!remove [config_id]` can be used, where `config_id` is
@@ -331,5 +367,5 @@ switch:
 
 ## See Also
 
-- [Getting Started with the ESPHome Command Line](/guides/getting_started_command_line/)
+- [Getting Started with ESPHome](/install/getting-started/)
 - [Frequently Asked Questions](/guides/faq/)

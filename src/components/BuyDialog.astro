@@ -1,0 +1,436 @@
+---
+import { products } from "src/data/products";
+
+interface Props {
+  product: string;
+}
+
+const { product: productKey } = Astro.props;
+const productData = products[productKey];
+if (!productData) throw new Error(`BuyDialog: unknown product key "${productKey}"`);
+
+function slugify(str: string): string {
+  return str
+    .toLowerCase()
+    .replace(/\s+/g, "-")
+    .replace(/[^a-z0-9-]/g, "");
+}
+
+const regionMap = new Map<string, typeof productData.distributors>();
+for (const d of productData.distributors) {
+  if (!regionMap.has(d.shipTo)) regionMap.set(d.shipTo, []);
+  regionMap.get(d.shipTo)!.push(d);
+}
+const regions = [...regionMap.entries()];
+---
+
+<dialog class="ha-buy-dialog" id="buy-dialog" aria-labelledby="buy-dialog-title">
+  <div class="ha-buy-dialog-inner">
+    <div class="ha-buy-dialog-header">
+      <div class="product-name" id="buy-dialog-title" set:html={productData.name} />
+      <button class="close" type="button" aria-label="Close" data-buy-close>
+        <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor">
+          <path
+            d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z"
+          ></path>
+        </svg>
+      </button>
+    </div>
+
+    {
+      productData.new && (
+        <div class="alert">
+          <strong>New product!</strong> Stock may be limited, and please be patient while our distributors' product
+          pages go live.
+        </div>
+      )
+    }
+
+    <div class="ha-buy-dialog-content">
+      <div class="ha-buy-dialog-sidebar">
+        <div class="ha-buy-dialog-sidebar-label">Shipping to</div>
+        <div class="ha-buy-dialog-sidebar-tabs" role="tablist">
+          {
+            regions.map(([region], i) => (
+              <div
+                class:list={["ha-buy-dialog-sidebar-tab", i === 0 && "active"]}
+                data-tab={`#${slugify(region)}`}
+                role="tab"
+                id={`tab-${slugify(region)}`}
+                aria-controls={slugify(region)}
+                aria-selected={i === 0}
+                tabindex={i === 0 ? 0 : -1}
+              >
+                {region}
+              </div>
+            ))
+          }
+        </div>
+      </div>
+
+      <div class="ha-buy-dialog-tab-content-wrapper">
+        {
+          regions.map(([region, distributors], i) => (
+            <div
+              class:list={["ha-buy-dialog-tab-content", i === 0 && "active"]}
+              id={slugify(region)}
+              role="tabpanel"
+              aria-labelledby={`tab-${slugify(region)}`}
+            >
+              <div class="ha-buy-dialog-distributor-items">
+                {distributors.map((d) => (
+                  <a href={d.url} target="_blank" rel="noopener noreferrer" class="ha-buy-dialog-distributor-item">
+                    {d.logo ? (
+                      <img src={d.logo} alt={`${d.name} logo`} class="ha-buy-dialog-distributor-logo" />
+                    ) : (
+                      <span class="ha-buy-dialog-distributor-name">{d.name}</span>
+                    )}
+                    {d.shipFrom && <span>Ships from {d.shipFrom}</span>}
+                    {d.note && <span class="ha-buy-dialog-distributor-note">{d.note}</span>}
+                  </a>
+                ))}
+              </div>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+</dialog>
+
+<script>
+  const dialog = document.getElementById("buy-dialog") as HTMLDialogElement | null;
+
+  function openBuyDialog(context?: string) {
+    if (!dialog) return;
+    focusDistributors();
+    document.body.classList.add("buy-dialog-open");
+    if (typeof dialog.showModal === "function") dialog.showModal();
+    else dialog.setAttribute("open", "");
+    // if plausible is available, track the event
+    if (typeof window.plausible === "function") {
+      if (context) window.plausible("Buy Dialog", { props: { context } });
+      else window.plausible("Buy Dialog");
+    }
+  }
+
+  function focusDistributors() {
+    if (!dialog) return;
+
+    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    const tzPrefix = timezone.split("/")[0].toLowerCase();
+
+    // Map IANA timezone area to region tab slug. Regions with no dedicated
+    // distributor tab (e.g. Asia/Pacific/Indian/Africa) fall back to Global.
+    const tzMap: Record<string, string> = {
+      america: "#north-america",
+      europe: "#europe",
+      australia: "#australia",
+      asia: "#global",
+      pacific: "#global",
+      indian: "#global",
+      africa: "#global",
+    };
+
+    const targetSlug = tzMap[tzPrefix];
+    if (!targetSlug) return;
+
+    const defaultTab = dialog.querySelector<HTMLElement>(`.ha-buy-dialog-sidebar-tab[data-tab="${targetSlug}"]`);
+    if (!defaultTab) return;
+
+    activateTab(defaultTab);
+  }
+
+  function activateTab(tab: HTMLElement) {
+    if (!dialog) return;
+    dialog.querySelectorAll<HTMLElement>(".ha-buy-dialog-sidebar-tab").forEach((t) => {
+      t.classList.remove("active");
+      t.setAttribute("aria-selected", "false");
+      t.tabIndex = -1;
+    });
+    dialog.querySelectorAll<HTMLElement>(".ha-buy-dialog-tab-content").forEach((tc) => tc.classList.remove("active"));
+    tab.classList.add("active");
+    tab.setAttribute("aria-selected", "true");
+    tab.tabIndex = 0;
+    dialog.querySelector<HTMLElement>(tab.dataset.tab!)?.classList.add("active");
+  }
+
+  if (dialog) {
+    // Tab switching — click and keyboard (Enter/Space) activation
+    dialog.querySelectorAll<HTMLElement>(".ha-buy-dialog-sidebar-tab").forEach((tab) => {
+      tab.addEventListener("click", () => activateTab(tab));
+      tab.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          activateTab(tab);
+        }
+      });
+    });
+
+    // Remove scroll lock whenever the dialog closes (covers close button, Escape, backdrop)
+    dialog.addEventListener("close", () => {
+      document.body.classList.remove("buy-dialog-open");
+    });
+
+    // Close button
+    dialog.querySelectorAll<HTMLElement>("[data-buy-close]").forEach((btn) => {
+      btn.addEventListener("click", () => dialog.close());
+    });
+
+    // Click backdrop to close
+    dialog.addEventListener("click", (e) => {
+      if (e.target === dialog) dialog.close();
+    });
+
+    // Any element with class "buy" opens the dialog
+    document.querySelectorAll<HTMLElement>(".buy").forEach((el) => {
+      el.addEventListener("click", (e) => {
+        e.preventDefault();
+        // element might have data-context attribute
+        const context = el.getAttribute("data-context") || undefined;
+        openBuyDialog(context);
+      });
+    });
+
+    // a[href="#buy"] (e.g. nav CTA) also opens the dialog
+    document.querySelectorAll<HTMLAnchorElement>('a[href="#buy"]').forEach((a) => {
+      a.addEventListener("click", (e) => {
+        e.preventDefault();
+        // element might have data-context attribute
+        const context = a.getAttribute("data-context") || undefined;
+        openBuyDialog(context);
+      });
+    });
+
+    // Auto-open if page loaded with #buy in URL
+    if (window.location.hash === "#buy") {
+      openBuyDialog("fragment");
+    }
+  }
+</script>
+
+<style lang="scss" is:global>
+  body.buy-dialog-open {
+    overflow: hidden;
+  }
+</style>
+
+<style lang="scss">
+  .ha-buy-dialog {
+    border: none;
+    padding: 20px;
+    background: transparent;
+    color: inherit;
+    max-width: 624px;
+    width: calc(100% - 2rem);
+    overflow: visible;
+    left: 50%;
+    transform: translateX(-50%);
+
+    &::backdrop {
+      background: rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(4px);
+    }
+  }
+
+  .ha-buy-dialog-inner {
+    background-color: #ffffff;
+    border-radius: 8px;
+    display: grid;
+    gap: 20px;
+    padding: 20px;
+    width: 100%;
+    overflow: hidden;
+    color: #0c0c0c;
+  }
+
+  .ha-buy-dialog-header {
+    align-items: flex-start;
+    display: flex;
+    gap: 12px;
+
+    .product-name {
+      flex-grow: 1;
+      font-size: 20px;
+      line-height: 1.2;
+      color: #0c0c0c;
+
+      @media (min-width: 704px) {
+        font-size: 28px;
+      }
+    }
+
+    .close {
+      align-items: center;
+      cursor: pointer;
+      display: flex;
+      flex-shrink: 0;
+      background: none;
+      border: none;
+      padding: 0;
+      color: #0c0c0c;
+
+      &:hover {
+        opacity: 0.7;
+      }
+    }
+  }
+
+  .alert {
+    background-color: #fff7e0;
+    border: 1px solid #f5d98b;
+    border-radius: 8px;
+    color: #6b5300;
+    font-size: 14px;
+    padding: 12px 16px;
+
+    strong {
+      color: #6b5300;
+    }
+  }
+
+  .ha-buy-dialog-content {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    max-height: 100%;
+    overflow: hidden;
+
+    @media (min-width: 704px) {
+      flex-direction: row;
+    }
+  }
+
+  .ha-buy-dialog-sidebar {
+    background-color: #f0f0f3;
+    border-radius: 8px;
+    min-width: 148px;
+    padding: 12px;
+
+    &-label {
+      font-size: 14px;
+      font-weight: 700;
+      padding-bottom: 8px;
+      color: #0c0c0c;
+    }
+
+    &-tabs {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: 4px;
+
+      @media (min-width: 704px) {
+        flex-direction: column;
+        flex-wrap: nowrap;
+      }
+    }
+
+    &-tab {
+      background-color: transparent;
+      border-radius: 4px;
+      color: #4f606e;
+      cursor: pointer;
+      flex-basis: 40%;
+      flex-grow: 1;
+      font-size: 14px;
+      padding: 8px;
+      text-align: center;
+      transition: background-color 0.1s;
+      user-select: none;
+
+      @media (min-width: 704px) {
+        flex-basis: unset;
+        text-align: left;
+        font-size: 16px;
+      }
+
+      &:hover {
+        background-color: #e1e1e1;
+      }
+
+      &.active {
+        background-color: #fcfcff;
+        color: #000;
+        pointer-events: none;
+      }
+    }
+  }
+
+  .ha-buy-dialog-tab-content-wrapper {
+    flex-grow: 1;
+    height: 100%;
+    max-height: 475px;
+    overflow-y: auto;
+  }
+
+  .ha-buy-dialog-tab-content {
+    display: none;
+    flex-direction: column;
+    gap: 32px;
+
+    &.active {
+      display: flex;
+    }
+  }
+
+  .ha-buy-dialog-distributor-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+
+    @media (min-width: 704px) {
+      justify-content: flex-start;
+      max-width: 400px;
+    }
+  }
+
+  .ha-buy-dialog-distributor-item {
+    border: 1px solid #f0f0f3;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-height: 60px;
+    padding: 8px 16px;
+    place-items: center;
+    text-align: center;
+    text-decoration: none;
+    transition: background-color 0.1s;
+    width: 120px;
+
+    &:hover {
+      background-color: #f0f0f3;
+    }
+
+    span {
+      color: #4f606e;
+      font-size: 10px;
+      line-height: 1;
+      text-wrap: balance;
+    }
+  }
+
+  .ha-buy-dialog-distributor-name {
+    color: #0c0c0c !important;
+    font-size: 14px !important;
+    font-weight: 600;
+    white-space: normal !important;
+    text-align: center;
+  }
+
+  .ha-buy-dialog-distributor-logo {
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    flex-grow: 1;
+    height: 100%;
+    max-height: 40px !important;
+    object-fit: contain;
+  }
+
+  .ha-buy-dialog-distributor-note {
+    font-style: italic;
+  }
+</style>

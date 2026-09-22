@@ -1,0 +1,130 @@
+---
+import { LinkButton } from "@astrojs/starlight/components";
+---
+
+<section class="supported-microcontrollers">
+  <div class="container">
+    <div class="content-container">
+      <h2>Supported microcontrollers</h2>
+
+      <div class="cards">
+        <div class="card card-bgc">
+          <h3 class="card__title">ESP32</h3>
+          <p>
+            The modern standard for DIY smart devices. Powerful, budget-friendly, and packed with built-in Wi-Fi and
+            Bluetooth.
+          </p>
+          <LinkButton
+            href="/components/#supported-microcontrollers"
+            class="card__text-link"
+            icon="right-arrow"
+            iconPlacement="start">Discover more</LinkButton
+          >
+        </div>
+
+        <div class="card card-bgc">
+          <h3 class="card__title">ESP8266</h3>
+          <p>The original low-cost Wi-Fi microcontroller. Ideal for basic sensors and simple projects.</p>
+          <LinkButton
+            href="/components/#supported-microcontrollers"
+            class="card__text-link"
+            icon="right-arrow"
+            iconPlacement="start">Discover more</LinkButton
+          >
+        </div>
+
+        <div class="card card-bgc">
+          <h3 class="card__title">RP2040 / RP2350</h3>
+          <p>Raspberry Pi’s custom microcontroller. Great for high-performance projects and wired USB setups.</p>
+          <LinkButton
+            href="/components/#supported-microcontrollers"
+            class="card__text-link"
+            icon="right-arrow"
+            iconPlacement="start">Discover more</LinkButton
+          >
+        </div>
+
+        <div class="card card-bgc">
+          <h3 class="card__title">BK72xx, RTL87xx, nRF52 and LN882</h3>
+          <p>
+            Alternative wireless chips found in many off-the-shelf smart plugs and light bulbs (e.g. Nordic, Beken and
+            Realtek).
+          </p>
+          <LinkButton
+            href="/components/#supported-microcontrollers"
+            class="card__text-link"
+            icon="right-arrow"
+            iconPlacement="start">Discover more</LinkButton
+          >
+        </div>
+
+        <div class="card card-bgc">
+          <h3 class="card__title">Desktop</h3>
+          <p>Run and test ESPHome components on your computer without any physical hardware connected.</p>
+          <LinkButton
+            href="/components/#supported-microcontrollers"
+            class="card__text-link"
+            icon="right-arrow"
+            iconPlacement="start">Discover more</LinkButton
+          >
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style lang="scss">
+  @use "../../styles/mixins" as *;
+
+  .supported-microcontrollers {
+    .cards {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+      margin-top: 2rem;
+
+      @include bp(tablet) {
+        margin-top: 3rem;
+        grid-template-columns: repeat(4, 1fr);
+      }
+
+      @include bp(desktop) {
+        grid-template-columns: repeat(6, 1fr);
+      }
+    }
+
+    .card {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+
+      @include bp(tablet) {
+        grid-column: span 2;
+      }
+
+      @media (min-width: 768px) and (max-width: 1023px) {
+        &:nth-last-child(1):nth-child(2n + 1) {
+          grid-column: span 4;
+        }
+      }
+
+      @include bp(desktop) {
+        grid-column: span 2;
+
+        &:nth-last-child(1):nth-child(3n + 1) {
+          grid-column: span 6;
+        }
+
+        &:nth-last-child(2):nth-child(3n + 1),
+        &:nth-last-child(1):nth-child(3n + 2) {
+          grid-column: span 3;
+        }
+      }
+
+      .card__text-link {
+        margin: auto auto 0;
+        transform: translateX(-0.75rem);
+      }
+    }
+  }
+</style>

@@ -6,9 +6,9 @@ title: "LibreTiny Platform"
 This component contains platform-specific options for the [LibreTiny](https://docs.libretiny.eu/) platform.
 It provides support for the following microcontrollers, commonly used in Tuya devices, amongst others:
 
-- **BK72xx**: BK7231T, BK7231N
+- **BK72xx**: BK7231T, BK7231N, BK7238
 - **RTL87xx**: RTL8710BN, RTL8710BX
-- **LN882x**: LN882HKI
+- **LN882x**: LN882H
 
 Since different microcontrollers are supported, you need to include the appropriate ESPHome component,
 depending on which processor your device has.
@@ -26,7 +26,7 @@ rtl87xx:
 
 # Example configuration entry for LN882x
 ln882x:
-  board: generic-ln882hki
+  board: generic-ln882h
 ```
 
 ## Configuration variables
@@ -41,10 +41,10 @@ ln882x:
 - **framework** (*Optional*): Options for the underlying framework used by ESPHome.
 
   - **version** (*Optional*, string): The LibreTiny version number to use, from
-    [LibreTiny platform releases](https://github.com/kuba2k2/libretiny/releases). Defaults to `recommended`. Additional values
+    [LibreTiny platform releases](https://github.com/libretiny-eu/libretiny/releases). Defaults to `recommended`. Additional values
 
-    - `dev`  : Use the latest commit from [https://github.com/kuba2k2/libretiny](https://github.com/kuba2k2/libretiny), note this may break at any time
-    - `latest`  : Use the latest *release* from [https://github.com/kuba2k2/libretiny/releases](https://github.com/kuba2k2/libretiny/releases), even if it hasn't been recommended yet.
+    - `dev`  : Use the latest commit from [https://github.com/libretiny-eu/libretiny](https://github.com/libretiny-eu/libretiny), note this may break at any time
+    - `latest`  : Use the latest *release* from [https://github.com/libretiny-eu/libretiny/releases](https://github.com/libretiny-eu/libretiny/releases), even if it hasn't been recommended yet.
     - `recommended`  : Use the recommended framework version.
 
   - **source** (*Optional*, string): The PlatformIO package or repository to use for the framework. This can be used to use a custom or patched version of the framework.
@@ -52,14 +52,14 @@ ln882x:
   - [Advanced options](#advanced-options)
 
 - **family** (*Optional*, string): The family of LibreTiny-supported microcontrollers that is used on this board.
-  One of `bk7231n`, `bk7231t`, `rtl8710b`, `rtl8720c`, `bk7251`, `bk7231q`, `ln882hki`.
+  One of `bk7231n`, `bk7231q`, `bk7231t`, `bk7238`, `bk7251`, `ln882h`, `rtl8710b`, `rtl8720c`.
   Defaults to the variant that is detected from the board, if a board that's unknown to ESPHome is used,
   this option is mandatory. **It's recommended not to include this option**.
 
 > [!NOTE]
 > Support for the LibreTiny platform is still in development and there could be issues or missing components.
 >
-> Please report any issues on [LibreTiny GitHub](https://github.com/kuba2k2/libretiny).
+> Please report any issues on [LibreTiny GitHub](https://github.com/libretiny-eu/libretiny).
 
 ## Getting Started
 
@@ -158,8 +158,6 @@ uart:
   baud_rate: 9600
 tuya:
 ```
-
-<span id="advanced-options"></span>
 
 ## Advanced options
 

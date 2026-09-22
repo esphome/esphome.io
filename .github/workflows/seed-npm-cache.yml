@@ -1,0 +1,39 @@
+name: Seed npm cache
+
+# CI only runs on pull requests, so its setup-node npm cache is never saved
+# to a branch scope. Without a branch-scoped copy every pull request misses,
+# downloads all dependencies, and saves a ~120MB copy into its own merge ref
+# that no other run can reuse, crowding the 10GB Actions cache quota. This
+# workflow saves one shared copy per branch that pull request runs restore
+# (current is the default branch, readable by every run; the next and beta
+# copies cover pull requests based on those branches when the lock files
+# diverge); an exact-key hit also stops setup-node from saving per-PR copies.
+
+on:
+  push:
+    branches: [current, next, beta]
+    paths:
+      - package-lock.json
+      - .github/workflows/seed-npm-cache.yml
+  # For the initial seed and re-seeding after a cache eviction.
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  seed:
+    name: Seed
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version-file: .node-version
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci

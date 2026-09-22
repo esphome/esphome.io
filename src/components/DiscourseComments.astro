@@ -1,0 +1,72 @@
+---
+// Embeds a Discourse comments/discussion section for blog posts.
+// Discourse auto-creates a topic per post using the canonical page URL and
+// syncs replies back into the embedded thread. The account that owns the
+// created topics is configured via "embed by username" in the Discourse admin
+// settings, so no discourse-username meta tag is emitted here.
+//
+// The caller (MarkdownContent.astro) only renders this component on blog post
+// pages, so no page-type gating is needed here. Keeping the template
+// unconditional also avoids a prettier-plugin-astro parse bug that trips on
+// define:vars scripts nested inside a `{cond && (...)}` expression.
+const discourseUrl = "https://community.home-assistant.io/";
+
+// The embed URL must be the canonical URL of the page, matching the
+// <link rel="canonical"> Starlight emits from Astro.url.pathname.
+const embedUrl = new URL(Astro.url.pathname, Astro.site).href;
+---
+
+<section class="discourse-comments not-content">
+  <h2 id="comments">Comments</h2>
+  <div id="discourse-comments"></div>
+  <script is:inline define:vars={{ discourseUrl, embedUrl }}>
+    (function () {
+      // Starlight sets data-theme="light"|"dark" on <html>.
+      function siteTheme() {
+        return document.documentElement.dataset.theme === "dark" ? "dark" : "light";
+      }
+
+      // Mirror the site's light/dark mode into the cross-origin embed. Discourse
+      // applies className as a class on the iframe's own <html> element, so the
+      // forum's Embedded CSS can target it (e.g. `html.dark`).
+      window.DiscourseEmbed = {
+        discourseUrl,
+        discourseEmbedUrl: embedUrl,
+        className: siteTheme(),
+      };
+
+      const d = document.createElement("script");
+      d.type = "text/javascript";
+      d.async = true;
+      d.src = window.DiscourseEmbed.discourseUrl + "javascripts/embed.js";
+      (document.getElementsByTagName("head")[0] || document.getElementsByTagName("body")[0]).appendChild(d);
+
+      // The class is baked into the iframe URL, so re-point the frame whenever
+      // the visitor toggles the site theme to keep the comments in sync.
+      new MutationObserver(function () {
+        const frame = document.getElementById("discourse-embed-frame");
+        if (!frame || !frame.src) return;
+        const url = new URL(frame.src);
+        if (url.searchParams.get("class_name") === siteTheme()) return;
+        url.searchParams.set("class_name", siteTheme());
+        frame.src = url.toString();
+      }).observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ["data-theme"],
+      });
+    })();
+  </script>
+</section>
+
+<style>
+  .discourse-comments {
+    margin-block-start: 3rem;
+    padding-block-start: 2rem;
+    border-block-start: 1px solid var(--sl-color-gray-5);
+  }
+
+  .discourse-comments h2 {
+    margin-block-end: 1.5rem;
+    font-size: var(--sl-text-h3);
+  }
+</style>

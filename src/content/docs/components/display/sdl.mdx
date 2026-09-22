@@ -35,13 +35,22 @@ display:
 
 - **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to re-draw the screen. Defaults to `1s`.
 - **sdl_options** (*Optional*, string): Build arguments if required to specify include or library paths. Should not be required if SDL2 is properly installed.
+- **headless** (*Optional*, boolean): Draw into memory instead of opening a window. Defaults to `false`.
+  See [Headless Operation](#headless-operation). May not be used together with `window_options` or `snapshot_key`.
+- **snapshot_key** (*Optional*): A key that saves a [snapshot](#snapshots) when pressed, for example `SDLK_F12`.
+  See the [SDL binary sensor](/components/binary_sensor/sdl/) for the list of key names. Since this needs a
+  keyboard, it may not be used with `headless`. Each press saves one snapshot; holding the key down does
+  not keep saving them.
 - **pages** (*Optional*, list): Show pages instead of a single lambda. See [Display Pages](/components/display#display-pages).
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
 - **window_options** (*Optional*): Options that affect how the display renders on the host system. All default to false, except position, which defaults to SDL's undefined position
 
-  - **position** (*Optional*):
-    - **x** (**Required**, int): X position of the display window in pixels
-    - **y** (**Required**, int): Y position of the display window in pixels
+  - **position** (*Optional*): Specify the position of the display window on the host system.
+    If not specified, SDL will choose a default position. Either `x` and `y` or `centered_on_display` may be used, but not together.
+    - **x** (*Optional*, int): X position of the display window in pixels
+    - **y** (*Optional*, int): Y position of the display window in pixels
+    - **centered_on_display** (*Optional*, int): For use with multiple display screens.
+      Centers the window on the specified display number. Display numbering starts at 0. May not be used with `x` or `y`.
   - **borderless** (*Optional*, boolean): Whether to draw the display window with or without borders
   - **always_on_top** (*Optional*, boolean): Whether to always draw the display window above other windows or not
   - **fullscreen** (*Optional*, boolean): Whether to draw the display window in fullscreen or not. This may resize the resolution of the host display to match the SDL display dimensions
@@ -50,21 +59,62 @@ display:
 
 > [!NOTE]
 > To build with this display you must have the
-> [SDL2](https://wiki.libsdl.org/SDL2/Installation) package installed. The Sodium encryption library will
-> also be required for any API calls. See below for installation hints.
+> [SDL2](https://wiki.libsdl.org/SDL2/Installation) package installed.
+
+## Headless Operation
+
+With `headless: true` the display draws into memory and no window is opened. This lets the display run on a
+system with no graphical desktop, such as a continuous integration runner or a machine you are logged into over
+SSH. Taking a [snapshot](#snapshots) is then the only way to see what was drawn.
+
+```yaml
+display:
+  - platform: sdl
+    id: my_display
+    headless: true
+    show_test_card: true
+    dimensions:
+      width: 320
+      height: 240
+```
+
+Because there is no window, a headless display receives no mouse or keyboard events. The
+[SDL touchscreen](/components/touchscreen/sdl#sdl_touchscreen) and
+[SDL binary sensor](/components/binary_sensor/sdl/) cannot be used with it, and neither can `window_options`
+or `snapshot_key`.
+
+If all you want is a picture of what a configuration draws, consider the
+[snapshot display](/components/display/snapshot/) instead. It does the same job without SDL, so it needs no
+graphics library installed.
+
+## Snapshots
+
+A snapshot writes the current contents of the display to a `.bmp` file, either when `snapshot_key` is pressed or
+from the [`snapshot.take`](/components/display/snapshot/#snapshot-take-action) action. It works with or without a
+window.
+
+```yaml
+on_...:
+  - snapshot.take:
+      id: my_display
+      filename: start_screen.bmp
+```
+
+Where the file goes and how it is named is described under
+[snapshots](/components/display/snapshot/#snapshots).
 
 ## MacOS SDL2 Installation
 
 The easiest way to install SDL2 on MacOS is using `homebrew`  :
 
 ```sh
-brew install sdl2 libsodium
+brew install sdl2
 ```
 
 It may also be necessary to run the command:
 
 ```sh
-brew link sdl2 libsodium
+brew link sdl2
 ```
 
 To ensure that the files are symlinked correctly.
@@ -75,10 +125,11 @@ You will need the XCode command-line tools installed to build for the host platf
 ## Linux SDL2 Installation
 
 On Debian/Ubuntu derived Linux systems you can install with `apt`  ; also check that you have the necessary build
-tools installed, and you must be using a desktop system with a graphic display.
+tools installed. You must be using a desktop system with a graphic display, unless you set
+[headless](#headless-operation).
 
 ```sh
-apt install libsdl2-dev libsodium-dev build-essential git
+apt install libsdl2-dev build-essential git
 ```
 
 You can check installation with the command `sdl2-config --libs --cflags`.
@@ -97,5 +148,6 @@ The `esphome run yourfile.yaml` command will compile and automatically run the b
 
 - [SDL touchscreen](/components/touchscreen/sdl#sdl_touchscreen)
 - [SDL binary sensor](/components/binary_sensor/sdl/)
+- [Snapshot display](/components/display/snapshot/)
 - [Display Component](/components/display/)
 - <APIRef text="sdl_esphome.h" path="sdl/sdl_esphome.h" />
