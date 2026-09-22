@@ -1,0 +1,115 @@
+---
+description: "Instructions for setting up the Zephyr Power Management platform in ESPHome"
+title: "Zephyr Power Management"
+---
+
+import APIRef from '@components/APIRef.astro';
+
+
+The `zephyr_pm` platform enables Zephyr's system power management (`CONFIG_PM`), device power-down, and
+CPU frequency scaling (`subsys/cpu_freq`), for boards built on the [Zephyr platform](/components/zephyr/).
+
+Every option here depends on what the target board's own devicetree actually declares, not on which
+family (ESP32, nRF52, RP2040, Silicon Labs) it belongs to. Two boards in the same family can differ.
+
+## Usage
+
+```yaml
+# on a board with CONFIG_PM support
+power_management:
+  - platform: zephyr_pm
+    enable_light_sleep: true
+    power_down_device: true
+    profiling: true
+```
+
+```yaml
+# on a board without CONFIG_PM support
+power_management:
+  - platform: zephyr_pm
+    power_down_device: true
+```
+
+## Configuration variables
+
+- **enable_light_sleep** (*Optional*, boolean): Enables `CONFIG_PM`, Zephyr's system power management.
+  Opt-in -- omitting it (or setting it to `false`) leaves `CONFIG_PM` off. Only valid on a board whose
+  devicetree declares a `zephyr,power-state` node; setting it at all (`true` or `false`) on a board
+  without one fails configuration validation, since there's nothing here for it to control.
+- **power_down_device** (*Optional*, boolean): Suspends devices when the system is otherwise idle.
+  Valid regardless of whether `CONFIG_PM`/**enable_light_sleep** is available -- see
+  [Device power-down](#device-power-down) below for how the mechanism differs between the two cases, and
+  why this only ever affects some devices.
+- **profiling** (*Optional*, boolean): Enables profiling for whichever of system power management or CPU
+  frequency scaling is actually active (**enable_light_sleep** and/or **policy**, see
+  [Profiling](#profiling) below). Fails configuration validation if neither is set -- there would be
+  nothing to profile.
+- **policy** (*Optional*, one of `on_demand`, `pressure`): Enables Zephyr's CPU Frequency Scaling
+  subsystem with the given policy. Only valid on a board whose devicetree declares a
+  `performance-states` node. See [CPU frequency scaling](#cpu-frequency-scaling) below -- as of this
+  writing, no board any ESPHome Zephyr platform targets has one, so this option currently fails
+  configuration validation everywhere.
+- All other options from [Power Management](/components/power_management#config-power-management).
+
+## Discussion
+
+### CONFIG_PM and idle-halt
+
+Every board here idle-halts the CPU for free: Zephyr's idle thread unconditionally executes the core's
+wait instruction (WFI/WFE) whenever there's nothing to run, whether or not `CONFIG_PM` is enabled. What
+**enable_light_sleep** actually adds on top of that is deeper, coordinated system power management --
+suspending devices, selecting among the power states the board's devicetree declares, and so on -- which
+only exists where the board's own Zephyr port implements it (tracked here by whether a `zephyr,power-state`
+node is present).
+
+How much power idle-halt alone actually saves is specific to the SoC, and isn't something this component
+can verify or claim -- it varies with the chip's own design, not with anything ESPHome controls.
+
+### Device power-down
+
+**power_down_device** works one of two ways, depending on whether `CONFIG_PM` ends up enabled
+(**enable_light_sleep**):
+
+- **With `CONFIG_PM`:** system-managed device power-down (`PM_DEVICE_SYSTEM_MANAGED`) -- devices are
+  suspended and resumed automatically around system sleep entry/exit.
+- **Without `CONFIG_PM`:** usage-based runtime power management (`PM_DEVICE_RUNTIME`, with
+  `PM_DEVICE_RUNTIME_DEFAULT_ENABLE`) -- devices are suspended/resumed based on their own usage,
+  independent of system sleep state.
+
+In both cases, only a device whose own driver actually implements Zephyr's `PM_DEVICE` hooks is affected
+-- a driver that never implemented them is silently skipped, with no build error and no indication in the
+log. Whether a given device is covered depends on which driver backs it, which this component has no way
+to know or verify.
+
+### Profiling
+
+**profiling** covers whichever of the two subsystems above is active:
+
+- With **enable_light_sleep**, it enables `CONFIG_PM_STATS`, queryable at runtime via Zephyr's shell
+  (`stats list`, if the shell is enabled).
+- With **policy** set, it enables `CONFIG_CPU_FREQ_LOG_LEVEL_DBG` (and `CONFIG_LOG`, if not already on)
+  -- the CPU frequency subsystem has no separate stats API; its policy decisions (CPU load/pressure, the
+  P-state selected) are only observable via debug-level log output.
+
+### CPU frequency scaling
+
+**policy** enables Zephyr's `subsys/cpu_freq`: a policy (`on_demand`: load-based, `pressure`:
+scheduler-pressure-based) periodically selects a P-state from the ones the board's devicetree declares,
+via a `performance-states` node. This is unrelated to `CONFIG_PM`/**enable_light_sleep** -- CPU frequency
+scaling and system sleep are independent Zephyr subsystems.
+
+As of this writing, no board any ESPHome Zephyr platform targets declares a `performance-states` node --
+none has a real CPU frequency scaling driver (`HAS_CPU_FREQ`) in Zephyr yet. Setting **policy** on any of
+them fails configuration validation. The option and its validation exist so the component is ready for a
+board that does have one, without further changes here.
+
+> [!NOTE]
+> `CPU_FREQ_POLICY_TIMING_NOISE` also exists upstream in Zephyr, but it's a timing side-channel
+> mitigation (it periodically hops to a random P-state), not a power/performance policy, so it isn't
+> offered here.
+
+## See Also
+
+- [Power Management Component](/components/power_management/)
+- [Zephyr Component](/components/zephyr/)
+- <APIRef text="zephyr_pm.h" path="zephyr_pm/zephyr_pm.h" />
