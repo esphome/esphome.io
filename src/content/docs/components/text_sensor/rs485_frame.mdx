@@ -37,6 +37,23 @@ to surface it elsewhere.
 The sensor publishes only when the frame type differs from its last published value, at
 most once per `update_interval`, so a steady-state bus produces no API traffic.
 
+For bring-up or reverse engineering, lower `update_interval` (for example `100ms` to `1s`) to see
+frame-type changes sooner. Values down to `1ms` are accepted (ESPHome raises `0ms` to `1ms`); each
+step down trades more API traffic for fresher readings.
+
+At any interval, the sensor is a sample, not a record: it holds only the most recent frame type, so
+frames that arrive between two checks overwrite each other and are never published. To see every
+frame, use the hub's own tools:
+
+- [`dump_frames: true`](/components/rs485_frame/#configuration-variables) logs every validated RX
+  frame and every TX frame at DEBUG level, and is cheap enough to leave on while you work.
+- [`sniffer_stats:`](/components/rs485_frame/#optional-enable-sniffer-stats) logs a per-frame-type
+  table of counts and timings on a fixed interval.
+- [`frame_trace:`](/components/rs485_frame/#frame-trace) keeps a ring buffer of recent RX and TX
+  frames, including ones that failed validation, and dumps it to the log on demand.
+- [`on_frame:`](/components/rs485_frame/#configuration-variables) runs your automation for every
+  matching frame.
+
 ## Example
 
 ```yaml
