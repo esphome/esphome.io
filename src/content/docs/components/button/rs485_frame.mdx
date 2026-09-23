@@ -83,6 +83,11 @@ Provide **exactly one** of the following forms:
   - **payload** (list of hex bytes): The payload bytes that follow the frame type.
     Caller-composed; the hub adds framing and CRC.
 
+  Whichever form is used, the button's resolved on-wire frame (`frame_type:` + `payload:`,
+  or `command_format:`'s preamble + encoded value(s) + postamble) must fit within the
+  referenced hub's `max_frame_length:` (see [the hub config](/components/rs485_frame/)) —
+  rejected at config time otherwise.
+
 - **value_element_bytes** (*Optional*, integer): Overrides only the element byte width for
   this button, using `1`, `2`, `3`, or `4`. Inherits the hub's `preamble`, `endian`, and
   `postamble`. Requires the hub to have `command_format:` set. Cannot be combined with a

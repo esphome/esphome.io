@@ -486,9 +486,12 @@ marks it offline. `tx.idle_command` requires a `command_format:` (see below).
       - [0x01, 0x09]
     ```
 
-    Use `[]` to match every frame. Each prefix is conventionally one or two bytes; up
-    to eight bytes per prefix are accepted (enforced at config time). See the lambda
-    best-practices section above.
+    Use `[]` (the single-prefix form) to match every frame. An individual alternate
+    inside the list-of-prefixes form may not itself be empty — `[[0x01, 0x03], []]` is
+    rejected at config time rather than silently matching every frame for that
+    alternate. Each prefix is conventionally one or two bytes; up to eight bytes per
+    prefix are accepted (enforced at config time). See the lambda best-practices
+    section above.
 
 <span id="response-monitor"></span>
 
@@ -601,10 +604,12 @@ marks it offline. `tx.idle_command` requires a `command_format:` (see below).
       declare an explicit `id:` — useful when the button is defined in a shared package you
       don't want to edit just to add one. Must match exactly one button on this hub. Mutually
       exclusive with `button_id` and `frame_type`.
-    - **frame_type** (*Optional*, list of hex bytes, up to 8 bytes): A trigger that is not a
+    - **frame_type** (*Optional*, list of hex bytes, 1–8 bytes): A trigger that is not a
       declared button entity — e.g. a bare [`rs485_frame.send_frame`](#raw-frame-transmission)
       call. Matched as a prefix of the outgoing payload, the same way `tx.gate.frame_type`
-      matches. Mutually exclusive with `button_id` and `button_name`.
+      matches. Mutually exclusive with `button_id` and `button_name`. Unlike `on_frame`'s
+      `frame_type:`, an empty list is not accepted here — a trigger that matches every
+      outgoing frame has no well-defined window start, so it would never usefully arm.
 
   - **window** (**Required**, [Time](/guides/configuration-types#time)): How long to wait for
     a matching response after the trigger transmits. No default — like `framing.escape` and
@@ -628,6 +633,11 @@ marks it offline. `tx.idle_command` requires a `command_format:` (see below).
       `mask` and `bit` are mutually exclusive; `bit: N` is shorthand for `mask: 0x<1<<N>` — use
       it when the field is a single-bit flag in a bitmask you already reference by bit position
       elsewhere (e.g. a `binary_sensor` package templated on the same `bit:` var).
+
+      `masked_int` only supports fields of 4 bytes or fewer (rejected at config time
+      otherwise) — for a longer field (e.g. display text), use `changed`/`changed_gated`
+      instead, which compare the field's full byte range rather than decoding it as an
+      integer.
 
     - **text_enum**: Exact match against a small set of known ASCII strings. The field is
       decoded as ASCII — the display's blink/inverse flag (bit 7) is stripped, non-printable
@@ -682,7 +692,9 @@ marks it offline. `tx.idle_command` requires a `command_format:` (see below).
       ```
 
       The `gate` block's `mask`/`bit` follow the same rule as above: mutually exclusive, `bit: N`
-      shorthand for `mask: 0x<1<<N>`.
+      shorthand for `mask: 0x<1<<N>`. Unlike the `changed`/`changed_gated` field itself, the
+      `gate` field is always decoded as an integer, so it must be 4 bytes or fewer (rejected
+      at config time otherwise) even when the alert's own field is longer.
 
   - **on_confirmed** (*Optional*, [Automation](/automations/)): Runs when this entry
     resolves *success*.
@@ -910,8 +922,9 @@ them, and the suggested `uart:` snippet omits them — start with `parity: NONE`
 > a short manual sweep of the `uart:` block settles it.
 
 > [!NOTE]
-> `baud_sweep` needs runtime UART reconfiguration, which is implemented on ESP-IDF and ESP8266. On
-> other platforms the sweep is skipped and discovery runs at the `uart:` settings as configured.
+> `baud_sweep` needs runtime UART reconfiguration, which is implemented on ESP-IDF and ESP8266.
+> On other platforms it is rejected at config-validate time — omit `baud_sweep:` there and
+> discovery runs at the `uart:` settings as configured.
 
 ### Step 3: Flash a passive sniffer
 
