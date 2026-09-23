@@ -5,10 +5,11 @@ title: "CDC-ACM UART Bridge"
 import APIRef from '@components/APIRef.astro';
 
 
-The CDC-ACM UART Bridge (the `cdc_acm_uart` platform of the [Bridge](/components/bridge/) component) enables supported ESP32 microcontrollers to act
-as a USB-to-serial adapter, creating a bidirectional bridge between a UART interface and a USB CDC-ACM (Communications
-Device Class - Abstract Control Model) interface. This allows the microcontroller to appear as a virtual serial/COM
-port on a host computer while keeping the UART parameters in sync with the host.
+The CDC-ACM UART Bridge (the `cdc_acm_uart` platform of the [Bridge](/components/bridge/) component) enables
+supported ESP32 microcontrollers to act as a USB-to-serial adapter, creating a bidirectional bridge between a UART
+interface and a USB CDC-ACM (Communications Device Class - Abstract Control Model) interface. This allows the
+microcontroller to appear as a virtual serial/COM port on a host computer while keeping the UART parameters in sync
+with the host.
 
 The following ESP32 microcontroller variants are currently supported:
 
@@ -30,7 +31,7 @@ bridge:
     usb_cdc_acm_id: cdc_interface
 ```
 
-## Configuration variables
+## Configuration Variables
 
 - **uart_id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the UART bus to bridge to the USB
   CDC-ACM interface.
@@ -113,7 +114,7 @@ The bridge has no buffer settings of its own. Data is buffered by the USB CDC-AC
 `rx_buffer_size` and `tx_buffer_size` (see [USB CDC-ACM](/components/usb_cdc_acm/)) to make room for higher baud rates
 or bursty traffic. The defaults of 256 bytes suit most applications up to 115200 baud.
 
-## Pausing the bridge
+## Pausing the Bridge
 
 The bridge can be paused and resumed at runtime through lambda calls. While paused, it stops forwarding in both
 directions: data arriving on the UART stays in the UART's buffer for other code on the device to read, and data sent by
@@ -138,7 +139,7 @@ bridge:
 switch:
   - platform: template
     name: "Bridge paused"
-    optimistic: true
+    lambda: return id(my_bridge).is_paused();
     turn_on_action:
       - lambda: id(my_bridge).pause();
     turn_off_action:
@@ -149,8 +150,9 @@ switch:
 > The bridge normally stops within about 250 ms of `pause()`, but a write from the host that is already in progress
 > is allowed to finish first, which can take longer at low baud rates; any further host data not yet written to the
 > UART is discarded. Check `is_paused()` before using the UART rather than waiting a fixed time. Bytes that arrive on
-> the UART while the bridge is stopping are discarded too, so pause the bridge while both sides are idle. The exclusive-use rule above still applies: another component cannot be
-> configured on the same UART. While the bridge is paused, use the UART directly from lambdas through its `id()`.
+> the UART while the bridge is stopping are discarded too, so pause the bridge while both sides are idle. The
+> exclusive-use rule above still applies: another component cannot be configured on the same UART. While the bridge is
+> paused, use the UART directly from lambdas through its `id()`.
 
 ## See Also
 
