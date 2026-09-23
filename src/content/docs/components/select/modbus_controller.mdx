@@ -75,6 +75,11 @@ registers.
 - **use_write_multiple** (*Optional*, boolean): By default the modbus command *Function Code 6 (Preset Single Registers)*
   is used for setting the holding register if only one register is set. If your device only supports *Function Code 16 (Preset Multiple Registers)* set this option to `true`.
 
+- **expect_broadcast_write_response** (*Optional*, boolean): When the controller's `address` is `0` (see
+  `allow_broadcast_read` on [Modbus Controller](/components/modbus_controller/)), wait for the reply to each write
+  instead of treating it as a fire-and-forget broadcast. Rejected under a controller at any other address.
+  Defaults to `false`.
+
 - **optimistic** (*Optional*, boolean): Whether to operate in optimistic mode - when in this mode,
   any command sent to the Modbus Select will immediately update the reported state. Defaults
   to `false`.
