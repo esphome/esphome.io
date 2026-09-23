@@ -230,12 +230,41 @@ binary_sensor:
 
 - All options from [Binary Sensor](/components/binary_sensor#config-binary_sensor).
 
+## Text Sensor
+
+The `hoermann_hcp` text sensor platform reports the motor's serial number and firmware version. The
+motor is asked once after the device starts, and the values appear a moment later. A value the motor
+does not send after three attempts, 30 seconds apart, stays unknown and a warning is logged.
+
+```yaml
+text_sensor:
+  - platform: hoermann_hcp
+    serial_number:
+      name: Garage Motor Serial Number
+    version:
+      name: Garage Motor Firmware Version
+```
+
+### Configuration variables
+
+- **hoermann_hcp_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the
+  `hoermann_hcp` hub. Only required if you have more than one hub.
+
+- **serial_number** (*Optional*): The motor's serial number. Defaults to the `diagnostic` entity
+  category.
+
+- **version** (*Optional*): The motor's firmware version. Defaults to the `diagnostic` entity
+  category.
+
+- All options from [Text Sensor](/components/text_sensor#config-text_sensor).
+
 ## See Also
 
 - [Cover Component](/components/cover/)
 - [Button Component](/components/button/)
 - [Binary Sensor Component](/components/binary_sensor/)
 - [Light Component](/components/light/)
+- [Text Sensor Component](/components/text_sensor/)
 - [Modbus](/components/modbus/)
 - [HCPBridge project](https://github.com/hkiam/HCPBridge)
 - [Automation](/automations)
