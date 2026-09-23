@@ -3,6 +3,9 @@ description: "RX8025T Time Source"
 title: "RX8025T Time Source"
 ---
 
+The `rx8025t` time platform lets you use the Epson RX8025T real time clock as a time source. The chip keeps
+time from a backup battery while the device is powered off and is connected over I²C.
+
 You first need to set up the [I2C](/components/i2c/) component.
 
 ```yaml
@@ -12,16 +15,15 @@ time:
     id: rx8025t_time
 ```
 
-## Configuration variables
+## Configuration Variables
 
 - **address** (*Optional*, int): Manually specify the I²C address of the RTC. Defaults to `0x32`.
-- All other options from [Base Time Configuration](/components/time#base_time_config).
-
-<span id="rx8025t-write_time_action"></span>
+- All other options from [Base Time Configuration](/components/time/#base-time-configuration).
 
 ## `rx8025t.write_time` Action
 
-This [Action](/automations/actions#config-action) triggers a synchronization of the current system time to the RTC hardware.
+This [Action](/automations/actions/#config-action) triggers a synchronization of the current system time
+to the RTC hardware.
 
 > [!NOTE]
 > The RX8025T component will *not* write to the RTC clock if not triggered *explicitly* by this action.
@@ -35,11 +37,10 @@ on_...:
       id: rx8025t_time
 ```
 
-<span id="rx8025t-read_time_action"></span>
-
 ## `rx8025t.read_time` Action
 
-This [Action](/automations/actions#config-action) triggers a synchronization of the current system time from the RTC hardware.
+This [Action](/automations/actions/#config-action) triggers a synchronization of the current system time
+from the RTC hardware.
 
 > [!NOTE]
 > The RX8025T component will automatically read the RTC clock every 15 minutes by default and synchronize the
@@ -55,7 +56,13 @@ on_...:
       id: rx8025t_time
 ```
 
-<span id="rx8025t-config_example"></span>
+## Invalid Time After Power Loss
+
+When the RTC's oscillator has stopped, for example because the backup battery was removed or ran flat, the
+chip sets its VLF flag. While that flag is set the component logs a warning, treats the stored time as
+invalid and does not synchronize it to the system clock. The flag is cleared by the next successful
+`rx8025t.write_time`, after which reads resume normally. The full configuration example below handles this
+case by writing the time whenever an external source has synchronized.
 
 ## Full Configuration Example
 
