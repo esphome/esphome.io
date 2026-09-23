@@ -368,6 +368,10 @@ marks it offline. `tx.idle_command` requires a `command_format:` (see below).
 - **frame_timeout** (*Optional*, [Time](/guides/configuration-types#time)): Reset receive
   state if a partial frame sits on the bus longer than this. Prevents a noise burst or
   mid-frame cable pull from permanently stalling reception. Defaults to `50ms`.
+
+  Frames dropped by either of the two settings above are counted by the `discarded_frames`
+  sensor decode (see [Diagnostics](#diagnostics)) and, with `frame_trace:` configured, appear
+  in its ring buffer tagged `INVALID`.
 - **framing** (**Required**): DLE-framing configuration. The `escape:` sub-block must be set
   explicitly; the delimiter bytes default to the de-facto standard but can be overridden.
 
@@ -1094,6 +1098,7 @@ as Home Assistant entities. They do **not** decode user payloads — for that, u
 |---|---|---|---|---|
 | `frames_received` | Validated frames received. | `total_increasing` | `frames` | |
 | `crc_failures` | Frames that failed validation (CRC or structural). | `total_increasing` | `frames` | |
+| `discarded_frames` | Frames abandoned mid-receive (buffer overflow or intra-frame timeout), before CRC/structural validation ever ran. | `total_increasing` | `frames` | |
 | `commands_sent` | User commands transmitted (idle keepalives excluded). | `total_increasing` | `commands` | |
 | `command_drops` | Commands dropped (queue full or sniffer mode). | `total_increasing` | `commands` | |
 | `last_keepalive_ms` | Gate-frame interval in ms. | `measurement` | `ms` | `device_class: duration` |
@@ -1186,7 +1191,10 @@ Example output:
   truncated at this length (the logged `len=` is always the actual on-wire length, not the
   truncated capture length). Defaults to `24`.
 - **include_invalid** (*Optional*, boolean): Also capture frames that fail CRC or framing
-  validation, tagged `INVALID` in the dump. Defaults to `true`.
+  validation, tagged `INVALID` in the dump. This also covers frames abandoned mid-receive
+  (buffer overflow or intra-frame timeout, counted by the `discarded_frames` sensor decode)
+  — those never reach CRC/framing validation either, so they are captured under the same
+  flag. Defaults to `true`.
 
 The whole feature is compiled out of the firmware unless `frame_trace:` appears in the YAML —
 production builds pay no flash or RAM cost. It cannot be combined with `discovery:`, which

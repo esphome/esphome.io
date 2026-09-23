@@ -26,6 +26,7 @@ single bit-field LED mask through a multi-field temperature/text frame.
   |---|---|---|---|---|
   | `frames_received` | Validated frames received. | `total_increasing` | `frames` | |
   | `crc_failures` | Frames that failed validation (CRC or structural). | `total_increasing` | `frames` | |
+  | `discarded_frames` | Frames abandoned mid-receive (buffer overflow or intra-frame timeout), before CRC/structural validation ever ran. | `total_increasing` | `frames` | |
   | `commands_sent` | User commands transmitted (idle keepalives excluded). | `total_increasing` | `commands` | |
   | `command_drops` | Commands dropped (queue full or sniffer mode). | `total_increasing` | `commands` | |
   | `last_keepalive_ms` | Gate-frame interval in ms. | `measurement` | `ms` | `device_class: duration` |
@@ -85,6 +86,10 @@ sensor:
   baud rate or UART settings.
 - A small steady `crc_failures` alongside healthy `frames_received` suggests
   `crc.type` or `crc.rx_accept` needs adjustment.
+- `discarded_frames` counts frames that never reached CRC/structural validation at all — a
+  frame that overflowed `max_frame_length` or sat mid-receive past the intra-frame timeout. A
+  rising count usually points to bus noise, a wrong baud rate, or a `max_frame_length` set too
+  small for the bus.
 - `command_drops` should stay at 0 in normal operation. With `queue_policy: replace_latest`,
   every press that arrives while another command is pending increments the counter — useful for
   detecting button mash. With `queue_policy: fifo`, drops indicate the queue is too small.
