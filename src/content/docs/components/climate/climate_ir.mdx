@@ -25,7 +25,7 @@ submit a feature request (see FAQ).
 | [Delonghi](#delonghi_ir) | `delonghi`                         | yes |
 | Emmeti | `emmeti`                           | yes |
 | Fujitsu General | `fujitsu_general`                  | yes |
-| [GREE](#gree_ir) | `gree`                             | yes (`yb1fa` and `yx1ff`) |
+| [GREE](#gree_ir) | `gree`                             | yes |
 | Hitachi | `hitachi_ac344`, `hitachi_ac424` | yes |
 | [LG](#climate_ir_lg) | `climate_ir_lg`                    | yes |
 | [Midea](#midea_ir) | `midea_ir`                         | yes |
@@ -148,13 +148,18 @@ climate:
     model: yan
 ```
 
-The `yb1fa` and `yx1ff` models can also receive commands from the original remote and update the climate state. They
-decode power, operating mode, target temperature from 16 to 30 °C, fan speed, and vertical swing on/off. The `yx1ff`
-model also decodes the sleep preset. Both models only expose vertical swing control, so horizontal and combined swing
-modes are not offered.
+All GREE models can receive commands from the original remote and update the climate state. The receiver validates the
+GREE transport and checksum, then decodes power, operating mode, target temperature from 16 to 30 °C, fan speed, and
+the swing axes supported by the selected model. Timer and other auxiliary fields do not change the climate state.
 
-The `yb1fa` model maps the three numbered fan speeds to low, medium, and high. The `yx1ff` model maps them to quiet,
-low, and medium, and uses the Turbo bit for high.
+The existing `generic`, `yan`, `yaa`, `yac`, `yac1fb9`, and `yag` models use the common GREE state fields while
+allowing OEM-specific values in timer, display-temperature, I-Feel, WiFi, vane-position, and otherwise unused fields.
+This is useful for GREE-compatible units sold under other brands such as Tadiran or Tosot.
+
+The `yb1fa` and `yx1ff` models have stricter model-specific validation because their captured frame formats and
+feature interactions are known. Both expose only vertical swing control. The `yb1fa` model maps the three numbered
+fan speeds to low, medium, and high. The `yx1ff` model maps them to quiet, low, and medium, uses the Turbo bit for high,
+and also decodes the sleep preset.
 
 A GREE command has an inter-block space of approximately 20 ms. Set `remote_receiver.idle` to a value longer than
 that space so the receiver does not split one command into two captures. Use `25ms` to `30ms`; the default `10ms` is
@@ -198,13 +203,12 @@ The following additional features can be controlled with switches. Availability 
 | `yb1fa` | yes | yes | no | yes |
 | `yx1ff` | yes | no | no | no |
 
-On `yb1fa` and `yx1ff`, received commands also update the configured supported switches. ESPHome stores the received
-feature state in the climate component and preserves it when a later climate or feature change transmits a complete
-GREE state frame.
+For models with supported GREE feature switches, received feature bits update the configured switches and are preserved
+when a later climate or feature change transmits a complete GREE state frame. The existing startup restore behavior of
+the legacy `yan`, `yaa`, `yac`, and `yac1fb9` switches is unchanged.
 
-Feature switches for these receive-capable models do not restore a saved state or transmit IR during startup. They
-initially publish the protocol default state and are synchronized by the first valid frame received from the physical
-remote.
+On `yb1fa` and `yx1ff`, feature switches do not restore a saved state or transmit IR during startup. They initially
+publish the protocol default state and are synchronized by the first valid frame received from the physical remote.
 
 On `yb1fa`, Turbo is represented as an effective high fan speed. Enabling the Turbo switch also updates the climate fan
 state to high. Selecting any fan mode through the climate entity disables Turbo; disabling only the Turbo switch leaves
