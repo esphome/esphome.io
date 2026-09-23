@@ -295,17 +295,22 @@ on_...:
 
 Enables or disables repeat playback of the current track.
 
-- **enable** (**Required**, boolean, [templatable](/automations/templates)): Whether the current track should repeat.
+- **enable** (*Optional*, boolean, [templatable](/automations/templates)): Whether the current track
+  should repeat. Defaults to `true`, so the bare action turns repeat on.
 
 ```yaml
 on_...:
   then:
-    - dfplayer.set_current_track_repeat: true
+    - dfplayer.set_current_track_repeat
+
+on_...:
+  then:
+    - dfplayer.set_current_track_repeat: false
 
 on_...:
   then:
     - dfplayer.set_current_track_repeat:
-        enable: false
+        enable: !lambda return id(repeat_switch).state;
 ```
 
 ## All actions
