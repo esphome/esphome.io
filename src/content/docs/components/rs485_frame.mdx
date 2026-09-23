@@ -492,8 +492,8 @@ marks it offline. `tx.idle_command` requires a `command_format:` (see below).
 
     Use `[]` (the single-prefix form) to match every frame. An individual alternate
     inside the list-of-prefixes form may not itself be empty — `[[0x01, 0x03], []]` is
-    rejected at config time rather than silently matching every frame for that
-    alternate. Each prefix is conventionally one or two bytes; up to eight bytes per
+    rejected at config time rather than silently making the whole trigger match every
+    frame. Each prefix is conventionally one or two bytes; up to eight bytes per
     prefix are accepted (enforced at config time). See the lambda best-practices
     section above.
 
@@ -698,7 +698,7 @@ marks it offline. `tx.idle_command` requires a `command_format:` (see below).
       The `gate` block's `mask`/`bit` follow the same rule as above: mutually exclusive, `bit: N`
       shorthand for `mask: 0x<1<<N>`. Unlike the `changed`/`changed_gated` field itself, the
       `gate` field is always decoded as an integer, so it must be 4 bytes or fewer (rejected
-      at config time otherwise) even when the alert's own field is longer.
+      at config time otherwise) even when the alt's own field is longer.
 
   - **on_confirmed** (*Optional*, [Automation](/automations/)): Runs when this entry
     resolves *success*.
@@ -1110,7 +1110,8 @@ any of the defaults above by setting the same key explicitly in your YAML.
 
 The text_sensor exposes one diagnostic: the most recent validated frame type as a
 4-character hex string (e.g. `"0083"`, no separator). It also defaults to
-`entity_category: diagnostic` and publishes only on change.
+`entity_category: diagnostic`. It checks the hub every `update_interval` (default `60s`)
+and publishes only when the frame type differs from its last published value.
 
 ```yaml
 sensor:

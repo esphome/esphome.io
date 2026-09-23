@@ -24,13 +24,18 @@ blink-bit-and-degree-symbol display encoding.
 ## Configuration variables
 
 - **rs485_frame_id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the `rs485_frame` hub.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): How often to
+  check the hub's last frame type. Defaults to `60s`: on a live bus the frame type changes
+  on nearly every frame (Hayward interleaves keep-alive, LED, and display frames; a Jandy
+  master polls several devices in turn), so checking more often mostly adds API traffic.
 
 All other options from [Text Sensor](/components/text_sensor/#base-text-sensor-configuration).
 The platform defaults `entity_category: diagnostic` so Home Assistant groups
 this with the device's other diagnostic entities; override in YAML if you want
 to surface it elsewhere.
 
-The sensor publishes only on change — a steady-state bus produces no API traffic.
+The sensor publishes only when the frame type differs from its last published value, at
+most once per `update_interval`, so a steady-state bus produces no API traffic.
 
 ## Example
 
