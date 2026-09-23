@@ -40,13 +40,19 @@ single bit-field LED mask through a multi-field temperature/text frame.
 - **monitor_id** (**Required** with a `response_*` decode, string): The `name:` of the
   [`response_monitor`](/components/rs485_frame/#response-monitor) entry this sensor reads
   from. Not valid with any other `decode:` value.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): How often to
+  check the underlying counter. Defaults to `60s` for `frames_received` and
+  `last_keepalive_ms` (which change on nearly every RX frame on a live bus) and `1s` for
+  every other `decode:` (which only changes on rare error/edge conditions, so a real
+  occurrence still surfaces promptly).
 
 All other options from [Sensor](/components/sensor/#base-sensor-configuration).
 Every diagnostic also defaults to `entity_category: diagnostic`. You can override
 any of the per-decode defaults by setting the same key explicitly in YAML.
 
-Sensors publish on change only. A counter that has not advanced does not generate
-API traffic, so no `throttle` filter is required for steady-state operation.
+Sensors publish on change only: even though `update_interval` gates how often the
+underlying counter is checked, a value that has not advanced since the last check does
+not generate API traffic, so no `throttle` filter is required for steady-state operation.
 
 ## Example
 
