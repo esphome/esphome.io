@@ -79,8 +79,16 @@ Multiple remote receivers can be configured as a list of dict definitions within
   - **value** (**Required**, int or [Time](/guides/configuration-types#time)): The percentage or time value. Allowed values are in range `0`
     to `100%` or `0` to `4294967295us`.
 
-- **buffer_size** (*Optional*, int): The size of the internal buffer for storing the remote codes. Defaults to `10kB`
-  on the ESP32 and `1kB` on the ESP8266.
+- **buffer_size** (*Optional*, int): The size in bytes of the internal buffer for storing the remote codes. On ESP32
+  variants with RMT one receive slot is `receive_symbols` x 4 + 16 bytes (784 bytes at the default 192 symbols); the
+  default is four slots, 3136 bytes, and an explicit value below two slots is raised to two. On other platforms each
+  buffered pulse takes 4 bytes; the default is `4000B`, which holds 1000 pulses.
+
+  > [!WARNING]
+  > Before 2026.10.0 the value was applied as a number of pulses on ESP8266, RP2040, LibreTiny, ESP32-C2 and
+  > ESP32-C61, four times the bytes requested. Multiply an explicit `buffer_size` on those platforms by 4 to keep the
+  > same capacity. On ESP32 variants with RMT the default was `10kB`; an explicit `buffer_size: 10kb` copied from that
+  > can be removed, since the default now follows `receive_symbols`.
 
 - **filter** (*Optional*, [Time](/guides/configuration-types#time)): Filter any pulses that are shorter than this. Useful for removing
   glitches from noisy signals. Allowed values are in range `0` to `4294967295us`. Defaults to `50us`.
@@ -121,7 +129,8 @@ Multiple remote receivers can be configured as a list of dict definitions within
 | ESP32-S3      | 192 symbols      | 48 symbols |
 
 - **receive_symbols** (*Optional*, int): Maximum receive length in symbols. On some variants the maximum receive is
-  limited to `rmt_symbols`.
+  limited to `rmt_symbols`. Defaults to `192` on every variant; the receive slot size follows this value, while the
+  longest frame that can be received is limited by `rmt_symbols` where that is lower.
 
 - **filter_symbols** (*Optional*, int): Filter out any data received with a length in symbols less than
   `filter_symbols`. Useful for filtering out short bursts of noise.
