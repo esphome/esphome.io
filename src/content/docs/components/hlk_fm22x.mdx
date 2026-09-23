@@ -332,7 +332,9 @@ on_...:
 
 **Configuration options:**
 
-- **name** (**Required**, string, [templatable](/automations/templates)): The name associated with the face. Up to 31 ASCII characters.
+- **name** (**Required**, string, [templatable](/automations/templates)): The name associated with the face. Up to 31 printable ASCII characters.
+  Other characters are refused: the component strips anything else from the module's replies to remove its padding
+  bytes, so such a name would come back shortened.
   Names are labels, not keys: two enrollments may share a name, and each keeps its own `face_id` and admin flag.
   Use unique names if you want to tell people apart by name.
 - **direction** (*Optional*, [templatable](/automations/templates)): The direction to capture the face from: `middle`, `right`, `left`, `down` or `up`.
@@ -364,7 +366,8 @@ on_...:
 ## `hlk_fm22x.cancel` Action
 
 Stops the scan or enrollment that is currently running and clears any directions that were captured for a five
-direction enrollment. The interrupted scan or enrollment reports error `2` (aborted) through its failed trigger.
+direction enrollment. The interrupted scan or enrollment reports error `2` (aborted) through its failed trigger, and
+so does every scan or enrollment that was still waiting in the queue behind it.
 
 ```yaml
 on_...:
@@ -434,33 +437,34 @@ on_...:
 - **id** (*Optional*, ID): Manually specify the ID of the HLK-FM22x reader if you have multiple components.
 
 Commands are queued, so it is fine to call several actions in a row. The module handles one at a time and the
-component sends the next one as soon as the previous one has been answered. If the module stops answering, the
-component reports a warning after the first unanswered command and an error after three, and keeps retrying every
-few seconds until the module is back.
+component sends the next one as soon as the previous one has been answered. Up to six commands can wait at once; a
+scan or enrollment that does not fit is dropped and reports error `7` through its failed trigger. If the module stops
+answering, the component reports a warning after the first unanswered command and an error after three, and keeps
+retrying every few seconds until the module is back.
 
 ## Error codes
 
 The `error` variable of [`on_face_scan_invalid`](#on_face_scan_invalid-trigger) and
 [`on_enrollment_failed`](#on_enrollment_failed-trigger) uses the module's own result codes:
 
-| Code | Meaning                                              |
-| ---- | ---------------------------------------------------- |
-| 1    | The module rejected the command                      |
-| 2    | The scan or enrollment was aborted                   |
-| 4    | The camera could not be opened                       |
-| 5    | Unknown error                                        |
-| 6    | Invalid parameter                                    |
-| 7    | The module is out of memory                          |
-| 8    | Unknown face, or no faces are enrolled               |
-| 9    | The face storage is full                             |
-| 10   | The face is already enrolled                         |
-| 12   | The liveness check failed (for example a photo)      |
-| 13   | Timeout, no usable face was seen                     |
-| 14   | Authorization of the module's encryption chip failed |
-| 19   | Reading a file on the module failed                  |
-| 20   | Writing a file on the module failed                  |
-| 21   | The module expects encrypted communication           |
-| 23   | The camera image was not ready                       |
+| Code | Meaning                                                               |
+| ---- | --------------------------------------------------------------------- |
+| 1    | The module rejected the command                                       |
+| 2    | The scan or enrollment was aborted                                    |
+| 4    | The camera could not be opened                                        |
+| 5    | Unknown error                                                         |
+| 6    | Invalid parameter                                                     |
+| 7    | The module is out of memory, or the component's command queue is full |
+| 8    | Unknown face, or no faces are enrolled                                |
+| 9    | The face storage is full                                              |
+| 10   | The face is already enrolled                                          |
+| 12   | The liveness check failed (for example a photo)                       |
+| 13   | Timeout, no usable face was seen                                      |
+| 14   | Authorization of the module's encryption chip failed                  |
+| 19   | Reading a file on the module failed                                   |
+| 20   | Writing a file on the module failed                                   |
+| 21   | The module expects encrypted communication                            |
+| 23   | The camera image was not ready                                        |
 
 ## Test setup
 
