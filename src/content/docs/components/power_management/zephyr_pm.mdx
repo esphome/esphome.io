@@ -20,7 +20,7 @@ power_management:
   - platform: zephyr_pm
     enable_light_sleep: true
     power_down_device: true
-    profiling: true
+    stats: true
 ```
 
 ```yaml
@@ -40,10 +40,10 @@ power_management:
   Valid regardless of whether `CONFIG_PM`/**enable_light_sleep** is available -- see
   [Device power-down](#device-power-down) below for how the mechanism differs between the two cases, and
   why this only ever affects some devices.
-- **profiling** (*Optional*, boolean): Enables profiling for whichever of system power management or CPU
-  frequency scaling is actually active (**enable_light_sleep** and/or **policy**, see
-  [Profiling](#profiling) below). Fails configuration validation if neither is set -- there would be
-  nothing to profile.
+- **stats** (*Optional*, boolean): Enables stats collection for whichever of system power management or
+  CPU frequency scaling is actually active (**enable_light_sleep** and/or **policy**, see [Stats](#stats)
+  below). Fails configuration validation if neither is set -- there would be nothing to collect stats
+  for.
 - **policy** (*Optional*, one of `on_demand`, `pressure`): Enables Zephyr's CPU Frequency Scaling
   subsystem with the given policy. Only valid on a board whose devicetree declares a
   `performance-states` node. See [CPU frequency scaling](#cpu-frequency-scaling) below -- as of this
@@ -81,12 +81,14 @@ In both cases, only a device whose own driver actually implements Zephyr's `PM_D
 log. Whether a given device is covered depends on which driver backs it, which this component has no way
 to know or verify.
 
-### Profiling
+### Stats
 
-**profiling** covers whichever of the two subsystems above is active:
+**stats** covers whichever of the two subsystems above is active:
 
-- With **enable_light_sleep**, it enables `CONFIG_PM_STATS`, queryable at runtime via Zephyr's shell
-  (`stats list`, if the shell is enabled).
+- With **enable_light_sleep**, it enables `CONFIG_PM_STATS`. This only turns the counters on -- add the
+  [`debug`](/components/debug/) component to actually see them: it periodically logs each power state's
+  entry count and cycles spent, at debug log level, whenever `CONFIG_PM_STATS` is enabled. Without
+  `debug` present, nothing reads or prints these counters.
 - With **policy** set, it enables `CONFIG_CPU_FREQ_LOG_LEVEL_DBG` (and `CONFIG_LOG`, if not already on)
   -- the CPU frequency subsystem has no separate stats API; its policy decisions (CPU load/pressure, the
   P-state selected) are only observable via debug-level log output.
