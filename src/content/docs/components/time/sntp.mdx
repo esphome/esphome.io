@@ -20,6 +20,18 @@ time:
 - **servers** (*Optional*, list of strings): Choose up to 3 NTP servers that are used for the clock source.
   Defaults to `0.pool.ntp.org`, `1.pool.ntp.org` and `2.pool.ntp.org`
 
+- **timezone** (*Optional*): Either a fixed time zone as described in
+  [Base Time Configuration](/components/time#base_time_config), or a mapping that makes the device get its time zone
+  at runtime from an online service. See [Time zone from an online service](#sntp-timezone_service).
+
+  - **service** (*Optional*, string): The service to use. Only `time.now` is available, and it is the default.
+  - **zone** (*Required*, string): The zone to look up. Either a [TZ database name](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones)
+    in the form `<Region>/<City>`, or `ip` to let the service work out the zone from the public IP address of the device.
+  - **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): How often to ask the service again.
+    Defaults to `1h`, minimum `1min`. This is separate from the `update_interval` below, which controls the clock sync.
+  - **http_request_id** (*Optional*, [ID](/guides/configuration-types#id)): The [HTTP Request](/components/http_request) component to use.
+    Not needed if there is only one.
+
 - All other options from [Base Time Configuration](/components/time#base_time_config).
 
 > [!NOTE]
@@ -31,3 +43,92 @@ time:
 > `on_time_sync` only once when it detects that the system clock has been set, even if the update was not done by the
 > SNTP implementation! This must be taken into consideration when SNTP is used together with other real time components,
 > where another time source could update the time before SNTP synchronizes.
+
+<span id="sntp-timezone_service"></span>
+
+## Time zone from an online service
+
+Instead of a fixed time zone, the device can ask the [time.now](https://time.now) service for its current time zone.
+This is useful for devices that are moved between places, or when the zone needs to change without a new firmware.
+It needs the [HTTP Request](/components/http_request) component and works on ESP32, ESP8266 and RP2040.
+
+```yaml
+http_request:
+
+time:
+  - platform: sntp
+    id: sntp_time
+    timezone:
+      service: time.now
+      zone: Europe/London
+      update_interval: 6h
+```
+
+To look up the zone from the public IP address of the device, use `zone: ip`.
+
+How it works:
+
+- The first request is sent after the first clock sync. It is repeated every `update_interval`, and again after
+  one minute if a request fails.
+- Until the first answer arrives, the device uses the zone from the configuration. For `zone: ip`, this is the
+  zone of the computer running ESPHome.
+- The service only gives the current offset from UTC, not the dates when daylight saving time starts and ends.
+  After a daylight saving change the device keeps the old offset until the next request, so a shorter
+  `update_interval` makes the change happen sooner.
+- A zone set with the [`time.sntp.set_timezone`](#sntp-set_timezone_action) action is stored on the device and kept
+  after a restart. It is dropped when the `zone` in the configuration is changed.
+
+> [!NOTE]
+> The requests use HTTPS. On ESP8266 and RP2040 this needs `verify_ssl: false` in the
+> [HTTP Request](/components/http_request) configuration, as those platforms cannot check certificates.
+
+<span id="sntp-set_timezone_action"></span>
+
+## `time.sntp.set_timezone` Action
+
+This [Action](/automations/actions#all-actions) changes the zone at runtime and asks the service for the new
+offset straight away. It can only be used when `timezone` is set to the mapping form described above.
+
+```yaml
+on_...:
+  - time.sntp.set_timezone: Australia/Sydney
+
+  # in case you need to specify the SNTP id
+  - time.sntp.set_timezone:
+      id: sntp_time
+      zone: ip
+
+  # zone as a template
+  - time.sntp.set_timezone:
+      zone: !lambda 'return id(my_zone).state;'
+```
+
+- **zone** (*Required*, string, [templatable](/automations/templates)): A `<Region>/<City>` name, or `ip`.
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the SNTP time. Not needed if there is only one.
+
+A zone name that is not valid is not used, and a warning is written to the log.
+
+## Text Sensor
+
+The `sntp` text sensor platform shows the abbreviation of the current time zone, for example `BST` or `AEST`, as
+reported by the service. It is updated after every successful request, and only works when `timezone` is set to the
+mapping form described above.
+
+```yaml
+text_sensor:
+  - platform: sntp
+    name: Timezone Abbreviation
+```
+
+### Configuration variables
+
+- **sntp_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the SNTP time. Not needed if there is only one.
+- All other options from [Text Sensor](/components/text_sensor#config-text_sensor).
+
+The entity category is `diagnostic` by default.
+
+## See Also
+
+- [Time Component](/components/time)
+- [HTTP Request](/components/http_request)
+- [Text Sensor](/components/text_sensor)
