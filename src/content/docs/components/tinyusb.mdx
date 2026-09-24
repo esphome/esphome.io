@@ -31,7 +31,7 @@ tinyusb:
 
 ## Configuration variables
 
-- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID for this component.
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID for this component.
 - **usb_product_id** (*Optional*, int): USB product identifier. Defaults to `0x4001`.
 - **usb_vendor_id** (*Optional*, int): USB vendor identifier. Defaults to `0x303A` (Espressif Systems).
 - **usb_lang_id** (*Optional*, int): USB language identifier. Defaults to `0x0409` (English - United States).
@@ -39,12 +39,12 @@ tinyusb:
 - **usb_product_str** (*Optional*, string): Product name string descriptor. Defaults to `"ESPHome"`.
 - **usb_serial_str** (*Optional*, string): Serial number string descriptor. If not specified, the device's MAC address
   will be used.
-- **vbus_monitor_pin** (*Optional*, [Pin](/guides/configuration-types#pin)): For a device that has its own power
+- **vbus_monitor_pin** (*Optional*, [Pin](/guides/configuration-types/#pin)): For a device that has its own power
   supply, the GPIO that senses the USB VBUS (5 V) line. Required for `on_unmount` to fire when the cable is
   unplugged; see [Reacting to a USB host](#reacting-to-a-usb-host). Not available on the ESP32-S31.
-- **on_mount** (*Optional*, [Automation](/automations)): An automation to perform when a USB host has connected to the
+- **on_mount** (*Optional*, [Automation](/automations/)): An automation to perform when a USB host has connected to the
   device and finished setting it up. See [Reacting to a USB host](#reacting-to-a-usb-host).
-- **on_unmount** (*Optional*, [Automation](/automations)): An automation to perform when the USB host disconnects.
+- **on_unmount** (*Optional*, [Automation](/automations/)): An automation to perform when the USB host disconnects.
   See [Reacting to a USB host](#reacting-to-a-usb-host).
 
 ## Notes
@@ -69,7 +69,7 @@ The `usb_lang_id` field uses USB Language IDs as defined by the USB specificatio
 
 A more complete list can be found [here](https://github.com/brookebasile/USB-langids/blob/master/USB_LANGIDs.pdf).
 
-## Reacting to a USB host
+## Reacting to a USB Host
 
 The `on_mount` and `on_unmount` automations run when a computer (or any other USB host) connects to the device and
 finishes setting it up, and when it disconnects again. A connection to a charger or a power-only cable does not count
@@ -84,7 +84,7 @@ tinyusb:
     - logger.log: USB host disconnected
 ```
 
-### When the automations run
+### When the Automations Run
 
 `on_mount` runs when a host has finished setting the device up, which is the moment it can start talking to it:
 
@@ -118,7 +118,7 @@ can tell the two apart with `on_mount` alone, without `on_unmount` or extra wiri
 This condition passes while a USB host has the device connected and set up. It reflects what the USB controller
 knows, so on a device with its own power supply and no `vbus_monitor_pin` it stays true after the cable is unplugged.
 
-- **id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the `tinyusb` component. Only needed if you
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the `tinyusb` component. Only needed if you
   have given it an ID yourself.
 
 ```yaml

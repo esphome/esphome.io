@@ -31,7 +31,7 @@ bridge:
     usb_cdc_acm_id: cdc_interface
 ```
 
-## Configuration variables
+## Configuration Variables
 
 - **uart_id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the UART bus to bridge to the USB
   CDC-ACM interface.
@@ -114,7 +114,7 @@ The bridge has no buffer settings of its own. Data is buffered by the USB CDC-AC
 `rx_buffer_size` and `tx_buffer_size` (see [USB CDC-ACM](/components/usb_cdc_acm/)) to make room for higher baud rates
 or bursty traffic. The defaults of 256 bytes suit most applications up to 115200 baud.
 
-## Pausing the bridge
+## Pausing the Bridge
 
 The bridge can be paused and resumed at runtime through lambda calls. While paused, it stops forwarding in both
 directions: data arriving on the UART stays in the UART's buffer for other code on the device to read, and data sent by
@@ -141,7 +141,7 @@ bridge:
 switch:
   - platform: template
     name: "Bridge paused"
-    optimistic: true
+    lambda: return id(my_bridge).is_paused();
     turn_on_action:
       - lambda: id(my_bridge).pause();
     turn_off_action:
