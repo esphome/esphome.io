@@ -16,34 +16,15 @@ the hardware UART only while it is routed to them. Components that check whether
 [Z-Wave Proxy](/components/zwave_proxy/), see the route change as the connection going away and coming back, and
 recover on their own.
 
-The component is available on the ESP32-P4, ESP32-S2 and ESP32-S3, the same variants as the bridge.
+The component is available on the ESP32-P4, ESP32-S2 and ESP32-S3, the same variants as the bridge. It requires a
+[CDC-ACM UART Bridge](/components/bridge/cdc_acm_uart/); see that page for setting up the bridge, its UART and its
+USB CDC-ACM interface.
 
 ```yaml
 # Example configuration entry
-uart:
-  - id: radio_uart
-    tx_pin: GPIOXX
-    rx_pin: GPIOXX
-    baud_rate: 115200
-
-tinyusb:
-  on_mount:
-    - uart_mux.select_bridge: radio_mux
-
-usb_cdc_acm:
-  interfaces:
-    - id: cdc_interface
-
-bridge:
-  - platform: cdc_acm_uart
-    id: radio_bridge
-    uart_id: radio_uart
-    usb_cdc_acm_id: cdc_interface
-
 uart_mux:
   - id: radio_mux
     bridge_id: radio_bridge
-    initial_route: local
 
 zwave_proxy:
   uart_id: radio_mux
@@ -51,8 +32,9 @@ zwave_proxy:
 
 ## Configuration variables
 
-- **bridge_id** (**Required**, [ID](/guides/configuration-types#id)): The [CDC-ACM UART Bridge](/components/bridge/cdc_acm_uart/)
-  whose UART is shared. The mux takes the UART from the bridge, so it is not configured here.
+- **bridge_id** (**Required**, [ID](/guides/configuration-types#id)): The
+  [CDC-ACM UART Bridge](/components/bridge/cdc_acm_uart/) whose UART is shared. The mux takes the UART from the
+  bridge, so it is not configured here.
 - **initial_route** (*Optional*, string): Who gets the UART at boot: `bridge` or `local`. Defaults to `bridge`. See
   [Following a USB host](#following-a-usb-host) for when to use `local`.
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID for this component.
