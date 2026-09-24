@@ -113,6 +113,8 @@ api:
 - **reboot_timeout** (*Optional*, [Time](/guides/configuration-types#time)): The amount of time to wait before rebooting when no
   client connects to the API. This is needed because sometimes the low level ESP functions report that
   the ESP is connected to the network, when in fact it is not - only a full reboot fixes it.
+  Only a client that completes authentication counts; a connection that never does, such as a port scan or
+  a client with a stale encryption key, does not hold off the reboot.
   Can be disabled by setting this to `0s`. Defaults to `15min`.
 
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
