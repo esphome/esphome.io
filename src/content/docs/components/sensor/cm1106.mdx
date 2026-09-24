@@ -44,6 +44,35 @@ sensor:
 
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for actions.
 
+- **automatic_baseline_calibration** (*Optional*, boolean or mapping): CM1106 has an automatic
+  baseline calibration procedure (ABC). The sensor refreshes the baseline against the lowest
+  reading observed during each calibration cycle; with the default settings a cycle starts 24 hours
+  after the sensor is powered on and then repeats every 15 days.
+  Set this value to `false` to disable ABC on boot (recommended for most indoor sensors).
+  Set this value to `true` to enable ABC on boot.
+  No calibration command is sent if not set (the sensor's stored logic is used).
+
+  - **cycle** (*Optional*, int, [1, 90]): Calibration
+    cycle interval in days. Defaults to `15`.
+  - **baseline** (*Optional*, int, [400, 10000]): The
+    reference concentration the baseline is refreshed against, in ppm. Defaults to `400`. ABC
+    requires at least 400ppm; the value cannot be set below the factory reference.
+
+  Set to `true` to enable ABC on boot with the default cycle and baseline:
+
+  ```yaml
+  automatic_baseline_calibration: true
+  ```
+
+  Alternatively, provide a mapping to customize the cycle and baseline; the mapping implicitly
+  enables ABC:
+
+  ```yaml
+  automatic_baseline_calibration:
+    cycle: 7
+    baseline: 420
+  ```
+
 ## `cm1106.calibrate_zero` Action
 
 This [action](/automations/actions#all-actions) executes zero point calibration command on the sensor with the given ID.
@@ -99,6 +128,39 @@ binary_sensor:
       then:
         - cm1106.calibrate_zero: my_cm1106_id
     internal: true
+```
+
+## `cm1106.abc_enable` Action
+
+This [action](/automations/actions#all-actions) enables automatic baseline calibration on the sensor with the given ID.
+
+```yaml
+on_...:
+  then:
+    - cm1106.abc_enable: my_cm1106_id
+```
+
+## `cm1106.abc_disable` Action
+
+This [action](/automations/actions#all-actions) disables automatic baseline calibration on the sensor with the given ID.
+
+```yaml
+on_...:
+  then:
+    - cm1106.abc_disable: my_cm1106_id
+```
+
+You can provide a switch to control ABC from Home Assistant.
+
+```yaml
+switch:
+  - platform: template
+    name: "CM1106 ABC"
+    optimistic: true
+    on_turn_on:
+      cm1106.abc_enable: my_cm1106_id
+    on_turn_off:
+      cm1106.abc_disable: my_cm1106_id
 ```
 
 ## See Also
