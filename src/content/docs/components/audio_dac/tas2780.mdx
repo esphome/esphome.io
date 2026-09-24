@@ -17,9 +17,6 @@ with the TAS2780 for configuration and status monitoring. Audio data is delivere
 audio_dac:
   - platform: tas2780
     id: tas2780_amp
-    amp_level: 8
-    power_mode: 2
-    channel: mono
 ```
 
 <span id="config-tas2780"></span>
@@ -109,17 +106,17 @@ platform as well.
 
 ## Configuration Examples
 
-**Basic stereo speaker with media player:**
+**Mono speaker:**
 
 ```yaml
 i2c:
-  sda: GPIO8
-  scl: GPIO9
+  sda: GPIOXX
+  scl: GPIOXX
 
 i2s_audio:
   - id: i2s_output
-    i2s_lrclk_pin: GPIO5
-    i2s_bclk_pin: GPIO6
+    i2s_lrclk_pin: GPIOXX
+    i2s_bclk_pin: GPIOXX
 
 audio_dac:
   - platform: tas2780
@@ -132,7 +129,7 @@ speaker:
   - platform: i2s_audio
     id: amp_speaker
     i2s_audio_id: i2s_output
-    i2s_dout_pin: GPIO7
+    i2s_dout_pin: GPIOXX
     dac_type: external
     audio_dac: tas2780_amp
 ```
