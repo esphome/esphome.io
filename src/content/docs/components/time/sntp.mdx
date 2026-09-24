@@ -22,14 +22,16 @@ time:
 
 - **timezone** (*Optional*): Either a fixed time zone as described in
   [Base Time Configuration](/components/time#base_time_config), or a mapping that makes the device get its time zone
-  at runtime from an online service. See [Time zone from an online service](#sntp-timezone_service).
+  at runtime from an online service. See [Time Zone From an Online Service](#sntp-timezone_service).
 
   - **service** (*Optional*, string): The service to use. Only `time.now` is available, and it is the default.
-  - **zone** (*Required*, string): The zone to look up. Either a [TZ database name](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones)
-    in the form `<Region>/<City>`, or `ip` to let the service work out the zone from the public IP address of the device.
+  - **zone** (*Required*, string): The zone to look up. Either
+    a [TZ database name](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones)
+    in the form `<Region>/<City>`, or `ip` to let the service work out the zone from the public
+    IP address of the device.
   - **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): How often to ask the service again.
     Defaults to `1h`, minimum `1min`. This is separate from the `update_interval` below, which controls the clock sync.
-  - **http_request_id** (*Optional*, [ID](/guides/configuration-types#id)): The [HTTP Request](/components/http_request) component to use.
+  - **http_request_id** (*Optional*, [ID](/guides/configuration-types#id)): The [HTTP Request](/components/http_request/) component to use.
     Not needed if there is only one.
 
 - All other options from [Base Time Configuration](/components/time#base_time_config).
@@ -46,11 +48,11 @@ time:
 
 <span id="sntp-timezone_service"></span>
 
-## Time zone from an online service
+## Time Zone From an Online Service
 
-Instead of a fixed time zone, the device can ask the [time.now](https://time.now) service for its current time zone.
+Instead of a fixed time zone, the device can ask the [time.now](https://time.now/) service for its current time zone.
 This is useful for devices that are moved between places, or when the zone needs to change without a new firmware.
-It needs the [HTTP Request](/components/http_request) component and works on ESP32, ESP8266 and RP2040.
+It needs the [HTTP Request](/components/http_request/) component and works on ESP32, ESP8266 and RP2040.
 
 ```yaml
 http_request:
@@ -80,7 +82,7 @@ How it works:
 
 > [!NOTE]
 > The requests use HTTPS. On ESP8266 and RP2040 this needs `verify_ssl: false` in the
-> [HTTP Request](/components/http_request) configuration, as those platforms cannot check certificates.
+> [HTTP Request](/components/http_request/) configuration, as those platforms cannot check certificates.
 
 <span id="sntp-set_timezone_action"></span>
 
@@ -120,7 +122,7 @@ text_sensor:
     name: Timezone Abbreviation
 ```
 
-### Configuration variables
+### Configuration Variables
 
 - **sntp_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the SNTP time. Not needed if there is only one.
 - All other options from [Text Sensor](/components/text_sensor#config-text_sensor).
@@ -129,6 +131,6 @@ The entity category is `diagnostic` by default.
 
 ## See Also
 
-- [Time Component](/components/time)
-- [HTTP Request](/components/http_request)
-- [Text Sensor](/components/text_sensor)
+- [Time Component](/components/time/)
+- [HTTP Request](/components/http_request/)
+- [Text Sensor](/components/text_sensor/)
