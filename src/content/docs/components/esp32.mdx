@@ -511,6 +511,22 @@ esp32:
   the bootloader is already compatible. ESPHome will log a suggestion at boot if it detects a compatible bootloader
   and this option is not yet enabled.
 
+- **flash_chip** (*Optional*, string): Keep only the SPI flash vendor driver the board needs. One of `generic`,
+  `gd`, `issi`, `mxic`, `winbond`, `boya`, `th`, or `mxic_opi` (ESP32-S3 with `flash_mode: opi` only). ESP-IDF
+  links a driver for every vendor it supports and picks one at boot from the flash ID; the others still take IRAM
+  and about 124 bytes of DRAM each. Naming the vendor drops the rest, roughly 1 KB of IRAM on the original ESP32
+  and 2 to 3 KB on the ESP32-S3.
+
+  Leave it unset first: ESPHome logs a line at boot such as `Set flash_chip: gd under esp32 > framework > advanced`
+  with the value to use.
+
+  A wrong value falls back to the generic driver and ESPHome logs a warning at boot. In the default `dio` and
+  `dout` flash modes that is the whole effect; the generic driver works with every chip. In `qio` and `qout`
+  mode an ISSI or MXIC chip, or a larger GigaDevice chip, needs its own driver to enable quad mode, and flash
+  init can fail at startup; an OTA update then rolls back to the previous firmware, a USB flash needs to be
+  repeated with the right value. Winbond and GigaDevice chips above 16 MB are limited to 16 MB under the generic
+  driver.
+
 - **enable_idf_experimental_features** (*Optional*, boolean): Can be set to `true` to enable experimental features. Use of
   experimental features may cause instability or other issues.
 
@@ -637,6 +653,10 @@ The following options disable unused VFS features to save flash memory:
   `true` only if an external component needs full FILE\*-based `fprintf()` with output longer than 512 bytes.
   Defaults to `false` (lightweight stubs to save flash).
 
+  On the ESP32-C6, builds using [HTTP Request](/components/http_request/) also no longer link newlib's printf engine
+  (saving ~20 KB flash) because ESPHome supplies a `vasprintf` built on the ROM `vsnprintf`. This is automatic and is
+  disabled together with `enable_full_printf: true`.
+
 Some options can be disabled to save flash memory without affecting typical ESPHome functionality. The performance
 options (defaulting to `true`) improve socket operation performance but can be disabled if you need better
 multi-threaded scalability (which is uncommon since ESPHome uses an event loop).
@@ -644,6 +664,18 @@ multi-threaded scalability (which is uncommon since ESPHome uses an event loop).
 - **disable_mbedtls_pkcs7** (*Optional*, boolean): Disable PKCS#7 support in mbedTLS. PKCS#7 is used for specific certificate
   validation scenarios that ESPHome doesn't typically use. Components that require PKCS#7 automatically enable it regardless
   of this setting. Disabling this saves code size. Defaults to `true` (PKCS#7 disabled to save flash).
+
+- **disable_mbedtls_tls_server** (*Optional*, boolean): Build mbedTLS as a TLS client only, dropping the server-side
+  handshake code. Nothing in ESPHome accepts TLS connections; components that do (OpenThread's DTLS commissioner)
+  automatically re-enable it. Set to `false` if an external component runs an HTTPS server. Defaults to `true` (server
+  code removed, saving ~7 KB flash).
+
+- **disable_mbedtls_tls_extras** (*Optional*, boolean): Remove TLS features that an HTTPS or MQTT client talking to a
+  modern server never negotiates: static RSA and static ECDH key exchange, TLS renegotiation, session tickets, AES-CCM
+  ciphersuites and deterministic ECDSA. If a server only offers one of these legacy ciphersuites, the TLS handshake fails
+  and the error is logged; set this to `false` to restore them. Components that need any of these (OpenThread)
+  automatically re-enable them. A value set explicitly under `sdkconfig_options` always takes precedence. Defaults to
+  `true` (legacy TLS features removed, saving ~10 KB flash).
 
 **Debug and Development Options:**
 
@@ -713,6 +745,8 @@ esp32:
       use_full_certificate_bundle: false  # Saves ~51 KB flash
       disable_mbedtls_peer_cert: true  # Saves ~4 KB heap per connection
       disable_mbedtls_pkcs7: true  # Saves code size
+      disable_mbedtls_tls_server: true  # Saves ~7 KB flash
+      disable_mbedtls_tls_extras: true  # Saves ~10 KB flash
 
       # C library options
       enable_full_printf: false  # Saves ~11 KB flash
@@ -727,6 +761,8 @@ esp32:
       disable_fatfs: true  # Saves code size (auto-enabled by SD card components)
       disable_regi2c_in_iram: true  # Saves IRAM
       adc_oneshot_in_iram: false  # Auto-enabled by ADC component
+
+      # flash_chip: gd  # Keep one flash vendor driver; the boot log names the value
 
       # ESP32 (original) only options
       # sram1_as_iram: true  # +40 KB IRAM (requires bootloader from ESP-IDF >= 5.1)
@@ -785,6 +821,13 @@ ESPHome can protect an ESP32 device on several fronts. These options are all con
   Adding this block — even with no options inside — compiles signature verification into the firmware: the
   device will reject any OTA update that is not signed with a trusted key. The options below only control how
   the firmware gets signed.
+
+  > [!NOTE]
+  > A device built this way also advertises `ota_signed=1` in its [mDNS](/components/mdns/) TXT records, meaning
+  > it accepts only updates signed by a key it trusts. Tools that discover devices on the network can use this
+  > to check up front whether they can sign an update at all, and say that a serial flash is needed when they
+  > cannot. A missing record does not mean the device accepts unsigned updates: it may have mDNS disabled or run
+  > firmware from before the record was added.
 
   - **signing_key** (*Optional*, filename): Path to a PEM-encoded private signing key. When provided, the firmware
     is **automatically signed during build** using `espsecure`. This is the simplest workflow — the public key is
