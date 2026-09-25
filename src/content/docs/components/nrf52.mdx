@@ -16,8 +16,8 @@ nrf52:
 
 ## Configuration variables
 
-- **board** (*Required*, string): The board type. Valid options are `adafruit_feather_nrf52840`, `adafruit_itsybitsy_nrf52840`, `xiao_ble`. Other boards should work with those configuration as well.
-- **bootloader** (*Optional*, string): Bootloader type. Valid options are `mcuboot`, `adafruit`, `adafruit_nrf52_sd132`, `adafruit_nrf52_sd140_v6`, `adafruit_nrf52_sd140_v7`. Default value depends on board type.
+- **board** (*Required*, string): The board type. Valid options are `adafruit_feather_nrf52840`, `adafruit_itsybitsy_nrf52840`, `xiao_ble`, `nrf52840dongle`. Other boards should work with those configuration as well.
+- **bootloader** (*Optional*, string): Bootloader type. Valid options are `mcuboot`, `adafruit`, `adafruit_nrf52_sd132`, `adafruit_nrf52_sd140_v6`, `adafruit_nrf52_sd140_v7`, `nrf`. Default value depends on board type.
 - **dcdc** (*Optional*, boolean): Enable DC/DC converter for REG1 stage. Defaults follow board settings from Zephyr.
 External LC filters must be connected to the DC/DC regulator pins if it is being used.
 The advantage of using a DC/DC regulator is that the overall power consumption is normally reduced
@@ -26,7 +26,7 @@ as the efficiency of such a regulator is higher than that of a LDO.
 
 ## Getting Started
 
-The nRF52840 requires a bootloader, with two supported options: `MCUboot` and `Adafruit nRF52 Bootloader`. It is recommended to use MCUboot as it supports OTA (Over-The-Air) updates. Your board most likely comes with a manufacturer-provided bootloader. ESPHome determines the bootloader type based on the board name.
+The nRF52840 requires a bootloader, with three supported options: `MCUboot`, `Adafruit nRF52 Bootloader`, and the Nordic Open DFU Bootloader (factory-flashed on the nRF52840 Dongle). It is recommended to use MCUboot as it supports OTA (Over-The-Air) updates. Your board most likely comes with a manufacturer-provided bootloader. ESPHome determines the bootloader type based on the board name.
 
 Examples of low power [nRF52840 boards](https://github.com/joric/nrfmicro/wiki).
 
@@ -62,6 +62,45 @@ This bootloader supports updates over USB CDC.
 nrf52:
   board: adafruit_itsybitsy_nrf52840
 ```
+
+## Flashing the Nordic nRF52840 Dongle (PCA10059)
+
+The dongle ships with Nordic's Open DFU Bootloader factory-flashed at the top of
+flash (`0xE0000`–`0x100000`). ESPHome reserves that region and boots your
+application directly after it — no custom bootloader is built.
+
+### First flash and recovery
+
+1. Connect the dongle to the PC while holding the **SW1** button (the small
+   button on the far side of the PCB from the USB connector).
+2. Release SW1 after a second — the red LED fades in and out while the
+   bootloader is running.
+3. Run `esphome upload yourfile.yaml`. ESPHome sends the merged firmware image
+   to the dongle over USB CDC.
+
+The same procedure recovers a device whose application won't boot; the factory
+bootloader is never erased by application uploads.
+
+### Updating a running device
+
+Once an application is running, replug with SW1 held to re-enter the bootloader,
+then upload again. There is no automatic bootloader entry on this board — the
+Open DFU Bootloader has no auto-entry mechanism, and the [dfu](#dfu-device-firmware-update)
+component's 1200-baud touch trick does not apply to it.
+
+### OTA updates
+
+The Open DFU Bootloader has no secondary slot to stage a download into, so
+over-the-air updates are not supported with this bootloader. Choose `mcuboot`
+(with an SWD connection) on boards where wireless updates are required.
+
+### On-board LEDs
+
+All four on-board LEDs are active-low. ESPHome handles the inversion
+automatically for the built-in board, so logical `on`/`off` matches the printed
+labels. LED0 is a dedicated green LED on `P0.6`; LED1 is an RGB LED with red on
+`P0.8`, green on `P1.9` and blue on `P0.12` — turning on more than one channel
+at a time blends the colors.
 
 ## GPIO Pin Numbering
 
@@ -194,6 +233,31 @@ interval:
       - output.turn_on: red_led
       - delay: 0.5s
       - output.turn_off: red_led
+```
+
+[nrf52840-dongle](https://docs.nordicsemi.com/r/bundle/ug_nrf52840_dongle/page/ug/nrf52840_dongle/programming.html)
+
+```yaml
+nrf52:
+  board: nrf52840dongle
+
+esphome:
+  name: nrf52840-dongle
+
+logger:
+  level: DEBUG
+
+output:
+  - platform: gpio
+    pin: P0.6
+    id: green_led
+
+interval:
+  - interval: 1s
+    then:
+      - output.turn_on: green_led
+      - delay: 0.5s
+      - output.turn_off: green_led
 ```
 
 ### Board does not boot
