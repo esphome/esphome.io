@@ -1,0 +1,167 @@
+---
+title: "USB Storage"
+description: "Instructions for setting up USB mass storage devices in ESPHome"
+---
+import APIRef from '@components/APIRef.astro';
+
+This component allows an ESP32 to access a USB mass storage device (flash drive, external SSD, etc.)
+as a storage device. The device is mounted into the ESP-IDF virtual filesystem (VFS) and made
+available to other components through the [Storage](/components/storage/) abstraction.
+
+The component implements USB Mass Storage Class (MSC) Bulk-Only Transport and mounts the first FAT
+partition found on the device.
+
+> [!NOTE]
+> This component requires an ESP32 variant with a USB host-capable peripheral (ESP32-S2, ESP32-S3,
+> or ESP32-P4) and the ESP-IDF framework. It depends on the [USB Host](/components/usb_host/)
+> component, which must be present in the configuration.
+
+## Example
+
+```yaml
+usb_host:
+
+usb_storage:
+  devices:
+    - id: my_usb_drive
+      mount_path: /usb
+      on_mounted:
+        - logger.log: "USB drive mounted"
+```
+
+## Configuration Variables
+
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID for this
+  component instance (the `USBStorageClient`).
+- **devices** (*Optional*, list): List of USB storage device instances to expose. Each entry
+  supports the following variables:
+
+  - **id** (**Required**, [ID](/guides/configuration-types#id)): The ID for this device instance.
+  - **mount_path** (**Required**, string): The VFS mount point. Other components that access files
+    on this device must use this prefix in their paths (e.g. `/usb/data.csv`).
+  - **vid** (*Optional*, integer): USB vendor ID filter. If set, only devices with this VID are
+    accepted. Defaults to `0x0000` (any vendor).
+  - **pid** (*Optional*, integer): USB product ID filter. If set, only devices with this PID are
+    accepted. Defaults to `0x0000` (any product).
+  - **on_mounted** (*Optional*, [Automation](/automations/actions/)): An automation to run when the
+    device is successfully mounted. The mount path is available as `mount_path`.
+  - **file_system** (*Optional*, string): The filesystem to mount the device with. One of `auto`
+    (default), `fat32` or `exfat`. Only available when exFAT is enabled in the ESP32 framework
+    (see [exFAT support](#exfat-support) below); without it the filesystem is always FAT32 and this
+    option does not exist.
+
+## exFAT support
+
+The device is mounted as FAT32 by default. To use exFAT instead -- for drives larger than 32 GB or
+files larger than 4 GB -- enable it in the ESP32 framework:
+
+```yaml
+esp32:
+  framework:
+    type: esp-idf
+    advanced:
+      enable_exfat: true
+```
+
+With exFAT compiled in, the `file_system` option controls how the device is mounted:
+
+- **auto** (default): the device is mounted with whatever filesystem it already carries; FatFs
+  detects FAT32 or exFAT from the boot sector. Nothing is ever reformatted.
+- **fat32** / **exfat**: the device is checked before mounting, and if it does not already carry the
+  requested filesystem it is reformatted to it.
+
+> [!WARNING]
+> `file_system: fat32` and `file_system: exfat` reformat the device when its current filesystem does
+> not match the requested one, which erases all data on the device. Use `auto` (the default) to
+> mount an existing device without any risk of reformatting.
+
+Without `enable_exfat: true`, the `file_system` option is rejected during validation, because the
+build then supports only FAT32.
+
+```yaml
+esp32:
+  framework:
+    type: esp-idf
+    advanced:
+      enable_exfat: true
+
+usb_host:
+
+usb_storage:
+  devices:
+    - id: my_usb_drive
+      mount_path: /usb
+      file_system: exfat
+```
+
+## Automations
+
+### `on_mounted` Trigger
+
+Fires each time the USB device is successfully mounted, including after a remount following
+removal and reinsertion.
+
+```yaml
+usb_storage:
+  devices:
+    - id: my_usb_drive
+      mount_path: /usb
+      on_mounted:
+        - logger.log:
+            format: "USB drive mounted at %s"
+            args: [mount_path]
+```
+
+The variable `mount_path` (type `const char *`) contains the VFS mount point.
+
+### `usb_storage.remount` Action
+
+Unmount and remount the device. Useful after writing files to force a filesystem sync.
+
+```yaml
+on_...:
+  - usb_storage.remount:
+      id: my_usb_drive
+```
+
+### `usb_storage.unmount` Action
+
+Unmount the device. All open file handles should be closed before unmounting.
+
+```yaml
+on_...:
+  - usb_storage.unmount:
+      id: my_usb_drive
+```
+
+### `usb_storage.list_files` Action
+
+Log all files in a directory on the device to the console.
+
+```yaml
+on_...:
+  - usb_storage.list_files:
+      id: my_usb_drive
+```
+
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the device.
+
+### `usb_storage.is_mounted` Condition
+
+Returns `true` if the device is currently mounted.
+
+```yaml
+on_...:
+  - if:
+      condition:
+        usb_storage.is_mounted:
+          id: my_usb_drive
+      then:
+        - logger.log: "USB drive is ready"
+```
+
+## See Also
+
+- [USB Host](/components/usb_host/)
+- [Storage](/components/storage/)
+- <APIRef text="usb_storage.h" path="usb_storage/usb_storage.h"/>
