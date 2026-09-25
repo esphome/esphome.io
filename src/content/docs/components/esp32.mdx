@@ -72,8 +72,9 @@ esp32:
 - **watchdog_timeout** (*Optional*, [Time](/guides/configuration-types#time)): The timeout applied to the
   ESP-IDF task watchdog. If a subscribed task fails to feed the watchdog within this period, the device
   will reboot. Useful for power-managed devices or long blocking operations that need extended watchdog
-  windows. Defaults to `5s`, valid range is `5s` to `60s`. Note: OTA updates temporarily raise the
-  watchdog to `15s` when the configured timeout is below that threshold.
+  windows. Defaults to `5s`, valid values are `0s` and values in the range of `5s` to `60s`. Note: OTA updates temporarily raise the
+  watchdog to `15s` when the configured timeout is below that threshold.  Values between `0s` and `5s` are ignored and `5s` is used instead.
+  Using a value of `0s` turns off the ESP-IDF task watchdog functionality.
 
 - **toolchain** (*Optional*, [Toolchain](#esp32-toolchain)): Toolchain used to build the firmware. The
   `platformio` toolchain is deprecated and will be removed in 2027.2.0.
