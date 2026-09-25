@@ -92,7 +92,72 @@ sensor:
   - `gyroscope_z`: Synonym for `angular_rate_z`.
   - `pitch`: Pitch angle in `°`.
   - `roll`: Roll angle in `°`.
+  - `orientation`: Discrete in-plane rotation derived from gravity, reported as `0`, `90`, `180` or
+    `270`°. While the device lies flat (face up or face down) no value is published.
+- **flat_threshold** (*Optional*, float): Only used by the `orientation` type. The minimum tilt
+  angle from horizontal, in degrees, before an orientation is reported. While the device is more
+  level than this it is treated as flat and the sensor publishes no value. Defaults to `30`.
 - All other options from [Sensor](/components/sensor).
+
+## Binary Sensor
+
+The `motion` [binary sensor](/components/binary_sensor) platform reports orientation and movement
+states derived from the IMU data. Each binary sensor selects a `type` and reads from a `motion` hub.
+
+```yaml
+# Example configuration entry
+binary_sensor:
+  - platform: motion
+    type: face_up
+    name: "Face Up"
+  - platform: motion
+    type: free_fall
+    name: "Free Fall"
+```
+
+### Configuration variables
+
+- **type** (**Required**, string): The state to detect. One of:
+  - `face_up`: `ON` while the device lies roughly horizontal with its Z axis pointing up.
+  - `face_down`: `ON` while the device lies roughly horizontal with its Z axis pointing down.
+  - `free_fall`: `ON` while the device is in free fall (total acceleration near zero).
+  - `moving`: `ON` while the device is being moved or rotated.
+- **threshold** (*Optional*, float): Detection threshold; its meaning and default depend on `type`:
+  - `face_up` / `face_down`: the maximum tilt from horizontal, in degrees (`0`–`90`). Smaller values
+    require the device to be more level. Defaults to `30`. These two states are only evaluated while
+    the device is at rest; during movement the last reported state is held.
+  - `free_fall`: the total acceleration in `g` below which free fall is detected. Defaults to `0.15`.
+  - `moving`: the change in acceleration in `g` (or a proportional change in angular rate) above
+    which motion is detected. Defaults to `0.05`.
+- **duration** (*Optional*, [Time](/guides/configuration-types#time)): Only used by `free_fall` and
+  `moving`. For `free_fall`, the device must be falling for at least this long before the sensor
+  turns `ON`; defaults to `100ms`. For `moving`, the sensor stays `ON` for at least this long after
+  the last detected motion; defaults to `2s`.
+- **motion_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the `motion` hub to
+  read from. Only required when more than one `motion` hub is configured.
+- All other options from [Binary Sensor](/components/binary_sensor).
+
+## Event
+
+The `motion` [event](/components/event) platform fires events for gesture-like motions. It exposes a
+single event type, `shake`, triggered by a sharp change in acceleration.
+
+```yaml
+# Example configuration entry
+event:
+  - platform: motion
+    name: "Shake"
+```
+
+### Configuration variables
+
+- **threshold** (*Optional*, float): The change in acceleration between successive readings, in `g`,
+  above which a shake is detected. Lower values make detection more sensitive. Defaults to `0.5`.
+- **cooldown** (*Optional*, [Time](/guides/configuration-types#time)): The minimum time between
+  consecutive `shake` events. Defaults to `500ms`.
+- **motion_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the `motion` hub to
+  read from. Only required when more than one `motion` hub is configured.
+- All other options from [Event](/components/event#config-event).
 
 ## Actions
 
@@ -192,7 +257,8 @@ entry with the resulting matrix in a format suitable for copy-pasting into your 
 
 ## See Also
 
-- [QMI8658 Accelerometer/Gyroscope platform](/components/motion/qmi8658/)
 - [Sensor Filters](/components/sensor#sensor-filters)
 - [BMI270 Accelerometer/Gyroscope platform](/components/motion/bmi270/)
+- [LSM6DS Accelerometer/Gyroscope platform](/components/motion/lsm6ds/)
+- [QMI8658 Accelerometer/Gyroscope platform](/components/motion/qmi8658/)
 - <APIRef text="motion_component.h" path="motion/motion_component.h" />
