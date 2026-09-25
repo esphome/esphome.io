@@ -1,0 +1,68 @@
+---
+description: "Instructions for setting up ATC MiThermometer bluetooth-based temperature and humidity sensors in ESPHome."
+title: "ATC MiThermometer"
+---
+
+import APIRef from '@components/APIRef.astro';
+
+The `atc_mithermometer` sensor platform lets you track the output of Xiaomi LYWSD03MMC
+Bluetooth Low Energy devices broadcasting in the ATC1441 advertisement format — that is, devices
+running the [ATC firmware](https://github.com/atc1441/ATC_MiThermometer), or
+[PVVX MiThermometer](https://github.com/pvvx/ATC_MiThermometer) firmware set to the "ATC1441"
+advertisement type — using a BLE tracker (for example the
+[ESP32 BLE Tracker](/components/esp32_ble_tracker)). This component listens passively to
+the advertisement packets the device broadcasts in that format (temperature, humidity,
+battery level and battery voltage) and does not pair with or connect to the device, so it has
+no impact on the device's battery life.
+
+The ATC1441 advertisement format is unencrypted, so no bindkey is required. Note that both the
+ATC and PVVX firmware projects have deprecated this format in favor of BTHome v2 — prefer the
+`bthome_mithermometer` platform for new setups.
+
+For choosing between the firmware options of these thermometers (stock MiBeacon, ATC, PVVX and
+their advertisement formats) and for flashing instructions, see
+[LYWSD03MMC on the Xiaomi BLE page](/components/sensor/xiaomi_ble/#lywsd03mmc) — this page is the
+option reference for the `atc_mithermometer` platform itself.
+
+```yaml
+# Example configuration entry
+esp32_ble_tracker:
+
+sensor:
+  - platform: atc_mithermometer
+    mac_address: "A4:C1:38:XX:XX:XX"
+    temperature:
+      name: "ATC Temperature"
+    humidity:
+      name: "ATC Humidity"
+    battery_level:
+      name: "ATC Battery-Level"
+    battery_voltage:
+      name: "ATC Battery-Voltage"
+```
+
+## Configuration variables
+
+- **mac_address** (**Required**, MAC Address): The MAC address of the device.
+- **temperature** (*Optional*): The information for the temperature sensor. All options from
+  [Sensor](/components/sensor/).
+- **humidity** (*Optional*): The information for the humidity sensor. All options from
+  [Sensor](/components/sensor/).
+- **battery_level** (*Optional*): The information for the battery level sensor in %. All options
+  from [Sensor](/components/sensor/).
+- **battery_voltage** (*Optional*): The information for the battery voltage sensor. All options
+  from [Sensor](/components/sensor/).
+- **signal_strength** (*Optional*): The information for the received signal strength sensor in
+  dBm. All options from [Sensor](/components/sensor/).
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for
+  code generation.
+- **ble_hub_id** (*Optional*, [ID](/guides/configuration-types#id)): The BLE tracker
+  hub to receive advertisements from. Auto-generated when only one tracker is configured;
+  set it explicitly to disambiguate multiple trackers. Replaces the former `esp32_ble_id`
+  key, which still works as a deprecated alias until ESPHome 2027.2.0.
+
+## See Also
+
+- [ESP32 Bluetooth Low Energy Tracker Hub](/components/esp32_ble_tracker/)
+- [Xiaomi BLE — LYWSD03MMC firmware guide](/components/sensor/xiaomi_ble/#lywsd03mmc)
+- <APIRef text="atc_mithermometer.h" path="atc_mithermometer/atc_mithermometer.h" />

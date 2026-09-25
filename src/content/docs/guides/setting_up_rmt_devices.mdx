@@ -100,8 +100,10 @@ remote_receiver:
   tolerance: 25%
   filter: 250us
   idle: 4ms
-  buffer_size: 2kb # only for ESP8266
 ```
+
+A noisy receiver that truncates long codes may need `buffer_size` raised above its default; see the
+[remote_receiver](/components/remote_receiver/) options.
 
 The `tolerance` setting defaults to `25%`. If a known protocol fails to decode, raise
 it in small steps. Avoid values close to `50%` — wide windows for adjacent timing slots

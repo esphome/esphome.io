@@ -98,7 +98,9 @@ web_server:
   When enabled, preflight requests are authorized against `allowed_origins`, so `allowed_origins` must also
   be set. Defaults to `false`.
 
-- **log** (*Optional*, boolean): Turn on or off the log feature inside webserver. Defaults to `true`.
+- **log** (*Optional*, boolean): Turn on or off the log feature inside the web server. When enabled, the device also
+  streams logs over the `/events` endpoint, so [`esphome logs`](/guides/cli/#logs-command) can view logs over the
+  network on devices that have no [native API](/components/api/) configured. Defaults to `true`.
 - **ota** (*Optional*, boolean): Explicitly disable OTA updates through the web server interface. Only accepts `false`.
   This option is typically used when you have both `web_server` and `captive_portal` configured, and you want
   OTA updates to be available only through the captive portal. Since `captive_portal` automatically loads the
@@ -382,5 +384,6 @@ By clicking on any sensor it will expand a graph with the historical values for 
 
 - [Event Source API](/web-api#api-event-source)
 - [REST API](/web-api#api-rest)
+- [`esphome logs` Command](/guides/cli/#logs-command)
 - [Prometheus Component](/components/prometheus/)
 - <APIRef text="web_server.h" path="web_server/web_server.h" />

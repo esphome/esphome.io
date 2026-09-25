@@ -69,10 +69,19 @@ climate:
 
 - **supports_cool** (*Optional*, boolean): Enables setting cooling mode for this climate device. Defaults to `true`.
 - **supports_heat** (*Optional*, boolean): Enables setting heating mode for this climate device. Defaults to `true`.
+- **supports_heat_cool** (*Optional*, boolean): Enables setting heat/cool mode for this climate device. Most remotes
+  label this mode "auto", since the unit switches between heating and cooling on its own. When not set, it is enabled
+  automatically only if both `supports_cool` and `supports_heat` are enabled. Set it to `true` to advertise the mode
+  regardless (e.g. cool-only units that still expose an auto mode), or to `false` to hide it even on units that
+  support both heating and cooling but have no usable auto mode.
 - **receiver_id** (*Optional*, [ID](/guides/configuration-types#id)): The id of the remote_receiver if this platform supports
   receiver. see: [Using a Receiver](#ir-receiver_id).
 
 - All other options from [Climate](/components/climate#config-climate).
+
+> [!NOTE]
+> Older versions offered the heat/cool mode on every device. If `supports_cool` or `supports_heat` is set to `false`
+> and you still use this mode (for example in automations or voice commands), add `supports_heat_cool: true` to keep it.
 
 ### Advanced Options
 
@@ -85,6 +94,7 @@ climate:
 - **bit_high** (*Optional*, [Time](/guides/configuration-types#time)): time for the high part of any bit in the LG protocol. Defaults to `600us`
 - **bit_one_low** (*Optional*, [Time](/guides/configuration-types#time)): time for the low part of a '1' bit in the LG protocol. Defaults to `1600us`
 - **bit_zero_low** (*Optional*, [Time](/guides/configuration-types#time)): time for the low part of a '0' bit in the LG protocol. Defaults to `550us`
+- **advanced_commands_support** (*Optional*, boolean): enables an advanced control mode for newer units, allowing temperature regulation in `Heat/Cool` mode and vertical airflow adjustment.  Only up and down swing are supported.  The 6 fixed position settings are treated as off.  Swing mode is remembered after powering off as well. Defaults to `false`.
 
 ```yaml
 # Example configuration entry
@@ -94,6 +104,7 @@ climate:
     sensor: room_temperature
     header_high: 3265us # AC Units from LG in Brazil, for example use these timings
     header_low: 9856us
+    advanced_commands_support: false
 ```
 
 ### `daikin_brc`

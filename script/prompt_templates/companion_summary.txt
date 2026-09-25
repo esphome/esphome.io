@@ -1,0 +1,170 @@
+SAVE YOUR RESPONSE TO:
+  {{ companion_file }}
+
+NOTE: The output file and directories may not exist yet - that's fine, create them.
+
+════════════════════════════════════════════════════════════════════════════════
+
+TASK: Write the companion summary for ESPHome {{ version }}.
+
+════════════════════════════════════════════════════════════════════════════════
+
+CONTEXT:
+This is a short plain-language summary for people new to ESPHome. It is placed at
+the very top of the release blog post, directly beneath the post's title and above
+the full technical writeup, which continues below it unchanged.
+
+INPUT - the finished sections of the post. Read every one of these that exists (a
+missing file simply means the release has no such section):
+  Release overview:                {{ overview_file }}
+  Feature highlights:              {{ highlights_file }}
+  Breaking changes (users):        {{ breaking_users_file }}
+  Upgrade checklist:               {{ checklist_file }}
+  Undocumented API changes:        {{ undocumented_file }}
+  Breaking changes (developers):   {{ breaking_devs_file }}
+The post itself is at {{ blog_post_file }} (it may not exist yet, and its title may
+still contain the {TAGLINE} placeholder).
+
+════════════════════════════════════════════════════════════════════════════════
+
+You will be given the finished sections of an ESPHome release blog post (listed
+above), written for an experienced audience. Produce a companion summary that will
+sit at the top of that same post, above the full technical writeup – it is not a
+separate page. Aimed explicitly at people new to ESPHome.
+
+**Do not generate a title or main heading of your own.** The post already has one –
+the developer's own title (e.g. "ESPHome 2026.9.0: Faster builds and encrypted
+updates") – and that stays exactly as it is, unchanged, as the only top-level heading on
+the page. The companion is not a second post with its own headline; it's a section
+that begins directly beneath the existing title. The first thing you generate should
+be the opener (part a), not a heading of any kind. "Short on time? Here's the quick
+version" (part b) is a subheading within the companion, not a title for it.
+
+**Do not add or infer anything not stated in the sections above.** Every claim in
+the companion must trace back to something the finished sections actually say. If
+something is ambiguous in the source material, leave it out rather than guessing at
+what it means or how much it matters.
+
+### Structure (strict – do not exceed it)
+
+This must be short enough to read in under 30 seconds.
+
+OUTPUT FORMAT: this response is MDX/markdown that will be spliced into the post
+verbatim. Part (a)'s opener is a plain paragraph. Part (b)'s "Short on time? Here's
+the quick version" is a `##` heading (the post's own sections use `##`, and the
+companion sits above "## Release overview"). Part (c) is a bulleted list with a
+short bold label per item, as described below. Parts (d), (e), (f), and (g) are
+plain sentences/paragraphs as described below. The fixed closing block is a
+`:::note[...]` aside block, copied verbatim, three lines including the opening
+and closing fences.
+
+**a. Opener (1-2 sentences).** Before anything else, briefly orient a genuine
+newcomer on what this page even is: every month ESPHome ships a release like this,
+so you can learn about new features, fixes, and other changes worth knowing about
+before you update. Keep this to one sentence – it's context-setting, not an
+explanation of how releases work in general.
+
+**b. "Short on time?" framing (1-2 sentences).** Frame this next part as the quick,
+plain-language version for anyone short on time or newer to ESPHome, with the full
+technical post continuing below for anyone who wants it. Don't lead with "New to
+ESPHome?" as the framing device here – that phrasing is reserved for the fixed
+Starter Kit line at the end of this section, and using it twice reads as a
+repeated, slightly redundant greeting. A heading like "Short on time? Here's the
+quick version" works well. Keep this generic about whether action is needed – don't
+preview or name the specific action-needed item here, since it's stated once, in
+full, below. Avoid "check" or "worth checking" here if the next part will also use
+that phrasing.
+
+**c. Action needed (up to 3 items, one sentence each).** Read every item in the
+breaking changes (users), undocumented API changes, breaking changes (developers),
+and upgrade checklist files above. This is the only place a given item's specific
+detail should appear – don't restate it in the opener or the closing line. If more
+than 3 items are tagged as breaking changes, include only the ones that would
+genuinely affect a typical user's existing setup; fold a narrow edge case, an
+already-unused option, or an internal/developer-only API change into a single
+passing mention elsewhere, or omit it entirely. If there are zero action-needed
+items, omit this part entirely – don't write "nothing here."
+
+**d. New features (exactly one sentence).** Give this a short bold label, matching
+the style of the "Action needed" bullet list above (e.g. **New features:**), so it
+doesn't read as a disconnected floating paragraph after a clearly labeled bullet
+list. Don't make an independent editorial judgment about which features matter most
+– that's a call the team has already made. Anchor this sentence on whatever the
+post's own title highlights (e.g. a title like "Faster builds and encrypted updates"
+already tells you what to name here), and use the post's own section ordering as a
+secondary signal if the title alone doesn't cover it. If the title still holds the
+{TAGLINE} placeholder, or the post file does not exist yet, anchor instead on the
+themes the release overview leads with, then the order of the feature highlights
+sections. Mention at most one or two features this way. If the title is generic and
+gives no clear signal, name the first one or two features the post itself leads
+with rather than picking based on what seems most impressive or interesting.
+
+**e. Fixes & improvements (exactly one sentence).** Give this a short bold label
+too (e.g. **Also in this release:**), for the same reason as part (d) – it keeps
+this section visually consistent with the labeled bullet list above it rather than
+trailing off as unlabeled prose. No per-item detail.
+
+**f. Closing reassurance (1 sentence).** Scope this explicitly to a standard setup
+– e.g. "If you're running a typical config, there's nothing else you need to check
+before updating." This should reassure about safety/compatibility only – it is not
+an opinion on whether the reader should update at all, and must not discourage
+updating or imply the release isn't worth having. Don't repeat the specific
+action-needed item by name here; refer back to it only in general terms ("aside
+from the item above") if needed. Never state or imply that no one needs to act if
+part (c) had content.
+
+**g. Pointer into the full post (1 sentence).** Point the reader into the full
+writeup below, framed as a continuation of the page rather than an external link –
+explicitly aimed at anyone running custom lambdas, external components, or a
+non-standard config, or anyone who wants the full technical detail. Don't phrase
+this as "click here"; phrase it as "keep reading below" or equivalent. Don't imply
+this is a hard cut into unrelated new content – the source post's own
+overview/summary section (if it has one) usually comes right after this pointer,
+so phrase it as "keep reading below for the full release overview and technical
+detail" or similar, rather than something that oversells a clean break.
+
+**Cross-check before finalizing:** check the opener, each section, and the closing
+line against each other – no specific detail (a component name, a setting, a
+platform) should appear more than once across the whole summary. This includes
+repeated framing phrases, not just factual detail – e.g. don't open with "New to
+ESPHome?" and then use the same phrase again in the fixed Starter Kit line a few
+lines later. Only the section headers and general reassurance ("nothing to do,"
+"worth a look") may repeat as structural signposting.
+
+### Tone
+
+Write like a friendly, knowledgeable person filling someone in, not a compliance
+notice. Vary sentence structure. Lead with the interesting or human part of the
+change before the condition. Keep it warm and light – a few words of personality
+are fine, but don't force jokes or overdo it.
+
+### Word choice
+
+Never use "flash," "flashing," or "firmware" when writing for beginners. Use
+"install" or "update" instead. Rephrase naturally rather than doing a literal
+find-and-replace. Define any necessary jargon inline (ESP-IDF, GPIO, coexistence,
+watchdog, etc.) in the same sentence, briefly.
+
+### Punctuation
+
+Use en dashes (–), not em dashes (—), for parenthetical asides or connecting
+related clauses – e.g. "installing updates gets faster – especially if you manage
+more than one device" rather than using an em dash there. This matches house style
+used elsewhere on the site.
+
+### Do not include
+
+PR numbers, contributor handles, or specific benchmark figures anywhere in the
+companion – this is a companion, not a replacement, and that level of detail
+already lives in the full post below.
+
+### Fixed closing block (always include, verbatim – do not compose or paraphrase this)
+
+After part (g), always append this exact block, unchanged, word for word, every
+release. This is not something to generate or rephrase – it's a standing note, not
+tied to this release's content, so treat it as literal text to copy in rather than
+something to write:
+
+:::note[New to ESPHome?]
+The [ESPHome Starter Kit](/starter-kit/) is the easiest way to start building your own smart home devices – no soldering, breadboarding, or coding required.
+:::

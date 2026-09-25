@@ -15,7 +15,9 @@ reachable between the device and the server.
 On its own, the hub does not expose any user-facing entities. Once a Sendspin
 server is present on the network, it will connect to the device and begin
 sending group state updates, but audio playback, control, and metadata require
-the corresponding child components to be configured as well.
+the corresponding child components to be configured as well. The
+[Sendspin Switch](/components/switch/sendspin/) can stop the client so no server
+connects.
 
 This platform only works on ESP32-based chips.
 
@@ -35,6 +37,19 @@ sendspin:
 - **task_stack_in_psram** (*Optional*, boolean): Place the internal HTTP server task
   stack in PSRAM to reduce internal RAM usage. Requires the
   [Psram](/components/psram/) component to be configured. Defaults to `false`.
+- **manufacturer** (*Optional*, string): The manufacturer the device reports to the
+  Sendspin server. Defaults to the author part of the
+  [project name](/components/esphome#esphome-creators_project) when one is set,
+  otherwise `ESPHome`.
+- **model** (*Optional*, string): The model the device reports to the Sendspin
+  server. Defaults to the project part of the
+  [project name](/components/esphome#esphome-creators_project) when one is set,
+  otherwise the device's name.
+- **firmware_version** (*Optional*, string): The firmware version the device reports
+  to the Sendspin server. Defaults to the
+  [project version](/components/esphome#esphome-creators_project) when one is set,
+  otherwise the ESPHome version.
+
 
 ## Actions
 
@@ -50,12 +65,16 @@ on_...:
 
 ## Child components
 
+- [Sendspin Image](/components/image/sendspin/): Displays album and artist artwork
+  streamed from the group on a connected display.
 - [Sendspin Group Media Player](/components/media_player/sendspin/): Exposes
   group-wide playback and volume controls as a Home Assistant media player entity.
 - [Sendspin Media Source](/components/media_source/sendspin/): Plays synchronized
   audio from a Sendspin group through a Speaker Source media player.
 - [Sendspin Sensor](/components/sensor/sendspin/): Exposes numeric metadata
   about the currently playing audio (track progress, track duration, etc.).
+- [Sendspin Switch](/components/switch/sendspin/): Enables and disables the
+  Sendspin client.
 - [Sendspin Text Sensor](/components/text_sensor/sendspin/): Exposes metadata
   about the currently playing audio (title, artist, album, etc.).
 

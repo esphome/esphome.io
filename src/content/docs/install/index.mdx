@@ -1,0 +1,58 @@
+---
+title: "Install ESPHome"
+description: "Install ESPHome as a Home Assistant app, a desktop app for macOS, Windows and Linux, or a CLI tool."
+---
+
+import InstallSelector from "@components/InstallSelector.astro";
+
+ESPHome has two parts: the firmware that runs on your device, and the part that runs on your computer to build and
+install that firmware. This page is about the second part.
+
+Most people use the [ESPHome Device Builder](https://github.com/esphome/device-builder), a dashboard for
+creating configurations, compiling firmware, and installing it onto devices. You can run it as a Home Assistant app or
+as a native desktop app on macOS, Windows, and Linux. Both bundle their own Python environment, so there is nothing to
+install by hand.
+
+If you would rather manage Python yourself, the **pip** tab covers installing the Device Builder and the ESPHome
+command-line tool as ordinary Python packages.
+
+Pick your platform below. We'll try to detect it automatically.
+
+<InstallSelector />
+
+## After Installing the Desktop App
+
+The first time you launch ESPHome Device Builder on macOS, Windows, or Linux, it sets up its bundled Python environment
+in the background and opens the dashboard in your default browser. The ESPHome icon appears in the macOS menu bar, the
+Windows notification area, or your Linux desktop's system tray for quick access - open the dashboard, check for
+updates, or quit from there.
+
+> [!NOTE]
+> Some Linux desktops (notably GNOME without a tray extension) don't show tray icons at all. The app still runs; use
+> the dashboard in your browser.
+
+Home Assistant users open the dashboard from the **Open Web UI** button on the app page in Home Assistant.
+
+## Building on a Faster Machine
+
+Compiling firmware is the slowest thing the Device Builder does, and on a small host such as a Home Assistant Green or
+a Raspberry Pi a single build can take several minutes. The Device Builder can hand the compile to another dashboard on
+your network, such as a desktop or laptop running the desktop app, which builds the firmware and sends it back to be
+installed as usual. Your devices, configurations, and dashboard all stay where they are; only the build moves.
+
+Pairing the two dashboards is done from **Settings** on both sides and is documented in the
+[Device Builder README](https://github.com/esphome/device-builder#send-builds-to-another-dashboard).
+
+## Next Steps
+
+With ESPHome installed, head to [Getting Started with ESPHome](/install/getting-started/) to create your first
+configuration and install it onto a device.
+
+## See Also
+
+- [Getting Started with ESPHome](/install/getting-started/) - create your first device
+- [Running ESPHome in Docker](/install/docker/) - image tags, Compose, and USB passthrough
+- [Send builds to another dashboard](https://github.com/esphome/device-builder#send-builds-to-another-dashboard) - pair a faster machine to do the compiling
+- [Command Line Interface](/guides/cli/) - every `esphome` subcommand
+- [esphome-desktop on GitHub](https://github.com/esphome/esphome-desktop) - source and issue tracker
+- [All releases](https://github.com/esphome/esphome-desktop/releases) - previous versions and release notes

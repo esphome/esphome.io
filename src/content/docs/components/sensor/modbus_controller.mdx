@@ -13,13 +13,15 @@ and requires [Modbus Controller](/components/modbus_controller/) to be configure
   - `coil`  : Coils are 1-bit registers (ON/OFF values) that are used to control discrete outputs. They may be read and/or written. Modbus *Function Code 1 (Read Coil Status)* will be used.
   - `discrete_input`  : discrete input register (read only coil) are similar to coils but can only be read. Modbus *Function Code 2 (Read Input Status)* will be used.
   - `holding`  : Holding Registers - Holding registers are the most universal 16-bit register. They may be read and/or written. Modbus *Function Code 3 (Read Holding Registers)* will be used.
-  - `read`  : Read Input Registers - registers are 16-bit registers used for input, and may only be read. Modbus *Function Code 4 (Read Input Registers)* will be used.
+  - `input`  : Input Registers - 16-bit registers used for input; may only be read. Modbus *Function Code 4 (Read Input Registers)* will be used. `read` is an accepted alias for this value.
 
 - **address** (**Required**, int): start address of the first register in a range (can be decimal or hexadecimal).
-- **value_type** (**Required**): data type of the modbus register data. The default data type for modbus is a 16 bit integer in big endian format (MSB first).
+- **value_type** (*Optional*): data type of the modbus register data. Defaults to `U_WORD`, a 16 bit integer in big endian format (MSB first).
 
   - `U_WORD`  : unsigned 16 bit integer from 1 register = 16bit
   - `S_WORD`  : signed 16 bit integer from 1 register = 16bit
+  - `U_WORD_S`  : unsigned 16 bit integer from 1 register with bytes swapped within the register = 16bit
+  - `S_WORD_S`  : signed 16 bit integer from 1 register with bytes swapped within the register = 16bit
   - `U_DWORD`  : unsigned 32 bit integer from 2 registers = 32bit
   - `S_DWORD`  : signed 32 bit integer from 2 registers = 32bit
   - `U_DWORD_R`  : unsigned 32 bit integer from 2 registers low word first
@@ -31,30 +33,49 @@ and requires [Modbus Controller](/components/modbus_controller/) to be configure
   - `FP32`  : 32 bit IEEE 754 floating point from 2 registers
   - `FP32_R`  : 32 bit IEEE 754 floating point - same as FP32 but low word first
 
+> [!WARNING]
+> `U_WORD_S` and `S_WORD_S` are a **rare, non-standard** configuration: the two bytes
+> **within** one 16-bit register are reversed (LSB first on the wire within that register).
+> Modbus registers are big-endian (MSB first) per the specification. The `_S` suffix is not
+> the same as `_R` (word order reversed / **low word first** across multiple registers).
+
+
 - **bitmask** (*Optional*, int): sometimes multiple values are packed in a single register's response. The bitmask can be used to extract a value from the response. See [Bitmasks](/components/modbus_controller#bitmasks).
-- **skip_updates** (*Optional*, int): By default, all sensors of a modbus_controller are updated together. For data points that don't change very frequently, updates can be skipped. A value of 5 would only update this sensor range in every 6th update cycle. Note: The modbus_controller groups components by address ranges to reduce number of transactions. All components with the same starting address will be updated in one request. `skip_updates` applies for *all* components in the same range.
-- **register_count** (*Optional*, int): The number of consecutive registers this read request should span or skip in a single command. Default is 1. See [Optimizing modbus communications](/components/modbus_controller#modbus_register_count) for more details.
-- **response_size** (*Optional*, int): Size of the response for the register in bytes. Defaults to register_count*2.
-- **force_new_range** (*Optional*, boolean): If possible sensors with sequential addresses are grouped together and requested in one range. Setting `force_new_range: true` enforces the start of a new range at that address.
+- **skip_updates** (*Optional*, int): **Deprecated and no longer has any effect** — every register range is polled on
+  each `update_interval`. The key is still accepted (logging a config-time warning) and will be removed in 2027.3.0.
+  To poll some registers less often, place those sensors on a second `modbus_controller` with the same `address:` and a
+  slower `update_interval:`.
+- **response_size** (*Optional*, int): Size of the response for the register in bytes. If unset, defaults to the
+  size implied by `value_type` (2 bytes per register).
+- **reuse_previous_range** (*Optional*, boolean or `auto`): How this item relates to the register range built just
+  before it (same register type, ascending address order). `auto` (default) joins when the addresses are adjacent and
+  the item's position in the reply is exact; `true` joins unconditionally, reading across address gaps and past
+  registers with a non-standard `response_size`; `false` always starts a new range here (later items may still extend
+  it). See [Register ranges](/components/modbus_controller/#modbus_register_count). Replaces the deprecated
+  `force_new_range` and `register_count` options, which will be removed in 2027.3.0 — the linked section covers
+  migration.
 - **lambda** (*Optional*, [lambda](/automations/templates#config-lambda)):
   Lambda to be evaluated every update interval to get the new value of the sensor.
 
   Parameters passed into the lambda
 
   - **x** (float): The parsed float value of the modbus data
-  - **data** (`std::vector<uint8_t>`): vector containing the complete raw modbus response bytes for this sensor
+  - **data** (`std::span<const uint8_t>`): span containing the complete raw modbus response bytes for this sensor
     *note:* because the response contains data for all registers in the same range you have to use `data[item->offset]` to get the first response byte for your sensor.
 
-  - **item** (const pointer to a SensorItem derived object): The sensor object itself.
+  - **item** (pointer to a SensorItem derived object): The sensor object itself.
 
   Possible return values for the lambda:
 
   - `return <FLOATING_POINT_NUMBER>;` the new value for the sensor.
   - `return NAN;` if the state should be considered invalid to indicate an error (advanced).
 
-- **custom_command** (*Optional*, list of bytes): raw bytes for modbus command. This allows using non-standard commands. If `custom_command` is used `address` and `register_type` can't be used.
-  Custom data must contain all required bytes including the modbus device address. The CRC is automatically calculated and appended to the command.
-  See [Using `custom_command`](/components/modbus_controller#modbus_custom_command) how to use `custom_command`
+- **custom_pdu** (*Optional*, list of bytes): The modbus PDU (function code + data) for a custom command. This allows
+  using non-standard commands. The device address (taken from the controller's `address:`) and the CRC are added
+  automatically, so do not include a leading device-address byte. If `custom_pdu` is used, `address` and
+  `register_type` can't be used. Renamed from `custom_command`, which is now removed and raises a config-validation
+  error.
+  See [Using `custom_pdu`](/components/modbus_controller/#modbus_custom_pdu) for how to use `custom_pdu`
 
 - **offset** (*Optional*, int): Offset from start address in bytes (only required for uncommon response encodings). If more than one register is written in a command this value is used to find the start of this datapoint relative to start address. The component calculates the size of the range based on offset and size of the value type. For `coil` or `discrete_input` registers offset is the position of the coil/register because these registers encode 8 coils in one byte.
 
@@ -75,7 +96,7 @@ The example below will send 2 modbus commands (device address 1 assumed):
   name: "PV array input voltage"
   address: 0x3100
   unit_of_measurement: "V" ## for any other unit the value is returned in minutes
-  register_type: read
+  register_type: input
   value_type: U_WORD
   accuracy_decimals: 1
   filters:

@@ -41,6 +41,13 @@ bk72xx_ble:
 > `platformio_options` are needed. The bundled 3.0.33 has an older BLE
 > header/library layout and can crash the device at boot when BLE is compiled in.
 
+> [!NOTE]
+> **WiFi power save.** While `bk72xx_ble` is configured, `wifi: power_save_mode` is kept
+> at `none`: any other value is reported at validation and not applied. With the BLE
+> controller running, the MCU sleep that the Beken SDK arms together with WiFi power save
+> never wakes up once the station is stopped, and the device stays halted until a power
+> cycle. The override is removed once LibreTiny ships the SDK-side fix.
+
 ## See Also
 
 - [ESP32 Bluetooth Low Energy](/components/esp32_ble/)

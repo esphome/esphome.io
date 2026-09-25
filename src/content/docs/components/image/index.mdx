@@ -14,6 +14,8 @@ data comes from:
 - **[`animation`](/components/image/animation/)**: Multi-frame (animated) images embedded into the firmware at
   compile time.
 - **[`online_image`](/components/image/online_image/)**: Images downloaded, decoded and drawn at runtime.
+- **[`sendspin`](/components/image/sendspin/)**: Album and artist artwork streamed from a
+  [Sendspin](/components/sendspin/) group and decoded at runtime.
 
 ```yaml
 # Example configuration entry
@@ -79,18 +81,49 @@ display:
 You can also use this to invert images in two color displays, use `COLOR_OFF` then `COLOR_ON`
 as the additional parameters.
 
+## Setting Defaults
+
+If you have several images that share most of their options (`type`, `transparency`, `resize`, ...), a platform entry
+can use `defaults:` together with `files:` instead of repeating those options on every image:
+
+```yaml
+image:
+  - platform: file
+    defaults:
+      type: RGB565
+      transparency: opaque
+      resize: 100x100
+    files:
+      - id: image_one
+        file: "image1.png"
+      - id: image_two
+        file: "image2.png"
+        type: GRAYSCALE # overrides the default type for this image only
+```
+
+Each entry in `files:` is merged with `defaults:`, with the entry's own options taking priority. `defaults:` can only
+be used together with `files:`. This works the same way for every image platform
+([`file`](/components/image/file/), [`animation`](/components/image/animation/) and
+[`online_image`](/components/image/online_image/)) — just replace the entries in `files:` with the options normally
+used for that platform.
+
+- **defaults** (*Optional*, mapping): Options merged into every entry in `files:`.
+- **files** (*Optional*, list): A list of images, each using the normal configuration variables of the selected
+  platform.
+
 ## Transparency Options
 
-By default transparency is not used. If `transparency: chroma_key` is set then a specific colour will be used to
-replace any transparent or partially transparent portions of the image. This will not be drawn when rendering the
-image, allowing the background to be visible.
+The `transparency` option controls how the alpha channel of the input image is handled. Possible values are:
 
-If `transparency: alpha_channel` is set, then each pixel of the image will be assigned an additional byte with a
-transparency value. This is useful mainly when using [LVGL](/components/lvgl/) as the `alpha_channel` transparency
-will enable smooth blending of transparent images with the background. This choice is not available for binary
-images.
-When using the display lambda image drawing functions these will draw or not draw the pixel, no blending with the
-background will be done.
+- `opaque` (default): Transparency is not used; the image is drawn fully opaque.
+- `chroma_key`: A specific colour is used to represent any transparent or partially transparent portions of the
+  image. Pixels of that colour will not be drawn when rendering the image, allowing the background to be visible.
+- `alpha_channel`: Each pixel of the image is assigned an additional byte with a transparency value. This is useful
+  mainly when using [LVGL](/components/lvgl/), as `alpha_channel` transparency enables smooth blending of
+  transparent images with the background. This choice is not available for binary images. When using the display
+  lambda image drawing functions, these will only draw or not draw the pixel; no blending with the background will
+  be done.
+
 The `BINARY` format with `chroma_key` transparency effectively turns the image into an alpha mask with one bit per
 pixel. GRAYSCALE images with transparency store the alpha channel only, and remain 1 byte per pixel.
 
@@ -99,5 +132,6 @@ pixel. GRAYSCALE images with transparency store the alpha channel only, and rema
 - [File](/components/image/file/)
 - [Animation](/components/image/animation/)
 - [Online Image](/components/image/online_image/)
+- [Sendspin Image](/components/image/sendspin/)
 - [Display](/components/display/)
 - [LVGL](/components/lvgl/)

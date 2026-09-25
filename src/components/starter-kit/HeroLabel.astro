@@ -1,0 +1,106 @@
+---
+import IconText from "../IconText.astro";
+import type { Icon } from "src/lib/icons";
+
+interface Props {
+  /**
+   * Name of the mesh / object inside the hero GLB to anchor the label to.
+   * Use the same name as authored in the 3D model. Mutually exclusive
+   * with `position`.
+   */
+  target?: string;
+  /**
+   * Fixed model-space coordinates `[x, y, z]` to anchor the label to.
+   * Use when the GLB has no semantically named meshes. Coordinates are
+   * applied after the hero re-centers and scales the model, so the
+   * model's centre is `[0, 0, 0]` and the bounding box max dimension is
+   * roughly `1.6`.
+   */
+  position?: [number, number, number];
+  /**
+   * Icon to show before the label text. Uses the shared `IconText`
+   * component for consistent styling with the rest of the page.
+   */
+  icon?: Icon;
+  /**
+   * Label text. Required.
+   */
+  text: string;
+  /**
+   * Horizontal offset in pixels from the projected target position.
+   * Positive moves right.
+   */
+  offsetX?: number;
+  /**
+   * Vertical offset in pixels from the projected target position.
+   * Negative floats the label above the body (default `-80`).
+   */
+  offsetY?: number;
+  class?: string;
+}
+
+const { target, position, icon, text, offsetX = 0, offsetY = -80, class: className } = Astro.props;
+
+if (!target && !position) {
+  throw new Error("<HeroLabel /> requires either a `target` mesh name or a `position` tuple.");
+}
+---
+
+<div
+  class:list={["hero-label", className]}
+  data-hero-label
+  data-target={target}
+  data-position={position ? position.join(",") : undefined}
+  data-offset-x={offsetX}
+  data-offset-y={offsetY}
+  data-label-text={text}
+  role="button"
+  tabindex="0"
+>
+  <IconText icon={icon} text={text} />
+  {
+    Astro.slots.has("default") && (
+      <div class="hero-label__detail-source" data-label-detail hidden>
+        <slot />
+      </div>
+    )
+  }
+</div>
+
+<style lang="scss">
+  .hero-label {
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+    pointer-events: none;
+
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    will-change: transform;
+
+    &.is-ready {
+      opacity: 1;
+      pointer-events: auto;
+      cursor: pointer;
+    }
+
+    // Hidden while another component is focused.
+    &.is-other-active {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    :global(.text) {
+      height: auto;
+      padding: 0.35rem 0.5rem;
+      transition: background-color 0.2s ease;
+
+      &:hover,
+      .hover {
+        background-color: var(--esk-primary-color);
+      }
+    }
+  }
+</style>
