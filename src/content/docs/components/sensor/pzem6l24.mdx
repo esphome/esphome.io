@@ -10,9 +10,9 @@ ESPHome. It is similar to the single-phase [PZEM-004T V3](/components/sensor/pze
 phases simultaneously, reporting voltage, current, active power, reactive power, apparent power, power factor,
 and energy for each phase individually as well as combined totals.
 
-The communication with this component is done via a [UART](/components/uart) using [Modbus](/components/modbus#modbus).
+The communication with this component is done via a [UART](/components/uart/) using [Modbus](/components/modbus/).
 You must therefore have a `uart:` entry in your configuration with both the TX and RX pins set
-to some pins on your board and the baud rate set to 9600.
+to some pins on your board and the baud rate set to 9600, and a `modbus:` hub using that UART.
 
 The PZEM-6L24 exposes two physical interfaces:
 
@@ -20,10 +20,12 @@ The PZEM-6L24 exposes two physical interfaces:
   is close to the meter. The TX and RX signal lines operate at 3.3 V logic, so they connect directly to any
   ESP32 or ESP8266 GPIO without a level shifter. The PZEM-6L24 is self-powered from its AC inputs, so the +5V
   pin on the UART header is not needed.
-- **RS-485** — screw terminals on the meter. Use a MAX485 or MAX3485 module when the ESP is further away from
+- **RS-485** — screw terminals on the meter. Use an RS-485 transceiver module when the ESP is further away from
   the meter, when the meter is on a shared RS-485 bus with multiple devices, or when you want proper
-  differential signalling for noise immunity. If you need software control of the DE/RE direction pin, set
-  `flow_control_pin` on the `modbus` component; otherwise tie DE/RE low for permanent receive mode.
+  differential signalling for noise immunity. ESPHome is the Modbus master and has to transmit every request,
+  so a plain MAX485 or MAX3485 module needs its DE/RE direction pin switched by a GPIO: set `flow_control_pin`
+  on the [UART](/components/uart/) component if it supports it, otherwise on the [Modbus](/components/modbus/)
+  component. Modules with automatic direction control need no direction pin.
 
 When using RS-485 with multiple devices on the same bus, each device must have a unique Modbus address
 (1–247). Use the DIP switches on the meter for hardware addressing, or configure a software address through
@@ -31,84 +33,24 @@ the device's settings before integrating it into ESPHome.
 
 ```yaml
 # Example configuration entry
-uart:
-  id: modbus_uart
-  tx_pin: GPIO17
-  rx_pin: GPIO16
-  baud_rate: 9600
-
-modbus:
-  uart_id: modbus_uart
-
 sensor:
   - platform: pzem6l24
-    id: pzem
-    address: 0x01
-    update_interval: 10s
-
-    # Per-phase voltage
     voltage_a:
       name: "Voltage Phase A"
-    voltage_b:
-      name: "Voltage Phase B"
-    voltage_c:
-      name: "Voltage Phase C"
-
-    # Per-phase current
     current_a:
       name: "Current Phase A"
-    current_b:
-      name: "Current Phase B"
-    current_c:
-      name: "Current Phase C"
-
-    # Per-phase active power
-    active_power_a:
-      name: "Active Power Phase A"
-    active_power_b:
-      name: "Active Power Phase B"
-    active_power_c:
-      name: "Active Power Phase C"
-
-    # Per-phase power factor
-    power_factor_a:
-      name: "Power Factor Phase A"
-    power_factor_b:
-      name: "Power Factor Phase B"
-    power_factor_c:
-      name: "Power Factor Phase C"
-
-    # Per-phase energy
-    active_energy_a:
-      name: "Energy Phase A"
-    active_energy_b:
-      name: "Energy Phase B"
-    active_energy_c:
-      name: "Energy Phase C"
-
-    # Combined totals
-    frequency:
-      name: "Grid Frequency"
     total_active_power:
       name: "Total Active Power"
     total_active_energy:
       name: "Total Active Energy"
-
-button:
-  - platform: template
-    name: "Reset Energy Counters"
-    on_press:
-      - pzem6l24.reset_energy:
-          id: pzem
-          phase: all
 ```
 
-## Configuration variables
+## Configuration Variables
 
-### Per-Phase Sensors (phases A, B, and C)
+### Per-Phase Sensors
 
 Each per-phase key follows the pattern `<measurement>_a`, `<measurement>_b`, `<measurement>_c`. All are
-optional and support all options from [Sensor](/components/sensor).
+optional and support all options from [Sensor](/components/sensor/).
 
 - **voltage_a**, **voltage_b**, **voltage_c** (*Optional*): Line voltage for the phase in volts (V),
   resolution 0.1 V.
@@ -129,7 +71,7 @@ optional and support all options from [Sensor](/components/sensor).
 - **apparent_energy_a**, **apparent_energy_b**, **apparent_energy_c** (*Optional*): Accumulated apparent
   energy for the phase in kVAh, resolution 0.1 kVAh.
 
-### Combined sensors
+### Combined Sensors
 
 - **frequency** (*Optional*): Grid frequency in hertz (Hz), resolution 0.01 Hz. Derived from phase A (all
   phases share the same grid frequency).
@@ -148,7 +90,7 @@ optional and support all options from [Sensor](/components/sensor).
 - **total_apparent_energy** (*Optional*): Total accumulated apparent energy across all three phases in kVAh,
   resolution 0.1 kVAh.
 
-### Other options
+### Other Options
 
 - **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to check the
   sensor. Defaults to `60s`.
@@ -170,13 +112,9 @@ on_...:
 
 Configuration variables:
 
-- **id** (*Required*): The ID of the PZEM-6L24 component to reset.
-- **phase** (*Optional*, default: `all`): Which energy counter(s) to reset. One of:
-  - `all` — Reset all counters (phases A, B, C, and the combined total).
-  - `a` — Reset phase A only.
-  - `b` — Reset phase B only.
-  - `c` — Reset phase C only.
-  - `combined` — Reset the combined total only.
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the PZEM-6L24 component to reset.
+- **phase** (*Optional*, string): Which energy counters to reset. One of `all` (phases A, B, C and the combined
+  total), `a`, `b`, `c` or `combined`. Defaults to `all`.
 
 ## See Also
 
