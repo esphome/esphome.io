@@ -62,6 +62,23 @@ frames will be embedded. In addition, the following options are available:
     will continue with the next frame after `end_frame`, or restart from the beginning if `end_frame` was the last
     frame. Defaults to "loop forever".
 
+### Automatic Frame Encoding
+
+Animations support `type: AUTO` and `target_display` with the same
+[selection rules as file images](/components/image/file/#automatic-image-encoding). Every frame is encoded on the
+build computer as RGB565 or RGB for the selected target. Requested alpha is retained in either format.
+
+```yaml
+image:
+  - platform: animation
+    id: my_animation
+    file: animation.gif
+    type: AUTO
+    target_display: my_display
+```
+
+When an LVGL image widget displays the animation, refresh its source with `lvgl.image.update` after changing frames.
+
 ## Actions
 
 ### `animation.next_frame` Action

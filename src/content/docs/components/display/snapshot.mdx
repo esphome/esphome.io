@@ -39,6 +39,8 @@ display:
   - **width** (**Required**, int): Specifies width of display in pixels.
   - **height** (**Required**, int): Specifies height of display in pixels.
 
+- **color_depth** (*Optional*, int): The in-memory framebuffer depth: `16` (RGB565, default) or `24` (RGB888).
+  Set this and `lvgl.color_depth` to `24` when testing [RGB888 LVGL output](/components/lvgl/#rgb888-output).
 - **lambda** (*Optional*, [lambda](/automations/templates#config-lambda)): The lambda to use for rendering the content
   on the display. See [Display Rendering Engine](/components/display#display-engine) for more information.
 - **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to re-draw the screen.
@@ -57,6 +59,10 @@ display:
 A snapshot writes the current contents of a display to a `.bmp` file. Snapshots are saved in the `snapshots` folder
 under the `.esphome` folder that holds the build directory. Set the `ESPHOME_SNAPSHOT_DIR` environment variable when
 running the binary to save them somewhere else.
+
+Snapshots are written as 24-bit BMP files at either depth. With `color_depth: 16`, RGB565 pixels are expanded for
+the file; this does not restore discarded color precision. With `color_depth: 24`, the framebuffer itself retains
+eight bits per channel and the BMP preserves them.
 
 An existing file is never overwritten. Snapshots that use a generated name get a number added if a file of that name
 is already there; a snapshot with a name you chose yourself will fail instead, so that a test checking a fixed path
