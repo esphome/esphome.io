@@ -16,7 +16,8 @@ downloaded, decoded and drawn at runtime.
 >   - 8-bit / indexed
 >   - 24-bit / RGB
 >
-> - JPEG images, currently only baseline images (no progressive support)
+> - JPEG images, baseline and progressive. Progressive JPEG decoding requires the `LIBJPEG_TURBO`
+>   decoder (ESP32 only); see [JPEG Decoder](#jpeg-decoder).
 >
 > - PNG images
 >
@@ -78,6 +79,27 @@ image:
 Advanced options:
 
 - **buffer_size** (*Optional*, int): Explicitly specify the size of the buffer where the image chunks are being downloaded while decoding. The default value (65536) should be OK for most use cases, but you can try to reduce the size for slow connections, to avoid watchdog timeouts.
+
+## JPEG Decoder
+
+The JPEG decoder is selected for the whole build with the `jpeg_decoder` option of the `runtime_image` component; it
+applies to every JPEG image in the configuration.
+
+```yaml
+runtime_image:
+  jpeg_decoder: LIBJPEG_TURBO
+```
+
+### Configuration Variables
+
+- **jpeg_decoder** (*Optional*): The JPEG decoder to use. Defaults to `JPEGDEC`.
+
+  - `JPEGDEC`  : Supports baseline JPEG images only.
+  - `LIBJPEG_TURBO`  : Supports baseline and progressive JPEG images. ESP32 only.
+
+> [!NOTE]
+> `LIBJPEG_TURBO` uses roughly 120 kB more flash than `JPEGDEC`. Progressive images require the coefficients of the
+> whole image to be buffered in memory, so PSRAM is generally required for large images.
 
 ## Automations
 
