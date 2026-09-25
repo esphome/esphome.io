@@ -36,8 +36,20 @@ touchscreen:
 
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually set the ID of this touchscreen.
 - **interrupt_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The touch detection pin.
+- **model** (*Optional*, string): The touch controller variant. Defaults to `CHSC6X`.
+
+  - `CHSC6X`: touch count at the first byte of the report, with single-byte
+    coordinates. Used by the Seeed Studio Round Display for XIAO.
+  - `CHSC6540`: three-byte report header and 9-bit coordinates. Required for the
+    CHSC6540, and for any panel wider or taller than 255 pixels, which single-byte
+    coordinates cannot address.
 
 - All other options from [Touchscreen](/components/touchscreen#config-touchscreen).
+
+If the controller is a CHSC6540 and touches are never registered, `model` is the first
+thing to check. With the default `CHSC6X` layout the touch count is read from a byte
+that is always zero on that part, so no touch is ever reported, and there is no error
+or log output to indicate why.
 
 ### Sample config for the ESP32S3
 
