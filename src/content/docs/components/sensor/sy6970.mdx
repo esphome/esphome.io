@@ -36,6 +36,7 @@ sy6970:
   precharge_current: 128
   charge_enabled: true
   enable_adc: true
+  i2c_watchdog_timeout: 40S
   update_interval: 1s
 ```
 
@@ -50,8 +51,21 @@ sy6970:
 - **precharge_current**  (*Optional*, int): Pre-charge current in milliamps. Accepts values between 64 and 1024. Defaults to `128`.
 - **charge_enabled** (*Optional*, boolean): Enable or disable charging. Defaults to `true`.
 - **enable_adc** (*Optional*, boolean): Enable or disable the ADC. Defaults to `true`.
+- **i2c_watchdog_timeout** (*Optional*, enum): The timeout of the IC's I²C watchdog. One of `DISABLED`, `40S`, `80S` or `160S`. Defaults to `40S`. See [Watchdog](#watchdog).
 - All other options from [I²C Device](/components/i2c).
 - **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to check the sensor. Defaults to `5s`.
+
+## Watchdog
+
+The SY6970 has an I²C watchdog. If the host does not reset it within the timeout, the IC reverts several
+registers to their power-on defaults, including `charge_enabled` and `enable_status_led`. Charging and the status
+LED then switch back on by themselves.
+
+While `i2c_watchdog_timeout` is not `DISABLED`, ESPHome resets the watchdog after every successful update, so
+`update_interval` must be shorter than the timeout. Validation fails otherwise, and also when `update_interval` is
+`never`. If the IC cannot be read, the watchdog is not reset, so the IC returns to its defaults after the timeout.
+
+Set `i2c_watchdog_timeout: DISABLED` to turn the watchdog off, for example when a long `update_interval` is needed.
 
 ## Sensor
 
@@ -252,6 +266,7 @@ automation:
 - `set_charge_enabled(bool enabled)` - Set battery charging enabled/disabled
 - `set_led_enabled(bool enabled)` - Set status LED to enabled/disabled
 - `set_enable_adc_measure(bool enabled)` - Enable ADC measurements
+- `reset_i2c_watchdog()` - Reset the I²C watchdog timer. Called automatically after each update while the watchdog is enabled.
 
 ## Technical Details
 
