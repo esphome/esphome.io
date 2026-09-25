@@ -1,0 +1,204 @@
+---
+title: "WiFi TWT Component"
+description: "WiFi 6 Individual Target Wake Time (iTWT) on ESP32-C5/C6/C61: scheduled radio sleep, CPU stays running."
+---
+
+The `wifi_twt` component enables WiFi 6 Individual Target Wake Time (iTWT) on ESP32-C5, ESP32-C6, and ESP32-C61
+devices. iTWT allows the device to negotiate a schedule with the access point to sleep between wake windows,
+reducing current draw significantly during idle periods.
+
+Unlike [Deep Sleep](/components/deep_sleep/), iTWT keeps the CPU running and maintains the WiFi association.
+The device wakes on its scheduled window without rebooting, resumes execution immediately, and responds to
+hardware interrupts (GPIO, timers, sensor thresholds) with microsecond latency at any time.
+
+This component requires the [WiFi](/components/wifi/) component and an access point that supports WiFi 6
+(802.11ax). It is only supported on the ESP-IDF framework.
+
+This component cannot be used together with [Deep Sleep](/components/deep_sleep/) or
+[ESP-NOW](/components/espnow/).
+
+```yaml
+# Example configuration entry
+wifi_twt:
+  wake_interval: 15s
+  wake_duration: 10ms
+```
+
+> [!NOTE]
+> iTWT requires a WiFi 6 (802.11ax) access point. On access points that do not support iTWT the setup
+> request will be ignored and the device will operate without power savings.
+
+> [!WARNING]
+> The [Native API](/components/api/) sends keepalive pings every 20 s and disconnects if no response
+> arrives within 90 s. While the device is asleep the radio is off and pings go unanswered, so keep
+> `wake_interval` below 90 s to ensure the device wakes before that timeout fires. Any traffic sent by
+> the device during a wake window resets the timer, so frequent sensor updates can sustain the connection
+> at longer intervals. For wake intervals above 90 s, use MQTT instead.  Both Native API and MQTT use TCP
+> connections that routers will typically cache and send to device when it is awake.
+
+> [!WARNING]
+> Broadcast and multicast UDP packets received while the device is asleep are silently dropped. Routers and
+> access points only buffer unicast frames for sleeping clients; broadcast traffic is never cached. Protocols
+> that rely on broadcast or multicast for discovery or delivery — such as mDNS, CoAP multicast, and SSDP —
+> will not reach the device during sleep periods.  Unicast UDP packets may be cached and passed through to device,
+> however, most routers do not do a good job of this and only a portion of the UDP packets may reach the device.
+
+> [!WARNING]
+> UDP packets queued for transmission while the radio is off may be silently dropped. The device's transmit
+> queue is shallow, so if multiple UDP frames accumulate between wake windows — for example, sensor updates
+> fired faster than `wake_interval` — older frames are discarded before the radio comes back up. TCP-based
+> protocols such as MQTT tolerate this better because the stack retransmits unacknowledged segments.
+> UDP-based protocols such as CoAP have no retransmission at the transport layer, so callers must either
+> rate-limit transmissions to one per wake window or handle retries at the application level.
+
+## Configuration Variables
+
+- **wake_interval** (**Required**, [Time](/guides/configuration-types#time)): How often the device wakes
+  up. Must exceed `wake_duration` by at least 10 ms.
+- **wake_duration** (**Required**, [Time](/guides/configuration-types#time)): The minimum duration the device stays
+  awake each wake window. Maximum is 65 ms (802.11ax wire limit of 255 × 256 µs).  Device will finish processing
+  messages prior to going back to sleep.
+- **setup_cmd** (*Optional*, string): How the device negotiates the TWT schedule with the access point.
+  One of `request`, `suggest`, or `demand`. Defaults to `demand`.
+
+  - `request`: Join a TWT session without providing parameters. The access point assigns the schedule
+    entirely; `wake_interval` and `wake_duration` are ignored.
+  - `suggest`: Offer `wake_interval` and `wake_duration` as preferred parameters. The access point may
+    accept them as-is or respond with a counter-proposal, which the device will accept.
+  - `demand`: Require the access point to accept exactly the specified `wake_interval` and
+    `wake_duration`. If the access point cannot accommodate the parameters, setup fails.
+- **flow_type** (*Optional*, string): TWT flow type. One of `announced` or `unannounced`. In `announced`
+  mode the device sends a QoS Null frame at the start of each wake window to signal the access point it
+  is awake; the AP then delivers any buffered downlink frames immediately. In `unannounced` mode the
+  device wakes and transmits without any announcement; the AP does not know the device is awake until it
+  hears from it, so buffered downlink may be delayed until the next DTIM beacon. Use `announced` when the
+  device needs to receive data each wake window; use `unannounced` for pure uplink devices such as sensors
+  that only push data. Defaults to `announced`.
+- **auto_setup** (*Optional*, boolean): Automatically negotiate a TWT session after WiFi connects.
+  Set to `false` to negotiate manually using `wifi_twt.start`. Defaults to `true`.
+- **on_twt_start** (*Optional*, [Automation](/automations/)): Automation to run when a TWT session is
+  successfully established with the access point.
+- **on_twt_stop** (*Optional*, [Automation](/automations/)): Automation to run when a TWT session ends,
+  either because the access point tore it down or `wifi_twt.stop` was called.
+- **on_twt_wakeup** (*Optional*, [Automation](/automations/)): Automation to run at the start of each
+  TWT wake window.
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code
+  generation.
+
+## Actions
+
+### `wifi_twt.start` Action
+
+Negotiate a TWT session. When called while a session is already active, the existing session is torn down
+first and a new one is negotiated. All parameters are optional; any omitted parameter keeps its current
+value.
+
+```yaml
+on_...:
+  then:
+    - wifi_twt.start:
+        id: my_twt
+        wake_interval: 30s
+        wake_duration: 20ms
+```
+
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the `wifi_twt` component.
+- **wake_interval** (*Optional*, [Time](/guides/configuration-types#time)): Override the wake interval
+  for this session. Supports [templates](/automations/templates/).
+- **wake_duration** (*Optional*, [Time](/guides/configuration-types#time)): Override the wake duration
+  for this session. Supports [templates](/automations/templates/).
+- **setup_cmd** (*Optional*, string): Override the setup command (`request`, `suggest`, or `demand`)
+  for this session. See [Configuration Variables](#configuration-variables) for details. Supports
+  [templates](/automations/templates/).
+- **flow_type** (*Optional*, string): Override the flow type (`announced` or `unannounced`) for this
+  session. See [Configuration Variables](#configuration-variables) for details. Supports
+  [templates](/automations/templates/).
+
+### `wifi_twt.stop` Action
+
+Tear down the active TWT session. The device returns to normal WiFi power save behavior. The session is
+not renegotiated on the next WiFi reconnect.
+
+```yaml
+on_...:
+  then:
+    - wifi_twt.stop:
+        id: my_twt
+```
+
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the `wifi_twt` component.
+
+### `wifi_twt.disable` Action
+
+Block TWT from starting and tear down any active session. If a session was active when `disable` was
+called, `wifi_twt.enable` will renegotiate it. Calling `disable` when already disabled logs a warning
+and does nothing.
+
+Use `disable` when the device must remain reachable for an extended period — for example, to receive an
+OTA update or respond to user input — and `enable` when that period ends.
+
+```yaml
+on_...:
+  then:
+    - wifi_twt.disable:
+        id: my_twt
+```
+
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the `wifi_twt` component.
+
+### `wifi_twt.enable` Action
+
+Lift the block set by `wifi_twt.disable`. If a session was active when `wifi_twt.disable` was called,
+it is renegotiated immediately. If no session was previously active, TWT is permitted again but not
+started — call `wifi_twt.start` explicitly to begin a new session.
+
+```yaml
+on_...:
+  then:
+    - wifi_twt.enable:
+        id: my_twt
+```
+
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the `wifi_twt` component.
+
+## Choosing Parameters
+
+`wake_interval` controls how often the device wakes and `wake_duration` controls how long it stays awake.
+A shorter interval increases responsiveness but reduces power savings. A longer interval improves power
+savings but increases latency for sensor reporting and command response.
+
+The 802.11ax standard encodes `wake_duration` in units of 256 µs, so the maximum value is 255 × 256 µs ≈ 65 ms.
+Values above 65 ms are rejected at configuration time.
+
+ESP-IDF requires the service period (`wake_interval`) to exceed `wake_duration` by at least 10 ms. For
+example, with `wake_duration: 50ms` the minimum `wake_interval` is 60 ms.
+
+## OTA Updates
+
+When the [OTA](/components/ota/) component is present, TWT is automatically suspended when an OTA update
+begins and renegotiated when it completes or is aborted. No additional configuration is required.
+
+## Example: Low-Power Sensor Node
+
+This example wakes every 30 seconds, reads sensors during the 50 ms wake window, and reports via MQTT.
+
+```yaml
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+wifi_twt:
+  wake_interval: 30s
+  wake_duration: 50ms
+  on_twt_wakeup:
+    then:
+      - component.update: my_sensor
+
+mqtt:
+  broker: 192.168.1.100
+
+sensor:
+  - platform: ...
+    id: my_sensor
+    name: "My Sensor"
+```
