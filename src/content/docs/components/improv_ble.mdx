@@ -5,10 +5,15 @@ title: "Improv via BLE"
 import APIRef from '@components/APIRef.astro';
 
 
-The `esp32_improv` component in ESPHome implements the open [Improv standard](https://www.improv-wifi.com/)
+The `improv_ble` component in ESPHome implements the open [Improv standard](https://www.improv-wifi.com/)
 for configuring Wi-Fi on an ESP32 device by using Bluetooth Low Energy (BLE) to receive the credentials.
 
-The `esp32_improv` component will automatically set up the [BLE Server](/components/esp32_ble/).
+The `improv_ble` component will automatically set up the [BLE Server](/components/esp32_ble/).
+
+> [!NOTE]
+> The component was renamed from `esp32_improv` to `improv_ble` in ESPHome 2026.10.0 so the name matches the
+> [Improv via Serial](/components/improv_serial/) component and no longer implies an ESP32-only feature. The
+> legacy `esp32_improv:` key continues to work as a deprecated alias and will be removed in 2027.4.0.
 
 > [!WARNING]
 > The BLE software stack on the ESP32 consumes a significant amount of RAM on the device.
@@ -22,7 +27,7 @@ The `esp32_improv` component will automatically set up the [BLE Server](/compone
 wifi:
   # ...
 
-esp32_improv:
+improv_ble:
   authorizer: binary_sensor_id
 ```
 
@@ -58,7 +63,7 @@ esp32_improv:
 
 ## Improv Automations
 
-The ESP32 Improv component provides various [automations](/automations) that can be used to provide feedback during
+The Improv via BLE component provides various [automations](/automations) that can be used to provide feedback during
 the Improv provisioning process.
 
 <span id="improv-on_start"></span>
@@ -69,7 +74,7 @@ This automation will be triggered when the device is waiting for authorization (
 device, if configured -- see `authorizer` above) and/or upon authorization.
 
 ```yaml
-esp32_improv:
+improv_ble:
   on_start:
     then:
       - logger.log: "Improv awaiting authorization/authorized"
@@ -82,7 +87,7 @@ esp32_improv:
 This automation will be triggered when provisioning has completed.
 
 ```yaml
-esp32_improv:
+improv_ble:
   on_provisioned:
     then:
       - logger.log: "Improv provisioned"
@@ -95,7 +100,7 @@ esp32_improv:
 This automation will be triggered when provisioning begins.
 
 ```yaml
-esp32_improv:
+improv_ble:
   on_provisioning:
     then:
       - logger.log: "Improv provisioning"
@@ -108,7 +113,7 @@ esp32_improv:
 This automation will be triggered when Improv has stopped.
 
 ```yaml
-esp32_improv:
+improv_ble:
   on_stop:
     then:
       - logger.log: "Improv stopped"
@@ -140,7 +145,7 @@ Two variables are available for use in [lambdas](/automations/templates#config-l
   - `improv::ERROR_UNKNOWN`
 
 ```yaml
-esp32_improv:
+improv_ble:
   on_state:
     then:
       - if:
@@ -166,4 +171,4 @@ The `status_indicator` has the following patterns:
 - [Improv via Serial](/components/improv_serial/)
 - [Captive Portal](/components/captive_portal/)
 - [Improv Wi-Fi](https://www.improv-wifi.com/)
-- <APIRef text="esp32_improv_component.h" path="esp32_improv/esp32_improv_component.h" />
+- <APIRef text="improv_ble_component.h" path="improv_ble/improv_ble_component.h" />

@@ -47,13 +47,93 @@ light:
 - **flash_transition_length** (*Optional*, [Time](/guides/configuration-types#time)): The transition length to use when flash is called.
   Defaults to `0s`.
 
-- **initial_state** (*Optional*): The initial state the light should be set to on bootup. This state will be applied
-  when the state is **not** restored based on `restore_mode` (below).
+- **transition_state_publish_interval** (*Optional*, [Time](/guides/configuration-types#time)): How often to publish
+  the light's state while a transition or flash is running, so Home Assistant and other clients can follow a long
+  fade. The starting state is published when the call is made, intermediate states at this interval, and the final
+  state once at the end; the `on_state` trigger fires for each of them. Calls made during the fade still start from
+  the fade's target, and `save: true` saves the target. Not available on addressable lights. Minimum is `150ms`;
+  `200ms` to `250ms` works well. When not set, only the target state is published, once, when the call is made.
+
+- **initial_state** (*Optional*): The initial state the light should be set to on bootup, applied before any state
+  is restored via `restore_mode` or `restore_state` (below). If restoring is configured and a previous state is
+  successfully loaded, the loaded (and, for `restore_state`, possibly overridden) values take precedence over
+  **initial_state** for the fields they touch.
+
+  If neither `restore_mode` nor `restore_state` is set, **initial_state**'s `state` is honored as-is on every
+  boot. If `restore_mode` **is** set, its own cold-boot direction (`OFF` for `RESTORE_DEFAULT_OFF`,
+  `RESTORE_INVERTED_DEFAULT_OFF`, `RESTORE_AND_OFF` and `ALWAYS_OFF`; `ON` for the other four values) always
+  overrides **initial_state**'s `state`.
+
+  > [!WARNING]
+  > Before 2026.10.0, a light whose `initial_state` set `state: ON` and had neither `restore_mode` nor `restore_state`
+  > set would still boot OFF, because omitting both keys implicitly behaved like `restore_mode: ALWAYS_OFF`.
+  > This was counter-intuitive and has been fixed: such a light now boots ON, as `initial_state` says.
 
   - **state** (*Optional*, boolean, [templatable](/automations/templates)): The ON/OFF state for the light.
   - All other options from [light state](#light-state).
 
-- **restore_mode** (*Optional*): Control how the light attempts to restore state on bootup.
+  If **color_mode** is not given but color fields such as `red` or `brightness` are, the light uses the first
+  color mode it supports that provides those fields (for example `RGB` for `red`, `green` and `blue`).
+
+- **restore_state** (*Optional*): Persist the light's state to flash and restore it on bootup, with optional
+  per-field overrides applied on top of whatever was loaded. Mutually exclusive with `restore_mode`. Accepts
+  a mapping of per-field overrides, or one of two case-insensitive shorthands: `all` or `none`.
+
+  If nothing has been saved yet (e.g. on the very first boot), restoring has nothing to do, so the light falls
+  back to **initial_state** (or its hardware defaults) instead — none of the fields below take effect until a
+  state has actually been persisted at least once.
+
+  - **state** (*Optional*, string or boolean): `KEEP` (default, case-insensitive) to restore the saved ON/OFF
+    state as-is, `INVERT` to restore it inverted, `INITIAL` to use **initial_state**'s state instead (OFF if
+    **initial_state** doesn't set one), or an explicit `ON`/`OFF` (or boolean) to always force this value
+    regardless of what was saved.
+  - All other options from [light state](#light-state), each defaulting to `KEEP` (case-insensitive): restore
+    the saved value for that field as-is. Set any of them to `INITIAL` to use **initial_state**'s value for
+    that field instead (or its hardware default, if **initial_state** doesn't set it either), or to an
+    explicit value to always force that value — either way, regardless of what was saved.
+
+  ```yaml
+  # Restore everything exactly as it was last saved -- "all" is shorthand for {}
+  light:
+    - platform: ...
+      restore_state: all
+  ```
+
+  ```yaml
+  # Explicitly disable restoring -- equivalent to omitting restore_state: entirely.
+  # Useful when the value comes from a substitution or package that might resolve to
+  # "all", "none", or a mapping.
+  light:
+    - platform: ...
+      restore_state: none
+  ```
+
+  ```yaml
+  # Restore color/brightness as saved, but always come back on
+  light:
+    - platform: ...
+      restore_state:
+        state: ON
+  ```
+
+  ```yaml
+  # Restore color as saved, but always come back at the brightness configured in
+  # initial_state: (here, 50%) rather than whatever brightness was last saved
+  light:
+    - platform: ...
+      initial_state:
+        brightness: 50%
+      restore_state:
+        brightness: INITIAL
+  ```
+
+- **restore_mode** (*Optional*): Control how the light attempts to restore state on bootup. Mutually exclusive
+  with `restore_state`.
+
+  > [!WARNING]
+  > `restore_mode` is deprecated in favor of `restore_state` (above), which offers the same behavior plus
+  > per-field control. `restore_mode` is not currently scheduled for removal and all 8 values below continue
+  > to work as described.
 
   - `RESTORE_DEFAULT_OFF` - Attempt to restore state and default to OFF if not possible to restore.
   - `RESTORE_DEFAULT_ON` - Attempt to restore state and default to ON.
@@ -61,8 +141,67 @@ light:
   - `RESTORE_INVERTED_DEFAULT_ON` - Attempt to restore state inverted from the previous state and default to ON.
   - `RESTORE_AND_OFF` - Attempt to restore state but initialize the light as OFF.
   - `RESTORE_AND_ON` - Attempt to restore state but initialize the light as ON.
-  - `ALWAYS_OFF` (Default) - Always initialize the light as OFF on bootup.
+  - `ALWAYS_OFF` - Always initialize the light as OFF on bootup.
   - `ALWAYS_ON` - Always initialize the light as ON on bootup.
+
+  To migrate from `restore_mode` to `restore_state`, replace it with the equivalent configuration below. For the
+  `*_OFF` values this assumes **initial_state** does not set `state: ON`; remove that if it does, since
+  `restore_state` and "set neither" honor **initial_state** where `restore_mode` overrode it.
+
+  `RESTORE_DEFAULT_OFF`:
+
+  ```yaml
+  restore_state: all
+  ```
+
+  `RESTORE_DEFAULT_ON`:
+
+  ```yaml
+  initial_state:
+    state: ON
+  restore_state: all
+  ```
+
+  `RESTORE_INVERTED_DEFAULT_OFF`:
+
+  ```yaml
+  restore_state:
+    state: INVERT
+  ```
+
+  `RESTORE_INVERTED_DEFAULT_ON`:
+
+  ```yaml
+  initial_state:
+    state: ON
+  restore_state:
+    state: INVERT
+  ```
+
+  `RESTORE_AND_OFF`:
+
+  ```yaml
+  restore_state:
+    state: OFF
+  ```
+
+  `RESTORE_AND_ON`:
+
+  ```yaml
+  initial_state:
+    state: ON
+  restore_state:
+    state: ON
+  ```
+
+  `ALWAYS_OFF`: set neither `restore_mode` nor `restore_state`.
+
+  `ALWAYS_ON`: set neither `restore_mode` nor `restore_state`, and:
+
+  ```yaml
+  initial_state:
+    state: ON
+  ```
 
 - **on_turn_on** (*Optional*, [Action](/automations/actions#all-actions)): An automation to perform when the light is turned on. See
   [`light.on_turn_on` / `light.on_turn_off` Trigger](#light-on_turn_on_off_trigger).
@@ -140,8 +279,23 @@ configuration variables:
 - **red** (*Optional*, percentage, [templatable](/automations/templates)): The red channel of the light.
 - **green** (*Optional*, percentage, [templatable](/automations/templates)): The green channel of the light.
 - **blue** (*Optional*, percentage, [templatable](/automations/templates)): The blue channel of the light.
+- **color** (*Optional*, string or hex value): A
+  [standard CSS color name](https://developer.mozilla.org/en-US/docs/Web/CSS/named-color),
+  for example `red` or `springgreen`, or a hex value in the form `0xRRGGBB`, for example `0x223344`, used instead of
+  **red**, **green** and **blue**. Names are not case-sensitive.
+  Cannot be used together with **red**, **green** or **blue**. This option is not templatable.
+
+  The light always drives its brightest color channel at full level. For a dark color such as `darkred` or
+  `0x223344`, the **color_brightness** is therefore set to match (about 55% and 27% respectively).
+  Colors with a channel at full level, such as `red`, set **color_brightness** to 100%. If you also
+  set **color_brightness**, your value is used instead, and a warning is logged if the color is a dark one.
+
+  Color names such as `white` and `gray` are converted to RGB colors only and do not affect the white channel,
+  if present.
+
 - **white** (*Optional*, percentage, [templatable](/automations/templates)): The brightness of the white channel.
-- **color_temperature** (*Optional*, float, [templatable](/automations/templates)): The color temperature (in [mireds](https://en.wikipedia.org/wiki/Mired) or Kelvin) of the white channel.
+- **color_temperature** (*Optional*, float, [templatable](/automations/templates)): The color temperature
+  (in [mireds](https://en.wikipedia.org/wiki/Mired) or Kelvin) of the white channel.
 
 - **cold_white** (*Optional*, percentage, [templatable](/automations/templates)): The brightness of the cold white
   channel. Cannot be used at the same time as *color_temperature*.
@@ -202,6 +356,14 @@ on_...:
         brightness: !lambda |-
           // output value must be in range 0 - 1.0
           return id(some_sensor).state / 100.0;
+    # Using a color name
+    - light.turn_on:
+        id: light_1
+        color: springgreen
+    # Using a hex color value
+    - light.turn_on:
+        id: light_1
+        color: 0x223344
     # Shorthand
     - light.turn_on: light_1
 ```
@@ -301,7 +463,7 @@ on_...:
   then:
     - light.control:
         id: light_1
-        state: on
+        state: ON
 ```
 
 **Configuration variables:**
@@ -412,6 +574,18 @@ on_...:
       red: 100%
       green: 0%
       blue: 0%
+  # Using a color name instead
+  - light.addressable_set:
+      id: my_light
+      range_from: 51
+      range_to: 99
+      color: darkred
+  # Using a hex value
+  - light.addressable_set:
+      id: my_light
+      range_from: 100
+      range_to: 149
+      color: 0x223344
 ```
 
 **Configuration variables:**
@@ -429,6 +603,10 @@ on_...:
 - **red** (*Optional*, [templatable](/automations/templates), percentage): The value to set the red channel to.
 - **green** (*Optional*, [templatable](/automations/templates), percentage): The value to set the green channel to.
 - **blue** (*Optional*, [templatable](/automations/templates), percentage): The value to set the blue channel to.
+- **color** (*Optional*, string or hex value): A
+  [standard CSS color name](https://developer.mozilla.org/en-US/docs/Web/CSS/named-color)
+  or a hex value in the form `0xRRGGBB` to use instead of **red**, **green** and **blue**. Not templatable.
+  Also sets **color_brightness**, as described in [light state](#light-state).
 - **white** (*Optional*, [templatable](/automations/templates), percentage): The brightness to set the white channel
   to.
 
@@ -635,15 +813,15 @@ light:
       - strobe:
           name: Strobe Effect With Custom Values
           colors:
-            - state: true
+            - state: ON
               brightness: 100%
               red: 100%
               green: 90%
               blue: 0%
               duration: 500ms
-            - state: false
+            - state: OFF
               duration: 250ms
-            - state: true
+            - state: ON
               brightness: 100%
               red: 0%
               green: 100%
@@ -656,7 +834,7 @@ light:
 - **name** (*Optional*, string): The name of the effect. Defaults to `Strobe`.
 - **colors** (*Optional*, list): A list of colors to cycle through. Defaults to a quick cycle between ON and OFF.
 
-  - **state** (*Optional*, boolean): The on/off state to show. Defaults to `true`.
+  - **state** (*Optional*, boolean): The ON/OFF state to show. Defaults to `ON`.
   - **color_mode** (*Optional*, string): The color mode of the light. Defaults to the current color mode.
   - **brightness** (*Optional*, percentage): The brightness of the light. Defaults to `100%`.
   - **color_brightness** (*Optional*, percentage): The brightness of the RGB lights, if applicable. Defaults to `100%`.
