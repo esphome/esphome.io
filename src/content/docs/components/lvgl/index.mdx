@@ -156,6 +156,12 @@ The following configuration variables apply to the main `lvgl` component, in ord
 - **buffer_size** (*Optional*, percentage): The percentage of screen size to allocate buffer memory. If unconfigured, the default is `100%` with runtime fallback to `12%` if a full size buffer allocation fails. For devices without PSRAM, the recommended value is `25%`.
 - **draw_rounding** (*Optional*, int): An optional value to use for rounding draw areas to a specified boundary. Defaults to 2. Useful for displays that require draw windows to be on specified boundaries (usually powers of 2.)
 - **log_level** (*Optional*, string): Set the logger level specifically for the messages of the LVGL library: `VERBOSE`, `DEBUG`, `INFO`, `WARN`, `ERROR`, `NONE`. Defaults to `WARN`.
+- **debug_borders** (*Optional*, boolean): When `true`, every widget is drawn with a 1 pixel border, each in a different
+  color, to make the size and position of widgets easier to see while designing a layout. Colors repeat after 12 widgets.
+  The border replaces any border set on the widget itself, and it takes up space, so widgets and their content may move
+  by about 1 pixel. Tab and tile pages, message box frames and other parts that LVGL creates internally are not
+  outlined. Intended for design use only. When more than one LVGL configuration is used, the value must be the same in
+  all of them. Defaults to `false`.
 - **byte_order** (*Optional*, string): The byte order of the data LVGL outputs; either `big_endian` or `little_endian`. Will try to auto-configure based on the display metadata. Defaults to `big_endian` if the display driver does not supply the information.
 - **refresh_interval** (*Optional*, [Time](/guides/configuration-types#time): The minimum interval for screen refresh. Defaults to 16ms.
 - **default_font** (*Optional*, ID): The ID of the [font](#fonts) used by default to render the text or symbols. Defaults to LVGL's internal `montserrat_14` if not specified.
