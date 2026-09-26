@@ -161,9 +161,14 @@ ESP32 FIFO is 128 bytes.
   set to address `0`; if the device's address is configurable, setting it to 1-247 is the fix.
 - **A reply with no request before it is not paired.** This happens on the first exchange after a
   reset, or when a request is lost to a CRC error. The register address is unknowable in that case,
-  so neither automation fires for it. The exception is a single-register write (`0x06`): its reply
+  so neither automation fires for it. The exception is a single write (`0x05` or `0x06`): its reply
   is byte-identical to its request, so one seen on its own fires `on_request` as if it were a request.
   Nothing on the wire can tell the two apart; the next request puts the pairing back in step.
+- **An unanswered single write can take the next one as its reply.** If a `0x05`/`0x06` write gets
+  no reply and the very next frame is another single write, the second is read as the first one's
+  reply: `on_response` pairs the two if both went to the same device, or logs a warning if not, and
+  the second write gets no `on_response` of its own. Its contents still reach `on_request`, because
+  its reply is byte-identical to it, and the next read puts the pairing back in step.
 - **One sniffer per bus.** Watching two buses needs two UARTs and two hubs; two hubs on one UART
   would compete for the received bytes.
 
