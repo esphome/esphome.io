@@ -822,6 +822,13 @@ ESPHome can protect an ESP32 device on several fronts. These options are all con
   device will reject any OTA update that is not signed with a trusted key. The options below only control how
   the firmware gets signed.
 
+  > [!NOTE]
+  > A device built this way also advertises `ota_signed=1` in its [mDNS](/components/mdns/) TXT records, meaning
+  > it accepts only updates signed by a key it trusts. Tools that discover devices on the network can use this
+  > to check up front whether they can sign an update at all, and say that a serial flash is needed when they
+  > cannot. A missing record does not mean the device accepts unsigned updates: it may have mDNS disabled or run
+  > firmware from before the record was added.
+
   - **signing_key** (*Optional*, filename): Path to a PEM-encoded private signing key. When provided, the firmware
     is **automatically signed during build** using `espsecure`. This is the simplest workflow — the public key is
     derived automatically and embedded in the signature block. When omitted, the firmware is **not signed during
