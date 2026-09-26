@@ -279,8 +279,23 @@ configuration variables:
 - **red** (*Optional*, percentage, [templatable](/automations/templates)): The red channel of the light.
 - **green** (*Optional*, percentage, [templatable](/automations/templates)): The green channel of the light.
 - **blue** (*Optional*, percentage, [templatable](/automations/templates)): The blue channel of the light.
+- **color** (*Optional*, string or hex value): A
+  [standard CSS color name](https://developer.mozilla.org/en-US/docs/Web/CSS/named-color),
+  for example `red` or `springgreen`, or a hex value in the form `0xRRGGBB`, for example `0x223344`, used instead of
+  **red**, **green** and **blue**. Names are not case-sensitive.
+  Cannot be used together with **red**, **green** or **blue**. This option is not templatable.
+
+  The light always drives its brightest color channel at full level. For a dark color such as `darkred` or
+  `0x223344`, the **color_brightness** is therefore set to match (about 55% and 27% respectively).
+  Colors with a channel at full level, such as `red`, set **color_brightness** to 100%. If you also
+  set **color_brightness**, your value is used instead, and a warning is logged if the color is a dark one.
+
+  Color names such as `white` and `gray` are converted to RGB colors only and do not affect the white channel,
+  if present.
+
 - **white** (*Optional*, percentage, [templatable](/automations/templates)): The brightness of the white channel.
-- **color_temperature** (*Optional*, float, [templatable](/automations/templates)): The color temperature (in [mireds](https://en.wikipedia.org/wiki/Mired) or Kelvin) of the white channel.
+- **color_temperature** (*Optional*, float, [templatable](/automations/templates)): The color temperature
+  (in [mireds](https://en.wikipedia.org/wiki/Mired) or Kelvin) of the white channel.
 
 - **cold_white** (*Optional*, percentage, [templatable](/automations/templates)): The brightness of the cold white
   channel. Cannot be used at the same time as *color_temperature*.
@@ -341,6 +356,14 @@ on_...:
         brightness: !lambda |-
           // output value must be in range 0 - 1.0
           return id(some_sensor).state / 100.0;
+    # Using a color name
+    - light.turn_on:
+        id: light_1
+        color: springgreen
+    # Using a hex color value
+    - light.turn_on:
+        id: light_1
+        color: 0x223344
     # Shorthand
     - light.turn_on: light_1
 ```
@@ -551,6 +574,18 @@ on_...:
       red: 100%
       green: 0%
       blue: 0%
+  # Using a color name instead
+  - light.addressable_set:
+      id: my_light
+      range_from: 51
+      range_to: 99
+      color: darkred
+  # Using a hex value
+  - light.addressable_set:
+      id: my_light
+      range_from: 100
+      range_to: 149
+      color: 0x223344
 ```
 
 **Configuration variables:**
@@ -568,6 +603,10 @@ on_...:
 - **red** (*Optional*, [templatable](/automations/templates), percentage): The value to set the red channel to.
 - **green** (*Optional*, [templatable](/automations/templates), percentage): The value to set the green channel to.
 - **blue** (*Optional*, [templatable](/automations/templates), percentage): The value to set the blue channel to.
+- **color** (*Optional*, string or hex value): A
+  [standard CSS color name](https://developer.mozilla.org/en-US/docs/Web/CSS/named-color)
+  or a hex value in the form `0xRRGGBB` to use instead of **red**, **green** and **blue**. Not templatable.
+  Also sets **color_brightness**, as described in [light state](#light-state).
 - **white** (*Optional*, [templatable](/automations/templates), percentage): The brightness to set the white channel
   to.
 
