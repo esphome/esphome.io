@@ -6,8 +6,9 @@ title: "Xiaomi Body Scale"
 import { Image } from "astro:assets";
 
 The `xiaomi_body_scale` sensor platform lets you track the output of the Xiaomi Smart Scale S200 and the Xiaomi Body
-Composition Scale S400 using the [ESP32 BLE Tracker](/components/esp32_ble_tracker/). This component listens
-**passively** to BLE advertisement packets and does not pair with the device, so ESPHome has no impact on battery life.
+Composition Scale S400 using a BLE tracker hub such as the [ESP32 BLE Tracker](/components/esp32_ble_tracker/). This
+component listens **passively** to BLE advertisement packets and does not pair with the device, so ESPHome has no impact
+on battery life.
 
 The scale broadcasts encrypted MiBeacon packets (UUID `0xFE95`). A **bindkey** is required to decrypt the
 payload; see [Getting the Bindkey](#getting-the-bindkey).
@@ -61,8 +62,6 @@ sensor:
     bindkey: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
     weight:
       name: "Scale Weight"
-    impedance_low:
-      name: "Scale Impedance Low"
 ```
 
 ---
@@ -156,7 +155,7 @@ Impedance packet routing (BIA frequency convention):
    > [!NOTE]
    > In the Xiaomi Cloud, the S400 variants (`MJTZC01YM` / `MJTZC03YM`) do not appear by their commercial model
    > name. Instead, they are identified as **`yunmai.scales.ms103`**, **`ms104`**, **`ms107`**, or
-   > **`xiaomi.scales.ms110`**.
+   > **`xiaomi.scales.ms110`**. This mapping is for the S400 only.
 
 4. Copy the **BLE KEY** field (32 hex characters); this is your `bindkey`.
 
