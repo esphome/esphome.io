@@ -1,0 +1,184 @@
+---
+description: "Instructions for setting up the Modbus Sniffer component."
+title: "Modbus Sniffer"
+params:
+  seo:
+    description: Instructions for setting up the Modbus Sniffer component.
+    image: modbus.png
+---
+
+import { Image } from 'astro:assets';
+
+The `modbus_sniffer` component listens to a Modbus RTU bus that two *other* devices are talking on,
+pairs each request with its reply, and hands the result to a lambda. It never transmits.
+
+This is for buses you do not control. If your ESPHome node is the one doing the polling, use
+[Modbus Controller](/components/modbus_controller/) instead - you will get decoded sensors and none
+of the work below. A sniffer is what you reach for when some other device is the master: an inverter
+polling a battery, a controller polling a meter, and you want that data without interrupting it.
+
+You must set the `role` attribute of the [Modbus](/components/modbus/) hub to `sniffer`.
+
+> [!NOTE]
+> Observed exchanges currently reach you through a lambda, so decoding the PDUs is your job. A
+> sensor platform is intended to follow, giving the sniffer role the kind of declarative sensors
+> [Modbus Controller](/components/modbus_controller/) already provides for the client role.
+
+<Image src="/images/modbus.png" width={190} height={200} layout="constrained" alt="" />
+
+See [Modbus](/components/modbus/#hardware-setup) for RS485 hardware setup instructions. Wire only the
+receive side: the hub in this role declares no `flow_control_pin` and never sends, so a node running
+it cannot disturb the bus it is watching.
+
+```yaml
+uart:
+  - id: bus
+    rx_pin: GPIO17
+    baud_rate: 9600
+    rx_timeout: 10           # ESP32 only; see UART settings below
+    rx_full_threshold: 120   # ESP32 only, optional
+
+modbus:
+  - id: sniffer_hub
+    uart_id: bus
+    role: sniffer
+
+modbus_sniffer:
+  - modbus_id: sniffer_hub
+    on_response:
+      - lambda: |-
+          ESP_LOGD("sniff", "address %u function %02X, %u response bytes",
+                   address, request_pdu[0], (unsigned) response_pdu.size());
+```
+
+## Configuration variables
+
+- **modbus_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the [Modbus](/components/modbus/)
+  hub the sniffer is attached to. The hub must have `role: sniffer`.
+- **on_request** (*Optional*, [Automation](/automations)): An automation to run for each request
+  to a server address (not broadcasts), whether or not it is answered. See [`on_request`](#on_request).
+- **on_response** (*Optional*, [Automation](/automations)): An automation to run for each
+  request/reply pair observed on the bus. See [`on_response`](#on_response).
+
+## `on_response`
+
+This automation fires once per matched exchange, with three variables in scope:
+
+- `address` (`uint8_t`): the server the request was addressed to.
+- `request_pdu` (`std::span<const uint8_t>`): the request, function code first, as it appeared on
+  the wire.
+- `response_pdu` (`std::span<const uint8_t>`): the reply, in the same form.
+
+A Modbus reply does not carry a register address - only the request does - so the component retains
+each request until its reply arrives and hands you both. That pairing is the reason a sniffer needs
+to see both halves of the conversation.
+
+Both PDUs are only valid while the automation runs: the hub reuses their buffers for the next
+frame. Deferring actions (`delay`, `wait_until`, `script.wait`, ...) are therefore rejected at
+validation, in both `on_response` and `on_request`. Copy what you need into
+[globals](/components/globals/) first, and defer in a separate script.
+
+Nothing is decoded for you. Both PDUs arrive raw, which means the helper functions the rest of the
+Modbus component uses work here too, and every function code is available rather than a chosen few.
+
+Reading one register out of a read response:
+
+```yaml
+modbus_sniffer:
+  - modbus_id: sniffer_hub
+    on_response:
+      - lambda: |-
+          if (address != 0x0F || request_pdu[0] != 0x03) return;
+          // A read request is: function code, start address, register count.
+          const uint16_t start = modbus::helpers::get_data<uint16_t>(request_pdu.data(), 1);
+          // server_pdu_payload() skips the function code, and the byte count on a read.
+          const auto payload = modbus::helpers::server_pdu_payload(response_pdu);
+
+          auto reg = [&](uint16_t want) -> int {
+            if (want < start) return -1;
+            const size_t idx = (want - start) * 2;
+            if (idx + 1 >= payload.size()) return -1;
+            return (payload[idx] << 8) | payload[idx + 1];
+          };
+
+          const int soc = reg(206);
+          if (soc >= 0) id(battery_soc).publish_state(soc);
+```
+
+Watching a device being configured, which a register read would never show:
+
+```yaml
+modbus_sniffer:
+  - modbus_id: sniffer_hub
+    on_response:
+      - lambda: |-
+          // 0x06 writes one register; its reply echoes the register and the value it accepted.
+          // Check the reply too: a refused write comes back as a 2-byte exception reply (0x86).
+          if (request_pdu[0] == 0x06 && response_pdu[0] == 0x06 && response_pdu.size() == 5) {
+            ESP_LOGI("sniff", "device %u set register %u to %u", address,
+                     modbus::helpers::get_data<uint16_t>(response_pdu.data(), 1),
+                     modbus::helpers::get_data<uint16_t>(response_pdu.data(), 3));
+          }
+```
+
+## `on_request`
+
+Fires for every request except broadcasts (address 0), before any reply, with two variables in scope:
+
+- `address` (`uint8_t`): the server the request was addressed to.
+- `request_pdu` (`std::span<const uint8_t>`): the request, function code first.
+
+Because it does not wait for a reply, this is where you notice a device that has stopped answering:
+count the requests here and the exchanges in `on_response`, and the difference is the silence.
+
+```yaml
+modbus_sniffer:
+  - modbus_id: sniffer_hub
+    on_request:
+      - lambda: |-
+          ESP_LOGD("sniff", "-> %u fn %02X", address, request_pdu[0]);
+```
+
+## UART settings
+
+`rx_timeout` and `rx_full_threshold` are ESP32-only UART options; leave them out on other platforms.
+
+Modbus RTU has no length prefix and no terminator - message boundaries are silence on the line, and
+`rx_timeout` is what detects that silence. Set it shorter than the gap between one exchange and the
+next, or two exchanges arrive as one batch.
+
+`rx_full_threshold` raises a second interrupt once that many bytes have arrived, which can deliver a
+frame in pieces. The component accumulates across reads, so a low threshold is not automatically a
+problem: on a 9600-baud bus carrying frames of 7 to 31 bytes, values of 8 and 120 gave the same
+throughput and no parse failures either way. If you do see `parse failed` warnings (the discarded
+bytes are shown at `VERBOSE`), raising it above the longest burst on your bus is the thing to try.
+ESPHome caps it at 120, and the ESP32 FIFO is 128 bytes.
+
+## Limitations
+
+- **Exchanges are paired, not interpreted.** Every function code is delivered, including writes,
+  coils and exception responses; what the bytes mean is for your lambda to decide.
+- **Address 0 is ignored.** It is the Modbus broadcast address and is never answered, so neither
+  `on_request` nor `on_response` fires for it. Some non-compliant devices (certain BMS clones) ship
+  set to address `0`; if the device's address is configurable, setting it to 1-247 is the fix.
+- **A reply with no request before it is not paired.** This happens on the first exchange after a
+  reset, or when a request is lost to a CRC error. The register address is unknowable in that case,
+  so neither automation fires for it. The exceptions are replies shaped like a request: the reply
+  to a single write (`0x05`/`0x06`) or a mask write (`0x16`), which is byte-identical to its request,
+  and an exception reply. One of those seen on its own fires `on_request` as if it were a request.
+  The next request puts the pairing back in step.
+- **An unanswered request can take the next request as its reply.** After a request gets no reply,
+  the next frame is tried as that reply first, and a request with the same length and shape passes:
+  single writes (`0x05`/`0x06`), mask writes (`0x16`), and reads (`0x01`-`0x04`) whose start address
+  is 768-1023 (`0x0300`-`0x03FF`). If it went to the same device with the same function code,
+  `on_response` fires with that request as the reply; otherwise a warning is logged and it fires no
+  `on_request`. Pairing is back in step within an exchange or two.
+- **One sniffer per bus.** Watching two buses needs two UARTs and two hubs; two hubs on one UART
+  would compete for the received bytes.
+
+## See Also
+
+- [Modbus](/components/modbus/)
+- [Modbus Controller](/components/modbus_controller/)
+- [Modbus Server](/components/modbus_server/)
+- [UART Bus](/components/uart/)
