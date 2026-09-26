@@ -1,0 +1,193 @@
+---
+description: "Instructions for using ESPHome's TAS5805M stereo Class-D audio amplifier platform."
+title: "TAS5805M"
+---
+import APIRef from '@components/APIRef.astro';
+
+The `tas5805m` platform allows your ESPHome devices to use the Texas Instruments TAS5805M stereo Class-D audio
+amplifier with digital (I²S) input. This allows the playback of audio via the microcontroller from a range of sources
+via [Speaker](/components/speaker/) or [Media Player](/components/media_player/).
+
+The [I²C bus](/components/i2c/) is required in your configuration as this is used to configure the TAS5805M and read
+its fault status. Audio data is delivered via I²S, for example with the
+[I²S Audio Speaker](/components/speaker/i2s_audio/).
+
+```yaml
+# Example configuration entry
+audio_dac:
+  - platform: tas5805m
+    id: tas5805m_amp
+```
+
+<span id="config-tas5805m"></span>
+
+## Configuration Variables
+
+- **enable_pin** (*Optional*, [Pin](/guides/configuration-types/#pin)): The pin connected to the `PDN` (power down)
+  pin of the TAS5805M. During setup the pin is held low for 10 ms and then driven high. Omit if `PDN` is hardwired
+  high.
+- **analog_gain** (*Optional*, dB): The analog gain of the output stage. Range: `-15.5dB` to `0dB` in `0.5dB` steps.
+  Defaults to `-15.5dB`, the lowest gain.
+- **dac_mode** (*Optional*, enum): How the output stage drives the speakers. Defaults to `btl`.
+  - `btl`: Bridge tied load, two speakers (stereo).
+  - `pbtl`: Parallel bridge tied load, one speaker driven by both output channels. Requires `mixer_mode` to be
+    `mono`, `left` or `right`.
+- **mixer_mode** (*Optional*, enum): How the left and right input channels are routed to the outputs.
+  Defaults to `stereo`.
+  - `stereo`: Left input to the left output, right input to the right output.
+  - `stereo_inverse`: Left and right swapped.
+  - `mono`: Left and right mixed (each at -6 dB) to both outputs.
+  - `left`: Left input to both outputs.
+  - `right`: Right input to both outputs.
+- **volume_min_db** (*Optional*, dB): The digital volume that maps to the minimum volume (0%). Must be less than
+  `volume_max_db`. Range: `-103dB` to `24dB`. Defaults to `-103dB`.
+- **volume_max_db** (*Optional*, dB): The digital volume that maps to the maximum volume (100%). Must be greater than
+  `volume_min_db`. Range: `-103dB` to `24dB`. Defaults to `24dB`.
+- **address** (*Optional*, int): The I²C address of the TAS5805M. The address is selected with a resistor on the
+  `ADR` pin (see the datasheet). Defaults to `0x2D`.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): How often the fault and power state
+  registers are read. Defaults to `1s`.
+- **i2c_id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the [I²C bus](/components/i2c/) the
+  TAS5805M is connected to.
+- All other options from [Audio DAC](/components/audio_dac/#config-audio_dac).
+
+The volume is mapped linearly in dB between `volume_min_db` and `volume_max_db`, in `0.5dB` steps. A volume of 0%
+is not silent unless `volume_min_db` is `-103dB`; use the [Audio DAC](/components/audio_dac/#automations-audio_dac)
+mute actions to silence the output.
+
+> [!TIP]
+> Digital volume above `0dB` can clip full-scale audio. Set `volume_max_db` to `0dB` or lower when the source plays
+> at full scale, and use `analog_gain` to set the maximum output level.
+
+### Operation
+
+The TAS5805M enters play mode after setup. It stays in Hi-Z (outputs off) until an I²S clock is present, and the
+mixer settings from `mixer_mode` are written each time the device enters play mode.
+
+The fault registers are read every `update_interval`. Errors are logged, and latched faults are cleared
+automatically so the output stage restarts once the fault condition is gone. The ADR pin is configured as a fault
+output after startup, since the I²C address is only latched at power up.
+
+## Automations
+
+### `tas5805m.activate` Action
+
+Wakes the amplifier from deep sleep and switches it to play mode. The device waits in Hi-Z until an I²S clock is
+present.
+
+```yaml
+on_...:
+  - tas5805m.activate: tas5805m_amp
+```
+
+Configuration variables:
+
+- **id** (**Required**, [ID](/guides/configuration-types/#id)): The ID of the `tas5805m` platform.
+
+### `tas5805m.deactivate` Action
+
+Puts the amplifier into deep sleep, its lowest power state that keeps the I²C interface and DSP running. Settings
+are kept, and `tas5805m.activate` resumes playback.
+
+```yaml
+on_...:
+  - tas5805m.deactivate: tas5805m_amp
+```
+
+Configuration variables:
+
+- **id** (**Required**, [ID](/guides/configuration-types/#id)): The ID of the `tas5805m` platform.
+
+All [Audio DAC Automations](/components/audio_dac/#automations-audio_dac) are supported by this platform as well.
+
+## Binary Sensor
+
+The `tas5805m` binary sensor platform exposes the fault status of the TAS5805M. Each sensor is `ON` while the fault
+is present and is updated every `update_interval` of the `tas5805m` platform.
+
+```yaml
+binary_sensor:
+  - platform: tas5805m
+    have_fault:
+      name: "Amplifier Fault"
+```
+
+### Binary Sensor Configuration Variables
+
+- **tas5805m_id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the `tas5805m` platform. Required
+  when more than one TAS5805M is configured.
+- **have_fault** (*Optional*): `ON` when any of the faults below is present, except `clock_fault`.
+- **left_channel_dc_fault** (*Optional*): DC offset detected on the left output.
+- **right_channel_dc_fault** (*Optional*): DC offset detected on the right output.
+- **left_channel_over_current** (*Optional*): Over current on the left output.
+- **right_channel_over_current** (*Optional*): Over current on the right output.
+- **pvdd_over_voltage** (*Optional*): PVDD supply voltage too high.
+- **pvdd_under_voltage** (*Optional*): PVDD supply voltage too low.
+- **over_temp_shutdown** (*Optional*): The device shut down because it is too hot.
+- **over_temp_warning** (*Optional*): The device temperature is close to the shutdown threshold.
+- **otp_crc_check** (*Optional*): The CRC check of the internal OTP memory failed.
+- **bq_write_failed** (*Optional*): Writing the biquad filter coefficients failed.
+- **clock_fault** (*Optional*): The I²S clock is missing or invalid. This is normal whenever no audio is playing,
+  so it is not logged and not included in `have_fault`.
+
+All sensors accept the options from [Binary Sensor](/components/binary_sensor/). They default to the `problem` device
+class and the `diagnostic` entity category.
+
+## Configuration Examples
+
+### Stereo Speakers
+
+```yaml
+i2c:
+  sda: GPIOXX
+  scl: GPIOXX
+
+i2s_audio:
+  - id: i2s_output
+    i2s_lrclk_pin: GPIOXX
+    i2s_bclk_pin: GPIOXX
+
+audio_dac:
+  - platform: tas5805m
+    id: tas5805m_amp
+    enable_pin: GPIOXX
+    volume_max_db: 0dB
+
+speaker:
+  - platform: i2s_audio
+    id: amp_speaker
+    i2s_audio_id: i2s_output
+    i2s_dout_pin: GPIOXX
+    dac_type: external
+    channel: stereo
+    audio_dac: tas5805m_amp
+```
+
+### Single Speaker (PBTL)
+
+```yaml
+audio_dac:
+  - platform: tas5805m
+    id: tas5805m_amp
+    dac_mode: pbtl
+    mixer_mode: mono
+```
+
+### Deep Sleep When Idle
+
+```yaml
+media_player:
+  - platform: speaker
+    # ...
+    on_play:
+      - tas5805m.activate: tas5805m_amp
+    on_idle:
+      - tas5805m.deactivate: tas5805m_amp
+```
+
+## See Also
+
+- [Audio DAC Component](/components/audio_dac/)
+- <APIRef text="tas5805m.h" path="tas5805m/tas5805m.h" />
+- <APIRef text="audio_dac.h" path="audio_dac/audio_dac.h" />
+- [TAS5805M datasheet (Texas Instruments)](https://www.ti.com/product/TAS5805M)
