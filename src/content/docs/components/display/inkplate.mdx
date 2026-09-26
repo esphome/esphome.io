@@ -1,533 +1,314 @@
 ---
-description: "Instructions for setting up Inkplate E-Paper displays in ESPHome."
-title: "Inkplate 5, 6, 10 and 6 Plus"
+title: "Inkplate E-Paper Displays"
+description: "Instructions for setting up Inkplate e-paper displays in ESPHome."
 ---
 
 import { Image } from 'astro:assets';
 import Figure from '@components/Figure.astro';
 
-All-in-one e-paper display `Inkplate 5`, `Inkplate 6`, `Inkplate 10` and `Inkplate 6 Plus`.
-
-The Inkplate 5, 6, 10 and 6 Plus are powerful, Wi-Fi enabled ESP32 based six-inch e-paper displays -
-recycled from a Kindle e-reader. Its main feature is simplicity.
-
-Learn more at [Inkplate's documentation website](https://inkplate.readthedocs.io/en/stable/)
+The Inkplate family consists of Wi-Fi enabled ESP32-based e-paper displays by
+[Soldered Electronics](https://soldered.com/). Each board integrates the e-paper panel, an ESP32
+module, a TPS65186 PMIC, and a GPIO I/O expander into a single ready-to-use unit. For hardware
+details and board-specific documentation, see the
+[Inkplate documentation](https://docs.soldered.com/inkplate/).
 
 <Figure
   src="/images/inkplate6.jpg"
-  alt=""
+  alt="Inkplate 6"
   caption="Inkplate 6"
   layout="constrained"
   width={1024}
   height={683}
 />
 
-```yaml
-# Example minimal configuration entry
+## Supported Models
 
-mcp23017:
-  - id: mcp23017_hub
+| Model key | Product | Resolution |
+|-----------|---------|------------|
+| `inkplate4` | Inkplate 4 TEMPERA | 600×600 |
+| `inkplate5v1` | Inkplate 5 v1 | 960×540 |
+| `inkplate5v2` | Inkplate 5 v2 | 1280×720 |
+| `inkplate6v1` | Inkplate 6 v1 | 800×600 |
+| `inkplate6v2` | Inkplate 6 v2+ | 800×600 |
+| `inkplate6plus` | Inkplate 6 PLUS | 1024×758 |
+| `inkplate6flick` | Inkplate 6 FLICK | 1024×758 |
+| `inkplate10` | Inkplate 10 | 1200×825 |
+
+## Minimal Configuration
+
+```yaml
+i2c:
+
+pca6416a:
+  - id: pca6416a_hub
     address: 0x20
 
 display:
-- platform: inkplate
-  id: inkplate_display
-  greyscale: false
-  partial_updating: false
-  update_interval: 60s
-  model: inkplate_6
-
-  ckv_pin: 32
-  sph_pin: 33
-  gmod_pin:
-    mcp23xxx: mcp23017_hub
-    number: 1
-  gpio0_enable_pin:
-    mcp23xxx: mcp23017_hub
-    number: 8
-  oe_pin:
-    mcp23xxx: mcp23017_hub
-    number: 0
-  spv_pin:
-    mcp23xxx: mcp23017_hub
-    number: 2
-  powerup_pin:
-    mcp23xxx: mcp23017_hub
-    number: 4
-  wakeup_pin:
-    mcp23xxx: mcp23017_hub
-    number: 3
-  vcom_pin:
-    mcp23xxx: mcp23017_hub
-    number: 5
+  - platform: inkplate
+    model: inkplate6v2
+    pca6416a_id: pca6416a_hub
+    update_interval: 60s
+    lambda: |-
+      it.fill(COLOR_OFF);
+      it.rectangle(10, 10, 200, 100);
 ```
 
-> [!WARNING]
-> When using the Inkplate epaper module, the GPIO pin numbers above *cannot be changed* as they are
-> hardwired within the module/PCB.
+> [!NOTE]
+> Inkplate boards require PSRAM for framebuffer allocation. Add `psram:` to your configuration.
 
 > [!WARNING]
-> Inkplate module cannot perform partial update if 3 bit mode is on.
-> It just ignores the function call in that case.
+> Partial updates (`full_update_every` > `1`) are not supported in grayscale mode and are ignored.
 
-## Configuration variables
+## Configuration Variables
+
+- **model** (**Required**, enum): The Inkplate board model. One of:
+  - `inkplate4`
+  - `inkplate5v1`
+  - `inkplate5v2`
+  - `inkplate6v1`
+  - `inkplate6v2`
+  - `inkplate6plus`
+  - `inkplate6flick`
+  - `inkplate10`
+
+- **pca6416a_id** (*Optional*, [ID](/guides/configuration-types#id)): ID of the
+  [PCA6416A](/components/pca6416a/) I/O expander. Required for all models except `inkplate6v1`.
+- **mcp23017_id** (*Optional*, [ID](/guides/configuration-types#id)): ID of the
+  [MCP23017](/components/mcp230xx/) I/O expander. Required for `inkplate6v1`. Exactly one of
+  `pca6416a_id` or `mcp23017_id` must be specified.
+
+- **grayscale_mode** (*Optional*, boolean): Enable 3-bit grayscale rendering. Defaults to `false`.
+- **full_update_every** (*Optional*, int): Perform a full refresh every N updates. Set to `1` to
+  always do a full refresh (partial updating disabled). Set to a higher value to enable partial
+  updates with a periodic full refresh. Defaults to `1`.
 
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
-- **model** (*Optional*, enum): Specify the model. Defaults to `inkplate_6`.
-  - `inkplate_6`
-  - `inkplate_10`
-  - `inkplate_6_plus`
-  - `inkplate_6_v2`
-  - `inkplate_5`
-  - `inkplate_5_v2`
+- **lambda** (*Optional*, [lambda](/automations/templates#config-lambda)): The lambda to use for
+  rendering. See [Display Rendering Engine](/components/display#display-engine).
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): Interval between
+  refreshes. Minimum `5s`. Defaults to `1min` when `lambda` or `pages` is configured.
+- **pages** (*Optional*, list): Show pages instead of a single lambda.
+  See [Display Pages](/components/display#display-pages).
 
-- **greyscale** (*Optional*, boolean): Makes the screen display 3 bit colors. Defaults to `false`
-- **partial_updating** (*Optional*, boolean): Makes the screen update partially, which is faster, but leaves burnin. Defaults to `false`
-- **custom_waveform** (*Optional*, int): Sets a custom predefined waveform for the display. Accepts values from 1 to 4. Useful if the greyscale of the image seems washed. **Inkplate10 ONLY**. Defaults to `0`
-- **full_update_every** (*Optional*, int): When partial updating is enabled, forces a full screen update after chosen number of updates. Defaults to `10`
-- **transform** (*Optional*): Transform the display presentation.
+### I²C
 
-  - **flip_y** (*Optional*, boolean): Flip the screen on the Y axis. Defaults to `false`
-  - **flip_x** (*Optional*, boolean): Flip the screen on the X axis. Defaults to `false`
+The component communicates with the onboard TPS65186 PMIC over I²C. The `i2c:` bus must be
+configured. See [I²C Bus](/components/i2c/).
 
-- **lambda** (*Optional*, [lambda](/automations/templates#config-lambda)): The lambda to use for rendering the content on the display.
-  See [Display Rendering Engine](/components/display#display-engine) for more information.
+- **address** (*Optional*, int): I²C address of the TPS65186 PMIC. Defaults to `0x48`.
+- **i2c_id** (*Optional*, [ID](/guides/configuration-types#id)): ID of the I²C bus to use.
 
-- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to re-draw the screen. Defaults to `5s`.
-- **pages** (*Optional*, list): Show pages instead of a single lambda. See [Display Pages](/components/display#display-pages).
-
-- **ckv_pin** (**Required**, [Pin](/guides/configuration-types#pin)): The CKV pin for the Inkplate display.
-- **gmod_pin** (**Required**, [Pin](/guides/configuration-types#pin)): The GMOD pin for the Inkplate display.
-- **gpio0_enable_pin** (**Required**, [Pin](/guides/configuration-types#pin)): The GPIO0 Enable pin for the Inkplate display.
-- **oe_pin** (**Required**, [Pin](/guides/configuration-types#pin)): The OE pin for the Inkplate display.
-- **powerup_pin** (**Required**, [Pin](/guides/configuration-types#pin)): The Powerup pin for the Inkplate display.
-- **sph_pin** (**Required**, [Pin](/guides/configuration-types#pin)): The SPH pin for the Inkplate display.
-- **spv_pin** (**Required**, [Pin](/guides/configuration-types#pin)): The SPV pin for the Inkplate display.
-- **vcom_pin** (**Required**, [Pin](/guides/configuration-types#pin)): The VCOM pin for the Inkplate display.
-- **cl_pin** (*Optional*, [Pin](/guides/configuration-types#pin)): The CL pin for the Inkplate display.
-  Defaults to GPIO0.
-
-- **le_pin** (*Optional*, [Pin](/guides/configuration-types#pin)): The LE pin for the Inkplate display.
-  Defaults to GPIO2.
-
-- **display_data_0_pin** (*Optional*, [Pin](/guides/configuration-types#pin)): The Data 0 pin for the Inkplate display.
-  Defaults to GPIO4.
-
-- **display_data_1_pin** (*Optional*, [Pin](/guides/configuration-types#pin)): The Data 1 pin for the Inkplate display.
-  Defaults to GPIO5.
-
-- **display_data_2_pin** (*Optional*, [Pin](/guides/configuration-types#pin)): The Data 2 pin for the Inkplate display.
-  Defaults to GPIO18.
-
-- **display_data_3_pin** (*Optional*, [Pin](/guides/configuration-types#pin)): The Data 3 pin for the Inkplate display.
-  Defaults to GPIO19.
-
-- **display_data_4_pin** (*Optional*, [Pin](/guides/configuration-types#pin)): The Data 4 pin for the Inkplate display.
-  Defaults to GPIO23.
-
-- **display_data_5_pin** (*Optional*, [Pin](/guides/configuration-types#pin)): The Data 5 pin for the Inkplate display.
-  Defaults to GPIO25.
-
-- **display_data_6_pin** (*Optional*, [Pin](/guides/configuration-types#pin)): The Data 6 pin for the Inkplate display.
-  Defaults to GPIO26.
-
-- **display_data_7_pin** (*Optional*, [Pin](/guides/configuration-types#pin)): The Data 7 pin for the Inkplate display.
-  Defaults to GPIO27.
-
-## Complete Inkplate 6 example
-
-The following is a complete example YAML configuration that does a few things beyond the usual
-Wi-Fi, API, and OTA configuration.
+## Inkplate 4
 
 ```yaml
-# Example configuration entry
-esphome:
-  name: inkplate
+i2c:
 
-esp32:
-  board: esp-wrover-kit
-  cpu_frequency: 240MHz
+pca6416a:
+  - id: pca6416a_hub
+    address: 0x20
 
-logger:
+display:
+  - platform: inkplate
+    model: inkplate4
+    pca6416a_id: pca6416a_hub
+    update_interval: 60s
+```
 
-wifi:
-  ssid: !secret wifi_ssid
-  password: !secret wifi_password
-  ap: {}
+## Inkplate 5 v1
 
-captive_portal:
+```yaml
+i2c:
 
-ota:
-  platform: esphome
+pca6416a:
+  - id: pca6416a_hub
+    address: 0x20
 
-api:
+display:
+  - platform: inkplate
+    model: inkplate5v1
+    pca6416a_id: pca6416a_hub
+    update_interval: 60s
+```
 
-switch:
-  - platform: restart
-    name: "Inkplate Reboot"
-    id: reboot
+## Inkplate 5 v2
 
-  - platform: gpio
-    id: battery_read_mosfet
-    pin:
-      mcp23xxx: mcp23017_hub
-      number: 9
-      inverted: true
+```yaml
+i2c:
 
-  - platform: template
-    name: "Inkplate Greyscale mode"
-    lambda: return id(inkplate_display).get_greyscale();
-    turn_on_action:
-      - lambda: id(inkplate_display).set_greyscale(true);
-    turn_off_action:
-      - lambda: id(inkplate_display).set_greyscale(false);
+pca6416a:
+  - id: pca6416a_hub
+    address: 0x20
 
-  - platform: template
-    name: "Inkplate Partial Updating"
-    lambda: return id(inkplate_display).get_partial_updating();
-    turn_on_action:
-      - lambda: id(inkplate_display).set_partial_updating(true);
-    turn_off_action:
-      - lambda: id(inkplate_display).set_partial_updating(false);
+display:
+  - platform: inkplate
+    model: inkplate5v2
+    pca6416a_id: pca6416a_hub
+    update_interval: 60s
+```
 
-sensor:
-  - platform: adc
-    id: battery_voltage
-    update_interval: never
-    attenuation: 12db
-    pin: 35
-  - platform: template
-    name: "Inkplate Battery Voltage"
-    lambda: |-
-      id(battery_read_mosfet).turn_on();
-      delay(1);
-      float adc = id(battery_voltage).sample();
-      id(battery_read_mosfet).turn_off();
-      return adc;
-    filters:
-      - multiply: 2
+## Inkplate 6 v1
 
+The original Inkplate 6 uses an MCP23017 I/O expander. Use `mcp23017_id` instead of `pca6416a_id`:
+
+```yaml
 i2c:
 
 mcp23017:
   - id: mcp23017_hub
     address: 0x20
 
-binary_sensor:
-  - platform: status
-    name: "Inkplate Status"
-    id: system_status
+display:
+  - platform: inkplate
+    model: inkplate6v1
+    mcp23017_id: mcp23017_hub
+    update_interval: 60s
+```
 
-  - platform: gpio
-    name: "Inkplate Touch Pad 1"
-    pin:
-      mcp23xxx: mcp23017_hub
-      number: 10
-  - platform: gpio
-    name: "Inkplate Touch Pad 2"
-    pin:
-      mcp23xxx: mcp23017_hub
-      number: 11
-  - platform: gpio
-    name: "Inkplate Touch Pad 3"
-    pin:
-      mcp23xxx: mcp23017_hub
-      number: 12
+## Inkplate 6 v2
 
+```yaml
+i2c:
+
+pca6416a:
+  - id: pca6416a_hub
+    address: 0x20
+
+display:
+  - platform: inkplate
+    model: inkplate6v2
+    pca6416a_id: pca6416a_hub
+    update_interval: 60s
+```
+
+## Inkplate 6 PLUS
+
+```yaml
+i2c:
+
+pca6416a:
+  - id: pca6416a_hub
+    address: 0x20
+
+display:
+  - platform: inkplate
+    model: inkplate6plus
+    pca6416a_id: pca6416a_hub
+    update_interval: 60s
+```
+
+## Inkplate 6 FLICK
+
+```yaml
+i2c:
+
+pca6416a:
+  - id: pca6416a_hub
+    address: 0x20
+
+display:
+  - platform: inkplate
+    model: inkplate6flick
+    pca6416a_id: pca6416a_hub
+    update_interval: 60s
+```
+
+## Inkplate 10
+
+The Inkplate 10 board has two PCA6416A expanders. The display driver only uses the primary expander
+at address `0x20`. The secondary expander at `0x21` can be declared independently to access its
+additional I/O pins.
+
+```yaml
+i2c:
+
+pca6416a:
+  - id: pca6416a_hub
+    address: 0x20
+  - id: pca6416a_hub2
+    address: 0x21
+
+display:
+  - platform: inkplate
+    model: inkplate10
+    pca6416a_id: pca6416a_hub
+    update_interval: 60s
+```
+
+## Usage
+
+### Basic Rendering
+
+Use `lambda` to draw on the display. See [Display Rendering Engine](/components/display#display-engine)
+for the full drawing API.
+
+```yaml
+font:
+  - file: "gfonts://Roboto"
+    id: roboto_48
+    size: 48
+
+display:
+  - platform: inkplate
+    model: inkplate6v2
+    pca6416a_id: pca6416a_hub
+    update_interval: 60s
+    lambda: |-
+      it.fill(COLOR_OFF);
+      it.print(10, 10, id(roboto_48), COLOR_ON, "Hello World!");
+      it.rectangle(10, 80, 200, 100);
+```
+
+### Grayscale Rendering
+
+Enable `grayscale_mode` to draw with 8 gray levels (3-bit). Use color values from `0x00` (black)
+to `0xFF` (white):
+
+```yaml
+display:
+  - platform: inkplate
+    model: inkplate6v2
+    pca6416a_id: pca6416a_hub
+    grayscale_mode: true
+    update_interval: 60s
+    lambda: |-
+      it.fill(Color(0xFF, 0xFF, 0xFF));
+      it.filled_rectangle(0, 0, 100, 100, Color(0x00, 0x00, 0x00));
+      it.filled_rectangle(100, 0, 100, 100, Color(0x80, 0x80, 0x80));
+```
+
+### Partial Updates
+
+Set `full_update_every` to reduce flicker on frequent updates. A full refresh runs every N cycles
+to clear ghosting.
+
+> [!WARNING]
+> Partial updates only work in black and white mode (`grayscale_mode: false`). When grayscale is
+> enabled, partial updates are silently ignored and every update is a full refresh.
+
+```yaml
 time:
   - platform: sntp
     id: esptime
 
 font:
-  - file: "Helvetica.ttf"
-    id: helvetica_96
-    size: 96
-  - file: "Helvetica.ttf"
-    id: helvetica_48
+  - file: "gfonts://Roboto"
+    id: roboto_48
     size: 48
-
-psram:
-
-display:
-- platform: inkplate
-  id: inkplate_display
-  greyscale: false
-  partial_updating: false
-  update_interval: 60s
-
-  ckv_pin: 32
-  sph_pin: 33
-  gmod_pin:
-    mcp23xxx: mcp23017_hub
-    number: 1
-  gpio0_enable_pin:
-    mcp23xxx: mcp23017_hub
-    number: 8
-  oe_pin:
-    mcp23xxx: mcp23017_hub
-    number: 0
-  spv_pin:
-    mcp23xxx: mcp23017_hub
-    number: 2
-  powerup_pin:
-    mcp23xxx: mcp23017_hub
-    number: 4
-  wakeup_pin:
-    mcp23xxx: mcp23017_hub
-    number: 3
-  vcom_pin:
-    mcp23xxx: mcp23017_hub
-    number: 5
-
-  lambda: |-
-    it.fill(COLOR_ON);
-
-    it.print(100, 100, id(helvetica_48), COLOR_OFF, TextAlign::TOP_LEFT, "ESPHome");
-
-    it.strftime(400, 300, id(helvetica_48), COLOR_OFF, TextAlign::CENTER, "%Y-%m-%d", id(esptime).now());
-    it.strftime(400, 400, id(helvetica_96), COLOR_OFF, TextAlign::CENTER, "%H:%M", id(esptime).now());
-
-    if (id(system_status).state) {
-      it.print(700, 100, id(helvetica_48), COLOR_OFF, TextAlign::TOP_RIGHT, "Online");
-    } else {
-      it.print(700, 100, id(helvetica_48), COLOR_OFF, TextAlign::TOP_RIGHT, "Offline");
-    }
-```
-
-## Inkplate 6 Plus Touchscreen
-
-The Inkplate 6 Plus has a built in touchscreen supported by ESPHome. Note you need to enable pin 12 on the mcp23017 to enable the touchscreen
-Below is a config example with touchscreen power switch:
-
-```yaml
-switch:
-  - platform: gpio
-    name: 'Inkplate Touchscreen Enabled'
-    restore_mode: ALWAYS_ON
-    pin:
-      mcp23xxx: mcp23017_hub
-      number: 12
-      inverted: true
-
-touchscreen:
-  - platform: ektf2232
-    interrupt_pin: GPIO36
-    rts_pin:
-      mcp23xxx: mcp23017_hub
-      number: 10
-    on_touch:
-      - logger.log:
-          format: "touch x=%d, y=%d"
-          args: ['touch.x', 'touch.y']
-```
-
-## Inkplate 6 Plus Backlight
-
-The Inkplate 6 Plus has a built in backlight supported by ESPHome.
-Below is a config example:
-
-```yaml
-power_supply:
-  - id: backlight_power
-    keep_on_time: 0.2s
-    enable_time: 0s
-    pin:
-      mcp23xxx: mcp23017_hub
-      number: 11
-
-output:
-  - platform: mcp47a1
-    id: backlight_brightness_output
-    power_supply: backlight_power
-
-light:
-  - platform: monochromatic
-    output: backlight_brightness_output
-    id: backlight
-    default_transition_length: 0.2s
-    name: '${friendly_name} Backlight'
-```
-
-## Inkplate 6 v2
-
-The Inkplate 6 v2 has a slightly different configuration. The main difference is that it is using pca6416a instead of the mcp23017.
-Below is a config example:
-
-```yaml
-# Example minimal configuration entry
-pca6416a:
-  - id: pca6416a_hub
-    address: 0x20
-
-display:
-- platform: inkplate
-  id: inkplate_display
-  greyscale: true
-  partial_updating: false
-  update_interval: never
-  model: inkplate_6_v2
-
-  ckv_pin: 32
-  sph_pin: 33
-  gmod_pin:
-    pca6416a: pca6416a_hub
-    number: 1
-  gpio0_enable_pin:
-    pca6416a: pca6416a_hub
-    number: 8
-  oe_pin:
-    pca6416a: pca6416a_hub
-    number: 0
-  spv_pin:
-    pca6416a: pca6416a_hub
-    number: 2
-  powerup_pin:
-    pca6416a: pca6416a_hub
-    number: 4
-  wakeup_pin:
-    pca6416a: pca6416a_hub
-    number: 3
-  vcom_pin:
-    pca6416a: pca6416a_hub
-    number: 5
-```
-
-## Inkplate 5
-
-The Inkplate 5 has nearly the same configuration as inkplate 6 v2.
-Below is a config example:
-
-```yaml
-# Example minimal configuration entry
-pca6416a:
-  - id: pca6416a_hub
-    address: 0x20
-
-display:
-- platform: inkplate
-  id: inkplate_display
-  greyscale: true
-  partial_updating: false
-  update_interval: never
-  model: inkplate_5 # or inkplate_5_v2
-
-  ckv_pin: 32
-  sph_pin: 33
-  gmod_pin:
-    pca6416a: pca6416a_hub
-    number: 1
-  gpio0_enable_pin:
-    pca6416a: pca6416a_hub
-    number: 8
-  oe_pin:
-    pca6416a: pca6416a_hub
-    number: 0
-  spv_pin:
-    pca6416a: pca6416a_hub
-    number: 2
-  powerup_pin:
-    pca6416a: pca6416a_hub
-    number: 4
-  wakeup_pin:
-    pca6416a: pca6416a_hub
-    number: 3
-  vcom_pin:
-    pca6416a: pca6416a_hub
-    number: 5
-```
-
-## Inkplate 10
-
-The Inkplate 10 has a configuration similar to 5 and 6, except it has 2 expanders and the battery read MOSFET is not inverted. Also, some versions have an embedded RTC to aid in clock sync.
-Below is a config example:
-
-```yaml
-time:
-  - platform: pcf85063
-    id: esptime
-    # repeated synchronization is not necessary unless the external RTC
-    # is much more accurate than the internal clock
-    update_interval: never
-  - platform: homeassistant
-    # instead try to synchronize via network repeatedly ...
-    on_time_sync:
-      then:
-        # ... and update the RTC when the synchronization was successful
-        pcf85063.write_time:
-
-pca6416a:
-  - id: pca6416a_hub
-    address: 0x20
-    # Primary expander for display control and additional I/O
-  - id: pca6416a_hub2
-    address: 0x21
-    # Secondary expander for additional I/O
-
-switch:
-  - platform: gpio
-    id: battery_read_mosfet
-    pin:
-      pca6416a: pca6416a_hub
-      number: 9
-
-sensor:
-  - platform: adc
-    id: battery_voltage
-    update_interval: never
-    attenuation: 12db
-    pin: 35
-  - platform: template
-    name: "Inkplate Battery Voltage"
-    unit_of_measurement: "V"
-    accuracy_decimals: 3
-    lambda: |-
-      // Enable MOSFET to connect battery voltage divider
-      id(battery_read_mosfet).turn_on();
-      // Wait for voltage to stabilize
-      delay(5);
-      // Sample ADC value
-      float adc = id(battery_voltage).sample();
-      // Disable MOSFET to save power
-      id(battery_read_mosfet).turn_off();
-      return adc;
-    filters:
-      - multiply: 2 # Compensate for voltage divider (1:2 ratio)
 
 display:
   - platform: inkplate
-    id: inkplate_display
-    greyscale: true
-    partial_updating: false
-    update_interval: never
-    model: inkplate_10
-
-    ckv_pin: 32
-    sph_pin: 33
-    gmod_pin:
-      pca6416a: pca6416a_hub
-      number: 1
-    gpio0_enable_pin:
-      pca6416a: pca6416a_hub
-      number: 8
-    oe_pin:
-      pca6416a: pca6416a_hub
-      number: 0
-    spv_pin:
-      pca6416a: pca6416a_hub
-      number: 2
-    powerup_pin:
-      pca6416a: pca6416a_hub
-      number: 4
-    wakeup_pin:
-      pca6416a: pca6416a_hub
-      number: 3
-    vcom_pin:
-      pca6416a: pca6416a_hub
-      number: 5
+    model: inkplate6v2
+    pca6416a_id: pca6416a_hub
+    full_update_every: 10
+    update_interval: 5s
+    lambda: |-
+      it.fill(COLOR_OFF);
+      it.strftime(400, 300, id(roboto_48), COLOR_ON, TextAlign::CENTER, "%H:%M:%S", id(esptime).now());
 ```
 
 ## See Also
 
 - [Display Component](/components/display/)
-- [EKTF2232 Touchscreen Controller](/components/touchscreen/ektf2232/)
-- [Inkplate Arduino library](https://github.com/SolderedElectronics/Inkplate-Arduino-library) by [Soldered Electronics](https://soldered.com/)
+- [Inkplate Documentation](https://docs.soldered.com/inkplate/)
+- [Inkplate Arduino Library](https://github.com/SolderedElectronics/Inkplate-Arduino-library) by
+  [Soldered Electronics](https://soldered.com/)
