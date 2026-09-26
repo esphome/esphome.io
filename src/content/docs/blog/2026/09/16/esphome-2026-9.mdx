@@ -46,6 +46,11 @@ Here's the plain-language version for anyone short on time or newer to ESPHome �
 - **Modbus Controller users:** If your config uses `modbus_controller` with `custom_command`, `register_count`, `force_new_range`, or `skip_updates`, those options have been renamed or replaced and your config needs updating.
 - **ESP32 devices with a custom MAC:** If you've burned a custom MAC into an ESP32 and use Ethernet, Bluetooth, or Thread/Zigbee, those interfaces will get new addresses after updating – so DHCP reservations, Bluetooth pairings, and network filters keyed to the old MAC need updating too.
 - **Certain UART sensors:** A handful of components (including `mhz19`, `daly_bms`, and `teleinfo`) now reject unsupported UART settings at config time – if any of yours were on the wrong baud rate or parity, they'll flag a clear error you can fix on the UART bus.
+- **OTA password users:** If your `ota:` block has a `password:`, keep it for the update to 2026.9.0 and, if the
+  device has `api:`, make sure it has an `encryption:` key. After that update, replace `password:` with `encryption:`.
+  Updates then use the same key that already protects the connection to Home Assistant. If you remove the password
+  before the first update, it fails with `ESP requests password, but no password given!`. A device without `api:`
+  needs one extra step, see [the OTA docs](/components/ota/esphome/#enabling-encryption-on-an-existing-device).
 
 **New features:** Updates are quicker – ESPHome now downloads and sets up its build tools in parallel – and can be encrypted using the same key that already secures the link to Home Assistant.
 
@@ -97,6 +102,7 @@ and lets paired build servers recover from an address change on their own.
 ## Upgrade checklist
 
 {/* UPGRADE_CHECKLIST_START */}
+- If your `ota:` block has a `password:`, a two-step update process is required to migrate to OTA encryption. See [the `ota` docs](/components/ota/esphome/#enabling-encryption-on-an-existing-device) for the required procedure; unencrypted updates on older firmware will stop working from release 2027.3.0, so at least the first step should be done before then
 - If you have a device with a custom MAC burned into the ESP32 eFuses and use Ethernet, Bluetooth, or 802.15.4,
   expect a new MAC on those interfaces after upgrading; update DHCP reservations, ACLs and Bluetooth pairings
 - If you use `modbus_controller` with `custom_command:`, rename it to `custom_pdu:` and drop the leading device
@@ -294,21 +300,35 @@ and the JSON config endpoint serialises non-string keys
 ## Encrypted OTA updates
 
 [@bdraco](https://github.com/bdraco) adds Noise (ChaCha20-Poly1305) encryption to the `esphome` OTA platform
-([#18489](https://github.com/esphome/esphome/pull/18489)), using the same protocol the native API already
-uses. Until now the firmware image travelled over the network in plaintext, so a passive listener on the LAN
-could capture the WiFi credentials and API encryption key embedded in the image; the SHA256 password only
-authenticated the client, it did not make the transfer confidential. A device with an `api` encryption key
-now offers OTA encryption with that key and the CLI uses it whenever the device offers, so once a device runs
-this release, enabling encryption is an ordinary update; the update that brings older firmware to this release
-still travels in plaintext ([#18979](https://github.com/esphome/esphome/pull/18979)). An
-`encryption:` block on the OTA platform is what makes the device require it: both the device and the CLI then
-fail closed so an attacker cannot strip encryption and force a plaintext upload. A bare `encryption:` inherits
-the `api` encryption key, and a password and encryption are mutually exclusive because the key already
-authenticates the uploader. This work
-sits on top of a new shared `noise` component ([#18490](https://github.com/esphome/esphome/pull/18490)) that
-lifts the Noise plumbing out of the api component so both api and ota share it, from the noise-c dependency
-and the hardware RNG that seeds the handshake to key validation and the responder role; there is no user
-configuration for `noise` itself.
+([#18489](https://github.com/esphome/esphome/pull/18489)), using the same encryption the native API already uses.
+Until now the firmware image was sent over the network unencrypted, which mattered because the image contains your
+WiFi password and your API encryption key. Anyone on your network could read them from the upload, and the OTA
+password did not help here because it only checked who was uploading.
+
+A device with an `api:` encryption key now offers encrypted OTA with that key, and the CLI uses it whenever the
+device offers it ([#18979](https://github.com/esphome/esphome/pull/18979)). Firmware older than 2026.9.0 cannot
+offer it, so the update to 2026.9.0 is still unencrypted, but every update after that to a device with a key is
+encrypted.
+
+To make encryption mandatory, add `encryption:` under the OTA platform. The device then rejects unencrypted
+updates and the CLI refuses to send them, so an attacker cannot force an unencrypted upload. A bare `encryption:`
+uses the `api:` key, which means you do not need a second key, and because the key already identifies the
+uploader it cannot be combined with `password:`.
+
+If your device uses `password:` today, moving it over takes two updates:
+
+1. Update the device to 2026.9.0 with `password:` still in the config, because the old firmware checks it until it
+   is replaced. Removing it first makes the update fail with `ESP requests password, but no password given!`. If
+   the device has `api:` without `encryption:`, add one with a key now; if Home Assistant provisioned the key, copy
+   that key instead of generating a new one. A device without `api:` needs a temporary key, see the full procedure
+   below.
+2. Replace `password:` with `encryption:` and update again.
+
+The full procedure, including devices without `api:` and devices whose key Home Assistant provisioned, is in
+[Enabling Encryption on an Existing Device](/components/ota/esphome/#enabling-encryption-on-an-existing-device).
+
+All of this is built on a new shared `noise` component ([#18490](https://github.com/esphome/esphome/pull/18490)),
+which holds the Noise code that the api and ota components both use and has no user configuration of its own.
 
 ## Smaller and faster encryption
 
@@ -705,6 +725,18 @@ contributions, and to everyone who reported issues, tested pre-releases, and hel
 - **API**: The legacy media player `supports_pause` field is no longer sent. Clients on API 1.11 or newer already use
   `feature_flags`, so current Home Assistant is unaffected; only very old clients that never learned `feature_flags`
   would lose pause capability. [#18801](https://github.com/esphome/esphome/pull/18801)
+- **OTA**: A device with an `api:` encryption key now offers encrypted OTA, and the CLI uses it when the device
+  offers it. Firmware older than 2026.9.0 cannot offer it, so the update to 2026.9.0 is still unencrypted. That
+  unencrypted path will be removed in 2027.3.0; after that, a device on older firmware will need a serial flash or the web
+  server OTA platform. If your config has `password:`, keep it for the update to 2026.9.0 and, if the device has
+  `api:`, make sure it has an `encryption:` key; a device without `api:` needs a temporary key first, see
+  [Enabling Encryption on an Existing Device](/components/ota/esphome/#enabling-encryption-on-an-existing-device).
+  Then replace the password with `encryption:` and update again. The old firmware still
+  checks the password, so removing it before the first update fails with
+  `ESP requests password, but no password given!`. Validation warns while `password:` and an `api:` key are both
+  set; this is expected until you replace the password.
+  [#18489](https://github.com/esphome/esphome/pull/18489),
+  [#18979](https://github.com/esphome/esphome/pull/18979)
 - **Preferences**: `IntervalSyncer` is now a `PollingComponent`, so its interval can be suspended and resumed with
   `component.suspend` and `component.resume`. No YAML changes are required; the previous `flash_write_interval: 0`
   loop-every-iteration special case was already dead code (coerced to `1ms` by the validator). Lambdas that called
