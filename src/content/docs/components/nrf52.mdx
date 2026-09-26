@@ -76,6 +76,10 @@ The `dfu` component enables automatic entry into **DFU (Device Firmware Update)*
 the USB CDC serial connection. When a host opens the port at **1200 baud**, the component triggers
 a reset to put the device into DFU mode.
 
+Opening the port at **2001 baud** instead reboots the device straight back into its application,
+without entering DFU mode. The USB CDC has no reset line, so host tools such as the Device Builder
+use this for Reset device in the logs.
+
 ESPHome uses this component internally when uploading firmware via:
 
 ```bash
