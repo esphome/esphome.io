@@ -5,9 +5,12 @@ title: "Xiaomi Body Composition Scale S400"
 
 import { Image } from "astro:assets";
 
-The `xiaomi_body_scale_s400` sensor platform lets you track the output of Xiaomi Body Composition Scale S400 devices using the [ESP32 BLE Tracker](/components/esp32_ble_tracker/). This component listens **passively** to BLE advertisement packets and does not pair with the device, so ESPHome has no impact on battery life.
+The `xiaomi_body_scale_s400` sensor platform lets you track the output of Xiaomi Body Composition Scale S400
+devices using the [ESP32 BLE Tracker](/components/esp32_ble_tracker/). This component listens **passively** to
+BLE advertisement packets and does not pair with the device, so ESPHome has no impact on battery life.
 
-The scale broadcasts encrypted MiBeacon packets (UUID `0xFE95`). A **bindkey** is required to decrypt the payload. The bindkey can be extracted from the Xiaomi Cloud using [token_extractor](https://github.com/PiotrMachowski/Xiaomi-cloud-tokens-extractor) — use the **BLE KEY** field.
+The scale broadcasts encrypted MiBeacon packets (UUID `0xFE95`). A **bindkey** is required to decrypt the
+payload; see [Getting the Bindkey](#getting-the-bindkey).
 
 Each measurement cycle produces **two BLE packets**:
 
@@ -15,7 +18,8 @@ Each measurement cycle produces **two BLE packets**:
 - **Packet 2** — `impedance_high` (250 kHz, high frequency, smaller value)
 
 > [!NOTE]
-> **Impedance naming convention** follows the BIA standard used by [bodymiscale](https://github.com/dckiller51/bodymiscale):
+> **Impedance naming convention** follows the BIA standard used by
+> [bodymiscale](https://github.com/dckiller51/bodymiscale):
 > `low`/`high` refers to the **measurement frequency**, not the numerical value.
 > At 50 kHz, current flows only through extracellular fluid → higher resistance.
 > At 250 kHz, current penetrates cell membranes → lower resistance.
@@ -23,7 +27,7 @@ Each measurement cycle produces **two BLE packets**:
 ---
 
 <Image
-  src="/images/xiaomi_body_scale_s400.png"
+  src="/images/xiaomi_body_scale_s400.jpg"
   width={300}
   height={298}
   layout="constrained"
@@ -43,9 +47,8 @@ Each measurement cycle produces **two BLE packets**:
 
 ## Configuration
 
-### Minimal
-
 ```yaml
+# Example configuration entry
 esp32_ble_tracker:
 
 sensor:
@@ -56,57 +59,6 @@ sensor:
       name: "Scale Weight"
     impedance_low:
       name: "Scale Impedance Low"
-    impedance_high:
-      name: "Scale Impedance High"
-    heart_rate:
-      name: "Scale Heart Rate"
-    profile_id:
-      name: "Scale Profile ID"
-    stabilized:
-      name: "Scale Stabilized"
-```
-
-### With auto-reset
-
-Adding a `timeout` filter resets all sensors to `0` after 30 seconds if no new measurement is received.
-
-```yaml
-sensor:
-  - platform: xiaomi_body_scale_s400
-    mac_address: "XX:XX:XX:XX:XX:XX"
-    bindkey: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-    weight:
-      name: "Scale Weight"
-      filters:
-        - timeout:
-            timeout: 30s
-            value: !lambda return 0;
-    impedance_low:
-      name: "Scale Impedance Low"
-      filters:
-        - timeout:
-            timeout: 30s
-            value: !lambda return 0;
-    impedance_high:
-      name: "Scale Impedance High"
-      filters:
-        - timeout:
-            timeout: 30s
-            value: !lambda return 0;
-    heart_rate:
-      name: "Scale Heart Rate"
-      filters:
-        - timeout:
-            timeout: 30s
-            value: !lambda return 0;
-    profile_id:
-      name: "Scale Profile ID"
-      filters:
-        - timeout:
-            timeout: 30s
-            value: !lambda return 0;
-    stabilized:
-      name: "Scale Stabilized"
 ```
 
 ---
@@ -117,9 +69,11 @@ sensor:
 - **bindkey** (**Required**, string): 32-character hex key to decrypt the BLE payload.
 - **weight** (_Optional_): Stabilized weight in kg.
   - All options from [Sensor](/components/sensor/).
-- **impedance_low** (_Optional_): Low-frequency impedance at **50 kHz** in Ω. Numerically larger value (~558 Ω). Published together with weight and heart rate.
+- **impedance_low** (_Optional_): Low-frequency impedance at **50 kHz** in Ω. Numerically larger value
+  (~558 Ω). Published together with weight and heart rate.
   - All options from [Sensor](/components/sensor/).
-- **impedance_high** (_Optional_): High-frequency impedance at **250 kHz** in Ω. Numerically smaller value (~503 Ω). Published in the second packet without weight or heart rate.
+- **impedance_high** (_Optional_): High-frequency impedance at **250 kHz** in Ω. Numerically smaller value
+  (~503 Ω). Published in the second packet without weight or heart rate.
   - All options from [Sensor](/components/sensor/).
 - **heart_rate** (_Optional_): Heart rate in bpm.
   - All options from [Sensor](/components/sensor/).
@@ -128,6 +82,27 @@ sensor:
 - **stabilized** (_Optional_): Binary sensor that turns `ON` when the measurement
   cycle is complete (last BLE packet received). Turns `OFF` during the measurement.
   - All options from [Binary Sensor](/components/binary_sensor/).
+
+---
+
+## Examples
+
+### Clearing Stale Readings
+
+A `timeout` filter without a `value` publishes `NaN` when no new measurement arrives, so Home Assistant shows the
+sensor as unknown instead of keeping the last weigh-in. Unlike resetting to `0`, this keeps fake readings out of the
+history and statistics. Add the same filter to any other numeric sensor.
+
+```yaml
+sensor:
+  - platform: xiaomi_body_scale_s400
+    mac_address: "XX:XX:XX:XX:XX:XX"
+    bindkey: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+    weight:
+      name: "Scale Weight"
+      filters:
+        - timeout: 30s
+```
 
 ---
 
@@ -171,16 +146,19 @@ Impedance packet routing (BIA frequency convention):
 2. Run it and log in with your Xiaomi account
 3. Find your scale in the generated list.
 
-> [!NOTE]
-> In the Xiaomi Cloud, the S400 variants (`MJTZC01YM` / `MJTZC03YM`) do not appear by their commercial model name. Instead, they are identified as **`yunmai.scales.ms103`**, **`ms104`**, **`ms107`**, or **`xiaomi.scales.ms110`**.
+   > [!NOTE]
+   > In the Xiaomi Cloud, the S400 variants (`MJTZC01YM` / `MJTZC03YM`) do not appear by their commercial model
+   > name. Instead, they are identified as **`yunmai.scales.ms103`**, **`ms104`**, **`ms107`**, or
+   > **`xiaomi.scales.ms110`**.
 
-4. Copy the **BLE KEY** field (32 hex characters) — this is your `bindkey`.
+4. Copy the **BLE KEY** field (32 hex characters); this is your `bindkey`.
 
 ---
 
 ## Body Score Calculation
 
-The scale provides raw biometric data (weight + dual-frequency impedance). To compute body composition scores (BMI, body fat %, muscle mass, ECW/ICW, BCM, skeletal muscle mass, etc.) based on weight, impedance, age, height and gender, see:
+The scale provides raw biometric data (weight + dual-frequency impedance). To compute body composition scores (BMI, body
+fat %, muscle mass, ECW/ICW, BCM, skeletal muscle mass, etc.) based on weight, impedance, age, height and gender, see:
 
 - [bodymiscale](https://github.com/dckiller51/bodymiscale) — Home Assistant custom component
 - [lovelace-body-miscale-card](https://github.com/dckiller51/lovelace-body-miscale-card) — Lovelace card
