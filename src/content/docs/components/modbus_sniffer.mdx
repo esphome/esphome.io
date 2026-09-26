@@ -35,8 +35,8 @@ uart:
   - id: bus
     rx_pin: GPIO17
     baud_rate: 9600
-    rx_timeout: 10
-    rx_full_threshold: 120   # optional; see UART settings below
+    rx_timeout: 10           # ESP32 only; see UART settings below
+    rx_full_threshold: 120   # ESP32 only, optional
 
 modbus:
   - id: sniffer_hub
@@ -88,6 +88,7 @@ modbus_sniffer:
   - modbus_id: sniffer_hub
     on_response:
       - lambda: |-
+          if (address != 0x0F || request_pdu[0] != 0x03) return;
           // A read request is: function code, start address, register count.
           const uint16_t start = modbus::helpers::get_data<uint16_t>(request_pdu.data(), 1);
           // server_pdu_payload() skips the function code, and the byte count on a read.
@@ -100,10 +101,8 @@ modbus_sniffer:
             return (payload[idx] << 8) | payload[idx + 1];
           };
 
-          if (address == 0x0F && request_pdu[0] == 0x03) {
-            const int soc = reg(206);
-            if (soc >= 0) id(battery_soc).publish_state(soc);
-          }
+          const int soc = reg(206);
+          if (soc >= 0) id(battery_soc).publish_state(soc);
 ```
 
 Watching a device being configured, which a register read would never show:
@@ -114,7 +113,8 @@ modbus_sniffer:
     on_response:
       - lambda: |-
           // 0x06 writes one register; its reply echoes the register and the value it accepted.
-          if (request_pdu[0] == 0x06) {
+          // Check the reply too: a refused write comes back as a 2-byte exception reply (0x86).
+          if (request_pdu[0] == 0x06 && response_pdu[0] == 0x06 && response_pdu.size() == 5) {
             ESP_LOGI("sniff", "device %u set register %u to %u", address,
                      modbus::helpers::get_data<uint16_t>(response_pdu.data(), 1),
                      modbus::helpers::get_data<uint16_t>(response_pdu.data(), 3));
@@ -141,6 +141,8 @@ modbus_sniffer:
 
 ## UART settings
 
+`rx_timeout` and `rx_full_threshold` are ESP32-only UART options; leave them out on other platforms.
+
 Modbus RTU has no length prefix and no terminator - message boundaries are silence on the line, and
 `rx_timeout` is what detects that silence. Set it shorter than the gap between one exchange and the
 next, or two exchanges arrive as one batch.
@@ -148,9 +150,9 @@ next, or two exchanges arrive as one batch.
 `rx_full_threshold` raises a second interrupt once that many bytes have arrived, which can deliver a
 frame in pieces. The component accumulates across reads, so a low threshold is not automatically a
 problem: on a 9600-baud bus carrying frames of 7 to 31 bytes, values of 8 and 120 gave the same
-throughput and no parse failures either way. If you do see `parse failed` warnings at `VERBOSE`,
-raising it above the longest burst on your bus is the thing to try. ESPHome caps it at 120, and the
-ESP32 FIFO is 128 bytes.
+throughput and no parse failures either way. If you do see `parse failed` warnings (the discarded
+bytes are shown at `VERBOSE`), raising it above the longest burst on your bus is the thing to try.
+ESPHome caps it at 120, and the ESP32 FIFO is 128 bytes.
 
 ## Limitations
 
@@ -161,14 +163,16 @@ ESP32 FIFO is 128 bytes.
   set to address `0`; if the device's address is configurable, setting it to 1-247 is the fix.
 - **A reply with no request before it is not paired.** This happens on the first exchange after a
   reset, or when a request is lost to a CRC error. The register address is unknowable in that case,
-  so neither automation fires for it. The exception is a single write (`0x05` or `0x06`): its reply
-  is byte-identical to its request, so one seen on its own fires `on_request` as if it were a request.
-  Nothing on the wire can tell the two apart; the next request puts the pairing back in step.
-- **An unanswered single write can take the next one as its reply.** If a `0x05`/`0x06` write gets
-  no reply and the very next frame is another single write, the second is read as the first one's
-  reply: `on_response` pairs the two if both went to the same device, or logs a warning if not, and
-  the second write gets no `on_response` of its own. Its contents still reach `on_request`, because
-  its reply is byte-identical to it, and the next read puts the pairing back in step.
+  so neither automation fires for it. The exceptions are replies shaped like a request: the reply
+  to a single write (`0x05`/`0x06`) or a mask write (`0x16`), which is byte-identical to its request,
+  and an exception reply. One of those seen on its own fires `on_request` as if it were a request.
+  The next request puts the pairing back in step.
+- **An unanswered request can take the next request as its reply.** After a request gets no reply,
+  the next frame is tried as that reply first, and a request with the same length and shape passes:
+  single writes (`0x05`/`0x06`), mask writes (`0x16`), and reads (`0x01`-`0x04`) whose start address
+  is 768-1023 (`0x0300`-`0x03FF`). If it went to the same device with the same function code,
+  `on_response` fires with that request as the reply; otherwise a warning is logged and it fires no
+  `on_request`. Pairing is back in step within an exchange or two.
 - **One sniffer per bus.** Watching two buses needs two UARTs and two hubs; two hubs on one UART
   would compete for the received bytes.
 
