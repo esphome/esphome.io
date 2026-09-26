@@ -13,8 +13,8 @@ on battery life.
 The scale broadcasts encrypted MiBeacon packets (UUID `0xFE95`). A **bindkey** is required to decrypt the
 payload; see [Getting the Bindkey](#getting-the-bindkey).
 
-The S200 reports weight only. The S400 also measures impedance and heart rate, and each of its measurement
-cycles produces **two BLE packets**:
+The S200 reports weight and profile ID only. The S400 also measures impedance and heart rate. A bare feet S400
+measurement produces **two BLE packets**; with socks, only the first packet is sent:
 
 - **Packet 1** — weight + heart rate + `impedance_low` only (50 kHz, low frequency, larger value)
 - **Packet 2** — `impedance_high` (250 kHz, high frequency, smaller value)
@@ -54,7 +54,7 @@ cycles produces **two BLE packets**:
 
 ```yaml
 # Example configuration entry
-esp32_ble_tracker:
+esp32_ble_tracker: # or another BLE tracker hub
 
 sensor:
   - platform: xiaomi_body_scale
