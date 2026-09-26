@@ -54,6 +54,12 @@ only on trusted networks.
 - **buffer_size** (*Optional*, int): The size of the ring buffer in bytes used to transfer data
   between the HTTP reader and the audio decoder. Minimum is `5000`, maximum is `1000000`. Defaults
   to `50000`.
+- **persistent_ring_buffer** (*Optional*, boolean): If `true`, pre-allocate the decoder ring buffer
+  when the media source is set up, normally during device startup, and retain it between URL playback
+  sessions. This avoids repeated allocation and release of a contiguous buffer, which can help devices
+  that run several memory-intensive components concurrently. The buffer consumes `buffer_size` bytes
+  while playback is stopped. If pre-allocation fails, allocation is retried when playback starts.
+  Defaults to `false`.
 - **task_stack_in_psram** (*Optional*, boolean): If `true`, the FreeRTOS decode task stack is
   allocated in PSRAM instead of internal RAM. Requires the [psram](/components/psram/) component. Defaults to `false`.
 - All other options from [Media Source](/components/media_source/).

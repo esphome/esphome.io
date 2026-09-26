@@ -77,11 +77,12 @@ ESPHome-specific components or components supporting ESPHome device provisioning
   ["Demo", "/components/demo/", "description.svg", "dark-invert"],
   ["External Components", "/components/external_components/", "external_components.svg", "dark-invert"],
   ["Globals", "/components/globals/", "description.svg", "dark-invert"],
-  ["Improv via BLE", "/components/esp32_improv/", "improv.svg", "dark-invert"],
+  ["Improv via BLE", "/components/improv_ble/", "improv.svg", "dark-invert"],
   ["Improv via Serial", "/components/improv_serial/", "improv.svg", "dark-invert"],
   ["Interval", "/components/interval/", "description.svg", "dark-invert"],
   ["JSON", "/components/json/", "json.svg", "dark-invert"],
   ["Mapping", "/components/mapping/", "mapping.svg", "dark-invert"],
+  ["Preferences", "/components/preferences/", "settings.svg", "dark-invert"],
   ["Provisioning", "/components/provisioning/", "timer.svg", "dark-invert"],
   ["XXTEA", "/components/xxtea/", "xxtea.svg"],
   ["Script", "/components/script/", "description.svg", "dark-invert"],
@@ -125,7 +126,7 @@ ESPHome-specific components or components supporting ESPHome device provisioning
   ["ESP32 BLE Client", "/components/ble_client/", "bluetooth.svg", "dark-invert"],
   ["ESP32 BLE Server", "/components/esp32_ble_server/", "bluetooth.svg", "dark-invert"],
   ["ESP32 BLE Tracker", "/components/esp32_ble_tracker/", "bluetooth.svg", "dark-invert"],
-  ["Improv via BLE", "/components/esp32_improv/", "improv.svg", "dark-invert"],
+  ["Improv via BLE", "/components/improv_ble/", "improv.svg", "dark-invert"],
   ["LN882H BLE", "/components/ln882h_ble/", "bluetooth.svg", "dark-invert"],
   ["LN882H BLE Tracker", "/components/ln882h_ble_tracker/", "bluetooth.svg", "dark-invert"],
   ["Nordic UART Service (NUS)", "/components/ble_nus/", "bluetooth.svg", "dark-invert"],
@@ -171,13 +172,16 @@ Create update entities simplifying management of OTA updates.
 
 <ImgTable items={[
   ["1-Wire", "/components/one_wire/", "one-wire.svg"],
+  ["Bridge", "/components/bridge/", "usb.svg", "dark-invert"],
   ["CAN Bus", "/components/canbus/", "canbus.svg"],
+  ["CDC-ACM UART Bridge", "/components/bridge/cdc_acm_uart/", "usb.svg", "dark-invert"],
   ["I²C Bus", "/components/i2c/", "i2c.svg"],
   ["I²S Audio", "/components/i2s_audio/", "i2s_audio.svg"],
   ["OpenTherm", "/components/opentherm/", "opentherm.png"],
   ["SPI Bus", "/components/spi/", "spi.svg"],
   ["TinyUSB", "/components/tinyusb/", "usb.svg", "dark-invert"],
   ["UART", "/components/uart/", "uart.svg"],
+  ["UART Mux", "/components/uart_mux/", "uart.svg"],
   ["USB CDC-ACM", "/components/usb_cdc_acm/", "usb.svg", "dark-invert"],
   ["USB Host", "/components/usb_host/", "usb.svg", "dark-invert"],
   ["USB UART", "/components/usb_uart/", "usb.svg", "dark-invert"],
@@ -250,6 +254,7 @@ Sensors are organized into categories; if a given sensor fits into more than one
   ["AirThings BLE", "/components/sensor/airthings_ble/", "airthings_logo.png", "Radon", "CO2", "Volatile organics"],
   ["CCS811", "/components/sensor/ccs811/", "ccs811.jpg", "CO2 & Volatile organics"],
   ["CM1106", "/components/sensor/cm1106/", "cm1106.png", "CO2"],
+  ["D01", "/components/sensor/d01/", "d01.jpg", "Particulate"],
   ["EE895", "/components/sensor/ee895/", "EE895.png", "CO2 & Temperature & Pressure"],
   ["ENS160", "/components/sensor/ens160/", "ens160.jpg", "CO2 & Air Quality"],
   ["GCJA5", "/components/sensor/gcja5/", "gcja5.svg", "Particulate"],
@@ -273,6 +278,7 @@ Sensors are organized into categories; if a given sensor fits into more than one
   ["SEN6x", "/components/sensor/sen6x/", "sen6x.webp", "Particulate & Temperature & Humidity & VOC & NOx & CO2"],
   ["SenseAir", "/components/sensor/senseair/", "senseair_s8.jpg", "CO2"],
   ["SFA30", "/components/sensor/sfa30/", "sfa30.jpg", "Formaldehyde"],
+  ["SFA40", "/components/sensor/sfa40/", "sfa40.webp", "Formaldehyde & Temperature & Humidity"],
   ["SGP30", "/components/sensor/sgp30/", "sgp30.jpg", "CO2 & Volatile organics"],
   ["SGP4x", "/components/sensor/sgp4x/", "sgp40.jpg", "Volatile organics & NOx"],
   ["SM300D2", "/components/sensor/sm300d2/", "sm300d2.jpg", "Air quality"],
@@ -328,9 +334,11 @@ Sensors are organized into categories; if a given sensor fits into more than one
 <ImgTable items={[
   ["A01NYUB", "/components/sensor/a01nyub/", "a01nyub.jpg", "Acoustic distance"],
   ["A02YYUW", "/components/sensor/a02yyuw/", "a02yyuw.jpg", "Acoustic distance"],
+  ["DS1603L", "/components/sensor/ds1603l/", "ds1603l.svg", "Acoustic distance"],
   ["GL-R01 Time of Flight Sensor", "/components/sensor/gl_r01/", "gl_r01.jpg", "IR optical distance"],
   ["HRXL MaxSonar WR", "/components/sensor/hrxl_maxsonar_wr/", "hrxl_maxsonar_wr.jpg", "Acoustic distance"],
   ["JSN-SR04T", "/components/sensor/jsn_sr04t/", "jsn-sr04t-v3.jpg", "Acoustic distance"],
+  ["TF-Luna", "/components/sensor/tfluna/", "tfluna.jpg", "IR optical distance"],
   ["TOF10120", "/components/sensor/tof10120/", "tof10120.jpg", "IR optical distance"],
   ["Ultrasonic Sensor", "/components/sensor/ultrasonic/", "ultrasonic.jpg", "Acoustic distance"],
   ["VL53L0x", "/components/sensor/vl53l0x/", "vl53l0x.jpg", "IR optical distance"],
@@ -369,8 +377,10 @@ Sensors are organized into categories; if a given sensor fits into more than one
   ["INA3221", "/components/sensor/ina3221/", "ina3221.jpg", "3-Ch DC current"],
   ["Kamstrup KMP", "/components/sensor/kamstrup_kmp/", "kamstrup_kmp.jpg", "District Heating Meter"],
   ["MAX9611", "/components/sensor/max9611/", "max9611.jpg", "Voltage & Current & Power & Temperature"],
+  ["Mk2PVRouter", "/components/sensor/mk2pvrouter/", "mk2pvrouter.jpg", "Surplus Energy Diverter"],
   ["PZEM AC", "/components/sensor/pzemac/", "pzem-ac.jpg", "Voltage & Current & Power"],
   ["PZEM DC", "/components/sensor/pzemdc/", "pzem-dc.jpg", "Voltage & Current & Power"],
+  ["PZEM-6L24", "/components/sensor/pzem6l24/", "pzem6l24.svg", "3-Phase Voltage & Current & Power"],
   ["PZEM004T", "/components/sensor/pzem004t/", "pzem004t.svg", "Voltage & Current & Power"],
   ["SDM Meter", "/components/sensor/sdm_meter/", "sdm220m.jpg", "Modbus energy monitor"],
   ["Selec Meter", "/components/sensor/selec_meter/", "selec_meter_em2m.jpg", "Modbus energy monitor"],
@@ -530,6 +540,7 @@ Sensors are organized into categories; if a given sensor fits into more than one
   ["SMT100", "/components/sensor/smt100/", "smt100.jpg", "Moisture & Temperature"],
   ["Sound Level", "/components/sensor/sound_level/", "waveform.svg", "dark-invert"],
   ["SY6970", "/components/sensor/sy6970/", "sy6970.jpg", "Battery charge IC"],
+  ["Systa Bus", "/components/systa_bus/", "systasolar_aqua.png"],
   ["Tuya Sensor", "/components/sensor/tuya/", "tuya.png"],
   ["TX20", "/components/sensor/tx20/", "tx20.jpg", "Wind speed & Wind direction"],
   ["uFire EC sensor", "/components/sensor/ufire_ec/", "ufire_ec.png", "EC & Temperature"],
@@ -576,6 +587,7 @@ Sensors are organized into categories; if a given sensor fits into more than one
 
 <ImgTable items={[
   ["HX711", "/components/sensor/hx711/", "hx711.jpg", "Load cell amplifier"],
+  ["Xiaomi Body Scale", "/components/sensor/xiaomi_body_scale/", "xiaomi_body_scale.jpg", "S200, S400"],
   ["Xiaomi Miscale", "/components/sensor/xiaomi_miscale/", "xiaomi_miscale.jpg"],
 ]} />
 
@@ -693,6 +705,7 @@ Often known as "tag" or "card" readers within the community.
   ["ES8311", "/components/audio_dac/es8311/", "es8311.svg"],
   ["ES8388", "/components/audio_dac/es8388/", "es8388.svg"],
   ["PCM5122", "/components/audio_dac/pcm5122/", "pcm5122.svg"],
+  ["TAS2780", "/components/audio_dac/tas2780/", "tas2780.svg"],
 ]} />
 
 ## Button Components
@@ -713,6 +726,7 @@ Often known as "tag" or "card" readers within the community.
 
 <ImgTable items={[
   ["Climate Core", "/components/climate/", "folder-open.svg", "dark-invert"],
+  ["Template Climate", "/components/climate/template/", "description.svg", "dark-invert"],
   ["Anova Cooker", "/components/climate/anova/", "anova.png"],
   ["Bang Bang Controller", "/components/climate/bang_bang/", "air-conditioner.svg", "dark-invert"],
   ["BedJet Climate System", "/components/climate/bedjet/", "bedjet.png"],
@@ -791,6 +805,7 @@ Often known as "tag" or "card" readers within the community.
   ["PVVX MiThermometer", "/components/display/pvvx_mithermometer/", "xiaomi_lywsd03mmc.jpg"],
   ["Quad SPI Displays", "/components/display/qspi_dbi/", "t4-s3.jpg"],
   ["RPI_DPI_RGB", "/components/display/rpi_dpi_rgb/", "waveshare_touch-s3.jpg"],
+  ["Snapshot", "/components/display/snapshot/", "file-image-outline.svg", "dark-invert"],
   ["SSD1306", "/components/display/ssd1306/", "ssd1306.jpg"],
   ["SSD1322", "/components/display/ssd1322/", "ssd1322.jpg"],
   ["SSD1325", "/components/display/ssd1325/", "ssd1325.jpg"],
@@ -832,6 +847,7 @@ Often known as "tag" or "card" readers within the community.
   ["Resol VBus", "/components/vbus/", "resol_deltasol_bs_plus.jpg"],
   ["SML", "/components/sml/", "sml.svg"],
   ["SUN-GTIL2 inverter", "/components/sun_gtil2/", "sun_1000g2.png"],
+  ["Systa Bus", "/components/systa_bus/", "systasolar_aqua.png"],
 ]} />
 
 ## Event Components
@@ -944,7 +960,6 @@ Used for creating infrared (IR) remote control transmitters and/or receivers.
 <ImgTable items={[
   ["Media Player Core", "/components/media_player/", "folder-open.svg", "dark-invert"],
   ["DFPlayer", "/components/dfplayer/", "dfplayer.svg", "dark-invert"],
-  ["I2S Audio", "/components/media_player/i2s_audio/", "i2s_audio.svg"],
   ["Sendspin Group", "/components/media_player/sendspin/", "music.svg", "dark-invert"],
   ["Speaker", "/components/media_player/speaker/", "speaker.svg", "dark-invert"],
   ["Speaker Source", "/components/media_player/speaker_source/", "speaker.svg", "dark-invert"],
@@ -1057,6 +1072,7 @@ Used for creating infrared (IR) remote control transmitters and/or receivers.
   ["Nextion Switch", "/components/switch/nextion/", "nextion.jpg"],
   ["Restart Switch", "/components/switch/restart/", "restart.svg", "dark-invert"],
   ["Safe Mode Switch", "/components/switch/safe_mode/", "restart-alert.svg", "dark-invert"],
+  ["Sendspin Switch", "/components/switch/sendspin/", "music.svg", "dark-invert"],
   ["Shutdown Switch", "/components/switch/shutdown/", "power_settings.svg", "dark-invert"],
   ["Tuya Switch", "/components/switch/tuya/", "tuya.png"],
   ["UART Switch", "/components/switch/uart/", "uart.svg"],
@@ -1104,6 +1120,7 @@ Used for creating infrared (IR) remote control transmitters and/or receivers.
   ["Home Assistant Time", "/components/time/homeassistant/", "home-assistant.svg", "dark-invert"],
   ["PCF85063 RTC", "/components/time/pcf85063/", "clock-outline.svg", "dark-invert"],
   ["PCF8563 RTC", "/components/time/pcf8563/", "clock-outline.svg", "dark-invert"],
+  ["RX8025T RTC", "/components/time/rx8025t/", "clock-outline.svg", "dark-invert"],
   ["RX8130 RTC", "/components/time/rx8130/", "clock-outline.svg", "dark-invert"],
   ["SNTP", "/components/time/sntp/", "clock-outline.svg", "dark-invert"],
   ["Zigbee Time", "/components/time/zigbee/", "zigbee.svg"],
@@ -1123,6 +1140,7 @@ Used for creating infrared (IR) remote control transmitters and/or receivers.
   ["FT63X6", "/components/touchscreen/ft63x6/", "wt32-sc01.png"],
   ["GSL3670", "/components/touchscreen/gsl3670/", "touchscreen.svg", "dark-invert"],
   ["GT911", "/components/touchscreen/gt911/", "esp32_s3_box_3.png"],
+  ["ICNT86", "/components/touchscreen/icnt86/", "icnt86.svg", "dark-invert"],
   ["Lilygo T5 4.7", "/components/touchscreen/lilygo_t5_47/", "lilygo_t5_47_touch.jpg"],
   ["ST7123", "/components/touchscreen/st7123/", "touch.svg", "dark-invert"],
   ["TT21100", "/components/touchscreen/tt21100/", "esp32-s3-korvo-2-lcd.png"],
