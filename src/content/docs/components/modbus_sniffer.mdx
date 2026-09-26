@@ -56,7 +56,7 @@ modbus_sniffer:
 - **modbus_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the [Modbus](/components/modbus/)
   hub the sniffer is attached to. The hub must have `role: sniffer`.
 - **on_request** (*Optional*, [Automation](/automations)): An automation to run for each request
-  observed on the bus, whether or not it is answered. See [`on_request`](#on_request).
+  to a server address (not broadcasts), whether or not it is answered. See [`on_request`](#on_request).
 - **on_response** (*Optional*, [Automation](/automations)): An automation to run for each
   request/reply pair observed on the bus. See [`on_response`](#on_response).
 
@@ -123,7 +123,7 @@ modbus_sniffer:
 
 ## `on_request`
 
-Fires for every request seen on the bus, before any reply, with two variables in scope:
+Fires for every request except broadcasts (address 0), before any reply, with two variables in scope:
 
 - `address` (`uint8_t`): the server the request was addressed to.
 - `request_pdu` (`std::span<const uint8_t>`): the request, function code first.
@@ -156,10 +156,9 @@ ESP32 FIFO is 128 bytes.
 
 - **Exchanges are paired, not interpreted.** Every function code is delivered, including writes,
   coils and exception responses; what the bytes mean is for your lambda to decide.
-- **Devices using address 0 as a unit ID are not paired.** Some non-compliant devices (certain BMS
-  clones) ship set to address `0`, which is the Modbus broadcast address and is never answered, so
-  the hub cannot expect a reply. If the device's address is configurable, setting it to 1-247 is the
-  better fix.
+- **Address 0 is ignored.** It is the Modbus broadcast address and is never answered, so neither
+  `on_request` nor `on_response` fires for it. Some non-compliant devices (certain BMS clones) ship
+  set to address `0`; if the device's address is configurable, setting it to 1-247 is the fix.
 - **A reply with no request before it is not paired.** This happens on the first exchange after a
   reset, or when a request is lost to a CRC error. The register address is unknowable in that case,
   so neither automation fires for it. The exception is a single-register write (`0x06`): its reply
