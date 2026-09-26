@@ -1,0 +1,318 @@
+---
+description: "Instructions for setting up MQ-2 through MQ-309A gas sensors with ESPHome."
+title: "MQ Gas Sensors"
+---
+
+import Figure from '@components/Figure.astro';
+import APIRef from '@components/APIRef.astro';
+
+The `mq_gas_sensors` sensor platform allows you to use the sensors of the
+[MQ family](https://www.winsen-sensor.com/mq-sensor.html) with ESPHome. It is a
+port of the PPM model used by the [MQUnifiedsensor](https://github.com/miguel5612/MQSensorsLib) library to esp-idf and
+supports MQ-2 through MQ-9, MQ-131, MQ-135 through MQ-138, MQ-136, MQ-214, MQ-303A, MQ-309A and `CUSTOM`.
+
+<Figure
+  src="/images/mq-gas-sensor.jpg"
+  alt="MQ-135 gas sensor module on a blue breakout board"
+  caption="MQ-135 gas sensor module."
+  layout="constrained"
+  width={240}
+  height={194}
+/>
+
+The analog output (AO) of the module is sampled as a voltage, converted into the sensor resistance RS and
+evaluated with the regression curve of the selected gas:
+
+$$
+V = \text{ADC} \cdot \frac{V_{ref}}{2^{bits} - 1} \qquad
+RS = \frac{VCC \cdot RL}{V} - RL \qquad
+ratio = \frac{RS}{R0} \qquad
+PPM = a \cdot ratio^{b}
+$$
+
+The regression method `linear` uses `log10(PPM) = (log10(ratio) - b) / a` and `inverse` uses
+`PPM = (ratio / a)^(1 / b)`. R0, the sensor resistance in clean air, comes from the configuration, from a
+calibration stored in flash or from a clean-air calibration performed at runtime.
+
+The MQ modules need a 5 V supply, so AO can exceed the input range of an ESP32 ADC. Connect AO to the ADC through
+a voltage divider and describe the wiring with the `divider` option, as in the examples below.
+
+## Example Configuration
+
+```yaml
+# The MQ module needs 5 V; its AO pin feeds the ADC through a 10k/20k divider.
+sensor:
+  - platform: adc
+    id: mq8_adc
+    pin: GPIOXX
+    attenuation: 12db
+    update_interval: never
+    internal: true
+
+  - platform: mq_gas_sensors
+    name: "Hydrogen concentration"
+    sensor_type: MQ-8
+    voltage: mq8_adc
+    divider:
+      r1: 10.0
+      r2: 20.0
+```
+
+Instead of using an existing voltage sampler, the component can own the ADC pin. It then creates the hidden,
+internal `adc` sensor for you, configured with `adc_attenuation` and `adc_samples`:
+
+```yaml
+sensor:
+  - platform: mq_gas_sensors
+    name: "Hydrogen concentration"
+    sensor_type: MQ-8
+    pin: GPIOXX
+    divider:
+      r1: 10.0
+      r2: 20.0
+```
+
+R0 is unknown until it is either configured or calibrated, and a value is only published once it is known:
+
+```yaml
+sensor:
+  - platform: mq_gas_sensors
+    name: "Hydrogen concentration"
+    sensor_type: MQ-8
+    pin: GPIOXX
+    divider:
+      r1: 10.0
+      r2: 20.0
+    calibration:
+      delay: 5min
+      persist: true
+```
+
+> [!NOTE]
+> With `pin`, `divider` (or `voltage_multiplier`) is required. Without it the 5 V output of the module would map
+> to more than the absolute maximum input voltage of the ADC pin and the configuration is rejected at compile
+> time.
+
+## Configuration Variables
+
+- **sensor_type** (**Required**, string): The type of the sensor. One of `MQ-2`, `MQ-3`, `MQ-4`, `MQ-5`, `MQ-6`,
+  `MQ-7`, `MQ-8`, `MQ-9`, `MQ-131`, `MQ-135`, `MQ-136`, `MQ-137`, `MQ-138`, `MQ-214`, `MQ-303A`, `MQ-309A` or
+  `CUSTOM`. Case and separators are ignored, so `mq8`, `mq-8` and `MQ_8` are all equivalent.
+- **gas** (*Optional*, string): The gas whose curve is evaluated. Defaults to the primary gas of `sensor_type`.
+  Must be one of the gases listed for that type in
+  [Supported Sensors and Built-in Curves](#supported-sensors-and-built-in-curves).
+- **voltage** (*Optional*, [ID](/guides/configuration-types#id)): The `id` of a voltage sampler, usually an
+  [`adc`](/components/sensor/adc/) sensor, that samples the AO pin. Exactly one of `voltage` and `pin` is required.
+- **pin** (*Optional*, [Pin](/guides/configuration-types#pin)): The ADC pin that AO is connected to. A hidden,
+  internal `adc` sensor is created for it. Exactly one of `voltage` and `pin` is required.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to check the sensor.
+  Defaults to `60s`.
+- All other options from [Sensor](/components/sensor).
+
+### Analog Input
+
+- **divider** (*Optional*): The voltage divider between the AO pin and the ADC.
+  - **r1** (**Required**, float): The resistor in series with AO, in kOhm.
+  - **r2** (**Required**, float): The resistor to ground, in kOhm.
+
+  The sampled voltage is multiplied by `(r1 + r2) / r2`, which is `1.5` for a 10k/20k divider. Mutually exclusive
+  with `voltage_multiplier`.
+- **voltage_multiplier** (*Optional*, float): The factor applied to the sampled voltage, that is the inverse of
+  the divider ratio: `2.0` for a 10k/10k divider, `1.0` when AO is connected directly. Defaults to `1.0`.
+  Mutually exclusive with `divider`.
+- **adc_attenuation** (*Optional*, string): Only with `pin` and only on ESP32. The attenuation of the generated
+  `adc` sensor: `0db`, `2.5db`, `6db`, `11db`, `12db` or `auto`. Defaults to `12db`.
+- **adc_samples** (*Optional*, int): Only with `pin`. The number of ADC readings averaged per update by the
+  generated `adc` sensor. Range `1` to `255`. Defaults to `1`.
+- **samples** (*Optional*, int): The number of AO readings that are averaged into one measured voltage. Range `1`
+  to `255`. Defaults to `2`. This is independent of `adc_samples`, which averages inside the generated `adc`
+  sensor.
+- **sample_interval** (*Optional*, [Time](/guides/configuration-types#time)): The delay between two of those
+  readings, which also blocks the main loop for `(samples - 1) × sample_interval` during every update. It is also
+  the interval at which the samples of a clean-air calibration are taken. Defaults to `20ms`.
+- **adc_input_max** (*Optional*, float): The largest voltage the ADC measures correctly, that is the ADC supply
+  voltage. Exceeding it only disables the range warning below. Defaults to `3.3`.
+- **adc_pin_max** (*Optional*, float): The largest voltage the ADC pin may ever see, that is the absolute maximum
+  input voltage of the chip. Exceeding it rejects the configuration. Defaults to `3.6`.
+- **vcc** (*Optional*, float): The supply voltage of the module in V, used in the RS calculation.
+  Defaults to `5.0`.
+- **rl** (*Optional*, float): The load resistor of the module in kOhm. Defaults to `10.0`.
+
+> [!NOTE]
+> The ADC range guard compares `vcc / voltage_multiplier` against both limits and is only evaluated when `pin`,
+> `adc_input_max` or `adc_pin_max` is set. With the default 5 V module and no divider, expect a warning for an
+> ESP32 (which measures up to `3.3` V) followed by a rejected configuration for `adc_pin_max`. Raise the limits
+> only when the hardware really tolerates the voltage, for example `adc_input_max: 6.144` for an ADS1115.
+
+### Curve and Coefficients
+
+- **a** (*Optional*, float): The `a` coefficient of the regression curve. Required for `CUSTOM`, `MQ-136`,
+  `MQ-214`, `MQ-303A` and `MQ-309A`, optional for all other types where the built-in value is used by default.
+- **b** (*Optional*, float): The `b` coefficient of the regression curve. Required for `CUSTOM`, `MQ-136`,
+  `MQ-214`, `MQ-303A` and `MQ-309A`, optional for all other types.
+- **regression_method** (*Optional*, string): The regression method, one of `exponential`, `linear` or `inverse`.
+  Defaults to the method of the built-in curve.
+- **curve** (*Optional*, string): The coefficient dataset to use, `standard` (the MQUnifiedsensor values,
+  **Default**) or `mqdatascience` (the values published by the
+  [MQDataScience](https://github.com/abcdaaaaaaaaa/MQDataScience) project, currently only for the MQ-8 and
+  `gas: H2`, about 11 % lower). An alternative curve provides `a`, `b` and the regression method, so it cannot be
+  combined with those options.
+- **ratio_mode** (*Optional*, string): The convention used to form the ratio that the curve is evaluated with,
+  `rs_r0` or `r0_rs`. Defaults to `rs_r0`, which is the datasheet convention the built-in coefficients are fitted
+  against. Use `r0_rs` for coefficients fitted against the inverted convention of the original library.
+- **ratio_in_clean_air** (*Optional*, float): The RS/R0 ratio in clean air, used to derive R0. Defaults to the
+  value of the built-in curve, for example `70` for the MQ-8.
+- **min_ppm** (*Optional*, float): The lower limit of the published value. Defaults to `0`.
+- **max_ppm** (*Optional*, float): The upper limit of the published value. Defaults to the upper range of the
+  sensor type, for example `2000` for the MQ-7 or `10000` for the MQ-8. Must be greater than `min_ppm`.
+
+### Calibration
+
+R0 is the sensor resistance in clean air. It can be determined once during a clean-air calibration and then
+reused, or taken from the datasheet of the module.
+
+- **r0** (*Optional*, float): A fixed R0 in kOhm. When it is set, the automatic calibration is disabled and the
+  calibrated value is neither stored nor restored from flash.
+- **calibration** (*Optional*): Perform a clean-air calibration to determine R0.
+  - **ratio_in_clean_air** (*Optional*, float): Overrides the RS/R0 ratio in clean air for this calibration.
+    Defaults to the value of the top-level `ratio_in_clean_air` option.
+  - **delay** (*Optional*, [Time](/guides/configuration-types#time)): The delay before the calibration starts,
+    used to let the heater stabilise. Defaults to `60s`.
+  - **duration** (*Optional*, [Time](/guides/configuration-types#time)): The maximum duration of the calibration.
+    R0 is accepted from the samples taken so far when it elapses. `0s` disables the timeout. Defaults to `0s`.
+  - **samples** (*Optional*, int): The number of clean-air samples that are averaged into R0. Range `1` to
+    `1000`. Defaults to `50`.
+  - **persist** (*Optional*, boolean): Store the calibrated R0 in flash and restore it after a reboot.
+    Defaults to `true`.
+- **warmup_time** (*Optional*, [Time](/guides/configuration-types#time)): The burn-in or warm-up time of the
+  sensor. No value is published before it has elapsed. Defaults to `0s`.
+
+> [!NOTE]
+> Configuring both `r0` and `calibration` is not useful: the fixed `r0` wins, the automatic calibration is
+> disabled and a warning is logged. Configuring neither is allowed, but then R0 stays unknown and the sensor
+> publishes `unknown` until a calibrated R0 is available. Calibrate the sensor in clean air and keep
+> `persist: true` to avoid repeating this after every reboot.
+
+### Temperature and Humidity Correction
+
+The optional MQDataScience correction divides the RS/R0 ratio by a coefficient that depends on the ambient
+temperature and the relative humidity. The inputs are clamped to 33 - 85 % RH and -10 - 50 °C, and the coefficient
+is interpolated between the values tabulated for 33 % and 85 % RH:
+
+$$
+correction = a + c \cdot e^{b \cdot T}
+$$
+
+- **temperature** (*Optional*, [ID](/guides/configuration-types#id)): The `id` of a temperature sensor that
+  provides the ambient temperature. Must be used together with `humidity`.
+- **humidity** (*Optional*, [ID](/guides/configuration-types#id)): The `id` of a humidity sensor that provides
+  the relative humidity. Must be used together with `temperature`.
+- **correction_mode** (*Optional*, string): `none` or `mqdatascience`. When the option is not set it defaults to
+  `mqdatascience` if both `temperature` and `humidity` are linked and the sensor type has a correction model,
+  otherwise to `none`. Requesting `mqdatascience` without both ambient sensors, or for a type without a model, is
+  rejected.
+- **correction_clamp** (*Optional*, string): How the corrected value is limited.
+  - `absolute` (**Default**): The value is clipped to `max_ppm`.
+  - `scaled`: The value is clipped to `max_ppm` multiplied by the correction coefficient, which is the
+    MQDataScience behaviour.
+- **correction_factor** (*Optional*, float): An additive offset applied to the ratio and to the R0 determined in
+  clean air, to compensate a known systematic offset. Defaults to `0.0`.
+
+Correction models exist for the MQ-2 through MQ-8, the MQ-135 through MQ-138 and the MQ-214. The MQ-9 and the
+MQ-131 only have the two-segment variant upstream, so linking `temperature` and `humidity` for them logs a warning
+and publishes uncorrected values.
+
+### Diagnostic Entities
+
+These sensors are optional. They publish the intermediate values of the calculation and are useful while bringing
+up a new sensor, for example to compare the measured voltage against the datasheet.
+
+- **voltage_sensor** (*Optional*, [ID](/guides/configuration-types#id)): The `id` of a [Sensor](/components/sensor)
+  that publishes the sampled and scaled voltage in V.
+- **rs_sensor** (*Optional*, [ID](/guides/configuration-types#id)): The `id` of a [Sensor](/components/sensor)
+  that publishes the sensor resistance RS in kOhm.
+- **ratio_sensor** (*Optional*, [ID](/guides/configuration-types#id)): The `id` of a [Sensor](/components/sensor)
+  that publishes the ratio the curve is evaluated with, including `correction_factor`.
+- **correction_sensor** (*Optional*, [ID](/guides/configuration-types#id)): The `id` of a
+  [Sensor](/components/sensor) that publishes the active temperature/humidity correction coefficient.
+- **log_sensor** (*Optional*, [ID](/guides/configuration-types#id)): The `id` of a
+  [Text Sensor](/components/text_sensor/) that publishes the intermediate values of the last update. The messages
+  are rate limited to one every 30 seconds.
+- **log_ppm** (*Optional*, boolean): Also write the calculated PPM value into the messages of `log_sensor`.
+  Defaults to `false`.
+
+## Supported Sensors and Built-in Curves
+
+The table lists the built-in regression data of every supported type. The `gas` option selects one of the gases of
+the type; the other columns are the defaults that apply when the corresponding option is not set.
+
+| `sensor_type` | Method | RS/R0 in clean air | Default `gas` | Gases | Default `max_ppm` |
+| ------------- | ------ | ------------------ | ------------- | ----- | ----------------- |
+| `MQ-2` | `exponential` | 9.83 | `LPG` | `ALCOHOL`, `CH4`, `CO`, `H2`, `LPG`, `PROPANE`, `SMOKE` | 10000 |
+| `MQ-3` | `exponential` | 60 | `ALCOHOL` | `ALCOHOL`, `BENZENE`, `CH4`, `CO`, `HEXANE`, `LPG` | 10000 |
+| `MQ-4` | `exponential` | 4.4 | `CH4` | `ALCOHOL`, `CH4`, `CO`, `LPG`, `SMOKE` | 10000 |
+| `MQ-5` | `exponential` | 6.5 | `LPG` | `ALCOHOL`, `CH4`, `CO`, `H2`, `LPG` | 10000 |
+| `MQ-6` | `exponential` | 10 | `LPG` | `ALCOHOL`, `CH4`, `CO`, `H2`, `LPG` | 10000 |
+| `MQ-7` | `exponential` | 27.5 | `CO` | `ALCOHOL`, `CH4`, `CO`, `H2`, `LPG` | 2000 |
+| `MQ-8` | `exponential` | 70 | `H2` | `ALCOHOL`, `CH4`, `CO`, `H2`, `LPG` | 10000 |
+| `MQ-9` | `exponential` | 9.6 | `LPG` | `CH4`, `CO`, `LPG` | 10000 |
+| `MQ-131` | `linear` | 1 | `O3` | `O3` | 10 |
+| `MQ-135` | `linear` | 1 | `NH3` | `H2`, `NH3`, `TOLUENE` | 10000 |
+| `MQ-136` | `exponential` | 1 | - | none, `a` and `b` required | 200 |
+| `MQ-137` | `linear` | 1 | `NH3` | `NH3` | 500 |
+| `MQ-138` | `linear` | 1 | `TOLUENE` | `ACETONE`, `ALCOHOL`, `TOLUENE` | 1000 |
+| `MQ-214` | `exponential` | 1 | - | none, `a` and `b` required | 10000 |
+| `MQ-303A` | `exponential` | 1 | - | none, `a` and `b` required | 1000 |
+| `MQ-309A` | `exponential` | 1 | - | none, `a` and `b` required | 1000 |
+| `CUSTOM` | `exponential` | 1 | - | none, `a` and `b` required | 10000 |
+
+The MQ-131 measures ozone, whose datasheet range is given in ppb (10 - 1000 ppb), which is why its default
+`max_ppm` is the unusually low `10`.
+
+`curve: mqdatascience` is currently available for the MQ-8 with `gas: H2` only. It replaces the built-in fit with
+the MQDataScience fit (`a = 18391.5667`, `b = -1.4494`, method `inverse`), which reports about 11 % lower values
+across the whole range.
+
+## Notes and Limitations
+
+- **Power supply**: The modules need 5 V on `VCC`. The ADC pins of an ESP32 are not 5 V tolerant (the absolute
+  maximum is VDD + 0.3 V), so never connect AO directly to a GPIO. The recommended wiring is a 10 kOhm / 20 kOhm
+  divider (5 V becomes 3.33 V), which is what `divider: {r1: 10.0, r2: 20.0}` describes.
+- **Two-phase heaters**: The MQ-7, the MQ-136 and the MQ-309A need a cycled heater supply - for example 5 V for
+  60 s followed by 1.4 V for 90 s for the MQ-7 - and the MQ-303A needs a stable 5 V ± 0.1 V. This component only
+  measures the analog output and logs an informational note about the heater during configuration, so the heater
+  has to be driven by an external circuit or an ESPHome `output`.
+- **Burn-in**: A new sensor needs 24 - 48 hours of pre-heating before the readings are stable and a clean-air
+  calibration is meaningful. Use `warmup_time: 24h` to suppress the output during that period.
+- **Unavailable values**: The sensor publishes `unknown` while `warmup_time` has not elapsed, while a calibration
+  is pending or running, when R0 is unknown, and when the sampled voltage is 10 mV or less, which indicates an
+  open circuit, a missing supply or a wrong divider. Calibration samples that do not produce a valid RS are
+  skipped, and the previous R0 is kept when none of them is valid.
+- **No automation action**: Calibration is not exposed as an action. It runs once, `delay` after boot or after
+  `warmup_time`, whichever is later, and the result is restored from flash if `persist: true` is set. A
+  re-calibration can be started from C++ with `request_calibration()`, for example from the `lambda` of a
+  [Template Button](/components/button/template/):
+
+  ```yaml
+  button:
+    - platform: template
+      name: "Recalibrate MQ-8"
+      on_press:
+        - lambda: id(mq8).request_calibration();
+  ```
+
+  The sensor needs an `id` for this, and the calibration is deferred until `warmup_time` has elapsed.
+- **Accuracy**: The datasheet curves are coarse fits and the sensors are not selective - every MQ type responds to
+  several gases, so the published value is an estimate of the concentration of the selected gas and not a
+  measurement of it.
+- **Diagnostics**: `log_sensor` mirrors the component's messages to Home Assistant, with warnings and errors
+  immediately and the per-update measurement chain at most once every 30 seconds. With `log_ppm: true` the
+  published value is also logged on every update. The full V / RS / ratio chain only appears in the console log
+  with `logger: level: DEBUG`.
+
+## See Also
+
+- [Sensor Filters](/components/sensor#sensor-filters)
+- [ADC](/components/sensor/adc/)
+- [MQUnifiedsensor library](https://github.com/miguel5612/MQSensorsLib)
+- <APIRef text="mq_gas_sensor.h" path="mq_gas_sensors/mq_gas_sensor.h" />
