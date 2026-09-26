@@ -1,0 +1,124 @@
+---
+description: "Instructions for sharing a UART between a CDC-ACM UART Bridge and other components in ESPHome"
+title: "UART Mux"
+---
+import APIRef from '@components/APIRef.astro';
+
+
+The `uart_mux` component lets one hardware UART be used either by a
+[CDC-ACM UART Bridge](/components/bridge/cdc_acm_uart/) or by other components on the device, switching between the
+two at runtime. A typical use is a device with a radio module on its UART: while a computer is connected over USB the
+module is exposed to it as a serial port, and when no computer is connected the device's own firmware talks to the
+module instead.
+
+Other components do not use the UART directly. They use the mux as their UART, and the mux forwards their traffic to
+the hardware UART only while it is routed to them. Components that check whether their UART is connected, such as
+[Z-Wave Proxy](/components/zwave_proxy/), see the route change as the connection going away and coming back, and
+recover on their own.
+
+The component is available on the ESP32-P4, ESP32-S2 and ESP32-S3, the same variants as the bridge. It requires a
+[CDC-ACM UART Bridge](/components/bridge/cdc_acm_uart/); see that page for setting up the bridge, its UART and its
+USB CDC-ACM interface.
+
+```yaml
+# Example configuration entry
+uart_mux:
+  - id: radio_mux
+    bridge_id: radio_bridge
+
+zwave_proxy:
+  uart_id: radio_mux
+```
+
+## Configuration variables
+
+- **bridge_id** (**Required**, [ID](/guides/configuration-types#id)): The
+  [CDC-ACM UART Bridge](/components/bridge/cdc_acm_uart/) whose UART is shared. The mux takes the UART from the
+  bridge, so it is not configured here.
+- **initial_route** (*Optional*, string): Who gets the UART at boot: `bridge` or `local`. Defaults to `bridge`. See
+  [Following a USB host](#following-a-usb-host) for when to use `local`.
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID for this component.
+
+> [!NOTE]
+> A bridge refuses to share its UART with any other component, and that still holds with a mux in place: other
+> components must use the mux as their UART, never the hardware UART itself, and the UART still cannot use the `debug`
+> option. Each bridge can have one mux; put every local consumer of that UART on the same mux.
+
+## Routing
+
+The mux is in one of two routes:
+
+- **bridge**: the bridge forwards between the UART and the USB serial port. Components using the mux see a
+  disconnected UART: nothing is available to read, and anything they write is discarded.
+- **local**: the bridge is paused and components using the mux talk to the UART. The bridge restores the UART's
+  configured baud rate and framing before handing it over, and re-applies the host's settings when it takes it back.
+
+Switching to the local route takes a moment. The bridge finishes any write that is already in progress, which at low
+baud rates can be a fraction of a second, and only then is the UART handed over. Anything received on the UART during
+that hand-over is discarded, so switch while the attached device is idle where possible.
+
+## `uart_mux.select_local` Action
+
+Routes the UART to the components using the mux.
+
+```yaml
+on_...:
+  then:
+    - uart_mux.select_local: radio_mux
+```
+
+## `uart_mux.select_bridge` Action
+
+Routes the UART back to the bridge.
+
+```yaml
+on_...:
+  then:
+    - uart_mux.select_bridge: radio_mux
+```
+
+## `uart_mux.is_local` Condition
+
+Passes while the UART is routed to the components using the mux and the hand-over has completed.
+
+```yaml
+on_...:
+  then:
+    - if:
+        condition:
+          uart_mux.is_local: radio_mux
+        then:
+          - logger.log: The device owns the UART
+```
+
+## Following a USB host
+
+The mux does not watch USB itself. Wire it to the [TinyUSB](/components/tinyusb/) `on_mount` and `on_unmount`
+automations, which run when a computer connects to the device and when it disconnects. Set `initial_route: local`:
+a device that powers up without a computer never sees an `on_unmount`, so it must start on the local route, and a
+computer that is present at boot mounts within a moment and `on_mount` switches to the bridge.
+
+```yaml
+tinyusb:
+  on_mount:
+    - uart_mux.select_bridge: radio_mux
+  on_unmount:
+    - uart_mux.select_local: radio_mux
+
+uart_mux:
+  - id: radio_mux
+    bridge_id: radio_bridge
+    initial_route: local
+```
+
+A device powered only from its USB port does not need `on_unmount` at all, since unplugging it turns it off. A device
+with its own power supply needs `vbus_monitor_pin` on the `tinyusb` component for `on_unmount` to fire; see
+[Reacting to a USB host](/components/tinyusb/#reacting-to-a-usb-host) for the details.
+
+## See Also
+
+- [Bridge](/components/bridge/)
+- [CDC-ACM UART Bridge](/components/bridge/cdc_acm_uart/)
+- [TinyUSB](/components/tinyusb/)
+- [UART](/components/uart/)
+- <APIRef text="uart_mux.h" path="uart_mux/uart_mux.h" />
