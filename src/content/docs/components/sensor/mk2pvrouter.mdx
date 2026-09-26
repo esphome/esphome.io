@@ -201,6 +201,26 @@ binary_sensor:
   there is only one hub.
 - All other options from [Binary Sensor](/components/binary_sensor/).
 
+## Text Sensors
+
+Any tag can also be exposed as a text sensor, which publishes the raw
+value exactly as received, without numeric parsing or scaling. Values
+are limited to 7 characters; longer values are dropped by the hub.
+
+```yaml
+text_sensor:
+  - platform: mk2pvrouter
+    tag: "S_MC"
+    name: "S_MC raw"
+```
+
+- **tag** (**Required**, string): The tag to retrieve from the
+  Telemetry.
+- **mk2pvrouter_id** (*Optional*, [ID](/guides/configuration-types#id)):
+  The ID of the `mk2pvrouter` hub to use. Not normally needed, since
+  there is only one hub.
+- All other options from [Text Sensor](/components/text_sensor/).
+
 ## Complete Example
 
 Here's a complete configuration for a three-phase system using the
