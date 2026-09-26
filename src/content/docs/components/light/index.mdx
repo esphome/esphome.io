@@ -70,6 +70,12 @@ light:
   > This was counter-intuitive and has been fixed: such a light now boots ON, as `initial_state` says.
 
   - **state** (*Optional*, boolean, [templatable](/automations/templates)): The ON/OFF state for the light.
+  - **effect** (*Optional*, string): The name of the [effect](#light-effects) to start with, so the light can come up
+    already running an effect without an `on_boot` automation. Must match the name of one of the effects defined on
+    the same light, or `none` for no effect. This only has an effect when the light starts up ON: an effect is not
+    started for a light that boots OFF. Note that turning the light off stops the running effect, so an effect does
+    not resume by itself the next time the light is turned on — select it again, or set it in `initial_state` and
+    let the light boot into it.
   - All other options from [light state](#light-state).
 
   If **color_mode** is not given but color fields such as `red` or `brightness` are, the light uses the first
