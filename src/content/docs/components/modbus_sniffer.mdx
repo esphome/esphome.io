@@ -73,6 +73,11 @@ A Modbus reply does not carry a register address - only the request does - so th
 each request until its reply arrives and hands you both. That pairing is the reason a sniffer needs
 to see both halves of the conversation.
 
+Both PDUs are only valid while the automation runs: the hub reuses their buffers for the next
+frame. Deferring actions (`delay`, `wait_until`, `script.wait`, ...) are therefore rejected at
+validation, in both `on_response` and `on_request`. Copy what you need into
+[globals](/components/globals/) first, and defer in a separate script.
+
 Nothing is decoded for you. Both PDUs arrive raw, which means the helper functions the rest of the
 Modbus component uses work here too, and every function code is available rather than a chosen few.
 
@@ -155,9 +160,11 @@ ESP32 FIFO is 128 bytes.
   clones) ship set to address `0`, which is the Modbus broadcast address and is never answered, so
   the hub cannot expect a reply. If the device's address is configurable, setting it to 1-247 is the
   better fix.
-- **A reply with no retained request is dropped.** This happens on the first exchange after a reset,
-  or when a request is lost to a CRC error. The register address is unknowable in that case, so the
-  component counts it rather than guessing.
+- **A reply with no request before it is not paired.** This happens on the first exchange after a
+  reset, or when a request is lost to a CRC error. The register address is unknowable in that case,
+  so neither automation fires for it. The exception is a single-register write (`0x06`): its reply
+  is byte-identical to its request, so one seen on its own fires `on_request` as if it were a request.
+  Nothing on the wire can tell the two apart; the next request puts the pairing back in step.
 - **One sniffer per bus.** Watching two buses needs two UARTs and two hubs; two hubs on one UART
   would compete for the received bytes.
 
