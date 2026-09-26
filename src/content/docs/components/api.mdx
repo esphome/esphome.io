@@ -134,7 +134,7 @@ api:
   - **port** (*Optional*, integer): The TCP port the dial-back target listens on. Defaults to `6054`.
   - **delay** (*Optional*, [Time](/guides/configuration-types#time)): How long to give a dial-back client to connect
     in on its own, both after boot and after one disconnects, before the device dials out. Devices with
-    [deep sleep](/components/deep_sleep) skip the wait and dial as soon as the network is up on every wake, since
+    [deep sleep](/components/deep_sleep/) skip the wait and dial as soon as the network is up on every wake, since
     the awake window is short. Defaults to `60s`.
 
 <span id="api-outgoing-connections"></span>
@@ -155,8 +155,8 @@ This lets a device stay connected when the client can no longer reach it, for ex
 changes, as long as the device can still reach the client.
 
 A client declares itself a dial-back target when it connects; the device remembers the address of the last such client
-across reboots, or always dials `host` when one is set. Home Assistant accepts these connections automatically for
-every device with an encryption key; there is nothing to configure on its side.
+across reboots, or always dials `host` when one is set. Home Assistant 2026.10.0 or later accepts these connections
+automatically for every device with an encryption key; there is nothing to configure on its side.
 
 > [!NOTE]
 > The device must be added to the client once while it is reachable: dial-ins are only accepted for devices the
@@ -169,7 +169,6 @@ api:
   encryption:
     key: !secret api_encryption_key
   outgoing_connection:
-    delay: 60s
 ```
 
 ## Actions
