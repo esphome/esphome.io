@@ -1,18 +1,19 @@
 ---
-description: "Instructions for setting up Xiaomi Body Composition Scale S400 bluetooth-based sensors in ESPHome."
-title: "Xiaomi Body Composition Scale S400"
+description: "Instructions for setting up Xiaomi S200 and S400 bluetooth-based scales in ESPHome."
+title: "Xiaomi Body Scale"
 ---
 
 import { Image } from "astro:assets";
 
-The `xiaomi_body_scale_s400` sensor platform lets you track the output of Xiaomi Body Composition Scale S400
-devices using the [ESP32 BLE Tracker](/components/esp32_ble_tracker/). This component listens **passively** to
-BLE advertisement packets and does not pair with the device, so ESPHome has no impact on battery life.
+The `xiaomi_body_scale` sensor platform lets you track the output of the Xiaomi Smart Scale S200 and the Xiaomi Body
+Composition Scale S400 using the [ESP32 BLE Tracker](/components/esp32_ble_tracker/). This component listens
+**passively** to BLE advertisement packets and does not pair with the device, so ESPHome has no impact on battery life.
 
 The scale broadcasts encrypted MiBeacon packets (UUID `0xFE95`). A **bindkey** is required to decrypt the
 payload; see [Getting the Bindkey](#getting-the-bindkey).
 
-Each measurement cycle produces **two BLE packets**:
+The S200 reports weight only. The S400 also measures impedance and heart rate, and each of its measurement
+cycles produces **two BLE packets**:
 
 - **Packet 1** — weight + heart rate + `impedance_low` only (50 kHz, low frequency, larger value)
 - **Packet 2** — `impedance_high` (250 kHz, high frequency, smaller value)
@@ -27,7 +28,7 @@ Each measurement cycle produces **two BLE packets**:
 ---
 
 <Image
-  src="/images/xiaomi_body_scale_s400.jpg"
+  src="/images/xiaomi_body_scale.jpg"
   width={300}
   height={298}
   layout="constrained"
@@ -38,6 +39,9 @@ Each measurement cycle produces **two BLE packets**:
 
 | Device ID | Model     | Name                              |
 | --------- | --------- | --------------------------------- |
+| `0x45C9`  | MJTZC02YM | Smart Scale S200                  |
+| `0x4C04`  | MJTZC02YM | Smart Scale S200                  |
+| `0x4DCB`  | MJTZC02YM | Smart Scale S200                  |
 | `0x30D9`  | MJTZC01YM | Body Composition Scale S400       |
 | `0x3BD5`  | MJTZC01YM | Body Composition Scale S400 White |
 | `0x48CF`  | MJTZC01YM | Body Composition Scale S400 Blue  |
@@ -52,7 +56,7 @@ Each measurement cycle produces **two BLE packets**:
 esp32_ble_tracker:
 
 sensor:
-  - platform: xiaomi_body_scale_s400
+  - platform: xiaomi_body_scale
     mac_address: "XX:XX:XX:XX:XX:XX"
     bindkey: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
     weight:
@@ -69,17 +73,17 @@ sensor:
 - **bindkey** (**Required**, string): 32-character hex key to decrypt the BLE payload.
 - **weight** (_Optional_): Stabilized weight in kg.
   - All options from [Sensor](/components/sensor/).
-- **impedance_low** (_Optional_): Low-frequency impedance at **50 kHz** in Ω. Numerically larger value
+- **impedance_low** (_Optional_, S400 only): Low-frequency impedance at **50 kHz** in Ω. Numerically larger value
   (~558 Ω). Published together with weight and heart rate.
   - All options from [Sensor](/components/sensor/).
-- **impedance_high** (_Optional_): High-frequency impedance at **250 kHz** in Ω. Numerically smaller value
+- **impedance_high** (_Optional_, S400 only): High-frequency impedance at **250 kHz** in Ω. Numerically smaller value
   (~503 Ω). Published in the second packet without weight or heart rate.
   - All options from [Sensor](/components/sensor/).
-- **heart_rate** (_Optional_): Heart rate in bpm.
+- **heart_rate** (_Optional_, S400 only): Heart rate in bpm.
   - All options from [Sensor](/components/sensor/).
 - **profile_id** (_Optional_): User profile slot (1–5, matches the Xiaomi Home app user assignment).
   - All options from [Sensor](/components/sensor/).
-- **stabilized** (_Optional_): Binary sensor that turns `ON` when the measurement
+- **stabilized** (_Optional_, S400 only): Binary sensor that turns `ON` when the measurement
   cycle is complete (last BLE packet received). Turns `OFF` during the measurement.
   - All options from [Binary Sensor](/components/binary_sensor/).
 
@@ -95,7 +99,7 @@ history and statistics. Add the same filter to any other numeric sensor.
 
 ```yaml
 sensor:
-  - platform: xiaomi_body_scale_s400
+  - platform: xiaomi_body_scale
     mac_address: "XX:XX:XX:XX:XX:XX"
     bindkey: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
     weight:
@@ -120,7 +124,7 @@ Byte(s)  Content
 20-23    MIC — AES-CCM authentication tag (4 bytes)
 ```
 
-After decryption, the payload at offset 5 contains object ID `0x6E16` + length `0x09` + 9 data bytes:
+After decryption, the S400 payload at offset 5 contains object ID `0x6E16` + length `0x09` + 9 data bytes:
 
 ```text
 data[0]    Profile ID (uint8, 1–5)
@@ -130,6 +134,9 @@ data[1-4]  Compressed metrics (uint32, little-endian):
              bits 18-31  Impedance × 10  (0.1 Ω,   uint14)
 data[5-8]  UNIX timestamp (uint32, requires Xiaomi Home app — not published)
 ```
+
+The S200 sends object ID `0x4E16` with the same layout, except that `data[1-4]` holds only the weight × 100
+(0.01 kg).
 
 Impedance packet routing (BIA frequency convention):
 
@@ -157,7 +164,7 @@ Impedance packet routing (BIA frequency convention):
 
 ## Body Score Calculation
 
-The scale provides raw biometric data (weight + dual-frequency impedance). To compute body composition scores (BMI, body
+The S400 provides raw biometric data (weight + dual-frequency impedance). To compute body composition scores (BMI, body
 fat %, muscle mass, ECW/ICW, BCM, skeletal muscle mass, etc.) based on weight, impedance, age, height and gender, see:
 
 - [bodymiscale](https://github.com/dckiller51/bodymiscale) — Home Assistant custom component
