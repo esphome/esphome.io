@@ -377,6 +377,9 @@ seamless handoff:
 For seamless 802.11k/v/r roaming, use ESP32 and configure `enable_btm` and
 `enable_rrm`.
 
+To trigger a roaming check immediately instead of waiting for the periodic check, use the
+[`wifi.roam` action](#wifi-roam).
+
 <span id="wifi-networks"></span>
 
 ## Connecting to Multiple Networks
@@ -573,6 +576,22 @@ on_...:
 
 - **on_connect** (*Optional*, [Automation](/automations)): An action to be performed when a connection is established.
 - **on_error** (*Optional*, [Automation](/automations)): An action to be performed when the connection fails.
+
+<span id="wifi-roam"></span>
+
+### `wifi.roam` Action
+
+This action asks the WiFi component to check right away for a better access point on the current network, as
+described in [Post-Connect Roaming](#post-connect-roaming). It skips the usual 5-minute wait between checks, but
+still only roams if a meaningfully stronger access point is actually found.
+
+```yaml
+on_...:
+  then:
+    - wifi.roam:
+```
+
+The action is ignored if the device is not currently connected, or if a roaming check is already in progress.
 
 ## Conditions
 
