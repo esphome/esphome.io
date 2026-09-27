@@ -473,6 +473,16 @@ esp32:
   With octal or hex PSRAM this can be faster than executing from FLASH memory, and enables code such as display drawing
   to execute normally when writing to FLASH, e.g. during an OTA update. The default is `false`.
 
+- **nvs_cache_in_psram** (*Optional*, boolean): Keep the NVS page cache and key hash lists in PSRAM instead of
+  internal RAM; preference values stay in flash. Frees about 10 KB of internal heap on ESPHome's default NVS
+  partition. NVS operations get roughly 2.5 times slower, which a handful of preference reads and writes do not
+  notice; see
+  [Espressif's documentation](https://docs.espressif.com/projects/esp-idf/en/v5.5.5/esp32/api-reference/storage/nvs_flash.html).
+  Enabled by default when [PSRAM](/components/psram/) is configured with `ignore_not_found: false` (its default is
+  `true`, which leaves this off) and [`nvs_encryption`](#nvs-encryption) is off; with encryption on the cache stays
+  internal so key material never lands in PSRAM. Set to `false` to keep the cache internal; an explicit `true` where
+  it cannot apply is an error.
+
 - **ignore_efuse_custom_mac** (*Optional*, boolean): When a custom MAC address is burned into the eFuses, ESPHome
   uses it as the device's base MAC address in place of the factory-assigned one. Since ESPHome 2026.9.0, all network
   interfaces (Wi-Fi, Ethernet, Bluetooth and 802.15.4) derive their addresses from it; in earlier versions, only
