@@ -12,23 +12,6 @@ CPU frequency scaling (`subsys/cpu_freq`), for boards built on the [Zephyr platf
 Every option here depends on what the target board's own devicetree actually declares, not on which
 family (ESP32, nRF52, RP2040, Silicon Labs) it belongs to. Two boards in the same family can differ.
 
-## Support by family
-
-`enable_light_sleep` (`CONFIG_PM`) only works where the SoC's own Zephyr port implements
-`pm_state_set()` for a real sleep state. That's true for some families and not others, and where it is
-true, this component sometimes has to do family-specific extra work to make it actually engage:
-
-| Family | `enable_light_sleep`? | How it's implemented | Extra wiring this component does |
-| --- | --- | --- | --- |
-| Espressif (ESP32, C3, C5, C6, H2) | Yes | `pm_state_set()` calls `esp_light_sleep_start()` for `PM_STATE_STANDBY` | Enables the `rtc_timer` devicetree node as a wakeup source, plus `CONFIG_COUNTER` and `CONFIG_PM_DEVICE` - without these, light sleep silently no-ops, use with Zephyr 4.5+ |
-| Silicon Labs (EFR32MG24) | Yes | `pm_state_set()` maps each PM state directly to a hardware energy mode (`EMU_EnterEM1/2/3/4()`) | None - `CONFIG_PM` alone is enough |
-| Silicon Labs (SiWx91x) | No | The SoC's Kconfig selects `HAS_PM`, but no board declares the devicetree wakeup-state node this component checks for | N/A - fails configuration validation |
-| STMicroelectronics (F1, F4, L4, U5, WB55) | Yes | Each family's `pm_state_set()` maps PM states to the chip's STOP/STANDBY modes | None - `CONFIG_PM` alone is enough |
-| Nordic (nRF52, nRF54L, nRF54LM) | No | No `pm_state_set()` exists for these chips, in mainline Zephyr or Nordic's own NCS fork. Nordic's actual power management lives one layer up, in an application framework (CAF's `power_manager` module) rather than the OS-level PM subsystem, and only offers deep sleep ending in a reset-to-wake, not a resumable light sleep | N/A  fails configuration validation |
-| Raspberry Pi (RP2040) | No | No `pm_state_set()` implementation | N/A - fails configuration validation |
-| Raspberry Pi (RP2350) | No (today) | A real `pm_state_set()` exists (idle-halt plus genuine suspend-to-RAM), but no board yet declares the devicetree wakeup-state node | N/A - fails configuration validation until a board wires it up |
-| Renesas (RA4, e.g. RA4M1) | No | No `pm_state_set()` implementation (only the RA8 series has one) | N/A - fails configuration validation |
-
 ## Usage
 
 ```yaml
@@ -70,19 +53,51 @@ power_management:
 
 ## Discussion
 
-### CONFIG_PM and idle-halt
+### `Enable_light_sleep` Support by Family
 
-Every board here idle-halts the CPU for free: Zephyr's idle thread unconditionally executes the core's
+Variants idle-halt the CPU automatically: Zephyr's idle thread unconditionally executes the core's
 wait instruction (WFI/WFE) whenever there's nothing to run, whether or not `CONFIG_PM` is enabled. What
-**enable_light_sleep** actually adds on top of that is deeper, coordinated system power management --
-suspending devices, selecting among the power states the board's devicetree declares, and so on -- which
+**enable_light_sleep** actually adds on top of that is deeper, coordinated system power management -
+suspending devices, selecting among the power states the board's devicetree declares, and so on which
 only exists where the board's own Zephyr port implements it (tracked here by whether a `zephyr,power-state`
 node is present).
 
 How much power idle-halt alone actually saves is specific to the SoC, and isn't something this component
-can verify or claim -- it varies with the chip's own design, not with anything ESPHome controls.
+can verify or claim, it varies with the chip's own design, not with anything ESPHome controls.
+`enable_light_sleep` only works where the SoC's own Zephyr port implements `pm_state_set()` for a real sleep
+state. That's true for some families and not others, and where it is true, this component sometimes has to
+do family-specific extra work to make it actually engage.
 
-### Device power-down
+#### Espressif
+
+ `enable_light_sleep` works, additionally wiring the `rtc_timer` devicetree node as a wakeup source, plus
+ `CONFIG_COUNTER` and `CONFIG_PM_DEVICE`.  Needs Zephyr 4.5+
+
+#### Nordic
+
+`enable_light_sleep` does not work. Nordic's power management for nRF52/nRF54L/nRF54LM isn't missing so
+much as it lives one layer up, in nRF Connect SDK instead of Zephyr's OS-level PM policy. Same mechanism,
+different layer.  So automatic sleep is a default behavior of Nordic's chips using nrF Connect SDK.
+
+#### Raspberry Pi
+
+`enable_light_sleep` does not work. on the RP2350 it could work with a correctly configured board, but no
+board yet declares the devicetree wakeup-state node
+
+#### Renesas
+
+`enable_light_sleep` does not work for the currently available variant.
+
+#### Silicon Labs
+
+`enable_light_sleep` works for EFR32MG24, no additional wiring.  Doesn't work for SIWX91X, there aren't
+any boards declaring the wakeup-state node.
+
+#### STMicroelectronics
+
+`enable_light_sleep` works for EFR32MG24, no additional wiring.
+
+#### Device power-down
 
 **power_down_device** works one of two ways, depending on whether `CONFIG_PM` ends up enabled
 (**enable_light_sleep**):
@@ -105,7 +120,7 @@ to know or verify.
 - With **enable_light_sleep**, it enables `CONFIG_PM_STATS`. This only turns the counters on -- add the
   [`debug`](/components/debug/) component to actually see them: it periodically logs each power state's
   entry count and cycles spent, at debug log level, whenever `CONFIG_PM_STATS` is enabled. Without
-  `debug` present, nothing reads or prints these counters.
+  `debug` component present, nothing reads or prints these counters.
 - With **policy** set, it enables `CONFIG_CPU_FREQ_LOG_LEVEL_DBG` (and `CONFIG_LOG`, if not already on)
   -- the CPU frequency subsystem has no separate stats API; its policy decisions (CPU load/pressure, the
   P-state selected) are only observable via debug-level log output.
