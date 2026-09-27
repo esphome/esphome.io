@@ -12,6 +12,23 @@ CPU frequency scaling (`subsys/cpu_freq`), for boards built on the [Zephyr platf
 Every option here depends on what the target board's own devicetree actually declares, not on which
 family (ESP32, nRF52, RP2040, Silicon Labs) it belongs to. Two boards in the same family can differ.
 
+## Support by family
+
+`enable_light_sleep` (`CONFIG_PM`) only works where the SoC's own Zephyr port implements
+`pm_state_set()` for a real sleep state. That's true for some families and not others, and where it is
+true, this component sometimes has to do family-specific extra work to make it actually engage:
+
+| Family | `enable_light_sleep`? | How it's implemented | Extra wiring this component does |
+| --- | --- | --- | --- |
+| Espressif (ESP32, C3, C5, C6, H2) | Yes | `pm_state_set()` calls `esp_light_sleep_start()` for `PM_STATE_STANDBY` | Enables the `rtc_timer` devicetree node as a wakeup source, plus `CONFIG_COUNTER` and `CONFIG_PM_DEVICE` - without these, light sleep silently no-ops, use with Zephyr 4.5+ |
+| Silicon Labs (EFR32MG24) | Yes | `pm_state_set()` maps each PM state directly to a hardware energy mode (`EMU_EnterEM1/2/3/4()`) | None - `CONFIG_PM` alone is enough |
+| Silicon Labs (SiWx91x) | No | The SoC's Kconfig selects `HAS_PM`, but no board declares the devicetree wakeup-state node this component checks for | N/A - fails configuration validation |
+| STMicroelectronics (F1, F4, L4, U5, WB55) | Yes | Each family's `pm_state_set()` maps PM states to the chip's STOP/STANDBY modes | None - `CONFIG_PM` alone is enough |
+| Nordic (nRF52, nRF54L, nRF54LM) | No | No `pm_state_set()` exists for these chips, in mainline Zephyr or Nordic's own NCS fork. Nordic's actual power management lives one layer up, in an application framework (CAF's `power_manager` module) rather than the OS-level PM subsystem, and only offers deep sleep ending in a reset-to-wake, not a resumable light sleep | N/A  fails configuration validation |
+| Raspberry Pi (RP2040) | No | No `pm_state_set()` implementation | N/A - fails configuration validation |
+| Raspberry Pi (RP2350) | No (today) | A real `pm_state_set()` exists (idle-halt plus genuine suspend-to-RAM), but no board yet declares the devicetree wakeup-state node | N/A - fails configuration validation until a board wires it up |
+| Renesas (RA4, e.g. RA4M1) | No | No `pm_state_set()` implementation (only the RA8 series has one) | N/A - fails configuration validation |
+
 ## Usage
 
 ```yaml
