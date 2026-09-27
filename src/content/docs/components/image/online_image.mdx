@@ -91,8 +91,10 @@ runtime_image:
   - `LIBJPEG_TURBO`  : Supports baseline and progressive JPEG images. ESP32 only.
 
 > [!NOTE]
-> `LIBJPEG_TURBO` uses roughly 120 kB more flash than `JPEGDEC`. Progressive images require the coefficients of the
-> whole image to be buffered in memory, so PSRAM is generally required for large images.
+> `LIBJPEG_TURBO` uses roughly 120 kB more flash than `JPEGDEC`. When [PSRAM](/components/psram/) is configured,
+> `LIBJPEG_TURBO` allocates its working memory from PSRAM first and falls back to internal RAM. Progressive images
+> require the coefficients of the whole image to be buffered in memory, so PSRAM is generally required for large
+> images.
 
 ## Automations
 
