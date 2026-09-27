@@ -75,7 +75,9 @@ sensor:
   Defaults to `0x64`.
 
 - **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to check the
-  sensor in `single_shot` measurement mode. Must not be set in `continuous` measurement mode. Defaults to `60s`.
+  sensor in `single_shot` measurement mode. Must not be set in `continuous` measurement mode. The minimum
+  practical single shot update interval is approximately 550ms to allow time for the measurement to complete.
+  Defaults to `60s`.
 
 ## Temperature and Humidity Compensation
 
@@ -123,20 +125,24 @@ sensor:
 
 ## Pressure Compensation
 
-Ambient pressure affects CO₂ readings. You can set a static pressure value or use a dynamic
-pressure sensor:
+Ambient pressure affects CO₂ readings.  You can provide a static pressure value or a dynamic
+pressure sensor to compensate for the ambient pressure.
 
 ### Static pressure compensation
+
+Provide a static pressure value in units of bar between 0.4 and 1.1 bar.  Note that 1 bar = 1000 hPa.
 
 ```yaml
 sensor:
   - platform: stcc4
     co2:
       name: "CO2"
-    ambient_pressure_compensation: 1013
+    ambient_pressure_compensation: 1013 mbar
 ```
 
 ### Dynamic pressure compensation
+
+Provide the ID of a pressure sensor that reports pressure in units of mbar.  Note that 1 mbar = 1 hPa.
 
 ```yaml
 sensor:
