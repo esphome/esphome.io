@@ -1,0 +1,321 @@
+---
+title: "LD6004 Radar"
+description: "Read target tracking and presence and configure the Hi-Link LD6004 radar over UART."
+---
+
+import APIRef from '@components/APIRef.astro';
+import Figure from '@components/Figure.astro';
+import homeAssistantImg from './images/ld6004-home-assistant.webp';
+
+The `ld6004` component reads target tracking and detection-area presence from the Hi-Link LD6004 60 GHz radar.
+It also configures detection, interference and dwell areas and the radar's operating settings.
+
+Connect the radar TX to the microcontroller RX, radar RX to microcontroller TX, and connect their grounds.
+This component requires a [UART bus](/components/uart/) with both RX and TX, 115200 baud,
+8 data bits, no parity and 1 stop bit.
+
+> [!NOTE]
+> The LD6004 and LD6002B share some report formats, but have different configuration features.
+> Use this component for the LD6004. Hardware testing covers firmware project 6, version 3.18.0,
+> with a Seeed XIAO ESP32-C6. Two-dimensional firmware has not been tested on hardware.
+
+```yaml
+ld6004:
+
+binary_sensor:
+  - platform: ld6004
+    presence:
+      name: "Radar Presence"
+
+sensor:
+  - platform: ld6004
+    target_count:
+      name: "Radar Target Count"
+```
+
+## Home Assistant
+
+Add the [native API](/components/api/) to the device configuration and upload the firmware.
+In Home Assistant, open **Settings > Devices & services** and add the discovered ESPHome device.
+If discovery does not find it, add the ESPHome integration and enter the device's hostname or IP address.
+Supply the API encryption key when prompted if encryption is configured.
+
+Each named entity configured below appears on the device's Home Assistant page.
+Presence and target measurements are normal entities. Numbers, selects and the target-output switch are configuration
+entities. Firmware details, command status and the refresh button are diagnostic entities.
+Entities with `internal: true` are excluded from the native API.
+
+An ESPHome `id` identifies an object in YAML and lambdas. Its `name` supplies the entity's displayed name.
+Home Assistant assigns a separate `entity_id`, which you can rename in the entity settings.
+Use the entity ID shown by Home Assistant in automations. Do not assume it matches the YAML `id`.
+
+<Figure
+  src={homeAssistantImg}
+  alt="LD6004 settings in Home Assistant"
+  caption="Native controls on a connected device, with English display names set for this capture."
+  layout="constrained"
+  style="width: 100%; max-width: 492px; height: auto;"
+/>
+
+Use presence or detection-area presence in automations. Missing reports make measurements unavailable after
+`stale_timeout`, which is different from a valid report saying that nobody is present.
+Switching off target output also stops tracking reports. The output switch shows acknowledged requests and cannot
+query the radar's current output setting, so its displayed state alone does not prove that reports are arriving.
+
+## Component Configuration
+
+- **id** (*Optional*, ID): Identify the radar when configuring multiple instances.
+- **uart_id** (*Optional*, ID): The UART bus connected to the radar.
+- **stale_timeout** (*Optional*, Time): Time without a valid report before measurements become unavailable.
+  Defaults to `5s`.
+- **out_pin** (*Optional*, [Pin Schema](/guides/configuration-types/#pin-schema)): Input connected to radar OUT.
+
+All child platforms accept **ld6004_id** (*Optional*, ID) to select the parent radar.
+
+## Startup
+
+On startup, the component requests target tracking output, then reads settings and firmware information.
+Restarting ESPHome therefore requests tracking again even if you previously disabled it with the output switch.
+The switch remains unknown until the radar acknowledges the request. Valid target reports update tracking sensors
+independently of command acknowledgements.
+
+Startup requests use the same queue as configuration commands. A timeout or ambiguous reply blocks further commands,
+including settings queries. Tracking reports still update sensors while commands are blocked.
+Use the recovery procedure under `ld6004.recover_commands` after physically restarting the radar.
+
+## Binary Sensors
+
+All entries are optional and accept options from [Binary Sensor](/components/binary_sensor/).
+
+- **presence**: Whether at least one tracked target is present.
+- **target_1** through **target_10**: Presence in each tracking slot.
+  The number of targets supplied depends on radar firmware.
+- **detection_area_0** through **detection_area_3**: Presence reported in each detection area.
+- **out**: Physical level read from `out_pin`. Requires `out_pin` on the parent component.
+
+Tracking slots follow cluster IDs so reordered reports preserve existing slot assignments.
+An empty target report clears presence. Missing reports invalidate measurements after `stale_timeout`.
+
+## Sensors
+
+All individual sensors accept options from [Sensor](/components/sensor/).
+
+- **target_count** (*Optional*, Sensor): Number of tracked targets.
+- **parser_errors** (*Optional*, Sensor): Rejected serial frames.
+- **target_1** through **target_10** (*Optional*): Per-slot measurements:
+  - **x**, **y**, **z** (*Optional*, Sensor): Position in metres. Two-dimensional firmware reports zero for Z.
+  - **doppler_index** (*Optional*, Sensor): Raw Doppler index. This is not a velocity in metres per second.
+  - **cluster_id** (*Optional*, Sensor): Tracking identifier assigned by the radar.
+- **interference_area_0** through **interference_area_3**, **detection_area_0** through **detection_area_3**,
+  and **dwell_area_0** through **dwell_area_3** (*Optional*): Readback of area coordinates.
+  Each accepts optional **x_min**, **x_max**, **y_min**, **y_max**, **z_min**, and **z_max** sensors in metres.
+
+```yaml
+sensor:
+  - platform: ld6004
+    target_1:
+      x:
+        name: "Target 1 X"
+      y:
+        name: "Target 1 Y"
+      z:
+        name: "Target 1 Z"
+      cluster_id:
+        name: "Target 1 Cluster ID"
+```
+
+## Selects
+
+All entries are optional and accept options from [Select](/components/select/).
+
+- **sensitivity**: `Low`, `Medium`, `High`.
+- **trigger_speed**: `Slow`, `Medium`, `Fast`.
+- **installation_mode**: `Top`, `Side`.
+- **work_mode**: `Normal`, `Low power`, `Radar off P20 high`, `Radar off P20 low`, `High reflectivity`.
+- **p20_mode**: `Presence high`, `Presence low`, `Constant low`, `Constant high`, `Pulse low`, `Pulse high`.
+
+Installation mode applies to three-dimensional firmware. P20 pulse modes use a 500 ms pulse on a presence transition.
+
+```yaml
+select:
+  - platform: ld6004
+    sensitivity:
+      name: "Radar Sensitivity"
+```
+
+## Numbers
+
+All entries are optional and accept options from [Number](/components/number/).
+The ranges below are component limits, not manufacturer guarantees for every firmware version.
+
+- **hold_delay**: 0 to 16777215 seconds.
+  Presence hold delay.
+- **z_min**, **z_max**: -100 to 100 metres.
+  Vertical detection limits, in steps of 0.1. Three-dimensional firmware only.
+- **low_power_sleep_time**: 0 to 16777215 milliseconds.
+  Unattended low-power sleep time.
+- **dwell_lifetime**: 0 to 16777215.
+  Raw dwell counter, in steps of 1.
+- **output_interval**: 1 to 16777215 frames.
+  Report every Nth radar frame.
+
+The manual describes the dwell counter decreasing by 20 each second, without defining its complete expiry behaviour.
+Set both Z limits together with `ld6004.set_z_range` when the individual limits would cross during an adjustment.
+
+```yaml
+number:
+  - platform: ld6004
+    hold_delay:
+      name: "Radar Hold Delay"
+```
+
+## Switches
+
+All entries are optional and accept options from [Switch](/components/switch/).
+
+- **target_output**: Enable target tracking reports.
+
+This control has no documented state-query command. Its state shows the last unambiguously acknowledged
+request. If a reply is ambiguous, the switch retains its previous state even if the radar applied the new request.
+Use `command_status` to identify blocked command processing.
+Disabling target output prevents new tracking measurements and eventually makes tracking sensors unavailable.
+
+```yaml
+switch:
+  - platform: ld6004
+    target_output:
+      name: "Radar Target Output"
+```
+
+## Buttons
+
+All entries are optional and accept options from [Button](/components/button/).
+
+- **refresh**: Read the radar's settings and firmware information.
+- **generate_interference**: Generate interference areas from the current scene.
+- **clear_interference**: Clear interference areas.
+- **reset_detection**: Reset detection areas.
+- **clear_dwell**: Clear designated dwell areas.
+- **reset_unoccupied**: Reset the radar to the unoccupied state.
+
+```yaml
+button:
+  - platform: ld6004
+    refresh:
+      name: "Refresh Radar Settings"
+```
+
+## Actions
+
+### `ld6004.refresh` Action
+
+Read settings and firmware information. **id** (*Optional*, ID) selects the radar.
+
+```yaml
+on_...:
+  then:
+    - ld6004.refresh:
+```
+
+### `ld6004.set_zone` Action
+
+Set one zone. **id** (*Optional*, ID) selects the radar.
+**zone_id** (**Required**, templatable integer) selects the area.
+**x_min**, **x_max**, **y_min**, **y_max**, **z_min**, and **z_max** are required templatable bounds.
+Zone IDs `0` to `3` are interference areas, `4` to `7` are detection areas, and `8` to `11` are dwell areas.
+Coordinates are finite numbers in metres. Each minimum must be less than the corresponding maximum.
+The action sends one complete box. Read the corresponding area sensors to confirm the radar's response.
+
+```yaml
+on_...:
+  then:
+    - ld6004.set_zone:
+        zone_id: 4
+        x_min: -1
+        x_max: 1
+        y_min: 0
+        y_max: 3
+        z_min: -6
+        z_max: 6
+```
+
+### `ld6004.set_z_range` Action
+
+Set both vertical detection limits for three-dimensional firmware.
+**minimum** and **maximum** (**Required**, templatable float) are metres, with minimum less than maximum.
+**id** (*Optional*, ID) selects the radar.
+
+```yaml
+on_...:
+  then:
+    - ld6004.set_z_range:
+        minimum: -1
+        maximum: 3
+```
+
+### `ld6004.recover_commands` Action
+
+Resume command processing after a timeout or ambiguous replies.
+**id** (*Optional*, ID) selects the radar.
+
+First physically restart the radar by disconnecting and reconnecting its power.
+Restarting ESPHome alone does not power-cycle the radar.
+After the radar restarts, invoke this action to discard pending commands, reset the parser and request fresh settings.
+The action does not restart the radar itself.
+
+```yaml
+on_...:
+  then:
+    - ld6004.recover_commands:
+```
+
+## Text Sensors
+
+All entries are optional and accept options from [Text Sensor](/components/text_sensor/).
+
+- **project**: Numeric firmware project identifier.
+- **firmware_version**: Radar firmware version.
+- **work_status**: `Normal` or `Sleeping`, reported on transitions in unattended low-power mode.
+- **command_status**: `Ready`, `Busy`, or `Blocked`, published when command-processing status changes.
+  `Blocked` requires the recovery procedure described under `ld6004.recover_commands`.
+
+```yaml
+text_sensor:
+  - platform: ld6004
+    firmware_version:
+      name: "Radar Firmware Version"
+```
+
+## Operating Modes
+
+Normal mode keeps the radar active. Unattended low-power mode sleeps between detection periods.
+A command can wake the radar, and UART activity keeps it awake for ten seconds.
+Commands can therefore take longer in low-power mode.
+
+The radar also supports high-reflectivity mode and two radar-disabled modes that hold P20 high or low.
+The configured P20 output mode is separate from the physical level on its output pin.
+To measure that level, connect the radar OUT pin to a microcontroller input.
+
+## Configuration Readback
+
+An empty acknowledgement confirms that the radar received a command.
+For settings with a readback command, the component queries the setting and publishes the returned value.
+Some output controls have no documented readback command.
+
+The radar does not echo command IDs in its replies. A late reply can therefore be indistinguishable from a reply
+for a later command. The component blocks further commands after a timeout, or after a transaction required a retry.
+Reported settings retain their actual readback values. Use `ld6004.recover_commands` after physically restarting
+the radar to resume command processing.
+
+## Radar Firmware Updates
+
+This component does not update the radar's firmware.
+The manufacturer's protocol describes entering update mode but omits the firmware-transfer and recovery procedures.
+You can update the microcontroller's ESPHome firmware through [OTA](/components/ota/) independently.
+
+## See Also
+
+- [Hi-Link LD6004 protocol (April 2026)](https://drive.google.com/file/d/1GJj9rrRBSRkltrmo9_o-65DsHKSwMaiU/view)
+
+- [UART](/components/uart/)
+- <APIRef text="ld6004.h" path="ld6004/ld6004.h" />
