@@ -44,9 +44,15 @@ sensor:
 
 Existing temperature-only configurations work unchanged and do not write configuration or threshold registers
 at startup.
-Setting any option below, or adding a TMP102 number, binary sensor, or text sensor, enables hardware configuration.
+Setting any option below, or adding a TMP102 number, enables hardware configuration.
 ESPHome then writes the configuration register and both threshold registers during setup, using the defaults below
 for omitted settings. These settings apply to TMP102 chips; do not enable them for LM75 sensors.
+Adding only an alert binary sensor or status text sensor does not change hardware settings.
+
+When hardware configuration is enabled, ESPHome checks the configuration and threshold registers before each update.
+If they differ from the accepted settings, for example after a chip-only power reset, ESPHome restores them and skips
+that update. A warning remains until a complete read succeeds. Do not use another controller to change these registers
+while ESPHome manages them.
 
 - **extended_mode** (*Optional*, boolean): Use the 13-bit temperature format.
   Defaults to `false` when configuring hardware.
@@ -65,12 +71,14 @@ for omitted settings. These settings apply to TMP102 chips; do not enable them f
 
 Thresholds accept Celsius or Fahrenheit values, such as `30°C` or `86°F`. The low threshold must not exceed the high
 threshold. Supported thresholds range from `-55°C` to `127.9375°C` in normal mode, or `150°C` in extended mode.
-The chip stores thresholds in steps of `0.0625°C`; values between steps are truncated toward zero.
+The chip stores thresholds in steps of `0.0625°C`; values are rounded to the nearest step, with exact half-steps
+rounded away from zero. Number states and saved values reflect the rounded hardware thresholds.
 Temperature sensor filters do not change thermostat thresholds or alert decisions.
 
 In continuous mode, the chip makes conversions independently of ESPHome polling. In one-shot mode, ESPHome waits
-40 ms after triggering a conversion before reading it. Continuous-mode reads use a 50 ms delay; they do not force
-a new conversion. Very short update intervals do not restart a pending read.
+40 ms after triggering a conversion before reading it. Continuous-mode reads happen immediately and do not force
+a new conversion. Very short update intervals do not restart a pending one-shot conversion. Each reading uses the
+format flag in the temperature register, including when a sample still uses the previous mode's format.
 
 ## Adjustable Thresholds
 
@@ -112,6 +120,7 @@ Both threshold numbers support:
 These numbers use Celsius internally, have a step of `0.0625°C`, and default to configuration entities.
 ESPHome loads both saved thresholds before validating their relationship. Invalid saved values fall back to their
 initial values. If the resulting pair is inverted, both thresholds fall back to the configured initial pair.
+After successful hardware setup, corrected values are saved and the status text sensor reports the fallback.
 With `restore_value: false`, that threshold starts from its configured initial value on every boot.
 
 Runtime changes must stay within range and keep the low threshold at or below the high threshold. Rejected changes
@@ -136,7 +145,8 @@ binary_sensor:
 Only one alert binary sensor may reference each TMP102 sensor. Its state is active above the high threshold and
 stays active until the temperature falls below the low threshold, subject to the fault queue. ESPHome updates this
 state when it reads temperature, so Home Assistant sees changes at the polling rate rather than immediately.
-The reported state accounts for `alert_polarity`: `on` always means an active alert.
+The reported state accounts for the polarity read from the chip: `on` always means an active alert.
+Failed reads invalidate the alert state and set a component warning until a complete read succeeds.
 
 > [!NOTE]
 > This entity reports comparator status, not the physical ALERT pin level. In interrupt mode, reading chip registers
@@ -159,8 +169,9 @@ text_sensor:
 - All other options from [Text Sensor](/components/text_sensor/).
 
 Only one status text sensor may reference each TMP102 sensor. It reports `OK` after successful configured setup
-or a threshold write, and a rejection or write-failure message when a threshold change fails. It is not a general
-sensor-connectivity indicator.
+or a threshold write, and a rejection or write-failure message when a threshold change fails. It also reports
+invalid restored values, preference-save failures, and configuration recovery. When hardware configuration is disabled,
+it has no initial state. It is not a general sensor-connectivity indicator.
 
 ## See Also
 
