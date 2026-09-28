@@ -453,6 +453,13 @@ select:
   [Select](/components/select/#config-select).
 
 > [!NOTE]
+> The name follows Hi-Link's own documentation, which calls the OUT pin P20 throughout. The user manual's
+> pin table (V1.0, section 5.2) lists pin 2 as "TX2, GPIO_P20/uart2 txd: If there is someone within the
+> area, output a high level", and the serial protocol (section 6.1) names the commands "Set P20 output:
+> P20 outputs a high level when someone is present" (0x1D) through "P20 operates in momentary mode"
+> (0x22, 0x23).
+
+> [!NOTE]
 > The protocol specifies only `0` (high on presence) and `1` (low on presence) for the `0x0A15` report,
 > so after boot `p20_mode` shows `presence_high` or `presence_low`. The four constant and momentary
 > modes are reflected once you set them.
