@@ -355,20 +355,11 @@ number:
       name: Dwell Lifetime
     output_interval:
       name: Output Interval (frames)
-    area_config:
-      x_min:
-        name: Area X Min
-      x_max:
-        name: Area X Max
-      y_min:
-        name: Area Y Min
-      y_max:
-        name: Area Y Max
-      z_min:
-        name: Area Z Min
-      z_max:
-        name: Area Z Max
 ```
+
+The `area_config` numbers stage the bounds of the area chosen with the `area_id` select and are written by
+the `apply_area` button, so all three belong to the same hub. See the
+[full configuration](#full-configuration) for the three together.
 
 ### Configuration Variables
 
@@ -466,8 +457,8 @@ select:
 > so after boot `p20_mode` shows `presence_high` or `presence_low`. The four constant and momentary
 > modes are reflected once you set them.
 
-The `work_mode` select configures the operating mode. The `work_mode` text sensor reports only
-`normal` or `low_power`, so it does not distinguish all five select options.
+The `work_mode` select configures the operating mode. The `work_mode` text sensor reports the same
+five states back from the module.
 
 > [!NOTE]
 > If no area ID is selected, **Apply Area** is ignored to prevent writing to the wrong region.
@@ -517,8 +508,6 @@ The `ld6004` button platform exposes configuration and diagnostic commands.
 button:
   - platform: ld6004
     ld6004_id: ld6004_radar
-    apply_area:
-      name: Apply Area
     auto_interference:
       name: Auto Interference
     get_areas:
@@ -528,6 +517,9 @@ button:
     clear_dwell:
       name: Clear Dwell
 ```
+
+`apply_area` needs the `area_id` select on the same hub; the
+[full configuration](#full-configuration) shows it together with `area_config`.
 
 ### Configuration Variables
 
