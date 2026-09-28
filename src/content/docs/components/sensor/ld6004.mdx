@@ -3,6 +3,12 @@ description: "Instructions for setting up LD6004 3D presence radar sensors."
 title: "LD6004 3D Presence Radar"
 ---
 
+import { Image } from 'astro:assets';
+import ld6004ModuleImg from './images/ld6004-module.png';
+import ld6004PinoutImg from './images/ld6004-pinout.png';
+import ld6004DimensionsImg from './images/ld6004-dimensions.png';
+import ld6004SideMountImg from './images/ld6004-side-mount.png';
+import ld6004RangeImg from './images/ld6004-range.png';
 import Figure from '@components/Figure.astro';
 import APIRef from '@components/APIRef.astro';
 
@@ -11,19 +17,17 @@ import APIRef from '@components/APIRef.astro';
 <span id="ld6004-component"></span>
 
 The `ld6004` component allows you to use the Hi-Link HLK-LD6004 60 GHz 3D presence radar module with
-ESPHome. It can track up to 10 people and reports per-target position (X/Y/Z), cluster ID, and Doppler
+ESPHome. It can track up to 3 people and reports per-target position (X/Y/Z), cluster ID, and Doppler
 index.
 
 The [UART](/components/uart/) component is required. `baud_rate`, `data_bits`, `parity` and
 `stop_bits` **must be** `115200`, `8`, `NONE` and `1`.
 
 <Figure
-  src="/images/ld6004.svg"
+  src={ld6004ModuleImg}
   alt="LD6004"
   caption="Hi-Link HLK-LD6004 3D presence radar"
   layout="constrained"
-  width={238}
-  height={50}
 />
 
 ```yaml
@@ -44,29 +48,71 @@ ld6004:
 
 ## Power and Hardware Requirements
 
-Connect the radar TX to the microcontroller RX, radar RX to microcontroller TX, and connect their grounds.
+Connect radar TX0 to the microcontroller RX, radar RX0 to microcontroller TX, and connect their grounds.
 The module's OUT / P20 pin is a configurable digital output. Connect it to a microcontroller input to read
 its level with a [GPIO Binary Sensor](/components/binary_sensor/gpio/).
 See [Reading the OUT Pin](#reading-the-out-pin) for an example.
 
-Use the supply requirements and connector pinout specified for your LD6004 module.
+Use a 3.3 V supply with at least 1 A capacity and no more than 50 mV ripple. The permitted supply range
+is 3.1 to 3.5 V. If using a DC-DC supply, its switching frequency must be at least 2 MHz. IO levels are
+3.3 V. The default UART configuration is 115200 baud, 8 data bits, no parity, and 1 stop bit (8N1).
+
+<Image src={ld6004PinoutImg} alt="HLK-LD6004 connector pin labels" layout="constrained" />
+
+| Pin | Name | Description |
+| --- | --- | --- |
+| 1 | 3.3V | 3.3 V power input |
+| 2 | TX2 | GPIO P20 / OUT, UART2 TX |
+| 3 | RX0 | GPIO P01 / UART0 RX |
+| 4 | TX0 | GPIO P00 / UART0 TX |
+| 5 | RST | Active-low reset input with internal pull-up |
+| 6 | GND | Ground |
+| 7 | 3.3V | 3.3 V power input |
+| 8 | SWCLK | SWD debug clock |
+| 9 | SWDIO | SWD debug data |
+| 10 | GND | Ground |
+
+> [!NOTE]
+> BOOT1 must be low when the module starts. Both BOOT1 and BOOT0 have internal pull-ups.
+> Leave BOOT0 high for booting from the module's flash.
 
 ## Specifications
 
-- Operating frequency: 60 GHz.
-- Maximum tracked targets: 10.
+- Operating frequency: 58 to 64 GHz.
+- Transmit power: 12 dBm typical.
+- Antenna gain: 4 dBi typical.
+- Horizontal and vertical beam angles (-3 dB): +/-60 degrees.
+- Side-mounted sensing distance: 0 to 6 m.
+- Distance accuracy: about 0.4 m.
+- Recognition rate: 95% typical.
+- Supply voltage: 3.1 to 3.5 V (3.3 V typical).
+- Operating current: 135 mA typical, 600 mA maximum.
+- Operating temperature: -20 to 85 C.
+- Dimensions: 35 x 7 x 1.27 mm.
+- Chip and antenna: ADT6101P with a 2T2R (two transmit, two receive) AIP antenna.
+- Mounting: ceiling (top) or side.
+- Maximum tracked targets: 3.
 - Target reports: X/Y/Z coordinates, cluster ID, and Doppler index.
 - Configurable areas: four interference areas, four detection areas, and four dwell areas.
+
+<Image src={ld6004DimensionsImg} alt="HLK-LD6004 mechanical dimensions in millimetres" layout="constrained" />
 
 ## Installation and Coordinate System
 
 The module supports top and side mounting. Set `installation_mode` to match the installation.
 Mount the antenna side facing the detection area.
 
-Target and area coordinates are reported in meters. The origin is the module projection onto the
-reference plane (floor for ceiling installs, wall for side installs). X is left/right, Y is
+<Image src={ld6004SideMountImg} alt="HLK-LD6004 side-mounted installation" layout="constrained" />
+
+Target and area coordinates are reported in metres, with the radar as the origin. X is left/right, Y is
 forward/away, and Z is height. Detection, interference, and dwell areas are configured relative to this
 origin.
+
+<Image
+  src={ld6004RangeImg}
+  alt="HLK-LD6004 side-mounted detection range for moving and motionless targets"
+  layout="constrained"
+/>
 
 > [!NOTE]
 > Detection distance varies with target size and environment. Some variation is expected.
@@ -115,8 +161,8 @@ binary_sensor:
   LD6004 component.
 - **target** (*Optional*, boolean): True if any target is detected or any detection area reports presence.
   All options from [Binary Sensor](/components/binary_sensor/#config-binary_sensor).
-- **target_N** (*Optional*, boolean): True if target slot N (N = 1 to 10) is occupied: `target_1` through
-  `target_10`. A person keeps the same slot for as long as they are tracked continuously, and a new
+- **target_N** (*Optional*, boolean): True if target slot N (N = 1 to 3) is occupied: `target_1` through
+  `target_3`. A person keeps the same slot for as long as they are tracked continuously, and a new
   person takes the lowest free slot. All options from
   [Binary Sensor](/components/binary_sensor/#config-binary_sensor).
 - **detection_area_N** (*Optional*, boolean): True if presence is detected in detection area N (0 to 3):
@@ -159,12 +205,12 @@ sensor:
 
 - **ld6004_id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID of the
   LD6004 component.
-- **target_count** (*Optional*, int): Total number of targets currently detected (0 to 10). All options
+- **target_count** (*Optional*, int): Total number of targets currently detected (0 to 3). All options
   from [Sensor](/components/sensor/).
 - **point_count** (*Optional*, int): Total number of point-cloud points reported by the radar. All
   options from [Sensor](/components/sensor/).
-- **target_N** (*Optional*, configuration): Details about each target (N = 1 to 10). Up to 10 targets can be tracked
-  simultaneously: `target_1` through `target_10`. A tracked person keeps the same `target_N`
+- **target_N** (*Optional*, configuration): Details about each target (N = 1 to 3). Up to 3 targets can be tracked
+  simultaneously: `target_1` through `target_3`. A tracked person keeps the same `target_N`
   slot for as long as they remain tracked, and a new person takes the lowest free slot.
 
   - **x** (*Optional*, float): X coordinate of the target in meters.
@@ -318,21 +364,25 @@ number:
 
 - **ld6004_id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID of the
   LD6004 component.
-- **hold_delay** (*Optional*, range `0` to `65535` s, step `1`): Presence hold time, in seconds. All options from
+- **hold_delay** (*Optional*, range `0` to `65535` s, step `1`): Time to maintain presence after detection, in seconds.
+  All options from
   [Number](/components/number/#config-number).
-- **z_min** (*Optional*, range `-10` to `10` m, step `0.1`): Global minimum Z coordinate in meters.
-  All options from [Number](/components/number/#config-number).
-- **z_max** (*Optional*, range `-10` to `10` m, step `0.1`): Global maximum Z coordinate in meters.
-  All options from [Number](/components/number/#config-number).
+- **z_min** (*Optional*, range `-10` to `10` m, step `0.1`): Global minimum Z coordinate in metres,
+  relative to the radar. All options from [Number](/components/number/#config-number).
+- **z_max** (*Optional*, range `-10` to `10` m, step `0.1`): Global maximum Z coordinate in metres,
+  relative to the radar. All options from [Number](/components/number/#config-number).
 - **low_power_sleep_time** (*Optional*, range `0` to `60000` ms, step `100`): Low power sleep time in
   milliseconds. When low-power mode is enabled and the area is unattended, the module sleeps for this interval between
-  scans. Higher values reduce idle power but increase detection latency. All options from
+  scans. Higher values reduce idle power but increase detection latency. The manual recommends no more than
+  500 ms. All options from
   [Number](/components/number/#config-number).
 - **dwell_lifetime** (*Optional*, range `0` to `16777215`, step `1`): Raw dwell counter.
-  The module documentation describes a decrement of 20 per second, without defining the complete
-  expiry behavior. All options from [Number](/components/number/#config-number).
+  The counter decreases by 20 per second, so set it to the desired time in seconds multiplied by 20.
+  The module default is `300` (15 seconds). This sets the dwell-area lifetime independently of
+  `hold_delay`. All options from [Number](/components/number/#config-number).
 - **output_interval** (*Optional*, range `1` to `16777215` frames, step `1`): Report every Nth radar
-  frame. The minimum is `1`. All options from [Number](/components/number/#config-number).
+  frame. Each frame takes 50 ms. The module default is `1` (50 ms), and `10` gives 500 ms. All options
+  from [Number](/components/number/#config-number).
 - **area_config** (*Optional*, configuration): Coordinate values (`x_min`/`x_max`/`y_min`/`y_max`/`z_min`/`z_max`, each
   range `-10` to `10` m, step `0.1`) for the selected area ID. **Requires** both a `select.area_id` and a
   `button.apply_area` on the same `ld6004` (enforced at compile time). Set the values, then press
@@ -381,7 +431,7 @@ select:
   LD6004 component.
 - **sensitivity** (*Optional*, select): `low`, `medium`, or `high`. `low` only detects motion. All options
   from [Select](/components/select/#config-select).
-- **trigger_speed** (*Optional*, select): `fast` (~0.5 s), `medium` (~1 s), or `slow` (~5 s), the time from
+- **trigger_speed** (*Optional*, select): `fast` (0.5 s), `medium` (1 s), or `slow` (5 s), the time from
   detecting a person to triggering. All options from [Select](/components/select/#config-select).
 - **installation_mode** (*Optional*, select): `top` or `side`. All options from
   [Select](/components/select/#config-select).
@@ -391,13 +441,20 @@ select:
 
 - **work_mode** (*Optional*, select): `normal`, `low_power`, `radar_off_p20_high`,
   `radar_off_p20_low`, or `high_reflectivity`. The radar-off modes disable the radar and hold P20
-  high or low. Use this select to enable low-power mode. All options from
+  high or low. In `low_power`, an unoccupied room uses 1T1R with about 2.5 mA average current. Movement
+  switches the radar to 2T2R to detect stationary targets. Use `high_reflectivity` in rooms with a lot
+  of metal. All options from
   [Select](/components/select/#config-select).
 - **p20_mode** (*Optional*, select): Configure the module's OUT / P20 pin. Options are
   `presence_high`, `presence_low`, `constant_low`, `constant_high`, `pulse_low`, and `pulse_high`.
   The presence modes select the active level, the constant modes hold a fixed level, and the pulse
-  modes emit a 500 ms pulse on a presence transition. All options from
+  modes emit a 500 ms pulse on a presence transition. The module default is `presence_high`. All options from
   [Select](/components/select/#config-select).
+
+> [!NOTE]
+> The protocol specifies only `0` (high on presence) and `1` (low on presence) for the `0x0A15` report,
+> so after boot `p20_mode` shows `presence_high` or `presence_low`. The four constant and momentary
+> modes are reflected once you set them.
 
 The `work_mode` select configures the operating mode. The `work_mode` text sensor reports only
 `normal` or `low_power`, so it does not distinguish all five select options.
@@ -476,7 +533,7 @@ button:
   All options from [Button](/components/button/#config-button).
 - **clear_interference** (*Optional*, button): Clear interference areas. All options from
   [Button](/components/button/#config-button).
-- **reset_detection_area** (*Optional*, button): Reset detection areas to the module defaults. All options
+- **reset_detection_area** (*Optional*, button): Restore the default 6 x 4 m detection area. All options
   from [Button](/components/button/#config-button).
 - **get_delay** (*Optional*, button): Request hold delay. All options from [Button](/components/button/#config-button).
 - **get_sensitivity** (*Optional*, button): Request sensitivity state. All options from
@@ -500,7 +557,7 @@ button:
 
 ## Examples
 
-### Targets Only (X/Y/Z For 10 Targets)
+### Targets Only (X/Y/Z For 3 Targets)
 
 ```yaml
 uart:
@@ -543,69 +600,6 @@ sensor:
         name: Target-3 Z
       doppler_index:
         name: Target-3 Doppler Index
-    target_4:
-      x:
-        name: Target-4 X
-      y:
-        name: Target-4 Y
-      z:
-        name: Target-4 Z
-      doppler_index:
-        name: Target-4 Doppler Index
-    target_5:
-      x:
-        name: Target-5 X
-      y:
-        name: Target-5 Y
-      z:
-        name: Target-5 Z
-      doppler_index:
-        name: Target-5 Doppler Index
-    target_6:
-      x:
-        name: Target-6 X
-      y:
-        name: Target-6 Y
-      z:
-        name: Target-6 Z
-      doppler_index:
-        name: Target-6 Doppler Index
-    target_7:
-      x:
-        name: Target-7 X
-      y:
-        name: Target-7 Y
-      z:
-        name: Target-7 Z
-      doppler_index:
-        name: Target-7 Doppler Index
-    target_8:
-      x:
-        name: Target-8 X
-      y:
-        name: Target-8 Y
-      z:
-        name: Target-8 Z
-      doppler_index:
-        name: Target-8 Doppler Index
-    target_9:
-      x:
-        name: Target-9 X
-      y:
-        name: Target-9 Y
-      z:
-        name: Target-9 Z
-      doppler_index:
-        name: Target-9 Doppler Index
-    target_10:
-      x:
-        name: Target-10 X
-      y:
-        name: Target-10 Y
-      z:
-        name: Target-10 Z
-      doppler_index:
-        name: Target-10 Doppler Index
 
 binary_sensor:
   - platform: ld6004
@@ -616,20 +610,6 @@ binary_sensor:
       name: Target-2 Presence
     target_3:
       name: Target-3 Presence
-    target_4:
-      name: Target-4 Presence
-    target_5:
-      name: Target-5 Presence
-    target_6:
-      name: Target-6 Presence
-    target_7:
-      name: Target-7 Presence
-    target_8:
-      name: Target-8 Presence
-    target_9:
-      name: Target-9 Presence
-    target_10:
-      name: Target-10 Presence
 ```
 
 ### Reading the OUT Pin
@@ -674,20 +654,6 @@ binary_sensor:
       name: Target-2 Presence
     target_3:
       name: Target-3 Presence
-    target_4:
-      name: Target-4 Presence
-    target_5:
-      name: Target-5 Presence
-    target_6:
-      name: Target-6 Presence
-    target_7:
-      name: Target-7 Presence
-    target_8:
-      name: Target-8 Presence
-    target_9:
-      name: Target-9 Presence
-    target_10:
-      name: Target-10 Presence
     detection_area_0:
       name: Area-0 Presence
     detection_area_1:
@@ -737,83 +703,6 @@ sensor:
         name: Target-3 Doppler Index
       cluster_id:
         name: Target-3 Cluster
-    target_4:
-      x:
-        name: Target-4 X
-      y:
-        name: Target-4 Y
-      z:
-        name: Target-4 Z
-      doppler_index:
-        name: Target-4 Doppler Index
-      cluster_id:
-        name: Target-4 Cluster
-    target_5:
-      x:
-        name: Target-5 X
-      y:
-        name: Target-5 Y
-      z:
-        name: Target-5 Z
-      doppler_index:
-        name: Target-5 Doppler Index
-      cluster_id:
-        name: Target-5 Cluster
-    target_6:
-      x:
-        name: Target-6 X
-      y:
-        name: Target-6 Y
-      z:
-        name: Target-6 Z
-      doppler_index:
-        name: Target-6 Doppler Index
-      cluster_id:
-        name: Target-6 Cluster
-    target_7:
-      x:
-        name: Target-7 X
-      y:
-        name: Target-7 Y
-      z:
-        name: Target-7 Z
-      doppler_index:
-        name: Target-7 Doppler Index
-      cluster_id:
-        name: Target-7 Cluster
-    target_8:
-      x:
-        name: Target-8 X
-      y:
-        name: Target-8 Y
-      z:
-        name: Target-8 Z
-      doppler_index:
-        name: Target-8 Doppler Index
-      cluster_id:
-        name: Target-8 Cluster
-    target_9:
-      x:
-        name: Target-9 X
-      y:
-        name: Target-9 Y
-      z:
-        name: Target-9 Z
-      doppler_index:
-        name: Target-9 Doppler Index
-      cluster_id:
-        name: Target-9 Cluster
-    target_10:
-      x:
-        name: Target-10 X
-      y:
-        name: Target-10 Y
-      z:
-        name: Target-10 Z
-      doppler_index:
-        name: Target-10 Doppler Index
-      cluster_id:
-        name: Target-10 Cluster
     interference_area_0:
       x_min:
         name: Interference-0 X Min
