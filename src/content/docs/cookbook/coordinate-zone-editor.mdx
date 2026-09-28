@@ -1,0 +1,125 @@
+---
+title: "Optional Coordinate Zone Editor"
+description: "Display mapped X/Y coordinates and edit rectangular zones through the web server."
+---
+
+import Figure from '@components/Figure.astro';
+import coordinateEditorImg from './images/coordinate-editor.webp';
+
+This optional editor adds a coordinate view to an ESPHome device's web page using configured entity endpoints.
+It displays X and Y at the same scale and lets you move, resize or type the limits of rectangular zones.
+Optional Z values appear as text and editable limits alongside the X/Y map, without a 3D scene.
+
+<Figure
+  src={coordinateEditorImg}
+  alt="Detection zones with coloured area selectors, a coordinate map and selected-zone limits"
+  layout="constrained"
+>
+  <p slot="caption">
+    Simulated data. Each area has its own colour. Dashed bounds show a local draft.
+    This is not a hardware capture.
+  </p>
+</Figure>
+
+## Requirements
+
+Use an ESPHome build with the `web_server` option `js_extra_urls`, introduced in
+[esphome/esphome#19864](https://github.com/esphome/esphome/pull/19864) and documented in
+[esphome/esphome.io#7467](https://github.com/esphome/esphome.io/pull/7467).
+Set [Web Server](/components/web_server/) to `version: 3` and keep the normal web interface enabled.
+The browser needs network access to the script URLs. Requests to entities use the device's origin and existing
+web-server authentication.
+
+The editor and its configuration examples live in the
+[coordinate editor repository](https://github.com/wolph/esphome-coordinate-editor).
+The examples are fragments to merge into your device configuration. Set the UART pins and retain your board,
+network and authentication settings. For LD6004 or LD6002B, the build also needs that device's hub, sensor,
+binary sensor, number, select and button components.
+
+## LD2450: 2D Zones
+
+Merge the [LD2450 fragment][ld2450-yaml] into an existing [LD2450](/components/sensor/ld2450/) configuration.
+Its entity names match the [LD2450 mapping module][ld2450-config]. Load the editor and that module with:
+
+```yaml
+web_server:
+  version: 3
+  js_extra_urls:
+    - https://cdn.jsdelivr.net/gh/wolph/esphome-coordinate-editor@v0.1.0/coordinate-editor.js
+    - https://cdn.jsdelivr.net/gh/wolph/esphome-coordinate-editor@v0.1.0/examples/ld2450-config.js
+```
+
+LD2450 reports millimetres. The mapping uses `scale: 0.001` to display metres and convert edited bounds back to
+millimetres. It maps one X/Y target and four zone number entities, with no Z configuration.
+Configure the device's zone mode separately.
+
+Open the device's web page and select the zone. Drag inside its bounds to move it, drag a corner to resize it,
+or type limits in the side panel. Solid rectangles show actual values and dashed rectangles show a local draft.
+Press **Apply** to write the four limits directly to the zone number entities. Each write takes effect independently,
+so a failed Apply can leave mixed bounds on the device. Check actual values before trying again.
+
+## LD6004 and LD6002B: 3D Zones
+
+Merge the [LD6004 fragment][ld6004-yaml] into your device configuration and use its
+[LD6004 mapping module][ld6004-config]:
+
+```yaml
+web_server:
+  version: 3
+  js_extra_urls:
+    - https://cdn.jsdelivr.net/gh/wolph/esphome-coordinate-editor@v0.1.0/coordinate-editor.js
+    - https://cdn.jsdelivr.net/gh/wolph/esphome-coordinate-editor@v0.1.0/examples/ld6004-config.js
+```
+
+For LD6002B, use the [LD6002B fragment][ld6002b-yaml] and [LD6002B mapping module][ld6002b-config] instead:
+
+```yaml
+web_server:
+  version: 3
+  js_extra_urls:
+    - https://cdn.jsdelivr.net/gh/wolph/esphome-coordinate-editor@v0.1.0/coordinate-editor.js
+    - https://cdn.jsdelivr.net/gh/wolph/esphome-coordinate-editor@v0.1.0/examples/ld6002b-config.js
+```
+
+Both mappings use metres with `scale: 1`. The LD6004 example maps four detection areas.
+The LD6002B example maps eight areas: four detection and four interference areas, with no dwell areas.
+Open the device's web page, select an area and edit its X/Y rectangle. Type the Z limits in the side panel.
+
+Press **Apply** to write all six limits to shared template staging numbers. These numbers have no hardware side
+effects. The editor verifies every staging value before pressing the area's Apply button.
+That button selects `area_id`, copies the six values into `area_config`, then presses `apply_area`.
+Selecting the area first matters because selection discards unapplied component edits.
+A failed staging read-back prevents the button press.
+
+## Entity Names and Write Limits
+
+A mapping reference's `id` is the exact configured entity name, including spaces and case. For example,
+`name: "Target 1 X"` maps to `id: "Target 1 X"`. The [REST API](/web-api/) matches on the name, not the YAML `id`
+or a slug. Use the name exposed by your firmware if a friendly-name prefix changes it.
+
+Drafts stay local to the browser until **Apply**. After a staged Apply succeeds over HTTP, the draft stays pending
+until actual bounds agree. A pending Apply expires after 15 seconds by default, retaining the draft and requiring
+review of actual values before further writes. A timeout does not cancel a command already sent.
+**Discard draft** replaces local edits with the latest actual values and cannot undo a write.
+
+Use one writer. Another browser or Home Assistant can change the shared staging values between verification and
+the button press. HTTP success and matching entity values do not establish hardware acknowledgement.
+Edited bounds need a positive extent on each axis and must fit the mapping's limits and steps.
+Use native controls to disable an area. See the [repository README][editor-readme] for the full configuration reference.
+
+## Hosting Your Own Copy
+
+> [!NOTE]
+> Browsers fetch module scripts with CORS. Your host must send an `Access-Control-Allow-Origin` header that admits
+> the device's origin. jsDelivr supplies this header, but a plain file server on your LAN may not.
+
+Host your own mapping module when changing entity names or room limits, and replace its URL in `js_extra_urls`.
+The example URLs pin the `v0.1.0` tag; keep a tag or commit rather than a branch on devices that need stable behaviour.
+
+[ld2450-yaml]: https://github.com/wolph/esphome-coordinate-editor/blob/master/examples/ld2450.yaml
+[ld2450-config]: https://github.com/wolph/esphome-coordinate-editor/blob/master/examples/ld2450-config.js
+[ld6004-yaml]: https://github.com/wolph/esphome-coordinate-editor/blob/master/examples/ld6004.yaml
+[ld6004-config]: https://github.com/wolph/esphome-coordinate-editor/blob/master/examples/ld6004-config.js
+[ld6002b-yaml]: https://github.com/wolph/esphome-coordinate-editor/blob/master/examples/ld6002b.yaml
+[ld6002b-config]: https://github.com/wolph/esphome-coordinate-editor/blob/master/examples/ld6002b-config.js
+[editor-readme]: https://github.com/wolph/esphome-coordinate-editor/blob/master/README.md#configuration-reference
