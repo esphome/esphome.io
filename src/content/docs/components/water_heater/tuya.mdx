@@ -1,0 +1,92 @@
+---
+description: "Instructions for setting up a Tuya water heater device."
+title: "Tuya Water Heater"
+---
+import APIRef from '@components/APIRef.astro';
+
+
+The `tuya` water heater platform creates a water heater device from a [Tuya](/components/tuya/) component.
+It is meant for electric water heaters (boilers) whose Tuya MCU exposes on/off, temperature and mode
+as datapoints.
+
+Tuya water heater requires a [Tuya](/components/tuya/) to be configured.
+
+```text
+[C][tuya:041]: Tuya:
+[C][tuya:056]:   Datapoint 1: switch (value: ON)
+[C][tuya:058]:   Datapoint 2: int value (value: 60)
+[C][tuya:058]:   Datapoint 3: int value (value: 54)
+[C][tuya:062]:   Datapoint 4: enum (value: 2)
+```
+
+On this heater, the data points are:
+
+- 1 represents the on/off state.
+- 2 represents the target temperature.
+- 3 represents the current temperature.
+- 4 represents the operating mode. On this heater the MCU reports `0` for its *SMART* mode and
+  `2` for its *STD* mode. We map those enum values onto water heater modes: SMART (`0`) becomes
+  `ECO` and STD (`2`) becomes `ELECTRIC`. That is why the example below sets `eco_value: 0` and
+  `electric_value: 2` — each `*_value` is the raw enum value the device reports for that mode.
+
+Based on this, you can create the water heater device as follows:
+
+```yaml
+water_heater:
+  - platform: tuya
+    name: "My Water Heater"
+    switch_datapoint: 1
+    target_temperature_datapoint: 2
+    current_temperature_datapoint: 3
+    mode_datapoint: 4
+    eco_value: 0        # the enum value that means ECO on this device
+    electric_value: 2   # the enum value that means ELECTRIC on this device
+    supported_modes:
+      - "OFF"
+      - ECO
+      - ELECTRIC
+    visual:
+      min_temperature: 30
+      max_temperature: 75
+      target_temperature_step: 1
+```
+
+## Configuration variables
+
+- **switch_datapoint** (**Required**, int): The datapoint id number of the on/off switch. Turning the
+  water heater off publishes the `OFF` mode; turning it on restores the last reported mode.
+- **target_temperature_datapoint** (*Optional*, int): The datapoint id number of the target temperature.
+- **current_temperature_datapoint** (*Optional*, int): The datapoint id number of the current temperature.
+- **mode_datapoint** (*Optional*, int): The datapoint id number of the enum reporting the operating mode.
+  When set, at least one `*_value` below must be provided.
+- **eco_value** (*Optional*, int): The datapoint value that maps to the `ECO` mode.
+- **electric_value** (*Optional*, int): The datapoint value that maps to the `ELECTRIC` mode.
+- **performance_value** (*Optional*, int): The datapoint value that maps to the `PERFORMANCE` mode.
+- **high_demand_value** (*Optional*, int): The datapoint value that maps to the `HIGH_DEMAND` mode.
+- **heat_pump_value** (*Optional*, int): The datapoint value that maps to the `HEAT_PUMP` mode.
+- **gas_value** (*Optional*, int): The datapoint value that maps to the `GAS` mode.
+- **target_temperature_multiplier** (*Optional*, float): A multiplier applied to the incoming and outgoing
+  target temperature values - [see below](#temperature-multiplier). Defaults to `1.0`.
+- **current_temperature_multiplier** (*Optional*, float): A multiplier applied to the incoming current
+  temperature value. Defaults to `1.0`.
+- All other options from [Water Heater](/components/water_heater#config-water-heater), including
+  **supported_modes**.
+
+## Modes
+
+The `OFF` mode is not an enum value on the device: it is represented by the on/off switch being off, the
+same way the [Tuya Climate](/components/climate/tuya/) platform works. The `*_value` options map each of
+the remaining [Water Heater modes](/components/water_heater#water-heater-modes) to the enum value the MCU
+uses for that mode, mirroring the `*_value` style of the Tuya climate fan modes.
+
+## Temperature multiplier
+
+Some Tuya devices report the temperature multiplied by a factor, because the MCU only uses integers. For
+example, to get a `.5` resolution the MCU reports twice the value, so you would set a multiplier of `0.5`.
+
+## See Also
+
+- [Tuya MCU](/components/tuya/)
+- [Water Heater Component](/components/water_heater/)
+- [Tuya Climate](/components/climate/tuya/)
+- <APIRef text="tuya_water_heater.h" path="tuya/water_heater/tuya_water_heater.h" />

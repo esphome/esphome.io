@@ -22,7 +22,24 @@ ota:
 
 ## Configuration variables
 
+- **status** (*Optional*, mapping): Configure a GPIO pin that MCUboot will use as an indication LED during OTA updates.
 - **transport** (*Optional*, mapping): Specifies the transport method used by Zephyr MCUmgr for OTA updates. By default, Bluetooth Low Energy (`ble: true`) is enabled.
+
+## `status`
+
+An optional LED that MCUboot controls during firmware updates to show progress.
+
+```yaml
+# Example configuration entry
+ota:
+  - platform: zephyr_mcumgr
+    status:
+      pin: P0.13
+```
+
+### Configuration variables
+
+- **pin** (**Required**, [Pin Schema](/guides/configuration-types#pin-schema)): The GPIO pin connected to the LED. The pin can be configured as active-low or active-high using the `inverted` option.
 
 ## `transport`
 
