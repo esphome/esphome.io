@@ -59,6 +59,15 @@ named boards from the board list; use `platformio` for other framework versions 
 `esphome: platformio_options:` it honors `build_flags`, `build_unflags`, `lib_deps`, `lib_ignore`, `board_build.f_cpu`
 and `board_build.ldscript`; other options are ignored with a warning.
 
+The `arduino` toolchain uses compiler builds from
+[esphome-libs/xtensa-lx106-elf-toolchain](https://github.com/esphome-libs/xtensa-lx106-elf-toolchain/releases/), which
+are available for Linux (x86_64 and arm64), macOS (Apple Silicon and Intel) and Windows (x86_64). On other host
+systems, use the `platformio` toolchain.
+
+> [!NOTE]
+> On Apple Silicon Macs the `platformio` toolchain needs Rosetta 2, because its compiler is only built for Intel
+> Macs. The `arduino` toolchain runs natively and does not need it.
+
 **Example for using the native Arduino toolchain:**
 
 ```yaml
