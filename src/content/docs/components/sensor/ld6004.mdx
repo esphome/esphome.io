@@ -317,16 +317,17 @@ text_sensor:
 
 - **ld6004_id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID of the
   LD6004 component.
-- **work_mode** (*Optional*, string): `normal` or `low_power` based on the radar work mode. All options from
+- **work_mode** (*Optional*, string): The operating mode the module reports: `normal`, `low_power`,
+  `radar_off_p20_high`, `radar_off_p20_low` or `high_reflectivity`. All options from
   [Text Sensor](/components/text_sensor/#config-text_sensor).
 - **ota_version** (*Optional*, string): Firmware version string, if supported by your module firmware. All
   options from [Text Sensor](/components/text_sensor/#config-text_sensor).
 
 > [!NOTE]
-> `work_mode` reflects the current operating state and can differ from the `work_mode` select setting.
-> If the module firmware does not emit work mode reports, ESPHome falls back to the configured low-power
-> setting after a **Get Low Power Mode** request. In this fallback, ESPHome treats any detected presence
-> as `normal`.
+> `work_mode` follows the module's mode report, so it shows what the module is doing rather than what was
+> last requested through the `work_mode` select. The two agree once the module has applied the request.
+> ESPHome asks for the mode at boot when this sensor is configured, and the module reports it again on
+> every change.
 
 > [!NOTE]
 > This component does not update the radar firmware. Updating the microcontroller through
