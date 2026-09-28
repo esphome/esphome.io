@@ -44,6 +44,12 @@ serial_proxy:
   modem control output. The state of this pin may be controlled by the API client at runtime.
 - **dtr_pin** (*Optional*, [Pin](/guides/configuration-types#pin)): GPIO pin to use as the DTR (Data Terminal Ready)
   modem control output. The state of this pin may be controlled by the API client at runtime.
+- **identity** (*Optional*): The identity of the device behind the port, reported to API clients. Each value is a string or a [lambda](/automations/templates#config-lambda), evaluated once at setup.
+  Not allowed when `uart_id` refers to a [USB UART](/components/usb_uart/) channel, as the identity is then read
+  from the USB descriptors.
+  - **manufacturer** (*Optional*, string): The manufacturer of the device.
+  - **product** (*Optional*, string): The product name of the device.
+  - **serial_number** (*Optional*, string): The serial number of the device.
 
 ## How It Works
 
@@ -53,8 +59,9 @@ When an API client connects, it can:
 - **Receive data** from the serial device — data arriving on the UART is forwarded to connected API clients automatically each loop iteration (up to 256 bytes at a time).
 - **Reconfigure the UART** at runtime — the API client may change the baud rate, data bits, stop bits, and parity without reflashing firmware.
 - **Control modem pins** — if `rts_pin` or `dtr_pin` are configured, the API client can set their states at runtime.
-- **Identify USB devices** — if `uart_id` refers to a [USB UART](/components/usb_uart/) channel, the API client can
-  read the identity of the attached USB device and is notified when a device is attached or removed.
+- **Identify devices** — the API client can read the identity of the device behind each port. The identity comes
+  from `identity`, or from the USB descriptors if `uart_id` refers to a [USB UART](/components/usb_uart/) channel.
+  For USB, the API client is notified when a device is attached or removed.
 
 ## Full Example
 
@@ -84,6 +91,10 @@ serial_proxy:
     name: RS-485 Bus
     port_type: RS485
     rts_pin: GPIO18
+    identity:
+      manufacturer: Acme
+      product: RS-485 Adapter
+      serial_number: !lambda return str_upper_case(get_mac_address());
 ```
 
 ## See Also
