@@ -14,8 +14,9 @@ This component allows components in ESPHome to communicate to those devices via 
 > [!NOTE]
 > This page is the starting point for everything Modbus in ESPHome, including hardware setup. See
 > [Modbus Controller](/components/modbus_controller/) for polling registers/coils into sensors,
-> [Modbus Client](/components/modbus_client/) for ad-hoc requests, and [Modbus Server](/components/modbus_server/)
-> for serving registers to another device.
+> [Modbus Client](/components/modbus_client/) for ad-hoc requests, [Modbus Server](/components/modbus_server/)
+> for serving registers to another device, and [Modbus Sniffer](/components/modbus_sniffer/) for listening
+> to a bus other devices are talking on.
 
 The various sub-components implement some of the Modbus functions below (depending on their required functionality):
 
@@ -72,7 +73,8 @@ on_...:
   If devices don't respond sometimes, it can help to increase this value.
   This option is only valid when the `role` is `client`.
 
-- **role** (*Optional*, string): The role of this component, `client` or `server`. Defaults to `client`.
+- **role** (*Optional*, string): The role of this component, `client`, `server` or `sniffer`. Defaults to `client`.
+  `sniffer` only listens and never transmits; see [Modbus Sniffer](/components/modbus_sniffer/).
 
 ## Performance vs Stability
 
@@ -161,6 +163,8 @@ On the bus side, you need 120 Ohm termination resistors at the ends of the bus c
   [Modbus Client](/components/modbus_client/)
 - For serving registers in response to client requests from another device, use
   [Modbus Server](/components/modbus_server/)
+- For passively watching the requests and replies of a bus you don't control, use
+  [Modbus Sniffer](/components/modbus_sniffer/)
 - There are many components which communicate directly via the modbus hub (no controller needed):
   [Growatt Solar](/components/sensor/growatt_solar/), [Havells Solar](/components/sensor/havells_solar/),
   [Kuntze Pool Monitor](/components/sensor/kuntze/), [PZEMAC](/components/sensor/pzemac/),
