@@ -164,7 +164,10 @@ most of the configuration will be set by default, but can be overridden if neede
 
 - **init_sequence** (*Optional*): Allows custom initialisation sequences to be added. See below for more information.
 - **pixel_mode** (*Optional*): Select the interface mode for the display driver. Options are `16bit` (default) and `24bit`.
-- **color_depth** (*Optional*): The color depth of the display buffer, expressed in bits. Options are `16` (default) and `24`. Preferably should be the same as the `pixel_mode` option.
+- **color_depth** (*Optional*): The color depth of the display buffer, expressed in bits. Options are `16` (default)
+  and `24`. Preferably should be the same as the `pixel_mode` option. Native
+  [RGB888 LVGL output](/components/lvgl/#rgb888-output) requires both `color_depth: 24` and `pixel_mode: 24bit`;
+  setting only one to 24 bits does not preserve a full 24-bit path.
 - **draw_rounding** (*Optional*): The rounding factor for drawing operations. Defaults to 2. Some chips require a higher value to avoid display artifacts. Must be a power of 2.
 - **use_axis_flips** (*Optional*): If true, the driver will use alternate bits in the MADCTL register to implement x and y mirroring. Defaults to false.
 - **byte_order** (*Optional*): The byte order of the display buffer. Options are `big_endian` and `little_endian` (default). This affects the byte order for the buffer when

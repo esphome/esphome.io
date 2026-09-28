@@ -152,7 +152,9 @@ The following configuration variables apply to the main `lvgl` component, in ord
 - **paused** (*Optional*, boolean): When `true`, LVGL will be initially paused and the display will not be updated until [`lvgl.resume:`](#lvgl-resume-action) is called. Defaults to `false`.
   Used to prevent display updates on boot for epaper displays until data is ready, to avoid showing a blank screen or unstyled content.
 - **resume_on_input** (*Optional*, boolean): If LVGL is paused and the user interacts with the screen, resume the activity of LVGL. Defaults to `true`. "Interacts" means to release a touch or button, or rotate an encoder.
-- **color_depth** (*Optional*, string): The color depth at which the contents are generated. Currently only `16` is supported (RGB565, 2 bytes/pixel), which is the default value.
+- **color_depth** (*Optional*, int): The output color depth: `16` (RGB565, two bytes per pixel, default) or `24`
+  (RGB888, three bytes per pixel). All LVGL configurations in one firmware must use the same depth.
+  See [RGB888 Output](#rgb888-output) for display requirements.
 - **buffer_size** (*Optional*, percentage): The percentage of screen size to allocate buffer memory. If unconfigured, the default is `100%` with runtime fallback to `12%` if a full size buffer allocation fails. For devices without PSRAM, the recommended value is `25%`.
 - **draw_rounding** (*Optional*, int): An optional value to use for rounding draw areas to a specified boundary. Defaults to 2. Useful for displays that require draw windows to be on specified boundaries (usually powers of 2.)
 - **log_level** (*Optional*, string): Set the logger level specifically for the messages of the LVGL library: `VERBOSE`, `DEBUG`, `INFO`, `WARN`, `ERROR`, `NONE`. Defaults to `WARN`.
@@ -198,10 +200,43 @@ lvgl:
 
 See [Page navigation footer](/cookbook/lvgl#lvgl-cookbook-navigator) in the Cookbook for an example which demonstrates how to implement a page navigation bar at the bottom of the screen.
 
-### Choosing a buffer size
+### RGB888 Output
+
+Set `color_depth: 24` to preserve eight bits per red, green and blue channel. The display driver must declare a
+native 24-bit path through its framebuffer and panel interface. A driver that accepts RGB888 input but converts it
+to RGB565 does not qualify. Configuration validation rejects unsupported or unknown paths before compilation.
+
+Supported paths are:
+
+- [MIPI DSI](/components/display/mipi_dsi/) with both `color_depth: 24` and `pixel_mode: 24bit`.
+- [Snapshot Display](/components/display/snapshot/) with `color_depth: 24` on the host platform.
+
+Configure a supported display with ID `my_display` and native 24-bit output, then select it in LVGL:
+
+```yaml
+lvgl:
+  displays: my_display
+  color_depth: 24
+```
+
+RGB888 requires `little_endian` output, which is selected automatically from these drivers' metadata. Its packed
+memory layout is B, G, R. An explicit `big_endian` setting is rejected. The panel's RGB/BGR color-order setting is
+separate from this byte order. Existing 16-bit configurations retain their defaults.
+
+RGB888 buffers and display transfers use 50% more bytes than RGB565. For example, an 800x800 framebuffer grows from
+1,280,000 to 1,920,000 bytes. A software rotation buffer also uses three bytes per pixel. Check available memory,
+pixel clock and panel timing limits on the device; RGB888 does not promise a higher frame rate. Reduce `buffer_size`
+if an LVGL draw-buffer allocation fails, or use 16-bit output if the display path cannot sustain 24-bit transfers.
+
+Image storage is configured separately from LVGL output. Use
+[automatic image encoding](/components/image/file/#automatic-image-encoding) to embed file images and animations
+in the format selected for their target. Transparent images still require blending at runtime.
+
+### Choosing a Buffer Size
 
 The `buffer_size` option is a percentage of the display size. For example, if you have a 320x240 display, the buffer size is `320 * 240 * 2` bytes (for RGB565) = `153600` bytes. If you set the buffer size to `50%`,
 then the buffer will be `76800` bytes. If you set it to `25%`, then the buffer will be `38400` bytes. The default value is `100%`.
+For RGB888, use three bytes per pixel in this calculation. Buffers are rounded to whole rows.
 
 When using larger displays on devices with limited RAM (i.e. no PSRAM), you may want to reduce the buffer size to avoid running out of RAM.
 If not specified, the buffer size will be 100%, but a fallback
