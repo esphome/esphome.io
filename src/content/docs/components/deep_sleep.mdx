@@ -206,10 +206,12 @@ The following integers are the wakeup causes:
 - **11** - `ESP_SLEEP_WAKEUP_COCPU_TRAP_TRIG`  : Wakeup caused by COCPU crash
 - **12** - `ESP_SLEEP_WAKEUP_BT`  : Wakeup caused by BT (light sleep only)
 
-## nRF52
+## Zephyr-based platforms
 
-When `sleep_duration` is configured or Zigbee is used, the nRF52 resumes normal operation after waking up.
-Otherwise, the nRF52 performs a full reset instead of continuing execution.
+This applies to both the `nrf52` platform and every `zephyr` platform hardware variant (`native_sim` does not
+support `deep_sleep` at all). When `sleep_duration` is configured, or Zigbee is used (only possible on the
+`nrf52` platform — the `zephyr` platform does not support Zigbee on any variant), the device resumes normal
+operation after waking up. Otherwise, it performs a full reset instead of continuing execution.
 
 ## `deep_sleep.enter` Action
 

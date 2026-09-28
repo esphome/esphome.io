@@ -14,6 +14,7 @@ ADC in your device to measure a voltage on certain pins.
 - ESP32: Available pins vary by variant, see [ESP32 pins and Hardware Details](#adc-esp32_pins).
 - RP2040: GPIO26 through GPIO29 can be used.
 - nRF52840: AIN0 through AIN7, VDD, VDDHDIV5 can be used.
+- Zephyr: Available pins vary by variant, see [Zephyr](#zephyr) below.
 
 <Image src={adcUiImg} layout="constrained" alt="" />
 
@@ -31,8 +32,9 @@ sensor:
 - **pin** (**Required**, [Pin](/guides/configuration-types#pin)): The pin to measure the voltage on.
   Or on the ESP8266 or Raspberry Pi Pico it could alternatively be set to `VCC`, see [Measuring VCC](#adc-vcc).
 
-- **attenuation** (*Optional*): Only on ESP32. Specify the ADC
-  attenuation to use. See [ESP32 Attenuation](#esp32-attenuation). Defaults to `0db`.
+- **attenuation** (*Optional*): On ESP32, or on the `zephyr` platform with an `esp32`/`esp32c3`/`esp32c6`/`esp32h2`
+  variant, or together with `emulation:`. Specify the ADC attenuation to use. See
+  [ESP32 Attenuation](#esp32-attenuation). Defaults to `0db`.
 
 - **raw** (*Optional*): Allows to read the raw ADC output without any conversion or calibration. See [Different ESP32-ADC behavior since 2021.11](#adc-raw). Defaults to `false`.
 - **samples** (*Optional*): The amount of ADC readings to take per sensor update. On the ESP32 this value is ignored if `attenuation` is set to `auto`. Defaults to `1`.
@@ -99,6 +101,45 @@ This is handled automatically by the code, but it's worth noting if you're debug
 
 > [!WARNING]
 > On ESP32-C5, GPIO2 is a strapping pin used during boot. While it can be used as an ADC input, avoid connecting circuits that might interfere with the boot process.
+
+<span id="zephyr"></span>
+
+## Zephyr
+
+Pin availability on the `zephyr` platform's `esp32`/`esp32c3`/`esp32c6`/`esp32h2` variants matches ADC1 in
+[ESP32 pins and Hardware Details](#adc-esp32_pins) above (ADC2 is not exposed). `attenuation:` behaves the
+same as on ESP32, defaulting to `0db`.
+
+On the `nrf52` variant, `pin:` is a GPIO number that maps to one of the SoC's SAADC analog inputs
+(`AIN0`-`AIN7`); which GPIO maps to which `AIN` channel is fixed by the chip, not configurable.
+`attenuation:` does not apply on this variant — gain and reference are fixed internally.
+
+```yaml
+# Example configuration entry
+sensor:
+  - platform: adc
+    pin: GPIO0
+    name: "Living Room Brightness"
+    attenuation: 12db
+```
+
+- **emulation** (*Optional*, list): Defines canned voltage reading(s) for this sensor instead of a real ADC
+  channel — useful for testing without hardware, typically with the `native_sim` variant. `pin:` is still
+  required by schema but is ignored. Each entry is one `sample()` call's worth of readings, either a single
+  voltage (sugar for a one-reading group) or a list matching `samples:` for multisampling; successive updates
+  cycle through the list of entries.
+
+  ```yaml
+  # Example configuration entry
+  sensor:
+    - platform: adc
+      pin: GPIO0 # ignored, but still required
+      name: "Fake Battery Voltage"
+      emulation:
+        - 3.7
+        - 3.6
+        - 3.5
+  ```
 
 <span id="adc-raw"></span>
 
