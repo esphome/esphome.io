@@ -68,6 +68,12 @@ web_server:
   Contents of this file will be served as `/0.js` and used as JS script by internal webserver.
   Useful when building device without internet access, where you want to use built-in AP and webserver.
 
+- **js_extra_urls** (*Optional*, list of URLs): Additional JavaScript modules loaded by the index page after
+  the main script, each as a `<script type="module">` tag. Use this for optional add-ons to the web
+  interface, such as a zone editor for a radar sensor, without embedding them in the firmware or replacing
+  the main script. Requires `version` 2 or 3. Browsers fetch module scripts with CORS, so the host must send an
+  `Access-Control-Allow-Origin` header that admits the device's origin (public CDNs such as jsDelivr do).
+
 - **auth** (*Optional*): Enables HTTP authentication with a username and password.
 
   - **username** (**Required**, string): The username to use for authentication.
