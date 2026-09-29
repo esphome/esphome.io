@@ -16,7 +16,7 @@ export interface Product {
 export const products: Record<string, Product> = {
   "esphome-starter-kit": {
     name: "ESPHome Starter Kit",
-    new: true,
+    new: false,
     distributors: [
       {
         name: "Apollo Automation",
@@ -52,6 +52,13 @@ export const products: Record<string, Product> = {
         shipFrom: "Europe",
         shipTo: "Europe",
         logo: "/images/distributors/domo-supply-logo.webp",
+      },
+      {
+        name: "Domadoo",
+        url: "https://www.domadoo.fr/en/home-assistant-compatible-products/9971-apollo-automation-esphome-starter-kit-compatible-home-assistant-0860014900228.html",
+        shipFrom: "Europe",
+        shipTo: "Europe",
+        logo: "/images/distributors/domadoo-logo.webp",
       },
       {
         name: "The Pi Hut",
