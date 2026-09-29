@@ -48,7 +48,11 @@ serial_proxy:
 An API client uses a port by subscribing to it. A port has one subscriber at a time, and only the subscribed client
 can use it. Once subscribed, the client can:
 
-- **Send data** to the serial device by writing bytes through the API.
+- **Send data** to the serial device by writing bytes through the API. Writes are not flow-controlled: bytes the
+  UART cannot buffer stall the device until they have gone out on the wire. The proxy allows a stall of up to one
+  second; a write that would stall longer is truncated to what fits, and a warning is logged. Set the UART's
+  `tx_buffer_size` to the largest block a client writes at once. This matters most at low baud rates, where even a
+  few hundred bytes take seconds to send.
 - **Receive data** from the serial device — data arriving on the UART is forwarded to the client automatically each
   loop iteration (up to 256 bytes at a time).
 - **Reconfigure the UART** at runtime — the API client may change the baud rate, data bits, stop bits, and parity
@@ -74,6 +78,7 @@ uart:
     tx_pin: GPIO4
     rx_pin: GPIO5
     baud_rate: 9600
+    tx_buffer_size: 1024
 
   - id: rs485_uart
     tx_pin: GPIO16
