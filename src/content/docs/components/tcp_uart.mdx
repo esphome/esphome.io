@@ -1,41 +1,43 @@
 ---
-description: "Instructions for using a TCP socket as a UART in ESPHome"
+description: "Instructions for setting up a TCP socket as a UART in ESPHome"
 title: "TCP UART"
 ---
 import APIRef from '@components/APIRef.astro';
 
 
-The `tcp_uart` component is a [UART bus](/components/uart/) whose other end is a TCP client. Bytes are copied
-unchanged. Any component that takes a `uart_id` can use the socket the same way it uses a hardware UART.
+This component allows ESPHome to use a TCP connection as a [UART bus](/components/uart/). Bytes received on the
+socket can be read like UART data, and bytes written to the UART are sent to the socket. Any component that has a
+`uart_id` option can use it.
 
-The socket is not clocked, so this component has no baud rate.
+> [!NOTE]
+> There is no `baud_rate` option. The connection is a TCP socket, not a serial line.
 
 ```yaml
 # Example configuration entry
 tcp_uart:
-  - id: remote_serial
+  - id: tcp_uart_1
     host: 192.0.2.10
     port: 502
 
 modbus:
-  - id: bus
-    uart_id: remote_serial
+  - id: modbus_bus
+    uart_id: tcp_uart_1
 ```
 
 ## Configuration variables
 
-- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID for this component. Other
-  components use this ID as their `uart_id`.
-- **host** (**Required**, string): The host to connect to. An IPv4 address. On the ESP32 a hostname is resolved as
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation. Use
+  this ID as `uart_id` in other components.
+- **host** (**Required**, string): The host to connect to. An IPv4 address. On the ESP32, a hostname can be used as
   well.
-- **port** (**Required**, int): The TCP port of the remote host.
-- **reconnect_interval** (*Optional*, [Time](/guides/configuration-types#time)): How long to wait before connecting
-  again after a failure. Defaults to `5s`.
-- **connected** (*Optional*): A [binary sensor](/components/binary_sensor/) that is on while the TCP connection is
-  up. It uses the diagnostic entity category and the connectivity device class.
+- **port** (**Required**, int): The TCP port to connect to.
+- **reconnect_interval** (*Optional*, [Time](/guides/configuration-types#time)): The time to wait before connecting
+  again after a failed or closed connection. Defaults to `5s`.
+- **connected** (*Optional*): A [binary sensor](/components/binary_sensor/) that reports whether the TCP connection
+  is established.
 
 ## See Also
 
-- [UART](/components/uart/)
+- [UART Bus](/components/uart/)
 - [Modbus](/components/modbus/)
 - <APIRef text="tcp_uart.h" path="tcp_uart/tcp_uart.h" />
