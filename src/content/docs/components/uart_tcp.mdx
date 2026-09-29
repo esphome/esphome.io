@@ -1,0 +1,69 @@
+---
+description: "Instructions for setting up a UART to TCP bridge in ESPHome"
+title: "UART TCP"
+---
+import APIRef from '@components/APIRef.astro';
+
+
+This component allows bytes to be transferred between a hardware [UART bus](/components/uart/) and a TCP socket.
+Data is copied unchanged in both directions.
+
+The component can connect to a remote host (`role: client`) or listen for one incoming connection (`role: server`).
+Only one TCP connection is open at a time. When `role` is `server`, a new client is accepted only after the current
+connection is closed.
+
+> [!NOTE]
+> Baud rate, data bits, parity and stop bits are set on the UART bus. They are not options of this component.
+
+## Client
+
+```yaml
+# Example configuration entry
+uart:
+  - id: uart_bus
+    tx_pin: GPIO17
+    rx_pin: GPIO16
+    baud_rate: 9600
+
+uart_tcp:
+  - id: uart_tcp_1
+    uart_id: uart_bus
+    host: 192.0.2.20
+    port: 502
+```
+
+## Server
+
+```yaml
+# Example configuration entry
+uart:
+  - id: uart_bus
+    tx_pin: GPIO17
+    rx_pin: GPIO16
+    baud_rate: 9600
+
+uart_tcp:
+  - id: uart_tcp_1
+    uart_id: uart_bus
+    role: server
+    port: 502
+```
+
+## Configuration variables
+
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
+- **uart_id** (**Required**, [ID](/guides/configuration-types#id)): The [UART bus](/components/uart/) to use.
+- **role** (*Optional*, string): `client` or `server`. Defaults to `client`.
+- **host** (**Required** when `role` is `client`, string): The host to connect to. An IPv4 address. On the ESP32, a
+  hostname can be used as well. This option is not used when `role` is `server`.
+- **port** (**Required**, int): The TCP port to connect to, or to listen on.
+- **reconnect_interval** (*Optional*, [Time](/guides/configuration-types#time)): The time to wait before trying
+  again after a failure. Defaults to `5s`.
+- **connected** (*Optional*): A [binary sensor](/components/binary_sensor/) that reports whether the TCP connection
+  is established.
+
+## See Also
+
+- [UART Bus](/components/uart/)
+- [TCP UART](/components/tcp_uart/)
+- <APIRef text="uart_tcp.h" path="uart_tcp/uart_tcp.h" />
