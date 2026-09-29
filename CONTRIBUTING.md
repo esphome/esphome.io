@@ -135,7 +135,12 @@ Headings automatically create anchors using their slugified form. To link to a s
 See [Configuration Variables](#configuration-variables) for details.
 ```
 
-Wherever possible, use automatic anchors generated from headings. Only when it is not feasible to use automatic anchors should you use HTML:
+Wherever possible, use automatic anchors generated from headings. Never put a `<span id="...">` in front of a heading:
+the heading already has an anchor, and a page-prefixed id such as `#esp8266-toolchain` on the ESP8266 page only
+duplicates `#toolchain-configuration`. Older pages still carry such spans; do not copy the pattern into new sections.
+
+Only when it is not feasible to use automatic anchors, for example a link target in the middle of a list or a
+paragraph, should you use HTML:
 
 ```markdown
 <span id="custom-section-name"></span>
