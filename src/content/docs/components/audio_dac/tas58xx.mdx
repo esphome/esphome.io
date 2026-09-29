@@ -31,7 +31,11 @@ audio_dac:
 - **model** (**Required**, enum): The amplifier model. One of the supported models listed above.
 - **enable_pin** (*Optional*, [Pin](/guides/configuration-types/#pin)): The pin connected to the `PDN` (power down)
   pin of the amplifier. During setup the pin is briefly driven low and then high to power up the amplifier cleanly.
-  Omit if `PDN` is hardwired high.
+  Omit if `PDN` is hardwired high. Without this pin, and with `PDN` not pulled high, the amplifier does not respond on
+  I²C and setup fails.
+- **ignore_enable_pin_warning** (*Optional*, boolean): Set to `true` to hide the config validation warning shown when
+  `enable_pin` is not set. Use this when `PDN` is hardwired high. Cannot be used together with `enable_pin`.
+  Defaults to `false`.
 - **analog_gain** (*Optional*, dB): The analog gain of the output stage, in `0.5dB` steps. Use it to match the output
   swing to the supply voltage. Range: `-15.5dB` to `0dB`. Defaults to `-15.5dB`, the lowest gain.
 - **dac_mode** (*Optional*, enum): How the output stage drives the speakers. Defaults to `btl`.
