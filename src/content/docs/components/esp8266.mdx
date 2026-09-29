@@ -41,17 +41,22 @@ esp8266:
 - **enable_full_printf** (*Optional*, boolean): Enable full `FILE*`-based printf support. By default, ESPHome wraps `printf()`, `vprintf()`, and `fprintf()` with lightweight stubs that use `vsnprintf()` + `fwrite()`, saving ~1.6 KB of flash. ESPHome logging writes directly to the UART via Arduino's `Serial`, not libc printf, so these functions are typically unused unless an external component calls them. Set to `true` only if an external component needs full `FILE*`-based printf. Defaults to `false`.
 - **enable_scanf_float** (*Optional*, boolean): Enable float support for `scanf()`/`sscanf()`. By default, ESPHome removes the `-u _scanf_float` linker flag to save ~8 KB of flash. This means `sscanf()` with `%f` will silently fail to parse floating-point numbers. Nothing in ESPHome itself uses scanf; set to `true` only if you use `sscanf()` with `%f` in lambdas. Defaults to `false`.
 - **toolchain** (*Optional*, [Toolchain](#toolchain-configuration)): Toolchain used to build the firmware. Defaults to
-  `arduino`.
+  `arduino`. The `platformio` toolchain is deprecated and will be removed in 2027.4.0.
 
 ## Toolchain Configuration
 
 ESPHome supports two toolchains for building ESP8266 firmware. The toolchain determines how the firmware is compiled
 and which build system is used.
 
-- `arduino` (default): builds the Arduino core directly. ESPHome downloads the framework and the compiler itself and drives the
-  build natively, the same way the ESP32 platform builds ESP-IDF. The resulting firmware is functionally identical to a
-  PlatformIO build.
-- `platformio`: builds through PlatformIO.
+- `arduino` (default): builds the Arduino core directly. ESPHome downloads the framework and the compiler itself and
+  drives the build natively, the same way the ESP32 platform builds ESP-IDF. The resulting firmware is functionally
+  identical to a PlatformIO build.
+- `platformio` (deprecated): builds through PlatformIO.
+
+> [!WARNING]
+> The `platformio` toolchain is deprecated and will be removed in 2027.4.0. Remove `toolchain: platformio` from your
+> configuration to migrate; configurations that need it (a custom framework `source`, another framework version, a
+> board outside the board list) should move to the native toolchain before then.
 
 The `arduino` toolchain builds the framework versions ESPHome publishes, currently 3.1.2, which `recommended` and
 `latest` both select. It does not support a custom framework `source`, ignores `platform_version`, and only supports the
@@ -77,7 +82,7 @@ systems, use the `platformio` toolchain.
 > On Apple Silicon Macs the `platformio` toolchain needs Rosetta 2, because its compiler is only built for Intel
 > Macs. The `arduino` toolchain runs natively and does not need it.
 
-**Example for going back to the PlatformIO toolchain:**
+**Example for using the PlatformIO toolchain until it is removed:**
 
 ```yaml
 esp8266:
