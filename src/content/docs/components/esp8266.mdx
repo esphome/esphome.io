@@ -26,12 +26,12 @@ esp8266:
   - **version** (*Optional*, string): The base framework version number to use, from
     [esp8266 arduino releases](https://github.com/esp8266/Arduino/releases). Defaults to `recommended`. Additional values
 
-    - `dev`  : Use the latest commit from [https://github.com/esp8266/Arduino](https://github.com/esp8266/Arduino), note this may break at any time
-    - `latest`  : Use the latest *release* from [https://github.com/esp8266/Arduino/releases](https://github.com/esp8266/Arduino/releases), even if it hasn't been recommended yet.
+    - `dev`  : Use the latest commit from [https://github.com/esp8266/Arduino](https://github.com/esp8266/Arduino), note this may break at any time. Only with the `platformio` toolchain.
+    - `latest`  : Use the latest *release* from [https://github.com/esp8266/Arduino/releases](https://github.com/esp8266/Arduino/releases), even if it hasn't been recommended yet. With the `arduino` toolchain, the newest version ESPHome publishes (see [Toolchain](#esp8266-toolchain)).
     - `recommended`  : Use the recommended framework version.
 
-  - **source** (*Optional*, string): The PlatformIO package or repository to use for the framework. This can be used to use a custom or patched version of the framework.
-  - **platform_version** (*Optional*, string): The version of the [platformio/espressif8266](https://github.com/platformio/platform-espressif8266/releases/) package to use.
+  - **source** (*Optional*, string): The PlatformIO package or repository to use for the framework. This can be used to use a custom or patched version of the framework. Only with the `platformio` toolchain.
+  - **platform_version** (*Optional*, string): The version of the [platformio/espressif8266](https://github.com/platformio/platform-espressif8266/releases/) package to use. Only used by the `platformio` toolchain.
 
 - **restore_from_flash** (*Optional*, boolean): Whether to store some persistent preferences in flash memory. Defaults to `false`.
 - **board_flash_mode** (*Optional*, string): The SPI mode of the flash chip. One of `qio`, `qout`, `dio` and `dout`. Defaults to `dout` for compatibility with all chips. Note: on the next OTA update the actual flash mode is automatically detected and changed to the appropriate one.
@@ -55,23 +55,15 @@ and which build system is used.
 
 > [!WARNING]
 > The `platformio` toolchain is deprecated and will be removed in 2027.4.0. Configurations that only select it can drop
-> `toolchain: platformio` now; configurations that need it (a custom framework `source`, another framework version, a
-> board outside the board list) stop building with that release.
+> `toolchain: platformio` now; configurations that need it (a custom framework `source`, a framework version other than
+> the ones ESPHome publishes, a board outside the board list) must add it when upgrading, and stop building with that
+> release.
 
 The `arduino` toolchain builds the framework versions ESPHome publishes, currently 3.1.2, which `recommended` and
 `latest` both select. It does not support a custom framework `source`, ignores `platform_version`, and only supports the
 named boards from the board list; use `platformio` for other framework versions or custom boards. Under
 `esphome: platformio_options:` it honors `build_flags`, `build_unflags`, `lib_deps`, `lib_ignore`, `board_build.f_cpu`
 and `board_build.ldscript`; other options are ignored with a warning.
-
-The `arduino` toolchain uses compiler builds from
-[esphome-libs/xtensa-lx106-elf-toolchain](https://github.com/esphome-libs/xtensa-lx106-elf-toolchain/releases/), which
-are available for Linux (x86_64 and arm64), macOS (Apple Silicon and Intel) and Windows (x86_64). On other host
-systems, use the `platformio` toolchain.
-
-> [!NOTE]
-> On Apple Silicon Macs the `platformio` toolchain needs Rosetta 2, because its compiler is only built for Intel
-> Macs. The `arduino` toolchain runs natively and does not need it.
 
 The `arduino` toolchain uses compiler builds from
 [esphome-libs/xtensa-lx106-elf-toolchain](https://github.com/esphome-libs/xtensa-lx106-elf-toolchain/releases/), which
