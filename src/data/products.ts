@@ -61,6 +61,13 @@ export const products: Record<string, Product> = {
         logo: "/images/distributors/domadoo-logo.webp",
       },
       {
+        name: "Berry Base",
+        url: "https://www.berrybase.de/detail/01a0d3d899e771eca8270525ce995c4c",
+        shipFrom: "Europe",
+        shipTo: "Europe",
+        logo: "/images/distributors/berry-base-logo.webp",
+      },
+      {
         name: "The Pi Hut",
         url: "https://thepihut.com/products/esphome-starter-kit",
         shipFrom: "UK",
