@@ -17,12 +17,14 @@ socket can be read like UART data, and bytes written to the UART are sent to the
 tcp_uart:
   - id: tcp_uart_1
     host: 192.0.2.10
-    port: 502
+    port: 8899
 
 modbus:
   - id: modbus_bus
     uart_id: tcp_uart_1
 ```
+
+`modbus` sends RTU frames. The other end must be a serial bridge that forwards the bytes unchanged, not a Modbus TCP server.
 
 ## Configuration variables
 
