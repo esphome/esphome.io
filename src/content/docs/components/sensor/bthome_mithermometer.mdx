@@ -40,6 +40,13 @@ sensor:
 > unencrypted devices work without one. It is the same 32-character (16-byte) hex key you set when
 > enabling encryption on the device (for example in the ATC/PVVX web configurator).
 
+With a `bindkey`, encrypted advertisements are also protected against replay: each one carries a
+counter that the device increases with every transmission, and a frame whose counter is not higher
+than the last accepted one is ignored (a warning is logged when it is lower). If the device restarts
+its counter, for example after a battery change, its frames are accepted again once no valid frame
+has been received for 10 minutes. The last counter is not stored across reboots of the ESP, so the
+first valid frame after a reboot is always accepted.
+
 ## Configuration variables
 
 - **mac_address** (**Required**, MAC Address): The MAC address of the device to receive data from.
