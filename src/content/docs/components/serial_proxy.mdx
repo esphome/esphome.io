@@ -44,22 +44,6 @@ serial_proxy:
   modem control output. The state of this pin may be controlled by the API client at runtime.
 - **dtr_pin** (*Optional*, [Pin](/guides/configuration-types#pin)): GPIO pin to use as the DTR (Data Terminal Ready)
   modem control output. The state of this pin may be controlled by the API client at runtime.
-- **identity** (*Optional*): The identity of the device behind the port, reported to API clients. Each string value
-  is a string or a [lambda](/automations/templates#config-lambda), evaluated once at setup. At least one of
-  `manufacturer`, `product`, `serial_number`, or `vid` is required.
-  Not allowed when `uart_id` refers to a [USB UART](/components/usb_uart/) channel, as the identity is then read
-  from the USB descriptors.
-  - **manufacturer** (*Optional*, string): The manufacturer of the device.
-  - **product** (*Optional*, string): The product name of the device.
-  - **serial_number** (*Optional*, string): The serial number of the device.
-  - **vid** (*Optional*, int): The USB vendor ID of the device. Requires `pid`.
-  - **pid** (*Optional*, int): The USB product ID of the device. Requires `vid`.
-  - **bcd_device** (*Optional*, int): The USB device release number. Defaults to `0`.
-  - **interface_number** (*Optional*, int): The USB interface number the serial port is on. Defaults to `0`.
-
-  The USB fields let a device that is not attached over USB report itself as a USB device. For example, a
-  USB serial adapter built onto a board and wired to a UART. If the values match the real USB descriptors, API
-  clients see the same device whether it is plugged in over USB or attached to this port.
 
 ## How It Works
 
@@ -69,14 +53,13 @@ When an API client connects, it can:
 - **Receive data** from the serial device — data arriving on the UART is forwarded to connected API clients automatically each loop iteration (up to 256 bytes at a time).
 - **Reconfigure the UART** at runtime — the API client may change the baud rate, data bits, stop bits, and parity without reflashing firmware.
 - **Control modem pins** — if `rts_pin` or `dtr_pin` are configured, the API client can set their states at runtime.
-- **Identify devices** — the API client can read the identity of the device behind each port. The identity comes
-  from `identity`, or from the USB descriptors if `uart_id` refers to a [USB UART](/components/usb_uart/) channel.
-  For USB, the API client is notified when a device is attached or removed.
+- **Identify USB devices** — if `uart_id` refers to a [USB UART](/components/usb_uart/) channel, the API client can
+  read the identity of the attached USB device and is notified when a device is attached or removed.
 
 ## Full Example
 
 ```yaml
-# Three serial proxies on separate UARTs
+# Two serial proxies on separate UARTs
 uart:
   - id: device_uart
     tx_pin: GPIO4
@@ -87,11 +70,6 @@ uart:
     tx_pin: GPIO16
     rx_pin: GPIO17
     baud_rate: 19200
-
-  - id: zigbee_uart
-    tx_pin: GPIO21
-    rx_pin: GPIO22
-    baud_rate: 460800
 
 api:
 
@@ -106,22 +84,6 @@ serial_proxy:
     name: RS-485 Bus
     port_type: RS485
     rts_pin: GPIO18
-    identity:
-      manufacturer: Acme
-      product: RS-485 Adapter
-      serial_number: !lambda return str_upper_case(get_mac_address());
-
-  - id: zigbee_serial
-    uart_id: zigbee_uart
-    name: Zigbee
-    port_type: TTL
-    identity:
-      manufacturer: Nabu Casa
-      product: ZBT-2
-      serial_number: 10B41DE58F10
-      vid: 0x303A
-      pid: 0x4001
-      bcd_device: 0x0101
 ```
 
 ## See Also
