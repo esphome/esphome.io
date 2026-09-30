@@ -40,18 +40,28 @@ sensor:
 > unencrypted devices work without one. It is the same 32-character (16-byte) hex key you set when
 > enabling encryption on the device (for example in the ATC/PVVX web configurator).
 
-With a `bindkey`, encrypted advertisements are also protected against replay: each one carries a
-counter that the device increases with every transmission, and a frame whose counter is not higher
-than the last accepted one is ignored (a warning is logged when it is lower). If the device restarts
-its counter, for example after a battery change, its frames are accepted again once no valid frame
-has been received for 10 minutes. The last counter is not stored across reboots of the ESP, so the
-first valid frame after a reboot is always accepted.
+### Replay protection
+
+A `bindkey` makes sure that only the device can create valid advertisements, but a valid advertisement
+recorded by someone in range can still be sent again later. With `replay_protection: true` the
+component uses the counter carried by every encrypted advertisement to ignore:
+
+- an exact repeat of the last advertisement;
+- an advertisement whose counter is lower than the last accepted one (a warning is logged).
+
+An advertisement with the same counter but new data is accepted, because some firmwares (for example
+PVVX) send new readings without increasing the counter. If the device restarts its counter, for
+example after a battery change, its advertisements are accepted again once none has been accepted
+for 10 minutes, so expect a gap of up to 10 minutes in that case. The last counter is not stored
+across reboots of the ESP, so the first valid advertisement after a reboot is always accepted.
 
 ## Configuration variables
 
 - **mac_address** (**Required**, MAC Address): The MAC address of the device to receive data from.
 - **bindkey** (*Optional*, 32-character hex string): The encryption key for devices that broadcast
   encrypted BTHome advertisements. Omit it for unencrypted devices.
+- **replay_protection** (*Optional*, boolean): Ignore repeated or older encrypted advertisements,
+  see [Replay protection](#replay-protection). Requires `bindkey`. Defaults to `false`.
 - **temperature** (*Optional*): The temperature, in °C. All options from [Sensor](/components/sensor).
 - **humidity** (*Optional*): The relative humidity, in %. All options from [Sensor](/components/sensor).
 - **battery_level** (*Optional*): The battery level, in %. All options from [Sensor](/components/sensor).
