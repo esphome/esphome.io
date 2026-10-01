@@ -358,10 +358,11 @@ Example using the inline and multi-line syntax with `condition` to conditionally
 
 ```yaml
 substitutions:
+  have_experimental_feature: false
   have_optional_feature: true
 
 packages:
-  - !include { file: experimental_package.yaml, condition: false } # inline syntax
+  - !include { file: experimental_package.yaml, condition: "${have_experimental_feature}" } # inline syntax
   - !include
     # multi-line syntax
     file: optional_package.yaml
