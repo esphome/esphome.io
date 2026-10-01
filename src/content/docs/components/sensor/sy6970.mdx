@@ -61,11 +61,11 @@ The SY6970 has an I²C watchdog. If the host does not reset it within the timeou
 registers to their power-on defaults, including `charge_enabled` and `enable_status_led`. Charging and the status
 LED then switch back on by themselves.
 
-While `i2c_watchdog_timeout` is not `DISABLED`, ESPHome resets the watchdog after every successful update, so
-`update_interval` must be shorter than the timeout. Validation fails otherwise, and also when `update_interval` is
-`never`. If the IC cannot be read, the watchdog is not reset, so the IC returns to its defaults after the timeout.
+While `i2c_watchdog_timeout` is not `DISABLED`, ESPHome resets the watchdog on its own interval, independent of
+`update_interval`, so any `update_interval` - including `never` - is valid. If the IC cannot be read, the watchdog
+is not reset, so the IC returns to its defaults after the timeout.
 
-Set `i2c_watchdog_timeout: DISABLED` to turn the watchdog off, for example when a long `update_interval` is needed.
+Set `i2c_watchdog_timeout: DISABLED` to turn the watchdog off.
 
 ## Sensor
 
