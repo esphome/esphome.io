@@ -67,6 +67,30 @@ is not reset, so the IC returns to its defaults after the timeout.
 
 Set `i2c_watchdog_timeout: DISABLED` to turn the watchdog off.
 
+### Deep sleep
+
+Nothing runs on the ESP while it is in [deep sleep](/components/deep_sleep), including the watchdog kick. If
+`sleep_duration` is longer than `i2c_watchdog_timeout`, the IC's watchdog fires mid-sleep and reverts
+`charge_enabled`/`enable_status_led` before the device wakes up to reconfigure it - the IC is doing exactly what
+the watchdog is for, since the host genuinely is unreachable for that whole window. (This is not a regression:
+the watchdog was never serviced before `i2c_watchdog_timeout` existed either, so a sleep longer than the IC's
+fixed 40s default already reverted these settings the same way.)
+
+If deep sleep is entered through the [`deep_sleep.enter` action](/components/deep_sleep#deep_sleep-enter-action),
+disable the watchdog right before that action. `setup()` re-arms it with the configured `i2c_watchdog_timeout`
+on wake, since waking from deep sleep restarts the ESP:
+
+```yaml
+on_...:
+  then:
+    - lambda: 'id(pmu).set_i2c_watchdog_timeout(sy6970::I2C_WATCHDOG_DISABLED);'
+    - deep_sleep.enter: deep_sleep_1
+```
+
+If sleep is instead entered automatically (`run_duration` with no `deep_sleep.enter` action), there is no hook to
+run a lambda first. Either keep `sleep_duration` under the IC's maximum watchdog timeout (`160S`), or set
+`i2c_watchdog_timeout: DISABLED` for the whole configuration.
+
 ## Sensor
 
 The `sy6970` sensor platform exposes voltage and current measurements from the SY6970 IC.
