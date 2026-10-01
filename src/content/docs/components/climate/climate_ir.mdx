@@ -128,12 +128,26 @@ The Daikin ARC remotes (`daikin_arc` climate, `daikin_arc417`, `daikin_arc480` p
 
 ### `friedrich`
 
-The `friedrich`` climate currently supports the MW12Y3H protocol.
+The `friedrich` climate currently supports the MW12Y3H protocol.
 
-- **model** (*Optional*, string): There is 1 valid model.  Future proofing for other models
-  - ``MW12Y3H``: uses Deg F
+The unit only accepts Fahrenheit temperatures in steps of 2 degrees, so the climate entity reports temperatures
+in degrees Fahrenheit, in the range 60 to 88. Heating can be set down to 60, other modes down to 64.
 
-- **use_fahrenheit** (*Optional*, boolean): Future proofing for other models. Defaults to ``true``.
+- **model** (*Optional*, string): There is 1 valid model. Reserved for other models in the future.
+  - `MW12Y3H`: uses degrees Fahrenheit. This is the default.
+
+The `sensor` and `humidity_sensor` options are not supported.
+
+> [!NOTE]
+> Home Assistant reads the temperature unit from the device starting with release 2026.10. In earlier releases
+> the temperatures are treated as Celsius and converted, so they are shown incorrectly (for example 72 °F as 162 °F).
+
+```yaml
+# Example configuration entry
+climate:
+  - platform: friedrich
+    name: "AC"
+```
 
 <span id="gree_ir"></span>
 
