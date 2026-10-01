@@ -135,7 +135,7 @@ For each package:
 
 ## Packages as Templates
 
-Since packages are incorporated using the `!include` system, variables can be provided to them. This means that
+When packages are loaded using the [`!include` tag](/guides/yaml#include), variables can be provided to them. This means that
 packages can be used as *templates*, allowing complex or repetitive configurations to be stored in a package file
 and then incorporated into the configuration more than once.
 
@@ -172,8 +172,25 @@ switch:
 
 ## Conditionally including a package
 
-You can include a package based on a condition, or choose a package dynamically by loading your package with
-`!include` into a substitution variable instead of under `packages`:
+You can dynamically choose whether to load a package with an `!include` condition. The package will only be loaded
+if the condition evaluates to true after expanding its substitution expressions.
+
+```yaml
+# In config.yaml
+substitutions:
+  enable_extra_door: true
+
+packages:
+  - !include
+    file: garage-door.yaml
+    vars:
+      door_name: Left
+    condition: ${enable_extra_door}
+```
+
+Alternatively, you can load a package into a substitution variable instead of under `packages` then evaluate
+the condition in `packages` to merge it into the configuration. Because the package is always loaded, this method
+may generate build warnings if the package references undefined substitution variables.
 
 ```yaml
 # In config.yaml
@@ -189,7 +206,7 @@ packages:
   extra_door: ${ left_garage_door if enable_extra_door else {} }
 ```
 
-The above utilizes a [Jinja expression](/components/substitutions#jinja-expressions) to determine whether
+Both of these examples use a [Jinja expression](/components/substitutions#jinja-expressions) to determine whether
 `left_garage_door` package is actually included. `enable_extra_door` can be set from the
 [command line](/components/substitutions#command-line-substitutions) as well.
 
