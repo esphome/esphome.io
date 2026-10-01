@@ -1,0 +1,350 @@
+---
+description: "Instructions for setting up LD2460 radar sensors."
+title: "LD2460 Sensor"
+---
+
+import { Image } from 'astro:assets';
+import Figure from '@components/Figure.astro';
+import APIRef from '@components/APIRef.astro';
+
+## Component
+
+<span id="ld2460-component"></span>
+
+The `ld2460` component allows you to use the [Hi-Link HLK-LD2460](https://www.hlktech.net/) 24GHz 2T4R
+millimeter-wave radar module with ESPHome.
+
+The LD2460 is an intelligent multi-target trajectory tracking sensor module. It can simultaneously detect and track
+the trajectory and position of up to 5 moving human targets in real-time, measuring distance, angle, and 2D planar
+coordinates ($X, Y$).
+
+[HLK-LD2460 Official Manual and Communication Protocol](https://drive.google.com/drive/folders/1JkImVaRfSgP8taq5W4aW_bCxlcqeHVan)
+
+<Figure
+  src="/images/ld2460.png"
+  alt="HLK-LD2460 radar module"
+  caption="HLK-LD2460 24GHz 2T4R multi-target trajectory tracking radar module"
+  layout="constrained"
+  width={300}
+  height={300}
+/>
+
+The [UART](/components/uart/) bus must be configured for communication. Use of a hardware UART is recommended.
+The default baud rate of the LD2460 module is `115200` with 8 data bits, no parity, and 1 stop bit.
+
+```yaml
+# Example UART and LD2460 component configuration
+uart:
+  id: uart_radar
+  tx_pin: GPIO17
+  rx_pin: GPIO16
+  baud_rate: 115200
+
+ld2460:
+  id: ld2460_radar
+  uart_id: uart_radar
+```
+
+### Configuration variables
+
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID for this LD2460 component.
+- **uart_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the [UART Component](/components/uart/) to use.
+  Required if multiple UARTs are configured.
+- **on_data** (*Optional*, [Automation](/automations/)): An action or automation to perform after each periodic data frame
+  is received and decoded.
+
+<span id="ld2460-binary-sensors"></span>
+
+## Binary Sensor
+
+The `ld2460` binary sensor indicates whether any target is currently tracked by the radar module.
+
+```yaml
+binary_sensor:
+  - platform: ld2460
+    ld2460_id: ld2460_radar
+    has_target:
+      name: "LD2460 Presence"
+```
+
+### Configuration variables
+
+- **ld2460_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the parent LD2460 component.
+- **has_target** (*Optional*): State is `true` when at least one target is currently tracked.
+  All options from [Binary Sensor](/components/binary_sensor/#config-binary_sensor).
+
+<span id="ld2460-sensors"></span>
+
+## Sensor
+
+The `ld2460` sensor platform exposes target count and real-time tracking data for up to 5 detected targets.
+
+```yaml
+sensor:
+  - platform: ld2460
+    ld2460_id: ld2460_radar
+    target_count:
+      name: "Target Count"
+    target_1:
+      x:
+        name: "Target 1 X"
+      y:
+        name: "Target 1 Y"
+      distance:
+        name: "Target 1 Distance"
+      angle:
+        name: "Target 1 Angle"
+    target_2:
+      x:
+        name: "Target 2 X"
+      y:
+        name: "Target 2 Y"
+      distance:
+        name: "Target 2 Distance"
+      angle:
+        name: "Target 2 Angle"
+```
+
+### Configuration variables
+
+- **ld2460_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the parent LD2460 component.
+- **target_count** (*Optional*, int): Total number of targets currently detected (0 to 5).
+  All options from [Sensor](/components/sensor/).
+- **target_N** (*Optional*): Coordinates and metrics for target $N$ ($N = 1$ to $5$):
+  - **x** (*Optional*, float): Position along the X-axis in meters relative to the radar. Negative represents left, positive represents right.
+    All options from [Sensor](/components/sensor/).
+  - **y** (*Optional*, float): Position along the Y-axis in meters relative to the radar.
+    All options from [Sensor](/components/sensor/).
+  - **distance** (*Optional*, float): Euclidean distance from the sensor to the target ($\sqrt{X^2 + Y^2}$) in meters.
+    All options from [Sensor](/components/sensor/).
+  - **angle** (*Optional*, float): Target angle relative to the sensor normal in degrees ($^{\circ}$).
+    All options from [Sensor](/components/sensor/).
+
+## Number
+
+The `ld2460` number platform allows configuring physical installation parameters and detection boundaries directly on the radar module.
+
+```yaml
+number:
+  - platform: ld2460
+    ld2460_id: ld2460_radar
+    installation_height:
+      name: "Installation Height"
+    installation_angle:
+      name: "Installation Angle"
+    max_detection_distance:
+      name: "Max Detection Distance"
+    detection_angle_min:
+      name: "Detection Angle Min"
+    detection_angle_max:
+      name: "Detection Angle Max"
+```
+
+### Configuration variables
+
+- **ld2460_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the parent LD2460 component.
+- **installation_height** (*Optional*): The mounting height of the radar in meters (0.0 m to 10.0 m, step 0.01 m). Default is `2.6 m`.
+  All options from [Number](/components/number/#config-number).
+- **installation_angle** (*Optional*): The downward tilt angle of the radar in degrees (0 to 90 degrees). Default is `30°`.
+  All options from [Number](/components/number/#config-number).
+- **max_detection_distance** (*Optional*): The maximum boundary distance for target tracking in meters (0.1 m to 6.0 m, step 0.1 m).
+  All options from [Number](/components/number/#config-number).
+- **detection_angle_min** (*Optional*): The minimum boundary angle in degrees (-60° to 360°).
+  All options from [Number](/components/number/#config-number).
+- **detection_angle_max** (*Optional*): The maximum boundary angle in degrees (-60° to 360°).
+  All options from [Number](/components/number/#config-number).
+
+## Select
+
+The `ld2460` select platform allows switching operational modes, detection sensitivity, and communication baud rate.
+
+```yaml
+select:
+  - platform: ld2460
+    ld2460_id: ld2460_radar
+    installation_mode:
+      name: "Installation Mode"
+    sensitivity:
+      name: "Sensitivity"
+    baud_rate:
+      name: "Baud Rate"
+```
+
+### Configuration variables
+
+- **ld2460_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the parent LD2460 component.
+- **installation_mode** (*Optional*): Radar mounting orientation: `Side` (wall/side mounted) or `Top` (ceiling/top mounted).
+  All options from [Select](/components/select/#config-select).
+- **sensitivity** (*Optional*): Target detection sensitivity level: `High`, `Medium`, or `Low`.
+  All options from [Select](/components/select/#config-select).
+- **baud_rate** (*Optional*): Module UART communication baud rate: `9600`, `19200`, `38400`, `57600`, `115200`, `230400`, or `256000`.
+  After changing the baud rate, restart the sensor and update the ESPHome UART baud rate to match.
+  All options from [Select](/components/select/#config-select).
+
+## Switch
+
+The `ld2460` switch platform controls periodic target reporting.
+
+```yaml
+switch:
+  - platform: ld2460
+    ld2460_id: ld2460_radar
+    reporting:
+      name: "Target Reporting"
+```
+
+### Configuration variables
+
+- **ld2460_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the parent LD2460 component.
+- **reporting** (*Optional*): Turn periodic target reporting on or off. When turned off, the module ceases outputting tracking data frames until re-enabled.
+  All options from [Switch](/components/switch/#config-switch).
+
+## Button
+
+The `ld2460` button platform allows triggering module restart and factory reset commands.
+
+```yaml
+button:
+  - platform: ld2460
+    ld2460_id: ld2460_radar
+    restart:
+      name: "Restart Radar"
+    factory_reset:
+      name: "Factory Reset Radar"
+```
+
+### Configuration variables
+
+- **ld2460_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the parent LD2460 component.
+- **restart** (*Optional*): Restarts the LD2460 module hardware.
+  All options from [Button](/components/button/#config-button).
+- **factory_reset** (*Optional*): Restores all parameters on the LD2460 module to their factory default values.
+  All options from [Button](/components/button/#config-button).
+
+## Text Sensor
+
+The `ld2460` text sensor platform provides firmware version details.
+
+```yaml
+text_sensor:
+  - platform: ld2460
+    ld2460_id: ld2460_radar
+    version:
+      name: "LD2460 Firmware Version"
+```
+
+### Configuration variables
+
+- **ld2460_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the parent LD2460 component.
+- **version** (*Optional*): Reports the firmware version string read from the sensor during startup.
+  All options from [Text Sensor](/components/text_sensor/#config-text_sensor).
+
+## Example Configuration
+
+Complete configuration example:
+
+```yaml
+esphome:
+  name: ld2460-tracker
+
+esp32:
+  board: esp32dev
+  framework:
+    type: esp-idf
+
+logger:
+  level: INFO
+
+uart:
+  id: uart_radar
+  tx_pin: GPIO17
+  rx_pin: GPIO16
+  baud_rate: 115200
+
+ld2460:
+  id: ld2460_radar
+  uart_id: uart_radar
+
+binary_sensor:
+  - platform: ld2460
+    ld2460_id: ld2460_radar
+    has_target:
+      name: "Presence"
+
+sensor:
+  - platform: ld2460
+    ld2460_id: ld2460_radar
+    target_count:
+      name: "Active Targets"
+    target_1:
+      x:
+        name: "Target 1 X"
+      y:
+        name: "Target 1 Y"
+      distance:
+        name: "Target 1 Distance"
+      angle:
+        name: "Target 1 Angle"
+    target_2:
+      x:
+        name: "Target 2 X"
+      y:
+        name: "Target 2 Y"
+      distance:
+        name: "Target 2 Distance"
+      angle:
+        name: "Target 2 Angle"
+
+number:
+  - platform: ld2460
+    ld2460_id: ld2460_radar
+    installation_height:
+      name: "Installation Height"
+    installation_angle:
+      name: "Installation Angle"
+    max_detection_distance:
+      name: "Max Detection Distance"
+    detection_angle_min:
+      name: "Detection Angle Min"
+    detection_angle_max:
+      name: "Detection Angle Max"
+
+select:
+  - platform: ld2460
+    ld2460_id: ld2460_radar
+    installation_mode:
+      name: "Installation Mode"
+    sensitivity:
+      name: "Sensitivity"
+    baud_rate:
+      name: "Baud Rate"
+
+switch:
+  - platform: ld2460
+    ld2460_id: ld2460_radar
+    reporting:
+      name: "Target Reporting"
+
+button:
+  - platform: ld2460
+    ld2460_id: ld2460_radar
+    restart:
+      name: "Restart Sensor"
+    factory_reset:
+      name: "Factory Reset Sensor"
+
+text_sensor:
+  - platform: ld2460
+    ld2460_id: ld2460_radar
+    version:
+      name: "Sensor Firmware Version"
+```
+
+## See Also
+
+- [LD2410 Sensor](/components/sensor/ld2410/)
+- [LD2412 Sensor](/components/sensor/ld2412/)
+- [LD2420 Sensor](/components/sensor/ld2420/)
+- [LD2450 Sensor](/components/sensor/ld2450/)
+- [UART Bus](/components/uart/)
+- <APIRef text="ld2460.h" path="ld2460/ld2460.h" />
