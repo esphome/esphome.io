@@ -124,6 +124,33 @@ Advanced options:
   If you are *absolutely* certain that your specific board design allows a normally-reserved pin to be used,
   you can suppress the error by setting this option to `true`. Defaults to `false`.
 
+### Selecting an I2C expander by address
+
+Pins provided by an I²C I/O expander (`xl9535`, `pca9554`, `pca6416a`, `tca9555`, `mcp23xxx`,
+`mcp23016`, `sx1509`, `pcf8574`, `pi4ioe5v6408`, `max6956`) are referenced in the pin schema by the
+expander's own domain name, set to the id of the hub instance:
+
+```yaml
+pin:
+  xl9535: xl9535_hub
+  number: 4
+```
+
+If a configuration has more than one hub instance of the same expander type — for example, a board
+with two `xl9535` expanders at different I²C addresses — the id can be omitted and the hub selected
+instead by its I²C address, matched against the hub's own `address:`:
+
+```yaml
+pin:
+  xl9535:
+    address: 0x21
+  number: 4
+```
+
+This fails with a clear error if no hub of that type has a matching address, or if more than one
+does (for example, two hubs with the same address on different I²C buses — those still need
+explicit ids).
+
 ## Time
 
 In lots of places in ESPHome you need to define time periods.
