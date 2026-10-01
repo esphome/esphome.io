@@ -115,6 +115,9 @@ api:
   the ESP is connected to the network, when in fact it is not - only a full reboot fixes it.
   Can be disabled by setting this to `0s`. Defaults to `15min`.
 
+- **wizard** (*Optional*): A setup wizard that Home Assistant shows when the device is added.
+  See [Wizard](#wizard).
+
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
 
 - **on_client_connected** (*Optional*, [Action](/automations/actions#all-actions)): An automation to perform when a client
@@ -442,6 +445,180 @@ The lambda equivalent for this is `id(api_id).is_connected(true)`.
 
 - Use `state_subscription_only: false` (default) to detect any API connection
 - Use `state_subscription_only: true` when you need to ensure Home Assistant (or other connections that subscribe to states) is connected before sending events or calling services, preventing errors from logger-only connections
+
+### `api.wizard.input_is_set` Condition
+
+This [Condition](/automations/actions#all-conditions) checks if the user has picked a Home Assistant entity for a
+standalone [wizard](#wizard) input, either in the wizard or in an earlier run of it that was saved on the device.
+It only works with standalone inputs (declared with `id`). A linked input is read through its `homeassistant` entity.
+
+```yaml
+on_...:
+  if:
+    condition:
+      api.wizard.input_is_set: weather_input
+    then:
+      - logger.log: A weather entity has been picked
+```
+
+The lambda equivalent for this is `id(weather_input).has_entity_id()`.
+
+## Wizard
+
+The `wizard` option describes a setup wizard that Home Assistant shows when the device is added. Instead of a device
+page with many entities and no guidance, the user is taken through a series of pages that point out the entities that
+matter for setup and ask for the Home Assistant entities the device needs, such as an outdoor temperature sensor or a
+weather forecast.
+
+> [!NOTE]
+> The wizard needs a version of Home Assistant that supports it. Older versions ignore it and add the device as usual.
+
+```yaml
+api:
+  wizard:
+    pages:
+      - title: Features
+        entities:
+          - id: feature_switch
+            description: Turn on the feature
+      - title: Sources
+        inputs:
+          - entity: outdoor_temperature
+            description: Outdoor temperature
+            target:
+              entity:
+                - domain: sensor
+                  device_class: temperature
+```
+
+Each page lists **entities**, **inputs**, or both:
+
+- An entity is an entity of the device itself, for example a switch that turns a feature on or off, which the page
+  points out to the user.
+- An input asks the user to pick a Home Assistant entity. The entity ID the user picks is saved on the device and is
+  kept across restarts. An input is either:
+  - **linked** (`entity`): it gives the entity ID of a `homeassistant` platform entity on the device, so that entity
+    no longer needs an `entity_id` in the YAML. Supported platforms are
+    [sensor](/components/sensor/homeassistant/), [binary sensor](/components/binary_sensor/homeassistant/),
+    [text sensor](/components/text_sensor/homeassistant/), [number](/components/number/homeassistant/),
+    [switch](/components/switch/homeassistant/), [text](/components/text/homeassistant/),
+    [select](/components/select/homeassistant/) and [button](/components/button/homeassistant/). If the entity also
+    has an `entity_id`, that is used until the user picks another entity.
+  - **standalone** (`id`): it only stores an entity ID, for use in [lambdas](/automations/templates#config-lambda).
+    `id(my_input).entity_id()` returns the picked entity ID, and `id(my_input).has_entity_id()` returns whether one
+    has been picked. See also the [`api.wizard.input_is_set` Condition](#api-wizard-input_is_set-condition).
+
+Titles and descriptions are sent to Home Assistant as they are, so they can also be Home Assistant translation
+placeholders such as `"[%key:component::example::feature::enable%]"`.
+
+### Configuration variables
+
+- **pages** (**Required**, list): The pages of the wizard, in the order they are shown. At least one page is required.
+  Each page has these options, and needs at least one of `entities` and `inputs`:
+
+  - **title** (*Optional*, string): The title of the page. At most 127 characters.
+  - **description** (*Optional*, string): A text shown at the top of the page. At most 255 characters.
+  - **entities** (*Optional*, list): Entities of the device to show on the page. Each entry has these options:
+
+    - **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the entity. The entity must be exposed
+      to Home Assistant, so it cannot be `internal`.
+    - **description** (*Optional*, string): A text shown with the entity. At most 255 characters.
+
+  - **inputs** (*Optional*, list): Home Assistant entities for the user to pick. Each entry needs exactly one of
+    `entity` and `id`, and each input can appear in the wizard only once:
+
+    - **entity** (*Optional*, [ID](/guides/configuration-types#id)): The ID of a `homeassistant` platform entity on
+      the device to link the input to.
+    - **id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of a new standalone input.
+    - **description** (*Optional*, string): A text shown with the input. At most 255 characters.
+    - **target** (*Optional*): Limits which Home Assistant entities the user can pick.
+
+      - **entity** (**Required**, list): A list of filters. An entity can be picked if it matches any one of
+        them. Each filter needs at least one of these options, and an entity must match all of the options a filter
+        sets:
+
+        - **integration** (*Optional*, string): The integration that provides the entity, for example `met`.
+        - **domain** (*Optional*, string or list): One or more entity domains, for example `sensor`.
+        - **device_class** (*Optional*, string or list): One or more device classes, for example `temperature`.
+        - **supported_features** (*Optional*, string or list): One or more supported features, for example
+          `weather.WeatherEntityFeature.FORECAST_DAILY`.
+
+### Linked Input Domains
+
+A linked input can only be set to an entity that its `homeassistant` platform can work with. Without a `target`, the
+user can pick from these domains:
+
+- `switch`: `automation`, `fan`, `humidifier`, `input_boolean`, `light`, `remote`, `siren` and `switch`
+- `number`: `number`
+- `text`: `text` and `input_text`
+- `select`: `select` and `input_select`
+- `button`: `button` and `input_button`
+
+For `switch`, `text`, `select` and `button` inputs with a `target`, every filter must set `domain`, and only the
+domains in the list above are allowed. Sensor, binary sensor and text sensor inputs accept any entity unless a
+`target` is set.
+
+### Wizard Example
+
+This wizard has two pages. The first lets the user turn on a feature of the device. The second asks for an outdoor
+temperature sensor, which a `homeassistant` sensor then follows, and for a weather entity, whose daily forecast the
+device fetches every hour once one has been picked.
+
+```yaml
+api:
+  wizard:
+    pages:
+      - title: Features
+        description: Choose which features to turn on
+        entities:
+          - id: frost_protection
+            description: Turn the heating on when it freezes outside
+      - title: Sources
+        inputs:
+          - entity: outdoor_temperature
+            description: Outdoor temperature sensor
+            target:
+              entity:
+                - domain: sensor
+                  device_class: temperature
+          - id: weather_input
+            description: Weather forecast
+            target:
+              entity:
+                - domain: weather
+                  supported_features: weather.WeatherEntityFeature.FORECAST_DAILY
+
+switch:
+  - platform: template
+    id: frost_protection
+    name: Frost Protection
+    optimistic: true
+
+sensor:
+  - platform: homeassistant
+    id: outdoor_temperature
+
+interval:
+  - interval: 1h
+    then:
+      - if:
+          condition:
+            api.wizard.input_is_set: weather_input
+          then:
+            - homeassistant.action:
+                action: weather.get_forecasts
+                data:
+                  type: daily
+                  entity_id: !lambda 'return id(weather_input).entity_id().c_str();'
+                capture_response: true
+                on_success:
+                  - lambda: |-
+                      JsonObjectConst today =
+                          response["response"][id(weather_input).entity_id().c_str()]["forecast"][0];
+                      ESP_LOGI("weather", "High today: %.1f", today["temperature"].as<float>());
+```
+
+The `homeassistant.action` needs Home Assistant to allow the device to perform actions, see [Actions](#actions).
 
 <span id="api-device-actions"></span>
 
