@@ -36,6 +36,11 @@ usb_host:
 - **max_transfer_requests** (*Optional*, int): Maximum number of concurrent USB transfer requests. Range: 1-32. Defaults to `16`. Increase this value for high-throughput devices (e.g., USB UART at 115200+ baud) if you see "All X transfer slots in use" errors.
 - **max_packet_size** (*Optional*, int): Maximum USB packet size in bytes. Defaults to `64` (USB Full Speed). Valid option values are 64, 128, 256, 512 and 1024. Intended for use with USB-HS capable devices like the ESP32-P4.
 - **devices** (*Optional*, list): A list of devices to configure.
+- **rx_fifo_lines** (*Optional*, int): Number of FIFO lines (4-byte chunks) allocated to received USB packets. Must be specified together with `nptx_fifo_lines`. Because of [a bug in ESP-IDF](https://github.com/espressif/esp-idf/issues/19143) it is recommended to allocate three lines more than actually required for the incoming MSP.
+- **nptx_fifo_lines** (*Optional*, int): Number of FIFO lines (4-byte chunks) allocated to non-periodic transmit transfers, such as control and bulk
+transfers. This option must be specified together with `rx_fifo_lines`.
+- **ptx_fifo_lines** (*Optional*, int, default `0`): Number of FIFO lines (4-byte chunks) allocated to periodic transmit transfers, such as interrupt and isochronous
+  transfers. This option can only be used when `rx_fifo_lines` and `nptx_fifo_lines` are also specified.
 
 ## Device configuration options
 
