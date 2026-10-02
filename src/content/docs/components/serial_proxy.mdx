@@ -48,7 +48,12 @@ serial_proxy:
 An API client uses a port by subscribing to it. A port has one subscriber at a time, and only the subscribed client
 can use it. Once subscribed, the client can:
 
-- **Send data** to the serial device by writing bytes through the API.
+- **Send data** to the serial device by writing bytes through the API. Writes are not flow-controlled: bytes the
+  UART cannot buffer stall the device until they have gone out on the wire. The proxy lets such stalls add up to
+  one second per pass of the main loop. A write that would go past that is cut to what the UART can buffer right
+  now; the rest is discarded without telling the client, and a warning is logged on the device. To avoid this, set
+  the [UART](/components/uart/)'s `tx_buffer_size` (ESP32 only) to the largest block a client writes at once. This
+  matters most at low baud rates, where even a few hundred bytes take seconds to send.
 - **Receive data** from the serial device — data arriving on the UART is forwarded to the client automatically each
   loop iteration (up to 256 bytes at a time).
 - **Reconfigure the UART** at runtime — the API client may change the baud rate, data bits, stop bits, and parity
