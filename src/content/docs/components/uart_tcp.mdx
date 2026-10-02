@@ -24,6 +24,8 @@ connection is closed.
 > [!NOTE]
 > Baud rate, data bits, parity and stop bits are set on the UART bus. They are not options of this component.
 
+This is not Modbus TCP. The bytes on the socket are the UART bytes, unchanged.
+
 The examples assume a [UART bus](/components/uart/) with the id `uart_bus` is configured.
 
 ## Client
@@ -48,8 +50,6 @@ uart_tcp:
     port: 8899
 ```
 
-This is not Modbus TCP. The bytes on the socket are the UART bytes, unchanged.
-
 ## Configuration variables
 
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
@@ -65,15 +65,15 @@ This is not Modbus TCP. The bytes on the socket are the UART bytes, unchanged.
 
 ## Zigbee Coordinator
 
-Zigbee2MQTT can use a server of this component instead of a serial port on the machine that runs it.
-In its `configuration.yaml`, set `serial.port` to `tcp://<device ip>:<port>` and `baudrate` to the UART's
-baud rate. Zigbee2MQTT must be the only TCP client. A stick on an ESP32 with USB host can be exposed the
-same way through [USB Host UART](/components/usb_uart/). This setup has not been tested with this component.
+This setup has not been tested with this component. Zigbee2MQTT can use a server of this component instead
+of a serial port on the machine that runs it: in its `configuration.yaml`, set `serial.port` to
+`tcp://<device ip>:<port>` and `baudrate` to the UART's baud rate. Zigbee2MQTT must be the only TCP client.
+A stick on an ESP32 with USB host can be exposed the same way through [USB Host UART](/components/usb_uart/).
 
 > [!NOTE]
-> Use [Ethernet](/components/ethernet/). A coordinator drops bytes more easily on Wi-Fi than on a cable, and
-> Zigbee2MQTT does not tolerate that. If Wi-Fi is the only network, do not also enable `bluetooth_proxy`,
-> `esp32_ble_tracker` or `esp32_ble` on this device. They share the radio with Wi-Fi.
+> [Ethernet](/components/ethernet/) is recommended. A coordinator drops bytes more easily on Wi-Fi than on a
+> cable, and Zigbee2MQTT does not tolerate that. If Wi-Fi is the only network, do not also enable
+> `bluetooth_proxy`, `esp32_ble_tracker` or `esp32_ble` on this device. They share the radio with Wi-Fi.
 
 ## See Also
 
