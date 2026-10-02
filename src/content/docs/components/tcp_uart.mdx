@@ -58,9 +58,9 @@ tcp_uart:
 - **host** (**Required** when `role` is `client`, string): The host to connect to. An IP address or a hostname.
   This option cannot be used when `role` is `server`.
 - **port** (**Required**, int): When `role` is `client`, the TCP port to connect to. When `role` is `server`, the TCP port to listen on.
-- **allowed_ips** (*Optional*, list): Only when `role` is `server`. IPv4 addresses that may connect. A plain
-  address is one host. A network is written in CIDR form, for example `192.0.2.0/24`. At most 8 entries. If the
-  option is omitted, every address may connect.
+- **allowed_ips** (*Optional* when `role` is `server`, list): IPv4 addresses that may connect. A plain
+  address is one host. A network is written in CIDR form, for example `192.0.2.0/24`. At most 8 entries. If
+  omitted, every address may connect. This option cannot be used when `role` is `client`.
 - **baud_rate** (*Optional*, int): The baud rate reported to consuming components. The socket itself has no clock;
   components such as `modbus` read this value for their frame timing. Defaults to `9600`.
 - **data_bits** (*Optional*, int): The number of data bits reported to consuming components. Defaults to `8`.
