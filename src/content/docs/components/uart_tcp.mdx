@@ -13,9 +13,9 @@ Only one TCP connection is open at a time. When `role` is `server`, a new client
 connection is closed.
 
 > [!WARNING]
-> The connection is plain TCP with no encryption. On a server, `allowed_ips` limits which IPv4 addresses may
-> connect. If it is omitted, any host that can reach the port is accepted, and the first client to connect is
-> the one that is served. Only use this component on a trusted network.
+> The connection is plain TCP with no encryption and no authentication; `allowed_ips` filters by address but
+> does not authenticate the peer. If it is omitted, any host that can reach the port is accepted, and the
+> first client to connect is the one that is served. Only use this component on a trusted network.
 
 > [!NOTE]
 > While no connection is open, bytes from the UART are discarded; a fast peer is throttled by TCP flow
@@ -48,9 +48,6 @@ uart_tcp:
     uart_id: uart_bus
     role: server
     port: 8899
-    allowed_ips:
-      - 192.0.2.20
-      - 192.0.2.0/24
 ```
 
 ## Configuration variables
@@ -63,7 +60,9 @@ uart_tcp:
 - **port** (**Required**, int): The TCP port to connect to, or to listen on.
 - **allowed_ips** (*Optional* when `role` is `server`, list): IPv4 addresses that may connect. A plain
   address is one host. A network is written in CIDR form, for example `192.0.2.0/24`. At most 255 entries. If
-  the option is omitted, every address may connect. This option cannot be used when `role` is `client`.
+  the option is omitted, every address may connect. A rejected client is closed immediately and logged as a
+  warning at most once every 5 seconds; an IPv6 client is rejected unless it carries an IPv4 address, as on a
+  dual stack network. This option cannot be used when `role` is `client`.
 - **reconnect_interval** (*Optional*, [Time](/guides/configuration-types#time)): The time to wait before trying
   again after a failure. Defaults to `5s`.
 - **connected** (*Optional*): A binary sensor that reports whether the TCP connection is established. All options
