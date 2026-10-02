@@ -84,6 +84,7 @@ openthread:
   limits.
 - **poll_period** (*Optional*, [Time](/guides/configuration-types#time)): When set on an MTD device, the parent
   router enqueues any messages and waits for the child to submit a poll data request.
+  The maximum is 7200 seconds (2 hours).
 
 > [!NOTE]
 > `esphome.ota` does not work when `poll_period` > 0. Use the `openthread.set_poll_period` action to set the poll
@@ -122,7 +123,7 @@ on_...:
 ### Configuration Variables
 
 - **poll_period** (**Required**, [Time](/guides/configuration-types#time)): The poll period to apply, e.g. the
-  short form `openthread.set_poll_period: 5s`.
+  short form `openthread.set_poll_period: 5s`. The maximum is 7200 seconds (2 hours).
 
 ## OpenThread Device Type
 
@@ -134,8 +135,21 @@ See [https://openthread.io/guides/thread-primer/node-roles-and-types](https://op
 
 ## Sleepy End Device (SED)
 
-The Poll Period makes the device behave as a SED. Follow on work is needed utilizing Power Management and/or Light Sleep capability in esp-idf.
-If the device is always awake, the API timeout is 60 seconds, so a ping request will force interaction with the parent when the poll period is greater than 60 seconds.
+The Poll Period makes an MTD device behave as a SED. Follow on work is needed utilizing Power Management and/or Light
+Sleep capability in esp-idf.
+If the device is always awake, the API timeout is 60 seconds, so a ping request will force interaction with the parent
+when the poll period is greater than 60 seconds.
+
+The following values are set to define the parent-child relationship. They are
+calculated from `poll_period` and are recalculated whenever the poll period changes, including by the
+`openthread.set_poll_period` action:
+
+- **Child Timeout** - The maximum time (in seconds) a parent will wait without hearing from a SED before
+  assuming the child has detached. Set to the larger of 240 seconds or 4 * `poll_period` in seconds.
+- **Child Supervision Check Timeout** - The duration a SED waits to receive a message from its parent.
+  Set to the larger of 190 seconds or 2 * `poll_period` in seconds.
+- **Child Supervision Interval** - A configured interval that the parent uses to ensure at least one message
+  is sent to SED. Set to the larger of 129 seconds or 1.5 * `poll_period` in seconds.
 
 ### Public API
 
