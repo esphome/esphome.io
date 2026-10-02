@@ -832,6 +832,9 @@ light:
               green: 100%
               blue: 0%
               duration: 500ms
+            - state: ON
+              color: darkred
+              duration: 500ms
 ```
 
 **Configuration variables:**
@@ -846,6 +849,10 @@ light:
   - **red** (*Optional*, percentage): The red channel of the light, if applicable. Defaults to `100%`.
   - **green** (*Optional*, percentage): The green channel of the light, if applicable. Defaults to `100%`.
   - **blue** (*Optional*, percentage): The blue channel of the light, if applicable. Defaults to `100%`.
+  - **color** (*Optional*, string or hex value): A
+    [standard CSS color name](https://developer.mozilla.org/en-US/docs/Web/CSS/named-color) or a hex value in the
+    form `0xRRGGBB` to use instead of **red**, **green** and **blue**. Also sets **color_brightness**, as described
+    in [light state](#light-state).
   - **white** (*Optional*, percentage): The white channel of the light, if applicable. Defaults to `100%`.
   - **color_temperature** (*Optional*, float): The color temperature (in [mireds](https://en.wikipedia.org/wiki/Mired)
     or Kelvin) of the light, if applicable.
@@ -1006,6 +1013,8 @@ light:
               green: 0%
               blue: 0%
               num_leds: 1
+            - color: darkred
+              num_leds: 1
           add_led_interval: 100ms
           reverse: false
 ```
@@ -1019,6 +1028,12 @@ light:
   - **red** (*Optional*, percentage): The percentage the red color channel should be on. Defaults to `100%`.
   - **green** (*Optional*, percentage): The percentage the green color channel should be on. Defaults to `100%`.
   - **blue** (*Optional*, percentage): The percentage the blue color channel should be on. Defaults to `100%`.
+  - **color_brightness** (*Optional*, percentage): A brightness to scale **red**, **green** and **blue** by.
+    Defaults to `100%`.
+  - **color** (*Optional*, string or hex value): A
+    [standard CSS color name](https://developer.mozilla.org/en-US/docs/Web/CSS/named-color) or a hex value in the
+    form `0xRRGGBB` to use instead of **red**, **green** and **blue**. Also sets **color_brightness**, as described
+    in [light state](#light-state).
   - **random** (*Optional*, boolean): If set to `true`, will overwrite the RGB colors by a new, randomly-chosen
     color each time. Defaults to `false`.
 
