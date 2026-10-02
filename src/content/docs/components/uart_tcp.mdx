@@ -13,6 +13,11 @@ Only one TCP connection is open at a time. When `role` is `server`, a new client
 connection is closed.
 
 > [!NOTE]
+> The connection is plain TCP without encryption or authentication, so only use it on a trusted network.
+> While no connection is open, bytes from the UART are discarded; a fast peer is throttled by TCP flow
+> control instead of blocking the device.
+
+> [!NOTE]
 > Baud rate, data bits, parity and stop bits are set on the UART bus. They are not options of this component.
 
 ## Client
@@ -51,15 +56,18 @@ uart_tcp:
 
 This is not Modbus TCP. The bytes on the socket are the UART bytes, unchanged.
 
+## Configuration variables
+
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
 - **uart_id** (**Required**, [ID](/guides/configuration-types#id)): The [UART bus](/components/uart/) to use.
 - **role** (*Optional*, string): `client` or `server`. Defaults to `client`.
-- **host** (**Required** when `role` is `client`, string): The host to connect to. An IP address or a hostname. This option is not used when `role` is `server`.
+- **host** (**Required** when `role` is `client`, string): The host to connect to. An IP address or a hostname.
+  This option cannot be used when `role` is `server`.
 - **port** (**Required**, int): The TCP port to connect to, or to listen on.
 - **reconnect_interval** (*Optional*, [Time](/guides/configuration-types#time)): The time to wait before trying
   again after a failure. Defaults to `5s`.
-- **connected** (*Optional*): A [binary sensor](/components/binary_sensor/) that reports whether the TCP connection
-  is established.
+- **connected** (*Optional*): A binary sensor that reports whether the TCP connection is established. All options
+  from [Binary Sensor](/components/binary_sensor#config-binary_sensor) are supported.
 
 ## Zigbee coordinator
 
