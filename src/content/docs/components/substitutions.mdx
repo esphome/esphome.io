@@ -187,7 +187,7 @@ substitutions:
   switch_a_timeout: 500ms
   switch_b_timeout: 300ms
 
-package:
+packages:
   - !include
     file: timed_switch.yaml
     vars:
@@ -204,12 +204,12 @@ package:
 
 ```yaml
 switch:
-  platform: template
-  id: ${switch_id}
-  optimistic: true
-  turn_on_action:
-    - delay: ${switch_timeout}
-    - switch.turn_off: ${switch_id}
+  - platform: template
+    id: ${switch_id}
+    optimistic: true
+    turn_on_action:
+      - delay: ${switch_timeout}
+      - switch.turn_off: ${switch_id}
 ```
 
 Finally, ESPHome expands substitution expressions in include conditions. The file is only loaded if the condition
@@ -221,9 +221,9 @@ substitutions:
   port_1_reserved: true
 
 packages:
-  - !include { file: port.yaml, vars: { port: 1 }, condition: "${number_of_ports > 1 and not port_1_reserved}" }
-  - !include { file: port.yaml, vars: { port: 2 }, condition: "${number_of_ports > 2}" }
-  - !include { file: port.yaml, vars: { port: 3 }, condition: "${number_of_ports > 3}" }
+  - !include { file: port.yaml, vars: { port: 1 }, condition: "${number_of_ports >= 1 and not port_1_reserved}" }
+  - !include { file: port.yaml, vars: { port: 2 }, condition: "${number_of_ports >= 2}" }
+  - !include { file: port.yaml, vars: { port: 3 }, condition: "${number_of_ports >= 3}" }
 ```
 
 ## Command line substitutions

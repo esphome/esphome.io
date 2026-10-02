@@ -178,6 +178,10 @@ switch:
 You can dynamically choose whether to load a package with an `!include` condition. The package will only be loaded
 if the condition evaluates to true after expanding its substitution expressions.
 
+This example only includes the package for the left garage door if the `enable_extra_door` variable evaluates
+to true. Here the `enable_extra_door` variable has the default value of true and it can also be set from the
+[command line](/components/substitutions#command-line-substitutions).
+
 ```yaml
 # In config.yaml
 substitutions:
@@ -195,6 +199,10 @@ Alternatively, you can load a package into a substitution variable instead of un
 the condition in `packages` to merge it into the configuration. Because the package is always loaded, this method
 may generate build warnings if the package references undefined substitution variables.
 
+This example loads the content for the left garage door into the `left_garage_door` substitution variable. Then it
+uses a [Jinja expression](/components/substitutions#jinja-expressions) to determine whether to merge it into the
+configuration as a package when the `enable_extra_door` variable evaluates to true, as in the previous example.
+
 ```yaml
 # In config.yaml
 substitutions:
@@ -206,12 +214,8 @@ substitutions:
   enable_extra_door: true
 
 packages:
-  extra_door: ${ left_garage_door if enable_extra_door else {} }
+  - ${ left_garage_door if enable_extra_door else {} }
 ```
-
-Both of these examples use a [Jinja expression](/components/substitutions#jinja-expressions) to determine whether
-`left_garage_door` package is actually included. `enable_extra_door` can be set from the
-[command line](/components/substitutions#command-line-substitutions) as well.
 
 ## Including packages with dynamic filenames
 
