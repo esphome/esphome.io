@@ -11,6 +11,7 @@ import lvglBarImg from './images/lvgl_bar.png';
 import lvglButtonImg from './images/lvgl_button.png';
 import lvglButtonmatrixImg from './images/lvgl_buttonmatrix.png';
 import lvglCanvasImg from './images/lvgl_canvas.png';
+import lvglChartImg from './images/lvgl_chart.png';
 import lvglCheckboxImg from './images/lvgl_checkbox.png';
 import lvglDropdownImg from './images/lvgl_dropdown.png';
 import lvglImageImg from './images/lvgl_image.png';
@@ -808,6 +809,128 @@ on_...:
       text: "Hello World"
       max_width: 100
       color: red
+```
+
+### `chart`
+
+The chart widget plots one or more series over time, as a line chart, a bar chart, or a scatter plot. For every
+type except `SCATTER`, each series is pushed a new point either whenever its sensor publishes a new state, or, if
+`update_interval` is set, at a fixed interval read from the sensor's current state. A `SCATTER` chart has no
+sensors; its points are pushed with the `lvgl.chart.add_point` action instead (see Actions below).
+
+<Image src={lvglChartImg} layout="constrained" alt="" />
+
+**Configuration variables:**
+
+- **series** (**Required**, list): The series to plot.
+  - **sensor** (*Optional*, [ID](/guides/configuration-types#id)): The sensor providing the series' values.
+    Required for every series unless `type` is `SCATTER`, where it must be omitted.
+  - **color** (*Optional*, [Color](/components/lvgl#lvgl-styling)): The color of the series' line, bars, or points.
+  - **format** (*Optional*, string): A `printf`-style format string used to show the series' last value in a small
+    legend label at the top left of the chart.
+- **type** (*Optional*, string): The chart type: `LINE`, `BAR`, `STACKED`, `SCATTER`, or `NONE` (the series data is
+  kept but nothing is drawn). `STACKED` draws a single stacked bar per point and only supports values of `0` or
+  above. `SCATTER` plots each series as a point cloud of (x, y) points, with no line between them by default; see
+  `lvgl.chart.add_point` below and the `items` *part* to draw a connecting line instead (set `line_width` there).
+  Defaults to `LINE`.
+
+  > [!NOTE]
+  > `BAR` and `STACKED` give each point a fixed-width column, with a gap between columns set by the `pad_column`
+  > [style property](/components/lvgl#lvgl-styling) (a few pixels by default). If `point_count` is high relative to
+  > the chart's width, the gaps alone can exceed the available space and no bars are drawn at all. As a rule of
+  > thumb, keep:
+  >
+  > `point_count × (pad_column + number of series) < chart width in pixels`
+  >
+  > For example, 48 points with 2 series on a 280px-wide chart and the default `pad_column` (around 10px) gives
+  > `48 × (10 + 2) = 576`, well over 280px, so nothing is drawn. If bars don't appear, lower `point_count`, reduce
+  > `pad_column` (`0` removes the gap entirely), or widen the chart.
+- **point_count** (*Optional*, int): The number of points kept per series. Each point occupies 4 bytes of RAM per
+  series (8 bytes for a `SCATTER` series, which also keeps an X value; plus 4 bytes of flash per series when
+  `persist` is enabled), so large values increase memory usage. Defaults to `100`.
+- **decimals** (*Optional*, 0-4): The number of decimal places kept when storing values, which also sets the
+  resolution of the automatic Y-axis (and, for `SCATTER`, X-axis) range. Defaults to `1`.
+- **min_value** / **max_value** (*Optional*, float): Fixed bounds for the Y-axis. If either is set, both must be
+  set. When neither is set, the Y-axis automatically rescales to fit the data, rounded outward to a whole unit (for
+  example, values between 12.7 and 21.3 give a range of 12 to 22). A `SCATTER` chart's X-axis always auto-rescales
+  this way.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): If set, a timer samples every series'
+  current sensor state at this interval. If not set, a point is pushed each time a series' sensor publishes a new
+  state. Not valid on a `SCATTER` chart.
+- **point_radius** (*Optional*, int): The radius of the point markers, shared by all series on the chart (LVGL does
+  not support a separate marker size per series). Only applies to `LINE` and `SCATTER` charts.
+- **persist** (*Optional*, boolean): ESP32 only. Saves the series history to flash so it survives a reboot. Not
+  valid on a `SCATTER` chart, whose history has no room for X values. Defaults to `false`.
+- **time_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of a [time](/components/time/) component.
+  Used together with `persist` and `update_interval` to fill the time the device was powered off with gaps instead
+  of resuming as if no time had passed.
+- **y_axis** (*Optional*, dict): If set, shows the current Y-axis bounds as two labels at the top-left and
+  bottom-left of the chart.
+  - **format** (**Required**, string): A `printf`-style format string used to format the bounds, for example `"%.0f°"`.
+- Style options from [Style properties](/components/lvgl#lvgl-styling). Unlike most other widgets, `width` and
+  `height` default to `100%`.
+
+A sensor value of `NaN` leaves a gap in the corresponding series' line.
+
+**Widget parts:** `main`, `items`, `indicator`, `cursor`.
+
+**Actions:**
+
+- `lvgl.chart.update` [action](/automations/actions#actions-action) changes the Y-axis bounds of a chart created
+  with fixed `min_value`/`max_value`. All other options are set once, when the chart is created.
+  - **id** (**Required**): The ID or a list of IDs of chart widgets to be updated.
+  - **min_value** / **max_value** (**Required**, float): The new Y-axis bounds.
+- `lvgl.chart.add_point` [action](/automations/actions#actions-action) pushes a new (x, y) point onto a series of a
+  `SCATTER` chart.
+  - **id** (**Required**): The ID or a list of IDs of chart widgets to add a point to.
+  - **series** (*Optional*, int, templatable): The 0-based index of the series (in the order listed under `series`)
+    to add the point to. Defaults to `0`.
+  - **x** (**Required**, float, templatable): The point's X value.
+  - **y** (**Required**, float, templatable): The point's Y value.
+
+**Triggers:**
+
+- [interaction](#triggers) LVGL event triggers.
+
+**Example:**
+
+```yaml
+# Example widget:
+- chart:
+    id: chart_id
+    point_count: 20
+    update_interval: 5s
+    y_axis:
+      format: "%.0f°"
+    series:
+      - sensor: indoor_temperature_sensor
+        color: 0xFF0000
+        format: "%.1f°"
+      - sensor: outdoor_temperature_sensor
+
+# Example action:
+on_...:
+  - lvgl.chart.update:
+      id: chart_id
+      min_value: 0
+      max_value: 40
+```
+
+**Scatter chart example:**
+
+```yaml
+- chart:
+    id: scatter_chart_id
+    type: SCATTER
+    point_count: 20
+    series:
+      - color: 0xFF0000
+
+on_...:
+  - lvgl.chart.add_point:
+      id: scatter_chart_id
+      x: 12.5
+      y: 34.0
 ```
 
 ### `checkbox`
