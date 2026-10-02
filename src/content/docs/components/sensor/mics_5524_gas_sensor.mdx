@@ -62,7 +62,7 @@ The vendor model is what the [DFRobot_MICS](https://github.com/DFRobot/DFRobot_M
 the [Fermion tutorial](https://www.makerguides.com/fermion-mems-multi-gas-sensor-mics-5524-with-arduino/) uses. Its
 clean-air reference is captured in place, so it does not depend on the board's load resistor or on the exact divider
 ratio - which makes it the default for the common unlabeled modules. The datasheet model evaluates the published curve
-of the gas against a calibrated `R0`; only CO ships with coefficients, every other gas needs explicit `a:` and `b:`.
+of the gas against a calibrated `R0`; only CO ships with coefficients, every other gas needs explicit `coefficient_a:` and `coefficient_b:`.
 
 ## Example configuration
 
@@ -74,14 +74,14 @@ sensor:
     name: "H2 trace (MiCS-5524)"
     gas: H2
     pin: GPIO33                  # or: voltage: some_adc_or_ads1115_sensor
-    divider:                     # 10k/20k, the recommended wiring
+    voltage_divider:             # 10k/20k, the recommended wiring
       r1: 10.0                   # kOhm, in series with A0 (top)
       r2: 20.0                   # kOhm, to GND (bottom) -> voltage_multiplier 1.5
     vcc: 5.0
     warmup_time: 3min            # DFRobot's heater warm-up
     calibration:
       delay: 3min                # in clean air, after boot
-      samples: 10
+      sample_count: 10
       persist: true
     enable_pin:                  # EN of the module (LOW = enabled)
       number: GPIO4
@@ -89,7 +89,7 @@ sensor:
 ```
 
 The AO output can also be read by an existing sampler. An ADS1115 (16 bit, gain 6.144 V) covers the 0 - 5 V output
-directly, so neither `divider` nor `adc_attenuation` are needed:
+directly, so neither `voltage_divider` nor `adc_attenuation` are needed:
 
 ```yaml
 # Example configuration entry, external sampler
@@ -122,7 +122,7 @@ sensor:
     name: "H2 trace (MiCS-5524)"
     gas: H2
     pin: GPIO33
-    divider:
+    voltage_divider:
       r1: 10.0
       r2: 20.0
     calibration:
@@ -179,20 +179,20 @@ button:
   `0db`, `2.5db`, `6db`, `11db`, `12db`, `auto`. Defaults to `12db`. ESP32 only.
 - **adc_samples** (*Optional*, int): Only for `pin`. The number of ADC samples the generated `adc` sensor averages.
   Defaults to `1`. Range: 1-255.
-- **divider** (*Optional*): Describes the voltage divider of the wiring and derives
+- **voltage_divider** (*Optional*): Describes the voltage divider of the wiring and derives
   `voltage_multiplier = (r1 + r2) / r2` from it. Mutually exclusive with `voltage_multiplier`.
   - **r1** (*Required*, float): Resistor in series with the sensor output, in kOhm.
   - **r2** (*Required*, float): Resistor to ground, in kOhm.
   - `{r1: 10.0, r2: 20.0}` maps the 0 - 5 V output to 0 - 3.33 V (`voltage_multiplier: 1.5`).
 - **voltage_multiplier** (*Optional*, float): The multiplier applied to the sampled voltage, the inverse of the
   divider ratio (`1.5` for 10k/20k, `1.0` for a directly connected sensor or a sampler with a wider input range).
-  Defaults to `1.0`. Mutually exclusive with `divider`.
+  Defaults to `1.0`. Mutually exclusive with `voltage_divider`.
 - **adc_input_max** (*Optional*, float): The largest voltage the ADC measures correctly, `3.3` for the ESP32 (VDD) and
   `6.144` for an ADS1115. Above it a warning is logged. Defaults to `3.3`.
 - **adc_pin_max** (*Optional*, float): The largest voltage the ADC pin may ever see, `3.6` for the ESP32 (absolute
   maximum, VDD + 0.3 V). The configuration is rejected above it. Defaults to `3.6`.
 - **vcc** (*Optional*, float): The supply voltage of the module. Defaults to `5.0`.
-- **samples** (*Optional*, int): The number of AO samples averaged per update. Defaults to `4`. Range: 1-255.
+- **sample_count** (*Optional*, int): The number of AO samples averaged per update. Defaults to `4`. Range: 1-255.
 - **sample_interval** (*Optional*, [Time](/guides/configuration-types#time)): The delay between those samples.
   Defaults to `20ms`.
 - **warmup_time** (*Optional*, [Time](/guides/configuration-types#time)): The heater warm-up. Nothing is published
@@ -215,8 +215,9 @@ button:
   boot. Rejected with `conversion: dfrobot`.
 - **air_reference** (*Optional*, float): A fixed clean-air reference in volts (`VCC - V_AO` measured in clean air) for
   the vendor model. Disables the automatic calibration at boot. Rejected with `conversion: datasheet`.
-- **a** / **b** (*Optional*, float): The coefficients of the datasheet power law `ppm = a * ratio^b`. Only for
-  `conversion: datasheet`, where both are required for every gas except CO (which ships with `a: 6.3`, `b: -1.1`).
+- **coefficient_a** / **coefficient_b** (*Optional*, float): The coefficients of the datasheet power law
+  `ppm = a * ratio^b`. Only for `conversion: datasheet`, where both are required for every gas except CO (which
+  ships with `coefficient_a: 6.3`, `coefficient_b: -1.1`).
   Rejected with `conversion: dfrobot`.
 - **min_ppm** / **max_ppm** (*Optional*, float): The clamp of the published value, applied on top of the model's own
   range. `min_ppm` defaults to `0`, `max_ppm` to the gas range (1000 ppm for H2/CO, 500 for NH3/C2H5OH, 25000 for
@@ -224,12 +225,12 @@ button:
 
 > [!NOTE]
 > The coefficient options belong to one model only and a mismatch fails the build instead of publishing nonsense:
-> with `conversion: dfrobot` the options `rl:`, `r0:`, `a:` and `b:` are rejected, with `conversion: datasheet` the
-> option `air_reference:` is.
+> with `conversion: dfrobot` the options `rl:`, `r0:`, `coefficient_a:` and `coefficient_b:` are rejected, with
+> `conversion: datasheet` the option `air_reference:` is.
 
 ### Supported gases
 
-| `gas:` | Aliases | Vendor range | Vendor `threshold` | Vendor `gain` | Datasheet `a` / `b` |
+| `gas:` | Aliases | Vendor range | Vendor `threshold` | Vendor `gain` | Datasheet `coefficient_a` / `coefficient_b` |
 | --- | --- | --- | --- | --- | --- |
 | `CO` | `carbon monoxide`, `carbonmonoxide` | 1 - 1000 ppm | 0.425 | 0.000405 | 6.3 / -1.1 |
 | `H2` | `hydrogen` | 1 - 1000 ppm | 0.279 | 0.00026 | - |
@@ -242,7 +243,7 @@ button:
 - The vendor's own minimum applies near the threshold: H2 and CO report 0 ppm below 1 ppm, NH3 and C2H5OH below
   10 ppm and CH4 below 1000 ppm.
 - The datasheet coefficients of CO are a two-point fit of the datasheet curve (10 ppm at RS/R0 = 0.5 and 1000 ppm at
-  RS/R0 = 0.01). Every other gas needs explicit `a:` and `b:`.
+  RS/R0 = 0.01). Every other gas needs explicit `coefficient_a:` and `coefficient_b:`.
 
 ### Calibration
 
@@ -257,7 +258,7 @@ datasheet  R0            = RS measured in clean air           (ratio is 1.0 ther
 - **calibration** (*Optional*): Enables the automatic calibration at boot.
   - **delay** (*Optional*, [Time](/guides/configuration-types#time)): The time to wait after boot before the reference
     is sampled. Defaults to `60s`.
-  - **samples** (*Optional*, int): The number of readings averaged for the reference. Defaults to `10`. Range: 1-1000.
+  - **sample_count** (*Optional*, int): The number of readings averaged for the reference. Defaults to `10`. Range: 1-1000.
   - **persist** (*Optional*, boolean): Store the reference in flash and reuse it after a reboot. Defaults to `true`.
 
 The reference is logged as `air reference = ...` (vendor model) or `R0 = ...` (datasheet model) and can be pinned with
@@ -310,7 +311,7 @@ All of these options are optional. The four entity options need an `id` on the s
   independent measurements.
 - **EN pin**: `enable_pin` is driven once at setup (enabled) and never toggled at runtime, because on these modules
   the warm-up is part of the calibration - duty-cycling the sensor would invalidate the reference.
-- **ESP32 ADC**: The ESP32 ADC is noisy and bottoms out around 75 mV (~7 ppm CO). Raise `samples`, add an RC filter or
+- **ESP32 ADC**: The ESP32 ADC is noisy and bottoms out around 75 mV (~7 ppm CO). Raise `sample_count`, add an RC filter or
   use an [ADS1115](/components/sensor/ads1115/) (16 bit, gain `6.144` covers the 0 - 5 V output without a divider).
 - **Accuracy**: Both conversion models are coarse fits of a multi-gas sensor. Treat the published ppm value as an
   estimate of the concentration of the selected gas, not as a measurement of it.
@@ -323,7 +324,7 @@ All of these options are optional. The four entity options need an `id` on the s
 | warning about `0.0000 V` on the analog output | AO not wired, module not powered from 5 V, EN not enabled (or the wrong polarity in `enable_pin`) |
 | ratio stuck near 1.0 | sensor still warming up, or a gas-free environment (that is the baseline) |
 | ratio at 0.8 - 0.9 in clean air, or drifting away from 1.0 after a calibration | the stored reference is stale: it was captured while the module was still warming up or burning in, or the sensor drifted. Re-calibrate once the reading is stable (24 - 48 h of burn-in for a new module). While the reference is too high, the vendor model over-reports |
-| values jump around | ESP32 ADC noise - raise `samples`, add an RC filter or use an `ads1115` |
+| values jump around | ESP32 ADC noise - raise `sample_count`, add an RC filter or use an `ads1115` |
 | ppm far too high | wrong `conversion` for the hardware (the vendor model expects the module's analog front-end), or a reference that was captured while gas was present |
 | ppm always 0 | the vendor thresholds sit close to the clean-air ratio; re-calibrate in really clean air and check the ratio diagnostic |
 
