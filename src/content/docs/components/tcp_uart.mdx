@@ -15,9 +15,12 @@ connection is closed.
 
 To copy a hardware UART to a TCP socket instead, see [UART TCP](/components/uart_tcp/).
 
+> [!WARNING]
+> The connection is plain TCP with no encryption and no authentication; `allowed_ips` filters by address but
+> does not authenticate the peer. If it is omitted, any host that can reach the port is accepted. Only use
+> this component on a trusted network.
+
 > [!NOTE]
-> The connection is plain TCP without encryption and no authentication; `allowed_ips` filters by address but
-> does not authenticate the peer. Only use this component on a trusted network.
 > While the connection is down, written bytes are dropped and a warning is logged.
 
 ## Client
@@ -44,7 +47,7 @@ Modbus TCP server.
 tcp_uart:
   - id: meter_bus
     role: server
-    port: 502
+    port: 8899
 ```
 
 ## Configuration variables
@@ -69,8 +72,8 @@ tcp_uart:
 - **stop_bits** (*Optional*, int): The number of stop bits reported to consuming components. One of `1`, `2`.
   Defaults to `1`.
 - **reconnect_interval** (*Optional*, [Time](/guides/configuration-types#time)): The time to wait before connecting
-  again after a failed or closed connection. For a server, this is also the wait after a failed listen. Defaults
-  to `5s`.
+  again after a failed or closed connection. For a server, this is the wait after a failed listen; a new client
+  is accepted as soon as the current one disconnects. Defaults to `5s`.
 - **connected** (*Optional*): A binary sensor that reports whether the TCP connection is established. All options
   from [Binary Sensor](/components/binary_sensor#config-binary_sensor) are supported.
 
