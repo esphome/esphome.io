@@ -36,6 +36,10 @@ voice_assistant:
 - **micro_wake_word** (*Optional*, [ID](/guides/configuration-types#id)): The [micro_wake_word](/components/micro_wake_word/)
   component used for wake word detection. Configuring this allows Home Assistant to change which wake word model is enabled.
 
+- **http_request_id** (*Optional*, [ID](/guides/configuration-types#id)): The [HTTP Request](/components/http_request/)
+  component used to download wake word models offered by Home Assistant. Requires `micro_wake_word` above.
+  See [Downloading wake word models](#downloading-wake-word-models) below.
+
 - **speaker** (*Optional*, [ID](/guides/configuration-types#id)): The [speaker](/components/speaker/) to use to output
   the response. Cannot be used with `media_player` below.
 
@@ -194,6 +198,42 @@ voice_assistant:
 
 See our [example YAML files on GitHub](https://github.com/esphome/wake-word-voice-assistants/blob/main/m5stack-atom-echo/m5stack-atom-echo.yaml)
 for continuous wake word detection.
+
+## Downloading wake word models
+
+Home Assistant can offer wake word models that are not built into the firmware. Add `http_request_id` and the device
+downloads a model the first time you turn that wake word on in Home Assistant, then runs it alongside any models listed
+under [micro_wake_word](/components/micro_wake_word/).
+
+```yaml
+http_request:
+  id: model_http_request
+
+micro_wake_word:
+  id: mww_id
+  microphone: mic_id
+  models:
+    - model: okay_nabu
+
+voice_assistant:
+  microphone: mic_id
+  micro_wake_word: mww_id
+  http_request_id: model_http_request
+```
+
+Models can also be left out of `micro_wake_word` entirely, in which case every wake word comes from Home Assistant.
+
+Downloaded models are held in RAM, so a device with [PSRAM](/components/psram/) is recommended. They are not written to
+flash, so a model is downloaded again after a reboot. Which wake words you turned on is remembered, so the device
+restores the same set on its own.
+
+Home Assistant sends the list of models it offers each time it asks the device for its configuration, and the device
+keeps its own list in step. A model is unloaded and its memory freed once Home Assistant stops offering it. A model that
+fails to download or does not suit the device is left turned off rather than retried on every boot.
+
+> [!NOTE]
+> Only microWakeWord models are supported. A downloaded model also has to use the same `feature_step_size` as the
+> models already configured, otherwise it is rejected. Models offered for other wake word engines are ignored.
 
 ## Push to Talk
 
