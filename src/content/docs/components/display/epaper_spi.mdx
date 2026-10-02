@@ -36,7 +36,7 @@ pins and dimensions specified.
 | SSD1677                | Solomon      | [https://www.solomon-systech.com/product/ssd1677/](https://www.solomon-systech.com/product/ssd1677/) |
 | SSD1683                | Solomon      | [https://www.solomon-systech.com/product/ssd1683/](https://www.solomon-systech.com/product/ssd1683/) |
 | T133A01                | TianMa       | 13.3" 6-color e-paper controller IC with dual-CS SPI architecture          |
-| UC8179                 | UltraChip    | E-paper controller used by 800x480 7.5" panels (mono and 3-color variants) |
+| UC8179                 | UltraChip    | [E-paper controller used by 800x480 7.5" panels (mono and 3-color variants)](https://www.buydisplay.com/download/ic/UC8179.pdf) |
 
 ## Supported display panels
 
@@ -57,6 +57,7 @@ the pins used to interface to the display to be specified.
 | WeAct-2.13in-3c           | WeAct               | 2.13" 3-color e-paper (250x122, SSD1683)           |
 | WeAct-2.9in-3c            | WeAct               | 2.9" 3-color e-paper (128x296, SSD1683)            |
 | WeAct-4.2in-3c            | WeAct               | 4.2" 3-color e-paper (400x300, SSD1683)            |
+| 7.5in-bv3-bwr-xsrupb      | Various             | 7.5" 3-color e-paper (800x480, UC8179) - FPC-8612, DEPG0750RWF86BF30, XSRUPB-2025 |
 
 ## Supported integrated display boards
 
@@ -110,6 +111,9 @@ but can be overridden if needed.
   - **mirror_y** (**Required**, boolean): If true, mirror the y axis.
 
 - **reset_duration** (*Optional*, [Time](/guides/configuration-types#time)): Duration for the display reset operation. Defaults to `200ms`.
+- **invert_red** (*Optional*, boolean): Invert the red color plane. Some BWR e-paper panels with OTP waveforms use
+  inverted red encoding (0 = red, 1 = no red). Only available for models that support it (e.g. `7.5in-bv3-bwr-xsrupb`).
+  Defaults to `true` for the `7.5in-bv3-bwr-xsrupb` model.
 - **lambda** (*Optional*, [lambda](/automations/templates#config-lambda)): The lambda to use for rendering the content on the display.
   See [Display Rendering Engine](/components/display#display-engine) for more information.
 - **pages** (*Optional*, list): Show pages instead of a single lambda. See [Display Pages](/components/display#display-pages).
