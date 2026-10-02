@@ -16,8 +16,8 @@ connection is closed.
 To copy a hardware UART to a TCP socket instead, see [UART TCP](/components/uart_tcp/).
 
 > [!NOTE]
-> The connection is plain TCP without encryption. On a server, `allowed_ips` only limits which IPv4 addresses may
-> connect. Only use this component on a trusted network.
+> The connection is plain TCP without encryption and no authentication; `allowed_ips` filters by address but
+> does not authenticate the peer. Only use this component on a trusted network.
 > While the connection is down, written bytes are dropped and a warning is logged.
 
 ## Client
@@ -45,9 +45,6 @@ tcp_uart:
   - id: meter_bus
     role: server
     port: 502
-    allowed_ips:
-      - 192.0.2.20
-      - 192.0.2.0/24
 ```
 
 ## Configuration variables
@@ -57,10 +54,13 @@ tcp_uart:
 - **role** (*Optional*, string): `client` or `server`. Defaults to `client`.
 - **host** (**Required** when `role` is `client`, string): The host to connect to. An IP address or a hostname.
   This option cannot be used when `role` is `server`.
-- **port** (**Required**, int): When `role` is `client`, the TCP port to connect to. When `role` is `server`, the TCP port to listen on.
+- **port** (**Required**, int): When `role` is `client`, the TCP port to connect to. When `role` is `server`,
+  the TCP port to listen on.
 - **allowed_ips** (*Optional* when `role` is `server`, list): IPv4 addresses that may connect. A plain
-  address is one host. A network is written in CIDR form, for example `192.0.2.0/24`. At most 8 entries. If
-  omitted, every address may connect. This option cannot be used when `role` is `client`.
+  address is one host. A network is written in CIDR form, for example `192.0.2.0/24`. At most 255 entries. If
+  the option is omitted, every address may connect. A rejected client is closed immediately and logged as a
+  warning at most once every 5 seconds; an IPv6 client is rejected unless it carries an IPv4 mapped address, as
+  on a dual stack network. This option cannot be used when `role` is `client`.
 - **baud_rate** (*Optional*, int): The baud rate reported to consuming components. The socket itself has no clock;
   components such as `modbus` read this value for their frame timing. Defaults to `9600`.
 - **data_bits** (*Optional*, int): The number of data bits reported to consuming components. Defaults to `8`.
