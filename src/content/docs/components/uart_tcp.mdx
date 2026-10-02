@@ -12,8 +12,12 @@ The component can connect to a remote host (`role: client`) or listen for one in
 Only one TCP connection is open at a time. When `role` is `server`, a new client is accepted only after the current
 connection is closed.
 
+> [!WARNING]
+> The connection is plain TCP with no encryption and no authentication. Any host that can reach the port
+> can connect and exchange bytes with the UART, and in server mode the first client to connect is accepted.
+> Only use this component on a trusted network.
+
 > [!NOTE]
-> The connection is plain TCP without encryption or authentication, so only use it on a trusted network.
 > While no connection is open, bytes from the UART are discarded; a fast peer is throttled by TCP flow
 > control instead of blocking the device.
 
