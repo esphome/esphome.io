@@ -188,6 +188,40 @@ specific to a widget are described in each section below. Some of these properti
 `lvgl.<widget_type>.update` action, e.g. `lvgl.label.update` allows updating not only the common style properties,
 but also the `text` property of a label.
 
+### Updating a widget that has no `id:` of its own
+
+Every `lvgl.<widget_type>.update` action's `id:` normally refers to a widget's own configured
+[ID](/guides/configuration-types#id). It can instead be given a reference to a widget that was never assigned an `id:` --
+one nested inside another widget's `widgets:` -- by specifying the widget that *does* have an ID, plus a path of child
+indices to walk from it:
+
+- **parent** (**Required**, [ID](/guides/configuration-types#id)): The ID of a widget with children.
+- **path** (**Required**, list of templatable ordinal numbers): Child indices to walk from `parent`. `path: [1]` selects
+  `parent`'s 2nd child (indices are zero-based); `path: [1, 0]` selects that child's own 1st child, and so on.
+
+```yaml
+- button:
+    id: my_button
+    widgets:
+      - label:
+          text: "Original"
+
+on_...:
+  - lvgl.label.update:
+      id:
+        parent: my_button
+        path: [0]
+      text: "Updated"
+```
+
+`parent` can be any widget with children, not only a `button` -- whatever widget the target is nested inside. If the
+path doesn't resolve to anything (for example, if the widget it used to point to no longer exists), the update is
+silently skipped rather than causing a crash.
+
+This isn't supported for widget types backed by a compound C++ object rather than a single LVGL object --
+`dropdown`, `page`, `msgbox` -- nor for the generic `lvgl.widget.update` action, only the per-widget-type
+`lvgl.<widget_type>.update` actions.
+
 ## Text property
 
 Several widgets have a `text` property, and the possible ways this can be specified are common to all `text` properties.
