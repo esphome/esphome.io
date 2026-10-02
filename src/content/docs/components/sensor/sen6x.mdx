@@ -32,6 +32,7 @@ The [I²C Bus](/components/i2c) is required to be set up in your configuration f
 # Example configuration entry
 sensor:
   - platform: sen6x
+    id: my_sen6x
     type: SEN69C
     pm_1_0:
       name: PM <1µm Weight concentration
@@ -169,6 +170,44 @@ sensor:
 > [!NOTE]
 > The sensor needs about a minute "warm-up". The VOC and NOx gas index algorithm needs a
 > number of samples before the values stabilize.
+## Actions
+
+The measurement can be controlled and maintenance functions triggered from automations. On the SEN6x family,
+fan cleaning and the SHT heater only work while the measurement is stopped, and the device needs wait time
+after each command (1400 ms after stop, 10 s after fan cleaning, 20 s after the heater). Commands sent too
+early are ignored with a "Device busy" warning.
+
+### `sen6x.start_measurement` Action
+
+Starts a continuous measurement. The warm-up period applies again before values are published.
+On SEN63C and SEN69C the measurement must not be restarted within 24 s of a start while the CO₂ sensor
+is conditioning; ESPHome enforces this.
+
+### `sen6x.stop_measurement` Action
+
+Stops the measurement and puts the device in idle mode. No values are published while stopped.
+
+### `sen6x.start_fan_cleaning` Action
+
+Runs the fan at maximum speed for 10 seconds to blow out accumulated dust. Only accepted in idle mode.
+
+### `sen6x.activate_sht_heater` Action
+
+Activates the built-in heater of the RH/T sensor for 1 second with 200 mW to reverse creep at high humidity.
+Only accepted in idle mode.
+
+```yaml
+# Example: fan cleaning via a button
+button:
+  - platform: template
+    name: Fan Cleaning
+    on_press:
+      - sen6x.stop_measurement: my_sen6x
+      - delay: 2s
+      - sen6x.start_fan_cleaning: my_sen6x
+      - delay: 11s
+      - sen6x.start_measurement: my_sen6x
+```
 
 ## Wiring
 
