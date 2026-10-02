@@ -35,7 +35,7 @@ The regression method `linear` uses `log10(PPM) = (log10(ratio) - b) / a` and `i
 calibration stored in flash or from a clean-air calibration performed at runtime.
 
 The MQ modules need a 5 V supply, so AO can exceed the input range of an ESP32 ADC. Connect AO to the ADC through
-a voltage divider and describe the wiring with the `divider` option, as in the examples below.
+a voltage divider and describe the wiring with the `voltage_divider` option, as in the examples below.
 
 ## Example Configuration
 
@@ -53,7 +53,7 @@ sensor:
     name: "Hydrogen concentration"
     sensor_type: MQ-8
     voltage: mq8_adc
-    divider:
+    voltage_divider:
       r1: 10.0
       r2: 20.0
 ```
@@ -67,7 +67,7 @@ sensor:
     name: "Hydrogen concentration"
     sensor_type: MQ-8
     pin: GPIOXX
-    divider:
+    voltage_divider:
       r1: 10.0
       r2: 20.0
 ```
@@ -80,7 +80,7 @@ sensor:
     name: "Hydrogen concentration"
     sensor_type: MQ-8
     pin: GPIOXX
-    divider:
+    voltage_divider:
       r1: 10.0
       r2: 20.0
     calibration:
@@ -89,7 +89,7 @@ sensor:
 ```
 
 > [!NOTE]
-> With `pin`, `divider` (or `voltage_multiplier`) is required. Without it the 5 V output of the module would map
+> With `pin`, `voltage_divider` (or `voltage_multiplier`) is required. Without it the 5 V output of the module would map
 > to more than the absolute maximum input voltage of the ADC pin and the configuration is rejected at compile
 > time.
 
@@ -111,7 +111,7 @@ sensor:
 
 ### Analog Input
 
-- **divider** (*Optional*): The voltage divider between the AO pin and the ADC.
+- **voltage_divider** (*Optional*): The voltage divider between the AO pin and the ADC.
   - **r1** (**Required**, float): The resistor in series with AO, in kOhm.
   - **r2** (**Required**, float): The resistor to ground, in kOhm.
 
@@ -119,17 +119,17 @@ sensor:
   with `voltage_multiplier`.
 - **voltage_multiplier** (*Optional*, float): The factor applied to the sampled voltage, that is the inverse of
   the divider ratio: `2.0` for a 10k/10k divider, `1.0` when AO is connected directly. Defaults to `1.0`.
-  Mutually exclusive with `divider`.
+  Mutually exclusive with `voltage_divider`.
 - **adc_attenuation** (*Optional*, string): Only with `pin` and only on ESP32. The attenuation of the generated
   `adc` sensor: `0db`, `2.5db`, `6db`, `11db`, `12db` or `auto`. Defaults to `12db`.
 - **adc_samples** (*Optional*, int): Only with `pin`. The number of ADC readings averaged per update by the
   generated `adc` sensor. Range `1` to `255`. Defaults to `1`.
-- **samples** (*Optional*, int): The number of AO readings that are averaged into one measured voltage. Range `1`
-  to `255`. Defaults to `2`. This is independent of `adc_samples`, which averages inside the generated `adc`
-  sensor.
-- **sample_interval** (*Optional*, [Time](/guides/configuration-types#time)): The delay between two of those
-  readings, which also blocks the main loop for `(samples - 1) × sample_interval` during every update. It is also
-  the interval at which the samples of a clean-air calibration are taken. Defaults to `20ms`.
+- **sample_count** (*Optional*, int): The number of AO readings that are averaged into one measured voltage.
+  Range `1` to `255`. Defaults to `2`. This is independent of `adc_samples`, which averages inside the
+  generated `adc` sensor. The readings are taken back to back, so the update blocks the main loop only for the
+  sampling time of the sampler itself and not for `sample_count * sample_interval`.
+- **sample_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval at which the samples
+  of a clean-air calibration are taken. Defaults to `20ms`.
 - **adc_input_max** (*Optional*, float): The largest voltage the ADC measures correctly, that is the ADC supply
   voltage. Exceeding it only disables the range warning below. Defaults to `3.3`.
 - **adc_pin_max** (*Optional*, float): The largest voltage the ADC pin may ever see, that is the absolute maximum
@@ -146,16 +146,16 @@ sensor:
 
 ### Curve and Coefficients
 
-- **a** (*Optional*, float): The `a` coefficient of the regression curve. Required for `CUSTOM`, `MQ-136`,
+- **coefficient_a** (*Optional*, float): The `a` coefficient of the regression curve. Required for `CUSTOM`, `MQ-136`,
   `MQ-214`, `MQ-303A` and `MQ-309A`, optional for all other types where the built-in value is used by default.
-- **b** (*Optional*, float): The `b` coefficient of the regression curve. Required for `CUSTOM`, `MQ-136`,
+- **coefficient_b** (*Optional*, float): The `b` coefficient of the regression curve. Required for `CUSTOM`, `MQ-136`,
   `MQ-214`, `MQ-303A` and `MQ-309A`, optional for all other types.
 - **regression_method** (*Optional*, string): The regression method, one of `exponential`, `linear` or `inverse`.
   Defaults to the method of the built-in curve.
 - **curve** (*Optional*, string): The coefficient dataset to use, `standard` (the MQUnifiedsensor values,
   **Default**) or `mqdatascience` (the values published by the
   [MQDataScience](https://github.com/abcdaaaaaaaaa/MQDataScience) project, currently only for the MQ-8 and
-  `gas: H2`, about 11 % lower). An alternative curve provides `a`, `b` and the regression method, so it cannot be
+  `gas: H2`, about 11 % lower). An alternative curve provides the coefficients and the regression method, so it cannot be
   combined with those options.
 - **ratio_mode** (*Optional*, string): The convention used to form the ratio that the curve is evaluated with,
   `rs_r0` or `r0_rs`. Defaults to `rs_r0`, which is the datasheet convention the built-in coefficients are fitted
@@ -180,7 +180,7 @@ reused, or taken from the datasheet of the module.
     used to let the heater stabilise. Defaults to `60s`.
   - **duration** (*Optional*, [Time](/guides/configuration-types#time)): The maximum duration of the calibration.
     R0 is accepted from the samples taken so far when it elapses. `0s` disables the timeout. Defaults to `0s`.
-  - **samples** (*Optional*, int): The number of clean-air samples that are averaged into R0. Range `1` to
+  - **sample_count** (*Optional*, int): The number of clean-air samples that are averaged into R0. Range `1` to
     `1000`. Defaults to `50`.
   - **persist** (*Optional*, boolean): Store the calibrated R0 in flash and restore it after a reboot.
     Defaults to `true`.
@@ -258,26 +258,26 @@ the type; the other columns are the defaults that apply when the corresponding o
 | `MQ-9` | `exponential` | 9.6 | `LPG` | `CH4`, `CO`, `LPG` | 10000 |
 | `MQ-131` | `linear` | 1 | `O3` | `O3` | 10 |
 | `MQ-135` | `linear` | 1 | `NH3` | `H2`, `NH3`, `TOLUENE` | 10000 |
-| `MQ-136` | `exponential` | 1 | - | none, `a` and `b` required | 200 |
+| `MQ-136` | `exponential` | 1 | - | none, `coefficient_a` and `coefficient_b` required | 200 |
 | `MQ-137` | `linear` | 1 | `NH3` | `NH3` | 500 |
 | `MQ-138` | `linear` | 1 | `TOLUENE` | `ACETONE`, `ALCOHOL`, `TOLUENE` | 1000 |
-| `MQ-214` | `exponential` | 1 | - | none, `a` and `b` required | 10000 |
-| `MQ-303A` | `exponential` | 1 | - | none, `a` and `b` required | 1000 |
-| `MQ-309A` | `exponential` | 1 | - | none, `a` and `b` required | 1000 |
-| `CUSTOM` | `exponential` | 1 | - | none, `a` and `b` required | 10000 |
+| `MQ-214` | `exponential` | 1 | - | none, `coefficient_a` and `coefficient_b` required | 10000 |
+| `MQ-303A` | `exponential` | 1 | - | none, `coefficient_a` and `coefficient_b` required | 1000 |
+| `MQ-309A` | `exponential` | 1 | - | none, `coefficient_a` and `coefficient_b` required | 1000 |
+| `CUSTOM` | `exponential` | 1 | - | none, `coefficient_a` and `coefficient_b` required | 10000 |
 
 The MQ-131 measures ozone, whose datasheet range is given in ppb (10 - 1000 ppb), which is why its default
 `max_ppm` is the unusually low `10`.
 
 `curve: mqdatascience` is currently available for the MQ-8 with `gas: H2` only. It replaces the built-in fit with
-the MQDataScience fit (`a = 18391.5667`, `b = -1.4494`, method `inverse`), which reports about 11 % lower values
-across the whole range.
+the MQDataScience fit (`coefficient_a = 18391.5667`, `coefficient_b = -1.4494`, method `inverse`), which reports
+about 11 % lower values across the whole range.
 
 ## Notes and Limitations
 
 - **Power supply**: The modules need 5 V on `VCC`. The ADC pins of an ESP32 are not 5 V tolerant (the absolute
   maximum is VDD + 0.3 V), so never connect AO directly to a GPIO. The recommended wiring is a 10 kOhm / 20 kOhm
-  divider (5 V becomes 3.33 V), which is what `divider: {r1: 10.0, r2: 20.0}` describes.
+  divider (5 V becomes 3.33 V), which is what `voltage_divider: {r1: 10.0, r2: 20.0}` describes.
 - **Two-phase heaters**: The MQ-7, the MQ-136 and the MQ-309A need a cycled heater supply - for example 5 V for
   60 s followed by 1.4 V for 90 s for the MQ-7 - and the MQ-303A needs a stable 5 V ± 0.1 V. This component only
   measures the analog output and logs an informational note about the heater during configuration, so the heater
