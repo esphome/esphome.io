@@ -810,6 +810,82 @@ on_...:
       color: red
 ```
 
+### `chart`
+
+The chart widget displays one or more data series as a line, bar, or scatter chart. Line and bar series use
+Y values at evenly spaced X positions. Scatter series use explicit X/Y points.
+
+**Configuration variables:**
+
+- **type** (*Optional*, string): Chart type, one of `NONE`, `LINE`, `BAR`, or `SCATTER`. Defaults to `LINE`.
+- **update_mode** (*Optional*, string): How new points are added, one of `SHIFT` or `CIRCULAR`. Defaults to `SHIFT`.
+- **point_count** (*Optional*, int): Number of points per series. The range is `1` to `4096`. Defaults to `10`.
+- **div_line_count** (*Optional*, list): Two integer values for the horizontal and vertical division line counts.
+- **x_axis**, **y_axis**, **secondary_x_axis**, **secondary_y_axis** (*Optional*, dict): Axis range settings:
+  - **min_value** (*Optional*, int): Minimum axis value. Defaults to `0`.
+  - **max_value** (*Optional*, int): Maximum axis value. Defaults to `100`.
+- **series** (*Optional*, list): Series definitions:
+  - **id** (**Required**, [ID](/guides/configuration-types/#id)): Series ID used by
+    `lvgl.chart.series.update`.
+  - **color** (*Optional*, [color](/components/lvgl/#lvgl-color)): Series color. Defaults to `0`.
+  - **y_axis** (*Optional*, string): Axis used by the series. Defaults to `PRIMARY_Y`.
+  - **values** (*Optional*, list of int): Initial Y values for a `LINE` or `BAR` series.
+  - **points** (*Optional*, list): Initial points for a `SCATTER` series. Each point requires **x** and **y** values.
+- Style options from [Style properties](/components/lvgl/#lvgl-styling).
+
+The number of entries in **values** or **points** must not exceed **point_count**. A scatter series must use
+**points**; other chart types must use **values**.
+
+**Actions:**
+
+- `lvgl.chart.update` [action](/automations/actions/#actions-action) updates chart properties and common widget
+  styles, states, and flags.
+  - **id** (**Required**): The ID or a list of IDs of chart widgets to update.
+  - **update_mode**, **point_count**, **div_line_count**, **x_axis**, **y_axis**, **secondary_x_axis**, and
+    **secondary_y_axis** (*Optional*): Same as the chart configuration options above. The chart **type** cannot be
+    changed at runtime. When updating an axis range, both **min_value** and **max_value** are required.
+- `lvgl.chart.series.update` [action](/automations/actions/#actions-action) updates a chart series.
+  - **id** (**Required**): The series ID defined in **series**.
+  - **value** (*Optional*, int): Append one Y value to a `LINE` or `BAR` series.
+  - **values** (*Optional*, list of int): Rewrite a `LINE` or `BAR` series by index.
+  - **point** (*Optional*): Append one point to a `SCATTER` series. Both **x** and **y** are required.
+
+Exactly one of **value**, **values**, or **point** is required. The payload must match the configured chart type.
+
+**Triggers:**
+
+- [interaction](#triggers) LVGL event triggers.
+
+**Example:**
+
+```yaml
+- chart:
+    id: scatter_chart
+    width: 200
+    height: 120
+    point_count: 10
+    type: SCATTER
+    x_axis:
+      min_value: 0
+      max_value: 100
+    y_axis:
+      min_value: 0
+      max_value: 100
+    series:
+      - id: scatter_series
+        color: 0x00FF00
+        points:
+          - { x: 10, y: 20 }
+          - { x: 30, y: 60 }
+
+on_...:
+  - lvgl.chart.series.update:
+      id: scatter_series
+      point:
+        x: 50
+        y: 40
+```
+
 ### `checkbox`
 
 The checkbox widget is made internally from a *tick box* and a label. When the checkbox is clicked the tick box's `checked` state will be toggled.
