@@ -20,16 +20,12 @@ connection is closed.
 > [!NOTE]
 > Baud rate, data bits, parity and stop bits are set on the UART bus. They are not options of this component.
 
+The examples assume a [UART bus](/components/uart/) with the id `uart_bus` is configured.
+
 ## Client
 
 ```yaml
 # Example configuration entry
-uart:
-  - id: uart_bus
-    tx_pin: GPIO17
-    rx_pin: GPIO16
-    baud_rate: 9600
-
 uart_tcp:
   - id: uart_tcp_1
     uart_id: uart_bus
@@ -41,12 +37,6 @@ uart_tcp:
 
 ```yaml
 # Example configuration entry
-uart:
-  - id: uart_bus
-    tx_pin: GPIO17
-    rx_pin: GPIO16
-    baud_rate: 9600
-
 uart_tcp:
   - id: uart_tcp_1
     uart_id: uart_bus
@@ -69,35 +59,17 @@ This is not Modbus TCP. The bytes on the socket are the UART bytes, unchanged.
 - **connected** (*Optional*): A binary sensor that reports whether the TCP connection is established. All options
   from [Binary Sensor](/components/binary_sensor#config-binary_sensor) are supported.
 
-## Zigbee coordinator
+## Zigbee Coordinator
 
 Zigbee2MQTT can use a server of this component instead of a serial port on the machine that runs it.
-In its `configuration.yaml`, set `serial.port` to `tcp://192.0.2.20:6638` and `baudrate` to the same value
-as the UART below. `adapter` is `zstack`, `ember`, `deconz`, `zigate` or `zboss`, depending on the stick.
-Zigbee2MQTT is the one TCP client. This setup has not been tested with this component.
-
-An ESP32 with USB host, such as the ESP32-P4, can host the stick through [USB Host UART](/components/usb_uart/).
-The stick's USB-serial chip must be one of the types listed there. A Sonoff Dongle-E is a CP2102 (`cp210x`).
-A Sonoff Dongle-P is a CH340 (`ch340`). The board has to power the stick.
+In its `configuration.yaml`, set `serial.port` to `tcp://<device ip>:<port>` and `baudrate` to the UART's
+baud rate. Zigbee2MQTT must be the only TCP client. A stick on an ESP32 with USB host can be exposed the
+same way through [USB Host UART](/components/usb_uart/). This setup has not been tested with this component.
 
 > [!NOTE]
 > Use [Ethernet](/components/ethernet/). A coordinator drops bytes more easily on Wi-Fi than on a cable, and
 > Zigbee2MQTT does not tolerate that. If Wi-Fi is the only network, do not also enable `bluetooth_proxy`,
 > `esp32_ble_tracker` or `esp32_ble` on this device. They share the radio with Wi-Fi.
-
-```yaml
-# Example configuration entry
-usb_uart:
-  - type: cp210x
-    channels:
-      - id: zigbee_stick
-        baud_rate: 115200
-
-uart_tcp:
-  - uart_id: zigbee_stick
-    role: server
-    port: 6638
-```
 
 ## See Also
 
