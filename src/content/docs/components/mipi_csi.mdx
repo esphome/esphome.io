@@ -1,0 +1,197 @@
+---
+description: "Instructions for setting up MIPI-CSI cameras on the ESP32-P4 in ESPHome"
+title: "MIPI-CSI Camera"
+---
+
+import APIRef from '@components/APIRef.astro';
+
+The `mipi_csi` component lets an ESP32-P4 capture images from a MIPI-CSI camera sensor and expose them to
+Home Assistant (or any other native API client) through the [camera](/components/camera/) framework.
+
+Frames are captured through the V4L2 interface of Espressif's `esp_video` component and encoded to JPEG by
+the chip's hardware JPEG peripheral. Sensors that output raw Bayer data are routed through the ESP32-P4's
+built-in Image Signal Processor (ISP), which also runs automatic exposure and white balance.
+
+Requires an [I²C](/components/i2c/) bus and a [PSRAM](/components/psram/) configuration.
+
+```yaml
+# Example configuration entry
+i2c:
+  - id: cam_i2c
+    sda: GPIO7
+    scl: GPIO8
+    frequency: 400kHz
+
+psram:
+  speed: 200MHZ
+
+mipi_csi:
+  name: My Camera
+  sensor: OV5647
+  resolution: 1920x1080
+  pixel_format: RGB565
+  framerate: 15 fps
+  sccb_frequency: 400kHz
+```
+
+## Configuration variables
+
+- **name** (*Optional*, string): The name of the camera.
+- **sensor** (**Required**, string): The camera sensor model that is connected. Only the driver for
+  this sensor is built into the firmware. One of the sensors listed under
+  [Supported sensors](#supported-sensors) below.
+- **resolution** (*Optional*, string): The capture resolution, written as `WIDTHxHEIGHT`, for example
+  `1280x720`. Must be one of the resolutions the selected sensor supports; see
+  [Supported sensors](#supported-sensors). If omitted, the sensor keeps whatever resolution it starts
+  up with.
+- **pixel_format** (*Optional*, enum): The raw pixel format requested from the sensor/ISP before it is
+  encoded to JPEG. Defaults to `RGB565`.
+
+  - `RGB565`
+  - `RGB888`
+  - `YUV422`
+  - `GRAYSCALE`
+
+- **jpeg_quality** (*Optional*, int): The JPEG quality every captured frame is encoded with, from `10`
+  (smallest, lowest quality) to `100` (largest, highest quality). Defaults to `40`.
+- **framerate** (*Optional*, framerate): The frame rate to request from the sensor, between `1fps` and
+  `60fps`. Defaults to `10fps`. Sensors can usually only run at rates that evenly divide their own
+  native frame rate; if the requested rate does not, the component logs a warning and steps down to the
+  closest rate that does.
+- **idle_framerate** (*Optional*, framerate): The frame rate to capture at when no client is actively
+  requesting a stream or a single image, between `0fps` and `1fps`. Defaults to `0.1fps`. Set to `0fps`
+  to stop capturing entirely while idle.
+- **frame_buffer_count** (*Optional*, int): The number of V4L2 capture buffers to allocate in PSRAM, from
+  `1` to `3`. Defaults to `2`. More buffers make it less likely that a slow consumer causes a frame to be
+  dropped, at the cost of more PSRAM.
+- **init_ldo** (*Optional*, boolean): Whether this component should power up the MIPI D-PHY's internal LDO
+  regulator (channel 3) itself. Defaults to `true`. Set this to `false` if another peripheral (for example
+  a MIPI-DSI display configured through [`esp_ldo`](/components/esp_ldo/)) already powers that channel;
+  attempting to acquire it twice fails and prevents the camera from starting.
+- **horizontal_flip** (*Optional*, boolean): Whether to flip the image horizontally.
+- **vertical_flip** (*Optional*, boolean): Whether to flip the image vertically.
+- **i2c_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the [I²C bus](/components/i2c)
+  the sensor is connected to, when using more than one bus.
+- **sccb_frequency** (**Required**, frequency): The clock frequency to use for the sensor's control bus
+  (SCCB, layered over I²C), between `10kHz` and `1MHz`. Check the sensor's datasheet for the supported
+  value.
+- **reset_pin** (*Optional*, pin): The ESP pin connected to the sensor's reset line.
+- **power_pin** (*Optional*, pin): The ESP pin connected to the sensor's power-down line.
+- **external_clock** (*Optional*): Configuration for driving the sensor from an ESP-generated clock signal,
+  for sensors that need an external clock rather than generating their own.
+
+  - **pin** (**Required**, pin): The pin the sensor's external clock input is connected to.
+  - **frequency** (*Optional*, frequency): The frequency of the external clock, between `6MHz` and
+    `40MHz`. Defaults to `24MHz`.
+
+Automations:
+
+- **on_stream_start** (*Optional*, [Automation](/automations)): An automation to perform when a client
+  starts a continuous stream.
+- **on_stream_stop** (*Optional*, [Automation](/automations)): An automation to perform when a client
+  stops a continuous stream.
+- **on_image** (*Optional*, [Automation](/automations)): An automation called every time a frame is
+  captured. The encoded JPEG frame is available as the `image` variable, a struct with `data`
+  (`uint8_t *`) and `length` (`size_t`) members.
+
+  ```yaml
+  on_image:
+    - logger.log:
+        format: "Got a %u byte image"
+        args: [image.length]
+  ```
+
+## Supported sensors
+
+Only the driver for the configured `sensor` is compiled in, which keeps the firmware small. Each sensor
+can only capture the resolution/frame rate/pixel format combinations its register tables were built for;
+picking a `resolution` outside that list fails during setup and logs the ones that are actually available.
+Check [espressif/esp_cam_sensor](https://components.espressif.com/components/espressif/esp_cam_sensor) for
+an up to date list.
+
+| Sensor | Supported resolutions |
+| --- | --- |
+| `GC2053` | 1920x1080@30fps (RAW10), 1920x1080@25fps (RAW8) |
+| `GC2145` | 640x480@15fps (RGB565), 800x600@30fps (RGB565), 1600x1200@7fps (RGB565) |
+| `GC2607` | 1920x1080@25fps (RAW10) |
+| `GC4053` | 1440x1440@25fps (RAW10) |
+| `LT6911` | 1280x720@60fps (YUV422), 1920x1080@48fps (YUV422) |
+| `MIRA220` | 1024x600@15fps (RAW8) |
+| `MIT245` | 1920x1080@30fps (RAW8), 1920x1080@30fps (RAW10) |
+| `OS02N10` | 960x540@25fps (RAW8), 1280x720@50fps (RAW8), 1920x1080@25fps (RAW8), 1280x720@50fps (RAW10), 1920x1080@25fps (RAW10) |
+| `OS04C10` | 810x1080@30fps (RAW10), 960x1280@30fps (RAW10), 1280x720@25fps (RAW10) |
+| `OV2710` | 1280x720@25fps (RAW10), 1920x1080@25fps (RAW10) |
+| `OV5640` | 1280x720@14fps (RGB565) |
+| `OV5645` | 1280x960@30fps (RGB565), 1280x960@30fps (YUV420), 640x480@24fps (YUV422), 1280x960@30fps (YUV422), 1920x1080@15fps (YUV422), 2592x1944@15fps (YUV422) |
+| `OV5647` | 800x640@50fps (RAW8), 800x800@50fps (RAW8), 800x1280@50fps (RAW8), 1920x1080@30fps (RAW10), 1280x960@45fps (RAW10, binned) |
+| `OV9281` | 640x400@100fps (RAW8), 1280x720@50fps (RAW8) |
+| `SC035HGS` | 640x480@50fps (RAW8), 640x480@100fps (RAW8), 640x480@48fps (RAW10), 640x480@120fps (RAW10) |
+| `SC121AT` | 1280x800@25fps (YUV422), 1280x960@30fps (YUV422) |
+| `SC132GS` | 544x640@60fps (RAW10), 1080x1280@60fps (RAW10) |
+| `SC1346` | 1280x720@25fps (RAW10), 1280x720@30fps (RAW10), 1280x720@30fps (RAW8) |
+| `SC202CS` | 1280x720@30fps (RAW8), 1600x1200@30fps (RAW8), 1600x900@30fps (RAW10), 1600x1200@30fps (RAW10) |
+| `SC2331` | 1280x720@25fps (RAW8), 1280x720@30fps (RAW8), 1920x1080@5fps (RAW8), 1920x1080@25fps (RAW8), 1920x1080@25fps (RAW10), 1920x1080@30fps (RAW8) |
+| `SC2336` | 800x800@30fps (RAW8), 1024x600@30fps (RAW8), 1280x720@30fps (RAW8), 1920x1080@30fps (RAW8), 640x480@50fps (RAW10), 800x800@30fps (RAW10), 1280x720@30fps (RAW10), 1280x720@50fps (RAW10), 1280x720@60fps (RAW10), 1920x1080@25fps (RAW10, 1-lane), 1920x1080@25fps (RAW10, 2-lane), 1920x1080@30fps (RAW10) |
+| `SC2337P` | 1088x1080@30fps (RAW10), 1920x1080@30fps (RAW10), 1920x1080@30fps (RAW8) |
+| `STI2250` | 800x600@50fps (RAW8) |
+| `TC358743` | 1920x1080@30fps (RGB888), 1920x1080@30fps (YUV422) |
+
+Sensors marked `RAW` output Bayer data and are processed by the ISP, which is where auto exposure and
+auto white balance run. `TC358743` and the `RGB`/`YUV` entries above output an already-demosaiced image
+and bypass those algorithms; their picture will not automatically adapt to the light in the room.
+
+## PSRAM bandwidth
+
+Every frame is copied out of a PSRAM capture buffer and into the JPEG encoder, so the PSRAM clock speed
+directly limits how quickly frames can be produced without corruption. Configure `psram: speed: 100MHz` (or
+faster, if the board supports it); a slower PSRAM clock can produce visibly corrupted frames at higher
+resolutions or frame rates.
+
+## Sharing the LDO channel with a display
+
+The MIPI D-PHY on the ESP32-P4 is powered from LDO channel 3. If a MIPI-DSI display (or anything else) on
+the same board already powers that channel through [`esp_ldo`](/components/esp_ldo/), set `init_ldo: false`
+so this component does not try to acquire it a second time:
+
+```yaml
+# The display already powers LDO channel 3.
+esp_ldo:
+  - channel: 3
+    voltage: 2.5V
+
+mipi_csi:
+  name: My Camera
+  sensor: SC2336
+  init_ldo: false
+  sccb_frequency: 100kHz
+```
+
+Leaving `init_ldo` at its default of `true` while the channel is already in use makes camera setup fail with
+`Camera sensor initialization failed`.
+
+## Troubleshooting
+
+- **`The sensor cannot capture WxH`**: The requested `resolution` is not one this sensor was built for. The
+  log lists every resolution the driver actually supports; pick one of those, or omit `resolution` to keep
+  the sensor's own default.
+- **`The camera cannot deliver FORMAT at WxH`**: The requested `pixel_format` is not available at this
+  resolution, most often because the chosen sensor format has no ISP tuning data for it. Try a different
+  `pixel_format` or resolution.
+- **`Camera sensor initialization failed`**: Often an LDO channel 3 conflict; see
+  [Sharing the LDO channel with a display](#sharing-the-ldo-channel-with-a-display) above.
+- **`The sensor runs at N fps, so M fps is used instead`**: The sensor cannot run at the exact `framerate`
+  requested. This is expected and only a warning; the closest rate the sensor can evenly divide down to is
+  used automatically.
+- When a sensor outputs RAW pixel data with horizontal or vertical flipping enabled, the image may have a
+  color shift because the Bayer pattern no longer aligns with the sensor's mirror settings. Disabling the
+  corresponding `horizontal_flip` or `vertical_flip` option should restore the correct colors.
+- **`Frame buffer N holds ... bytes but a frame needs ...`**: The video driver's buffer is smaller than a
+  full frame at the configured resolution/pixel format. This should not normally happen; please open an
+  issue if it does.
+- Corrupted or torn frames, especially at higher resolutions: see [PSRAM bandwidth](#psram-bandwidth) above.
+
+## See Also
+
+- [Camera Component](/components/camera/)
+- [ESP32-P4 LDO](/components/esp_ldo/)
+- <APIRef text="mipi_csi.h" path="mipi_csi/mipi_csi.h" />
