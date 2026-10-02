@@ -100,6 +100,15 @@ sensor:
 - **address** (*Optional*, int): Manually specify the I²C address of
   the sensor. Defaults to `0x0C`.
 
+  :::note
+  Adafruit STEMMA QT MLX90393 breakouts shipped since May 2023 default to
+  address `0x18`, not `0x0C`, due to a chip substitution (see the
+  [product page](https://www.adafruit.com/product/4022)). If your sensor
+  shows up in an I²C bus scan but every subsequent read/write fails with
+  "Communication failed," check the scanned address and set `address: 0x18`
+  explicitly if needed.
+  :::
+
 - **i2c_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the [I²C Component](/components/i2c) if you want
   to use multiple I²C buses.
 
