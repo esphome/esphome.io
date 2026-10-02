@@ -1,0 +1,59 @@
+---
+import { Image } from "astro:assets";
+
+import CardGroup from "@components/CardGroup.astro";
+import Card from "@components/Card.astro";
+import TitleText from "@components/starter-kit/TitleText.astro";
+
+import easyAssemblyImg from "./images/easy-assembly.webp";
+import codingOptionalImg from "./images/esphome-starter-kit-builder.webp";
+---
+
+<section id="whats-included" class="block-succeed">
+  <TitleText>
+    <h2 slot="title" class="title">All you need to succeed</h2>
+    <p slot="text">
+      The starter kit has all the quality components you need for a successful build, so you don't have to source them
+      yourself. And to bring it all together, we’ve created two digital tools to guide you from the first connection to
+      your first automation.
+    </p>
+  </TitleText>
+
+  <CardGroup columns="2fr 1fr">
+    <Card span="full" bleed>
+      <Image slot="media" src={easyAssemblyImg} alt="Ribbon cable connecting starter kit modules" />
+      <video id="cable-video" slot="media" class="lazy-video" muted playsinline preload="metadata">
+        <source src="/videos/starter-kit/ribbon-cable.mp4" type="video/mp4" />
+      </video>
+      <button slot="media" class="play-button" data-video-id="cable-video" aria-label="Play cable video"></button>
+      <h3 class="no-mt">Easy assembly: Ribbon cable system.</h3>
+      <p>
+        We've stripped back the complexity so you can focus entirely on learning: simply snap the modules off the panel
+        and connect to the compute board via a single ribbon cable. No wiring, pins, soldering, or risk of getting it
+        wrong!
+      </p>
+    </Card>
+    <Card href="/install" target="_blank">
+      <Image slot="media" src={codingOptionalImg} alt="Visual device builder interface" class="contain" />
+      <h3>Coding optional:<br />Visual device builder</h3>
+      <p>
+        Intuitive interface lets you configure hardware and software without writing code – but the YAML's always there
+        underneath, should you want it! Runs on your desktop via our app, or on your existing smart home setup.
+      </p>
+    </Card>
+    <Card
+      href="https://wiki.apolloautomation.com/products/ESPHome-Starter-Kit/start-here/"
+      rel="noopener noreferrer"
+      target="_blank"
+      data-delay="150"
+    >
+      <h3>Guided support:<br />Learning Wiki</h3>
+      <p>
+        More than just assembly instructions, our Wiki explains the “why” behind each action. It shows how your
+        components connect to the code running them, giving you the skills to take on bigger projects when you're ready.
+      </p>
+    </Card>
+  </CardGroup>
+</section>
+
+<style lang="scss"></style>

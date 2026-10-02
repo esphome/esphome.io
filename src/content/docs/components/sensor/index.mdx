@@ -45,7 +45,7 @@ Configuration variables:
 - **name** (*Optional*, string): The name for the sensor. At least one of **id** and **name** must be specified.
 
 > [!NOTE]
-> If you have a [friendly_name](/components/esphome#esphome-configuration_variables) set for your device and
+> If you have a [friendly_name](/components/esphome#configuration-variables) set for your device and
 > you want the sensor to use that name, you can set `name: None`.
 
 - **unit_of_measurement** (*Optional*, string): Manually set the unit
@@ -128,8 +128,6 @@ MQTT Options:
 >         # ...
 > ```
 
-<span id="sensor-filters"></span>
-
 ## Sensor Filters
 
 ESPHome lets you pre-process sensor values before sending them to Home Assistant. This is useful, for example, if you want to apply an average to the last few readings.
@@ -206,7 +204,7 @@ unit_of_measurement: "°F"
 ## Sensor Automation
 
 You can access the most recent state of the sensor in [lambdas](/automations/templates#config-lambda) using
-`id(sensor_id).state` and the most recent raw state using `id(sensor_id).raw_state`.
+`id(sensor_id).get_state()` and the most recent raw state using `id(sensor_id).get_raw_state()`.
 
 <span id="sensor-on_value"></span>
 
@@ -287,8 +285,6 @@ sensor:
 
 Configuration variables: See [Automation](/automations).
 
-<span id="sensor-in_range_condition"></span>
-
 ### `sensor.in_range` Condition
 
 This condition passes if the state of the given sensor is inside a range.
@@ -313,8 +309,6 @@ Configuration variables:
 - **above** (*Optional*, float): The minimum for the condition.
 - **below** (*Optional*, float): The maximum for the condition.
 
-<span id="sensor-lambda_calls"></span>
-
 ### Lambda calls
 
 From [lambdas](/automations/templates#config-lambda), you can call several methods on all sensors to do some
@@ -328,20 +322,20 @@ advanced stuff (see the full API Reference for more info).
     id(my_sensor).publish_state(42.0);
 ```
 
-- `.state`  : Retrieve the current value of the sensor that has passed through all sensor filters.
+- `.get_state()`  : Retrieve the current value of the sensor that has passed through all sensor filters.
   Is `NAN` if no value has gotten through all filters yet.
 
 ```cpp
     // For example, create a custom log message when a value is received:
-    ESP_LOGI("main", "Value of my sensor: %f", id(my_sensor).state);
+    ESP_LOGI("main", "Value of my sensor: %f", id(my_sensor).get_state());
 ```
 
-- `raw_state`  : Retrieve the current value of the sensor that has not passed through any filters.
+- `.get_raw_state()`  : Retrieve the current value of the sensor that has not passed through any filters.
   Is `NAN` if no value has been pushed by the sensor itself yet.
 
 ```cpp
     // For example, create a custom log message when a value is received:
-    ESP_LOGI("main", "Raw Value of my sensor: %f", id(my_sensor).raw_state);
+    ESP_LOGI("main", "Raw Value of my sensor: %f", id(my_sensor).get_raw_state());
 ```
 
 ## See Also

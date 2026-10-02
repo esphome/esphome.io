@@ -44,8 +44,6 @@ sensor:
 
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for actions.
 
-<span id="cm1106-calibrate_zero_action"></span>
-
 ## `cm1106.calibrate_zero` Action
 
 This [action](/automations/actions#all-actions) executes zero point calibration command on the sensor with the given ID.
@@ -90,7 +88,7 @@ binary_sensor:
   - platform: template
     id: co2_calibration
     lambda: |-
-      if (id(co2sensor).state < 400) {
+      if (id(co2sensor).get_state() < 400) {
         return true;
       } else {
         return false;

@@ -1,0 +1,41 @@
+---
+description: "Instructions for setting up a switch to enable and disable Sendspin in ESPHome."
+title: "Sendspin Switch"
+---
+
+import APIRef from '@components/APIRef.astro';
+
+The `sendspin` switch platform enables and disables the [Sendspin](/components/sendspin/)
+client. The Sendspin [hub](/components/sendspin/) must be configured on the same device.
+
+While the switch is off, the device stops advertising itself to Sendspin servers, closes
+any server connection, and rejects playback and control commands from the other Sendspin
+components. Turning the switch on starts the client again.
+
+The switch restores its previous state on boot and defaults to on, so a device that was
+disabled stays disabled after a restart.
+
+This platform only works on ESP32-based chips.
+
+```yaml
+# Example configuration entry
+sendspin:
+
+switch:
+  - platform: sendspin
+    name: "Sendspin Enabled"
+```
+
+## Configuration Variables
+
+- **sendspin_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the
+  [Sendspin](/components/sendspin/) hub to attach to. Only needed if you have more than one hub configured.
+- **restore_mode** (*Optional*): Control how the switch attempts to restore state on bootup.
+  Defaults to `RESTORE_DEFAULT_ON`. See [Switch](/components/switch#config-switch) for the options.
+- All other options from [Switch](/components/switch#config-switch), except `inverted`.
+
+## See Also
+
+- [Sendspin](/components/sendspin/)
+- [Switch Components](/components/switch/)
+- <APIRef text="sendspin_switch.h" path="sendspin/switch/sendspin_switch.h" />

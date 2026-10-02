@@ -1,0 +1,268 @@
+---
+/**
+ * FAQ Component
+ *
+ * Renders a list of question/answer pairs as an accordion using native
+ * <details>/<summary> elements. Answer content is treated as Markdown and
+ * rendered to HTML at build time.
+ *
+ * Usage with the `faq` content collection (recommended):
+ *
+ *   ---
+ *   import { getEntry } from 'astro:content';
+ *   import FAQ from '@components/FAQ.astro';
+ *   const faq = await getEntry('faq', 'starter-kit');
+ *   ---
+ *   <FAQ heading="Got some questions?" items={faq.data.items} />
+ *
+ * Or pass items inline:
+ *
+ *   <FAQ items={[
+ *     { title: "Question?", content: "Answer with **markdown**." },
+ *   ]} />
+ */
+import { micromark } from "micromark";
+
+interface FAQItem {
+  /** Question text shown in the <summary>. */
+  title: string;
+  /** Answer body. Markdown supported. */
+  content: string;
+}
+
+interface Props {
+  /** Optional heading rendered above the FAQ list. */
+  heading?: string;
+  /** FAQ entries to render. */
+  items: FAQItem[];
+}
+
+const { heading, items } = Astro.props;
+
+// Pre-render Markdown answers to HTML at build time.
+// All links open in a new tab — FAQ answers often link to external resources.
+const rendered = items.map((item) => ({
+  title: item.title,
+  html: micromark(item.content ?? "").replace(/<a /g, '<a target="_blank" rel="noreferrer noopener" '),
+}));
+---
+
+<div class="container">
+  <section class="faq">
+    {heading && <h2 class="faq-heading">{heading}</h2>}
+    <div class="faq-items">
+      {
+        rendered.map((item) => (
+          <details class="faq-item">
+            <summary class="faq-item-summary">
+              <span class="faq-item-title">{item.title}</span>
+              <span class="faq-item-icon" aria-hidden="true">
+                <span class="faq-item-icon-plus" />
+              </span>
+            </summary>
+            <div class="faq-item-content" set:html={item.html} />
+          </details>
+        ))
+      }
+    </div>
+  </section>
+</div>
+
+<style>
+  .faq {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin: 1rem 0 2rem;
+  }
+
+  .faq-heading {
+    font-size: 1.75rem;
+    font-weight: 600;
+    margin: 0;
+  }
+
+  .faq-items {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .faq-item {
+    border-bottom: 1px solid var(--sl-color-gray-5, #72787e);
+    border-left: none;
+    margin-top: 0;
+    padding-left: 0;
+  }
+
+  .faq-item:first-of-type {
+    border-top: 1px solid var(--sl-color-gray-5, #72787e);
+  }
+
+  /* Hide the default disclosure triangle. */
+  .faq-item-summary::-webkit-details-marker {
+    display: none;
+  }
+  .faq-item-summary::marker {
+    content: "";
+  }
+  .faq-item-summary {
+    list-style: none;
+  }
+
+  .faq-item-summary::before {
+    content: unset;
+  }
+
+  .faq-item-summary {
+    align-items: center;
+    cursor: pointer;
+    display: flex;
+    gap: 1rem;
+    /* Starlight applies a negative margin to <summary>; reset it. */
+    margin: 0;
+    padding: 1.25rem 0;
+    user-select: none;
+  }
+
+  @media (min-width: 50rem) {
+    .faq-item-summary {
+      padding: 2rem 0;
+    }
+  }
+
+  .faq-item-title {
+    color: var(--sl-color-white, #002332);
+    font-size: 1.25rem;
+    font-weight: 400;
+    line-height: 1.4;
+    flex-grow: 1;
+  }
+
+  @media (min-width: 50rem) {
+    .faq-item-title {
+      font-size: 1.5rem;
+    }
+  }
+
+  /* Circular +/× toggle icon. */
+  .faq-item-icon {
+    align-items: center;
+    background-color: var(--esk-primary-color, var(--sl-color-accent));
+    border-radius: 50%;
+    display: inline-flex;
+    flex-shrink: 0;
+    height: 1.75rem;
+    justify-content: center;
+    position: relative;
+    transition: background-color 0.1s ease;
+    width: 1.75rem;
+  }
+
+  .faq-item-icon-plus {
+    display: block;
+    height: 0.625rem;
+    position: relative;
+    transition: transform 0.1s ease;
+    width: 0.625rem;
+  }
+
+  .faq-item-icon-plus::before,
+  .faq-item-icon-plus::after {
+    background-color: #ffffff;
+    content: "";
+    left: 50%;
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    transition:
+      opacity 0.1s ease,
+      background-color 0.1s ease;
+  }
+
+  .faq-item-icon-plus::before {
+    height: 2px;
+    width: 0.625rem;
+  }
+
+  .faq-item-icon-plus::after {
+    height: 0.625rem;
+    width: 2px;
+  }
+
+  .faq-item[open] .faq-item-icon-plus {
+    transform: rotate(90deg);
+  }
+
+  .faq-item[open] .faq-item-icon-plus::before {
+    opacity: 0;
+  }
+
+  .faq-item-summary:hover .faq-item-icon {
+    background-color: transparent;
+  }
+
+  .faq-item-summary:hover .faq-item-icon .faq-item-icon-plus::before,
+  .faq-item-summary:hover .faq-item-icon .faq-item-icon-plus::after {
+    background-color: var(--sl-color-white, #002332);
+  }
+
+  .faq-item-content {
+    color: var(--sl-color-gray-2, #4f606e);
+    font-size: 1rem;
+    line-height: 1.5;
+    /* Reset margins that Starlight's content styles may apply to direct
+       children of the main content area; otherwise the margin sits outside
+       the animated block-size and causes a visible jump. */
+    margin: 0;
+    padding: 0 0 1.5rem 0;
+  }
+
+  .faq-item-content :global(p) {
+    margin: 0 0 1rem 0;
+  }
+
+  .faq-item-content :global(p:last-child) {
+    margin-bottom: 0;
+  }
+
+  .faq-item-content :global(img) {
+    border-radius: 8px;
+    display: block;
+    max-width: 100%;
+  }
+
+  .faq-item-content :global(pre) {
+    margin: 1rem 0;
+  }
+
+  /* Smooth open/close on browsers that support it.
+     Requires `interpolate-size: allow-keywords` on an ancestor (here :root)
+     so that block-size can animate between 0 and `auto`. */
+  :global(:root) {
+    interpolate-size: allow-keywords;
+  }
+
+  @supports (interpolate-size: allow-keywords) {
+    .faq-item::details-content {
+      block-size: 0;
+      overflow: clip;
+      transition:
+        block-size 0.1s ease,
+        content-visibility 0.1s ease;
+      transition-behavior: allow-discrete;
+    }
+    .faq-item[open]::details-content {
+      block-size: auto;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .faq-item-icon,
+    .faq-item-icon-plus,
+    .faq-item-icon-plus::before,
+    .faq-item-icon-plus::after {
+      transition: none;
+    }
+  }
+</style>

@@ -25,15 +25,21 @@ The [I²C Bus](/components/i2c) is required to be set up in your configuration f
 # Example configuration entry
 sensor:
   - platform: sgp4x
-    voc:
+    voc_index:
       name: "VOC Index"
-    nox:
+    nox_index:
       name: "NOx Index"
 ```
 
+> [!NOTE]
+> The `voc` and `nox` keys were renamed to `voc_index` and `nox_index`, since
+> these sensors report Sensirion's unitless Gas Index rather than a
+> concentration. The old keys still work but are deprecated and will be removed
+> in ESPHome 2027.2.0.
+
 ## Configuration variables
 
-- **voc** (*Optional*): VOC Index
+- **voc_index** (*Optional*): VOC Index
 
   - **algorithm_tuning** (*Optional*): The VOC algorithm can be customized by tuning 6 different parameters. For more details see [Engineering Guidelines for SEN5x](https://sensirion.com/media/documents/25AB572C/62B463AA/Sensirion_Engineering_Guidelines_SEN5x.pdf)
 
@@ -46,7 +52,7 @@ sensor:
 
   - All other options from [Sensor](/components/sensor).
 
-- **nox** (*Optional*): NOx Index. Only available with SGP41. If a SGP40 sensor is detected this sensor will be ignored
+- **nox_index** (*Optional*): NOx Index. Only available with SGP41. If a SGP40 sensor is detected this sensor will be ignored
 
   - **algorithm_tuning** (*Optional*): The NOx algorithm can be customized by tuning 5 different parameters.For more details see [Engineering Guidelines for SEN5x](https://sensirion.com/media/documents/25AB572C/62B463AA/Sensirion_Engineering_Guidelines_SEN5x.pdf)
 
@@ -76,9 +82,9 @@ sensor:
 # Example configuration entry
 sensor:
 - platform: sgp4x
-  voc:
+  voc_index:
     name: "VOC Index"
-  nox:
+  nox_index:
     name: "NOx Index"
   compensation:
     humidity_source: dht1_hum

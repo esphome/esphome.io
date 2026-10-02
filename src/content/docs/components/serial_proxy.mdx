@@ -45,12 +45,25 @@ serial_proxy:
 
 ## How It Works
 
-When an API client connects, it can:
+An API client uses a port by subscribing to it. A port has one subscriber at a time, and only the subscribed client
+can use it. Once subscribed, the client can:
 
 - **Send data** to the serial device by writing bytes through the API.
-- **Receive data** from the serial device — data arriving on the UART is forwarded to connected API clients automatically each loop iteration (up to 256 bytes at a time).
-- **Reconfigure the UART** at runtime — the API client may change the baud rate, data bits, stop bits, and parity without reflashing firmware.
+- **Receive data** from the serial device — data arriving on the UART is forwarded to the client automatically each
+  loop iteration (up to 256 bytes at a time).
+- **Reconfigure the UART** at runtime — the API client may change the baud rate, data bits, stop bits, and parity
+  without reflashing firmware.
 - **Control modem pins** — if `rts_pin` or `dtr_pin` are configured, the API client can set their states at runtime.
+- **Switch the port mode** — every port starts in `RAW` mode, a plain byte pipe that passes data through unchanged.
+  The client can switch the port to `PROTOCOL` mode, letting a protocol-aware component on the device observe the
+  traffic and send protocol messages such as acknowledgements on the client's behalf. The port returns to `RAW` when
+  the client unsubscribes or disconnects, so a client doing something sensitive with the attached device — uploading
+  firmware to it, for example — can rely on `RAW` passing bytes through untouched.
+
+  No component that ships with ESPHome provides protocol handling yet; `PROTOCOL` mode is an extension point for
+  component authors (see `SerialProxyTap` in <APIRef text="serial_proxy.h" path="serial_proxy/serial_proxy.h" />).
+  On a port without such a component, a request to switch to `PROTOCOL` mode is refused and the port stays in `RAW`
+  mode.
 
 ## Full Example
 
