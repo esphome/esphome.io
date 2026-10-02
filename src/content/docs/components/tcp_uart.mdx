@@ -10,7 +10,8 @@ socket can be read like UART data, and bytes written to the UART are sent to the
 `uart_id` option can use it.
 
 > [!NOTE]
-> There is no `baud_rate` option. The connection is a TCP socket, not a serial line.
+> The connection is plain TCP without encryption or authentication, so only use it on a trusted network.
+> While the connection is down, written bytes are dropped and a warning is logged.
 
 ```yaml
 # Example configuration entry
@@ -24,7 +25,8 @@ modbus:
     uart_id: tcp_uart_1
 ```
 
-`modbus` sends RTU frames. The other end must be a serial bridge that forwards the bytes unchanged, not a Modbus TCP server.
+`modbus` sends RTU frames. The other end must be a serial bridge that forwards the bytes unchanged, not a
+Modbus TCP server.
 
 ## Configuration variables
 
@@ -32,10 +34,17 @@ modbus:
   this ID as `uart_id` in other components.
 - **host** (**Required**, string): The host to connect to. An IP address or a hostname.
 - **port** (**Required**, int): The TCP port to connect to.
+- **baud_rate** (*Optional*, int): The baud rate reported to consuming components. The socket itself has no clock;
+  components such as `modbus` read this value for their frame timing. Defaults to `9600`.
+- **data_bits** (*Optional*, int): The number of data bits reported to consuming components. Defaults to `8`.
+- **parity** (*Optional*): The parity reported to consuming components. One of `NONE`, `EVEN`, `ODD`. Defaults to
+  `NONE`.
+- **stop_bits** (*Optional*, int): The number of stop bits reported to consuming components. One of `1`, `2`.
+  Defaults to `1`.
 - **reconnect_interval** (*Optional*, [Time](/guides/configuration-types#time)): The time to wait before connecting
   again after a failed or closed connection. Defaults to `5s`.
-- **connected** (*Optional*): A [binary sensor](/components/binary_sensor/) that reports whether the TCP connection
-  is established.
+- **connected** (*Optional*): A binary sensor that reports whether the TCP connection is established. All options
+  from [Binary Sensor](/components/binary_sensor#config-binary_sensor) are supported.
 
 ## See Also
 
