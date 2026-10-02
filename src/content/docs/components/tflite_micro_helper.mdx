@@ -1,0 +1,446 @@
+---
+description: "Instructions for setting up the TFLite Micro helper component in ESPHome"
+title: "TFLite Micro Helper"
+---
+
+import APIRef from '@components/APIRef.astro';
+
+The `tflite_micro_helper` component provides a reusable TensorFlow Lite Micro runtime for ESP32 microcontrollers
+using the ESP-IDF framework. It encapsulates model loading, tensor arena memory allocation, operator
+registration (via `OpResolver`), and inference execution through the `TFLiteMicroHelper` and `ModelHandler`
+classes.
+
+This component serves as a foundation for TFLite-based components such as the
+[`meter_reader_tflite`](https://github.com/nliaudat/esphome_ai_component) AI meter reader. A complete working
+demo with multiple ESP32 boards, pre-trained digit recognition models, and camera integration is available at
+[github.com/nliaudat/esphome_ai_component](https://github.com/nliaudat/esphome_ai_component).
+
+> [!NOTE]
+> This is a **helper/library component** that is typically used as a dependency by other components. It does not
+> expose sensors or entities directly. It currently supports **ESP32** targets with the **ESP-IDF** framework
+> only.
+
+```yaml
+# Example configuration entry
+tflite_micro_helper:
+  model_type: image
+  model: "models/digit_recognizer.tflite"
+  debug: false
+```
+
+## Configuration variables
+
+### Common configuration variables
+
+- **id** (*Required*, :ref:`config-id`): The ID with which to reference this component in lambdas.
+- **model_type** (*Required*, string): The model type. Must be one of:
+  - `"image"` — Single-shot image classification model.
+  - `"audio"` — Streaming audio classification model (e.g. wake word detection).
+- **model** (*Required*, string or dictionary): The TFLite model source. Can be one of:
+  - A local `.tflite` file path relative to the configuration directory.
+  - A `github://` shorthand URL (e.g. `github://user/repo/path/to/model.tflite`).
+  - An `http://` or `https://` URL pointing to a manifest JSON that specifies the model file.
+- **tensor_arena_size** (*Optional*, bytes): The tensor arena size in bytes. Supports suffixed strings such
+  as `"110KB"`, `"2MB"`, or raw bytes. If omitted, the size is auto-detected from the `.txt` report file or
+  defaults to 100KB.
+- **debug** (*Optional*, boolean): Enable debug logging and diagnostic features. Defaults to `false`. When
+  enabled, the `DEBUG_TFLITE_MICRO_HELPER` define is set, enabling CRC32 model verification, model
+  architecture inspection, tensor input/output analysis, and memory status reporting.
+
+### Image model configuration variables
+
+When `model_type: image`, the following variables are available to describe the model's expected input format.
+Most of these values are auto-detected from the `.txt` report file (see [Usage as a Dependency](#usage-as-a-dependency)),
+but can be overridden explicitly.
+
+- **input_type** (*Optional*, string): Input tensor data type. One of `"uint8"` or `"float32"`. Defaults to
+  `"uint8"`.
+- **input_channels** (*Optional*, integer): Number of input channels (`1` for grayscale, `3` for RGB/BGR).
+  Defaults to `3`.
+- **input_width** (*Optional*, integer): Input image width in pixels. Defaults to `32`.
+- **input_height** (*Optional*, integer): Input image height in pixels. Defaults to `20`.
+- **input_order** (*Optional*, string): Channel order for preprocessing. One of `"RGB"`, `"BGR"`, or `"GRAY"`.
+  Defaults to `"RGB"`.
+- **output_processing** (*Optional*, string): Output post-processing strategy. One of:
+  - `"direct_class"` — Use raw output tensor for direct class selection.
+  - `"softmax"` — Apply softmax normalization.
+  - `"argmax"` — Return the index of the maximum value.
+  - `"logits"` — Return raw logits.
+  - `"auto_detect"` — Automatically detect the best strategy.
+  
+  Defaults to `"direct_class"` when a softmax output is present, or `"softmax"` otherwise.
+- **scale_factor** (*Optional*, float): Output scale factor for multi-class models. Range `0.1`–`100.0`.
+  Defaults to `1.0`.
+- **normalize** (*Optional*, boolean): Normalize input pixels to `[0.0, 1.0]`. Defaults to `false`.
+- **invert** (*Optional*, boolean): Invert input pixel values. Defaults to `false`.
+
+### Audio model configuration variables
+
+When `model_type: audio`, the following variables configure streaming audio classification:
+
+- **probability_cutoff** (*Optional*, percentage): Probability threshold `0.0`–`1.0` for audio classification.
+  Only detections above this threshold are reported.
+- **sliding_window_size** (*Optional*, integer): Size of the sliding window in frames.
+- **features_step_size** (*Optional*, integer): Step size for feature extraction in milliseconds. Range `0`–`30`.
+- **feature_count** (*Optional*, integer): Number of MFCC features. Range `10`–`80`.
+
+## Model Source Resolution
+
+The component resolves the model file from the `model` configuration using one of three strategies:
+
+| Type | Syntax | Description |
+|---|---|---|
+| Local file | `"path/to/model.tflite"` | Path relative to the configuration directory. |
+| GitHub shorthand | `"github://user/repo/path/model.tflite"` | Clones the repository (or updates if cached) and reads the model file. |
+| HTTP manifest | `"https://example.com/manifest.json"` | Downloads a JSON manifest, then fetches the model file specified in the manifest. |
+
+## Platform Support
+
+| Platform   | Supported | Framework |
+|------------|-----------|-----------|
+| ESP32      | Yes       | ESP-IDF   |
+| ESP32-S2   | Yes       | ESP-IDF   |
+| ESP32-S3   | Yes       | ESP-IDF   |
+| ESP32-C3   | Yes       | ESP-IDF   |
+| ESP32-C6   | Yes       | ESP-IDF   |
+| ESP32-H2   | Yes       | ESP-IDF   |
+| ESP8266    | No        | N/A       |
+| RP2040     | No        | N/A       |
+
+> [!IMPORTANT]
+> This component requires the **ESP-IDF** framework. Arduino framework is not supported. Set
+> `esp32:` `framework:` to `esp-idf` in your device configuration.
+
+## ESP-IDF Component Dependencies
+
+This component automatically adds the following ESP-IDF components:
+
+- **`espressif/esp-tflite-micro`** (version 1.3.7): The TensorFlow Lite Micro runtime ported and maintained by
+  Espressif for ESP32-series chips.
+- **`espressif/esp-nn`** (version 1.2.3): Espressif's optimized neural network kernels providing hardware
+  acceleration for common TFLite operators.
+
+When `model_type: audio` is set, the following additional component is added:
+
+- **`esphome/esp-micro-speech-features`** (version 1.2.3): Feature extraction for streaming audio
+  classification (MFCC preprocessing).
+
+Build flags:
+
+- **`-DTF_LITE_STATIC_MEMORY`**: Use static memory allocation within the TFLite Micro runtime.
+- **`-DTF_LITE_DISABLE_X86_NEON`**: Disable x86 NEON intrinsics (not applicable to ESP32 targets).
+- **`-DESP_NN`**: Enable ESP-NN optimized kernels.
+- **`-DOPTIMIZED_KERNEL=esp_nn`**: Select ESP-NN as the kernel provider for TFLite Micro.
+- **`-DMAX_OPERATORS=<N>`**: Set to the number of model operations plus a safety margin (auto-detected from the
+  `.txt` report file, or defaults to `30`).
+
+## Usage as a Dependency
+
+Components that require TFLite Micro should declare a dependency in their `__init__.py`:
+
+```python
+DEPENDENCIES = ["tflite_micro_helper"]
+```
+
+This ensures the required build flags and IDF components are configured before the dependent component's code
+generation runs.
+
+### Model Report File (`.txt`)
+
+Consumer components load a `.tflite` model file by referencing its path in their YAML configuration. The model
+file must be accompanied by a `.txt` report file containing the operator list, tensor dimensions, and metadata
+for auto-detection of configuration values. When present, the report file enables automatic configuration of:
+
+- Input dimensions (`input_width`, `input_height`, `input_channels`)
+- Input data type (`uint8` or `float32`)
+- Recommended tensor arena size
+- Number of model operations (for operator resolver sizing)
+- Output processing strategy
+
+Generate this report using `regenerate_txt_reports.py` from the
+[esphome_ai_component](https://github.com/nliaudat/esphome_ai_component) repository. If no `.txt` report is
+present, the tensor arena size and other parameters must be set manually in the YAML configuration.
+
+> [!IMPORTANT]
+> Models using hybrid quantization (float32 I/O + int8 weights) are **not** supported by TFLite Micro on ESP32.
+> Use a full integer quantized model instead.
+
+## Multiple Instances
+
+This component supports multiple instances (`MULTI_CONF = True`). Each instance can load a different model with
+independent configuration, tensor arena, and CRC32 verification:
+
+```yaml
+tflite_micro_helper:
+  - id: digit_reader
+    model_type: image
+    model: "models/digit_recognizer.tflite"
+    tensor_arena_size: 200KB
+
+  - id: wake_word
+    model_type: audio
+    model: "github://esphome/micro-wake-word-models/models/v2/okay_nabu.json"
+    probability_cutoff: 0.5
+```
+
+## Operator Registration
+
+The component uses an **X-macro-based operator registration system** via the `OpResolverManager` class and the
+`tflm_operators.h` header. This system maps each TFLite `BuiltinOperator` to its corresponding
+`Add<Operator>()` method in the `MicroMutableOpResolver`.
+
+The `tflm_operators.h` file is verified against `esp-tflite-micro` 1.3.7 and supports **90+ operators**,
+organized into categories:
+
+- **Core NN ops**: `CONV_2D`, `DEPTHWISE_CONV_2D`, `FULLY_CONNECTED`, `SOFTMAX`, `AVERAGE_POOL_2D`,
+  `MAX_POOL_2D`, `UNIDIRECTIONAL_SEQUENCE_LSTM`, etc.
+- **Activation functions**: `RELU`, `RELU6`, `LOGISTIC`, `TANH`, `HARD_SWISH`, `LEAKY_RELU`, `PRELU`, `ELU`, etc.
+- **Basic math ops**: `ADD`, `SUB`, `MUL`, `DIV`, `FLOOR`, `CEIL`, `ROUND`, `ABS`, `SQRT`, `EXP`, `LOG`, `SIN`,
+  `COS`, `CAST`, etc.
+- **Tensor operations**: `RESHAPE`, `QUANTIZE`, `DEQUANTIZE`, `CONCATENATION`, `SPLIT`, `STRIDED_SLICE`,
+  `PAD`, `TRANSPOSE`, `TRANSPOSE_CONV`, `GATHER`, `SLICE`, etc.
+- **Comparison ops**: `EQUAL`, `NOT_EQUAL`, `GREATER`, `LESS`, etc.
+- **Reduction ops**: `REDUCE_MAX`, `REDUCE_MIN`, `SUM`, `MEAN`, etc.
+- **Control flow / variables**: `IF`, `WHILE`, `CALL_ONCE`, `ASSIGN_VARIABLE`, `READ_VARIABLE`, `VAR_HANDLE`
+
+Operators not available in the ESP32 TFLite Micro library (e.g. `BIDIRECTIONAL_SEQUENCE_LSTM`, `WHERE`,
+`SELECT`, `REDUCE_PROD`) are logged as warnings and cause model loading to fail with a descriptive message.
+
+## Memory Management
+
+The tensor arena is allocated using one of three strategies (in priority order):
+
+1. **PSRAM** (preferred): When PSRAM is available, the tensor arena is allocated there to avoid exhausting
+   internal SRAM.
+2. **Internal SRAM** (fallback): When no PSRAM is present, the arena is allocated from internal RAM.
+3. **Force flags**: Build flags `-DTFLITE_FORCE_SRAM` or `-DTFLITE_FORCE_PSRAM` override the automatic
+   selection.
+
+### Arena Size Configuration
+
+Arena size can be specified as a parsed size string using the `MemoryManager::parse_size_string()` utility,
+which supports:
+
+- Suffixed strings: `"110KB"`, `"2MB"`, `"51200"` (raw bytes)
+- Fallback to raw bytes if parsing fails
+
+> [!TIP]
+> On **ESP32-S3** devices, when the 64KB data cache is enabled
+> (`CONFIG_ESP32S3_DATA_CACHE_64KB` + `CONFIG_ESP32S3_DATA_CACHE_LINE_64B`), the requested arena size is
+> automatically increased by **1.5x** to accommodate the larger memory requirements of the S3 architecture.
+> This automatic bump is applied once during model loading.
+
+### Arena Statistics
+
+After loading a model, use `get_arena_stats()` to inspect memory utilization:
+
+- **total_size**: The actual allocated arena size (may differ from the requested size).
+- **used_bytes**: Memory consumed by the TFLite interpreter for tensors and scratch buffers.
+- **wasted_bytes**: Allocated but unused memory due to arena fragmentation.
+- **efficiency**: Utilization ratio as a percentage (`0.0`–`100.0%`).
+
+## C++ API
+
+The `TFLiteMicroHelper` class is the main entry point for consumer components. It wraps the lower-level
+`ModelHandler` class which manages the TFLite Micro interpreter, operator resolver, and tensor arena.
+
+<APIRef text="tflite_micro_helper.h" path="tflite_micro_helper/tflite_micro_helper.h" />
+
+### Structs
+
+#### ModelSpec struct
+
+```cpp
+struct ModelSpec {
+  int input_width{0};
+  int input_height{0};
+  int input_channels{0};
+  bool normalize{false};
+  std::string input_order{"RGB"};
+  int input_type{0};  // 0=UINT8, 1=FLOAT
+};
+```
+
+#### ModelConfig struct
+
+```cpp
+struct ModelConfig {
+  std::string description;
+  std::string tensor_arena_size;    // Size string e.g. "110KB", "2MB", "51200"
+  std::string output_processing;    // Processing strategy: "direct_class", "softmax", etc.
+  float scale_factor{1.0f};
+  std::string input_type;           // "uint8" or "float32"
+  int input_channels{3};
+  std::string input_order{"RGB"};
+  std::vector<int> input_size;      // [width, height]
+  bool normalize{false};
+  bool invert{false};
+};
+```
+
+#### ArenaStats struct
+
+```cpp
+struct ArenaStats {
+  size_t total_size{0};       // Total allocated tensor arena size in bytes
+  size_t used_bytes{0};       // Bytes currently used by the interpreter
+  size_t wasted_bytes{0};     // Unused bytes (arena fragmentation)
+  float efficiency{0.0f};     // Utilization as percentage (0.0–100.0)
+};
+```
+
+#### ProcessedOutput struct
+
+```cpp
+struct ProcessedOutput {
+  float value{0.0f};         // Class/index value
+  float confidence{0.0f};    // Confidence score
+};
+```
+
+### Key Methods
+
+| Method                              | Description                                         |
+|-------------------------------------|-----------------------------------------------------|
+| `set_model(data, size)`             | Set the TFLite model data pointer and size.         |
+| `set_model_type(type)`              | Set the model type (`"image"`, `"audio"`, or `"default"`). |
+| `set_tensor_arena_size(size)`       | Request a specific tensor arena size in bytes.      |
+| `set_output_processing(strategy)`   | Set the output post-processing strategy.            |
+| `set_scale_factor(factor)`          | Set the output scale factor.                        |
+| `set_expected_crc32(crc)`           | Set the expected CRC32 checksum for model integrity verification (0 = skip). |
+| `set_debug(bool)`                   | Enable or disable debug diagnostics.                |
+| `load_model()`                      | Load the model, verify CRC32, allocate arena, and initialize the interpreter. |
+| `unload_model()`                    | Unload the model and free resources.                |
+| `is_model_loaded()`                 | Returns `true` if a model is currently loaded.      |
+| `invoke()`                          | Run a single inference pass. Returns `TfLiteStatus`. |
+| `run_inference(src_data, src_size)` | Copy data into the input tensor, invoke, and process the output. Returns a `ProcessedOutput` struct (value + confidence). |
+| `run_inference_on_buffer(src_data, src_size)` | Copy data into the input tensor and invoke without output processing. Returns `true` on success. |
+| `input_tensor()`                    | Get the input `TfLiteTensor` (for writing data).    |
+| `output_tensor()`                   | Get the output `TfLiteTensor` (for reading results). |
+| `get_model_spec()`                  | Get the `ModelSpec` describing input dimensions and type. |
+| `get_arena_stats()`                 | Get tensor arena utilization statistics (thread-safe). |
+| `update_arena_stats_cache()`        | Refresh the cached arena statistics.                |
+| `report_memory_status()`            | Print memory allocation details to the log.         |
+
+#### Image model setters
+
+| Method                  | Description                          |
+|------------------------|--------------------------------------|
+| `set_input_type(type)` | Set input tensor data type.          |
+| `set_input_channels(n)`| Set number of input channels.        |
+| `set_input_width(w)`   | Set input image width.               |
+| `set_input_height(h)`  | Set input image height.              |
+| `set_input_order(o)`   | Set input channel order (`"RGB"`, `"BGR"`, `"GRAY"`). |
+| `set_normalize(n)`     | Enable or disable pixel normalization. |
+| `set_invert(i)`        | Enable or disable pixel inversion.   |
+
+#### Audio model setters
+
+| Method                           | Description                                  |
+|----------------------------------|----------------------------------------------|
+| `set_probability_cutoff(f)`      | Set probability threshold (`0.0`–`1.0`, quantized internally). |
+| `set_sliding_window_size(n)`     | Set sliding window size in frames.           |
+| `set_features_step_size(ms)`     | Set feature extraction step size in ms.      |
+| `set_feature_count(n)`           | Set number of MFCC features.                 |
+
+#### Arena accessors
+
+| Method                              | Description                                |
+|-------------------------------------|--------------------------------------------|
+| `get_tensor_arena_size()`           | Get the requested tensor arena size.       |
+| `get_tensor_arena_size_actual()`    | Get the actual allocated arena size.       |
+| `get_arena_used_bytes()`            | Get the number of bytes used in the arena. |
+| `get_model_size_bytes()`            | Get the model binary size in bytes.        |
+
+### Example Usage in a Consumer Component (Image Model)
+
+```cpp
+#include "esphome/components/tflite_micro_helper/tflite_micro_helper.h"
+#include "esphome/components/tflite_micro_helper/model_handler.h"
+
+using namespace esphome::tflite_micro_helper;
+
+// In your component setup:
+TFLiteMicroHelper tflite;
+
+// Configure model specifics
+tflite.set_model(my_model_data, my_model_size);
+tflite.set_input_type("uint8");
+tflite.set_input_width(32);
+tflite.set_input_height(20);
+tflite.set_input_channels(3);
+tflite.set_input_order("RGB");
+tflite.set_normalize(false);
+tflite.set_tensor_arena_size(200 * 1024);  // 200KB arena
+tflite.set_debug(true);
+
+// Load model — CRC32 verification happens here
+if (!tflite.load_model()) {
+  ESP_LOGE("my_component", "Failed to load TFLite model");
+  return;
+}
+
+// Run inference on preprocessed image data
+ProcessedOutput result = tflite.run_inference(image_buffer, image_size);
+ESP_LOGI("my_component", "Prediction: value=%.0f confidence=%.2f",
+         result.value, result.confidence);
+
+// Check memory usage
+ArenaStats stats = tflite.get_arena_stats();
+ESP_LOGI("my_component", "Arena: %u used / %u total (%.1f%%)",
+         stats.used_bytes, stats.total_size, stats.efficiency);
+```
+
+### Example Usage in a Consumer Component (Audio Model)
+
+```cpp
+#include "esphome/components/tflite_micro_helper/tflite_micro_helper.h"
+#include "esphome/components/tflite_micro_helper/model_handler.h"
+
+using namespace esphome::tflite_micro_helper;
+
+// In your component setup:
+TFLiteMicroHelper tflite;
+
+tflite.set_model(my_model_data, my_model_size);
+tflite.set_model_type("audio");
+tflite.set_probability_cutoff(0.5f);
+tflite.set_sliding_window_size(10);
+tflite.set_features_step_size(20);
+tflite.set_feature_count(40);
+tflite.set_tensor_arena_size(110 * 1024);
+
+if (!tflite.load_model()) {
+  ESP_LOGE("my_component", "Failed to load audio model");
+  return;
+}
+```
+
+## Debug Features
+
+When `debug: true` is set in the configuration, the `DEBUG_TFLITE_MICRO_HELPER` preprocessor define is
+activated, enabling:
+
+- **CRC32 Model Verification**: The `ModelHandler::verify_model_crc()` method computes and checks the model
+  file CRC32 to detect data corruption. CRC32 is computed from the model binary and stored per-instance.
+- **Model Architecture Inspection**: `debug_model_architecture()` logs operator types, tensor shapes, and
+  quantization parameters.
+- **Input/Output Analysis**: Tensor data statistics (min, max, mean), quantization details, and output
+  distribution. Includes `debug_pre_inference_state()`, `debug_output_tensor_details()`, and
+  `debug_raw_outputs()`.
+- **Memory Status**: `report_memory_status()` prints arena allocation, usage, and peak memory consumption.
+- **Parameter Sweeping** (advanced): `debug_test_parameters()` runs inference across multiple configurations
+  (varying `input_order`, `input_size`, `normalize`, `input_type`) to find optimal settings. Sweeps generate
+  up to 16 configuration combinations and report the top 10 by confidence.
+- **Watchdog Feeding**: `feed_watchdog()` is called periodically during long debug operations to prevent
+  task watchdog timeouts on ESP32.
+
+## See Also
+
+- [ESP32 Component](/components/esp32/)
+- [PSRAM Component](/components/psram/)
+- [TensorFlow Lite Micro](https://www.tensorflow.org/lite/micro)
+- [ESP-TFLite-Micro](https://components.espressif.com/components/espressif/esp-tflite-micro)
+- [esphome_ai_component Demo](https://github.com/nliaudat/esphome_ai_component) — Working ESPHome external
+  component with AI meter reader, camera integration, and pre-trained models
+
