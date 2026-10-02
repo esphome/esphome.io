@@ -12,14 +12,14 @@ The `http_request` component lets you make HTTP/HTTPS requests. To do so, you ne
 http_request:
 ```
 
-<span id="http_request-configuration_variables"></span>
-
 ## Configuration variables
 
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
 - **follow_redirects** (*Optional*, boolean): Enable following HTTP redirects. Defaults to `true`.
 - **redirect_limit** (*Optional*, integer): Maximum amount of redirects to follow when enabled. Defaults to `3`.
 - **timeout** (*Optional*, [Time](/guides/configuration-types#time)): Timeout for request. Defaults to `4.5s`.
+  On ESP32 this applies to each network operation (DNS lookup, connect, TLS handshake, every read and write)
+  rather than to the request as a whole.
 - **useragent** (*Optional*, string): User-Agent header for requests. Defaults to
   `ESPHome/<version> (https://esphome.io)` where `<version>` is the version of ESPHome the device is running.
   For example: `ESPHome/2024.6.0 (https://esphome.io)`
@@ -30,7 +30,10 @@ http_request:
   Mozilla's NSS root certificate store. **Supported on ESP32 only; must be explicitly set to false on other platforms.**
 
 - **watchdog_timeout** (*Optional*, [Time](/guides/configuration-types#time)): Change the watchdog timeout during connection/data transfer.
-  May be useful on slow connections or connections with high latency. **Do not change this value unless you are
+  May be useful on slow connections or connections with high latency. On ESP32 this defaults to three times
+  `timeout` plus one second, and never less than the `watchdog_timeout` set in the [ESP32 platform](/components/esp32)
+  configuration; requests run on the main loop, so without this the task watchdog could reboot the device while a
+  request waits on a slow server. On RP2040 there is no default. **Do not raise this value unless you are
   experiencing device reboots due to watchdog timeouts;** doing so may prevent the device from rebooting due to a
   legitimate problem. **Only available on ESP32 and RP2040**.
 
@@ -89,8 +92,6 @@ http_request:
 
 The `http_request` component supports a number of [actions](/automations/actions#all-actions) that can be used to send requests.
 
-<span id="http_request-get_action"></span>
-
 ### `http_request.get` Action
 
 This [action](/automations/actions#all-actions) sends a GET request.
@@ -126,8 +127,6 @@ on_...:
 - **on_response** (*Optional*, [Automation](/automations)): An automation to perform after the request is received.
 - **on_error** (*Optional*, [Automation](/automations)): An automation to perform if the request cannot be completed.
 
-<span id="http_request-post_action"></span>
-
 ### `http_request.post` Action
 
 This [action](/automations/actions#all-actions) sends a POST request.
@@ -148,11 +147,9 @@ on_...:
 
 - **body** (*Optional*, string, [templatable](/automations/templates)): A HTTP body string to send with request.
 - **json** (*Optional*, mapping): A HTTP body in JSON format. Values are [templatable](/automations/templates).
-  See [Examples](#http_request-examples).
+  See [Examples](#examples).
 
-- All other options from [`http_request.get` Action](#http_request-get_action).
-
-<span id="http_request-send_action"></span>
+- All other options from [`http_request.get` Action](#http_request-get-action).
 
 ### `http_request.send` Action
 
@@ -171,7 +168,7 @@ on_...:
 #### Configuration variables
 
 - **method** (**Required**, string): HTTP method to use (`GET`, `POST`, `PUT`, `DELETE`, `PATCH`  ).
-- All other options from [`http_request.post` Action](#http_request-post_action) and [`http_request.get` Action](#http_request-get_action).
+- All other options from [`http_request.post` Action](#http_request-post-action) and [`http_request.get` Action](#http_request-get-action).
 
 ## Triggers
 
@@ -185,7 +182,7 @@ The following variables are available for use in [lambdas](/automations/template
 - `response` as a pointer to `HttpContainer` object which contains `content_length`, `status_code` and `  duration_ms``.
 - `std::string get_response_header(const std::string &header_name)` to read response headers (only headers with names specified in the `collect_headers` are available).
 - `body` as `std::string` which contains the response body when `capture_response`
-  (see [`http_request.get` Action](#http_request-get_action)) is set to `true`.
+  (see [`http_request.get` Action](#http_request-get-action)) is set to `true`.
 
 > [!NOTE]
 > The `status_code` should be checked before using the `body` variable. A successful response will usually have
@@ -221,8 +218,6 @@ This automation will be triggered when the HTTP request fails to complete. This 
 or the server is not reachable. This will *not* be triggered if the request
 completes, even if the response code is not 200. No information on the type of error is available and no variables
 are available for use in [lambdas](/automations/templates#config-lambda). See example usage above.
-
-<span id="http_request-examples"></span>
 
 ## Examples
 

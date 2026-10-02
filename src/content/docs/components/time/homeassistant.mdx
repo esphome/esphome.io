@@ -10,7 +10,7 @@ to Home Assistant will be used to periodically synchronize the current time.
 > [!NOTE]
 > Although you might not plan to *export* states from the node and you do not need an entity of the node
 > in Home Assistant, this component still requires you to register the node under Home Assistant. See:
-> [Connecting your device to Home Assistant](/guides/getting_started_hassio#connecting-your-device-to-home-assistant).
+> [Connecting your device to Home Assistant](/install/getting-started/#connecting-your-device-to-home-assistant).
 
 ```yaml
 # Example configuration entry
@@ -18,6 +18,10 @@ time:
   - platform: homeassistant
     id: homeassistant_time
 ```
+
+If no `timezone` is configured for this component, an initial timezone will be inferred from the build host, but
+at runtime the timezone will be updated from Home Assistant when the time is synced.
+An explicitly configured timezone will prevent the timezone from being updated from Home Assistant.
 
 ## Configuration variables
 

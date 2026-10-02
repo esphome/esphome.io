@@ -1,0 +1,422 @@
+---
+title: "ESPHome 2025.10.0: Z-Wave Proxy and Arduino as an IDF component"
+description: "ESPHome 2025.10.0 adds the Z-Wave Proxy component, rebuilds ESP32 Arduino builds on top of ESP-IDF, introduces a unified SPI ePaper component, and hardens OTA and API security."
+date: 2025-10-15
+authors:
+  - jesse
+tags:
+  - Releases
+excerpt: "ESPHome 2025.10.0 adds the Z-Wave Proxy component, rebuilds ESP32 Arduino builds on top of ESP-IDF, introduces a unified SPI ePaper component, and hardens OTA and API security."
+cover:
+  alt: "ESPHome 2025.10.0: Z-Wave Proxy and Arduino as an IDF component"
+  image: "https://assets.openhomefoundation.org/opengraph?url=https://esphome.io/blog/2025/10/15/esphome-2025-10"
+head:
+  - tag: meta
+    attrs:
+      property: "og:image"
+      content: "https://assets.openhomefoundation.org/opengraph?url=https://esphome.io/blog/2025/10/15/esphome-2025-10"
+  - tag: meta
+    attrs:
+      name: "twitter:image"
+      content: "https://assets.openhomefoundation.org/opengraph?url=https://esphome.io/blog/2025/10/15/esphome-2025-10"
+  - tag: meta
+    attrs:
+      property: "og:image:title1"
+      content: "ESPHome 2025.10.0"
+  - tag: meta
+    attrs:
+      property: "og:image:title2"
+      content: "Z-Wave Proxy and Arduino as an IDF component"
+  - tag: meta
+    attrs:
+      property: "og:image:author"
+      content: "Jesse Hills"
+  - tag: meta
+    attrs:
+      property: "og:image:category"
+      content: "Releases"
+---
+
+import ImgTable from "@components/ImgTable.astro";
+
+<ImgTable items={[
+  ["Z-Wave Proxy","/components/zwave_proxy","z-wave.svg"],
+  ["ePaper SPI Displays","/components/display/epaper_spi","epaper.svg"],
+  ["WTS01","/components/sensor/wts01","wts01.png"],
+  ["LM75B","/components/sensor/lm75b","lm75b.jpg"]
+]} />
+
+## Release Overview
+
+ESPHome 2025.10.0 delivers major architectural improvements, new communication protocols, and extensive performance
+optimizations. This release focuses on enhancing security, improving memory efficiency, and expanding hardware support
+while introducing groundbreaking new features.
+
+**Key Highlights:**
+
+- **Z-Wave Proxy** - Bridge Z-Wave devices to Home Assistant through ESPHome
+- **Arduino as IDF Component** - Unified ESP32 framework architecture (breaking change)
+- **Enhanced ePaper Display Support** - New unified SPI ePaper component
+- **Security Enhancements** - SHA256 OTA authentication, password deprecation, and API hardening with OOM protection
+- **API Improvements** - Home Assistant action responses and configurable connection limits
+- **Extensive Memory Optimizations** - Flash and RAM savings across all platforms
+- **New Sensor Components** - WTS01 and LM75B temperature sensors
+
+## Z-Wave Proxy
+
+The new [Zwave Proxy](/components/zwave_proxy/) component enables network-based connectivity for Z-Wave hardware
+by proxying serial communication between a Z-Wave modem SoC and Z-Wave JS over WiFi or Ethernet. This component was
+specifically designed for the [Home Assistant ZWA-2 Z-Wave Adapter](https://www.home-assistant.io/connect/zwa-2/), which combines an ESP32 and a Z-Wave modem in a single device, but could support other Z-Wave hardware in the future.
+
+**Key Features:**
+
+- **Remote Z-Wave placement** - Position your Z-Wave modem anywhere in your home with WiFi/Ethernet connectivity
+- **Serial-to-network bridge** - Proxies UART communication between Z-Wave hardware and Z-Wave JS via ESPHome's
+  native API
+- **Flexible deployment** - Use ESP32 devices to extend Z-Wave modem placement beyond USB cable reach
+- **Low latency performance** - Achieves 50-60ms typical latency (as low as 35ms under ideal conditions)
+- **Ethernet recommended** - Best reliability with wired connections, though WiFi is supported
+
+This component is particularly useful for optimizing Z-Wave mesh network topology by placing the Z-Wave controller in
+a central location, even when your server is in a basement or closet.
+
+## Arduino as IDF Component (Major Architectural Change)
+
+This release includes a fundamental change in how ESP32 Arduino builds work - **Arduino is now integrated as an ESP-IDF component** rather than a separate framework. This is the biggest architectural change for ESP32 in ESPHome's history.
+
+Previously, Arduino came as a precompiled framework with everything baked in - you got whatever upstream decided, whether you needed it or not. This led to bloated builds that often **couldn't even fit on devices** with limited flash space. You were stuck with the upstream choices and locked out of ESP-IDF features.
+
+Now Arduino is built as an ESP-IDF component alongside your configuration. ESPHome compiles only what you actually use, eliminating the bloat. You get access to ESP-IDF features while still using Arduino libraries when you need them. This aligns with Espressif's recommended approach and is how the Arduino ecosystem is evolving.
+
+**Memory Savings:**
+
+- **20-30KB RAM savings** on Arduino builds
+- **Additional ~8KB RAM savings** if using the web server
+- **Smaller binary sizes** overall
+- Better memory efficiency through shared libraries
+
+**Development Benefits:**
+
+- **Faster fixes for underlying components** - Many components now share the same implementations between Arduino and ESP-IDF, eliminating duplicate maintenance
+- **Access to latest ESP-IDF 5.4** features while using Arduino libraries
+- **Reduced maintenance burden** - One framework to maintain instead of two separate paths
+- **Future-proof** - Follows Espressif's direction for the ESP32 ecosystem
+
+**Build Time Trade-off:**
+
+- Arduino builds now take longer (Arduino is compiled on top of ESP-IDF)
+- ESP-IDF builds are now **2-3x faster** than Arduino builds
+- **Consider migrating to ESP-IDF** if build time matters to you
+
+### Should You Migrate to ESP-IDF?
+
+**We recommend ESP-IDF for most users**, especially for:
+
+- Bluetooth Proxy devices (lower memory usage)
+- New projects
+- Configurations where you want faster builds
+
+Arduino is still fully supported and works great if you need it for specific Arduino libraries. See our [Arduino to ESP-IDF migration guide](/guides/esp32_arduino_to_idf) for help switching - it's easier than you might think!
+
+### What You Need to Know
+
+**Most users:** Your configuration will work without changes. ESPHome handles the framework integration automatically.
+
+**External component developers:** If you maintain external components using Arduino-specific APIs, review [Espressif's Arduino as ESP-IDF component documentation](https://docs.espressif.com/projects/arduino-esp32/en/latest/esp-idf_component.html) and test your components with this release.
+
+**Breaking change details:** Framework version handling has been improved with stricter validation. See the breaking changes section for specifics.
+
+## ePaper SPI Display Component
+
+The new [Epaper Spi](/components/display/epaper_spi/) component provides a unified, modernized interface for
+SPI-based ePaper displays:
+
+**Improvements:**
+
+- **Cleaner configuration** with consistent API across models
+- **Better performance** with optimized refresh cycles
+- **Improved partial update** handling where supported
+- **Reduced memory overhead** through efficient buffering
+
+**Current Status:**
+
+Currently supports one display model, with additional models from the
+[waveshare_epaper](/components/display/waveshare_epaper/) component being migrated over time. This
+new architecture provides a more maintainable codebase for future ePaper display support.
+
+## Security Enhancements
+
+ESPHome 2025.10.0 significantly improves security with several key changes. We conducted an internal security audit that didn't find any privilege escalation issues but identified many hardening opportunities. We've addressed these in this release and will continue to focus on internal security testing in the coming months.
+
+### SHA256 OTA Authentication
+
+OTA authentication has been upgraded from MD5 to SHA256 for better security:
+
+- **Modern cryptographic hashing** replaces legacy MD5 authentication
+- **Hardware acceleration** on supported ESP32 variants (S3, etc.)
+- **Non-blocking authentication** for better performance
+- **Graceful transition period** - Both SHA256 and MD5 are accepted through 2025.12.x
+- **MD5 will be rejected starting with 2026.1.0** on platforms that support SHA256
+
+During the transition, you'll see a warning when MD5 is used. After 2026.1.0, downgrading to older ESPHome versions will require serial flashing instead of OTA.
+
+**Bonus improvement:** Extended handshake timeout (20s) makes OTA more reliable on poor WiFi connections without freezing the device.
+
+### API Password Deprecation - Heads Up
+
+If you're still using password authentication for the API, now's the time to switch to encryption. Password support will be removed in **version 2026.1.0**.
+
+This release adds better warnings so you'll know if you need to update your configuration:
+
+- **You'll see a clear warning** if you're using passwords - no surprises when support is removed
+- **Can't use both** - if you try to configure both password and encryption, ESPHome will stop you (this combination has never worked properly and causes connection failures)
+- **Easy migration** - just switch from `password:` to `encryption:` with a key
+- **You have time** - password support works until 2026.1.0, giving you plenty of time to update
+
+> [!warning]
+> If you're using `password:` in your API configuration, please migrate to `encryption:` before version 2026.1.0.
+> Password authentication will be removed at that time. You can't use both password and encryption together -
+> pick one (and encryption is the better choice for security).
+
+## Dashboard Improvements
+
+The ESPHome Dashboard now uses WebSockets instead of HTTP polling for real-time updates:
+
+- **Instant updates** - Device status changes appear immediately (no more 1-2 second polling delay)
+- **Snappier interface** - Everything feels more responsive
+- **Lower server load** - More efficient than constant HTTP polling
+- **Logs start instantly** - The logs command now skips external component updates, eliminating 5-30 second delays when internet is unavailable
+
+If you manage multiple devices, the dashboard will feel noticeably faster and more responsive. Viewing logs is now instant even in offline or isolated network environments.
+
+## Device Onboarding Improvements
+
+Getting your ESPHome devices online has never been easier. This release brings major improvements to the initial setup experience, particularly for ESP32-IDF devices and the [Made for ESPHome](/guides/made_for_esphome/) program.
+
+### Captive Portal for ESP-IDF
+
+**This is huge.** ESP-IDF devices now have full captive portal support, which means you don't have to figure out which IP address to type into your browser anymore. When you connect to the device's access point, your phone or computer automatically detects the captive portal and opens the configuration page - just like connecting to hotel or airport WiFi.
+
+This brings ESP-IDF up to feature parity with Arduino for onboarding, and since most new ESPHome devices are running ESP-IDF, this dramatically improves the out-of-box experience. The implementation includes a lightweight DNS server that runs in ESPHome's event loop, responding to all DNS queries with the device's IP address to trigger captive portal detection on iOS, Android, and other platforms.
+
+### Improved Improv BLE Performance
+
+[Improv Wi-Fi over BLE](https://www.improv-wifi.com/ble/) is the standard way to provision ESPHome devices over Bluetooth, and we've made it significantly faster and more reliable:
+
+**Performance improvements:**
+
+- **26x faster service lookups** for typical 3-service configurations by replacing HashMap with vectors
+- **1KB flash savings** plus reduced RAM usage
+- **Better discoverability** - Device names are now visible to passive BLE scanners, making ESPHome devices easier to find on a wider range of BLE scanning technologies
+
+**Why passive scanning matters:** Many home automation systems and BLE scanners only support passive scanning (not active scanning). Making the device name visible to passive scanners means your devices show up in more scanning apps and are easier to identify during setup.
+
+These improvements directly support the [Made for ESPHome program](/guides/made_for_esphome/), which requires Improv provisioning via BLE for Wi-Fi projects to ensure a consistent, high-quality setup experience across all ESPHome-compatible products.
+
+The Made for ESPHome program requires Improv BLE provisioning for Wi-Fi projects. See the [certification requirements](/guides/made_for_esphome/) for details.
+
+## Home Assistant Action Responses
+
+The API now supports receiving responses from Home Assistant actions, enabling bidirectional communication:
+
+**Capabilities:**
+
+- **Call Home Assistant actions** from ESPHome
+- **Receive response data** for processing in automations
+- **Enhanced integration** with Home Assistant services
+- **New automation possibilities** with real-time data exchange
+
+This feature enables more sophisticated integrations, such as querying state from Home Assistant for use in ESPHome
+logic.
+
+## YAML Enhancements
+
+### Literal Substitutions
+
+The new `!literal` tag allows raw string values in substitutions without variable expansion:
+
+```yaml
+substitutions:
+  json_template: !literal '{"key": "${value}"}'
+```
+
+This is particularly useful for JSON templates and other contexts where dollar signs should not trigger
+substitution.
+
+### Dynamic Auto-Loading
+
+Components can now conditionally auto-load dependencies based on configuration, reducing unnecessary component
+inclusion and saving memory.
+
+## Memory & Performance Optimizations
+
+ESPHome 2025.10.0 brings major memory efficiency improvements, with **nearly 3KB of RAM savings** on typical configurations. As ESPHome has grown more capable over the years, memory usage has naturally increased with new features. ESP8266 devices with their ~40KB of free RAM were starting to feel the squeeze, and ESP32-C3 Bluetooth proxies were experiencing stability issues under load.
+
+**We've made these use cases much better.** Through systematic optimization efforts, we've reclaimed precious RAM and improved stability across the board. ESP8266 users get more headroom for complex configurations. ESP32-C3 Bluetooth proxy users get better stability with multiple active connections. All platforms benefit from faster performance and lower memory overhead.
+
+The improvements come from replacing heavy C++ STL containers (vectors, maps, sets) with lighter alternatives and moving data from RAM to flash storage where possible. Each optimization might save a few hundred bytes, but they add up quickly when applied across the codebase.
+
+**This is just the beginning** - we're continuing this optimization work in 2025.11.0 and beyond. Expect more memory savings and performance improvements in upcoming releases.
+
+**RAM Savings:**
+
+- **~3KB total RAM savings on ESP8266, ~1-2KB on ESP32** from all optimizations combined
+- **Lock component**: 388 bytes flash + 23 bytes RAM per lock via bitmask optimization
+- **ESP32 BLE Server**: 1KB flash savings by replacing HashMap with vectors (26x faster lookups)
+- **Event Emitter**: 2.6KB flash savings via vector replacement (2.3x faster)
+- **mDNS/OpenThread**: StaticVector eliminates dynamic allocation overhead
+- **Script names**: Moved to flash storage instead of RAM
+- **Component metadata**: Named structs replace std::pair overhead
+- **API**: Zero-copy techniques eliminate unnecessary data copying in Bluetooth proxy, Z-Wave proxy, and base API calls (authentication, time zones), reducing allocations and improving performance
+
+**Performance Improvements:**
+
+- **Logger**: 35-72% faster log formatting through optimized string handling
+- **Web Server**: Significant reduction through lookup tables and IDF server unification
+- **Scheduler**: Reduced function call overhead
+- **OTA**: Non-blocking authentication improves responsiveness
+- **USB Host**: Dedicated FreeRTOS task for continuous event processing prevents data corruption during high-frequency transfers
+
+These optimizations benefit all platforms, but ESP8266 users will notice the most dramatic stability improvements.
+
+## New Components & Features
+
+### Sensor Components
+
+- **WTS01** - Temperature sensor with UART interface
+- **LM75B** - Popular I2C temperature sensor
+
+### Communication Features
+
+- **Multiple CAN instances** on supported ESP32 platforms
+- **UART enhancements** with multiple ESP32 features and fixes
+- **Remote receiver demodulation** support on ESP32
+- **Modbus courtesy responses** for improved protocol compliance
+
+### Hardware Support
+
+- **LAN8670 PHY** support for Ethernet
+- **Configurable Ethernet MAC address** in YAML
+- **QMC5883L DRDY pin** for maximum sampling rate
+- **USB host/UART** support on ESP32-P4
+
+## For Contributors
+
+If you contribute to ESPHome or maintain external components, you'll notice some big improvements to the development experience:
+
+**CI Testing Improvements:**
+
+- **Much faster CI for large PRs** - Large PR test time reduced from ~1 hour to ~20 minutes through intelligent component grouping
+- **Release builds 6-7x faster** - Release test time reduced from 12+ hours to 1h40m
+- **Smarter component testing** - Changed components get isolated test runners with full validation, while dependency-only components are grouped for speed
+- **Better feedback loops** - Get results faster, making it easier to iterate on contributions
+- **More reliable testing** - APT package caching (2m30s → 5s), retry logic for downloads, and utilization of a larger available disk partition (66GB instead of 23GB)
+
+These improvements make it much easier to contribute to ESPHome by reducing wait times and making the CI system more efficient and reliable.
+
+## Breaking Changes
+
+ESPHome 2025.10.0 includes several breaking changes requiring attention:
+
+### Arduino as IDF Component
+
+- **Framework architecture change** - Arduino is now integrated as an ESP-IDF component
+- **Impact**: Build process changes, potential incompatibilities with external components
+- **Action Required**: Test custom components, update framework version handling
+- **PR**: [esphome#10647](https://github.com/esphome/esphome/pull/10647)
+
+### API Changes
+
+Several API-related breaking changes improve security and efficiency:
+
+- **ConnectRequest/Response renamed** to AuthenticationRequest/Response
+  [esphome#10726](https://github.com/esphome/esphome/pull/10726)
+- **Password and encryption now mutually exclusive** with deprecation warnings
+  [esphome#10871](https://github.com/esphome/esphome/pull/10871)
+- **Configurable connection limits** added with new defaults [esphome#10939](https://github.com/esphome/esphome/pull/10939)
+- **Message size limits** to prevent memory exhaustion [esphome#10936](https://github.com/esphome/esphome/pull/10936)
+- **ClientInfo::get_combined_info() removed** to eliminate heap fragmentation
+  [esphome#10970](https://github.com/esphome/esphome/pull/10970)
+- **HomeassistantServiceResponse renamed** to HomeassistantActionRequest
+  [esphome#10839](https://github.com/esphome/esphome/pull/10839)
+
+### Component Changes
+
+- **EKTF2232**: `rts_pin` renamed to `reset_pin` [esphome#10720](https://github.com/esphome/esphome/pull/10720)
+- **MMC5603**: Fixed incorrect calculation factor (values will change)
+  [esphome#9925](https://github.com/esphome/esphome/pull/9925)
+- **ESP32 BLE**: max_connections now shared between client and server
+  [esphome#11006](https://github.com/esphome/esphome/pull/11006)
+- **Logger**: Runtime tag-specific log levels conditionally compiled
+  [esphome#11004](https://github.com/esphome/esphome/pull/11004)
+- **Lock**: Internal representation changed to bitmask [esphome#10977](https://github.com/esphome/esphome/pull/10977)
+- **mDNS/OpenThread**: Services storage uses StaticVector [esphome#10976](https://github.com/esphome/esphome/pull/10976)
+
+### ESP32 Platform
+
+- **Version handling improved** with stricter validation
+  [esphome#10899](https://github.com/esphome/esphome/pull/10899)
+- **Web server**: IDF web server now used for Arduino builds
+  [esphome#10991](https://github.com/esphome/esphome/pull/10991)
+
+### Audio
+
+- **esp-audio-libs updated to 2.0.1** with new FLAC decoder
+  [esphome#10974](https://github.com/esphome/esphome/pull/10974)
+
+Most breaking changes involve internal optimizations and security improvements. Standard configurations should
+continue working, but custom components and advanced setups may require updates.
+
+{/* markdownlint-disable MD013 */}
+
+## Release 2025.10.1 - October 16
+
+- [mipi_spi] Rotation fixes [esphome#11226](https://github.com/esphome/esphome/pull/11226) by [@clydebarrow](https://github.com/clydebarrow) (new-feature)
+- [ota] Fix MQTT resolution when static IP appears first in device list [esphome#11272](https://github.com/esphome/esphome/pull/11272) by [@bdraco](https://github.com/bdraco)
+- [ota.esphome] Handle blank password the same as no password defined [esphome#11271](https://github.com/esphome/esphome/pull/11271) by [@jesserockz](https://github.com/jesserockz)
+- [tests] Fix OTA password test assertions after merge collision [esphome#11275](https://github.com/esphome/esphome/pull/11275) by [@bdraco](https://github.com/bdraco)
+- [wifi] Fix enterprise wifi [esphome#11276](https://github.com/esphome/esphome/pull/11276) by [@swoboda1337](https://github.com/swoboda1337)
+- [substitutions] Fix AttributeError when using packages with substitutions [esphome#11274](https://github.com/esphome/esphome/pull/11274) by [@bdraco](https://github.com/bdraco)
+
+## Release 2025.10.2 - October 20
+
+- [datetime] Fix DateTimeStateTrigger compilation when time component is not used [esphome#11287](https://github.com/esphome/esphome/pull/11287) by [@bdraco](https://github.com/bdraco)
+- [core] Add ESP32 ROM functions to reserved ids [esphome#11293](https://github.com/esphome/esphome/pull/11293) by [@swoboda1337](https://github.com/swoboda1337)
+- [htu21d] Revert register address change [esphome#11291](https://github.com/esphome/esphome/pull/11291) by [@swoboda1337](https://github.com/swoboda1337)
+- [esp32] Reduce tx power on Arduino in the event of a brownout [esphome#11304](https://github.com/esphome/esphome/pull/11304) by [@swoboda1337](https://github.com/swoboda1337)
+- [const] Add CONF_OPENTHREAD [esphome#11318](https://github.com/esphome/esphome/pull/11318) by [@danstiner](https://github.com/danstiner)
+- [dashboard] Fix binary download with packages using secrets after Path migration [esphome#11313](https://github.com/esphome/esphome/pull/11313) by [@bdraco](https://github.com/bdraco)
+- [dashboard] fix migration to Path [esphome#11342](https://github.com/esphome/esphome/pull/11342) by [@tomaszduda23](https://github.com/tomaszduda23)
+- [scd4x, bme68x] Fix temperature_offset to use the temperature_delta instead of temperature [esphome#11347](https://github.com/esphome/esphome/pull/11347) by [@Spectre5](https://github.com/Spectre5)
+- [core] Fix IndexError when OTA devices cannot be resolved [esphome#11311](https://github.com/esphome/esphome/pull/11311) by [@bdraco](https://github.com/bdraco)
+- [esp32] Fix OTA rollback [esphome#11300](https://github.com/esphome/esphome/pull/11300) by [@swoboda1337](https://github.com/swoboda1337)
+- [openthread] Backport address resolution support to prevent OTA crash [esphome#11312](https://github.com/esphome/esphome/pull/11312) by [@bdraco](https://github.com/bdraco)
+
+## Release 2025.10.3 - October 24
+
+- [hdc1080] Make HDC1080_CMD_CONFIGURATION failure a warning (and log it) [esphome#11355](https://github.com/esphome/esphome/pull/11355) by [@pzich](https://github.com/pzich)
+- [uart] Make rx pin respect pullup and pulldown settings [esphome#9248](https://github.com/esphome/esphome/pull/9248) by [@asergunov](https://github.com/asergunov)
+- [core] handle mixed IP and DNS addresses correctly in resolve_ip_address [esphome#11503](https://github.com/esphome/esphome/pull/11503) by [@Links2004](https://github.com/Links2004)
+
+## Release 2025.10.4 - November 4
+
+- [uart] Fix order of initialization calls [esphome#11510](https://github.com/esphome/esphome/pull/11510) by [@kbx81](https://github.com/kbx81)
+- Fix the LiberTiny bug with UART pin setup [esphome#11518](https://github.com/esphome/esphome/pull/11518) by [@asergunov](https://github.com/asergunov)
+- [mipi_rgb] Fix rotation with custom model [esphome#11585](https://github.com/esphome/esphome/pull/11585) by [@clydebarrow](https://github.com/clydebarrow) (new-feature)
+- [lvgl] Fix nested lambdas in automations unable to access parameters [esphome#11583](https://github.com/esphome/esphome/pull/11583) by [@bdraco](https://github.com/bdraco)
+- [image] Catch and report svg load errors [esphome#11619](https://github.com/esphome/esphome/pull/11619) by [@clydebarrow](https://github.com/clydebarrow)
+- [lvgl] Fix event for binary sensor [esphome#11636](https://github.com/esphome/esphome/pull/11636) by [@clydebarrow](https://github.com/clydebarrow)
+- [sdl] Fix keymappings [esphome#11635](https://github.com/esphome/esphome/pull/11635) by [@clydebarrow](https://github.com/clydebarrow)
+
+## Release 2025.10.5 - November 11
+
+- [const] Add CONF_ROWS [esphome#11249](https://github.com/esphome/esphome/pull/11249) by [@stuartparmenter](https://github.com/stuartparmenter)
+- [core] Don't allow python 3.14 [esphome#11527](https://github.com/esphome/esphome/pull/11527) by [@swoboda1337](https://github.com/swoboda1337)
+- [usb_uart] Fixes for transfer queue allocation [esphome#11548](https://github.com/esphome/esphome/pull/11548) by [@clydebarrow](https://github.com/clydebarrow)
+- [lvgl] Fix rotation with unusual width [esphome#11680](https://github.com/esphome/esphome/pull/11680) by [@clydebarrow](https://github.com/clydebarrow)
+{/* markdownlint-enable MD013 */}
+
+## Full List of Changes
+
+For the complete list of every merged pull request in this release, see the
+[full 2025.10.0 changelog](/changelog/2025.10.0/).
