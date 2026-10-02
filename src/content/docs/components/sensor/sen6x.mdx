@@ -160,6 +160,25 @@ sensor:
 
   - All options from [Sensor](/components/sensor).
 
+- **temperature_compensation** (*Optional*): Compensate temperature effects of the design-in at customer side by
+  applying a custom temperature offset to the ambient temperature. Compensation slot 0 is used.
+
+  - **offset** (*Optional*, float): Temperature offset in °C. Defaults to `0`.
+  - **normalized_offset_slope** (*Optional*, float): Normalized temperature offset slope. Defaults to `0`.
+  - **time_constant** (*Optional*, int): Time constant in seconds. Defaults to `0`.
+
+- **temperature_acceleration** (*Optional*): Parameters for the RH/T engine's temperature acceleration mode, from
+  Sensirion's [SEN6x Temperature Acceleration and Compensation](https://sensirion.com/media/documents/C964FCC8/69709EC3/PS_AN_SEN6x_Temperature_Compensation_and_Acceleration_Application_No.pdf)
+  application note.
+
+  - **k** (*Optional*, float): Filter constant K. Defaults to `20.0`.
+  - **p** (*Optional*, float): Filter constant P. Defaults to `20.0`.
+  - **t1** (*Optional*, float): Time constant T1 in seconds. Defaults to `100.0`.
+  - **t2** (*Optional*, float): Time constant T2 in seconds. Defaults to `300.0`.
+
+- **startup_delay** (*Optional*, [Time](/guides/configuration-types#time)): Warm-up period after starting a
+  measurement during which values are discarded. Maximum 1 hour. Defaults to `60s`.
+
 - **address** (*Optional*, int): Manually specify the I²C address of the sensor.
   Defaults to `0x6B`.
 
@@ -168,7 +187,8 @@ sensor:
 
 > [!NOTE]
 > The sensor needs about a minute "warm-up". The VOC and NOx gas index algorithm needs a
-> number of samples before the values stabilize.
+> number of samples before the values stabilize. The warm-up period can be changed with `startup_delay`.
+
 
 ## Wiring
 
