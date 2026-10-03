@@ -1,0 +1,45 @@
+---
+title: "DS3231 Temperature Sensor"
+description: "Instructions for reading the DS3231 real-time clock's temperature sensor in ESPHome."
+---
+
+import APIRef from '@components/APIRef.astro';
+
+The `ds3231` sensor platform reads the temperature measured by the [DS3231 real-time clock](/components/ds3231/).
+The chip uses this reading internally to compensate its oscillator; it has 0.25 °C resolution.
+
+Set up the [`ds3231`](/components/ds3231/) hub (and the [I²C](/components/i2c/) bus it needs) first.
+
+```yaml
+# Example configuration entry
+ds3231:
+  id: ds3231_hub
+
+sensor:
+  - platform: ds3231
+    name: "RTC Temperature"
+```
+
+## Configuration Variables
+
+- **name** (**Required**, string): The name of the sensor.
+- **ds3231_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the [`ds3231`](/components/ds3231/)
+  hub to use when more than one is configured.
+- **unit** (*Optional*, string): The unit to publish the temperature in, either `celsius` or `fahrenheit`.
+  Defaults to `celsius`. The chip always measures in Celsius; `fahrenheit` converts the published value.
+  `unit_of_measurement` defaults to match (`°C` / `°F`) unless you set it explicitly.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): How often to read the
+  temperature. Defaults to `60s`.
+- All other options from [Sensor](/components/sensor/#config-sensor).
+
+> [!NOTE]
+> The DS3231 runs a temperature conversion on its own every 64 seconds. Reading more often than that returns
+> the same value until the next conversion. Use the
+> [`ds3231.force_temperature_conversion`](/components/ds3231/#ds3231-force_temperature_conversion-action)
+> action to trigger a conversion on demand.
+
+## See Also
+
+- [DS3231 Real-Time Clock](/components/ds3231/)
+- [Sensor Component](/components/sensor/)
+- <APIRef text="ds3231/sensor/ds3231_temperature.h" path="ds3231/sensor/ds3231_temperature.h" />
