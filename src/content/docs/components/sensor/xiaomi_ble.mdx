@@ -553,6 +553,37 @@ sensor:
       name: "Mi Motion Sensor Battery Level"
 ```
 
+### MCCGQ02HL - Mi Door and Window Sensor 2
+
+Door/window contact with an ambient light sensor. Broadcasts the opening state, a bright/dark light state and
+battery level. Requires a bindkey in order to decrypt the received data (see
+[Obtaining the Bindkey](#obtaining-the-bindkey)).
+
+Configuration example:
+
+```yaml
+binary_sensor:
+  - platform: xiaomi_mccgq02hl
+    name: "Front Door"
+    mac_address: "XX:XX:XX:XX:XX:XX"
+    bindkey: 00112233445566778899aabbccddeeff
+    open:
+      name: "Front Door Open"
+    has_light:
+      name: "Front Door Light"
+    battery_level:
+      name: "Front Door Battery Level"
+```
+
+The platform itself is a binary sensor for the opening state (device class `opening`). A door left open past the
+device's internal timeout is reported as open; the device's reset message is ignored.
+
+- **open** (*Optional*): A second binary sensor with the same opening state. All options from
+  [Binary Sensor](/components/binary_sensor/).
+- **has_light** (*Optional*): `ON` when the ambient light is above the device's fixed threshold. The device sends it
+  only when the state changes. All options from [Binary Sensor](/components/binary_sensor/).
+- **battery_level** (*Optional*): The battery level in percent. All options from [Sensor](/components/sensor/).
+
 ## Setting Up Devices
 
 Required:
