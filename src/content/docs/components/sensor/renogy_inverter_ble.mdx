@@ -1,0 +1,84 @@
+---
+description: "Instructions for setting up Renogy inverter sensors that read over Bluetooth Low Energy in ESPHome."
+title: "Renogy Inverter BLE Sensor"
+---
+
+The `renogy_inverter_ble` sensor platform reads live data from a **Renogy inverter with built-in Bluetooth** over Bluetooth Low Energy — for example the **Renogy PUH 12V 3000W Pure Sine Wave Inverter** (with UPS transfer switch, SKU `RIV1230PU-126`) and other units in the `RNGRIU` family.
+
+These inverters speak Modbus over BLE, but require a proprietary "wake" read on a vendor characteristic before they answer any request — which is why a generic [Modbus Controller](/components/modbus_controller) over a BLE bridge times out against them. This component performs that handshake, then reads the inverter's holding registers and publishes the values.
+
+It depends on the [BLE Client](/components/ble_client) component, which in turn requires the [ESP32 BLE Tracker](/components/esp32_ble_tracker).
+
+## Finding the inverter's MAC address
+
+The inverter's BLE MAC address is not the same as the UUID shown by some operating systems. To find it, flash a temporary tracker build and watch the logs for a device whose name starts with `RNGRIU`:
+
+```yaml
+logger:
+  level: DEBUG
+
+esp32_ble_tracker:
+  on_ble_advertise:
+    then:
+      - lambda: |-
+          ESP_LOGD("scan", "Found %s '%s'", x.address_str().c_str(), x.get_name().c_str());
+```
+
+A phone app such as nRF Connect can also be used. Once you have the MAC, remove the tracker logging and configure the component below.
+
+:::note
+The inverter accepts only **one** BLE connection at a time. If a phone app or another client is connected to it, this component cannot read it.
+:::
+
+## Configuration example
+
+```yaml
+esp32_ble_tracker:
+
+ble_client:
+  - mac_address: AA:BB:CC:DD:EE:FF  # the inverter's BLE MAC (RNGRIU…)
+    id: inverter_client
+
+renogy_inverter_ble:
+  - id: inverter0
+    ble_client_id: inverter_client
+    update_interval: 30s
+
+sensor:
+  - platform: renogy_inverter_ble
+    renogy_inverter_ble_id: inverter0
+    ac_output_voltage:
+      name: "Inverter Output Voltage"
+    battery_voltage:
+      name: "Inverter Battery Voltage"
+    load_active_power:
+      name: "Inverter Load Power"
+    temperature:
+      name: "Inverter Temperature"
+```
+
+## Hub configuration variables
+
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
+- **ble_client_id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the [BLE Client](/components/ble_client) to read from.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to poll the inverter. Defaults to `30s`.
+
+## Sensor configuration variables
+
+- **renogy_inverter_ble_id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the `renogy_inverter_ble` hub to read from.
+- **ac_input_voltage** (*Optional*): AC input (grid pass-through) voltage. All options from [Sensor](/components/sensor#config-sensor).
+- **ac_output_voltage** (*Optional*): AC output voltage. All options from [Sensor](/components/sensor#config-sensor).
+- **ac_output_current** (*Optional*): AC output current. All options from [Sensor](/components/sensor#config-sensor).
+- **ac_output_frequency** (*Optional*): AC output frequency. All options from [Sensor](/components/sensor#config-sensor).
+- **input_frequency** (*Optional*): AC input (grid) frequency. All options from [Sensor](/components/sensor#config-sensor).
+- **battery_voltage** (*Optional*): Battery voltage. All options from [Sensor](/components/sensor#config-sensor).
+- **temperature** (*Optional*): Inverter temperature. All options from [Sensor](/components/sensor#config-sensor).
+- **load_current** (*Optional*): Load current. All options from [Sensor](/components/sensor#config-sensor).
+- **load_active_power** (*Optional*): Load active power (W). All options from [Sensor](/components/sensor#config-sensor).
+- **load_apparent_power** (*Optional*): Load apparent power (VA). All options from [Sensor](/components/sensor#config-sensor).
+
+## See Also
+
+- [BLE Client](/components/ble_client)
+- [ESP32 BLE Tracker](/components/esp32_ble_tracker)
+- [Sensor Component](/components/sensor)
