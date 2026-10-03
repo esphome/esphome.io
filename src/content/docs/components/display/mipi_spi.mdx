@@ -245,6 +245,19 @@ by the driver, but can be controlled by a separate GPIO pin. Depending on the di
 be able to be dimmed using a [Monochromatic](/components/light/monochromatic/) with a [Ledc](/components/output/ledc/). AMOLED displays do not have a backlight but
 their brightness can be set using the `brightness` option. This may also be controlled by a lambda API call.
 
+## Sleep and Wakeup
+
+The [`display.sleep` and `display.wakeup` actions](/components/display/#display-sleep-action) are enabled only for models
+that use a controller verified on hardware. The following models currently support these actions:
+
+- `ILI9341`
+- `ESP32-2432S028`
+- `M5CORE2`
+- `JC4827W543`
+
+Other models fail configuration validation when either action targets them. Turning off a backlight does not put the
+display controller to sleep; control the backlight separately when required.
+
 ## Touchscreens
 
 A touchscreen, if present, must be configured separately. See the [Touchscreen](/components/touchscreen/) documentation for more information.
