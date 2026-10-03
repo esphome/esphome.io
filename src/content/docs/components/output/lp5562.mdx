@@ -1,0 +1,96 @@
+---
+description: "Instructions for setting up LP5562 RGBW LED drivers."
+title: "LP5562"
+---
+
+import APIRef from '@components/APIRef.astro';
+
+<span id="lp5562-component"></span>
+
+## Component/Hub
+
+The LP5562 component represents a Texas Instruments LP5562 4-channel (RGBW) LED driver
+([datasheet](https://web.archive.org/web/20240327023921/https://www.ti.com/lit/ds/symlink/lp5562.pdf)) in ESPHome. It
+uses [I²C Bus](/components/i2c) for communication.
+
+To use the channels of this component, you first need to set up the global `lp5562` chip and specify its address
+and id, and then define the [individual output channels](#lp5562-output).
+
+```yaml
+# Minimalistic configuration entry, single chip, single output
+lp5562:
+  address: 0x30
+  id: lp5562_1
+
+# Individual outputs
+output:
+  - platform: lp5562
+    lp5562_id: 'lp5562_1'
+    channel: white
+```
+
+### Configuration variables
+
+- **address** (*Optional*, int): The I²C address of the driver.
+   Defaults to `0x30`.
+
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): The id to use for
+   this lp5562 component. Use this if you have multiple LP5562s connected at the same time.
+
+## LP5562 Output
+
+The LP5562 output component exposes an LP5562 PWM channel of a global
+[LP5562 chip](#lp5562-component) as a float output.
+
+```yaml
+# Complete example configuration entry for 1 driver and 4 outputs
+lp5562:
+  - address: 0x30
+    id: lp5562_1
+
+# Individual outputs
+output:
+  - platform: lp5562
+    id: 'lp5562_1_red'
+    channel: red
+    lp5562_id: 'lp5562_1'
+  - platform: lp5562
+    id: 'lp5562_1_green'
+    channel: green
+    lp5562_id: 'lp5562_1'
+  - platform: lp5562
+    id: 'lp5562_1_blue'
+    channel: blue
+    lp5562_id: 'lp5562_1'
+  - platform: lp5562
+    id: 'lp5562_1_white'
+    channel: white
+    lp5562_id: 'lp5562_1'
+
+# Sample use as an RGBW light
+light:
+  - platform: rgbw
+    name: "Sample RGBW light"
+    red: lp5562_1_red
+    green: lp5562_1_green
+    blue: lp5562_1_blue
+    white: lp5562_1_white
+```
+
+### Configuration variables
+
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The id to use for this output component.
+- **channel** (**Required**, string): Choose the channel of the LP5562 for this output component. One of
+  `red`, `green`, `blue`, `white`.
+
+- **lp5562_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the
+  [LP5562 chip](#lp5562-component).
+  Use this if you have multiple LP5562s you want to use at the same time.
+
+- All other options from [Output](/components/output#config-output).
+
+## See Also
+
+- [Output Component](/components/output/)
+- [RGBW Light](/components/light/rgbw/)
+- <APIRef text="lp5562_output.h" path="lp5562/lp5562_output.h" />
