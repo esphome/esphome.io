@@ -1,0 +1,122 @@
+---
+description: "Setting up APC Proteous gate motors in ESPHome."
+title: "APC Proteous Gate Controller"
+---
+
+import Figure from '@components/Figure.astro';
+import APIRef from '@components/APIRef.astro';
+import apcInterfaceImg from '../images/apc_interface.jpg';
+import apcWiringImg from '../images/apc_wiring.png';
+
+<Figure
+  src="/images/apc_proteous.svg"
+  alt="APC Proteous gate controller"
+  caption="APC Proteous gate controller"
+  layout="constrained"
+  width={300}
+  height={333}
+/>
+
+The `apc_proteous` cover platform allows you to control an APC gate motor
+controller. It should work with any APC gate controller that accepts the
+Infinity 2.0 WiFi controller, including:
+
+- APC Proteous Sliding Gate Opener Systems
+- APC Logico24 Swing Gate Opener Systems
+- APC Able Sliding Gate Openers
+- APC Able Swing Gate Openers
+
+The controller is driven over a serial connection, so a
+[UART bus](/components/uart) component is required. The UART **must** be set to
+9600 baud, 8 data bits, no parity and 1 stop bit (9600 8N1), with both `tx_pin`
+and `rx_pin` connected.
+
+The component polls the controller for its status and reports the gate
+position (0&ndash;100%) and movement back to the frontend, so the published
+state always reflects what the controller reports rather than an assumed state.
+
+```yaml
+# Example configuration entry
+uart:
+  - id: gate_uart
+    baud_rate: 9600
+    tx_pin: GPIOXX
+    rx_pin: GPIOXX
+
+cover:
+  - platform: apc_proteous
+    id: gate
+    name: Gate
+    device_class: gate
+```
+
+## Configuration variables
+
+- **uart_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the
+  [UART bus](/components/uart) connected to the controller. Required if multiple
+  UART buses are defined.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): How
+  often to poll the controller for its status. Defaults to `500ms`.
+- All other options from [Cover](/components/cover#config-cover).
+
+## Hardware connection
+
+The controller exposes its serial link on the connector marked **INTERFACE
+PORT** (it may also be labeled **ADI PORT**).
+
+<Figure
+  src={apcInterfaceImg}
+  alt="APC controller interface port"
+  caption="The INTERFACE PORT connector on the controller"
+  layout="constrained"
+  width={350}
+  height={344}
+/>
+
+Connect the ESP's UART to this port: the ESP's TX and RX lines and a common
+ground. In the example schematic below, `GPIO25` is used for TX (`TXD`) and
+`GPIO32` for RX (`RXD`). A 47&nbsp;kΩ series resistor **must** be fitted in the
+RX line; without it the controller can fail to start on power-up. The matching
+configuration is:
+
+```yaml
+uart:
+  - id: gate_uart
+    baud_rate: 9600
+    tx_pin: GPIO25
+    rx_pin: GPIO32
+
+cover:
+  - platform: apc_proteous
+    id: gate
+    name: Gate
+    device_class: gate
+```
+
+<Figure
+  src={apcWiringImg}
+  alt="APC Proteous serial interface wiring schematic"
+  caption="Example ESP32 wiring to the controller interface port"
+  layout="constrained"
+  width={480}
+  height={288}
+/>
+
+> [!NOTE]
+> The GPIO assignments above are only an example. Any UART-capable pins can be
+> used; set `tx_pin` and `rx_pin` to match your wiring.
+
+## Position control
+
+The controller reports the gate position, so the cover supports open, close,
+stop and toggle commands as well as moving to a partial position. When a target
+position between fully open and fully closed is requested, the component drives
+the gate in the appropriate direction and sends a stop command once the polled
+position reaches the target.
+
+## See Also
+
+- [Cover Component](/components/cover/)
+- [UART Bus](/components/uart)
+- [Automation](/automations)
+- <APIRef text="apc_proteous_cover.h" path="apc_proteous/apc_proteous_cover.h" />
