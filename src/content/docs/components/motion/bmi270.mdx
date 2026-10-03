@@ -15,6 +15,13 @@ a 16-bit 3-axis accelerometer and a 16-bit 3-axis gyroscope, plus an on-chip tem
 sensor. It requires an internal configuration blob to be uploaded at each power-on
 (handled automatically by this component).
 
+The BMI270 also exposes an auxiliary (secondary I²C master) interface that can optionally drive a
+[Bosch BMM150](https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bmm150-ds001.pdf)
+magnetometer wired to its AUX pins rather than the main I²C bus, since the BMM150 has no address of its own on
+that bus. Set `aux_device` to `BMM150` to enable it, then read the magnetic field via the
+[BMI270 Sensor](/components/sensor/bmi270/) platform's `magnetic_field_x`/`magnetic_field_y`/`magnetic_field_z`
+types.
+
 ```yaml
 # Example configuration entry
 motion:
@@ -46,10 +53,14 @@ sensor:
   `125DPS`, `250DPS`, `500DPS`, `1000DPS`, `2000DPS`. Defaults to `2000DPS`.
 - **gyroscope_odr** (*Optional*, string): The output data rate of the gyroscope. One of
   `25HZ`, `50HZ`, `100HZ`, `200HZ`, `400HZ`, `800HZ`, `1600HZ`, `3200HZ`. Defaults to `200HZ`.
+- **aux_device** (*Optional*, string): What, if anything, is wired to the BMI270's auxiliary interface.
+  One of `NONE`, `BMM150`. Defaults to `NONE`.
+- **aux_address** (*Optional*, int): The I²C address of the device on the auxiliary interface. Only relevant
+  when `aux_device` is not `NONE`. Defaults to `0x10`, the BMM150's fixed address.
 
 - All other options from [Motion](/components/motion).
 
 ## See Also
 
-- [BMI270 Temperature Sensor](/components/sensor/bmi270/)
+- [BMI270 Temperature and Magnetic Field Sensor](/components/sensor/bmi270/)
 - <APIRef text="bmi270.h" path="bmi270/bmi270.h" />
