@@ -84,14 +84,16 @@ wifi:
   - **coexist** (*Optional*, boolean): Only on `esp32` with ESP-IDF. If enabled, the access
     point starts immediately at boot and stays active permanently alongside the station
     connection, instead of only being enabled as a fallback hotspot when no station
-    connection can be made. Defaults to `false`.
+    connection can be made. This uses the ESP-IDF AP+STA mode (`WIFI_MODE_APSTA`): the
+    device stays a client of the upstream network while also serving clients on its own
+    access point. Defaults to `false`, which leaves the fallback hotspot behavior unchanged.
 
     Requires at least one station network to be configured (via `ssid`/`password` or
     `networks`), and requires `post_connect_roaming: false` (see
     [Post-Connect Roaming](#post-connect-roaming)). While coexistence is enabled,
     `ap_timeout` is ignored because the access point is always started. See
-    [Access Point Coexistence](#wifi-access-point-coexistence) below.
-  
+    [Access Point Coexistence](#access-point-coexistence) below.
+
     > [!NOTE]
     > The ESP32 has a single radio shared by the station and access point interfaces, so both
     > must use the same channel. When the station connects to your router, the driver
@@ -101,7 +103,9 @@ wifi:
 
   - **napt** (*Optional*, boolean): Only on `esp32` with ESP-IDF. Enables Network Address and
     Port Translation (IP forwarding) for the access point, so devices connected to the AP
-    can reach the internet through the device's station connection. Defaults to `false`.
+    can reach the internet through the device's station connection. Combined with
+    `coexist: true` this lets the device act as a WiFi repeater, sharing the upstream
+    connection with the AP clients. Defaults to `false`.
     Requires `coexist: true` to be enabled.
 
     > [!NOTE]
@@ -211,9 +215,13 @@ ESPHome has an optional "Access Point Mode". If you include `ap:`
 in your wifi configuration, ESPHome will automatically set up an access point that you
 can connect to. Additionally, you can specify both a "normal" station mode and AP mode at the
 same time. By default, this will cause ESPHome to only enable the access point when no connection
-to the WiFi router can be made. On `esp32` devices using ESP-IDF, you can optionally configure the
-access point to remain permanently active alongside the station connection by setting
-`coexist: true`. See [Access Point Coexistence](#wifi-access-point-coexistence) below.
+to the WiFi router can be made.
+
+On `esp32` devices using ESP-IDF, you can additionally let both interfaces run at the same
+time by setting `coexist: true` (AP+STA mode), and share the station connection with the
+connected clients by setting `napt: true`. Both options are opt-in, so configurations that
+do not set them keep the fallback behavior described above. See
+[Access Point Coexistence](#access-point-coexistence) below.
 
 ```yaml
 wifi:
@@ -238,13 +246,18 @@ wifi:
     password: "W1PBGyrokfLz"
 ```
 
-<span id="wifi-access-point-coexistence"></span>
-
 ### Access Point Coexistence
 
 On `esp32` with ESP-IDF, setting `coexist: true` makes the access point start immediately at
 boot and remain active at the same time as the station connection, instead of only being used
-as a fallback hotspot.
+as a fallback hotspot. This puts the ESP-IDF WiFi driver into AP+STA mode (`WIFI_MODE_APSTA`),
+so the device is a client of your router and an access point for other devices at the same
+time. Adding `napt: true` (see
+[Sharing the Station Connection (NAPT)](#sharing-the-station-connection-napt)) extends this
+into a WiFi repeater, forwarding the AP clients' traffic over the station connection.
+
+Coexistence is opt-in, so existing configurations that do not set `coexist: true` are
+unaffected and keep the classic fallback hotspot behavior.
 
 ```yaml
 wifi:
