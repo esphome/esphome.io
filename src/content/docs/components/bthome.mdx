@@ -1,0 +1,51 @@
+---
+description: "BTHome v2 button gestures as binary sensors."
+title: "BTHome"
+---
+import APIRef from '@components/APIRef.astro';
+
+
+`bthome:` links the BTHome v2 button codec. The hub has no keys.
+
+A received gesture is one `binary_sensor`. It turns ON, then OFF. One entity per gesture.
+Sending a button is not on this page.
+
+```yaml
+# Example configuration entry
+esp32_ble_tracker:
+
+bthome:
+
+binary_sensor:
+  - platform: bthome
+    mac_address: XX:XX:XX:XX:XX:XX
+    event: press
+    name: "Button press"
+```
+
+## Configuration variables
+
+The hub has none.
+
+## Binary sensor
+
+- **mac_address** (**Required**, MAC Address): Address of the button.
+- **event** (**Required**, string): One of `press`, `double_press`, `triple_press`, `long_press`,
+  `long_double_press`, `long_triple_press`, `hold_press`.
+- **index** (*Optional*, int): Position of the button object in the advertisement, starting at 1.
+  Defaults to `1`. The range is 1 to 8.
+- **pulse_length** (*Optional*, [Time](/guides/configuration-types#time)): How long the sensor stays ON.
+  Defaults to `200ms`.
+
+All other options from [Binary Sensor](/components/binary_sensor#config-binary_sensor).
+
+The same packet id is one gesture. Without a packet id, a repeat inside 1.2 seconds is dropped.
+Encrypted advertisements are ignored.
+
+## See Also
+
+- [BTHome](https://bthome.io/)
+- [ESP32 Bluetooth Low Energy Tracker](/components/esp32_ble_tracker/)
+- [Binary Sensor Component](/components/binary_sensor/)
+- [BTHome MiThermometer](/components/sensor/bthome_mithermometer/)
+- <APIRef text="codec.h" path="bthome/codec.h" />
