@@ -1,0 +1,122 @@
+---
+description: "Instructions for speaking Modbus TCP on a TCP UART or a hardware UART in ESPHome."
+title: "Modbus TCP"
+---
+import APIRef from '@components/APIRef.astro';
+
+
+This component turns Modbus RTU into Modbus TCP, and back. [TCP UART](/components/tcp_uart/) and
+[UART TCP](/components/uart_tcp/) stay raw and copy bytes unchanged.
+
+Set `tcp_uart_id` or `uart_id`, not both.
+
+> [!WARNING]
+> A hardware entry opens plain TCP with no encryption and no authentication. `allowed_ips` filters by address
+> but does not authenticate the peer. If it is omitted, any host that can reach the port is accepted. Only use
+> the server on a trusted network.
+
+## In front of a TCP UART
+
+Set up a [TCP UART](/components/tcp_uart/) first. The hub's `uart_id` points here. `role` on this component is who sends the Modbus request. It defaults to `client`. `role` on the `tcp_uart` only decides who opens the TCP connection. The hub must use the same role.
+
+When `role` is `client`, the hub writes one RTU frame. That PDU is sent as one Modbus TCP request, and the matching response is turned back into RTU. One request is outstanding. A response with another transaction id is dropped.
+
+```yaml
+# Example configuration entry
+modbus_tcp:
+  - id: shelly_uart
+    tcp_uart_id: shelly_link
+
+modbus:
+  - uart_id: shelly_uart
+```
+
+When `role` is `server`, a request from the TCP peer is turned into one RTU frame. The hub's reply is sent back with that request's transaction id.
+
+```yaml
+# Example configuration entry
+tcp_uart:
+  - id: inbound
+    port: 502
+
+modbus_tcp:
+  - id: bus
+    tcp_uart_id: inbound
+    role: server
+
+modbus:
+  - uart_id: bus
+    role: server
+```
+
+The hub reads baud rate, data bits, parity and stop bits from the `tcp_uart`. Those settings are documented on
+[TCP UART](/components/tcp_uart/).
+
+## On a hardware UART
+
+This entry owns the pins and opens the socket. [UART TCP](/components/uart_tcp/) is not in this path. Only one
+transaction is open. `send_wait_time` should be shorter than the timeout of the Modbus TCP client. It is
+independent of `send_wait_time` on a [Modbus](/components/modbus/) hub.
+
+When `role` is `client`, an RTU frame from the UART is sent as a Modbus TCP request to `host`. The matching
+response is written back as RTU. If `host` does not answer within `send_wait_time`, the request is dropped.
+
+```yaml
+# Example configuration entry
+modbus_tcp:
+  - uart_id: meter_pins
+    host: 192.0.2.10
+    port: 502
+```
+
+When `role` is `server`, the TCP client is the Modbus client. Its request is written to the UART as RTU, and the reply
+is sent back as Modbus TCP. If the UART device does not answer within `send_wait_time`, the client receives
+exception `0x0B` (gateway target device failed to respond).
+
+```yaml
+# Example configuration entry
+modbus_tcp:
+  - uart_id: meter_pins
+    role: server
+    port: 502
+```
+
+> [!NOTE]
+> Baud rate, data bits, parity and stop bits are set on the [UART bus](/components/uart/). They are not options
+> of this component.
+
+## Configuration variables
+
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
+  With `tcp_uart_id`, use this ID as `uart_id` of the [Modbus](/components/modbus/) hub.
+- **tcp_uart_id** (**Required** for the first shape, [ID](/guides/configuration-types#id)): The raw
+  [TCP UART](/components/tcp_uart/). Do not set `uart_id` as well.
+- **uart_id** (**Required** for the second shape, [ID](/guides/configuration-types#id)): The hardware
+  [UART bus](/components/uart/). Do not set `tcp_uart_id` as well.
+- **role** (*Optional*, string): `client` or `server`. Defaults to `client`. With `tcp_uart_id`, this is who sends
+  the Modbus request, and the hub must use the same role. Who opens the socket stays on the TCP UART. With
+  `uart_id`, `server` listens and the TCP peer sends the requests.
+- **host** (**Required** when `role` is `client`, string): The host to connect to. An IP address or a hostname.
+  This option cannot be used when `role` is `server`, or with `tcp_uart_id`.
+- **port** (**Required** with `uart_id`, int): The TCP port to connect to, or to listen on.
+- **send_wait_time** (*Optional* with `uart_id`, [Time](/guides/configuration-types#time)): How long to wait
+  for the other side of one transaction. Defaults to `2s`. Not used with `tcp_uart_id`.
+- **timeout** (*Optional* with `uart_id`, [Time](/guides/configuration-types#time)): Close the connection when
+  no byte has been sent or received for this long. `0s` leaves it open. Defaults to `0s`. A `tcp_uart` has its
+  own `timeout`.
+- **allowed_ips** (*Optional* when `role` is `server`, list): IPv4 addresses that may connect. A plain address
+  is one host. A network is written in CIDR form, for example `192.0.2.0/24`. At most 255 entries. If the
+  option is omitted, every address may connect. This option cannot be used when `role` is `client`.
+- **reconnect_interval** (*Optional* with `uart_id`, [Time](/guides/configuration-types#time)): The time to wait
+  before trying again after a failure. Defaults to `5s`.
+- **connected** (*Optional* with `uart_id`): A binary sensor that reports whether the TCP connection is
+  established. All options from [Binary Sensor](/components/binary_sensor#config-binary_sensor) are supported.
+  On a `tcp_uart`, the sensor belongs to that component.
+
+## See Also
+
+- [TCP UART](/components/tcp_uart/)
+- [UART TCP](/components/uart_tcp/)
+- [UART Bus](/components/uart/)
+- [Modbus](/components/modbus/)
+- <APIRef text="modbus_tcp.h" path="modbus_tcp/modbus_tcp.h" />
