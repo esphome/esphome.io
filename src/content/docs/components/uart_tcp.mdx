@@ -58,6 +58,12 @@ uart_tcp:
 - **host** (**Required** when `role` is `client`, string): The host to connect to. An IP address or a hostname.
   This option cannot be used when `role` is `server`.
 - **port** (**Required**, int): The TCP port to connect to, or to listen on.
+- **timeout** (*Optional*, [Time](/guides/configuration-types#time)): Close the connection when no byte has
+  been sent or received for this long. Time is counted from the last byte, or from when the connection opened.
+  `0s` leaves it open. Defaults to `0s`. A UART that cannot take more bytes also counts as traffic, so the
+  connection stays up while bytes are waiting for the bus even if the peer has stopped. On a client, the next
+  connection waits for `reconnect_interval`. On a server, the next client is accepted as soon as this
+  connection is closed.
 - **allowed_ips** (*Optional* when `role` is `server`, list): IPv4 addresses that may connect. A plain
   address is one host. A network is written in CIDR form, for example `192.0.2.0/24`. At most 255 entries. If
   the option is omitted, every address may connect. A rejected client is closed immediately and logged as a
@@ -67,6 +73,9 @@ uart_tcp:
   again after a failure. Defaults to `5s`.
 - **connected** (*Optional*): A binary sensor that reports whether the TCP connection is established. All options
   from [Binary Sensor](/components/binary_sensor#config-binary_sensor) are supported.
+- **disconnects** (*Optional*): A sensor that counts how many times an open connection has closed. It starts at
+  `0` on boot and does not increase again while the connection stays down. All options from
+  [Sensor](/components/sensor#config-sensor) are supported.
 
 ## Zigbee Coordinator
 
