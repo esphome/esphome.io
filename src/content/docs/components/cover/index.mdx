@@ -182,6 +182,24 @@ Configuration variables:
 
 - **id** (**Required**, [ID](/guides/configuration-types#id)): The cover to control.
 - **stop** (*Optional*, boolean, [templatable](/automations/templates)): Whether to stop the cover.
+  > [!NOTE]
+  > Stop can be used with a [lambda](/automations/templates#config-lambda) to implement a pausing behavior, for example
+  > when operating a cover with a common two button up/down control:
+  >
+  > ```yaml
+  > on_...: # to open the cover or pause if operation is already in progress.
+  >    then:
+  >      - cover.control:
+  >          id: kitchen
+  >          state: open
+  >          stop: !lambda "return id(kitchen).current_operation != COVER_OPERATION_IDLE;"
+  > on_...: # to close the cover or pause if operation is already in progress.
+  >    then:
+  >      - cover.control:
+  >          id: kitchen
+  >          state: closed
+  >          stop: !lambda "return id(kitchen).current_operation != COVER_OPERATION_IDLE;"
+  > ```
 - **state** (*Optional*, string, [templatable](/automations/templates)): The state to set the cover to - one of `OPEN` or `CLOSE`.
 - **position** (*Optional*, float, [templatable](/automations/templates)): The cover position to set.
 
