@@ -1,0 +1,82 @@
+---
+description: "Instructions for sharing one Modbus RTU bus between several masters."
+title: "Modbus Gateway"
+---
+import APIRef from '@components/APIRef.astro';
+
+
+The `modbus_gateway` component lets several Modbus masters share one RTU bus. One request is on the bus at a
+time, and the response goes back only to the port that sent it. The gateway does not poll. The masters do.
+
+Set up the [UART buses](/components/uart/) first. One bus is the server. Each other bus is a master. A port
+can instead be a UART this component creates. Use that id as the `uart_id` of a [Modbus](/components/modbus/)
+hub. A [Modbus Controller](/components/modbus_controller/) then uses the hub like any other bus.
+
+```yaml
+# Example configuration entry
+modbus_gateway:
+  - uart_id: bms_bus
+    ports:
+      - uart_id: inverter_bus
+      - id: local_bus
+
+modbus:
+  - uart_id: local_bus
+```
+
+## Configuration Variables
+
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
+- **uart_id** (**Required**, [ID](/guides/configuration-types#id)): The [UART bus](/components/uart/) the server
+  is connected to. No other component reads or writes this bus.
+- **response_timeout** (*Optional*, [Time](/guides/configuration-types#time)): How long to wait for a response
+  before the next port may use the bus. Defaults to `500ms`.
+- **cache_time** (*Optional*, [Time](/guides/configuration-types#time)): How long one stored read is reused.
+  It does nothing while `cache_entries` is `0`. The clock starts when that response arrives and is not
+  restarted by a later read of the same registers. A new response from the bus starts it again. Defaults to
+  `500ms`. `0s` disables the cache.
+- **cache_entries** (*Optional*, int): How many reads are kept. The cache stays off until this is set.
+  Defaults to `0`. The limit is 32 on the ESP8266, 512 when PSRAM is enabled, and 64 otherwise. One entry is
+  one reply, at most 256 bytes. A longer reply is not kept. The same read is answered from the stored reply.
+  A different read replaces the least recently used entry when the table is full. A write clears the entries.
+- **ports** (**Required**, list): The masters. At least 1 and at most 4. See [Ports](#ports).
+
+## Ports
+
+Set `uart_id` or `id`, not both.
+
+- **uart_id** ([ID](/guides/configuration-types#id)): A [UART bus](/components/uart/) a master is connected to.
+  Requests are read from it and the response is written back. A UART can be listed once, and it cannot be the
+  server bus.
+- **id** ([ID](/guides/configuration-types#id)): Creates a UART. Use it as `uart_id` of a
+  [Modbus](/components/modbus/) hub, not the server bus. The new UART copies baud rate, data bits, parity and
+  stop bits from the server bus. Those settings are documented on the [UART bus](/components/uart/).
+- **cache** (*Optional*, boolean): Whether this port may be answered from a stored response. Defaults to
+  `false`. `false` always reads the bus. The reply is still stored, so a port with `true` can use it until
+  `cache_time` runs out.
+
+A port that sends again before it is served keeps the latest frame.
+
+## Examples
+
+A stored read. `inverter_bus` always uses the bus. `local_bus` may reuse a reply until `cache_time` runs out.
+
+```yaml
+# Example configuration entry
+modbus_gateway:
+  - uart_id: bms_bus
+    cache_time: 500ms
+    cache_entries: 64
+    ports:
+      - uart_id: inverter_bus
+        cache: false
+      - id: local_bus
+        cache: true
+```
+
+## See Also
+
+- [Modbus](/components/modbus/)
+- [Modbus Controller](/components/modbus_controller/)
+- [UART Bus](/components/uart/)
+- <APIRef text="modbus_gateway.h" path="modbus_gateway/modbus_gateway.h" />
