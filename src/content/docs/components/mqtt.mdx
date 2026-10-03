@@ -95,12 +95,14 @@ mqtt:
 - **shutdown_message** (*Optional*, [MQTTMessage](#mqtt-message)): The message to send when
   the node shuts down and the connection is closed cleanly. See [Last Will And Birth Messages](#mqtt-last_will_birth) for more information.
 
-- **certificate_authority** (*Optional*, string): Only on ESP32. CA certificate in PEM format. See
-  [TLS (ESP32)](#mqtt-tls-idf) for more information.
-
+- **tls** (*Optional*, bool): Only on ESP32. Whether to use TLS for the MQTT connection. Defaults to `false`. Make sure to change the `port` of the MQTT broker. Most brokers use port 8883 for TLS connections.
 > [!TIP]
 > For MQTT security recommendations including TLS configuration, see the [Security Best Practices](/guides/security_best_practices#mqtt) guide.
 
+- **verify_ssl** (*Optional*, bool): Only on ESP32. When set to `true` (default), SSL/TLS certificates will be validated upon connection; if invalid,
+  the connection will be aborted. To accomplish this, ESP-IDF’s default ESP x509 certificate bundle is included in the build. This certificate bundle
+  includes the complete list of root certificates from Mozilla’s NSS root certificate store.
+- **certificate_authority** (*Optional*, string): Only on ESP32. CA certificate in PEM format. See [TLS CA (ESP32)](#mqtt-tls-ca-idf) for more information.
 - **client_certificate** (*Optional*, string): Only on `esp32`. Client certificate in PEM format.
 - **client_certificate_key** (*Optional*, string): Only on `esp32`. Client private key in PEM format.
 - **skip_cert_cn_check** (*Optional*, bool): Only on ESP32. Don't verify if the common name in the server
@@ -350,16 +352,13 @@ If the birth message and last will message have empty topics or topics
 that are different from each other, availability reporting will be
 disabled.
 
-<span id="mqtt-tls-idf"></span>
+<span id="mqtt-tls-ca-idf"></span>
 
-## TLS (ESP32)
+## TLS CA (ESP32)
 
-On ESP32, a TLS connection to an MQTT broker can be established.
-The server's CA certificate is required to validate the connection.
-
-You have to download the server CA certificate in PEM format and add it to `certificate_authority`.
+On ESP32, if the server's CA certificate is required to validate the TLS connection,
+you have to download the server CA certificate in PEM format and add it to `certificate_authority`.
 Usually these are .crt files and you can open them with any text editor.
-Also make sure to change the `port` of the MQTT broker. Most brokers use port 8883 for TLS connections.
 
 > [!WARNING]
 > MbedTLS, the library that handles TLS for the esp-idf, doesn't validate wildcard certificates.
