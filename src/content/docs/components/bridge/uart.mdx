@@ -1,0 +1,32 @@
+---
+description: "Instructions for setting up a bridge between two UART buses in ESPHome."
+title: "UART Bridge"
+---
+
+The `uart` platform of the [Bridge](/components/bridge/) component copies bytes unchanged, in both directions,
+between two [UART buses](/components/uart/). Each bus keeps the baud rate, data bits, parity and stop bits set
+on that bus.
+
+Set up the two buses first. To publish the same bytes, for example with [UART TCP](/components/uart_tcp/), put
+a [UART Split](/components/uart_split/) on one bus and bridge one of its outputs.
+
+```yaml
+# Example configuration entry
+bridge:
+  - platform: uart
+    uart_id: device_a
+    peer_id: device_b
+```
+
+## Configuration variables
+
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of this bridge.
+- **uart_id** (**Required**, [ID](/guides/configuration-types#id)): One [UART bus](/components/uart/).
+- **peer_id** (**Required**, [ID](/guides/configuration-types#id)): The other [UART bus](/components/uart/).
+
+## See Also
+
+- [Bridge](/components/bridge/)
+- [UART Bus](/components/uart/)
+- [UART Split](/components/uart_split/)
+- [UART TCP](/components/uart_tcp/)
