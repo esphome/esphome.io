@@ -13,9 +13,13 @@ jobs:
   close:
     name: Close PR opened from fork's current/next branch
     runs-on: ubuntu-latest
+    # Maintainers can apply the `allow-fork-default-branch` label to exempt a PR from this check, e.g. for
+    # legacy PRs opened before this rule existed. Labels can only be set by users with write access, so
+    # contributors can't exempt themselves.
     if: >-
       github.event.pull_request.head.repo.full_name != github.event.pull_request.base.repo.full_name
       && (github.event.pull_request.head.ref == 'current' || github.event.pull_request.head.ref == 'next')
+      && !contains(github.event.pull_request.labels.*.name, 'allow-fork-default-branch')
     steps:
       - uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         with:

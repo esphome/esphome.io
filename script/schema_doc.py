@@ -655,6 +655,44 @@ def is_title(title):
     return title.startswith("#")
 
 
+# Schemas (e.g. "LIGHT_STATE_SCHEMA") of the doc section currently being parsed,
+# keyed by name. Set per-section in parse_file() so a heading can be matched to a
+# sibling schema emitted from the code.
+current_component_schemas = {}
+
+
+def title_schema_name(title):
+    """Return the schema a heading names, or None.
+
+    The heading carries the schema's logical name without the trailing
+    ``_SCHEMA`` (e.g. "Light state" -> ``LIGHT_STATE_SCHEMA``); it matches only
+    when that schema is present in the current component's generated JSON. This
+    keeps the docs heading human-readable while still routing its config vars to
+    the schema they belong to.
+    """
+    slug = slugify(title)
+    if not slug:
+        return None
+    candidate = slug.replace("-", "_").upper() + "_SCHEMA"
+    return candidate if candidate in current_component_schemas else None
+
+
+def set_current_schemas(doc_type, doc_component, doc_platform):
+    """Record the schemas of the doc section being parsed for title matching."""
+    global current_component_schemas
+    if not doc_component:
+        current_component_schemas = {}
+        return
+    component_key = (
+        f"{doc_component}.{doc_platform}"
+        if doc_type == "platform_component"
+        else doc_component
+    )
+    current_component_schemas = (
+        (json_get(doc_component) or {}).get(component_key, {}).get("schemas", {})
+    )
+
+
 def is_break_title(title):
     if is_title(title):
         name = title.split(" ")[-1].lower()
@@ -665,6 +703,11 @@ def is_break_title(title):
         # Bare backtick heading (### `name`) — registry entry like a filter or effect.
         # Nothing after the closing backtick, so it's not a property sub-heading.
         if re.match(r"^#+\s+`[^`]+`\s*$", title):
+            return True
+        # A heading that names a sibling schema emitted from the code (e.g.
+        # "Light state" -> LIGHT_STATE_SCHEMA) ends the current config-vars walk
+        # so its options are routed to that schema instead of the base one.
+        if title_schema_name(title):
             return True
     return False
 
@@ -1122,6 +1165,29 @@ def parse_file(md_full_path):
                 print(
                     f"{md_full_path}:{index} {doc_platform}/{file_name} {title} not processed."
                 )
+
+        # A heading that names a sibling schema emitted from the code documents
+        # that schema (e.g. "Light state" -> LIGHT_STATE_SCHEMA) rather than the
+        # doc's main config schema. Routing its config vars there keeps shared
+        # sub-schemas documented where they belong instead of leaking their keys
+        # into the base component schema. Skip headings already claimed by the
+        # component/platform title logic or an action/condition/registry entry
+        # (e.g. "EMC2101 Component" -> EMC2101_COMPONENT_SCHEMA) so this doesn't
+        # hijack their handling.
+        set_current_schemas(doc_type, doc_component, doc_platform)
+        schema_name = (
+            None
+            if title_component or pending_schema
+            else title_schema_name(title)
+        )
+        if schema_name:
+            try:
+                index = process_config(
+                    md_full_path, lines, index, current_component_schemas[schema_name]
+                )
+            except Exception as err:
+                print(f"{md_full_path}:{index} {title} failed {repr(err)}")
+            continue
 
         if title == DOC_CONFIGURATION_VARIABLES:
             if not doc_component:

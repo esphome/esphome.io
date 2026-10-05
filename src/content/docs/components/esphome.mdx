@@ -1,6 +1,9 @@
 ---
 description: "Instructions for setting up the core ESPHome configuration."
 title: "ESPHome Core Configuration"
+anchorRedirects:
+  preferences-component: /components/preferences/
+  preferences-flash_write_interval: /components/preferences/
 ---
 
 Here you specify some core information that ESPHome needs to create
@@ -83,6 +86,8 @@ Advanced options:
   Defaults to the number of cores of the CPU which is also the maximum you can set.
 
 - **debug_scheduler** (*Optional*, boolean): If set, the scheduler will print debug information about scheduled tasks at log level DEBUG.
+- **merge_warnings** (*Optional*, boolean): Whether to warn when a YAML merge key (`<<:`)
+  silently drops a key. Defaults to `true`. See [Merge key warnings](#esphome-merge_warnings).
 - **areas** (*Optional*, list of [Area Configuration](#esphome-area)): Additional areas that can be referenced by devices.
 - **devices** (*Optional*, list of [Sub-Devices](#esphome-devices)): Sub-devices to group entities under.
 
@@ -300,40 +305,6 @@ By default, ESPHome does not include any libraries into the project. This means 
 Arduino, such as `Wire` or `EEPROM`, aren't available. If you need to use them, you should list them manually under
 this option. If they are used by another library, they should be listed before the library that uses them.
 
-<span id="preferences-flash_write_interval"></span>
-
-## Preferences Component
-
-This component is used to store data in the flash memory which is persisted across device reboots, e.g. the latest
-state of a light or the accumulated energy used by an appliance.
-
-```yaml
-# Example configuration entry
-preferences:
-  flash_write_interval: 1min
-```
-
-### Configuration variables
-
-- **flash_write_interval** (*Optional*, [Time](/guides/configuration-types#time)): Customize the frequency in which data is
-  flushed to the flash. This setting helps to prevent rapid changes to a component from being quickly
-  written to the flash and wearing it out. Defaults to `1min`. Set to `never` to disable this feature.
-
-As all devices have a limited number of flash write cycles, this setting helps to reduce the number of flash writes
-due to quickly changing components. In the past, when components such as `light`, `switch`, `fan` and `globals`
-were changed, the state was immediately committed to flash. The result of this was that the last state of these
-components would always restore to its last state on power loss, however, this has the cost of potentially quickly
-damaging the flash if these components are quickly changed.
-
-A safety feature has thus been implemented to mitigate issues resulting from the limited number of flash write cycles,
-the state is first stored in memory before being flushed to flash after the `flash_write_interval` has passed. This
-results in fewer flash writes, preserving the flash health.
-
-This behavior can be modified by setting `flash_write_interval` to `0s` to commit the changes to flash as soon as possible,
-however, be aware that this may lead to increased flash wearing and a shortened device lifespan!
-
-For [ESP8266](/components/esp8266/), `restore_from_flash` must also be set to `true` for states to be written to flash.
-
 <span id="esphome-changing_node_name"></span>
 
 ## Changing ESPHome Node Name
@@ -416,6 +387,38 @@ available in a newer version of ESPHome. This allows for a more friendly error m
 # Example configuration
 esphome:
   min_version: 2025.11.0
+```
+
+<span id="esphome-merge_warnings"></span>
+
+## Merge key warnings
+
+YAML merge keys (`<<:`), often combined with `!include`, merge mappings *shallowly*
+following the [YAML merge spec](https://yaml.org/type/merge.html): each key is inserted
+only if it does not already exist, and the first definition wins. This means that if two
+merged-in files both define the same top-level key, the second one is **dropped entirely**
+rather than combined:
+
+```yaml
+# main.yaml
+<<: !include a.yaml   # defines api: { reboot_timeout: 5min }
+<<: !include b.yaml   # also defines api: { encryption: ... }  -> silently dropped
+```
+
+In the example above only the `api:` block from `a.yaml` survives; the one from `b.yaml`
+is discarded. By default ESPHome prints a warning whenever this happens so the data loss
+is not silent.
+
+If you want to *combine* sections instead of having one win, use [`packages:`](/components/packages/),
+which performs a recursive deep merge.
+
+To silence the warning (for example when the drop is intentional), set `merge_warnings` to
+`false`:
+
+```yaml
+esphome:
+  name: my_device
+  merge_warnings: false
 ```
 
 <span id="esphome-area"></span>

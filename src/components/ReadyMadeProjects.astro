@@ -1,0 +1,395 @@
+---
+/**
+ * ReadyMadeProjects Component
+ * Renders the project type picker, per-type device pickers and the ESP Web Tools
+ * install buttons used on the Ready-Made Projects page.
+ *
+ * Everything shown here comes from `src/data/readyMadeProjects.ts` - adding a
+ * device or a project type is a data change, not a markup change.
+ *
+ * Usage in MDX:
+ *   <ReadyMadeProjects />
+ */
+
+import { DASHBOARD_ADOPT_URL, PROJECT_TYPES, type Device, type ProjectType } from "../data/readyMadeProjects";
+
+const ESP_WEB_TOOLS_URL = "https://unpkg.com/esp-web-tools@10/dist/web/install-button.js?module";
+
+/** The type shown before the visitor picks one, and the device preselected within each type. */
+const defaultType = PROJECT_TYPES[0];
+
+function isDefaultDevice(type: ProjectType, device: Device): boolean {
+  return type.devices[0] === device;
+}
+
+/** Repository holding the YAML for a device, falling back to the project type's. */
+function githubUrlFor(type: ProjectType, device: Device): string | undefined {
+  return device.githubUrl ?? type.advanced?.githubUrl;
+}
+
+/**
+ * The distinct YAML repositories across a type's devices. A single entry means
+ * one line covers the whole type; more than one means the link has to follow
+ * the selected device.
+ */
+function githubUrlsFor(type: ProjectType): (string | undefined)[] {
+  return [...new Set(type.devices.map((device) => githubUrlFor(type, device)))];
+}
+---
+
+<script is:inline type="module" src={ESP_WEB_TOOLS_URL}></script>
+
+<blockquote class="unsupported projects-hidden">
+  <p>
+    This page requires a browser that supports WebSerial. Please open this website on your desktop using Firefox, Google
+    Chrome or Microsoft Edge.
+  </p>
+</blockquote>
+
+<div class="question-prompt">I want to create a:</div>
+<div class="types not-content">
+  {
+    PROJECT_TYPES.map((type) => (
+      <label>
+        <input type="radio" name="type" value={type.id} checked={type === defaultType} />
+        <div class="name" set:html={type.name} />
+        <div class="description" set:html={type.description} />
+      </label>
+    ))
+  }
+</div>
+
+{
+  PROJECT_TYPES.map((type) => (
+    <div
+      class:list={["project-type", "not-content", `type-${type.id}`, { "projects-hidden": type !== defaultType }]}
+      data-manifest-root={type.manifestRoot}
+    >
+      <div class="question-prompt">{type.devicePrompt}</div>
+      <div class="radios not-content">
+        {type.devices.map((device) => (
+          <label class:list={[{ diy: device.diy }]}>
+            <input
+              type="radio"
+              name={`${type.id}-device`}
+              class="device-option"
+              value={device.id}
+              data-manifest-root={device.manifestRoot}
+              checked={isDefaultDevice(type, device)}
+            />
+            <img src={device.image} alt={device.imageAlt} />
+          </label>
+        ))}
+      </div>
+
+      {/* Variant sub-selectors sit above the install button so the manifest is picked first. */}
+      {type.devices
+        .filter((device) => device.variants)
+        .map((device) => (
+          <div class="project-info not-content projects-hidden" data-device={device.id}>
+            <div class="question-prompt">Select your variant:</div>
+            <div class="types not-content">
+              {device.variants!.map((variant, index) => (
+                <label>
+                  <input
+                    type="radio"
+                    name={`${type.id}-${device.id}-variant`}
+                    value={variant.value}
+                    checked={index === 0}
+                  />
+                  <div class="name">{variant.name}</div>
+                </label>
+              ))}
+            </div>
+          </div>
+        ))}
+
+      {type.installPlacement !== "device" && (
+        <Fragment>
+          <div class="question-prompt">Start the installation:</div>
+          <esp-web-install-button />
+        </Fragment>
+      )}
+
+      {type.devices.map((device) => (
+        <div class="project-info not-content projects-hidden" data-device={device.id}>
+          {device.title && <h3>{device.title}</h3>}
+          {device.body?.map((paragraph) => (
+            <p set:html={paragraph} />
+          ))}
+          {device.links && (
+            <Fragment>
+              <p set:html={device.linksLabel ?? "Buy"} />
+              <ul>
+                {device.links.map((link) => (
+                  <li>
+                    <a href={link.url}>{link.label}</a>
+                  </li>
+                ))}
+              </ul>
+            </Fragment>
+          )}
+          {device.manifest && (
+            <Fragment>
+              <div class="question-prompt">Start the installation:</div>
+              <esp-web-install-button manifest={device.manifest} />
+            </Fragment>
+          )}
+          {device.steps && (
+            <Fragment>
+              {device.stepsPrompt && <div class="question-prompt">{device.stepsPrompt}</div>}
+              <ol>
+                {device.steps.map((step) => (
+                  <li set:html={step} />
+                ))}
+              </ol>
+            </Fragment>
+          )}
+        </div>
+      ))}
+
+      {type.advanced && (
+        <Fragment>
+          <h3>For advanced users</h3>
+          <ul>
+            <li>
+              The device is adoptable in <a href={DASHBOARD_ADOPT_URL}>the ESPHome dashboard</a>
+            </li>
+            {githubUrlsFor(type).length > 1
+              ? type.devices.map((device) => {
+                  const githubUrl = githubUrlFor(type, device);
+                  return (
+                    githubUrl && (
+                      <li class="projects-hidden" data-device={device.id}>
+                        The YAML configuration is on <a href={githubUrl}>GitHub</a>
+                      </li>
+                    )
+                  );
+                })
+              : githubUrlsFor(type)[0] && (
+                  <li>
+                    The YAML configuration is on <a href={githubUrlsFor(type)[0]}>GitHub</a>
+                  </li>
+                )}
+            {type.advanced.diyToggle && (
+              <li>
+                <a href={`?type=${type.id}&diy`}>Show DIY devices</a> that require extra setup
+              </li>
+            )}
+          </ul>
+        </Fragment>
+      )}
+    </div>
+  ))
+}
+
+<script is:inline>
+  async function showImprovWifiSerial() {
+    await import("https://unpkg.com/improv-wifi-serial-sdk@2.5.0/dist/web/serial-launch-button.js?module");
+    let port;
+    try {
+      port = await navigator.serial.requestPort({
+        filters: [{ usbProductId: 61450, usbVendorId: 11914 }],
+      });
+    } catch (err) {
+      if (err.name !== "NotFoundError") {
+        alert("Error: " + err.message);
+      }
+      return;
+    }
+    try {
+      await port.open({ baudRate: 115200 });
+    } catch (err) {
+      alert(err.message);
+      return;
+    }
+    const improv = document.createElement("improv-wifi-serial-provision-dialog");
+    improv.port = port;
+    document.body.appendChild(improv);
+  }
+
+  const improvBtn = document.getElementById("improv-wifi-btn");
+  if (improvBtn) {
+    improvBtn.addEventListener("click", showImprovWifiSerial);
+  }
+
+  // Handle selecting a project type
+  document.querySelectorAll('input[name="type"]').forEach((radio) => {
+    radio.addEventListener("change", () => {
+      document.querySelectorAll(".project-type").forEach((el) => {
+        el.classList.add("projects-hidden");
+      });
+      const target = document.querySelector(`.type-${radio.value}`);
+      if (target) target.classList.remove("projects-hidden");
+    });
+  });
+
+  // Handle selecting a device
+  document.querySelectorAll("input.device-option").forEach((radio) => {
+    radio.addEventListener("change", () => {
+      const typeRoot = radio.closest(".project-type");
+      if (!typeRoot) return;
+      // A device can override the manifest root its project type declares.
+      const manifestRoot = radio.dataset.manifestRoot || typeRoot.dataset.manifestRoot;
+      // Only the type-level button is driven from here; per-device buttons carry
+      // a fixed manifest and live inside a .project-info block.
+      const button = typeRoot.querySelector(":scope > esp-web-install-button");
+      if (manifestRoot && button) {
+        const variant = typeRoot.querySelector(`[data-device="${radio.value}"] input[name$="-variant"]:checked`);
+        const segment = variant ? variant.value : radio.value;
+        // esp-web-tools reads `manifest || getAttribute("manifest")` when the
+        // button is clicked, so use the attribute the per-device buttons already
+        // carry rather than a second mechanism.
+        button.setAttribute("manifest", `${manifestRoot}/${segment}/manifest.json`);
+      }
+      // Show the blocks belonging to this device, hide every other device's
+      typeRoot.querySelectorAll("[data-device]").forEach((el) => {
+        el.classList.toggle("projects-hidden", el.dataset.device !== radio.value);
+      });
+    });
+  });
+
+  // Handle selecting a variant
+  document.querySelectorAll('input[name$="-variant"]').forEach((radio) => {
+    radio.addEventListener("change", () => {
+      const typeRoot = radio.closest(".project-type");
+      const checked = typeRoot && typeRoot.querySelector("input.device-option:checked");
+      if (checked) checked.dispatchEvent(new Event("change"));
+    });
+  });
+
+  // Check URL for type and diy
+  if (window.location.search) {
+    const params = new URLSearchParams(window.location.search);
+    const type = params.get("type");
+    if (type) {
+      // Matched by value rather than by selector: ?type=%22%5D would otherwise
+      // throw out of querySelector and abort the rest of this script.
+      const typeRadio = [...document.querySelectorAll('input[name="type"]')].find((el) => el.value === type);
+      if (typeRadio) typeRadio.checked = true;
+    }
+    if (params.has("diy")) {
+      document.body.classList.add("show-diy");
+    }
+  }
+
+  // Show current selection on page load
+  const checkedType = document.querySelector('input[name="type"]:checked');
+  if (checkedType) checkedType.dispatchEvent(new Event("change"));
+  document.querySelectorAll("input.device-option:checked").forEach((radio) => {
+    radio.dispatchEvent(new Event("change"));
+  });
+
+  // Check if web installation is supported
+  customElements.whenDefined("esp-web-install-button").then((cls) => {
+    if (cls.isSupported) return;
+    const unsupported = document.querySelector(".unsupported");
+    if (unsupported) unsupported.classList.remove("projects-hidden");
+  });
+</script>
+
+<style is:global>
+  .projects-hidden {
+    display: none;
+  }
+  .question-prompt {
+    margin-top: 56px;
+    margin-bottom: 24px;
+    font-style: italic;
+  }
+  esp-web-install-button {
+    display: inline-block;
+    margin-bottom: 24px;
+  }
+  .types label {
+    display: flex;
+    margin-bottom: 24px;
+    flex-direction: column;
+    position: relative;
+    padding-left: 48px;
+  }
+  .types input {
+    position: absolute;
+    left: 16px;
+    top: 0.5em;
+  }
+  .types .name {
+    font-weight: bold;
+  }
+  .project-type {
+    margin-top: 56px;
+  }
+  .radios {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .radios label {
+    padding: 4px;
+    cursor: pointer;
+    width: calc(33.3% - 16px);
+    display: block;
+    position: relative;
+  }
+  .radios input {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+  }
+  .radios img {
+    display: block;
+    width: calc(100% - 8px);
+    border: 4px solid rgba(0, 0, 0, 0);
+    aspect-ratio: 1;
+  }
+  .radios input:checked + img {
+    border-color: #58a6ff;
+  }
+  @media only screen and (max-width: 450px) {
+    .radios label {
+      width: calc(50% - 16px);
+      max-width: initial;
+    }
+  }
+  .project-info {
+    margin-bottom: 1em;
+  }
+  /* `not-content` strips Starlight's typography, including every vertical margin,
+     which leaves the heading, description and buy list flush against each other. */
+  .project-info h3 {
+    margin-bottom: 8px;
+  }
+  .project-info p {
+    margin-bottom: 1em;
+  }
+  /* A paragraph introducing a list labels it, so keep the two together. */
+  .project-info p:has(+ ul),
+  .project-info p:has(+ ol) {
+    margin-bottom: 8px;
+  }
+  .project-info :is(ul, ol) {
+    margin-top: 0;
+    margin-bottom: 24px;
+  }
+  .project-info :is(ul, ol) li {
+    margin-bottom: 8px;
+  }
+  .diy::after {
+    content: "DIY";
+    background-color: #f44336;
+    color: #fff;
+    padding: 2px 4px;
+    border-radius: 4px;
+    font-size: 0.8em;
+    position: absolute;
+    bottom: 12px;
+    left: 12px;
+  }
+  body .diy {
+    display: none;
+  }
+  body.show-diy .diy {
+    display: initial;
+  }
+</style>

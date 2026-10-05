@@ -1,0 +1,42 @@
+---
+interface Props {
+  title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<div class="spec-item">
+  <h4 class="spec-item-title">{title}</h4>
+  <ul>
+    <slot />
+  </ul>
+</div>
+
+<style lang="scss">
+  @use "../../styles/mixins" as *;
+
+  .spec-item {
+    width: 100%;
+
+    @include bp(tablet) {
+      width: calc(50% - 1.25rem);
+    }
+
+    .spec-item-title {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      letter-spacing: -1px;
+      border-bottom: 1px solid var(--esk-body-colour);
+      padding: 0.75rem 0;
+    }
+
+    ul {
+      padding: 0;
+      margin: 0;
+      list-style: none;
+      font-size: 0.75rem;
+    }
+  }
+</style>

@@ -173,7 +173,8 @@ on_...:
   This is evaluated on the Home Assistant side with Home Assistant's templating engine.
 
 - **variables** (*Optional*, mapping): Optional variables that can be used in the `data_template`.
-  Values are [lambdas](/automations/templates#config-lambda) and will be evaluated before sending the request.
+  A value tagged with `!lambda` is a [lambda](/automations/templates#config-lambda) evaluated on the device
+  before sending the request; any other value is sent as a static string.
 
 ### `homeassistant.action` Action
 
@@ -199,7 +200,7 @@ on_...:
       data_template:
         message: The humidity is {{ my_variable }}%.
       variables:
-        my_variable: |-
+        my_variable: !lambda |-
           return id(my_sensor).state;
 ```
 
@@ -213,7 +214,8 @@ on_...:
   This is evaluated on the Home Assistant side with Home Assistant's templating engine.
 
 - **variables** (*Optional*, mapping): Optional variables that can be used in the `data_template`.
-  Values are [lambdas](/automations/templates#config-lambda) and will be evaluated before sending the request.
+  A value tagged with `!lambda` is a [lambda](/automations/templates#config-lambda) evaluated on the device
+  before sending the request; any other value is sent as a static string.
 
 - **capture_response** (*Optional*, boolean): Enable capturing the response from the Home Assistant action call.
   When enabled, `on_success` must be configured. Defaults to `false`.
@@ -228,6 +230,14 @@ on_...:
 
 - **on_error** (*Optional*, [Automation](/automations)): Optional automation to execute when the Home Assistant action
   call fails. See [Action Response Handling](#action-response-handling).
+
+> [!NOTE]
+> Home Assistant starts listening for device actions shortly *after* the API connection is established, so actions
+> triggered right at connection time (for example from `on_client_connected` or `on_time_sync`) can fire before
+> Home Assistant is ready for them. Such actions are not delivered and ESPHome logs a warning
+> (versions before 2026.7.0 dropped them silently). The same applies to `homeassistant.event`. If you need to
+> perform an action as soon as a connection is made, add a short `delay` before it so Home Assistant has time to
+> start listening.
 
 Data structures are not possible, but you can create a script in Home Assistant and call with all
 the parameters in plain format.
