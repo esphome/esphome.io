@@ -846,27 +846,14 @@ configured without `openthread:` (on `esp32c6`/`esp32c5`/`esp32h2` with `openthr
 `nrf52`/`nrf54l15` — which always use `openthread:` — discovery instead goes through OpenThread's
 own SRP client; `nativesim` uses the host's own mDNS backend, not Zephyr's).
 
-As of Zephyr 4.4.1/mainline, `subsys/net/lib/dns/mdns_responder.c` has two known bugs that keep mDNS
-from actually working correctly out of the box:
-
-- A DHCP-bound announce race that can permanently prevent the mDNS listener from starting at all.
-- `send_sd_response()` only parses the first Question in a DNS-SD query packet and can't follow DNS
-  name-compression pointers, so multi-question queries — such as `avahi-browse`'s own default query,
-  which batches many question types into one packet — are frequently never answered.
-
-Fixes for both exist as Zephyr source merges on main, but aren't backported to 4.4 yet. Until they are
-backported, get a working mDNS by pointing `framework: source:` at the `main`
-branch of [`zephyrproject-rtos/zephyr`](https://github.com/zephyrproject-rtos/zephyr):
+The minimum Zephyr recommended to use with Wifi is 4.5.0-rc1
 
 ```yaml
 # Example configuration entry
 zephyr:
   variant: esp32c6
   framework:
-    source:
-      type: git
-      url: https://github.com/zephyrproject-rtos/zephyr
-      ref: main
+    version: 4.5.0-rc1
   kconfig_options:
     # Only meaningful against main until backported -- enables its DNS-SD announce-completeness
     # fix.
@@ -879,7 +866,7 @@ ESPHome's own `mdns:` component already sets the mainline-safe Kconfig values it
 `MDNS_RESPONDER`, `MDNS_RESPONDER_PROBE`, and larger stack sizes for the responder's worker and
 socket-service dispatcher threads) regardless of which Zephyr source is used. Only
 `MDNS_RESPONDER_ANNOUNCE_DNS_SD` needs setting by hand, since it's specific to the patches that
-are not in 4.4 yet
+are not in 4.4.1 which is still the minimum version available.
 
 ## Adding a new variant
 
