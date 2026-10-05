@@ -109,7 +109,7 @@ based on the prefix of its `tag_name`, for the main tags of both standard and hi
 | `EA` | Standard | `Wh` | `energy` | `total_increasing` |
 | `ER` | Standard | `varh` | `reactive_energy` | `total_increasing` |
 | `IRMS` | Standard | `A` | `current` | `measurement` |
-| `U` | Standard | `V` | `voltage` | `measurement` |
+| `URMS`, `UMOY` | Standard | `V` | `voltage` | `measurement` |
 | `SINST`, `SMAX` | Standard | `VA` | `apparent_power` | `measurement` |
 | `PREF`, `PCOUP` | Standard | `kVA` | `apparent_power` | `measurement` |
 | `CC` | Standard | `W` | `power` | `measurement` |
@@ -124,17 +124,18 @@ Tags that do not match any prefix get the following defaults: unit `Wh`, device 
 state class `total_increasing` and icon `mdi:flash`.
 
 Any value you set explicitly in your configuration takes precedence over the pre-defined one.
-`unit_of_measurement` and `device_class` are treated as a pair: if you set either of them, neither
-is taken from the pre-defined configuration, so that you don't end up with an inconsistent combination.
+If you set a `unit_of_measurement` that is compatible with the pre-defined `device_class` (for example
+`kWh` for an `energy` tag, or `mA` for a `current` tag), the pre-defined `device_class` is kept.
+If it is not compatible, the pre-defined `device_class` is not applied, so that you don't end up
+with an inconsistent combination. The same applies the other way round when you set `device_class`.
 
 ```yaml
 sensor:
   - platform: teleinfo
     tag_name: "HCHP"
     name: "Peak hours consumption"
-    # Setting the unit disables the pre-defined device_class, so set it too
+    # kWh is compatible with the pre-defined energy device class, which is kept
     unit_of_measurement: "kWh"
-    device_class: energy
     filters:
       - multiply: 0.001
     accuracy_decimals: 3
@@ -144,7 +145,7 @@ sensor:
 > [!NOTE]
 > Previously, every sensor defaulted to `Wh`/`energy`/`total_increasing`, whatever its tag.
 > Sensors whose tag matches a prefix above now use the correct unit and device class, for example
-> `PAPP` now reports `VA` instead of `Wh`. To keep the previous behavior, set `unit_of_measurement`
+> `PAPP` now reports `VA` instead of `Wh`. To keep the previous behavior, set both `unit_of_measurement`
 > and `device_class` explicitly.
 
 ### Text Sensor
