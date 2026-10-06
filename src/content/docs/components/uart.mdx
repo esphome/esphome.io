@@ -65,6 +65,11 @@ uart:
 - **port** (*Optional*, string): Host platform only. Unix style name of the port to use.
 - **rx_buffer_size** (*Optional*, int): The size of the buffer used for receiving UART messages. Increase if you use an
   integration that needs to read big payloads from UART. Defaults to `256`.
+- **tx_buffer_size** (*Optional*, int): ESP32 only. The size of the buffer that holds bytes waiting to be sent. When
+  no buffer is set, a write larger than the free space in the 128-byte hardware FIFO blocks until the excess has gone
+  out on the wire, which stalls the device at low baud rates. Set this when a component such as
+  [Serial Proxy](/components/serial_proxy/) may write large blocks at once. Must be greater than `128`. Not set by
+  default.
 
 - **rx_full_threshold** (*Optional*, int): ESP32 only. After receiving this number of bytes, the data becomes available for processing.
   The default is calculated at compilation time to be approximately ten milliseconds (about 8 bytes at 9600 baud, 114 bytes at 115200 baud).
