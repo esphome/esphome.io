@@ -1,0 +1,44 @@
+---
+description: "Instructions for setting up addressable lights like NEOPIXEL on an ESP32 using the I2S peripheral."
+title: "I2S Clockless LED Strip"
+---
+import APIRef from '@components/APIRef.astro';
+
+
+This component drives a clockless addressable LED strip with the I2S peripheral and DMA.  It works with the
+WS2811 / WS2812B / SK6812 family of devices with RGB or RGBW pixels.
+
+This component is similar to the [ESP32 RMT LED Strip](/components/light/esp32_rmt_led_strip/)
+component but it is more immune to flickering.  The RMT peripheral can only buffer enough symbols for a few pixels
+at once and flickering occurs when the RMT interrupt cannot run fast enough to refill the buffer because the
+microcontroller is busy performing higher priority tasks.  Conversely, the I2S peripheral can use much bigger
+buffers and tolerates more interrupt latency at the cost of more memory.
+
+> [!NOTE]
+> Only the following ESP32 variants are supported: ESP32-C3, ESP32-C5, ESP32-C6, ESP32-C61, ESP32-H2, ESP32-H4,
+> ESP32-P4, ESP32-S3.
+
+```yaml
+light:
+  - platform: i2s_clockless_led_strip
+    id: my_light
+    name: "My Light"
+    pin: GPIOXX
+    num_leds: 30
+    channel_colors: GRB
+```
+
+## Configuration variables
+
+- **pin** (**Required**, [Pin Schema](/guides/configuration-types#pin-schema)): The pin for the data line of the light.
+- **num_leds** (**Required**, int): The number of LEDs in the strip.
+- **channel_colors** (**Required**, string): The order in which the strip expects its color channels. List each of
+  `R`, `G` and `B` exactly once, optionally with a single `W` in any position; for example `GRB`, `BGR`, `GRBW`,
+  `WRGB` or `RWGB`. The value is case-insensitive. Including a `W` makes this a four channel RGBW strip.
+- All other options from [Light](/components/light#config-light).
+
+## See Also
+
+- [Light Component](/components/light/)
+- [Power Supply Component](/components/power_supply/)
+- <APIRef text="i2s_clockless_led_strip.h" path="i2s_clockless_led_strip/i2s_clockless_led_strip.h" />
