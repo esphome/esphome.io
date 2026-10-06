@@ -114,6 +114,11 @@ basis, or set with this option at the time of uploading.
 : Disable starting log view.
 
 
+**`--skip-bootloader`**
+: Skip building the bootloader and the factory image; see [`compile`](#compile-command).
+The result can only be flashed over OTA, so combining this with a serial `--device` fails before compiling.
+
+
 **`--topic TOPIC`**
 : Manually set the topic to subscribe to for MQTT logs (defaults to the one in the configuration).
 
@@ -175,6 +180,13 @@ Any command that accepts `<CONFIG>` can also accept a `.esphomebundle.tar.gz` bu
 
 **`--only-generate`**
 : If set, only generates the C++ source code and does not compile the firmware.
+
+
+**`--skip-bootloader`**
+: Do not build the bootloader or the factory image. A plain OTA update never delivers the bootloader; the device
+keeps the one it has. A build that will only ever go out over OTA can skip it and save build time.
+ESP32 with the `esp-idf` toolchain only; on other platforms the flag is ignored with a log message and a full build runs.
+Serial flashing and OTA `--bootloader` need a build without this flag.
 
 
 ### `upload` Command
