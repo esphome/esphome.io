@@ -43,7 +43,7 @@ api:
   reboot_timeout: 30min
 ```
 
-## Configuration variables
+## Configuration Variables
 
 - **port** (*Optional*, int): The port to run the API server on. Defaults to `6053`.
 - **listen_backlog** (*Optional*, int): The maximum number of pending connections in the listen queue. Must be between 1 and 10.
@@ -168,7 +168,7 @@ on_...:
         message: Button was pressed
 ```
 
-#### Configuration variables
+#### Configuration Variables
 
 - **event** (**Required**, string): The event to create - must begin with `esphome.`
 - **data** (*Optional*, mapping): Optional *static* data to pass along with the event.
@@ -207,7 +207,7 @@ on_...:
           return id(my_sensor).state;
 ```
 
-#### Configuration variables
+#### Configuration Variables
 
 - **action** (**Required**, string, [templatable](/automations/templates)): The Home Assistant [Action](https://www.home-assistant.io/docs/scripts/service-calls/)
   to perform.
@@ -361,7 +361,7 @@ on_...:
   - homeassistant.tag_scanned: some-tag
 ```
 
-#### Configuration variables
+#### Configuration Variables
 
 - **tag** (**Required**, string, [templatable](/automations/templates)): The id of the scanned tag
 
@@ -409,7 +409,7 @@ api:
 
 This [Condition](/automations/actions#all-conditions) checks if at least one client is connected to the ESPHome native API.
 
-#### Configuration variables
+#### Configuration Variables
 
 - **state_subscription_only** (*Optional*, boolean, [templatable](/automations/templates)): If enabled, only counts clients that have subscribed to entity state updates. This filters out logger-only connections (such as `esphome logs` command), which can cause false positives when waiting for Home Assistant. Defaults to `false`.
 
@@ -515,7 +515,7 @@ placeholders such as `"[%key:component::example::feature::enable%]"`.
 The wizard is sent to Home Assistant in a single message, and validation fails if it does not fit. In that case,
 shorten the texts or use fewer pages, entities or filters.
 
-### Configuration variables
+### Configuration Variables
 
 - **pages** (**Required**, list): The pages of the wizard, in the order they are shown. At least one page is required.
   Each page has these options, and needs at least one of `entities` and `inputs`:
@@ -716,7 +716,7 @@ api:
             rtttl: !lambda "return song_str;"
 ```
 
-#### Configuration variables
+#### Configuration Variables
 
 - **description** (*Optional*, string): Description of the action.
 - **variables** (*Optional*, mapping): Each variable may be given as `name: type` or as a mapping:
@@ -743,7 +743,7 @@ auto-detected based on your action configuration:
 - **optional**: Returns JSON data when the client requests it. Auto-detected when `api.respond` is used with `data:`.
 - **only**: Always returns JSON data. Must be set explicitly. Use this for query-type actions.
 
-#### Configuration variables
+#### Configuration Variables
 
 - **supports_response** (*Optional*, string): The response mode for this action. One of `none`, `status`,
   `optional`, or `only`. If not specified, the mode is auto-detected based on `api.respond` usage in the action.
@@ -761,7 +761,7 @@ When `supports_response` is not `none`, the following variables are available in
 This action sends a response back to the client that called the user-defined action. It can report
 success/error status and optionally include JSON data.
 
-#### Configuration variables
+#### Configuration Variables
 
 - **success** (*Optional*, boolean, [templatable](/automations/templates)): Whether the action succeeded.
   Defaults to `true`.
