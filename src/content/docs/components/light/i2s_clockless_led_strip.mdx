@@ -8,11 +8,17 @@ import APIRef from '@components/APIRef.astro';
 The `i2s_clockless_led_strip` light platform drives a clockless addressable LED strip with the I2S peripheral and DMA.
 It works with the WS2811 / WS2812B / SK6812 family of devices with RGB or RGBW pixels.
 
-This component is similar to the [ESP32 RMT LED Strip](/components/light/esp32_rmt_led_strip/)
-component but it is more immune to flickering.  The RMT peripheral can only buffer enough symbols for a few pixels
-at once and flickering occurs when the RMT interrupt cannot run fast enough to refill the buffer because the
-microcontroller is busy performing higher priority tasks.  Conversely, the I2S peripheral can use much bigger
-buffers and tolerates more interrupt latency at the cost of more memory.
+Here's a comparison of some alternatives for driving these strips:
+
+- The [ESP32 RMT LED Strip](/components/light/esp32_rmt_led_strip/) component uses the RMT peripheral to precisely
+  control the timing of the output and ensure compatibility with a wide range of LED strips. However, there is only
+  enough RMT symbol memory to buffer a few pixels at a time. Flickering may occur when the microcontroller is busy
+  performing higher priority tasks and the RMT interrupt cannot be serviced soon enough to refill the buffer for
+  subsequent pixels.
+- [I2S Clockless LED Strip](/components/light/i2s_clockless_led_strip/) component uses the I2S peripheral and DMA
+  to drive the output with larger buffers that are more immune to flickering caused by interrupt latency. However,
+  the resulting waveform diverges slightly from the datasheet timing recommendations although in practice it is
+  close enough for the LED pixels to work reliably.
 
 > [!NOTE]
 > Only the following ESP32 variants are supported: ESP32-C3, ESP32-C5, ESP32-C6, ESP32-C61, ESP32-H2, ESP32-H4,
