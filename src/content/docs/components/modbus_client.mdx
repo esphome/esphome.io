@@ -52,7 +52,8 @@ on_...:
 - **modbus_id** (*Optional*, [ID](/guides/configuration-types#id)): The Modbus hub to send on. Automatically assigned
   when a single hub is configured.
 - **address** (**Required**, templatable, int): The device address the frame is sent to. Accepts `0`-`255`; the valid
-  Modbus device range is `1`-`247`, and `0` is broadcast (no reply will ever arrive; see [Behavior](#behavior)).
+  Modbus device range is `1`-`247`, and `0` is broadcast (never answered unless one of the broadcast options below
+  is set; see [Behavior](#behavior)).
 - **pdu** (**Required**, templatable, list of bytes): The PDU to send: function code followed by data. The device
   address and CRC are added automatically - do **not** include them. Maximum 253 bytes (the Modbus PDU limit): an
   empty or over-long YAML list fails config validation. As a lambda it must return a `modbus::helpers::PduBuffer` (a
@@ -62,6 +63,19 @@ on_...:
   length-checked: one over 253 bytes is silently truncated to the limit rather than rejected. An empty lambda result
   (or a builder that fails - see below) also produces an empty PDU; the hub refuses to send it, and `on_not_sent`
   fires.
+- **continuous** (*Optional*, templatable, boolean): Poll continuously instead of sending once - see
+  [Continuous polling](#continuous-polling). Cannot be used with known write function codes. They are rejected at
+  config time when the PDU is a literal list, or sent non-continuously at run time with a warning when it comes from
+  a lambda; every other code - read, custom, vendor-specific, or unknown - is allowed to poll continuously. Defaults
+  to `false`.
+- **allow_broadcast_read** (*Optional*, templatable, boolean): Let a read be sent to address `0` and wait for its
+  reply, for a device that answers the broadcast address - see [Broadcast](#behavior) under Behavior. Applies to
+  the function codes whose reply carries data (the reads, including `0x17`): a literal `pdu` with any other code
+  is rejected at config time, and a lambda-built one is sent without it. Defaults to `false`.
+- **expect_broadcast_write_response** (*Optional*, templatable, boolean): Wait for the reply to a write sent to
+  address `0` instead of treating it as fire-and-forget - see [Broadcast](#behavior) under Behavior. Applies to the
+  function codes whose reply carries no data (the plain writes and custom codes): a literal `pdu` with any other
+  code is rejected at config time, and a lambda-built one is sent without it. Defaults to `false`.
 - **on_sent** (*Optional*, [Automation](/automations/)): Fires when the frame is written to the wire. Lambda
   variable: `request` (`std::span<const uint8_t>`, the PDU sent). This fires once per transmission, before any reply,
   and does not fire when the send ends in `on_not_sent` (nothing was transmitted). Exactly one of
@@ -153,8 +167,8 @@ handlers, never another action's.
 ### Common Configuration Variables
 
 - **address** (**Required**, templatable, int): The Modbus device address the frame is sent to. Accepts `0`-`255`;
-  the valid Modbus device range is `1`-`247`, and `0` is broadcast (no reply will ever arrive; see
-  [Behavior](#behavior)).
+  the valid Modbus device range is `1`-`247`, and `0` is broadcast (never answered unless `allow_broadcast_read` or
+  `expect_broadcast_write_response` is set; see [Behavior](#behavior)).
 - **modbus_id** (*Optional*, [ID](/guides/configuration-types#id)): The Modbus hub to send on. Automatically assigned
   when a single hub is configured.
 - **start_address** (**Required**, templatable, int): The starting register or coil address. Not used by
@@ -164,6 +178,15 @@ handlers, never another action's.
   produces an empty PDU, and `on_not_sent` fires instead of the send. The same holds for the per-action `count` and
   `values` bounds below: a lambda returning a count or list length outside its documented range also produces an
   empty PDU and fires `on_not_sent`.
+- **continuous** (*Optional*, templatable, boolean): Poll with this frame instead of sending it once - see
+  [Continuous polling](#continuous-polling). Accepted by the four read actions only; the write actions and
+  `read_write_multiple_registers` do not take it. Defaults to `false`.
+- **allow_broadcast_read** (*Optional*, templatable, boolean): Let this read be sent to address `0` and wait for its
+  reply, for a device that answers the broadcast address - see [Broadcast](#behavior) under Behavior. Accepted by
+  the four read actions and `read_write_multiple_registers`. Defaults to `false`.
+- **expect_broadcast_write_response** (*Optional*, templatable, boolean): Wait for the reply to this write when it
+  is sent to address `0`, instead of treating it as fire-and-forget - see [Broadcast](#behavior) under Behavior.
+  Accepted by the four write actions only. Defaults to `false`.
 - **on_sent** (*Optional*, [Automation](/automations/)): Fires when the frame is written to the wire. Lambda
   variable: `request` (`std::span<const uint8_t>`, the PDU sent).
 - **on_response** (*Optional*, [Automation](/automations/)): Fires on a standard-conforming reply. The lambda
@@ -432,12 +455,73 @@ button:
                     ESP_LOGD("modbus", "read 0x%04X", v);
 ```
 
+## Continuous Polling
+
+Setting `continuous: true` on a read action - or on `modbus_client.send` with a read PDU - turns a single request
+into a continuous poll: the frame stays in the hub's queue and is sent again after each successful reply, and the
+action's reply handlers fire once per cycle. There is no interval option. The frame is re-queued as soon as its
+reply has been handled, so the poll runs about as fast as the bus allows, paced by the hub's
+[`turnaround_time`](/components/modbus/#performance-vs-stability).
+
+A continuous poll ranks below every one-shot request in the queue, so it never starves ordinary traffic: a read or
+write queued while the poll is running goes out as soon as the poll's current frame completes, and the poll resumes
+after it.
+
+The poll stops when any of these happens:
+
+- the device answers with a Modbus exception (`on_error`);
+- a request times out (`on_no_response`) and no retry is granted - a `retry:` lambda returning `true` keeps it
+  alive for another attempt;
+- the same action (with identical `address` and `PDU`) runs again with `continuous: false` - the poll serves that
+  request with one more cycle, then stops;
+- the queue is cleared from a [Lambda Hook Component](#lambda-hook-component) sharing the same `address` -
+  `id(ad_hoc_client).clear_tx_queue_for_address();` drops every command queued to that Modbus address, the poll
+  included (each dropped frame resolves through `on_not_sent`; see the note below on stopping a templated poll).
+
+A reply whose length doesn't match the request is delivered to `on_custom_response` and still counts as a
+successful cycle, so the poll keeps running; only the conditions above stop it.
+
+The `continuous: false` stop matches the **exact** frame the poll is running, so if the read used a templated field
+(such as `start_address`) the stopping request must evaluate to the same values, or it will not cancel that poll. To
+stop a templated poll regardless of its arguments, clear the queue by **address** - from a `modbus_client` component
+that shares the poll's device address, `id(ad_hoc_client).clear_tx_queue_for_address();` drops every queued command
+to that address, the poll included.
+
+Running a read action with `continuous: true` while an identical one-shot request from the same action is still in
+flight converts that request into a poll rather than queueing a second frame.
+
+`continuous` is meant for reads and is refused or stripped only for **mutating** function codes. The typed write
+actions and `read_write_multiple_registers` do not offer the option at all, and `modbus_client.send` guards it two
+ways:
+
+- If `pdu` is a literal list starting with a mutating function code (`0x05`, `0x06`, `0x0F`, `0x10`, `0x16`,
+  `0x17`) and `continuous` is `true`, the config is rejected with an error naming the function code. `0x17` counts
+  as mutating despite its read half, which is also why `read_write_multiple_registers` does not offer the option.
+- If either value is a lambda, that check cannot run at config time, so the guard falls to the hub at queue time -
+  which strips `continuous` (with a warning, and sends once as a one-shot) **only** when the resolved frame's
+  function code mutates. A lambda read PDU polls normally.
+
+```yaml
+button:
+  - platform: template
+    name: "Start polling"
+    on_press:
+      - modbus_client.read_holding_registers:
+          address: 0x01
+          start_address: 0x0010
+          count: 2
+          continuous: true
+          on_response:
+            then:
+              - lambda: 'ESP_LOGD("modbus", "reg0=%u", values[0]);'
+```
+
 ## Behavior
 
 - **Fire-and-continue**: the action queues the frame and the enclosing automation continues immediately; the reply
   handlers run later, when the outcome is known. Exactly one of `on_response`/`on_error`/`on_no_response`/
-  `on_not_sent` fires per transmission attempt (except a broadcast to address `0`, which is never answered and gets
-  only `on_sent`); a retried frame runs the timeout branch again on each attempt. The
+  `on_not_sent` fires per transmission attempt (except a fire-and-forget broadcast to address `0`, which gets only
+  `on_sent`); a retried frame runs the timeout branch again on each attempt. The
   typed read/write actions also have `on_custom_response`, which fires in place of `on_response` for a
   non-conforming reply.
 - The reply handlers run with the action's own context - they do **not** see the enclosing automation's local
@@ -445,13 +529,43 @@ button:
   recompute the configured expression if a handler needs it.
 - **Duplicate suppression**: sending an identical frame while one from the same action is already in flight is
   safe. For a read, the second send is rescheduled for a second transmission at the back of the queue once the
-  first completes, and still gets its own reply handler. For a write or custom command, only one may be in flight - a
-  second identical send is refused (`on_not_sent`).
+  first completes, and still gets its own reply handler (unless that second send sets `continuous: true`, which
+  converts the in-flight request into a poll instead - see [Continuous polling](#continuous-polling)). For a write
+  or custom command, only one may be in flight - a second identical send is refused (`on_not_sent`).
 - **Broadcast** (address `0`): a broadcast is never answered (Modbus 4.1), so the hub treats it as fire-and-forget -
   `on_sent` fires when the frame goes out and no terminal handler follows. It does **not** occupy the waiting slot
-  or wait the full `send_wait_time`, so it never blocks the bus, and a `retry:` lambda is never invoked. Only writes,
-  read/write-multiple (`0x17`), and custom/vendor codes may be broadcast; a **read** to address `0` can never
-  deliver a result and is refused up front, resolving immediately via `on_not_sent`.
+  or wait the full `send_wait_time`, so it never blocks the bus, and a `retry:` lambda is never invoked. Only writes
+  and custom/vendor codes may be broadcast; a code whose reply carries data - the reads, and read/write-multiple
+  (`0x17`) for its read half - can never deliver a result at address `0` and is refused up front, resolving
+  immediately via `on_not_sent`.
+
+  Some devices don't follow the Modbus spec and reply to the broadcast address. Two options send to address `0`
+  as if it were a unicast address, waiting for the reply with the normal `send_wait_time`, retry and reply
+  handlers: `allow_broadcast_read: true` lifts the refusal of a read, and `expect_broadcast_write_response: true`
+  makes a write wait for its echo instead of retiring at transmission. The reply is matched like any other, so
+  the device must answer as address `0` with the same function code. Each option is silently ignored when set on
+  a function code it does not apply to (a literal `pdu` is checked at validation instead). Both are rejected at
+  validation on a literal `address` other than `0`; a templated address is checked at run time, where the hub
+  ignores them for a unicast frame.
+
+  ```yaml
+  on_...:
+    - modbus_client.read_holding_registers:
+        address: 0
+        allow_broadcast_read: true
+        start_address: 0x0010
+        on_response:
+          then:
+            - lambda: 'ESP_LOGI("modbus", "value=%u", values[0]);'
+    - modbus_client.write_single_register:
+        address: 0
+        expect_broadcast_write_response: true
+        start_address: 0x0011
+        value: 1
+        on_response:
+          then:
+            - logger.log: "write acked"
+  ```
 
 > [!NOTE]
 > None of the reply handlers (`on_sent`, `on_response`, `on_custom_response`, `on_error`, `on_no_response`,
@@ -553,7 +667,7 @@ on_...:
   - lambda: |-
       uint8_t pdu[] = {42};
       id(ad_hoc_client).queue_pdu(pdu);
-  # Clear the send queue for all commands targeting this client's address
+  # Clear the send queue for all commands targeting this client's address (even from other components or actions)
   - lambda: 'id(ad_hoc_client).clear_tx_queue_for_address();'
   # Clear the send queue for all commands sent from this client component
   - lambda: 'id(ad_hoc_client).clear_tx_queue_for_device();'

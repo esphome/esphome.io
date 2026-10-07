@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 import importlib.util
 import json
 from pathlib import Path
+import re
 import shutil
 import sys
 from types import ModuleType
@@ -31,7 +32,8 @@ def grn_fixture() -> ModuleType:
 
 @pytest.fixture(name="workspace")
 def workspace_fixture(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
-    """A repo-like tree with both templates, cwd switched into it."""
+    """A repo-like tree with both templates and the prompt templates, cwd
+    switched into it."""
     script_dir = tmp_path / "script"
     script_dir.mkdir()
     for template in ("release_notes_template.mdx", "blog_post_template.mdx"):
@@ -43,14 +45,9 @@ def workspace_fixture(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
     return tmp_path
 
 
-def _make_generator(
-    grn: ModuleType,
-    version: str = "2026.9.0",
-    dry_run: bool = False,
-    blog_only: bool = False,
-):
+def _make_generator(grn: ModuleType, version: str = "2026.9.0", dry_run: bool = False):
     return grn.ReleaseNotesGenerator(
-        version=grn.Version.parse(version), dry_run=dry_run, blog_only=blog_only
+        version=grn.Version.parse(version), dry_run=dry_run
     )
 
 
@@ -147,6 +144,7 @@ def test_load_ai_responses_missing_files_empty(
     assert responses["contributors"] == ""
     assert responses["tagline"] == ""
     assert responses["description"] == ""
+    assert responses["companion"] == ""
     assert set(responses) == {
         "overview",
         "upgrade_checklist",
@@ -157,6 +155,7 @@ def test_load_ai_responses_missing_files_empty(
         "contributors",
         "tagline",
         "description",
+        "companion",
     }
 
 
@@ -172,12 +171,67 @@ def test_load_ai_responses_reads_tagline(grn: ModuleType, workspace: Path) -> No
     assert responses["description"] == "A one sentence summary."
 
 
+def test_load_ai_responses_returns_companion_when_present(
+    grn: ModuleType, workspace: Path
+) -> None:
+    generator = _make_generator(grn)
+    generator.responses_dir.mkdir(parents=True)
+    (generator.responses_dir / "release_overview.md").write_text("Overview\n")
+    (generator.responses_dir / "companion_summary.md").write_text("Companion\n")
+
+    responses = generator._load_ai_responses()
+    assert responses["companion"] == "Companion"
+
+
+def test_generate_prompts_writes_companion_summary_txt(
+    grn: ModuleType, workspace: Path
+) -> None:
+    """generate_prompts writes the fourth prompt, driven through the real
+    Jinja rendering pipeline (not a mocked template)."""
+    generator = _make_generator(grn)
+    generator.ensure_dirs()
+    prs = [
+        _make_pr(grn, 100, "[wifi] Add feature", "alice", ["new-feature"]),
+        _make_pr(grn, 101, "[api] Break things", "bob", ["breaking-change"]),
+    ]
+
+    generator.generate_prompts(prs)
+
+    companion_prompt = (generator.prompts_dir / "companion_summary.txt").read_text()
+
+    assert str(generator.responses_dir / "companion_summary.md") in companion_prompt
+    assert str(generator.responses_dir / "release_overview.md") in companion_prompt
+    assert str(generator.responses_dir / "feature_highlights.md") in companion_prompt
+    assert (
+        str(generator.responses_dir / "breaking_changes_users.md") in companion_prompt
+    )
+    assert str(generator.responses_dir / "upgrade_checklist.md") in companion_prompt
+    assert (
+        str(generator.responses_dir / "undocumented_api_changes.md") in companion_prompt
+    )
+    assert (
+        str(generator.responses_dir / "breaking_changes_developers.md")
+        in companion_prompt
+    )
+    assert str(generator._blog_post_path()) in companion_prompt
+    assert (
+        ":::note[New to ESPHome?]\n"
+        "The [ESPHome Starter Kit](/starter-kit/) is the easiest way to start "
+        "building your own smart home devices – no soldering, breadboarding, or "
+        "coding required.\n"
+        ":::"
+    ) in companion_prompt
+
+
 def test_assemble_writes_blog_post_and_changelog(
     grn: ModuleType, workspace: Path
 ) -> None:
     generator = _make_generator(grn)
     _prepare_assembly_inputs(grn, workspace, generator)
     (generator.responses_dir / "contributors.md").write_text("Thanks to everyone!")
+    (generator.responses_dir / "companion_summary.md").write_text(
+        "New to ESPHome? Read on for the full details."
+    )
 
     # Blog post already created by the release tooling, with tokens filled
     post = workspace / "src/content/docs/blog/2026/09/16/esphome-2026-9.mdx"
@@ -195,6 +249,9 @@ def test_assemble_writes_blog_post_and_changelog(
     assert generator.assemble_changelog() is True
 
     blog = post.read_text()
+    assert "New to ESPHome? Read on for the full details." in blog
+    # The template's marker comment is replaced, not left alongside the content
+    assert "COMPANION SUMMARY" not in blog
     assert "The overview." in blog
     assert "- If you upgrade" in blog
     assert "## Big Feature" in blog
@@ -240,6 +297,10 @@ def test_assemble_creates_blog_post_from_template(
     assert f"date: {'-'.join(post_path.parts[-4:-1])}" in blog
     site_path = grn.ReleaseNotesGenerator._blog_site_path(post_path)
     assert f"https://esphome.io/{site_path}" in blog
+    # No companion_summary.md response: the marker block is left untouched
+    assert "{/* COMPANION_SUMMARY_START */}" in blog
+    assert "{/* COMPANION_SUMMARY_END */}" in blog
+    assert "COMPANION SUMMARY" in blog
 
 
 def test_assemble_preserves_existing_full_list(
@@ -258,6 +319,33 @@ def test_assemble_preserves_existing_full_list(
     changelog = changelog_path.read_text()
     assert "Hand-edited list" in changelog
     assert "[wifi] Add feature" not in changelog
+
+
+def test_assemble_blog_only_skips_changelog_file(
+    grn: ModuleType, workspace: Path
+) -> None:
+    """With blog_only, the blog post is written but the changelog page is
+    left alone, since the release tooling writes that page itself."""
+    generator = _make_generator(grn)
+    _prepare_assembly_inputs(grn, workspace, generator)
+
+    assert generator.assemble_changelog(blog_only=True) is True
+
+    assert generator._blog_post_path().exists()
+    assert not (workspace / "src/content/docs/changelog/2026.9.0.mdx").exists()
+
+
+def test_run_assemble_only_threads_blog_only(grn: ModuleType, workspace: Path) -> None:
+    """run(assemble_only=True, blog_only=True) skips PR discovery and passes
+    blog_only through to assemble_changelog, so the changelog page is left
+    alone."""
+    generator = _make_generator(grn)
+    _prepare_assembly_inputs(grn, workspace, generator)
+
+    assert generator.run(assemble_only=True, blog_only=True) is True
+
+    assert generator._blog_post_path().exists()
+    assert not (workspace / "src/content/docs/changelog/2026.9.0.mdx").exists()
 
 
 def test_assemble_dry_run_writes_nothing(grn: ModuleType, workspace: Path) -> None:
@@ -416,6 +504,12 @@ def test_generate_prompts_includes_docs_urls_and_tagline(
     assert str(generator.responses_dir / "tagline.md") in prompt
     assert "/components/lvgl/widgets/list/" in prompt  # the bad-link example
     assert "never build one by hand" in docs_urls_file.read_text()
+    # The tagline guidance that used to be printed for a human to follow
+    assert "TAGLINE: <short headline for the release" in prompt
+    assert "DESCRIPTION: <one sentence" in prompt
+    assert "Plain language in sentence case, with no jargon and no abbreviations" in prompt
+    assert '"Faster builds and encrypted updates"' in prompt
+    assert '"Faster builds and encrypted OTA"' in prompt
 
 
 @pytest.mark.parametrize(
@@ -545,25 +639,17 @@ def test_assemble_warns_when_only_description_missing(
     assert 'description: "{DESCRIPTION}"' in blog
 
 
-def test_assemble_blog_only_skips_changelog(grn: ModuleType, workspace: Path) -> None:
-    generator = _make_generator(grn, blog_only=True)
-    _prepare_assembly_inputs(grn, workspace, generator)
-    _write_tagline(generator, "Bluetooth everywhere", "A one sentence summary.")
-
-    assert generator.assemble_changelog() is True
-
-    assert generator._blog_post_path().exists()
-    assert not (workspace / "src/content/docs/changelog/2026.9.0.mdx").exists()
-
-
 def test_assemble_blog_only_ignores_missing_changelog_template(
     grn: ModuleType, workspace: Path
 ) -> None:
-    generator = _make_generator(grn, blog_only=True)
+    """With blog_only the changelog template is never read, so its absence
+    is not an error."""
+    generator = _make_generator(grn)
     _prepare_assembly_inputs(grn, workspace, generator)
+    _write_tagline(generator, "Bluetooth everywhere", "A one sentence summary.")
     (workspace / "script" / "release_notes_template.mdx").unlink()
 
-    assert generator.assemble_changelog() is True
+    assert generator.assemble_changelog(blog_only=True) is True
 
 
 def test_main_rejects_blog_only_without_assemble(
@@ -577,14 +663,44 @@ def test_main_rejects_blog_only_without_assemble(
     assert "--blog-only requires --assemble" in capsys.readouterr().out
 
 
-def test_main_passes_blog_only_to_generator(
-    grn: ModuleType, monkeypatch: pytest.MonkeyPatch
-) -> None:
-    recorded: dict[str, bool] = {}
+def test_blog_post_template_structure() -> None:
+    """The blog post template's frontmatter and section headings match the
+    copywriters' house style: no cover banner, sentence-case headings, and
+    the companion summary/featured-components ordering."""
+    template = (REPO_ROOT / "script" / "blog_post_template.mdx").read_text()
 
-    def fake_run(self, assemble_only: bool = False) -> bool:
-        recorded["assemble_only"] = assemble_only
-        recorded["blog_only"] = self.blog_only
+    frontmatter = template.split("---", 2)[1]
+    assert "cover:" not in frontmatter
+    assert 'property: "og:image"' in frontmatter
+    assert 'name: "twitter:image"' in frontmatter
+
+    headings = re.findall(r"^#{2,3} .+$", template, re.MULTILINE)
+    assert headings == [
+        "## Components added in this release",
+        "## Release overview",
+        "## Upgrade checklist",
+        "## Thank you, contributors",
+        "## Breaking changes",
+        "### Undocumented API changes",
+        "### Breaking changes for developers",
+        "## Full list of changes",
+    ]
+
+    companion_pos = template.index("{/* COMPANION_SUMMARY_START */}")
+    components_heading_pos = template.index("## Components added in this release")
+    img_table_pos = template.index("<ImgTable")
+    overview_pos = template.index("## Release overview")
+    assert companion_pos < components_heading_pos < img_table_pos < overview_pos
+
+
+def test_main_parses_assemble_blog_only(
+    grn: ModuleType, workspace: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """--assemble --blog-only is parsed and threaded through to run()."""
+    captured_kwargs: dict[str, object] = {}
+
+    def fake_run(self: object, **kwargs: object) -> bool:
+        captured_kwargs.update(kwargs)
         return True
 
     monkeypatch.setattr(
@@ -598,4 +714,4 @@ def test_main_passes_blog_only_to_generator(
     )
 
     assert grn.main() == 0
-    assert recorded == {"assemble_only": True, "blog_only": True}
+    assert captured_kwargs == {"assemble_only": True, "blog_only": True}

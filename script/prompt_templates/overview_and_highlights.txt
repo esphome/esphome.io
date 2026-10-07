@@ -83,8 +83,8 @@ taglines look like:
 
   Bluetooth on more chips than ever
   Native toolchains by default
-  Z-Wave Proxy and Arduino as an IDF component
-  API action responses and HUB75 matrix displays
+  Device Builder enters public beta
+  Performance overhaul and first-class RP2040
 
 OUTPUT FORMAT - the file must contain exactly these two lines and nothing else:
 
@@ -93,12 +93,15 @@ DESCRIPTION: <one sentence, roughly 120-200 characters>
 
 TAGLINE RULES:
 - Under 60 characters (it must fit the social card)
+- Plain language in sentence case, with no jargon and no abbreviations, e.g.
+  "Faster builds and encrypted updates" rather than "Faster builds and encrypted OTA"
 - No colon, no double quote, no markdown, no trailing period
 - No em dashes or double dashes (--); this repository bans them
 - Do not repeat "ESPHome {{ version }}", that prefix is added automatically
 
 DESCRIPTION RULES:
-- One sentence of plain prose, roughly 120-200 characters
+- One sentence of plain prose in sentence case, roughly 120-200 characters
+- Plain language, no jargon and no abbreviations, same as the tagline
 - No markdown, no quotes, no links, no PR numbers
 - No em dashes or double dashes (--)
 - It is used verbatim as both `description:` and `excerpt:`, so it must read well alone
@@ -139,7 +142,7 @@ Select the 3-10 MOST IMPORTANT features/changes from the PRs and ORDER BY PRIORI
 
 STYLE EXAMPLES from ESPHome 2025.10.0:
 
-## Z-Wave Proxy
+## Z-Wave proxy
 
 The new [zwave_proxy](/components/zwave_proxy/) component enables network-based connectivity
 for Z-Wave hardware by proxying serial communication between a Z-Wave modem SoC and Z-Wave JS.
@@ -150,7 +153,7 @@ for Z-Wave hardware by proxying serial communication between a Z-Wave modem SoC 
 - **Serial-to-network bridge** - Proxies UART communication between hardware and Z-Wave JS
 - **Low latency** - Achieves 50-60ms typical latency
 
-## Arduino as IDF Component (Major Architectural Change)
+## Arduino as IDF component (major architectural change)
 
 This release includes a fundamental change - **Arduino is now integrated as an ESP-IDF component**.
 
@@ -159,13 +162,13 @@ This release includes a fundamental change - **Arduino is now integrated as an E
 - **20-30KB RAM savings** on Arduino builds
 - **Additional ~8KB RAM savings** if using the web server
 
-### Should You Migrate to ESP-IDF?
+### Should you migrate to ESP-IDF?
 
 **We recommend ESP-IDF for most users**, especially for:
 - Bluetooth Proxy devices (lower memory usage)
 - New projects
 
-## Notable Bug Fixes (Example)
+## Notable bug fixes (example)
 
 This release fixes critical WiFi mesh network failover issues that left devices stuck attempting to connect to failed access points ([#11805](https://github.com/esphome/esphome/pull/11805)).
 
@@ -212,6 +215,9 @@ INSTRUCTIONS:
 
 5. **Write detailed sections**:
    - ## Heading for each major feature
+   - Write all ## and ### headings in sentence case: only the first word and
+     proper nouns/acronyms are capitalized (e.g. "ESP8266 native toolchain
+     foundation", "Arduino as an ESP-IDF component")
    - Opening paragraph: what it is and why it matters
    - **Key Features/Benefits** bulleted list with bold labels
    - Subsections (###) for migration guidance or recommendations

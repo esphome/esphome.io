@@ -55,6 +55,23 @@ ethernet:
 ```
 
 ```yaml
+# Example configuration entry for SPI chips sharing an existing SPI bus (ESP32)
+spi:
+  - id: spi_bus
+    interface: spi2
+    clk_pin: GPIOXX
+    mosi_pin: GPIOXX
+    miso_pin: GPIOXX
+
+ethernet:
+  type: W5500
+  spi_id: spi_bus
+  cs_pin: GPIOXX
+  interrupt_pin: GPIOXX
+  reset_pin: GPIOXX
+```
+
+```yaml
 # Example configuration entry for SPI chips (RP2040 Pico)
 ethernet:
   type: W5500
@@ -148,10 +165,15 @@ It takes the same configuration variables as the [GENERIC type](#generic-rgmii-c
 
 ### SPI configuration variables
 
-- **clk_pin** (**Required**, [Pin](/guides/configuration-types#pin)): The SPI clock pin.
-- **mosi_pin** (**Required**, [Pin](/guides/configuration-types#pin)): The SPI MOSI pin.
-- **miso_pin** (**Required**, [Pin](/guides/configuration-types#pin)): The SPI MISO pin.
+- **clk_pin** (**Required** unless `spi_id` is set, [Pin](/guides/configuration-types#pin)): The SPI clock pin.
+- **mosi_pin** (**Required** unless `spi_id` is set, [Pin](/guides/configuration-types#pin)): The SPI MOSI pin.
+- **miso_pin** (**Required** unless `spi_id` is set, [Pin](/guides/configuration-types#pin)): The SPI MISO pin.
 - **cs_pin** (**Required**, [Pin](/guides/configuration-types#pin)): The SPI chip select pin.
+- **spi_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of an [SPI Component](/components/spi/) bus
+  to attach the Ethernet chip to instead of initializing a dedicated SPI host. ESP32 only. This allows the chip to
+  share the SPI bus with other peripherals, each using its own CS pin. The referenced bus must use a hardware SPI
+  interface (for example `interface: spi2`, not `software`) and must have a `miso_pin`. When `spi_id` is set,
+  `clk_pin`, `mosi_pin`, `miso_pin` and `interface` must not be set - they come from the referenced bus.
 - **interrupt_pin** (*Optional*, [Pin](/guides/configuration-types#pin)): The interrupt pin.
   This variable is **required** for older frameworks. See below.
 
@@ -165,7 +187,7 @@ It takes the same configuration variables as the [GENERIC type](#generic-rgmii-c
   set the time interval for periodic polling. Minimum is 1ms; defaults to 10ms. ESP32 only.
   Older frameworks may not support this variable. See below for details.
 - **interface** (*Optional*, string): Controls which ESP-IDF SPI implementation should be used.
-  Value may be either `spi2` or `spi3`.
+  Value may be either `spi2` or `spi3`. Must not be set when `spi_id` is used.
 
 On ESP32, the `interrupt_pin` and `polling_interval` options control how the SPI Ethernet
 chip is polled. On RP2040, the arduino-pico framework handles packet processing automatically.
@@ -214,7 +236,9 @@ If you are using a framework that does not support SPI polling mode,
 > not travel reliably over these types of connections.
 
 > [!NOTE]
-> SPI based chips do *not* use [Spi](/components/spi/). This means that SPI pins can't be shared with other devices.
+> By default, SPI based chips do *not* use the [SPI Component](/components/spi/) and their SPI pins can't be shared
+> with other devices. On ESP32, set `spi_id` to attach the chip to an existing hardware `spi:` bus instead, sharing
+> its pins with other SPI peripherals.
 
 ## Configuration examples
 
@@ -446,6 +470,25 @@ ethernet:
   cs_pin: GPIO14
   interrupt_pin: GPIO10
   reset_pin: GPIO9
+```
+
+**M5Stack CoreS3 with Base LAN PoE** (W5500 sharing the SPI bus with the LCD and microSD):
+
+```yaml
+spi:
+  - id: spi_bus
+    interface: spi2
+    clk_pin: GPIO36
+    mosi_pin: GPIO37
+    miso_pin: GPIO35
+
+ethernet:
+  type: W5500
+  spi_id: spi_bus
+  cs_pin: GPIO9
+  reset_pin: GPIO7
+  interrupt_pin: GPIO14
+  clock_speed: 20MHz
 ```
 
 **ETH01-Evo**:

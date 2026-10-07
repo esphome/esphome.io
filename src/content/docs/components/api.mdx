@@ -173,7 +173,8 @@ on_...:
   This is evaluated on the Home Assistant side with Home Assistant's templating engine.
 
 - **variables** (*Optional*, mapping): Optional variables that can be used in the `data_template`.
-  Values are [lambdas](/automations/templates#config-lambda) and will be evaluated before sending the request.
+  A value tagged with `!lambda` is a [lambda](/automations/templates#config-lambda) evaluated on the device
+  before sending the request; any other value is sent as a static string.
 
 ### `homeassistant.action` Action
 
@@ -199,7 +200,7 @@ on_...:
       data_template:
         message: The humidity is {{ my_variable }}%.
       variables:
-        my_variable: |-
+        my_variable: !lambda |-
           return id(my_sensor).state;
 ```
 
@@ -213,7 +214,8 @@ on_...:
   This is evaluated on the Home Assistant side with Home Assistant's templating engine.
 
 - **variables** (*Optional*, mapping): Optional variables that can be used in the `data_template`.
-  Values are [lambdas](/automations/templates#config-lambda) and will be evaluated before sending the request.
+  A value tagged with `!lambda` is a [lambda](/automations/templates#config-lambda) evaluated on the device
+  before sending the request; any other value is sent as a static string.
 
 - **capture_response** (*Optional*, boolean): Enable capturing the response from the Home Assistant action call.
   When enabled, `on_success` must be configured. Defaults to `false`.

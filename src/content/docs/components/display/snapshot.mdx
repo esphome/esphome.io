@@ -1,0 +1,111 @@
+---
+description: "Instructions for setting up a snapshot display, which draws into memory and writes image files"
+title: "Snapshot Display"
+---
+import APIRef from '@components/APIRef.astro';
+
+
+
+## Usage
+
+The `snapshot` display platform draws into memory and nothing else. There is no screen and no window; the only way
+to see what was drawn is to take a snapshot, which writes the current contents of the display to a `.bmp` file.
+
+This is useful for producing pictures of a layout without a device to run it on, and for checking in a test that a
+configuration still draws what it used to. Unlike the [SDL display](/components/display/sdl/) it needs no graphics
+library and no graphical desktop, so it runs anywhere the `host` platform does.
+
+```yaml
+# Example configuration entry
+esphome:
+  name: snapshot
+
+host:
+
+display:
+  - platform: snapshot
+    id: my_display
+    show_test_card: true
+    dimensions:
+      width: 320
+      height: 240
+```
+
+### Configuration Variables
+
+- **dimensions** (**Required**): Dimensions of the screen, specified either as *width* **x** *height* (e.g. `320x240`)
+  or with separate config keys.
+
+  - **width** (**Required**, int): Specifies width of display in pixels.
+  - **height** (**Required**, int): Specifies height of display in pixels.
+
+- **lambda** (*Optional*, [lambda](/automations/templates#config-lambda)): The lambda to use for rendering the content
+  on the display. See [Display Rendering Engine](/components/display#display-engine) for more information.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to re-draw the screen.
+  Defaults to `1s`.
+- **pages** (*Optional*, list): Show pages instead of a single lambda. See
+  [Display Pages](/components/display#display-pages).
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
+- All other options from [Display Component](/components/display#display-configuration).
+
+> [!NOTE]
+> This platform is only available on the `host` platform.
+
+
+## Snapshots
+
+A snapshot writes the current contents of a display to a `.bmp` file. Snapshots are saved in the `snapshots` folder
+under the `.esphome` folder that holds the build directory. Set the `ESPHOME_SNAPSHOT_DIR` environment variable when
+running the binary to save them somewhere else.
+
+An existing file is never overwritten. Snapshots that use a generated name get a number added if a file of that name
+is already there; a snapshot with a name you chose yourself will fail instead, so that a test checking a fixed path
+cannot pick up an old file by mistake.
+
+The [SDL display](/components/display/sdl/) can take snapshots as well, and writes the same file for the same
+picture.
+
+### `snapshot.take` Action
+
+Save a snapshot of the given display.
+
+```yaml
+on_...:
+  # save to a name built from the display id and the current time
+  - snapshot.take: my_display
+
+  # save to a name you choose
+  - snapshot.take:
+      id: my_display
+      filename: start_screen.bmp
+
+  # the name may be templated
+  - snapshot.take:
+      id: my_display
+      filename: !lambda |-
+        return id(night_mode).state ? "dark.bmp" : "light.bmp";
+```
+
+Configuration variables:
+
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): The display to capture. Required if you have more than
+  one display that can take snapshots.
+- **filename** (*Optional*, string, [templatable](/automations/templates#config-templatable)): The name of the file to
+  write. If not given, a name is built from the display id and the current date and time. Only letters, digits, `.`,
+  `_` and `-` are kept, so the file is always written inside the snapshots folder. A `.bmp` ending is added if you
+  leave it off.
+
+> [!NOTE]
+> Writing the file blocks the main loop for as long as it takes, which may be reported as a slow component. This is
+> not a problem for the design and test work this display is meant for, but it is not something to do on a timer in a
+> device you leave running.
+
+## Build and Run
+
+The `esphome run yourfile.yaml` command will compile and automatically run the build file on the `host` platform.
+
+## See Also
+
+- [Host SDL2 display](/components/display/sdl/)
+- [Display Component](/components/display/)
+- <APIRef text="snapshot.h" path="snapshot/snapshot.h" />
