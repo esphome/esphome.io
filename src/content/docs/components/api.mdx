@@ -448,8 +448,9 @@ The lambda equivalent for this is `id(api_id).is_connected(true)`.
 
 ### `api.wizard.input_is_set` Condition
 
-This [Condition](/automations/actions#all-conditions) checks if the user has picked a Home Assistant entity for a
-standalone [wizard](#wizard) input, either in the wizard or in an earlier run of it that was saved on the device.
+This [Condition](/automations/actions#all-conditions) checks if a Home Assistant entity has been picked for a
+standalone [wizard](#wizard) input. Home Assistant sends the picked entity each time it connects, so after a restart
+this condition is false until Home Assistant has connected.
 It only works with standalone inputs (declared with `id`). A linked input is read through its `homeassistant` entity.
 
 ```yaml
@@ -495,21 +496,24 @@ Each page lists **entities**, **inputs**, or both:
 
 - An entity is an entity of the device itself, for example a switch that turns a feature on or off, which the page
   points out to the user.
-- An input asks the user to pick a Home Assistant entity. The entity ID the user picks is saved on the device and is
-  kept across restarts. An input is either:
-  - **linked** (`entity`): it gives the entity ID of a `homeassistant` platform entity on the device, so that entity
-    no longer needs an `entity_id` in the YAML. Supported platforms are
+- An input asks the user to pick a Home Assistant entity. Home Assistant keeps the entity ID the user picks and sends
+  it to the device every time it connects. The device does not store it, so after a restart the input is empty until
+  Home Assistant connects. An input is either:
+  - **linked** (`entity`): it gives the entity ID of a `homeassistant` platform entity on the device. That entity
+    must not set `entity_id`, as Home Assistant sets it through the wizard. Supported platforms are
     [sensor](/components/sensor/homeassistant/), [binary sensor](/components/binary_sensor/homeassistant/),
     [text sensor](/components/text_sensor/homeassistant/), [number](/components/number/homeassistant/),
     [switch](/components/switch/homeassistant/), [text](/components/text/homeassistant/),
-    [select](/components/select/homeassistant/) and [button](/components/button/homeassistant/). If the entity also
-    has an `entity_id`, that is used until the user picks another entity.
+    [select](/components/select/homeassistant/) and [button](/components/button/homeassistant/).
   - **standalone** (`id`): it only stores an entity ID, for use in [lambdas](/automations/templates#config-lambda).
     `id(my_input).entity_id()` returns the picked entity ID, and `id(my_input).has_entity_id()` returns whether one
     has been picked. See also the [`api.wizard.input_is_set` Condition](#api-wizard-input_is_set-condition).
 
 Titles and descriptions are sent to Home Assistant as they are, so they can also be Home Assistant translation
 placeholders such as `"[%key:component::example::feature::enable%]"`.
+
+The wizard is sent to Home Assistant in a single message, and validation fails if it does not fit. In that case,
+shorten the texts or use fewer pages, entities or filters.
 
 ### Configuration variables
 
@@ -521,7 +525,7 @@ placeholders such as `"[%key:component::example::feature::enable%]"`.
   - **entities** (*Optional*, list): Entities of the device to show on the page. Each entry has these options:
 
     - **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the entity. The entity must be exposed
-      to Home Assistant, so it cannot be `internal`.
+      to Home Assistant, so it cannot be `internal`, and it must have a `name` that is not empty.
     - **description** (*Optional*, string): A text shown with the entity. At most 255 characters.
 
   - **inputs** (*Optional*, list): Home Assistant entities for the user to pick. Each entry needs exactly one of
