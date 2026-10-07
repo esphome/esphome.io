@@ -32,6 +32,8 @@ Basic workflow:
        python script/generate_release_notes.py 2025.11.0 --update
   3. Assemble release notes from AI responses:
        python script/generate_release_notes.py 2025.11.0 --assemble
+  4. Assemble only the blog post, leaving the changelog page alone:
+       python script/generate_release_notes.py 2025.11.0 --assemble --blog-only
 
 Detailed Workflow:
 ------------------
@@ -41,10 +43,13 @@ Step 1: Generate Prompts
   caches PR metadata, and generates AI prompts in script/cache/2025.11.0/prompts/
 
 Step 2: Process Prompts with Claude Code CLI
-  Start Claude Code CLI and read the prompts:
+  Start Claude Code CLI and read the prompts 1-3, then prompt 4 last since it
+  reads the responses to prompts 1-3:
   $ claude
   > Please read script/cache/2025.11.0/prompts/overview_and_highlights.txt and follow the instructions
   > Please read script/cache/2025.11.0/prompts/breaking_changes.txt and follow the instructions
+  > Please read script/cache/2025.11.0/prompts/contributors.txt and follow the instructions
+  > Please read script/cache/2025.11.0/prompts/companion_summary.txt and follow the instructions
 
   Claude will write AI responses to script/cache/2025.11.0/ai_responses/
 
@@ -605,6 +610,13 @@ class ReleaseNotesGenerator:
         contributors_file = self.prompts_dir / "contributors.txt"
         contributors_file.write_text(contributors_prompt)
 
+        # Generate Companion Summary Prompt
+        # Runs last: it reads the responses to the three prompts above, so it
+        # must be answered after they are.
+        companion_prompt = self._generate_companion_summary_prompt()
+        companion_file = self.prompts_dir / "companion_summary.txt"
+        companion_file.write_text(companion_prompt)
+
         # Print instructions
         print("\n" + "=" * 80)
         print("STEP 1: Process prompts through Claude Code CLI")
@@ -614,6 +626,10 @@ class ReleaseNotesGenerator:
         print(f"  > Please read {overview_highlights_file} and follow the instructions")
         print(f"  > Please read {breaking_file} and follow the instructions")
         print(f"  > Please read {contributors_file} and follow the instructions")
+        print(
+            f"  > Please read {companion_file} and follow the instructions "
+            "(run this one last)"
+        )
 
         print("\nPrompt 1: Overview + Feature Highlights (COMBINED)")
         print(f"  Prompt: {overview_highlights_file}")
@@ -633,6 +649,13 @@ class ReleaseNotesGenerator:
         print("\nPrompt 3: Contributor Acknowledgments")
         print(f"  Prompt: {contributors_file}")
         print(f"  Output: {self.responses_dir / 'contributors.md'}")
+
+        print(
+            "\nPrompt 4: Companion summary (run AFTER prompts 1-3 have been "
+            "answered - it reads their responses)"
+        )
+        print(f"  Prompt: {companion_file}")
+        print(f"  Output: {self.responses_dir / 'companion_summary.md'}")
 
         print("\nNote: Each prompt will generate multiple output files automatically.")
 
@@ -705,6 +728,26 @@ class ReleaseNotesGenerator:
             breaking_changes=breaking_prs,
             undocumented_api_changes=undocumented_api_prs,
             all_prs=all_prs,
+        )
+
+    def _generate_companion_summary_prompt(self) -> str:
+        """Generate prompt for the newcomer-friendly companion summary.
+
+        This runs after the other three prompts, since it reads their
+        responses to produce a short summary placed above the full post.
+        """
+        template = self.jinja_env.get_template("companion_summary.txt")
+
+        return template.render(
+            version=str(self.version),
+            companion_file=self.responses_dir / "companion_summary.md",
+            overview_file=self.responses_dir / "release_overview.md",
+            highlights_file=self.responses_dir / "feature_highlights.md",
+            breaking_users_file=self.responses_dir / "breaking_changes_users.md",
+            checklist_file=self.responses_dir / "upgrade_checklist.md",
+            undocumented_file=self.responses_dir / "undocumented_api_changes.md",
+            breaking_devs_file=self.responses_dir / "breaking_changes_developers.md",
+            blog_post_file=self._blog_post_path(),
         )
 
     def _get_contributor_stats(
@@ -809,8 +852,12 @@ class ReleaseNotesGenerator:
 
         return "\n".join(lines)
 
-    def assemble_changelog(self) -> bool:
-        """Assemble the release notes blog post and changelog from AI responses"""
+    def assemble_changelog(self, blog_only: bool = False) -> bool:
+        """Assemble the release notes blog post and changelog from AI responses
+
+        With blog_only, write only the blog post and leave the changelog page
+        alone (the release tooling writes that page itself).
+        """
         print("\n=== Assembling Release Notes ===\n")
 
         # Check that AI responses exist
@@ -844,6 +891,8 @@ class ReleaseNotesGenerator:
 
         if not self._assemble_blog_post(responses, prs):
             return False
+        if blog_only:
+            return True
         return self._assemble_changelog_file(prs)
 
     def _load_ai_responses(self) -> dict[str, str]:
@@ -857,6 +906,7 @@ class ReleaseNotesGenerator:
             ("undocumented_api", "undocumented_api_changes.md"),
             ("breaking_devs", "breaking_changes_developers.md"),
             ("contributors", "contributors.md"),
+            ("companion", "companion_summary.md"),
         ):
             file = self.responses_dir / filename
             responses[key] = file.read_text().strip() if file.exists() else ""
@@ -905,8 +955,21 @@ class ReleaseNotesGenerator:
             content = content.replace("{BLOG_PATH}", self._blog_site_path(post_path))
             print(f"✓ Creating blog post from template: {post_path}")
             print("  Note: fill in the {TAGLINE} and {DESCRIPTION} placeholders manually")
+            print(
+                "  The tagline is plain language in sentence case with no jargon or "
+                "abbreviations,"
+            )
+            print(
+                '  e.g. "Faster builds and encrypted updates" rather than '
+                '"Faster builds and encrypted OTA"'
+            )
 
         # Replace AI-generated sections
+        if responses["companion"]:
+            content = self._replace_marker_content(
+                content, "COMPANION_SUMMARY", responses["companion"]
+            )
+
         content = self._replace_marker_content(
             content, "RELEASE_OVERVIEW", responses["overview"]
         )
@@ -1120,13 +1183,13 @@ class ReleaseNotesGenerator:
 
         return template
 
-    def run(self, assemble_only: bool = False) -> bool:
+    def run(self, assemble_only: bool = False, blog_only: bool = False) -> bool:
         """Main workflow"""
         self.ensure_dirs()
 
         if assemble_only:
             # Skip PR discovery, just assemble from cached data
-            return self.assemble_changelog()
+            return self.assemble_changelog(blog_only=blog_only)
 
         # Discover and fetch PRs
         pr_numbers = self.discover_prs()
@@ -1175,6 +1238,9 @@ Examples:
 
   # Dry run (show what would be generated)
   python script/generate_release_notes.py 2025.11.0 --assemble --dry-run
+
+  # Assemble only the blog post, leaving the changelog page alone
+  python script/generate_release_notes.py 2025.11.0 --assemble --blog-only
         """,
     )
     parser.add_argument(
@@ -1195,6 +1261,14 @@ Examples:
         action="store_true",
         help="Show what would be generated without writing files",
     )
+    parser.add_argument(
+        "--blog-only",
+        action="store_true",
+        help=(
+            "With --assemble, write only the blog post and leave the changelog "
+            "page alone (the release tooling writes that page itself)"
+        ),
+    )
 
     args = parser.parse_args()
 
@@ -1213,7 +1287,7 @@ Examples:
     # Check GitHub CLI is installed and authenticated
     generator.check_github_cli()
 
-    success = generator.run(assemble_only=args.assemble)
+    success = generator.run(assemble_only=args.assemble, blog_only=args.blog_only)
     return 0 if success else 1
 
 

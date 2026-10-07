@@ -65,7 +65,7 @@ acceptable; "Acme Widget for ESPHome" is.
 Devices always arrive with no Wi-Fi credentials, so the user needs a way to supply them without a computer or a
 configuration file:
 
-- [`esp32_improv`](/components/esp32_improv/) provisions credentials over Bluetooth LE.
+- [`improv_ble`](/components/improv_ble/) provisions credentials over Bluetooth LE.
 - [`improv_serial`](/components/improv_serial/) does the same over USB, and is required if the device exposes a USB
   port.
 
@@ -99,7 +99,7 @@ fetches the manifest and the binary, so a dead link or a chip family mismatch wi
 
 ## Example Configuration
 
-The pieces every Made for ESPHome configuration needs, with a single entity to show the `id` requirement:
+The pieces every Made for ESPHome configuration needs:
 
 ```yaml
 esphome:
@@ -119,21 +119,26 @@ api:
 
 ota:
   - platform: esphome
+    id: ota_esphome
   - platform: http_request
+    id: ota_http_request
 
 http_request:
+  id: http_request_id
 
 update:
   - platform: http_request
-    id: esphome_update
+    id: update_http_request
     name: "ESPHome update"
     source: https://acme.example.com/widget/manifest.json
 
 wifi:
   ap:
 
-esp32_improv:
+improv_ble:
   authorizer: none
+
+logger:
 
 improv_serial:
 
