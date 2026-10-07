@@ -665,12 +665,13 @@ def test_main_rejects_blog_only_without_assemble(
 
 def test_blog_post_template_structure() -> None:
     """The blog post template's frontmatter and section headings match the
-    copywriters' house style: no cover banner, sentence-case headings, and
-    the companion summary/featured-components ordering."""
+    copywriters' house style: a cover for blog list cards (hidden on the post
+    page itself), sentence-case headings, and the companion
+    summary/featured-components ordering."""
     template = (REPO_ROOT / "script" / "blog_post_template.mdx").read_text()
 
     frontmatter = template.split("---", 2)[1]
-    assert "cover:" not in frontmatter
+    assert "cover:" in frontmatter
     assert 'property: "og:image"' in frontmatter
     assert 'name: "twitter:image"' in frontmatter
 
