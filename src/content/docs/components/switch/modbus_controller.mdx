@@ -22,6 +22,10 @@ and requires [Modbus Controller](/components/modbus_controller/) to be configure
   To poll some registers less often, place those sensors on a second `modbus_controller` with the same `address:` and a
   slower `update_interval:`.
 - **use_write_multiple** (*Optional*, boolean): By default the modbus command *Function Code 6 (Preset Single Registers)* is used for setting the holding register if only one register is set. If your device only supports *Function Code 16 (Preset Multiple Registers)* set this option to `true`.
+- **expect_broadcast_write_response** (*Optional*, boolean): When the controller's `address` is `0` (see
+  `allow_broadcast_read` on [Modbus Controller](/components/modbus_controller/)), wait for the reply to each write
+  instead of treating it as a fire-and-forget broadcast. Rejected under a controller at any other address.
+  Defaults to `false`.
 - **bitmask** (*Optional*, int): Some values are packed in a response. The bitmask is used to determined if the result is true or false. See [Bitmasks](/components/modbus_controller#bitmasks).
 - **lambda** (*Optional*, [lambda](/automations/templates#config-lambda)):
   Lambda to be evaluated every update interval to read the status of the switch.
