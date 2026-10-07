@@ -1,0 +1,90 @@
+---
+description: "Instructions for setting up how ESPHome stores state that persists across device reboots."
+title: "Preferences"
+---
+import APIRef from '@components/APIRef.astro';
+
+This component is used to store data that persists across device reboots, e.g. the latest state of a light or the
+accumulated energy used by an appliance. The data is normally stored in flash memory; the
+[host](/components/host/) platform stores it in a file instead, and on ESP32 it can optionally be kept in RTC memory.
+
+```yaml
+# Example configuration entry
+preferences:
+  flash_write_interval: 1min
+```
+
+## Configuration variables
+
+- **flash_write_interval** (*Optional*, [Time](/guides/configuration-types#time)): Customize the frequency in which
+  data is flushed to the flash. This setting helps to prevent rapid changes to a component from being quickly
+  written to the flash and wearing it out. Defaults to `1min`. Set to `never` to disable this feature.
+
+- **rtc_storage** (*Optional*, boolean): Only useful on ESP32. Compile RTC-memory-backed preference storage into the
+  firmware even when no other option selects it (options such as `safe_mode`'s and `fast_connect`'s `storage: rtc`
+  enable it automatically). This is intended for external components that request RTC storage through the C++
+  preferences API; without it, such requests fall back to flash (NVS) with a warning in the log. Not available on
+  ESP32 variants without RTC memory (C2 and C61). On ESP8266, RTC storage is integral and always enabled: `true` is
+  accepted (and does nothing), while `false` is rejected since it cannot be disabled.
+
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID for this component, required to
+  reference it from `component.suspend` / `component.resume` / `component.update`.
+
+## Flash Wear
+
+As flash memory has a limited number of write cycles, `flash_write_interval` reduces the number of flash writes
+caused by rapidly changing components. In the past, when components such as `light`, `switch`, `fan` and `globals`
+were changed, the state was immediately committed to flash. This meant those components always restored their most
+recent state after power loss, but at the cost of potentially damaging the flash when they changed frequently.
+
+To mitigate this, the state is now first stored in memory and only flushed to flash once the `flash_write_interval`
+has passed. This results in fewer flash writes, preserving the flash health.
+
+This behavior can be modified by setting `flash_write_interval` to `0s` to commit the changes to flash as soon as
+possible. Be aware that this may lead to increased flash wearing and a shortened device lifespan!
+
+For [ESP8266](/components/esp8266/), `restore_from_flash` must also be set to `true` for states to be written to flash.
+
+## Suspending and Resuming Sync
+
+The [`component.suspend`](/automations/actions/#component-suspend-action) and
+[`component.resume`](/automations/actions/#component-resume-action) actions suspend and resume the periodic flash
+write at runtime. This enables power-saving use cases where after the initial save of persistently stored data there
+is no need to continue periodic flash writes. `component.resume` also accepts an `update_interval` option, letting
+you change the `flash_write_interval` at runtime.
+
+> [!NOTE]
+> While the syncer is suspended, changes to component states are still stored in memory but are not written to flash
+> until sync resumes. Use [`component.update`](/automations/actions/#component-update-action) to flash component
+> states.
+
+```yaml
+preferences:
+  id: prefs
+
+esphome:
+  on_boot:
+    then:
+      - component.suspend: prefs
+```
+
+The [`component.update`](/automations/actions/#component-update-action) action can be used to force an immediate
+flash write outside of the normal `flash_write_interval` schedule, for example right before a suspend:
+
+```yaml
+preferences:
+  id: prefs
+
+esphome:
+  on_boot:
+    then:
+      - component.update: prefs
+      - component.suspend: prefs
+```
+
+
+## See Also
+
+- [ESPHome Core Configuration](/components/esphome/)
+- [Factory Reset](/components/factory_reset/)
+- <APIRef text="syncer.h" path="preferences/syncer.h" />

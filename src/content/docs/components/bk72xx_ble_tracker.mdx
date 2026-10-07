@@ -20,8 +20,9 @@ for example [BLE RSSI](/components/sensor/ble_rssi/),
 
 > [!NOTE]
 > This tracker is **scan-only**: it receives advertisements but cannot open GATT connections,
-> so connection-based components such as [`ble_client`](/components/ble_client/) and
-> [`bluetooth_proxy`](/components/bluetooth_proxy/) are not available on this platform.
+> so [`ble_client`](/components/ble_client/) is not available on this platform.
+> [`bluetooth_proxy`](/components/bluetooth_proxy/) runs in **advertisement-only** mode — see
+> [Platform Support](/components/bluetooth_proxy/#platform-support).
 
 > [!NOTE]
 > The tracker builds on the [BK72xx BLE](/components/bk72xx_ble/) controller component and
@@ -47,9 +48,10 @@ bk72xx_ble_tracker:
   for background reading.
 
   > [!NOTE]
-  > The BK72xx controller scans **passive only** — there is no `active` option. Passive
-  > scanning is sufficient for BTHome/ATC thermometers and most beacons, which broadcast all
-  > their data in the advertisement (no scan response).
+  > Scanning defaults to **active**, like the other BLE trackers. Passive scanning
+  > (`scan_parameters.active: false`) is sufficient for BTHome/ATC thermometers and most
+  > beacons — they broadcast all their data in the advertisement (no scan response) — and
+  > keeps the radio cost of each window minimal on the single-core SoC.
 
   - **interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval between
     each consecutive scan window. The scanner cycles through the three BLE advertising channels
@@ -65,25 +67,114 @@ bk72xx_ble_tracker:
     complete scan session. When `continuous` is `true` the scanner restarts immediately after each
     session ends. Defaults to `5min`.
 
-  - **continuous** (*Optional*, boolean): Leave this at `true`. When `true` the scanner runs
-    permanently, with the `duration` period used only for per-session bookkeeping. When `false`
-    a started scan runs for `duration` and then stops. Defaults to `true`.
+  - **continuous** (*Optional*, boolean): When `true` the scanner runs permanently, with the
+    `duration` period used only for per-session bookkeeping. When `false` a started scan runs
+    for `duration` and then stops — note that nothing starts the first scan automatically, so
+    pair it with the `bk72xx_ble_tracker.start_scan` action (for example from
+    `api.on_client_connected`, so the single-core radio only scans while Home Assistant is
+    connected). Defaults to `true`.
+
+  - **active** (*Optional*, boolean): Whether to send scan requests and receive scan responses
+    (device names and other data some devices only put in the scan response). An advertisement
+    and its scan response are merged and delivered as one frame, the same behavior as the
+    ESP32 tracker. Active scanning transmits during each window, which adds radio cost on the
+    single-core SoC — see [Use on a single-core chip](#use-on-a-single-core-chip). Defaults to
+    `true`. A scanner-mode request from Home Assistant (for example through
+    [`bluetooth_proxy`](/components/bluetooth_proxy/)) switches the mode at runtime regardless
+    of this setting.
+
+- **on_ble_advertise** (*Optional*, [Automation](/automations)): An automation to perform
+  when a Bluetooth advertisement is received. A variable `x` of type
+  `ble_device_base::ESPBTDevice` is passed to the automation.
+
+  - **mac_address** (*Optional*, MAC Address or list of MAC Address): Filter to specific devices.
+
+- **on_ble_service_data_advertise** (*Optional*, [Automation](/automations)): An
+  automation to perform when an advertisement carries matching service data. A variable `x`
+  with the service data bytes (`std::vector<uint8_t>`) is passed to the automation.
+
+  - **service_uuid** (**Required**, string): 16-, 32- or 128-bit BLE service UUID in hex.
+  - **mac_address** (*Optional*, MAC Address): Filter to a single device.
+
+- **on_ble_manufacturer_data_advertise** (*Optional*, [Automation](/automations)): The
+  same for manufacturer data. A variable `x` with the manufacturer data bytes
+  (`std::vector<uint8_t>`) is passed.
+
+  - **manufacturer_id** (**Required**, string): 16-, 32- or 128-bit BLE manufacturer ID in hex.
+  - **mac_address** (*Optional*, MAC Address): Filter to a single device.
+
+- **on_scan_end** (*Optional*, [Automation](/automations)): An automation to perform
+  when a scan session ends (its `duration` elapsed, or `stop_scan` was called).
 
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used to
   reference this component in lambdas.
 
-> [!WARNING]
-> Automation triggers (`on_ble_advertise`, `on_scan_end`, …) and the
-> `start_scan` / `stop_scan` actions are not available on this platform yet. Because nothing
-> else starts a scan, setting `continuous: false` leaves the scanner permanently idle: there is
-> no config error and no scan-start log line, and every attached BLE sensor simply stays
-> unknown. Starting a scan is currently only possible from C++ (`start_scan()`).
+The `x` variable differs between the triggers — `on_ble_advertise` receives the parsed device,
+while the service and manufacturer data triggers receive only the matched payload bytes:
+
+```yaml
+bk72xx_ble_tracker:
+  on_ble_advertise:
+    - mac_address: XX:XX:XX:XX:XX:XX
+      then:
+        - lambda: |-
+            ESP_LOGD("ble_adv", "Advertisement from %s (RSSI %d)",
+                     x.address_str().c_str(), x.get_rssi());
+  on_ble_service_data_advertise:
+    - service_uuid: FCD2
+      then:
+        - lambda: |-
+            ESP_LOGD("ble_svc_data", "Service data of length %i", x.size());
+```
+
+## Actions
+
+### `bk72xx_ble_tracker.start_scan` Action
+
+Start a scan. The optional [templatable](/automations/templates#config-templatable) `continuous`
+overrides the scan mode until the next `start_scan` or `stop_scan` (the YAML-configured value
+itself is untouched); without it the mode configured under `scan_parameters` is restored (a
+previous `stop_scan` does not stick as "one-shot"). This differs from
+`esp32_ble_tracker.start_scan`, where an omitted `continuous` always forces a one-shot scan.
+Invoked while a scan is already running, a mode switch re-anchors the running scan's `duration`
+window instead of restarting the radio (the `on_scan_end` period clock is unaffected); a
+same-mode call is a no-op — it does not extend the running scan.
+
+### `bk72xx_ble_tracker.stop_scan` Action
+
+Stop a running scan; also cancels a start that is still being retried, and switches the scanner
+to one-shot until a later `start_scan` restores the configured mode. Accepts the bare-id
+shorthand (`bk72xx_ble_tracker.stop_scan: my_tracker`) like `esp32_ble_tracker.stop_scan`.
+
+Scan only while Home Assistant is connected — the time-share pattern from
+[Use on a single-core chip](#use-on-a-single-core-chip):
+
+```yaml
+bk72xx_ble_tracker:
+  scan_parameters:
+    continuous: false   # do not start on boot — the api: automation drives scanning
+
+api:
+  on_client_connected:
+    - bk72xx_ble_tracker.start_scan:
+        continuous: true
+  on_client_disconnected:
+    # fires for EVERY departing client (log viewer, CLI) — state_subscription_only
+    # ignores logger-only clients, so scanning stops only when Home Assistant is gone
+    - if:
+        condition:
+          not:
+            api.connected:
+              state_subscription_only: true
+        then:
+          - bk72xx_ble_tracker.stop_scan:
+```
 
 ## With BLE sensors
 
-Sensor platforms attach to the tracker automatically (identical to ESP32). The BK72xx scans
-passive-only, which is sufficient for BTHome/ATC-style sensors that broadcast all their data
-in the advertisement:
+Sensor platforms attach to the tracker automatically (identical to ESP32). Passive scanning
+(`scan_parameters.active: false`) is sufficient for BTHome/ATC-style sensors that broadcast
+all their data in the advertisement:
 
 ```yaml
 bk72xx_ble_tracker:
@@ -105,12 +196,17 @@ sensor:
 
 Unlike the ESP32 which runs BLE on a dedicated core, the BK72xx run both WiFi and BLE on the
 same single ARM CPU core. The scan `window` / `interval` ratio decides how that core is split
-between BLE and WiFi, and passive-only scanning (no scan requests) keeps the radio cost of each
-window minimal:
+between BLE and WiFi. Active scanning adds a transmission per discovered device, so set
+`scan_parameters.active: false` when scan responses are not needed (BTHome/ATC beacons) to
+keep the radio cost of each window minimal:
 
 - `interval: 100ms`, `window: 30ms` → **30/70** BLE / WiFi — the BK reference default
 - `interval: 200ms`, `window: 50ms` → **25/75** BLE / WiFi — catches fewer advertisements,
   but leaves more of the core for WiFi
+
+Note that `scan_parameters.active` only governs standalone configurations: with
+[`bluetooth_proxy`](/components/bluetooth_proxy/), a connected Home Assistant drives the scan
+mode at runtime.
 
 ## See Also
 

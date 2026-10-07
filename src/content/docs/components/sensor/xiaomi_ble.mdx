@@ -218,7 +218,8 @@ sensor:
       name: "LYWSD03MMC Battery Level"
 ```
 
-Configuration example for PVVX MiThermometer firmware set to "BTHome v2" advertisement:
+Configuration example for PVVX MiThermometer firmware set to "BTHome v2" advertisement — see
+[BTHome MiThermometer](/components/sensor/bthome_mithermometer) for the full option reference:
 
 ```yaml
 sensor:
@@ -260,7 +261,8 @@ sensor:
       name: "PVVX Signal"
 ```
 
-Configuration example for ATC MiThermometer firmware set to "Custom" advertisement (deprecated):
+Configuration example for ATC MiThermometer firmware set to "Custom" advertisement (deprecated; all
+options: [ATC MiThermometer](/components/sensor/atc_mithermometer/)):
 
 ```yaml
 sensor:
@@ -557,6 +559,13 @@ Required:
 
 - **mac_address** (MAC Address): The MAC address of the device.
 - **bindkey** (string, 32 characters, case insensitive): The key to decrypt the BLE advertisements for encrypted sensor types
+
+Optional:
+
+- **ble_hub_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the
+  [ESP32 BLE Tracker](/components/esp32_ble_tracker/) to receive advertisements from.
+  Only needed when more than one tracker is configured. Configurations using the former
+  `esp32_ble_id` key keep working as a deprecated alias until ESPHome 2027.2.0.
 
 All options from [Sensor](/components/sensor) are supported for:
 
