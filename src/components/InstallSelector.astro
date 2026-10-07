@@ -202,9 +202,14 @@ if (!urls) {
         </div>
       </div>
       <p class="install-selector__warning" data-mac-intel-warning role="status" hidden>
-        Support for Intel Macs will end in ESPHome 2027.6.0 or earlier. The Python ecosystem is dropping Intel macOS;
-        the&nbsp;
-        <code>cryptography</code> package no longer publishes Intel builds as of version 49.
+        Support for Intel Macs will end in ESPHome 2027.6.0 or earlier. The Python packages ESPHome depends on have
+        stopped publishing Intel macOS builds, so future releases of this app and of the pip install will not install on
+        Intel Macs. ESPHome in <a href="/install/docker/">Docker</a> is not affected, since the container runs Linux rather
+        than macOS: if you run Home Assistant Container on an Intel Mac, keep running ESPHome alongside it in Docker. Docker
+        on an Intel Mac can also serve as a <a
+          href="https://github.com/esphome/device-builder#send-builds-to-another-dashboard">build server</a
+        > for another dashboard; pair it by hostname. If you run Home Assistant OS, the Home Assistant app runs ESPHome on
+        your Home Assistant server instead of the Mac. On an Apple Silicon Mac, pick Apple Silicon above.
       </p>
       <LinkButton data-download="mac" href={urls["mac-arm64"]}> Download disk image (.dmg) </LinkButton>
       <ol class="install-selector__steps">
