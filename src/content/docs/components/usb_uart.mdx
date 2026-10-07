@@ -52,6 +52,7 @@ usb_uart:
 - **channels** (**Required**, list): A list of channels to configure.
 - **vid** (*Optional*, int): The vendor ID of the device. Use 0 as a wildcard. Each type has a default VID which will be overridden if this is set.
 - **pid** (*Optional*, int): The product ID of the device. Use 0 as a wildcard. Each type has a default PID which will be overridden if this is set.
+- **claim_comm_interface** (*Optional*, boolean): Whether to claim the CDC communication (interrupt) interface. Each claimed interface permanently occupies one USB host hardware channel per endpoint, and these are scarce (the ESP32-S3 has eight in total — a hub occupies two, and each CDC-ACM device occupies four). The communication interface only carries modem-status notifications, which this component does not use, so setting this to `false` frees one channel per device — for example, allowing a hub plus two CDC-ACM devices to fit within the ESP32-S3's budget. Some devices may require the interface to be claimed before they enable data flow, so this defaults to `true`. Only available on device types with standard CDC-ACM descriptors (`CDC_ACM`, `ESP_JTAG`, `STM32_VCP`); the other types never claim the communication interface, so the option is rejected there.
 
 Setting both `vid` and `pid` to 0 will match any device.
 
