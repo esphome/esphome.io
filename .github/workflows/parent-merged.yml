@@ -62,7 +62,12 @@ jobs:
               await Promise.all(codeNumbers.slice(i, i + 10).map(async number => {
                 const { data } = await github.rest.pulls.get({
                   owner: 'esphome', repo: 'esphome', pull_number: number,
-                }).catch(() => ({ data: null }));
+                }).catch(error => {
+                  // A 404 is a reference to an issue, not a PR. Anything else must
+                  // fail the run rather than strip correct labels.
+                  if (error.status === 404) return { data: null };
+                  throw error;
+                });
                 codePrs.set(number, data);
               }));
             }
@@ -94,7 +99,7 @@ jobs:
             const closed = await github.paginate(github.rest.issues.listForRepo, {
               owner, repo, state: 'closed', labels: LABEL, per_page: 100,
             });
-            for (const issue of closed) {
+            for (const issue of closed.filter(item => item.pull_request)) {
               console.log(`Removing ${LABEL} on closed #${issue.number}`);
               await github.rest.issues.removeLabel({
                 owner, repo, issue_number: issue.number, name: LABEL,
