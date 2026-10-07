@@ -306,10 +306,7 @@ class ReleaseNotesGenerator:
     """Main release notes generator"""
 
     def __init__(
-        self,
-        version: Version,
-        force_update: bool = False,
-        dry_run: bool = False,
+        self, version: Version, force_update: bool = False, dry_run: bool = False
     ):
         self.version = version
         self.force_update = force_update
@@ -1399,11 +1396,11 @@ Examples:
   # Assemble blog post and changelog from AI responses (skip PR discovery)
   python script/generate_release_notes.py 2025.11.0 --assemble
 
-  # Assemble only the blog post, leaving the changelog page alone
-  python script/generate_release_notes.py 2025.11.0 --assemble --blog-only
-
   # Dry run (show what would be generated)
   python script/generate_release_notes.py 2025.11.0 --assemble --dry-run
+
+  # Assemble only the blog post, leaving the changelog page alone
+  python script/generate_release_notes.py 2025.11.0 --assemble --blog-only
         """,
     )
     parser.add_argument(
