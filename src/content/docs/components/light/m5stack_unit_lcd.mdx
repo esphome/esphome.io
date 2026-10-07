@@ -1,0 +1,39 @@
+---
+title: "M5Stack Unit LCD Backlight"
+description: "Instructions for setting up the backlight of an M5Stack Unit LCD display as a light."
+---
+
+import APIRef from '@components/APIRef.astro';
+
+The `m5stack_unit_lcd` light platform exposes the backlight of an
+[M5Stack Unit LCD display](/components/display/m5stack_unit_lcd/) as a brightness-only light, so it can be dimmed
+and switched from Home Assistant or automations.
+
+This platform requires an [`m5stack_unit_lcd` display](/components/display/m5stack_unit_lcd/) to be configured.
+The light's state is sent to the display, so it overrides the display's `brightness` option once the light has
+restored its state at boot.
+
+```yaml
+# Example configuration entry
+light:
+  - platform: m5stack_unit_lcd
+    name: "Unit LCD Backlight"
+    restore_mode: RESTORE_DEFAULT_ON
+```
+
+## Configuration Variables
+
+- **m5stack_unit_lcd_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the `m5stack_unit_lcd`
+  display to control. Automatically set when only one `m5stack_unit_lcd` display is configured; required when
+  there is more than one.
+- All other options from [Light](/components/light#config-light).
+
+> [!TIP]
+> The default `restore_mode` for lights is `ALWAYS_OFF`, which leaves the screen dark after boot until the light is
+> turned on. Set `restore_mode: RESTORE_DEFAULT_ON` (or `ALWAYS_ON`) if the screen should come up lit.
+
+## See Also
+
+- [M5Stack Unit LCD Display](/components/display/m5stack_unit_lcd/)
+- [Light Component](/components/light/)
+- <APIRef text="m5stack_unit_lcd_light.h" path="m5stack_unit_lcd/light/m5stack_unit_lcd_light.h" />
