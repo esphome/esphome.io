@@ -21,7 +21,8 @@ To copy a hardware UART to a TCP socket instead, see [UART TCP](/components/uart
 > this component on a trusted network.
 
 > [!NOTE]
-> While the connection is down, written bytes are dropped and a warning is logged.
+> While the connection is down, or while its 1024-byte send buffer is full, written bytes are dropped and a warning
+> is logged.
 
 ## Client
 
@@ -38,7 +39,9 @@ modbus:
 ```
 
 `modbus` sends RTU frames. The other end must be a serial bridge that forwards the bytes unchanged, not a
-Modbus TCP server.
+Modbus TCP server. After each response the hub waits its `turnaround_time` (default 600 ms) before the next request,
+so that slow devices on a shared serial bus can keep up. If the devices behind the bridge answer quickly, it can be
+lowered; see [Modbus](/components/modbus/#performance-vs-stability).
 
 ## Server
 
@@ -52,12 +55,13 @@ tcp_uart:
 
 The connecting client sends raw bytes, for example RTU frames for `modbus`, not Modbus TCP.
 
-## Configuration variables
+## Configuration Variables
 
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation. Use
   this ID as `uart_id` in other components.
 - **role** (*Optional*, string): `client` or `server`. Defaults to `client`.
-- **host** (**Required** when `role` is `client`, string): The host to connect to. An IP address or a hostname.
+- **host** (**Required** when `role` is `client`, string): The host to connect to. An IPv4 address or a hostname.
+  IPv6 is not supported.
   This option cannot be used when `role` is `server`.
 - **port** (**Required**, int): When `role` is `client`, the TCP port to connect to. When `role` is `server`,
   the TCP port to listen on.
@@ -74,10 +78,14 @@ The connecting client sends raw bytes, for example RTU frames for `modbus`, not 
 - **stop_bits** (*Optional*, int): The number of stop bits reported to consuming components. One of `1`, `2`.
   Defaults to `1`.
 - **reconnect_interval** (*Optional*, [Time](/guides/configuration-types#time)): The time to wait before connecting
-  again after a failed or closed connection. For a server, this is the wait after a failed listen; a new client
-  is accepted as soon as the current one disconnects. Defaults to `5s`.
+  again after a failed or closed connection. An unanswered connection attempt is given up after
+  `reconnect_interval` or 10 seconds, whichever is longer. For a server, this is the wait after a failed listen or
+  accept; a new client is accepted as soon as the current one disconnects. Defaults to `5s`.
 - **connected** (*Optional*): A binary sensor that reports whether the TCP connection is established. All options
   from [Binary Sensor](/components/binary_sensor#config-binary_sensor) are supported.
+- **disconnects** (*Optional*): A sensor that counts how many times an open connection has closed. It starts at
+  `0` on boot and does not increase again while the connection stays down. All options from
+  [Sensor](/components/sensor#config-sensor) are supported.
 
 ## See Also
 

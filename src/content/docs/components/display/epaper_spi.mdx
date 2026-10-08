@@ -307,6 +307,29 @@ on_...:
   - component.update: epaper  # not needed if something else, such as LVGL, triggers the update
 ```
 
+## Conditions
+
+### `epaper_spi.is_updating` Condition
+
+This condition lets automations check whether a display update or refresh is in progress. It is true from the moment an
+update starts until the panel has finished refreshing and gone back to deep sleep.
+
+```yaml
+interval:
+  - interval: 10s
+    then:
+      - if:
+          condition:
+            not:
+              epaper_spi.is_updating: my_display
+          then:
+            - component.update: my_display
+```
+
+Configuration variables:
+
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the `epaper_spi` display.
+
 ## See Also
 
 - [ESPHome Display Rendering Engine](/components/display#display-engine)
