@@ -220,26 +220,44 @@ tflite_micro_helper:
 
 ## Operator Registration
 
-The component uses an **X-macro-based operator registration system** via the `OpResolverManager` class and the
-`tflm_operators.h` header. This system maps each TFLite `BuiltinOperator` to its corresponding
-`Add<Operator>()` method in the `MicroMutableOpResolver`.
+Operators are registered automatically from the model, so the helper has no operator configuration of its own.
 
-The `tflm_operators.h` file is verified against `esp-tflite-micro` 1.3.7 and supports **90+ operators**,
-organized into categories:
+The `tflm_operators.h` header holds one X-macro table of the operators the `esp-tflite-micro` library can
+register, in two forms: `TFLM_OP_AVAILABLE(BuiltinOperator, AddMethod)` for supported operators and
+`TFLM_OP_UNAVAILABLE(BuiltinOperator)` for the rest. The code generator and the device runtime both read that
+table, which keeps the supported operator set in a single place.
+
+- **Build time**: `-DMAX_OPERATORS` is sized automatically from the `.txt` report of every configured model
+  (operator count plus a safety margin, taking the largest value across instances, or `30` when no report is
+  available), so a multi-instance configuration always has enough resolver capacity. When a `.txt` report is
+  present, the code generator also compares the operators it lists with the table and stops config generation,
+  before anything is compiled or flashed, if the model needs an operator that is not available.
+- **Model loading**: the helper reads the operators the model uses from its flatbuffer operator codes and
+  registers only that set through `OpResolverManager`, which maps each operator through the table to the
+  matching `Add<Operator>()` method of `MicroMutableOpResolver`. A model that uses few operators therefore
+  registers few of them.
+
+The table is verified against `esp-tflite-micro` 1.3.7 and covers operators such as:
 
 - **Core NN ops**: `CONV_2D`, `DEPTHWISE_CONV_2D`, `FULLY_CONNECTED`, `SOFTMAX`, `AVERAGE_POOL_2D`,
-  `MAX_POOL_2D`, `UNIDIRECTIONAL_SEQUENCE_LSTM`, etc.
-- **Activation functions**: `RELU`, `RELU6`, `LOGISTIC`, `TANH`, `HARD_SWISH`, `LEAKY_RELU`, `PRELU`, `ELU`, etc.
+  `MAX_POOL_2D`, `L2_NORMALIZATION`, `UNIDIRECTIONAL_SEQUENCE_LSTM`.
+- **Activation functions**: `RELU`, `RELU6`, `LOGISTIC`, `TANH`, `HARD_SWISH`, `LEAKY_RELU`, `PRELU`, `ELU`.
 - **Basic math ops**: `ADD`, `SUB`, `MUL`, `DIV`, `FLOOR`, `CEIL`, `ROUND`, `ABS`, `SQRT`, `EXP`, `LOG`, `SIN`,
   `COS`, `CAST`, etc.
+- **Comparison and logical ops**: `EQUAL`, `NOT_EQUAL`, `GREATER`, `LESS`, `LOGICAL_AND`, `LOGICAL_OR`,
+  `LOGICAL_NOT`, etc.
 - **Tensor operations**: `RESHAPE`, `QUANTIZE`, `DEQUANTIZE`, `CONCATENATION`, `SPLIT`, `STRIDED_SLICE`,
-  `PAD`, `TRANSPOSE`, `TRANSPOSE_CONV`, `GATHER`, `SLICE`, etc.
-- **Comparison ops**: `EQUAL`, `NOT_EQUAL`, `GREATER`, `LESS`, etc.
-- **Reduction ops**: `REDUCE_MAX`, `REDUCE_MIN`, `SUM`, `MEAN`, etc.
-- **Control flow / variables**: `IF`, `WHILE`, `CALL_ONCE`, `ASSIGN_VARIABLE`, `READ_VARIABLE`, `VAR_HANDLE`
+  `PAD`, `TRANSPOSE`, `TRANSPOSE_CONV`, `SLICE`, etc.
+- **Reduction and element-wise ops**: `REDUCE_MAX`, `REDUCE_MIN`, `SUM`, `MEAN`, `MAXIMUM`, `MINIMUM`,
+  `ARG_MAX`, `SELECT_V2`, etc.
+- **Advanced, variable and control flow ops**: `RESIZE_BILINEAR`, `RESIZE_NEAREST_NEIGHBOR`, `GATHER`,
+  `GATHER_ND`, `BATCH_MATMUL`, `SVDF`, `IF`, `WHILE`, `CALL_ONCE`, `ASSIGN_VARIABLE`, `READ_VARIABLE`,
+  `VAR_HANDLE`.
 
-Operators not available in the ESP32 TFLite Micro library (e.g. `BIDIRECTIONAL_SEQUENCE_LSTM`, `WHERE`,
-`SELECT`, `REDUCE_PROD`) are logged as warnings and cause model loading to fail with a descriptive message.
+Operators marked unavailable in the table (for example `BIDIRECTIONAL_SEQUENCE_LSTM`, `WHERE`, `SELECT` or
+`REDUCE_PROD`) are logged as warnings and cause model loading to fail with a message naming the operator. This
+runtime check is also the safety net for models that ship without a `.txt` report, for which the build-time
+check is skipped.
 
 ## Memory Management
 
