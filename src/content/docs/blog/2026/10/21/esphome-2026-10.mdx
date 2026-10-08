@@ -120,7 +120,7 @@ a Sensirion STCC4 CO2 sensor, alongside a device-side Home Assistant onboarding 
 API connections for NAT-ed devices, broader Zigbee cluster coverage and new light transition,
 color, resume-effect and e-paper features. The bundled Device Builder now flashes every supported chip
 family from the browser, adding nRF52, Raspberry Pi Pico, Realtek, Beken and LN882H, routes
-signed OTA devices to USB for their first install, and adds an MCP endpoint.
+signed OTA devices to USB for their first install, and adds an optional MCP endpoint.
 {/* RELEASE_OVERVIEW_END */}
 
 ## Upgrade checklist
@@ -562,9 +562,10 @@ Home Assistant's MCP integration, list, read and edit device configs, add compon
 component and board catalogs, and validate, compile and install
 ([#2733](https://github.com/esphome/device-builder/pull/2733),
 [#2736](https://github.com/esphome/device-builder/pull/2736),
-[#2789](https://github.com/esphome/device-builder/pull/2789)). Its writes go through the same commands the editor uses,
-and a write that would overwrite a change made since it was read is refused, which also protects the editor's own saves
-([#2760](https://github.com/esphome/device-builder/pull/2760),
+[#2789](https://github.com/esphome/device-builder/pull/2789)). It is entirely optional: the Device Builder does not
+call any AI model itself, the endpoint does nothing unless you connect an MCP client to it, and everything else works
+the same without one. Its writes go through the same commands the editor uses, and a write that would overwrite a
+change made since it was read is refused, which also protects the editor's own saves ([#2760](https://github.com/esphome/device-builder/pull/2760),
 [#2761](https://github.com/esphome/device-builder/pull/2761)).
 
 In the fleet view, [@siegeld](https://github.com/siegeld) added how long a device has been offline, as `Offline 2h` on
