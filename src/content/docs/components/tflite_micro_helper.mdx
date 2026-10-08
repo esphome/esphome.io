@@ -25,21 +25,21 @@ demo with multiple ESP32 boards, pre-trained digit recognition models, and camer
 tflite_micro_helper:
   model_type: image
   model: "models/digit_recognizer.tflite"
-  debug: false
 ```
 
-## Configuration variables
+## Configuration Variables
 
-### Common configuration variables
+### Common Configuration Variables
 
-- **id** (*Required*, :ref:`config-id`): The ID with which to reference this component in lambdas.
-- **model_type** (*Required*, string): The model type. Must be one of:
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code
+  generation. Set this when a consumer component references this instance.
+- **model_type** (**Required**, string): The model type. Must be one of:
   - `"image"` — Single-shot image classification model.
   - `"audio"` — Streaming audio classification model (e.g. wake word detection).
-- **model** (*Required*, string or dictionary): The TFLite model source. Can be one of:
+- **model** (**Required**, string or dictionary): The TFLite model source. Can be one of:
   - A local `.tflite` file path relative to the configuration directory.
   - A `github://` shorthand URL (e.g. `github://user/repo/path/to/model.tflite`).
-  - An `http://` or `https://` URL pointing to a manifest JSON that specifies the model file.
+  - An `http://` or `https://` URL pointing to a `.tflite` file, or to a JSON manifest that names it.
 - **tensor_arena_size** (*Optional*, bytes): The tensor arena size in bytes. Supports suffixed strings such
   as `"110KB"`, `"2MB"`, or raw bytes. If omitted, the size is auto-detected from the `.txt` report file or
   defaults to 100KB.
@@ -47,11 +47,11 @@ tflite_micro_helper:
   enabled, the `DEBUG_TFLITE_MICRO_HELPER` define is set, enabling CRC32 model verification, model
   architecture inspection, tensor input/output analysis, and memory status reporting.
 
-### Image model configuration variables
+### Image Model Configuration Variables
 
 When `model_type: image`, the following variables are available to describe the model's expected input format.
-Most of these values are auto-detected from the `.txt` report file (see [Usage as a Dependency](#usage-as-a-dependency)),
-but can be overridden explicitly.
+Most of these values are auto-detected from the `.txt` report file (see
+[Usage as a Dependency](#usage-as-a-dependency)), but can be overridden explicitly.
 
 - **input_type** (*Optional*, string): Input tensor data type. One of `"uint8"` or `"float32"`. Defaults to
   `"uint8"`.
@@ -67,16 +67,18 @@ but can be overridden explicitly.
   - `"argmax"` — Return the index of the maximum value.
   - `"logits"` — Return raw logits.
   - `"auto_detect"` — Automatically detect the best strategy.
-  
+
   Defaults to `"direct_class"` when a softmax output is present, or `"softmax"` otherwise.
 - **scale_factor** (*Optional*, float): Output scale factor for multi-class models. Range `0.1`–`100.0`.
   Defaults to `1.0`.
 - **normalize** (*Optional*, boolean): Normalize input pixels to `[0.0, 1.0]`. Defaults to `false`.
 - **invert** (*Optional*, boolean): Invert input pixel values. Defaults to `false`.
 
-### Audio model configuration variables
+### Audio Model Configuration Variables
 
-When `model_type: audio`, the following variables configure streaming audio classification:
+When `model_type: audio`, the following variables configure streaming audio classification. The official audio
+models ship as JSON manifests that only name the `.tflite` file (see
+[Model Source Resolution](#model-source-resolution)); their tuning values must be set here explicitly:
 
 - **probability_cutoff** (*Optional*, percentage): Probability threshold `0.0`–`1.0` for audio classification.
   Only detections above this threshold are reported.
@@ -91,8 +93,21 @@ The component resolves the model file from the `model` configuration using one o
 | Type | Syntax | Description |
 |---|---|---|
 | Local file | `"path/to/model.tflite"` | Path relative to the configuration directory. |
-| GitHub shorthand | `"github://user/repo/path/model.tflite"` | Clones the repository (or updates if cached) and reads the model file. |
-| HTTP manifest | `"https://example.com/manifest.json"` | Downloads a JSON manifest, then fetches the model file specified in the manifest. |
+| GitHub shorthand | `"github://user/repo/path/model.tflite"` | Clones the repository and reads the model file. |
+| HTTP(S) URL | `"https://example.com/manifest.json"` | Downloads the file, or a JSON manifest naming it. |
+
+A `github://` source always reads a model file directly from the repository, so the shorthand must point at the
+`.tflite` file:
+
+- `github://esphome/micro-wake-word-models/models/v2/okay_nabu.tflite` (model file, read as-is).
+- `https://github.com/esphome/micro-wake-word-models/raw/main/models/v2/okay_nabu.json` (manifest, which names
+  the `.tflite` file).
+
+JSON manifests are resolved only for `http://` and `https://` sources, by joining the manifest's `model` key with
+the manifest URL. Unlike `micro_wake_word`, the `github://` shorthand does not read a JSON manifest. Only the
+manifest's `model` key is used here; the `micro` tuning values in the official manifests are not applied, so set
+`probability_cutoff`, `sliding_window_size`, `features_step_size`, and `feature_count` explicitly unless a `.txt`
+report file is available next to the model.
 
 ## Platform Support
 
@@ -145,6 +160,26 @@ DEPENDENCIES = ["tflite_micro_helper"]
 This ensures the required build flags and IDF components are configured before the dependent component's code
 generation runs.
 
+### Referencing a Helper Instance from a Consumer
+
+The model is configured once, in the `tflite_micro_helper` block. A consumer component does not load a model
+itself; it names the helper instance to use in its own configuration:
+
+```yaml
+tflite_micro_helper:
+  - id: digit_reader
+    model_type: image
+    model: "models/digit_recognizer.tflite"
+
+meter_reader_tflite:
+  model: digit_reader
+```
+
+The consumer component declares `DEPENDENCIES = ["tflite_micro_helper"]`, accepts the helper's ID in its
+own configuration with `cv.use_id(TFLiteMicroHelper)`, and resolves it during code generation with
+`await cg.get_variable(...)`. The C++ examples later on this page construct a standalone `TFLiteMicroHelper`
+to show the API; a component configured through YAML receives the instance set up in YAML instead.
+
 ### Model Report File (`.txt`)
 
 Consumer components load a `.tflite` model file by referencing its path in their YAML configuration. The model
@@ -179,7 +214,7 @@ tflite_micro_helper:
 
   - id: wake_word
     model_type: audio
-    model: "github://esphome/micro-wake-word-models/models/v2/okay_nabu.json"
+    model: "https://github.com/esphome/micro-wake-word-models/raw/main/models/v2/okay_nabu.json"
     probability_cutoff: 0.5
 ```
 
@@ -313,8 +348,8 @@ struct ProcessedOutput {
 | `unload_model()`                    | Unload the model and free resources.                |
 | `is_model_loaded()`                 | Returns `true` if a model is currently loaded.      |
 | `invoke()`                          | Run a single inference pass. Returns `TfLiteStatus`. |
-| `run_inference(src_data, src_size)` | Copy data into the input tensor, invoke, and process the output. Returns a `ProcessedOutput` struct (value + confidence). |
-| `run_inference_on_buffer(src_data, src_size)` | Copy data into the input tensor and invoke without output processing. Returns `true` on success. |
+| `run_inference(src_data, src_size)` | Run inference and return the processed `ProcessedOutput`. |
+| `run_inference_on_buffer(src_data, src_size)` | Run inference without processing the output. |
 | `input_tensor()`                    | Get the input `TfLiteTensor` (for writing data).    |
 | `output_tensor()`                   | Get the output `TfLiteTensor` (for reading results). |
 | `get_model_spec()`                  | Get the `ModelSpec` describing input dimensions and type. |
@@ -322,7 +357,10 @@ struct ProcessedOutput {
 | `update_arena_stats_cache()`        | Refresh the cached arena statistics.                |
 | `report_memory_status()`            | Print memory allocation details to the log.         |
 
-#### Image model setters
+`run_inference()` fills a `ProcessedOutput` (`value` and `confidence`); `run_inference_on_buffer()` skips
+output processing and returns `true` on success.
+
+#### Image Model Setters
 
 | Method                  | Description                          |
 |------------------------|--------------------------------------|
@@ -334,7 +372,7 @@ struct ProcessedOutput {
 | `set_normalize(n)`     | Enable or disable pixel normalization. |
 | `set_invert(i)`        | Enable or disable pixel inversion.   |
 
-#### Audio model setters
+#### Audio Model Setters
 
 | Method                           | Description                                  |
 |----------------------------------|----------------------------------------------|
@@ -343,7 +381,7 @@ struct ProcessedOutput {
 | `set_features_step_size(ms)`     | Set feature extraction step size in ms.      |
 | `set_feature_count(n)`           | Set number of MFCC features.                 |
 
-#### Arena accessors
+#### Arena Accessors
 
 | Method                              | Description                                |
 |-------------------------------------|--------------------------------------------|
@@ -387,7 +425,7 @@ ESP_LOGI("my_component", "Prediction: value=%.0f confidence=%.2f",
 
 // Check memory usage
 ArenaStats stats = tflite.get_arena_stats();
-ESP_LOGI("my_component", "Arena: %u used / %u total (%.1f%%)",
+ESP_LOGI("my_component", "Arena: %zu used / %zu total (%.1f%%)",
          stats.used_bytes, stats.total_size, stats.efficiency);
 ```
 
