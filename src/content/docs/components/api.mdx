@@ -43,7 +43,7 @@ api:
   reboot_timeout: 30min
 ```
 
-## Configuration variables
+## Configuration Variables
 
 - **port** (*Optional*, int): The port to run the API server on. Defaults to `6053`.
 - **listen_backlog** (*Optional*, int): The maximum number of pending connections in the listen queue. Must be between 1 and 10.
@@ -113,7 +113,12 @@ api:
 - **reboot_timeout** (*Optional*, [Time](/guides/configuration-types#time)): The amount of time to wait before rebooting when no
   client connects to the API. This is needed because sometimes the low level ESP functions report that
   the ESP is connected to the network, when in fact it is not - only a full reboot fixes it.
+  Only a client that completes authentication counts; a connection that never does, such as a port scan or
+  a client with a stale encryption key, does not hold off the reboot.
   Can be disabled by setting this to `0s`. Defaults to `15min`.
+
+- **wizard** (*Optional*): A setup wizard that Home Assistant shows when the device is added.
+  See [Wizard](#wizard).
 
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
 
@@ -122,6 +127,50 @@ api:
 
 - **on_client_disconnected** (*Optional*, [Action](/automations/actions#all-actions)): An automation to perform when a client
   disconnects from the API. See [`on_client_disconnected` Trigger](#api-on_client_disconnected_trigger).
+
+- **outgoing_connection** (*Optional*): Have the device open the API connection itself when no dial-back client is
+  connected. Requires `encryption`. See
+  [Outgoing Connections](#outgoing-connections).
+
+  - **host** (*Optional*, IP address): The address to dial. When not set, the device remembers the address of the last
+    client that declared itself a dial-back target (such as Home Assistant) and dials that.
+  - **port** (*Optional*, integer): The TCP port the dial-back target listens on. Defaults to `6054`.
+  - **delay** (*Optional*, [Time](/guides/configuration-types#time)): How long to give a dial-back client to connect
+    in on its own, both after boot and after one disconnects, before the device dials out. Devices with
+    [deep sleep](/components/deep_sleep/) skip the wait and dial as soon as the network is up on every wake, since
+    the awake window is short. Defaults to `60s`.
+
+## Outgoing Connections
+
+> [!IMPORTANT]
+> Outgoing connections require [API encryption](#configuration-variables); this is a hard requirement by design and
+> plaintext support is not planned. Because the device opens the connection, the traffic can leave the local network
+> entirely, so the shared encryption key is the only trustworthy way the device and the client can verify each
+> other. The option refuses to configure without `encryption`, and only key-verified clients can become dial-back
+> targets.
+
+Normally the client, such as Home Assistant, opens the TCP connection to the device. With `outgoing_connection`
+configured, the device notices when no dial-back client is connected and, after `delay`, opens the connection itself;
+the protocol then runs over that connection unchanged and both sides still verify each other with the encryption key.
+This lets a device stay connected when the client can no longer reach it, for example after network or firewall
+changes, as long as the device can still reach the client.
+
+A client declares itself a dial-back target when it connects; the device remembers the address of the last such client
+across reboots, or always dials `host` when one is set. Home Assistant 2026.10.0 or later accepts these connections
+automatically for every device with an encryption key; there is nothing to configure on its side.
+
+> [!NOTE]
+> The device must be added to the client once while it is reachable: dial-ins are only accepted for devices the
+> client already knows, since an unknown caller cannot be verified. After that first setup the device can stay
+> permanently unreachable from the client.
+
+```yaml
+# Example configuration entry
+api:
+  encryption:
+    key: !secret api_encryption_key
+  outgoing_connection:
+```
 
 ## Actions
 
@@ -165,7 +214,7 @@ on_...:
         message: Button was pressed
 ```
 
-#### Configuration variables
+#### Configuration Variables
 
 - **event** (**Required**, string): The event to create - must begin with `esphome.`
 - **data** (*Optional*, mapping): Optional *static* data to pass along with the event.
@@ -204,7 +253,7 @@ on_...:
           return id(my_sensor).state;
 ```
 
-#### Configuration variables
+#### Configuration Variables
 
 - **action** (**Required**, string, [templatable](/automations/templates)): The Home Assistant [Action](https://www.home-assistant.io/docs/scripts/service-calls/)
   to perform.
@@ -358,7 +407,7 @@ on_...:
   - homeassistant.tag_scanned: some-tag
 ```
 
-#### Configuration variables
+#### Configuration Variables
 
 - **tag** (**Required**, string, [templatable](/automations/templates)): The id of the scanned tag
 
@@ -406,7 +455,7 @@ api:
 
 This [Condition](/automations/actions#all-conditions) checks if at least one client is connected to the ESPHome native API.
 
-#### Configuration variables
+#### Configuration Variables
 
 - **state_subscription_only** (*Optional*, boolean, [templatable](/automations/templates)): If enabled, only counts clients that have subscribed to entity state updates. This filters out logger-only connections (such as `esphome logs` command), which can cause false positives when waiting for Home Assistant. Defaults to `false`.
 
@@ -442,6 +491,184 @@ The lambda equivalent for this is `id(api_id).is_connected(true)`.
 
 - Use `state_subscription_only: false` (default) to detect any API connection
 - Use `state_subscription_only: true` when you need to ensure Home Assistant (or other connections that subscribe to states) is connected before sending events or calling services, preventing errors from logger-only connections
+
+### `api.wizard.input_is_set` Condition
+
+This [Condition](/automations/actions#all-conditions) checks if a Home Assistant entity has been picked for a
+standalone [wizard](#wizard) input. Home Assistant sends the picked entity each time it connects, so after a restart
+this condition is false until Home Assistant has connected.
+It only works with standalone inputs (declared with `id`). A linked input is read through its `homeassistant` entity.
+
+```yaml
+on_...:
+  if:
+    condition:
+      api.wizard.input_is_set: weather_input
+    then:
+      - logger.log: A weather entity has been picked
+```
+
+The lambda equivalent for this is `id(weather_input).has_entity_id()`.
+
+## Wizard
+
+The `wizard` option describes a setup wizard that Home Assistant shows when the device is added. Instead of a device
+page with many entities and no guidance, the user is taken through a series of pages that point out the entities that
+matter for setup and ask for the Home Assistant entities the device needs, such as an outdoor temperature sensor or a
+weather forecast.
+
+> [!NOTE]
+> The wizard needs a version of Home Assistant that supports it. Older versions ignore it and add the device as usual.
+
+```yaml
+api:
+  wizard:
+    pages:
+      - title: Features
+        entities:
+          - id: feature_switch
+            description: Turn on the feature
+      - title: Sources
+        inputs:
+          - entity: outdoor_temperature
+            description: Outdoor temperature
+            target:
+              entity:
+                - domain: sensor
+                  device_class: temperature
+```
+
+Each page lists **entities**, **inputs**, or both:
+
+- An entity is an entity of the device itself, for example a switch that turns a feature on or off, which the page
+  points out to the user.
+- An input asks the user to pick a Home Assistant entity. Home Assistant keeps the entity ID the user picks and sends
+  it to the device every time it connects. The device does not store it, so after a restart the input is empty until
+  Home Assistant connects. An input is either:
+  - **linked** (`entity`): it gives the entity ID of a `homeassistant` platform entity on the device. That entity
+    must not set `entity_id`, as Home Assistant sets it through the wizard. Supported platforms are
+    [sensor](/components/sensor/homeassistant/), [binary sensor](/components/binary_sensor/homeassistant/),
+    [text sensor](/components/text_sensor/homeassistant/), [number](/components/number/homeassistant/),
+    [switch](/components/switch/homeassistant/), [text](/components/text/homeassistant/),
+    [select](/components/select/homeassistant/) and [button](/components/button/homeassistant/).
+  - **standalone** (`id`): it only stores an entity ID, for use in [lambdas](/automations/templates#config-lambda).
+    `id(my_input).entity_id()` returns the picked entity ID, and `id(my_input).has_entity_id()` returns whether one
+    has been picked. See also the [`api.wizard.input_is_set` Condition](#api-wizard-input_is_set-condition).
+
+Titles and descriptions are sent to Home Assistant as they are, so they can also be Home Assistant translation
+placeholders such as `"[%key:component::example::feature::enable%]"`.
+
+The wizard is sent to Home Assistant in a single message, and validation fails if it does not fit. In that case,
+shorten the texts or use fewer pages, entities or filters.
+
+### Configuration Variables
+
+- **pages** (**Required**, list): The pages of the wizard, in the order they are shown. At least one page is required.
+  Each page has these options, and needs at least one of `entities` and `inputs`:
+
+  - **title** (*Optional*, string): The title of the page. At most 127 characters.
+  - **description** (*Optional*, string): A text shown at the top of the page. At most 255 characters.
+  - **entities** (*Optional*, list): Entities of the device to show on the page. Each entry has these options:
+
+    - **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the entity. The entity must be exposed
+      to Home Assistant, so it cannot be `internal`, and it must have a `name` that is not empty.
+    - **description** (*Optional*, string): A text shown with the entity. At most 255 characters.
+
+  - **inputs** (*Optional*, list): Home Assistant entities for the user to pick. Each entry needs exactly one of
+    `entity` and `id`, and each input can appear in the wizard only once:
+
+    - **entity** (*Optional*, [ID](/guides/configuration-types#id)): The ID of a `homeassistant` platform entity on
+      the device to link the input to.
+    - **id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of a new standalone input.
+    - **description** (*Optional*, string): A text shown with the input. At most 255 characters.
+    - **target** (*Optional*): Limits which Home Assistant entities the user can pick.
+
+      - **entity** (**Required**, list): A list of filters. An entity can be picked if it matches any one of
+        them. Each filter needs at least one of these options, and an entity must match all of the options a filter
+        sets:
+
+        - **integration** (*Optional*, string): The integration that provides the entity, for example `met`.
+        - **domain** (*Optional*, string or list): One or more entity domains, for example `sensor`.
+        - **device_class** (*Optional*, string or list): One or more device classes, for example `temperature`.
+        - **supported_features** (*Optional*, string or list): One or more supported features, for example
+          `weather.WeatherEntityFeature.FORECAST_DAILY`.
+
+### Linked Input Domains
+
+A linked input can only be set to an entity that its `homeassistant` platform can work with. Without a `target`, the
+user can pick from these domains:
+
+- `switch`: `automation`, `fan`, `humidifier`, `input_boolean`, `light`, `remote`, `siren` and `switch`
+- `number`: `number`
+- `text`: `text` and `input_text`
+- `select`: `select` and `input_select`
+- `button`: `button` and `input_button`
+
+For `switch`, `number`, `text`, `select` and `button` inputs with a `target`, every filter must set `domain`, and only
+the domains in the list above are allowed. Sensor, binary sensor and text sensor inputs accept any entity unless a
+`target` is set.
+
+### Wizard Example
+
+This wizard has two pages. The first lets the user turn on a feature of the device. The second asks for an outdoor
+temperature sensor, which a `homeassistant` sensor then follows, and for a weather entity, whose daily forecast the
+device fetches every hour once one has been picked.
+
+```yaml
+api:
+  wizard:
+    pages:
+      - title: Features
+        description: Choose which features to turn on
+        entities:
+          - id: frost_protection
+            description: Turn the heating on when it freezes outside
+      - title: Sources
+        inputs:
+          - entity: outdoor_temperature
+            description: Outdoor temperature sensor
+            target:
+              entity:
+                - domain: sensor
+                  device_class: temperature
+          - id: weather_input
+            description: Weather forecast
+            target:
+              entity:
+                - domain: weather
+                  supported_features: weather.WeatherEntityFeature.FORECAST_DAILY
+
+switch:
+  - platform: template
+    id: frost_protection
+    name: Frost Protection
+    optimistic: true
+
+sensor:
+  - platform: homeassistant
+    id: outdoor_temperature
+
+interval:
+  - interval: 1h
+    then:
+      - if:
+          condition:
+            api.wizard.input_is_set: weather_input
+          then:
+            - homeassistant.action:
+                action: weather.get_forecasts
+                data:
+                  type: daily
+                  entity_id: !lambda 'return id(weather_input).entity_id().c_str();'
+                capture_response: true
+                on_success:
+                  - lambda: |-
+                      JsonObjectConst today =
+                          response["response"][id(weather_input).entity_id().c_str()]["forecast"][0];
+                      ESP_LOGI("weather", "High today: %.1f", today["temperature"].as<float>());
+```
+
+The `homeassistant.action` needs Home Assistant to allow the device to perform actions, see [Actions](#actions).
 
 <span id="api-device-actions"></span>
 
@@ -535,7 +762,7 @@ api:
             rtttl: !lambda "return song_str;"
 ```
 
-#### Configuration variables
+#### Configuration Variables
 
 - **description** (*Optional*, string): Description of the action.
 - **variables** (*Optional*, mapping): Each variable may be given as `name: type` or as a mapping:
@@ -562,7 +789,7 @@ auto-detected based on your action configuration:
 - **optional**: Returns JSON data when the client requests it. Auto-detected when `api.respond` is used with `data:`.
 - **only**: Always returns JSON data. Must be set explicitly. Use this for query-type actions.
 
-#### Configuration variables
+#### Configuration Variables
 
 - **supports_response** (*Optional*, string): The response mode for this action. One of `none`, `status`,
   `optional`, or `only`. If not specified, the mode is auto-detected based on `api.respond` usage in the action.
@@ -580,7 +807,7 @@ When `supports_response` is not `none`, the following variables are available in
 This action sends a response back to the client that called the user-defined action. It can report
 success/error status and optionally include JSON data.
 
-#### Configuration variables
+#### Configuration Variables
 
 - **success** (*Optional*, boolean, [templatable](/automations/templates)): Whether the action succeeded.
   Defaults to `true`.
