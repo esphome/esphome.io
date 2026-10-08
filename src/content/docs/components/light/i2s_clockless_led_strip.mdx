@@ -15,13 +15,13 @@ Here's a comparison of some alternatives for driving these strips:
   enough RMT symbol memory to buffer a few pixels at a time. Flickering may occur when the microcontroller is busy
   performing higher priority tasks and the RMT interrupt cannot be serviced soon enough to refill the buffer for
   subsequent pixels.
-- The [I2S Clockless LED Strip](/components/light/i2s_clockless_led_strip/) component uses the I2S peripheral and DMA
+- This component, the I2S Clockless LED Strip, uses the I2S peripheral and DMA
   to drive the output with larger buffers that are more immune to flickering caused by interrupt latency. However,
   the resulting waveform diverges slightly from the datasheet timing recommendations although in practice it is
   close enough for the LED pixels to work reliably.
 
 This table shows the number of I2S TDM ports available for this component on each ESP32 variant. Each LED strip
-uses one port.
+uses one port. The original ESP32, ESP32-S2, and ESP32-C2 lack the necessary hardware and are not supported.
 
 | Variant   | Ports |
 | --------- | ----- |
@@ -41,7 +41,6 @@ uses one port.
 # Example configuration entry
 light:
   - platform: i2s_clockless_led_strip
-    id: my_light
     name: "My Light"
     pin: GPIOXX
     num_leds: 30
