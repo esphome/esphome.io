@@ -126,25 +126,25 @@ For more details, refer to the [Logger Component](/components/logger/).
 
 The predefined sensor keys (for example `voltage_l1` or `timestamp`) and the `provider` option were removed in
 2026.11.0. Replace each legacy key with an entry that sets `obis_code` to the code listed below, as shown in the
-examples above. The legacy keys also set the unit, device class and state class for you, so add those to each new
-entry. Remove `provider` from the hub; for `provider: netznoe`, add the `custom_patterns` shown under
-[Netz NOE P1 (M-Bus)](#specific-meter-configurations) instead.
+examples above. For sensors, the legacy keys also set the unit, accuracy, device class and state class shown in
+the list, so add those to each new entry. Remove `provider` from the hub; for `provider: netznoe`, add the
+`custom_patterns` shown under [Netz NOE P1 (M-Bus)](#specific-meter-configurations) instead.
 
 **Sensors:**
 
-- **voltage_l1** (`1.0.32.7.0.255`): Voltage Phase 1.
-- **voltage_l2** (`1.0.52.7.0.255`): Voltage Phase 2.
-- **voltage_l3** (`1.0.72.7.0.255`): Voltage Phase 3.
-- **current_l1** (`1.0.31.7.0.255`): Current Phase 1.
-- **current_l2** (`1.0.51.7.0.255`): Current Phase 2.
-- **current_l3** (`1.0.71.7.0.255`): Current Phase 3.
-- **active_power_plus** (`1.0.1.7.0.255`): Active power taken from grid.
-- **active_power_minus** (`1.0.2.7.0.255`): Active power put into grid.
-- **active_energy_plus** (`1.0.1.8.0.255`): Cumulative active energy taken from grid.
-- **active_energy_minus** (`1.0.2.8.0.255`): Cumulative active energy exported to grid.
-- **reactive_energy_plus** (`1.0.3.8.0.255`): Reactive energy taken from grid.
-- **reactive_energy_minus** (`1.0.4.8.0.255`): Reactive energy exported to grid.
-- **power_factor** (`1.0.13.7.0.255`): Power factor.
+- **voltage_l1** (`1.0.32.7.0.255`; `V`, 1 decimal, `voltage`, `measurement`): Voltage Phase 1.
+- **voltage_l2** (`1.0.52.7.0.255`; `V`, 1 decimal, `voltage`, `measurement`): Voltage Phase 2.
+- **voltage_l3** (`1.0.72.7.0.255`; `V`, 1 decimal, `voltage`, `measurement`): Voltage Phase 3.
+- **current_l1** (`1.0.31.7.0.255`; `A`, 2 decimals, `current`, `measurement`): Current Phase 1.
+- **current_l2** (`1.0.51.7.0.255`; `A`, 2 decimals, `current`, `measurement`): Current Phase 2.
+- **current_l3** (`1.0.71.7.0.255`; `A`, 2 decimals, `current`, `measurement`): Current Phase 3.
+- **active_power_plus** (`1.0.1.7.0.255`; `W`, 0 decimals, `power`, `measurement`): Active power taken from grid.
+- **active_power_minus** (`1.0.2.7.0.255`; `W`, 0 decimals, `power`, `measurement`): Active power put into grid.
+- **active_energy_plus** (`1.0.1.8.0.255`; `Wh`, 0 decimals, `energy`, `total_increasing`): Cumulative active energy taken from grid.
+- **active_energy_minus** (`1.0.2.8.0.255`; `Wh`, 0 decimals, `energy`, `total_increasing`): Cumulative active energy exported to grid.
+- **reactive_energy_plus** (`1.0.3.8.0.255`; `Wh`, 0 decimals, `energy`, `total_increasing`): Reactive energy taken from grid.
+- **reactive_energy_minus** (`1.0.4.8.0.255`; `Wh`, 0 decimals, `energy`, `total_increasing`): Reactive energy exported to grid.
+- **power_factor** (`1.0.13.7.0.255`; no unit, 3 decimals, `power_factor`, `measurement`): Power factor.
 
 **Text Sensors:**
 
