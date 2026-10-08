@@ -30,6 +30,10 @@ api:
 
 - **port** (*Optional*, int): The TCP port to listen on. Defaults to `5403`, the port
   `corosync-qdevice` connects to by default.
+- **max_clients** (*Optional*, int): The number of client connections served at a time. Every
+  cluster node holds one connection, so set this to the node count plus two to leave room for
+  a node reconnecting while its old connection is still being timed out. Range 2 to 16.
+  Defaults to `4`, which suits a two-node cluster.
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for
   code generation.
 
@@ -141,8 +145,9 @@ text_sensor:
 
 - Only the `ffsplit` decision algorithm is implemented. Clients requesting another algorithm
   are rejected during the handshake.
-- Up to 4 client connections and 2 clusters are served at a time: the two nodes of the
-  arbitrated cluster plus slack for reconnects.
+- `max_clients` connections and 2 clusters are served at a time. A quorum device is useful for
+  any cluster with an even number of nodes; raise `max_clients` for clusters larger than two
+  nodes.
 - Node lists may hold up to 16 nodes. Clusters that large do not need a quorum device.
 - Heartbeat intervals are bounded to 1 s to 120 s as in the upstream daemon.
 
