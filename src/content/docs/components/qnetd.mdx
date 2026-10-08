@@ -1,0 +1,157 @@
+---
+description: "Instructions for setting up the qnetd quorum arbiter component in ESPHome."
+title: "Corosync Qnetd Arbiter"
+---
+
+The `qnetd` component turns the device into a quorum arbiter for a two-node
+[Corosync](https://corosync.github.io/corosync/) cluster, such as a two-node
+[Proxmox VE](https://www.proxmox.com/) cluster. The cluster nodes run the stock
+`corosync-qdevice` daemon and point it at the device, which replaces the `corosync-qnetd`
+daemon that would otherwise need a third machine.
+
+With a third vote available, a two-node cluster stays quorate when one node fails, and when
+the link between the nodes breaks, exactly one side keeps quorum. The device casts the
+tie-breaking vote using the same `ffsplit` algorithm as the upstream daemon, which prefers
+the partition containing the node with the lowest ID.
+
+An absent arbiter costs nothing: while both nodes see each other they hold two of three
+votes and stay quorate. The device keeps no persistent state and may be rebooted or updated
+at any time while the cluster is healthy.
+
+```yaml
+# Example configuration entry
+qnetd:
+
+api:
+  reboot_timeout: 0s
+```
+
+## Configuration variables
+
+- **port** (*Optional*, int): The TCP port to listen on. Defaults to `5403`, the port
+  `corosync-qdevice` connects to by default.
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for
+  code generation.
+
+> [!WARNING]
+> Set `reboot_timeout: 0s` on the [Native API](/components/api/) and on the
+> [Wi-Fi](/components/wifi/) or [Ethernet](/components/ethernet/) component. By default ESPHome
+> reboots the device when Home Assistant or the network has been unreachable for a while, and
+> both may well run as guests on the very cluster this device arbitrates. The arbiter must
+> stay up during exactly that outage. The component logs a warning at validation time when
+> one of these timeouts is left at its default.
+
+## Security
+
+The connection between the cluster nodes and the device is **not encrypted**. The device
+advertises TLS as unsupported, which the stock client accepts with its default `tls: on`
+setting; only `tls: required` on the node side refuses to connect.
+
+Anyone who can reach the device on the network can impersonate the arbiter, and a hostile
+arbiter can grant the vote to both halves of a split cluster at once. That results in both
+halves believing they are quorate, running the same virtual machines against the same
+storage. Only use this component on a network you would already trust with unauthenticated
+Corosync traffic.
+
+## Cluster setup
+
+On each cluster node, install the client and add the device to the quorum configuration. On
+Proxmox VE edit `/etc/pve/corosync.conf` by hand and increase `config_version`, because the
+`pvecm qdevice setup` helper needs SSH access to the arbiter:
+
+```text
+quorum {
+  provider: corosync_votequorum
+  device {
+    votes: 1
+    model: net
+    net {
+      tls: on
+      host: <device-ip>
+      algorithm: ffsplit
+      tie_breaker: lowest
+    }
+  }
+}
+```
+
+Then on both nodes:
+
+```bash
+apt install corosync-qdevice
+# tls: on makes the client initialize NSS even though TLS goes unused; without
+# a certificate database it fails with "bad database":
+mkdir -p /etc/corosync/qdevice/net/nssdb
+certutil -N -d sql:/etc/corosync/qdevice/net/nssdb --empty-password
+systemctl restart corosync-qdevice
+```
+
+Verify with `pvecm status` (three expected votes plus a `Qdevice` line) and
+`corosync-qdevice-tool -s`.
+
+Give the device a fixed IP address: the nodes reconnect to the configured address after
+every restart of the arbiter.
+
+## Entities
+
+The arbiter exposes its state as diagnostic entities. All of them are optional.
+
+```yaml
+# Example configuration entry
+sensor:
+  - platform: qnetd
+    connected_clients:
+      name: "Connected cluster nodes"
+    decisions:
+      name: "Quorum decisions"
+
+binary_sensor:
+  - platform: qnetd
+    vote_granted:
+      name: "Vote granted"
+
+text_sensor:
+  - platform: qnetd
+    status:
+      name: "Quorum status"
+```
+
+### Sensor
+
+- **connected_clients** (*Optional*): The number of cluster nodes with a completed handshake.
+  All options from [Sensor](/components/sensor/).
+- **decisions** (*Optional*): The number of quorum decisions taken since boot.
+  All options from [Sensor](/components/sensor/).
+
+### Binary Sensor
+
+- **vote_granted** (*Optional*): `ON` while some node holds the arbiter's vote.
+  All options from [Binary Sensor](/components/binary_sensor/).
+
+### Text Sensor
+
+- **status** (*Optional*): A summary of the vote held by each node, per cluster, for example
+  `pve: 1=ACK 2=NACK`, or `idle` when no node is connected.
+  All options from [Text Sensor](/components/text_sensor/).
+
+- **qnetd_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the `qnetd` component
+  the entities belong to. Only needed when more than one instance is configured.
+
+## Limits
+
+- Only the `ffsplit` decision algorithm is implemented. Clients requesting another algorithm
+  are rejected during the handshake.
+- Up to 8 client connections and 2 clusters are served at a time, enough for a two-node
+  cluster with slack for reconnects.
+- Node lists may hold up to 16 nodes. Clusters that large do not need a quorum device.
+- Heartbeat intervals are bounded to 1 s to 120 s as in the upstream daemon.
+
+Prefer `logger: level: INFO` on a device that does other work too. At `DEBUG`, a membership
+change produces a burst of log lines that can exceed the loop budget for one iteration and log
+a warning. Nothing is at risk when that happens.
+
+## See Also
+
+- [Native API Component](/components/api/)
+- [Corosync qdevice manual](https://manpages.debian.org/corosync-qdevice/corosync-qdevice.8.en.html)
+- [Proxmox VE: Corosync external vote support](https://pve.proxmox.com/wiki/Cluster_Manager#_corosync_external_vote_support)
