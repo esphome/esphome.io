@@ -99,7 +99,7 @@ sensor:
 - **teleinfo_id** (*Optional*, [ID](/guides/configuration-types#id)): Specify the ID of used hub.
 - All other options from [Sensor](/components/sensor).
 
-#### Pre-defined sensor configurations
+#### Pre-Defined Sensor Configurations
 
 The `unit_of_measurement`, `device_class` and `state_class` of a sensor are set automatically
 based on the prefix of its `tag_name`, for the main tags of both standard and historical mode:
@@ -114,7 +114,7 @@ based on the prefix of its `tag_name`, for the main tags of both standard and hi
 | `PREF`, `PCOUP` | Standard | `kVA` | `apparent_power` | `measurement` |
 | `CC` | Standard | `W` | `power` | `measurement` |
 | `BASE`, `HCH`, `EJP`, `BBRH` | Historical | `Wh` | `energy` | `total_increasing` |
-| `IINST`, `IMAX`, `ISOUSC`, `ADPS` | Historical | `A` | `current` | `measurement` |
+| `IINST`, `IMAX`, `ISOUSC`, `ADPS`, `ADIR` | Historical | `A` | `current` | `measurement` |
 | `PAPP` | Historical | `VA` | `apparent_power` | `measurement` |
 | `PMAX` | Historical | `W` | `power` | `measurement` |
 
@@ -142,11 +142,11 @@ sensor:
     teleinfo_id: myteleinfo
 ```
 
-> [!NOTE]
+> [!WARNING]
 > Previously, every sensor defaulted to `Wh`/`energy`/`total_increasing`, whatever its tag.
 > Sensors whose tag matches a prefix above now use the correct unit and device class, for example
-> `PAPP` now reports `VA` instead of `Wh`. To keep the previous behavior, set both `unit_of_measurement`
-> and `device_class` explicitly.
+> `PAPP` now reports `VA` instead of `Wh`. To keep the previous behavior, set `unit_of_measurement`,
+> `device_class`, `state_class` and `icon` explicitly.
 
 ### Text Sensor
 
