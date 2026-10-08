@@ -1,0 +1,41 @@
+---
+description: "Instructions for setting up the EZSP Proxy Tap component in ESPHome."
+title: "EZSP Proxy Tap"
+---
+import APIRef from '@components/APIRef.astro';
+
+> [!IMPORTANT]
+> This component is EXPERIMENTAL. The API (both Python configuration and C++ interfaces)
+> may change at any time without following the normal breaking changes policy. Use at your own risk.
+> Once the API is considered stable, this warning will be removed.
+
+The `ezsp_proxy_tap` component acknowledges frames from a Silicon Labs EZSP Zigbee network coprocessor (NCP)
+attached to a [Serial Proxy](/components/serial_proxy/). The NCP resets if it gets no acknowledgement in time, so a
+slow or unstable network between the device and the API client can otherwise reset it.
+
+The component requires a [Serial Proxy](/components/serial_proxy/).
+
+```yaml
+# Example configuration entry
+ezsp_proxy_tap:
+  serial_proxy_id: zigbee_serial
+```
+
+## Configuration Variables
+
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID to use for code generation.
+- **serial_proxy_id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the
+  [Serial Proxy](/components/serial_proxy/) the NCP is attached to.
+
+## How It Works
+
+The component acknowledges frames only while the API client has the port in `PROTOCOL` mode. The client must then
+not send its own acknowledgements. In `RAW` mode the component sends nothing.
+
+The component follows the NCP's frame numbers from its next reset. If the NCP is already running, the component
+follows them from the first frame it receives.
+
+## See Also
+
+- [Serial Proxy](/components/serial_proxy/)
+- <APIRef text="ezsp_proxy_tap.h" path="ezsp_proxy_tap/ezsp_proxy_tap.h" />
