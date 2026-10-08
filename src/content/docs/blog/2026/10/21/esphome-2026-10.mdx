@@ -118,7 +118,9 @@ top of that, 20 new components land, including Wi-Fi CSI motion sensing, USB-UAR
 and tap seams, TCP-UART and UART-TCP, SPI Ethernet on KSZ8851SNL, a persistent counter sensor and
 a Sensirion STCC4 CO2 sensor, alongside a device-side Home Assistant onboarding wizard, outgoing
 API connections for NAT-ed devices, broader Zigbee cluster coverage and new light transition,
-color, resume-effect and e-paper features.
+color, resume-effect and e-paper features. The bundled Device Builder flashes nRF52, Raspberry Pi
+Pico, Realtek, Beken and LN882H boards from the browser, routes signed OTA devices to USB for their
+first install, and adds an MCP endpoint.
 {/* RELEASE_OVERVIEW_END */}
 
 ## Upgrade checklist
@@ -499,6 +501,102 @@ cannot encrypt yet, [@bdraco](https://github.com/bdraco) added `allow_plaintext_
 `ota: encryption:` so one migration install can still land after the plaintext fallback is removed
 in 2027.3.0; the uploader logs that the install went plaintext and tells the user to remove the
 option once the device is seen encrypting ([#19396](https://github.com/esphome/esphome/pull/19396)).
+
+## ESPHome Device Builder
+
+The bundled [ESPHome Device Builder](https://github.com/esphome/device-builder) can now flash most of the chip
+families ESPHome supports straight from the browser, not only ESP; this section covers everything since the 2026.9.0
+release notes.
+
+[@tomaszduda23](https://github.com/tomaszduda23) added nRF52 flashing through the Adafruit bootloader's Nordic Legacy
+DFU protocol ([frontend#1784](https://github.com/esphome/device-builder-frontend/pull/1784)), MCUboot updates over
+Bluetooth and serial ([frontend#1891](https://github.com/esphome/device-builder-frontend/pull/1891)), and nRF52 logs
+over USB serial and Bluetooth that reconnect on their own when the link drops
+([frontend#1788](https://github.com/esphome/device-builder-frontend/pull/1788),
+[frontend#1868](https://github.com/esphome/device-builder-frontend/pull/1868)). Raspberry Pi Pico boards flash over
+WebUSB with the PICOBOOT protocol, RP2040 and RP2350 alike
+([frontend#1785](https://github.com/esphome/device-builder-frontend/pull/1785),
+[frontend#1927](https://github.com/esphome/device-builder-frontend/pull/1927)); Firefox, which has no WebUSB, gets the
+UF2 with copy to drive instructions instead. On LibreTiny, Realtek RTL8720C and RTL8710B, Beken BK72xx and Lightning
+LN882H boards flash over Web Serial through a USB serial adapter
+([frontend#1796](https://github.com/esphome/device-builder-frontend/pull/1796),
+[frontend#1977](https://github.com/esphome/device-builder-frontend/pull/1977),
+[frontend#1929](https://github.com/esphome/device-builder-frontend/pull/1929),
+[frontend#1972](https://github.com/esphome/device-builder-frontend/pull/1972)), with Web Serial logs to match
+([frontend#1786](https://github.com/esphome/device-builder-frontend/pull/1786),
+[frontend#1804](https://github.com/esphome/device-builder-frontend/pull/1804),
+[frontend#1934](https://github.com/esphome/device-builder-frontend/pull/1934)). When the dashboard is served over
+plain HTTP, where the browser blocks USB access, it hands the firmware for each of these chips to ESPHome Web the way it
+already did for ESP ([frontend#1869](https://github.com/esphome/device-builder-frontend/pull/1869),
+[frontend#1923](https://github.com/esphome/device-builder-frontend/pull/1923),
+[frontend#1926](https://github.com/esphome/device-builder-frontend/pull/1926),
+[frontend#1935](https://github.com/esphome/device-builder-frontend/pull/1935),
+[frontend#1978](https://github.com/esphome/device-builder-frontend/pull/1978)).
+
+[ESPHome Web](https://web.esphome.io/) gained the same families: nRF52 with logs and MCUboot updates
+([frontend#1799](https://github.com/esphome/device-builder-frontend/pull/1799),
+[frontend#1913](https://github.com/esphome/device-builder-frontend/pull/1913)), Pico installs over PICOBOOT
+([frontend#1814](https://github.com/esphome/device-builder-frontend/pull/1814)), BK72xx and LN882H
+([frontend#1933](https://github.com/esphome/device-builder-frontend/pull/1933),
+[frontend#1973](https://github.com/esphome/device-builder-frontend/pull/1973)), and one RTL87xx family that reads the
+chip from the UF2 ([frontend#1986](https://github.com/esphome/device-builder-frontend/pull/1986)). It offers to switch
+flows when the board you plug in belongs to another family
+([frontend#1819](https://github.com/esphome/device-builder-frontend/pull/1819)), and the header names every family,
+with a dropdown on narrow screens ([frontend#1980](https://github.com/esphome/device-builder-frontend/pull/1980)). In
+both apps an nRF52 can be reset from its logs
+([frontend#1847](https://github.com/esphome/device-builder-frontend/pull/1847)), board detection behind a USB serial bridge reads the boot banner before trying esptool, so an RTL8720C or a LibreTiny
+board is recognised ([frontend#1867](https://github.com/esphome/device-builder-frontend/pull/1867)), and a flash
+fails with a message instead of hanging when the board is unplugged
+([frontend#1902](https://github.com/esphome/device-builder-frontend/pull/1902)).
+
+A device that advertises `ota_signed=1` would reject the user's own unsigned build over OTA, so
+[@kbx81](https://github.com/kbx81) made the dashboard route its first install over USB up front
+([#2895](https://github.com/esphome/device-builder/pull/2895),
+[frontend#1991](https://github.com/esphome/device-builder-frontend/pull/1991)). OTA installs on 2026.10 compile with
+the new `--skip-bootloader` flag, which skips building the bootloader and factory image they never flash
+([#2874](https://github.com/esphome/device-builder/pull/2874)).
+
+A new [Model Context Protocol](https://modelcontextprotocol.io/) endpoint at `/api/mcp` lets an MCP client, such as
+Home Assistant's MCP integration, list, read and edit device configs, add components and automations, search the
+component and board catalogs, and validate, compile and install
+([#2733](https://github.com/esphome/device-builder/pull/2733),
+[#2736](https://github.com/esphome/device-builder/pull/2736),
+[#2789](https://github.com/esphome/device-builder/pull/2789)). Its writes go through the same commands the editor uses,
+and a write that would overwrite a change made since it was read is refused, which also protects the editor's own saves
+([#2760](https://github.com/esphome/device-builder/pull/2760),
+[#2761](https://github.com/esphome/device-builder/pull/2761)).
+
+In the fleet view, [@siegeld](https://github.com/siegeld) added how long a device has been offline, as `Offline 2h` on
+the status pill ([#2842](https://github.com/esphome/device-builder/pull/2842),
+[frontend#1862](https://github.com/esphome/device-builder-frontend/pull/1862)), and
+[@davidcoulson](https://github.com/davidcoulson) added a Network column and filter showing whether a device is on
+WiFi or Ethernet ([#2692](https://github.com/esphome/device-builder/pull/2692),
+[frontend#1737](https://github.com/esphome/device-builder-frontend/pull/1737)). Expert Mode adds an **Analyze memory**
+action that runs `esphome analyze-memory` and streams the per component flash and RAM report
+([#2835](https://github.com/esphome/device-builder/pull/2835),
+[frontend#1816](https://github.com/esphome/device-builder-frontend/pull/1816)), and the ESP32 framework form shows the
+new `flash_chip` option ([#2870](https://github.com/esphome/device-builder/pull/2870)).
+[@lboue](https://github.com/lboue) added the Waveshare ESP32-C5-Zero
+([#2732](https://github.com/esphome/device-builder/pull/2732)) and [@kepstin](https://github.com/kepstin) filled out
+the Waveshare ESP32-P4-WIFI6-DEV-KIT with its audio, display and header buses
+([#2663](https://github.com/esphome/device-builder/pull/2663)).
+
+In the editor, reference pickers only offer blocks whose class the field accepts, so a Modbus device can no longer
+point at a client hub or a light at a binary output ([#2782](https://github.com/esphome/device-builder/pull/2782),
+[frontend#1760](https://github.com/esphome/device-builder-frontend/pull/1760)), and the add component form shows the
+fields a required group needs instead of writing a config that fails validation
+([frontend#1753](https://github.com/esphome/device-builder-frontend/pull/1753)). An all digit device name like `8266`
+is quoted so it validates ([#2841](https://github.com/esphome/device-builder/pull/2841)), and whitespace pasted
+around a new secret is trimmed ([frontend#1944](https://github.com/esphome/device-builder-frontend/pull/1944)).
+[@vonpanda](https://github.com/vonpanda) stopped a handled build warning from failing an otherwise successful install
+([#2828](https://github.com/esphome/device-builder/pull/2828)), and [@randybb](https://github.com/randybb) made
+device discovery listen on IPv6 and skip Podman bridges
+([#2864](https://github.com/esphome/device-builder/pull/2864),
+[#2865](https://github.com/esphome/device-builder/pull/2865)).
+
+One behavior change: version history now only uses a git repository rooted at the ESPHome config directory. If your
+whole Home Assistant `/config` is a git repository, ESPHome edits are no longer committed into it automatically
+([#2882](https://github.com/esphome/device-builder/pull/2882)).
 
 ## New components
 
