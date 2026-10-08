@@ -230,12 +230,64 @@ binary_sensor:
 
 - All options from [Binary Sensor](/components/binary_sensor#config-binary_sensor).
 
+## Text Sensor
+
+The `hoermann_hcp` text sensor platform reports the door state as the motor names it, and the motor's
+serial number and firmware version.
+
+```yaml
+text_sensor:
+  - platform: hoermann_hcp
+    door_state:
+      name: Garage Door State
+    serial_number:
+      name: Garage Motor Serial Number
+    version:
+      name: Garage Motor Firmware Version
+```
+
+### Configuration variables
+
+- **hoermann_hcp_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the
+  `hoermann_hcp` hub. Only required if you have more than one hub.
+
+- **door_state** (*Optional*): The door state reported by the motor. Unlike the cover, it tells the vent
+  and half-open positions apart. A new value is published only when the state changes. While the bus
+  controller is not connected, the last value stays; the [binary sensor](#binary-sensor) shows whether
+  it is current. The possible values are:
+
+  | Value            | Meaning                                  |
+  | ---------------- | ---------------------------------------- |
+  | `Open`           | Fully open                               |
+  | `Opening`        | Moving to fully open                     |
+  | `Closed`         | Fully closed                             |
+  | `Closing`        | Moving to fully closed                   |
+  | `Half open`      | Resting in the half-open position        |
+  | `Moving to half` | Moving to the half-open position         |
+  | `Vent position`  | Resting in the vent position             |
+  | `Moving to vent` | Moving to the vent position              |
+  | `Stopped`        | Stopped anywhere else                    |
+
+- **serial_number** (*Optional*): The motor's serial number. It is requested once after the device
+  starts and appears a moment later. If the motor does not send it after three attempts, 30 seconds
+  apart, it stays unknown and a warning is logged. Defaults to the `diagnostic` entity category.
+
+- **version** (*Optional*): The motor's firmware version, requested the same way. Defaults to the
+  `diagnostic` entity category.
+
+- All options from [Text Sensor](/components/text_sensor#config-text_sensor).
+
+> [!NOTE]
+> The cover shows the half-open position, the vent position and a stopped door all as open, each with its
+> position. Use `door_state` when an automation needs to tell these apart.
+
 ## See Also
 
 - [Cover Component](/components/cover/)
 - [Button Component](/components/button/)
 - [Binary Sensor Component](/components/binary_sensor/)
 - [Light Component](/components/light/)
+- [Text Sensor Component](/components/text_sensor/)
 - [Modbus](/components/modbus/)
 - [HCPBridge project](https://github.com/hkiam/HCPBridge)
 - [Automation](/automations)
@@ -243,3 +295,4 @@ binary_sensor:
 - <APIRef text="hoermann_hcp_button.h" path="hoermann_hcp/button/hoermann_hcp_button.h" />
 - <APIRef text="hoermann_hcp_light.h" path="hoermann_hcp/light/hoermann_hcp_light.h" />
 - <APIRef text="hoermann_hcp_binary_sensor.h" path="hoermann_hcp/binary_sensor/hoermann_hcp_binary_sensor.h" />
+- <APIRef text="hoermann_hcp_text_sensor.h" path="hoermann_hcp/text_sensor/hoermann_hcp_text_sensor.h" />

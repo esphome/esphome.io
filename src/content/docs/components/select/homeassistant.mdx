@@ -1,0 +1,56 @@
+---
+description: "Instructions for setting up Home Assistant selects with ESPHome."
+title: "Home Assistant Select"
+---
+import APIRef from '@components/APIRef.astro';
+
+
+The `homeassistant` select platform allows you to create a select that mirrors a Home Assistant `select` or
+`input_select` entity using the [native API](/components/api/). The device subscribes to the entity's state, and
+selecting an option on the device calls the `select.select_option` or `input_select.select_option` action, chosen
+from the entity's domain.
+
+The options are read from the entity's `options` attribute at runtime and are kept up to date when they change in
+Home Assistant.
+
+> [!NOTE]
+> Although you might not plan to *export* states from the node and you do not need an entity of the node
+> in Home Assistant, this component still requires you to register the node under Home Assistant. See:
+> [Connecting your device to Home Assistant](/install/getting-started/#connecting-your-device-to-home-assistant).
+>
+> Home Assistant must also allow the device to perform actions. See [Actions](/components/api/#actions).
+
+```yaml
+# Example configuration entry
+select:
+  - platform: homeassistant
+    id: house_mode
+    entity_id: input_select.house_mode
+```
+
+## Configuration Variables
+
+- **entity_id** (**Required**, string): The entity ID to import / control from Home Assistant.
+  Must be in the `select` or `input_select` domain.
+- **internal** (*Optional*, boolean): Mark this component as internal. Internal components will not be exposed
+  to the frontend (like Home Assistant). Defaults to `true`.
+- **max_options** (*Optional*, int): The most options the device can hold, between `1` and `255`. Defaults to `16`.
+- **options_buffer_size** (*Optional*, int): The number of bytes reserved for the option text, between `2` and
+  `4096`. Each option uses its length in UTF-8 bytes plus one. Defaults to `256`.
+- All other options from [Select](/components/select#config-select).
+
+## Option Storage
+
+Storage for the options is reserved when the device boots. If Home Assistant sends a list with more options than
+`max_options`, or more text than fits in `options_buffer_size`, the list is rejected with an error in the log
+naming the setting to increase, and the previous options are kept.
+
+> [!NOTE]
+> The device sends its entity list to Home Assistant before the options arrive. With `internal: false`, the
+> options shown for this select in Home Assistant only update after the next reconnection, and are empty on the
+> first connection.
+
+## See Also
+
+- [Automation](/automations)
+- <APIRef text="homeassistant_select.h" path="homeassistant/select/homeassistant_select.h" />

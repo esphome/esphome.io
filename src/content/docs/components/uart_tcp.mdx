@@ -1,0 +1,89 @@
+---
+description: "Instructions for setting up a UART to TCP bridge in ESPHome"
+title: "UART TCP"
+---
+import APIRef from '@components/APIRef.astro';
+
+
+This component allows bytes to be transferred between a hardware [UART bus](/components/uart/) and a TCP socket.
+Data is copied unchanged in both directions.
+
+The component can connect to a remote host (`role: client`) or listen for one incoming connection (`role: server`).
+Only one TCP connection is open at a time. When `role` is `server`, a new client is accepted only after the current
+connection is closed.
+
+> [!WARNING]
+> The connection is plain TCP with no encryption and no authentication; `allowed_ips` filters by address but
+> does not authenticate the peer. If it is omitted, any host that can reach the port is accepted, and the
+> first client to connect is the one that is served. Only use this component on a trusted network.
+
+> [!NOTE]
+> While no connection is open, bytes from the UART are discarded; a fast peer is throttled by TCP flow
+> control instead of blocking the device.
+
+> [!NOTE]
+> Baud rate, data bits, parity and stop bits are set on the UART bus. They are not options of this component.
+
+This is not Modbus TCP. The bytes on the socket are the UART bytes, unchanged.
+
+The examples assume a [UART bus](/components/uart/) with the id `uart_bus` is configured.
+
+## Client
+
+```yaml
+# Example configuration entry
+uart_tcp:
+  - id: uart_tcp_1
+    uart_id: uart_bus
+    host: 192.0.2.20
+    port: 8899
+```
+
+## Server
+
+```yaml
+# Example configuration entry
+uart_tcp:
+  - id: uart_tcp_1
+    uart_id: uart_bus
+    role: server
+    port: 8899
+```
+
+## Configuration variables
+
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
+- **uart_id** (**Required**, [ID](/guides/configuration-types#id)): The [UART bus](/components/uart/) to use.
+- **role** (*Optional*, string): `client` or `server`. Defaults to `client`.
+- **host** (**Required** when `role` is `client`, string): The host to connect to. An IP address or a hostname.
+  This option cannot be used when `role` is `server`.
+- **port** (**Required**, int): The TCP port to connect to, or to listen on.
+- **allowed_ips** (*Optional* when `role` is `server`, list): IPv4 addresses that may connect. A plain
+  address is one host. A network is written in CIDR form, for example `192.0.2.0/24`. At most 255 entries. If
+  the option is omitted, every address may connect. A rejected client is closed immediately and logged as a
+  warning at most once every 5 seconds; an IPv6 client is rejected unless it carries an IPv4 mapped address, as
+  on a dual stack network. This option cannot be used when `role` is `client`.
+- **reconnect_interval** (*Optional*, [Time](/guides/configuration-types#time)): The time to wait before trying
+  again after a failure. Defaults to `5s`.
+- **connected** (*Optional*): A binary sensor that reports whether the TCP connection is established. All options
+  from [Binary Sensor](/components/binary_sensor#config-binary_sensor) are supported.
+
+## Zigbee Coordinator
+
+This setup has not been tested with this component. Zigbee2MQTT can use a server of this component instead
+of a serial port on the machine that runs it: in its `configuration.yaml`, set `serial.port` to
+`tcp://<device ip>:<port>` and `baudrate` to the UART's baud rate. Zigbee2MQTT must be the only TCP client.
+A stick on an ESP32 with USB host can be exposed the same way through [USB Host UART](/components/usb_uart/).
+
+> [!NOTE]
+> [Ethernet](/components/ethernet/) is recommended. A coordinator drops bytes more easily on Wi-Fi than on a
+> cable, and Zigbee2MQTT does not tolerate that. If Wi-Fi is the only network, do not also enable
+> `bluetooth_proxy`, `esp32_ble_tracker` or `esp32_ble` on this device. They share the radio with Wi-Fi.
+
+## See Also
+
+- [UART Bus](/components/uart/)
+- [USB Host UART Interface](/components/usb_uart/)
+- [Ethernet](/components/ethernet/)
+- [TCP UART](/components/tcp_uart/)
+- <APIRef text="uart_tcp.h" path="uart_tcp/uart_tcp.h" />

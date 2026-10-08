@@ -291,6 +291,31 @@ on_...:
     - dfplayer.random
 ```
 
+## `dfplayer.set_current_track_repeat` Action
+
+Enables or disables repeat playback of the track that is already playing. Unlike the `loop` option of
+`dfplayer.play`, it can be sent after playback has started, and disabling it lets a looping track
+finish normally instead of stopping it. It applies only to the current track; the next track selected
+plays once unless the action is sent again.
+
+- **enable** (*Optional*, boolean, [templatable](/automations/templates)): Whether the current track
+  should repeat. Defaults to `true`, so the bare action turns repeat on.
+
+```yaml
+on_...:
+  then:
+    - dfplayer.set_current_track_repeat
+
+on_...:
+  then:
+    - dfplayer.set_current_track_repeat: false
+
+on_...:
+  then:
+    - dfplayer.set_current_track_repeat:
+        enable: !lambda return id(repeat_switch).state;
+```
+
 ## All actions
 
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the DFPlayer if you have multiple components.
