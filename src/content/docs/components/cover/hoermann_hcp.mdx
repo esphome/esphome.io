@@ -148,6 +148,10 @@ The `hoermann_hcp` cover platform exposes the garage door as a [cover](/componen
 opening, closing, stopping and moving to a position, and reports the position and operation as
 provided by the motor.
 
+> [!NOTE]
+> While the door moves, or right after it was started, the component turns any door command into a
+> stop, so the door is never reversed at speed. Send the command again once the door rests.
+
 ```yaml
 cover:
   - platform: hoermann_hcp
@@ -178,8 +182,10 @@ button:
 
 - **hoermann_hcp_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the
   `hoermann_hcp` hub. Only required if you have more than one hub.
-- **vent** (*Optional*): Configuration for the vent button. When pressed, moves the door to its built-in vent position.
-- **half_open** (*Optional*): Configuration for the half-open button. When pressed, moves the door to its built-in half-open position.
+- **vent** (*Optional*): Configuration for the vent button. When pressed, moves a resting door to its
+  built-in vent position.
+- **half_open** (*Optional*): Configuration for the half-open button. When pressed, moves a resting door to
+  its built-in half-open position.
 
 Both buttons support all options from [Button](/components/button#config-button).
 
