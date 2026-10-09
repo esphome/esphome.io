@@ -120,6 +120,8 @@ but can be overridden if needed.
 - **full_update_every** (*Optional*, int): On screens that support partial updates, this sets the number of updates
   before a full update is forced. Defaults to `1` which will make every update a full update. A full update can also be
   requested at any time with the [`epaper_spi.full_update_next`](#epaper_spi-full_update_next-action) action.
+  While partial updates are in use, an update that draws the same frame as the previous one is skipped: nothing is
+  sent to the display, and it does not count towards the next full update.
 - **monochrome_partial_updates** (*Optional*, boolean): Only for four-level grayscale models
   (`Seeed-reTerminal-Sticky-gray4`). Allows `full_update_every` greater than `1`, with the partial updates in between
   in black and white. Defaults to `false`: every update is a full four-level update. See
