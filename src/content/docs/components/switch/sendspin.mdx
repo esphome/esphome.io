@@ -1,19 +1,24 @@
 ---
-description: "Instructions for setting up a switch to enable and disable Sendspin in ESPHome."
+description: "Instructions for setting up switches that control the Sendspin client and its unpaired access in ESPHome."
 title: "Sendspin Switch"
 ---
 
 import APIRef from '@components/APIRef.astro';
 
-The `sendspin` switch platform enables and disables the [Sendspin](/components/sendspin/)
-client. The Sendspin [hub](/components/sendspin/) must be configured on the same device.
+The `sendspin` switch platform controls the [Sendspin](/components/sendspin/) client. The Sendspin
+[hub](/components/sendspin/) must be configured on the same device. There are two types:
 
-While the switch is off, the device stops advertising itself to Sendspin servers, closes
-any server connection, and rejects playback and control commands from the other Sendspin
-components. Turning the switch on starts the client again.
+- `enabled`: Enables and disables the client. While it is off, the device stops advertising itself to Sendspin
+  servers, closes any server connection, and rejects playback and control commands from the other Sendspin
+  components. Turning it on starts the client again.
+- `unpaired_access`: Turns [unpaired access](/components/sendspin/#unpaired-access) on and off. While it is off,
+  only servers that have [paired](/components/sendspin/#pairing) with the device can play on it. Before turning it
+  off, make sure the device offers a [pairing code](/components/sendspin/#pairing), otherwise no new server can
+  pair. This switch replaces the hub's [`unpaired_access`](/components/sendspin/#configuration-variables) option,
+  and the two cannot be configured together.
 
-The switch restores its previous state on boot and defaults to on, so a device that was
-disabled stays disabled after a restart.
+Each switch restores its previous state on boot and defaults to on, so a setting that was turned off stays off
+after a restart. Only one switch of each type can be configured.
 
 This platform only works on ESP32-based chips.
 
@@ -24,15 +29,24 @@ sendspin:
 switch:
   - platform: sendspin
     name: "Sendspin Enabled"
+    type: enabled
+  - platform: sendspin
+    name: "Sendspin Unpaired Access"
+    type: unpaired_access
 ```
 
 ## Configuration Variables
 
+- **type** (**Required**, enum): The kind of Sendspin switch. One of `enabled` or `unpaired_access`.
 - **sendspin_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the
   [Sendspin](/components/sendspin/) hub to attach to. Only needed if you have more than one hub configured.
 - **restore_mode** (*Optional*): Control how the switch attempts to restore state on bootup.
   Defaults to `RESTORE_DEFAULT_ON`. See [Switch](/components/switch#config-switch) for the options.
 - All other options from [Switch](/components/switch#config-switch), except `inverted`.
+
+> [!TIP]
+> For an `unpaired_access` switch, set `restore_mode: RESTORE_DEFAULT_OFF` if unpaired access should stay off
+> when the saved state is lost, for example after renaming the switch.
 
 ## See Also
 

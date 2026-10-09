@@ -1,0 +1,113 @@
+name: Parent Merged
+
+# Labels open docs PRs whose paired esphome PR has already merged, so they can
+# be found with `is:open label:parent-merged`. The label is removed again once
+# the docs PR is closed or no longer qualifies.
+
+on:
+  schedule:
+    - cron: '17 * * * *'
+  workflow_dispatch:
+
+permissions:
+  issues: read
+  pull-requests: write
+  contents: read
+
+concurrency:
+  group: parent-merged
+
+jobs:
+  label:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Update parent-merged labels
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const LABEL = 'parent-merged';
+
+            // Same rules as docs_pr_links.py in esphome-release. Markdown links
+            // are collapsed to their URL so link text never counts as a reference.
+            const MARKDOWN_LINK = /\[([^\]]+)\]\(([^)]+)\)/g;
+            const CODE_REFS = [
+              /esphome\/esphome#(\d+)/g,
+              /github\.com\/esphome\/esphome\/pull\/(\d+)/g,
+            ];
+            const DOCS_REFS = [
+              /(?<![\w.-])esphome\/esphome(?:\.io|-docs)#(\d+)/g,
+              /github\.com\/esphome\/esphome(?:\.io|-docs)\/pull\/(\d+)/g,
+            ];
+
+            function extract(body, patterns) {
+              const text = (body || '').replace(MARKDOWN_LINK, '$2');
+              const numbers = new Set();
+              for (const pattern of patterns) {
+                for (const match of text.matchAll(pattern)) {
+                  numbers.add(parseInt(match[1]));
+                }
+              }
+              return numbers;
+            }
+
+            const docsPrs = await github.paginate(github.rest.pulls.list, {
+              owner, repo, state: 'open', per_page: 100,
+            });
+
+            // Fetch each linked code PR once, a few at a time.
+            const codePrs = new Map();
+            const codeNumbers = [...new Set(docsPrs.flatMap(pr => [...extract(pr.body, CODE_REFS)]))];
+            for (let i = 0; i < codeNumbers.length; i += 10) {
+              await Promise.all(codeNumbers.slice(i, i + 10).map(async number => {
+                const { data } = await github.rest.pulls.get({
+                  owner: 'esphome', repo: 'esphome', pull_number: number,
+                }).catch(error => {
+                  // A 404 is a reference to an issue, not a PR. Anything else must
+                  // fail the run rather than strip correct labels.
+                  if (error.status === 404) return { data: null };
+                  throw error;
+                });
+                codePrs.set(number, data);
+              }));
+            }
+
+            // Only a code PR that links back is the real pair; docs PRs often
+            // mention unrelated code PRs in passing.
+            function hasMergedParent(pr) {
+              for (const number of extract(pr.body, CODE_REFS)) {
+                const codePr = codePrs.get(number);
+                if (codePr?.merged_at && extract(codePr.body, DOCS_REFS).has(pr.number)) {
+                  return true;
+                }
+              }
+              return false;
+            }
+
+            const flagged = [];
+            for (const pr of docsPrs) {
+              const wanted = hasMergedParent(pr);
+              if (wanted) flagged.push(pr);
+              if (wanted === pr.labels.some(l => l.name === LABEL)) continue;
+              console.log(`${wanted ? 'Adding' : 'Removing'} ${LABEL} on #${pr.number}`);
+              const params = { owner, repo, issue_number: pr.number };
+              await (wanted
+                ? github.rest.issues.addLabels({ ...params, labels: [LABEL] })
+                : github.rest.issues.removeLabel({ ...params, name: LABEL }));
+            }
+
+            const closed = await github.paginate(github.rest.issues.listForRepo, {
+              owner, repo, state: 'closed', labels: LABEL, per_page: 100,
+            });
+            for (const issue of closed.filter(item => item.pull_request)) {
+              console.log(`Removing ${LABEL} on closed #${issue.number}`);
+              await github.rest.issues.removeLabel({
+                owner, repo, issue_number: issue.number, name: LABEL,
+              });
+            }
+
+            const escape = text => text.replace(/[&<>"]/g, c => `&#${c.charCodeAt(0)};`);
+            await core.summary
+              .addHeading(`${flagged.length} docs PRs with a merged parent`)
+              .addList(flagged.map(pr => `<a href="${pr.html_url}">#${pr.number}</a> ${escape(pr.title)}`))
+              .write();
