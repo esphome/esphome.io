@@ -1,0 +1,592 @@
+---
+title: "M5PM1 Power Management and I/O Expander"
+description: "Configure the M5PM1 I²C power-management controller, GPIO expander, sensors, events, and power controls."
+---
+
+import { Image } from 'astro:assets';
+import Figure from '@components/Figure.astro';
+import APIRef from '@components/APIRef.astro';
+
+The M5PM1 ([datasheet](https://m5stack-doc.oss-cn-shenzhen.aliyuncs.com/1207/M5PM1_Datasheet_EN.pdf)) is an I²C
+power-management controller with five multifunction GPIOs. It also provides voltage and temperature measurements, two
+PWM channels, power-rail controls, a hardware timer, interrupt events, a power button, NeoPixel output, and RTC memory.
+
+<Figure
+  src="/images/m5pm1-module.jpg"
+  alt="M5PM1 power-management module"
+  caption="M5PM1 Module"
+  layout="constrained"
+  width={480}
+  height={360}
+/>
+
+The component uses I²C address `0x6E`. The M5PM1 starts at `100 kHz`, and supports `100 kHz` or `400 kHz`. Keep the
+ESPHome I²C bus at `100 kHz` unless the M5PM1 I²C speed is changed by application code at the same time.
+
+The five GPIOs are multiplexed with the M5PM1 peripherals. A GPIO cannot be used as a normal GPIO while its alternate
+function is enabled. GPIO0 is the NeoPixel output, GPIO1 and GPIO2 are ADC inputs, and GPIO3 and GPIO4 are PWM outputs.
+The power source and wakeup events also have hardware conditions described in the Events section.
+
+## M5PM1 Hub Component
+
+```yaml
+i2c:
+  sda: GPIOXX
+  scl: GPIOXX
+  frequency: 100kHz
+
+m5pm1:
+  id: pm1
+```
+
+### Configuration Variables
+
+- **id** (**Required**, [ID](/guides/configuration-types/#id)): The ID of the M5PM1 component.
+- **address** (*Optional*, I²C address): The device address. Defaults to `0x6E` and normally does not need to be set.
+- **pwm_frequency** (*Optional*, frequency): The frequency used by the M5PM1 PWM channels. Defaults to `500Hz`.
+- **interrupt_gpio** (*Optional*, integer): One M5PM1 GPIO, from `0` to `4`, used as the interrupt output.
+- **interrupt_pin** (*Optional*, [Pin Schema](/guides/configuration-types/#pin-schema)): The ESP GPIO connected to the
+  M5PM1 interrupt output. `interrupt_gpio` and `interrupt_pin` must be configured together.
+- **power_button** (*Optional*): Configure the M5PM1 power-button timing and actions.
+  The defaults are shown below.
+
+The following options belong inside **power_button**:
+
+- **single_click_time** (*Optional*, enum): One of `125ms`, `250ms`, `500ms`, or `1s`. Defaults to `250ms`.
+- **double_click_time** (*Optional*, enum): One of `125ms`, `250ms`, `500ms`, or `1s`. Defaults to `500ms`.
+- **long_press_time** (*Optional*, enum): One of `1s`, `2s`, `3s`, or `4s`. Defaults to `1s`.
+- **single_click_reset** (*Optional*, boolean): Reset the system on a single click. Defaults to `true`.
+- **double_click_poweroff** (*Optional*, boolean): Power off on a double click. Defaults to `true`.
+- **long_press_download** (*Optional*, boolean): Enter download mode on a long press. Defaults to `true`.
+- **single_click_irq** (*Optional*, boolean): Enable the single-click event. Defaults to `true`.
+- **double_click_irq** (*Optional*, boolean): Enable the double-click event. Defaults to `true`.
+
+### M5PM1 Hub Example
+
+```yaml
+m5pm1:
+  id: pm1
+  interrupt_gpio: 4
+  interrupt_pin:
+    number: GPIOXX
+    mode:
+      input: true
+      pullup: true
+  power_button:
+    single_click_time: 250ms
+    double_click_time: 500ms
+    long_press_time: 1s
+    single_click_reset: true
+    double_click_poweroff: true
+    long_press_download: true
+    single_click_irq: true
+    double_click_irq: true
+```
+
+## GPIO Expander
+
+The five M5PM1 GPIOs can be used anywhere an ESPHome GPIO pin is accepted.
+
+```yaml
+binary_sensor:
+  - platform: gpio
+    name: "M5PM1 Input"
+    pin:
+      m5pm1_id: pm1
+      number: 1
+      mode:
+        input: true
+        pullup: true
+      inverted: true
+      interrupt: true
+
+switch:
+  - platform: gpio
+    name: "M5PM1 Output"
+    pin:
+      m5pm1_id: pm1
+      number: 3
+      mode:
+        output: true
+        open_drain: false
+```
+
+### Pin Configuration Variables
+
+- **m5pm1_id** (**Required**, [ID](/guides/configuration-types/#id)): The M5PM1 component ID.
+- **number** (**Required**, integer): A GPIO number from `0` to `4`.
+- **mode** (**Required**, [Pin Schema](/guides/configuration-types/#pin-schema)): Select `input` or `output`.
+- **pullup** / **pulldown** (*Optional*): Configure an input pull resistor.
+- **open_drain** (*Optional*): Configure an output as open-drain.
+- **inverted** (*Optional*, boolean): Invert the logical pin state. Defaults to `false`.
+- **interrupt** (*Optional*, boolean): Include the input in the M5PM1 GPIO interrupt mask. Defaults to `false`.
+- **wakeup** (*Optional*, boolean): Allow the input to wake the M5PM1. Defaults to `false`.
+  GPIO1 does not support wakeup.
+- **wakeup_edge** (*Optional*, enum): The wakeup edge, either `FALLING` (default) or `RISING`.
+
+The M5PM1 firmware defaults GPIO outputs to open-drain. Set `open_drain: false` when a push-pull output is required.
+Pull resistors are input-only, and open-drain is output-only.
+
+GPIO0 is shared with the NeoPixel output, GPIO1 and GPIO2 with ADC1 and ADC2, and GPIO3 and GPIO4 with PWM1 and PWM2.
+A GPIO cannot be used while its alternate function is active. GPIO0 and GPIO2 are mutually exclusive wake sources, as
+are GPIO3 and GPIO4.
+
+When interrupt-driven reads are enabled, the GPIO selected by `interrupt_gpio` is reserved for the M5PM1 active-low,
+open-drain interrupt output and cannot be used as a normal GPIO.
+
+## Sensors
+
+The sensor platform supports voltage measurements, M5PM1 temperature, and ADC measurements from GPIO1 or GPIO2.
+
+```yaml
+sensor:
+  - platform: m5pm1
+    type: battery_voltage
+    name: "M5PM1 Battery Voltage"
+
+  - platform: m5pm1
+    type: vin_voltage
+    name: "M5PM1 VIN Voltage"
+
+  - platform: m5pm1
+    type: temperature
+    name: "M5PM1 Temperature"
+
+  - platform: m5pm1
+    type: adc
+    pin:
+      m5pm1_id: pm1
+      number: 1
+      mode:
+        input: true
+    name: "M5PM1 ADC1"
+```
+
+### Configuration Variables
+
+- **m5pm1_id** (**Required**, [ID](/guides/configuration-types/#id)): The M5PM1 component ID.
+- **type** (**Required**, enum): Sensor type. Supported voltage types are `battery_voltage`, `vin_voltage`, `5vout_voltage`,
+  and `vref_voltage`. Voltage sensors use volts; the M5PM1 raw registers use millivolts. ADC sensors are limited to
+  GPIO1 and GPIO2. An internal `temperature` measurement is also supported.
+
+## Binary Sensor
+
+The M5PM1 power button is available as a binary sensor. It polls the button status and does not require the hardware
+interrupt connection.
+
+```yaml
+binary_sensor:
+  - platform: m5pm1
+    m5pm1_id: pm1
+    name: "M5PM1 Power Button"
+    on_click:
+      - min_length: 2s
+        max_length: 10s
+        then:
+          - logger.log: "M5PM1 power button long press"
+```
+
+### Configuration Variables
+
+- **m5pm1_id** (**Required**, [ID](/guides/configuration-types/#id)): The M5PM1 component ID.
+
+Disable `single_click_reset`, `double_click_poweroff`, and `long_press_download` when the button is used exclusively by
+ESPHome automations. This button is used as the power button across M5Stack products, so keep the default button
+behavior unless the hardware design requires different behavior.
+
+## Events
+
+Events require both `interrupt_gpio` and `interrupt_pin` on the parent M5PM1 component.
+
+```yaml
+event:
+  - platform: m5pm1
+    m5pm1_id: pm1
+    type: system
+    name: "M5PM1 System Event"
+    events:
+      - timer_wakeup
+      - gpio_wakeup
+      - vin_wakeup
+```
+
+### Configuration Variables
+
+- **m5pm1_id** (**Required**, [ID](/guides/configuration-types/#id)): The M5PM1 component ID.
+- **type** (**Required**, enum): Event type, one of `power`, `system` or `user_button`
+- **events** (*Optional*, list): Event names. If omitted, all events supported by the selected `type` are enabled.
+
+The following events are supported. The power events use the M5PM1 voltage thresholds: an insertion event is generated
+when the monitored voltage changes from at or below `2.4V` to above `2.4V`, and a removal event when it changes from at
+or above `2.4V` to below `2.4V`.
+
+| Event Type | Name | Note |
+| :--: | :--: | :-- |
+| `power` | `vin_inserted` | 5VIN was connected. Only valid when 5VIN is configured as an input. |
+| `power` | `vin_removed` | 5VIN was disconnected. Only valid when 5VIN is configured as an input. |
+| `power` | `vinout_inserted` | 5VIN/OUT connected; valid with boost disabled and input mode. |
+| `power` | `vinout_removed` | 5VIN/OUT disconnected; valid with boost disabled and input mode. |
+| `power` | `battery_inserted` | A battery was connected. Only valid when battery charging (`CHG_EN`) is disabled. |
+| `power` | `battery_removed` | A battery was disconnected. Only valid when battery charging (`CHG_EN`) is disabled. |
+| `system` | `wakeup` | The M5PM1 reported a wakeup IRQ. This is the generic event for the wake sources below. |
+| `system` | `timer_wakeup` | The hardware timer caused the wakeup. |
+| `system` | `vin_wakeup` | 5VIN insertion caused the wakeup. |
+| `system` | `vinout_wakeup` | 5VIN/OUT insertion caused the wakeup; available with boost disabled. |
+| `system` | `power_button_wakeup` | The power button caused the wakeup. |
+| `system` | `reset_button_wakeup` | The reset button caused the wakeup. |
+| `system` | `command_reset_wakeup` | A reset command caused the wakeup. |
+| `system` | `gpio_wakeup` | An enabled GPIO wake source caused the wakeup; GPIO1 is unsupported. |
+| `user_button` | `single_click` | Single-click IRQ; disable the built-in reset action. |
+| `user_button` | `double_click` | Double-click IRQ; disable the built-in power-off action. |
+
+The `system` source events are reported through the M5PM1 `WAKE_SRC` register and are delivered with the generic
+`wakeup` IRQ. Configure `interrupt_gpio` and `interrupt_pin` on the M5PM1 component to receive these events. The
+`single_click` and `double_click` events also require the corresponding `power_button.single_click_irq` or
+`power_button.double_click_irq` option to be enabled.
+
+## PWM Output
+
+The output platform exposes PWM1 on GPIO3 and PWM2 on GPIO4.
+
+```yaml
+output:
+  - platform: m5pm1
+    m5pm1_id: pm1
+    pin:
+      m5pm1_id: pm1
+      number: 3
+      mode:
+        output: true
+    id: m5pm1_pwm1
+    pwm_polarity: ACTIVE_HIGH
+```
+
+### Configuration Variables
+
+- **m5pm1_id** (**Required**, [ID](/guides/configuration-types/#id)): The M5PM1 component ID.
+- **pin** (**Required**, [Pin Schema](/guides/configuration-types/#pin-schema)): GPIO3 for PWM1 or GPIO4 for PWM2.
+- **pwm_polarity** (*Optional*, enum): The polarity, either `ACTIVE_HIGH` or `ACTIVE_LOW`. Defaults to `ACTIVE_HIGH`.
+
+## NeoPixel Light
+
+The M5PM1 NeoPixel output uses GPIO0 and supports 1 to 32 LEDs.
+
+```yaml
+light:
+  - platform: m5pm1
+    m5pm1_id: pm1
+    num_led: 1
+    name: "M5PM1 NeoPixel"
+```
+
+### Configuration Variables
+
+- **m5pm1_id** (**Required**, [ID](/guides/configuration-types/#id)): The M5PM1 component ID.
+- **num_led** (**Required**, integer): Number of LEDs, range from `1` to `32`
+
+## Switch
+
+The switch platform provides power-rail controls and the AW8737A pulse output.
+
+The `boost_5v` switch enables the 5V boost converter. When it is enabled, 5VIN/OUT is an output and cannot be used for
+VINOUT detection or wakeup. The `hold_*` switches control whether a rail or GPIO state is retained while the system is
+powered off. The `charger` switch controls battery charging.
+
+```yaml
+switch:
+  - platform: m5pm1
+    type: dcdc_3v3
+    m5pm1_id: pm1
+    name: "M5PM1 3.3V DCDC"
+```
+
+### Configuration Variables
+
+- **m5pm1_id** (**Required**, [ID](/guides/configuration-types/#id)): The M5PM1 component ID.
+- **type** (**Required**, enum): One of `charger`, `dcdc_3v3`, `ldo_3v3`, `boost_5v`, `hold_ldo_3v3`, `hold_boost_5v`,
+  `hold_gpio`, or `aw8737a`. The `hold_gpio` switch requires a pin number from `0` to `4`; the AW8737A switch accepts
+  a GPIO pin and a `pulse_num` from `0` to `3`.
+
+For examples:
+
+```yaml
+switch:
+  # Hold the GPIO1 output when system is powered down
+  - platform: m5pm1
+    type: hold_gpio
+    m5pm1_id: pm1
+    pin:
+      number: 3
+    restore_mode: RESTORE_DEFAULT_ON
+  # Enable the AW8737A pulse modulation (for power amplifier)
+  - platform: m5pm1
+    type: aw8737a
+    m5pm1_id: pm1    
+    pin:
+      number: 1
+    restore_mode: RESTORE_DEFAULT_ON
+```
+
+## Hardware Timer
+
+The timer is implemented by the M5PM1 hardware. It is one-shot, has one-second resolution, and accepts durations from
+`1s` through `214748364s`.
+
+```yaml
+button:
+  - platform: template
+    name: "Reboot in 10 seconds"
+    on_press:
+      - m5pm1.timer.start:
+          id: pm1
+          duration: 10s
+          action: reboot
+          on_success:
+            - logger.log: "M5PM1 timer armed"
+          on_error:
+            - logger.log:
+                level: ERROR
+                format: "Unable to arm M5PM1 timer"
+
+  - platform: template
+    name: "Cancel M5PM1 timer"
+    on_press:
+      - m5pm1.timer.clear: pm1
+```
+
+## M5PM1 Actions
+
+The M5PM1 actions can be used in any ESPHome [automation](/automations/). Each action accepts the M5PM1 component ID
+as `id`. The timer actions also support `on_success` and `on_error` automations. These callbacks run when the M5PM1
+reports whether the command was written successfully; they do not run when the timer later expires.
+
+### `m5pm1.timer.start` Action
+
+Starts or replaces the one-shot hardware timer in the M5PM1.
+
+Configuration variables:
+
+- **id** (**Required**, [ID](/guides/configuration-types/#id)): The M5PM1 component ID.
+- **duration** (**Required**, time period): The timer duration, from `1s` through `214748364s`. Templatable.
+- **action** (**Required**, enum): The action to perform when the timer expires. One of `set_wakeup_flag`, `reboot`,
+  `power_on`, or `power_off`. Templatable.
+- **on_success** (*Optional*, [Automation](/automations/)): Automation to run after the timer registers are written.
+- **on_error** (*Optional*, [Automation](/automations/)): Automation to run if the timer registers cannot be written.
+
+```yaml
+on_press:
+  then:
+    - m5pm1.timer.start:
+        id: pm1
+        duration: 10s
+        action: reboot
+        on_success:
+          - logger.log: "M5PM1 timer armed"
+        on_error:
+          - logger.log:
+              level: ERROR
+              format: "Unable to arm M5PM1 timer"
+```
+
+### `m5pm1.timer.clear` Action
+
+Clears the current M5PM1 hardware timer. The action can be written in shorthand using the component ID or in mapping
+form when callbacks are needed.
+
+Configuration variables:
+
+- **id** (**Required**, [ID](/guides/configuration-types/#id)): The M5PM1 component ID.
+- **on_success** (*Optional*, [Automation](/automations/)): Automation to run after the timer is cleared.
+- **on_error** (*Optional*, [Automation](/automations/)): Automation to run if the timer cannot be cleared.
+
+```yaml
+on_press:
+  then:
+    - m5pm1.timer.clear: pm1
+```
+
+## M5PM1 System Command Actions
+
+These actions send commands to the M5PM1 itself. They do not perform a software restart or power operation on the host
+microcontroller.
+
+### `m5pm1.power_off` Action
+
+Powers off the system through the M5PM1. Use `m5pm1.timer.start` with `action: power_on` first when the system must
+power on again automatically.
+
+Configuration variables:
+
+- **id** (**Required**, [ID](/guides/configuration-types/#id)): The M5PM1 component ID.
+- **on_success** (*Optional*, [Automation](/automations/)): Automation to run after the command is accepted.
+- **on_error** (*Optional*, [Automation](/automations/)): Automation to run if the command cannot be sent.
+
+```yaml
+on_press:
+  then:
+    - m5pm1.power_off:
+        id: pm1
+```
+
+### `m5pm1.reboot` Action
+
+Requests a reboot from the M5PM1.
+
+Configuration variables:
+
+- **id** (**Required**, [ID](/guides/configuration-types/#id)): The M5PM1 component ID.
+- **on_success** (*Optional*, [Automation](/automations/)): Automation to run after the command is accepted.
+- **on_error** (*Optional*, [Automation](/automations/)): Automation to run if the command cannot be sent.
+
+```yaml
+on_press:
+  then:
+    - m5pm1.reboot: pm1
+```
+
+### `m5pm1.enter_download_mode` Action
+
+Requests download mode from the M5PM1.
+
+Configuration variables:
+
+- **id** (**Required**, [ID](/guides/configuration-types/#id)): The M5PM1 component ID.
+- **on_success** (*Optional*, [Automation](/automations/)): Automation to run after the command is accepted.
+- **on_error** (*Optional*, [Automation](/automations/)): Automation to run if the command cannot be sent.
+
+```yaml
+on_press:
+  then:
+    - m5pm1.enter_download_mode: pm1
+```
+
+## Known Devices
+
+### M5Stack StickS3
+
+```yaml
+i2c:
+  sda: GPIO47
+  scl: GPIO48
+  frequency: 100kHz
+
+m5pm1:
+  id: m5pm1_hub
+  # The GPIO used for interrupt signal on M5PM1
+  interrupt_gpio: 1
+  # The GPIO receive the interrupt signal on ESP32
+  interrupt_pin:
+    number: GPIO13
+    mode:
+      input: true # enable the internal pullup on ESP32
+      pullup: true
+
+  power_button:
+    single_click_time: 250ms
+    single_click_reset: true
+    double_click_time: 500ms
+    double_click_poweroff: true
+    long_press_time: 2s
+    long_press_download: true
+    single_click_irq: true
+    double_click_irq: true
+
+switch:
+  - platform: m5pm1
+    type: ldo_3v3
+    name: "3V3 LDO"
+    restore_mode: RESTORE_DEFAULT_ON
+  - platform: m5pm1
+    type: dcdc_3v3
+    name: "3V3 DCDC"
+    restore_mode: RESTORE_DEFAULT_ON
+
+  - platform: m5pm1
+    type: boost_5v
+    name: "EXT 5V Enable"
+    restore_mode: RESTORE_DEFAULT_OFF
+
+  - platform: m5pm1
+    type: charger
+    name: "Chagrge Enable"
+    restore_mode: RESTORE_DEFAULT_ON
+
+  - platform: m5pm1
+    type: hold_ldo_3v3
+    name: "Hold 3V3 LDO"
+    restore_mode: RESTORE_DEFAULT_ON
+
+  # Enable the L3B power schema
+  - platform: gpio
+    name: "PYG2"
+    pin:
+      m5pm1_id: m5pm1_hub
+      number: 2
+      mode:
+        output: true
+        open_drain: false
+    restore_mode: ALWAYS_ON
+
+  # PYG3 for AW8737A Pulse
+  - platform: m5pm1
+    name: "Speaker Enable"
+    pin: 
+      m5pm1_id: m5pm1_hub
+      number: 3
+      mode:
+        output: true
+        open_drain: false
+    pulse_num: 3
+    restore_mode: RESTORE_DEFAULT_ON
+
+sensor:
+  - platform: m5pm1
+    type: temperature
+    name: "Internal Temperature"
+  - platform: m5pm1
+    type: battery_voltage
+    name: "Battery Voltage"
+  - platform: m5pm1
+    type: vin_voltage
+    name: "VIN Voltage"
+  - platform: m5pm1
+    type: 5vout_voltage
+    name: "EXT 5V Voltage"
+  - platform: m5pm1
+    type: vref_voltage
+    name: "ADC Ref Voltage"
+
+event:
+  - platform: m5pm1
+    m5pm1_id: m5pm1_hub
+    name: "Power Events"
+    type: power
+    events:
+      - vin_inserted
+      - vin_removed
+
+button:
+  - platform: template
+    name: "Reboot in 10 seconds"
+    on_press:
+      - m5pm1.timer.start:
+          id: m5pm1_hub
+          duration: 10s
+          action: reboot
+          on_success:
+            - logger.log: "M5PM1 timer armed"
+          on_error:
+            - logger.log:
+                level: ERROR
+                format: "Unable to arm M5PM1 timer"
+```
+
+## See Also
+
+- [I²C Bus](/components/i2c/)
+- [GPIO Binary Sensor](/components/binary_sensor/gpio/)
+- [GPIO Switch](/components/switch/gpio/)
+- [Sensor Component](/components/sensor/)
+- [Event Component](/components/event/)
+- [M5PM1 Arduino/ESP-IDF code](https://github.com/m5stack/M5PM1)
+- <APIRef text="m5pm1.h" path="m5pm1/m5pm1.h" />
