@@ -100,6 +100,88 @@ LABEL_CODE_QUALITY = "code-quality"
 # Bot accounts to exclude from contributor acknowledgments
 BOT_AUTHORS = {"app/dependabot", "app/copilot-swe-agent", "esphomebot"}
 
+# Blog post frontmatter placeholders filled from the AI tagline response
+TAGLINE_PLACEHOLDER = "{TAGLINE}"
+DESCRIPTION_PLACEHOLDER = "{DESCRIPTION}"
+
+# Documentation content root, used to enumerate valid internal link targets
+DOCS_CONTENT_DIR = Path("src/content/docs")
+# Sections that are pure noise as link targets for release notes
+DOCS_URL_EXCLUDED_PREFIXES = ("changelog/", "blog/")
+DOC_SUFFIXES = (".md", ".mdx")
+
+# Heading slugging, mirroring generateSlug() in script/lint.mjs so the emitted
+# anchors are exactly the ones the link linter accepts. The ASCII flag keeps
+# \w and \s equivalent to their JavaScript meaning.
+_SLUG_STRIP_RE = re.compile(r"[^\w\s-]", re.ASCII)
+_SLUG_COLLAPSE_RE = re.compile(r"[-\s]+", re.ASCII)
+_SLUG_TRIM_RE = re.compile(r"^-+|-+$")
+# Only H2/H3 headings are useful link targets in release notes
+_HEADING_RE = re.compile(r"^#{2,3}\s+(.*)")
+_SPAN_ANCHOR_RE = re.compile(r'<span id="([^"]+)"></span>')
+# Field lines in the AI tagline response
+_TAGLINE_FIELD_RE = re.compile(r"^\s*(TAGLINE|DESCRIPTION)\s*:\s*(.*?)\s*$")
+
+
+def slugify_heading(text: str) -> str:
+    """Slug a heading the same way script/lint.mjs does"""
+    slug = text.lower().replace(".", "-")
+    slug = _SLUG_STRIP_RE.sub("", slug)
+    slug = _SLUG_COLLAPSE_RE.sub("-", slug)
+    return _SLUG_TRIM_RE.sub("", slug)
+
+
+def _page_anchors(content: str) -> list[str]:
+    """Collect the anchor ids of a documentation page, in document order"""
+    anchors: dict[str, None] = {}
+    for line in content.split("\n"):
+        if heading_match := _HEADING_RE.match(line):
+            anchors[slugify_heading(heading_match[1].strip())] = None
+        if span_match := _SPAN_ANCHOR_RE.search(line):
+            anchors[span_match[1]] = None
+    anchors.pop("", None)
+    return list(anchors)
+
+
+def collect_docs_urls(content_dir: Path) -> list[str]:
+    """Enumerate every documentation page URL and its heading anchors.
+
+    An `index.mdx` maps to its directory URL, so
+    `components/lvgl/widgets/index.mdx` becomes `/components/lvgl/widgets/`.
+    """
+    pages: list[tuple[str, list[str]]] = []
+    for path in content_dir.rglob("*"):
+        if path.suffix not in DOC_SUFFIXES or not path.is_file():
+            continue
+        relative = path.relative_to(content_dir)
+        page = (
+            relative.parent.as_posix()
+            if path.stem == "index"
+            else relative.with_suffix("").as_posix()
+        )
+        page = "" if page == "." else page
+        # The trailing slash makes the prefix match the section itself as well
+        # as the pages inside it
+        if f"{page}/".startswith(DOCS_URL_EXCLUDED_PREFIXES):
+            continue
+        url = f"/{page}/" if page else "/"
+        anchors = [f"{url}#{anchor}" for anchor in _page_anchors(path.read_text())]
+        pages.append((url, [url, *anchors]))
+
+    return [url for _, page_urls in sorted(pages) for url in page_urls]
+
+
+def parse_tagline_response(text: str) -> tuple[str, str]:
+    """Parse the TAGLINE and DESCRIPTION fields of the AI tagline response.
+
+    Missing fields come back as empty strings.
+    """
+    fields: dict[str, str] = {}
+    for line in text.split("\n"):
+        if match := _TAGLINE_FIELD_RE.match(line):
+            fields.setdefault(match[1], match[2].strip('"').strip())
+    return fields.get("TAGLINE", ""), fields.get("DESCRIPTION", "")
+
 
 @dataclass
 class Version:
@@ -589,9 +671,17 @@ class ReleaseNotesGenerator:
         ]
         code_quality = [pr for pr in prs if LABEL_CODE_QUALITY in pr.labels]
 
+        # Enumerate real documentation URLs so the AI never invents a link
+        docs_urls_file = self._write_docs_urls_file()
+
         # Generate Combined Overview + Feature Highlights Prompt
         overview_and_highlights_prompt = self._generate_overview_and_highlights_prompt(
-            prs, new_features, new_components, breaking_changes, code_quality
+            prs,
+            new_features,
+            new_components,
+            breaking_changes,
+            code_quality,
+            docs_urls_file,
         )
         overview_highlights_file = self.prompts_dir / "overview_and_highlights.txt"
         overview_highlights_file.write_text(overview_and_highlights_prompt)
@@ -635,6 +725,7 @@ class ReleaseNotesGenerator:
         print(f"  Prompt: {overview_highlights_file}")
         print(f"  Outputs: {self.responses_dir / 'release_overview.md'}")
         print(f"           {self.responses_dir / 'feature_highlights.md'}")
+        print(f"           {self.responses_dir / 'tagline.md'}")
 
         print(
             "\nPrompt 2: Breaking Changes + Upgrade Checklist + Undocumented API Changes"
@@ -686,6 +777,20 @@ class ReleaseNotesGenerator:
         print("  ✓ Correct component links and formatting")
         print()
 
+    def _write_docs_urls_file(self) -> Path:
+        """Write the list of real documentation URLs the AI may link to"""
+        docs_urls_file = self.version_dir / "docs_urls.txt"
+        urls = collect_docs_urls(DOCS_CONTENT_DIR)
+        lines = [
+            "# Every documentation page URL on esphome.io, with its heading anchors.",
+            "# Copy internal links from this file verbatim; never build one by hand.",
+            "",
+            *urls,
+        ]
+        docs_urls_file.write_text("\n".join(lines) + "\n")
+        print(f"✓ Saved {len(urls)} documentation URLs to {docs_urls_file}")
+        return docs_urls_file
+
     def _generate_overview_and_highlights_prompt(
         self,
         all_prs: list[PullRequest],
@@ -693,6 +798,7 @@ class ReleaseNotesGenerator:
         new_components: list[PullRequest],
         breaking_changes: list[PullRequest],
         code_quality: list[PullRequest],
+        docs_urls_file: Path,
     ) -> str:
         """Generate combined prompt for release overview and feature highlights"""
         template = self.jinja_env.get_template("overview_and_highlights.txt")
@@ -701,6 +807,8 @@ class ReleaseNotesGenerator:
             version=str(self.version),
             overview_file=self.responses_dir / "release_overview.md",
             highlights_file=self.responses_dir / "feature_highlights.md",
+            tagline_file=self.responses_dir / "tagline.md",
+            docs_urls_file=docs_urls_file,
             prs_cache_dir=self.prs_cache_dir,
             total_prs=len(all_prs),
             new_features=new_features,
@@ -910,6 +1018,15 @@ class ReleaseNotesGenerator:
         ):
             file = self.responses_dir / filename
             responses[key] = file.read_text().strip() if file.exists() else ""
+
+        tagline_file = self.responses_dir / "tagline.md"
+        tagline, description = (
+            parse_tagline_response(tagline_file.read_text())
+            if tagline_file.exists()
+            else ("", "")
+        )
+        responses["tagline"] = tagline
+        responses["description"] = description
         return responses
 
     @staticmethod
@@ -954,15 +1071,10 @@ class ReleaseNotesGenerator:
             content = content.replace("{DATE}", "-".join(post_path.parts[-4:-1]))
             content = content.replace("{BLOG_PATH}", self._blog_site_path(post_path))
             print(f"✓ Creating blog post from template: {post_path}")
-            print("  Note: fill in the {TAGLINE} and {DESCRIPTION} placeholders manually")
-            print(
-                "  The tagline is plain language in sentence case with no jargon or "
-                "abbreviations,"
-            )
-            print(
-                '  e.g. "Faster builds and encrypted updates" rather than '
-                '"Faster builds and encrypted OTA"'
-            )
+
+        # Fill the frontmatter tagline and description on both paths: the
+        # release tooling creates the skeleton with the placeholders intact.
+        content = self._apply_tagline(content, responses)
 
         # Replace AI-generated sections
         if responses["companion"]:
@@ -1001,14 +1113,21 @@ class ReleaseNotesGenerator:
 
         # Contributors section: use AI response if available, otherwise fallback
         if responses["contributors"]:
+            # The template already carries the section heading above the
+            # marker block, so drop one the AI response repeats
+            contributors = re.sub(
+                r"\A#{1,6} [^\n]*\n+", "", responses["contributors"]
+            )
             content = self._replace_marker_content(
-                content, "CONTRIBUTORS", responses["contributors"]
+                content, "CONTRIBUTORS", contributors
             )
         else:
             fallback_contributors = self._generate_fallback_contributors(prs)
             content = self._replace_marker_content(
                 content, "CONTRIBUTORS", fallback_contributors
             )
+
+        self._warn_unfilled_placeholders(content, post_path)
 
         if self.dry_run:
             print("\n" + "=" * 80)
@@ -1022,6 +1141,52 @@ class ReleaseNotesGenerator:
             print(f"\n✓ Blog post written to: {post_path}")
 
         return True
+
+    def _apply_tagline(self, content: str, responses: dict[str, str]) -> str:
+        """Substitute the frontmatter tagline and description placeholders"""
+        tagline = responses.get("tagline", "")
+        description = responses.get("description", "")
+
+        if tagline:
+            content = content.replace(TAGLINE_PLACEHOLDER, tagline)
+            print(f"✓ Tagline: {tagline}")
+        if description:
+            content = content.replace(DESCRIPTION_PLACEHOLDER, description)
+            print(f"✓ Description: {description}")
+
+        missing = [
+            field
+            for field, value in (("TAGLINE", tagline), ("DESCRIPTION", description))
+            if not value
+        ]
+        if missing:
+            tagline_file = self.responses_dir / "tagline.md"
+            print("\n" + "!" * 80)
+            print(f"WARNING: no usable {' and '.join(missing)} in {tagline_file}")
+            print("Expected two lines:")
+            print("  TAGLINE: <short headline>")
+            print("  DESCRIPTION: <one sentence>")
+            print("The placeholders are left in place and must be filled manually.")
+            print("!" * 80)
+
+        return content
+
+    @staticmethod
+    def _warn_unfilled_placeholders(content: str, post_path: Path) -> None:
+        """Warn loudly about placeholders that survived assembly"""
+        remaining = [
+            placeholder
+            for placeholder in (TAGLINE_PLACEHOLDER, DESCRIPTION_PLACEHOLDER)
+            if placeholder in content
+        ]
+        if not remaining:
+            return
+
+        print("\n" + "!" * 80)
+        print(f"WARNING: {' and '.join(remaining)} still present in {post_path}")
+        print("These ship in the post title, description, excerpt and OpenGraph card.")
+        print("Fill them in before publishing.")
+        print("!" * 80)
 
     def _assemble_changelog_file(self, prs: list[PullRequest]) -> bool:
         """Assemble the changelog page (full list of changes) from its template"""
@@ -1271,6 +1436,10 @@ Examples:
     )
 
     args = parser.parse_args()
+
+    if args.blog_only and not args.assemble:
+        print("Error: --blog-only requires --assemble")
+        return 1
 
     try:
         version = Version.parse(args.version)
