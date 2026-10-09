@@ -50,23 +50,32 @@ uart_tcp:
     port: 8899
 ```
 
-## Configuration variables
+## Configuration Variables
 
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
-- **uart_id** (**Required**, [ID](/guides/configuration-types#id)): The [UART bus](/components/uart/) to use.
+- **uart_id** (**Required**, [ID](/guides/configuration-types#id)): The [UART bus](/components/uart/) to use. This
+  component needs the UART for itself: another component with the same `uart_id`, or `dummy_receiver` in the UART's
+  [debug](/components/uart/#debugging) option, is rejected. A `uart.write` action or a lambda that uses the UART is
+  not detected, so avoid them.
 - **role** (*Optional*, string): `client` or `server`. Defaults to `client`.
-- **host** (**Required** when `role` is `client`, string): The host to connect to. An IP address or a hostname.
+- **host** (**Required** when `role` is `client`, string): The host to connect to. An IPv4 address or a hostname.
+  IPv6 is not supported.
   This option cannot be used when `role` is `server`.
-- **port** (**Required**, int): The TCP port to connect to, or to listen on.
+- **port** (**Required**, int): The TCP port to connect to, or to listen on. When `role` is `server`, a second
+  `uart_tcp` or `tcp_uart` server on the same port is rejected.
 - **allowed_ips** (*Optional* when `role` is `server`, list): IPv4 addresses that may connect. A plain
   address is one host. A network is written in CIDR form, for example `192.0.2.0/24`. At most 255 entries. If
   the option is omitted, every address may connect. A rejected client is closed immediately and logged as a
   warning at most once every 5 seconds; an IPv6 client is rejected unless it carries an IPv4 mapped address, as
   on a dual stack network. This option cannot be used when `role` is `client`.
 - **reconnect_interval** (*Optional*, [Time](/guides/configuration-types#time)): The time to wait before trying
-  again after a failure. Defaults to `5s`.
+  again after a failure. An unanswered connection attempt is given up after `reconnect_interval` or 10 seconds,
+  whichever is longer. Defaults to `5s`.
 - **connected** (*Optional*): A binary sensor that reports whether the TCP connection is established. All options
   from [Binary Sensor](/components/binary_sensor#config-binary_sensor) are supported.
+- **disconnects** (*Optional*): A sensor that counts how many times an open connection has closed. It starts at
+  `0` on boot and does not increase again while the connection stays down. All options from
+  [Sensor](/components/sensor#config-sensor) are supported.
 
 ## Zigbee Coordinator
 
