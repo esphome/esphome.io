@@ -8,9 +8,10 @@ import APIRef from '@components/APIRef.astro';
 
 
 The `stepper` component allows you to use stepper motors with ESPHome.
-Currently only the A4988 stepper driver
-([datasheet](https://www.pololu.com/file/0J450/a4988_DMOS_microstepping_driver_with_translator.pdf))
-and ULN2003 ([datasheet](http://www.ti.com/lit/ds/symlink/uln2003a.pdf)) are supported.
+Supported drivers are the A4988
+([datasheet](https://www.pololu.com/file/0J450/a4988_DMOS_microstepping_driver_with_translator.pdf)),
+the ULN2003 ([datasheet](http://www.ti.com/lit/ds/symlink/uln2003a.pdf)) and the
+[TMC2209](/components/stepper/tmc2209/).
 
 > [!NOTE]
 > This component will not show up in the Home Assistant front-end automatically because
@@ -83,7 +84,8 @@ Configuration variables:
 
 > [!NOTE]
 > TMC drivers are pin-compatible with the A4988, but instead of a `SLEEP` pin they expose an `ENABLE` pin.
-> When using a TMC driver with the `a4988` platform you therefore need to invert the `sleep_pin`  :
+> When using a TMC driver with the `a4988` platform you therefore need to invert the `sleep_pin`. For the TMC2209,
+> the [TMC2209](/components/stepper/tmc2209/) platform also configures the driver over UART:
 >
 > ```yaml
 > stepper:
