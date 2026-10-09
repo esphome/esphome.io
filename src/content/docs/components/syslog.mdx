@@ -16,6 +16,7 @@ time:
   platform: sntp
 
 syslog:
+  format: RFC3164
 ```
 
 ## Configuration Options
@@ -27,5 +28,20 @@ syslog:
   if only one time client is configured.
 - **port** (*Optional*, int): The port to send logs to. Defaults to `514`.
 - **facility** (*Optional*, int): The syslog facility to use. Defaults to `16` (corresponding to `local0`  ).
+- **format** (*Optional*, string): The syslog message format. Supported values are `RFC3164` and `RFC5424`.
+  Defaults to `RFC3164`.
 - **level** (*Optional*, string): The highest log level to send to the syslog server. Defaults to `DEBUG`.
 - **strip** (*Optional*, boolean): If set, remove color-codes from log messages. Defaults to `true`.
+
+## Message Formats
+
+`RFC3164` preserves the legacy ESPHome syslog format. If the configured time source does not yet have a valid time,
+ESPHome omits the timestamp so that a syslog relay can add it as described by
+[RFC 3164](https://www.rfc-editor.org/rfc/rfc3164#section-4.3.2).
+
+`RFC5424` generates a complete [RFC 5424](https://www.rfc-editor.org/rfc/rfc5424) header. ESPHome uses the logger tag
+as `APP-NAME`, and uses the NILVALUE (`-`) for `PROCID`, `MSGID`, and `STRUCTURED-DATA`. Its timestamp uses the
+RFC 3339 format with the configured timezone offset, or the NILVALUE if the time is not valid.
+
+Both formats are sent over UDP. RFC 5424 transport over UDP is described by
+[RFC 5426](https://www.rfc-editor.org/rfc/rfc5426).

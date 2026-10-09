@@ -76,6 +76,10 @@ The `dfu` component enables automatic entry into **DFU (Device Firmware Update)*
 the USB CDC serial connection. When a host opens the port at **1200 baud**, the component triggers
 a reset to put the device into DFU mode.
 
+Opening the port at **2001 baud** instead reboots the device straight back into its application,
+without entering DFU mode, regardless of whether `reset_pin` is set. The USB CDC has no reset line,
+so host tools such as the Device Builder use this for the **Reset device** action in the logs view.
+
 ESPHome uses this component internally when uploading firmware via:
 
 ```bash
@@ -226,7 +230,8 @@ nrf52:
   Notably, the `%zu` specifier is not handled correctly, which can
   cause incorrect log output when the [logger](/components/logger) component is used.
   Set to `false` to use the full newlib, which supports all standard printf format specifiers
-  including `%zu` and 64-bit integers at the cost of a larger binary. Defaults to `true`.
+  including `%zu` and 64-bit integers at the cost of a larger binary.
+  Defaults to `false` when `logger` component is present, otherwise `true`.
 
 - **advanced** (*Optional*, mapping): See [Advanced Configuration](#advanced-configuration) below.
 

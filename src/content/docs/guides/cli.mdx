@@ -61,11 +61,18 @@ Please see [command line substitutions](/components/substitutions#command-line-s
 : Selects which toolchain to use for compiling the project. Supported values are:
 
 * `esp-idf` (ESP32 only)
+* `arduino` (ESP8266 only)
+* `sdk-nrf` (nRF52 only)
+* `host` (host only)
 * `platformio`
 
-The toolchain can be configured using `esp32.toolchain` (see the [ESP32 toolchain configuration](/components/esp32#esp32-toolchain)).
-If not specified, ESP32 devices default to `esp-idf`; all other platforms use `platformio`.
-If both `esp32.toolchain` and the `--toolchain` CLI option are set, the CLI option takes precedence.
+The toolchain can be configured using `esp32.toolchain` (see the
+[ESP32 toolchain configuration](/components/esp32#esp32-toolchain)) or `esp8266.toolchain` (see the
+[ESP8266 toolchain configuration](/components/esp8266#toolchain-configuration)).
+If not specified, ESP32 devices default to `esp-idf`, ESP8266 devices to `arduino`, nRF52 devices to `sdk-nrf` and host
+builds to `host`; all other platforms use `platformio`. The host platform always uses `host` and rejects any other
+value.
+If both the YAML `toolchain` option and the `--toolchain` CLI option are set, the CLI option takes precedence.
 
 Please see [ESP-IDF toolchain documentation](/guides/esp_idf/) for details on using the ESP-IDF integration.
 
@@ -106,6 +113,11 @@ basis, or set with this option at the time of uploading.
 
 **`--no-logs`**
 : Disable starting log view.
+
+
+**`--skip-bootloader`**
+: Skip building the bootloader and the factory image; see [`compile`](#compile-command).
+The result can only be flashed over OTA, so combining this with a serial `--device` fails before compiling.
 
 
 **`--topic TOPIC`**
@@ -169,6 +181,13 @@ Any command that accepts `<CONFIG>` can also accept a `.esphomebundle.tar.gz` bu
 
 **`--only-generate`**
 : If set, only generates the C++ source code and does not compile the firmware.
+
+
+**`--skip-bootloader`**
+: Do not build the bootloader or the factory image. A plain OTA update never delivers the bootloader; the device
+keeps the one it has. A build that will only ever go out over OTA can skip it and save build time.
+ESP32 with the `esp-idf` toolchain only; on other platforms the flag is ignored with a log message and a full build runs.
+Serial flashing and OTA `--bootloader` need a build without this flag.
 
 
 ### `upload` Command

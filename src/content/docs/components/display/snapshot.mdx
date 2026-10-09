@@ -9,7 +9,8 @@ import APIRef from '@components/APIRef.astro';
 ## Usage
 
 The `snapshot` display platform draws into memory and nothing else. There is no screen and no window; the only way
-to see what was drawn is to take a snapshot, which writes the current contents of the display to a `.bmp` file.
+to see what was drawn is to take a snapshot, which writes the current contents of the display to a `.bmp` file, or
+records a short animation to a `.gif` file.
 
 This is useful for producing pictures of a layout without a device to run it on, and for checking in a test that a
 configuration still draws what it used to. Unlike the [SDL display](/components/display/sdl/) it needs no graphics
@@ -54,9 +55,10 @@ display:
 
 ## Snapshots
 
-A snapshot writes the current contents of a display to a `.bmp` file. Snapshots are saved in the `snapshots` folder
-under the `.esphome` folder that holds the build directory. Set the `ESPHOME_SNAPSHOT_DIR` environment variable when
-running the binary to save them somewhere else.
+A snapshot writes the current contents of a display to a `.bmp` file. If you give a number of frames and a frame rate
+it records an animation to a `.gif` file instead. Snapshots are saved in the `snapshots` folder under the `.esphome`
+folder that holds the build directory. Set the `ESPHOME_SNAPSHOT_DIR` environment variable when running the binary to
+save them somewhere else.
 
 An existing file is never overwritten. Snapshots that use a generated name get a number added if a file of that name
 is already there; a snapshot with a name you chose yourself will fail instead, so that a test checking a fixed path
@@ -67,7 +69,7 @@ picture.
 
 ### `snapshot.take` Action
 
-Save a snapshot of the given display.
+Save a snapshot of the given display, or record an animation of it.
 
 ```yaml
 on_...:
@@ -84,6 +86,13 @@ on_...:
       id: my_display
       filename: !lambda |-
         return id(night_mode).state ? "dark.bmp" : "light.bmp";
+
+  # record an animation of 30 frames, 10 frames a second, to a .gif file
+  - snapshot.take:
+      id: my_display
+      filename: demo.gif
+      frames: 30
+      frame_rate: 10fps
 ```
 
 Configuration variables:
@@ -93,12 +102,25 @@ Configuration variables:
 - **filename** (*Optional*, string, [templatable](/automations/templates#config-templatable)): The name of the file to
   write. If not given, a name is built from the display id and the current date and time. Only letters, digits, `.`,
   `_` and `-` are kept, so the file is always written inside the snapshots folder. A `.bmp` ending is added if you
-  leave it off.
+  leave it off, or a `.gif` ending if you have set `frames`.
+- **frames** (*Optional*, int): The number of frames to record. Must be at least 1. If set, the action records a `.gif`
+  animation instead of taking a single `.bmp` picture. Must be given together with **frame_rate**.
+- **frame_rate** (*Optional*, frame rate): How many frames to record each second, for example `10fps`. The unit is
+  required. Must be between `0.1fps` and `50fps`, because a GIF stores the time between frames in hundredths of a
+  second. Must be given together with **frames**.
+
+The action returns as soon as the first frame has been captured. The remaining frames are captured in the background,
+so the animation takes about *frames* divided by *frame_rate* seconds to finish. Only one animation can be recorded
+for a display at a time; asking for another while one is running is refused with a warning.
+
+Each frame is reduced to at most 256 colors, chosen from the colors in that frame. A frame that uses 256 colors or
+fewer is stored exactly. Frames with smooth gradients may show banding. The main loop runs about every 16 ms, so
+frame rates close to `50fps` will not be perfectly even.
 
 > [!NOTE]
-> Writing the file blocks the main loop for as long as it takes, which may be reported as a slow component. This is
-> not a problem for the design and test work this display is meant for, but it is not something to do on a timer in a
-> device you leave running.
+> Writing the file blocks the main loop for as long as it takes, which may be reported as a slow component. For an
+> animation this happens once for each frame. This is not a problem for the design and test work this display is
+> meant for, but it is not something to do on a timer in a device you leave running.
 
 ## Build and Run
 

@@ -1,16 +1,17 @@
 ---
-description: "Instructions for setting up Sendspin metadata text sensors in ESPHome."
+description: "Instructions for setting up Sendspin metadata and pairing code text sensors in ESPHome."
 title: "Sendspin Text Sensor"
 ---
 
 import APIRef from '@components/APIRef.astro';
 
 The `sendspin` text sensor platform exposes metadata about the currently playing
-audio from a [Sendspin](/components/sendspin/) group. The Sendspin
+audio from a [Sendspin](/components/sendspin/) group, and the dynamic pairing code used to
+[pair](/components/sendspin/#pairing) a server with the device. The Sendspin
 [hub](/components/sendspin/) must be configured on the same device.
 
-Each text sensor reports a single metadata field. Configure one text sensor per
-field you want to expose.
+Each text sensor reports a single value. Configure one text sensor per
+value you want to expose.
 
 This platform only works on ESP32-based chips.
 
@@ -35,11 +36,14 @@ text_sensor:
 
 ## Configuration variables
 
-- **type** (**Required**, string): The metadata field to report. One of:
+- **type** (**Required**, string): The value to report. One of:
   - `title`: The title of the currently playing track.
   - `artist`: The track's artist.
   - `album`: The album the track belongs to.
   - `album_artist`: The album's artist.
+  - `pairing_code`: The current [dynamic pairing code](/components/sendspin/#dynamic-pairing-code) while a server
+    is pairing, and empty otherwise. Configuring this sensor makes the device offer the dynamic pairing code, so it
+    cannot be combined with `static_pairing_code`.
 - All other options from [Text Sensor](/components/text_sensor/#config-text_sensor).
 
 ## See Also

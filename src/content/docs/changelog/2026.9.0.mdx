@@ -5,9 +5,6 @@ pagefind: false
 slug: "changelog/2026.9.0"
 ---
 
-> [!NOTE]
-> This is a beta release. Details on this page may change before the stable release is published.
-
 Read the [ESPHome 2026.9.0 release notes](/blog/2026/09/16/esphome-2026-9/) on the blog for the release
 overview, feature highlights, upgrade checklist, and breaking changes.
 
@@ -87,25 +84,6 @@ overview, feature highlights, upgrade checklist, and breaking changes.
 - [modbus_controller] Poll through PollingDevice; deprecate ModbusCommandItem [esphome#18071](https://github.com/esphome/esphome/pull/18071) by [@exciton](https://github.com/exciton) (breaking-change)
 - [modbus_controller] Replace register_count/force_new_range with reuse_previous_range [esphome#18085](https://github.com/esphome/esphome/pull/18085) by [@exciton](https://github.com/exciton) (new-feature) (breaking-change)
 - [api] Add description and example metadata to user-defined actions [esphome#18881](https://github.com/esphome/esphome/pull/18881) by [@bharvey88](https://github.com/bharvey88) (new-feature) (breaking-change)
-
-{/* BETA_CHANGES_START */}
-### Beta Changes
-
-- [remote_transmitter] Fix BK7231N build by limiting the PWM path to BK7238 [esphome#18958](https://github.com/esphome/esphome/pull/18958) by [@kbx81](https://github.com/kbx81)
-- Bump bundled esphome-device-builder to 1.14.0 [esphome#18960](https://github.com/esphome/esphome/pull/18960) by [@esphome[bot]](https://github.com/apps/esphome)
-- [esp32_ble] Reference count BLE advertising [esphome#18943](https://github.com/esphome/esphome/pull/18943) by [@jesserockz](https://github.com/jesserockz)
-- [usb_uart] Keep the comm interface number valid when its claim fails [esphome#18968](https://github.com/esphome/esphome/pull/18968) by [@kbx81](https://github.com/kbx81)
-- Bump bundled esphome-device-builder to 1.14.1 [esphome#18981](https://github.com/esphome/esphome/pull/18981) by [@esphome[bot]](https://github.com/apps/esphome)
-- Bump bundled esphome-device-builder to 1.14.2 [esphome#18988](https://github.com/esphome/esphome/pull/18988) by [@esphome[bot]](https://github.com/apps/esphome)
-- Bump bundled esphome-device-builder to 1.14.3 [esphome#18996](https://github.com/esphome/esphome/pull/18996) by [@esphome[bot]](https://github.com/apps/esphome)
-- [climate][template] New template climate component [esphome#14455](https://github.com/esphome/esphome/pull/14455) by [@rsre](https://github.com/rsre) (new-feature) (new-platform)
-- [ota] Offer encryption with the api key so enabling it works over OTA [esphome#18979](https://github.com/esphome/esphome/pull/18979) by [@bdraco](https://github.com/bdraco) (new-feature)
-- Bump bundled esphome-device-builder to 1.14.4 [esphome#19006](https://github.com/esphome/esphome/pull/19006) by [@esphome[bot]](https://github.com/apps/esphome)
-- [noise] Bump noise-c to 0.1.24 and libsodium to 1.10021.6 [esphome#18989](https://github.com/esphome/esphome/pull/18989) by [@bdraco](https://github.com/bdraco)
-- [mdns] Guard LEAmDNS main loop calls against lwIP re-entrancy on ESP8266 [esphome#18990](https://github.com/esphome/esphome/pull/18990) by [@bdraco](https://github.com/bdraco)
-- [core] Show the other downloader's progress while a prefetch job waits on its lock [esphome#18983](https://github.com/esphome/esphome/pull/18983) by [@bdraco](https://github.com/bdraco)
-- [esp32_hosted] Add ESP-NOW-over-hosted shim for the ESP32-P4 [esphome#17712](https://github.com/esphome/esphome/pull/17712) by [@jesserockz](https://github.com/jesserockz) (new-feature)
-{/* BETA_CHANGES_END */}
 
 ### All changes
 
@@ -396,6 +374,63 @@ overview, feature highlights, upgrade checklist, and breaking changes.
 - [mdns] Guard LEAmDNS main loop calls against lwIP re-entrancy on ESP8266 [esphome#18990](https://github.com/esphome/esphome/pull/18990) by [@bdraco](https://github.com/bdraco)
 - [core] Show the other downloader's progress while a prefetch job waits on its lock [esphome#18983](https://github.com/esphome/esphome/pull/18983) by [@bdraco](https://github.com/bdraco)
 - [esp32_hosted] Add ESP-NOW-over-hosted shim for the ESP32-P4 [esphome#17712](https://github.com/esphome/esphome/pull/17712) by [@jesserockz](https://github.com/jesserockz) (new-feature)
+- [i2s_audio] Keep a start request that arrives while the speaker task stops [esphome#19027](https://github.com/esphome/esphome/pull/19027) by [@mipa87](https://github.com/mipa87)
+- [audio] Do not treat MP3_STREAM_INFO_CHANGED as a fatal decoder error [esphome#19028](https://github.com/esphome/esphome/pull/19028) by [@mipa87](https://github.com/mipa87)
+- [mqtt] Restore brightness flag in light discovery [esphome#18950](https://github.com/esphome/esphome/pull/18950) by [@ryan-ronnander](https://github.com/ryan-ronnander)
+- [logger] Fix garbled stack traces [esphome#17939](https://github.com/esphome/esphome/pull/17939) by [@AndreKR](https://github.com/AndreKR)
+- [dallas_temp] filter 85 temp from sensor reset [esphome#17877](https://github.com/esphome/esphome/pull/17877) by [@ssieb](https://github.com/ssieb)
+- [ble_client] Report Established from nodes that never read services [esphome#17920](https://github.com/esphome/esphome/pull/17920) by [@ptr727](https://github.com/ptr727)
+- [debug] Check reboot source pref on ESP_RST_WDT and guard against empty source [esphome#17537](https://github.com/esphome/esphome/pull/17537) by [@dmd79](https://github.com/dmd79)
+- [udp] Use cv.invalid for relocated packet_transport options [esphome#19032](https://github.com/esphome/esphome/pull/19032) by [@jesserockz](https://github.com/jesserockz)
+- [tuya] Build without a network component [esphome#18948](https://github.com/esphome/esphome/pull/18948) by [@swoboda1337](https://github.com/swoboda1337)
+- [core] Skip PlatformIO's private-package authorization probe [esphome#18823](https://github.com/esphome/esphome/pull/18823) by [@bdraco](https://github.com/bdraco)
+- [lvgl] Add missing label dependency to qrcode, keyboard and tabview [esphome#18387](https://github.com/esphome/esphome/pull/18387) by [@Gytisla](https://github.com/Gytisla)
+- [rf_bridge] Fix bucket sniffing with Portisch firmware [esphome#17683](https://github.com/esphome/esphome/pull/17683) by [@btli](https://github.com/btli)
+- [anova] Re-assert temperature unit on every poll cycle [esphome#17141](https://github.com/esphome/esphome/pull/17141) by [@raykholo](https://github.com/raykholo)
+- [atm90e32] Verify offset calibration writes [esphome#18701](https://github.com/esphome/esphome/pull/18701) by [@CircuitSetup](https://github.com/CircuitSetup)
+- Bump bundled esphome-device-builder to 1.14.5 [esphome#19040](https://github.com/esphome/esphome/pull/19040) by [@esphome[bot]](https://github.com/apps/esphome)
+- [core] Fix use-after-free when deleting a running StaticTask [esphome#19048](https://github.com/esphome/esphome/pull/19048) by [@kahrendt](https://github.com/kahrendt)
+- [audio][i2s_audio][micro_wake_word][microphone][mixer][resampler][speaker] Replace use_count() checks with lock and null test [esphome#19046](https://github.com/esphome/esphome/pull/19046) by [@kahrendt](https://github.com/kahrendt)
+- [i2s_audio] Fix spurious driver failure [esphome#19045](https://github.com/esphome/esphome/pull/19045) by [@kahrendt](https://github.com/kahrendt)
+- [noise] Bump noise-c to 0.1.26 and libsodium to 1.10021.8 [esphome#19030](https://github.com/esphome/esphome/pull/19030) by [@bdraco](https://github.com/bdraco)
+- [esphome][core] Give a lost OTA chunk ack time to be retransmitted [esphome#19041](https://github.com/esphome/esphome/pull/19041) by [@bdraco](https://github.com/bdraco)
+- [sendspin] Add codec preference list to the media source [esphome#19047](https://github.com/esphome/esphome/pull/19047) by [@kahrendt](https://github.com/kahrendt) (new-feature)
+- [sendspin] Fix codec enum codegen when codecs is not set [esphome#19055](https://github.com/esphome/esphome/pull/19055) by [@remcom](https://github.com/remcom)
+- [network] Improve `network::is_connected()` to better handle multiple interfaces [esphome#18999](https://github.com/esphome/esphome/pull/18999) by [@robin-thoni](https://github.com/robin-thoni)
+- Bump bundled esphome-device-builder to 1.14.6 [esphome#19072](https://github.com/esphome/esphome/pull/19072) by [@esphome[bot]](https://github.com/apps/esphome)
+- [core] Support set_internal() during setup, log error after setup [esphome#19069](https://github.com/esphome/esphome/pull/19069) by [@bdraco](https://github.com/bdraco)
+- Bump bundled esphome-device-builder to 1.14.7 [esphome#19096](https://github.com/esphome/esphome/pull/19096) by [@esphome[bot]](https://github.com/apps/esphome)
+- [lvgl] Fix crash when using lvgl.list.add [esphome#19177](https://github.com/esphome/esphome/pull/19177) by [@clydebarrow](https://github.com/clydebarrow)
+- Bump bundled esphome-device-builder to 1.14.8 [esphome#19250](https://github.com/esphome/esphome/pull/19250) by [@esphome[bot]](https://github.com/apps/esphome)
+- [noise] Bump noise-c to 0.1.30 and libsodium to 1.10021.11 [esphome#19062](https://github.com/esphome/esphome/pull/19062) by [@bdraco](https://github.com/bdraco)
+- [core] Add FixedVector::try_init so callers can handle an exhausted heap [esphome#19253](https://github.com/esphome/esphome/pull/19253) by [@bdraco](https://github.com/bdraco)
+- Bump bundled esphome-device-builder to 1.14.9 [esphome#19263](https://github.com/esphome/esphome/pull/19263) by [@esphome[bot]](https://github.com/apps/esphome)
+- [wifi] Drop a scan instead of aborting when its results cannot be allocated, filter ESP32 scans by SSID in the driver [esphome#19254](https://github.com/esphome/esphome/pull/19254) by [@bdraco](https://github.com/bdraco)
+- [esp32_ble_tracker] Re-register GATT clients after ble.disable and ble.enable [esphome#19068](https://github.com/esphome/esphome/pull/19068) by [@bdraco](https://github.com/bdraco)
+- [core] Add RAMAllocator::make_unique for objects whose allocation may fail [esphome#19245](https://github.com/esphome/esphome/pull/19245) by [@bdraco](https://github.com/bdraco)
+- [i2s_audio][router] Loop thread controls all state changes [esphome#19089](https://github.com/esphome/esphome/pull/19089) by [@kahrendt](https://github.com/kahrendt)
+- [esp32_ble_tracker] Revert coexistence preference to balanced when OTA starts [esphome#19082](https://github.com/esphome/esphome/pull/19082) by [@bdraco](https://github.com/bdraco)
+- [nextion] Allocate queue components through RAMAllocator and free entries the way they were allocated [esphome#19246](https://github.com/esphome/esphome/pull/19246) by [@bdraco](https://github.com/bdraco)
+- [esphome] Allocate the OTA noise session and auth buffer through RAMAllocator [esphome#19249](https://github.com/esphome/esphome/pull/19249) by [@bdraco](https://github.com/bdraco)
+- [core] Resolve file paths against the YAML file that declares them [esphome#19259](https://github.com/esphome/esphome/pull/19259) by [@bdraco](https://github.com/bdraco) (new-feature)
+- [ethernet] Keep the W5500 SPI context in a static instance instead of the heap [esphome#19248](https://github.com/esphome/esphome/pull/19248) by [@bdraco](https://github.com/bdraco)
+- [ota] Allocate the signature block through RAMAllocator [esphome#19251](https://github.com/esphome/esphome/pull/19251) by [@bdraco](https://github.com/bdraco)
+- [core] Clear loaded_platforms on CORE.reset() [esphome#19268](https://github.com/esphome/esphome/pull/19268) by [@jesserockz](https://github.com/jesserockz)
+- [api] Reuse overflow buffer storage instead of allocating per stalled write [esphome#19093](https://github.com/esphome/esphome/pull/19093) by [@bdraco](https://github.com/bdraco)
+- [pmsa003i] Fix read from uninitialized stack memory [esphome#19053](https://github.com/esphome/esphome/pull/19053) by [@j9brown](https://github.com/j9brown)
+- [template] Stop water heater republishing when a temperature is unknown [esphome#19013](https://github.com/esphome/esphome/pull/19013) by [@tronikos](https://github.com/tronikos)
+- [core] Mark filters, manual_ip and interlock as advanced [esphome#19272](https://github.com/esphome/esphome/pull/19272) by [@jesserockz](https://github.com/jesserockz)
+- [number] Fix the default mode check so mode auto is no longer emitted [esphome#19231](https://github.com/esphome/esphome/pull/19231) by [@bdraco](https://github.com/bdraco)
+- [web_server] Skip setters that pass the default port, log and include internal values [esphome#19226](https://github.com/esphome/esphome/pull/19226) by [@bdraco](https://github.com/bdraco)
+- [output] Skip the power limit setters when they match the defaults [esphome#19225](https://github.com/esphome/esphome/pull/19225) by [@bdraco](https://github.com/bdraco)
+- [light] Skip the flash transition setter and the empty effect list [esphome#19228](https://github.com/esphome/esphome/pull/19228) by [@bdraco](https://github.com/bdraco)
+- [wifi] Skip setters that pass the default priority, timeouts, power save and auth mode [esphome#19229](https://github.com/esphome/esphome/pull/19229) by [@bdraco](https://github.com/bdraco)
+- [logger] Skip the hardware UART setter when it matches the default [esphome#19230](https://github.com/esphome/esphome/pull/19230) by [@bdraco](https://github.com/bdraco)
+- [esp8266_pwm] Skip the frequency setter when it matches the default [esphome#19224](https://github.com/esphome/esphome/pull/19224) by [@bdraco](https://github.com/bdraco)
+- [bk72xx_ble] Keep wifi power save off while BLE is compiled in [esphome#19317](https://github.com/esphome/esphome/pull/19317) by [@Bl00d-B0b](https://github.com/Bl00d-B0b)
+- [modbus] Add allow_broadcast_read and expect_broadcast_write_response options [esphome#19304](https://github.com/esphome/esphome/pull/19304) by [@exciton](https://github.com/exciton) (new-feature)
+- [file] Keep resolved image paths as Path so config-hash normalizes them [esphome#19267](https://github.com/esphome/esphome/pull/19267) by [@cpruijsen](https://github.com/cpruijsen)
+- [bluetooth_connection] Keep USE_BLUETOOTH_PROXY out of the shared host test binary [esphome#19271](https://github.com/esphome/esphome/pull/19271) by [@bdraco](https://github.com/bdraco)
 {/* ALL_CHANGES_END */}
 
 ### Dependency Changes
