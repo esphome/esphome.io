@@ -214,6 +214,15 @@ Some components such as [Captive Portal](/components/captive_portal/), [Improv S
 as long as no credentials are set in the config file, and firmware is uploaded without erasing
 the flash (via OTA), the device will keep the saved credentials.
 
+Saved credentials take precedence over any `ssid` and `password` in the configuration: the device loads them at
+boot and connects with them instead.
+
+Leaving `ssid` and `password` in the configuration as a fallback does not work as expected. When the configuration
+defines a network, the saved credentials are stored under a key derived from the configuration and the ESPHome
+version, so they are discarded by any configuration change or version upgrade, and the device silently reverts to
+the credentials in the configuration. When the configuration defines no network, they are stored under a fixed key
+and survive updates. Omit `ssid` and `password` entirely when provisioning with Captive Portal or Improv.
+
 <span id="wifi-manual_ip"></span>
 
 ## Manual IPs
