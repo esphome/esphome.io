@@ -120,6 +120,11 @@ but can be overridden if needed.
 - **full_update_every** (*Optional*, int): On screens that support partial updates, this sets the number of updates
   before a full update is forced. Defaults to `1` which will make every update a full update. A full update can also be
   requested at any time with the [`epaper_spi.full_update_next`](#epaper_spi-full_update_next-action) action.
+- **partial_update_after_deep_sleep** (*Optional*): Continue the partial update cycle when the device wakes from
+  [deep sleep](/components/deep_sleep), instead of doing a full update on every wake. Set to `panel` on a board that
+  keeps the display powered while the device sleeps. Only for models that support it (currently `SSD1681` panels), on
+  ESP8266 and ESP32, and needs `full_update_every` above `1`. See
+  [Partial updates across deep sleep](#partial-updates-across-deep-sleep).
 - **monochrome_partial_updates** (*Optional*, boolean): Only for four-level grayscale models
   (`Seeed-reTerminal-Sticky-gray4`). Allows `full_update_every` greater than `1`, with the partial updates in between
   in black and white. Defaults to `false`: every update is a full four-level update. See
@@ -167,6 +172,40 @@ display:
     full_update_every: 30
     lambda: |-
       it.filled_circle(it.get_width() / 2, it.get_height() / 2, 50, Color::BLACK);
+```
+
+### Partial updates across deep sleep
+
+A device that uses [deep sleep](/components/deep_sleep) between updates normally does a full update on every wake,
+because the driver starts with no memory of the update cycle. With `partial_update_after_deep_sleep: panel` the driver
+remembers where it was in the cycle, keeps the display's enable pin at its level through the sleep so the display stays
+powered, and the first update after the wake is a partial one.
+
+This is only correct if the display keeps its power while the device sleeps; on a board that switches the display's
+supply off during sleep, leave the option out.
+
+```yaml
+deep_sleep:
+  run_duration: 10s
+  sleep_duration: 5min
+
+display:
+  - platform: epaper_spi
+    id: epaper
+    model: Waveshare-1.54in-v2
+    cs_pin: GPIOXX
+    dc_pin: GPIOXX
+    reset_pin: GPIOXX
+    busy_pin: GPIOXX
+    full_update_every: 20
+    partial_update_after_deep_sleep: panel
+    update_interval: never
+    lambda: |-
+      it.printf(0, 0, id(my_font), Color::BLACK, "%.1f C", id(temperature).state);
+
+esphome:
+  on_boot:
+    - component.update: epaper
 ```
 
 ### Four-Level Grayscale (reTerminal Sticky)
