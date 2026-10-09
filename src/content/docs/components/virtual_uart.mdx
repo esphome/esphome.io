@@ -1,0 +1,60 @@
+---
+description: "Instructions for setting up a virtual UART in ESPHome"
+title: "Virtual UART"
+---
+import APIRef from '@components/APIRef.astro';
+
+The `virtual_uart` component is a UART without pins. A component that uses it with `uart_id` reads and writes it like
+any [UART bus](/components/uart/). What that component writes runs the `on_tx` automation, and the
+`virtual_uart.inject_rx` action gives it bytes to read. This connects a UART device to any other transport in YAML.
+
+```yaml
+# Example configuration entry
+virtual_uart:
+  - id: my_virtual_uart
+    baud_rate: 9600
+    on_tx:
+      - lambda: |-
+          ESP_LOGD("virtual_uart", "%u bytes written", (unsigned) data.size());
+```
+
+## Configuration Variables
+
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation. Use
+  this ID as `uart_id` in other components.
+- **baud_rate** (**Required**, int): The baud rate reported to the components that use this UART.
+- **data_bits** (*Optional*, int): The number of data bits reported. Options: 5 to 8. Defaults to `8`.
+- **parity** (*Optional*): The parity reported. One of `NONE`, `EVEN`, `ODD`. Defaults to `NONE`.
+- **stop_bits** (*Optional*, int): The number of stop bits reported. One of `1`, `2`. Defaults to `1`.
+- **rx_buffer_size** (*Optional*, int): The size of the RX buffer that holds the bytes from `inject_rx` until they
+  are read. At most 65535. Defaults to `256`.
+- **on_tx** (*Optional*, [Automation](/automations)): Runs for each write, with the written bytes as `data`
+  (`std::span<const uint8_t>`); without it, the bytes are discarded. The data is only valid while the automation
+  runs, so `delay`, `wait_until` and other actions that wait are rejected in it.
+- **debug** (*Optional*, mapping): Log the bytes that pass this UART. Same options as the
+  [UART debug](/components/uart/#debugging) option.
+
+## `virtual_uart.inject_rx` Action
+
+Gives the component on this UART bytes to read. A block that does not fit into the free space of the RX buffer is
+dropped whole, with a warning.
+
+```yaml
+on_...:
+  - virtual_uart.inject_rx:
+      id: my_virtual_uart
+      data: [0x01, 0x03, 0x00, 0x00, 0x00, 0x01, 0x84, 0x0A]
+  # Templated, returns a std::vector<uint8_t>
+  - virtual_uart.inject_rx:
+      id: my_virtual_uart
+      data: !lambda return {0x01, 0x02};
+```
+
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): The virtual UART. Required only when more than one
+  virtual UART is configured.
+- **data** (**Required**, string, list of bytes or [lambda](/automations/templates#config-lambda)): The bytes.
+
+## See Also
+
+- [UART Bus](/components/uart/)
+- <APIRef text="virtual_uart.h" path="virtual_uart/virtual_uart.h" />
