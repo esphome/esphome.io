@@ -1,0 +1,63 @@
+---
+description: "Instructions for setting up the Modbus Monitor component."
+title: "Modbus Monitor"
+params:
+  seo:
+    description: Instructions for setting up the Modbus Monitor component.
+    image: modbus.png
+---
+
+The `modbus_monitor` component runs automations for the requests and responses that a [Modbus](/components/modbus/)
+hub handles. On a hub with the `server` role, that is each request the hub receives and the reply of another device
+to it. On a hub with the `client` role, that is each request the hub sends and the reply to it.
+
+```yaml
+# Example configuration entry
+modbus_monitor:
+  - on_request:
+      - lambda: |-
+          ESP_LOGD("modbus_monitor", "Request to %u, function 0x%02X", address, request[0]);
+```
+
+## Configuration Variables
+
+- **modbus_id** (*Optional*, [ID](/guides/configuration-types#id)): The Modbus hub to watch. Automatically assigned
+  when a single hub is configured.
+
+- **on_request** (*Optional*, [Automation](/automations)): Runs for each request. See below.
+
+- **on_response** (*Optional*, [Automation](/automations)): Runs for each response. See below.
+
+At least one of `on_request` and `on_response` is required. Several `modbus_monitor` entries can watch the same hub.
+
+## Automation Variables
+
+- `address` (`uint8_t`): The address the request was sent to. `0` is a broadcast.
+- `request` (`std::span<const uint8_t>`): The request PDU: function code followed by data, without address and CRC.
+- `response` (`std::span<const uint8_t>`, `on_response` only): The response PDU, in the same form. An exception
+  response has bit 7 of the function code set (`response[0] & 0x80`).
+
+The data is only valid while the automation runs, so `delay`, `wait_until` and other actions that wait are rejected
+in it. Copy what you need first. Keep the automation short: it runs in the hub's loop.
+
+### Server Hub
+
+`on_request` runs for every frame the hub reads as a request, for any address and for broadcasts. For a request to
+one of this hub's [Modbus Server](/components/modbus_server/) devices, it runs after the device has answered or
+queued its answer. `on_response` runs for the reply of another device to a request the hub has seen.
+
+> [!NOTE]
+> The hub tells a request from a reply by the order and shape of the frames. If a device does not answer, the next
+> request that has the shape of a reply is taken for one, whatever its address, for example a single write or mask
+> write (function codes `0x05`, `0x06`, `0x16`).
+
+### Client Hub
+
+`on_request` runs each time the hub sends a request, broadcasts and retries included. A request that was queued but
+never sent does not run it. `on_response` runs for each response that matches the request the hub is waiting for.
+
+## See Also
+
+- [Modbus Component](/components/modbus/)
+- [Modbus Client](/components/modbus_client/)
+- [Modbus Server](/components/modbus_server/)
