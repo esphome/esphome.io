@@ -382,7 +382,7 @@ pn7160_...:
   # ...
   on_tag:
     then:
-      - homeassistant.tag_scanned: !lambda "return tag.has_ha_tag_id() ? tag.get_ha_tag_id() : x;"
+      - homeassistant.tag_scanned: !lambda "return nfc::has_ha_tag_ndef(tag) ? nfc::get_ha_tag_ndef(tag) : x;"
 ```
 
 ### NDEF Writing

@@ -620,6 +620,13 @@ article.preview {
   --sl-content-width: 50rem;
 }
 
+/* starlight-blog renders the post cover above the metadata on the post page.
+   Covers are the generated OpenGraph card, which only belongs on blog list cards
+   and social previews, so hide it on the post page itself. */
+.sl-markdown-content > figure:first-child:has(+ .metadata) {
+  display: none;
+}
+
 .main-pane:has(.post-footer) figure img,
 .sl-markdown-content .posts figure img {
   max-height: 100%;
