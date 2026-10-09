@@ -74,6 +74,61 @@ on_...:
 
 - **role** (*Optional*, string): The role of this component, `client` or `server`. Defaults to `client`.
 
+## `modbus.send_response` Action
+
+Answers a request on a `server` hub for an address that none of its [Modbus Server](/components/modbus_server/)
+devices has, while the hub still waits for the reply to that request.
+
+```yaml
+# A gateway: requests to 0x0A on the server hub go to device 0x01 on the client hub.
+modbus_monitor:
+  - modbus_id: server_hub
+    on_request:
+      - if:
+          condition:
+            lambda: return address == 0x0A;
+          then:
+            - modbus_client.send:
+                modbus_id: client_hub
+                address: 0x01
+                pdu: !lambda return {request.begin(), request.end()};
+                on_response:
+                  - modbus.send_response:
+                      modbus_id: server_hub
+                      address: 0x0A
+                      request: !lambda return request;
+                      pdu: !lambda return {response.begin(), response.end()};
+                on_error:
+                  - modbus.send_response:
+                      modbus_id: server_hub
+                      address: 0x0A
+                      request: !lambda return request;
+                      pdu: !lambda |-
+                        return {static_cast<uint8_t>(request[0] | 0x80), static_cast<uint8_t>(exception_code)};
+                on_no_response:
+                  then:
+                    # Gateway target device failed to respond
+                    - modbus.send_response:
+                        modbus_id: server_hub
+                        address: 0x0A
+                        request: !lambda return request;
+                        pdu: !lambda return {static_cast<uint8_t>(request[0] | 0x80), 0x0B};
+```
+
+Answer `on_response`, `on_error` and `on_no_response`: until a response is sent, the hub waits for it and can take
+the next request for the reply. Keep the client hub's `send_wait_time` well below the timeout of the device that
+sends the requests, so that `on_no_response` answers in time.
+
+### Configuration Variables
+
+- **modbus_id** (*Optional*, [ID](/guides/configuration-types#id)): The hub with the `server` role that answers.
+  Automatically assigned when a single such hub is configured.
+- **address** (**Required**, templatable, int): The address the request was sent to, `1`-`255`; `0` is rejected.
+- **request** (**Required**, [lambda](/automations/templates#config-lambda)): The request as the hub received it, for
+  example the `request` of a `modbus_client.send` handler that forwarded it unchanged.
+- **pdu** (**Required**, templatable, list of bytes): The response PDU, 1-253 bytes: the request's function code,
+  with bit 7 set for an exception, followed by data, without address and CRC.
+
 ## Performance vs Stability
 
 The default settings are aimed to provide high stability (low error rate) for a wide variety of devices. If you are
