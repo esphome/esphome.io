@@ -1,0 +1,228 @@
+---
+description: "Instructions for setting up the Trinamic TMC2209 stepper motor driver in ESPHome"
+title: "TMC2209 Stepper Motor Driver"
+---
+
+import APIRef from '@components/APIRef.astro';
+
+The `tmc2209` stepper platform supports the Trinamic TMC2209 stepper motor driver
+([datasheet](https://www.analog.com/media/en/technical-documentation/data-sheets/TMC2209_datasheet_rev1.09.pdf)).
+The driver is configured over its single wire UART interface. Several drivers can share one UART bus by using
+different addresses.
+
+The motor can be driven in two ways:
+
+- **STEP/DIR pins**: ESPHome generates the steps on `step_pin`, like the [A4988](/components/stepper/#a4988-component).
+  The driver is set to step on both edges, so every change of the step pin is one step.
+- **UART speed control**: the driver generates the steps itself from the speed written over UART (the `VACTUAL`
+  register). ESPHome counts the position from the step pulses the driver outputs on its `INDEX` pin, so no STEP or
+  DIR connection is needed.
+
+This component requires a [UART bus](/components/uart/) to be configured. The TMC2209 accepts baud rates between
+9600 and 500000 baud and detects the rate automatically.
+
+```yaml
+# Example configuration entry
+stepper:
+  - platform: tmc2209
+    id: my_stepper
+    step_pin: GPIOXX
+    dir_pin: GPIOXX
+    rsense: 110 mOhm
+    max_speed: 2000 steps/s
+```
+
+## Wiring
+
+The TMC2209 uses a single wire for UART (the `PDN_UART` pin). Connect the RX pin of the microcontroller directly to
+`PDN_UART`, and the TX pin through a 1 kΩ resistor. On the single wire bus every byte sent is also received; the
+component discards this echo.
+
+The UART address (0-3) is set by the `MS1` and `MS2` pins of the driver. Drivers on the same bus need different
+addresses. Check the schematic of your driver module, as some boards tie these pins to a fixed level.
+
+## Configuration Variables
+
+- **id** (**Required**, [ID](/guides/configuration-types#id)): Specify the ID of the stepper so that you can control
+  it.
+
+- **uart_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the [UART bus](/components/uart/) the
+  driver is connected to. Required if you have multiple UART buses.
+
+- **address** (*Optional*, int): The UART address of the driver, `0` to `3`. Defaults to `0`.
+
+- **step_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The `STEP` pin of the driver.
+  Enables STEP/DIR mode. Exactly one of `step_pin` or `index_pin` is required.
+
+- **dir_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The `DIR` pin of the driver.
+  Required when `step_pin` is set.
+
+- **index_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The `INDEX` pin of the driver.
+  Enables UART speed control mode. Must be a pin that supports interrupts. Exactly one of `step_pin` or `index_pin`
+  is required.
+
+- **enn_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The `ENN` (enable, active low) pin
+  of the driver. When not set, the motor outputs are turned on and off over UART.
+
+- **rsense** (*Optional*, resistance): The value of the external sense resistors on the driver module, for example
+  `110 mOhm`. Used to convert currents to driver settings. When not set, the driver is switched to its internal sense
+  resistors, which only works on boards designed for it. Most driver modules have external sense resistors.
+
+- **vsense** (*Optional*, boolean): Use the high sensitivity sense voltage range. This lowers the maximum current
+  and gives finer current steps, useful for small motors. When not set, the driver setting is not changed.
+
+- **run_current** (*Optional*, current): The motor current while running, in A RMS. Values above the maximum of the
+  driver are limited to the maximum and a warning is logged. The maximum is shown in the log at startup.
+
+- **hold_current** (*Optional*, current): The motor current at standstill, in A RMS.
+
+- **microsteps** (*Optional*, int): The number of microsteps per full step. One of `1`, `2`, `4`, `8`, `16`, `32`,
+  `64`, `128` or `256`. When not set, the driver setting is kept (`256` after power-on).
+
+- **analog_current_scale** (*Optional*, boolean): Scale the motor current with the voltage on the `VREF` pin of the
+  driver. Defaults to `false`.
+
+- **ottrim** (*Optional*, int): The overtemperature thresholds, `0` to `3`. See the `OTTRIM` setting in the
+  datasheet. When not set, the driver setting is not changed.
+
+- **clock_frequency** (*Optional*, frequency): The clock frequency of the driver. Only used to convert the speed in
+  UART speed control mode. Change this when the driver runs from an external clock. Defaults to `12MHz`.
+
+- All other options from [Base Stepper Configuration](/components/stepper/#base_stepper_config).
+
+> [!NOTE]
+> Positions and speeds are in microsteps. With `microsteps: 16`, a motor with 200 full steps per revolution needs
+> 3200 steps for one revolution.
+
+> [!NOTE]
+> In STEP/DIR mode the steps are generated from the main loop, so the maximum speed depends on how busy the
+> microcontroller is. In UART speed control mode the driver generates the steps, which allows higher speeds.
+
+The driver is enabled at startup. When a new target is set while the driver is disabled, it is enabled again. If
+the driver does not respond during setup, the component is marked as failed.
+
+## Multiple Drivers on One Bus
+
+Up to four drivers can share one UART bus. Give each driver a different `address`. Configurations with two drivers
+using the same address on the same bus are rejected.
+
+```yaml
+stepper:
+  - platform: tmc2209
+    id: x_axis
+    address: 0
+    step_pin: GPIOXX
+    dir_pin: GPIOXX
+    rsense: 110 mOhm
+    max_speed: 2000 steps/s
+
+  - platform: tmc2209
+    id: y_axis
+    address: 1
+    index_pin: GPIOXX
+    rsense: 110 mOhm
+    max_speed: 1000 steps/s
+```
+
+## `tmc2209.enable` / `tmc2209.disable` Actions
+
+Turn the motor outputs on or off. This uses the `enn_pin` when configured, and the chopper off time setting
+(`TOFF`) of the driver otherwise. When disabled, the target is set to the current position, so the motor does not
+move again when it is enabled.
+
+```yaml
+on_...:
+  then:
+    - tmc2209.disable: my_stepper
+    - tmc2209.enable: my_stepper
+```
+
+Configuration variables:
+
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the stepper.
+
+## `tmc2209.configure` Action
+
+Change driver settings at runtime.
+
+```yaml
+on_...:
+  then:
+    - tmc2209.configure:
+        id: my_stepper
+        inverse_direction: true
+        microsteps: 16
+        interpolation: true
+        enable_spreadcycle: false
+```
+
+Configuration variables:
+
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the stepper.
+
+- **inverse_direction** (*Optional*, boolean, [templatable](/automations/templates)): Reverse the direction of the
+  motor.
+
+- **microsteps** (*Optional*, int, [templatable](/automations/templates)): The number of microsteps per full step.
+  One of `1`, `2`, `4`, `8`, `16`, `32`, `64`, `128` or `256`.
+
+- **interpolation** (*Optional*, boolean, [templatable](/automations/templates)): Interpolate each step to 256
+  microsteps, for smoother and quieter movement at low microstep settings.
+
+- **enable_spreadcycle** (*Optional*, boolean, [templatable](/automations/templates)): `true` uses SpreadCycle
+  chopper mode, `false` uses StealthChop. StealthChop is quieter, SpreadCycle gives more torque at higher speeds.
+
+- **tpwm_threshold** (*Optional*, int, [templatable](/automations/templates)): The `TPWMTHRS` value, `0` to
+  `1048575`. When StealthChop is used, the driver switches to SpreadCycle above the speed set by this value. `0`
+  disables the switch. See the datasheet for the conversion between this value and speed.
+
+## `tmc2209.currents` Action
+
+Change the motor currents at runtime.
+
+```yaml
+on_...:
+  then:
+    - tmc2209.currents:
+        id: my_stepper
+        run_current: 800mA
+        hold_current: 400mA
+```
+
+Configuration variables:
+
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the stepper.
+
+- **run_current** (*Optional*, current, [templatable](/automations/templates)): The motor current while running,
+  in A RMS. Cannot be used together with `irun`.
+
+- **irun** (*Optional*, int, [templatable](/automations/templates)): The run current as a raw driver value, `0` to
+  `31`. Cannot be used together with `run_current`.
+
+- **hold_current** (*Optional*, current, [templatable](/automations/templates)): The motor current at standstill,
+  in A RMS. Cannot be used together with `ihold`.
+
+- **ihold** (*Optional*, int, [templatable](/automations/templates)): The hold current as a raw driver value, `0`
+  to `31`. Cannot be used together with `hold_current`.
+
+- **iholddelay** (*Optional*, int, [templatable](/automations/templates)): How gradually the current is lowered
+  from the run current to the hold current, `0` to `15`. `0` switches at once.
+
+- **tpowerdown** (*Optional*, int, [templatable](/automations/templates)): The delay after the motor stops before
+  the current is lowered to the hold current, `0` to `255`. Each unit is $2^{18}$ clock cycles (about 22 ms at
+  12 MHz). The driver default is `20`.
+
+- **standstill_mode** (*Optional*, enum, [templatable](/automations/templates)): What the driver does at standstill
+  when the hold current is zero. Only works in StealthChop mode. One of:
+
+  - `normal`: Normal operation.
+  - `freewheeling`: The motor can turn freely.
+  - `coil_short_ls`: The coils are shorted through the low side switches (passive braking).
+  - `coil_short_hs`: The coils are shorted through the high side switches (passive braking).
+
+## See Also
+
+- [Stepper Component](/components/stepper/)
+- [UART Bus](/components/uart/)
+- <APIRef text="tmc2209.h" path="tmc2209/tmc2209.h" />
+- <APIRef text="tmc22xx.h" path="tmc22xx/tmc22xx.h" />
