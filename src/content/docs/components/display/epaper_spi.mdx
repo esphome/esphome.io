@@ -34,7 +34,7 @@ pins and dimensions specified.
 | JD79660                | Jadard       | [https://www.tdytech.com/en/](https://www.tdytech.com/en/) (B2B, see vendors instead) |
 | Spectra-E6             | Eink         | [https://www.eink.com/brand/detail/Spectra6](https://www.eink.com/brand/detail/Spectra6)       |
 | SSD1677                | Solomon      | [https://www.solomon-systech.com/product/ssd1677/](https://www.solomon-systech.com/product/ssd1677/) |
-| SSD1681                | Solomon      | [https://www.solomon-systech.com/product/ssd1681/](https://www.solomon-systech.com/product/ssd1681/) |
+| SSD1681                | Solomon      | [https://www.solomon-systech.com/product/ssd1681/](https://www.solomon-systech.com/product/ssd1681/) — 200x200 mono, supports partial refresh via `full_update_every` |
 | SSD1683                | Solomon      | [https://www.solomon-systech.com/product/ssd1683/](https://www.solomon-systech.com/product/ssd1683/) |
 | T133A01                | TianMa       | 13.3" 6-color e-paper controller IC with dual-CS SPI architecture          |
 | UC8179                 | UltraChip    | E-paper controller used by 800x480 7.5" panels (mono and 3-color variants) |
@@ -46,6 +46,7 @@ the pins used to interface to the display to be specified.
 
 | Display name              | Manufacturer        | Product Description                                |
 |---------------------------|---------------------|----------------------------------------------------|
+| GooDisplay-GDEY0154D67-1.54 | Dalian Good Display | 1.54" mono e-paper (200x200, SSD1681) [https://www.good-display.com/product/388.html](https://www.good-display.com/product/388.html) |
 | GooDisplay-GDEY042T81-4.2 | Dalian Good Display | [https://www.good-display.com/product/386.html](https://www.good-display.com/product/386.html) |
 | Waveshare-1.54in-G        | Waveshare           | [https://www.waveshare.com/1.54inch-e-paper-g.htm](https://www.waveshare.com/1.54inch-e-paper-g.htm) |
 | Waveshare-1.54in-v2       | Waveshare           | 1.54" V2 mono e-paper (200x200, SSD1681) [https://www.waveshare.com/1.54inch-e-paper-module.htm](https://www.waveshare.com/1.54inch-e-paper-module.htm) |
@@ -167,6 +168,28 @@ display:
     full_update_every: 30
     lambda: |-
       it.filled_circle(it.get_width() / 2, it.get_height() / 2, 50, Color::BLACK);
+```
+
+### Partial refresh example (1.54" SSD1681 panels)
+
+The 200x200 panels based on the SSD1681 (`Waveshare-1.54in-v2`, `GooDisplay-GDEY0154D67-1.54`, or `SSD1681` for
+another panel of that size) support partial refresh. Set `full_update_every` greater than `1` to enable it: only the
+pixels that changed since the previous update are driven, so a partial refresh is quick and does not flash the
+panel. While partial refresh is in use the panel is kept powered between updates; the full refresh every
+`full_update_every` updates clears any residue.
+
+```yaml
+display:
+  - platform: epaper_spi
+    model: Waveshare-1.54in-v2
+    cs_pin: GPIOXX
+    dc_pin: GPIOXX
+    reset_pin: GPIOXX
+    busy_pin: GPIOXX
+    update_interval: 60s
+    full_update_every: 20
+    lambda: |-
+      it.strftime(0, 0, id(my_font), Color::BLACK, "%H:%M", id(my_time).now());
 ```
 
 ### Four-Level Grayscale (reTerminal Sticky)
