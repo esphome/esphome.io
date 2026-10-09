@@ -70,6 +70,13 @@ sensor:
 - **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to check the
   sensor. Defaults to `60s`.
 
+> [!NOTE]
+> The pressure sensor publishes values in **pascals (Pa)**. Most other ESPHome pressure sensors publish
+> hectopascals (hPa), so a `multiply: 0.01` [filter](/components/sensor#sensor-filters) is required when feeding
+> this sensor to something that expects hPa. One example is the [SCD4x](/components/sensor/scd4x) component's
+> `ambient_pressure_compensation_source`, which expects hPa and will report incorrect CO₂ values if given pascals.
+> Set `unit_of_measurement: hPa` on the sensor as well, so the converted value is recorded under the correct unit.
+
 ### I²C
 
 - **address** (*Optional*, int): Manually specify the I²C address of the sensor.
