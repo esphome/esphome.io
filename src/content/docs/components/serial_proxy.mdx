@@ -38,6 +38,8 @@ serial_proxy:
   - `TTL`: Standard TTL logic-level UART (3.3V or 5V). Typically used for direct connections to most microcontrollers.
   - `RS232`: RS-232 standard serial port (typically ±12V levels via an appropriate line-driver IC). Typically used for PC-style serial connections, often with a DB9-type connector.
   - `RS485`: RS-485 differential serial bus. Typically used for industrial/multi-drop serial networks.
+  - `USB_SERIAL`: A serial device attached through a USB bridge. Requires `uart_id` to refer to a
+    [USB UART](/components/usb_uart/) channel.
 - **rts_pin** (*Optional*, [Pin](/guides/configuration-types#pin)): GPIO pin to use as the RTS (Request to Send)
   modem control output. The state of this pin may be controlled by the API client at runtime.
 - **dtr_pin** (*Optional*, [Pin](/guides/configuration-types#pin)): GPIO pin to use as the DTR (Data Terminal Ready)
@@ -48,7 +50,12 @@ serial_proxy:
 An API client uses a port by subscribing to it. A port has one subscriber at a time, and only the subscribed client
 can use it. Once subscribed, the client can:
 
-- **Send data** to the serial device by writing bytes through the API.
+- **Send data** to the serial device by writing bytes through the API. Writes are not flow-controlled: bytes the
+  UART cannot buffer stall the device until they have gone out on the wire. The proxy lets such stalls add up to
+  one second per pass of the main loop. A write that would go past that is cut to what the UART can buffer right
+  now; the rest is discarded without telling the client, and a warning is logged on the device. To avoid this, set
+  the [UART](/components/uart/)'s `tx_buffer_size` (ESP32 only) to the largest block a client writes at once. This
+  matters most at low baud rates, where even a few hundred bytes take seconds to send.
 - **Receive data** from the serial device — data arriving on the UART is forwarded to the client automatically each
   loop iteration (up to 256 bytes at a time).
 - **Reconfigure the UART** at runtime — the API client may change the baud rate, data bits, stop bits, and parity
@@ -64,6 +71,12 @@ can use it. Once subscribed, the client can:
   component authors (see `SerialProxyTap` in <APIRef text="serial_proxy.h" path="serial_proxy/serial_proxy.h" />).
   On a port without such a component, a request to switch to `PROTOCOL` mode is refused and the port stays in `RAW`
   mode.
+
+A client can also subscribe to the identity of every port, without subscribing to the ports themselves. For a port
+whose `uart_id` refers to a [USB UART](/components/usb_uart/) channel, the identity holds the vendor and product
+IDs, the manufacturer, product and serial number strings and the interface number of the attached USB device, much
+like a `/dev/serial/by-id` name on Linux. The client gets the identity of every port when it subscribes, and an
+update whenever a USB device is attached or removed, so it can find a device by identity rather than by port number.
 
 ## Full Example
 
@@ -98,6 +111,7 @@ serial_proxy:
 ## See Also
 
 - [UART Bus](/components/uart/)
+- [USB UART](/components/usb_uart/)
 - [Native API Component](/components/api/)
 - [aioesphomeapi](https://github.com/esphome/aioesphomeapi) — Python library implementing the ESPHome native API
 - <APIRef text="serial_proxy.h" path="serial_proxy/serial_proxy.h" />

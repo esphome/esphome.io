@@ -11,6 +11,12 @@ thermometers broadcasting in [BTHome](https://bthome.io/) v2 format — that is,
 advertisement type. The component listens passively to the advertisements, so it does not pair with
 the device and has no impact on its battery life.
 
+Other BTHome v2 thermometers work too, as long as they send temperature and humidity in one of the
+standard formats the component decodes: temperature in 0.01 °C (object `0x02`, PVVX) or 0.1 °C
+(object `0x45`), humidity in 0.01 % (object `0x03`, PVVX) or 1 % (object `0x2E`). Each object is
+decoded on its own, so any combination works. The Shelly BLU H&T, for example, sends temperature as
+`0x45` and humidity as `0x2E`.
+
 It requires a BLE tracker, for example the [ESP32 BLE Tracker](/components/esp32_ble_tracker), to
 receive the advertisements.
 

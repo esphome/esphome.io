@@ -11,6 +11,7 @@ via [Speaker](/components/speaker/) or [Media Player](/components/media_player/)
 Supported models:
 
 - `tas5805m`: TAS5805M
+- `tas5825m`: TAS5825M
 
 The [I²C bus](/components/i2c/) is required in your configuration as this is used to configure the amplifier and
 read its fault status. Audio data is delivered via I²S, for example with the
@@ -54,7 +55,7 @@ audio_dac:
 - **volume_max_db** (*Optional*, dB): The digital volume that maps to the maximum volume (100%). Must be greater than
   `volume_min_db`. Range: `-103dB` to `24dB`. Defaults to `24dB`.
 - **address** (*Optional*, int): The I²C address of the amplifier. The address is selected with a resistor on the
-  `ADR` pin (see the datasheet). Defaults to `0x2D`.
+  `ADR` pin (see the datasheet). Defaults to `0x2D` for `tas5805m` and `0x4C` for `tas5825m`.
 - **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): How often the fault and power state
   registers are read. Defaults to `1s`.
 - **i2c_id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the [I²C bus](/components/i2c/) the
@@ -134,20 +135,34 @@ binary_sensor:
 
 - **tas58xx_id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the `tas58xx` platform. Required
   when more than one amplifier is configured.
-- **have_fault** (*Optional*): `ON` when any of the faults below is present, except `clock_fault` and
-  `over_temp_warning`.
+- **have_fault** (*Optional*): `ON` when any of the faults below is present, except `clock_fault` and the warnings
+  (`over_temp_warning`, `over_temp_146c_warning`, `left_channel_cbc_over_current_warning` and
+  `right_channel_cbc_over_current_warning`).
 - **left_channel_dc_fault** (*Optional*): DC offset detected on the left output.
 - **right_channel_dc_fault** (*Optional*): DC offset detected on the right output.
 - **left_channel_over_current** (*Optional*): Over current on the left output.
 - **right_channel_over_current** (*Optional*): Over current on the right output.
+- **left_channel_cbc_over_current** (*Optional*): Cycle-by-cycle over current on the left output.
+  Only available on TAS5825M.
+- **right_channel_cbc_over_current** (*Optional*): Cycle-by-cycle over current on the right output.
+  Only available on TAS5825M.
 - **pvdd_over_voltage** (*Optional*): PVDD supply voltage too high.
 - **pvdd_under_voltage** (*Optional*): PVDD supply voltage too low.
 - **over_temp_shutdown** (*Optional*): The device shut down because it is too hot.
+- **left_channel_cbc_over_current_warning** (*Optional*): Cycle-by-cycle current on the left output is close to the
+  fault threshold. Logged as a warning. Only available on TAS5825M.
+- **right_channel_cbc_over_current_warning** (*Optional*): Cycle-by-cycle current on the right output is close to the
+  fault threshold. Logged as a warning. Only available on TAS5825M.
+- **over_temp_146c_warning** (*Optional*): The device temperature has reached 146°C. Logged as a warning.
+  Only available on TAS5825M.
 - **over_temp_warning** (*Optional*): The device temperature is close to the shutdown threshold. Logged as a warning.
 - **otp_crc_check** (*Optional*): The CRC check of the internal OTP memory failed.
 - **bq_write_failed** (*Optional*): Writing the biquad filter coefficients failed.
+- **load_eeprom_error** (*Optional*): Loading from EEPROM at boot failed. Only available on TAS5825M.
 - **clock_fault** (*Optional*): The I²S clock is missing or invalid. This is normal whenever no audio is playing,
   so it is not logged and not included in `have_fault`.
+
+A sensor marked as only available on TAS5825M fails validation when the amplifier is `model: tas5805m`.
 
 All sensors accept the options from [Binary Sensor](/components/binary_sensor/). They default to the `problem` device
 class and the `diagnostic` entity category.
@@ -212,3 +227,4 @@ media_player:
 - <APIRef text="tas58xx.h" path="tas58xx/tas58xx.h" />
 - <APIRef text="audio_dac.h" path="audio_dac/audio_dac.h" />
 - [TAS5805M datasheet (Texas Instruments)](https://www.ti.com/product/TAS5805M)
+- [TAS5825M datasheet (Texas Instruments)](https://www.ti.com/product/TAS5825M)
