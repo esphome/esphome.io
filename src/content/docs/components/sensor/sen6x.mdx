@@ -169,6 +169,44 @@ sensor:
 > [!NOTE]
 > The sensor needs about a minute "warm-up". The VOC and NOx gas index algorithm needs a
 > number of samples before the values stabilize.
+## Binary Sensor
+
+The `sen6x` binary sensor platform exposes the device status register as diagnostic entities. The register is
+read and cleared once per update cycle, so each entity reports whether a problem occurred since the last update.
+
+```yaml
+binary_sensor:
+  - platform: sen6x
+    fan_error:
+      name: Fan Error
+    fan_speed_warning:
+      name: Fan Speed Warning
+    rht_error:
+      name: RH/T Error
+    gas_error:
+      name: Gas Error
+    co2_error:
+      name: CO2 Error
+    hcho_error:
+      name: HCHO Error
+    pm_error:
+      name: PM Error
+```
+
+### Configuration variables
+
+- **sen6x_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the sen6x sensor component.
+- **fan_error** (*Optional*): The fan is switched on but not spinning.
+- **fan_speed_warning** (*Optional*): The fan speed is more than 10% off target. Not latched; clears by itself.
+- **rht_error** (*Optional*): Error in the relative humidity and temperature sensor.
+- **gas_error** (*Optional*): Error in the VOC/NOx gas sensor. Only available with SEN65, SEN66, SEN68 or SEN69C.
+- **co2_error** (*Optional*): Error in the CO₂ sensor. Only available with SEN63C, SEN66 or SEN69C.
+- **hcho_error** (*Optional*): Error in the formaldehyde sensor. Only available with SEN68 or SEN69C.
+- **pm_error** (*Optional*): Error in the particulate matter sensor.
+
+All entities support all options from [Binary Sensor](/components/binary_sensor). Entities not supported by the
+detected model are ignored with an error in the log.
+
 
 ## Wiring
 
