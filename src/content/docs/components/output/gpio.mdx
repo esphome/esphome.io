@@ -23,6 +23,12 @@ output:
 - **id** (**Required**, [ID](/guides/configuration-types#id)): The id to use for this output component.
 - All other options from [Output](/components/output#config-output).
 
+> [!NOTE]
+> With `hold_state: true` on the pin, an ESP32 keeps the output level through deep sleep and reboots. Components such
+> as lights write their state again on boot through `restore_mode`, so nothing more is needed. An output driven only
+> by automations or lambdas is not written until the next action, so set it in `on_boot` if it needs a known level.
+> If the output has a [Power Supply](/components/power_supply/), enable `hold_state` on the power supply pin as well.
+
 > [!WARNING]
 > This is an **output component** and will not be visible from the frontend. Output components are intermediary
 > components that can be attached to for example lights. To have a GPIO pin in the Home Assistant frontend, please
