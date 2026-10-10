@@ -13,18 +13,19 @@ Only one TCP connection is open at a time. When `role` is `server`, a new client
 connection is closed.
 
 > [!WARNING]
-> The connection is plain TCP with no encryption and no authentication; `allowed_ips` filters by address but
-> does not authenticate the peer. If it is omitted, any host that can reach the port is accepted, and the
-> first client to connect is the one that is served. Only use this component on a trusted network.
+> Without `encryption`, the connection is plain TCP with no encryption and no authentication; only use it on a
+> trusted network. `allowed_ips` filters by address but does not authenticate the peer. If it is omitted, any host
+> that can reach the port is accepted, and the first client to connect is the one that is served. With
+> `encryption`, a host without the key still holds the server until its handshake fails or times out.
 
 > [!NOTE]
-> While no connection is open, bytes from the UART are discarded; a fast peer is throttled by TCP flow
-> control instead of blocking the device.
+> While no connection is open or, with `encryption`, until the handshake has succeeded, bytes from the UART are
+> discarded; a fast peer is throttled by TCP flow control instead of blocking the device.
 
 > [!NOTE]
 > Baud rate, data bits, parity and stop bits are set on the UART bus. They are not options of this component.
 
-This is not Modbus TCP. The bytes on the socket are the UART bytes, unchanged.
+This is not Modbus TCP. Without `encryption`, the bytes on the socket are the UART bytes, unchanged.
 
 The examples assume a [UART bus](/components/uart/) with the id `uart_bus` is configured.
 
@@ -68,12 +69,31 @@ uart_tcp:
   the option is omitted, every address may connect. A rejected client is closed immediately and logged as a
   warning at most once every 5 seconds; an IPv6 client is rejected unless it carries an IPv4 mapped address, as
   on a dual stack network. This option cannot be used when `role` is `client`.
+- **timeout** (*Optional*, [Time](/guides/configuration-types#time)): Close the connection when no byte has
+  been sent or received for this long. Time is counted from the last byte, or from when the connection opened.
+  `0s` turns the timeout off and leaves the connection open; any other value must be at least the main loop
+  interval ([`loop_interval`](/components/esphome#configuration-variables), `16ms` by default). Defaults to `0s`.
+  A UART that cannot take more bytes also counts as traffic, so the connection stays up while bytes are waiting for
+  the bus even if the peer has stopped. On a client, the next connection waits for `reconnect_interval`. On a
+  server, the next client is accepted as soon as this connection is closed.
+- **encryption** (*Optional*): Encrypt the connection with a key that both ends hold. The other end must be an
+  ESPHome [TCP UART](/components/tcp_uart/) or UART TCP with the same key, so other programs cannot connect. A
+  connection whose handshake fails or does not finish within 60 seconds is closed and logged. After a failed
+  handshake, a client waits `reconnect_interval` before it tries again, then twice as long after each further
+  failure, up to 5 minutes; each wait varies at random by up to 20%. A successful handshake starts over at
+  `reconnect_interval`.
+  - **key** (**Required**, string): A base64 encoded 32-byte key, for example from `openssl rand -base64 32`. It must
+    differ from the [API](/components/api/) and [OTA](/components/ota/esphome/) encryption keys, because the other
+    device holds this key too; a configuration with an equal key is rejected. A key the API gets at runtime is not
+    checked.
 - **reconnect_interval** (*Optional*, [Time](/guides/configuration-types#time)): The time to wait before trying
   again after a failure. An unanswered connection attempt is given up after `reconnect_interval` or 10 seconds,
   whichever is longer. Defaults to `5s`.
-- **connected** (*Optional*): A binary sensor that reports whether the TCP connection is established. All options
+- **connected** (*Optional*): A binary sensor that reports whether the TCP connection is established, with
+  `encryption` once the handshake has succeeded. All options
   from [Binary Sensor](/components/binary_sensor#config-binary_sensor) are supported.
-- **disconnects** (*Optional*): A sensor that counts how many times an open connection has closed. It starts at
+- **disconnects** (*Optional*): A sensor that counts how many times an open connection, with `encryption` one whose
+  handshake succeeded, has closed. It starts at
   `0` on boot and does not increase again while the connection stays down. All options from
   [Sensor](/components/sensor#config-sensor) are supported.
 
