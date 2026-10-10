@@ -109,6 +109,11 @@ ESP8266 has a more limited selection of pins that can be used; check the datashe
 
 Quad and octal modes requires a hardware interface, so `software` and `any` are not permitted values.
 
+nRF52 boards have a single user-accessible hardware controller (`spi`/`spi2`, backed by Zephyr's SPIM2 peripheral),
+selected the same way as on other platforms with `interface: any`, `hardware` or `spi2`. Only one hardware SPI bus
+is supported per device; a second `spi:` instance must set `interface: software` explicitly, or configuration
+fails with an error.
+
 ## Generic SPI device component
 
 <span id="spi_device"></span>
@@ -174,6 +179,7 @@ be achieved by division from the SPI clock source. Clock source frequencies are:
 | ESP32    | 80MHz        |
 | ESP8266  | 40MHz        |
 | RP2040   | 62.5MHz      |
+| nRF52    | 8MHz         |
 
 The requested rate must be able to be generated from the clock source with integer division, with a 5% error allowed.
 
