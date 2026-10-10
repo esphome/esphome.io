@@ -70,6 +70,13 @@ The connecting client sends raw bytes, for example RTU frames for `modbus`, not 
   the option is omitted, every address may connect. A rejected client is closed immediately and logged as a
   warning at most once every 5 seconds; an IPv6 client is rejected unless it carries an IPv4 mapped address, as
   on a dual stack network. This option cannot be used when `role` is `client`.
+- **timeout** (*Optional*, [Time](/guides/configuration-types#time)): Close the connection when no byte has
+  been sent or received for this long. Time is counted from the last byte, or from when the connection opened.
+  `0s` turns the timeout off and leaves the connection open; any other value must be at least the main loop
+  interval ([`loop_interval`](/components/esphome#configuration-variables), `16ms` by default). Defaults to `0s`.
+  A full receive buffer also counts as traffic, so the connection stays up while bytes are waiting here even if the
+  peer has stopped. On a client, the next connection waits for `reconnect_interval`. On a server, the next client
+  is accepted as soon as this connection is closed.
 - **baud_rate** (*Optional*, int): The baud rate reported to consuming components. The socket itself has no clock;
   components such as `modbus` read this value for their frame timing. Defaults to `9600`.
 - **data_bits** (*Optional*, int): The number of data bits reported to consuming components. Defaults to `8`.
