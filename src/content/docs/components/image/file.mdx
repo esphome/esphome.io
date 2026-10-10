@@ -50,6 +50,12 @@ image:
   - `GRAYSCALE`  : Full scale grey. Uses 8 bits per pixel, 1 pixel per byte.
   - `RGB565`  : Lossy RGB color stored. Uses 2 bytes per pixel, 3 with an alpha channel.
   - `RGB`  : Full RGB color stored. Uses 3 bytes per pixel, 4 with an alpha channel.
+  - `AUTO` : Selects `RGB565` or `RGB` for a target display at build time. See
+    [Automatic Image Encoding](#automatic-image-encoding).
+
+- **target_display** (*Optional*, [ID](/guides/configuration-types/#id)): The display whose output format is used
+  for `type: AUTO`. Required when more than one display is configured. With exactly one display it may be omitted.
+  This option is not valid with explicit image types.
 
 - **transparency** (*Optional*): If set the alpha channel of the input image will be taken into account. The possible
   values are `opaque` (default), `chroma_key` and `alpha_channel`. Binary images do not support `alpha_channel`. See
@@ -65,6 +71,40 @@ image:
   but you can override this by setting `byte_order` to `big_endian`. Options are `little_endian` (default) and `big_endian`.
   Not applicable to other image formats.
   Images used in displays and LVGL are expected to be in little endian format.
+
+## Automatic Image Encoding
+
+Use `type: AUTO` to keep a full-color source file and encode it for the selected display when compiling. The
+`target_display` refers to an existing [display](/components/display/) configuration:
+
+```yaml
+image:
+  - platform: file
+    id: background
+    file: background.png
+    type: AUTO
+    target_display: my_display
+```
+
+For a target driven by [LVGL](/components/lvgl/), AUTO selects `RGB565` with `lvgl.color_depth: 16` and `RGB` with
+`lvgl.color_depth: 24`. Without LVGL, it uses the driver's declared native color depth. If that depth is unknown,
+validation asks you to select an explicit `RGB565` or `RGB` type. A missing or ambiguous target is also a
+configuration error.
+
+The build computer performs the conversion; the device does not keep a second full-color source for this purpose.
+Changing the target depth and rebuilding regenerates the embedded data. AUTO does not change the source file.
+It works with local files, files downloaded during the build, SVGs and
+[file-backed animations](/components/image/animation/). It is not available for runtime image platforms such as
+`online_image` or `sendspin`, whose content is not known at build time.
+
+Use `transparency: alpha_channel` to retain alpha in either format. Blending against the current background still
+happens on the device. Omit `byte_order` when the same AUTO configuration should support both depths: RGB565 defaults
+to little-endian storage, while RGB rejects the byte-order option.
+
+`target_display` selects the embedded format; it does not restrict where an image can be drawn. To embed one source
+in two formats, define two image IDs with different targets. Existing explicit types keep their meaning: `type: RGB`
+always stores full-color pixels and is not automatically reduced when used with a 16-bit display. AUTO can also be
+set in [shared defaults](/components/image/#setting-defaults).
 
 ## Typed Sources
 
