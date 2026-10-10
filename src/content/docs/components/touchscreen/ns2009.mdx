@@ -1,0 +1,45 @@
+---
+description: "Instructions for setting up NS2009 touch screen controller with ESPHome"
+title: "NS2009 Touch Screen Controller"
+---
+
+import Figure from '@components/Figure.astro';
+import APIRef from '@components/APIRef.astro';
+
+The `ns2009` touchscreen platform allows using the touch screen controllers based on the NS2009 chip with ESPHome.
+The [I²C bus](/components/i2c/) is required to be set up in your configuration for this touchscreen to work.
+
+This controller is used in the Olimex MOD-LCD2.8RTP.
+
+<Figure
+  src="/images/mod-lcd2.8rtp.jpg"
+  alt="Olimex MOD-LCD2.8RTP display with NS2009 touchscreen"
+  caption="NS2009 touchscreen on Olimex MOD-LCD2.8RTP"
+  layout="constrained"
+  width={200}
+  height={200}
+/>
+
+```yaml
+# Example configuration entry
+touchscreen:
+  id: my_touchscreen
+  platform: ns2009
+  calibration:
+    x_min: 400
+    x_max: 3700
+    y_min: 300
+    y_max: 3700
+```
+
+## Configuration Variables
+
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually set the ID of this touchscreen.
+- **threshold** (*Optional*, int): The pressure it takes for a touch to register. Range: `0` - `255`, defaults to `40`.
+- **address** (*Optional*, int): The I²C address of this touchscreen, defaults to `0x48`.
+
+- All other options from [Touchscreen](/components/touchscreen/#config-touchscreen).
+
+## See Also
+
+- <APIRef text="ns2009.h" path="ns2009/touchscreen/ns2009.h" />
