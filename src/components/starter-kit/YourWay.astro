@@ -1,0 +1,164 @@
+---
+import CardGroup from "@components/CardGroup.astro";
+import Card from "@components/Card.astro";
+import IconText from "@components/IconText.astro";
+
+import TitleText from "@components/starter-kit/TitleText.astro";
+---
+
+<section id="features" class="block-your-way">
+  <TitleText>
+    <h2 slot="title" class="title">Your smart home, your way</h2>
+    <p slot="text">
+      The ESPHome Starter Kit equips you with the tools, skills, and confidence to stop just using smart home tech and
+      start creating it, in three simple steps.
+    </p>
+  </TitleText>
+
+  <CardGroup columns={3} gap="24px">
+    <Card line>
+      <IconText animated="build" />
+      <h3>Build.</h3>
+      <p>
+        Go straight to the fun part with foolproof, solder-free assembly – everything works out of the box via an easy
+        plug-and-play system.
+      </p>
+    </Card>
+    <Card line data-delay="150">
+      <IconText animated="learn" delay="0.5s" />
+      <h3>Learn.</h3>
+      <p>
+        Real skills, not shortcuts: we simplify getting started, but you'll gain knowledge to tackle more complex
+        projects with ESPHome.
+      </p>
+    </Card>
+    <Card data-delay="300">
+      <IconText animated="automate" delay="1s" />
+      <h3>Automate.</h3>
+      <p>
+        Create automations for the devices you build, and easily add them to your existing smart home setup to suit your
+        lifestyle.
+      </p>
+    </Card>
+  </CardGroup>
+</section>
+
+<script>
+  const group = document.querySelector(".block-your-way .card-group");
+  if (group) {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          group.classList.add("in-view");
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.2 },
+    );
+    observer.observe(group);
+  }
+</script>
+
+<style lang="scss">
+  @use "../../styles/mixins" as *;
+
+  $line-length: 36;
+  $line-duration: 0.7s;
+  $dot-delay: 0.7s;
+  $dot-duration: 0.3s;
+  $pulse-delay: 0.85s;
+  $pulse-duration: 0.7s;
+
+  .card-connector {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 60px;
+
+    @include bp(tablet) {
+      height: auto;
+    }
+  }
+
+  .connector-v {
+    display: block;
+    width: 24px;
+    height: 60px;
+
+    @include bp(tablet) {
+      display: none;
+    }
+  }
+
+  .connector-h {
+    display: none;
+
+    @include bp(tablet) {
+      display: block;
+      width: 60px;
+      height: 24px;
+    }
+  }
+
+  /* Default: line fully drawn, dots visible, pulse hidden */
+  .connector-line {
+    stroke-dasharray: #{$line-length};
+    stroke-dashoffset: 0;
+  }
+
+  .connector-pulse {
+    transform-box: fill-box;
+    transform-origin: center;
+    opacity: 0;
+  }
+
+  /* Animations triggered when IntersectionObserver adds .in-view */
+  :global(.card-group.in-view) .connector-line {
+    animation: yw-line-draw $line-duration ease-out;
+  }
+
+  :global(.card-group.in-view) .dot-dest {
+    animation: yw-dot-appear $dot-duration ease-out $dot-delay backwards;
+  }
+
+  :global(.card-group.in-view) .connector-pulse {
+    animation: yw-pulse $pulse-duration ease-out $pulse-delay forwards;
+  }
+
+  @keyframes yw-line-draw {
+    from {
+      stroke-dashoffset: #{$line-length};
+    }
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+
+  @keyframes yw-dot-appear {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes yw-pulse {
+    0% {
+      transform: scale(0.4);
+      opacity: 0.7;
+    }
+    100% {
+      transform: scale(3);
+      opacity: 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    :global(.card-group.in-view) .connector-line,
+    :global(.card-group.in-view) .dot-dest,
+    :global(.card-group.in-view) .connector-pulse {
+      animation: none;
+    }
+  }
+</style>

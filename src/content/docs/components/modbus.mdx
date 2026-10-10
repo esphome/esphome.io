@@ -9,7 +9,7 @@ import APIRef from '@components/APIRef.astro';
 <span id="modbus"></span>
 
 The Modbus protocol is used by many consumer and industrial devices for communication.
-This component allows components in ESPHome to communicate to those devices via RTU protocol. You can access the coils, inputs, holding, read registers from your devices as sensors, switches, selects, numbers or various other ESPHome components and present them to your favorite Home Automation system. You can even write them as binary or float outputs from ESPHome.
+This component allows components in ESPHome to communicate to those devices via RTU protocol. You can access the coils, discrete inputs, holding registers and input registers from your devices as sensors, switches, selects, numbers or various other ESPHome components and present them to your favorite Home Automation system. You can even write them as binary or float outputs from ESPHome.
 
 > [!NOTE]
 > This page is the starting point for everything Modbus in ESPHome, including hardware setup. See
@@ -31,8 +31,9 @@ The various sub-components implement some of the Modbus functions below (dependi
 | 16 | Write Multiple Registers |
 | 23 | Read/Write Multiple Registers |
 
-Function code 23 (`0x17`) is implemented for the `server` role only; see
-[Read/Write Multiple Registers](/components/modbus_server/#readwrite-multiple-registers-function-code-0x17).
+Function code 23 (`0x17`, Read/Write Multiple Registers) is available in both roles - as a client action
+([`modbus_client.read_write_multiple_registers`](/components/modbus_client/)) and as a server handler
+([Read/Write Multiple Registers](/components/modbus_server/#readwrite-multiple-registers-function-code-0x17)).
 
 Modbus RTU requires a [UART Bus](/components/uart) to communicate.
 
@@ -86,6 +87,42 @@ increase it.
 
 Reducing `send_wait_time` generally does not impact performance at all, unless you have devices that are physically
 offline. When all devices are responding, `send_wait_time` does nothing.
+
+### Reducing CPU Load at High Baud Rates
+
+Modbus RTU requires a silent gap between frames. Above 19200 baud the specification fixes that gap at 1.75 ms, which
+is far longer than the frames themselves, so at high baud rates the bus spends most of its time waiting. The component
+waits out the remainder of that gap before it transmits, and the last part of the wait is spent busy-waiting so the
+gap is met precisely.
+
+On ESP32, increasing [`rx_timeout`](/components/uart/#configuration-variables) on the
+[UART Component](/components/uart/) moves more of that waiting into the UART hardware. A larger value means the UART
+waits longer after the last byte before it declares a frame complete and hands it over, so the component is notified
+later and has less of the gap left to wait out itself. Throughput is unaffected, because the gap is measured from the
+last byte on the wire rather than from the moment the frame was handed over.
+
+`rx_timeout` is counted in bytes, not in time: one unit is however long a byte takes to send at your baud rate, which
+is roughly ten bit times. At 115200 baud a byte is about 87 us, so the default of `2` is about 174 us and the 1.75 ms
+gap is about twenty.
+
+On a bus running at 115200 baud, raising `rx_timeout` from the default of `2` to `15` can reduce the time the
+`modbus` component spends in each loop from around 1.67 ms to 0.43 ms, without affecting throughput. The CPU freed
+this way is available to WiFi and the rest of your configuration.
+
+The saving is per transaction, so it only adds up if you are already pushing throughput: `turnaround_time` reduced
+to `0` and devices polled as fast as they will answer. With the default `turnaround_time` the bus is idle most of the
+time and there is little to reclaim.
+
+There is a limit: if the value is so large that the frame is handed over too late for the component to process it and
+transmit within the remaining gap, throughput starts to fall. Staying under about three quarters of the gap leaves
+enough room, which is around `15` at 115200 baud. At 19200 baud and below the gap scales with the baud rate rather
+than being fixed, so it is only 3.5 bytes wide and the default of `2` already covers more than half of it: there is
+little left to reclaim and no room to raise it.
+
+> [!WARNING]
+> A large `rx_timeout` also means the UART waits longer before deciding that a frame has ended, so anything arriving
+> in that window is handed over as a single block. That makes it harder to recover cleanly from line noise, and
+> setting it too large may lead to problems parsing frames; reduce it again if you see them.
 
 ## Hardware setup
 

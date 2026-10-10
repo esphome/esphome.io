@@ -31,13 +31,14 @@ bluetooth_proxy:
   Defaults to `true` on ESP32 and RP2040/RP2350. On advertisement-only platforms it defaults to
   `false` and enabling it fails validation — see [Platform Support](#platform-support).
   RP2040/RP2350 proxies were advertisement only before active connection support landed, so
-  existing Pico W configurations that omit this option will gain a connection slot on their next
+  existing Pico W configurations that omit this option will gain connection slots on their next
   update; set `active: false` to keep an advertisement-only proxy.
 - **cache_services** (*Optional*, boolean): ESP32 only; setting it on any other platform is a
   configuration error. Enables caching GATT services in NVS flash storage which significantly
   speeds up active connections. Defaults to `true`.
 - **connection_slots** (*Optional*, int): ESP32 and RP2040/RP2350. The maximum number of BLE
-  connection slots to use. On RP2040/RP2350 the maximum and default are both `1`. On ESP32, each
+  connection slots to use. On RP2040/RP2350 the maximum and default are both `3`; three slots use
+  about 17KB more static RAM than a single-slot build. On ESP32, each
   configured slot consumes ~1KB of RAM, with a maximum of `9`; it is recommended not to exceed `5`
   connection slots to avoid stability and memory issues. The ESP32 default is `3`. Ethernet-based
   proxies can generally handle `4` slots reliably. The value must not exceed the total configured
@@ -53,8 +54,8 @@ configuration: [ESP32 BLE Tracker](/components/esp32_ble_tracker/) on ESP32, the
 The Bluetooth proxy provides Home Assistant with a limited number of simultaneous active GATT connections
 (configured via `connection_slots`). On ESP32 the default is 3 slots; Ethernet-based proxies can generally
 handle 4 slots reliably since they don't share the radio with WiFi traffic, so set `connection_slots: 4`
-there if you need more connections (each slot uses additional RAM). RP2040/RP2350 proxies always have a
-single slot.
+there if you need more connections (each slot uses additional RAM). RP2040/RP2350 proxies also default
+to 3 slots, which is the platform maximum; lower `connection_slots` (`1` or `2`) to reclaim static RAM.
 
 Devices that stay connected continuously (like some locks or thermostats) use one slot the entire time.
 Devices that connect briefly to exchange data and then disconnect (like many sensors) free up the slot
@@ -76,9 +77,8 @@ the controller can do beyond scanning:
   and write GATT characteristics through the device (`active: true`, `connection_slots`); requires
   the [ESP32 BLE Tracker](/components/esp32_ble_tracker/) component.
 - **RP2040/RP2350 (Raspberry Pi Pico W family)** — the full proxy, with active connections through
-  the framework's prebuilt BTstack GATT client; requires the
-  [RP2 BLE Tracker](/components/rp2_ble_tracker/) component. That library supports one
-  concurrent GATT connection, so `connection_slots` is limited to `1`.
+  the framework's BTstack GATT client; requires the [RP2 BLE Tracker](/components/rp2_ble_tracker/)
+  component. Up to `3` concurrent GATT connections are supported, matching the ESP32 default.
 - **BK72xx and LN882x** — **advertisement-only**. These controllers do not expose the GATT client
   the proxy needs for connections, so Home Assistant uses the device for advertisements only and
   will not route connections through it; requires the

@@ -36,6 +36,10 @@ remote_transmitter:
 
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation. Useful when multiple
   transmitters are connected to a single device.
+- **non_blocking** (*Optional*, boolean): If enabled, transmissions return immediately and complete in the
+  background; the `on_complete` automation triggers once the transmission finishes. Only available on ESP32
+  variants with RMT hardware, where it defaults to `true`, and on RTL8720C and BK7238, where it defaults
+  to `false`.
 
 ### ESP32 RMT configuration variables
 
@@ -60,8 +64,6 @@ remote_transmitter:
 | ESP32-S3      | 192 symbols      | 48 symbols |
 
 - **clock_resolution** (*Optional*, int): The clock resolution used by the RMT peripheral in Hz. Defaults to `1000000`.
-- **non_blocking** (*Optional*, boolean): If enabled, any transmit will return immediately and the RMT will run in the
-  background. The `on_complete` automation will trigger after the transmit completes. Defaults to `true`.
 - **use_dma** (*Optional*, boolean): Enable DMA on variants that support it. If enabled `rmt_symbols` controls
   the DMA buffer size and can be set to a large value.
 
@@ -462,6 +464,31 @@ on_...:
 
   - All other options from [Remote Transmitter Actions](#remote_transmitter-transmit_action).
 
+<span id="remote_transmitter-transmit_hob2hood"></span>
+
+### `remote_transmitter.transmit_hob2hood` Action
+
+This [action](/automations/actions#all-actions) sends a Hob2Hood infrared remote code to a remote transmitter.
+
+```yaml
+on_...:
+  - remote_transmitter.transmit_hob2hood:
+      command: light_on
+```
+
+#### Configuration variables
+
+- **command** (**Required**, enum, [templatable](/automations/templates)): The Hob2Hood command to send,
+  see dumper output for more info.
+  - `light_off`
+  - `light_on`
+  - `fan_off`
+  - `fan_low`
+  - `fan_medium`
+  - `fan_high`
+  - `fan_max`
+- All other options from [Remote Transmitter Actions](#remote_transmitter-transmit_action).
+
 <span id="remote_transmitter-transmit_jvc"></span>
 
 ### `remote_transmitter.transmit_jvc` Action
@@ -642,6 +669,42 @@ on_...:
 - **channel** (**Required**, int, [templatable](/automations/templates)): The Nexa channel code to send, see dumper output for more info.
 - **level** (**Required**, int, [templatable](/automations/templates)): The Nexa level code to send, see dumper output for more info.
 - All other options from [Remote Transmitter Actions](#remote_transmitter-transmit_action).
+
+<span id="remote_transmitter-transmit_onkyori"></span>
+
+### `remote_transmitter.transmit_onkyori` Action
+
+This [action](/automations/actions#all-actions) sends an Onkyo RI remote code to a remote transmitter.
+
+```yaml
+on_...:
+  - remote_transmitter.transmit_onkyori:
+      data: 0xD9 # A-9050 power on; codes differ between models
+```
+
+#### Configuration variables
+
+- **data** (**Required**, int, [templatable](/automations/templates)): The Onkyo RI code to send. Codes are 12 bits
+  wide, so the range is `0x000` to `0xFFF`. A lambda that returns a wider value is not transmitted and an error
+  is logged. Codes differ between models, see the links below.
+- All other options from [Remote Transmitter Actions](#remote_transmitter-transmit_action).
+
+#### Onkyo RI
+
+Onkyo RI ("Remote Interactive") is a wired protocol, not an infrared one. Onkyo used it to link its
+own components together over a 3.5 mm mono cable.
+
+RI has no carrier. `carrier_duty_percent` is still required by `remote_transmitter`, but it has
+no effect on RI.
+
+> [!WARNING]
+> The RI signal swings between 0 V and 5 V. Most ESP32 GPIOs are not 5 V tolerant. Put a level shifter between the
+> GPIO and the RI jack.
+
+Code lists and protocol descriptions are published by the
+[LIRC project](https://lirc.sourceforge.net/remotes/onkyo/Remote_Interactive),
+[fredboboss](http://fredboboss.free.fr/articles/onkyo_ri.php) and
+[docbender/Onkyo-RI](https://github.com/docbender/Onkyo-RI).
 
 <span id="remote_transmitter-transmit_panasonic"></span>
 

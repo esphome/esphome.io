@@ -309,8 +309,9 @@ This would create:
 - **Standard posts:** use the Open Home Foundation OG generator, which renders the image on demand from the post URL:
   `https://assets.openhomefoundation.org/opengraph?url=https://esphome.io/blog/<slug>`. Set it on both the
   `cover.image` field and the `og:image` / `twitter:image` `head` meta tags. No source file is created or committed.
-- **Crossposts:** use the source site's own card image instead of the generator (for example, the Open Home Foundation
-  site card at `https://www.openhomefoundation.org/assets/images/blog/<slug>/card.webp`) — again as a remote URL only.
+- **Crossposts:** use the source site's own card image instead of the generator (for example, the Open Home
+  Foundation site card at `https://www.openhomefoundation.org/assets/images/blog/<slug>/card.webp`) — again as a remote
+  URL only, set on `og:image`, `twitter:image`, and the `crosspostCover` field (never the plugin's `cover`).
 
 **Link handling:**
 
@@ -345,9 +346,11 @@ provided. If a source URL is available, fetch it first to pre-fill the title, de
   `jesse`). Verify it exists; if not, it must be added there before publishing.
 - **Publish date** — in `YYYY-MM-DD` format. Used for the filename path, `date`, and ordering.
 - **Category/tag** — the blog tag (for example, `Announcements`).
-- **Social image** — by default point `og:image` and `cover` at the source article's card image. For Open Home
-  Foundation articles this is usually
-  `https://www.openhomefoundation.org/assets/images/blog/<slug>/card.webp`. Confirm the URL resolves.
+- **Social image** — by default point `og:image`, `twitter:image`, and `crosspostCover` at the source article's card
+  image. For Open Home Foundation articles this is usually
+  `https://www.openhomefoundation.org/assets/images/blog/<slug>/card.webp`. Confirm the URL resolves. Note the crosspost
+  card image uses the dedicated `crosspostCover` field (not the plugin's `cover`) so it renders as a plain `<img>` — see
+  the note under [Build the crosspost](#3-build-the-crosspost).
 
 ### 2. Validate the details
 
@@ -390,9 +393,7 @@ head:
 title: "<TITLE>"
 description: "<DESCRIPTION>"
 crosspostSource: "<EXTERNAL SOURCE>"
-cover:
-  image: "<SOCIAL_IMAGE_URL>"
-  alt: "<TITLE>"
+crosspostCover: "<SOCIAL_IMAGE_URL>"
 excerpt: "<TEASER PARAGRAPH>"
 date: YYYY-MM-DD
 authors:
@@ -411,7 +412,10 @@ Notes:
   canonical version lives off-site.
 - `crosspostSource` opts the post into the "shared from &lt;source&gt;" pill on the blog grid (see
   [`CrosspostBadges.astro`](../../../src/components/CrosspostBadges.astro)). It must be the plain source name only.
-- `cover.image` is the blog-archive thumbnail — point it at the same `<SOCIAL_IMAGE_URL>` as `og:image`.
+- `crosspostCover` is the blog-grid card image — point it at the same `<SOCIAL_IMAGE_URL>` as `og:image`. Never use the
+  starlight-blog `cover` field for a crosspost: that renders through Astro's `<Image>`, which probes and caches the
+  remote image at build time (and fails if the source image is not live yet). `crosspostCover` is drawn as a plain
+  `<img>` client-side, so it updates the moment the source image is published — no rebuild needed.
 - The body is only the teaser paragraph (the same text as `excerpt`). Do not paste the full article — the reader is
   redirected on load.
 - Apply the same prose rules as standard posts (curly apostrophes/quotes in body text, sentence-style title).

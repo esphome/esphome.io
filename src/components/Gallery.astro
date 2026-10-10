@@ -1,0 +1,28 @@
+---
+const { columns = 2, rows, ...attrs } = Astro.props;
+const colsValue = typeof columns === "number" ? `repeat(${columns}, 1fr)` : String(columns);
+const rowsValue = rows ? (typeof rows === "number" ? `repeat(${rows}, 1fr)` : String(rows)) : null;
+---
+
+<div class="container">
+  <div class="gallery" style={{ "--gallery-cols": colsValue, "--gallery-rows": rowsValue }} {...attrs}>
+    <slot />
+  </div>
+</div>
+
+<style lang="scss">
+  @use "../styles/mixins" as *;
+
+  .gallery {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+
+    @include bp(tablet) {
+      grid-template-columns: var(--gallery-cols);
+      grid-template-rows: var(--gallery-rows, auto);
+      gap: 20px;
+    }
+  }
+</style>

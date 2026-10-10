@@ -205,40 +205,10 @@ If you *still* can't get it to work, you might want to revisit
   as long as this file is in the same directory as your ESPHome configuration file.
 
   We've enhanced ESPHome's `!include` directive such that it accepts a list of variables that can be substituted
-  within the included file. For example:
+  within the included file. It also supports conditional expressions to determine whether the file should be loaded.
+  This feature is described in [!include](/guides/yaml#include).
 
 [ha-docs-split]: https://www.home-assistant.io/docs/configuration/splitting_configuration/
-
-```yaml
-    binary_sensor:
-      - platform: gpio
-        id: button1
-        pin: GPIOXX
-        on_multi_click: !include { file: on-multi-click.yaml, vars: { id: 1 } } # inline syntax
-      - platform: gpio
-        id: button2
-        pin: GPIOXX
-        on_multi_click: !include
-          # multi-line syntax
-          file: on-multi-click.yaml
-          vars:
-            id: 2
-```
-
-  `on-multi-click.yaml`  :
-
-```yaml
-    - timing: !include click-single.yaml
-      then:
-        - mqtt.publish:
-            topic: ${device_name}/button${id}/status
-            payload: single
-    - timing: !include click-double.yaml
-      then:
-        - mqtt.publish:
-            topic: ${device_name}/button${id}/status
-            payload: double
-```
 
 - You can use [Substitutions](/components/substitutions/) to build on the examples above and reduce repetition in your
   configuration files.

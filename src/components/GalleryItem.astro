@@ -1,0 +1,64 @@
+---
+const { rowSpan, colSpan, ...attrs } = Astro.props;
+---
+
+<div
+  class:list={["gallery-item", "gallery-item-media", "fade-up", { "gallery-item--spans-rows": Boolean(rowSpan) }]}
+  style={{
+    "--gallery-item-row-span": rowSpan ?? null,
+    "--gallery-item-col-span": colSpan ?? null,
+  }}
+  {...attrs}
+>
+  <slot />
+</div>
+
+<style lang="scss">
+  @use "../styles/mixins" as *;
+
+  .gallery-item.gallery-item-media {
+    border-radius: 12px;
+    overflow: hidden;
+    position: relative;
+    min-height: 0;
+    min-width: 0;
+
+    :global(img),
+    :global(picture),
+    :global(svg) {
+      width: 100%;
+      max-height: 100%;
+      height: auto;
+      display: block;
+      border-radius: inherit;
+    }
+
+    :global(video) {
+      width: 100%;
+      height: 100%;
+      display: block;
+      border-radius: inherit;
+      position: absolute;
+      inset: 0;
+      object-fit: cover;
+      z-index: 2;
+    }
+
+    @include bp(tablet) {
+      grid-row: span var(--gallery-item-row-span, 1);
+      grid-column: span var(--gallery-item-col-span, 1);
+
+      &:not(.gallery-item--spans-rows) {
+        :global(img),
+        :global(picture),
+        :global(svg) {
+          width: 100%;
+          height: 100%;
+          position: absolute;
+          inset: 0;
+          object-fit: cover;
+        }
+      }
+    }
+  }
+</style>

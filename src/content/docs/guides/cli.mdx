@@ -61,11 +61,18 @@ Please see [command line substitutions](/components/substitutions#command-line-s
 : Selects which toolchain to use for compiling the project. Supported values are:
 
 * `esp-idf` (ESP32 only)
+* `arduino` (ESP8266 only)
+* `sdk-nrf` (nRF52 only)
+* `host` (host only)
 * `platformio`
 
-The toolchain can be configured using `esp32.toolchain` (see the [ESP32 toolchain configuration](/components/esp32#esp32-toolchain)).
-If not specified, ESP32 devices default to `esp-idf`; all other platforms use `platformio`.
-If both `esp32.toolchain` and the `--toolchain` CLI option are set, the CLI option takes precedence.
+The toolchain can be configured using `esp32.toolchain` (see the
+[ESP32 toolchain configuration](/components/esp32#esp32-toolchain)) or `esp8266.toolchain` (see the
+[ESP8266 toolchain configuration](/components/esp8266#toolchain-configuration)).
+If not specified, ESP32 devices default to `esp-idf`, ESP8266 devices to `arduino`, nRF52 devices to `sdk-nrf` and host
+builds to `host`; all other platforms use `platformio`. The host platform always uses `host` and rejects any other
+value.
+If both the YAML `toolchain` option and the `--toolchain` CLI option are set, the CLI option takes precedence.
 
 Please see [ESP-IDF toolchain documentation](/guides/esp_idf/) for details on using the ESP-IDF integration.
 
@@ -106,6 +113,11 @@ basis, or set with this option at the time of uploading.
 
 **`--no-logs`**
 : Disable starting log view.
+
+
+**`--skip-bootloader`**
+: Skip building the bootloader and the factory image; see [`compile`](#compile-command).
+The result can only be flashed over OTA, so combining this with a serial `--device` fails before compiling.
 
 
 **`--topic TOPIC`**
@@ -171,6 +183,13 @@ Any command that accepts `<CONFIG>` can also accept a `.esphomebundle.tar.gz` bu
 : If set, only generates the C++ source code and does not compile the firmware.
 
 
+**`--skip-bootloader`**
+: Do not build the bootloader or the factory image. A plain OTA update never delivers the bootloader; the device
+keeps the one it has. A build that will only ever go out over OTA can skip it and save build time.
+ESP32 with the `esp-idf` toolchain only; on other platforms the flag is ignored with a log message and a full build runs.
+Serial flashing and OTA `--bootloader` need a build without this flag.
+
+
 ### `upload` Command
 
 The `esphome upload <CONFIG>` validates the configuration and uploads the most recent firmware build.
@@ -209,6 +228,25 @@ and `platform: web_server` are configured, the native `esphome` protocol is pref
 `--ota-platform web_server` to upload via the
 [Web Server OTA platform](/components/ota/web_server/#using-the-command-line) instead — for example,
 when the OTA password has been lost but the `web_server` `auth` credentials are still known.
+
+
+**`--file FILE`**
+: Manually specify the binary file to upload instead of the most recent build. Can be combined with
+`--partition-table` or `--bootloader` to upload a custom partition table or bootloader image.
+
+
+**`--partition-table`**
+: Only on ESP32, over OTA with the `esphome` platform. Upload the partition table instead of the firmware.
+The device must be running a firmware with `allow_partition_access: true` configured on the
+[ESPHome OTA platform](/components/ota/esphome/#updating-the-partition-table-on-esp32).
+Can't be combined with `--bootloader`.
+
+
+**`--bootloader`**
+: Only on ESP32, over OTA with the `esphome` platform. Upload the bootloader instead of the firmware.
+The device must be running a firmware with `allow_partition_access: true` configured on the
+[ESPHome OTA platform](/components/ota/esphome/#updating-the-bootloader-on-esp32).
+Can't be combined with `--partition-table`.
 
 
 ### `clean-mqtt` Command
@@ -313,6 +351,10 @@ esphome bundle my-device.yaml
 ### `logs` Command
 
 The `esphome logs <CONFIG>` command validates the configuration and shows all logs.
+
+For network logging, ESPHome uses the [native API](/components/api/) if configured, then MQTT, then the
+[`web_server`](/components/web_server/) `/events` stream. The web_server stream is used for devices that have a
+`web_server` but no native API, and reconnects automatically if the connection drops.
 
 #### Options
 
