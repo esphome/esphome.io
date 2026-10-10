@@ -279,6 +279,24 @@ def test_assemble_writes_blog_post_and_changelog(
     assert "[wifi] Add feature" not in tail
 
 
+def test_assemble_drops_repeated_contributors_heading(
+    grn: ModuleType, workspace: Path
+) -> None:
+    generator = _make_generator(grn)
+    _prepare_assembly_inputs(grn, workspace, generator)
+    (generator.responses_dir / "contributors.md").write_text(
+        "## Thank You, Contributors\n\nThanks to everyone!"
+    )
+
+    assert generator.assemble_changelog() is True
+
+    blog = generator._blog_post_path().read_text()
+    assert "Thanks to everyone!" in blog
+    assert re.findall(r"^## Thank.*$", blog, re.MULTILINE) == [
+        "## Thank you, contributors"
+    ]
+
+
 def test_assemble_creates_blog_post_from_template(
     grn: ModuleType, workspace: Path
 ) -> None:

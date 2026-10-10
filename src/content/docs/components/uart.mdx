@@ -65,6 +65,11 @@ uart:
 - **port** (*Optional*, string): Host platform only. Unix style name of the port to use.
 - **rx_buffer_size** (*Optional*, int): The size of the buffer used for receiving UART messages. Increase if you use an
   integration that needs to read big payloads from UART. Defaults to `256`.
+- **tx_buffer_size** (*Optional*, int): ESP32 only. The size of the buffer that holds bytes waiting to be sent. When
+  no buffer is set, a write larger than the free space in the 128-byte hardware FIFO blocks until the excess has gone
+  out on the wire, which stalls the device at low baud rates. Set this when a component such as
+  [Serial Proxy](/components/serial_proxy/) may write large blocks at once. Must be greater than `128`. Not set by
+  default.
 
 - **rx_full_threshold** (*Optional*, int): ESP32 only. After receiving this number of bytes, the data becomes available for processing.
   The default is calculated at compilation time to be approximately ten milliseconds (about 8 bytes at 9600 baud, 114 bytes at 115200 baud).
@@ -76,6 +81,25 @@ uart:
 - **stop_bits** (*Optional*, int): The number of stop bits to send. Options: 1, 2. Defaults to 1.
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID for this UART hub if you need multiple UART hubs.
 - **debug** (*Optional*, mapping): Options for debugging communication on the UART hub, see [Debugging](#debugging).
+- **clock_source** (*Optional*): ESP32 only. The UART clock source. Options: `DEFAULT`, `APB`, `XTAL`, `RTC`,
+  `REF_TICK`. Defaults to `DEFAULT`, which uses the chip's ESP-IDF default. Supported values vary by chip and an
+  unsupported selection is rejected during configuration validation.
+
+> [!NOTE]
+> The default clock is the right choice unless you have enabled ESP-IDF dynamic frequency scaling yourself, for
+> example with `CONFIG_PM_ENABLE` under `sdkconfig_options` in the [esp32](/components/esp32/) component. ESPHome does
+> not enable it. With scaling active the APB frequency changes at runtime, so a UART clocked from APB loses its baud
+> rate. On those builds pick a source that does not follow APB:
+>
+> - `XTAL` is the external crystal and keeps the full baud rate range. It is available on every variant except the
+>   original ESP32 and ESP32-S2.
+> - `REF_TICK` is a fixed 1 MHz clock and the only choice independent of APB on the original ESP32 and ESP32-S2.
+>   Because it is so slow the divider error grows above a few hundred kilobaud, so it suits lower baud rates only.
+> - `RTC` is the internal RC oscillator, which is uncalibrated and drifts with temperature and supply voltage. It is
+>   meant for light sleep use and is not accurate enough for a general serial link.
+>
+> `DEFAULT` uses APB on the original ESP32, ESP32-S2, ESP32-S3 and ESP32-C3, and a fixed PLL clock on the newer
+> variants. The startup log shows the clock ESP-IDF resolved, so `DEFAULT` may appear there as `APB`.
 
 ## Hardware UARTs
 

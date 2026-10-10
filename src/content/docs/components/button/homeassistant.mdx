@@ -1,0 +1,41 @@
+---
+description: "Instructions for setting up Home Assistant buttons with ESPHome."
+title: "Home Assistant Button"
+---
+import APIRef from '@components/APIRef.astro';
+
+
+The `homeassistant` button platform allows you to create a button that presses a Home Assistant `button` or
+`input_button` entity using the [native API](/components/api/). Pressing the button on the device calls the
+`button.press` or `input_button.press` action, chosen from the entity's domain. Buttons have no state, so nothing
+is imported from Home Assistant.
+
+> [!NOTE]
+> Although you might not plan to *export* states from the node and you do not need an entity of the node
+> in Home Assistant, this component still requires you to register the node under Home Assistant. See:
+> [Connecting your device to Home Assistant](/install/getting-started/#connecting-your-device-to-home-assistant).
+>
+> Home Assistant must also allow the device to perform actions. See [Actions](/components/api/#actions).
+
+```yaml
+# Example configuration entry
+button:
+  - platform: homeassistant
+    id: doorbell_chime
+    entity_id: input_button.doorbell_chime
+```
+
+## Configuration Variables
+
+- **entity_id** (*Optional*, string): The entity ID to press in Home Assistant.
+  Must be in the `button` or `input_button` domain.
+  Required unless the entity is a linked input of the [API wizard](/components/api/#wizard), which lets the user
+  pick the entity when the device is added.
+- **internal** (*Optional*, boolean): Mark this component as internal. Internal components will not be exposed
+  to the frontend (like Home Assistant). Defaults to `true`.
+- All other options from [Button](/components/button#config-button).
+
+## See Also
+
+- [Automation](/automations)
+- <APIRef text="homeassistant_button.h" path="homeassistant/button/homeassistant_button.h" />

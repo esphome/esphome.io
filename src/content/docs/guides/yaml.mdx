@@ -295,13 +295,33 @@ For full details see [Substitutions](/components/substitutions/)
 
 ### !include
 
-- Insert the contents of another YAML file at this position.
-- May be used at any level of the configuration, and will be substituted at that level.
-- Unless used in conjunction with `packages:` (see below) the insertion is done literally.
-- Substitutions can be used in the included file to reference values passed to `!include`. Such values will override
-  any global substitutions, so global substitutions can be used to provide default values.
+The `!include` tag inserts the contents of another YAML file at any level of the configuration. It accepts a list
+of variables that can be substituted within the included file and a condition to determine whether the file should
+be loaded. The `file`, `vars`, and `condition` attributes can contain substitution expressions.
 
-Example:
+When `vars` is provided, each variable is defined as a substitution within the context of the included file. These
+variables override global substitutions of the same name, so global substitutions can be used to provide default
+values for them.
+
+When `condition` is provided, the file is only loaded if the condition evaluates to true after expanding its
+substitution expressions. Otherwise, the file is not loaded and an empty dictionary (`{}`) is included instead.
+
+Example of the short form syntax with only the file:
+
+```yaml
+esphome:
+  name: my-device
+  project: !include project.yaml
+```
+
+`project.yaml`:
+
+```yaml
+name: "jesse.leds_party"
+version: "1.0.0"
+```
+
+Example using the inline and multi-line syntax with `vars` to pass variables to the included file:
 
 ```yaml
 binary_sensor:
@@ -317,6 +337,36 @@ binary_sensor:
       file: on-multi-click.yaml
       vars:
         id: 2
+```
+
+`on-multi-click.yaml`:
+
+```yaml
+- timing: !include click-single.yaml
+  then:
+    - mqtt.publish:
+        topic: ${device_name}/button${id}/status
+        payload: single
+- timing: !include click-double.yaml
+  then:
+    - mqtt.publish:
+        topic: ${device_name}/button${id}/status
+        payload: double
+```
+
+Example using the inline and multi-line syntax with `condition` to conditionally include a package:
+
+```yaml
+substitutions:
+  have_experimental_feature: false
+  have_optional_feature: true
+
+packages:
+  - !include { file: experimental-package.yaml, condition: "${have_experimental_feature}" } # inline syntax
+  - !include
+    # multi-line syntax
+    file: optional-package.yaml
+    condition: ${have_optional_feature}
 ```
 
 ### Packages
