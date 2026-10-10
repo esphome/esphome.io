@@ -230,7 +230,9 @@ To enable signal demodulation, configure the signal carrier frequency and duty c
 
 - **on_keeloq** (*Optional*, [Automation](/automations)): An automation to perform when a
   KeeLoq RF code has been decoded. A variable `x` of type <APIStruct text="remote_base::KeeloqData" path="remote_base::KeeloqData" />
-  is passed to the automation for use in lambdas.
+  is passed to the automation for use in lambdas. Up to 16 bits that follow the 66-bit HCS301 word are in
+  `x.suffix`, lowest bit first, and their number is in `x.suffix_bits`. Both are `0` when these bits do not end
+  at a gap or at the end of the capture, or when there are more than 16.
 
 - **on_haier** (*Optional*, [Automation](/automations)): An automation to perform when a
   Haier remote code has been decoded. A variable `x` of type <APIStruct text="remote_base::HaierData" path="remote_base::HaierData" />
@@ -491,7 +493,8 @@ Remote code selection (exactly one of these has to be included):
 
   - **data** (**Required**, int): The JVC code to trigger on, see dumper output for more info.
 
-- **keeloq**: Trigger on a decoded KeeLoq RF remote code with the given data.
+- **keeloq**: Trigger on a decoded KeeLoq RF remote code with the given data. Suffix bits after the 66-bit word
+  are not compared.
 
   - **address** (**Required**, int): The 32-bit ID code to trigger on, see dumper output for more info.
   - **command** (*Optional*, int): The 8-bit switch/command to listen for. If omitted, will match on any command/button.
