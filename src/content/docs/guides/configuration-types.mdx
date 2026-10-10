@@ -107,15 +107,16 @@ Advanced options:
   i.e. the maximum amount of current can additionally be set. Defaults to `20mA`.
   Options are `5mA`, `10mA`, `20mA`, `40mA`.
 
-- **hold_state** (*Optional*, boolean): Hold internal pin during (deep)sleep and software reset on `ESP32`.
-  Set this to `true` to hold the output level or pullup/pulldown mode during sleep/reboot. Usually, hold
-  should be used only for GPIO pins and not for pins that are used for peripherals like `i2c` or `rmt`
-  (`uart` is an exception where it can be used for holding pullup/pulldown). If the pin is also used elsewhere
-  and `allow_other_uses` is set, make sure to use hold on all or none. Pins defined as input and output might
-  glitch during wakeup/reboot. **Attention:** If a held pin is completely
-  removed from the configuration and the device is OTA updated a hardware reset is needed to clear the held state.
-  Likewise, when adding `hold_state: true` to an existing pin and updating with OTA the pin might be in an undefined
-  state. Toggel the pin manually or use a hardware reset in that case. Defaults to `false`.
+- **hold_state** (*Optional*, boolean): On `ESP32`, hold the pin during (deep) sleep and software reset so it keeps
+  its output level or pullup/pulldown mode. Only internal pins support this; pins on I/O expanders do not. Use hold
+  for pins driven directly as GPIO, not for pins used by peripherals such as `i2c` or `rmt` (`uart` is the exception,
+  where it can hold the pullup/pulldown). If the pin is also used elsewhere with `allow_other_uses`, enable hold on
+  all uses or none. Pins configured as both input and output might glitch during wakeup/reboot. Defaults to `false`.
+
+> [!WARNING]
+> A hold outlives an OTA update. If a held pin is removed from the configuration entirely, the pin stays held until
+> a hardware reset. When `hold_state: true` is added to an existing pin and installed over OTA, the pin may be in an
+> undefined state until it is toggled or the device is hardware reset.
 
 - **ignore_strapping_warning** (*Optional*, boolean): Certain pins on ESP32s are designated *strapping pins* and are read
   by the chip on reset to configure initial operation, e.g. to enable bootstrap mode.

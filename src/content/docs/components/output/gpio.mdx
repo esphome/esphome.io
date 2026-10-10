@@ -19,12 +19,15 @@ output:
 
 ## Configuration variables
 
-- **pin** (**Required**, [Pin Schema](/guides/configuration-types#pin-schema)): The pin to turn on and off. When
-  enabling `hold_state` the state needs to be set or restored after wake-up when driving it by automation or an
-  external component. Official components set the state by default (e.g. light). When using a power supply, make
-  sure to enable `hold_state` there as well.
+- **pin** (**Required**, [Pin Schema](/guides/configuration-types#pin-schema)): The pin to turn on and off.
 - **id** (**Required**, [ID](/guides/configuration-types#id)): The id to use for this output component.
 - All other options from [Output](/components/output#config-output).
+
+> [!NOTE]
+> With `hold_state: true` on the pin, an ESP32 keeps the output level through deep sleep and reboots. Components such
+> as lights write their state again on boot through `restore_mode`, so nothing more is needed. An output driven only
+> by automations or lambdas is not written until the next action, so set it in `on_boot` if it needs a known level.
+> If the output has a [Power Supply](/components/power_supply/), enable `hold_state` on the power supply pin as well.
 
 > [!WARNING]
 > This is an **output component** and will not be visible from the frontend. Output components are intermediary
