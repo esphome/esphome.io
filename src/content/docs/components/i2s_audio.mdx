@@ -21,6 +21,64 @@ i2s_audio:
 - **i2s_bclk_pin** (*Optional*, [Pin](/guides/configuration-types#pin)): The GPIO pin to use for the I²S `BCLK` *(Bit Clock)* signal, also referred to as `SCK` *(Serial Clock)*.
 - **i2s_mclk_pin** (*Optional*, [Pin](/guides/configuration-types#pin)): The GPIO pin to use for the I²S `MCLK` *(Master Clock)* signal.
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID for this I²S bus if you need multiple.
+- **full_duplex** (*Optional*, boolean): Run a microphone and a speaker at the same time on this bus. See
+  [Full Duplex](#full-duplex). Defaults to `false`.
+
+## Full Duplex
+
+By default, a microphone and a speaker on the same I²S bus cannot run at the same time: while one is active, the other
+has to wait. This prevents a device with a single I²S codec from recording while it plays audio.
+
+With `full_duplex: true`, the microphone and speaker run at the same time on the same I²S port and share its bit clock
+and word clock. Both I²S channels are set up once at boot and kept for the lifetime of the device.
+
+A full duplex bus must meet these requirements, which are checked when the configuration is validated:
+
+- Exactly one [I²S Audio Microphone](/components/microphone/i2s_audio/) and at least one
+  [I²S Audio Speaker](/components/speaker/i2s_audio/) use the bus.
+- The microphone is not a PDM microphone.
+- The speakers use an external DAC. Internal DAC and SPDIF speakers are not supported.
+- The microphone and every speaker use the same `sample_rate`, `bits_per_sample`, `i2s_mode`, `use_apll` and
+  `mclk_multiple`, because both directions run from the same clocks. Note that `bits_per_sample` has a different
+  default for the microphone (`32bit`) and the speaker (`16bit`), so set it explicitly on both.
+- All speakers use the same `i2s_dout_pin`, `channel` and `i2s_comm_fmt`, because they share one output channel.
+
+Because the output channel is set up only once, a speaker on a full duplex bus only accepts audio in exactly its
+configured format (sample rate, bits per sample and number of channels). A stream in any other format is rejected and
+a message is logged. Put a [Resampler Speaker](/components/speaker/resampler/) in front of it to convert other formats.
+
+More than one speaker can use a full duplex bus, for example a media speaker and an announcement speaker. They share
+the one output channel, so only one of them can play at a time.
+
+```yaml
+# Example full duplex configuration
+i2s_audio:
+  - id: i2s_duplex_bus
+    i2s_lrclk_pin: GPIOXX
+    i2s_bclk_pin: GPIOXX
+    full_duplex: true
+
+microphone:
+  - platform: i2s_audio
+    i2s_audio_id: i2s_duplex_bus
+    i2s_din_pin: GPIOXX
+    adc_type: external
+    sample_rate: 48000
+    bits_per_sample: 32bit
+
+speaker:
+  - platform: i2s_audio
+    id: duplex_speaker
+    i2s_audio_id: i2s_duplex_bus
+    i2s_dout_pin: GPIOXX
+    dac_type: external
+    sample_rate: 48000
+    bits_per_sample: 32bit
+  # Converts incoming audio to the fixed format of the full duplex bus
+  - platform: resampler
+    output_speaker: duplex_speaker
+    bits_per_sample: 32
+```
 
 ## See Also
 
