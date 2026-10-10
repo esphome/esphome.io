@@ -1,0 +1,73 @@
+---
+description: "Instructions for speaking Modbus TCP on a TCP UART in ESPHome."
+title: "Modbus TCP UART"
+---
+import APIRef from '@components/APIRef.astro';
+
+
+This component turns Modbus RTU into Modbus TCP, and back. It does not open a socket and it has no pins.
+[TCP UART](/components/tcp_uart/) stays raw and copies bytes unchanged.
+
+Set up a [TCP UART](/components/tcp_uart/) first. The hub's `uart_id` points here. `role` on this component is
+who sends the Modbus request. It defaults to `client`. `role` on the `tcp_uart` only decides who opens the TCP
+connection. The hub must use the same role.
+
+When `role` is `client`, the hub writes one RTU frame. That PDU is sent as one Modbus TCP request, and the matching
+response is turned back into RTU. One request is outstanding. A response with another transaction id is dropped.
+
+```yaml
+# Example configuration entry
+tcp_uart:
+  - id: shelly_link
+    host: 192.0.2.10
+    port: 502
+
+modbus_tcp_uart:
+  - id: shelly_uart
+    tcp_uart_id: shelly_link
+
+modbus:
+  - uart_id: shelly_uart
+```
+
+When `role` is `server`, each request from the TCP peer is turned into one RTU frame, one at a time: the next request
+waits until the reply has gone out, or for one second, or for the longest `send_wait_time` of a client `modbus` hub if
+that is longer. The reply is sent back with that request's transaction id. Address 0 is not answered. If the hub has a
+Modbus Server, a request to an address that no Modbus Server on the hub uses is dropped without an answer.
+
+```yaml
+# Example configuration entry
+tcp_uart:
+  - id: inbound
+    role: server
+    port: 502
+
+modbus_tcp_uart:
+  - id: bus
+    tcp_uart_id: inbound
+    role: server
+
+modbus:
+  - uart_id: bus
+    role: server
+```
+
+The hub reads baud rate, data bits, parity and stop bits from the `tcp_uart`. Those settings are documented on
+[TCP UART](/components/tcp_uart/).
+
+## Configuration Variables
+
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
+  Use this ID as `uart_id` of the [Modbus](/components/modbus/) hub.
+- **tcp_uart_id** (**Required**, [ID](/guides/configuration-types#id)): The raw [TCP UART](/components/tcp_uart/).
+- **role** (*Optional*, string): `client` or `server`. Defaults to `client`. This is who sends the Modbus
+  request, and the hub must use the same role. Who opens the socket stays on the TCP UART.
+- **debug** (*Optional*): Log the RTU bytes that pass this UART. Same options as the
+  [UART debug](/components/uart/#debugging) option.
+
+## See Also
+
+- [TCP UART](/components/tcp_uart/)
+- [UART Bus](/components/uart/)
+- [Modbus](/components/modbus/)
+- <APIRef text="modbus_tcp_uart.h" path="modbus_tcp_uart/modbus_tcp_uart.h" />
