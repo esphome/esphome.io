@@ -91,11 +91,51 @@ climate:
   sensor.
 
   - All options from [Sensor](/components/sensor).
+- **compressor_power** (*Optional*): Compressor power reported by the appliance's Group 7 reply, in watts.
+  Only available on models that support this query. See [Compressor Power](#compressor-power).
+
+  - All options from [Sensor](/components/sensor/).
 - **humidity_setpoint** (*Optional*): The information for the humidity indoor
   sensor (experimental).
 
   - All options from [Sensor](/components/sensor).
 - All other options from [Climate](/components/climate#config-climate).
+
+## Compressor Power
+
+Some models report compressor power through a Group 7 query rather than the query used by `power_usage`.
+Configure `compressor_power` to enable these additional requests. The component requires a configured
+[UART bus](/components/uart/) at 9600 baud.
+
+```yaml
+climate:
+  - platform: midea
+    name: Air Conditioner
+    compressor_power:
+      name: Compressor Power
+```
+
+Sampling starts one minute after boot, then queues a request every 30 seconds. Each request is sent once,
+using `timeout` as the response deadline; `num_attempts` does not apply to this sensor. Only one Group 7
+request can be queued or in flight at a time. After three consecutive failed requests, sampling pauses
+for five minutes and resumes on a subsequent polling interval.
+
+A reading becomes unknown two minutes after the last valid reply. Each valid reply refreshes that expiry,
+even if the value is unchanged or zero. A new valid reply restores the reading after it has expired.
+These rules apply before any configured sensor filters.
+
+Omit `compressor_power` to disable Group 7 polling. It does not change ordinary status polling or the
+existing `power_usage` sensor. A power request already in flight can delay a subsequent control command
+until the request completes or times out.
+
+The reported value should not be assumed to measure total appliance consumption. A zero reading does
+not establish that the fan or other parts of the appliance are off. Support has been tested on the
+Carrier 40MPHAQ09XA3; support on other models has not been established. The reported watts have not been
+validated against an external power meter.
+
+Replies are matched by group, without a per-request identifier. A late Group 7 reply can therefore be
+accepted during a later Group 7 request. Expiry limits how long a received reading is retained; it cannot
+prove when the appliance took the underlying measurement.
 
 ## Automations
 
