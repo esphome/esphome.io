@@ -46,7 +46,8 @@ sensor:
     i2c_id: multiplex0channel1
 ```
 
-A channel can run slower or faster than the main bus, for example for a sensor on a long cable:
+The multiplexer itself and its channels can run at a different frequency than the main bus, for example a
+400 kHz multiplexer on a 1 MHz bus, or a sensor on a long cable:
 
 ```yaml
 # The main I²C bus; its frequency applies to channels without one of their own
@@ -57,6 +58,7 @@ i2c:
 tca9548a:
   - address: 0x70
     i2c_id: i2c0
+    frequency: 400 kHz
     channels:
       - bus_id: multiplex0channel1
         channel: 1
@@ -73,14 +75,18 @@ tca9548a:
 - **i2c_id** (*Optional*, [ID](/guides/configuration-types/#id)): The upstream I²C bus to use. Required when more than
   one I²C bus is configured.
 
+- **frequency** (*Optional*, frequency): The frequency the multiplexer itself is addressed at, and the default for
+  its channels. Set it when the main bus runs faster than the multiplexer supports, 400 kHz for the TCA9548A.
+  Defaults to the main bus frequency.
+
 - **channels** (*Optional*): The virtual I²C bus channels
 
   - **bus_id** (**Required**, [ID](/guides/configuration-types/#id)): The id to use for this virtual I²C bus.
 
   - **channel** (**Required**): The channel (0-7) to use for this virtual I²C bus.
 
-  - **frequency** (*Optional*, frequency): The frequency for this virtual I²C bus.
-    Defaults to the main bus frequency. On nRF52 the controller only distinguishes standard (100 kHz), fast
+  - **frequency** (*Optional*, frequency): The frequency for the devices on this virtual I²C bus.
+    Defaults to the multiplexer's frequency, or the main bus frequency. On nRF52 the controller only distinguishes standard (100 kHz), fast
     (400 kHz) and fast plus (1 MHz) mode, so other values round down to one of those.
 
 ## See Also
