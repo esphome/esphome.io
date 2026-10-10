@@ -1,0 +1,96 @@
+---
+description: "Instructions for setting up the ESP32 Camera Window component to read out part of the camera sensor."
+title: "ESP32 Camera Window"
+---
+
+import APIRef from '@components/APIRef.astro';
+
+The `esp32_camera_window` component restricts the readout of an [ESP32 Camera](/components/esp32_camera/) sensor to a
+rectangular part of the picture, a *window*. Only the part of the sensor covered by the window is read out at all, so
+pixels outside it are never read out.
+
+The camera keeps publishing frames of the size it is configured with. The window describes which part of the picture is
+read out, measured in the pixels of the published frame with `(0, 0)` at its top left corner, so the same window always
+asks for the same part of the picture whatever frame size is in use. A window smaller than the frame fills the whole
+frame on its own; a window that reaches past the frame is clamped to it.
+
+Windows are supported by the OV2640, OV3660 and OV5640 sensors. Every other sensor the camera driver knows, such as
+the OV7725 and the SC sensors, is read out in a way of its own, so a window is reported as unsupported and every call
+to set one fails on it. The OV2640 can only crop in whole four-pixel steps, so a window on it is rounded down to one.
+
+Requires an [ESP32 Camera](/components/esp32_camera/) to be configured.
+
+```yaml
+# Example configuration entry
+esp32_camera_window:
+  camera_id: my_camera
+  window:
+    offset_x: 0
+    offset_y: 0
+    width: 320
+    height: 240
+```
+
+## Configuration variables
+
+- **camera_id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the
+  [ESP32 Camera](/components/esp32_camera/) to read a window out of.
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
+
+Window Options:
+
+- **window** (*Optional*): The window to apply at startup. If not set, no window is applied and the whole sensor is
+  read out.
+
+  - **offset_x** (**Required**, int): The horizontal offset of the window in the published frame, in pixels, counted
+    from the left edge. Must be `0` or greater.
+  - **offset_y** (**Required**, int): The vertical offset of the window in the published frame, in pixels, counted
+    from the top edge. Must be `0` or greater.
+  - **width** (**Required**, int): The width of the window in pixels. Must be `1` or greater.
+  - **height** (**Required**, int): The height of the window in pixels. Must be `1` or greater.
+
+## Automations
+
+### `esp32_camera_window.set` Action
+
+This action reads out a window of the camera. It has the same effect as the `window` option above, but can be used at
+runtime.
+
+```yaml
+on_...:
+  then:
+    - esp32_camera_window.set:
+        id: my_window
+        offset_x: 100
+        offset_y: 100
+        width: 320
+        height: 240
+```
+
+Configuration variables:
+
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the `esp32_camera_window` component.
+- **offset_x** (**Required**, int): The horizontal offset of the window in the published frame, in pixels.
+- **offset_y** (**Required**, int): The vertical offset of the window in the published frame, in pixels.
+- **width** (**Required**, int): The width of the window in pixels.
+- **height** (**Required**, int): The height of the window in pixels.
+
+### `esp32_camera_window.reset` Action
+
+This action reads out the whole sensor again, without changing the frame size the camera publishes.
+
+```yaml
+on_...:
+  then:
+    - esp32_camera_window.reset: my_window
+```
+
+Configuration variables:
+
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the `esp32_camera_window` component.
+
+## See Also
+
+- [ESP32 Camera Component](/components/esp32_camera/)
+- [Camera Component](/components/camera/)
+- <APIRef text="esp32_camera_window.h" path="esp32_camera_window/esp32_camera_window.h" />
