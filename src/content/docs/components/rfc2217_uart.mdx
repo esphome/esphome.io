@@ -1,0 +1,116 @@
+---
+description: "Instructions for using RFC 2217 (Telnet COM Port Control) on a TCP UART in ESPHome"
+title: "RFC 2217 UART"
+---
+import APIRef from '@components/APIRef.astro';
+
+This component speaks Telnet COM Port Control ([RFC 2217](https://www.rfc-editor.org/rfc/rfc2217)) on a
+[TCP UART](/components/tcp_uart/). Unlike plain bytes over TCP, it also carries the line settings: baud rate, data
+bits, parity and stop bits. The TCP UART keeps the connection; this component opens no socket of its own.
+
+- As a client (`role: client`), it is a [UART bus](/components/uart/) whose line settings go to an RFC 2217 server.
+- As a server (`role: server`), it lets an RFC 2217 client use a hardware UART and set its line.
+
+Every payload byte passes unchanged, `0x11` and `0x13` included.
+
+> [!WARNING]
+> The connection is plain TCP with no encryption and no authentication; `allowed_ips` on the TCP UART filters by
+> address but does not authenticate the peer. If it is omitted, any host that can reach the port is accepted, and
+> a client of the server can change the line settings of the UART. Only use this component on a trusted network.
+
+## Client
+
+```yaml
+# Example configuration entry
+rfc2217_uart:
+  - id: remote_port
+    tcp_uart_id: remote_link
+    baud_rate: 19200
+```
+
+The example assumes a TCP UART with the id `remote_link`. Use `remote_port` as `uart_id` in other components.
+
+The settings are sent on each connect. On ESP32 and ESP8266, a lambda that changes them and then calls
+`load_settings()` sends them again; see [Changing at runtime](/components/uart/#changing-at-runtime). After a connect,
+written bytes wait for the settings, at most 3 seconds. If the server refuses the COM-PORT option, a warning is logged
+and the bytes pass without line settings. If the server answers with another value, a warning is logged. The flow
+control of the server's port is left as the server has it; configure it without XON/XOFF, or the server consumes `0x11`
+and `0x13`.
+
+> [!NOTE]
+> While the connection is down, or while its 256-byte send buffer is full, written bytes are dropped and a warning is
+> logged. The client follows the server's FLOWCONTROL-SUSPEND and FLOWCONTROL-RESUME and sends neither itself; while
+> the server has suspended it and nobody reads, the oldest received bytes are dropped so that the RESUME arrives.
+
+## Server
+
+```yaml
+# Example configuration entry
+rfc2217_uart:
+  - role: server
+    tcp_uart_id: inbound
+    uart_id: uart_bus
+```
+
+The example assumes a TCP UART with `role: server` and the id `inbound`, and a UART bus with the id `uart_bus`.
+
+> [!NOTE]
+> While no client is connected, bytes from the UART are discarded.
+
+- On ESP32, a new baud rate, data size (5 to 8), parity (`NONE`, `ODD`, `EVEN`) or stop size (1 or 2) is applied.
+  Other values, such as `MARK` parity or 1.5 stop bits, and a rate the UART cannot reach are answered with the value
+  in use.
+- On the other platforms the line stays as configured, and each request is answered with the configured value.
+  A client that asks for another value gets an error, so open the port with the configured settings.
+- For a client that waits for each answer, as pySerial does, a change waits until the bytes written before it have
+  left. At a low baud rate with much data queued, this can take longer than pySerial waits for the answer,
+  3 seconds; raise it with `?timeout=` in the URL.
+- When the client disconnects, the bytes it sent still go out; then the line returns to the configured settings.
+- Flow control, BREAK, DTR and RTS are answered with "off": the UART has none of them. No line or modem state is
+  reported, so pySerial's `cts`, `dsr`, `ri` and `cd` raise an error.
+- When its buffer fills, the server sends FLOWCONTROL-SUSPEND and later FLOWCONTROL-RESUME, not XON/XOFF characters.
+  pySerial ignores them; TCP flow control then slows it down.
+
+pySerial compares every answer with its request. It asks for DTR and RTS on when it opens the port, so set them off
+first, or add `?ign_set_control` to the URL:
+
+```python
+port = serial.serial_for_url("rfc2217://192.0.2.20:2217", baudrate=9600, do_not_open=True)
+port.dtr = False
+port.rts = False
+port.open()
+```
+
+esptool resets the chip through DTR and RTS, which this UART does not have. Put the chip into download mode by hand,
+run esptool with `--before no-reset`, and add `?ign_set_control` to the URL. esptool connects at 115200 baud and
+switches to `--baud` only when that is higher; on platforms other than ESP32, configure the UART at 115200 and keep
+the default `--baud`.
+
+## Configuration Variables
+
+- **role** (*Optional*, string): `client` or `server`. Defaults to `client`.
+- **tcp_uart_id** (**Required**, [ID](/guides/configuration-types#id)): The [TCP UART](/components/tcp_uart/) that
+  carries the connection. No other component may use it.
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
+
+When `role` is `client`:
+
+- **baud_rate** (**Required**, int): The baud rate sent to the server.
+- **data_bits** (*Optional*, int): The data bits sent to the server, `5` to `8`. Defaults to `8`.
+- **parity** (*Optional*, string): The parity sent to the server. One of `NONE`, `EVEN`, `ODD`. Defaults to `NONE`.
+- **stop_bits** (*Optional*, int): The stop bits sent to the server. One of `1`, `2`. Defaults to `1`.
+- **debug** (*Optional*, mapping): Logs the bytes read and written, as for the [UART bus](/components/uart/#debugging).
+
+When `role` is `server`:
+
+- **uart_id** (**Required**, [ID](/guides/configuration-types#id)): The hardware UART. No other component may use
+  it.
+
+The check that no other component uses a UART does not see actions and lambdas that use it by id.
+
+## See Also
+
+- [TCP UART](/components/tcp_uart/)
+- [UART TCP](/components/uart_tcp/)
+- [UART Bus](/components/uart/)
+- <APIRef text="rfc2217_uart.h" path="rfc2217_uart/rfc2217_uart.h" />
