@@ -7,7 +7,8 @@ import APIRef from '@components/APIRef.astro';
 
 This ESPHome component enables *wired* Ethernet connections for ESP32 and RP2040 boards.
 
-- **ESP32**: Supports RMII PHY chips (LAN8720, RTL8201, etc.) and SPI Ethernet chips (W5500, DM9051, CH390, ENC28J60).
+- **ESP32**: Supports RMII PHY chips (LAN8720, RTL8201, etc.) and SPI Ethernet chips (W5500, DM9051, CH390,
+  KSZ8851SNL, ENC28J60).
 - **RP2040/RP2350**: Supports SPI/PIO Ethernet chips (W5100, W5500, W6100, W6300, ENC28J60).
 
 On ESP32 family devices, Ethernet may be configured alongside [WiFi](/components/wifi/) in the same configuration;
@@ -101,6 +102,7 @@ ethernet:
   - `OPENETH` (QEMU, ESP32 only)
   - `DM9051` (SPI, ESP32 only)
   - `CH390` (SPI, ESP32 only)
+  - `KSZ8851SNL` (SPI, ESP32 only)
   - `ENC28J60` (SPI, 10Mbps, ESP32 and RP2040)
   - `W6100` (SPI, RP2040/RP2350 only)
   - `W6300` (PIO QSPI, RP2040/RP2350 only)
@@ -179,8 +181,9 @@ It takes the same configuration variables as the [GENERIC type](#generic-rgmii-c
 
 - **reset_pin** (*Optional*, [Pin](/guides/configuration-types#pin)): The reset pin.
 - **clock_speed** (*Optional*, float): The SPI clock speed. ESP32 only.
-  Any frequency between `8MHz` and `80MHz` is allowed, but the nearest integer division
-  of `80MHz` is used, i.e. `16MHz` (`80MHz` / 5) is used when `15MHz` is configured.
+  The minimum is `8MHz`. The maximum depends on the chip: `20MHz` for `ENC28J60`, `40MHz` for `KSZ8851SNL`,
+  `72MHz` for `CH390`, and `80MHz` for the rest. The nearest integer division of `80MHz` is used, i.e. `16MHz`
+  (`80MHz` / 5) is used when `15MHz` is configured.
   Default: `26.67MHz`.
 
 - **polling_interval** (*Optional*, [Time](/guides/configuration-types#time)): If `interrupt_pin` is not set,
@@ -523,6 +526,22 @@ ethernet:
 > [!NOTE]
 > The WCH CH390 shares the Davicom DM9051 register map but reports its own vendor and product IDs, so the
 > `DM9051` type rejects it during initialization with a `wrong Vendor ID` error. Use `CH390`.
+
+**Unfolded Circle Remote Dock 3** (KSZ8851SNL, ESP32-S3):
+
+```yaml
+ethernet:
+  type: KSZ8851SNL
+  clk_pin: GPIO12
+  mosi_pin: GPIO11
+  miso_pin: GPIO13
+  cs_pin: GPIO6
+  interrupt_pin: GPIO46
+```
+
+> [!NOTE]
+> The KSZ8851SNL rates its SPI clock (fSCLK) at `40MHz` maximum, so `clock_speed` is capped there rather than at
+> the `80MHz` most other chips allow. The default `26.67MHz` is within spec.
 
 **ENC28J60** (ESP32, SPI):
 
