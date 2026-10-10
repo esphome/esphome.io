@@ -165,8 +165,9 @@ sensor:
 ### Configuration Variables
 
 - **m5pm1_id** (**Required**, [ID](/guides/configuration-types/#id)): The M5PM1 component ID.
-- **type** (**Required**, enum): Sensor type. Supported voltage types are `battery_voltage`, `vin_voltage`, `5vout_voltage`,
-  and `vref_voltage`. Voltage sensors use volts; the M5PM1 raw registers use millivolts. ADC sensors are limited to
+- **type** (**Required**, enum): Sensor type. Supported voltage types are
+  `battery_voltage`, `vin_voltage`, `5vout_voltage`, and `vref_voltage`. Voltage sensors use volts; the M5PM1 raw
+  registers use millivolts. ADC sensors are limited to
   GPIO1 and GPIO2. An internal `temperature` measurement is also supported.
 
 ## Binary Sensor
@@ -307,11 +308,11 @@ switch:
   `hold_gpio`, or `aw8737a`. The `hold_gpio` switch requires a pin number from `0` to `4`; the AW8737A switch accepts
   a GPIO pin and a `pulse_num` from `0` to `3`.
 
-For examples:
+Examples:
 
 ```yaml
 switch:
-  # Hold the GPIO1 output when system is powered down
+  # Hold the GPIO3 output when system is powered down
   - platform: m5pm1
     type: hold_gpio
     m5pm1_id: pm1
@@ -474,7 +475,7 @@ m5pm1:
   id: m5pm1_hub
   # The GPIO used for interrupt signal on M5PM1
   interrupt_gpio: 1
-  # The GPIO receive the interrupt signal on ESP32
+  # The GPIO that receives the interrupt signal on the ESP32
   interrupt_pin:
     number: GPIO13
     mode:
@@ -508,7 +509,7 @@ switch:
 
   - platform: m5pm1
     type: charger
-    name: "Chagrge Enable"
+    name: "Charge Enable"
     restore_mode: RESTORE_DEFAULT_ON
 
   - platform: m5pm1
@@ -589,5 +590,5 @@ button:
 - [GPIO Switch](/components/switch/gpio/)
 - [Sensor Component](/components/sensor/)
 - [Event Component](/components/event/)
-- [M5PM1 Arduino/ESP-IDF code](https://github.com/m5stack/M5PM1)
+- [M5PM1 Arduino/ESP-IDF code](https://github.com/m5stack/M5PM1/)
 - <APIRef text="m5pm1.h" path="m5pm1/m5pm1.h" />
