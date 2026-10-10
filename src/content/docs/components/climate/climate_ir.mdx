@@ -37,7 +37,7 @@ submit a feature request (see FAQ).
 | Yashima | `yashima`                          | |
 | [Whynter](#whynter) | `whynter`                          | yes |
 | [ZH/LT-01](#zhlt01) | `zhlt01`                           | yes |
-| [Arduino-HeatpumpIR](#heatpumpir) library | `heatpumpir`                       | |
+| [Arduino-HeatpumpIR](#heatpumpir) library | `heatpumpir`                       | ZMP |
 
 This component requires that you have configured a [Remote Transmitter](/components/remote_transmitter/).
 
@@ -342,6 +342,35 @@ The `heatpumpir` platform supports dozens of manufacturers and hundreds of AC un
 This platform works with the `arduino` framework and ESP-IDF (on ESP32), and should only be used if your AC unit is not supported by any of the other (native) platforms from above. No support can be provided for Arduino-HeatpumpIR, because it is a third party library.
 
 This platform utilises the library's generic one-size-fits-all API, which might not line up perfectly with all of the supported AC units. For example, some AC units have more fan speed options than what the generic API supports.
+
+The `mitsubishi_heavy_zj` and `mitsubishi_heavy_zmp` protocols expose **ECO** and **BOOST** climate presets. ECO maps to `FAN_5` (Econo / energy-saver mode) and BOOST maps to `FAN_4` (HiPower / turbo mode). On these protocols, `FAN_4` and `FAN_5` are operating modes rather than fan speeds — normal fan control uses `FAN_1` through `FAN_3`. Preset commands take priority over fan speed when both are set.
+
+The `mitsubishi_heavy_zmp` protocol supports an optional IR receiver to keep the climate state in sync when the physical remote control is used. To enable this, set up a [Remote Receiver](/components/remote_receiver/) and pass its ID via `receiver_id`:
+
+```yaml
+remote_receiver:
+  id: rcvr
+  pin:
+    number: GPIOXX
+    inverted: true
+    mode:
+      input: true
+      pullup: true
+  tolerance: 55%
+
+climate:
+  - platform: heatpumpir
+    protocol: mitsubishi_heavy_zmp
+    name: "Heat Pump"
+    receiver_id: rcvr
+    horizontal_default: left
+    vertical_default: up
+    min_temperature: 18
+    max_temperature: 30
+    transmitter_id: xmitr
+```
+
+Other protocols do not support the receiver at this time.
 
 Additional configuration must be specified for this platform:
 
