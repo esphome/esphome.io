@@ -8,26 +8,32 @@ import Figure from '@components/Figure.astro';
 
 The TCA9548A component allows you to use TCA9548A as a I²C multiplexer
 ([datasheet](https://www.ti.com/lit/ds/symlink/tca9548a.pdf),
-[AdaFruit](https://learn.adafruit.com/adafruit-tca9548a-1-to-8-i2c-multiplexer-breakout)) in ESPHome. It uses [I²C Bus](/components/i2c) for communication.
-
-Once configured, you can use any of the 8 channels (TCA9548A) as separated channels for your projects.
-Every Channel acts for all connected components as a virtual I²C Bus.
+[AdaFruit](https://learn.adafruit.com/adafruit-tca9548a-1-to-8-i2c-multiplexer-breakout)) in ESPHome.
+It uses [I²C Bus](/components/i2c/) for communication.
 
 <Figure
   src="/images/tca9548a.jpg"
-  alt=""
+  alt="TCA9548A I²C multiplexer breakout"
   caption="tca9548a I2C Multiplexer."
   layout="constrained"
   width={300}
   height={229}
 />
 
+Once configured, you can use any of the 8 channels (TCA9548A) as separated channels for your projects.
+Each channel acts as a virtual I²C bus for the connected components, and can be set to a different frequency than
+the main I²C bus.
+
+> [!WARNING]
+> The main (upstream) I²C bus frequency is temporarily changed to the frequency of the active channel, so the
+> devices on the main bus must be able to gracefully handle all selected channel speeds. This is usually not a
+> problem if the channels are all the same or slower than the main bus. With a multiplexer behind a port, the
+> outer port's frequency is the one a transfer uses.
+
 ```yaml
 # Example configuration entry
 tca9548a:
   - address: 0x70
-    id: multiplex0
-    i2c_id: i2c0
     channels:
       - bus_id: multiplex0channel0
         channel: 0
@@ -40,20 +46,50 @@ sensor:
     i2c_id: multiplex0channel1
 ```
 
+The multiplexer itself and its channels can run at a different frequency than the main bus, for example a
+400 kHz multiplexer on a 1 MHz bus, or a sensor on a long cable:
+
+```yaml
+# Channels without a frequency of their own use the multiplexer's, then this one
+i2c:
+  id: i2c0
+  frequency: 1 MHz
+
+tca9548a:
+  - address: 0x70
+    i2c_id: i2c0
+    frequency: 400 kHz
+    channels:
+      - bus_id: multiplex0channel1
+        channel: 1
+        frequency: 100 kHz
+```
+
 ## Configuration variables
 
-- **id** (**Required**, [ID](/guides/configuration-types#id)): The id to use for this TCA9548A component.
-- **address** (*Optional*, int): The I²C address of the Multiplexer.
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): The id to use for this TCA9548A component.
+
+- **address** (*Optional*, int): Manually specify the I²C address of the multiplexer.
   Defaults to `0x70`.
 
-- **i2c_id** (*Optional*): The I²C Bus ID
-  Defaults to `false`
+- **i2c_id** (*Optional*, [ID](/guides/configuration-types/#id)): The upstream I²C bus to use. Required when more than
+  one I²C bus is configured.
 
-- **channels** (*Optional*): The I²C Bus Channels
+- **frequency** (*Optional*, frequency): The frequency the multiplexer itself is addressed at, and the default for
+  its channels. Set it when the main bus runs faster than the multiplexer supports, 400 kHz for the
+  TCA9548A. Without it the multiplexer is addressed at the main bus frequency, or at the slower of the main bus
+  and the channel frequency when the channel sets one.
 
-  - **bus_id** (**Required**, [ID](/guides/configuration-types#id)): The id to use for this virtual I2C Bus.
-  - **channel** (**Required**): The channel (0-7) to use for this virtual I2C Bus.
+- **channels** (*Optional*): The virtual I²C bus channels
+
+  - **bus_id** (**Required**, [ID](/guides/configuration-types/#id)): The id to use for this virtual I²C bus.
+
+  - **channel** (**Required**): The channel (0-7) to use for this virtual I²C bus.
+
+  - **frequency** (*Optional*, frequency): The frequency for the devices on this virtual I²C bus.
+    Defaults to the multiplexer's frequency, or the main bus frequency. On nRF52 the controller only distinguishes
+    standard (100 kHz) and fast (400 kHz and above) mode, so other values round to one of those.
 
 ## See Also
 
-- [I²C Bus](/components/i2c)
+- [I²C Bus](/components/i2c/)
