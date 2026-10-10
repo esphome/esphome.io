@@ -153,7 +153,19 @@ sensor:
 - **co2** (*Optional*): The **carbon dioxide** concentration in ppm. Note: only available with SEN63C, SEN66 or
   SEN69C. The sensor will be ignored on unsupported models.
 
-  - All options from [Sensor](/components/sensor).
+  - **automatic_self_calibration** (*Optional*, boolean): Enable or disable the CO₂ sensor's automatic
+    self-calibration (ASC).
+  - **altitude_compensation** (*Optional*, int): Altitude of the sensor location in meters above sea level,
+    used to compensate the CO₂ reading. Allowed values are in range 0..3000.
+  - **ambient_pressure_compensation** (*Optional*, int): Static ambient pressure in hPa used to compensate the
+    CO₂ reading. Allowed values are in range 700..1200.
+  - **ambient_pressure_compensation_source** (*Optional*, [ID](/guides/configuration-types#id)): A pressure sensor
+    (in hPa) whose value updates the ambient pressure compensation on every update cycle. Values outside
+    700..1200 hPa are ignored with a warning. Can be combined with `ambient_pressure_compensation`, which then
+    applies until the source reports a valid value.
+  - All other options from [Sensor](/components/sensor).
+
+  Options that are not set are not written to the device.
 
 - **formaldehyde** (*Optional*): The Formaldehyde (HCHO) concentration in ppb. Note: only available with SEN68 or
   SEN69C. The sensor will be ignored on unsupported models.
