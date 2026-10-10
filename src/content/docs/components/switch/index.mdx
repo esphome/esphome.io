@@ -57,6 +57,52 @@ Configuration variables:
 
   Unless a specific platform defines another default value, the default is `ALWAYS_OFF`.
 
+- **restore_mode_on_reset** (*Optional*): Override **restore_mode** for specific reasons the
+  device booted. Each key is a boot cause and each value is any of the **restore_mode** values
+  listed above. A boot whose cause is not listed, or that the device cannot identify, uses
+  **restore_mode** unchanged. Some devices report one cause as another (see the table and the
+  note below), so a listed cause can also match a boot that really had a different cause.
+
+  The common use is to keep a load on by default while letting your own restarts and updates
+  leave it as it was. Cutting power then switches the load back on, but an OTA update does not:
+
+  ```yaml
+  switch:
+    - platform: gpio
+      pin: GPIOXX
+      name: "Lamp"
+      restore_mode: ALWAYS_ON
+      restore_mode_on_reset:
+        software: RESTORE_DEFAULT_OFF
+  ```
+
+  If **restore_mode** was not a `RESTORE_*` value before, no state has been stored yet, so the
+  first restart after adding this option, including the update that installs it, uses the
+  override's default (OFF for `RESTORE_DEFAULT_OFF`).
+
+  | Key          | Boot cause                                                                                   | Reported on                              |
+  | ------------ | -------------------------------------------------------------------------------------------- | ---------------------------------------- |
+  | `software`   | A restart made by ESPHome: an OTA update, a `restart` button, or a `reboot_timeout` restart. | ESP32, ESP8266, BK72xx, RTL8720C, LN882x |
+  | `watchdog`   | A hardware or software watchdog expired.                                                     | ESP32, ESP8266, BK72xx, RTL8720C, LN882x |
+  | `panic`      | An exception or unhandled fault.                                                             | ESP32, ESP8266, BK72xx                   |
+  | `sleep_wake` | The device woke from deep sleep.                                                             | ESP32, ESP8266, BK72xx                   |
+  | `brownout`   | The supply voltage dipped below the brownout threshold.                                      | ESP32                                    |
+  | `external`   | The reset pin was asserted (on many ESP8266 boards, also a power-up).                        | ESP8266                                  |
+
+  This option does not yet use the boot cause on RP2040, RP2350 or nRF52, LibreTiny does not
+  report one on RTL8710B, and the `host` platform has none, so the option has no effect on these
+  platforms. A key for a cause the device never reports never matches. If you do not want to
+  depend on these distinctions, give several causes the same value.
+
+  > [!NOTE]
+  > On every ESP32 variant a reset-pin press is reported as a power-up, so `external` never
+  > matches on ESP32. On many ESP8266 boards the reverse happens: depending on the delay circuit
+  > on the reset pin, a power-up is reported as `external`, so if a power cut must switch the load
+  > on, do not give `external` the value you use for `software`. Likewise, on BK72xx and LN882x a
+  > reset the device did not record, such as a reset-pin press, may be reported as `watchdog`. On
+  > some ESP32-S3 configurations a restart is intermittently reported as `watchdog` instead of
+  > `software`; on those, give `watchdog` the same value as `software`.
+
 - **on_turn_on** (*Optional*, [Action](/automations/actions#all-actions)): An automation to perform
   when the switch is turned on. See [`switch.on_turn_on` / `switch.on_turn_off` Trigger](#switch-on_turn_on_off_trigger).
 
