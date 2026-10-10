@@ -1,0 +1,92 @@
+---
+title: "ESP32 Camera Utils"
+description: "Image preprocessing for ESP32 camera frames used by AI models"
+---
+
+import APIRef from '@components/APIRef.astro';
+
+The `esp32_camera_utils` component preprocesses frames from the
+[`esp32_camera`](/components/esp32_camera/) component so that they can be consumed by other
+components, such as TensorFlow Lite models. It supports rotation, cropping, scaling, format
+conversion and normalization, and can apply a hardware camera window (region of interest) before
+capture.
+
+Requires the [`esp32`](/components/esp32/) platform and reads frames from an
+[`esp32_camera`](/components/esp32_camera/) component.
+
+```yaml
+# Example configuration entry
+esp32_camera_utils:
+  id: camera_utils
+  camera_id: my_camera
+  rotation: 90.0
+```
+
+## Configuration Variables
+
+- **camera_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the
+  [`esp32_camera`](/components/esp32_camera/) component to control. Required when a `camera_window`
+  is configured.
+
+- **rotation** (*Optional*, float): Clockwise image rotation in degrees. `0`, `90`, `180` and `270`
+  use hardware-accelerated paths where available, any other value uses software rotation. A value
+  other than `0` also compiles the rotator into the firmware. Defaults to `0.0`.
+
+- **enable_rotation** (*Optional*, boolean): Force the rotator to be compiled even when **rotation**
+  is `0`, for example when the rotation is changed at runtime. Defaults to `false`.
+
+- **camera_window** (*Optional*): Apply a hardware region of interest (digital zoom) before capture.
+  Supported by some sensors only (`OV2640`, `OV3660`, `OV5640`).
+
+  - **offset_x** (**Required**, int): Horizontal pixel offset of the window in the full frame.
+  - **offset_y** (**Required**, int): Vertical pixel offset of the window in the full frame.
+  - **width** (**Required**, int): Window width in pixels.
+  - **height** (**Required**, int): Window height in pixels.
+
+- **scaler** (*Optional*): Resize the processed image to the model input size. Both `width` and
+  `height` must be set for the configuration to be applied.
+
+  - **width** (*Optional*, int): Target width in pixels.
+  - **height** (*Optional*, int): Target height in pixels.
+
+- **cropper** (*Optional*): Crop a region from the processed image. Both `width` and `height` must
+  be set for the configuration to be applied.
+
+  - **width** (*Optional*, int): Crop width in pixels.
+  - **height** (*Optional*, int): Crop height in pixels.
+  - **offset_x** (*Optional*, int): Crop X offset. Defaults to `0`.
+  - **offset_y** (*Optional*, int): Crop Y offset. Defaults to `0`.
+
+- **enable_scaler** (*Optional*, boolean): Compile in the scaler module. Defaults to `true`.
+- **enable_cropper** (*Optional*, boolean): Compile in the cropper module. Defaults to `true`.
+- **enable_drawing** (*Optional*, boolean): Compile in the drawing helpers (rectangles and circles).
+  Defaults to `true`.
+- **debug** (*Optional*, boolean): Enable verbose logging of buffer allocation, JPEG decoding and
+  rotation timings. Defaults to `false`.
+- **debug_memory** (*Optional*, boolean): Create sensors exposing the camera buffer size and the free
+  PSRAM and internal memory watermarks. Defaults to `false`.
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code
+  generation.
+
+## Examples
+
+### Camera Window
+
+The window is applied on the sensor before capture, so it reduces the size of every frame and can
+therefore also reduce memory use. The offsets are relative to the full sensor frame, not to the
+current window.
+
+```yaml
+esp32_camera_utils:
+  camera_id: my_camera
+  camera_window:
+    offset_x: 928
+    offset_y: 480
+    width: 448
+    height: 88
+```
+
+## See Also
+
+- [ESP32 Camera](/components/esp32_camera/)
+- <APIRef text="esp32_camera_utils.h" path="esp32_camera_utils/esp32_camera_utils.h" />
