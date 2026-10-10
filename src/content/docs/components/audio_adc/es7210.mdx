@@ -1,0 +1,107 @@
+---
+description: "Instructions for using ESPHome's ES7210 platform to configure microphone inputs."
+title: "ES7210"
+---
+import APIRef from '@components/APIRef.astro';
+
+
+The `es7210` platform allows your ESPHome devices to use the ES7210 high performance four channel audio ADC
+([datasheet](http://www.everest-semi.com/pdf/ES7210%20PB.pdf)).
+This allows attached microphones to be used as a microphone input via [I2S Audio](/components/microphone/i2s_audio/).
+
+The [I²C bus](/components/i2c) is required in your configuration as this is used to communicate with the ES7210.
+
+```yaml
+# Example configuration entry
+audio_adc:
+  - platform: es7210
+```
+
+<span id="config-es7210"></span>
+
+## Configuration variables
+
+- **bits_per_sample** (*Optional*, enum): The bit depth of the audio samples. One of `16bit`, `24bit` or `32bit`.
+  Defaults to `16bit`.
+
+- **mic_gain** (*Optional*, enum): The gain applied to the ADC microphones. One of `0dB`, `3dB`, `6dB`, `9dB`,
+  `12dB`, `15dB`, `18dB`, `21dB`, `24dB`, `27dB`, `30dB`, `33dB`, `34.5dB`, `36dB`, or `37.5dB`.
+  Defaults to `24dB`. This option cannot be used with `channel_gains`.
+
+- **channel_gains** (*Optional*, list): The individual gains applied to microphone channels 1 through 4, in that
+  order. The list must contain exactly four values. Each value accepts the same gain levels as `mic_gain`. This
+  option cannot be used with `mic_gain`.
+
+- **sample_rate** (*Optional*, positive integer): I2S sample rate. Defaults to `16000`.
+- **tdm** (*Optional*, boolean): Enable four-channel time-division multiplexed (TDM) output. Enabling this option
+  changes `SDOUT1` from a two-channel I2S output into a four-slot TDM stream containing microphones 1 through 4;
+  `SDOUT2` is therefore not needed to receive all four microphones. When disabled, microphones 1 and 2 are output
+  on `SDOUT1`, and microphones 3 and 4 are output on `SDOUT2`. Defaults to `false`.
+- **address** (*Optional*, int): The I²C address of the driver. Defaults to `0x40`.
+- **i2c_id** (*Optional*): The ID of the [I²C bus](/components/i2c) the ES7210 is connected to.
+- All other options from [Audio ADC](/components/audio_adc#config-audio_adc).
+
+> [!WARNING]
+> Although the ES7210 supports four-channel TDM output, ESPHome's `i2s_audio` microphone platform does not
+> configure the I2S peripheral for TDM receive mode. Do not enable `tdm` when using `platform: i2s_audio`. Enable
+> it only when using a custom microphone component that configures the receiving I2S peripheral and consumes the
+> four-slot TDM stream.
+
+## Automations
+
+All [Audio ADC Automations](/components/audio_adc#automations-audio_adc) are supported by this platform.
+Calling `audio_adc.set_mic_gain` applies the requested gain uniformly to all four microphone channels, replacing
+any individual gains configured with `channel_gains`.
+
+## Configuration Examples
+
+**ESP32 S3 Box 3**:
+
+```yaml
+audio_adc:
+  - platform: es7210
+    id: es7210_adc
+    bits_per_sample: 16bit
+    sample_rate: 16000
+
+i2s_audio:
+  - id: i2s_audio_bus
+    i2s_lrclk_pin: GPIO45
+    i2s_bclk_pin: GPIO17
+    i2s_mclk_pin: GPIO2
+
+microphone:
+  - platform: i2s_audio
+    id: box_mic
+    sample_rate: 16000
+    i2s_din_pin: GPIO16
+    bits_per_sample: 16bit
+    adc_type: external
+```
+
+**Four-channel TDM output for custom components**:
+
+The following configuration places all four microphone channels into four consecutive TDM slots on `SDOUT1` and
+configures separate gains for the two microphones, an acoustic echo cancellation reference, and an unused input.
+It requires a custom component to receive the resulting audio stream:
+
+```yaml
+audio_adc:
+  - platform: es7210
+    id: es7210_adc
+    bits_per_sample: 16bit
+    sample_rate: 16000
+    # MIC1, MIC2, AEC reference on MIC3, unused MIC4
+    channel_gains: [33dB, 33dB, 0dB, 0dB]
+    tdm: true
+```
+
+The custom audio receiver connected to the ES7210 must use the same sample rate and sample width and must configure
+the receiving I2S peripheral for four TDM slots. The `tdm` option configures only the ADC's serial output; it does
+not configure the ESP32 I2S peripheral. The standard [`i2s_audio` microphone](/components/microphone/i2s_audio/)
+uses standard I2S receive mode and cannot receive this four-slot TDM stream.
+
+## See Also
+
+- [Audio Adc Component](/components/audio_adc/)
+- <APIRef text="es7210.h" path="es7210/es7210.h" />

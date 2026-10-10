@@ -1,0 +1,95 @@
+---
+description: "Instructions for setting up a TCP socket as a UART in ESPHome"
+title: "TCP UART"
+---
+import APIRef from '@components/APIRef.astro';
+
+
+This component allows ESPHome to use a TCP connection as a [UART bus](/components/uart/). Bytes received on the
+socket can be read like UART data, and bytes written to the UART are sent to the socket. Any component that has a
+`uart_id` option can use it.
+
+The component can connect to a remote host (`role: client`) or listen for one incoming connection (`role: server`).
+Only one TCP connection is open at a time. When `role` is `server`, a new client is accepted only after the current
+connection is closed.
+
+To copy a hardware UART to a TCP socket instead, see [UART TCP](/components/uart_tcp/).
+
+> [!WARNING]
+> The connection is plain TCP with no encryption and no authentication; `allowed_ips` filters by address but
+> does not authenticate the peer. If it is omitted, any host that can reach the port is accepted. Only use
+> this component on a trusted network.
+
+> [!NOTE]
+> While the connection is down, or while its 1024-byte send buffer is full, written bytes are dropped and a warning
+> is logged.
+
+## Client
+
+```yaml
+# Example configuration entry
+tcp_uart:
+  - id: tcp_uart_1
+    host: 192.0.2.10
+    port: 8899
+
+modbus:
+  - id: modbus_bus
+    uart_id: tcp_uart_1
+```
+
+`modbus` sends RTU frames. The other end must be a serial bridge that forwards the bytes unchanged, not a
+Modbus TCP server. After each response the hub waits its `turnaround_time` (default 600 ms) before the next request,
+so that slow devices on a shared serial bus can keep up. If the devices behind the bridge answer quickly, it can be
+lowered; see [Modbus](/components/modbus/#performance-vs-stability).
+
+## Server
+
+```yaml
+# Example configuration entry
+tcp_uart:
+  - id: meter_bus
+    role: server
+    port: 8899
+```
+
+The connecting client sends raw bytes, for example RTU frames for `modbus`, not Modbus TCP.
+
+## Configuration Variables
+
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation. Use
+  this ID as `uart_id` in other components.
+- **role** (*Optional*, string): `client` or `server`. Defaults to `client`.
+- **host** (**Required** when `role` is `client`, string): The host to connect to. An IPv4 address or a hostname.
+  IPv6 is not supported.
+  This option cannot be used when `role` is `server`.
+- **port** (**Required**, int): When `role` is `client`, the TCP port to connect to. When `role` is `server`,
+  the TCP port to listen on.
+- **allowed_ips** (*Optional* when `role` is `server`, list): IPv4 addresses that may connect. A plain
+  address is one host. A network is written in CIDR form, for example `192.0.2.0/24`. At most 255 entries. If
+  the option is omitted, every address may connect. A rejected client is closed immediately and logged as a
+  warning at most once every 5 seconds; an IPv6 client is rejected unless it carries an IPv4 mapped address, as
+  on a dual stack network. This option cannot be used when `role` is `client`.
+- **baud_rate** (*Optional*, int): The baud rate reported to consuming components. The socket itself has no clock;
+  components such as `modbus` read this value for their frame timing. Defaults to `9600`.
+- **data_bits** (*Optional*, int): The number of data bits reported to consuming components. Defaults to `8`.
+- **parity** (*Optional*): The parity reported to consuming components. One of `NONE`, `EVEN`, `ODD`. Defaults to
+  `NONE`.
+- **stop_bits** (*Optional*, int): The number of stop bits reported to consuming components. One of `1`, `2`.
+  Defaults to `1`.
+- **reconnect_interval** (*Optional*, [Time](/guides/configuration-types#time)): The time to wait before connecting
+  again after a failed or closed connection. An unanswered connection attempt is given up after
+  `reconnect_interval` or 10 seconds, whichever is longer. For a server, this is the wait after a failed listen or
+  accept; a new client is accepted as soon as the current one disconnects. Defaults to `5s`.
+- **connected** (*Optional*): A binary sensor that reports whether the TCP connection is established. All options
+  from [Binary Sensor](/components/binary_sensor#config-binary_sensor) are supported.
+- **disconnects** (*Optional*): A sensor that counts how many times an open connection has closed. It starts at
+  `0` on boot and does not increase again while the connection stays down. All options from
+  [Sensor](/components/sensor#config-sensor) are supported.
+
+## See Also
+
+- [UART Bus](/components/uart/)
+- [UART TCP](/components/uart_tcp/)
+- [Modbus](/components/modbus/)
+- <APIRef text="tcp_uart.h" path="tcp_uart/tcp_uart.h" />
