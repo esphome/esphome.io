@@ -215,13 +215,15 @@ light:
 ## Binary Sensor
 
 The `hoermann_hcp` binary sensor platform exposes diagnostic information about the connection to the
-motor's bus controller.
+motor's bus controller and the motor's error flag.
 
 ```yaml
 binary_sensor:
   - platform: hoermann_hcp
     is_connected:
       name: Garage Connected
+    actuator_error:
+      name: Garage Actuator Error
 ```
 
 ### Configuration variables
@@ -229,10 +231,15 @@ binary_sensor:
 - **hoermann_hcp_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the
   `hoermann_hcp` hub. Only required if you have more than one hub.
 
-- **is_connected** (*Required*): `true` while the motor's bus controller is polling the emulated UAP1
+- **is_connected** (*Optional*): `true` while the motor's bus controller is polling the emulated UAP1
   module. Turns `false` about two seconds after the motor stops responding, for example after the bus
   power is cut. Defaults to the `connectivity` device class and the `diagnostic` entity category, so
   the entity appears under the device's diagnostics rather than on its main card.
+
+- **actuator_error** (*Optional*): `true` while the motor reports an actuator error. What triggers it
+  is not fully known; it has been seen set after the device restarts, until the next door command.
+  Unknown until the motor first reports it; while the bus controller is not connected, the last value
+  stays. Defaults to the `problem` device class and the `diagnostic` entity category.
 
 - All options from [Binary Sensor](/components/binary_sensor#config-binary_sensor).
 
