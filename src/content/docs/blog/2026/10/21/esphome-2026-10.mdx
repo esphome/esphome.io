@@ -118,7 +118,8 @@ top of that, 20 new components land, including Wi-Fi CSI motion sensing, USB-UAR
 and tap seams, TCP-UART and UART-TCP, SPI Ethernet on KSZ8851SNL, a persistent counter sensor and
 a Sensirion STCC4 CO2 sensor, alongside a device-side Home Assistant onboarding wizard, outgoing
 API connections for NAT-ed devices, broader Zigbee cluster coverage and new light transition,
-color, resume-effect and e-paper features.
+color, resume-effect and e-paper features. The bundled Device Builder can now flash every supported
+chip family from the browser.
 {/* RELEASE_OVERVIEW_END */}
 
 ## Upgrade checklist
@@ -405,9 +406,11 @@ linked to a `homeassistant`-platform entity so the device subscribes to it autom
 alone as a plain entity id a lambda can use.
 
 The wizard is fixed at build time and compressed with zstd on the Python side, so the device
-shippers one blob out of flash and the format can grow without new proto fields. On an ESP32-IDF
-build a single-switch wizard adds about 0.4 KB of flash; a config with no wizard adds nothing. The
-Home Assistant integration PR follows.
+ships one blob out of flash and the format can grow without new proto fields. On an ESP32-IDF
+build a single-switch wizard adds about 0.4 KB of flash; a config with no wizard adds nothing.
+
+> [!NOTE]
+> The wizard will not be shown until Home Assistant 2026.11. Older versions ignore it and add the device as usual.
 
 ## Light transition state publishing and color names
 
@@ -499,6 +502,93 @@ cannot encrypt yet, [@bdraco](https://github.com/bdraco) added `allow_plaintext_
 `ota: encryption:` so one migration install can still land after the plaintext fallback is removed
 in 2027.3.0; the uploader logs that the install went plaintext and tells the user to remove the
 option once the device is seen encrypting ([#19396](https://github.com/esphome/esphome/pull/19396)).
+
+## ESPHome Device Builder
+
+The bundled [ESPHome Device Builder](https://github.com/esphome/device-builder) can now flash every
+chip family that ESPHome supports from the browser. Before this release, browser flashing worked
+only for ESP32 and ESP8266. This section covers the main changes merged since the 2026.9.0 release
+notes.
+
+- **nRF52** - [@tomaszduda23](https://github.com/tomaszduda23) added flashing through the Adafruit
+  bootloader's Nordic Legacy DFU (Device Firmware Update) protocol
+  ([frontend#1784](https://github.com/esphome/device-builder-frontend/pull/1784)), MCUboot updates
+  over Bluetooth and serial
+  ([frontend#1891](https://github.com/esphome/device-builder-frontend/pull/1891)), and logs over USB
+  serial and Bluetooth
+  ([frontend#1788](https://github.com/esphome/device-builder-frontend/pull/1788)). The Bluetooth
+  logs reconnect when the link drops
+  ([frontend#1868](https://github.com/esphome/device-builder-frontend/pull/1868)).
+- **Raspberry Pi Pico** - RP2040 and RP2350 boards flash over WebUSB with PICOBOOT, the Pico's USB
+  boot protocol ([frontend#1785](https://github.com/esphome/device-builder-frontend/pull/1785),
+  [frontend#1927](https://github.com/esphome/device-builder-frontend/pull/1927)). Logs work over Web
+  Serial ([frontend#1786](https://github.com/esphome/device-builder-frontend/pull/1786)). Firefox
+  has no WebUSB, so it downloads the UF2 firmware file and shows how to copy it to the board.
+- **LibreTiny** - Realtek RTL8720C and RTL8710B, Beken BK72xx and Lightning LN882H boards flash over
+  Web Serial through a USB serial adapter
+  ([frontend#1796](https://github.com/esphome/device-builder-frontend/pull/1796),
+  [frontend#1977](https://github.com/esphome/device-builder-frontend/pull/1977),
+  [frontend#1929](https://github.com/esphome/device-builder-frontend/pull/1929),
+  [frontend#1972](https://github.com/esphome/device-builder-frontend/pull/1972)). Logs work over Web
+  Serial too ([frontend#1804](https://github.com/esphome/device-builder-frontend/pull/1804),
+  [frontend#1934](https://github.com/esphome/device-builder-frontend/pull/1934),
+  [frontend#1973](https://github.com/esphome/device-builder-frontend/pull/1973)).
+- **Plain HTTP dashboards** - browsers block USB access when the dashboard is served over plain
+  HTTP. In that case the dashboard sends the firmware to ESPHome Web, which flashes it. This already
+  worked for ESP; it now works for every family above
+  ([frontend#1869](https://github.com/esphome/device-builder-frontend/pull/1869),
+  [frontend#1923](https://github.com/esphome/device-builder-frontend/pull/1923),
+  [frontend#1926](https://github.com/esphome/device-builder-frontend/pull/1926),
+  [frontend#1935](https://github.com/esphome/device-builder-frontend/pull/1935),
+  [frontend#1978](https://github.com/esphome/device-builder-frontend/pull/1978)).
+- **ESPHome Web** - [web.esphome.io](https://web.esphome.io/) supports the same families. nRF52 gets
+  logs and MCUboot updates
+  ([frontend#1799](https://github.com/esphome/device-builder-frontend/pull/1799),
+  [frontend#1913](https://github.com/esphome/device-builder-frontend/pull/1913)). Pico boards flash
+  over PICOBOOT ([frontend#1814](https://github.com/esphome/device-builder-frontend/pull/1814)).
+  BK72xx and LN882H are new
+  ([frontend#1933](https://github.com/esphome/device-builder-frontend/pull/1933),
+  [frontend#1973](https://github.com/esphome/device-builder-frontend/pull/1973)). RTL8720C and
+  RTL8710B share one RTL87xx entry that reads the chip from the firmware file
+  ([frontend#1986](https://github.com/esphome/device-builder-frontend/pull/1986)).
+
+Other Device Builder changes in this release:
+
+- **Signed OTA devices** - a device that advertises `ota_signed=1` rejects any OTA update that is
+  not signed by a key it trusts. After adoption, the user's own build is unsigned. When the config
+  has no signing key, [@kbx81](https://github.com/kbx81) made the dashboard flash the first build
+  over USB
+  ([#2895](https://github.com/esphome/device-builder/pull/2895),
+  [frontend#1991](https://github.com/esphome/device-builder-frontend/pull/1991)).
+- **Faster OTA builds** - OTA updates compile with the new `--skip-bootloader` flag. On ESP32, the
+  build skips the bootloader and factory image, which an OTA update never uses. This saves tens of
+  seconds per device on a Home Assistant Green. Other platforms run a full build as before
+  ([#2874](https://github.com/esphome/device-builder/pull/2874)).
+- **Optional MCP endpoint** - MCP (Model Context Protocol) is a standard way for an AI assistant to
+  call tools. The new `/api/mcp` endpoint lets an MCP client, such as Home Assistant's MCP
+  integration, read and edit configs, add components and automations, and validate, compile and
+  install ([#2733](https://github.com/esphome/device-builder/pull/2733),
+  [#2736](https://github.com/esphome/device-builder/pull/2736),
+  [#2789](https://github.com/esphome/device-builder/pull/2789)). It is optional. The Device Builder
+  never calls an AI model itself. The endpoint does nothing until you connect an MCP client, and
+  everything else works the same without one.
+- **Offline duration** - [@siegeld](https://github.com/siegeld) added how long a device has been
+  offline. The status pill shows `Offline 2h`
+  ([#2842](https://github.com/esphome/device-builder/pull/2842),
+  [frontend#1862](https://github.com/esphome/device-builder-frontend/pull/1862)).
+- **Network column** - [@davidcoulson](https://github.com/davidcoulson) added a Network column and
+  filter. It shows whether a device uses WiFi or Ethernet
+  ([#2692](https://github.com/esphome/device-builder/pull/2692),
+  [frontend#1737](https://github.com/esphome/device-builder-frontend/pull/1737)).
+- **Analyze memory** - Expert Mode has a new action that runs `esphome analyze-memory`. It shows the
+  flash and RAM use of each component ([#2835](https://github.com/esphome/device-builder/pull/2835),
+  [frontend#1816](https://github.com/esphome/device-builder-frontend/pull/1816)).
+- **Flash chip setting** - the ESP32 framework form shows the new `flash_chip` option
+  ([#2870](https://github.com/esphome/device-builder/pull/2870)).
+- **Version history** - the Device Builder now only commits to a git repository rooted at the
+  ESPHome config directory. If your whole Home Assistant `/config` is a git repository, ESPHome
+  edits are no longer committed to it
+  ([#2882](https://github.com/esphome/device-builder/pull/2882)).
 
 ## New components
 
@@ -688,8 +778,6 @@ micro_wake_word, ufm01 and xdb401 were fixed so a tightened format-sensitive bui
 ## Thank you, contributors
 
 {/* CONTRIBUTORS_START */}
-## Thank You, Contributors
-
 This release includes 786 pull requests from over 60 contributors. A huge thank you to everyone who
 made 2026.10.0 possible:
 
@@ -714,8 +802,8 @@ made 2026.10.0 possible:
   wireguard libraries, refining climate_ir encoding and tightening esp32_hosted compatibility
 - [@leodrivera](https://github.com/leodrivera) - 8 PRs reworking climate_ir supported-mode handling
   and shrinking state across fujitsu_general, gree and mitsubishi
-- [@tomaszduda23](https://github.com/tomaszduda23) - 7 PRs adding nRF Connect SDK 3.4.0 / Zephyr 4.x
-  support, BLE NUS MTU and nRF52 deep-sleep power management
+- [@tomaszduda23](https://github.com/tomaszduda23) - 7 PRs adding initial nRF Connect SDK 3.4.0 /
+  Zephyr 4.x build support, BLE NUS MTU and nRF52 deep-sleep power management
 - [@remcom](https://github.com/remcom) - 5 PRs including the new RX8025T RTC, TAS2780 and TAS58xx
   audio amplifiers, and the resampler microphone platform
 - [@j9brown](https://github.com/j9brown) - 5 PRs including the new STCC4 CO2 sensor and conditional
