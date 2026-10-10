@@ -5,12 +5,25 @@ title: "ESP32 RMT LED Strip"
 import APIRef from '@components/APIRef.astro';
 
 
-This is a component using the ESP32 RMT peripheral to drive most addressable LED strips.
+The `esp32_rmt_led_strip` light platform drives most addressable LED strips using the RMT peripheral.
+
+Here's a comparison of some alternatives for driving these strips:
+
+- This component, the ESP32 RMT LED Strip, uses the RMT peripheral to precisely
+  control the timing of the output and ensure compatibility with a wide range of LED strips. However, there is only
+  enough RMT symbol memory to buffer a few pixels at a time. Flickering may occur when the microcontroller is busy
+  performing higher priority tasks and the RMT interrupt cannot be serviced soon enough to refill the buffer for
+  subsequent pixels.
+- The [I2S Clockless LED Strip](/components/light/i2s_clockless_led_strip/) component uses the I2S peripheral and DMA
+  to drive the output with larger buffers that are more immune to flickering caused by interrupt latency. However,
+  the resulting waveform diverges slightly from the datasheet timing recommendations although in practice it is
+  close enough for the LED pixels to work reliably.
 
 > [!NOTE]
 > The ESP32-C2 and ESP32-C61 do not have RMT hardware and are not supported by this component.
 
 ```yaml
+# Example configuration entry
 light:
   - platform: esp32_rmt_led_strip
     channel_colors: GRB
