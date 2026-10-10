@@ -9,14 +9,23 @@ The `esp32_camera_window` component restricts the readout of an [ESP32 Camera](/
 rectangular part of the picture, a *window*. Only the part of the sensor covered by the window is read out at all, so
 pixels outside it are never read out.
 
-The camera keeps publishing frames of the size it is configured with. The window describes which part of the picture is
-read out, measured in the pixels of the published frame with `(0, 0)` at its top left corner, so the same window always
-asks for the same part of the picture whatever frame size is in use. A window smaller than the frame fills the whole
-frame on its own; a window that reaches past the frame is clamped to it.
+The camera keeps publishing frames of the size it is configured with. The window is measured from the top left corner of
+the published frame, with `(0, 0)` there, so the same window always asks for the same part of the picture whatever
+frame size is in use. A window that reaches past the frame is clamped to it.
 
-Windows are supported by the OV2640, OV3660 and OV5640 sensors. Every other sensor the camera driver knows, such as
-the OV7725 and the SC sensors, is read out in a way of its own, so a window is reported as unsupported and every call
-to set one fails on it. The OV2640 can only crop in whole four-pixel steps, so a window on it is rounded down to one.
+Windows are supported by the OV2640, OV3660 and OV5640, which scale the part of the picture a window covers back up to
+the frame, so a window on them also zooms in and a window smaller than the frame fills the whole frame on its own. The
+OV2640 can only crop in whole four-pixel steps, so a window on it is rounded down to one.
+
+The SC101IOT and SC030IOT are supported as well, but they read a window out as it is and cannot scale it, so a window
+on them has to be the size of the frame and only moves which part of the sensor the frame shows. The offsets of such a
+window are counted in the pixels of the whole sensor readout from its top left corner, 1280x720 for the SC101IOT and
+640x480 for the SC030IOT, and a window of another size is rejected.
+
+Every other sensor the camera driver knows, among them the OV7725, the OV7670, the GC and BF sensors, the SC031GS,
+the NT99141, the HM sensors and the MEGA_CCM, is read out through registers of its own, so a window is reported as
+unsupported and every call to set one fails on it. A camera with such a sensor is otherwise unaffected: a `window` in
+the configuration is skipped with a warning at startup.
 
 Requires an [ESP32 Camera](/components/esp32_camera/) to be configured.
 
@@ -40,12 +49,12 @@ esp32_camera_window:
 Window Options:
 
 - **window** (*Optional*): The window to apply at startup. If not set, no window is applied and the whole sensor is
-  read out.
+  read out. On the SC101IOT and SC030IOT the window has to be the size of the frame.
 
-  - **offset_x** (**Required**, int): The horizontal offset of the window in the published frame, in pixels, counted
-    from the left edge. Must be `0` or greater.
-  - **offset_y** (**Required**, int): The vertical offset of the window in the published frame, in pixels, counted
-    from the top edge. Must be `0` or greater.
+  - **offset_x** (**Required**, int): The horizontal offset of the window in pixels, counted from the left edge of
+    the published frame, or of the whole sensor readout on the SC101IOT and SC030IOT. Must be `0` or greater.
+  - **offset_y** (**Required**, int): The vertical offset of the window in pixels, counted from the top edge of the
+    published frame, or of the whole sensor readout on the SC101IOT and SC030IOT. Must be `0` or greater.
   - **width** (**Required**, int): The width of the window in pixels. Must be `1` or greater.
   - **height** (**Required**, int): The height of the window in pixels. Must be `1` or greater.
 
@@ -70,10 +79,15 @@ on_...:
 Configuration variables:
 
 - **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the `esp32_camera_window` component.
-- **offset_x** (**Required**, int): The horizontal offset of the window in the published frame, in pixels.
-- **offset_y** (**Required**, int): The vertical offset of the window in the published frame, in pixels.
+- **offset_x** (**Required**, int): The horizontal offset of the window in pixels, counted from the left edge of the
+  published frame, or of the whole sensor readout on the SC101IOT and SC030IOT.
+- **offset_y** (**Required**, int): The vertical offset of the window in pixels, counted from the top edge of the
+  published frame, or of the whole sensor readout on the SC101IOT and SC030IOT.
 - **width** (**Required**, int): The width of the window in pixels.
 - **height** (**Required**, int): The height of the window in pixels.
+
+On the SC101IOT and SC030IOT, `width` and `height` have to be the size of the frame, and a window of another size is
+rejected.
 
 ### `esp32_camera_window.reset` Action
 
