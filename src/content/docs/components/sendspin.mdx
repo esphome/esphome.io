@@ -94,6 +94,17 @@ Only one pairing code method can be offered. The device offers a dynamic pairing
 `on_display_pairing_code` or a `pairing_code` text sensor is configured, so neither can be combined with
 `static_pairing_code`.
 
+### Pairing Through the Native API
+
+When the device has an [API encryption key](/components/api/#configuration-variables), a native API client that knows
+the key, such as Home Assistant, can read the device's Sendspin pairing token and pass it to a Sendspin server. The
+server then pairs with the device without a pairing code or a confirmation on the device.
+
+> [!NOTE]
+> The token does not change and cannot be revoked. Anyone who can connect with the API encryption key can use it to
+> pair a server, even when `unpaired_access` is `false`. Without an encryption key, the device does not share the
+> token.
+
 ## Unpaired Access
 
 While `unpaired_access` is `true`, any server on the network may play on the device without pairing. When it is
