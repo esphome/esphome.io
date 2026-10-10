@@ -1,0 +1,295 @@
+---
+description: "Instructions for setting up the tsdb component to keep a persistent local history of sensor readings on the device."
+title: "TSDB"
+---
+import APIRef from '@components/APIRef.astro';
+
+The `tsdb` component stores a persistent history of the device's own sensor readings in a time-series
+database on a LittleFS partition. Because the data lives on the board itself, a reading taken while Home
+Assistant or the whole network is unreachable is still available afterwards.
+
+The storage engine is [esp_tsdb](https://github.com/zakery292/esp_tsdb) (MIT): columnar storage with one row
+of `int16_t` values per sample, a sparse time index and a ring buffer that overwrites the oldest row once
+the configured capacity is reached. The filesystem is
+[esp_littlefs](https://github.com/joltwallet/esp_littlefs) (MIT). Both are fetched from the ESP-IDF
+component registry at build time and pinned to the version this component was written against, because the
+on-disk format of the database belongs to the engine.
+
+> [!WARNING]
+> The history is a **local copy** of the measurement, not a substitute for it: the stored values have the
+> same accuracy, drift and cross-sensitivity as the live entities, and the file is only as good as the
+> flash it lives on.
+
+> [!NOTE]
+> This component is only available on the **ESP32** and requires the `esp-idf` framework, because both
+> engines are ESP-IDF components. It also needs a flash partition of its own, and a partition table change
+> can only be delivered over USB - so the first install of a configuration with this component needs a
+> cable.
+
+```yaml
+# Example configuration entry
+tsdb:
+  id: history
+  time_id: my_time
+  columns:
+    - sensor: h2_mq8
+      name: h2_mq8_ppm
+```
+
+## Configuration variables
+
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the component,
+  which is used to [call it from a lambda](#lambdas).
+- **columns** (**Required**, list): The columns of the database, one to 16 entries. See [Columns](#columns).
+- **file** (*Optional*, string): File name of the database inside `mount_point`. Defaults to `history.tsdb`.
+  Must be a plain file name without path separators and at most 64 characters long. The engine keeps two
+  small sidecar files (`.h0` and `.h1`) with its header slots next to it.
+- **mount_point** (*Optional*, string): Absolute VFS path the partition is mounted on, without a trailing
+  slash. Defaults to `/littlefs`.
+- **partition** (*Optional*, string): Partition label. Defaults to `littlefs`. The label is registered with
+  ESPHome, so the partition appears in `partitions.csv` next to the existing `nvs` partition - see
+  [Partitions](/components/esp32/#partitions).
+- **partition_size** (*Optional*, size): Size of that partition. Defaults to `512KB`; must be a multiple of
+  4 KB and at least `64KB`. The size is taken out of the two OTA slots, so each of them shrinks by half of
+  it. See [Partition sizing](#partition-sizing).
+
+- **format_on_first_boot** (*Optional*, boolean): Format the partition when it is *blank*, meaning every byte
+  of it reads `0xFF`. Defaults to `true`. The whole partition is scanned before formatting, so a partition
+  that holds data but does not mount - or whose head happens to be erased - is never reformatted: that
+  would throw the history away.
+- **recreate_on_schema_change** (*Optional*, boolean): Delete the database and start an empty one when the
+  file's own header proves it was written with another column count (see [Columns](#columns)). Defaults to
+  `false`. An open failure for any other reason (heap, filesystem, I/O) keeps the file for the next boot -
+  only a proven schema change discards the stored records. Enable this where a column change should be
+  deliverable by an OTA update alone.
+- **max_file_size** (*Optional*, size): Data budget of the database file. Defaults to `384KB`. The record
+  capacity is derived from it, and the file never grows beyond it - the ring buffer overwrites the oldest
+  records instead.
+- **index_stride** (*Optional*, integer): Number of records between two entries of the sparse time index.
+  Defaults to `380`. Range is `1` to `100000`; a smaller stride means faster lookups and more index bytes.
+- **buffer_pool_size** (*Optional*, size): Buffer pool the engine uses for block I/O. Defaults to `4KB`.
+  Range is `1KB` to `256KB`.
+- **memory** (*Optional*, string): Where the buffer pool is allocated: `auto`, `internal` or `psram`.
+  Defaults to `auto`. `psram` requires a [PSRAM](/components/psram/) component, e.g. on a WROVER module with
+  a larger `buffer_pool_size`.
+- **paged_allocation** (*Optional*, boolean): Allocate the buffer pool in pages instead of one contiguous
+  block, which helps on a fragmented heap. Defaults to `false`.
+- **page_size** (*Optional*, size): Page size for `paged_allocation`. Defaults to `2KB`. Range is `1KB` to
+  `64KB`.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): How often a record is written.
+  Defaults to `60s` - one record per interval.
+- **sync_interval** (*Optional*, [Time](/guides/configuration-types#time)): How often the database is
+  committed to the filesystem. Defaults to `60s`; `0s` commits after every record. See
+  [Durability and flash wear](#durability-and-flash-wear).
+- **min_free_bytes** (*Optional*, size): Free-space guard. Defaults to `32KB`; `0` disables it. The engine
+  caps its capacity early and starts evicting the oldest records when the free space on the partition drops
+  below this value.
+- **require_time** (*Optional*, boolean): Refuse to write while the clock is invalid (a date before
+  2001-09-09). Defaults to `true`. A board that boots offline writes nothing until the first SNTP sync - the
+  log says so once per boot. Set it to `false` on a board without a time source to accept wrong timestamps:
+  the records then only *order* the readings, a boot counter is not a date.
+- **time_id** (*Optional*, [ID](/guides/configuration-types#id)): The [Time](/components/time/) component
+  the timestamps come from. Required while `require_time` is `true`.
+- **on_missing** (*Optional*, string): What to do with a column whose sensor has never published, or
+  publishes `NaN`. One of `skip` (the default), `hold` or `sentinel` - see
+  [How a record is written](#how-a-record-is-written).
+- **aggregate_window** (*Optional*, [Time](/guides/configuration-types#time)): Time window of the
+  per-column aggregates. Defaults to `1h`.
+- **aggregate_interval** (*Optional*, [Time](/guides/configuration-types#time)): How often the aggregates
+  are computed and published. Defaults to `5min`; `0s` disables them.
+- **dump_rows** (*Optional*, integer): Number of records the CSV dump prints. Defaults to `60`. Range is `1`
+  to `1000`. See [CSV dump](#csv-dump).
+- **records_sensor** (*Optional*, [ID](/guides/configuration-types#id)): The ID of a `sensor:` to publish
+  the number of stored records to.
+- **used_sensor** (*Optional*, [ID](/guides/configuration-types#id)): The ID of a `sensor:` to publish the
+  number of bytes used on the partition to.
+- **free_sensor** (*Optional*, [ID](/guides/configuration-types#id)): The ID of a `sensor:` to publish the
+  number of bytes still free on the partition to.
+- **oldest_sensor** (*Optional*, [ID](/guides/configuration-types#id)): The ID of a `sensor:` to publish
+  the timestamp of the oldest stored record to, as Unix epoch seconds.
+- **newest_sensor** (*Optional*, [ID](/guides/configuration-types#id)): The ID of a `sensor:` to publish
+  the timestamp of the newest stored record to, as Unix epoch seconds.
+- **errors_sensor** (*Optional*, [ID](/guides/configuration-types#id)): The ID of a `sensor:` to publish
+  the number of write and sync errors since boot to.
+- **log_sensor** (*Optional*, [ID](/guides/configuration-types#id)): The ID of a
+  [Text Sensor](/components/text_sensor/) that mirrors the important log lines (opened, cleared, flushed,
+  recreated, dropped records, waiting for a valid time).
+
+Sizes are written as a plain byte count or with a `B`, `KB`/`KiB` or `MB`/`MiB` suffix, e.g. `512KB`, `2MB`,
+`524288` or `0x40000`.
+
+### Columns
+
+```yaml
+tsdb:
+  columns:
+    - sensor: mq8                # id of the source sensor (required)
+      name: h2_mq8_ppm           # column name in the file header (required, at most 31 characters, unique)
+      scale: 1                   # raw = round(value * scale + offset)
+      offset: 0
+      average_sensor: my_average # optional aggregates over `aggregate_window`
+      min_sensor: my_min
+      max_sensor: my_max
+```
+
+- **sensor** (**Required**, [ID](/guides/configuration-types#id)): The `sensor:` the column is read from.
+  The component reads its last published value; the sensor itself keeps working as before.
+- **name** (**Required**, string): Column name stored in the file header. At most 31 characters and unique
+  across all columns.
+- **scale** (*Optional*, float): Multiplier of the raw encoding, `raw = round(value * scale + offset)`.
+  Defaults to `1`. Must not be `0`.
+- **offset** (*Optional*, float): Offset of the raw encoding, see `scale`. Defaults to `0`.
+- **average_sensor** (*Optional*, [ID](/guides/configuration-types#id)): The ID of a `sensor:` to publish
+  the average of this column over `aggregate_window` to.
+- **min_sensor** (*Optional*, [ID](/guides/configuration-types#id)): The ID of a `sensor:` to publish the
+  minimum of this column over `aggregate_window` to.
+- **max_sensor** (*Optional*, [ID](/guides/configuration-types#id)): The ID of a `sensor:` to publish the
+  maximum of this column over `aggregate_window` to.
+
+The engine stores `int16_t` values, so pick a `scale` that keeps the expected range inside `-32767` to
+`32767`: ppm and dBm are `1`, °C and %RH are `10`, volts are `1000` (mV). A value outside the range is
+clamped, not wrapped, and never silently turned into `-32768`.
+
+- At most **16** columns - the base-parameter limit of the V3 file format.
+- The number of columns is part of the stored schema: the engine refuses to open a file that was written
+  with another count, so adding or removing a column needs `recreate_on_schema_change: true`, which deletes
+  the file and starts an empty one - the old records are lost. Without it the component stays failed until
+  the original count is restored. A failed open for any other reason (heap, filesystem, I/O) keeps the file.
+- Only the count is stored, not the column names or their order. Renaming or reordering a column therefore
+  keeps the database open, and the stored values of that column appear under the new name.
+- `average_sensor`, `min_sensor` and `max_sensor` are ordinary `sensor:`s (for example a
+  [template sensor](/components/sensor/template/)) that the component publishes to. They report `unknown` -
+  never a `0` - while no stored record lies inside `aggregate_window`.
+
+Reading a stored value back is `value = (raw - offset) / scale`; the [CSV dump](#csv-dump) prints the
+engineering values already decoded.
+
+## How a record is written
+
+One record is written per `update_interval`:
+
+1. The clock is checked. With `require_time: true` (the default) nothing is written while the time is not
+   valid yet - a record whose timestamp is a boot counter would be worse than a gap. The log reports this
+   once per boot.
+1. Every column is read and encoded: `raw = round(value * scale + offset)`, clamped to the range of
+   `int16_t` (`-32767` to `32767`; `-32768` is reserved by the engine for "no value").
+1. A column whose sensor has never published, or publishes `NaN`, follows `on_missing`: `skip` (the default,
+   the whole record is dropped - a gap is honest, a zero is not), `hold` (the last value written for that
+   column is repeated; a column that has not published since boot has nothing to repeat and drops the record
+   like `skip`) or `sentinel` (`-32768` is written for that column).
+1. The record is appended to the database and - at most every `sync_interval` - committed with
+   `tsdb_sync_h()`.
+
+Dropped records are logged with the name of the column that had no value: the first one and then every
+tenth. `log_sensor` mirrors the drop as well.
+
+## Durability and flash wear
+
+LittleFS publishes a file only when it is closed, so `sync_interval` is exactly the age of the data a power
+cut can lose. The component commits (close and reopen) on that cadence, and once after the first record -
+that first commit is what makes the database survive a reboot at all. A clean restart (an OTA update,
+`safe_mode:`) commits and closes as well.
+
+The commit deadline is evaluated after every write interval, including the intervals that dropped a record,
+so the last record that *was* written is never left unsynced for longer than `sync_interval` while the
+history has gaps. An interval in which nothing was written costs no commit at all.
+
+Every write costs one LittleFS metadata commit, which is why the default `update_interval` is `60s` and not
+a few seconds. Lower values trade flash wear for a smaller loss window.
+
+## Partition sizing
+
+`partition_size` is split between the two OTA slots: each of them shrinks by half of it. The capacity of the
+database comes from `max_file_size` instead, so pick a partition that comfortably holds it plus
+`min_free_bytes` - both values must fit into `partition_size`, and `min_free_bytes` must stay below it,
+because LittleFS needs free blocks to write at all.
+
+| `partition_size` | Each OTA slot | Suggested `max_file_size` |
+| --- | --- | --- |
+| `256KB` | 1.625 MB | 192 KB |
+| `512KB` (default) | 1.5 MB | 384 KB |
+| `1MB` | 1.25 MB | 768 KB |
+
+The OTA slot values assume a 4 MB flash with the auto-generated partition table, which provides every app
+slot with 1.75 MB (see [Partitions](/components/esp32/#partitions)); on a board with less flash, check that
+the remaining slots still fit the firmware.
+
+## Diagnostic sensors
+
+Every diagnostic is optional and publishes to an ordinary `sensor:` (for example a
+[template sensor](/components/sensor/template/)). They are refreshed every 60 seconds.
+
+- `records_sensor`: Number of records currently stored. `0` until the first statistics pass after boot.
+- `used_sensor` and `free_sensor`: Number of bytes used and still free on the LittleFS partition.
+- `oldest_sensor` and `newest_sensor`: Timestamp of the oldest and the newest stored record, as Unix epoch
+  seconds. They report `unknown` while the database holds no records.
+- `errors_sensor`: Number of write and sync errors since boot. Anything but `0` means the flash or the
+  filesystem refused a write - the log (with `logger:` at `level: DEBUG`) has the details.
+- `log_sensor`: Mirrors the important log lines as text: `history opened`, `history cleared`,
+  `history flushed`, `history recreated (the column set changed)`,
+  `record dropped (a column had no value)` and `waiting for a valid time`.
+
+With `logger:` at `level: DEBUG`, a statistics line is logged as well:
+
+```text
+[12:00:00][D][tsdb:552]: history.tsdb: 12 records of 5000, 12 writes, 0 dropped, 0 errors
+```
+
+## Lambdas
+
+The following methods are available from [lambdas](/automations/templates#config-lambda):
+
+- `id(history).request_flush()`: Commit the database immediately (`tsdb_sync_h()`) - for "the power is about
+  to be cut".
+- `id(history).request_dump()`: Print the newest `dump_rows` stored records as CSV to the log, see
+  [CSV dump](#csv-dump). Pass a count to print that many records instead: `id(history).request_dump(200)`.
+- `id(history).request_clear()`: Delete every stored record. The file, the partition and the column
+  configuration stay.
+- `id(history).is_ready()`: `true` once the partition is mounted and the database is open.
+- `id(history).get_records()`: Number of records currently stored (`0` until the first statistics pass).
+
+`request_flush()`, `request_dump()` and `request_clear()` are carried out at the start of the next
+`update_interval`, so they are safe to call from any automation.
+
+```yaml
+button:
+  - platform: template
+    name: Flush history
+    on_press:
+      - lambda: id(history).request_flush();
+```
+
+## CSV dump
+
+`id(history).request_dump()` prints the newest `dump_rows` stored records to the log: a header line with the
+column names, then one line per record with the timestamp in Unix epoch seconds and the decoded engineering
+values with four decimal places.
+
+```text
+[12:00:00][I][tsdb:611]: history.tsdb: csv-dump begin (newest 4 records, window [1758900000, 1758900480], timestamp,h2_mq8_ppm,temperature,humidity ...)
+[12:00:00][I][tsdb:636]: history.tsdb: 1758900000,12.3400,21.5000,41.2000
+[12:00:00][I][tsdb:636]: history.tsdb: 1758900060,12.4100,21.5000,41.1000
+[12:00:00][I][tsdb:636]: history.tsdb: 1758900120,12.3900,21.6000,41.3000
+[12:00:00][I][tsdb:636]: history.tsdb: 1758900180,12.4500,21.6000,41.0000
+[12:00:00][I][tsdb:648]: history.tsdb: csv-dump end (4 rows, 0 older skipped)
+```
+
+The dump reads a bounded window (the last `dump_rows` write intervals up to the newest record, doubled as a
+margin) that the engine seeks to directly, so it never scans the whole history and cannot stall the main
+loop. A gap wider than that margin widens the window to the whole history once - which is logged - so the
+newest `dump_rows` stored records are still printed; only a database holding fewer records than `dump_rows`
+prints fewer. A failed record count aborts the dump instead of printing old records as the newest.
+
+There is no file download: the CSV dump over the log is the export path that needs no Home Assistant.
+
+## See Also
+
+- [Time Component](/components/time/)
+- [PSRAM Component](/components/psram/)
+- [ESP32 Platform](/components/esp32/) - flash partitions
+- [Runtime Statistics](/components/runtime_stats/)
+- [Logger Component](/components/logger/)
+- [Automations and Templates](/automations)
+- [esp_tsdb](https://github.com/zakery292/esp_tsdb) (MIT) - the time-series engine
+- [esp_littlefs](https://github.com/joltwallet/esp_littlefs) (MIT) - the LittleFS VFS component
+- <APIRef text="tsdb.h" path="tsdb/tsdb.h" />
