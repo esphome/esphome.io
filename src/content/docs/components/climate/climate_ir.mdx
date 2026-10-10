@@ -26,6 +26,7 @@ submit a feature request (see FAQ).
 | Emmeti | `emmeti`                           | yes |
 | Fujitsu General | `fujitsu_general`                  | yes |
 | [GREE](#gree_ir) | `gree`                             | |
+| [Haier Tundra](#haier_tundra) | `haier_tundra` | yes |
 | Hitachi | `hitachi_ac344`, `hitachi_ac424` | yes |
 | [LG](#climate_ir_lg) | `climate_ir_lg`                    | yes |
 | [Midea](#midea_ir) | `midea_ir`                         | yes |
@@ -178,6 +179,53 @@ switch:
     xfan:
       name: "AC X-Fan"
 ```
+
+<span id="haier_tundra"></span>
+
+### `haier_tundra`
+
+Haier 112-bit protocol, currently only tested with AS35TB4HRA but may also work with other units.
+
+```yaml
+# Example configuration entry
+climate:
+  - platform: haier_tundra
+    name: "AC"
+    sensor: room_temperature
+```
+
+Two buttons and three switches are also exposed:
+
+- **haier_tundra_id** (**Required**, [ID](/guides/configuration-types#id)): The Haier Tundra Climate entity.
+- **light** (*Optional*, [Button](/components/button#config-button)): Toggles the display LEDs.
+- **self_clean** (*Optional*, [Button](/components/button#config-button)): Starts the self clean process. Can be started when the unit is off.
+- **health** (*Optional*, [Switch](/components/switch#config-switch)): Turns on/off Health mode.
+- **quiet** (*Optional*, [Switch](/components/switch#config-switch)): Turns on/off Quiet mode.
+- **turbo** (*Optional*, [Switch](/components/switch#config-switch)): Turns on/off Turbo mode.
+
+```yaml
+# Example configuration entry
+button:
+  - platform: haier_tundra
+    haier_tundra_id: my_haier_ac
+    light:
+      name: "Toggle Light"
+    self_clean:
+      name: "Start Self Clean"
+
+switch:
+  - platform: haier_tundra
+    haier_tundra_id: my_haier_ac
+    health:
+      name: "Health Mode"
+    quiet:
+      name: "Quiet Mode"
+    turbo:
+      name: "Turbo Mode"
+```
+
+> [!NOTE]
+> Quiet and Turbo Mode cannot be enabled at the same time, and are not available in Heat/Cool, Dry or Fan modes.
 
 ### `midea_ir`
 
@@ -383,6 +431,7 @@ Additional configuration must be specified for this platform:
 - <APIRef text="daikin.h" path="daikin/daikin.h" />
 - <APIRef text="fujitsu_general.h" path="fujitsu_general/fujitsu_general.h" />
 - <APIRef text="gree.h" path="gree/gree.h" />
+- <APIRef text="haier_tundra.h" path="haier_tundra/haier_tundra.h" />
 - <APIRef text="hitachi_ac344.h" path="hitachi_ac344/hitachi_ac344.h" />
 - <APIRef text="midea_ir.h" path="midea_ir/midea_ir.h" />
 - <APIRef text="mitsubishi.h" path="mitsubishi/mitsubishi.h" />
