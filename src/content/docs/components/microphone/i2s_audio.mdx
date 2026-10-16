@@ -73,6 +73,27 @@ microphone:
     pdm: false
 ```
 
+For audio-heavy Muse Luxe configurations, running flash and PSRAM at 80MHz aims to improve memory access
+performance and leave more CPU time for decoding and voice processing. In one Muse Luxe 02 test with the same MP3
+playback and wake-word workload, and the MP3 buffer in PSRAM, CPU0 load fell from 75.3% to 36.4% and CPU1 load from
+72.8% to 39.4% when both clocks changed from 40MHz to 80MHz. These are reductions of 38.9 and 33.4 percentage
+points (about 52% and 46% relative), measured on one core each. Results may differ with other devices and workloads.
+
+To try these settings, add both clock options to your existing configuration:
+
+```yaml
+esp32:
+  board: esp-wrover-kit
+  flash_frequency: 80MHz
+  framework:
+    type: esp-idf
+
+psram:
+  speed: 80MHz
+```
+
+Test stability on your device before relying on the higher clocks.
+
 ### ICS-43434
 
 ```yaml

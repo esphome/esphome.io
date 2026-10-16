@@ -52,3 +52,6 @@ the datasheet for the module you are using to be sure.
 - 120MHz is not available with octal mode, unless using ESP-IDF and the `enable_idf_experimental_features` is enabled
   in the ESP-IDF platform [Advanced Configuration](/components/esp32#advanced-configuration).
 - Configuring an unsupported speed will usually result in the PSRAM running at the default speed.
+- On the original ESP32, 80MHz PSRAM requires 80MHz flash. Set `esp32.flash_frequency: 80MHz` alongside
+  `psram.speed: 80MHz`; setting only the PSRAM speed may leave it at 40MHz in the generated ESP-IDF configuration.
+  Check the resulting `sdkconfig` to confirm both clocks.
