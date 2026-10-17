@@ -137,6 +137,14 @@ The Daikin ARC remotes (`daikin_arc` climate, `daikin_arc417`, `daikin_arc480` p
   - `yx1ff`
   - `yag`
 
+- **use_fahrenheit** (*Optional*, boolean): Ask the air conditioner to show its setpoint in
+  Fahrenheit on its own display. Home Assistant already shows whichever unit you have configured;
+  this controls what the unit itself displays, which otherwise reads Celsius. Defaults to `false`.
+
+  Verified on a `yx1ff` unit. Gree's temperature field holds only whole degrees Celsius plus a
+  half-degree flag, so each whole Fahrenheit degree is matched as closely as the protocol allows;
+  every degree from 61 °F to 86 °F is reachable exactly.
+
 ```yaml
 # Example configuration entry for climate only
 climate:
@@ -145,6 +153,7 @@ climate:
     id: my_gree_ac
     sensor: room_temperature
     model: yan
+    use_fahrenheit: true
 ```
 
 Models `yan`, `yaa`, `yac` and `yac1fb9` support a couple of additional features which can be controlled with switches:
