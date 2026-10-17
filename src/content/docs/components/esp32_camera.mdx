@@ -230,6 +230,72 @@ esp32_camera:
   # ...
 ```
 
+**LCKFB SZPI ESP32-S3-VA with GC0308**:
+
+> [!NOTE]
+> This configuration has been tested with the LCKFB SZPI ESP32-S3-VA development board
+> and its onboard GC0308 camera. Other ESP32-S3 boards or GC0308 modules may use
+> different pin mappings or power control pins.
+
+```yaml
+# Example configuration entry
+psram:
+  mode: octal
+  speed: 80MHz
+
+pca9554:
+  - id: pca9557pw_device
+    address: 0x19
+
+switch:
+  - platform: gpio
+    id: camera_active
+    internal: true
+    pin:
+      pca9554: pca9557pw_device
+      number: 2
+      inverted: true
+      mode:
+        output: true
+    restore_mode: ALWAYS_ON
+
+i2c:
+  - id: camera_i2c
+    sda: GPIO1
+    scl: GPIO2
+    scan: true
+    frequency: 100kHz
+
+esp32_camera:
+  setup_priority: -200
+  i2c_id: camera_i2c
+
+  external_clock:
+    pin: GPIO5
+    frequency: 20MHz
+  vsync_pin: GPIO3
+  href_pin: GPIO46
+  pixel_clock_pin: GPIO7
+  data_pins: [GPIO16, GPIO18, GPIO8, GPIO17, GPIO15, GPIO6, GPIO4, GPIO9]
+
+  # Image settings
+  name: My Camera
+  max_framerate: 15 fps
+  idle_framerate: 0.5 fps
+  resolution: 320x240
+  frame_buffer_count: 1
+  frame_buffer_location: PSRAM
+  pixel_format: RGB565
+  jpeg_quality: 12
+  brightness: 1
+  contrast: 1
+  saturation: 0
+  aec_mode: manual
+  aec_value: 800
+  agc_mode: manual
+  agc_value: 30
+```
+
 **M5Stack Camera**:
 
 > [!WARNING]
