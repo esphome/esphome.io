@@ -18,7 +18,13 @@ network:
 
 - **enable_ipv6** (*Optional*, boolean): Enables IPv6 support. Defaults to `false`.
 Always `true` on nRF52 because IPv4 is not supported.
-- **min_ipv6_addr_count** (*Optional*, integer): ESPHome considers the network to be connected when it has one IPv4 address and this number of IPv6 addresses. Defaults to `0` so as to not hang on boot with networks where IPv6 is not enabled. `2` is typically a reasonable value for configurations requiring IPv6.
+- **min_ipv6_addr_count** (*Optional*, integer): ESPHome considers the network to be connected when it has one IPv4 address and this number of IPv6 addresses. Defaults to `0` so as to not hang on boot with networks where IPv6 is not enabled. `2` is typically a reasonable value for configurations requiring IPv6. With `enable_ipv4: false`, no IPv4 address is needed.
+- **enable_ipv4** (*Optional*, boolean): Set to `false` to connect without IPv4, for networks that
+  only offer IPv6 (SLAAC) and no DHCPv4. Only `esp32` supports `false`. WiFi and Ethernet don't start
+  their DHCPv4 client and count as connected once they have `min_ipv6_addr_count` IPv6 addresses. The
+  WiFi fallback access point still uses IPv4. `false` requires `enable_ipv6: true` and
+  `min_ipv6_addr_count` of at least `1`, and can't be used with `manual_ip`. See
+  [IPv6-only networks](#network-ipv6-only). Defaults to `true`.
 - **enable_high_performance** (*Optional*, boolean): Explicitly enables or disables high-performance networking optimizations. Only supported on ESP32 devices. When not specified, this is automatically enabled by components that benefit from optimized network settings. Set to `false` to disable these optimizations if they cause memory issues on your device. Defaults to component-driven behavior.
 - **tcp_send_buffer** (*Optional*, int): The amount of outgoing data lwIP queues per TCP connection before
   writes stall, in bytes. Only supported on ESP32 devices. The framework default of 5744 bytes can stall
@@ -31,6 +37,35 @@ Always `true` on nRF52 because IPv4 is not supported.
   Each list entry names one of the supported interface types (`ethernet` or `wifi`); the first entry is the most
   preferred. Required when both `ethernet:` and `wifi:` are configured, and must then list every configured
   interface. See [Multi-Interface Support](#multi-interface-support).
+
+<span id="network-ipv6-only"></span>
+
+## IPv6-only networks
+
+By default the node waits for an IPv4 address from DHCP before it counts as connected. On a network
+that only hands out IPv6 addresses, set `enable_ipv4: false`.
+This works for [WiFi](/components/wifi/) and [Ethernet](/components/ethernet/):
+
+```yaml
+network:
+  enable_ipv6: true
+  min_ipv6_addr_count: 2
+  enable_ipv4: false
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+```
+
+With `min_ipv6_addr_count: 2` the node waits for its link-local address and one address from the
+router. Use `1` only if Home Assistant is on the same network segment.
+
+DNS servers are taken from the router advertisement (RDNSS) or from stateless DHCPv6. Anything the
+node itself connects to, like an NTP or MQTT server, must be reachable over IPv6. Each connect logs
+one harmless `invalid static ip` error from `esp_netif_handlers`.
+
+The node can't resolve `.local` names in this mode, so give anything it fetches from, like the Home
+Assistant URL used for TTS, a regular DNS name with an AAAA record.
 
 ## High-performance networking
 
