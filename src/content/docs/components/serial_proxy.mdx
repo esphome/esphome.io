@@ -75,9 +75,11 @@ can use it. Once subscribed, the client can:
 
 A client can also subscribe to the identity of every port, without subscribing to the ports themselves. For a port
 whose `uart_id` refers to a [USB UART](/components/usb_uart/) channel, the identity holds the vendor and product
-IDs, the manufacturer, product and serial number strings and the interface number of the attached USB device, much
-like a `/dev/serial/by-id` name on Linux. The client gets the identity of every port when it subscribes, and an
-update whenever a USB device is attached or removed, so it can find a device by identity rather than by port number.
+IDs, the manufacturer, product and serial number strings, and the number and class of the interface the port is
+bound through, much like a `/dev/serial/by-id` name on Linux: the interface number gives the `-ifNN` suffix, and
+the class decides whether `-port0` follows it. The client gets the identity of every port when it subscribes, and
+an update whenever a USB device is attached or removed, so it can find a device by identity rather than by port
+number.
 
 ## Full Example
 
