@@ -340,8 +340,10 @@ Coexistence is best suited to occasional access rather than high-throughput clie
 
 The access point runs its own subnet and DHCP server (default `192.168.4.1`). You can override
 this with `manual_ip` under `ap:`. A [Captive Portal](/components/captive_portal/) is served on
-the AP while the station is not connected, so a wrong password can be corrected without a
-reboot, and it closes once the station connects. The
+the AP while the station is not connected, so a wrong password or a lost upstream can be
+corrected without a reboot, and it closes once the station connects. Once the
+[`provisioning:`](/components/provisioning/) window has closed the portal is no longer served,
+but the access point itself stays up. The
 [`wifi.ap_active` condition](#wifi-ap_active-condition) reports whether the AP is currently up.
 
 [WISP Mode](#wisp-mode) keeps an access point up next to the station as well and routes its
@@ -372,10 +374,11 @@ wifi:
     napt: true
 ```
 
-Clients of the access point are handed the resolvers of the station connection over DHCP, so
-their name lookups work once the station has connected; before that there is nothing to pass
-on. A later change of resolvers is given to the clients with their next lease, without taking
-the access point down.
+Clients of the access point are handed the resolvers of the station connection over DHCP. A
+client that joins before the station has a resolver is handed the access point's own address and
+is disconnected once the station's resolvers are known, so it rejoins and picks them up. A
+resolver that changes later is handed out with the clients' next lease, without taking the
+access point down.
 
 > [!WARNING]
 > With `napt: true`, anything connected to the access point can reach the networks the device

@@ -24,7 +24,10 @@ the window closes anyway and the device stops accepting provisioning:
   left enabled, since it requires a physical connection to the device.
 - The [WiFi](/components/wifi/) access point shuts down, along with the
   [captive portal](/components/captive_portal/) running on it, and neither comes
-  back until the device restarts.
+  back until the device restarts. A routed access point
+  ([`ap_mode: wisp`](/components/wifi/#wisp-mode) or `coexist`/`napt`) stays up
+  instead, since it is not a provisioning surface; its captive portal, if any, is
+  closed.
 - The `on_timeout` automation runs.
 
 While the device is unprovisioned, the [API](/components/api/) and
