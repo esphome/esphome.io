@@ -22,6 +22,16 @@ load cell amplifier
 Connect `GND` to `GND`, `VCC` to `3.3V` and the other two `DOUT` (or `DT` for short)
 and `CLK` (or `SCK`  ) to free GPIO pins.
 
+The HX711 has two input channels. Channel A takes a gain of 128 or 64 and channel B a fixed gain of 32,
+so `gain` selects the channel as well as the amplification. The data sheet suggests channel B for monitoring
+the supply voltage or another low-rate signal next to the load cell on channel A. The optional `channel_b`
+sensor reports channel B after every reading of the main sensor.
+
+The chip is powered down when the device shuts down or reboots, so nothing extra is needed for
+[Deep Sleep](/components/deep_sleep/) or a [Shutdown Button](/components/button/shutdown/). It can also be
+put to sleep between readings with `power_down_after_reading`, or on demand with the
+[`hx711.power_down`](#hx711-power_down-action) action.
+
 ```yaml
 # Example configuration entry
 sensor:
@@ -35,17 +45,89 @@ sensor:
 
 ## Configuration variables
 
-- **dout_pin** (**Required**, [Pin Schema](/guides/configuration-types#pin-schema)): The DOUT (or DAT) pin.
-- **clk_pin** (**Required**, [Pin Schema](/guides/configuration-types#pin-schema)): The CLK pin.
-- **gain** (*Optional*, enum): The gain. Implicitly selects the channel. Defaults to `128`.
+- **dout_pin** (**Required**, [Pin Schema](/guides/configuration-types/#pin-schema)): The DOUT (or DAT) pin.
+- **clk_pin** (**Required**, [Pin Schema](/guides/configuration-types/#pin-schema)): The CLK pin.
+- **gain** (*Optional*, enum): The gain. Implicitly selects the channel and can be changed at runtime with
+  [`hx711.set_gain`](#hx711-set_gain-action). Defaults to `128`.
 
   - `32` (Channel B, gain 32)
   - `64` (Channel A, gain 64)
   - `128` (Channel A, gain 128)
 
-- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to check the sensor. Defaults to `60s`.
+- **settling_time** (*Optional*, [Time](/guides/configuration-types/#time)): How long to wait after a power-up or
+  a gain change before a reading is trusted. The data sheet calls this the settling time: about four conversions,
+  400 ms at the default 10 samples per second. Defaults to `400ms`.
+- **measurement_ready_timeout** (*Optional*, [Time](/guides/configuration-types/#time)): How long to wait for the
+  chip to signal a finished conversion on `DOUT`. When it is exceeded the sensor publishes `NaN`, sets a warning,
+  powers the chip down and tries again at the next update. Defaults to `2000ms`.
+- **power_down_after_reading** (*Optional*, boolean): Power the chip down after each update and wake it, with a
+  settling wait, for the next one. Defaults to `false`.
+- **channel_b** (*Optional*, [Sensor](/components/sensor/)): A second sensor that reports channel B (gain 32)
+  after every reading of the main sensor. Each update then takes two conversions and two settling waits. With
+  `gain: 32` the main sensor already reads channel B, so both sensors publish the same value from one conversion.
 
-- All other options from [Sensor](/components/sensor).
+  ```yaml
+  sensor:
+    - platform: hx711
+      name: "Load Cell"
+      dout_pin: D0
+      clk_pin: D1
+      channel_b:
+        name: "Supply Voltage"
+  ```
+
+- **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): The interval to check the sensor.
+  Defaults to `60s`.
+- All other options from [Sensor](/components/sensor/).
+
+## Actions
+
+### `hx711.set_gain` Action
+
+Sets the gain, and with it the input channel, at runtime. The next conversion is read with the new gain and
+discarded, then the chip settles before the next published reading. No power cycle is involved.
+
+```yaml
+on_...:
+  - hx711.set_gain:
+      gain: 64
+```
+
+Configuration variables:
+
+- **gain** (**Required**, [templatable](/automations/templates/#config-templatable), enum): `32`, `64` or `128`.
+  A lambda returns a value of the `HX711Gain` enum, for example `hx711::HX711_GAIN_64`.
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): The HX711 sensor. Can be omitted when only one is
+  configured.
+
+### `hx711.power_down` Action
+
+Powers the chip down. Updates are skipped while it sleeps; the poller keeps running so a later
+[`hx711.power_up`](#hx711-power_up-action) resumes readings without any further action.
+
+```yaml
+on_...:
+  - hx711.power_down
+```
+
+Configuration variables:
+
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): The HX711 sensor. Can be omitted when only one is
+  configured.
+
+### `hx711.power_up` Action
+
+Wakes the chip after `hx711.power_down`. Readings resume once it has settled.
+
+```yaml
+on_...:
+  - hx711.power_up
+```
+
+Configuration variables:
+
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): The HX711 sensor. Can be omitted when only one is
+  configured.
 
 ## Converting Units
 
@@ -76,7 +158,8 @@ Replace the masses and values `120.0`, `810.0`, etc with your values.
 
 ## See Also
 
-- [Sensor Filters](/components/sensor#sensor-filters)
+- [Sensor Filters](/components/sensor/#sensor-filters)
 - [Analog To Digital Sensor](/components/sensor/adc/)
 - [HX711 Library](https://github.com/bogde/HX711) by [@bogde](https://github.com/bogde)
 - <APIRef text="hx711.h" path="hx711/hx711.h" />
+
