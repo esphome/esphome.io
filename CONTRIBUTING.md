@@ -20,6 +20,23 @@
   - Provide a link to the dependency's documentation
   - Do NOT include the dependent component's configuration in the example
 
+#### Devices Without a Dedicated Component
+
+Some devices need no dedicated component because an existing one already supports them, for example the TSL235R
+light-to-frequency converter works with the Pulse Counter sensor. Document these with a short recipe page:
+
+- Place the page at `/components/<domain>/<part>/` (flat) and use the part number as the title
+- Start the page with the `SupportedBy` component, which links to the component that does the work
+- Use the sections Wiring, Configuration, a conversion section if the output needs scaling, and See Also
+- Add an index card with the caption `<Measurement> (via <Component>)`
+- Link the page from the See Also list of the generic component
+
+```mdx
+import SupportedBy from '@components/SupportedBy.astro';
+
+<SupportedBy name="TSL235R" component="Pulse Counter" path="/components/sensor/pulse_counter/" />
+```
+
 #### Pin References
 
 - **ALWAYS use the literal string `GPIOXX`** in documentation examples

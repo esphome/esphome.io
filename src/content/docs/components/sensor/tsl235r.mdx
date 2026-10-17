@@ -1,0 +1,60 @@
+---
+title: "TSL235R Light-to-Frequency Converter"
+description: "Instructions for using the TSL235R light-to-frequency converter with the Pulse Counter sensor."
+---
+
+import SupportedBy from '@components/SupportedBy.astro';
+
+<SupportedBy name="TSL235R" component="Pulse Counter" path="/components/sensor/pulse_counter/" />
+
+The TSL235R is a light sensor that outputs a 50% duty-cycle square wave whose frequency is directly proportional to
+the irradiance. The output ranges from about 1 Hz in the dark (typically 0.4 Hz) up to roughly 500 kHz.
+
+The part is discontinued by ams-OSRAM, but it is still widely sold on breakout boards. See the
+[product page](https://ams-osram.com/products/photodetectors/photodiodes/ams-tsl235-light-to-frequency) for the
+datasheet.
+
+## Wiring
+
+The sensor has three pins: `GND`, `VDD` and `OUT`. The supply voltage can be 2.7 V to 5.5 V. Power it from 3.3 V so
+that `OUT` is safe to connect directly to an ESP GPIO pin. Connect `OUT` to any GPIO pin that supports input.
+
+## Configuration
+
+Count the output with the [Pulse Counter](/components/sensor/pulse_counter/) sensor:
+
+```yaml
+sensor:
+  - platform: pulse_counter
+    pin: GPIOXX
+    name: "Irradiance"
+    internal_filter: 0us
+    unit_of_measurement: "µW/cm²"
+    filters:
+      - multiply: 0.0000277778
+```
+
+The Pulse Counter reports pulses per minute. The typical responsivity of the TSL235R is 0.6 kHz per µW/cm² at 635 nm,
+so the irradiance is the frequency in Hz divided by 600, and the frequency is the pulses per minute divided by 60:
+
+$$
+E_e = \frac{f}{600} = \frac{\text{ppm}}{60 \times 600} = \text{ppm} \times 0.0000277778
+$$
+
+The `internal_filter` option defaults to `13us`, which on the ESP32 drops pulses shorter than 13 µs. Above roughly
+38 kHz (about 64 µW/cm²) pulses would be lost, so the filter is disabled by setting it to `0us`.
+
+## Limitations
+
+- The responsivity depends on the wavelength of the light, and the full-scale tolerance is ±20% between units. The
+  result is therefore approximate. For better accuracy, compare the readings with a reference meter and apply a
+  [Calibrate Linear](/components/sensor/filter/calibrate_linear/) filter.
+- An ESP32 is recommended, as it counts pulses in hardware (PCNT) and handles counter overflow. On the ESP8266, or with
+  `use_pcnt: false`, counting is interrupt-based in software and cannot keep up with the high frequencies produced in
+  bright light.
+
+## See Also
+
+- [Pulse Counter Sensor](/components/sensor/pulse_counter/)
+- [Sensor Filters](/components/sensor/#sensor-filters)
+- [ams-OSRAM TSL235 product page](https://ams-osram.com/products/photodetectors/photodiodes/ams-tsl235-light-to-frequency)
