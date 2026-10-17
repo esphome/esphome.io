@@ -84,11 +84,45 @@ wifi:
 
   - **ap_mode** (*Optional*, string): One of `fallback` or `wisp`. Defaults to `fallback`, which starts the access
     point only when no connection to the WiFi router can be made. `wisp` turns the node into a WiFi repeater, see
-    [WISP Mode](#wisp-mode). ESP32 with ESP-IDF 5.1 or newer only.
+    [WISP Mode](#wisp-mode). ESP32 with ESP-IDF 5.1 or newer only. `coexist` and `napt` are
+    only accepted with `fallback`.
 
   - **dns_servers** (*Optional*, list of IPv4 addresses): The DNS servers handed out to clients of the access point.
     Only valid with `ap_mode: wisp`. Accepts one server, or two with ESP-IDF 6.0 or newer. If not set, the DNS
     servers of the router connection are passed on to the clients.
+
+  - **coexist** (*Optional*, boolean): Only on `esp32` with ESP-IDF. If enabled, the access
+    point starts immediately at boot and stays active permanently alongside the station
+    connection, instead of only being enabled as a fallback hotspot when no station
+    connection can be made. This uses the ESP-IDF AP+STA mode (`WIFI_MODE_APSTA`): the
+    device stays a client of the upstream network while also serving clients on its own
+    access point. Defaults to `false`, which leaves the fallback hotspot behavior unchanged.
+
+    Requires at least one station network to be configured (via `ssid`/`password` or
+    `networks`), and requires `post_connect_roaming: false` (see
+    [Post-Connect Roaming](#post-connect-roaming)). `ap_timeout` has to stay at its default:
+    the access point is started with the node whether or not the station connects, so any
+    other value is rejected. `ap_mode: wisp` keeps the access point up as well and cannot be
+    combined with `coexist`. See [Access Point Coexistence](#access-point-coexistence) below.
+
+    > [!NOTE]
+    > The ESP32 has a single radio shared by the station and access point interfaces, so both
+    > must use the same channel. When the station connects to your router, the driver
+    > automatically moves the access point to the station's channel, which can briefly
+    > disconnect AP clients. Time-slicing between both modes also reduces overall WiFi
+    > throughput.
+
+  - **napt** (*Optional*, boolean): Only on `esp32` with ESP-IDF 5.1 or newer. Enables Network
+    Address and Port Translation (IP forwarding) for the access point, so devices connected
+    to the AP can reach the internet through the device's station connection. Combined with
+    `coexist: true` this lets the device act as a WiFi repeater, sharing the upstream
+    connection with the AP clients. Defaults to `false`. Requires `coexist: true` to be
+    enabled, and cannot be combined with `ap_mode: wisp`, which routes the access point's
+    subnet through the station on its own path (see [WISP Mode](#wisp-mode)).
+
+    > [!NOTE]
+    > Enabling `napt` adds `CONFIG_LWIP_IP_FORWARD` and `CONFIG_LWIP_IPV4_NAPT` to the
+    > ESP-IDF build configuration.
 
 - **domain** (*Optional*, string): Set the domain of the node hostname used for uploading.
   For example, if it's set to `.local`, all uploads will be sent to `<HOSTNAME>.local`.
@@ -239,14 +273,22 @@ wifi:
 ESPHome has an optional "Access Point Mode". If you include `ap:`
 in your wifi configuration, ESPHome will automatically set up an access point that you
 can connect to. Additionally, you can specify both a "normal" station mode and AP mode at the
-same time. This will cause ESPHome to only enable the access point when no connection
+same time. By default, this will cause ESPHome to only enable the access point when no connection
 to the WiFi router can be made.
+
+On `esp32` devices using ESP-IDF, you can additionally let both interfaces run at the same
+time by setting `coexist: true` (AP+STA mode), and share the station connection with the
+connected clients by setting `napt: true`. Both options are opt-in, so configurations that
+do not set them keep the fallback behavior described above. See
+[Access Point Coexistence](#access-point-coexistence) below.
 
 ```yaml
 wifi:
   ap:
     ssid: "Livingroom Fallback Hotspot"
     password: "W1PBGyrokfLz"
+    # coexist: true # (esp32 + ESP-IDF only) uncomment to keep the AP active permanently
+    # napt: true    # (esp32 + ESP-IDF only) uncomment to allow AP clients to access the internet
 ```
 
 You can also create a simple `ap` config which will set up the access point to have the
@@ -265,6 +307,83 @@ wifi:
 
 For a device that only ever uses its access point, add [`web_server:`](/components/web_server/#access-point-mode)
 to control it from a phone without any internet connection.
+
+### Access Point Coexistence
+
+On `esp32` with ESP-IDF, setting `coexist: true` makes the access point start immediately at
+boot and remain active at the same time as the station connection, instead of only being used
+as a fallback hotspot. This puts the ESP-IDF WiFi driver into AP+STA mode (`WIFI_MODE_APSTA`),
+so the device is a client of your router and an access point for other devices at the same
+time. Adding `napt: true` (see
+[Sharing the Station Connection (NAPT)](#sharing-the-station-connection-napt)) extends this
+into a WiFi repeater, forwarding the AP clients' traffic over the station connection.
+
+Coexistence is opt-in, so existing configurations that do not set `coexist: true` are
+unaffected and keep the classic fallback hotspot behavior.
+
+```yaml
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  post_connect_roaming: false
+  ap:
+    ssid: "Livingroom Hotspot"
+    password: "W1PBGyrokfLz"
+    coexist: true
+```
+
+Requires at least one station network and `post_connect_roaming: false`. Because the ESP32
+shares a single radio between station and access point operation, both interfaces use the same
+channel, and the access point follows the station's channel when it connects. This can briefly
+disconnect AP clients, and time-slicing between the two modes lowers overall throughput.
+Coexistence is best suited to occasional access rather than high-throughput clients.
+
+The access point runs its own subnet and DHCP server (default `192.168.4.1`). You can override
+this with `manual_ip` under `ap:`. A [Captive Portal](/components/captive_portal/) is served on
+the AP while the station is not connected, so a wrong password or a lost upstream can be
+corrected without a reboot, and it closes once the station connects. Once the
+[`provisioning:`](/components/provisioning/) window has closed the portal is no longer served,
+but the access point itself stays up. The
+[`wifi.ap_active` condition](#wifi-ap_active-condition) reports whether the AP is currently up.
+
+[WISP Mode](#wisp-mode) keeps an access point up next to the station as well and routes its
+subnet the same way. Choose `ap_mode: wisp` for a repeater: it also enlarges the Wi-Fi driver
+buffers and enables frame aggregation for the forwarded traffic. Choose `coexist` when the
+access point should keep its [Captive Portal](/components/captive_portal/) or the Wi-Fi
+driver settings should stay as they are; WISP mode rejects `captive_portal`.
+
+> [!WARNING]
+> Enabling `coexist: true` together with aggressive power saving (e.g. `power_save_mode: high`)
+> can make the access point slow to respond.
+
+#### Sharing the Station Connection (NAPT)
+
+By default, AP clients stay on their own subnet and cannot reach the internet. Setting
+`ap.napt: true` enables Network Address and Port Translation, forwarding traffic from AP clients
+through the device's station connection:
+
+```yaml
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  post_connect_roaming: false
+  ap:
+    ssid: "Livingroom Hotspot"
+    password: "W1PBGyrokfLz"
+    coexist: true
+    napt: true
+```
+
+Clients of the access point are handed the resolvers of the station connection over DHCP. A
+client that joins before the station has a resolver is handed the access point's own address and
+is disconnected once the station's resolvers are known, so it rejoins and picks them up. A
+resolver that changes later is handed out with the clients' next lease, without taking the
+access point down.
+
+> [!WARNING]
+> With `napt: true`, anything connected to the access point can reach the networks the device
+> itself can reach through its station connection. Always set a password on the access point,
+> and treat the AP as an extension of your upstream network.
 
 ## WISP Mode
 
