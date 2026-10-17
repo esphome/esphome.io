@@ -1,0 +1,232 @@
+---
+title: "Storage"
+description: "Base storage registry component, automatically loaded by storage drivers such as sd_storage, usb_storage, nfs_client, and binary_storage."
+---
+
+The `storage` component is the shared base layer for all ESPHome storage drivers. It provides a runtime registry
+(`StorageRegistry`) that tracks every configured storage device and notifies subscribers when devices register or
+unregister (e.g. on hotplug events).
+
+You do not need to add `storage:` to your configuration manually — it is automatically loaded by any storage
+driver that depends on it (`sd_storage`, `usb_storage`, `nfs_client`, `binary_storage`, etc.).
+
+> [!NOTE]
+> The `storage` component has no user-visible configuration variables. All configuration is done in the individual
+> storage driver components.
+
+## How It Works
+
+When any storage driver is added to the configuration, `storage` is auto-loaded and a single `StorageRegistry`
+instance is created. The registry initializes at `setup_priority::BUS` — before any driver — so drivers can safely
+call `register_storage()` from their own `setup()`. Each driver calls `register_storage()` when it becomes ready
+and `unregister_storage()` when it disconnects or unmounts (e.g. SD card removed).
+
+The registry pool is sized exactly at code-generation time from the number of configured storage devices — no
+runtime reallocation occurs.
+
+## Storage Drivers
+
+Storage drivers auto-load this component and register themselves with the registry at runtime.
+The following drivers are currently in development and will be added in separate PRs, each with their own documentation:
+
+- `sd_storage` — SD/MMC cards via SPI or SDIO
+- `usb_storage` — USB mass storage devices via USB host
+- `nfs_client` — Network File System shares (NFSv3/v4)
+- `binary_storage` — I²C/SPI EEPROM, FRAM, MRAM, SPI flash, OneWire EEPROM, and internal flash partitions
+
+> [!NOTE]
+> These drivers are currently in testing. Documentation for each will be added alongside their respective PRs.
+
+## Storage Types
+
+All storage drivers expose one of three abstract base classes:
+
+- **`FilesystemStorage`** — path-based file access with a local filesystem layer (SD, USB, LittleFS partitions).
+- **`RawStorage`** — offset-based byte access without a filesystem (EEPROM, FRAM, MRAM, raw flash).
+- **`NetworkStorage`** — path-based file access over a network protocol (NFS). Stateless; uses chunked
+  `read_chunk`/`write_chunk` instead of file handles.
+
+## C++ API
+
+This section is for component developers who want to interact with storage devices from custom components
+or lambdas.
+
+### Global Registry
+
+The registry is accessible via the global pointer:
+
+```cpp
+#include "esphome/components/storage/storage.h"
+
+esphome::storage::global_storage_registry  // StorageRegistry*
+```
+
+### Enumerating Devices
+
+Use the typed enumeration methods to iterate over registered devices. Each method calls a C-style callback
+for every matching device:
+
+```cpp
+using namespace esphome::storage;
+
+// All devices
+global_storage_registry->for_each([](Storage *s, void *ctx) {
+  StorageInfo info{};
+  if (s->get_info(&info) == StorageError::OK) {
+    ESP_LOGI("my_component", "Device: %s (%s)", info.id, info.name);
+  }
+}, nullptr);
+
+// Filesystem devices only (SD, USB, LittleFS)
+global_storage_registry->for_each_filesystem([](FilesystemStorage *fs, void *ctx) {
+  FileStat stat{};
+  if (fs->stat("/myfile.txt", &stat) == StorageError::OK) {
+    ESP_LOGI("my_component", "File size: %zu", stat.size);
+  }
+}, nullptr);
+
+// Raw devices only (EEPROM, FRAM, MRAM, raw flash)
+global_storage_registry->for_each_raw([](RawStorage *raw, void *ctx) {
+  uint8_t buf[4];
+  size_t transferred = 0;
+  raw->read(0, buf, sizeof(buf), &transferred);
+}, nullptr);
+
+// Network devices only (NFS)
+global_storage_registry->for_each_network([](NetworkStorage *net, void *ctx) {
+  // ...
+}, nullptr);
+```
+
+To pass context into a callback, use the `void *ctx` pointer:
+
+```cpp
+size_t total_free = 0;
+global_storage_registry->for_each_filesystem([](FilesystemStorage *fs, void *ctx) {
+  StorageInfo info{};
+  if (fs->get_info(&info) == StorageError::OK)
+    *static_cast<size_t *>(ctx) += info.free_bytes;
+}, &total_free);
+```
+
+### Hotplug Callbacks
+
+Subscribe to device registration/unregistration events. Useful for components that need to react when a
+storage device becomes available or is removed:
+
+```cpp
+global_storage_registry->add_on_registered_callback([](Storage *s) {
+  if (s->get_storage_type() == StorageType::FILESYSTEM) {
+    auto *fs = static_cast<FilesystemStorage *>(s);
+    // filesystem just became available
+  }
+});
+
+global_storage_registry->add_on_unregistered_callback([](Storage *s) {
+  // device removed or unmounted
+});
+```
+
+### StorageInfo
+
+`get_info()` fills a `StorageInfo` struct:
+
+```cpp
+struct StorageInfo {
+  const char *id;          // Mount path or unique identifier (e.g. "/sdcard")
+  const char *name;        // Human-readable name (e.g. "SD Card")
+  uint64_t total_bytes;    // Total capacity in bytes
+  uint64_t free_bytes;     // Free space in bytes
+  uint32_t block_size;     // Block/sector size in bytes
+  bool is_mounted;         // Whether the device is currently mounted/ready
+  bool is_removable;       // Whether the device supports hotplug
+  bool is_read_only;       // Whether the device is read-only
+};
+```
+
+### FileStat
+
+`stat()` and `list_dir()` use `FileStat`:
+
+```cpp
+struct FileStat {
+  char name[256];   // Entry name (not full path)
+  size_t size;      // File size in bytes (0 for directories)
+  bool is_dir;      // True if this entry is a directory
+};
+```
+
+### StorageError
+
+All API methods return a `StorageError`:
+
+| Value | Meaning |
+|-------|---------|
+| `OK` | Success |
+| `NOT_READY` | Device not mounted or not initialized |
+| `READ_ERROR` | Read operation failed |
+| `WRITE_ERROR` | Write operation failed |
+| `INVALID_ARGS` | Invalid arguments passed |
+| `NOT_FOUND` | File or path not found |
+| `NO_SPACE` | Insufficient space on device |
+| `PERMISSION_DENIED` | Operation not permitted (e.g. read-only device) |
+| `TIMEOUT` | Operation timed out |
+| `CORRUPT` | Filesystem or data corruption detected |
+
+### FilesystemStorage API
+
+```cpp
+// Mount/unmount
+StorageError mount();
+StorageError unmount();
+StorageError format();
+StorageError sync();
+
+// File operations
+StorageError open(const char *path, FileHandle *&handle, OpenMode mode);
+StorageError close(FileHandle *handle);
+StorageError read(FileHandle *handle, uint8_t *buf, size_t len, size_t *bytes_transferred);
+StorageError write(FileHandle *handle, const uint8_t *buf, size_t len, size_t *bytes_transferred);
+StorageError seek(FileHandle *handle, size_t offset);
+StorageError tell(FileHandle *handle, size_t *position);
+
+// Directory/metadata operations
+StorageError stat(const char *path, FileStat *stat);
+StorageError list_dir(const char *path, void (*callback)(const FileStat *entry, void *ctx), void *ctx);
+StorageError mkdir(const char *path);
+StorageError rmdir(const char *path, bool recursive);
+StorageError remove(const char *path);
+StorageError rename(const char *old_path, const char *new_path);
+StorageError copy(const char *src_path, const char *dst_path);
+```
+
+`OpenMode` values: `READ`, `WRITE`, `APPEND`, `READ_WRITE`.
+
+### RawStorage API
+
+```cpp
+StorageError read(size_t offset, uint8_t *buf, size_t len, size_t *bytes_transferred);
+StorageError write(size_t offset, const uint8_t *buf, size_t len, size_t *bytes_transferred);
+StorageError erase(size_t offset, size_t len);
+StorageError format();
+```
+
+### NetworkStorage API
+
+```cpp
+StorageError connect();
+StorageError disconnect();
+StorageError read_chunk(const char *path, uint8_t *buf, size_t offset, size_t len, size_t *bytes_transferred);
+StorageError write_chunk(const char *path, const uint8_t *buf, size_t offset, size_t len, size_t *bytes_transferred);
+StorageError stat(const char *path, FileStat *stat);
+StorageError list_dir(const char *path, void (*callback)(const FileStat *entry, void *ctx), void *ctx);
+StorageError mkdir(const char *path);
+StorageError rmdir(const char *path, bool recursive);
+StorageError remove(const char *path);
+StorageError rename(const char *old_path, const char *new_path);
+StorageError copy(const char *src_path, const char *dst_path);
+```
+
+## See Also
+
+Documentation for the individual storage drivers will be linked here as they are merged.
