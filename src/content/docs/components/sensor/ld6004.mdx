@@ -1,0 +1,859 @@
+---
+description: "Instructions for setting up LD6004 3D presence radar sensors."
+title: "LD6004 3D Presence Radar"
+---
+
+import { Image } from 'astro:assets';
+import ld6004ModuleImg from './images/ld6004-module.png';
+import ld6004PinoutImg from './images/ld6004-pinout.png';
+import ld6004DimensionsImg from './images/ld6004-dimensions.png';
+import ld6004SideMountImg from './images/ld6004-side-mount.png';
+import ld6004RangeImg from './images/ld6004-range.png';
+import ld6004AxesImg from './images/ld6004-axes.png';
+import Figure from '@components/Figure.astro';
+import APIRef from '@components/APIRef.astro';
+
+## Component
+
+<span id="ld6004-component"></span>
+
+The `ld6004` component allows you to use the Hi-Link HLK-LD6004 60 GHz 3D presence radar module with
+ESPHome. It can track up to 3 people and reports per-target position (X/Y/Z), cluster ID, and Doppler
+index.
+
+The [UART](/components/uart/) component is required. `baud_rate`, `data_bits`, `parity` and
+`stop_bits` **must be** `115200`, `8`, `NONE` and `1`.
+
+<Figure
+  src={ld6004ModuleImg}
+  alt="LD6004"
+  caption="Hi-Link HLK-LD6004 3D presence radar"
+  layout="constrained"
+/>
+
+```yaml
+# Example configuration entry
+ld6004:
+  id: ld6004_radar
+```
+
+### Configuration Variables
+
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID for this component.
+- **uart_id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID of the
+  [UART Component](/components/uart/) to use. Required if you have multiple UARTs configured.
+
+> [!NOTE]
+> The LD6004 has no `wakeup_pin`, `wakeup_pulse`, or `auto_wake` hub options and no `wake` button.
+> Configure low-power operation with the `work_mode` select. There is no `low_power` switch.
+
+## Power and Hardware Requirements
+
+Connect radar TX0 to the microcontroller RX, radar RX0 to microcontroller TX, and connect their grounds.
+The module's OUT / P20 pin is a configurable digital output. Connect it to a microcontroller input to read
+its level with a [GPIO Binary Sensor](/components/binary_sensor/gpio/).
+See [Reading the OUT Pin](#reading-the-out-pin) for an example.
+
+Use a 3.3 V supply with at least 1 A capacity and no more than 50 mV ripple. The permitted supply range
+is 3.1 to 3.5 V. If using a DC-DC supply, its switching frequency must be at least 2 MHz. IO levels are
+3.3 V. The default UART configuration is 115200 baud, 8 data bits, no parity, and 1 stop bit (8N1).
+
+<Image src={ld6004PinoutImg} alt="HLK-LD6004 connector pin labels" layout="constrained" />
+
+| Pin | Name | Description |
+| --- | --- | --- |
+| 1 | 3.3V | 3.3 V power input |
+| 2 | TX2 | GPIO P20 / OUT, UART2 TX |
+| 3 | RX0 | GPIO P01 / UART0 RX |
+| 4 | TX0 | GPIO P00 / UART0 TX |
+| 5 | RST | Active-low reset input with internal pull-up |
+| 6 | GND | Ground |
+| 7 | 3.3V | 3.3 V power input |
+| 8 | SWCLK | SWD debug clock |
+| 9 | SWDIO | SWD debug data |
+| 10 | GND | Ground |
+
+> [!NOTE]
+> BOOT1 must be low when the module starts. Both BOOT1 and BOOT0 have internal pull-ups.
+> Leave BOOT0 high for booting from the module's flash.
+
+## Specifications
+
+- Operating frequency: 58 to 64 GHz.
+- Transmit power: 12 dBm typical.
+- Antenna gain: 4 dBi typical.
+- Horizontal and vertical beam angles (-3 dB): +/-60 degrees.
+- Side-mounted sensing distance: 0 to 6 m.
+- Distance accuracy: about 0.4 m.
+- Recognition rate: 95% typical.
+- Supply voltage: 3.1 to 3.5 V (3.3 V typical).
+- Operating current: 135 mA typical, 600 mA maximum.
+- Operating temperature: -20 to 85 C.
+- Dimensions: 35 x 7 x 1.27 mm.
+- Chip and antenna: ADT6101P with a 2T2R (two transmit, two receive) AIP antenna.
+- Mounting: ceiling (top) or side.
+- Maximum tracked targets: 3.
+- Target reports: X/Y/Z coordinates, cluster ID, and Doppler index.
+- Configurable areas: four interference areas, four detection areas, and four dwell areas.
+
+<Image src={ld6004DimensionsImg} alt="HLK-LD6004 mechanical dimensions in millimetres" layout="constrained" />
+
+## Installation and Coordinate System
+
+The module supports top and side mounting. Set `installation_mode` to match the installation.
+Mount the antenna side facing the detection area.
+
+<Image src={ld6004SideMountImg} alt="HLK-LD6004 side-mounted installation" layout="constrained" />
+
+Target and area coordinates are reported in metres, with the radar as the origin. The manual's direction
+diagram fixes the axes to the module: X runs along the long edge, Z along the short edge, and Y points away
+from the antenna face into the room. Side mounted with the long edge horizontal, X is left/right, Y is
+forward/away, and Z is height. Detection, interference, and dwell areas are configured relative to this
+origin.
+
+<Image
+  src={ld6004AxesImg}
+  alt="HLK-LD6004 axis directions: X along the long edge, Z along the short edge, Y away from the antenna face"
+  layout="constrained"
+/>
+
+<Image
+  src={ld6004RangeImg}
+  alt="HLK-LD6004 side-mounted detection range for moving and motionless targets"
+  layout="constrained"
+/>
+
+> [!NOTE]
+> Detection distance varies with target size and environment. Some variation is expected.
+
+## Area Configuration Notes
+
+Detection areas define where presence is considered valid for the presence output modes and the
+`detection_area_N` binary sensors. Interference areas mask known noise sources (fans, air
+conditioners, curtains) so they do not trigger presence. Areas are stored in the module and persist
+across power cycles. Dwell zones are a third area kind, with coordinates available through
+`dwell_area_0` to `dwell_area_3`. Use `dwell_lifetime` to set the raw dwell counter and
+**Clear Dwell** to clear dwell areas. Dwell areas do not expose separate presence binary sensors.
+
+Use `area_id` to select the area, set `area_config`, then press **Apply Area**. Use **Get Areas** to
+read back stored values. A value you set on one of the `area_config` numbers is kept until you apply
+it or switch to another `area_id`, so an area read does not overwrite an edit in progress.
+
+> [!NOTE]
+> **Apply Area** writes all six coordinates of the selected area, combining the values you set with
+> the ones cached from the last area read, which happens on boot and after **Auto Interference**,
+> **Clear Interference**, **Reset Detection Area**, and **Clear Dwell**. If a bound is still unknown, the component
+> requests the current areas first and applies the update once a fresh report arrives. If that report
+> is still incomplete, the update is dropped with a warning.
+
+## Binary Sensor
+
+<span id="ld6004-binary-sensors"></span>
+
+The `ld6004` binary sensor provides presence detection for targets and detection areas.
+
+```yaml
+binary_sensor:
+  - platform: ld6004
+    ld6004_id: ld6004_radar
+    target:
+      name: Presence
+    target_1:
+      name: Target-1 Presence
+    detection_area_0:
+      name: Area-0 Presence
+```
+
+### Configuration Variables
+
+- **ld6004_id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID of the
+  LD6004 component.
+- **target** (*Optional*, boolean): True if any target is detected or any detection area reports presence.
+  All options from [Binary Sensor](/components/binary_sensor/#config-binary_sensor).
+- **target_N** (*Optional*, boolean): True if target slot N (N = 1 to 3) is occupied: `target_1` through
+  `target_3`. A person keeps the same slot for as long as they are tracked continuously, and a new
+  person takes the lowest free slot. All options from
+  [Binary Sensor](/components/binary_sensor/#config-binary_sensor).
+- **detection_area_N** (*Optional*, boolean): True if presence is detected in detection area N (0 to 3):
+  `detection_area_0`, `detection_area_1`, `detection_area_2`, `detection_area_3`. All options from
+  [Binary Sensor](/components/binary_sensor/#config-binary_sensor).
+
+> [!NOTE]
+> The `detection_area_N` sensors are cleared when the module reports that it entered unattended
+> low-power mode. If a target is still being tracked at that moment the clear is skipped, because a
+> tracked target is the more recent statement about the room.
+
+## Sensor
+
+<span id="ld6004-sensors"></span>
+
+The `ld6004` sensor provides target coordinates, point-cloud count, and configured area coordinates.
+
+```yaml
+sensor:
+  - platform: ld6004
+    ld6004_id: ld6004_radar
+    target_count:
+      name: Target Count
+    point_count:
+      name: Point Count
+    target_1:
+      x:
+        name: Target-1 X
+      y:
+        name: Target-1 Y
+      z:
+        name: Target-1 Z
+      doppler_index:
+        name: Target-1 Doppler Index
+      cluster_id:
+        name: Target-1 Cluster
+```
+
+### Configuration Variables
+
+- **ld6004_id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID of the
+  LD6004 component.
+- **target_count** (*Optional*, int): Total number of targets currently detected (0 to 3). All options
+  from [Sensor](/components/sensor/).
+- **point_count** (*Optional*, int): Total number of point-cloud points reported by the radar. All
+  options from [Sensor](/components/sensor/).
+- **target_N** (*Optional*, configuration): Details about each target (N = 1 to 3). Up to 3 targets can be tracked
+  simultaneously: `target_1` through `target_3`. A tracked person keeps the same `target_N`
+  slot for as long as they remain tracked, and a new person takes the lowest free slot.
+
+  - **x** (*Optional*, float): X coordinate of the target in meters.
+  - **y** (*Optional*, float): Y coordinate of the target in meters.
+  - **z** (*Optional*, float): Z coordinate of the target in meters.
+  - **doppler_index** (*Optional*, int): Doppler index for the target (speed indicator, not a direct
+    speed).
+  - **cluster_id** (*Optional*, int): Cluster ID for the target.
+
+  All options above inherit from [Sensor](/components/sensor/).
+
+  Slot identity comes from the module's own spatial clustering, so it is stable rather than perfect:
+  two people standing very close together can merge into a single target, a track's cluster ID can
+  occasionally change while the person is still in the room, and a slot left by someone who leaves is
+  reused by the next new person. Watch `cluster_id` to see when a slot changes hands. It is published
+  only when the value changes, not on every frame.
+
+- **interference_area_N** (*Optional*, configuration): Interference (mask) area coordinates (N = 0 to 3). Each area
+  provides `x_min`, `x_max`, `y_min`, `y_max`, `z_min`, `z_max` sensors. All options from
+  [Sensor](/components/sensor/).
+
+- **detection_area_N** (*Optional*, configuration): Detection area coordinates (N = 0 to 3). Each area provides
+  `x_min`, `x_max`, `y_min`, `y_max`, `z_min`, `z_max` sensors. All options from
+  [Sensor](/components/sensor/).
+
+- **dwell_area_N** (*Optional*, configuration): Dwell area coordinates (N = 0 to 3), available as
+  `dwell_area_0` through `dwell_area_3`.
+
+Each interference, detection, or dwell area accepts these coordinate sensors:
+
+- **x_min** (*Optional*, float): Minimum X coordinate in meters.
+- **x_max** (*Optional*, float): Maximum X coordinate in meters.
+- **y_min** (*Optional*, float): Minimum Y coordinate in meters.
+- **y_max** (*Optional*, float): Maximum Y coordinate in meters.
+- **z_min** (*Optional*, float): Minimum Z coordinate in meters.
+- **z_max** (*Optional*, float): Maximum Z coordinate in meters.
+
+All coordinate sensors inherit from [Sensor](/components/sensor/).
+
+> [!NOTE]
+> The per-target `x`, `y`, `z` and `doppler_index` sensors come with these
+> [filters](/components/sensor/#sensor-filters) by default. They hold the last reading for a second, so a
+> dropped frame does not read as a gap, and then limit how often updates reach the frontend:
+>
+> ```yaml
+> - timeout:
+>     timeout: 1s
+>     value: last
+> - throttle_with_priority: 1s
+> ```
+>
+> Giving a sensor its own `filters:` replaces the defaults. Use `filters: []` to drop them. For
+> example, to get faster updates on a single axis:
+>
+> ```yaml
+>     target_1:
+>       x:
+>         name: Target-1 X
+>         filters:
+>           - throttle_with_priority: 300ms
+> ```
+
+If a **Target Display** switch is configured, its `restore_mode` decides whether target reporting
+starts on boot. The default is `RESTORE_DEFAULT_ON`. Without that switch, the component enables
+target reporting automatically when any target sensors or the `work_mode` text sensor are
+configured. While target reporting is disabled, target sensors remain `unknown`.
+
+If you configure any area sensors or area configuration numbers, the component requests stored
+area data on boot. You can also use **Get Areas** to refresh the values.
+
+> [!NOTE]
+> If a `point_cloud` switch is configured, it owns the point cloud stream and its `restore_mode` decides
+> the boot state, and turning it off returns `point_count` to `unknown`. Without that switch,
+> configuring `point_count` starts the stream on boot on its own.
+> The stream sends large frames over the 115200 baud link, so leave it on only while you need the
+> count. Configuring the switch or the sensor also reserves a larger 4 KB frame buffer at boot.
+
+## Text Sensor
+
+<span id="ld6004-text-sensors"></span>
+
+The `ld6004` text sensor exposes radar operating mode and firmware version.
+
+```yaml
+text_sensor:
+  - platform: ld6004
+    ld6004_id: ld6004_radar
+    work_mode:
+      name: Work Mode
+    ota_version:
+      name: OTA Version
+```
+
+### Configuration Variables
+
+- **ld6004_id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID of the
+  LD6004 component.
+- **work_mode** (*Optional*, string): The operating mode the module reports: `normal`, `low_power`,
+  `radar_off_p20_high`, `radar_off_p20_low` or `high_reflectivity`. All options from
+  [Text Sensor](/components/text_sensor/#config-text_sensor).
+- **ota_version** (*Optional*, string): Firmware version string, if supported by your module firmware. All
+  options from [Text Sensor](/components/text_sensor/#config-text_sensor).
+
+> [!NOTE]
+> `work_mode` follows the module's mode report, so it shows what the module is doing rather than what was
+> last requested through the `work_mode` select. The two agree once the module has applied the request.
+> ESPHome asks for the mode at boot when this sensor is configured, and the module reports it again on
+> every change.
+
+> [!NOTE]
+> This component does not update the radar firmware. Updating the microcontroller through
+> [ESPHome OTA](/components/ota/) does not update the radar.
+
+## Number
+
+<span id="ld6004-number"></span>
+
+The `ld6004` number platform lets you configure timing and area coordinates.
+
+```yaml
+number:
+  - platform: ld6004
+    ld6004_id: ld6004_radar
+    hold_delay:
+      name: Hold Delay (s)
+    z_min:
+      name: Z Min (m)
+    z_max:
+      name: Z Max (m)
+    low_power_sleep_time:
+      name: Low Power Sleep (ms)
+    dwell_lifetime:
+      name: Dwell Lifetime
+    output_interval:
+      name: Output Interval (frames)
+```
+
+The `area_config` numbers stage the bounds of the area chosen with the `area_id` select and are written by
+the `apply_area` button, so all three belong to the same hub. See the
+[full configuration](#full-configuration) for the three together.
+
+### Configuration Variables
+
+- **ld6004_id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID of the
+  LD6004 component.
+- **hold_delay** (*Optional*, range `0` to `65535` s, step `1`): Time to maintain presence after detection, in seconds.
+  All options from
+  [Number](/components/number/#config-number).
+- **z_min** (*Optional*, range `-10` to `10` m, step `0.1`): Global minimum Z coordinate in metres,
+  relative to the radar. All options from [Number](/components/number/#config-number).
+- **z_max** (*Optional*, range `-10` to `10` m, step `0.1`): Global maximum Z coordinate in metres,
+  relative to the radar. All options from [Number](/components/number/#config-number).
+- **low_power_sleep_time** (*Optional*, range `0` to `60000` ms, step `100`): Low power sleep time in
+  milliseconds. When low-power mode is enabled and the area is unattended, the module sleeps for this interval between
+  scans. Higher values reduce idle power but increase detection latency. The manual recommends no more than
+  500 ms. All options from
+  [Number](/components/number/#config-number).
+- **dwell_lifetime** (*Optional*, range `0` to `16777215`, step `1`): Raw dwell counter.
+  The counter decreases by 20 per second, so set it to the desired time in seconds multiplied by 20.
+  The module default is `300` (15 seconds). This sets the dwell-area lifetime independently of
+  `hold_delay`. All options from [Number](/components/number/#config-number).
+- **output_interval** (*Optional*, range `1` to `16777215` frames, step `1`): Report every Nth radar
+  frame. Each frame takes 50 ms. The module default is `1` (50 ms), and `10` gives 500 ms. All options
+  from [Number](/components/number/#config-number).
+- **area_config** (*Optional*, configuration): Coordinate values (`x_min`/`x_max`/`y_min`/`y_max`/`z_min`/`z_max`, each
+  range `-10` to `10` m, step `0.1`) for the selected area ID. **Requires** both a `select.area_id` and a
+  `button.apply_area` on the same `ld6004` (enforced at compile time). Set the values, then press
+  **Apply Area** to send them. A minimum above its matching maximum is rejected with a warning
+  instead of being written.
+
+The optional coordinates under `area_config` are:
+
+- **x_min** (*Optional*, number): Minimum X coordinate in meters.
+- **x_max** (*Optional*, number): Maximum X coordinate in meters.
+- **y_min** (*Optional*, number): Minimum Y coordinate in meters.
+- **y_max** (*Optional*, number): Maximum Y coordinate in meters.
+- **z_min** (*Optional*, number): Minimum Z coordinate in meters.
+- **z_max** (*Optional*, number): Maximum Z coordinate in meters.
+
+Each accepts all options from [Number](/components/number/#config-number).
+
+## Select
+
+<span id="ld6004-select"></span>
+
+The `ld6004` select platform configures sensitivity, trigger speed, installation mode, the
+active area ID, work mode, and OUT / P20 behavior.
+
+```yaml
+select:
+  - platform: ld6004
+    ld6004_id: ld6004_radar
+    sensitivity:
+      name: Sensitivity
+    trigger_speed:
+      name: Trigger Speed
+    installation_mode:
+      name: Installation Mode
+    area_id:
+      name: Area ID
+    work_mode:
+      name: Work Mode Setting
+    p20_mode:
+      name: P20 Mode
+```
+
+### Configuration Variables
+
+- **ld6004_id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID of the
+  LD6004 component.
+- **sensitivity** (*Optional*, select): `low`, `medium`, or `high`. `low` only detects motion. All options
+  from [Select](/components/select/#config-select).
+- **trigger_speed** (*Optional*, select): `fast` (0.5 s), `medium` (1 s), or `slow` (5 s), the time from
+  detecting a person to triggering. All options from [Select](/components/select/#config-select).
+- **installation_mode** (*Optional*, select): `top` or `side`. All options from
+  [Select](/components/select/#config-select).
+- **area_id** (*Optional*, select): Area to edit with `area_config`. Options are `interference_area_0` through
+  `interference_area_3`, `detection_area_0` through `detection_area_3`, and `dwell_area_0` through `dwell_area_3`
+  (twelve options mapped internally to IDs 0 to 11). All options from [Select](/components/select/#config-select).
+
+- **work_mode** (*Optional*, select): `normal`, `low_power`, `radar_off_p20_high`,
+  `radar_off_p20_low`, or `high_reflectivity`. The radar-off modes disable the radar and hold P20
+  high or low. In `low_power`, an unoccupied room uses 1T1R with about 2.5 mA average current. Movement
+  switches the radar to 2T2R to detect stationary targets. Use `high_reflectivity` in rooms with a lot
+  of metal. All options from
+  [Select](/components/select/#config-select).
+- **p20_mode** (*Optional*, select): Configure the module's OUT / P20 pin. Options are
+  `presence_high`, `presence_low`, `constant_low`, `constant_high`, `pulse_low`, and `pulse_high`.
+  The presence modes select the active level, the constant modes hold a fixed level, and the pulse
+  modes emit a 500 ms pulse on a presence transition. The module default is `presence_high`. All options from
+  [Select](/components/select/#config-select).
+
+> [!NOTE]
+> The name follows Hi-Link's own documentation, which calls the OUT pin P20 throughout. The user manual's
+> pin table (V1.0, section 5.2) lists pin 2 as "TX2, GPIO_P20/uart2 txd: If there is someone within the
+> area, output a high level", and the serial protocol (section 6.1) names the commands "Set P20 output:
+> P20 outputs a high level when someone is present" (0x1D) through "P20 operates in momentary mode"
+> (0x22, 0x23).
+
+> [!NOTE]
+> The protocol specifies only `0` (high on presence) and `1` (low on presence) for the `0x0A15` report,
+> so after boot `p20_mode` shows `presence_high` or `presence_low`. The four constant and momentary
+> modes are reflected once you set them.
+
+The `work_mode` select configures the operating mode. The `work_mode` text sensor reports the same
+five states back from the module.
+
+> [!NOTE]
+> If no area ID is selected, **Apply Area** is ignored to prevent writing to the wrong region.
+
+## Switch
+
+<span id="ld6004-switch"></span>
+
+The `ld6004` switch platform enables point-cloud output and target reporting.
+
+```yaml
+switch:
+  - platform: ld6004
+    ld6004_id: ld6004_radar
+    point_cloud:
+      name: Point Cloud
+    target_display:
+      name: Target Display
+```
+
+### Configuration Variables
+
+- **ld6004_id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID of the
+  LD6004 component.
+- **point_cloud** (*Optional*, switch): Enable or disable point-cloud reporting, which is what `point_count`
+  reads. All options from
+  [Switch](/components/switch/#config-switch).
+- **target_display** (*Optional*, switch): Enable or disable target reporting (`0x0A04`). If disabled, target
+  sensors will show `unknown` and target presence binary sensors turn off until re-enabled. All
+  options from [Switch](/components/switch/#config-switch).
+
+> [!NOTE]
+> Each switch applies its own [`restore_mode`](/components/switch/#config-switch) on boot. `point_cloud`
+> keeps the standard `ALWAYS_OFF` default, so enable **Point Cloud** when you want the
+> stream. `target_display` defaults to `RESTORE_DEFAULT_ON`, so target reporting starts on unless a
+> stored state or your own `restore_mode` says otherwise. `inverted` is not available on these
+> switches: they report what the module is doing, not how something is wired to it. The full point
+> cloud is not exposed as a text sensor. Use `point_count` to monitor how many points are returned.
+
+## Button
+
+<span id="ld6004-button"></span>
+
+The `ld6004` button platform exposes configuration and diagnostic commands.
+
+```yaml
+button:
+  - platform: ld6004
+    ld6004_id: ld6004_radar
+    auto_interference:
+      name: Auto Interference
+    get_areas:
+      name: Get Areas
+    get_installation:
+      name: Get Installation
+    clear_dwell:
+      name: Clear Dwell
+```
+
+`apply_area` needs the `area_id` select on the same hub; the
+[full configuration](#full-configuration) shows it together with `area_config`.
+
+### Configuration Variables
+
+- **ld6004_id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID of the
+  LD6004 component.
+- **apply_area** (*Optional*, button): Send the configured `area_config` to the selected `area_id`. **Requires**
+  a `select.area_id` on the same `ld6004`. All options from [Button](/components/button/#config-button).
+- **auto_interference** (*Optional*, button): Generate interference areas from the current environment. Run
+  this with no people present and with known interference sources active. To reset the generated
+  interference areas, use **Clear Interference**. All options from
+  [Button](/components/button/#config-button).
+- **get_areas** (*Optional*, button): Request stored interference, detection, and dwell areas from the radar.
+  All options from [Button](/components/button/#config-button).
+- **clear_interference** (*Optional*, button): Clear interference areas. All options from
+  [Button](/components/button/#config-button).
+- **reset_detection_area** (*Optional*, button): Restore the default 6 x 4 m detection area. All options
+  from [Button](/components/button/#config-button).
+- **get_delay** (*Optional*, button): Request hold delay. All options from [Button](/components/button/#config-button).
+- **get_sensitivity** (*Optional*, button): Request sensitivity state. All options from
+  [Button](/components/button/#config-button).
+- **get_trigger_speed** (*Optional*, button): Request trigger speed state. All options from
+  [Button](/components/button/#config-button).
+- **get_z_range** (*Optional*, button): Request Z-axis range. All options from
+  [Button](/components/button/#config-button).
+- **get_installation** (*Optional*, button): Request installation mode from the radar and update the
+  `installation_mode` select with `top` or `side`. All options from
+  [Button](/components/button/#config-button).
+- **get_low_power_mode** (*Optional*, button): Request low power mode state. All options from
+  [Button](/components/button/#config-button).
+- **get_low_power_sleep_time** (*Optional*, button): Request low power sleep time. All options from
+  [Button](/components/button/#config-button).
+- **reset_unattended** (*Optional*, button): Reset the module's unattended (no-person) state used by its
+  low-power logic. Helpful if the device gets stuck in an unattended state. All options from
+  [Button](/components/button/#config-button).
+- **clear_dwell** (*Optional*, button): Clear dwell areas and request updated area coordinates.
+  All options from [Button](/components/button/#config-button).
+
+## Examples
+
+### Targets Only (X/Y/Z For 3 Targets)
+
+```yaml
+uart:
+  tx_pin: GPIOXX
+  rx_pin: GPIOXX
+  baud_rate: 115200
+
+ld6004:
+  id: ld6004_radar
+
+sensor:
+  - platform: ld6004
+    ld6004_id: ld6004_radar
+    target_count:
+      name: Target Count
+    target_1:
+      x:
+        name: Target-1 X
+      y:
+        name: Target-1 Y
+      z:
+        name: Target-1 Z
+      doppler_index:
+        name: Target-1 Doppler Index
+    target_2:
+      x:
+        name: Target-2 X
+      y:
+        name: Target-2 Y
+      z:
+        name: Target-2 Z
+      doppler_index:
+        name: Target-2 Doppler Index
+    target_3:
+      x:
+        name: Target-3 X
+      y:
+        name: Target-3 Y
+      z:
+        name: Target-3 Z
+      doppler_index:
+        name: Target-3 Doppler Index
+
+binary_sensor:
+  - platform: ld6004
+    ld6004_id: ld6004_radar
+    target_1:
+      name: Target-1 Presence
+    target_2:
+      name: Target-2 Presence
+    target_3:
+      name: Target-3 Presence
+```
+
+### Reading the OUT Pin
+
+Connect OUT / P20 to the input specified below. Set **P20 Mode** to `presence_high` for a high level
+when presence is detected. This GPIO sensor reads the physical level, which follows the selected P20
+mode independently of the UART target sensors. For `presence_low`, set `inverted: true` in the pin schema.
+
+```yaml
+binary_sensor:
+  - platform: gpio
+    pin: GPIOXX
+    name: Radar OUT
+
+select:
+  - platform: ld6004
+    p20_mode:
+      name: P20 Mode
+```
+
+### Full Configuration
+
+```yaml
+uart:
+  id: uart_bus
+  tx_pin: GPIOXX
+  rx_pin: GPIOXX
+  baud_rate: 115200
+
+ld6004:
+  id: ld6004_radar
+  uart_id: uart_bus
+
+binary_sensor:
+  - platform: ld6004
+    ld6004_id: ld6004_radar
+    target:
+      name: Presence
+    target_1:
+      name: Target-1 Presence
+    target_2:
+      name: Target-2 Presence
+    target_3:
+      name: Target-3 Presence
+    detection_area_0:
+      name: Area-0 Presence
+    detection_area_1:
+      name: Area-1 Presence
+    detection_area_2:
+      name: Area-2 Presence
+    detection_area_3:
+      name: Area-3 Presence
+
+sensor:
+  - platform: ld6004
+    ld6004_id: ld6004_radar
+    target_count:
+      name: Target Count
+    point_count:
+      name: Point Count
+    target_1:
+      x:
+        name: Target-1 X
+      y:
+        name: Target-1 Y
+      z:
+        name: Target-1 Z
+      doppler_index:
+        name: Target-1 Doppler Index
+      cluster_id:
+        name: Target-1 Cluster
+    target_2:
+      x:
+        name: Target-2 X
+      y:
+        name: Target-2 Y
+      z:
+        name: Target-2 Z
+      doppler_index:
+        name: Target-2 Doppler Index
+      cluster_id:
+        name: Target-2 Cluster
+    target_3:
+      x:
+        name: Target-3 X
+      y:
+        name: Target-3 Y
+      z:
+        name: Target-3 Z
+      doppler_index:
+        name: Target-3 Doppler Index
+      cluster_id:
+        name: Target-3 Cluster
+    interference_area_0:
+      x_min:
+        name: Interference-0 X Min
+      x_max:
+        name: Interference-0 X Max
+      y_min:
+        name: Interference-0 Y Min
+      y_max:
+        name: Interference-0 Y Max
+      z_min:
+        name: Interference-0 Z Min
+      z_max:
+        name: Interference-0 Z Max
+    detection_area_0:
+      x_min:
+        name: Detection-0 X Min
+      x_max:
+        name: Detection-0 X Max
+      y_min:
+        name: Detection-0 Y Min
+      y_max:
+        name: Detection-0 Y Max
+      z_min:
+        name: Detection-0 Z Min
+      z_max:
+        name: Detection-0 Z Max
+    dwell_area_0:
+      x_min:
+        name: Dwell-0 X Min
+      x_max:
+        name: Dwell-0 X Max
+      y_min:
+        name: Dwell-0 Y Min
+      y_max:
+        name: Dwell-0 Y Max
+      z_min:
+        name: Dwell-0 Z Min
+      z_max:
+        name: Dwell-0 Z Max
+    # Areas 1 to 3 of each kind follow the same shape
+
+text_sensor:
+  - platform: ld6004
+    ld6004_id: ld6004_radar
+    work_mode:
+      name: Work Mode
+    ota_version:
+      name: OTA Version
+
+number:
+  - platform: ld6004
+    ld6004_id: ld6004_radar
+    hold_delay:
+      name: Hold Delay (s)
+    z_min:
+      name: Z Min (m)
+    z_max:
+      name: Z Max (m)
+    low_power_sleep_time:
+      name: Low Power Sleep (ms)
+    dwell_lifetime:
+      name: Dwell Lifetime
+    output_interval:
+      name: Output Interval (frames)
+    area_config:
+      x_min:
+        name: Area X Min
+      x_max:
+        name: Area X Max
+      y_min:
+        name: Area Y Min
+      y_max:
+        name: Area Y Max
+      z_min:
+        name: Area Z Min
+      z_max:
+        name: Area Z Max
+
+select:
+  - platform: ld6004
+    ld6004_id: ld6004_radar
+    sensitivity:
+      name: Sensitivity
+    trigger_speed:
+      name: Trigger Speed
+    installation_mode:
+      name: Installation Mode
+    area_id:
+      name: Area ID
+    work_mode:
+      name: Work Mode Setting
+    p20_mode:
+      name: P20 Mode
+
+switch:
+  - platform: ld6004
+    ld6004_id: ld6004_radar
+    point_cloud:
+      name: Point Cloud
+    target_display:
+      name: Target Display
+
+button:
+  - platform: ld6004
+    ld6004_id: ld6004_radar
+    apply_area:
+      name: Apply Area
+    auto_interference:
+      name: Auto Interference
+    get_areas:
+      name: Get Areas
+    clear_interference:
+      name: Clear Interference
+    reset_detection_area:
+      name: Reset Detection Area
+    get_delay:
+      name: Get Hold Delay
+    get_sensitivity:
+      name: Get Sensitivity
+    get_trigger_speed:
+      name: Get Trigger Speed
+    get_z_range:
+      name: Get Z Range
+    get_installation:
+      name: Get Installation
+    get_low_power_mode:
+      name: Get Low Power Mode
+    get_low_power_sleep_time:
+      name: Get Low Power Sleep Time
+    reset_unattended:
+      name: Reset Unattended
+    clear_dwell:
+      name: Clear Dwell
+```
+
+## See Also
+
+- [LD6002B 3D Presence Radar](/components/sensor/ld6002b/)
+- [ESPHome coordinate editor](https://github.com/wolph/esphome-coordinate-editor): edit the detection,
+  interference and dwell areas graphically on the device's web page, loaded through `web_server` `js_extra_urls`
+- [LD2410 Sensor](/components/sensor/ld2410/)
+- [LD2420 24GHz mmWave Radar Sensor](/components/sensor/ld2420/)
+- [LD2450 Sensor](/components/sensor/ld2450/)
+- [RD-03D mmWave Radar](/components/sensor/rd03d/)
+- <APIRef text="ld6004.h" path="ld6004/ld6004.h" />
