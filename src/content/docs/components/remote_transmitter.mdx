@@ -569,6 +569,15 @@ on_...:
       code: '0xd19ef0a9'
       suffix: '0x2A'
       suffix_bits: 6
+  # Jarolift TDEF group frame (72 bits)
+  - remote_transmitter.transmit_keeloq:
+      address: '0x1234500'
+      command: '0x8'
+      code: '0xF94A09F2'
+      group: '0x0F'
+      repeat:
+        times: 2
+        wait_time: 0ms
 ```
 
 #### Configuration variables
@@ -582,8 +591,14 @@ on_...:
   validation; a lambda value is cut to the lowest **suffix_bits** bits at run time. Defaults to `0`.
 - **suffix_bits** (*Optional*, int, [templatable](/automations/templates)): How many suffix bits to send, from `0`
   to `16`; a lambda value above `16` is capped at `16`. Defaults to `0`, which sends only the 66-bit word.
+- **group** (*Optional*, int, [templatable](/automations/templates/)): The 8 group bits (channels 9 to 16) of a
+  72-bit Jarolift TDEF frame, sent after the 64-bit word in place of the low battery and repeat bits. Channels 1
+  to 8 are part of the encrypted **code**. Combining it with **suffix** or **suffix_bits** is rejected, and
+  **level** must stay `false` (no lambda).
 - All other options from [Remote Transmitter Actions](#remote_transmitter-transmit_action).
-- A repeat **wait_time** of 15ms as shown replicates the repetition of an HCS301.
+- A repeat **wait_time** of 15ms, as in the first example, replicates the repetition of an HCS301. The Jarolift
+  example repeats its frame with no extra wait: the guard time that ends every KeeLoq frame already separates the
+  two copies.
 
 <span id="remote_transmitter-transmit_haier"></span>
 

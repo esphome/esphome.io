@@ -244,6 +244,8 @@ To enable signal demodulation, configure the signal carrier frequency and duty c
   is passed to the automation for use in lambdas. Up to 16 bits that follow the 66-bit HCS301 word are in
   `x.suffix`, lowest bit first, and their number is in `x.suffix_bits`. Both are `0` when these bits do not end
   at a gap or at the end of the capture, or when there are more than 16; the 66-bit word is still reported.
+  For a 72-bit Jarolift TDEF frame, where `x.suffix_bits` is `6`, `x.group()` returns its 8 group bits. Check
+  `x.suffix_bits` first: for other frames `x.group()` is not a group. The log shows such a frame with `group=`.
 
 - **on_haier** (*Optional*, [Automation](/automations)): An automation to perform when a
   Haier remote code has been decoded. A variable `x` of type <APIStruct text="remote_base::HaierData" path="remote_base::HaierData" />
