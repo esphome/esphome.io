@@ -8,7 +8,11 @@ import Figure from '@components/Figure.astro';
 
 The MAX17043 platform allows you to use a MAX17043 to more accurately monitor the remaining capacity
 of a LIPO battery ([datasheet](https://www.analog.com/en/products/max17043.html#documentation),
-[DFRobot](https://www.dfrobot.com/product-1734.html)) in ESPHome. It uses the [I²C Bus](/components/i2c) for communication (the address is fixed at 0x36).
+[DFRobot](https://www.dfrobot.com/product-1734.html)) in ESPHome. It uses the [I²C Bus](/components/i2c/) for communication (the address is fixed at 0x36).
+
+The register-compatible MAX17048 ([datasheet](https://www.analog.com/en/products/max17048.html#documentation)),
+found on recent Adafruit Feather boards, is supported with `model: MAX17048`. It adds a charge rate reading
+and needs a different sleep command, which the component sends for it.
 
 Once configured, it uses a sophisticated Li+ battery-modeling scheme, called ModelGauge™ to track the
 battery's relative state-of-charge continuously over a widely varying charge/discharge profile.
@@ -45,14 +49,37 @@ sensor:
       name: "Battery"
 ```
 
+```yaml
+# Example configuration entry for a MAX17048
+sensor:
+  - platform: max17043
+    model: MAX17048
+    battery_voltage:
+      name: "Battery Voltage"
+    battery_level:
+      name: "Battery"
+    battery_charge_rate:
+      name: "Battery Charge Rate"
+```
+
+## Configuration Variables
+
+- **model** (*Optional*, string): The part in use, `MAX17043` or `MAX17048`. Defaults to `MAX17043`.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): The interval to check the
+  sensor. Defaults to `60s`.
+
 ## Sensors
 
 - **battery_voltage** (*Optional*, float): The voltage measured at the LIPO battery.
 
-  - All other options from [Sensor](/components/sensor).
+  - All other options from [Sensor](/components/sensor/).
 - **battery_level** (*Optional*, float): The percentage of battery remaining using the ModelGauge™ battery-modelling scheme.
 
-  - All other options from [Sensor](/components/sensor).
+  - All other options from [Sensor](/components/sensor/).
+- **battery_charge_rate** (*Optional*, float): The rate of change of the battery level in percent per hour,
+  negative while discharging. Only available with `model: MAX17048`.
+
+  - All other options from [Sensor](/components/sensor/).
 
 ## Hardware design considerations
 
@@ -72,6 +99,9 @@ If power is removed from the MAX17043 then each time the ESP comes out of deep s
 have to start again from a new best guess.
 It will not be able to use past charge and discharge behaviour to work its magic -
 significantly diminishing the point of using a MAX17043.
+
+On boards that switch the I²C supply with a pin, such as `I2C_POWER` on Adafruit Feathers, the gauge may not
+answer when ESPHome starts. The component keeps trying on every update and publishes once the gauge answers.
 
 Current consumption during device sleep mode is extremely low (maximum of 3µA compared to up to 75µA maximum when active).
 The driver enables the user to put the device to sleep just before deep sleep commences using the `sleep_mode` action.
