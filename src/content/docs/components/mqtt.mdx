@@ -73,6 +73,10 @@ mqtt:
   [Abbreviations](https://www.home-assistant.io/docs/mqtt/discovery/)
   in discovery messages. Defaults to `true`.
 
+- **sub_device_topics** (*Optional*, boolean): Give entities on a [sub-device](/components/esphome#esphome-devices)
+  their own topics, so that entities with the same name on different sub-devices do not share one. Defaults to
+  `false`. See [Sub-devices](#mqtt-sub_devices).
+
 - **topic_prefix** (*Optional*, string): The prefix used for all MQTT
   messages. Should not contain trailing slash. Defaults to `<APP_NAME>`.
   Use `null` to disable publishing or subscribing of any MQTT topic unless
@@ -298,6 +302,53 @@ name part of the generated entity name. Setting `discovery_object_id_generator: 
 in the ESPHome MQTT component configuration will cause Home Assistant to include device name
 in the generated entity names (e.g. `sensor.uptime` becomes `sensor.<device name>_uptime`  ),
 making it easier to distinguish the entities in various entity lists.
+
+<span id="mqtt-sub_devices"></span>
+
+## Sub-devices
+
+Default topics are built from the entity name, so entities with the same name on different
+[sub-devices](/components/esphome#esphome-devices) share one topic and overwrite each other's state. ESPHome warns
+about this when it validates the configuration. Set `sub_device_topics: true` to add the sub-device to their topics:
+
+```yaml
+esphome:
+  name: livingroom
+  devices:
+    - id: living_room
+      name: Living Room
+    - id: bedroom
+      name: Bedroom
+
+mqtt:
+  broker: 10.0.0.2
+  sub_device_topics: true
+
+sensor:
+  - platform: template
+    name: Temperature
+    device_id: living_room
+    lambda: return 22.5;
+  - platform: template
+    name: Temperature
+    device_id: bedroom
+    lambda: return 19.5;
+```
+
+The two sensors then publish to `livingroom/living_room/sensor/temperature/state` and
+`livingroom/bedroom/sensor/temperature/state`. Entities on the main device keep their topics.
+
+With discovery, each sub-device also appears as its own device in Home Assistant, connected through the main device
+and in the sub-device's area (or the main device's area when it has none), and the discovery id and unique id of its
+entities include the sub-device.
+
+Names are compared after lower-casing and replacing spaces and symbols with `_`. With the option on, configuration
+validation fails if two entities would still share a topic or discovery id: for example `Temperature` on the
+`Bedroom` sub-device and `Bedroom Temperature` on the main device, or sub-devices named `Battery A` and `Battery_A`.
+
+> [!NOTE]
+> Turning this on changes the topics, discovery ids and unique ids of entities on sub-devices. Home Assistant
+> creates them as new entities; remove the old ones, and update anything else that uses the old topics.
 
 ## Defaults
 
