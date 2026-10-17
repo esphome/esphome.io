@@ -135,9 +135,10 @@ wifi:
     - `rtc`: stored in RTC memory, which survives software reboots and deep sleep but **not** power loss, and avoids
       flash wear. A good fit for battery-powered devices that wake from deep sleep frequently.
 
-    Defaults to `rtc` on ESP8266 and `flash` on ESP32, matching each platform's previous behavior. Only `flash` is
-    available on platforms without RTC-backed storage (the RP2040 and the ESP32-C2 and C61 variants, which have no
-    RTC memory), where `rtc` is rejected.
+    Defaults to `rtc` on ESP8266 and `flash` on ESP32, matching each platform's previous behavior. `rtc` is
+    available on ESP32 (except the C2 and C61 variants, which have no RTC memory), ESP8266 and the Beken BK7231T,
+    BK7231N and BK7238; elsewhere only `flash` is available and `rtc` is rejected. These Beken chips have no RTC memory:
+    there `rtc` keeps the details in flash and forgets them after a power cut, so it does not avoid flash wear.
 
   > [!NOTE]
   > While `fast_connect` skips the initial scan, if the connection attempt fails, ESPHome will still perform a scan
