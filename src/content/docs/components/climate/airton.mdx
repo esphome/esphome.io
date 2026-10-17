@@ -1,0 +1,89 @@
+---
+description: "Instructions for setting up Airton IR air conditioners with ESPHome."
+title: "Airton Climate"
+---
+
+import APIRef from '@components/APIRef.astro';
+
+The `airton` climate platform controls air conditioners that use the Airton RD1A1 infrared remote protocol. It is
+found in Airton branded units and in Ferroli's Aster range. The platform is part of the
+[IR Remote Climate](/components/climate/climate_ir/) family and takes all of its options, plus the extra features of
+this remote: the vertical air outlet direction, the display light and sleep mode. Those are exposed through the
+`airton` select and switch platforms and through actions, all described on this page. Like every IR climate it needs
+a [Remote Transmitter](/components/remote_transmitter/), and takes a [Remote Receiver](/components/remote_receiver/)
+to follow the handheld remote.
+
+```yaml
+# Example configuration entry
+climate:
+  - platform: airton
+    id: living_room_ac
+    name: Living Room AC
+
+switch:
+  - platform: airton
+    display:
+      name: Display Light
+    sleep_mode:
+      name: Sleep Mode
+
+select:
+  - platform: airton
+    vertical_direction:
+      name: Vertical Direction
+```
+
+## Configuration Variables
+
+- **vertical_direction** (*Optional*, string): The vertical direction of the air outlet until a saved setting is
+  restored or the select below changes it. One of `off`, `swing`, `up`, `middle-up`, `middle`, `middle-down` and
+  `down`. Defaults to `off`.
+- All other options from [IR Remote Climate](/components/climate/climate_ir/#configuration-variables).
+
+The remote sends every setting in each frame, so the display light, sleep mode and vertical direction are stored in
+flash and restored at boot. Nothing is transmitted at boot; the stored settings go out with the next command. With a
+`receiver_id`, frames from the handheld remote update the climate state and these settings as well.
+
+## Switch
+
+The `airton` switch platform adds the remote's display light and sleep mode. Both switches are configuration entities
+and keep their state through the climate's own storage, so they do not need a `restore_mode`.
+
+- **airton_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the `airton` climate. Only needed with
+  more than one.
+- **display** (*Optional*): The display light of the indoor unit. All options from
+  [Switch](/components/switch/#config-switch).
+- **sleep_mode** (*Optional*): Sleep mode. The unit ignores it in fan-only mode and in the automatic heat/cool mode. All
+  options from [Switch](/components/switch/#config-switch).
+
+## Select
+
+The `airton` select platform adds the vertical air outlet direction.
+
+- **airton_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the `airton` climate. Only needed with
+  more than one.
+- **vertical_direction** (*Optional*): The vertical direction, with the options listed for the climate's
+  `vertical_direction`. `swing` and the climate's vertical swing mode are the same setting, so changing one updates the
+  other. All options from [Select](/components/select/#config-select).
+
+## Actions
+
+The display light and sleep mode can also be set from automations. Each action takes the ID of the `airton` climate.
+
+```yaml
+on_...:
+  - climate.airton.display_off: living_room_ac
+  - climate.airton.sleep_on:
+      id: living_room_ac
+```
+
+- **climate.airton.display_on** / **climate.airton.display_off**: Turn the display light on or off.
+- **climate.airton.sleep_on** / **climate.airton.sleep_off**: Turn sleep mode on or off.
+
+## See Also
+
+- [IR Remote Climate](/components/climate/climate_ir/)
+- [Climate Component](/components/climate/)
+- [Remote Transmitter](/components/remote_transmitter/)
+- [Remote Receiver](/components/remote_receiver/)
+- <APIRef text="airton.h" path="airton/airton.h" />
