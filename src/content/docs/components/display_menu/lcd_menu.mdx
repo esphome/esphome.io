@@ -19,8 +19,10 @@ The component implements the [Display Menu](/components/display_menu#display_men
 a hierarchical menu primarily intended to be controlled either by a rotary encoder
 with a button or a five-button joystick controller.
 
-The component needs to be connected to an instance of a character based LCD display, which
-like [lcd_pcf8574 Component](/components/display/lcd_display#lcd-pcf8574) or [lcd_gpio Component](/components/display/lcd_display#lcd-gpio). For the best results the GPIO connection is
+The component needs to be connected to an instance of a character based display, such as the
+[lcd_pcf8574 Component](/components/display/lcd_display#lcd-pcf8574), the
+[lcd_gpio Component](/components/display/lcd_display#lcd-gpio) or a
+[UART Terminal](/components/display/uart_terminal/). For the best results the GPIO connection is
 recommended; the I²C one running at the speed according to the datasheet (usually `100`
 kHz) or even ESPHome default (`50` kHz) will create perceptible delays especially when
 changing a numeric value using the rotary encoder. Most `PCF8574` adapters used with
@@ -89,7 +91,8 @@ binary_sensor:
 Configuration variables:
 
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
-- **display_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the LCD display.
+- **display_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the character
+  display.
 - **mark_back** (*Optional*, 0-255): Code of the character used to mark menu items going back
   one level. As the character set lacks a good looking back arrow, using a user defined character
   is advisable (use `8` to reference one at position `0` to avoid problems with zeros

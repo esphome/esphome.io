@@ -1,0 +1,92 @@
+---
+description: "Instructions for setting up a character display drawn on a serial terminal."
+title: "UART Terminal Display"
+---
+
+import APIRef from '@components/APIRef.astro';
+
+The `uart_terminal` display platform draws a character grid on an ANSI terminal connected to a
+[UART bus](/components/uart/), such as a serial console on a computer. It takes the same `print`, `printf` and
+`strftime` calls as the [character-based LCD displays](/components/display/lcd_display/), and an
+[LCD Menu](/components/display_menu/lcd_menu/) can draw on it, so a menu can be driven over a serial link. Together
+with the [UART Binary Sensor](/components/binary_sensor/uart/), which turns the keys of the terminal into presses,
+this gives a complete menu over a serial port.
+
+```yaml
+# Example configuration entry
+uart:
+  tx_pin: GPIOXX
+  rx_pin: GPIOXX
+  baud_rate: 115200
+
+display:
+  - platform: uart_terminal
+    dimensions: 20x4
+    lambda: |-
+      it.print("Hello World!");
+```
+
+## Configuration Variables
+
+- **dimensions** (**Required**, string): The size of the grid as `COLUMNSxROWS`, at most `255x255`.
+- **lambda** (*Optional*, [lambda](/automations/templates/#config-lambda)): The lambda to use for rendering the
+  content. It takes the same calls as the [LCD rendering lambda](/components/display/lcd_display/#display-lcd_lambda).
+- **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): The interval to re-draw the grid.
+  Defaults to `1s`.
+- **uart_id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID of the UART bus. The bus
+  needs a `tx_pin`.
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID used for code generation.
+
+Each redraw moves the terminal's cursor to the top left corner and sends every row, so the terminal shows the grid in
+place. A redraw is skipped while the content has not changed, so an idle display sends little. Every tenth update the
+grid goes out again with the screen cleared first, so a terminal attached later shows it within a few seconds, and
+older output around the grid disappears.
+
+## Menu Over a Serial Port
+
+The menu draws itself from the display's lambda, as on an LCD.
+
+```yaml
+display:
+  - platform: uart_terminal
+    id: terminal
+    dimensions: 20x4
+    lambda: |-
+      id(serial_menu).draw();
+
+lcd_menu:
+  id: serial_menu
+  display_id: terminal
+  active: true
+  mode: joystick
+  items:
+    - type: label
+      text: Settings
+    - type: menu
+      text: Submenu
+      items:
+        - type: back
+          text: Back
+
+binary_sensor:
+  - platform: uart
+    data: [0x1B, 0x5B, 0x41]  # the up arrow key
+    on_press:
+      - display_menu.up
+  - platform: uart
+    data: [0x1B, 0x5B, 0x42]  # the down arrow key
+    on_press:
+      - display_menu.down
+  - platform: uart
+    data: "\r"
+    on_press:
+      - display_menu.enter
+```
+
+## See Also
+
+- [LCD Display](/components/display/lcd_display/)
+- [LCD Menu](/components/display_menu/lcd_menu/)
+- [UART Binary Sensor](/components/binary_sensor/uart/)
+- [UART Bus](/components/uart/)
+- <APIRef text="terminal.h" path="uart_terminal/terminal.h" />
