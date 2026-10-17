@@ -102,7 +102,9 @@ wifi:
 - **reboot_timeout** (*Optional*, [Time](/guides/configuration-types#time)): The amount of time to wait before rebooting when no
   WiFi connection exists. Can be disabled by setting this to `0s`, but note that the low level IP stack currently
   seems to have issues with WiFi where a full reboot is required to get the interface back working. Defaults to `15min`.
-  Does not apply when in access point mode.
+  The device does not reboot while a client (for example a phone) is connected to its fallback access point, or when
+  no networks are configured. RTL87xx and LN882x boards cannot detect connected clients, so on those boards the
+  device does not reboot while the fallback access point is up.
 
 - **power_save_mode** (*Optional*, string): The power save mode for the WiFi interface.
   See [Power Save Mode](#power-save-mode)
@@ -246,7 +248,9 @@ ESPHome has an optional "Access Point Mode". If you include `ap:`
 in your wifi configuration, ESPHome will automatically set up an access point that you
 can connect to. Additionally, you can specify both a "normal" station mode and AP mode at the
 same time. This will cause ESPHome to only enable the access point when no connection
-to the WiFi router can be made.
+to the WiFi router can be made, also after a connection that was established and then lost. The exception is a device
+whose [provisioning](/components/provisioning/) window has closed: that shuts the access point down until the next
+restart.
 
 ```yaml
 wifi:
