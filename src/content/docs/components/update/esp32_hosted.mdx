@@ -24,10 +24,48 @@ to bundle a specific firmware version with your device.
 # Example configuration entry for embedded mode
 update:
   - platform: esp32_hosted
+    id: coprocessor_update
     type: embedded
     path: coprocessor-firmware.bin
     sha256: 1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef
 ```
+
+You can also use an HTTP or HTTPS `url` instead of `path`. ESPHome downloads the binary on the computer building
+your firmware and verifies its SHA256 before embedding it. The device does not need access to the firmware server.
+
+```yaml
+update:
+  - platform: esp32_hosted
+    id: coprocessor_update
+    type: embedded
+    url: https://example.com/firmware/esp32c6.bin
+    sha256: "<SHA256_OF_FIRMWARE>"
+```
+
+Replace the URL and SHA256 placeholder with the firmware binary's URL and its 64-character hexadecimal SHA256 hash.
+Configure exactly one of `path` or `url`. Both require `sha256`.
+
+Downloaded images are cached under `esp32_hosted/firmware` in ESPHome's data directory, normally `.esphome` next to
+your configuration. Each cached image is verified before use. A matching cached image is reused without contacting
+the server, so subsequent builds can acquire the image offline. A missing or damaged cache entry requires a new
+download; download failures and SHA256 mismatches stop configuration validation.
+
+Ordinary **Clean Build Files** keeps these images. **Reset Build Environment** (`esphome clean-all`) removes them,
+so the next build requires access to the server again.
+
+Embedding an image makes it available for installation. To install it automatically when an update is available,
+use `on_update_available` with the [update.perform action](/components/update/#update-perform-action):
+
+```yaml
+on_update_available:
+  then:
+    - update.perform: coprocessor_update
+```
+
+Add this automation to the update entry above.
+
+Choose firmware compatible with your co-processor and the ESP-Hosted library version used by ESPHome. The binary
+must also fit the co-processor's OTA partition. Embedded mode does not select a version from a manifest.
 
 ## HTTP Mode
 
@@ -77,8 +115,11 @@ into ESPHome).
 
 ### Embedded mode options
 
-- **path** (**Required**, string): Path to the co-processor firmware binary file (`.bin`).
-  The path is relative to your ESPHome configuration file.
+- **path** (*Optional*, string): Path to the co-processor firmware binary file (`.bin`).
+  The path is relative to your ESPHome configuration file. Required when `url` is not set.
+
+- **url** (*Optional*, url): HTTP or HTTPS URL of the co-processor firmware binary (`.bin`), downloaded by ESPHome
+  during configuration validation and embedded at compile time. Required when `path` is not set.
 
 - **sha256** (**Required**, string): SHA256 hash of the firmware binary file. This is used to verify
   the integrity of the firmware both at compile time and at runtime before flashing to the co-processor.
