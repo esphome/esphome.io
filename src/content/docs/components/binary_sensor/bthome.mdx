@@ -1,0 +1,54 @@
+---
+description: "Instructions for receiving BTHome v2 button presses as binary sensors in ESPHome."
+title: "BTHome Button Binary Sensor"
+---
+import APIRef from '@components/APIRef.astro';
+
+
+The `bthome` binary sensor platform turns a button press sent in the [BTHome](https://bthome.io/) v2
+format, for example by a Shelly BLU Button, into a short ON pulse. It listens passively to the
+advertisements and needs a BLE tracker, for example the [ESP32 BLE Tracker](/components/esp32_ble_tracker/).
+
+Each binary sensor reacts to one gesture of one button. Configure one entry per gesture you want to use.
+
+```yaml
+# Example configuration entry
+esp32_ble_tracker:
+
+binary_sensor:
+  - platform: bthome
+    mac_address: "XX:XX:XX:XX:XX:XX"
+    event: press
+    name: "Button press"
+```
+
+> [!NOTE]
+> Encrypted BTHome advertisements are not supported. They are ignored, and a warning is logged once.
+
+## Configuration Variables
+
+- **mac_address** (**Required**, MAC Address): The MAC address of the button. A transmitter that puts its
+  MAC address into the advertisement is also matched by that address.
+- **event** (**Required**, string): The gesture that turns the sensor on. One of `press`, `double_press`,
+  `triple_press`, `long_press`, `long_double_press`, `long_triple_press` or `hold_press`.
+- **index** (*Optional*, int): The position of the button in the advertisement, for devices with more
+  than one button. From 1 to 8. Defaults to `1`.
+- **pulse_length** (*Optional*, [Time](/guides/configuration-types#time)): How long the sensor stays ON.
+  Defaults to `200ms`.
+- **ble_hub_id** (*Optional*, [ID](/guides/configuration-types#id)): The BLE tracker to receive
+  advertisements from. Only needed when more than one tracker is configured.
+- All other options from [Binary Sensor](/components/binary_sensor#config-binary_sensor).
+
+## Repeated Advertisements
+
+A transmitter sends each gesture several times. An advertisement with the same packet id as the previous
+one is ignored. After 4 seconds without advertisements, the same packet id counts as a new gesture again.
+For a transmitter that sends no packet id, the same gesture within 1.2 seconds is ignored.
+
+## See Also
+
+- [BTHome format](https://bthome.io/format/)
+- [ESP32 Bluetooth Low Energy Tracker](/components/esp32_ble_tracker/)
+- [Binary Sensor Component](/components/binary_sensor/)
+- [BTHome MiThermometer](/components/sensor/bthome_mithermometer/)
+- <APIRef text="bthome_binary_sensor.h" path="bthome/bthome_binary_sensor.h" />
