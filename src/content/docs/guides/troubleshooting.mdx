@@ -232,6 +232,29 @@ documentation for detailed information and examples.
 > reduce verbosity, not increase it beyond the global level. For example, if the global level is `INFO`, setting a
 > component to `DEBUG` will have no effect.
 
+## Seeing Logs From Before the Network Came Up
+
+A warning or error logged during boot, before Wi-Fi or Ethernet is up, is gone by the time a client connects over
+the API; only a serial console would have shown it. On a board without a usable serial port, set a boot log buffer
+in the [Logger](/components/logger/) configuration and replay it from the API's
+[`on_client_connected` trigger](/components/api/#api-on_client_connected_trigger):
+
+```yaml
+logger:
+  boot_log_buffer_size: 4kB
+
+api:
+  on_client_connected:
+    - delay: 2s
+    - logger.replay_boot_logs:
+```
+
+The buffer keeps `WARN` and `ERROR` messages from the moment the logger starts. On the next `esphome logs` connection
+they are replayed with the time since boot in front of each line, such as `@64ms [W][wifi:123]: ...`, so a component
+that set the error status early, or a failed setup, is visible from the usual log view. See the
+[`logger.replay_boot_logs` action](/components/logger/#logger-replay_boot_logs-action) for the capture level and
+per-tag options.
+
 ## "Took a long time for an operation" Warning
 
 ```log
