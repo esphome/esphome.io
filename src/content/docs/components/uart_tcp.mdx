@@ -68,6 +68,13 @@ uart_tcp:
   the option is omitted, every address may connect. A rejected client is closed immediately and logged as a
   warning at most once every 5 seconds; an IPv6 client is rejected unless it carries an IPv4 mapped address, as
   on a dual stack network. This option cannot be used when `role` is `client`.
+- **timeout** (*Optional*, [Time](/guides/configuration-types#time)): Close the connection when no byte has
+  been sent or received for this long. Time is counted from the last byte, or from when the connection opened.
+  `0s` turns the timeout off and leaves the connection open; any other value must be at least the main loop
+  interval ([`loop_interval`](/components/esphome#configuration-variables), `16ms` by default). Defaults to `0s`.
+  A UART that cannot take more bytes also counts as traffic, so the connection stays up while bytes are waiting for
+  the bus even if the peer has stopped. On a client, the next connection waits for `reconnect_interval`. On a
+  server, the next client is accepted as soon as this connection is closed.
 - **reconnect_interval** (*Optional*, [Time](/guides/configuration-types#time)): The time to wait before trying
   again after a failure. An unanswered connection attempt is given up after `reconnect_interval` or 10 seconds,
   whichever is longer. Defaults to `5s`.
