@@ -1,0 +1,62 @@
+---
+description: "Instructions for setting up the Bluetooth connection to a Fendt or Hobby caravan control panel in ESPHome"
+title: "Fendt Caravan"
+---
+
+The `fendt_caravan` component connects an ESP32 to the Bluetooth Low Energy (BLE) interface of a Fendt or Hobby
+caravan control panel, the one the Fendt Connect app talks to. It reads the values the panel reports and sends the
+same key presses as the app, all locally. Only the main control unit is supported at the moment. The component is
+experimental and not supported by Fendt: it operates the caravan, so test each switch while you are next to it.
+
+The panel accepts a link only from the Bluetooth address it was paired with. The `bt_id` option is that address; the
+default is the one the panels seen so far were paired with. The ESP32 does **not** use its own address for this. If
+the panel drops the link right after it connects, it was paired with another address: use the one of the phone that
+runs the Fendt Connect app, shown in the phone's Bluetooth settings or by a BLE scanner app.
+
+```yaml
+# Example configuration entry
+esp32_ble_tracker:
+
+ble_client:
+  - mac_address: AA:BB:CC:DD:EE:FF
+    id: caravan_ble
+
+fendt_caravan:
+  ble_client_id: caravan_ble
+  main_control_unit:
+    temp_in:
+      name: Inside Temperature
+    water_level:
+      name: Fresh Water
+    main_switch:
+      name: Caravan Power
+```
+
+## Configuration Variables
+
+- **ble_client_id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the
+  [BLE client](/components/ble_client/) set up with the address of the panel.
+- **bt_id** (*Optional*, MAC address): The Bluetooth address the panel was paired with, sent in the handshake.
+  Defaults to `C0:EE:FB:90:B0:A7`.
+- **main_control_unit** (**Required**): The entities of the main control unit. Each value is published as the panel
+  reports it; add a `throttle` [filter](/components/sensor/) to a sensor to publish it less often.
+  - **temp_in** (*Optional*): The inside temperature. All options from [Sensor](/components/sensor/).
+  - **temp_out** (*Optional*): The outside temperature. All options from [Sensor](/components/sensor/).
+  - **water_level** (*Optional*): The fresh water level in percent, in steps of a quarter tank. All options from
+    [Sensor](/components/sensor/).
+  - **power_status** (*Optional*): Whether the caravan is on mains power. All options from
+    [Binary Sensor](/components/binary_sensor/).
+  - **software_version** (*Optional*): The software version the panel reports. All options from
+    [Text Sensor](/components/text_sensor/).
+  - **main_switch** (*Optional*): Turns the main control unit on with a short press of its key and off with a long
+    press. All options from [Switch](/components/switch/).
+  - **all_lights** (*Optional*): Toggles all lights with a short press of the key while the unit is on. All options
+    from [Switch](/components/switch/).
+  - **floor_heater** (*Optional*): Turns the floor heater on or off. All options from [Switch](/components/switch/).
+
+The switches show the state the panel reports, so a press the panel did not act on stays visible.
+
+## See Also
+
+- [BLE Client](/components/ble_client/)
+- [ESP32 BLE Tracker](/components/esp32_ble_tracker/)
