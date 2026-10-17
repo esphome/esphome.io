@@ -38,6 +38,10 @@ media_player:
   - **format** (*Optional*, enum): The audio format Home Assistant will transcode audio to before sending it to the device. One of `FLAC`, `MP3`, `OPUS`, `WAV`, or `NONE`. `NONE` disables transcoding in Home Assistant; ESPHome will then compile support for all supported codecs (`FLAC`, `MP3`, `OPUS`, and `WAV`), which increases firmware size. To compile in additional codecs without setting this to `NONE`, use the [Audio](/components/audio/) component. Defaults to `FLAC`.
   - **sample_rate** (*Optional*, positive integer): Sample rate for the transcoded audio. Should be supported by the configured `speaker` component. Defaults to the speaker's sample rate. The `OPUS` codec only supports a `48000` sample rate.
   - **num_channels** (*Optional*, positive integer): Number of channels for the transcoded audio. Must be either `1` or `2`. Defaults to the speaker's number of channels.
+  - **start_condition** (*Optional*, lambda): The reader and decoder wait until this returns `true`. The media player
+    enters the playing or announcing state while waiting, so `on_play` or `on_announcement` can release a shared
+    resource. A stop command cancels the pending start. If the condition never becomes true, the player continues
+    waiting; use a condition that reliably reflects the resource state. If omitted, playback starts immediately.
 
 - **media_pipeline** (*Optional*, Pipeline Schema): Configuration settings for the media pipeline. Same options as the `announcement_pipeline`.
 - **buffer_size** (*Optional*, positive integer): The buffer size in bytes for each pipeline. Must be between `4000` and `4000000`. Defaults to `1000000`.
@@ -57,6 +61,26 @@ media_player:
 - All other options from [Media Player](/components/media_player#config-media_player)
 
 <span id="media_player-speaker-examples"></span>
+
+## Sharing an I²S Bus With a Microphone
+
+When a microphone and speaker use the same I²S controller in simplex mode, stop microphone capture before playback.
+Muting the microphone does not release the controller. The condition is checked without blocking the main loop;
+do not use a delay or a blocking operation inside the lambda.
+
+```yaml
+media_player:
+  - platform: speaker
+    announcement_pipeline:
+      speaker: speaker_id
+      start_condition: !lambda 'return id(mic_id).is_stopped();'
+    on_announcement:
+      - microphone.stop_capture: mic_id
+    on_idle:
+      - microphone.capture: mic_id
+```
+
+If another component uses the microphone, stop it before `microphone.stop_capture` and restart it after capture resumes.
 
 ## Example Configuration
 
