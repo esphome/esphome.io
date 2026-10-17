@@ -37,6 +37,8 @@ microphone:
   between `2` and `1024`. Defaults to `16`.
 - **taps** (*Optional*, positive integer): The number of taps per windowed sinc interpolation filter. Must be between
   `16` and `128` and divisible by 4. Defaults to `16`.
+- **fast_decimation** (*Optional*, boolean): Use an ESP-DSP FIR filter for 48 kHz to 16 kHz mono, 16-bit audio on
+  classic ESP32 with ESP-IDF. Defaults to `false`. This uses a fixed filter; **filters** and **taps** do not affect it.
 - All other options from [Microphone Component](/components/microphone#config-microphone).
 
 ## Improving Quality
@@ -47,6 +49,10 @@ of taps. Increasing the number of filters increases the memory load. Increasing 
 load.
 
 When downsampling, frequencies above the new Nyquist limit are filtered out to avoid aliasing.
+
+For a 48 kHz source with 16-bit mono input selected by **microphone**, **fast_decimation** can reduce CPU use on
+classic ESP32. It does not change the output format or the speaker path. Other input and output formats use the
+standard resampler when **fast_decimation** is left at its default of `false`.
 
 ## Example
 
