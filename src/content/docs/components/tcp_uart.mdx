@@ -39,9 +39,10 @@ modbus:
 ```
 
 `modbus` sends RTU frames. The other end must be a serial bridge that forwards the bytes unchanged, not a
-Modbus TCP server. After each response the hub waits its `turnaround_time` (default 600 ms) before the next request,
-so that slow devices on a shared serial bus can keep up. If the devices behind the bridge answer quickly, it can be
-lowered; see [Modbus](/components/modbus/#performance-vs-stability).
+Modbus TCP server. For a Modbus TCP server, put [Modbus TCP UART](/components/modbus_tcp_uart/) in front of this
+component and point the hub at that id. After each response the hub waits its `turnaround_time` (default 600 ms)
+before the next request, so that slow devices on a shared serial bus can keep up. If the devices behind the bridge
+answer quickly, it can be lowered; see [Modbus](/components/modbus/#performance-vs-stability).
 
 ## Server
 
@@ -53,7 +54,8 @@ tcp_uart:
     port: 8899
 ```
 
-The connecting client sends raw bytes, for example RTU frames for `modbus`, not Modbus TCP.
+The connecting client sends raw bytes, for example RTU frames for `modbus`, not Modbus TCP. For a Modbus TCP client,
+put [Modbus TCP UART](/components/modbus_tcp_uart/) in front of this component and point the hub at that id.
 
 ## Configuration Variables
 
@@ -92,4 +94,5 @@ The connecting client sends raw bytes, for example RTU frames for `modbus`, not 
 - [UART Bus](/components/uart/)
 - [UART TCP](/components/uart_tcp/)
 - [Modbus](/components/modbus/)
+- [Modbus TCP UART](/components/modbus_tcp_uart/)
 - <APIRef text="tcp_uart.h" path="tcp_uart/tcp_uart.h" />
