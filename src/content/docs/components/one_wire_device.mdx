@@ -1,0 +1,214 @@
+---
+title: "1-Wire Device Emulation"
+description: "Emulate a selectable thermometer, serial-ID device or two-channel I/O device on an ESP32."
+---
+
+The `one_wire_device` component makes a classic dual-core [ESP32](/components/esp32/) respond to an external
+[1-Wire controller](/components/one_wire/). **A node emulates exactly one device on one DQ GPIO.** Select the device
+model with `type`; multiple emulated outputs per node and several virtual devices on one output are not implemented.
+
+```yaml
+one_wire_device:
+  pin: GPIOXX
+```
+
+The default model is `DS18B20`, with a fixed value of 23.5 degrees Celsius. This is an emulator, not a temperature sensor.
+
+:::caution[Experimental]
+Bench verification is not production qualification. The microsecond timing backend uses a dedicated GPIO interrupt
+on the opposite core from setup. Network-load, cache-disabled and long-duration operation need separate qualification.
+Do not use this prototype for safety interlocks or critical measurements.
+:::
+
+## Device Models
+
+| `type` | ROM family | Value channels |
+| --- | --- | --- |
+| `DS18B20` | `0x28` | `temperature` (Celsius) |
+| `DS1822` | `0x22` | `temperature` (Celsius) |
+| `DS18S20` | `0x10` | `temperature` (Celsius, with DS18S20 interpolation) |
+| `DS2401` | `0x01` | None: identity-only model |
+| `DS2413` | `0x3A` | `pio_a`, `pio_b` (0/1 input levels) |
+
+These are protocol models, not electrical simulations of the original silicon. In particular, an emulated DS2413
+still uses 3.3 V ESP32 wiring, not the real part's high-voltage PIO ratings.
+
+## Values Are Model-Specific Channels
+
+A physical 1-Wire device can report several quantities. For example, the
+[DS1923 Hygrochron](https://www.analog.com/media/en/technical-documentation/data-sheets/DS1923.pdf) records both
+temperature and humidity. It also has a logger/memory protocol and is **not** one of the models implemented here.
+A multi-value device is not the same thing as multiple virtual devices sharing a bus.
+
+The API therefore uses `set_value` and named channels. A single-value model can use the `value` shorthand; a
+multi-value model uses a `values` mapping and an explicit `channel` in actions. The model determines channel names,
+units, valid ranges and the wire representation. Unsupported channels are rejected, not silently ignored.
+
+## Computed Values and Live Offsets
+
+Values accept constants or normal ESPHome C++ lambdas. Read any existing sensor or global variable and calculate
+the result on the emulating node:
+
+```yaml
+globals:
+  - id: offset
+    type: float
+    initial_value: '4.0'
+
+one_wire_device:
+  id: emulated
+  pin: GPIOXX
+  type: DS18B20
+  value: !lambda return id(my_temperature_sensor).state + id(offset);
+  update_interval: 1s
+```
+
+`my_temperature_sensor` is an existing sensor on this node. It can be physical or imported with an
+[MQTT sensor](/components/sensor/mqtt_subscribe/) or [Home Assistant sensor](/components/sensor/homeassistant/).
+IDs do not refer directly to sensors on another ESP32: import remote readings first. The thermometer channel uses
+Celsius; convert the source's units before supplying it.
+
+Change the `offset` global from an existing automation or control, and the next evaluation uses the new offset.
+For two readouts, the same `value` key can contain:
+
+```yaml
+value: !lambda return id(sensor_x).state + id(sensor_y).state;
+```
+
+Explicit channel syntax is equivalent for the thermometer:
+
+```yaml
+values:
+  temperature: !lambda return id(sensor_x).state + id(sensor_y).state + id(offset);
+```
+
+Lambdas run in foreground at `update_interval` (default `1s`), not inside the protocol ISR. `update_interval: never`
+disables periodic evaluation; `component.update` can then explicitly recompute the bindings. Constants are applied
+once, not reapplied at every polling interval.
+
+The evaluated result is checked against the selected channel's range and published as a lock-free snapshot.
+Convert T latches the current thermometer snapshot; an already converted scratchpad remains unchanged until the
+next conversion. NaN, infinity and out-of-range results make the virtual endpoint unavailable until valid data
+recovers. A configured lambda starts unavailable before its first valid evaluation, rather than using the fixed
+23.5 C default. Numeric sensor NaNs propagate through arithmetic. For binary sensors, or a variable without a
+suitable unknown state, explicitly return `NAN` until its prerequisites are ready.
+
+## Generic `set_value` Action
+
+For an action-controlled value, omit a periodic lambda and use the generic action in an existing automation:
+
+```yaml
+one_wire_device:
+  id: emulated
+  pin: GPIOXX
+  type: DS18B20
+  value: 20.0
+
+# Inside an existing then: block:
+# - one_wire_device.set_value:
+#     id: emulated
+#     value: !lambda return id(sensor_x).state + id(offset);
+```
+
+The model has one channel, so `channel` may be omitted. Explicit `channel: temperature` is also valid.
+The action accepts constants and lambdas and performs the same run-time validity checks. If a periodic lambda is
+also configured for that channel, its next evaluation overwrites an action's result; choose one producer or use
+manual evaluation deliberately. The old `set_temperature` action is replaced, not retained as a parallel API.
+
+## Independent Channels: DS2413
+
+```yaml
+one_wire_device:
+  id: emulated_io
+  pin: GPIOXX
+  type: DS2413
+  values:
+    pio_a: !lambda |-
+      if (!id(input_a).has_state()) return NAN;
+      return id(input_a).state;
+    pio_b: !lambda |-
+      if (!id(input_b).has_state()) return NAN;
+      return id(input_b).state;
+```
+
+These sources are existing [binary sensors](/components/binary_sensor/). A high value (`true` or `1`) means a high
+input level; low is `false` or `0`. Other numeric results are invalid rather than implicitly converted to true.
+Either configured channel being unavailable suppresses the endpoint. Omitted channels default to released/high.
+A PIO status byte already sampled at its first bit can finish; an invalid input suppresses the next byte instead of
+reporting retained levels as current data. After recovery, a new bus reset starts the next transaction.
+Each channel is independently addressable:
+
+```yaml
+# Inside an existing then: block:
+# - one_wire_device.set_value:
+#     id: emulated_io
+#     channel: pio_a
+#     value: !lambda return id(input_a).state;
+# - one_wire_device.set_value:
+#     id: emulated_io
+#     channel: pio_b
+#     value: false
+```
+
+`channel` is mandatory for a multi-value model. The configuration rejects an omitted channel, a channel belonging
+to a different model, and attempts to set any value on the identity-only DS2401.
+
+Controller writes separately affect the model's open-drain output latches: a zero latch pulls that virtual input
+low, while a one releases it to the supplied input level. These are virtual registers, not physical GPIO outputs.
+Status bytes include the complemented nibble. Invalid-complement writes do not modify latches. Power-down behavior,
+overdrive and Resume ROM are not implemented.
+
+## Configuration Variables
+
+- **pin** (**Required**, [Pin Schema](/guides/configuration-types/#pin-schema)): Internal DQ GPIO. The default mode
+  is input/output/open-drain. Inversion, pulldown and incompatible modes are rejected.
+- **type** (*Optional*, string): Device model; defaults to `DS18B20`.
+- **address** (*Optional*, hexadecimal integer): Full ROM with the selected family and a valid Dallas CRC.
+  Defaults to `0`, deriving the serial from the station MAC and calculating family/CRC bytes. Logged at startup.
+- **value** (*Optional*, float/boolean or lambda): Shorthand for a model with exactly one value channel.
+  Cannot be combined with `values`. For thermometers the range is -55 through 125 C; default is 23.5 C.
+- **values** (*Optional*, mapping): Model-specific channel names to constants or lambdas. Thermometers support
+  `temperature`; DS2413 supports `pio_a`/`pio_b` (default 1 each); DS2401 has no value channels.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): Lambda evaluation interval; default `1s`.
+  Use `never` for explicit `component.update` or action-only control.
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): Target of `set_value` and `component.update`.
+
+The former draft-specific `temperature`, `sensor_id` and direct PIO-source keys are replaced by `value`/`values`.
+For example, replace `sensor_id: source` with `value: !lambda return id(source).state;`.
+The obsolete prototype options `timing_scale` and `interrupt_mode` are rejected; only the standard-speed interrupt
+backend is supported.
+
+## Wiring and Controller
+
+Connect DQ to the external controller's DQ, share ground and use an external pull-up from DQ to **3.3 V**
+(4.7 kOhm is a starting value for a short bench bus). Power both boards independently; do not join their 5 V rails.
+The emulator releases the line rather than driving it high. Parasite-power and 5 V DQ operation are not supported.
+
+An unchanged ESPHome [Dallas temperature sensor](/components/sensor/dallas_temp/) can consume the three thermometer
+models through either the [GPIO controller](/components/one_wire/gpio/) or a supported bridge. Discover the ROM in the
+controller log, then use an explicit address where necessary. Do not configure the emulating ESP32's same DQ pin as a
+controller bus as well.
+
+## Deliberate Limits
+
+- Only classic dual-core ESP32 is accepted. There is one emulated device per node, not one independently per pin.
+- The GPIO backend times slots from ISR entry, not a hardware edge timestamp. Interrupt latency can shift sampling
+  and responses, and not all timing overruns are detected. A high line at ISR entry is not itself an overrun detector:
+  normal short write-1/read pulses can already have ended. This backend does not provide a timing-integrity guarantee
+  under arbitrary interrupt load; applications requiring that guarantee need hardware-timestamped/offloaded handling.
+- Conversion completes immediately using the latest source snapshot; ready polling returns ready. Real sensor
+  conversion delays and power consumption are not simulated.
+- Copy Scratchpad and Recall E2 use a **RAM shadow**. They survive bus resets, not ESP32 restarts or power loss.
+- Thermometer alarm search and resolution masking are model state, not host-side filters.
+- Overdrive, parasite power, persistent EEPROM, authenticated memory, loggers and arbitrary family codes are unsupported.
+- Device-model bit-slot logic is separated from the GPIO adapter to allow future extensions without pretending that
+  changing a ROM family byte implements another chip's function commands.
+
+## See Also
+
+- [1-Wire Bus](/components/one_wire/)
+- [DS18B20 Datasheet](https://www.analog.com/media/en/technical-documentation/data-sheets/ds18b20.pdf)
+- [DS1822 Datasheet](https://www.analog.com/media/en/technical-documentation/data-sheets/DS1822.pdf)
+- [DS18S20 Datasheet](https://www.analog.com/media/en/technical-documentation/data-sheets/DS18S20.pdf)
+- [DS2401 Datasheet](https://www.analog.com/media/en/technical-documentation/data-sheets/DS2401.pdf)
+- [DS2413 Datasheet](https://www.analog.com/media/en/technical-documentation/data-sheets/DS2413.pdf)
