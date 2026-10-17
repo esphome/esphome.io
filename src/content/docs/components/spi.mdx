@@ -28,10 +28,13 @@ In some cases one of **MOSI** or **MISO** does not exist as the receiving device
 It is also possible to configure a quad SPI interface using 4 output data lines, and an octal interface using 8 data
 output lines. This is required only for use with certain components.
 
-> [!NOTE]
-> - Software mode supports only single-bit SPI.
-> - Quad mode SPI is available only on ESP32 devices (all variants).
-> - Octal mode is available only on ESP32-S3, -S2, -S31 and -P4 variants.
+Not every mode and interface is available on every device:
+
+| Type | Hardware | Software |
+|---|---|---|
+| Single | ESP8266, all ESP32, RP2 | ESP8266, all ESP32, RP2 |
+| Quad | All ESP32 | All ESP32 |
+| Octal | ESP32-S3, -S2, -S31 and -P4 only | All ESP32 |
 
 To set up SPI devices in ESPHome, you first need to place a top-level SPI component which defines the pins to
 use for the functions described above. The **CS** pins are individually managed by the other components that
@@ -73,7 +76,7 @@ spi:
 - **clk_pin** (**Required**, [Pin Schema](/guides/configuration-types#pin-schema)): The pin used for the clock line of the SPI bus.
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID for this SPI hub if you need multiple SPI hubs.
 - **interface** (*Optional*): Controls which hardware or software SPI implementation should be used.
-  Value may be one of `any` (default), `software`, `hardware`, `spi`, `spi2` or `spi3`, depending on
+  Value may be one of `any`, `software`, `hardware`, `spi`, `spi2` or `spi3`, depending on
   the type and the particular chip used. See discussion below.
 
 For the conventional `single` bit bus at least one of `miso_pin` or `mosi_pin` is required.
@@ -84,7 +87,8 @@ For the conventional `single` bit bus at least one of `miso_pin` or `mosi_pin` i
 For `quad` or `octal` type instead specify `data_pins`  :
 
 - **data_pins** (**Required**, [Pin Schema](/guides/configuration-types#pin-schema)): Must be a list of exactly 4 pins to be used
-  for the quad SPI output data lines, or exactly 8 pins for octal mode. Not used for single mode.
+  for the quad SPI output data lines, or exactly 8 pins for octal mode. Not used for single mode. When using the software
+  interface, these must be between GPIO 0 and GPIO 31.
 
 ## Interface selection
 
@@ -93,7 +97,7 @@ are reserved for use to access
 the flash and PSRAM memories, leaving one or two user-accessible controllers. SPI controller instances configured in
 ESPHome can be assigned to one of these with the `interface:` configuration option.
 
-By default (`interface: any`  ) the first available hardware controller will be assigned, a second if available then
+By default (`interface: any`) the first available hardware controller will be assigned, a second if available then
 any further instances configured will use software mode. You can choose a specific controller with `spi` (meaning
 the first or only available controller) or one of `spi2` and `spi3` for ESP32 chips with two available SPI
 controllers. Note that SPI0 and SPI1 are typically not available, being reserved for accessing flash and PSRAM.
@@ -103,11 +107,12 @@ the remaining instances will use a software implementation, which is unable to a
 kHz. This is acceptable for sensors or other devices not transferring large amounts of data, but will be too slow
 to drive a display for example.
 
+When the `type` is `quad` or `octal`, the default for `interface` is `hardware`. If you want to use software SPI in quad
+or octal mode, specify `interface: software` explicitly.
+
 While the ESP32 supports the reassignment of the default SPI pins to most other GPIO pins, using the dedicated SPI pins
 can improve performance and stability for certain ESP/device combinations.
 ESP8266 has a more limited selection of pins that can be used; check the datasheet for more information.
-
-Quad and octal modes requires a hardware interface, so `software` and `any` are not permitted values.
 
 ## Generic SPI device component
 
