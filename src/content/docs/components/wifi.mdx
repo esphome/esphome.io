@@ -14,6 +14,10 @@ configuration; this requires a `network:` `priority:` list naming both interface
 [Multi-Interface Support](/components/network/#multi-interface-support) on the [Network](/components/network/)
 component. Using more than one network interface is not supported on other platforms.
 
+An access point alone can run next to [Ethernet](/components/ethernet/) without a `priority:` list; with
+`ap_mode: wisp` the devices that join it reach the network through the Ethernet connection, see
+[WISP Mode](#wisp-mode).
+
 It's recommended to provide a static IP for your node, as it can
 dramatically improve connection times.
 
@@ -317,9 +321,9 @@ Notes:
 
 ## WISP Mode
 
-With `ap_mode: wisp` an ESP32 works as a WiFi repeater: it connects to your router as a station and, at the same
-time, runs an access point. Devices that join the access point get an address from the node and their traffic is
-routed (NAT) through the router connection, or through `ethernet` or a `modem`.
+With `ap_mode: wisp` an ESP32 runs an access point whose clients get an address from the node and have their
+traffic routed (NAT) through an upstream connection: the router it joins as a station, which makes the node a
+WiFi repeater, [Ethernet](/components/ethernet/) or a [modem](/components/modem/).
 
 ```yaml
 wifi:
@@ -332,14 +336,26 @@ wifi:
     ap_mode: wisp
 ```
 
+Without `networks`, the upstream is [Ethernet](/components/ethernet/) instead of the router: with Ethernet configured
+as described on its page, only the access point is added. Unless `dns_servers` is set, it starts once the Ethernet
+connection has an address and DNS servers, and the clients are routed through it.
+
+```yaml
+wifi:
+  ap:
+    ssid: "Bridge"
+    password: "W1PBGyrokfLz"
+    ap_mode: wisp
+```
+
 Notes:
 
 - Requires an ESP32, a password for the access point, and an upstream: a station network (`ssid` or
   `networks`), `ethernet` or `modem`.
 - The access point stays on, and `ap_timeout` is how long a start that failed waits before it is tried again (it
-  cannot be `0s`). With `dns_servers` the access point starts right away; without them it starts once the node
-  has connected and learned its DNS servers, so no client is ever handed the access point as a resolver. A
-  network with `manual_ip` must then set `dns1`.
+  cannot be `0s`). With `dns_servers` the access point starts right away; without them it starts once the upstream
+  (router, Ethernet or modem) is connected and its DNS servers are known, so no client is ever handed the access
+  point as a resolver. A network or an Ethernet connection with `manual_ip` must then set `dns1`.
 - With [Captive Portal](/components/captive_portal/) the access point starts before the upstream has DNS servers,
   see the example below.
 - WISP mode enlarges the Wi-Fi driver buffers and enables frame aggregation, the Wi-Fi half of

@@ -31,6 +31,7 @@ communication.
 # Example configuration entry
 sensor:
   - platform: max17048
+    id: max17048_id
     battery_voltage:
       name: Battery Voltage
     battery_level:
@@ -48,6 +49,38 @@ sensor:
 - **address** (*Optional*, int): The I²C address of the device. Defaults to `0x36`.
 - **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): How often to read the gauge.
   Defaults to `60s`.
+
+If the gauge does not answer when the device starts, for example on an Adafruit Feather that switches the I²C
+power on after boot, the component sets a warning and tries again on every update until the gauge answers. The
+gauge's CONFIG register keeps its value while the battery is connected; a value left by other firmware is logged
+as a warning and written back to the power-up default.
+
+## `max17048.sleep_mode` Action
+
+This action puts the gauge into sleep mode, where it draws less than 1 µA. Call it just before the device enters
+deep sleep. When the device starts again, the component wakes the gauge.
+
+```yaml
+on_...:
+  then:
+    - max17048.sleep_mode: max17048_id
+    - deep_sleep.enter:
+        id: deep_sleep_1
+        sleep_duration: 20min
+```
+
+Configuration variables:
+
+- **id** (**Required**, [ID](/guides/configuration-types/#id)): The ID of the MAX17048 sensor.
+
+> [!NOTE]
+> While the gauge sleeps it stops measuring, so the sensors keep publishing the *last* values. Only a restart of the
+> device wakes it, so only call `sleep_mode` when the device is about to enter deep sleep.
+>
+> The gauge also cannot track self-discharge while it sleeps. The datasheet recommends its automatic hibernate mode,
+> which draws about 3 µA and needs no action, for devices that can afford that current.
+>
+> Waking from sleep can raise a false low-battery alert in the gauge; the component clears it shortly after waking.
 
 ## See Also
 
