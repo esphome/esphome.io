@@ -365,7 +365,7 @@ async function checkInternalLinks(fname, content, anchorCache) {
     if (linkUrl.startsWith("/images/") && /\.(png|jpg|jpeg|gif|svg|webp|pdf|zip)$/i.test(linkUrl)) {
       continue;
     }
-    if (linkUrl.startsWith("/files/") && /\.(bin|zip)$/i.test(linkUrl)) {
+    if (linkUrl.startsWith("/files/") && /\.(bin|xml|zip)$/i.test(linkUrl)) {
       continue;
     }
 

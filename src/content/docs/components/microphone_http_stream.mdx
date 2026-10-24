@@ -49,3 +49,33 @@ Replace `16000` with the `sample_rate_hz` returned by `GET /audio/microphones` i
 component uses the source's rate at device startup and does not change it during an active connection. It does not
 provide acoustic echo cancellation, noise suppression or wake word detection. To stream audio after processing, that
 processing stage must expose its own microphone source and be selected in `source`.
+
+## Using a DLNA Server
+
+The component provides an HTTP audio source, but does not make the ESP32 a DLNA/UPnP MediaServer. Implementing the
+additional discovery, content directory and media format services on the device would add substantial code and
+resource use. A separate DLNA server can publish the microphone stream to DLNA clients instead.
+
+For example, [Gerbera](https://docs.gerbera.io/en/stable/) can expose the HTTP stream and use FFmpeg to convert its raw
+PCM to MP3. This configuration was tested with Gerbera 3.3.0 and an HTTP source matching this component's format.
+Install Gerbera and FFmpeg on a host that can reach the ESP32 and is reachable by DLNA clients. Create a
+`microphone.m3u` playlist, replacing `DEVICE_IP` with the device's address and `room_mic` with the configured
+`stream_id`:
+
+```text
+#EXTM3U
+#EXTINF:-1,ESPHome microphone,application/octet-stream
+http://DEVICE_IP/audio/microphones/room_mic
+```
+
+Open the [Gerbera transcoding example](/files/microphone_http_stream/gerbera-transcoding.xml) and merge its mapping
+and profile into the existing `<transcoding>` section of Gerbera's `config.xml`. Enable that section, retaining any
+other mappings and profiles; do not create a second `<transcoding>` section. The example converts the raw S16LE stream
+to MP3. Set the input `-ar 16000` to the `sample_rate_hz` returned by `GET /audio/microphones`; use `-ar 48000` for a
+48 kHz source.
+
+Add the playlist to Gerbera's library, for example with `gerbera --add-file /absolute/path/microphone.m3u` when starting
+Gerbera, then select the microphone in a DLNA client. The server opens the ESPHome HTTP stream when playback starts,
+which uses one of the component's `max_clients` slots. Do not label the raw S16LE URL as `audio/mpeg` without the
+conversion shown above. See Gerbera's [playlist format](https://docs.gerbera.io/en/stable/supported-types.html) and
+[transcoding](https://docs.gerbera.io/en/stable/transcoding.html) documentation for other configurations.
