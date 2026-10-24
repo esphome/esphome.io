@@ -58,6 +58,7 @@ image:
   and preserve the aspect ratio.
 
 - **placeholder** (*Optional*, [ID](/guides/configuration-types#id)): ID of another [image](/components/image/) to display while the downloaded image is not yet ready.
+  This includes the time a new image of a different size is loading, unless `double_buffer` is set.
   This placeholder image will **not** be resized; regardless of the `resize` option value for the `online_image`.
 
 - **type** (**Required**): Specifies how to encode image internally.
@@ -81,6 +82,10 @@ image:
 Advanced options:
 
 - **buffer_size** (*Optional*, int): Explicitly specify the size of the buffer where the image chunks are being downloaded while decoding. The default value (65536) should be OK for most use cases, but you can try to reduce the size for slow connections, to avoid watchdog timeouts.
+
+- **double_buffer** (*Optional*, boolean): Decode a new image into a second buffer, and keep showing the current image until the new one is complete.
+  If the download fails, the current image stays. This uses twice the memory for the image. Defaults to `false`.
+  Without it, a new image of the same size is drawn over the current one as it loads, and the placeholder is shown while one of a different size loads.
 
 ## Automations
 
@@ -112,6 +117,7 @@ image:
 ```
 
 A good example for that is to update the display component after the download succeeded.
+LVGL image widgets showing the image are redrawn when it changes, so they need no `lvgl.image.update` here.
 
 - **on_error** (*Optional*, [Automation](/automations)): An automation to perform when an error happened during download or decode.
 
