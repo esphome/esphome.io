@@ -45,6 +45,11 @@ media_player:
 - **media_pipeline** (*Optional*, Pipeline Schema): Configuration settings for the media pipeline. Same options as the `announcement_pipeline`.
 - **buffer_size** (*Optional*, positive integer): The buffer size in bytes for each pipeline. Must be between `4000` and `4000000`. Defaults to `1000000`.
 - **task_stack_in_psram** (*Optional*, boolean): Run the audio tasks in external memory. Defaults to `false`.
+- **audio_pipeline_core** (*Optional*, integer): Pin each pipeline's reader and decoder tasks to the specified CPU core
+  (`0` or `1`). Core `1` requires a dual-core ESP32 variant. When set, the decoder runs at a higher priority than its
+  reader. By default, neither task is pinned, and both retain their normal priority. Core `0` also handles Wi-Fi on
+  typical ESP32 configurations, so choose a core based on your device's workload. This option can reduce MP3 playback
+  underruns, but does not guarantee uninterrupted playback in every configuration.
 - **volume_increment** (*Optional*, percentage): Increment amount that the `media_player.volume_up` and `media_player.volume_down` actions will increase or decrease volume by. Defaults to `5%`.
 - **volume_initial** (*Optional*, percentage): The default volume that mediaplayer uses for first boot where a volume has not been previously saved. Defaults to `50%`.
 - **volume_min** (*Optional*, percentage): The minimum volume allowed. Defaults to `0%`.
