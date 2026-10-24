@@ -385,11 +385,11 @@ wifi:
 captive_portal:
 ```
 
-The access point then starts without waiting for the upstream. Until the upstream has DNS servers, clients are
-handed the access point's own address as DNS server, so their lookups reach the portal. The portal is served while
-the upstream is down, as with an [always-on access point](#always-on-access-point). Once the upstream has DNS
-servers, the clients are disconnected so they rejoin and pick them up. `dns_servers` cannot be combined with
-`captive_portal` in WISP mode.
+The access point then starts without waiting for the upstream. The portal is served while the router connection is
+down, as with an [always-on access point](#always-on-access-point). While it is served, and whenever the upstream has
+no DNS servers, clients are handed the access point's own address as DNS server, so their lookups reach the portal.
+Each time this switches, the clients are disconnected so they rejoin with the new DNS server. `dns_servers` cannot
+be combined with `captive_portal` in WISP mode.
 
 ## User Entered Credentials
 
