@@ -23,6 +23,8 @@ i2s_audio:
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID for this I²S bus if you need multiple.
 - **full_duplex** (*Optional*, boolean): Run a microphone and a speaker at the same time on this bus. See
   [Full Duplex](#full-duplex). Defaults to `false`.
+- **keep_tx_active** (*Optional*, boolean): Keep the transmit channel and I²S clocks running with silent samples
+  between playbacks. Requires `full_duplex: true`. Defaults to `false`.
 
 ## Full Duplex
 
@@ -31,6 +33,15 @@ has to wait. This prevents a device with a single I²S codec from recording whil
 
 With `full_duplex: true`, the microphone and speaker run at the same time on the same I²S port and share its bit clock
 and word clock. Both I²S channels are set up once at boot and kept for the lifetime of the device.
+
+By default, the transmit channel stops after playback. On hardware where stopping it interrupts microphone capture or
+where a continuously clocked output is needed, set `keep_tx_active: true`. The bus then initializes TX as the clock
+master and keeps it running after the speaker stops, transmitting silence while idle. This option does not perform echo
+cancellation. It keeps the I²S peripheral and attached codec clocked, which may increase power use; use the codec's
+mute control if it should be silent while idle.
+
+Starting playback or recovering from a dropped DMA event briefly stops TX to synchronize the speaker's DMA buffers
+with playback timestamps. The microphone may miss samples during this brief clock interruption.
 
 A full duplex bus must meet these requirements, which are checked when the configuration is validated:
 
