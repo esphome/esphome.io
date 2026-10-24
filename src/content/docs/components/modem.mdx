@@ -17,6 +17,9 @@ do over Wi-Fi or Ethernet.
 Only the ESP32 family with the ESP-IDF framework is supported. The component cannot be used together with the
 [Ethernet](/components/ethernet/) or [Captive Portal](/components/captive_portal/) components.
 
+The cellular connection can be shared with other devices through a Wi-Fi access point, see
+[WISP Mode](/components/wifi/#wisp-mode).
+
 > [!NOTE]
 > On most cellular networks the device gets a private address behind the operator's NAT, so Home Assistant cannot
 > open a connection to it. Use [MQTT](/components/mqtt/), or the API over [WireGuard](/components/wireguard/).
@@ -223,6 +226,9 @@ esphome:
 
 ## Performance
 
+The serial link limits throughput, so a higher `baud_rate` helps most, in particular when the connection is shared
+through [WISP Mode](/components/wifi/#wisp-mode).
+
 Large transfers can be made faster, at the cost of some internal RAM, by running the UART interrupt handler from
 RAM:
 
@@ -237,6 +243,7 @@ esp32:
 ## See Also
 
 - [Network](/components/network/)
+- [WiFi](/components/wifi/)
 - [MQTT](/components/mqtt/)
 - [WireGuard](/components/wireguard/)
 - [esp_modem](https://docs.espressif.com/projects/esp-protocols/esp_modem/docs/latest/)
