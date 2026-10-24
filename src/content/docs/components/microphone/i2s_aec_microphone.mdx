@@ -1,0 +1,70 @@
+---
+title: "I²S AEC Microphone"
+description: "Reduce speaker echo in microphone audio on a full-duplex ESP32 I²S bus using ESP-SR AEC."
+---
+
+The `i2s_aec_microphone` component provides a 16 kHz, 16-bit mono microphone stream with echo from the local
+speaker reduced by Espressif's ESP-SR acoustic echo cancellation (AEC). Other components can use its ID as a
+[microphone](/components/microphone/). The component needs a microphone and a speaker on the same
+[full-duplex I²S bus](/components/i2s_audio/#full-duplex).
+
+The speaker reference is taken from PCM buffers after their I²S TX DMA completion is observed. The component aligns
+that reference with the microphone stream. When no usable speaker reference is available, it passes the microphone
+audio through without echo cancellation.
+
+> [!WARNING]
+> This component currently supports only the original ESP32 with ESP-IDF and PSRAM. On this chip, an ESP-IDF I²S
+> interrupt issue can lose TX DMA-completion events and disrupt reference alignment. See
+> [the upstream ESP-IDF report](https://github.com/espressif/esp-idf/issues/19305). Hardware measurements for the
+> component used a local ESP-IDF fix; do not assume the same stability with an unpatched ESP-IDF release.
+
+## Configuration
+
+Configure an [I²S Audio](/components/i2s_audio/) bus with `full_duplex: true` and `keep_tx_active: true`, an
+[I²S Audio Microphone](/components/microphone/i2s_audio/) on that bus, and a
+[16-bit stereo I²S Audio Speaker](/components/speaker/i2s_audio/) on the same bus. The speaker's sample rate must be
+16 or 48 kHz. The source passed to AEC must provide 16 kHz, 16-bit mono audio.
+
+For a 16 kHz bus, the source can be the I²S microphone directly if it provides the required format. For a 48 kHz bus,
+convert its microphone stream to 16 kHz mono first, for example with a
+[Resampler Microphone](/components/microphone/resampler/). RX and TX on one full-duplex bus use the same physical
+sample rate; this conversion does not make the I²S RX clock run at 16 kHz while TX runs at 48 kHz.
+
+Once the bus, speaker and microphone source have been configured, add:
+
+```yaml
+i2s_aec_microphone:
+  id: echo_cancelled_microphone
+  i2s_audio_id: audio_bus
+  microphone: voice_microphone
+```
+
+Here, `audio_bus` is the ID of the full-duplex I²S bus and `voice_microphone` is the ID of its 16 kHz mono microphone
+source. Use `echo_cancelled_microphone` in a component that accepts a microphone ID.
+
+## Configuration Variables
+
+- **microphone** (**Required**, [ID](/guides/configuration-types/#id)): The 16 kHz, 16-bit mono microphone source.
+  It must originate from an I²S microphone on the selected bus, either directly or through a converter.
+- **i2s_audio_id** (*Optional*, [ID](/guides/configuration-types/#id)): The full-duplex I²S bus to observe.
+  It must have `keep_tx_active: true`. The only bus is selected automatically if there is one.
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID used by downstream microphone consumers.
+- **filter_length** (*Optional*, integer): ESP-SR AEC filter length, from `1` to `4`. Defaults to `2`.
+  Longer filters use more processing time and memory.
+- **reference_gain** (*Optional*, float): Gain applied to the speaker reference before AEC, from `0.1` to `20.0`.
+  Defaults to `1.0`.
+- **task_core** (*Optional*, integer): Pin the AEC task to CPU `0` or `1`. If omitted, FreeRTOS chooses the core.
+- All other options from the [Microphone Component](/components/microphone/).
+
+## Resource Use
+
+AEC runs continuously while its microphone stream is captured and playback is active. It uses CPU time and PSRAM in
+addition to the I²S microphone, speaker and any sample-rate converter. Available headroom depends on the full device
+configuration; a longer filter or additional audio components may exceed it. Measure memory and audio losses on the
+target device before using the component alongside other demanding features.
+
+## See Also
+
+- [I²S Audio Component](/components/i2s_audio/)
+- [I²S Audio Microphone](/components/microphone/i2s_audio/)
+- [Resampler Microphone](/components/microphone/resampler/)
