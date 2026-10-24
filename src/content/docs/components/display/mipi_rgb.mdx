@@ -28,6 +28,7 @@ specified, or a custom init sequence can be provided.
 | Driver Chip | Typical Dimensions |
 | ----------- | ------------------ |
 | CUSTOM      | varies             |
+| GC9503V     | 480x480            |
 | RPI         | varies             |
 | ST7701S     | 480x480            |
 
@@ -54,6 +55,37 @@ option is `model`.
 | WAVESHARE-3.16-320X820       | ST7701s     | Waveshare    | [https://www.waveshare.com/esp32-s3-lcd-3.16.htm](https://www.waveshare.com/esp32-s3-lcd-3.16.htm)                                                                                                     |
 | WAVESHARE-4-480X480          | RPI         | Waveshare    | [https://www.waveshare.com/esp32-s3-touch-lcd-4.htm](https://www.waveshare.com/esp32-s3-touch-lcd-4.htm)                                                                                               |
 | WAVESHARE-5-1024X600         | RPI         | Waveshare    | [https://www.waveshare.com/esp32-s3-touch-lcd-5.htm](https://www.waveshare.com/esp32-s3-touch-lcd-5.htm)                                                                                               |
+| ZX3D95CE01S-TR-4848          | GC9503V     | Panlee       |  |
+
+> [!NOTE]
+The `ZX3D95CE01S-TR-4848` shares GPIO45 and GPIO48 between the SPI bus used to send the init sequence and the RGB data
+lines, so the SPI bus must declare those pins with `allow_other_uses`:
+
+```yaml
+esp32:
+  framework:
+    type: esp-idf
+    sdkconfig_options:
+      CONFIG_ESP32S3_DATA_CACHE_LINE_64B: y
+      
+psram:
+  mode: octal
+  speed: 80MHz
+
+spi:
+  clk_pin:
+    number: 45
+    allow_other_uses: true
+    ignore_strapping_warning: true
+  mosi_pin:
+    number: 48
+    allow_other_uses: true
+
+display:
+  - platform: mipi_rgb
+    model: ZX3D95CE01S-TR-4848
+    id: my_display
+```
 
 ## Usage
 
@@ -136,6 +168,9 @@ Displays needing a custom init sequence require an SPI bus to be configured, plu
   require `MODE3` .
 - **spi_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the SPI interface to use - may be omitted if only one SPI bus
   is configured.
+- **init_before_rgb** (*Optional*, boolean): Send the init sequence before the RGB interface is started, instead of
+  after. This is required when the SPI pins are shared with RGB data pins, because the RGB interface takes those pins
+  over when it starts. Defaults to `false`, except for boards that need it, which enable it automatically.
 - **init_sequence** (*Optional*, A list of byte arrays): Specifies the init sequence for the display.
   Predefined boards
   have a default init sequence, which can be overridden. A custom board can specify the init sequence using this
