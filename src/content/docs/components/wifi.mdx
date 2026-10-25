@@ -98,7 +98,7 @@ wifi:
 
   - **dns_servers** (*Optional*, list of IPv4 addresses): The DNS servers handed out to clients of the access point.
     Only valid with `ap_mode: wisp`. Accepts one server, or two with ESP-IDF 6.0 or newer. If not set, the DNS
-    servers of the router connection are passed on to the clients.
+    servers of the upstream connection are passed on to the clients, see [WISP Mode](#wisp-mode).
 
 - **domain** (*Optional*, string): Set the domain of the node hostname used for uploading.
   For example, if it's set to `.local`, all uploads will be sent to `<HOSTNAME>.local`.
@@ -392,8 +392,9 @@ captive_portal:
 ```
 
 The access point then starts without waiting for the upstream. The portal is served while the router connection is
-down, as with an [always-on access point](#always-on-access-point). While it is served, and whenever the upstream has
-no DNS servers, clients are handed the access point's own address as DNS server, so their lookups reach the portal.
+down, as with an [always-on access point](#always-on-access-point). While it is served because the router connection
+is down, and whenever the upstream has no DNS servers, clients are handed the access point's own address as DNS server,
+so their lookups reach the portal.
 Each time this switches, the clients are disconnected so they rejoin with the new DNS server. `dns_servers` cannot
 be combined with `captive_portal` in WISP mode.
 
