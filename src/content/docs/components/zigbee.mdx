@@ -42,26 +42,18 @@ to the coordinator.
 ## Full Configuration
 
 ```yaml
-# Example configuration entry on ESP32
 zigbee:
   id: my_zigbee
   router: true
-```
-```yaml
-# Example configuration entry on nRF52
-zigbee:
-  id: my_zigbee
+  power_source: MAINS_SINGLE_PHASE
   on_join:
     then:
       - logger.log:
           format: "%s network."
           args: ['x ? "Joined" : "Rejoined"']
-  power_source: BATTERY
 ```
 
 ## Configuration variables
-
-- **model** (*Optional*, string): Model Identifier of the Zigbee device. Defaults to the ESPHome node name.
 
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): The ID to use for this `zigbee` component.
 
@@ -70,15 +62,37 @@ zigbee:
   for a stable Zigbee network. For this reasons battery-powered devices should not be used as routers.
   Defaults to `false`.
 
+- **sleepy** (*Optional*, boolean): Disable RX during idle to reduce power consumption for battery-powered devices.
+  Only valid for end devices, not routers. The device polls for data typically every 3-5 s, or at the interval set
+  with `polling_interval` on `ESP32`. Device interview is considerably slower and can take a long time if many
+  sensors are used. Defaults to `false`.
+
 - **power_source** (*Optional*, enum): Indicates what kind of power the device uses. Affects
   sleep behavior. One of `UNKNOWN`, `MAINS_SINGLE_PHASE`, `MAINS_THREE_PHASE`, `BATTERY`,
   `DC_SOURCE`, `EMERGENCY_MAINS_CONST`, or `EMERGENCY_MAINS_TRANSF`. Defaults to `DC_SOURCE`.
+
+- **version** (*Optional*, int): Application version number in range `0` to `255`. Defaults to `0`.
+
+- **model** (*Optional*, string): Model Identifier of the Zigbee device. Maximum length is 31 ASCII
+  characters. Defaults to the ESPHome node name.
+
+- **manufacturer** (*Optional*, string): Manufacturer name of the Zigbee device. Change this only if you want
+  to provide your own converter/quirks as it might break some default handling in ZHA or Zigbee2MQTT. Maximum
+  length is 31 ASCII characters. Defaults to `esphome`.
 
 - **on_start** (*Optional*, [Automation](/automations#automation)): Automation to run when the Zigbee stack is fully
   initialized and can be interacted with. It will then try to (re-)join a network.
 
 - **on_join** (*Optional*, [Automation](/automations#automation)): Automation to run when the device joins the network.
   In [Lambdas](/automations/templates#config-lambda) you can get the join type with `x`. It is `true` for join and `false` for rejoin.
+
+Only on `ESP32`:
+
+- **polling_interval** (*Optional*, [Time](/guides/configuration-types/#time)): The time between polls for data of a
+  sleepy end device, also known as the long poll interval. Do not set a value higher than `7s` if the device needs to
+  be reachable from the coordinator (e.g. switch or number components). For non-sleepy end devices this is the
+  interval of the keep-alive message and has no influence on responsiveness. Only valid for end devices, not
+  routers. Must be between `200ms` and `1h`. Defaults to `3s`.
 
 Only on `nRF52`:
 
@@ -96,9 +110,6 @@ Only on `nRF52`:
   This is useful during development to force the coordinator (ZHA/Z2M) to recognize the device
   as new after firmware updates.
 
-- **sleepy** (*Optional*, boolean): Disable RX during idle to reduce power consumption for battery-powered devices.
-  It may cause stability problems with the Zigbee connection. Defaults to `false`.
-
 > [!WARNING]
 > Overusing `random` may exhaust memory in the Zigbee coordinator by creating many "ghost" devices.
 
@@ -113,6 +124,17 @@ It handles leaving the Zigbee network.
 on_...:
   then:
     - zigbee.factory_reset
+```
+
+### `zigbee.report` Action (`ESP32` only)
+
+This [action](/automations/actions#config-action) triggers a report of all attributes of
+components with `report: enable` or `report: force`.
+
+```yaml
+on_...:
+  then:
+    - zigbee.report
 ```
 
 
@@ -130,10 +152,11 @@ Zigbee can have some overrides for specific options.
 
 Only on `ESP32`:
 
-- **report** (*Optional*, enum): How the state is reported. One of `default` or `force`. `default` activates reporting with default settings
-  and uses the configuration from the coordinator if possible. `force` sends manual reports for every change to the coordinator.
-  On `nRF52` the coordinator configuration is always used.
-  Defaults to `default`.
+- **report** (*Optional*, enum): How the state is reported. One of `default`, `enable`, or `force`. `default` activates
+  reporting of all reportable attributes with default settings and uses the configuration from the coordinator if
+  possible. `enable` is the same but additionally activates manual reporting through the `zigbee.report` action.
+  `force` sends manual reports for every change to the coordinator and enables manual reporting. On `nRF52` the
+  coordinator configuration is always used. Defaults to `default`.
 
 > [!NOTE]
 > ZHA sets the minimum reporting interval to 30 seconds for some sensor devices. If a faster response is needed set `report` to `force`.

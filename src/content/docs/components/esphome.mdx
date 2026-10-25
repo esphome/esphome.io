@@ -481,6 +481,21 @@ into logical devices that appear separately in Home Assistant. This is particula
 - **id** (**Required**, string): Unique identifier for the device.
 - **name** (**Required**, string): Display name for the device.
 - **area_id** (*Optional*, string): Reference to an area ID defined in `areas`.
+- **relation** (**Required**, string): How the sub-device relates to this ESP device. One of `via` or `child`.
+
+### Device Relation
+
+Each sub-device tells Home Assistant how it relates to the ESP device that exposes it:
+
+- `via`: The sub-device is a separate physical device that Home Assistant reaches through this ESP device.
+  Use this when the ESP is a hub or bridge for other hardware, for example RF sensors, Modbus devices, or
+  devices connected over UART, ESP-NOW or UDP. The RF bridge example below uses `via`.
+- `child`: The sub-device is a logical part of this ESP device, not separate hardware. Use this when one
+  ESP controls several zones, channels or outputs that make up a single physical product. Targeting the ESP
+  device in Home Assistant also targets its child devices.
+  The multi-zone controller example below uses `child`.
+
+Requires a Home Assistant version that supports device relations. Older versions treat every sub-device as `via`.
 
 ### Example: RF Bridge Gateway
 
@@ -494,12 +509,15 @@ esphome:
     - id: front_door_device
       name: "Front Door Sensor"
       area_id: entrance_area
+      relation: via  # A separate physical sensor reached over RF
     - id: kitchen_motion_device
       name: "Kitchen Motion"
       area_id: kitchen_area
+      relation: via
     - id: garage_door_device
       name: "Garage Door"
       area_id: garage_area
+      relation: via
 
   areas:
     - id: entrance_area
@@ -534,9 +552,11 @@ esphome:
     - id: living_room_device
       name: "Living Room Controller"
       area_id: living_area
+      relation: child  # One zone of this controller, not separate hardware
     - id: kitchen_device
       name: "Kitchen Controller"
       area_id: kitchen_area
+      relation: child
 
   areas:
     - id: living_area

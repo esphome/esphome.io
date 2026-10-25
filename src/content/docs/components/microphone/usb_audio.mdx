@@ -1,0 +1,60 @@
+---
+description: "Instructions for setting up USB Audio Class (UAC) microphones in ESPHome."
+title: "USB Audio Microphone"
+---
+
+The `usb_audio` microphone platform receives audio from a USB audio device, such as a USB microphone, sound card or
+speakerphone, connected to the [USB Audio](/components/usb_audio/) component.
+
+This platform only works on ESP32 variants with a USB OTG peripheral.
+
+> [!WARNING]
+> Audio and voice components consume a significant amount of resources (RAM, CPU) on the device.
+>
+> Crashes are likely to occur if you include too many in the same configuration. In particular, Bluetooth/BLE
+> components are known to cause issues when used in combination with audio and voice components.
+
+```yaml
+# Example configuration entry
+usb_audio:
+
+microphone:
+  - platform: usb_audio
+    id: usb_mic
+```
+
+## Configuration variables
+
+- **sample_rate** (*Optional*, positive integer): The sample rate of the audio stream, in Hz. Must be between `8000`
+  and `96000` and supported by the USB device. Defaults to `16000`.
+- **bits_per_sample** (*Optional*, enum): The bit depth of the audio samples. One of `8bit`, `16bit`, `24bit` or
+  `32bit`. Must be supported by the USB device. Defaults to `16bit`.
+- **num_channels** (*Optional*, positive integer): The number of channels, `1` (mono) or `2` (stereo). Must be
+  supported by the USB device. Defaults to `1`.
+- **buffer_size** (*Optional*, positive integer): The size of the buffer between the USB driver and ESPHome, in
+  bytes. Must hold at least 40 ms of audio (e.g. `1280` bytes at 16000 Hz, 16 bit, mono). Defaults to `6400`, or to
+  the minimum when that is larger.
+- **usb_audio_id** (*Optional*, [ID](/guides/configuration-types/#id)): The [USB Audio](/components/usb_audio/)
+  component to use. Defaults to the only one in YAML.
+- All other options from [Microphone Component](/components/microphone/).
+
+Voice components such as [Voice Assistant](/components/voice_assistant/) and
+[Micro Wake Word](/components/micro_wake_word/) expect 16000 Hz audio. Speakerphones commonly offer only 48 kHz, so
+the 16000 Hz default is rejected on them and the log lists the rates the device supports. Set `sample_rate` to one
+of those and put a [Resampler Microphone](/components/microphone/resampler/) in front of the voice component:
+
+```yaml
+microphone:
+  - platform: usb_audio
+    id: usb_mic
+    sample_rate: 48000
+  - platform: resampler
+    id: voice_mic
+    microphone: usb_mic
+    sample_rate: 16000
+```
+
+## See Also
+
+- [USB Audio](/components/usb_audio/)
+- [Microphone Component](/components/microphone/)
