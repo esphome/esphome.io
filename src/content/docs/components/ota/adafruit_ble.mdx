@@ -70,13 +70,13 @@ An upload has two steps:
    bootloader restarts the device into the new firmware.
 
 The bootloader shows up either at the device's own address or at the next address up (the device address plus one).
-ESPHome only accepts those two addresses, so another device that is in update mode nearby is never flashed. It is
-listed in the error message instead.
+ESPHome only accepts those two addresses, so another device that is in update mode nearby is never flashed; that
+device is listed in the error message instead.
 
 If the connection drops or the bootloader stops answering during the transfer, ESPHome tries again, up to three times
 in total. A bootloader that is still in the middle of an earlier, interrupted transfer refuses to start a new one;
-ESPHome resets it and tries once more. If the bootloader refuses the update, for example because of a CRC error or because the image is too large,
-ESPHome stops at once and the error names the step and the reason.
+ESPHome resets it and tries once more. If the bootloader refuses the update, for example because of a CRC error or
+because the image is too large, ESPHome stops at once and the error names the step and the reason.
 
 > [!NOTE]
 > `esphome upload` picks the update method from the new configuration, not from the firmware that is installed. A
@@ -102,8 +102,8 @@ normally.
 If an upload fails after the device restarted, the device can stay in its bootloader in update mode. Run the same
 command again:
 
-- With `--device <address>`, ESPHome looks for the bootloader when the device does not answer at its address, at that
-  address or the one above it, and continues the update.
+- With `--device <address>`, if the device does not answer at that address, ESPHome looks for its bootloader at the
+  same address and at the address plus one, and continues the update.
 - With `--device BLE`, the device is searched by its name, which the bootloader does not advertise. Pass the address
   of the bootloader instead: the device address plus one (on macOS, the UUID of the device in update mode). The error
   message lists the devices in update mode that were found.
@@ -130,7 +130,7 @@ macOS hides BLE addresses and gives every device its own UUID instead. Use that 
 
 The upload stops with an error, and nothing is flashed, if the device rejects the request (for example because it is
 not paired), if two or more new devices in update mode appear, or if the device still advertises after a new one
-appeared (it then belongs to another board). Updating one board at a time avoids this.
+appeared (the new one then belongs to another board). Updating one board at a time avoids this.
 
 ## See Also
 
