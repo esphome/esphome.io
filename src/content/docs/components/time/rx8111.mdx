@@ -191,11 +191,11 @@ This [Action](/automations/actions/#config-action) writes the current system tim
 system time with a year from 2019 to 2099. A successful write clears the RTC's time-validity flags and keeps its
 alarm, timer, update and event flags.
 
-If restarting the counter after a write fails, the component retries the restart every second without rewriting
-the calendar snapshot. A delayed restart leaves that snapshot behind real time, so the component does not clear
-its validity flags or allow it to synchronize the system clock. A failed calendar write or validity-flag cleanup
-also blocks synchronization. The warning remains until a new `rx8111.write_time` with trusted system time succeeds.
-Reads also refuse synchronization while STOP is set.
+The counter is stopped while the time is written. If writing the calendar, clearing the validity flags or
+restarting the counter fails, the counter stays stopped and the component logs a warning; nothing restarts it later,
+because the written time would then be behind real time. Reads refuse to synchronize the system clock while the
+counter is stopped, also after a reset of the device. The warning remains until a new `rx8111.write_time` with
+trusted system time succeeds.
 
 > [!NOTE]
 > The RX8111 component will *not* write to the RTC unless triggered *explicitly* by this action.
