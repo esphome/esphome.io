@@ -37,8 +37,10 @@ microphone:
   between `2` and `1024`. Defaults to `16`.
 - **taps** (*Optional*, positive integer): The number of taps per windowed sinc interpolation filter. Must be between
   `16` and `128` and divisible by 4. Defaults to `16`.
-- **fast_decimation** (*Optional*, boolean): Use an ESP-DSP FIR filter for 48 kHz to 16 kHz mono, 16-bit audio on
-  classic ESP32 with ESP-IDF. Defaults to `false`. This uses a fixed filter; **filters** and **taps** do not affect it.
+- **fast_decimation** (*Optional*, boolean): Use an ESP-DSP FIR filter for mono, 16-bit audio on classic ESP32 with
+  ESP-IDF when the source sample rate is an integer multiple of the output rate (2:1 through 16:1). Defaults to
+  `false`. The filter is selected for the rate ratio; **filters** and **taps** do not affect it. Non-integer ratios use
+  the standard resampler with this option left disabled.
 - All other options from [Microphone Component](/components/microphone#config-microphone).
 
 ## Improving Quality
@@ -50,9 +52,11 @@ load.
 
 When downsampling, frequencies above the new Nyquist limit are filtered out to avoid aliasing.
 
-For a 48 kHz source with 16-bit mono input selected by **microphone**, **fast_decimation** can reduce CPU use on
-classic ESP32. It does not change the output format or the speaker path. Other input and output formats use the
-standard resampler when **fast_decimation** is left at its default of `false`.
+For example, a 48 kHz source with 16-bit mono input selected by **microphone** can use **fast_decimation** for
+16 kHz or 24 kHz output on classic ESP32. The filter suppresses frequencies above the output Nyquist limit and
+does not change the speaker path. Higher ratios use longer filters and more internal RAM, so the CPU savings decrease
+as the ratio increases. If the filter cannot be allocated, initialization fails instead of silently switching to the
+standard resampler. Leave **fast_decimation** disabled for other input formats or non-integer rate ratios.
 
 ## Example
 
