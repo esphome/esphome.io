@@ -80,8 +80,11 @@ because the image is too large, ESPHome stops at once and the error names the st
 
 > [!NOTE]
 > `esphome upload` picks the update method from the new configuration, not from the firmware that is installed. A
-> device that still runs firmware built with `zephyr_mcumgr` only has to be updated once with its old method (or
-> over USB) before `adafruit_ble` uploads work.
+> device that still runs firmware built with `zephyr_mcumgr` has MCUboot between the Adafruit bootloader and the
+> firmware, so its old update method cannot install a build without MCUboot. Flash the first `adafruit_ble` build
+> over USB as described in
+> [Flashing with Adafruit nRF52 Bootloader](/components/nrf52/#flashing-with-adafruit-nrf52-bootloader); later
+> uploads work over BLE.
 
 ## Pairing
 
@@ -93,26 +96,31 @@ with the device before the first upload. On Linux, an upload from a computer tha
 Without pairing, any nearby BLE device can restart the device into its bootloader, and the build logs a warning.
 
 The update service also works when the device is in [safe mode](/components/safe_mode/), so a device stuck in a boot
-loop can still be updated. While the device is in safe mode the `on_numeric_comparison_request` automation does not run,
-so the device rejects new pairing requests and only a computer that was paired before can start an update. Pair your
-computer while the device works normally.
+loop can still be updated. With pairing turned on, the `on_numeric_comparison_request` automation does not run in
+safe mode, so the device rejects new pairing requests and only a computer that was paired before can start an update.
+Pair your computer while the device works normally. Without pairing, any computer can start an update in safe mode too.
 
 ## Recovery
 
 If an upload fails after the device restarted, the device can stay in its bootloader in update mode. Run the same
 command again:
 
-- With `--device <address>`, if the device does not answer at that address, ESPHome looks for its bootloader at the
-  same address and at the address plus one, and continues the update.
-- With `--device BLE`, the device is searched by its name, which the bootloader does not advertise. Pass the address
-  of the bootloader instead: the device address plus one (on macOS, the UUID of the device in update mode). The error
-  message lists the devices in update mode that were found.
+- With `--device <MAC address>`, if the device does not answer at that address, ESPHome looks for its bootloader at
+  the same address and at the address plus one, and continues the update.
+- With `--device <UUID>` on macOS, the bootloader has a different UUID from the running firmware, so the old UUID does
+  not find it. The error message lists the devices in update mode that were seen; pass the UUID of the bootloader
+  instead.
+- With `--device BLE`, the device is searched by its name, which the bootloader does not advertise, and the upload
+  stops without looking for bootloaders. Pass the address of the bootloader instead: the device address plus one. On
+  macOS, find the UUID of the device in update mode with a BLE scanner app on the computer you upload from, because
+  macOS gives a device a different UUID on each computer. The bootloader advertises the DFU service
+  `00001530-1212-efde-1523-785feabcd123`.
 - If the address you pass already belongs to a bootloader in update mode, ESPHome sends the firmware to it directly.
 
 You can also update the device over USB as described in
 [Flashing with Adafruit nRF52 Bootloader](/components/nrf52/#flashing-with-adafruit-nrf52-bootloader).
 
-## OTA rollback
+## OTA Rollback
 
 The Adafruit bootloader has no OTA rollback. With `adafruit_ble` and no MCUboot, the nRF52
 [`enable_ota_rollback`](/components/nrf52/#advanced-configuration) option defaults to `false`, and setting it to
