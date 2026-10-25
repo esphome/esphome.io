@@ -76,9 +76,8 @@ ota:
   - `4232` for the `zephyr` platform
 
 - **swap_method** (*Optional*, string): `zephyr` platform only. The MCUboot image-swap algorithm to use for
-  applying an update. One of `scratch`, `move`, `offset`. Not applicable to the `native_sim` variant,
-  which has no real bootloader. See [Swap methods](#swap-methods) below for what each one does and
-  the per-variant defaults/availability.
+  applying an update. One of `scratch`, `move`, `offset`. See [Swap methods](#swap-methods) below for
+  what each one does and the per-variant defaults/availability.
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
 - **version** (*Optional*, int): Version of OTA protocol to use. Version 2 is more stable. To downgrade to legacy
    ESPHome, the device should be updated with OTA version 1 first. Defaults to `2`.
@@ -120,7 +119,7 @@ Which methods a given variant/board's flash layout supports (and which one it de
 | `efr32mg24`, `ra4m1`, `rp2040`, `rp2350`, `stm32f1`, `stm32l4`, `stm32u5` | `move`, `offset` | `offset` |
 
 `scratch` needs a `scratch_partition` in the board's devicetree, so it is only offered on the variants whose boards
-can have one. `siwx917` and `native_sim` have no MCUboot, so `swap_method` does not apply there. The build checks the
+can have one. `siwx917` has no MCUboot, so `swap_method` does not apply there. The build checks the
 flash layout and stops with an error if the chosen method does not fit it.
 
 > [!IMPORTANT]

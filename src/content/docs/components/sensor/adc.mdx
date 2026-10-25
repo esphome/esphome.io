@@ -33,8 +33,7 @@ sensor:
   Or on the ESP8266 or Raspberry Pi Pico it could alternatively be set to `VCC`, see [Measuring VCC](#adc-vcc).
 
 - **attenuation** (*Optional*): On ESP32, or on the `zephyr` platform with an `esp32`/`esp32c3`/`esp32c6`/`esp32h2`/`esp32s3`
-  variant, or together with `emulation:`. Specify the ADC attenuation to use. See
-  [ESP32 Attenuation](#esp32-attenuation). Defaults to `0db`.
+  variant. Specify the ADC attenuation to use. See [ESP32 Attenuation](#esp32-attenuation). Defaults to `0db`.
 
 - **raw** (*Optional*): Allows to read the raw ADC output without any conversion or calibration. See [Different ESP32-ADC behavior since 2021.11](#adc-raw). Defaults to `false`.
 - **samples** (*Optional*): The amount of ADC readings to take per sensor update. On the ESP32 this value is ignored if `attenuation` is set to `auto`. Defaults to `1`.
@@ -122,24 +121,6 @@ sensor:
     name: "Living Room Brightness"
     attenuation: 12db
 ```
-
-- **emulation** (*Optional*, list): Defines canned voltage reading(s) for this sensor instead of a real ADC
-  channel — useful for testing without hardware, typically with the `native_sim` variant. `pin:` is still
-  required by schema but is ignored. Each entry is one `sample()` call's worth of readings, either a single
-  voltage (sugar for a one-reading group) or a list matching `samples:` for multisampling; successive updates
-  cycle through the list of entries.
-
-  ```yaml
-  # Example configuration entry
-  sensor:
-    - platform: adc
-      pin: GPIO0 # ignored, but still required
-      name: "Fake Battery Voltage"
-      emulation:
-        - 3.7
-        - 3.6
-        - 3.5
-  ```
 
 <span id="adc-raw"></span>
 

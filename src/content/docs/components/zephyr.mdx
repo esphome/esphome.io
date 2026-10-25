@@ -18,9 +18,7 @@ Working, compile-tested example configs for every current variant and board are 
 ```yaml
 # Example configuration entry
 zephyr:
-  variant: nativesim
-  advanced:
-    mac_address: "61:23:45:AF:B3:DE"
+  variant: esp32c6
 ```
 
 ## Configuration variables
@@ -66,7 +64,7 @@ zephyr:
   may go without checking in before Zephyr's hardware watchdog resets the device. `0` disables the
   watchdog entirely. Otherwise must be between 5 and 60 seconds — some variants' watchdog hardware
   can't reach the full range and min and max are configured by variant in those cases,
-  See [Variants](#variants). This variable is not available for nativesim.
+  See [Variants](#variants).
 - **single_slot** (*Optional*, boolean): MCUboot single-slot option for variants too
   flash-constrained for the normal two-slot layout. No live OTA path — serial/wired flashing only.
   Defaults to `false`. See [`single_slot`](#single_slot).
@@ -87,7 +85,6 @@ zephyr:
 | Espressif | `esp32c6` | ESP32-C6 (RISC-V) | [`esp32c6_devkitc`](https://docs.zephyrproject.org/latest/boards/espressif/esp32c6_devkitc/doc/index.html) | mainline Zephyr | Wi-Fi, BLE, Thread (via `openthread:`) |
 | Espressif | `esp32h2` | ESP32-H2 (RISC-V) | [`esp32h2_devkitm`](https://docs.zephyrproject.org/latest/boards/espressif/esp32h2_devkitm/doc/index.html) | mainline Zephyr | BLE, Thread (via `openthread:`) |
 | Espressif | `esp32s3` | ESP32-S3 (Xtensa, dual-core) | [`esp32s3_devkitc`](https://docs.zephyrproject.org/latest/boards/espressif/esp32s3_devkitc/doc/index.html) | mainline Zephyr | Wi-Fi, BLE |
-| Native | `nativesim` | Host binary, no real hardware | [`native_sim/native/64`](https://docs.zephyrproject.org/latest/boards/native/native_sim/doc/index.html) | mainline Zephyr | Simulation on your PC |
 | Nordic | `nrf5340` | nRF5340 application core (Cortex-M33) | [`nrf7002dk/nrf5340/cpuapp`](https://docs.zephyrproject.org/latest/boards/nordic/nrf7002dk/doc/index.html) | nRF Connect SDK (NCS) | Wi-Fi (via the onboard nRF7002) |
 | Nordic | `nrf52` | nRF52840 (Cortex-M4) | [`adafruit_feather_nrf52840`](https://docs.zephyrproject.org/latest/boards/adafruit/feather_nrf52840/doc/index.html) | nRF Connect SDK (NCS) | BLE, Thread (via `openthread:`), Zigbee (via `zigbee:`) |
 | Nordic | `nrf54l15` | nRF54L15 (Cortex-M33) | [`nrf54l15dk`](https://docs.zephyrproject.org/latest/boards/nordic/nrf54l15dk/doc/index.html) | nRF Connect SDK (NCS) | BLE, Thread (via `openthread:`), Zigbee (via `zigbee:`) |
@@ -599,9 +596,6 @@ to. **runner** and **main_stack_size** are the exceptions: they apply to every v
   only): Override the version of Silicon Labs' Simplicity Commander CLI used for secure-boot image
   signing. Defaults to a pinned known-good version. Commander is downloaded and cached automatically;
   no extra install step is needed.
-- **mac_address** (*Optional*, MAC Address, `nativesim` only): A fixed MAC address to report.
-  Only valid for the `nativesim` variant, which has no real network hardware of its own; every
-  other variant uses the chip's burned-in MAC address.
 
 ```yaml
 # Example configuration entry -- EFR32MG24 forced onto the pyocd runner
@@ -645,14 +639,6 @@ zephyr:
     type: silabs
   advanced:
     commander_version: "1.24.1"
-```
-
-```yaml
-# Example configuration entry -- native_sim with a fixed MAC address
-zephyr:
-  variant: nativesim
-  advanced:
-    mac_address: "61:23:45:AF:B3:DE"
 ```
 
 ## `kconfig_options`
@@ -937,7 +923,7 @@ is printed on the logger's output before the device resets. The next boot also l
 
 **`--skip-bootloader`.** With an `ota:` platform configured, `esphome compile` or `esphome run` with
 `--skip-bootloader` builds only the application images, since an OTA upload never sends MCUboot. A serial,
-BOOTSEL or pyOCD flash of such a build is refused. Without `ota:`, or on `nativesim`, the flag is ignored.
+BOOTSEL or pyOCD flash of such a build is refused. Without `ota:`, the flag is ignored.
 
 **`esphome analyze-memory`** works on `platform: zephyr` builds and reads `.west_build/zephyr/zephyr/zephyr.elf`.
 
@@ -955,7 +941,7 @@ at a time when troubleshooting, rather than turning everything up simultaneously
 [`mdns:`](/components/mdns/) works on the `esp32`, `esp32c3`, `esp32c5`, `esp32c6`, and `esp32s3` variants when Wi-Fi is
 configured without `openthread:` (on `esp32c6`/`esp32c5`/`esp32h2` with `openthread:`, and on
 `nrf52`/`nrf54l15` — which always use `openthread:` — discovery instead goes through OpenThread's
-own SRP client; `nativesim` uses the host's own mDNS backend, not Zephyr's).
+own SRP client).
 
 The minimum Zephyr recommended to use with Wi-Fi is 4.5.0-rc1. With OTA on an Espressif variant, 4.5 also needs
 `swap_method: offset`; see [Swap methods](/components/ota/esphome/#swap-methods).
@@ -1048,8 +1034,7 @@ driven entirely by that data. A new variant is a new entry plus variant-specific
    guess at up front — internal temperature sensing and USB-based logging both needed real
    fixes for the nRF52 variant that weren't caught until compiled against real hardware, because
    the initial review only checked components assumed to be relevant. Most components gate on
-   `CORE.is_zephyr` combined with `zephyr_variant() != ZEPHYR_VARIANT_NATIVE_SIM` (i.e. "not the
-   simulator") rather than listing every hardware variant by name, so a new hardware variant
+   `CORE.is_zephyr` rather than listing every hardware variant by name, so a new hardware variant
    usually needs no changes to those. Three things to watch for specifically:
    - Some conditionals are keyed to a *different, unrelated* platform's own flag — for example
      `CORE.is_nrf52`, which belongs to the separate NCS-based `platform: nrf52`, not this one. A
@@ -1076,8 +1061,8 @@ driven entirely by that data. A new variant is a new entry plus variant-specific
    here.
 8. **Add tests**: `tests/components/zephyr/test.zephyr-<slug>.yaml` for the variant itself, plus
    `tests/test_build_components/build_components_base.zephyr-<slug>.yaml` and `test.zephyr-<slug>.yaml`
-   files under the components the new variant supports (see the existing `esp32-c6`/`esp32-h2`/
-   `native-sim` files for the pattern). Test targets are auto-discovered by filename suffix, so
+   files under the components the new variant supports (see the existing `esp32-c6`/`esp32-h2`
+   files for the pattern). Test targets are auto-discovered by filename suffix, so
    no separate CI registration step is needed. Verify new code paths against a real
    `esphome compile`/`esphome run`, not just against Kconfig/devicetree documentation — several
    real gaps (ADC handling, toolchain selection, exception-stack-trace linking) were only found
