@@ -97,6 +97,7 @@ zephyr:
 | Silicon Labs | `simg301` | Silicon Labs SiMG301 (Cortex-M33) | `simg301_ek2719a` (custom board, see [Silicon Labs](#silicon-labs)) | mainline Zephyr | BLE |
 | Silicon Labs | `siwx917` | Silicon Labs SiWx917 (Cortex-M4F, Wi-Fi 6) | [`siwx917_dk2605a`](https://docs.zephyrproject.org/latest/boards/silabs/dev_kits/siwx917_dk2605a/doc/index.html) | mainline Zephyr | Wi-Fi, BLE |
 | STMicroelectronics | `stm32f1` | STM32F1 (Cortex-M3) | [`nucleo_f103rb`](https://docs.zephyrproject.org/latest/boards/st/nucleo_f103rb/doc/index.html) | mainline Zephyr | No wireless |
+| STMicroelectronics | `stm32c5` | STM32C5 (Cortex-M33) | [`nucleo_c5a3zg`](https://docs.zephyrproject.org/latest/boards/st/nucleo_c5a3zg/doc/index.html) | mainline Zephyr | No wireless |
 | STMicroelectronics | `stm32f4` | STM32F4 (Cortex-M4) | [`nucleo_f401re`](https://docs.zephyrproject.org/latest/boards/st/nucleo_f401re/doc/index.html) | mainline Zephyr | No wireless |
 | STMicroelectronics | `stm32l4` | STM32L4 (Cortex-M4) | [`nucleo_l476rg`](https://docs.zephyrproject.org/latest/boards/st/nucleo_l476rg/doc/index.html) | mainline Zephyr | No wireless |
 | STMicroelectronics | `stm32u5` | STM32U5 (Cortex-M33) | [`stm32u5g9j_dk1`](https://docs.zephyrproject.org/latest/boards/st/stm32u5g9j_dk1/doc/index.html) | mainline Zephyr | No wireless |
@@ -188,7 +189,10 @@ powered on at boot.
 ### STMicroelectronics
 
 `watchdog_timeout` on `stm32l4` and `stm32f4` is `0` or `5s`–`32s`; on `stm32f1` is `0` and `5s`-`26s`;
-`stm32u5` is `0` and `5s`-`60s`.
+`stm32u5` and `stm32c5` is `0` and `5s`-`60s`.
+
+The Seeed XIAO STM32C5 (`board: xiao_stm32c5`) needs `framework: version: 4.5.0-rc3` or later. ESPHome
+adds the USB clock and USB pins that the board's devicetree is missing, so the USB serial port works.
 
 ## Serial Load Process
 
@@ -322,6 +326,20 @@ Installation via SWD is also typically available for serial flash. MCUboot is op
 (`advanced: bootloader:`, defaulted to `none` on `stm32l4`; and 'mcuboot` for `stm32f1`,`stm32f4`
 , and `stm32u5`.
 
+The Seeed XIAO STM32C5 ships with a TinyUF2 bootloader, and `esphome run` writes `zephyr.uf2` straight to
+the bootloader's USB disk without mounting it. On Linux, give your user write access to that disk once
+with a udev rule, then unplug and replug the board:
+
+```bash
+echo 'SUBSYSTEM=="block", ATTRS{idVendor}=="2886", ATTRS{idProduct}=="00c5", GROUP="plugdev", MODE="0660"' | sudo tee /etc/udev/rules.d/63-tinyuf2.rules
+sudo udevadm control --reload-rules
+```
+
+For the first flash, put the board into bootloader mode by hand, because the factory firmware cannot reboot
+into it, then run `esphome run <config-file> --device /dev/ttyACM0`. After that, `esphome run` reflashes
+with no button: opening the USB serial port at 1200 baud reboots the app into the bootloader.
+`esphome logs <config-file> --reset` reboots the app.
+
 ## GPIO Pin Numbering
 
 Pins are referenced by a flat number regardless of variant, either as a plain integer or with a `GPIO` prefix —
@@ -330,7 +348,7 @@ port and a pin-within-port, but this is transparent to configuration; use the nu
 board or listed in the board's pinout.
 
 On variants with lettered GPIO ports, the vendor's own notation is also accepted. For example on
-`efr32bg27`, `efr32mg24`, `simg301`, `stm32l4`, and `stm32f4` — `PA4`, `PB2`, and so on are accepted, the same string logs and
+`efr32bg27`, `efr32mg24`, `simg301`, `stm32l4`, `stm32f4`, and `stm32c5` — `PA4`, `PB2`, and so on are accepted, the same string logs and
 `dump_config` print back. This is rejected on variants that don't use a lettered-port notation.
 
 On Nordic variants (`nrf52`, `nrf5340`, `nrf54l15`, `nrf54lm20a`), Nordic's own `P<port>.<pin>` notation is
@@ -580,7 +598,7 @@ to. **runner** and **main_stack_size** are the exceptions: they apply to every v
   `nrf54lm20a` and the STM32 variants. On `nrf52`: `mcuboot`, `adafruit_nrf52_sd140_v6`,
   `adafruit_nrf52_sd140_v7` or `nrf`, to keep the board's own serial DFU bootloader — see
   [Nordic Serial Load Process](#nordic-serial-load-process). Defaults to `none` on
-  `rp2040`/`rp2350`/`ra4m1`/`stm32l4` — their default boards ship no `slot0`/`slot1` partitions, so choosing
+  `rp2040`/`rp2350`/`ra4m1`/`stm32l4`/`stm32c5` — their default boards have no MCUboot-ready layout, so choosing
   `mcuboot` there means supplying a fully qualified board and your own MCUboot-shaped partition overlay via
   `overlays` (for example `board: rpi_pico/rp2040/mcuboot`). Defaults to `mcuboot` on the others. OTA needs
   `mcuboot`. The Espressif variants, `nrf5340`, `efr32bg27`, `efr32mg24` and `simg301` always use MCUboot and
@@ -847,7 +865,7 @@ a new image into it while the application keeps running risks corrupting the run
 not just failing to recover from an interrupted one. Updates on a `single_slot: true` build are
 serial/wired flashing only.
 
-`single_slot: true` requires the MCUboot bootloader. `rp2040`, `rp2350`, `ra4m1`, and `stm32l4`
+`single_slot: true` requires the MCUboot bootloader. `rp2040`, `rp2350`, `ra4m1`, `stm32l4`, and `stm32c5`
 default to no bootloader at all and need `advanced: bootloader: mcuboot` set explicitly first —
 every other variant (including `stm32f4`, whose default is already `mcuboot`) uses MCUboot by
 default already. See [Nordic Serial Load Process](#nordic-serial-load-process).
