@@ -382,6 +382,23 @@ climate:
     receiver_id: rcvr  # the remote_receiver from Using a Receiver
 ```
 
+The `hitachi_ac344` switch platform exposes the unit's mildew proof function, which keeps the fan running for a
+while after power off to dry the unit:
+
+- **hitachi_ac344_id** (*Optional*, [ID](/guides/configuration-types/#id)): The `hitachi_ac344` climate the switch
+  belongs to. Only needed with more than one.
+- **mildew_proof** (**Required**, [Switch](/components/switch/#config-switch)): The mildew proof switch.
+  `restore_mode` defaults to `RESTORE_DEFAULT_OFF`. The restored setting is not sent at boot; it goes out with the
+  next command, so a reboot does not turn mildew proof off.
+
+```yaml
+# Example configuration entry for the switch
+switch:
+  - platform: hitachi_ac344
+    mildew_proof:
+      name: "AC Mildew Proof"
+```
+
 ### `islandaire`
 
 The `islandaire` climate supports Islandaire PTAC units, known working with the Islandaire EZ12A1GSP1S10AL.
