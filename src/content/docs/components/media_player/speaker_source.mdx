@@ -40,21 +40,41 @@ media_player:
 
 - **media_pipeline** (*Optional*, Pipeline Schema): Configuration settings for the media pipeline. At least one of `media_pipeline` or `announcement_pipeline` is required.
 
-  - **speaker** (**Required**, [ID](/guides/configuration-types#id)): The [speaker](/components/speaker/) to output the audio.
-  - **sources** (**Required**, list of [IDs](/guides/configuration-types#id)): A list of [media source](/components/media_source/) component IDs to use for this pipeline. At least one source is required. When a media URL is received, the pipeline finds the first source that can handle the URI prefix. Each source can only belong to one pipeline; if both pipelines need the same type of source, configure separate instances.
+  - **speaker** (**Required**, [ID](/guides/configuration-types/#id)): The [speaker](/components/speaker/) to output the audio.
+  - **sources** (**Required**, list of [IDs](/guides/configuration-types/#id)): A list of [media source](/components/media_source/) component IDs to use for this pipeline. At least one source is required. When a media URL is received, the pipeline finds the first source that can handle the URI prefix. Each source can only belong to one pipeline; if both pipelines need the same type of source, configure separate instances.
   - **format** (*Optional*, enum): The audio format Home Assistant will transcode audio to before sending it to the device. One of `FLAC`, `MP3`, `OPUS`, `WAV`, or `NONE`. `NONE` disables transcoding in Home Assistant; ESPHome will then compile support for all supported codecs (`FLAC`, `MP3`, `OPUS`, and `WAV`), which increases firmware size. To compile in additional codecs without setting this to `NONE`, use the [Audio](/components/audio/) component. Defaults to `FLAC`.
   - **sample_rate** (*Optional*, positive integer): Sample rate for the transcoded audio. Should be supported by the configured `speaker` component. Defaults to the speaker's sample rate. The `OPUS` codec only supports a `48000` sample rate.
   - **num_channels** (*Optional*, positive integer): Number of channels for the transcoded audio. Must be either `1` or `2`. Defaults to the speaker's number of channels.
+  - **bitrate** (*Optional*, positive integer): Constant bitrate in kbps that Home Assistant encodes `MP3` at, one
+    of `8`, `16`, `24`, `32`, `40`, `48`, `56`, `64`, `80`, `96`, `112`, `128`, `144`, `160`, `192`, `224`, `256` or
+    `320`. Only valid when `format` is `MP3`. When omitted, Home Assistant uses its default variable bitrate.
 
 - **announcement_pipeline** (*Optional*, Pipeline Schema): Configuration settings for the announcement pipeline. Same options as `media_pipeline`. Must use a different speaker than `media_pipeline`.
 - **volume_increment** (*Optional*, percentage): Increment amount that the `media_player.volume_up` and `media_player.volume_down` actions will increase or decrease volume by. Defaults to `5%`.
 - **volume_initial** (*Optional*, percentage): The default volume used on first boot when no volume has been previously saved. Defaults to `50%`.
 - **volume_min** (*Optional*, percentage): The minimum volume allowed. Defaults to `0%`.
 - **volume_max** (*Optional*, percentage): The maximum volume allowed. Defaults to `100%`.
+- **announcement_volume** (*Optional*, percentage): The volume for announcements that start while no media is
+  playing. Scaled between `volume_min` and `volume_max` like the media player volume. Requires both
+  `announcement_pipeline` and `media_pipeline`. If not set, announcements use the media player volume. See
+  [Announcement Volume](#announcement-volume).
 - **on_mute** (*Optional*, [Automation](/automations)): An automation to perform when muted.
 - **on_unmute** (*Optional*, [Automation](/automations)): An automation to perform when unmuted.
 - **on_volume** (*Optional*, [Automation](/automations)): An automation to perform when the volume is changed.
 - All other options from [Media Player](/components/media_player#config-media_player)
+
+### Announcement Volume
+
+When `announcement_volume` is set, an announcement that starts while nothing is playing uses that volume instead of
+the media player volume. Paused media counts as not playing. An announcement that starts while media is playing, or
+while another announcement plays at the media player volume, keeps the media player volume.
+
+The media player volume is restored when the announcements finish or when media starts playing. Changing the volume
+during the announcement, for example with `media_player.volume_set`, ends the announcement volume and applies the new
+volume right away. The volume reported to Home Assistant and saved to flash is always the media player volume.
+
+To change the announcement volume at runtime, use the
+[`speaker_source.set_announcement_volume` action](#speaker_source-set_announcement_volume-action).
 
 <span id="media_player-speaker_source-examples"></span>
 
@@ -133,9 +153,34 @@ on_...:
 
 Configuration variables:
 
-- **id** (**Required**, [ID](/guides/configuration-types#id)): The speaker source media player to control.
+- **id** (**Required**, [ID](/guides/configuration-types/#id)): The speaker source media player to control.
 - **pipeline** (**Required**, enum): Which pipeline to set the delay for. One of `media` or `announcement`.
-- **delay** (**Required**, [Time](/guides/configuration-types#time), [templatable](/automations/templates)): The delay between playlist tracks.
+- **delay** (**Required**, [Time](/guides/configuration-types/#time), [templatable](/automations/templates/)): The delay between playlist tracks.
+
+### `speaker_source.set_announcement_volume` Action
+
+This action sets the [announcement volume](#announcement-volume). If an announcement is playing at the announcement
+volume, the new volume applies right away. The value is not saved; after a reboot the configured
+`announcement_volume` applies again. If `announcement_volume` is not configured, this action turns the announcement
+volume on, as long as both `announcement_pipeline` and `media_pipeline` are configured.
+
+```yaml
+on_...:
+  # Simple
+  - speaker_source.set_announcement_volume: 70%
+
+  # Full
+  - speaker_source.set_announcement_volume:
+      id: speaker_source_media_player_id
+      volume: 70%
+```
+
+Configuration variables:
+
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): The speaker source media player to control. Required if
+  more than one is configured.
+- **volume** (**Required**, percentage, [templatable](/automations/templates/)): The announcement volume. A lambda
+  returns a value between `0.0` and `1.0`.
 
 ### Base Media Player Actions
 

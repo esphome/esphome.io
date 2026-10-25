@@ -67,34 +67,17 @@ MQTT options:
 - **target_temperature_state_topic** (*Optional*, string): The topic to publish target temperature state changes to.
 - All other options from [MQTT Component](/components/mqtt#config-mqtt-component).
 
-## `water_heater.control` Action
+## Controlling the Water Heater
 
-This [action](/automations/actions#all-actions) allows you to set the operation mode and/or target temperature of the water heater.
+The operation mode and target temperature are set from [lambdas](/automations/templates#config-lambda)
+with a control call. See [Modes](#water-heater-modes) for the available modes.
 
-```yaml
-on_...:
-  then:
-    - water_heater.control:
-        id: boiler_1
-        mode: ECO
-        target_temperature: 55.0
+```cpp
+auto call = id(my_boiler).make_call();
+call.set_mode("PERFORMANCE");
+call.set_target_temperature(65.0);
+call.perform();
 ```
-
-Configuration variables:
-
-- **id** (**Required**, [ID](/guides/configuration-types#id)): The water heater to control.
-- **mode** (*Optional*, string): The operation mode to set. See [Modes](#water-heater-modes) for available options.
-- **target_temperature** (*Optional*, float): The target temperature to set (e.g., `60.0`).
-
-> [!NOTE]
-> This action can also be expressed in [lambdas](/automations/templates#config-lambda):
->
-> ```cpp
-> auto call = id(boiler_1).make_call();
-> call.set_mode("PERFORMANCE");
-> call.set_target_temperature(65.0);
-> call.perform();
-> ```
 
 ## Water Heater Modes
 
@@ -146,6 +129,7 @@ Available C++ enums for modes:
 
 ## See Also
 
+- [Haier Water Heater](/components/water_heater/haier_water_heater/)
 - [Template Water Heater](/components/water_heater/template/)
 - [Tuya Water Heater](/components/water_heater/tuya/)
 - <APIClass text="WaterHeater" path="water_heater::WaterHeater" />

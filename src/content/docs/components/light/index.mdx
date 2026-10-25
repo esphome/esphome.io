@@ -70,6 +70,15 @@ light:
   > This was counter-intuitive and has been fixed: such a light now boots ON, as `initial_state` says.
 
   - **state** (*Optional*, boolean, [templatable](/automations/templates)): The ON/OFF state for the light.
+  - **effect** (*Optional*, string): The name of the [effect](#light-effects) to start with, so the light can come up
+    already running an effect without an `on_boot` automation. Must match the name of one of the effects defined on
+    the same light, or `none` for no effect.
+    - It applies on a cold boot only; a state restored from flash keeps its own effect.
+    - The effect starts when the light boots ON. A light that boots OFF starts it at the first turn-on when
+      `resume_effect` (below) is set; otherwise it is not started, and config validation warns when the boot state
+      is known at build time (a `state` lambda is only known at boot, so there is no warning for it).
+    - Turning the light off stops the running effect, so without `resume_effect` an effect does not come back by
+      itself the next time the light is turned on.
   - All other options from [light state](#light-state).
 
   If **color_mode** is not given but color fields such as `red` or `brightness` are, the light uses the first
@@ -205,8 +214,9 @@ light:
 
 - **resume_effect** (*Optional*, boolean): Remember the effect that was running when the light was turned off,
   and start it again when the light is next turned on with a plain turn-on. A turn-on that also sets an effect,
-  brightness, color or transition uses those instead. The remembered effect is kept in memory only, so it is lost
-  on reboot. Defaults to `false`.
+  brightness, color or transition uses those instead. On a light that boots OFF, the effect from **initial_state**
+  counts as the remembered effect. The remembered effect is kept in memory only, so it is lost on reboot. Defaults
+  to `false`.
 
 - **on_turn_on** (*Optional*, [Action](/automations/actions#all-actions)): An automation to perform when the light is turned on. See
   [`light.on_turn_on` / `light.on_turn_off` Trigger](#light-on_turn_on_off_trigger).
@@ -225,6 +235,27 @@ light:
 
 - **power_supply** (*Optional*, [ID](/guides/configuration-types#id)): The [Power Supply](/components/power_supply/) to connect to this light. When
   the light is turned on, the power supply will automatically be switched on too.
+
+- **power_estimation** (*Optional*): Estimate the strip's current draw and, with `max_current_ma`, keep it
+  within a budget. It applies to every addressable platform, for example `esp32_rmt_led_strip`, `neopixelbus`
+  and `fastled_clockless`, and belongs on the strip itself, not on a [partition](/components/light/partition/):
+  the strip's limit covers every partition drawn on it. See
+  [Addressable Light Power Estimation](#addressable-light-power-estimation) for details.
+
+  - **ma_per_led_red** (*Optional*, float): Current drawn by a single LED at full red brightness, in mA.
+    Defaults to `20.0`.
+  - **ma_per_led_green** (*Optional*, float): Current drawn by a single LED at full green brightness, in mA.
+    Defaults to `20.0`.
+  - **ma_per_led_blue** (*Optional*, float): Current drawn by a single LED at full blue brightness, in mA.
+    Defaults to `20.0`.
+  - **ma_per_led_white** (*Optional*, float): Current drawn by a single LED at full white brightness, in mA
+    (only relevant for RGBW strips). Defaults to `20.0`.
+  - **idle_ma_per_led** (*Optional*, float): Current drawn by a single LED on top of its channels, whatever
+    they show, in mA. Defaults to `1.0`.
+  - **max_current_ma** (*Optional*, float): Maximum total current draw for the whole strip, in mA. When the
+    estimated draw exceeds this value, all pixel values are scaled down uniformly so the strip stays within
+    the budget. The scaling is applied every frame and covers solid colors, transitions and effects. Omit it
+    to estimate without limiting.
 
 **Advanced options:**
 
@@ -615,6 +646,84 @@ on_...:
 - **white** (*Optional*, [templatable](/automations/templates), percentage): The brightness to set the white channel
   to.
 
+## Addressable Light Power Estimation
+
+ESPHome can estimate the current draw of an addressable LED strip and optionally cap it to a
+configured maximum. This is useful for protecting power supplies and avoiding over-current
+situations when many LEDs are lit at high brightness.
+
+### How It Works
+
+Before each frame goes out to the hardware, including during effects and transitions, ESPHome sums the raw
+per-channel values of all LEDs and converts them to milliamps with the per-channel constants you supply:
+
+```text
+estimated_ma = num_leds * idle_ma_per_led
+             + sum over LEDs of (R * ma_per_led_red + G * ma_per_led_green
+                                 + B * ma_per_led_blue + W * ma_per_led_white) / 255
+```
+
+If `max_current_ma` is set, the idle draw is taken off it first, since no scaling changes that part, and the
+channel values are scaled down so that the pixels fit what is left. The user-visible brightness and color are
+not changed; only the physical output is reduced. The scale is worked out from each frame just before it goes
+out, so the strip never sees a frame over budget by more than one hardware level per lit channel, about 70 mA
+on 300 RGB pixels at 20 mA per channel. Pixels written from a lambda or with `light.addressable_set` are
+limited in the same way, and read back as the levels they were written with. A `max_current_ma` that does not
+even cover the idle draw cannot be met; a warning says so at boot and the pixels are held to their dimmest
+level.
+
+### Example Configuration
+
+```yaml
+light:
+  - platform: esp32_rmt_led_strip
+    id: my_leds
+    pin: GPIOXX
+    num_leds: 60
+    chipset: WS2812
+    rgb_order: GRB
+    name: "My LED Strip"
+    power_estimation:
+      ma_per_led_red: 16.0
+      ma_per_led_green: 11.0
+      ma_per_led_blue: 15.0
+      idle_ma_per_led: 0.5
+      max_current_ma: 1000.0   # limit the strip to 1 A
+```
+
+### Reading the Estimated Current
+
+The estimate is available from the light's ID in a lambda. It is the draw of the pixel buffer as the strip
+receives it, after the limit, so with `max_current_ma` set it stays at or near that value rather than showing
+what the frame asked for. Each call sums the whole buffer, which is the last frame sent, or the next one when
+pixels were written since; those pixels are not limited until that frame goes out, so a read taken in between
+can be above the limit for one frame. Read it from something that polls, such as a
+[template sensor](/components/sensor/template/), rather than on every loop:
+
+```yaml
+sensor:
+  - platform: template
+    name: "LED Strip Current"
+    unit_of_measurement: "mA"
+    lambda: return id(my_leds).get_estimated_current_ma();
+```
+
+### Choosing Per-Channel Constants
+
+Datasheets rarely list per-channel values. To measure them, put a multimeter in the supply line and take four
+readings: every LED off gives the idle draw; every LED at full red, with the idle draw taken off, gives the red
+value; then the same for green, blue and, on an RGBW strip, white. Divide each by the number of LEDs. Typical
+values for common chipsets:
+
+| Chipset  | Red (mA) | Green (mA) | Blue (mA) |
+|----------|----------|------------|-----------|
+| WS2812B  | 16       | 11         | 15        |
+| SK6812   | 12       | 12         | 12        |
+| APA106   | 16       | 14         | 12        |
+
+> [!NOTE]
+> These are rough guideline values. For accurate power budgeting, measure your specific strip.
+
 ## Light Conditions
 
 <span id="light-is_on_condition"></span>
@@ -773,8 +882,8 @@ light:
 - **transition_length** (*Optional*, [Time](/guides/configuration-types#time)): The duration of each transition. Defaults to `1s`. Can be a
   single time or split for on and off using these nested options.
 
-  - **on_length** (*Optional*, [Time](/guides/configuration-types#time)): The duration of the transition when the light is turned on.
-  - **off_length** (*Optional*, [Time](/guides/configuration-types#time)): The duration of the transition when the light is turned off.
+  - **on_length** (**Required**, [Time](/guides/configuration-types#time)): The duration of the transition when the light is turned on.
+  - **off_length** (**Required**, [Time](/guides/configuration-types#time)): The duration of the transition when the light is turned off.
 - **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval when the new transition is started. Defaults to
   `1s`.
 
@@ -893,9 +1002,9 @@ This effect allows you to write completely custom light effects yourself using [
 
 Available variables in the lambda:
 
-- **it** - <APIClass text="LightState" path="light::LightState" /> instance for the light running this effect, allowing
+- `it`: <APIClass text="LightState" path="light::LightState" /> instance for the light running this effect, allowing
   you to reference the light directly without needing its `id` (see API reference for more info).
-- **initial_run** - A bool which is true on the first execution of the lambda. Useful to reset static variables when
+- `initial_run`: A bool which is true on the first execution of the lambda. Useful to reset static variables when
   restarting an effect.
 
 ```yaml
@@ -928,7 +1037,7 @@ light:
 
 **Configuration variables:**
 
-- **name** (**Required**, string): The name of the custom effect.
+- **name** (*Optional*, string): The name of the custom effect. Defaults to `Lambda`.
 - **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval with which the lambda code is executed. A value of
   `0ms` means that the lambda is always executed, without a cool-down. Defaults to `0ms`.
 
@@ -1191,9 +1300,9 @@ This effect allows you to access each LED individually in a custom light effect.
 
 Available variables in the lambda:
 
-- **it** - <APIClass text="AddressableLight" path="light::AddressableLight" /> instance (see API reference for more info).
-- **current_color** - <APIStruct text="ESPColor" path="light::ESPColor" /> instance (see API reference for more info).
-- **initial_run** - A bool which is true on the first execution of the lambda. Useful to reset static variables when
+- `it`: <APIClass text="AddressableLight" path="light::AddressableLight" /> instance (see API reference for more info).
+- `current_color`: <APIStruct text="ESPColor" path="light::ESPColor" /> instance (see API reference for more info).
+- `initial_run`: A bool which is true on the first execution of the lambda. Useful to reset static variables when
   restarting an effect.
 
 > [!NOTE]
@@ -1288,7 +1397,7 @@ light:
 **Configuration variables:**
 
 - **name** (*Optional*, string): The name of the effect.
-- **sequence** (*Optional*, [Action](/automations/actions#all-actions)): The actions to perform in sequence until the effect is
+- **sequence** (**Required**, [Action](/automations/actions#all-actions)): The actions to perform in sequence until the effect is
   stopped.
 
 <span id="e131-light-effect"></span>

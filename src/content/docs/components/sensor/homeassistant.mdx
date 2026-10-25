@@ -52,6 +52,25 @@ sensor:
 > on them) you need to specifically configure `internal: false`. Also, `state_class`, `unit_of_measurement`
 > are not inherited from the imported sensor so you need to set them manually.
 
+## Logging Received States
+
+To see values arriving from Home Assistant while debugging, raise the log level for the platform's tag:
+
+```yaml
+logger:
+  level: VERBOSE
+  initial_level: DEBUG
+  logs:
+    homeassistant.sensor: VERBOSE
+```
+
+Each `homeassistant` platform has its own tag, such as `homeassistant.binary_sensor` or
+`homeassistant.text_sensor`; a bare `homeassistant` matches nothing. Received values then log as
+`'sensor.power': Got state 100.50`. This platform logs them at `VERBOSE` rather than `DEBUG` because Home Assistant
+forwards every change and a fast-updating entity would flood the default level; the other `homeassistant` platforms
+log them at `DEBUG`. See
+[Manual Tag-Specific Log Levels](/components/logger/#manual-tag-specific-log-levels).
+
 ## See Also
 
 - [Sensor Filters](/components/sensor#sensor-filters)

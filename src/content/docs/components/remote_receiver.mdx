@@ -37,6 +37,7 @@ Multiple remote receivers can be configured as a list of dict definitions within
     [transmitter description](/components/remote_transmitter#remote_transmitter-transmit_abbwelcome) for more details.
 
   - **aeha**: Decode and dump AEHA infrared codes.
+  - **aok**: Decode and dump A-OK RF codes.
   - **beo4**: Decode and dump B&O Beo4 infrared codes.
   - **brennenstuhl**: Decode and dump brennenstuhl RF codes.
   - **byronsx**: Decode and dump Byron SX doorbell RF codes.
@@ -179,6 +180,10 @@ To enable signal demodulation, configure the signal carrier frequency and duty c
   AEHA remote code has been decoded. A variable `x` of type <APIStruct text="remote_base::AEHAData" path="remote_base::AEHAData" />
   is passed to the automation for use in lambdas.
 
+- **on_aok** (*Optional*, [Automation](/automations)): An automation to perform when an
+  A-OK RF remote code has been decoded. A variable `x` of type
+  <APIStruct text="remote_base::AOKData" path="remote_base::AOKData" /> is passed to the automation for use in lambdas.
+
 - **on_beo4** (*Optional*, [Automation](/automations)): An automation to perform when a
   B&O Beo4 infrared remote code has been decoded. A variable `x` of type <APIStruct text="remote_base::Beo4Data" path="remote_base::Beo4Data" />
   is passed to the automation for use in lambdas.
@@ -239,6 +244,8 @@ To enable signal demodulation, configure the signal carrier frequency and duty c
   is passed to the automation for use in lambdas. Up to 16 bits that follow the 66-bit HCS301 word are in
   `x.suffix`, lowest bit first, and their number is in `x.suffix_bits`. Both are `0` when these bits do not end
   at a gap or at the end of the capture, or when there are more than 16; the 66-bit word is still reported.
+  For a 72-bit Jarolift TDEF frame, where `x.suffix_bits` is `6`, `x.group()` returns its 8 group bits. Check
+  `x.suffix_bits` first: for other frames `x.group()` is not a group. The log shows such a frame with `group=`.
 
 - **on_haier** (*Optional*, [Automation](/automations)): An automation to perform when a
   Haier remote code has been decoded. A variable `x` of type <APIStruct text="remote_base::HaierData" path="remote_base::HaierData" />
@@ -439,6 +446,13 @@ Remote code selection (exactly one of these has to be included):
   - **data** (**Required**, 3-35 bytes list): The code to listen for, see
     [transmitter description](/components/remote_transmitter#remote_transmitter-transmit_aeha) for more info. Usually you only need to copy this
     directly from the dumper output.
+
+- **aok**: Trigger on a decoded A-OK RF remote code with the given data.
+
+  - **remote_id** (**Required**, int): The 24-bit ID of the remote. Range is 0 to 0xFFFFFF.
+  - **channels** (**Required**, int): The 16-bit channel mask. Each of the 16 channels on the remote corresponds to
+    one bit of the mask.
+  - **command** (**Required**, int): The 1-byte command code. Range is 0 to 0xFF.
 
 - **beo4**: Trigger on a decoded B&O Beo4 infrared remote code with the given data.
 

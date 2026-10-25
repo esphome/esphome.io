@@ -71,6 +71,11 @@ climate:
   to use multiple UART buses.
 
 - **transmitter_id** (*Optional*, [ID](/guides/configuration-types#id)): Defined and used automatically when using [Remote Transmitter](/components/remote_transmitter/) component for IR commands transmit.
+- **display_control** (*Optional*, string): How [`midea_ac.display_toggle`](#midea_ac-display_toggle-action) reaches
+  the appliance. `UART` always sends the UART request. `IR` always uses the
+  [Remote Transmitter](/components/remote_transmitter/), so one has to be configured. `AUTO` sends the UART request
+  when the appliance reports display control, or when no remote transmitter is configured, and uses IR otherwise.
+  Defaults to `AUTO`.
 - **period** (*Optional*, [Time](/guides/configuration-types#time)): Minimal period between requests to the appliance. Defaults to `1s`.
 - **timeout** (*Optional*, [Time](/guides/configuration-types#time)): Request response timeout until next request attempt. Defaults to `2s`.
 - **num_attempts** (*Optional*, int): Number of request attempts between 1 and 5 inclusive. Defaults to `3`.
@@ -159,7 +164,10 @@ Configuration variables:
 
 ### `midea_ac.display_toggle` Action
 
-This action toggle ac screen. Works via UART if supported or [Remote Transmitter](/components/remote_transmitter/).
+This action toggles the display of the appliance over UART or the [Remote Transmitter](/components/remote_transmitter/),
+as chosen by `display_control`. Many appliances, Mundoclima and Rotenso among them, accept the UART toggle without
+reporting display control, so in `AUTO` they get IR whenever a remote transmitter is configured. If such a unit
+ignores the toggle, set `display_control: UART`.
 
 ```yaml
 on_...:
@@ -201,7 +209,7 @@ on_...:
 
 It is possible to use the FollowMe function and some other features available only through IR commands.
 Below is an example of how to send FollowMe commands with the values of your sensor using the [Remote Transmitter](/components/remote_transmitter/)
-component, as well as control the light of the LED display.
+component, as well as toggle the LED display over IR.
 
 ```yaml
 # Example configuration entry

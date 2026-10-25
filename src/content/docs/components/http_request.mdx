@@ -18,6 +18,7 @@ http_request:
 - **follow_redirects** (*Optional*, boolean): Enable following HTTP redirects. Defaults to `true`.
 - **redirect_limit** (*Optional*, integer): Maximum amount of redirects to follow when enabled. Defaults to `3`.
 - **timeout** (*Optional*, [Time](/guides/configuration-types#time)): Timeout for request. Defaults to `4.5s`.
+  Each action can override it with its own `timeout` option.
   On ESP32 this applies to each network operation (DNS lookup, connect, TLS handshake, every read and write)
   rather than to the request as a whole.
 - **useragent** (*Optional*, string): User-Agent header for requests. Defaults to
@@ -124,6 +125,8 @@ on_...:
 
 - **max_response_buffer_size** (*Optional*, integer): The maximum buffer size to be used to store the response.
   Defaults to `1 kB`.
+- **timeout** (*Optional*, [Time](/guides/configuration-types#time), [templatable](/automations/templates)): Timeout
+  for this request. Defaults to the `timeout` of the `http_request` component.
 
 - **on_response** (*Optional*, [Automation](/automations)): An automation to perform after the request is received.
 - **on_error** (*Optional*, [Automation](/automations)): An automation to perform if the request cannot be completed.
@@ -291,6 +294,7 @@ on_...:
 - http_request.get:
     url: https://esphome.io
     capture_response: true
+    timeout: 10s
     on_response:
       then:
         - if:
