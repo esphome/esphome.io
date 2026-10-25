@@ -3,14 +3,20 @@ description: "Instructions for integrating Hoval TopTronic devices into ESPHome.
 title: "TopTronic"
 ---
 
-import { Image } from 'astro:assets';
+import Figure from '@components/Figure.astro';
 import APIRef from '@components/APIRef.astro';
 
 The `toptronic` component allows you to integrate Hoval TopTronic devices into ESPHome. It
 communicates with the devices over a CAN bus and auto-generates all
 entities from the presets bundled with the component.
 
-<Image src="/images/toptronic.jpg" width={374} height={217} layout="constrained" alt="" />
+<Figure
+  src="/images/toptronic.jpg"
+  width={374}
+  height={217}
+  alt="Hoval TopTronic thermostat and heating control device interface"
+  layout="constrained"
+/>
 
 Supported device types:
 
@@ -27,7 +33,7 @@ Supported device types:
 | `BM` | Control module (display) | 8 | 1 |
 | `GW` | Gateway (Modbus/KNX) | — | 5 |
 
-## Component/Hub
+## Component Configuration
 
 The `toptronic` hub is configured once per device (device type and bus address). You can
 declare multiple hubs to talk to several devices (e.g. `HV`, `BM` and `WEZ`) on the same bus.
@@ -39,14 +45,12 @@ declare multiple hubs to talk to several devices (e.g. `HV`, `BM` and `WEZ`) on 
 ```yaml
 # Example configuration entry
 toptronic:
-  - id: toptronic_HV
-    canbus_id: cbus
-    device_type: HV
+  - device_type: HV
     device_addr: 8
     language: en
 ```
 
-### Configuration variables
+### Configuration Variables
 
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for
   code generation. Set it when entities need to name this hub with `toptronic_id`.
@@ -199,7 +203,7 @@ sensor:
 - **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): How often the
   datapoint is polled. Defaults to `30s`.
 
-### Text sensor
+### Text Sensor
 
 Read-only value mapped to a text label. It needs **options** (a list of labels) and
 **values** (the matching integer codes); both lists must have the same length, and each value
@@ -225,7 +229,7 @@ text_sensor:
 - **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): How often the
   datapoint is polled. Defaults to `30s`.
 
-### Number
+### Number Sensor
 
 Writable numeric value. **type** is required (see above).
 
@@ -260,7 +264,7 @@ number:
   example above shows a `10.0` to `30.0 °C` control with `0.5 °C` steps. A value written from
   the entity is multiplied by `10^decimal` before it is sent. Defaults to `0`.
 
-### Select
+### Select Entity
 
 Writable value chosen from a list. It needs **options** and **values** with the same rules as
 the text sensor, and accepts **type** (*Optional*, default `U8`).
@@ -286,7 +290,7 @@ select:
     values: [0, 1, 2, 4, 5]
 ```
 
-### Button
+### Button Entity
 
 Sends one SET request when pressed. **type** and **value** (**Required**, int) describe the
 value to write; the value must fit the selected type and is checked when the configuration is
@@ -304,7 +308,7 @@ button:
     value: 7
 ```
 
-## Debug logging
+## Debug Logging
 
 The hub can log the raw CAN traffic to help find a datapoint or diagnose a device. One
 `switch` entry on the platform holds both debug switches; add only the ones you need:
