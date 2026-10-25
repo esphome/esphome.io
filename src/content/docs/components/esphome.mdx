@@ -75,7 +75,7 @@ Advanced options:
   - **name** (**Required**, string): Name of the project
   - **version** (**Required**, string): Version of the project
   - **sbom** (*Optional*): Details about the maker of the project for its software bill of materials.
-    Only available on ESP32. See [Software bill of materials (SBOM)](#esphome-sbom).
+    Only available on ESP32. See [Software bill of materials (SBOM)](#software-bill-of-materials-sbom).
 
     - **supplier** (**Required**, string): Name of the organization that makes and supplies the firmware.
     - **contact** (*Optional*, string): Email address for security reports.
@@ -396,8 +396,6 @@ esphome:
     version: "1.0.0"
 ```
 
-<span id="esphome-sbom"></span>
-
 ## Software bill of materials (SBOM)
 
 A software bill of materials (SBOM) lists the software that makes up a firmware, with the version of each part.
@@ -414,6 +412,8 @@ firmware has been compiled:
 esphome compile my-device.yaml
 esp-idf-sbom create -o my-device.spdx .esphome/build/my-device/build/project_description.json
 ```
+
+Replace `my-device` in the path with the device's `name`, which sets the build directory.
 
 The tool can also write [CycloneDX](https://cyclonedx.org) files and check the SBOM for known vulnerabilities; see
 its documentation for details.
