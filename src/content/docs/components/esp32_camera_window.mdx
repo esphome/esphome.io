@@ -13,17 +13,20 @@ The window is measured from the top left corner of the published frame, with `(0
 always asks for the same part of the picture whatever frame size is in use. A window that reaches past the frame is
 clamped to it.
 
-Windows are supported by the OV2640, OV3660, OV5640, SC101IOT and SC030IOT. The OV3660 and OV5640 scale the part of
-the picture a window covers back up to the frame, so a window on them also zooms in and the camera keeps publishing
-frames of the size it is configured with.
+How a window maps onto the published frame depends on the sensor:
 
-The OV2640 reads a window out as it is and cannot scale it, so the published frame takes the size of the window
-instead. It can only crop in whole four-pixel steps, so a window on it is rounded down to one.
+| Sensor             | Published frame           | Notes                                    |
+| ------------------ | ------------------------- | ---------------------------------------- |
+| OV2640             | The size of the window    | JPEG output only, rounded to 16x8 blocks |
+| OV3660, OV5640     | The configured frame size | Scaled to the frame, so it also zooms in |
+| SC101IOT, SC030IOT | The configured frame size | `width` and `height` must be the frame   |
 
-The SC101IOT and SC030IOT are supported as well, but they read a window out as it is and cannot scale it, so a window
-on them has to be the size of the frame and only moves which part of the sensor the frame shows. The offsets of such a
-window are counted in the pixels of the whole sensor readout from its top left corner, 1280x720 for the SC101IOT and
-640x480 for the SC030IOT, and a window of another size is rejected.
+On the SC101IOT and SC030IOT the offsets are counted in the pixels of the whole sensor readout from its top left
+corner, 1280x720 for the SC101IOT and 640x480 for the SC030IOT, and a window of another size is rejected.
+
+A window set at runtime replaces the previous one, and never nests inside it. Changing the frame size through the
+camera clears the window back to the whole sensor, so re-apply it afterwards; one or two captures after a change
+may still show the previous window.
 
 Every other sensor the camera driver knows — the OV7725, OV7670, OV3640, NT99141, GC2145, GC032A, GC0308, BF3005,
 BF20A6, SC031GS, HM1055, HM0360 and MEGA_CCM — is read out through registers of its own, so a window is reported as
