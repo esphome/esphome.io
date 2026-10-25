@@ -4,8 +4,10 @@ description: "Stream microphone samples from an ESP32 device over the ESPHome we
 ---
 
 The `microphone_http_stream` component serves one configured [microphone source](/components/microphone/) over HTTP.
-It requires the [web server](/components/web_server/) and an ESP32 device. Capture starts when a client connects and
-stops after the last client disconnects. It forwards samples from the selected microphone source without resampling.
+It requires the [web server](/components/web_server/) and an ESP32 device. The stream joins a microphone that is
+already running. Otherwise, it starts capture when a client connects and stops it after the last client disconnects.
+When it joins an already running microphone, disconnecting HTTP leaves that microphone running. Samples are forwarded
+without resampling.
 
 > [!WARNING]
 > A microphone stream can expose private audio. Use this component only on a trusted network. Without web server
@@ -34,6 +36,9 @@ microphone_http_stream:
   number of channels, format, URL and client limit.
 - `GET /audio/microphones/{stream_id}` streams the selected microphone. If every configured client slot is in use,
   another request receives HTTP `409`.
+
+If another component stops the shared microphone during a stream, the HTTP connection closes after five seconds
+without audio. The stream does not restart a microphone owned by another component.
 
 The response body contains raw **S16LE mono** samples at the source microphone's configured sample rate. Its content
 type is `application/octet-stream`; the `X-Audio-Format`, `X-Audio-Sample-Rate` and `X-Audio-Channels` headers specify
