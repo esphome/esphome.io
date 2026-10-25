@@ -62,19 +62,20 @@ and normal disconnections are logged at `INFO`. Failed stream requests, full buf
 overlapping audio callbacks and stream timeouts are logged at `WARN`. ESPHome reports permanent setup failures at
 `ERROR` through its core component logging.
 Buffer peak and longest HTTP send time are logged at `DEBUG` when a client disconnects. The component collects these
-diagnostics only while its effective log level is `DEBUG` or more detailed.
+diagnostics for every active stream when the firmware is compiled with `logger.level: DEBUG` or more detailed.
+Setting this component's runtime log level to `INFO` suppresses the diagnostic message but does not stop collection.
+With `logger.level: INFO`, the diagnostic fields and calculations are omitted from the firmware.
 
-For routine operation, keep the component at `INFO` even if the global logger level is `DEBUG`:
+For routine operation without diagnostic overhead, compile the firmware with:
 
 ```yaml
 logger:
-  level: DEBUG
-  logs:
-    microphone_http_stream: INFO
+  level: INFO
 ```
 
-Set `microphone_http_stream: DEBUG` when investigating stream performance. The global `logger.level` must also be
-`DEBUG` or more detailed for debug messages to be compiled into the firmware.
+To investigate stream performance, compile with `logger.level: DEBUG`. You can then set
+`logger.logs.microphone_http_stream: INFO` to hide diagnostic messages while collection continues, and change the
+tag to `DEBUG` to show them. Changing the runtime level cannot enable diagnostics in a firmware compiled at `INFO`.
 
 ## Using a DLNA Server
 
