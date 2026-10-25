@@ -59,6 +59,9 @@ sensor:
 - **iir_filter** (*Optional*): Set up an Infinite Impulse Response filter to increase accuracy. One of
   `OFF`, `2x`, `4x`, `16x`, `32`, `64x`, `128x`. Defaults to `OFF`.
 
+- **data_rate** (*Optional*): Measure continuously at this rate instead of once per `update_interval`.
+  See [Continuous Measurement](#bmp3xx-data-rate). By default the sensor measures once per update.
+
 - **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to check the
   sensor. Defaults to `60s`.
 
@@ -99,11 +102,45 @@ sensor:
 - **iir_filter** (*Optional*): Set up an Infinite Impulse Response filter to increase accuracy. One of
   `OFF`, `2x`, `4x`, `16x`, `32`, `64x`, `128x`. Defaults to `OFF`.
 
+- **data_rate** (*Optional*): Measure continuously at this rate instead of once per `update_interval`.
+  See [Continuous Measurement](#bmp3xx-data-rate). By default the sensor measures once per update.
+
 - **address** (*Optional*, int): *I2C* only. Manually specify the I²C address of
   the sensor. Defaults to `0x77`. Another address can be `0x76`.
 
 - **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to check the
   sensor. Defaults to `60s`.
+
+<span id="bmp3xx-data-rate"></span>
+
+## Continuous Measurement
+
+By default the sensor takes one measurement each `update_interval` and sleeps in between. With `data_rate`
+set, it measures continuously at that rate and each update reads the latest result. Combined with
+`iir_filter`, the sensor's own filter then runs on every measurement, which gives lower noise for the same
+`update_interval`.
+
+```yaml
+sensor:
+  - platform: bmp3xx_i2c
+    pressure:
+      name: "Pressure"
+      oversampling: 32x
+    temperature:
+      name: "Temperature"
+      oversampling: 2x
+    iir_filter: 16x
+    data_rate: 12.5Hz
+    update_interval: 1s
+```
+
+Possible values: `200Hz`, `100Hz`, `50Hz`, `25Hz`, `12.5Hz`, `6.25Hz`, `3.1Hz`, `1.5Hz`, `0.78Hz`, `0.39Hz`,
+`0.2Hz`, `0.1Hz`, `0.05Hz`, `0.02Hz`, `0.01Hz`, `0.006Hz`, `0.003Hz` and `0.001Hz`.
+
+One measurement must fit within one period of the data rate, so higher oversampling needs a slower rate.
+For example, pressure `32x` with temperature `2x` takes about 70 ms, which allows `12.5Hz` (80 ms) or slower.
+`update_interval` must be at least one period of the data rate. Configurations that break either rule are
+rejected when validating the configuration.
 
 <span id="bmp3xx-oversampling"></span>
 
