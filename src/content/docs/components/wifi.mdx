@@ -14,9 +14,9 @@ configuration; this requires a `network:` `priority:` list naming both interface
 [Multi-Interface Support](/components/network/#multi-interface-support) on the [Network](/components/network/)
 component. Using more than one network interface is not supported on other platforms.
 
-An access point alone can run next to [Ethernet](/components/ethernet/) without a `priority:` list; with
-`ap_mode: wisp` the devices that join it reach the network through the Ethernet connection, see
-[WISP Mode](#wisp-mode).
+An access point alone can run next to [Ethernet](/components/ethernet/) or a [Modem](/components/modem/) without a
+`priority:` list; with `ap_mode: wisp` the devices that join it reach the network through the Ethernet or cellular
+connection, see [WISP Mode](#wisp-mode).
 
 It's recommended to provide a static IP for your node, as it can
 dramatically improve connection times.
@@ -93,7 +93,8 @@ wifi:
 
   - **ap_mode** (*Optional*, string): One of `fallback` or `wisp`. Defaults to `fallback`, which starts the access
     point only when no connection to the WiFi router can be made. `wisp` routes the devices that join the access
-    point to the router connection or to Ethernet, see [WISP Mode](#wisp-mode). ESP32 with ESP-IDF 5.1 or newer only.
+    point to the router connection, to Ethernet or to a modem, see [WISP Mode](#wisp-mode). ESP32 with ESP-IDF 5.1
+    or newer only.
 
   - **dns_servers** (*Optional*, list of IPv4 addresses): The DNS servers handed out to clients of the access point.
     Only valid with `ap_mode: wisp`. Accepts one server, or two with ESP-IDF 6.0 or newer. If not set, the DNS
@@ -285,7 +286,7 @@ to control it from a phone without any internet connection.
 
 With `ap_mode: wisp` an ESP32 runs an access point whose clients get an address from the node and have their
 traffic routed (NAT) through an upstream connection: the router it joins as a station, which makes the node a
-WiFi repeater, or [Ethernet](/components/ethernet/).
+WiFi repeater, [Ethernet](/components/ethernet/) or a cellular [Modem](/components/modem/).
 
 ```yaml
 wifi:
@@ -298,9 +299,10 @@ wifi:
     ap_mode: wisp
 ```
 
-Without `networks`, the upstream is [Ethernet](/components/ethernet/) instead of the router: with Ethernet configured
-as described on its page, only the access point is added. Unless `dns_servers` is set, it starts once the Ethernet
-connection has an address and DNS servers, and the clients are routed through it.
+Without `networks`, the upstream is [Ethernet](/components/ethernet/) or a [Modem](/components/modem/) instead of the
+router: with Ethernet or the modem configured as described on its page, only the access point is added. Unless
+`dns_servers` is set, it starts once the Ethernet or cellular connection has an address and DNS servers, and the
+clients are routed through it.
 
 ```yaml
 wifi:
@@ -310,13 +312,18 @@ wifi:
     ap_mode: wisp
 ```
 
+With a modem, all the clients' traffic goes through the serial link to the modem, so set a high `baud_rate` on the
+modem if it supports one (for example `3686400`). Even then, the link is much slower than Ethernet or WiFi, so this
+access point is meant for other ESPHome nodes that send little data, for example over MQTT, rather than for phones or
+laptops used to browse the web or for other heavy use.
+
 Notes:
 
 - Requires an ESP32 on the ESP-IDF framework (5.1 or newer; the Arduino framework is not supported), at least one
-  entry in `networks` or an Ethernet connection, and a password for the access point.
+  entry in `networks`, an Ethernet connection or a modem, and a password for the access point.
 - The access point stays on, so `captive_portal` is rejected, and `ap_timeout` is how long a start that failed
   waits before it is tried again (it cannot be `0s`). With `dns_servers` the access point starts right away;
-  without them it starts once the upstream (router or Ethernet) is connected and its DNS servers are known, so
+  without them it starts once the upstream (router, Ethernet or modem) is connected and its DNS servers are known, so
   no client is ever handed the access point as a resolver. A network or an Ethernet connection with `manual_ip`
   must then set `dns1`.
 - WISP mode enlarges the Wi-Fi driver buffers and enables frame aggregation, the Wi-Fi half of
@@ -779,5 +786,6 @@ The lambda equivalent for this is `id(wifi_id).is_ap_active()`.
 - [WiFi Signal Sensor](/components/sensor/wifi_signal/)
 - [Network component](/components/network/)
 - [Ethernet Component](/components/ethernet/)
+- [Modem Component](/components/modem/)
 - [Native API](/components/api/)
 - <APIRef text="wifi_component.h" path="wifi/wifi_component.h" />
