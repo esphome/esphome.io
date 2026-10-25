@@ -23,11 +23,113 @@ audio_dac:
  - platform: es8388
 ```
 
+If you are recording from a microphone and the input level is too low for speech recognition, set
+`mic_gain`:
+
+```yaml
+# Example microphone configuration entry
+audio_dac:
+ - platform: es8388
+   mic_gain: 21DB
+```
+
+See [Microphone recording level](#microphone-recording-level) for details.
+
 ### Configuration variables
 
 - **address** (*Optional*, int): The I²C address of the driver. Defaults to `0x10`.
 - **i2c_id** (*Optional*): The ID of the [I²C bus](/components/i2c) the ES8388 is connected to.
+- **mic_gain** (*Optional*, enum): The ADC PGA gain applied to both channels at startup, in dB.
+  One of `0DB`, `3DB`, `6DB`, `9DB`, `12DB`, `15DB`, `18DB`, `21DB`, `24DB`. Defaults to `0DB`.
+  Set this if you record from a microphone and the input level is too low for speech
+  recognition. On some boards the default is too quiet to transcribe; see
+  [Microphone recording level](#microphone-recording-level).
 - All other options from [Audio DAC](/components/audio_dac#config-audio_dac).
+
+> [!NOTE]
+> The default is `0DB` for backwards compatibility: raising it would suddenly amplify every
+> existing configuration by up to 21 dB. The [ES8311](/components/audio_dac/es8311/) component,
+> by contrast, defaults to `42DB`.
+
+## Microphone recording level
+
+The ES8388 ADC PGA gain is set by register `0x09`, where bits 7:4 hold the left channel gain
+(`MicAmpL`) and bits 3:0 the right channel gain (`MicAmpR`) ([datasheet](http://www.everest-semi.com/pdf/ES8388%20DS.pdf),
+register 9). Each nibble is the gain in 3 dB steps, where `0111` is +21 dB. So `0x77` is
++21 dB on both channels and `0x00` is 0 dB on both channels.
+
+`mic_gain` selects this value. For example, `mic_gain: 21DB` writes `0x77`:
+
+```yaml
+audio_dac:
+  - platform: es8388
+    id: es8388_dac
+    mic_gain: 21DB
+```
+
+The configured value is reported in the device log at startup, so it can be verified on your own
+board without attaching to the I²C bus:
+
+```
+[C][es8388:154]: ES8388 Audio Codec:
+[C][es8388:155]:   Mic gain: 21 dB (ADC PGA gain: 0x77)
+```
+
+### Why this option exists
+
+The ES8388's ADC PGA gain defaults to 0 dB, and on some boards that is too quiet for speech
+recognition: raising it is necessary for the microphone to be usable. `mic_gain` exposes that gain
+directly. The `0DB` default is unchanged, so this option does nothing unless you set it.
+
+**One board on which the default was too low is an ESP32-A1S Audio Kit V2.2 (A618).** On that
+board, with the stock 0 dB setting, the wake word was detected but speech-to-text returned nothing
+usable: the recorded level was too low for the transcription service. Setting the gain to +21 dB
+(`mic_gain: 21DB`) made speech-to-text work.
+
+The observations behind that conclusion, taken on the ESP32-A1S board above, were:
+
+- Reading register `0x09` back returned `0x00` with the default, confirming 0 dB was applied.
+- With `mic_gain: 21DB` set, the same read-back returned `0x77`, and speech-to-text succeeded.
+- No recording levels in dBFS were captured, so the exact signal level was not measured; the
+  conclusion is based on speech-to-text succeeding or not.
+
+> [!NOTE]
+> This evidence comes from a single board, the ESP32-A1S Audio Kit V2.2 (A618). Whether the default
+> is too low on other ES8388 boards is not known. The default of `0DB` is therefore retained so no
+> existing configuration changes behaviour: set `mic_gain` only if your board actually needs it. If
+> you can test other ES8388 boards, please report what you find.
+
+If you are unsure what value your board needs, start from the default (`0DB`) and raise `mic_gain`
+until recording works. If you have an oscilloscope or a level meter, a level of around
+−20 dBFS to −12 dBFS for normal speech is a reasonable target.
+
+> [!NOTE]
+> `mic_gain` raises the input *level*, not the signal-to-noise ratio: it is an analog gain in front
+> of the ADC, so any noise already present at the microphone is amplified with the signal. It
+> helps where the problem is a recording level too low to transcribe, which is the case observed
+> above.
+
+> [!NOTE]
+> Adjusting `mic_gain` only changes the analog PGA in front of the ADC. Other microphone-level
+> settings such as [automatic gain control and the noise gate](#noise-gate-and-agc) are separate
+> and still apply.
+
+## Noise gate and AGC
+
+The ES8388 also has an automatic level control (ALC) block and a noise gate. These are separate
+from `mic_gain` and are configured by the component with fixed values based on the ES8388 User
+Guide's voice-recording recommendations:
+
+- Register `0x12` (`ADCCONTROL10`) = `0xE2` configures the ALC with a maximum gain of +23.5 dB.
+- Register `0x16` (`ADCCONTROL14`) = `0xC3` enables the noise gate at −40.5 dB with the
+  "mute ADC" option.
+
+These values are not configurable through this component and are not covered by the testing
+described above; the numbers come from the user guide, not from measurement. The ALC is intended
+to keep the recording level roughly constant, so it may interact with `mic_gain`. If
+speech-to-text accuracy is poor even with `mic_gain` set, these are a reasonable place to
+experiment — for example by disabling them (`0x12` = `0x00`, `0x16` = `0x00`) after startup.
+This is an untested suggestion, not a verified fix.
 
 ## Select
 
