@@ -69,6 +69,29 @@ Wi-Fi, Bluetooth Classic and BLE share the ESP32 radio. Streaming audio and scan
 increase connection times or packet loss. Test both the audio path and BLE reception with your own receiver and radio
 conditions before relying on the device as a Bluetooth proxy.
 
+## Logging and diagnostics
+
+A2DP connection and disconnection state changes use the `a2dp_source.connection` tag at `INFO` level. AVRCP negotiation
+and BLE scan coordination use `a2dp_source.avrcp` and `a2dp_source.coexistence` at `DEBUG` level; failures remain at
+`WARN` or `ERROR`. When the speaker media player begins sending audio through a configured `preconnect_speaker`,
+`speaker_media_player.stream` logs the complete source URL at `INFO` level. The URL can contain query parameters.
+
+With `logger.level: DEBUG`, the firmware continuously counts audio callbacks, PCM bytes and underruns, and tracks the
+maximum gap between callbacks. The runtime log level only controls which messages are shown; these counters continue
+updating even while `initial_level` or `logger.logs` sets the displayed level to `INFO`. A firmware built with
+`logger.level: INFO` omits the diagnostic calculations and cannot enable them by changing the runtime log level.
+
+```yaml
+logger:
+  level: DEBUG  # Include diagnostic calculations in the firmware.
+  initial_level: INFO
+  logs:
+    a2dp_source: INFO  # Filter output; diagnostic counters still update.
+    a2dp_source.avrcp: WARN
+    a2dp_source.coexistence: WARN
+    speaker_media_player.stream: INFO
+```
+
 ## See Also
 
 - [BLE Component](/components/esp32_ble/)
