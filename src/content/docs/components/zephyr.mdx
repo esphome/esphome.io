@@ -1026,9 +1026,9 @@ driven entirely by that data. A new variant is a new entry plus variant-specific
    variant:` — the schema validates against `cv.one_of(*VARIANTS, ...)`, which reads the
    registry, so no separate schema change is needed.
 3. **Add a `ZEPHYR_VARIANT_<NAME>` constant** in `zephyr/const.py`, matching `VARIANT_NAME`.
-4. **Wire up dispatch** in `zephyr/__init__.py`: add one `elif variant == ZEPHYR_VARIANT_<NAME>:`
-   branch in `_variant_config_schema` (which calls your module's `config_schema`) and one in
-   `to_code` (which calls your module's `to_code`).
+4. **No dispatch code is needed.** `zephyr/__init__.py` finds your module with
+   `get_variant_module(variant)` and calls its `config_schema` and `to_code`, and it runs the
+   `family` module's `to_code` (e.g. `variants/stm32_family.py`) before yours.
 5. **Check every component that already handles `platform: zephyr`**, not just the ones that
    seem obviously relevant. A new hardware variant can expose gaps in components you wouldn't
    guess at up front — internal temperature sensing and USB-based logging both needed real
