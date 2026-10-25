@@ -55,6 +55,27 @@ component uses the source's rate at device startup and does not change it during
 provide acoustic echo cancellation, noise suppression or wake word detection. To stream audio after processing, that
 processing stage must expose its own microphone source and be selected in `source`.
 
+## Logging
+
+The component uses the ESPHome [logger](/components/logger/) with the `microphone_http_stream` tag. Client connections
+and normal disconnections are logged at `INFO`. Failed stream requests, full buffers, incomplete audio frames,
+overlapping audio callbacks and stream timeouts are logged at `WARN`. ESPHome reports permanent setup failures at
+`ERROR` through its core component logging.
+Buffer peak and longest HTTP send time are logged at `DEBUG` when a client disconnects. The component collects these
+diagnostics only while its effective log level is `DEBUG` or more detailed.
+
+For routine operation, keep the component at `INFO` even if the global logger level is `DEBUG`:
+
+```yaml
+logger:
+  level: DEBUG
+  logs:
+    microphone_http_stream: INFO
+```
+
+Set `microphone_http_stream: DEBUG` when investigating stream performance. The global `logger.level` must also be
+`DEBUG` or more detailed for debug messages to be compiled into the firmware.
+
 ## Using a DLNA Server
 
 The component provides an HTTP audio source, but does not make the ESP32 a DLNA/UPnP MediaServer. Implementing the
