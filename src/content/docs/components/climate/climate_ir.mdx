@@ -275,6 +275,8 @@ climate:
   - `yac1fb9`
   - `yx1ff`
   - `yag`
+  - `yaw1f`: the `yag` byte layout with the frame timing and follow-up message of YAW1F remotes. Try it when a
+    unit with a YAW1F remote ignores `yag`.
 
 ```yaml
 # Example configuration entry for climate only
@@ -361,6 +363,24 @@ switch:
 
 > [!NOTE]
 > Quiet and Turbo mode cannot both be on at once, and either can only be turned on in Cool or Heat mode.
+
+### `hitachi_ac344`
+
+Fan modes `auto`, `quiet`, `low`, `medium` and `high`, and swing modes `off`, `vertical`, `horizontal` and `both`.
+
+The unit does not read the vertical swing setting from the frame; it toggles vertical swing when the frame carries
+the swing button, so ESPHome tracks the state it last sent or received and sends the button only on a change. When
+the unit misses a command the two drift apart. To bring them back in step, press the vertical swing button on the
+original remote once at the unit. With a [receiver](#ir-receiver_id) configured, point the remote at the receiver but
+away from the unit instead, and press the button until the two agree again.
+
+```yaml
+# Example configuration entry
+climate:
+  - platform: hitachi_ac344
+    name: "AC"
+    receiver_id: rcvr  # the remote_receiver from Using a Receiver
+```
 
 ### `islandaire`
 
