@@ -53,10 +53,12 @@ All options are listed per instance below. The helper libraries loaded automatic
   - An `http://` or `https://` URL pointing to a `.tflite` file, or to a JSON manifest that names it.
 - **tensor_arena_size** (*Optional*, bytes): The tensor arena size in bytes. Supports suffixed strings such
   as `"110KB"`, `"2MB"`, or raw bytes. If omitted, the size is auto-detected from the `.txt` report file or
-  defaults to 100KB.
+  defaults to 100KB. It is where the arena probe starts: the model is loaded with the smallest arena it fits
+  in, so the boot log reports this size, the size the load asked the allocator for after probing, and the
+  bytes the tensors actually occupy. A probe result above or below this size is logged as a warning.
 - **debug** (*Optional*, boolean): Enable debug logging and diagnostic features. Defaults to `false`. When
-  enabled, the `DEBUG_TFLITE_MICRO_HELPER` define is set, enabling CRC32 model verification, model
-  architecture inspection, tensor input/output analysis, and memory status reporting.
+  enabled, the `DEBUG_TFLITE_MICRO_HELPER` define is set, compiling in the loader diagnostics, and this
+  instance reports the model architecture, its input and output tensors, and the memory status.
 
 ### Image Model Configuration Variables
 
@@ -68,8 +70,10 @@ Most of these values are auto-detected from the `.txt` report file (see
   `"uint8"`.
 - **input_channels** (*Optional*, integer): Number of input channels (`1` for grayscale, `3` for RGB/BGR).
   Defaults to `3`.
-- **input_width** (*Optional*, integer): Input image width in pixels. Defaults to `32`.
-- **input_height** (*Optional*, integer): Input image height in pixels. Defaults to `20`.
+- **input_width** (*Optional*, integer): Input image width in pixels. The `.txt` report supplies it when the
+  model has one, and there is no fallback: a model that neither its report nor this option describes is
+  rejected while the configuration is validated.
+- **input_height** (*Optional*, integer): Input image height in pixels. Same rule as `input_width`.
 - **input_order** (*Optional*, string): Channel order for preprocessing. One of `"RGB"`, `"BGR"`, or `"GRAY"`.
   Defaults to `"RGB"`.
 - **output_processing** (*Optional*, string): Output post-processing strategy. One of:
