@@ -119,11 +119,12 @@ macOS hides BLE addresses and gives every device its own UUID instead. Use that 
 
 1. Just before asking the device to restart, ESPHome notes which devices are already in update mode.
 2. After the request, it accepts the bootloader only if exactly one new device in update mode appears, and the
-   running firmware has stopped advertising.
+   running firmware has stopped advertising. To check this, ESPHome runs a new short scan, because macOS reports a
+   device only once per scan.
 
-The upload stops with an error, and nothing is flashed, if two or more new devices in update mode appear, or if the
-device keeps advertising after a new one appeared (it then belongs to another board). Updating one board at a time
-avoids this.
+The upload stops with an error, and nothing is flashed, if the device rejects the request (for example because it is
+not paired), if two or more new devices in update mode appear, or if the device still advertises after a new one
+appeared (it then belongs to another board). Updating one board at a time avoids this.
 
 ## See Also
 
