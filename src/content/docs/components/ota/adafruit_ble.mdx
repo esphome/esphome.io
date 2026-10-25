@@ -74,7 +74,8 @@ ESPHome only accepts those two addresses, so another device that is in update mo
 listed in the error message instead.
 
 If the connection drops or the bootloader stops answering during the transfer, ESPHome tries again, up to three times
-in total. If the bootloader refuses the update, for example because of a CRC error or because the image is too large,
+in total. A bootloader that is still in the middle of an earlier, interrupted transfer refuses to start a new one;
+ESPHome resets it and tries once more. If the bootloader refuses the update, for example because of a CRC error or because the image is too large,
 ESPHome stops at once and the error names the step and the reason.
 
 > [!NOTE]
@@ -90,6 +91,11 @@ with the device before the first upload. On Linux, an upload from a computer tha
 "Make sure the device is paired."
 
 Without pairing, any nearby BLE device can restart the device into its bootloader, and the build logs a warning.
+
+The update service also works in [safe mode](/components/safe_mode/), so a device stuck in a boot loop can still be
+updated. In safe mode the `on_numeric_comparison_request` automation does not run, so the device rejects new pairing
+requests and only a computer that was paired before can start an update. Pair your computer while the device works
+normally.
 
 ## Recovery
 
