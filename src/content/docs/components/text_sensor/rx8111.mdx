@@ -52,6 +52,8 @@ baseline is not later published as a new capture.
 Retained latest records use a best-effort startup policy: POR, VLF, and XST must all be clear, and either EVF must
 be set or EVIN capture must already have been enabled. Otherwise the bytes become a baseline without publication,
 even if they decode as a valid date. The original startup evidence is kept across retries that pause capture.
+The first successful FLAG read is preserved even if a later control or extension read fails, so clearing flags
+between attempts does not change the original validity and event evidence.
 There is no persistent consumed marker: an acknowledged retained record may be recovered or replayed after a host
 reboot, and enabled capture does not prove that an event occurred. If capture was disabled and EVF cleared before
 reboot, an unread retained latest record cannot be distinguished from unused storage and is not recovered.
@@ -74,9 +76,12 @@ run. Fully staged records are published even if restoring capture fails, and a l
 During startup, retained records remain staged until configuration succeeds or the startup retry limit is reached.
 
 I²C failures set a warning and are retried by the existing event polling or bounded startup retry mechanism.
-Buffered records may be delivered again after a failed pointer clear. Runtime polling retries failed capture
-restoration; startup uses the bounded retry mechanism below. When no records have been published, the entity has
-no state.
+Buffered records may be delivered again after a failed pointer clear. Startup retains fully read buffered
+records before attempting the pointer clear and retries pending cleanup separately. A clear accepted by the RTC
+but reported as an I²C failure does not discard that host copy.
+If startup retries are exhausted without confirming cleanup, delivery still occurs and records may replay after
+a reboot if the RTC did not accept the clear. Runtime polling retries failed capture restoration; startup uses
+the bounded retry mechanism below. When no records have been published, the entity has no state.
 
 Startup configuration is attempted at most three times. On the final failure, any fully staged retained records
 are published once in their original storage format, oldest first for buffered records. This prevents records
