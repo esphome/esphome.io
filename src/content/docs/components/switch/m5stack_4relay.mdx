@@ -1,0 +1,56 @@
+---
+description: "Instructions for setting up the M5Stack 4-Relay Unit in ESPHome."
+title: "M5Stack 4-Relay Switch"
+---
+
+import Figure from '@components/Figure.astro';
+import APIRef from '@components/APIRef.astro';
+
+The `m5stack_4relay` component controls the four relays of the
+[M5Stack 4-Relay Unit](https://docs.m5stack.com/en/unit/4relay) over [I²C](/components/i2c/). Each relay switches
+up to 250 V AC or 28 V DC at 10 A, and the unit's LEDs follow the relays.
+
+<Figure
+  src="/images/m5stack_4relay.webp"
+  alt="M5Stack 4-Relay Unit"
+  caption="M5Stack 4-Relay Unit"
+  layout="constrained"
+  width={486}
+  height={521}
+/>
+
+```yaml
+# Example configuration entry
+m5stack_4relay:
+  id: relay_hub
+
+switch:
+  - platform: m5stack_4relay
+    name: "Relay 1"
+    channel: 1
+  - platform: m5stack_4relay
+    name: "Relay 2"
+    channel: 2
+```
+
+## Hub configuration variables
+
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
+- **address** (*Optional*, int): The I²C address of the unit. Defaults to `0x26`.
+- **i2c_id** (*Optional*, [ID](/guides/configuration-types#id)): The [I²C](/components/i2c/) bus to use. Required
+  with more than one bus.
+
+## Switch configuration variables
+
+- **channel** (**Required**, int): The relay to control, `1` to `4`.
+- **m5stack_4relay_id** (*Optional*, [ID](/guides/configuration-types#id)): The unit the relay belongs to. Required
+  with more than one unit.
+- **restore_mode** (*Optional*): Defaults to `DISABLED`. The unit keeps its relays while it stays powered, so after a
+  reboot of the ESP a switch shows the relay as it is instead of changing it. Set one of the other
+  [restore modes](/components/switch#config-switch) to drive the relay at boot.
+- All other options from [Switch](/components/switch#config-switch).
+
+## See Also
+
+- [Switch Component](/components/switch/)
+- <APIRef text="m5stack_4relay.h" path="m5stack_4relay/m5stack_4relay.h" />

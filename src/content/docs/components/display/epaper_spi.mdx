@@ -34,9 +34,10 @@ pins and dimensions specified.
 | JD79660                | Jadard       | [https://www.tdytech.com/en/](https://www.tdytech.com/en/) (B2B, see vendors instead) |
 | Spectra-E6             | Eink         | [https://www.eink.com/brand/detail/Spectra6](https://www.eink.com/brand/detail/Spectra6)       |
 | SSD1677                | Solomon      | [https://www.solomon-systech.com/product/ssd1677/](https://www.solomon-systech.com/product/ssd1677/) |
-| SSD1681                | Solomon      | [https://www.solomon-systech.com/product/ssd1681/](https://www.solomon-systech.com/product/ssd1681/) |
+| SSD1681                | Solomon      | [https://www.solomon-systech.com/product/ssd1681/](https://www.solomon-systech.com/product/ssd1681/) — 200x200 mono, supports partial refresh via `full_update_every` |
 | SSD1683                | Solomon      | [https://www.solomon-systech.com/product/ssd1683/](https://www.solomon-systech.com/product/ssd1683/) |
 | T133A01                | TianMa       | 13.3" 6-color e-paper controller IC with dual-CS SPI architecture          |
+| UC8151                 | UltraChip    | UC8151D 3-color (black/white/red) e-paper controller |
 | UC8179                 | UltraChip    | E-paper controller used by 800x480 7.5" panels (mono and 3-color variants) |
 | UC8279                 | UltraChip    | Mono e-paper controller, supports partial refresh via `full_update_every` |
 
@@ -47,13 +48,16 @@ the pins used to interface to the display to be specified.
 
 | Display name              | Manufacturer        | Product Description                                |
 |---------------------------|---------------------|----------------------------------------------------|
+| GooDisplay-GDEY0154D67-1.54 | Dalian Good Display | 1.54" mono e-paper (200x200, SSD1681) [https://www.good-display.com/product/388.html](https://www.good-display.com/product/388.html) |
 | GooDisplay-GDEY0213F51-2.13 | Dalian Good Display | [https://www.good-display.com/product/463.html](https://www.good-display.com/product/463.html) |
+| GooDisplay-GDEY029Z95-2.9 | Dalian Good Display | 2.9" 3-color e-paper (128x296, SSD1680) [https://www.good-display.com/product/527.html](https://www.good-display.com/product/527.html) |
 | GooDisplay-GDEY042T81-4.2 | Dalian Good Display | [https://www.good-display.com/product/386.html](https://www.good-display.com/product/386.html) |
 | Waveshare-1.54in-G        | Waveshare           | [https://www.waveshare.com/1.54inch-e-paper-g.htm](https://www.waveshare.com/1.54inch-e-paper-g.htm) |
 | Waveshare-1.54in-v2       | Waveshare           | 1.54" V2 mono e-paper (200x200, SSD1681) [https://www.waveshare.com/1.54inch-e-paper-module.htm](https://www.waveshare.com/1.54inch-e-paper-module.htm) |
 | Waveshare-2.13in-G        | Waveshare           | 2.13" 4-color e-paper (124x250 padded from 122, JD79660), current hardware/init revision. [https://www.waveshare.com/product/raspberry-pi/displays/e-paper/2.13inch-e-paper-hat-g.htm](https://www.waveshare.com/product/raspberry-pi/displays/e-paper/2.13inch-e-paper-hat-g.htm) |
 | Waveshare-2.13in-G-V1     | Waveshare           | Older hardware/init revision of the same panel (128x250 padded from 122). Untested. [https://www.waveshare.com/product/raspberry-pi/displays/e-paper/2.13inch-e-paper-hat-g.htm](https://www.waveshare.com/product/raspberry-pi/displays/e-paper/2.13inch-e-paper-hat-g.htm) |
 | Waveshare-2.13in-v3       | Waveshare           | [https://www.waveshare.com/pico-epaper-2.13.htm](https://www.waveshare.com/pico-epaper-2.13.htm)   |
+| Waveshare-2.13in-bv3      | Waveshare           | 2.13" B V3 3-color e-paper (212x104, UC8151D), also used on the Pico-ePaper-2.13-B. Later boards use the V4 panel; see `Waveshare-2.13in-bv4`. [https://www.waveshare.com/pico-epaper-2.13-b.htm](https://www.waveshare.com/pico-epaper-2.13-b.htm) |
 | Waveshare-2.13in-bv4      | Waveshare           | 2.13" 3-color e-paper (250x122, SSD1683) [https://www.waveshare.com/product/displays/e-paper/epaper-3/2.13inch-e-paper-b.htm](https://www.waveshare.com/product/displays/e-paper/epaper-3/2.13inch-e-paper-b.htm) |
 | Waveshare-2.66in-b        | Waveshare           | [https://www.waveshare.com/2.66inch-e-paper-module-b.htm](https://www.waveshare.com/2.66inch-e-paper-module-b.htm) |
 | Waveshare-2.9in-v2        | Waveshare           | [https://www.waveshare.com/2.9inch-e-paper-module.htm](https://www.waveshare.com/2.9inch-e-paper-module.htm) — 2.9" V2 mono (128x296, SSD1680), partial refresh via `full_update_every` |
@@ -94,14 +98,15 @@ but can be overridden if needed.
 - **cs_pin** (**Required**, [Pin Schema](/guides/configuration-types#pin-schema)): The CS pin. Predefined for integrated boards.
 - **cs1_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The secondary CS pin for dual-CS displays (e.g. T133A01). Predefined for integrated boards that require it.
 - **dc_pin** (**Required**, [Pin Schema](/guides/configuration-types#pin-schema)): The DC pin. Predefined for integrated boards.
-- **busy_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The BUSY pin, if used.
+- **busy_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The BUSY pin, if used. Required for
+  `GooDisplay-GDEY029Z95-2.9`.
 
   > [!NOTE]
   > Some displays use inverted busy pin polarity (LOW = busy, HIGH = idle). For these models, set `inverted: true`
-  > on the busy pin. This applies to: `Waveshare-1.54in-G`, `Waveshare-2.13in-G`, `Waveshare-2.13in-G-V1`,
-  > `Waveshare-7.5in-H`, `Waveshare-7.5in-V2`, `inkplate6color`.
+  > on the busy pin. This applies to: `UC8151`, `Waveshare-1.54in-G`, `Waveshare-2.13in-bv3`, `Waveshare-2.13in-G`,
+  > `Waveshare-2.13in-G-V1`, `Waveshare-7.5in-H`, `Waveshare-7.5in-V2`, `inkplate6color`.
 
-- **reset_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The RESET pin, if used.
+- **reset_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The RESET pin, if used. Required for the SSD1681-based models (`SSD1681`, `Waveshare-1.54in-v2`, `GooDisplay-GDEY0154D67-1.54`), whose panels only wake from deep sleep on a hardware reset, and for `GooDisplay-GDEY029Z95-2.9`.
   Make sure you pull this pin high (by connecting it to 3.3V with a resistor) if not connected to a GPIO pin.
 - **enable_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): An optional pin to enable the
   display, if required. A list of pins can be provided for displays that require multiple enable pins.
@@ -188,6 +193,36 @@ display:
     full_update_every: 30
     lambda: |-
       it.filled_circle(it.get_width() / 2, it.get_height() / 2, 50, Color::BLACK);
+```
+
+### Partial refresh example (1.54" SSD1681 panels)
+
+The 200x200 panels based on the SSD1681 (`Waveshare-1.54in-v2`, `GooDisplay-GDEY0154D67-1.54`, or `SSD1681` for
+another panel of that size) support partial refresh. Set `full_update_every` greater than `1` to enable it: only the
+pixels that changed since the previous update are driven, so a partial refresh is quick and does not flash the
+panel. The full refresh every `full_update_every` updates clears any residue.
+
+The panel is put into deep sleep after every update and only a hardware reset wakes it, so `reset_pin` is required.
+
+> [!NOTE]
+> Partial refresh relies on a setting the panel maker stores in the controller (RAM ping-pong), which both named
+> panels have. If the generic `SSD1681` model gives garbled partial updates on another panel, that panel lacks it;
+> leave `full_update_every` at `1`.
+
+This example assumes a [font](/components/font/) with id `my_font` and a [time source](/components/time/) with id `my_time`.
+
+```yaml
+display:
+  - platform: epaper_spi
+    model: Waveshare-1.54in-v2
+    cs_pin: GPIOXX
+    dc_pin: GPIOXX
+    reset_pin: GPIOXX
+    busy_pin: GPIOXX
+    update_interval: 60s
+    full_update_every: 20
+    lambda: |-
+      it.strftime(0, 0, id(my_font), Color::BLACK, "%H:%M", id(my_time).now());
 ```
 
 ### Four-Level Grayscale (reTerminal Sticky)
