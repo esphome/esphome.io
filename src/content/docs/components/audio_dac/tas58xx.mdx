@@ -54,10 +54,11 @@ audio_dac:
   - `mono`: Left and right mixed (each at -6 dB) to both outputs.
   - `left`: Left input to both outputs.
   - `right`: Right input to both outputs.
-- **modulation** (*Optional*, enum): The modulation scheme of the output stage, which affects its efficiency.
-  Defaults to `bd_mode`.
-  - `bd_mode`: BD modulation, each output switches between 0 V and the supply voltage.
-  - `1spw_mode`: 1SPW modulation, higher efficiency at the cost of slightly higher distortion.
+- **modulation** (*Optional*, enum): The modulation scheme of the output stage. Defaults to `bd_mode`.
+  - `bd_mode`: BD modulation, lower distortion, lower efficiency.
+  - `1spw_mode`: 1SPW modulation, higher efficiency and less heat at the cost of slightly higher distortion. Use it
+    at higher supply voltages, where the amplifier cannot sustain full power without cooling (a heatsink, a fan or
+    both).
 - **volume_min_db** (*Optional*, dB): The digital volume that maps to the minimum volume (0%). Must be less than
   `volume_max_db`. Range: `-103dB` to `24dB`. Defaults to `-103dB`.
 - **volume_max_db** (*Optional*, dB): The digital volume that maps to the maximum volume (100%). Must be greater than
@@ -69,13 +70,6 @@ audio_dac:
 - **i2c_id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the [I²C bus](/components/i2c/) the
   amplifier is connected to.
 - All other options from [Audio DAC](/components/audio_dac/#config-audio_dac).
-
-Consider changing modulation from default `bd_mode` to `1spw_mode` for supply voltages above 12 V.
-
-> [!TIP]
-> With a supply of 12 V or less, there is no reason to change `modulation` from `bd_mode`. At higher supply voltages,
-> the amplifier cannot sustain full power without cooling (a heatsink, a fan or both), and the more efficient
-> `1spw_mode` reduces the heat.
 
 The volume is mapped linearly in dB between `volume_min_db` and `volume_max_db`, in `0.5dB` steps. A volume of 0%
 is not silent unless `volume_min_db` is `-103dB`; use the [Audio DAC](/components/audio_dac/#automations-audio_dac)
