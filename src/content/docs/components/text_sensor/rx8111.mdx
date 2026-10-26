@@ -59,9 +59,12 @@ reboot, an unread retained latest record cannot be distinguished from unused sto
 In buffered modes, the RAM pointer is cleared before capture resumes and records are published oldest first.
 The entity state holds the last valid record; use `on_value` to process each record. Records arriving faster than
 polling can be lost once storage is full, depending on the selected mode. Capture is briefly paused while records
-are read and the pointer is cleared. Latest storage is read with capture paused on every poll, even when EVF is clear,
-so acknowledging EVF cannot hide an unread record. Events during a pause are not captured. Increasing the poll
-interval reduces these pauses but increases the chance that a newer record replaces an unread one.
+are read and the pointer is cleared. In latest mode, each poll first compares storage with the previous record
+without pausing capture, even when EVF is clear. Unchanged polls do not write capture-control registers. If bytes
+differ, capture is paused and storage is read again; only this paused read can be published. A potentially torn
+initial read can cause an unnecessary pause, but is never published directly. Events during a pause are not
+captured. Increasing the poll interval reduces opportunities for pauses but increases the chance that a newer
+record replaces an unread one. Acknowledging EVF cannot hide a changed record.
 
 Publication does **not** clear EVF or release `/INT`. Use `rx8111.clear_event_flag` explicitly after handling an
 event if acknowledgement is needed. In `latest` mode, unchanged bytes are not published again, even after EVF is
