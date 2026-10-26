@@ -194,9 +194,85 @@ Test Setting:
 
 - **test_pattern** (*Optional*, boolean): For tests purposes, it's possible to replace picture get from sensor by a test color pattern. Defaults to `false`.
 
+Window Setting:
+
+- **window** (*Optional*): Read out only part of the sensor at startup; see
+  [Reading Out a Window](#reading-out-a-window). Without it the whole sensor is read out.
+
+  - **offset_x** (**Required**, int): Horizontal offset of the window in pixels, `0` or more.
+  - **offset_y** (**Required**, int): Vertical offset of the window in pixels, `0` or more.
+  - **width** (**Required**, int): Width of the window in pixels, `1` or more.
+  - **height** (**Required**, int): Height of the window in pixels, `1` or more.
+
 > [!NOTE]
 > Camera uses PWM timer #1. If you need PWM (via the `ledc` platform) you need to manually specify
 > a channel there (with the `channel: 2`  parameter)
+
+## Reading Out a Window
+
+A window restricts the readout to a rectangle of the picture, so the camera works as a digital zoom. It is measured
+from the top left corner of the published frame, so the same window asks for the same part of the picture whatever
+frame size is in use; a window that reaches past the frame is clamped to it.
+
+```yaml
+esp32_camera:
+  # ...
+  window:
+    offset_x: 100
+    offset_y: 200
+    width: 320
+    height: 240
+```
+
+How a window maps onto the published frame depends on the sensor:
+
+| Sensor             | Published frame           | Notes                                    |
+| ------------------ | ------------------------- | ---------------------------------------- |
+| OV2640             | The size of the window    | JPEG output only, rounded to 16x8 blocks |
+| OV3660, OV5640     | The configured frame size | Scaled to the frame, so it also zooms in |
+| SC101IOT, SC030IOT | The configured frame size | `width` and `height` must be the frame   |
+
+On the SC101IOT and SC030IOT the offsets are counted in pixels of the whole sensor readout, 1280x720 and 640x480,
+and a window of another size is rejected. Other sensors cannot read out a window: setting one fails, and a `window` in
+the configuration is skipped with a warning at startup.
+
+A new window replaces the previous one and never nests inside it. Changing the frame size clears the window, so set it
+again afterwards. If a window cannot be applied, the previous one stays in place.
+
+> [!TIP]
+> The community [ESP32 Camera ROI Tool](https://nliaudat.github.io/esphome_ai_component/roi.html) picks `offset_x`,
+> `offset_y`, `width` and `height` visually and snaps them to the alignment the sensor needs.
+
+### `esp32_camera.set_window` Action
+
+Reads out a window at runtime, with the same options as `window` above. Each value can be a lambda.
+
+```yaml
+on_...:
+  then:
+    - esp32_camera.set_window:
+        id: my_camera
+        offset_x: 300
+        offset_y: 100
+        width: 320
+        height: 240
+```
+
+- **id** (**Required**, [ID](/guides/configuration-types/#id)): The camera.
+- **offset_x**, **offset_y**, **width**, **height** (**Required**, [templatable](/automations/templates/), int): The
+  window, as for the `window` option.
+
+### `esp32_camera.reset_window` Action
+
+Reads out the whole sensor again.
+
+```yaml
+on_...:
+  then:
+    - esp32_camera.reset_window: my_camera
+```
+
+- **id** (**Required**, [ID](/guides/configuration-types/#id)): The camera.
 
 ## Configuration examples
 
@@ -618,5 +694,4 @@ esp32_camera:
 
 ## See Also
 
-- [ESP32 Camera Window Component](/components/esp32_camera_window/)
 - <APIRef text="esp32_camera.h" path="esp32_camera/esp32_camera.h" />
