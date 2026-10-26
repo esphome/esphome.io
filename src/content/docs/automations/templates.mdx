@@ -92,6 +92,62 @@ on_press:
 When you see the label "templatable" in the documentation for a given action, it can be templated as in this example,
 using the lambda syntax as described/shown above.
 
+### Simplified Lambda Syntax
+
+> [!NOTE]
+> This is an incubating feature and may change in the future. If you have any feedback on this, please let us know in the ESPHome Discord server.
+
+For the common case of a lambda that only returns the state of an entity, or a value passed to the automation,
+you can use a simplified syntax that avoids writing C++ code. It can be used in any option that accepts a
+template value (a value that may be either a constant or a lambda). Options that only accept a lambda, such as the
+`lambda` action, do not support it.
+
+Use `entity_state` to return the state of an entity. In the example below, the red and green values generate
+identical code.
+
+```yaml
+on_press:
+  then:
+    - light.turn_on:
+        id: some_light_id
+
+        # Simpler syntax - identical to the lambda below
+        red:
+          entity_state: brightness_sensor
+
+        # Regular C++ lambda syntax
+        green: !lambda return id(brightness_sensor).state;
+
+        blue: 1.0
+```
+
+`entity_state` can refer to a sensor, binary sensor, text sensor, number, switch, fan, text, lock or media player.
+Any other ID is rejected when the configuration is validated.
+
+Use `argument` to return a value passed to the automation (for example, `x` as the value in an `on_value` trigger):
+
+```yaml
+on_value:
+  then:
+    - light.turn_on:
+        id: some_light_id
+
+        # Use the argument `x` from the on_value trigger directly
+        red:
+          argument: x
+
+        blue: 1.0
+```
+
+The name given to `argument` must be one of the values passed to that automation, or an error is reported when the
+code is generated. Where the type the option expects is known, a value of an incompatible type (for example, a text
+sensor state used for a number) is also reported at that point. Otherwise a type mismatch is reported when the
+firmware is compiled, as it would be for a regular lambda.
+
+> [!NOTE]
+> Inside an option that accepts a template value, a mapping whose only key is `entity_state` or `argument` is always
+> read as this shorthand.
+
 ## All Lambda Calls
 
 - [Sensor](/components/sensor#lambda-calls)
