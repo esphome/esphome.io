@@ -284,11 +284,11 @@ api:
 ```
 
 Each call sends the captured lines with the time since boot in front of each, such as `@64ms [W][wifi:123]: ...`, so
-listeners that are still attached see the lines again on the next call. A line is skipped when it no longer passes
-the log level in force at replay time, for example after `logger.set_level` lowered it. Capture stops at the first
-replay. Lines that did not fit are counted in the replay summary, which is logged as a warning when any were dropped;
-raise `boot_log_buffer_size` if that happens. This is the way to see why a device shows an error status before the
-network comes up on boards without a usable serial port.
+listeners that are still attached see the lines again on the next call. A line is skipped when it no longer passes the
+log level in force at replay time, for example after `logger.set_level` set a more severe level. Capture stops at the
+first replay. Lines that did not fit are counted in the replay summary, which is logged as a warning when any were
+dropped; raise `boot_log_buffer_size` if that happens. This is the way to see why a device shows an error status before
+the network comes up on boards without a usable serial port.
 
 ## Logger Automation
 
