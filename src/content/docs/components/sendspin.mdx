@@ -15,7 +15,8 @@ reachable between the device and the server.
 On its own, the hub does not expose any user-facing entities. Once a Sendspin
 server is present on the network, it will connect to the device and begin
 sending group state updates, but audio playback, control, and metadata require
-the corresponding child components to be configured as well. The
+the corresponding child components to be configured as well. The hub can also
+stream a microphone to the server; see [Source](#source). The
 [Sendspin Switch](/components/switch/sendspin/) can stop the client so no server
 connects.
 
@@ -64,6 +65,19 @@ sendspin:
   it. Set to `false` once a server is paired so only paired servers can play. Defaults to `true`. To change it at
   runtime, use a [Sendspin Switch](/components/switch/sendspin/) of type `unpaired_access` instead; the two cannot
   be combined.
+- **source** (*Optional*, mapping): Streams a microphone to the Sendspin server. See [Source](#source).
+
+  - **microphone** (**Required**, [Microphone Source Configuration](/components/microphone#config-microphone-source)):
+    The microphone to stream. The source's `bits_per_sample` (default `16`) must be `16`, `24` or `32`, and at most
+    two channels can be selected. The microphone must have a fixed sample rate, which the stream uses as is. Audio is
+    sent as uncompressed PCM.
+  - **task_stack_in_psram** (*Optional*, boolean): Place the source task's stack in PSRAM to reduce internal RAM
+    usage. Only use this if the device runs out of internal memory. Requires the [PSRAM](/components/psram/)
+    component. Defaults to `false`.
+  - **on_streaming_started** (*Optional*, [Automation](/automations/)): An automation to perform when the server
+    starts the stream.
+  - **on_streaming_stopped** (*Optional*, [Automation](/automations/)): An automation to perform when the stream
+    stops.
 
 ## Pairing
 
@@ -104,6 +118,23 @@ While `unpaired_access` is `true`, any server on the network may play on the dev
 > With `unpaired_access: false`, make sure the device offers a [static](#static-pairing-code) or
 > [dynamic](#dynamic-pairing-code) pairing code. Otherwise no new server can pair, so only servers that already
 > paired can play.
+
+## Source
+
+With `source` configured, the device can stream a microphone to the Sendspin server, for example to share a line
+input or a room microphone. The server decides when the stream runs. The device starts the microphone when the
+server opens the stream and stops it when the stream closes. `on_streaming_started` and `on_streaming_stopped` run at
+those moments.
+
+Each chunk carries the time its audio was captured, so the server can line it up with other audio.
+
+The audio is sent as uncompressed PCM, which needs a stable network connection: 256 kbit/s for 16 kHz mono 16-bit
+audio, and about 1.5 Mbit/s for 48 kHz stereo. While sending stalls, the device keeps about half a second of audio
+in a buffer, placed in [PSRAM](/components/psram/) when available. If a stall lasts longer, the delayed audio is
+dropped and the stream continues from live audio.
+
+To tell the server whether the input has a signal, for example when a line input is plugged in, use the
+[`sendspin.source.set_signal`](#sendspin-source-set_signal-action) action.
 
 ## Automations
 
@@ -162,6 +193,37 @@ on_...:
   - sendspin.cancel_pairing_window:
 ```
 
+### `sendspin.source.set_signal` Action
+
+This [action](/automations/actions/#all-actions) tells the server whether the [source](#source) input has a signal.
+Using this action anywhere in the configuration tells the server that the device can report whether the input has a
+signal. The device reports nothing until the action first runs. Requires a `source` block.
+
+```yaml
+on_...:
+  - sendspin.source.set_signal:
+      present: true
+```
+
+- **present** (**Required**, boolean, [templatable](/automations/templates/)): `true` when the input has a signal,
+  `false` when it does not.
+
+## Conditions
+
+### `sendspin.source.is_streaming` Condition
+
+This [condition](/automations/actions/#all-conditions) checks whether the [source](#source) is streaming to the
+server. Requires a `source` block.
+
+```yaml
+on_...:
+  - if:
+      condition:
+        sendspin.source.is_streaming:
+      then:
+        - logger.log: "Streaming to the server"
+```
+
 ## Examples
 
 Pair with a static code that is confirmed with a button press:
@@ -178,6 +240,29 @@ binary_sensor:
     name: "Pair Button"
     on_press:
       - sendspin.confirm_pairing_window:
+```
+
+Stream a stereo line input to the server, and report whether a cable is plugged in. `line_in` is a
+[microphone](/components/microphone/) with a fixed sample rate:
+
+```yaml
+sendspin:
+  source:
+    microphone:
+      microphone: line_in
+      channels: [0, 1]
+
+binary_sensor:
+  - platform: gpio
+    pin: GPIOXX
+    name: "Line In Plugged"
+    trigger_on_initial_state: true
+    on_press:
+      - sendspin.source.set_signal:
+          present: true
+    on_release:
+      - sendspin.source.set_signal:
+          present: false
 ```
 
 Pair with a dynamic code that is shown as a text sensor, with a button for when attempts need confirming:
