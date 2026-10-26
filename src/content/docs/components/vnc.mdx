@@ -41,6 +41,9 @@ is larger, only its top-left part is shown.
 - **max_update_delay** (_Optional_, [Time](/guides/configuration-types/#time)): The longest a change waits for
   the picture to stop changing. If the picture never stops changing, for example because of a moving background,
   the display refreshes about this often. Defaults to `1s`. On e-paper, a few seconds often looks better.
+- **pixel_format** (_Optional_, string): The colour format to ask the server for. `rgb565` uses 2 bytes per
+  pixel and shows all grey levels of a 16-level e-paper panel. `rgb332` uses half the data but shows only about
+  8 grey levels. `auto` uses `rgb332` on black and white displays and `rgb565` on all others. Defaults to `auto`.
 - **on_connect** (_Optional_, [Automation](/automations/)): An automation to run when the client has connected to
   the server, before the first picture arrives.
 - **on_disconnect** (_Optional_, [Automation](/automations/)): An automation to run when the connection is lost.
@@ -66,8 +69,11 @@ A display cannot be shared with [LVGL](/components/lvgl/) or with a second `vnc`
 
 The client asks the server for changes, draws them into the display's memory as they arrive, and refreshes the
 display once the picture has stopped changing for `update_delay`. On e-paper this keeps the number of refreshes
-low, which means less flashing. While an e-paper panel refreshes, the client waits before asking for the next
-change.
+low, which means less flashing.
+
+- Hextile tiles that the server sends again without changes are skipped, so they do not cause a refresh. This
+  works only for tiles that line up with a 16x16 grid. Everything else the server sends is always drawn.
+- While an e-paper panel refreshes, the client waits before asking for the next change.
 
 On e-paper, choose content that changes rarely. Clocks with seconds, blinking text cursors, spinners and moving
 backgrounds keep the panel refreshing. The Home Assistant login page has a moving background, so log in, or use
@@ -78,8 +84,8 @@ For the IT8951, the `GL16` waveform flashes much less than the default `GC16`, w
 
 ## Server Setup
 
-The client supports the VNC protocol versions 3.3, 3.7 and 3.8, and the Raw encoding. It works with servers
-that need no password.
+The client supports the VNC protocol versions 3.3, 3.7 and 3.8, and the encodings Raw and Hextile. It works
+with servers that need no password.
 
 - **VNC Web Browser add-on for Home Assistant** (TightVNC): set the display `resolution` to the size of the
   panel, for example `540x960` for an M5Paper in portrait, and keep the colour depth at `16`. The add-on
@@ -88,6 +94,23 @@ that need no password.
 - **TigerVNC**: `Xvnc :1 -geometry 540x960 -depth 16 -SecurityTypes None`.
 - **x11vnc**: run it against an X server of the right size, for example `Xvfb :1 -screen 0 540x960x16`, with
   `-nopw`.
+
+## Actions
+
+### `vnc.refresh` Action
+
+Asks the server for the whole screen again and redraws all of it. The display then refreshes in its usual
+mode, so on e-paper this does not always clear ghosting. On E-Paper SPI, run
+[`epaper_spi.full_update_next`](/components/display/epaper_spi/#epaper_spi-full_update_next-action) first to
+make that refresh a full one.
+
+```yaml
+on_...:
+  - vnc.refresh:
+```
+
+- **id** (_Optional_, [ID](/guides/configuration-types/#id)): The `vnc` client to refresh. Only needed if there
+  is more than one.
 
 ## Conditions
 
@@ -119,7 +142,7 @@ binary_sensor:
 
 ## M5Paper Example
 
-A dashboard in portrait.
+A dashboard in portrait, with the rocker button to fetch the whole screen again.
 
 ```yaml
 esp32:
@@ -163,6 +186,15 @@ vnc:
   host: 192.168.1.20
   port: 5901
   max_update_delay: 5s
+
+binary_sensor:
+  - platform: gpio
+    name: Rocker push
+    pin:
+      number: GPIO38
+      inverted: true
+    on_press:
+      - vnc.refresh:
 ```
 
 ## Troubleshooting
@@ -172,7 +204,7 @@ vnc:
 - **"The server requires a password" or "No supported security type":** turn off authentication on the
   server.
 - Set the [logger](/components/logger/) level to `DEBUG` to see a line for every change the server sends, with
-  its size and how long it took.
+  its size, how long it took, and how many tiles had to be drawn.
 
 ## See Also
 
