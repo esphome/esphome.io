@@ -89,6 +89,7 @@ zephyr:
 | Nordic | `nrf52` | nRF52840 (Cortex-M4) | [`adafruit_feather_nrf52840`](https://docs.zephyrproject.org/latest/boards/adafruit/feather_nrf52840/doc/index.html) | nRF Connect SDK (NCS) | BLE, Thread (via `openthread:`), Zigbee (via `zigbee:`) |
 | Nordic | `nrf54l15` | nRF54L15 (Cortex-M33) | [`nrf54l15dk`](https://docs.zephyrproject.org/latest/boards/nordic/nrf54l15dk/doc/index.html) | nRF Connect SDK (NCS) | BLE, Thread (via `openthread:`), Zigbee (via `zigbee:`) |
 | Nordic | `nrf54lm20a` | nRF54LM20A (Cortex-M33) | [`nrf54lm20dk`](https://docs.zephyrproject.org/latest/boards/nordic/nrf54lm20dk/doc/index.html) | nRF Connect SDK (NCS) | BLE, Thread (via `openthread:`), Zigbee (via `zigbee:`) |
+| NXP | `mcxn236` | NXP MCX N236 (Cortex-M33) | [`frdm_mcxn236`](https://docs.zephyrproject.org/latest/boards/nxp/frdm_mcxn236/doc/index.html) | mainline Zephyr | No wireless |
 | Raspberry Pi | `rp2040` | Raspberry Pi RP2040 (Cortex-M0+) | [`rpi_pico`](https://docs.zephyrproject.org/latest/boards/raspberrypi/rpi_pico/doc/index.html) | mainline Zephyr | No wireless |
 | Raspberry Pi | `rp2350` | Raspberry Pi RP2350 (Cortex-M33, dual-core) | [`rpi_pico2`](https://docs.zephyrproject.org/latest/boards/raspberrypi/rpi_pico2/doc/index.html) | mainline Zephyr | No wireless |
 | Renesas | `ra4m1` | Renesas RA4M1 (Cortex-M4) | [`ek_ra4m1`](https://docs.zephyrproject.org/latest/boards/renesas/ek_ra4m1/doc/index.html) | mainline Zephyr | No wireless |
@@ -149,6 +150,36 @@ are not available; Wi-Fi uses the onboard nRF7002. A Wi-Fi build is too large fo
 slot and needs `single_slot: true` plus a partition overlay (see the example configs). `wifi: ap:` is
 not supported yet. With `framework: type: zephyr` an insecure software random number generator is used,
 and a warning is logged; NCS, the default, uses the chip's hardware one.
+
+### NXP
+
+`watchdog_timeout` on `mcxn236` is `0` or `5s`–`60s`.
+
+The FRDM-MCXN236's devicetree places `slot1_partition` so that it runs 8K into `storage_partition`, and the build
+stops with a flash layout error. Until Zephyr fixes the board, move `slot1_partition` in both the app and MCUboot
+images:
+
+```yaml
+zephyr:
+  variant: mcxn236
+  overlays:
+    app: |
+      &slot1_partition { reg = <0x82000 DT_SIZE_K(440)>; };
+    mcuboot: |
+      &slot1_partition { reg = <0x82000 DT_SIZE_K(440)>; };
+```
+
+MCUboot is the default bootloader and is needed to boot the default board. MCUboot can only run in upgrade-only
+mode on this chip, so there is no swap method and no OTA.
+
+The board leaves GPIO port 5 disabled. To use `P5_x` pins, enable it with an overlay:
+
+```yaml
+zephyr:
+  overlays:
+    app: |
+      &gpio5 { status = "okay"; };
+```
 
 ### Raspberry Pi
 
@@ -276,6 +307,25 @@ Both keep the vendor bootloader, so there is no MCUboot and no OTA. The touch th
 `nrf54l15` and `nrf54lm20a` default to MCUboot and also accept `advanced: bootloader: none`.
 `nrf5340` always uses MCUboot.
 
+### NXP Serial Load Process
+
+The FRDM-MCXN236 has two USB ports. The **MCU-Link** port powers the board, flashes it through the on-board
+MCU-Link debug probe, and carries the console UART, so logs appear on its serial port (`/dev/ttyACM0` on Linux).
+The **MCU USB** port connects to the chip's own USB controller and is only used with `logger: hardware_uart: USB_CDC`
+or [`usb_cdc_acm`](/components/usb_cdc_acm/).
+
+The board's default flash runner is NXP's LinkServer, which must be installed separately. Instead, pyOCD, which
+ships with the Zephyr tools, works with the MCU-Link's factory firmware. Install the chip's support pack once with
+`pyocd pack install mcxn236`, and select the runner:
+
+```yaml
+zephyr:
+  advanced:
+    runner: pyocd
+```
+
+Then flash with `esphome run <config-file> --device /dev/ttyACM0`.
+
 ### Raspberry Pi Serial Load Process
 
 `rp2040`/`rp2350` have a ROM bootloader, `BOOTSEL`, that flashes the chip directly — MCUboot is
@@ -354,6 +404,8 @@ On variants with lettered GPIO ports, the vendor's own notation is also accepted
 On Nordic variants (`nrf52`, `nrf5340`, `nrf54l15`, `nrf54lm20a`), Nordic's own `P<port>.<pin>` notation is
 accepted the same way — `P0.02`, `P1.05`, and so on. This is rejected on variants that don't use
 Nordic's port-banked notation.
+
+On `mcxn236`, NXP's own `P<port>_<pin>` notation is accepted the same way — `P4_18`, `P1_16`, and so on.
 
 ## `board_source`
 
