@@ -1,0 +1,174 @@
+---
+title: "CANopen Client"
+description: "Read and write CANopen objects, send NMT commands, and receive heartbeat and emergency messages."
+---
+
+The `canopen` component reads and writes object dictionary entries on remote CANopen nodes using Service Data Objects
+(SDOs). It requires an existing [CAN bus](/components/canbus/) with a matching bitrate.
+
+This component implements an SDO client, not a CANopen device server or a CiA 402 motor controller.
+It supports expedited transfers with explicit sizes of one, two, or four bytes. Segmented transfers, block transfers,
+and PDOs are not implemented. NMT commands, heartbeat reception, and emergency (EMCY) reception use the default CAN IDs.
+
+```yaml
+canopen:
+
+sensor:
+  - platform: canopen
+    name: "Drive Position"
+    node_id: 32
+    index: 0x6064
+    value_type: INT32
+```
+
+## Hub Configuration Variables
+
+- **id** (*Optional*, ID): The hub's ID. Required when explicitly referring to this hub.
+- **canbus_id** (*Optional*, ID): The CAN bus to use. Required if more than one CAN bus is configured.
+- **response_timeout** (*Optional*, Time): Time allowed for a response after sending a request. Defaults to `500ms`.
+  The permitted range is `1ms` to `60s`.
+
+Configure one CANopen hub per physical bus. It serves multiple remote node IDs and processes requests in order,
+with one request awaiting a response at a time. It stores up to 16 requests, including the active request.
+When the queue is full, new requests are rejected and a warning is logged. Sensor polls are not duplicated while
+that sensor already has a pending request.
+
+Do not use another SDO client on the same default SDO channels while this hub is active. CANopen SDO replies have no
+transaction identifier: a delayed reply to a timed-out request for the same object cannot be distinguished from a
+reply to a later request. Choose a timeout that accommodates your device and bus load.
+
+The CAN bus's `can_id` is not used as the target node ID. This component uses the default SDO request identifiers
+`0x600 + node_id` and response identifiers `0x580 + node_id` with standard 11-bit CAN frames.
+
+## Sensor Configuration Variables
+
+- **canopen_id** (*Optional*, ID): The CANopen hub to use. Required if more than one hub is configured.
+- **node_id** (**Required**, integer): The remote node's ID, from 1 to 127.
+- **index** (**Required**, integer): The 16-bit object dictionary index, for example `0x6064`.
+- **subindex** (*Optional*, integer): The 8-bit subindex. Defaults to `0`.
+- **value_type** (**Required**, string): One of `UINT8`, `INT8`, `UINT16`, `INT16`, `UINT32`, `INT32`, or `FLOAT32`.
+  This must match the object's documented type and response size.
+- **update_interval** (*Optional*, Time): The polling interval. Defaults to `60s`.
+- All other options from [Sensor](/components/sensor/).
+
+Values use CANopen little-endian byte order. Use sensor filters to convert raw units into physical units.
+As with other ESPHome numeric sensors, values are published as floating-point numbers; large 32-bit integers may lose
+precision. A timeout, rejected request, SDO abort, unsupported transfer, or mismatched width publishes `NaN` and sets a
+component warning. A later successful read clears only that sensor's warning. Width mismatches log the node,
+object, expected size, and received size once until a successful read restores the sensor.
+
+## Writing an Object
+
+The `canopen.sdo_write` action sends an expedited download. The action queues the request and returns immediately;
+it does not wait for the remote device to acknowledge the write. Failures are logged. Writes are never retried
+automatically because repeating a command may have side effects.
+
+```yaml
+on_press:
+  - canopen.sdo_write:
+      node_id: 32
+      index: 0x2000
+      size: 2
+      value: 100
+```
+
+- **id** (*Optional*, ID): The CANopen hub to use. Required if more than one hub is configured.
+- **node_id** (**Required**, integer): The remote node's ID, from 1 to 127.
+- **index** (**Required**, integer): The 16-bit object dictionary index.
+- **subindex** (*Optional*, integer): The 8-bit subindex. Defaults to `0`.
+- **size** (**Required**, integer): The value's width in bytes: `1`, `2`, or `4`.
+- **value** (**Required**, integer, templatable): The unsigned raw bit pattern to write.
+  For signed objects, supply the two's-complement representation at the configured width: for example, `0xFFFF`
+  writes `-1` to a two-byte signed object. Constants that do not fit the selected width fail configuration validation;
+  lambda results are checked at runtime.
+- **on_success** (*Optional*, [Automation](/automations/)): Runs when the remote node acknowledges the write.
+- **on_error** (*Optional*, [Automation](/automations/)): Runs if the write is rejected, times out, fails to send,
+  or receives an SDO abort. Provides `result` (`canopen::SDOResult`) and `abort_code` (`uint32_t`).
+
+`on_error` reports `SDO_RESULT_REJECTED` for a full queue or invalid runtime value, `SDO_RESULT_TIMEOUT` for a missing
+reply, `SDO_RESULT_TRANSPORT_ERROR` for a failed CAN send, and `SDO_RESULT_ABORT` for a remote SDO abort.
+`abort_code` contains the remote abort code only for an SDO abort and is zero otherwise.
+Callbacks run once per invocation, including when several writes from the same action are queued. They do not inherit
+arguments from the automation that queued the write. Put dependent operations inside `on_success`; actions after
+`canopen.sdo_write` continue immediately, before acknowledgement.
+
+```yaml
+on_press:
+  - canopen.sdo_write:
+      node_id: 32
+      index: 0x2000
+      size: 2
+      value: 0xFFFF
+      on_success:
+        - logger.log: "Write acknowledged"
+      on_error:
+        - lambda: |-
+            ESP_LOGW("canopen", "Write failed: result=%u abort=0x%08X",
+                     static_cast<unsigned>(result), static_cast<unsigned>(abort_code));
+```
+
+## Network Management
+
+The `canopen.nmt` action sends a standard NMT command immediately, independently of the SDO queue. NMT has no
+acknowledgement; use heartbeat state to observe the remote state. CAN send failures are logged.
+
+```yaml
+on_press:
+  - canopen.nmt:
+      node_id: 32
+      command: START
+```
+
+- **id** (*Optional*, ID): The hub to use. Required if more than one hub is configured.
+- **node_id** (**Required**, integer): The target node, from 1 to 127. `0` explicitly broadcasts to every node.
+- **command** (**Required**, string): `START`, `STOP`, `PRE_OPERATIONAL`, `RESET_NODE`, or `RESET_COMMUNICATION`.
+
+## Heartbeat and Emergency Events
+
+The hub receives these events even while its request queue is idle. It ignores extended frames, RTR frames,
+invalid lengths, and invalid heartbeat states.
+
+- **on_heartbeat** (*Optional*, [Automation](/automations/)): Hub trigger with `node_id` and `state` (`uint8_t`).
+  State `0` is boot-up, `4` is stopped, `5` is operational, and `127` is pre-operational.
+- **on_emcy** (*Optional*, [Automation](/automations/)): Hub trigger with `node_id` (`uint8_t`) and
+  `emergency` (`canopen::Emergency`). The record contains `error_code` (`uint16_t`), `error_register` (`uint8_t`),
+  and the five manufacturer-specific bytes in `manufacturer_data`. Error code zero reports an error reset.
+
+```yaml
+canopen:
+  on_heartbeat:
+    - lambda: ESP_LOGI("canopen", "Node %u state %u", node_id, state);
+  on_emcy:
+    - lambda: ESP_LOGW("canopen", "Node %u EMCY 0x%04X", node_id, emergency.error_code);
+```
+
+Receiving heartbeat events does not configure a remote node's heartbeat producer. Configure its producer interval
+according to the device documentation. This component does not implement node guarding or produce a local heartbeat.
+
+## Building Device Profiles
+
+A profile component can inherit `canopen::CANopenNode` alongside `Component` or `PollingComponent`. Its constructor
+receives the shared `CANopenComponent*` and a node ID from 1 to 127, and its `setup()` calls `setup_canopen()` once.
+The node provides `read_sdo`, `write_sdo`, `send_nmt`, and callbacks filtered to its heartbeat and EMCY messages.
+All protocol calls and callback registration take place on ESPHome's main thread. Nodes and callback contexts must
+remain alive for the lifetime of the hub; callbacks cannot be unregistered.
+
+SDO methods return whether the request was accepted. Accepted requests invoke their callback exactly once with
+`(context, result, value, size)`; rejected requests return `false` without invoking it. A successful read returns the
+raw unsigned bit pattern and byte width. Write acknowledgements return zero for `value` and `size`. Abort results
+return the abort code in `value`. Other failures return zero. A callback may enqueue the next request, allowing a
+profile to sequence commands only after successful acknowledgement.
+
+`heartbeat_seen()` distinguishes an unseen node from a boot-up state. `get_nmt_state()` returns the last heartbeat
+state; `heartbeat_age(now)` and `is_online(now, timeout)` use unsigned millisecond arithmetic. Pass the cached loop
+time from `App.get_loop_component_start_time()` when checking from a component loop. A node is online only after a
+heartbeat and while its age is less than the timeout. This means heartbeat availability, not drive readiness;
+profile components decide how to handle timeouts, boot-up, or EMCY events.
+
+This layer contains no CiA 402 state machine, motion commands, or manufacturer-specific registers. Those belong in
+separate profile and device components built on the shared CANopen node interface.
+
+## References
+
+- [CAN in Automation: CANopen](https://www.can-cia.org/can-knowledge/canopen)
+- [CAN Bus](/components/canbus/)
