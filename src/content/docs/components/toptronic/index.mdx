@@ -73,15 +73,12 @@ toptronic:
   of any hub. Range `1` to `16`, defaults to `2`.
 - **max_pending_age** (*Optional*, [Time](/guides/configuration-types#time)): A pending message
   without a continuation frame for this long is considered lost. Defaults to `5000ms`.
-- **max_refresh_per_loop** (*Optional*, int): Number of GET requests a full refresh may send per
-  refresh window. Range `1` to `255`, defaults to `8`.
 - **max_frames_per_message** (*Optional*, int): Maximum total frames a start frame may claim;
   larger counts are rejected as corrupted headers. Range `3` to `31`, defaults to `8`.
-- **refresh_gap** (*Optional*, [Time](/guides/configuration-types#time)): Length of the refresh
-  window. The GET burst budget is spread across it, so the target per-GET spacing is
-  `refresh_gap / max_refresh_per_loop`. The main loop ticks about every 16 ms, so the spacing
-  is never shorter than about 17 ms; a `50ms` window with the default budget therefore sends
-  one GET per loop tick. Defaults to `50ms`.
+- **refresh_interval** (*Optional*, [Time](/guides/configuration-types#time)): Minimum spacing
+  between two GET requests during a full refresh, so the bus is not saturated by one burst. The
+  main loop ticks about every 16 ms, so values below `16ms` are clamped to `16ms`. Defaults to
+  `50ms`.
 - **max_refresh_retries** (*Optional*, int): Re-sends of an unanswered GET during a refresh
   burst; `0` disables retries. Range `0` to `10`, defaults to `1`.
 - **refresh_retry_interval** (*Optional*, [Time](/guides/configuration-types#time)): Delay
@@ -151,11 +148,10 @@ Every read entity (sensor and text sensor) sends a GET request for its datapoint
 `update_interval` (default `30s`). Numbers, selects and buttons never poll.
 
 A full refresh reads every read entity of a hub at once. It sends the requests as a paced
-burst set by `max_refresh_per_loop` and `refresh_gap`, sends an unanswered request again
-according to `max_refresh_retries`, and gives up on the burst when no request is sent or
-answered for a while. The regular poll still covers a datapoint that did not answer. A full
-refresh runs once after boot (see `boot_refresh_delay`) and when the **Refresh all** button is
-pressed.
+burst set by `refresh_interval`, sends an unanswered request again according to
+`max_refresh_retries`, and gives up on the burst when no request is sent or answered for a
+while. The regular poll still covers a datapoint that did not answer. A full refresh runs once
+after boot (see `boot_refresh_delay`) and when the **Refresh all** button is pressed.
 
 The **Refresh all** button (entity category Config) is generated once per build, however many
 hubs there are. It starts a full refresh on every hub, one hub every 15 seconds, so the bus
