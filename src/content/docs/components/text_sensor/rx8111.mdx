@@ -30,14 +30,22 @@ connected signal. With no explicit settings, capture uses an active-low input, n
 The RTC must contain trusted UTC time; timestamp capture does not set or synchronize its calendar.
 
 States use UTC ISO 8601 format, for example `2026-10-24T12:34:56.999Z`, regardless of the time component's timezone.
-Fractional seconds are truncated to milliseconds. Invalid BCD, impossible dates, and records whose captured oscillator-stop
-flag is set are skipped without replacing the last valid state. The supported calendar years are 2019–2099.
+Fractional seconds are truncated to milliseconds. Invalid BCD, impossible dates, and records whose captured
+oscillator-stop flag is set are skipped without replacing the last valid state. The supported calendar years are
+2019–2099.
+
+Without filtering, latest storage has a resolution of 1/1024 second and buffered storage has a resolution of
+1/256 second. Fractional-second accuracy depends on the storage mode and `evin_filter`. Enabling the hardware
+filter makes some low fractional bits unreliable; three displayed decimal places do not imply millisecond accuracy.
+Retained records may have been captured with a different filter setting, so their fractions are not masked using
+the current configuration.
 
 Records are checked using the time component's `event_poll_interval` (default `1s`, minimum `500ms`), even when
 `update_interval: never` disables periodic calendar reads. No separate timestamp polling loop is created.
 
 At startup, capture is paused and retained records are staged using their previous storage format. The requested
-mode is configured before capture resumes and retained-record callbacks run. Staged records survive configuration retries.
+mode is configured before capture resumes and retained-record callbacks run on successful startup. Staged records
+survive configuration retries.
 Latest-bank bytes are baselined before capture resumes, including when switching from buffered mode. An unchanged
 baseline is not later published as a new capture.
 
@@ -58,16 +66,25 @@ interval reduces these pauses but increases the chance that a newer record repla
 Publication does **not** clear EVF or release `/INT`. Use `rx8111.clear_event_flag` explicitly after handling an
 event if acknowledgement is needed. In `latest` mode, unchanged bytes are not published again, even after EVF is
 acknowledged; a changed record is published regardless of EVF. Buffered records are read even if EVF
-has already been cleared. Capture restoration is attempted before text-sensor callbacks run. Staged records
-are still published if restoration fails, and a later poll retries restoration.
+has already been cleared. During runtime polling, capture restoration is attempted before text-sensor callbacks
+run. Fully staged records are published even if restoring capture fails, and a later poll retries restoration.
+During startup, retained records remain staged until configuration succeeds or the startup retry limit is reached.
 
 I²C failures set a warning and are retried by the existing event polling or bounded startup retry mechanism.
-Buffered records may be delivered again after a failed pointer clear. If restoring capture fails, a later poll
-retries it. When no records have been published, the entity has no state.
+Buffered records may be delivered again after a failed pointer clear. Runtime polling retries failed capture
+restoration; startup uses the bounded retry mechanism below. When no records have been published, the entity has
+no state.
 
-Startup configuration is attempted at most three times. If these attempts fail after capture was paused, capture
-can remain disabled for the rest of that boot. Timestamp polling does not restart failed startup configuration;
-resolve the bus fault and reboot the host to retry.
+Startup configuration is attempted at most three times. On the final failure, any fully staged retained records
+are published once in their original storage format, oldest first for buffered records. This prevents records
+already removed from the RTC buffer from being discarded without publication when the host reboots. Records that
+could not be fully read and staged are not published.
+
+This terminal-failure delivery does not enable capture, clear the configuration warning, or acknowledge EVF.
+Unlike successful startup, these callbacks can run with capture disabled and the requested mode only partially
+configured. Capture can remain disabled for the rest of that boot. Timestamp polling does not restart failed
+startup configuration; resolve the bus fault and reboot the host to retry. Staging is not persistent across a
+host reset or power loss before delivery, and publication does not guarantee that a remote client received the state.
 
 The component preserves the internal timestamp-trigger settings in register `0x35`. Records produced by previously
 enabled internal triggers can therefore also be published; the entity does not distinguish them from EVIN records.
