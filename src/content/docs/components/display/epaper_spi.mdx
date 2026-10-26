@@ -69,6 +69,7 @@ the pins used to interface to the display to be specified.
 | WeAct-2.13in-3c           | WeAct               | 2.13" 3-color e-paper (250x122, SSD1683)           |
 | WeAct-2.9in-3c            | WeAct               | 2.9" 3-color e-paper (128x296, SSD1683)            |
 | WeAct-4.2in-3c            | WeAct               | 4.2" 3-color e-paper (400x300, SSD1683)            |
+| XSRUPB-7.5in-bwr            | XSRUPB              | [https://xsrupb.com/index.php?route=product/product&product_id=13](https://xsrupb.com/index.php?route=product/product&product_id=13) - 7.5" 3-color (800x480, UC8179), sold under part numbers FPC-8612 / DEPG0750RWF86BF30 / XSRUPB-2025 |
 
 `Waveshare-2.9in-v2` replaces `model: 2.90inv2` of the deprecated `waveshare_epaper` component.
 
@@ -411,32 +412,35 @@ This has some consequences:
 
 ### Color Panels
 
-Panels with colored inks map each color to one of their inks. The `inkplate2`, 4-color (JD79660), 6-color
-(`Seeed-reTerminal-E1002`, `Seeed-reTerminal-E1004`) and `inkplate6color` models first check whether the color is
-close to gray, meaning its largest and smallest RGB components differ by less than `50`. A gray is drawn black or
-white by its luma, as above (`Seeed-reTerminal-E1004` uses the plain average of the components instead). Any other
-color counts each component as on above `128`, and the combination of components that are on selects the ink. Colors
+Panels with colored inks map each color to one of their inks. All models first check whether the color is close to
+gray, meaning its largest and smallest RGB components differ by less than `50`. A gray is drawn black or white by its
+luma, as above (`Seeed-reTerminal-E1004` uses the plain average of the components instead).
+
+The 3-color (black, white and red) models, `inkplate2`, `WeAct-*-3c`, `Waveshare-2.13in-bv4`, `Waveshare-2.66in-b`,
+`Waveshare-7.5in-bV2-BWR` and `XSRUPB-7.5in-bwr`, draw any other color in whichever of black, white or red is nearest
+in RGB space. A color equally near red and white, such as yellow, draws white. Oranges and dark reds such as
+`(128, 0, 0)` therefore draw red, while a very dark red such as `(100, 0, 0)` draws black and a pale pink such as
+`(255, 129, 129)` draws white.
+
+The 4-color (JD79660), 6-color (`Seeed-reTerminal-E1002`, `Seeed-reTerminal-E1004`) and `inkplate6color` models
+instead count each component as on above `128`, and the combination of components that are on selects the ink. Colors
 with no matching ink are folded into another, and a dark color with no component above `128` is black.
 
-The `WeAct-*-3c`, `Waveshare-2.13in-bv4`, `Waveshare-2.66in-b` and `Waveshare-7.5in-bV2-BWR` models use a simpler
-rule: red if the red component is above `127` and greater than green and blue together, otherwise white if the average
-of the components is at least half brightness, otherwise black.
-
-| Color                  | WeAct and Waveshare 3-color | `inkplate2` | 4-color | 6-color | `inkplate6color` |
-|------------------------|-----------------------------|-------------|---------|---------|------------------|
-| Red `(255, 0, 0)`      | Red                         | Red         | Red     | Red     | Red              |
-| Green `(0, 255, 0)`    | Black                       | Black       | Black   | Green   | Green            |
-| Blue `(0, 0, 255)`     | Black                       | Black       | Black   | Blue    | Blue             |
-| Yellow `(255, 255, 0)` | White                       | White       | Yellow  | Yellow  | Yellow           |
-| Cyan `(0, 255, 255)`   | White                       | White       | White   | Green   | Green            |
-| Magenta `(255, 0, 255)`| White                       | White       | White   | Red     | Red              |
-| Orange `(255, 165, 0)` | Red                         | White       | Yellow  | Yellow  | Orange           |
+| Color                  | 3-color | 4-color | 6-color | `inkplate6color` |
+|------------------------|---------|---------|---------|------------------|
+| Red `(255, 0, 0)`      | Red     | Red     | Red     | Red              |
+| Green `(0, 255, 0)`    | Black   | Black   | Green   | Green            |
+| Blue `(0, 0, 255)`     | Black   | Black   | Blue    | Blue             |
+| Yellow `(255, 255, 0)` | White   | Yellow  | Yellow  | Yellow           |
+| Cyan `(0, 255, 255)`   | White   | White   | Green   | Green            |
+| Magenta `(255, 0, 255)`| White   | White   | Red     | Red              |
+| Orange `(255, 165, 0)` | Red     | Yellow  | Yellow  | Orange           |
 
 Things to watch for:
 
 - Magenta draws white on 3-color and 4-color panels, and so is invisible on the white background.
 - Green draws black on 3-color and 4-color panels, but white on black and white panels.
-- Orange draws red, white, yellow or orange depending on the panel.
+- Orange draws red, yellow or orange depending on the panel.
 - Yellow and cyan draw white on 3-color panels.
 
 ## Actions
