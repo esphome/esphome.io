@@ -53,8 +53,49 @@ source. Use `echo_cancelled_microphone` in a component that accepts a microphone
   Longer filters use more processing time and memory.
 - **reference_gain** (*Optional*, float): Gain applied to the speaker reference before AEC, from `0.1` to `20.0`.
   Defaults to `1.0`.
+- **fast_reference_decimation** (*Optional*, boolean): Use an ESP-DSP 3:1 decimator for the speaker reference when
+  the I²S speaker runs at 48 kHz. Defaults to `false`, which keeps the standard resampler. The optional filter adds
+  working RAM. This setting is independent of the source microphone's `fast_decimation` option: enabling either one
+  does not enable the other. The AEC source must still provide 16 kHz mono audio. A 16 kHz speaker uses its reference
+  directly and cannot enable this option.
 - **task_core** (*Optional*, integer): Pin the AEC task to CPU `0` or `1`. If omitted, FreeRTOS chooses the core.
 - All other options from the [Microphone Component](/components/microphone/).
+
+## Diagnostics
+
+The optional AEC probe is compiled and runs when the global logger level is `DEBUG` (or more verbose). The tag level
+controls which results are reported, not whether the calculations run:
+
+```yaml
+logger:
+  level: DEBUG
+  logs:
+    i2s_aec_microphone: DEBUG
+```
+
+Setting the tag to `INFO` at runtime hides probe messages but does not stop its calculations. A firmware compiled with
+global `INFO` omits the probe; raising the reporting level at runtime cannot add it back. No microphone recordings or
+additional audio ring buffers are retained.
+
+The probe samples one in 128 audio samples, rotating the sampling position between frames, at seven nearby reference
+delays. It accumulates about four seconds of reference/microphone products. It selects the delay most strongly
+associated with the **raw** microphone and compares the reference-related component before and after AEC at that
+same delay and with the same normalization. The primary result is signed `attenuation` in dB:
+`20 log10(remaining)`, where `remaining` is the ratio of correlated amplitudes after and before AEC, stabilized near
+zero correlation by a small fixed floor. A negative value indicates suppression (for example, `−20 dB`), zero means no
+change, and a positive value indicates amplification.
+The delay tracker moves only after two consecutive windows favour the same new delay;
+it never changes the alignment supplied to ESP-SR.
+
+The first synchronization also logs the best candidate from the existing correlation search and the RX/TX counter
+offset actually used by AEC. Their difference initializes the probe's observed-path delay; it is **not** an internal
+delay reported by ESP-SR. Windows with zero signal variance or dropped audio are reported as `n/a`; when playback is
+idle, an explicit `0.0 dB (idle: no playback, not a measurement)` is a status value, not measured attenuation. Nearby
+speech, periodic music and reflections at other delays can still mislead this inexpensive single-delay indicator.
+Compare it with recordings when assessing actual echo suppression.
+
+If RX/TX sample alignment changes, AEC logs a warning and recalibrates. During recalibration, microphone audio passes
+through without echo cancellation; `AEC reference synchronized` confirms that the reference is aligned again.
 
 ## Resource Use
 
