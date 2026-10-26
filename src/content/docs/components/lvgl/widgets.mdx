@@ -849,6 +849,7 @@ provided in the form of a list of dictionaries, each with templatable `x` and `y
   - **height** (**Required**, int): Height in pixels
   - **radius** (*Optional*, int): Corner radius.
   - **bg_color** (*Optional*, [color](/components/lvgl#lvgl-color)): Background color.
+  - **bg_grad** (*Optional*, [gradient](/components/lvgl/#gradients)): A gradient to fill the rectangle with.
   - **bg_opa** (*Optional*, [opacity](/components/lvgl#opacity)): Background opacity. Defaults to `COVER`.
   - **border_color** (*Optional*, [color](/components/lvgl#lvgl-color)): Border color.
   - **border_width** (*Optional*, int): Border width.
@@ -864,10 +865,12 @@ provided in the form of a list of dictionaries, each with templatable `x` and `y
   - **shadow_offset_y** (*Optional*, int): Shadow offset Y.
   - **shadow_spread** (*Optional*, int): Shadow spread.
 
-- `lvgl.canvas.draw_polygon` draws a polygon:
+- `lvgl.canvas.draw_polygon` draws the outline of a polygon. The shape is not filled.
   - **id** (**Required**): The ID of the canvas widget.
   - **points** (**Required**, list): List of points forming the polygon vertices.
-  - Other options as for `lvgl.canvas.draw_rectangle`.
+  - **border_color** (*Optional*, [color](/components/lvgl/#lvgl-color)): Outline color.
+  - **border_width** (*Optional*, int): Outline width.
+  - **border_opa** (*Optional*, [opacity](/components/lvgl/#opacity)): Outline opacity. Defaults to `COVER`.
 
 - `lvgl.canvas.draw_text` draws text:
   - **id** (**Required**): The ID of the canvas widget.
@@ -893,6 +896,8 @@ provided in the form of a list of dictionaries, each with templatable `x` and `y
   - **color** (*Optional*, [color](/components/lvgl#lvgl-color)): Line color.
   - **width** (*Optional*, int): Line width.
   - **opa** (*Optional*, [opacity](/components/lvgl#opacity)): Line opacity. Defaults to `COVER`.
+  - **dash_width** (*Optional*, int): Length of each dash in pixels. Defaults to `0`, a solid line.
+  - **dash_gap** (*Optional*, int): Gap between dashes in pixels. Defaults to `0`, a solid line.
   - **round_start** (*Optional*, boolean): Round the start of the line. Defaults to `false`.
   - **round_end** (*Optional*, boolean): Round the end of the line. Defaults to `false`.
 

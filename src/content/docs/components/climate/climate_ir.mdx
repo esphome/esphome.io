@@ -243,7 +243,9 @@ The Daikin ARC remotes (`daikin_arc` climate, `daikin_arc417`, `daikin_arc480` p
 The `friedrich` climate currently supports the MW12Y3H protocol.
 
 The unit only accepts Fahrenheit temperatures in steps of 2 degrees, so the climate entity reports temperatures
-in degrees Fahrenheit, in the range 60 to 88. Heating can be set down to 60, other modes down to 64.
+in degrees Fahrenheit, in the range 60 to 88. Heating can be set down to 60, other modes down to 64. Write `visual`
+temperatures and the fixed temperatures of `climate.control` in Fahrenheit too; a value written with another unit,
+such as `20°C`, is converted.
 
 - **model** (*Optional*, string): The unit model. Only `MW12Y3H` exists so far; the option is reserved for other
   models. Defaults to `MW12Y3H`.
@@ -277,6 +279,10 @@ climate:
   - `yag`
   - `yaw1f`: the `yag` byte layout with the frame timing and follow-up message of YAW1F remotes. Try it when a
     unit with a YAW1F remote ignores `yag`.
+
+- **use_fahrenheit** (*Optional*, boolean): Show the setpoint in Fahrenheit on the air conditioner's own display,
+  for every whole degree from 61 °F to 86 °F. This does not change the unit Home Assistant shows. Sent for every
+  model, but only tested with `yx1ff`. Defaults to `false`.
 
 ```yaml
 # Example configuration entry for climate only
@@ -405,7 +411,8 @@ The `islandaire` climate supports Islandaire PTAC units, known working with the 
 It supports cool, heat and fan only modes and the auto, low and high fan speeds.
 
 The unit takes whole degrees Fahrenheit, so the climate entity reports temperatures in degrees Fahrenheit, in the
-range 61 to 88.
+range 61 to 88. Write `visual` temperatures and the fixed temperatures of `climate.control` in Fahrenheit too; a value
+written with another unit, such as `20°C`, is converted.
 
 The `sensor` option is not supported, because a temperature sensor reports Celsius while this climate works in
 Fahrenheit. `humidity_sensor` works as usual.
