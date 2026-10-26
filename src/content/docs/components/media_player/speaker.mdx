@@ -43,6 +43,12 @@ media_player:
     `320`. Only valid when `format` is `MP3`. When omitted, Home Assistant uses its default variable bitrate.
 
 - **media_pipeline** (*Optional*, Pipeline Schema): Configuration settings for the media pipeline. Same options as the `announcement_pipeline`.
+- **preconnect_speaker** (*Optional*, [ID](/guides/configuration-types/#id)): Prepare this speaker before downloading
+  announcement audio. Currently requires a single `announcement_pipeline` and cannot be used with `media_pipeline`.
+  For a [Bluetooth A2DP source speaker](/components/speaker/a2dp_source/), readiness includes the receiver connection
+  and an AVRCP volume response.
+- **preconnect_timeout** (*Optional*, [Time](/guides/configuration-types/#time)): Maximum time to wait for
+  `preconnect_speaker` to become ready. Defaults to `20s`. Increase it when the receiver needs connection retries.
 - **buffer_size** (*Optional*, positive integer): The buffer size in bytes for each pipeline. Must be between `4000` and `4000000`. Defaults to `1000000`.
 - **task_stack_in_psram** (*Optional*, boolean): Run the audio tasks in external memory. Defaults to `false`.
 - **volume_increment** (*Optional*, percentage): Increment amount that the `media_player.volume_up` and `media_player.volume_down` actions will increase or decrease volume by. Defaults to `5%`.
