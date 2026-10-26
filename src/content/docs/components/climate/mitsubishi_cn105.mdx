@@ -117,7 +117,9 @@ climate:
   Set to `never` to disable telemetry polling.
 
 - **use_fahrenheit** (*Optional*, boolean): Configure the climate entity to report and accept temperatures in Fahrenheit
-  using Mitsubishi-specific mapping. Defaults to `false`.
+  using Mitsubishi-specific mapping. Defaults to `false`. When enabled, write the climate's `visual` temperatures and
+  the fixed temperatures of `climate.control` in Fahrenheit too; a value written with another unit, such as `20°C`, is
+  converted.
 
   > [!NOTE]
   > Some indoor units use a temperature encoding that cannot accurately represent Fahrenheit setpoints. If the
@@ -133,10 +135,10 @@ climate:
 
 - **supported_swing_modes** (*Optional*, enum): Selects which swing modes are exposed by the climate entity. Defaults to `'OFF'`.
 
-  - `'OFF'` — no swing support  
-  - `VERTICAL` — exposes `'OFF'`, `VERTICAL`  
-  - `HORIZONTAL` — exposes `'OFF'`, `HORIZONTAL`  
-  - `BOTH` — exposes `'OFF'`, `VERTICAL`, `HORIZONTAL`, `BOTH`
+  - `OFF`: no swing support. Write it as `'OFF'` in YAML, since a bare `OFF` is read as a boolean.
+  - `VERTICAL`: exposes `'OFF'`, `VERTICAL`
+  - `HORIZONTAL`: exposes `'OFF'`, `HORIZONTAL`
+  - `BOTH`: exposes `'OFF'`, `VERTICAL`, `HORIZONTAL`, `BOTH`
 
 - All other options from [Climate](/components/climate#config-climate).
 

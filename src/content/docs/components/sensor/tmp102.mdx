@@ -1,5 +1,5 @@
 ---
-description: "Instructions for TMP102 temperature readings, thermostat configuration, and alert status."
+description: "TMP102 temperature, thermostat, alert, and threshold-status configuration."
 title: "TMP102 Temperature Sensor"
 ---
 
@@ -46,7 +46,8 @@ Temperature-only configurations work unchanged and write no registers at startup
 adding a [TMP102 number](#adjustable-thresholds) makes ESPHome write the configuration register and both threshold
 registers during setup, using the listed defaults for omitted settings. These settings apply to TMP102 chips; do not
 enable them for LM75 sensors.
-Adding only an alert binary sensor does not enable hardware configuration or write these registers.
+Adding only an alert binary sensor or threshold status text sensor does not enable hardware configuration or write
+these registers.
 
 Before each update ESPHome reads the configuration register back. If it no longer matches, for example after the chip
 alone lost power, ESPHome rewrites the configuration and both thresholds, skips that update and sets the sensor's
@@ -138,6 +139,52 @@ crosses the other threshold is rejected, and the entity keeps the accepted value
 accepted value and sets the sensor's warning status until the next reading succeeds. If hardware setup failed,
 changes are rejected with a warning and the numbers have no state. When moving both thresholds, change the high
 threshold first when raising the pair, or the low threshold first when lowering it.
+
+## Threshold Status Text Sensor
+
+The TMP102 [Text Sensor](/components/text_sensor/) platform reports threshold validation, writes, restoration, and
+configuration recovery. It requires a TMP102 temperature sensor in the same configuration. This platform applies to
+TMP102 chips, not LM75 sensors.
+
+```yaml
+sensor:
+  - platform: tmp102
+    id: freezer_temperature
+    name: "Freezer Temperature"
+    temperature_high: -12°C
+    temperature_low: -13°C
+
+text_sensor:
+  - platform: tmp102
+    tmp102_id: freezer_temperature
+    name: "Threshold Status"
+```
+
+- **tmp102_id** (*Optional*, [ID](/guides/configuration-types/#id)): The TMP102 temperature sensor to monitor. Required
+  when the configuration contains more than one TMP102 sensor.
+- All other options from [Text Sensor](/components/text_sensor/).
+
+Only one threshold status text sensor may reference each TMP102 sensor. It defaults to the `diagnostic` entity
+category. The possible states are:
+
+| State | Meaning |
+| --- | --- |
+| `OK` | Setup completed with no other result to report, or an accepted runtime threshold write completed. |
+| `Not configured` | No hardware setting or threshold number enables ESPHome management. |
+| `Setup failed` | Writing the configuration or thresholds during setup failed. |
+| `Restored thresholds reset` | Invalid saved thresholds were replaced with configured starting values. |
+| `Restore reset; save failed` | Corrected thresholds reached the chip, but saving the corrected values failed. |
+| `Preference save failed` | A runtime threshold reached the chip, but saving it failed. |
+| `Write failed: high threshold` | Writing a requested high threshold failed. |
+| `Write failed: low threshold` | Writing a requested low threshold failed. |
+| `Rejected: sensor setup failed` | A runtime threshold change was rejected because setup failed. |
+| `Rejected: high VALUE°C crosses low VALUE°C` | A high-threshold change would cross the low threshold. |
+| `Rejected: low VALUE°C crosses high VALUE°C` | A low-threshold change would cross the high threshold. |
+| `Configuration restored` | Changed configuration or threshold registers were restored. |
+| `Configuration recovery failed` | Restoring changed registers failed. |
+
+`VALUE` is printed with four decimal places. Adding this entity alone does not enable hardware configuration or write
+registers. This entity reports threshold-management results, not general sensor connectivity.
 
 ## Alert Binary Sensor
 

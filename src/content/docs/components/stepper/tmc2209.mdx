@@ -252,7 +252,63 @@ stepper:
 ```
 
 The right `threshold` depends on the motor, its current and speed, and the load. Start low and raise it until a stall
-is detected reliably without false reports during normal moves.
+is detected reliably without false reports during normal moves. The `stallguard_result` and `motor_load`
+[sensors](#sensor) help to find a value: watch them during a normal move and while the motor is blocked.
+
+## Sensor
+
+The `tmc2209` sensor platform reads the motor current, the StallGuard load measurement and the StealthChop
+regulation values from the driver.
+
+```yaml
+sensor:
+  - platform: tmc2209
+    actual_current:
+      name: "Motor Current"
+    motor_load:
+      name: "Motor Load"
+```
+
+### Configuration Variables
+
+- **tmc2209_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the TMC2209 stepper. Required if you
+  have multiple TMC2209 drivers.
+
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to read the sensors.
+  Defaults to `60s`.
+
+- **actual_current** (*Optional*): The motor current the driver is set to, in A RMS. This is the run current or the
+  hold current, lowered by CoolStep when it is active. Cannot be used when `analog_current_scale` is `true`, because
+  the current then depends on the voltage on `VREF`. All options from [Sensor](/components/sensor/).
+
+- **stallguard_result** (*Optional*): The StallGuard result, `0` to `510`. A lower value means a higher load. Only
+  valid while the motor runs in StealthChop mode. All options from [Sensor](/components/sensor/).
+
+- **motor_load** (*Optional*): The StallGuard result as a load in percent. `0%` is a result of `510` (no load) and
+  `100%` is twice the StallGuard `threshold`, where a stall is reported. Values above `100%` are possible. Only valid
+  while the motor runs in StealthChop mode. Has no value while the motor is stopped. All options from
+  [Sensor](/components/sensor/).
+
+- **pwm_scale_sum** (*Optional*): The StealthChop PWM duty cycle, `0` to `255`. A value close to `255` means that
+  the supply voltage is too low to reach the motor current at this speed. All options from
+  [Sensor](/components/sensor/).
+
+- **pwm_scale_auto** (*Optional*): The offset that the StealthChop automatic current regulation adds to the PWM
+  amplitude, `-255` to `255`. All options from [Sensor](/components/sensor/).
+
+- **pwm_ofs_auto** (*Optional*): The PWM amplitude offset determined by the StealthChop automatic tuning, `0` to
+  `255`. All options from [Sensor](/components/sensor/).
+
+- **pwm_grad_auto** (*Optional*): The PWM amplitude gradient determined by the StealthChop automatic tuning, `0` to
+  `255`. All options from [Sensor](/components/sensor/).
+
+`stallguard_result`, `pwm_scale_sum`, `pwm_scale_auto`, `pwm_ofs_auto` and `pwm_grad_auto` are diagnostic sensors.
+See the `SG_RESULT`, `PWM_SCALE` and `PWM_AUTO` registers in the datasheet for details.
+
+> [!NOTE]
+> The sensors only show the value at the moment they are read. To follow the load during a move, use a short
+> `update_interval`. Every update reads the driver registers over UART. When a read fails, that sensor and the
+> sensors after it have no value until the next update.
 
 ## `tmc2209.enable` / `tmc2209.disable` Actions
 
@@ -414,9 +470,93 @@ Configuration variables:
 - **seimin** (*Optional*, boolean, [templatable](/automations/templates)): The minimum current CoolStep lowers to.
   `false` for half of the run current, `true` for a quarter.
 
+## `tmc2209.chopconf` Action
+
+Change the chopper settings at runtime. `toff` and `tbl` apply in both chopper modes, `hstrt` and `hend` set the
+SpreadCycle hysteresis. The driver defaults work for most motors. See the `CHOPCONF` register and the SpreadCycle
+section in the datasheet for tuning.
+
+The power-up values below are the values of a driver as shipped. The driver reads them from its OTP memory, so they
+can differ when that memory was programmed. These are not the reset values in the datasheet's register table.
+
+```yaml
+on_...:
+  then:
+    - tmc2209.chopconf:
+        id: my_stepper
+        toff: 5
+        tbl: 1
+```
+
+Configuration variables:
+
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the stepper.
+
+- **toff** (*Optional*, int, [templatable](/automations/templates)): The chopper off time, `1` to `15`. The slow
+  decay phase lasts 24 + 32 × `toff` clock cycles. `1` only works with `tbl` set to `2` or higher. This is checked
+  when both are set to fixed values in the same action. Without an `enn_pin`, the driver is disabled by setting the
+  off time to `0`. While the motor is disabled, the new value is stored and written on the next enable. The power-up
+  value is `3`.
+
+- **tbl** (*Optional*, int, [templatable](/automations/templates)): The comparator blank time, `0` to `3`, for 16,
+  24, 32 or 40 clock cycles. The datasheet recommends `0` or `1` for most motors. The power-up value is `2`.
+
+- **hstrt** (*Optional*, int, [templatable](/automations/templates)): The hysteresis start value added to `hend`,
+  `0` to `7`, for 1 to 8. The power-up value is `5` (6).
+
+- **hend** (*Optional*, int, [templatable](/automations/templates)): The hysteresis end value, `0` to `15`, for -3
+  to 12. The power-up value is `0` (-3). The sum of `hstrt` and `hend` (as the datasheet values) must not exceed 16.
+  This is checked when both are set to fixed values in the same action.
+
+## `tmc2209.pwmconf` Action
+
+Change the StealthChop PWM settings at runtime. The driver defaults work for most motors. See the `PWMCONF`
+register and the StealthChop section in the datasheet for tuning. The power-up values are those of a driver as
+shipped, see the [`tmc2209.chopconf` action](#tmc2209-chopconf-action).
+
+```yaml
+on_...:
+  then:
+    - tmc2209.pwmconf:
+        id: my_stepper
+        pwm_freq: 2
+        pwm_reg: 4
+```
+
+Configuration variables:
+
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the stepper.
+
+- **pwm_ofs** (*Optional*, int, [templatable](/automations/templates)): The PWM amplitude offset, `0` to `255`.
+  With `pwm_autoscale`, this is the start value for the automatic tuning. The power-up value is `36`.
+
+- **pwm_grad** (*Optional*, int, [templatable](/automations/templates)): The velocity dependent PWM amplitude
+  gradient, `0` to `255`. With `pwm_autograd`, this is the start value for the automatic tuning. The power-up value
+  is `14`.
+
+- **pwm_freq** (*Optional*, int, [templatable](/automations/templates)): The PWM frequency, `0` to `3`, for 2/1024,
+  2/683, 2/512 or 2/410 of the clock frequency (about 23.4, 35.1, 46.9 or 58.5 kHz at 12 MHz). The power-up value
+  is `1`.
+
+- **pwm_autoscale** (*Optional*, boolean, [templatable](/automations/templates)): Regulate the PWM amplitude to
+  the motor current automatically. When `false`, `pwm_ofs` and `pwm_grad` set the amplitude directly. The power-up
+  value is `true`.
+
+- **pwm_autograd** (*Optional*, boolean, [templatable](/automations/templates)): Tune the PWM amplitude gradient
+  automatically. Requires `pwm_autoscale`. The power-up value is `true`.
+
+- **pwm_reg** (*Optional*, int, [templatable](/automations/templates)): The regulation loop gradient for
+  `pwm_autoscale`, `1` to `15`. This is the maximum change of the PWM amplitude per half wave, from 0.5 for `1` to
+  7.5 for `15`. A higher value adapts faster to load changes. The power-up value is `8`.
+
+- **pwm_lim** (*Optional*, int, [templatable](/automations/templates)): The limit for the PWM amplitude when
+  switching from SpreadCycle back to StealthChop, `0` to `15`, in units of 16. The power-up value is `12`.
+
 ## See Also
 
 - [Stepper Component](/components/stepper/)
 - [UART Bus](/components/uart/)
+- [Sensor Component](/components/sensor/)
 - <APIRef text="tmc2209.h" path="tmc2209/tmc2209.h" />
+- <APIRef text="tmc2209_sensor.h" path="tmc2209/sensor/tmc2209_sensor.h" />
 - <APIRef text="tmc22xx.h" path="tmc22xx/tmc22xx.h" />

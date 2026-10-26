@@ -61,7 +61,10 @@ In `emontx` platform:
 
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation or multiple hubs.
 - **uart_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the [UART Component](/components/uart) if you want to use multiple UART buses.
-- **lock_on_reboot** (*Optional*, boolean): The ESPHome device sends `emonlock` to the EmonTx right before it reboots (OTA update, restart, safe mode, ...), and `emonunlock` once it has booted. While locked, the EmonTx ignores configuration commands, so serial noise during the reboot cannot change its settings. A crash, watchdog reset or power loss skips the lock. Requires EmonTx firmware v1.2.0 or later: older firmware reads these commands as a request to enter the bootloader. When `false`, nothing is sent. Defaults to `false`.
+- **lock_on_reboot** (*Optional*, boolean or `auto`): The ESPHome device sends `emonlock` to the EmonTx right before it reboots (OTA update, restart, safe mode, ...), and `emonunlock` once it has booted. While locked, the EmonTx ignores configuration commands, so serial noise during the reboot cannot change its settings. A crash, watchdog reset or power loss skips the lock. These commands need EmonTx firmware v1.2.0 or later: older firmware reads them as a request to enter the bootloader. Defaults to `auto`.
+  - `auto`: ESPHome asks the EmonTx for its firmware version with the `v` command after it boots, and only sends the lock commands to firmware v1.2.0 or later. Nothing else is sent to older firmware. If no version arrives (ESPHome asks up to three times), no lock command is sent either: an EmonTx locked before the reboot then stays locked until it restarts or receives `emonunlock` (see [emontx.send_command](#actions)).
+  - `true`: always send the lock commands. Only use this with firmware v1.2.0 or later.
+  - `false`: never send them.
 - **on_json** (*Optional*): An automation that will be triggered whenever new JSON data is received from the EmonTx. Within this trigger, the `raw_json` variable (`StringRef`) contains the received JSON data as a string. A parsed JSON object is also available as the `json` variable (`JsonObject`), which can be used to access and manipulate specific fields in the JSON data.
 - **on_data** (*Optional*): An automation that will be triggered for every serial line received from the EmonTx (both plain text and JSON). Within this trigger, the `data` variable (`StringRef`) contains the received line. This is useful for debugging, logging all serial output, or handling configuration responses from the EmonTx.
 
@@ -416,7 +419,8 @@ The `version` text sensor reports the firmware version of the EmonTx, for exampl
 the EmonTx for it with the `v` command once it has booted, and again whenever the EmonTx restarts (seen
 when the `MSG` counter in its data goes back down), as it does after a firmware update. It also asks after
 `emontx.resume`, since the firmware may have been changed while the UART was paused. The `v` command is
-only sent when this text sensor is configured.
+sent when this text sensor is configured or when [lock_on_reboot](#configuration-variables) is `auto`, the
+default.
 
 ```yaml
 # Example configuration entry

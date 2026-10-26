@@ -16,6 +16,10 @@ this requires a `network:` `priority:` list naming both interfaces — see
 [Multi-Interface Support](/components/network/#multi-interface-support) on the [Network](/components/network/)
 component. Using more than one network interface is not supported on other platforms.
 
+On ESP32, a [WiFi](/components/wifi/) access point alone can run next to Ethernet without a `priority:` list.
+With `ap_mode: wisp` (ESP-IDF 5.1 or newer) the devices that join it reach the network through the Ethernet
+connection, see [WISP Mode](/components/wifi/#wisp-mode).
+
 ```yaml
 # Example configuration entry for RMII chips
 ethernet:
@@ -84,6 +88,19 @@ ethernet:
   reset_pin: 20
 ```
 
+```yaml
+# Example (ESP32, ESP-IDF): a WiFi access point whose clients reach the network through Ethernet
+ethernet:
+  type: W5500
+  # See the SPI examples for ESP32 above for the pins
+
+wifi:
+  ap:
+    ssid: myap
+    password: mypassword
+    ap_mode: wisp
+```
+
 ## Configuration variables
 
 - **type** (**Required**, string): The type of LAN chipset/phy.
@@ -118,7 +135,7 @@ ethernet:
 - **mdio_pin** (**Required**, [Pin](/guides/configuration-types#pin)): The MDIO pin of the board.
   Usually this is `GPIO18`.
 
-- **clk** (**Required**, mapping):
+- **clk** (**Required**, mapping): The RMII clock configuration.
 
   - **pin** (**Required**, [Pin](/guides/configuration-types#pin)): The RMII clock pin.
   - **mode** (**Required**, string): The clock mode of the data lines. See your board's
@@ -726,5 +743,6 @@ The lambda equivalent for this is `id(ethernet_id).is_enabled()`.
 
 - [Network component](/components/network/)
 - [Ethernet Info Text Sensor](/components/text_sensor/ethernet_info/)
+- [WiFi component](/components/wifi/)
 - [ESP32 Ethernet PHY connection info](https://pcbartists.com/design/embedded/esp32-ethernet-phy-schematic-design/)
 - <APIRef text="ethernet_component.h" path="ethernet/ethernet_component.h" />

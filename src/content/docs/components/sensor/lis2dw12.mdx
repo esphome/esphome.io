@@ -66,7 +66,7 @@ Base Configuration (shared by both `lis2dw12_i2c` and `lis2dw12_spi`):
 
 - **low_noise** (*Optional*, boolean): Enable low-noise mode. Defaults to `false`.
 
-- **calibration** (*Optional*):
+- **calibration** (*Optional*): Zero position offsets per axis.
 
   - **offset_x** (*Optional*, float): X-axis zero position calibration, in m/s². From -4.5 to 4.5. Defaults to `0`.
   - **offset_y** (*Optional*, float): Y-axis zero position calibration, in m/s². From -4.5 to 4.5. Defaults to `0`.
@@ -94,6 +94,68 @@ SPI-specific:
 
 - **cs_pin** (**Required**, [Pin](/guides/configuration-types/#pin)): The chip select pin.
 - All other options from [SPI Device](/components/spi/#spi_device).
+
+## Automations
+
+### `on_tap` Trigger
+
+This automation will be triggered when single tap is detected.
+
+```yaml
+lis2dw12_i2c:  # or lis2dw12_spi
+  # ...
+  on_tap:
+    - then:
+        - logger.log: "Tapped"
+```
+
+### `on_double_tap` Trigger
+
+This automation will be triggered when double tap is detected.
+
+```yaml
+lis2dw12_i2c:  # or lis2dw12_spi
+  # ...
+  on_double_tap:
+    - then:
+        - logger.log: "Double tapped"
+```
+
+### `on_freefall` Trigger
+
+This automation will be triggered when free-fall is detected.
+
+```yaml
+lis2dw12_i2c:  # or lis2dw12_spi
+  # ...
+  on_freefall:
+    - then:
+        - logger.log: "Freefall detected"
+```
+
+### `on_active` Trigger
+
+This automation will be triggered when device detects changes in motion.
+
+```yaml
+lis2dw12_i2c:  # or lis2dw12_spi
+  # ...
+  on_active:
+    - then:
+        - logger.log: "Activity detected"
+```
+
+### `on_orientation` Trigger
+
+This automation will be triggered when the device orientation changes with respect to the gravity vector.
+
+```yaml
+lis2dw12_i2c:  # or lis2dw12_spi
+  # ...
+  on_orientation:
+    - then:
+        - logger.log: "Orientation change detected"
+```
 
 ## Binary Sensor
 
@@ -161,68 +223,6 @@ text_sensor:
   `lis2dw12_spi` hub. Needed when more than one sensor is configured.
 - **orientation** (*Optional*): 6D orientation. One of `X Up`, `X Down`, `Y Up`, `Y Down`, `Z Up`, `Z Down`,
   or `Unknown` while the chip has not settled on an axis.
-
-## Automations
-
-### `on_tap` Trigger
-
-This automation will be triggered when single tap is detected.
-
-```yaml
-lis2dw12_i2c:  # or lis2dw12_spi
-  # ...
-  on_tap:
-    - then:
-        - logger.log: "Tapped"
-```
-
-### `on_double_tap` Trigger
-
-This automation will be triggered when double tap is detected.
-
-```yaml
-lis2dw12_i2c:  # or lis2dw12_spi
-  # ...
-  on_double_tap:
-    - then:
-        - logger.log: "Double tapped"
-```
-
-### `on_freefall` Trigger
-
-This automation will be triggered when free-fall is detected.
-
-```yaml
-lis2dw12_i2c:  # or lis2dw12_spi
-  # ...
-  on_freefall:
-    - then:
-        - logger.log: "Freefall detected"
-```
-
-### `on_active` Trigger
-
-This automation will be triggered when device detects changes in motion.
-
-```yaml
-lis2dw12_i2c:  # or lis2dw12_spi
-  # ...
-  on_active:
-    - then:
-        - logger.log: "Activity detected"
-```
-
-### `on_orientation` Trigger
-
-This automation will be triggered when the device orientation changes with respect to the gravity vector.
-
-```yaml
-lis2dw12_i2c:  # or lis2dw12_spi
-  # ...
-  on_orientation:
-    - then:
-        - logger.log: "Orientation change detected"
-```
 
 ## See Also
 

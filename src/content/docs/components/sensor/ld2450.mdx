@@ -90,9 +90,17 @@ binary_sensor:
 - **has_still_target** (*Optional*): True if a still target is detected.
   All options from [Binary Sensor](/components/binary_sensor#config-binary_sensor).
 
+- **polygon_zones** (*Optional*, list): Presence binary sensors for [polygon zones](#polygon-zones). Each polygon
+  zone must have exactly one presence binary sensor, under the same `ld2450_id` as the zone.
+
+  - **polygon_zone_id** (**Required**, [ID](/guides/configuration-types/#id)): The ID of the polygon zone defined
+    in the [text platform](#text).
+  - All options from [Binary Sensor](/components/binary_sensor/#config-binary_sensor), except `filters`. To keep
+    presence on after targets leave, use [presence_timeout](#number).
+
 > [!NOTE]
-> By default, each of the [Binary Sensor](/components/binary_sensor/) components above includes the
-> following [filter](/components/binary_sensor#binary-sensor-filters) by default to prevent flooding Home Assistant with state updates:
+> By default, the `has_target`, `has_moving_target` and `has_still_target` binary sensors include the following
+> [filter](/components/binary_sensor/#binary-sensor-filters) to prevent flooding Home Assistant with state updates:
 >
 > ```yaml
 > - settle: 1000ms
@@ -102,6 +110,8 @@ binary_sensor:
 > filter(s) as above if you wish.
 >
 > To remove the default filter for any given binary sensor instance, add `filters: []` to its configuration.
+>
+> Polygon zone binary sensors can't have filters: they publish changes as soon as each radar frame is processed.
 
 <span id="ld2450-sensors"></span>
 
@@ -329,8 +339,9 @@ number:
   seconds. All options from [Number](/components/number#config-number).
 
 > [!NOTE]
-> The `presence_timeout` value applies *only* to the [presence binary sensor states](#ld2450-binary-sensors).
-> It does **not** apply to any other sensor data, such as target count or target details.
+> The `presence_timeout` value applies *only* to the [presence binary sensor states](#ld2450-binary-sensors),
+> including those of [polygon zones](#polygon-zones). It does **not** apply to any other sensor data, such as
+> target count or target details.
 
 - **zone_N** (*Optional*): Configuration for the zone (N = 1 to 3), defined as a rectangular area in front of and
   relative to the sensor. A maximum of three zones can be configured: `zone_1`, `zone_2`, `zone_3`. The zone
@@ -374,6 +385,74 @@ button:
   All options from [Button](/components/button#config-button).
 
 - **restart** (*Optional*): Restart the `ld2450` device. All options from [Button](/components/button#config-button).
+
+## Text
+
+The `ld2450` text platform defines [polygon zones](#polygon-zones): one text entity per zone that holds its polygon,
+paired with a presence binary sensor under the [binary sensor platform](#ld2450-binary-sensors).
+
+```yaml
+text:
+  - platform: ld2450
+    ld2450_id: ld2450_radar
+    polygon_zones:
+      - id: couch_zone
+        name: Couch Zone Polygon
+
+binary_sensor:
+  - platform: ld2450
+    ld2450_id: ld2450_radar
+    polygon_zones:
+      - polygon_zone_id: couch_zone
+        name: Couch Occupied
+```
+
+### Configuration variables
+
+- **ld2450_id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID for the
+  [Ld2450](/components/sensor/ld2450/) component.
+- **polygon_zones** (**Required**, list): The polygon zones.
+
+  - **id** (**Required**, [ID](/guides/configuration-types/#id)): The ID of the zone, referenced by
+    `polygon_zone_id` in the zone's presence binary sensor.
+  - All options from [Text](/components/text/#config-text). `mode` defaults to `TEXT`.
+
+### Polygon Zones
+
+The hardware zones of the [number platform](#number) are three rectangles. A polygon zone can have any shape, and
+presence in it is evaluated on the device at the radar's full rate of 10 Hz, instead of in Home Assistant from the
+target X/Y sensors, which are throttled to 1 Hz by default.
+
+The polygon is set at runtime through the zone's text entity, as `x,y` points in millimeters separated by `;`:
+
+```text
+-1000,500;1000,500;1500,3000;-1500,3000
+```
+
+- 3 to 23 points, in the radar's coordinates, the same as the target X/Y sensors. Spaces around numbers and a
+  trailing `;` are allowed.
+- An empty value disables the zone, and its presence binary sensor becomes unknown.
+- An invalid value, or one that can't be saved, is rejected and the previous polygon is kept.
+
+The polygon is saved and restored on boot. Presence is on while any target is inside the polygon, and stays on
+for [presence_timeout](#number) after the last target leaves it.
+
+> [!NOTE]
+> Polygons are checked against the raw coordinates reported by the radar, before any sensor filter, so a filter
+> that changes the target X/Y sensor values (such as `multiply`, `offset` or `lambda`) puts them in a different
+> coordinate frame. Targets the radar itself drops never reach a polygon zone: those outside the hardware zones
+> when `zone_type` is `Detection` or inside them when it is `Filter`, and all but one target when `multi_target`
+> is off.
+
+> [!NOTE]
+> On ESP8266, polygons are kept in RTC memory by default, which survives a reboot but not a power loss; set
+> [restore_from_flash](/components/esp8266/#configuration-variables) to keep them across a power loss. Each zone
+> takes about 100 bytes of the small space for saved settings, which is shared with other components: at most 4
+> zones fit in RTC memory, or 5 with `restore_from_flash`, and the build fails when everything saved does not fit.
+
+> [!TIP]
+> The [LD2450 Zone Card](https://github.com/fornellas/ld2450-zone-card) is a Home Assistant dashboard card that
+> lets you draw polygon zones over a live view of the targets. It finds polygon zone entities automatically.
 
 ## Text Sensor
 
@@ -485,6 +564,16 @@ binary_sensor:
       name: Moving Target
     has_still_target:
       name: Still Target
+    polygon_zones:
+      - polygon_zone_id: couch_zone
+        name: Couch Occupied
+
+text:
+  - platform: ld2450
+    ld2450_id: ld2450_radar
+    polygon_zones:
+      - id: couch_zone
+        name: Couch Zone Polygon
 
 number:
   - platform: ld2450

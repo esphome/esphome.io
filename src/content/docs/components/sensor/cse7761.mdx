@@ -88,6 +88,29 @@ energy dashboard handles that reset because the sensors use `total_increasing`; 
 reboots, feed `active_power_1` or `active_power_2` into the [Total Daily Energy](/components/sensor/total_daily_energy/)
 sensor.
 
+## Power Direction
+
+Active power is signed, so it shows which way power flows: a load reads positive and power fed back, for
+example from a solar inverter, reads negative. On the Sonoff Dual R3 v1.x the board wires the current into
+the chip the other way round, so normal loads read as negative watts. Flip the sign with a filter on each
+power sensor:
+
+```yaml
+sensor:
+  - platform: cse7761
+    active_power_1:
+      name: 'CSE7761 Active Power 1'
+      filters:
+        - multiply: -1
+    active_power_2:
+      name: 'CSE7761 Active Power 2'
+      filters:
+        - multiply: -1
+```
+
+If a channel only ever powers loads, `- lambda: return fabsf(x);` also works, but it hides the direction.
+On a board with a clip-on current transformer, such as the Sonoff POW CT, turn the clamp around instead.
+
 ## See Also
 
 - [Sensor Filters](/components/sensor#sensor-filters)

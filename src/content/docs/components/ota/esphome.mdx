@@ -366,6 +366,22 @@ upload.
   duration of the update; when that is not available the device asks for an uncompressed upload instead. The
   transfer is about a third smaller, which helps most on a slow link.
 
+## Unreliable Wi-Fi
+
+Devices with a weak signal (a distant access point, a poor antenna, a metal enclosure or a crowded 2.4 GHz band)
+often lose so many packets that an upload over TCP gives up. When the `esphome` command line sees packet loss
+while connecting, it moves the upload itself to UDP, which keeps going through heavy loss instead of timing out.
+There is nothing to configure, and on a good link uploads stay on TCP.
+
+- Both the device firmware and the `esphome` command line need ESPHome 2026.11.0 or newer; with an older side the
+  upload uses TCP as before.
+- It works on ESP8266, RP2, ESP32, host, and the BK72xx and LN882x families of [LibreTiny](/components/libretiny/);
+  RTL87xx devices keep using TCP. It uses no extra RAM outside an update: the device opens the UDP socket only while
+  an upload runs.
+- The upload uses UDP on the same port number as the OTA [`port`](#configuration-variables). If a firewall blocks
+  it, the upload falls back to TCP after 15 seconds and the log shows `UDP blocked, using TCP`.
+- Encrypted uploads stay encrypted over UDP.
+
 ## Updating the partition table on ESP32
 
 On the ESP32 it is possible to modify the partition table with an OTA update. This feature can be used to update devices that can't be flashed via serial and have an old partition table with a small NVS partition. It can also be used to [convert devices running Tasmota to ESPHome](/guides/migrate_sonoff_tasmota). Before you can update the partition table you need to add the option `allow_partition_access: true` to the config and install it to your device.
