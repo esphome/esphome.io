@@ -214,6 +214,35 @@ bk72xx:
   Refer to [LibreTiny/Configuration](https://docs.libretiny.eu/link/config) to see all options.
   *This takes precedence (overrides) all options described above*.
 
+## Crash Handler
+
+On BK7238 and BK7231N, ESPHome captures crash data from the previous boot and logs it on startup, the
+same way it does on ESP32, ESP8266 and RP2040. It covers the chip's three fault traps: undefined
+instruction, prefetch abort and data abort.
+
+When a crash occurs, the fault PC, the return address and up to 8 stack-scanned return addresses are
+preserved across the reboot and logged at the `ERROR` level. The report is also replayed to the next log
+client that connects over the API or MQTT, and the ESPHome CLI decodes the addresses to function names
+(see [Getting a Stack Trace from Crashes](/guides/troubleshooting/#getting-a-stack-trace-from-crashes)).
+
+```log
+[E][libretiny.crash]: *** CRASH DETECTED ON PREVIOUS BOOT ***
+[E][libretiny.crash]:   Reason: Undefined instruction
+[E][libretiny.crash]:   PC:  0x0001D6DC  (fault location)
+[E][libretiny.crash]:   LR:  0x0001D6DD  (return address)
+[E][libretiny.crash]:   SP:  0x0040DDB8
+[E][libretiny.crash]:   BT0: 0x0001D735  (stack backtrace)
+[E][libretiny.crash]:   BT1: 0x0001D305  (stack backtrace)
+```
+
+The crash handler also makes the device restart after a crash. Once Wi-Fi is connected, the SDK's own
+crash handling leaves a BK72xx device hung until its power is cycled; with the crash handler the device
+reboots within a second and reports the crash.
+
+No configuration is needed — the crash handler is always enabled on BK7238 and BK7231N. Other BK72xx,
+RTL87xx and LN882x chips do not have it yet; on the other BK72xx chips a crash with Wi-Fi connected can
+still leave the device hung until it is power-cycled.
+
 ## See Also
 
 - [ESPHome Core Configuration](/components/esphome/)

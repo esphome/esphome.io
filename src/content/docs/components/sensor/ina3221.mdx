@@ -47,6 +47,30 @@ sensor:
     update_interval: 60s
 ```
 
+```yaml
+# Single-shot mode with averaging, alert limits and the shunt voltage sum
+sensor:
+  - platform: ina3221
+    continuous_mode: false
+    adc_averaging: 16
+    adc_time: 1100us
+    channel_1:
+      shunt_resistance: 0.05 ohm
+      current:
+        name: "Channel 1 Current"
+      warning_current_limit: 2.5A
+      critical_current_limit: 3A
+    channel_2:
+      shunt_resistance: 0.05 ohm
+      current:
+        name: "Channel 2 Current"
+    sum_shunt_voltage:
+      name: "Sum Shunt Voltage"
+    sum_current:
+      name: "Total Current"
+    update_interval: 60s
+```
+
 ## Configuration variables
 
 - **address** (*Optional*, int): Manually specify the I²C address of the sensor. Defaults to `0x40`.
@@ -56,20 +80,55 @@ sensor:
     Defaults to `0.1 ohm`.
 
   - **current** (*Optional*): Use the current value on this channel in amperes. All options from
-    [Sensor](/components/sensor).
+    [Sensor](/components/sensor/).
 
   - **power** (*Optional*): Use the power value on this channel in watts. All options from
-    [Sensor](/components/sensor).
+    [Sensor](/components/sensor/).
 
   - **bus_voltage** (*Optional*): Use the bus voltage (voltage of the high side contact) value on this channel in V.
-    All options from [Sensor](/components/sensor).
+    All options from [Sensor](/components/sensor/).
 
   - **shunt_voltage** (*Optional*): Use the shunt voltage (voltage across the shunt resistor) value on this channel in V.
-    All options from [Sensor](/components/sensor).
+    All options from [Sensor](/components/sensor/).
+
+  - **warning_current_limit** (*Optional*, current): Current at which the chip pulls its WARNING pin low for this
+    channel, for example `2.5A`. The pin follows the averaged measurement.
+
+  - **critical_current_limit** (*Optional*, current): Current at which the chip pulls its CRITICAL pin low for this
+    channel, for example `3A`. The pin follows every single conversion.
 
 - **channel_2** (*Optional*): The configuration options for the 2nd channel. Same options as 1st channel.
 - **channel_3** (*Optional*): The configuration options for the 3rd channel. Same options as 1st channel.
-- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to check the sensor. Defaults to `60s`.
+- **continuous_mode** (*Optional*, boolean): Keep the chip converting all the time. Set to `false` for single-shot
+  mode, where one conversion of every channel is started at each update and the chip idles in between.
+  Defaults to `true`.
+- **adc_averaging** (*Optional*, int): Number of samples averaged per conversion. One of `1`, `4`, `16`, `64`, `128`,
+  `256`, `512` or `1024`. Defaults to `1`.
+- **adc_time** (*Optional*, [Time](/guides/configuration-types/#time)): Conversion time per sample. One of `140us`,
+  `204us`, `332us`, `588us`, `1100us`, `2116us`, `4156us` or `8244us`. Defaults to `8244us`. To use different times for
+  the two measurements, give a mapping instead; each sub-key defaults to `8244us`:
+
+  ```yaml
+  adc_time:
+    bus_voltage: 1100us
+    shunt_voltage: 4156us
+  ```
+
+- **sum_shunt_voltage** (*Optional*): The chip's own sum of the shunt voltages of all configured channels, in V.
+  It only tracks the total current when every configured channel has the same `shunt_resistance`.
+  All options from [Sensor](/components/sensor/).
+- **sum_current** (*Optional*): Sum of the currents of all configured channels, in amperes, added up from the
+  per-channel readings with each channel's own shunt. All options from [Sensor](/components/sensor/).
+- **sum_power** (*Optional*): Sum of the power of all configured channels, in watts, added up from the per-channel
+  readings. All options from [Sensor](/components/sensor/).
+- **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): The interval to check the sensor.
+  Defaults to `60s`.
+  In single-shot mode it has to be longer than one conversion of all channels, which is
+  `(bus time + shunt time) × adc_averaging × configured channels` rounded up to whole milliseconds, plus 5 ms of
+  headroom; the configuration fails otherwise.
+
+The chip is put into power-down mode when the device shuts down or enters deep sleep, so a battery-powered node does
+not keep it converting.
 
 <Figure
   src={ina3221PinsImg}

@@ -23,11 +23,23 @@ udp:
 - **port** (*Optional*, int): The destination UDP port number to use. Defaults to `18511`. Different listen and broadcast ports can be specified via a map instead of a single port number.:
   - **listen_port** (**Required**, int): The port to listen on for received packets.
   - **broadcast_port** (**Required**, int): The port to send packets to.
-- **addresses** (*Optional*, list of IPv4 addresses): One or more IP addresses to broadcast data to. Defaults to `255.255.255.255`
-  which is the local network broadcast address.
+- **addresses** (*Optional*, list of IP addresses): One or more IPv4 or IPv6 addresses to send data to. Defaults to
+  `255.255.255.255`, the local network broadcast address. IPv6 addresses require `enable_ipv6: true` in the
+  [Network](/components/network/) component; on ESP8266 and RP2040 the `udp` component rejects them at validation.
+  A `%` scope suffix and link-local unicast destinations (`fe80::/10`) also fail validation, because the device
+  cannot pick an interface for them; use multicast, unique local or global addresses instead. Multicast destinations
+  leave on the interface the `listen_address` group was joined on, or on the first IPv6 interface when there is no
+  IPv6 group.
 
-- **listen_address** (*Optional*, IPv4 address): Changes to multicast, adding an address to listen to. Defaults to no multicast address, just
-  local network broadcast address `255.255.255.255`. **NOTE**: Adding a multicast address stops it from listening on the broadcast address.
+- **listen_address** (*Optional*, IP address): An IPv4 multicast or broadcast address, or an IPv6 multicast
+  address, to listen on. A multicast address joins that group; a broadcast address, such as the default
+  `255.255.255.255`, only listens. IPv6 multicast addresses (e.g. `ff12::6053`) have the same `enable_ipv6`,
+  platform and `%` scope suffix requirements as IPv6 `addresses` above. With the default `listen_address` and
+  `enable_ipv6: true`, the device also receives IPv6 unicast datagrams sent to its own address, except on ESP8266
+  and RP2040.
+  **NOTE**: When set to a multicast address, the socket binds to the group address and receives only datagrams sent
+  to that group, whichever family the group is in: IPv4 broadcast packets (`255.255.255.255`) and IPv6 unicast
+  datagrams sent to the device's own address are no longer received. Outgoing `addresses` are unaffected.
 
 ## Reliability
 
@@ -110,6 +122,22 @@ binary_sensor:
     on_press:
       - lambda: |-
           ESP_LOGI("main", "d command to binary_sensor_unlock");
+```
+
+### IPv6 Multicast
+
+With IPv6 enabled in the [Network](/components/network/) component, both `listen_address` and `addresses` accept IPv6
+multicast addresses. Pick a group of your own, such as a transient link-local group; `ff02::1` would reach every
+IPv6 host on the link.
+
+```yaml
+network:
+  enable_ipv6: true
+
+udp:
+  listen_address: ff12::6053
+  addresses:
+    - ff12::6053
 ```
 
 ## See Also

@@ -32,7 +32,7 @@ The `modbus_controller` platform creates an output from a modbus_controller. The
 > the same as `_R` (word order reversed / **low word first** across multiple registers).
 
 
-- **register_type** (*Optional*):
+- **register_type** (*Optional*): The kind of register to write. One of:
   - `coil`  : Write Coil - Write the ON/OFF status of a discrete coil in the device with *Function Code 5 or 15*. This will create a binary output.
   - `holding`  : Write Holding Registers - write contents of holding registers in the device with *Function Code 6 or 16*. This will create a float output.
 
@@ -51,7 +51,7 @@ The `modbus_controller` platform creates an output from a modbus_controller. The
   - **x** (float or bool): the new value being set — a `float` for `register_type: holding`, or a `bool` for
     `register_type: coil`
   - **item** (`ModbusFloatOutput *` / `ModbusBinaryOutput *`): The entity as its own modbus device: the
-    [write helpers](/components/modbus_client/#lambda-hook-component) and `queue_pdu()` are available - for example
+    [write helpers](/components/modbus_client/#modbus_client-component) and `queue_pdu()` are available - for example
     `item->write_single_register(0x1234, 42)` or `item->queue_pdu(...)` - regardless of the output's own register
     type. Also a [`SensorItem`](https://api-docs.esphome.io/classesphome_1_1modbus__controller_1_1_sensor_item)
     subclass, so the configured address, `offset`, `bitmask`, etc. are accessible.

@@ -19,7 +19,14 @@ the corresponding child components to be configured as well. The
 [Sendspin Switch](/components/switch/sendspin/) can stop the client so no server
 connects.
 
-This platform only works on ESP32-based chips.
+Every connection to a Sendspin server is encrypted. By default any server on the network may play on the device.
+Turn off [unpaired access](#unpaired-access) to allow only servers that have [paired](#pairing) with it.
+
+This platform only works on ESP32-based chips, with the [ESP-IDF framework](/components/esp32/).
+
+> [!IMPORTANT]
+> The device needs a Sendspin 1.0.0-rc1 server, such as Music Assistant 2.11.0b4 or newer. Servers using an
+> earlier protocol version cannot connect.
 
 > [!WARNING]
 > The Sendspin protocol is not yet finalized and this component is considered
@@ -34,8 +41,8 @@ sendspin:
 ## Configuration variables
 
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID for this hub. Required if you want to reference this hub explicitly from child components.
-- **task_stack_in_psram** (*Optional*, boolean): Place the internal HTTP server task
-  stack in PSRAM to reduce internal RAM usage. Requires the
+- **task_stack_in_psram** (*Optional*, boolean): Place the internal HTTP server and protocol
+  task stacks in PSRAM to reduce internal RAM usage. Requires the
   [Psram](/components/psram/) component to be configured. Defaults to `false`.
 - **manufacturer** (*Optional*, string): The manufacturer the device reports to the
   Sendspin server. Defaults to the author part of the
@@ -49,7 +56,74 @@ sendspin:
   to the Sendspin server. Defaults to the
   [project version](/components/esphome#esphome-creators_project) when one is set,
   otherwise the ESPHome version.
+- **static_pairing_code** (*Optional*, string): A fixed pairing code of exactly 8 decimal digits. Always quote the
+  value, including in `secrets.yaml` when using `!secret`, for example `"01234567"`, since an unquoted number is
+  rejected. Cannot be combined with a [dynamic pairing code](#dynamic-pairing-code). See
+  [Static Pairing Code](#static-pairing-code).
+- **unpaired_access** (*Optional*, boolean): Whether servers that have not paired with the device may play on
+  it. Set to `false` once a server is paired so only paired servers can play. Defaults to `true`. To change it at
+  runtime, use a [Sendspin Switch](/components/switch/sendspin/) of type `unpaired_access` instead; the two cannot
+  be combined.
 
+## Pairing
+
+A server pairs with the device once, and the device stores the result. A paired server can always play, even
+when [unpaired access](#unpaired-access) is off. The device can offer these ways to pair:
+
+### Static Pairing Code
+
+Set `static_pairing_code` to a fixed 8-digit code, then enter that code on the server. Pick a random code that is
+unique to the device. An attempt must also be confirmed on the device with the
+[`sendspin.confirm_pairing_window`](#sendspin-confirm_pairing_window-action) action, for example from a button press.
+[`on_open_pairing_window`](#automations) runs when an attempt is waiting for that confirmation.
+
+Confirming opens a **pairing window** of 5 minutes. It closes early when pairing succeeds, after 5 wrong codes,
+when the server disconnects, or when [`sendspin.cancel_pairing_window`](#sendspin-cancel_pairing_window-action) runs.
+After it closes, the next attempt has to be confirmed again.
+
+### Dynamic Pairing Code
+
+The device shows a new 6-digit code for each attempt, which you enter on the server. Configure
+[`on_display_pairing_code`](#automations) to show the code, or publish it with a
+[Sendspin Text Sensor](/components/text_sensor/sendspin/) of type `pairing_code`. Attempts do not need to be
+confirmed on the device, and there is no pairing window. After 20 wrong codes, though, further attempts wait until
+[`sendspin.confirm_pairing_window`](#sendspin-confirm_pairing_window-action) runs, which resets the count. Give the
+device a way to run it, such as a button. [`on_open_pairing_window`](#automations) runs when an attempt is waiting.
+
+Only one pairing code method can be offered. The device offers a dynamic pairing code when
+`on_display_pairing_code` or a `pairing_code` text sensor is configured, so neither can be combined with
+`static_pairing_code`.
+
+## Unpaired Access
+
+While `unpaired_access` is `true`, any server on the network may play on the device without pairing. When it is
+`false`, servers that have not paired can still connect to pair, but cannot play. A
+[Sendspin Switch](/components/switch/sendspin/) of type `unpaired_access` can turn it on and off at runtime instead.
+
+> [!WARNING]
+> With `unpaired_access: false`, make sure the device offers a [static](#static-pairing-code) or
+> [dynamic](#dynamic-pairing-code) pairing code. Otherwise no new server can pair, so only servers that already
+> paired can play.
+
+## Automations
+
+- **on_pairing_succeeded** (*Optional*, [Automation](/automations/)): An automation to perform when a server
+  finishes pairing with the device. The variable `server_id` (`std::string`) holds the server's ID.
+- **on_pairing_failed** (*Optional*, [Automation](/automations/)): An automation to perform when a pairing attempt
+  fails. The variables `server_id` (`std::string`) and `reason` (`StringRef`) are available. `reason` is one
+  of `attempt_timeout`, `concurrent_attempt`, `method_not_supported`, `pairing_code_mismatch`,
+  `user_cancelled` or `unknown`. Compare it directly, for example `reason == "user_cancelled"`, and use
+  `reason.c_str()` to log it.
+- **on_open_pairing_window** (*Optional*, [Automation](/automations/)): An automation to perform when a pairing
+  attempt is waiting to be confirmed on the device: a [static pairing code](#static-pairing-code) attempt while no
+  pairing window is open, or a [dynamic pairing code](#dynamic-pairing-code) attempt after 20 wrong codes. Run
+  [`sendspin.confirm_pairing_window`](#sendspin-confirm_pairing_window-action) to allow it.
+- **on_close_pairing_window** (*Optional*, [Automation](/automations/)): An automation to perform when the
+  attempt that ran `on_open_pairing_window` ends, whatever the outcome. Use it to dismiss a prompt.
+- **on_display_pairing_code** (*Optional*, [Automation](/automations/)): An automation to perform when a server
+  asks the device to show a dynamic pairing code. The variable `code` (`std::string`) holds the 6-digit code.
+- **on_clear_pairing_code** (*Optional*, [Automation](/automations/)): An automation to perform when the dynamic
+  pairing code is no longer needed.
 
 ## Actions
 
@@ -63,6 +137,67 @@ on_...:
   - sendspin.switch:
 ```
 
+### `sendspin.confirm_pairing_window` Action
+
+This [action](/automations/actions/#all-actions) confirms a pairing attempt on the device. Run it in response to a
+user action such as a button press.
+
+- With a [static pairing code](#static-pairing-code), it opens the pairing window. If no attempt is waiting yet,
+  the window still opens, so you can press the button before starting pairing on the server.
+- With a [dynamic pairing code](#dynamic-pairing-code), it resets the count of wrong codes, so a waiting attempt
+  can continue.
+
+```yaml
+on_...:
+  - sendspin.confirm_pairing_window:
+```
+
+### `sendspin.cancel_pairing_window` Action
+
+This [action](/automations/actions/#all-actions) closes the [pairing window](#static-pairing-code), so a
+waiting pairing attempt is not confirmed.
+
+```yaml
+on_...:
+  - sendspin.cancel_pairing_window:
+```
+
+## Examples
+
+Pair with a static code that is confirmed with a button press:
+
+```yaml
+sendspin:
+  static_pairing_code: !secret sendspin_pairing_code
+  on_open_pairing_window:
+    - logger.log: "Press the button to pair"
+
+binary_sensor:
+  - platform: gpio
+    pin: GPIOXX
+    name: "Pair Button"
+    on_press:
+      - sendspin.confirm_pairing_window:
+```
+
+Pair with a dynamic code that is shown as a text sensor, with a button for when attempts need confirming:
+
+```yaml
+sendspin:
+
+text_sensor:
+  - platform: sendspin
+    name: "Pairing Code"
+    type: pairing_code
+
+binary_sensor:
+  - platform: gpio
+    pin: GPIOXX
+    name: "Pair Button"
+    on_press:
+      - sendspin.confirm_pairing_window:
+```
+
 ## Child components
 
 - [Sendspin Image](/components/image/sendspin/): Displays album and artist artwork
@@ -74,9 +209,9 @@ on_...:
 - [Sendspin Sensor](/components/sensor/sendspin/): Exposes numeric metadata
   about the currently playing audio (track progress, track duration, etc.).
 - [Sendspin Switch](/components/switch/sendspin/): Enables and disables the
-  Sendspin client.
+  Sendspin client, and turns unpaired access on and off.
 - [Sendspin Text Sensor](/components/text_sensor/sendspin/): Exposes metadata
-  about the currently playing audio (title, artist, album, etc.).
+  about the currently playing audio (title, artist, album, etc.), and the pairing code.
 
 ## See Also
 

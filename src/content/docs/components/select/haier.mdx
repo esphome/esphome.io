@@ -1,0 +1,35 @@
+---
+title: Haier Climate Select
+description: Instructions for setting up select entities that set the airflow direction of a Haier hOn air conditioner.
+---
+
+The `haier` select platform adds a vertical and a horizontal airflow direction select to a
+[Haier Climate](/components/climate/haier/) that uses the hOn protocol.
+
+```yaml
+# Example configuration entry
+select:
+  - platform: haier
+    haier_id: haier_ac
+    vertical_airflow:
+      name: Vertical airflow
+    horizontal_airflow:
+      name: Horizontal airflow
+```
+
+## Configuration Variables
+
+- **haier_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the hOn
+  [Haier Climate](/components/climate/haier/). Only needed with more than one climate.
+- **vertical_airflow** (*Optional*): The vertical airflow direction. Options are `Health Up`, `Max Up`, `Up`,
+  `Center`, `Down`, `Max Down` and `Health Down`. All options from [Select](/components/select/#config-select).
+- **horizontal_airflow** (*Optional*): The horizontal airflow direction. Options are `Max Left`, `Left`, `Center`,
+  `Right` and `Max Right`. All options from [Select](/components/select/#config-select).
+
+While an axis swings, its select shows the position the appliance returns to when that swing is turned off, and
+choosing a position then only changes that return position.
+
+## See Also
+
+- [Haier Climate](/components/climate/haier/)
+- [Select Component](/components/select/)
