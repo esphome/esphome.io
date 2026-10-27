@@ -73,8 +73,11 @@ web_server:
 - **js_extra_urls** (*Optional*, list of URLs): Additional JavaScript modules loaded by the index page after
   the main script, each as a `<script type="module">` tag. Use this for optional add-ons to the web
   interface, such as a zone editor for a radar sensor, without embedding them in the firmware or replacing
-  the main script. Requires `version` 2 or 3. Browsers fetch module scripts with CORS, so the host must send an
-  `Access-Control-Allow-Origin` header that admits the device's origin (public CDNs such as jsDelivr do).
+  the main script. Requires `version` 2 or 3. Each URL must be an `http://` or `https://` URL. The option
+  cannot be combined with `local: true`, and when `local` is not set it is also rejected on a device whose
+  WiFi runs in AP-only mode, because both serve the embedded interface, which loads no add-on scripts.
+  Browsers fetch module scripts with CORS, so the host must send an `Access-Control-Allow-Origin` header that
+  admits the device's origin (public CDNs such as jsDelivr do).
 
 - **auth** (*Optional*): Enables HTTP authentication with a username and password.
 
