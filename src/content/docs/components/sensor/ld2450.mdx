@@ -486,7 +486,7 @@ text_sensor:
         name: "Target-3 Direction"
       xy:
         name: "Target-3 XY"
-        throttle: 200ms
+        filters: []
 ```
 
 ### Configuration variables
@@ -509,9 +509,10 @@ text_sensor:
     the target is not tracked. `x` and `y` are the same as those of the target's [sensors](#sensor), but always
     from the same radar frame.
 
-    - **throttle** (*Optional*, [Time](/guides/configuration-types/#time)): The minimum time between two positions.
-      `NA` is published at once, and a position held back by the throttle is published when it ends, so the last
-      position of a target that stops is never lost. Use `0s` to publish every change. Defaults to `1s`.
+    - **filters** (*Optional*): Like the target's [sensors](#sensor), defaults to a `1s` `timeout` that resends
+      the last position and a `1s` `throttle_with_priority` that lets `NA` through at once, so the last position of
+      a target that stops is never lost. Use `filters: []` to publish every change. See
+      [Text Sensor Filters](/components/text_sensor/#text-sensor-filters).
     - All options from [Text Sensor](/components/text_sensor/#config-text_sensor).
 
 ## Select
