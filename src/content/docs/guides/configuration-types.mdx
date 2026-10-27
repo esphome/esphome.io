@@ -107,6 +107,17 @@ Advanced options:
   i.e. the maximum amount of current can additionally be set. Defaults to `20mA`.
   Options are `5mA`, `10mA`, `20mA`, `40mA`.
 
+- **hold_state** (*Optional*, boolean): On `ESP32`, hold the pin during (deep) sleep and software reset so it keeps
+  its output level or pullup/pulldown mode. Only internal pins support this; pins on I/O expanders do not. Use hold
+  for pins driven directly as GPIO, not for pins used by peripherals such as `i2c` or `rmt` (`uart` is the exception,
+  where it can hold the pullup/pulldown). If the pin is also used elsewhere with `allow_other_uses`, enable hold on
+  all uses or none. Pins configured as both input and output might glitch during wakeup/reboot. Defaults to `false`.
+
+> [!WARNING]
+> A hold outlives an OTA update. If a held pin is removed from the configuration entirely, the pin stays held until
+> a hardware reset. When `hold_state: true` is added to an existing pin and installed over OTA, the pin may be in an
+> undefined state until it is toggled or the device is hardware reset.
+
 - **ignore_strapping_warning** (*Optional*, boolean): Certain pins on ESP32s are designated *strapping pins* and are read
   by the chip on reset to configure initial operation, e.g. to enable bootstrap mode.
   Using such pins for I/O should be avoided and ESPHome will warn if I/O is configured on a strapping pin.
@@ -123,6 +134,37 @@ Advanced options:
   However, some ESP32 board designs wire specific flash configurations that free up certain pins for general use.
   If you are *absolutely* certain that your specific board design allows a normally-reserved pin to be used,
   you can suppress the error by setting this option to `true`. Defaults to `false`.
+
+### Selecting an I2C Expander by Address
+
+Pins provided by an I²C I/O expander (`xl9535`, `pca9554`, `pca6416a`, `tca9555`, `mcp23xxx`,
+`mcp23016`, `sx1509`, `pcf8574`, `pi4ioe5v6408`, `max6956`) are referenced in the pin schema by the
+expander's own domain name, set to the id of the hub instance:
+
+```yaml
+pin:
+  xl9535: xl9535_hub
+  number: 4
+```
+
+If a configuration has more than one hub instance of the same expander type — for example, a board
+with two `xl9535` expanders at different I²C addresses — the id can be omitted and the hub selected
+instead by its I²C address, matched against the hub's own `address:`:
+
+```yaml
+pin:
+  xl9535:
+    address: 0x21
+  number: 4
+```
+
+This fails with a clear error if no hub of that type has a matching address, or if more than one
+does (for example, two hubs with the same address on different I²C buses — those still need
+explicit ids).
+
+The `mcp23xxx` pin key is shared by the I²C hubs (`mcp23008`, `mcp23017`) and the SPI hubs
+(`mcp23s08`, `mcp23s17`), so an `address:` is matched against all of them. SPI hubs have no
+`address:` and are never selected this way; reference them by id.
 
 ## Time
 

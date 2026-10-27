@@ -17,27 +17,37 @@ submit a feature request (see FAQ).
 
 | Supported units                           | Platform name                      | Supports receiver |
 | ----------------------------------------- | ---------------------------------- | ----------------- |
+| [Airton](#airton)                         | `airton`                           | yes               |
 | Ballu                                     | `ballu`                            | yes               |
 | Coolix                                    | `coolix`                           | yes               |
-| Daikin | `daikin`                           | yes |
+| [Daikin](#daikin) | `daikin`                           | yes |
 | [Daikin ARC](#daikin_arc) | `daikin_arc`                       | yes |
 | [Daikin BRC](#daikin_brc) | `daikin_brc`                       | yes |
 | [Delonghi](#delonghi_ir) | `delonghi`                         | yes |
 | Emmeti | `emmeti`                           | yes |
+| [Friedrich](#friedrich)                   | `friedrich`                        | yes               |
 | Fujitsu General | `fujitsu_general`                  | yes |
 | [GREE](#gree_ir) | `gree`                             | |
+| [Haier Tundra](#haier_tundra) | `haier_tundra` | yes |
 | Hitachi | `hitachi_ac344`, `hitachi_ac424` | yes |
+| [Islandaire](#islandaire) | `islandaire`                       | yes |
 | [LG](#climate_ir_lg) | `climate_ir_lg`                    | yes |
 | [Midea](#midea_ir) | `midea_ir`                         | yes |
+| [Mistral](#mistral_ir) | `mistral_ir`                       | yes |
 | [Mitsubishi](#mitsubishi) | `mitsubishi`                       | yes |
 | Noblex | `noblex`                           | yes |
+| [Pioneer mini-split (Parker Davis)](#pd_pioneer_ir) | `pd_pioneer_ir`                    | yes |
+| [Remko, Fischer ClimaButler, TROTEC, Novamatic, Rexair, FREECOM](#remko_ar715) | `remko_ar715` | |
+| [Samsung](#samsung) | `samsung`                          | yes |
+| [Siemens IRA211](#siemens_ira211) | `siemens_ira211`        | yes |
 | Electrolux, TCL, Fuego | `tcl112`                           | yes |
 | [Toshiba](#toshiba) | `toshiba`                          | yes |
+| [Hisense, BGH, Tadiran (Argentina)](#whirlpool) | `whirlpool` (`HISENSE_ARG`) | yes |
 | [Whirlpool](#whirlpool) | `whirlpool`                        | yes |
 | Yashima | `yashima`                          | |
 | [Whynter](#whynter) | `whynter`                          | yes |
 | [ZH/LT-01](#zhlt01) | `zhlt01`                           | yes |
-| [Arduino-HeatpumpIR](#heatpumpir) library | `heatpumpir`                       | |
+| [Arduino-HeatpumpIR](#heatpumpir) library | `heatpumpir`                       | `mitsubishi_heavy_zmp` |
 
 This component requires that you have configured a [Remote Transmitter](/components/remote_transmitter/).
 
@@ -87,6 +97,66 @@ climate:
 
 - **transmitter_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the remote transmitter.
 
+### `airton`
+
+Airton RD1A1 remote protocol, used by Airton branded units and Ferroli's Aster range.
+
+- **vertical_direction** (*Optional*, string): The vertical direction of the air outlet until a saved setting is
+  restored or the select below changes it. One of `off`, `swing`, `up`, `middle-up`, `middle`, `middle-down` and
+  `down`. Defaults to `off`.
+
+The remote sends every setting in each frame, so the display light, sleep mode and vertical direction are stored in
+flash and restored at boot. Nothing is transmitted at boot; the stored settings go out with the next command. With a
+`receiver_id`, frames from the handheld remote update the climate state and these settings as well.
+
+The `airton` switch platform exposes the display light and sleep mode. Both switches are configuration entities and
+keep their state through the climate's own storage, so they do not need a `restore_mode`.
+
+- **airton_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the `airton` climate. Only needed with
+  more than one.
+- **display** (*Optional*, [Switch](/components/switch#config-switch)): The display light of the indoor unit.
+- **sleep_mode** (*Optional*, [Switch](/components/switch#config-switch)): Sleep mode. The unit ignores it in fan-only
+  mode and in the automatic heat/cool mode.
+
+The `airton` select platform exposes the vertical air outlet direction.
+
+- **airton_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the `airton` climate. Only needed with
+  more than one.
+- **vertical_direction** (*Optional*, [Select](/components/select#config-select)): The vertical direction, with the
+  options of the climate's `vertical_direction`. `swing` and the climate's vertical swing mode are the same setting,
+  so changing one updates the other.
+
+```yaml
+# Example configuration entry
+climate:
+  - platform: airton
+    id: living_room_ac
+    name: Living Room AC
+
+switch:
+  - platform: airton
+    display:
+      name: Display Light
+    sleep_mode:
+      name: Sleep Mode
+
+select:
+  - platform: airton
+    vertical_direction:
+      name: Vertical Direction
+```
+
+The display light and sleep mode can also be set from automations with `climate.airton.display_on`,
+`climate.airton.display_off`, `climate.airton.sleep_on` and `climate.airton.sleep_off`. Each action takes the ID of
+the `airton` climate.
+
+```yaml
+on_...:
+  - climate.airton.display_off: living_room_ac
+  - climate.airton.sleep_on:
+      id: living_room_ac
+```
+
 ### `climate_ir_lg`
 
 - **header_high** (*Optional*, [Time](/guides/configuration-types#time)): time for the high part of the header for the LG protocol. Defaults to `8000us`
@@ -107,11 +177,36 @@ climate:
     advanced_commands_support: false
 ```
 
+### `daikin`
+
+The `daikin` climate controls units that use the Daikin ARC43xxx remotes. The target temperature can be set in
+0.5 °C steps. The following presets are supported and map to the unit's own functions:
+
+| Preset     | Unit function                     |
+| ---------- | --------------------------------- |
+| `boost`    | Powerful                          |
+| `sleep`    | Quiet                             |
+| `eco`      | Econo                             |
+| `comfort`  | Comfort airflow                   |
+| `activity` | Intelligent eye (presence sensor) |
+
+The unit ends Powerful after 20 minutes, so the `boost` preset returns to `none` by itself.
+
+```yaml
+# Example configuration entry
+climate:
+  - platform: daikin
+    name: "Living Room AC"
+    sensor: room_temperature
+```
+
 ### `daikin_brc`
 
 The Daikin BRC remotes are used by the ceiling cassette model of Daikin heatpumps.
 
 - **use_fahrenheit** (*Optional*, boolean): U.S. models of the Daikin BRC remote send the temperature in Fahrenheit, if your remote shows Fahrenheit and can not be changed to Celsius then set this to true. Defaults to `false`.
+- **sub_unit** (*Optional*, int): Which indoor unit this climate addresses on a system with several units on one
+  remote, `0` to `5`. A frame from the remote is only decoded when it is addressed to this unit. Defaults to `0`.
 
 ```yaml
 # Example configuration entry
@@ -120,6 +215,17 @@ climate:
     name: "AC"
     sensor: room_temperature
     use_fahrenheit: true
+```
+
+```yaml
+# Two indoor units driven from one transmitter
+climate:
+  - platform: daikin_brc
+    name: "Living Room"
+    sub_unit: 0
+  - platform: daikin_brc
+    name: "Kitchen"
+    sub_unit: 1
 ```
 
 <span id="delonghi_ir"></span>
@@ -131,6 +237,32 @@ The `delonghi` climate currently supports the protocol used by some Delonghi por
 ### `daikin_arc`
 
 The Daikin ARC remotes (`daikin_arc` climate, `daikin_arc417`, `daikin_arc480` protocols of [Arduino-HeatpumpIR](#heatpumpir)) are used by the japanese model of Daikin.
+
+### `friedrich`
+
+The `friedrich` climate currently supports the MW12Y3H protocol.
+
+The unit only accepts Fahrenheit temperatures in steps of 2 degrees, so the climate entity reports temperatures
+in degrees Fahrenheit, in the range 60 to 88. Heating can be set down to 60, other modes down to 64. Write `visual`
+temperatures and the fixed temperatures of `climate.control` in Fahrenheit too; a value written with another unit,
+such as `20°C`, is converted.
+
+- **model** (*Optional*, string): The unit model. Only `MW12Y3H` exists so far; the option is reserved for other
+  models. Defaults to `MW12Y3H`.
+
+The `sensor` option is not supported, because a temperature sensor reports Celsius while this climate works in
+Fahrenheit. `humidity_sensor` works as usual.
+
+> [!NOTE]
+> Home Assistant reads the temperature unit from the device starting with release 2026.10. In earlier releases
+> the temperatures are treated as Celsius and converted, so they are shown incorrectly (for example 72 °F as 162 °F).
+
+```yaml
+# Example configuration entry
+climate:
+  - platform: friedrich
+    name: "AC"
+```
 
 <span id="gree_ir"></span>
 
@@ -145,6 +277,12 @@ The Daikin ARC remotes (`daikin_arc` climate, `daikin_arc417`, `daikin_arc480` p
   - `yac1fb9`
   - `yx1ff`
   - `yag`
+  - `yaw1f`: the `yag` byte layout with the frame timing and follow-up message of YAW1F remotes. Try it when a
+    unit with a YAW1F remote ignores `yag`.
+
+- **use_fahrenheit** (*Optional*, boolean): Show the setpoint in Fahrenheit on the air conditioner's own display,
+  for every whole degree from 61 °F to 86 °F. This does not change the unit Home Assistant shows. Sent for every
+  model, but only tested with `yx1ff`. Defaults to `false`.
 
 ```yaml
 # Example configuration entry for climate only
@@ -155,6 +293,8 @@ climate:
     sensor: room_temperature
     model: yan
 ```
+
+Models `yx1ff` and `yac1fb9` also offer the `sleep` preset.
 
 Models `yan`, `yaa`, `yac` and `yac1fb9` support a couple of additional features which can be controlled with switches:
 
@@ -179,6 +319,115 @@ switch:
       name: "AC X-Fan"
 ```
 
+<span id="haier_tundra"></span>
+
+### `haier_tundra`
+
+Haier 112-bit protocol, currently only tested with AS35TB4HRA but may also work with other units.
+
+- **unit** (*Optional*, string): The AC unit ID, either `a` or `b`. Each transmitter can drive one unit of each ID.
+  Defaults to `a`.
+
+```yaml
+# Example configuration entry
+climate:
+  - platform: haier_tundra
+    name: "AC"
+    id: my_haier_ac
+```
+
+Two buttons and three switches are also exposed:
+
+- **haier_tundra_id** (**Required**, [ID](/guides/configuration-types/#id)): The Haier Tundra Climate entity.
+- **light** (*Optional*, [Button](/components/button/#config-button)): Toggles the display LEDs.
+- **self_clean** (*Optional*, [Button](/components/button/#config-button)): Starts the self clean process. Can be
+  started when the unit is off.
+- **health_mode** (*Optional*, [Switch](/components/switch/#config-switch)): Turns on/off Health mode.
+- **quiet_mode** (*Optional*, [Switch](/components/switch/#config-switch)): Turns on/off Quiet mode.
+- **turbo_mode** (*Optional*, [Switch](/components/switch/#config-switch)): Turns on/off Turbo mode.
+
+```yaml
+# Example configuration entry
+button:
+  - platform: haier_tundra
+    haier_tundra_id: my_haier_ac
+    light:
+      name: "Toggle Light"
+    self_clean:
+      name: "Start Self Clean"
+
+switch:
+  - platform: haier_tundra
+    haier_tundra_id: my_haier_ac
+    health_mode:
+      name: "Health Mode"
+    quiet_mode:
+      name: "Quiet Mode"
+    turbo_mode:
+      name: "Turbo Mode"
+```
+
+> [!NOTE]
+> Quiet and Turbo mode cannot both be on at once, and either can only be turned on in Cool or Heat mode.
+
+### `hitachi_ac344`
+
+Fan modes `auto`, `quiet`, `low`, `medium` and `high`, and swing modes `off`, `vertical`, `horizontal` and `both`.
+
+The unit does not read the vertical swing setting from the frame; it toggles vertical swing when the frame carries
+the swing button, so ESPHome tracks the state it last sent or received and sends the button only on a change. When
+the unit misses a command the two drift apart. To bring them back in step, press the vertical swing button on the
+original remote once at the unit. With a [receiver](#ir-receiver_id) configured, point the remote at the receiver but
+away from the unit instead, and press the button until the two agree again.
+
+```yaml
+# Example configuration entry
+climate:
+  - platform: hitachi_ac344
+    name: "AC"
+    receiver_id: rcvr  # the remote_receiver from Using a Receiver
+```
+
+The `hitachi_ac344` switch platform exposes the unit's mildew proof function, which keeps the fan running for a
+while after power off to dry the unit:
+
+- **hitachi_ac344_id** (*Optional*, [ID](/guides/configuration-types/#id)): The `hitachi_ac344` climate the switch
+  belongs to. Only needed with more than one.
+- **mildew_proof** (**Required**, [Switch](/components/switch/#config-switch)): The mildew proof switch.
+  `restore_mode` defaults to `RESTORE_DEFAULT_OFF`. The restored setting is not sent at boot; it goes out with the
+  next command, so a reboot does not turn mildew proof off.
+
+```yaml
+# Example configuration entry for the switch
+switch:
+  - platform: hitachi_ac344
+    mildew_proof:
+      name: "AC Mildew Proof"
+```
+
+### `islandaire`
+
+The `islandaire` climate supports Islandaire PTAC units, known working with the Islandaire EZ12A1GSP1S10AL.
+It supports cool, heat and fan only modes and the auto, low and high fan speeds.
+
+The unit takes whole degrees Fahrenheit, so the climate entity reports temperatures in degrees Fahrenheit, in the
+range 61 to 88. Write `visual` temperatures and the fixed temperatures of `climate.control` in Fahrenheit too; a value
+written with another unit, such as `20°C`, is converted.
+
+The `sensor` option is not supported, because a temperature sensor reports Celsius while this climate works in
+Fahrenheit. `humidity_sensor` works as usual.
+
+> [!NOTE]
+> Home Assistant reads the temperature unit from the device starting with release 2026.10. In earlier releases
+> the temperatures are treated as Celsius and converted, so they are shown incorrectly (for example 72 °F as 162 °F).
+
+```yaml
+# Example configuration entry
+climate:
+  - platform: islandaire
+    name: "AC"
+```
+
 ### `midea_ir`
 
 These air conditioners support two protocols: Midea and Coolix. Therefore, when using an IR receiver, it considers both protocols and publishes the received states.
@@ -198,6 +447,22 @@ climate:
 > - See [Transmit Midea](/components/remote_transmitter#remote_transmitter-transmit_midea) to send custom commands, including Follow Me mode.
 > - See [Toshiba](#toshiba) below if you are looking for compatibility with Midea model MAP14HS1TBL or similar.
 
+### `mistral_ir`
+
+The `mistral_ir` platform supports Mistral brand split air conditioners, model MHFE1126A, which use the MR112C
+remote controller.
+
+The platform supports turning the unit on and off, the cool, dry, fan only, heat and auto modes, a target
+temperature from 16 to 30 °C in steps of 1 °C, and the low, medium, high and auto fan speeds. Swing control is
+not supported.
+
+```yaml
+# Example configuration entry
+climate:
+  - platform: mistral_ir
+    name: "Living Room AC"
+```
+
 ### `mitsubishi`
 
 > [!NOTE]
@@ -205,21 +470,24 @@ climate:
 
 - **set_fan_mode** (*Optional*, string): Select the fan modes desired or that are supported on your remote. Defaults to `3levels`
 
-  - Options are: `3levels`, `4levels`, `quiet_4levels`.
-
-    - `3levels`  ; Low [fan speed 1], Medium [2], High [3]
-    - `4levels`  ; Low [1], Middle [2], Medium [3], High [4]
-    - `quiet_4levels`  ; Low [1], Middle [2], Medium [3], High [4], Quiet [5]
+  - `3levels`: Low [fan speed 1], Medium [2], High [3]
+  - `4levels`: Low [1], Middle [2], Medium [3], High [4]
+  - `quiet_4levels`: Low [1], Middle [2], Medium [3], High [4], Quiet [5]
 
 - **supports_dry** (*Optional*, boolean): Enables setting dry mode for this unit. Defaults to `false`.
 - **supports_fan_only** (*Optional*, boolean): Enables setting fan only mode for this unit. Confirm that mode is supported on your remote. Defaults to `false`.
+- **fahrenheit_compatibility** (*Optional*, boolean): Send the temperature codes a Mitsubishi remote set to Fahrenheit
+  uses. These codes add a half degree bit, so every whole degree from 61°F to 88°F reaches the unit unchanged instead
+  of rounding to the nearest Celsius step; targets outside that range are clamped to it. Enable this when you set the
+  target temperature in Fahrenheit, for example when Home Assistant uses imperial units. Defaults to `false`.
 
-- **horizontal_default** (*Optional*, string): What to default to when the AC unit's horizontal direction is *not* set to swing. Defaults to `middle`.
-
-  - Options are: `left`, `middle-left`, `middle`, `middle-right`, `right`, `auto`
-- **vertical_default** (*Optional*, string): What to default to when the AC unit's vertical direction is *not* set to swing. Defaults to `middle`.
-
-  - Options are: `down`, `middle-down`, `middle`, `middle-up`, `up`, `auto`
+- **horizontal_default** (*Optional*, string): What to default to when the AC unit's horizontal direction is *not* set to swing.
+  One of `left`, `middle-left`, `middle`, `middle-right`, `right`, `auto`. Defaults to `middle`.
+- **vertical_default** (*Optional*, string): What to default to when the AC unit's vertical direction is *not* set to swing.
+  One of `down`, `middle-down`, `middle`, `middle-up`, `up`, `auto`. Defaults to `middle`.
+- **vertical_vanes** (*Optional*, int): Set to `2` on units with separately controlled left and right vertical vanes, such
+  as the FH, FS and FX series, so both vanes receive the swing and default position commands. Both vanes always get the
+  same setting. Defaults to `1`.
 
 > [!NOTE]
 > - This climate IR component is also known to work with some Stiebel Eltron Units. It has been tested with Stiebel Eltron IR-Remote `KM07F` and unit `ACW 25 i`
@@ -236,16 +504,113 @@ climate:
     vertical_default: "down"
 ```
 
+### `pd_pioneer_ir`
+
+This platform controls Pioneer mini-split air conditioners that use the PD Pioneer infrared protocol.
+These units are manufactured by Parker Davis (the "PD" in the protocol name). It has been tested with
+the ESPIR1 IR adapter module. Other Pioneer mini-split models that use the same protocol may also work.
+
+Supported modes are Off, Cool, Heat, Dry, and Fan Only. Fan speeds Auto, Low, Medium, and High are supported.
+Swing modes Off, Vertical, Horizontal, and Both are supported. The ECO preset is supported.
+
+- **use_fahrenheit** (*Optional*, boolean): When enabled, the target temperature is sent in half-degree
+  Fahrenheit steps and the unit display shows Fahrenheit. When disabled, whole-degree Celsius is used.
+  Defaults to `false`.
+
+```yaml
+# Example configuration entry
+climate:
+  - platform: pd_pioneer_ir
+    name: "Pioneer AC"
+    use_fahrenheit: true
+```
+
+> [!NOTE]
+> See [Transmit PD Pioneer](/components/remote_transmitter/#remote_transmitter-transmit_pd_pioneer-action) to send
+> custom raw frames for debugging or advanced use.
+
+### `remko_ar715`
+
+Supports air conditioners using the Remko AR-715 infrared remote (model 1613138). The IRremoteESP8266
+library calls this protocol *ClimaButler* after one of the rebranded models.
+
+| Brand | Model |
+|---|---|
+| Remko | RKL 490, RKL 491, RKL 494, RKL 495 |
+| Fischer | ClimaButler RCS-SD43UAI, RCS-SD43UWI |
+| TROTEC | PAC 4600 |
+| Novamatic | CL 990, CL 1590 |
+| Rexair | C15000N |
+| FREECOM | RCS-SD43UAI, RCS-SD43UWI |
+
+- The remote has no heat mode, so only cool, dry and fan-only modes are available.
+- The fan speed can only be chosen in cool mode. In dry and fan-only modes the unit picks the speed itself.
+  Fan speed `auto` is the remote's *Fuzzy Logic* setting, which follows the room temperature.
+- The remote's 1 to 24 hour timer is not implemented; use an automation instead.
+
+```yaml
+# Example configuration entry
+climate:
+  - platform: remko_ar715
+    name: Air Conditioner
+```
+
+### `samsung`
+
+> [!NOTE]
+> - Supported models:
+>   - `AR09FSSDAWKNFA`
+>   - `AR09HSFSBWKN`
+>   - `AR12RXFPEWQNEU` (tested)
+>
+> - Supported remotes:
+>   - `DB93-15882Q` (tested)
+>   - `DB93-14195A`
+>   - `DB96-24901C`
+
+```yaml
+# Example configuration entry
+climate:
+  - platform: samsung
+    name: "Samsung AC"
+```
+
+### `siemens_ira211`
+
+The `siemens_ira211` climate controls Siemens RDG1xx and RDG2xx thermostats that are operated with the
+Siemens IRA211 handheld remote. It has no options beyond the common ones listed above. The thermostat decides between
+heating and cooling itself, so with both `supports_cool` and `supports_heat` enabled the climate offers one
+`heat_cool` mode; the thermostat's `PROTECTION` mode is shown as `off`, and its `COMFORT` and `TIMER` modes as the
+`comfort` and `eco` presets. When `receiver_id` is set the climate state is tracked when the thermostat is operated
+with the original remote.
+
+```yaml
+# Example configuration entry
+climate:
+  - platform: siemens_ira211
+    name: "Siemens IRA211"
+    sensor: room_temperature
+```
+
 ### `toshiba`
 
-- **model** (*Optional*, string): There are four valid models:
+- **model** (*Optional*, string): One of:
 
   - `GENERIC`  : Temperature range is from 17 to 30 (default)
   - `RAC-PT1411HWRU-C`  : Temperature range is from 16 to 30; unit displays temperature in degrees Celsius
   - `RAC-PT1411HWRU-F`  : Temperature range is from 16 to 30; unit displays temperature in degrees Fahrenheit
   - `RAS-2819T`  : Temperature range is from 18 to 30; supports two-packet IR protocol
+  - `RAS-B10N3KV2`  : Temperature range is from 17 to 30; the same commands as `GENERIC` with the IR timings of the
+    RAS-B13 remote family (RAS-B10N3KV2-E1 and similar); use it if your unit ignores `GENERIC`
+  - `RAS-25J2KVSG-ND`  : Toshiba Polar with the WH-TA15PE remote. Temperature range is from 17 to 30, or 5 to 13
+    with the frost protection preset. See [Toshiba Polar](#toshiba-polar) below.
+  - `SEIYA`  : Temperature range is from 17 to 30; Seiya family units such as the RAS-B13E2KVG-E, with vertical,
+    horizontal and both swing modes
 
 > [!NOTE]
+> - The `SEIYA` swing setting is a momentary command, as on the remote: the swing code is only sent when the
+>   swing mode changes, and a received swing command updates the reported mode without turning it off again on
+>   the next ordinary update. No code to stop the swing is known, so an off setting is not offered.
 > - While they are identified as separate models here, the `RAC-PT1411HWRU-C` and `RAC-PT1411HWRU-F` are
 >   in fact the same physical model/unit. They are separated here only because different IR codes are used
 >   depending on the desired unit of measurement. This only affects how temperature is displayed on the unit itself.
@@ -275,12 +640,120 @@ climate:
     sensor: room_temperature
 ```
 
+#### Toshiba Polar
+
+Use `model: RAS-25J2KVSG-ND` for the Toshiba Polar with the WH-TA15PE remote. `GENERIC` does not expose these
+additional controls. A [Remote Transmitter](/components/remote_transmitter/) is required. Add a
+[Remote Receiver](/components/remote_receiver/) and set `receiver_id` to track commands from the handheld remote.
+
+```yaml
+climate:
+  - platform: toshiba
+    name: "Toshiba Polar"
+    model: RAS-25J2KVSG-ND
+```
+
+##### Fan Modes And Presets
+
+The standard fan modes are `AUTO`, `QUIET`, `LOW`, `MEDIUM` and `HIGH`. The custom fan modes `Low+` and `Medium+`
+provide the two intermediate speeds. `QUIET` controls the indoor fan; it is separate from outdoor Silent.
+
+The standard presets are `NONE`, `BOOST` (Hi Power) and `ECO`. The custom presets are:
+
+- `Fireplace 1` and `Fireplace 2`: Heating presets. Selecting either switches to `HEAT` unless the same call
+  specifies another mode, in which case the call is rejected. Changing away from `HEAT` cancels the preset.
+- `Frost protection`: A heating preset with a default target of 8 °C and a range of 5 to 13 °C. Leaving the preset
+  restores the remembered normal target, or 24 °C after a reboot. The normal range is 17 to 30 °C.
+- `HADA Care`: Ceiling-directed airflow. Vane step and SWING are unavailable while this preset is active.
+- `Sleep 1h`, `Sleep 3h`, `Sleep 5h` and `Sleep 9h`: Set the unit's OFF timer and force the fan to `AUTO`.
+  Leaving Sleep restores the previous fan setting. After a reboot, ESPHome clears the restored Sleep preset
+  without sending a command, so it does not restart the timer.
+
+Use `preset` or `custom_preset` in [climate automations](/components/climate/#climate-control-action) to select a
+preset. Use `custom_fan_mode` for `Low+` and `Medium+`. Only one preset can be active at a time.
+
+##### Power Selection And Outdoor Silent
+
+The optional `toshiba` select platform provides these choices: `100%`, `75%`, `50%`, `Silent 1` and `Silent 2`.
+It requires `model: RAS-25J2KVSG-ND`.
+
+```yaml
+select:
+  - platform: toshiba
+    power_selection:
+      name: "Toshiba Power Selection"
+```
+
+- **toshiba_id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the Toshiba climate. Required when
+  more than one Toshiba climate is configured.
+- **power_selection** (**Required**, [Select](/components/select/#config-select)): The power limit or outdoor
+  Silent setting. All options from [Select](/components/select/#config-select) are supported.
+
+The 75% and 50% limits are kept when changing presets, including ECO. Changing the limit also keeps the active
+preset. Power selection is restored after reboot without sending IR. A supported full-state command from the
+handheld remote updates the select when a receiver is configured, and its power selection is saved too.
+
+> [!NOTE]
+> Combined outdoor Silent and preset commands are not yet supported. Select `100%`, `75%` or `50%` before enabling
+> a preset, or cancel the preset before selecting `Silent 1` or `Silent 2`. Requests for an unsupported combination
+> are rejected without changing the reported state or sending IR.
+
+##### SWING And Vane Step
+
+Use the climate's `VERTICAL` swing mode for continuous up/down movement and `OFF` to stop it. The remote sends the
+same toggle command for both, so ESPHome tracks the assumed state. Missed handheld commands can leave it out of
+sync. A receiver lets ESPHome track handheld SWING presses.
+
+The `toshiba.step_vane` [action](/automations/actions/#all-actions) moves the vane one step on each call, like the
+remote's FIX button. It does not set an absolute position or report the vane angle. This action is only supported
+by `RAS-25J2KVSG-ND` and is unavailable during HADA Care.
+
+Set `id: toshiba_polar` on the climate entry, then call the action from an automation:
+
+```yaml
+on_...:
+  - toshiba.step_vane: toshiba_polar
+```
+
+To expose the vane step in Home Assistant, use a [Template Button](/components/button/template/):
+
+```yaml
+button:
+  - platform: template
+    name: "Toshiba Vane Step"
+    on_press:
+      - toshiba.step_vane: toshiba_polar
+```
+
 ### `whirlpool`
 
-- **model** (*Optional*, string): There are two valid models to choose from:
+- **model** (*Optional*, string): There are three valid models to choose from:
 
   - `DG11J1-3A`  : Temperature range is from 18 to 32 (default)
   - `DG11J1-91`  : Temperature range is from 16 to 30
+  - `HISENSE_ARG`: Hisense, BGH and Tadiran units sold in Argentina that work with the BGH Smart Control (HPA-4911)
+    module. Temperature range is from 16 to 30; the swing setting is sent as a state instead of a toggle.
+
+All whirlpool models only have a power toggle, so the climate keeps track of whether it believes the unit is on. If
+the unit is switched with another remote, the next command may toggle the power instead of changing a setting. With
+the `HISENSE_ARG` model the three frames of one transmission are separated by gaps close to the default `idle` of
+`10ms`, so a [receiver](#ir-receiver_id) needs a longer `idle` to capture them as one signal: `idle: 50ms`, or the
+largest value the platform allows, `32767us`, on ESP32 variants with RMT other than ESP32 and ESP32-S2.
+
+The three frames also take more pulses than a single-frame protocol. On platforms other than ESP32 variants with RMT,
+the default `buffer_size` of `4000B` holds 1000 pulses, which is plenty. An explicit `buffer_size` carried over from
+before 2026.10 now holds a quarter of the pulses it used to (see the `buffer_size` warning in
+[Remote Receiver](/components/remote_receiver/#configuration-variables)) and shows up as repeated "Buffer overflow"
+warnings with no decode; raise it to at least `2000B` (500 pulses) or remove it.
+
+```yaml
+# Example configuration entry
+climate:
+  - platform: whirlpool
+    name: "AC"
+    model: HISENSE_ARG
+    receiver_id: rcvr
+```
 
 ### `whynter`
 
@@ -343,6 +816,24 @@ This platform works with the `arduino` framework and ESP-IDF (on ESP32), and sho
 
 This platform utilises the library's generic one-size-fits-all API, which might not line up perfectly with all of the supported AC units. For example, some AC units have more fan speed options than what the generic API supports.
 
+The `mitsubishi_heavy_zj` and `mitsubishi_heavy_zmp` protocols expose **ECO** and **BOOST** climate presets. ECO maps to `FAN_5` (Econo / energy-saver mode) and BOOST maps to `FAN_4` (HiPower / turbo mode). On these protocols, `FAN_4` and `FAN_5` are operating modes rather than fan speeds — normal fan control uses `FAN_1` through `FAN_3`. Preset commands take priority over fan speed when both are set.
+
+The `mitsubishi_heavy_zmp` protocol can also decode frames from the physical remote, so the climate state follows
+the remote. Set up a receiver as shown in [Using a Receiver](#ir-receiver_id) and pass its ID as `receiver_id`;
+other protocols ignore received frames.
+
+```yaml
+climate:
+  - platform: heatpumpir
+    protocol: mitsubishi_heavy_zmp
+    name: "Heat Pump"
+    receiver_id: rcvr
+    horizontal_default: left
+    vertical_default: up
+    min_temperature: 18
+    max_temperature: 30
+```
+
 Additional configuration must be specified for this platform:
 
 - **protocol** (**Required**, string): Choose one of Arduino-HeatpumpIR's supported protcols:
@@ -377,15 +868,23 @@ Additional configuration must be specified for this platform:
 - [Remote Receiver](/components/remote_receiver/)
 - [Remote Transmitter](/components/remote_transmitter/)
 - [Sensor Component](/components/sensor/)
+- <APIRef text="airton.h" path="airton/airton.h" />
 - <APIRef text="ballu.h" path="ballu/ballu.h" />
 - <APIRef text="climate_ir_lg.h" path="climate_ir_lg/climate_ir_lg.h" />
 - <APIRef text="coolix.h" path="coolix/coolix.h" />
 - <APIRef text="daikin.h" path="daikin/daikin.h" />
+- <APIRef text="friedrich.h" path="friedrich/friedrich.h" />
 - <APIRef text="fujitsu_general.h" path="fujitsu_general/fujitsu_general.h" />
 - <APIRef text="gree.h" path="gree/gree.h" />
+- <APIRef text="haier_tundra.h" path="haier_tundra/haier_tundra.h" />
 - <APIRef text="hitachi_ac344.h" path="hitachi_ac344/hitachi_ac344.h" />
+- <APIRef text="islandaire.h" path="islandaire/islandaire.h" />
 - <APIRef text="midea_ir.h" path="midea_ir/midea_ir.h" />
+- <APIRef text="mistral_ir.h" path="mistral_ir/mistral_ir.h" />
 - <APIRef text="mitsubishi.h" path="mitsubishi/mitsubishi.h" />
+- <APIRef text="pd_pioneer_ir.h" path="pd_pioneer_ir/pd_pioneer_ir.h" />
+- <APIRef text="remko_ar715.h" path="remko_ar715/remko_ar715.h" />
+- <APIRef text="siemens_ira211.h" path="siemens_ira211/siemens_ira211.h" />
 - <APIRef text="tcl112.h" path="tcl112/tcl112.h" />
 - <APIRef text="toshiba.h" path="toshiba/toshiba.h" />
 - <APIRef text="whirlpool.h" path="whirlpool/whirlpool.h" />

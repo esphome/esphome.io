@@ -17,6 +17,8 @@
     "lint:js": "eslint .",
     "lint:md": "markdownlint \"**/*.md\"",
     "check:images": "node script/check_image_references.mjs",
+    "test:js": "node --test \"tests/*.test.mjs\"",
+    "test:js:coverage": "node --test --experimental-test-coverage --test-coverage-include=\"src/lib/badges.mjs\" --test-coverage-include=\"src/lib/img-table.mjs\" --test-coverage-include=\"src/pages/images/badges/*.ts\" --test-coverage-include=\"script/check_image_references.mjs\" --test-coverage-lines=100 --test-coverage-branches=100 --test-coverage-functions=100 \"tests/*.test.mjs\"",
     "format": "prettier --write \"**/*.{ts,tsx,js,mjs,cjs,astro,css}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,mjs,cjs,astro,css}\"",
     "prepare": "husky"
@@ -28,7 +30,8 @@
   "dependencies": {
     "@astrojs/markdown-remark": "^7.2.1",
     "@astrojs/starlight": "^0.41.7",
-    "astro": "^7.2.0",
+    "@esphome/component-image-generator": "github:esphome/component-image-generator#bb6b2f7876c04d0b8dff26cd99d309711a822544",
+    "astro": "^7.3.8",
     "astro-swiper": "^2.10.0",
     "github-slugger": "^2.0.0",
     "gsap": "^3.15.0",
@@ -37,8 +40,8 @@
     "rehype-katex": "^7.0.1",
     "remark-github-blockquote-alert": "^2.1.0",
     "remark-math": "^6.0.0",
-    "sass": "^1.102.0",
-    "sharp": "^0.35.2",
+    "sass": "^1.105.1",
+    "sharp": "^0.35.5",
     "starlight-blog": "^0.28.0",
     "three": "^0.185.1",
     "unist-util-visit": "^5.1.0"
@@ -54,7 +57,7 @@
   "homepage": "https://esphome.io",
   "devDependencies": {
     "@eslint/js": "^10.0.1",
-    "eslint": "^10.7.0",
+    "eslint": "^10.12.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-astro": "^3.1.0",
     "globals": "^17.11.0",
@@ -62,9 +65,13 @@
     "jsdom": "^29.1.1",
     "lint-staged": "^17.3.0",
     "markdownlint-cli": "^0.49.1",
-    "prettier": "^3.9.6",
+    "mdast-util-to-string": "^4.0.0",
+    "prettier": "^3.9.9",
     "prettier-plugin-astro": "^0.14.1",
+    "remark-mdx": "^3.1.1",
+    "remark-parse": "^11.0.0",
     "typescript": "^6.0.3",
-    "typescript-eslint": "^8.67.0"
+    "typescript-eslint": "^8.68.0",
+    "unified": "^11.0.5"
   }
 }

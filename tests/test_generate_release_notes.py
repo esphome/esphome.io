@@ -142,6 +142,8 @@ def test_load_ai_responses_missing_files_empty(
     responses = generator._load_ai_responses()
     assert responses["overview"] == "Overview"
     assert responses["contributors"] == ""
+    assert responses["tagline"] == ""
+    assert responses["description"] == ""
     assert responses["companion"] == ""
     assert set(responses) == {
         "overview",
@@ -151,8 +153,22 @@ def test_load_ai_responses_missing_files_empty(
         "undocumented_api",
         "breaking_devs",
         "contributors",
+        "tagline",
+        "description",
         "companion",
     }
+
+
+def test_load_ai_responses_reads_tagline(grn: ModuleType, workspace: Path) -> None:
+    generator = _make_generator(grn)
+    generator.responses_dir.mkdir(parents=True)
+    (generator.responses_dir / "tagline.md").write_text(
+        "TAGLINE: Bluetooth everywhere\nDESCRIPTION: A one sentence summary.\n"
+    )
+
+    responses = generator._load_ai_responses()
+    assert responses["tagline"] == "Bluetooth everywhere"
+    assert responses["description"] == "A one sentence summary."
 
 
 def test_load_ai_responses_returns_companion_when_present(
@@ -261,6 +277,24 @@ def test_assemble_writes_blog_post_and_changelog(
     assert "Update foo requirement" not in head
     assert "Update foo requirement" in tail
     assert "[wifi] Add feature" not in tail
+
+
+def test_assemble_drops_repeated_contributors_heading(
+    grn: ModuleType, workspace: Path
+) -> None:
+    generator = _make_generator(grn)
+    _prepare_assembly_inputs(grn, workspace, generator)
+    (generator.responses_dir / "contributors.md").write_text(
+        "## Thank You, Contributors\n\nThanks to everyone!"
+    )
+
+    assert generator.assemble_changelog() is True
+
+    blog = generator._blog_post_path().read_text()
+    assert "Thanks to everyone!" in blog
+    assert re.findall(r"^## Thank.*$", blog, re.MULTILINE) == [
+        "## Thank you, contributors"
+    ]
 
 
 def test_assemble_creates_blog_post_from_template(
@@ -380,14 +414,282 @@ def test_assemble_errors_without_changelog_template(
     assert generator.assemble_changelog() is False
 
 
+@pytest.mark.parametrize(
+    ("heading", "expected"),
+    [
+        ("Configuration Variables", "configuration-variables"),
+        ("`light.turn_on` Action", "light-turn_on-action"),
+        ("I²C Bus", "ic-bus"),
+        ("  Spaced   Out  ", "spaced-out"),
+        ("---", ""),
+    ],
+)
+def test_slugify_heading(grn: ModuleType, heading: str, expected: str) -> None:
+    assert grn.slugify_heading(heading) == expected
+
+
+def _write_docs_tree(root: Path) -> None:
+    """A miniature src/content/docs tree covering every URL shape."""
+    pages = {
+        "components/lvgl/widgets.mdx": (
+            # The "## ---" heading slugs to nothing and is dropped
+            "## Widgets\n\n### `list`\n\n### `table`\n\n## ---\n\nText\n"
+        ),
+        "components/cover/index.mdx": "## Configuration Variables\n",
+        "components/cover/hoermann_hcp.mdx": "No headings at all\n",
+        "components/climate/climate_ir.mdx": (
+            '## Overview\n\n<span id="climate_ir_lg"></span>\n\n#### Too Deep\n'
+        ),
+        "guides/faq.md": "## Frequently Asked\n",
+        # Non-documentation files in the tree are skipped
+        "components/lvgl/images/widget.png": "not markdown\n",
+        "changelog/2026.9.0.mdx": "## Full list of changes\n",
+        "blog/2026/09/16/esphome-2026-9.mdx": "## Release Overview\n",
+        "index.mdx": "## Welcome\n",
+    }
+    for relative, content in pages.items():
+        path = root / relative
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(content)
+
+
+def test_collect_docs_urls(grn: ModuleType, tmp_path: Path) -> None:
+    _write_docs_tree(tmp_path)
+
+    urls = grn.collect_docs_urls(tmp_path)
+
+    assert urls == [
+        # Root index maps to "/"
+        "/",
+        "/#welcome",
+        "/components/climate/climate_ir/",
+        "/components/climate/climate_ir/#overview",
+        # <span id> anchors count, H4 headings do not
+        "/components/climate/climate_ir/#climate_ir_lg",
+        # index.mdx maps to its directory URL
+        "/components/cover/",
+        "/components/cover/#configuration-variables",
+        # A page with no headings still gets its URL
+        "/components/cover/hoermann_hcp/",
+        "/components/lvgl/widgets/",
+        "/components/lvgl/widgets/#widgets",
+        "/components/lvgl/widgets/#list",
+        "/components/lvgl/widgets/#table",
+        # .md files are included alongside .mdx
+        "/guides/faq/",
+        "/guides/faq/#frequently-asked",
+    ]
+
+
+def test_collect_docs_urls_skips_changelog_and_blog(
+    grn: ModuleType, tmp_path: Path
+) -> None:
+    _write_docs_tree(tmp_path)
+
+    urls = grn.collect_docs_urls(tmp_path)
+
+    assert not [url for url in urls if url.startswith(("/changelog", "/blog"))]
+
+
+def test_write_docs_urls_file(grn: ModuleType, workspace: Path) -> None:
+    _write_docs_tree(workspace / "src/content/docs")
+    generator = _make_generator(grn)
+    generator.ensure_dirs()
+
+    docs_urls_file = generator._write_docs_urls_file()
+
+    assert docs_urls_file == generator.version_dir / "docs_urls.txt"
+    lines = docs_urls_file.read_text().split("\n")
+    assert lines[0].startswith("# Every documentation page URL")
+    assert "/components/lvgl/widgets/#list" in lines
+
+
+def test_generate_prompts_includes_docs_urls_and_tagline(
+    grn: ModuleType, workspace: Path
+) -> None:
+    _write_docs_tree(workspace / "src/content/docs")
+    generator = _make_generator(grn)
+    generator.ensure_dirs()
+
+    generator.generate_prompts(
+        [_make_pr(grn, 100, "[wifi] Add feature", "alice", ["new-feature"])]
+    )
+
+    prompt = (generator.prompts_dir / "overview_and_highlights.txt").read_text()
+    docs_urls_file = generator.version_dir / "docs_urls.txt"
+    assert docs_urls_file.exists()
+    assert str(docs_urls_file) in prompt
+    assert str(generator.responses_dir / "tagline.md") in prompt
+    assert "/components/lvgl/widgets/list/" in prompt  # the bad-link example
+    assert "never build one by hand" in docs_urls_file.read_text()
+    # The tagline guidance that used to be printed for a human to follow
+    assert "TAGLINE: <short headline for the release" in prompt
+    assert "DESCRIPTION: <one sentence" in prompt
+    assert "Plain language in sentence case, with no jargon and no abbreviations" in prompt
+    assert '"Faster builds and encrypted updates"' in prompt
+    assert '"Faster builds and encrypted OTA"' in prompt
+
+
+@pytest.mark.parametrize(
+    ("response", "expected"),
+    [
+        (
+            "TAGLINE: A headline\nDESCRIPTION: A sentence.",
+            ("A headline", "A sentence."),
+        ),
+        (
+            "  TAGLINE :   A headline  \n\nDESCRIPTION:A sentence.\n",
+            ("A headline", "A sentence."),
+        ),
+        (
+            'TAGLINE: "A headline"\nDESCRIPTION: "A sentence."',
+            ("A headline", "A sentence."),
+        ),
+        (
+            "TAGLINE: First\nTAGLINE: Second\nDESCRIPTION: A sentence.",
+            ("First", "A sentence."),
+        ),
+        ("TAGLINE: Only a tagline", ("Only a tagline", "")),
+        ("Here is my suggested tagline!", ("", "")),
+        ("", ("", "")),
+    ],
+)
+def test_parse_tagline_response(
+    grn: ModuleType, response: str, expected: tuple[str, str]
+) -> None:
+    assert grn.parse_tagline_response(response) == expected
+
+
+def _write_tagline(generator, tagline: str, description: str) -> None:
+    (generator.responses_dir / "tagline.md").write_text(
+        f"TAGLINE: {tagline}\nDESCRIPTION: {description}\n"
+    )
+
+
+def test_assemble_fills_tagline_in_new_blog_post(
+    grn: ModuleType, workspace: Path
+) -> None:
+    generator = _make_generator(grn)
+    _prepare_assembly_inputs(grn, workspace, generator)
+    _write_tagline(generator, "Bluetooth everywhere", "A one sentence summary.")
+
+    assert generator.assemble_changelog() is True
+
+    blog = generator._blog_post_path().read_text()
+    assert 'title: "ESPHome 2026.9.0: Bluetooth everywhere"' in blog
+    assert 'description: "A one sentence summary."' in blog
+    assert 'excerpt: "A one sentence summary."' in blog
+    assert "{TAGLINE}" not in blog
+    assert "{DESCRIPTION}" not in blog
+
+
+def test_assemble_fills_tagline_in_existing_blog_post(
+    grn: ModuleType, workspace: Path
+) -> None:
+    generator = _make_generator(grn)
+    _prepare_assembly_inputs(grn, workspace, generator)
+    _write_tagline(generator, "Bluetooth everywhere", "A one sentence summary.")
+
+    # The release tooling created the skeleton with the placeholders intact
+    post = workspace / "src/content/docs/blog/2026/09/16/esphome-2026-9.mdx"
+    post.parent.mkdir(parents=True)
+    post.write_text(
+        (REPO_ROOT / "script" / "blog_post_template.mdx")
+        .read_text()
+        .replace("{VERSION}", "2026.9.0")
+        .replace("{DATE}", "2026-09-16")
+        .replace("{BLOG_PATH}", "blog/2026/09/16/esphome-2026-9")
+    )
+
+    assert generator.assemble_changelog() is True
+
+    blog = post.read_text()
+    assert 'title: "ESPHome 2026.9.0: Bluetooth everywhere"' in blog
+    assert 'content: "Bluetooth everywhere"' in blog  # OpenGraph card
+    assert "{TAGLINE}" not in blog
+    assert "{DESCRIPTION}" not in blog
+
+
+def test_assemble_warns_when_tagline_missing(
+    grn: ModuleType, workspace: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    generator = _make_generator(grn)
+    _prepare_assembly_inputs(grn, workspace, generator)
+
+    assert generator.assemble_changelog() is True
+
+    output = capsys.readouterr().out
+    assert "no usable TAGLINE and DESCRIPTION" in output
+    assert "{TAGLINE} and {DESCRIPTION} still present" in output
+    assert str(generator._blog_post_path()) in output
+    blog = generator._blog_post_path().read_text()
+    assert 'title: "ESPHome 2026.9.0: {TAGLINE}"' in blog
+
+
+def test_assemble_warns_when_tagline_unparseable(
+    grn: ModuleType, workspace: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    generator = _make_generator(grn)
+    _prepare_assembly_inputs(grn, workspace, generator)
+    (generator.responses_dir / "tagline.md").write_text("Some prose, no fields.\n")
+
+    assert generator.assemble_changelog() is True
+
+    output = capsys.readouterr().out
+    assert "no usable TAGLINE and DESCRIPTION" in output
+    assert "{TAGLINE} and {DESCRIPTION} still present" in output
+
+
+def test_assemble_warns_when_only_description_missing(
+    grn: ModuleType, workspace: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    generator = _make_generator(grn)
+    _prepare_assembly_inputs(grn, workspace, generator)
+    (generator.responses_dir / "tagline.md").write_text("TAGLINE: Bluetooth everywhere")
+
+    assert generator.assemble_changelog() is True
+
+    output = capsys.readouterr().out
+    assert "no usable DESCRIPTION" in output
+    assert "{DESCRIPTION} still present" in output
+    blog = generator._blog_post_path().read_text()
+    assert 'title: "ESPHome 2026.9.0: Bluetooth everywhere"' in blog
+    assert 'description: "{DESCRIPTION}"' in blog
+
+
+def test_assemble_blog_only_ignores_missing_changelog_template(
+    grn: ModuleType, workspace: Path
+) -> None:
+    """With blog_only the changelog template is never read, so its absence
+    is not an error."""
+    generator = _make_generator(grn)
+    _prepare_assembly_inputs(grn, workspace, generator)
+    _write_tagline(generator, "Bluetooth everywhere", "A one sentence summary.")
+    (workspace / "script" / "release_notes_template.mdx").unlink()
+
+    assert generator.assemble_changelog(blog_only=True) is True
+
+
+def test_main_rejects_blog_only_without_assemble(
+    grn: ModuleType, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    monkeypatch.setattr(
+        sys, "argv", ["generate_release_notes.py", "2026.9.0", "--blog-only"]
+    )
+
+    assert grn.main() == 1
+    assert "--blog-only requires --assemble" in capsys.readouterr().out
+
+
 def test_blog_post_template_structure() -> None:
     """The blog post template's frontmatter and section headings match the
-    copywriters' house style: no cover banner, sentence-case headings, and
-    the companion summary/featured-components ordering."""
+    copywriters' house style: a cover for blog list cards (hidden on the post
+    page itself), sentence-case headings, and the companion
+    summary/featured-components ordering."""
     template = (REPO_ROOT / "script" / "blog_post_template.mdx").read_text()
 
     frontmatter = template.split("---", 2)[1]
-    assert "cover:" not in frontmatter
+    assert "cover:" in frontmatter
     assert 'property: "og:image"' in frontmatter
     assert 'name: "twitter:image"' in frontmatter
 
@@ -432,21 +734,3 @@ def test_main_parses_assemble_blog_only(
 
     assert grn.main() == 0
     assert captured_kwargs == {"assemble_only": True, "blog_only": True}
-
-
-def test_assemble_creates_blog_post_from_template_prints_tagline_guidance(
-    grn: ModuleType, workspace: Path, capsys: pytest.CaptureFixture[str]
-) -> None:
-    """The note printed when creating a new blog post from the template
-    tells the operator to keep the tagline plain, sentence-case, and
-    jargon-free (no abbreviations like "OTA")."""
-    generator = _make_generator(grn)
-    _prepare_assembly_inputs(grn, workspace, generator)
-
-    assert generator.assemble_changelog() is True
-
-    output = capsys.readouterr().out
-    assert "fill in the {TAGLINE} and {DESCRIPTION} placeholders manually" in output
-    assert "plain language in sentence case with no jargon or abbreviations" in output
-    assert '"Faster builds and encrypted updates"' in output
-    assert '"Faster builds and encrypted OTA"' in output

@@ -53,6 +53,9 @@ ota:
     in plaintext when the running firmware does not offer encryption. Only affects the upload; the firmware built
     with it still requires encryption. Remove it once the device encrypts, the CLI says when. See
     [Enabling Encryption on an Existing Device](#enabling-encryption-on-an-existing-device).
+  - **old_key** (*Optional*, string): The key the device ran before **key** was changed. Only used by the CLI: when
+    the device rejects the current key the upload reconnects once with this one. Never built into the firmware.
+    Remove it once the device runs the new key, the CLI says when. See [Changing the Key](#changing-the-key).
 
 - **password** (*Optional*, string): The password to use for updates. Not recommended for new devices, use
   **encryption** instead. Cannot be combined with **encryption**, except next to **allow_plaintext_upload** for the
@@ -187,10 +190,8 @@ intended recovery path for a device that cannot join Wi-Fi, so it does not warn.
 > Once a device runs firmware with `encryption:` enabled it refuses plaintext OTA updates, and the CLI refuses to send
 > a plaintext image when `encryption:` is configured. This is intentional; a downgrade to plaintext would be an
 > unauthenticated upload. If the key is lost, recover the device with a serial flash, or through the
-> [web server OTA platform](/components/ota/web_server/) if the config has it. Changing the key is not an OTA
-> operation yet either: the device only accepts the key it is running and the CLI presents the key in the config,
-> so a new key goes in the same two ways. A
-> [key rotation system is planned for the future](https://github.com/esphome/backlog/issues/161).
+> [web server OTA platform](/components/ota/web_server/) if the config has it. The device only accepts the key it
+> is running, so a new key is installed with the old one; see [Changing the Key](#changing-the-key).
 
 To troubleshoot a failing encrypted handshake, build with the logger at `VERY_VERBOSE` so the shared `noise`
 component's messages are compiled in; a `logs:` entry alone cannot raise a level above `level:`. `initial_level`
@@ -315,6 +316,71 @@ ota:
   out components you do not need for that one build.
 - Home Assistant asks for the key after step 1 if one was added, and discovers the temporary `api:` device on the
   second path; ignore that, it disappears after step 2.
+
+### Changing the Key
+
+The device only accepts the key it is running, so a new key has to be built into the firmware and uploaded with the
+old one. Put the new key where the current one is (`api: encryption: key:` in the recommended setup, or the OTA
+block's own `key:` on a device without `api:`) and move the previous one to `old_key:` under the OTA block, then
+install. The CLI presents the new key first, and when the device rejects it reconnects once with `old_key:`. The
+firmware it sends carries the new key only; `old_key:` never reaches the device.
+
+```yaml
+api:
+  encryption:
+    key: !secret device_name__encryption_key  # the new key
+
+ota:
+  - platform: esphome
+    encryption:
+      old_key: !secret device_name__encryption_key_old
+```
+
+Once the device has booted the new firmware it runs the new key; the CLI says so after the install, and warns when
+the device was reached with `old_key:`. Remove `old_key:` then. An `old_key:` equal to `key:` is rejected at
+validation. The Device Builder writes `old_key:` itself when a key is rotated there, for example when Home Assistant
+hands over a new API key, so the next install still reaches the device.
+
+`old_key:` is for a planned change of key. Presenting a previous key means whoever holds that key and can answer at
+the device's address receives the image, and with it the new key, so a key you believe leaked is replaced by serial
+flash or with the device on a trusted network, never through `old_key:`. With the recommended shape the API key
+changes too, so Home Assistant needs the new key; a device whose key Home Assistant provisions is rotated from Home
+Assistant instead.
+
+For a single install with a key that is not in the yaml, for example from a script, use
+[`--prompt-ota-key`](/guides/cli/#upload-command) on `upload` or `run` instead of editing the configuration.
+
+## Compression
+
+Uploads are compressed automatically; there is nothing to configure. ESP8266 uploads have always been compressed.
+On ESP32, RP2040, LibreTiny and host they are compressed when both the device firmware and the `esphome` command
+line are ESPHome 2026.10.0 or newer; an older device or an older command line simply falls back to an uncompressed
+upload.
+
+- **ESP8266 and RP2040**: a compressed upload is a gzip file. The ESP8266 bootloader and the RP2040 OTA stub
+  inflate it into the application area at reboot, so the reboot after an update takes a little longer (about 1.5 s
+  more on an RP2040 for a 500 KB image) while the upload itself is a third shorter. On the RP2040 the file is staged
+  in the LittleFS region, so a firmware that did not fit there uncompressed may fit now.
+- **ESP32, [LibreTiny](/components/libretiny/) and [host](/components/host/)**: these cannot inflate at boot, so the
+  device inflates the stream while it receives it. On a microcontroller this needs about 5 KB of free heap for the
+  duration of the update; when that is not available the device asks for an uncompressed upload instead. The
+  transfer is about a third smaller, which helps most on a slow link.
+
+## Unreliable Wi-Fi
+
+Devices with a weak signal (a distant access point, a poor antenna, a metal enclosure or a crowded 2.4 GHz band)
+often lose so many packets that an upload over TCP gives up. When the `esphome` command line sees packet loss
+while connecting, it moves the upload itself to UDP, which keeps going through heavy loss instead of timing out.
+There is nothing to configure, and on a good link uploads stay on TCP.
+
+- Both the device firmware and the `esphome` command line need ESPHome 2026.11.0 or newer; with an older side the
+  upload uses TCP as before.
+- It works on ESP8266, RP2, ESP32, host, and the BK72xx and LN882x families of [LibreTiny](/components/libretiny/);
+  RTL87xx devices keep using TCP. It uses no extra RAM outside an update: the device opens the UDP socket only while
+  an upload runs.
+- The upload uses UDP on the same port number as the OTA [`port`](#configuration-variables). If a firewall blocks
+  it, the upload falls back to TCP after 15 seconds and the log shows `UDP blocked, using TCP`.
+- Encrypted uploads stay encrypted over UDP.
 
 ## Updating the partition table on ESP32
 

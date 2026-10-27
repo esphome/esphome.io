@@ -1,0 +1,150 @@
+---
+description: "Instructions for updating nRF52 boards with the Adafruit bootloader over Bluetooth Low Energy."
+title: "nRF52 Adafruit Bootloader BLE Updates"
+---
+import APIRef from '@components/APIRef.astro';
+
+The `adafruit_ble` OTA platform updates [nRF52](/components/nrf52/) boards that run the
+[Adafruit nRF52 Bootloader](https://github.com/adafruit/Adafruit_nRF52_Bootloader), such as the nice!nano, the
+ItsyBitsy nRF52840 and the Feather nRF52840, over Bluetooth Low Energy (BLE) with `esphome upload`.
+For boards with MCUboot, use [zephyr_mcumgr](/components/ota/zephyr_mcumgr/) instead.
+
+The firmware is written by the Adafruit bootloader, not by the running ESPHome firmware. This component only adds a
+small BLE service that asks the device to restart into its bootloader, which then receives the new firmware.
+
+```yaml
+# Example configuration entry
+nrf52:
+  board: adafruit_itsybitsy_nrf52840
+  bootloader: adafruit
+
+zephyr_ble_server:
+  # Turns on pairing, so only a paired computer can start an update
+  on_numeric_comparison_request:
+    then:
+      - ble_server.numeric_comparison_reply:
+          accept: true
+
+ota:
+  - platform: adafruit_ble
+```
+
+## Requirements
+
+- The [nRF52](/components/nrf52/) platform with one of the Adafruit bootloaders: `bootloader:` set to `adafruit`,
+  `adafruit_nrf52_sd132`, `adafruit_nrf52_sd140_v6` or `adafruit_nrf52_sd140_v7`. Any other bootloader is rejected
+  when the configuration is validated.
+- The [Zephyr BLE Server](/components/zephyr_ble_server/) component.
+
+## Configuration variables
+
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
+- **on_begin** (*Optional*, [Automation](/automations)): An action to be performed when an update is requested, just
+  before the device restarts into its bootloader. See [`on_begin`](/components/ota/#ota-on_begin).
+- **on_state_change** (*Optional*, [Automation](/automations)): An action to be performed when the update state
+  changes. Only `ota::OTA_STARTED` is ever reported, at the same moment as `on_begin`.
+  See [`on_state_change`](/components/ota/#ota-on_state_change).
+
+`on_progress`, `on_end`, `on_error` and `on_abort` are not allowed: the bootloader writes the firmware after the
+device has already restarted, so ESPHome never sees the transfer.
+
+## Usage
+
+Find the device by its name:
+
+```bash
+esphome upload nrf52_device.yaml --device BLE
+```
+
+Or connect to a specific BLE address (on macOS, the device's Bluetooth UUID; see [macOS](#macos)):
+
+```bash
+esphome upload nrf52_device.yaml --device 00:11:22:33:44:55
+```
+
+An upload has two steps:
+
+1. ESPHome connects to the device and writes to its restart service. The device runs its `on_begin` automation and
+   restarts into the bootloader in update (DFU) mode.
+2. ESPHome scans for the bootloader and sends it the new firmware. When the transfer is finished and checked, the
+   bootloader restarts the device into the new firmware.
+
+The bootloader shows up either at the device's own address or at the next address up (the device address plus one).
+ESPHome only accepts those two addresses, so another device that is in update mode nearby is never flashed; that
+device is listed in the error message instead.
+
+If the connection drops or the bootloader stops answering during the transfer, ESPHome tries again, up to three times
+in total. A bootloader that is still in the middle of an earlier, interrupted transfer refuses to start a new one;
+ESPHome resets it and tries once more. If the bootloader refuses the update, for example because of a CRC error or
+because the image is too large, ESPHome stops at once and the error names the step and the reason.
+
+> [!NOTE]
+> `esphome upload` picks the update method from the new configuration, not from the firmware that is installed. A
+> device that still runs firmware built with `zephyr_mcumgr` has MCUboot between the Adafruit bootloader and the
+> firmware, so its old update method cannot install a build without MCUboot. Flash the first `adafruit_ble` build
+> over USB as described in
+> [Flashing with Adafruit nRF52 Bootloader](/components/nrf52/#flashing-with-adafruit-nrf52-bootloader); later
+> uploads work over BLE.
+
+## Pairing
+
+When the [Zephyr BLE Server](/components/zephyr_ble_server/) has `on_numeric_comparison_request` set, pairing is
+turned on and the restart service only accepts a request from a paired (authenticated) connection. Pair your computer
+with the device before the first upload. On Linux, an upload from a computer that is not paired fails with
+"Make sure the device is paired."
+
+Without pairing, any nearby BLE device can restart the device into its bootloader, and the build logs a warning.
+
+The update service also works when the device is in [safe mode](/components/safe_mode/), so a device stuck in a boot
+loop can still be updated. With pairing turned on, the `on_numeric_comparison_request` automation does not run in
+safe mode, so the device rejects new pairing requests and only a computer that was paired before can start an update.
+Pair your computer while the device works normally. Without pairing, any computer can start an update in safe mode too.
+
+## Recovery
+
+If an upload fails after the device restarted, the device can stay in its bootloader in update mode. Run the same
+command again:
+
+- With `--device <MAC address>`, if the device does not answer at that address, ESPHome looks for its bootloader at
+  the same address and at the address plus one, and continues the update.
+- With `--device <UUID>` on macOS, the bootloader has a different UUID from the running firmware, so the old UUID does
+  not find it. The error message lists the devices in update mode that were seen; pass the UUID of the bootloader
+  instead.
+- With `--device BLE`, the device is searched by its name, which the bootloader does not advertise, and the upload
+  stops without looking for bootloaders. Pass the address of the bootloader instead: the device address plus one. On
+  macOS, find the UUID of the device in update mode with a BLE scanner app on the computer you upload from, because
+  macOS gives a device a different UUID on each computer. The bootloader advertises the DFU service
+  `00001530-1212-efde-1523-785feabcd123`.
+- If the address you pass already belongs to a bootloader in update mode, ESPHome sends the firmware to it directly.
+
+You can also update the device over USB as described in
+[Flashing with Adafruit nRF52 Bootloader](/components/nrf52/#flashing-with-adafruit-nrf52-bootloader).
+
+## OTA Rollback
+
+The Adafruit bootloader has no OTA rollback. With `adafruit_ble` and no MCUboot, the nRF52
+[`enable_ota_rollback`](/components/nrf52/#advanced-configuration) option defaults to `false`, and setting it to
+`true` is ignored with a warning.
+
+## macOS
+
+macOS hides BLE addresses and gives every device its own UUID instead. Use that UUID with `--device`, or use
+`--device BLE`. The bootloader gets a different UUID from the running firmware, so ESPHome finds it another way:
+
+1. Just before asking the device to restart, ESPHome notes which devices are already in update mode.
+2. After the request, it accepts the bootloader only if exactly one new device in update mode appears, and the
+   running firmware has stopped advertising. To check this, ESPHome runs a new short scan, because macOS reports a
+   device only once per scan.
+
+The upload stops with an error, and nothing is flashed, if the device rejects the request (for example because it is
+not paired), if two or more new devices in update mode appear, or if the device still advertises after a new one
+appeared (the new one then belongs to another board). Updating one board at a time avoids this.
+
+## See Also
+
+- [Over-the-Air Updates](/components/ota/)
+- [nRF52 Firmware Updates (MCUboot)](/components/ota/zephyr_mcumgr/)
+- [nRF52](/components/nrf52/)
+- [Zephyr BLE Server](/components/zephyr_ble_server/)
+- <APIRef text="ota_backend.h" path="ota/ota_backend.h" />
+- [Adafruit nRF52 Bootloader](https://github.com/adafruit/Adafruit_nRF52_Bootloader)
