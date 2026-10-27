@@ -1,0 +1,94 @@
+---
+description: "Instructions for setting up USB Audio Class (UAC) speakers in ESPHome."
+title: "USB Audio Speaker"
+---
+
+The `usb_audio` speaker platform plays audio on a USB audio device, such as a USB sound card, DAC or speakerphone,
+connected to the [USB Audio](/components/usb_audio/) component.
+
+This platform only works on ESP32 variants with a USB OTG peripheral.
+
+> [!WARNING]
+> Audio and voice components consume a significant amount of resources (RAM, CPU) on the device.
+>
+> Crashes are likely to occur if you include too many in the same configuration. In particular, Bluetooth/BLE
+> components are known to cause issues when used in combination with audio and voice components.
+
+```yaml
+# Example configuration entry
+usb_audio:
+
+speaker:
+  - platform: usb_audio
+    id: usb_speaker
+```
+
+## Configuration variables
+
+- **sample_rate** (*Optional*, positive integer): The sample rate of the audio stream, in Hz. Must be between `8000`
+  and `96000` and supported by the USB device. Defaults to `48000`.
+- **bits_per_sample** (*Optional*, enum): The bit depth of the audio samples. One of `8bit`, `16bit`, `24bit` or
+  `32bit`. Must be supported by the USB device. Defaults to `16bit`.
+- **num_channels** (*Optional*, positive integer): The number of channels, `1` (mono) or `2` (stereo). Must be
+  supported by the USB device. Defaults to `2`.
+- **buffer_size** (*Optional*, positive integer): The size of the buffer between ESPHome and the USB driver, in
+  bytes. Must hold at least two USB transfers (6 ms of audio, e.g. `1152` bytes at 48000 Hz, 16 bit, stereo).
+  Defaults to `6400`, or to the minimum when that is larger.
+- **write_timeout** (*Optional*, [Time](/guides/configuration-types/#time)): The maximum time a write waits for
+  room in the buffer. Defaults to `20ms`.
+- **usb_audio_id** (*Optional*, [ID](/guides/configuration-types/#id)): The [USB Audio](/components/usb_audio/)
+  component to use. Defaults to the only one in YAML.
+- All other options from [Speaker Component](/components/speaker/).
+
+The volume and mute state are passed to the USB device. If the device has no volume or mute control, a warning is
+logged and the setting has no effect.
+
+The ESP32 keeps a few milliseconds of audio queued on the USB bus, and the queue is refilled by a task. Writing to
+flash stalls that task, so a flash write while audio plays leaves a short gap: for example the boot counter that
+the [Safe Mode](/components/safe_mode/) component writes about a minute after each boot, saved preferences, or an OTA
+update.
+
+The stream takes about a second to start on the USB device. Until it runs, `play()` accepts no audio: it waits up
+to `ticks_to_wait` and returns `0`. A lambda runs on the main loop, so call `play()` there with a wait of `0`
+(or the two-argument form, which never blocks) and send the unsent audio again on a later loop; a blocking wait
+stalls the loop and can trip the task watchdog.
+
+## Media player
+
+To stream media or play announcements on a USB speaker, use it with the
+[Speaker Media Player](/components/media_player/speaker/). Use a [Mixer Speaker](/components/speaker/mixer/) to give
+the announcement and media pipelines their own source speakers, and match their sample rate to the USB speaker, or
+add a [Resampler Speaker](/components/speaker/resampler/).
+
+```yaml
+speaker:
+  - platform: usb_audio
+    id: usb_speaker
+    sample_rate: 48000
+    num_channels: 2
+  - platform: mixer
+    output_speaker: usb_speaker
+    num_channels: 2
+    source_speakers:
+      - id: announcement_speaker
+      - id: media_speaker
+
+media_player:
+  - platform: speaker
+    name: USB Media Player
+    announcement_pipeline:
+      speaker: announcement_speaker
+      format: FLAC
+      sample_rate: 48000
+      num_channels: 2
+    media_pipeline:
+      speaker: media_speaker
+      format: FLAC
+      sample_rate: 48000
+      num_channels: 2
+```
+
+## See Also
+
+- [USB Audio](/components/usb_audio/)
+- [Speaker Component](/components/speaker/)

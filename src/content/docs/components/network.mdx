@@ -16,9 +16,18 @@ network:
 
 ## Configuration variables
 
-- **enable_ipv6** (*Optional*, boolean): Enables IPv6 support. Defaults to `false`.
-Always `true` on nRF52 because IPv4 is not supported.
-- **min_ipv6_addr_count** (*Optional*, integer): ESPHome considers the network to be connected when it has one IPv4 address and this number of IPv6 addresses. Defaults to `0` so as to not hang on boot with networks where IPv6 is not enabled. `2` is typically a reasonable value for configurations requiring IPv6.
+- **enable_ipv4** (*Optional*, boolean): Enables IPv4 support. Defaults to `true`, except with
+  [OpenThread](/components/openthread/) or on [nRF52](/components/nrf52/) where it defaults to `false` unless
+  something else requires IPv4. On ESP32 with OpenThread this is a change from earlier versions, where IPv4 stayed
+  enabled; set `enable_ipv4: true` to keep it. Setting this to `false` is rejected if a configured component or
+  platform requires IPv4, such as [WiFi](/components/wifi/) or [Ethernet](/components/ethernet/); the error names
+  them. At least one of IPv4 and IPv6 must stay enabled.
+- **enable_ipv6** (*Optional*, boolean): Enables IPv6 support. Defaults to `false` unless a configured component or
+  platform requires IPv6, such as [OpenThread](/components/openthread/) or [nRF52](/components/nrf52/). Setting this
+  to `false` is rejected if IPv6 is required; the error names the components.
+- **min_ipv6_addr_count** (*Optional*, integer): ESPHome considers the network to be connected when it has an IPv4
+  address (if IPv4 is enabled) and at least this number of IPv6 addresses. Defaults to `0` so as to not hang on boot
+  with networks where IPv6 is not enabled. `2` is typically a reasonable value for configurations requiring IPv6.
 - **enable_high_performance** (*Optional*, boolean): Explicitly enables or disables high-performance networking optimizations. Only supported on ESP32 devices. When not specified, this is automatically enabled by components that benefit from optimized network settings. Set to `false` to disable these optimizations if they cause memory issues on your device. Defaults to component-driven behavior.
 - **tcp_send_buffer** (*Optional*, int): The amount of outgoing data lwIP queues per TCP connection before
   writes stall, in bytes. Only supported on ESP32 devices. The framework default of 5744 bytes can stall

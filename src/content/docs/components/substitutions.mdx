@@ -159,63 +159,72 @@ lvgl:
 
 In the above example, the value of the `text` property will be, literally, `This is a ${value}`.
 
-## Substitute !include variables
+## Substitute !include file, variables, and condition
 
-ESPHome's `!include` accepts a list of variables that can be substituted within the included file. The filename itself may also contain substitution expressions, allowing you to dynamically select which file is loaded.
+ESPHome's [`!include` tag](/guides/yaml#include) accepts a list of variables that can be substituted within
+the included file. Also, the tag's filename, variables, and condition can contain substitution expressions,
+allowing you to dynamically select which file is loaded, generate values to pass to the file as variables, and
+conditionally load the file based on an expression. Any substitution expression — including
+[Jinja expressions](/components/substitutions#jinja-expressions) — can be used.
 
-```yaml
-binary_sensor:
-  - platform: gpio
-    id: button1
-    pin: GPIOXX
-    on_multi_click: !include { file: on-multi-click.yaml, vars: { id: 1 } } # inline syntax
-  - platform: gpio
-    id: button2
-    pin: GPIOXX
-    on_multi_click: !include # multi-line syntax
-      file: on-multi-click.yaml
-      vars:
-        id: 2
-```
-
-`on-multi-click.yaml`:
-
-```yaml
-- timing: !include click-single.yaml
-  then:
-    - mqtt.publish:
-        topic: ${device_name}/button${id}/status
-        payload: single
-- timing: !include click-double.yaml
-  then:
-    - mqtt.publish:
-        topic: ${device_name}/button${id}/status
-        payload: double
-```
-
-You can also use substitutions to construct the filename of the file to be included:
+ESPHome expands the substitutions in the filename before loading the file, so `hardware-${platform}.yaml`
+resolves to `hardware-esp32.yaml` in the following example.
 
 ```yaml
 substitutions:
   platform: esp32
 
-binary_sensor:
-  - platform: gpio
-    id: button1
-    pin: GPIOXX
-    on_multi_click: !include { file: on-multi-click-${platform}.yaml, vars: { id: 1 } }
-  - platform: gpio
-    id: button2
-    pin: GPIOXX
-    on_multi_click: !include
-      file: on-multi-click-${platform}.yaml
-      vars:
-        id: 2
+packages:
+  - !include main.yaml
+  - !include hardware-${platform}.yaml
 ```
 
-ESPHome expands the substitutions in the filename before loading the file, so `on-multi-click-${platform}.yaml`
-resolves to `on-multi-click-esp32.yaml` in the above example. Any substitution expression — including
-[Jinja expressions](/components/substitutions#jinja-expressions) — can be used.
+Similarly, ESPHome expands the values of variables to pass to the file. The following example defines two
+switches with different timeouts based on substitution expressions.
+
+```yaml
+substitutions:
+  switch_a_timeout: 500ms
+  switch_b_timeout: 300ms
+
+packages:
+  - !include
+    file: timed-switch.yaml
+    vars:
+      switch_id: switch_a
+      switch_timeout: ${switch_a_timeout}
+  - !include
+    file: timed-switch.yaml
+    vars:
+      switch_id: switch_b
+      switch_timeout: ${switch_b_timeout}
+```
+
+`timed-switch.yaml`:
+
+```yaml
+switch:
+  - platform: template
+    id: ${switch_id}
+    optimistic: true
+    turn_on_action:
+      - delay: ${switch_timeout}
+      - switch.turn_off: ${switch_id}
+```
+
+Finally, ESPHome expands substitution expressions in include conditions. The file is only loaded if the condition
+evaluates to true.
+
+```yaml
+substitutions:
+  number_of_ports: 3
+  port_1_reserved: true
+
+packages:
+  - !include { file: port.yaml, vars: { port: 1 }, condition: "${number_of_ports >= 1 and not port_1_reserved}" }
+  - !include { file: port.yaml, vars: { port: 2 }, condition: "${number_of_ports >= 2}" }
+  - !include { file: port.yaml, vars: { port: 3 }, condition: "${number_of_ports >= 3}" }
+```
 
 ## Command line substitutions
 

@@ -54,6 +54,27 @@ Can also be enabled via environment variable `ESPHOME_VERBOSE=true`.
 
 Please see [command line substitutions](/components/substitutions#command-line-substitutions) for details.
 
+### `--error-format` Option
+
+**`--error-format FORMAT`**
+: Selects how configuration errors are shown. Supported values are:
+
+* `yaml` (default): show each error inside a copy of the failing part of the configuration.
+* `line`: print one line per error in the form `file:line:column: error: message`.
+
+Values are not case-sensitive. Can also be set via environment variable `ESPHOME_ERROR_FORMAT`. The command line
+option takes precedence.
+
+The `line` format is the same one compilers use, so editors, IDE terminals and CI tools can link each error to its
+place in the YAML file. Errors in a package or included file give the location in that file. Extra information
+is printed on following lines flagged with `note:`, for example where a file with a YAML syntax error was included:
+
+```text
+common/wifi.yaml:3:11: error: expected ',' or ']', but got ':'
+common/wifi.yaml:2:9: note: while parsing a flow sequence
+livingroom.yaml:6:3: note: included from here
+```
+
 <span id="cli-toolchain"></span>
 ### `--toolchain` Option
 
@@ -61,11 +82,18 @@ Please see [command line substitutions](/components/substitutions#command-line-s
 : Selects which toolchain to use for compiling the project. Supported values are:
 
 * `esp-idf` (ESP32 only)
+* `arduino` (ESP8266 only)
+* `sdk-nrf` (nRF52 only)
+* `host` (host only)
 * `platformio`
 
-The toolchain can be configured using `esp32.toolchain` (see the [ESP32 toolchain configuration](/components/esp32#esp32-toolchain)).
-If not specified, ESP32 devices default to `esp-idf`; all other platforms use `platformio`.
-If both `esp32.toolchain` and the `--toolchain` CLI option are set, the CLI option takes precedence.
+The toolchain can be configured using `esp32.toolchain` (see the
+[ESP32 toolchain configuration](/components/esp32#esp32-toolchain)) or `esp8266.toolchain` (see the
+[ESP8266 toolchain configuration](/components/esp8266#toolchain-configuration)).
+If not specified, ESP32 devices default to `esp-idf`, ESP8266 devices to `arduino`, nRF52 devices to `sdk-nrf` and host
+builds to `host`; all other platforms use `platformio`. The host platform always uses `host` and rejects any other
+value.
+If both the YAML `toolchain` option and the `--toolchain` CLI option are set, the CLI option takes precedence.
 
 Please see [ESP-IDF toolchain documentation](/guides/esp_idf/) for details on using the ESP-IDF integration.
 
@@ -108,6 +136,11 @@ basis, or set with this option at the time of uploading.
 : Disable starting log view.
 
 
+**`--skip-bootloader`**
+: Skip building the bootloader and the factory image; see [`compile`](#compile-command).
+The result can only be flashed over OTA, so combining this with a serial `--device` fails before compiling.
+
+
 **`--topic TOPIC`**
 : Manually set the topic to subscribe to for MQTT logs (defaults to the one in the configuration).
 
@@ -136,6 +169,12 @@ basis, or set with this option at the time of uploading.
 **`--no-states`** / **`--states`**
 : Control whether entity state changes are shown in log output. See the [`logs` command](#logs-command)
 for details. The default can be set with the environment variable `ESPHOME_LOG_STATES`.
+
+
+**`--prompt-ota-key`**
+: Also accepted by [`upload`](#upload-command). Ask for the OTA encryption key to present to the device instead of
+using the one in the configuration, for a device that still runs a previous key. See the
+[`upload` command](#upload-command) for details.
 
 
 ### `config` Command
@@ -169,6 +208,13 @@ Any command that accepts `<CONFIG>` can also accept a `.esphomebundle.tar.gz` bu
 
 **`--only-generate`**
 : If set, only generates the C++ source code and does not compile the firmware.
+
+
+**`--skip-bootloader`**
+: Do not build the bootloader or the factory image. A plain OTA update never delivers the bootloader; the device
+keeps the one it has. A build that will only ever go out over OTA can skip it and save build time.
+ESP32 with the `esp-idf` toolchain only; on other platforms the flag is ignored with a log message and a full build runs.
+Serial flashing and OTA `--bootloader` need a build without this flag.
 
 
 ### `upload` Command
@@ -228,6 +274,24 @@ Can't be combined with `--bootloader`.
 The device must be running a firmware with `allow_partition_access: true` configured on the
 [ESPHome OTA platform](/components/ota/esphome/#updating-the-bootloader-on-esp32).
 Can't be combined with `--partition-table`.
+
+
+**`--prompt-ota-key`**
+: Also accepted by [`run`](#run-command). Ask for the OTA encryption key to present to the device instead of using
+the one in the configuration. A device that requires [OTA encryption](/components/ota/esphome/#encryption) only
+accepts the key it runs, so after a key change the new firmware is built with the new key from the yaml and uploaded
+with the old one. The key is read without echo on a terminal, or as one line from stdin when piped; it is never taken
+from the command line, since command lines are visible to every process on the machine. A key given this way never
+falls back to plaintext, and the flag only applies to the `esphome` OTA platform: a configuration with only the
+`web_server` platform is refused unless a serial port is named with `--device`, in which case the key is ignored.
+
+```shell
+esphome run --prompt-ota-key my-device.yaml
+OTA encryption key:
+```
+
+A program that runs the CLI, such as the Device Builder, can hand the key over in the `ESPHOME_OTA_KEY` environment
+variable instead; it is read once and removed from the environment before any build tool runs.
 
 
 ### `clean-mqtt` Command

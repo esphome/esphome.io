@@ -21,6 +21,25 @@ export const collections = {
            * and can be published before the post. See CrosspostBadges.astro.
            */
           crosspostCover: z.string().optional(),
+          /**
+           * Anchors on this page that no longer resolve because the section they
+           * pointed at moved to its own page, mapped to the URL that now covers it.
+           * Keys omit the leading "#". A URL fragment is never sent to the server,
+           * so Netlify cannot redirect these. See AnchorRedirects.astro.
+           *
+           * Targets are restricted to site-relative paths. AnchorRedirects.astro
+           * feeds them to location.replace(), so allowing an absolute URL would turn
+           * a typo into an open redirect, and a "javascript:" URL into an XSS sink.
+           * Rejecting a leading "//" keeps protocol-relative URLs out too.
+           */
+          anchorRedirects: z
+            .record(
+              z.string(),
+              z
+                .string()
+                .regex(/^\/(?!\/)/, 'anchor redirect targets must be site-relative paths starting with a single "/"'),
+            )
+            .optional(),
         }),
     }),
   }),

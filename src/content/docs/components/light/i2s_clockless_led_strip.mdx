@@ -1,0 +1,63 @@
+---
+description: "Instructions for setting up addressable lights like NEOPIXEL on an ESP32 using the I2S peripheral."
+title: "I2S Clockless LED Strip"
+---
+import APIRef from '@components/APIRef.astro';
+
+
+The `i2s_clockless_led_strip` light platform drives a clockless addressable LED strip with the I2S peripheral and DMA.
+It works with the WS2811 / WS2812B / SK6812 family of devices with RGB or RGBW pixels.
+
+Here's a comparison of some alternatives for driving these strips:
+
+- The [ESP32 RMT LED Strip](/components/light/esp32_rmt_led_strip/) component uses the RMT peripheral to precisely
+  control the timing of the output and ensure compatibility with a wide range of LED strips. However, there is only
+  enough RMT symbol memory to buffer a few pixels at a time. Flickering may occur when the microcontroller is busy
+  performing higher priority tasks and the RMT interrupt cannot be serviced soon enough to refill the buffer for
+  subsequent pixels.
+- This component, the I2S Clockless LED Strip, uses the I2S peripheral and DMA
+  to drive the output with larger buffers that are more immune to flickering caused by interrupt latency. However,
+  the resulting waveform diverges slightly from the datasheet timing recommendations although in practice it is
+  close enough for the LED pixels to work reliably.
+
+This table shows the number of I2S TDM ports available for this component on each ESP32 variant. Each LED strip
+uses one port. The original ESP32, ESP32-S2, and ESP32-C2 lack the necessary hardware and are not supported.
+
+| Variant   | Ports |
+| --------- | ----- |
+| ESP32-C3  | 1     |
+| ESP32-C5  | 1     |
+| ESP32-C6  | 1     |
+| ESP32-C61 | 1     |
+| ESP32-H2  | 1     |
+| ESP32-H4  | 1     |
+| ESP32-P4  | 3     |
+| ESP32-S3  | 2     |
+
+> [!NOTE]
+> This component may conflict with other uses of the I2S peripheral (such as for speakers and microphones).
+
+```yaml
+# Example configuration entry
+light:
+  - platform: i2s_clockless_led_strip
+    name: "My Light"
+    pin: GPIOXX
+    num_leds: 30
+    channel_colors: GRB
+```
+
+## Configuration variables
+
+- **pin** (**Required**, [Pin Schema](/guides/configuration-types#pin-schema)): The pin for the data line of the light.
+- **num_leds** (**Required**, int): The number of LEDs in the strip.
+- **channel_colors** (**Required**, string): The order in which the strip expects its color channels. List each of
+  `R`, `G` and `B` exactly once, optionally with a single `W` in any position; for example `GRB`, `BGR`, `GRBW`,
+  `WRGB` or `RWGB`. The value is case-insensitive. Including a `W` makes this a four channel RGBW strip.
+- All other options from [Light](/components/light#config-light).
+
+## See Also
+
+- [Light Component](/components/light/)
+- [Power Supply Component](/components/power_supply/)
+- <APIRef text="i2s_clockless_led_strip.h" path="i2s_clockless_led_strip/i2s_clockless_led_strip.h" />

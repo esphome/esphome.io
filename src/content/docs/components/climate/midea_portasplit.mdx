@@ -1,0 +1,45 @@
+---
+description: "Instructions for setting up the Midea PortaSplit climate component."
+title: "Midea PortaSplit"
+---
+
+import APIRef from '@components/APIRef.astro';
+
+The `midea_portasplit` climate platform controls a Midea PortaSplit air conditioner over the UART connection
+normally used by its Wi-Fi module.
+
+The PortaSplit uses a variant of the Midea UART protocol that the [Midea](/components/climate/midea/) component
+cannot drive: it ignores climate commands unless their sync byte is `0x00`. This component speaks that variant and
+also takes the place of the original Wi-Fi module, which the air conditioner expects to be present.
+
+This component requires a [UART bus](/components/uart/) with both `tx_pin` and `rx_pin` set, using `baud_rate: 9600`.
+Like other Midea units, the module connector works at 5 V logic levels, so a 3.3 V board needs a level shifter.
+The [Midea](/components/climate/midea/) page lists dongle hardware that fits.
+
+```yaml
+# Example configuration entry
+climate:
+  - platform: midea_portasplit
+    name: "PortaSplit"
+```
+
+## Configuration Variables
+
+- **uart_id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the [UART bus](/components/uart/) to use.
+  Required if you have more than one UART bus.
+- All other options from [Climate](/components/climate/#base-climate-configuration).
+
+## Supported Features
+
+- **Modes**: off, heat/cool (auto), cool, dry, heat and fan only
+- **Target temperature**: 16 °C to 30 °C in 0.5 °C steps
+- **Current temperature**: indoor temperature reported by the air conditioner
+- **Fan modes**: auto, quiet, low, medium and high
+- **Swing modes**: off and vertical
+- **Presets**: none, sleep, boost, eco and away (frost protection, which heats to 8 °C)
+
+## See Also
+
+- [Climate Component](/components/climate/)
+- [Midea Air Conditioner](/components/climate/midea/)
+- <APIRef text="midea_portasplit.h" path="midea_portasplit/midea_portasplit.h" />
