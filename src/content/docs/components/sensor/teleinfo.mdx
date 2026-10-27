@@ -99,6 +99,9 @@ sensor:
 - **teleinfo_id** (*Optional*, [ID](/guides/configuration-types#id)): Specify the ID of used hub.
 - All other options from [Sensor](/components/sensor).
 
+A value that is not a number, for example from a frame corrupted in a way its checksum does not
+catch, is logged as a warning and ignored, so that it does not look like a meter reset.
+
 #### Pre-Defined Sensor Configurations
 
 The `unit_of_measurement`, `device_class` and `state_class` of a sensor are set automatically
@@ -113,12 +116,19 @@ based on the prefix of its `tag_name`, for the main tags of both standard and hi
 | `SINST`, `SMAX` | Standard | `VA` | `apparent_power` | `measurement` |
 | `PREF`, `PCOUP` | Standard | `kVA` | `apparent_power` | `measurement` |
 | `CC` | Standard | `W` | `power` | `measurement` |
+| `VTIC`, `NTARF`, `NJOURF`, `RELAIS` | Standard | *none* | *none* | *none* |
 | `BASE`, `HCH`, `EJP`, `BBRH` | Historical | `Wh` | `energy` | `total_increasing` |
 | `IINST`, `IMAX`, `ISOUSC`, `ADPS`, `ADIR` | Historical | `A` | `current` | `measurement` |
-| `PAPP` | Historical | `VA` | `apparent_power` | `measurement` |
-| `PMAX` | Historical | `W` | `power` | `measurement` |
+| `PAPP`, `PMAX` | Historical | `VA` | `apparent_power` | `measurement` |
+| `PEJP` | Historical | `min` | `duration` | `measurement` |
 
 For example, `IINST1`, `IINST2` and `IINST3` all match the `IINST` prefix.
+
+Some tags hold text, which a sensor cannot publish. Use a [text sensor](#text-sensor) for them
+instead: `ADSC`, `DATE`, `NGTF`, `LTARF`, `STGE`, `DPM1` to `DPM3`, `FPM1` to `FPM3`, `MSG1`,
+`MSG2`, `PRM`, `PJOURF+1` and `PPOINTE` in standard mode, and `ADCO`, `OPTARIF`, `PTEC`, `DEMAIN`,
+`HHPHC`, `MOTDETAT` and `PPOT` in historical mode. A sensor with one of these tags gets no
+pre-defined values, and a warning is logged when the configuration is validated.
 
 Tags that do not match any prefix get the following defaults: unit `Wh`, device class `energy`,
 state class `total_increasing` and icon `mdi:flash`.
@@ -147,6 +157,42 @@ sensor:
 > Sensors whose tag matches a prefix above now use the correct unit and device class, for example
 > `PAPP` now reports `VA` instead of `Wh`. To keep the previous behavior, set `unit_of_measurement`,
 > `device_class`, `state_class` and `icon` explicitly.
+
+#### Precision of Energy Indexes
+
+Sensor values are 32-bit floating point numbers, which hold every whole number exactly only up to
+16 777 216. Energy indexes such as `EAST`, `EASF01` or `HCHP` are sent in Wh, and many meters have
+counted more than that (about 16.8 MWh). Above it, a sensor only moves in steps of 2 Wh, and above
+33 554 432 Wh (about 33.6 MWh) in steps of 4 Wh. Converting to kWh with a `multiply` filter does not
+help, because the value is already rounded when the filter runs.
+
+If you need every Wh, for example to compute the power from the index, read the tag with a
+[text sensor](#text-sensor) instead. It keeps the exact digits sent by the meter:
+
+```yaml
+text_sensor:
+  - platform: teleinfo
+    tag_name: "EAST"
+    name: "Total energy index"
+    teleinfo_id: myteleinfo
+```
+
+Then convert it to a number in Home Assistant, which uses 64-bit floating point numbers, for example
+with a template sensor:
+
+```yaml
+# Home Assistant configuration
+template:
+  - sensor:
+      - name: "Total energy"
+        unit_of_measurement: "Wh"
+        device_class: energy
+        state_class: total_increasing
+        # Use the entity ID Home Assistant gave the text sensor above; it usually starts with the
+        # device name, for example sensor.linky_total_energy_index
+        availability: "{{ states('sensor.total_energy_index') | is_number }}"
+        state: "{{ states('sensor.total_energy_index') | int }}"
+```
 
 ### Text Sensor
 

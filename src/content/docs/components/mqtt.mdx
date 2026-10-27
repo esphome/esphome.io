@@ -33,7 +33,7 @@ mqtt:
 
 - **broker** (**Required**, string): The host of your MQTT broker.
 - **enable_on_boot** (*Optional*, boolean): If enabled, MQTT will be enabled on boot. Defaults to `true`.
-- **port** (*Optional*, int): The port to connect to. Defaults to 1883.
+- **port** (*Optional*, int): The port to connect to. Defaults to `1883`, or `8883` when `tls` is enabled.
 - **username** (*Optional*, string): The username to use for
   authentication. Empty (the default) means no authentication.
 
@@ -42,6 +42,27 @@ mqtt:
 
 - **clean_session** (*Optional*, boolean): Whether the broker will clean
   the MQTT session after disconnect. Defaults to `false`.
+
+- **persist_subscriptions** (*Optional*, boolean): Skip sending the subscriptions again when the device
+  reconnects and the broker still has them from the previous session. This saves traffic and time on
+  each connection, which helps battery-powered and deep sleep devices. Requires `clean_session: false`.
+  Defaults to `false`.
+
+  The device keeps one fingerprint of its subscriptions (topics, QoS and the configuration) in memory
+  that survives deep sleep and restarts but not a power loss: RTC memory on the ESP8266 and on ESP32
+  chips that have it. Nothing is written to flash. When the broker reports that the session is still
+  present and the fingerprint matches the one the broker last accepted in full, no subscriptions are
+  sent; otherwise all of them are sent as usual. While they are being sent the fingerprint is not
+  trusted, so a connection lost part way through cannot be mistaken for a complete session. After a
+  power loss, and after any restart on chips without RTC memory (the ESP32-C2 and ESP32-C61 and the
+  LibreTiny chips), the first connection subscribes to everything once. Unsubscribing from a topic at
+  run time also makes the next connection subscribe to everything again.
+
+  Subscriptions that a lambda adds after the device has connected make the fingerprint differ between
+  restarts and reconnects, so everything is subscribed again then. Topics that only an older firmware
+  used stay subscribed on the broker until it drops the session. To drop them sooner, flash the device
+  once with `clean_session: true` and without `persist_subscriptions`, let it connect, then flash the usual
+  configuration again.
 
 - **client_id** (*Optional*, string): The client id to use for opening
   connections. See [Defaults](#defaults) for more information.
@@ -86,6 +107,9 @@ mqtt:
   - **level** (*Optional*, string): The log level to use for MQTT logs. See
     [Log Levels](/components/logger#log-levels) for options.
 
+  When `esphome logs` connects through the broker, the device prints the log of its previous crash, if there is
+  one, as it does for a native API client. It offers this only while `level` lets error messages through.
+
 - **birth_message** (*Optional*, [MQTTMessage](#mqtt-message)): The message to send when
   a connection to the broker is established. See [Last Will And Birth Messages](#mqtt-last_will_birth) for more information.
 
@@ -95,16 +119,28 @@ mqtt:
 - **shutdown_message** (*Optional*, [MQTTMessage](#mqtt-message)): The message to send when
   the node shuts down and the connection is closed cleanly. See [Last Will And Birth Messages](#mqtt-last_will_birth) for more information.
 
-- **certificate_authority** (*Optional*, string): Only on ESP32. CA certificate in PEM format. See
-  [TLS (ESP32)](#mqtt-tls-idf) for more information.
-
-> [!TIP]
-> For MQTT security recommendations including TLS configuration, see the [Security Best Practices](/guides/security_best_practices#mqtt) guide.
-
+- **tls** (*Optional*, bool): Only on ESP32. Use TLS for the connection. Defaults to `false`; it is switched on when
+  `verify_ssl`, `certificate_authority`, `client_certificate` or `skip_cert_cn_check` is set, and cannot be `false`
+  together with them. See [TLS (ESP32)](#mqtt-tls-idf).
+- **verify_ssl** (*Optional*, bool): Only on ESP32. Check the broker's certificate. Defaults to `true`: with
+  `certificate_authority` the broker is checked against that CA, otherwise against ESP-IDF's certificate bundle (the
+  Mozilla root store), which is then included in the build. Set it to `false` for a broker whose certificate cannot
+  be checked at all; this cannot be combined with `certificate_authority` or `skip_cert_cn_check`.
+- **certificate_authority** (*Optional*, string): Only on ESP32. CA certificate in PEM format, used instead of the
+  certificate bundle. See [TLS (ESP32)](#mqtt-tls-idf).
 - **client_certificate** (*Optional*, string): Only on `esp32`. Client certificate in PEM format.
 - **client_certificate_key** (*Optional*, string): Only on `esp32`. Client private key in PEM format.
 - **skip_cert_cn_check** (*Optional*, bool): Only on ESP32. Don't verify if the common name in the server
   certificate matches the value of `broker`.
+
+- **transport** (*Optional*, string): Only on ESP32 with the ESP-IDF framework. How the broker is reached: `tcp`
+  (default), `ws` (MQTT over WebSocket) or `wss` (MQTT over WebSocket with TLS, which switches `tls` on). See
+  [MQTT over WebSocket](#mqtt-over-websocket).
+- **ws_path** (*Optional*, string): Only with `transport: ws` or `wss`. Path of the WebSocket endpoint on the broker.
+  Defaults to `/mqtt`.
+
+> [!TIP]
+> For MQTT security recommendations including TLS configuration, see the [Security Best Practices](/guides/security_best_practices#mqtt) guide.
 
 - **idf_send_async** (*Optional*, bool): Only on ESP32. If true publishing the message happens from a separate mqtt task.
   The client only enqueues the message. Defaults to `false`.
@@ -132,8 +168,9 @@ mqtt:
   performed when a JSON message on a specific MQTT topic is received. See [`on_json_message` Trigger](#mqtt-on_json_message).
 
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
-- **publish_nan_as_none** (*Optional*, bool): Publish `None` instead of `NaN` to handle Unknown/Unavailable sensor
-  states in Home Assistant. Defaults to `false`.
+- **publish_nan_as_none** (*Optional*, bool): Publish `None` instead of `NaN` for sensor states, climate target
+  temperatures (both limits of a two-point target) and climate target humidity, so Home Assistant can represent
+  missing values. Defaults to `false`.
 
 - **wait_for_connection** (*Optional*, bool): Blocks other components from starting until the MQTT connection is
   established. Defaults to `false`.
@@ -204,22 +241,26 @@ Example Payload:
 }
 ```
 
-JSON keys:
+JSON keys that are always present:
 
-- **ip** (**Required**, ip): The IP address of the ESPHome device.
-- **name** (**Required**, string): Name of the device (`esphome.name`  ).
-- **mac** (**Required**, string): MAC address of the device.
-- **board** (**Required**, string): Board used for the device.
-- **version** (**Required**, string): ESPHome version.
-- **port** (*Optional*, port): Port of the ESPHome API (if enabled).
-- **ipX** (*Optional*, ip): Additional IP addresses (X is a number starting at 1).
-- **friendly_name** (*Optional*, string): Friendly name of the device (`esphome.friendly_name`  ).
-- **platform** (*Optional*, string): Platform of the device (e.g. ESP32 or ESP8266)
-- **network** (*Optional*, string): Network type.
-- **project_name** (*Optional*, string): `esphome.project.name`.
-- **project_version** (*Optional*, string): `esphome.project.version`.
-- **project_version** (*Optional*, string): `dashboard_import.package_import_url`.
-- **api_encryption** (*Optional*, string): API encryption type.
+- `name`: Name of the device (`esphome.name`).
+- `mac`: MAC address of the device.
+- `board`: Board used for the device.
+- `version`: ESPHome version.
+
+JSON keys that are present when applicable:
+
+- `ip`: The IP address of the ESPHome device, once it has one.
+- `port`: Port of the ESPHome API, if enabled.
+- `ipX`: Additional IP addresses (X is a number starting at 1).
+- `friendly_name`: Friendly name of the device (`esphome.friendly_name`).
+- `platform`: Platform of the device (e.g. ESP32 or ESP8266).
+- `network`: Network type.
+- `project_name`: `esphome.project.name`.
+- `project_version`: `esphome.project.version`.
+- `package_import_url`: `dashboard_import.package_import_url`.
+- `api_encryption`: API encryption type, when an API encryption key is configured.
+- `api_encryption_supported`: API encryption type the device supports, when no key is configured yet.
 
 ## Using device discovery with Home Assistant
 
@@ -343,8 +384,9 @@ mqtt:
     payload: offline
 ```
 
-- **birth_message** (*Optional*, [MQTTMessage](#mqtt-message))
-- **will_message** (*Optional*, [MQTTMessage](#mqtt-message))
+- **birth_message** (*Optional*, [MQTTMessage](#mqtt-message)): The message to publish once connected to the broker.
+- **will_message** (*Optional*, [MQTTMessage](#mqtt-message)): The last will message the broker publishes when it loses the
+  connection to the device unexpectedly. A clean shutdown publishes `shutdown_message` instead.
 
 If the birth message and last will message have empty topics or topics
 that are different from each other, availability reporting will be
@@ -354,12 +396,27 @@ disabled.
 
 ## TLS (ESP32)
 
-On ESP32, a TLS connection to an MQTT broker can be established.
-The server's CA certificate is required to validate the connection.
+On ESP32 the connection to the broker can use TLS. Setting `tls: true` (or any of the certificate options) is enough
+for a broker with a certificate from a public CA: the broker is checked against ESP-IDF's certificate bundle and the
+port defaults to `8883`.
 
-You have to download the server CA certificate in PEM format and add it to `certificate_authority`.
+```yaml
+mqtt:
+  broker: mqtt.example.com
+  tls: true
+```
+
+For a broker with its own CA, download the CA certificate in PEM format and add it to `certificate_authority`.
 Usually these are .crt files and you can open them with any text editor.
-Also make sure to change the `port` of the MQTT broker. Most brokers use port 8883 for TLS connections.
+
+A broker whose certificate cannot be checked at all can still be reached over TLS with `verify_ssl: false`. The
+connection is then encrypted but not authenticated, so anyone between the device and the broker can impersonate it.
+
+```yaml
+mqtt:
+  broker: 192.168.1.10
+  verify_ssl: false
+```
 
 > [!WARNING]
 > MbedTLS, the library that handles TLS for the esp-idf, doesn't validate wildcard certificates.
@@ -378,7 +435,6 @@ Also make sure to change the `port` of the MQTT broker. Most brokers use port 88
 ```yaml
 mqtt:
   broker: test.mymqtt.local
-  port: 8883
   discovery_prefix: ${mqtt_prefix}/homeassistant
   log_topic: ${mqtt_prefix}/logs
   # Evaluate carefully skip_cert_cn_check
@@ -409,6 +465,26 @@ mqtt:
     LdUdRudafMu5T5Xma182OC0/u/xRlEm+tvKGGmfFcN0piqVl8OrSPBgIlb+1IKJE
     m/XriWr/Cq4h/JfB7NTsezVslgkBaoU=
     -----END CERTIFICATE-----
+```
+
+## MQTT over WebSocket
+
+On ESP32 with the ESP-IDF framework the broker can be reached over a WebSocket, for example when it sits behind a
+reverse proxy or tunnel that only passes HTTP(S). Set `transport: ws` for a plain WebSocket or `transport: wss` for a
+WebSocket over TLS, and `port` to the broker's WebSocket listener.
+
+`wss` switches `tls` on, so `verify_ssl`, `certificate_authority`, `client_certificate`, `client_certificate_key` and
+`skip_cert_cn_check` apply to the TLS handshake as they do for [TLS over TCP](#mqtt-tls-idf). Without
+`certificate_authority` the broker certificate is checked against the certificate bundle built into the firmware, as
+the [HTTP Request](/components/http_request/) component does. `tls` and the certificate options are rejected with
+`ws`, which is unencrypted.
+
+```yaml
+mqtt:
+  broker: mqtt.example.com
+  port: 443
+  transport: wss
+  ws_path: /ws
 ```
 
 <span id="config-mqtt-component"></span>

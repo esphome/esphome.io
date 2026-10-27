@@ -37,9 +37,6 @@ head:
       content: "Releases"
 ---
 
-> [!NOTE]
-> This is a beta release. Details on this page may change before the stable release is published.
-
 import ImgTable from "@components/ImgTable.astro";
 
 {/* COMPANION_SUMMARY_START */}
@@ -54,6 +51,7 @@ Here's the plain-language rundown for anyone short on time or newer to ESPHome; 
 - **Lights with an `initial_state:`** now actually respect it at boot, so if you had a light configured to come up on but it was quietly staying off, double-check the behavior is what you want after updating.
 - **The `codec_support_enabled` option on `speaker` media players is gone;** remove it from your config and set the pipeline `format:` to `NONE` to keep the old behavior, otherwise the config will no longer validate.
 - **IR climate devices with `supports_heat: false` or `supports_cool: false`** no longer offer the combined heat/cool auto mode by default - add `supports_heat_cool: true` to bring it back if you were relying on it.
+- **Sendspin speakers** now encrypt every connection and need Music Assistant 2.10.7 or 2.11.0b4 or newer - update Music Assistant first, or the device will not connect.
 
 **New features:** Updates install about a third smaller and proportionally faster on every platform ESPHome supports, and ESP8266 builds are considerably quicker end-to-end, including on recent Apple Silicon Macs that no longer need Rosetta.
 
@@ -143,6 +141,9 @@ chip family from the browser.
   conversion now uses perceived luminance. Also drop `full_update_every` above 1 on panels without partial refresh
   and add `psram:` for `seeed-reterminal-sticky`.
 - If you have a `sendspin` switch, add `type: enabled` to each entry.
+- If you use `sendspin`, update Music Assistant to 2.10.7 or 2.11.0b4 or newer first; older servers cannot connect.
+  Also replace `format: BMP` on sendspin images with `JPEG` or `PNG`, make sure a media source `codecs:` list
+  includes `flac` or `pcm`, and set the `esp32:` framework `type:` to `esp-idf`.
 - If you build for the `host` platform, remove unsupported `platformio_options` keys and rewrite any
   separate-argument `build_flags` (such as `-include pre.h`) as a single entry; Windows host builds are no longer
   supported.
@@ -711,9 +712,15 @@ The release adds a strong batch of new components and platforms:
   AMOLED brightness control ([#20212](https://github.com/esphome/esphome/pull/20212)).
 - **Sendspin** by [@kahrendt](https://github.com/kahrendt) gained manufacturer/model/firmware
   identity options ([#18792](https://github.com/esphome/esphome/pull/18792)), a switch platform to
-  enable and disable the client ([#19361](https://github.com/esphome/esphome/pull/19361)) and
+  enable and disable the client ([#19361](https://github.com/esphome/esphome/pull/19361)),
   mixer ducking that now goes up to 255 dB
-  ([#19347](https://github.com/esphome/esphome/pull/19347)).
+  ([#19347](https://github.com/esphome/esphome/pull/19347)) and pairing for the new encrypted
+  protocol: pairing codes, a pairing window confirmed on the device, an unpaired access option and
+  switch, and an API request that lets Home Assistant pass the pairing token to Music Assistant
+  ([#20348](https://github.com/esphome/esphome/pull/20348),
+  [#20349](https://github.com/esphome/esphome/pull/20349),
+  [#20350](https://github.com/esphome/esphome/pull/20350),
+  [#20355](https://github.com/esphome/esphome/pull/20355)).
 - **nRF52 2001-baud touch** by [@bdraco](https://github.com/bdraco) reboots an nRF52 straight into
   the application without going through DFU, so a host can "restart device" over USB
   ([#19727](https://github.com/esphome/esphome/pull/19727)).
@@ -921,6 +928,11 @@ issues, tested pre-releases, and helped in the community.
   [#19765](https://github.com/esphome/esphome/pull/19765)
 - **Sendspin**: The `sendspin` switch platform now requires a `type:` option. The only supported value today is
   `enabled`. [#20189](https://github.com/esphome/esphome/pull/20189)
+- **Sendspin**: Updated to sendspin-cpp 0.9.3, which implements the Sendspin 1.0.0-rc1 protocol. Every connection is
+  now encrypted, and the protocol does not work with earlier versions, so Music Assistant 2.10.7 or 2.11.0b4 or newer
+  is required. Unpaired access is on by default, so any compatible server can still play without pairing.
+  `format: BMP` on sendspin images is rejected, a media source `codecs:` list must include `flac` or `pcm`, and
+  sendspin now requires the ESP-IDF framework. [#20347](https://github.com/esphome/esphome/pull/20347)
 {/* BREAKING_CHANGES_USERS_END */}
 
 ### Undocumented API changes
@@ -1037,6 +1049,12 @@ The `nfc` stack now avoids per-tag heap churn. Most lambdas keep compiling, but 
 - **Hoermann HCP**: `toggle_light()` and `cancel_light_toggle()` are removed; lambdas that drove the lamp through
   them should use `id(hcp).set_light(!id(hcp).is_light_heading_on())`.
   [#19765](https://github.com/esphome/esphome/pull/19765)
+
+### Sendspin client id
+
+- **Sendspin**: `SendspinHub::update_state()` is removed, and `SendspinHub::get_client_id_into_buffer()` is renamed
+  `get_mac_address_into_buffer()`, since the client id now comes from the stored keypair instead of the MAC address.
+  [#20347](https://github.com/esphome/esphome/pull/20347)
 {/* UNDOCUMENTED_API_CHANGES_END */}
 
 ### Breaking changes for developers
