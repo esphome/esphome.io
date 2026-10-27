@@ -219,7 +219,7 @@ Serial flashing and OTA `--bootloader` need a build without this flag.
 
 ### `upload` Command
 
-The `esphome upload <CONFIG>` validates the configuration and uploads the most recent firmware build.
+With a configuration, `esphome upload <CONFIG>` validates it and uploads the most recent firmware build.
 
 The configuration is optional for `upload`. Without it, a prebuilt firmware image given with `--file` is sent to the
 device given with `--device`; see
@@ -277,9 +277,9 @@ whose own OTA settings apply.
 
 **`--ota-password PASSWORD`**
 : The device's OTA password, if it has one and a configuration file is not given. The `ESPHOME_OTA_PASSWORD`
-environment variable keeps it out of the shell history and the process list; if both are given, `--ota-password`
-is used. Neither it nor `ESPHOME_OTA_PASSWORD` can be used together with a configuration, whose own OTA settings
-apply.
+environment variable keeps it out of the process list; if both are given, `--ota-password` is used.
+`--ota-password` can't be used together with a configuration, whose own OTA settings apply, and
+`ESPHOME_OTA_PASSWORD` is ignored with a warning.
 
 
 **`--partition-table`**
@@ -323,8 +323,8 @@ the device's IP address or hostname with `--device`:
 esphome upload --file firmware.bin --device 192.168.1.50
 ```
 
-The image is sent directly over the [ESPHome OTA platform](/components/ota/esphome/); nothing is read, validated or
-compiled.
+The image is sent directly over the [ESPHome OTA platform](/components/ota/esphome/); no configuration is read or
+validated and nothing is compiled.
 
 The OTA port defaults to the [ESPHome OTA platform](/components/ota/esphome/)'s default for the platform the image
 was built for, which is read from the image header:
@@ -345,19 +345,22 @@ esphome upload --file firmware.bin --device 192.168.1.50 --ota-port 6053
 ```
 
 If the device has an OTA password, give it in the `ESPHOME_OTA_PASSWORD` environment variable, which keeps it out
-of the shell history, or with `--ota-password`. Like `ESPHOME_OTA_KEY`, the variable is removed from the
-environment before anything else runs.
+of the process list, or with `--ota-password`. Like `ESPHOME_OTA_KEY`, the variable is removed from the
+environment before anything else runs. Typing it on the command line saves it in the shell history, so read it
+without echo instead:
 
 ```shell
-ESPHOME_OTA_PASSWORD=secret esphome upload --file firmware.bin --device 192.168.1.50
+read -rs ESPHOME_OTA_PASSWORD && export ESPHOME_OTA_PASSWORD
+esphome upload --file firmware.bin --device 192.168.1.50
 ```
 
-For a device that uses [OTA encryption](/components/ota/esphome/#encryption), give the key with `--prompt-ota-key`
-or the `ESPHOME_OTA_KEY` environment variable. A malformed key is refused before the device is contacted, and the
-upload is never sent unencrypted instead.
+For a device that uses [OTA encryption](/components/ota/esphome/#encryption), give the key with `--prompt-ota-key`.
+A program that runs the CLI can hand it over in the `ESPHOME_OTA_KEY` environment variable instead. A malformed key
+is refused before the device is contacted, and the upload is never sent unencrypted instead.
 
 ```shell
-ESPHOME_OTA_KEY=<base64 key> esphome upload --file firmware.bin --device 192.168.1.50
+esphome upload --prompt-ota-key --file firmware.bin --device 192.168.1.50
+OTA encryption key:
 ```
 
 `--partition-table` and `--bootloader` also work in this mode. The following need a configuration and are refused
