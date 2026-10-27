@@ -36,7 +36,7 @@ http_request:
 - **watchdog_timeout** (*Optional*, [Time](/guides/configuration-types#time)): Change the watchdog timeout during connection/data transfer.
   May be useful on slow connections or connections with high latency. On ESP32 this defaults to three times
   `timeout` plus one second, and never less than the `watchdog_timeout` set in the [ESP32 platform](/components/esp32)
-  configuration; requests run on the main loop, so without this the task watchdog could reboot the device while a
+  configuration, or not set when that is `0s`; requests run on the main loop, so without this the task watchdog could reboot the device while a
   request waits on a slow server. On RP2040 there is no default. **Do not raise this value unless you are
   experiencing device reboots due to watchdog timeouts;** doing so may prevent the device from rebooting due to a
   legitimate problem. **Only available on ESP32 and RP2040**.
