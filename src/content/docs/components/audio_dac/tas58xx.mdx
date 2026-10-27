@@ -43,6 +43,10 @@ audio_dac:
   - `btl`: Bridge tied load, two speakers (stereo).
   - `pbtl`: Parallel bridge tied load, one speaker driven by both output channels. Requires `mixer_mode` to be
     `mono`, `left` or `right`.
+- **fault_output** (*Optional*, enum): The amplifier pin that reports faults. The pin goes low while a fault is present
+  (the `FAULTZ` signal of the datasheet). With `none` the pin is not configured and keeps its power on state.
+  - `tas5805m`: `adr` or `none`. Defaults to `adr`.
+  - `tas5825m`: `gpio0`, `gpio1`, `gpio2` or `none`. Defaults to `gpio1`.
 - **mixer_mode** (*Optional*, enum): How the left and right input channels are routed to the outputs.
   Defaults to `stereo`.
   - `stereo`: Left input to the left output, right input to the right output.
@@ -50,6 +54,11 @@ audio_dac:
   - `mono`: Left and right mixed (each at -6 dB) to both outputs.
   - `left`: Left input to both outputs.
   - `right`: Right input to both outputs.
+- **modulation** (*Optional*, enum): The modulation scheme of the output stage. Defaults to `bd_mode`.
+  - `bd_mode`: BD modulation, lower distortion, lower efficiency.
+  - `1spw_mode`: 1SPW modulation, higher efficiency and less heat at the cost of slightly higher distortion. Use it
+    at higher supply voltages, where the amplifier cannot sustain full power without cooling (a heatsink, a fan or
+    both).
 - **volume_min_db** (*Optional*, dB): The digital volume that maps to the minimum volume (0%). Must be less than
   `volume_max_db`. Range: `-103dB` to `24dB`. Defaults to `-103dB`.
 - **volume_max_db** (*Optional*, dB): The digital volume that maps to the maximum volume (100%). Must be greater than
@@ -80,8 +89,9 @@ mixer settings from `mixer_mode` are written each time the device enters play mo
 
 The fault registers are read every `update_interval`, and a log message is written each time a fault appears or
 clears. Faults that only report a past event are cleared automatically, so the fault state follows the current
-condition. The ADR pin is configured as a fault output after startup, since the I²C address is only latched at
-power up.
+condition. The `fault_output` pin is configured after startup. On the TAS5805M, the default fault output pin is the
+ADR pin. It also selects the I²C address, but the address is latched at power up, so the pin is free to use for
+reporting faults afterwards.
 
 > [!IMPORTANT]
 > DC and over current faults are not cleared automatically. After one of these faults the output stays off until

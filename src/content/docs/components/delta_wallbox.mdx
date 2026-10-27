@@ -6,8 +6,8 @@ title: "Delta AC Wallbox"
 import Figure from '@components/Figure.astro';
 
 The `delta_wallbox` component connects to a Delta AC wallbox over Bluetooth Low Energy. It reports the charger's
-model, serial number, firmware versions, state, power, energy and charging time, and can start and stop a charging
-session.
+model, serial number, firmware versions, state, power, energy and charging time, lets you set the maximum charging
+current, and can start and stop a charging session.
 
 <Figure
   src="/images/delta-wallbox-ac-max.jpg"
@@ -61,7 +61,7 @@ delta_wallbox:
 - **password** (**Required**, string): The password from the Delta app.
 - **pin** (*Optional*, int): The six-digit pairing PIN from the Delta app, needed when the charger asks for a
   passkey while pairing.
-- **user** (*Optional*, string): The user name to log in with. Defaults to `admin`.
+- **user** (*Optional*, string): The user name to log in with. Up to 6 characters. Defaults to `admin`.
 - **time_id** (*Optional*, [ID](/guides/configuration-types/#id)): A [time](/components/time/) source. When set, the
   charger's clock is synchronized at every connection so that its own logs carry the right time.
 - **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): How often to read the charger.
@@ -98,6 +98,22 @@ sensor:
   [Sensor](/components/sensor/).
 - **charging_time** (*Optional*, Sensor): The length of the current session in minutes. All options from
   [Sensor](/components/sensor/).
+
+## Number
+
+```yaml
+number:
+  - platform: delta_wallbox
+    max_current:
+      name: "Set Max Current"
+```
+
+- **delta_wallbox_id** (*Optional*, [ID](/guides/configuration-types/#id)): The `delta_wallbox` hub. Only needed
+  with more than one.
+- **max_current** (*Optional*, Number): Sets the maximum charging current in amperes (A), from 6 to 32 A.
+  The charger's configured maximum (set by its DIP switches) is an additional upper limit: requests above it are
+  reduced to that value. The number has no value until the charger has been read after connecting.
+  All options from [Number](/components/number/).
 
 ## Text Sensor
 
