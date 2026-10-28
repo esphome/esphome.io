@@ -210,9 +210,8 @@ Window Setting:
 
 ## Reading Out a Window
 
-A window restricts the readout to a rectangle of the picture, so the camera works as a digital zoom. It is measured
-from the top left corner of the published frame, so the same window asks for the same part of the picture whatever
-frame size is in use; a window that reaches past the frame is clamped to it.
+A window restricts the readout to a rectangle of the picture, so the camera works as a digital zoom. The offsets
+count from the top left corner; what they are counted in depends on the sensor, as the table below shows.
 
 ```yaml
 esp32_camera:
@@ -224,20 +223,18 @@ esp32_camera:
     height: 240
 ```
 
-How a window maps onto the published frame depends on the sensor:
+| Sensor             | Window counted in                               | Published frame        | Notes                                         |
+| ------------------ | ----------------------------------------------- | ---------------------- | --------------------------------------------- |
+| OV2640             | Pixels of the `resolution`                      | The size of the window | JPEG output only, rounded to 16x8 blocks      |
+| OV3660, OV5640     | Pixels of the `resolution`                      | The `resolution`       | Scaled to the frame, so it also zooms in      |
+| SC101IOT, SC030IOT | Pixels of the whole sensor, 1280x720 or 640x480 | The `resolution`       | `width` and `height` must be the `resolution` |
 
-| Sensor             | Published frame           | Notes                                    |
-| ------------------ | ------------------------- | ---------------------------------------- |
-| OV2640             | The size of the window    | JPEG output only, rounded to 16x8 blocks |
-| OV3660, OV5640     | The configured frame size | Scaled to the frame, so it also zooms in |
-| SC101IOT, SC030IOT | The configured frame size | `width` and `height` must be the frame   |
+A window that reaches past the edge is clamped to it. On the SC101IOT and SC030IOT a window whose size is not the
+`resolution` is rejected. Other sensors cannot read out a window: setting one fails, and a `window` in the
+configuration is skipped with a warning at startup.
 
-On the SC101IOT and SC030IOT the offsets are counted in pixels of the whole sensor readout, 1280x720 and 640x480,
-and a window of another size is rejected. Other sensors cannot read out a window: setting one fails, and a `window` in
-the configuration is skipped with a warning at startup.
-
-A new window replaces the previous one and never nests inside it. Changing the frame size clears the window, so set it
-again afterwards. If a window cannot be applied, the previous one stays in place.
+A new window replaces the previous one and never nests inside it. Changing the frame size at runtime, from a lambda,
+clears the window, so set it again afterwards. If a window cannot be applied, the previous one stays in place.
 
 > [!TIP]
 > The community [ESP32 Camera ROI Tool](https://nliaudat.github.io/esphome_ai_component/roi.html) picks `offset_x`,
