@@ -301,7 +301,7 @@ All GREE models can receive commands from the original remote and update the cli
 GREE transport and checksum, then decodes power, operating mode, target temperature from 16 to 30 °C, fan speed, and
 the swing axes supported by the selected model. Timer and other auxiliary fields do not change the climate state.
 
-The existing `generic`, `yan`, `yaa`, `yac`, `yac1fb9`, and `yag` models use the common GREE state fields while
+The `generic`, `yan`, `yaa`, `yac`, `yac1fb9`, `yag`, and `yaw1f` models use the common GREE state fields while
 allowing OEM-specific values in timer, display-temperature, I-Feel, WiFi, vane-position, and otherwise unused fields.
 This is useful for GREE-compatible units sold under other brands such as Tadiran or Tosot.
 
@@ -312,20 +312,14 @@ and also decodes the sleep preset.
 
 A GREE command has an inter-block space of approximately 20 ms. Set `remote_receiver.idle` to a value longer than
 that space so the receiver does not split one command into two captures. Use `25ms` to `30ms`; the default `10ms` is
-too short for this protocol.
+too short for this protocol. See [Remote Receiver](/components/remote_receiver/) and
+[Remote Transmitter](/components/remote_transmitter/) for the other settings.
 
 ```yaml
 remote_receiver:
   id: ir_receiver
-  pin:
-    number: GPIOXX
-    inverted: true
-    mode:
-      input: true
-      pullup: true
-  filter: 250us
+  pin: GPIOXX
   idle: 30ms
-  buffer_size: 2kb
 
 remote_transmitter:
   id: ir_transmitter
@@ -338,7 +332,6 @@ climate:
     model: yx1ff
     transmitter_id: ir_transmitter
     receiver_id: ir_receiver
-    sensor: room_temperature
 ```
 
 The receiver updates only the state encoded by the remote. If `sensor` is configured, its current temperature reading
@@ -352,9 +345,11 @@ The following additional features can be controlled with switches. Availability 
 | `yb1fa` | yes | yes | no | yes |
 | `yx1ff` | yes | no | no | no |
 
+The `generic`, `yag`, and `yaw1f` models have no feature switches; configuring one is a validation error.
+
 For models with supported GREE feature switches, received feature bits update the configured switches and are preserved
-when a later climate or feature change transmits a complete GREE state frame. The existing startup restore behavior of
-the legacy `yan`, `yaa`, `yac`, and `yac1fb9` switches is unchanged.
+when a later climate or feature change transmits a complete GREE state frame. On `yan`, `yaa`, `yac`, and `yac1fb9`,
+switch states are restored at startup.
 
 On `yb1fa` and `yx1ff`, feature switches do not restore a saved state or transmit IR during startup. They initially
 publish the protocol default state and are synchronized by the first valid frame received from the physical remote.
