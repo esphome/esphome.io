@@ -337,21 +337,21 @@ was built for, which is read from the image header:
 | BK72xx and RTL87xx  | `8892`           |
 | LN882x              | `8820`           |
 
-If the header does not name a platform, as with an original ESP32 factory image, the upload is refused and the
-port must be given with `--ota-port`. A device on a port other than its platform's default also needs `--ota-port`:
+If the header does not name a platform, the upload is refused and the port must be given with `--ota-port`. A
+device on a port other than its platform's default also needs `--ota-port`:
 
 ```shell
-esphome upload --file firmware.bin --device 192.168.1.50 --ota-port 6053
+esphome upload --file firmware.bin --device 192.168.1.50 --ota-port 3233
 ```
 
 If the device has an OTA password, give it in the `ESPHOME_OTA_PASSWORD` environment variable, which keeps it out
 of the process list, or with `--ota-password`. Like `ESPHOME_OTA_KEY`, the variable is removed from the
 environment before anything else runs. Typing it on the command line saves it in the shell history, so read it
-without echo instead:
+without echo and pass it to this one command only:
 
 ```shell
-read -rs ESPHOME_OTA_PASSWORD && export ESPHOME_OTA_PASSWORD
-esphome upload --file firmware.bin --device 192.168.1.50
+read -rs PASSWORD
+ESPHOME_OTA_PASSWORD="$PASSWORD" esphome upload --file firmware.bin --device 192.168.1.50
 ```
 
 For a device that uses [OTA encryption](/components/ota/esphome/#encryption), give the key with `--prompt-ota-key`.
@@ -362,6 +362,9 @@ is refused before the device is contacted, and the upload is never sent unencryp
 esphome upload --prompt-ota-key --file firmware.bin --device 192.168.1.50
 OTA encryption key:
 ```
+
+An ESP32 factory image, which serial flashing tools write as bootloader, partition table and app in one file, is
+refused before the device is contacted, even with `--ota-port`; upload the app image (`firmware.ota.bin`) instead.
 
 `--partition-table` and `--bootloader` also work in this mode. The following need a configuration and are refused
 without one: a serial port or `SERIAL`, `OTA`, `MQTT`, `MQTTIP` or `BOOTSEL` as `--device`, and
