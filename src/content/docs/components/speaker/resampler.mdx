@@ -24,18 +24,32 @@ speaker:
     sample_rate: 48000
 ```
 
-## Configuration variables
+## Configuration Variables
 
 - **output_speaker** (**Required**, [ID](/guides/configuration-types#id)): The [speaker](/components/speaker/) to output the resampled audio.
-- **buffer_duration** (*Optional*, [Time](/guides/configuration-types#time)): The duration of the internal ring buffer. Larger values may reduce stuttering but use more memory. Defaults to `500ms`.
+- **buffer_duration** (*Optional*, [Time](/guides/configuration-types#time)): The duration of the internal ring buffer. Larger values may reduce stuttering but use more memory. Defaults to `100ms`.
 - **bits_per_sample** (*Optional*, positive integer or `passthrough`): The audio sample bit depth after resampling. Defaults to `passthrough`, where the bit depth matches the input audio.
 - **sample_rate** (*Optional*, positive integer): Sample rate to convert to. Must be between `8000` and `48000`. Defaults to the output speaker's sample rate.
 - **filters** (*Optional*, positive integer): The number of windowed sinc interpolation filters to use. Must be between `2` and `1024`. Defaults to `16`.
 - **taps** (*Optional*, positive integer): The number of taps per windowed sinc interpolation filter. Must between `16` and `128` and divisible by 4. Defaults to `16`.
 - **task_stack_in_psram** (*Optional*, boolean): Run the audio tasks in external memory. Defaults to `false`.
+- **task_core** (*Optional*, integer): CPU core for this speaker's resampling task: `0`, `1`, or `-1` to let
+  FreeRTOS choose. Defaults to `-1`. Core `1` requires a dual-core ESP32 variant running FreeRTOS in dual-core mode.
+- **task_priority** (*Optional*, integer): FreeRTOS priority of this speaker's resampling task, from `1` to `23`.
+  Defaults to `1`.
 - All other options from [Speaker Component](/components/speaker#config-speaker).
 
-## Improving quality
+## Task Scheduling
+
+Leave the scheduling defaults in place unless you need to balance resampling with other work on the device.
+Each resampler speaker has its own settings. Raising its priority can delay other tasks.
+These settings apply when resampling is needed; audio that already matches the output format continues directly
+to the output speaker.
+
+On ESP32 targets with a floating-point unit, FreeRTOS can pin an initially unpinned task to the core where it
+first uses floating-point arithmetic. Setting `task_core` makes that initial placement explicit.
+
+## Improving Quality
 
 Resampling is processor intensive and should be avoided as much as possible. The audio quality is effected by the number of filters and the number of taps. Increasing the number of filters will increase the memory load. Increasing the number of taps will increase the CPU load.
 
