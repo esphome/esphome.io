@@ -1,0 +1,57 @@
+---
+description: "TFLite Micro operator table and registration manager"
+title: "TFLite Op Processor"
+---
+
+The `tflite_op_processor` component is a **library-only component**: it has no user-facing configuration options and is
+loaded automatically as a dependency of the `tflite_micro_runtime`
+component and of the third-party components that consume it.
+
+The `tflm_operators.h` header holds one X-macro table describing every operator the `esp-tflite-micro`
+library can register (`TFLM_OP_AVAILABLE`, `TFLM_OP_CONDITIONAL`, `TFLM_OP_UNAVAILABLE`). The entry is the
+single source of truth for both sides of the pipeline:
+
+- **At configuration time**, the Python side parses the same table
+  (`op_manifest.py`) and rejects a model whose operators cannot be registered before anything is compiled.
+- **At run time**, `OpResolverManager::register_ops()` reads the model's operator code list and registers only
+  the operators actually used, through the table, on a `MicroMutableOpResolver` sized by
+  `TFLITE_MICRO_MAX_OPERATORS` (emitted by `tflite_micro_runtime` from the models in the configuration).
+
+The `TFLM_OP_CONDITIONAL` entries name the `Add*()` method they need. `register_ops()` checks for that method with
+`if constexpr`, so a model that needs one of those operators is reported as unsupported on a pinned
+`esp-tflite-micro` release that does not provide it, instead of failing to compile. The table is written against
+`esp-tflite-micro` 1.3.7, the version this component pins.
+
+## Example configuration entry
+
+The component has no options of its own: operators are registered automatically from the model, and
+`debug: true` prints the operator table that was registered for it:
+
+```yaml
+tflite_micro_runtime:
+  - id: digit_reader
+    model_type: image
+    model: "models/digit_recognizer.tflite"
+    # Operators are registered automatically from the model;
+    # debug: true prints the operator table that was registered.
+    debug: true
+```
+
+## Configuration Variables
+
+This component has no configuration variables of its own: it is loaded automatically by `tflite_micro_runtime`,
+which owns the user-facing options. The operator list is derived from the model (`.tflite` and its companion `.txt` report), so there is nothing to configure.
+
+The empty schema also allows loading it explicitly, which is mainly useful when another component declares it
+in its `DEPENDENCIES` (the ESPHome component tests do this):
+
+```yaml
+tflite_op_processor:
+```
+
+## See Also
+
+- `tflite_micro_runtime` - the user-facing component that loads this library
+  automatically
+- [esphome_ai_component Demo](https://github.com/nliaudat/esphome_ai_component) - working demo with pre-trained
+  models and camera integration
