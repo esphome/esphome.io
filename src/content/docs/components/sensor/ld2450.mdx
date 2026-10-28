@@ -510,8 +510,20 @@ text_sensor:
 
     - **filters** (*Optional*): Like the target's [sensors](#sensor), defaults to a `1s` `timeout` that resends
       the last position and a `1s` `throttle_with_priority` that lets `NA` through at once, so the last position of
-      a target that stops is never lost. Use `filters: []` to publish every change. See
-      [Text Sensor Filters](/components/text_sensor/#text-sensor-filters).
+      a target that stops is never lost. Use `filters: []` to publish every change. Setting `filters` replaces the
+      defaults, so add them back to keep the rate limit:
+
+      ```yaml
+      xy:
+        name: "Target-1 XY"
+        filters:
+          - timeout: 1s
+          - throttle_with_priority:
+              timeout: 1s
+              value: "NA"
+      ```
+
+      See [Text Sensor Filters](/components/text_sensor/#text-sensor-filters).
     - All options from [Text Sensor](/components/text_sensor/#config-text_sensor).
 
 ## Select
