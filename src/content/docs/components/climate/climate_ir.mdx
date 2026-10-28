@@ -27,7 +27,7 @@ submit a feature request (see FAQ).
 | Emmeti | `emmeti`                           | yes |
 | [Friedrich](#friedrich)                   | `friedrich`                        | yes               |
 | Fujitsu General | `fujitsu_general`                  | yes |
-| [GREE](#gree_ir) | `gree`                             | |
+| [GREE](#gree_ir) | `gree`                             | yes |
 | [Haier Tundra](#haier_tundra) | `haier_tundra` | yes |
 | Hitachi | `hitachi_ac344`, `hitachi_ac424` | yes |
 | [Islandaire](#islandaire) | `islandaire`                       | yes |
@@ -275,6 +275,7 @@ climate:
   - `yaa`
   - `yac`
   - `yac1fb9`
+  - `yb1fa`
   - `yx1ff`
   - `yag`
   - `yaw1f`: the `yag` byte layout with the frame timing and follow-up message of YAW1F remotes. Try it when a
@@ -296,13 +297,75 @@ climate:
 
 Models `yx1ff` and `yac1fb9` also offer the `sleep` preset.
 
-Models `yan`, `yaa`, `yac` and `yac1fb9` support a couple of additional features which can be controlled with switches:
+All GREE models can receive commands from the original remote and update the climate state. The receiver validates the
+GREE transport and checksum, then decodes power, operating mode, target temperature from 16 to 30 °C, fan speed, and
+the swing axes supported by the selected model. Timer and other auxiliary fields do not change the climate state.
 
-- **gree_id** (**Required**, [ID](/guides/configuration-types#id)): Specify the ID of the `gree` climate to which these swicthes should belong.
-- **light** (*Optional*, [Switch](/components/switch#config-switch)): To turn off indoor unit display/LED at night for complete room darkness.
-- **turbo** (*Optional*, [Switch](/components/switch#config-switch)): For maximum fan speed and fastest results.
-- **health** (*Optional*, [Switch](/components/switch#config-switch)): Removal of dust and germs from the environment by ionizing the air flowing through the blades.
-- **xfan** (*Optional*, [Switch](/components/switch#config-switch)): Prevention of excess moisture in the machine that cause mold, mildew, and unpleasant odors. Indoor fan will keep running for short period after turning turn off the AC, to dry the blades.
+The `generic`, `yan`, `yaa`, `yac`, `yac1fb9`, `yag`, and `yaw1f` models use the common GREE state fields while
+allowing OEM-specific values in timer, display-temperature, I-Feel, WiFi, vane-position, and otherwise unused fields.
+This is useful for GREE-compatible units sold under other brands such as Tadiran or Tosot.
+
+The `yb1fa` and `yx1ff` models have stricter model-specific validation because their captured frame formats and
+feature interactions are known. Both expose only vertical swing control. The `yb1fa` model maps the three numbered
+fan speeds to low, medium, and high. The `yx1ff` model maps them to quiet, low, and medium, uses the Turbo bit for high,
+and also decodes the sleep preset.
+
+A GREE command has an inter-block space of approximately 20 ms. Set `remote_receiver.idle` to a value longer than
+that space so the receiver does not split one command into two captures. Use `25ms` to `30ms`; the default `10ms` is
+too short for this protocol. See [Remote Receiver](/components/remote_receiver/) and
+[Remote Transmitter](/components/remote_transmitter/) for the other settings.
+
+```yaml
+remote_receiver:
+  id: ir_receiver
+  pin: GPIOXX
+  idle: 30ms
+
+remote_transmitter:
+  id: ir_transmitter
+  pin: GPIOXX
+  carrier_duty_percent: 50%
+
+climate:
+  - platform: gree
+    name: "AC"
+    model: yx1ff
+    transmitter_id: ir_transmitter
+    receiver_id: ir_receiver
+```
+
+The receiver updates only the state encoded by the remote. If `sensor` is configured, its current temperature reading
+is kept unchanged.
+
+The following additional features can be controlled with switches. Availability depends on the selected GREE model:
+
+| Model | `light` | `turbo` | `health` | `xfan` |
+| --- | --- | --- | --- | --- |
+| `yan`, `yaa`, `yac`, `yac1fb9` | yes | yes | yes | yes |
+| `yb1fa` | yes | yes | no | yes |
+| `yx1ff` | yes | no | no | no |
+
+The `generic`, `yag`, and `yaw1f` models have no feature switches; configuring one is a validation error.
+
+For models with supported GREE feature switches, received feature bits update the configured switches and are preserved
+when a later climate or feature change transmits a complete GREE state frame. On `yan`, `yaa`, `yac`, and `yac1fb9`,
+switch states are restored at startup.
+
+On `yb1fa` and `yx1ff`, feature switches do not restore a saved state or transmit IR during startup. They initially
+publish the protocol default state and are synchronized by the first valid frame received from the physical remote.
+
+On `yb1fa`, Turbo is represented as an effective high fan speed. Enabling the Turbo switch also updates the climate fan
+state to high. Selecting any fan mode through the climate entity disables Turbo; disabling only the Turbo switch leaves
+the regular high fan speed selected. The `yx1ff` Turbo bit is part of high fan-speed encoding and is therefore not
+available as an independent switch.
+
+- **gree_id** (**Required**, [ID](/guides/configuration-types/#id)): The ID of the `gree` climate to which the switches
+  belong.
+- **light** (*Optional*, [Switch](/components/switch/#config-switch)): Turns the indoor-unit display/LED on or off.
+- **turbo** (*Optional*, [Switch](/components/switch/#config-switch)): Enables maximum fan speed for faster results.
+- **health** (*Optional*, [Switch](/components/switch/#config-switch)): Enables the air ionization feature.
+- **xfan** (*Optional*, [Switch](/components/switch/#config-switch)): Keeps the indoor fan running briefly after the
+  climate device is turned off to dry the evaporator.
 
 ```yaml
 # Example configuration entry for switches of the climate
