@@ -1,0 +1,99 @@
+---
+title: "RX8111 Event Timestamp"
+description: "Publish event timestamps captured by the Epson RX8111CE real-time clock."
+---
+
+The `rx8111` text sensor publishes timestamps captured by the EVIN input of an
+[RX8111 real-time clock](/components/time/rx8111/). Configure that time component first.
+
+```yaml
+text_sensor:
+  - platform: rx8111
+    name: "Event Timestamp"
+```
+
+## Configuration Variables
+
+- **rx8111_id** (*Optional*, [ID](/guides/configuration-types/#id)): The RX8111 time component. Required when
+  more than one RX8111 is configured. Only one timestamp text sensor is allowed per clock.
+- **timestamp_record_mode** (*Optional*, string): Timestamp storage mode. Defaults to `latest`.
+  - `latest`: Publish the latest captured record. A new event replaces the previous record.
+  - `stop_when_full`: Store up to eight records; capture stops updating the buffer when it is full.
+  - `overwrite`: Store the latest eight records, replacing the oldest when full.
+- All other options from [Text Sensor](/components/text_sensor/).
+
+## Capture and Publication
+
+The text sensor enables EVIN capture independently of `event_enabled`, which controls the event interrupt and
+`on_event` automation. Configure `event_level`, `evin_filter`, and `evin_pull` on the time component to match the
+connected signal. With no explicit settings, capture uses an active-low input, no filter, and no internal pull.
+The RTC must contain trusted UTC time; timestamp capture does not set or synchronize its calendar.
+
+The component preserves the internal timestamp-trigger settings in register `0x35`. Records produced by previously
+enabled internal triggers can therefore also be published; the entity does not distinguish them from EVIN records.
+
+### Output Format
+
+States use UTC ISO 8601 format, for example `2026-10-24T12:34:56.999Z`, regardless of the time component's timezone.
+Fractional seconds are truncated to milliseconds. Invalid BCD, impossible dates, and records whose captured
+oscillator-stop flag is set are skipped without replacing the last valid state. The supported calendar years are
+2019–2099. When no records have been published, the entity has no state.
+
+Without filtering, latest storage has a resolution of 1/1024 second and buffered storage has a resolution of
+1/256 second. Enabling the hardware filter makes some low fractional bits unreliable, so three decimal places do not
+imply millisecond accuracy. Retained records may have been captured with a different filter setting, so their
+fractions are not masked using the current configuration.
+
+### Storage Modes and Event Loss
+
+Choose the mode by how bursty the input is:
+
+- `latest`: only the newest event per poll interval is kept. A second event before the next poll replaces the
+  first.
+- `stop_when_full`: up to eight unread records are kept. Events after the eighth are dropped until the records are
+  read.
+- `overwrite`: the newest eight records are kept. Further events replace the oldest unread records.
+
+Buffered records are published oldest first. The entity state holds the last valid record, so use `on_value` to
+process each record.
+
+### Polling
+
+Records are checked using the time component's `event_poll_interval` (default `1s`, minimum `500ms`), even when
+`update_interval: never` disables periodic calendar reads. No separate timestamp polling loop is created.
+
+In `latest` mode, each poll compares storage with the previous record without pausing capture. Only when the record
+has changed is capture paused and the record read again for publication. In buffered modes, capture is paused while
+the records are read and the buffer is cleared. Events during a pause are not captured. A longer poll interval
+means fewer pauses, but more chance that a newer record replaces an unread one in `latest` mode.
+
+### Acknowledging Events
+
+Publication does **not** clear `EVF` or release `/INT`. Use `rx8111.clear_event_flag` explicitly after handling an
+event if acknowledgement is needed. Records are read whether or not `EVF` is set: in `latest` mode a changed record
+is published and an unchanged one is not published again, even after `EVF` is acknowledged.
+
+### Startup and Recovery
+
+At startup, capture is paused, retained records are read in their previous storage format, and the requested mode
+is configured before capture resumes. Retained records are published once configuration succeeds.
+
+A retained `latest` record is only published when the clock was not reset or stopped (POR, VLF, and XST all clear)
+and either `EVF` is set or capture was already enabled. Otherwise it only becomes the baseline for later
+comparisons. There is no persistent record of what was already published, so an acknowledged record may be
+published again after a host reboot. If capture was disabled and `EVF` cleared before the reboot, an unread
+`latest` record cannot be told apart from unused storage and is not recovered.
+
+I²C failures set a warning and are retried by event polling, or at startup by up to three configuration attempts.
+Buffered records may be delivered again when clearing the buffer fails. If all three startup attempts fail, records
+that were fully read are still published once, so records already removed from the RTC are not lost. Capture can
+then stay disabled for the rest of that boot; fix the bus fault and reboot the host to retry.
+
+> [!NOTE]
+> Records waiting for delivery are kept in RAM only, so they are lost on a host reset or power loss before
+> publication. Publication also does not guarantee that a remote client received the state.
+
+## See Also
+
+- [RX8111 Time](/components/time/rx8111/)
+- [Text Sensor](/components/text_sensor/)

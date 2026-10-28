@@ -13,7 +13,8 @@ A common use is a wall dashboard: a server runs a web browser at the size of the
 device with an e-paper or LCD screen shows it.
 
 > [!WARNING]
-> VNC sends the picture unencrypted. Only use it on a network you trust.
+> VNC sends the picture unencrypted, and the VNC password check is weak. Only use it on a network you
+> trust.
 
 ```yaml
 # Example configuration entry
@@ -29,12 +30,16 @@ is larger, only its top-left part is shown.
 
 - **host** (**Required**, string): The IPv4 address or hostname of the VNC server.
 - **port** (_Optional_, int): The port of the VNC server. Defaults to `5900`.
+- **password** (_Optional_, string): The VNC password, if the server asks for one. VNC uses only the first
+  8 bytes: 8 characters for plain letters, digits and symbols, fewer if the password has accented or other
+  special characters.
 - **display_id** (_Optional_, [ID](/guides/configuration-types/#id)): The display to draw on. Only needed if
   there is more than one display.
 - **reconnect_interval** (_Optional_, [Time](/guides/configuration-types/#time)): How long to wait before the
   first new connection attempt after a failure. The wait doubles with each further failure, up to 60 seconds or
   `reconnect_interval`, whichever is longer. Defaults to `5s`. After a configuration problem, for example when the
-  server is not a VNC server or asks for a password that is not set, the client waits 5 minutes instead.
+  server is not a VNC server or asks for a password that is not set, the client waits 5 minutes instead. After a
+  wrong password it stops retrying until the device restarts or `vnc.connect` runs.
 - **update_delay** (_Optional_, [Time](/guides/configuration-types/#time)): How long the picture must stay
   unchanged before the display refreshes. This turns an animation into one refresh that shows where the
   animation ended. Defaults to `200ms`.
@@ -85,15 +90,21 @@ For the IT8951, the `GL16` waveform flashes much less than the default `GC16`, w
 ## Server Setup
 
 The client supports the VNC protocol versions 3.3, 3.7 and 3.8, and the encodings Raw and Hextile. It works
-with servers that need no password.
+with servers that offer either no password or a classic VNC password.
 
 - **VNC Web Browser add-on for Home Assistant** (TightVNC): set the display `resolution` to the size of the
   panel, for example `540x960` for an M5Paper in portrait, and keep the colour depth at `16`. The add-on
   disconnects other viewers when a new one connects, so the device and a desktop viewer will push each other
   off.
-- **TigerVNC**: `Xvnc :1 -geometry 540x960 -depth 16 -SecurityTypes None`.
+- **TigerVNC**: `Xvnc :1 -geometry 540x960 -depth 16 -SecurityTypes None`. For a password, use
+  `-SecurityTypes VncAuth -rfbauth <file>`.
 - **x11vnc**: run it against an X server of the right size, for example `Xvfb :1 -screen 0 540x960x16`, with
-  `-nopw`.
+  `-nopw` or `-rfbauth <file>`.
+- **wayvnc**: offers the VNC password only with `allow_broken_crypto` enabled.
+
+> [!IMPORTANT]
+> After a wrong password the client stops trying, because some servers lock out every user after a few
+> failed logins. Fix the password, then restart the device or run the `vnc.connect` action.
 
 ## Actions
 
@@ -111,6 +122,24 @@ on_...:
 
 - **id** (_Optional_, [ID](/guides/configuration-types/#id)): The `vnc` client to refresh. Only needed if there
   is more than one.
+
+### `vnc.connect` and `vnc.disconnect` Actions
+
+`vnc.disconnect` closes the connection and stops reconnecting, for example before deep sleep. `vnc.connect`
+connects again. It also retries after a wrong password.
+
+```yaml
+# Before deep sleep
+on_...:
+  - vnc.disconnect:
+
+# After fixing the password on the server
+on_...:
+  - vnc.connect:
+```
+
+- **id** (_Optional_, [ID](/guides/configuration-types/#id)): The `vnc` client to connect or disconnect. Only
+  needed if there is more than one.
 
 ## Conditions
 
@@ -201,8 +230,9 @@ binary_sensor:
 
 - **Only part of the screen is shown, or there is an empty border:** the server's screen size does not match the
   display. The log shows both sizes when the client connects.
-- **"The server requires a password" or "No supported security type":** turn off authentication on the
-  server.
+- **"The server requires a password":** set `password`.
+- **"No supported security type":** the server only offers login methods this client does not support, such as
+  TLS. Enable classic VNC authentication or no authentication on the server.
 - Set the [logger](/components/logger/) level to `DEBUG` to see a line for every change the server sends, with
   its size, how long it took, and how many tiles had to be drawn.
 
