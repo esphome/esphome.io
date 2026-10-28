@@ -67,7 +67,7 @@ sendspin:
   be combined.
 - **source** (*Optional*, mapping): Streams a microphone to the Sendspin server. See [Source](#source).
 
-  - **microphone** (**Required**, [Microphone Source Configuration](/components/microphone#config-microphone-source)):
+  - **microphone** (**Required**, [Microphone Source Configuration](/components/microphone/#config-microphone-source)):
     The microphone to stream. The source's `bits_per_sample` (default `16`) must be `16`, `24` or `32`, and at most
     two channels can be selected. The microphone must have a fixed sample rate, which the stream uses as is. Audio is
     sent as uncompressed PCM.
@@ -129,9 +129,9 @@ those moments.
 Each chunk carries the time its audio was captured, so the server can line it up with other audio.
 
 The audio is sent as uncompressed PCM, which needs a stable network connection: 256 kbit/s for 16 kHz mono 16-bit
-audio, and about 1.5 Mbit/s for 48 kHz stereo. While sending stalls, the device keeps about half a second of audio
-in a buffer, placed in [PSRAM](/components/psram/) when available. If a stall lasts longer, the delayed audio is
-dropped and the stream continues from live audio.
+audio, and about 1.5 Mbit/s for 48 kHz stereo 16-bit audio. 24 and 32 bits per sample need 1.5 and 2 times as much.
+While sending stalls, the device keeps about half a second of audio in a buffer, placed in [PSRAM](/components/psram/)
+when available. If a stall lasts longer, the delayed audio is dropped and the stream continues from live audio.
 
 To tell the server whether the device has audio to offer, use the
 [`sendspin.source.set_signal`](#sendspin-source-set_signal-action) action. The server can start the stream when
@@ -262,6 +262,43 @@ switch:
       - sendspin.source.set_signal:
           present: true
     turn_off_action:
+      - sendspin.source.set_signal:
+          present: false
+```
+
+Report the line input as present while something plays on it, using a
+[sound level sensor](/components/sensor/sound_level/). This keeps the input capturing all the time, so use it for a
+line input, not a microphone. Set the threshold between the input's level when nothing plays and its level for quiet
+music. `delayed_off` keeps short pauses, such as between tracks, from reporting the input as absent:
+
+```yaml
+sendspin:
+  source:
+    microphone:
+      microphone: line_in
+      channels: [0, 1]
+
+sensor:
+  - platform: sound_level
+    microphone:
+      microphone: line_in
+      channels: [0]
+    passive: false
+    measurement_duration: 500ms
+    rms:
+      id: line_in_level
+      internal: true
+
+binary_sensor:
+  - platform: template
+    name: "Line In Playing"
+    lambda: return id(line_in_level).state > -60;
+    filters:
+      - delayed_off: 10s
+    on_press:
+      - sendspin.source.set_signal:
+          present: true
+    on_release:
       - sendspin.source.set_signal:
           present: false
 ```
