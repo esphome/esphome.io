@@ -133,8 +133,11 @@ audio, and about 1.5 Mbit/s for 48 kHz stereo. While sending stalls, the device 
 in a buffer, placed in [PSRAM](/components/psram/) when available. If a stall lasts longer, the delayed audio is
 dropped and the stream continues from live audio.
 
-To tell the server whether the input has a signal, for example when a line input is plugged in, use the
-[`sendspin.source.set_signal`](#sendspin-source-set_signal-action) action.
+To tell the server whether the device has audio to offer, use the
+[`sendspin.source.set_signal`](#sendspin-source-set_signal-action) action. The server can start the stream when
+this changes to present and stop it when it changes to absent. Set it from a button or a switch, or for a line input,
+from whether the connected device is playing. A microphone should use a button or a switch rather than listening for
+sound.
 
 ## Automations
 
@@ -195,9 +198,8 @@ on_...:
 
 ### `sendspin.source.set_signal` Action
 
-This [action](/automations/actions/#all-actions) tells the server whether the [source](#source) input has a signal.
-Using this action anywhere in the configuration tells the server that the device can report whether the input has a
-signal. The device reports nothing until the action first runs. Requires a `source` block.
+This [action](/automations/actions/#all-actions) tells the server whether the [source](#source) has audio to
+offer. The device reports that it has none until the action first runs. Requires a `source` block.
 
 ```yaml
 on_...:
@@ -205,8 +207,8 @@ on_...:
       present: true
 ```
 
-- **present** (**Required**, boolean, [templatable](/automations/templates/)): `true` when the input has a signal,
-  `false` when it does not.
+- **present** (**Required**, boolean, [templatable](/automations/templates/)): `true` when the source has audio to
+  offer, `false` when it does not.
 
 ## Conditions
 
@@ -242,7 +244,7 @@ binary_sensor:
       - sendspin.confirm_pairing_window:
 ```
 
-Stream a stereo line input to the server, and report whether a cable is plugged in. `line_in` is a
+Stream a stereo line input to the server, with a switch that offers it to the server. `line_in` is a
 [microphone](/components/microphone/) with a fixed sample rate:
 
 ```yaml
@@ -252,15 +254,14 @@ sendspin:
       microphone: line_in
       channels: [0, 1]
 
-binary_sensor:
-  - platform: gpio
-    pin: GPIOXX
-    name: "Line In Plugged"
-    trigger_on_initial_state: true
-    on_press:
+switch:
+  - platform: template
+    name: "Share Line In"
+    optimistic: true
+    turn_on_action:
       - sendspin.source.set_signal:
           present: true
-    on_release:
+    turn_off_action:
       - sendspin.source.set_signal:
           present: false
 ```
