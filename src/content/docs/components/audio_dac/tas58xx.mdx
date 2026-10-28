@@ -84,8 +84,9 @@ power state changes start with the I²C address of the amplifier.
 
 ### Operation
 
-The amplifier enters play mode after setup. It stays in Hi-Z (outputs off) until an I²S clock is present, and the
-mixer settings from `mixer_mode` are written each time the device enters play mode.
+The amplifier enters play mode after setup. It stays in Hi-Z (outputs off) until an I²S clock is present. The mixer
+setting (`mixer_mode`, or the mode chosen with the [mixer mode select](#select)) is written when audio first starts,
+and the amplifier keeps it while the clock stops and starts again.
 
 The fault registers are read every `update_interval`, and a log message is written each time a fault appears or
 clears. Faults that only report a past event are cleared automatically, so the fault state follows the current
@@ -222,7 +223,7 @@ select:
   available. All options from [Select](/components/select/). Defaults to the `config` entity category.
 
 At every restart the select starts with the `mixer_mode` of the `audio_dac`, so a selected mode lasts until the next
-restart. A new mode is written immediately if audio is playing, otherwise when audio starts.
+restart. A new mode is written immediately if audio is playing, otherwise when audio next starts.
 
 ## Configuration Examples
 
