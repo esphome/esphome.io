@@ -1,0 +1,87 @@
+---
+description: "Instructions for setting up GY39v3 environment sensors with ESPHome"
+title: "GY39v3 Environment Sensor Array"
+---
+
+import { Image } from 'astro:assets';
+import Figure from '@components/Figure.astro';
+import gy39v3FullImg from './images/gy39v3.png';
+import gy39v3TopImg from './images/gy39v3_top.png';
+import gy39v3BottomImg from './images/gy39v3_bottom.png';
+import gy39v3ModesImg from './images/gy39v3_modes.png';
+import APIRef from '@components/APIRef.astro';
+
+The `gy39v3` sensor platform allows you to use your GY39v3 ([datasheet](https://www.gysensor.cn/gy39-esphome/)) environmental sensor array with ESPHome. The [I²C](/components/i2c) is required to be set up in your configuration for this sensor to work.
+
+<Figure src={gy39v3FullImg} alt="" caption="GY39v3 Environmental Sensor Array." layout="constrained" />
+
+```yaml
+sensor:
+  - platform: gy39v3
+    illuminance:
+      name: GY39v3 Illuminance
+    temperature:
+      name: GY39v3 Temperature
+    pressure:
+      name: GY39v3 Pressure
+    humidity:
+      name: GY39v3 Humidity
+    altitude:
+      name: GY39v3 Elevation
+    delta: -2.25
+    vapor_pressure_deficit:
+      name: GY39v3 VPD (calculated)
+    update_interval: 60s
+```
+
+## Configuration variables
+
+- **illuminance** (*Optional*): Current illuminance measurement of the integrated MAX 44009 light intensity sensor.
+  - All other options from [Sensor](/components/sensor) (applies to all measurement configs).
+
+- **temperature** (*Optional*): Current temperature measurement of the integrated BME 280 environment sensor.
+
+- **pressure** (*Optional*): The information for the pressure sensor.
+
+- **humidity** (*Optional*): The information for the relative humidity sensor.
+
+- **altitude** (*Optional*): The information for the altitude / elevation sensor.
+
+- **delta** / **vapor_pressure_deficit** (*Optional*): this calculated from the measurements
+  - as the reference point for VPD is f.e. on the surface of a plant, but the array measures air temperature, `delta` is added to the measured temperature before calculation
+  - VPD is then calculated from temperature and relative humidity
+  - **Hint:** `delta` is required for the calculation, thus if no delta is defined, VPD is never calculated.
+
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to check the
+  sensor. Defaults to `60s`.
+
+I²C Configuration variables:
+
+- this sensor always uses I²C address `0x5b`. No config needed.
+
+<Figure src={gy39v3TopImg} alt="" caption="Light-facing (top) side" layout="" />
+<Figure src={gy39v3BottomImg} alt="" caption="Bottom view" layout="" />
+
+<span id="gy39v3-wiring"></span>
+
+## Wiring of GY39v3
+
+The sensor itself supports a few different modes, so the question should be: does it need all those modes?
+
+The pragmatic answer is: no, not at all.  This PCB contains a driver chip already optimally addressing the max and bmp chips.  It doesn't make any sense to try and "talk" to those chips explicitly.
+
+For this to happen, pin `S0` needs to be connected to `GND`, as in the central configuration (`2. MCU_IIC mode`):
+<Figure src={gy39v3ModesImg} alt="" caption="different modes of operation" layout="" />
+
+Now, the pins `CT` and `DR` act as `SCL` and `SDA`:
+
+- `CT` → `SCL`
+- `DR` → `SDA`
+
+---
+
+## See Also
+
+- [Sensor Filters](/components/sensor#sensor-filters)
+- [BME280 Temperature+Pressure+Humidity Sensor](/components/sensor/bme280/)
+- <APIRef text="gy39v3.h" path="gy39v3/gy39v3.h" />
