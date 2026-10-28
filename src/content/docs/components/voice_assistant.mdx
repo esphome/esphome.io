@@ -46,16 +46,23 @@ voice_assistant:
 - **conversation_timeout** (*Optional*, [Time](/guides/configuration-types#time)): How long to wait before resetting the `conversation_id`
   sent to the voice assist pipeline, which contains the context of the current assist pipeline. Defaults to `300s`.
 - **tts_playback_start_timeout** (*Optional*, [Time](/guides/configuration-types/#time)): How long to wait for TTS
-  playback to start before considering the response finished. Must be at least `1ms`. Defaults to `2s`.
+  playback to start before timing out. Must be at least `1ms`. Defaults to `2s`.
   Increase this if a slow TTS engine, such as XTTS, causes the response to finish before playback starts.
   On the speaker path without an end-of-stream event, this timer is also restarted while audio is playing.
   The response then finishes after the speaker stops and this timeout expires. A larger value therefore also delays
   returning to idle or listening for the next turn. Explicit stream-end events and media-player completion do not
   rely on this timeout.
+  With `media_player`, a response that has not entered the announcing state before this timeout is cancelled
+  and reported through `on_error` with code `tts-start-timeout`. Pending announcements report failure to
+  Home Assistant. Late TTS events do not restart a cancelled response. This check uses the media player's
+  reported state; it does not measure when the first audio sample arrives.
 
 - **on_intent_start** (*Optional*, [Automation](/automations)): An automation to perform when intent processing starts.
 - **on_intent_progress** (*Optional*, [Automation](/automations)): An automation to perform when intent progress happens.
-  The variable `x` is a non-empty string containing the streaming TTS response URL only if it is sent to the media player.
+  The variable `x` contains the streaming TTS response URL when one is available, or an empty string otherwise.
+  For a streaming response, synchronous actions run before the URL is sent to the media player. Calling
+  `voice_assistant.stop` from those actions prevents playback. Asynchronous actions such as `delay` do not
+  postpone submission of the URL.
 
 - **on_intent_end** (*Optional*, [Automation](/automations)): An automation to perform when intent processing ends.
 - **on_listening** (*Optional*, [Automation](/automations)): An automation to
