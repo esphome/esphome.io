@@ -22,80 +22,76 @@ text_sensor:
   - `overwrite`: Store the latest eight records, replacing the oldest when full.
 - All other options from [Text Sensor](/components/text_sensor/).
 
-## Capture And Publication
+## Capture and Publication
 
 The text sensor enables EVIN capture independently of `event_enabled`, which controls the event interrupt and
 `on_event` automation. Configure `event_level`, `evin_filter`, and `evin_pull` on the time component to match the
 connected signal. With no explicit settings, capture uses an active-low input, no filter, and no internal pull.
 The RTC must contain trusted UTC time; timestamp capture does not set or synchronize its calendar.
 
+The component preserves the internal timestamp-trigger settings in register `0x35`. Records produced by previously
+enabled internal triggers can therefore also be published; the entity does not distinguish them from EVIN records.
+
+### Output Format
+
 States use UTC ISO 8601 format, for example `2026-10-24T12:34:56.999Z`, regardless of the time component's timezone.
 Fractional seconds are truncated to milliseconds. Invalid BCD, impossible dates, and records whose captured
 oscillator-stop flag is set are skipped without replacing the last valid state. The supported calendar years are
-2019–2099.
+2019–2099. When no records have been published, the entity has no state.
 
 Without filtering, latest storage has a resolution of 1/1024 second and buffered storage has a resolution of
-1/256 second. Fractional-second accuracy depends on the storage mode and `evin_filter`. Enabling the hardware
-filter makes some low fractional bits unreliable; three displayed decimal places do not imply millisecond accuracy.
-Retained records may have been captured with a different filter setting, so their fractions are not masked using
-the current configuration.
+1/256 second. Enabling the hardware filter makes some low fractional bits unreliable, so three decimal places do not
+imply millisecond accuracy. Retained records may have been captured with a different filter setting, so their
+fractions are not masked using the current configuration.
+
+### Storage Modes and Event Loss
+
+Choose the mode by how bursty the input is:
+
+- `latest`: only the newest event per poll interval is kept. A second event before the next poll replaces the
+  first.
+- `stop_when_full`: up to eight unread records are kept. Events after the eighth are dropped until the records are
+  read.
+- `overwrite`: the newest eight records are kept. Further events replace the oldest unread records.
+
+Buffered records are published oldest first. The entity state holds the last valid record, so use `on_value` to
+process each record.
+
+### Polling
 
 Records are checked using the time component's `event_poll_interval` (default `1s`, minimum `500ms`), even when
 `update_interval: never` disables periodic calendar reads. No separate timestamp polling loop is created.
 
-At startup, capture is paused and retained records are staged using their previous storage format. The requested
-mode is configured before capture resumes and retained-record callbacks run on successful startup. Staged records
-survive configuration retries.
-Latest-bank bytes are baselined before capture resumes, including when switching from buffered mode. An unchanged
-baseline is not later published as a new capture.
+In `latest` mode, each poll compares storage with the previous record without pausing capture. Only when the record
+has changed is capture paused and the record read again for publication. In buffered modes, capture is paused while
+the records are read and the buffer is cleared. Events during a pause are not captured. A longer poll interval
+means fewer pauses, but more chance that a newer record replaces an unread one in `latest` mode.
 
-Retained latest records use a best-effort startup policy: POR, VLF, and XST must all be clear, and either EVF must
-be set or EVIN capture must already have been enabled. Otherwise the bytes become a baseline without publication,
-even if they decode as a valid date. The original startup evidence is kept across retries that pause capture.
-The first successful FLAG read is preserved even if a later control or extension read fails, so clearing flags
-between attempts does not change the original validity and event evidence.
-There is no persistent consumed marker: an acknowledged retained record may be recovered or replayed after a host
-reboot, and enabled capture does not prove that an event occurred. If capture was disabled and EVF cleared before
-reboot, an unread retained latest record cannot be distinguished from unused storage and is not recovered.
+### Acknowledging Events
 
-In buffered modes, the RAM pointer is cleared before capture resumes and records are published oldest first.
-The entity state holds the last valid record; use `on_value` to process each record. Records arriving faster than
-polling can be lost once storage is full, depending on the selected mode. Capture is briefly paused while records
-are read and the pointer is cleared. In latest mode, each poll first compares storage with the previous record
-without pausing capture, even when EVF is clear. Unchanged polls do not write capture-control registers. If bytes
-differ, capture is paused and storage is read again; only this paused read can be published. A potentially torn
-initial read can cause an unnecessary pause, but is never published directly. Events during a pause are not
-captured. Increasing the poll interval reduces opportunities for pauses but increases the chance that a newer
-record replaces an unread one. Acknowledging EVF cannot hide a changed record.
+Publication does **not** clear `EVF` or release `/INT`. Use `rx8111.clear_event_flag` explicitly after handling an
+event if acknowledgement is needed. Records are read whether or not `EVF` is set: in `latest` mode a changed record
+is published and an unchanged one is not published again, even after `EVF` is acknowledged.
 
-Publication does **not** clear EVF or release `/INT`. Use `rx8111.clear_event_flag` explicitly after handling an
-event if acknowledgement is needed. In `latest` mode, unchanged bytes are not published again, even after EVF is
-acknowledged; a changed record is published regardless of EVF. Buffered records are read even if EVF
-has already been cleared. During runtime polling, capture restoration is attempted before text-sensor callbacks
-run. Fully staged records are published even if restoring capture fails, and a later poll retries restoration.
-During startup, retained records remain staged until configuration succeeds or the startup retry limit is reached.
+### Startup and Recovery
 
-I²C failures set a warning and are retried by the existing event polling or bounded startup retry mechanism.
-Buffered records may be delivered again after a failed pointer clear. Startup retains fully read buffered
-records before attempting the pointer clear and retries pending cleanup separately. A clear accepted by the RTC
-but reported as an I²C failure does not discard that host copy.
-If startup retries are exhausted without confirming cleanup, delivery still occurs and records may replay after
-a reboot if the RTC did not accept the clear. Runtime polling retries failed capture restoration; startup uses
-the bounded retry mechanism below. When no records have been published, the entity has no state.
+At startup, capture is paused, retained records are read in their previous storage format, and the requested mode
+is configured before capture resumes. Retained records are published once configuration succeeds.
 
-Startup configuration is attempted at most three times. On the final failure, any fully staged retained records
-are published once in their original storage format, oldest first for buffered records. This prevents records
-already removed from the RTC buffer from being discarded without publication when the host reboots. Records that
-could not be fully read and staged are not published.
+A retained `latest` record is only published when the clock was not reset or stopped (POR, VLF, and XST all clear)
+and either `EVF` is set or capture was already enabled. Otherwise it only becomes the baseline for later
+comparisons. There is no persistent record of what was already published, so an acknowledged record may be
+published again after a host reboot. If capture was disabled and `EVF` cleared before the reboot, an unread
+`latest` record cannot be told apart from unused storage and is not recovered.
 
-This terminal-failure delivery does not enable capture, clear the configuration warning, or acknowledge EVF.
-Unlike successful startup, these callbacks can run with capture disabled and the requested mode only partially
-configured. Capture can remain disabled for the rest of that boot. Timestamp polling does not restart failed
-startup configuration; resolve the bus fault and reboot the host to retry. Staging is not persistent across a
-host reset or power loss before delivery, and publication does not guarantee that a remote client received the state.
+I²C failures set a warning and are retried by event polling, or at startup by up to three configuration attempts.
+Buffered records may be delivered again when clearing the buffer fails. If all three startup attempts fail, records
+that were fully read are still published once, so records already removed from the RTC are not lost. Capture can
+then stay disabled for the rest of that boot; fix the bus fault and reboot the host to retry.
 
-The component preserves the internal timestamp-trigger settings in register `0x35`. Records produced by previously
-enabled internal triggers can therefore also be published; the entity does not distinguish them from EVIN records.
+> [!NOTE]
+> Records waiting for delivery are kept in RAM only, so they are lost on a host reset or power loss before
+> publication. Publication also does not guarantee that a remote client received the state.
 
 ## See Also
 
