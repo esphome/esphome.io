@@ -4,10 +4,10 @@ description: "Stream microphone samples from an ESP32 device over the ESPHome we
 ---
 
 The `microphone_http_stream` component serves one configured [microphone source](/components/microphone/) over HTTP.
-It requires the [web server](/components/web_server/) and an ESP32 device. The stream joins a microphone that is
-already running. Otherwise, it starts capture when a client connects and stops it after the last client disconnects.
-When it joins an already running microphone, disconnecting HTTP leaves that microphone running. Samples are forwarded
-without resampling.
+It requires the [web server](/components/web_server/) and an ESP32 device. The stream requests microphone capture
+when a client connects and releases that request after the last client disconnects. Microphone implementations that
+track listeners can share capture with other components: stopping one of them leaves HTTP streaming, and disconnecting
+HTTP leaves the other listeners running. Samples are forwarded without resampling.
 
 > [!WARNING]
 > A microphone stream can expose private audio. Use this component only on a trusted network. Without web server
@@ -27,8 +27,10 @@ microphone_http_stream:
   underscores or hyphens; the first character must be a letter.
 - **source** (**Required**, [Microphone Source](/components/microphone/#microphone-source-configuration)): The source
   must output mono, 16-bit PCM. Select a microphone that exposes the desired capture stage.
-- **max_clients** (*Optional*, integer): Maximum simultaneous listeners, from `1` to `3`. Defaults to `1`. When set
-  above `1`, each listener uses a 128 KiB buffer in PSRAM. Without PSRAM, stream requests fail with HTTP `503`.
+- **max_clients** (*Optional*, integer): Maximum simultaneous listeners, from `1` to `3`. Defaults to `1`. Each
+  configured slot reserves a 128 KiB buffer at startup, including when no client is connected. With three slots,
+  this reserves 384 KiB of PSRAM. More than one slot requires PSRAM; a single slot can fall back to internal RAM.
+  If the buffers cannot be allocated, both audio endpoints return HTTP `503`.
 
 ## HTTP Endpoints
 
@@ -37,8 +39,8 @@ microphone_http_stream:
 - `GET /audio/microphones/{stream_id}` streams the selected microphone. If every configured client slot is in use,
   another request receives HTTP `409`.
 
-If another component stops the shared microphone during a stream, the HTTP connection closes after five seconds
-without audio. The stream does not restart a microphone owned by another component.
+If the microphone stops delivering samples for five seconds, the HTTP connection closes. Sharing behavior depends on
+whether the microphone implementation tracks its listeners.
 
 The response body contains raw **S16LE mono** samples at the source microphone's configured sample rate. Its content
 type is `application/octet-stream`; the `X-Audio-Format`, `X-Audio-Sample-Rate` and `X-Audio-Channels` headers specify
