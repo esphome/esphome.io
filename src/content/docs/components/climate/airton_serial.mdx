@@ -1,0 +1,114 @@
+---
+description: "Instructions for setting up an Airton air conditioner over its serial Wi-Fi module link"
+title: "Airton Serial Climate"
+---
+import APIRef from '@components/APIRef.astro';
+
+The `airton_serial` climate platform controls Airton air conditioners that use the serial link
+between the indoor unit and its Wi-Fi module. The ESP takes the role of the original module
+(address `0x21`) and talks directly to the climate board.
+
+This platform is separate from the IR-based `airton` component.
+
+> [!WARNING]
+> The module connector provides +12 V. Never connect it directly to the ESP. Use a 5 V regulator
+> (a 12 V → 5 V buck module or a bare 7805), verify its output before wiring, and
+> connect a common ground.
+
+The bus is a 9600 baud, 8N1, TTL 5 V serial link with two data wires and a common ground. The
+platform requires a [UART](/components/uart/) bus; the UART must use 9600 8N1 with both TX and RX.
+
+> [!NOTE]
+> Tested on an ESP32-S3-Zero with GPIO5 (TX) and GPIO4 (RX), original Wi-Fi module removed.
+
+```yaml
+# Example configuration entry
+climate:
+  - platform: airton_serial
+    id: airton_climate
+    name: Airton Climate
+```
+
+## Configuration variables
+
+- **uart_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the
+  [UART](/components/uart/) bus. Required if you have more than one UART bus.
+- All other options from [Climate](/components/climate#config-climate).
+
+## Switches
+
+The optional switches control the settings that the board exposes on the same serial link:
+
+```yaml
+switch:
+  - platform: airton_serial
+    airton_serial_id: airton_climate
+    display:
+      name: Display
+    ionizer:
+      name: Ionizer
+    health:
+      name: Health
+    sleep:
+      name: Sleep
+    eco:
+      name: Eco
+```
+
+- **airton_serial_id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the
+  `airton_serial` climate.
+- **display** (*Optional*): The display backlight.
+- **ionizer** (*Optional*): The ionizer.
+- **health** (*Optional*): The health setting. The board uses one bit for anti-mould and
+  auxiliary heat, so both are controlled by this switch.
+- **sleep** (*Optional*): Sleep mode.
+- **eco** (*Optional*): Eco mode.
+- All other options from [Switch](/components/switch#config-switch).
+
+## Sensors
+
+```yaml
+sensor:
+  - platform: airton_serial
+    airton_serial_id: airton_climate
+    total_usage_time:
+      name: Total usage time
+    revision:
+      name: Protocol revision
+```
+
+- **airton_serial_id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the
+  `airton_serial` climate.
+- **total_usage_time** (*Optional*): Total usage time in hours, read from the board's poll
+  response. All options from [Sensor](/components/sensor).
+- **revision** (*Optional*): The board's protocol revision counter. This is a diagnostic value.
+  All options from [Sensor](/components/sensor).
+
+## Supported features
+
+- HVAC modes: `OFF`, `HEAT_COOL`, `COOL`, `HEAT`, `DRY`, `FAN_ONLY`.
+- Fan modes: `AUTO`, `LOW`, `MEDIUM`, `HIGH`, `QUIET`, plus the custom modes `medlow`, `medhigh`
+  and `strong`.
+- Swing: `OFF` and `VERTICAL` (the protocol's `Swing`).
+- Current temperature and target temperature (16–31 °C, 1 °C steps).
+
+Vane positions 1–5 are not exposed.
+
+## Wiring
+
+| Module connector | ESP |
+|---|---|
+| +12 V (red) | input of a 5 V regulator (buck module or 7805); never directly to the ESP |
+| TX (black) | UART RX (for example `GPIOXX`) |
+| RX (yellow) | UART TX (for example `GPIOXX`) |
+| GND (green) | Common ground |
+
+Verify the 5 V output before connecting the ESP. The 7805 in the photos is used bare and stays
+barely warm at the ESP current. Do not power the ESP from USB and from the regulator at the same
+time. The bus is TTL 5 V; if your MCU is
+3.3 V only, use a level shifter or a divider on the board TX line.
+
+## See Also
+
+- [Climate Component](/components/climate/)
+- <APIRef text="airton_serial_climate.h" path="climate/airton_serial_climate.h" />
