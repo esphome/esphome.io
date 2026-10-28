@@ -326,16 +326,8 @@ esphome upload --file firmware.bin --device 192.168.1.50
 The image is sent directly over the [ESPHome OTA platform](/components/ota/esphome/); no configuration is read or
 validated and nothing is compiled.
 
-The OTA port defaults to the [ESPHome OTA platform](/components/ota/esphome/)'s default for the platform the image
-was built for, which is read from the image header:
-
-| Platform            | Default OTA port |
-| ------------------- | ---------------- |
-| ESP32               | `3232`           |
-| ESP8266             | `8266`           |
-| RP2040 and RP2350   | `2040`           |
-| BK72xx and RTL87xx  | `8892`           |
-| LN882x              | `8820`           |
+The OTA port defaults to the [ESPHome OTA platform's default port](/components/ota/esphome/#configuration-variables)
+for the platform the image was built for, which is read from the image header.
 
 If the header does not name a platform, the upload is refused and the port must be given with `--ota-port`. A
 device on a port other than its platform's default also needs `--ota-port`:
@@ -350,7 +342,7 @@ environment before anything else runs. Typing it on the command line saves it in
 without echo and pass it to this one command only:
 
 ```shell
-read -rs PASSWORD
+printf 'OTA password: '; read -rs PASSWORD; echo
 ESPHOME_OTA_PASSWORD="$PASSWORD" esphome upload --file firmware.bin --device 192.168.1.50
 ```
 
