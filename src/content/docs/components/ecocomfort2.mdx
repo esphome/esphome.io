@@ -193,7 +193,8 @@ number:
 - **voc_threshold** (*Optional*): How strongly the unit reacts to volatile organic compounds, from `0` (off)
   to `3`. All options from [Number](/components/number/).
 - **temperature_offset** (*Optional*): A correction added to the unit's temperature reading, from `-5` to
-  `5` °C in steps of `0.1`. All options from [Number](/components/number/).
+  `5` °C in steps of `0.1`. It stays in °C even when Home Assistant shows temperatures in °F.
+  All options from [Number](/components/number/).
 - **humidity_offset** (*Optional*): A correction added to the unit's humidity reading, from `-5` to `5` % in
   steps of `1`. All options from [Number](/components/number/).
 
@@ -212,7 +213,8 @@ switch:
   Only needed when more than one hub is configured.
 - **humidity_advanced** (*Optional*): Advanced control for humidity: as the reading approaches the threshold,
   the unit raises its speed by one level. It needs `humidity_threshold` above `0`; turning it on while the
-  threshold is `0` is refused. All options from [Switch](/components/switch/).
+  threshold is `0` is refused with a warning in the log, and the switch stays off.
+  All options from [Switch](/components/switch/).
 - **voc_advanced** (*Optional*): The same for volatile organic compounds, with `voc_threshold`.
   All options from [Switch](/components/switch/).
 
@@ -236,8 +238,9 @@ select:
 - **season** (*Optional*): The season the unit runs in, `Winter` or `Summer`.
   All options from [Select](/components/select/).
 - **free_cooling** (*Optional*): Free cooling, which cools the home with outside air at night: `Off`, `Low`,
-  `Medium` or `High`. The unit only runs free cooling in summer, so it shows `Off` in winter and changing it
-  in winter is refused. The unit keeps the level and uses it again when the season returns to summer.
+  `Medium` or `High`. The unit only runs free cooling in summer, so it shows `Off` in winter, and changing it
+  in winter is refused with a warning in the log. The unit keeps the level and uses it again when the season
+  returns to summer.
   All options from [Select](/components/select/).
 
 ## Multiple Units
