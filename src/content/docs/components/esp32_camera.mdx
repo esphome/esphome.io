@@ -226,11 +226,13 @@ esp32_camera:
 | Sensor             | Window counted in                               | Published frame        | Notes                                         |
 | ------------------ | ----------------------------------------------- | ---------------------- | --------------------------------------------- |
 | OV2640             | Pixels of the `resolution`                      | The size of the window | JPEG output only, rounded to 16x8 blocks      |
-| OV3660, OV5640     | Pixels of the `resolution`                      | The `resolution`       | Scaled to the frame, so it also zooms in      |
+| OV3660, OV5640     | Pixels of the `resolution`                      | The `resolution`       | Scaled down to the frame, so it also zooms in |
 | SC101IOT, SC030IOT | Pixels of the whole sensor, 1280x720 or 640x480 | The `resolution`       | `width` and `height` must be the `resolution` |
 
-A window that reaches past the edge is clamped to it. On the SC101IOT and SC030IOT a window whose size is not the
-`resolution` is rejected. Other sensors cannot read out a window: setting one fails, and a `window` in the
+A window that reaches past the edge is clamped to it. Because the window is counted in pixels of the `resolution`,
+set it again when you change the `resolution`. The OV3660 and OV5640 only scale down: a window that covers fewer
+sensor pixels than the frame has is rejected, so pick a larger window or a lower `resolution`. On the SC101IOT and
+SC030IOT a window whose size is not the `resolution` is rejected. Other sensors cannot read out a window: setting one fails, and a `window` in the
 configuration is skipped with a warning at startup.
 
 A new window replaces the previous one and never nests inside it. Changing the frame size at runtime, from a lambda,
