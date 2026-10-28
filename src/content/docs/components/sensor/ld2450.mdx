@@ -505,8 +505,8 @@ text_sensor:
       `Stationary`, `Moving away`, `Approaching`, `NA`. All options from [Sensor](/components/sensor).
 
   - **xy** (*Optional*): Position of the target as `x,y` in `millimeter (mm)`, for example `-782,1713`, or `NA` when
-    the target is not tracked. `x` and `y` are the same as those of the target's [sensors](#sensor), but always
-    from the same radar frame.
+    the target is not tracked. `x` and `y` are the radar's own values, always from the same radar frame. Filters
+    on the target's `x` and `y` [sensors](#sensor), such as `offset` or `multiply`, do not apply to them.
 
     - **filters** (*Optional*): Like the target's [sensors](#sensor), defaults to a `1s` `timeout` that resends
       the last position and a `1s` `throttle_with_priority` that lets `NA` through at once, so the last position of
