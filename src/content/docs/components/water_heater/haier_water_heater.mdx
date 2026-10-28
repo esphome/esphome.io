@@ -57,8 +57,13 @@ water_heater:
 
 ### Optional Sensors
 
-Each sensor is created only when configured. Temperature and available-water sensors support all options from
-[Sensor](/components/sensor/). The estimated heating-time sensor also supports those options.
+Each entity is created only when configured, under its own `sensor`, `binary_sensor` or `text_sensor` entry
+with `platform: haier_water_heater` (see the example below). Every one of those entries accepts:
+
+- **haier_water_heater_id** (*Optional*, ID): The water heater to read from. Required if more than one
+  `haier_water_heater` is configured.
+
+These go under `sensor:` and support all options from [Sensor](/components/sensor/):
 
 - **primary_temperature** (*Optional*): The current temperature shown on the heater's display, in degrees Celsius.
   This is also the main water-heater entity's current temperature.
@@ -71,14 +76,15 @@ Each sensor is created only when configured. Temperature and available-water sen
 - **available_water** (*Optional*): Estimated usable hot water as `0%`, `33%`, `66%`, or `100%`.
   This is not the tank fill level. Unexpected raw values publish an unknown sensor value.
 
-The following support all options from [Binary Sensor](/components/binary_sensor/):
+These go under `binary_sensor:` and support all options from [Binary Sensor](/components/binary_sensor/):
 
 - **communication** (*Optional*): A diagnostic connectivity sensor. Starts disconnected, becomes connected after
   a valid heater status, and becomes disconnected after `communication_timeout` without another valid status.
 - **power** (*Optional*): Whether the heater is powered on rather than in standby.
 - **heating** (*Optional*): Whether the heater reports heating activity.
 
-The **mode** (*Optional*) [Text Sensor](/components/text_sensor/) reports `Normal`, `ECO`, `BPS`, or `Unknown`.
+The **mode** (*Optional*) entry goes under `text_sensor:`, supports all options from
+[Text Sensor](/components/text_sensor/), and reports `Normal`, `ECO`, `BPS`, or `Unknown`.
 
 ## Operating Modes And Temperature Control
 
@@ -122,8 +128,13 @@ not internet access, a cloud connection, or a connection to Home Assistant. Ther
 ```yaml
 water_heater:
   - platform: haier_water_heater
+    id: heater
     name: "Water Heater"
     communication_timeout: 20s
+
+sensor:
+  - platform: haier_water_heater
+    haier_water_heater_id: heater
     primary_temperature:
       name: "Primary temperature zone"
     secondary_temperature:
@@ -134,12 +145,20 @@ water_heater:
       name: "Heater Estimated Heating Time"
     available_water:
       name: "Heater Available Water"
+
+binary_sensor:
+  - platform: haier_water_heater
+    haier_water_heater_id: heater
     communication:
       name: "Heater Communication"
     power:
       name: "Heater Power"
     heating:
       name: "Heater Heating"
+
+text_sensor:
+  - platform: haier_water_heater
+    haier_water_heater_id: heater
     mode:
       name: "Heater Mode"
 ```
