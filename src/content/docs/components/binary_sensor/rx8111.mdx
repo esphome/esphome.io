@@ -28,7 +28,9 @@ binary_sensor:
 - **event_flag** (*Optional*): The latched EVIN event flag (`FLAG.EVF`). On means an event has been recorded.
 - **battery_low** (*Optional*): The live backup-voltage status (`STATUS.VLOW`). On means the backup voltage at
   `VBAT` is below the chip's detection threshold. This is not a battery percentage. Defaults to the `battery`
-  device class; detector availability depends on the RTC's existing power configuration.
+  device class. Detection must already be enabled using `EVLOW` in register `0x35`; this component leaves that
+  setting unchanged and does not provide a YAML option to enable it. An off state does not establish battery
+  health when detection is disabled.
 - **evin** (*Optional*): The sampled physical EVIN input level (`STATUS.EVIN`). On means high and off means low,
   independently of the configured event polarity. Short pulses between polls can be missed.
 
@@ -51,6 +53,10 @@ enabled. Reading or publishing a flag does not clear it. Use the time component'
 or [`rx8111.clear_event_flag` action](/components/time/rx8111/#rx8111-clear_event_flag-action) to acknowledge the
 corresponding flag. A successful `rx8111.write_time` clears the time-invalid flags, including VLF and XST.
 Cleared states are reported on the next status read.
+
+Binary-sensor automations run before the corresponding time-component event callbacks. Clearing a flag from a
+synchronous binary-sensor automation can suppress the matching `on_alarm`, `on_timer`, or `on_event` callback in
+that poll. If both are needed, acknowledge the flag only after the required handling is complete.
 
 Adding these sensors does not enable or reconfigure alarms, the timer, EVIN event detection, timestamp capture,
 backup switching, or charging. Configure those features on the time component or
