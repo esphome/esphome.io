@@ -194,9 +194,80 @@ Test Setting:
 
 - **test_pattern** (*Optional*, boolean): For tests purposes, it's possible to replace picture get from sensor by a test color pattern. Defaults to `false`.
 
+Window Setting:
+
+- **window** (*Optional*): Read out only part of the sensor at startup; see
+  [Reading Out a Window](#reading-out-a-window). Without it the whole sensor is read out.
+
+  - **offset_x** (**Required**, int): Horizontal offset of the window in pixels, `0` or more.
+  - **offset_y** (**Required**, int): Vertical offset of the window in pixels, `0` or more.
+  - **width** (**Required**, int): Width of the window in pixels, `1` or more.
+  - **height** (**Required**, int): Height of the window in pixels, `1` or more.
+
 > [!NOTE]
 > Camera uses PWM timer #1. If you need PWM (via the `ledc` platform) you need to manually specify
 > a channel there (with the `channel: 2`  parameter)
+
+## Reading Out a Window
+
+A window restricts the readout to a rectangle of the picture, so the camera works as a digital zoom. The offsets
+count from the top left corner; what they are counted in depends on the sensor, as the table below shows.
+
+```yaml
+esp32_camera:
+  # ...
+  window:
+    offset_x: 100
+    offset_y: 200
+    width: 320
+    height: 240
+```
+
+| Sensor             | Window counted in                               | Published frame        | Notes                                         |
+| ------------------ | ----------------------------------------------- | ---------------------- | --------------------------------------------- |
+| OV2640             | Pixels of the `resolution`                      | The size of the window | JPEG output only, rounded to 16x8 blocks      |
+| OV3660, OV5640     | Pixels of the `resolution`                      | The `resolution`       | Scaled down to the frame, so it also zooms in |
+| SC101IOT, SC030IOT | Pixels of the whole sensor, 1280x720 or 640x480 | The `resolution`       | `width` and `height` must be the `resolution` |
+
+A window that reaches past the edge is clamped to it. Because the window is counted in pixels of the `resolution`, set
+it again when you change the `resolution`. The OV3660 and OV5640 only scale down: a window that covers fewer sensor
+pixels than the frame has is rejected, so pick a larger window or a lower `resolution`. On the SC101IOT and SC030IOT a
+window whose size is not the `resolution` is rejected. Other sensors cannot read out a window: setting one fails, and a
+`window` in the configuration is skipped with a warning at startup.
+
+A new window replaces the previous one and never nests inside it. Changing the frame size at runtime, from a lambda,
+clears the window, so set it again afterwards. If a window cannot be applied, the previous one stays in place.
+
+### `esp32_camera.set_window` Action
+
+Reads out a window at runtime, with the same options as `window` above. Each value can be a lambda.
+
+```yaml
+on_...:
+  then:
+    - esp32_camera.set_window:
+        id: my_camera
+        offset_x: 300
+        offset_y: 100
+        width: 320
+        height: 240
+```
+
+- **id** (**Required**, [ID](/guides/configuration-types/#id)): The camera.
+- **offset_x**, **offset_y**, **width**, **height** (**Required**, [templatable](/automations/templates/), int): The
+  window, as for the `window` option.
+
+### `esp32_camera.reset_window` Action
+
+Reads out the whole sensor again.
+
+```yaml
+on_...:
+  then:
+    - esp32_camera.reset_window: my_camera
+```
+
+- **id** (**Required**, [ID](/guides/configuration-types/#id)): The camera.
 
 ## Configuration examples
 

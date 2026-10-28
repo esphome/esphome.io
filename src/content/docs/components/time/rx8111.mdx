@@ -21,9 +21,10 @@ invalid. A successful `rx8111.write_time` clears those flags.
 ## Configuration Variables
 
 - **address** (*Optional*, int): Manually specify the I²C address of the RTC. Defaults to `0x32`.
-- **event_poll_interval** (*Optional*, time period): How often to check alarm, timer and EVIN flags,
-  independently of the calendar `update_interval`. Minimum `500ms`; defaults to `1s`. EVIN alone only enables
-  this polling when `on_event` is configured; hardware event detection does not require polling.
+- **event_poll_interval** (*Optional*, time period): How often to check alarm, timer and EVIN flags and timestamp
+  records, independently of the calendar `update_interval`. Minimum `500ms`; defaults to `1s`. EVIN alone only enables
+  this polling when `on_event` or an [RX8111 timestamp text sensor](/components/text_sensor/rx8111/) is configured;
+  hardware event detection does not require polling.
 - All other options from [Base Time Configuration](/components/time/#base_time_config).
 
 ### Backup Power and Clock Output
@@ -61,10 +62,11 @@ time:
 ### EVIN Events
 
 The RX8111 can detect when its `EVIN` pin reaches a configured level, even while the host is asleep. All EVIN
-options are opt-in; omitting them leaves the battery-backed event settings unchanged. EVIN needs suitable wiring and a
-defined idle level. The event callback runs when the latched `EVF` flag is first observed; `EVF` is **not cleared
-automatically**. Clear it after handling the event to release EVIN's hold on `/INT` and re-arm the callback. Other
-pending interrupts may still hold `/INT` low. EVIN, alarm and timer events share the same flag read and poll interval.
+options are opt-in; omitting them and the timestamp text sensor leaves the battery-backed event settings unchanged.
+EVIN needs suitable wiring and a defined idle level. The event callback runs when the latched `EVF` flag is first
+observed; `EVF` is **not cleared automatically**. Clear it after handling the event to release EVIN's hold on `/INT`
+and re-arm the callback. Other pending interrupts may still hold `/INT` low. EVIN, alarm and timer events share the
+same flag read and poll interval.
 
 - **event_enabled** (*Optional*, boolean): Enable EVIN detection (`ETS`), its `/INT` interrupt (`EIE`) and the
   `on_event` callback. Explicit `false` clears only `EIE`, without clearing `EVF` or disabling retained capture.
@@ -72,18 +74,19 @@ pending interrupts may still hold `/INT` low. EVIN, alarm and timer events share
   `event_enabled: true`; use `rx8111.clear_event_flag` to acknowledge the event. A flag retained across a reset
   is delivered on the first poll after successful configuration.
 - **event_level** (*Optional*, string): Detect `low` (default) or `high` voltage at EVIN. Requires
-  `event_enabled: true`.
+  `event_enabled: true` or an [RX8111 timestamp text sensor](/components/text_sensor/rx8111/).
 - **evin_filter** (*Optional*, int): Hardware chattering filter: `0` (off, default), `1` (3.9 ms), `2` (15.6 ms),
-  or `3` (125 ms). Requires `event_enabled: true`.
+  or `3` (125 ms). Requires `event_enabled: true` or a timestamp text sensor.
 - **evin_pull** (*Optional*, string): `none` (default), `pullup_500k`, `pullup_1m`, `pullup_10m`, or
   `pulldown_500k`. Select a pull that holds EVIN inactive when external circuitry is not driving it. Requires
-  `event_enabled: true`.
+  `event_enabled: true` or a timestamp text sensor.
 
-This time platform does not publish the timestamps the chip records. `EVF` only latches while the chip's EVIN
-detection (`ETS`) is on, and turning it on also starts the chip's EVIN timestamp capture. Enabling EVIN also makes
-every timestamp trigger raise an interrupt (`EISEL: 0`), replacing a stored setting that interrupts only after eight
-records. Existing records and unrelated settings are kept. Explicit `event_enabled: false` only disables the EVIN
-interrupt and leaves detection and capture running.
+Captured timestamps are available through the [RX8111 text sensor](/components/text_sensor/rx8111/), which enables
+capture independently of `event_enabled` without enabling its interrupt or `on_event` callback. Timestamp publication
+does not clear `EVF`. `EVF` only latches while the chip's EVIN detection (`ETS`) is on, and turning it on also starts
+the chip's EVIN timestamp capture. Enabling EVIN also makes every timestamp trigger raise an interrupt (`EISEL: 0`),
+replacing a stored setting that interrupts only after eight records. Existing records and unrelated settings are kept.
+Explicit `event_enabled: false` only disables the EVIN interrupt and leaves detection and capture running.
 
 EVIN setup is retried up to three times, one second apart. If every attempt fails, the component keeps the warning
 `RX8111 EVIN configuration failed`; check the log and wiring. A failed `rx8111.clear_event_flag` also leaves a warning
