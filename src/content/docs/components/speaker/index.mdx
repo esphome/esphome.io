@@ -19,7 +19,23 @@ speaker:
 
 Configuration variables:
 
-- **audio_dac** (*Optional*, [ID](/guides/configuration-types#id)): The [audio DAC](/components/audio_dac/) to use for volume control.
+- **audio_dac** (*Optional*, [ID](/guides/configuration-types#id) or list of IDs): The
+  [audio DAC](/components/audio_dac/) to use for volume control. Can also be a list of audio DAC IDs that all receive
+  this speaker's audio. Every audio DAC in the list gets the same volume and mute. Each audio DAC can only be listed
+  once.
+
+```yaml
+# Example: two amplifiers on one I²S output
+speaker:
+  - platform: i2s_audio
+    # ...
+    audio_dac: [front_amp, rear_amp]
+```
+
+> [!NOTE]
+> A list of audio DACs must be on the same I²S data line. ESPHome can't detect this from the YAML, because it doesn't
+> know how I²S outputs are physically wired. An audio DAC connected to a different I²S output, or another speaker's
+> data line, would follow this speaker's volume and mute instead of its own.
 
 ## Speaker Actions
 
