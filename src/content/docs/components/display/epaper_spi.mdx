@@ -34,6 +34,7 @@ pins and dimensions specified.
 | JD79660                | Jadard       | [https://www.tdytech.com/en/](https://www.tdytech.com/en/) (B2B, see vendors instead) |
 | Spectra-E6             | Eink         | [https://www.eink.com/brand/detail/Spectra6](https://www.eink.com/brand/detail/Spectra6)       |
 | SSD1677                | Solomon      | [https://www.solomon-systech.com/product/ssd1677/](https://www.solomon-systech.com/product/ssd1677/) |
+| SSD1681                | Solomon      | [https://www.solomon-systech.com/product/ssd1681/](https://www.solomon-systech.com/product/ssd1681/) |
 | SSD1683                | Solomon      | [https://www.solomon-systech.com/product/ssd1683/](https://www.solomon-systech.com/product/ssd1683/) |
 | T133A01                | TianMa       | 13.3" 6-color e-paper controller IC with dual-CS SPI architecture          |
 | UC8179                 | UltraChip    | E-paper controller used by 800x480 7.5" panels (mono and 3-color variants) |
@@ -47,6 +48,7 @@ the pins used to interface to the display to be specified.
 |---------------------------|---------------------|----------------------------------------------------|
 | GooDisplay-GDEY042T81-4.2 | Dalian Good Display | [https://www.good-display.com/product/386.html](https://www.good-display.com/product/386.html) |
 | Waveshare-1.54in-G        | Waveshare           | [https://www.waveshare.com/1.54inch-e-paper-g.htm](https://www.waveshare.com/1.54inch-e-paper-g.htm) |
+| Waveshare-1.54in-v2       | Waveshare           | 1.54" V2 mono e-paper (200x200, SSD1681) [https://www.waveshare.com/1.54inch-e-paper-module.htm](https://www.waveshare.com/1.54inch-e-paper-module.htm) |
 | Waveshare-2.13in-v3       | Waveshare           | [https://www.waveshare.com/pico-epaper-2.13.htm](https://www.waveshare.com/pico-epaper-2.13.htm)   |
 | Waveshare-2.13in-bv4      | Waveshare           | 2.13" 3-color e-paper (250x122, SSD1683) [https://www.waveshare.com/product/displays/e-paper/epaper-3/2.13inch-e-paper-b.htm](https://www.waveshare.com/product/displays/e-paper/epaper-3/2.13inch-e-paper-b.htm) |
 | Waveshare-3.97in          | Waveshare           | [https://www.waveshare.com/3.97inch-e-paper-hat-plus.htm](https://www.waveshare.com/3.97inch-e-paper-hat-plus.htm) |
@@ -71,7 +73,8 @@ a minimum only the model name need be configured. Other options can be overridde
 | Seeed-reTerminal-E1001  | Seeed Studio         | 7.5" mono e-paper (800x480, UC8179), supports fast and partial refresh via `full_update_every`. [https://www.seeedstudio.com/reTerminal-E1001-p-6534.html](https://www.seeedstudio.com/reTerminal-E1001-p-6534.html) |
 | Seeed-reTerminal-E1002  | Seeed Studio         | [https://www.seeedstudio.com/reTerminal-E1002-p-6533.html](https://www.seeedstudio.com/reTerminal-E1002-p-6533.html)         |
 | Seeed-reTerminal-E1004 | Seeed Studio | 13.3" 6-color e-paper (1200x1600, T133A01). Requires PSRAM. [https://www.seeedstudio.com/reTerminal-E1004-p-6692.html](https://www.seeedstudio.com/reTerminal-E1004-p-6692.html) |
-| Seeed-reTerminal-Sticky | Seeed Studio         | [https://www.seeedstudio.com/sticky/](https://www.seeedstudio.com/sticky/)                                                                 |
+| Seeed-reTerminal-Sticky | Seeed Studio         | 3.97" mono e-paper (800x480, SSD1677), supports partial refresh via `full_update_every`. Requires PSRAM. [https://www.seeedstudio.com/sticky/](https://www.seeedstudio.com/sticky/) |
+| Seeed-reTerminal-Sticky-gray4 | Seeed Studio   | The reTerminal Sticky in four-level grayscale, for antialiased text. Full refresh only unless `monochrome_partial_updates` is set; see [Four-level grayscale](#four-level-grayscale-reterminal-sticky). Requires PSRAM. |
 
 ## Configuration variables
 
@@ -115,7 +118,15 @@ but can be overridden if needed.
 - **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to re-draw the screen. Defaults to `60s`,
   use `never` to only manually update the screen via `component.update`.
 - **full_update_every** (*Optional*, int): On screens that support partial updates, this sets the number of updates
-  before a full update is forced. Defaults to `1` which will make every update a full update.
+  before a full update is forced. Defaults to `1` which will make every update a full update. A full update can also be
+  requested at any time with the [`epaper_spi.full_update_next`](#epaper_spi-full_update_next-action) action.
+- **monochrome_partial_updates** (*Optional*, boolean): Only for four-level grayscale models
+  (`Seeed-reTerminal-Sticky-gray4`). Allows `full_update_every` greater than `1`, with the partial updates in between
+  in black and white. Defaults to `false`: every update is a full four-level update. See
+  [Four-level grayscale](#four-level-grayscale-reterminal-sticky) for the trade-off this accepts.
+- **border_waveform** (*Optional*, int): Only for SSD1677 models. The border waveform byte (controller command `0x3C`),
+  which sets how the border around the active area is driven. Defaults to `0x01`, or `0x00` for
+  `Seeed-reTerminal-Sticky-gray4`. Rarely needs changing.
 - **spi_id** (*Optional*, [ID](/guides/configuration-types#id)): Required to specify the ID of the [SPI Component](/components/spi) if your
   configuration defines multiple SPI buses. If only a single SPI bus is configured, this is optional.
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
@@ -158,9 +169,43 @@ display:
       it.filled_circle(it.get_width() / 2, it.get_height() / 2, 50, Color::BLACK);
 ```
 
+### Four-Level Grayscale (reTerminal Sticky)
+
+The `Seeed-reTerminal-Sticky-gray4` model drives the panel in four gray levels. With `monochrome_partial_updates: true`,
+`full_update_every` can be greater than `1`, and the partial updates in between are black and white. The first partial
+update removes the gray levels from the whole panel until the next full update, a trade-off often worth making for the
+noticeably sharper text.
+
+In this mode, an update is partial by default; request a full one with
+[`epaper_spi.full_update_next`](#epaper_spi-full_update_next-action) to bring the gray levels back:
+
+```yaml
+display:
+  - platform: epaper_spi
+    id: epaper
+    model: Seeed-reTerminal-Sticky-gray4
+    monochrome_partial_updates: true
+    full_update_every: 30
+```
+
+```yaml
+# Partial update: fast, black and white
+on_...:
+  - component.update: epaper
+
+# Full four-level update, bringing the gray levels back
+on_...:
+  - epaper_spi.full_update_next: epaper
+  - component.update: epaper
+```
+
+> [!NOTE]
+> With custom `dimensions`, the width must be a multiple of 8.
+
 ### 4-color display example
 
-Some displays support 4 colors (black, white, red, yellow). Colors are mapped from RGB automatically.
+Some displays support 4 colors (black, white, red, yellow). Colors are mapped from RGB automatically; see
+[Color Panels](#color-panels).
 Full refresh times for 4-color displays are typically around 20 seconds.
 
 ```yaml
@@ -179,13 +224,10 @@ display:
       inverted: true
     update_interval: 5min
     lambda: |-
-      auto BLACK = Color(0, 0, 0);
-      auto WHITE = Color(255, 255, 255);
       auto RED = Color(255, 0, 0);
       auto YELLOW = Color(255, 255, 0);
 
-      it.fill(WHITE);
-      it.filled_rectangle(50, 50, 80, 80, BLACK);
+      it.filled_rectangle(50, 50, 80, 80, Color::BLACK);
       it.filled_rectangle(150, 50, 80, 80, RED);
       it.filled_rectangle(250, 50, 80, 80, YELLOW);
 ```
@@ -204,15 +246,12 @@ display:
     model: Seeed-reTerminal-E1004
     update_interval: 5min
     lambda: |-
-      auto BLACK = Color(0, 0, 0);
-      auto WHITE = Color(255, 255, 255);
       auto RED = Color(255, 0, 0);
       auto GREEN = Color(0, 255, 0);
       auto BLUE = Color(0, 0, 255);
       auto YELLOW = Color(255, 255, 0);
 
-      it.fill(WHITE);
-      it.filled_circle(200, 300, 80, BLACK);
+      it.filled_circle(200, 300, 80, Color::BLACK);
       it.filled_circle(400, 300, 80, RED);
       it.filled_circle(600, 300, 80, GREEN);
       it.filled_circle(200, 550, 80, BLUE);
@@ -233,22 +272,152 @@ display:
     model: inkplate6color
     update_interval: 5min
     lambda: |-
-      auto BLACK = Color(0, 0, 0);
-      auto WHITE = Color(255, 255, 255);
       auto GREEN = Color(0, 255, 0);
       auto BLUE = Color(0, 0, 255);
       auto RED = Color(255, 0, 0);
       auto YELLOW = Color(255, 255, 0);
       auto ORANGE = Color(255, 165, 0);
 
-      it.fill(WHITE);
-      it.filled_circle(100, 224, 80, BLACK);
+      it.filled_circle(100, 224, 80, Color::BLACK);
       it.filled_circle(250, 224, 80, GREEN);
       it.filled_circle(400, 224, 80, BLUE);
       it.filled_circle(100, 350, 80, RED);
       it.filled_circle(250, 350, 80, YELLOW);
       it.filled_circle(400, 350, 80, ORANGE);
 ```
+
+## Colors
+
+### Background and Default Color
+
+Most displays clear to black, but `epaper_spi` clears the display to white, like blank paper. This applies to the
+automatic clear before each update (see `auto_clear_enabled` in [Display](/components/display/)) and to `it.clear()`.
+
+Drawing methods called without a color still draw in `Color::WHITE`, which on this display is white on white, so
+nothing appears. The same applies to `graph()`, `legend()` and `qr_code()`. Pass a color explicitly:
+
+```yaml
+display:
+  - platform: epaper_spi
+    # ...
+    lambda: |-
+      it.line(0, 0, 50, 50, Color::BLACK);
+      it.print(0, 10, id(my_font), Color::BLACK, "Hello World!");
+```
+
+Antialiased fonts (`bpp` greater than `1`) blend the edges of each character with a background color that defaults to
+`Color::BLACK`, so on white paper the edges come out darker than intended. Pass `Color::WHITE` as the background:
+
+```yaml
+display:
+  - platform: epaper_spi
+    # ...
+    lambda: |-
+      it.print(0, 10, id(my_font), Color::BLACK, TextAlign::TOP_LEFT, "Hello World!", Color::WHITE);
+```
+
+### Black and White and Grayscale Panels
+
+Black and white panels convert each color to black or white by its brightness (luma), calculated with the Rec.601
+weights, which count green far more than red or blue:
+
+$$
+Y = 0.299R + 0.587G + 0.114B
+$$
+
+A luma of `128` or more draws white, anything lower draws black. The four-level grayscale model
+(`Seeed-reTerminal-Sticky-gray4`) uses the same luma, split into four bands: below `32` draws black, `32` to `95` dark
+gray, `96` to `159` light gray, and `160` or more white.
+
+Saturated colors therefore do not map the way their RGB values might suggest:
+
+| Color                  | Luma | Black and white | Four-level gray |
+|------------------------|------|-----------------|-----------------|
+| Red `(255, 0, 0)`      | 77   | Black           | Dark gray       |
+| Green `(0, 255, 0)`    | 149  | White           | Light gray      |
+| Blue `(0, 0, 255)`     | 29   | Black           | Black           |
+| Yellow `(255, 255, 0)` | 226  | White           | White           |
+| Cyan `(0, 255, 255)`   | 178  | White           | White           |
+| Magenta `(255, 0, 255)`| 106  | Black           | Light gray      |
+| Orange `(255, 165, 0)` | 173  | White           | White           |
+| Gray `(128, 128, 128)` | 128  | White           | Light gray      |
+| Gray `(127, 127, 127)` | 127  | Black           | Light gray      |
+
+This has some consequences:
+
+- Green, yellow, cyan and orange draw white, so they are invisible on the white background.
+- Red, blue and magenta draw black, so they cannot be told apart from black, for example to highlight a warning.
+- A darker green such as `Color(0, 200, 0)` (luma 117) draws black, while full green draws white.
+- Mid grays flip between black and white at `128`, so a small change in a gray value can invert it.
+- Images and LVGL content are converted pixel by pixel in the same way, without dithering, so areas of similar
+  brightness become solid black or white. For photos, use a `BINARY` [image](/components/image/) with
+  `dither: FLOYDSTEINBERG`, which keeps the shading.
+
+### Color Panels
+
+Panels with colored inks map each color to one of their inks. The `inkplate2`, 4-color (JD79660), 6-color
+(`Seeed-reTerminal-E1002`, `Seeed-reTerminal-E1004`) and `inkplate6color` models first check whether the color is
+close to gray, meaning its largest and smallest RGB components differ by less than `50`. A gray is drawn black or
+white by its luma, as above (`Seeed-reTerminal-E1004` uses the plain average of the components instead). Any other
+color counts each component as on above `128`, and the combination of components that are on selects the ink. Colors
+with no matching ink are folded into another, and a dark color with no component above `128` is black.
+
+The `WeAct-*-3c`, `Waveshare-2.13in-bv4`, `Waveshare-2.66in-b` and `Waveshare-7.5in-bV2-BWR` models use a simpler
+rule: red if the red component is above `127` and greater than green and blue together, otherwise white if the average
+of the components is at least half brightness, otherwise black.
+
+| Color                  | WeAct and Waveshare 3-color | `inkplate2` | 4-color | 6-color | `inkplate6color` |
+|------------------------|-----------------------------|-------------|---------|---------|------------------|
+| Red `(255, 0, 0)`      | Red                         | Red         | Red     | Red     | Red              |
+| Green `(0, 255, 0)`    | Black                       | Black       | Black   | Green   | Green            |
+| Blue `(0, 0, 255)`     | Black                       | Black       | Black   | Blue    | Blue             |
+| Yellow `(255, 255, 0)` | White                       | White       | Yellow  | Yellow  | Yellow           |
+| Cyan `(0, 255, 255)`   | White                       | White       | White   | Green   | Green            |
+| Magenta `(255, 0, 255)`| White                       | White       | White   | Red     | Red              |
+| Orange `(255, 165, 0)` | Red                         | White       | Yellow  | Yellow  | Orange           |
+
+Things to watch for:
+
+- Magenta draws white on 3-color and 4-color panels, and so is invisible on the white background.
+- Green draws black on 3-color and 4-color panels, but white on black and white panels.
+- Orange draws red, white, yellow or orange depending on the panel.
+- Yellow and cyan draw white on 3-color panels.
+
+## Actions
+
+### `epaper_spi.full_update_next` Action
+
+Make the next update of the display a full one. That update refreshes the whole
+panel, even if nothing new was drawn.
+
+```yaml
+on_...:
+  - epaper_spi.full_update_next: epaper
+  - component.update: epaper  # not needed if something else, such as LVGL, triggers the update
+```
+
+## Conditions
+
+### `epaper_spi.is_updating` Condition
+
+This condition lets automations check whether a display update or refresh is in progress. It is true from the moment an
+update starts until the panel has finished refreshing and gone back to deep sleep.
+
+```yaml
+interval:
+  - interval: 10s
+    then:
+      - if:
+          condition:
+            not:
+              epaper_spi.is_updating: my_display
+          then:
+            - component.update: my_display
+```
+
+Configuration variables:
+
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the `epaper_spi` display.
 
 ## See Also
 

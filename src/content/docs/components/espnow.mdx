@@ -48,14 +48,14 @@ Automations:
 All three triggers (`on_receive`, `on_unknown_peer`, and `on_broadcast`) expose the same three lambda variables describing
 the received packet:
 
-- **info** (<APIStruct text="espnow::ESPNowRecvInfo" path="espnow::ESPNowRecvInfo" />): Information about the received
+- `info`: <APIStruct text="espnow::ESPNowRecvInfo" path="espnow::ESPNowRecvInfo" /> with information about the received
   packet. The most useful members are:
   - `info.src_addr` — `uint8_t[6]` source MAC address of the packet.
   - `info.des_addr` — `uint8_t[6]` destination MAC address (will be `FF:FF:FF:FF:FF:FF` for broadcasts).
   - `info.rx_ctrl` — pointer to a Wi-Fi `wifi_pkt_rx_ctrl_t` structure containing low-level reception details such as
     `info.rx_ctrl->rssi` (signal strength in dBm).
-- **data**: A `const uint8_t *` pointer to the received payload.
-- **size**: A `uint16_t` giving the length of the payload in bytes.
+- `data`: A `const uint8_t *` pointer to the received payload.
+- `size`: A `uint16_t` giving the length of the payload in bytes.
 
 These variables are only valid for the duration of the synchronous part of the automation. If the automation
 includes any asynchronous actions (such as `delay`), the underlying memory may have been recycled by the time the
