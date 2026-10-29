@@ -23,30 +23,35 @@ Optional Z values appear as text and editable limits alongside the X/Y map, with
 
 ## Requirements
 
-Use an ESPHome build with the `web_server` option `js_extra_urls`, introduced in
-[esphome/esphome#19864](https://github.com/esphome/esphome/pull/19864) and documented in
-[esphome/esphome.io#7467](https://github.com/esphome/esphome.io/pull/7467).
-Set [Web Server](/components/web_server/) to `version: 3` and keep the normal web interface enabled.
+Set [Web Server](/components/web_server/) to `version: 3`, keep `js_url` at its default and leave `local` off.
+The editor loads through `js_include`, as described under
+[Advanced usage](/components/web_server/#advanced-usage), and the embedded `local` interface does not load that file.
 The browser needs network access to the script URLs. Requests to entities use the device's origin and existing
 web-server authentication.
 
 The editor and its configuration examples live in the
 [coordinate editor repository](https://github.com/wolph/esphome-coordinate-editor).
-The examples are fragments to merge into your device configuration. Set the UART pins and retain your board,
-network and authentication settings. For LD6004 or LD6002B, the build also needs that device's hub, sensor,
-binary sensor, number, select and button components.
+The examples are fragments to merge into your device configuration. Each fragment has an addons file to save next
+to your device YAML. Set the UART pins and retain your board, network and authentication settings. For LD6004 or
+LD6002B, the build also needs that device's hub, sensor, binary sensor, number, select and button components.
 
 ## LD2450: 2D Zones
 
 Merge the [LD2450 fragment][ld2450-yaml] into an existing [LD2450](/components/sensor/ld2450/) configuration.
-Its entity names match the [LD2450 mapping module][ld2450-config]. Load the editor and that module with:
+Its entity names match the [LD2450 mapping module][ld2450-config]. The fragment loads the addons file with:
 
 ```yaml
 web_server:
   version: 3
-  js_extra_urls:
-    - https://cdn.jsdelivr.net/gh/wolph/esphome-coordinate-editor@v0.1.0/coordinate-editor.js
-    - https://cdn.jsdelivr.net/gh/wolph/esphome-coordinate-editor@v0.1.0/examples/ld2450-config.js
+  js_include: ld2450-addons.js
+```
+
+The [LD2450 addons file][ld2450-addons] imports the editor and the mapping:
+
+```js wrap
+// ld2450-addons.js
+import "https://cdn.jsdelivr.net/gh/wolph/esphome-coordinate-editor@v0.1.1/coordinate-editor.js";
+import "https://cdn.jsdelivr.net/gh/wolph/esphome-coordinate-editor@v0.1.1/examples/ld2450-config.js";
 ```
 
 LD2450 reports millimetres. The mapping uses `scale: 0.001` to display metres and convert edited bounds back to
@@ -61,14 +66,20 @@ so a failed Apply can leave mixed bounds on the device. Check actual values befo
 ## LD6004 and LD6002B: 3D Zones
 
 Merge the [LD6004 fragment][ld6004-yaml] into your device configuration and use its
-[LD6004 mapping module][ld6004-config]:
+[LD6004 mapping module][ld6004-config]. The fragment loads the addons file with:
 
 ```yaml
 web_server:
   version: 3
-  js_extra_urls:
-    - https://cdn.jsdelivr.net/gh/wolph/esphome-coordinate-editor@v0.1.0/coordinate-editor.js
-    - https://cdn.jsdelivr.net/gh/wolph/esphome-coordinate-editor@v0.1.0/examples/ld6004-config.js
+  js_include: ld6004-addons.js
+```
+
+The [LD6004 addons file][ld6004-addons] imports the editor and the mapping:
+
+```js wrap
+// ld6004-addons.js
+import "https://cdn.jsdelivr.net/gh/wolph/esphome-coordinate-editor@v0.1.1/coordinate-editor.js";
+import "https://cdn.jsdelivr.net/gh/wolph/esphome-coordinate-editor@v0.1.1/examples/ld6004-config.js";
 ```
 
 For LD6002B, use the [LD6002B fragment][ld6002b-yaml] and [LD6002B mapping module][ld6002b-config] instead:
@@ -76,9 +87,15 @@ For LD6002B, use the [LD6002B fragment][ld6002b-yaml] and [LD6002B mapping modul
 ```yaml
 web_server:
   version: 3
-  js_extra_urls:
-    - https://cdn.jsdelivr.net/gh/wolph/esphome-coordinate-editor@v0.1.0/coordinate-editor.js
-    - https://cdn.jsdelivr.net/gh/wolph/esphome-coordinate-editor@v0.1.0/examples/ld6002b-config.js
+  js_include: ld6002b-addons.js
+```
+
+The [LD6002B addons file][ld6002b-addons] imports the editor and the mapping:
+
+```js wrap
+// ld6002b-addons.js
+import "https://cdn.jsdelivr.net/gh/wolph/esphome-coordinate-editor@v0.1.1/coordinate-editor.js";
+import "https://cdn.jsdelivr.net/gh/wolph/esphome-coordinate-editor@v0.1.1/examples/ld6002b-config.js";
 ```
 
 Both mappings use metres with `scale: 1`. The LD6004 example maps four detection areas.
@@ -107,21 +124,38 @@ the button press. HTTP success and matching entity values do not establish hardw
 Edited bounds need a positive extent on each axis and must fit the mapping's limits and steps.
 Use native controls to disable an area. See the [repository README][editor-readme] for the full configuration reference.
 
-## Hosting Your Own Copy
+## Your Own Mapping
+
+To change entity names or room limits, replace the mapping import in your addons file with the configuration
+itself. The file is embedded in the firmware, so nothing else needs hosting, and a change takes effect after the
+next install. Copy the matching mapping module below the editor import and keep its last line, which tells the
+editor that the configuration is ready:
+
+```js wrap
+// ld2450-addons.js
+import "https://cdn.jsdelivr.net/gh/wolph/esphome-coordinate-editor@v0.1.1/coordinate-editor.js";
+
+window.coordinateEditorConfig = {
+  // The contents of ld2450-config.js, with your entity names and room limits
+};
+window.dispatchEvent(new Event("coordinate-editor-config"));
+```
 
 > [!NOTE]
-> Browsers fetch module scripts with CORS. Your host must send an `Access-Control-Allow-Origin` header that admits
-> the device's origin. jsDelivr supplies this header, but a plain file server on your LAN may not.
+> Browsers fetch imported modules with CORS. A host that serves your own copy of the editor must send an
+> `Access-Control-Allow-Origin` header that admits the device's origin. jsDelivr supplies this header, but a plain
+> file server on your LAN may not.
 
-Host your own mapping module when changing entity names or room limits, and replace its URL in `js_extra_urls`.
-The example URLs and the reference links on this page pin the `v0.1.0` tag, so the YAML, the mapping and the
-loaded module always come from one release. Keep a tag or commit rather than a branch on devices that need stable
-behaviour.
+The URLs on this page pin the `v0.1.1` tag, so the YAML, the mapping and the loaded module always come from one
+release. Keep a tag or commit rather than a branch on devices that need stable behaviour.
 
-[ld2450-yaml]: https://github.com/wolph/esphome-coordinate-editor/blob/v0.1.0/examples/ld2450.yaml
-[ld2450-config]: https://github.com/wolph/esphome-coordinate-editor/blob/v0.1.0/examples/ld2450-config.js
-[ld6004-yaml]: https://github.com/wolph/esphome-coordinate-editor/blob/v0.1.0/examples/ld6004.yaml
-[ld6004-config]: https://github.com/wolph/esphome-coordinate-editor/blob/v0.1.0/examples/ld6004-config.js
-[ld6002b-yaml]: https://github.com/wolph/esphome-coordinate-editor/blob/v0.1.0/examples/ld6002b.yaml
-[ld6002b-config]: https://github.com/wolph/esphome-coordinate-editor/blob/v0.1.0/examples/ld6002b-config.js
-[editor-readme]: https://github.com/wolph/esphome-coordinate-editor/blob/v0.1.0/README.md#configuration-reference
+[ld2450-yaml]: https://github.com/wolph/esphome-coordinate-editor/blob/v0.1.1/examples/ld2450.yaml
+[ld2450-addons]: https://github.com/wolph/esphome-coordinate-editor/blob/v0.1.1/examples/ld2450-addons.js
+[ld2450-config]: https://github.com/wolph/esphome-coordinate-editor/blob/v0.1.1/examples/ld2450-config.js
+[ld6004-yaml]: https://github.com/wolph/esphome-coordinate-editor/blob/v0.1.1/examples/ld6004.yaml
+[ld6004-addons]: https://github.com/wolph/esphome-coordinate-editor/blob/v0.1.1/examples/ld6004-addons.js
+[ld6004-config]: https://github.com/wolph/esphome-coordinate-editor/blob/v0.1.1/examples/ld6004-config.js
+[ld6002b-yaml]: https://github.com/wolph/esphome-coordinate-editor/blob/v0.1.1/examples/ld6002b.yaml
+[ld6002b-addons]: https://github.com/wolph/esphome-coordinate-editor/blob/v0.1.1/examples/ld6002b-addons.js
+[ld6002b-config]: https://github.com/wolph/esphome-coordinate-editor/blob/v0.1.1/examples/ld6002b-config.js
+[editor-readme]: https://github.com/wolph/esphome-coordinate-editor/blob/v0.1.1/README.md#configuration-reference
