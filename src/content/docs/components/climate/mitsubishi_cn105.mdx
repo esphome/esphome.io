@@ -142,6 +142,11 @@ climate:
 
 - All other options from [Climate](/components/climate#config-climate).
 
+When telemetry is enabled, the climate entity also reports the current action (heating, cooling, drying, fan or idle)
+from the unit's operating status. The operating status is read together with the room temperature, so the action
+refreshes at most once per `telemetry_request_min_interval`. In heat/cool mode, heating or cooling is inferred from
+the room and target temperatures. A unit that does not answer the operating status request reports the action as idle.
+
 ### Select
 
 Vane controls are optional and can be enabled independently of the climate entity's `supported_swing_modes`. They
