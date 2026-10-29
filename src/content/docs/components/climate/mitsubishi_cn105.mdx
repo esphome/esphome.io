@@ -83,7 +83,7 @@ climate:
 - Modes: `OFF`, `HEAT`, `COOL`, `DRY`, `FAN_ONLY`, `HEAT_COOL` (called `AUTO` by Mitsubishi)
 - Fan modes: `AUTO`, `QUIET`, `LOW`, `MEDIUM`, `MIDDLE`, `HIGH`
 - Swing modes: `OFF`, `VERTICAL`, `HORIZONTAL`, `BOTH` (configurable via `supported_swing_modes`)
-- Vertical vane direction select
+- Vane direction selects
 
 > [!NOTE]
 > Fan modes map to the following Mitsubishi fan speeds:
@@ -161,6 +161,29 @@ defines the hub options on the `climate:` entry.
 
   All options from [Select](/components/select#config-select) are supported.
 
+- **horizontal_vane_direction** (*Optional*, [Select](/components/select/)): Exposes the horizontal (wide) vane
+  direction as a select entity. Only useful on indoor units that have a horizontal vane.
+
+  Available options are: `←←`, `←`, `|`, `→`, `→→`, `←→`, `Swing`.
+
+  The labels are language-neutral symbols that mirror the wide vane icons on the Mitsubishi remote:
+
+  | Option    | Direction      |
+  | --------- | -------------- |
+  | `"←←"`    | Far left       |
+  | `"←"`     | Left           |
+  | `"\|"`    | Center         |
+  | `"→"`     | Right          |
+  | `"→→"`    | Far right      |
+  | `"←→"`    | Left and right |
+  | `"Swing"` | Swing          |
+
+  These are the select option labels exposed to Home Assistant. The options are shown quoted, ready to paste into YAML
+  automations; the quotes are not part of the label. Alternatively, use
+  [`select.set_index`](/components/select#selectset_index-action) with the option's position in the table above.
+
+  All options from [Select](/components/select#config-select) are supported.
+
   Example:
 
   ```yaml
@@ -173,6 +196,8 @@ defines the hub options on the `climate:` entry.
       mitsubishi_cn105_id: hp
       vertical_vane_direction:
         name: "Vertical Vane"
+      horizontal_vane_direction:
+        name: "Horizontal Vane"
   ```
 
 ## `vane.on_state` Trigger
