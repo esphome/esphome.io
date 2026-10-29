@@ -21,10 +21,12 @@ invalid. A successful `rx8111.write_time` clears those flags.
 ## Configuration Variables
 
 - **address** (*Optional*, int): Manually specify the I²C address of the RTC. Defaults to `0x32`.
-- **event_poll_interval** (*Optional*, time period): How often to check alarm, timer and EVIN flags and timestamp
-  records, independently of the calendar `update_interval`. Minimum `500ms`; defaults to `1s`. EVIN alone only enables
-  this polling when `on_event` or an [RX8111 timestamp text sensor](/components/text_sensor/rx8111/) is configured;
-  hardware event detection does not require polling.
+- **event_poll_interval** (*Optional*, time period): How often to check alarm, timer and EVIN flags, timestamp
+  records, and [binary status sensors](/components/binary_sensor/rx8111/), independently of the calendar
+  `update_interval`. Minimum `500ms`; defaults to `1s`. Configuring a binary status sensor enables polling even
+  when periodic calendar reads are disabled. EVIN event detection alone only enables polling when `on_event` or an
+  [RX8111 timestamp text sensor](/components/text_sensor/rx8111/) is configured; hardware event detection does not
+  require polling.
 - All other options from [Base Time Configuration](/components/time/#base_time_config).
 
 ### Backup Power and Clock Output
@@ -296,5 +298,7 @@ time:
 
 ## See Also
 
+- [RX8111 Binary Sensor](/components/binary_sensor/rx8111/)
+- [RX8111 Event Timestamp](/components/text_sensor/rx8111/)
 - [Time Component](/components/time/)
 - [I²C Bus](/components/i2c/)
