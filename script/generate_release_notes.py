@@ -1113,8 +1113,13 @@ class ReleaseNotesGenerator:
 
         # Contributors section: use AI response if available, otherwise fallback
         if responses["contributors"]:
+            # The template already carries the section heading above the
+            # marker block, so drop one the AI response repeats
+            contributors = re.sub(
+                r"\A#{1,6} [^\n]*\n+", "", responses["contributors"]
+            )
             content = self._replace_marker_content(
-                content, "CONTRIBUTORS", responses["contributors"]
+                content, "CONTRIBUTORS", contributors
             )
         else:
             fallback_contributors = self._generate_fallback_contributors(prs)
