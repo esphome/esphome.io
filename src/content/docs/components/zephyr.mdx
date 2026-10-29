@@ -214,7 +214,7 @@ upstream Zephyr/WiseConnect Wi-Fi driver rather than this platform.
 powered on at boot.
 
 `simg301`'s default board is not in mainline Zephyr yet: set `board_source:` to
-`https://github.com/esphomeplatformzephyr/custom_zephyr_boards`. It needs Zephyr 4.5.0-rc1 or later
+`https://github.com/esphomeplatformzephyr/custom_zephyr_boards`. It needs Zephyr 4.5.0 or later
 (the default). The UART can only use pins PA0–PA8 and PB0–PB3; ADC and SPI are not supported yet.
 
 ### STMicroelectronics
@@ -222,7 +222,7 @@ powered on at boot.
 `watchdog_timeout` on `stm32l4` and `stm32f4` is `0` or `5s`–`32s`; on `stm32f1` is `0` and `5s`-`26s`;
 `stm32u5` and `stm32c5` is `0` and `5s`-`60s`.
 
-The Seeed XIAO STM32C5 (`board: xiao_stm32c5`) needs `framework: version: 4.5.0-rc3` or later. ESPHome
+The Seeed XIAO STM32C5 (`board: xiao_stm32c5`) needs Zephyr 4.5.0 or later (the default). ESPHome
 adds the USB clock and USB pins that the board's devicetree is missing, so the USB serial port works.
 
 ## Serial Load Process
@@ -522,9 +522,10 @@ it from:
   alternate); `efr32bg27` and `efr32mg24` support mainline Zephyr (the default) and `silabs` (Silicon Labs' own
   Simplicity SDK for Zephyr, as an alternate). See [Variants](#variants) for each variant's default.
 - **version** (*Optional*, string): The version to build against, in **that SDK's own numbering** —
-  defaults to the SDK's own recommended version, currently `4.4.2` for mainline Zephyr and `3.4.1` for NCS
-  (the oldest accepted are `4.4.1` and `3.4.0`). The literal value `recommended` is also accepted as
-  an explicit alias for that default. Mutually exclusive with **source**, since a source determines
+  defaults to the SDK's own recommended version, currently `4.5.0` for mainline Zephyr and `3.4.1` for NCS
+  (the oldest accepted are `4.4.1` and `3.4.0`; the Espressif variants, `ra4m1`, `rp2040`, `rp2350`,
+  `siwx917` and `simg301` need `4.5.0`). The literal value `recommended` is also accepted as an explicit alias for
+  that default. Mutually exclusive with **source**, since a source determines
   the version from itself.
 - **source** (*Optional*): Overrides *where the selected SDK is fetched from* — a fork, an unreleased
   branch, or an already-initialized local west workspace — as opposed to `board_source`, which only
@@ -551,7 +552,7 @@ zephyr:
   variant: nrf52
   framework:
     type: zephyr   # mainline, instead of nrf52's NCS default
-    version: "4.4.2"
+    version: "4.5.0"
 ```
 
 ```yaml
@@ -561,7 +562,7 @@ zephyr:
   framework:
     source:
       type: git
-      ref: v4.5.0-rc1
+      ref: main
 ```
 
 ```yaml
@@ -586,7 +587,7 @@ zephyr:
 ```
 
 `source: url` may be omitted to target a branch of the selected SDK's own official manifest (for
-example, an alpha or pre-release) — `source: {type: git, ref: v4.5.0-rc1}` alone is enough.
+example, `main` or a pre-release tag) — `source: {type: git, ref: main}` alone is enough.
 
 ## `modules`
 
@@ -1013,28 +1014,19 @@ configured without `openthread:` (on `esp32c6`/`esp32c5`/`esp32h2` with `openthr
 `nrf52`/`nrf54l15` — which always use `openthread:` — discovery instead goes through OpenThread's
 own SRP client).
 
-The minimum Zephyr recommended to use with Wi-Fi is 4.5.0-rc1. With OTA on an Espressif variant, 4.5 also needs
-`swap_method: offset`; see [Swap methods](/components/ota/esphome/#swap-methods).
+The minimum Zephyr recommended to use with Wi-Fi is 4.5.0 (the default).
 
 ```yaml
 # Example configuration entry
 zephyr:
   variant: esp32c6
-  framework:
-    version: 4.5.0-rc1
-  kconfig_options:
-    # Only meaningful against main until backported -- enables its DNS-SD announce-completeness
-    # fix.
-    MDNS_RESPONDER_ANNOUNCE_DNS_SD: true
 
 mdns:
 ```
 
-ESPHome's own `mdns:` component already sets the mainline-safe Kconfig values it needs (`DNS_SD`,
-`MDNS_RESPONDER`, `MDNS_RESPONDER_PROBE`, and larger stack sizes for the responder's worker and
-socket-service dispatcher threads) regardless of which Zephyr source is used. Only
-`MDNS_RESPONDER_ANNOUNCE_DNS_SD` needs setting by hand, since it's specific to patches that are not
-in the 4.4 releases.
+ESPHome's own `mdns:` component sets the Kconfig values it needs: `DNS_SD`, `MDNS_RESPONDER`,
+`MDNS_RESPONDER_PROBE`, `MDNS_RESPONDER_ANNOUNCE_DNS_SD` (mainline Zephyr 4.5.0 and newer), and larger
+stack sizes for the responder's worker and socket-service dispatcher threads.
 
 ## Adding a new variant
 

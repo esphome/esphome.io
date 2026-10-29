@@ -113,7 +113,7 @@ Which methods a given variant/board's flash layout supports (and which one it de
 
 | Variant | Supported methods | Default |
 | --- | --- | --- |
-| `esp32`, `esp32c3`, `esp32c5`, `esp32c6`, `esp32h2`, `esp32s3` | `scratch`, `move`, `offset` | `scratch` |
+| `esp32`, `esp32c3`, `esp32c5`, `esp32c6`, `esp32h2`, `esp32s3` | `scratch`, `move`, `offset` | `offset` |
 | `stm32f4` | `scratch`, `move`, `offset` | `offset` |
 | `nrf52`, `nrf54l15`, `nrf54lm20a` | `move`, `offset` | `move` |
 | `efr32mg24`, `ra4m1`, `rp2040`, `rp2350`, `stm32f1`, `stm32l4`, `stm32u5` | `move`, `offset` | `offset` |
@@ -124,9 +124,8 @@ upgrade-only mode, which has no swap method, so it has no OTA. The build checks 
 flash layout and stops with an error if the chosen method does not fit it.
 
 > [!IMPORTANT]
-> Zephyr 4.4 ships a `scratch_partition` on the Espressif boards, but Zephyr 4.5 and newer do not. With
-> `framework: version: 4.5.0-rc1` or newer on an Espressif variant, set `swap_method: offset`, which Espressif now
-> recommends; the default `scratch` fails the flash layout check there.
+> The Espressif boards have no `scratch_partition` in Zephyr 4.5 and newer. To use `scratch` on an Espressif
+> variant, add one with `zephyr: overlays:`.
 
 ## Updating the Password
 
