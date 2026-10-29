@@ -28,9 +28,9 @@ microphone_http_stream:
 - **source** (**Required**, [Microphone Source](/components/microphone/#microphone-source-configuration)): The source
   must output mono, 16-bit PCM. Select a microphone that exposes the desired capture stage.
 - **max_clients** (*Optional*, integer): Maximum simultaneous listeners, from `1` to `3`. Defaults to `1`. Each
-  configured slot reserves a 128 KiB buffer at startup, including when no client is connected. With three slots,
-  this reserves 384 KiB of PSRAM. More than one slot requires PSRAM; a single slot can fall back to internal RAM.
-  If the buffers cannot be allocated, both audio endpoints return HTTP `503`.
+  configured slot reserves a buffer at startup, even when no client is connected. With one slot, the buffer is 16 KiB;
+  PSRAM is preferred, with a fallback to internal RAM. With two or three slots, each buffer is 128 KiB in PSRAM, for
+  a total of 256 or 384 KiB, respectively. If the buffers cannot be allocated, both audio endpoints return HTTP `503`.
 
 ## HTTP Endpoints
 
