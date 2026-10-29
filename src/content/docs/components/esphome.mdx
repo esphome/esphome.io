@@ -86,6 +86,17 @@ Advanced options:
   Defaults to the number of cores of the CPU which is also the maximum you can set.
 
 - **debug_scheduler** (*Optional*, boolean): If set, the scheduler will print debug information about scheduled tasks at log level DEBUG.
+- **loop_interval** (*Optional*, [Time](/guides/configuration-types#time)): Set the loop interval of the main loop.
+  Increasing the value can be useful for low power applications but increases latency.
+  **Attention:** Some components might not work properly with increased intervals.
+  Setting a smaller interval is usually not needed as components will request it themselves.
+  Sleep per wake is capped at twice the watchdog feed interval (except on `host` and `esp8266`); raise
+  `watchdog_timeout` in the [ESP32 component](/components/esp32/) to sleep longer. Defaults to `16ms`.
+- **suspend_loop** (*Optional*, boolean): If set, suspends the main loop if no component needs it in order to allow
+  longer sleep times and reduced power consumption. If at least one component does not disable its loop this has no
+  effect (examples are `api` or `wifi`). **Attention:** Some components might not work properly or fail to update.
+  Work scheduled from another task or interrupt (a `set_timeout` or `defer` off the main loop) can wait up to about
+  two seconds on ESP32 before the suspended loop runs it. Defaults to `false`.
 - **merge_warnings** (*Optional*, boolean): Whether to warn when a YAML merge key (`<<:`)
   silently drops a key. Defaults to `true`. See [Merge key warnings](#esphome-merge_warnings).
 - **areas** (*Optional*, list of [Area Configuration](#esphome-area)): Additional areas that can be referenced by devices.
@@ -363,7 +374,8 @@ have unique identification for customer installs.
 ## Project information
 
 This allows creators to add the project name and version to the compiled code. It is currently only
-exposed via the logger, mDNS and the device_info response via the native API. The format of the name
+exposed via the logger, mDNS, the device_info response via the native API and the
+[Sendspin](/components/sendspin/) hub's device information. The format of the name
 should be `author_name.project_name`.
 
 ```yaml

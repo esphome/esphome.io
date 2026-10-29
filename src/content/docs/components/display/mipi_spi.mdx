@@ -102,6 +102,7 @@ the pins used to interface to the display to be specified.
 | WAVESHARE-ESP32-S3-TOUCH-AMOLED-1.64 | Waveshare    | [https://www.waveshare.com/ESP32-S3-Touch-AMOLED-1.64.htm](https://www.waveshare.com/ESP32-S3-Touch-AMOLED-1.64.htm)               |
 | WAVESHARE-ESP32-S3-TOUCH-AMOLED-1.75 | Waveshare    | [https://www.waveshare.com/esp32-s3-touch-amoled-1.75.htm](https://www.waveshare.com/esp32-s3-touch-amoled-1.75.htm)               |
 | WAVESHARE-ESP32-S3-TOUCH-AMOLED-2.16 | Waveshare    | [https://www.waveshare.com/esp32-s3-touch-amoled-2.16.htm](https://www.waveshare.com/esp32-s3-touch-amoled-2.16.htm)               |
+| WAVESHARE-ESP32-S3-TOUCH-LCD-1.46    | Waveshare    | [https://www.waveshare.com/esp32-s3-touch-lcd-1.46b.htm](https://www.waveshare.com/esp32-s3-touch-lcd-1.46b.htm) |
 | WAVESHARE-ESP32-S3-TOUCH-LCD-3.49    | Waveshare    | [https://www.waveshare.com/esp32-s3-touch-lcd-3.49.htm](https://www.waveshare.com/esp32-s3-touch-lcd-3.49.htm)                     |
 | WAVESHARE-ESP32-S3-TOUCH-LCD-3.5B    | Waveshare    | [https://www.waveshare.com/esp32-s3-touch-lcd-3.5b.htm](https://www.waveshare.com/esp32-s3-touch-lcd-3.5b.htm)                     |
 | WT32-SC01-PLUS                       | Wireless-Tag | [https://www.wireless-tag.com/portfolio/wt32-sc01-plus/](https://www.wireless-tag.com/portfolio/wt32-sc01-plus/)                   |
@@ -139,7 +140,7 @@ most of the configuration will be set by default, but can be overridden if neede
 - **enable_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): An optional pin to enable the display, if required. A list of pins can be provided for displays that require multiple enable pins. A full pin configuration may be provided
   to set the pin mode and inverted property. By default the pin will be driven high to enable the display.
 
-- **brightness** (*Optional*, int): The initial brightness of the display, for AMOLED displays only. This should be a value from 0 to 255, and defaults to 0xD0.
+- **brightness** (*Optional*, int): The initial brightness of the display, for AMOLED displays and the `CUSTOM` model only. This should be a value from 0 to 255. It defaults to 0xD0 for AMOLED displays, and has no default for the `CUSTOM` model, where no brightness command is sent unless it is set.
 - **color_order** (*Optional*): Should be one of `bgr` (default) or `rgb`. This specifies the order of the color channels in the display panel. The default is `bgr` for most displays, but some displays may require `rgb`. It does not affect the color order of the display buffer, which is always RGB.
 - **dimensions** (*Optional*): Dimensions of the screen, specified either as *width* **x** *height* (e.g `320x240`  ) or with separate config keys. If not provided the dimensions will be determined by the model selected. This is required for the `CUSTOM` model, and is optional for other models. The dimensions are specified in pixels, and the width and height must be greater than 0. The following keys are available:
 
@@ -220,6 +221,9 @@ If converting from other code, make sure the length byte, if present, is not cop
 
 The `CUSTOM` model selection is provided for otherwise unsupported displays, and requires both `dimensions:` and `init_sequence:` to be specified. There is no pre-defined init sequence.
 
+If the display sets its brightness with the standard brightness command (0x51), set the `brightness` option. This sends the brightness at startup,
+and allows a [MIPI SPI brightness light](/components/light/mipi_spi/) to be used with the display.
+
 ## Using the `transform` options
 
 In most cases, the `rotation` option will be sufficient to orient the display correctly. However, some custom displays may require additional transformations for example to correct for a mirrored image. The `transform` option allows for these transformations to be applied in any of 8 different
@@ -243,7 +247,8 @@ When using the `CUSTOM` model with rotation, if the chip does not support hardwa
 Many displays have an integrated backlight, which may need to be turned on for the display to show. This backlight is not controlled
 by the driver, but can be controlled by a separate GPIO pin. Depending on the display, the backlight may be active high or active low, and may
 be able to be dimmed using a [Monochromatic](/components/light/monochromatic/) with a [Ledc](/components/output/ledc/). AMOLED displays do not have a backlight but
-their brightness can be set using the `brightness` option. This may also be controlled by a lambda API call.
+their initial brightness can be set using the `brightness` option. To control the brightness while running, use a
+[MIPI SPI brightness light](/components/light/mipi_spi/).
 
 ## Touchscreens
 
@@ -253,4 +258,5 @@ A touchscreen, if present, must be configured separately. See the [Touchscreen](
 
 - [Display Component](/components/display/)
 - [LVGL Graphics](/components/lvgl/)
+- [MIPI SPI Display Brightness](/components/light/mipi_spi/)
 - <APIRef text="mipi_spi.h" path="mipi_spi/mipi_spi.h" />

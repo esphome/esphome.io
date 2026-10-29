@@ -69,10 +69,19 @@ climate:
 
 - **supports_cool** (*Optional*, boolean): Enables setting cooling mode for this climate device. Defaults to `true`.
 - **supports_heat** (*Optional*, boolean): Enables setting heating mode for this climate device. Defaults to `true`.
+- **supports_heat_cool** (*Optional*, boolean): Enables setting heat/cool mode for this climate device. Most remotes
+  label this mode "auto", since the unit switches between heating and cooling on its own. When not set, it is enabled
+  automatically only if both `supports_cool` and `supports_heat` are enabled. Set it to `true` to advertise the mode
+  regardless (e.g. cool-only units that still expose an auto mode), or to `false` to hide it even on units that
+  support both heating and cooling but have no usable auto mode.
 - **receiver_id** (*Optional*, [ID](/guides/configuration-types#id)): The id of the remote_receiver if this platform supports
   receiver. see: [Using a Receiver](#ir-receiver_id).
 
 - All other options from [Climate](/components/climate#config-climate).
+
+> [!NOTE]
+> Older versions offered the heat/cool mode on every device. If `supports_cool` or `supports_heat` is set to `false`
+> and you still use this mode (for example in automations or voice commands), add `supports_heat_cool: true` to keep it.
 
 ### Advanced Options
 
@@ -196,21 +205,17 @@ climate:
 
 - **set_fan_mode** (*Optional*, string): Select the fan modes desired or that are supported on your remote. Defaults to `3levels`
 
-  - Options are: `3levels`, `4levels`, `quiet_4levels`.
-
-    - `3levels`  ; Low [fan speed 1], Medium [2], High [3]
-    - `4levels`  ; Low [1], Middle [2], Medium [3], High [4]
-    - `quiet_4levels`  ; Low [1], Middle [2], Medium [3], High [4], Quiet [5]
+  - `3levels`: Low [fan speed 1], Medium [2], High [3]
+  - `4levels`: Low [1], Middle [2], Medium [3], High [4]
+  - `quiet_4levels`: Low [1], Middle [2], Medium [3], High [4], Quiet [5]
 
 - **supports_dry** (*Optional*, boolean): Enables setting dry mode for this unit. Defaults to `false`.
 - **supports_fan_only** (*Optional*, boolean): Enables setting fan only mode for this unit. Confirm that mode is supported on your remote. Defaults to `false`.
 
-- **horizontal_default** (*Optional*, string): What to default to when the AC unit's horizontal direction is *not* set to swing. Defaults to `middle`.
-
-  - Options are: `left`, `middle-left`, `middle`, `middle-right`, `right`, `auto`
-- **vertical_default** (*Optional*, string): What to default to when the AC unit's vertical direction is *not* set to swing. Defaults to `middle`.
-
-  - Options are: `down`, `middle-down`, `middle`, `middle-up`, `up`, `auto`
+- **horizontal_default** (*Optional*, string): What to default to when the AC unit's horizontal direction is *not* set to swing.
+  One of `left`, `middle-left`, `middle`, `middle-right`, `right`, `auto`. Defaults to `middle`.
+- **vertical_default** (*Optional*, string): What to default to when the AC unit's vertical direction is *not* set to swing.
+  One of `down`, `middle-down`, `middle`, `middle-up`, `up`, `auto`. Defaults to `middle`.
 
 > [!NOTE]
 > - This climate IR component is also known to work with some Stiebel Eltron Units. It has been tested with Stiebel Eltron IR-Remote `KM07F` and unit `ACW 25 i`

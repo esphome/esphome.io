@@ -204,22 +204,26 @@ Example Payload:
 }
 ```
 
-JSON keys:
+JSON keys that are always present:
 
-- **ip** (**Required**, ip): The IP address of the ESPHome device.
-- **name** (**Required**, string): Name of the device (`esphome.name`  ).
-- **mac** (**Required**, string): MAC address of the device.
-- **board** (**Required**, string): Board used for the device.
-- **version** (**Required**, string): ESPHome version.
-- **port** (*Optional*, port): Port of the ESPHome API (if enabled).
-- **ipX** (*Optional*, ip): Additional IP addresses (X is a number starting at 1).
-- **friendly_name** (*Optional*, string): Friendly name of the device (`esphome.friendly_name`  ).
-- **platform** (*Optional*, string): Platform of the device (e.g. ESP32 or ESP8266)
-- **network** (*Optional*, string): Network type.
-- **project_name** (*Optional*, string): `esphome.project.name`.
-- **project_version** (*Optional*, string): `esphome.project.version`.
-- **project_version** (*Optional*, string): `dashboard_import.package_import_url`.
-- **api_encryption** (*Optional*, string): API encryption type.
+- `name`: Name of the device (`esphome.name`).
+- `mac`: MAC address of the device.
+- `board`: Board used for the device.
+- `version`: ESPHome version.
+
+JSON keys that are present when applicable:
+
+- `ip`: The IP address of the ESPHome device, once it has one.
+- `port`: Port of the ESPHome API, if enabled.
+- `ipX`: Additional IP addresses (X is a number starting at 1).
+- `friendly_name`: Friendly name of the device (`esphome.friendly_name`).
+- `platform`: Platform of the device (e.g. ESP32 or ESP8266).
+- `network`: Network type.
+- `project_name`: `esphome.project.name`.
+- `project_version`: `esphome.project.version`.
+- `package_import_url`: `dashboard_import.package_import_url`.
+- `api_encryption`: API encryption type, when an API encryption key is configured.
+- `api_encryption_supported`: API encryption type the device supports, when no key is configured yet.
 
 ## Using device discovery with Home Assistant
 
@@ -343,8 +347,9 @@ mqtt:
     payload: offline
 ```
 
-- **birth_message** (*Optional*, [MQTTMessage](#mqtt-message))
-- **will_message** (*Optional*, [MQTTMessage](#mqtt-message))
+- **birth_message** (*Optional*, [MQTTMessage](#mqtt-message)): The message to publish once connected to the broker.
+- **will_message** (*Optional*, [MQTTMessage](#mqtt-message)): The last will message the broker publishes when it loses the
+  connection to the device unexpectedly. A clean shutdown publishes `shutdown_message` instead.
 
 If the birth message and last will message have empty topics or topics
 that are different from each other, availability reporting will be
