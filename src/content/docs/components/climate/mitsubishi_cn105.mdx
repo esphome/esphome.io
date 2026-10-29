@@ -80,10 +80,17 @@ climate:
 
 - Target temperature range: `16 °C` to `31 °C`, or `61 °F` to `88 °F` with `use_fahrenheit` enabled
 - Current temperature reporting
+- Current action reporting: heating, cooling, drying, fan or idle (needs telemetry)
 - Modes: `OFF`, `HEAT`, `COOL`, `DRY`, `FAN_ONLY`, `HEAT_COOL` (called `AUTO` by Mitsubishi)
 - Fan modes: `AUTO`, `QUIET`, `LOW`, `MEDIUM`, `MIDDLE`, `HIGH`
 - Swing modes: `OFF`, `VERTICAL`, `HORIZONTAL`, `BOTH` (configurable via `supported_swing_modes`)
 - Vane direction selects
+
+> [!NOTE]
+> The current action comes from the unit's operating status, which is read together with the room temperature. It
+> refreshes at most once per `telemetry_request_min_interval`, and is not reported when telemetry is set to `never`.
+> In heat/cool mode, heating or cooling is inferred from the room and target temperatures. A unit that does not answer
+> the operating status request always reports idle, even while it is heating or cooling.
 
 > [!NOTE]
 > Fan modes map to the following Mitsubishi fan speeds:
@@ -141,11 +148,6 @@ climate:
   - `BOTH`: exposes `'OFF'`, `VERTICAL`, `HORIZONTAL`, `BOTH`
 
 - All other options from [Climate](/components/climate#config-climate).
-
-When telemetry is enabled, the climate entity also reports the current action (heating, cooling, drying, fan or idle)
-from the unit's operating status. The operating status is read together with the room temperature, so the action
-refreshes at most once per `telemetry_request_min_interval`. In heat/cool mode, heating or cooling is inferred from
-the room and target temperatures. A unit that does not answer the operating status request reports the action as idle.
 
 ### Select
 
