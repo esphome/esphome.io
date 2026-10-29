@@ -289,7 +289,7 @@ Copy [https://oi.esphome.io/v2/www.js](https://oi.esphome.io/v2/www.js) to a V2 
 ### Loading add-on modules
 
 To extend the hosted interface with an add-on, such as an extra panel for one of your sensors, keep `js_url` at its
-default and point `js_include` at a small file next to your YAML:
+default, leave `local` off and point `js_include` at a small file next to your YAML:
 
 ```yaml
 web_server:
@@ -306,6 +306,9 @@ import "https://example.com/my-addon.js";
 
 Module scripts run after the page has been parsed. On version 2 and 3 the main script has therefore defined
 `<esp-app>` by the time `addons.js` runs. Each further add-on is one more `import` line in the same file.
+
+With `local: true`, version 2 and 3 serve the embedded interface in place of this page. The device still serves
+`/0.js`, but the embedded interface does not load it, so the add-on never runs.
 
 > [!NOTE]
 > Browsers fetch module scripts with CORS. The add-on's host must send an `Access-Control-Allow-Origin` header that
