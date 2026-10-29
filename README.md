@@ -65,7 +65,7 @@ import myImageImg from './images/my-image.jpg';
 For images used in multiple documents or in ImgTable components:
 
 ```jsx
-<Image src="/images/shared-image.jpg" alt="Description" layout="constrained" />
+<Image src="/images/shared-image.jpg" alt="Description" layout="constrained" width={800} height={600} />
 ```
 
 - Images are stored in `/public/images/`
@@ -81,10 +81,15 @@ The ImgTable component creates grids of component cards (commonly used on index 
   ["Title", "/path/to/page/", "image.png"],
   ["Title 2", "/path/to/page2/", "image2.png", "caption"],
   ["Title 3", "/path/to/page3/", "image3.png", "caption", "dark-invert"],
+  ["Title 4", "/path/to/page4/", "badge:Title_4"],
 ]} />
 ```
 
 All images referenced in ImgTable **must** be in `/public/images/` as the component resolves them to `/images/filename.png`.
+
+The exception is `badge:<Name>`, which shows a black and white component name badge generated at build time by
+[component-image-generator](https://github.com/esphome/component-image-generator) and served from
+`/images/badges/<name>.svg`. Names use letters, digits, hyphens and underscores, and underscores are shown as spaces.
 
 ## Starlight Framework
 
@@ -222,6 +227,9 @@ Contributions to improve the documentation are welcome! Please follow these step
 - Use local imported images for single-use images (one file only)
 - Keep multi-use images in `/public/images/` with absolute paths
 - All ImgTable images must remain in `/public/images/`
+- Use one image per component, in `/public/images/`, for both the ImgTable card and the component page
+- Keep images small; lint rejects files over 1 MB
+- Prefer a transparent background (WebP, PNG or SVG) so images work in both light and dark themes
 - Use descriptive alt text for accessibility
 - Include `layout="constrained"` for responsive images
 

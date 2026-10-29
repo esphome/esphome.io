@@ -474,7 +474,7 @@ The poll stops when any of these happens:
   alive for another attempt;
 - the same action (with identical `address` and `PDU`) runs again with `continuous: false` - the poll serves that
   request with one more cycle, then stops;
-- the queue is cleared from a [Lambda Hook Component](#lambda-hook-component) sharing the same `address` -
+- the queue is cleared from a [Lambda Hook Component](#modbus_client-component) sharing the same `address` -
   `id(ad_hoc_client).clear_tx_queue_for_address();` drops every command queued to that Modbus address, the poll
   included (each dropped frame resolves through `on_not_sent`; see the note below on stopping a templated poll).
 
@@ -629,7 +629,7 @@ Handling the error and timeout branches:
       - lambda: 'id(device_online).publish_state(false);'
 ```
 
-## Lambda Hook Component
+## `modbus_client` Component
 
 A simpler alternative to the actions above, for use only inside a lambda - not a YAML automation action. It's
 syntactic sugar over the `id(hub).queue_pdu(address, pdu)` call shown on the [Modbus](/components/modbus/) page: the

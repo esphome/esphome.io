@@ -35,14 +35,8 @@ pn7150_i2c:
 
 ### Configuration variables
 
-- **dwl_req_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The pin connected to the PN7150's
-  `DWL_REQ` line. Used to invoke the PN7150's firmware update mode; may be used in a future release.
-
 - **irq_pin** (**Required**, [Pin Schema](/guides/configuration-types#pin-schema)): The pin connected to the PN7150's `IRQ` line.
 - **ven_pin** (**Required**, [Pin Schema](/guides/configuration-types#pin-schema)): The pin connected to the PN7150's `VEN` line.
-- **wkup_req_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The pin connected to the PN7150's
-  `WKUP_REQ` line. May be used to improve power management in a future release.
-
 - **emulation_message** (*Optional*, string): When scanned by another NFC card/tag reader (such as a smartphone), this
   string is used as the content for an NDEF-formatted response. This allows the PN7150 to act as a tag in addition to a
   tag reader/writer.
@@ -58,6 +52,8 @@ pn7150_i2c:
 
 - **on_emulated_tag_scan** (*Optional*, [Automation](/automations)): An automation to perform when the PN7150 is
   scanned by another tag reader (such as a smartphone). See [`on_emulated_tag_scan` Trigger](#pn7150-on_emulated_tag_scan).
+- **on_finished_write** (*Optional*, [Automation](/automations)): An automation to perform when an NDEF write attempt finishes,
+  whether successful or not. Standalone clean/format operations and failures during pre-write formatting do not trigger it.
 
 - **i2c_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the [I²C Component](/components/i2c) if you need
   to use multiple I²C buses.

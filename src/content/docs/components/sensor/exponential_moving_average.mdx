@@ -1,0 +1,152 @@
+---
+description: "Instructions for setting up a sensor that averages another sensor and keeps the average across reboots."
+title: "Exponential Moving Average Sensor"
+---
+import APIRef from '@components/APIRef.astro';
+
+The `exponential_moving_average` sensor platform smooths the values of another sensor using an
+[exponential moving average](https://en.wikipedia.org/wiki/Moving_average#Exponential_moving_average).
+It publishes a new average each time the source sensor publishes a value.
+
+Unlike the [Exponential Moving Average Filter](/components/sensor/filter/exponential_moving_average/), this sensor
+saves the average on the device. After a reboot it starts from the saved value instead of from the first new
+reading. This is useful for averages that change slowly over hours or days.
+
+The unit of measurement, icon, device class and state class are copied from the source sensor unless they are set
+in this sensor's configuration. The accuracy decimals are also copied, with one extra decimal added, because an
+average is more precise than the individual readings.
+
+```yaml
+# Example configuration entry
+sensor:
+  - platform: exponential_moving_average
+    name: "Average Temperature"
+    sensor: my_temperature_sensor
+```
+
+## Configuration Variables
+
+- **sensor** (**Required**, [ID](/guides/configuration-types#id)): The ID of the sensor to average.
+
+- **alpha** (*Optional*, float): The weight given to each new value, greater than `0` and at most `1`.
+  A higher value follows changes more quickly, while a lower value removes more noise. Defaults to `0.1`.
+  Cannot be used with `time_constant`.
+
+- **time_constant** (*Optional*, [Time](/guides/configuration-types#time)): Weight each new value by the time
+  since the previous one, instead of using a fixed `alpha`. See [Using a Time Constant](#using-a-time-constant).
+  Cannot be used with `alpha`.
+
+- **time_weighting** (*Optional*, string): Which value is assumed to apply during the time between two readings.
+  One of `new`, `previous` or `linear`. Only used with `time_constant`. Defaults to `new`.
+  See [Choosing a Time Weighting](#choosing-a-time-weighting).
+
+- **restore** (*Optional*, boolean): Whether to save the average on the device so it can be restored after a reboot
+  or power cycle. Defaults to `true`.
+
+- All other options from [Sensor](/components/sensor).
+
+> [!NOTE]
+> The average is saved each time it changes, but it is only written to flash at the interval set by
+> [`flash_write_interval`](/components/preferences/) (default `1min`), so this does not wear out the flash.
+> Changes made after the last write are lost at a power cycle.
+>
+> On the ESP8266, the value survives only a software reboot unless
+> [`restore_from_flash`](/components/esp8266/) is set to `true`.
+
+> [!NOTE]
+> When `time_constant` is used, the time the device was switched off is not known. The first value after a reboot is
+> weighted by the time since the device started, not by the time since the last value before the reboot. The
+> reading from before the reboot is not saved, so `previous` and `linear` use the new value for this first interval.
+
+## Using a Time Constant
+
+With `alpha`, every new value has the same weight, however long it has been since the previous one. The amount of
+smoothing therefore depends on how often the source sensor updates: changing the source's `update_interval` changes
+the average.
+
+With `time_constant`, the weight of a new value depends on the time since the previous value:
+`1 - exp(-t / time_constant)`, where `t` is that time. A value that arrives after a long gap has a large weight, and
+a value that arrives soon after the previous one has a small weight. The result is the same however often the source
+updates, and a missed reading does not distort the average.
+
+The time constant sets how quickly the average follows a change. If the source changes to a new, steady value, the
+average moves:
+
+| Time after the change | Part of the change followed |
+| --------------------- | --------------------------- |
+| 1 × `time_constant`   | 63%                         |
+| 2 × `time_constant`   | 86%                         |
+| 3 × `time_constant`   | 95%                         |
+| 5 × `time_constant`   | 99%                         |
+
+```yaml
+# Example: a daily average of a temperature received from Home Assistant
+sensor:
+  - platform: exponential_moving_average
+    name: "Average Outdoor Temperature"
+    sensor: outdoor_temperature
+    time_constant: 12h
+    time_weighting: previous
+```
+
+### Choosing a Time Constant
+
+- Choose a value longer than the changes you want to remove, and shorter than the changes you want to see. For
+  example, to remove the effect of a heater cycling on and off every few minutes while still following the room
+  warming up over an hour, a time constant of 10 to 15 minutes is suitable.
+- Make it several times longer than the source's update interval. If it is similar to or shorter than the update
+  interval, each new value has a weight of 63% or more and there is little smoothing.
+- A longer time constant gives a smoother average but it takes longer to respond. After a step change it takes about
+  three time constants for the average to come close to the new value.
+- To convert an existing `alpha` for a source that updates every `T`, use `time_constant = -T / ln(1 - alpha)`,
+  or about `T / alpha` for small values of `alpha`. For example, `alpha: 0.1` with a 10 second update interval
+  is about the same as `time_constant: 95s`.
+
+Some starting points:
+
+| Use                                                  | Time constant |
+| ---------------------------------------------------- | ------------- |
+| Smoothing a noisy power or current reading           | 30s to 2min   |
+| Room temperature or humidity                         | 5min to 15min |
+| Battery voltage, ignoring short drops under load     | 5min to 30min |
+| Typical outdoor temperature over the day             | 6h to 24h     |
+
+### Choosing a Time Weighting
+
+A sensor only reports its value at certain times, so the average must assume what the value was between two
+readings. The `time_weighting` option sets this:
+
+- `new`: The new value applied for the whole time since the previous reading. The average responds to a new value
+  immediately. Use this for sensors that are read at regular intervals, such as most sensors with an
+  `update_interval`.
+- `previous`: The previous value stayed the same until the new reading. Use this for sources that only publish
+  when their value changes, such as a sensor with a `delta` filter, many Bluetooth sensors, or values received from
+  Home Assistant. A new value only starts to affect the average at the following reading.
+- `linear`: The value changed in a straight line from the previous reading to the new one. This is a compromise
+  between the other two, and suits values that change smoothly but are read at irregular times.
+
+For example, a value that stays at 20 for an hour and then changes to 25: with `new` the average moves almost
+fully to 25 at once, because the gap is counted at 25; with `previous` the hour is counted at 20, and the average
+moves towards 25 as later readings arrive.
+
+The average is only recalculated when the source sensor publishes a value. If the source can go a long time without
+publishing, add a [`heartbeat`](/components/sensor/filter/heartbeat/) filter to it so the average keeps up to date.
+
+When readings are frequent compared to the time constant, the three options give almost the same result.
+
+## `sensor.exponential_moving_average.reset` Action
+
+This [Action](/automations/actions#all-actions) clears the average. The next value from the source sensor
+starts a new average.
+
+```yaml
+on_...:
+  - sensor.exponential_moving_average.reset: my_average_sensor
+```
+
+## See Also
+
+- [Exponential Moving Average Filter](/components/sensor/filter/exponential_moving_average/)
+- [Sensor Filters](/components/sensor#sensor-filters)
+- <APIRef text="exponential_moving_average_sensor.h"
+  path="exponential_moving_average/exponential_moving_average_sensor.h" />
