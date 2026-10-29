@@ -69,6 +69,8 @@ web_server:
 - **js_include** (*Optional*, local file): Path to local file to be included in web server index page.
   Contents of this file will be served as `/0.js` and used as JS script by internal webserver.
   Useful when building device without internet access, where you want to use built-in AP and webserver.
+  The page loads the file as a JavaScript module, so it can also `import` add-ons by URL while the main
+  script keeps rendering the interface. See [Loading add-on modules](#loading-add-on-modules).
 
 - **auth** (*Optional*): Enables HTTP authentication with a username and password.
 
@@ -283,6 +285,31 @@ web_server:
 ```
 
 Copy [https://oi.esphome.io/v2/www.js](https://oi.esphome.io/v2/www.js) to a V2 folder in your yaml folder.
+
+### Loading add-on modules
+
+To extend the hosted interface with an add-on, such as an extra panel for one of your sensors, keep `js_url` at its
+default and point `js_include` at a small file next to your YAML:
+
+```yaml
+web_server:
+  version: 3
+  js_include: "addons.js"
+```
+
+The page loads `/0.js` with `<script type="module">`, so `addons.js` can import the add-on by URL:
+
+```js
+// addons.js
+import "https://example.com/my-addon.js";
+```
+
+Module scripts run after the page has been parsed. On version 2 and 3 the main script has therefore defined
+`<esp-app>` by the time `addons.js` runs. Each further add-on is one more `import` line in the same file.
+
+> [!NOTE]
+> Browsers fetch module scripts with CORS. The add-on's host must send an `Access-Control-Allow-Origin` header that
+> admits the device's origin. Public CDNs such as jsDelivr send one, but a plain file server on your LAN may not.
 
 <span id="config-webserver-version-3-options"></span>
 
