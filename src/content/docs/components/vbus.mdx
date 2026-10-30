@@ -809,3 +809,83 @@ Use `vbus.suspend_polling` and `vbus.resume_polling` with the **hub ID**, as in 
 abandons an incomplete scan and retains the last complete snapshot. Resuming requests a fresh scan, subject to the
 startup delay and 60-second minimum interval; it never resumes partial data. With `update_interval: never`, resuming
 only requests a scan if a manual scan has previously been attempted. Shutdown permanently stops the profile.
+
+## Validated CS Plus Setting Writes
+
+Writing settings is a separate opt-in on the DeltaSol CS Plus 1.11 profile. Without `writes`, setting actions are
+rejected during validation and the controller's write code is excluded from the firmware.
+
+```yaml
+vbus:
+  id: solar_bus
+  controller:
+    id: solar_controller
+    model: deltasol_cs_plus
+    writes:
+      require_write_arm: true
+      on_setting_result:
+      - lambda: |-
+          ESP_LOGI("solar", "Setting %u finished with status %u", value_id, unsigned(status));
+button:
+- platform: template
+  name: Use Italian Display Language
+  on_press:
+  - vbus.arm_writes:
+      id: solar_controller
+      enabled: true
+  - vbus.set_setting:
+      id: solar_controller
+      value_id: 55
+      value: 4
+```
+
+- **writes** (*Optional*, mapping or string): Enables validated controller writes. It sends nothing by itself.
+  Use `direct` for direct explicit changes or `armed` to require one-shot authorization. These are equivalent to
+  mappings with `require_write_arm: false` and `require_write_arm: true`, respectively. Use a mapping to add callbacks.
+  - **require_write_arm** (*Optional*, boolean): Require one-shot authorization, valid for 60 seconds and consumed
+    by one accepted setting request. Defaults to `true`. Set `false` for direct explicit controls without a separate arm action.
+  - **on_setting_result** (*Optional*, [Automation](/automations/)): Runs when a request is rejected or an accepted request finishes.
+    Arguments are `uint16_t value_id` and `vbus::SettingWriteStatus status`.
+
+The `vbus.set_setting` action requires the **controller ID**, a 16-bit `value_id` and a floating-point `value`.
+Both the value ID and value can be [templated](/automations/templates/). Values use each setting's scale, rather
+than the raw wire integer; for example, `60.0` represents 60 degrees for a setting with scale 0.1.
+Only the profile's 84 known settings can be requested. Out-of-range values, off-step values, unknown enum options,
+non-finite values, stale snapshots and settings that do not apply are rejected. A request also needs current telemetry,
+an idle controller and an unsuspended hub. Acceptance starts validation; it does not mean the change has been applied.
+Rejected requests report their own `value_id` through `on_setting_result`, including when another write is active.
+Rejecting a second request leaves the active write and its status unchanged.
+
+The `vbus.arm_writes` action requires the controller `id` and a templatable boolean `enabled`. Arming does not write
+anything. Suspension consumes the authorization. It cannot override stale data, an uncertain previous write or setting constraints.
+
+### Validation And Confirmation
+
+Each accepted request first reads its dependencies again, including the hydraulic scheme, unit system, current value
+and related limits or function flags. It validates applicability, supported options, step sizes and relationships against
+these fresh replies. For example, a pump minimum must remain below its maximum. If the requested value already matches
+the freshly read value, the request finishes without sending a write.
+
+Otherwise, the existing transaction manager sends one `0x0200` write, receives a matching acknowledgement and reads the
+value back independently. Completion also requires a bus release and resumed firmware 1.11 telemetry. The complete job
+has a 15-second limit. Nothing is published optimistically, and no failed or interrupted write is retried automatically.
+No startup, refresh, restored-state or resume operation writes settings.
+
+Completion statuses are:
+
+- `SETTING_WRITE_STATUS_SUCCESS`: acknowledgement, matching readback, release and resumed telemetry confirmed the change.
+- `SETTING_WRITE_STATUS_UNCHANGED`: fresh preflight already matched; no write was sent.
+- `SETTING_WRITE_STATUS_FAILED`: the request ended before any write was handed to the UART.
+- `SETTING_WRITE_STATUS_UNCERTAIN`: a write was handed to the UART, but complete confirmation was lost. The controller may have changed.
+
+An uncertain result blocks further writes until a new complete settings scan establishes the current state. Retained values
+are not proof that the interrupted write had no effect. OTA cancellation has the same rule; late replies cannot restart
+verification or replay the write. `vbus.resume_polling` only resumes reads.
+
+Verified numeric changes update the confirmed cached value. A verified enum change or an uncertain write requests a
+fresh, read-only scan because the available controls or their units may have changed. This one refresh bypasses the
+usual 60-second scan limit and is prepared on the next main-loop iteration when telemetry and polling are available.
+If they are unavailable, the controller checks again once per second without keeping its loop busy.
+Until it completes, `has_fresh_snapshot()` is false and further writes are rejected. `has_recent_snapshot()` still reports
+whether the last complete snapshot is within its 660-second expiry, so displays can retain confirmed values while waiting.
+An incompatible firmware broadcast discards both fresh and retained context immediately. No refresh retries a write.
