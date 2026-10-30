@@ -65,6 +65,7 @@ the pins used to interface to the display to be specified.
 | Waveshare-4.26in          | Waveshare           | [https://www.waveshare.com/4.26inch-e-paper.htm](https://www.waveshare.com/4.26inch-e-paper.htm)   |
 | Waveshare-7.5in-H         | Waveshare           | [https://www.waveshare.com/7.5inch-e-paper-hat-h.htm](https://www.waveshare.com/7.5inch-e-paper-hat-h.htm) |
 | Waveshare-7.5in-V2        | Waveshare           | [https://www.waveshare.com/7.5inch-e-paper-hat.htm](https://www.waveshare.com/7.5inch-e-paper-hat.htm) — 7.5" V2 mono (800x480, UC8179), supports fast and partial refresh via `full_update_every` |
+| Waveshare-7.5in-V2-gray4  | Waveshare           | The 7.5" V2 panel in four gray levels; full refresh only, see [Four-Level Grayscale (Waveshare 7.5in V2)](#four-level-grayscale-waveshare-7-5in-v2) |
 | Waveshare-7.5in-bV2-BWR   | Waveshare           | [https://www.waveshare.com/7.5inch-e-paper-hat-b.htm](https://www.waveshare.com/7.5inch-e-paper-hat-b.htm) — 7.5" V2 3-color (800x480, UC8179) |
 | WeAct-2.13in-3c           | WeAct               | 2.13" 3-color e-paper (250x122, SSD1683)           |
 | WeAct-2.9in-3c            | WeAct               | 2.9" 3-color e-paper (128x296, SSD1683)            |
@@ -227,6 +228,26 @@ display:
     full_update_every: 20
     lambda: |-
       it.strftime(0, 0, id(my_font), Color::BLACK, "%H:%M", id(my_time).now());
+```
+
+### Four-Level Grayscale (Waveshare 7.5in V2)
+
+The `Waveshare-7.5in-V2-gray4` model drives the 7.5" V2 panel in black, dark gray, light gray and white. Colors are
+reduced to the nearest of the four levels by brightness. Every update is a full refresh with the model's own waveform,
+so `full_update_every` must stay at `1`. The buffer takes 2 bits per pixel, 96 kB for the full panel.
+
+```yaml
+display:
+  - platform: epaper_spi
+    model: Waveshare-7.5in-V2-gray4
+    cs_pin: GPIOXX
+    dc_pin: GPIOXX
+    reset_pin: GPIOXX
+    busy_pin:
+      number: GPIOXX
+      inverted: true
+    lambda: |-
+      it.filled_rectangle(0, 0, it.get_width() / 2, it.get_height(), Color(170, 170, 170));
 ```
 
 ### Four-Level Grayscale (reTerminal Sticky)
