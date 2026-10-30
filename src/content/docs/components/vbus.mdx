@@ -478,7 +478,7 @@ valid settings, access permissions or Home Assistant entities.
   - `command` (`uint16_t`): The original request command: `0x0300`, `0x0200` or `0x0400`.
   - `value_id` (`uint16_t`): The parameter identifier.
   - `value` (`uint32_t`): The returned value on success, or the observed readback on verification mismatch.
-    It is `0` for timeout or loss of ownership; those errors do not provide a measurement.
+    It is `0` for timeout, cancellation or loss of ownership; those errors do not provide a measurement.
   - `status` (`vbus::TransactionStatus`): One of the results below.
 
 | Status | Meaning |
@@ -487,6 +487,7 @@ valid settings, access permissions or Home Assistant entities.
 | `TRANSACTION_STATUS_TIMEOUT` | A required reply or verification send did not complete before its timeout. |
 | `TRANSACTION_STATUS_BUS_LOST` | Ownership ended before the operation could finish. |
 | `TRANSACTION_STATUS_VERIFY_MISMATCH` | Readback differs from the requested write value. |
+| `TRANSACTION_STATUS_CANCELLED` | Polling was suspended before completion; a sent write may already have taken effect. |
 
 The C++ enumerators are scoped, for example `vbus::TransactionStatus::TRANSACTION_STATUS_SUCCESS`.
 
@@ -590,8 +591,9 @@ produce a second `on_value` publication.
 - **on_value** (*Optional*, [Automation](/automations/)): Runs on the first successful value and subsequent changes.
   Arguments are `uint16_t value_id` and `uint32_t value`. Values remain raw, without scaling or signed conversion.
 - **on_result** (*Optional*, [Automation](/automations/)): Runs for each completed queued transaction, expired
-  unsent write and read that times out waiting for a bus grant. Arguments and statuses match [transaction results](#transaction-configuration). `grant_id` is `0` for an
-  unsent request that expired; its value is `0` and must not be used as a measurement.
+  unsent write, cancelled unsent write and read that times out waiting for a bus grant. Arguments and statuses match
+  [transaction results](#transaction-configuration). `grant_id` is `0` for an unsent request that expired or was cancelled;
+  its value is `0` and must not be used as a measurement.
 
 A refresh schedules each eligible ID once. Further refreshes and `queue_read` calls coalesce pending or active reads
 of the same ID. Successful write verification also satisfies a pending read of that ID. The read cursor continues
@@ -650,6 +652,33 @@ These actions need no `grant_id`. In a lambda, `id(solar_bus).queue_read(value_i
 `id(solar_bus).queue_write(value_id, value, command)` return `false` when rejected. A rejected request has no result
 callback. Acceptance means queued, not applied: check `on_result` for confirmed completion. Distinct writes are never
 silently replaced. Only queue values supported by the controller and safe for the connected installation.
+
+### Suspend And Resume Polling
+
+`vbus.suspend_polling` stops new transmissions and discards scheduled reads and queued writes. RX reception and the
+last confirmed values remain available. Use it before OTA to avoid starting bus operations while flash is being written:
+
+```yaml
+ota:
+  - platform: esphome
+    on_begin:
+      - vbus.suspend_polling:
+          id: solar_bus
+    on_error:
+      - vbus.resume_polling:
+          id: solar_bus
+```
+
+Both actions require the VBus hub's `id` with polling enabled. Repeating either action has no effect.
+Suspension reports `TRANSACTION_STATUS_CANCELLED` once for the active operation and each unsent write through
+`polling.on_result`. Unsent writes use `grant_id: 0`; the active operation retains its grant identifier.
+The transaction manager also reports cancellation for its active operation. No further verification request or release
+frame is started during suspension. A frame already handed to the UART may finish, and a sent write may already have
+changed the controller: cancellation does not undo a write. Late replies cannot restart the cancelled operation.
+
+`vbus.resume_polling` schedules a fresh read of the configured non-RX IDs. It does not restore or retry discarded writes.
+Reads, writes and periodic refreshes are rejected or ignored while suspended. Shutdown remains permanent and cannot be
+reversed by resuming polling. After a successful OTA and restart, normal boot polling applies.
 
 ## P2 Parameter Sensors
 
