@@ -88,10 +88,12 @@ climate:
 
 > [!NOTE]
 > The current action comes from the unit's operating status, which is read together with the room temperature once
-> per `telemetry_request_min_interval`, and again right after a mode or power change. It is not reported when
+> per `telemetry_request_min_interval`. A mode or power change also triggers one extra read of the operating status
+> alone, at most once per interval; further changes wait for the next regular read. It is not reported when
 > telemetry is set to `never`. In heat/cool mode, heating or cooling is inferred from the room and target
-> temperatures when the unit starts running, and kept while it runs. A unit that misses the operating status request
-> three times in a row always reports idle, even while it is heating or cooling.
+> temperatures when the unit starts running, and kept while it runs. After three missed operating status requests in
+> a row the component stops asking and keeps the last operating status it received. A unit that never answers
+> reports idle while it is on, even while it is heating or cooling; off and fan only are still reported.
 
 > [!NOTE]
 > Fan modes map to the following Mitsubishi fan speeds:
