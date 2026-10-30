@@ -8,18 +8,24 @@ The `airton_serial` climate platform controls Airton air conditioners that use t
 between the indoor unit and its Wi-Fi module. The ESP takes the role of the original module
 (address `0x21`) and talks directly to the climate board.
 
-This platform is separate from the IR-based `airton` component.
+This platform is separate from the IR-based [`airton`](/components/climate/climate_ir/#airton) component.
 
 > [!WARNING]
 > The module connector provides +12 V. Never connect it directly to the ESP. Use a 5 V regulator
 > (a 12 V → 5 V buck module or a bare 7805), verify its output before wiring, and
 > connect a common ground.
 
+> [!WARNING]
+> The data lines are 5 V TTL, and ESP GPIOs are rated for 3.3 V. Put a level shifter, or a resistor divider
+> such as 10 kΩ / 20 kΩ, between the module's TX and the ESP's RX. If the board does not read the ESP's
+> 3.3 V TX reliably, use a bidirectional level shifter on both lines.
+
 The bus is a 9600 baud, 8N1, TTL 5 V serial link with two data wires and a common ground. The
 platform requires a [UART](/components/uart/) bus; the UART must use 9600 8N1 with both TX and RX.
 
 > [!NOTE]
-> Tested on an ESP32-S3-Zero with GPIO5 (TX) and GPIO4 (RX), original Wi-Fi module removed.
+> Tested on an ESP32-S3-Zero with GPIO5 (TX) and GPIO4 (RX), original Wi-Fi module removed. The board read
+> the ESP's 3.3 V TX directly.
 
 ```yaml
 # Example configuration entry
@@ -29,11 +35,11 @@ climate:
     name: Airton Climate
 ```
 
-## Configuration variables
+## Configuration Variables
 
-- **uart_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the
+- **uart_id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID of the
   [UART](/components/uart/) bus. Required if you have more than one UART bus.
-- All other options from [Climate](/components/climate#config-climate).
+- All other options from [Climate](/components/climate/#config-climate).
 
 ## Switches
 
@@ -55,15 +61,15 @@ switch:
       name: Eco
 ```
 
-- **airton_serial_id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the
+- **airton_serial_id** (**Required**, [ID](/guides/configuration-types/#id)): The ID of the
   `airton_serial` climate.
-- **display** (*Optional*): The display backlight.
-- **ionizer** (*Optional*): The ionizer.
-- **health** (*Optional*): The health setting. The board uses one bit for anti-mould and
+- **display** (*Optional*, [Switch](/components/switch/)): The display backlight.
+- **ionizer** (*Optional*, [Switch](/components/switch/)): The ionizer.
+- **health** (*Optional*, [Switch](/components/switch/)): The health setting. The board uses one bit for anti-mould and
   auxiliary heat, so both are controlled by this switch.
-- **sleep** (*Optional*): Sleep mode.
-- **eco** (*Optional*): Eco mode.
-- All other options from [Switch](/components/switch#config-switch).
+- **sleep** (*Optional*, [Switch](/components/switch/)): Sleep mode.
+- **eco** (*Optional*, [Switch](/components/switch/)): Eco mode.
+- All other options from [Switch](/components/switch/#config-switch).
 
 ## Sensors
 
@@ -77,14 +83,14 @@ sensor:
       name: Protocol revision
 ```
 
-- **airton_serial_id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the
+- **airton_serial_id** (**Required**, [ID](/guides/configuration-types/#id)): The ID of the
   `airton_serial` climate.
-- **total_usage_time** (*Optional*): Total usage time in hours, read from the board's poll
-  response. All options from [Sensor](/components/sensor).
-- **revision** (*Optional*): The board's protocol revision counter. This is a diagnostic value.
-  All options from [Sensor](/components/sensor).
+- **total_usage_time** (*Optional*, [Sensor](/components/sensor/)): Total usage time in hours, read from the board's
+  poll response. All options from [Sensor](/components/sensor/#config-sensor).
+- **revision** (*Optional*, [Sensor](/components/sensor/)): The board's protocol revision counter. This is a diagnostic
+  value. All options from [Sensor](/components/sensor/#config-sensor).
 
-## Supported features
+## Supported Features
 
 - HVAC modes: `OFF`, `HEAT_COOL`, `COOL`, `HEAT`, `DRY`, `FAN_ONLY`.
 - Fan modes: `AUTO`, `LOW`, `MEDIUM`, `HIGH`, `QUIET`, plus the custom modes `medlow`, `medhigh`
@@ -97,7 +103,7 @@ sensor:
 | Module connector | ESP |
 |---|---|
 | +12 V (red) | input of a 5 V regulator (buck module or 7805); never directly to the ESP |
-| TX (black) | UART RX (for example `GPIOXX`) |
+| TX (black) | UART RX (for example `GPIOXX`), through a level shifter or divider |
 | RX (yellow) | UART TX (for example `GPIOXX`) |
 | GND (green) | Common ground |
 
@@ -107,4 +113,4 @@ the ESP current. Do not power the ESP from USB and from the regulator at the sam
 ## See Also
 
 - [Climate Component](/components/climate/)
-- <APIRef text="airton_serial_climate.h" path="climate/airton_serial_climate.h" />
+- <APIRef text="airton_serial_climate.h" path="airton_serial/airton_serial_climate.h" />
