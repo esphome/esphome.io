@@ -7,12 +7,55 @@ import { Image } from 'astro:assets';
 import resolVbusAdapterSchematicImg from './images/resol_vbus_adapter_schematic.png';
 import vbusSerialOptocouplerImg from './images/vbus_serial_optocoupler.png';
 
-The `VBus` Component provides status reading connectivity to solar heat energy collector controllers using VBus
-protocol. These devices are mainly produced by Resol, often also found under different brand names like Viessmann,
-Kioto, Wagner etc. The component currently supports natively the models in the table below
-but any device can be added via lambda by knowing [its packet structure](https://danielwippermann.github.io/resol-vbus).
+The `vbus` component receives telemetry from solar thermal controllers using the VBus protocol. These controllers
+are produced by RESOL and also sold under names such as Viessmann, Kioto and Wagner. With an RX/TX interface, it can
+also read and change settings on a qualified controller profile. The generic transport remains available for custom
+applications using a documented [packet structure](https://danielwippermann.github.io/resol-vbus).
 
 <Image src="/images/resol_deltasol_bs_plus.jpg" width={207} height={300} layout="constrained" alt="" />
+
+## Choose Your Configuration
+
+| What You Need | Start Here |
+| --- | --- |
+| Temperatures, pump states and energy already broadcast by the controller | [RX sensors](#sensor) and [binary sensors](#binary-sensor); no TX circuit or polling required |
+| Settings on a DeltaSol CS Plus with firmware 1.11 | [CS Plus quick start](#cs-plus-quick-start) |
+| An unsupported controller or custom protocol work | [Generic TX](#optional-transmission) and [P2 transactions](#p2-value-transactions) |
+
+The qualified profile handles addresses, bus access, parameter scaling, dependencies and write confirmation.
+Generic TX leaves those device-specific choices to you. RX remains available in both cases.
+
+
+## CS Plus Quick Start
+
+Use an [RX/TX interface](#hardware-connection) and a [UART bus](/components/uart/) configured for 9600 baud,
+8 data bits, no parity and one stop bit, with RX and TX pins. Add the following to an existing ESPHome device
+configuration; `resol` is the UART ID. A separate TX UART can be selected under `transmit.uart_id` if needed.
+
+```yaml
+vbus:
+  uart_id: resol
+  controller:
+    model: deltasol_cs_plus
+    writes: direct
+
+number:
+  - platform: vbus
+    min_pump_speed_1: {}
+    max_pump_speed_1: {}
+
+select:
+  - platform: vbus
+    display_language: {}
+```
+
+The first settings scan starts after compatible telemetry arrives. Controls show confirmed values and only accept
+changes that apply to the current hydraulic scheme and enabled functions. `writes: direct` permits explicit changes
+through these entities; it does not send settings at startup. Omit `writes` for a read-only profile and omit writable
+controls, or use `writes: armed` for [one-shot write authorization](#validated-cs-plus-setting-writes).
+
+Names, units and the controller association have defaults. Add `name`, `id` and other entity options inside a setting
+to customize it. For an existing installation, [keep the existing names, IDs and domains](#existing-installations-and-advanced-use).
 
 ## Supported Models
 
@@ -1022,3 +1065,156 @@ to particular hydraulic schemes or optional functions. Enumerated settings such 
 - `tube_collector_end_time`
 - `tube_collector_run_time`
 - `tube_collector_interval`
+
+
+
+## CS Plus Select Setting Controls
+
+As with numbers, several selects can share one platform entry and controller association:
+
+```yaml
+select:
+  - platform: vbus
+    display_language:
+      name: Controller Language
+    holiday_cooling: {}
+```
+
+Each nested setting accepts the usual Select options, including custom `options` labels. The single-parameter form
+below remains supported. A group must contain at least one known setting; do not combine `parameter` and setting keys
+within the same entry.
+
+The `vbus` select platform exposes the 26 enumerated settings of the DeltaSol CS Plus 1.11 profile.
+It shares the controller's existing scans and validated write path with number controls.
+
+```yaml
+# Uses the controller from the numeric controls example above.
+select:
+  - platform: vbus
+    parameter: display_language
+    name: Controller Display Language
+
+  - platform: vbus
+    parameter: relay_mode_1
+    name: Relay 1 Operating Mode
+    options:
+      0: "Off"
+      1: "Automatic"
+      2: "On"
+```
+
+- **controller_id** (*Optional*, [ID](/guides/configuration-types/#id)): A CS Plus controller with explicit `writes`
+  configuration. Inferred with one controller; required when there are multiple controllers.
+- **parameter** (**Required**, string): One of the keys below. Numeric parameters belong to the number platform.
+- **options** (*Optional*, mapping): Customize the display labels for the documented raw option values.
+  Supply every documented raw value exactly once, with unique, nonempty labels. Extra or missing values are rejected.
+  Labels do not change the protocol values or permit unsupported choices.
+- Other options from [Select](/components/select/) are supported. The default entity category is `config`.
+
+If both `name` and `id` are omitted, the parameter supplies the default display name, such as `Display language`.
+Existing explicit names, IDs and option labels are preserved. Default option labels remain unchanged so existing
+automations comparing those labels keep working.
+
+For automations using named settings, use the standard number/select actions instead of raw protocol IDs:
+
+```yaml
+select:
+  - platform: vbus
+    id: controller_language
+    parameter: display_language
+    name: Controller Language
+
+button:
+  - platform: template
+    name: Use Italian
+    on_press:
+      - select.set:
+          id: controller_language
+          option: Italian
+```
+
+This requires the controller's `writes` option. With `writes: armed`, arm the controller before the action.
+Use the configured label if `options` changes `Italian` to a translated label.
+
+With `require_write_arm: false`, selecting an option makes a direct explicit request. With the default `true`,
+arm the controller once before the change. No boot, restored state, polling or recovery operation writes settings.
+
+Only options allowed by the current hydraulic scheme, enabled functions and related settings are advertised.
+Commands are validated again against fresh dependency reads. A selected option is not published optimistically:
+acknowledgement, independent readback, bus release and resumed telemetry must confirm the write.
+Without adaptive polling, an enum change also requests a full context scan before updating select states. With adaptive
+polling, affected dependencies are refreshed where needed; a language-only change needs no extra scan.
+
+During this refresh or an uncertain write, recent confirmed states remain visible, and further writes wait for fresh
+context. A retained display is not proof that an uncertain write had no effect. Equal confirmed states are not published
+again, including when the option list changes the selected label's position. Actual expiry, incompatible firmware or
+verified inapplicability invalidates the value while retaining the last advertised options; recovery publishes one state.
+
+Options are updated without allocating memory during operation. Entity notification remains bounded to one per loop.
+The native API exposes updated option lists; cached clients need to refresh their entity listing when
+`id(solar_controller).metadata_revision()` changes. The revision advances once per batch of actual metadata changes.
+
+`system_scheme` can reinitialize other controller settings. Relay `Off`/`On` modes override automatic relay operation.
+For `disable_storage_safety_shutdown`, `On` means that the safety shutdown is disabled. Use clear names for these
+controls and consider `disabled_by_default: true` when adding them to Home Assistant.
+
+### Select Parameter Keys and Raw Values
+
+The table lists all defined options. A controller may permit only a subset in its current context.
+Display labels can be translated with `options` while preserving these raw values.
+
+| Parameter | Raw values and default labels |
+| --- | --- |
+| `system_scheme` | 1: 1, 2: 2, 3: 3, 4: 4, 5: 5, 6: 6, 7: 7, 8: 8, 9: 9, 10: 10 |
+| `temperature_unit` | 0: °C, 1: °F |
+| `storage_priority` | 0: Spread loading 1, 1: Spread loading 2, 2: Sequential loading 1, 3: Sequential loading 2, 4: Parallel loading, 5: Storage 1 priority, 6: Storage 2 priority |
+| `display_language` | 1: German, 2: English, 3: French, 4: Italian, 5: Spanish |
+| `holiday_cooling` | 0: Off, 1: On |
+| `storage_cooling` | 0: Off, 1: On |
+| `flow_sensor_type` | 0: Off, 1: 12, 2: 40, 3: 40F |
+| `heat_meter` | 0: Off, 1: On |
+| `flow_sensor_position` | 0: Fixed flow, 1: Flow sensor, 2: Return sensor |
+| `heat_transfer_fluid` | 0: Water, 1: Propylene glycol, 2: Ethylene glycol, 3: Tyfocor LS / G-LS |
+| `collector_cooling_1` | 0: Off, 1: On |
+| `collector_cooling_2` | 0: Off, 1: On |
+| `collector_minimum_limit_1` | 0: Off, 1: On |
+| `collector_minimum_limit_2` | 0: Off, 1: On |
+| `collector_antifreeze_1` | 0: Off, 1: On |
+| `collector_antifreeze_2` | 0: Off, 1: On |
+| `relay_mode_1` | 0: Off, 1: Auto, 2: On |
+| `relay_mode_2` | 0: Off, 1: Auto, 2: On |
+| `disable_storage_safety_shutdown` | 0: Off, 1: On |
+| `thermal_disinfection` | 0: Off, 1: On |
+| `system_cooling` | 0: Off, 1: On |
+| `drainback` | 0: Off, 1: On |
+| `drainback_booster` | 0: Off, 1: On |
+| `tube_collector_function` | 0: Off, 1: On |
+| `pump_control_1` | 0: OnOF, 1: PULS, 2: PSOL, 3: PRIS |
+| `pump_control_2` | 0: OnOF, 1: PULS, 2: PSOL, 3: PRIS |
+
+The pump-control labels follow the controller's display. According to the
+[RESOL manual](https://www.resol.de/Produktdokumente/Alte_Montageanleitungen/11204489_DeltaSol_CS_Plus.monit.pdf),
+`OnOF` is ordinary on/off control, `PULS` controls speed through the semiconductor relay, `PSOL` uses the solar-pump
+PWM curve and `PRIS` uses the heating-pump PWM curve. To use longer labels, set `options` explicitly; the raw values
+and existing default labels remain unchanged.
+
+## Existing Installations And Advanced Use
+
+Shortening the configuration does not require renaming entities, changing their domains or migrating Home Assistant
+history. Keep existing entity `name`, `id`, custom `options`, units and `disabled_by_default` choices. They override the
+new defaults. The following simplifications retain the existing choices:
+
+- Omit controller addresses only for a supported profile.
+- Omit `controller_id` only when there is exactly one controller.
+- Omit `entity_category: config` on setting controls and `disabled_by_default: false`; these are already defaults.
+- Keep explicit translated names and labels. Keep `mode: box` if that is the desired number control.
+- Group number or select controls under one platform entry if useful. Move each entity's options under its parameter
+  key, retaining its name and ID; place the shared `controller_id` at the platform level when needed.
+
+Existing clock controls remain numeric minutes after midnight, preserving their identities and special values.
+Two-state selects retain their domains and labels.
+
+The generic `transmit`, transaction, polling and P2 sensor sections above remain available for unsupported controllers
+and custom applications. Set the correct destination and protocol IDs from the controller's documentation. Selecting
+an unsupported model is not a way to bypass the qualified CS Plus validation. For a separate transmitter UART, combine
+`controller` with `transmit.uart_id`; the same UART pin and framing requirements still apply.
