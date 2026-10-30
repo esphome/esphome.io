@@ -8,26 +8,20 @@
  *   ["Title 1", "/path/to/page1/", "image1.png"],
  *   ["Title 2", "/path/to/page2/", "image2.png", "caption"],
  *   ["Title 3", "/path/to/page3/", "image3.png", "caption", "dark-invert"],
+ *   ["Title 4", "/path/to/page4/", "badge:Title_4"],
  * ]} />
+ *
+ * An image of `badge:<Name>` uses a component name badge generated at build time
+ * (see src/lib/badges.mjs).
  */
+
+import { resolveImagePath } from "../lib/img-table.mjs";
 
 interface Props {
   items: Array<[string, string, string, string?, string?]>;
 }
 
 const { items } = Astro.props;
-
-// Helper function to resolve image paths
-function resolveImagePath(image: string): string {
-  // If it's already an absolute path or URL, use as-is
-  if (image.startsWith("/") || image.startsWith("http://") || image.startsWith("https://")) {
-    return image;
-  }
-
-  // Check if it looks like a component path (e.g., components/sensor/dht)
-  // Try to resolve relative to /images/ first
-  return `/images/${image}`;
-}
 
 // Helper to add word break opportunities after non-alphabetic characters
 function addWordBreaks(text: string): string {

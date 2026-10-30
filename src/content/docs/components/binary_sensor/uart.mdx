@@ -1,0 +1,45 @@
+---
+description: "Instructions for setting up binary sensors that fire when a byte pattern arrives on a UART bus."
+title: "UART Binary Sensor"
+---
+
+import APIRef from '@components/APIRef.astro';
+
+The `uart` binary sensor platform watches a [UART bus](/components/uart/) for a fixed sequence of bytes. When the
+bytes that arrived most recently match the sequence, the sensor publishes `ON` and then `OFF` right away, so it
+behaves like a button press: use `on_press` to react to it. Keyboard escape sequences and the keys of a serial
+terminal are the typical use.
+
+```yaml
+# Example configuration entry
+binary_sensor:
+  - platform: uart
+    id: up
+    data: [0x1B, 0x5B, 0x41]
+    on_press:
+      then:
+        - display_menu.up
+  - platform: uart
+    id: enter
+    data: "\r"
+    on_press:
+      then:
+        - display_menu.enter
+```
+
+## Configuration Variables
+
+- **data** (**Required**, string or list of bytes): The sequence to watch for, 1 to 255 bytes, as an ASCII string or
+  a list of bytes. The sequence is stored in flash.
+- **uart_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the UART bus.
+- All other options from [Binary Sensor](/components/binary_sensor/#config-binary_sensor).
+
+All sensors on one bus read the same bytes, and the first sensor whose sequence matches takes them. Two sensors on the
+same bus therefore cannot have the same sequence, and neither sequence may occur anywhere inside the other (`AB` and
+`ABC`, or `B` and `ABC`); the configuration is rejected in that case.
+
+## See Also
+
+- [UART Bus](/components/uart/)
+- [Binary Sensor Component](/components/binary_sensor/)
+- <APIRef text="uart_binary_sensor.h" path="uart/binary_sensor/uart_binary_sensor.h" />

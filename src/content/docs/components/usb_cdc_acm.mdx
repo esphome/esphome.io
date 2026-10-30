@@ -1,5 +1,5 @@
 ---
-description: "Instructions for setting up USB CDC-ACM virtual serial ports on ESP32 variants in ESPHome"
+description: "Instructions for setting up USB CDC-ACM virtual serial ports on ESP32 variants and nRF52 in ESPHome"
 title: "USB CDC-ACM Interface"
 ---
 import APIRef from '@components/APIRef.astro';
@@ -9,7 +9,7 @@ The USB CDC-ACM (Communications Device Class - Abstract Control Model) component
 as USB virtual serial ports. When connected to a host computer, the microcontroller will appear as one or
 more serial/COM ports, allowing serial communication with the application running on the microcontroller.
 
-You must have [Tinyusb](/components/tinyusb/) in your device's configuration to use this component.
+On ESP32 you must have [Tinyusb](/components/tinyusb/) in your device's configuration to use this component.
 
 The following ESP32 microcontroller variants are currently supported:
 
@@ -19,8 +19,15 @@ The following ESP32 microcontroller variants are currently supported:
 - ESP32-S3
 - ESP32-S31
 
+The nRF52840 is supported as well. There the ports are shared with the [Logger](/components/logger/), which
+owns port 0 by default (`hardware_uart: USB_CDC`), and with the [mcumgr OTA](/components/ota/zephyr_mcumgr/)
+transport, whose `hardware_uart: CDC` is port 0 and `CDC1` is port 1. Each port has one owner, and a
+configuration that gives the same port to two components is rejected. The position of an interface in the
+`interfaces` list is its port number, so on nRF52 the first entry is normally `disabled: true` (see the
+example below) unless the logger has been moved to a hardware UART.
+
 ```yaml
-# Example minimal configuration entry
+# Example minimal configuration entry (ESP32)
 usb_cdc_acm:
 ```
 
@@ -37,6 +44,11 @@ Each interface in the `interfaces` list consists of the following:
 
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): The ID to use for this interface instance. This is
   used to refer to the interface in other components, platforms or lambdas.
+- **disabled** (*Optional*, boolean): **nRF52 only.** Skip this port, for example because the logger or the
+  mcumgr OTA transport owns it. The entry keeps its place in the list so the later ports keep their numbers.
+  Defaults to `false`.
+- **debug** (*Optional*, mapping): Log the bytes sent and received on this port, with the same options as the
+  [UART debugging](/components/uart/#debugging) configuration.
 
 ## Multiple Interface Example
 
@@ -44,7 +56,7 @@ The USB CDC-ACM component supports up to two simultaneous virtual serial port in
 allows you to create multiple independent communication channels over a single physical USB connection.
 
 ```yaml
-# Example configuration with two interfaces
+# Example configuration with two interfaces (ESP32)
 usb_cdc_acm:
   interfaces:
     - id: cdc_acm_1
@@ -54,6 +66,16 @@ usb_cdc_acm:
 In this configuration, the device will appear as two separate serial/COM ports to the host computer. Each interface
 operates independently with its own data buffers.
 
+On an nRF52 board the logger owns port 0 by default, so a CDC-ACM port for your own data is the second entry:
+
+```yaml
+# Example configuration next to the default logger (nRF52)
+usb_cdc_acm:
+  interfaces:
+    - disabled: true  # port 0 belongs to the logger
+    - id: cdc_acm_1
+```
+
 ## Buffer Size Considerations
 
 The buffer sizes determine how much data can be temporarily stored during USB transfers:
@@ -62,8 +84,11 @@ The buffer sizes determine how much data can be temporarily stored during USB tr
 - **Large buffers (512-1024 bytes)**: Recommended for high-throughput applications or when handling bursts of data
 
 Increase buffer sizes if you experience data loss or need to handle larger data packets without frequent polling.
+A write that does not fit in the transmit buffer, or that arrives while no host has the port open, drops the bytes
+that do not fit; the only sign is a throttled warning in the log with the total number of dropped bytes.
 
 ## See Also
 
 - [TinyUSB](/components/tinyusb/)
+- [CDC-ACM UART Bridge](/components/bridge/cdc_acm_uart/)
 - <APIRef text="usb_cdc_acm.h" path="usb_cdc_acm/usb_cdc_acm.h" />

@@ -1,0 +1,304 @@
+---
+title: "RX8111 Time Source"
+description: "Read and set time, schedule alarms, handle EVIN events, and configure backup power on an Epson RX8111CE."
+---
+
+The RX8111 time platform reads UTC time from an Epson RX8111CE real-time clock (RTC) over
+[I²C](/components/i2c/). Configure the I²C bus separately.
+
+```yaml
+# Example configuration entry
+time:
+  - platform: rx8111
+    id: rtc
+```
+
+The RTC is read on startup and then at the `update_interval` (15 minutes by default). It is **not** set from the
+system time automatically; use the `rx8111.write_time` action for that. A read does not synchronize the system
+clock when the RTC reports a power loss or an oscillator stop, or when its time, calendar date or weekday is
+invalid. A successful `rx8111.write_time` clears those flags.
+
+## Configuration Variables
+
+- **address** (*Optional*, int): Manually specify the I²C address of the RTC. Defaults to `0x32`.
+- **event_poll_interval** (*Optional*, time period): How often to check alarm, timer and EVIN flags, timestamp
+  records, and [binary status sensors](/components/binary_sensor/rx8111/), independently of the calendar
+  `update_interval`. Minimum `500ms`; defaults to `1s`. Configuring a binary status sensor enables polling even
+  when periodic calendar reads are disabled. EVIN event detection alone only enables polling when `on_event` or an
+  [RX8111 timestamp text sensor](/components/text_sensor/rx8111/) is configured; hardware event detection does not
+  require polling.
+- All other options from [Base Time Configuration](/components/time/#base_time_config).
+
+### Backup Power and Clock Output
+
+- **battery_backup** (*Optional*, boolean): Enable the RX8111's automatic switchover to an externally connected
+  backup supply at `VBAT`. Set to `false` to disable switchover and charging and run from `VDD` only. When omitted,
+  the power-switch setting stored in the RTC is left unchanged.
+- **battery_charging** (*Optional*, boolean): Enable the RX8111's backup charging switch. Requires an explicit
+  `battery_backup` setting, and `true` requires `battery_backup: true`. Defaults to `false` when `battery_backup` is
+  set; when both options are omitted, the stored charging setting is left unchanged. **Only enable this with a
+  rechargeable backup supply and a charging circuit designed for that supply. Never enable it with a
+  non-rechargeable coin cell.**
+- **fout_frequency** (*Optional*, string): Set the `FOUT` pin to `32768hz`, `1024hz`, `1hz`, or `off` (high impedance).
+  When omitted, the FOUT setting stored in the RTC is left unchanged. ESPHome does not measure this output; wire `FOUT`
+  to the input that needs the clock. `1hz` stops while the RTC counter is stopped (see `rx8111.write_time` below). If
+  the RTC routes the wake-up timer interrupt to `FOUT`, for example after other firmware set it up that way, the clock
+  output is not enabled and the log shows `FOUT is routed to the wake-up timer (TMPIN); cannot configure clock output`;
+  `off` still works. Starting the timer from this component, at boot or with `rx8111.start_timer`, moves the timer
+  interrupt back to `/INT`, and a failed FOUT setting then gets a fresh set of attempts.
+
+When any of these options is set, it is written at startup without changing unrelated settings. A failed write is
+retried up to three times, one second apart, without delaying startup. If every attempt fails, the component keeps a
+warning (`RX8111 battery configuration failed` or `RX8111 FOUT configuration failed`). A power-on or low-voltage
+reset of the RTC can restore the chip's default power-switch settings; verify supply and charging behavior on your
+board.
+
+```yaml
+time:
+  - platform: rx8111
+    id: rtc
+    battery_backup: true
+    fout_frequency: 1hz
+```
+
+### EVIN Events
+
+The RX8111 can detect when its `EVIN` pin reaches a configured level, even while the host is asleep. All EVIN
+options are opt-in; omitting them and the timestamp text sensor leaves the battery-backed event settings unchanged.
+EVIN needs suitable wiring and a defined idle level. The event callback runs when the latched `EVF` flag is first
+observed; `EVF` is **not cleared automatically**. Clear it after handling the event to release EVIN's hold on `/INT`
+and re-arm the callback. Other pending interrupts may still hold `/INT` low. EVIN, alarm and timer events share the
+same flag read and poll interval.
+
+- **event_enabled** (*Optional*, boolean): Enable EVIN detection (`ETS`), its `/INT` interrupt (`EIE`) and the
+  `on_event` callback. Explicit `false` clears only `EIE`, without clearing `EVF` or disabling retained capture.
+- **on_event** (*Optional*, [Automation](/automations/)): Run once per observed EVF assertion. Requires
+  `event_enabled: true`; use `rx8111.clear_event_flag` to acknowledge the event. A flag retained across a reset
+  is delivered on the first poll after successful configuration.
+- **event_level** (*Optional*, string): Detect `low` (default) or `high` voltage at EVIN. Requires
+  `event_enabled: true` or an [RX8111 timestamp text sensor](/components/text_sensor/rx8111/).
+- **evin_filter** (*Optional*, int): Hardware chattering filter: `0` (off, default), `1` (3.9 ms), `2` (15.6 ms),
+  or `3` (125 ms). Requires `event_enabled: true` or a timestamp text sensor.
+- **evin_pull** (*Optional*, string): `none` (default), `pullup_500k`, `pullup_1m`, `pullup_10m`, or
+  `pulldown_500k`. Select a pull that holds EVIN inactive when external circuitry is not driving it. Requires
+  `event_enabled: true` or a timestamp text sensor.
+
+Captured timestamps are available through the [RX8111 text sensor](/components/text_sensor/rx8111/), which enables
+capture independently of `event_enabled` without enabling its interrupt or `on_event` callback. Timestamp publication
+does not clear `EVF`. `EVF` only latches while the chip's EVIN detection (`ETS`) is on, and turning it on also starts
+the chip's EVIN timestamp capture. Enabling EVIN also makes every timestamp trigger raise an interrupt (`EISEL: 0`),
+replacing a stored setting that interrupts only after eight records. Existing records and unrelated settings are kept.
+Explicit `event_enabled: false` only disables the EVIN interrupt and leaves detection and capture running.
+
+EVIN setup is retried up to three times, one second apart. If every attempt fails, the component keeps the warning
+`RX8111 EVIN configuration failed`; check the log and wiring. A failed `rx8111.clear_event_flag` also leaves a warning
+until that action succeeds; clearing EVF does not dismiss an EVIN configuration failure.
+
+```yaml
+time:
+  - platform: rx8111
+    id: rtc
+    event_enabled: true
+    on_event:
+      then:
+        - rx8111.clear_event_flag: rtc
+```
+
+### Alarm Options
+
+- **alarm_second** (*Optional*, int): Match a second (`0` to `59`).
+- **alarm_minute** (*Optional*, int): Match a minute (`0` to `59`).
+- **alarm_hour** (*Optional*, int): Match an hour (`0` to `23`).
+- **alarm_weekday** (*Optional*, int): Match a weekday (`1` = Sunday through `7` = Saturday). Cannot be combined with
+  `alarm_day`.
+- **alarm_day** (*Optional*, int): Match a day of the month (`1` to `31`). Cannot be combined with `alarm_weekday`.
+- **alarm_enabled** (*Optional*, boolean): Enable the alarm interrupt. Defaults to `true` when at least one alarm
+  matching field is set, and `false` otherwise. Set to `true` when only using runtime alarm actions; `on_alarm`
+  requires the alarm to be enabled. Explicit `false` disables a battery-backed alarm interrupt without clearing AF;
+  omitting this setting leaves a retained interrupt alone.
+- **on_alarm** (*Optional*, [Automation](/automations/)): Run when an alarm flag is observed during event polling.
+
+Only the specified fields are matched. For example, `alarm_hour: 7` and `alarm_minute: 30` match every day at 07:30.
+An alarm configured in YAML is programmed at startup. An alarm set by an action is retained across reboot while
+`alarm_enabled: true` and no fixed matching fields are configured. Events are checked at `event_poll_interval`,
+independently of calendar updates; choose an interval appropriate for your response time. The alarm flag (AF)
+remains set until explicitly cleared, and `on_alarm` runs only once per newly observed event. Clear AF to allow the
+next matching event to trigger. A flag latched before boot (including one that woke the device) is reported once;
+an alarm already latched when a runtime action reprograms the alarm is not treated as a new event.
+
+```yaml
+time:
+  - platform: rx8111
+    id: rtc
+    alarm_hour: 7
+    alarm_minute: 30
+    on_alarm:
+      then:
+        - logger.log: "RX8111 alarm fired"
+        - rx8111.clear_alarm_flag: rtc
+```
+
+### Wake-Up Timer Options
+
+- **timer_count** (*Optional*, int): Timer reload value from `1` to `16777215` (24 bits). Required when
+  `timer_enabled: true` or `on_timer` is configured; also configure it to use `rx8111.start_timer`.
+- **timer_clock** (*Optional*, string): Clock source: `4096hz`, `64hz`, `1hz` (default), or `1_60hz` (one tick per
+  minute). The timer period is `timer_count` divided by the clock frequency.
+- **timer_enabled** (*Optional*, boolean): Enable the timer interrupt. Defaults to `true` when `timer_count` or
+  `on_timer` is configured. An explicit `false` stops the battery-backed timer at startup; omitting the timer
+  configuration leaves its stored settings alone.
+- **on_timer** (*Optional*, [Automation](/automations/)): Run when a timer flag is observed during event polling.
+
+The timer repeats at the configured period. Its timer flag (TF) remains set until explicitly cleared. `on_timer`
+fires once per newly observed flag, including a flag latched before boot. With `timer_count` and
+`timer_enabled: false`, a retained TF is still reported once at boot while the counter remains stopped. Clear TF after
+handling the event to receive further callbacks. Polling cannot distinguish multiple expirations while TF remains
+latched: choose a timer period longer than `event_poll_interval` if every expiration matters.
+
+Starting the timer at boot or with `rx8111.start_timer` clears retained `TSTP`, `TBKE`, `TBKON` and `TMPIN`
+settings: the timer counts in both normal and backup operation and routes interrupt pulses to `/INT`, not FOUT.
+Omitting timer configuration leaves the stored timer mode unchanged.
+
+```yaml
+time:
+  - platform: rx8111
+    id: rtc
+    timer_count: 60
+    on_timer:
+      then:
+        - logger.log: "RX8111 timer fired"
+        - rx8111.clear_timer_flag: rtc
+```
+
+### Waking the Device
+
+Events are detected by polling over I²C, so they only run automations while the device is awake. Enabled alarm
+and EVIN interrupts hold the open-drain `/INT` output low until their flags are cleared or their interrupts disabled.
+To wake a device from [Deep Sleep](/components/deep_sleep/), connect `/INT` to a GPIO and use it as the `wakeup_pin`
+with a low `wakeup_pin_mode`; the flag that woke the device is reported once after boot.
+
+Timer interrupts are different: `/INT` produces a pulse and automatically returns inactive, even while TF remains
+set. A latched TF does not hold the wake pin low. Check that the timer interrupt pulse duration for the selected
+clock meets your hardware's wake-input requirements; do not rely on a persistent timer wake level.
+
+> [!NOTE]
+> If a startup alarm, timer or EVIN write fails, it is retried up to three times, one second apart, without delaying
+> startup. After the last failure the component keeps a warning and does not assume the configuration took effect.
+> Runtime alarm and timer actions are not retried; a newer action replaces a pending startup retry for the same
+> feature. Latched flags are kept across retries.
+
+## `rx8111.write_time` Action
+
+This [Action](/automations/actions/#config-action) writes the current system time to the RTC. It needs a valid
+system time with a year from 2019 to 2099. A successful write clears the RTC's time-validity flags and keeps its
+alarm, timer, update and event flags.
+
+The counter is stopped while the time is written. If writing the calendar, clearing the validity flags or
+restarting the counter fails, the counter stays stopped and the component logs a warning; nothing restarts it later,
+because the written time would then be behind real time. Reads refuse to synchronize the system clock while the
+counter is stopped, also after a reset of the device. The warning remains until a new `rx8111.write_time` with
+trusted system time succeeds.
+
+> [!NOTE]
+> The RX8111 component will *not* write to the RTC unless triggered *explicitly* by this action.
+
+```yaml
+on_...:
+  - rx8111.write_time
+
+  # in case you need to specify the RX8111 id
+  - rx8111.write_time:
+      id: rtc
+```
+
+## `rx8111.read_time` Action
+
+This [Action](/automations/actions/#config-action) reads the RTC and synchronizes the system clock when the time
+read is valid, in addition to the reads at the `update_interval`.
+
+```yaml
+on_...:
+  - rx8111.read_time
+
+  # in case you need to specify the RX8111 id
+  - rx8111.read_time:
+      id: rtc
+```
+
+## Alarm Actions
+
+Use `rx8111.set_alarm` to replace the matching fields at runtime. Supply at least one of `second` (`0`–`59`), `minute`
+(`0`–`59`), `hour` (`0`–`23`), `weekday` (`1`–`7`, Sunday first), or `day` (`1`–`31`). Omitted fields do not participate
+in matching; `weekday` and `day` cannot be used together. These fields also accept [templatable
+values](/automations/templates/). Enable the alarm with `alarm_enabled: true` if no fixed alarm fields are configured.
+
+`rx8111.schedule_alarm_in` programs an alarm relative to the RTC's current UTC time. Its `duration`
+([Time](/guides/configuration-types/#time), [templatable](/automations/templates/)) must be at least one second and
+less than 28 days; a template returns the number of seconds and is checked at runtime. The RTC must contain valid
+time. The action matches the target second, minute, hour and day of month; after it fires, use `rx8111.unset_alarm`
+to disable it if you do not want the same day-of-month match later.
+
+`rx8111.clear_alarm_flag` clears AF without disabling the alarm. `rx8111.unset_alarm` disables the alarm interrupt
+and removes all matching fields; it does not clear AF. Each action accepts an RX8111 `id` in the same way as
+`rx8111.read_time`.
+
+```yaml
+on_...:
+  - rx8111.set_alarm:
+      id: rtc
+      hour: 7
+      minute: 30
+  - rx8111.schedule_alarm_in:
+      id: rtc
+      duration: 5min
+  - rx8111.clear_alarm_flag: rtc
+  - rx8111.unset_alarm: rtc
+```
+
+## Timer Actions
+
+`rx8111.start_timer` restarts the full interval using the configured `timer_count` and `timer_clock`; it cannot change
+either at runtime. It also clears any old TF flag before enabling the timer, so a previous expiration will not fire
+`on_timer` immediately. Configure `timer_count` and set `timer_enabled: false` to keep the timer stopped at boot until
+an automation starts it. `rx8111.stop_timer` disables both the counter and its interrupt without clearing TF.
+`rx8111.clear_timer_flag` clears TF without stopping the counter; use it after handling `on_timer` to allow a later
+expiration to trigger another callback. Each action accepts the RX8111 `id`.
+
+```yaml
+on_...:
+  - rx8111.start_timer: rtc
+  - rx8111.clear_timer_flag: rtc
+  - rx8111.stop_timer: rtc
+```
+
+## `rx8111.clear_event_flag` Action
+
+This action clears only the EVIN event flag (EVF). Clearing EVF releases EVIN's `/INT` assertion and allows
+`on_event` to fire on the next event; it does not clear captured timestamp records.
+
+```yaml
+on_...:
+  - rx8111.clear_event_flag: rtc
+```
+
+## Full Configuration Example
+
+The RTC is read once at boot, and written whenever Home Assistant provides a trusted time.
+
+```yaml
+time:
+  - platform: rx8111
+    id: rtc
+    update_interval: never
+  - platform: homeassistant
+    on_time_sync:
+      then:
+        - rx8111.write_time: rtc
+```
+
+## See Also
+
+- [RX8111 Binary Sensor](/components/binary_sensor/rx8111/)
+- [RX8111 Event Timestamp](/components/text_sensor/rx8111/)
+- [Time Component](/components/time/)
+- [I²C Bus](/components/i2c/)

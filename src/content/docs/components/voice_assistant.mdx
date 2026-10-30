@@ -45,6 +45,13 @@ voice_assistant:
 - **use_wake_word** (*Optional*, boolean): Enable wake word on the assist pipeline. Defaults to `false`.
 - **conversation_timeout** (*Optional*, [Time](/guides/configuration-types#time)): How long to wait before resetting the `conversation_id`
   sent to the voice assist pipeline, which contains the context of the current assist pipeline. Defaults to `300s`.
+- **tts_playback_start_timeout** (*Optional*, [Time](/guides/configuration-types/#time)): How long to wait for TTS
+  playback to start before considering the response finished. Must be at least `1ms`. Defaults to `2s`.
+  Increase this if a slow TTS engine, such as XTTS, causes the response to finish before playback starts.
+  On the speaker path without an end-of-stream event, this timer is also restarted while audio is playing.
+  The response then finishes after the speaker stops and this timeout expires. A larger value therefore also delays
+  returning to idle or listening for the next turn. Explicit stream-end events and media-player completion do not
+  rely on this timeout.
 
 - **on_intent_start** (*Optional*, [Automation](/automations)): An automation to perform when intent processing starts.
 - **on_intent_progress** (*Optional*, [Automation](/automations)): An automation to perform when intent progress happens.
@@ -68,10 +75,11 @@ voice_assistant:
   available to automations as the variable `x`.
 
 - **on_stt_vad_start** (*Optional*, [Automation](/automations)): An automation to perform when voice activity
-  detection starts speech-to-text processing.
+  detection starts speech-to-text processing. Some speech-to-text providers do not send this event.
 
 - **on_stt_vad_end** (*Optional*, [Automation](/automations)): An automation to perform when voice activity
-  detection ends speech-to-text processing.
+  detection ends speech-to-text processing. Some speech-to-text providers do not send this event, so consider using
+  `on_stt_end` instead.
 
 - **on_tts_start** (*Optional*, [Automation](/automations)): An automation to perform
   when the voice assistant has started text-to-speech. The text to be spoken is

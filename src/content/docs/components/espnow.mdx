@@ -5,11 +5,25 @@ title: "ESPNow communication Component"
 import APIStruct from '@components/APIStruct.astro';
 import APIRef from '@components/APIRef.astro';
 
-The ESPNow component allows ESPHome to communicate with ESP32 devices in a simple and unrestricted way.
-It enables the option to interact with other ESP32 devices over Espressif's ESP-NOW protocol, see
+The ESPNow component allows ESPHome to communicate with ESP32 and ESP8266 devices in a simple and unrestricted way.
+It enables the option to interact with other ESP32 and ESP8266 devices over Espressif's ESP-NOW protocol, see
 [documentation](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/network/esp_now.html).
 It can be used with the [Packet Transport Component](/components/packet_transport) to share
 sensor data; see [ESP-NOW Packet Transport Platform](/components/packet_transport/espnow).
+
+> [!NOTE]
+> ESP-NOW is a Wi-Fi-based protocol, so it is native to ESP32 variants that have their own Wi-Fi radio. The ESP32-P4
+> has no radio of its own; there it instead requires the [ESP32 Hosted](/components/esp32_hosted/) component with a
+> co-processor running ESP-NOW-capable firmware; adding `esp32_hosted:` enables the ESP-NOW path automatically. On
+> variants that lack Wi-Fi and have no such path (for example the ESP32-H2, which has an 802.15.4 and Bluetooth LE
+> radio but no Wi-Fi), ESP-NOW is not available and the configuration will fail validation.
+>
+> The ESP8266 is supported with the limits of its SDK: payloads stay at 250 bytes, received packets carry no signal
+> strength (`info.rx_ctrl->rssi` is `0`) and no destination address, so [`on_broadcast`](#espnow-on_broadcast) is not
+> available there and broadcasts reach [`on_receive`](#espnow-on_receive) like any other packet. Without a `wifi:`
+> configuration the component keeps a hidden soft-AP running, which the SDK requires before it delivers broadcasts.
+> When `wifi:` runs in access point only mode the device sends from its soft-AP MAC address, and that is the address
+> peers must use.
 
 ```yaml
 # Example configuration entry
@@ -25,30 +39,34 @@ espnow:
 - **max_payload_size** (*Optional*, int): The largest payload, in bytes, this device can send and receive in one frame.
   Values above `250` use ESP-NOW v2 frames (up to `1470` bytes), only work with peers that also support them, and
   reserve proportionally more RAM for packet buffers. This only sizes this device's buffers; the protocol version
-  itself is negotiated with each peer automatically. Defaults to `250`.
+  itself is negotiated with each peer automatically. Defaults to `250`. Only `250` is accepted on the ESP8266.
 - **peers** (*Optional*, list of MAC Address): The list of MAC addresses of the devices that this device is allowed to
   communicate with. See [Peers](#peers) below.
 
 Automations:
 - **on_receive** (*Optional*, [Automation](/automations)): An automation to perform when a directed (non-broadcast) packet is
-  received from a registered peer. May be specified multiple times. See [`on_receive`](#espnow-on_receive).
+  received from a registered peer (on the ESP8266, broadcasts as well). May be specified multiple times. See
+  [`on_receive`](#espnow-on_receive).
 - **on_unknown_peer** (*Optional*, [Automation](/automations)): An automation to perform when a packet is received from a
   device that is not registered as a peer. See [`on_unknown_peer`](#espnow-on_unknown_peer).
 - **on_broadcast** (*Optional*, [Automation](/automations)): An automation to perform when a broadcast packet is received.
-  May be specified multiple times. See [`on_broadcast`](#espnow-on_broadcast).
+  May be specified multiple times. See [`on_broadcast`](#espnow-on_broadcast). Only on ESP32.
 
 ## Automations
-All three triggers (`on_receive`, `on_unknown_peer`, and `on_broadcast`) expose the same three lambda variables describing
-the received packet:
+All three triggers (`on_receive`, `on_unknown_peer`, and `on_broadcast`; the last is ESP32 only) expose the same three
+lambda variables describing the received packet:
 
-- **info** (<APIStruct text="espnow::ESPNowRecvInfo" path="espnow::ESPNowRecvInfo" />): Information about the received
+- `info`: <APIStruct text="espnow::ESPNowRecvInfo" path="espnow::ESPNowRecvInfo" /> with information about the received
   packet. The most useful members are:
   - `info.src_addr` — `uint8_t[6]` source MAC address of the packet.
-  - `info.des_addr` — `uint8_t[6]` destination MAC address (will be `FF:FF:FF:FF:FF:FF` for broadcasts).
-  - `info.rx_ctrl` — pointer to a Wi-Fi `wifi_pkt_rx_ctrl_t` structure containing low-level reception details such as
-    `info.rx_ctrl->rssi` (signal strength in dBm).
-- **data**: A `const uint8_t *` pointer to the received payload.
-- **size**: A `uint16_t` giving the length of the payload in bytes.
+  - `info.des_addr` — `uint8_t[6]` destination MAC address (will be `FF:FF:FF:FF:FF:FF` for broadcasts, and all
+    zeros on the ESP8266, whose SDK does not report it).
+  - `info.rx_ctrl` — pointer to low-level reception details. On the ESP32 this is the SDK's `wifi_pkt_rx_ctrl_t`
+    structure, with fields such as `info.rx_ctrl->rssi` (signal strength in dBm). On the ESP8266 it is a small
+    ESPHome structure with only `rssi` and `timestamp`; `rssi` is always `0` there and the other `wifi_pkt_rx_ctrl_t`
+    fields do not exist.
+- `data`: A `const uint8_t *` pointer to the received payload.
+- `size`: A `uint16_t` giving the length of the payload in bytes.
 
 These variables are only valid for the duration of the synchronous part of the automation. If the automation
 includes any asynchronous actions (such as `delay`), the underlying memory may have been recycled by the time the
@@ -72,7 +90,8 @@ espnow:
 ### `on_receive`
 This automation is triggered when a directed (non-broadcast) packet is received from a peer that is registered in the
 internal peer list. Broadcast packets are dispatched to [`on_broadcast`](#espnow-on_broadcast) instead, and packets
-from unregistered peers are dispatched to [`on_unknown_peer`](#espnow-on_unknown_peer).
+from unregistered peers are dispatched to [`on_unknown_peer`](#espnow-on_unknown_peer). On the ESP8266 the SDK does
+not report the destination address, so broadcasts are delivered to `on_receive` as well.
 
 Multiple `on_receive` automations may be configured; each can optionally filter on the source address. They are
 evaluated in the order they are declared.
@@ -101,7 +120,8 @@ espnow:
 This automation is triggered when a packet is received from a device whose MAC address is not in the registered peer
 list. It gives the configuration an opportunity to inspect the packet and decide whether to register the sender as a
 peer (typically by calling the [`espnow.peer.add`](#espnow-peer-add-action) action). If the peer is added during the
-trigger, the same packet is then delivered to `on_receive` (or `on_broadcast`) before the next packet is processed.
+trigger, the same packet is then delivered to `on_receive` (or, on the ESP32, `on_broadcast` for broadcasts) before the
+next packet is processed.
 
 If no `on_unknown_peer` automation is configured, the packet is silently dropped unless `auto_add_peer` is set to
 `true`, in which case the sender is added to the peer list and the packet is delivered to `on_receive` or
@@ -131,7 +151,8 @@ registered peer. Broadcasts from devices that are not registered peers are dispa
 [`on_unknown_peer`](#espnow-on_unknown_peer) first; once the peer has been added, broadcasts from it will
 reach this trigger.
 
-Multiple `on_broadcast` automations may be configured; each can optionally filter on the source address.
+Multiple `on_broadcast` automations may be configured; each can optionally filter on the source address. This trigger
+is not available on the ESP8266, whose SDK does not report whether a packet was a broadcast.
 
 #### Configuration variables
 - **address** (*Optional*, MAC Address): Only fire this trigger when the packet's source address matches. If not set,
@@ -258,8 +279,9 @@ on_...:
 ## Peers
 A peer is a device that this device is allowed to send to. Broadcast and unencrypted unicast data can be received from
 any device without explicitly adding it as a peer; however, only packets whose source address is in the registered peer
-list are delivered to the [`on_receive`](#espnow-on_receive) and [`on_broadcast`](#espnow-on_broadcast) triggers.
-Packets from any other device are first offered to [`on_unknown_peer`](#espnow-on_unknown_peer).
+list are delivered to the [`on_receive`](#espnow-on_receive) and [`on_broadcast`](#espnow-on_broadcast) triggers
+(`on_receive` alone on the ESP8266). Packets from any other device are first offered to
+[`on_unknown_peer`](#espnow-on_unknown_peer).
 
 If `auto_add_peer` is set to `false` and you have not added any peers, then only broadcasts can be sent and there
 will be an error when trying to send data to a non-broadcast address.
@@ -297,4 +319,5 @@ over unicast and broadcast.
 
 ## See Also
 - [ESP-NOW Packet Transport Platform](/components/packet_transport/espnow/)
+- [ESP32 Hosted](/components/esp32_hosted/)
 - <APIRef text="espnow.h" path="espnow/espnow.h" />

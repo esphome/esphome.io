@@ -19,6 +19,12 @@ globals:
     restore_value: yes
     max_restore_data_length: 24
     initial_value: '"Global value is"'
+  # Kept across deep sleep and restarts without wearing the flash
+  - id: my_wake_count
+    type: int
+    restore_value: yes
+    storage: rtc
+    initial_value: '0'
 
  # In an automation
  on_...:
@@ -43,7 +49,22 @@ globals:
   `int` (for integers), `float` (for decimal numbers), `int[50]` for an array of 50 integers, etc.
 
 - **restore_value** (*Optional*, boolean): Whether to try to restore the state on boot up.
-  Be careful: on the ESP8266, you only have a total of 96 bytes available for this! Defaults to `no`.
+  Be careful: on the ESP8266, RTC memory holds only 96 bytes in total for all restored values! Restored
+  `std::string` globals count toward that at build time, so a configuration that would not fit is rejected instead
+  of failing to save on the device. Defaults to `no`.
+
+- **storage** (*Optional*, string): Where the value is saved. Only valid when `restore_value` is `yes`. One of:
+
+  - `flash`: survives a power loss, but every save wears the flash a little, so it suits values that change rarely.
+  - `rtc`: RTC memory, which survives software restarts, crashes and deep sleep but **not** a power loss, and avoids
+    flash wear, so it suits values that change often. On the original ESP32 the hardware reset button (the EN pin)
+    also clears RTC memory.
+
+  Defaults to `flash` on the ESP32, and on the ESP8266 to `rtc` unless `restore_from_flash: true` is set on the
+  [ESP8266 platform](/components/esp8266/), which keeps the behaviour from before this option existed. `rtc` is
+  available on the ESP32 (except the C2 and C61 variants, which have no RTC memory), the ESP8266 and the Beken
+  BK7231T, BK7231N and BK7238; elsewhere only `flash` is available and `rtc` is rejected. These Beken chips have no
+  RTC memory: there `rtc` keeps the value in flash and forgets it after a power cut, so it does not avoid flash wear.
 
 - **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval
   to check if the value has changed and needs to be saved. Only applies when `restore_value` is `yes`.

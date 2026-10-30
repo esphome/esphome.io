@@ -1,0 +1,117 @@
+---
+description: "Instructions for setting up the Hi-Link HLK-LD2460 multi-target tracking radar sensor in ESPHome."
+title: "LD2460 Sensor"
+---
+
+import Figure from '@components/Figure.astro';
+import APIRef from '@components/APIRef.astro';
+
+## Component
+
+The `ld2460` component allows you to use the Hi-Link HLK-LD2460 24GHz 2T4R millimeter-wave radar module with
+ESPHome. The module is made by [Hi-Link](https://www.hlktech.net/) (vendor website).
+
+The LD2460 is an intelligent multi-target trajectory tracking sensor module. It can simultaneously detect and track
+the trajectory and position of up to 5 moving human targets in real-time, measuring distance, angle, and 2D planar
+coordinates ($X, Y$).
+
+The component currently offers the [sensor platform](#sensor) only.
+
+- [HLK-LD2460 serial protocol V1.0 (English translation)](https://revspace.nl/images/2/2c/HLK-LD2460%E4%B8%B2%E5%8F%A3%E5%8D%8F%E8%AE%AEV1.0_translated.pdf)
+- [HLK-LD2460 manuals and protocol on the vendor's Google Drive](https://drive.google.com/drive/folders/1JkImVaRfSgP8taq5W4aW_bCxlcqeHVan)
+
+<Figure
+  src="/images/ld2460.jpg"
+  alt="HLK-LD2460 radar module"
+  caption="HLK-LD2460 24GHz 2T4R multi-target trajectory tracking radar module"
+  layout="constrained"
+  width={300}
+  height={300}
+/>
+
+The [UART](/components/uart/) bus must be configured for communication, with both the TX and RX pins connected.
+Use of a hardware UART is recommended. The default baud rate of the LD2460 module is `115200` with 8 data bits,
+no parity, and 1 stop bit.
+
+```yaml
+# Example configuration entry
+ld2460:
+  id: ld2460_radar
+```
+
+### Configuration Variables
+
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID for this LD2460 component.
+- **uart_id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID of the
+  [UART Component](/components/uart/) to use. Required if multiple UARTs are configured.
+- **on_data** (*Optional*, [Automation](/automations/)): An action or automation to perform after each report frame
+  is received and decoded. It passes no variables. The module sends report frames continuously,
+  so this runs very often; keep the automation short.
+
+```yaml
+ld2460:
+  id: ld2460_radar
+  on_data:
+    then:
+      - logger.log: "Frame received"
+```
+
+## Sensor
+
+The `ld2460` sensor platform exposes the target count and real-time tracking data for up to 5 detected targets.
+
+```yaml
+sensor:
+  - platform: ld2460
+    ld2460_id: ld2460_radar
+    target_count:
+      name: "Target Count"
+    target_1:
+      x:
+        name: "Target 1 X"
+      y:
+        name: "Target 1 Y"
+      distance:
+        name: "Target 1 Distance"
+      angle:
+        name: "Target 1 Angle"
+    # target_2 to target_5 follow the same shape
+```
+
+### Configuration Variables
+
+- **ld2460_id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID of the parent LD2460
+  component. Required if multiple LD2460 components are configured.
+- **target_count** (*Optional*): Total number of targets currently detected (0 to 5).
+  All options from [Sensor](/components/sensor/).
+- **target_1**, **target_2**, **target_3**, **target_4**, **target_5** (*Optional*): Tracking data for one target.
+  Each accepts the following sensors:
+  - **x** (*Optional*): Position in meters across the face of the module (left and right), in 0.1 m steps. Negative
+    values are to the left, positive values to the right. All options from [Sensor](/components/sensor/).
+  - **y** (*Optional*): Position in meters along the module's forward axis, in 0.1 m steps. The module reports
+    it as a signed value: positive in front of a side-mounted module, and either sign across the floor under a
+    top-mounted one.
+    All options from [Sensor](/components/sensor/).
+  - **distance** (*Optional*): Straight-line distance from the radar to the target ($\sqrt{X^2 + Y^2}$) in meters.
+    All options from [Sensor](/components/sensor/).
+  - **angle** (*Optional*): Target angle in degrees. All options from [Sensor](/components/sensor/).
+
+When a target is no longer tracked, its sensors report an unknown state.
+
+### Target Angle
+
+The way the angle is calculated depends on how the module is mounted. The component reads the installation mode
+from the module at boot:
+
+- **Side** (wall mounted): 0° is straight out from the module (along +Y) and positive angles are towards +X.
+  The range is about -90° to 90°.
+- **Top** (ceiling mounted): 0° is along +X and the angle increases towards +Y. The range is 0° to 360°.
+
+## See Also
+
+- [LD2410 Sensor](/components/sensor/ld2410/)
+- [LD2412 Sensor](/components/sensor/ld2412/)
+- [LD2420 Sensor](/components/sensor/ld2420/)
+- [LD2450 Sensor](/components/sensor/ld2450/)
+- [UART Bus](/components/uart/)
+- <APIRef text="ld2460.h" path="ld2460/ld2460.h" />

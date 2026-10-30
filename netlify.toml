@@ -17,21 +17,35 @@
 
 # Purge Cloudflare CDN cache after successful deploy.
 [[plugins]]
-  package = "./plugins/cloudflare-cache-purge"
+  package = "@esphome/netlify-plugin-cloudflare-cache-purge"
 
 # Default caching for all pages (HTML and everything else)
-# Browser: 1 hour, Cloudflare CDN: 1 week, serve stale while revalidating
+# Browser: revalidate every load (a cheap 304 from Cloudflare, so deploys and fixed 404s
+# show at once), Cloudflare CDN: 1 week, purged per changed URL on deploy
 # Using /* as a catch-all since /*.html only matches single-level paths
 [[headers]]
   for = "/*"
   [headers.values]
-    Cache-Control = "public, max-age=3600, stale-while-revalidate=86400"
+    Cache-Control = "public, max-age=0, must-revalidate"
     Cloudflare-CDN-Cache-Control = "public, max-age=604800, stale-while-revalidate=86400"
     Link = '</sitemap-index.xml>; rel="index"; type="application/xml", </components.json>; rel="describedby"; type="application/json"'
 
 # Fingerprinted assets (Astro build output in /_astro/) - 1 year, immutable
 [[headers]]
   for = "/_astro/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+    Cloudflare-CDN-Cache-Control = "public, max-age=31536000, immutable"
+
+# Fingerprinted Pagefind search index files - 1 year, immutable
+[[headers]]
+  for = "/pagefind/fragment/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+    Cloudflare-CDN-Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/pagefind/index/*"
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
     Cloudflare-CDN-Cache-Control = "public, max-age=31536000, immutable"
@@ -125,6 +139,21 @@ status = 301
 [[redirects]]
   from = "/components/online_image*"
   to = "/components/image/online_image/"
+  status = 301
+
+[[redirects]]
+  from = "/components/esp32_improv.html"
+  to = "/components/improv_ble/"
+  status = 301
+
+[[redirects]]
+  from = "/components/esp32_improv/"
+  to = "/components/improv_ble/"
+  status = 301
+
+[[redirects]]
+  from = "/components/esp32_improv"
+  to = "/components/improv_ble/"
   status = 301
 
 [[redirects]]
@@ -467,6 +496,11 @@ status = 301
 [[redirects]]
   from = "/guides/installing_esphome"
   to = "/install/"
+  status = 301
+
+[[redirects]]
+  from = "/components/media_player/i2s_audio*"
+  to = "/components/media_player/speaker/"
   status = 301
 
 # Starlight URL compatibility - trailing slash redirects

@@ -47,13 +47,102 @@ light:
 - **flash_transition_length** (*Optional*, [Time](/guides/configuration-types#time)): The transition length to use when flash is called.
   Defaults to `0s`.
 
-- **initial_state** (*Optional*): The initial state the light should be set to on bootup. This state will be applied
-  when the state is **not** restored based on `restore_mode` (below).
+- **transition_state_publish_interval** (*Optional*, [Time](/guides/configuration-types#time)): How often to publish
+  the light's state while a transition or flash is running, so Home Assistant and other clients can follow a long
+  fade. The starting state is published when the call is made, intermediate states at this interval, and the final
+  state once at the end; the `on_state` trigger fires for each of them. Calls made during the fade still start from
+  the fade's target, and `save: true` saves the target. Not available on addressable lights. Minimum is `150ms`;
+  `200ms` to `250ms` works well. When not set, only the target state is published, once, when the call is made.
+
+- **initial_state** (*Optional*): The initial state the light should be set to on bootup, applied before any state
+  is restored via `restore_mode` or `restore_state` (below). If restoring is configured and a previous state is
+  successfully loaded, the loaded (and, for `restore_state`, possibly overridden) values take precedence over
+  **initial_state** for the fields they touch.
+
+  If neither `restore_mode` nor `restore_state` is set, **initial_state**'s `state` is honored as-is on every
+  boot. If `restore_mode` **is** set, its own cold-boot direction (`OFF` for `RESTORE_DEFAULT_OFF`,
+  `RESTORE_INVERTED_DEFAULT_OFF`, `RESTORE_AND_OFF` and `ALWAYS_OFF`; `ON` for the other four values) always
+  overrides **initial_state**'s `state`.
+
+  > [!WARNING]
+  > Before 2026.10.0, a light whose `initial_state` set `state: ON` and had neither `restore_mode` nor `restore_state`
+  > set would still boot OFF, because omitting both keys implicitly behaved like `restore_mode: ALWAYS_OFF`.
+  > This was counter-intuitive and has been fixed: such a light now boots ON, as `initial_state` says.
 
   - **state** (*Optional*, boolean, [templatable](/automations/templates)): The ON/OFF state for the light.
+  - **effect** (*Optional*, string): The name of the [effect](#light-effects) to start with, so the light can come up
+    already running an effect without an `on_boot` automation. Must match the name of one of the effects defined on
+    the same light, or `none` for no effect.
+    - It applies on a cold boot only; a state restored from flash keeps its own effect.
+    - The effect starts when the light boots ON. A light that boots OFF starts it at the first turn-on when
+      `resume_effect` (below) is set; otherwise it is not started, and config validation warns when the boot state
+      is known at build time (a `state` lambda is only known at boot, so there is no warning for it).
+    - Turning the light off stops the running effect, so without `resume_effect` an effect does not come back by
+      itself the next time the light is turned on.
   - All other options from [light state](#light-state).
 
-- **restore_mode** (*Optional*): Control how the light attempts to restore state on bootup.
+  If **color_mode** is not given but color fields such as `red` or `brightness` are, the light uses the first
+  color mode it supports that provides those fields (for example `RGB` for `red`, `green` and `blue`).
+
+- **restore_state** (*Optional*): Persist the light's state to flash and restore it on bootup, with optional
+  per-field overrides applied on top of whatever was loaded. Mutually exclusive with `restore_mode`. Accepts
+  a mapping of per-field overrides, or one of two case-insensitive shorthands: `all` or `none`.
+
+  If nothing has been saved yet (e.g. on the very first boot), restoring has nothing to do, so the light falls
+  back to **initial_state** (or its hardware defaults) instead — none of the fields below take effect until a
+  state has actually been persisted at least once.
+
+  - **state** (*Optional*, string or boolean): `KEEP` (default, case-insensitive) to restore the saved ON/OFF
+    state as-is, `INVERT` to restore it inverted, `INITIAL` to use **initial_state**'s state instead (OFF if
+    **initial_state** doesn't set one), or an explicit `ON`/`OFF` (or boolean) to always force this value
+    regardless of what was saved.
+  - All other options from [light state](#light-state), each defaulting to `KEEP` (case-insensitive): restore
+    the saved value for that field as-is. Set any of them to `INITIAL` to use **initial_state**'s value for
+    that field instead (or its hardware default, if **initial_state** doesn't set it either), or to an
+    explicit value to always force that value — either way, regardless of what was saved.
+
+  ```yaml
+  # Restore everything exactly as it was last saved -- "all" is shorthand for {}
+  light:
+    - platform: ...
+      restore_state: all
+  ```
+
+  ```yaml
+  # Explicitly disable restoring -- equivalent to omitting restore_state: entirely.
+  # Useful when the value comes from a substitution or package that might resolve to
+  # "all", "none", or a mapping.
+  light:
+    - platform: ...
+      restore_state: none
+  ```
+
+  ```yaml
+  # Restore color/brightness as saved, but always come back on
+  light:
+    - platform: ...
+      restore_state:
+        state: ON
+  ```
+
+  ```yaml
+  # Restore color as saved, but always come back at the brightness configured in
+  # initial_state: (here, 50%) rather than whatever brightness was last saved
+  light:
+    - platform: ...
+      initial_state:
+        brightness: 50%
+      restore_state:
+        brightness: INITIAL
+  ```
+
+- **restore_mode** (*Optional*): Control how the light attempts to restore state on bootup. Mutually exclusive
+  with `restore_state`.
+
+  > [!WARNING]
+  > `restore_mode` is deprecated in favor of `restore_state` (above), which offers the same behavior plus
+  > per-field control. `restore_mode` is not currently scheduled for removal and all 8 values below continue
+  > to work as described.
 
   - `RESTORE_DEFAULT_OFF` - Attempt to restore state and default to OFF if not possible to restore.
   - `RESTORE_DEFAULT_ON` - Attempt to restore state and default to ON.
@@ -61,8 +150,73 @@ light:
   - `RESTORE_INVERTED_DEFAULT_ON` - Attempt to restore state inverted from the previous state and default to ON.
   - `RESTORE_AND_OFF` - Attempt to restore state but initialize the light as OFF.
   - `RESTORE_AND_ON` - Attempt to restore state but initialize the light as ON.
-  - `ALWAYS_OFF` (Default) - Always initialize the light as OFF on bootup.
+  - `ALWAYS_OFF` - Always initialize the light as OFF on bootup.
   - `ALWAYS_ON` - Always initialize the light as ON on bootup.
+
+  To migrate from `restore_mode` to `restore_state`, replace it with the equivalent configuration below. For the
+  `*_OFF` values this assumes **initial_state** does not set `state: ON`; remove that if it does, since
+  `restore_state` and "set neither" honor **initial_state** where `restore_mode` overrode it.
+
+  `RESTORE_DEFAULT_OFF`:
+
+  ```yaml
+  restore_state: all
+  ```
+
+  `RESTORE_DEFAULT_ON`:
+
+  ```yaml
+  initial_state:
+    state: ON
+  restore_state: all
+  ```
+
+  `RESTORE_INVERTED_DEFAULT_OFF`:
+
+  ```yaml
+  restore_state:
+    state: INVERT
+  ```
+
+  `RESTORE_INVERTED_DEFAULT_ON`:
+
+  ```yaml
+  initial_state:
+    state: ON
+  restore_state:
+    state: INVERT
+  ```
+
+  `RESTORE_AND_OFF`:
+
+  ```yaml
+  restore_state:
+    state: OFF
+  ```
+
+  `RESTORE_AND_ON`:
+
+  ```yaml
+  initial_state:
+    state: ON
+  restore_state:
+    state: ON
+  ```
+
+  `ALWAYS_OFF`: set neither `restore_mode` nor `restore_state`.
+
+  `ALWAYS_ON`: set neither `restore_mode` nor `restore_state`, and:
+
+  ```yaml
+  initial_state:
+    state: ON
+  ```
+
+- **resume_effect** (*Optional*, boolean): Remember the effect that was running when the light was turned off,
+  and start it again when the light is next turned on with a plain turn-on. A turn-on that also sets an effect,
+  brightness, color or transition uses those instead. On a light that boots OFF, the effect from **initial_state**
+  counts as the remembered effect. The remembered effect is kept in memory only, so it is lost on reboot. Defaults
+  to `false`.
 
 - **on_turn_on** (*Optional*, [Action](/automations/actions#all-actions)): An automation to perform when the light is turned on. See
   [`light.on_turn_on` / `light.on_turn_off` Trigger](#light-on_turn_on_off_trigger).
@@ -81,6 +235,27 @@ light:
 
 - **power_supply** (*Optional*, [ID](/guides/configuration-types#id)): The [Power Supply](/components/power_supply/) to connect to this light. When
   the light is turned on, the power supply will automatically be switched on too.
+
+- **power_estimation** (*Optional*): Estimate the strip's current draw and, with `max_current_ma`, keep it
+  within a budget. It applies to every addressable platform, for example `esp32_rmt_led_strip`, `neopixelbus`
+  and `fastled_clockless`, and belongs on the strip itself, not on a [partition](/components/light/partition/):
+  the strip's limit covers every partition drawn on it. See
+  [Addressable Light Power Estimation](#addressable-light-power-estimation) for details.
+
+  - **ma_per_led_red** (*Optional*, float): Current drawn by a single LED at full red brightness, in mA.
+    Defaults to `20.0`.
+  - **ma_per_led_green** (*Optional*, float): Current drawn by a single LED at full green brightness, in mA.
+    Defaults to `20.0`.
+  - **ma_per_led_blue** (*Optional*, float): Current drawn by a single LED at full blue brightness, in mA.
+    Defaults to `20.0`.
+  - **ma_per_led_white** (*Optional*, float): Current drawn by a single LED at full white brightness, in mA
+    (only relevant for RGBW strips). Defaults to `20.0`.
+  - **idle_ma_per_led** (*Optional*, float): Current drawn by a single LED on top of its channels, whatever
+    they show, in mA. Defaults to `1.0`.
+  - **max_current_ma** (*Optional*, float): Maximum total current draw for the whole strip, in mA. When the
+    estimated draw exceeds this value, all pixel values are scaled down uniformly so the strip stays within
+    the budget. The scaling is applied every frame and covers solid colors, transitions and effects. Omit it
+    to estimate without limiting.
 
 **Advanced options:**
 
@@ -140,8 +315,23 @@ configuration variables:
 - **red** (*Optional*, percentage, [templatable](/automations/templates)): The red channel of the light.
 - **green** (*Optional*, percentage, [templatable](/automations/templates)): The green channel of the light.
 - **blue** (*Optional*, percentage, [templatable](/automations/templates)): The blue channel of the light.
+- **color** (*Optional*, string or hex value): A
+  [standard CSS color name](https://developer.mozilla.org/en-US/docs/Web/CSS/named-color),
+  for example `red` or `springgreen`, or a hex value in the form `0xRRGGBB`, for example `0x223344`, used instead of
+  **red**, **green** and **blue**. Names are not case-sensitive.
+  Cannot be used together with **red**, **green** or **blue**. This option is not templatable.
+
+  The light always drives its brightest color channel at full level. For a dark color such as `darkred` or
+  `0x223344`, the **color_brightness** is therefore set to match (about 55% and 27% respectively).
+  Colors with a channel at full level, such as `red`, set **color_brightness** to 100%. If you also
+  set **color_brightness**, your value is used instead, and a warning is logged if the color is a dark one.
+
+  Color names such as `white` and `gray` are converted to RGB colors only and do not affect the white channel,
+  if present.
+
 - **white** (*Optional*, percentage, [templatable](/automations/templates)): The brightness of the white channel.
-- **color_temperature** (*Optional*, float, [templatable](/automations/templates)): The color temperature (in [mireds](https://en.wikipedia.org/wiki/Mired) or Kelvin) of the white channel.
+- **color_temperature** (*Optional*, float, [templatable](/automations/templates)): The color temperature
+  (in [mireds](https://en.wikipedia.org/wiki/Mired) or Kelvin) of the white channel.
 
 - **cold_white** (*Optional*, percentage, [templatable](/automations/templates)): The brightness of the cold white
   channel. Cannot be used at the same time as *color_temperature*.
@@ -202,6 +392,14 @@ on_...:
         brightness: !lambda |-
           // output value must be in range 0 - 1.0
           return id(some_sensor).state / 100.0;
+    # Using a color name
+    - light.turn_on:
+        id: light_1
+        color: springgreen
+    # Using a hex color value
+    - light.turn_on:
+        id: light_1
+        color: 0x223344
     # Shorthand
     - light.turn_on: light_1
 ```
@@ -301,7 +499,7 @@ on_...:
   then:
     - light.control:
         id: light_1
-        state: on
+        state: ON
 ```
 
 **Configuration variables:**
@@ -412,6 +610,18 @@ on_...:
       red: 100%
       green: 0%
       blue: 0%
+  # Using a color name instead
+  - light.addressable_set:
+      id: my_light
+      range_from: 51
+      range_to: 99
+      color: darkred
+  # Using a hex value
+  - light.addressable_set:
+      id: my_light
+      range_from: 100
+      range_to: 149
+      color: 0x223344
 ```
 
 **Configuration variables:**
@@ -429,8 +639,90 @@ on_...:
 - **red** (*Optional*, [templatable](/automations/templates), percentage): The value to set the red channel to.
 - **green** (*Optional*, [templatable](/automations/templates), percentage): The value to set the green channel to.
 - **blue** (*Optional*, [templatable](/automations/templates), percentage): The value to set the blue channel to.
+- **color** (*Optional*, string or hex value): A
+  [standard CSS color name](https://developer.mozilla.org/en-US/docs/Web/CSS/named-color)
+  or a hex value in the form `0xRRGGBB` to use instead of **red**, **green** and **blue**. Not templatable.
+  Also sets **color_brightness**, as described in [light state](#light-state).
 - **white** (*Optional*, [templatable](/automations/templates), percentage): The brightness to set the white channel
   to.
+
+## Addressable Light Power Estimation
+
+ESPHome can estimate the current draw of an addressable LED strip and optionally cap it to a
+configured maximum. This is useful for protecting power supplies and avoiding over-current
+situations when many LEDs are lit at high brightness.
+
+### How It Works
+
+Before each frame goes out to the hardware, including during effects and transitions, ESPHome sums the raw
+per-channel values of all LEDs and converts them to milliamps with the per-channel constants you supply:
+
+```text
+estimated_ma = num_leds * idle_ma_per_led
+             + sum over LEDs of (R * ma_per_led_red + G * ma_per_led_green
+                                 + B * ma_per_led_blue + W * ma_per_led_white) / 255
+```
+
+If `max_current_ma` is set, the idle draw is taken off it first, since no scaling changes that part, and the
+channel values are scaled down so that the pixels fit what is left. The user-visible brightness and color are
+not changed; only the physical output is reduced. The scale is worked out from each frame just before it goes
+out, so the strip never sees a frame over budget by more than one hardware level per lit channel, about 70 mA
+on 300 RGB pixels at 20 mA per channel. Pixels written from a lambda or with `light.addressable_set` are
+limited in the same way, and read back as the levels they were written with. A `max_current_ma` that does not
+even cover the idle draw cannot be met; a warning says so at boot and the pixels are held to their dimmest
+level.
+
+### Example Configuration
+
+```yaml
+light:
+  - platform: esp32_rmt_led_strip
+    id: my_leds
+    pin: GPIOXX
+    num_leds: 60
+    chipset: WS2812
+    rgb_order: GRB
+    name: "My LED Strip"
+    power_estimation:
+      ma_per_led_red: 16.0
+      ma_per_led_green: 11.0
+      ma_per_led_blue: 15.0
+      idle_ma_per_led: 0.5
+      max_current_ma: 1000.0   # limit the strip to 1 A
+```
+
+### Reading the Estimated Current
+
+The estimate is available from the light's ID in a lambda. It is the draw of the pixel buffer as the strip
+receives it, after the limit, so with `max_current_ma` set it stays at or near that value rather than showing
+what the frame asked for. Each call sums the whole buffer, which is the last frame sent, or the next one when
+pixels were written since; those pixels are not limited until that frame goes out, so a read taken in between
+can be above the limit for one frame. Read it from something that polls, such as a
+[template sensor](/components/sensor/template/), rather than on every loop:
+
+```yaml
+sensor:
+  - platform: template
+    name: "LED Strip Current"
+    unit_of_measurement: "mA"
+    lambda: return id(my_leds).get_estimated_current_ma();
+```
+
+### Choosing Per-Channel Constants
+
+Datasheets rarely list per-channel values. To measure them, put a multimeter in the supply line and take four
+readings: every LED off gives the idle draw; every LED at full red, with the idle draw taken off, gives the red
+value; then the same for green, blue and, on an RGBW strip, white. Divide each by the number of LEDs. Typical
+values for common chipsets:
+
+| Chipset  | Red (mA) | Green (mA) | Blue (mA) |
+|----------|----------|------------|-----------|
+| WS2812B  | 16       | 11         | 15        |
+| SK6812   | 12       | 12         | 12        |
+| APA106   | 16       | 14         | 12        |
+
+> [!NOTE]
+> These are rough guideline values. For accurate power budgeting, measure your specific strip.
 
 ## Light Conditions
 
@@ -590,8 +882,8 @@ light:
 - **transition_length** (*Optional*, [Time](/guides/configuration-types#time)): The duration of each transition. Defaults to `1s`. Can be a
   single time or split for on and off using these nested options.
 
-  - **on_length** (*Optional*, [Time](/guides/configuration-types#time)): The duration of the transition when the light is turned on.
-  - **off_length** (*Optional*, [Time](/guides/configuration-types#time)): The duration of the transition when the light is turned off.
+  - **on_length** (**Required**, [Time](/guides/configuration-types#time)): The duration of the transition when the light is turned on.
+  - **off_length** (**Required**, [Time](/guides/configuration-types#time)): The duration of the transition when the light is turned off.
 - **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval when the new transition is started. Defaults to
   `1s`.
 
@@ -635,19 +927,22 @@ light:
       - strobe:
           name: Strobe Effect With Custom Values
           colors:
-            - state: true
+            - state: ON
               brightness: 100%
               red: 100%
               green: 90%
               blue: 0%
               duration: 500ms
-            - state: false
+            - state: OFF
               duration: 250ms
-            - state: true
+            - state: ON
               brightness: 100%
               red: 0%
               green: 100%
               blue: 0%
+              duration: 500ms
+            - state: ON
+              color: darkred
               duration: 500ms
 ```
 
@@ -656,13 +951,17 @@ light:
 - **name** (*Optional*, string): The name of the effect. Defaults to `Strobe`.
 - **colors** (*Optional*, list): A list of colors to cycle through. Defaults to a quick cycle between ON and OFF.
 
-  - **state** (*Optional*, boolean): The on/off state to show. Defaults to `true`.
+  - **state** (*Optional*, boolean): The ON/OFF state to show. Defaults to `ON`.
   - **color_mode** (*Optional*, string): The color mode of the light. Defaults to the current color mode.
   - **brightness** (*Optional*, percentage): The brightness of the light. Defaults to `100%`.
   - **color_brightness** (*Optional*, percentage): The brightness of the RGB lights, if applicable. Defaults to `100%`.
   - **red** (*Optional*, percentage): The red channel of the light, if applicable. Defaults to `100%`.
   - **green** (*Optional*, percentage): The green channel of the light, if applicable. Defaults to `100%`.
   - **blue** (*Optional*, percentage): The blue channel of the light, if applicable. Defaults to `100%`.
+  - **color** (*Optional*, string or hex value): A
+    [standard CSS color name](https://developer.mozilla.org/en-US/docs/Web/CSS/named-color) or a hex value in the
+    form `0xRRGGBB` to use instead of **red**, **green** and **blue**. Also sets **color_brightness**, as described
+    in [light state](#light-state).
   - **white** (*Optional*, percentage): The white channel of the light, if applicable. Defaults to `100%`.
   - **color_temperature** (*Optional*, float): The color temperature (in [mireds](https://en.wikipedia.org/wiki/Mired)
     or Kelvin) of the light, if applicable.
@@ -703,9 +1002,9 @@ This effect allows you to write completely custom light effects yourself using [
 
 Available variables in the lambda:
 
-- **it** - <APIClass text="LightState" path="light::LightState" /> instance for the light running this effect, allowing
+- `it`: <APIClass text="LightState" path="light::LightState" /> instance for the light running this effect, allowing
   you to reference the light directly without needing its `id` (see API reference for more info).
-- **initial_run** - A bool which is true on the first execution of the lambda. Useful to reset static variables when
+- `initial_run`: A bool which is true on the first execution of the lambda. Useful to reset static variables when
   restarting an effect.
 
 ```yaml
@@ -738,7 +1037,7 @@ light:
 
 **Configuration variables:**
 
-- **name** (**Required**, string): The name of the custom effect.
+- **name** (*Optional*, string): The name of the custom effect. Defaults to `Lambda`.
 - **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval with which the lambda code is executed. A value of
   `0ms` means that the lambda is always executed, without a cool-down. Defaults to `0ms`.
 
@@ -823,6 +1122,8 @@ light:
               green: 0%
               blue: 0%
               num_leds: 1
+            - color: darkred
+              num_leds: 1
           add_led_interval: 100ms
           reverse: false
 ```
@@ -836,6 +1137,12 @@ light:
   - **red** (*Optional*, percentage): The percentage the red color channel should be on. Defaults to `100%`.
   - **green** (*Optional*, percentage): The percentage the green color channel should be on. Defaults to `100%`.
   - **blue** (*Optional*, percentage): The percentage the blue color channel should be on. Defaults to `100%`.
+  - **color_brightness** (*Optional*, percentage): A brightness to scale **red**, **green** and **blue** by.
+    Defaults to `100%`.
+  - **color** (*Optional*, string or hex value): A
+    [standard CSS color name](https://developer.mozilla.org/en-US/docs/Web/CSS/named-color) or a hex value in the
+    form `0xRRGGBB` to use instead of **red**, **green** and **blue**. Also sets **color_brightness**, as described
+    in [light state](#light-state).
   - **random** (*Optional*, boolean): If set to `true`, will overwrite the RGB colors by a new, randomly-chosen
     color each time. Defaults to `false`.
 
@@ -993,9 +1300,9 @@ This effect allows you to access each LED individually in a custom light effect.
 
 Available variables in the lambda:
 
-- **it** - <APIClass text="AddressableLight" path="light::AddressableLight" /> instance (see API reference for more info).
-- **current_color** - <APIStruct text="ESPColor" path="light::ESPColor" /> instance (see API reference for more info).
-- **initial_run** - A bool which is true on the first execution of the lambda. Useful to reset static variables when
+- `it`: <APIClass text="AddressableLight" path="light::AddressableLight" /> instance (see API reference for more info).
+- `current_color`: <APIStruct text="ESPColor" path="light::ESPColor" /> instance (see API reference for more info).
+- `initial_run`: A bool which is true on the first execution of the lambda. Useful to reset static variables when
   restarting an effect.
 
 > [!NOTE]
@@ -1090,7 +1397,7 @@ light:
 **Configuration variables:**
 
 - **name** (*Optional*, string): The name of the effect.
-- **sequence** (*Optional*, [Action](/automations/actions#all-actions)): The actions to perform in sequence until the effect is
+- **sequence** (**Required**, [Action](/automations/actions#all-actions)): The actions to perform in sequence until the effect is
   stopped.
 
 <span id="e131-light-effect"></span>

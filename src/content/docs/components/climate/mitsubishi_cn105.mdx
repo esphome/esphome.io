@@ -83,7 +83,7 @@ climate:
 - Modes: `OFF`, `HEAT`, `COOL`, `DRY`, `FAN_ONLY`, `HEAT_COOL` (called `AUTO` by Mitsubishi)
 - Fan modes: `AUTO`, `QUIET`, `LOW`, `MEDIUM`, `MIDDLE`, `HIGH`
 - Swing modes: `OFF`, `VERTICAL`, `HORIZONTAL`, `BOTH` (configurable via `supported_swing_modes`)
-- Vertical vane direction select
+- Vane direction selects
 
 > [!NOTE]
 > Fan modes map to the following Mitsubishi fan speeds:
@@ -117,7 +117,9 @@ climate:
   Set to `never` to disable telemetry polling.
 
 - **use_fahrenheit** (*Optional*, boolean): Configure the climate entity to report and accept temperatures in Fahrenheit
-  using Mitsubishi-specific mapping. Defaults to `false`.
+  using Mitsubishi-specific mapping. Defaults to `false`. When enabled, write the climate's `visual` temperatures and
+  the fixed temperatures of `climate.control` in Fahrenheit too; a value written with another unit, such as `20°C`, is
+  converted.
 
   > [!NOTE]
   > Some indoor units use a temperature encoding that cannot accurately represent Fahrenheit setpoints. If the
@@ -133,10 +135,10 @@ climate:
 
 - **supported_swing_modes** (*Optional*, enum): Selects which swing modes are exposed by the climate entity. Defaults to `'OFF'`.
 
-  - `'OFF'` — no swing support  
-  - `VERTICAL` — exposes `'OFF'`, `VERTICAL`  
-  - `HORIZONTAL` — exposes `'OFF'`, `HORIZONTAL`  
-  - `BOTH` — exposes `'OFF'`, `VERTICAL`, `HORIZONTAL`, `BOTH`
+  - `OFF`: no swing support. Write it as `'OFF'` in YAML, since a bare `OFF` is read as a boolean.
+  - `VERTICAL`: exposes `'OFF'`, `VERTICAL`
+  - `HORIZONTAL`: exposes `'OFF'`, `HORIZONTAL`
+  - `BOTH`: exposes `'OFF'`, `VERTICAL`, `HORIZONTAL`, `BOTH`
 
 - All other options from [Climate](/components/climate#config-climate).
 
@@ -159,6 +161,26 @@ defines the hub options on the `climate:` entry.
 
   All options from [Select](/components/select#config-select) are supported.
 
+- **horizontal_vane_direction** (*Optional*, [Select](/components/select/)): Exposes the horizontal (wide) vane
+  direction as a select entity. Only useful on indoor units that have a horizontal vane.
+
+  Available options are: `1`, `2`, `3`, `4`, `5`, `Split`, `Swing`.
+
+  | Option  | Airflow direction |
+  | ------- | ----------------- |
+  | `1`     | Far left          |
+  | `2`     | Left              |
+  | `3`     | Center            |
+  | `4`     | Right             |
+  | `5`     | Far right         |
+  | `Split` | Left and right    |
+  | `Swing` | Swing             |
+
+  These are the select option labels exposed to Home Assistant. If referenced from automations or templates, use them
+  exactly as shown, including casing.
+
+  All options from [Select](/components/select/#config-select) are supported.
+
   Example:
 
   ```yaml
@@ -171,6 +193,8 @@ defines the hub options on the `climate:` entry.
       mitsubishi_cn105_id: hp
       vertical_vane_direction:
         name: "Vertical Vane"
+      horizontal_vane_direction:
+        name: "Horizontal Vane"
   ```
 
 ## `vane.on_state` Trigger
@@ -318,6 +342,9 @@ sensor:
 > This is an advanced feature; users are expected to understand the implications of overriding the internal sensor. Depending 
 > on the unit, it may be necessary to explicitly call `mitsubishi_cn105.clear_remote_temperature` to restore normal
 > operation. Improper use may lead to unexpected behavior.
+>
+> Check out the [remote temperature example in the Cookbook](/cookbook/mitsubishi_cn105_remote_temp/) to see a possible way to
+> implement this functionality.
 
 ## Migration From Climate-Owned Configuration
 
@@ -337,3 +364,4 @@ Legacy climate-owned configuration compatibility will be removed in ESPHome `202
 ## See Also
 
 - [Climate Component](/components/climate/)
+- [Remote temperature example in the Cookbook](/cookbook/mitsubishi_cn105_remote_temp/)
