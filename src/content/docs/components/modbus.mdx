@@ -65,6 +65,9 @@ on_...:
 - **send_wait_time** (*Optional*, [Time](/guides/configuration-types#time)): Time in milliseconds before the next ModBUS command is sent when an answer from a previous command has not yet started (i.e. when to timeout and assume no response is coming). Defaults to 2000 ms.
   Set this value to the maximum time required for the slowest device on the bus to begin responding (time to first byte).
   If a device starts responding within this time, the next command will be queued and sent after the response is finished, no matter how long the response.
+  A reply that starts later, after the next command has gone out, is taken as the reply to that command if it goes to
+  the same device with the same function code. The exception flag (bit 7) is not compared, so an exception reply is
+  taken the same way.
   This option is only valid when the `role` is `client`.
 
 - **turnaround_time** (*Optional*, [Time](/guides/configuration-types#time)): Time in milliseconds before the next ModBUS command is sent after last response is received. This interval allows other devices on the bus time to process messages. Defaults to 600 ms.
