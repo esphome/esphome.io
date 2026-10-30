@@ -57,6 +57,10 @@ another device to a request the hub has seen. A reply that is dropped does not r
 > The hub tells a request from a reply by the order and shape of the frames. If a device does not answer, the next
 > request that has the shape of a reply is taken for one, whatever its address, for example a single write or mask
 > write (function codes `0x05`, `0x06`, `0x16`). Broadcasts are always read as requests.
+>
+> A reply from another device is paired with the last request by address and function code only, so a late reply
+> to an earlier request can arrive with a newer one. If that is a concern, compare the reply's length with what
+> the request asked for, as the example under [Listening Only](#listening-only-sniffer) does.
 
 ### Client Hub
 
@@ -65,8 +69,62 @@ to the UART and after the device's `on_sent`. A request that was queued but neve
 `on_response` runs for each response that matches the request the hub is waiting for, exception responses included,
 after the device has handled it. A request without a response does not run it.
 
+## Listening Only (Sniffer)
+
+A hub with the `server` role and no [Modbus Server](/components/modbus_server/) devices never transmits, so it can
+sniff a bus that other devices use. It needs only an `rx_pin`. For register values, use the
+[Modbus Monitor Sensor](/components/sensor/modbus_monitor/). For anything else, use an automation, for example to
+log every exchange on the bus:
+
+```yaml
+uart:
+  - id: bus
+    rx_pin: GPIOXX
+    baud_rate: 9600
+
+modbus:
+  - uart_id: bus
+    role: server
+
+modbus_monitor:
+  - on_response:
+      - lambda: |-
+          char hex[format_hex_pretty_size(modbus::MAX_PDU_SIZE)];
+          ESP_LOGI("sniffer", "%u request:  %s", address, format_hex_pretty_to(hex, request.data(), request.size()));
+          ESP_LOGI("sniffer", "%u response: %s", address, format_hex_pretty_to(hex, response.data(), response.size()));
+```
+
+To decode register values, check that the reply carries the registers the request asked for, so that a late reply
+to an earlier read is not taken for the newer one's. The [Modbus Monitor Sensor](/components/sensor/modbus_monitor/)
+makes this check before it publishes. For example, to log each register read on the bus:
+
+```yaml
+modbus_monitor:
+  - on_response:
+      - lambda: |-
+          // Register reads only. A client hub also passes exception replies, which have bit 7 set.
+          if ((request[0] != 0x03 && request[0] != 0x04) || response[0] != request[0] || request.size() < 5)
+            return;
+          const uint16_t start = encode_uint16(request[1], request[2]);
+          const uint16_t count = encode_uint16(request[3], request[4]);
+          // Skip a reply of the wrong length: it answers some other request.
+          if (response.size() != 2u + count * 2u || response[1] != count * 2u)
+            return;
+          for (uint16_t i = 0; i < count; i++) {
+            const unsigned reg = start + i;
+            const unsigned value = encode_uint16(response[2 + i * 2], response[3 + i * 2]);
+            ESP_LOGI("sniffer", "%u register %u = %u", address, reg, value);
+          }
+```
+
+On the same bus, the hub can also answer as a Modbus Server: give it a `tx_pin` and devices, and it still sees the
+exchanges of the others. A `client` hub sees only its own exchanges. Each hub has its own UART, so one ESPHome device
+can sniff one bus and be a client or server on another. Most ESP32 chips have at least two hardware UARTs free for
+buses; an ESP8266 has only one. See [UART](/components/uart/#hardware-uarts).
+
 ## See Also
 
 - [Modbus Component](/components/modbus/)
+- [Modbus Monitor Sensor](/components/sensor/modbus_monitor/)
 - [Modbus Client](/components/modbus_client/)
 - [Modbus Server](/components/modbus_server/)
