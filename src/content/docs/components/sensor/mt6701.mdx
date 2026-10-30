@@ -95,8 +95,10 @@ mt6701_i2c:
   - **mode** (**Required**, string): Output-pin mode, `analog` or `pwm`.
   - **pwm_frequency** (*Optional*, string): `994.4hz` or `497.2hz`.
   - **pwm_polarity** (*Optional*, string): `high` or `low`.
-  - **analog_start** / **analog_stop** (*Optional*): Start/stop angles of the
-    analog or PWM output range (12-bit, same units as **zero_offset**).
+  - **analog_start** (*Optional*): Start angle of the analog or PWM output range (12-bit, same units as
+    **zero_offset**).
+  - **analog_stop** (*Optional*): Stop angle of the analog or PWM output range (12-bit, same units as
+    **zero_offset**).
 
 - **id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the
   ID for this MT6701 hub.
@@ -181,7 +183,7 @@ sensor:
 
 - All other options from [Sensor](/components/sensor/).
 
-## Binary Sensor
+## `mt6701_spi` Binary Sensor
 
 The `mt6701_spi` binary sensors expose the status flags carried in the SSI
 frame. They are only available on the [SSI/SPI hub](#ssispi-hub).
@@ -215,7 +217,7 @@ binary_sensor:
   often the flags are read. A push has to be seen between two reads, so this is
   short. Defaults to `50ms`.
 
-## Text Sensor
+## `mt6701_spi` Text Sensor
 
 The `mt6701_spi` text sensor exposes the magnetic-field status. It is only
 available on the [SSI/SPI hub](#ssispi-hub).

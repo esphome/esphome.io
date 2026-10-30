@@ -112,6 +112,13 @@ display:
 - **hsync_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The Horizontal sync pin.
 - **vsync_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The Vertical sync pin.
 - **reset_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The RESET pin.
+- **enable_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): An optional pin to enable the display, if required.
+  A list of pins can be provided for displays that require multiple enable pins. A full pin configuration may be provided
+  to set the pin mode and inverted property. By default the pin will be driven high to enable the display.
+  If `enable_pin` is not set, the model's default enable pins are used, if it has any. A default enable pin
+  that is also used elsewhere in the configuration, for example by a GPIO switch, is left out, so you can
+  control that pin yourself. If every other use of the pin sets `allow_other_uses: true`, the pin is shared
+  with the display instead. Setting `enable_pin` replaces all of the model's default enable pins.
 - **hsync_pulse_width** (*Optional*, int): The horizontal sync pulse width.
 - **hsync_front_porch** (*Optional*, int): The horizontal front porch length.
 - **hsync_back_porch** (*Optional*, int): The horizontal back porch length.

@@ -66,6 +66,21 @@ devices that share a vendor and product ID.
 > configuration is rejected if they could, for example two entries of the same type left at their default IDs. Add
 > `manufacturer` or `product` filters, or more specific IDs, so that each USB device matches at most one entry.
 
+## Modem control lines
+
+A channel starts with DTR and RTS asserted, as a host driver does when it opens the port, and applies its current
+states whenever a device is attached. A [Serial Proxy](/components/serial_proxy/) on the channel lets an API
+client change them at runtime, which many USB-serial devices use to pull the attached microcontroller into its
+bootloader; a state set that way is kept across reattachment.
+
+## Hardware Flow Control
+
+A [Serial Proxy](/components/serial_proxy/) client can ask a channel for RTS/CTS flow control. The `ch340`,
+`cp210x`, `ft232`, `ft2232`, `ft4232` and all `pl2303*` types pass the request on to the chip; a CP2102N with
+firmware 1.0.4 or older cannot do it and the request is ignored. The `cdc_acm`, `esp_jtag`, `stm32_vcp` and
+multi-channel `ch34x` types have no flow control register, so the request is accepted and ignored, as a Linux
+driver does.
+
 ## Channel configuration options
 
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): An id to assign to the channel. This id may be used anywhere a `uart` component is required.

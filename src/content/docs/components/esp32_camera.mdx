@@ -112,15 +112,15 @@ Image Settings:
   Defaults to ``jpeg`` (JPEG compressed image) which may not be supported by all cameras.
   Other formats require more CPU and memory and may not be supported by all cameras.
 
-  - ``jpeg``: JPEG compressed image
-  - ``rgb565``: RGB565 uncompressed image
-  - ``yuv422``: YUV422 uncompressed image
-  - ``yuv420``: YUV420 uncompressed image
-  - ``grayscale``: Grayscale uncompressed image
-  - ``rgb888``: RGB888 uncompressed image
-  - ``raw``: Raw uncompressed image
-  - ``rgb444``: RGB444 uncompressed image
-  - ``rgb555``: RGB555 uncompressed image
+  - `jpeg`: JPEG compressed image
+  - `rgb565`: RGB565 uncompressed image
+  - `yuv422`: YUV422 uncompressed image
+  - `yuv420`: YUV420 uncompressed image
+  - `grayscale`: Grayscale uncompressed image
+  - `rgb888`: RGB888 uncompressed image
+  - `raw`: Raw uncompressed image
+  - `rgb444`: RGB444 uncompressed image
+  - `rgb555`: RGB555 uncompressed image
 
 - **jpeg_quality** (*Optional*, int): The JPEG quality that the camera should encode images with.
   From 6 (best) to 63 (worst). Defaults to `10`. Set this to ``0`` to disable JPEG compression/conversion.
@@ -180,6 +180,35 @@ White Balance Setting:
   - `office`  : White balance office mode
   - `home`  : White balance home mode
 
+Single Image Settings:
+
+- **capture_delay** (*Optional*, [Time](/guides/configuration-types/#time)): Wait this long before a
+  single image and drop frames that started before the wait ended, so a light switched on in
+  **on_capture_start** and the auto exposure can settle. `0s` to `3s`, defaults to `0s`.
+  With `idle_framerate: 0 fps` the first frame after an idle period is badly exposed, `500ms` to `2s`
+  fixes that on an OV2640.
+
+- **on_capture_start** (*Optional*, [Automation](/automations/)): Runs when a single image capture
+  begins, for example to switch on a flash LED. Use actions that finish right away.
+
+- **on_capture_end** (*Optional*, [Automation](/automations/)): Runs after the image was captured, also
+  when a stream cancels the capture and on shutdown. If no frame that started after the delay arrived
+  4 seconds after **on_capture_start**, it runs as well and the next frame is used as is. The 4 seconds
+  include **capture_delay**, so with `3s` about one second is left. A `light` may stay on after
+  shutdown, an `output` does not.
+
+Only single images use these: Home Assistant snapshots (picture cards refresh every 10 seconds) and the
+snapshot mode of `esp32_camera_web_server`. Streams (the Home Assistant more-info dialog, the web server
+stream mode, `rtsp_server` clients) and **idle_framerate** captures skip them. While a stream runs,
+single images skip them as well and come straight from the stream. Otherwise each single image runs
+the whole cycle, so a picture card that refreshes every 10 seconds also switches the light every 10
+seconds.
+
+> [!NOTE]
+> With `aec_mode: auto` the sensor makes up for a weaker light, so the light level hardly changes the
+> image. When the flash is the only light, set `aec_mode: manual` and tune **aec_value** and the
+> light level together.
+
 Automations:
 
 - **on_stream_start** (*Optional*, [Automation](/automations)): An automation to perform
@@ -194,9 +223,80 @@ Test Setting:
 
 - **test_pattern** (*Optional*, boolean): For tests purposes, it's possible to replace picture get from sensor by a test color pattern. Defaults to `false`.
 
+Window Setting:
+
+- **window** (*Optional*): Read out only part of the sensor at startup; see
+  [Reading Out a Window](#reading-out-a-window). Without it the whole sensor is read out.
+
+  - **offset_x** (**Required**, int): Horizontal offset of the window in pixels, `0` or more.
+  - **offset_y** (**Required**, int): Vertical offset of the window in pixels, `0` or more.
+  - **width** (**Required**, int): Width of the window in pixels, `1` or more.
+  - **height** (**Required**, int): Height of the window in pixels, `1` or more.
+
 > [!NOTE]
-> Camera uses PWM timer #1. If you need PWM (via the `ledc` platform) you need to manually specify
-> a channel there (with the `channel: 2`  parameter)
+> The camera clock uses LEDC timer 0. Set `channel: 2` on a `ledc` output, for example a flash LED.
+> A frequency such as `5kHz` avoids dark bands from the default 1 kHz.
+
+## Reading Out a Window
+
+A window restricts the readout to a rectangle of the picture, so the camera works as a digital zoom. The offsets
+count from the top left corner; what they are counted in depends on the sensor, as the table below shows.
+
+```yaml
+esp32_camera:
+  # ...
+  window:
+    offset_x: 100
+    offset_y: 200
+    width: 320
+    height: 240
+```
+
+| Sensor             | Window counted in                               | Published frame        | Notes                                         |
+| ------------------ | ----------------------------------------------- | ---------------------- | --------------------------------------------- |
+| OV2640             | Pixels of the `resolution`                      | The size of the window | JPEG output only, rounded to 16x8 blocks      |
+| OV3660, OV5640     | Pixels of the `resolution`                      | The `resolution`       | Scaled down to the frame, so it also zooms in |
+| SC101IOT, SC030IOT | Pixels of the whole sensor, 1280x720 or 640x480 | The `resolution`       | `width` and `height` must be the `resolution` |
+
+A window that reaches past the edge is clamped to it. Because the window is counted in pixels of the `resolution`, set
+it again when you change the `resolution`. The OV3660 and OV5640 only scale down: a window that covers fewer sensor
+pixels than the frame has is rejected, so pick a larger window or a lower `resolution`. On the SC101IOT and SC030IOT a
+window whose size is not the `resolution` is rejected. Other sensors cannot read out a window: setting one fails, and a
+`window` in the configuration is skipped with a warning at startup.
+
+A new window replaces the previous one and never nests inside it. Changing the frame size at runtime, from a lambda,
+clears the window, so set it again afterwards. If a window cannot be applied, the previous one stays in place.
+
+### `esp32_camera.set_window` Action
+
+Reads out a window at runtime, with the same options as `window` above. Each value can be a lambda.
+
+```yaml
+on_...:
+  then:
+    - esp32_camera.set_window:
+        id: my_camera
+        offset_x: 300
+        offset_y: 100
+        width: 320
+        height: 240
+```
+
+- **id** (**Required**, [ID](/guides/configuration-types/#id)): The camera.
+- **offset_x**, **offset_y**, **width**, **height** (**Required**, [templatable](/automations/templates/), int): The
+  window, as for the `window` option.
+
+### `esp32_camera.reset_window` Action
+
+Reads out the whole sensor again.
+
+```yaml
+on_...:
+  then:
+    - esp32_camera.reset_window: my_camera
+```
+
+- **id** (**Required**, [ID](/guides/configuration-types/#id)): The camera.
 
 ## Configuration examples
 
@@ -228,6 +328,61 @@ esp32_camera:
   # Image settings
   name: My Camera
   # ...
+```
+
+**Ai-Thinker Camera with flash LED**:
+
+The flash LED of this board sits on GPIO4. Any other GPIO works the same way through the pin of the
+output. The LED gets hot and draws a lot of current, so keep the level below full power.
+
+```yaml
+# Example configuration entry
+output:
+  - platform: ledc
+    id: flash_led
+    pin: GPIO4
+    channel: 2
+    frequency: 5kHz
+
+esp32_camera:
+  # Pins as in the Ai-Thinker example above
+  # ...
+  name: Meter Camera
+  resolution: 1600x1200
+  jpeg_quality: 10
+  idle_framerate: 0 fps
+  aec_mode: manual
+  aec_value: 300
+  capture_delay: 2s
+  on_capture_start:
+    - output.set_level:
+        id: flash_led
+        level: 50%
+  on_capture_end:
+    - output.turn_off: flash_led
+```
+
+**Camera with an LED ring**:
+
+```yaml
+# Example configuration entry
+light:
+  - platform: esp32_rmt_led_strip
+    id: led_ring
+    # ...
+
+esp32_camera:
+  # ...
+  capture_delay: 1s
+  on_capture_start:
+    - light.turn_on:
+        id: led_ring
+        brightness: 60%
+        transition_length: 0s
+  on_capture_end:
+    - light.turn_off:
+        id: led_ring
+        transition_length: 0s
 ```
 
 **M5Stack Camera**:

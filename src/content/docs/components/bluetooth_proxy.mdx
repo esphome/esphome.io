@@ -43,6 +43,9 @@ bluetooth_proxy:
   connection slots to avoid stability and memory issues. The ESP32 default is `3`. Ethernet-based
   proxies can generally handle `4` slots reliably. The value must not exceed the total configured
   `max_connections` for [ESP32 BLE](/components/esp32_ble/).
+- **connections** (*Optional*, list): ESP32 only. Configure the connection slots one by one instead of
+  with `connection_slots`. Each entry is one slot and takes the common component options such as
+  `setup_priority`. Requires `active: true`.
 
 The Bluetooth proxy depends on the platform's BLE tracker component, so make sure to add that to your
 configuration: [ESP32 BLE Tracker](/components/esp32_ble_tracker/) on ESP32, the

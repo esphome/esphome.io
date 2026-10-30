@@ -70,6 +70,15 @@ light:
   > This was counter-intuitive and has been fixed: such a light now boots ON, as `initial_state` says.
 
   - **state** (*Optional*, boolean, [templatable](/automations/templates)): The ON/OFF state for the light.
+  - **effect** (*Optional*, string): The name of the [effect](#light-effects) to start with, so the light can come up
+    already running an effect without an `on_boot` automation. Must match the name of one of the effects defined on
+    the same light, or `none` for no effect.
+    - It applies on a cold boot only; a state restored from flash keeps its own effect.
+    - The effect starts when the light boots ON. A light that boots OFF starts it at the first turn-on when
+      `resume_effect` (below) is set; otherwise it is not started, and config validation warns when the boot state
+      is known at build time (a `state` lambda is only known at boot, so there is no warning for it).
+    - Turning the light off stops the running effect, so without `resume_effect` an effect does not come back by
+      itself the next time the light is turned on.
   - All other options from [light state](#light-state).
 
   If **color_mode** is not given but color fields such as `red` or `brightness` are, the light uses the first
@@ -205,8 +214,9 @@ light:
 
 - **resume_effect** (*Optional*, boolean): Remember the effect that was running when the light was turned off,
   and start it again when the light is next turned on with a plain turn-on. A turn-on that also sets an effect,
-  brightness, color or transition uses those instead. The remembered effect is kept in memory only, so it is lost
-  on reboot. Defaults to `false`.
+  brightness, color or transition uses those instead. On a light that boots OFF, the effect from **initial_state**
+  counts as the remembered effect. The remembered effect is kept in memory only, so it is lost on reboot. Defaults
+  to `false`.
 
 - **on_turn_on** (*Optional*, [Action](/automations/actions#all-actions)): An automation to perform when the light is turned on. See
   [`light.on_turn_on` / `light.on_turn_off` Trigger](#light-on_turn_on_off_trigger).
@@ -872,8 +882,8 @@ light:
 - **transition_length** (*Optional*, [Time](/guides/configuration-types#time)): The duration of each transition. Defaults to `1s`. Can be a
   single time or split for on and off using these nested options.
 
-  - **on_length** (*Optional*, [Time](/guides/configuration-types#time)): The duration of the transition when the light is turned on.
-  - **off_length** (*Optional*, [Time](/guides/configuration-types#time)): The duration of the transition when the light is turned off.
+  - **on_length** (**Required**, [Time](/guides/configuration-types#time)): The duration of the transition when the light is turned on.
+  - **off_length** (**Required**, [Time](/guides/configuration-types#time)): The duration of the transition when the light is turned off.
 - **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval when the new transition is started. Defaults to
   `1s`.
 
@@ -992,9 +1002,9 @@ This effect allows you to write completely custom light effects yourself using [
 
 Available variables in the lambda:
 
-- **it** - <APIClass text="LightState" path="light::LightState" /> instance for the light running this effect, allowing
+- `it`: <APIClass text="LightState" path="light::LightState" /> instance for the light running this effect, allowing
   you to reference the light directly without needing its `id` (see API reference for more info).
-- **initial_run** - A bool which is true on the first execution of the lambda. Useful to reset static variables when
+- `initial_run`: A bool which is true on the first execution of the lambda. Useful to reset static variables when
   restarting an effect.
 
 ```yaml
@@ -1027,7 +1037,7 @@ light:
 
 **Configuration variables:**
 
-- **name** (**Required**, string): The name of the custom effect.
+- **name** (*Optional*, string): The name of the custom effect. Defaults to `Lambda`.
 - **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval with which the lambda code is executed. A value of
   `0ms` means that the lambda is always executed, without a cool-down. Defaults to `0ms`.
 
@@ -1290,9 +1300,9 @@ This effect allows you to access each LED individually in a custom light effect.
 
 Available variables in the lambda:
 
-- **it** - <APIClass text="AddressableLight" path="light::AddressableLight" /> instance (see API reference for more info).
-- **current_color** - <APIStruct text="ESPColor" path="light::ESPColor" /> instance (see API reference for more info).
-- **initial_run** - A bool which is true on the first execution of the lambda. Useful to reset static variables when
+- `it`: <APIClass text="AddressableLight" path="light::AddressableLight" /> instance (see API reference for more info).
+- `current_color`: <APIStruct text="ESPColor" path="light::ESPColor" /> instance (see API reference for more info).
+- `initial_run`: A bool which is true on the first execution of the lambda. Useful to reset static variables when
   restarting an effect.
 
 > [!NOTE]
@@ -1387,7 +1397,7 @@ light:
 **Configuration variables:**
 
 - **name** (*Optional*, string): The name of the effect.
-- **sequence** (*Optional*, [Action](/automations/actions#all-actions)): The actions to perform in sequence until the effect is
+- **sequence** (**Required**, [Action](/automations/actions#all-actions)): The actions to perform in sequence until the effect is
   stopped.
 
 <span id="e131-light-effect"></span>
