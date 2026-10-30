@@ -17,11 +17,10 @@ specification calls for high immunity to electrical interference and the ability
 data errors. These features have led to CAN's popularity in a variety of industries including building
 automation, medical, and manufacturing.
 
-The current ESPHome implementation supports single frame data transfer. In this way you may send and
-receive data frames up to 8 bytes.
-With this you can transmit the press of a button or the feedback from a sensor on the bus.
-All other devices on the bus will be able to get this data to switch on/off a light or display the
-transmitted data.
+ESPHome supports single frame data transfer. Up to 8 bytes for classic CAN and up to 64 bytes for CAN FD.
+CAN FD requires a platform and controller that support it. With this you can transmit the press of a button
+or the feedback from a sensor on the bus. All other devices on the bus will be able to get this data to switch
+on/off a light or display the transmitted data.
 
 The CAN bus itself has only two wires named Can High and Can Low or CanH and CanL. For the ESPHome
 CAN bus to work, you need to select the device that has the physical CAN bus implemented.
@@ -85,12 +84,22 @@ canbus:
   - `200KBPS` - Not supported by `esp32_can`
   - `250KBPS`
   - `500KBPS`
+  - `800KBPS`
   - `1000KBPS`
 
 - **max_frames_per_loop** (*Optional*, int): Maximum number of received CAN frames processed in one pass of the main
   loop. Frames still queued after that are handled on the next pass, so one burst cannot stall the rest of the
   firmware. A warning is logged each time the limit is reached, since the receive queue may overflow and drop frames
   if it keeps happening. Must be at least `1`. Defaults to `50`.
+
+- **default_pad_data** (*Optional*, boolean): Default padding behavior for `canbus.send` actions. Defaults to `false`.
+  See [`pad_data`](#canbussend-action).
+
+- **default_fd** (*Optional*, boolean): Default frame format for `canbus.send` actions. Defaults to `false`, unless
+  the platform specifies otherwise. CAN FD requires a platform that supports it.
+
+- **default_bit_rate_switch** (*Optional*, boolean): Default bit rate switch setting for CAN FD send actions.
+  Defaults to `false`. Enabling it requires a platform that supports CAN FD.
 
 - **on_frame** (*Optional*, [Automation](/automations)): An automation to perform when a
   CAN frame is received. See [`on_frame` Trigger](#canbus-on-frame).
@@ -178,8 +187,9 @@ on_...:
 
 **Configuration variables:**
 
-- **data** (**Required**, binary data, [templatable](/automations/templates)): Data to transmit, up to eight
-  bytes/characters are supported by CAN bus per frame.
+- **data** (**Required**, binary data, [templatable](/automations/templates)): Data to transmit, up to 8 bytes for
+  classic CAN or 64 bytes for CAN FD. CAN FD payload lengths above 8 must be 12, 16, 20, 24, 32, 48, or 64 bytes,
+  unless `pad_data` is enabled.
 
 - **canbus_id** (*Optional*): Sets the CAN bus ID to use for transmitting the frame. Required if you are have multiple
   CAN bus platforms defined in your configuration.
@@ -192,6 +202,33 @@ on_...:
 
 - **remote_transmission_request** (*Optional*, boolean): Set to send CAN bus frame to request data from another node.
   If a certain data length code needs to be sent, include the necessary (dummy) bytes in `data`. Defaults to `false`.
+  Remote transmission requests cannot be used with CAN FD.
+
+- **fd** (*Optional*, boolean, [templatable](/automations/templates)): Send a CAN FD frame. Defaults to
+  `default_fd` on the CAN bus. Sending an FD frame requires a platform that supports CAN FD.
+
+- **bit_rate_switch** (*Optional*, boolean, [templatable](/automations/templates)): Use the faster data phase bit
+  rate for a CAN FD frame. Defaults to `default_bit_rate_switch` for FD frames and `false` for classic frames.
+  This option requires `fd: true`.
+
+- **pad_data** (*Optional*, boolean, [templatable](/automations/templates)): Pad a CAN FD payload with zero bytes
+  to the next supported length. Defaults to `default_pad_data` on the CAN bus.
+
+Invalid frames are rejected and not sent. This includes payloads that exceed the frame format's maximum length,
+unsupported CAN FD frames, and CAN FD payload lengths that require padding when padding is disabled.
+
+## CAN FD and Bit Rate Switching
+
+CAN FD frames can carry up to 64 bytes, even with bit rate switching (BRS) disabled. With BRS disabled, the data
+phase uses the nominal bit rate. This allows larger payloads without switching to a faster data rate. Some platforms,
+such as [MCP251XFD](/components/canbus/mcp251xfd/) in `NORMAL` mode, send CAN FD frames by default with BRS disabled.
+
+Enabling BRS allows a faster data phase, but higher rates place greater demands on the transceiver, wiring, and
+termination. They can also require compensation for transceiver delays to sample the data phase correctly. Choose a
+data bit rate supported by the whole bus and check the platform documentation for timing constraints.
+
+All nodes on the bus must be able to tolerate CAN FD frames, even when BRS is disabled. Use classic CAN frames when
+communicating on a bus with nodes that do not support CAN FD.
 
 ## Extended ID
 
@@ -353,6 +390,35 @@ cover:
           canbus_id: my_canbus
           can_id: 0x51A
 ```
+
+## Receive Throughput
+
+High logging levels and slow `on_frame` handlers can delay reading received frames. Frames continue to arrive while
+the main loop is busy, and the receive queue can overflow if it is not drained fast enough.
+
+The CAN bus component logs each received frame at `DEBUG` level and its payload as a hexadecimal message at `VERBOSE`
+level. Reducing the `canbus` log level can help on a busy bus. For example:
+
+```yaml
+logger:
+  logs:
+    canbus: INFO
+```
+
+With ESP32 hardware UART logging, messages are written to the ESP-IDF UART driver's transmit buffer. When the buffer
+fills, logging waits for space and delays the main loop. At 115200 baud with 8N1 framing, a 100-byte message takes
+about 8.7 ms to transmit, during which several CAN frames can arrive. Increasing `logger.tx_buffer_size` can absorb
+short bursts, but sustained logging must stay within the UART's output capacity. Reducing logging or increasing the
+UART baud rate can reduce the bottleneck. See [Logger](/components/logger/) for configuration options.
+
+The receive loop starts matching `on_frame` automations before reading the next frame. Synchronous actions run until
+they finish or yield, so keep handlers brief and avoid blocking waits, long computations, and excessive per-frame
+logging. If several handlers match a frame, their combined execution time delays the next read.
+
+For longer operations, capture the necessary values quickly and process them in small, nonblocking steps. The YAML
+[`delay` action](/automations/actions/#delay-action) schedules a continuation and allows reception to continue.
+Calling C++ `delay()` in a lambda blocks the receive loop. Deferred work still shares the main loop and must remain
+short enough to avoid receive queue overflow.
 
 ## See Also
 
