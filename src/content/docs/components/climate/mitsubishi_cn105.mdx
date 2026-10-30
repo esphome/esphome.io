@@ -87,10 +87,11 @@ climate:
 - Vane direction selects
 
 > [!NOTE]
-> The current action comes from the unit's operating status, which is read together with the room temperature. It
-> refreshes at most once per `telemetry_request_min_interval`, and is not reported when telemetry is set to `never`.
-> In heat/cool mode, heating or cooling is inferred from the room and target temperatures. A unit that does not answer
-> the operating status request always reports idle, even while it is heating or cooling.
+> The current action comes from the unit's operating status, which is read together with the room temperature once
+> per `telemetry_request_min_interval`, and again right after a mode or power change. It is not reported when
+> telemetry is set to `never`. In heat/cool mode, heating or cooling is inferred from the room and target
+> temperatures when the unit starts running, and kept while it runs. A unit that misses the operating status request
+> three times in a row always reports idle, even while it is heating or cooling.
 
 > [!NOTE]
 > Fan modes map to the following Mitsubishi fan speeds:
