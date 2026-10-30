@@ -43,7 +43,30 @@ Flashing with MCUboot requires an SWD connection, for which a programmer is nece
 # Example configuration entry
 nrf52:
   board: adafruit_feather_nrf52840
+  bootloader: mcuboot
 ```
+
+Boards that ship with the Adafruit nRF52 Bootloader, the Seeed XIAO nRF52840 (`xiao_ble`) and the Adafruit
+ItsyBitsy nRF52840 (`adafruit_itsybitsy_nrf52840`, `adafruit_itsybitsy`), can also run MCUboot as their only
+bootloader. Select it explicitly with `bootloader: mcuboot`:
+
+```yaml
+# Example configuration entry
+nrf52:
+  board: xiao_ble
+  bootloader: mcuboot
+```
+
+MCUboot then replaces the factory bootloader, so the first flash needs SWD and the Adafruit bootloader, its UF2 drive
+and its SoftDevice are gone afterwards. The dashboard offers a **HEX package** for that first flash and an **app update
+package** for later [OTA updates](/components/ota/zephyr_mcumgr/) over BLE or USB CDC. MCUboot waits two seconds after
+each reset for a serial recovery upload over USB, and enters recovery by itself when the application slot is empty or
+invalid. Updates overwrite the application, so OTA rollback is not available with this layout.
+
+> [!IMPORTANT]
+> OTA works only if the [`zephyr_mcumgr`](/components/ota/zephyr_mcumgr/) OTA component is part of the firmware you flash
+> over SWD. Add `transport.ble: true` for updates over BLE and `transport.hardware_uart: CDC` for updates over USB CDC.
+> If the initial SWD-flashed firmware has no OTA endpoint, a programmer is still required for subsequent updates.
 
 ## Flashing with Adafruit nRF52 Bootloader
 
