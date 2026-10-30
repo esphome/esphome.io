@@ -94,7 +94,8 @@ web_server:
   cross-origin requests from. See [Cross-Origin Requests](#cross-origin-requests) for details. Each entry
   must exactly match the requesting page's `Origin` header (e.g. `https://app.esphome.io`) and be at most 127
   characters long. A single `"*"` entry (quoted, since an unquoted `*` is invalid YAML) allows any origin, but
-  this is not recommended.
+  this is not recommended. On ESP32, a device reached through a host name longer than about 119 characters can only be
+  used from a browser with the `"*"` entry, because its own origin does not fit the 127 character limit.
 
 - **enable_private_network_access** (*Optional*, boolean): Enables support for
   [Private Network Access](https://wicg.github.io/private-network-access) and the
