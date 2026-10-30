@@ -28,14 +28,14 @@ The [native API](/components/api) is the primary communication method between ES
 ```yaml
 api:
   encryption:
-    key: !secret device_name_api_key
+    key: !secret device_name__encryption_key
 
 ```
 
 **Best practices:**
 
 - Generate a unique encryption key for each device - see the [API component documentation](/components/api#configuration-variables) for an on-demand key generator
-- Store keys in `secrets.yaml` (never commit this file to version control)
+- Store keys in `secrets.yaml` (never commit this file to version control); the `device_name__encryption_key` name follows the `<hostname>__<base>` shape the Device Builder writes, see [Using secrets.yaml](#using-secrets-yaml)
 - Never reuse encryption keys across devices
 - If a device is compromised, regenerate its key immediately
 
@@ -54,15 +54,15 @@ If you enable the [web server](/components/web_server) for device monitoring and
 web_server:
   port: 80
   auth:
-    username: !secret device_name_web_username
-    password: !secret device_name_web_password
+    username: device-name-admin
+    password: !secret device_name__web_password
 
 ```
 
 **Best practices:**
 
 - Use strong, unique passwords
-- Store credentials in `secrets.yaml`
+- Store the password in `secrets.yaml`
 - Consider disabling the web server entirely if you don't need it
 - If you only need logs, use Home Assistant or the native API instead
 
@@ -79,29 +79,46 @@ web_server:
 > a trusted, segmented network are the defenses. This is intentional; see the project
 > [threat model](https://github.com/esphome/esphome/blob/dev/THREAT_MODEL.md).
 
-### 3. OTA Password Protection
+### 3. OTA Encryption
 
-[OTA (Over-The-Air)](/components/ota) updates allow you to update firmware wirelessly. Protect this with a password:
+[OTA (Over-The-Air)](/components/ota) updates allow you to update firmware wirelessly. Encrypt them so the firmware
+image stays confidential in transit; the image contains your Wi-Fi credentials and your API encryption key. Encryption
+reuses the API key, so no extra secret is needed:
 
 ```yaml
+api:
+  encryption:
+    key: !secret device_name__encryption_key
+
 ota:
   - platform: esphome
-    password: !secret device_name_ota_password
-
+    encryption:
 ```
 
 **Best practices:**
 
-- Use strong, unique passwords
-- Store passwords in `secrets.yaml`
-- Never use the same OTA password across multiple devices
-- Rotate passwords periodically or after suspected compromise
+- Prefer encryption over a password; a password only authenticates the uploader, it does not keep the image confidential
+- Reuse the API encryption key so there is a single unique key per device
+- Never reuse keys across devices
+- Enable encryption before the device leaves a trusted network. On 2026.9.0 or newer with an API key the upload that adds the block is already encrypted; on older firmware install once without the block first, see [Enabling Encryption on an Existing Device](/components/ota/esphome/#enabling-encryption-on-an-existing-device)
 
-**Without OTA password:** Anyone on your local network can:
+**Without OTA encryption:** Anyone on your local network can:
 
+- Read your wifi credentials and API encryption key out of the transferred image
 - Upload malicious firmware to your devices
 - Completely compromise device functionality
 - Use your devices as a pivot point to attack other network resources
+
+If you cannot use encryption, at least set an OTA password:
+
+```yaml
+ota:
+  - platform: esphome
+    password: !secret device_name__ota_password
+```
+
+Use a strong, unique password, store it in `secrets.yaml`, never share it across devices, and rotate it after a
+suspected compromise. A password and encryption cannot be combined; the key already authenticates the uploader.
 
 ## Network Security
 
@@ -173,7 +190,7 @@ wifi:
   # Optional: Fallback AP with password (only if needed)
   ap:
     ssid: "Fallback-AP"
-    password: !secret fallback_password
+    password: !secret device_name__ap_password
 
 ```
 
@@ -261,33 +278,29 @@ If you have extreme security requirements, you can physically disable USB/serial
 
 ### Using secrets.yaml
 
-Use `secrets.yaml` to avoid storing sensitive information in your configuration files, especially if you share your configs in a public Git repository:
+Use `secrets.yaml` to avoid storing sensitive information in your configuration files, especially if you share your configs in a public Git repository. The per device names below follow the `<hostname>__<base>` shape the Device Builder uses when it stores a secret for a device, with hyphens in the hostname written as underscores, so the examples match what it writes to `secrets.yaml`; the web server username is not a secret, so it stays in the config:
 
 ```yaml
 # Example: device1.yaml
 api:
   encryption:
-    key: !secret device1_api_key
+    key: !secret device1__encryption_key
 
 ota:
   - platform: esphome
-    password: !secret device1_ota_password
+    encryption:
 
 ```
 
 **secrets.yaml:**
 
 ```yaml
-# Each device should have unique keys and passwords
-device1_api_key: "uKh1234567890abcdefghijklmnopqrstuvwxyz="
-device1_ota_password: "strong-unique-password-device1"
-device1_web_username: "device1_admin"
-device1_web_password: "strong-unique-web-password-device1"
+# Each device should have unique keys and passwords; the API key also encrypts OTA
+device1__encryption_key: "uKh1234567890abcdefghijklmnopqrstuvwxyz="
+device1__web_password: "strong-unique-web-password-device1"
 
-device2_api_key: "aBc9876543210xyzqrstuvwxyzabcdefghijkl="
-device2_ota_password: "strong-unique-password-device2"
-device2_web_username: "device2_admin"
-device2_web_password: "strong-unique-web-password-device2"
+device2__encryption_key: "aBc9876543210xyzqrstuvwxyzabcdefghijkl="
+device2__web_password: "strong-unique-web-password-device2"
 
 # WiFi credentials can be shared across devices
 wifi_ssid: "YourNetworkName"
@@ -295,7 +308,7 @@ wifi_password: "your-wifi-password"
 
 ```
 
-**Important:** Even when using `secrets.yaml`, **each device must have unique API encryption keys, OTA passwords, and web server credentials**. Never reuse these across devices. Only WiFi credentials can be shared.
+**Important:** Even when using `secrets.yaml`, **each device must have unique API encryption keys (which also secure OTA), OTA passwords where still used, and web server credentials**. Never reuse these across devices. Only WiFi credentials can be shared.
 
 ### Version Control
 
@@ -329,7 +342,7 @@ git log --all --full-history -- secrets.yaml  # Should return nothing
 
 ### Keep ESPHome Updated
 
-Security vulnerabilities are discovered and fixed regularly. Keep your ESPHome installation up to date by following the [installation instructions](/guides/installing_esphome).
+Security vulnerabilities are discovered and fixed regularly. Keep your ESPHome installation up to date by following the [installation instructions](/install/).
 
 **Best practices:**
 
@@ -349,7 +362,7 @@ Security vulnerabilities are discovered and fixed regularly. Keep your ESPHome i
 **OTA security:**
 
 - OTA updates are performed over your local network
-- Enable OTA password protection (see above)
+- Enable OTA encryption (see above)
 - Monitor device logs during updates for unexpected behavior
 
 ## Logging and Monitoring
@@ -401,7 +414,7 @@ wifi:
   # ... your normal wifi config ...
   ap:
     ssid: "Device-Fallback"
-    password: !secret device_name_fallback_password  # ALWAYS SET THIS
+    password: !secret device_name__ap_password  # ALWAYS SET THIS
 
 ```
 
@@ -424,12 +437,20 @@ If using [MQTT](/components/mqtt) instead of the native API:
 ```yaml
 mqtt:
   broker: !secret mqtt_broker
-  username: !secret mqtt_username
-  password: !secret mqtt_password
+  username: !secret device_name__mqtt_username
+  password: !secret device_name__mqtt_password
   # For ESP32 with esp-idf: Use TLS with certificate authority
   # certificate_authority: ca_cert.pem
 
+# Without api: encryption there is no API key to reuse, so give OTA its own
+ota:
+  - platform: esphome
+    encryption:
+      key: !secret device_name__ota_esphome_key
+
 ```
+
+A device already in the field gets that block in two installs; see [Enabling Encryption on an Existing Device](/components/ota/esphome/#enabling-encryption-on-an-existing-device).
 
 **Best practices:**
 
@@ -480,24 +501,24 @@ wifi:
   # Fallback hotspot with password
   ap:
     ssid: "Secure-Device-Fallback"
-    password: !secret secure_device_fallback_password
+    password: !secret secure_device__ap_password
 
 # API with encryption (REQUIRED)
 api:
   encryption:
-    key: !secret secure_device_api_key
+    key: !secret secure_device__encryption_key
 
-# OTA with password (REQUIRED)
+# OTA encrypted with the API key (REQUIRED)
 ota:
   - platform: esphome
-    password: !secret secure_device_ota_password
+    encryption:
 
 # Disable web server if not needed
 # web_server:
 #   port: 80
 #   auth:
-#     username: !secret secure_device_web_username
-#     password: !secret secure_device_web_password
+#     username: secure-device-admin
+#     password: !secret secure_device__web_password
 
 logger:
   level: INFO
@@ -522,7 +543,7 @@ wifi:
 
   # Use static IP to reduce mDNS dependency
   manual_ip:
-    static_ip: !secret production_device_ip
+    static_ip: !secret production_device__ip
     gateway: !secret gateway_ip
     subnet: 255.255.255.0
 
@@ -531,14 +552,14 @@ wifi:
 # API with encryption
 api:
   encryption:
-    key: !secret production_device_api_key
+    key: !secret production_device__encryption_key
   # Optional: Restrict to specific Home Assistant instance
   # reboot_timeout: 15min
 
-# OTA with password
+# OTA encrypted with the API key
 ota:
   - platform: esphome
-    password: !secret production_device_ota_password
+    encryption:
   # Optional: Require safe_mode for troubleshooting
   # safe_mode: true
 
@@ -577,8 +598,8 @@ Depending on your jurisdiction and use case, you may need to comply with:
 1. **Investigate** other devices on the same network
 1. **Rotate credentials**:
 
-   - API encryption keys
-   - OTA passwords
+   - API encryption keys (a device that requires OTA encryption only accepts its current key, so a new key goes in with the serial flash below)
+   - OTA passwords, where still used
    - Web server credentials
    - WiFi passwords (if device had access)
 

@@ -23,6 +23,8 @@ External LC filters must be connected to the DC/DC regulator pins if it is being
 The advantage of using a DC/DC regulator is that the overall power consumption is normally reduced
 as the efficiency of such a regulator is higher than that of a LDO.
 ⚠️ Warning: Enabling DC/DC may cause the board to fail to boot if external LC filter is misconfigured or is poor quality.
+- **dfu** (*Optional*): Enter DFU mode automatically when flashing; see [DFU](#dfu-device-firmware-update).
+- **reg0** (*Optional*): Configure the REGOUT0 output voltage; see [REGOUT0](#reg0-output-voltage-regout0).
 
 ## Getting Started
 
@@ -76,6 +78,10 @@ The `dfu` component enables automatic entry into **DFU (Device Firmware Update)*
 the USB CDC serial connection. When a host opens the port at **1200 baud**, the component triggers
 a reset to put the device into DFU mode.
 
+Opening the port at **2001 baud** instead reboots the device straight back into its application,
+without entering DFU mode, regardless of whether `reset_pin` is set. The USB CDC has no reset line,
+so host tools such as the Device Builder use this for the **Reset device** action in the logs view.
+
 ESPHome uses this component internally when uploading firmware via:
 
 ```bash
@@ -112,7 +118,7 @@ nrf52:
   This pin should be connected to the MCU's reset line or to a circuit that causes the bootloader to enter DFU mode after reset.
   When omitted, a software reset is used instead.
 
-## REGOUT0
+## REG0 Output Voltage (REGOUT0)
 
 Output voltage from the REG0 regulator stage, which powers the GPIO pins when the board operates in high-voltage mode.
 This setting can only be changed a limited number of times, unless uicr_erase is set to true.
@@ -134,6 +140,36 @@ nrf52:
 - **uicr_erase** (**Optional**, bool): If set to true, the User Information Configuration Registers (UICR)
 will be erased before writing the new voltage setting.
 ⚠️ Warning: Enabling this may cause the board to fail to boot if misconfigured. Default is false.
+
+## Powering a GPIO-Gated Peripheral Rail
+
+Some nRF52 boards -- mostly cheap hobby clones such as the "SuperMini nRF52840" (nRFMicro-style boards) -- have no
+pull-up resistor on the GPIO pin that gates their external peripheral header. Without one, that pin floats at an
+indeterminate voltage instead of the rail reliably being on, so anything wired to that header (sensors, displays,
+etc.) may not receive stable power.
+
+To check whether your board needs this before flashing, power the board on (without `power_supply` configured
+yet) and measure the candidate pin against ground with a multimeter: a genuine pull-up holds it close to the
+board's GPIO supply voltage (typically 3.3V) on its own, while a floating pin settles at an indeterminate voltage
+instead (around 1.9V was observed on a "SuperMini nRF52840" clone).
+
+The [Power Supply](/components/power_supply/) component already covers this case: with `enable_on_boot: true` on
+an internal pin, it sets up before any bus, so the rail is confirmed on before
+[I²C](/components/i2c/) or [SPI](/components/spi/) try to use it.
+
+```yaml
+power_supply:
+  - id: ext_vcc
+    pin: P0.13
+    enable_on_boot: true
+    enable_time: 500ms
+```
+
+`P0.13` is the external-VCC gate on nice!nano and SuperMini-nRF52840-style boards -- check your own board's
+schematic for the equivalent pin. `enable_time` is the delay other components wait for after the rail turns on,
+to let its voltage settle before anything uses it; 500ms was enough on a "SuperMini nRF52840" clone, but measure
+your own board's actual settle time rather than copying this value. See the [Power Supply](/components/power_supply/)
+page for the full set of configuration variables.
 
 ## Troubleshooting
 
@@ -226,7 +262,8 @@ nrf52:
   Notably, the `%zu` specifier is not handled correctly, which can
   cause incorrect log output when the [logger](/components/logger) component is used.
   Set to `false` to use the full newlib, which supports all standard printf format specifiers
-  including `%zu` and 64-bit integers at the cost of a larger binary. Defaults to `true`.
+  including `%zu` and 64-bit integers at the cost of a larger binary.
+  Defaults to `false` when `logger` component is present, otherwise `true`.
 
 - **advanced** (*Optional*, mapping): See [Advanced Configuration](#advanced-configuration) below.
 
@@ -245,5 +282,8 @@ nrf52:
 - [ESPHome Core Configuration](/components/esphome/)
 - [OpenThread Component](/components/openthread/)
 - [Network Component](/components/network/)
+- [Power Supply Component](/components/power_supply/)
+- [Zephyr BLE Server](/components/zephyr_ble_server/)
+- [Zephyr PWM](/components/output/zephyr_pwm/)
 
 - [Guidelines for Adafruit Bootloader Memory Map](https://learn.adafruit.com/introducing-the-adafruit-nrf52840-feather?view=all#hathach-memory-map)

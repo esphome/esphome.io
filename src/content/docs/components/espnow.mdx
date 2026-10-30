@@ -11,6 +11,13 @@ It enables the option to interact with other ESP32 devices over Espressif's ESP-
 It can be used with the [Packet Transport Component](/components/packet_transport) to share
 sensor data; see [ESP-NOW Packet Transport Platform](/components/packet_transport/espnow).
 
+> [!NOTE]
+> ESP-NOW is a Wi-Fi-based protocol, so it is native to ESP32 variants that have their own Wi-Fi radio. The ESP32-P4
+> has no radio of its own; there it instead requires the [ESP32 Hosted](/components/esp32_hosted/) component with a
+> co-processor running ESP-NOW-capable firmware; adding `esp32_hosted:` enables the ESP-NOW path automatically. On
+> variants that lack Wi-Fi and have no such path (for example the ESP32-H2, which has an 802.15.4 and Bluetooth LE
+> radio but no Wi-Fi), ESP-NOW is not available and the configuration will fail validation.
+
 ```yaml
 # Example configuration entry
 espnow:
@@ -41,14 +48,14 @@ Automations:
 All three triggers (`on_receive`, `on_unknown_peer`, and `on_broadcast`) expose the same three lambda variables describing
 the received packet:
 
-- **info** (<APIStruct text="espnow::ESPNowRecvInfo" path="espnow::ESPNowRecvInfo" />): Information about the received
+- `info`: <APIStruct text="espnow::ESPNowRecvInfo" path="espnow::ESPNowRecvInfo" /> with information about the received
   packet. The most useful members are:
   - `info.src_addr` — `uint8_t[6]` source MAC address of the packet.
   - `info.des_addr` — `uint8_t[6]` destination MAC address (will be `FF:FF:FF:FF:FF:FF` for broadcasts).
   - `info.rx_ctrl` — pointer to a Wi-Fi `wifi_pkt_rx_ctrl_t` structure containing low-level reception details such as
     `info.rx_ctrl->rssi` (signal strength in dBm).
-- **data**: A `const uint8_t *` pointer to the received payload.
-- **size**: A `uint16_t` giving the length of the payload in bytes.
+- `data`: A `const uint8_t *` pointer to the received payload.
+- `size`: A `uint16_t` giving the length of the payload in bytes.
 
 These variables are only valid for the duration of the synchronous part of the automation. If the automation
 includes any asynchronous actions (such as `delay`), the underlying memory may have been recycled by the time the
@@ -297,4 +304,5 @@ over unicast and broadcast.
 
 ## See Also
 - [ESP-NOW Packet Transport Platform](/components/packet_transport/espnow/)
+- [ESP32 Hosted](/components/esp32_hosted/)
 - <APIRef text="espnow.h" path="espnow/espnow.h" />
