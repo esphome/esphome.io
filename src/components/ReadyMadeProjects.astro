@@ -135,16 +135,6 @@ function githubUrlsFor(type: ProjectType): (string | undefined)[] {
               <esp-web-install-button manifest={device.manifest} />
             </Fragment>
           )}
-          {device.steps && (
-            <Fragment>
-              {device.stepsPrompt && <div class="question-prompt">{device.stepsPrompt}</div>}
-              <ol>
-                {device.steps.map((step) => (
-                  <li set:html={step} />
-                ))}
-              </ol>
-            </Fragment>
-          )}
         </div>
       ))}
 
@@ -184,35 +174,6 @@ function githubUrlsFor(type: ProjectType): (string | undefined)[] {
 }
 
 <script is:inline>
-  async function showImprovWifiSerial() {
-    await import("https://unpkg.com/improv-wifi-serial-sdk@2.5.0/dist/web/serial-launch-button.js?module");
-    let port;
-    try {
-      port = await navigator.serial.requestPort({
-        filters: [{ usbProductId: 61450, usbVendorId: 11914 }],
-      });
-    } catch (err) {
-      if (err.name !== "NotFoundError") {
-        alert("Error: " + err.message);
-      }
-      return;
-    }
-    try {
-      await port.open({ baudRate: 115200 });
-    } catch (err) {
-      alert(err.message);
-      return;
-    }
-    const improv = document.createElement("improv-wifi-serial-provision-dialog");
-    improv.port = port;
-    document.body.appendChild(improv);
-  }
-
-  const improvBtn = document.getElementById("improv-wifi-btn");
-  if (improvBtn) {
-    improvBtn.addEventListener("click", showImprovWifiSerial);
-  }
-
   // Handle selecting a project type
   document.querySelectorAll('input[name="type"]').forEach((radio) => {
     radio.addEventListener("change", () => {

@@ -56,7 +56,7 @@ Automations:
 All three triggers (`on_receive`, `on_unknown_peer`, and `on_broadcast`; the last is ESP32 only) expose the same three
 lambda variables describing the received packet:
 
-- **info** (<APIStruct text="espnow::ESPNowRecvInfo" path="espnow::ESPNowRecvInfo" />): Information about the received
+- `info`: <APIStruct text="espnow::ESPNowRecvInfo" path="espnow::ESPNowRecvInfo" /> with information about the received
   packet. The most useful members are:
   - `info.src_addr` — `uint8_t[6]` source MAC address of the packet.
   - `info.des_addr` — `uint8_t[6]` destination MAC address (will be `FF:FF:FF:FF:FF:FF` for broadcasts, and all
@@ -65,8 +65,8 @@ lambda variables describing the received packet:
     structure, with fields such as `info.rx_ctrl->rssi` (signal strength in dBm). On the ESP8266 it is a small
     ESPHome structure with only `rssi` and `timestamp`; `rssi` is always `0` there and the other `wifi_pkt_rx_ctrl_t`
     fields do not exist.
-- **data**: A `const uint8_t *` pointer to the received payload.
-- **size**: A `uint16_t` giving the length of the payload in bytes.
+- `data`: A `const uint8_t *` pointer to the received payload.
+- `size`: A `uint16_t` giving the length of the payload in bytes.
 
 These variables are only valid for the duration of the synchronous part of the automation. If the automation
 includes any asynchronous actions (such as `delay`), the underlying memory may have been recycled by the time the

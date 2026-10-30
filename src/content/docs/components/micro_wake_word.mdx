@@ -33,6 +33,11 @@ micro_wake_word:
   the task priority, stack size or detection settings. Leave it at the default unless you have measured
   contention in your configuration.
 - **task_stack_in_psram** (*Optional*, boolean): If `true`, allocate the inference task stack in PSRAM instead of internal RAM. Requires the [PSRAM](/components/psram/) component. Defaults to `false`.
+- **ring_buffer_duration** (*Optional*, Time): Duration of microphone audio buffered for wake word inference.
+  Accepts `120ms` to `1s` and defaults to `120ms`. A longer buffer can absorb temporary delays in the inference
+  task, but uses more RAM and does not make inference faster. At the required 16 kHz, mono, 16-bit input, each
+  millisecond holds 32 bytes: the default `120ms` stores 3,840 bytes, while `800ms` stores 25,600 bytes.
+  These figures exclude the small allocation overhead.
 - **prefer_internal_ram** (*Optional*, boolean): If `true`, try to place each active model's tensor arena and weights
   in internal RAM. See [Memory Usage](#memory-usage) for the RAM tradeoff. Defaults to `false`.
 - **models** (*Optional*, list): The models to use. Only the first model is enabled by default on the first boot. Each model's enabled state is then saved/restored to/from the flash.

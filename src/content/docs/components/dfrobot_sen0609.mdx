@@ -126,7 +126,8 @@ text_sensor:
 ## Settings
 
 The [number](#number), [switch](#switch) and [select](#select) entities change the settings of the module. The hub
-reads their values from the module at boot, so the entities show what the module holds.
+reads their values from the module at boot, so the entities show what the module holds. The `query_params`
+[button](#button) reads them again.
 
 Changing a setting stops the radar for a moment: the hub stops the sensor, writes the change, saves it to the module's
 flash and starts the sensor again. Changes made within a second of each other are saved together. If the module does
@@ -214,6 +215,28 @@ select:
   if you have multiple hubs configured.
 - **out_pin_level** (*Optional*): The level of the module's OUT pin while a target is detected, `low` or `high`. All
   options from [Select](/components/select/).
+
+## Button
+
+```yaml
+button:
+  - platform: dfrobot_sen0609
+    restart:
+      name: Restart
+```
+
+### Configuration Variables
+
+- **dfrobot_sen0609_id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the hub component. Required
+  if you have multiple hubs configured.
+- **restart** (*Optional*): Reboots the module. The module does not answer this command, so the hub waits for it to
+  boot, then writes the run mode, the UART output settings and the LEDs and reads the settings again, as it does at
+  boot. All options from [Button](/components/button/).
+- **factory_reset** (*Optional*): Restores the module's factory settings, then writes the run mode, the UART output
+  settings and the LEDs and reads the settings again, so the [settings](#settings) entities show the factory values.
+  All options from [Button](/components/button/).
+- **query_params** (*Optional*): Reads the versions and the settings that have an entity configured from the module
+  again. Like a change, this stops the radar for a moment. All options from [Button](/components/button/).
 
 ## See Also
 

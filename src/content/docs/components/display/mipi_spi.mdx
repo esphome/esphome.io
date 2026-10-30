@@ -87,6 +87,7 @@ the pins used to interface to the display to be specified.
 | LANBON-L8                            | Lanbon       | [https://www.lanbon.cn/product/lanbon-l8](https://www.lanbon.cn/product/lanbon-l8)                                                 |
 | M5CORE                               | M5Stack      | [https://docs.m5stack.com/en/core/BASIC%20v2.6](https://docs.m5stack.com/en/core/BASIC%20v2.6)                                     |
 | M5CORE2                              | M5Stack      | [https://docs.m5stack.com/en/core/core2](https://docs.m5stack.com/en/core/core2)                                                   |
+| M5STACK-ATOMS3                       | M5Stack      | [https://docs.m5stack.com/en/core/AtomS3](https://docs.m5stack.com/en/core/AtomS3)                                                 |
 | M5STACK-ATOMS3R-GC9107               | M5Stack      | [https://shop.m5stack.com/products/atoms3r-dev-kit](https://shop.m5stack.com/products/atoms3r-dev-kit)                             |
 | M5STACK-ATOMS3R-ST7735               | M5Stack      | [https://shop.m5stack.com/products/atoms3r-dev-kit](https://shop.m5stack.com/products/atoms3r-dev-kit) (ST7735 revision, May 2026 on) |
 | PICO-RESTOUCH-LCD-3.5                | Waveshare    | [https://www.waveshare.com/pico-restouch-lcd-3.5.htm](https://www.waveshare.com/pico-restouch-lcd-3.5.htm)                         |
@@ -142,6 +143,10 @@ most of the configuration will be set by default, but can be overridden if neede
 
 - **enable_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): An optional pin to enable the display, if required. A list of pins can be provided for displays that require multiple enable pins. A full pin configuration may be provided
   to set the pin mode and inverted property. By default the pin will be driven high to enable the display.
+  If `enable_pin` is not set, the model's default enable pins are used, if it has any. A default enable pin
+  that is also used elsewhere in the configuration, for example by a GPIO switch, is left out, so you can
+  control that pin yourself. If every other use of the pin sets `allow_other_uses: true`, the pin is shared
+  with the display instead. Setting `enable_pin` replaces all of the model's default enable pins.
 
 - **brightness** (*Optional*, int): The initial brightness of the display, for AMOLED displays and the `CUSTOM` model only. This should be a value from 0 to 255. It defaults to 0xD0 for AMOLED displays, and has no default for the `CUSTOM` model, where no brightness command is sent unless it is set.
 - **color_order** (*Optional*): Should be one of `bgr` (default) or `rgb`. This specifies the order of the color channels in the display panel. The default is `bgr` for most displays, but some displays may require `rgb`. It does not affect the color order of the display buffer, which is always RGB.

@@ -1,0 +1,92 @@
+---
+description: "Instructions for setting up the RTSP Server in ESPHome to stream camera video to VLC, ffplay or NVR software"
+title: "RTSP Server Component"
+---
+import APIRef from '@components/APIRef.astro';
+
+
+The `rtsp_server` component streams video from an [ESP32 Camera](/components/esp32_camera/) over
+RTSP, the standard protocol used by video players and surveillance software. This allows tools like
+VLC, ffplay, go2rtc or Frigate to
+consume the camera feed directly, without any ESPHome-specific integration.
+
+Video is delivered as Motion JPEG (the format produced by the camera hardware) carried over
+the RTSP connection itself (TCP-interleaved transport). Clients requesting UDP transport are
+asked to fall back to TCP, which every common player does automatically. The camera streams
+only while at least one client is playing.
+
+> [!WARNING]
+> The connection is plain TCP with no encryption and no authentication; `allowed_ips` filters by address but
+> does not authenticate the peer. If it is omitted, any host that can reach the port can watch the camera. Only
+> use this component on a trusted network.
+
+```yaml
+# Example configuration entry, next to a configured esp32_camera
+rtsp_server:
+```
+
+## Configuration Variables
+
+- **port** (*Optional*, int): The port the RTSP server listens on. Defaults to `554`,
+  the standard RTSP port.
+- **max_connections** (*Optional*, int): The maximum number of clients that can stream at
+  the same time, from `1` to `4`. Each connection reserves about 900 bytes of memory and a
+  socket for the whole run, so keep this low on memory-constrained boards. Defaults to `2`.
+- **allowed_ips** (*Optional*, list of IPv4 networks): Only peers from these networks may connect;
+  others are refused at accept time. Each entry is a single address (`192.168.1.50`) or an
+  `address/prefix` network (`192.168.1.0/24`). When omitted, every host that can reach the port is accepted.
+
+The component needs an [ESP32 Camera](/components/esp32_camera/) that delivers JPEG: the default
+`pixel_format: JPEG`, or another colour format converted with `jpeg_quality`; `GRAYSCALE` is not
+supported. The `resolution` may be at most 2040 pixels per side. The configuration is rejected
+otherwise. A client whose connection makes no progress for half a second drops its current frame
+and takes no new one until the connection drains again, so it cannot slow the camera down for the
+other consumers.
+
+## Watching the Stream
+
+The stream is available at `rtsp://<device-ip>:<port>/`. For example:
+
+```bash
+ffplay -rtsp_transport tcp rtsp://192.168.1.100:554/
+```
+
+or open the same URL as a network stream in VLC. For the lowest latency with ffplay, disable
+its internal buffering:
+
+```bash
+ffplay -fflags nobuffer -flags low_delay -probesize 32 -analyzeduration 0 -rtsp_transport tcp rtsp://192.168.1.100:554/
+```
+
+## Throughput
+
+A 640x480 frame is 6 to 19 KB, far more than the 5.7 KB that lwIP queues per TCP connection by default,
+so the sender has to wait a network round trip every few segments. Over Wi-Fi that limits the stream to
+about one frame per second and keeps dropping frames. The component therefore requests the
+[high-performance networking](/components/network/#high-performance-networking) settings, which raise
+the send buffer and the Wi-Fi driver buffers; in the same test they lifted a Wi-Fi client to about
+5 fps and an Ethernet client to the camera's 10 fps (measured on an ESP32-S3 with an OV5640 at
+640x480, 10 fps, over Wi-Fi and Ethernet). The larger TCP buffers cost heap while clients are
+connected; the Wi-Fi driver buffers are reserved for the whole run. Set
+`network: enable_high_performance: false` to turn this off on a board that cannot spare the memory,
+or `network: tcp_send_buffer` to pick a buffer size by hand.
+
+## Integrating into an NVR
+
+The RTSP URL can be used directly as a camera source in surveillance software such as
+Frigate, go2rtc, Zoneminder or Blue Iris. Configure the source as an RTSP camera with
+TCP transport and the URL `rtsp://<device-ip>:<port>/`.
+
+## Home Assistant
+
+Home Assistant does not need this component: the [ESP32 Camera](/components/esp32_camera/) entity
+streams over the native API and works out of the box. The RTSP server is for other software. Pointing
+a Home Assistant Generic Camera at the RTSP URL does not work either, because Home Assistant's stream
+pipeline plays only H.264 and HEVC.
+
+## See Also
+
+- [Camera Component](/components/camera/)
+- [ESP32 Camera Component](/components/esp32_camera/)
+- [ESP32 Camera Web Server Component](/components/esp32_camera_web_server/)
+- <APIRef text="rtsp_server.h" path="rtsp_server/rtsp_server.h" />

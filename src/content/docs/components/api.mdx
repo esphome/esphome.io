@@ -457,7 +457,12 @@ This [Condition](/automations/actions#all-conditions) checks if at least one cli
 
 #### Configuration Variables
 
-- **state_subscription_only** (*Optional*, boolean, [templatable](/automations/templates)): If enabled, only counts clients that have subscribed to entity state updates. This filters out logger-only connections (such as `esphome logs` command), which can cause false positives when waiting for Home Assistant. Defaults to `false`.
+- **state_subscription_only** (*Optional*, boolean, [templatable](/automations/templates)): If enabled, only counts
+  clients that have subscribed to entity state updates. This filters out log-only connections, which can cause false
+  positives when waiting for Home Assistant. Since ESPHome 2026.4.0, `esphome logs` (also used by the
+  [ESPHome Device Builder](/install/) log viewer) subscribes to entity states by default to show state changes in the
+  log, which means it is counted here unless started with [`--no-states`](/guides/cli#logs-command).
+  Defaults to `false`.
 
 **Check if any client is connected:**
 
@@ -827,6 +832,13 @@ api:
   - **description** (*Optional*, string): Description of the variable.
   - **example** (*Optional*, string): Example value for the variable. Always a string, so
     quote values for numeric variables, e.g. `example: "420"`.
+  - **required** (*Optional*, boolean): Set to `false` to let callers omit the variable.
+    An omitted variable arrives as `false` for `bool`, `0` for `int`, `0.0` for `float` and
+    an empty string for `string`, so the action cannot tell it apart from that value sent on
+    purpose. To detect an omitted variable, set `default` to a value callers never send.
+    Array types such as `bool[]` cannot be optional. Defaults to `true`.
+  - **default** (*Optional*): Default value the client fills in when the caller omits
+    the variable. Must match the variable type and implies `required: false`.
 
 The `name: type` shorthand and the mapping form can be mixed within the same
 `variables:` block.
@@ -841,10 +853,10 @@ bidirectional communication where actions can report success/error status or ret
 The response behavior is controlled by the `supports_response` option, which can be set explicitly or
 auto-detected based on your action configuration:
 
-- **none** (default): No response is sent. The action is "fire and forget".
-- **status**: Reports success/error status without data. Auto-detected when `api.respond` is used without `data:`.
-- **optional**: Returns JSON data when the client requests it. Auto-detected when `api.respond` is used with `data:`.
-- **only**: Always returns JSON data. Must be set explicitly. Use this for query-type actions.
+- `none`: No response is sent. The action is "fire and forget". This is the default.
+- `status`: Reports success/error status without data. Auto-detected when `api.respond` is used without `data:`.
+- `optional`: Returns JSON data when the client requests it. Auto-detected when `api.respond` is used with `data:`.
+- `only`: Always returns JSON data. Must be set explicitly. Use this for query-type actions.
 
 #### Configuration Variables
 

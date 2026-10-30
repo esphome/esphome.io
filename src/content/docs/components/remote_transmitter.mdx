@@ -200,6 +200,36 @@ on_...:
 AEHA refers to the Association for Electric Home Appliances in Japan, a format used by Panasonic and many other
 companies.
 
+### `remote_transmitter.transmit_aok` Action
+
+This [action](/automations/actions/#all-actions) sends an A-OK RF remote code to a remote transmitter. A-OK is used by
+remote controls for roller shutters, awnings and similar motors on 433MHz and 868MHz.
+
+```yaml
+on_...:
+  - remote_transmitter.transmit_aok:
+      remote_id: 0x123456
+      channels: 0x1000
+      command: 0x43
+```
+
+#### Configuration Variables
+
+- **remote_id** (**Required**, int, [templatable](/automations/templates/)): The 24-bit ID of the remote to send as.
+  Range is 0 to 0xFFFFFF.
+- **channels** (**Required**, int, [templatable](/automations/templates/)): The 16-bit channel mask to send the command
+  to. Each of the 16 channels on the remote corresponds to one bit of the mask. Multiple bits can
+  be set at once to broadcast the command to multiple receivers.
+- **command** (**Required**, int, [templatable](/automations/templates/)): The 1-byte command code to send.
+  Range is 0 to 0xFF.
+- All other options from [Remote Transmitter Actions](#remote_transmitter-transmit_action).
+
+Set `dump: aok` on a [remote receiver](/components/remote_receiver/) to read these values from an existing remote.
+
+> [!NOTE]
+> Remotes send each code several times. If the device does not react to a single transmission, set `repeat`,
+> for example `times: 8` with `wait_time: 5ms`.
+
 <span id="remote_transmitter-transmit_beo4"></span>
 
 ### `remote_transmitter.transmit_beo4` Action
@@ -539,6 +569,15 @@ on_...:
       code: '0xd19ef0a9'
       suffix: '0x2A'
       suffix_bits: 6
+  # Jarolift TDEF group frame (72 bits)
+  - remote_transmitter.transmit_keeloq:
+      address: '0x1234500'
+      command: '0x8'
+      code: '0xF94A09F2'
+      group: '0x0F'
+      repeat:
+        times: 2
+        wait_time: 0ms
 ```
 
 #### Configuration variables
@@ -552,8 +591,14 @@ on_...:
   validation; a lambda value is cut to the lowest **suffix_bits** bits at run time. Defaults to `0`.
 - **suffix_bits** (*Optional*, int, [templatable](/automations/templates)): How many suffix bits to send, from `0`
   to `16`; a lambda value above `16` is capped at `16`. Defaults to `0`, which sends only the 66-bit word.
+- **group** (*Optional*, int, [templatable](/automations/templates/)): The 8 group bits (channels 9 to 16) of a
+  72-bit Jarolift TDEF frame, sent after the 64-bit word in place of the low battery and repeat bits. Channels 1
+  to 8 are part of the encrypted **code**. Combining it with **suffix** or **suffix_bits** is rejected, and
+  **level** must stay `false` (no lambda).
 - All other options from [Remote Transmitter Actions](#remote_transmitter-transmit_action).
-- A repeat **wait_time** of 15ms as shown replicates the repetition of an HCS301.
+- A repeat **wait_time** of 15ms, as in the first example, replicates the repetition of an HCS301. The Jarolift
+  example repeats its frame with no extra wait: the guard time that ends every KeeLoq frame already separates the
+  two copies.
 
 <span id="remote_transmitter-transmit_haier"></span>
 
