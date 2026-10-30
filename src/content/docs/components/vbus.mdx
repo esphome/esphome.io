@@ -56,6 +56,7 @@ controls, or use `writes: armed` for [one-shot write authorization](#validated-c
 
 Names, units and the controller association have defaults. Add `name`, `id` and other entity options inside a setting
 to customize it. For an existing installation, [keep the existing names, IDs and domains](#existing-installations-and-advanced-use).
+See [write results](#last-setting-write-result) if you want a visible explanation when a change is rejected.
 
 ## Supported Models
 
@@ -1312,6 +1313,33 @@ The pump-control labels follow the controller's display. According to the
 `OnOF` is ordinary on/off control, `PULS` controls speed through the semiconductor relay, `PSOL` uses the solar-pump
 PWM curve and `PRIS` uses the heating-pump PWM curve. To use longer labels, set `options` explicitly; the raw values
 and existing default labels remain unchanged.
+
+## Last Setting Write Result
+
+An optional text sensor reports the last explicit setting request without adding polling or writes:
+
+```yaml
+text_sensor:
+  - platform: vbus
+    last_write_result:
+      name: Last Setting Write
+```
+
+- **controller_id** (*Optional*, [ID](/guides/configuration-types/#id)): The controller with `writes` enabled.
+  Inferred with one controller; required when there are multiple controllers.
+- **last_write_result** (**Required**, [Text Sensor](/components/text_sensor/)): The result entity. Configure it
+  only once per controller. The default entity category is `diagnostic`.
+
+Results include the setting's protocol ID and a readable outcome, such as `Setting 48: verified (value 60, raw 60)`,
+`Setting 48: writes are not armed` or a request rejected because a settings scan is in progress. A verified result
+requires readback, bus release and resumed telemetry. An unconfirmed result does not prove that the setting stayed
+unchanged. Verified and unchanged outcomes include the scaled value and the raw protocol value, so different values
+remain distinguishable. For example, a setting with scale `0.1` reports `value 60.0, raw 600` for a requested value of `60.0`.
+The entity reports request results: rejecting a concurrent request temporarily replaces the displayed result until the
+active operation finishes. Equal result strings are not published again; use the controller's `writes.on_setting_result`
+callback to handle every attempt, including identical retries. The entity has no state until the first result and is not
+restored across reboot.
+Omit the platform to compile out its storage and formatting code.
 
 ## Existing Installations And Advanced Use
 
