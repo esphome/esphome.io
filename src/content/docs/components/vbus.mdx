@@ -20,11 +20,11 @@ applications using a documented [packet structure](https://danielwippermann.gith
 | --- | --- |
 | Temperatures, pump states and energy already broadcast by the controller | [RX sensors](#sensor) and [binary sensors](#binary-sensor); no TX circuit or polling required |
 | Settings on a DeltaSol CS Plus with firmware 1.11 | [CS Plus quick start](#cs-plus-quick-start) |
+| All CS Plus setting controls | [Complete controls package](#optional-complete-controls-package) |
 | An unsupported controller or custom protocol work | [Generic TX](#optional-transmission) and [P2 transactions](#p2-value-transactions) |
 
 The qualified profile handles addresses, bus access, parameter scaling, dependencies and write confirmation.
 Generic TX leaves those device-specific choices to you. RX remains available in both cases.
-
 
 ## CS Plus Quick Start
 
@@ -1341,6 +1341,35 @@ callback to handle every attempt, including identical retries. The entity has no
 restored across reboot.
 Omit the platform to compile out its storage and formatting code.
 
+## Optional Time-Of-Day Controls
+
+The `vbus` datetime platform provides an optional time picker for ordinary clock settings. It uses the same cache,
+validation and verified write path as the corresponding numbers, without adding polling. Existing number entities
+are not replaced or renamed.
+
+```yaml
+datetime:
+  - platform: vbus
+    parameter: system_time
+    name: Controller Clock
+```
+
+- **controller_id** (*Optional*, [ID](/guides/configuration-types/#id)): The controller with `writes` enabled.
+  Inferred with one controller; required when there are multiple controllers.
+- **parameter** (**Required**, string): `system_time`, `thermostat_start_time_1`, `thermostat_end_time_1`,
+  `thermostat_start_time_2`, `thermostat_end_time_2`, `thermostat_start_time_3`, `thermostat_end_time_3`,
+  `tube_collector_start_time` or `tube_collector_end_time`.
+- Other options from [DateTime](/components/datetime/). The entity type is `time` and its default category is `config`.
+
+Send a complete `HH:MM:00` time, including zero seconds. Partial calls and invalid fields are rejected rather than
+completed from the cached clock. Scheduled windows retain the controller's 15-minute step; invalid requests are rejected
+rather than rounded. The displayed time changes only after confirmation, and unchanged values are not published again.
+The controller clock still comes from RX broadcasts. There are no automatic boot, restoration or time-sync writes.
+
+`disinfection_start_time` remains a number because its special value `1440` cannot be represented by a standard
+00:00–23:59 time entity. Durations such as `loading_break_time` are also numbers. For existing automations and history,
+retain the numeric controls; a time picker is a separate opt-in entity, not a domain migration.
+
 ## Existing Installations And Advanced Use
 
 Shortening the configuration does not require renaming entities, changing their domains or migrating Home Assistant
@@ -1355,9 +1384,33 @@ new defaults. The following simplifications retain the existing choices:
   key, retaining its name and ID; place the shared `controller_id` at the platform level when needed.
 
 Existing clock controls remain numeric minutes after midnight, preserving their identities and special values.
-Two-state selects retain their domains and labels.
+The optional time entities are configured separately. Two-state selects retain their domains and labels.
 
 The generic `transmit`, transaction, polling and P2 sensor sections above remain available for unsupported controllers
 and custom applications. Set the correct destination and protocol IDs from the controller's documentation. Selecting
 an unsupported model is not a way to bypass the qualified CS Plus validation. For a separate transmitter UART, combine
 `controller` with `transmit.uart_id`; the same UART pin and framing requirements still apply.
+
+### Optional Complete Controls Package
+
+For a new installation, download the
+<a href="/examples/vbus/cs-plus-controls.yaml" download>CS Plus controls package</a> and save it as
+`vbus-cs-plus-controls.yaml` beside the main configuration. It declares all 84 settings as 49 numbers, 9 time-of-day
+controls and 26 selects, with stable IDs for customization using [`!extend`](/components/packages/).
+Common controls are enabled
+by default; the other entities are disabled by default in Home Assistant and can be enabled individually.
+
+```yaml
+packages:
+  cs_plus_controls: !include vbus-cs-plus-controls.yaml
+
+vbus:
+  controller:
+    model: deltasol_cs_plus
+    writes: direct
+```
+
+The package does not configure GPIOs, enable writes, add polling cycles, restore controller settings or add diagnostic
+entities. Those choices belong to the main configuration. It shortens the file users maintain, rather than reducing
+the memory needed for the same 84 controls. For an existing installation, keep the existing entity declarations and
+their explicit names, IDs and labels instead of replacing them with the package's defaults.
