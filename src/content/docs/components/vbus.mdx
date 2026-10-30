@@ -353,6 +353,7 @@ The example parameter `0x1234` is illustrative and is not a universal setting id
   - **on_bus_grant** (*Optional*, [Automation](/automations/)): Runs after a fresh, valid grant and a quiet 100 ms
     contention period. This is the earliest point at which an application can send a datagram. Its `grant_id`
     argument (`uint32_t`) identifies this lease and remains available after a `delay` action.
+  - **transactions** (*Optional*): Enable [P2 value transactions](#p2-value-transactions) on this instance.
 
 Addresses are nonzero 16-bit integers with both byte high bits clear, for example `0x0020` and `0x2211`.
 Raw parameter identifiers and values retain all 16 and 32 bits respectively.
@@ -433,6 +434,115 @@ UART access must be exclusive to this component. Do not use `uart.write` or anot
 The implementation does not block on `flush()`. A platform whose UART cannot report write capacity may still block
 briefly while handing off the single 16-byte frame. Software timing checks cannot guarantee collision-free operation
 or compensate for an incorrect transmitter circuit.
+
+## P2 Value Transactions
+
+The optional `transmit.transactions` manager adds standard P2 reads and verified writes on top of the
+[transmission transport](#optional-transmission). It accepts one pending operation per VBus instance, with no
+queue, polling or automatic retries. Request the bus first and pass the current `grant_id` to each operation.
+Existing RX callbacks and raw TX configurations continue to work without this option.
+
+```yaml
+vbus:
+  id: resol_bus
+  uart_id: resol
+  transmit:
+    destination: 0x2211
+    transactions:
+      on_result:
+        - lambda: |-
+            ESP_LOGI("vbus", "ID 0x%04x: status %u, value %" PRIu32,
+                     value_id, static_cast<unsigned>(status), value);
+        - vbus.release_bus:
+            id: resol_bus
+            grant_id: !lambda return grant_id;
+    on_bus_grant:
+      - vbus.read_value:
+          id: resol_bus
+          grant_id: !lambda return grant_id;
+          value_id: 0x1234  # Replace with a documented readable identifier.
+```
+
+Use `vbus.request_bus` to start this example. Configuring the manager does not request a grant or transmit by itself.
+The identifiers and raw values are specific to the controller and firmware. This manager does not define units,
+valid settings, access permissions or Home Assistant entities.
+
+### Transaction Configuration
+
+- **response_timeout** (*Optional*, Time): Maximum wait for each reply or for UART space before a verification read.
+  Defaults to `100ms`; allowed range is `20ms` to `1000ms`. The transport's remaining lease can impose a shorter limit.
+- **on_result** (*Optional*, [Automation](/automations/)): Runs once for each accepted operation when it completes
+  or fails. Its five arguments are passed by value, including across delayed actions:
+  - `grant_id` (`uint32_t`): The lease used by the operation.
+  - `command` (`uint16_t`): The original request command: `0x0300`, `0x0200` or `0x0400`.
+  - `value_id` (`uint16_t`): The parameter identifier.
+  - `value` (`uint32_t`): The returned value on success, or the observed readback on verification mismatch.
+    It is `0` for timeout or loss of ownership; those errors do not provide a measurement.
+  - `status` (`vbus::TransactionStatus`): One of the results below.
+
+| Status | Meaning |
+|---|---|
+| `TRANSACTION_STATUS_SUCCESS` | Valid read reply, or write ACK followed by a matching readback. |
+| `TRANSACTION_STATUS_TIMEOUT` | A required reply or verification send did not complete before its timeout. |
+| `TRANSACTION_STATUS_BUS_LOST` | Ownership ended before the operation could finish. |
+| `TRANSACTION_STATUS_VERIFY_MISMATCH` | Readback differs from the requested write value. |
+
+The C++ enumerators are scoped, for example `vbus::TransactionStatus::TRANSACTION_STATUS_SUCCESS`.
+
+### Read And Write Actions
+
+`vbus.read_value` sends a standard `0x0300` read. It accepts only a checksum-valid P2 `0x0100` reply from the configured
+controller to this client, with the requested identifier and enough elapsed time for the request to leave the UART.
+Local echoes, wrong commands, other identifiers and malformed datagrams cannot complete the operation.
+
+`vbus.write_value` sends the write once, waits for its `0x0100` ACK, then sends a separate `0x0300` read of the same
+identifier. It reports success only after the returned raw value matches the requested raw value. The ACK alone
+does not confirm the setting. The write action has these fields:
+
+```yaml
+on_bus_grant:
+  - vbus.write_value:
+      id: resol_bus
+      grant_id: !lambda return grant_id;
+      value_id: 0x1234  # Use a documented writable identifier.
+      value: 1        # Use a documented allowed raw value.
+```
+
+- **id** (**Required**, ID): The VBus component with `transmit.transactions` configured.
+- **grant_id** (**Required**, integer, templatable): The current lease identifier.
+- **value_id** (**Required**, integer, templatable): The raw 16-bit parameter identifier.
+- **value** (**Required** for writes, integer, templatable): The raw unsigned 32-bit value.
+- **command** (*Optional*, integer, templatable): Write command, either `0x0200` (default) or `0x0400`.
+  Use the command documented for the controller. Reads always use `0x0300` and do not accept `value` or `command`.
+
+In a lambda, `id(resol_bus).read_value(grant_id, value_id)` and
+`id(resol_bus).write_value(grant_id, value_id, value)` return whether the operation was accepted.
+An optional fourth argument to `write_value` selects `0x0200` or `0x0400`.
+Acceptance means that the initial request reached the UART, not that the controller accepted a change.
+A busy manager, invalid command, old lease, missing UART capacity or unusable lease rejects the request with a warning;
+it does not create a pending operation or fire `on_result`.
+
+### Completion And Failure
+
+On success, `on_result` can start another operation while the transport still permits sends, or request
+`vbus.release_bus`. A valid read can finish in the reserved release window, when another request no longer fits.
+On failure, the lease is retired from further sends. A late reply cannot turn that failure into success or start
+another verification read. A safe release may still follow that reply; no read or write is retried.
+Shutdown discards pending work and stops callbacks without sending another command.
+
+A write that times out or loses ownership may already have changed the controller. Do not interpret those results
+as proof that the value stayed unchanged, and do not retry a write automatically. A matching readback observes the
+returned value; it does not establish persistence across a controller restart or confirm physical outputs.
+
+While an operation is pending, raw `vbus.send_datagram` calls through the hub are rejected with a warning.
+Release the lease after
+`on_result`; releasing it earlier can prevent write verification. The transport still enforces its deadline and
+stops on competing traffic, stale reception or UART failure. Continuous P1/P2 reception remains independent.
+
+P2 replies have no transaction sequence number. A delayed duplicate with the same source, destination, command and
+identifier can be indistinguishable from a later reply. The manager serializes operations, retires failed leases
+and rejects replies before a request could finish transmitting; controller-specific code must respect the
+controller's reply timing and supported command semantics.
 
 ## See Also
 
