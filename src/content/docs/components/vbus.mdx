@@ -36,7 +36,7 @@ The `Config Value` should be used for the `model` parameter in your `sensor` and
 The `Hex Address` field is the value sent by a device in the `from` field of a message. To identify an unknown
 model, set the logger level to `VERBOSE` and look for lines like this in the log output:
 
-`[10:53:48][V][vbus:068]: P1 C0500 427b->0000: 0000 0000 (0)`
+`[10:53:48][V][vbus:068]: P2 C0500 427b->0000: 0000 0000 (0)`
 
 The value before the `->` symbol is the device source address. If it matches one of the entries in the table above
 then that model should work with your unit.
@@ -79,12 +79,42 @@ vbus:
 ### Configuration variables
 
 - **uart_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the UART hub used to connect to the device.
+- **on_datagram** (*Optional*, [Automation](/automations/)): An automation to run when a valid VBus P2 datagram is received.
 
 > [!NOTE]
 > Functionality of the sensors depends on the type of the device and the scheme arrangement of the hydraulic
 > system it controls. The actual arrangement number set up can be determined from the settings of the device. Please
 > check the user manual and assess your arrangement to determine the functionality of each sensor and name them
 > accordingly.
+
+## P2 Datagram Automation
+
+The `on_datagram` trigger receives raw datagrams with protocol version `0x20`, after checksum and septet validation.
+It is independent of the P1 sensor and binary sensor decoders. It only reports traffic already present on the bus;
+it does not send requests, poll parameters, or change controller settings. A bus carrying only P1 telemetry does not
+trigger this automation.
+
+```yaml
+vbus:
+  uart_id: resol
+  on_datagram:
+    then:
+      - lambda: |-
+          ESP_LOGI("vbus", "C%04x %04x->%04x: %04x %08" PRIx32,
+                   command, source, destination, value_id, value);
+```
+
+The lambda receives five arguments:
+
+- `command` (`uint16_t`): The datagram command.
+- `source` (`uint16_t`): The sender address.
+- `destination` (`uint16_t`): The recipient address.
+- `value_id` (`uint16_t`): The datagram's 16-bit parameter, also used as a value identifier by some commands.
+- `value` (`uint32_t`): The raw 32-bit parameter, with all bits preserved.
+
+Interpretation, scaling, and valid identifiers depend on the command and controller model. When a documented value
+is signed, use `static_cast<int32_t>(value)` before applying its scale. Arguments are passed by value and remain
+available after a `delay` action. Multiple `on_datagram` automations can be configured.
 
 ## Sensor
 
