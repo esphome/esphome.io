@@ -95,8 +95,6 @@ sensor:
 
 - **modbus_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the Modbus hub.
 
-<span id="pzemac-reset_energy_action"></span>
-
 ### `pzemac.reset_energy` Action
 
 This action resets the total energy value of the pzemac device with the given ID when executed.
@@ -110,7 +108,7 @@ on_...:
 ## Changing the address of a PZEM-004T
 
 You can use the following configuration to change the address of a sensor.
-You must set the `address` of the `modbus_controller` to the current address, and `new_address` of the `on_boot` lambda to the new one.
+You must set the `address` of the `modbus_client` action to the current address, and `value` to the new one.
 
 > [!WARNING]
 > This should be used only once! After changing the address, this code should be removed from the ESP before using the actual sensor code.
@@ -119,43 +117,26 @@ You must set the `address` of the `modbus_controller` to the current address, an
 esphome:
   ...
   on_boot:
-    ## configure controller settings at setup
-    ## make sure priority is lower than setup_priority of modbus_controller
+    ## configure the device at setup
+    ## make sure priority is lower than setup_priority of the modbus hub
     priority: -100
     then:
-      - lambda: |-
-          auto new_address = 0x03;
-
-          if(new_address < 0x01 || new_address > 0xF7) // sanity check
-          {
-            ESP_LOGE("ModbusLambda", "Address needs to be between 0x01 and 0xF7");
-            return;
-          }
-
-          esphome::modbus_controller::ModbusController *controller = id(pzem);
-          auto set_addr_cmd = esphome::modbus_controller::ModbusCommandItem::create_write_single_command(
-            controller, 0x0002, new_address);
-
-          delay(200) ;
-          controller->queue_command(set_addr_cmd);
-          ESP_LOGI("ModbusLambda", "PZEM Addr set");
+      - modbus_client.write_single_register:
+          # The special address 0xF8 is a broadcast address accepted by any pzem device.
+          # If you use this address, make sure there is only one pzem device connected to the bus.
+          # address: 0xF8
+          address: 0x01 # current address
+          start_address: 0x02
+          value: 0x0003 # new address
+          on_response:
+            then:
+              - logger.log: "PZEM address set"
+          on_error:
+            then:
+              - logger.log: "PZEM address could not be set!"
 
 modbus:
   send_wait_time: 200ms
-  id: mod_bus_pzem
-
-modbus_controller:
-  - id: pzem
-    # The current device address.
-    address: 0x1
-    # The special address 0xF8 is a broadcast address accepted by any pzem device,
-    # so if you use this address, make sure there is only one pzem device connected
-    # to the uart bus.
-    # address: 0xF8
-    modbus_id: mod_bus_pzem
-    command_throttle: 0ms
-    setup_priority: -10
-    update_interval: 30s
 ```
 
 ## Other Devices

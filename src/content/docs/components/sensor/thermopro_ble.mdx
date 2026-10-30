@@ -96,7 +96,9 @@ like so:
 esp32_ble_tracker:
   on_ble_advertise:
     - then:
-        - lambda: 'ESP_LOGD("ble_adv", "BLE device address: %s name: %s", x.address_str().c_str(), x.get_name().c_str());'
+        - lambda: |-
+            char addr[MAC_ADDRESS_PRETTY_BUFFER_SIZE];
+            ESP_LOGD("ble_adv", "BLE device address: %s name: %s", x.address_str_to(addr), x.get_name().c_str());
 ```
 
 After uploading the ESP32 will immediately try to scan for BLE devices such as the ThermoPro, so

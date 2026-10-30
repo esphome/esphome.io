@@ -1,0 +1,74 @@
+---
+import CardGroup from "@components/CardGroup.astro";
+import Card from "@components/Card.astro";
+import IconText from "@components/IconText.astro";
+import TitleText from "@components/starter-kit/TitleText.astro";
+
+interface CommunityLink {
+  title: string;
+  description: string;
+  href: string;
+  icon?: "printable" | "discord" | "forum";
+  delay?: number;
+}
+
+const links: CommunityLink[] = [
+  {
+    title: "Explore projects",
+    description:
+      "The latest community-designed 3D-printed enclosures, stands and mounts for every module: all ready to print and remix.",
+    href: "https://wiki.apolloautomation.com/products/ESPHome-Starter-Kit/community-corner/#3d-prints",
+    icon: "printable",
+    delay: 0,
+  },
+  {
+    title: "Join our Discord",
+    description:
+      "Discuss anything ESPHome-related and connect with other makers – and show off your new creations, of course!",
+    href: "https://esphome.io/chat",
+    icon: "discord",
+    delay: 150,
+  },
+  {
+    title: "Community Forum",
+    description:
+      "A great place for beginners to ask questions about the ESPHome Starter Kit, with helpful links to Learning Wiki and documentation.",
+    href: "https://community.home-assistant.io/c/esphome/",
+    icon: "forum",
+    delay: 300,
+  },
+];
+---
+
+<section id="community" class="block-community">
+  <TitleText>
+    <h2 slot="title" class="title">Build with the community</h2>
+    <p slot="text">
+      Say hello to a welcoming community of makers already designing their own smart home devices, sharing
+      configurations, and remixing the kit into projects of their own.
+    </p>
+  </TitleText>
+
+  <CardGroup columns={3}>
+    {
+      links.map((link) => (
+        <Card href={link.href} rel="noopener noreferrer" target="_blank" data-delay={link.delay}>
+          {link.icon && <IconText icon={link.icon} />}
+          <h3>{link.title}</h3>
+          <p>{link.description}</p>
+        </Card>
+      ))
+    }
+  </CardGroup>
+</section>
+
+<style lang="scss">
+  @use "../../styles/mixins" as *;
+
+  .block-community {
+    :global(.card__arrow) {
+      @include fluid(16, 32, $property: top);
+      @include fluid(16, 32, $property: right);
+    }
+  }
+</style>

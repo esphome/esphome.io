@@ -1,0 +1,204 @@
+---
+import { Icon } from "@astrojs/starlight/components";
+import { Image } from "astro:assets";
+import { Swiper, SwiperWrapper, SwiperSlide, SwiperPagination } from "astro-swiper";
+
+import environmentSensorImg from "../../assets/images/homepage/environment-sensor.webp";
+import timeAndTempSensorImg from "../../assets/images/homepage/time-and-temperature-sensor.webp";
+import kitImg from "../starter-kit/images/esphome-starter-kit.webp";
+
+const swiperOptions = {
+  slidesPerView: 1.25,
+  spaceBetween: 16,
+  pagination: {
+    clickable: true,
+    el: ".pick-your-first-project .swiper-pagination",
+  },
+  breakpoints: {
+    768: {
+      slidesPerView: 2.25,
+    },
+    1024: {
+      slidesPerView: 3,
+    },
+  },
+};
+---
+
+<section class="pick-your-first-project">
+  <div class="container">
+    <div class="content-container">
+      <h2>Pick your first project</h2>
+      <p>
+        Now you’re set up it’s time to get cooking! Here are a few practical recipes to help you build your very first
+        project – there’s something to suit all experience levels.
+      </p>
+    </div>
+
+    <Swiper class="cards" options={swiperOptions}>
+      <SwiperWrapper>
+        <SwiperSlide>
+          <a href="/starter-kit/" class="card card-bgc">
+            <div class="card__media">
+              <Image src={kitImg} alt="ESPHome Starter Kit" width={330} height={230} />
+            </div>
+            <div class="card__body">
+              <span class="card__tag beginner">Beginner</span>
+              <h3 class="card__title">ESPHome Starter Kit</h3>
+              <p>
+                Get started with the ESPHome Starter Kit – the easiest path to building your own smart home devices.
+              </p>
+              <span class="sl-link-button not-content primary card__text-link">
+                <Icon name="right-arrow" size="1.5rem" />
+                View ESPHome Starter Kit
+              </span>
+            </div>
+          </a>
+        </SwiperSlide>
+        <SwiperSlide>
+          <a href="/cookbook/bme280_environment/" class="card card-bgc">
+            <div class="card__media">
+              <Image src={environmentSensorImg} alt="Environment Sensor" width={330} height={230} />
+            </div>
+            <div class="card__body">
+              <span class="card__tag beginner">Beginner</span>
+              <h3 class="card__title">Environment sensor</h3>
+              <p>Measure temperature, humidity, and air pressure using a BME280 sensor.</p>
+              <span class="sl-link-button not-content primary card__text-link">
+                <Icon name="right-arrow" size="1.5rem" />
+                View recipe
+              </span>
+            </div>
+          </a>
+        </SwiperSlide>
+        <SwiperSlide>
+          <a href="/cookbook/display_time_temp_oled/" class="card card-bgc">
+            <div class="card__media">
+              <Image src={timeAndTempSensorImg} alt="Time & Temperature Sensor" width={330} height={230} />
+            </div>
+            <div class="card__body">
+              <span class="card__tag intermediate">Intermediate</span>
+              <h3 class="card__title">Time & temperature display</h3>
+              <p>Build a mini desktop clock that shows live sensor data.</p>
+              <span class="sl-link-button not-content primary card__text-link">
+                <Icon name="right-arrow" size="1.5rem" />
+                View recipe
+              </span>
+            </div>
+          </a>
+        </SwiperSlide>
+      </SwiperWrapper>
+      <SwiperPagination />
+    </Swiper>
+
+    <p class="cookbook-link">
+      Browse our full <a href="/cookbook/">Cookbook</a> for more step-by-step recipes – and remember, you can also install
+      our <a href="/projects/">Ready-Made Projects</a> in a single click without any configuration.
+    </p>
+  </div>
+</section>
+
+<style lang="scss">
+  @use "../../styles/mixins" as *;
+
+  .pick-your-first-project {
+    overflow: clip;
+
+    .content-container {
+      @include bp(tablet) {
+        max-width: 50%;
+      }
+    }
+
+    :global(.cards) {
+      margin-top: 1.5rem;
+      padding-bottom: 2.5rem;
+
+      @include bp(desktop) {
+        margin-top: 3rem;
+      }
+
+      &.swiper {
+        overflow: visible;
+      }
+
+      :global(.swiper-slide) {
+        height: auto;
+      }
+
+      :global(.swiper-pagination) {
+        bottom: 0;
+      }
+
+      :global(.swiper-pagination-bullet) {
+        background: var(--sl-color-gray-3);
+        opacity: 1;
+      }
+
+      :global(.swiper-pagination-bullet-active) {
+        background: var(--sl-color-accent);
+      }
+    }
+
+    :global(.cards:not(.swiper-initialized) .swiper-wrapper) {
+      gap: 1rem;
+    }
+
+    :global(.cards:not(.swiper-initialized) .swiper-slide) {
+      width: 80%;
+
+      @include bp(tablet) {
+        width: 44.44%;
+      }
+
+      @include bp(desktop) {
+        width: 33.33%;
+      }
+    }
+
+    :global(.card) {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      height: 100%;
+      color: inherit;
+      text-decoration: none;
+
+      .card__media {
+        border-radius: 0.5rem;
+        overflow: hidden;
+        margin-bottom: 1.5rem;
+        width: 100%;
+
+        :global(img) {
+          max-height: 100%;
+          width: 100%;
+          object-fit: cover;
+          margin: 0;
+        }
+      }
+
+      .card__body {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        flex: 1;
+        gap: 0.75rem;
+
+        .card__title,
+        .card__text-link {
+          margin: 0;
+        }
+
+        .card__text-link {
+          margin-top: auto;
+        }
+      }
+    }
+
+    .cookbook-link {
+      margin-top: 1.5rem;
+    }
+  }
+</style>

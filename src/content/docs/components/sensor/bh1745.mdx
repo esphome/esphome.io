@@ -1,0 +1,129 @@
+---
+description: "Instructions for setting up BH1745 RGB color, illuminance and color temperature sensors in ESPHome."
+title: "BH1745 RGB Color Sensor"
+---
+
+import APIRef from '@components/APIRef.astro';
+
+The `bh1745` component allows you to use your BH1745 (BH1745NUC) RGB color sensor
+([datasheet](https://github.com/latonita/datasheets-storage/blob/main/sensors/BH1745NUC_ROHM_S_A0001988929_1-2561519.pdf),
+[Pimoroni](https://shop.pimoroni.com/products/bh1745-luminance-and-colour-sensor-breakout)) with ESPHome.
+It reports the red, green, blue and clear channel readings and calculates the illuminance and the
+color temperature of the light.
+
+The [I²C Bus](/components/i2c/) is required to be set up in your configuration for this sensor to work.
+
+The component has three parts: a `bh1745` hub that talks to the chip, a [sensor](#sensor) platform for
+the readings and an optional [output](#output) platform that drives the chip's `INT` pin.
+
+```yaml
+# Example configuration entry
+bh1745:
+
+sensor:
+  - platform: bh1745
+    red_channel:
+      name: "Red Channel"
+    green_channel:
+      name: "Green Channel"
+    blue_channel:
+      name: "Blue Channel"
+    clear_channel:
+      name: "Clear Channel"
+    illuminance:
+      name: "Illuminance"
+    color_temperature:
+      name: "Color Temperature"
+
+output:
+  - platform: bh1745
+    id: bh1745_output
+```
+
+## Hub
+
+### Configuration variables
+
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): Manually specify the ID for this hub. Use this
+  if you want to use more than one BH1745 sensor.
+
+- **gain** (*Optional*, string): The gain of the internal ADC. Higher values work better in low light.
+  One of `1X`, `2X` or `16X`. Defaults to `1X`.
+
+- **integration_time** (*Optional*, [Time](/guides/configuration-types/#time)): How long the sensor collects
+  light for each measurement. Longer times work better in low light. One of `160ms`, `320ms`, `640ms`,
+  `1280ms`, `2560ms` or `5120ms`. Defaults to `160ms`.
+
+- **glass_attenuation_factor** (*Optional*, float): Use this when the sensor sits behind glass or another
+  cover that blocks some of the light. The illuminance is multiplied by this value to make up for the
+  lost light: `1.0` means all light passes through, `2.0` means half of it does. Must be at least `1.0`.
+  Defaults to `1.0`.
+
+- **address** (*Optional*, int): Manually specify the I²C address of the sensor. Defaults to `0x38`.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): The interval to read the
+  sensor. Defaults to `60s`.
+
+- All other options for I²C devices described at [I²C Bus](/components/i2c/).
+
+The sensor measures continuously. Each update reads the latest finished measurement, so an
+`update_interval` shorter than the `integration_time` does not give fresher readings.
+
+## Sensor
+
+Each configured sensor is reported on every `update_interval` of the hub.
+
+### Configuration variables
+
+- **bh1745_id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the `bh1745` hub. Only
+  needed when you have more than one hub.
+
+- **red_channel** (*Optional*): Raw reading of the red color channel, in counts.
+  All options from [Sensor](/components/sensor/).
+
+- **green_channel** (*Optional*): Raw reading of the green color channel, in counts.
+  All options from [Sensor](/components/sensor/).
+
+- **blue_channel** (*Optional*): Raw reading of the blue color channel, in counts.
+  All options from [Sensor](/components/sensor/).
+
+- **clear_channel** (*Optional*): Raw reading of the clear channel (no color filter), in counts.
+  All options from [Sensor](/components/sensor/).
+
+- **illuminance** (*Optional*): Calculated illuminance, in lx.
+  All options from [Sensor](/components/sensor/).
+
+- **color_temperature** (*Optional*): Calculated color temperature of the light, in K.
+  All options from [Sensor](/components/sensor/).
+
+## Output
+
+The Pimoroni breakout board has two white LEDs that light up the object in front of the sensor. They are
+connected to the `INT` pin of the BH1745, so they can not be switched with a GPIO of your board. The
+`bh1745` output platform is a [binary output](/components/output/) that switches the `INT` pin, and with
+it the LEDs. The component does not use the interrupt feature of the chip for anything else.
+
+The chip only updates the `INT` pin at the end of a measurement, so the LEDs turn on or off up to one
+`integration_time` after the output changes.
+
+### Configuration variables
+
+- **id** (**Required**, [ID](/guides/configuration-types/#id)): The ID of the output, used to control it.
+- **bh1745_id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the `bh1745` hub. Only
+  needed when you have more than one hub.
+
+- All other options from [Output](/components/output/#config-output).
+
+To control the LEDs from Home Assistant, use the output in a [Binary Light](/components/light/binary/):
+
+```yaml
+light:
+  - platform: binary
+    name: "Sensor LEDs"
+    output: bh1745_output
+```
+
+## See Also
+
+- [Sensor Filters](/components/sensor/#sensor-filters)
+- [Binary Light](/components/light/binary/)
+- <APIRef text="bh1745.h" path="bh1745/bh1745.h" />

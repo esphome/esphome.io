@@ -1,0 +1,49 @@
+---
+interface Props {
+  icon: string;
+  class?: string;
+}
+
+const svgModules = import.meta.glob<string>("../assets/icons/*.svg", {
+  query: "?raw",
+  import: "default",
+  eager: true,
+});
+
+const icons = Object.fromEntries(
+  Object.entries(svgModules).map(([path, contents]) => [path.replace(/^.*\/([^/]+)\.svg$/, "$1"), contents]),
+);
+
+const { icon, class: className } = Astro.props;
+
+const svg = icons[icon];
+
+if (!svg) {
+  throw new Error(`Icon "${icon}" not found in src/assets/icons. Available icons: ${Object.keys(icons).join(", ")}`);
+}
+---
+
+<div class:list={["icon-circle", className]} aria-hidden="true" set:html={svg} />
+
+<style lang="scss">
+  .icon-circle {
+    --icon-circle-bg: var(--esphome-icon-background-color--transparent);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: var(--icon-circle-bg);
+    color: var(--sl-color-text-accent);
+
+    :global(svg) {
+      width: 100%;
+      height: auto;
+      max-width: 14px;
+      max-height: 14px;
+    }
+  }
+</style>

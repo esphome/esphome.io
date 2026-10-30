@@ -1,0 +1,94 @@
+---
+description: "Instructions for setting up VEML6040 RGBW color sensors in ESPHome."
+title: "VEML6040 RGBW Color Sensor"
+---
+
+import APIRef from '@components/APIRef.astro';
+
+The `veml6040` sensor platform allows you to use the Vishay VEML6040 RGBW color sensor with ESPHome. It reports the
+red, green, blue and white channels, illuminance and correlated color temperature. Communication with the device is
+over [I²C](/components/i2c/), which must be present in your configuration.
+
+The sensor measures continuously. Each channel is a 16-bit count, so it ranges from `0` to `65535`. Illuminance is
+calculated from the green channel. Color temperature uses the formula from the Vishay application note
+"Designing the VEML6040 into an Application". Both values are approximate without calibration for your light source
+and enclosure.
+
+A red, green or blue channel that reaches `65535` is saturated, and a warning is logged. The white channel is not
+checked, so a white reading of `65535` comes with no warning. If the green channel is saturated, illuminance is
+reported as unknown. If any of the red, green or blue channels is saturated, color temperature is reported as
+unknown. A saturated red or blue channel does not affect illuminance, so a valid lux reading can appear next to an
+unknown color temperature. Use a shorter `integration_time` in bright light.
+
+```yaml
+# Example configuration entry
+sensor:
+  - platform: veml6040
+    red_channel:
+      name: "Red Channel"
+    green_channel:
+      name: "Green Channel"
+    blue_channel:
+      name: "Blue Channel"
+    white_channel:
+      name: "White Channel"
+    illuminance:
+      name: "Illuminance"
+    color_temperature:
+      name: "Color Temperature"
+```
+
+## Configuration Variables
+
+- **red_channel** (*Optional*): Raw count of the red channel. All options from [Sensor](/components/sensor/).
+
+- **green_channel** (*Optional*): Raw count of the green channel. All options from [Sensor](/components/sensor/).
+
+- **blue_channel** (*Optional*): Raw count of the blue channel. All options from [Sensor](/components/sensor/).
+
+- **white_channel** (*Optional*): Raw count of the white channel. All options from [Sensor](/components/sensor/).
+
+- **illuminance** (*Optional*): Illuminance in lux. All options from [Sensor](/components/sensor/).
+
+- **color_temperature** (*Optional*): Correlated color temperature in kelvin. All options from
+  [Sensor](/components/sensor/).
+
+- **integration_time** (*Optional*, [Time](/guides/configuration-types/#time)): The time the device uses for each
+  measurement. Longer times give more resolution in low light, but the sensor saturates at a lower light level. It
+  must be one of:
+
+  | Integration time    | Lux per count | Maximum lux |
+  | ------------------- | ------------- | ----------- |
+  | `40ms`              | 0.25168       | 16496       |
+  | `80ms`              | 0.12584       | 8248        |
+  | `160ms` *(default)* | 0.06292       | 4124        |
+  | `320ms`             | 0.03146       | 2062        |
+  | `640ms`             | 0.01573       | 1031        |
+  | `1280ms`            | 0.007865      | 515.4       |
+
+- **glass_attenuation_factor** (*Optional*, float): Corrects the illuminance for light lost when the sensor is behind
+  glass or another cover. The value is the inverse of the cover's transmission; for example, a cover that passes 50% of
+  the light needs a factor of `2`. Defaults to `1.0` (no cover). Must be at least `1.0`. It does not affect color
+  temperature; use `color_temperature_offset` for that.
+
+- **color_temperature_offset** (*Optional*, float): The offset in the color temperature formula
+  `CCT = 4278.6 × ((R − B) / G + offset) ^ −1.2455`. Vishay gives `0.5` for a sensor in open air and notes that the
+  value changes behind cover glass. To tune it, compare the reported color temperature with a reference meter or a
+  light source of known color temperature, and adjust the offset until they match. Defaults to `0.5`.
+
+- **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): The interval to check the sensor.
+  Defaults to `60s`.
+
+- **address** (*Optional*, int): The I²C address of the sensor. Defaults to `0x10`.
+
+- **i2c_id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the [I²C bus](/components/i2c/) to use, if
+  you have more than one.
+
+## See Also
+
+- [Sensor Filters](/components/sensor/#sensor-filters)
+- [Vishay VEML6040 datasheet](https://www.vishay.com/docs/84276/veml6040.pdf)
+- [Designing the VEML6040 into an Application](https://www.vishay.com/docs/84331/designingveml6040.pdf)
+- [TCS34725 RGB Color Sensor](/components/sensor/tcs34725/)
+- [VEML3235 Ambient Light Sensor](/components/sensor/veml3235/)
+- <APIRef text="veml6040.h" path="veml6040/veml6040.h" />

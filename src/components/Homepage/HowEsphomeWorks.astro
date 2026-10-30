@@ -1,0 +1,127 @@
+---
+import { Aside } from "@astrojs/starlight/components";
+import Icon from "@components/Icon.astro";
+---
+
+<section id="how-it-works" class="how-esphome-works">
+  <div class="container">
+    <div class="columns">
+      <div class="content content-container">
+        <h2>How ESPHome works</h2>
+        <p>
+          Building your own smart home device from scratch can feel daunting, particularly if you’re not familiar with
+          coding. Not with ESPHome. Its intuitive <a
+            href="https://esphome.io/blog/2026/07/02/unbox-your-creativity-with-the-esphome-device-builder/"
+            >Device Builder</a
+          > replaces code with simple visual choices for a hassle-free setup that brings you straight into building without
+          touching a command line. And for experienced users who prefer writing code manually, YAML is always there if you
+          need it. Every device works out of the box with Home Assistant, too – locally, privately, and securely.
+        </p>
+
+        <p>Whether you’re building your first sensor or managing fifty devices, the initial workflow stays the same…</p>
+
+        <Aside type="note" title="">
+          Every ESPHome device is built around a small, inexpensive chip called a microcontroller – commonly an ESP32
+          (hence the name ESPHome!), but it also works with others like the Raspberry Pi RP2040 / RP2350. The chip is
+          the programmable part that controls your sensors, switches, and displays. ESPHome creates the programming that
+          runs on the chip, telling it what to do. Once installed, the chip can then “talk” directly to Home Assistant
+          or any other smart home system that supports it.
+        </Aside>
+      </div>
+      <div class="cards">
+        <div class="card">
+          <div class="card__title--icon-row">
+            <Icon icon="manufacturing" class="card__icon" />
+            <p class="card__title card__title--has-icon">Step 1: Choose & configure</p>
+          </div>
+          <p>
+            Select your board and components using the visual Device Builder or a YAML file. Pick sensors from the
+            catalog and set your options without writing code.
+          </p>
+        </div>
+
+        <div class="card">
+          <div class="card__title--icon-row">
+            <Icon icon="build" class="card__icon" />
+            <p class="card__title card__title--has-icon">Step 2: Build & install</p>
+          </div>
+          <p>
+            ESPHome installs your configuration to your device straight from your browser, or wirelessly over the air.
+          </p>
+        </div>
+
+        <div class="card">
+          <div class="card__title--icon-row">
+            <Icon icon="automation" class="card__icon" />
+            <p class="card__title card__title--has-icon">Step 3: Connect & control</p>
+          </div>
+          <p>
+            Your new device automatically pops up in Home Assistant over your local network: no cloud accounts or
+            external servers required.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style lang="scss">
+  @use "../../styles/mixins" as *;
+
+  .how-esphome-works {
+    .columns {
+      display: flex;
+      flex-direction: column;
+      gap: 48px;
+      margin: 0 auto;
+
+      @include bp(tablet) {
+        flex-direction: row;
+      }
+    }
+
+    .content,
+    .cards {
+      @include bp(tablet) {
+        flex-basis: 50%;
+      }
+
+      @include bp(desktop) {
+        flex-basis: 55%;
+      }
+    }
+
+    .content {
+      :global(.starlight-aside__title) {
+        display: none;
+      }
+
+      :global(.starlight-aside__content) {
+        margin-top: 0;
+      }
+    }
+
+    .cards {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+
+      @include bp(desktop) {
+        flex-basis: 45%;
+      }
+    }
+
+    .card {
+      padding: 1.25rem 1.75rem;
+      display: flex;
+      flex-direction: column;
+
+      &__title--icon-row {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 0.75rem;
+      }
+    }
+  }
+</style>

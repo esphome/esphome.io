@@ -1,12 +1,12 @@
 ---
-description: "Instructions for setting up CSE7761 power sensors for the Sonoff Dual R3 v1.x"
+description: "Instructions for setting up CSE7761 power sensors for the Sonoff Dual R3 v1.x and Sonoff POW CT"
 title: "CSE7761 Power Sensor"
 ---
 import APIRef from '@components/APIRef.astro';
 
 
 The `cse7761` sensor platform allows you to use your CSE7761 voltage/current and power sensors
-with ESPHome. This sensor is commonly found in Sonoff Dual R3 v1.x.
+with ESPHome. This sensor is commonly found in the Sonoff Dual R3 v1.x and the Sonoff POW CT.
 
 > [!NOTE]
 > SAFETY HAZARD: Some devices such as Sonoff POWs/Shelly/etc, have the digital GND connected directly to mains voltage so **the GPIOs become LIVE during normal operation**. Our advice is to mark these boards to prevent any use of the dangerous digital pins.
@@ -29,12 +29,26 @@ sensor:
       name: 'CSE7761 Active Power 1'
     active_power_2:
       name: 'CSE7761 Active Power 2'
+    energy_1:
+      name: 'CSE7761 Energy 1'
+    energy_2:
+      name: 'CSE7761 Energy 2'
+    frequency:
+      name: 'CSE7761 Frequency'
+    power_factor_1:
+      name: 'CSE7761 Power Factor 1'
 ```
 
 > [!NOTE]
-> The configuration above should work for Sonoff Dual R3 v1.x.
+> The configuration above should work for Sonoff Dual R3 v1.x. The Sonoff POW CT measures a single circuit with
+> a current transformer, so add `current_input: current_transformer` and use only the channel 1 sensors.
 
 ## Configuration variables
+
+- **current_input** (*Optional*, string): How the board feeds current into the chip. `shunt` for boards with shunt
+  resistors such as the Sonoff Dual R3, or `current_transformer` for boards with a current transformer such
+  as the Sonoff POW CT. Defaults to `shunt`. The chip reports no load below about 10 mA with a shunt and below
+  about 50 mA with a current transformer.
 
 - **voltage** (*Optional*): Use the voltage value of the sensor in V (RMS).
   All options from [Sensor](/components/sensor).
@@ -51,11 +65,51 @@ sensor:
 - **active_power_2** (*Optional*): Use the (active) power value of the channel 2 in watts. All options from
   [Sensor](/components/sensor).
 
+- **energy_1** (*Optional*): Use the active energy counted by channel 1 in watt-hours. All options from
+  [Sensor](/components/sensor/).
+
+- **energy_2** (*Optional*): Use the active energy counted by channel 2 in watt-hours. All options from
+  [Sensor](/components/sensor/).
+
+- **frequency** (*Optional*): Use the mains frequency in Hz. All options from
+  [Sensor](/components/sensor/).
+
+- **power_factor_1** (*Optional*): Use the power factor of channel 1. The chip reports it for channel 1 only.
+  All options from [Sensor](/components/sensor/).
+
 - **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to check the
   sensor. Defaults to `60s`.
 
 - **uart_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the [UART Component](/components/uart) if you want
   to use multiple UART buses.
+
+The energy values come from the chip's pulse counters and start from zero again after a reboot. Home Assistant's
+energy dashboard handles that reset because the sensors use `total_increasing`; for a daily total that survives
+reboots, feed `active_power_1` or `active_power_2` into the [Total Daily Energy](/components/sensor/total_daily_energy/)
+sensor.
+
+## Power Direction
+
+Active power is signed, so it shows which way power flows: a load reads positive and power fed back, for
+example from a solar inverter, reads negative. On the Sonoff Dual R3 v1.x the board wires the current into
+the chip the other way round, so normal loads read as negative watts. Flip the sign with a filter on each
+power sensor:
+
+```yaml
+sensor:
+  - platform: cse7761
+    active_power_1:
+      name: 'CSE7761 Active Power 1'
+      filters:
+        - multiply: -1
+    active_power_2:
+      name: 'CSE7761 Active Power 2'
+      filters:
+        - multiply: -1
+```
+
+If a channel only ever powers loads, `- lambda: return fabsf(x);` also works, but it hides the direction.
+On a board with a clip-on current transformer, such as the Sonoff POW CT, turn the clamp around instead.
 
 ## See Also
 
