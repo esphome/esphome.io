@@ -818,26 +818,28 @@ vbus:
   controller:
     id: solar_controller
     model: deltasol_cs_plus
-    update_interval: 5min
-    on_snapshot:
-    - lambda: |-
-        int32_t language;
-        if (id(solar_controller).get_value(55, language)) {
-          ESP_LOGI("solar", "Confirmed language setting: %d", int(language));
-        }
 ```
 
 - **id** (*Optional*, [ID](/guides/configuration-types/#id)): ID used by controller actions and lambdas.
 - **model** (**Required**, string): `deltasol_cs_plus`. Other models and firmware versions are not qualified.
 - **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): Time between scan attempts.
-  Defaults to `5min`; the minimum is `60s`. Set to `never` for manual scans only.
-- **on_snapshot** (*Optional*, [Automation](/automations/)): Runs after a complete settings snapshot, on its expiry,
-  or when an incompatible firmware broadcast invalidates it. Check `has_fresh_snapshot()` before using values.
+  Defaults to `5min`; the minimum is `60s`. Set to `never` for manual scans only. With adaptive polling enabled,
+  this is the full-scan interval and must be finite and no longer than `24h`.
+- **adaptive_polling** (*Optional*, mapping): Enable [adaptive controller polling](#adaptive-controller-polling).
+  Omit it to retain the existing full-scan behavior.
+  - **context_update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): Interval between context
+    checks. Defaults to `5min`; it must be at least `60s` and no longer than `update_interval`.
+- **on_snapshot** (*Optional*, [Automation](/automations/)): Runs after a completed full or context scan, a confirmed
+  or unchanged setting request, snapshot expiry, or incompatible-firmware invalidation.
+  Check `has_fresh_snapshot()` before using values.
 
-The profile supplies controller address `0x2211` and client address `0x0020`; explicit values must match.
-The nested `transmit.transactions.controller` spelling remains supported. Configure the profile in one location only.
-Advanced `transmit` options, such as a separate TX UART, can be combined with `controller`.
-Generic TX still requires an explicit destination. The profile owns the polling queue:
+The profile defaults to controller address `0x2211` and client address `0x0020`; explicit values must match.
+The nested `transmit.transactions.controller` spelling remains supported and produces the same protocol operations.
+Configure the profile in only one location. Advanced `transmit` options, such as a separate TX UART, can be combined
+with the short `controller` spelling. Generic TX without a supported profile still requires an explicit `destination`;
+no address is guessed from received traffic.
+
+The profile owns the polling queue:
 `controller` and generic `polling` are mutually exclusive. Manual bus, raw transaction and queue actions on that hub
 are rejected. Hubs without the profile keep their existing behavior.
 
@@ -854,13 +856,48 @@ This keeps ordinary telemetry flowing during a scan. A missing response, incompa
 abandons the scan. There is no automatic retry within that scan.
 
 A snapshot replaces the previous one only after every planned read succeeds and telemetry resumes. During refreshes
-and failed scans, the last complete snapshot remains available for up to 660 seconds. Reading an unchanged value
-does not require publishing a new sensor state. An incomplete first scan provides no settings. A broadcast identifying
+and failed scans, confirmed values remain available under the [retention rules](#adaptive-controller-polling) below.
+Without adaptive polling, the last complete snapshot expires after 660 seconds. Reading an unchanged value does not
+require publishing a new sensor state. An incomplete first scan provides no settings. A broadcast identifying
 another firmware invalidates the snapshot immediately; returning firmware 1.11 requires a new complete scan.
 
 In a lambda, `id(solar_controller).get_value(value_id, raw_value)` returns `true` only for an available setting in a
-fresh, complete snapshot. Values are raw integers; scaling and applicability depend on the setting. The raw getter
-is intended for custom automations, rather than bypassing setting validation for writes.
+confirmed cache with fresh context. Values are raw integers; scaling and applicability depend on the setting.
+The raw getter is intended for custom automations, rather than bypassing setting validation for writes.
+
+### Adaptive Controller Polling
+
+Adaptive polling separates a full settings scan from a shorter context check. It requires the controller profile
+above and sends no setting writes by itself. Existing RX measurements and number/select entities use the same hub
+and keep their identities.
+
+```yaml
+vbus:
+  controller:
+    model: deltasol_cs_plus
+    update_interval: 15min
+    adaptive_polling: {}
+```
+
+A context check reads the hydraulic scheme, units and function/mode flags. Unchanged context skips the numeric
+settings. A changed flag adds the affected settings and their limits before committing the result. A changed scheme
+or unit system requires a full scan. Startup, manual refresh, OTA recovery and uncertain-write recovery also use full
+scans. Groups still contain at most 16 reads, and each released lease must be followed by resumed telemetry.
+
+After a confirmed write, adaptive polling refreshes affected dependencies instead of every setting. A language-only
+change needs no extra scan after verified readback. An unchanged request also avoids an unnecessary refresh unless
+its fresh preflight detects changed dependencies. Write validation, acknowledgement, readback and the rule against
+automatic write retries are unchanged.
+
+A partial scan updates only the values it actually reads. It does not renew untouched values or postpone the full
+scan. A failed scan commits no partial result and requests a full recovery, subject to the one-minute scan spacing.
+Context older than twice `context_update_interval` plus one minute blocks writes. Confirmed display values remain
+available during temporary context refreshes or failures. The full cache expires after twice `update_interval` plus
+one minute, with an 11-minute minimum. Incompatible firmware invalidates the cache immediately.
+
+Panel edits are detected at the next relevant read: function/mode flag changes at the next context check, and changes
+confined to numeric settings or language at the next full scan. Use manual refresh to read them sooner. Choose the
+intervals for that detection delay; traffic savings depend on the active scheme and functions.
 
 ### Scan Diagnostics
 
@@ -901,8 +938,10 @@ write, including its preflight reads and verification, leaves them unchanged:
 | `elapsed_ms()` | Attempt duration in milliseconds, finalized on completion or interruption; zero while running. |
 | `maximum_lease_ms()` | Longest observed released lease duration during the scan. |
 
-`completed_scans()` counts complete snapshots since startup. `telemetry_count()` counts qualified CS Plus broadcasts;
-`snapshot_age_seconds()` reports the age of the last complete snapshot. Setting-write counters and results are separate.
+`completed_scans()` counts completed settings scans since startup, including context scans when adaptive polling is
+active. `telemetry_count()` counts qualified CS Plus broadcasts. `snapshot_age_seconds()` reports the age of the last
+full snapshot; a context scan does not reset it. With adaptive polling enabled, `value_age_seconds(value_id)` reports
+the age of an individual confirmed sample. Setting-write counters and results are separate.
 
 ### Manual Refresh And OTA
 
@@ -931,25 +970,29 @@ rejected during validation and the controller's write code is excluded from the 
 ```yaml
 vbus:
   id: solar_bus
-  controller:
-    id: solar_controller
-    model: deltasol_cs_plus
-    writes:
-      require_write_arm: true
-      on_setting_result:
-      - lambda: |-
-          ESP_LOGI("solar", "Setting %u finished with status %u", value_id, unsigned(status));
+  transmit:
+    destination: 0x2211
+    transactions:
+      controller:
+        id: solar_controller
+        model: deltasol_cs_plus
+        writes:
+          require_write_arm: true
+          on_setting_result:
+            - lambda: |-
+                ESP_LOGI("solar", "Setting %u finished with status %u", value_id, unsigned(status));
+
 button:
-- platform: template
-  name: Use Italian Display Language
-  on_press:
-  - vbus.arm_writes:
-      id: solar_controller
-      enabled: true
-  - vbus.set_setting:
-      id: solar_controller
-      value_id: 55
-      value: 4
+  - platform: template
+    name: Use Italian Display Language
+    on_press:
+      - vbus.arm_writes:
+          id: solar_controller
+          enabled: true
+      - vbus.set_setting:
+          id: solar_controller
+          value_id: 55
+          value: 4
 ```
 
 - **writes** (*Optional*, mapping or string): Enables validated controller writes. It sends nothing by itself.
@@ -995,12 +1038,14 @@ An uncertain result blocks further writes until a new complete settings scan est
 are not proof that the interrupted write had no effect. OTA cancellation has the same rule; late replies cannot restart
 verification or replay the write. `vbus.resume_polling` only resumes reads.
 
-Verified numeric changes update the confirmed cached value. A verified enum change or an uncertain write requests a
-fresh, read-only scan because the available controls or their units may have changed. This one refresh bypasses the
-usual 60-second scan limit and is prepared on the next main-loop iteration when telemetry and polling are available.
+Verified numeric changes update the confirmed cached value. Without adaptive polling, a verified enum change requests
+a fresh, read-only scan because the available controls or their units may have changed. With adaptive polling, only
+changed dependencies are refreshed where possible, as described above. An uncertain write always requests a full scan.
+This one refresh bypasses the usual 60-second scan limit and is prepared on the next main-loop iteration when telemetry and polling are available.
 If they are unavailable, the controller checks again once per second without keeping its loop busy.
 Until it completes, `has_fresh_snapshot()` is false and further writes are rejected. `has_recent_snapshot()` still reports
-whether the last complete snapshot is within its 660-second expiry, so displays can retain confirmed values while waiting.
+whether the cache is within its expiry, so displays can retain confirmed values while waiting. The default expiry is
+660 seconds; adaptive polling uses the retention rules above.
 An incompatible firmware broadcast discards both fresh and retained context immediately. No refresh retries a write.
 
 
