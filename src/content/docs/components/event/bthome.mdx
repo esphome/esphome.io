@@ -1,0 +1,76 @@
+---
+description: "Instructions for receiving BTHome v2 button presses and dimmer turns as events in ESPHome."
+title: "BTHome Event"
+---
+import APIRef from '@components/APIRef.astro';
+
+
+The `bthome` event platform turns a button press or a dimmer turn sent in the [BTHome](https://bthome.io/) v2
+format, for example by a Shelly BLU Button, into an event. The advertisements come from a remote device of the
+`bthome` component, which listens passively and needs a BLE tracker, for example the
+[ESP32 BLE Tracker](/components/esp32_ble_tracker/).
+
+Each entry is one button or one dimmer of a remote device. `source_id` is the `id` of that device in the
+`remote_devices` list of the `bthome` component.
+
+```yaml
+# Example configuration entry
+event:
+  - platform: bthome
+    source_id: blu_button
+    type: button
+    name: "Button"
+```
+
+## Configuration Variables
+
+- **source_id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the remote device declared in the
+  `bthome` component's `remote_devices` list.
+- **type** (**Required**, string): `button` (`button_event`) for a button or `dimmer` (`dimmer_event`) for a
+  rotary dimmer. Type names are case-insensitive.
+- **index** (*Optional*, int): Which button or dimmer of the device, for devices with more than one. From 1 to 8.
+  Defaults to `1`.
+- All other options from [Event](/components/event#config-event). The device class of a button defaults to
+  `button`.
+
+## Event Types
+
+A button fires `press`, `double_press`, `triple_press`, `long_press`, `long_double_press`, `long_triple_press`,
+`hold_press` or `hold_release`. A dimmer fires `rotate_left` or `rotate_right`; the number of steps is not passed on.
+
+A device with several buttons sends one value per button in each advertisement, and "no event" for the buttons
+that were not pressed. Each entry only fires for its own `index`.
+
+A transmitter sends each gesture several times. With a packet ID, a repeated advertisement is ignored until the
+device has sent nothing for 4 seconds. Without a packet ID, a copy of the previous advertisement is ignored while
+copies arrive less than 1.2 seconds apart.
+
+## Example
+
+Two buttons of one device, with an action on a double press of button 2:
+
+```yaml
+event:
+  - platform: bthome
+    source_id: blu_button
+    type: button
+    name: "Button 1"
+  - platform: bthome
+    source_id: blu_button
+    type: button
+    index: 2
+    name: "Button 2"
+    on_event:
+      - if:
+          condition:
+            lambda: 'return event_type == "double_press";'
+          then:
+            - light.toggle: hall_light
+```
+
+## See Also
+
+- [Event Component](/components/event/)
+- [ESP32 BLE Tracker](/components/esp32_ble_tracker/)
+- [BTHome format](https://bthome.io/format/)
+- <APIRef text="bthome.h" path="bthome/bthome.h" />
