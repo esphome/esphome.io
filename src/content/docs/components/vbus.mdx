@@ -36,14 +36,14 @@ The `Config Value` should be used for the `model` parameter in your `sensor` and
 The `Hex Address` field is the value sent by a device in the `from` field of a message. To identify an unknown
 model, set the logger level to `VERBOSE` and look for lines like this in the log output:
 
-`[10:53:48][V][vbus:068]: P1 C0500 427b->0000: 0000 0000 (0)`
+`[10:53:48][V][vbus:068]: P2 C0500 427b->0000: 0000 0000 (0)`
 
 The value before the `->` symbol is the device source address. If it matches one of the entries in the table above
 then that model should work with your unit.
 
 ## Hardware Connection
 
-The device must be connected via a [UART bus](/components/uart/) supporting the receiving line only. The UART bus
+For status reading, connect the device via a [UART bus](/components/uart/) with a receiving line. The UART bus
 must be configured at the same speed of the module which is by default 9600bps. The controller outputs data every second.
 
 To connect to this and read data from the bus a level shifting is needed as the voltage is around 8V (direct connection
@@ -57,6 +57,14 @@ An electrically isolated version using an opto-coupler:
 <Image src={vbusSerialOptocouplerImg} layout="constrained" alt="" />
 
 Another approach, with PCB design ready to be manufactured [can be found here](https://github.com/FatBeard/vbus-arduino-library/tree/master/pcb).
+
+Optional transmission requires a VBus transmitter circuit as well as the receiver. A UART TX pin must never be
+connected directly to the bus. The open-source [isolated VBus interface](https://github.com/labodj/resol-vbus-interface)
+provides KiCad sources, fabrication files, a BOM and
+[circuit notes](https://github.com/labodj/resol-vbus-interface/blob/main/docs/circuit.md).
+Its [assembly guide](https://github.com/labodj/resol-vbus-interface/blob/main/docs/assembly.md) covers startup checks
+and the TX signal polarity. See the project's
+[validation notes](https://github.com/labodj/resol-vbus-interface/blob/main/docs/validation.md) for the tested setup.
 
 > [!WARNING]
 > Do not connect the GND pin of your module with the ground of Resol unit as that may damage the output port of it.
@@ -79,12 +87,42 @@ vbus:
 ### Configuration variables
 
 - **uart_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the UART hub used to connect to the device.
+- **on_datagram** (*Optional*, [Automation](/automations/)): An automation to run when a valid VBus P2 datagram is received.
 
 > [!NOTE]
 > Functionality of the sensors depends on the type of the device and the scheme arrangement of the hydraulic
 > system it controls. The actual arrangement number set up can be determined from the settings of the device. Please
 > check the user manual and assess your arrangement to determine the functionality of each sensor and name them
 > accordingly.
+
+## P2 Datagram Automation
+
+The `on_datagram` trigger receives raw datagrams with protocol version `0x20`, after checksum and septet validation.
+It is independent of the P1 sensor and binary sensor decoders. It only reports traffic already present on the bus;
+it does not send requests, poll parameters, or change controller settings. A bus carrying only P1 telemetry does not
+trigger this automation.
+
+```yaml
+vbus:
+  uart_id: resol
+  on_datagram:
+    then:
+      - lambda: |-
+          ESP_LOGI("vbus", "C%04x %04x->%04x: %04x %08" PRIx32,
+                   command, source, destination, value_id, value);
+```
+
+The lambda receives five arguments:
+
+- `command` (`uint16_t`): The datagram command.
+- `source` (`uint16_t`): The sender address.
+- `destination` (`uint16_t`): The recipient address.
+- `value_id` (`uint16_t`): The datagram's 16-bit parameter, also used as a value identifier by some commands.
+- `value` (`uint32_t`): The raw 32-bit parameter, with all bits preserved.
+
+Interpretation, scaling, and valid identifiers depend on the command and controller model. When a documented value
+is signed, use `static_cast<int32_t>(value)` before applying its scale. Arguments are passed by value and remain
+available after a `delay` action. Multiple `on_datagram` automations can be configured.
 
 ## Sensor
 
@@ -267,6 +305,243 @@ binary_sensor:
         icon: mdi:counter
         lambda: return x[15] & 0x20; // Option Heat Quantity Measurement enabled
 ```
+
+## Optional Transmission
+
+The component remains receive-only unless `transmit` is configured. This option adds a low-level P2 datagram
+transport, not a controller-specific list of settings. It does not start polling or change any settings by itself.
+Parameter identifiers, units, allowed values and reply handling must come from documentation for the exact
+controller and firmware version. Do not infer them from the models supported for P1 sensors.
+
+VBus has one master. A client must wait for its controller to offer the bus with command `0x0500`, then return
+control with `0x0600`. This component manages those two commands; applications cannot send them as ordinary datagrams.
+Use only one active transmitting client on a bus. The quiet contention period detects observed competing traffic,
+but it is not arbitration between clients that start simultaneously.
+
+### Transmit Configuration
+
+```yaml
+vbus:
+  id: resol_bus
+  uart_id: resol
+  transmit:
+    destination: 0x2211
+    on_bus_grant:
+      # Replace this example ID with a documented readable parameter.
+      - vbus.send_datagram:
+          id: resol_bus
+          grant_id: !lambda return grant_id;
+          command: 0x0300
+          value_id: 0x1234
+```
+
+The destination shown is the DeltaSol CS Plus address. Use your controller's address.
+This example waits for an explicit `vbus.request_bus` action and reads one raw parameter after acquiring the bus.
+The lease expires automatically; an application should release it earlier once its exchange is complete.
+The example parameter `0x1234` is illustrative and is not a universal setting identifier.
+
+- **transmit** (*Optional*): Enable transmission for this VBus instance.
+  - **destination** (**Required**, integer): Address of the controller that grants the bus.
+  - **source** (*Optional*, integer): Client address. Defaults to `0x0020`. It must differ from the controller's
+    address and be unused by other devices on the bus.
+  - **uart_id** (*Optional*, [ID](/guides/configuration-types/#id)): UART used for TX. Defaults to the component's
+    UART. A separate TX UART can be useful with an ESP8266 software receiver. Both UARTs must use 9600 baud, 8 data
+    bits, no parity and 1 stop bit. The main UART needs an RX pin; the transmitting UART needs a TX pin.
+  - **lease_duration** (*Optional*, Time): Maximum ownership time, measured from receipt of the grant, including
+    the 100 ms contention period. Defaults to `500ms`; allowed range is `200ms` to `1000ms`. Keep it shorter than
+    your controller's bus timeout. This is a local limit, not a duration negotiated with the controller.
+  - **on_bus_grant** (*Optional*, [Automation](/automations/)): Runs after a fresh, valid grant and a quiet 100 ms
+    contention period. This is the earliest point at which an application can send a datagram. Its `grant_id`
+    argument (`uint32_t`) identifies this lease and remains available after a `delay` action.
+  - **transactions** (*Optional*): Enable [P2 value transactions](#p2-value-transactions) on this instance.
+
+Addresses are nonzero 16-bit integers with both byte high bits clear, for example `0x0020` and `0x2211`.
+Raw parameter identifiers and values retain all 16 and 32 bits respectively.
+
+### Actions
+
+#### `vbus.request_bus` Action
+
+Wait for the next fresh grant from the configured controller. No data is transmitted while waiting.
+A duplicate request while waiting or owning the bus is ignored. Waiting ends after 10 seconds without a usable grant;
+it is not automatically retried. A grant already being received when the action runs cannot be claimed.
+
+```yaml
+on_press:
+  - vbus.request_bus:
+      id: resol_bus
+```
+
+#### `vbus.send_datagram` Action
+
+Send one P2 datagram while the component owns the bus.
+
+- **id** (**Required**, ID): The VBus component.
+- **grant_id** (**Required**, integer, templatable): The identifier received by `on_bus_grant`.
+- **command** (**Required**, integer, templatable): The P2 command.
+- **value_id** (*Optional*, integer, templatable): The raw 16-bit parameter. Defaults to `0`.
+- **value** (*Optional*, integer, templatable): The raw 32-bit parameter. Defaults to `0`.
+- **expect_reply** (*Optional*, boolean, templatable): Wait for a controller reply before allowing more traffic.
+  Defaults to `true`.
+
+Always pass the `grant_id` received by `on_bus_grant`, as shown above. A saved callback from an earlier lease cannot
+use a later lease, even when the bus has been acquired again.
+Commands must have both byte high bits clear; `0x0500` and `0x0600` are reserved for bus management.
+
+While waiting for a reply, the transport cannot
+send another datagram or a release. A complete, valid P2 datagram from the configured controller to the client
+ends this wait; standard read/write requests also require the same parameter identifier. The local TX echo
+does not count. This is flow control, not confirmation that a setting was accepted.
+The application must still validate the reply command, identifier and value. Standard read/write requests
+(`0x0200`, `0x0300` and `0x0400`) require this flag to remain `true`. Use `false` only for commands documented
+to have no reply.
+
+The action returns immediately. It does not wait for a grant, queue data, confirm a parameter change or retry a request.
+A send attempted without a usable lease, while RX is incomplete or busy, or before the preceding frame has had time
+to leave the UART is rejected
+with a warning. Space for a complete 16-byte frame is required. There is a minimum 20 ms interval between sends.
+Each exchange should wait for and validate its reply before sending another request.
+
+The existing `on_datagram` receive callback can be used to match controller replies by source, destination,
+command and parameter identifier. The transport does not interpret success or failure for controller-specific commands.
+In a lambda, `id(resol_bus).send_datagram(grant_id, command, value_id, value)` reports whether the frame
+reached the UART. An optional fifth `expect_reply` argument has the same behavior as the action's flag.
+This does not prove reception or acceptance by the controller. `id(resol_bus).has_bus()` reports a usable lease.
+
+#### `vbus.release_bus` Action
+
+Cancel a pending request, or return the owned bus once its reply has arrived, RX is idle and the preceding frame
+has had time to finish.
+Once release is requested, further ordinary sends are rejected.
+
+```yaml
+on_bus_grant:
+  - vbus.release_bus:
+      id: resol_bus
+      grant_id: !lambda return grant_id;
+```
+
+Pass the callback's `grant_id` to release that lease. An old identifier cannot release a newer lease.
+Omitting `grant_id` (default `0`) only cancels a pending request or contention; it does not release an owned bus.
+
+The component reserves the last 40 ms of each lease for release. It never starts a release in the final 20 ms,
+because there would not be enough time to finish the frame. If a reply is missing, the controller resumes,
+another sender appears, reception fails, the loop stalls, or a safe release can no longer fit, it stops transmitting
+without sending a late release. Shutdown also stops transmission; it does not send another bus command.
+Queued traffic and grants split across a stale receive period cannot authorize transmission. RX continues independently.
+
+UART access must be exclusive to this component. Do not use `uart.write` or another component on its TX UART.
+The implementation does not block on `flush()`. A platform whose UART cannot report write capacity may still block
+briefly while handing off the single 16-byte frame. Software timing checks cannot guarantee collision-free operation
+or compensate for an incorrect transmitter circuit.
+
+## P2 Value Transactions
+
+The optional `transmit.transactions` manager adds standard P2 reads and verified writes on top of the
+[transmission transport](#optional-transmission). It accepts one pending operation per VBus instance, with no
+queue, polling or automatic retries. Request the bus first and pass the current `grant_id` to each operation.
+Existing RX callbacks and raw TX configurations continue to work without this option.
+
+```yaml
+vbus:
+  id: resol_bus
+  uart_id: resol
+  transmit:
+    destination: 0x2211
+    transactions:
+      on_result:
+        - lambda: |-
+            ESP_LOGI("vbus", "ID 0x%04x: status %u, value %" PRIu32,
+                     value_id, static_cast<unsigned>(status), value);
+        - vbus.release_bus:
+            id: resol_bus
+            grant_id: !lambda return grant_id;
+    on_bus_grant:
+      - vbus.read_value:
+          id: resol_bus
+          grant_id: !lambda return grant_id;
+          value_id: 0x1234  # Replace with a documented readable identifier.
+```
+
+Use `vbus.request_bus` to start this example. Configuring the manager does not request a grant or transmit by itself.
+The identifiers and raw values are specific to the controller and firmware. This manager does not define units,
+valid settings, access permissions or Home Assistant entities.
+
+### Transaction Configuration
+
+- **response_timeout** (*Optional*, Time): Maximum wait for each reply or for UART space before a verification read.
+  Defaults to `100ms`; allowed range is `20ms` to `1000ms`. The transport's remaining lease can impose a shorter limit.
+- **on_result** (*Optional*, [Automation](/automations/)): Runs once for each accepted operation when it completes
+  or fails. Its five arguments are passed by value, including across delayed actions:
+  - `grant_id` (`uint32_t`): The lease used by the operation.
+  - `command` (`uint16_t`): The original request command: `0x0300`, `0x0200` or `0x0400`.
+  - `value_id` (`uint16_t`): The parameter identifier.
+  - `value` (`uint32_t`): The returned value on success, or the observed readback on verification mismatch.
+    It is `0` for timeout or loss of ownership; those errors do not provide a measurement.
+  - `status` (`vbus::TransactionStatus`): One of the results below.
+
+| Status | Meaning |
+|---|---|
+| `TRANSACTION_STATUS_SUCCESS` | Valid read reply, or write ACK followed by a matching readback. |
+| `TRANSACTION_STATUS_TIMEOUT` | A required reply or verification send did not complete before its timeout. |
+| `TRANSACTION_STATUS_BUS_LOST` | Ownership ended before the operation could finish. |
+| `TRANSACTION_STATUS_VERIFY_MISMATCH` | Readback differs from the requested write value. |
+
+The C++ enumerators are scoped, for example `vbus::TransactionStatus::TRANSACTION_STATUS_SUCCESS`.
+
+### Read And Write Actions
+
+`vbus.read_value` sends a standard `0x0300` read. It accepts only a checksum-valid P2 `0x0100` reply from the configured
+controller to this client, with the requested identifier and enough elapsed time for the request to leave the UART.
+Local echoes, wrong commands, other identifiers and malformed datagrams cannot complete the operation.
+
+`vbus.write_value` sends the write once, waits for its `0x0100` ACK, then sends a separate `0x0300` read of the same
+identifier. It reports success only after the returned raw value matches the requested raw value. The ACK alone
+does not confirm the setting. The write action has these fields:
+
+```yaml
+on_bus_grant:
+  - vbus.write_value:
+      id: resol_bus
+      grant_id: !lambda return grant_id;
+      value_id: 0x1234  # Use a documented writable identifier.
+      value: 1        # Use a documented allowed raw value.
+```
+
+- **id** (**Required**, ID): The VBus component with `transmit.transactions` configured.
+- **grant_id** (**Required**, integer, templatable): The current lease identifier.
+- **value_id** (**Required**, integer, templatable): The raw 16-bit parameter identifier.
+- **value** (**Required** for writes, integer, templatable): The raw unsigned 32-bit value.
+- **command** (*Optional*, integer, templatable): Write command, either `0x0200` (default) or `0x0400`.
+  Use the command documented for the controller. Reads always use `0x0300` and do not accept `value` or `command`.
+
+In a lambda, `id(resol_bus).read_value(grant_id, value_id)` and
+`id(resol_bus).write_value(grant_id, value_id, value)` return whether the operation was accepted.
+An optional fourth argument to `write_value` selects `0x0200` or `0x0400`.
+Acceptance means that the initial request reached the UART, not that the controller accepted a change.
+A busy manager, invalid command, old lease, missing UART capacity or unusable lease rejects the request with a warning;
+it does not create a pending operation or fire `on_result`.
+
+### Completion And Failure
+
+On success, `on_result` can start another operation while the transport still permits sends, or request
+`vbus.release_bus`. A valid read can finish in the reserved release window, when another request no longer fits.
+On failure, the lease is retired from further sends. A late reply cannot turn that failure into success or start
+another verification read. A safe release may still follow that reply; no read or write is retried.
+Shutdown discards pending work and stops callbacks without sending another command.
+
+A write that times out or loses ownership may already have changed the controller. Do not interpret those results
+as proof that the value stayed unchanged, and do not retry a write automatically. A matching readback observes the
+returned value; it does not establish persistence across a controller restart or confirm physical outputs.
+
+While an operation is pending, raw `vbus.send_datagram` calls through the hub are rejected. Release the lease after
+`on_result`; releasing it earlier can prevent write verification. The transport still enforces its deadline and
+stops on competing traffic, stale reception or UART failure. Continuous P1/P2 reception remains independent.
+
+P2 replies have no transaction sequence number. A delayed duplicate with the same source, destination, command and
+identifier can be indistinguishable from a later reply. The manager serializes operations, retires failed leases
+and rejects replies before a request could finish transmitting; controller-specific code must respect the
+controller's reply timing and supported command semantics.
 
 ## See Also
 
