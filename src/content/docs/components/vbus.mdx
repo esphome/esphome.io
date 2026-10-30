@@ -87,6 +87,9 @@ vbus:
 ### Configuration variables
 
 - **uart_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the UART hub used to connect to the device.
+- **controller** (*Optional*, mapping): A [supported settings profile](#deltasol-cs-plus-setting-snapshots).
+  Its protocol addresses are supplied automatically. This is equivalent to `transmit.transactions.controller`;
+  configure the profile in one location only.
 - **on_datagram** (*Optional*, [Automation](/automations/)): An automation to run when a valid VBus P2 datagram is received.
 
 > [!NOTE]
@@ -308,7 +311,8 @@ binary_sensor:
 
 ## Optional Transmission
 
-The component remains receive-only unless `transmit` is configured. This option adds a low-level P2 datagram
+The component remains receive-only unless `transmit` or a supported `controller` profile is configured.
+The `transmit` option adds a low-level P2 datagram
 transport, not a controller-specific list of settings. It does not start polling or change any settings by itself.
 Parameter identifiers, units, allowed values and reply handling must come from documentation for the exact
 controller and firmware version. Do not infer them from the models supported for P1 sensors.
@@ -341,7 +345,8 @@ The lease expires automatically; an application should release it earlier once i
 The example parameter `0x1234` is illustrative and is not a universal setting identifier.
 
 - **transmit** (*Optional*): Enable transmission for this VBus instance.
-  - **destination** (**Required**, integer): Address of the controller that grants the bus.
+  - **destination** (**Required** for generic TX, integer): Address of the controller that grants the bus.
+    Supplied automatically by a supported controller profile when omitted.
   - **source** (*Optional*, integer): Client address. Defaults to `0x0020`. It must differ from the controller's
     address and be unused by other devices on the bus.
   - **uart_id** (*Optional*, [ID](/guides/configuration-types/#id)): UART used for TX. Defaults to the component's
@@ -727,3 +732,80 @@ Only new raw values enter the sensor filters. For a callback on every successful
 use `polling.on_result`. This generic sensor does not impose an age expiry or controller-specific applicability policy.
 Those policies need controller-specific information; retained state alone does not prove that the controller is online.
 As with other ESPHome numeric sensors, values are represented as 32-bit floats, so large raw integers can be rounded.
+
+
+## DeltaSol CS Plus Setting Snapshots
+
+The controller profile reads settings from a **DeltaSol CS Plus with firmware 1.11**. Configure the
+[UART](/components/uart/) and the transmitter circuit described above first. The profile supplies the protocol
+addresses and shares one receiver, transmitter and settings cache. Existing broadcast sensors continue receiving
+telemetry on the same hub. This example is read-only: it neither changes settings nor adds number or select entities.
+
+```yaml
+vbus:
+  id: solar_bus
+  controller:
+    id: solar_controller
+    model: deltasol_cs_plus
+    update_interval: 5min
+    on_snapshot:
+    - lambda: |-
+        int32_t language;
+        if (id(solar_controller).get_value(55, language)) {
+          ESP_LOGI("solar", "Confirmed language setting: %d", int(language));
+        }
+```
+
+- **id** (*Optional*, [ID](/guides/configuration-types/#id)): ID used by controller actions and lambdas.
+- **model** (**Required**, string): `deltasol_cs_plus`. Other models and firmware versions are not qualified.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types/#time)): Time between scan attempts.
+  Defaults to `5min`; the minimum is `60s`. Set to `never` for manual scans only.
+- **on_snapshot** (*Optional*, [Automation](/automations/)): Runs after a complete settings snapshot, on its expiry,
+  or when an incompatible firmware broadcast invalidates it. Check `has_fresh_snapshot()` before using values.
+
+The profile supplies controller address `0x2211` and client address `0x0020`; explicit values must match.
+The nested `transmit.transactions.controller` spelling remains supported. Configure the profile in one location only.
+Advanced `transmit` options, such as a separate TX UART, can be combined with `controller`.
+Generic TX still requires an explicit destination. The profile owns the polling queue:
+`controller` and generic `polling` are mutually exclusive. Manual bus, raw transaction and queue actions on that hub
+are rejected. Hubs without the profile keep their existing behavior.
+
+### Reading And Retaining Settings
+
+Automatic scanning starts no earlier than 30 seconds after startup, once firmware 1.11 telemetry is present.
+Each scan first reads the hydraulic scheme and unit system through P2. These settings determine which options and
+dependent values apply. The profile contains 84 setting definitions; only the applicable subset is requested.
+Clock data comes from the existing broadcast, and ordinary RX measurements are not polled again.
+
+Reads are queued in groups of at most 16. A lease may end before all 16 complete; remaining reads wait for a fresh
+grant. After each release, a new telemetry broadcast must arrive before the next group or snapshot completion.
+This keeps ordinary telemetry flowing during a scan. A missing response, incompatible value or missing telemetry
+abandons the scan. There is no automatic retry within that scan.
+
+A snapshot replaces the previous one only after every planned read succeeds and telemetry resumes. During refreshes
+and failed scans, the last complete snapshot remains available for up to 660 seconds. Reading an unchanged value
+does not require publishing a new sensor state. An incomplete first scan provides no settings. A broadcast identifying
+another firmware invalidates the snapshot immediately; returning firmware 1.11 requires a new complete scan.
+
+In a lambda, `id(solar_controller).get_value(value_id, raw_value)` returns `true` only for an available setting in a
+fresh, complete snapshot. Values are raw integers; scaling and applicability depend on the setting. The raw getter
+is intended for custom automations, rather than bypassing setting validation for writes.
+
+### Manual Refresh And OTA
+
+```yaml
+button:
+  - platform: template
+    name: Refresh Solar Settings
+    on_press:
+      - vbus.scan_controller:
+          id: solar_controller
+```
+
+The `vbus.scan_controller` action requires the controller's `id`. A request is ignored while scanning, suspended,
+offline, or less than 60 seconds after the previous attempt. It cannot force a bus grant.
+
+Use `vbus.suspend_polling` and `vbus.resume_polling` with the **hub ID**, as in the OTA example above. Suspension
+abandons an incomplete scan and retains the last complete snapshot. Resuming requests a fresh scan, subject to the
+startup delay and 60-second minimum interval; it never resumes partial data. With `update_interval: never`, resuming
+only requests a scan if a manual scan has previously been attempted. Shutdown permanently stops the profile.
