@@ -46,8 +46,9 @@ nrf52:
   bootloader: mcuboot
 ```
 
-The Seeed XIAO nRF52840 (`xiao_ble`) also supports the MCUboot two-slot bootloader. Select it explicitly with
-`bootloader: mcuboot`:
+Boards that ship with the Adafruit nRF52 Bootloader, the Seeed XIAO nRF52840 (`xiao_ble`) and the Adafruit
+ItsyBitsy nRF52840 (`adafruit_itsybitsy_nrf52840`, `adafruit_itsybitsy`), can also run MCUboot as their only
+bootloader. Select it explicitly with `bootloader: mcuboot`:
 
 ```yaml
 # Example configuration entry
@@ -56,9 +57,11 @@ nrf52:
   bootloader: mcuboot
 ```
 
-After the initial SWD flash, the MCUboot two-slot layout enables [OTA updates](/components/ota/zephyr_mcumgr/) over BLE
-or USB CDC, so a programmer is no longer required for subsequent updates. The dashboard offers a **HEX package** for the
-initial SWD flash and an **app update package** for OTA.
+MCUboot then replaces the factory bootloader, so the first flash needs SWD and the Adafruit bootloader, its UF2 drive
+and its SoftDevice are gone afterwards. The dashboard offers a **HEX package** for that first flash and an **app update
+package** for later [OTA updates](/components/ota/zephyr_mcumgr/) over BLE or USB CDC. MCUboot waits two seconds after
+each reset for a serial recovery upload over USB, and enters recovery by itself when the application slot is empty or
+invalid. Updates overwrite the application, so OTA rollback is not available with this layout.
 
 > [!IMPORTANT]
 > OTA works only if the [`zephyr_mcumgr`](/components/ota/zephyr_mcumgr/) OTA component is part of the firmware you flash
