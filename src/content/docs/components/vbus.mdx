@@ -650,3 +650,51 @@ These actions need no `grant_id`. In a lambda, `id(solar_bus).queue_read(value_i
 `id(solar_bus).queue_write(value_id, value, command)` return `false` when rejected. A rejected request has no result
 callback. Acceptance means queued, not applied: check `on_result` for confirmed completion. Distinct writes are never
 silently replaced. Only queue values supported by the controller and safe for the connected installation.
+
+## P2 Parameter Sensors
+
+The `p2` sensor model exposes values from [periodic P2 polling](#periodic-polling-and-queued-writes). Configure the
+value ID once in the polling list, then bind the sensor to that polling component. This adds no separate polling
+cycle or write control. Existing broadcast RX sensors can run on the same VBus hub.
+
+```yaml
+vbus:
+  transmit:
+    destination: 0x2211
+    transactions:
+      polling:
+        id: controller_values
+        value_ids: [0x1234]
+
+sensor:
+  - platform: vbus
+    model: p2
+    polling_id: controller_values
+    value_id: 0x1234
+    name: Controller Parameter
+```
+
+The destination and value ID are examples; replace them with documented values for the controller.
+
+- **polling_id** (**Required**, [ID](/guides/configuration-types/#id)): Polling component supplying the value.
+- **value_id** (**Required**, integer): 16-bit ID in that polling component's `value_ids` list. IDs in `rx_value_ids`
+  are rejected: use the existing broadcast RX sensor for those measurements.
+- **value_type** (*Optional*, string): Interpret the raw response as `int32` or `uint32`. Defaults to `int32`.
+- All other options from [Sensor](/components/sensor/).
+
+P2 values do not carry a unit or scaling factor. Set sensor units and accuracy from the controller's specification.
+Use the normal sensor filters for scaling, for example:
+
+```yaml
+filters:
+  - multiply: 0.1
+```
+
+A sensor publishes its first successful value and subsequent changes. Missing replies and failed writes preserve the
+last confirmed state. A write updates the sensor only after successful verification. Multiple sensors can share an
+ID without adding bus requests, and each polling component keeps its own cache.
+
+Only new raw values enter the sensor filters. For a callback on every successful refresh, including unchanged values,
+use `polling.on_result`. This generic sensor does not impose an age expiry or controller-specific applicability policy.
+Those policies need controller-specific information; retained state alone does not prove that the controller is online.
+As with other ESPHome numeric sensors, values are represented as 32-bit floats, so large raw integers can be rounded.
