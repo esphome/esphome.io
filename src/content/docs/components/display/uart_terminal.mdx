@@ -39,12 +39,13 @@ display:
 
 Each redraw moves the terminal's cursor to the top left corner and sends every row, so the terminal shows the grid in
 place. A redraw is skipped while the content has not changed, so an idle display sends little. Every tenth update the
-grid goes out again with the screen cleared first, so a terminal attached later shows it within a few seconds, and
-older output around the grid disappears.
+grid goes out again with the screen cleared first (every 10 seconds at the default `update_interval`), so a terminal
+attached later shows the grid and older output around it disappears.
 
 ## Menu Over a Serial Port
 
-The menu draws itself from the display's lambda, as on an LCD.
+The menu draws itself from the display's lambda, as on an LCD. The keys arrive over the same UART bus, so it also needs
+an `rx_pin`.
 
 ```yaml
 display:
@@ -83,6 +84,9 @@ binary_sensor:
       - display_menu.enter
 ```
 
+The arrow key bytes above are what most terminals send. Terminals in application cursor mode send `ESC O A` and
+`ESC O B` instead; if the arrows do nothing, check what your terminal sends with the
+[UART debugger](/components/uart/#debugging) and use those bytes.
 ## See Also
 
 - [LCD Display](/components/display/lcd_display/)
