@@ -65,6 +65,7 @@ the pins used to interface to the display to be specified.
 | Waveshare-4.26in          | Waveshare           | [https://www.waveshare.com/4.26inch-e-paper.htm](https://www.waveshare.com/4.26inch-e-paper.htm)   |
 | Waveshare-7.5in-H         | Waveshare           | [https://www.waveshare.com/7.5inch-e-paper-hat-h.htm](https://www.waveshare.com/7.5inch-e-paper-hat-h.htm) |
 | Waveshare-7.5in-V2        | Waveshare           | [https://www.waveshare.com/7.5inch-e-paper-hat.htm](https://www.waveshare.com/7.5inch-e-paper-hat.htm) — 7.5" V2 mono (800x480, UC8179), supports fast and partial refresh via `full_update_every` |
+| Waveshare-7.5in-v2-gray4  | Waveshare           | 7.5" V2 in four-level grayscale (800x480, UC8179), using the panel's OTP grayscale waveform. Full refresh only, see [Four-Level Grayscale](#four-level-grayscale-waveshare-7-5in-v2). Requires a width that is a multiple of 8. |
 | Waveshare-7.5in-bV2-BWR   | Waveshare           | [https://www.waveshare.com/7.5inch-e-paper-hat-b.htm](https://www.waveshare.com/7.5inch-e-paper-hat-b.htm) — 7.5" V2 3-color (800x480, UC8179) |
 | WeAct-2.13in-3c           | WeAct               | 2.13" 3-color e-paper (250x122, SSD1683)           |
 | WeAct-2.9in-3c            | WeAct               | 2.9" 3-color e-paper (128x296, SSD1683)            |
@@ -104,7 +105,7 @@ but can be overridden if needed.
   > [!NOTE]
   > Some displays use inverted busy pin polarity (LOW = busy, HIGH = idle). For these models, set `inverted: true`
   > on the busy pin. This applies to: `UC8151`, `Waveshare-1.54in-G`, `Waveshare-2.13in-bv3`, `Waveshare-2.13in-G`,
-  > `Waveshare-2.13in-G-V1`, `Waveshare-7.5in-H`, `Waveshare-7.5in-V2`, `inkplate6color`.
+  > `Waveshare-2.13in-G-V1`, `Waveshare-7.5in-H`, `Waveshare-7.5in-V2`, `Waveshare-7.5in-v2-gray4`, `inkplate6color`.
 
 - **reset_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The RESET pin, if used. Required for the SSD1681-based models (`SSD1681`, `Waveshare-1.54in-v2`, `GooDisplay-GDEY0154D67-1.54`), whose panels only wake from deep sleep on a hardware reset, and for `GooDisplay-GDEY029Z95-2.9`.
   Make sure you pull this pin high (by connecting it to 3.3V with a resistor) if not connected to a GPIO pin.
@@ -259,8 +260,28 @@ on_...:
   - component.update: epaper
 ```
 
+### Four-Level Grayscale (Waveshare 7.5in V2)
+
+The `Waveshare-7.5in-v2-gray4` model drives the Waveshare 7.5" V2 panel in four gray levels using the panel's own OTP
+grayscale waveform. Unlike `Seeed-reTerminal-Sticky-gray4`, this waveform has no partial form, so `full_update_every`
+must remain at `1` (`monochrome_partial_updates` does not apply) and every update is a full four-level refresh. This
+model also fits the GDEY075T7 panel used by the TRMNL 7.5" kits.
+
+```yaml
+display:
+  - platform: epaper_spi
+    model: Waveshare-7.5in-v2-gray4
+    cs_pin: GPIOXX
+    dc_pin: GPIOXX
+    reset_pin: GPIOXX
+    busy_pin: { number: GPIOXX, inverted: true }
+    lambda: |-
+      it.filled_circle(it.get_width() / 2, it.get_height() / 2, 50, Color::BLACK);
+```
+
 > [!NOTE]
-> With custom `dimensions`, the width must be a multiple of 8.
+> With custom `dimensions`, the width must be a multiple of 8. Panels made before late 2023 may lack the
+> grayscale waveform.
 
 ### 4-color display example
 
@@ -385,9 +406,10 @@ $$
 Y = 0.299R + 0.587G + 0.114B
 $$
 
-A luma of `128` or more draws white, anything lower draws black. The four-level grayscale model
-(`Seeed-reTerminal-Sticky-gray4`) uses the same luma, split into four bands: below `32` draws black, `32` to `95` dark
-gray, `96` to `159` light gray, and `160` or more white.
+A luma of `128` or more draws white, anything lower draws black. The four-level grayscale models
+(`Seeed-reTerminal-Sticky-gray4` and `Waveshare-7.5in-v2-gray4`) use the same luma, mapped to the nearest of the four
+evenly spaced levels `0`, `85`, `170` and `255`, so a luma below `43` draws black, `43` to `127` dark gray, `128` to
+`212` light gray, and `213` or more white.
 
 Saturated colors therefore do not map the way their RGB values might suggest:
 
@@ -397,18 +419,21 @@ Saturated colors therefore do not map the way their RGB values might suggest:
 | Green `(0, 255, 0)`    | 149  | White           | Light gray      |
 | Blue `(0, 0, 255)`     | 29   | Black           | Black           |
 | Yellow `(255, 255, 0)` | 226  | White           | White           |
-| Cyan `(0, 255, 255)`   | 178  | White           | White           |
-| Magenta `(255, 0, 255)`| 106  | Black           | Light gray      |
-| Orange `(255, 165, 0)` | 173  | White           | White           |
+| Cyan `(0, 255, 255)`   | 178  | White           | Light gray      |
+| Magenta `(255, 0, 255)`| 106  | Black           | Dark gray       |
+| Orange `(255, 165, 0)` | 173  | White           | Light gray      |
 | Gray `(128, 128, 128)` | 128  | White           | Light gray      |
-| Gray `(127, 127, 127)` | 127  | Black           | Light gray      |
+| Gray `(127, 127, 127)` | 127  | Black           | Dark gray       |
 
 This has some consequences:
 
-- Green, yellow, cyan and orange draw white, so they are invisible on the white background.
-- Red, blue and magenta draw black, so they cannot be told apart from black, for example to highlight a warning.
-- A darker green such as `Color(0, 200, 0)` (luma 117) draws black, while full green draws white.
-- Mid grays flip between black and white at `128`, so a small change in a gray value can invert it.
+- Green, yellow and cyan draw white, so they are invisible on the white background. Orange draws light gray, and is
+  faint against it.
+- Red, blue and magenta draw black or dark gray, so they cannot be told apart from black, for example to highlight a
+  warning.
+- A darker green such as `Color(0, 200, 0)` (luma 117) draws dark gray rather than light gray, while full green draws
+  light gray.
+- Mid grays flip between dark and light gray at `128`, so a small change in a gray value can invert it.
 - Images and LVGL content are converted pixel by pixel in the same way, without dithering, so areas of similar
   brightness become solid black or white. For photos, use a `BINARY` [image](/components/image/) with
   `dither: FLOYDSTEINBERG`, which keeps the shading.
