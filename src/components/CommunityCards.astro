@@ -24,65 +24,58 @@ cards.forEach((card, index) => {
     </header>
 
     <div class="masonry" style={{ "--cc-columns": columns }}>
-      {
-        columnedCards.map((column) => (
-          <div class="masonry__col">
-            {column.map(({ card, order }) => {
-              const isYoutube = card.href.includes("youtube.com") || card.href.includes("youtu.be");
-              const media = card.backgroundImage ?? card.videoPoster;
-              const classes = ["community-card"];
-              if (card.quote) classes.push("community-card--quote");
-              if (card.video || media) classes.push("community-card--media");
-              if (card.video) classes.push("community-card--video");
+      {columnedCards.map((column) => (
+        <div class="masonry__col">
+          {column.map(({ card, order }) => {
+            const isYoutube = card.href.includes("youtube.com") || card.href.includes("youtu.be");
+            const media = card.backgroundImage ?? card.videoPoster;
+            const classes = ["community-card"];
+            if (card.quote) classes.push("community-card--quote");
+            if (card.video || media) classes.push("community-card--media");
+            if (card.video) classes.push("community-card--video");
 
-              const linkIcon = card.linkIcon ?? (isYoutube ? "/images/community-cards/play-icon.png" : undefined);
+            const linkIcon = card.linkIcon ?? (isYoutube ? "/images/community-cards/play-icon.png" : undefined);
 
-              return (
-                <a
-                  href={card.href}
-                  class="community-card__link"
-                  style={{ "--source-order": order }}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <div class={classes.join(" ")}>
-                    {media && !card.video && (
-                      <img
-                        class="community-card__image"
-                        src={media}
-                        alt={card.backgroundImageAlt ?? ""}
-                        loading="lazy"
-                      />
-                    )}
-                    {card.video && (
-                      <video
-                        class="community-card__video"
-                        loop
-                        muted
-                        playsinline
-                        preload="metadata"
-                        poster={card.videoPoster}
-                      >
-                        <source src={card.video} type="video/webm" />
-                      </video>
-                    )}
-                    <div class="community-card__content">
-                      <p class="community-card__text">{card.text}</p>
-                      <p class="community-card__meta">
-                        {card.authorImage && (
-                          <img class="author" src={card.authorImage} alt={card.authorImageAlt ?? ""} loading="lazy" />
-                        )}
-                        <span>{card.author}</span>
-                        {linkIcon && <img class="meta-link" src={linkIcon} alt="" aria-hidden="true" />}
-                      </p>
-                    </div>
+            return (
+              <a
+                href={card.href}
+                class="community-card__link"
+                style={{ "--source-order": order }}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <div class={classes.join(" ")}>
+                  {media && !card.video && (
+                    <img class="community-card__image" src={media} alt={card.backgroundImageAlt ?? ""} loading="lazy" />
+                  )}
+                  {card.video && (
+                    <video
+                      class="community-card__video"
+                      loop
+                      muted
+                      playsinline
+                      preload="metadata"
+                      poster={card.videoPoster}
+                    >
+                      <source src={card.video} type="video/webm" />
+                    </video>
+                  )}
+                  <div class="community-card__content">
+                    <p class="community-card__text">{card.text}</p>
+                    <p class="community-card__meta">
+                      {card.authorImage && (
+                        <img class="author" src={card.authorImage} alt={card.authorImageAlt ?? ""} loading="lazy" />
+                      )}
+                      <span>{card.author}</span>
+                      {linkIcon && <img class="meta-link" src={linkIcon} alt="" aria-hidden="true" />}
+                    </p>
                   </div>
-                </a>
-              );
-            })}
-          </div>
-        ))
-      }
+                </div>
+              </a>
+            );
+          })}
+        </div>
+      ))}
     </div>
   </div>
 </section>
