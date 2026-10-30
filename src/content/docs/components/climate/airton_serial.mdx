@@ -12,7 +12,7 @@ This platform is separate from the IR-based [`airton`](/components/climate/clima
 
 > [!WARNING]
 > The module connector provides +12 V. Never connect it directly to the ESP. Use a 5 V regulator
-> (a 12 V → 5 V buck module or a bare 7805), verify its output before wiring, and
+> (a 12 V → 5 V buck module, or a 7805 with a heatsink), verify its output before wiring, and
 > connect a common ground.
 
 > [!WARNING]
@@ -61,15 +61,16 @@ switch:
       name: Eco
 ```
 
-- **airton_serial_id** (**Required**, [ID](/guides/configuration-types/#id)): The ID of the
-  `airton_serial` climate.
+- **airton_serial_id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the
+  `airton_serial` climate. Only needed when more than one is configured.
 - **display** (*Optional*, [Switch](/components/switch/)): The display backlight.
 - **ionizer** (*Optional*, [Switch](/components/switch/)): The ionizer.
 - **health** (*Optional*, [Switch](/components/switch/)): The health setting. The board uses one bit for anti-mould and
   auxiliary heat, so both are controlled by this switch.
 - **sleep** (*Optional*, [Switch](/components/switch/)): Sleep mode.
 - **eco** (*Optional*, [Switch](/components/switch/)): Eco mode.
-- All other options from [Switch](/components/switch/#config-switch).
+
+Each switch accepts all options from [Switch](/components/switch/#config-switch) inside its own block.
 
 ## Sensors
 
@@ -83,8 +84,8 @@ sensor:
       name: Protocol revision
 ```
 
-- **airton_serial_id** (**Required**, [ID](/guides/configuration-types/#id)): The ID of the
-  `airton_serial` climate.
+- **airton_serial_id** (*Optional*, [ID](/guides/configuration-types/#id)): The ID of the
+  `airton_serial` climate. Only needed when more than one is configured.
 - **total_usage_time** (*Optional*, [Sensor](/components/sensor/)): Total usage time in hours, read from the board's
   poll response. All options from [Sensor](/components/sensor/#config-sensor).
 - **revision** (*Optional*, [Sensor](/components/sensor/)): The board's protocol revision counter. This is a diagnostic
@@ -102,13 +103,15 @@ sensor:
 
 | Module connector | ESP |
 |---|---|
-| +12 V (red) | input of a 5 V regulator (buck module or 7805); never directly to the ESP |
+| +12 V (red) | input of a 5 V regulator (buck module, or 7805 with a heatsink); never directly to the ESP |
 | TX (black) | UART RX (for example `GPIOXX`), through a level shifter or divider |
 | RX (yellow) | UART TX (for example `GPIOXX`) |
 | GND (green) | Common ground |
 
-Verify the 5 V output before connecting the ESP. The 7805 is used bare and stays barely warm at
-the ESP current. Do not power the ESP from USB and from the regulator at the same time.
+Verify the 5 V output before connecting the ESP. A buck module is the better choice. A 7805 turns the 7 V it drops
+into heat: about 1.4 W at the 200 mA an ESP32 can draw during Wi-Fi transmits, which is too much for a bare TO-220
+part inside a closed unit. Give it a heatsink and add the input and output capacitors from its datasheet. Do not
+power the ESP from USB and from the regulator at the same time.
 
 ## See Also
 
